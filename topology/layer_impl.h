@@ -98,8 +98,7 @@ Layer< D >::get_status( DictionaryDatum& d ) const
   DictionaryDatum topology_dict( new Dictionary );
 
   ( *d )[ names::extent ] = std::vector< double >( extent_ );
-  ( *d )[ names::center ] =
-    std::vector< double >( lower_left_ + extent_ / 2 );
+  ( *d )[ names::center ] = std::vector< double >( lower_left_ + extent_ / 2 );
 
   if ( periodic_.none() )
   {
@@ -284,7 +283,8 @@ Layer< D >::get_global_positions_vector( index model_filter,
   const Position< D >& anchor,
   bool allow_oversized )
 {
-  MaskedLayer< D > masked_layer( *this, model_filter, mask, true, allow_oversized );
+  MaskedLayer< D > masked_layer(
+    *this, model_filter, mask, true, allow_oversized );
   std::vector< std::pair< Position< D >, index > > positions;
 
   for ( typename Ntree< D, index >::masked_iterator iter =
@@ -332,7 +332,9 @@ Layer< D >::dump_nodes( std::ostream& out ) const
 
 template < int D >
 void
-Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
+Layer< D >::dump_connections( std::ostream& out,
+  AbstractLayerPTR target_layer,
+  const Token& syn_model )
 {
   std::vector< std::pair< Position< D >, index > >* src_vec =
     get_global_positions_vector();
@@ -351,9 +353,7 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
   {
 
     const index source_gid = src_iter->second;
-    // TODO this is commented out, as it is to be used in the commented out
-    // section below.
-    //const Position< D > source_pos = src_iter->first;
+    const Position< D > source_pos = src_iter->first;
 
     source_array[ 0 ] = source_gid;
     def( gcdict,
@@ -384,32 +384,13 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
       // Print source, target, weight, delay, rports
       out << source_gid << ' ' << target_gid << ' ' << weight << ' ' << delay;
 
-      /*
-      // We decided to change how this function is called. It is to be called
-      // with source and target layers.
-      // TODO 481 Specify target layer
+      Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
+      target_layer.unlock();
 
-      Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >(
-        target->get_parent() );
-      if ( tgt_layer == 0 )
-      {
-
-        // Happens if target does not belong to layer, eg spike_detector.
-        // We then print NaNs for the displacement.
-        for ( int n = 0; n < D; ++n )
-        {
-          out << " NaN";
-        }
-      }
-      else
-      {
-
-        out << ' ';
-        tgt_layer->compute_displacement( source_pos,
-                     tgt_layer->gid_collection_->find( target->get_gid() ) )
-          .print( out );
-      }
-      */
+      out << ' ';
+      tgt_layer->compute_displacement( source_pos,
+                   tgt_layer->gid_collection_->find( target->get_gid() ) )
+        .print( out );
       out << '\n';
     }
   }

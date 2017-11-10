@@ -156,6 +156,7 @@ public:
    * @param synapse_id type of connection
    */
   virtual void dump_connections( std::ostream& out,
+    AbstractLayerPTR target_layer,
     const Token& syn_model ) = 0;
 
 protected:
@@ -387,7 +388,9 @@ public:
    * @param out output stream
    * @param synapse_id type of connection
    */
-  void dump_connections( std::ostream& out, const Token& syn_model );
+  void dump_connections( std::ostream& out,
+    AbstractLayerPTR target_layer,
+    const Token& syn_model );
 
 protected:
   /**

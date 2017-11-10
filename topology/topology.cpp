@@ -241,14 +241,16 @@ dump_layer_nodes( GIDCollectionPTR layer_gc, OstreamDatum& out )
 
 void
 dump_layer_connections( const Token& syn_model,
-  GIDCollectionPTR layer_gc,
+  GIDCollectionPTR source_layer_gc,
+  GIDCollectionPTR target_layer_gc,
   OstreamDatum& out )
 {
-  AbstractLayerPTR layer = get_layer( layer_gc );
+  AbstractLayerPTR source_layer = get_layer( source_layer_gc );
+  AbstractLayerPTR target_layer = get_layer( target_layer_gc );
 
   if ( out->good() )
   {
-    layer->dump_connections( *out, syn_model );
+    source_layer->dump_connections( *out, target_layer, syn_model );
   }
 }
 

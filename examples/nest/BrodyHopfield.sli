@@ -44,6 +44,8 @@
 
 ResetKernel
 
+<< /overwrite_files true >> SetKernelStatus
+
 /N             1000   def % number of neurons
 /T             600 ms def % simulation time
 /bias_begin    140 pA def % increasing bias current to all neurons...

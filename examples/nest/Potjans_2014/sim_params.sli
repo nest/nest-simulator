@@ -118,4 +118,4 @@
 %%%                         NEST parameters                         %%%        
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-/nest_path (/opt/nest)   % the base path of the NEST installation
+/nest_path (/opt/nest) def  % the base path of the NEST installation

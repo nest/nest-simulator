@@ -341,7 +341,7 @@
             GIDs Min <- (\t) <- GIDs Max <- (\n) <-
 	} forall
 
-        close
+close
     } if
 } def
 
@@ -526,7 +526,7 @@
 
 
 % load parameters
-(user_params) run
+(sim_params) run
 (network_params) run
 
 % execute functions

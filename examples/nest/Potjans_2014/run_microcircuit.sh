@@ -33,7 +33,6 @@ STDOUT=$(grep '/std_out' sim_params.sli | cut -d'(' -f2 | cut -d')' -f1)
 STDERR=$(grep '/std_err' sim_params.sli | cut -d'(' -f2 | cut -d')' -f1)
 
 mkdir -p $OUTPUT_PATH
-cp 'user_params.sli' $OUTPUT_PATH
 cp 'sim_params.sli' $OUTPUT_PATH
 cp 'network_params.sli' $OUTPUT_PATH
 cp 'microcircuit.sli' $OUTPUT_PATH

@@ -2109,11 +2109,11 @@ def SelectNodesByMask(layer, anchor, mask_obj):
         GID(s) of nodes/elements inside the mask.
     """
 
-    if len(layer) != 1:
-        raise ValueError("layer must contain exactly one GID.")
+    if not isinstance(layer, nest.GIDCollection):
+        raise ValueError("layer must be a GIDCollection.")
 
     mask_datum = mask_obj._datum
 
-    gid_list = nest.sli_func('SelectNodesByMask', layer[0], anchor, mask_datum)
+    gid_list = nest.sli_func('SelectNodesByMask', layer, anchor, mask_datum)
 
     return gid_list

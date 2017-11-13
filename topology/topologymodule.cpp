@@ -1276,9 +1276,17 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
     throw BadProperty( "Center must be 2- or 3-dimensional." );
   }
 
+  AbstractLayerPTR abstract_layer = get_layer( layer_gc );
+  if ( abstract_layer.islocked() )
+  {
+    // Need to unlock the layer in case we call the function several times,
+    // or the layer is to be used in some other way.
+    abstract_layer.unlock();
+  }
+
   if ( dim == 2 )
   {
-    Layer< 2 >* layer = dynamic_cast< Layer< 2 >* >( get_layer( layer_gc ).get() );
+    Layer< 2 >* layer = dynamic_cast< Layer< 2 >* >( abstract_layer.get() );
     if ( not layer )
     {
       throw TypeMismatch( "2D layer", "other type" );
@@ -1297,7 +1305,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
   }
   else
   {
-    Layer< 3 >* layer = dynamic_cast< Layer< 3 >* >( get_layer( layer_gc ).get() );
+    Layer< 3 >* layer = dynamic_cast< Layer< 3 >* >( abstract_layer.get() );
     if ( not layer )
     {
       throw TypeMismatch( "3D layer", "other type" );

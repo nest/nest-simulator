@@ -201,12 +201,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
   size_t num_threads = kernel().vp_manager.get_num_threads();
-  size_t current_thread = kernel().vp_manager.get_thread_id();
   index model = target_model_filter_;
-
-  GIDCollection::const_iterator target_begin =
-    target_gc->begin( current_thread, num_threads, model );
-  GIDCollection::const_iterator target_end = target_gc->end();
 
   // retrieve global positions, either for masked or unmasked pool
   PoolWrapper_< D > pool;
@@ -225,6 +220,9 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
                      // target_begin, target_end)
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
+    GIDCollection::const_iterator target_begin =
+      target_gc->local_begin( thread_id, num_threads, model );
+    GIDCollection::const_iterator target_end = target_gc->end();
 
     for ( GIDCollection::const_iterator tgt_it = target_begin;
           tgt_it != target_end;
@@ -277,7 +275,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   index model = target_model_filter_;
 
   GIDCollection::const_iterator target_begin =
-    target_gc->begin( current_thread, num_threads, model );
+    target_gc->local_begin( current_thread, num_threads, model );
   GIDCollection::const_iterator target_end = target_gc->end();
 
   PoolWrapper_< D > pool;
@@ -355,7 +353,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
   index model = target_model_filter_;
 
   GIDCollection::const_iterator target_begin =
-    target_gc->begin( current_thread, num_threads, model );
+    target_gc->local_begin( current_thread, num_threads, model );
   GIDCollection::const_iterator target_end = target_gc->end();
 
   // protect against connecting to devices without proxies
@@ -646,7 +644,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
   size_t current_thread = kernel().vp_manager.get_thread_id();
 
   GIDCollection::const_iterator target_begin =
-    target_gc->begin( current_thread, num_threads );
+    target_gc->local_begin( current_thread, num_threads );
   GIDCollection::const_iterator target_end = target_gc->end();
 
   for ( GIDCollection::const_iterator tgt_it = target_begin;

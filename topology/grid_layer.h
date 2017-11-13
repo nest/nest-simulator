@@ -314,7 +314,7 @@ GridLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
   index model = model_filter;
 
   GIDCollection::const_iterator gc_begin =
-    this->gid_collection_->begin( current_rank, num_processes, model );
+    this->gid_collection_->local_begin( current_rank, num_processes, model );
   GIDCollection::const_iterator gc_end = this->gid_collection_->end();
 
   for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it != gc_end;
@@ -340,7 +340,7 @@ GridLayer< D >::insert_global_positions_( Ins iter, const index& model_filter )
   index model = model_filter;
 
   GIDCollection::const_iterator gi =
-    this->gid_collection_->begin( current_rank, num_processes, model );
+    this->gid_collection_->local_begin( current_rank, num_processes, model );
 
   for ( ; ( gi != this->gid_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
   {

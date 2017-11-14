@@ -331,14 +331,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
   // 2. Compute connection probability for each source position
   // 3. Draw source nodes and make connections
 
-  // We have to adjust the begin and end pointers in case we select by model
-  // or we have to adjust the step because we use threads:
-  size_t num_threads = kernel().vp_manager.get_num_threads();
-  size_t current_thread = kernel().vp_manager.get_thread_id();
-  index model = target_model_filter_;
-
-  GIDCollection::const_iterator target_begin =
-    target_gc->local_begin( current_thread, num_threads, model );
+  GIDCollection::const_iterator target_begin = target_gc->MPI_local_begin();
   GIDCollection::const_iterator target_end = target_gc->end();
 
   // protect against connecting to devices without proxies
@@ -617,13 +610,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
 
-  // We have to adjust the begin and end pointers in case we select by model
-  // or we have to adjust the step because we use threads:
-  size_t num_threads = kernel().vp_manager.get_num_threads();
-  size_t current_thread = kernel().vp_manager.get_thread_id();
-
-  GIDCollection::const_iterator target_begin =
-    target_gc->local_begin( current_thread, num_threads );
+  GIDCollection::const_iterator target_begin = target_gc->MPI_local_begin();
   GIDCollection::const_iterator target_end = target_gc->end();
 
   for ( GIDCollection::const_iterator tgt_it = target_begin;

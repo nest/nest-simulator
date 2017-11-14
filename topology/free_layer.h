@@ -163,14 +163,8 @@ FreeLayer< D >::communicate_positions_( Ins iter )
   // This array will be filled with GID,pos_x,pos_y[,pos_z] for local nodes:
   std::vector< double > local_gid_pos;
 
-  // We have to adjust the begin and end pointers in case we select by model
-  // or we have to adjust the step because we use threads:
-  size_t num_processes = kernel().mpi_manager.get_num_processes();
-  size_t current_rank = kernel().mpi_manager.get_rank();
-  index model = model_filter;
-
   GIDCollection::const_iterator gc_begin =
-    this->gid_collection_->local_begin( current_rank, num_processes, model );
+    this->gid_collection_->MPI_local_begin();
   GIDCollection::const_iterator gc_end = this->gid_collection_->end();
 
   local_gid_pos.reserve( ( D + 1 ) * this->gid_collection_->size() );

@@ -249,14 +249,19 @@ public:
   /**
    * Method to get an iterator representing the beginning of the GIDCollection.
    *
-   * @param offset  Index of element GC that iterator points to
-   * @param step    Step for skipping due to e.g. slicing
-   * @param model_type   ID of the model to iterate over
-   *
-   * @return an iterator representing the beginning of the GIDCollection, taking
-   * offset and model type into account
+   * @return an iterator representing the beginning of the GIDCollection, in a
+   * parallel context.
    */
   virtual const_iterator local_begin(
+    GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
+
+  /**
+   * Method to get an iterator representing the beginning of the GIDCollection.
+   *
+   * @return an iterator representing the beginning of the GIDCollection, in an
+   * MPI-parallel context.
+   */
+  virtual const_iterator MPI_local_begin(
     GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
 
   /**
@@ -407,6 +412,8 @@ public:
 
   const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
   const_iterator local_begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
+  const_iterator MPI_local_begin(
+    GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
   const_iterator end( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
 
   //! Returns an ArrayDatum filled with GIDs from the primitive.
@@ -538,6 +545,8 @@ public:
 
   const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
   const_iterator local_begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
+  const_iterator MPI_local_begin(
+    GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
   const_iterator end( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
 
   //! Returns an ArrayDatum filled with GIDs from the composite.

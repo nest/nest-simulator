@@ -296,11 +296,13 @@ template < int D >
 void
 Layer< D >::dump_nodes( std::ostream& out ) const
 {
-  for ( index i = 0; i < this->gid_collection_->size(); ++i )
+  for (
+    GIDCollection::const_iterator it = this->gid_collection_->MPI_local_begin();
+    it < this->gid_collection_->end();
+    ++it )
   {
-    const index gid = this->gid_collection_->operator[]( i );
-    out << gid << ' ';
-    get_position( i ).print( out );
+    out << ( *it ).gid << ' ';
+    get_position( ( *it ).lid ).print( out );
     out << std::endl;
   }
 }

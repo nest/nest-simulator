@@ -23,6 +23,7 @@
 #include "gid_collection.h"
 #include "kernel_manager.h"
 #include "vp_manager_impl.h"
+#include "mpi_manager_impl.h"
 
 
 // C++ includes:
@@ -350,13 +351,23 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
 GIDCollectionPrimitive::const_iterator
 GIDCollectionPrimitive::local_begin( GIDCollectionPTR cp ) const
 {
-  std::cerr << "Making primitive local_begin()" << std::endl; // TODO 481
   size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   size_t current_vp =
     kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
   size_t vp_first_node = kernel().vp_manager.suggest_vp( first_ );
   size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
   return const_iterator( cp, *this, offset, num_vps );
+}
+
+GIDCollectionPrimitive::const_iterator
+GIDCollectionPrimitive::MPI_local_begin( GIDCollectionPTR cp ) const
+{
+  size_t num_processes = kernel().mpi_manager.get_num_processes();
+  size_t rank = kernel().mpi_manager.get_rank();
+  size_t rank_first_node = kernel().mpi_manager.get_process_id(
+    kernel().vp_manager.suggest_vp( first_ ) );
+  size_t offset = ( rank - rank_first_node + num_processes ) % num_processes;
+  return const_iterator( cp, *this, offset, num_processes );
 }
 
 GIDCollectionPTR
@@ -688,7 +699,33 @@ GIDCollectionComposite::local_begin( GIDCollectionPTR cp ) const
   }
 
   return const_iterator(
-    GIDCollectionPTR( 0 ), *this, current_part, current_offset, num_vps * step_ );
+    cp, *this, current_part, current_offset, num_vps * step_ );
+}
+
+GIDCollectionComposite::const_iterator
+GIDCollectionComposite::MPI_local_begin( GIDCollectionPTR cp ) const
+{
+  std::cerr << "Making composite MPI_local_begin()" << std::endl; // TODO 481
+  size_t num_processes = kernel().mpi_manager.get_num_processes();
+  size_t rank = kernel().mpi_manager.get_rank();
+  size_t rank_first_node = kernel().mpi_manager.get_process_id(
+    kernel().vp_manager.suggest_vp( operator[]( 0 ) ) );
+  size_t offset = ( rank - rank_first_node + num_processes ) % num_processes;
+
+  size_t current_part = start_part_;
+  size_t current_offset = start_offset_;
+  if ( offset )
+  {
+    // First create an iterator at the start position.
+    const_iterator tmp_it =
+      const_iterator( cp, *this, start_part_, start_offset_, step_ );
+    tmp_it += offset; // Go forward to the offset.
+    // Get current position.
+    tmp_it.get_current_part_offset( current_part, current_offset );
+  }
+
+  return const_iterator(
+    cp, *this, current_part, current_offset, num_processes * step_ );
 }
 
 ArrayDatum

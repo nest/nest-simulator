@@ -112,8 +112,8 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set(
 
   if ( tau_ <= 0 )
     throw BadProperty( "Time constant must be > 0." );
-  if ( lambda_ <= 0 )
-    throw BadProperty( "Passive decay rate must be > 0." );
+  if ( lambda_ < 0 )
+    throw BadProperty( "Passive decay rate must be >= 0." );
   if ( std_ < 0 )
     throw BadProperty( "Standard deviation of noise must not be negative." );
 }
@@ -222,11 +222,21 @@ nest::rate_neuron_ipn< TNonlinearities >::calibrate()
 
   const double h = Time::get_resolution().get_ms();
 
-  // propagators
-  V_.P1_ = std::exp( -P_.lambda_ * h / P_.tau_ );
-  V_.P2_ = -1.0 / P_.lambda_ * numerics::expm1( -P_.lambda_ * h / P_.tau_ );
-  V_.input_noise_factor_ = std::sqrt(
-    -0.5 / P_.lambda_ * numerics::expm1( -2. * P_.lambda_ * h / P_.tau_ ) );
+  if ( P_.lambda_ > 0 )
+  {
+    // use stochastic exponential Euler method
+    V_.P1_ = std::exp( -P_.lambda_ * h / P_.tau_ );
+    V_.P2_ = -1.0 / P_.lambda_ * numerics::expm1( -P_.lambda_ * h / P_.tau_ );
+    V_.input_noise_factor_ = std::sqrt(
+      -0.5 / P_.lambda_ * numerics::expm1( -2. * P_.lambda_ * h / P_.tau_ ) );
+  }
+  else
+  {
+    // use Euler-Maruyama method
+    V_.P1_ = 1;
+    V_.P2_ = h / P_.tau_;
+    V_.input_noise_factor_ = std::sqrt( h / P_.tau_ );
+  }
 }
 
 /* ----------------------------------------------------------------

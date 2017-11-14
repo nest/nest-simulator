@@ -196,6 +196,8 @@ ModelsModule::init( SLIInterpreter* )
     "lin_rate_parrot" );
   kernel().model_manager.register_node_model< sigm_rate_ipn >(
     "sigm_rate_ipn" );
+  kernel().model_manager.register_node_model< sigm_rate_parrot >(
+    "sigm_rate_parrot" );
   kernel().model_manager.register_node_model< sigmoid_rate_ipn >(
     "sigmoid_rate_ipn" );
   kernel().model_manager.register_node_model< tanh_rate_opn >(
@@ -206,6 +208,8 @@ ModelsModule::init( SLIInterpreter* )
     "threshold_lin_rate_opn" );
   kernel().model_manager.register_node_model< threshold_lin_rate_ipn >(
     "threshold_lin_rate_ipn" );
+  kernel().model_manager.register_node_model< threshold_lin_rate_parrot >(
+    "threshold_lin_rate_parrot" );
   kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron",
     /* private_model */ false,
     /* deprecation_info */ "NEST 3.0" );

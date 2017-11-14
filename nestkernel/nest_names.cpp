@@ -467,6 +467,8 @@ const Name tau_vacant( "tau_vacant" );
 const Name tau_w( "tau_w" );
 const Name theta( "theta" );
 const Name theta_eq( "theta_eq" );
+const Name theta_ex( "theta_ex" );
+const Name theta_in( "theta_in" );
 const Name thread( "thread" );
 const Name thread_local_id( "thread_local_id" );
 const Name tics_per_ms( "tics_per_ms" );

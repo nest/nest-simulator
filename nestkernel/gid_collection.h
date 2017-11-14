@@ -748,15 +748,6 @@ GIDCollectionPrimitive::begin( GIDCollectionPTR cp ) const
 }
 
 inline GIDCollectionPrimitive::const_iterator
-GIDCollectionPrimitive::local_begin( size_t offset,
-  size_t step,
-  index model_type ) const
-{
-  return const_iterator(
-    GIDCollectionPTR( 0 ), *this, offset, step, model_type );
-}
-
-inline GIDCollectionPrimitive::const_iterator
 GIDCollectionPrimitive::end( GIDCollectionPTR cp ) const
 {
   return const_iterator( cp, *this, size() );
@@ -858,35 +849,6 @@ inline GIDCollectionComposite::const_iterator
 GIDCollectionComposite::begin( GIDCollectionPTR cp ) const
 {
   return const_iterator( cp, *this, start_part_, start_offset_, step_ );
-}
-
-inline GIDCollectionComposite::const_iterator
-GIDCollectionComposite::local_begin( size_t offset,
-  size_t step,
-  index model_type ) const
-{
-  size_t current_part = start_part_;
-  size_t current_offset = start_offset_;
-  if ( offset )
-  {
-    // First create an iterator at the start position.
-    const_iterator tmp_it = const_iterator( GIDCollectionPTR( 0 ),
-      *this,
-      start_part_,
-      start_offset_,
-      step_,
-      model_type );
-    tmp_it += offset; // Go forward to the offset.
-    // Get current position.
-    tmp_it.get_current_part_offset( current_part, current_offset );
-  }
-
-  return const_iterator( GIDCollectionPTR( 0 ),
-    *this,
-    current_part,
-    current_offset,
-    step * step_,
-    model_type );
 }
 
 inline GIDCollectionComposite::const_iterator

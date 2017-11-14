@@ -44,23 +44,7 @@ class BasicsTestCase(unittest.TestCase):
         l = topo.CreateLayer({'elements': 'iaf_neuron',
                               'rows': nr,
                               'columns': nc})
-        self.assertEqual(len(l), 1)
-        self.assertEqual(len(nest.GetLeaves(l)[0]), nr * nc)
-
-    def test_CreateLayerN(self):
-        """Creating multiple layers from tuple of dicts."""
-        nr = 4
-        nc = 5
-        ldict = {'elements': 'iaf_neuron',
-                 'rows': nr,
-                 'columns': nc}
-        nlayers = 3
-
-        nest.ResetKernel()
-        l = topo.CreateLayer((ldict,) * nlayers)
-        self.assertEqual(len(l), nlayers)
-        self.assertEqual([len(lvs) for lvs in nest.GetLeaves(l)],
-                         [nr * nc] * nlayers)
+        self.assertEqual(len(l), nr * nc)
 
     def test_GetLayer(self):
         """Check if GetLayer returns correct information."""

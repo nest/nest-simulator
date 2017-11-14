@@ -21,14 +21,14 @@
 #
 # This module defines
 #  READLINE_FOUND, if false, do not try to use GNU Readline.
-#  READLINE_INCLUDE_DIR, where to find readline/readline.h.
-#  READLINE_LIBRARY, the libraries to link against to use GNU Readline.
+#  READLINE_INCLUDE_DIRS, where to find readline/readline.h.
+#  READLINE_LIBRARIES, the libraries to link against to use GNU Readline.
 #  READLINE_VERSION, the library version
 #
 # As a hint allows READLINE_ROOT_DIR
 
 
-find_path( READLINE_INCLUDE_DIRS
+find_path( READLINE_INCLUDE_DIR
     NAMES readline/readline.h
     HINTS ${READLINE_ROOT_DIR}/include
     NO_SYSTEM_ENVIRONMENT_PATH  # anaconda python tries to be first in path and hides a useful readline
@@ -42,10 +42,11 @@ find_library( NCURSES_LIBRARY       # readline depends on libncurses, or similar
     NAMES ncurses ncursesw curses termcap
     HINTS ${READLINE_ROOT_DIR}/lib
     )
-set( READLINE_LIBRARIES ${READLINE_LIBRARY} ${NCURSES_LIBRARY} )
+set( READLINE_LIBRARIES "${READLINE_LIBRARY}" "${NCURSES_LIBRARY}" )
+set( READLINE_INCLUDE_DIRS "${READLINE_INCLUDE_DIR}" )
 
-if ( EXISTS "${READLINE_INCLUDE_DIRS}/readline/readline.h" )
-  file( STRINGS "${READLINE_INCLUDE_DIRS}/readline/readline.h" readline_h_content
+if ( EXISTS "${READLINE_INCLUDE_DIR}/readline/readline.h" )
+  file( STRINGS "${READLINE_INCLUDE_DIR}/readline/readline.h" readline_h_content
                 REGEX "#define RL_READLINE_VERSION" )
   string( REGEX REPLACE ".*0x([0-9][0-9])([0-9][0-9]).*" "\\1.\\2"
                         READLINE_VERSION ${readline_h_content} )
@@ -60,9 +61,9 @@ find_package_handle_standard_args( Readline
   REQUIRED_VARS
     READLINE_LIBRARY
     NCURSES_LIBRARY
-    READLINE_INCLUDE_DIRS
+    READLINE_INCLUDE_DIR
   VERSION_VAR
     READLINE_VERSION
     )
 
-mark_as_advanced( READLINE_ROOT_DIR READLINE_INCLUDE_DIRS READLINE_LIBRARIES )
+mark_as_advanced( READLINE_ROOT_DIR READLINE_INCLUDE_DIR READLINE_LIBRARY NCURSES_LIBRARY )

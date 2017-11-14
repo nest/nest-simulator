@@ -309,7 +309,7 @@ GridLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree )
     this->gid_collection_->local_begin( current_rank, num_processes, model );
   GIDCollection::const_iterator gc_end = this->gid_collection_->end();
 
-  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it != gc_end;
+  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it < gc_end;
         ++gc_it )
   {
     tree.insert( std::pair< Position< D >, index >(
@@ -325,16 +325,9 @@ GridLayer< D >::insert_global_positions_( Ins iter )
   index i = 0;
   index lid_end = this->gid_collection_->size();
 
-  // We have to adjust the begin and end pointers in case we select by model
-  // or we have to adjust the step because we use threads:
-  size_t num_processes = kernel().mpi_manager.get_num_processes();
-  size_t current_rank = kernel().mpi_manager.get_rank();
-  index model = model_filter;
+  GIDCollection::const_iterator gi = this->gid_collection_->begin();
 
-  GIDCollection::const_iterator gi =
-    this->gid_collection_->local_begin( current_rank, num_processes, model );
-
-  for ( ; ( gi != this->gid_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
+  for ( ; ( gi < this->gid_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
   {
     *iter++ =
       std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).gid );

@@ -161,7 +161,7 @@ public:
 
 protected:
   /**
-   * TODO 481
+   * The GIDCollection to which the layer belongs
    */
   GIDCollectionPTR gid_collection_;
 

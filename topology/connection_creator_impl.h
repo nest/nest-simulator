@@ -280,9 +280,11 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
                      // target_begin, target_end)
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
+    GIDCollection::const_iterator target_begin = target_gc->local_begin();
+    GIDCollection::const_iterator target_end = target_gc->end();
 
     for ( GIDCollection::const_iterator tgt_it = target_begin;
-          tgt_it != target_end;
+          tgt_it < target_end;
           ++tgt_it )
     {
       Node* const tgt =
@@ -344,7 +346,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
   for ( GIDCollection::const_iterator tgt_it = target_begin;
-        tgt_it != target_end;
+        tgt_it < target_end;
         ++tgt_it )
   {
     Node* const tgt =
@@ -355,12 +357,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
 
   if ( mask_.valid() )
   {
-
-    // for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
-    //      tgt_it != target_end;
-    //      ++tgt_it )
     for ( GIDCollection::const_iterator tgt_it = target_begin;
-          tgt_it != target_end;
+          tgt_it < target_end;
           ++tgt_it )
     {
       index target_id = ( *tgt_it ).gid;
@@ -493,10 +491,10 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
 
     // Get (position,GID) pairs for all nodes in source layer
     std::vector< std::pair< Position< D >, index > >* positions =
-      source.get_global_positions_vector( source_model_filter_ );
+      source.get_global_positions_vector();
 
     for ( GIDCollection::const_iterator tgt_it = target_begin;
-          tgt_it != target_end;
+          tgt_it < target_end;
           ++tgt_it )
     {
       index target_id = ( *tgt_it ).gid;
@@ -630,7 +628,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
   GIDCollection::const_iterator target_end = target_gc->end();
 
   for ( GIDCollection::const_iterator tgt_it = target_begin;
-        tgt_it != target_end;
+        tgt_it < target_end;
         ++tgt_it )
   {
     Node* const tgt =

@@ -176,7 +176,7 @@ FreeLayer< D >::communicate_positions_( Ins iter )
 
   local_gid_pos.reserve( ( D + 1 ) * this->gid_collection_->size() );
 
-  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it != gc_end;
+  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it < gc_end;
         ++gc_it )
   {
     // Push GID into array to communicate
@@ -235,7 +235,7 @@ FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree )
     this->gid_collection_->local_begin( current_rank, num_processes, model );
   GIDCollection::const_iterator gc_end = this->gid_collection_->end();
 
-  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it != gc_end;
+  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it < gc_end;
         ++gc_it )
   {
     tree.insert( std::pair< Position< D >, index >(

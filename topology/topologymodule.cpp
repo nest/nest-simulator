@@ -1287,7 +1287,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
       throw TypeMismatch( "2D layer", "other type" );
     }
 
-    MaskedLayer< 2 > ml = MaskedLayer< 2 >( *layer, mask, true, false );
+    MaskedLayer< 2 > ml = MaskedLayer< 2 >( *layer, mask, false );
 
     for ( Ntree< 2, index >::masked_iterator it =
             ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
@@ -1306,7 +1306,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
       throw TypeMismatch( "3D layer", "other type" );
     }
 
-    MaskedLayer< 3 > ml = MaskedLayer< 3 >( *layer, mask, true, false );
+    MaskedLayer< 3 > ml = MaskedLayer< 3 >( *layer, mask, false );
 
     for ( Ntree< 3, index >::masked_iterator it =
             ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );

@@ -202,8 +202,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   PoolWrapper_< D > pool;
   if ( mask_.valid() ) // MaskedLayer will be freed by PoolWrapper d'tor
   {
-    pool.define(
-      new MaskedLayer< D >( source, mask_, true, allow_oversized_ ) );
+    pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_ ) );
   }
   else
   {
@@ -268,7 +267,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
     // By supplying the target layer to the MaskedLayer constructor, the
     // mask is mirrored so it may be applied to the source layer instead
     pool.define(
-      new MaskedLayer< D >( source, mask_, true, allow_oversized_, target ) );
+      new MaskedLayer< D >( source, mask_, allow_oversized_, target ) );
   }
   else
   {
@@ -644,7 +643,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
   // 2. If using kernel: Compute connection probability for each global target
   // 3. Draw connections to make using global rng
 
-  MaskedLayer< D > masked_target( target, mask_, true, allow_oversized_ );
+  MaskedLayer< D > masked_target( target, mask_, allow_oversized_ );
 
   std::vector< std::pair< Position< D >, index > >* sources =
     source.get_global_positions_vector();

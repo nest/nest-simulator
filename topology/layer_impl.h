@@ -135,18 +135,6 @@ Layer< D >::connect( AbstractLayerPTR target_layer,
 
 template < int D >
 lockPTR< Ntree< D, index > >
-Layer< D >::get_local_positions_ntree()
-{
-  lockPTR< Ntree< D, index > > ntree( new Ntree< D, index >(
-    this->lower_left_, this->extent_, this->periodic_ ) );
-
-  insert_local_positions_ntree_( *ntree );
-
-  return ntree;
-}
-
-template < int D >
-lockPTR< Ntree< D, index > >
 Layer< D >::get_global_positions_ntree()
 {
   if ( cached_ntree_gc_ == get_metadata() )
@@ -272,7 +260,7 @@ Layer< D >::get_global_positions_vector( const MaskDatum& mask,
   const Position< D >& anchor,
   bool allow_oversized )
 {
-  MaskedLayer< D > masked_layer( *this, mask, true, allow_oversized );
+  MaskedLayer< D > masked_layer( *this, mask, allow_oversized );
   std::vector< std::pair< Position< D >, index > > positions;
 
   for ( typename Ntree< D, index >::masked_iterator iter =
@@ -292,7 +280,7 @@ Layer< D >::get_global_nodes( const MaskDatum& mask,
   const std::vector< double >& anchor,
   bool allow_oversized )
 {
-  MaskedLayer< D > masked_layer( *this, mask, true, allow_oversized );
+  MaskedLayer< D > masked_layer( *this, mask, allow_oversized );
   std::vector< index > nodes;
   for ( typename Ntree< D, index >::masked_iterator i =
           masked_layer.begin( anchor );

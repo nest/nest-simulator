@@ -316,12 +316,6 @@ public:
   double compute_distance( const std::vector< double >& from_pos,
     const index to ) const;
 
-
-  /**
-   * Get positions for local nodes in layer.
-   */
-  lockPTR< Ntree< D, index > > get_local_positions_ntree();
-
   /**
    * Get positions for all nodes in layer, including nodes on other MPI
    * processes. The positions will be cached so that subsequent calls for
@@ -413,11 +407,6 @@ protected:
   virtual void insert_global_positions_vector_(
     std::vector< std::pair< Position< D >, index > >& ) = 0;
 
-  /**
-   * Insert local position info into ntree.
-   */
-  virtual void insert_local_positions_ntree_( Ntree< D, index >& tree ) = 0;
-
   //! lower left corner (minimum coordinates) of layer
   Position< D > lower_left_;
   Position< D > extent_;      //!< size of layer
@@ -444,15 +433,10 @@ public:
    * Regular constructor.
    * @param layer           The layer to mask
    * @param mask            The mask to apply to the layer
-   * @param include_global  If true, include all nodes, otherwise only local to
-   *                        MPI process
    * @param allow_oversized If true, allow larges masks than layers when using
    *                        periodic b.c.
    */
-  MaskedLayer( Layer< D >& layer,
-    const MaskDatum& mask,
-    bool include_global,
-    bool allow_oversized );
+  MaskedLayer( Layer< D >& layer, const MaskDatum& mask, bool allow_oversized );
 
   /**
    * Constructor for applying "converse" mask to layer. To be used for
@@ -461,8 +445,6 @@ public:
    * the target layer will be applied to the source layer.
    * @param layer           The layer to mask (source layer)
    * @param mask            The mask to apply to the layer
-   * @param include_global  If true, include all nodes, otherwise only local to
-   * MPI process
    * @param allow_oversized If true, allow larges masks than layers when using
    * periodic b.c.
    * @param target          The layer which the given mask is defined for
@@ -470,7 +452,6 @@ public:
    */
   MaskedLayer( Layer< D >& layer,
     const MaskDatum& mask,
-    bool include_global,
     bool allow_oversized,
     Layer< D >& target );
 
@@ -510,18 +491,10 @@ protected:
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
   const MaskDatum& maskd,
-  bool include_global,
   bool allow_oversized )
   : mask_( maskd )
 {
-  if ( include_global )
-  {
-    ntree_ = layer.get_global_positions_ntree();
-  }
-  else
-  {
-    ntree_ = layer.get_local_positions_ntree();
-  }
+  ntree_ = layer.get_global_positions_ntree();
 
   check_mask_( layer, allow_oversized );
 }
@@ -529,21 +502,12 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
   const MaskDatum& maskd,
-  bool include_global,
   bool allow_oversized,
   Layer< D >& target )
   : mask_( maskd )
 {
-  if ( include_global )
-  {
-    ntree_ = layer.get_global_positions_ntree( target.get_periodic_mask(),
-      target.get_lower_left(),
-      target.get_extent() );
-  }
-  // else
-  //  ntree_ = layer.get_local_positions_ntree(
-  //  target.get_periodic_mask(),
-  //  target.get_lower_left(), target.get_extent());
+  ntree_ = layer.get_global_positions_ntree(
+    target.get_periodic_mask(), target.get_lower_left(), target.get_extent() );
 
   check_mask_( target, allow_oversized );
   mask_ = new ConverseMask< D >( dynamic_cast< const Mask< D >& >( *mask_ ) );

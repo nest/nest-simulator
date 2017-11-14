@@ -64,4 +64,12 @@ RecordablesMap< nest::threshold_lin_rate_opn >::create()
   insert_( names::noisy_rate, &nest::threshold_lin_rate_opn::get_noisy_rate_ );
 }
 
+template <>
+void
+RecordablesMap< nest::threshold_lin_rate_parrot >::create()
+{
+  // use standard names whereever you can for consistency!
+  insert_( names::rate, &nest::threshold_lin_rate_parrot::get_rate_ );
+}
+
 } // namespace nest

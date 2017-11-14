@@ -50,4 +50,12 @@ RecordablesMap< nest::sigm_rate_ipn >::create()
   insert_( names::noise, &nest::sigm_rate_ipn::get_noise_ );
 }
 
+template <>
+void
+RecordablesMap< nest::sigm_rate_parrot >::create()
+{
+  // use standard names whereever you can for consistency!
+  insert_( names::rate, &nest::sigm_rate_parrot::get_rate_ );
+}
+
 } // namespace nest

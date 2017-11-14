@@ -28,8 +28,6 @@ namespace nest
 ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   : allow_autapses_( true )
   , allow_multapses_( true )
-  , source_model_filter_( invalid_index )
-  , target_model_filter_( invalid_index )
   , number_of_connections_( 0 )
   , mask_()
   , kernel_()
@@ -84,14 +82,6 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
       }
 
       synapse_model_ = static_cast< index >( synmodel );
-    }
-    else if ( dit->first == names::targets )
-    {
-      target_model_filter_ = getValue< long >( dit->second );
-    }
-    else if ( dit->first == names::sources )
-    {
-      source_model_filter_ = getValue< long >( dit->second );
     }
     else if ( dit->first == names::weights )
     {

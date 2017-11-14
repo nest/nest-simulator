@@ -320,8 +320,7 @@ public:
   /**
    * Get positions for local nodes in layer.
    */
-  lockPTR< Ntree< D, index > > get_local_positions_ntree(
-    index model_filter = invalid_index );
+  lockPTR< Ntree< D, index > > get_local_positions_ntree();
 
   /**
    * Get positions for all nodes in layer, including nodes on other MPI
@@ -330,8 +329,7 @@ public:
    * user should group together all ConnectLayers calls using the same
    * pool layer.
    */
-  lockPTR< Ntree< D, index > > get_global_positions_ntree(
-    index model_filter = invalid_index );
+  lockPTR< Ntree< D, index > > get_global_positions_ntree();
 
   /**
    * Get positions globally, overriding the dimensions of the layer and
@@ -339,17 +337,16 @@ public:
    * coordinates are only used for the dimensions where the supplied
    * periodic flag is set.
    */
-  lockPTR< Ntree< D, index > > get_global_positions_ntree( index model_filter,
+  lockPTR< Ntree< D, index > > get_global_positions_ntree(
     std::bitset< D > periodic,
     Position< D > lower_left,
     Position< D > extent );
 
-  std::vector< std::pair< Position< D >, index > >* get_global_positions_vector(
-    index model_filter = invalid_index );
+  std::vector< std::pair< Position< D >, index > >*
+  get_global_positions_vector();
 
   virtual std::vector< std::pair< Position< D >, index > >
-  get_global_positions_vector( index model_filter,
-    const MaskDatum& mask,
+  get_global_positions_vector( const MaskDatum& mask,
     const Position< D >& anchor,
     bool allow_oversized );
 
@@ -403,27 +400,23 @@ protected:
    */
   void clear_vector_cache_() const;
 
-  lockPTR< Ntree< D, index > > do_get_global_positions_ntree_(
-    const index& model_filter );
+  lockPTR< Ntree< D, index > > do_get_global_positions_ntree_();
 
   /**
    * Insert global position info into ntree.
    */
-  virtual void insert_global_positions_ntree_( Ntree< D, index >& tree,
-    const index& model_filter ) = 0;
+  virtual void insert_global_positions_ntree_( Ntree< D, index >& tree ) = 0;
 
   /**
    * Insert global position info into vector.
    */
   virtual void insert_global_positions_vector_(
-    std::vector< std::pair< Position< D >, index > >&,
-    const index& model_filter ) = 0;
+    std::vector< std::pair< Position< D >, index > >& ) = 0;
 
   /**
    * Insert local position info into ntree.
    */
-  virtual void insert_local_positions_ntree_( Ntree< D, index >& tree,
-    const index& model_filter ) = 0;
+  virtual void insert_local_positions_ntree_( Ntree< D, index >& tree ) = 0;
 
   //! lower left corner (minimum coordinates) of layer
   Position< D > lower_left_;
@@ -435,7 +428,6 @@ protected:
    */
   static lockPTR< Ntree< D, index > > cached_ntree_;
   static std::vector< std::pair< Position< D >, index > >* cached_vector_;
-  static index cached_model_selector_;
 
   friend class MaskedLayer< D >;
 };
@@ -451,7 +443,6 @@ public:
   /**
    * Regular constructor.
    * @param layer           The layer to mask
-   * @param model_filter    Optionally select subset of neurons based on model
    * @param mask            The mask to apply to the layer
    * @param include_global  If true, include all nodes, otherwise only local to
    *                        MPI process
@@ -459,7 +450,6 @@ public:
    *                        periodic b.c.
    */
   MaskedLayer( Layer< D >& layer,
-    index model_filter,
     const MaskDatum& mask,
     bool include_global,
     bool allow_oversized );
@@ -470,7 +460,6 @@ public:
    * will be mirrored about the origin, and settings for periodicity for
    * the target layer will be applied to the source layer.
    * @param layer           The layer to mask (source layer)
-   * @param model_filter    Optionally select subset of neurons based on model
    * @param mask            The mask to apply to the layer
    * @param include_global  If true, include all nodes, otherwise only local to
    * MPI process
@@ -480,7 +469,6 @@ public:
    * (target layer)
    */
   MaskedLayer( Layer< D >& layer,
-    index model_filter,
     const MaskDatum& mask,
     bool include_global,
     bool allow_oversized,
@@ -521,7 +509,6 @@ protected:
 
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
-  index model_filter,
   const MaskDatum& maskd,
   bool include_global,
   bool allow_oversized )
@@ -529,11 +516,11 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
 {
   if ( include_global )
   {
-    ntree_ = layer.get_global_positions_ntree( model_filter );
+    ntree_ = layer.get_global_positions_ntree();
   }
   else
   {
-    ntree_ = layer.get_local_positions_ntree( model_filter );
+    ntree_ = layer.get_local_positions_ntree();
   }
 
   check_mask_( layer, allow_oversized );
@@ -541,7 +528,6 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
 
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
-  index model_filter,
   const MaskDatum& maskd,
   bool include_global,
   bool allow_oversized,
@@ -550,13 +536,12 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
 {
   if ( include_global )
   {
-    ntree_ = layer.get_global_positions_ntree( model_filter,
-      target.get_periodic_mask(),
+    ntree_ = layer.get_global_positions_ntree( target.get_periodic_mask(),
       target.get_lower_left(),
       target.get_extent() );
   }
   // else
-  //  ntree_ = layer.get_local_positions_ntree(model_filter,
+  //  ntree_ = layer.get_local_positions_ntree(
   //  target.get_periodic_mask(),
   //  target.get_lower_left(), target.get_extent());
 

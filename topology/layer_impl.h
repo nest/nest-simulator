@@ -44,9 +44,6 @@ std::vector< std::pair< Position< D >, index > >* Layer< D >::cached_vector_ =
   0;
 
 template < int D >
-index Layer< D >::cached_model_selector_;
-
-template < int D >
 Position< D >
 Layer< D >::compute_displacement( const Position< D >& from_pos,
   const Position< D >& to_pos ) const
@@ -138,22 +135,21 @@ Layer< D >::connect( AbstractLayerPTR target_layer,
 
 template < int D >
 lockPTR< Ntree< D, index > >
-Layer< D >::get_local_positions_ntree( index model_filter )
+Layer< D >::get_local_positions_ntree()
 {
   lockPTR< Ntree< D, index > > ntree( new Ntree< D, index >(
     this->lower_left_, this->extent_, this->periodic_ ) );
 
-  insert_local_positions_ntree_( *ntree, model_filter );
+  insert_local_positions_ntree_( *ntree );
 
   return ntree;
 }
 
 template < int D >
 lockPTR< Ntree< D, index > >
-Layer< D >::get_global_positions_ntree( index model_filter )
+Layer< D >::get_global_positions_ntree()
 {
-  if ( ( cached_ntree_gc_ == get_metadata() )
-    and ( cached_model_selector_ == model_filter ) )
+  if ( cached_ntree_gc_ == get_metadata() )
   {
     assert( cached_ntree_.valid() );
     return cached_ntree_;
@@ -164,13 +160,12 @@ Layer< D >::get_global_positions_ntree( index model_filter )
   cached_ntree_ = lockPTR< Ntree< D, index > >( new Ntree< D, index >(
     this->lower_left_, this->extent_, this->periodic_ ) );
 
-  return do_get_global_positions_ntree_( model_filter );
+  return do_get_global_positions_ntree_();
 }
 
 template < int D >
 lockPTR< Ntree< D, index > >
-Layer< D >::get_global_positions_ntree( index model_filter,
-  std::bitset< D > periodic,
+Layer< D >::get_global_positions_ntree( std::bitset< D > periodic,
   Position< D > lower_left,
   Position< D > extent )
 {
@@ -190,7 +185,7 @@ Layer< D >::get_global_positions_ntree( index model_filter,
   cached_ntree_ = lockPTR< Ntree< D, index > >(
     new Ntree< D, index >( this->lower_left_, extent, periodic ) );
 
-  do_get_global_positions_ntree_( model_filter );
+  do_get_global_positions_ntree_();
 
   // Do not use cache since the periodic bits and extents were altered.
   cached_ntree_gc_ = GIDCollectionMetadataPTR( 0 );
@@ -200,10 +195,9 @@ Layer< D >::get_global_positions_ntree( index model_filter,
 
 template < int D >
 lockPTR< Ntree< D, index > >
-Layer< D >::do_get_global_positions_ntree_( const index& model_filter )
+Layer< D >::do_get_global_positions_ntree_()
 {
-  if ( ( cached_vector_gc_ == get_metadata() )
-    and ( cached_model_selector_ == model_filter ) )
+  if ( cached_vector_gc_ == get_metadata() )
   {
     // Convert from vector to Ntree
 
@@ -222,23 +216,21 @@ Layer< D >::do_get_global_positions_ntree_( const index& model_filter )
   else
   {
 
-    insert_global_positions_ntree_( *cached_ntree_, model_filter );
+    insert_global_positions_ntree_( *cached_ntree_ );
   }
 
   clear_vector_cache_();
 
   cached_ntree_gc_ = get_metadata();
-  cached_model_selector_ = model_filter;
 
   return cached_ntree_;
 }
 
 template < int D >
 std::vector< std::pair< Position< D >, index > >*
-Layer< D >::get_global_positions_vector( index model_filter )
+Layer< D >::get_global_positions_vector()
 {
-  if ( ( cached_vector_gc_ == get_metadata() )
-    and ( cached_model_selector_ == model_filter ) )
+  if ( cached_vector_gc_ == get_metadata() )
   {
     assert( cached_vector_ );
     return cached_vector_;
@@ -248,8 +240,7 @@ Layer< D >::get_global_positions_vector( index model_filter )
 
   cached_vector_ = new std::vector< std::pair< Position< D >, index > >;
 
-  if ( ( cached_ntree_gc_ == get_metadata() )
-    and ( cached_model_selector_ == model_filter ) )
+  if ( cached_ntree_gc_ == get_metadata() )
   {
     // Convert from NTree to vector
 
@@ -265,26 +256,23 @@ Layer< D >::get_global_positions_vector( index model_filter )
   }
   else
   {
-    insert_global_positions_vector_( *cached_vector_, model_filter );
+    insert_global_positions_vector_( *cached_vector_ );
   }
 
   clear_ntree_cache_();
 
   cached_vector_gc_ = get_metadata();
-  cached_model_selector_ = model_filter;
 
   return cached_vector_;
 }
 
 template < int D >
 std::vector< std::pair< Position< D >, index > >
-Layer< D >::get_global_positions_vector( index model_filter,
-  const MaskDatum& mask,
+Layer< D >::get_global_positions_vector( const MaskDatum& mask,
   const Position< D >& anchor,
   bool allow_oversized )
 {
-  MaskedLayer< D > masked_layer(
-    *this, model_filter, mask, true, allow_oversized );
+  MaskedLayer< D > masked_layer( *this, mask, true, allow_oversized );
   std::vector< std::pair< Position< D >, index > > positions;
 
   for ( typename Ntree< D, index >::masked_iterator iter =
@@ -304,8 +292,7 @@ Layer< D >::get_global_nodes( const MaskDatum& mask,
   const std::vector< double >& anchor,
   bool allow_oversized )
 {
-  MaskedLayer< D > masked_layer(
-    *this, invalid_index, mask, true, allow_oversized );
+  MaskedLayer< D > masked_layer( *this, mask, true, allow_oversized );
   std::vector< index > nodes;
   for ( typename Ntree< D, index >::masked_iterator i =
           masked_layer.begin( anchor );

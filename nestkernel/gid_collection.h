@@ -94,9 +94,8 @@ class gc_const_iterator
 private:
   GIDCollectionPTR coll_ptr_; //!< holds pointer reference in safe iterators
   size_t element_idx_;        //!< index into (current) primitive gid collection
-  size_t part_idx_;  //!< index into parts vector of composite collection
-  size_t step_;      //!< step for skipping due to e.g. slicing
-  index model_type_; //!< index of model type to iterate over
+  size_t part_idx_; //!< index into parts vector of composite collection
+  size_t step_;     //!< step for skipping due to e.g. slicing
 
   /**
    * Pointer to primitive collection to iterate over.
@@ -121,8 +120,7 @@ private:
   explicit gc_const_iterator( GIDCollectionPTR collection_ptr,
     const GIDCollectionPrimitive& collection,
     size_t offset,
-    size_t step = 1,
-    index model_type_ = invalid_index );
+    size_t step = 1 );
 
   /**
    * Create safe iterator for GIDCollectionComposite.
@@ -137,8 +135,7 @@ private:
     const GIDCollectionComposite& collection,
     size_t part,
     size_t offset,
-    size_t step = 1,
-    index model_type = invalid_index );
+    size_t step = 1 );
 
 public:
   gc_const_iterator( const gc_const_iterator& );
@@ -259,9 +256,8 @@ public:
    * @return an iterator representing the beginning of the GIDCollection, taking
    * offset and model type into account
    */
-  virtual const_iterator local_begin( size_t offset,
-    size_t step,
-    index model_type = invalid_index ) const = 0;
+  virtual const_iterator local_begin(
+    GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
 
   /**
    * Method to get an iterator representing the end of the GIDCollection.
@@ -410,9 +406,7 @@ public:
   bool operator==( const GIDCollectionPrimitive& rhs ) const;
 
   const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
-  const_iterator local_begin( size_t offset,
-    size_t step,
-    index model_type = invalid_index ) const;
+  const_iterator local_begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
   const_iterator end( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
 
   //! Returns an ArrayDatum filled with GIDs from the primitive.
@@ -543,9 +537,7 @@ public:
   bool operator==( const GIDCollectionPTR rhs ) const;
 
   const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
-  const_iterator local_begin( size_t offset,
-    size_t step,
-    index model_type = invalid_index ) const;
+  const_iterator local_begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
   const_iterator end( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
 
   //! Returns an ArrayDatum filled with GIDs from the composite.
@@ -653,12 +645,7 @@ inline gc_const_iterator& gc_const_iterator::operator++()
     while ( element_idx_ >= primitive_size )
     {
       element_idx_ = element_idx_ - primitive_size;
-      do
-      {
-        ++part_idx_;
-      } while ( model_type_ != invalid_index
-        and model_type_
-          != composite_collection_->parts_[ part_idx_ ].model_id_ );
+      ++part_idx_;
       if ( part_idx_ < composite_collection_->parts_.size() )
       {
         primitive_size = composite_collection_->parts_[ part_idx_ ].size();

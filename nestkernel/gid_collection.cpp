@@ -51,23 +51,14 @@ struct PrimitiveSortObject
 gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   const GIDCollectionPrimitive& collection,
   size_t offset,
-  size_t step,
-  index model_type )
+  size_t step )
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( 0 )
   , step_( step )
-  , model_type_( model_type )
   , primitive_collection_( &collection )
   , composite_collection_( 0 )
 {
-  // If the primitive doesn't have the right model, we set the iterator equal to
-  // the end iterator.
-  if ( model_type_ != invalid_index
-    and model_type_ != primitive_collection_->model_id_ )
-  {
-    element_idx_ = primitive_collection_->size();
-  }
   // test requiring get() first so that unlock() can be run afterwards
   assert( collection_ptr.get() == &collection or not collection_ptr.valid() );
   collection_ptr.unlock();
@@ -82,48 +73,14 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   const GIDCollectionComposite& collection,
   size_t part,
   size_t offset,
-  size_t step,
-  index model_type )
+  size_t step )
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( part )
   , step_( step )
-  , model_type_( model_type )
   , primitive_collection_( 0 )
   , composite_collection_( &collection )
 {
-  if ( model_type_ != invalid_index )
-  {
-    // Check if any of the primitives have the specified model type.
-    bool has_model_type = false;
-    for ( size_t part_index = part_idx_;
-          part_index < composite_collection_->stop_part_;
-          ++part_index )
-    {
-      if ( model_type_
-        == composite_collection_->parts_[ part_index ].model_id_ )
-      {
-        has_model_type = true;
-        break;
-      }
-    }
-    // If none of the primitives have the right model, we set the iterator equal
-    // to the end iterator.
-    if ( not has_model_type )
-    {
-      if ( composite_collection_->stop_part_ != 0
-        or composite_collection_->stop_offset_ != 0 )
-      {
-        part_idx_ = composite_collection_->stop_part_;
-        element_idx_ = composite_collection_->stop_offset_;
-      }
-      else
-      {
-        part_idx_ = composite_collection_->parts_.size();
-      }
-    }
-  }
-
   // test requiring get() first so that unlock() can be run afterwards
   assert( collection_ptr.get() == &collection or not collection_ptr.valid() );
   collection_ptr.unlock();
@@ -143,7 +100,6 @@ gc_const_iterator::gc_const_iterator( const gc_const_iterator& gci )
   , element_idx_( gci.element_idx_ )
   , part_idx_( gci.part_idx_ )
   , step_( gci.step_ )
-  , model_type_( gci.model_type_ )
   , primitive_collection_( gci.primitive_collection_ )
   , composite_collection_( gci.composite_collection_ )
 {
@@ -392,17 +348,15 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
 }
 
 GIDCollectionPrimitive::const_iterator
-GIDCollectionPrimitive::local_begin( size_t NOT_USED_offset,
-  size_t NOT_USED_step,
-  index model_type ) const
+GIDCollectionPrimitive::local_begin( GIDCollectionPTR cp ) const
 {
   std::cerr << "Making primitive local_begin()" << std::endl; // TODO 481
-  size_t num_vps = kernel().vp_manager.get_num_active_virtual_processes();
+  size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   size_t current_vp =
     kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
   size_t vp_first_node = kernel().vp_manager.suggest_vp( first_ );
   size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
-  return const_iterator( GIDCollectionPTR( 0 ), *this, offset, num_vps, 12345 );
+  return const_iterator( cp, *this, offset, num_vps );
 }
 
 GIDCollectionPTR
@@ -712,39 +666,29 @@ GIDCollectionPTR GIDCollectionComposite::operator+(
 }
 
 GIDCollectionComposite::const_iterator
-GIDCollectionComposite::local_begin( size_t NOT_USED_offset,
-  size_t NOT_USED_step,
-  index model_type ) const
+GIDCollectionComposite::local_begin( GIDCollectionPTR cp ) const
 {
   std::cerr << "Making composite local_begin()" << std::endl; // TODO 481
-  size_t n_vps = kernel().vp_manager.get_num_virtual_processes();
+  size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   size_t current_vp =
     kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
   size_t vp_first_node = kernel().vp_manager.suggest_vp( operator[]( 0 ) );
-  size_t offset = ( current_vp - vp_first_node + n_vps ) % n_vps;
+  size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
 
   size_t current_part = start_part_;
   size_t current_offset = start_offset_;
   if ( offset )
   {
     // First create an iterator at the start position.
-    const_iterator tmp_it = const_iterator( GIDCollectionPTR( 0 ),
-      *this,
-      start_part_,
-      start_offset_,
-      step_,
-      model_type );
+    const_iterator tmp_it =
+      const_iterator( cp, *this, start_part_, start_offset_, step_ );
     tmp_it += offset; // Go forward to the offset.
     // Get current position.
     tmp_it.get_current_part_offset( current_part, current_offset );
   }
 
-  return const_iterator( GIDCollectionPTR( 0 ),
-    *this,
-    current_part,
-    current_offset,
-    n_vps * step_,
-    model_type );
+  return const_iterator(
+    GIDCollectionPTR( 0 ), *this, current_part, current_offset, num_vps * step_ );
 }
 
 ArrayDatum

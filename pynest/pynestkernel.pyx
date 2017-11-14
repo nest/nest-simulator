@@ -38,6 +38,8 @@ from cpython cimport array
 from cpython.ref cimport PyObject
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
+from nest.lib.hl_api_types import GIDCollection
+
 
 cdef string SLI_TYPE_BOOL = b"booltype"
 cdef string SLI_TYPE_INTEGER = b"integertype"
@@ -80,7 +82,6 @@ except ImportError:
 
 class NESTError(Exception):
     pass
-
 
 cdef class SLIDatum(object):
 
@@ -308,13 +309,10 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
     ):
         ret = python_object_to_datum(obj.item())
     elif isinstance(obj, SLIDatum):
-        # TODO480
         if (<SLIDatum> obj).dtype == SLI_TYPE_MASK.decode():
             ret = <Datum*> new MaskDatum(deref(<MaskDatum*> (<SLIDatum> obj).thisptr))
         elif (<SLIDatum> obj).dtype == SLI_TYPE_PARAMETER.decode():
             ret = <Datum*> new ParameterDatum(deref(<ParameterDatum*> (<SLIDatum> obj).thisptr))
-        if False:
-            pass
         elif (<SLIDatum> obj).dtype == SLI_TYPE_GIDCOLLECTION.decode():
             ret = <Datum*> new GIDCollectionDatum(deref(<GIDCollectionDatum*> (<SLIDatum> obj).thisptr))
         elif (<SLIDatum> obj).dtype == SLI_TYPE_GIDCOLLECTIONITERATOR.decode():
@@ -436,9 +434,10 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_PARAMETER:
         ret = SLIDatum()
         (<SLIDatum> ret)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
-    elif datum_type == SLI_TYPE_GIDCOLLECTION:
-        ret = SLIDatum()
-        (<SLIDatum> ret)._set_datum(<Datum*> new GIDCollectionDatum(deref(<GIDCollectionDatum*> dat)), SLI_TYPE_GIDCOLLECTION.decode())
+    elif datum_type == SLI_TYPE_GIDCOLLECTION:        
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new GIDCollectionDatum(deref(<GIDCollectionDatum*> dat)), SLI_TYPE_GIDCOLLECTION.decode())
+        ret = GIDCollection(datum)
     elif datum_type == SLI_TYPE_GIDCOLLECTIONITERATOR:
         ret = SLIDatum()
         (<SLIDatum> ret)._set_datum(<Datum*> new GIDCollectionIteratorDatum(deref(<GIDCollectionIteratorDatum*> dat)), SLI_TYPE_GIDCOLLECTIONITERATOR.decode())

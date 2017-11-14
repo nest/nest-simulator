@@ -70,19 +70,34 @@ class BasicsTestCase(unittest.TestCase):
 
     def test_GetPosition(self):
         """Check if GetPosition returns proper positions."""
-        pos = ((1.0, 0.0), (0.0, 1.0), (3.5, 1.5))
+        pos = [(1.0, 0.0), (0.0, 1.0), (3.5, 1.5)]
         ldict = {'elements': 'iaf_neuron',
                  'extent': (20., 20.),
                  'positions': pos}
-        nlayers = 2
         nest.ResetKernel()
-        l = topo.CreateLayer((ldict,) * nlayers)
+        l = topo.CreateLayer(ldict)
 
-        nodepos_ref = (pos,) * nlayers
-        nodepos_exp = (topo.GetPosition(node) for node in nest.GetLeaves(l))
+        # GetPosition of single node
+        nodepos_exp = l.GetPosition(l[0])
+        self.assertEqual(nodepos_exp, pos[0])
 
-        for npe, npr in zip(nodepos_exp, nodepos_ref):
+        nodepos_exp = l.GetPosition(l[len(pos) - 1])
+        self.assertEqual(nodepos_exp, pos[len(pos) - 1])
+
+        nodepos_exp = l.GetPosition(2)
+        self.assertEqual(nodepos_exp, pos[1])
+
+        # GetPosition of all the nodes in the layer
+        nodepos_exp = l.GetPosition()
+
+        for npe, npr in zip(nodepos_exp, pos):
             self.assertEqual(npe, npr)
+
+        self.assertEqual(pos, nodepos_exp)
+
+        # GetPosition on list of GIDs
+        nodepos_exp = l.GetPosition([l[0], l[2]])
+        self.assertEqual(nodepos_exp, [pos[0], pos[2]])
 
     def test_GetElement(self):
         """Check if GetElement returns proper lists."""

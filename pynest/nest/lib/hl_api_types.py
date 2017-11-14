@@ -168,3 +168,140 @@ class GIDCollection(object):
 
     def __str__(self):
         return ''.format(nest.sli_func('==', self._datum))
+
+
+class Mask(object):
+    """
+    Class for spatial masks.
+
+    Masks are used when creating connections in the Topology module. A mask
+    describes which area of the pool layer shall be searched for nodes to
+    connect for any given node in the driver layer. Masks are created using
+    the ``CreateMask`` command.
+    """
+
+    _datum = None
+
+    # The constructor should not be called by the user
+    def __init__(self, datum):
+        """Masks must be created using the CreateMask command."""
+        if not isinstance(datum, nest.SLIDatum) or datum.dtype != "masktype":
+            raise TypeError("expected mask Datum")
+        self._datum = datum
+
+    # Generic binary operation
+    def _binop(self, op, other):
+        if not isinstance(other, Mask):
+            return NotImplemented
+        return nest.sli_func(op, self._datum, other._datum)
+
+    def __or__(self, other):
+        return self._binop("or", other)
+
+    def __and__(self, other):
+        return self._binop("and", other)
+
+    def __sub__(self, other):
+        return self._binop("sub", other)
+
+    def Inside(self, point):
+        """
+        Test if a point is inside a mask.
+
+
+        Parameters
+        ----------
+        point : tuple/list of float values
+            Coordinate of point
+
+
+        Returns
+        -------
+        out : bool
+            True if the point is inside the mask, False otherwise
+        """
+        return nest.sli_func("Inside", point, self._datum)
+
+
+class Parameter(object):
+    """
+    Class for parameters for distance dependency or randomization.
+
+    Parameters are spatial functions which are used when creating
+    connections in the Topology module. A parameter may be used as a
+    probability kernel when creating connections or as synaptic parameters
+    (such as weight and delay). Parameters are created using the
+    ``CreateParameter`` command.
+    """
+
+    _datum = None
+
+    # The constructor should not be called by the user
+    def __init__(self, datum):
+        """Parameters must be created using the CreateParameter command."""
+        if not isinstance(datum,
+                          nest.SLIDatum) or datum.dtype != "parametertype":
+            raise TypeError("expected parameter datum")
+        self._datum = datum
+
+    # Generic binary operation
+    def _binop(self, op, other):
+        if not isinstance(other, Parameter):
+            return NotImplemented
+        return nest.sli_func(op, self._datum, other._datum)
+
+    def __add__(self, other):
+        return self._binop("add", other)
+
+    def __sub__(self, other):
+        return self._binop("sub", other)
+
+    def __mul__(self, other):
+        return self._binop("mul", other)
+
+    def __div__(self, other):
+        return self._binop("div", other)
+
+    def __truediv__(self, other):
+        return self._binop("div", other)
+
+    def GetValue(self, point):
+        """
+        Compute value of parameter at a point.
+
+
+        Parameters
+        ----------
+        point : tuple/list of float values
+            coordinate of point
+
+
+        Returns
+        -------
+        out : value
+            The value of the parameter at the point
+
+
+        See also
+        --------
+        CreateParameter : create parameter for e.g., distance dependency
+
+
+        Notes
+        -----
+        -
+
+
+        **Example**
+            ::
+
+                import nest.topology as tp
+
+                #linear dependent parameter
+                P = tp.CreateParameter('linear', {'a' : 2., 'c' : 0.})
+
+                #get out value
+                P.GetValue(point=[3., 4.])
+
+        """
+        return nest.sli_func("GetValue", point, self._datum)

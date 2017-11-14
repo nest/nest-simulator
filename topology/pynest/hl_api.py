@@ -67,37 +67,6 @@ import nest
 import nest.lib.hl_api_helper as hlh
 
 
-def topology_func(slifunc, *args):
-    """
-    Execute SLI function `slifunc` with arguments `args` in Topology namespace.
-
-
-    Parameters
-    ----------
-    slifunc : str
-        SLI namespace expression
-
-
-    Other parameters
-    ----------------
-    args : dict
-        An arbitrary number of arguments
-
-
-    Returns
-    -------
-    out :
-        Values from SLI function `slifunc`
-
-
-    See also
-    --------
-    nest.sli_func
-    """
-
-    return nest.sli_func(slifunc, *args)
-
-
 class Mask(object):
     """
     Class for spatial masks.
@@ -121,7 +90,7 @@ class Mask(object):
     def _binop(self, op, other):
         if not isinstance(other, Mask):
             return NotImplemented
-        return Mask(topology_func(op, self._datum, other._datum))
+        return Mask(nest.sli_func(op, self._datum, other._datum))
 
     def __or__(self, other):
         return self._binop("or", other)
@@ -148,7 +117,7 @@ class Mask(object):
         out : bool
             True if the point is inside the mask, False otherwise
         """
-        return topology_func("Inside", point, self._datum)
+        return nest.sli_func("Inside", point, self._datum)
 
 
 def CreateMask(masktype, specs, anchor=None):
@@ -288,10 +257,10 @@ def CreateMask(masktype, specs, anchor=None):
     """
 
     if anchor is None:
-        return Mask(topology_func('CreateMask', {masktype: specs}))
+        return Mask(nest.sli_func('CreateMask', {masktype: specs}))
     else:
         return Mask(
-            topology_func('CreateMask', {masktype: specs, 'anchor': anchor}))
+            nest.sli_func('CreateMask', {masktype: specs, 'anchor': anchor}))
 
 
 class Parameter(object):
@@ -319,7 +288,7 @@ class Parameter(object):
     def _binop(self, op, other):
         if not isinstance(other, Parameter):
             return NotImplemented
-        return Parameter(topology_func(op, self._datum, other._datum))
+        return Parameter(nest.sli_func(op, self._datum, other._datum))
 
     def __add__(self, other):
         return self._binop("add", other)
@@ -375,7 +344,7 @@ class Parameter(object):
                 P.GetValue(point=[3., 4.])
 
         """
-        return topology_func("GetValue", point, self._datum)
+        return nest.sli_func("GetValue", point, self._datum)
 
 
 def CreateParameter(parametertype, specs):
@@ -518,19 +487,16 @@ def CreateParameter(parametertype, specs):
             tp.ConnectLayers(l, l, conndict)
 
     """
-    return Parameter(topology_func('CreateParameter', {parametertype: specs}))
+    return Parameter(nest.sli_func('CreateParameter', {parametertype: specs}))
 
 
 def CreateLayer(specs):
     """
-    Create one ore more Topology layer(s) according to given specifications.
+    Create a Topology layer(s) according to given specifications.
 
     The Topology module organizes neuronal networks in layers. A layer is a
-    special type of subnet which contains information about the spatial
+    special type of GIDCollection which contains information about the spatial
     position of its nodes (simple or composite elements) in 2 or 3 dimensions.
-
-    If `specs` is a dictionary, a single layer is created. If it is a list
-    of dictionaries, one layer is created for each dictionary.
 
     Topology distinguishes between two classes of layers:
 
@@ -545,19 +511,18 @@ def CreateLayer(specs):
 
     Parameters
     ----------
-    specs : (tuple/list of) dict(s)
-        Dictionary or list of dictionaries with layer specifications, see
-        **Notes**.
+    specs : dict
+        Dictionary with layer specifications, see **Notes**.
 
     Returns
     -------
-    out : tuple of int(s)
-        GID(s) of created layer(s)
+    out : GIDCollection
+        GID(s) of created layer
 
 
     See also
     --------
-    ConnectLayers: Connect two (lists of) layers which were created with
+    ConnectLayers: Connect two layers which were created with
         ``CreateLayer`` pairwise according to specified projections.
 
 
@@ -573,13 +538,9 @@ def CreateLayer(specs):
         Needs `'rows'`; mutually exclusive with `'positions'`.
     edge_wrap : bool, default: False
         Periodic boundary conditions.
-    elements : (tuple/list of) str or str followed by int
+    elements : str
         Elements of layers are NEST network nodes such as neuron models or
         devices.
-        For network elements with several nodes of the same type, the
-        number of nodes to be created must follow the model name.
-        For composite elements, a collection of nodes can be passed as
-        list or tuple.
     extent : tuple of floats, optional, default in 2D: (1.0, 1.0)
         Size of the layer. It has length 2 or 3 dependent on the number of
         dimensions.
@@ -626,39 +587,25 @@ def CreateLayer(specs):
                                  'edge_wrap' : True,
                                  'elements'  : 'iaf_psc_alpha'})
 
-            # composite layer with several nodes of the same type
-            cl = tp.CreateLayer({'rows'      : 1,
-                                 'columns'   : 2,
-                                 'elements'  : ['iaf_cond_alpha', 10,
-                                               'poisson_generator',
-                                               'noise_generator', 2]})
-
             # investigate the status dictionary of a layer
             nest.GetStatus(gl)[0]['topology']
 
     """
 
-    if isinstance(specs, dict):
-        specs = (specs, )
-    elif not all(isinstance(spec, dict) for spec in specs):
-        raise TypeError("specs must be a dictionary or a list of dictionaries")
+    if not isinstance(specs, dict):
+        raise TypeError("specs must be a dictionary")
 
-    for dicts in specs:
-        elements = dicts['elements']
-        if isinstance(elements, list):
-            for elem in elements:
-                hlh.model_deprecation_warning(elem)
-        else:
-            hlh.model_deprecation_warning(elements)
+    elements = specs['elements']
+    hlh.model_deprecation_warning(elements)
 
-    return nest.GIDCollection(topology_func('{ CreateLayer } Map', specs)[0])
+    return nest.GIDCollection(nest.sli_func('CreateLayer', specs))
 
 
 def ConnectLayers(pre, post, projections):
     """
-    Pairwise connect of pre- and postsynaptic (lists of) layers.
+    Pairwise connect of pre- and postsynaptic layers.
 
-    `pre` and `post` must be a tuple/list of GIDs of equal length. The GIDs
+    `pre` and `post` must be GIDCollections. The GIDs
     must refer to layers created with ``CreateLayers``. Layers in the `pre`
     and `post` lists are connected pairwise.
 
@@ -680,10 +627,10 @@ def ConnectLayers(pre, post, projections):
 
     Parameters
     ----------
-    pre : tuple/list of int(s)
-        List of GIDs of presynaptic layers (sources)
-    post : tuple/list of int(s)
-        List of GIDs of postsynaptic layers (targets)
+    pre : GIDCollection
+        GIDCollection with GIDs of presynaptic layers (sources)
+    post : GIDCollection
+       GIDCollection with GIDs of postsynaptic layers (targets)
     projections : (tuple/list of) dict(s)
         Dictionary or list of dictionaries specifying projection properties
 
@@ -804,20 +751,11 @@ def ConnectLayers(pre, post, projections):
                          'kernel': gauss_kernel,
                          'weights': {'uniform': {'min': 0.2, 'max': 0.8}}}
     """
+    if not isinstance(pre, nest.GIDCollection):
+        raise TypeError("pre must be a GIDCollection")
 
-    if not nest.is_sequence_of_gids(pre):
-        raise TypeError("pre must be a sequence of GIDs")
-
-    if not nest.is_sequence_of_gids(pre):
-        raise TypeError("post must be a sequence of GIDs")
-
-    if not len(pre) == len(post):
-        raise nest.NESTError("pre and post must have the same length.")
-
-    # TODO481
-    # ensure projections is list of full length
-    #projections = nest.broadcast(projections, len(pre), (dict, ),
-    #                             "projections")
+    if not isinstance(post, nest.GIDCollection):
+        raise TypeError("post must be a GIDCollection")
 
     # Replace python classes with SLI datums
     def fixdict(d):
@@ -829,11 +767,9 @@ def ConnectLayers(pre, post, projections):
                 d[k] = v._datum
         return d
 
-    #projections = [fixdict(p) for p in projections]
     projections = fixdict(projections)
 
-    topology_func('ConnectLayers', pre, post,
-                  projections)
+    nest.sli_func('ConnectLayers', pre, post, projections)
 
 
 def GetPosition(nodes):
@@ -887,7 +823,7 @@ def GetPosition(nodes):
     if not nest.is_sequence_of_gids(nodes):
         raise TypeError("nodes must be a sequence of GIDs")
 
-    return topology_func('{ GetPosition } Map', nodes)
+    return nest.sli_func('{ GetPosition } Map', nodes)
 
 
 def GetLayer(nodes):
@@ -935,7 +871,7 @@ def GetLayer(nodes):
     if not nest.is_sequence_of_gids(nodes):
         raise TypeError("nodes must be a sequence of GIDs")
 
-    return topology_func('{ GetLayer } Map', nodes)
+    return nest.sli_func('{ GetLayer } Map', nodes)
 
 
 def GetElement(layers, locations):
@@ -1013,7 +949,7 @@ def GetElement(layers, locations):
     # ensure that all layers are grid-based, otherwise one ends up with an
     # incomprehensible error message
     try:
-        topology_func('{ [ /topology [ /rows /columns ] ] get ; } forall',
+        nest.sli_func('{ [ /topology [ /rows /columns ] ] get ; } forall',
                       layers)
     except:
         raise nest.NESTError(
@@ -1029,7 +965,7 @@ def GetElement(layers, locations):
     if nest.is_iterable(locations[0]):
 
         # layers and locations are now lists
-        nodes = topology_func(
+        nodes = nest.sli_func(
             '/locs Set { /lyr Set locs { lyr exch GetElement } Map } Map',
             layers, locations)
 
@@ -1040,7 +976,7 @@ def GetElement(layers, locations):
     else:
 
         # layers is list, locations is a single location
-        nodes = topology_func('/loc Set { loc GetElement } Map', layers,
+        nodes = nest.sli_func('/loc Set { loc GetElement } Map', layers,
                               locations)
 
         node_list = tuple(make_tuple(nodes_in_lyr) for nodes_in_lyr in nodes)
@@ -1275,7 +1211,7 @@ def Displacement(from_arg, to_arg):
 
     from_arg, to_arg = _check_displacement_args(from_arg, to_arg,
                                                 'Displacement')
-    return topology_func('{ Displacement } MapThread', [from_arg, to_arg])
+    return nest.sli_func('{ Displacement } MapThread', [from_arg, to_arg])
 
 
 def Distance(from_arg, to_arg):
@@ -1346,7 +1282,7 @@ def Distance(from_arg, to_arg):
     """
 
     from_arg, to_arg = _check_displacement_args(from_arg, to_arg, 'Distance')
-    return topology_func('{ Distance } MapThread', [from_arg, to_arg])
+    return nest.sli_func('{ Distance } MapThread', [from_arg, to_arg])
 
 
 def _rank_specific_filename(basename):
@@ -1421,7 +1357,7 @@ def DumpLayerNodes(layers, outname):
             tp.DumpLayerNodes(l, 'positions.txt')
 
     """
-    topology_func("""
+    nest.sli_func("""
                   (w) file exch { DumpLayerNodes } forall close
                   """,
                   layers, _rank_specific_filename(outname))
@@ -1493,7 +1429,7 @@ def DumpLayerConnections(layers, synapse_model, outname):
             tp.DumpLayerConnections(l, 'static_synapse', 'connections.txt')
     """
 
-    topology_func("""
+    nest.sli_func("""
                   /oname  Set
                   cvlit /synmod Set
                   /lyrs   Set
@@ -2173,11 +2109,11 @@ def SelectNodesByMask(layer, anchor, mask_obj):
         GID(s) of nodes/elements inside the mask.
     """
 
-    if len(layer) != 1:
-        raise ValueError("layer must contain exactly one GID.")
+    if not isinstance(layer, nest.GIDCollection):
+        raise ValueError("layer must be a GIDCollection.")
 
     mask_datum = mask_obj._datum
 
-    gid_list = topology_func('SelectNodesByMask', layer[0], anchor, mask_datum)
+    gid_list = nest.sli_func('SelectNodesByMask', layer, anchor, mask_datum)
 
     return gid_list

@@ -32,7 +32,8 @@ nonlinearities_lin_rate::get( DictionaryDatum& d ) const
   def< bool >( d, names::mult_coupling, mult_coupling_ );
   def< double >( d, names::g_ex, g_ex_ );
   def< double >( d, names::g_in, g_in_ );
-  def< double >( d, names::theta, theta_ );
+  def< double >( d, names::theta_ex, theta_ex_ );
+  def< double >( d, names::theta_in, theta_in_ );
 }
 
 void
@@ -42,7 +43,8 @@ nonlinearities_lin_rate::set( const DictionaryDatum& d )
   updateValue< bool >( d, names::mult_coupling, mult_coupling_ );
   updateValue< double >( d, names::g_ex, g_ex_ );
   updateValue< double >( d, names::g_in, g_in_ );
-  updateValue< double >( d, names::theta, theta_ );
+  updateValue< double >( d, names::theta_ex, theta_ex_ );
+  updateValue< double >( d, names::theta_in, theta_in_ );
 }
 
 /*

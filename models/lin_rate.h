@@ -91,7 +91,8 @@ private:
   /** linear factor in multiplicative inhibitory coupling*/
   double g_in_;
   /** offset in multiplicative coupling*/
-  double theta_;
+  double theta_ex_;
+  double theta_in_;
 
 public:
   /** sets default parameters */
@@ -100,7 +101,8 @@ public:
     , mult_coupling_( false )
     , g_ex_( 1.0 )
     , g_in_( 1.0 )
-    , theta_( 1.0 )
+    , theta_ex_( 1.0 )
+    , theta_in_( 1.0 )
   {
   }
 
@@ -123,7 +125,7 @@ nonlinearities_lin_rate::mult_coupling_ex( double rate )
 {
   if ( mult_coupling_ )
   {
-    return g_ex_ * ( theta_ - rate );
+    return g_ex_ * ( theta_ex_ - rate );
   }
 
   return 1.;
@@ -134,7 +136,7 @@ nonlinearities_lin_rate::mult_coupling_in( double rate )
 {
   if ( mult_coupling_ )
   {
-    return g_in_ * ( theta_ - rate );
+    return g_in_ * ( theta_in_ + rate );
   }
 
   return 1.;

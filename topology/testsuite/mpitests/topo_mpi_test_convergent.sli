@@ -27,8 +27,8 @@
 [1 2 4]
 {
   ResetKernel
-  0 << /total_num_virtual_procs 4 >> SetStatus
-  /layer_specs << /rows 4 /columns 4 /elements [/iaf_psc_alpha 2] /edge_wrap true >> def
+  << /total_num_virtual_procs 4 >> SetKernelStatus
+  /layer_specs << /rows 4 /columns 4 /elements /iaf_psc_alpha /edge_wrap true >> def
   /l1 layer_specs CreateLayer def
   /l2 layer_specs CreateLayer def
 
@@ -42,8 +42,8 @@
   ofile (w) file
   l1 DumpLayerNodes
   l2 DumpLayerNodes
-  l1 /static_synapse DumpLayerConnections close
-  ofile
+  l1 l2 /static_synapse DumpLayerConnections close
+  ofile 
 }
 {
   /result_files Set

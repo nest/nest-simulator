@@ -127,32 +127,32 @@ class BasicsTestCase(unittest.TestCase):
                  'rows': 4, 'columns': 5}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        n = nest.GetLeaves(l)[0]
+        n = [x for x in l]
 
         # gids -> gids, all displacements must be zero here
-        d = topo.Displacement(n, n)
+        d = l.Displacement(n, n)
         self.assertEqual(len(d), len(n))
         self.assertTrue(all(dd == (0., 0.) for dd in d))
 
         # single gid -> gids
-        d = topo.Displacement(n[:1], n)
+        d = l.Displacement(n[:1], n)
         self.assertEqual(len(d), len(n))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
         # gids -> single gid
-        d = topo.Displacement(n, n[:1])
+        d = l.Displacement(n, n[:1])
         self.assertEqual(len(d), len(n))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
         from numpy import array
 
         # position -> gids
-        d = topo.Displacement(array([0.0, 0.0]), n)
+        d = l.Displacement(array([0.0, 0.0]), n)
         self.assertEqual(len(d), len(n))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
         # positions -> gids
-        d = topo.Displacement([array([0.0, 0.0])] * len(n), n)
+        d = l.Displacement([array([0.0, 0.0])] * len(n), n)
         self.assertEqual(len(d), len(n))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 

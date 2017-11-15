@@ -180,8 +180,6 @@ def
   << /connection_type /convergent /number_of_connections 2 >>
   << /connection_type /divergent /number_of_connections 2 >>
   << /connection_type /convergent /delays 2.0 >>
-  << /connection_type /convergent /sources << /model /iaf_neuron >> >>
-  << /connection_type /convergent /targets << /model /iaf_neuron >> >>
 ]
 def
 

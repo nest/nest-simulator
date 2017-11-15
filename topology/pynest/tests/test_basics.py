@@ -104,33 +104,20 @@ class BasicsTestCase(unittest.TestCase):
         ldict = {'elements': 'iaf_neuron',
                  'rows': 4, 'columns': 5}
         nest.ResetKernel()
-        l = topo.CreateLayer((ldict, ldict))
+        l = topo.CreateLayer(ldict)
         checkpos = [[0, 0], [1, 1], [4, 3]]
 
-        # single gid, single coord gives 1-elem gid list
-        n1 = topo.GetElement(l[:1], checkpos[0])
+        # single coord gives 1-elem gid list
+        n1 = l.GetElement(checkpos[0])
         self.assertEqual(len(n1), 1)
         self.assertIsInstance(n1[0], int)
+        self.assertEqual(n1[0], 10)
 
-        # multiple gid, single coord gives l-elem gid list
-        n2 = topo.GetElement(l, checkpos[0])
-        self.assertEqual(len(n2), len(l))
-        self.assertTrue(all(nest.is_sequence_of_gids(n) for n in n2))
-
-        # single gid, multiple coord gives len(checkpos)-elem gid list
-        n3 = topo.GetElement(l[:1], checkpos)
+        # single gid, multiple coord gives len(checkpos) gid list
+        n3 = l.GetElement(checkpos)
         self.assertEqual(len(n3), len(checkpos))
-        self.assertTrue(all(nest.is_sequence_of_gids(n) for n in n3))
-        self.assertTrue(all(len(n) == 1 for n in n3))
-
-        # multiple gid, multiple coord gives l*len(cp)-elem gid list
-        n4 = topo.GetElement(l, checkpos)
-        self.assertEqual(len(n4), len(l))
-
-        self.assertTrue(all(nest.is_iterable(n) for n in n4))
-        self.assertTrue(all(len(n) == len(checkpos) for n in n4))
-        self.assertTrue(all(nest.is_sequence_of_gids(m)
-                            for n in n4 for m in n))
+        self.assertTrue(nest.is_sequence_of_gids(n3))
+        self.assertTrue(all(isinstance(n, int) for n in n3))
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Displacement(self):
@@ -265,7 +252,8 @@ class BasicsTestCase(unittest.TestCase):
 
     def test_GetTargetNodesPositions(self):
         """Interface check for finding targets."""
-        ldict = {'elements': ['iaf_neuron', 'iaf_psc_alpha'], 'rows': 3,
+        # Not allowed anymore
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3,
                  'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         cdict = {'connection_type': 'divergent',

@@ -143,6 +143,90 @@ class Layer(nest.GIDCollection):
             for gid in nodes:
                 pos.append(nest.sli_func('GetPosition', self.layer, gid))
             return pos
+        
+    def GetElement(self, locations):
+        """
+        Return the node(s) at the location(s) in the layer.
+    
+        This function works for fixed grid layers only.
+    
+        * If locations is a single 2-element array giving a grid location,
+          return a list with the GID at the given location.
+        * If locations is a list of coordinates, the function returns a list
+          with GIDs of the nodes at all locations.
+
+
+        Parameters
+        ----------
+        locations : [tuple/list of floats | tuple/list of tuples/lists of floats]
+            2-element list with coordinates of a single grid location,
+            or list of 2-element lists of coordinates for 2-dimensional layers,
+            i.e., on the format [column, row]
+
+
+        Returns
+        -------
+        out : tuple of int(s)
+            List of GIDs
+
+
+        See also
+        --------
+        GetLayer : Return the layer to which nodes belong.
+        FindNearestElement: Return the node(s) closest to the location(s) in the
+            given layer(s).
+        GetPosition : Return the spatial locations of nodes.
+
+
+        Notes
+        -----
+        -
+
+        **Example**
+            ::
+
+                import nest.topology as tp
+    
+                # create a layer
+                l = tp.CreateLayer({'rows'      : 5,
+                                    'columns'   : 4,
+                                    'elements'  : 'iaf_psc_alpha'})
+    
+                # get GID of element in last row and column
+                tp.GetElement(l, [3, 4])
+        """
+
+        if not len(self.layer) > 0:
+            raise nest.NESTError("layers cannot be empty")
+
+        if not (nest.is_iterable(locations) and len(locations) > 0):
+            raise nest.NESTError(
+                "locations must be coordinate array or list of coordinate arrays")
+
+        # ensure that all layers are grid-based, otherwise one ends up with an
+        # incomprehensible error message
+        # TODO481
+        #try:
+        #    nest.sli_func('{ [ /rows /columns ] get ; } forall',
+        #                  self.layer)
+        #except:
+        #    raise nest.NESTError(
+        #        "layers must contain only grid-based topology layers")
+
+        # TODO481 What does positions mean?`Is it actual coordinates, or grid points? Does the function return
+        # something reasonable?
+        if nest.is_iterable(locations[0]):
+            # locations is a lists
+            node_list = nest.sli_func(
+                '/posi Set /lyr Set posi { /locs Set lyr locs GetElement } forall',
+                self.layer, locations)
+        else:
+            # locations is a single location
+            # TODO481 should a single GID be a list, or just the int?
+            nodes = nest.sli_func('GetElement', self.layer, locations)            
+            node_list = [nodes]
+
+        return node_list
 
 
 def CreateMask(masktype, specs, anchor=None):
@@ -756,123 +840,6 @@ def GetLayer(nodes):
         raise TypeError("nodes must be a sequence of GIDs")
 
     return nest.sli_func('{ GetLayer } Map', nodes)
-
-
-def GetElement(layers, locations):
-    """
-    Return the node(s) at the location(s) in the given layer(s).
-
-    This function works for fixed grid layers only.
-
-    * If layers contains a single GID and locations is a single 2-element
-      array giving a grid location, return a list of GIDs of layer elements
-      at the given location.
-    * If layers is a list with a single GID and locations is a list of
-      coordinates, the function returns a list of lists with GIDs of the nodes
-      at all locations.
-    * If layers is a list of GIDs and locations single 2-element array giving
-      a grid location, the function returns a list of lists with the GIDs of
-      the nodes in all layers at the given location.
-    * If layers and locations are lists, it returns a nested list of GIDs, one
-      list for each layer and each location.
-
-
-    Parameters
-    ----------
-    layers : tuple/list of int(s)
-        List of layer GIDs
-    locations : [tuple/list of floats | tuple/list of tuples/lists of floats]
-        2-element list with coordinates of a single grid location,
-        or list of 2-element lists of coordinates for 2-dimensional layers,
-        i.e., on the format [column, row]
-
-
-    Returns
-    -------
-    out : tuple of int(s)
-        List of GIDs
-
-
-    See also
-    --------
-    GetLayer : Return the layer to which nodes belong.
-    FindNearestElement: Return the node(s) closest to the location(s) in the
-        given layer(s).
-    GetPosition : Return the spatial locations of nodes.
-
-
-    Notes
-    -----
-    -
-
-
-    **Example**
-        ::
-
-            import nest.topology as tp
-
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 4,
-                                'elements'  : 'iaf_psc_alpha'})
-
-            # get GID of element in last row and column
-            tp.GetElement(l, [3, 4])
-    """
-
-    if not nest.is_sequence_of_gids(layers):
-        raise TypeError("layers must be a sequence of GIDs")
-
-    if not len(layers) > 0:
-        raise nest.NESTError("layers cannot be empty")
-
-    if not (nest.is_iterable(locations) and len(locations) > 0):
-        raise nest.NESTError(
-            "locations must be coordinate array or list of coordinate arrays")
-        
-    print(layers)
-    print(nest.GetStatus(layers))
-
-    # ensure that all layers are grid-based, otherwise one ends up with an
-    # incomprehensible error message
-    try:
-        nest.sli_func('{ [ /rows /columns ] get ; } forall',
-                      layers)
-    except:
-        raise nest.NESTError(
-            "layers must contain only grid-based topology layers")
-
-    # SLI GetElement returns either single GID or list
-    def make_tuple(x):
-        if not nest.is_iterable(x):
-            return (x, )
-        else:
-            return x
-
-    if nest.is_iterable(locations[0]):
-
-        # layers and locations are now lists
-        nodes = nest.sli_func(
-            '/locs Set { /lyr Set locs { lyr exch GetElement } Map } Map',
-            layers, locations)
-
-        node_list = tuple(
-            tuple(make_tuple(nodes_at_loc) for nodes_at_loc in nodes_in_lyr)
-            for nodes_in_lyr in nodes)
-
-    else:
-
-        # layers is list, locations is a single location
-        nodes = nest.sli_func('/loc Set { loc GetElement } Map', layers,
-                              locations)
-
-        node_list = tuple(make_tuple(nodes_in_lyr) for nodes_in_lyr in nodes)
-
-    # If only a single layer is given, un-nest list
-    if len(layers) == 1:
-        node_list = node_list[0]
-
-    return node_list
 
 
 def FindNearestElement(layers, locations, find_all=False):

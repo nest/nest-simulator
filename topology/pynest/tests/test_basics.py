@@ -44,23 +44,7 @@ class BasicsTestCase(unittest.TestCase):
         l = topo.CreateLayer({'elements': 'iaf_neuron',
                               'rows': nr,
                               'columns': nc})
-        self.assertEqual(len(l), 1)
-        self.assertEqual(len(nest.GetLeaves(l)[0]), nr * nc)
-
-    def test_CreateLayerN(self):
-        """Creating multiple layers from tuple of dicts."""
-        nr = 4
-        nc = 5
-        ldict = {'elements': 'iaf_neuron',
-                 'rows': nr,
-                 'columns': nc}
-        nlayers = 3
-
-        nest.ResetKernel()
-        l = topo.CreateLayer((ldict,) * nlayers)
-        self.assertEqual(len(l), nlayers)
-        self.assertEqual([len(lvs) for lvs in nest.GetLeaves(l)],
-                         [nr * nc] * nlayers)
+        self.assertEqual(len(l), nr * nc)
 
     def test_GetLayer(self):
         """Check if GetLayer returns correct information."""
@@ -90,48 +74,51 @@ class BasicsTestCase(unittest.TestCase):
         ldict = {'elements': 'iaf_neuron',
                  'extent': (20., 20.),
                  'positions': pos}
-        nlayers = 2
         nest.ResetKernel()
-        l = topo.CreateLayer((ldict,) * nlayers)
+        l = topo.CreateLayer(ldict)
 
-        nodepos_ref = (pos,) * nlayers
-        nodepos_exp = (topo.GetPosition(node) for node in nest.GetLeaves(l))
+        # GetPosition of single node
+        nodepos_exp = l.GetPosition(l[0])
+        self.assertEqual(nodepos_exp, pos[0])
 
-        for npe, npr in zip(nodepos_exp, nodepos_ref):
+        nodepos_exp = l.GetPosition(l[len(pos) - 1])
+        self.assertEqual(nodepos_exp, pos[len(pos) - 1])
+
+        nodepos_exp = l.GetPosition(2)
+        self.assertEqual(nodepos_exp, pos[1])
+
+        # GetPosition of all the nodes in the layer
+        nodepos_exp = l.GetPosition()
+
+        for npe, npr in zip(nodepos_exp, pos):
             self.assertEqual(npe, npr)
+
+        self.assertEqual(pos, nodepos_exp)
+
+        # GetPosition on list of GIDs
+        nodepos_exp = l.GetPosition([l[0], l[2]])
+        self.assertEqual(nodepos_exp, (pos[0], pos[2]))
 
     def test_GetElement(self):
         """Check if GetElement returns proper lists."""
         ldict = {'elements': 'iaf_neuron',
                  'rows': 4, 'columns': 5}
         nest.ResetKernel()
-        l = topo.CreateLayer((ldict, ldict))
+        l = topo.CreateLayer(ldict)
         checkpos = [[0, 0], [1, 1], [4, 3]]
 
-        # single gid, single coord gives 1-elem gid list
-        n1 = topo.GetElement(l[:1], checkpos[0])
+        # single coord gives 1-elem gid list
+        n1 = l.GetElement(checkpos[0])
         self.assertEqual(len(n1), 1)
         self.assertIsInstance(n1[0], int)
+        self.assertEqual(n1[0], 1)
 
-        # multiple gid, single coord gives l-elem gid list
-        n2 = topo.GetElement(l, checkpos[0])
-        self.assertEqual(len(n2), len(l))
-        self.assertTrue(all(nest.is_sequence_of_gids(n) for n in n2))
-
-        # single gid, multiple coord gives len(checkpos)-elem gid list
-        n3 = topo.GetElement(l[:1], checkpos)
-        self.assertEqual(len(n3), len(checkpos))
-        self.assertTrue(all(nest.is_sequence_of_gids(n) for n in n3))
-        self.assertTrue(all(len(n) == 1 for n in n3))
-
-        # multiple gid, multiple coord gives l*len(cp)-elem gid list
-        n4 = topo.GetElement(l, checkpos)
-        self.assertEqual(len(n4), len(l))
-
-        self.assertTrue(all(nest.is_iterable(n) for n in n4))
-        self.assertTrue(all(len(n) == len(checkpos) for n in n4))
-        self.assertTrue(all(nest.is_sequence_of_gids(m)
-                            for n in n4 for m in n))
+        # single gid, multiple coord gives len(checkpos) gid list
+        n2 = l.GetElement(checkpos)
+        self.assertEqual(len(n2), len(checkpos))
+        self.assertTrue(nest.is_sequence_of_gids(n2))
+        self.assertTrue(all(isinstance(n, int) for n in n2))
+        self.assertEqual(n2, (1, 6, 20))
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Displacement(self):
@@ -140,32 +127,32 @@ class BasicsTestCase(unittest.TestCase):
                  'rows': 4, 'columns': 5}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        n = nest.GetLeaves(l)[0]
+        n = [x for x in l]
 
         # gids -> gids, all displacements must be zero here
-        d = topo.Displacement(n, n)
+        d = l.Displacement(n, n)
         self.assertEqual(len(d), len(n))
         self.assertTrue(all(dd == (0., 0.) for dd in d))
 
         # single gid -> gids
-        d = topo.Displacement(n[:1], n)
+        d = l.Displacement(n[:1], n)
         self.assertEqual(len(d), len(n))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
         # gids -> single gid
-        d = topo.Displacement(n, n[:1])
+        d = l.Displacement(n, n[:1])
         self.assertEqual(len(d), len(n))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
         from numpy import array
 
         # position -> gids
-        d = topo.Displacement(array([0.0, 0.0]), n)
+        d = l.Displacement(array([0.0, 0.0]), n)
         self.assertEqual(len(d), len(n))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
         # positions -> gids
-        d = topo.Displacement([array([0.0, 0.0])] * len(n), n)
+        d = l.Displacement([array([0.0, 0.0])] * len(n), n)
         self.assertEqual(len(d), len(n))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
@@ -266,7 +253,8 @@ class BasicsTestCase(unittest.TestCase):
 
     def test_GetTargetNodesPositions(self):
         """Interface check for finding targets."""
-        ldict = {'elements': ['iaf_neuron', 'iaf_psc_alpha'], 'rows': 3,
+        # Not allowed anymore
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3,
                  'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         cdict = {'connection_type': 'divergent',

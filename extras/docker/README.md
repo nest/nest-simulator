@@ -25,12 +25,13 @@ You need a working docker environment. (https://docs.docker.com/)
 
 ## Getting the repository
 
-    git clone https://github.com/steffengraber/nest-docker.git
-    cd nest-docker
+    git clone https://github.com/nest/nest-simulator.git
+    cd nest-simulator/extras/docker
+    
 
 ## 1 - 2 (- 3)
 
-In the following VESRION is the version number of NEST you want to use 
+In the following, VESRION is the version number of NEST you want to use 
 (right now 2.12.0 or 2.14.0).
 
 Two little steps to get started

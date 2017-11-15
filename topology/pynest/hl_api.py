@@ -87,7 +87,7 @@ class Layer(nest.GIDCollection):
 
         Returns
         -------
-        out : tuple or list of tuple(s)
+        out : tuple or tuple of tuple(s)
             Tuple of position with 2- or 3-elements or list of positions
 
 
@@ -138,11 +138,7 @@ class Layer(nest.GIDCollection):
         if isinstance(nodes, int):
             return nest.sli_func('GetPosition', self.layer, nodes)
         else:
-            # TODO481 Do this iteration on sli level?
-            pos = []
-            for gid in nodes:
-                pos.append(nest.sli_func('GetPosition', self.layer, gid))
-            return pos
+            return nest.sli_func('/gids Set /lyr Set gids { /gid Set lyr gid GetPosition } forall', self.layer, nodes)            #pos = []
         
     def GetElement(self, locations):
         """

@@ -70,7 +70,7 @@ class BasicsTestCase(unittest.TestCase):
 
     def test_GetPosition(self):
         """Check if GetPosition returns proper positions."""
-        pos = [(1.0, 0.0), (0.0, 1.0), (3.5, 1.5)]
+        pos = ((1.0, 0.0), (0.0, 1.0), (3.5, 1.5))
         ldict = {'elements': 'iaf_neuron',
                  'extent': (20., 20.),
                  'positions': pos}
@@ -97,7 +97,7 @@ class BasicsTestCase(unittest.TestCase):
 
         # GetPosition on list of GIDs
         nodepos_exp = l.GetPosition([l[0], l[2]])
-        self.assertEqual(nodepos_exp, [pos[0], pos[2]])
+        self.assertEqual(nodepos_exp, (pos[0], pos[2]))
 
     def test_GetElement(self):
         """Check if GetElement returns proper lists."""

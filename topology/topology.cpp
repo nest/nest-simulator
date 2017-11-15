@@ -265,6 +265,13 @@ get_element( GIDCollectionPTR layer_gc, const TokenArray array )
   {
     GridLayer< 2 > const* layer =
       dynamic_cast< GridLayer< 2 > const* >( abstract_layer.get() );
+
+    if ( abstract_layer.islocked() )
+    {
+      // Need to unlock the layer in case we call the function several times,
+      // or the layer is to be used in some other way.
+      abstract_layer.unlock();
+    }
     if ( layer_gc.islocked() )
     {
       layer_gc.unlock();
@@ -284,6 +291,13 @@ get_element( GIDCollectionPTR layer_gc, const TokenArray array )
   {
     GridLayer< 3 > const* layer =
       dynamic_cast< GridLayer< 3 > const* >( abstract_layer.get() );
+
+    if ( abstract_layer.islocked() )
+    {
+      // Need to unlock the layer in case we call the function several times,
+      // or the layer is to be used in some other way.
+      abstract_layer.unlock();
+    }
     if ( layer_gc.islocked() )
     {
       layer_gc.unlock();
@@ -303,13 +317,6 @@ get_element( GIDCollectionPTR layer_gc, const TokenArray array )
 
   default:
     throw TypeMismatch( "array with length 2 or 3", "something else" );
-  }
-
-  if ( abstract_layer.islocked() )
-  {
-    // Need to unlock the layer in case we call the function several times,
-    // or the layer is to be used in some other way.
-    abstract_layer.unlock();
   }
   return node_gid;
 }

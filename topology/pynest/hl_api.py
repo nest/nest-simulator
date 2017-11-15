@@ -146,8 +146,9 @@ class Layer(nest.GIDCollection):
     
         This function works for fixed grid layers only.
     
-        * If locations is a single 2-element array giving a grid location,
-          return a list with the GID at the given location.
+        * If locations is a single 2-element array giving a grid location
+          (in [column, row] format), return a tuple with the GID at the given
+          location.
         * If locations is a list of coordinates, the function returns a list
           with GIDs of the nodes at all locations.
 
@@ -157,13 +158,14 @@ class Layer(nest.GIDCollection):
         locations : [tuple/list of floats | tuple/list of tuples/lists of floats]
             2-element list with coordinates of a single grid location,
             or list of 2-element lists of coordinates for 2-dimensional layers,
-            i.e., on the format [column, row]
+            i.e., on the format [column, row].
+            Zero-indexing is used for the [column, row] coordinates.
 
 
         Returns
         -------
         out : tuple of int(s)
-            List of GIDs
+            Tuple of GIDs
 
 
         See also
@@ -188,7 +190,7 @@ class Layer(nest.GIDCollection):
                                     'columns'   : 4,
                                     'elements'  : 'iaf_psc_alpha'})
     
-                # get GID of element in last row and column
+                # get GID of element in last column and row
                 tp.GetElement(l, [3, 4])
         """
 
@@ -209,8 +211,6 @@ class Layer(nest.GIDCollection):
         #    raise nest.NESTError(
         #        "layers must contain only grid-based topology layers")
 
-        # TODO481 What does positions mean?`Is it actual coordinates, or grid points? Does the function return
-        # something reasonable?
         if nest.is_iterable(locations[0]):
             # locations is a lists
             node_list = nest.sli_func(

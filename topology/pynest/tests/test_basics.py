@@ -111,13 +111,14 @@ class BasicsTestCase(unittest.TestCase):
         n1 = l.GetElement(checkpos[0])
         self.assertEqual(len(n1), 1)
         self.assertIsInstance(n1[0], int)
-        self.assertEqual(n1[0], 10)
+        self.assertEqual(n1[0], 1)
 
         # single gid, multiple coord gives len(checkpos) gid list
-        n3 = l.GetElement(checkpos)
-        self.assertEqual(len(n3), len(checkpos))
-        self.assertTrue(nest.is_sequence_of_gids(n3))
-        self.assertTrue(all(isinstance(n, int) for n in n3))
+        n2 = l.GetElement(checkpos)
+        self.assertEqual(len(n2), len(checkpos))
+        self.assertTrue(nest.is_sequence_of_gids(n2))
+        self.assertTrue(all(isinstance(n, int) for n in n2))
+        self.assertEqual(n2, (1, 6, 20))
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Displacement(self):

@@ -1277,12 +1277,6 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
   }
 
   AbstractLayerPTR abstract_layer = get_layer( layer_gc );
-  if ( abstract_layer.islocked() )
-  {
-    // Need to unlock the layer in case we call the function several times,
-    // or the layer is to be used in some other way.
-    abstract_layer.unlock();
-  }
 
   if ( dim == 2 )
   {
@@ -1321,6 +1315,13 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
     {
       mask_gids.push_back( it->second );
     }
+  }
+
+  if ( abstract_layer.islocked() )
+  {
+    // Need to unlock the layer in case we call the function several times,
+    // or the layer is to be used in some other way.
+    abstract_layer.unlock();
   }
 
   i->OStack.pop( 3 );

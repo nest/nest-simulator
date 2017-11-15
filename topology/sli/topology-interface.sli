@@ -66,7 +66,7 @@
   def
   
   /Distance [/gidcollectiontype /integertype /integertype]
-    { exch GetPosition exch
+    { rolld dup 4 -1 roll GetPosition rolld
       Distance_g_a_i } bind
   def
   
@@ -87,8 +87,8 @@
     { DumpLayerNodes_os_g } bind
   def
   
-  /DumpLayerConnections [/ostreamtype /gidcollectiontype /literaltype]
-    /DumpLayerConnections_os_g_l load
+  /DumpLayerConnections [/ostreamtype /gidcollectiontype /gidcollectiontype /literaltype]
+    /DumpLayerConnections_os_g_g_l load
   def
   
   /CreateMask [/dictionarytype]

@@ -105,7 +105,8 @@ public:
    * @param target target layer.
    */
   template < int D >
-  void connect( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void
+  connect( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
 private:
   /**
@@ -146,16 +147,24 @@ private:
     const Layer< D >& source );
 
   template < int D >
-  void target_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void target_driven_connect_( Layer< D >& source,
+    Layer< D >& target,
+    GIDCollectionPTR target_gc );
 
   template < int D >
-  void source_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void source_driven_connect_( Layer< D >& source,
+    Layer< D >& target,
+    GIDCollectionPTR target_gc );
 
   template < int D >
-  void convergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void convergent_connect_( Layer< D >& source,
+    Layer< D >& target,
+    GIDCollectionPTR target_gc );
 
   template < int D >
-  void divergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void divergent_connect_( Layer< D >& source,
+    Layer< D >& target,
+    GIDCollectionPTR target_gc );
 
   void connect_( index s,
     Node* target,
@@ -179,8 +188,6 @@ private:
   bool allow_autapses_;
   bool allow_multapses_;
   bool allow_oversized_;
-  index source_model_filter_;
-  index target_model_filter_;
   index number_of_connections_;
   lockPTR< AbstractMask > mask_;
   lockPTR< TopologyParameter > kernel_;
@@ -189,7 +196,8 @@ private:
   lockPTR< TopologyParameter > delay_;
 };
 
-// TODO481 : do we need this function at all? Why not call kernel's connect directly?
+// TODO481 : do we need this function at all? Why not call kernel's connect
+// directly?
 inline void
 ConnectionCreator::connect_( index s,
   Node* target,
@@ -202,7 +210,7 @@ ConnectionCreator::connect_( index s,
   // check whether the target is on this process
   if ( kernel().node_manager.is_local_node( target ) )
   {
-	// TODO481 Why do we need to check for thread locality here?
+    // TODO481 Why do we need to check for thread locality here?
     // check whether the target is on our thread
     thread tid = kernel().vp_manager.get_thread_id();
     if ( tid == target_thread )

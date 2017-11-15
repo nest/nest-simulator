@@ -53,24 +53,31 @@ class LayerMetadata : public GIDCollectionMetadata
 {
 public:
   LayerMetadata( AbstractLayerPTR );
-  ~LayerMetadata() {}
+  ~LayerMetadata()
+  {
+  }
 
   //! Returns pointer to object with layer representation
-  const AbstractLayerPTR get_layer() const { return layer_; }
+  const AbstractLayerPTR
+  get_layer() const
+  {
+    return layer_;
+  }
 
 private:
-  const AbstractLayerPTR layer_;  //!< layer object
+  const AbstractLayerPTR layer_; //!< layer object
 };
 
 AbstractLayerPTR get_layer( GIDCollectionPTR layer_gc );
 GIDCollectionPTR create_layer( const DictionaryDatum& layer_dict );
 std::vector< double > get_position( GIDCollectionPTR layer_gc,
-		const index node_gid );
+  const index node_gid );
 std::vector< double > displacement( GIDCollectionPTR layer_gc,
-		const std::vector< double >& point,
+  const std::vector< double >& point,
   const index node_gid );
 double distance( GIDCollectionPTR layer_gc,
-		const std::vector< double >& point, const index node_gid );
+  const std::vector< double >& point,
+  const index node_gid );
 MaskDatum create_mask( const DictionaryDatum& mask_dict );
 BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
@@ -92,10 +99,10 @@ double get_value( const std::vector< double >& point,
   const ParameterDatum& param );
 void dump_layer_nodes( GIDCollectionPTR layer_gc, OstreamDatum& out );
 void dump_layer_connections( const Token& syn_model,
-  GIDCollectionPTR layer_gc,
+  GIDCollectionPTR source_layer_gc,
+  GIDCollectionPTR target_layer_gc,
   OstreamDatum& out_file );
-index get_element( GIDCollectionPTR layer_gc,
-  const TokenArray array );
+index get_element( GIDCollectionPTR layer_gc, const TokenArray array );
 DictionaryDatum get_layer_status( GIDCollectionPTR layer_gc );
 }
 

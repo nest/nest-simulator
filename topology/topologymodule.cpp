@@ -367,7 +367,7 @@ TopologyModule::init( SLIInterpreter* i )
   i->createcommand( "DumpLayerNodes_os_g", &dumplayernodes_os_gfunction );
 
   i->createcommand(
-    "DumpLayerConnections_os_g_l", &dumplayerconnections_os_g_lfunction );
+    "DumpLayerConnections_os_g_g_l", &dumplayerconnections_os_g_g_lfunction );
 
   i->createcommand( "GetElement_g_ia", &getelement_g_iafunction );
 
@@ -1176,19 +1176,21 @@ TopologyModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
 */
 
 void
-TopologyModule::DumpLayerConnections_os_g_lFunction::execute(
+TopologyModule::DumpLayerConnections_os_g_g_lFunction::execute(
   SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 3 );
+  i->assert_stack_load( 4 );
 
-  OstreamDatum out_file = getValue< OstreamDatum >( i->OStack.pick( 2 ) );
-  const GIDCollectionDatum layer =
+  OstreamDatum out_file = getValue< OstreamDatum >( i->OStack.pick( 3 ) );
+  const GIDCollectionDatum source_layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  const GIDCollectionDatum target_layer =
     getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   const Token syn_model = i->OStack.pick( 0 );
 
-  dump_layer_connections( syn_model, layer, out_file );
+  dump_layer_connections( syn_model, source_layer, target_layer, out_file );
 
-  i->OStack.pop( 2 ); // leave ostream on stack
+  i->OStack.pop( 3 ); // leave ostream on stack
   i->EStack.pop();
 }
 
@@ -1261,7 +1263,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
 {
   i->assert_stack_load( 3 );
 
-  const GIDCollectionDatum layer_gc  =
+  const GIDCollectionDatum layer_gc =
     getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
   std::vector< double > anchor =
     getValue< std::vector< double > >( i->OStack.pick( 1 ) );
@@ -1286,8 +1288,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
       throw TypeMismatch( "2D layer", "other type" );
     }
 
-    MaskedLayer< 2 > ml =
-      MaskedLayer< 2 >( *layer, invalid_index, mask, true, false );
+    MaskedLayer< 2 > ml = MaskedLayer< 2 >( *layer, mask, false );
 
     for ( Ntree< 2, index >::masked_iterator it =
             ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
@@ -1305,8 +1306,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
       throw TypeMismatch( "3D layer", "other type" );
     }
 
-    MaskedLayer< 3 > ml =
-      MaskedLayer< 3 >( *layer, invalid_index, mask, true, false );
+    MaskedLayer< 3 > ml = MaskedLayer< 3 >( *layer, mask, false );
 
     for ( Ntree< 3, index >::masked_iterator it =
             ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );

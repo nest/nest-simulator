@@ -53,19 +53,14 @@ public:
 protected:
   /**
    * Communicate positions across MPI processes
-   * @param iter Insert iterator which will recieve pairs of Position,GID
-   * @param model_filter index to optionally communicate only subset of nodes
+   * @param iter Insert iterator which will receive pairs of Position,GID
    */
   template < class Ins >
-  void communicate_positions_( Ins iter, const index& model_filter );
+  void communicate_positions_( Ins iter );
 
-  void insert_global_positions_ntree_( Ntree< D, index >& tree,
-    const index& model_filter );
+  void insert_global_positions_ntree_( Ntree< D, index >& tree );
   void insert_global_positions_vector_(
-    std::vector< std::pair< Position< D >, index > >& vec,
-    const index& model_filter );
-  void insert_local_positions_ntree_( Ntree< D, index >& tree,
-    const index& model_filter );
+    std::vector< std::pair< Position< D >, index > >& vec );
 
   /// Vector of positions.
   std::vector< Position< D > > positions_;
@@ -163,24 +158,18 @@ FreeLayer< D >::get_position( index lid ) const
 template < int D >
 template < class Ins >
 void
-FreeLayer< D >::communicate_positions_( Ins iter, const index& model_filter )
+FreeLayer< D >::communicate_positions_( Ins iter )
 {
   // This array will be filled with GID,pos_x,pos_y[,pos_z] for local nodes:
   std::vector< double > local_gid_pos;
 
-  // We have to adjust the begin and end pointers in case we select by model
-  // or we have to adjust the step because we use threads:
-  size_t num_processes = kernel().mpi_manager.get_num_processes();
-  size_t current_rank = kernel().mpi_manager.get_rank();
-  index model = model_filter;
-
   GIDCollection::const_iterator gc_begin =
-    this->gid_collection_->begin( current_rank, num_processes, model );
+    this->gid_collection_->MPI_local_begin();
   GIDCollection::const_iterator gc_end = this->gid_collection_->end();
 
   local_gid_pos.reserve( ( D + 1 ) * this->gid_collection_->size() );
 
-  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it != gc_end;
+  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it < gc_end;
         ++gc_it )
   {
     // Push GID into array to communicate
@@ -219,34 +208,10 @@ FreeLayer< D >::communicate_positions_( Ins iter, const index& model_filter )
 
 template < int D >
 void
-FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree,
-  const index& model_filter )
+FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree )
 {
 
-  communicate_positions_( std::inserter( tree, tree.end() ), model_filter );
-}
-
-template < int D >
-void
-FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
-  const index& model_filter )
-{
-  // We have to adjust the begin and end pointers in case we select by model
-  // or we have to adjust the step because we use threads:
-  size_t num_processes = kernel().mpi_manager.get_num_processes();
-  size_t current_rank = kernel().mpi_manager.get_rank();
-  index model = model_filter;
-
-  GIDCollection::const_iterator gc_begin =
-    this->gid_collection_->begin( current_rank, num_processes, model );
-  GIDCollection::const_iterator gc_end = this->gid_collection_->end();
-
-  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it != gc_end;
-        ++gc_it )
-  {
-    tree.insert( std::pair< Position< D >, index >(
-      positions_.at( ( *gc_it ).lid ), ( *gc_it ).gid ) );
-  }
+  communicate_positions_( std::inserter( tree, tree.end() ) );
 }
 
 // Helper function to compare GIDs used for sorting (Position,GID) pairs
@@ -261,11 +226,10 @@ gid_less( const std::pair< Position< D >, index >& a,
 template < int D >
 void
 FreeLayer< D >::insert_global_positions_vector_(
-  std::vector< std::pair< Position< D >, index > >& vec,
-  const index& model_filter )
+  std::vector< std::pair< Position< D >, index > >& vec )
 {
 
-  communicate_positions_( std::back_inserter( vec ), model_filter );
+  communicate_positions_( std::back_inserter( vec ) );
 
   // Sort vector to ensure consistent results
   std::sort( vec.begin(), vec.end(), gid_less< D > );

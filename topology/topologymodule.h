@@ -104,7 +104,7 @@ public:
   class GetLayerStatus_gFunction : public SLIFunction
   {
   public:
-	void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const;
   } getlayerstatus_gfunction;
 
   class Inside_a_MFunction : public SLIFunction
@@ -173,11 +173,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } dumplayernodes_os_gfunction;
 
-  class DumpLayerConnections_os_g_lFunction : public SLIFunction
+  class DumpLayerConnections_os_g_g_lFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } dumplayerconnections_os_g_lfunction;
+  } dumplayerconnections_os_g_g_lfunction;
 
   class GetElement_g_iaFunction : public SLIFunction
   {

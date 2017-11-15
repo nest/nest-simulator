@@ -52,6 +52,7 @@ M_ERROR setverbosity
 /ConnExpected N C mul def
 
 ResetKernel
+
 << /total_num_virtual_procs N_VP >> SetKernelStatus
 
 /nodes /iaf_psc_alpha N Create def 

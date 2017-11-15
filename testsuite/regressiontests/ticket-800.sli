@@ -141,29 +141,29 @@ def
 
 /good_layers
 [
-  << /rows 2 /columns 2 /elements /iaf_neuron >>
-  << /rows 2 /columns 2 /elements /iaf_neuron 
+  << /rows 2 /columns 2 /elements /iaf_psc_alpha >>
+  << /rows 2 /columns 2 /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap true >>
-  << /rows 2 /columns 2 /elements /iaf_neuron 
+  << /rows 2 /columns 2 /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap false >>
-  << /positions [[0.1 0.1] [0.2 0.2]] /elements /iaf_neuron 
+  << /positions [[0.1 0.1] [0.2 0.2]] /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap true >>
-  << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_neuron 
+  << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha
      /extent [2. .5 3.] /center [.2 .3 .4] /edge_wrap true >>
 ]
 def
        
 /bad_layers
 [
-  << /rows 2 /elements /iaf_neuron >>    % mandatory missing
-  << /rows 2 /columns 2 /elementsss /iaf_neuron >>  % misspelling
-  << /rows 2 /columns 2 /elements /iaf_neuron 
+  << /rows 2 /elements /iaf_psc_alpha >>    % mandatory missing
+  << /rows 2 /columns 2 /elementsss /iaf_psc_alpha >>  % misspelling
+  << /rows 2 /columns 2 /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap 3 >>  % bad data type
-  << /positions [[0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_neuron  % dim mix 
+  << /positions [[0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha  % dim mix
      /extent [2. .5] /center [.2 .3] /edge_wrap true >>
-  << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_neuron  % dim mix 
+  << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha  % dim mix
      /extent [2. .5 .5] /center [.2 .3] /edge_wrap true >>
-  << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_neuron  % dim mix 
+  << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha  % dim mix
      /extent [2. .5] /center [.2 .2 .3] /edge_wrap true >>
 ]
 def
@@ -180,8 +180,8 @@ def
   << /connection_type /convergent /number_of_connections 2 >>
   << /connection_type /divergent /number_of_connections 2 >>
   << /connection_type /convergent /delays 2.0 >>
-  << /connection_type /convergent /sources << /model /iaf_neuron >> >>
-  << /connection_type /convergent /targets << /model /iaf_neuron >> >>
+  << /connection_type /convergent /sources << /model /iaf_psc_alpha >> >>
+  << /connection_type /convergent /targets << /model /iaf_psc_alpha >> >>
 ]
 def
 
@@ -198,7 +198,7 @@ def
   /conndict Set
   
   ResetKernel
-  << /elements /iaf_neuron  /rows 1 /columns 1 >> CreateLayer
+  << /elements /iaf_psc_alpha  /rows 1 /columns 1 >> CreateLayer
   dup
   conndict ConnectLayers
 } def
@@ -209,7 +209,7 @@ def
   /conndict Set
   
   ResetKernel
-  << /elements /iaf_neuron  /positions [ [0. 0. 0.] ] >> CreateLayer
+  << /elements /iaf_psc_alpha  /positions [ [0. 0. 0.] ] >> CreateLayer
   dup
   conndict ConnectLayers
 } def

@@ -191,8 +191,15 @@ def
 % Min and Max for GIDCollections
 %
 
-/Min [/gidcollectiontype] { 0 get } def
-/Max [/gidcollectiontype] { dup size 1 sub get } def
+/Min trie
+[/gidcollectiontype] { 0 get } addtotrie
+[/anytype] /Min load addtotrie
+def
+
+/Max trie
+[/gidcollectiontype] { dup size 1 sub get } addtotrie
+[/anytype] /Max load addtotrie
+def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

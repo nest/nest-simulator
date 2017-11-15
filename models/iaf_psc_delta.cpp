@@ -262,9 +262,6 @@ nest::iaf_psc_delta::calibrate()
   //     2. The refractory time in units of steps is read out get_steps(), a
   //        member function of class nest::Time.
   //
-  // The definition of the refractory period of the iaf_psc_delta is consistent
-  // the one of iaf_neuron_ps.
-  //
   // Choosing a TauR that is not an integer multiple of the computation time
   // step h will leed to accurate (up to the resolution h) and self-consistent
   // results. However, a neuron model capable of operating with real valued

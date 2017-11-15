@@ -55,9 +55,9 @@ ResetKernel
 
 /gid1 N 1 add def            % gid1 = N + 1
 
-% create source and targets
-/net1 /iaf_psc_alpha N Create def  % source
-/net2 /iaf_psc_alpha N Create def  % target
+% create sources and targets
+/sources /iaf_psc_alpha N Create def
+/targets /iaf_psc_alpha N Create def
 
 /NC N N mul def     % number of connections = N^2
 /Dmax NC 1 add def  % maximum delay
@@ -70,11 +70,11 @@ ResetKernel
 /syn_dict << /model /static_synapse /weight Warr /delay Darr >> def
 /conn_dict << /rule /all_to_all >> def
 
-net1 net2 conn_dict syn_dict Connect % connects source to target subnet
+sources targets conn_dict syn_dict Connect % connects source to target subnet
 
 /pass true def % error control flag
 /n_loc 0 def  % used to check n. of neurons belonging to this MPI process
-net2 % loop on all neurons of target subnet
+targets % loop on all neurons of target subnet
 {
   /neuron2 exch def
 
@@ -116,7 +116,7 @@ net2 % loop on all neurons of target subnet
   } 
   if   % neuron2 is local
 } 
-forall  % neurons in net2
+forall  % neurons in targets
 
 pass n_loc 0 gt and
 } distributed_collect_assert_or_die

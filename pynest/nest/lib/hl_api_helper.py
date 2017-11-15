@@ -576,9 +576,7 @@ def model_deprecation_warning(model):
         Name of model
     """
 
-    deprecated_models = {'subnet': 'GIDCollection',
-                         'aeif_cond_alpha_RK5': 'aeif_cond_alpha',
-                         'iaf_neuron': 'iaf_psc_alpha'}
+    deprecated_models = {'aeif_cond_alpha_RK5': 'aeif_cond_alpha'}
 
     if model in deprecated_models:
         text = "The {0} model is deprecated and will be removed in a \

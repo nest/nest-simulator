@@ -46,8 +46,7 @@ M_ERROR setverbosity
   ResetKernel
   << /resolution 0.1 >>  SetKernelStatus
   
-  /iaf_neuron Create /n Set
-  n n
+  /iaf_psc_alpha Create dup
   << /rule /fixed_indegree /indegree 1000 >>
   << /delay << /distribution /uniform /low 0.11 /high 0.19 >> >>
   Connect

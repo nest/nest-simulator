@@ -41,7 +41,7 @@ M_ERROR setverbosity
 {
   ResetKernel
   << /resolution 0.25 >> SetKernelStatus
-  /iaf_neuron Create dup
+  /iaf_psc_alpha Create dup
   1.0 0.1 Connect
 } fail_or_die
  

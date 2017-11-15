@@ -37,7 +37,7 @@
 
 
 /smalldelay 0.5 def    % small connection delay used in network
-/bigdelay   1.0 def    % big connection delay used in netwokr
+/largedelay 1.0 def    % large connection delay used in netwokr
 /simtime    1.0 def    % simulation time
 
 
@@ -49,20 +49,16 @@
 
   <<
     /resolution h
-                               % settings not required but respected:
-    /min_delay h               % smallest delay expected by user 
-    /max_delay bigdelay 2 mul  % biggest delay expected by user
+                                 % settings not required but respected:
+    /min_delay h                 % smallest delay expected by user 
+    /max_delay largedelay 2 mul  % largest delay expected by user
   >> SetKernelStatus
 
-  /iaf_neuron Create /neuron1 Set
-  neuron1 << /I_e 1450.0 >> SetStatus
-
-  /iaf_neuron Create /neuron2 Set
-
+  /iaf_psc_alpha << /I_e 1450.0 >> Create /neuron1 Set
+  /iaf_psc_alpha Create /neuron2 Set
 
   neuron1 neuron2 100.0 smalldelay Connect
-  neuron2 neuron1 100.0 bigdelay Connect
-
+  neuron2 neuron1 100.0 largedelay Connect
 
   simtime Simulate
 
@@ -71,6 +67,6 @@
 0.1 AlignedImpact
 
 
-{ GetKernelStatus [[/max_delay /min_delay]] get [bigdelay 2 mul h] eq } assert_or_die
+{ GetKernelStatus [[/max_delay /min_delay]] get [largedelay 2 mul h] eq } assert_or_die
 
 

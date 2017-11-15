@@ -289,7 +289,6 @@ class TestGrowthCurve(unittest.TestCase):
 
         # build
         self.pop = nest.Create('iaf_psc_alpha', 10)
-        self.local_nodes = self.pop
         self.spike_detector = nest.Create('spike_detector')
         nest.Connect(self.pop, self.spike_detector, 'all_to_all')
         noise = nest.Create('poisson_generator')
@@ -444,8 +443,9 @@ class TestGrowthCurve(unittest.TestCase):
         growth_rate = 0.0001
         eps = 0.10
         psi = 0.10
+        local_nodes = nest.GetNodes([0], {'model': 'iaf_psc_alpha'}, True)[0]
         nest.SetStatus(
-            self.local_nodes,
+            local_nodes,
             {
                 'beta_Ca': beta_ca,
                 'tau_Ca': tau_ca,
@@ -472,7 +472,7 @@ class TestGrowthCurve(unittest.TestCase):
         ])
 
         pop_as_list = list(self.pop)
-        local_nodes_as_list = list(self.local_nodes)
+        local_nodes_as_list = list(local_nodes)
         for n in self.pop:
             loc = self.se_nest[local_nodes_as_list.index(n), 30]
             ex = expected[pop_as_list.index(n)]

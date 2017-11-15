@@ -37,10 +37,7 @@
 [1 2 4]                                          
 {                                                 
  ResetKernel
-
- /n /iaf_neuron Create def
- n 0 get n 0 get << /weight 1.0 >> Connect
-
+ /iaf_psc_alpha Create dup << /weight 1.0 >> Connect
 }
 distributed_pass_or_die
 

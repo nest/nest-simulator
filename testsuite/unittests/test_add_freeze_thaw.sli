@@ -44,7 +44,7 @@ M_ERROR setverbosity
 /num_threads 4 def
 /blocksize 11 def   % number of neurons to create / freeze, intentionally not multiple of num_threads 
 /simtime 10. def
-/Vmref /iaf_neuron GetDefaults /V_m get def
+/Vmref /iaf_psc_alpha GetDefaults /V_m get def
 
 ResetKernel
 
@@ -55,7 +55,7 @@ statusdict/threading :: (no) neq
 }
 if
 
-/node_pop_a /iaf_neuron blocksize << /I_e -50.0 >> Create def
+/node_pop_a /iaf_psc_alpha blocksize << /I_e -50.0 >> Create def
 
 % first test: one block of neurons
 {
@@ -68,7 +68,7 @@ if
   } forall
 } assert_or_die
 
-/node_pop_b /iaf_neuron blocksize << /I_e -50.0 >> Create def
+/node_pop_b /iaf_psc_alpha blocksize << /I_e -50.0 >> Create def
 /all_nodes node_pop_a node_pop_b join def
 
 % second test: additional block of neurons

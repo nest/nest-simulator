@@ -26,7 +26,7 @@
    and creating a neuron and then setting node params lead to the same 
    results.
 
-   Works by connecting device to iaf_neuron, measuring voltage trace over 1s
+   Works by connecting device to iaf_psc_alpha, measuring voltage trace over 1s
    and comparing traces.
 
    todo: - generalize for more models

@@ -356,7 +356,14 @@ GIDCollectionPrimitive::local_begin( GIDCollectionPTR cp ) const
     kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
   size_t vp_first_node = kernel().vp_manager.suggest_vp( first_ );
   size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
-  return const_iterator( cp, *this, offset, num_vps );
+  if ( offset > size() )
+  {
+    return const_iterator( cp, *this, size() );
+  }
+  else
+  {
+    return const_iterator( cp, *this, offset, num_vps );
+  }
 }
 
 GIDCollectionPrimitive::const_iterator

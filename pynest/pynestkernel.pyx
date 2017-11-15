@@ -430,7 +430,6 @@ cdef inline object sli_datum_to_object(Datum* dat):
         ret = sli_vector_to_object[sli_vector_int_ptr_t, long](<IntVectorDatum*> dat)
     elif datum_type == SLI_TYPE_VECTOR_DOUBLE:
         ret = sli_vector_to_object[sli_vector_double_ptr_t, double](<DoubleVectorDatum*> dat)
-    # TODO480
     elif datum_type == SLI_TYPE_MASK:
         ret = SLIDatum()
         (<SLIDatum> ret)._set_datum(<Datum*> new MaskDatum(deref(<MaskDatum*> dat)), SLI_TYPE_MASK.decode())

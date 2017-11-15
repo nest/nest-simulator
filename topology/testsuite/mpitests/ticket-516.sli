@@ -33,14 +33,14 @@
   
   /conn_type Set
 
-  /n_vp 0 GetStatus /total_num_virtual_procs get def
+  /n_vp GetKernelStatus /total_num_virtual_procs get def
   (Number of virtual processes: ) n_vp cvs join =
   (Rank: ) Rank cvs join =
 
-  0 << /grng_seed master_seed n_vp add
-       /rng_seeds [master_seed n_vp add 1 add
-                   master_seed n_vp 2 mul add] Range
-    >> SetStatus
+  << /grng_seed master_seed n_vp add
+     /rng_seeds [master_seed n_vp add 1 add
+                 master_seed n_vp 2 mul add] Range
+  >> SetKernelStatus
   
   /layer << /rows 10 /columns 10 /edge_wrap false /elements /iaf_psc_delta >> CreateLayer def
 
@@ -55,9 +55,9 @@
 
 [6]
 {
-  (convergent) setup_network
-  sim_time Simulate
+ (convergent) setup_network
+ sim_time Simulate
 
-  (divergent) setup_network
-  sim_time Simulate
+ (divergent) setup_network
+ sim_time Simulate
 } distributed_pass_or_die

@@ -52,7 +52,7 @@
   def
   
   /Displacement [/gidcollectiontype /integertype /integertype]
-    { exch GetPosition exch
+    { rolld dup  3 -1 roll GetPosition rolld
       Displacement_g_a_i } bind
   def
   

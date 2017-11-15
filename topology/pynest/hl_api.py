@@ -264,6 +264,7 @@ class Layer(nest.GIDCollection):
         Get vector of lateral displacement from node(s) `from_arg`
         to node(s) `to_arg`.
         
+        # TODO481
         Displacement is always measured in the layer to which the `to_arg` node
         belongs. If a node in the `from_arg` list belongs to a different layer,
         its location is projected into the `to_arg` layer. If explicit positions
@@ -326,7 +327,7 @@ class Layer(nest.GIDCollection):
         # TODO481 Remember to check that we get an error if layer is called with from_arg
         from_arg, to_arg = self._check_displacement_args(from_arg, to_arg,
                                                     'Displacement')
-        return nest.sli_func('/from_to Set from_to == /lyr Set from_to { lyr { Displacement } == } MapThread', self.layer, [from_arg, to_arg])
+        return nest.sli_func('/from_to Set /lyr Set from_to { lyr rollu Displacement } MapThread', self.layer, [from_arg, to_arg])
 
 
 def CreateMask(masktype, specs, anchor=None):

@@ -98,6 +98,7 @@ get_position( GIDCollectionPTR layer_gc, const index gid )
   {
     throw LayerNodeExpected();
   }
+
   return layer->get_position_vector( lid );
 }
 
@@ -113,7 +114,13 @@ displacement( GIDCollectionPTR layer_gc,
   }
 
   AbstractLayerPTR layer = get_layer( layer_gc );
-  return layer->compute_displacement( point, node_gid );
+  // TODO481
+  const long lid = layer_gc->find( node_gid );
+  if ( lid < 0 )
+  {
+    throw LayerNodeExpected();
+  }
+  return layer->compute_displacement( point, lid );
 }
 
 double

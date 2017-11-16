@@ -1356,7 +1356,7 @@ def FindCenterElement(layers):
                  for lyr in layers)
 
 
-def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
+def GetTargetNodes(sources, tgt_layer, syn_model=None):
     """
     Obtain targets of a list of sources in given target layer.
 
@@ -1365,10 +1365,8 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     ----------
     sources : tuple/list of int(s)
         List of GID(s) of source neurons
-    tgt_layer : tuple/list of int(s)
-        Single-element list with GID of tgt_layer
-    tgt_model : [None | str], optional, default: None
-        Return only target positions for a given neuron model.
+    tgt_layer : GIDCollection (Layer)
+        GIDCollection with GIDs of tgt_layer
     syn_model : [None | str], optional, default: None
         Return only target positions for a given synapse model.
 
@@ -1380,9 +1378,8 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
         It is a list of lists, one list per source.
 
         For each neuron in `sources`, this function finds all target elements
-        in `tgt_layer`. If `tgt_model` is not given (default), all targets are
-        returned, otherwise only targets of specific type, and similarly for
-        syn_model.
+        in `tgt_layer`. If `syn_model` is not given (default), all targets are
+        returned, otherwise only targets of specific type.
 
 
     See also
@@ -1426,20 +1423,10 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     if not nest.is_sequence_of_gids(sources):
         raise TypeError("sources must be a sequence of GIDs")
 
-    if not nest.is_sequence_of_gids(tgt_layer):
-        raise TypeError("tgt_layer must be a sequence of GIDs")
+    if not isinstance(tgt_layer, Layer):
+        raise nest.NESTError("tgt_layer must be a Layer")
 
-    if len(tgt_layer) != 1:
-        raise nest.NESTError("tgt_layer must be a one-element list")
-
-    with nest.SuppressedDeprecationWarning('GetLeaves'):
-        # obtain local nodes in target layer, to pass to GetConnections
-        tgt_nodes = nest.GetLeaves(tgt_layer,
-                                   properties={'model': tgt_model}
-                                   if tgt_model else None,
-                                   local_only=True)[0]
-
-    conns = nest.GetConnections(sources, tgt_nodes, synapse_model=syn_model)
+    conns = nest.GetConnections(sources, tgt_layer, synapse_model=syn_model)
 
     # conns is a flat list of connections.
     # Re-organize into one list per source, containing only target GIDs.
@@ -1451,7 +1438,7 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     return tuple(src_tgt_map[sgid] for sgid in sources)
 
 
-def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
+def GetTargetPositions(sources, tgt_layer, syn_model=None):
     """
     Obtain positions of targets of a list of sources in a given target layer.
 
@@ -1460,10 +1447,8 @@ def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
     ----------
     sources : tuple/list of int(s)
         List of GID(s) of source neurons
-    tgt_layer : tuple/list of int(s)
-        Single-element list with GID of tgt_layer
-    tgt_model : [None | str], optional, default: None
-        Return only target positions for a given neuron model.
+    tgt_layer : GIDCollection (Layer)
+        GIDCollection with GIDs of tgt_layer
     syn_type : [None | str], optional, default: None
         Return only target positions for a given synapse model.
 
@@ -1475,9 +1460,8 @@ def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
         list, containing one list of positions per node in sources.
 
         For each neuron in `sources`, this function finds all target elements
-        in `tgt_layer`. If `tgt_model` is not given (default), all targets are
-        returned, otherwise only targets of specific type, and similarly for
-        syn_model.
+        in `tgt_layer`. If `syn_model` is not given (default), all targets are
+        returned, otherwise only targets of specific type.
 
 
     See also
@@ -1516,8 +1500,8 @@ def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
             tp.GetTargetPositions([5], l)
     """
 
-    return tuple(GetPosition(nodes) for nodes
-                 in GetTargetNodes(sources, tgt_layer, tgt_model, syn_model))
+    return tuple(tgt_layer.GetPosition(nodes) for nodes
+                 in GetTargetNodes(sources, tgt_layer, syn_model))
 
 
 def _draw_extent(ax, xctr, yctr, xext, yext):

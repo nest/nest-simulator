@@ -309,64 +309,46 @@ class BasicsTestCase(unittest.TestCase):
                  'mask': {'grid': {'rows': 2, 'columns': 2}}}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        ian = [gid for gid in nest.GetLeaves(l)[0]
-               if nest.GetStatus([gid], 'model')[0] == 'iaf_neuron']
-        ipa = [gid for gid in nest.GetLeaves(l)[0]
-               if nest.GetStatus([gid], 'model')[0] == 'iaf_psc_alpha']
 
-        # connect ian -> all using static_synapse
-        cdict.update({'sources': {'model': 'iaf_neuron'},
-                      'synapse_model': 'static_synapse'})
+        # connect l -> l using stdp_synapse
+        cdict.update({'synapse_model': 'stdp_synapse'})
         topo.ConnectLayers(l, l, cdict)
-        for k in ['sources', 'synapse_model']:
-            cdict.pop(k)
 
-        # connect ipa -> ipa using stdp_synapse
-        cdict.update({'sources': {'model': 'iaf_psc_alpha'},
-                      'targets': {'model': 'iaf_psc_alpha'},
-                      'synapse_model': 'stdp_synapse'})
-        topo.ConnectLayers(l, l, cdict)
-        for k in ['sources', 'targets', 'synapse_model']:
-            cdict.pop(k)
-
-        t = topo.GetTargetNodes(ian[:1], l)
+        t = topo.GetTargetNodes(l[:1], l)
         self.assertEqual(len(t), 1)
 
-        p = topo.GetTargetPositions(ian[:1], l)
+        p = topo.GetTargetPositions(l[:1], l)
         self.assertEqual(len(p), 1)
         self.assertTrue(all([len(pp) == 2 for pp in p[0]]))
 
-        t = topo.GetTargetNodes(ian, l)
-        self.assertEqual(len(t), len(ian))
-        # 2x2 mask x 2 neurons / element -> eight targets
-        self.assertTrue(all([len(g) == 8 for g in t]))
+        t = topo.GetTargetNodes(l, l)
+        self.assertEqual(len(t), len(l))
+        # 2x2 mask -> four targets
+        self.assertTrue(all([len(g) == 4 for g in t]))
 
-        p = topo.GetTargetPositions(ian, l)
-        self.assertEqual(len(p), len(ian))
+        p = topo.GetTargetPositions(l, l)
+        self.assertEqual(len(p), len(l))
 
-        t = topo.GetTargetNodes(ian, l, tgt_model='iaf_neuron')
-        self.assertEqual(len(t), len(ian))
-        self.assertTrue(
-            all([len(g) == 4 for g in t]))  # 2x2 mask  -> four targets
-
-        t = topo.GetTargetNodes(ian, l, tgt_model='iaf_psc_alpha')
-        self.assertEqual(len(t), len(ian))
-        self.assertTrue(
-            all([len(g) == 4 for g in t]))  # 2x2 mask  -> four targets
-
-        t = topo.GetTargetNodes(ipa, l)
-        self.assertEqual(len(t), len(ipa))
-        self.assertTrue(
-            all([len(g) == 4 for g in t]))  # 2x2 mask  -> four targets
-
-        t = topo.GetTargetNodes(ipa, l, syn_model='static_synapse')
-        self.assertEqual(len(t), len(ipa))
+        t = topo.GetTargetNodes(l, l, syn_model='static_synapse')
+        self.assertEqual(len(t), len(l))
         self.assertTrue(all([len(g) == 0 for g in t]))  # no static syns
 
-        t = topo.GetTargetNodes(ipa, l, syn_model='stdp_synapse')
-        self.assertEqual(len(t), len(ipa))
+        t = topo.GetTargetNodes(l, l, syn_model='stdp_synapse')
+        self.assertEqual(len(t), len(l))
         self.assertTrue(
             all([len(g) == 4 for g in t]))  # 2x2 mask  -> four targets
+        
+        t = topo.GetTargetNodes([1], l)
+        self.assertEqual(t, ([1, 2, 4, 5],))
+        
+        t = topo.GetTargetNodes(l[:1], l)
+        self.assertEqual(t, ([1, 2, 4, 5],))
+        
+        t = topo.GetTargetNodes(l[4:5], l)
+        self.assertEqual(t, ([5, 6, 8, 9],))
+        
+        t = topo.GetTargetNodes(l[8:9], l)
+        self.assertEqual(t, ([1, 3, 7, 9],))
 
     def test_Parameter(self):
 

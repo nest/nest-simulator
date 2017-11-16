@@ -127,15 +127,17 @@ public:
   bool is_local_gid( index gid ) const;
 
   /**
-   * Return pointer of the specified Node.
-   * @param i Index of the specified Node.
-   * @param thr global thread index of the Node.
+   * Return pointer to the specified Node. The function expects that
+   * the given gid and thread are valid. If they are not, an assertion
+   * will fail. In case the given Node does not exist on the fiven
+   * thread, a proxy is returned instead.
    *
-   * @throws nest::UnknownNode       Target does not exist in the network.
+   * @param gid index of the Node
+   * @param tid local thread index of the Node
    *
    * @ingroup net_access
    */
-  Node* get_node_or_proxy( index, thread );
+  Node* get_node_or_proxy( index gid, thread tid);
 
   /**
    * Return pointer of the specified Node.
@@ -152,16 +154,6 @@ public:
    * @params gid Index of the Node.
    */
   Node* get_mpi_local_node_or_device_head( index );
-
-  /*
-   * Return pointer of Node.
-   *
-   * If the Node is not on the given thread, the function returns 0.
-   *
-   * @param gid Index of the Node.
-   * @param t Thread index of the Node.
-   */
-  Node* get_thread_local_node( index, thread );
 
   /**
    * Return a vector that contains the thread siblings.

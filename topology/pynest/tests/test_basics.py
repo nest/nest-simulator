@@ -143,6 +143,24 @@ class BasicsTestCase(unittest.TestCase):
         d = l.Displacement(n, n[:1])
         self.assertEqual(len(d), len(n))
         self.assertTrue(all(len(dd) == 2 for dd in d))
+        
+        # Difference between gid 1 and 6. They are on the same y-axis, and
+        # directly next to each other on the x-axis, so the displacement on
+        # x-axis should be approximately -dx, while the displacement on the
+        # y-axis should be 0.
+        d = l.Displacement(n[:1], n[4:5])
+        dx = 1 / ldict['columns']
+        self.assertAlmostEqual(d[0][0], -dx, 3)
+        self.assertEqual(d[0][1], 0.0)
+        
+        # Difference between gid 1 and 2. They are on the same x-axis, and
+        # directly next to each other on the y-axis, so the displacement on
+        # x-axis should be 0, while the displacement on the y-axis should be
+        # approximately dy.
+        d = l.Displacement(n[:1], n[1:2])
+        dy = 1 / ldict['rows']
+        self.assertEqual(d[0][0], 0.0)
+        self.assertAlmostEqual(d[0][1], dy, 3)
 
         from numpy import array
 

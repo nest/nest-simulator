@@ -41,6 +41,38 @@
 namespace nest
 {
 
+/* BeginDocumentation
+Name: parrot_rate_neuron - Rate neuron that sums up incoming rates and applies
+                           a nonlinearity specified via the template.
+
+Description:
+
+The parrot rate neuron simply sums up all incoming rates and applies
+the nonlinearity specified in the function input of the template class.
+An important application is to provide the possibility to
+apply different nonlinearities to different incoming connections of the
+same rate neuron by connecting the sending rate neurons to the
+parrot rate neuron and connecting the parrot rate neuron to the
+receiving rate neuron instead of using a direct connection.
+Please note that for instantaneous rate connections the rate arrives
+one time step later at the receiving rate neurons as with a direct connection.
+
+Remarks:
+
+- Weights on connections from and to the parrot_rate_neuron
+  are handled as usual.
+- Delays are honored on incoming and outgoing connections.
+
+Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Parameters:
+No parameters to be set in the status dictionary.
+
+Author: Mario Senden, Jan Hahne, Jannis Schuecker
+FirstVersion: November 2017
+*/
 template < class TNonlinearities >
 class parrot_rate_neuron : public Archiving_Node
 {

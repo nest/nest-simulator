@@ -37,10 +37,10 @@ Name: tanh_rate - rate model with hyperbolic tangent non-linearity
 
 Description:
 
- tanh_rate is an implementation of a non-linear rate model with either
- input (tanh_rate_ipn) or output noise (tanh_rate_opn) and gain function
- Phi(h) = tanh(g * (h-theta)) and Psi(h) = h for linear_summation = True
- Phi(h) = h and Psi(h) = tanh(g * (h-theta)) for linear_summation = False.
+ tanh_rate is an implementation of a nonlinear rate model with input function
+ input(h) = tanh(g * (h-theta)). The boolean parameter linear_summation
+ determines whether the input function is applied to the summed up incoming
+ connections (= True, default value) or to each input individually (= False).
 
  The model supports connections to other rate models with either zero or
  non-zero delay, and uses the secondary_event concept introduced with
@@ -56,7 +56,7 @@ Parameters:
  std                 double - Standard deviation of Gaussian white noise.
  g                   double - Gain parameter
  theta               double - Inflection point
- linear_summation    boolean - specifies type of non-linearity (see above)
+ linear_summation    bool   - Specifies type of non-linearity (see above)
 
 Note:
 The boolean parameter linear_summation determines whether the

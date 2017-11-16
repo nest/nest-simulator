@@ -36,7 +36,7 @@ class GetConnectionsTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        a = nest.Create("iaf_neuron", 3)
+        a = nest.Create("iaf_psc_alpha", 3)
         nest.Connect(a, a)
         c1 = nest.GetConnections(a)
         c2 = nest.GetConnections(a, synapse_model="static_synapse")

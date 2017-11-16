@@ -22,15 +22,15 @@
 
 
 /* BeginDocumentation
-Name: testsuite::test_iaf_psp - sli script for test of iaf_neuron spike input 
+Name: testsuite::test_iaf_psp - sli script for test of iaf_psc_alpha spike input
 
 Synopsis: (test_iaf_psp) run -> compare response with reference data
 
 Description:
 
- test_iaf_psp.sli checks the voltage response of the iaf_neuron
+ test_iaf_psp.sli checks the voltage response of the iaf_psc_alpha
  model neuron to a single incoming spike. The voltage excursion is
- called post-synaptic potential (PSP). In the iaf_neuron model neuron
+ called post-synaptic potential (PSP). In the iaf_psc_alpha model neuron
  the post-synaptic current is described by an alpha-function 
  (see [1] and references therein). The resulting PSP has a finite 
  rise-time, with voltage and current beeing zero in the initial 
@@ -43,7 +43,7 @@ Description:
  The weight of the connection specifies the peak value (amplitude)
  of the post-synaptic current (PSC) in pA.
 
- The subthreshold dynamics of the iaf_neuron is integrated exactly.
+ The subthreshold dynamics of the iaf_psc_alpha is integrated exactly.
  Therefore, it is suitable to check whether the simulation kernel 
  produces results independent of the computation step size
  (resolution).
@@ -101,7 +101,7 @@ sg <<
      /stop 3.0              % in ms
    >> SetStatus
 
-/iaf_neuron Create /neuron Set
+/iaf_psc_alpha Create /neuron Set
 
 
 /voltmeter Create /vm Set

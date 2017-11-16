@@ -67,57 +67,266 @@ import nest
 import nest.lib.hl_api_helper as hlh
 
 
-class Mask(object):
-    """
-    Class for spatial masks.
+class Layer(nest.GIDCollection):
+    def __init__(self, gc):
+        self.layer = gc
+        self._datum = gc._datum
 
-    Masks are used when creating connections in the Topology module. A mask
-    describes which area of the pool layer shall be searched for nodes to
-    connect for any given node in the driver layer. Masks are created using
-    the ``CreateMask`` command.
-    """
-
-    _datum = None
-
-    # The constructor should not be called by the user
-    def __init__(self, datum):
-        """Masks must be created using the CreateMask command."""
-        if not isinstance(datum, nest.SLIDatum) or datum.dtype != "masktype":
-            raise TypeError("expected mask Datum")
-        self._datum = datum
-
-    # Generic binary operation
-    def _binop(self, op, other):
-        if not isinstance(other, Mask):
-            return NotImplemented
-        return Mask(nest.sli_func(op, self._datum, other._datum))
-
-    def __or__(self, other):
-        return self._binop("or", other)
-
-    def __and__(self, other):
-        return self._binop("and", other)
-
-    def __sub__(self, other):
-        return self._binop("sub", other)
-
-    def Inside(self, point):
+    def GetPosition(self, nodes=None):
         """
-        Test if a point is inside a mask.
+        Return the spatial locations of nodes.
 
 
         Parameters
         ----------
-        point : tuple/list of float values
-            Coordinate of point
+        nodes : int or tuple/list of int(s), optional, default None
+            GID or List of GIDs
+            If nodes is None, we want the positions to all the nodes in the
+            layer.
 
 
         Returns
         -------
-        out : bool
-            True if the point is inside the mask, False otherwise
+        out : tuple or tuple of tuple(s)
+            Tuple of position with 2- or 3-elements or list of positions
+
+
+        See also
+        --------
+        Displacement : Get vector of lateral displacement between nodes.
+        Distance : Get lateral distance between nodes.
+        DumpLayerConnections : Write connectivity information to file.
+        DumpLayerNodes : Write layer node positions to file.
+
+
+        Notes
+        -----
+        * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
+          only works for nodes local to the current MPI process, if used in a
+          MPI-parallel simulation.
+
+
+        **Example**
+            ::
+
+                import nest
+                import nest.topology as tp
+
+                # Reset kernel
+                nest.ResetKernel
+
+                # create a layer
+                l = tp.CreateLayer({'rows'      : 5,
+                                    'columns'   : 5,
+                                    'elements'  : 'iaf_psc_alpha'})
+
+                # retrieve positions of all (local) nodes belonging to the layer
+                pos = l.GetPosition()
+
+                # retrieve positions of the first nodes in the layer
+                pos = l.GetPosition(l[0])
+
+                # retrieve positions of nodes 4
+                pos = l.GetPosition(4)
+
+                # retrieve positions of the list of nodes in the layer
+                pos = l.GetPosition([l[0], l[2]])
         """
-        return nest.sli_func("Inside", point, self._datum)
+        if nodes is None:
+            nodes = self.layer
+
+        if isinstance(nodes, int):
+            return nest.sli_func('GetPosition', self.layer, nodes)
+        else:
+            return nest.sli_func('/gids Set /lyr Set gids { /gid Set lyr gid GetPosition } forall', self.layer, nodes)            #pos = []
+        
+    def GetElement(self, locations):
+        """
+        Return the node(s) at the location(s) in the layer.
+    
+        This function works for fixed grid layers only.
+    
+        * If locations is a single 2-element array giving a grid location
+          (in [column, row] format), return a tuple with the GID at the given
+          location.
+        * If locations is a list of coordinates, the function returns a list
+          with GIDs of the nodes at all locations.
+
+
+        Parameters
+        ----------
+        locations : [tuple/list of floats | tuple/list of tuples/lists of floats]
+            2-element list with coordinates of a single grid location,
+            or list of 2-element lists of coordinates for 2-dimensional layers,
+            i.e., on the format [column, row].
+            Zero-indexing is used for the [column, row] coordinates.
+
+
+        Returns
+        -------
+        out : tuple of int(s)
+            Tuple of GIDs
+
+
+        See also
+        --------
+        GetLayer : Return the layer to which nodes belong.
+        FindNearestElement: Return the node(s) closest to the location(s) in the
+            given layer(s).
+        GetPosition : Return the spatial locations of nodes.
+
+
+        Notes
+        -----
+        -
+
+        **Example**
+            ::
+
+                import nest.topology as tp
+    
+                # create a layer
+                l = tp.CreateLayer({'rows'      : 5,
+                                    'columns'   : 4,
+                                    'elements'  : 'iaf_psc_alpha'})
+    
+                # get GID of element in last column and row
+                tp.GetElement(l, [3, 4])
+        """
+
+        if not len(self.layer) > 0:
+            raise nest.NESTError("layers cannot be empty")
+
+        if not (nest.is_iterable(locations) and len(locations) > 0):
+            raise nest.NESTError(
+                "locations must be coordinate array or list of coordinate arrays")
+
+        # ensure that all layers are grid-based, otherwise one ends up with an
+        # incomprehensible error message
+        # TODO481
+        #try:
+        #    nest.sli_func('{ [ /rows /columns ] get ; } forall',
+        #                  self.layer)
+        #except:
+        #    raise nest.NESTError(
+        #        "layers must contain only grid-based topology layers")
+
+        if nest.is_iterable(locations[0]):
+            # locations is a lists
+            node_list = nest.sli_func(
+                '/posi Set /lyr Set posi { /locs Set lyr locs GetElement } forall',
+                self.layer, locations)
+        else:
+            # locations is a single location
+            # TODO481 should a single GID be a list, or just the int?
+            nodes = nest.sli_func('GetElement', self.layer, locations)            
+            node_list = [nodes]
+
+        return node_list
+    
+    def _check_displacement_args(self, from_arg, to_arg, caller):
+        """
+        Internal helper function to check arguments to Displacement
+        and Distance and make them lists of equal length.
+        """
+        
+        import numpy
+        
+        if isinstance(from_arg, numpy.ndarray):
+            from_arg = (from_arg, )
+        elif not (nest.is_iterable(from_arg) and len(from_arg) > 0):
+            raise nest.NESTError(
+                "%s: from_arg must be lists of GIDs or positions" % caller)
+        # invariant: from_arg is list
+        
+        if not nest.is_sequence_of_gids(to_arg):
+            raise nest.NESTError("%s: to_arg must be lists of GIDs" % caller)
+        # invariant: from_arg and to_arg are sequences
+        
+        if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(
+                to_arg):
+            raise nest.NESTError(
+                "%s: If to_arg and from_arg are lists, they must have same length."
+                % caller)
+        # invariant: from_arg and to_arg have equal length,
+        # or (at least) one has length 1
+        
+        if len(from_arg) == 1:
+            from_arg = from_arg * len(to_arg)  # this is a no-op if len(to_arg)==1
+        if len(to_arg) == 1:
+            to_arg = to_arg * len(from_arg)  # this is a no-op if len(from_arg)==1
+        # invariant: from_arg and to_arg have equal length
+        
+        return from_arg, to_arg
+    
+    def Displacement(self, from_arg, to_arg):
+        """
+        Get vector of lateral displacement from node(s) `from_arg`
+        to node(s) `to_arg`.
+        
+        Displacement is always measured in the layer to which the `to_arg` node
+        belongs. If a node in the `from_arg` list belongs to a different layer,
+        its location is projected into the `to_arg` layer. If explicit positions
+        are given in the `from_arg` list, they are interpreted in the `to_arg`
+        layer.
+        Displacement is the shortest displacement, taking into account
+        periodic boundary conditions where applicable.
+        
+        * If one of `from_arg` or `to_arg` has length 1, and the other is longer,
+          the displacement from/to the single item to all other items is given.
+        * If `from_arg` and `to_arg` both have more than two elements, they have
+          to be lists of the same length and the displacement for each pair is
+          returned.
+        
+        
+        Parameters
+        ----------
+        from_arg : [tuple/list of int(s) | tuple/list of tuples/lists of floats]
+            List of GIDs or position(s)
+        to_arg : tuple/list of int(s)
+            List of GIDs
+        
+        
+        Returns
+        -------
+        out : tuple
+            Displacement vectors between pairs of nodes in `from_arg` and `to_arg`
+        
+        
+        See also
+        --------
+        Distance : Get lateral distances between nodes.
+        DumpLayerConnections : Write connectivity information to file.
+        GetPosition : Return the spatial locations of nodes.
+        
+        
+        Notes
+        -----
+        * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
+          only works for nodes local to the current MPI process, if used in a
+          MPI-parallel simulation.
+        
+        
+        **Example**
+            ::
+        
+                import nest.topology as tp
+        
+                # create a layer
+                l = tp.CreateLayer({'rows'      : 5,
+                                    'columns'   : 5,
+                                    'elements'  : 'iaf_psc_alpha'})
+        
+                # displacement between node 2 and 3
+                print(tp.Displacement([2], [3]))
+        
+                # displacment between the position (0.0., 0.0) and node 2
+                print(tp.Displacement([(0.0, 0.0)], [2]))
+        """
+        # TODO481 Remember to check that we get an error if layer is called with from_arg
+        from_arg, to_arg = self._check_displacement_args(from_arg, to_arg,
+                                                    'Displacement')
+        return nest.sli_func('/from_to Set from_to == /lyr Set from_to { lyr { Displacement } == } MapThread', self.layer, [from_arg, to_arg])
 
 
 def CreateMask(masktype, specs, anchor=None):
@@ -255,97 +464,10 @@ def CreateMask(masktype, specs, anchor=None):
             tp.ConnectLayers(l, l, conndict)
 
     """
-
     if anchor is None:
-        return Mask(nest.sli_func('CreateMask', {masktype: specs}))
+        return nest.sli_func('CreateMask', {masktype: specs})
     else:
-        return Mask(
-            nest.sli_func('CreateMask', {masktype: specs, 'anchor': anchor}))
-
-
-class Parameter(object):
-    """
-    Class for parameters for distance dependency or randomization.
-
-    Parameters are spatial functions which are used when creating
-    connections in the Topology module. A parameter may be used as a
-    probability kernel when creating connections or as synaptic parameters
-    (such as weight and delay). Parameters are created using the
-    ``CreateParameter`` command.
-    """
-
-    _datum = None
-
-    # The constructor should not be called by the user
-    def __init__(self, datum):
-        """Parameters must be created using the CreateParameter command."""
-        if not isinstance(datum,
-                          nest.SLIDatum) or datum.dtype != "parametertype":
-            raise TypeError("expected parameter datum")
-        self._datum = datum
-
-    # Generic binary operation
-    def _binop(self, op, other):
-        if not isinstance(other, Parameter):
-            return NotImplemented
-        return Parameter(nest.sli_func(op, self._datum, other._datum))
-
-    def __add__(self, other):
-        return self._binop("add", other)
-
-    def __sub__(self, other):
-        return self._binop("sub", other)
-
-    def __mul__(self, other):
-        return self._binop("mul", other)
-
-    def __div__(self, other):
-        return self._binop("div", other)
-
-    def __truediv__(self, other):
-        return self._binop("div", other)
-
-    def GetValue(self, point):
-        """
-        Compute value of parameter at a point.
-
-
-        Parameters
-        ----------
-        point : tuple/list of float values
-            coordinate of point
-
-
-        Returns
-        -------
-        out : value
-            The value of the parameter at the point
-
-
-        See also
-        --------
-        CreateParameter : create parameter for e.g., distance dependency
-
-
-        Notes
-        -----
-        -
-
-
-        **Example**
-            ::
-
-                import nest.topology as tp
-
-                #linear dependent parameter
-                P = tp.CreateParameter('linear', {'a' : 2., 'c' : 0.})
-
-                #get out value
-                P.GetValue(point=[3., 4.])
-
-        """
-        return nest.sli_func("GetValue", point, self._datum)
-
+        return nest.sli_func('CreateMask', {masktype: specs, 'anchor': anchor})
 
 def CreateParameter(parametertype, specs):
     """
@@ -487,7 +609,7 @@ def CreateParameter(parametertype, specs):
             tp.ConnectLayers(l, l, conndict)
 
     """
-    return Parameter(nest.sli_func('CreateParameter', {parametertype: specs}))
+    return nest.sli_func('CreateParameter', {parametertype: specs})
 
 
 def CreateLayer(specs):
@@ -598,7 +720,7 @@ def CreateLayer(specs):
     elements = specs['elements']
     hlh.model_deprecation_warning(elements)
 
-    return nest.GIDCollection(nest.sli_func('CreateLayer', specs))
+    return Layer(nest.sli_func('CreateLayer', specs))
 
 
 def ConnectLayers(pre, post, projections):
@@ -763,67 +885,13 @@ def ConnectLayers(pre, post, projections):
         for k, v in d.items():
             if isinstance(v, dict):
                 d[k] = fixdict(v)
-            elif isinstance(v, Mask) or isinstance(v, Parameter):
+            elif isinstance(v, nest.Mask) or isinstance(v, nest.Parameter):
                 d[k] = v._datum
         return d
 
     projections = fixdict(projections)
 
     nest.sli_func('ConnectLayers', pre, post, projections)
-
-
-def GetPosition(nodes):
-    """
-    Return the spatial locations of nodes.
-
-
-    Parameters
-    ----------
-    nodes : tuple/list of int(s)
-        List of GIDs
-
-
-    Returns
-    -------
-    out : tuple of tuple(s)
-        List of positions as 2- or 3-element lists
-
-
-    See also
-    --------
-    Displacement : Get vector of lateral displacement between nodes.
-    Distance : Get lateral distance between nodes.
-    DumpLayerConnections : Write connectivity information to file.
-    DumpLayerNodes : Write layer node positions to file.
-
-
-    Notes
-    -----
-    * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
-      only works for nodes local to the current MPI process, if used in a
-      MPI-parallel simulation.
-
-
-    **Example**
-        ::
-
-            import nest
-            import nest.topology as tp
-
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
-
-            # retrieve positions of all (local) nodes belonging to the layer
-            gids = nest.GetNodes(l, {'local_only': True})[0]
-            tp.GetPosition(gids)
-    """
-
-    if not nest.is_sequence_of_gids(nodes):
-        raise TypeError("nodes must be a sequence of GIDs")
-
-    return nest.sli_func('{ GetPosition } Map', nodes)
 
 
 def GetLayer(nodes):
@@ -868,124 +936,11 @@ def GetLayer(nodes):
             tp.GetLayer(nest.GetNodes(l)[0])
     """
 
+    # TODO481, should this be GetLayerStatus? What should GetLayerStatus return?
     if not nest.is_sequence_of_gids(nodes):
         raise TypeError("nodes must be a sequence of GIDs")
 
     return nest.sli_func('{ GetLayer } Map', nodes)
-
-
-def GetElement(layers, locations):
-    """
-    Return the node(s) at the location(s) in the given layer(s).
-
-    This function works for fixed grid layers only.
-
-    * If layers contains a single GID and locations is a single 2-element
-      array giving a grid location, return a list of GIDs of layer elements
-      at the given location.
-    * If layers is a list with a single GID and locations is a list of
-      coordinates, the function returns a list of lists with GIDs of the nodes
-      at all locations.
-    * If layers is a list of GIDs and locations single 2-element array giving
-      a grid location, the function returns a list of lists with the GIDs of
-      the nodes in all layers at the given location.
-    * If layers and locations are lists, it returns a nested list of GIDs, one
-      list for each layer and each location.
-
-
-    Parameters
-    ----------
-    layers : tuple/list of int(s)
-        List of layer GIDs
-    locations : [tuple/list of floats | tuple/list of tuples/lists of floats]
-        2-element list with coordinates of a single grid location,
-        or list of 2-element lists of coordinates for 2-dimensional layers,
-        i.e., on the format [column, row]
-
-
-    Returns
-    -------
-    out : tuple of int(s)
-        List of GIDs
-
-
-    See also
-    --------
-    GetLayer : Return the layer to which nodes belong.
-    FindNearestElement: Return the node(s) closest to the location(s) in the
-        given layer(s).
-    GetPosition : Return the spatial locations of nodes.
-
-
-    Notes
-    -----
-    -
-
-
-    **Example**
-        ::
-
-            import nest.topology as tp
-
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 4,
-                                'elements'  : 'iaf_psc_alpha'})
-
-            # get GID of element in last row and column
-            tp.GetElement(l, [3, 4])
-    """
-
-    if not nest.is_sequence_of_gids(layers):
-        raise TypeError("layers must be a sequence of GIDs")
-
-    if not len(layers) > 0:
-        raise nest.NESTError("layers cannot be empty")
-
-    if not (nest.is_iterable(locations) and len(locations) > 0):
-        raise nest.NESTError(
-            "locations must be coordinate array or list of coordinate arrays")
-
-    # ensure that all layers are grid-based, otherwise one ends up with an
-    # incomprehensible error message
-    try:
-        nest.sli_func('{ [ /topology [ /rows /columns ] ] get ; } forall',
-                      layers)
-    except:
-        raise nest.NESTError(
-            "layers must contain only grid-based topology layers")
-
-    # SLI GetElement returns either single GID or list
-    def make_tuple(x):
-        if not nest.is_iterable(x):
-            return (x, )
-        else:
-            return x
-
-    if nest.is_iterable(locations[0]):
-
-        # layers and locations are now lists
-        nodes = nest.sli_func(
-            '/locs Set { /lyr Set locs { lyr exch GetElement } Map } Map',
-            layers, locations)
-
-        node_list = tuple(
-            tuple(make_tuple(nodes_at_loc) for nodes_at_loc in nodes_in_lyr)
-            for nodes_in_lyr in nodes)
-
-    else:
-
-        # layers is list, locations is a single location
-        nodes = nest.sli_func('/loc Set { loc GetElement } Map', layers,
-                              locations)
-
-        node_list = tuple(make_tuple(nodes_in_lyr) for nodes_in_lyr in nodes)
-
-    # If only a single layer is given, un-nest list
-    if len(layers) == 1:
-        node_list = node_list[0]
-
-    return node_list
 
 
 def FindNearestElement(layers, locations, find_all=False):
@@ -1106,112 +1061,6 @@ def FindNearestElement(layers, locations, find_all=False):
         return tuple(el[0] for el in result)
     else:
         return tuple(result)
-
-
-def _check_displacement_args(from_arg, to_arg, caller):
-    """
-    Internal helper function to check arguments to Displacement
-    and Distance and make them lists of equal length.
-    """
-
-    import numpy
-
-    if isinstance(from_arg, numpy.ndarray):
-        from_arg = (from_arg, )
-    elif not (nest.is_iterable(from_arg) and len(from_arg) > 0):
-        raise nest.NESTError(
-            "%s: from_arg must be lists of GIDs or positions" % caller)
-    # invariant: from_arg is list
-
-    if not nest.is_sequence_of_gids(to_arg):
-        raise nest.NESTError("%s: to_arg must be lists of GIDs" % caller)
-    # invariant: from_arg and to_arg are sequences
-
-    if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(
-            to_arg):
-        raise nest.NESTError(
-            "%s: If to_arg and from_arg are lists, they must have same length."
-            % caller)
-    # invariant: from_arg and to_arg have equal length,
-    # or (at least) one has length 1
-
-    if len(from_arg) == 1:
-        from_arg = from_arg * len(to_arg)  # this is a no-op if len(to_arg)==1
-    if len(to_arg) == 1:
-        to_arg = to_arg * len(from_arg)  # this is a no-op if len(from_arg)==1
-    # invariant: from_arg and to_arg have equal length
-
-    return from_arg, to_arg
-
-
-def Displacement(from_arg, to_arg):
-    """
-    Get vector of lateral displacement from node(s) `from_arg`
-    to node(s) `to_arg`.
-
-    Displacement is always measured in the layer to which the `to_arg` node
-    belongs. If a node in the `from_arg` list belongs to a different layer,
-    its location is projected into the `to_arg` layer. If explicit positions
-    are given in the `from_arg` list, they are interpreted in the `to_arg`
-    layer.
-    Displacement is the shortest displacement, taking into account
-    periodic boundary conditions where applicable.
-
-    * If one of `from_arg` or `to_arg` has length 1, and the other is longer,
-      the displacement from/to the single item to all other items is given.
-    * If `from_arg` and `to_arg` both have more than two elements, they have
-      to be lists of the same length and the displacement for each pair is
-      returned.
-
-
-    Parameters
-    ----------
-    from_arg : [tuple/list of int(s) | tuple/list of tuples/lists of floats]
-        List of GIDs or position(s)
-    to_arg : tuple/list of int(s)
-        List of GIDs
-
-
-    Returns
-    -------
-    out : tuple
-        Displacement vectors between pairs of nodes in `from_arg` and `to_arg`
-
-
-    See also
-    --------
-    Distance : Get lateral distances between nodes.
-    DumpLayerConnections : Write connectivity information to file.
-    GetPosition : Return the spatial locations of nodes.
-
-
-    Notes
-    -----
-    * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
-      only works for nodes local to the current MPI process, if used in a
-      MPI-parallel simulation.
-
-
-    **Example**
-        ::
-
-            import nest.topology as tp
-
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
-
-            # displacement between node 2 and 3
-            print(tp.Displacement([2], [3]))
-
-            # displacment between the position (0.0., 0.0) and node 2
-            print(tp.Displacement([(0.0, 0.0)], [2]))
-    """
-
-    from_arg, to_arg = _check_displacement_args(from_arg, to_arg,
-                                                'Displacement')
-    return nest.sli_func('{ Displacement } MapThread', [from_arg, to_arg])
 
 
 def Distance(from_arg, to_arg):

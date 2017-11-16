@@ -274,6 +274,16 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
     pool.define( source.get_global_positions_vector() );
   }
 
+  // We only need to check the first in the GIDCollection
+  Node* const first_in_tgt =
+    kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
+  if ( not first_in_tgt->has_proxies() )
+  {
+    throw IllegalConnection(
+      "Topology Divergent connections"
+      " to devices are not possible." );
+  }
+
 // sharing specs on next line commented out because gcc 4.2 cannot handle them
 #pragma omp parallel // default(none) shared(source, target, masked_layer,
                      // target_begin, target_end)
@@ -330,6 +340,16 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
   // 1. Apply Mask to source layer
   // 2. Compute connection probability for each source position
   // 3. Draw source nodes and make connections
+
+  // We only need to check the first in the GIDCollection
+  Node* const first_in_tgt =
+    kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
+  if ( not first_in_tgt->has_proxies() )
+  {
+    throw IllegalConnection(
+      "Topology Divergent connections"
+      " to devices are not possible." );
+  }
 
   GIDCollection::const_iterator target_begin = target_gc->MPI_local_begin();
   GIDCollection::const_iterator target_end = target_gc->end();
@@ -609,6 +629,16 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
+
+  // We only need to check the first in the GIDCollection
+  Node* const first_in_tgt =
+    kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
+  if ( not first_in_tgt->has_proxies() )
+  {
+    throw IllegalConnection(
+      "Topology Divergent connections"
+      " to devices are not possible." );
+  }
 
   GIDCollection::const_iterator target_begin = target_gc->MPI_local_begin();
   GIDCollection::const_iterator target_end = target_gc->end();

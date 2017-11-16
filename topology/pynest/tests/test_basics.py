@@ -284,7 +284,7 @@ class BasicsTestCase(unittest.TestCase):
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_GetCenterElement(self):
         """Interface and result check for finding center element.
-            This function is Py only, so we also need to check results."""
+           This function is Py only, so we also need to check results."""
         # nodes at [-1,0,1]x[-1,0,1], column-wise
         ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
                  'extent': (2., 2.)}
@@ -293,11 +293,11 @@ class BasicsTestCase(unittest.TestCase):
 
         # single layer
         n = topo.FindCenterElement(l)
-        self.assertEqual(n, (6,))
+        self.assertEqual(n, (5,))
 
         # two layers
-        n = topo.FindCenterElement(l * 2)
-        self.assertEqual(n, (6,) * 2)
+        n = topo.FindCenterElement([l, l])
+        self.assertEqual(n, (5,) * 2)
 
     def test_GetTargetNodesPositions(self):
         """Interface check for finding targets."""

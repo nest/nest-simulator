@@ -1304,7 +1304,7 @@ def FindCenterElement(layers):
 
     Parameters
     ----------
-    layers : tuple/list of int(s)
+    layers : tuple/list of int(s) or Layer
         List of layer GIDs
 
 
@@ -1344,13 +1344,15 @@ def FindCenterElement(layers):
             tp.FindCenterElement(l)
     """
 
-    if not nest.is_sequence_of_gids(layers):
-        raise TypeError("layers must be a sequence of GIDs")
+    # TODO481 should this be part of Layer?
+    # TODO481 are we allowed to send in several layers?    
+    # TODO481 only if several layers are allowed.
+    if isinstance(layers, Layer):
+       layers = [layers,] 
 
     # Do each layer on its own since FindNearestElement does not thread
     return tuple(FindNearestElement((lyr, ),
-                                    nest.GetStatus((lyr, ), 'topology')[0][
-                                        'center'])[0]
+                                    nest.GetStatus(lyr[:1])[0]['center'])[0]
                  for lyr in layers)
 
 

@@ -163,7 +163,7 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
             # for multiplicative coupling
             a = g * self.drive * self.weight * \
                 nest.GetStatus(self.rate_neuron_4)[0]['g_ex']
-            theta = nest.GetStatus(self.rate_neuron_4)[0]['theta']
+            theta = nest.GetStatus(self.rate_neuron_4)[0]['theta_ex']
 
             if ls:
 

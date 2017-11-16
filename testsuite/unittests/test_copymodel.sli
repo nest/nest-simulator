@@ -39,17 +39,17 @@
 /unittest using
 
 % Checks for consistent operation for node models 
-/iaf_neuron /my_iaf_neuron1 CopyModel
+/iaf_psc_alpha /my_iaf_psc_alpha1 CopyModel
 /neuron_params << /V_m -66.6 >> def
-/iaf_neuron /my_iaf_neuron2 neuron_params CopyModel
+/iaf_psc_alpha /my_iaf_psc_alpha2 neuron_params CopyModel
 
-/iaf_neuron     GetDefaults /V_m get
-/my_iaf_neuron1 GetDefaults /V_m get
+/iaf_psc_alpha     GetDefaults /V_m get
+/my_iaf_psc_alpha1 GetDefaults /V_m get
 eq assert_or_die
 
-/iaf_neuron neuron_params SetDefaults
-/iaf_neuron     GetDefaults /V_m get
-/my_iaf_neuron2 GetDefaults /V_m get
+/iaf_psc_alpha neuron_params SetDefaults
+/iaf_psc_alpha     GetDefaults /V_m get
+/my_iaf_psc_alpha2 GetDefaults /V_m get
 eq assert_or_die
 
 % Checks for consistent operation for synapse models

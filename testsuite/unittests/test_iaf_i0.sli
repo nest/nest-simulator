@@ -21,14 +21,14 @@
  */
 
  /* BeginDocumentation
-Name: testsuite::test_iaf_i0 - sli script for test of iaf_neuron internal DC current
+Name: testsuite::test_iaf_i0 - sli script for test of iaf_psc_alpha internal DC current
 
 Synopsis: (test_iaf_i0) run -> compares response to internal dc with reference data
 
 
 Description:
 
- test_iaf_i0.sli is a test of a specific feature of the iaf_neuron
+ test_iaf_i0.sli is a test of a specific feature of the iaf_psc_alpha
  model. It is tested whether an internal DC current that is present
  from the time of neuron initialization, correctly affects the membrane
  potential.
@@ -44,7 +44,7 @@ Description:
   
 
 Author:  February 2004, Diesmann, Gewaltig, Plesser
-SeeAlso: iaf_neuron
+SeeAlso: iaf_psc_alpha
 */
 
 (unittest) run
@@ -61,7 +61,7 @@ ResetKernel
 
 
 
-/iaf_neuron Create /neuron Set
+/iaf_psc_alpha Create /neuron Set
 neuron << /I_e 1000.0 >> SetStatus
 
 % we must manually set the recording interval to single time step

@@ -41,7 +41,7 @@
 /local_num_threads 256
 >> SetStatus
 
-/id_neuron /iaf_neuron 1 Create def
+/id_neuron /iaf_psc_alpha 1 Create def
 /id_generator /noise_generator 1 Create def
 
 id_generator <<

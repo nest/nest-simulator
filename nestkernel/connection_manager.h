@@ -294,6 +294,25 @@ public:
    */
   DelayChecker& get_delay_checker();
 
+  /**
+   * Returns initial connector capacity.
+   * When a connector is first created, it starts with this capacity
+   * (if >= connector_cutoff).
+   */
+  size_t get_initial_connector_capacity() const;
+
+  /**
+   * Return large connector limit.
+   * Capacity doubling is used up to this limit.
+   */
+  size_t get_large_connector_limit() const;
+
+  /**
+   * Returns large connector growth factor.
+   * This capacity growth factor is used beyond the large connector limit.
+   */
+  double get_large_connector_growth_factor() const;
+
 private:
   /**
    * Update delay extrema to current values.
@@ -388,6 +407,18 @@ private:
   delay min_delay_; //!< Value of the smallest delay in the network.
 
   delay max_delay_; //!< Value of the largest delay in the network in steps.
+
+  /**
+   * When a connector is first created, it starts with this capacity
+   * (if >= connector_cutoff)
+   */
+  size_t initial_connector_capacity_;
+
+  //! Capacity doubling is used up to this limit
+  size_t large_connector_limit_;
+
+  //! Capacity growth factor to use beyond the limit
+  double large_connector_growth_factor_;
 };
 
 inline DictionaryDatum&
@@ -406,6 +437,24 @@ inline delay
 ConnectionManager::get_max_delay() const
 {
   return max_delay_;
+}
+
+inline size_t
+ConnectionManager::get_initial_connector_capacity() const
+{
+  return initial_connector_capacity_;
+}
+
+inline size_t
+ConnectionManager::get_large_connector_limit() const
+{
+  return large_connector_limit_;
+}
+
+inline double
+ConnectionManager::get_large_connector_growth_factor() const
+{
+  return large_connector_growth_factor_;
 }
 
 } // namespace nest

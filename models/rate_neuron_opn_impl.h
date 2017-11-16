@@ -186,11 +186,13 @@ template < class TNonlinearities >
 void
 nest::rate_neuron_opn< TNonlinearities >::init_buffers_()
 {
-  B_.delayed_rates_.clear(); // includes resize
+  B_.delayed_rates_ex_.clear(); // includes resize
+  B_.delayed_rates_in_.clear(); // includes resize
 
   // resize buffers
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
-  B_.instant_rates_.resize( buffer_size, 0.0 );
+  B_.instant_rates_ex_.resize( buffer_size, 0.0 );
+  B_.instant_rates_in_.resize( buffer_size, 0.0 );
   B_.last_y_values.resize( buffer_size, 0.0 );
   B_.random_numbers.resize( buffer_size, numerics::nan );
 
@@ -261,15 +263,23 @@ nest::rate_neuron_opn< TNonlinearities >::update_( Time const& origin,
       {
         S_.rate_ += V_.P2_
           * nonlinearities_.mult_coupling_ex( new_rates[ lag ] )
-          * nonlinearities_.input( B_.delayed_rates_.get_value_wfr_update( lag )
-              + B_.instant_rates_[ lag ] );
+          * nonlinearities_.input( B_.delayed_rates_ex_.get_value_wfr_update(
+                                     lag ) + B_.instant_rates_ex_[ lag ] );
+        S_.rate_ += V_.P2_
+          * nonlinearities_.mult_coupling_in( new_rates[ lag ] )
+          * nonlinearities_.input( B_.delayed_rates_in_.get_value_wfr_update(
+                                     lag ) + B_.instant_rates_in_[ lag ] );
       }
       else
       {
         S_.rate_ += V_.P2_
           * nonlinearities_.mult_coupling_ex( new_rates[ lag ] )
-          * ( B_.delayed_rates_.get_value_wfr_update( lag )
-                      + B_.instant_rates_[ lag ] );
+          * ( B_.delayed_rates_ex_.get_value_wfr_update( lag )
+                      + B_.instant_rates_ex_[ lag ] );
+        S_.rate_ += V_.P2_
+          * nonlinearities_.mult_coupling_in( new_rates[ lag ] )
+          * ( B_.delayed_rates_in_.get_value_wfr_update( lag )
+                      + B_.instant_rates_in_[ lag ] );
       }
 
       // check if deviation from last iteration exceeds wfr_tol
@@ -284,14 +294,23 @@ nest::rate_neuron_opn< TNonlinearities >::update_( Time const& origin,
       {
         S_.rate_ += V_.P2_
           * nonlinearities_.mult_coupling_ex( new_rates[ lag ] )
-          * nonlinearities_.input(
-              B_.delayed_rates_.get_value( lag ) + B_.instant_rates_[ lag ] );
+          * nonlinearities_.input( B_.delayed_rates_ex_.get_value( lag )
+              + B_.instant_rates_ex_[ lag ] );
+        S_.rate_ += V_.P2_
+          * nonlinearities_.mult_coupling_in( new_rates[ lag ] )
+          * nonlinearities_.input( B_.delayed_rates_in_.get_value( lag )
+              + B_.instant_rates_in_[ lag ] );
       }
       else
       {
         S_.rate_ += V_.P2_
           * nonlinearities_.mult_coupling_ex( new_rates[ lag ] )
-          * ( B_.delayed_rates_.get_value( lag ) + B_.instant_rates_[ lag ] );
+          * ( B_.delayed_rates_ex_.get_value( lag )
+                      + B_.instant_rates_ex_[ lag ] );
+        S_.rate_ += V_.P2_
+          * nonlinearities_.mult_coupling_in( new_rates[ lag ] )
+          * ( B_.delayed_rates_in_.get_value( lag )
+                      + B_.instant_rates_in_[ lag ] );
       }
       // rate logging
       B_.logger_.record_data( origin.get_steps() + lag );
@@ -328,7 +347,8 @@ nest::rate_neuron_opn< TNonlinearities >::update_( Time const& origin,
   kernel().event_delivery_manager.send_secondary( *this, rve );
 
   // Reset variables
-  std::vector< double >( buffer_size, 0.0 ).swap( B_.instant_rates_ );
+  std::vector< double >( buffer_size, 0.0 ).swap( B_.instant_rates_ex_ );
+  std::vector< double >( buffer_size, 0.0 ).swap( B_.instant_rates_in_ );
 
   return wfr_tol_exceeded;
 }
@@ -346,12 +366,27 @@ nest::rate_neuron_opn< TNonlinearities >::handle(
   {
     if ( P_.linear_summation_ )
     {
-      B_.instant_rates_[ i ] += e.get_weight() * e.get_coeffvalue( it );
+      if ( e.get_weight() >= 0.0 )
+      {
+        B_.instant_rates_ex_[ i ] += e.get_weight() * e.get_coeffvalue( it );
+      }
+      else
+      {
+        B_.instant_rates_in_[ i ] += e.get_weight() * e.get_coeffvalue( it );
+      }
     }
     else
     {
-      B_.instant_rates_[ i ] +=
-        e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) );
+      if ( e.get_weight() >= 0.0 )
+      {
+        B_.instant_rates_ex_[ i ] +=
+          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) );
+      }
+      else
+      {
+        B_.instant_rates_in_[ i ] +=
+          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) );
+      }
     }
     i++;
   }
@@ -369,15 +404,33 @@ nest::rate_neuron_opn< TNonlinearities >::handle(
   {
     if ( P_.linear_summation_ )
     {
-      B_.delayed_rates_.add_value(
-        e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-        e.get_weight() * e.get_coeffvalue( it ) );
+      if ( e.get_weight() >= 0.0 )
+      {
+        B_.delayed_rates_ex_.add_value(
+          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+          e.get_weight() * e.get_coeffvalue( it ) );
+      }
+      else
+      {
+        B_.delayed_rates_in_.add_value(
+          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+          e.get_weight() * e.get_coeffvalue( it ) );
+      }
     }
     else
     {
-      B_.delayed_rates_.add_value(
-        e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-        e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) ) );
+      if ( e.get_weight() >= 0.0 )
+      {
+        B_.delayed_rates_ex_.add_value(
+          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) ) );
+      }
+      else
+      {
+        B_.delayed_rates_in_.add_value(
+          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) ) );
+      }
     }
     ++i;
   }

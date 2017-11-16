@@ -21,7 +21,7 @@
  */
 
  /* BeginDocumentation
-Name: testsuite::test_iaf_i0_refractory - sli script for test of iaf_neuron internal DC current
+Name: testsuite::test_iaf_i0_refractory - sli script for test of iaf_psc_alpha internal DC current
 
 Synopsis: (test_iaf_i0_refractory) run -> compare cout with comments in file
 
@@ -29,7 +29,7 @@ Synopsis: (test_iaf_i0_refractory) run -> compare cout with comments in file
 Description:
 
  test_iaf_i0_refractory.sli is a test of a specific feature of the
- iaf_neuron model. It is tested whether the voltage traces of simulations
+ iaf_psc_alpha model. It is tested whether the voltage traces of simulations
  carried out at different resolutions (computation step sizes) are well
  aligned and identical when the neuron recovers from refractoriness.
 
@@ -41,7 +41,7 @@ Description:
  reported at time 3.0 ms, corresponding to computation step 30, 15, 6, 
  and 3, respectively.
 
- The results are consistent with those of iaf_neuron_ps capable of
+ The results are consistent with those of iaf_psc_alpha_canon capable of
  handling off-grid spike timing when the interpolation order is set to
  0.
 
@@ -51,7 +51,7 @@ Description:
  The file is an extended version of test_iaf_i0.sli .
 
 Author:  July 2004, Diesmann
-SeeAlso: iaf_neuron, testsuite::test_iaf_i0
+SeeAlso: iaf_psc_alpha, testsuite::test_iaf_i0
 */
 
 (unittest) run
@@ -73,7 +73,7 @@ ResetKernel
      >> SetStatus
 
 
-/iaf_neuron Create /neuron Set
+/iaf_psc_alpha Create /neuron Set
 neuron << /I_e 1450.0 >> SetStatus  
 
 

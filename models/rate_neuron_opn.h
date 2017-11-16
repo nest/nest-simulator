@@ -44,7 +44,11 @@ namespace nest
 /**
  * Base class for rate model with output noise.
  *
- * This class needs to be instantiated with a gain function.
+ * This template class needs to be instantiated with a class
+ * containing the following functions:
+ *  - input (nonlinearity that is applied to the input)
+ *  - mult_coupling_ex (factor of multiplicative coupling for excitatory input)
+ *  - mult_coupling_in (factor of multiplicative coupling for inhibitory input)
  *
  * References:
  *
@@ -177,8 +181,15 @@ private:
     Buffers_( const Buffers_&, rate_neuron_opn& );
 
 
-    RingBuffer delayed_rates_; //!< buffer for rate vector received by
-    // RateConnectionDelayed
+    RingBuffer delayed_rates_ex_; //!< buffer for rate vector received by
+    // RateConnectionDelayed from excitatory neurons
+    RingBuffer delayed_rates_in_; //!< buffer for rate vector received by
+    // RateConnectionDelayed from inhibitory neurons
+    std::vector< double >
+      instant_rates_ex_; //!< buffer for rate vector received
+    // by RateConnectionInstantaneous from excitatory neurons
+    std::vector< double >
+      instant_rates_in_;                  //!< buffer for rate vector received
     std::vector< double > instant_rates_; //!< buffer for rate vector received
     // by RateConnectionInstantaneous
     std::vector< double >

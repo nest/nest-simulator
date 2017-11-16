@@ -276,8 +276,9 @@ extern const Name index_map;               //!< Parameters for MUSIC devices
 extern const Name individual_spike_trains; //!< Generator parameters
 extern const Name inh_conductance;         //!< Recorder parameter
 extern const Name init_flag; //!< Used by stdp_connection_facetshw_hom
-extern const Name instant_unblock_NMDA; //!< specific to Hill-Tononi
-extern const Name instantiations;       //!< model paramater
+extern const Name initial_connector_capacity; //!< Initial Connector capacity
+extern const Name instant_unblock_NMDA;       //!< specific to Hill-Tononi
+extern const Name instantiations;             //!< model paramater
 extern const Name
   Interpol_Order;           //!< Interpolation order (precise timing neurons)
 extern const Name interval; //!< Recorder parameter
@@ -286,9 +287,12 @@ extern const Name is_refractory; //!< Neuron is in refractory period (debugging)
 extern const Name Kplus;         //!< Used by stdp_connection_facetshw_hom
 extern const Name Kplus_triplet; //!< Used by stdp_connection_facetshw_hom
 
-extern const Name label;      //!< Miscellaneous parameters
-extern const Name lambda;     //!< stdp_synapse and rate model parameter
-extern const Name lambda_0;   //!< Specific to gif models
+extern const Name label;    //!< Miscellaneous parameters
+extern const Name lambda;   //!< stdp_synapse parameter
+extern const Name lambda_0; //!< Specific to gif models
+extern const Name
+  large_connector_growth_factor;         //! Growth factor for large connectors
+extern const Name large_connector_limit; //! Cutoff for large connectors
 extern const Name len_kernel; //!< Specific to population point process model
                               //!< (pp_pop_psc_delta)
 extern const Name linear;     //!< Parameter for MSP growth curves
@@ -536,10 +540,10 @@ extern const Name tau_w; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name theta; //!< Did not compile without (theta neuron problem)
 extern const Name theta_eq; //!< specific to Hill & Tononi 2005
 extern const Name theta_ex; //!< specific to rate neurons (offset excitatory
-                            //multiplicative coupling)
+// multiplicative coupling)
 extern const Name theta_in; //!< specific to rate neurons (offset inhibitory
-                            //multiplicative coupling)
-extern const Name thread;   //!< Node parameter
+// multiplicative coupling)
+extern const Name thread;                  //!< Node parameter
 extern const Name thread_local_id;         //!< Thead-local ID of node,
                                            //!< see Kunkel et al 2014, Sec 3.3.2
 extern const Name tics_per_ms;             //!< Simulation-related

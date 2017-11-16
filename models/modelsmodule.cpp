@@ -63,7 +63,6 @@
 #include "iaf_cond_alpha_mc.h"
 #include "iaf_cond_exp.h"
 #include "iaf_cond_exp_sfa_rr.h"
-#include "iaf_neuron.h"
 #include "iaf_psc_alpha.h"
 #include "iaf_psc_alpha_multisynapse.h"
 #include "iaf_psc_delta.h"
@@ -210,9 +209,6 @@ ModelsModule::init( SLIInterpreter* )
     "threshold_lin_rate_ipn" );
   kernel().model_manager.register_node_model< threshold_lin_rate_parrot >(
     "threshold_lin_rate_parrot" );
-  kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron",
-    /* private_model */ false,
-    /* deprecation_info */ "NEST 3.0" );
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >(
     "iaf_psc_alpha" );

@@ -48,10 +48,10 @@ skip_if_not_threaded
 
  0 << /total_num_virtual_procs 4 >> SetStatus
 
- /iaf_neuron Create /n1 Set
- /iaf_neuron Create /n2 Set
- /iaf_neuron Create /n3 Set
- /iaf_neuron Create /n4 Set
+ /iaf_psc_alpha Create /n1 Set
+ /iaf_psc_alpha Create /n2 Set
+ /iaf_psc_alpha Create /n3 Set
+ /iaf_psc_alpha Create /n4 Set
 
  n3 /local get                                      % only a single job should generate output
  {

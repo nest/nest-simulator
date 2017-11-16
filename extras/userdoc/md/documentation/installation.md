@@ -13,9 +13,9 @@ For more generic installation instructions, see the `INSTALL` file in the top so
 Following are the basic steps to compile and install NEST from source code:
 
 1.  [Download NEST](download.md)
-1.  Unpack the tarball: `tar -xzvf nest-x.y.z.tar.gz`
-1.  Create a build directory: `mkdir nest-x.y.z-build`
-1.  Change to the build directory: `cd nest-x.y.z-build`
+1.  Unpack the tarball: `tar -xzvf nest-simulator-x.y.z.tar.gz`
+1.  Create a build directory: `mkdir nest-simulator-x.y.z-build`
+1.  Change to the build directory: `cd nest-simulator-x.y.z-build`
 1.  Configure NEST: `cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>` with
 additional `cmake` options as needed (see `INSTALL` file; `/install/path` should be an
 absolute path)
@@ -170,11 +170,11 @@ Installation instructions here have been tested under OS X 10.11 *El Capitan* an
 
 4.  Create a directory for building and installing NEST (you should always build NEST outside the source code directory; installing NEST in a "place of its own" makes it easy to remove NEST later).
 
-5.  Extract the NEST tarball as a subdirectory in that directory or clone NEST from Github into a subdirectory. 
+5.  Extract the NEST tarball as a subdirectory in that directory or clone NEST from GitHub into a subdirectory. 
 
         mkdir NEST       # directory for all NEST stuff
         cd NEST
-        tar zxf nest-2.14.0.tar.gz
+        tar zxf nest-simulator-x.y.z.tar.gz
         mkdir bld
         cd bld
 
@@ -256,13 +256,13 @@ Following are the basic steps to compile and install NEST from source code:
 
 1.  [Download NEST](download.md)
 
-2.  Unpack the tarball: `tar -xzvf nest-x.y.z.tar.gz`
+2.  Unpack the tarball: `tar -xzvf nest-simulator-x.y.z.tar.gz`
 
-3.  Create a build directory: `mkdir nest-x.y.z-build`
+3.  Create a build directory: `mkdir nest-simulator-x.y.z-build`
 
-4.  Change to the build directory: `cd nest-x.y.z-build`
+4.  Change to the build directory: `cd nest-simulator-x.y.z-build`
 
-5.  Configure NEST: `../nest-x.y.z/configure` with appropriate
+5.  Configure NEST: `../nest-simulator-x.y.z/configure` with appropriate
      configuration options
 
 6.  Compile by running `make`
@@ -315,11 +315,11 @@ and parallel computing facilities will be disabled.
 To compile NEST without external packages, use the following command line to
 configure it:
 
-    tar -xzvf nest-x.y.z.tar.gz
-    mkdir nest-x.y.z-build
-    cd nest-x.y.z-build
+    tar -xzvf nest-simulator-x.y.z.tar.gz
+    mkdir nest-simulator-x.y.z-build
+    cd nest-simulator-x.y.z-build
 
-    ../nest-x.y.z/configure
+    ../nest-simulator-x.y.z/configure
         --prefix=$HOME/opt/nest
         --without-python
         --without-readline
@@ -336,7 +336,7 @@ command line:
 
 Then configure NEST using:
 
-    ../nest-x.y.z/configure --prefix=$HOME/opt/nest
+    ../nest-simulator-x.y.z/configure --prefix=$HOME/opt/nest
 
 ## Configuration options
 
@@ -361,7 +361,7 @@ then crash Python. Either make sure that gcc and g++ are the system compiler,
 or force compilation with the system compiler, configure like this (append any
 other configure options):
 
-    ../nest-x.y.z/configure CC=/usr/bin/gcc CXX=/usr/bin/g++
+    ../nest-simulator-x.y.z/configure CC=/usr/bin/gcc CXX=/usr/bin/g++
 
 #### MPI issues
 

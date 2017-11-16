@@ -186,8 +186,6 @@ class BasicsTestCase(unittest.TestCase):
         # gids -> gids, all displacements must be zero here
         d = l.Distance(n, n)
         self.assertEqual(len(d), len(n))
-        for dd in d:
-            print(dd)
         self.assertTrue(all([dd == 0. for dd in d]))
 
         # single gid -> gids
@@ -239,7 +237,7 @@ class BasicsTestCase(unittest.TestCase):
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_FindElements(self):
         """Interface and result check for finding nearest element.
-            This function is Py only, so we also need to check results."""
+           This function is Py only, so we also need to check results."""
         # nodes at [-1,0,1]x[-1,0,1], column-wise
         ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
                  'extent': (3., 3.)}
@@ -248,34 +246,40 @@ class BasicsTestCase(unittest.TestCase):
 
         # single location at center
         n = topo.FindNearestElement(l, (0., 0.))
-        self.assertEqual(n, (6,))
+        self.assertEqual(n, (5,))
 
         # single location, two layers
-        n = topo.FindNearestElement(l * 2, (0., 0.))
-        self.assertEqual(n, (6, 6))
+        # TODO481 Is l * 2 allowed?
+        #n = topo.FindNearestElement(l * 2, (0., 0.))
+        n = topo.FindNearestElement([l, l], (0., 0.))
+        self.assertEqual(n, (5, 5))
 
         # two locations, one layer
         n = topo.FindNearestElement(l, ((0., 0.), (1., 1.)))
-        self.assertEqual(n, (6, 8))
+        self.assertEqual(n, (5, 7))
 
         # two locations, two layers
-        n = topo.FindNearestElement(l * 2, ((0., 0.), (1., 1.)))
-        self.assertEqual(n, ((6, 8),) * 2)
+        # TODO481
+        #n = topo.FindNearestElement(l * 2, ((0., 0.), (1., 1.)))
+        n = topo.FindNearestElement([l, l], ((0., 0.), (1., 1.)))
+        self.assertEqual(n, ((5, 7),) * 2)
 
         # several closest locations, not all
         n = topo.FindNearestElement(l, (0.5, 0.5))
         self.assertEqual(len(n), 1)
-        self.assertEqual(1, sum(n[0] == k for k in (5, 6, 8, 9)))
+        self.assertEqual(1, sum(n[0] == k for k in (4, 5, 7, 8)))
 
         # several closest locations, all
         n = topo.FindNearestElement(l, (0.5, 0.5), find_all=True)
         self.assertEqual(len(n), 1)
-        self.assertEqual(n, ((5, 6, 8, 9),))
+        self.assertEqual(n, ((4, 5, 7, 8),))
 
         # complex case
-        n = topo.FindNearestElement(l * 2, ((0., 0.), (0.5, 0.5)),
+        # TODO481
+        #n = topo.FindNearestElement(l * 2, ((0., 0.), (0.5, 0.5)),
+        n = topo.FindNearestElement([l, l], ((0., 0.), (0.5, 0.5)),
                                     find_all=True)
-        self.assertEqual(n, (((6,), (5, 6, 8, 9)),) * 2)
+        self.assertEqual(n, (((5,), (4, 5, 7, 8)),) * 2)
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_GetCenterElement(self):

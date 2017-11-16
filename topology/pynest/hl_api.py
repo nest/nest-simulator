@@ -1037,7 +1037,7 @@ def FindNearestElement(layers, locations, find_all=False):
 
     Parameters
     ----------
-    layers : tuple/list of int(s)
+    layers : tuple/list of int(s) or GIDCollection
         List of layer GIDs
     locations : tuple(s)/list(s) of tuple(s)/list(s)
         2-element list with coordinates of a single position, or list of
@@ -1083,8 +1083,10 @@ def FindNearestElement(layers, locations, find_all=False):
 
     import numpy
 
-    if not nest.is_sequence_of_gids(layers):
-        raise TypeError("layers must be a sequence of GIDs")
+    # TODO481, should you be able to send in several layers?
+
+    #if not nest.is_sequence_of_gids(layers):
+    #    raise TypeError("layers must be a sequence of GIDs")
 
     if not len(layers) > 0:
         raise nest.NESTError("layers cannot be empty")
@@ -1096,29 +1098,34 @@ def FindNearestElement(layers, locations, find_all=False):
     # ensure locations is sequence, keeps code below simpler
     if not nest.is_iterable(locations[0]):
         locations = (locations, )
+        
+    # TODO481 only if several layers are allowed.
+    if isinstance(layers, Layer):
+       layers = [layers,] 
 
     result = []  # collect one list per layer
     # loop over layers
     for lyr in layers:
-        els = nest.GetChildren((lyr, ))[0]
-
+        if not isinstance(lyr, nest.GIDCollection):
+            raise TypeError("layers must be a GIDCollection")
+        
         lyr_result = []
         # loop over locations
         for loc in locations:
-            d = Distance(numpy.array(loc), els)
+            d = lyr.Distance(numpy.array(loc), [gid for gid in lyr])
 
             if not find_all:
                 dx = numpy.argmin(d)  # finds location of one minimum
-                lyr_result.append(els[dx])
+                lyr_result.append(lyr[dx])
             else:
-                mingids = list(els[:1])
+                mingids = list(lyr[:1])
                 minval = d[0]
-                for idx in range(1, len(els)):
+                for idx in range(1, len(lyr)):
                     if d[idx] < minval:
-                        mingids = [els[idx]]
+                        mingids = [lyr[idx]]
                         minval = d[idx]
                     elif numpy.abs(d[idx] - minval) <= 1e-14 * minval:
-                        mingids.append(els[idx])
+                        mingids.append(lyr[idx])
                 lyr_result.append(tuple(mingids))
         result.append(tuple(lyr_result))
 

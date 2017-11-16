@@ -65,6 +65,7 @@ Parameters:
  g_in                double - Linear factor in multiplicative coupling.
  theta_ex            double - Shift in multiplicative coupling.
  theta_in            double - Shift in multiplicative coupling.
+ rectify_output      bool   - Switch to restrict rate to values >= 0
 
 References:
 

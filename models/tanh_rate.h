@@ -57,6 +57,7 @@ Parameters:
  g                   double - Gain parameter
  theta               double - Inflection point
  linear_summation    bool   - Specifies type of non-linearity (see above)
+ rectify_output      bool   - Switch to restrict rate to values >= 0
 
 Note:
 The boolean parameter linear_summation determines whether the

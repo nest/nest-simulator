@@ -63,7 +63,8 @@ Parameters:
  g                   double - Gain parameter
  theta               double - First Threshold
  alpha               double - Second Threshold
- linear_summation    boole  - Specifies type of non-linearity (see above)
+ linear_summation    bool   - Specifies type of non-linearity (see above)
+ rectify_output      bool   - Switch to restrict rate to values >= 0
 
 Note:
 The boolean parameter linear_summation determines whether the

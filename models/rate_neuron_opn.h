@@ -181,8 +181,15 @@ private:
     Buffers_( const Buffers_&, rate_neuron_opn& );
 
 
-    RingBuffer delayed_rates_; //!< buffer for rate vector received by
-    // RateConnectionDelayed
+    RingBuffer delayed_rates_ex_; //!< buffer for rate vector received by
+    // RateConnectionDelayed from excitatory neurons
+    RingBuffer delayed_rates_in_; //!< buffer for rate vector received by
+    // RateConnectionDelayed from inhibitory neurons
+    std::vector< double >
+      instant_rates_ex_; //!< buffer for rate vector received
+    // by RateConnectionInstantaneous from excitatory neurons
+    std::vector< double >
+      instant_rates_in_;                  //!< buffer for rate vector received
     std::vector< double > instant_rates_; //!< buffer for rate vector received
     // by RateConnectionInstantaneous
     std::vector< double >

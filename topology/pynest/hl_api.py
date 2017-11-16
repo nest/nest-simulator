@@ -319,15 +319,87 @@ class Layer(nest.GIDCollection):
                                     'elements'  : 'iaf_psc_alpha'})
         
                 # displacement between node 2 and 3
-                print(tp.Displacement([2], [3]))
+                print(l.Displacement(l[1], l[2]))
         
                 # displacment between the position (0.0., 0.0) and node 2
-                print(tp.Displacement([(0.0, 0.0)], [2]))
+                print(l.Displacement([(0.0, 0.0)], [2]))
         """
         # TODO481 Remember to check that we get an error if layer is called with from_arg
         from_arg, to_arg = self._check_displacement_args(from_arg, to_arg,
                                                     'Displacement')
         return nest.sli_func('/from_to Set /lyr Set from_to { lyr rollu Displacement } MapThread', self.layer, [from_arg, to_arg])
+    
+    
+    def Distance(self, from_arg, to_arg):
+        """
+        Get lateral distances from node(s) from_arg to node(s) to_arg.
+    
+        The distance between two nodes is the length of its displacement.
+    
+        # TODO481
+        Distance is always measured in the layer to which the `to_arg` node
+        belongs. If a node in the `from_arg` list belongs to a different layer,
+        its location is projected into the `to_arg` layer. If explicit positions
+        are given in the `from_arg` list, they are interpreted in the `to_arg`
+        layer.
+        Distance is the shortest distance, taking into account periodic boundary
+        conditions where applicable.
+    
+        * If one of `from_arg` or `to_arg` has length 1, and the other is longer,
+          the displacement from/to the single item to all other items is given.
+        * If `from_arg` and `to_arg` both have more than two elements, they have
+          to be lists of the same length and the distance for each pair is
+          returned.
+    
+    
+        Parameters
+        ----------
+        from_arg : [tuple/list of ints | tuple/list with tuples/lists of floats]
+            List of GIDs or position(s)
+        to_arg : tuple/list of ints
+            List of GIDs
+    
+    
+        Returns
+        -------
+        out : tuple
+            Distances between from and to
+    
+    
+        See also
+        --------
+        Displacement : Get vector of lateral displacements between nodes.
+        DumpLayerConnections : Write connectivity information to file.
+        GetPosition : Return the spatial locations of nodes.
+    
+    
+        Notes
+        -----
+        * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
+          only works for nodes local to the current MPI process, if used in a
+          MPI-parallel simulation.
+    
+    
+        **Example**
+            ::
+    
+                import nest.topology as tp
+    
+                # create a layer
+                l = tp.CreateLayer({'rows'      : 5,
+                                    'columns'   : 5,
+                                    'elements'  : 'iaf_psc_alpha'})
+    
+                # distance between node 2 and 3
+                print(l.Distance([2], [3]))
+    
+                # distance between the position (0.0., 0.0) and node 2
+                print(l.Distance([(0.0, 0.0)], [2]))
+    
+        """
+    
+        from_arg, to_arg = self._check_displacement_args(from_arg, to_arg, 'Distance')
+        return nest.sli_func('/from_to Set /lyr Set from_to { lyr rollu Distance } MapThread', self.layer, [from_arg, to_arg])
 
 
 def CreateMask(masktype, specs, anchor=None):
@@ -1062,77 +1134,6 @@ def FindNearestElement(layers, locations, find_all=False):
         return tuple(el[0] for el in result)
     else:
         return tuple(result)
-
-
-def Distance(from_arg, to_arg):
-    """
-    Get lateral distances from node(s) from_arg to node(s) to_arg.
-
-    The distance between two nodes is the length of its displacement.
-
-    Distance is always measured in the layer to which the `to_arg` node
-    belongs. If a node in the `from_arg` list belongs to a different layer,
-    its location is projected into the `to_arg` layer. If explicit positions
-    are given in the `from_arg` list, they are interpreted in the `to_arg`
-    layer.
-    Distance is the shortest distance, taking into account periodic boundary
-    conditions where applicable.
-
-    * If one of `from_arg` or `to_arg` has length 1, and the other is longer,
-      the displacement from/to the single item to all other items is given.
-    * If `from_arg` and `to_arg` both have more than two elements, they have
-      to be lists of the same length and the distance for each pair is
-      returned.
-
-
-    Parameters
-    ----------
-    from_arg : [tuple/list of ints | tuple/list with tuples/lists of floats]
-        List of GIDs or position(s)
-    to_arg : tuple/list of ints
-        List of GIDs
-
-
-    Returns
-    -------
-    out : tuple
-        Distances between from and to
-
-
-    See also
-    --------
-    Displacement : Get vector of lateral displacements between nodes.
-    DumpLayerConnections : Write connectivity information to file.
-    GetPosition : Return the spatial locations of nodes.
-
-
-    Notes
-    -----
-    * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
-      only works for nodes local to the current MPI process, if used in a
-      MPI-parallel simulation.
-
-
-    **Example**
-        ::
-
-            import nest.topology as tp
-
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
-
-            # distance between node 2 and 3
-            print(tp.Distance([2], [3]))
-
-            # distance between the position (0.0., 0.0) and node 2
-            print(tp.Distance([(0.0, 0.0)], [2]))
-
-    """
-
-    from_arg, to_arg = _check_displacement_args(from_arg, to_arg, 'Distance')
-    return nest.sli_func('{ Distance } MapThread', [from_arg, to_arg])
 
 
 def _rank_specific_filename(basename):

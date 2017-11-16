@@ -144,7 +144,7 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(len(d), len(n))
         self.assertTrue(all(len(dd) == 2 for dd in d))
         
-        # Difference between gid 1 and 6. They are on the same y-axis, and
+        # Displacement between gid 1 and 6. They are on the same y-axis, and
         # directly next to each other on the x-axis, so the displacement on
         # x-axis should be approximately -dx, while the displacement on the
         # y-axis should be 0.
@@ -153,7 +153,7 @@ class BasicsTestCase(unittest.TestCase):
         self.assertAlmostEqual(d[0][0], -dx, 3)
         self.assertEqual(d[0][1], 0.0)
         
-        # Difference between gid 1 and 2. They are on the same x-axis, and
+        # Displacement between gid 1 and 2. They are on the same x-axis, and
         # directly next to each other on the y-axis, so the displacement on
         # x-axis should be 0, while the displacement on the y-axis should be
         # approximately dy.
@@ -181,34 +181,60 @@ class BasicsTestCase(unittest.TestCase):
                  'rows': 4, 'columns': 5}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        n = nest.GetLeaves(l)[0]
+        n = [gid for gid in l]
 
         # gids -> gids, all displacements must be zero here
-        d = topo.Distance(n, n)
+        d = l.Distance(n, n)
         self.assertEqual(len(d), len(n))
+        for dd in d:
+            print(dd)
         self.assertTrue(all([dd == 0. for dd in d]))
 
         # single gid -> gids
-        d = topo.Distance(n[:1], n)
+        d = l.Distance(n[:1], n)
         self.assertEqual(len(d), len(n))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
+        self.assertTrue(all([dd >= 0. for dd in d]))
 
         # gids -> single gid
-        d = topo.Distance(n, n[:1])
+        d = l.Distance(n, n[:1])
         self.assertEqual(len(d), len(n))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
+        self.assertTrue(all([dd >= 0. for dd in d]))
+        
+        # Distance between gid 1 and 6. They are on the same y-axis, and
+        # directly next to each other on the x-axis, so the distance should be
+        # approximately dx. The same is true for distance between gid 6 and 1.
+        d = l.Distance(n[:1], n[4:5])
+        dx = 1 / ldict['columns']
+        self.assertAlmostEqual(d[0], dx, 3)
+        
+        d = l.Distance(n[4:5], n[:1])
+        self.assertAlmostEqual(d[0], dx, 3)
+        
+        # Distance between gid 1 and 2. They are on the same x-axis, and
+        # directly next to each other on the y-axis, so the distance should be
+        # approximately dy. The same is true for distance between gid 2 and 1.
+        d = l.Distance(n[:1], n[1:2])
+        dy = 1 / ldict['rows']
+        self.assertAlmostEqual(d[0], dy, 3)
+        
+        d = l.Distance(n[1:2], n[:1])
+        self.assertAlmostEqual(d[0], dy, 3)
 
         from numpy import array
 
         # position -> gids
-        d = topo.Distance(array([0.0, 0.0]), n)
+        d = l.Distance(array([0.0, 0.0]), n)
         self.assertEqual(len(d), len(n))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
+        self.assertTrue(all([dd >= 0. for dd in d]))
 
         # positions -> gids
-        d = topo.Distance([array([0.0, 0.0])] * len(n), n)
+        d = l.Distance([array([0.0, 0.0])] * len(n), n)
         self.assertEqual(len(d), len(n))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
+        self.assertTrue(all([dd >= 0. for dd in d]))
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_FindElements(self):

@@ -1,48 +1,113 @@
 Examples
-=========
+========
 
-.. toctree::
-    :maxdepth: 1
+Here you'll find example networks demonstrating different aspects of
+NEST.
 
-    balancedneuron
-    brette_gerstner_fig_2c
-    brette_gerstner_fig_3d
-    BrodyHopfield
-    brunel_alpha_nest
-    brunel_alpha_numpy
-    brunel_delta_nest
-    brunel_exp_multisynapse_nest
-    brunel_siegert_nest
-    CampbellSiegert
-	  correlospinmatrix_detector_two_neuron
-	  csa_example
-    csa_topology_example
-    evaluate_quantal_stp_synapse
-    evaluate_tsodyks2_synapse
-    gap_junctions_inhibitory_network
-    gap_junctions_two_neurons
-    gif_population
-  	if_curve
-    intrinsic_currents_spiking
-    intrinsic_currents_subthreshold
-    lin_rate_ipn_network
-    mc_neuron
-    multimeter_file
-    one_neuron
-    one_neuron_with_noise
-    plot_quantal_stp_synapse
-    plot_weight_matrices
-    precise_spiking
-    pulsepacket
-    ratebased
-    repeated_stimulation
-    sensitivity_to_perturbation
-    sinusoidal_gamma_generator
-    sinusoidal_poisson_generator
-    structural_plasticity
-    testiaf
-    tsodyks_depressing
-    tsodyks_facilitating
-    twoneurons
-    vinit_example
+Basic Networks
+-------------------
 
+These networks show basic network setups - a great place to start if new
+to NEST
+
+-  :doc:`One Neuron Example <one_neuron>`
+-  :doc:`One Neuron with Noise <one_neuron_with_noise>`
+-  :doc:`Two Neuron Example <twoneurons>`
+-  :doc:`Multi-compartment Neuron Example <mc_neuron>` - using the
+   three-compartment ```iaf_cond_alpha_mc`` </path/to/index>` neuron
+-  :doc:`Recording with Multimeter and Writing Output to
+   File <multimeter_file>`
+
+??
+--
+
+-  :doc:`Network of linear rate neurons <lin_rate_ipn_network>` - simulate populations of lin_rate_ipn neurons
+-  :doc:`Balanced Neuron Example <balancedneuron>` - find a firing rate
+   for the inhibitory population that will make the neuron fire at the
+   same rate as the excitatory population
+-  :doc:`Two Population Network using Structural
+   Plasticity <structural_plasticity>` - a simple network of two
+   populations where structural plasticity is used
+-  :doc:`Binary Neuron Example using the Correlospinmatrix
+   Detector <correlospinmatrix_detector_two_neuron>`
+-  :doc:`Example of Neuron receiving Input from Multiple
+   Receptors <intrinsic_currents_spiking>`
+-  :doc:`Example of Neuron with Multiple Intrisic
+   Currents <intrinsic_currents_subthreshold>`
+
+-  :doc:`Sensitivity to Perturbation <sensitivity_to_perturbation>`
+-  :doc:`Example how to Measure I-F Curve <if_curve>`
+-  :doc:`Example of a Pulse Packet <pulsepacket>` - compares the
+   average and individual membrane potential excursions in response to a
+   single pulse packet with an analytically acquired voltage trace
+-  :doc:`Extract connection strength for synapses and input into weight matrices <plot_weight_matrices>`
+-  :doc:`Compare two variants of tsodyks-markram synapse model <plot_quantal_stp_synapse>`
+
+Examples using different Generators
+----------------------------------------
+
+-  :doc:`Example using the Sinusoidal Poisson Generator <sinusoidal_poisson_generator>`
+-  :doc:`Example using the Sinusoidal Gamma Generator <sinusoidal_gamma_generator>`
+-  :doc:`Repeated Stimulation using Poisson Generator <repeated_stimulation>` -
+   generate a spike train that is recorded directly by a spike detector
+
+Examples using the Integrate and Fire Model
+------------------------------------------------
+
+-  :doc:`Integrate and Fire Neuron Example <testiaf>`
+-  :doc:`Adapting exponential Integrate and Fire Model
+   I <brette_gerstner_fig_2c>`
+-  :doc:`Adapting exponential Integrate and Fire Model
+   II <brette_gerstner_fig_3d>`
+-  :doc:`Spike Synchronization of Integrate and Fire
+   Neurons <BrodyHopfield>`
+-  :doc:`Calculating Integrate and Fire Neuron with Poisson
+   Generators <CambellSiegert>`
+-  :doc:`Plot Initial Membrane Voltage of Integrate and Fire
+   Neuron <vinit_example>`
+-  :doc:`Compare Precise and Grid-based Integrate and Fire Neuron
+   Models <precise_spiking>`
+-  :doc:`Population of Generalized Integrate and Fire Neurons with Oscillatory Behavior <gif_population>`
+
+Examples of Connection Setups
+------------------------------
+
+    **See our detailed guide on :ref:`Connection
+    Management <guides/connection-management>`**
+
+-  :doc:`Using CSA for Connection Setup <csa_example>` - set up simple
+   netowrk using the Connection Set Algebra
+-  :doc:`Using CSA with Topology Layers <csa_topology_example>` - specify
+   connections between topology layers using the Connection Set Algebra
+
+Examples with Gap Junctions
+----------------------------
+
+    **See our detailed guide on :ref:`Simulations with Gap
+    Junctions <guides/simulation-with-gap-junctions>`**
+
+-  :doc:`Example of Inhibitory Network with Gap
+   Junctions <gap_junctions_inhibitory_network>`
+-  :doc:`Two Neuron Example with Gap Junctions <gap_junctions_two_neurons>`
+
+Examples of Random Balanced Networks
+-------------------------------------
+
+-  :doc:`Random Balanced Network Example with Alpha
+   Synapses <brunel_alpha_nest>`
+-  :doc:`Random Balanced Network Example using NumPy <brunel_alpha_numpy>`
+-  :doc:`Random Balanced Network Example with Delta
+   Synapses <brunel_delta_nest>`
+-  :doc:`Random Balanced Network Example with the Multisynapse Neuron
+   Model <brunel_exp_multisynapse_nest>`
+-  :doc:`Mean-field Theory for Random Balanced Network <brunel_siegert_nest>`
+
+Examples with Different Synapse Models
+----------------------------------------
+
+-  :doc:`Two Neuron Example Facilitating a Tsodyks
+   Synapse <tsodyks_facilitating>`
+-  :doc:`Two Neuron Example Depressing a Tsodyks
+   Synapse <tsodyks_depressing>`
+-  :doc:`Example using Tsodyks2 Synapse <evaluate_tsodyks2_synapse>`
+-  :doc:`Compare Tsodyks-Markram Synapse Models <evaluate_quantal_stp_synapse>`

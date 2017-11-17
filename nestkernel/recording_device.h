@@ -615,8 +615,6 @@ RecordingDevice::get_status( DictionaryDatum& d ) const
   P_.get( *this, d );
   S_.get( d, P_ );
   Device::get_status( d );
-
-  ( *d )[ names::element_type ] = LiteralDatum( names::recorder );
 }
 
 inline void

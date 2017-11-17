@@ -85,6 +85,19 @@ public:
     return false;
   }
 
+  //! Allow multimeter to connect to local instances
+  bool
+  local_receiver() const
+  {
+    return true;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
   port send_test_event( Node&, rport, synindex, bool );
 
   using Node::handle;
@@ -96,13 +109,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
 
 private:
   void init_state_( const Node& );

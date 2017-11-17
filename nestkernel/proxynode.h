@@ -70,7 +70,6 @@ public:
    * happily live without.
    */
   using Node::handle;
-
   using Node::sends_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
@@ -91,9 +90,7 @@ public:
   }
 
   void
-  get_status( DictionaryDatum& ) const
-  {
-  }
+  get_status( DictionaryDatum& ) const;
 
   /**
    * Proxy nodes have no properties.

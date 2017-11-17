@@ -99,6 +99,12 @@ public:
     return false;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
   using Node::event_hook;
 
   port send_test_event( Node&, rport, synindex, bool );

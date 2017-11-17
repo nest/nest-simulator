@@ -88,6 +88,12 @@ public:
     return true;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
   port send_test_event( Node&, rport, synindex, bool );
 
   void get_status( DictionaryDatum& ) const;

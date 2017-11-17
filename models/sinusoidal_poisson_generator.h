@@ -124,6 +124,12 @@ public:
     return true;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
 private:
   void init_state_( const Node& );
   void init_buffers_();

@@ -372,8 +372,8 @@ NodeManager::is_local_gid( index gid ) const
   thread num_threads = kernel().vp_manager.get_num_threads();
   for ( thread t = 0; t < num_threads; ++t )
   {
-    is_local = ( is_local
-    		         or local_nodes_[ t ].get_node_by_gid( gid ) != 0 );
+    const bool not_a_proxy = local_nodes_[ t ].get_node_by_gid( gid ) != 0;
+    is_local = is_local or not_a_proxy;
   }
   return is_local;
 }

@@ -164,6 +164,12 @@ public:
     return true;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::recorder;
+  }
+
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -302,8 +308,6 @@ nest::correlomatrix_detector::get_status( DictionaryDatum& d ) const
   device_.get_status( d );
   P_.get( d );
   S_.get( d );
-
-  ( *d )[ names::element_type ] = LiteralDatum( names::recorder );
 }
 
 inline void

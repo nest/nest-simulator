@@ -55,16 +55,6 @@ class PlottingTestCase(unittest.TestCase):
                                             'test_DumpNodes.out.lyr'))
         self.assertTrue(True)
 
-    def test_DumpNodes2(self):
-        """Test dumping nodes, two layers."""
-        ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
-                 'extent': [2., 2.], 'edge_wrap': True}
-        nest.ResetKernel()
-        l = topo.CreateLayer(ldict)
-        topo.DumpLayerNodes([l, l], os.path.join(self.nest_tmpdir(),
-                                                'test_DumpNodes2.out.lyr'))
-        self.assertTrue(True)
-
     def test_DumpConns(self):
         """Test dumping connections."""
         ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
@@ -78,21 +68,6 @@ class PlottingTestCase(unittest.TestCase):
         topo.DumpLayerConnections(l, l, 'static_synapse',
                                   os.path.join(self.nest_tmpdir(),
                                                'test_DumpConns.out.cnn'))
-        self.assertTrue(True)
-
-    def test_DumpConns2(self):
-        """Test dumping connections, 2 layers."""
-        ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
-                 'extent': [2., 2.], 'edge_wrap': True}
-        cdict = {'connection_type': 'divergent',
-                 'mask': {'circular': {'radius': 1.}}}
-        nest.ResetKernel()
-        l = topo.CreateLayer(ldict)
-        topo.ConnectLayers(l, l, cdict)
-
-        topo.DumpLayerConnections([l, l], 'static_synapse',
-                                  os.path.join(self.nest_tmpdir(),
-                                               'test_DumpConns2.out.cnn'))
         self.assertTrue(True)
 
 

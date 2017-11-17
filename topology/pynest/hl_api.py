@@ -1109,24 +1109,24 @@ def _rank_specific_filename(basename):
             return '%s-%0*d%s' % (basename[:dot], np_digs, rk, basename[dot:])
 
 
-def DumpLayerNodes(layers, outname):
+def DumpLayerNodes(layer, outname):
     """
-    Write GID and position data of layer(s) to file.
+    Write GID and position data of layer to file.
 
-    Write GID and position data to layer(s) file. For each node in a layer,
+    Write GID and position data to layer file. For each node in a layer,
     a line with the following information is written:
         ::
 
             GID x-position y-position [z-position]
 
-    If `layers` contains several GIDs, data for all layers will be written to a
+    If `layer` contains several GIDs, data for all layer will be written to a
     single file.
 
 
     Parameters
     ----------
-    layers : GIDCollection(s) (Layer(s))
-        GIDCollection(s) of GIDs of a Topology layer
+    layer : GIDCollection
+        GIDCollection of GIDs of a Topology layer
     outname : str
         Name of file to write to (existing files are overwritten)
 
@@ -1165,13 +1165,13 @@ def DumpLayerNodes(layers, outname):
             tp.DumpLayerNodes(l, 'positions.txt')
 
     """
-    # TODO481
-    if isinstance(layers, Layer):
-        layers = (layers,)
+    if not isinstance(layer, nest.GIDCollection):
+        raise TypeError("layer must be a GIDCollection")
+
     nest.sli_func("""
-                  (w) file exch { DumpLayerNodes } forall close
+                  (w) file exch DumpLayerNodes close
                   """,
-                  layers, _rank_specific_filename(outname))
+                  layer, _rank_specific_filename(outname))
 
 
 def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
@@ -1194,9 +1194,9 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
 
     Parameters
     ----------
-    source_layers : GIDCollection (Layer)
+    source_layers : GIDCollection
         GIDCollection of GIDs of a Topology layer
-    target_layers : GIDCollection (Layer)
+    target_layers : GIDCollection
         GIDCollection of GIDs of a Topology layer
     synapse_model : str
         NEST synapse model
@@ -1241,11 +1241,10 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
             # write connectivity information to file
             tp.DumpLayerConnections(l, l, 'static_synapse', 'connections.txt')
     """
-    # TODO481 should source_layer and target_layer be allowed to be list of layers?
-    if not isinstance(source_layer, Layer):
-        raise nest.NESTError("source_layer must be a Layer")
-    if not isinstance(target_layer, Layer):
-        raise nest.NESTError("target_layer must be a Layer")
+    if not isinstance(source_layer, nest.GIDCollection):
+        raise nest.NESTError("source_layer must be a GIDCollection")
+    if not isinstance(target_layer, nest.GIDCollection):
+        raise nest.NESTError("target_layer must be a GIDCollection")
 
     nest.sli_func("""
                   /oname  Set

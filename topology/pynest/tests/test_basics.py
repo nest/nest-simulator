@@ -46,28 +46,6 @@ class BasicsTestCase(unittest.TestCase):
                               'columns': nc})
         self.assertEqual(len(l), nr * nc)
 
-    def test_GetLayer(self):
-        """Check if GetLayer returns correct information."""
-        nr = 4
-        nc = 5
-        ldict = {'elements': 'iaf_neuron',
-                 'rows': nr,
-                 'columns': nc}
-        nlayers = 3
-        nest.ResetKernel()
-        l = topo.CreateLayer((ldict,) * nlayers)
-
-        # obtain list containing list of results from GetLayer for all
-        # nodes in layers
-        layers_exp = (topo.GetLayer(node) for node in nest.GetLeaves(l))
-
-        # the list comprehension builds a list of lists of layer gids,
-        # each list containing nr*nc copies of the layer gid
-        layers_ref = zip(*((l,) * (nr * nc)))
-
-        for le, lr in zip(layers_exp, layers_ref):
-            self.assertEqual(le, lr)
-
     def test_GetPosition(self):
         """Check if GetPosition returns proper positions."""
         pos = ((1.0, 0.0), (0.0, 1.0), (3.5, 1.5))
@@ -99,6 +77,7 @@ class BasicsTestCase(unittest.TestCase):
         nodepos_exp = l.GetPosition([l[0], l[2]])
         self.assertEqual(nodepos_exp, (pos[0], pos[2]))
 
+    # TODO481 remove GetElement
     def test_GetElement(self):
         """Check if GetElement returns proper lists."""
         ldict = {'elements': 'iaf_neuron',
@@ -306,12 +285,12 @@ class BasicsTestCase(unittest.TestCase):
                  'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         cdict = {'connection_type': 'divergent',
+                 'synapse_model': 'stdp_synapse',
                  'mask': {'grid': {'rows': 2, 'columns': 2}}}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
 
-        # connect l -> l using stdp_synapse
-        cdict.update({'synapse_model': 'stdp_synapse'})
+        # connect l -> l
         topo.ConnectLayers(l, l, cdict)
 
         t = topo.GetTargetNodes(l[:1], l)

@@ -69,6 +69,9 @@ import nest.lib.hl_api_helper as hlh
 
 class Layer(nest.GIDCollection):
     """
+    TODO 481 remove layer class
+    
+    
     Layer class
     TODO480: write documentation
     
@@ -277,6 +280,7 @@ class Layer(nest.GIDCollection):
         # invariant: from_arg and to_arg have equal length,
         # or (at least) one has length 1
         
+        # TODO481 not possible with GIDColl, so must loop over different sizes
         if len(from_arg) == 1:
             from_arg = from_arg * len(to_arg)  # this is a no-op if len(to_arg)==1
         if len(to_arg) == 1:
@@ -991,55 +995,6 @@ def ConnectLayers(pre, post, projections):
     projections = fixdict(projections)
 
     nest.sli_func('ConnectLayers', pre, post, projections)
-
-
-def GetLayer(nodes):
-    """
-    Return the layer to which nodes belong.
-
-
-    Parameters
-    ----------
-    nodes : tuple/list of int(s)
-        List of neuron GIDs
-
-
-    Returns
-    -------
-    out : tuple of int(s)
-        List of layer GIDs
-
-
-    See also
-    --------
-    GetElement : Return the node(s) at the location(s) in the given layer(s).
-    GetPosition : Return the spatial locations of nodes.
-
-
-    Notes
-    -----
-    -
-
-
-    **Example**
-        ::
-
-            import nest.topology as tp
-
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
-
-            # get layer GID of nodes in layer
-            tp.GetLayer(nest.GetNodes(l)[0])
-    """
-
-    # TODO481, should this be GetLayerStatus? What should GetLayerStatus return?
-    if not nest.is_sequence_of_gids(nodes):
-        raise TypeError("nodes must be a sequence of GIDs")
-
-    return nest.sli_func('{ GetLayer } Map', nodes)
 
 
 def FindNearestElement(layers, locations, find_all=False):

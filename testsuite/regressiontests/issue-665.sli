@@ -60,13 +60,13 @@ skip_if_not_threaded
   
   pgl nnl connspec ConnectLayers
   
-  /src pgl GetGlobalLeaves 1 Take cvgidcollection def
-  /tgts nnl GetGlobalLeaves Sort def
+  /src pgl 1 Take cvgidcollection def
+  /tgts nnl def
 
   /conns << /source src >> GetConnections def
-  /ctgts conns { cva 1 get } Map Sort def
+  /ctgts conns { cva 1 get } Map cvgidcollection def
     
-  tgts ctgts eq
+  tgts cva ctgts cva eq
 } 
 def
 
@@ -118,13 +118,13 @@ assert_or_die
     
   nnl sdl connspec ConnectLayers
   
-  /tgt sdl GetGlobalLeaves 1 Take cvgidcollection def
-  /srcs nnl GetGlobalLeaves Sort def
+  /tgt sdl 1 Take cvgidcollection def
+  /srcs nnl def
     
   /conns << /target tgt >> GetConnections def
   /csrcs conns { cva 0 get } Map Sort def
   
-  srcs csrcs eq
+  srcs cva csrcs cva eq
 } 
 def
 

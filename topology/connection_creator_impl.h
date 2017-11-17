@@ -209,41 +209,63 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
     pool.define( source.get_global_positions_vector() );
   }
 
+  // TODO 481 : Same with other functions
+  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_(
+    kernel().vp_manager.get_num_threads() );
+
 // sharing specs on next line commented out because gcc 4.2 cannot handle them
 #pragma omp parallel // default(none) shared(source, target, masked_layer,
                      // target_begin, target_end)
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
-    GIDCollection::const_iterator target_begin = target_gc->local_begin();
-    GIDCollection::const_iterator target_end = target_gc->end();
-
-    for ( GIDCollection::const_iterator tgt_it = target_begin;
-          tgt_it < target_end;
-          ++tgt_it )
+    try
     {
-      Node* const tgt =
-        kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
+      GIDCollection::const_iterator target_begin = target_gc->local_begin();
+      GIDCollection::const_iterator target_end = target_gc->end();
 
-      assert( not tgt->is_proxy() );
-
-      const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
-
-      if ( mask_.valid() )
+      for ( GIDCollection::const_iterator tgt_it = target_begin;
+            tgt_it < target_end;
+            ++tgt_it )
       {
-        connect_to_target_( pool.masked_begin( target_pos ),
-          pool.masked_end(),
-          tgt,
-          target_pos,
-          thread_id,
-          source );
-      }
-      else
-      {
-        connect_to_target_(
-          pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
-      }
-    } // for target_begin
-  }   // omp parallel
+        Node* const tgt =
+          kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
+
+        assert( not tgt->is_proxy() );
+
+        const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+
+        if ( mask_.valid() )
+        {
+          connect_to_target_( pool.masked_begin( target_pos ),
+            pool.masked_end(),
+            tgt,
+            target_pos,
+            thread_id,
+            source );
+        }
+        else
+        {
+          connect_to_target_(
+            pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
+        }
+      } // for target_begin
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( thread_id ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  } // omp parallel
+  // check if any exceptions have been raised
+  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  {
+    if ( exceptions_raised_.at( thr ).valid() )
+    {
+      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+    }
+  }
 }
 
 
@@ -272,6 +294,16 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   else
   {
     pool.define( source.get_global_positions_vector() );
+  }
+
+  // We only need to check the first in the GIDCollection
+  Node* const first_in_tgt =
+    kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
+  if ( not first_in_tgt->has_proxies() )
+  {
+    throw IllegalConnection(
+      "Topology Divergent connections"
+      " to devices are not possible." );
   }
 
 // sharing specs on next line commented out because gcc 4.2 cannot handle them
@@ -330,6 +362,16 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
   // 1. Apply Mask to source layer
   // 2. Compute connection probability for each source position
   // 3. Draw source nodes and make connections
+
+  // We only need to check the first in the GIDCollection
+  Node* const first_in_tgt =
+    kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
+  if ( not first_in_tgt->has_proxies() )
+  {
+    throw IllegalConnection(
+      "Topology Convergent connections"
+      " to devices are not possible." );
+  }
 
   GIDCollection::const_iterator target_begin = target_gc->MPI_local_begin();
   GIDCollection::const_iterator target_end = target_gc->end();
@@ -609,6 +651,16 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
+
+  // We only need to check the first in the GIDCollection
+  Node* const first_in_tgt =
+    kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
+  if ( not first_in_tgt->has_proxies() )
+  {
+    throw IllegalConnection(
+      "Topology Divergent connections"
+      " to devices are not possible." );
+  }
 
   GIDCollection::const_iterator target_begin = target_gc->MPI_local_begin();
   GIDCollection::const_iterator target_end = target_gc->end();

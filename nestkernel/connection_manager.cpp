@@ -407,10 +407,6 @@ nest::ConnectionManager::connect( index sgid,
     // make sure source is on this MPI rank
     if ( source->is_proxy() )
     {
-      if ( kernel().node_manager.is_local_node( source ) )
-      {
-        connect_( *source, *target, sgid, target_thread, syn, d, w );
-      }
       return;
     }
 

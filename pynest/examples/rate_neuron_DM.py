@@ -44,8 +44,8 @@ import pylab
 import numpy
 
 '''
-Second the Function build_network is defined to build the network and
-return the handles of the mutimeter
+Second, the Function build_network is defined to build the network and
+return the handles of two decision units and the mutimeter
 '''
 
 
@@ -70,23 +70,22 @@ def build_network(sigma,dt):
 
 '''
 The function build_network takes the standard deviation of Gaussian
-white noise and the resolution as arguments.
-First the Kernel is reset and use_wfr (waveform-relaxation) is set to 
-false as well as the resolution to the specified value dt.  
+white noise and the time resolution as arguments.
+First the Kernel is reset and the use_wfr (waveform-relaxation) is set to 
+false while the resolution is set to the specified value dt.  
 Two rate neurons with linear activation functions are created and the
-handle is stored in the variables D1 and D2. The two decisions units are
-coupled via mutual inhibition.  Next the multimeter is created and 
-the handle stored in mm and the option 'record_from' is set.
-
-The multimeter is then then connected to the two units neuron.  The
-connect function takes the handles as input.  The multimeter is
-connected to the units because 'observes' them.
+handle is stored in the variables D1 and D2. The output of both decision
+units is rectified at zero.
+The two decisions units are coupled via mutual inhibition.  
+Next the multimeter is created and the handle stored in mm and the option 
+'record_from' is set. The multimeter is then connected to the two units
+in order to 'observe' them.  The connect function takes the handles as input.  
 '''
 
 '''
 The decision making process is simulated for three different levels of noise
-and three differences in evidence for a given decision. The activity of each
-decision unit is plotted.
+and three differences in evidence for a given decision. The activity of both
+decision units is plotted for each scenario.
 '''
 
 fig_size    = [14,8]
@@ -123,7 +122,7 @@ for i in range(9):
     simulation time in milliseconds and advances the network state by
     this amount of time. After an initial period in the absence of evidence
     for either decision, evidence is given by changing the state of each
-    decision unit.
+    decision unit. Note that both units receive evidence.
     '''
 
     data  = nest.GetStatus(mm)
@@ -131,7 +130,7 @@ for i in range(9):
     voltages = data[0]['events']['rate']
 
     '''
-    The activity values ('voltages') are read out by the multimeter are read out
+    The activity values ('voltages') are read out by the multimeter
     '''
     
     ax[i]   = fig.add_subplot(fig_rows,fig_cols,i+1)
@@ -153,7 +152,17 @@ for i in range(9):
         ax[i].set_xlabel('time (ms)')
     
     
-    
-    
+    '''
+    The activity of the two units is plottedin each scenario.
 
+    In the absence of noise, the network will not make a decision if evidence 
+    for both choices is equal. With noise, this symmetry can be broken and a 
+    decision wil be taken despite identical evidence.
+
+    As evidence for D1 relative to D2 increases, it becomes more likely that 
+    the corresponding decision will be taken. For small differences in the evidence
+    for the two decisions, noise can lead to the 'wrong' decision.
+
+    '''
+    
 pylab.show()

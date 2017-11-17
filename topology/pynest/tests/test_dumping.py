@@ -61,7 +61,7 @@ class PlottingTestCase(unittest.TestCase):
                  'extent': [2., 2.], 'edge_wrap': True}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        topo.DumpLayerNodes(l * 2, os.path.join(self.nest_tmpdir(),
+        topo.DumpLayerNodes([l, l], os.path.join(self.nest_tmpdir(),
                                                 'test_DumpNodes2.out.lyr'))
         self.assertTrue(True)
 
@@ -75,7 +75,7 @@ class PlottingTestCase(unittest.TestCase):
         l = topo.CreateLayer(ldict)
         topo.ConnectLayers(l, l, cdict)
 
-        topo.DumpLayerConnections(l, 'static_synapse',
+        topo.DumpLayerConnections(l, l, 'static_synapse',
                                   os.path.join(self.nest_tmpdir(),
                                                'test_DumpConns.out.cnn'))
         self.assertTrue(True)
@@ -90,7 +90,7 @@ class PlottingTestCase(unittest.TestCase):
         l = topo.CreateLayer(ldict)
         topo.ConnectLayers(l, l, cdict)
 
-        topo.DumpLayerConnections(l * 2, 'static_synapse',
+        topo.DumpLayerConnections([l, l], 'static_synapse',
                                   os.path.join(self.nest_tmpdir(),
                                                'test_DumpConns2.out.cnn'))
         self.assertTrue(True)

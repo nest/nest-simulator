@@ -68,6 +68,32 @@ import nest.lib.hl_api_helper as hlh
 
 
 class Layer(nest.GIDCollection):
+    """
+    Layer class
+    TODO480: write documentation
+    
+    Functions that can be used on the Layer class:
+      - GetPosition(nodes=None)
+      - GetElement(locations)
+      - Displacement(from_arg, to_arg)     NB, must now be part of same layer
+      - Distance(from_arg, to_arg)         NB, must now be part of same layer
+    
+    Other functions in the Topology module:
+      - CreateMask(masktype, specs, anchor=None)
+      - CreateParameter(parametertype, specs)
+      - CreateLayer(specs)
+      - ConnectLayers(pre, post, projections)
+      - GetLayer(nodes)                                           DOES NOT WORK
+      - FindNearestElement(layers, locations, find_all=False)     Part of Layer??
+      - DumpLayerNodes(layers, outname)                           NB Several layers?
+      - DumpLayerConnections(source_layer, target_layer, synapse_model, outname)  NB Several layers?
+      - FindCenterElement(layers)                                 DOES NOT WORK BECAUSE OF GET_STATUS
+      - GetTargetNodes(sources, tgt_layer, syn_model=None)        Part of Layer??
+      - PlotLayer(layer, fig=None, nodecolor='b', nodesize=20)    DOES NOT WORK BECAUSE OF GET_STATUS
+      - lotTargets(src_nrn, tgt_layer, ...)                       DOES NOT WORK BECAUSE OF GET_STATUS
+      - PlotKernel(ax, src_nrn, mask,...')                        DOES NOT WORK BECAUSE OF GET_STATUS
+      - SelectNodesByMask(layer, anchor, mask_obj)                Part of Layer??
+    """
     def __init__(self, gc):
         self.layer = gc
         self._datum = gc._datum
@@ -1175,8 +1201,8 @@ def DumpLayerNodes(layers, outname):
 
     Parameters
     ----------
-    layers : tuple/list of int(s)
-        List of GIDs of a Topology layer
+    layers : GIDCollection(s) (Layer(s))
+        GIDCollection(s) of GIDs of a Topology layer
     outname : str
         Name of file to write to (existing files are overwritten)
 
@@ -1215,13 +1241,16 @@ def DumpLayerNodes(layers, outname):
             tp.DumpLayerNodes(l, 'positions.txt')
 
     """
+    # TODO481
+    if isinstance(layers, Layer):
+        layers = (layers,)
     nest.sli_func("""
                   (w) file exch { DumpLayerNodes } forall close
                   """,
                   layers, _rank_specific_filename(outname))
 
 
-def DumpLayerConnections(layers, synapse_model, outname):
+def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
     """
     Write connectivity information to file.
 
@@ -1241,8 +1270,10 @@ def DumpLayerConnections(layers, synapse_model, outname):
 
     Parameters
     ----------
-    layers : tuple/list of int(s)
-        List of GIDs of a Topology layer
+    source_layers : GIDCollection (Layer)
+        GIDCollection of GIDs of a Topology layer
+    target_layers : GIDCollection (Layer)
+        GIDCollection of GIDs of a Topology layer
     synapse_model : str
         NEST synapse model
     outname : str
@@ -1284,17 +1315,23 @@ def DumpLayerConnections(layers, synapse_model, outname):
                                    'synapse_model': 'static_synapse'})
 
             # write connectivity information to file
-            tp.DumpLayerConnections(l, 'static_synapse', 'connections.txt')
+            tp.DumpLayerConnections(l, l, 'static_synapse', 'connections.txt')
     """
+    # TODO481 should source_layer and target_layer be allowed to be list of layers?
+    if not isinstance(source_layer, Layer):
+        raise nest.NESTError("source_layer must be a Layer")
+    if not isinstance(target_layer, Layer):
+        raise nest.NESTError("target_layer must be a Layer")
 
     nest.sli_func("""
                   /oname  Set
                   cvlit /synmod Set
-                  /lyrs   Set
-                  oname (w) file lyrs
-                  { synmod DumpLayerConnections } forall close
+                  /lyr_target Set
+                  /lyr_source Set
+                  oname (w) file lyr_target lyr_source synmod DumpLayerConnections close
                   """,
-                  layers, synapse_model, _rank_specific_filename(outname))
+                  source_layer, target_layer, synapse_model,
+                  _rank_specific_filename(outname))
 
 
 def FindCenterElement(layers):
@@ -1533,8 +1570,8 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
 
     Parameters
     ----------
-    layer : tuple/list of int(s)
-        GID of layer to plot, must be tuple/list of length 1
+    layer : GIDCollection (Layer)
+        GIDCollection with GIDs of layer to plot
     fig : [None | matplotlib.figure.Figure object], optional, default: None
         Matplotlib figure to plot to. If not given, a new figure is
         created.
@@ -1580,8 +1617,8 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
 
     import matplotlib.pyplot as plt
 
-    if len(layer) != 1:
-        raise ValueError("layer must contain exactly one GID.")
+    if not isinstance(layer, nest.GIDCollection):
+        raise ValueError("layer must be a GIDCollection.")
 
     # get layer extent
     ext = nest.GetStatus(layer, 'topology')[0]['extent']
@@ -1593,9 +1630,8 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         xext, yext = ext
         xctr, yctr = nest.GetStatus(layer, 'topology')[0]['center']
 
-        with nest.SuppressedDeprecationWarning('GetChildren'):
-            # extract position information, transpose to list of x and y pos
-            xpos, ypos = zip(*GetPosition(nest.GetChildren(layer)[0]))
+        # extract position information, transpose to list of x and y pos
+        xpos, ypos = zip(*layer.GetPosition())
 
         if fig is None:
             fig = plt.figure()
@@ -1611,9 +1647,8 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         # 3D layer
         from mpl_toolkits.mplot3d import Axes3D
 
-        with nest.SuppressedDeprecationWarning('GetChildren'):
-            # extract position information, transpose to list of x,y,z pos
-            pos = zip(*GetPosition(nest.GetChildren(layer)[0]))
+        # extract position information, transpose to list of x,y,z pos
+        pos = zip(*layer.GetPosition())
 
         if fig is None:
             fig = plt.figure()

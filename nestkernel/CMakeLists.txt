@@ -46,7 +46,6 @@ set( nestkernel_sources
     nest_timeconverter.h nest_timeconverter.cpp
     modelrange.h modelrange.cpp
     modelrange_manager.h modelrange_manager.cpp
-    multirange.h multirange.cpp
     node.h node.cpp
     proxynode.h proxynode.cpp
     recording_device.h recording_device.cpp

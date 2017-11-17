@@ -227,21 +227,9 @@ class BasicsTestCase(unittest.TestCase):
         n = topo.FindNearestElement(l, (0., 0.))
         self.assertEqual(n, (5,))
 
-        # single location, two layers
-        # TODO481 Is l * 2 allowed?
-        #n = topo.FindNearestElement(l * 2, (0., 0.))
-        n = topo.FindNearestElement([l, l], (0., 0.))
-        self.assertEqual(n, (5, 5))
-
         # two locations, one layer
         n = topo.FindNearestElement(l, ((0., 0.), (1., 1.)))
         self.assertEqual(n, (5, 7))
-
-        # two locations, two layers
-        # TODO481
-        #n = topo.FindNearestElement(l * 2, ((0., 0.), (1., 1.)))
-        n = topo.FindNearestElement([l, l], ((0., 0.), (1., 1.)))
-        self.assertEqual(n, ((5, 7),) * 2)
 
         # several closest locations, not all
         n = topo.FindNearestElement(l, (0.5, 0.5))
@@ -254,11 +242,9 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(n, ((4, 5, 7, 8),))
 
         # complex case
-        # TODO481
-        #n = topo.FindNearestElement(l * 2, ((0., 0.), (0.5, 0.5)),
-        n = topo.FindNearestElement([l, l], ((0., 0.), (0.5, 0.5)),
+        n = topo.FindNearestElement(l, ((0., 0.), (0.5, 0.5)),
                                     find_all=True)
-        self.assertEqual(n, (((5,), (4, 5, 7, 8)),) * 2)
+        self.assertEqual(n, ((5,), (4, 5, 7, 8)))
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_GetCenterElement(self):

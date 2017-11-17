@@ -997,29 +997,22 @@ def ConnectLayers(pre, post, projections):
     nest.sli_func('ConnectLayers', pre, post, projections)
 
 
-def FindNearestElement(layers, locations, find_all=False):
+def FindNearestElement(layer, locations, find_all=False):
     """
-    Return the node(s) closest to the location(s) in the given layer(s).
+    Return the node(s) closest to the location(s) in the given layer.
 
-    This function works for fixed grid layers only.
+    This function works for fixed grid layer only.
 
-    * If layers contains a single GID and locations is a single 2-element
-      array giving a grid location, return a list of GIDs of layer elements
-      at the given location.
-    * If layers is a list with a single GID and locations is a list of
-      coordinates, the function returns a list of lists with GIDs of the nodes
-      at all locations.
-    * If layers is a list of GIDs and locations single 2-element array giving
-      a grid location, the function returns a list of lists with the GIDs of
-      the nodes in all layers at the given location.
-    * If layers and locations are lists, it returns a nested list of GIDs, one
-      list for each layer and each location.
+    * If locations is a single 2-element array giving a grid location, return a
+      list of GIDs of layer elements at the given location.
+    * If locations is a list of coordinates, the function returns a list of
+      lists with GIDs of the nodes at all locations.
 
 
     Parameters
     ----------
-    layers : tuple/list of int(s) or GIDCollection
-        List of layer GIDs
+    layer : GIDCollection
+        GIDCollection of layer GIDs
     locations : tuple(s)/list(s) of tuple(s)/list(s)
         2-element list with coordinates of a single position, or list of
         2-element list of positions
@@ -1063,65 +1056,41 @@ def FindNearestElement(layers, locations, find_all=False):
     """
 
     import numpy
+    
+    if not isinstance(layer, nest.GIDCollection):
+        raise TypeError("layer must be a GIDCollection")
 
-    # TODO481, should you be able to send in several layers?
-
-    #if not nest.is_sequence_of_gids(layers):
-    #    raise TypeError("layers must be a sequence of GIDs")
-
-    if not len(layers) > 0:
-        raise nest.NESTError("layers cannot be empty")
+    if not len(layer) > 0:
+        raise nest.NESTError("layer cannot be empty")
 
     if not nest.is_iterable(locations):
         raise TypeError(
             "locations must be coordinate array or list of coordinate arrays")
 
-    # ensure locations is sequence, keeps code below simpler
+    # Ensure locations is sequence, keeps code below simpler
     if not nest.is_iterable(locations[0]):
         locations = (locations, )
-        
-    # TODO481 only if several layers are allowed.
-    if isinstance(layers, Layer):
-       layers = [layers,] 
 
-    result = []  # collect one list per layer
-    # loop over layers
-    for lyr in layers:
-        if not isinstance(lyr, nest.GIDCollection):
-            raise TypeError("layers must be a GIDCollection")
-        
-        lyr_result = []
-        # loop over locations
-        for loc in locations:
-            d = lyr.Distance(numpy.array(loc), [gid for gid in lyr])
+    result = []
+    
+    for loc in locations:
+        d = layer.Distance(numpy.array(loc), [gid for gid in layer])
 
-            if not find_all:
-                dx = numpy.argmin(d)  # finds location of one minimum
-                lyr_result.append(lyr[dx])
-            else:
-                mingids = list(lyr[:1])
-                minval = d[0]
-                for idx in range(1, len(lyr)):
-                    if d[idx] < minval:
-                        mingids = [lyr[idx]]
-                        minval = d[idx]
-                    elif numpy.abs(d[idx] - minval) <= 1e-14 * minval:
-                        mingids.append(lyr[idx])
-                lyr_result.append(tuple(mingids))
-        result.append(tuple(lyr_result))
-
-    # If both layers and locations are multi-element lists, result shall remain
-    # a nested list. Otherwise, either the top or the second level is a single
-    # element list and we flatten.
-    assert (len(result) > 0)
-    if len(result) == 1:
-        assert (len(layers) == 1)
-        return result[0]
-    elif len(result[0]) == 1:
-        assert (len(locations) == 1)
-        return tuple(el[0] for el in result)
-    else:
-        return tuple(result)
+        if not find_all:
+            dx = numpy.argmin(d)  # finds location of one minimum
+            result.append(layer[dx])
+        else:
+            mingids = list(layer[:1])
+            minval = d[0]
+            for idx in range(1, len(layer)):
+                if d[idx] < minval:
+                    mingids = [layer[idx]]
+                    minval = d[idx]
+                elif numpy.abs(d[idx] - minval) <= 1e-14 * minval:
+                    mingids.append(layer[idx])
+            result.append(tuple(mingids))
+            
+    return tuple(result)
 
 
 def _rank_specific_filename(basename):

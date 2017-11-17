@@ -95,7 +95,7 @@ public:
     return true;
   }
 
-  bool
+  Name
   get_element_type() const
   {
     return names::stimulator;

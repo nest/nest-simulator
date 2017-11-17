@@ -54,9 +54,7 @@ M_INFO setverbosity
 { 
   retina
   Tp
-  << /sources << /model /RetinaNode >>
-     /targets << /model /ThalamicNeuron >>
-     /connection_type (divergent)
+  << /connection_type (divergent)
      /receptor_type ampa
      /synapse_model /ht_synapse
      /mask << /circular << /radius 2.0 >> >>
@@ -73,9 +71,7 @@ bind def
 
   retina
   Tp
-  << /sources << /model /RetinaNode >>
-     /targets << /model /ThalamicNeuron >>
-     /connection_type (divergent)
+  << /connection_type (divergent)
      /synapse_model /ht_syn_ampa
      /mask << /circular << /radius 2.0 >> >>
   >>
@@ -86,29 +82,16 @@ bind def
 % Connection function using explicit receptor type --- passes
 /connect_explicit_rt
 {
-  [ retina_gen GetGlobalLeaves 100 Take 
-    Tp GetGlobalLeaves 100 Take 
-  ]
-  { 
-    << /receptor_type ampa >>
-    Connect
-    true
-  }
-  MapThread ;
+  retina_gen 100 Take Tp 100 Take 
+  << /rule /one_to_one >> << /receptor_type ampa >>
+  Connect
 } 
 bind def
 
 % Connection function not giving receptor type --- fails
 /connect_implicit_rt
 {
-  [ retina_gen GetGlobalLeaves 100 Take 
-    Tp GetGlobalLeaves 100 Take 
-  ]
-  {
-    Connect
-    true
-  } 
-  MapThread ;
+  retina_gen 100 Take Tp 100 Take /one_to_one Connect
 } 
 bind def
 
@@ -135,7 +118,7 @@ bind def
   layerProps << /elements /ThalamicNeuron >> join
   /Tp layerProps CreateLayer def
 
-  [retina_gen GetGlobalLeaves retina GetGlobalLeaves] { Connect true } MapThread ;
+  retina_gen retina /one_to_one Connect
   
   connfun load exec
 

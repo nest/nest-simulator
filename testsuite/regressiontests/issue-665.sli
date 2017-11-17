@@ -61,7 +61,7 @@ skip_if_not_threaded
   pgl nnl connspec ConnectLayers
   
   /src pgl 1 Take cvgidcollection def
-  /tgts nnl pstack def
+  /tgts nnl def
 
   /conns << /source src >> GetConnections def
   /ctgts conns { cva 1 get } Map cvgidcollection def

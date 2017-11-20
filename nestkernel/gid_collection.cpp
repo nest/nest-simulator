@@ -251,17 +251,16 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last )
   assert( first_ <= last_ );
 
   // find the model_id
-  const int model_id =
-    kernel().node_manager.get_node_or_proxy( first )->get_model_id();
+  const int first_model_id = kernel().modelrange_manager.get_model_id( first );
   for ( index gid = ++first; gid <= last; ++gid )
   {
-    if ( model_id
-      != kernel().node_manager.get_node_or_proxy( gid )->get_model_id() )
+    const int model_id =  kernel().modelrange_manager.get_model_id( gid );
+    if ( model_id != first_model_id )
     {
       throw BadProperty( "model ids does not match" );
     }
   }
-  model_id_ = model_id;
+  model_id_ = first_model_id;
 }
 
 GIDCollectionPrimitive::GIDCollectionPrimitive(

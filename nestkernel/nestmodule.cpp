@@ -350,7 +350,6 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
   long gid = conn.get_source_gid();
-  kernel().node_manager.get_node_or_proxy( gid ); // Just to check if the node exists
 
   DictionaryDatum result_dict =
     kernel().connection_manager.get_synapse_status( gid,

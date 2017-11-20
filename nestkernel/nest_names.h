@@ -335,6 +335,7 @@ extern const Name network_size;      //!< Network size
 extern const Name next_readout_time; //!< Used by stdp_connection_facetshw_hom
 extern const Name NMDA;
 extern const Name node_uses_wfr;      //!< Node parameter
+extern const Name nodes;              //!< Nodes
 extern const Name noise;              //!< Specific to iaf_chs_2008 neuron
                                       //!< and rate models
 extern const Name noisy_rate;         //!< Specific to rate models

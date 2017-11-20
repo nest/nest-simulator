@@ -280,7 +280,7 @@ def GetStatus(nodes, keys=None):
         return nodes
 
     if keys is None:
-        cmd = '{ GetStatus } Map'
+        cmd = 'GetStatus'
     elif is_literal(keys):
         cmd = '{{ GetStatus /{0} get }} Map'.format(keys)
     elif is_iterable(keys):

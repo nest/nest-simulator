@@ -38,6 +38,7 @@
 
 // Includes from sli:
 #include "arraydatum.h"
+#include "dictdatum.h"
 
 namespace nest
 {
@@ -58,12 +59,16 @@ typedef lockPTR< GIDCollectionMetadata > GIDCollectionMetadataPTR;
 class GIDCollectionMetadata
 {
 public:
+  // TODO481 SetStatus, GetStatus, Setstatus must have flag
   GIDCollectionMetadata()
   {
   }
   virtual ~GIDCollectionMetadata()
   {
   }
+
+  virtual void set_status( const DictionaryDatum&, bool ) = 0;
+  virtual void get_status( DictionaryDatum& ) const = 0;
 };
 
 class GIDTriple
@@ -314,7 +319,7 @@ public:
    *
    * @param meta A Metadata pointer
    */
-  virtual void set_metadata( GIDCollectionMetadataPTR );
+  virtual void set_metadata( GIDCollectionMetadataPTR ) = 0;
 
   /**
    * Gets the metadata of the GIDCollection.
@@ -557,6 +562,8 @@ public:
 
   bool contains( index gid ) const;
   GIDCollectionPTR slice( size_t start, size_t stop, size_t step = 1 ) const;
+
+  void set_metadata( GIDCollectionMetadataPTR );
 
   GIDCollectionMetadataPTR get_metadata() const;
 
@@ -889,6 +896,17 @@ GIDCollectionComposite::contains( index gid ) const
     }
   }
   return false;
+}
+
+inline void
+GIDCollectionComposite::set_metadata( GIDCollectionMetadataPTR meta )
+{
+  for ( std::vector< GIDCollectionPrimitive >::iterator gc = parts_.begin();
+      gc != parts_.end();
+      ++gc ) // iterate over GIDCollections
+    {
+      ( *gc ).set_metadata( meta );
+    }
 }
 
 inline GIDCollectionMetadataPTR

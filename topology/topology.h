@@ -57,6 +57,14 @@ public:
   {
   }
 
+  //TODO481 SetStatus, GetStatus, SetStatus must have flag
+  void set_status( const DictionaryDatum&, bool ){};
+
+  void get_status( DictionaryDatum& d ) const
+  {
+    layer_->get_status( d );
+  }
+
   //! Returns pointer to object with layer representation
   const AbstractLayerPTR
   get_layer() const

@@ -131,6 +131,12 @@ public:
 
   //@{
 
+  class GetStatus_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getstatus_gfunction;
+
   class GetStatus_iFunction : public SLIFunction
   {
   public:

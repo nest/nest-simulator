@@ -382,13 +382,9 @@ def
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % GetStatus / SetStatus for GIDCollection
+
 /GetStatus [/gidcollectiontype]
-{
-  dup size /get_s_siz Set
-  dup ValidQ_g not { /GetStatus /InvalidGIDCollectionError raiseerror } if
-  { GetStatus_i } Map
-  get_s_siz 1 eq { 0 get } if
-}
+  /GetStatus_g load
 def
 
 /SetStatus [/gidcollectiontype /dictionarytype]

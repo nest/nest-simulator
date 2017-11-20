@@ -280,6 +280,63 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
    GetKernelStatus
 */
 void
+NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  GIDCollectionDatum gc = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  if ( not gc->valid() )
+  {
+    throw KernelException("InvalidGIDCollection");
+  }
+
+  size_t gc_size = gc->size();
+
+  GIDCollectionMetadataPTR meta = gc->get_metadata();
+  if ( meta.valid() )
+  {
+    DictionaryDatum dict = DictionaryDatum( new Dictionary );
+    meta->get_status(dict);
+
+    ( *dict )[ names::network_size ] = gc_size;
+
+    GIDCollectionPrimitive* gcp = dynamic_cast<GIDCollectionPrimitive*>( &( *gc ) );
+    assert (gcp != 0 && "object must be a GIDCollectionPrimitive");
+
+    GIDCollectionDatum new_gc = GIDCollectionDatum( new GIDCollectionPrimitive( *gcp ) );
+    new_gc->set_metadata( GIDCollectionMetadataPTR( 0 ) );
+    ( *dict )[ names::nodes ] = new_gc;
+
+    i->OStack.pop();
+    i->OStack.push( dict );
+    i->EStack.pop();
+  }
+  else
+  {
+    ArrayDatum result;
+    result.reserve( gc_size );
+
+    for( GIDCollection::const_iterator it = gc->begin() ; it != gc->end() ; ++it )
+    {
+      index node_id = (*it).gid;
+      DictionaryDatum dict = get_node_status( node_id );
+      result.push_back( dict );
+    }
+
+    i->OStack.pop();
+    if ( gc_size == 1 )
+    {
+      i->OStack.push( result[0] );
+    }
+    else
+    {
+      i->OStack.push( result );
+    }
+    i->EStack.pop();
+  }
+}
+
+void
 NestModule::GetStatus_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
@@ -1731,6 +1788,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "SetStatus_aa", &setstatus_aafunction );
   i->createcommand( "SetKernelStatus", &setkernelstatus_Dfunction );
 
+  i->createcommand( "GetStatus_g", &getstatus_gfunction );
   i->createcommand( "GetStatus_i", &getstatus_ifunction );
   i->createcommand( "GetStatus_C", &getstatus_Cfunction );
   i->createcommand( "GetStatus_a", &getstatus_afunction );

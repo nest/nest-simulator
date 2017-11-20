@@ -163,6 +163,42 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+/* BeginDocumentation
+   Name: LocalOnly - Get only local elements of a GIDCollection.
+
+   Synopsis:
+   gidcollection    LocalOnly --> local_gidcollection
+
+   Parameters:
+   gidcollection          - GIDCollection in which to find local elements
+   local_gidcollection    - GIDCollection with only local elements 
+
+   Description:
+   This function gets only the local elements in a GIDCollection.
+   The resulting elements are returned in a new GIDCollection. If
+   there are no local elements, an empty GIDCollection is returned.
+
+   Author: Håkon Mørk 
+   FirstVersion: November 2017
+*/
+/LocalOnly [/gidcollectiontype]
+{
+   << >> begin
+     /gc Set
+     Rank gc 0 get NumProcesses mod sub NumProcesses add NumProcesses mod 1 add
+     dup gc size leq
+     {
+       gc size NumProcesses 3 arraystore gc exch Take
+     }
+     {
+       pop
+       [] cvgidcollection
+     } ifelse
+   end
+} def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % Return array containing only those GIDs for which procedure returns true
 %
 % Note: 

@@ -61,6 +61,13 @@ def
 } if
 [/integertype] /GetStatus_i load addtotrie
 [/connectiontype] /GetStatus_C load addtotrie
+[/arraytype] /GetStatus_a load addtotrie
+def
+
+/GetStatus_a
+{
+  { GetStatus_C } Map
+}
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

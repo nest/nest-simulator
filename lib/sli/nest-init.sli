@@ -133,21 +133,7 @@ def
   /coll Set
   slice length 1 eq
   {
-    slice 0 get
-    dup 0 eq 
-    {
-      pop coll slice /Take /RangeCheck raiseerror
-    }
-    if
-      
-    dup 1 geq
-    {
-      % positive index, must subtract 1
-      1 sub
-    }
-    if
-    coll exch
-    get      % negative index works the same for Take and get
+    slice 0 get dup 1 3 arraystore coll exch Take_g_a
   }
   {
     % assume that we have two or three elements now

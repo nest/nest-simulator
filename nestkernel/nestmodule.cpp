@@ -324,14 +324,7 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
     }
 
     i->OStack.pop();
-    if ( gc_size == 1 )
-    {
-      i->OStack.push( result[0] );
-    }
-    else
-    {
-      i->OStack.push( result );
-    }
+    i->OStack.push( result );
     i->EStack.pop();
   }
 }

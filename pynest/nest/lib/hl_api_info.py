@@ -282,7 +282,7 @@ def GetStatus(nodes, keys=None):
     if keys is None:
         cmd = 'GetStatus'
     elif is_literal(keys):
-        cmd = 'GetStatus pstack {{ /{0} get }} Map'.format(keys)
+        cmd = 'GetStatus {{ /{0} get }} Map'.format(keys)
     elif is_iterable(keys):
         keys_str = " ".join("/{0}".format(x) for x in keys)
         cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)
@@ -295,5 +295,6 @@ def GetStatus(nodes, keys=None):
         sps(nodes)
 
     sr(cmd)
-
+    
     return spp()
+

@@ -173,8 +173,7 @@ GIDCollection::create_( const std::vector< index >& gids )
 {
   index current_first = gids[ 0 ];
   index current_last = current_first;
-  index current_model =
-    kernel().node_manager.get_node_or_proxy( gids[ 0 ] )->get_model_id();
+  index current_model = kernel().modelrange_manager.get_model_id( gids[ 0 ] );
 
   std::vector< GIDCollectionPrimitive > parts;
 
@@ -182,8 +181,7 @@ GIDCollection::create_( const std::vector< index >& gids )
         gid != gids.end();
         ++gid )
   {
-    index next_model =
-      kernel().node_manager.get_node_or_proxy( *gid )->get_model_id();
+    index next_model = kernel().modelrange_manager.get_model_id( *gid );
 
     if ( next_model == current_model and *gid == ( current_last + 1 ) )
     {

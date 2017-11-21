@@ -40,8 +40,8 @@ Name: sigmoid_rate - rate model with sigmoidal gain function
 Description:
 
  sigmoid_rate is an implementation of a nonlinear rate model with input
- function input(h) = g / ( 1. + exp( -beta * ( h - theta ) ) ).  
- The boolean parameter linear_summation determines whether the input 
+ function input(h) = g / ( 1. + exp( -beta * ( h - theta ) ) ).
+ The boolean parameter linear_summation determines whether the input
  function is applied to the summed up incoming connections
  (= True, default value) or to each input individually (= False).
 

@@ -43,8 +43,8 @@ in [1].
 Description:
 
  sigm_rate is an implementation of a nonlinear rate model with input
- function input(h) = ( g * h )^4 / ( .1^4 + ( g * h )^4 ).  
- The boolean parameter linear_summation determines whether the input 
+ function input(h) = ( g * h )^4 / ( .1^4 + ( g * h )^4 ).
+ The boolean parameter linear_summation determines whether the input
  function is applied to the summed up incoming connections
  (= True, default value) or to each input individually (= False).
 
@@ -73,7 +73,7 @@ then summed up (false). Default is true.
 
 References:
 
- [1] Gancarz, G., & Grossberg, S. (1998). 
+ [1] Gancarz, G., & Grossberg, S. (1998).
  A neural model of the saccade generator in the reticular formation.
  Neural Networks, 11(7), 1159–1174. doi: 10.1016/S0893-6080(98)00096-3
 

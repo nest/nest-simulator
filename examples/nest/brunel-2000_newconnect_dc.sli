@@ -20,6 +20,8 @@
  *
  */
 
+% autorun=true
+
 /*
    Current-driven Brunel Network
 

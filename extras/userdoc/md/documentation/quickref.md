@@ -172,7 +172,6 @@ current subnet.
 
 ### Neuron Models
 
-[iaf\_neuron](../helpindex/cmds/iaf_neuron),
 [iaf\_psc\_alpha](../helpindex/cmds/iaf_psc_alpha.md)
 Leaky integrate-and-fire neuron model.
 [iaf\_psc\_delta](../helpindex/cmds/iaf_psc_delta.md)

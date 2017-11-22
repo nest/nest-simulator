@@ -40,9 +40,9 @@ Author: Maximilian Schmidt, 2014-10-08
 M_ERROR setverbosity
 
 [
-  { /iaf_neuron /test_neuron CopyModel }
+  { /iaf_psc_alpha /test_neuron CopyModel }
   { /static_synapse /test_synapse CopyModel }
-  { /iaf_neuron << /V_reset -100. >> SetDefaults }
+  { /iaf_psc_alpha << /V_reset -100. >> SetDefaults }
   { /static_synapse << /weight 10. >> SetDefaults }  
 ]
 {

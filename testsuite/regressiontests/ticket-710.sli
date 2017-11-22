@@ -38,7 +38,7 @@ Author: Susanne Kunkel, Maximilian Schmidt, 2012-04-08
 M_ERROR setverbosity
 
 
-/iaf_neuron Create /neuron Set
+/iaf_psc_alpha Create /neuron Set
 /spike_detector Create /sd Set
 {
 neuron 0 get sd 0 get /static_synapse_hpc Connect

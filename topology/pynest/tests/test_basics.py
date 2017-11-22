@@ -41,7 +41,7 @@ class BasicsTestCase(unittest.TestCase):
         nr = 4
         nc = 5
         nest.ResetKernel()
-        l = topo.CreateLayer({'elements': 'iaf_neuron',
+        l = topo.CreateLayer({'elements': 'iaf_psc_alpha',
                               'rows': nr,
                               'columns': nc})
         self.assertEqual(len(l), nr * nc)
@@ -49,7 +49,7 @@ class BasicsTestCase(unittest.TestCase):
     def test_GetPosition(self):
         """Check if GetPosition returns proper positions."""
         pos = ((1.0, 0.0), (0.0, 1.0), (3.5, 1.5))
-        ldict = {'elements': 'iaf_neuron',
+        ldict = {'elements': 'iaf_psc_alpha',
                  'extent': (20., 20.),
                  'positions': pos}
         nest.ResetKernel()
@@ -80,7 +80,7 @@ class BasicsTestCase(unittest.TestCase):
     # TODO481 remove GetElement
     def test_GetElement(self):
         """Check if GetElement returns proper lists."""
-        ldict = {'elements': 'iaf_neuron',
+        ldict = {'elements': 'iaf_psc_alpha',
                  'rows': 4, 'columns': 5}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
@@ -102,7 +102,7 @@ class BasicsTestCase(unittest.TestCase):
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Displacement(self):
         """Interface check on displacement calculations."""
-        ldict = {'elements': 'iaf_neuron',
+        ldict = {'elements': 'iaf_psc_alpha',
                  'rows': 4, 'columns': 5}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
@@ -156,7 +156,7 @@ class BasicsTestCase(unittest.TestCase):
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Distance(self):
         """Interface check on distance calculations."""
-        ldict = {'elements': 'iaf_neuron',
+        ldict = {'elements': 'iaf_psc_alpha',
                  'rows': 4, 'columns': 5}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
@@ -218,7 +218,7 @@ class BasicsTestCase(unittest.TestCase):
         """Interface and result check for finding nearest element.
            This function is Py only, so we also need to check results."""
         # nodes at [-1,0,1]x[-1,0,1], column-wise
-        ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': (3., 3.)}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
@@ -251,7 +251,7 @@ class BasicsTestCase(unittest.TestCase):
         """Interface and result check for finding center element.
            This function is Py only, so we also need to check results."""
         # nodes at [-1,0,1]x[-1,0,1], column-wise
-        ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': (2., 2.)}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)

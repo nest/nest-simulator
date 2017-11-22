@@ -140,21 +140,7 @@ def
   /coll Set
   slice length 1 eq
   {
-    slice 0 get
-    dup 0 eq 
-    {
-      pop coll slice /Take /RangeCheck raiseerror
-    }
-    if
-      
-    dup 1 geq
-    {
-      % positive index, must subtract 1
-      1 sub
-    }
-    if
-    coll exch
-    get      % negative index works the same for Take and get
+    slice 0 get dup 1 3 arraystore coll exch Take_g_a
   }
   {
     % assume that we have two or three elements now
@@ -166,6 +152,42 @@ def
   ifelse
   end
   
+} def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/* BeginDocumentation
+   Name: LocalOnly - Get only local elements of a GIDCollection.
+
+   Synopsis:
+   gidcollection    LocalOnly --> local_gidcollection
+
+   Parameters:
+   gidcollection          - GIDCollection in which to find local elements
+   local_gidcollection    - GIDCollection with only local elements 
+
+   Description:
+   This function gets only the local elements in a GIDCollection.
+   The resulting elements are returned in a new GIDCollection. If
+   there are no local elements, an empty GIDCollection is returned.
+
+   Author: Håkon Mørk 
+   FirstVersion: November 2017
+*/
+/LocalOnly [/gidcollectiontype]
+{
+   << >> begin
+     /gc Set
+     Rank gc 0 get NumProcesses mod sub NumProcesses add NumProcesses mod 1 add
+     dup gc size leq
+     {
+       gc size NumProcesses 3 arraystore gc exch Take
+     }
+     {
+       pop
+       [] cvgidcollection
+     } ifelse
+   end
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -192,6 +214,21 @@ def
   exch pop
   currentdict /predicate undef
 } bind def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Min and Max for GIDCollections
+%
+
+/Min trie
+[/gidcollectiontype] { 0 get } addtotrie
+[/anytype] /Min load addtotrie
+def
+
+/Max trie
+[/gidcollectiontype] { dup size 1 sub get } addtotrie
+[/anytype] /Max load addtotrie
+def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

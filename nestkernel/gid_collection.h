@@ -340,6 +340,7 @@ public:
 private:
   std::clock_t fingerprint_; //!< Unique identity of the kernel that created the
                              //!< GIDCollection
+  static GIDCollectionPTR create_();
   static GIDCollectionPTR create_( const std::vector< index >& );
 };
 

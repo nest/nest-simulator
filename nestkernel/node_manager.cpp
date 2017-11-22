@@ -372,8 +372,8 @@ NodeManager::is_local_gid( index gid ) const
   thread num_threads = kernel().vp_manager.get_num_threads();
   for ( thread t = 0; t < num_threads; ++t )
   {
-    is_local = ( is_local
-    		         or local_nodes_[ t ].get_node_by_gid( gid ) != 0 );
+    const bool not_a_proxy = local_nodes_[ t ].get_node_by_gid( gid ) != 0;
+    is_local = is_local or not_a_proxy;
   }
   return is_local;
 }
@@ -381,8 +381,9 @@ NodeManager::is_local_gid( index gid ) const
 Node* NodeManager::get_node_or_proxy( index gid, thread t )
 {
   assert( 0 <= t and t < kernel().vp_manager.get_num_threads() );
+  assert( 0 < gid and gid <= size() );
 
-  Node* node = get_thread_local_node( gid, t );
+  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
   if ( node == 0 )
   {
     return kernel().model_manager.get_proxy_node( t, gid );
@@ -403,7 +404,7 @@ Node* NodeManager::get_mpi_local_node_or_device_head( index gid )
 {
   thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
 
-  Node* node = get_thread_local_node( gid, t );
+  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
 
   if ( node == 0 )
   {
@@ -413,13 +414,6 @@ Node* NodeManager::get_mpi_local_node_or_device_head( index gid )
   {
     node = local_nodes_[ 0 ].get_node_by_gid( gid );
   }
-
-  return node;
-}
-
-Node* NodeManager::get_thread_local_node( index gid, thread t )
-{
-  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
 
   return node;
 }
@@ -529,7 +523,7 @@ NodeManager::ensure_valid_thread_local_ids()
 void
 NodeManager::destruct_nodes_()
 {
-#ifdef _OPENMP    
+#ifdef _OPENMP
 #pragma omp parallel
   {
     index t = kernel().vp_manager.get_thread_id();

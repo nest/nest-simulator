@@ -1,5 +1,5 @@
 /*
- *  ticket-748.sli
+ *  test_neuron_vp_global.sli
  *
  *  This file is part of NEST.
  *
@@ -21,24 +21,31 @@
  */
 
 /* BeginDocumentation
+Name: testsuite::test_neuron_vp_global - Test that neurons are assigned to correct VP
 
-Name: testsuite::ticket-785 - fail_or_die inconsistenly reports errors
-
-Synopsis: (ticket-748) run -> NEST exits if test fails
+Synopsis: nest_indirect test_neuron_vp_global.sli -> -
 
 Description:
-Test that GetConnections throws an error if argument list is not of dimension 1
-
-Author: Maximilian Schmidt, 2014-01-28
- */
+Tests that neurons are assigned to correct VP in various configurations
+and that correct VP information is available on all ranks.
+*/
 
 (unittest) run
 /unittest using
 
+skip_if_not_threaded
+
+[1 2 4]
 {
-  /iaf_neuron 2 Create
-  1 2 Connect
-  << /target [[1]] >> GetConnections
-} fail_or_die 
+  ResetKernel
 
+  << /total_num_virtual_procs 4 >> SetKernelStatus
 
+  /nodes /iaf_psc_alpha 4 Create def
+
+  % build list of GID-VP pairs for local neurons
+  nodes { GetStatus } Map
+  { dup /global_id get exch /vp get 2 arraystore } Map  
+}
+distributed_rank_invariant_collect_assert_or_die
+% pooled over all processes, we must always have the same pairs

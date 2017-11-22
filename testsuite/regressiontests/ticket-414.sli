@@ -39,7 +39,7 @@
 {
 ResetKernel
 /spike_generator << /precise_times false /spike_times [1.0] >> Create
-/iaf_neuron Create dup << /frozen true >> SetStatus
+/iaf_psc_alpha Create dup << /frozen true >> SetStatus
 Connect
 10 Simulate
 } 

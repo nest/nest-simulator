@@ -96,6 +96,7 @@ class Archiving_Node;
 class Node
 {
   friend class NodeManager;
+  friend class ModelManager;
   friend class proxynode;
   friend class Synapse;
   friend class Model;
@@ -163,6 +164,17 @@ public:
    * the model in the interpreter's model dictionary.
    */
   std::string get_name() const;
+
+  /**
+   * Return the element type of the node.
+   * The returned Name is a free label describing the class of network
+   * elements a node belongs to. Currently used values are "neuron",
+   * "recorder", "stimulator", and "other", which are all defined as
+   * static Name objects in the names namespace.
+   * This function is overwritten with a corresponding value in the
+   * derived classes
+   */
+  virtual Name get_element_type() const;
 
   /**
    * Return global Network ID.
@@ -900,6 +912,12 @@ inline bool
 Node::is_proxy() const
 {
   return false;
+}
+
+inline Name
+Node::get_element_type() const
+{
+  return names::neuron;
 }
 
 inline index

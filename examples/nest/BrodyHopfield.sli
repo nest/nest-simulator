@@ -20,6 +20,8 @@
  *
  */
 
+% autorun=true
+
 /*
     Synchronization Behavior
 
@@ -42,33 +44,38 @@
 
 ResetKernel
 
+<< /overwrite_files true >> SetKernelStatus
+
 /N             1000   def % number of neurons
 /T             600 ms def % simulation time
 /bias_begin    140 pA def % increasing bias current to all neurons...
 /bias_end      200 pA def % ...from neuron 0 to N-1
-/model /iaf_psc_alpha def
 
-/ac_generator    Create /drive Set
-/noise_generator Create /noise Set
-/spike_detector  Create /sd    Set
-
-/neurons model N Create def
+/ac_generator       Create /drive   Set
+/noise_generator    Create /noise   Set
+/spike_detector     Create /sd      Set
+/iaf_psc_alpha   N  Create /neurons Set
 
 sd << /to_file true /withgid true >> SetStatus
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 drive
 <<
     /amplitude 50. pA
     /frequency 35. Hz
 >> SetStatus
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 noise
 <<
     /mean    0.   pA
     /std     200. pA
 >> SetStatus
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 0 1 N 1 sub {
     /i Set neurons i get
     <<
@@ -83,10 +90,11 @@ noise
     >>
     SetStatus
 } for
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-drive neurons cvgidcollection Connect
-noise neurons cvgidcollection Connect
-neurons cvgidcollection sd    Connect
+drive   neurons Connect
+noise   neurons Connect
+neurons sd      Connect
 
 T Simulate

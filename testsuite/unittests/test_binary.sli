@@ -129,7 +129,7 @@ forall
 
 
 /mcculloch_pitts_neuron Create /binary Set
-/iaf_neuron Create /spiking Set
+/iaf_psc_alpha Create /spiking Set
 /spike_generator Create /sg Set
 /spike_detector Create /sd Set
 

@@ -126,24 +126,19 @@ Node::get_status_base()
   // add information available for all nodes
   ( *dict )[ names::local ] = kernel().node_manager.is_local_node( this );
   ( *dict )[ names::model ] = LiteralDatum( get_name() );
+  ( *dict )[ names::global_id ] = get_gid();
+  ( *dict )[ names::vp ] = get_vp();
+  ( *dict )[ names::element_type ] = LiteralDatum( get_element_type() );
 
   // add information available only for local nodes
   if ( not is_proxy() )
   {
-    ( *dict )[ names::global_id ] = get_gid();
     ( *dict )[ names::frozen ] = is_frozen();
     ( *dict )[ names::node_uses_wfr ] = node_uses_wfr();
+    ( *dict )[ names::thread_local_id ] = get_thread_lid();
     ( *dict )[ names::thread ] = get_thread();
-    ( *dict )[ names::vp ] = get_vp();
+    ( *dict )[ names::supports_precise_spikes ] = is_off_grid();
   }
-
-  ( *dict )[ names::thread_local_id ] = get_thread_lid();
-  ( *dict )[ names::supports_precise_spikes ] = is_off_grid();
-
-  // This is overwritten with a corresponding value in the
-  // base classes for stimulating and recording devices, and
-  // in other special node classes
-  ( *dict )[ names::element_type ] = LiteralDatum( names::neuron );
 
   // now call the child class' hook
   get_status( dict );

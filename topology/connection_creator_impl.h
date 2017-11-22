@@ -209,7 +209,6 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
     pool.define( source.get_global_positions_vector() );
   }
 
-  // TODO 481 : Same with other functions
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised_(
     kernel().vp_manager.get_num_threads() );
 
@@ -296,6 +295,9 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
     pool.define( source.get_global_positions_vector() );
   }
 
+  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_(
+    kernel().vp_manager.get_num_threads() );
+
   // We only need to check the first in the GIDCollection
   Node* const first_in_tgt =
     kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
@@ -311,43 +313,63 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
                      // target_begin, target_end)
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
-    GIDCollection::const_iterator target_begin = target_gc->local_begin();
-    GIDCollection::const_iterator target_end = target_gc->end();
-
-    for ( GIDCollection::const_iterator tgt_it = target_begin;
-          tgt_it < target_end;
-          ++tgt_it )
+    try
     {
-      Node* const tgt =
-        kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
+      GIDCollection::const_iterator target_begin = target_gc->local_begin();
+      GIDCollection::const_iterator target_end = target_gc->end();
 
-      assert( not tgt->is_proxy() );
-
-      const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
-
-      if ( mask_.valid() )
+      for ( GIDCollection::const_iterator tgt_it = target_begin;
+            tgt_it < target_end;
+            ++tgt_it )
       {
-        // We do the same as in the target driven case, except that we calculate
-        // displacements in the target layer. We therefore send in target as
-        // last parameter.
-        connect_to_target_( pool.masked_begin( target_pos ),
-          pool.masked_end(),
-          tgt,
-          target_pos,
-          thread_id,
-          target );
-      }
-      else
-      {
-        // We do the same as in the target driven case, except that we calculate
-        // displacements in the target layer. We therefore send in target as
-        // last parameter.
-        connect_to_target_(
-          pool.begin(), pool.end(), tgt, target_pos, thread_id, target );
-      }
+        Node* const tgt =
+          kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
 
-    } // end for
-  }   // end pragma
+        assert( not tgt->is_proxy() );
+
+        const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+
+        if ( mask_.valid() )
+        {
+          // We do the same as in the target driven case, except that we
+          // calculate
+          // displacements in the target layer. We therefore send in target as
+          // last parameter.
+          connect_to_target_( pool.masked_begin( target_pos ),
+            pool.masked_end(),
+            tgt,
+            target_pos,
+            thread_id,
+            target );
+        }
+        else
+        {
+          // We do the same as in the target driven case, except that we
+          // calculate
+          // displacements in the target layer. We therefore send in target as
+          // last parameter.
+          connect_to_target_(
+            pool.begin(), pool.end(), tgt, target_pos, thread_id, target );
+        }
+
+      } // end for
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( thread_id ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  } // omp parallel
+  // check if any exceptions have been raised
+  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  {
+    if ( exceptions_raised_.at( thr ).valid() )
+    {
+      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+    }
+  }
 }
 
 template < int D >

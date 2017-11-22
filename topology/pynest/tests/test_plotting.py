@@ -44,7 +44,7 @@ except:
 class PlottingTestCase(unittest.TestCase):
     def test_PlotLayer(self):
         """Test plotting layer."""
-        ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
@@ -54,7 +54,8 @@ class PlottingTestCase(unittest.TestCase):
 
     def test_PlotTargets(self):
         """Test plotting targets."""
-        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3,
+        ldict = {'elements': 'iaf_psc_alpha',
+                 'rows': 3,
                  'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         cdict = {'connection_type': 'divergent',
@@ -74,7 +75,7 @@ class PlottingTestCase(unittest.TestCase):
 
     def test_PlotKernel(self):
         """Test plotting kernels."""
-        ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)

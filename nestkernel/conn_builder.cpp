@@ -205,9 +205,8 @@ nest::ConnBuilder::ConnBuilder( GIDCollectionPTR sources,
     {
       param_dicts_.push_back( new Dictionary() );
 
-      for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
-            it != synapse_params_.end();
-            ++it )
+      ConnParameterMap::const_iterator it = synapse_params_.begin();
+      for ( ; it != synapse_params_.end(); ++it )
       {
         if ( it->first == names::receptor_type
           || it->first == names::music_channel
@@ -231,13 +230,14 @@ nest::ConnBuilder::ConnBuilder( GIDCollectionPTR sources,
     {
       weight_->reset();
     }
+
     if ( delay_ )
     {
       delay_->reset();
     }
-    for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
-          it != synapse_params_.end();
-          ++it )
+
+    ConnParameterMap::const_iterator it = synapse_params_.begin();
+    for ( ; it != synapse_params_.end(); ++it )
     {
       it->second->reset();
     }
@@ -245,9 +245,8 @@ nest::ConnBuilder::ConnBuilder( GIDCollectionPTR sources,
 
   if ( not( sources_->valid() and targets_->valid() ) )
   {
-    throw KernelException(
-      "InvalidGIDCollection: Sources and Targets must be valid "
-      "GIDCollections" );
+    throw KernelException("InvalidGIDCollection: "
+      "sources and targets must be valid GIDCollections" );
   }
 }
 
@@ -256,9 +255,9 @@ nest::ConnBuilder::~ConnBuilder()
 {
   delete weight_;
   delete delay_;
-  for ( std::map< Name, ConnParameter* >::iterator it = synapse_params_.begin();
-        it != synapse_params_.end();
-        ++it )
+
+  std::map< Name, ConnParameter* >::iterator it = synapse_params_.begin();
+  for ( ; it != synapse_params_.end(); ++it )
   {
     delete it->second;
   }
@@ -361,17 +360,19 @@ nest::ConnBuilder::connect()
     if ( make_symmetric_ )
     {
       // call reset on all parameters
+
       if ( weight_ )
       {
         weight_->reset();
       }
+
       if ( delay_ )
       {
         delay_->reset();
       }
-      for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
-            it != synapse_params_.end();
-            ++it )
+
+      ConnParameterMap::const_iterator it = synapse_params_.begin();
+      for ( ; it != synapse_params_.end(); ++it )
       {
         it->second->reset();
       }
@@ -465,9 +466,8 @@ nest::ConnBuilder::single_connect_( index sgid,
   {
     assert( kernel().vp_manager.get_num_threads() == param_dicts_.size() );
 
-    for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
-          it != synapse_params_.end();
-          ++it )
+    ConnParameterMap::const_iterator it = synapse_params_.begin();
+    for ( ; it != synapse_params_.end(); ++it )
     {
       if ( it->first == names::receptor_type
         || it->first == names::music_channel
@@ -575,20 +575,23 @@ bool
 nest::ConnBuilder::all_parameters_scalar_() const
 {
   bool all_scalar = true;
+
   if ( weight_ )
   {
     all_scalar = all_scalar && weight_->is_scalar();
   }
+
   if ( delay_ )
   {
     all_scalar = all_scalar && delay_->is_scalar();
   }
-  for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
-        it != synapse_params_.end();
-        ++it )
+
+  ConnParameterMap::const_iterator it = synapse_params_.begin();
+  for ( ; it != synapse_params_.end(); ++it )
   {
     all_scalar = all_scalar && it->second->is_scalar();
   }
+
   return all_scalar;
 }
 
@@ -629,28 +632,33 @@ nest::OneToOneBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        for ( GIDCollection::const_iterator tgid = targets_->begin(),
-                                            sgid = sources_->begin();
-              tgid < targets_->end();
-              ++tgid, ++sgid )
+	//todo481: Iterate over local nodes only using GIDCollection's
+	//local_begin(). Also find a way to only iterate the sources
+	//and parameters using the same start and step. This probably
+	//also applies to other ConnBuilders below.
+	GIDCollection::const_iterator target_it = targets_->begin();
+	GIDCollection::const_iterator source_it = sources_->begin();
+        for ( ; target_it < targets_->end(); ++target_it, ++source_it )
         {
-          assert( sgid < sources_->end() );
+          assert( source_it < sources_->end() );
 
-          if ( ( *sgid ).gid == ( *tgid ).gid and not autapses_ )
+	  const index sgid = ( *source_it ).gid;
+	  const index tgid = ( *target_it ).gid;
+
+          if ( sgid == tgid and not autapses_ )
           {
             continue;
           }
 
-          Node* const target =
-                      kernel().node_manager.get_thread_local_node( ( *tgid ).gid, tid );
-
-          if ( target == 0 )
+          Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
+          if ( target->is_proxy() )
           {
+            // skip array parameters handled in other virtual processes
             skip_conn_parameter_( tid );
             continue;
           }
 
-          single_connect_( ( *sgid ).gid, *target, tid, rng );
+          single_connect_( sgid, *target, tid, rng );
         }
       }
       else
@@ -707,23 +715,24 @@ nest::OneToOneBuilder::disconnect_()
 
     try
     {
-      for ( GIDCollection::const_iterator tgid = targets_->begin(),
-                                          sgid = sources_->begin();
-            tgid < targets_->end();
-            ++tgid, ++sgid )
+      GIDCollection::const_iterator target_it = targets_->begin();
+      GIDCollection::const_iterator source_it = sources_->begin();
+      for ( ; target_it < targets_->end(); ++target_it, ++source_it )
       {
+        assert( source_it < sources_->end() );
 
-        assert( sgid < sources_->end() );
+	const index tgid = ( *target_it ).gid;
+	const index sgid = ( *source_it ).gid;
 
         // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
+        if ( not kernel().node_manager.is_local_gid( tgid ) )
         {
           // Disconnecting: no parameter skipping required
-          continue;
+	  continue;
         }
 
-        Node* const target =
-          kernel().node_manager.get_node_or_proxy( ( *tgid ).gid, tid );
+	Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
+	//todo481 do we have to check here if the target is a proxy?
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -732,7 +741,7 @@ nest::OneToOneBuilder::disconnect_()
           // Disconnecting: no parameter skipping required
           continue;
         }
-        single_disconnect_( ( *sgid ).gid, *target, target_thread );
+        single_disconnect_( sgid, *target, target_thread );
       }
     }
     catch ( std::exception& err )
@@ -765,29 +774,29 @@ nest::OneToOneBuilder::sp_connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      for ( GIDCollection::const_iterator tgid = targets_->begin(),
-                                          sgid = sources_->begin();
-            tgid < targets_->end();
-            ++tgid, ++sgid )
+      GIDCollection::const_iterator target_it = targets_->begin();
+      GIDCollection::const_iterator source_it = sources_->begin();
+      for ( ; target_it < targets_->end(); ++target_it, ++source_it )
       {
-        assert( sgid < sources_->end() );
+        assert( source_it < sources_->end() );
 
-        if ( ( *sgid ).gid == ( *tgid ).gid and not autapses_ )
+	const index sgid = ( *source_it ).gid;
+	const index tgid = ( *target_it ).gid;
+
+        if ( sgid == tgid and not autapses_ )
         {
           continue;
         }
 
-        if ( not change_connected_synaptic_elements(
-               ( *sgid ).gid, ( *tgid ).gid, tid, 1 ) )
+        if ( not change_connected_synaptic_elements( sgid, tgid, tid, 1 ) )
         {
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target =
-          kernel().node_manager.get_node_or_proxy( ( *tgid ).gid, tid );
+        Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
         const thread target_thread = target->get_thread();
 
-        single_connect_( ( *sgid ).gid, *target, target_thread, rng );
+        single_connect_( sgid, *target, target_thread, rng );
       }
     }
     catch ( std::exception& err )
@@ -817,23 +826,24 @@ nest::OneToOneBuilder::sp_disconnect_()
 
     try
     {
-      for ( GIDCollection::const_iterator tgid = targets_->begin(),
-                                          sgid = sources_->begin();
-            tgid < targets_->end();
-            ++tgid, ++sgid )
+      GIDCollection::const_iterator target_it = targets_->begin();
+      GIDCollection::const_iterator source_it = sources_->begin();
+      for ( ; target_it < targets_->end(); ++target_it, ++source_it )
       {
-        assert( sgid < sources_->end() );
+        assert( source_it < sources_->end() );
 
-        if ( not change_connected_synaptic_elements(
-               ( *sgid ).gid, ( *tgid ).gid, tid, -1 ) )
+	const index sgid = ( *source_it ).gid;
+	const index tgid = ( *target_it ).gid;
+
+        if ( not change_connected_synaptic_elements( sgid, tgid, tid, -1 ) )
         {
           continue;
         }
-        Node* const target =
-          kernel().node_manager.get_node_or_proxy( ( *tgid ).gid, tid );
+
+        Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
         const thread target_thread = target->get_thread();
 
-        single_disconnect_( ( *sgid ).gid, *target, target_thread );
+        single_disconnect_( sgid, *target, target_thread );
       }
     }
     catch ( std::exception& err )
@@ -862,20 +872,18 @@ nest::AllToAllBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        for ( GIDCollection::const_iterator tgid = targets_->begin();
-              tgid < targets_->end();
-              ++tgid )
+	GIDCollection::const_iterator target_it = targets_->begin();
+        for ( ; target_it < targets_->end(); ++target_it )
         {
-          Node* const target =
-                      kernel().node_manager.get_thread_local_node( ( *tgid ).gid, tid );
-
-          if ( target == 0 )
+	  const index tgid = ( *target_it ).gid;
+          Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
+          if ( target->is_proxy() )
           {
             skip_conn_parameter_( tid, sources_->size() );
             continue;
           }
 
-          inner_connect_( tid, rng, target, ( *tgid ).gid, true );
+          inner_connect_( tid, rng, target, tgid, true );
         }
       }
       else
@@ -926,11 +934,12 @@ nest::AllToAllBuilder::inner_connect_( const int tid,
     return;
   }
 
-  for ( GIDCollection::const_iterator sgid = sources_->begin();
-        sgid < sources_->end();
-        ++sgid )
+  GIDCollection::const_iterator source_it = sources_->begin();
+  for ( ; source_it < sources_->end(); ++source_it )
   {
-    if ( not autapses_ and ( *sgid ).gid == tgid )
+    const index sgid = ( *source_it ).gid;
+
+    if ( not autapses_ and sgid == tgid )
     {
       if ( skip )
       {
@@ -939,7 +948,7 @@ nest::AllToAllBuilder::inner_connect_( const int tid,
       continue;
     }
 
-    single_connect_( ( *sgid ).gid, *target, target_thread, rng );
+    single_connect_( sgid, *target, target_thread, rng );
   }
 }
 
@@ -956,34 +965,35 @@ nest::AllToAllBuilder::sp_connect_()
   {
     // get thread id
     const int tid = kernel().vp_manager.get_thread_id();
+
     try
     {
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      for ( GIDCollection::const_iterator tgid = targets_->begin();
-            tgid < targets_->end();
-            ++tgid )
+      GIDCollection::const_iterator target_it = targets_->begin();
+      for ( ; target_it < targets_->end(); ++target_it )
       {
-        for ( GIDCollection::const_iterator sgid = sources_->begin();
-              sgid < sources_->end();
-              ++sgid )
+	const index tgid = ( *target_it ).gid;
+
+	GIDCollection::const_iterator source_it = sources_->begin();
+        for ( ; source_it < sources_->end(); ++source_it )
         {
-          if ( not autapses_ and ( *sgid ).gid == ( *tgid ).gid )
+	  const index sgid = ( *source_it ).gid;
+
+          if ( not autapses_ and sgid == tgid )
           {
             skip_conn_parameter_( tid );
             continue;
           }
-          if ( not change_connected_synaptic_elements(
-                 ( *sgid ).gid, ( *tgid ).gid, tid, 1 ) )
+          if ( not change_connected_synaptic_elements( sgid, tgid, tid, 1 ) )
           {
             skip_conn_parameter_( tid, sources_->size() );
             continue;
           }
-          Node* const target =
-            kernel().node_manager.get_node_or_proxy( ( *tgid ).gid, tid );
+          Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
           const thread target_thread = target->get_thread();
-          single_connect_( ( *sgid ).gid, *target, target_thread, rng );
+          single_connect_( sgid, *target, target_thread, rng );
         }
       }
     }
@@ -1013,19 +1023,19 @@ nest::AllToAllBuilder::disconnect_()
 
     try
     {
-      for ( GIDCollection::const_iterator tgid = targets_->begin();
-            tgid < targets_->end();
-            ++tgid )
+      GIDCollection::const_iterator target_it = targets_->begin();
+      for ( ; target_it < targets_->end(); ++target_it )
       {
+	const index tgid = ( *target_it ).gid;
+
         // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
+        if ( not kernel().node_manager.is_local_gid( tgid ) )
         {
           // Disconnecting: no parameter skipping required
           continue;
         }
 
-        Node* const target =
-          kernel().node_manager.get_node_or_proxy( ( *tgid ).gid, tid );
+        Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -1035,12 +1045,11 @@ nest::AllToAllBuilder::disconnect_()
           continue;
         }
 
-        for ( GIDCollection::const_iterator sgid = sources_->begin();
-              sgid < sources_->end();
-              ++sgid )
+	GIDCollection::const_iterator source_it = sources_->begin();
+        for ( ; source_it < sources_->end(); ++source_it )
         {
-
-          single_disconnect_( ( *sgid ).gid, *target, target_thread );
+	  const index sgid = ( *source_it ).gid;
+          single_disconnect_( sgid, *target, target_thread );
         }
       }
     }
@@ -1070,24 +1079,24 @@ nest::AllToAllBuilder::sp_disconnect_()
 
     try
     {
-      for ( GIDCollection::const_iterator tgid = targets_->begin();
-            tgid < targets_->end();
-            ++tgid )
+      GIDCollection::const_iterator target_it = targets_->begin();
+      for ( ; target_it < targets_->end(); ++target_it )
       {
-        for ( GIDCollection::const_iterator sgid = sources_->begin();
-              sgid < sources_->end();
-              ++sgid )
+	const index tgid = ( *target_it ).gid;
+
+	GIDCollection::const_iterator source_it = sources_->begin();
+        for ( ; source_it < sources_->end(); ++source_it )
         {
-          if ( not change_connected_synaptic_elements(
-                 ( *sgid ).gid, ( *tgid ).gid, tid, -1 ) )
+	  const index sgid = ( *source_it ).gid;
+
+          if ( not change_connected_synaptic_elements( sgid, tgid, tid, -1 ) )
           {
             // Disconnecting: no parameter skipping required
             continue;
           }
-          Node* const target =
-            kernel().node_manager.get_node_or_proxy( ( *tgid ).gid, tid );
+          Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
           const thread target_thread = target->get_thread();
-          single_disconnect_( ( *sgid ).gid, *target, target_thread );
+          single_disconnect_( sgid, *target, target_thread );
         }
       }
     }
@@ -1163,21 +1172,19 @@ nest::FixedInDegreeBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        for ( GIDCollection::const_iterator tgid = targets_->begin();
-              tgid < targets_->end();
-              ++tgid )
+	GIDCollection::const_iterator target_it = targets_->begin();
+        for ( ; target_it < targets_->end(); ++target_it )
         {
-          Node* const target =
-              kernel().node_manager.get_thread_local_node( ( *tgid ).gid, tid );
-
-          if ( target == 0 )
+	  const index tgid = ( *target_it ).gid;
+          Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
+          if ( target->is_proxy() )
           {
             // skip array parameters handled in other virtual processes
             skip_conn_parameter_( tid, indegree_ );
             continue;
           }
 
-          inner_connect_( tid, rng, target, ( *tgid ).gid, true );
+          inner_connect_( tid, rng, target, tgid, true );
         }
       }
       else
@@ -1304,10 +1311,11 @@ nest::FixedOutDegreeBuilder::connect_()
 {
   librandom::RngPtr grng = kernel().rng_manager.get_grng();
 
-  for ( GIDCollection::const_iterator sgid = sources_->begin();
-        sgid < sources_->end();
-        ++sgid )
+  GIDCollection::const_iterator source_it = sources_->begin();
+  for ( ; source_it < sources_->end(); ++source_it )
   {
+    const index sgid = ( *source_it ).gid;
+
     std::set< long > ch_ids;
     std::vector< index > tgt_ids_;
     const long n_rnd = targets_->size();
@@ -1321,7 +1329,7 @@ nest::FixedOutDegreeBuilder::connect_()
       {
         t_id = grng->ulrand( n_rnd );
         tgid = ( *targets_ )[ t_id ];
-      } while ( ( not autapses_ and tgid == ( *sgid ).gid )
+      } while ( ( not autapses_ and tgid == sgid )
         or ( not multapses_ and ch_ids.find( t_id ) != ch_ids.end() ) );
       if ( not multapses_ )
       {
@@ -1341,21 +1349,18 @@ nest::FixedOutDegreeBuilder::connect_()
         // allocate pointer to thread specific random generator
         librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-        for ( std::vector< index >::const_iterator tgid = tgt_ids_.begin();
-              tgid != tgt_ids_.end();
-              ++tgid )
+	std::vector< index >::const_iterator tgid_it = tgt_ids_.begin();
+        for ( ; tgid_it != tgt_ids_.end(); ++tgid_it )
         {
-          Node* const target =
-              kernel().node_manager.get_thread_local_node( *tgid, tid );
-
-          if ( target == 0 )
+          Node* const target = kernel().node_manager.get_node_or_proxy( *tgid_it, tid );
+          if ( target->is_proxy() )
           {
             // skip array parameters handled in other virtual processes
             skip_conn_parameter_( tid );
             continue;
           }
 
-          single_connect_( ( *sgid ).gid, *target, tid, rng );
+          single_connect_( sgid, *target, tid, rng );
         }
       }
       catch ( std::exception& err )
@@ -1500,15 +1505,16 @@ nest::FixedTotalNumberBuilder::connect_()
         // gather local target gids
         std::vector< index > thread_local_targets;
         thread_local_targets.reserve( number_of_targets_on_vp[ vp_id ] );
-        for ( std::vector< index >::const_iterator it = local_targets.begin();
-              it != local_targets.end();
-              ++it )
+
+	std::vector< index >::const_iterator tgid_it = local_targets.begin();
+        for ( ; tgid_it != local_targets.end(); ++tgid_it )
         {
-          if ( kernel().vp_manager.suggest_vp( *it ) == vp_id )
+          if ( kernel().vp_manager.suggest_vp( *tgid_it ) == vp_id )
           {
-            thread_local_targets.push_back( *it );
+            thread_local_targets.push_back( *tgid_it );
           }
         }
+
         assert(
           thread_local_targets.size() == number_of_targets_on_vp[ vp_id ] );
 
@@ -1578,21 +1584,19 @@ nest::BernoulliBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        for ( GIDCollection::const_iterator tgid = targets_->begin();
-              tgid < targets_->end();
-              ++tgid )
+	GIDCollection::const_iterator target_it = targets_->begin();
+        for ( ; target_it < targets_->end(); ++target_it )
         {
-          Node* const target =
-              kernel().node_manager.get_thread_local_node( ( *tgid ).gid, tid );
-
-          if ( target == 0 )
+	  const index tgid = ( *target_it ).gid;
+          Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
+          if ( target->is_proxy() )
           {
             // skip array parameters handled in other virtual processes
             skip_conn_parameter_( tid );
             continue;
           }
 
-          inner_connect_( tid, rng, target, ( *tgid ).gid );
+          inner_connect_( tid, rng, target, tgid );
         }
       }
 
@@ -1642,11 +1646,12 @@ nest::BernoulliBuilder::inner_connect_( const int tid,
   // It is not possible to create multapses with this type of BernoulliBuilder,
   // hence leave out corresponding checks.
 
-  for ( GIDCollection::const_iterator sgid = sources_->begin();
-        sgid != sources_->end();
-        ++sgid )
+  GIDCollection::const_iterator source_it = sources_->begin();
+  for ( ; source_it != sources_->end(); ++source_it )
   {
-    if ( not autapses_ and ( *sgid ).gid == tgid )
+    const index sgid = ( *source_it ).gid;
+
+    if ( not autapses_ and sgid == tgid )
     {
       continue;
     }
@@ -1656,7 +1661,7 @@ nest::BernoulliBuilder::inner_connect_( const int tid,
       continue;
     }
 
-    single_connect_( ( *sgid ).gid, *target, target_thread, rng );
+    single_connect_( sgid, *target, target_thread, rng );
   }
 }
 
@@ -1690,8 +1695,8 @@ nest::SPBuilder::update_delay( delay& d ) const
   {
     DictionaryDatum syn_defaults =
       kernel().model_manager.get_connector_defaults( get_synapse_model() );
-    d = Time( Time::ms( getValue< double >( syn_defaults, "delay" ) ) )
-          .get_steps();
+    const double delay = getValue< double >( syn_defaults, "delay" );
+    d = Time( Time::ms( delay ) ).get_steps();
   }
 }
 
@@ -1756,26 +1761,27 @@ nest::SPBuilder::connect_( const std::vector< index >& sources,
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      for ( std::vector< index >::const_iterator tgid = targets.begin(),
-                                                 sgid = sources.begin();
-            tgid != targets.end();
-            ++tgid, ++sgid )
+      std::vector< index >::const_iterator tgid_it = targets.begin();
+      std::vector< index >::const_iterator sgid_it = sources.begin();
+      for ( ; tgid_it != targets.end(); ++tgid_it, ++sgid_it )
       {
-        assert( sgid != sources.end() );
-        if ( *sgid == *tgid and not autapses_ )
+        assert( sgid_it != sources.end() );
+
+        if ( *sgid_it == *tgid_it and not autapses_ )
         {
           continue;
         }
 
-        if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+        if ( not change_connected_synaptic_elements( *sgid_it, *tgid_it, tid, 1 ) )
         {
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target = kernel().node_manager.get_node_or_proxy( *tgid, tid );
+        Node* const target = kernel().node_manager.get_node_or_proxy( *tgid_it, tid );
+	//todo481 do we need to check for proxyness of the target?
         const thread target_thread = target->get_thread();
 
-        single_connect_( *sgid, *target, target_thread, rng );
+        single_connect_( *sgid_it, *target, target_thread, rng );
       }
     }
     catch ( std::exception& err )

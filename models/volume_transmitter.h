@@ -118,10 +118,17 @@ public:
   {
     return false;
   }
+
   bool
   local_receiver() const
   {
     return false;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::other;
   }
 
   /**
@@ -189,8 +196,6 @@ volume_transmitter::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   Archiving_Node::get_status( d );
-
-  ( *d )[ names::element_type ] = LiteralDatum( names::other );
 }
 
 inline void

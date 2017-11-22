@@ -129,7 +129,7 @@ GIDCollection::create( IntVectorDatum gidsdatum )
 {
   if ( gidsdatum->size() == 0 )
   {
-    throw KernelException( "Cannot create empty GIDCollection" );
+    return GIDCollection::create_();
   }
 
   std::vector< index > gids;
@@ -141,10 +141,6 @@ GIDCollection::create( IntVectorDatum gidsdatum )
     gids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
   std::sort( gids.begin(), gids.end() );
-  if ( gids[ 0 ] == 0 )
-  {
-    throw KernelException( "GIDCollection cannot contain root" );
-  }
   return GIDCollection::create_( gids );
 }
 
@@ -153,7 +149,7 @@ GIDCollection::create( TokenArray gidsarray )
 {
   if ( gidsarray.size() == 0 )
   {
-    throw BadProperty( "Cannot create empty GIDCollection" );
+    return GIDCollection::create_();
   }
 
   std::vector< index > gids;
@@ -163,11 +159,13 @@ GIDCollection::create( TokenArray gidsarray )
     gids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
   std::sort( gids.begin(), gids.end() );
-  if ( gids[ 0 ] == 0 )
-  {
-    throw KernelException( "GIDCollection cannot contain root" );
-  }
   return GIDCollection::create_( gids );
+}
+
+GIDCollectionPTR
+GIDCollection::create_()
+{
+  return GIDCollectionPTR( new GIDCollectionPrimitive( 0, 0, invalid_index ) );
 }
 
 GIDCollectionPTR
@@ -175,8 +173,7 @@ GIDCollection::create_( const std::vector< index >& gids )
 {
   index current_first = gids[ 0 ];
   index current_last = current_first;
-  index current_model =
-    kernel().node_manager.get_node_or_proxy( gids[ 0 ] )->get_model_id();
+  index current_model = kernel().modelrange_manager.get_model_id( gids[ 0 ] );
 
   std::vector< GIDCollectionPrimitive > parts;
 
@@ -184,8 +181,7 @@ GIDCollection::create_( const std::vector< index >& gids )
         gid != gids.end();
         ++gid )
   {
-    index next_model =
-      kernel().node_manager.get_node_or_proxy( *gid )->get_model_id();
+    index next_model = kernel().modelrange_manager.get_model_id( *gid );
 
     if ( next_model == current_model and *gid == ( current_last + 1 ) )
     {
@@ -418,24 +414,25 @@ GIDCollectionPrimitive::GIDCollectionPrimitive::slice( size_t start,
 void
 GIDCollectionPrimitive::print_me( std::ostream& out ) const
 {
+  std::string model = model_id_ != invalid_index
+    ? kernel().model_manager.get_model( model_id_ )->get_name()
+    : "none";
   out << "[["
-      << "model=" << kernel().model_manager.get_model( model_id_ )->get_name()
-      << ", size=" << size() << " ";
+      << "model=" << model << ", size=" << size();
+
   if ( size() == 1 )
   {
-    out << "(" << first_ << ")";
-    out << "]]";
+    out << " (" << first_ << ")";
   }
   else if ( size() == 2 )
   {
-    out << "(" << first_ << ", " << last_ << ")";
-    out << "]]";
+    out << " (" << first_ << ", " << last_ << ")";
   }
-  else
+  else if ( size() > 2 )
   {
-    out << "(" << first_ << ".." << last_ << ")";
-    out << "]]";
+    out << " (" << first_ << ".." << last_ << ")";
   }
+  out << "]]";
 }
 
 bool
@@ -498,7 +495,7 @@ GIDCollectionComposite::GIDCollectionComposite(
 {
   if ( parts.size() < 1 )
   {
-    throw BadProperty( "Cannot create an empty GIDCollection" );
+    throw BadProperty( "Cannot create an empty composite GIDCollection" );
   }
 
   GIDCollectionMetadataPTR meta = parts[ 0 ].get_metadata();
@@ -534,7 +531,7 @@ GIDCollectionComposite::GIDCollectionComposite(
 {
   if ( stop - start < 1 )
   {
-    throw BadProperty( "Cannot create an empty GIDCollection." );
+    throw BadProperty( "Cannot create an empty composite GIDCollection." );
   }
   if ( start > composite.size() or stop > composite.size() )
   {
@@ -694,7 +691,6 @@ GIDCollectionPTR GIDCollectionComposite::operator+(
 GIDCollectionComposite::const_iterator
 GIDCollectionComposite::local_begin( GIDCollectionPTR cp ) const
 {
-  std::cerr << "Making composite local_begin()" << std::endl; // TODO 481
   size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   size_t current_vp =
     kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
@@ -720,7 +716,6 @@ GIDCollectionComposite::local_begin( GIDCollectionPTR cp ) const
 GIDCollectionComposite::const_iterator
 GIDCollectionComposite::MPI_local_begin( GIDCollectionPTR cp ) const
 {
-  std::cerr << "Making composite MPI_local_begin()" << std::endl; // TODO 481
   size_t num_processes = kernel().mpi_manager.get_num_processes();
   size_t rank = kernel().mpi_manager.get_rank();
   size_t rank_first_node = kernel().mpi_manager.get_process_id(

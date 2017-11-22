@@ -75,6 +75,12 @@ public:
     return true;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
   using Node::handles_test_event; // new
   using Node::handle;
   using Node::event_hook;

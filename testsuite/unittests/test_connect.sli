@@ -48,14 +48,14 @@ M_ERROR setverbosity
 
 (  Testing variant "integer integer") =
 ResetKernel
-/iaf_neuron 2 Create ;
+/iaf_psc_alpha 2 Create ;
 1 2 Connect
 << /source 1 dup cvgidcollection >> GetConnections 0 get
 /target get 2 eq assert_or_die
 
 (  Testing variant "integer integer double double") =
 ResetKernel
-/iaf_neuron 2 Create ;
+/iaf_psc_alpha 2 Create ;
 1 2 2.0 3.0 Connect
 << /source 1 dup cvgidcollection >> GetConnections 0 get dup dup
 /target get 2 eq assert_or_die
@@ -67,8 +67,8 @@ ResetKernel
 
 (  Testing variant "GIDCollection GIDCollection") =
 ResetKernel
-/a /iaf_neuron 3 Create def
-/b /iaf_neuron 3 Create def
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
 a b Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
@@ -76,8 +76,8 @@ Last /target get 6 eq assert_or_die
 
 (  Testing variant "GIDCollection GIDCollection literal") =
 ResetKernel
-/a /iaf_neuron 3 Create def
-/b /iaf_neuron 3 Create def
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
 a b /one_to_one Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
@@ -85,8 +85,8 @@ Last /target get 6 eq assert_or_die
 
 (  Testing variant "GIDCollection GIDCollection dict") =
 ResetKernel
-/a /iaf_neuron 3 Create def
-/b /iaf_neuron 3 Create def
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
 a b << /rule /one_to_one >> Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
@@ -94,8 +94,8 @@ Last /target get 6 eq assert_or_die
 
 (  Testing variant "GIDCollection GIDCollection empty_dict") =
 ResetKernel
-/a /iaf_neuron 3 Create def
-/b /iaf_neuron 3 Create def
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
 a b << >> Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
@@ -103,8 +103,8 @@ Last /target get 6 eq assert_or_die
 
 (  Testing variant "GIDCollection GIDCollection literal literal") =
 ResetKernel
-/a /iaf_neuron 3 Create def
-/b /iaf_neuron 3 Create def
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
 a b /one_to_one /stdp_synapse Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
@@ -112,8 +112,8 @@ Last /target get 6 eq assert_or_die
 
 (  Testing variant "GIDCollection GIDCollection dict literal") =
 ResetKernel
-/a /iaf_neuron 3 Create def
-/b /iaf_neuron 3 Create def
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
 a b << /rule /one_to_one >> /stdp_synapse Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
@@ -121,8 +121,8 @@ Last /target get 6 eq assert_or_die
 
 (  Testing variant "GIDCollection GIDCollection empty_dict literal") =
 ResetKernel
-/a /iaf_neuron 3 Create def
-/b /iaf_neuron 3 Create def
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
 a b << >> /stdp_synapse Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
@@ -130,8 +130,8 @@ Last /target get 6 eq assert_or_die
 
 (  Testing variant "GIDCollection GIDCollection literal dict") =
 ResetKernel
-/a /iaf_neuron 3 Create def
-/b /iaf_neuron 3 Create def
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
 a b /one_to_one << /model /stdp_synapse >> Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
@@ -139,8 +139,8 @@ Last /target get 6 eq assert_or_die
 
 (  Testing variant "GIDCollection GIDCollection literal empty_dict") =
 ResetKernel
-/a /iaf_neuron 3 Create def
-/b /iaf_neuron 3 Create def
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
 a b /one_to_one << >> Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
@@ -148,8 +148,8 @@ Last /target get 6 eq assert_or_die
 
 (  Testing variant "GIDCollection GIDCollection dict dict") =
 ResetKernel
-/a /iaf_neuron 3 Create def
-/b /iaf_neuron 3 Create def
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
 a b << /rule /one_to_one >> << /model /stdp_synapse >> Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
@@ -157,8 +157,8 @@ Last /target get 6 eq assert_or_die
 
 (  Testing variant "GIDCollection GIDCollection empty_dict dict") =
 ResetKernel
-/a /iaf_neuron 3 Create def
-/b /iaf_neuron 3 Create def
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
 a b << >> << /model /stdp_synapse >> Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
@@ -166,8 +166,8 @@ Last /target get 6 eq assert_or_die
 
 (  Testing variant "GIDCollection GIDCollection dict empty_dict") =
 ResetKernel
-/a /iaf_neuron 3 Create def
-/b /iaf_neuron 3 Create def
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
 a b << /rule /one_to_one >> << >> Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
@@ -175,8 +175,8 @@ Last /target get 6 eq assert_or_die
 
 (  Testing variant "GIDCollection GIDCollection empty_dict empty_dict") =
 ResetKernel
-/a /iaf_neuron 3 Create def
-/b /iaf_neuron 3 Create def
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
 a b << >> << >> Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die

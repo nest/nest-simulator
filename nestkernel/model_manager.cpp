@@ -35,6 +35,7 @@
 #include "kernel_manager.h"
 #include "model_manager_impl.h"
 #include "proxynode.h"
+#include "vp_manager_impl.h"
 
 
 namespace nest
@@ -85,11 +86,9 @@ ModelManager::initialize()
 {
   if ( proxynode_model_ == 0 )
   {
-    proxynode_model_ =
-      new GenericModel< proxynode >( "proxynode", /* deprecation_info */ "" );
+    proxynode_model_ = new GenericModel< proxynode >( "proxynode", "" );
     proxynode_model_->set_type_id( 1 );
-    pristine_models_.push_back(
-      std::pair< Model*, bool >( proxynode_model_, true ) );
+    pristine_models_.push_back( std::pair< Model*, bool >( proxynode_model_, true ) );
   }
 
   // Re-create the model list from the clean prototypes
@@ -107,23 +106,25 @@ ModelManager::initialize()
     }
   }
 
-  // create proxy nodes, one for each thread and model
+  // create proxy nodes, one for each thread and model and one dummy
+  // spike source for each thread.
+
   proxy_nodes_.resize( kernel().vp_manager.get_num_threads() );
-  int proxy_model_id = get_model_id( "proxynode" );
-  for ( thread t = 0;
-        t < static_cast< thread >( kernel().vp_manager.get_num_threads() );
-        ++t )
+  dummy_spike_sources_.resize( kernel().vp_manager.get_num_threads() );
+
+#pragma omp parallel
   {
+    const thread t = kernel().vp_manager.get_thread_id();
+    proxy_nodes_[ t ].clear();
+
     for ( index i = 0; i < pristine_models_.size(); ++i )
     {
-      assert( pristine_models_[ i ].first != 0 );
-      Node* newnode = proxynode_model_->allocate( t );
-      newnode->set_model_id( i );
-      proxy_nodes_[ t ].push_back( newnode );
+      const int model_id = pristine_models_[ i ].first->get_model_id();
+      proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
     }
-    Node* newnode = proxynode_model_->allocate( t );
-    newnode->set_model_id( proxy_model_id );
-    dummy_spike_sources_.push_back( newnode );
+
+    const int model_id = get_model_id( "proxynode" );
+    dummy_spike_sources_[ t ] = create_proxynode_( t, model_id );
   }
 
   synapsedict_->clear();
@@ -220,21 +221,16 @@ ModelManager::register_node_model_( Model* model, bool private_model )
 
   std::string name = model->get_name();
 
-  pristine_models_.push_back(
-    std::pair< Model*, bool >( model, private_model ) );
+  pristine_models_.push_back( std::pair< Model*, bool >( model, private_model ) );
   models_.push_back( model->clone( name ) );
-  int proxy_model_id = get_model_id( "proxynode" );
-  Model* proxy_model = models_[ proxy_model_id ];
-  assert( proxy_model != 0 );
 
-  for ( thread t = 0;
-        t < static_cast< thread >( kernel().vp_manager.get_num_threads() );
-        ++t )
+#pragma omp parallel
   {
-    Node* newnode = proxy_model->allocate( t );
-    newnode->set_model_id( id );
-    proxy_nodes_[ t ].push_back( newnode );
+    const thread t = kernel().vp_manager.get_thread_id();
+    const int model_id = model->get_model_id();
+    proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
   }
+
   if ( not private_model )
   {
     modeldict_->insert( name, id );
@@ -255,13 +251,11 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
   index new_id = models_.size() - 1;
   modeldict_->insert( new_name, new_id );
 
-  for ( thread t = 0;
-        t < static_cast< thread >( kernel().vp_manager.get_num_threads() );
-        ++t )
+#pragma omp parallel
   {
-    Node* newnode = proxynode_model_->allocate( t );
-    newnode->set_model_id( new_id );
-    proxy_nodes_[ t ].push_back( newnode );
+    const thread t = kernel().vp_manager.get_thread_id();
+    const int model_id = new_model->get_model_id();
+    proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
   }
 
   return new_id;
@@ -610,6 +604,14 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
   synapsedict_->insert( cf->get_name(), syn_id );
 
   return syn_id;
+}
+
+Node*
+ModelManager::create_proxynode_( thread t, int model_id )
+{
+  Node* proxy = proxynode_model_->allocate( t );
+  proxy->set_model_id( model_id );
+  return proxy;
 }
 
 } // namespace nest

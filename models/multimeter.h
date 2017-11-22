@@ -171,6 +171,12 @@ public:
     return false;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::recorder;
+  }
+
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and

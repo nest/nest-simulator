@@ -20,6 +20,8 @@
  *
  */
 
+% autorun=true
+
 ResetKernel
 
  1000.   ms /t_relax Set % how long to wait for the state to stabiluze before reording the spikes

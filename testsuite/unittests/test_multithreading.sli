@@ -61,7 +61,6 @@ GetKernelStatus /local_num_threads get 1 eq assert_or_die
 << /local_num_threads threads >> SetKernelStatus
 
 % check if modulo node distribution works
-/iaf_neuron 4 Create ;
-[1 2 3 4 ] {
+/iaf_psc_alpha 4 Create {
   dup threads mod exch [ /vp ] get eq assert_or_die
 } forall

@@ -1,5 +1,5 @@
 /*
- *  test_thread_local_ids.sli
+ *  test_localonly.sli
  *
  *  This file is part of NEST.
  *
@@ -20,48 +20,38 @@
  *
  */
 
-
 /* BeginDocumentation
-Name: testsuite::test_thread_local_ids - test that thread-local ids are set correctly 
+Name: testsuite::test_localonly - Test that LocalOnly returns GIDCollection with
+only local elements.
 
-Synopsis: (test_thread_local_ids.sli) run -> dies if assertion fails
+Synopsis: nest_indirect test_localonly.sli -> -
 
 Description:
-Ensures that thread-local IDs are set correctly on multithreaded simulations.
-
-Author: Plesser, Ippen
-FirstVersion: 2014-11-21
+Test that LocalOnly returns a GIDCollection with only GIDs of nodes in the
+current MPI process.
 */
 
 (unittest) run
 /unittest using
 
-skip_if_not_threaded
-
-M_ERROR setverbosity
-
+[1 2 4 8] % Including check where NumProcesses > size of GIDCollection.
 {
   ResetKernel
-  << /local_num_threads 4 >> SetKernelStatus
-  
-  /iaf_psc_alpha 4 Create ;
-  [ 1 ] [ 2 ] /all_to_all << /model /static_synapse_hpc >> Connect
-   
-  [ 4 ] { [[ /thread_local_id ]] get } Table dup ==
-  [ [0] [0] [0] [0] ]
-  eq
-} assert_or_die
 
+  /iaf_psc_alpha 4 Create LocalOnly cva
+  % Check if all returned GIDs are local nodes.
+  dup true exch {GetStatus /local get and} Fold 
+  2 arraystore
+}
 {
-  ResetKernel
-  << /local_num_threads 4 >> SetKernelStatus
-
-  /iaf_psc_alpha 4 Create ;
-  10 Simulate
-
-  [ 4 ] { [[ /thread_local_id ]] get } Table dup ==
-  [ [0] [0] [0] [0] ]
-  eq
-} assert_or_die
-
-endusing
+  % Check that results are rank invariant.
+  /results Set
+  /ref results First First First def
+  true results Rest
+  {
+    dup true exch {1 get and} Fold
+    exch [] exch {First join} Fold Sort ref eq and
+    and
+  } Fold
+}
+distributed_collect_assert_or_die

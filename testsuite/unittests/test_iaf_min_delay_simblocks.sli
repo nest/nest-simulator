@@ -40,7 +40,7 @@ Description:
   see the SeeAlso key below. If this test fails go back to the simpler ones.
 
 Author:  July 2004, Diesmann, January 2005, Plesser, September 2010, Diesmann
-SeeAlso: iaf_neuron, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc, testsuite::test_min_delay, testsuite::test_min_delay
+SeeAlso: iaf_psc_alpha, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc, testsuite::test_min_delay, testsuite::test_min_delay
 */
 
 (unittest) run
@@ -69,7 +69,7 @@ SeeAlso: iaf_neuron, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, 
   >> SetDefaults
 
 %  /iaf_psc_alpha_canon Create /neuron Set
-  /iaf_neuron Create /neuron Set  
+  /iaf_psc_alpha Create /neuron Set
 
   /dc_generator Create /dc_gen Set
   dc_gen <<  /amplitude 1000. >> SetStatus

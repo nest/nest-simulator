@@ -443,7 +443,10 @@ class TestGrowthCurve(unittest.TestCase):
         growth_rate = 0.0001
         eps = 0.10
         psi = 0.10
-        local_nodes = nest.GetNodes([0], {'model': 'iaf_psc_alpha'}, True)[0]
+        # TODO481 Temporary fix, gets easier if we make the PyNEST function
+        # local_only, this is already available on SLI
+        local_nodes = [gid for gid in self.pop if nest.GetStatus([gid], 'local')]
+
         nest.SetStatus(
             local_nodes,
             {
@@ -472,12 +475,11 @@ class TestGrowthCurve(unittest.TestCase):
         ])
 
         pop_as_list = list(self.pop)
-        local_nodes_as_list = list(local_nodes)
         for n in self.pop:
-            loc = self.se_nest[local_nodes_as_list.index(n), 30]
+            loc = self.se_nest[local_nodes.index(n), 30]
             ex = expected[pop_as_list.index(n)]
             testing.assert_almost_equal(
-                self.se_nest[local_nodes_as_list.index(n), 30], expected[
+                self.se_nest[local_nodes.index(n), 30], expected[
                     pop_as_list.index(n)],
                 decimal=5)
 

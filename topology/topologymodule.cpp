@@ -369,8 +369,6 @@ TopologyModule::init( SLIInterpreter* i )
   i->createcommand(
     "DumpLayerConnections_os_g_g_l", &dumplayerconnections_os_g_g_lfunction );
 
-  i->createcommand( "GetElement_g_ia", &getelement_g_iafunction );
-
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
 
   i->createcommand(
@@ -1196,55 +1194,6 @@ TopologyModule::DumpLayerConnections_os_g_g_lFunction::execute(
   dump_layer_connections( syn_model, source_layer, target_layer, out_file );
 
   i->OStack.pop( 3 ); // leave ostream on stack
-  i->EStack.pop();
-}
-
-/*
-  BeginDocumentation
-
-  Name: topology::GetElement - return node GID at specified layer position
-
-  Synopsis: layer [array] GetElement -> node_gid
-
-  Parameters:
-  layer         - GIDCollection for layer
-  [array]       - position of node
-  node_gid      - node GID
-
-  Description: Retrieves node at the layer grid position
-  given in [array]. [array] is on the format [column row].
-  The layer must be of grid type. Returns an array of GIDs
-  if there are several nodes per grid point.
-
-  Examples:
-
-  topology using
-
-  %%Create layer
-  << /rows 5
-     /columns 4
-     /elements /iaf_psc_alpha
-  >> /dictionary Set
-
-  dictionary CreateLayer /src Set
-
-  src [2 3] GetElement
-
-  Author: Kittel Austvoll, Håkon Enger
-*/
-void
-TopologyModule::GetElement_g_iaFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 2 );
-
-  const GIDCollectionDatum layer =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
-  TokenArray array = getValue< TokenArray >( i->OStack.pick( 0 ) );
-
-  index node_gid = get_element( layer, array );
-
-  i->OStack.pop( 2 );
-  i->OStack.push( node_gid );
   i->EStack.pop();
 }
 

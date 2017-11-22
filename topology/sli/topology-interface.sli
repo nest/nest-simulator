@@ -43,10 +43,6 @@
     /CreateLayer_D load
   def
   
-  /GetElement [/gidcollectiontype /arraytype]
-    /GetElement_g_ia load
-  def
-  
   /GetPosition [/gidcollectiontype]
     /GetPosition_g_i load
   def

@@ -76,8 +76,6 @@ class Layer(nest.GIDCollection):
     TODO480: write documentation
     
     Functions that can be used on the Layer class:
-      - GetPosition(nodes=None)
-      - GetElement(locations)
       - Displacement(from_arg, to_arg)     NB, must now be part of same layer
       - Distance(from_arg, to_arg)         NB, must now be part of same layer
     
@@ -100,90 +98,7 @@ class Layer(nest.GIDCollection):
     def __init__(self, gc):
         self.layer = gc
         self._datum = gc._datum
-        
-    def GetElement(self, locations):
-        """
-        Return the node(s) at the location(s) in the layer.
-    
-        This function works for fixed grid layers only.
-    
-        * If locations is a single 2-element array giving a grid location
-          (in [column, row] format), return a tuple with the GID at the given
-          location.
-        * If locations is a list of coordinates, the function returns a list
-          with GIDs of the nodes at all locations.
 
-
-        Parameters
-        ----------
-        locations : [tuple/list of floats | tuple/list of tuples/lists of floats]
-            2-element list with coordinates of a single grid location,
-            or list of 2-element lists of coordinates for 2-dimensional layers,
-            i.e., on the format [column, row].
-            Zero-indexing is used for the [column, row] coordinates.
-
-
-        Returns
-        -------
-        out : tuple of int(s)
-            Tuple of GIDs
-
-
-        See also
-        --------
-        GetLayer : Return the layer to which nodes belong.
-        FindNearestElement: Return the node(s) closest to the location(s) in the
-            given layer(s).
-        GetPosition : Return the spatial locations of nodes.
-
-
-        Notes
-        -----
-        -
-
-        **Example**
-            ::
-
-                import nest.topology as tp
-    
-                # create a layer
-                l = tp.CreateLayer({'rows'      : 5,
-                                    'columns'   : 4,
-                                    'elements'  : 'iaf_psc_alpha'})
-    
-                # get GID of element in last column and row
-                tp.GetElement(l, [3, 4])
-        """
-
-        if not len(self.layer) > 0:
-            raise nest.NESTError("layers cannot be empty")
-
-        if not (nest.is_iterable(locations) and len(locations) > 0):
-            raise nest.NESTError(
-                "locations must be coordinate array or list of coordinate arrays")
-
-        # ensure that all layers are grid-based, otherwise one ends up with an
-        # incomprehensible error message
-        # TODO481
-        #try:
-        #    nest.sli_func('{ [ /rows /columns ] get ; } forall',
-        #                  self.layer)
-        #except:
-        #    raise nest.NESTError(
-        #        "layers must contain only grid-based topology layers")
-
-        if nest.is_iterable(locations[0]):
-            # locations is a lists
-            node_list = nest.sli_func(
-                '/posi Set /lyr Set posi { /locs Set lyr locs GetElement } forall',
-                self.layer, locations)
-        else:
-            # locations is a single location
-            # TODO481 should a single GID be a list, or just the int?
-            nodes = nest.sli_func('GetElement', self.layer, locations)            
-            node_list = [nodes]
-
-        return node_list
     
     def _check_displacement_args(self, from_arg, to_arg, caller):
         """
@@ -1028,7 +943,6 @@ def FindNearestElement(layer, locations, find_all=False):
     See also
     --------
     FindCenterElement : Return GID(s) of node closest to center of layers.
-    GetElement : Return the node(s) at the location(s) in the given layer(s).
     GetPosition : Return the spatial locations of nodes.
 
 
@@ -1276,7 +1190,6 @@ def FindCenterElement(layer):
     --------
     FindNearestElement : Return the node(s) closest to the location(s) in the
         given layer.
-    GetElement : Return the node(s) at the location(s) in the given layer.
     GetPosition : Return the spatial locations of nodes.
 
 

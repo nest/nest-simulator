@@ -113,7 +113,6 @@ void dump_layer_connections( const Token& syn_model,
   GIDCollectionPTR source_layer_gc,
   GIDCollectionPTR target_layer_gc,
   OstreamDatum& out_file );
-index get_element( GIDCollectionPTR layer_gc, const TokenArray array );
 DictionaryDatum get_layer_status( GIDCollectionPTR layer_gc );
 }
 

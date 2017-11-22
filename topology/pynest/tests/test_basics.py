@@ -77,28 +77,6 @@ class BasicsTestCase(unittest.TestCase):
         nodepos_exp = topo.GetPosition(l[:2])
         self.assertEqual(nodepos_exp, (pos[0], pos[1]))
 
-    # TODO481 remove GetElement
-    def test_GetElement(self):
-        """Check if GetElement returns proper lists."""
-        ldict = {'elements': 'iaf_psc_alpha',
-                 'rows': 4, 'columns': 5}
-        nest.ResetKernel()
-        l = topo.CreateLayer(ldict)
-        checkpos = [[0, 0], [1, 1], [4, 3]]
-
-        # single coord gives 1-elem gid list
-        n1 = l.GetElement(checkpos[0])
-        self.assertEqual(len(n1), 1)
-        self.assertIsInstance(n1[0], int)
-        self.assertEqual(n1[0], 1)
-
-        # single gid, multiple coord gives len(checkpos) gid list
-        n2 = l.GetElement(checkpos)
-        self.assertEqual(len(n2), len(checkpos))
-        self.assertTrue(nest.is_sequence_of_gids(n2))
-        self.assertTrue(all(isinstance(n, int) for n in n2))
-        self.assertEqual(n2, (1, 6, 20))
-
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Displacement(self):
         """Interface check on displacement calculations."""

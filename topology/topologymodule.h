@@ -179,12 +179,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } dumplayerconnections_os_g_g_lfunction;
 
-  class GetElement_g_iaFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getelement_g_iafunction;
-
   class Cvdict_MFunction : public SLIFunction
   {
   public:

@@ -100,74 +100,6 @@ class Layer(nest.GIDCollection):
     def __init__(self, gc):
         self.layer = gc
         self._datum = gc._datum
-
-    def GetPosition(self, nodes=None):
-        """
-        Return the spatial locations of nodes.
-
-
-        Parameters
-        ----------
-        nodes : int or tuple/list of int(s), optional, default None
-            GID or List of GIDs
-            If nodes is None, we want the positions to all the nodes in the
-            layer.
-
-
-        Returns
-        -------
-        out : tuple or tuple of tuple(s)
-            Tuple of position with 2- or 3-elements or list of positions
-
-
-        See also
-        --------
-        Displacement : Get vector of lateral displacement between nodes.
-        Distance : Get lateral distance between nodes.
-        DumpLayerConnections : Write connectivity information to file.
-        DumpLayerNodes : Write layer node positions to file.
-
-
-        Notes
-        -----
-        * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
-          only works for nodes local to the current MPI process, if used in a
-          MPI-parallel simulation.
-
-
-        **Example**
-            ::
-
-                import nest
-                import nest.topology as tp
-
-                # Reset kernel
-                nest.ResetKernel
-
-                # create a layer
-                l = tp.CreateLayer({'rows'      : 5,
-                                    'columns'   : 5,
-                                    'elements'  : 'iaf_psc_alpha'})
-
-                # retrieve positions of all (local) nodes belonging to the layer
-                pos = l.GetPosition()
-
-                # retrieve positions of the first nodes in the layer
-                pos = l.GetPosition(l[0])
-
-                # retrieve positions of nodes 4
-                pos = l.GetPosition(4)
-
-                # retrieve positions of the list of nodes in the layer
-                pos = l.GetPosition([l[0], l[2]])
-        """
-        if nodes is None:
-            nodes = self.layer
-
-        if isinstance(nodes, int):
-            return nest.sli_func('GetPosition', self.layer, nodes)
-        else:
-            return nest.sli_func('/gids Set /lyr Set gids { /gid Set lyr gid GetPosition } forall', self.layer, nodes)            #pos = []
         
     def GetElement(self, locations):
         """
@@ -997,6 +929,70 @@ def ConnectLayers(pre, post, projections):
     nest.sli_func('ConnectLayers', pre, post, projections)
 
 
+def GetPosition(nodes):
+    """
+    Return the spatial locations of nodes.
+
+
+    Parameters
+    ----------
+    nodes : GIDCollection
+        GIDCollection of nodes we want the Positions to
+
+
+    Returns
+    -------
+    out : tuple or tuple of tuple(s)
+        Tuple of position with 2- or 3-elements or list of positions
+
+
+    See also
+    --------
+    Displacement : Get vector of lateral displacement between nodes.
+    Distance : Get lateral distance between nodes.
+    DumpLayerConnections : Write connectivity information to file.
+    DumpLayerNodes : Write layer node positions to file.
+
+
+    Notes
+    -----
+    * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
+      only works for nodes local to the current MPI process, if used in a
+      MPI-parallel simulation.
+
+
+    **Example**
+        ::
+
+            import nest
+            import nest.topology as tp
+
+            # Reset kernel
+            nest.ResetKernel
+
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 5,
+                                'columns'   : 5,
+                                'elements'  : 'iaf_psc_alpha'})
+
+            # retrieve positions of all (local) nodes belonging to the layer
+            pos = GetPosition(l)
+
+            # retrieve positions of the first node in the layer
+            pos = GetPosition(l[:1])
+
+            # retrieve positions of node 4
+            pos = GetPosition(l[4:5])
+
+            # retrieve positions of a subset of nodes in the layer
+            pos = GetPosition(l[2:18])
+    """
+    if not isinstance(nodes, nest.GIDCollection):
+        raise TypeError("nodes must be a GIDCollection")
+
+    return nest.sli_func('GetPosition', nodes)
+
+
 def FindNearestElement(layer, locations, find_all=False):
     """
     Return the node(s) closest to the location(s) in the given layer.
@@ -1372,7 +1368,6 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
             # get the GIDs of the targets of the source neuron with GID 5
             tp.GetTargetNodes([5], l)
     """
-
     if not nest.is_sequence_of_gids(sources):
         raise TypeError("sources must be a sequence of GIDs")
 
@@ -1398,8 +1393,8 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     Parameters
     ----------
-    sources : tuple/list of int(s)
-        List of GID(s) of source neurons
+    sources : GIDCollection
+        GIDCollection with GID(s) of source neurons
     tgt_layer : GIDCollection (Layer)
         GIDCollection with GIDs of tgt_layer
     syn_type : [None | str], optional, default: None
@@ -1450,11 +1445,21 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
             tp.ConnectLayers(l, l, conndict1)
 
             # get the positions of the targets of the source neuron with GID 5
-            tp.GetTargetPositions([5], l)
+            tp.GetTargetPositions(l[5:6], l)
     """
-
-    return tuple(tgt_layer.GetPosition(nodes) for nodes
-                 in GetTargetNodes(sources, tgt_layer, syn_model))
+    if not isinstance(sources, nest.GIDCollection):
+        raise ValueError("sources must be a GIDCollection.")
+    
+    # TODO481 some sort of list comprehension
+    result = []
+    for nodes in GetTargetNodes(sources, tgt_layer, syn_model):
+        node_results = []
+        for gid in nodes:
+            gc = nest.GIDCollection(tgt_layer[gid-1:gid])
+            gp = GetPosition(gc)
+            node_results.append(gp)
+        result.append( node_results )
+    return result
 
 
 def _draw_extent(ax, xctr, yctr, xext, yext):
@@ -1547,7 +1552,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         xctr, yctr = nest.GetStatus(layer)[0]['center']
 
         # extract position information, transpose to list of x and y pos
-        xpos, ypos = zip(*layer.GetPosition())
+        xpos, ypos = zip(*GetPosition(layer))
 
         if fig is None:
             fig = plt.figure()
@@ -1564,7 +1569,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         from mpl_toolkits.mplot3d import Axes3D
 
         # extract position information, transpose to list of x,y,z pos
-        pos = zip(*layer.GetPosition())
+        pos = zip(*GetPosition(layer))
 
         if fig is None:
             fig = plt.figure()
@@ -1667,9 +1672,8 @@ def PlotTargets(src_nrn, src_layer, tgt_layer, syn_type=None, fig=None,
     import matplotlib.pyplot as plt
 
     # get position of source
-    # TODO481 VERY temporary. When we remove Layer class and make GetPosition
-    # take in GIDColl, we can remove src_layer again.
-    srcpos = src_layer.GetPosition(src_nrn)
+    # TODO481 make src_nrn into GIDCollection?
+    srcpos = GetPosition(nest.GIDCollection(src_nrn))
 
     # get layer extent and center, x and y
     ext = nest.GetStatus(tgt_layer)[0]['extent']
@@ -1822,9 +1826,8 @@ def PlotKernel(ax, src_nrn, src_layer, mask, kern=None, mask_color='red',
     if ax and not isinstance(ax, matplotlib.axes.Axes):
         raise ValueError('ax must be matplotlib.axes.Axes instance.')
 
-    # TODO481 VERY temporary. When we remove Layer class and make GetPosition
-    # take in GIDColl, we can remove src_layer again.
-    srcpos = np.array(src_layer.GetPosition(src_nrn))
+    # TODO481 make src_nrn into GIDCollection?.
+    srcpos = np.array(GetPosition(nest.GIDCollection(src_nrn)))
 
     if 'anchor' in mask:
         offs = np.array(mask['anchor'])

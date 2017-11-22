@@ -440,16 +440,15 @@ TopologyModule::CreateLayer_DFunction::execute( SLIInterpreter* i ) const
 
   Name: topology::GetPosition - retrieve position of input node
 
-  Synopsis: layer node GetPosition -> [array]
+  Synopsis: GIDCollection GetPosition -> [array]
 
   Parameters:
-  layer      - GIDCollection for layer
-  node       - gid of layer node
+  layer      - GIDCollection for layer with layer nodes
 
   Returns:
   [array]    - spatial position of node [x y]
 
-  Description: Retrieves spatial 2D position of layer node.
+  Description: Retrieves spatial 2D position of layer node(s).
 
   Examples:
 
@@ -463,7 +462,7 @@ TopologyModule::CreateLayer_DFunction::execute( SLIInterpreter* i ) const
 
   dictionary CreateLayer /src Set
 
-  src 4 GetPosition
+  src [4] Take GetPosition
 
   Author: Kittel Austvoll
 */
@@ -471,16 +470,22 @@ TopologyModule::CreateLayer_DFunction::execute( SLIInterpreter* i ) const
 void
 TopologyModule::GetPosition_g_iFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 2 );
+  i->assert_stack_load( 1 );
 
   const GIDCollectionDatum layer =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
-  const index gid = getValue< long >( i->OStack.pick( 0 ) );
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
-  Token result = get_position( layer, gid );
+  ArrayDatum result = get_position( layer );
 
-  i->OStack.pop( 2 );
-  i->OStack.push( result );
+  i->OStack.pop( 1 );
+  if ( layer->size() == 1 )
+  {
+    i->OStack.push( result[0] );
+  }
+  else
+  {
+    i->OStack.push( result );
+  }
   i->EStack.pop();
 }
 

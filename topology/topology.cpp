@@ -51,6 +51,7 @@ namespace nest
 LayerMetadata::LayerMetadata( AbstractLayerPTR layer )
   : GIDCollectionMetadata()
   , layer_( layer )
+  , first_gid_( 0 )
 {
 }
 
@@ -83,23 +84,33 @@ create_layer( const DictionaryDatum& layer_dict )
   return layer;
 }
 
-std::vector< double >
-get_position( GIDCollectionPTR layer_gc, const index gid )
+ArrayDatum
+get_position( GIDCollectionPTR layer_gc )
 {
-  if ( not kernel().node_manager.is_local_gid( gid ) )
-  {
-    throw KernelException(
-      "GetPosition is currently implemented for local nodes only." );
-  }
-
   AbstractLayerPTR layer = get_layer( layer_gc );
-  const long lid = layer_gc->find( gid );
-  if ( lid < 0 )
+  GIDCollectionMetadataPTR meta = layer_gc->get_metadata();
+  index first_gid = meta->get_first_gid();
+
+  ArrayDatum result;
+  result.reserve(layer_gc->size());
+
+  for( GIDCollection::const_iterator it = layer_gc->begin() ; it != layer_gc->end() ; ++it )
   {
-    throw LayerNodeExpected();
+    index gid = (*it).gid;
+
+    if ( not kernel().node_manager.is_local_gid( gid ) )
+    {
+      throw KernelException(
+        "GetPosition is currently implemented for local nodes only." );
+    }
+
+    const long lid = gid - first_gid;
+    Token arr = layer->get_position_vector( lid );
+
+    result.push_back( arr );
   }
 
-  return layer->get_position_vector( lid );
+  return result;
 }
 
 std::vector< double >

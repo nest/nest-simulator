@@ -47,7 +47,7 @@
     /GetElement_g_ia load
   def
   
-  /GetPosition [/gidcollectiontype /integertype]
+  /GetPosition [/gidcollectiontype]
     /GetPosition_g_i load
   def
   

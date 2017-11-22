@@ -72,14 +72,17 @@ public:
     return layer_;
   }
 
+  void set_first_gid( index gid ) { first_gid_ = gid; }
+  const index get_first_gid() const { return first_gid_; }
+
 private:
   const AbstractLayerPTR layer_; //!< layer object
+  index first_gid_;
 };
 
 AbstractLayerPTR get_layer( GIDCollectionPTR layer_gc );
 GIDCollectionPTR create_layer( const DictionaryDatum& layer_dict );
-std::vector< double > get_position( GIDCollectionPTR layer_gc,
-  const index node_gid );
+ArrayDatum get_position( GIDCollectionPTR layer_gc );
 std::vector< double > displacement( GIDCollectionPTR layer_gc,
   const std::vector< double >& point,
   const index node_gid );

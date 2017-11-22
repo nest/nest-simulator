@@ -22,7 +22,7 @@ Fundamentally, we can build a basic network with the following functions::
     # Simulate network providing a specific timeframe.
     nest.Simulate(time_in_ms)
 
-.. seealso:: :doc:`Part 1: Neurons and simple neural networks <tutorials/part-1-neurons-and-simple-neural-networks>` or the One Neuron Example to try it out yourself.
+.. seealso:: :doc:`PyNEST Tutorial Part 1: Neurons and simple neural networks <tutorials/part-1-neurons-and-simple-neural-networks>` or the :doc:`One Neuron Example </examples/one_neuron>` to try it out yourself.
 
 .. note:: Properties of objects in NEST are generally in the form of dictionaries {key : value}. Function calls typically return dictionary or lists of dictionaries.
 
@@ -57,7 +57,7 @@ Nodes consist of neuron models, devices and subnets. Each node can connect to an
 
     * **Neuron models** serve as the heart of NEST. There are many neuron models from simple integrate-and-fire neurons to Hodgkin-Huxley neuron models.
 
-    * **Devices** represent instruments to either measure or stimulate the network
+    * **Devices** represent instruments to either measure or stimulate the network.
 
       Examples include measuring devices like a multimeter or spike detector or generators of neural activity, like the poisson generator.
 
@@ -65,7 +65,7 @@ Nodes consist of neuron models, devices and subnets. Each node can connect to an
 
     * **Subnets** are network nodes. The default subnetwork is called the :code:`root node`. Subnets can be arranged and connected to build hierarchal networks.
 
-    .. seealso:: :doc:`Part 4: Topologically structured networks <tutorials/part-4-topologically-structured-networks>` or the topology manual for more details.
+    .. seealso:: :doc:`PyNEST Tutorial Part 4: Topologically structured networks <tutorials/part-4-topologically-structured-networks>` or the :download:`Topology Manual <Topology_UserManual.pdf>`  for more details.
 
 Once you have :ref:`created your node <FAnchor>`, you can view its current parameters and corresponding values::
 
@@ -85,11 +85,8 @@ You can also modify multiple dictionary properties and pass them into :code:`nes
     syn_dict_ex =[{"model": "tsodyks_synapse"}, {"weight": 1.2}]
     nest.Connect(pre_syn_node, post_syn_node, syn_spec=syn_dict_ex)
 
-.. seealso:: :doc:`Part 3: Connecting networks with synapses <tutorials/part-3-connecting-networks-with-synapses>` for details on using synapses in your network.
-.. note:: You cannot access synapse model parameters via :code:`nest.GetStatus()`.
-Available keys in the synapse dictionary include "model", "weight", "delay", "receptor_type" and parameters specific to the chosen synapse model.
-
-You can view and alter the default parameters with :code:`nest.GetDefaults("synapse_model")` and :code:`nest.SetDefaults("synapse_model")`, respectively. 
+.. seealso:: :doc:`PyNEST Tutorial Part 3: Connecting networks with synapses <tutorials/part-3-connecting-networks-with-synapses>` for details on using synapses in your network.
+.. note:: Available keys in the synapse dictionary include "model", "weight", "delay", "receptor_type" and parameters specific to the chosen synapse model. You can view and alter the default parameters with :code:`nest.GetDefaults("synapse_model")` and :code:`nest.SetDefaults("synapse_model")`, respectively. 
 
 
 

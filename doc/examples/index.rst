@@ -2,7 +2,7 @@ Examples
 ========
 
 Here you'll find example networks demonstrating different aspects of
-NEST.
+NEST. These should be grouped together in some logical way ...
 
 Basic Networks
 -------------------
@@ -14,7 +14,7 @@ to NEST
 -  :doc:`One Neuron with Noise <one_neuron_with_noise>`
 -  :doc:`Two Neuron Example <twoneurons>`
 -  :doc:`Multi-compartment Neuron Example <mc_neuron>` - using the
-   three-compartment ```iaf_cond_alpha_mc`` </path/to/index>` neuron
+   three-compartment :doc:`iaf_cond_alpha_mc </quickref>` neuron
 -  :doc:`Recording with Multimeter and Writing Output to
    File <multimeter_file>`
 
@@ -62,7 +62,7 @@ Examples using the Integrate and Fire Model
 -  :doc:`Spike Synchronization of Integrate and Fire
    Neurons <BrodyHopfield>`
 -  :doc:`Calculating Integrate and Fire Neuron with Poisson
-   Generators <CambellSiegert>`
+   Generators <CampbellSiegert>`
 -  :doc:`Plot Initial Membrane Voltage of Integrate and Fire
    Neuron <vinit_example>`
 -  :doc:`Compare Precise and Grid-based Integrate and Fire Neuron
@@ -72,8 +72,7 @@ Examples using the Integrate and Fire Model
 Examples of Connection Setups
 ------------------------------
 
-    **See our detailed guide on :ref:`Connection
-    Management <guides/connection-management>`**
+    See our detailed guide on :doc:`Connection Management </guides/connection-management>`
 
 -  :doc:`Using CSA for Connection Setup <csa_example>` - set up simple
    netowrk using the Connection Set Algebra
@@ -83,8 +82,7 @@ Examples of Connection Setups
 Examples with Gap Junctions
 ----------------------------
 
-    **See our detailed guide on :ref:`Simulations with Gap
-    Junctions <guides/simulation-with-gap-junctions>`**
+    See our detailed guide on :doc:`Simulations with Gap Junctions </guides/simulations-with-gap-junctions>`
 
 -  :doc:`Example of Inhibitory Network with Gap
    Junctions <gap_junctions_inhibitory_network>`

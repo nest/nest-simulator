@@ -1,3 +1,6 @@
+Table of Contents
+=================
+
 .. toctree::
 
    index
@@ -24,7 +27,7 @@
    :caption: Getting Help
 
    Mailing List <http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user>
-   frequently-asked-questions
+   faqs/index
    tutorials/videos/index
    Report Bugs <https://github.com/nest/nest-simulator/issues>
 
@@ -33,7 +36,7 @@
    :caption: Getting Involved
 
     Contact Us <http://www.nest-simulator.org/community/>
-    :ref:`citing-nest`
+    :doc:`citing-nest`
     Publications <http://www.nest-simulator.org/publications/>
     Developer Space <https://nest.github.io/nest-simulator/>
     NEST-Initiative <http://www.nest-initiative.org/>

@@ -70,7 +70,7 @@ ResetKernel
 >> /hh_params Set
 
 neuron hh_params SetStatus
-neuron GetStatus /result Set
+neuron GetStatus 0 get /result Set
 
 {
   result /V_m  get 6 ToUnitTestPrecision 10 eq

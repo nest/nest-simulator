@@ -71,7 +71,7 @@
   1000 Simulate
 
   vm [ /events /V_m ] get cva
-  m GetStatus
+  m GetStatus 0 get
   2 arraystore
 } def
 

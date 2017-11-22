@@ -65,7 +65,7 @@ precise_models
   {
     dup ==
     model Create
-    GetStatus /tau_minus known
+    GetStatus 0 get /tau_minus known
   } assert_or_die
 } forall
 
@@ -85,8 +85,8 @@ precise_models
     
     20 Simulate
     
-    sd GetStatus /events get /times get dup length 1 sub get
-    n GetStatus /t_spike get
+    sd /events get /times get dup length 1 sub get
+    n /t_spike get
     eq
   } assert_or_die
 } forall
@@ -112,7 +112,7 @@ precise_models
     100. Simulate
     
     << /source n1 >> GetConnections 
-    0 get GetStatus 
+    0 get 
     /weight get
     ini_weight neq
   } assert_or_die

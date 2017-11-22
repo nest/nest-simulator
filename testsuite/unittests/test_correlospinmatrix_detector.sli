@@ -86,7 +86,7 @@ csd << /N_channels 3 /tau_max 10. /delta_tau 1.0 >> SetStatus
 sg1 << /spike_times [10. 10. 16.] >> SetStatus  % binary pulse starting at 10. ending at 16.
 sg2 << /spike_times [15. 15. 20.] >> SetStatus  % binary pulse starting at 15. ending at 20.
 
-sg1 GetStatus info
+sg1 GetStatus 0 get info
 
 sg1 0 get sd 0 get << /receptor_type 0 >> Connect
 
@@ -100,7 +100,7 @@ sg3 0 get csd 0 get << /receptor_type 2 >> Connect
 
 100. Simulate
 
-csd GetStatus /count_covariance get cva  % 3-tensor of recorded raw correlation functions
+csd /count_covariance get cva  % 3-tensor of recorded raw correlation functions
 expected_corr                            % expected result
 eq
 assert_or_die

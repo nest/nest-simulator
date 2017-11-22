@@ -210,7 +210,7 @@ def SetStatus(nodes, params, val=None):
         else:
             params = {params: val}
 
-    if (isinstance(params, list) and len(nodes) != len(params)):
+    if (isinstance(params, list) and len(nodes) != len(params)) or (isinstance(params, tuple) and len(nodes) != len(params)):
         raise TypeError(
             "status dict must be a dict, or a list of dicts of length "
             "len(nodes)")

@@ -88,8 +88,8 @@ class Layer(nest.GIDCollection):
       - ConnectLayers(pre, post, projections)
       - GetLayer(nodes)                                           DOES NOT WORK
       - FindNearestElement(layers, locations, find_all=False)     Part of Layer??
-      - DumpLayerNodes(layers, outname)                           NB Several layers?
-      - DumpLayerConnections(source_layer, target_layer, synapse_model, outname)  NB Several layers?
+      - DumpLayerNodes(layers, outname)
+      - DumpLayerConnections(source_layer, target_layer, synapse_model, outname)
       - FindCenterElement(layers)                                 DOES NOT WORK BECAUSE OF GET_STATUS
       - GetTargetNodes(sources, tgt_layer, syn_model=None)        Part of Layer??
       - PlotLayer(layer, fig=None, nodecolor='b', nodesize=20)    DOES NOT WORK BECAUSE OF GET_STATUS
@@ -1257,31 +1257,30 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
                   _rank_specific_filename(outname))
 
 
-def FindCenterElement(layers):
+def FindCenterElement(layer):
     """
-    Return GID(s) of node closest to center of layers.
+    Return GID(s) of node closest to center of layer.
 
 
     Parameters
     ----------
-    layers : tuple/list of int(s) or Layer
-        List of layer GIDs
+    layers : GIDCollection
+        GIDCollection of layer GIDs
 
 
     Returns
     -------
-    out : tuple of int(s)
-        A list containing for each layer the GID of the node closest to the
-        center of the layer, as specified in the layer parameters. If several
-        nodes are equally close to the center, an arbitrary one of them is
-        returned.
+    out : int
+        The GID of the node closest to the center of the layer, as specified in
+        the layer parameters. If several nodes are equally close to the center,
+        an arbitrary one of them is returned.
 
 
     See also
     --------
     FindNearestElement : Return the node(s) closest to the location(s) in the
-        given layer(s).
-    GetElement : Return the node(s) at the location(s) in the given layer(s).
+        given layer.
+    GetElement : Return the node(s) at the location(s) in the given layer.
     GetPosition : Return the spatial locations of nodes.
 
 
@@ -1304,16 +1303,10 @@ def FindCenterElement(layers):
             tp.FindCenterElement(l)
     """
 
-    # TODO481 should this be part of Layer?
-    # TODO481 are we allowed to send in several layers?    
-    # TODO481 only if several layers are allowed.
-    if isinstance(layers, Layer):
-       layers = [layers,] 
+    if not isinstance(layer, nest.GIDCollection):
+        raise nest.NESTError("layer must be a GIDCollection")
 
-    # Do each layer on its own since FindNearestElement does not thread
-    return tuple(FindNearestElement((lyr, ),
-                                    nest.GetStatus(lyr[:1])[0]['center'])[0]
-                 for lyr in layers)
+    return FindNearestElement(layer, nest.GetStatus(layer[:1])[0]['center'])[0]
 
 
 def GetTargetNodes(sources, tgt_layer, syn_model=None):

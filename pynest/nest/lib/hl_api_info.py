@@ -296,5 +296,13 @@ def GetStatus(nodes, keys=None):
 
     sr(cmd)
     
-    return spp()
+    result = spp()
+    
+    if isinstance(result, dict):
+        # We have taken GetStatus on a layer object, or another GIDCollection
+        # with metadata, which returns a dictionary from C++, so we need to
+        # turn it into a tuple for consistency.
+        result = (result,)
+
+    return result
 

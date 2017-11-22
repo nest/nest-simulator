@@ -258,11 +258,12 @@ class BasicsTestCase(unittest.TestCase):
 
         # single layer
         n = topo.FindCenterElement(l)
-        self.assertEqual(n, (5,))
+        self.assertEqual(n, 5)
 
-        # two layers
-        n = topo.FindCenterElement([l, l])
-        self.assertEqual(n, (5,) * 2)
+        # new layer
+        l2 = topo.CreateLayer(ldict)
+        n = topo.FindCenterElement(l2)
+        self.assertEqual(n, 14)
 
     def test_GetTargetNodesPositions(self):
         """Interface check for finding targets."""

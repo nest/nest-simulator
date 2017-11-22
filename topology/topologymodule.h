@@ -71,11 +71,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } createlayer_Dfunction;
 
-  class GetPosition_g_iFunction : public SLIFunction
+  class GetPosition_gFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } getposition_g_ifunction;
+  } getposition_gfunction;
 
   class Displacement_g_a_iFunction : public SLIFunction
   {

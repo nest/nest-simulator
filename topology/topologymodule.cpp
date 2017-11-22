@@ -332,7 +332,7 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "CreateLayer_D", &createlayer_Dfunction );
 
-  i->createcommand( "GetPosition_g_i", &getposition_g_ifunction );
+  i->createcommand( "GetPosition_g", &getposition_gfunction );
 
   i->createcommand( "Displacement_g_a_i", &displacement_g_a_ifunction );
 
@@ -466,7 +466,7 @@ TopologyModule::CreateLayer_DFunction::execute( SLIInterpreter* i ) const
 */
 
 void
-TopologyModule::GetPosition_g_iFunction::execute( SLIInterpreter* i ) const
+TopologyModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 

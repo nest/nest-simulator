@@ -2,6 +2,7 @@ Guides
 ==============
 
 Here you can find detailed look into a variety of topics in NEST.
+(Maybe these do not all belong together but should be grouped somehow ...)
 
 .. toctree::
     :maxdepth: 1
@@ -19,7 +20,7 @@ Here you can find detailed look into a variety of topics in NEST.
    :maxdepth: 1
    :caption: Model Details
 
-   model_details/aeif_models_implementation_files
-   model_details/HillTononiModels
-   model_details/IAF_neurons_singularity
-   model_details/noise_generator
+   aeif_models_implementation
+   HillTononiModels
+   IAF_neurons_singularity
+   noise_generator

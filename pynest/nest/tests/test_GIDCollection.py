@@ -406,11 +406,10 @@ class TestGIDCollection(unittest.TestCase):
         wr = nest.Create('weight_recorder')
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
-
-        with self.assertRaises(nest.NESTError):
-            [x for x in nest.GIDCollection(nest.GetStatus(wr, "senders")[0])]
-        with self.assertRaises(nest.NESTError):
-            [x for x in nest.GIDCollection(nest.GetStatus(wr, "targets")[0])]
+        
+        # Senders and targets lists empty
+        self.assertFalse(nest.GetStatus(wr, "senders")[0])
+        self.assertFalse(nest.GetStatus(wr, "targets")[0])
 
         nest.SetStatus(wr, {"senders": pre[1:3], "targets": post[3:]})
 

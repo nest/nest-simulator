@@ -98,7 +98,7 @@ statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
 
   150.0 Simulate
 
-  sd GetStatus /events get /times get
+  sd /events get /times get
 } def
 
 % Test 1: wrong parameters (negative lambda)

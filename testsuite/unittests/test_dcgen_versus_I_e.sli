@@ -104,8 +104,8 @@ modeldict keys
       300 Simulate
   
       % compare final membrane potentials
-      n1 GetStatus /V_m get /v1 Set
-      n2 GetStatus /V_m get /v2 Set
+      n1 /V_m get /v1 Set
+      n2 /V_m get /v2 Set
       
       v1 v2 eq dup 
 	    {

@@ -59,7 +59,7 @@ skip_if_without_gsl
 
   10 Simulate
 
-  wr GetStatus /events get /weights get 1 get
+  wr /events get /weights get 1 get
 
   2.0 eq
 }

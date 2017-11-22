@@ -123,9 +123,8 @@ pn2 cd Connect
 
 T Simulate
 
-cd GetStatus
-dup /histogram get cva /hist Set
-/n_events get cva arrayload ; /n2 Set /n1 Set
+cd /histogram get cva /hist Set
+cd /n_events get cva arrayload ; /n2 Set /n1 Set
 
 n1 T tau_max sub div 1000.0 mul /lmbd1 Set
 n2 T tau_max sub div 1000.0 mul /lmbd2 Set

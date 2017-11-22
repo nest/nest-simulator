@@ -128,7 +128,7 @@ vm 0 get multisynapse_neuron 0 get 1. 8. /static_synapse Connect
 simulation_t ms Simulate % run simulation
 
 % Gets the membrane voltage of the multisynapse neuron
-/d vm GetStatus /events get def
+/d vm /events get def
 d /V_m get cva /Vms Set
 d /times get cva /ts Set % get times
 

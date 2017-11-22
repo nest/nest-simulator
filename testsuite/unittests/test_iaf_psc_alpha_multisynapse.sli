@@ -51,7 +51,7 @@
 /iaf_psc_alpha_multisynapse Create /npost Set
 npost << /tau_syn taus >> SetStatus
 
-npost GetStatus /tau_syn get
+npost /tau_syn get
 taus eq assert_or_die
 
 /multimeter Create /mm Set
@@ -78,7 +78,7 @@ mm npost 1. 8. /static_synapse Connect
 
 2500 ms Simulate
 
-/d mm GetStatus /events get def
+/d mm /events get def
 d /currents get cva /currents Set
 
 % find indices where currents should be maximal (weight==1.0)

@@ -88,51 +88,51 @@ dilutor sp_det9 Connect
 
 102 Simulate
 
-sp_det0 GetStatus /events get /times get /spikes Set
+sp_det0 /events get /times get /spikes Set
 spikes size
 exch pop
 
-sp_det1 GetStatus /events get /times get /spikes Set
-spikes size
-exch pop
-add
-
-sp_det2 GetStatus /events get /times get /spikes Set
+sp_det1 /events get /times get /spikes Set
 spikes size
 exch pop
 add
 
-sp_det3 GetStatus /events get /times get /spikes Set
+sp_det2 /events get /times get /spikes Set
 spikes size
 exch pop
 add
 
-sp_det4 GetStatus /events get /times get /spikes Set
+sp_det3 /events get /times get /spikes Set
 spikes size
 exch pop
 add
 
-sp_det5 GetStatus /events get /times get /spikes Set
+sp_det4 /events get /times get /spikes Set
 spikes size
 exch pop
 add
 
-sp_det6 GetStatus /events get /times get /spikes Set
+sp_det5 /events get /times get /spikes Set
 spikes size
 exch pop
 add
 
-sp_det7 GetStatus /events get /times get /spikes Set
+sp_det6 /events get /times get /spikes Set
 spikes size
 exch pop
 add
 
-sp_det8 GetStatus /events get /times get /spikes Set
+sp_det7 /events get /times get /spikes Set
 spikes size
 exch pop
 add
 
-sp_det9 GetStatus /events get /times get /spikes Set
+sp_det8 /events get /times get /spikes Set
+spikes size
+exch pop
+add
+
+sp_det9 /events get /times get /spikes Set
 spikes size
 exch pop
 add

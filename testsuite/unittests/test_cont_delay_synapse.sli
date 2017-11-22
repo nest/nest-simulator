@@ -55,7 +55,7 @@ M_ERROR setverbosity
   10 Simulate
   
   % expected output spike times: 3.0, 6.5
-  sd GetStatus /events/times :: cva [ 3.0 6.5 ] eq
+  sd /events get /times get cva [ 3.0 6.5 ] eq
 }
 assert_or_die
 
@@ -76,7 +76,7 @@ assert_or_die
   10 Simulate
   
   % expected output spike times: 3.7, 7.2
-  sd GetStatus /events/times :: cva [ 3.7 7.2 ] eq
+  sd /events get /times get cva [ 3.7 7.2 ] eq
 }
 assert_or_die
 
@@ -100,7 +100,7 @@ assert_or_die
   10 Simulate
   
   % expected output spike times: 3.7, 7.2
-  sd GetStatus /events/times :: cva [ 3.7 7.2 ] eq
+  sd /events get /times get cva [ 3.7 7.2 ] eq
 }
 assert_or_die
 

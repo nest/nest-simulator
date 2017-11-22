@@ -107,7 +107,7 @@ M_ERROR setverbosity
    150.0 Simulate
 
    /V_max 0.0 def
-   vm GetStatus /events get /V_m get
+   vm /events get /V_m get
    {
      dup V_max gt { /V_max Set }{ pop } ifelse
    } forall

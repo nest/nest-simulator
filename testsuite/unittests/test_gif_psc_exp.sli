@@ -85,7 +85,7 @@ SeeAlso: gif_psc_exp, testsuite::test_gif_psc_exp_multisynapse
 
   150.0 Simulate
 
-  sd GetStatus /events get /times get
+  sd /events get /times get
 } def
 
 % Test 1: wrong parameters (negative lambda)

@@ -122,7 +122,7 @@ vm multisynapse_neuron  1. 8. /static_synapse Connect
 simulation_t ms Simulate
 
 % Get the currents of the multisynapse neuron
-/d vm GetStatus /events get def
+/d vm /events get def
 
 d /V_m get cva /currents Set
 % Take the array of delays, remove the first element and append at the end (total simulation time - spiketime).
@@ -145,7 +145,7 @@ append
 	/voltmeter_var exch def
 
 	% Get the currents of the single synapse model
-	voltmeter_var GetStatus /events get /V_m get cva
+	voltmeter_var /events get /V_m get cva
 	
 	% black voodoo magic - compare values at the same position in multisynapse currents and according single synapse currents
 	current_pos 1 delay_var spike_time add dt div 

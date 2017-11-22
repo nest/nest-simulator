@@ -56,26 +56,26 @@ class BasicsTestCase(unittest.TestCase):
         l = topo.CreateLayer(ldict)
 
         # GetPosition of single node
-        nodepos_exp = l.GetPosition(l[0])
+        nodepos_exp = topo.GetPosition(l[:1])
         self.assertEqual(nodepos_exp, pos[0])
 
-        nodepos_exp = l.GetPosition(l[len(pos) - 1])
-        self.assertEqual(nodepos_exp, pos[len(pos) - 1])
+        nodepos_exp = topo.GetPosition(l[-1:])
+        self.assertEqual(nodepos_exp, pos[-1])
 
-        nodepos_exp = l.GetPosition(2)
+        nodepos_exp = topo.GetPosition(l[1:2])
         self.assertEqual(nodepos_exp, pos[1])
 
         # GetPosition of all the nodes in the layer
-        nodepos_exp = l.GetPosition()
+        nodepos_exp = topo.GetPosition(l)
 
         for npe, npr in zip(nodepos_exp, pos):
             self.assertEqual(npe, npr)
 
         self.assertEqual(pos, nodepos_exp)
 
-        # GetPosition on list of GIDs
-        nodepos_exp = l.GetPosition([l[0], l[2]])
-        self.assertEqual(nodepos_exp, (pos[0], pos[2]))
+        # GetPosition on some of the GIDs
+        nodepos_exp = topo.GetPosition(l[:2])
+        self.assertEqual(nodepos_exp, (pos[0], pos[1]))
 
     # TODO481 remove GetElement
     def test_GetElement(self):
@@ -282,7 +282,7 @@ class BasicsTestCase(unittest.TestCase):
 
         t = topo.GetTargetNodes(l[:1], l)
         self.assertEqual(len(t), 1)
-
+        
         p = topo.GetTargetPositions(l[:1], l)
         self.assertEqual(len(p), 1)
         self.assertTrue(all([len(pp) == 2 for pp in p[0]]))
@@ -303,9 +303,6 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(len(t), len(l))
         self.assertTrue(
             all([len(g) == 4 for g in t]))  # 2x2 mask  -> four targets
-        
-        t = topo.GetTargetNodes([1], l)
-        self.assertEqual(t, ([1, 2, 4, 5],))
         
         t = topo.GetTargetNodes(l[:1], l)
         self.assertEqual(t, ([1, 2, 4, 5],))

@@ -1537,14 +1537,14 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         raise ValueError("layer must be a GIDCollection.")
 
     # get layer extent
-    ext = nest.GetStatus(layer, 'topology')[0]['extent']
+    ext = nest.GetStatus(layer)[0]['extent']
 
     if len(ext) == 2:
         # 2D layer
 
         # get layer extent and center, x and y
         xext, yext = ext
-        xctr, yctr = nest.GetStatus(layer, 'topology')[0]['center']
+        xctr, yctr = nest.GetStatus(layer)[0]['center']
 
         # extract position information, transpose to list of x and y pos
         xpos, ypos = zip(*layer.GetPosition())
@@ -1581,7 +1581,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
     return fig
 
 
-def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
+def PlotTargets(src_nrn, src_layer, tgt_layer, syn_type=None, fig=None,
                 mask=None, kernel=None,
                 src_color='red', src_size=50, tgt_color='blue', tgt_size=20,
                 mask_color='red', kernel_color='red'):
@@ -1595,8 +1595,6 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
         GID of source neuron (as single-element list)
     tgt_layer : tuple/list of int(s)
         GID of tgt_layer (as single-element list)
-    tgt_model : [None | str], optional, default: None
-        Show only targets of a given model.
     syn_type : [None | str], optional, default: None
         Show only targets connected to with a given synapse type
     fig : [None | matplotlib.figure.Figure object], optional, default: None
@@ -1669,17 +1667,19 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
     import matplotlib.pyplot as plt
 
     # get position of source
-    srcpos = GetPosition(src_nrn)[0]
+    # TODO481 VERY temporary. When we remove Layer class and make GetPosition
+    # take in GIDColl, we can remove src_layer again.
+    srcpos = src_layer.GetPosition(src_nrn)
 
     # get layer extent and center, x and y
-    ext = nest.GetStatus(tgt_layer, 'topology')[0]['extent']
+    ext = nest.GetStatus(tgt_layer)[0]['extent']
 
     if len(ext) == 2:
         # 2D layer
 
         # get layer extent and center, x and y
         xext, yext = ext
-        xctr, yctr = nest.GetStatus(tgt_layer, 'topology')[0]['center']
+        xctr, yctr = nest.GetStatus(tgt_layer)[0]['center']
 
         if fig is None:
             fig = plt.figure()
@@ -1688,7 +1688,7 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
             ax = fig.gca()
 
         # get positions, reorganize to x and y vectors
-        tgtpos = GetTargetPositions(src_nrn, tgt_layer, tgt_model, syn_type)
+        tgtpos = GetTargetPositions([src_nrn], tgt_layer, syn_type)
         if tgtpos:
             xpos, ypos = zip(*tgtpos[0])
             ax.scatter(xpos, ypos, s=tgt_size, facecolor=tgt_color,
@@ -1714,7 +1714,7 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
             ax = fig.gca()
 
         # get positions, reorganize to x,y,z vectors
-        tgtpos = GetTargetPositions(src_nrn, tgt_layer, tgt_model, syn_type)
+        tgtpos = GetTargetPositions([src_nrn], tgt_layer, syn_type)
         if tgtpos:
             xpos, ypos, zpos = zip(*tgtpos[0])
             ax.scatter3D(xpos, ypos, zpos, s=tgt_size, facecolor=tgt_color,
@@ -1729,7 +1729,7 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
     return fig
 
 
-def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
+def PlotKernel(ax, src_nrn, src_layer, mask, kern=None, mask_color='red',
                kernel_color='red'):
     """
     Add indication of mask and kernel to axes.
@@ -1822,7 +1822,9 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     if ax and not isinstance(ax, matplotlib.axes.Axes):
         raise ValueError('ax must be matplotlib.axes.Axes instance.')
 
-    srcpos = np.array(GetPosition(src_nrn)[0])
+    # TODO481 VERY temporary. When we remove Layer class and make GetPosition
+    # take in GIDColl, we can remove src_layer again.
+    srcpos = np.array(src_layer.GetPosition(src_nrn))
 
     if 'anchor' in mask:
         offs = np.array(mask['anchor'])

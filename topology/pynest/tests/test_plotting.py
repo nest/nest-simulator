@@ -54,35 +54,20 @@ class PlottingTestCase(unittest.TestCase):
 
     def test_PlotTargets(self):
         """Test plotting targets."""
-        ldict = {'elements': ['iaf_neuron', 'iaf_psc_alpha'], 'rows': 3,
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3,
                  'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         cdict = {'connection_type': 'divergent',
+                 'synapse_model': 'stdp_synapse',
                  'mask': {'grid': {'rows': 2, 'columns': 2}}}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        ian = [gid for gid in nest.GetLeaves(l)[0]
-               if nest.GetStatus([gid], 'model')[0] == 'iaf_neuron']
-        ipa = [gid for gid in nest.GetLeaves(l)[0]
-               if nest.GetStatus([gid], 'model')[0] == 'iaf_psc_alpha']
 
-        # connect ian -> all using static_synapse
-        cdict.update({'sources': {'model': 'iaf_neuron'},
-                      'synapse_model': 'static_synapse'})
+        # connect l -> l
         topo.ConnectLayers(l, l, cdict)
-        for k in ['sources', 'synapse_model']:
-            cdict.pop(k)
-
-        # connect ipa -> ipa using stdp_synapse
-        cdict.update({'sources': {'model': 'iaf_psc_alpha'},
-                      'targets': {'model': 'iaf_psc_alpha'},
-                      'synapse_model': 'stdp_synapse'})
-        topo.ConnectLayers(l, l, cdict)
-        for k in ['sources', 'targets', 'synapse_model']:
-            cdict.pop(k)
 
         ctr = topo.FindCenterElement(l)
-        fig = topo.PlotTargets(ctr, l)
+        fig = topo.PlotTargets(ctr,l, l)
         fig.gca().set_title('Plain call')
 
         self.assertTrue(True)
@@ -96,15 +81,15 @@ class PlottingTestCase(unittest.TestCase):
         f = plt.figure()
         a1 = f.add_subplot(221)
         ctr = topo.FindCenterElement(l)
-        topo.PlotKernel(a1, ctr, {'circular': {'radius': 1.}},
+        topo.PlotKernel(a1, ctr, l, {'circular': {'radius': 1.}},
                         {'gaussian': {'sigma': 0.2}})
 
         a2 = f.add_subplot(222)
-        topo.PlotKernel(a2, ctr, {
+        topo.PlotKernel(a2, ctr, l, {
             'doughnut': {'inner_radius': 0.5, 'outer_radius': 0.75}})
 
         a3 = f.add_subplot(223)
-        topo.PlotKernel(a3, ctr, {'rectangular': {'lower_left': [-.5, -.5],
+        topo.PlotKernel(a3, ctr, l, {'rectangular': {'lower_left': [-.5, -.5],
                                                   'upper_right': [0.5, 0.5]}})
 
         self.assertTrue(True)

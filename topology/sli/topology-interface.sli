@@ -70,11 +70,6 @@
       /Distance_a_g load
   def
   
-  /Distance [/doublevectortype /gidcollectiontype]
-    { exch cva exch
-      Distance_a_g } bind
-  def
-  
   /GetLayerStatus [/gidcollectiontype]
      /GetLayerStatus_g load
   def

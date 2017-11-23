@@ -1449,7 +1449,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
     return fig
 
 
-def PlotTargets(src_nrn, src_layer, tgt_layer, syn_type=None, fig=None,
+def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
                 mask=None, kernel=None,
                 src_color='red', src_size=50, tgt_color='blue', tgt_size=20,
                 mask_color='red', kernel_color='red'):
@@ -1459,10 +1459,10 @@ def PlotTargets(src_nrn, src_layer, tgt_layer, syn_type=None, fig=None,
 
     Parameters
     ----------
-    src_nrn : int
-        GID of source neuron (as single-element list)
-    tgt_layer : tuple/list of int(s)
-        GID of tgt_layer (as single-element list)
+    src_nrn : GIDCollection
+        GIDCollection of source neuron (as single-element GIDCollection)
+    tgt_layer : GIDCollection
+        GIDCollection of tgt_layer
     syn_type : [None | str], optional, default: None
         Show only targets connected to with a given synapse type
     fig : [None | matplotlib.figure.Figure object], optional, default: None
@@ -1528,15 +1528,19 @@ def PlotTargets(src_nrn, src_layer, tgt_layer, syn_type=None, fig=None,
             tp.ConnectLayers(l, l, conndict)
 
             # plot the targets of the source neuron with GID 5
-            tp.PlotTargets([5], l)
+            tp.PlotTargets(l[4:5], l)
             plt.show()
     """
 
     import matplotlib.pyplot as plt
+    
+    if not isinstance(src_nrn, nest.GIDCollection) and len(src_nrn) != 1:
+        raise ValueError("src_nrn must be a single element GIDCollection.")
+    if not isinstance(tgt_layer, nest.GIDCollection):
+        raise ValueError("tgt_layer must be a GIDCollection.")
 
     # get position of source
-    # TODO481 make src_nrn into GIDCollection?
-    srcpos = GetPosition(nest.GIDCollection(src_nrn))
+    srcpos = GetPosition(src_nrn)
 
     # get layer extent and center, x and y
     ext = nest.GetStatus(tgt_layer)[0]['extent']
@@ -1555,7 +1559,7 @@ def PlotTargets(src_nrn, src_layer, tgt_layer, syn_type=None, fig=None,
             ax = fig.gca()
 
         # get positions, reorganize to x and y vectors
-        tgtpos = GetTargetPositions([src_nrn], tgt_layer, syn_type)
+        tgtpos = GetTargetPositions(src_nrn, tgt_layer, syn_type)
         if tgtpos:
             xpos, ypos = zip(*tgtpos[0])
             ax.scatter(xpos, ypos, s=tgt_size, facecolor=tgt_color,
@@ -1581,7 +1585,7 @@ def PlotTargets(src_nrn, src_layer, tgt_layer, syn_type=None, fig=None,
             ax = fig.gca()
 
         # get positions, reorganize to x,y,z vectors
-        tgtpos = GetTargetPositions([src_nrn], tgt_layer, syn_type)
+        tgtpos = GetTargetPositions(src_nrn, tgt_layer, syn_type)
         if tgtpos:
             xpos, ypos, zpos = zip(*tgtpos[0])
             ax.scatter3D(xpos, ypos, zpos, s=tgt_size, facecolor=tgt_color,
@@ -1596,7 +1600,7 @@ def PlotTargets(src_nrn, src_layer, tgt_layer, syn_type=None, fig=None,
     return fig
 
 
-def PlotKernel(ax, src_nrn, src_layer, mask, kern=None, mask_color='red',
+def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                kernel_color='red'):
     """
     Add indication of mask and kernel to axes.
@@ -1611,9 +1615,9 @@ def PlotKernel(ax, src_nrn, src_layer, mask, kern=None, mask_color='red',
     ----------
     ax : matplotlib.axes.AxesSubplot,
         subplot reference returned by PlotTargets
-    src_nrn : int
-        GID of source neuron  (as single element list), mask and kernel
-        plotted relative to it
+    src_nrn : GIDCollection
+        GIDCollection of source neuron (as single-element GIDCollection), mask
+        and kernel plotted relative to it
     mask : dict
         Mask used in creating connections.
     kern : [None | dict], optional, default: None
@@ -1678,19 +1682,24 @@ def PlotKernel(ax, src_nrn, src_layer, mask, kern=None, mask_color='red',
             ctr_elem = tp.FindCenterElement(l)
 
             # plot mask and kernel of the center element
-            tp.PlotKernel(ax, ctr_elem, mask=mask_dict, kern=kernel_dict)
+            tp.PlotKernel(ax,
+                l[ctr_elem-1:ctr_elem],
+                mask=mask_dict,
+                kern=kernel_dict)
     """
 
     import matplotlib
     import matplotlib.pyplot as plt
     import numpy as np
+    
+    if not isinstance(src_nrn, nest.GIDCollection) and len(src_nrn) != 1:
+        raise ValueError("src_nrn must be a single element GIDCollection.")
 
     # minimal checks for ax having been created by PlotKernel
     if ax and not isinstance(ax, matplotlib.axes.Axes):
         raise ValueError('ax must be matplotlib.axes.Axes instance.')
 
-    # TODO481 make src_nrn into GIDCollection?.
-    srcpos = np.array(GetPosition(nest.GIDCollection(src_nrn)))
+    srcpos = np.array(GetPosition(src_nrn))
 
     if 'anchor' in mask:
         offs = np.array(mask['anchor'])

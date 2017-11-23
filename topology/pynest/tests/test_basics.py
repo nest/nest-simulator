@@ -117,6 +117,25 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(d[0][0], 0.0)
         self.assertAlmostEqual(d[0][1], dy, 3)
 
+        # Test that we get correct results if to_arg and from_arg are from two
+        # different layers
+        l2 = topo.CreateLayer(ldict)
+        d = topo.Displacement(l[:1], l2[4:5])
+        dx = 1 / ldict['columns']
+        self.assertAlmostEqual(d[0][0], -dx, 3)
+        self.assertEqual(d[0][1], 0.0)
+        
+        d = topo.Displacement(l[:1], l2[1:2])
+        dy = 1 / ldict['rows']
+        self.assertEqual(d[0][0], 0.0)
+        self.assertAlmostEqual(d[0][1], dy, 3)
+        
+        # Test that an error is thrown if to_arg and from_arg have different
+        # size.
+        with self.assertRaises(nest.NESTError):
+            d = topo.Displacement(l[1:3], l[2:7])
+
+
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Distance(self):
         """Interface check on distance calculations."""

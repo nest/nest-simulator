@@ -262,19 +262,39 @@ distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
   return result;
 }
 
-double
+std::vector< double >
 distance( GIDCollectionPTR layer_gc,
-  const std::vector< double >& point,
-  const index node_gid )
+  const ArrayDatum point )
 {
-  if ( not kernel().node_manager.is_local_gid( node_gid ) )
-  {
-    throw KernelException(
-      "Distance is currently implemented for local nodes only." );
-  }
-
   AbstractLayerPTR layer = get_layer( layer_gc );
-  return layer->compute_distance( point, node_gid );
+  GIDCollectionMetadataPTR meta = layer_gc->get_metadata();
+  index first_gid = meta->get_first_gid();
+
+  int counter = 0;
+  std::vector< double > result;
+  for( GIDCollection::const_iterator it = layer_gc->begin() ; it != layer_gc->end() ; ++it )
+  {
+    index gid = (*it).gid;
+    if ( not kernel().node_manager.is_local_gid( gid ) )
+    {
+      throw KernelException(
+        "Displacement is currently implemented for local nodes only." );
+    }
+
+    const long lid = gid - first_gid;
+
+    std::vector< double > pos = getValue< std::vector< double > >(point[counter]);
+    double disp = layer->compute_distance( pos, lid );
+    result.push_back( disp );
+
+    // We only iterate the positions vector if it has more than one
+    // element.
+    if ( point.size() != 1 )
+    {
+      ++counter;
+    }
+  }
+  return result;
 }
 
 MaskDatum

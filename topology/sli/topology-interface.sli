@@ -61,18 +61,18 @@
       Displacement_g_a_i } bind
   def
   
-  /Distance [/gidcollectiontype /integertype /integertype]
-    { rolld dup 4 -1 roll GetPosition rolld
-      Distance_g_a_i } bind
+  % gc_from, gc_to
+  /Distance [/gidcollectiontype /gidcollectiontype]
+    /Distance_g_g load
   def
   
-  /Distance [/gidcollectiontype /arraytype /integertype]
-    /Distance_g_a_i load
+  /Distance [/arraytype /gidcollectiontype]
+      /Distance_a_g load
   def
   
-  /Distance [/gidcollectiontype /doublevectortype /integertype]
+  /Distance [/doublevectortype /gidcollectiontype]
     { exch cva exch
-      Distance_g_a_i } bind
+      Distance_a_g } bind
   def
   
   /GetLayerStatus [/gidcollectiontype]

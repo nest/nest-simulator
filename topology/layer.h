@@ -107,7 +107,7 @@ public:
    * @returns length of vector pointing from from_pos to node to's position
    */
   virtual double compute_distance( const std::vector< double >& from_pos,
-    const index to ) const = 0;
+    const index lid ) const = 0;
 
   /**
    * Connect this layer to the given target layer. The actual connections
@@ -311,10 +311,10 @@ public:
    * @returns length of vector pointing from from_pos to node to's position
    */
   double compute_distance( const Position< D >& from_pos,
-    const index to ) const;
+    const index lid ) const;
 
   double compute_distance( const std::vector< double >& from_pos,
-    const index to ) const;
+    const index lid ) const;
 
   /**
    * Get positions for all nodes in layer, including nodes on other MPI
@@ -594,9 +594,8 @@ Layer< D >::compute_displacement( const std::vector< double >& from_pos,
 template < int D >
 inline double
 Layer< D >::compute_distance( const Position< D >& from_pos,
-  const index to_gid ) const
+  const index lid ) const
 {
-  long lid = gid_collection_->find( to_gid );
   if ( lid < 0 )
   {
     throw KernelException( "GID not in GIDCollection." );
@@ -607,9 +606,8 @@ Layer< D >::compute_distance( const Position< D >& from_pos,
 template < int D >
 inline double
 Layer< D >::compute_distance( const std::vector< double >& from_pos,
-  const index to_gid ) const
+  const index lid ) const
 {
-  long lid = gid_collection_->find( to_gid );
   if ( lid < 0 )
   {
     throw KernelException( "GID not in GIDCollection." );

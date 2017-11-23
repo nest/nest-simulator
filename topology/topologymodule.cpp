@@ -340,7 +340,7 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "Distance_g_g", &distance_g_gfunction );
 
-  i->createcommand( "Distance_g_a_i", &distance_g_a_ifunction );
+  i->createcommand( "Distance_a_g", &distance_a_gfunction );
 
   i->createcommand( "CreateMask_D", &createmask_Dfunction );
 
@@ -652,20 +652,18 @@ TopologyModule::Distance_g_gFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-TopologyModule::Distance_g_a_iFunction::execute( SLIInterpreter* i ) const
+TopologyModule::Distance_a_gFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 3 );
+  i->assert_stack_load( 2 );
 
   const GIDCollectionDatum layer =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
-  const std::vector< double > point =
-    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const ArrayDatum point =
+    getValue< ArrayDatum >( i->OStack.pick( 1 ) );
 
-  const index node_gid = getValue< long >( i->OStack.pick( 0 ) );
+  Token result = distance( layer, point );
 
-  Token result = distance( layer, point, node_gid );
-
-  i->OStack.pop( 3 );
+  i->OStack.pop( 2 );
   i->OStack.push( result );
   i->EStack.pop();
 }

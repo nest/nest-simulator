@@ -90,9 +90,8 @@ std::vector< double > displacement( GIDCollectionPTR layer_gc,
   const index node_gid );
 std::vector< double > distance( GIDCollectionPTR layer_to_gc,
   GIDCollectionPTR layer_from_gc );
-double distance( GIDCollectionPTR layer_gc,
-  const std::vector< double >& point,
-  const index node_gid );
+std::vector< double > distance( GIDCollectionPTR layer_gc,
+  ArrayDatum point );
 MaskDatum create_mask( const DictionaryDatum& mask_dict );
 BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );

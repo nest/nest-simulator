@@ -55,34 +55,14 @@ using the same dictionary to specify both connections.
     connects the same layers, but the `layers[0]` to `layers[1]` connection
     is specified by the first dictionary, the `layers[1]` to `layers[2]`
     connection by the second.
-
-
-:Authors:
-    Kittel Austvoll,
-    Hans Ekkehard Plesser,
-    Hakon Enger
-"""
-
-import nest
-import nest.lib.hl_api_helper as hlh
-
-
-class Layer(nest.GIDCollection):
-    """
-    TODO 481 remove layer class
     
-    
-    Layer class
-    TODO480: write documentation
-    
-    Functions that can be used on the Layer class:
-      - Distance(from_arg, to_arg)         NB, must now be part of same layer
     
     Functions in the Topology module:
       - CreateMask(masktype, specs, anchor=None)
       - CreateParameter(parametertype, specs)
       - CreateLayer(specs)
       - ConnectLayers(pre, post, projections)
+      - Distance(from_arg, to_arg)
       - Displacement(from_arg, to_arg)
       - FindNearestElement(layers, locations, find_all=False)
       - DumpLayerNodes(layers, outname)
@@ -93,10 +73,16 @@ class Layer(nest.GIDCollection):
       - lotTargets(src_nrn, tgt_layer, ...)
       - PlotKernel(ax, src_nrn, mask,...')
       - SelectNodesByMask(layer, anchor, mask_obj)
-    """
-    def __init__(self, gc):
-        self.layer = gc
-        self._datum = gc._datum
+
+
+:Authors:
+    Kittel Austvoll,
+    Hans Ekkehard Plesser,
+    Hakon Enger
+"""
+
+import nest
+import nest.lib.hl_api_helper as hlh
 
 
 def CreateMask(masktype, specs, anchor=None):
@@ -490,7 +476,7 @@ def CreateLayer(specs):
     elements = specs['elements']
     hlh.model_deprecation_warning(elements)
 
-    return Layer(nest.sli_func('CreateLayer', specs))
+    return nest.sli_func('CreateLayer', specs)
 
 
 def ConnectLayers(pre, post, projections):
@@ -1191,7 +1177,7 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
     ----------
     sources : tuple/list of int(s)
         List of GID(s) of source neurons
-    tgt_layer : GIDCollection (Layer)
+    tgt_layer : GIDCollection
         GIDCollection with GIDs of tgt_layer
     syn_model : [None | str], optional, default: None
         Return only target positions for a given synapse model.
@@ -1248,8 +1234,8 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
     if not nest.is_sequence_of_gids(sources):
         raise TypeError("sources must be a sequence of GIDs")
 
-    if not isinstance(tgt_layer, Layer):
-        raise nest.NESTError("tgt_layer must be a Layer")
+    if not isinstance(tgt_layer, nest.GIDCollection):
+        raise nest.NESTError("tgt_layer must be a GIDCollection")
 
     conns = nest.GetConnections(sources, tgt_layer, synapse_model=syn_model)
 

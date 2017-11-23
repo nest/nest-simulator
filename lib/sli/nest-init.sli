@@ -88,19 +88,32 @@ def
 % The following version allows extraction of a GID from a GIDCollection
 /get [/gidcollectiontype /integertype] { get_g_i } def
 
-% Using GID in a GIDCollection with size=1 as a dictionary 
-/get [/gidcollectiontype /literaltype] 
-{ 
-  exch 
-  dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
-  0 get_g_i GetStatus exch get 
+% Get parameter value of all GIDs in GIDCollection
+/get [/gidcollectiontype /literaltype]
+{
+  << >> begin
+  /value Set
+  dup cva /GID exch 2 arraystore
+  exch { GetStatus value get } Map
+  value exch 2 arraystore join cvdict
+  end
 } def
 
-/get [/gidcollectiontype /arraytype] 
-{ 
-  exch 
-  dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if 
-  0 get_g_i GetStatus exch get_d_a
+% Get parameter values of GIDCollection from an array of parameters
+/get [/gidcollectiontype /arraytype]
+{
+  << >> begin
+  /value_array Set
+  dup /gc Set
+  cva /GID exch 2 arraystore
+  value_array
+  {
+    dup /value Set
+    gc { GetStatus value get } Map
+    2 arraystore join
+  } forall
+  cvdict
+  end
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

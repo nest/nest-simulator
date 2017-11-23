@@ -77,35 +77,33 @@ class BasicsTestCase(unittest.TestCase):
         nodepos_exp = topo.GetPosition(l[:2])
         self.assertEqual(nodepos_exp, (pos[0], pos[1]))
 
-    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Displacement(self):
         """Interface check on displacement calculations."""
         ldict = {'elements': 'iaf_psc_alpha',
                  'rows': 4, 'columns': 5}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        n = [x for x in l]
 
         # gids -> gids, all displacements must be zero here
-        d = l.Displacement(n, n)
-        self.assertEqual(len(d), len(n))
+        d = topo.Displacement(l, l)
+        self.assertEqual(len(d), len(l))
         self.assertTrue(all(dd == (0., 0.) for dd in d))
 
         # single gid -> gids
-        d = l.Displacement(n[:1], n)
-        self.assertEqual(len(d), len(n))
+        d = topo.Displacement(l[:1], l)
+        self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
         # gids -> single gid
-        d = l.Displacement(n, n[:1])
-        self.assertEqual(len(d), len(n))
+        d = topo.Displacement(l, l[:1])
+        self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
         
         # Displacement between gid 1 and 6. They are on the same y-axis, and
         # directly next to each other on the x-axis, so the displacement on
         # x-axis should be approximately -dx, while the displacement on the
         # y-axis should be 0.
-        d = l.Displacement(n[:1], n[4:5])
+        d = topo.Displacement(l[:1], l[4:5])
         dx = 1 / ldict['columns']
         self.assertAlmostEqual(d[0][0], -dx, 3)
         self.assertEqual(d[0][1], 0.0)
@@ -114,22 +112,10 @@ class BasicsTestCase(unittest.TestCase):
         # directly next to each other on the y-axis, so the displacement on
         # x-axis should be 0, while the displacement on the y-axis should be
         # approximately dy.
-        d = l.Displacement(n[:1], n[1:2])
+        d = topo.Displacement(l[:1], l[1:2])
         dy = 1 / ldict['rows']
         self.assertEqual(d[0][0], 0.0)
         self.assertAlmostEqual(d[0][1], dy, 3)
-
-        from numpy import array
-
-        # position -> gids
-        d = l.Displacement(array([0.0, 0.0]), n)
-        self.assertEqual(len(d), len(n))
-        self.assertTrue(all(len(dd) == 2 for dd in d))
-
-        # positions -> gids
-        d = l.Displacement([array([0.0, 0.0])] * len(n), n)
-        self.assertEqual(len(d), len(n))
-        self.assertTrue(all(len(dd) == 2 for dd in d))
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Distance(self):

@@ -77,6 +77,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } getposition_gfunction;
 
+  class Displacement_g_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } displacement_g_gfunction;
+
   class Displacement_g_a_iFunction : public SLIFunction
   {
   public:

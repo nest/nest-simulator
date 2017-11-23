@@ -83,6 +83,7 @@ private:
 AbstractLayerPTR get_layer( GIDCollectionPTR layer_gc );
 GIDCollectionPTR create_layer( const DictionaryDatum& layer_dict );
 ArrayDatum get_position( GIDCollectionPTR layer_gc );
+ArrayDatum displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc);
 std::vector< double > displacement( GIDCollectionPTR layer_gc,
   const std::vector< double >& point,
   const index node_gid );

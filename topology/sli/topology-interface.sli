@@ -47,9 +47,9 @@
     /GetPosition_g load
   def
   
-  /Displacement [/gidcollectiontype /integertype /integertype]
-    { rolld dup  3 -1 roll GetPosition rolld
-      Displacement_g_a_i } bind
+  % gc_from, gc_to
+  /Displacement [/gidcollectiontype /gidcollectiontype]
+    /Displacement_g_g load
   def
   
   /Displacement [/gidcollectiontype /arraytype /integertype]

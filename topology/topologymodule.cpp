@@ -334,6 +334,8 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "GetPosition_g", &getposition_gfunction );
 
+  i->createcommand( "Displacement_g_g", &displacement_g_gfunction );
+
   i->createcommand( "Displacement_g_a_i", &displacement_g_a_ifunction );
 
   i->createcommand( "Distance_g_a_i", &distance_g_a_ifunction );
@@ -525,13 +527,39 @@ TopologyModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
   >> CreateLayer
   /layer Set
 
-  layer 4 5         Displacement
+  layer [4] Take layer [5] Take Displacement
   layer [0.2 0.3] 5 Displacement
 
   Author: Håkon Enger, Hans E Plesser, Kittel Austvoll
 
   See also: Distance, GetPosition
 */
+void
+TopologyModule::Displacement_g_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  const GIDCollectionDatum layer_to =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+
+  const GIDCollectionDatum layer_from =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+
+  if ( layer_to->size() != 1
+      and layer_from->size() != 1
+      and not ( layer_to->size() == layer_from->size() ) )
+  {
+    throw BadProperty(
+        "GIDCollections must have equal length or one must have size 1." );
+  }
+
+  ArrayDatum result = displacement( layer_to, layer_from );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( result );
+  i->EStack.pop();
+}
+
 void
 TopologyModule::Displacement_g_a_iFunction::execute( SLIInterpreter* i ) const
 {

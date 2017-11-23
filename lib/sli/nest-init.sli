@@ -93,9 +93,17 @@ def
 {
   << >> begin
   /value Set
-  dup cva /GID exch 2 arraystore
-  exch { GetStatus value get } Map
-  value exch 2 arraystore join cvdict
+  dup GetStatus dup type /arraytype eq
+  { % if not a layer
+    pop % remove status array from stack
+    dup cva /GID exch 2 arraystore
+    exch { GetStatus value get } Map
+    value exch 2 arraystore join cvdict
+  }
+  { % if a layer
+    value get value exch 2 arraystore cvdict
+    exch pop % remove GIDCollection from stack
+  } ifelse
   end
 } def
 
@@ -105,14 +113,28 @@ def
   << >> begin
   /value_array Set
   dup /gc Set
-  cva /GID exch 2 arraystore
-  value_array
-  {
-    dup /value Set
-    gc { GetStatus value get } Map
-    2 arraystore join
-  } forall
-  cvdict
+  dup GetStatus dup type /arraytype eq
+  { % if not a layer
+    pop % remove status array from stack
+    cva /GID exch 2 arraystore
+    value_array
+    {
+      dup /value Set
+      gc { GetStatus value get } Map
+      2 arraystore join
+    } forall
+    cvdict
+  }
+  { % if a layer
+    /status Set
+    []
+    value_array
+    {
+      dup status exch get 2 arraystore join
+    } forall
+    cvdict
+    exch pop % remove GIDCollection from stack
+  } ifelse
   end
 } def
 

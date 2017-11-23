@@ -338,6 +338,8 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "Displacement_g_a_i", &displacement_g_a_ifunction );
 
+  i->createcommand( "Distance_g_g", &distance_g_gfunction );
+
   i->createcommand( "Distance_g_a_i", &distance_g_a_ifunction );
 
   i->createcommand( "CreateMask_D", &createmask_Dfunction );
@@ -623,6 +625,32 @@ TopologyModule::Displacement_g_a_iFunction::execute( SLIInterpreter* i ) const
 
   See also: Displacement, GetPosition
 */
+void
+TopologyModule::Distance_g_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  const GIDCollectionDatum layer_to =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+
+  const GIDCollectionDatum layer_from =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+
+  if ( layer_to->size() != 1
+      and layer_from->size() != 1
+      and not ( layer_to->size() == layer_from->size() ) )
+  {
+    throw BadProperty(
+        "GIDCollections must have equal length or one must have size 1." );
+  }
+
+  Token result = distance( layer_to, layer_from );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( result );
+  i->EStack.pop();
+}
+
 void
 TopologyModule::Distance_g_a_iFunction::execute( SLIInterpreter* i ) const
 {

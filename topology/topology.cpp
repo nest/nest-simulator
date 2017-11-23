@@ -198,6 +198,70 @@ displacement( GIDCollectionPTR layer_gc,
   return layer->compute_displacement( point, lid );
 }
 
+std::vector< double >
+distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
+{
+  ArrayDatum layer_to_positions = get_position(layer_to_gc);
+
+  AbstractLayerPTR layer_from = get_layer( layer_from_gc );
+  GIDCollectionMetadataPTR meta = layer_from_gc->get_metadata();
+  index first_gid = meta->get_first_gid();
+
+  int counter = 0;
+  std::vector< double > result;
+
+  // If layer_from has size equal to one, but layer_to do not, we want the
+  // distance between every node in layer_to against the one in layer_from.
+  // Likewise if layer_to has size 1 and layer_from do not.
+  if( layer_from_gc->size() == 1 )
+  {
+    index gid = layer_from_gc->operator [](0);
+    if ( not kernel().node_manager.is_local_gid( gid ) )
+    {
+      throw KernelException(
+        "Displacement is currently implemented for local nodes only." );
+    }
+    const long lid = gid - first_gid;
+
+    // If layer_from has size 1, we need to iterate over the layer_to positions
+    for(Token const* it = layer_to_positions.begin() ;
+        it != layer_to_positions.end();
+        ++ it )
+    {
+      std::vector< double > pos = getValue< std::vector< double > >(*it);
+      double disp = layer_from->compute_distance( pos, lid );
+      result.push_back( disp );
+    }
+  }
+  else
+  {
+    for( GIDCollection::const_iterator it = layer_from_gc->begin() ; it != layer_from_gc->end() ; ++it )
+    {
+      index gid = (*it).gid;
+      if ( not kernel().node_manager.is_local_gid( gid ) )
+      {
+        throw KernelException(
+          "Displacement is currently implemented for local nodes only." );
+      }
+
+      const long lid = gid - first_gid;
+
+      std::vector< double > pos = getValue< std::vector< double > >(layer_to_positions[counter]);
+      double disp = layer_from->compute_distance( pos, lid );
+      result.push_back( disp );
+
+      // We only iterate the layer_to positions vector if it has more than one
+      // element.
+      if ( layer_to_gc->size() != 1 )
+      {
+        ++counter;
+      }
+    }
+  }
+
+  return result;
+}
+
 double
 distance( GIDCollectionPTR layer_gc,
   const std::vector< double >& point,

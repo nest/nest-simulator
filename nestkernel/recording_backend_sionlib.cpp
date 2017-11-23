@@ -153,7 +153,7 @@ nest::RecordingBackendSIONlib::open_files_()
     int rank = kernel().mpi_manager.get_rank();
 
     file.sid = sion_paropen_ompi( filename.c_str(),
-      P_.sion_collective_ ? "bw,cmerge" : "bw",
+      P_.sion_collective_ ? "bw,cmerge,collsize=-1" : "bw",
       &n_files,
       MPI_COMM_WORLD,
       &local_comm,
@@ -329,7 +329,7 @@ nest::RecordingBackendSIONlib::close_files_()
 void
 nest::RecordingBackendSIONlib::synchronize()
 {
-  if ( !P_.sion_collective_ )
+  if ( not files_opened_ or not P_.sion_collective_ )
   {
     return;
   }

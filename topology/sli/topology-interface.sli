@@ -56,11 +56,6 @@
     /Displacement_a_g load
   def
   
-  /Displacement [/gidcollectiontype /doublevectortype /integertype]
-    { exch cva exch
-      Displacement_a_g } bind
-  def
-  
   % gc_from, gc_to
   /Distance [/gidcollectiontype /gidcollectiontype]
     /Distance_g_g load

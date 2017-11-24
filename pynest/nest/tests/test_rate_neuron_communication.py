@@ -45,6 +45,8 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         self.neuron_params = {'tau': 5., 'std': 0.}
         self.neuron_params2 = self.neuron_params.copy()
         self.neuron_params2.update({'mult_coupling': True})
+        self.neuron_params3 = self.neuron_params.copy()
+        self.neuron_params3.update({'rectify_output': True, 'rate': 1.})
         self.drive = 1.5
         self.delay = 2.
         self.weight = 0.5
@@ -62,6 +64,9 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         self.rate_neuron_drive = nest.Create(
             'lin_rate_ipn', params={'rate': self.drive,
                                     'mean': self.drive, 'std': 0.})
+        self.rate_neuron_negative_drive = nest.Create(
+            'lin_rate_ipn', params={'rate': -self.drive,
+                                    'mean': -self.drive, 'std': 0.})
 
         self.rate_neuron_1 = nest.Create(
             'lin_rate_ipn', params=self.neuron_params)
@@ -71,6 +76,8 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
             'threshold_lin_rate_ipn', params=self.neuron_params)
         self.rate_neuron_4 = nest.Create(
             'lin_rate_ipn', params=self.neuron_params2)
+        self.rate_neuron_5 = nest.Create(
+            'lin_rate_ipn', params=self.neuron_params3)
 
         self.multimeter = nest.Create("multimeter",
                                       params={'record_from': ['rate'],
@@ -78,7 +85,8 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         # record rates and connect neurons
         self.neurons = self.rate_neuron_1 + \
-            self.rate_neuron_2 + self.rate_neuron_3 + self.rate_neuron_4
+            self.rate_neuron_2 + self.rate_neuron_3 + self.rate_neuron_4 + \
+            self.rate_neuron_5
 
         nest.Connect(
             self.multimeter, self.neurons, 'all_to_all', {'delay': 10.})
@@ -97,6 +105,10 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
                                     'weight': self.weight})
 
         nest.Connect(self.rate_neuron_drive, self.rate_neuron_4,
+                     'all_to_all', {'model': 'rate_connection_instantaneous',
+                                    'weight': self.weight})
+
+        nest.Connect(self.rate_neuron_negative_drive, self.rate_neuron_5,
                      'all_to_all', {'model': 'rate_connection_instantaneous',
                                     'weight': self.weight})
 
@@ -181,6 +193,21 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
                      a * theta / (1 + a)])
 
             self.assertTrue(np.allclose(rates, rates_test))
+
+    def test_RectifyOutput(self):
+        """Check the rectification of the output"""
+
+        # simulate
+        nest.Simulate(self.simtime)
+
+        # get activity from rate neuron
+        events = nest.GetStatus(self.multimeter)[0]["events"]
+        senders = events['senders']
+        rate_5 = events['rate'][np.where(senders == self.rate_neuron_5)]
+
+        value = rate_5[-1]
+        value_test = 0.
+        self.assertTrue(np.isclose(value, value_test))
 
 
 def suite():

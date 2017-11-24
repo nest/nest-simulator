@@ -104,7 +104,7 @@ class BasicsTestCase(unittest.TestCase):
         # x-axis should be approximately -dx, while the displacement on the
         # y-axis should be 0.
         d = topo.Displacement(l[:1], l[4:5])
-        dx = 1 / ldict['columns']
+        dx = 1. / ldict['columns']
         self.assertAlmostEqual(d[0][0], -dx, 3)
         self.assertEqual(d[0][1], 0.0)
         
@@ -113,7 +113,7 @@ class BasicsTestCase(unittest.TestCase):
         # x-axis should be 0, while the displacement on the y-axis should be
         # approximately dy.
         d = topo.Displacement(l[:1], l[1:2])
-        dy = 1 / ldict['rows']
+        dy = 1. / ldict['rows']
         self.assertEqual(d[0][0], 0.0)
         self.assertAlmostEqual(d[0][1], dy, 3)
 
@@ -121,12 +121,12 @@ class BasicsTestCase(unittest.TestCase):
         # different layers
         l2 = topo.CreateLayer(ldict)
         d = topo.Displacement(l[:1], l2[4:5])
-        dx = 1 / ldict['columns']
+        dx = 1. / ldict['columns']
         self.assertAlmostEqual(d[0][0], -dx, 3)
         self.assertEqual(d[0][1], 0.0)
         
         d = topo.Displacement(l[:1], l2[1:2])
-        dy = 1 / ldict['rows']
+        dy = 1. / ldict['rows']
         self.assertEqual(d[0][0], 0.0)
         self.assertAlmostEqual(d[0][1], dy, 3)
         
@@ -165,7 +165,7 @@ class BasicsTestCase(unittest.TestCase):
         # directly next to each other on the x-axis, so the distance should be
         # approximately dx. The same is true for distance between gid 6 and 1.
         d = topo.Distance(l[:1], l[4:5])
-        dx = 1 / ldict['columns']
+        dx = 1. / ldict['columns']
         self.assertAlmostEqual(d[0], dx, 3)
         
         d = topo.Distance(l[4:5], l[:1])
@@ -175,7 +175,7 @@ class BasicsTestCase(unittest.TestCase):
         # directly next to each other on the y-axis, so the distance should be
         # approximately dy. The same is true for distance between gid 2 and 1.
         d = topo.Distance(l[:1], l[1:2])
-        dy = 1 / ldict['rows']
+        dy = 1. / ldict['rows']
         self.assertAlmostEqual(d[0], dy, 3)
         
         d = topo.Distance(l[1:2], l[:1])
@@ -185,14 +185,14 @@ class BasicsTestCase(unittest.TestCase):
         # different layers
         l2 = topo.CreateLayer(ldict)
         d = topo.Distance(l[:1], l2[4:5])
-        dx = 1 / ldict['columns']
+        dx = 1. / ldict['columns']
         self.assertAlmostEqual(d[0], dx, 3)
         
         d = topo.Distance(l[4:5], l2[:1])
         self.assertAlmostEqual(d[0], dx, 3)
         
         d = topo.Distance(l[:1], l2[1:2])
-        dy = 1 / ldict['rows']
+        dy = 1. / ldict['rows']
         self.assertAlmostEqual(d[0], dy, 3)
         
         d = topo.Distance(l[1:2], l2[:1])

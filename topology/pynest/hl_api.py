@@ -1318,7 +1318,8 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
     for nodes in GetTargetNodes(sources, tgt_layer, syn_model):
         node_results = []
         for gid in nodes:
-            gc = nest.GIDCollection(tgt_layer[gid-1:gid])
+            index = gid - tgt_layer[0]
+            gc = nest.GIDCollection(tgt_layer[index:index + 1])
             gp = GetPosition(gc)
             node_results.append(gp)
         result.append( node_results )

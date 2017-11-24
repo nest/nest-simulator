@@ -77,6 +77,7 @@ class BasicsTestCase(unittest.TestCase):
         nodepos_exp = topo.GetPosition(l[:2])
         self.assertEqual(nodepos_exp, (pos[0], pos[1]))
 
+    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Displacement(self):
         """Interface check on displacement calculations."""
         ldict = {'elements': 'iaf_psc_alpha',

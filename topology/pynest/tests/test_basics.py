@@ -134,6 +134,23 @@ class BasicsTestCase(unittest.TestCase):
         # size.
         with self.assertRaises(nest.NESTError):
             d = topo.Displacement(l[1:3], l[2:7])
+            
+        # position -> gids
+        d = topo.Displacement([(0.0, 0.0)], l)
+        self.assertEqual(len(d), len(l))
+        self.assertTrue(all(len(dd) == 2 for dd in d))
+            
+        from numpy import array
+
+        # position -> gids
+        d = topo.Displacement(array([0.0, 0.0]), l)
+        self.assertEqual(len(d), len(l))
+        self.assertTrue(all(len(dd) == 2 for dd in d))
+
+        # positions -> gids
+        d = topo.Displacement([array([0.0, 0.0])] * len(l), l)
+        self.assertEqual(len(d), len(l))
+        self.assertTrue(all(len(dd) == 2 for dd in d))
 
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')

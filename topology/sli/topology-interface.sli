@@ -52,13 +52,13 @@
     /Displacement_g_g load
   def
   
-  /Displacement [/gidcollectiontype /arraytype /integertype]
-    /Displacement_g_a_i load
+  /Displacement [/arraytype /gidcollectiontype]
+    /Displacement_a_g load
   def
   
   /Displacement [/gidcollectiontype /doublevectortype /integertype]
     { exch cva exch
-      Displacement_g_a_i } bind
+      Displacement_a_g } bind
   def
   
   % gc_from, gc_to

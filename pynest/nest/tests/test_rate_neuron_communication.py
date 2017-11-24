@@ -78,6 +78,8 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
             'lin_rate_ipn', params=self.neuron_params2)
         self.rate_neuron_5 = nest.Create(
             'lin_rate_ipn', params=self.neuron_params3)
+        self.parrot_neuron = nest.Create(
+            'sigm_rate_parrot')
 
         self.multimeter = nest.Create("multimeter",
                                       params={'record_from': ['rate'],
@@ -90,6 +92,8 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         nest.Connect(
             self.multimeter, self.neurons, 'all_to_all', {'delay': 10.})
+        nest.Connect(
+            self.multimeter, self.parrot_neuron, 'all_to_all', {'delay': 10.})
 
         nest.Connect(self.rate_neuron_drive, self.rate_neuron_1,
                      'all_to_all', {'model': 'rate_connection_delayed',
@@ -109,6 +113,10 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
                                     'weight': self.weight})
 
         nest.Connect(self.rate_neuron_negative_drive, self.rate_neuron_5,
+                     'all_to_all', {'model': 'rate_connection_instantaneous',
+                                    'weight': self.weight})
+
+        nest.Connect(self.rate_neuron_drive, self.parrot_neuron,
                      'all_to_all', {'model': 'rate_connection_instantaneous',
                                     'weight': self.weight})
 
@@ -207,6 +215,25 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         value = rate_5[-1]
         value_test = 0.
+        self.assertTrue(np.isclose(value, value_test))
+
+    def test_ParrotRateNeuron(self):
+        """Check the parrot rate neuron with sigm non-linearity"""
+
+        nest.SetStatus(self.parrot_neuron, {'g': 0.1})
+
+        # simulate
+        nest.Simulate(self.simtime)
+
+        # get activity from rate neuron
+        events = nest.GetStatus(self.multimeter)[0]["events"]
+        senders = events['senders']
+        parrot_rate = events['rate'][np.where(senders == self.parrot_neuron)]
+
+        value = parrot_rate[-1]
+        g = nest.GetStatus(self.parrot_neuron)[0]['g']
+        value_test = (g * self.weight * self.drive)**4 / \
+            (0.1**4 + (g * self.weight * self.drive)**4)
         self.assertTrue(np.isclose(value, value_test))
 
 

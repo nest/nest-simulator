@@ -186,7 +186,8 @@ protected:
   virtual void clear_vector_cache_() const = 0;
 
   /**
-   * TODO 481
+   * Gets a lockPTR to the metadata to the GIDCollection to which this layer
+   * belongs.
    */
   GIDCollectionMetadataPTR get_metadata() const;
 };

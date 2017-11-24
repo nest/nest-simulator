@@ -169,6 +169,20 @@ class GIDCollection(object):
     def __str__(self):
         return ''.format(nest.sli_func('==', self._datum))
 
+    def get(self, params):
+        if nest.is_literal(params):
+            cmd = '/{} get'.format(params)
+        elif nest.is_iterable(params):
+            params_str = ' '.join('/{}'.format(p) for p in params)
+            cmd = '[ {} ] get'.format(params_str)
+        else:
+            raise TypeError("Params should be either a string or an iterable")
+
+        nest.sps(self._datum)
+        nest.sr(cmd)
+
+        return nest.spp()
+
 
 class Mask(object):
     """

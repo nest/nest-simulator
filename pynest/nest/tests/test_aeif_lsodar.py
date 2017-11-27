@@ -26,6 +26,8 @@ import unittest
 import numpy as np
 from scipy.interpolate import interp1d
 
+from collections import defaultdict
+
 import nest
 
 """
@@ -141,13 +143,8 @@ aeif_DT0 = {
 aeif_DT0_delta = aeif_DT0.copy()
 aeif_DT0_delta.pop('tau_syn_ex')
 
-DT0_params = {"aeif_cond_alpha": aeif_DT0,
-              "aeif_cond_exp": aeif_DT0,
-              "aeif_psc_alpha": aeif_DT0,
-              "aeif_psc_delta": aeif_DT0_delta,
-              "aeif_psc_exp": aeif_DT0,
-              "aeif_cond_alpha_multisynapse": aeif_DT0,
-              "aeif_cond_alpha_RK5": aeif_DT0}
+DT0_params = defaultdict(lambda: aeif_DT0)
+DT0_params["aeif_psc_delta"] = aeif_DT0_delta
 
 iaf_param_base = {
     'V_reset': -60.,
@@ -269,9 +266,8 @@ class AEIFTestCase(unittest.TestCase):
 
     @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_closeness_nest_lsodar(self):
-        '''
-        Compare models to the LSODAR implementation.
-        '''
+        # Compare models to the LSODAR implementation.
+
         simtime = 100.
 
         # get lsodar reference
@@ -301,10 +297,9 @@ class AEIFTestCase(unittest.TestCase):
 
     @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_iaf_spike_input(self):
-        '''
-        Test that the models behave as iaf_* if a == 0., b == 0. and
-        Delta_T == 0 due to random spike input.
-        '''
+        # Test that the models behave as iaf_* if a == 0., b == 0. and
+        # Delta_T == 0 due to random spike input.
+
         simtime = 200.
         # create the neurons and devices
         refs = {syn_type: nest.Create("iaf_" + syn_type,
@@ -354,10 +349,9 @@ class AEIFTestCase(unittest.TestCase):
 
     @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_iaf_dc_input(self):
-        '''
-        Test that the models behave as iaf_* if a == 0., b == 0. and
-        Delta_T == 0 due to direct current input.
-        '''
+        # Test that the models behave as iaf_* if a == 0., b == 0. and
+        # Delta_T == 0 due to direct current input.
+
         simtime = 200.
         # create the neurons and devices
         refs = {syn_type: nest.Create("iaf_" + syn_type,

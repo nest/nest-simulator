@@ -127,3 +127,7 @@ install( TARGETS models
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
+
+FILTER_HEADERS("${models_sources}" install_headers )
+install( FILES ${install_headers}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

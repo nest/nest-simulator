@@ -718,7 +718,9 @@ def Displacement(from_arg, to_arg):
     to node(s) `to_arg`.
 
     Displacement is the shortest displacement, taking into account
-    periodic boundary conditions where applicable.
+    periodic boundary conditions where applicable. If explicit positions
+    are given in the `from_arg` list, they are interpreted in the `to_arg`
+    layer.
     
     * If one of `from_arg` or `to_arg` has length 1, and the other is longer,
       the displacement from/to the single item to all other items is given.
@@ -767,16 +769,17 @@ def Displacement(from_arg, to_arg):
     
             # displacement between node 2 and 3
             print(Displacement(l[1:2], l[2:3]))
-    
-            // TODO481
+
             # displacment between the position (0.0., 0.0) and node 2
-            print(Displacement([(0.0, 0.0)], [2]))
-    """
-    if not isinstance(from_arg, nest.GIDCollection):
-        raise TypeError("from_arg must be a GIDCollection")
-    
+            print(Displacement([(0.0, 0.0)], l[1:2]))
+    """    
     if not isinstance(to_arg, nest.GIDCollection):
         raise TypeError("to_arg must be a GIDCollection")
+    
+    import numpy
+    
+    if isinstance(from_arg, numpy.ndarray):
+        from_arg = (from_arg, )
     
     if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(to_arg):
         raise nest.NESTError(
@@ -790,7 +793,6 @@ def Distance(from_arg, to_arg):
 
     The distance between two nodes is the length of its displacement.
 
-    # TODO481
     If explicit positions are given in the `from_arg` list, they are
     interpreted in the `to_arg` layer. Distance is the shortest distance,
     taking into account periodic boundary conditions where applicable.
@@ -806,7 +808,7 @@ def Distance(from_arg, to_arg):
     ----------
     from_arg : GIDCollection or tuple/list with tuples/lists of floats
         GIDCollection of GIDs or position(s)
-    to_arg : tuple/list of ints
+    to_arg : GIDCollection
         GIDCollection of GIDs
 
 
@@ -843,18 +845,21 @@ def Distance(from_arg, to_arg):
             # distance between node 2 and 3
             print(Distance(l[1:2], l[2:3]))
 
-            # TODO481
             # distance between the position (0.0., 0.0) and node 2
-            print(l.Distance([(0.0, 0.0)], [2]))
+            print(l.Distance([(0.0, 0.0)], l[1:2]))
 
     """    
     if not isinstance(to_arg, nest.GIDCollection):
         raise TypeError("to_arg must be a GIDCollection")
-    
+
     import numpy
     
     if isinstance(from_arg, numpy.ndarray):
         from_arg = (from_arg, )
+        
+    if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(to_arg):
+        raise nest.NESTError(
+            "to_arg and from_arg must have same size unless one have size 1.")
         
     return nest.sli_func('Distance', from_arg, to_arg)
 

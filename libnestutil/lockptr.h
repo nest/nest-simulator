@@ -133,18 +133,26 @@ class lockPTR
     void
     addReference( void )
     {
-      ++number_of_references;
+#pragma omp critical
+      {
+        ++number_of_references;
+      }
     }
 
     void
     removeReference( void )
     {
-      //      assert(number_of_references > 0);
-
-      --number_of_references;
-      if ( number_of_references == 0 )
+      // TODO481 This should be protected with #pragma omp critical, but when
+      // we do everything deadlocks.
+//#pragma omp critical
       {
-        delete this;
+        assert(number_of_references > 0);
+
+        --number_of_references;
+        if ( number_of_references == 0 )
+        {
+          delete this;
+        }
       }
     }
 
@@ -169,15 +177,21 @@ class lockPTR
     void
     lock( void )
     {
-      assert( locked == false );
-      locked = true;
+#pragma omp critical
+      {
+        assert( not locked );
+        locked = true;
+      }
     }
 
     void
     unlock( void )
     {
-      assert( locked == true );
-      locked = false;
+#pragma omp critical
+      {
+        assert( locked );
+        locked = false;
+      }
     }
   };
 
@@ -217,8 +231,8 @@ public:
 
   lockPTR< D > operator=( const lockPTR< D >& spd )
   {
-    //  assert(obj != NULL);
-    // assert(spd.obj != NULL);
+    assert(obj != NULL);
+    assert(spd.obj != NULL);
 
     // The following order of the expressions protects
     // against a=a;

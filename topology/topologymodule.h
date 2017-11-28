@@ -83,11 +83,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } displacement_g_gfunction;
 
-  class Displacement_g_a_iFunction : public SLIFunction
+  class Displacement_a_gFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } displacement_g_a_ifunction;
+  } displacement_a_gfunction;
 
   class Distance_g_gFunction : public SLIFunction
   {

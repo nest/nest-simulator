@@ -85,13 +85,10 @@ GIDCollectionPTR create_layer( const DictionaryDatum& layer_dict );
 ArrayDatum get_position( GIDCollectionPTR layer_gc );
 ArrayDatum displacement( GIDCollectionPTR layer_to_gc,
   GIDCollectionPTR layer_from_gc);
-std::vector< double > displacement( GIDCollectionPTR layer_gc,
-  const std::vector< double >& point,
-  const index node_gid );
+ArrayDatum displacement( GIDCollectionPTR layer_gc, const ArrayDatum point );
 std::vector< double > distance( GIDCollectionPTR layer_to_gc,
   GIDCollectionPTR layer_from_gc );
-std::vector< double > distance( GIDCollectionPTR layer_gc,
-  ArrayDatum point );
+std::vector< double > distance( GIDCollectionPTR layer_gc, const ArrayDatum point );
 MaskDatum create_mask( const DictionaryDatum& mask_dict );
 BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );

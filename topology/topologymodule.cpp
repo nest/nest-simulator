@@ -336,7 +336,7 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "Displacement_g_g", &displacement_g_gfunction );
 
-  i->createcommand( "Displacement_g_a_i", &displacement_g_a_ifunction );
+  i->createcommand( "Displacement_a_g", &displacement_a_gfunction );
 
   i->createcommand( "Distance_g_g", &distance_g_gfunction );
 
@@ -563,20 +563,18 @@ TopologyModule::Displacement_g_gFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-TopologyModule::Displacement_g_a_iFunction::execute( SLIInterpreter* i ) const
+TopologyModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 3 );
+  i->assert_stack_load( 2 );
 
   const GIDCollectionDatum layer =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
-  const std::vector< double > point =
-    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const ArrayDatum point =
+    getValue< ArrayDatum >( i->OStack.pick( 1 ) );
 
-  const index node_gid = getValue< long >( i->OStack.pick( 0 ) );
+  ArrayDatum result = displacement( layer, point );
 
-  Token result = displacement( layer, point, node_gid );
-
-  i->OStack.pop( 3 );
+  i->OStack.pop( 2 );
   i->OStack.push( result );
   i->EStack.pop();
 }

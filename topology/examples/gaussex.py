@@ -33,7 +33,6 @@ import pylab
 import nest
 import nest.topology as topo
 
-pylab.ion()
 
 nest.ResetKernel()
 
@@ -58,9 +57,9 @@ fig = pylab.gcf()
 
 # plot targets of two source neurons into same figure, with mask
 # use different colors
-for src_pos, color in [([15, 15], 'blue'), ([0, 0], 'green')]:
+for src_index, color in [(30 * 15 + 15, 'blue'), (0, 'green')]:
     # obtain node id for center
-    src = topo.GetElement(a, src_pos)
+    src = a[src_index:src_index + 1]
     topo.PlotTargets(src, b, mask=conndict['mask'], kernel=conndict['kernel'],
                      src_color=color, tgt_color=color, mask_color=color,
                      kernel_color=color, src_size=100,
@@ -73,5 +72,7 @@ pylab.grid(True)
 pylab.axis([-2.0, 2.0, -2.0, 2.0])
 pylab.axes().set_aspect('equal', 'box')
 pylab.title('Connection targets, Gaussian kernel')
+
+pylab.show()
 
 # pylab.savefig('gaussex.pdf')

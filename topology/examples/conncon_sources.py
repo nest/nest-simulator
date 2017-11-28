@@ -63,7 +63,7 @@ for tgt_index in [30 * 15 + 15, 0]:
 
     spos_x = pylab.array([x for x, y in spos])
     spos_y = pylab.array([y for x, y in spos])
-    
+
     print(spos_x)
     print(spos_y)
 

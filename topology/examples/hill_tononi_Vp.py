@@ -381,15 +381,12 @@ layerProps = {'rows': Params['N'],
 layerProps.update({'elements': 'RetinaNode'})
 retina = topo.CreateLayer(layerProps)
 
-# retina_leaves is a work-around until NEST 3.0 is released
-retina_leaves = nest.GetLeaves(retina)[0]
-
 # ! Now set phases of retinal oscillators; we use a list comprehension instead
 # ! of a loop.
 [nest.SetStatus([n], {"phase": phaseInit(topo.GetPosition([n])[0],
                                          Params["lambda_dg"],
                                          Params["phi_dg"])})
- for n in retina_leaves]
+ for n in retina]  # TODO481 : Change this when GIDCollection gets a Set method
 
 # ! Thalamus
 # ! --------
@@ -405,6 +402,7 @@ retina_leaves = nest.GetLeaves(retina)[0]
 
 # ! Now we can create the layer, with one relay cell and one
 # ! interneuron per location:
+# TODO481 : Set up one layer for each element
 layerProps.update({'elements': ['TpRelay', 'TpInter']})
 Tp = topo.CreateLayer(layerProps)
 
@@ -435,6 +433,7 @@ Rp = topo.CreateLayer(layerProps)
  for layer in ('L23', 'L4', 'L56')]
 
 # ! Now we can create the populations, suffixes h and v indicate tuning
+# TODO481 : Set up one layer for each element
 layerProps.update({'elements': ['L23pyr', 2, 'L23in', 1,
                                 'L4pyr', 2, 'L4in', 1,
                                 'L56pyr', 2, 'L56in', 1]})

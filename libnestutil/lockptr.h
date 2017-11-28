@@ -142,18 +142,18 @@ class lockPTR
     void
     removeReference( void )
     {
-      // TODO481 This should be protected with #pragma omp critical, but when
-      // we do everything deadlocks.
-//#pragma omp critical
+      // TODO481 This should all be protected with #pragma omp critical, but
+      // when we do everything deadlocks.
+#pragma omp critical
       {
         assert(number_of_references > 0);
 
         --number_of_references;
+      }
         if ( number_of_references == 0 )
         {
           delete this;
         }
-      }
     }
 
     size_t

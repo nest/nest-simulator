@@ -197,8 +197,6 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
   double t_lastspike,
   const CommonSynapseProperties& )
 {
-  const int vp = get_target( t )->get_vp();
-
   const double h = e.get_stamp().get_ms() - t_lastspike;
 
   // Compute the decay factors, based on the time since the last spike.

@@ -124,7 +124,7 @@
                                   (sfa) after each spike emission in mV.
     tau_sfa    vector of double - Time constants of sfa variables in ms.
     Delta_V    double - Stochasticity level in mV.
-    lambda_0   double - Stochastic intensity at firing threshold V_T in 1/ms.
+    lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
     V_T_star   double - Base threshold in mV.
 
   Synaptic parameters
@@ -240,7 +240,7 @@ private:
     double V_reset_;
     double Delta_V_;
     double V_T_star_;
-    double lambda_0_; /** 1/ms */
+    double lambda_0_; /** 1/s */
 
     /** Refractory period in ms. */
     double t_ref_;
@@ -306,7 +306,7 @@ private:
     };
 
     static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;        //!< V_M
-    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 1; //!< G
+    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;        //!< G
 
     std::vector< double > y_;        //!< neuron state
 

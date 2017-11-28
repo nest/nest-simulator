@@ -98,7 +98,7 @@ nest::gif_cond_exp_multisynapse_dynamics( double,
   double I_syn = 0.0;
   for ( size_t i = 0; i < node.P_.n_receptors(); ++i )
   {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    const size_t j = i * S::NUM_STATE_ELEMENTS_PER_RECEPTOR;
     I_syn += -y[ S::G + j ] * ( V - node.P_.E_rev_[ i ] );
   }
 
@@ -109,7 +109,7 @@ nest::gif_cond_exp_multisynapse_dynamics( double,
   // outputs: dg/dt
   for ( size_t i = 0; i < node.P_.n_receptors(); i++ )
   {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    const size_t j = i * S::NUM_STATE_ELEMENTS_PER_RECEPTOR;
     f[ S::G + j ] = -y[ S::G + j ] / node.P_.tau_syn_[ i ];
   }
 
@@ -127,7 +127,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::Parameters_()
   , V_reset_( -55.0 )  // mV
   , Delta_V_( 0.5 )    // mV
   , V_T_star_( -35 )   // mV
-  , lambda_0_( 0.001 ) // 1/ms
+  , lambda_0_( 1. )    // 1/s
   , t_ref_( 4.0 )      // ms
   , c_m_( 80.0 )       // pF
   , tau_stc_()         // ms
@@ -143,7 +143,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::Parameters_()
 }
 
 nest::gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
-  : y_( STATE_VEC_SIZE + NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR, 0.0 )
+  : y_( STATE_VEC_SIZE + NUM_STATE_ELEMENTS_PER_RECEPTOR, 0.0 )
   , I_stim_( 0.0 )
   , sfa_( 0.0 )
   , stc_( 0.0 )
@@ -217,7 +217,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_reset, V_reset_ );
   def< double >( d, names::Delta_V, Delta_V_ );
   def< double >( d, names::V_T_star, V_T_star_ );
-  def< double >( d, names::lambda_0, lambda_0_);
+  def< double >( d, names::lambda_0, lambda_0_ * 1000.0 ); // convert to 1/s
   def< double >( d, names::t_ref, t_ref_ );
   def< size_t >( d, names::n_receptors, n_receptors() );
   ArrayDatum E_rev_ad( E_rev_ );
@@ -252,7 +252,10 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::Delta_V, Delta_V_ );
   updateValue< double >( d, names::V_T_star, V_T_star_ );
 
-  updateValue< double >( d, names::lambda_0, lambda_0_ );
+  if ( updateValue< double >( d, names::lambda_0, lambda_0_ ) )
+  {
+    lambda_0_ /= 1000.0; // convert to 1/ms
+  }
 
   updateValue< double >( d, names::t_ref, t_ref_ );
   updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
@@ -375,7 +378,7 @@ nest::gif_cond_exp_multisynapse::State_::get( DictionaryDatum& d,
         ++i )
   {
     g->push_back(
-      y_[ State_::G + State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ] );
+      y_[ State_::G + State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ] );
   }
 
   ( *d )[ names::g ] = DoubleVectorDatum( g );
@@ -387,7 +390,7 @@ nest::gif_cond_exp_multisynapse::State_::set( const DictionaryDatum& d,
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-                + State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * p.n_receptors(),
+                + State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * p.n_receptors(),
                 0.0 );
 
   sfa_elems_.resize( p.tau_sfa_.size(), 0.0 );
@@ -615,7 +618,7 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin,
 
     for ( size_t i = 0; i < P_.n_receptors(); i++ )
     {
-      S_.y_[ State_::G + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+      S_.y_[ State_::G + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR
                            * i ) ] += B_.spikes_[ i ].get_value( lag );
     }
 

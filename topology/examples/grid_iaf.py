@@ -32,8 +32,6 @@ import nest
 import pylab
 import nest.topology as topo
 
-pylab.ion()
-
 nest.ResetKernel()
 
 l1 = topo.CreateLayer({'columns': 4, 'rows': 3,
@@ -53,4 +51,6 @@ pylab.grid(True)
 pylab.xlabel('4 Columns, Extent: 1.5')
 pylab.ylabel('2 Rows, Extent: 1.0')
 
-# pylab.savefig('grid_iaf.png')
+pylab.show()
+
+# plt.savefig('grid_iaf.png')

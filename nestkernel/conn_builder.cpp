@@ -1647,7 +1647,7 @@ nest::BernoulliBuilder::inner_connect_( const int tid,
   // hence leave out corresponding checks.
 
   GIDCollection::const_iterator source_it = sources_->begin();
-  for ( ; source_it != sources_->end(); ++source_it )
+  for ( ; source_it < sources_->end(); ++source_it )
   {
     const index sgid = ( *source_it ).gid;
 

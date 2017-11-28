@@ -1306,7 +1306,7 @@ nest::ConnectionManager::get_connections(
         if ( validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
         {
           GIDCollection::const_iterator t_id = target->begin();
-          for ( ; t_id != target->end(); ++t_id )
+          for ( ; t_id < target->end(); ++t_id )
           {
             size_t target_id = ( *t_id ).gid;
             validate_pointer( connections_[ t ].get( source_id ) )

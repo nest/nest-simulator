@@ -316,7 +316,7 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
     ArrayDatum result;
     result.reserve( gc_size );
 
-    for( GIDCollection::const_iterator it = gc->begin() ; it != gc->end() ; ++it )
+    for ( GIDCollection::const_iterator it = gc->begin(); it < gc->end(); ++it )
     {
       index node_id = (*it).gid;
       DictionaryDatum dict = get_node_status( node_id );

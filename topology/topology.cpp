@@ -94,7 +94,9 @@ get_position( GIDCollectionPTR layer_gc )
   ArrayDatum result;
   result.reserve(layer_gc->size());
 
-  for( GIDCollection::const_iterator it = layer_gc->begin() ; it != layer_gc->end() ; ++it )
+  for ( GIDCollection::const_iterator it = layer_gc->begin();
+        it < layer_gc->end();
+        ++it )
   {
     index gid = (*it).gid;
 
@@ -150,7 +152,9 @@ displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
   }
   else
   {
-    for( GIDCollection::const_iterator it = layer_from_gc->begin() ; it != layer_from_gc->end() ; ++it )
+    for ( GIDCollection::const_iterator it = layer_from_gc->begin();
+          it < layer_from_gc->end();
+          ++it )
     {
       index gid = (*it).gid;
       if ( not kernel().node_manager.is_local_gid( gid ) )
@@ -235,7 +239,9 @@ distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
   }
   else
   {
-    for( GIDCollection::const_iterator it = layer_from_gc->begin() ; it != layer_from_gc->end() ; ++it )
+    for ( GIDCollection::const_iterator it = layer_from_gc->begin();
+          it < layer_from_gc->end();
+          ++it )
     {
       index gid = (*it).gid;
       if ( not kernel().node_manager.is_local_gid( gid ) )
@@ -272,7 +278,9 @@ distance( GIDCollectionPTR layer_gc,
 
   int counter = 0;
   std::vector< double > result;
-  for( GIDCollection::const_iterator it = layer_gc->begin() ; it != layer_gc->end() ; ++it )
+  for ( GIDCollection::const_iterator it = layer_gc->begin();
+        it < layer_gc->end();
+        ++it )
   {
     index gid = (*it).gid;
     if ( not kernel().node_manager.is_local_gid( gid ) )

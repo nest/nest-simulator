@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Tests for GetStatus and SetStatus calls for layer GIDCollections.
+Tests for GetStatus, SetStatus, get and set calls for layer GIDCollections.
 """
 
 import unittest
@@ -117,6 +117,25 @@ class GetSetTestCase(unittest.TestCase):
 
         with self.assertRaises(nest.NESTError):
             l.get('V_m')
+
+    def test_LayerSet(self):
+        """Test set function on layer GIDCollection."""
+        nest.ResetKernel()
+
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
+                 'extent': [2., 2.], 'edge_wrap': True}
+        l = topo.CreateLayer(ldict)
+
+        with self.assertRaises(nest.NESTError):
+            l.set({'center': [1., 1.]})
+
+        nodes = l.get('nodes')['nodes']
+        nodes.set('V_m', -50.)
+
+        nodes2 = l.get('nodes')['nodes']
+        self.assertEqual(nodes2.get('V_m')['V_m'],
+                         (-50., -50., -50., -50., -50.,
+                          -50., -50., -50., -50.))
 
 
 def suite():

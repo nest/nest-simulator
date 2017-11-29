@@ -222,6 +222,7 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
+
 # -- Options for readthedocs ----------------------------------------------
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 if on_rtd:

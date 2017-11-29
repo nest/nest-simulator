@@ -172,6 +172,7 @@ def setup(app):
             }, True)
     app.add_transform(AutoStructify)
 
+
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {

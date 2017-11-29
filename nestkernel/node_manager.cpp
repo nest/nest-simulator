@@ -52,7 +52,7 @@ NodeManager::NodeManager()
   , wfr_is_used_( false )
   , wfr_network_size_( 0 ) // zero to force update
   , num_active_nodes_( 0 )
-  , exceptions_raised_()  // cannot call kernel(), not complete yet
+  , exceptions_raised_() // cannot call kernel(), not complete yet
 {
 }
 
@@ -132,16 +132,18 @@ NodeManager::add_node( index model_id, long n )
   const index max_gid = min_gid + n - 1;
   if ( max_gid >= local_nodes_.at( 0 ).max_size() or max_gid < min_gid )
   {
-    LOG( M_ERROR,"NodeManager::add_node",
-	 "Requested number of nodes will overflow the memory. "
-	 "No nodes were created");
+    LOG( M_ERROR,
+      "NodeManager::add_node",
+      "Requested number of nodes will overflow the memory. "
+      "No nodes were created" );
     throw KernelException( "OutOfMemory" );
   }
 
   kernel().modelrange_manager.add_range( model_id, min_gid, max_gid );
 
   // clear any exceptions from previous call
-  std::vector< lockPTR< WrappedThreadException > >(  kernel().vp_manager.get_num_threads() ).swap( exceptions_raised_ );
+  std::vector< lockPTR< WrappedThreadException > >(
+    kernel().vp_manager.get_num_threads() ).swap( exceptions_raised_ );
 
   if ( model->has_proxies() )
   {
@@ -192,7 +194,7 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid )
   const size_t max_new_per_thread = static_cast< size_t >(
     std::ceil( static_cast< double >( max_gid - min_gid + 1 ) / num_vps ) );
 
-  #pragma omp parallel
+#pragma omp parallel
   {
     const index t = kernel().vp_manager.get_thread_id();
 
@@ -255,7 +257,7 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid )
 {
   const size_t n_per_thread = max_gid - min_gid + 1;
 
-  #pragma omp parallel
+#pragma omp parallel
   {
     const index t = kernel().vp_manager.get_thread_id();
     try
@@ -283,13 +285,12 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid )
         lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
-
 }
 
 void
 NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid )
 {
-  #pragma omp parallel
+#pragma omp parallel
   {
     const size_t t = kernel().vp_manager.get_thread_id();
     try
@@ -378,9 +379,11 @@ NodeManager::is_local_gid( index gid ) const
   return is_local;
 }
 
-Node* NodeManager::get_node_or_proxy( index gid, thread t )
+Node*
+NodeManager::get_node_or_proxy( index gid, thread t )
 {
-  assert( 0 <= t and t < kernel().vp_manager.get_num_threads() );
+  assert( 0 <= t
+    and ( t == -1 or ( unsigned ) t < kernel().vp_manager.get_num_threads() ) );
   assert( 0 < gid and gid <= size() );
 
   Node* node = local_nodes_[ t ].get_node_by_gid( gid );
@@ -392,17 +395,21 @@ Node* NodeManager::get_node_or_proxy( index gid, thread t )
   return node;
 }
 
-Node* NodeManager::get_node_or_proxy( index gid )
+Node*
+NodeManager::get_node_or_proxy( index gid )
 {
-  thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
+  thread t =
+    kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
   Node* node = get_node_or_proxy( gid, t );
 
   return node;
 }
 
-Node* NodeManager::get_mpi_local_node_or_device_head( index gid )
+Node*
+NodeManager::get_mpi_local_node_or_device_head( index gid )
 {
-  thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
+  thread t =
+    kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
 
   Node* node = local_nodes_[ t ].get_node_by_gid( gid );
 
@@ -421,7 +428,7 @@ Node* NodeManager::get_mpi_local_node_or_device_head( index gid )
 std::vector< Node* >
 NodeManager::get_thread_siblings( index gid ) const
 {
-  thread num_threads =  kernel().vp_manager.get_num_threads();
+  index num_threads = kernel().vp_manager.get_num_threads();
   std::vector< Node* > siblings( num_threads );
   for ( size_t t = 0; t < num_threads; ++t )
   {
@@ -594,8 +601,8 @@ NodeManager::prepare_nodes()
   {
     size_t t = kernel().vp_manager.get_thread_id();
 #else
-    for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
 #endif
 
     // We prepare nodes in a parallel region. Therefore, we need to catch
@@ -763,5 +770,4 @@ void
 NodeManager::set_status( const DictionaryDatum& d )
 {
 }
-
 }

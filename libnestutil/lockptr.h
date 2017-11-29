@@ -133,27 +133,24 @@ class lockPTR
     void
     addReference( void )
     {
-#pragma omp critical
-      {
-        ++number_of_references;
-      }
+#pragma omp atomic update // To avoid race conditions.
+      ++number_of_references;
     }
 
     void
     removeReference( void )
     {
-      // TODO481 This should all be protected with #pragma omp critical, but
-      // when we do everything deadlocks.
-#pragma omp critical
+      assert( number_of_references > 0 );
+#pragma omp atomic update // To avoid race conditions.
+      --number_of_references;
+      if ( number_of_references == 0 )
       {
-        assert(number_of_references > 0);
-
-        --number_of_references;
-      }
-        if ( number_of_references == 0 )
+#pragma omp single nowait // Only one thread deletes this. Using nowait to avoid
+                          // deadlock if the delete is recursive.
         {
           delete this;
         }
+      }
     }
 
     size_t
@@ -177,21 +174,17 @@ class lockPTR
     void
     lock( void )
     {
-#pragma omp critical
-      {
-        assert( not locked );
-        locked = true;
-      }
+      assert( not locked );
+#pragma omp atomic write // To avoid race conditions.
+      locked = true;
     }
 
     void
     unlock( void )
     {
-#pragma omp critical
-      {
-        assert( locked );
-        locked = false;
-      }
+      assert( locked );
+#pragma omp atomic write // To avoid race conditions.
+      locked = false;
     }
   };
 

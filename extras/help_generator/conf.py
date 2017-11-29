@@ -223,3 +223,8 @@ texinfo_documents = [
 ]
 
 # -- Options for readthedocs ----------------------------------------------
+on_rtd = os.environ.get('READTHEDOCS') == 'True'
+if on_rtd:
+    html_theme = 'alabaster'
+else:
+    html_theme = 'nat

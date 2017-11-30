@@ -57,22 +57,22 @@ using the same dictionary to specify both connections.
     connection by the second.
     
     
-    Functions in the Topology module:
-      - CreateMask(masktype, specs, anchor=None)
-      - CreateParameter(parametertype, specs)
-      - CreateLayer(specs)
-      - ConnectLayers(pre, post, projections)
-      - Distance(from_arg, to_arg)
-      - Displacement(from_arg, to_arg)
-      - FindNearestElement(layers, locations, find_all=False)
-      - DumpLayerNodes(layers, outname)
-      - DumpLayerConnections(source_layer, target_layer, synapse_model, outname)
-      - FindCenterElement(layers)
-      - GetTargetNodes(sources, tgt_layer, syn_model=None)
-      - PlotLayer(layer, fig=None, nodecolor='b', nodesize=20)
-      - lotTargets(src_nrn, tgt_layer, ...)
-      - PlotKernel(ax, src_nrn, mask,...')
-      - SelectNodesByMask(layer, anchor, mask_obj)
+Functions in the Topology module:
+  - CreateMask(masktype, specs, anchor=None)
+  - CreateParameter(parametertype, specs)
+  - CreateLayer(specs)
+  - ConnectLayers(pre, post, projections)
+  - Distance(from_arg, to_arg)
+  - Displacement(from_arg, to_arg)
+  - FindNearestElement(layers, locations, find_all=False)
+  - DumpLayerNodes(layers, outname)
+  - DumpLayerConnections(source_layer, target_layer, synapse_model, outname)
+  - FindCenterElement(layers)
+  - GetTargetNodes(sources, tgt_layer, syn_model=None)
+  - PlotLayer(layer, fig=None, nodecolor='b', nodesize=20)
+  - lotTargets(src_nrn, tgt_layer, ...)
+  - PlotKernel(ax, src_nrn, mask,...')
+  - SelectNodesByMask(layer, anchor, mask_obj)
 
 
 :Authors:
@@ -1324,7 +1324,7 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
         node_results = []
         for gid in nodes:
             index = gid - tgt_layer[0]
-            gc = nest.GIDCollection(tgt_layer[index:index + 1])
+            gc = tgt_layer[index:index + 1]
             gp = GetPosition(gc)
             node_results.append(gp)
         result.append( node_results )

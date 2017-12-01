@@ -248,8 +248,6 @@ cdef class NESTEngine(object):
 
         cdef ConnectionDatum* cdt = NULL
         cdef ArrayDatum* connectome = new ArrayDatum()
-        
-        print("Vi pusher connection datums")
 
         try:
             connectome.reserve(len(conns))
@@ -320,7 +318,6 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
         elif (<SLIDatum> obj).dtype == SLI_TYPE_GIDCOLLECTIONITERATOR.decode():
             ret = <Datum*> new GIDCollectionIteratorDatum(deref(<GIDCollectionIteratorDatum*> (<SLIDatum> obj).thisptr))
         elif (<SLIDatum> obj).dtype == SLI_TYPE_CONNECTION.decode():
-            print("Vi sender connectionDatum")
             ret = <Datum*> new ConnectionDatum(deref(<ConnectionDatum*> (<SLIDatum> obj).thisptr))
         else:
             raise NESTError("unknown SLI datum type: {0}".format((<SLIDatum> obj).dtype))
@@ -419,18 +416,15 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_DOUBLE:
         ret = (<DoubleDatum*> dat).get()
     elif datum_type == SLI_TYPE_STRING:
-        print("Vi får en streng??")
         ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
     elif datum_type == SLI_TYPE_LITERAL:
         obj_str = (<LiteralDatum*> dat).toString()
         ret = SLILiteral(obj_str.decode())
     elif datum_type == SLI_TYPE_ARRAY:
-        print("Vi får en array")
         ret = sli_array_to_object(<ArrayDatum*> dat)
     elif datum_type == SLI_TYPE_DICTIONARY:
         ret = sli_dict_to_object(<DictionaryDatum*> dat)
     elif datum_type == SLI_TYPE_CONNECTION:
-        print("Vi får connectionDatum")
         datum = SLIDatum()
         (<SLIDatum> datum)._set_datum(<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> dat)), SLI_TYPE_CONNECTION.decode())
         ret = Connectome(datum)
@@ -473,13 +467,9 @@ cdef inline object sli_array_to_object(ArrayDatum* dat):
         return ()
 
     if tok.datum().gettypename().toString() == SLI_TYPE_CONNECTION:
-        print("Første i array er connectiondatum!")
         for i in range(len(tmp)):
             datum = SLIDatum()
-            #(<SLIDatum> datum)._set_datum(tok.datum(), SLI_TYPE_CONNECTION.decode())
             (<SLIDatum> datum)._set_datum(<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> tok.datum())), SLI_TYPE_CONNECTION.decode())
-            #<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)
-            #<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> (<SLIDatum> obj).thisptr))
             tmp[i] = datum
             # Increment
             inc(tok)
@@ -508,6 +498,7 @@ cdef inline object sli_dict_to_object(DictionaryDatum* dat):
 
     return tmp
 
+# TODO481, think we can remove this
 cdef inline object sli_connection_to_object(ConnectionDatum* dat):
 
     cdef array.array arr

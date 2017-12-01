@@ -182,17 +182,17 @@ class GIDCollection(object):
         nest.sr(cmd)
 
         return nest.spp()
-    
+
     def set(self, params, val=None):
         """
         NB! This is the same implementation as SetStatus
-        
+
         Set the parameters of nodes or connections to params.
-    
+
         If val is given, params has to be the name of an attribute, which is
         set to val on the nodes. val can be a single value or a list of the
         same size as the GIDCollection.
-    
+
         Parameters
         ----------
         params : str or dict or list
@@ -201,7 +201,7 @@ class GIDCollection(object):
             the name of a model property as a str.
         val : str, optional
             If given, params has to be the name of a model property.
-    
+
         Raises
         ------
         TypeError
@@ -214,69 +214,68 @@ class GIDCollection(object):
         # relying on language idioms, such as comprehensions
         if self.__len__() == 0:
             return
-    
+
         if val is not None and nest.is_literal(params):
             if nest.is_iterable(val) and not isinstance(val, (uni_str, dict)):
                 params = [{params: x} for x in val]
             else:
                 params = {params: val}
-    
-        if (isinstance(params, list) and self.__len__() != len(params)) or (isinstance(params, tuple) and self.__len__() != len(params)):
+
+        if ((isinstance(params, list) and self.__len__() != len(params)) or
+                (isinstance(params, tuple) and self.__len__() != len(params))):
             raise TypeError(
                 "status dict must be a dict, or a list of dicts of length "
                 "len(nodes)")
-        
+
         nest.sli_func('SetStatus', self._datum, params)
+
 
 class Connectome(object):
     """
+    Class for Connections.
+
+    Connectome represents the connections of a network. The class supports
+    get(), set() and len()..
+
+    A Connectome is created by the ``GetConnections`` function.``
     """
-    
+
     _datum = None
-    
+
     def __init__(self, data):
-        
+
         if isinstance(data, list):
             for datum in data:
-                if not isinstance(datum, nest.SLIDatum) or datum.dtype != "connectiontype":
+                if (not isinstance(datum, nest.SLIDatum) or
+                        datum.dtype != "connectiontype"):
                     raise TypeError("Expected Connection Datum.")
             self._datum = data
         else:
-            if not isinstance(data, nest.SLIDatum) or data.dtype != "connectiontype":
+            if (not isinstance(data, nest.SLIDatum) or
+                    data.dtype != "connectiontype"):
                 raise TypeError("Expected Connection Datum.")
             # self._datum is a list of Connection datums.
             self._datum = [data]
-    
+
     def __len__(self):
         return len(self._datum)
-    
-    def __str__(self):
-        nest.sps(self._datum)
-        nest.sr('==')
-        return ''
-    
-    def __getitem__(self, key):
-        nest.sps(self._datum)
-        nest.sps(key)
-        nest.sr('get')
-        return nest.spp()
-    
+
     def get(self, keys=None):
         """
         NB! This is the same implementation as SetStatus
-        
+
         Return the parameter dictionaries of connections.
-    
-        If keys is given, a list of values is returned instead. keys may also be a
-        list, in which case the returned list contains lists of values.
-    
+
+        If keys is given, a list of values is returned instead. keys may also
+        be a list, in which case the returned list contains lists of values.
+
         Parameters
         ----------
         keys : str or list, optional
-            String or a list of strings naming model properties. GetDefaults then
-            returns a single value or a list of values belonging to the keys
-            given.
-    
+            String or a list of strings naming model properties. GetDefaults
+            then returns a single value or a list of values belonging to the
+            keys given.
+
         Returns
         -------
         dict:
@@ -284,43 +283,43 @@ class Connectome(object):
         type:
             If keys is a string, the corrsponding default parameter is returned
         list:
-            If keys is a list of strings, a list of corrsponding default parameters
-            is returned
-    
+            If keys is a list of strings, a list of corrsponding default
+            parameters is returned
+
         Raises
         ------
         TypeError
             Description
-        """    
+        """
         if self.__len__() == 0:
             return ()
-    
+
         if keys is None:
             cmd = 'GetStatus'
-        elif is_literal(keys):
+        elif nest.is_literal(keys):
             cmd = 'GetStatus {{ /{0} get }} Map'.format(keys)
-        elif is_iterable(keys):
+        elif nest.is_iterable(keys):
             keys_str = " ".join("/{0}".format(x) for x in keys)
             cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)
         else:
             raise TypeError("keys should be either a string or an iterable")
-            
+
         nest.sps(self._datum)
-    
+
         nest.sr(cmd)
-        
+
         return nest.spp()
-    
+
     def set(self, params, val=None):
         """
         NB! This is the same implementation as SetStatus
-        
+
         Set the parameters of nodes or connections to params.
-    
+
         If val is given, params has to be the name of an attribute, which is
         set to val on the nodes. val can be a single value or a list of the
         same size as the Connections.
-    
+
         Parameters
         ----------
         params : str or dict or list
@@ -329,7 +328,7 @@ class Connectome(object):
             the name of a model property as a str.
         val : str, optional
             If given, params has to be the name of a model property.
-    
+
         Raises
         ------
         TypeError
@@ -342,18 +341,19 @@ class Connectome(object):
         # relying on language idioms, such as comprehensions
         if self.__len__() == 0:
             return
-    
+
         if val is not None and nest.is_literal(params):
             if nest.is_iterable(val) and not isinstance(val, (uni_str, dict)):
                 params = [{params: x} for x in val]
             else:
                 params = {params: val}
-    
-        if (isinstance(params, list) and self.__len__() != len(params)) or (isinstance(params, tuple) and self.__len__() != len(params)):
+
+        if ((isinstance(params, list) and self.__len__() != len(params)) or
+                (isinstance(params, tuple) and self.__len__() != len(params))):
             raise TypeError(
                 "status dict must be a dict, or a list of dicts of length "
                 "len(nodes)")
-        
+
         params = nest.broadcast(params, self.__len__(), (dict,), "params")
 
         nest.sps(self._datum)
@@ -361,6 +361,7 @@ class Connectome(object):
 
         nest.sr('2 arraystore')
         nest.sr('Transpose { arrayload pop SetStatus } forall')
+
 
 class Mask(object):
     """

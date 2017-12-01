@@ -102,12 +102,10 @@ def
     dup GetStatus dup type /arraytype eq
     { % if not a layer
       pop % remove status array from stack
-      dup cva /GID exch 2 arraystore
-      exch { GetStatus value get } Map
-      value exch 2 arraystore join cvdict
+      { GetStatus value get } Map
     }
     { % if a layer
-      value get value exch 2 arraystore cvdict
+      value get
       exch pop % remove GIDCollection from stack
     } ifelse
     end
@@ -129,7 +127,7 @@ def
     dup GetStatus dup type /arraytype eq
     { % if not a layer
       pop % remove status array from stack
-      cva /GID exch 2 arraystore
+      [] % empty array to fill with values
       value_array
       {
         dup /value Set
@@ -140,7 +138,7 @@ def
     }
     { % if a layer
       /status Set
-      []
+      [] % empty array to fill with values
       value_array
       {
         dup status exch get 2 arraystore join

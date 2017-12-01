@@ -38,8 +38,7 @@ from cpython cimport array
 from cpython.ref cimport PyObject
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
-from nest.lib.hl_api_types import GIDCollection, Mask, Parameter
-#from .topology.pynest.hl_api_types import Mask
+from nest.lib.hl_api_types import GIDCollection, Connectome, Mask, Parameter
 
 
 cdef string SLI_TYPE_BOOL = b"booltype"
@@ -249,6 +248,8 @@ cdef class NESTEngine(object):
 
         cdef ConnectionDatum* cdt = NULL
         cdef ArrayDatum* connectome = new ArrayDatum()
+        
+        print("Vi pusher connection datums")
 
         try:
             connectome.reserve(len(conns))
@@ -318,6 +319,9 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
             ret = <Datum*> new GIDCollectionDatum(deref(<GIDCollectionDatum*> (<SLIDatum> obj).thisptr))
         elif (<SLIDatum> obj).dtype == SLI_TYPE_GIDCOLLECTIONITERATOR.decode():
             ret = <Datum*> new GIDCollectionIteratorDatum(deref(<GIDCollectionIteratorDatum*> (<SLIDatum> obj).thisptr))
+        elif (<SLIDatum> obj).dtype == SLI_TYPE_CONNECTION.decode():
+            print("Vi sender connectionDatum")
+            ret = <Datum*> new ConnectionDatum(deref(<ConnectionDatum*> (<SLIDatum> obj).thisptr))
         else:
             raise NESTError("unknown SLI datum type: {0}".format((<SLIDatum> obj).dtype))
     elif isConnectionGenerator(<PyObject*> obj):
@@ -415,16 +419,23 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_DOUBLE:
         ret = (<DoubleDatum*> dat).get()
     elif datum_type == SLI_TYPE_STRING:
-         ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
+        print("Vi får en streng??")
+        ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
     elif datum_type == SLI_TYPE_LITERAL:
         obj_str = (<LiteralDatum*> dat).toString()
         ret = SLILiteral(obj_str.decode())
     elif datum_type == SLI_TYPE_ARRAY:
+        print("Vi får en array")
         ret = sli_array_to_object(<ArrayDatum*> dat)
     elif datum_type == SLI_TYPE_DICTIONARY:
         ret = sli_dict_to_object(<DictionaryDatum*> dat)
     elif datum_type == SLI_TYPE_CONNECTION:
-        ret = sli_connection_to_object(<ConnectionDatum*> dat)
+        print("Vi får connectionDatum")
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> dat)), SLI_TYPE_CONNECTION.decode())
+        ret = Connectome(datum)
+        # TODO481 remove sli_connection_to_object
+        #ret = sli_connection_to_object(<ConnectionDatum*> dat)
     elif datum_type == SLI_TYPE_VECTOR_INT:
         ret = sli_vector_to_object[sli_vector_int_ptr_t, long](<IntVectorDatum*> dat)
     elif datum_type == SLI_TYPE_VECTOR_DOUBLE:
@@ -453,17 +464,32 @@ cdef inline object sli_datum_to_object(Datum* dat):
     return ret
 
 cdef inline object sli_array_to_object(ArrayDatum* dat):
-
     cdef tmp = [None] * dat.size()
 
     cdef size_t i
     cdef Token* tok = dat.begin()
+    
+    if not len(tmp):
+        return ()
 
-    for i in range(len(tmp)):
-        tmp[i] = sli_datum_to_object(tok.datum())
-        inc(tok)
-
-    return tuple(tmp)
+    if tok.datum().gettypename().toString() == SLI_TYPE_CONNECTION:
+        print("Første i array er connectiondatum!")
+        for i in range(len(tmp)):
+            datum = SLIDatum()
+            #(<SLIDatum> datum)._set_datum(tok.datum(), SLI_TYPE_CONNECTION.decode())
+            (<SLIDatum> datum)._set_datum(<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> tok.datum())), SLI_TYPE_CONNECTION.decode())
+            #<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)
+            #<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> (<SLIDatum> obj).thisptr))
+            tmp[i] = datum
+            # Increment
+            inc(tok)
+        return Connectome(tmp)
+    else:
+        for i in range(len(tmp)):
+            tmp[i] = sli_datum_to_object(tok.datum())
+            inc(tok)
+    
+        return tuple(tmp)
 
 cdef inline object sli_dict_to_object(DictionaryDatum* dat):
 

@@ -86,6 +86,7 @@ cdef extern from "connection_id.h" namespace "nest":
 cdef extern from "nest_datums.h":
     cppclass ConnectionDatum:
         ConnectionDatum(const ConnectionID&) except +
+        ConnectionDatum(const ConnectionDatum&) except +
         long get_source_gid()
         long get_target_gid()
         long get_target_thread()

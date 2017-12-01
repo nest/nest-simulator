@@ -1,0 +1,191 @@
+# -*- coding: utf-8 -*-
+#
+# test_connectome.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Tests for the Connectome class
+"""
+
+import unittest
+import nest
+
+
+@nest.check_stack
+class TestConnectome(unittest.TestCase):
+    """Connectome tests"""
+
+    def setUp(self):
+        nest.ResetKernel()
+
+    def test_basic(self):
+        """
+        Test simple Connectome.
+        """
+        nrns = nest.Create('iaf_psc_alpha', 2)
+        nest.Connect(nrns, nrns)
+
+        get_conns = nest.GetConnections()
+
+        self.assertTrue(isinstance(get_conns, nest.Connectome))
+        self.assertEqual(len(get_conns), 4)
+
+        sources = get_conns.get('source')
+        targets = get_conns.get('target')
+
+        self.assertEqual(sources, (1, 1, 2, 2))
+        self.assertEqual(targets, (1, 2, 1, 2))
+
+    def test_get_set(self):
+        """
+        Test get() and set() on Connectome.
+        """
+        nrns = nest.Create('iaf_psc_alpha', 2)
+        nest.Connect(nrns, nrns)
+
+        get_conns = nest.GetConnections()
+
+        get_conns.set('delay', 2.0)
+        get_conns.set(({'weight': 1.5},
+                       {'weight': 2.5},
+                       {'weight': 3.5},
+                       {'weight': 4.5}))
+
+        delay = get_conns.get('delay')
+        weight = get_conns.get('weight')
+
+        self.assertEqual(delay, (2.0, 2.0, 2.0, 2.0))
+        self.assertEqual(weight, (1.5, 2.5, 3.5, 4.5))
+
+        get_conns.set({'weight': 6., 'delay': 11.})
+
+        delay = get_conns.get('delay')
+        weight = get_conns.get('weight')
+
+        self.assertEqual(delay, (11.0, 11.0, 11.0, 11.0))
+        self.assertEqual(weight, (6.0, 6.0, 6.0, 6.0))
+
+        with self.assertRaises(nest.NESTError):
+            get_conns.set('source', 2)
+
+    def test_GetConnectionsOnSubset(self):
+        """
+        Test GetConnections on sliced GIDCollection
+        """
+        nrns = nest.Create('iaf_psc_alpha', 10)
+        nest.Connect(nrns, nrns)
+
+        get_conns = nest.GetConnections(nrns[3:6], nrns[2:8:2])
+
+        self.assertEqual(len(get_conns), 9)
+
+        sources = get_conns.get('source')
+        targets = get_conns.get('target')
+
+        self.assertEqual(sources, (4, 4, 4, 5, 5, 5, 6, 6, 6))
+        self.assertEqual(targets, (3, 5, 7, 3, 5, 7, 3, 5, 7))
+
+        nest.ResetKernel()
+
+        nrns = nest.Create('iaf_psc_alpha', 10)
+        nest.Connect(nrns, nrns, {'rule': 'one_to_one'})
+
+        get_conns = nest.GetConnections(nrns[3:6], nrns[2:8:2])
+
+        self.assertEqual(len(get_conns), 1)
+
+        sources = get_conns.get('source')
+        targets = get_conns.get('target')
+
+        self.assertEqual(sources, (5,))
+        self.assertEqual(targets, (5,))
+
+        nest.ResetKernel()
+
+        nrns = nest.Create('iaf_psc_alpha', 10)
+        nest.Connect(nrns[3:6], nrns[2:8:2], {'rule': 'one_to_one'})
+
+        get_conns = nest.GetConnections(nrns[3:6], nrns[2:8:2])
+
+        self.assertEqual(len(get_conns), 3)
+
+        sources = get_conns.get('source')
+        targets = get_conns.get('target')
+
+        self.assertEqual(sources, (4, 5, 6))
+        self.assertEqual(targets, (3, 5, 7))
+
+    def test_GetConnectionsSynapse(self):
+        """
+        Test GetConnections wirh synapse_model
+        """
+        nrns = nest.Create('iaf_psc_alpha', 10)
+        nest.Connect(nrns[:4], nrns[2:6], syn_spec={'model': 'stdp_synapse'})
+        nest.Connect(nrns[5:7], nrns[8:],
+                     conn_spec={'rule': 'one_to_one'},
+                     syn_spec={'model': 'tsodyks_synapse'})
+        nest.Connect(nrns[7:], nrns[:5],
+                     syn_spec={'model': 'stdp_triplet_synapse',
+                               'weight': 5.})
+
+        get_conn_1 = nest.GetConnections(nrns, nrns,
+                                         synapse_model='stdp_synapse')
+        get_conn_2 = nest.GetConnections(nrns, nrns,
+                                         synapse_model='tsodyks_synapse')
+        get_conn_3 = nest.GetConnections(nrns, nrns,
+                                         synapse_model='stdp_triplet_synapse')
+
+        sources_1 = get_conn_1.get('source')
+        sources_2 = get_conn_2.get('source')
+        sources_3 = get_conn_3.get('source')
+        targets_1 = get_conn_1.get('target')
+        targets_2 = get_conn_2.get('target')
+        targets_3 = get_conn_3.get('target')
+
+        self.assertEqual(sources_1,
+                         (1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4))
+        self.assertEqual(sources_2, (6, 7))
+        self.assertEqual(sources_3,
+                         (8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10))
+        self.assertEqual(targets_1,
+                         (3, 4, 5, 6, 3, 4, 5, 6, 3, 4, 5, 6, 3, 4, 5, 6))
+        self.assertEqual(targets_2, (9, 10))
+        self.assertEqual(targets_3,
+                         (1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5))
+
+        weight = get_conn_3.get('weight')
+        self.assertEqual(weight,
+                         (5., 5., 5., 5., 5., 5., 5.,
+                          5., 5., 5., 5., 5., 5., 5., 5.))
+
+        get_conns = nest.GetConnections()
+        self.assertEqual(len(get_conns), 33)
+
+
+def suite():
+    suite = unittest.makeSuite(TestConnectome, 'test')
+    return suite
+
+
+def run():
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())
+
+if __name__ == "__main__":
+    run()

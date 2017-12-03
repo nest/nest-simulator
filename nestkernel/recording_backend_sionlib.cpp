@@ -102,7 +102,10 @@ nest::RecordingBackendSIONlib::open_files_()
     
   MPI_Comm local_comm = MPI_COMM_NULL;
 #ifdef BG_MULTIFILE
-  MPIX_Pset_same_comm_create( &local_comm );
+#pragma omp single copyprivate (local_comm)
+  {
+    MPIX_Pset_same_comm_create( &local_comm );
+  }
 #endif // BG_MULTIFILE
 
   // we need to delay the throwing of exceptions to the end of the parallel
@@ -146,7 +149,7 @@ nest::RecordingBackendSIONlib::open_files_()
 #ifdef BG_MULTIFILE
     int n_files = -1;
 #else
-    int n_files = 1;
+    int n_files = P_.sion_n_files_;
 #endif // BG_MULTIFILE
     sion_int32 fs_block_size = -1;
     sion_int64 sion_chunksize = P_.sion_chunksize_;
@@ -581,6 +584,7 @@ nest::RecordingBackendSIONlib::Parameters_::Parameters_()
   : file_ext_( "sion" )
   , sion_collective_( false )
   , sion_chunksize_( 1 << 18 )
+  , sion_n_files_( 1 )
   , buffer_size_( 1024 )
 {
 }
@@ -594,6 +598,7 @@ nest::RecordingBackendSIONlib::Parameters_::get(
   ( *d )[ names::buffer_size ] = buffer_size_;
   ( *d )[ names::sion_chunksize ] = sion_chunksize_;
   ( *d )[ names::sion_collective ] = sion_collective_;
+  ( *d )[ names::sion_n_files ] = sion_n_files_;
 }
 
 void
@@ -605,6 +610,7 @@ nest::RecordingBackendSIONlib::Parameters_::set(
   updateValue< long >( d, names::buffer_size, buffer_size_ );
   updateValue< long >( d, names::sion_chunksize, sion_chunksize_ );
   updateValue< bool >( d, names::sion_collective, sion_collective_ );
+  updateValue< bool >( d, names::sion_n_files, sion_n_files_ );
 }
 
 void

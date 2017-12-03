@@ -162,6 +162,7 @@ private:
     std::string file_ext_; //!< the file name extension to use, without .
     bool sion_collective_; //!< use SIONlib's collective mode.
     long sion_chunksize_;  //!< the size of SIONlib's buffer.
+    int sion_n_files_;     //!< the number of SIONLIB container files automatically used.
     long buffer_size_;     //!< the size of the internal buffer.
 
     Parameters_();

@@ -61,6 +61,7 @@
 #include "iaf_chxk_2008.h"
 #include "iaf_cond_alpha.h"
 #include "iaf_cond_alpha_mc.h"
+#include "iaf_cond_beta.h"
 #include "iaf_cond_exp.h"
 #include "iaf_cond_exp_sfa_rr.h"
 #include "iaf_psc_alpha.h"

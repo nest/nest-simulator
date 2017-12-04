@@ -298,13 +298,13 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
 {
   size_t new_id = prototypes_[ 0 ].size();
 
-  if ( new_id == invalid_synindex ) // we wrapped around (=255), maximal id of
-                                    // synapse_model = 254
+  if ( new_id == invalid_synindex ) // we wrapped around (=63), maximal id of
+                                    // synapse_model = 62, see nest_types.h
   {
     LOG( M_ERROR,
       "ModelManager::copy_synapse_model_",
       "CopyModel cannot generate another synapse. Maximal synapse model count "
-      "of 255 exceeded." );
+      "of 63 exceeded." );
     throw KernelException( "Synapse model count exceeded" );
   }
   assert( new_id != invalid_synindex );

@@ -170,7 +170,9 @@ class GIDCollection(object):
         return ''.format(nest.sli_func('==', self._datum))
 
     def get(self, *params):
-        if len(params) == 1:
+        if len(params) == 0:
+            return nest.sli_func('get', self._datum)
+        elif len(params) == 1:
             param = params[0]
             if nest.is_literal(param):
                 cmd = '/{} get'.format(param)

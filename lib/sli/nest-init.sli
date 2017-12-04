@@ -88,6 +88,26 @@ def
 % The following version allows extraction of a GID from a GIDCollection
 /get [/gidcollectiontype /integertype] { get_g_i } def
 
+% This version gets all values from all nodes. The same as GetStatus, but
+% concatenates into a single dictionary.
+/get [/gidcollectiontype]
+{
+  << >> begin
+  GetStatus
+  /d << >> def
+  dup First {d rollu 1 arraystore put_d} forall
+  Rest
+  {
+    {
+      exch dup d dup rolld get
+      4 -1 roll 1 arraystore join
+      rollu exch rolld put_d
+    } forall
+  } forall
+  d
+  end
+} def
+
 % Get parameter value of all GIDs in GIDCollection
 /get [/gidcollectiontype /literaltype]
 {

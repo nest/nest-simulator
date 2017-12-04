@@ -259,10 +259,27 @@ class Connectome(object):
 
     def __len__(self):
         return len(self._datum)
+    
+    def __eq__(self, other):
+        if not isinstance(other, Connectome):
+            return NotImplemented
+
+        if self.__len__() != other.__len__():
+            return False
+        self_get = self.get(['source', 'target', 'target_thread', 'synapse_id', 'port'])
+        other_get = other.get(['source', 'target', 'target_thread', 'synapse_id', 'port'])
+        if self_get != other_get:
+            return False
+        return True
+    
+    def __neq__(self, other):
+        if not isinstance(other, GIDCollection):
+            return NotImplemented
+        return not self == other
 
     def get(self, keys=None):
         """
-        NB! This is the same implementation as SetStatus
+        NB! This is the same implementation as GetStatus
 
         Return the parameter dictionaries of connections.
 

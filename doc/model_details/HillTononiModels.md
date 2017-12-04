@@ -1488,8 +1488,3 @@ Gax.set_xlabel('Time [ms]');
 
 ![png](HillTononiModels_files/HillTononiModels_79_0.png)
 
-
-
-```python
-
-```

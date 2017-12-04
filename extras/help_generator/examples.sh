@@ -37,7 +37,7 @@ cd $myhome
 
 set -e
 
-imgdir=$myhome/img
+imgdir=$myhome/py-original
 rm -rf $imgdir
 mkdir $imgdir
 rm -rf $myhome/more-example-networks
@@ -128,7 +128,7 @@ for i in $EXAMPLES ; do
 
    
 
-    cat $myhome/assets/sample-header.tmpl $myhome/py_sample/$examplename/$examplename.html $myhome/assets/sample-footer.tmpl > $myhome/py_sample/$examplename/index.html
+    cat $myhome/templates/sample-header.tmpl $myhome/py_sample/$examplename/$examplename.html $myhome/templates/sample-footer.tmpl > $myhome/py_sample/$examplename/index.html
 
 
     if [ $? != 0 ] ; then
@@ -145,7 +145,9 @@ for i in $EXAMPLES ; do
 
 done
 echo '</ul>' >> $myhome/more-example-networks/index.tmpl.html
-cat $myhome/assets/sample-header.tmpl $myhome/more-example-networks/index.tmpl.html $myhome/assets/sample-footer.tmpl > $myhome/more-example-networks/index.html
+cat $myhome/templates/overview-sample-header.tmpl $myhome/more-example-networks/index.tmpl.html $myhome/templates/overview-sample-footer.tmpl > $myhome/more-example-networks/index.html
+
+rm -rf $imgdir
 
 ELAPSED_TIME=$(($SECONDS - $START))
 

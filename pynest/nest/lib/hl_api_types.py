@@ -169,20 +169,43 @@ class GIDCollection(object):
     def __str__(self):
         return ''.format(nest.sli_func('==', self._datum))
 
-    def get(self, params):
-        if nest.is_literal(params):
-            cmd = '/{} get'.format(params)
-        elif nest.is_iterable(params):
-            params_str = ' '.join('/{}'.format(p) for p in params)
-            cmd = '[ {} ] get'.format(params_str)
-        else:
-            raise TypeError("Params should be either a string or an iterable")
+    def get(self, *params):
+        if len(params) == 1:
+            param = params[0]
+            if nest.is_literal(param):
+                cmd = '/{} get'.format(param)
+            elif nest.is_iterable(param):
+                params_str = ' '.join('/{}'.format(p) for p in param)
+                cmd = '[ {} ] get'.format(params_str)
+            else:
+                raise TypeError("Params should be either a string or an iterable")
+            nest.sps(self._datum)
+            nest.sr(cmd)
+            return nest.spp()
+        else: # Hierarchical addressing (brutal implementation)
+            first = True
+            for param in params[:-1]:
+                if nest.is_literal(param):
+                    if first:
+                        value_list = self.get(param)
+                        first = False
+                    else:
+                        value_list = [nest.sli_func('/{} get'.format(param), d) for d in value_list]
+                elif nest.is_iterable(param):
+                    raise TypeError("Only the last argument can be an iterable")
+                else:
+                    raise TypeError("Argument must be a string")
+            if nest.is_literal(params[-1]):
+                return {params[-1]: value_list[params[-1]]}
+            elif nest.is_iterable(params[-1]):
+                for value in params[-1]:
+                    if value not in value_list.keys():
+                        raise KeyError("The value '{}' does not exist at the given path".format(value))
+                return {'{}'.format(key): value for key, value in value_list.iteritems() if key in params[-1]}
+            else:
+                raise TypeError("Final argument should be either a string or an iterable")
+            
 
-        nest.sps(self._datum)
-        nest.sr(cmd)
-
-        return nest.spp()
-    
     def set(self, params, val=None):
         """
         NB! This is the same implementation as SetStatus

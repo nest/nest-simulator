@@ -249,10 +249,10 @@ class AEIFTestCase(unittest.TestCase):
                                     model, var, diff, di_tol[model][var]))
 
     @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
-    def test_closeness_nest_lsodar(self):
-        '''
-        Compare models to the LSODAR implementation.
-        '''
+    def testClosenessNestLSODAR(self):
+
+        # Compare models to the LSODAR implementation.
+
         simtime = 100.
 
         # get lsodar reference
@@ -281,11 +281,11 @@ class AEIFTestCase(unittest.TestCase):
         self.assert_pass_tolerance(rel_diff, di_tolerances_lsodar)
 
     @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
-    def test_iaf_behaviour(self):
-        '''
-        The models should behave as iaf_cond_* if a == 0., b == 0. and
-        Delta_T == 0.
-        '''
+    def testIafBehaviour(self):
+
+        # The models should behave as iaf_cond_* if a == 0., b == 0. and
+        # Delta_T == 0.
+
         simtime = 200.
         # create the neurons and devices
         refs = {syn_type: nest.Create("iaf_" + syn_type,

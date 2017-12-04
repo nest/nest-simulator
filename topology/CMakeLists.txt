@@ -34,6 +34,7 @@ set( topo_sources
     grid_layer.h
     mask.h
     mask_impl.h
+    mask.cpp
     grid_mask.h
     ntree.h
     ntree_impl.h
@@ -69,6 +70,16 @@ install( FILES sli/topology-interface.sli
 install( FILES doc/Topology_UserManual.pdf
     DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology )
 
+file( GLOB topo_unittests "testsuite/unittests/*" )
+install( FILES ${topo_unittests}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology/unittests
+    )
+
+file( GLOB topo_mpitests "testsuite/mpitests/*" )
+install( FILES ${topo_mpitests}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology/mpitests
+    )
+
 if ( HAVE_PYTHON )
   install( CODE "execute_process(
     COMMAND ${PYTHON} setup.py build --build-base=${CMAKE_CURRENT_BINARY_DIR}/build
@@ -82,8 +93,5 @@ if ( HAVE_PYTHON )
   file( GLOB topo_examples "examples/*" )
   install( FILES ${topo_examples}
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/topology
-      )
-  install( DIRECTORY testsuite
-      DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology
       )
 endif ()

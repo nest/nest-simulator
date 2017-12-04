@@ -320,7 +320,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     {
       const size_t event_size = kernel()
         .model_manager.get_secondary_event_prototype( cit->second, tid )
-        .prototype_size();
+        .size();
       uint_count_per_rank[ kernel().mpi_manager.get_process_id_of_gid( cit->first ) ] += event_size;
     }
 
@@ -346,7 +346,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
       const thread source_rank = kernel().mpi_manager.get_process_id_of_gid( cit->first );
       const size_t event_size = kernel()
         .model_manager.get_secondary_event_prototype( cit->second, tid )
-        .prototype_size();
+        .size();
 
       buffer_pos_of_source_gid_syn_id.insert( std::pair< index, size_t >( pack_source_gid_and_syn_id( *cit ), recv_buffer_position_by_rank[ source_rank ] ) );
       recv_buffer_position_by_rank[ source_rank ] += event_size;

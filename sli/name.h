@@ -98,7 +98,7 @@ public:
 
   bool operator!=( const Name& n ) const
   {
-    return !( handle_ == n.handle_ );
+    return not( handle_ == n.handle_ );
   }
 
   /**

@@ -37,7 +37,7 @@ SeeAlso:
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 M_ERROR setverbosity
 

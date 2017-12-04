@@ -219,6 +219,9 @@ nest::ConnectionManager::get_synapse_status( index gid,
   ( *dict )[ names::source ] = gid;
   ( *dict )[ names::synapse_model ] = LiteralDatum(
     kernel().model_manager.get_synapse_prototype( syn_id ).get_name() );
+  ( *dict )[ names::target_thread ] = tid;
+  ( *dict )[ names::synapse_id ] = syn_id;
+  ( *dict )[ names::port ] = p;
 
   return dict;
 }

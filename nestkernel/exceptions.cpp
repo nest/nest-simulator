@@ -410,10 +410,11 @@ nest::NumericalInstability::message() const
 }
 
 std::string
-nest::NoEntryToMap::message() const
+nest::KeyError::message() const
 {
   std::ostringstream msg;
-  msg << "DynamicRecordablesMap::erase( const Name& n ): "
-      << "Name " << n_.toString() << " was not in the DynamicRecordablesMap.";
+  msg << "Key '" << key_.toString() << "' not found in map."
+      << "Error encountered with map type: '" << map_type_ << "'"
+      << "when applying operation: '" << map_op_;
   return msg.str();
 }

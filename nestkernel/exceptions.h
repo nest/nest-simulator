@@ -916,18 +916,24 @@ private:
  * DynamicRecordablesMap that does not exist.
  * @ingroup KernelExceptions
  */
-class NoEntryToMap : public KernelException
+class KeyError : public KernelException
 {
-  const Name n_;
+  const Name key_;
+  const std::string map_type_;
+  const std::string map_op_;
 
 public:
-  NoEntryToMap( const Name& n )
-    : KernelException( "NoEntryToMap" )
-    , n_( n )
+  KeyError( const Name& key,
+    const std::string& map_type,
+    const std::string& map_op )
+    : KernelException( "KeyError" )
+    , key_( key )
+    , map_type_( map_type )
+    , map_op_( map_op )
   {
   }
 
-  ~NoEntryToMap() throw()
+  ~KeyError() throw()
   {
   }
   std::string message() const;

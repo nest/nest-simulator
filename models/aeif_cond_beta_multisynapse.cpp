@@ -56,17 +56,24 @@ DynamicRecordablesMap< aeif_cond_beta_multisynapse >::create(
 {
   // use standard names wherever you can for consistency!
   insert( names::V_m,
-    aeif_cond_beta_multisynapse::DataAccessFunctor(
-            host, aeif_cond_beta_multisynapse::State_::V_M ) );
-
+    host.get_data_access_functor( aeif_cond_beta_multisynapse::State_::V_M ) );
+  
   insert( names::w,
-    aeif_cond_beta_multisynapse::DataAccessFunctor(
-            host, aeif_cond_beta_multisynapse::State_::W ) );
+    host.get_data_access_functor( aeif_cond_beta_multisynapse::State_::W ) );
 
   host.insert_conductance_recordables();
 }
 
-inline void
+
+Name
+aeif_cond_beta_multisynapse::get_g_receptor_name( size_t receptor )
+{
+  std::stringstream receptor_name;
+  receptor_name << "g_" << receptor + 1;
+  return Name( receptor_name.str() );
+}
+
+void
 aeif_cond_beta_multisynapse::insert_conductance_recordables( size_t first )
 {
   for ( size_t receptor = first; receptor < P_.E_rev.size(); ++receptor )
@@ -75,8 +82,14 @@ aeif_cond_beta_multisynapse::insert_conductance_recordables( size_t first )
       + receptor * aeif_cond_beta_multisynapse::State_::
                      NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
     recordablesMap_.insert( get_g_receptor_name( receptor ),
-      aeif_cond_beta_multisynapse::DataAccessFunctor( this, elem ) );
+      this->get_data_access_functor( elem ) );
   }
+}
+
+DataAccessFunctor < aeif_cond_beta_multisynapse >
+aeif_cond_beta_multisynapse::get_data_access_functor( size_t elem )
+{
+  return DataAccessFunctor < aeif_cond_beta_multisynapse > (this, elem);
 }
 
 /* ----------------------------------------------------------------
@@ -699,6 +712,53 @@ void
 aeif_cond_beta_multisynapse::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
+}
+
+void
+aeif_cond_beta_multisynapse::set_status( const DictionaryDatum& d )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( d );         // throws if BadProperty
+  State_ stmp = S_;      // temporary copy in case of errors
+  stmp.set( d );         // throws if BadProperty
+
+  // We now know that (ptmp, stmp) are consistent. We do not
+  // write them back to (P_, S_) before we are also sure that
+  // the properties to be set in the parent class are internally
+  // consistent.
+  Archiving_Node::set_status( d );
+
+  /*
+   * Here is where we must update the recordablesMap_ if new receptors
+   * are added!
+   */
+  DynamicRecordablesMap< aeif_cond_beta_multisynapse > rtmp =
+    recordablesMap_;                         // temporary copy in case of errors
+  if ( ptmp.E_rev.size() > P_.E_rev.size() ) // Number of receptors increased
+  {
+    for ( size_t receptor = P_.E_rev.size(); receptor < ptmp.E_rev.size();
+          ++receptor )
+    {
+      size_t elem = aeif_cond_beta_multisynapse::State_::G
+        + receptor * aeif_cond_beta_multisynapse::State_::
+                       NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+      rtmp.insert( get_g_receptor_name( receptor ),
+        get_data_access_functor( elem ) );
+    }
+  }
+  else if ( ptmp.E_rev.size() < P_.E_rev.size() )
+  {  // Number of receptors decreased
+    for ( size_t receptor = ptmp.E_rev.size(); receptor < P_.E_rev.size();
+          ++receptor )
+    {
+      rtmp.erase( get_g_receptor_name( receptor ) );
+    }
+  }
+
+  // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
+  S_ = stmp;
+  recordablesMap_ = rtmp;
 }
 
 } // namespace nest

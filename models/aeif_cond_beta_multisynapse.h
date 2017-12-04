@@ -208,53 +208,11 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  static inline Name
-  get_g_receptor_name( size_t receptor )
+  DataAccessFunctor < aeif_cond_beta_multisynapse >
+    get_data_access_functor( size_t elem );
+  inline double get_state_element( size_t elem )
   {
-    std::stringstream receptor_name;
-    receptor_name << "g_" << receptor + 1;
-    return Name( receptor_name.str() );
-  };
-
-  //! Class that reads out state vector elements, used by UniversalDataLogger
-  class DataAccessFunctor
-  {
-    aeif_cond_beta_multisynapse* parent_;
-    size_t elem_;
-
-  public:
-    DataAccessFunctor( aeif_cond_beta_multisynapse& n, size_t elem )
-      : elem_( elem )
-    {
-      set_parent( &n );
-    };
-
-    DataAccessFunctor( aeif_cond_beta_multisynapse* n, size_t elem )
-      : elem_( elem )
-    {
-      set_parent( n );
-    };
-
-    void
-    set_parent( aeif_cond_beta_multisynapse* parent )
-    {
-      parent_ = parent;
-    };
-
-    double operator()() const
-    {
-      return parent_->S_.y_[ elem_ ];
-    };
-
-    DataAccessFunctor& operator=(
-      const aeif_cond_beta_multisynapse::DataAccessFunctor& other )
-    {
-      this->elem_ = other.elem_;
-      this->parent_ = other.parent_;
-      return *this;
-    }
-    friend class DynamicRecordablesMap< aeif_cond_beta_multisynapse >;
+    return S_.y_[ elem ];
   };
 
 private:
@@ -310,7 +268,7 @@ private:
     n_receptors() const
     {
       return E_rev.size();
-    }
+    };
   };
 
   // ----------------------------------------------------------------
@@ -439,7 +397,9 @@ private:
 
   // Utility function that inserts the synaptic conductances to the
   // recordables map
-  inline void insert_conductance_recordables( size_t first = 0 );
+
+  Name get_g_receptor_name( size_t receptor );
+  void insert_conductance_recordables( size_t first = 0 );
 };
 
 inline port
@@ -484,54 +444,6 @@ aeif_cond_beta_multisynapse::get_status( DictionaryDatum& d ) const
   Archiving_Node::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
-}
-
-inline void
-aeif_cond_beta_multisynapse::set_status( const DictionaryDatum& d )
-{
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
-
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
-  Archiving_Node::set_status( d );
-
-  /**
-   * Here is where we must update the recordablesMap_ if new receptors
-   * are added!
-   */
-  DynamicRecordablesMap< aeif_cond_beta_multisynapse > rtmp =
-    recordablesMap_;                         // temporary copy in case of errors
-  if ( ptmp.E_rev.size() > P_.E_rev.size() ) // Number of receptors increased
-  {
-    for ( size_t receptor = P_.E_rev.size(); receptor < ptmp.E_rev.size();
-          ++receptor )
-    {
-      size_t elem = aeif_cond_beta_multisynapse::State_::G
-        + receptor * aeif_cond_beta_multisynapse::State_::
-                       NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-      rtmp.insert( get_g_receptor_name( receptor ),
-        aeif_cond_beta_multisynapse::DataAccessFunctor( this, elem ) );
-    }
-  }
-  else if ( ptmp.E_rev.size()
-    < P_.E_rev.size() ) // Number of receptors decreased
-  {
-    for ( size_t receptor = ptmp.E_rev.size(); receptor < P_.E_rev.size();
-          ++receptor )
-    {
-      rtmp.erase( get_g_receptor_name( receptor ) );
-    }
-  }
-
-  // if we get here, temporaries contain consistent set of properties
-  P_ = ptmp;
-  S_ = stmp;
-  recordablesMap_ = rtmp;
 }
 
 } // namespace

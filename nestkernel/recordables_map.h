@@ -131,29 +131,70 @@ RecordablesMap< HostNode >::create()
 }
 
 
+
+
+//! Class that reads out state vector elements, used by UniversalDataLogger
+template < typename HostNode >
+class DataAccessFunctor
+{
+  HostNode* parent_;
+  size_t elem_;
+
+public:
+  DataAccessFunctor( HostNode& n, size_t elem )
+    : elem_( elem )
+  {
+    parent_ = &n;
+  };
+
+  DataAccessFunctor( HostNode* n, size_t elem )
+    : elem_( elem )
+  {
+    parent_ = n;
+  };
+
+  double operator()() const
+  {
+    return parent_->get_state_element( elem_ );
+  };
+
+  DataAccessFunctor < HostNode > & operator=(
+    const DataAccessFunctor < HostNode > & other )
+  {
+    this->elem_ = other.elem_;
+    this->parent_ = other.parent_;
+    return *this;
+  }
+};
+
+
 /**
- * Map names of recordables to data access functors.
+ * Map names of recordables to DataAccessFunctors.
  *
- * This map identifies the data access functors for recordable
- * state variables in multisynapse model neurons.
- * As the number of synapse receptors is can be modified at runtime,
+ * This map identifies the DataAccessFunctors for recordable state
+ * variables in multisynapse model neurons.
+ * As the number of synapse receptors can be modified at runtime,
  * each neuron shall have its own instance of DynamicRecordablesMap.
+ * Furthermore, the neurons are able to insert and erase elements from
+ * the map at runtime.
  *
  * @see multimeter, UniversalDataLogger
  * @ingroup Devices
  */
 template < typename HostNode >
 class DynamicRecordablesMap
-  : public std::map< Name, const typename HostNode::DataAccessFunctor >
+  : public std::map< Name, const DataAccessFunctor< HostNode > >
 {
+  typedef std::map< Name, const DataAccessFunctor< HostNode > > Base_;
+  
 public:
-  typedef std::map< Name, const typename HostNode::DataAccessFunctor > Base_;
+
   virtual ~DynamicRecordablesMap()
   {
   }
 
   //! Datatype for access callable
-  typedef typename HostNode::DataAccessFunctor DataAccessFct;
+  typedef DataAccessFunctor< HostNode > DataAccessFct;
 
   /**
    * Create the map.
@@ -200,7 +241,7 @@ public:
     // If the Name is not in the map, throw an error
     if ( it == this->end() )
     {
-      throw NoEntryToMap( n );
+      throw KeyError( n, "DynamicRecordablesMap", "erase" );
     }
 
     Base_::erase( it );
@@ -213,6 +254,8 @@ DynamicRecordablesMap< HostNode >::create( HostNode& n )
 {
   assert( false );
 }
+
+
 }
 
 #endif

@@ -881,8 +881,12 @@ nest::ConnectionManager::disconnect_5g( const thread tid,
   {
     lcid = find_connection_unsorted( tid, syn_id, sgid, tgid );
   }
-  assert( lcid != invalid_index ); // this function should only be
-                                   // called with a valid connection
+
+  if ( lcid == invalid_index ) // this function should only be called
+                               // with a valid connection
+  {
+    throw InexistentConnection();
+  }
 
   ( *( *connections_5g_[ tid ] )[ syn_id ] ).disable_connection( lcid );
   source_table_.disable_connection( tid, syn_id, lcid );

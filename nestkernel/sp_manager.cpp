@@ -241,10 +241,12 @@ SPManager::disconnect_single( index sgid,
   thread target_thread,
   DictionaryDatum& syn )
 {
-  std::cout << "dis" << std::endl;
-
   if ( kernel().connection_manager.have_connections_changed() )
   {
+    if ( kernel().connection_manager.secondary_connections_exist() )
+    {
+      kernel().model_manager.create_secondary_events_prototypes();  // necessary before updating connection infrastructure
+    }
 #pragma omp parallel
     {
       const thread tid = kernel().vp_manager.get_thread_id();
@@ -337,6 +339,10 @@ SPManager::disconnect( GIDCollection& sources,
 {
   if ( kernel().connection_manager.have_connections_changed() )
   {
+    if ( kernel().connection_manager.secondary_connections_exist() )
+    {
+      kernel().model_manager.create_secondary_events_prototypes(); // necessary before updating connection infrastructure
+    }
 #pragma omp parallel
     {
       const thread tid = kernel().vp_manager.get_thread_id();

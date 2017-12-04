@@ -50,7 +50,7 @@ M_ERROR setverbosity
   2.0 /wfr_comm Set
   0 << /wfr_comm_interval wfr_comm >> SetStatus
 
-  /iaf_neuron Create /neuron_no_gap Set
+  /iaf_psc_alpha Create /neuron_no_gap Set
   /hh_psc_alpha_gap Create /neuron_gap Set
 } def
 

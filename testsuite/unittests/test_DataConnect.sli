@@ -27,7 +27,8 @@
 
    Description:
 
-   This test generates 100 iaf_neurons and creates a connectivity vector per neuron
+   This test generates 100 iaf_psc_alpha neurons and creates
+   a connectivity vector per neuron
 
    SeeAlso: DataConnect
 
@@ -66,7 +67,7 @@ normdv_d
 /n_neurons 100 def
 /n_syn 10 def
 
-/iaf_neuron n_neurons Create /n Set
+/iaf_psc_alpha n_neurons Create /n Set
 
 /synapses
 [
@@ -110,7 +111,7 @@ normdv_d
 ResetKernel
 
 % Step 3: rebuild the neurons
-/iaf_neuron n_neurons Create /n Set
+/iaf_psc_alpha n_neurons Create /n Set
 
 % Step 4: Rebuild the connections
 % Pass the connectome to DataConnect

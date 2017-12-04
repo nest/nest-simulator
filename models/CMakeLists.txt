@@ -26,6 +26,7 @@ set( models_sources
     aeif_cond_exp.h aeif_cond_exp.cpp
     aeif_psc_alpha.h aeif_psc_alpha.cpp
     aeif_psc_exp.h aeif_psc_exp.cpp
+    aeif_psc_delta.h aeif_psc_delta.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
     bernoulli_connection.h
     binary_neuron.h
@@ -53,7 +54,6 @@ set( models_sources
     iaf_cond_alpha_mc.h iaf_cond_alpha_mc.cpp
     iaf_cond_exp.h iaf_cond_exp.cpp
     iaf_cond_exp_sfa_rr.h iaf_cond_exp_sfa_rr.cpp
-    iaf_neuron.h iaf_neuron.cpp
     iaf_psc_alpha.h iaf_psc_alpha.cpp
     iaf_psc_alpha_multisynapse.h iaf_psc_alpha_multisynapse.cpp
     iaf_psc_exp_multisynapse.h iaf_psc_exp_multisynapse.cpp
@@ -127,3 +127,7 @@ install( TARGETS models
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
+
+FILTER_HEADERS("${models_sources}" install_headers )
+install( FILES ${install_headers}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

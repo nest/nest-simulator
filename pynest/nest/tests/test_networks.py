@@ -57,7 +57,7 @@ class NetworkTestCase(unittest.TestCase):
         """GetLeaves"""
 
         nest.ResetKernel()
-        model = 'iaf_neuron'
+        model = 'iaf_psc_alpha'
         l = nest.LayoutNetwork(model, (2, 3))
         allLeaves = (3, 4, 5, 7, 8, 9)
 
@@ -86,7 +86,7 @@ class NetworkTestCase(unittest.TestCase):
         """GetNodes"""
 
         nest.ResetKernel()
-        model = 'iaf_neuron'
+        model = 'iaf_psc_alpha'
         l = nest.LayoutNetwork(model, (2, 3))
         allNodes = tuple(range(2, 10))
         allSubnets = (2, 6)
@@ -119,7 +119,7 @@ class NetworkTestCase(unittest.TestCase):
         """GetChildren"""
 
         nest.ResetKernel()
-        model = 'iaf_neuron'
+        model = 'iaf_psc_alpha'
         l = nest.LayoutNetwork(model, (2, 3))
         topKids = (2, 6)
         kids2 = (3, 4, 5)
@@ -153,7 +153,7 @@ class NetworkTestCase(unittest.TestCase):
         nest.BeginSubnet(label='subnet1')
         nest.BeginSubnet(label='subnet2')
 
-        n = nest.Create('iaf_neuron', 100)
+        n = nest.Create('iaf_psc_alpha', 100)
         sn2 = nest.EndSubnet()
         sn1 = nest.EndSubnet()
 

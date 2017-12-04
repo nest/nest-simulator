@@ -36,7 +36,7 @@ class DataConnectTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        a = nest.Create("iaf_neuron", 10)
+        a = nest.Create("iaf_psc_alpha", 10)
         sources = [1]
         target = [1.0 * x for x in range(2, 10)]
         weight = [2.0 * x for x in target]
@@ -53,7 +53,7 @@ class DataConnectTestCase(unittest.TestCase):
         # by erasing and reinstantiating
         # the nestwork from the status data.
         nest.ResetKernel()
-        a = nest.Create("iaf_neuron", 10)
+        a = nest.Create("iaf_psc_alpha", 10)
         nest.DataConnect(stat1)
         conn2 = nest.GetConnections()
 

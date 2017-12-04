@@ -70,7 +70,7 @@ class TestDisconnectSingle(unittest.TestCase):
                         'total_num_virtual_procs': self.num_procs
                     }
                 )
-                neurons = nest.Create('iaf_neuron', 4)
+                neurons = nest.Create('iaf_psc_alpha', 4)
                 syn_dict = {'model': syn_model}
 
                 nest.Connect([neurons[0]], [neurons[2]],

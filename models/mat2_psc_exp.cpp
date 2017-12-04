@@ -292,7 +292,7 @@ nest::mat2_psc_exp::calibrate()
   // To ensure consistency with the overall simulation scheme such conversion
   // should be carried out via objects of class nest::Time. The conversion
   // requires 2 steps:
-  //     1. A time object r is constructed defining representation of
+  //     1. A time object r is constructed, defining representation of
   //        tau_ref_ in tics. This representation is then converted to
   //        computation time steps again by a strategy defined by class
   //        nest::Time.
@@ -300,7 +300,7 @@ nest::mat2_psc_exp::calibrate()
   //        member function of class nest::Time.
   //
   // Choosing a tau_ref_ that is not an integer multiple of the computation time
-  // step h will leed to accurate (up to the resolution h) and self-consistent
+  // step h will lead to accurate (up to the resolution h) and self-consistent
   // results. However, a neuron model capable of operating with real valued
   // spike time may exhibit a different effective refractory time.
 

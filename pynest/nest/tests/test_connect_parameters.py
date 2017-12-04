@@ -65,15 +65,15 @@ class TestParams(unittest.TestCase):
             N1 = self.N1
         if N2 is None:
             N2 = self.N2
-        self.pop1 = hf.nest.Create('iaf_neuron', N1)
-        self.pop2 = hf.nest.Create('iaf_neuron', N2)
+        self.pop1 = hf.nest.Create('iaf_psc_alpha', N1)
+        self.pop2 = hf.nest.Create('iaf_psc_alpha', N2)
         hf.nest.set_verbosity('M_FATAL')
         hf.nest.Connect(self.pop1, self.pop2, conn_dict, syn_dict)
 
     def setUpNetworkOnePop(self, conn_dict=None, syn_dict=None, N=None):
         if N is None:
             N = self.N1
-        self.pop = hf.nest.Create('iaf_neuron', N)
+        self.pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.set_verbosity('M_FATAL')
         hf.nest.Connect(self.pop, self.pop, conn_dict, syn_dict)
 
@@ -137,7 +137,7 @@ class TestParams(unittest.TestCase):
 
         # test that autapses exist
         conn_params['autapses'] = True
-        self.pop1 = hf.nest.Create('iaf_neuron', self.N1)
+        self.pop1 = hf.nest.Create('iaf_psc_alpha', self.N1)
         hf.nest.Connect(self.pop1, self.pop1, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(self.pop1, self.pop1)
@@ -146,7 +146,7 @@ class TestParams(unittest.TestCase):
 
         # test that autapses were excluded
         conn_params['autapses'] = False
-        self.pop1 = hf.nest.Create('iaf_neuron', self.N1)
+        self.pop1 = hf.nest.Create('iaf_psc_alpha', self.N1)
         hf.nest.Connect(self.pop1, self.pop1, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(self.pop1, self.pop1)

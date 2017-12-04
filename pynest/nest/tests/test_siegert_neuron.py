@@ -27,6 +27,7 @@ import numpy as np
 
 HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 
+
 @nest.check_stack
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class SiegertNeuronTestCase(unittest.TestCase):
@@ -58,24 +59,24 @@ class SiegertNeuronTestCase(unittest.TestCase):
         nest.SetKernelStatus(
             {'resolution': self.dt, 'use_wfr': False, 'print_time': True})
 
-        # set up driven iaf neuron
+        # set up driven integrate-and-fire neuron
 
-        self.iaf_neuron = nest.Create(
+        self.iaf_psc_delta = nest.Create(
             'iaf_psc_delta', self.N)  # , params={"C_m": 1.0})
 
         self.poisson_generator = nest.Create(
             'poisson_generator', params={'rate': self.rate_ex})
-        nest.Connect(self.poisson_generator, self.iaf_neuron,
+        nest.Connect(self.poisson_generator, self.iaf_psc_delta,
                      syn_spec={'weight': self.J, 'delay': self.dt})
 
         self.spike_detector = nest.Create(
             "spike_detector", params={'start': self.start})
         nest.Connect(
-            self.iaf_neuron, self.spike_detector)
+            self.iaf_psc_delta, self.spike_detector)
 
         # set up driven siegert neuron
 
-        neuron_status = nest.GetStatus(self.iaf_neuron)[0]
+        neuron_status = nest.GetStatus(self.iaf_psc_delta)[0]
         siegert_params = {'tau_m': neuron_status['tau_m'],
                           't_ref': neuron_status['t_ref'],
                           'theta': neuron_status['V_th'] -
@@ -112,11 +113,12 @@ class SiegertNeuronTestCase(unittest.TestCase):
         rate = events['rate'][np.where(senders == self.siegert_neuron)]
         rate_prediction = rate[-1]
 
-        # get simulated rate of iaf neuron
+        # get simulated rate of integrate-and-fire neuron
         rate_iaf = nest.GetStatus(self.spike_detector)[0][
             "n_events"] / ((self.simtime - self.start) * 1e-3) / self.N
 
-        # test rate prediction against iaf result
+        # test rate prediction against simulated rate of
+        # integrate-and-fire neuron
         self.assertTrue(np.isclose(rate_iaf, rate_prediction, rtol=self.rtol))
         # test rate prediction against hard coded result
         rate_prediction_test = 27.1095934379

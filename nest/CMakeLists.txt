@@ -83,3 +83,7 @@ install( TARGETS nest nest_lib
 
 install( FILES sli/models-init.sli
     DESTINATION ${CMAKE_INSTALL_DATADIR}/sli )
+
+FILTER_HEADERS("${nest_sources}" install_headers )
+install( FILES ${install_headers}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

@@ -271,23 +271,24 @@ nest::iaf_tum_2000::calibrate()
   V_.P20_ = P_.Tau_ / P_.C_ * ( 1.0 - V_.P22_ );
   // P20_ = h/C_;
 
-  // TauR specifies the length of the absolute refractory period as
-  // a double in ms. The grid based iaf_tum_2000 can only handle refractory
-  // periods that are integer multiples of the computation step size (h).
-  // To ensure consistency with the overall simulation scheme such conversion
-  // should be carried out via objects of class nest::Time. The conversion
-  // requires 2 steps:
-  //     1. A time object r is constructed defining  representation of
-  //        TauR in tics. This representation is then converted to computation
-  //        time steps again by a strategy defined by class nest::Time.
+  // tau_ref_abs_ and tau_ref_tot_ specify the length of the corresponding
+  // refractory periods as doubles in ms. The grid based iaf_tum_2000 can
+  // only handle refractory periods that are integer multiples of the
+  // computation step size (h). To ensure consistency with the overall
+  // simulation scheme such conversion should be carried out via objects of
+  // class nest::Time. The conversion requires 2 steps:
+  //     1. A time object r is constructed, defining representation of
+  //        tau_ref_{abs,tot} in tics. This representation is then converted
+  //        to computation time steps again by a strategy defined by class
+  //        nest::Time.
   //     2. The refractory time in units of steps is read out get_steps(), a
   //        member function of class nest::Time.
   //
-  // Choosing a TauR that is not an integer multiple of the computation time
-  // step h will leed to accurate (up to the resolution h) and self-consistent
-  // results. However, a neuron model capable of operating with real valued
-  // spike time may exhibit a different effective refractory time.
-  //
+  // Choosing a tau_ref_{abs,tot} that is not an integer multiple of the
+  // computation time step h will lead to accurate (up to the resolution h)
+  // and self- consistent results. However, a neuron model capable of
+  // operating with real valued spike time may exhibit a different
+  // effective refractory time.
 
   V_.RefractoryCountsAbs_ = Time( Time::ms( P_.tau_ref_abs_ ) ).get_steps();
 

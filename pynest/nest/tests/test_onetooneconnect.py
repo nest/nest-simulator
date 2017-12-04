@@ -40,7 +40,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         post = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(pre, post, "one_to_one")
         connections = nest.GetConnections(pre)
-        targets = nest.GetStatus(connections, "target")
+        targets = connections.get("target")
         self.assertEqual(list(targets), list(post))
 
     def test_ConnectPrePostParams(self):
@@ -52,7 +52,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         post = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(pre, post, "one_to_one", syn_spec={"weight": 2.0})
         connections = nest.GetConnections(pre)
-        weights = nest.GetStatus(connections, "weight")
+        weights = connections.get("weight")
         self.assertEqual(weights, (2.0, 2.0))
 
         # Connect([pre], [post], [params, params])
@@ -62,7 +62,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
                      syn_spec={"weight": [2.0, 3.0]})
         connections = nest.GetConnections(pre)
-        weights = nest.GetStatus(connections, "weight")
+        weights = connections.get("weight")
         self.assertEqual(weights, (2.0, 3.0))
 
     def test_ConnectPrePostWD(self):
@@ -75,8 +75,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
         nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
                      syn_spec={"weight": 2.0, "delay": 2.0})
         connections = nest.GetConnections(pre)
-        weights = nest.GetStatus(connections, "weight")
-        delays = nest.GetStatus(connections, "delay")
+        weights = connections.get("weight")
+        delays = connections.get("delay")
         self.assertEqual(weights, (2.0, 2.0))
         self.assertEqual(delays, (2.0, 2.0))
 
@@ -87,8 +87,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
         nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
                      syn_spec={"weight": [2.0, 3.0], "delay": [2.0, 3.0]})
         connections = nest.GetConnections(pre)
-        weights = nest.GetStatus(connections, "weight")
-        delays = nest.GetStatus(connections, "delay")
+        weights = connections.get("weight")
+        delays = connections.get("delay")
         self.assertEqual(weights, (2.0, 3.0))
         self.assertEqual(delays, (2.0, 3.0))
 

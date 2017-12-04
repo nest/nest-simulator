@@ -102,12 +102,11 @@ class FacetsTestCase(unittest.TestCase):
             nest.Simulate(timeBetweenPairs)
 
             connections = nest.GetConnections(neuronA)
-            if (nest.GetStatus(connections)[0]['synapse_model'] ==
-                    modelName):
+            if (connections.get('synapse_model')[0] == modelName):
                 weightTrace.append(
-                    [run, nest.GetStatus(connections)[0]['weight'],
-                     nest.GetStatus(connections)[0]['a_causal'],
-                     nest.GetStatus(connections)[0]['a_acausal']])
+                    [run, connections.get('weight')[0],
+                     connections.get('a_causal')[0],
+                     connections.get('a_acausal')[0]])
 
         # analysis
         weightTrace = np.array(weightTrace)

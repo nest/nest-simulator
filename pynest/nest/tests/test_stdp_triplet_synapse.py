@@ -77,7 +77,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         """Get synapse parameter status."""
         stats = nest.GetConnections(
             self.pre_neuron, synapse_model=self.synapse_model)
-        return nest.GetStatus(stats, [which])[0][0]
+        return stats.get(which)[0]
 
     def decay(self, time, Kplus, Kplus_triplet, Kminus, Kminus_triplet):
         """Decay variables."""

@@ -71,8 +71,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         weights = np.array([])
         for i in range(100):
             nest.Simulate(1)
-            weights = np.append(weights, nest.GetStatus(connections,
-                                                        "weight")[0])
+            weights = np.append(weights, connections.get("weight"))
 
         wr_weights = nest.GetStatus(wr, "events")[0]["weights"]
 
@@ -102,8 +101,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         weights = np.array([])
         for i in range(100):
             nest.Simulate(1)
-            weights = np.append(weights, nest.GetStatus(connections,
-                                                        "weight")[0])
+            weights = np.append(weights, connections.get("weight"))
 
         wr_weights = nest.GetStatus(wr, "events")[0]["weights"]
 
@@ -134,8 +132,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         senders = np.array([])
         for i in range(100):
             nest.Simulate(1)
-            senders = np.append(senders, nest.GetStatus(connections,
-                                                        "source"))
+            senders = np.append(senders, connections.get("source"))
 
         wr_senders = nest.GetStatus(wr, "events")[0]["senders"]
 
@@ -166,8 +163,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         targets = np.array([])
         for i in range(100):
             nest.Simulate(1)
-            targets = np.append(targets, nest.GetStatus(connections,
-                                                        "target"))
+            targets = np.append(targets, connections.get("target"))
 
         wr_targets = nest.GetStatus(wr, "events")[0]["targets"]
 
@@ -198,8 +194,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         targets = np.array([])
         for i in range(100):
             nest.Simulate(1)
-            targets = np.append(targets, nest.GetStatus(connections,
-                                                        "target"))
+            targets = np.append(targets, connections.get("target"))
 
         wr_targets = nest.GetStatus(wr, "events")[0]["targets"]
 
@@ -224,9 +219,13 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec")
         nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec")
         nest.Connect(sg, pre)
-
-        connections = [(c[0], c[1], c[4])
-                       for c in nest.GetConnections(pre, post)]
+        
+        conn = nest.GetConnections(pre, post)
+        sources = conn.get('source')
+        targets = conn.get('target')
+        ports = conn.get('port')
+        
+        connections = [(sources[i], targets[i], ports[i]) for i in len(conn)]
 
         nest.Simulate(100)
 
@@ -275,8 +274,10 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Connect(sg, pre)
 
         connections = nest.GetConnections(pre, post)
-        receptors = nest.GetStatus(connections, "receptor")
-        connections = [(connections[i][0], connections[i][1], receptors[i])
+        receptors = connections.get("receptor")
+        sources = connections.get("source")
+        targets = connections.get("target")
+        connections = [(sources[i], targets[i], receptors[i])
                        for i in range(len(connections))]
 
         nest.Simulate(100)

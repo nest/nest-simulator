@@ -94,9 +94,11 @@ class ConnectWithEllipticalMask(unittest.TestCase):
                [24, 50], [25, 45], [25, 49], [25, 50]]
 
         connections = nest.GetConnections()
+        sources = connections.get('source')
+        targets = connections.get('target')
 
-        for conn, conn_ref in zip(connections, ref):
-            conn_list = [conn[0], conn[1]]
+        for counter, conn_ref in enumerate(ref):
+            conn_list = [sources[counter], targets[counter]]
             self.assertEqual(conn_list, conn_ref)
 
     def test_ConnectTiltedEllipticalMask(self):
@@ -153,9 +155,11 @@ class ConnectWithEllipticalMask(unittest.TestCase):
                [22, 47], [23, 44], [23, 48], [24, 45], [24, 49], [25, 50]]
 
         connections = nest.GetConnections()
+        sources = connections.get('source')
+        targets = connections.get('target')
 
-        for conn, conn_ref in zip(connections, ref):
-            conn_list = [conn[0], conn[1]]
+        for counter, conn_ref in enumerate(ref):
+            conn_list = [sources[counter], targets[counter]]
             self.assertEqual(conn_list, conn_ref)
 
     def test_ConnectAnchoredEllipticalMask(self):
@@ -219,9 +223,11 @@ class ConnectWithEllipticalMask(unittest.TestCase):
                [24, 49], [25, 50]]
 
         connections = nest.GetConnections()
+        sources = connections.get('source')
+        targets = connections.get('target')
 
-        for conn, conn_ref in zip(connections, ref):
-            conn_list = [conn[0], conn[1]]
+        for counter, conn_ref in enumerate(ref):
+            conn_list = [sources[counter], targets[counter]]
             self.assertEqual(conn_list, conn_ref)
 
     def test_ConnectEllipticalMaskWithPeriodicBoundary(self):
@@ -293,9 +299,11 @@ class ConnectWithEllipticalMask(unittest.TestCase):
                [25, 30], [25, 45], [25, 46], [25, 49], [25, 50]]
 
         connections = nest.GetConnections()
+        sources = connections.get('source')
+        targets = connections.get('target')
 
-        for conn, conn_ref in zip(connections, ref):
-            conn_list = [conn[0], conn[1]]
+        for counter, conn_ref in enumerate(ref):
+            conn_list = [sources[counter], targets[counter]]
             self.assertEqual(conn_list, conn_ref)
 
 

@@ -61,14 +61,15 @@ class ConnectArrayFixedIndegreeTestCase(unittest.TestCase):
 
             # gets all connections to the target neuron
             conns = nest.GetConnections(target=net2[i:i+1])
+            weight = conns.get('weight')
+            delay = conns.get('delay')
 
             Warr1 = []  # creates empty weight array
 
             # loop on synapses that connect to target neuron
             for j in range(len(conns)):
-                c = conns[j:j+1]
-                w = nest.GetStatus(c, 'weight')[0]  # gets synaptic weight
-                d = nest.GetStatus(c, 'delay')[0]   # gets synaptic delay
+                w = weight[j]  # gets synaptic weight
+                d = delay[j]   # gets synaptic delay
 
                 self.assertTrue(d - w == 1)  # checks that delay = weight + 1
 

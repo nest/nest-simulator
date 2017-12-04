@@ -208,9 +208,10 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-  DataAccessFunctor < aeif_cond_beta_multisynapse >
-    get_data_access_functor( size_t elem );
-  inline double get_state_element( size_t elem )
+  DataAccessFunctor< aeif_cond_beta_multisynapse > get_data_access_functor(
+    size_t elem );
+  inline double
+  get_state_element( size_t elem )
   {
     return S_.y_[ elem ];
   };

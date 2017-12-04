@@ -131,8 +131,6 @@ RecordablesMap< HostNode >::create()
 }
 
 
-
-
 //! Class that reads out state vector elements, used by UniversalDataLogger
 template < typename HostNode >
 class DataAccessFunctor
@@ -158,8 +156,8 @@ public:
     return parent_->get_state_element( elem_ );
   };
 
-  DataAccessFunctor < HostNode > & operator=(
-    const DataAccessFunctor < HostNode > & other )
+  DataAccessFunctor< HostNode >& operator=(
+    const DataAccessFunctor< HostNode >& other )
   {
     this->elem_ = other.elem_;
     this->parent_ = other.parent_;
@@ -186,9 +184,8 @@ class DynamicRecordablesMap
   : public std::map< Name, const DataAccessFunctor< HostNode > >
 {
   typedef std::map< Name, const DataAccessFunctor< HostNode > > Base_;
-  
-public:
 
+public:
   virtual ~DynamicRecordablesMap()
   {
   }
@@ -254,8 +251,6 @@ DynamicRecordablesMap< HostNode >::create( HostNode& n )
 {
   assert( false );
 }
-
-
 }
 
 #endif

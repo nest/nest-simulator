@@ -57,7 +57,7 @@ DynamicRecordablesMap< aeif_cond_beta_multisynapse >::create(
   // use standard names wherever you can for consistency!
   insert( names::V_m,
     host.get_data_access_functor( aeif_cond_beta_multisynapse::State_::V_M ) );
-  
+
   insert( names::w,
     host.get_data_access_functor( aeif_cond_beta_multisynapse::State_::W ) );
 
@@ -81,15 +81,15 @@ aeif_cond_beta_multisynapse::insert_conductance_recordables( size_t first )
     size_t elem = aeif_cond_beta_multisynapse::State_::G
       + receptor * aeif_cond_beta_multisynapse::State_::
                      NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    recordablesMap_.insert( get_g_receptor_name( receptor ),
-      this->get_data_access_functor( elem ) );
+    recordablesMap_.insert(
+      get_g_receptor_name( receptor ), this->get_data_access_functor( elem ) );
   }
 }
 
-DataAccessFunctor < aeif_cond_beta_multisynapse >
+DataAccessFunctor< aeif_cond_beta_multisynapse >
 aeif_cond_beta_multisynapse::get_data_access_functor( size_t elem )
 {
-  return DataAccessFunctor < aeif_cond_beta_multisynapse > (this, elem);
+  return DataAccessFunctor< aeif_cond_beta_multisynapse >( this, elem );
 }
 
 /* ----------------------------------------------------------------
@@ -742,12 +742,12 @@ aeif_cond_beta_multisynapse::set_status( const DictionaryDatum& d )
       size_t elem = aeif_cond_beta_multisynapse::State_::G
         + receptor * aeif_cond_beta_multisynapse::State_::
                        NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-      rtmp.insert( get_g_receptor_name( receptor ),
-        get_data_access_functor( elem ) );
+      rtmp.insert(
+        get_g_receptor_name( receptor ), get_data_access_functor( elem ) );
     }
   }
   else if ( ptmp.E_rev.size() < P_.E_rev.size() )
-  {  // Number of receptors decreased
+  { // Number of receptors decreased
     for ( size_t receptor = ptmp.E_rev.size(); receptor < P_.E_rev.size();
           ++receptor )
     {

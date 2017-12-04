@@ -427,6 +427,14 @@ public:
 
   void resize_connections();
 
+  void check_primary_connections_exist();
+
+  void check_secondary_connections_exist();
+
+  bool primary_connections_exist() const;
+
+  bool secondary_connections_exist() const;
+
   index get_source_gid( const thread tid,
     const synindex syn_id,
     const index lcid );
@@ -631,6 +639,10 @@ private:
                                   //!< since startup or last call to simulate
 
   bool sort_connections_by_source_; //!< Whether to sort connections by source gid
+
+  bool primary_connections_exist_; //!< Whether primary connections (spikes) exist
+
+  bool secondary_connections_exist_; //!< Whether secondary connections (e.g., gap junctions) exist
 };
 
 inline DictionaryDatum&
@@ -788,6 +800,18 @@ ConnectionManager::get_source_gid( const thread tid,
   const index lcid )
 {
   return source_table_.get_gid( tid, syn_index, lcid );
+}
+
+inline bool
+ConnectionManager::primary_connections_exist() const
+{
+  return primary_connections_exist_;
+}
+
+inline bool
+ConnectionManager::secondary_connections_exist() const
+{
+  return secondary_connections_exist_;
 }
   
 } // namespace nest

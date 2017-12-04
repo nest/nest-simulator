@@ -67,6 +67,8 @@ nest::ConnectionManager::ConnectionManager()
   , keep_source_table_( true )
   , have_connections_changed_( true )
   , sort_connections_by_source_( true )
+  , primary_connections_exist_( false )
+  , secondary_connections_exist_( false )
 {
 }
 
@@ -672,19 +674,30 @@ nest::ConnectionManager::connect_( Node& s,
   const double d,
   const double w )
 {
+  const bool is_primary = kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary();
+
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
     .add_connection_5g( s, r, connections_5g_[ tid ], syn_id, d, w );
   source_table_.add_source( tid,
     syn_id,
     s_gid,
-    kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary() );
+    is_primary );
 
   if ( vv_num_connections_[ tid ].size() <= syn_id )
   {
     vv_num_connections_[ tid ].resize( syn_id + 1 );
   }
   ++vv_num_connections_[ tid ][ syn_id ];
+
+  if ( is_primary )
+  {
+    primary_connections_exist_ = true;
+  }
+  else
+  {
+    secondary_connections_exist_ = true;
+  }
 }
 
 void
@@ -697,19 +710,30 @@ nest::ConnectionManager::connect_( Node& s,
   const double d,
   const double w )
 {
+  const bool is_primary = kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary();
+
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
     .add_connection_5g( s, r, connections_5g_[ tid ], syn_id, p, d, w );
   source_table_.add_source( tid,
     syn_id,
     s_gid,
-    kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary() );
+    is_primary );
 
   if ( vv_num_connections_[ tid ].size() <= syn_id )
   {
     vv_num_connections_[ tid ].resize( syn_id + 1 );
   }
   ++vv_num_connections_[ tid ][ syn_id ];
+
+  if ( is_primary )
+  {
+    primary_connections_exist_ = true;
+  }
+  else
+  {
+    secondary_connections_exist_ = true;
+  }
 }
 
 void
@@ -1771,4 +1795,16 @@ nest::ConnectionManager::resize_connections()
     connections_5g_[ tid ]->resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
     source_table_.resize_sources( tid );
   }
+}
+
+void
+nest::ConnectionManager::check_primary_connections_exist()
+{
+  primary_connections_exist_ = kernel().mpi_manager.any_true( primary_connections_exist_ );
+}
+
+void
+nest::ConnectionManager::check_secondary_connections_exist()
+{
+  secondary_connections_exist_ = kernel().mpi_manager.any_true( secondary_connections_exist_ );
 }

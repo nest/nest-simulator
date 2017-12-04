@@ -724,7 +724,12 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
     kernel().event_delivery_manager.configure_target_data_buffers();
   }
 
-  if ( kernel().node_manager.wfr_is_used() )
+  // check whether primary and secondary connections exists on any
+  // compute node
+  kernel().connection_manager.check_primary_connections_exist();
+  kernel().connection_manager.check_secondary_connections_exist();
+
+  if ( kernel().connection_manager.secondary_connections_exist() )
   {
 #pragma omp barrier
     kernel().connection_manager.compute_compressed_secondary_recv_buffer_positions( tid );
@@ -738,7 +743,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   // presynaptic side
   kernel().event_delivery_manager.gather_target_data( tid );
 
-  if ( kernel().node_manager.wfr_is_used() )
+  if ( kernel().connection_manager.secondary_connections_exist() )
   {
     kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
   }
@@ -848,8 +853,10 @@ nest::SimulationManager::update_()
 #endif
       }
 
-      // preliminary update of nodes that use waveform relaxtion
-      if ( kernel().node_manager.wfr_is_used() )
+      // preliminary update of nodes that use waveform relaxtion, only
+      // necessary if secondary connections exist and any node uses
+      // wfr
+      if ( kernel().connection_manager.secondary_connections_exist() and kernel().node_manager.wfr_is_used() )
       {
 #pragma omp single
         {
@@ -977,8 +984,11 @@ nest::SimulationManager::update_()
                                                                      // end of
                                                                      // slice
       {
-        kernel().event_delivery_manager.gather_spike_data( tid );
-        if ( kernel().node_manager.wfr_is_used() )
+        if ( kernel().connection_manager.primary_connections_exist() )
+        {
+          kernel().event_delivery_manager.gather_spike_data( tid );
+        }
+        if ( kernel().connection_manager.secondary_connections_exist() )
         {
 #pragma omp single
           {

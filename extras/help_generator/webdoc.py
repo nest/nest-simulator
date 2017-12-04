@@ -223,10 +223,7 @@ def examples_to_md(example, index_file, f_index):
         """
         link = '- [{}]({})\n'.format(the_name, the_name)
 
-
-
         f_index.write(link)
-
 
 
 def gen_examples():
@@ -243,7 +240,7 @@ def gen_examples():
         if 'Potjans_2014' in dirnames:
             dirnames.remove('Potjans_2014')
         for pyfile in files:
-            if pyfile.endswith(('.py')):
+            if pyfile.endswith('.py'):
                 pyfi = os.path.join(dirpath, pyfile)
                 examples_to_md(pyfi, index_file, f_index)
     f_index.close()

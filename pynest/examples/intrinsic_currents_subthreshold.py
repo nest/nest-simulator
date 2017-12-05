@@ -179,7 +179,8 @@ the first time point after t=0. All subsequent points are then automatically
 shifted by the delay.
 '''
 
-delay = nest.GetStatus(nest.GetConnections(dc, nrn))[0]['delay']
+conns = nest.GetConnections(dc, nrn)
+delay = conns.get('delay')[0]
 dt = nest.GetKernelStatus('resolution')
 
 t_dc, I_dc = [0], [0]

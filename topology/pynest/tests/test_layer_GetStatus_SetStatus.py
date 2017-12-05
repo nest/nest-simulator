@@ -99,19 +99,19 @@ class GetSetTestCase(unittest.TestCase):
         nodes = l.get('nodes')
         rows = l.get('rows')
 
-        self.assertEqual(center, {'center': (0.0, 0.0)})
-        self.assertEqual(columns, {'columns': 3})
-        self.assertTrue(edge_wrap['edge_wrap'])
-        self.assertEqual(extent, {'extent': (2., 2.)})
-        self.assertEqual(network_size, {'network_size': 9})
-        self.assertEqual(rows, {'rows': 3})
-        self.assertTrue(isinstance(nodes['nodes'], nest.GIDCollection))
+        self.assertEqual(center, (0.0, 0.0))
+        self.assertEqual(columns, 3)
+        self.assertTrue(edge_wrap)
+        self.assertEqual(extent, (2., 2.))
+        self.assertEqual(network_size, 9)
+        self.assertEqual(rows, 3)
+        self.assertTrue(isinstance(nodes, nest.GIDCollection))
 
-        nodes = nodes['nodes']
+        nodes = nodes
 
         n = [gid for gid in nodes]
         self.assertEqual(n, [1, 2, 3, 4, 5, 6, 7, 8, 9])
-        self.assertEqual(nodes.get('V_m')['V_m'],
+        self.assertEqual(nodes.get('V_m'),
                          (-70., -70., -70., -70., -70.,
                           -70., -70., -70., -70.))
 
@@ -129,11 +129,11 @@ class GetSetTestCase(unittest.TestCase):
         with self.assertRaises(nest.NESTError):
             l.set({'center': [1., 1.]})
 
-        nodes = l.get('nodes')['nodes']
+        nodes = l.get('nodes')
         nodes.set('V_m', -50.)
 
-        nodes2 = l.get('nodes')['nodes']
-        self.assertEqual(nodes2.get('V_m')['V_m'],
+        nodes2 = l.get('nodes')
+        self.assertEqual(nodes2.get('V_m'),
                          (-50., -50., -50., -50., -50.,
                           -50., -50., -50., -50.))
 

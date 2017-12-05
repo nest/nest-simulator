@@ -92,8 +92,8 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
 
         nest.Simulate(.1)  # flush the last voltmeter events from the queue
 
-        vm = numpy.array(nest.GetStatus([voltmeter[1]], 'events')[0]['V_m'])
-        vm_reference = numpy.array(nest.GetStatus([voltmeter[0]],
+        vm = numpy.array(nest.GetStatus(voltmeter[1], 'events')[0]['V_m'])
+        vm_reference = numpy.array(nest.GetStatus(voltmeter[0],
                                                   'events')[0]['V_m'])
 
         assert(len(vm) % n_trials == 0)

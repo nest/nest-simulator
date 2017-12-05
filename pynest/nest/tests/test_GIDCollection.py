@@ -88,17 +88,26 @@ class TestGIDCollection(unittest.TestCase):
         """Index of GIDCollections"""
 
         n = nest.Create('iaf_psc_alpha', 5)
-        self.assertEqual(n[0], 1)
-        self.assertEqual(n[2], 3)
-        self.assertEqual(n[4], 5)
+        gc_0 = nest.GIDCollection([1])
+        gc_2 = nest.GIDCollection([3])
+        gc_4 = nest.GIDCollection([5])
+        
+        self.assertEqual(n[0], gc_0)
+        self.assertEqual(n[2], gc_2)
+        self.assertEqual(n[4], gc_4)
         with self.assertRaises(nest.NESTError):
             n[7]
 
         nest.ResetKernel()
 
         nodes = nest.Create("iaf_psc_alpha", 10)
+        counter = 1
+        for gid in nodes:
+            self.assertEqual(gid, counter)
+            counter += 1
         for i in range(10):
-            self.assertEqual(i + 1, nodes[i])
+            gc = nest.GIDCollection([i+1])
+            self.assertEqual(gc, nodes[i])
 
     def test_slicing(self):
         """Slices of GIDCollections"""
@@ -252,9 +261,9 @@ class TestGIDCollection(unittest.TestCase):
                                    num_a + num_b + num_c + 1)))
         self.assertEqual(nodes_list, compare_list)
 
-        self.assertEqual(nodes[2], 5)
-        self.assertEqual(nodes[5], 26)
-        self.assertEqual(nodes[34], 55)
+        self.assertEqual(nodes[2], nest.GIDCollection([5]))
+        self.assertEqual(nodes[5], nest.GIDCollection([26]))
+        self.assertEqual(nodes[34], nest.GIDCollection([55]))
 
         n_slice_first = nodes[:10]
         n_slice_middle = nodes[2:7]
@@ -333,7 +342,7 @@ class TestGIDCollection(unittest.TestCase):
         nest.ResetKernel()
 
         n = nest.Create('iaf_psc_alpha', 2)
-        nest.Connect(nest.GIDCollection([n[0]]), nest.GIDCollection([n[1]]))
+        nest.Connect(n[0], n[1])
         self.assertEqual(nest.GetKernelStatus('num_connections'), 1)
 
     def test_SetStatus_and_GetStatus(self):
@@ -376,12 +385,10 @@ class TestGIDCollection(unittest.TestCase):
 
         nodes = nest.Create('iaf_psc_alpha', 10)
 
-        g = nodes.get('C_m')
-        C_m = g['C_m']
-        gids = g['GID']
-        E_L = nodes.get('E_L')['E_L']
-        V_m = nodes.get('V_m')['V_m']
-        t_ref = nodes.get('t_ref')['t_ref']
+        C_m = nodes.get('C_m')
+        E_L = nodes.get('E_L')
+        V_m = nodes.get('V_m')
+        t_ref = nodes.get('t_ref')
         g = nodes.get(['local', 'thread', 'vp'])
         local = g['local']
         thread = g['thread']
@@ -389,7 +396,6 @@ class TestGIDCollection(unittest.TestCase):
 
         self.assertEqual(C_m, (250.0, 250.0, 250.0, 250.0, 250.0,
                                250.0, 250.0, 250.0, 250.0, 250.0))
-        self.assertEqual(gids, (1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
         self.assertEqual(E_L, (-70.0, -70.0, -70.0, -70.0, -70.0,
                                -70.0, -70.0, -70.0, -70.0, -70.0))
         self.assertEqual(V_m, (-70.0, -70.0, -70.0, -70.0, -70.0,
@@ -400,8 +406,7 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(thread, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
         self.assertEqual(vp, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
-        g_reference = {'GID':(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
-                       'local': (True, True, True, True, True,
+        g_reference = {'local': (True, True, True, True, True,
                                  True, True, True, True, True),
                        'thread': (0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                        'vp': (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)}
@@ -411,9 +416,9 @@ class TestGIDCollection(unittest.TestCase):
         nest.ResetKernel()
         nodes = nest.Create('iaf_psc_alpha', 10)
 
-        V_m = nodes[2:5].get('V_m')['V_m']
+        V_m = nodes[2:5].get('V_m')
         g = nodes[5:7].get(['t_ref', 'tau_m'])
-        C_m = nodes[2:9:2].get('C_m')['C_m']
+        C_m = nodes[2:9:2].get('C_m')
 
         self.assertEqual(V_m, (-70.0, -70.0, -70.0))
         self.assertEqual(g['t_ref'], (2.0, 2.0))
@@ -427,19 +432,19 @@ class TestGIDCollection(unittest.TestCase):
         nodes = nest.Create('iaf_psc_alpha', 10)
 
         nodes.set({'C_m': 100.0})
-        C_m = nodes.get('C_m')['C_m']
+        C_m = nodes.get('C_m')
         self.assertEqual(C_m, (100.0, 100.0, 100.0, 100.0, 100.0,
                                100.0, 100.0, 100.0, 100.0, 100.0))
 
         nodes.set('tau_Ca', 500.0)
-        tau_Ca = nodes.get('tau_Ca')['tau_Ca']
+        tau_Ca = nodes.get('tau_Ca')
         self.assertEqual(tau_Ca, (500.0, 500.0, 500.0, 500.0, 500.0,
                                   500.0, 500.0, 500.0, 500.0, 500.0))
 
         nodes.set(({'V_m': 10.0}, {'V_m': 20.0}, {'V_m': 30.0}, {'V_m': 40.0},
                    {'V_m': 50.0}, {'V_m': 60.0}, {'V_m': 70.0}, {'V_m': 80.0},
                    {'V_m': 90.0}, {'V_m': -100.0}))
-        V_m = nodes.get('V_m')['V_m']
+        V_m = nodes.get('V_m')
         self.assertEqual(V_m, (10.0, 20.0, 30.0, 40.0, 50.0,
                                60.0, 70.0, 80.0, 90.0, -100.0))
 
@@ -462,14 +467,13 @@ class TestGIDCollection(unittest.TestCase):
         nodes[2:5].set(({'V_m': -50.0}, {'V_m': -40.0}, {'V_m':-30.0}))
         nodes[5:7].set({'t_ref': 4.4, 'tau_m': 3.0})
         nodes[2:9:2].set('C_m', 111.0)
-        V_m = nodes.get('V_m')['V_m']
+        V_m = nodes.get('V_m')
         g = nodes.get(['t_ref', 'tau_m'])
-        C_m = nodes.get('C_m')['C_m']
+        C_m = nodes.get('C_m')
         
         self.assertEqual(V_m, (-70.0, -70.0, -50.0, -40.0, -30.0,
                                -70.0, -70.0, -70.0, -70.0, -70.0,))
-        self.assertEqual(g, {'GID': (1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
-                             't_ref': (2.0, 2.0, 2.0, 2.0, 2.0,
+        self.assertEqual(g, {'t_ref': (2.0, 2.0, 2.0, 2.0, 2.0,
                                        4.4, 4.4, 2.0, 2.0, 2.0),
                              'tau_m': (10.0, 10.0, 10.0, 10.0, 10.0,
                                        3.00, 3.00, 10.0, 10.0, 10.0)})

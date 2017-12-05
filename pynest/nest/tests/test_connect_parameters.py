@@ -210,7 +210,8 @@ class TestParams(unittest.TestCase):
         # synapse type
         hf.nest.ResetKernel()
         vol = hf.nest.Create('volume_transmitter')
-        hf.nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})
+        hf.nest.SetDefaults('stdp_dopamine_synapse',
+                            {'vt':vol.get('global_id')})
         params = ['c', 'n']
         values = [0.153, 0.365]
         syn_params = {'model': 'stdp_dopamine_synapse'}
@@ -228,7 +229,8 @@ class TestParams(unittest.TestCase):
         for i, syn in enumerate(syns):
             if syn == 'stdp_dopamine_synapse':
                 vol = hf.nest.Create('volume_transmitter')
-                hf.nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})
+                hf.nest.SetDefaults('stdp_dopamine_synapse',
+                                    {'vt': vol.get('global_id')})
             syn_params['model'] = syn
             self.pop1 = hf.nest.Create('iaf_psc_exp_multisynapse', self.N1, {
                                        'tau_syn': [0.2, 0.5]})
@@ -258,7 +260,8 @@ class TestParams(unittest.TestCase):
         for i, syn in enumerate(syns):
             if syn == 'stdp_dopamine_synapse':
                 vol = hf.nest.Create('volume_transmitter')
-                hf.nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})
+                hf.nest.SetDefaults('stdp_dopamine_synapse',
+                                    {'vt': vol.get('global_id')})
             syn_params['model'] = syn
             hf.check_synapse(
                 ['weight'], [syn_params['weight']], syn_params, self)
@@ -278,7 +281,8 @@ class TestParams(unittest.TestCase):
         for i, syn in enumerate(syns):
             if syn == 'stdp_dopamine_synapse':
                 vol = hf.nest.Create('volume_transmitter')
-                hf.nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})
+                hf.nest.SetDefaults('stdp_dopamine_synapse',
+                                    {'vt': vol.get('global_id')})
             syn_params['model'] = syn
             hf.check_synapse(
                 ['delay'], [syn_params['delay']], syn_params, self)

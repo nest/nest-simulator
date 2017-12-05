@@ -218,7 +218,7 @@ class TestDisconnect(unittest.TestCase):
                 targId = 1
 
                 conns = nest.GetConnections(
-                    [neurons[srcId]], [neurons[targId]], syn_model)
+                    neurons[srcId], neurons[targId], syn_model)
                 assert conns
                 nest.DisconnectOneToOne(
                     neurons[srcId], neurons[targId], syn_dict)
@@ -229,7 +229,7 @@ class TestDisconnect(unittest.TestCase):
                 self.assertEqual(1, status[targId]['SE2']['z_connected'])
 
                 conns = nest.GetConnections(
-                    [neurons[srcId]], [neurons[targId]], syn_model)
+                    neurons[srcId], neurons[targId], syn_model)
                 assert not conns
 
 

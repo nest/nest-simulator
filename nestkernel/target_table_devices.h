@@ -124,6 +124,13 @@ public:
     const synindex synapse_id,
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const;
+  void get_connections_to_device_for_lid_(
+    const index lid,
+    const index requested_target_gid,
+    const thread tid,
+    const synindex syn_id,
+    const long synapse_label,
+    std::deque< ConnectionID >& conns ) const;
   void get_connections_from_devices_( const index requested_source_gid,
     const index requested_target_gid,
     const thread tid,

@@ -136,13 +136,7 @@ class GIDCollection(object):
 
             return nest.sli_func('Take', self._datum, [start, stop, step])
         else:
-            gid = nest.sli_func('get', self._datum, key)
-            try:
-                gid + 1
-            except TypeError:
-                raise TypeError("Slicing of a GIDCollection should return a \
-                                gid")
-            return gid
+            return nest.sli_func('Take', self._datum, [key+1])
 
     def __contains__(self, gid):
         return nest.sli_func('MemberQ', self._datum, gid)

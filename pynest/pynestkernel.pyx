@@ -359,7 +359,7 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
 
         if ret is NULL:
             try:
-                if isinstance( obj._datum, SLIDatum ):
+                if isinstance( obj._datum, SLIDatum ) or isinstance( obj._datum[0], SLIDatum):
                     ret = python_object_to_datum( obj._datum )
             except:
                 pass

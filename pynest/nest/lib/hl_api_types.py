@@ -250,6 +250,8 @@ class Connectome(object):
                         datum.dtype != "connectiontype"):
                     raise TypeError("Expected Connection Datum.")
             self._datum = data
+        elif data == None:
+            self._datum = data
         else:
             if (not isinstance(data, nest.SLIDatum) or
                     data.dtype != "connectiontype"):
@@ -258,6 +260,8 @@ class Connectome(object):
             self._datum = [data]
 
     def __len__(self):
+        if self._datum == None:
+            return 0
         return len(self._datum)
     
     def __eq__(self, other):

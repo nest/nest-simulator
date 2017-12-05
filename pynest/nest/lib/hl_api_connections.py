@@ -100,8 +100,13 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
     sps(params)
     sr("GetConnections")
+    
+    conns = spp()
+    
+    if isinstance(conns, tuple):
+        conns = nest.Connectome(None)
 
-    return spp()
+    return conns
 
 
 @check_stack

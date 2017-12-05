@@ -134,13 +134,6 @@ public:
 
   Position< D > gridpos_to_position( Position< D, int > gridpos ) const;
 
-  /**
-   * Returns the nodes at a given discrete layerspace position.
-   * @param pos  Discrete position in layerspace.
-   * @returns Gids covering the input position.
-   */
-  index get_node( Position< D, int > pos ) const;
-
   using Layer< D >::get_global_positions_vector;
 
   std::vector< std::pair< Position< D >, index > > get_global_positions_vector(
@@ -285,13 +278,6 @@ GridLayer< D >::gridpos_to_lid( Position< D, int > pos ) const
   }
 
   return lid;
-}
-
-template < int D >
-index
-GridLayer< D >::get_node( Position< D, int > pos ) const
-{
-  return this->gid_collection_->operator[]( gridpos_to_lid( pos ) );
 }
 
 template < int D >

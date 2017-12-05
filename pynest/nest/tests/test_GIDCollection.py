@@ -407,6 +407,18 @@ class TestGIDCollection(unittest.TestCase):
                        'vp': (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)}
         self.assertEqual(g, g_reference)
 
+        # Now check that it works with sliced GIDCollections
+        nest.ResetKernel()
+        nodes = nest.Create('iaf_psc_alpha', 10)
+
+        V_m = nodes[2:5].get('V_m')['V_m']
+        g = nodes[5:7].get(['t_ref', 'tau_m'])
+        C_m = nodes[2:9:2].get('C_m')['C_m']
+
+        self.assertEqual(V_m, (-70.0, -70.0, -70.0))
+        self.assertEqual(g['t_ref'], (2.0, 2.0))
+        self.assertEqual(C_m, (250.0, 250.0, 250.0, 250.0))
+
     def test_set(self):
         """
         Test that set function works as expected.
@@ -442,6 +454,27 @@ class TestGIDCollection(unittest.TestCase):
 
         with self.assertRaises(nest.NESTError):
             nodes.set({'vp': 2})
+
+        # Now check that it works with sliced GIDCollections
+        nest.ResetKernel()
+        nodes = nest.Create('iaf_psc_alpha', 10)
+        
+        nodes[2:5].set(({'V_m': -50.0}, {'V_m': -40.0}, {'V_m':-30.0}))
+        nodes[5:7].set({'t_ref': 4.4, 'tau_m': 3.0})
+        nodes[2:9:2].set('C_m', 111.0)
+        V_m = nodes.get('V_m')['V_m']
+        g = nodes.get(['t_ref', 'tau_m'])
+        C_m = nodes.get('C_m')['C_m']
+        
+        self.assertEqual(V_m, (-70.0, -70.0, -50.0, -40.0, -30.0,
+                               -70.0, -70.0, -70.0, -70.0, -70.0,))
+        self.assertEqual(g, {'GID': (1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+                             't_ref': (2.0, 2.0, 2.0, 2.0, 2.0,
+                                       4.4, 4.4, 2.0, 2.0, 2.0),
+                             'tau_m': (10.0, 10.0, 10.0, 10.0, 10.0,
+                                       3.00, 3.00, 10.0, 10.0, 10.0)})
+        self.assertEqual(C_m, (250.0, 250.0, 111.0, 250.0, 111.0,
+                               250.0, 111.0, 250.0, 111.0, 250.0))
 
     def test_GetConnections(self):
         """

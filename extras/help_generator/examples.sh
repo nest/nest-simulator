@@ -75,8 +75,6 @@ cp $EXAMPLES $imgdir
 EXAMPLES=$(find ${SEARCH_DIR:-$imgdir} -type f -name \*.py -o -name \*.sli | sort -t. -k3)
 
 
-
-START=$SECONDS
 echo '<ul>' >> $myhome/more-example-networks/index.tmpl.html
 for i in $EXAMPLES ; do
 
@@ -148,11 +146,6 @@ echo '</ul>' >> $myhome/more-example-networks/index.tmpl.html
 cat $myhome/templates/overview-sample-header.tmpl $myhome/more-example-networks/index.tmpl.html $myhome/templates/overview-sample-footer.tmpl > $myhome/more-example-networks/index.html
 
 rm -rf $imgdir
-
-ELAPSED_TIME=$(($SECONDS - $START))
-
-echo ">>> RESULTS: $FAILURES /" $(echo $EXAMPLES | wc -w) "(failed / total)"
-echo ">>> TIME: $(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec."
 
 if [ "x$OUTPUT" != "x" ] ; then
     echo ">>> Failed examples:"

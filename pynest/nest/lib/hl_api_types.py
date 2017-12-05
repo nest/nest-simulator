@@ -190,6 +190,8 @@ class GIDCollection(object):
                 if nest.is_literal(param):
                     if first:
                         value_list = self.get(param)
+                        if type(value_list) != tuple:
+                            value_list = (value_list,)
                         first = False
                     else:
                         value_list = [nest.sli_func('/{} get'.format(param), d) for d in value_list]
@@ -198,12 +200,21 @@ class GIDCollection(object):
                 else:
                     raise TypeError("Argument must be a string")
             if nest.is_literal(params[-1]):
-                return {params[-1]: value_list[params[-1]]}
+                if len(self) == 1:
+                    return value_list[0][params[-1]]
+                else:
+                    return [d[params[-1]] for d in value_list]
             elif nest.is_iterable(params[-1]):
                 for value in params[-1]:
-                    if value not in value_list.keys():
+                    # TODO481 : Assuming they are all of equal type, we check
+                    # only the values of the first node. This must be changed
+                    # if we decide something else.
+                    if value not in value_list[0].keys():
                         raise KeyError("The value '{}' does not exist at the given path".format(value))
-                return {'{}'.format(key): value for key, value in value_list.iteritems() if key in params[-1]}
+                if len(self) == 1:
+                    return {'{}'.format(key): value for key, value in value_list[0].iteritems() if key in params[-1]}
+                else:
+                    return [{'{}'.format(key): value for key, value in d.iteritems() if key in params[-1]} for d in value_list]
             else:
                 raise TypeError("Final argument should be either a string or an iterable")
             

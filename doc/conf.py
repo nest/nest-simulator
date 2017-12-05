@@ -32,7 +32,7 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 import sys
 import os
 # import shlex
-import recommonmark
+# import recommonmark
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
 from subprocess import check_output, CalledProcessError

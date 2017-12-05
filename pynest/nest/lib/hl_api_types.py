@@ -176,14 +176,15 @@ class GIDCollection(object):
             param = params[0]
             if nest.is_literal(param):
                 cmd = '/{} get'.format(param)
+                nest.sps(self._datum)
+                nest.sr(cmd)
+                return nest.spp()
             elif nest.is_iterable(param):
-                params_str = ' '.join('/{}'.format(p) for p in param)
-                cmd = '[ {} ] get'.format(params_str)
+                return {param_name: self.get(param_name)
+                        for param_name in param}
             else:
                 raise TypeError("Params should be either a string or an iterable")
-            nest.sps(self._datum)
-            nest.sr(cmd)
-            return nest.spp()
+
         else: # Hierarchical addressing (brutal implementation)
             first = True
             for param in params[:-1]:

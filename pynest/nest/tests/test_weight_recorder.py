@@ -219,12 +219,12 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec")
         nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec")
         nest.Connect(sg, pre)
-        
+
         conn = nest.GetConnections(pre, post)
         sources = conn.get('source')
         targets = conn.get('target')
         ports = conn.get('port')
-        
+
         connections = [(sources[i], targets[i], ports[i]) for i in
                        range(len(conn))]
 

@@ -52,7 +52,7 @@ class GetConnectionsTestCase(unittest.TestCase):
 
         c4 = nest.GetConnections()
         self.assertEqual(c1, c4)
-        
+
         weights = (11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
         d1 = tuple({"weight": w} for w in weights)
 

@@ -85,7 +85,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                          {"model": syn, "synapse_label": 123})
             c = nest.GetConnections(a, a)
             self.assertTrue(
-                all([ x == 123 for x in c.get('synapse_label')])
+                all([x == 123 for x in c.get('synapse_label')])
             )
 
     def test_SetLabelToSynapseSetStatus(self):
@@ -105,13 +105,13 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             c = nest.GetConnections(a, a)
             # still unlabeled
             self.assertTrue(
-                all([ x == -1 for x in c.get('synapse_label')])
+                all([x == -1 for x in c.get('synapse_label')])
             )
 
             # set a label
             c.set({'synapse_label': 123})
             self.assertTrue(
-                all([ x == 123 for x in c.get('synapse_label')])
+                all([x == 123 for x in c.get('synapse_label')])
             )
 
     def test_SetLabelToSynapseSetDefaults(self):
@@ -131,7 +131,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                          {"model": syn})
             c = nest.GetConnections(a, a)
             self.assertTrue(
-                all([ x == 123 for x in c.get('synapse_label')])
+                all([x == 123 for x in c.get('synapse_label')])
             )
 
     def test_GetLabeledSynapses(self):
@@ -158,7 +158,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                          {"model": syn, "synapse_label": 123})
             c = nest.GetConnections(a, a, synapse_label=123)
             self.assertTrue(
-                all([ x == 123 for x in c.get('synapse_label')])
+                all([x == 123 for x in c.get('synapse_label')])
             )
 
     def test_SetLabelToNotLabeledSynapse(self):

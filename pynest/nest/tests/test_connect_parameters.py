@@ -129,7 +129,8 @@ class TestParams(unittest.TestCase):
         self.assertTrue(all(x == self.w0 for x in conns.get('weight')))
         self.assertTrue(all(x == self.d0 for x in conns.get('delay')))
         self.assertTrue(all(x == self.r0 for x in conns.get('receptor')))
-        self.assertTrue(all(x == self.syn0 for x in conns.get('synapse_model')))
+        self.assertTrue(all(x == self.syn0 for
+                            x in conns.get('synapse_model')))
 
     def testAutapses(self):
         conn_params = self.conn_dict.copy()

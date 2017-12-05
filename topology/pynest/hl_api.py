@@ -55,8 +55,7 @@ using the same dictionary to specify both connections.
     connects the same layers, but the `layers[0]` to `layers[1]` connection
     is specified by the first dictionary, the `layers[1]` to `layers[2]`
     connection by the second.
-    
-    
+
 Functions in the Topology module:
   - CreateMask(masktype, specs, anchor=None)
   - CreateParameter(parametertype, specs)
@@ -224,6 +223,7 @@ def CreateMask(masktype, specs, anchor=None):
         return nest.sli_func('CreateMask', {masktype: specs})
     else:
         return nest.sli_func('CreateMask', {masktype: specs, 'anchor': anchor})
+
 
 def CreateParameter(parametertype, specs):
     """
@@ -649,6 +649,7 @@ def ConnectLayers(pre, post, projections):
 
     nest.sli_func('ConnectLayers', pre, post, projections)
 
+
 def GetPosition(nodes):
     """
     Return the spatial locations of nodes.
@@ -712,6 +713,7 @@ def GetPosition(nodes):
 
     return nest.sli_func('GetPosition', nodes)
 
+
 def Displacement(from_arg, to_arg):
     """
     Get vector of lateral displacement from node(s) `from_arg`
@@ -721,71 +723,73 @@ def Displacement(from_arg, to_arg):
     periodic boundary conditions where applicable. If explicit positions
     are given in the `from_arg` list, they are interpreted in the `to_arg`
     layer.
-    
+
     * If one of `from_arg` or `to_arg` has length 1, and the other is longer,
       the displacement from/to the single item to all other items is given.
     * If `from_arg` and `to_arg` both have more than two elements, they have
       to be GIDCollections of the same length and the displacement for each
       pair is returned.
-    
-    
+
+
     Parameters
     ----------
     from_arg : GIDCollection
         GIDCollection of GIDs
     to_arg : GIDCollection
         GIDCollection of GIDs
-    
-    
+
+
     Returns
     -------
     out : tuple
         Displacement vectors between pairs of nodes in `from_arg` and `to_arg`
-    
-    
+
+
     See also
     --------
     Distance : Get lateral distances between nodes.
     DumpLayerConnections : Write connectivity information to file.
     GetPosition : Return the spatial locations of nodes.
-    
-    
+
+
     Notes
     -----
     * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
       only works for nodes local to the current MPI process, if used in a
       MPI-parallel simulation.
-    
-    
+
+
     **Example**
         ::
-    
+
             import nest.topology as tp
-    
+
             # create a layer
             l = tp.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
                                 'elements'  : 'iaf_psc_alpha'})
-    
+
             # displacement between node 2 and 3
             print(Displacement(l[1:2], l[2:3]))
 
             # displacment between the position (0.0., 0.0) and node 2
             print(Displacement([(0.0, 0.0)], l[1:2]))
-    """    
+    """
     if not isinstance(to_arg, nest.GIDCollection):
         raise TypeError("to_arg must be a GIDCollection")
-    
+
     import numpy
-    
+
     if isinstance(from_arg, numpy.ndarray):
         from_arg = (from_arg, )
-    
-    if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(to_arg):
+
+    if (len(from_arg) > 1 and len(to_arg) > 1 and not
+            len(from_arg) == len(to_arg)):
         raise nest.NESTError(
             "to_arg and from_arg must have same size unless one have size 1.")
-    
+
     return nest.sli_func('Displacement', from_arg, to_arg)
+
 
 def Distance(from_arg, to_arg):
     """
@@ -848,20 +852,22 @@ def Distance(from_arg, to_arg):
             # distance between the position (0.0., 0.0) and node 2
             print(l.Distance([(0.0, 0.0)], l[1:2]))
 
-    """    
+    """
     if not isinstance(to_arg, nest.GIDCollection):
         raise TypeError("to_arg must be a GIDCollection")
 
     import numpy
-    
+
     if isinstance(from_arg, numpy.ndarray):
         from_arg = (from_arg, )
-        
-    if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(to_arg):
+
+    if (len(from_arg) > 1 and len(to_arg) > 1 and not
+            len(from_arg) == len(to_arg)):
         raise nest.NESTError(
             "to_arg and from_arg must have same size unless one have size 1.")
-        
+
     return nest.sli_func('Distance', from_arg, to_arg)
+
 
 def FindNearestElement(layer, locations, find_all=False):
     """
@@ -921,7 +927,7 @@ def FindNearestElement(layer, locations, find_all=False):
     """
 
     import numpy
-    
+
     if not isinstance(layer, nest.GIDCollection):
         raise TypeError("layer must be a GIDCollection")
 
@@ -937,7 +943,7 @@ def FindNearestElement(layer, locations, find_all=False):
         locations = (locations, )
 
     result = []
-    
+
     for loc in locations:
         d = Distance(numpy.array(loc), layer)
 
@@ -954,7 +960,7 @@ def FindNearestElement(layer, locations, find_all=False):
                 elif numpy.abs(d[idx] - minval) <= 1e-14 * minval:
                     mingids.append(layer[idx])
             result.append(tuple(mingids))
-            
+
     return tuple(result)
 
 
@@ -1116,7 +1122,8 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
                   cvlit /synmod Set
                   /lyr_target Set
                   /lyr_source Set
-                  oname (w) file lyr_target lyr_source synmod DumpLayerConnections close
+                  oname (w) file lyr_target lyr_source synmod
+                  DumpLayerConnections close
                   """,
                   source_layer, target_layer, synapse_model,
                   _rank_specific_filename(outname))
@@ -1319,7 +1326,7 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
     """
     if not isinstance(sources, nest.GIDCollection):
         raise ValueError("sources must be a GIDCollection.")
-    
+
     # TODO481 some sort of list comprehension
     result = []
     for nodes in GetTargetNodes(sources, tgt_layer, syn_model):
@@ -1329,7 +1336,7 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
             gc = tgt_layer[index:index + 1]
             gp = GetPosition(gc)
             node_results.append(gp)
-        result.append( node_results )
+        result.append(node_results)
     return result
 
 
@@ -1541,7 +1548,7 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     """
 
     import matplotlib.pyplot as plt
-    
+
     if not isinstance(src_nrn, nest.GIDCollection) and len(src_nrn) != 1:
         raise ValueError("src_nrn must be a single element GIDCollection.")
     if not isinstance(tgt_layer, nest.GIDCollection):
@@ -1699,7 +1706,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     import matplotlib
     import matplotlib.pyplot as plt
     import numpy as np
-    
+
     if not isinstance(src_nrn, nest.GIDCollection) and len(src_nrn) != 1:
         raise ValueError("src_nrn must be a single element GIDCollection.")
 

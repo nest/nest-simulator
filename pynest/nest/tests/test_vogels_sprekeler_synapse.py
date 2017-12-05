@@ -210,7 +210,7 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
         conn = nest.GetConnections(target=self.post_neuron,
                                    source=self.pre_neuron)
         # disable depression to make it get to max weight
-        # increase eta to cause enough facilitation        
+        # increase eta to cause enough facilitation
         conn.set("Wmax", limited_weight)
         conn.set("eta", 5.)
         conn.set("alpha", 0.)

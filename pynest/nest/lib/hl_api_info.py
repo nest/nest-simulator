@@ -188,13 +188,14 @@ def SetStatus(nodes, params, val=None):
         Description
     """
 
-    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, nest.Connectome)):
+    if not (isinstance(nodes, nest.GIDCollection) or
+            isinstance(nodes, nest.Connectome)):
         try:
             nodes = nest.GIDCollection(nodes)
         except nest.NESTError:
             raise TypeError("The first input (nodes) must be GIDCollection, "
-                            "convertible to GIDCollection or a Connectome with "
-                            "connection handles ")
+                            "convertible to GIDCollection or a Connectome "
+                            "with connection handles ")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty list,
@@ -210,7 +211,8 @@ def SetStatus(nodes, params, val=None):
         else:
             params = {params: val}
 
-    if (isinstance(params, list) and len(nodes) != len(params)) or (isinstance(params, tuple) and len(nodes) != len(params)):
+    if ((isinstance(params, list) and len(nodes) != len(params)) or
+            (isinstance(params, tuple) and len(nodes) != len(params))):
         raise TypeError(
             "status dict must be a dict, or a list of dicts of length "
             "len(nodes)")
@@ -268,13 +270,14 @@ def GetStatus(nodes, keys=None):
         Description
     """
 
-    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, nest.Connectome)):
+    if not (isinstance(nodes, nest.GIDCollection) or
+            isinstance(nodes, nest.Connectome)):
         try:
             nodes = nest.GIDCollection(nodes)
         except nest.NESTError:
             raise TypeError("The first input (nodes) must be GIDCollection, "
-                            "convertible to GIDCollection or a Connectome with "
-                            "connection handles ")
+                            "convertible to GIDCollection or a Connectome "
+                            "with connection handles ")
 
     if len(nodes) == 0:
         return nodes
@@ -292,9 +295,9 @@ def GetStatus(nodes, keys=None):
     sps(nodes)
 
     sr(cmd)
-    
+
     result = spp()
-    
+
     if isinstance(result, dict):
         # We have taken GetStatus on a layer object, or another GIDCollection
         # with metadata, which returns a dictionary from C++, so we need to
@@ -302,4 +305,3 @@ def GetStatus(nodes, keys=None):
         result = (result,)
 
     return result
-

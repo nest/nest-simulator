@@ -400,7 +400,7 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(thread, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
         self.assertEqual(vp, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
-        g_reference = {'GID':(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+        g_reference = {'GID': (1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
                        'local': (True, True, True, True, True,
                                  True, True, True, True, True),
                        'thread': (0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -458,14 +458,14 @@ class TestGIDCollection(unittest.TestCase):
         # Now check that it works with sliced GIDCollections
         nest.ResetKernel()
         nodes = nest.Create('iaf_psc_alpha', 10)
-        
-        nodes[2:5].set(({'V_m': -50.0}, {'V_m': -40.0}, {'V_m':-30.0}))
+
+        nodes[2:5].set(({'V_m': -50.0}, {'V_m': -40.0}, {'V_m': -30.0}))
         nodes[5:7].set({'t_ref': 4.4, 'tau_m': 3.0})
         nodes[2:9:2].set('C_m', 111.0)
         V_m = nodes.get('V_m')['V_m']
         g = nodes.get(['t_ref', 'tau_m'])
         C_m = nodes.get('C_m')['C_m']
-        
+
         self.assertEqual(V_m, (-70.0, -70.0, -50.0, -40.0, -30.0,
                                -70.0, -70.0, -70.0, -70.0, -70.0,))
         self.assertEqual(g, {'GID': (1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
@@ -514,7 +514,7 @@ class TestGIDCollection(unittest.TestCase):
         wr = nest.Create('weight_recorder')
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
-        
+
         # Senders and targets lists empty
         self.assertFalse(nest.GetStatus(wr, "senders")[0])
         self.assertFalse(nest.GetStatus(wr, "targets")[0])

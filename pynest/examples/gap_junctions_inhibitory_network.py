@@ -112,7 +112,7 @@ membrane potential of each neuron is set randomly between -40 and -80 mV.
 nest.Connect(neurons, sd)
 
 for i in range(n_neuron):
-    nest.SetStatus([neurons[i]], {'V_m': (-40. - 40. * random.random())})
+    nest.SetStatus(neurons[i], {'V_m': (-40. - 40. * random.random())})
 
 """
 Finally gap junctions are added to the network.

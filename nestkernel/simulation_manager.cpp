@@ -722,12 +722,12 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   {
     kernel().connection_manager.compute_target_data_buffer_size();
     kernel().event_delivery_manager.configure_target_data_buffers();
-  }
 
-  // check whether primary and secondary connections exists on any
-  // compute node
-  kernel().connection_manager.check_primary_connections_exist();
-  kernel().connection_manager.check_secondary_connections_exist();
+    // check whether primary and secondary connections exists on any
+    // compute node
+    kernel().connection_manager.check_primary_connections_exist();
+    kernel().connection_manager.check_secondary_connections_exist();
+  }
 
   if ( kernel().connection_manager.secondary_connections_exist() )
   {

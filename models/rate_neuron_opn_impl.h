@@ -360,13 +360,13 @@ nest::rate_neuron_opn< TGainfunction >::handle( DelayedRateConnectionEvent& e )
     if ( P_.linear_summation_ )
     {
       B_.delayed_rates_.add_value(
-        e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+        e.get_delay() + i,
         e.get_weight() * e.get_coeffvalue( it ) );
     }
     else
     {
       B_.delayed_rates_.add_value(
-        e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+        e.get_delay() + i,
         e.get_weight() * gain_( e.get_coeffvalue( it ) ) );
     }
     ++i;

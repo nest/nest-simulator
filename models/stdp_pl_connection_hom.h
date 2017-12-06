@@ -274,6 +274,8 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
 
   Kplus_ =
     Kplus_ * std::exp( ( t_lastspike_ - t_spike ) * cp.tau_plus_inv_ ) + 1.0;
+
+  t_lastspike_ = t_spike;
 }
 
 template < typename targetidentifierT >

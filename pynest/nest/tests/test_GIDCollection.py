@@ -32,6 +32,7 @@ class TestGIDCollection(unittest.TestCase):
     """GIDCollection tests"""
 
     def setUp(self):
+        nest.set_verbosity('M_FATAL')
         nest.ResetKernel()
 
     def test_GIDCollection_to_list(self):

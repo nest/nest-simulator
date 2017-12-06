@@ -49,7 +49,7 @@ VPManager::is_local_vp( thread vp ) const
 inline thread
 VPManager::suggest_vp( index gid ) const
 {
-  return gid % ( get_num_virtual_processes() );
+  return gid % get_num_virtual_processes();
 }
 
 inline thread

@@ -1679,7 +1679,7 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
 
 // TODO@5gNOW: pass recv_buffer as const reference
 bool
-nest::ConnectionManager::deliver_secondary_events( const thread tid,
+nest::ConnectionManager::deliver_secondary_events( const thread tid, const bool called_from_wfr_update,
   std::vector< unsigned int >& recv_buffer )
 {
   const Time stamp = kernel().simulation_manager.get_slice_origin() + Time::step( 1 );
@@ -1687,28 +1687,31 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
         syn_id < ( *secondary_recv_buffer_pos_[ tid ] ).size();
         ++syn_id )
   {
-    if ( ( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] != NULL )
+    if ( not called_from_wfr_update or ( called_from_wfr_update and kernel().model_manager.get_synapse_prototypes( tid )[ syn_id ]->supports_wfr() ) )
     {
-      SecondaryEvent& prototype = kernel().model_manager.get_secondary_event_prototype( syn_id, tid );
-
-      index lcid = 0;
-      while ( lcid < ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] ).size() )
+      if ( ( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] != NULL )
       {
-        std::vector< unsigned int >::iterator readpos = recv_buffer.begin()
-          + ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] )[ lcid ];
-        prototype << readpos;
-        prototype.set_stamp( stamp );
+        SecondaryEvent& prototype = kernel().model_manager.get_secondary_event_prototype( syn_id, tid );
 
-        while( ( *( *connections_5g_[ tid ] )[ syn_id ])
-               .send( tid,
-                      syn_id,
-                      lcid,
-                      prototype,
-                      kernel().model_manager.get_synapse_prototypes( tid ) ) )
+        index lcid = 0;
+        while ( lcid < ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] ).size() )
         {
+          std::vector< unsigned int >::iterator readpos = recv_buffer.begin()
+            + ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] )[ lcid ];
+          prototype << readpos;
+          prototype.set_stamp( stamp );
+
+          while( ( *( *connections_5g_[ tid ] )[ syn_id ])
+                 .send( tid,
+                        syn_id,
+                        lcid,
+                        prototype,
+                        kernel().model_manager.get_synapse_prototypes( tid ) ) )
+          {
+            ++lcid;
+          }
           ++lcid;
         }
-        ++lcid;
       }
     }
   }

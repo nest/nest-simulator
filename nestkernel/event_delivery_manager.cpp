@@ -357,10 +357,10 @@ EventDeliveryManager::gather_secondary_events( const bool done )
 }
 
 bool
-EventDeliveryManager::deliver_secondary_events( const thread tid )
+EventDeliveryManager::deliver_secondary_events( const thread tid, const bool called_from_wfr_update )
 {
   return kernel().connection_manager.deliver_secondary_events(
-    tid, recv_buffer_secondary_events_ );
+    tid, called_from_wfr_update, recv_buffer_secondary_events_ );
 }
 
 void

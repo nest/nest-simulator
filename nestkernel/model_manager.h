@@ -187,7 +187,7 @@ public:
    */
   template < typename ConnectionT >
   void register_connection_model( const std::string& name,
-    bool requires_symmetric = false );
+    const bool requires_symmetric = false );
 
   /**
    * Register a synape model with a custom Connector model and without any
@@ -196,12 +196,13 @@ public:
    */
   template < typename ConnectionT, template < typename > class ConnectorModelT >
   void register_connection_model( const std::string& name,
-    bool requires_symmetric = false );
+    const bool requires_symmetric = false );
 
   template < typename ConnectionT >
   void register_secondary_connection_model( const std::string& name,
-    bool has_delay = true,
-    bool requires_symmetric = false );
+    const bool has_delay = true,
+    const bool requires_symmetric = false,
+    const bool supports_wfr = true );
 
   /**
    * @return The model id of a given model name

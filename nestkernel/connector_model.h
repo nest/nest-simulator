@@ -50,9 +50,10 @@ class ConnectorModel
 
 public:
   ConnectorModel( const std::string,
-    bool is_primary,
-    bool has_delay,
-    bool requires_symmetric );
+    const bool is_primary,
+    const bool has_delay,
+    const bool requires_symmetric,
+    const bool supports_wfr );
   ConnectorModel( const ConnectorModel&, const std::string );
   virtual ~ConnectorModel()
   {
@@ -120,6 +121,12 @@ public:
     return requires_symmetric_;
   }
 
+  bool
+  supports_wfr() const
+  {
+    return supports_wfr_;
+  }
+
 protected:
   std::string name_;
   //! Flag indicating, that the default delay must be checked
@@ -129,6 +136,7 @@ protected:
   bool has_delay_; //!< indicates, that ConnectorModel has a delay
   bool requires_symmetric_;
   //!< indicates, that ConnectorModel requires symmetric connections
+  bool supports_wfr_; //!< whether connection can be used during wfr update
 
 }; // ConnectorModel
 
@@ -148,8 +156,9 @@ public:
   GenericConnectorModel( const std::string name,
     bool is_primary,
     bool has_delay,
-    bool requires_symmetric )
-    : ConnectorModel( name, is_primary, has_delay, requires_symmetric )
+    bool requires_symmetric,
+    bool supports_wfr )
+    : ConnectorModel( name, is_primary, has_delay, requires_symmetric, supports_wfr )
     , receptor_type_( 0 )
   {
   }
@@ -247,12 +256,14 @@ private:
 
 public:
   GenericSecondaryConnectorModel( const std::string name,
-    bool has_delay,
-    bool requires_symmetric )
+    const bool has_delay,
+    const bool requires_symmetric,
+    const bool supports_wfr )
     : GenericConnectorModel< ConnectionT >( name,
         /*is _primary=*/false,
         has_delay,
-        requires_symmetric )
+        requires_symmetric,
+        supports_wfr )
     , pev_( 0 )
   {
     pev_ = new typename ConnectionT::EventType();
@@ -299,6 +310,7 @@ public:
   {
     return pev_;
   }
+
 };
 
 } // namespace nest

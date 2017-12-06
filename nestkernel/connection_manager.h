@@ -420,7 +420,7 @@ public:
     const synindex syn_id,
     const index lcid ) const;
 
-  bool deliver_secondary_events( const thread tid,
+  bool deliver_secondary_events( const thread tid, const bool called_from_wfr_update,
     std::vector< unsigned int >& recv_buffer );
 
   void compress_secondary_send_buffer_pos( const thread tid );

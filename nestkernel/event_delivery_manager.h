@@ -249,7 +249,7 @@ public:
 
   void gather_secondary_events( const bool done );
 
-  bool deliver_secondary_events( const thread tid );
+  bool deliver_secondary_events( const thread tid, const bool called_from_wfr_update );
 
   /**
    * Update table of fixed modulos, including slice-based.

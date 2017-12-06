@@ -918,7 +918,7 @@ nest::SimulationManager::update_()
           // deliver SecondaryEvents generated during wfr_update
           // returns the done value over all threads
           done_p =
-            kernel().event_delivery_manager.deliver_secondary_events( tid );
+            kernel().event_delivery_manager.deliver_secondary_events( tid, true );
 
           if ( done_p )
           {
@@ -994,7 +994,7 @@ nest::SimulationManager::update_()
           {
             kernel().event_delivery_manager.gather_secondary_events( true );
           }
-          kernel().event_delivery_manager.deliver_secondary_events( tid );
+          kernel().event_delivery_manager.deliver_secondary_events( tid, false );
         }
       }
 

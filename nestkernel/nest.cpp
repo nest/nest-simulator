@@ -90,26 +90,6 @@ print_nodes_to_stream( std::ostream& ostr )
 }
 
 librandom::RngPtr
-get_vp_rng_of_gid( index target )
-{
-  Node* target_node = kernel().node_manager.get_node_or_proxy( target );
-
-  if ( not kernel().node_manager.is_local_node( target_node ) )
-  {
-    throw LocalNodeExpected( target );
-  }
-
-  // Only nodes with proxies have a well-defined VP and thus thread.
-  // Asking for the VP of, e.g., a subnet or spike_detector is meaningless.
-  if ( not target_node->has_proxies() )
-  {
-    throw NodeWithProxiesExpected( target );
-  }
-
-  return kernel().rng_manager.get_rng( target_node->get_thread() );
-}
-
-librandom::RngPtr
 get_vp_rng( thread tid )
 {
   assert( tid >= 0 );

@@ -247,11 +247,12 @@ statusdict/userargs :: size 1 geq
       (Configuring neuron parameters.) =
       /u0_delta u0_max u0_min sub def    
 
+      GetGlobalRNG /rng Set % RNG for drawing random membrane potentials
+
       allNeurons   
       {
         dup GetStatus /local get
         {
-      	  dup GetVpRNG /rng Set	  % RNG for VP to which neuron belongs
           << /V_m u0_min u0_delta rng drand mul add >> SetStatus
         } if
       } forall

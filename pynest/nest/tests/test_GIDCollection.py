@@ -490,8 +490,8 @@ class TestGIDCollection(unittest.TestCase):
 
         self.assertEqual(get_conn_all, get_conn)
 
-        compare_source = (1, 1, 1, 3, 3, 3)
-        compare_target = (1, 2, 3, 1, 2, 3)
+        compare_source = [1, 1, 1, 3, 3, 3]
+        compare_target = [1, 2, 3, 1, 2, 3]
         self.assertEqual(get_conn_list.get('source'), compare_source)
         self.assertEqual(get_conn_list.get('target'), compare_target)
 

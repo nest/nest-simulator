@@ -59,7 +59,7 @@ class GetConnectionsTestCase(unittest.TestCase):
         c5 = nest.GetConnections(a, a)
         c5.set(d1)
         s2 = c5.get('weight')
-        self.assertEqual(s2, weights)
+        self.assertEqual(s2, list(weights))
 
         c6 = nest.GetConnections()
         self.assertEqual(c1, c6)

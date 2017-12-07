@@ -53,7 +53,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         nest.Connect(pre, post, "one_to_one", syn_spec={"weight": 2.0})
         connections = nest.GetConnections(pre)
         weights = connections.get("weight")
-        self.assertEqual(weights, (2.0, 2.0))
+        self.assertEqual(weights, [2.0, 2.0])
 
         # Connect([pre], [post], [params, params])
         nest.ResetKernel()
@@ -63,7 +63,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
                      syn_spec={"weight": [2.0, 3.0]})
         connections = nest.GetConnections(pre)
         weights = connections.get("weight")
-        self.assertEqual(weights, (2.0, 3.0))
+        self.assertEqual(weights, [2.0, 3.0])
 
     def test_ConnectPrePostWD(self):
         """Connect pre to post with a weight and delay"""
@@ -77,8 +77,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
         connections = nest.GetConnections(pre)
         weights = connections.get("weight")
         delays = connections.get("delay")
-        self.assertEqual(weights, (2.0, 2.0))
-        self.assertEqual(delays, (2.0, 2.0))
+        self.assertEqual(weights, [2.0, 2.0])
+        self.assertEqual(delays, [2.0, 2.0])
 
         # Connect([pre], [post], [w, w], [d, d])
         nest.ResetKernel()
@@ -89,8 +89,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
         connections = nest.GetConnections(pre)
         weights = connections.get("weight")
         delays = connections.get("delay")
-        self.assertEqual(weights, (2.0, 3.0))
-        self.assertEqual(delays, (2.0, 3.0))
+        self.assertEqual(weights, [2.0, 3.0])
+        self.assertEqual(delays, [2.0, 3.0])
 
     def test_IllegalConnection(self):
         """Wrong Connections"""

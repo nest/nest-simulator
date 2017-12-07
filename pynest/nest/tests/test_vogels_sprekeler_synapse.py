@@ -68,7 +68,7 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
         """Get synapse parameter status."""
         stats = nest.GetConnections(self.pre_neuron,
                                     synapse_model=self.synapse_model)
-        return stats.get(which)[0]
+        return stats.get(which)
 
     def decay(self, time, Kvalue):
         """Decay variables."""

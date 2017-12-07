@@ -35,14 +35,24 @@
 namespace nest
 {
 /**
- * @note There are two class templates. The first is the original
- *       UniversalDataLogger implementation, which uses the class
- *       RecordablesMap, and the node_access_ callables are pointers to
- *       member functions of HostNode, that take no arguments and return
- *       a double.
- *       The second class is a new implementation that uses the
- *       DynamicRecordablesMap class, and the node_access_ callables are
- *       instances of HostNode::DataAccessFunctor class.
+ * @note There are two data logger class templates. The UniversalDataLogger
+ *       class template is connected and populated using a RecordablesMap
+ *       instance. The DynamicUniversalDataLogger class templated is
+ *       connected and populated using a DynamicRecordablesMap instance.
+ *       Conceptually the difference is that neurons that have a
+ *       RecordablesMap instance, have a static number of state variables
+ *       that can be recorded, while neurons with DynamicRecordablesMap
+ *       can vary the number of recordable state variables at runtime.
+ *       This is the main feature of multisynapse neurons where the
+ *       number of conductance channels can change at runtime, and thus
+ *       the number of recordable variables also changes.
+ *       The technical difference between the UniversalDataLogger and
+ *       DynamicUniversalDataLogger is that the way in which the neuron's
+ *       state is accessed is different. In the former class, the data is
+ *       accessed using a call to a static function pointer stored in
+ *       the neurons RecordablesMap. In the latter class, the data is
+ *       accessed through a functor call that holds a reference to the
+ *       neuron's id and the recorded state variable's index.
  */
 
 /**
@@ -51,7 +61,9 @@ namespace nest
  * This class provides logging of universal data such as
  * membrane potentials or conductances in a way that is
  * compatible with the DataLoggingRequest/DataLoggingReply
- * read-out mechanism.
+ * read-out mechanism. It is intended to be used by neuron models
+ * that have static recordable state variables, i.e. all models except
+ * multisynapse models.
  *
  * The logger must be informed about any incoming DataLoggingRequest
  * connections by calling connect_logging_device(). All incoming
@@ -305,13 +317,20 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_(
 
 
 /**
- * Universal data-logging plug-in for neuron models.
+ * Dynamic Universal data-logging plug-in for multisynapse neuron models.
  *
  * This class provides logging of universal data such as
  * membrane potentials or conductances in a way that is
  * compatible with the DataLoggingRequest/DataLoggingReply
- * read-out mechanism. It can handle logging multisynapse conductances,
- * which was not possible with the previous implementation.
+ * read-out mechanism. It is intended to handle logging of multisynapse
+ * neuron conductances because it interacts with DynamicRecordablesMap
+ * instances instead of RecordablesMap's. The difference is that
+ * the DynamicalRecordablesMap stores DataAccessFunctor instances instead
+ * of static function pointers. This allows the data accessor to select
+ * the state variable that will be recorded at runtime, instead of at
+ * compile time. This enables the DynamicUniversalDataLogger to be
+ * connected to a variable number of conductance channels that are set
+ * at runtime.
  *
  * The logger must be informed about any incoming DataLoggingRequest
  * connections by calling connect_logging_device(). All incoming

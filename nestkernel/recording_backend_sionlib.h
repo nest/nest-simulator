@@ -154,6 +154,7 @@ private:
   file_map files_;
 
   std::string filename_;
+  MPI_Comm local_comm_;
 
   double t_start_; // simulation start time for storing
 

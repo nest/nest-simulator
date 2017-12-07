@@ -100,11 +100,11 @@ nest::RecordingBackendSIONlib::open_files_()
     return;
   }
     
-  MPI_Comm local_comm = MPI_COMM_NULL;
+  local_comm_ = MPI_COMM_NULL;
 #ifdef BG_MULTIFILE
-#pragma omp single copyprivate (local_comm)
+#pragma omp single
   {
-    MPIX_Pset_same_comm_create( &local_comm );
+    MPIX_Pset_same_comm_create( &local_comm_ );
   }
 #endif // BG_MULTIFILE
 
@@ -159,7 +159,7 @@ nest::RecordingBackendSIONlib::open_files_()
       P_.sion_collective_ ? "bw,cmerge,collsize=-1" : "bw",
       &n_files,
       MPI_COMM_WORLD,
-      &local_comm,
+      &local_comm_,
       &sion_chunksize,
       &fs_block_size,
       &rank,

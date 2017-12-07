@@ -25,6 +25,7 @@ GIDCollection tests
 
 import unittest
 import nest
+import numpy as np
 
 
 @nest.check_stack
@@ -418,6 +419,53 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(V_m, (-70.0, -70.0, -70.0))
         self.assertEqual(g['t_ref'], (2.0, 2.0))
         self.assertEqual(C_m, (250.0, 250.0, 250.0, 250.0))
+
+        # Testing different input for different sizes of GIDCollections
+        single_sd = nest.Create('spike_detector', 1)
+        multi_sd = nest.Create('spike_detector', 10)
+        empty_array_float = np.array([], dtype=np.float64)
+        empty_array_int = np.array([], dtype=np.int64)
+
+        # Single node, literal parameter
+        self.assertEqual(single_sd.get('start'), 0.0)
+
+        # Single node, array parameter
+        self.assertEqual(single_sd.get(['start', 'to_file']),
+                         {'start': 0.0, 'to_file': False})
+
+        # Single node, hierarchical with literal parameter
+        np.testing.assert_array_equal(single_sd.get('events', 'times'),
+                                      empty_array_float)
+
+        # Multiple nodes, hierarchical with literal parameter
+        values = multi_sd.get('events', 'times')
+        for v in values:
+            np.testing.assert_array_equal(v, empty_array_float)
+
+        # Single node, hierarchical with array parameter
+        values = single_sd.get('events', ['senders', 'times'])
+        self.assertEqual(values.keys(), ['senders', 'times'])
+        np.testing.assert_array_equal(values['senders'], empty_array_int)
+        np.testing.assert_array_equal(values['times'], empty_array_float)
+
+        # Multiple nodes, hierarchical with array parameter
+        values = multi_sd.get('events', ['senders', 'times'])
+        self.assertEqual(len(values), len(multi_sd))
+        for v in values:
+            self.assertEqual(v.keys(), ['senders', 'times'])
+            np.testing.assert_array_equal(v['senders'], empty_array_int)
+            np.testing.assert_array_equal(v['times'], empty_array_float)
+
+        # Single node, no parameter (gets all values)
+        values = single_sd.get()
+        self.assertEqual(len(values.keys()), 38)
+        self.assertEqual(values['start'], (0.0,))
+
+        # Multiple nodes, no parameter (gets all values)
+        values = multi_sd.get()
+        self.assertEqual(len(values.keys()), 38)
+        self.assertEqual(values['start'],
+                         tuple(0.0 for i in range(len(multi_sd))))
 
     def test_set(self):
         """

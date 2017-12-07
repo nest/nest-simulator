@@ -111,6 +111,16 @@ class GetSetTestCase(unittest.TestCase):
         with self.assertRaises(nest.NESTError):
             self.layer.get('V_m')
 
+        # Test get all values
+        all_values = self.layer.get()
+        self.assertEqual(len(all_values.keys()), 7)
+        self.assertEqual(all_values['center'], (0.0, 0.0))
+        self.assertEqual(all_values['columns'], 3)
+        self.assertTrue(all_values['edge_wrap'])
+        self.assertEqual(all_values['extent'], (2., 2.))
+        self.assertEqual(all_values['network_size'], 9)
+        self.assertEqual(all_values['rows'], 3)
+
     def test_LayerSet(self):
         """Test set function on layer GIDCollection."""
 

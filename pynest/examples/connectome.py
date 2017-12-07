@@ -56,9 +56,10 @@ nrns = nest.Create('iaf_psc_alpha', 10)
 nest.Connect(nrns, nrns, 'one_to_one')
 conns = nest.GetConnections(nrns, nrns)  # This returns a Connectome
 # We can get desired information of the Connectome with simple get() calls.
-srcs = conns.get('source')
-tgts = conns.get('target')
-wghts = conns.get('weight')
+g = conns.get(['source', 'target', 'weight'])
+srcs = g['source']
+tgts = g['target']
+wghts = g['weight']
 
 # Plot the matrix consisting of the weights between the sources and targets
 plt.figure(figsize=(12, 10))
@@ -141,9 +142,10 @@ nest.Connect(nrns, nrns[12:],
 
 # First get a Connectome consisting of all the connections
 conns = nest.GetConnections()
-srcs = conns.get('source')
-tgts = conns.get('target')
-wghts = conns.get('weight')
+g = conns.get(['source', 'target', 'weight'])
+srcs = g['source']
+tgts = g['target']
+wghts = g['weight']
 
 plt.figure(figsize=(14, 12))
 plt.subplot(221)
@@ -157,9 +159,10 @@ plt.colorbar()
 
 # Get Connectome consisting of a subset of connections
 conns = nest.GetConnections(nrns[:10], nrns[:10])
-srcs = conns.get('source')
-tgts = conns.get('target')
-wghts = conns.get('weight')
+g = conns.get(['source', 'target', 'weight'])
+srcs = g['source']
+tgts = g['target']
+wghts = g['weight']
 
 plt.subplot(222)
 plt.matshow(makeMatrix(srcs, tgts, wghts), fignum=False, aspect='auto')
@@ -172,9 +175,10 @@ plt.colorbar()
 
 # Get Connectome consisting of just the stdp_synapses
 conns = nest.GetConnections(synapse_model='stdp_synapse')
-srcs = conns.get('source')
-tgts = conns.get('target')
-wghts = conns.get('weight')
+g = conns.get(['source', 'target', 'weight'])
+srcs = g['source']
+tgts = g['target']
+wghts = g['weight']
 
 plt.subplot(223)
 plt.matshow(makeMatrix(srcs, tgts, wghts), fignum=False, aspect='auto')
@@ -190,9 +194,10 @@ plt.colorbar()
 conns = nest.GetConnections(nrns[5:10], nrns[:5])
 w = [{'weight': x*1.0} for x in range(1, 6)]
 conns.set(w)
-srcs = conns.get('source')
-tgts = conns.get('target')
-wghts = conns.get('weight')
+g = conns.get(['source', 'target', 'weight'])
+srcs = g['source']
+tgts = g['target']
+wghts = g['weight']
 
 plt.subplot(224)
 plt.matshow(makeMatrix(srcs, tgts, wghts), fignum=False, aspect='auto')

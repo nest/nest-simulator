@@ -285,19 +285,19 @@ class Connectome(object):
 
     def get(self, keys=None):
         """
-        NB! This is the same implementation as GetStatus
+        Return the parameter dictionary of connections.
 
-        Return the parameter dictionaries of connections.
-
-        If keys is given, a list of values is returned instead. keys may also
-        be a list, in which case the returned list contains lists of values.
+        If keys is a string, a list of values is returned, unless we have a
+        single ConnectionDatum, in which case the single value is returned.
+        keys may also be a list, in which case a dictionary with a list of
+        values is returned.
 
         Parameters
         ----------
         keys : str or list, optional
-            String or a list of strings naming model properties. GetDefaults
-            then returns a single value or a list of values belonging to the
-            keys given.
+            String or a list of strings naming model properties. get
+            then returns a single value or a dictionary with lists of values
+            belonging to the keys given.
 
         Returns
         -------
@@ -306,8 +306,8 @@ class Connectome(object):
         type:
             If keys is a string, the corrsponding default parameter is returned
         list:
-            If keys is a list of strings, a list of corrsponding default
-            parameters is returned
+            If keys is a list of strings, a dictionary with a list of
+            corresponding parameters is returned
 
         Raises
         ------
@@ -328,10 +328,44 @@ class Connectome(object):
             raise TypeError("keys should be either a string or an iterable")
 
         nest.sps(self._datum)
-
         nest.sr(cmd)
+        result = nest.spp()
 
-        return nest.spp()
+        # Need to restructure thre data.
+        if nest.is_literal(keys):
+            final_result = result[0] if self.__len__() == 1 else list(result)
+        elif nest.is_iterable(keys):
+            final_result = {}
+            if self.__len__() != 1:
+                # We want a dictionary of lists if len != 1
+                for key in keys:
+                    final_result[key] = []
+                for val in result:
+                    # val is ordered the same way as keys.
+                    for count, key in enumerate(keys):
+                        final_result[key].append(val[count])
+            else:
+                # Restult is a tuple with a single value, a tuple with values
+                # in the same order as parameters in keys
+                for count, key in enumerate(keys):
+                    final_result[key] = result[0][count]
+        elif keys is None:
+            final_result = {}
+            if self.__len__() != 1:
+                # We want a dictionary of lists if len != 1
+                # First set the keys:
+                for key in result[0]:
+                    final_result[key] = []
+                # Then set the values
+                for val in result:
+                    # get a dictionary
+                    for key, value in val.items():
+                        final_result[key].append(value)
+            else:
+                for key, value in result[0].items():
+                    final_result[key] = value
+
+        return final_result
 
     def set(self, params, val=None):
         """

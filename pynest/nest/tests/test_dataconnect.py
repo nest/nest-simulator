@@ -46,7 +46,6 @@ class DataConnectTestCase(unittest.TestCase):
         nest.DataConnect(sources, connections)
         conn1 = nest.GetConnections(sources)
         stat1 = nest.GetStatus(conn1)
-        print()
         target1 = [d['target'] for d in stat1]
         self.assertEqual(target, target1)
 

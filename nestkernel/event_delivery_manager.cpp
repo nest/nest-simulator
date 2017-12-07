@@ -962,7 +962,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
     {
       const TargetData& target_data =
         recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank_ + i ];
-      if ( target_data.get_tid() == tid )
+      if ( target_data.get_source_tid() == tid )
       {
         kernel().connection_manager.add_target( tid, rank, target_data );
       }

@@ -499,15 +499,15 @@ nest::SourceTable::get_next_target_data( const thread tid,
     else
     {
       // set values of next_target_data
-      next_target_data.set_lid(
+      next_target_data.set_source_lid(
         kernel().vp_manager.gid_to_lid( current_source.get_gid() ) );
-      next_target_data.set_tid( kernel().vp_manager.vp_to_thread(
+      next_target_data.set_source_tid( kernel().vp_manager.vp_to_thread(
         kernel().vp_manager.suggest_vp( current_source.get_gid() ) ) );
       if ( current_source.is_primary() )
       {
         next_target_data.is_primary( true );
         // we store the thread index of the sources table, not our own tid
-        next_target_data.set_target_tid( current_position.tid );
+        next_target_data.set_tid( current_position.tid );
         next_target_data.set_syn_id(
           current_position.syn_id );
         next_target_data.set_lcid( current_position.lcid );

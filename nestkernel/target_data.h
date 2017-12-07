@@ -39,8 +39,8 @@ namespace nest
 class TargetDataBase
 {
 private:
-  unsigned int lid_ : 19;  //!< local id of presynaptic neuron
-  unsigned int tid_ : 10; //!< thread index of presynaptic neuron
+  unsigned int source_lid_ : 19;  //!< local id of presynaptic neuron
+  unsigned int source_tid_ : 10; //!< thread index of presynaptic neuron
   unsigned int marker_ : 2;
   bool is_primary_ : 1;
   static const unsigned int complete_marker_ = 1;
@@ -59,17 +59,17 @@ public:
   bool is_complete_marker() const;
   bool is_end_marker() const;
   bool is_invalid_marker() const;
-  void set_lid( const index lid );
-  void set_tid( const thread tid );
-  index get_lid() const;
-  thread get_tid() const;
+  void set_source_lid( const index source_lid );
+  void set_source_tid( const thread source_tid );
+  index get_source_lid() const;
+  thread get_source_tid() const;
   void is_primary( const bool is_primary );
   bool is_primary() const;
 };
 
 inline TargetDataBase::TargetDataBase()
-  : lid_( 0 )
-  , tid_( 0 )
+  : source_lid_( 0 )
+  , source_tid_( 0 )
   , marker_( 0 )
   , is_primary_( true )
 {
@@ -122,29 +122,29 @@ TargetDataBase::is_invalid_marker() const
 }
 
 inline void
-TargetDataBase::set_lid( const index lid )
+TargetDataBase::set_source_lid( const index source_lid )
 {
-  assert( lid < 1048576 );
-  lid_ = lid;
+  assert( source_lid < 1048576 );
+  source_lid_ = source_lid;
 }
 
 inline void
-TargetDataBase::set_tid( const thread tid )
+TargetDataBase::set_source_tid( const thread source_tid )
 {
-  assert( tid < 1024 );
-  tid_ = tid;
+  assert( source_tid < 1024 );
+  source_tid_ = source_tid;
 }
 
 inline index
-TargetDataBase::get_lid() const
+TargetDataBase::get_source_lid() const
 {
-  return lid_;
+  return source_lid_;
 }
 
 inline thread
-TargetDataBase::get_tid() const
+TargetDataBase::get_source_tid() const
 {
-  return tid_;
+  return source_tid_;
 }
 
 inline void
@@ -164,15 +164,15 @@ class TargetData : public TargetDataBase
 private:
   unsigned int lcid_ : 27;
   // do not use just tid_ here as this variable is already declared in base class
-  unsigned int target_tid_ : 10;
+  unsigned int tid_ : 10;
   unsigned int syn_id_ : 8;
 
 public:
   TargetData();
   void set_lcid( const index lcid );
   index get_lcid() const;
-  void set_target_tid( const thread tid );
-  thread get_target_tid() const;
+  void set_tid( const thread tid );
+  thread get_tid() const;
   void set_syn_id( const synindex syn_id );
   synindex get_syn_id() const;
 };
@@ -180,7 +180,7 @@ public:
 inline TargetData::TargetData()
   : TargetDataBase()
   , lcid_( 0 )
-  , target_tid_( 0 )
+  , tid_( 0 )
   , syn_id_( 0 )
 {
 }
@@ -198,15 +198,15 @@ TargetData::get_lcid() const
 }
 
 inline void
-TargetData::set_target_tid( const thread tid )
+TargetData::set_tid( const thread tid )
 {
-  target_tid_ = tid;
+  tid_ = tid;
 }
 
 inline thread
-TargetData::get_target_tid() const
+TargetData::get_tid() const
 {
-  return target_tid_;
+  return tid_;
 }
 
 inline void

@@ -144,7 +144,7 @@ nest::TargetTable::compress_secondary_send_buffer_pos( const thread tid )
 void
 nest::TargetTable::add_target( const thread tid, const thread target_rank, const TargetData& target_data )
 {
-  const index lid = target_data.get_lid();
+  const index lid = target_data.get_source_lid();
 
   // use 1.5 growth strategy (see, e.g.,
   // https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md)
@@ -156,7 +156,7 @@ nest::TargetTable::add_target( const thread tid, const thread target_rank, const
   if ( target_data.is_primary() )
   {
     ( *targets_[ tid ] )[ lid ].push_back(
-      Target( target_data.get_target_tid(), target_rank, target_data.get_syn_id(), target_data.get_lcid() ) );
+      Target( target_data.get_tid(), target_rank, target_data.get_syn_id(), target_data.get_lcid() ) );
   }
   else
   {

@@ -95,16 +95,19 @@ def
   << >> begin
   GetStatus
   /d << >> def
-  dup First {d rollu 1 arraystore put_d} forall
-  Rest
-  {
+  dup type /arraytype eq
+  { % if not a layer
+    dup First {d rollu 1 arraystore put_d} forall
+    Rest
     {
-      exch dup d dup rolld get
-      4 -1 roll 1 arraystore join
-      rollu exch rolld put_d
+      {
+        exch dup d dup rolld get
+        4 -1 roll 1 arraystore join
+        rollu exch rolld put_d
+      } forall
     } forall
-  } forall
-  d
+    d
+  } if
   end
 } def
 

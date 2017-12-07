@@ -170,6 +170,68 @@ class GIDCollection(object):
         return ''.format(nest.sli_func('==', self._datum))
 
     def get(self, *params):
+        """
+        Get parameters from nodes or layer.
+
+        Parameters
+        ----------
+        params : str or list, optional
+            Parameters to get from the nodes or from the layer status. It must
+            be one of the following:
+            - A single string.
+            - A list of strings.
+            - One or more strings, followed by a string or list of strings.
+              This is for hierarchical addressing.
+
+        Returns
+        -------
+        int or float
+            If there is a single node in the GIDCollection, and a single
+            parameter in params.
+        array_like
+            If there are multiple nodes in the GIDCollection, and a single
+            parameter in params.
+        dict
+            If there are multiple parameters in params. Also, if no parameters
+            are specified, a dictionary containing aggregated parameter-values
+            for all nodes is returned.
+
+        Raises
+        ------
+        TypeError
+            If the input params are on the wrong form.
+        KeyError
+            If the specified parameter does not exist for the nodes.
+        
+        See Also
+        --------
+        set
+
+        Examples
+        --------
+        Single parameter:
+
+        >>> gidcollection.get('V_m')
+        (-70.0, -70.0, ..., -70.0)
+
+        >>> gidcollection[3:4].get('V_m')
+        -70.0
+
+        Multiple parameters:
+
+        >>> gidcollection.get(['V_m', 'V_th'])
+        {'V_m': (-70.0, -70.0, ..., -70.0),
+         'V_th': (-55.0, -55.0, ..., -55.0)}
+
+        Hierarchical addressing:
+
+        >>> sd.get('events', 'senders')
+        array([], dtype=int64)
+
+        >>> sd.get('events', ['senders', 'times'])
+        {'senders': array([], dtype=int64),
+         'times': array([], dtype=float64)}
+        """
         if len(params) == 0:
             return nest.sli_func('get', self._datum)
         elif len(params) == 1:

@@ -95,16 +95,19 @@ def
   << >> begin
   GetStatus
   /d << >> def
-  dup First {d rollu 1 arraystore put_d} forall
-  Rest
-  {
+  dup type /arraytype eq
+  { % if not a layer
+    dup First {d rollu 1 arraystore put_d} forall
+    Rest
     {
-      exch dup d dup rolld get
-      4 -1 roll 1 arraystore join
-      rollu exch rolld put_d
+      {
+        exch dup d dup rolld get
+        4 -1 roll 1 arraystore join
+        rollu exch rolld put_d
+      } forall
     } forall
-  } forall
-  d
+    d
+  } if
   end
 } def
 
@@ -135,39 +138,9 @@ def
 % Get parameter values of GIDCollection from an array of parameters
 /get [/gidcollectiontype /arraytype]
 {
-  exch dup size 1 eq
-  { % if size == 1
-    0 get_g_i GetStatus exch get_d_a
-  }
-  { % if size > 1
-    exch
-    << >> begin
-    /value_array Set
-    dup /gc Set
-    dup GetStatus dup type /arraytype eq
-    { % if not a layer
-      pop % remove status array from stack
-      [] % empty array to fill with values
-      value_array
-      {
-        dup /value Set
-        gc { GetStatus value get } Map
-        2 arraystore join
-      } forall
-      cvdict
-    }
-    { % if a layer
-      /status Set
-      [] % empty array to fill with values
-      value_array
-      {
-        dup status exch get 2 arraystore join
-      } forall
-      cvdict
-      exch pop % remove GIDCollection from stack
-    } ifelse
-    end
-    } ifelse
+  exch
+  dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
+  0 get_g_i GetStatus exch get_d_a
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -193,7 +193,8 @@ enum SignalType
   NONE = 0,
   SPIKE = 1,
   BINARY = 2,
-  ALL = SPIKE | BINARY
+  STEPWISE_CONSTANT = 4,
+  ALL = SPIKE | BINARY | STEPWISE_CONSTANT
 };
 }
 

@@ -273,7 +273,7 @@ template < class TGainfunction >
 inline SignalType
 binary_neuron< TGainfunction >::receives_signal() const
 {
-  return BINARY;
+  return BINARY | STEPWISE_CONSTANT;
 }
 
 

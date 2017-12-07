@@ -39,7 +39,6 @@ set( sli_sources
     integerdatum.cc integerdatum.h
     interpret.cc interpret.h
     iostreamdatum.cc iostreamdatum.h
-    iteratordatum.h iteratordatum.cc
     literaldatum.cc
     lockptrdatum.h lockptrdatum_impl.h
     name.cc name.h

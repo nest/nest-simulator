@@ -111,7 +111,6 @@ public:
   Name irepeat_name;
   Name ifor_name;
   Name iforallarray_name;
-  Name iforalliter_name;
   Name iforallindexedarray_name;
   Name iforallindexedstring_name;
   Name iforallstring_name;
@@ -239,7 +238,6 @@ public:
   static const IrepeatFunction irepeatfunction;
   static const IforFunction iforfunction;
   static const IforallarrayFunction iforallarrayfunction;
-  static const IforalliterFunction iforalliterfunction;
   static const IforallindexedarrayFunction iforallindexedarrayfunction;
   static const IforallindexedstringFunction iforallindexedstringfunction;
   static const IforallstringFunction iforallstringfunction;

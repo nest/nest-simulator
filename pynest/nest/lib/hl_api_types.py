@@ -235,9 +235,9 @@ class Connectome(object):
     Class for Connections.
 
     Connectome represents the connections of a network. The class supports
-    get(), set() and len()..
+    get(), set() and len().
 
-    A Connectome is created by the ``GetConnections`` function.``
+    A Connectome is created by the ``GetConnections`` function.
     """
 
     _datum = None
@@ -251,6 +251,8 @@ class Connectome(object):
                     raise TypeError("Expected Connection Datum.")
             self._datum = data
         elif data is None:
+            # So we can have empty Connectome and not a tuple if there are no
+            # connections.
             self._datum = data
         else:
             if (not isinstance(data, nest.SLIDatum) or

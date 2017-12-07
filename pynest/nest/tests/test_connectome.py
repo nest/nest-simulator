@@ -49,8 +49,8 @@ class TestConnectome(unittest.TestCase):
         sources = get_conns.get('source')
         targets = get_conns.get('target')
 
-        self.assertEqual(sources, (1, 1, 2, 2))
-        self.assertEqual(targets, (1, 2, 1, 2))
+        self.assertEqual(sources, [1, 1, 2, 2])
+        self.assertEqual(targets, [1, 2, 1, 2])
 
     def test_get_set(self):
         """
@@ -70,19 +70,89 @@ class TestConnectome(unittest.TestCase):
         delay = get_conns.get('delay')
         weight = get_conns.get('weight')
 
-        self.assertEqual(delay, (2.0, 2.0, 2.0, 2.0))
-        self.assertEqual(weight, (1.5, 2.5, 3.5, 4.5))
+        self.assertEqual(delay, [2.0, 2.0, 2.0, 2.0])
+        self.assertEqual(weight, [1.5, 2.5, 3.5, 4.5])
 
         get_conns.set({'weight': 6., 'delay': 11.})
 
         delay = get_conns.get('delay')
         weight = get_conns.get('weight')
 
-        self.assertEqual(delay, (11.0, 11.0, 11.0, 11.0))
-        self.assertEqual(weight, (6.0, 6.0, 6.0, 6.0))
+        self.assertEqual(delay, [11.0, 11.0, 11.0, 11.0])
+        self.assertEqual(weight, [6.0, 6.0, 6.0, 6.0])
 
         with self.assertRaises(nest.NESTError):
             get_conns.set('source', 2)
+
+    def test_get(self):
+        """
+        Test get() on Connectome
+        """
+        nrns = nest.Create('iaf_psc_alpha', 2)
+        nest.Connect(nrns, nrns)
+        conns = nest.GetConnections()
+
+        # Key is a string
+        target = conns.get('target')
+        # Key is a list of strings
+        dpw = conns.get(['delay', 'port', 'weight'])
+        # Key is None
+        all_values = conns.get()
+
+        target_ref = [1, 2, 1, 2]
+        dpw_ref = {'delay': [1., 1., 1., 1.],
+                   'port': [0, 1, 0, 1],
+                   'weight': [1., 1., 1., 1.]}
+        all_ref = {'delay': [1.0, 1.0, 1.0, 1.0],
+                   'port': [0, 1, 0, 1],
+                   'receptor': [0, 0, 0, 0],
+                   'sizeof': [32, 32, 32, 32],
+                   'source': [1, 1, 2, 2],
+                   'synapse_id': [0, 0, 0, 0],
+                   'synapse_model': ['static_synapse',
+                                     'static_synapse',
+                                     'static_synapse',
+                                     'static_synapse'],
+                   'target': [1, 2, 1, 2],
+                   'target_thread': [0, 0, 0, 0],
+                   'weight': [1.0, 1.0, 1.0, 1.0]}
+
+        self.assertEqual(target, target_ref)
+        self.assertEqual(dpw, dpw_ref)
+        self.assertEqual(all_values, all_ref)
+
+        # Now try the same with a single connection
+        nest.ResetKernel()
+
+        nrns = nest.Create('iaf_psc_alpha')
+        nest.Connect(nrns, nrns)
+        conns = nest.GetConnections()
+
+        self.assertEqual(len(conns), 1)
+
+        # Key is a string
+        target = conns.get('target')
+        # Key is a list of strings
+        dpw = conns.get(['delay', 'port', 'weight'])
+        # Key is None
+        all_values = conns.get()
+
+        target_ref = 1
+        dpw_ref = {'delay': 1., 'port': 0, 'weight': 1.}
+        all_ref = {'delay': 1.0,
+                   'port': 0,
+                   'receptor': 0,
+                   'sizeof': 32,
+                   'source': 1,
+                   'synapse_id': 0,
+                   'synapse_model': 'static_synapse',
+                   'target': 1,
+                   'target_thread': 0,
+                   'weight': 1.0}
+
+        self.assertEqual(target, target_ref)
+        self.assertEqual(dpw, dpw_ref)
+        self.assertEqual(all_values, all_ref)
 
     def test_GetConnectionsOnSubset(self):
         """
@@ -98,8 +168,8 @@ class TestConnectome(unittest.TestCase):
         sources = get_conns.get('source')
         targets = get_conns.get('target')
 
-        self.assertEqual(sources, (4, 4, 4, 5, 5, 5, 6, 6, 6))
-        self.assertEqual(targets, (3, 5, 7, 3, 5, 7, 3, 5, 7))
+        self.assertEqual(sources, [4, 4, 4, 5, 5, 5, 6, 6, 6])
+        self.assertEqual(targets, [3, 5, 7, 3, 5, 7, 3, 5, 7])
 
         nest.ResetKernel()
 
@@ -113,8 +183,8 @@ class TestConnectome(unittest.TestCase):
         sources = get_conns.get('source')
         targets = get_conns.get('target')
 
-        self.assertEqual(sources, (5,))
-        self.assertEqual(targets, (5,))
+        self.assertEqual(sources, 5)
+        self.assertEqual(targets, 5)
 
         nest.ResetKernel()
 
@@ -128,8 +198,8 @@ class TestConnectome(unittest.TestCase):
         sources = get_conns.get('source')
         targets = get_conns.get('target')
 
-        self.assertEqual(sources, (4, 5, 6))
-        self.assertEqual(targets, (3, 5, 7))
+        self.assertEqual(sources, [4, 5, 6])
+        self.assertEqual(targets, [3, 5, 7])
 
     def test_GetConnectionsSynapse(self):
         """
@@ -159,20 +229,20 @@ class TestConnectome(unittest.TestCase):
         targets_3 = get_conn_3.get('target')
 
         self.assertEqual(sources_1,
-                         (1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4))
-        self.assertEqual(sources_2, (6, 7))
+                         [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4])
+        self.assertEqual(sources_2, [6, 7])
         self.assertEqual(sources_3,
-                         (8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10))
+                         [8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10])
         self.assertEqual(targets_1,
-                         (3, 4, 5, 6, 3, 4, 5, 6, 3, 4, 5, 6, 3, 4, 5, 6))
-        self.assertEqual(targets_2, (9, 10))
+                         [3, 4, 5, 6, 3, 4, 5, 6, 3, 4, 5, 6, 3, 4, 5, 6])
+        self.assertEqual(targets_2, [9, 10])
         self.assertEqual(targets_3,
-                         (1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5))
+                         [1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5])
 
         weight = get_conn_3.get('weight')
         self.assertEqual(weight,
-                         (5., 5., 5., 5., 5., 5., 5.,
-                          5., 5., 5., 5., 5., 5., 5., 5.))
+                         [5., 5., 5., 5., 5., 5., 5.,
+                          5., 5., 5., 5., 5., 5., 5., 5.])
 
         get_conns = nest.GetConnections()
         self.assertEqual(len(get_conns), 33)

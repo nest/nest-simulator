@@ -82,7 +82,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     conns = self.comm.allgather(conns)
                     conns = filter(None, conns)
                 assert len(conns) == 1
-                nest.DisconnectOneToOne(neurons[0], neurons[2], syn_dict)
+                nest.Disconnect(neurons[0], neurons[2], syn_spec=syn_dict)
                 conns = nest.GetConnections(
                     neurons[:1], neurons[2:3], syn_model)
                 if mpi_test:
@@ -98,7 +98,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     conns1 = filter(None, conns1)
                 assert len(conns1) == 0
                 try:
-                    nest.DisconnectOneToOne(neurons[0], neurons[1], syn_dict)
+                    nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_dict)
                     assertFail()
                 except:
                     print("Synapse deletion ok: " + syn_model)

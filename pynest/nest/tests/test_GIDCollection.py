@@ -25,7 +25,12 @@ GIDCollection tests
 
 import unittest
 import nest
-import numpy as np
+
+try:
+    import numpy as np
+    HAVE_NUMPY = True
+except ImportError:
+    HAVE_NUMPY = False
 
 
 @nest.check_stack
@@ -379,6 +384,7 @@ class TestGIDCollection(unittest.TestCase):
         nest.SetStatus(n, [{'V_m': 10.}, {'V_m': -10.}, {'V_m': -20.}])
         self.assertEqual(nest.GetStatus(n, 'V_m'), (10., -10., -20.))
 
+    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_get(self):
         """
         Test that get function works as expected.

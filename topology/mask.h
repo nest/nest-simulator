@@ -213,7 +213,8 @@ public:
    * lower_left    - Position of lower left corner (array of doubles)
    * upper_right   - Position of upper right corner (array of doubles)
    * azimuth_angle - Rotation angle in degrees from x-axis (double), optional
-   * polar_angle   - Rotation angle in degrees from z-axis (double), optional
+   * polar_angle   - Rotation angle in degrees from z-axis (double), the polar
+   *                 angle does not apply in 2D, optional
    */
   BoxMask( const DictionaryDatum& );
 
@@ -263,6 +264,12 @@ protected:
   Position< D > lower_left_;
   Position< D > upper_right_;
 
+  /*
+   * The {min,max}_values_ correspond to the minimum and maximum x, y, z values
+   * after the box has been rotated. That is, the lower_left and upper_right of
+   * the bounding box of the rotated box. If the box is not rotated,
+   * min_values_ = lower_left_ and max_values_ = upper_right_.
+   */
   Position< D > min_values_;
   Position< D > max_values_;
 
@@ -272,6 +279,23 @@ protected:
   double azimuth_sin_;
   double polar_cos_;
   double polar_sin_;
+
+  Position< D > cntr_;
+  Position< D > eps_;
+  double cntr_x_az_cos_;
+  double cntr_x_az_sin_;
+  double cntr_y_az_cos_;
+  double cntr_y_az_sin_;
+  double cntr_z_pol_cos_;
+  double cntr_z_pol_sin_;
+  double cntr_x_az_cos_pol_cos_;
+  double cntr_x_az_cos_pol_sin_;
+  double cntr_y_az_sin_pol_cos_;
+  double cntr_y_az_sin_pol_sin_;
+  double az_cos_pol_cos_;
+  double az_cos_pol_sin_;
+  double az_sin_pol_cos_;
+  double az_sin_pol_sin_;
 
   bool is_rotated_;
 };
@@ -751,7 +775,44 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
   polar_cos_ = std::cos( polar_angle_ * numerics::pi / 180. );
   polar_sin_ = std::sin( polar_angle_ * numerics::pi / 180. );
 
-  is_rotated_ = azimuth_angle_ or polar_angle_;
+  cntr_ = ( upper_right_ + lower_left_ ) * 0.5;
+  for ( int i = 0; i != D; ++i )
+  {
+    eps_[ i ] = 1e-12;
+  }
+
+  cntr_x_az_cos_ = cntr_[ 0 ] * azimuth_cos_;
+  cntr_x_az_sin_ = cntr_[ 0 ] * azimuth_sin_;
+  cntr_y_az_cos_ = cntr_[ 1 ] * azimuth_cos_;
+  cntr_y_az_sin_ = cntr_[ 1 ] * azimuth_sin_;
+  if ( D == 3 )
+  {
+    cntr_z_pol_cos_ = cntr_[ 2 ] * polar_cos_;
+    cntr_z_pol_sin_ = cntr_[ 2 ] * polar_sin_;
+    cntr_x_az_cos_pol_cos_ = cntr_x_az_cos_ * polar_cos_;
+    cntr_x_az_cos_pol_sin_ = cntr_x_az_cos_ * polar_sin_;
+    cntr_y_az_sin_pol_cos_ = cntr_y_az_sin_ * polar_cos_;
+    cntr_y_az_sin_pol_sin_ = cntr_y_az_sin_ * polar_sin_;
+    az_cos_pol_cos_ = azimuth_cos_ * polar_cos_;
+    az_cos_pol_sin_ = azimuth_cos_ * polar_sin_;
+    az_sin_pol_cos_ = azimuth_sin_ * polar_cos_;
+    az_sin_pol_sin_ = azimuth_sin_ * polar_sin_;
+  }
+  else
+  {
+    cntr_z_pol_cos_ = 0.0;
+    cntr_z_pol_sin_ = 0.0;
+    cntr_x_az_cos_pol_cos_ = 0.0;
+    cntr_x_az_cos_pol_sin_ = 0.0;
+    cntr_y_az_sin_pol_cos_ = 0.0;
+    cntr_y_az_sin_pol_sin_ = 0.0;
+    az_cos_pol_cos_ = 0.0;
+    az_cos_pol_sin_ = 0.0;
+    az_sin_pol_cos_ = 0.0;
+    az_sin_pol_sin_ = 0.0;
+  }
+
+  is_rotated_ = azimuth_angle_ != 0.0 or polar_angle_ != 0.0;
 
   calculate_min_max_values_();
 }
@@ -769,6 +830,11 @@ inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
   , azimuth_sin_( std::sin( azimuth_angle_ * numerics::pi / 180. ) )
   , polar_cos_( std::cos( polar_angle_ * numerics::pi / 180. ) )
   , polar_sin_( std::sin( polar_angle_ * numerics::pi / 180. ) )
+  , cntr_( ( upper_right_ + lower_left_ ) * 0.5 )
+  , cntr_x_az_cos_( cntr_[ 0 ] * azimuth_cos_ )
+  , cntr_x_az_sin_( cntr_[ 0 ] * azimuth_sin_ )
+  , cntr_y_az_cos_( cntr_[ 1 ] * azimuth_cos_ )
+  , cntr_y_az_sin_( cntr_[ 1 ] * azimuth_sin_ )
 {
   if ( D == 2 and not( polar_angle_ == 0.0 ) )
   {
@@ -777,7 +843,39 @@ inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
       "polar_angle not defined in 2D." );
   }
 
-  is_rotated_ = azimuth_angle_ or polar_angle_;
+  for ( int i = 0; i != D; ++i )
+  {
+    eps_[ i ] = 1e-12;
+  }
+
+  if ( D == 3 )
+  {
+    cntr_z_pol_cos_ = cntr_[ 2 ] * polar_cos_;
+    cntr_z_pol_sin_ = cntr_[ 2 ] * polar_sin_;
+    cntr_x_az_cos_pol_cos_ = cntr_x_az_cos_ * polar_cos_;
+    cntr_x_az_cos_pol_sin_ = cntr_x_az_cos_ * polar_sin_;
+    cntr_y_az_sin_pol_cos_ = cntr_y_az_sin_ * polar_cos_;
+    cntr_y_az_sin_pol_sin_ = cntr_y_az_sin_ * polar_sin_;
+    az_cos_pol_cos_ = azimuth_cos_ * polar_cos_;
+    az_cos_pol_sin_ = azimuth_cos_ * polar_sin_;
+    az_sin_pol_cos_ = azimuth_sin_ * polar_cos_;
+    az_sin_pol_sin_ = azimuth_sin_ * polar_sin_;
+  }
+  else
+  {
+    cntr_z_pol_cos_ = 0.0;
+    cntr_z_pol_sin_ = 0.0;
+    cntr_x_az_cos_pol_cos_ = 0.0;
+    cntr_x_az_cos_pol_sin_ = 0.0;
+    cntr_y_az_sin_pol_cos_ = 0.0;
+    cntr_y_az_sin_pol_sin_ = 0.0;
+    az_cos_pol_cos_ = 0.0;
+    az_cos_pol_sin_ = 0.0;
+    az_sin_pol_cos_ = 0.0;
+    az_sin_pol_sin_ = 0.0;
+  }
+
+  is_rotated_ = azimuth_angle_ != 0.0 or polar_angle_ != 0.0;
 
   calculate_min_max_values_();
 }

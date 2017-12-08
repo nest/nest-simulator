@@ -29,21 +29,23 @@ import nest.topology as topo
 
 
 class GetSetTestCase(unittest.TestCase):
-    def test_LayerGetStatus(self):
-        """Test GetStatus on layer GIDCollection."""
-        nest.ResetKernel()
 
+    def setUp(self):
+        nest.ResetKernel()
         ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
-        l = topo.CreateLayer(ldict)
+        self.layer = topo.CreateLayer(ldict)
 
-        center = nest.GetStatus(l)[0]['center']
-        columns = nest.GetStatus(l)[0]['columns']
-        edge_wrap = nest.GetStatus(l)[0]['edge_wrap']
-        extent = nest.GetStatus(l)[0]['extent']
-        network_size = nest.GetStatus(l)[0]['network_size']
-        nodes = nest.GetStatus(l)[0]['nodes']
-        rows = nest.GetStatus(l)[0]['rows']
+    def test_LayerGetStatus(self):
+        """Test GetStatus on layer GIDCollection."""
+
+        center = nest.GetStatus(self.layer)[0]['center']
+        columns = nest.GetStatus(self.layer)[0]['columns']
+        edge_wrap = nest.GetStatus(self.layer)[0]['edge_wrap']
+        extent = nest.GetStatus(self.layer)[0]['extent']
+        network_size = nest.GetStatus(self.layer)[0]['network_size']
+        nodes = nest.GetStatus(self.layer)[0]['nodes']
+        rows = nest.GetStatus(self.layer)[0]['rows']
 
         self.assertEqual(center, (0., 0.))
         self.assertEqual(columns, 3)
@@ -55,49 +57,40 @@ class GetSetTestCase(unittest.TestCase):
 
         n = [gid for gid in nodes]
         self.assertEqual(n, [1, 2, 3, 4, 5, 6, 7, 8, 9])
-        self.assertEqual(len(nest.GetStatus(nodes)), len(l))
+        self.assertEqual(len(nest.GetStatus(nodes)), len(self.layer))
         self.assertEqual(nest.GetStatus(nodes, 'V_m'),
                          (-70., -70., -70., -70., -70.,
                           -70., -70., -70., -70.))
 
-        self.assertEqual(len(nest.GetStatus(l)), 1)
+        self.assertEqual(len(nest.GetStatus(self.layer)), 1)
 
-        self.assertTrue('V_m' not in nest.GetStatus(l)[0])
+        self.assertTrue('V_m' not in nest.GetStatus(self.layer)[0])
 
     def test_LayerSetStatus(self):
         """Test SetStatus on layer GIDCollection."""
-        nest.ResetKernel()
-
-        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
-                 'extent': [2., 2.], 'edge_wrap': True}
-        l = topo.CreateLayer(ldict)
 
         with self.assertRaises(nest.NESTError):
-            nest.SetStatus(l, {'center': [1., 1.]})
+            nest.SetStatus(self.layer, {'center': [1., 1.]})
 
-        nodes = nest.GetStatus(l)[0]['nodes']
+        nodes = nest.GetStatus(self.layer)[0]['nodes']
         nest.SetStatus(nodes, 'V_m', -50.)
 
-        nodes2 = nest.GetStatus(l)[0]['nodes']
+        nodes2 = nest.GetStatus(self.layer)[0]['nodes']
         self.assertEqual(nest.GetStatus(nodes2, 'V_m'),
                          (-50., -50., -50., -50., -50.,
                           -50., -50., -50., -50.))
 
     def test_LayerGet(self):
         """Test get function on layer GIDCollection."""
-        nest.ResetKernel()
 
-        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
-                 'extent': [2., 2.], 'edge_wrap': True}
-        l = topo.CreateLayer(ldict)
-
-        center = l.get('center')
-        columns = l.get('columns')
-        edge_wrap = l.get('edge_wrap')
-        extent = l.get('extent')
-        network_size = l.get('network_size')
-        nodes = l.get('nodes')
-        rows = l.get('rows')
+        center = self.layer.get('center')
+        columns = self.layer.get('columns')
+        edge_wrap = self.layer.get('edge_wrap')
+        extent = self.layer.get('extent')
+        network_size = self.layer.get('network_size')
+        nodes = self.layer.get('nodes')
+        rows = self.layer.get('rows')
+        columns_rows = self.layer.get(['columns', 'rows'])
 
         self.assertEqual(center, (0.0, 0.0))
         self.assertEqual(columns, 3)
@@ -106,8 +99,7 @@ class GetSetTestCase(unittest.TestCase):
         self.assertEqual(network_size, 9)
         self.assertEqual(rows, 3)
         self.assertTrue(isinstance(nodes, nest.GIDCollection))
-
-        nodes = nodes
+        self.assertEqual(columns_rows, {'columns': 3, 'rows': 3})
 
         n = [gid for gid in nodes]
         self.assertEqual(n, [1, 2, 3, 4, 5, 6, 7, 8, 9])
@@ -116,23 +108,28 @@ class GetSetTestCase(unittest.TestCase):
                           -70., -70., -70., -70.))
 
         with self.assertRaises(nest.NESTError):
-            l.get('V_m')
+            self.layer.get('V_m')
+
+        # Test get all values
+        all_values = self.layer.get()
+        self.assertEqual(len(all_values.keys()), 7)
+        self.assertEqual(all_values['center'], (0.0, 0.0))
+        self.assertEqual(all_values['columns'], 3)
+        self.assertTrue(all_values['edge_wrap'])
+        self.assertEqual(all_values['extent'], (2., 2.))
+        self.assertEqual(all_values['network_size'], 9)
+        self.assertEqual(all_values['rows'], 3)
 
     def test_LayerSet(self):
         """Test set function on layer GIDCollection."""
-        nest.ResetKernel()
-
-        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
-                 'extent': [2., 2.], 'edge_wrap': True}
-        l = topo.CreateLayer(ldict)
 
         with self.assertRaises(nest.NESTError):
-            l.set({'center': [1., 1.]})
+            self.layer.set({'center': [1., 1.]})
 
-        nodes = l.get('nodes')
+        nodes = self.layer.get('nodes')
         nodes.set('V_m', -50.)
 
-        nodes2 = l.get('nodes')
+        nodes2 = self.layer.get('nodes')
         self.assertEqual(nodes2.get('V_m'),
                          (-50., -50., -50., -50., -50.,
                           -50., -50., -50., -50.))

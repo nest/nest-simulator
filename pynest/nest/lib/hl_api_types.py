@@ -164,26 +164,91 @@ class GIDCollection(object):
         return ''.format(nest.sli_func('==', self._datum))
 
     def get(self, *params):
+        """
+        Get parameters from nodes or layer.
+
+        Parameters
+        ----------
+        params : str or list, optional
+            Parameters to get from the nodes or from the layer status. It must
+            be one of the following:
+            - A single string.
+            - A list of strings.
+            - One or more strings, followed by a string or list of strings.
+              This is for hierarchical addressing.
+
+        Returns
+        -------
+        int or float
+            If there is a single node in the GIDCollection, and a single
+            parameter in params.
+        array_like
+            If there are multiple nodes in the GIDCollection, and a single
+            parameter in params.
+        dict
+            If there are multiple parameters in params. Also, if no parameters
+            are specified, a dictionary containing aggregated parameter-values
+            for all nodes is returned.
+
+        Raises
+        ------
+        TypeError
+            If the input params are on the wrong form.
+        KeyError
+            If the specified parameter does not exist for the nodes.
+        
+        See Also
+        --------
+        set
+
+        Examples
+        --------
+        Single parameter:
+
+        >>> gidcollection.get('V_m')
+        (-70.0, -70.0, ..., -70.0)
+
+        >>> gidcollection[3:4].get('V_m')
+        -70.0
+
+        Multiple parameters:
+
+        >>> gidcollection.get(['V_m', 'V_th'])
+        {'V_m': (-70.0, -70.0, ..., -70.0),
+         'V_th': (-55.0, -55.0, ..., -55.0)}
+
+        Hierarchical addressing:
+
+        >>> sd.get('events', 'senders')
+        array([], dtype=int64)
+
+        >>> sd.get('events', ['senders', 'times'])
+        {'senders': array([], dtype=int64),
+         'times': array([], dtype=float64)}
+        """
         if len(params) == 0:
             return nest.sli_func('get', self._datum)
         elif len(params) == 1:
             param = params[0]
             if nest.is_literal(param):
                 cmd = '/{} get'.format(param)
+                nest.sps(self._datum)
+                nest.sr(cmd)
+                return nest.spp()
             elif nest.is_iterable(param):
-                params_str = ' '.join('/{}'.format(p) for p in param)
-                cmd = '[ {} ] get'.format(params_str)
+                return {param_name: self.get(param_name)
+                        for param_name in param}
             else:
                 raise TypeError("Params should be either a string or an iterable")
-            nest.sps(self._datum)
-            nest.sr(cmd)
-            return nest.spp()
+
         else: # Hierarchical addressing (brutal implementation)
             first = True
             for param in params[:-1]:
                 if nest.is_literal(param):
                     if first:
                         value_list = self.get(param)
+                        if type(value_list) != tuple:
+                            value_list = (value_list,)
                         first = False
                     else:
                         value_list = [nest.sli_func('/{} get'.format(param), d) for d in value_list]
@@ -192,12 +257,21 @@ class GIDCollection(object):
                 else:
                     raise TypeError("Argument must be a string")
             if nest.is_literal(params[-1]):
-                return {params[-1]: value_list[params[-1]]}
+                if len(self) == 1:
+                    return value_list[0][params[-1]]
+                else:
+                    return [d[params[-1]] for d in value_list]
             elif nest.is_iterable(params[-1]):
                 for value in params[-1]:
-                    if value not in value_list.keys():
+                    # TODO481 : Assuming they are all of equal type, we check
+                    # only the values of the first node. This must be changed
+                    # if we decide something else.
+                    if value not in value_list[0].keys():
                         raise KeyError("The value '{}' does not exist at the given path".format(value))
-                return {'{}'.format(key): value for key, value in value_list.iteritems() if key in params[-1]}
+                if len(self) == 1:
+                    return {'{}'.format(key): value for key, value in value_list[0].iteritems() if key in params[-1]}
+                else:
+                    return [{'{}'.format(key): value for key, value in d.iteritems() if key in params[-1]} for d in value_list]
             else:
                 raise TypeError("Final argument should be either a string or an iterable")
             

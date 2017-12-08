@@ -25,6 +25,7 @@ GIDCollection tests
 
 import unittest
 import nest
+import numpy as np
 
 
 @nest.check_stack
@@ -386,6 +387,7 @@ class TestGIDCollection(unittest.TestCase):
         nodes = nest.Create('iaf_psc_alpha', 10)
 
         C_m = nodes.get('C_m')
+        gids = nodes.get('global_id')
         E_L = nodes.get('E_L')
         V_m = nodes.get('V_m')
         t_ref = nodes.get('t_ref')
@@ -423,6 +425,53 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(V_m, (-70.0, -70.0, -70.0))
         self.assertEqual(g['t_ref'], (2.0, 2.0))
         self.assertEqual(C_m, (250.0, 250.0, 250.0, 250.0))
+
+        # Testing different input for different sizes of GIDCollections
+        single_sd = nest.Create('spike_detector', 1)
+        multi_sd = nest.Create('spike_detector', 10)
+        empty_array_float = np.array([], dtype=np.float64)
+        empty_array_int = np.array([], dtype=np.int64)
+
+        # Single node, literal parameter
+        self.assertEqual(single_sd.get('start'), 0.0)
+
+        # Single node, array parameter
+        self.assertEqual(single_sd.get(['start', 'to_file']),
+                         {'start': 0.0, 'to_file': False})
+
+        # Single node, hierarchical with literal parameter
+        np.testing.assert_array_equal(single_sd.get('events', 'times'),
+                                      empty_array_float)
+
+        # Multiple nodes, hierarchical with literal parameter
+        values = multi_sd.get('events', 'times')
+        for v in values:
+            np.testing.assert_array_equal(v, empty_array_float)
+
+        # Single node, hierarchical with array parameter
+        values = single_sd.get('events', ['senders', 'times'])
+        self.assertEqual(values.keys(), ['senders', 'times'])
+        np.testing.assert_array_equal(values['senders'], empty_array_int)
+        np.testing.assert_array_equal(values['times'], empty_array_float)
+
+        # Multiple nodes, hierarchical with array parameter
+        values = multi_sd.get('events', ['senders', 'times'])
+        self.assertEqual(len(values), len(multi_sd))
+        for v in values:
+            self.assertEqual(v.keys(), ['senders', 'times'])
+            np.testing.assert_array_equal(v['senders'], empty_array_int)
+            np.testing.assert_array_equal(v['times'], empty_array_float)
+
+        # Single node, no parameter (gets all values)
+        values = single_sd.get()
+        self.assertEqual(len(values.keys()), 38)
+        self.assertEqual(values['start'], (0.0,))
+
+        # Multiple nodes, no parameter (gets all values)
+        values = multi_sd.get()
+        self.assertEqual(len(values.keys()), 38)
+        self.assertEqual(values['start'],
+                         tuple(0.0 for i in range(len(multi_sd))))
 
     def test_set(self):
         """
@@ -463,14 +512,14 @@ class TestGIDCollection(unittest.TestCase):
         # Now check that it works with sliced GIDCollections
         nest.ResetKernel()
         nodes = nest.Create('iaf_psc_alpha', 10)
-        
-        nodes[2:5].set(({'V_m': -50.0}, {'V_m': -40.0}, {'V_m':-30.0}))
+
+        nodes[2:5].set(({'V_m': -50.0}, {'V_m': -40.0}, {'V_m': -30.0}))
         nodes[5:7].set({'t_ref': 4.4, 'tau_m': 3.0})
         nodes[2:9:2].set('C_m', 111.0)
         V_m = nodes.get('V_m')
         g = nodes.get(['t_ref', 'tau_m'])
         C_m = nodes.get('C_m')
-        
+
         self.assertEqual(V_m, (-70.0, -70.0, -50.0, -40.0, -30.0,
                                -70.0, -70.0, -70.0, -70.0, -70.0,))
         self.assertEqual(g, {'t_ref': (2.0, 2.0, 2.0, 2.0, 2.0,
@@ -517,7 +566,7 @@ class TestGIDCollection(unittest.TestCase):
         wr = nest.Create('weight_recorder')
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
-        
+
         # Senders and targets lists empty
         self.assertFalse(nest.GetStatus(wr, "senders")[0])
         self.assertFalse(nest.GetStatus(wr, "targets")[0])
@@ -544,6 +593,7 @@ def suite():
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
+
 
 if __name__ == "__main__":
     run()

@@ -42,51 +42,66 @@ namespace nest
 
 /**
  * This data structure stores all targets of the local neurons. This
- * is the presynaptic part of the connection infrastructure. The core
- * structure is a three dimensional vector, which is arranged as
- * follows:
- * 1st dimension: threads
- * 2nd dimension: local neurons
- * 3rd dimension: targets
+ * is the presynaptic part of the connection infrastructure.
  */
 class TargetTable
 {
 private:
-  //! stores (remote) targets of local neurons
+  //! stores targets of local neurons
+  //! three dimensional objects:
+  //! - first dim: threads
+  //! - second dim: local neurons
+  //! - third dim: targets
   std::vector< std::vector< std::vector< Target > >* > targets_;
 
-  //! store secondary target of local neurons
+  //! stores MPI send buffer positions for secondary targets of local
+  //! neurons
+  //! four dimensional object:
+  //! - first dim: threads
+  //! - second dim: local neurons
+  //! - third dim: synapse types
+  //! - forth dim: MPI send buffer positions
   std::vector< std::vector< std::vector< std::vector< size_t > > >* >
     secondary_send_buffer_pos_;
 
 public:
   TargetTable();
   ~TargetTable();
+
   //! initialize data structures
   void initialize();
+
   //! delete data structure
   void finalize();
+
   //! adjust targets table's size to number of local nodes
   void prepare( const thread tid );
-  // void reserve( thread, synindex, index );
+
   //! add entry to target table
   void add_target( const thread tid, const thread target_rank, const TargetData& target_data );
+
   //! returns all targets of a neuron. used to fill spike_register_5g_
   //! in event_delivery_manager
   const std::vector< Target >& get_targets( const thread tid,
     const index lid ) const;
-  //! returns position in send buffer
+
+  //! returns all MPI send buffer positions of a neuron. used to fill
+  //! MPI buffer in event_delivery_manager
   const std::vector< size_t >& get_secondary_send_buffer_positions(
     const thread tid,
-    const synindex syn_id,
-    const index lid ) const;
+    const index lid,
+    const synindex syn_id ) const;
+
   //! clear all entries
   void clear( const thread tid );
+
+  //! removes identical MPI send buffer positions to avoid writing
+  //! data multiple times
   void compress_secondary_send_buffer_pos( const thread tid );
 
+  //! helper functions
   void print_targets( const thread tid ) const;
   void print_secondary_send_buffer_pos( const thread tid ) const;
-
 };
 
 inline const std::vector< Target >&
@@ -97,9 +112,9 @@ TargetTable::get_targets( const thread tid, const index lid ) const
 
 inline const std::vector< size_t >&
 TargetTable::get_secondary_send_buffer_positions( const thread tid,
-  const synindex syn_id, const index lid ) const
+  const index lid, const synindex syn_id ) const
 {
-  return ( *secondary_send_buffer_pos_[ tid ] )[ syn_id ][ lid ];
+  return ( *secondary_send_buffer_pos_[ tid ] )[ lid ][ syn_id ];
 }
 
 inline void

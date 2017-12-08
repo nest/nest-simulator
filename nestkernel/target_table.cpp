@@ -29,7 +29,6 @@ nest::TargetTable::TargetTable()
 {
   assert( sizeof( Target ) == 8 );
   assert( sizeof( TargetData ) == 12 );
-  // std::cout << sizeof( SecondaryTargetData ) << std::endl;
   assert( sizeof( SecondaryTargetData ) == 12 );
 }
 
@@ -50,7 +49,7 @@ nest::TargetTable::initialize()
     targets_[ tid ] =
       new std::vector< std::vector< Target > >( 0, std::vector< Target >( 0, Target() ) );
     secondary_send_buffer_pos_[ tid ] =
-      new std::vector< std::vector< std::vector< size_t > > > ( 0, std::vector< std::vector< size_t > >( 0 ) );
+      new std::vector< std::vector< std::vector< size_t > > > ( 0 );
   } // of omp parallel
 }
 
@@ -62,6 +61,7 @@ nest::TargetTable::finalize()
         it != targets_.end();
         ++it )
   {
+    ( *it )->clear();
     delete *it;
   }
   targets_.clear();
@@ -71,6 +71,7 @@ nest::TargetTable::finalize()
         it != secondary_send_buffer_pos_.end();
         ++it )
   {
+    ( *it )->clear();
     delete *it;
   }
   secondary_send_buffer_pos_.clear();
@@ -84,13 +85,57 @@ nest::TargetTable::prepare( const thread tid )
   targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes() + 1,
     std::vector< Target >( 0, Target() ) );
 
-  secondary_send_buffer_pos_[ tid ]->resize( 64,
-    std::vector< std::vector< size_t > >( 0 ) );
-  for ( size_t i = 0; i < 64; ++i )
+  ( *secondary_send_buffer_pos_[ tid ] ).resize( kernel().node_manager.get_max_num_local_nodes() + 1);
+
+  for ( size_t lid = 0; lid < kernel().node_manager.get_max_num_local_nodes() + 1; ++lid )
   {
-    ( *secondary_send_buffer_pos_[ tid ] )[ i ].resize(
-      kernel().node_manager.get_max_num_local_nodes(),
-      std::vector< size_t >( 0 ) );
+    ( *secondary_send_buffer_pos_[ tid ] )[ lid ].resize( 64 );
+  }
+}
+
+void
+nest::TargetTable::compress_secondary_send_buffer_pos( const thread tid )
+{
+  for ( std::vector< std::vector< std::vector< size_t > > >::iterator it = ( *secondary_send_buffer_pos_[ tid ] ).begin();
+        it != ( *secondary_send_buffer_pos_[ tid ] ).end(); ++it )
+  {
+    for ( std::vector< std::vector< size_t > >::iterator iit = ( *it ).begin(); iit != ( *it ).end(); ++iit )
+    {
+      std::sort( iit->begin(), iit->end() );
+      const std::vector< size_t >::iterator new_it = std::unique( iit->begin(), iit->end() );
+      iit->resize( std::distance( iit->begin(), new_it) );
+    }
+  }
+}
+
+void
+nest::TargetTable::add_target( const thread tid, const thread target_rank, const TargetData& target_data )
+{
+  const index lid = target_data.get_source_lid();
+
+  // use 1.5 growth strategy (see, e.g.,
+  // https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md)
+  if ( ( *targets_[ tid ] )[ lid ].size() == ( *targets_[ tid ] )[ lid ].capacity() )
+  {
+    ( *targets_[ tid ] )[ lid ].reserve( ( ( *targets_[ tid ] )[ lid ].size() * 3 + 1 ) / 2 );
+  }
+
+  if ( target_data.is_primary() )
+  {
+    ( *targets_[ tid ] )[ lid ].push_back(
+      Target( target_data.get_tid(), target_rank, target_data.get_syn_id(), target_data.get_lcid() ) );
+  }
+  else
+  {
+    const size_t send_buffer_pos =
+      reinterpret_cast< const SecondaryTargetData* >( &target_data )
+        ->get_send_buffer_pos();
+    const synindex syn_id =
+      reinterpret_cast< const SecondaryTargetData* >( &target_data )
+        ->get_syn_id();
+
+    ( *secondary_send_buffer_pos_[ tid ] )[ lid ][ syn_id ].push_back(
+      send_buffer_pos );
   }
 }
 
@@ -139,49 +184,4 @@ nest::TargetTable::print_secondary_send_buffer_pos( const thread tid ) const
   }
   std::cout << std::endl;
   std::cout << "---------------------------------------\n";
-}
-
-void
-nest::TargetTable::compress_secondary_send_buffer_pos( const thread tid )
-{
-  for ( std::vector< std::vector< std::vector< size_t > > >::iterator it = ( *secondary_send_buffer_pos_[ tid ] ).begin();
-        it != ( *secondary_send_buffer_pos_[ tid ] ).end(); ++it )
-  {
-    for ( std::vector< std::vector< size_t > >::iterator iit = ( *it ).begin(); iit != ( *it ).end(); ++iit )
-    {
-      std::sort( iit->begin(), iit->end() );
-      const std::vector< size_t >::iterator new_it = std::unique( iit->begin(), iit->end() );
-      iit->resize( std::distance( iit->begin(), new_it) );
-    }
-  }
-}
-
-void
-nest::TargetTable::add_target( const thread tid, const thread target_rank, const TargetData& target_data )
-{
-  const index lid = target_data.get_source_lid();
-
-  // use 1.5 growth strategy (see, e.g.,
-  // https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md)
-  if ( ( *targets_[ tid ] )[ lid ].size() == ( *targets_[ tid ] )[ lid ].capacity() )
-  {
-    ( *targets_[ tid ] )[ lid ].reserve( ( ( *targets_[ tid ] )[ lid ].size() * 3 + 1 ) / 2 );
-  }
-
-  if ( target_data.is_primary() )
-  {
-    ( *targets_[ tid ] )[ lid ].push_back(
-      Target( target_data.get_tid(), target_rank, target_data.get_syn_id(), target_data.get_lcid() ) );
-  }
-  else
-  {
-    const size_t send_buffer_pos =
-      reinterpret_cast< const SecondaryTargetData* >( &target_data )
-        ->get_send_buffer_pos();
-    const synindex syn_id =
-      reinterpret_cast< const SecondaryTargetData* >( &target_data )
-        ->get_syn_id();
-    ( *secondary_send_buffer_pos_[ tid ] )[ syn_id ][ lid ].push_back(
-      send_buffer_pos );
-  }
 }

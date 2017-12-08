@@ -153,7 +153,7 @@ EventDeliveryManager::send_secondary( const Node& source, SecondaryEvent& e )
         cit != supported_syn_ids.end(); ++cit )
   {
     const std::vector< size_t >& positions =
-      kernel().connection_manager.get_secondary_send_buffer_positions( tid, *cit, lid );
+      kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid, *cit );
 
     for ( size_t i = 0; i < positions.size(); ++i )
     {

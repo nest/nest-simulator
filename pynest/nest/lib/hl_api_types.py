@@ -292,7 +292,7 @@ class GIDCollection(object):
             Dictionary of parameters or list of dictionaries of parameters of
             same length as the GIDCollection. If val is given, this has to be
             the name of a model property as a str.
-        val : str, optional
+        val : int or list, optional
             If given, params has to be the name of a model property.
     
         Raises
@@ -309,7 +309,7 @@ class GIDCollection(object):
             return
     
         if val is not None and nest.is_literal(params):
-            if nest.is_iterable(val) and not isinstance(val, (uni_str, dict)):
+            if nest.is_iterable(val) and not isinstance(val, (nest.uni_str, dict)):
                 params = [{params: x} for x in val]
             else:
                 params = {params: val}

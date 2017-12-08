@@ -507,6 +507,12 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(V_m, (10.0, 20.0, 30.0, 40.0, 50.0,
                                60.0, 70.0, 80.0, 90.0, -100.0))
 
+        nodes.set('V_reset', [-85., -82., -80., -77., -75.,
+                              -72., -70., -67., -65., -62.])
+        V_reset = nodes.get('V_reset')
+        self.assertEqual(V_reset, (-85., -82., -80., -77., -75.,
+                                   -72., -70., -67., -65., -62.))
+
         nodes.set({'t_ref': 44.0, 'tau_m': 2.0, 'tau_minus': 42.0})
         g = nodes.get(['t_ref', 'tau_m', 'tau_minus'])
         self.assertEqual(g['t_ref'], (44.0, 44.0, 44.0, 44.0, 44.0,

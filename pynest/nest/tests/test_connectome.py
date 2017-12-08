@@ -84,6 +84,16 @@ class TestConnectome(unittest.TestCase):
         with self.assertRaises(nest.NESTError):
             get_conns.set('source', 2)
 
+        nest.ResetKernel()
+        nrns = nest.Create('iaf_psc_alpha', 2)
+        nest.Connect(nrns, nrns)
+
+        get_conns = nest.GetConnections()
+
+        get_conns.set('weight', [2.0, 3.0, 4.0, 5.0])
+        weight = get_conns.get('weight')
+        self.assertEqual(weight, [2.0, 3.0, 4.0, 5.0])
+
     def test_get(self):
         """
         Test get() on Connectome

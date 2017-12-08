@@ -402,8 +402,9 @@ class Connectome(object):
             return
 
         if val is not None and nest.is_literal(params):
-            if nest.is_iterable(val) and not isinstance(val, (uni_str, dict)):
-                params = [{params: x} for x in val]
+            if (nest.is_iterable(val)
+                and not isinstance(val, (nest.uni_str, dict))):
+                    params = [{params: x} for x in val]
             else:
                 params = {params: val}
 

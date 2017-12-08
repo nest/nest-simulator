@@ -412,6 +412,7 @@ public:
 
   const std::vector< size_t >& get_secondary_send_buffer_positions(
     const thread tid,
+    const synindex syn_id,
     const index lid ) const;
 
   //! returns read position in MPI receive buffer for secondary
@@ -775,9 +776,9 @@ ConnectionManager::get_next_target_data( const thread tid,
 
 inline const std::vector< size_t >&
 ConnectionManager::get_secondary_send_buffer_positions( const thread tid,
-  const index lid ) const
+  const synindex syn_id, const index lid ) const
 {
-  return target_table_.get_secondary_send_buffer_positions( tid, lid );
+  return target_table_.get_secondary_send_buffer_positions( tid, syn_id, lid );
 }
 
 inline size_t

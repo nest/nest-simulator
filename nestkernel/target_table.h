@@ -56,7 +56,7 @@ private:
   std::vector< std::vector< std::vector< Target > >* > targets_;
 
   //! store secondary target of local neurons
-  std::vector< std::vector< std::vector< size_t > >* >
+  std::vector< std::vector< std::vector< std::vector< size_t > > >* >
     secondary_send_buffer_pos_;
 
 public:
@@ -78,6 +78,7 @@ public:
   //! returns position in send buffer
   const std::vector< size_t >& get_secondary_send_buffer_positions(
     const thread tid,
+    const synindex syn_id,
     const index lid ) const;
   //! clear all entries
   void clear( const thread tid );
@@ -96,9 +97,9 @@ TargetTable::get_targets( const thread tid, const index lid ) const
 
 inline const std::vector< size_t >&
 TargetTable::get_secondary_send_buffer_positions( const thread tid,
-  const index lid ) const
+  const synindex syn_id, const index lid ) const
 {
-  return ( *secondary_send_buffer_pos_[ tid ] )[ lid ];
+  return ( *secondary_send_buffer_pos_[ tid ] )[ syn_id ][ lid ];
 }
 
 inline void

@@ -525,6 +525,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
           + ( recv_buffer_pos - target_rank * kernel().mpi_manager.get_chunk_size_secondary_events() );
         reinterpret_cast< SecondaryTargetData* >( &next_target_data )
           ->set_send_buffer_pos( send_buffer_pos );
+        reinterpret_cast< SecondaryTargetData* >( &next_target_data )
+          ->set_syn_id( current_position.syn_id );
       }
       --current_position.lcid;
       return true; // found a valid entry

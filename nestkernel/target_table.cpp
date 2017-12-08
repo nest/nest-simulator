@@ -29,7 +29,8 @@ nest::TargetTable::TargetTable()
 {
   assert( sizeof( Target ) == 8 );
   assert( sizeof( TargetData ) == 12 );
-  assert( sizeof( SecondaryTargetData ) == 8 );
+  // std::cout << sizeof( SecondaryTargetData ) << std::endl;
+  assert( sizeof( SecondaryTargetData ) == 12 );
 }
 
 nest::TargetTable::~TargetTable()
@@ -49,7 +50,7 @@ nest::TargetTable::initialize()
     targets_[ tid ] =
       new std::vector< std::vector< Target > >( 0, std::vector< Target >( 0, Target() ) );
     secondary_send_buffer_pos_[ tid ] =
-      new std::vector< std::vector< size_t > >( 0, std::vector< size_t >( 0 ) );
+      new std::vector< std::vector< std::vector< size_t > > > ( 0, std::vector< std::vector< size_t > >( 0 ) );
   } // of omp parallel
 }
 
@@ -65,7 +66,7 @@ nest::TargetTable::finalize()
   }
   targets_.clear();
 
-  for ( std::vector< std::vector< std::vector< size_t > >* >::iterator it =
+  for ( std::vector< std::vector< std::vector< std::vector< size_t > > >* >::iterator it =
           secondary_send_buffer_pos_.begin();
         it != secondary_send_buffer_pos_.end();
         ++it )
@@ -82,9 +83,15 @@ nest::TargetTable::prepare( const thread tid )
   // rounding errors
   targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes() + 1,
     std::vector< Target >( 0, Target() ) );
-  secondary_send_buffer_pos_[ tid ]->resize(
-    kernel().node_manager.get_max_num_local_nodes(),
-    std::vector< size_t >( 0 ) );
+
+  secondary_send_buffer_pos_[ tid ]->resize( 64,
+    std::vector< std::vector< size_t > >( 0 ) );
+  for ( size_t i = 0; i < 64; ++i )
+  {
+    ( *secondary_send_buffer_pos_[ tid ] )[ i ].resize(
+      kernel().node_manager.get_max_num_local_nodes(),
+      std::vector< size_t >( 0 ) );
+  }
 }
 
 void
@@ -112,16 +119,21 @@ void
 nest::TargetTable::print_secondary_send_buffer_pos( const thread tid ) const
 {
   std::cout << "-------------SENDBUFFERPOS-------------------\n";
-  for ( std::vector< std::vector< size_t > >::const_iterator cit =
+  for ( std::vector< std::vector< std::vector< size_t > > >::const_iterator cit =
           ( *secondary_send_buffer_pos_[ tid ] ).begin();
         cit != ( *secondary_send_buffer_pos_[ tid ] ).end();
         ++cit )
   {
-    for ( std::vector< size_t >::const_iterator ciit = ( *cit ).begin();
+    for ( std::vector< std::vector< size_t > >::const_iterator ciit = ( *cit ).begin();
           ciit != ( *cit ).end();
           ++ciit )
     {
-      std::cout << *ciit << ", ";
+      for ( std::vector< size_t >::const_iterator ciiit =  ( *ciit ).begin();
+            ciiit != ( *ciit ).end();
+          ++ciiit )
+      {
+        std::cout << *ciiit << ", ";
+      }
     }
     std::cout << std::endl;
   }
@@ -132,12 +144,15 @@ nest::TargetTable::print_secondary_send_buffer_pos( const thread tid ) const
 void
 nest::TargetTable::compress_secondary_send_buffer_pos( const thread tid )
 {
-  for ( std::vector< std::vector< size_t > >::iterator it = ( *secondary_send_buffer_pos_[ tid ] ).begin();
+  for ( std::vector< std::vector< std::vector< size_t > > >::iterator it = ( *secondary_send_buffer_pos_[ tid ] ).begin();
         it != ( *secondary_send_buffer_pos_[ tid ] ).end(); ++it )
   {
-    std::sort( it->begin(), it->end() );
-    const std::vector< size_t >::iterator new_it = std::unique( it->begin(), it->end() );
-    it->resize( std::distance( it->begin(), new_it) );
+    for ( std::vector< std::vector< size_t > >::iterator iit = ( *it ).begin(); iit != ( *it ).end(); ++iit )
+    {
+      std::sort( iit->begin(), iit->end() );
+      const std::vector< size_t >::iterator new_it = std::unique( iit->begin(), iit->end() );
+      iit->resize( std::distance( iit->begin(), new_it) );
+    }
   }
 }
 
@@ -163,7 +178,10 @@ nest::TargetTable::add_target( const thread tid, const thread target_rank, const
     const size_t send_buffer_pos =
       reinterpret_cast< const SecondaryTargetData* >( &target_data )
         ->get_send_buffer_pos();
-    ( *secondary_send_buffer_pos_[ tid ] )[ lid ].push_back(
+    const synindex syn_id =
+      reinterpret_cast< const SecondaryTargetData* >( &target_data )
+        ->get_syn_id();
+    ( *secondary_send_buffer_pos_[ tid ] )[ syn_id ][ lid ].push_back(
       send_buffer_pos );
   }
 }

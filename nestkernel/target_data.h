@@ -225,16 +225,20 @@ class SecondaryTargetData : public TargetDataBase
 {
 private:
   unsigned int send_buffer_pos_;
+  unsigned char syn_id_;
 
 public:
   SecondaryTargetData();
   void set_send_buffer_pos( const size_t pos );
   size_t get_send_buffer_pos() const;
+  void set_syn_id( const synindex syn_id );
+  synindex get_syn_id() const;
 };
 
 inline SecondaryTargetData::SecondaryTargetData()
   : TargetDataBase()
   , send_buffer_pos_( 4294967296 - 1 )
+  , syn_id_( 64 - 1)
 {
 }
 
@@ -249,6 +253,18 @@ inline size_t
 SecondaryTargetData::get_send_buffer_pos() const
 {
   return send_buffer_pos_;
+}
+
+inline void
+SecondaryTargetData::set_syn_id( const synindex syn_id )
+{
+  syn_id_ = syn_id;
+}
+
+inline synindex
+SecondaryTargetData::get_syn_id() const
+{
+  return syn_id_;
 }
 
 } // namespace nest

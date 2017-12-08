@@ -144,14 +144,23 @@ EventDeliveryManager::send_secondary( const Node& source, SecondaryEvent& e )
 {
   const thread tid = kernel().vp_manager.get_thread_id();
   const index lid = kernel().vp_manager.gid_to_lid( source.get_gid() );
-  const std::vector< size_t >& positions =
-    kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid );
 
-  for ( size_t i = 0; i < positions.size(); ++i )
+  // we need to consider every synapse type this event supports to
+  // make sure also labeled and connection created by CopyModel are
+  // considered
+  const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
+  for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin();
+        cit != supported_syn_ids.end(); ++cit )
   {
-    std::vector< unsigned int >::iterator it =
-      send_buffer_secondary_events_.begin() + positions[ i ];
-    e >> it;
+    const std::vector< size_t >& positions =
+      kernel().connection_manager.get_secondary_send_buffer_positions( tid, *cit, lid );
+
+    for ( size_t i = 0; i < positions.size(); ++i )
+    {
+      std::vector< unsigned int >::iterator it =
+        send_buffer_secondary_events_.begin() + positions[ i ];
+      e >> it;
+    }
   }
 }
 

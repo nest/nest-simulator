@@ -851,6 +851,8 @@ public:
     std::vector< unsigned int >::iterator& pos ) = 0;
   virtual std::vector< unsigned int >::iterator& operator>>(
     std::vector< unsigned int >::iterator& pos ) = 0;
+
+  virtual const std::vector< synindex >& get_supported_syn_ids() const = 0;
 };
 
 /**
@@ -1002,6 +1004,12 @@ public:
     supported_syn_ids_.push_back( synid );
   }
 
+  const std::vector< synindex >&
+  get_supported_syn_ids() const
+  {
+    return supported_syn_ids_;
+  }
+
   static void
   set_coeff_length( const size_t coeff_length )
   {
@@ -1138,6 +1146,12 @@ public:
     assert( not supports_syn_id( synid ) );
     VPManager::assert_single_threaded();
     supported_syn_ids_.push_back( synid );
+  }
+
+  const std::vector< synindex >&
+  get_supported_syn_ids() const
+  {
+    return supported_syn_ids_;
   }
 
   static void
@@ -1285,6 +1299,12 @@ public:
     assert( not supports_syn_id( synid ) );
     VPManager::assert_single_threaded();
     supported_syn_ids_.push_back( synid );
+  }
+
+  const std::vector< synindex >&
+  get_supported_syn_ids() const
+  {
+    return supported_syn_ids_;
   }
 
   static void
@@ -1443,6 +1463,12 @@ public:
     assert( not supports_syn_id( synid ) );
     VPManager::assert_single_threaded();
     supported_syn_ids_.push_back( synid );
+  }
+
+  const std::vector< synindex >&
+  get_supported_syn_ids() const
+  {
+    return supported_syn_ids_;
   }
 
   static void

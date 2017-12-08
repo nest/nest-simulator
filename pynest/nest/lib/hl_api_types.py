@@ -269,9 +269,9 @@ class GIDCollection(object):
                     if value not in value_list[0].keys():
                         raise KeyError("The value '{}' does not exist at the given path".format(value))
                 if len(self) == 1:
-                    return {'{}'.format(key): value for key, value in value_list[0].iteritems() if key in params[-1]}
+                    return {'{}'.format(key): value for key, value in value_list[0].items() if key in params[-1]}
                 else:
-                    return [{'{}'.format(key): value for key, value in d.iteritems() if key in params[-1]} for d in value_list]
+                    return [{'{}'.format(key): value for key, value in d.items() if key in params[-1]} for d in value_list]
             else:
                 raise TypeError("Final argument should be either a string or an iterable")
             

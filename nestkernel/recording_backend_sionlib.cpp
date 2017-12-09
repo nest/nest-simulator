@@ -610,7 +610,7 @@ nest::RecordingBackendSIONlib::Parameters_::set(
   updateValue< long >( d, names::buffer_size, buffer_size_ );
   updateValue< long >( d, names::sion_chunksize, sion_chunksize_ );
   updateValue< bool >( d, names::sion_collective, sion_collective_ );
-  updateValue< bool >( d, names::sion_n_files, sion_n_files_ );
+  updateValue< long >( d, names::sion_n_files, sion_n_files_ );
 }
 
 void

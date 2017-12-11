@@ -67,7 +67,6 @@ def GetConnections(source=None, target=None, synapse_model=None,
     Raises
     ------
     TypeError
-        Description
     """
 
     params = {}
@@ -119,7 +118,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     Raises
     ------
     kernel.NESTError
-        Description
 
     Notes
     -----
@@ -437,45 +435,34 @@ def DataConnect(pre, params=None, model="static_synapse"):
         SetKernelStatus({'dict_miss_is_error': dict_miss})
 
 
-def _is_subnet_instance(gids):
-    """Returns true if all gids point to subnet or derived type.
-
-    Parameters
-    ----------
-    gids : TYPE
-        Description
-
-    Returns
-    -------
-    bool:
-        true if all gids point to subnet or derived type
-    """
-
-    try:
-        # Turn off deprecation warning to avoid confusing users with
-        # internals.
-        with SuppressedDeprecationWarning(['GetChildren']):
-            GetChildren(gids)
-        return True
-    except kernel.NESTError:
-        return False
-
-
 @check_stack
 def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
-    """
-    Connect neurons from pre to neurons from post using connectivity
-    specified by the connection generator cg.
+    """Connect neurons using the Connection Generator Interface.
+
+    Potential pre-synaptic neurons are taken from pre, potential
+    post-synaptic neurons are taken from post. The connection
+    generator cg specifies the exact connectivity to be set up. The
+    parameter_map can either be None or a dictionary that maps the
+    keys "weight" and "delay" to their integer indices in the value
+    set of the connection generator.
 
     This function is only available if NEST was compiled with
     support for libneurosim.
 
+    For further information, see
+    * The NEST documentation on using the CG Interface at
+      http://nest-simulator.org/connection-generator-interface
+    * The GitHub repository and documentation for libneurosim at
+      https://github.com/INCF/libneurosim/
+    * The publication about the Connection Generator Interface at
+      https://doi.org/10.3389/fninf.2014.00043
+
     Parameters
     ----------
-    pre : list
-        must contain 1 subnet, or a list of GIDs
-    post : list
-        must contain 1 subnet, or a list of GIDs
+    pre : list or numpy.array
+        must contain a list of GIDs
+    post : list or numpy.array
+        must contain a list of GIDs
     cg : connection generator
         libneurosim connection generator to use
     parameter_map : dict, optional
@@ -498,28 +485,13 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
     if parameter_map is None:
         parameter_map = {}
 
-    if _is_subnet_instance(pre[:1]):
-
-        if not _is_subnet_instance(post[:1]):
-            raise kernel.NESTError(
-                "if pre is a subnet, post also has to be a subnet")
-
-        if len(pre) > 1 or len(post) > 1:
-            raise kernel.NESTError(
-                "the length of pre and post has to be 1 if subnets " +
-                "are given")
-
-        sli_func('CGConnect', cg, pre[0], post[0],
-                 parameter_map, '/' + model, litconv=True)
-
-    else:
-        sli_func('CGConnect', cg, pre, post,
-                 parameter_map, '/' + model, litconv=True)
+    sli_func('CGConnect', cg, pre, post,
+             parameter_map, '/' + model, litconv=True)
 
 
 @check_stack
 def CGParse(xml_filename):
-    """Parse an XML file and return the correcponding connection
+    """Parse an XML file and return the corresponding connection
     generator cg.
 
     The library to provide the parsing can be selected
@@ -533,7 +505,6 @@ def CGParse(xml_filename):
     Raises
     ------
     kernel.NESTError
-        Description
     """
 
     sr("statusdict/have_libneurosim ::")
@@ -564,7 +535,6 @@ def CGSelectImplementation(tag, library):
     Raises
     ------
     kernel.NESTError
-        Description
     """
 
     sr("statusdict/have_libneurosim ::")

@@ -205,6 +205,7 @@ nest::siegert_neuron::siegert_neuron()
   , B_( *this )
 {
   recordablesMap_.create();
+  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
 nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
@@ -213,6 +214,7 @@ nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
+  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
 /* ----------------------------------------------------------------

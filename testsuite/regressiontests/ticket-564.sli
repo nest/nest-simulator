@@ -53,7 +53,7 @@ M_ERROR setverbosity
     ResetKernel    
     0 << /total_num_virtual_procs N_VP >> SetStatus
 
-    /net /iaf_neuron [ N ] LayoutNetwork def
+    /net /iaf_psc_alpha [ N ] LayoutNetwork def
     /nodes net GetGlobalNodes def
     /local_nodes net GetLocalNodes def
     nodes local_nodes << /rule /fixed_indegree /indegree C >> Connect

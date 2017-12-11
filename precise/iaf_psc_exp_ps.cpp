@@ -331,7 +331,7 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
     bool end_of_refract;
 
     if ( not B_.events_.get_next_spike(
-           T, ev_offset, ev_weight, end_of_refract ) )
+           T, false, ev_offset, ev_weight, end_of_refract ) )
     {
       // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
@@ -408,8 +408,8 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
         V_.y1_in_before_ = S_.y1_in_;
         V_.y2_before_ = S_.y2_;
         last_offset = ev_offset;
-      } while (
-        B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) );
+      } while ( B_.events_.get_next_spike(
+        T, false, ev_offset, ev_weight, end_of_refract ) );
 
       // no events remaining, plain update step across remainder
       // of interval
@@ -479,6 +479,11 @@ nest::iaf_psc_exp_ps::handle( DataLoggingRequest& e )
 void
 nest::iaf_psc_exp_ps::propagate_( const double dt )
 {
+  if ( dt == 0 )
+  {
+    return; // if two input spikes arrived simultaneously (#368)
+  }
+
   const double expm1_tau_ex = numerics::expm1( -dt / P_.tau_ex_ );
   const double expm1_tau_in = numerics::expm1( -dt / P_.tau_in_ );
 
@@ -505,6 +510,11 @@ nest::iaf_psc_exp_ps::emit_spike_( const Time& origin,
   const double t0,
   const double dt )
 {
+  // dt == 0 if two input spikes arrived simultaneously,
+  // but threshold cannot be crossed during empty interval,
+  // so emit_spike_() should not be called then (#368)
+  assert( dt > 0 );
+
   // we know that the potential is subthreshold at t0, super at t0+dt
 
   // compute spike time relative to beginning of step

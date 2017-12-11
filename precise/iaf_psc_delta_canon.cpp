@@ -58,7 +58,7 @@ template <>
 void
 RecordablesMap< iaf_psc_delta_canon >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_psc_delta_canon::get_V_m_ );
 }
 
@@ -258,8 +258,7 @@ iaf_psc_delta_canon::calibrate()
 
   V_.exp_t_ = std::exp( -V_.h_ms_ / P_.tau_m_ );
   V_.expm1_t_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
-  V_.v_inf_ = P_.I_e_ * P_.tau_m_ / P_.c_m_;
-  V_.I_contrib_ = -V_.v_inf_ * V_.expm1_t_;
+  V_.R_ = P_.tau_m_ / P_.c_m_;
 
   // t_ref_ is the refractory period in ms
   // refractory_steps_ is the duration of the refractory period in whole
@@ -334,7 +333,7 @@ iaf_psc_delta_canon::update( Time const& origin,
     bool end_of_refract;
 
     if ( not B_.events_.get_next_spike(
-           T, ev_offset, ev_weight, end_of_refract ) )
+           T, true, ev_offset, ev_weight, end_of_refract ) )
     { // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
       // if there are many steps without input spikes.
@@ -352,9 +351,8 @@ iaf_psc_delta_canon::update( Time const& origin,
 
 
         // contribution of the stepwise constant current
-        double I_contrib_t = -S_.I_ * P_.tau_m_ / P_.c_m_ * V_.expm1_t_;
-
-        S_.U_ = V_.I_contrib_ + I_contrib_t + V_.expm1_t_ * S_.U_ + S_.U_;
+        const double I_ext = -V_.expm1_t_ * V_.R_ * ( S_.I_ + P_.I_e_ );
+        S_.U_ = I_ext + V_.expm1_t_ * S_.U_ + S_.U_;
 
         S_.U_ =
           S_.U_ < P_.U_min_ ? P_.U_min_ : S_.U_; // lower bound on potential
@@ -447,8 +445,8 @@ iaf_psc_delta_canon::update( Time const& origin,
           emit_instant_spike_( origin, lag, t );
         }
 
-      } while (
-        B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) );
+      } while ( B_.events_.get_next_spike(
+        T, true, ev_offset, ev_weight, end_of_refract ) );
 
       // no events remaining, plain update step across remainder
       // of interval
@@ -478,7 +476,7 @@ nest::iaf_psc_delta_canon::propagate_( const double dt )
 
   // see comment on regular update above
   const double expm1_dt = numerics::expm1( -dt / P_.tau_m_ );
-  const double v_inf = V_.v_inf_ + S_.I_ * P_.tau_m_ / P_.c_m_;
+  const double v_inf = V_.R_ * ( S_.I_ + P_.I_e_ );
   S_.U_ = -v_inf * expm1_dt + S_.U_ * expm1_dt + S_.U_;
 
   return;
@@ -491,9 +489,10 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
 {
   assert( S_.U_ >= P_.U_th_ ); // ensure we are superthreshold
 
-  // compute time since threhold crossing
-  double v_inf = V_.v_inf_ + S_.I_ * P_.tau_m_ / P_.c_m_;
-  double dt = -P_.tau_m_ * std::log( ( v_inf - S_.U_ ) / ( v_inf - P_.U_th_ ) );
+  // compute time since threshold crossing
+  const double v_inf = V_.R_ * ( S_.I_ + P_.I_e_ );
+  const double dt =
+    -P_.tau_m_ * std::log( ( v_inf - S_.U_ ) / ( v_inf - P_.U_th_ ) );
 
   // set stamp and offset for spike
   S_.last_spike_step_ = origin.get_steps() + lag + 1;

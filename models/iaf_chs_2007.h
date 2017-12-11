@@ -45,7 +45,7 @@ namespace nest
    potentials (V_syn), waveforms that include a spike and the subsequent
    after-hyperpolarization (V_spike) and Gaussian-distributed white noise.
 
-   The postsynaptic potential is described by alpha function where where
+   The postsynaptic potential is described by alpha function where
    U_epsp is the maximal amplitude of the EPSP and tau_epsp is the time to
    peak of the EPSP.
 

@@ -314,36 +314,36 @@ def run_simulation():
     '''Performs a simulation, including network construction'''
 
     # open log file
-    logger = Logger(params['log_file'])
+    with Logger(params['log_file']) as logger:
 
-    nest.ResetKernel
-    nest.set_verbosity(M_INFO)
+        nest.ResetKernel
+        nest.set_verbosity(M_INFO)
 
-    logger.log(str(memory_thisjob()) + ' # virt_mem_0')
+        logger.log(str(memory_thisjob()) + ' # virt_mem_0')
 
-    build_network(logger)
+        build_network(logger)
 
-    tic = time.time()
+        tic = time.time()
 
-    nest.Simulate(params['presimtime'])
+        nest.Simulate(params['presimtime'])
 
-    PreparationTime = time.time() - tic
+        PreparationTime = time.time() - tic
 
-    logger.log(str(memory_thisjob()) + ' # virt_mem_after_presim')
-    logger.log(str(PreparationTime) + ' # presim_time')
+        logger.log(str(memory_thisjob()) + ' # virt_mem_after_presim')
+        logger.log(str(PreparationTime) + ' # presim_time')
 
-    tic = time.time()
+        tic = time.time()
 
-    nest.Simulate(params['simtime'])
+        nest.Simulate(params['simtime'])
 
-    SimCPUTime = time.time() - tic
+        SimCPUTime = time.time() - tic
 
-    logger.log(str(memory_thisjob()) + ' # virt_mem_after_sim')
-    logger.log(str(SimCPUTime) + ' # sim_time')
+        logger.log(str(memory_thisjob()) + ' # virt_mem_after_sim')
+        logger.log(str(SimCPUTime) + ' # sim_time')
 
-    logger.log(str(compute_rate()) + ' # average rate')
+        time.sleep(5)
 
-    logger.done()
+        logger.log(str(compute_rate()) + ' # average rate')
 
 # ------------------------------------------------------------------------------------
 
@@ -404,8 +404,8 @@ def get_local_nodes(nodes):
 
 
 class Logger(object):
-    '''Logger class used to properly log memory and timing information
-    from network simulations.
+    '''Logger context manager used to properly log memory and timing
+    information from network simulations.
 
     '''
 
@@ -413,15 +413,19 @@ class Logger(object):
         self.max_rank_cout = 5  # copy output to cout for ranks 0..max_rank_cout-1
         self.max_rank_log = 30  # write to log files for ranks 0..max_rank_log-1
         self.line_counter = 0
+        self.file_name = file_name
 
+    def __enter__(self):
         if nest.Rank() < self.max_rank_log:
 
             # convert rank to string, prepend 0 if necessary to make
             # numbers equally wide for all ranks
             rank = '{:0' + str(len(str(self.max_rank_log))) + '}'
-            fn = '{fn}_{rank}.dat'.format(fn=file_name, rank=rank.format(nest.Rank()))
+            fn = '{fn}_{rank}.dat'.format(fn=self.file_name, rank=rank.format(nest.Rank()))
 
             self.f = open(fn, 'w')
+
+            return self
 
     def log(self, value):
         if nest.Rank() < self.max_rank_log:
@@ -433,7 +437,7 @@ class Logger(object):
             print(str(nest.Rank()) + ' ' + value + '\n', file=sys.stdout)
             print(str(nest.Rank()) + ' ' + value + '\n', file=sys.stderr)
 
-    def done(self):
+    def __exit__(self, exc_type, exc_val, traceback):
         if nest.Rank() < self.max_rank_log:
             self.f.close()
 

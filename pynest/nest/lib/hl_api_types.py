@@ -196,7 +196,7 @@ class GIDCollection(object):
             If the input params are on the wrong form.
         KeyError
             If the specified parameter does not exist for the nodes.
-        
+
         See Also
         --------
         set
@@ -205,15 +205,15 @@ class GIDCollection(object):
         --------
         Single parameter:
 
-        >>> gidcollection.get('V_m')
+        >>> neurons.get('V_m')
         (-70.0, -70.0, ..., -70.0)
 
-        >>> gidcollection[3:4].get('V_m')
+        >>> neurons[3].get('V_m')
         -70.0
 
         Multiple parameters:
 
-        >>> gidcollection.get(['V_m', 'V_th'])
+        >>> neurons.get(['V_m', 'V_th'])
         {'V_m': (-70.0, -70.0, ..., -70.0),
          'V_th': (-55.0, -55.0, ..., -55.0)}
 
@@ -234,14 +234,15 @@ class GIDCollection(object):
                 cmd = '/{} get'.format(param)
                 nest.sps(self._datum)
                 nest.sr(cmd)
-                return nest.spp()
+                result = nest.spp()
             elif nest.is_iterable(param):
-                return {param_name: self.get(param_name)
-                        for param_name in param}
+                result = {param_name: self.get(param_name)
+                          for param_name in param}
             else:
-                raise TypeError("Params should be either a string or an iterable")
+                raise TypeError("Params should be either a string or an " +
+                                "iterable")
 
-        else: # Hierarchical addressing (brutal implementation)
+        else:  # Hierarchical addressing (brutal implementation)
             first = True
             for param in params[:-1]:
                 if nest.is_literal(param):
@@ -251,30 +252,41 @@ class GIDCollection(object):
                             value_list = (value_list,)
                         first = False
                     else:
-                        value_list = [nest.sli_func('/{} get'.format(param), d) for d in value_list]
+                        # TODO481 : This is never run as the max depth in the
+                        # status dictionary is too low.
+                        value_list = [nest.sli_func('/{} get'.format(param), d)
+                                      for d in value_list]
                 elif nest.is_iterable(param):
-                    raise TypeError("Only the last argument can be an iterable")
+                    raise TypeError("Only the last argument can be an " +
+                                    "iterable")
                 else:
                     raise TypeError("Argument must be a string")
             if nest.is_literal(params[-1]):
                 if len(self) == 1:
-                    return value_list[0][params[-1]]
+                    result = value_list[0][params[-1]]
                 else:
-                    return [d[params[-1]] for d in value_list]
+                    result = tuple([d[params[-1]] for d in value_list])
             elif nest.is_iterable(params[-1]):
                 for value in params[-1]:
                     # TODO481 : Assuming they are all of equal type, we check
                     # only the values of the first node. This must be changed
                     # if we decide something else.
                     if value not in value_list[0].keys():
-                        raise KeyError("The value '{}' does not exist at the given path".format(value))
+                        raise KeyError("The value '{}' does not exist at" +
+                                       "the given path".format(value))
                 if len(self) == 1:
-                    return {'{}'.format(key): value for key, value in value_list[0].items() if key in params[-1]}
+                    result = {'{}'.format(key): value
+                              for key, value in value_list[0].items()
+                              if key in params[-1]}
                 else:
-                    return [{'{}'.format(key): value for key, value in d.items() if key in params[-1]} for d in value_list]
+                    result = tuple([{'{}'.format(key): value
+                                     for key, value in d.items()
+                                     if key in params[-1]}
+                                    for d in value_list])
             else:
-                raise TypeError("Final argument should be either a string or an iterable")
-            
+                raise TypeError("Final argument should be either a string " +
+                                "or an iterable")
+        return result
 
     def set(self, params, val=None):
         """

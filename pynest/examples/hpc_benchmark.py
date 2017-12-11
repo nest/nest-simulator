@@ -66,7 +66,6 @@
 
 import numpy as np
 import os
-# from scipy.special import lambertw
 import sys
 import time
 
@@ -77,10 +76,10 @@ M_INFO = 10
 M_ERROR = 30
 
 
-'''
- Parameter section
+'''Parameter section
 
- define all relevant parameters: changes should be made here
+ Define all relevant parameters: changes should be made here
+
 '''
 
 params = {
@@ -91,7 +90,7 @@ params = {
     'presimtime': 50.,      # simulation time until reaching equilibrium
     'dt': 0.1,              # simulation step
     'record_spikes': True,  # switch to record spikes of excitatory neurons to file
-    'path_name': './',      # path where all files will have to be written
+    'path_name': '',      # path where all files will have to be written
     'log_file': 'log',      # naming scheme for the log files
 }
 
@@ -99,9 +98,11 @@ params = {
 
 
 def convert_synapse_weight(tau_m, tau_syn, C_m):
-    '''Computes conversion factor for synapse weight from mV to pA. This
-    function is specific to the used neuron model Leaky
-    integrate-and-fire neuron with alpha-shaped postsynaptic currents.
+    '''Computes conversion factor for synapse weight from mV to pA
+
+    This function is specific to the leaky integrate-and-fire neuron
+    model with alpha-shaped postsynaptic currents.
+
     '''
     a = tau_m / tau_syn
     b = 1.0 / tau_syn - 1.0 / tau_m
@@ -118,11 +119,11 @@ def convert_synapse_weight(tau_m, tau_syn, C_m):
 # evoked post-synaptic potential is 1.700759 ms.
 # For alpha-shaped postynaptic currents, the rise time of the post-synaptic
 # potential follows from the synaptic rise time as
-
+#
 # def PSP_rise_time(tau_m, tau_syn):
 #     a = tau_m / tau_syn
 #     b = 1.0 / tau_syn - 1.0 / tau_m
-
+#
 # Inverting this equation numerically leads to tau_syn = 0.32582722403722841 ms,
 # as specified in model_params below.
 
@@ -175,12 +176,19 @@ brunel_params = {
     'filestem': params['path_name']
 }
 
-'''
- FUNCTION SECTION
+'''FUNCTION SECTION
+
 '''
 
 
 def build_network(logger):
+    '''Builds the network including setting of simulation and neuron
+    parameters, creation of neurons and connections
+
+    Requires an instance of Logger as argument
+
+    '''
+
     tic = time.time()  # start timer on construction
 
     # unpack a few variables for convenience
@@ -201,7 +209,7 @@ def build_network(logger):
     E_neurons = nest.Create('iaf_psc_alpha', NE)
 
     nest.message(M_INFO, 'build_network', 'Creating inhibitory population.')
-    I_neurons = nest.Create('iaf_psc_alpha', NI)  # subnet gets own gid
+    I_neurons = nest.Create('iaf_psc_alpha', NI)
 
     if brunel_params['randomize_Vm']:
         nest.message(M_INFO, 'build_network', 'Randomzing membrane potentials.')
@@ -303,6 +311,8 @@ def build_network(logger):
 
 
 def run_simulation():
+    '''Performs a simulation, including network construction'''
+
     # open log file
     logger = Logger(params['log_file'])
 
@@ -339,8 +349,12 @@ def run_simulation():
 
 
 def compute_rate():
-    '''compute approximation of average firing rate based on number of
-    local nodes, number of local spikes and total time
+    '''Compute local approximation of average firing rate
+
+    This approximation is based on the number of local nodes, number
+    of local spikes and total time. Since this also considers devices,
+    the actual firing rate is usually underestimated.
+
     '''
 
     n_local_spikes = nest.GetKernelStatus('local_spike_counter')
@@ -352,7 +366,7 @@ def compute_rate():
 
 
 def memory_thisjob():
-    '''wrapper to obtain current memory usage'''
+    '''Wrapper to obtain current memory usage'''
     nest.sr('memory_thisjob')
     return nest.spp()
 
@@ -360,6 +374,7 @@ def memory_thisjob():
 
 
 def lambertwm1(x):
+    '''Wrapper for LambertWm1 function'''
     nest.sr('{} LambertWm1'.format(x))
     return nest.spp()
 
@@ -367,9 +382,12 @@ def lambertwm1(x):
 
 
 def get_local_nodes(nodes):
+    '''Generator for efficient looping over local nodes
 
-    '''
-    Generator for efficient looping over local nodes.
+    Assumes nodes is a continous list of gids [1, 2, 3, ...], e.g., as
+    returned by Create. Only works for nodes with proxies, i.e.,
+    regular neurons.
+
     '''
 
     nvp = nest.GetKernelStatus('total_num_virtual_procs')  # step size
@@ -386,10 +404,9 @@ def get_local_nodes(nodes):
 
 
 class Logger(object):
-    '''
-    This class defines a logger class used to properly log memory and timing
-    information from network simulations. It is used by hpc_benchmark.sli to
-    store the information to the log files.
+    '''Logger class used to properly log memory and timing information
+    from network simulations.
+
     '''
 
     def __init__(self, file_name):
@@ -402,13 +419,14 @@ class Logger(object):
             # convert rank to string, prepend 0 if necessary to make
             # numbers equally wide for all ranks
             rank = '{:0' + str(len(str(self.max_rank_log))) + '}'
-            fn = file_name + '_' + rank.format(nest.Rank()) + '.dat'
+            fn = '{fn}_{rank}.dat'.format(fn=file_name, rank=rank.format(nest.Rank()))
 
             self.f = open(fn, 'w')
 
     def log(self, value):
         if nest.Rank() < self.max_rank_log:
-            self.f.write(str(self.line_counter) + ' ' + str(nest.Rank()) + ' ' + value + '\n')
+            line = '{lc} {rank} {value} \n'.format(lc=self.line_counter, rank=nest.Rank(), value=value)
+            self.f.write(line)
             self.line_counter += 1
 
         if nest.Rank() < self.max_rank_cout:

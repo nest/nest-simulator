@@ -23,10 +23,8 @@ from scipy.integrate import quad
 import math
 import numpy
 from numpy import testing
-import pylab
 import unittest
 import nest
-from nest import raster_plot
 import time
 HAVE_OPENMP = nest.sli_func("is_threaded")
 
@@ -339,22 +337,27 @@ class TestGrowthCurve(unittest.TestCase):
                     self.se_nest[n_i], self.se_python[sei_i], decimal=5)
 
     def plot(self):
-        pylab.ion()
-        for i, sei in enumerate(self.se_integrator):
-            pylab.figure()
-            pylab.subplot(1, 2, 1)
-            pylab.title('Ca')
-            pylab.plot(self.sim_steps, self.ca_nest[0, :])
-            pylab.plot(self.sim_steps, self.ca_python[i])
-            pylab.legend(('nest', sei.__class__.__name__))
-            pylab.subplot(1, 2, 2)
-            pylab.title('Synaptic Element')
-            pylab.plot(self.sim_steps, self.se_nest[0, :])
-            pylab.plot(self.sim_steps, self.se_python[i])
-            pylab.legend(('nest', sei.__class__.__name__))
-            pylab.savefig('sp' + sei.__class__.__name__ + '.png')
-        raster_plot.from_device(self.spike_detector)
-        pylab.savefig('sp_raster_plot.png')
+        try:
+            import pylab
+            from nest import raster_plot
+            pylab.ion()
+            for i, sei in enumerate(self.se_integrator):
+                pylab.figure()
+                pylab.subplot(1, 2, 1)
+                pylab.title('Ca')
+                pylab.plot(self.sim_steps, self.ca_nest[0, :])
+                pylab.plot(self.sim_steps, self.ca_python[i])
+                pylab.legend(('nest', sei.__class__.__name__))
+                pylab.subplot(1, 2, 2)
+                pylab.title('Synaptic Element')
+                pylab.plot(self.sim_steps, self.se_nest[0, :])
+                pylab.plot(self.sim_steps, self.se_python[i])
+                pylab.legend(('nest', sei.__class__.__name__))
+                pylab.savefig('sp' + sei.__class__.__name__ + '.png')
+            raster_plot.from_device(self.spike_detector)
+            pylab.savefig('sp_raster_plot.png')
+        except ImportError:
+            pass
 
     def test_linear_growth_curve(self):
         beta_ca = 0.0001

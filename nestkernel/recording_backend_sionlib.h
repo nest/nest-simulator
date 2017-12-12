@@ -154,7 +154,10 @@ private:
   file_map files_;
 
   std::string filename_;
-  MPI_Comm local_comm_;
+  MPI_Comm local_comm_;    // single copy of local MPI communicator
+                           // for all threads using the sionlib
+                           // recording backend in parallel (for broadcasting
+                           // the results of MPIX..(..) in open_files_(..))
 
   double t_start_; // simulation start time for storing
 

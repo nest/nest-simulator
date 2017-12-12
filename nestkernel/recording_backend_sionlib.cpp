@@ -102,11 +102,17 @@ nest::RecordingBackendSIONlib::open_files_()
     
   local_comm_ = MPI_COMM_NULL;
 #ifdef BG_MULTIFILE
-#pragma omp single
+  // MPIX calls not thread-safe; use only master thread here 
+  // (omp single may be problematic as well)
+#pragma omp master
   {
     MPIX_Pset_same_comm_create( &local_comm_ );
   }
+#pragma omp barrier
 #endif // BG_MULTIFILE
+  // use additional local variable for local communicator to
+  // avoid problems when calling sion_paropen_ompi(..)
+  MPI_Comm local_comm = local_comm_;
 
   // we need to delay the throwing of exceptions to the end of the parallel
   // section
@@ -159,7 +165,7 @@ nest::RecordingBackendSIONlib::open_files_()
       P_.sion_collective_ ? "bw,cmerge,collsize=-1" : "bw",
       &n_files,
       MPI_COMM_WORLD,
-      &local_comm_,
+      &local_comm,
       &sion_chunksize,
       &fs_block_size,
       &rank,

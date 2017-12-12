@@ -21,7 +21,7 @@
 
 . $HOME/work-nest/nest-git/install-mpi-off/bin/nest_vars.sh
 
-myhome="`cd $0; pwd`"
+myhome=$PWD
 nesthome=$HOME/work-nest/nest-git/nest-simulator
 exampleshome=$nesthome/pynest/examples
 
@@ -84,19 +84,16 @@ for i in $EXAMPLES ; do
     
     example=$(basename $i)
     examplename=$(basename $i .py)
-    echo $examplename
 
     ext=$(echo $example | cut -d. -f2)
 
     if [ $ext = sli ] ; then
         runner=nest
     elif [ $ext = py ] ; then
-		echo $example
-		echo $i
 		#in letzte Zeile Bild Erzeugung einfügen
 		echo "import pylab \npylab.savefig('$imgdir/$examplename.png')" >> $example
 		# Bilder generieren
-		# ipython $value
+		#ipython $value
     
         runner=python
     fi
@@ -106,7 +103,7 @@ for i in $EXAMPLES ; do
     set +e
 
     # MAKE IMAGES
-    #$runner $example
+    $runner $example
 
 	# letzte Zeile in Python Dateien löschen
 	sed -i '$d' $example
@@ -145,7 +142,7 @@ done
 echo '</ul>' >> $myhome/more-example-networks/index.tmpl.html
 cat $myhome/templates/overview-sample-header.tmpl $myhome/more-example-networks/index.tmpl.html $myhome/templates/overview-sample-footer.tmpl > $myhome/more-example-networks/index.html
 
-rm -rf $imgdir
+# rm -rf $imgdir
 
 if [ "x$OUTPUT" != "x" ] ; then
     echo ">>> Failed examples:"

@@ -25,6 +25,12 @@ Classes defining the different PyNEST types
 
 import nest
 
+try:
+    import pandas
+    HAVE_PANDAS = True
+except ImportError:
+    HAVE_PANDAS = False
+
 
 class GIDCollectionIterator(object):
     """
@@ -163,7 +169,7 @@ class GIDCollection(object):
     def __str__(self):
         return ''.format(nest.sli_func('==', self._datum))
 
-    def get(self, *params):
+    def get(self, *params, **kwargs):
         """
         Get parameters from nodes or layer.
 
@@ -176,6 +182,9 @@ class GIDCollection(object):
             - A list of strings.
             - One or more strings, followed by a string or list of strings.
               This is for hierarchical addressing.
+        pandas_output : bool, optional
+            Whether the returned data should be in a Pandas DataFrame or not.
+            Default is not.
 
         Returns
         -------
@@ -189,6 +198,8 @@ class GIDCollection(object):
             If there are multiple parameters in params. Also, if no parameters
             are specified, a dictionary containing aggregated parameter-values
             for all nodes is returned.
+        DataFrame
+            If the pandas_output parameter is True.
 
         Raises
         ------
@@ -226,24 +237,99 @@ class GIDCollection(object):
         {'senders': array([], dtype=int64),
          'times': array([], dtype=float64)}
         """
+        # TODO: Needs to be cleaned up.
+
+        #############################
+        #      Checks of input      #
+        #############################
+        if kwargs.keys() == []:
+            pandas_output = False
+        elif kwargs.keys() == ['pandas_output']:
+            if not HAVE_PANDAS:
+                raise ImportError('Pandas could not be imported')
+            pandas_output = kwargs['pandas_output']
+        else:
+            raise TypeError('Got unexpected keyword argument')
+
+        #############################
+        #  No specified params case #
+        #############################
         if len(params) == 0:
-            return nest.sli_func('get', self._datum)
+            result = nest.sli_func('get', self._datum)
+            if pandas_output:
+                try:
+                    index = result['global_id']
+                    result = pandas.DataFrame(result, index=index)
+                except KeyError:  # The GIDCollection is a layer
+                    result = {key: (item,) for key, item in result.items()}
+                    result = pandas.DataFrame(result,
+                                              index=['layer']).transpose()
+        #############################
+        #     Normal addressing     #
+        #############################
         elif len(params) == 1:
             param = params[0]
+            # Single literal case
             if nest.is_literal(param):
                 cmd = '/{} get'.format(param)
                 nest.sps(self._datum)
                 nest.sr(cmd)
                 result = nest.spp()
+                if pandas_output:
+                    try:
+                        index = self.get('global_id')
+                        if type(index) is int:
+                            index = [index]
+                        if type(result) is dict:
+                            # Problematic if result[key] isn't array-like
+                            result = pandas.DataFrame(
+                                {(param, key): result[key]
+                                 if len(result[key]) != 0
+                                 else [None]
+                                 for key in result.keys()},
+                                index=index)
+                        else:
+                            result = pandas.DataFrame({param: result},
+                                                      index=index)
+                    except nest.NESTError:  # It is (probably) a layer
+                        result = pandas.DataFrame({param: (result,)},
+                                                  columns=['layer'])
+            # Array param case
             elif nest.is_iterable(param):
                 result = {param_name: self.get(param_name)
                           for param_name in param}
+                if pandas_output:
+                    try:
+                        index = self.get('global_id')
+                        if type(index) is int:
+                            index = [index]
+                        p_dict = {}
+                        for key, item in result.items():
+                            if type(item) is dict:
+                                for subkey, subitem in item.items():
+                                    # Problematic if subitem isn't array-like
+                                    p_dict.update({(key, subkey): subitem
+                                                   if len(subitem) != 0
+                                                   else [None]})
+                            else:
+                                p_dict.update({key: item})
+
+                        result = pandas.DataFrame(p_dict,
+                                                  index=index)
+                    except nest.NESTError:  # It is (probably) a layer
+                        result = pandas.DataFrame(result,
+                                                  columns=['layer'])
+
             else:
                 raise TypeError("Params should be either a string or an " +
                                 "iterable")
 
-        else:  # Hierarchical addressing (brutal implementation)
+        ##############################
+        #   Hierarchical addressing  #
+        ##############################
+        else:
             first = True
+            # Path parameters
             for param in params[:-1]:
                 if nest.is_literal(param):
                     if first:
@@ -261,11 +347,21 @@ class GIDCollection(object):
                                     "iterable")
                 else:
                     raise TypeError("Argument must be a string")
+            # Value parameter, literal case
             if nest.is_literal(params[-1]):
                 if len(self) == 1:
                     result = value_list[0][params[-1]]
                 else:
                     result = tuple([d[params[-1]] for d in value_list])
+                if pandas_output:
+                    index = self.get('global_id')
+                    if type(index) is int:
+                        index = [index]
+                    result = pandas.DataFrame({params[-1]: result
+                                               if len(result) != 0
+                                               else [None]},
+                                              index=index)
+            # Value parameter, array case
             elif nest.is_iterable(params[-1]):
                 for value in params[-1]:
                     # TODO481 : Assuming they are all of equal type, we check
@@ -274,15 +370,34 @@ class GIDCollection(object):
                     if value not in value_list[0].keys():
                         raise KeyError("The value '{}' does not exist at" +
                                        "the given path".format(value))
-                if len(self) == 1:
-                    result = {'{}'.format(key): value
-                              for key, value in value_list[0].items()
+                if len(self) == 1:  # If GIDCollection contains a single node
+                    if pandas_output:
+                        index = [self.get('global_id')]
+                        result = {key: item
+                                  if len(item) != 0 else [None]
+                                  for key, item in value_list[0].items()
+                                  if key in params[-1]}
+                        result = pandas.DataFrame(result,
+                                                  index=index)
+                    else:
+                        result = {'{}'.format(key): value
+                                  for key, value in value_list[0].items()
+                                  if key in params[-1]}
+                else:  # If GIDCollection contains multiple nodes
+                    if pandas_output:
+                        index = self.get('global_id')
+                        result = pandas.DataFrame(
+                            [{key: item
+                              if len(item) != 0 else [None]
+                              for key, item in d.items()
                               if key in params[-1]}
-                else:
-                    result = tuple([{'{}'.format(key): value
-                                     for key, value in d.items()
-                                     if key in params[-1]}
-                                    for d in value_list])
+                             for d in value_list],
+                            index=index)
+                    else:
+                        result = tuple([{'{}'.format(key): value
+                                         for key, value in d.items()
+                                         if key in params[-1]}
+                                        for d in value_list])
             else:
                 raise TypeError("Final argument should be either a string " +
                                 "or an iterable")

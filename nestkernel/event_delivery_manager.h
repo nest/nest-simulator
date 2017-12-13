@@ -283,6 +283,8 @@ public:
   unsigned int comm_rounds_spike_data;
   unsigned int comm_steps_secondary_events;
 
+  std::vector< unsigned int > call_count_deliver_events_5g;
+
 private:
 
   template< typename SpikeDataT >

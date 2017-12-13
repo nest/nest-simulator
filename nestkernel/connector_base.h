@@ -60,6 +60,7 @@ class ConnectorBase
 {
 
 public:
+  unsigned int call_count;
 
    // destructor needs to be declared virtual to avoid undefined
    // behaviour, avoid possible memory leak and needs to be defined to
@@ -226,6 +227,7 @@ public:
   explicit Connector( const synindex syn_id )
     : syn_id_( syn_id )
   {
+    call_count = 0;
   }
 
   ~Connector()
@@ -422,6 +424,10 @@ public:
     Event& e,
     const std::vector< ConnectorModel* >& cm )
   {
+#ifndef DISABLE_TIMING
+    ++call_count;
+#endif
+
     e.set_port( lcid ); // TODO@5g: does this make sense?
     if ( not C_[ lcid ].is_disabled() )
     {

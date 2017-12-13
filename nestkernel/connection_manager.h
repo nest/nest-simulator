@@ -644,6 +644,8 @@ private:
   bool primary_connections_exist_; //!< Whether primary connections (spikes) exist
 
   bool secondary_connections_exist_; //!< Whether secondary connections (e.g., gap junctions) exist
+
+  void print_call_counts_connectors() const;
 };
 
 inline DictionaryDatum&

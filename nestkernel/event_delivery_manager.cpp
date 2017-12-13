@@ -51,6 +51,7 @@ EventDeliveryManager::EventDeliveryManager()
   , comm_steps_spike_data( 0 )
   , comm_rounds_spike_data( 0 )
   , comm_steps_secondary_events( 0 )
+  , call_count_deliver_events_5g( std::vector< unsigned int >() )
   , off_grid_spiking_( false )
   , moduli_()
   , slice_moduli_()
@@ -81,6 +82,7 @@ EventDeliveryManager::initialize()
   spike_register_5g_.resize( num_threads, 0 );
   off_grid_spike_register_5g_.resize( num_threads, 0 );
   completed_count_.resize( num_threads, 0 );
+  call_count_deliver_events_5g.resize( num_threads, 0 );
 
 #pragma omp parallel
   {
@@ -656,6 +658,8 @@ bool
 EventDeliveryManager::deliver_events_5g_( const thread tid,
   const std::vector< SpikeDataT >& recv_buffer )
 {
+  ++call_count_deliver_events_5g[ tid ];
+
   bool are_others_completed = true;
 
   // deliver only at end of time slice

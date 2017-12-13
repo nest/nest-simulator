@@ -32,6 +32,13 @@ try:
 except ImportError:
     HAVE_NUMPY = False
 
+try:
+    import pandas
+    import pandas.util.testing as pt
+    HAVE_PANDAS = True
+except ImportError:
+    HAVE_PANDAS = False
+
 
 @nest.check_stack
 class TestGIDCollection(unittest.TestCase):
@@ -482,6 +489,85 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(len(values.keys()), 38)
         self.assertEqual(values['start'],
                          tuple(0.0 for i in range(len(multi_sd))))
+
+    @unittest.skipIf(not HAVE_PANDAS, 'Pandas package is not available')
+    def test_get_pandas(self):
+        """
+        Test that get function with Pandas output works as expected.
+        """
+        single_sd = nest.Create('spike_detector', 1)
+        multi_sd = nest.Create('spike_detector', 10)
+        empty_array_float = np.array([], dtype=np.float64)
+
+        # Single node, literal parameter
+        pt.assert_frame_equal(single_sd.get('start', pandas_output=True),
+                              pandas.DataFrame({'start': [0.0]},
+                                               index=tuple(single_sd)))
+
+        # Multiple nodes, literal parameter
+        pt.assert_frame_equal(multi_sd.get('start', pandas_output=True),
+                              pandas.DataFrame(
+                                  {'start': [0.0 for i in range(
+                                      len(multi_sd))]},
+                                  index=tuple(multi_sd)))
+
+        # Single node, array parameter
+        pt.assert_frame_equal(single_sd.get(['start', 'n_events'],
+                                            pandas_output=True),
+                              pandas.DataFrame({'start': [0.0],
+                                                'n_events': [0]},
+                                               index=tuple(single_sd)))
+
+        # Multiple nodes, array parameter
+        ref_dict = {'start': [0.0 for i in range(len(multi_sd))],
+                    'n_events': [0]}
+        pt.assert_frame_equal(multi_sd.get(['start', 'n_events'],
+                                           pandas_output=True),
+                              pandas.DataFrame(ref_dict,
+                                               index=tuple(multi_sd)))
+
+        # Single node, hierarchical with literal parameter
+        pt.assert_frame_equal(single_sd.get('events', 'times',
+                                            pandas_output=True),
+                              pandas.DataFrame({'times': [None]},
+                                               index=tuple(single_sd)))
+
+        # Multiple nodes, hierarchical with literal parameter
+        ref_dict = {'times': [empty_array_float
+                              for i in range(len(multi_sd))]}
+        pt.assert_frame_equal(multi_sd.get('events', 'times',
+                                           pandas_output=True),
+                              pandas.DataFrame(ref_dict,
+                                               index=tuple(multi_sd)))
+
+        # Single node, hierarchical with array parameter
+        pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
+                                            pandas_output=True),
+                              pandas.DataFrame({'times': [None],
+                                                'senders': [None]},
+                                               index=tuple(single_sd)))
+
+        # Multiple nodes, hierarchical with array parameter
+        ref_dict = {'times': [[None] for i in range(len(multi_sd))],
+                    'senders': [[None] for i in range(len(multi_sd))]}
+        pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
+                                           pandas_output=True),
+                              pandas.DataFrame(ref_dict,
+                                               index=tuple(multi_sd)))
+
+        # Single node, no parameter (gets all values)
+        values = single_sd.get(pandas_output=True)
+        self.assertEqual(values.shape, (1, 38))
+        self.assertEqual(values['start'][tuple(single_sd)[0]], 0.0)
+
+        # Multiple nodes, no parameter (gets all values)
+        values = multi_sd.get(pandas_output=True)
+        self.assertEqual(values.shape, (len(multi_sd), 38))
+        pt.assert_series_equal(values['start'],
+                               pandas.Series({key: 0.0
+                                              for key in tuple(multi_sd)},
+                                             dtype=np.float64,
+                                             name='start'))
 
     def test_set(self):
         """

@@ -27,6 +27,13 @@ import unittest
 import nest
 import nest.topology as topo
 
+try:
+    import pandas
+    import pandas.util.testing as pt
+    HAVE_PANDAS = True
+except ImportError:
+    HAVE_PANDAS = False
+
 
 class GetSetTestCase(unittest.TestCase):
 
@@ -119,6 +126,30 @@ class GetSetTestCase(unittest.TestCase):
         self.assertEqual(all_values['extent'], (2., 2.))
         self.assertEqual(all_values['network_size'], 9)
         self.assertEqual(all_values['rows'], 3)
+
+    @unittest.skipIf(not HAVE_PANDAS, 'Pandas package is not available')
+    def test_LayerGet_pandas(self):
+        """Test get function on layer GIDCollection with Pandas output."""
+        # Literal argument
+        value = self.layer.get('center', pandas_output=True)
+        pt.assert_frame_equal(value, pandas.DataFrame({'center': [(0.0, 0.0)]},
+                                                      columns=['layer']))
+
+        # Array argument
+        value = self.layer.get(['center', 'extent'], pandas_output=True)
+        pt.assert_frame_equal(value, pandas.DataFrame({'center': [(0.0, 0.0)],
+                                                       'extent': [(1.0, 1.0)]},
+                                                      columns=['layer']))
+
+        # Get all values
+        all_values = self.layer.get(pandas_output=True)
+        self.assertEqual(all_values.shape, (7, 1))
+        self.assertEqual(all_values['layer']['center'], (0.0, 0.0))
+        self.assertEqual(all_values['layer']['columns'], 3)
+        self.assertTrue(all_values['layer']['edge_wrap'])
+        self.assertEqual(all_values['layer']['extent'], (2., 2.))
+        self.assertEqual(all_values['layer']['network_size'], 9)
+        self.assertEqual(all_values['layer']['rows'], 3)
 
     def test_LayerSet(self):
         """Test set function on layer GIDCollection."""

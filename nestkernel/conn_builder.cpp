@@ -57,6 +57,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   , autapses_( true )
   , multapses_( true )
   , make_symmetric_( false )
+  , own_symmetric_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
   , synapse_model_id_( kernel().model_manager.get_synapsedict()->lookup(
       "static_synapse" ) )
@@ -353,7 +354,7 @@ nest::ConnBuilder::connect()
   else
   {
     connect_();
-    if ( make_symmetric_ )
+    if ( make_symmetric_ and not own_symmetric_ )
     {
       // call reset on all parameters
       if ( weight_ )
@@ -1681,6 +1682,145 @@ nest::BernoulliBuilder::inner_connect_( const int tid,
     single_connect_( *sgid, *target, target_thread, rng );
   }
 }
+
+
+nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( const GIDCollection& sources,
+  const GIDCollection& targets,
+  const DictionaryDatum& conn_spec,
+  const DictionaryDatum& syn_spec )
+  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+  , p_( ( *conn_spec )[ names::p ] )
+{
+  own_symmetric_ = true; // this connector takes care of symmetric
+                         // connections on its own
+
+  if ( p_ < 0 or 1 < p_ )
+  {
+    throw BadProperty( "Connection probability 0 <= p <= 1 required." );
+  }
+
+  if ( not multapses_ )
+  {
+    throw BadProperty( "Multapses must be enabled." );
+  }
+
+  if ( autapses_ )
+  {
+    throw BadProperty( "Autapses must be disabled." );
+  }
+
+  if ( not make_symmetric_ )
+  {
+    throw BadProperty( "Symmetric connections must be enabled." );
+  }
+}
+
+
+void
+nest::SymmetricBernoulliBuilder::connect_()
+{
+  // allocate pointer to thread specific random generator
+  librandom::RngPtr grng = kernel().rng_manager.get_grng();
+  const unsigned long s = grng->ulrand( std::numeric_limits<unsigned int>::max() );
+
+#pragma omp parallel
+  {
+    // get thread id
+    const thread tid = kernel().vp_manager.get_thread_id();
+
+    // create a random generator for each thread, each using the same
+    // seed obtained from the global rng -> all threads across all
+    // processes generate identical random number streams
+#ifdef HAVE_GSL
+    librandom::RngPtr rng(
+      new librandom::GslRandomGen( gsl_rng_knuthran2002, s ) );
+#else
+    librandom::RngPtr rng = librandom::RandomGen::create_knuthlfg_rng( s );
+#endif
+
+    try
+    {
+#ifdef HAVE_GSL
+      librandom::GSL_BinomialRandomDev bino( rng, 0, 0 );
+#else
+      librandom::BinomialRandomDev bino( rng, 0, 0 );
+#endif
+      bino.set_p( p_ );
+      bino.set_n( sources_->size() );
+
+      unsigned long indegree;
+      index sgid;
+      Node* target;
+      thread target_thread;
+      Node* source;
+      thread source_thread;
+
+      for ( GIDCollection::const_iterator tgid = targets_->begin();
+            tgid != targets_->end();
+            ++tgid )
+      {
+        // sample indegree according to Binomial distribution
+        indegree = bino.ldev();
+        std::cout << p_ << " " << sources_->size() << " " << indegree << std::endl;
+
+        // check whether the target is on this thread
+        if ( kernel().node_manager.is_local_gid( *tgid ) )
+        {
+          target = kernel().node_manager.get_node( *tgid, tid );
+          target_thread = target->get_thread();
+        }
+        else
+        {
+          target = NULL;
+        }
+
+        // choose indegree number of sources randomly from all sources
+        size_t i = 0;
+        while( i < indegree )
+        {
+          sgid = ( *sources_ )[ rng->ulrand( sources_->size() ) ];
+
+          if ( sgid == *tgid )
+          {
+            continue;
+          }
+
+          if ( kernel().node_manager.is_local_gid( sgid ) )
+          {
+            source = kernel().node_manager.get_node( sgid, tid );
+            source_thread = source->get_thread();
+          }
+          else
+          {
+            source = NULL;
+          }
+
+          // if target is local: connect
+          if ( target_thread == tid )
+          {
+            single_connect_( sgid, *target, target_thread, rng );
+          }
+
+          // if source is local: connect
+          if ( source_thread == tid )
+          {
+            single_connect_( *tgid, *source, source_thread, rng );
+          }
+
+          ++i;
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
 
 /**
  * The SPBuilder is in charge of the creation of synapses during the simulation

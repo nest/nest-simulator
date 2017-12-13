@@ -1761,7 +1761,6 @@ nest::SymmetricBernoulliBuilder::connect_()
       {
         // sample indegree according to Binomial distribution
         indegree = bino.ldev();
-        std::cout << p_ << " " << sources_->size() << " " << indegree << std::endl;
 
         // check whether the target is on this thread
         if ( kernel().node_manager.is_local_gid( *tgid ) )
@@ -1772,6 +1771,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         else
         {
           target = NULL;
+          target_thread = invalid_thread_;
         }
 
         // choose indegree number of sources randomly from all sources
@@ -1793,17 +1793,20 @@ nest::SymmetricBernoulliBuilder::connect_()
           else
           {
             source = NULL;
+            source_thread = invalid_thread_;
           }
 
           // if target is local: connect
           if ( target_thread == tid )
           {
+            assert( target != NULL );
             single_connect_( sgid, *target, target_thread, rng );
           }
 
           // if source is local: connect
           if ( source_thread == tid )
           {
+            assert( source != NULL );
             single_connect_( *tgid, *source, source_thread, rng );
           }
 

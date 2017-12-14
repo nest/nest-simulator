@@ -1,3 +1,9 @@
 .rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
     color: #f63;
 }
+
+a.icon.icon-home:after {
+	content: url(img/nest_logo.png);
+    content: "hallo";
+    position: relative;
+}

@@ -163,7 +163,8 @@ github_doc_root = ''
 
 
 def setup(app):
-    app.add_stylesheet('css/my_styles.css')
+    # app.add_stylesheet('css/my_styles.css')
+    app.add_stylesheet('css/custom.css')
     app.add_config_value('recommonmark_config', {
             'auto_toc_tree_section': 'Contents',
             'enable_inline_math': True,
@@ -224,8 +225,8 @@ texinfo_documents = [
 ]
 
 # -- Options for readthedocs ----------------------------------------------
-on_rtd = os.environ.get('READTHEDOCS') == 'True'
-if on_rtd:
-    html_theme = 'alabaster'
-else:
-    html_theme = 'nat'
+# on_rtd = os.environ.get('READTHEDOCS') == 'True'
+# if on_rtd:
+#    html_theme = 'alabaster'
+# else:
+#    html_theme = 'nat'

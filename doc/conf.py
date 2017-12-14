@@ -165,6 +165,7 @@ github_doc_root = ''
 def setup(app):
     # app.add_stylesheet('css/my_styles.css')
     app.add_stylesheet('css/custom.css')
+    app.add_javascript("js/custom.js")
     app.add_config_value('recommonmark_config', {
             'auto_toc_tree_section': 'Contents',
             'enable_inline_math': True,

@@ -1694,9 +1694,9 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( const GIDCollection&
   own_symmetric_ = true; // this connector takes care of symmetric
                          // connections on its own
 
-  if ( p_ < 0 or 1 < p_ )
+  if ( p_ < 0 or 1 <= p_ )
   {
-    throw BadProperty( "Connection probability 0 <= p <= 1 required." );
+    throw BadProperty( "Connection probability 0 <= p < 1 required." );
   }
 
   if ( not multapses_ )
@@ -1750,6 +1750,7 @@ nest::SymmetricBernoulliBuilder::connect_()
 
       unsigned long indegree;
       index sgid;
+      std::set< index > previous_sgids;
       Node* target;
       thread target_thread;
       Node* source;
@@ -1759,8 +1760,13 @@ nest::SymmetricBernoulliBuilder::connect_()
             tgid != targets_->end();
             ++tgid )
       {
-        // sample indegree according to Binomial distribution
-        indegree = bino.ldev();
+        // sample indegree according to truncated Binomial distribution
+        indegree = sources_->size();
+        while ( indegree >= sources_->size() )
+        {
+          indegree = bino.ldev();
+        }
+        assert( indegree < sources_->size() );
 
         // check whether the target is on this thread
         if ( kernel().node_manager.is_local_gid( *tgid ) )
@@ -1774,16 +1780,23 @@ nest::SymmetricBernoulliBuilder::connect_()
           target_thread = invalid_thread_;
         }
 
+        previous_sgids.clear();
+
         // choose indegree number of sources randomly from all sources
         size_t i = 0;
         while( i < indegree )
         {
           sgid = ( *sources_ )[ rng->ulrand( sources_->size() ) ];
 
-          if ( sgid == *tgid )
+          // avoid autapses and multapses; due to symmetric
+          // connectivity, multapses might exist if the target neuron
+          // with gid sgid draws the source with gid tgid while
+          // choosing sources itself
+          if ( sgid == *tgid or previous_sgids.find( sgid ) != previous_sgids.end() )
           {
             continue;
           }
+          previous_sgids.insert( sgid );
 
           if ( kernel().node_manager.is_local_gid( sgid ) )
           {

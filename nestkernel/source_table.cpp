@@ -286,7 +286,9 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     unique_secondary_source_gid_syn_id_.clear();
   }
 
-  // collect all unique combination of source gid and event size
+  // collect all unique combinations of source gid and syn id across
+  // all threads on this process; makes sure secondary events are not
+  // duplicated for targets on the same process but different threads
   for ( size_t syn_id = 0; syn_id < sources_[ tid ]->size();
         ++syn_id )
   {
@@ -310,29 +312,8 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
 
 #pragma omp single
   {
-    // given all unique combination of source gid and event size,
-    // calculate maximal chunksize per rank and fill vector of unique
-    // sources
-    std::vector< size_t > uint_count_per_rank(
-      kernel().mpi_manager.get_num_processes(), 0 );
-    for ( std::set< std::pair< index, size_t > >::const_iterator cit = unique_secondary_source_gid_syn_id_.begin();
-          cit != unique_secondary_source_gid_syn_id_.end(); ++cit )
-    {
-      const size_t event_size = kernel()
-        .model_manager.get_secondary_event_prototype( cit->second, tid )
-        .size();
-      uint_count_per_rank[ kernel().mpi_manager.get_process_id_of_gid( cit->first ) ] += event_size;
-    }
-
-    // determine maximal chunksize across all MPI ranks
-    std::vector< long > max_uint_count(
-      1, *std::max_element( uint_count_per_rank.begin(), uint_count_per_rank.end() ) );
-    kernel().mpi_manager.communicate_Allreduce_max_in_place( max_uint_count );
-
-    kernel().mpi_manager.set_chunk_size_secondary_events(
-      max_uint_count[ 0 ] + 1 );
-
-    // compute offsets in receive buffer
+    // compute offsets in receive buffer for all unique combinations
+    // of source gid and synapse type
     std::vector< size_t > recv_buffer_position_by_rank(
       kernel().mpi_manager.get_num_processes(), 0 );
     for ( size_t rank = 0; rank < recv_buffer_position_by_rank.size(); ++rank )
@@ -351,6 +332,16 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
       buffer_pos_of_source_gid_syn_id.insert( std::pair< index, size_t >( pack_source_gid_and_syn_id( *cit ), recv_buffer_position_by_rank[ source_rank ] ) );
       recv_buffer_position_by_rank[ source_rank ] += event_size;
     }
+
+    // compute maximal chunksize per source rank and determine global
+    // maximal chunksize; will need to be taken into account when
+    // filling secondary_recv_buffer_pos_ in ConnectionManager
+    std::vector< long > max_uint_count(
+      1, *std::max_element( recv_buffer_position_by_rank.begin(), recv_buffer_position_by_rank.end() ) );
+    kernel().mpi_manager.communicate_Allreduce_max_in_place( max_uint_count );
+    kernel().mpi_manager.set_chunk_size_secondary_events(
+      max_uint_count[ 0 ] + 1 );
+
   } // of omp single
 }
 
@@ -520,9 +511,13 @@ nest::SourceTable::get_next_target_data( const thread tid,
             current_position.tid,
             current_position.syn_id,
             current_position.lcid );
+
+        // convert receive buffer position to send buffer position
+        // according to buffer layout of MPIAlltoall
         const size_t send_buffer_pos =
           kernel().mpi_manager.get_rank() * kernel().mpi_manager.get_chunk_size_secondary_events()
           + ( recv_buffer_pos - target_rank * kernel().mpi_manager.get_chunk_size_secondary_events() );
+
         reinterpret_cast< SecondaryTargetData* >( &next_target_data )
           ->set_send_buffer_pos( send_buffer_pos );
         reinterpret_cast< SecondaryTargetData* >( &next_target_data )

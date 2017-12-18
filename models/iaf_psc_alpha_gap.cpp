@@ -262,26 +262,26 @@ iaf_psc_alpha_gap::calibrate()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  const double h = Time::get_resolution().get_ms();
+  V_.h_ = Time::get_resolution().get_ms();
 
   // these P are independent
-  V_.P11_ex_ = V_.P22_ex_ = std::exp( -h / P_.tau_ex_ );
-  V_.P11_in_ = V_.P22_in_ = std::exp( -h / P_.tau_in_ );
+  V_.P11_ex_ = V_.P22_ex_ = std::exp( -V_.h_ / P_.tau_ex_ );
+  V_.P11_in_ = V_.P22_in_ = std::exp( -V_.h_ / P_.tau_in_ );
 
-  V_.P33_ = std::exp( -h / P_.Tau_ );
+  V_.P33_ = std::exp( -V_.h_ / P_.Tau_ );
 
-  V_.expm1_tau_m_ = numerics::expm1( -h / P_.Tau_ );
+  V_.expm1_tau_m_ = numerics::expm1( -V_.h_ / P_.Tau_ );
 
   // these depend on the above. Please do not change the order.
-  V_.P30_ = -P_.Tau_ / P_.C_ * numerics::expm1( -h / P_.Tau_ );
-  V_.P21_ex_ = h * V_.P11_ex_;
-  V_.P21_in_ = h * V_.P11_in_;
+  V_.P30_ = -P_.Tau_ / P_.C_ * numerics::expm1( -V_.h_ / P_.Tau_ );
+  V_.P21_ex_ = V_.h_ * V_.P11_ex_;
+  V_.P21_in_ = V_.h_ * V_.P11_in_;
 
   // these are determined according to a numeric stability criterion
-  V_.P31_ex_ = propagator_31( P_.tau_ex_, P_.Tau_, P_.C_, h );
-  V_.P32_ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
-  V_.P31_in_ = propagator_31( P_.tau_in_, P_.Tau_, P_.C_, h );
-  V_.P32_in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
+  V_.P31_ex_ = propagator_31( P_.tau_ex_, P_.Tau_, P_.C_, V_.h_ );
+  V_.P32_ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, V_.h_ );
+  V_.P31_in_ = propagator_31( P_.tau_in_, P_.Tau_, P_.C_, V_.h_ );
+  V_.P32_in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, V_.h_ );
 
   V_.EPSCInitialValue_ = 1.0 * numerics::e / P_.tau_ex_;
   V_.IPSCInitialValue_ = 1.0 * numerics::e / P_.tau_in_;
@@ -327,8 +327,35 @@ iaf_psc_alpha_gap::update_( Time const& origin, const long from, const long to, 
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
   bool wfr_tol_exceeded = false;
 
+  // allocate memory to store the new interpolation coefficients
+  // to be sent by gap event
+  const size_t buffer_size =
+    kernel().connection_manager.get_min_delay() * ( interpolation_order + 1 );
+  std::vector< double > new_coefficients( buffer_size, 0.0 );
+
+  // parameters needed for piecewise interpolation
+  // translation from paper (Hahne et al., 2015):
+  // y_i: V_0
+  // y_ip1: V_1
+  // hf_i: h dot(V_0)
+  // hf_ip1: h dot(V_1)
+  // where 0 denotes before and 1 denotes after one h step
+  double y_i = 0.0, y_ip1 = 0.0, hf_i = 0.0, hf_ip1 = 0.0;
+
   for ( long lag = from; lag < to; ++lag )
   {
+
+    if ( called_from_wfr_update )
+    {
+      y_i = S_.y3_;
+      if ( interpolation_order == 3 )
+      {
+        hf_i = V_.h_ * (
+          -S_.y3_ / P_.Tau_
+          + ( P_.I_e_ + S_.y0_ + S_.I_ex_ + S_.I_in_ ) / P_.C_ );
+      }
+    }
+    
     if ( S_.r_ == 0 )
     {
       // neuron not refractory
@@ -349,41 +376,118 @@ iaf_psc_alpha_gap::update_( Time const& origin, const long from, const long to, 
     S_.I_ex_ = V_.P21_ex_ * S_.dI_ex_ + V_.P22_ex_ * S_.I_ex_;
     S_.dI_ex_ *= V_.P11_ex_;
 
-    // Apply spikes delivered in this step; spikes arriving at T+1 have
-    // an immediate effect on the state of the neuron
-    V_.weighted_spikes_ex_ = B_.ex_spikes_.get_value( lag );
-    S_.dI_ex_ += V_.EPSCInitialValue_ * V_.weighted_spikes_ex_;
-
-    // alpha shape EPSCs
+    // alpha shape IPSCs
     S_.I_in_ = V_.P21_in_ * S_.dI_in_ + V_.P22_in_ * S_.I_in_;
     S_.dI_in_ *= V_.P11_in_;
 
-    // Apply spikes delivered in this step; spikes arriving at T+1 have
-    // an immediate effect on the state of the neuron
-    V_.weighted_spikes_in_ = B_.in_spikes_.get_value( lag );
-    S_.dI_in_ += V_.IPSCInitialValue_ * V_.weighted_spikes_in_;
-
-    // threshold crossing
-    if ( S_.y3_ >= P_.Theta_ )
+    if ( not called_from_wfr_update )
     {
-      S_.r_ = V_.RefractoryCounts_;
-      S_.y3_ = P_.V_reset_;
-      // A supra-threshold membrane potential should never be observable.
-      // The reset at the time of threshold crossing enables accurate
-      // integration independent of the computation step size, see [2,3] for
-      // details.
+      // Apply spikes delivered in this step; spikes arriving at T+1 have
+      // an immediate effect on the state of the neuron
+      V_.weighted_spikes_ex_ = B_.ex_spikes_.get_value( lag );
+      S_.dI_ex_ += V_.EPSCInitialValue_ * V_.weighted_spikes_ex_;
 
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+      // Apply spikes delivered in this step; spikes arriving at T+1 have
+      // an immediate effect on the state of the neuron
+      V_.weighted_spikes_in_ = B_.in_spikes_.get_value( lag );
+      S_.dI_in_ += V_.IPSCInitialValue_ * V_.weighted_spikes_in_;
+
+      // threshold crossing
+      if ( S_.y3_ >= P_.Theta_ )
+      {
+        S_.r_ = V_.RefractoryCounts_;
+        S_.y3_ = P_.V_reset_;
+        // A supra-threshold membrane potential should never be observable.
+        // The reset at the time of threshold crossing enables accurate
+        // integration independent of the computation step size, see [2,3] for
+        // details.
+
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
+
+      // set new input current
+      S_.y0_ = B_.currents_.get_value( lag );
+
+      // log state data
+      B_.logger_.record_data( origin.get_steps() + lag );
+    }
+    else
+    {
+      // Apply spikes delivered in this step; spikes arriving at T+1 have
+      // an immediate effect on the state of the neuron
+      V_.weighted_spikes_ex_ = B_.ex_spikes_.get_value_wfr_update( lag );
+      S_.dI_ex_ += V_.EPSCInitialValue_ * V_.weighted_spikes_ex_;
+
+      // Apply spikes delivered in this step; spikes arriving at T+1 have
+      // an immediate effect on the state of the neuron
+      V_.weighted_spikes_in_ = B_.in_spikes_.get_value_wfr_update( lag );
+      S_.dI_in_ += V_.IPSCInitialValue_ * V_.weighted_spikes_in_;
+
+      // check if deviation from last iteration exceeds wfr_tol
+      wfr_tol_exceeded = wfr_tol_exceeded
+        or fabs( S_.y3_ - B_.last_y_values[ lag ] ) > wfr_tol;
+      B_.last_y_values[ lag ] = S_.y3_;
+
+      // update different interpolations
+
+      // constant term is the same for each interpolation order
+      new_coefficients[ lag * ( interpolation_order + 1 ) + 0 ] = y_i;
+
+      switch ( interpolation_order )
+      {
+      case 0:
+        break;
+
+      case 1:
+        y_ip1 = S_.y3_;
+
+        new_coefficients[ lag * ( interpolation_order + 1 ) + 1 ] = y_ip1 - y_i;
+        break;
+
+      case 3:
+        y_ip1 = S_.y3_;
+        hf_ip1 = V_.h_ * (
+          -S_.y3_ / P_.Tau_
+          + ( P_.I_e_ + S_.y0_ + S_.I_ex_ + S_.I_in_ ) / P_.C_ );
+
+        new_coefficients[ lag * ( interpolation_order + 1 ) + 1 ] = hf_i;
+        new_coefficients[ lag * ( interpolation_order + 1 ) + 2 ] =
+          -3 * y_i + 3 * y_ip1 - 2 * hf_i - hf_ip1;
+        new_coefficients[ lag * ( interpolation_order + 1 ) + 3 ] =
+          2 * y_i - 2 * y_ip1 + hf_i + hf_ip1;
+        break;
+
+      default:
+        throw BadProperty( "Interpolation order must be 0, 1, or 3." );
+      }
+    }
+  } // of for
+
+  // if not called_from_wfr_update perform constant extrapolation
+  // and reset last_y_values
+  if ( not called_from_wfr_update )
+  {
+    for ( long temp = from; temp < to; ++temp )
+    {
+      new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] =
+        S_.y3_;
     }
 
-    // set new input current
-    S_.y0_ = B_.currents_.get_value( lag );
-
-    // log state data
-    B_.logger_.record_data( origin.get_steps() + lag );
+    std::vector< double >( kernel().connection_manager.get_min_delay(), 0.0 )
+      .swap( B_.last_y_values );
   }
+
+  // Send gap-event
+  GapJunctionEvent ge;
+  ge.set_coeffarray( new_coefficients );
+  kernel().event_delivery_manager.send_secondary( *this, ge );
+
+  // Reset variables
+  B_.sumj_g_ij_ = 0.0;
+  std::vector< double >( buffer_size, 0.0 )
+    .swap( B_.interpolation_coefficients );
 
   return wfr_tol_exceeded;
 }
@@ -431,17 +535,17 @@ iaf_psc_alpha_gap::handle( DataLoggingRequest& e )
 void
 nest::iaf_psc_alpha_gap::handle( GapJunctionEvent& e )
 {
-  // B_.sumj_g_ij_ += e.get_weight();
+  B_.sumj_g_ij_ += e.get_weight();
 
-  // size_t i = 0;
-  // std::vector< unsigned int >::iterator it = e.begin();
-  // // The call to get_coeffvalue( it ) in this loop also advances the iterator it
-  // while ( it != e.end() )
-  // {
-  //   B_.interpolation_coefficients[ i ] +=
-  //     e.get_weight() * e.get_coeffvalue( it );
-  //   ++i;
-  // }
+  size_t i = 0;
+  std::vector< unsigned int >::iterator it = e.begin();
+  // The call to get_coeffvalue( it ) in this loop also advances the iterator it
+  while ( it != e.end() )
+  {
+    B_.interpolation_coefficients[ i ] +=
+      e.get_weight() * e.get_coeffvalue( it );
+    ++i;
+  }
 }
 
 } // namespace

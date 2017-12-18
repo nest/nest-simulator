@@ -271,6 +271,13 @@ private:
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_psc_alpha_gap > logger_;
+
+    // remembers y_values from last wfr_update
+    std::vector< double > last_y_values;
+    // summarized gap weight
+    double sumj_g_ij_;
+    // summarized coefficients of the interpolation polynomial
+    std::vector< double > interpolation_coefficients;
   };
 
   // ----------------------------------------------------------------
@@ -302,6 +309,8 @@ private:
 
     double weighted_spikes_ex_;
     double weighted_spikes_in_;
+
+    double h_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------

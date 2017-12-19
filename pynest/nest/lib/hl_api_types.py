@@ -145,7 +145,7 @@ class GIDCollection(object):
 
             return nest.sli_func('Take', self._datum, [start, stop, step])
         else:
-            return nest.sli_func('Take', self._datum, [key+1])
+            return nest.sli_func('Take', self._datum, [key + (key >= 0)])
 
     def __contains__(self, gid):
         return nest.sli_func('MemberQ', self._datum, gid)

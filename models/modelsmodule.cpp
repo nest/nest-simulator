@@ -61,6 +61,7 @@
 #include "iaf_chxk_2008.h"
 #include "iaf_cond_alpha.h"
 #include "iaf_cond_alpha_mc.h"
+#include "iaf_cond_alpha_multisynapse.h"
 #include "iaf_cond_exp.h"
 #include "iaf_cond_exp_sfa_rr.h"
 #include "iaf_psc_alpha.h"
@@ -347,6 +348,8 @@ ModelsModule::init( SLIInterpreter* )
     "iaf_cond_exp_sfa_rr" );
   kernel().model_manager.register_node_model< iaf_cond_alpha_mc >(
     "iaf_cond_alpha_mc" );
+  kernel().model_manager.register_node_model< iaf_cond_alpha_multisynapse >(
+    "iaf_cond_alpha_multisynapse" );
   kernel().model_manager.register_node_model< hh_psc_alpha >( "hh_psc_alpha" );
   kernel().model_manager.register_node_model< hh_psc_alpha_gap >(
     "hh_psc_alpha_gap" );

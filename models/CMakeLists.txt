@@ -52,6 +52,7 @@ set( models_sources
     iaf_chs_2007.cpp iaf_chs_2007.h
     iaf_cond_alpha.h iaf_cond_alpha.cpp
     iaf_cond_alpha_mc.h iaf_cond_alpha_mc.cpp
+    iaf_cond_alpha_multisynapse.h iaf_cond_alpha_multisynapse.cpp
     iaf_cond_exp.h iaf_cond_exp.cpp
     iaf_cond_exp_sfa_rr.h iaf_cond_exp_sfa_rr.cpp
     iaf_psc_alpha.h iaf_psc_alpha.cpp

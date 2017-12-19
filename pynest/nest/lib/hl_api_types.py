@@ -55,6 +55,9 @@ class GIDCollectionIterator(object):
             raise StopIteration
         return val
 
+    def __str__(self):
+        return nest.sli_func('pcvs', self._datum)
+
     next = __next__  # Python2.x
 
 
@@ -92,7 +95,7 @@ class GIDCollection(object):
             # Convert to list
             gc_list =  [x for x in gc]
 
-            # Concatination
+            # Concatenation
             Enrns = nest.Create('aeif_cond_alpha', 600)
             Inrns = nest.Create('iaf_psc_alpha', 400)
             nrns = Enrns + Inrns
@@ -167,7 +170,7 @@ class GIDCollection(object):
         return nest.sli_func('size', self._datum)
 
     def __str__(self):
-        return ''.format(nest.sli_func('==', self._datum))
+        return nest.sli_func('pcvs', self._datum)
 
     def get(self, *params, **kwargs):
         """

@@ -245,9 +245,9 @@ class GIDCollection(object):
         #############################
         #      Checks of input      #
         #############################
-        if kwargs.keys() == []:
+        if not kwargs:
             pandas_output = False
-        elif kwargs.keys() == ['pandas_output']:
+        elif 'pandas_output' in kwargs:
             if not HAVE_PANDAS:
                 raise ImportError('Pandas could not be imported')
             pandas_output = kwargs['pandas_output']

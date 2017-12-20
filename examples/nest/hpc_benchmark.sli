@@ -41,10 +41,10 @@
    -----------------
    
    This benchmark was originally developed for very large-scale simulations on
-   supercomputers with more than 1 million neurons in the network and 
-   11.250 incoming synapses per neuron. For such large networks, input to a
-   single neuron will be little correlated and network activity will remain
-   stable for long periods of time. 
+   supercomputers with more than 1 million neurons in the network and
+   11.250 incoming synapses per neuron. For such large networks, synaptic input
+   to a single neuron will be little correlated across inputs and network
+   activity will remain stable over long periods of time.
    
    The original network size corresponds to a scale parameter of 100 or more.
    In order to make it possible to test this benchmark script on desktop

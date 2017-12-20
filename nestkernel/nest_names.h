@@ -424,7 +424,7 @@ extern const Name sdev;             //!< Used in pulsepacket_generator
 extern const Name send_buffer_size; //!< mpi-related
 extern const Name senders;          //!< Recorder parameter
 extern const Name shift_now_spikes; //!< Used by spike_generator
-extern const Name sigma;       	    //!< Inverse steepness of erfc_neuron
+extern const Name sigma;            //!< Inverse steepness of erfc_neuron
 extern const Name sigmoid;          //!< Sigmoid MSP growth curve
 extern const Name size_of;          //!< Connection parameters
 extern const Name soma_curr;        //!< Used by iaf_cond_alpha_mc

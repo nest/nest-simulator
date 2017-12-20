@@ -88,7 +88,7 @@ namespace nest
    [2] W. McCulloch und W. Pitts (1943). A logical calculus of the ideas
    immanent in nervous activity. Bulletin of Mathematical Biophysics, 5:115-133.
    [3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time
-   Neuronal Simulations. In: Lectures in Supercomputational Neuroscience, 
+   Neuronal Simulations. In: Lectures in Supercomputational Neuroscience,
    p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
    (Eds.), Springer 2008.
 

@@ -84,27 +84,25 @@ iaf_cond_alpha_multisynapse_dynamics( double,
 
   const bool is_refractory = node.S_.r_ > 0;
 
-  // Clamp membrane potential to V_reset while refractory, otherwise bound
-  // it to V_peak. Do not use V_.V_peak_ here, since that is set to V_th if
-  // Delta_T == 0.
-  const double& V =
-    is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ ); // TODOFIXME
+  // Clamp membrane potential to V_reset while refractory
+  const double& V = is_refractory ? node.P_.V_reset_ : y[ S::V_M ];
 
   // I_syn = - sum_k g_k (V - E_rev_k).
   double I_syn = 0.0;
   for ( size_t i = 0; i < node.P_.n_receptors(); ++i )
   {
     const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    I_syn += y[ S::G + j ] * ( node.P_.E_rev[ i ] - V );
+    I_syn += y[ S::G + j ] * ( V - node.P_.E_rev[ i ] );
   }
 
-  // dv/dt
-  f[ S::V_M ] =
-    is_refractory ? 0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_syn
-                          + node.P_.I_e + node.B_.I_stim_
-                          - node.P_.g_ahp * y[ S::GAHP ] * ( V - node.P_.E_ahp ) ) / node.P_.C_m;
+  const double I_ahp = y[ S::G_AHP ] * ( V - node.P_.E_ahp );
 
-  f[ S::GAHP ] = -1. / node.P_.tau_ahp * y[ S::GAHP ];
+  // dv/dt
+  f[ S::V_M ] = is_refractory ? 0 : ( -node.P_.g_L * ( V - node.P_.E_L ) - I_syn
+                                      + node.P_.I_e + node.B_.I_stim_ - I_ahp )
+      / node.P_.C_m;
+
+  f[ S::G_AHP ] = -1. / node.P_.tau_ahp * y[ S::G_AHP ];
 
   for ( size_t i = 0; i < node.P_.n_receptors(); ++i )
   {
@@ -122,8 +120,7 @@ iaf_cond_alpha_multisynapse_dynamics( double,
  * ---------------------------------------------------------------- */
 
 iaf_cond_alpha_multisynapse::Parameters_::Parameters_()
-  : V_peak_( 0.0 )    // mV
-  , V_reset_( -60.0 ) // mV
+  : V_reset_( -60.0 ) // mV
   , t_ref_( 0.0 )     // ms
   , g_L( 30.0 )       // nS
   , C_m( 281.0 )      // pF
@@ -266,12 +263,14 @@ iaf_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
 
   if ( g_ahp <= 0. )
   {
-    throw BadProperty( "The maximal after-hyperpolarization conductance must be positive." );
+    throw BadProperty(
+      "The after-hyperpolarization conductance must be positive." );
   }
 
   if ( tau_ahp <= 0. )
   {
-    throw BadProperty( "The maximal after-hyperpolarization time constant must be positive." );
+    throw BadProperty(
+      "The maximal after-hyperpolarization time constant must be positive." );
   }
 }
 
@@ -296,7 +295,6 @@ iaf_cond_alpha_multisynapse::State_::get( DictionaryDatum& d ) const
 
   ( *d )[ names::dg ] = DoubleVectorDatum( dg );
   ( *d )[ names::g ] = DoubleVectorDatum( g );
-
 }
 
 void
@@ -506,8 +504,7 @@ iaf_cond_alpha_multisynapse::update( Time const& origin,
       else if ( S_.y_[ State_::V_M ] >= P_.V_th ) // V_m >= V_th: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
-
-        S_.y_[ State_::GAHP ] += 1.;
+        S_.y_[ State_::G_AHP ] += P_.g_ahp;
 
         /* Initialize refractory step counter.
          * - We need to add 1 to compensate for count-down immediately after

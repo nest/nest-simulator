@@ -529,7 +529,7 @@ class TestGIDCollection(unittest.TestCase):
         # Single node, hierarchical with literal parameter
         pt.assert_frame_equal(single_sd.get('events', 'times',
                                             pandas_output=True),
-                              pandas.DataFrame({'times': [None]},
+                              pandas.DataFrame({'times': [[]]},
                                                index=tuple(single_sd)))
 
         # Multiple nodes, hierarchical with literal parameter
@@ -543,13 +543,13 @@ class TestGIDCollection(unittest.TestCase):
         # Single node, hierarchical with array parameter
         pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
                                             pandas_output=True),
-                              pandas.DataFrame({'times': [None],
-                                                'senders': [None]},
+                              pandas.DataFrame({'times': [[]],
+                                                'senders': [[]]},
                                                index=tuple(single_sd)))
 
         # Multiple nodes, hierarchical with array parameter
-        ref_dict = {'times': [[None] for i in range(len(multi_sd))],
-                    'senders': [[None] for i in range(len(multi_sd))]}
+        ref_dict = {'times': [[] for i in range(len(multi_sd))],
+                    'senders': [[] for i in range(len(multi_sd))]}
         pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
                                            pandas_output=True),
                               pandas.DataFrame(ref_dict,
@@ -568,6 +568,29 @@ class TestGIDCollection(unittest.TestCase):
                                               for key in tuple(multi_sd)},
                                              dtype=np.float64,
                                              name='start'))
+
+        # With data in events
+        nodes = nest.Create('iaf_psc_alpha', 10)
+        pg = nest.Create('poisson_generator', {'rate': 70000.0})
+        nest.Connect(pg, nodes)
+        nest.Connect(nodes, single_sd)
+        nest.Connect(nodes, multi_sd, 'one_to_one')
+        nest.Simulate(40)
+
+        ref_dict = {'times': [[31.8, 36.1, 38.5]],
+                    'senders': [[17, 12, 20]]}
+        pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
+                                            pandas_output=True),
+                              pandas.DataFrame(ref_dict,
+                                               index=tuple(single_sd)))
+
+        ref_dict = {'times': [[36.1], [], [], [], [], [31.8], [], [], [38.5],
+                              []],
+                    'senders': [[12], [], [], [], [], [17], [], [], [20], []]}
+        pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
+                                           pandas_output=True),
+                              pandas.DataFrame(ref_dict,
+                                               index=tuple(multi_sd)))
 
     def test_set(self):
         """

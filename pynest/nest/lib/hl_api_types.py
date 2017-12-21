@@ -354,16 +354,23 @@ class GIDCollection(object):
             if nest.is_literal(params[-1]):
                 if len(self) == 1:
                     result = value_list[0][params[-1]]
+                    if pandas_output:
+                        index = self.get('global_id')
+                        result = pandas.DataFrame({params[-1]: [result]
+                                                   if len(result) != 0
+                                                   else [[]]},
+                                                  index=[index])
                 else:
-                    result = tuple([d[params[-1]] for d in value_list])
-                if pandas_output:
-                    index = self.get('global_id')
-                    if type(index) is int:
-                        index = [index]
-                    result = pandas.DataFrame({params[-1]: result
-                                               if len(result) != 0
-                                               else [None]},
-                                              index=index)
+                    if pandas_output:
+                        index = self.get('global_id')
+                        result_list = [d[params[-1]] for d in value_list]
+                        result = pandas.DataFrame({params[-1]: result_list
+                                                   if len(result_list) != 0
+                                                   else [[]]},
+                                                  index=index)
+                    else:
+                        result = tuple([d[params[-1]] for d in value_list])
+
             # Value parameter, array case
             elif nest.is_iterable(params[-1]):
                 for value in params[-1]:
@@ -376,8 +383,8 @@ class GIDCollection(object):
                 if len(self) == 1:  # If GIDCollection contains a single node
                     if pandas_output:
                         index = [self.get('global_id')]
-                        result = {key: item
-                                  if len(item) != 0 else [None]
+                        result = {key: [item]
+                                  if len(item) != 0 else [[]]
                                   for key, item in value_list[0].items()
                                   if key in params[-1]}
                         result = pandas.DataFrame(result,
@@ -391,7 +398,7 @@ class GIDCollection(object):
                         index = self.get('global_id')
                         result = pandas.DataFrame(
                             [{key: item
-                              if len(item) != 0 else [None]
+                              if len(item) != 0 else []
                               for key, item in d.items()
                               if key in params[-1]}
                              for d in value_list],

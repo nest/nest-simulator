@@ -726,7 +726,7 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
    at T=0. The dynamic state comprises typically the membrane potential,
    synaptic currents, buffers holding input that has been delivered, but not
    yet become effective, and all events pending delivery. Technically, this
-   is achieve by calling init_state() on all nodes and forcing a call to
+   is achieved by calling init_state() on all nodes and forcing a call to
    init_buffers() upon the next call to Simulate. Node parameters, such as
    time constants and threshold potentials, are not affected.
 
@@ -864,6 +864,11 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
+  if ( kernel().vp_manager.get_num_threads() > 1 )
+  {
+    throw KernelException( "DataConnect cannot be used with multiple threads" );
+  }
+
   const index source = getValue< long >( i->OStack.pick( 2 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
@@ -922,6 +927,12 @@ void
 NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
+
+  if ( kernel().vp_manager.get_num_threads() > 1 )
+  {
+    throw KernelException( "DataConnect cannot be used with multiple threads" );
+  }
+
   const ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );
 
   kernel().connection_manager.data_connect_connectome( connectome );
@@ -963,7 +974,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    - Each Node is shown on a separate line, showing its model name followed
    by its in global id in brackets.
 
-   +-[0] Subnet Dim=[1]
+   +-[0] subnet Dim=[1]
    |
    +- iaf_psc_alpha [1]
 
@@ -972,7 +983,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    sequence, then the number of consecutive nodes, then the global id of
    the last node in the sequence.
 
-   +-[0] Subnet Dim=[1]
+   +-[0] subnet Dim=[1]
    |
    +- iaf_psc_alpha [1]..(2)..[2]
 
@@ -994,90 +1005,89 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    SLI [3] 0 2 PrintNetwork
    +-[0] root dim=[12]
       |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
    SLI [3] 0 3 PrintNetwork
    +-[0] root dim=[12]
       |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
-          |
-          +-[1] subnet dim=[5 6]
-          +-[2] subnet dim=[5 6]
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
+         |
+         +-[1] subnet dim=[5 6]
+         +-[2] subnet dim=[5 6]
    SLI [3] 0 4 PrintNetwork
    +-[0] root dim=[12]
       |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
-          |
-          +-[1] subnet dim=[5 6]
-          |  |
-          |  +-[1] subnet dim=[6]
-          |  +-[2] subnet dim=[6]
-          |  +-[3] subnet dim=[6]
-          |  +-[4] subnet dim=[6]
-          |  +-[5] subnet dim=[6]
-          +-[2] subnet dim=[5 6]
-             |
-             +-[1] subnet dim=[6]
-             +-[2] subnet dim=[6]
-             +-[3] subnet dim=[6]
-             +-[4] subnet dim=[6]
-             +-[5] subnet dim=[6]
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
+         |
+         +-[1] subnet dim=[5 6]
+         |  |
+         |  +-[1] subnet dim=[6]
+         |  +-[2] subnet dim=[6]
+         |  +-[3] subnet dim=[6]
+         |  +-[4] subnet dim=[6]
+         |  +-[5] subnet dim=[6]
+         +-[2] subnet dim=[5 6]
+            |
+            +-[1] subnet dim=[6]
+            +-[2] subnet dim=[6]
+            +-[3] subnet dim=[6]
+            +-[4] subnet dim=[6]
+            +-[5] subnet dim=[6]
    SLI [3] 0 5 PrintNetwork
    +-[0] root dim=[12]
       |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
-          |
-          +-[1] subnet dim=[5 6]
-          |  |
-          |  +-[1] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[2] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[3] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[4] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[5] subnet dim=[6]
-          |     |
-          |     +- [1]...[6] dc_generator
-          |
-          +-[2] subnet dim=[5 6]
-             |
-             +-[1] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[2] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[3] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[4] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[5] subnet dim=[6]
-                |
-                +- [1]...[6] dc_generator
-
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
+         |
+         +-[1] subnet dim=[5 6]
+         |  |
+         |  +-[1] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |
+         |  +-[2] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |
+         |  +-[3] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |
+         |  +-[4] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |
+         |  +-[5] subnet dim=[6]
+         |     |
+         |     +-[1]...[6] dc_generator
+         |
+         +-[2] subnet dim=[5 6]
+            |
+            +-[1] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |
+            +-[2] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |
+            +-[3] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |
+            +-[4] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |
+            +-[5] subnet dim=[6]
+               |
+               +-[1]...[6] dc_generator
 
    Availability: NEST
    Author: Marc-Oliver Gewaltig, Jochen Martin Eppler

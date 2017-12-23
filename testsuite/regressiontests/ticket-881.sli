@@ -51,7 +51,7 @@ M_ERROR setverbosity
   ResetKernel
   0 << /local_num_threads num_threads >> SetStatus
   
-  << /elements /iaf_neuron /positions node_pos >> CreateLayer
+  << /elements /iaf_psc_alpha /positions node_pos >> CreateLayer
   dup
   << /connection_type (convergent) >> ConnectLayers
 
@@ -63,7 +63,7 @@ M_ERROR setverbosity
   ResetKernel
   0 << /local_num_threads num_threads >> SetStatus
   
-  << /elements /iaf_neuron /positions node_pos >> CreateLayer
+  << /elements /iaf_psc_alpha /positions node_pos >> CreateLayer
   dup
   << /connection_type (divergent) >> ConnectLayers
 
@@ -75,7 +75,7 @@ M_ERROR setverbosity
   ResetKernel
   0 << /local_num_threads num_threads >> SetStatus
   
-  << /elements /iaf_neuron /positions node_pos >> CreateLayer
+  << /elements /iaf_psc_alpha /positions node_pos >> CreateLayer
   dup
   << /connection_type (convergent) /number_of_connections num_nodes >> ConnectLayers
 
@@ -87,7 +87,7 @@ M_ERROR setverbosity
   ResetKernel
   0 << /local_num_threads num_threads >> SetStatus
   
-  << /elements /iaf_neuron /positions node_pos >> CreateLayer
+  << /elements /iaf_psc_alpha /positions node_pos >> CreateLayer
   dup
   << /connection_type (divergent) /number_of_connections num_nodes >> ConnectLayers
 

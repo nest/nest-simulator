@@ -130,6 +130,27 @@ Quantal_StpConnection< targetidentifierT >::set_status(
   update_value_int( d, names::a, a_ );
 }
 
+template < typename targetidentifierT >
+void
+Quantal_StpConnection< targetidentifierT >::check_synapse_params(
+  const DictionaryDatum& syn_spec ) const
+{
+  // Throw error if n or a are set in quantal_stp_synapse, Connect cannot handle
+  // them since they are integers.
+  if ( syn_spec->known( names::n ) )
+  {
+    throw NotImplemented(
+      "Connect doesn't support the setting of parameter "
+      "n in quantal_stp_synapse. Use SetDefaults() or CopyModel()." );
+  }
+  if ( syn_spec->known( names::a ) )
+  {
+    throw NotImplemented(
+      "Connect doesn't support the setting of parameter "
+      "a in quantal_stp_synapse. Use SetDefaults() or CopyModel()." );
+  }
+}
+
 } // of namespace nest
 
 #endif // #ifndef QUANTAL_STP_CONNECTION_IMPL_H

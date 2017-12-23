@@ -54,6 +54,8 @@ const double Time::Range::TICS_PER_MS_DEFAULT = CONFIG_TICS_PER_MS;
 const tic_t Time::Range::TICS_PER_STEP_DEFAULT = CONFIG_TICS_PER_STEP;
 
 tic_t Time::Range::TICS_PER_STEP = Time::Range::TICS_PER_STEP_DEFAULT;
+double Time::Range::TICS_PER_STEP_INV =
+  1. / static_cast< double >( Time::Range::TICS_PER_STEP );
 tic_t Time::Range::TICS_PER_STEP_RND = Time::Range::TICS_PER_STEP - 1;
 
 double Time::Range::TICS_PER_MS = Time::Range::TICS_PER_MS_DEFAULT;
@@ -77,7 +79,7 @@ Time::compute_max()
   const tic_t tmax = std::numeric_limits< tic_t >::max();
 
   tic_t tics;
-  if ( lmax < tmax / Range::TICS_PER_STEP ) // step size is limiting factor
+  if ( lmax < tmax * Range::TICS_PER_STEP_INV ) // step size is limiting factor
   {
     tics = Range::TICS_PER_STEP * ( lmax / Range::INF_MARGIN );
   }
@@ -91,7 +93,7 @@ Time::compute_max()
 
 Time::Limit::Limit( const tic_t& t )
   : tics( t )
-  , steps( t / Range::TICS_PER_STEP )
+  , steps( t * Range::TICS_PER_STEP_INV )
   , ms( steps * Range::MS_PER_STEP )
 {
 }
@@ -106,6 +108,7 @@ Time::set_resolution( double ms_per_step )
 
   Range::TICS_PER_STEP =
     static_cast< tic_t >( dround( Range::TICS_PER_MS * ms_per_step ) );
+  Range::TICS_PER_STEP_INV = 1. / static_cast< double >( Range::TICS_PER_STEP );
   Range::TICS_PER_STEP_RND = Range::TICS_PER_STEP - 1;
 
   // Recalculate ms_per_step to be consistent with rounding above
@@ -129,6 +132,7 @@ void
 Time::reset_resolution()
 {
   Range::TICS_PER_STEP = Range::TICS_PER_STEP_DEFAULT;
+  Range::TICS_PER_STEP_INV = 1. / static_cast< double >( Range::TICS_PER_STEP );
   Range::TICS_PER_STEP_RND = Range::TICS_PER_STEP - 1;
 
   const tic_t max = compute_max();
@@ -172,8 +176,7 @@ Time::fromstamp( Time::ms_stamp t )
   // intended ones.
   tic_t n = static_cast< tic_t >( t.t * Range::TICS_PER_MS );
   n -= ( n % Range::TICS_PER_STEP );
-  long s = n / Range::TICS_PER_STEP;
-  double ms = s * Range::MS_PER_STEP;
+  const double ms = n * Range::TICS_PER_STEP_INV * Range::MS_PER_STEP;
   if ( ms < t.t )
   {
     n += Range::TICS_PER_STEP;
@@ -190,6 +193,7 @@ Time::reset_to_defaults()
 
   // reset TICS_PER_STEP to compiled in default values
   Range::TICS_PER_STEP = Range::TICS_PER_STEP_DEFAULT;
+  Range::TICS_PER_STEP_INV = 1. / static_cast< double >( Range::TICS_PER_STEP );
   Range::TICS_PER_STEP_RND = Range::TICS_PER_STEP - 1;
 
   Range::MS_PER_STEP = Range::TICS_PER_STEP / Range::TICS_PER_MS;
@@ -198,11 +202,11 @@ Time::reset_to_defaults()
 
 std::ostream& operator<<( std::ostream& strm, const Time& t )
 {
-  if ( t.tics == Time::LIM_NEG_INF.tics )
+  if ( t.is_neg_inf() )
   {
     strm << "-INF";
   }
-  else if ( t.tics == Time::LIM_POS_INF.tics )
+  else if ( t.is_pos_inf() )
   {
     strm << "+INF";
   }

@@ -65,7 +65,7 @@ M_ERROR setverbosity
   /syn Set
   mark
   {
-    /iaf_neuron Create dup syn Connect
+    /iaf_psc_alpha Create dup syn Connect
     10 Simulate
   } 
   stopped
@@ -99,7 +99,7 @@ M_ERROR setverbosity
   % we connect via a parrot neuron, so we can test plastic synapses, too 
   /sg /spike_generator << /spike_times [ 5.0 ] >> Create def
   /pn /parrot_neuron Create def
-  /nrn /iaf_neuron << /V_th 100000. >> Create def 
+  /nrn /iaf_psc_alpha << /V_th 100000. >> Create def
   sg pn Connect
   pn nrn syn Connect
   10 Simulate
@@ -132,11 +132,11 @@ hpcwithpartner
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
   /pn /parrot_neuron Create def
 
-  /iaf_neuron 2 << /V_th 100000. >> Create ;
+  /iaf_psc_alpha 2 << /V_th 100000. >> Create ;
   sg pn Connect
   [3 4] { /tgid Set [pn] [tgid] /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
 
-  /iaf_neuron 2 << /V_th 100000. >> Create ;
+  /iaf_psc_alpha 2 << /V_th 100000. >> Create ;
   [5 6] { /tgid Set [pn] [tgid] /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
 
   10. Simulate
@@ -163,7 +163,7 @@ hpcwithpartner
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
   /pn /parrot_neuron Create def
 
-  /iaf_neuron 4 << /V_th 100000. >> Create ;
+  /iaf_psc_alpha 4 << /V_th 100000. >> Create ;
   3 << /frozen true >> SetStatus
   sg pn Connect
   [4 5 6] { /tgid Set [pn] [tgid] /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
@@ -191,7 +191,7 @@ hpcwithpartner
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
   /pn /parrot_neuron Create def
 
-  /iaf_neuron 4 << /V_th 100000. >> Create ;
+  /iaf_psc_alpha 4 << /V_th 100000. >> Create ;
   3 << /frozen true >> SetStatus
   sg pn Connect
   [3 4 5 6] { /tgid Set [pn] [tgid] /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
@@ -216,7 +216,7 @@ hpcwithpartner
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
   /pn /parrot_neuron Create def
 
-  /iaf_neuron 4 << /V_th 100000. >> Create ;
+  /iaf_psc_alpha 4 << /V_th 100000. >> Create ;
   sg pn Connect
   [3 4 5 6] { /tgid Set [pn] [tgid] /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
   3 << /frozen true >> SetStatus

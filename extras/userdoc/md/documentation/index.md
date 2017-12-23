@@ -6,7 +6,7 @@
 
     Use NEST for your research, modify and improve it
 
-    Current Release [NEST 2.12.0 (Feb 24 2017)](download.md)
+    Current Release [NEST 2.14.0 (Oct 20 2017)](download.md)
 
 -   *Tools for modern computational neuroscience*
 
@@ -126,6 +126,10 @@ To learn more about the capabilities of NEST, see the [Feature summary](features
 ## Please cite NEST and tell us about your work
 
 Please cite NEST if you use it in your work.
+
+If you use NEST 2.14.0, please cite it as **Peyser, Alexander et al. (2017).
+NEST 2.14.0. Zenodo. 10.5281/zenodo.882971**. The full citation is available
+in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.882971).
 
 If you use NEST 2.12.0, please cite it as **Kunkel, Susanne et al. (2017).
 NEST 2.12.0. Zenodo. 10.5281/zenodo.259534**. The full citation is available

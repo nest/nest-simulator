@@ -51,7 +51,6 @@ nest::spin_detector::spin_detector()
       true ) // record time, gid and weight (used for spin)
   , last_in_gid_( 0 )
   , t_last_in_spike_( Time::neg_inf() )
-  , user_set_precise_times_( false )
 {
 }
 
@@ -60,7 +59,6 @@ nest::spin_detector::spin_detector( const spin_detector& n )
   , device_( *this, n.device_ )
   , last_in_gid_( 0 )
   , t_last_in_spike_( Time::neg_inf() ) // mark as not initialized
-  , user_set_precise_times_( n.user_set_precise_times_ )
 {
 }
 
@@ -84,21 +82,33 @@ nest::spin_detector::init_buffers_()
 void
 nest::spin_detector::calibrate()
 {
-  if ( not user_set_precise_times_
-    && kernel().event_delivery_manager.get_off_grid_communication() )
+
+  if ( kernel().event_delivery_manager.get_off_grid_communication()
+    and not device_.is_precise_times_user_set() )
   {
     device_.set_precise_times( true );
-    device_.set_precision( 15 );
+    std::string msg = String::compose(
+      "Precise neuron models exist: the property precise_times "
+      "of the %1 with gid %2 has been set to true",
+      get_name(),
+      get_gid() );
 
-    LOG( M_INFO,
-      "spin_detector::calibrate",
-      String::compose(
-           "Precise neuron models exist: the property precise_times "
-           "of the %1 with gid %2 has been set to true, precision has "
-           "been set to 15.",
-           get_name(),
-           get_gid() ) );
+    if ( device_.is_precision_user_set() )
+    {
+      // if user explicitly set the precision, there is no need to do anything.
+      msg += ".";
+    }
+
+    else
+    {
+      // it makes sense to increase the precision if precise models are used.
+      device_.set_precision( 15 );
+      msg += ", precision has been set to 15.";
+    }
+
+    LOG( M_INFO, "spin_detector::calibrate", msg );
   }
+
 
   device_.calibrate();
 }
@@ -145,11 +155,6 @@ nest::spin_detector::get_status( DictionaryDatum& d ) const
 void
 nest::spin_detector::set_status( const DictionaryDatum& d )
 {
-  if ( d->known( names::precise_times ) )
-  {
-    user_set_precise_times_ = true;
-  }
-
   device_.set_status( d );
 }
 
@@ -180,21 +185,23 @@ nest::spin_detector::handle( SpikeEvent& e )
 
 
     // The following logic implements the decoding
-    // A single spike signals a transition to 0 state, two spikes in same time
-    // step signal the transition to 1 state.
+    // A single spike signals a transition to the 0 state, two
+    // spikes at the same time step signal a transition to the 1
+    // state.
     //
-    // Remember the global id of the sender of the last spike being received
-    // this assumes that several spikes being sent by the same neuron in the
-    // same time step are received consecutively or are conveyed by setting the
-    // multiplicity accordingly.
+    // Remember the global id of the sender of the last spike being
+    // received this assumes that several spikes being sent by the
+    // same neuron in the same time step are received consecutively or
+    // are conveyed by setting the multiplicity accordingly.
 
     long m = e.get_multiplicity();
     index gid = e.get_sender_gid();
     const Time& t_spike = e.get_stamp();
 
     if ( m == 1 )
-    { // multiplicity == 1, either a single 1->0 event or the first or second of
-      // a pair of 0->1 events
+    {
+      // multiplicity == 1, either a single 1->0 event or the first or
+      // second of a pair of 0->1 events
       if ( gid == last_in_gid_ && t_spike == t_last_in_spike_ )
       {
         // received twice the same gid, so transition 0->1
@@ -206,7 +213,7 @@ nest::spin_detector::handle( SpikeEvent& e )
         // count this event negatively, assuming it comes as single event
         // transition 1->0
         Event* event = e.clone();
-        // assume it will stay alone, so meaning a down transition
+        // assume it will stay alone, so meaning a 1->0 transition
         event->set_weight( 0 );
         B_.spikes_[ dest_buffer ].push_back( event );
       }

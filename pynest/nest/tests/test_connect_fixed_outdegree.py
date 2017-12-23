@@ -100,7 +100,7 @@ class TestFixedOutDegree(TestParams):
         # test that autapses exist
         conn_params['outdegree'] = N
         conn_params['autapses'] = True
-        pop = hf.nest.Create('iaf_neuron', N)
+        pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
@@ -110,7 +110,7 @@ class TestFixedOutDegree(TestParams):
         # test that autapses were excluded
         conn_params['outdegree'] = N - 1
         conn_params['autapses'] = False
-        pop = hf.nest.Create('iaf_neuron', N)
+        pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
@@ -124,7 +124,7 @@ class TestFixedOutDegree(TestParams):
         # test that multapses were drawn
         conn_params['outdegree'] = N + 1
         conn_params['multapses'] = True
-        pop = hf.nest.Create('iaf_neuron', N)
+        pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         nr_conns = len(hf.nest.GetConnections(pop, pop))
         hf.mpi_assert(nr_conns, conn_params['outdegree'] * N, self)
@@ -133,7 +133,7 @@ class TestFixedOutDegree(TestParams):
         # test that no multapses exist
         conn_params['outdegree'] = N
         conn_params['multapses'] = False
-        pop = hf.nest.Create('iaf_neuron', N)
+        pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         M = hf.get_connectivity_matrix(pop, pop)
         M = hf.gather_data(M)

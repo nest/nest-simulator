@@ -58,7 +58,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   , multapses_( true )
   , make_symmetric_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
-  , synapse_model_( kernel().model_manager.get_synapsedict()->lookup(
+  , synapse_model_id_( kernel().model_manager.get_synapsedict()->lookup(
       "static_synapse" ) )
   , weight_( 0 )
   , delay_( 0 )
@@ -83,17 +83,17 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
     throw UnknownSynapseType( syn_name );
   }
 
-  // if another synapse than static_synapse is defined we need to make
-  // sure that Connect can process all parameter specified
-  if ( syn_name != "static_synapse" )
-  {
-    check_synapse_params_( syn_name, syn_spec );
-  }
+  synapse_model_id_ =
+    kernel().model_manager.get_synapsedict()->lookup( syn_name );
 
-  synapse_model_ = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+  // We need to make sure that Connect can process all synapse parameters
+  // specified.
+  const ConnectorModel& synapse_model =
+    kernel().model_manager.get_synapse_prototype( synapse_model_id_, 0 );
+  synapse_model.check_synapse_params( syn_spec );
 
   DictionaryDatum syn_defaults =
-    kernel().model_manager.get_connector_defaults( synapse_model_ );
+    kernel().model_manager.get_connector_defaults( synapse_model_id_ );
 
   // All synapse models have the possibility to set the delay (see
   // SynIdDelay), but some have homogeneous weights, hence it should
@@ -257,103 +257,6 @@ nest::ConnBuilder::~ConnBuilder()
   }
 }
 
-void
-nest::ConnBuilder::check_synapse_params_( std::string syn_name,
-  const DictionaryDatum& syn_spec )
-{
-  // throw error if weight is specified with static_synapse_hom_w
-  if ( syn_name == "static_synapse_hom_w" )
-  {
-    if ( syn_spec->known( names::weight ) )
-    {
-      throw BadProperty(
-        "Weight cannot be specified since it needs to be equal "
-        "for all connections when static_synapse_hom_w is used." );
-    }
-    return;
-  }
-
-
-  // throw error if n or a are set in quantal_stp_synapse, Connect cannot handle
-  // them since they are integer
-  if ( syn_name == "quantal_stp_synapse" )
-  {
-    if ( syn_spec->known( names::n ) )
-    {
-      throw NotImplemented(
-        "Connect doesn't support the setting of parameter "
-        "n in quantal_stp_synapse. Use SetDefaults() or CopyModel()." );
-    }
-    if ( syn_spec->known( names::a ) )
-    {
-      throw NotImplemented(
-        "Connect doesn't support the setting of parameter "
-        "a in quantal_stp_synapse. Use SetDefaults() or CopyModel()." );
-    }
-    return;
-  }
-
-  // print warning if delay is specified outside cont_delay_synapse
-  if ( syn_name == "cont_delay_synapse" )
-  {
-    if ( syn_spec->known( names::delay ) )
-    {
-      LOG( M_WARNING,
-        "Connect",
-        "The delay will be rounded to the next multiple of the time step. "
-        "To use a more precise time delay it needs to be defined within "
-        "the synapse, e.g. with CopyModel()." );
-    }
-    return;
-  }
-
-  // throw error if no volume transmitter is defined or parameters are specified
-  // that need to be introduced via CopyModel or SetDefaults
-  if ( syn_name == "stdp_dopamine_synapse" )
-  {
-    if ( syn_spec->known( names::vt ) )
-    {
-      throw NotImplemented(
-        "Connect doesn't support the direct specification of the "
-        "volume transmitter of stdp_dopamine_synapse in syn_spec."
-        "Use SetDefaults() or CopyModel()." );
-    }
-    // setting of parameter c and n not thread save
-    if ( kernel().vp_manager.get_num_threads() > 1 )
-    {
-      if ( syn_spec->known( names::c ) )
-      {
-        throw NotImplemented(
-          "For multi-threading Connect doesn't support the setting "
-          "of parameter c in stdp_dopamine_synapse. "
-          "Use SetDefaults() or CopyModel()." );
-      }
-      if ( syn_spec->known( names::n ) )
-      {
-        throw NotImplemented(
-          "For multi-threading Connect doesn't support the setting "
-          "of parameter n in stdp_dopamine_synapse. "
-          "Use SetDefaults() or CopyModel()." );
-      }
-    }
-    std::string param_arr[] = {
-      " A_minus", "A_plus", "Wmax", "Wmin", "b", "tau_c", "tau_n", "tau_plus"
-    };
-    std::vector< std::string > param_vec( param_arr, param_arr + 8 );
-    for ( std::vector< std::string >::iterator it = param_vec.begin();
-          it != param_vec.end();
-          it++ )
-    {
-      if ( syn_spec->known( *it ) )
-      {
-        throw NotImplemented(
-          "Connect doesn't support the setting of parameter " + *it
-          + " in stdp_dopamine_synapse. Use SetDefaults() or CopyModel()." );
-      }
-    }
-    return;
-  }
-}
 /**
  * Updates the number of connected synaptic elements in the
  * target and the source.
@@ -419,7 +322,7 @@ nest::ConnBuilder::connect()
 {
   // We test here, and not in the ConnBuilder constructor, so the derived
   // classes are fully constructed when the test is executed
-  if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ )
+  if ( kernel().model_manager.connector_requires_symmetric( synapse_model_id_ )
     and not( is_symmetric() or make_symmetric_ ) )
   {
     throw BadProperty(
@@ -525,14 +428,14 @@ nest::ConnBuilder::single_connect_( index sgid,
     if ( default_weight_and_delay_ )
     {
       kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_ );
+        sgid, &target, target_thread, synapse_model_id_ );
     }
     else if ( default_weight_ )
     {
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
-        synapse_model_,
+        synapse_model_id_,
         delay_->value_double( target_thread, rng ) );
     }
     else if ( default_delay_ )
@@ -540,7 +443,7 @@ nest::ConnBuilder::single_connect_( index sgid,
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
-        synapse_model_,
+        synapse_model_id_,
         numerics::nan,
         weight_->value_double( target_thread, rng ) );
     }
@@ -549,7 +452,7 @@ nest::ConnBuilder::single_connect_( index sgid,
       double delay = delay_->value_double( target_thread, rng );
       double weight = weight_->value_double( target_thread, rng );
       kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_, delay, weight );
+        sgid, &target, target_thread, synapse_model_id_, delay, weight );
     }
   }
   else
@@ -601,7 +504,7 @@ nest::ConnBuilder::single_connect_( index sgid,
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
-        synapse_model_,
+        synapse_model_id_,
         param_dicts_[ target_thread ] );
     }
     else if ( default_weight_ )
@@ -609,7 +512,7 @@ nest::ConnBuilder::single_connect_( index sgid,
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
-        synapse_model_,
+        synapse_model_id_,
         param_dicts_[ target_thread ],
         delay_->value_double( target_thread, rng ) );
     }
@@ -618,7 +521,7 @@ nest::ConnBuilder::single_connect_( index sgid,
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
-        synapse_model_,
+        synapse_model_id_,
         param_dicts_[ target_thread ],
         numerics::nan,
         weight_->value_double( target_thread, rng ) );
@@ -630,7 +533,7 @@ nest::ConnBuilder::single_connect_( index sgid,
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
-        synapse_model_,
+        synapse_model_id_,
         param_dicts_[ target_thread ],
         delay,
         weight );

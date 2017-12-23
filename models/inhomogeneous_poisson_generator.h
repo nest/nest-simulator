@@ -26,17 +26,24 @@
         at a piecewise constant rate
 
   Description:
-  The inhomogeneous Poisson generator provides Poisson spike trains at a
-  piecewise constant rate to the connected node(s). The rate of the process
-  is changed at the specified times. The unit of the instantaneous rate
-  is spikes/s. By default, each target of the generator will receive
-  a different spike train.
+    The inhomogeneous Poisson generator provides Poisson spike trains at a
+    piecewise constant rate to the connected node(s). The rate of the process
+    is changed at the specified times. The unit of the instantaneous rate
+    is spikes/s. By default, each target of the generator will receive
+    a different spike train.
 
- Parameters:
-     The following parameters can be set in the status dictionary:
-     rate_times   list of doubles - Times at which rate changes in ms
-     rate_values  list of doubles - Rate of Poisson spike train in spikes/s
-     individual_spike_trains bool - See note below, default: true
+  Parameters:
+   The following parameters can be set in the status dictionary:
+   rate_times   list of doubles - Times at which rate changes in ms
+   rate_values  list of doubles - Rate of Poisson spike train in spikes/s
+   individual_spike_trains bool - See note below, default: true
+   allow_offgrid_times     bool - If false, spike times will be rounded to the
+                                  nearest step if they are less than tic/2 from
+                                  the step, otherwise NEST reports an error.
+                                  If true, spike times are rounded to the
+                                  nearest step if within tic/2 from the step,
+                                  otherwise they are rounded up to the *end*
+                                  of the step. Default: false
 
   Examples:
     The current can be altered in the following way:
@@ -44,19 +51,15 @@
     sc << /rate_times [0.2 0.5] /rate_values [2.0 4.0] >> SetStatus
 
     The average firing rate of each realization of the Poisson process will be
- 0.0
-    in the time interval [0, 0.2), 2.0 in the interval [0.2, 0.5) and 4.0 from
- then on.
+    0.0 in the time interval [0, 0.2), 2.0 in the interval [0.2, 0.5)
+    and 4.0 from then on.
 
   Remarks:
-     - Individual spike trains vs single spike train:
-     By default, the generator sends a different spike train to each of its
- targets.
-     If /individual_spike_trains is set to false using either SetDefaults or
- CopyModel
-     before a generator node is created, the generator will send the same spike
- train
-     to all of its targets.
+    Individual spike trains vs single spike train: by default, the generator
+    sends a different spike train to each of its targets.  If
+    /individual_spike_trains is set to false using either SetDefaults or
+    CopyModel before a generator node is created, the generator will send the
+    same spike train to all of its targets.
 
   Receives: DataLoggingRequest
 
@@ -65,8 +68,9 @@
   Authors: Renato Duarte, Barna Zajzon
 
   SeeAlso: sinusoidal_poisson_generator, step_current_generator, Device,
- StimulatingDevice
+           StimulatingDevice
 */
+
 #ifndef INHOMOGENEOUS_POISSON_GENERATOR_H
 #define INHOMOGENEOUS_POISSON_GENERATOR_H
 
@@ -127,15 +131,21 @@ private:
    */
   struct Parameters_
   {
-    std::vector< double_t > rate_times_;
+    std::vector< Time > rate_times_;
     std::vector< double_t > rate_values_;
+
+    //! Allow and round up rate times not on steps;
+    bool allow_offgrid_times_;
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_&, Buffers_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      Buffers_& ); //!< Set values from dicitonary
+    //!< Store current values in dictionary
+    void get( DictionaryDatum& ) const;
+    //!< Set values from dictionary
+    void set( const DictionaryDatum&, Buffers_& );
+    //!< Align rate time to grid if necessary and insert it into rate_times_
+    void assert_valid_rate_time_and_insert( const double_t t );
   };
 
   // ------------------------------------------------------------

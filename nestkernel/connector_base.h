@@ -120,7 +120,9 @@ suicide( Told* connector )
 }
 
 // when to truncate the recursive instantiation
-#define K_CUTOFF 3
+// can be specified via cmake flag -Dconnector_cutoff=value
+#define K_CUTOFF CONFIG_CONNECTOR_CUTOFF
+
 
 namespace nest
 {
@@ -135,8 +137,10 @@ class ConnectorBase
 public:
   ConnectorBase();
 
-  virtual void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const = 0;
+  virtual void get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const = 0;
   virtual void set_synapse_status( synindex syn_id,
     ConnectorModel& cm,
     const DictionaryDatum& d,
@@ -300,12 +304,17 @@ public:
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const
   {
     if ( syn_id == C_[ 0 ].get_syn_id() )
     {
       assert( p >= 0 && static_cast< size_t >( p ) < K );
       C_[ p ].get_status( d );
+      // set target gid here, where tid is available
+      def< long >( d, names::target, C_[ p ].get_target( tid )->get_gid() );
     }
   }
 
@@ -583,12 +592,17 @@ public:
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const
   {
     if ( syn_id == C_[ 0 ].get_syn_id() )
     {
       assert( static_cast< size_t >( p ) == 0 );
       C_[ 0 ].get_status( d );
+      // set target gid here, where tid is available
+      def< long >( d, names::target, C_[ 0 ].get_target( tid )->get_gid() );
     }
   }
 
@@ -795,13 +809,15 @@ class Connector< K_CUTOFF, ConnectionT > : public vector_like< ConnectionT >
 public:
   Connector( const Connector< K_CUTOFF - 1, ConnectionT >& C,
     const ConnectionT& c )
-    : C_( K_CUTOFF ) //, syn_id_(C.get_syn_id())
   {
+    C_.reserve( kernel().connection_manager.get_initial_connector_capacity() );
+
     for ( size_t i = 0; i < K_CUTOFF - 1; i++ )
     {
-      C_[ i ] = C.get_C()[ i ];
+      C_.push_back( C.get_C()[ i ] );
     }
-    C_[ K_CUTOFF - 1 ] = c;
+
+    C_.push_back( c );
   };
 
   /**
@@ -834,12 +850,17 @@ public:
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const
   {
     if ( syn_id == C_[ 0 ].get_syn_id() )
     {
       assert( p >= 0 && static_cast< size_t >( p ) < C_.size() );
       C_[ p ].get_status( d );
+      // set target gid here, where tid is available
+      def< long >( d, names::target, C_[ p ].get_target( tid )->get_gid() );
     }
   }
 
@@ -897,6 +918,20 @@ public:
   ConnectorBase&
   push_back( const ConnectionT& c )
   {
+    // Replace default (doubling) vector grow strategy.
+    // Use specific vector grow strategy when size >= large_connector_limit.
+    // Call vector::reserve() manually if size() == capacity().
+    const size_t sz = C_.size();
+
+    if ( sz == C_.capacity()
+      and sz >= kernel().connection_manager.get_large_connector_limit() )
+    {
+      const size_t cap = static_cast< double >( sz )
+        * kernel().connection_manager.get_large_connector_growth_factor();
+
+      C_.reserve( cap > sz ? cap : sz + 1 );
+    }
+
     C_.push_back( c );
     return *this;
   }
@@ -1080,11 +1115,14 @@ public:
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const
   {
     for ( size_t i = 0; i < size(); i++ )
     {
-      at( i )->get_synapse_status( syn_id, d, p );
+      at( i )->get_synapse_status( syn_id, d, p, tid );
     }
   }
 
@@ -1249,6 +1287,11 @@ public:
     {
       push_back( conn );
     }
+  }
+  void
+  reduce_primary()
+  {
+    --primary_end_;
   }
 };
 

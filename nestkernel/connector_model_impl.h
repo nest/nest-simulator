@@ -587,6 +587,14 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
             // is only this element left
             if ( vc->size() == 1 )
             {
+              // if primary, reduce the primary marker
+              if ( kernel()
+                     .model_manager.get_synapse_prototype(
+                                      ( *hc )[ i ]->get_syn_id() )
+                     .is_primary() )
+              {
+                ( *hc ).reduce_primary();
+              }
               ( *hc ).erase( ( *hc ).begin() + i );
               // Test if the homogeneous vector of connections went back to only
               // 1 type of synapse... then go back to the simple vector_like

@@ -42,7 +42,7 @@ ConnBuilder::single_disconnect_( index sgid,
   // defined. TODO: Add functionality to delete synapses with a given weight
   // or a given delay
   kernel().sp_manager.disconnect(
-    sgid, &target, target_thread, synapse_model_ );
+    sgid, &target, target_thread, synapse_model_id_ );
 }
 
 } // namespace nest

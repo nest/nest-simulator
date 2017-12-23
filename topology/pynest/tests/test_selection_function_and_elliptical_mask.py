@@ -224,7 +224,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         self.assertEqual(gid_list, (656, 667, 678,))
 
     def test_TiltedEllipsoidalMask(self):
-        """"Ellipsoidal mask contains correct GIDs when tilted with respect to
+        """Ellipsoidal mask contains correct GIDs when tilted with respect to
         x-axis and z-axis"""
 
         pos = [[x*1., y*1., z*1.] for x in range(-2, 3)

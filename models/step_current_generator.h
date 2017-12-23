@@ -34,6 +34,18 @@
      amplitude_times   list of doubles - Times at which current changes in ms
      amplitude_values  list of doubles - Amplitudes of step current current in
                                          pA
+     allow_offgrid_times  bool - Default false
+       If false, times will be rounded to the nearest step if they are
+       less than tic/2 from the step, otherwise NEST reports an error.
+       If true,  times are rounded to the nearest step if within tic/2
+       from the step, otherwise they are rounded up to the *end* of the
+       step.
+
+  Note:
+    Times of amplitude changes must be strictly increasing after conversion
+    to simulation time steps. The option allow_offgrid_times may be
+    useful, e.g., if you are using randomized times for current changes
+    which typically would not fall onto simulation time steps.
 
   Examples:
     The current can be altered in the following way:
@@ -114,8 +126,14 @@ private:
    */
   struct Parameters_
   {
-    std::vector< double > amp_times_;
+    //! Times of amplitude changes
+    std::vector< Time > amp_time_stamps_;
+
+    //! Amplitude values activated at given times
     std::vector< double > amp_values_;
+
+    //! Allow and round up amplitude times not on steps
+    bool allow_offgrid_amp_times_;
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_&, Buffers_& );
@@ -125,6 +143,14 @@ private:
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
     void set( const DictionaryDatum&, Buffers_& );
+
+    /**
+     * Return time as Time object if valid, otherwise throw BadProperty
+     *
+     * @param amplitude time, ms
+     * @param previous time stamp
+     */
+    Time validate_time_( double, const Time& );
   };
 
   // ------------------------------------------------------------

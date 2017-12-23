@@ -79,6 +79,9 @@ class Node;
  * @see CurrentEvent
  * @see ConductanceEvent
  * @see GapJunctionEvent
+ * @see InstantaneousRateConnectionEvent
+ * @see DelayedRateConnectionEvent
+ * @see DiffusionConnectionEvent
  * @ingroup event_interface
  */
 
@@ -247,6 +250,16 @@ public:
   void set_weight( weight t );
 
   /**
+   * Set drift_factor of the event (see DiffusionConnectionEvent).
+   */
+  virtual void set_drift_factor( weight t ){};
+
+  /**
+   * Set diffusion_factor of the event (see DiffusionConnectionEvent).
+   */
+  virtual void set_diffusion_factor( weight t ){};
+
+  /**
    * Check integrity of the event.
    * This function returns true, if all data, in particular sender
    * and receiver pointers are correctly set.
@@ -308,6 +321,14 @@ protected:
    * when the event shall arrive at the target.
    */
   Time stamp_;
+
+  /**
+   * Time stamp in steps.
+   * Caches the value of stamp in steps for efficiency.
+   * Needs to be declared mutable since it is modified
+   * by a const function (get_rel_delivery_steps).
+   */
+  mutable long stamp_steps_;
 
   /**
    * Offset for precise spike times.
@@ -554,6 +575,8 @@ public:
   /** Create empty request for use during simulation. */
   DataLoggingRequest();
 
+  DataLoggingRequest( const Time&, const std::vector< Name >& );
+
   /** Create event for given time interval, offset for interval start,
    *  and vector of recordables. */
   DataLoggingRequest( const Time&, const Time&, const std::vector< Name >& );
@@ -590,6 +613,14 @@ inline DataLoggingRequest::DataLoggingRequest()
   , recording_interval_( Time::neg_inf() )
   , recording_offset_( Time::ms( 0. ) )
   , record_from_( 0 )
+{
+}
+
+inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int,
+  const std::vector< Name >& recs )
+  : Event()
+  , recording_interval_( rec_int )
+  , record_from_( &recs )
 {
 }
 
@@ -1062,6 +1093,453 @@ public:
   double get_coeffvalue( std::vector< unsigned int >::iterator& pos );
 };
 
+/**
+ * Event for rate model connections without delay.
+ */
+class InstantaneousRateConnectionEvent : public SecondaryEvent
+{
+private:
+  // we chose std::vector over std::set because we expect this always to be
+  // short
+  static std::vector< synindex > supported_syn_ids_;
+  static size_t coeff_length_; // length of coeffarray
+
+  std::vector< double >::iterator coeffarray_as_doubles_begin_;
+  std::vector< double >::iterator coeffarray_as_doubles_end_;
+  std::vector< unsigned int >::iterator coeffarray_as_uints_begin_;
+  std::vector< unsigned int >::iterator coeffarray_as_uints_end_;
+
+public:
+  InstantaneousRateConnectionEvent()
+  {
+  }
+
+  void operator()();
+  InstantaneousRateConnectionEvent* clone() const;
+
+  /**
+   * This function is needed to set the synid on model registration.
+   * At this point no object of this type is available and the
+   * add_syn_id-function cannot be used as it is virtual in the base class
+   * and therefore cannot be declared as static.
+   */
+  static void
+  set_syn_id( const synindex synid )
+  {
+    VPManager::assert_single_threaded();
+    supported_syn_ids_.push_back( synid );
+  }
+
+  /**
+   * This function is needed to add additional synids when the
+   * corresponded connector model is copied.
+   * This function needs to be a virtual function of the base class as
+   * it is called from a pointer on SecondaryEvent.
+   */
+  void
+  add_syn_id( const synindex synid )
+  {
+    assert( not supports_syn_id( synid ) );
+    VPManager::assert_single_threaded();
+    supported_syn_ids_.push_back( synid );
+  }
+
+  static void
+  set_coeff_length( const size_t coeff_length )
+  {
+    VPManager::assert_single_threaded();
+    coeff_length_ = coeff_length;
+  }
+
+  bool
+  supports_syn_id( const synindex synid ) const
+  {
+    return (
+      std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
+      != supported_syn_ids_.end() );
+  }
+
+  void
+  set_coeffarray( std::vector< double >& ca )
+  {
+    coeffarray_as_doubles_begin_ = ca.begin();
+    coeffarray_as_doubles_end_ = ca.end();
+    assert( coeff_length_ == ca.size() );
+  }
+
+  /**
+   * The following operator is used to read the information
+   * of the InstantaneousRateConnectionEvent from the buffer in
+   * Scheduler::deliver_events_
+   */
+  std::vector< unsigned int >::iterator& operator<<(
+    std::vector< unsigned int >::iterator& pos )
+  {
+    // The synid can be skipped here as it is stored in a static vector
+    pos += number_of_uints_covered< synindex >();
+    read_from_comm_buffer( sender_gid_, pos );
+
+    // generating a copy of the coeffarray is too time consuming
+    // therefore we save an iterator to the beginning+end of the coeffarray
+    coeffarray_as_uints_begin_ = pos;
+
+    pos += coeff_length_ * number_of_uints_covered< double >();
+
+    coeffarray_as_uints_end_ = pos;
+
+    return pos;
+  }
+
+  /**
+   * The following operator is used to write the information
+   * of the InstantaneousRateConnectionEvent into the secondary_events_buffer_
+   * All InstantaneousRateConnectionEvents are identified by the synid of the
+   * first element in supported_syn_ids_
+   */
+  std::vector< unsigned int >::iterator& operator>>(
+    std::vector< unsigned int >::iterator& pos )
+  {
+    write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
+    write_to_comm_buffer( sender_gid_, pos );
+    for ( std::vector< double >::iterator i = coeffarray_as_doubles_begin_;
+          i != coeffarray_as_doubles_end_;
+          i++ )
+    {
+      write_to_comm_buffer( *i, pos );
+    }
+    return pos;
+  }
+
+  size_t
+  size()
+  {
+    size_t s = number_of_uints_covered< synindex >();
+    s += number_of_uints_covered< index >();
+    s += number_of_uints_covered< double >() * coeff_length_;
+
+    return s;
+  }
+
+  const std::vector< unsigned int >::iterator&
+  begin()
+  {
+    return coeffarray_as_uints_begin_;
+  }
+
+  const std::vector< unsigned int >::iterator&
+  end()
+  {
+    return coeffarray_as_uints_end_;
+  }
+
+  double get_coeffvalue( std::vector< unsigned int >::iterator& pos );
+};
+
+/**
+ * Event for diffusion connections.
+ */
+class DiffusionConnectionEvent : public SecondaryEvent
+{
+private:
+  // we chose std::vector over std::set because we expect this always to be
+  // short
+  static std::vector< synindex > supported_syn_ids_;
+  static size_t coeff_length_; // length of coeffarray
+
+  std::vector< double >::iterator coeffarray_as_doubles_begin_;
+  std::vector< double >::iterator coeffarray_as_doubles_end_;
+  std::vector< unsigned int >::iterator coeffarray_as_uints_begin_;
+  std::vector< unsigned int >::iterator coeffarray_as_uints_end_;
+
+  // drift factor of the corresponding connection
+  weight drift_factor_;
+  // diffusion factor of the corresponding connection
+  weight diffusion_factor_;
+
+public:
+  DiffusionConnectionEvent()
+  {
+  }
+
+  void operator()();
+  DiffusionConnectionEvent* clone() const;
+
+  /**
+   * This function is needed to set the synid on model registration.
+   * At this point no object of this type is available and the
+   * add_syn_id-function cannot be used as it is virtual in the base class
+   * and therefore cannot be declared as static.
+   */
+  static void
+  set_syn_id( const synindex synid )
+  {
+    VPManager::assert_single_threaded();
+    supported_syn_ids_.push_back( synid );
+  }
+
+  /**
+   * This function is needed to add additional synids when the
+   * corresponded connector model is copied.
+   * This function needs to be a virtual function of the base class as
+   * it is called from a pointer on SecondaryEvent.
+   */
+  void
+  add_syn_id( const synindex synid )
+  {
+    assert( not supports_syn_id( synid ) );
+    VPManager::assert_single_threaded();
+    supported_syn_ids_.push_back( synid );
+  }
+
+  static void
+  set_coeff_length( const size_t coeff_length )
+  {
+    VPManager::assert_single_threaded();
+    coeff_length_ = coeff_length;
+  }
+
+  bool
+  supports_syn_id( const synindex synid ) const
+  {
+    return (
+      std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
+      != supported_syn_ids_.end() );
+  }
+
+  void
+  set_coeffarray( std::vector< double >& ca )
+  {
+    coeffarray_as_doubles_begin_ = ca.begin();
+    coeffarray_as_doubles_end_ = ca.end();
+    assert( coeff_length_ == ca.size() );
+  }
+
+  /**
+   * The following operator is used to read the information
+   * of the DiffusionConnectionEvent from the buffer in
+   * Scheduler::deliver_events_
+   */
+  std::vector< unsigned int >::iterator& operator<<(
+    std::vector< unsigned int >::iterator& pos )
+  {
+    // The synid can be skipped here as it is stored in a static vector
+    pos += number_of_uints_covered< synindex >();
+    read_from_comm_buffer( sender_gid_, pos );
+
+    // generating a copy of the coeffarray is too time consuming
+    // therefore we save an iterator to the beginning+end of the coeffarray
+    coeffarray_as_uints_begin_ = pos;
+
+    pos += coeff_length_ * number_of_uints_covered< double >();
+
+    coeffarray_as_uints_end_ = pos;
+
+    return pos;
+  }
+
+  /**
+   * The following operator is used to write the information
+   * of the DiffusionConnectionEvent into the secondary_events_buffer_
+   * All DiffusionConnectionEvents are identified by the synid of the
+   * first element in supported_syn_ids_
+   */
+  std::vector< unsigned int >::iterator& operator>>(
+    std::vector< unsigned int >::iterator& pos )
+  {
+    write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
+    write_to_comm_buffer( sender_gid_, pos );
+    for ( std::vector< double >::iterator i = coeffarray_as_doubles_begin_;
+          i != coeffarray_as_doubles_end_;
+          i++ )
+    {
+      write_to_comm_buffer( *i, pos );
+    }
+    return pos;
+  }
+
+  size_t
+  size()
+  {
+    size_t s = number_of_uints_covered< synindex >();
+    s += number_of_uints_covered< index >();
+    s += number_of_uints_covered< double >() * coeff_length_;
+
+    return s;
+  }
+
+  const std::vector< unsigned int >::iterator&
+  begin()
+  {
+    return coeffarray_as_uints_begin_;
+  }
+
+  const std::vector< unsigned int >::iterator&
+  end()
+  {
+    return coeffarray_as_uints_end_;
+  }
+
+  void
+  set_diffusion_factor( weight t )
+  {
+    diffusion_factor_ = t;
+  };
+
+  void
+  set_drift_factor( weight t )
+  {
+    drift_factor_ = t;
+  };
+
+  double get_coeffvalue( std::vector< unsigned int >::iterator& pos );
+
+  weight get_drift_factor() const;
+  weight get_diffusion_factor() const;
+};
+
+
+/**
+ * Event for rate model connections with delay.
+ */
+class DelayedRateConnectionEvent : public SecondaryEvent
+{
+private:
+  // we chose std::vector over std::set because we expect this always to be
+  // short
+  static std::vector< synindex > supported_syn_ids_;
+  static size_t coeff_length_; // length of coeffarray
+
+  std::vector< double >::iterator coeffarray_as_doubles_begin_;
+  std::vector< double >::iterator coeffarray_as_doubles_end_;
+  std::vector< unsigned int >::iterator coeffarray_as_uints_begin_;
+  std::vector< unsigned int >::iterator coeffarray_as_uints_end_;
+
+public:
+  DelayedRateConnectionEvent()
+  {
+  }
+
+  void operator()();
+  DelayedRateConnectionEvent* clone() const;
+
+  /**
+   * This function is needed to set the synid on model registration.
+   * At this point no object of this type is available and the
+   * add_syn_id-function cannot be used as it is virtual in the base class
+   * and therefore cannot be declared as static.
+   */
+  static void
+  set_syn_id( const synindex synid )
+  {
+    VPManager::assert_single_threaded();
+    supported_syn_ids_.push_back( synid );
+  }
+
+  /**
+   * This function is needed to add additional synids when the
+   * corresponded connector model is copied.
+   * This function needs to be a virtual function of the base class as
+   * it is called from a pointer on SecondaryEvent.
+   */
+  void
+  add_syn_id( const synindex synid )
+  {
+    assert( not supports_syn_id( synid ) );
+    VPManager::assert_single_threaded();
+    supported_syn_ids_.push_back( synid );
+  }
+
+  static void
+  set_coeff_length( const size_t coeff_length )
+  {
+    VPManager::assert_single_threaded();
+    coeff_length_ = coeff_length;
+  }
+
+  bool
+  supports_syn_id( const synindex synid ) const
+  {
+    return (
+      std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
+      != supported_syn_ids_.end() );
+  }
+
+  void
+  set_coeffarray( std::vector< double >& ca )
+  {
+    coeffarray_as_doubles_begin_ = ca.begin();
+    coeffarray_as_doubles_end_ = ca.end();
+    assert( coeff_length_ == ca.size() );
+  }
+
+  /**
+   * The following operator is used to read the information
+   * of the DelayedRateConnectionEvent from the buffer in
+   * Scheduler::deliver_events_
+   */
+  std::vector< unsigned int >::iterator& operator<<(
+    std::vector< unsigned int >::iterator& pos )
+  {
+    // The synid can be skipped here as it is stored in a static vector
+    pos += number_of_uints_covered< synindex >();
+    read_from_comm_buffer( sender_gid_, pos );
+
+    // generating a copy of the coeffarray is too time consuming
+    // therefore we save an iterator to the beginning+end of the coeffarray
+    coeffarray_as_uints_begin_ = pos;
+
+    pos += coeff_length_ * number_of_uints_covered< double >();
+
+    coeffarray_as_uints_end_ = pos;
+
+    return pos;
+  }
+
+  /**
+   * The following operator is used to write the information
+   * of the DelayedRateConnectionEvent into the secondary_events_buffer_
+   * All DelayedRateConnectionEvents are identified by the synid of the
+   * first element in supported_syn_ids_
+   */
+  std::vector< unsigned int >::iterator& operator>>(
+    std::vector< unsigned int >::iterator& pos )
+  {
+    write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
+    write_to_comm_buffer( sender_gid_, pos );
+    for ( std::vector< double >::iterator i = coeffarray_as_doubles_begin_;
+          i != coeffarray_as_doubles_end_;
+          i++ )
+    {
+      write_to_comm_buffer( *i, pos );
+    }
+    return pos;
+  }
+
+  size_t
+  size()
+  {
+    size_t s = number_of_uints_covered< synindex >();
+    s += number_of_uints_covered< index >();
+    s += number_of_uints_covered< double >() * coeff_length_;
+
+    return s;
+  }
+
+  const std::vector< unsigned int >::iterator&
+  begin()
+  {
+    return coeffarray_as_uints_begin_;
+  }
+
+  const std::vector< unsigned int >::iterator&
+  end()
+  {
+    return coeffarray_as_uints_end_;
+  }
+
+  double get_coeffvalue( std::vector< unsigned int >::iterator& pos );
+};
+
 inline double
 GapJunctionEvent::get_coeffvalue( std::vector< unsigned int >::iterator& pos )
 {
@@ -1074,6 +1552,63 @@ inline GapJunctionEvent*
 GapJunctionEvent::clone() const
 {
   return new GapJunctionEvent( *this );
+}
+
+inline double
+InstantaneousRateConnectionEvent::get_coeffvalue(
+  std::vector< unsigned int >::iterator& pos )
+{
+  double elem = 0.0;
+  read_from_comm_buffer( elem, pos );
+  return elem;
+}
+
+inline InstantaneousRateConnectionEvent*
+InstantaneousRateConnectionEvent::clone() const
+{
+  return new InstantaneousRateConnectionEvent( *this );
+}
+
+inline double
+DiffusionConnectionEvent::get_coeffvalue(
+  std::vector< unsigned int >::iterator& pos )
+{
+  double elem = 0.0;
+  read_from_comm_buffer( elem, pos );
+  return elem;
+}
+
+inline DiffusionConnectionEvent*
+DiffusionConnectionEvent::clone() const
+{
+  return new DiffusionConnectionEvent( *this );
+}
+
+inline double
+DelayedRateConnectionEvent::get_coeffvalue(
+  std::vector< unsigned int >::iterator& pos )
+{
+  double elem = 0.0;
+  read_from_comm_buffer( elem, pos );
+  return elem;
+}
+
+inline DelayedRateConnectionEvent*
+DelayedRateConnectionEvent::clone() const
+{
+  return new DelayedRateConnectionEvent( *this );
+}
+
+inline weight
+DiffusionConnectionEvent::get_drift_factor() const
+{
+  return drift_factor_;
+}
+
+inline weight
+DiffusionConnectionEvent::get_diffusion_factor() const
+{
+  return diffusion_factor_;
 }
 
 //*************************************************************
@@ -1144,6 +1679,10 @@ inline void
 Event::set_stamp( Time const& s )
 {
   stamp_ = s;
+  stamp_steps_ = 0; // setting stamp_steps to zero indicates
+                    // stamp_steps needs to be recalculated from
+                    // stamp_ next time it is needed (e.g., in
+                    // get_rel_delivery_steps)
 }
 
 inline delay
@@ -1155,7 +1694,11 @@ Event::get_delay() const
 inline long
 Event::get_rel_delivery_steps( const Time& t ) const
 {
-  return stamp_.get_steps() + d_ - 1 - t.get_steps();
+  if ( stamp_steps_ == 0 )
+  {
+    stamp_steps_ = stamp_.get_steps();
+  }
+  return stamp_steps_ + d_ - 1 - t.get_steps();
 }
 
 inline void

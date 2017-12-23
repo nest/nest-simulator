@@ -621,8 +621,8 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
 
   pristine_prototypes_.push_back( cf );
 
-  const synindex syn_id = prototypes_[ 0 ].size();
-  pristine_prototypes_[ syn_id ]->set_syn_id( syn_id );
+  const synindex syn_id = prototypes_.at( 0 ).size();
+  pristine_prototypes_.at( syn_id )->set_syn_id( syn_id );
 
   for ( thread t = 0;
         t < static_cast< thread >( kernel().vp_manager.get_num_threads() );

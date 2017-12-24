@@ -219,7 +219,6 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin,
   const long from,
   const long to )
 {
-  std::cout << "update\n\n";
   assert(
     to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );

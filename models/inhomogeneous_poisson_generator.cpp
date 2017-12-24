@@ -172,6 +172,7 @@ nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator()
   : Node()
   , device_()
   , P_()
+  , B_()
 {
 }
 
@@ -180,6 +181,7 @@ nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator(
   : Node( n )
   , device_( n.device_ )
   , P_( n.P_ )
+  , B_( n.B_ )
 {
 }
 

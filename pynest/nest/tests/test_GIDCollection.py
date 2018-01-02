@@ -108,6 +108,8 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(n[0], gc_0)
         self.assertEqual(n[2], gc_2)
         self.assertEqual(n[4], gc_4)
+        self.assertEqual(n[-1], gc_4)
+        self.assertEqual(n[-3], gc_2)
         with self.assertRaises(nest.NESTError):
             n[7]
 

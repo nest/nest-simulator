@@ -128,6 +128,12 @@ nest::IOManager::finalize()
   data_path_ = "";
   data_prefix_ = "";
   overwrite_files_ = false;
+
+  for ( auto backend : recording_backends_ )
+  {
+    delete backend.second;
+  }
+  recording_backends_.clear();
 }
 
 /*

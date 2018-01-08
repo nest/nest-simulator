@@ -292,6 +292,7 @@ const Name screen( "screen" );
 const Name senders( "senders" );
 const Name sion_chunksize( "sion_chunksize" );
 const Name sion_collective( "sion_collective" );
+const Name sion_n_files( "sion_n_files" );
 const Name sigmoid( "sigmoid" );
 const Name size_of( "sizeof" );
 const Name source( "source" );

@@ -337,6 +337,7 @@ extern const Name screen;          //!< Recorder parameter
 extern const Name senders;         //!< Recorder parameter
 extern const Name sion_chunksize;  //!< RecordingBackendSIONlib parameter
 extern const Name sion_collective; //!< RecordingBackendSIONlib parameter
+extern const Name sion_n_files;    //!< RecordingBackendSIONlib parameter
 extern const Name sigmoid;         //!< Sigmoid MSP growth curve
 extern const Name size_of;         //!< Connection parameters
 extern const Name source;          //!< Connection parameters

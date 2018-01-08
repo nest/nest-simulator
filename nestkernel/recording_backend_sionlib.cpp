@@ -100,10 +100,19 @@ nest::RecordingBackendSIONlib::open_files_()
     return;
   }
     
-  MPI_Comm local_comm = MPI_COMM_NULL;
+  local_comm_ = MPI_COMM_NULL;
 #ifdef BG_MULTIFILE
-  MPIX_Pset_same_comm_create( &local_comm );
+  // MPIX calls not thread-safe; use only master thread here 
+  // (omp single may be problematic as well)
+#pragma omp master
+  {
+    MPIX_Pset_same_comm_create( &local_comm_ );
+  }
+#pragma omp barrier
 #endif // BG_MULTIFILE
+  // use additional local variable for local communicator to
+  // avoid problems when calling sion_paropen_ompi(..)
+  MPI_Comm local_comm = local_comm_;
 
   // we need to delay the throwing of exceptions to the end of the parallel
   // section
@@ -146,14 +155,14 @@ nest::RecordingBackendSIONlib::open_files_()
 #ifdef BG_MULTIFILE
     int n_files = -1;
 #else
-    int n_files = 1;
+    int n_files = P_.sion_n_files_;
 #endif // BG_MULTIFILE
     sion_int32 fs_block_size = -1;
     sion_int64 sion_chunksize = P_.sion_chunksize_;
     int rank = kernel().mpi_manager.get_rank();
 
     file.sid = sion_paropen_ompi( filename.c_str(),
-      P_.sion_collective_ ? "bw,cmerge" : "bw",
+      P_.sion_collective_ ? "bw,cmerge,collsize=-1" : "bw",
       &n_files,
       MPI_COMM_WORLD,
       &local_comm,
@@ -329,7 +338,7 @@ nest::RecordingBackendSIONlib::close_files_()
 void
 nest::RecordingBackendSIONlib::synchronize()
 {
-  if ( !P_.sion_collective_ )
+  if ( not files_opened_ or not P_.sion_collective_ )
   {
     return;
   }
@@ -581,6 +590,7 @@ nest::RecordingBackendSIONlib::Parameters_::Parameters_()
   : file_ext_( "sion" )
   , sion_collective_( false )
   , sion_chunksize_( 1 << 18 )
+  , sion_n_files_( 1 )
   , buffer_size_( 1024 )
 {
 }
@@ -594,6 +604,7 @@ nest::RecordingBackendSIONlib::Parameters_::get(
   ( *d )[ names::buffer_size ] = buffer_size_;
   ( *d )[ names::sion_chunksize ] = sion_chunksize_;
   ( *d )[ names::sion_collective ] = sion_collective_;
+  ( *d )[ names::sion_n_files ] = sion_n_files_;
 }
 
 void
@@ -605,6 +616,7 @@ nest::RecordingBackendSIONlib::Parameters_::set(
   updateValue< long >( d, names::buffer_size, buffer_size_ );
   updateValue< long >( d, names::sion_chunksize, sion_chunksize_ );
   updateValue< bool >( d, names::sion_collective, sion_collective_ );
+  updateValue< long >( d, names::sion_n_files, sion_n_files_ );
 }
 
 void

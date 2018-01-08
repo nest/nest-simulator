@@ -33,14 +33,14 @@ endif ()
 
 set_target_properties( nest
     PROPERTIES
-    LINK_FLAGS "-Wl,--no-as-needed" 
+    LINK_FLAGS "-Wl,--no-as-needed"
     )
 
 add_library( nest_lib ${nest_sources} )
 set_target_properties( nest_lib
     PROPERTIES
     OUTPUT_NAME nest
-    LINK_FLAGS "-Wl,--no-as-needed" 
+    LINK_FLAGS "-Wl,--no-as-needed"
     )
 
 target_link_libraries( nest

@@ -129,9 +129,11 @@ nest::IOManager::finalize()
   data_prefix_ = "";
   overwrite_files_ = false;
 
-  for ( auto backend : recording_backends_ )
+  std::map< Name, RecordingBackend* >::const_iterator it;
+  for ( it = recording_backends_.begin(); it != recording_backends_.end();
+        ++it )
   {
-    delete backend.second;
+    delete it->second;
   }
   recording_backends_.clear();
 }

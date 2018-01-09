@@ -31,17 +31,27 @@ if ( IS_BLUEGENE AND static-libraries )
         )
 endif ()
 
-set_target_properties( nest
-    PROPERTIES
-    LINK_FLAGS "-Wl,--no-as-needed"
-    )
+if ( NOT APPLE )
+    set_target_properties( nest
+        PROPERTIES
+        LINK_FLAGS "-Wl,--no-as-needed"
+        )
+endif ()
 
 add_library( nest_lib ${nest_sources} )
-set_target_properties( nest_lib
-    PROPERTIES
-    OUTPUT_NAME nest
-    LINK_FLAGS "-Wl,--no-as-needed"
-    )
+
+if ( NOT APPLE )
+    set_target_properties( nest_lib
+        PROPERTIES
+        OUTPUT_NAME nest
+        LINK_FLAGS "-Wl,--no-as-needed"
+        )
+else ()
+    set_target_properties( nest_lib
+        PROPERTIES
+        OUTPUT_NAME nest
+        )
+endif ()
 
 target_link_libraries( nest
     nestutil nestkernel random sli_lib sli_readline

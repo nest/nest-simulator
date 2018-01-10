@@ -348,7 +348,6 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
   long gid = conn.get_source_gid();
-  kernel().node_manager.get_node_or_proxy( gid ); // Just to check if the node exists
 
   DictionaryDatum result_dict =
     kernel().connection_manager.get_synapse_status( gid,
@@ -1217,63 +1216,6 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
 #endif
 
 /* BeginDocumentation
-   Name: GetVpRNG - return random number generator associated to virtual process
-   of node
-   Synopsis:
-   gid GetVpRNG -> rngtype
-   Parameters:
-   gid  - global id of the node
-   Description:
-   This function is helpful in the implementation of parallelized wiring
-   routines that create identical random structures independent of the
-   number of machines and threads participating in the simulation. The
-   function is used in SLI libraries. There is probably no need to
-   directly use GetVpRNG in scripts describing a particular simulation.
-
-   In NEST each node (e.g. neuron) is assigned to a virtual process and
-   each virtual process maintains its own random number generator. In a
-   simulation run the virtual processes are equally distributed over the
-   participating machines and threads as specified by the user. In NEST
-   2.0 virtual processes are identified with threads.  Thus, with the
-   option /total_num_virtual_procs of [0] set to n, there are in total
-   always n threads (virtual processes) independent of the number of
-   participating machines.  The concept of virtual processes is described
-   in detail in [1].
-
-   Identical results are achieved independent of the number of machines
-   and threads participating in a simulation if all operations modifying
-   a neuron and its incoming synapses use the random number generator of
-   the virtual process the neuron is assigned to.
-
-   An ArgumentTypeError is raised if GetVpRNG is called for a
-   non-local gid.
-
-   References:
-   [1] Morrison A, Mehring C, Geisel T, Aertsen A, and Diesmann M (2005)
-       Advancing the boundaries of high connectivity network simulation
-       with distributed computing. Neural Computation 17(8):1776-1801
-       The article is available at www.nest-simulator.org
-
-   Author: Tobias Potjans, Moritz Helias, Diesmann
-   SeeAlso: GetGlobalRNG
-*/
-void
-NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-
-  index target = getValue< long >( i->OStack.pick( 0 ) );
-
-  librandom::RngPtr rng = get_vp_rng_of_gid( target );
-
-  Token rt( new librandom::RngDatum( rng ) );
-  i->OStack.pop( 1 );
-  i->OStack.push_move( rt );
-
-  i->EStack.pop();
-}
-
-/* BeginDocumentation
    Name: GetGlobalRNG - return global random number generator
    Synopsis:
    GetGlobalRNG -> rngtype
@@ -1293,8 +1235,8 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
        The article is available at www.nest-simulator.org
 
    Author: Tobias Potjans, Moritz Helias, Diesmann
-   SeeAlso: GetVpRNG
 */
+
 void
 NestModule::GetGlobalRngFunction::execute( SLIInterpreter* i ) const
 {
@@ -1803,7 +1745,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "MPI_Abort", &mpiabort_ifunction );
 #endif
 
-  i->createcommand( "GetVpRNG", &getvprngfunction );
   i->createcommand( "GetGlobalRNG", &getglobalrngfunction );
 
   i->createcommand( "cvdict_C", &cvdict_Cfunction );

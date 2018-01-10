@@ -137,7 +137,6 @@ const IloopFunction SLIInterpreter::iloopfunction;
 const IrepeatFunction SLIInterpreter::irepeatfunction;
 const IforFunction SLIInterpreter::iforfunction;
 const IforallarrayFunction SLIInterpreter::iforallarrayfunction;
-const IforalliterFunction SLIInterpreter::iforalliterfunction;
 const IforallindexedarrayFunction SLIInterpreter::iforallindexedarrayfunction;
 const IforallindexedstringFunction SLIInterpreter::iforallindexedstringfunction;
 const IforallstringFunction SLIInterpreter::iforallstringfunction;
@@ -220,7 +219,6 @@ SLIInterpreter::initbuiltins( void )
   createcommand( irepeat_name, &SLIInterpreter::irepeatfunction );
   createcommand( ifor_name, &SLIInterpreter::iforfunction );
   createcommand( iforallarray_name, &SLIInterpreter::iforallarrayfunction );
-  createcommand( iforalliter_name, &SLIInterpreter::iforalliterfunction );
   createcommand(
     iforallindexedstring_name, &SLIInterpreter::iforallindexedstringfunction );
   createcommand(
@@ -398,7 +396,6 @@ SLIInterpreter::SLIInterpreter( void )
   , irepeat_name( "::repeat" )
   , ifor_name( "::for" )
   , iforallarray_name( "::forall_a" )
-  , iforalliter_name( "::forall_iter" )
   , iforallindexedarray_name( "::forallindexed_a" )
   , iforallindexedstring_name( "::forallindexed_s" )
   , iforallstring_name( "::forall_s" )

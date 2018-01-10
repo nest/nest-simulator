@@ -354,11 +354,6 @@ public:
   } mpiabort_ifunction;
 #endif
 
-  class GetVpRngFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const;
-  } getvprngfunction;
-
   class GetGlobalRngFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;

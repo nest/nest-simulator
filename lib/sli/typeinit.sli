@@ -434,7 +434,6 @@ def
 /forall trie
   [/arraytype      /proceduretype] /forall_a    load addtotrie
   [/stringtype     /proceduretype] /forall_s    load addtotrie
-  [/iteratortype   /proceduretype] /forall_iter load addtotrie
   [/dictionarytype /proceduretype] /forall_di   load addtotrie
 def
 
@@ -509,7 +508,6 @@ def
 /size trie
  [/arraytype  ]    /size_a load addtotrie
  [/stringtype ]    /size_s load addtotrie
- [/iteratortype ]  /size_iter load addtotrie
 def
 
 /reserve trie
@@ -895,7 +893,6 @@ def
              array        cva -> array
              intvector    cva -> array
              doublevector cva -> array
-             iterator     cva -> array
 
    Description: cva converts the argument to an array. The 
    array is shaped close to a form usable to recreate the original
@@ -954,7 +951,6 @@ def
 [/intvectortype] /intvector2array load addtotrie
 [/doublevectortype] /doublevector2array load addtotrie
 [/arraytype] { {dup type /cva load triematches {cva} if} Map } addtotrie
-[/iteratortype] { {} Map } addtotrie
 def
 
 

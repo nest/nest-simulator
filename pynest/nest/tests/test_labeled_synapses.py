@@ -38,9 +38,9 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         nest.ResetKernel()
         # set volume transmitter for stdp_dopamine_synapse_lbl
         vol = nest.Create('volume_transmitter', 3)
-        nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})
-        nest.SetDefaults('stdp_dopamine_synapse_lbl', {'vt': vol[1]})
-        nest.SetDefaults('stdp_dopamine_synapse_hpc', {'vt': vol[2]})
+        nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol.get('global_id')[0]})
+        nest.SetDefaults('stdp_dopamine_synapse_lbl', {'vt': vol.get('global_id')[1]})
+        nest.SetDefaults('stdp_dopamine_synapse_hpc', {'vt': vol.get('global_id')[2]})
 
         self.rate_model_connections = [
             'rate_connection_instantaneous',

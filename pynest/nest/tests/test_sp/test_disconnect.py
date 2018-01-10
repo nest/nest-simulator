@@ -73,18 +73,18 @@ class TestDisconnectSingle(unittest.TestCase):
                 neurons = nest.Create('iaf_psc_alpha', 4)
                 syn_dict = {'model': syn_model}
 
-                nest.Connect(neurons[:1], neurons[2:3], "one_to_one", syn_dict)
-                nest.Connect(neurons[1:2], neurons[3:4], "one_to_one", syn_dict)
+                nest.Connect(neurons[0], neurons[2], "one_to_one", syn_dict)
+                nest.Connect(neurons[1], neurons[3], "one_to_one", syn_dict)
                 # Delete existent connection
                 conns = nest.GetConnections(
-                    neurons[:1], neurons[2:3], syn_model)
+                    neurons[0], neurons[2], syn_model)
                 if mpi_test:
                     conns = self.comm.allgather(conns)
                     conns = filter(None, conns)
                 assert len(conns) == 1
-                nest.DisconnectOneToOne(neurons[0], neurons[2], syn_dict)
+                nest.Disconnect(neurons[0], neurons[2], syn_spec=syn_dict)
                 conns = nest.GetConnections(
-                    neurons[:1], neurons[2:3], syn_model)
+                    neurons[0], neurons[2], syn_model)
                 if mpi_test:
                     conns = self.comm.allgather(conns)
                     conns = filter(None, conns)
@@ -98,7 +98,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     conns1 = filter(None, conns1)
                 assert len(conns1) == 0
                 try:
-                    nest.DisconnectOneToOne(neurons[0], neurons[1], syn_dict)
+                    nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_dict)
                     assertFail()
                 except:
                     print("Synapse deletion ok: " + syn_model)

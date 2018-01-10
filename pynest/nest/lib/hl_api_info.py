@@ -179,7 +179,7 @@ def SetStatus(nodes, params, val=None):
         Dictionary of parameters or list of dictionaries of parameters of
         same length as nodes. If val is given, this has to be the name of
         a model property as a str.
-    val : str, optional
+    val : int, list, optional
         If given, params has to be the name of a model property.
 
     Raises
@@ -282,10 +282,10 @@ def GetStatus(nodes, keys=None):
     if keys is None:
         cmd = 'GetStatus'
     elif is_literal(keys):
-        cmd = 'GetStatus {{ /{0} get }} Map'.format(keys)
+        cmd = 'GetStatus dup type /dictionarytype eq {{ /{0} get }}{{ {{ /{0} get }} Map }}ifelse'.format(keys)
     elif is_iterable(keys):
         keys_str = " ".join("/{0}".format(x) for x in keys)
-        cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)
+        cmd = 'GetStatus dup type /dictionarytype eq {{ [ [ {0} ] ] get }}{{ {{ [ [ {0} ] ] get }} Map }}ifelse'.format(keys_str)
     else:
         raise TypeError("keys should be either a string or an iterable")
 

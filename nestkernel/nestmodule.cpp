@@ -709,33 +709,6 @@ NestModule::ResetNetworkFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-// Disconnect for gid gid syn_model
-// See lib/sli/nest-init.sli for details
-void
-NestModule::Disconnect_i_i_lFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 3 ); // 3
-
-  index source = getValue< long >( i->OStack.pick( 2 ) );
-  index target = getValue< long >( i->OStack.pick( 1 ) );
-  DictionaryDatum synapse_params =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-
-  // check whether the target is on this process
-  if ( kernel().node_manager.is_local_gid( target ) )
-  {
-    Node* const target_node = kernel().node_manager.get_node_or_proxy( target );
-
-    const thread target_thread = target_node->get_thread();
-
-    kernel().sp_manager.disconnect_single(
-      source, target_node, target_thread, synapse_params );
-  }
-
-  i->OStack.pop( 3 );
-  i->EStack.pop();
-}
-
 // Disconnect for gidcollection gidcollection conn_spec syn_spec
 void
 NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
@@ -1808,7 +1781,6 @@ NestModule::init( SLIInterpreter* i )
     "SetStructuralPlasticityStatus", &setstructuralplasticitystatus_Dfunction );
   i->createcommand(
     "GetStructuralPlasticityStatus", &getstructuralplasticitystatus_function );
-  i->createcommand( "Disconnect", &disconnect_i_i_lfunction );
   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
   // Add connection rules
   kernel().connection_manager.register_conn_builder< OneToOneBuilder >(

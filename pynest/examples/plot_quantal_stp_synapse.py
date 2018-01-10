@@ -97,8 +97,8 @@ for t in range(n_trials):
 
 nest.Simulate(.1)  # flush the last voltmeter events from the queue
 
-vm = numpy.array(nest.GetStatus([voltmeter[1]], 'events')[0]['V_m'])
-vm_reference = numpy.array(nest.GetStatus([voltmeter[0]], 'events')[0]['V_m'])
+vm = numpy.array(nest.GetStatus(voltmeter[1], 'events')[0]['V_m'])
+vm_reference = numpy.array(nest.GetStatus(voltmeter[0], 'events')[0]['V_m'])
 
 t_tot = int(t_tot)
 t_plot = int(t_plot)

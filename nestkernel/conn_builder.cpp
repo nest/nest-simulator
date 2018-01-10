@@ -721,22 +721,22 @@ nest::OneToOneBuilder::disconnect_()
       {
         assert( source_it < sources_->end() );
 
-	const index tgid = ( *target_it ).gid;
-	const index sgid = ( *source_it ).gid;
+        const index tgid = ( *target_it ).gid;
+        const index sgid = ( *source_it ).gid;
 
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( tgid ) )
         {
           // Disconnecting: no parameter skipping required
-	  continue;
+          continue;
         }
 
-	Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
-	//todo481 do we have to check here if the target is a proxy?
+        Node* const target =
+          kernel().node_manager.get_node_or_proxy( tgid, tid );
         const thread target_thread = target->get_thread();
 
-        // check whether the target is on our thread
-        if ( tid != target_thread )
+        // check whether the target is a proxy
+        if ( target->is_proxy() )
         {
           // Disconnecting: no parameter skipping required
           continue;
@@ -1035,20 +1035,21 @@ nest::AllToAllBuilder::disconnect_()
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
+        Node* const target =
+          kernel().node_manager.get_node_or_proxy( tgid, tid );
         const thread target_thread = target->get_thread();
 
-        // check whether the target is on our thread
-        if ( tid != target_thread )
+        // check whether the target is a proxy
+        if ( target->is_proxy() )
         {
           // Disconnecting: no parameter skipping required
           continue;
         }
 
-	GIDCollection::const_iterator source_it = sources_->begin();
+        GIDCollection::const_iterator source_it = sources_->begin();
         for ( ; source_it < sources_->end(); ++source_it )
         {
-	  const index sgid = ( *source_it ).gid;
+          const index sgid = ( *source_it ).gid;
           single_disconnect_( sgid, *target, target_thread );
         }
       }

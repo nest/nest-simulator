@@ -88,23 +88,6 @@ public:
   void register_growth_curve( const std::string& name );
 
   /**
-   * Disconnect two nodes. The source node is defined by its global ID.
-   * The target node is defined by the node. The connection is
-   * established on the thread/process that owns the target node.
-   * Identifies if the network is Structural Plasticity enabled or not and then
-   * performs a single disconnect between the two nodes.
-   *
-   * \param s GID of the sending Node.
-   * \param target Pointer to target Node.
-   * \param target_thread Thread that hosts the target node.
-   * \param syn The synapse model to use.
-   */
-  void disconnect_single( index s,
-    Node* target,
-    thread target_thread,
-    DictionaryDatum& syn );
-
-  /**
    * Disconnect two collections of nodes.  The connection is
    * established on the thread/process that owns the target node.
    *

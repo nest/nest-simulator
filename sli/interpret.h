@@ -218,7 +218,6 @@ public:
   static SLIType Ostreamtype;
   static SLIType IntVectortype;
   static SLIType DoubleVectortype;
-  static SLIType Iteratortype;
 
   // SLIType default actions
   static DatatypeFunction datatypefunction;

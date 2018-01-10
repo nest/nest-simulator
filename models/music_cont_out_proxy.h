@@ -39,6 +39,7 @@
 #include <music.hh>
 
 // Includes from nestkernel:
+#include "gid_collection.h"
 #include "nest_types.h"
 #include "node.h"
 
@@ -162,7 +163,7 @@ private:
     Time interval_;                   //!< sampling interval, in ms
     std::string port_name_;           //!< the name of MUSIC port to connect to
     std::vector< Name > record_from_; //!< recordables to record from
-    std::vector< long > target_gids_; //!< Neuron GIDs to be observed
+    GIDCollectionPTR targets_;        //!< nodes to be observed
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum&,

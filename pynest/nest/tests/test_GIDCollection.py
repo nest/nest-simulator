@@ -484,7 +484,7 @@ class TestGIDCollection(unittest.TestCase):
         # Single node, no parameter (gets all values)
         values = single_sd.get()
         self.assertEqual(len(values.keys()), 38)
-        self.assertEqual(values['start'], (0.0,))
+        self.assertEqual(values['start'], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = multi_sd.get()

@@ -260,11 +260,15 @@ class GIDCollection(object):
         if len(params) == 0:
             result = nest.sli_func('get', self._datum)
             if pandas_output:
-                try:
+                if 'global_id' in result:
                     index = result['global_id']
+                    if isinstance(index, int):
+                        index = (index,)
+                        result = {key: (item,) for key, item in result.items()}
                     result = pandas.DataFrame(result, index=index)
-                except KeyError:  # The GIDCollection is a layer
+                else:  # The GIDCollection is a layer
                     result = {key: (item,) for key, item in result.items()}
+                    print(result)
                     result = pandas.DataFrame(result,
                                               index=['layer']).transpose()
         #############################

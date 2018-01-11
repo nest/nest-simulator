@@ -51,5 +51,3 @@ COPY ./entrypoint.sh /home/nest/
 RUN chown nest:nest /home/nest/entrypoint.sh && \
     chmod +x /home/nest/entrypoint.sh
 ENTRYPOINT ["/home/nest/entrypoint.sh"]
-
-

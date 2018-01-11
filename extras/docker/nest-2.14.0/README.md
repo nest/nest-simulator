@@ -2,12 +2,10 @@
 
 The 'entrypoint.sh' enables the use of different mode. 
 
-
     docker build \
             --build-arg WITH_MPI=On \
             --build-arg WITH_GSL=On \
             --build-arg WITH_MUSIC=On \
             --build-arg WITH_LIBNEUROSIM=On \
-            -t nest/docker-nest-2.14.0 .
-            
+            -t nest/docker-nest-2.14.0 .          
  

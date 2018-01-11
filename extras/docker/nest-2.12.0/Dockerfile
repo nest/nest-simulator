@@ -17,13 +17,15 @@ WORKDIR /home/nest
 
 USER nest
 
-
 RUN wget https://github.com/nest/nest-simulator/releases/download/v2.12.0/nest-2.12.0.tar.gz && \
     tar -xvzf nest-2.12.0.tar.gz && \
     mkdir /home/nest/nest-build && \
     mkdir /home/nest/nest-install
 
 WORKDIR /home/nest/nest-build
+
+ENV PATH=/home/nest/miniconda/bin:${PATH}
+RUN /bin/bash -c "source activate py3"
 
 # Install NEST 2.12.0
 

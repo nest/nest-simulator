@@ -24,13 +24,18 @@ RUN wget https://github.com/nest/nest-simulator/archive/v2.14.0.tar.gz && \
 
 WORKDIR /home/nest/nest-build
 
+ENV PATH=/home/nest/miniconda/bin:${PATH}
+RUN /bin/bash -c "source activate py3"
+
 RUN cmake -DCMAKE_INSTALL_PREFIX:PATH=/home/nest/nest-install \
-    -Dwith-python=2 \
+    -Dwith-python=3 \
     -Dwith-mpi:BOOL=$WITH_MPI \
     -Dwith-gsl:BOOL=$WITH_GSL /usr/local/lib \
     -Dwith-libneurosim:BOOL=$WITH_LIBNEUROSIM /usr/local/lib \
-    -Dwith-music=$WITH_MUSIC /usr/local/lib ../nest-simulator-2.14.0 && \
-    make && make install && \
+    -Dwith-music=$WITH_MUSIC /usr/lib \
+    ../nest-simulator-2.14.0
+
+RUN  make && make install && \
     echo '. /home/nest/nest-install/bin/nest_vars.sh' >> /home/nest/.bashrc
 
 # RUN su nest -c 'make installcheck'

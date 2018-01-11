@@ -2,73 +2,44 @@
 FROM ubuntu:16.04
 
 RUN apt-get update && apt-get install -y \
-            software-properties-common \
-            ssh \
-            python3 \
-            python3-dev \
-            python \
-            python-all-dev \
-            python-pip \
-            git \
-            wget \
-            nano \
-            build-essential \
-            clang-format \
-            autoconf \
-            cmake \
-            sudo \
-            libltdl-dev \
-            libreadline6-dev \
-            libncurses5-dev \
-            libgsl-dev \
-            libpcre3\
-            libpcre3-dev \
-            python-scipy \
-            openmpi-bin \
-            libopenmpi-dev \
-            python-mpi4py \
-            python-tk \
-            python-matplotlib \
-            vera++ \
-            pep8 \
-            libpcre3 \
-            libpcre3-dev \
-            jq \
-            openmpi-bin \
-            libopenmpi-dev \
-            python3-nose && \
+    software-properties-common \
+    ssh \
+    curl \
+    wget \
+    locales \
+    git \
+    unzip \
+    build-essential \
+    autoconf \
+    cmake \
+    libltdl-dev \
+    libreadline6-dev \
+    libncurses5-dev \
+    libgsl-dev \
+    openmpi-bin \
+    libopenmpi-dev \
+    vera++ \
+    pep8 \
+    libpcre3 \
+    libpcre3-dev \
+    jq \
+    libmusic1v5 \
+    music-bin \
+    libmusic-dev && \
+    apt-get autoremove -y
 
-    apt-get autoremove
+RUN locale-gen en_US.UTF-8
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
-# Install pip and Cython.
-WORKDIR /tmp
-RUN wget https://bootstrap.pypa.io/get-pip.py  && \
-    python get-pip.py && \
-    pip install --upgrade pip && \
-    pip install --no-cache-dir --upgrade \
-            setuptools \
-            path.py \
-            cython==0.23.4 \
-            statsmodels \
-            pandas \
-            jupyter
-
-
-# Install jupyter notebook
-#RUN python3 get-pip.py
-#RUN pip3 install --upgrade pip
-#RUN pip3 install statsmodels
-#RUN pip3 install jupyter
-
-# Install current MUSIC version  (/usr/local/lib)
-WORKDIR /tmp
-RUN git clone https://github.com/INCF/MUSIC.git music
-WORKDIR /tmp/music
-WORKDIR /tmp/music
-RUN chmod +x autogen.sh
-RUN ./autogen.sh && \
-    chmod +x configure && \
-    ./configure && make && make install
+# Install miniconda and create Python 3 environment
+RUN wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+bash ./Miniconda3-latest-Linux-x86_64.sh -b -p /home/nest/miniconda  && \
+echo ". /home/nest/miniconda/bin:$PATH" >> /home/nest/.bashrc
+ENV PATH=/home/nest/miniconda/bin:${PATH}
+RUN conda create --name py3 python=3 && \
+    conda update -y conda && \
+    /bin/bash -c "source activate py3" && \
+    conda install -y setuptools path.py cython statsmodels jupyter mpi4py pandas
 
 # Install libneurosim (/usr/local/lib)
 WORKDIR /tmp

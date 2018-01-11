@@ -16,7 +16,7 @@
 ## In short
 
 The master dockerfile [./master/Dockerfile]() builds an image with a basic 
-shell environment, Python 2, OpenMPI, matplotlib, Scipy, MUSIC, 
+shell environment, Python 3, OpenMPI, matplotlib, Scipy, MUSIC, 
 libneurosim and Jupyter Notebook.
 
 The NEST dockerfiles use the master image and integrates [NEST](https://github.com/nest/nest-simulator). 

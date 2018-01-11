@@ -39,7 +39,7 @@ ENV PATH=/home/nest/miniconda/bin:${PATH}
 RUN conda create --name py3 python=3 && \
     conda update -y conda && \
     /bin/bash -c "source activate py3" && \
-    conda install -y setuptools path.py cython statsmodels jupyter mpi4py pandas
+    conda install -y setuptools path.py cython statsmodels jupyter mpi4py pandas numpy
 
 # Install libneurosim (/usr/local/lib)
 WORKDIR /tmp

@@ -25,6 +25,12 @@ Classes defining the different PyNEST types
 
 import nest
 
+try:
+    import pandas
+    HAVE_PANDAS = True
+except ImportError:
+    HAVE_PANDAS = False
+
 
 class GIDCollectionIterator(object):
     """
@@ -285,7 +291,7 @@ class Connectome(object):
             return NotImplemented
         return not self == other
 
-    def get(self, keys=None):
+    def get(self, keys=None, pandas_output=False):
         """
         Return the parameter dictionary of connections.
 
@@ -316,6 +322,9 @@ class Connectome(object):
         TypeError
             Description
         """
+        if pandas_output and not HAVE_PANDAS:
+            raise ImportError('Pandas could not be imported')
+        
         if self.__len__() == 0:
             return ()
 
@@ -333,7 +342,7 @@ class Connectome(object):
         nest.sr(cmd)
         result = nest.spp()
 
-        # Need to restructure thre data.
+        # Need to restructure the data.
         if nest.is_literal(keys):
             final_result = result[0] if self.__len__() == 1 else list(result)
         elif nest.is_iterable(keys):
@@ -366,6 +375,12 @@ class Connectome(object):
             else:
                 for key, value in result[0].items():
                     final_result[key] = value
+
+        if pandas_output:
+            index = self.get('source') if self.__len__() > 1 else (self.get('source'),)
+            if nest.is_literal(keys):
+                final_result = {keys: final_result}
+            final_result = pandas.DataFrame(final_result, index=index)
 
         return final_result
 

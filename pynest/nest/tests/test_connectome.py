@@ -26,6 +26,12 @@ Tests for the Connectome class
 import unittest
 import nest
 
+try:
+    import pandas
+    HAVE_PANDAS = True
+except ImportError:
+    HAVE_PANDAS = False
+
 
 @nest.check_stack
 class TestConnectome(unittest.TestCase):
@@ -213,7 +219,7 @@ class TestConnectome(unittest.TestCase):
 
     def test_GetConnectionsSynapse(self):
         """
-        Test GetConnections wirh synapse_model
+        Test GetConnections with synapse_model
         """
         nrns = nest.Create('iaf_psc_alpha', 10)
         nest.Connect(nrns[:4], nrns[2:6], syn_spec={'model': 'stdp_synapse'})
@@ -256,6 +262,71 @@ class TestConnectome(unittest.TestCase):
 
         get_conns = nest.GetConnections()
         self.assertEqual(len(get_conns), 33)
+
+    @unittest.skipIf(not HAVE_PANDAS, 'Pandas package is not available')
+    def test_getWithPandasOutput(self):
+        """
+        Test get on Connectome with pandas output
+        """
+        nrn = nest.Create('iaf_psc_alpha')
+        nest.Connect(nrn, nrn)
+        conns = nest.GetConnections()
+
+        conns_val = conns.get(pandas_output=True)
+        pnds_ref = pandas.DataFrame({'delay': 1.,
+                                     'port': 0,
+                                     'receptor': 0,
+                                     'sizeof': 32,
+                                     'source': 1,
+                                     'synapse_id': 0,
+                                     'synapse_model': 'static_synapse',
+                                     'target': 1,
+                                     'target_thread': 0,
+                                     'weight': 1.},
+                                    index=(conns.get('source'),))
+        self.assertTrue(conns_val.equals(pnds_ref))
+
+        conns_delay = conns.get('delay', pandas_output=True)
+        conns_sizeof = conns.get(['sizeof'], pandas_output=True)
+
+        self.assertTrue(conns_delay.equals(
+            pandas.DataFrame({'delay': 1.}, index=(conns.get('source'),))))
+        self.assertTrue(conns_sizeof.equals(
+            pandas.DataFrame({'sizeof': 32}, index=(conns.get('source'),))))
+
+        nest.ResetKernel()
+
+        nrns = nest.Create('iaf_psc_alpha', 2)
+        nest.Connect(nrns, nrns)
+        conns = nest.GetConnections()
+
+        conns_val = conns.get(pandas_output=True)
+        pnds_ref = pandas.DataFrame({'delay': [1., 1., 1., 1.],
+                                     'port': [0, 1, 0, 1],
+                                     'receptor': [0, 0, 0, 0],
+                                     'sizeof': [32, 32, 32, 32],
+                                     'source': [1, 1, 2, 2],
+                                     'synapse_id': [0, 0, 0, 0],
+                                     'synapse_model': ['static_synapse',
+                                                       'static_synapse',
+                                                       'static_synapse',
+                                                       'static_synapse'],
+                                     'target': [1, 2, 1, 2],
+                                     'target_thread': [0, 0, 0, 0],
+                                     'weight': [1., 1., 1., 1.]},
+                                    index=conns.get('source'))
+        self.assertTrue(conns_val.equals(pnds_ref))
+
+        conns_target = conns.get('target', pandas_output=True)
+        conns_sizeof_port = conns.get(['sizeof', 'port'], pandas_output=True)
+
+        self.assertTrue(conns_target.equals(
+            pandas.DataFrame({'target': [1, 2, 1, 2]},
+                             index=conns.get('source'))))
+        self.assertTrue(conns_sizeof_port.equals(
+            pandas.DataFrame({'sizeof': [32, 32, 32, 32],
+                              'port': [0, 1, 0, 1]},
+                             index=conns.get('source'))))
 
 
 def suite():

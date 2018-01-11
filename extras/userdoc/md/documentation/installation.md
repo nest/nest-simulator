@@ -137,7 +137,7 @@ The easiest way to install NEST on a Mac is to install it via the Homebrew packa
 
     1.  Add the homebrew/science tap by running 
     
-        `brew tap homebrew/science`
+        `brew tap brewsci/science`
     
     2.  For information on what options NEST has and what will be installed,
         run 

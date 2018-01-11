@@ -113,7 +113,6 @@ SLIType SLIInterpreter::XIstreamtype;
 SLIType SLIInterpreter::Ostreamtype;
 SLIType SLIInterpreter::IntVectortype;
 SLIType SLIInterpreter::DoubleVectortype;
-SLIType SLIInterpreter::Iteratortype;
 
 // SLIType SLIInterpreter::IOstreamtype;
 
@@ -144,8 +143,6 @@ const IforallstringFunction SLIInterpreter::iforallstringfunction;
 void
 SLIInterpreter::inittypes( void )
 {
-  Iteratortype.settypename( "iteratortype" );
-  Iteratortype.setdefaultaction( datatypefunction );
   Integertype.settypename( "integertype" );
   Integertype.setdefaultaction( datatypefunction );
   Doubletype.settypename( "doubletype" );

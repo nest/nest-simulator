@@ -79,7 +79,7 @@ systemdict /GNUReadline known not {
 	/GetPosition_i /GetStatus_C /GetStatus_a
 	/GetStatus_dict /GetStatus_i /GetStatus_v /GetValue_a_P /Inside_a_M
 	/JoinTo_ald /JoinTo_cont /JoinTo_d /MapIndexed_a /MapIndexed_s /MapThread_a
-	/Map_iter /Map_s /MathematicaToSliIndex_a /MathematicaToSliIndex_i
+	/Map_s /MathematicaToSliIndex_a /MathematicaToSliIndex_i
 	/Part_a /Partition_a_i_i /RandomArray_v_i
 	/Random_i /RestoreNodes_a /SetDefaults_l_D
 	/SetStatus_CD /SetStatus_aa /SetStatus_dict /SetStatus_id /SetStatus_v

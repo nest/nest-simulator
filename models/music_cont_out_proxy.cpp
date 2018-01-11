@@ -52,7 +52,7 @@ nest::music_cont_out_proxy::Parameters_::Parameters_()
   : interval_( Time::ms( 1.0 ) )
   , port_name_( "cont_out" )
   , record_from_()
-  , target_gids_()
+  , targets_( new GIDCollectionPrimitive() )
 {
 }
 
@@ -60,7 +60,7 @@ nest::music_cont_out_proxy::Parameters_::Parameters_( const Parameters_& p )
   : interval_( p.interval_ )
   , port_name_( p.port_name_ )
   , record_from_( p.record_from_ )
-  , target_gids_( p.target_gids_ )
+  , targets_( p.targets_ )
 {
   interval_.calibrate();
 }
@@ -107,7 +107,7 @@ nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d ) const
   }
 
   ( *d )[ names::record_from ] = ad_record_from;
-  ( *d )[ names::targets ] = target_gids_;
+  ( *d )[ names::targets ] = new GIDCollectionDatum( targets_ );
 }
 
 void
@@ -167,18 +167,12 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
     if ( record_from_.empty() )
     {
       throw BadProperty(
-        "The property record_from must be set before passing target_gids." );
+        "The property record_from must be set before passing targets." );
     }
 
     if ( state.published_ == false )
     {
-      GIDCollectionDatum targets =
-        getValue< GIDCollectionDatum >( d, names::targets );
-      GIDCollection::const_iterator target = targets->begin();
-      for ( ; target != targets->end(); ++target )
-      {
-        target_gids_.push_back( ( *target ).gid );
-      }
+      targets_ = getValue< GIDCollectionDatum >( d, names::targets );
     }
     else
     {
@@ -261,29 +255,25 @@ nest::music_cont_out_proxy::calibrate()
       synmodel.empty() == false && "synapse 'static_synapse' not available" );
 
     const index synmodel_id = static_cast< index >( synmodel );
-    std::vector< long >::const_iterator t;
+    std::vector< MUSIC::GlobalIndex > music_index_map;
 
-    for ( t = P_.target_gids_.begin(); t != P_.target_gids_.end(); ++t )
+    for ( size_t i = 0; i < P_.targets_->size(); ++i )
     {
-      // check whether the target is on this process
-      if ( kernel().node_manager.is_local_gid( *t ) )
+      const index tgid = ( *P_.targets_ )[ i ];
+      if ( kernel().node_manager.is_local_gid( tgid ) )
       {
-        Node* const target_node = kernel().node_manager.get_node_or_proxy( *t );
+        // todo481 find the real node instead of just any
+        Node* const target_node = kernel().node_manager.get_node_or_proxy( tgid );
         kernel().connection_manager.connect(
           get_gid(), target_node, target_node->get_thread(), synmodel_id );
-      }
-    }
-    std::vector< MUSIC::GlobalIndex > music_index_map;
-    for ( size_t i = 0; i < P_.target_gids_.size(); i++ )
-    {
-      if ( kernel().node_manager.is_local_gid( P_.target_gids_[ i ] ) )
-      {
-        for ( size_t j = 0; j < P_.record_from_.size(); ++j )
+
+	for ( size_t j = 0; j < P_.record_from_.size(); ++j )
         {
           music_index_map.push_back( P_.record_from_.size() * i + j );
         }
       }
     }
+
     MUSIC::Setup* s = kernel().music_manager.get_music_setup();
     if ( s == 0 )
     {
@@ -309,7 +299,7 @@ nest::music_cont_out_proxy::calibrate()
     B_.data_.resize( per_port_width * S_.port_width_ );
 
     // Check if any port is out of bounds
-    if ( P_.target_gids_.size() > S_.port_width_ )
+    if ( P_.targets_->size() > S_.port_width_ )
     {
       throw MUSICChannelUnknown(
         get_name(), P_.port_name_, S_.port_width_ + 1 );

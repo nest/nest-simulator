@@ -58,7 +58,6 @@ class EventsTestCase(unittest.TestCase):
         vm = nest.Create('voltmeter', 1, {'withtime': True, 'interval': 1.})
 
         nest.Connect(vm, n)
-        nest.SetKernelStatus({'print_time': False})
         nest.Simulate(10)
 
         d = nest.GetStatus(vm, 'events')[0]
@@ -76,7 +75,6 @@ class EventsTestCase(unittest.TestCase):
         sd = nest.Create('spike_detector', 1, {'withtime': True})
 
         nest.Connect(n, sd)
-        nest.SetKernelStatus({'print_time': False})
         nest.Simulate(1000)
 
         d = nest.GetStatus(sd, 'events')[0]

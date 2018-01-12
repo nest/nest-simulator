@@ -263,12 +263,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } dataconnect_afunction;
 
-  class Disconnect_i_i_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } disconnect_i_i_lfunction;
-
   class Disconnect_g_g_D_DFunction : public SLIFunction
   {
   public:
@@ -359,11 +353,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } mpiabort_ifunction;
 #endif
-
-  class GetVpRngFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const;
-  } getvprngfunction;
 
   class GetGlobalRngFunction : public SLIFunction
   {

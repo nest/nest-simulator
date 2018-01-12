@@ -53,8 +53,7 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
-        nest.SetKernelStatus(
-            {'resolution': self.dt, 'use_wfr': True, 'print_time': True})
+        nest.SetKernelStatus({'resolution': self.dt, 'use_wfr': True})
 
         # set up rate neuron network
         self.rate_neuron_drive = nest.Create(
@@ -101,9 +100,9 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         # get noise from rate neuron
         events = nest.GetStatus(self.multimeter)[0]["events"]
         senders = events['senders']
-        times = events['times'][np.where(senders == self.rate_neuron_1)]
-        rate_1 = events['rate'][np.where(senders == self.rate_neuron_1)]
-        rate_2 = events['rate'][np.where(senders == self.rate_neuron_2)]
+        times = events['times'][np.where(senders == self.rate_neuron_1.get('global_id'))]
+        rate_1 = events['rate'][np.where(senders == self.rate_neuron_1.get('global_id'))]
+        rate_2 = events['rate'][np.where(senders == self.rate_neuron_2.get('global_id'))]
 
         delay_rate_1 = times[np.where(rate_1 > 0)[0][0]]
         test_delay_1 = self.delay + self.dt
@@ -119,7 +118,7 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         # get noise from rate neuron
         events = nest.GetStatus(self.multimeter)[0]["events"]
         senders = events['senders']
-        rate_1 = events['rate'][np.where(senders == self.rate_neuron_1)]
+        rate_1 = events['rate'][np.where(senders == self.rate_neuron_1.get('global_id'))]
 
         value = rate_1[-1]
         value_test = self.drive * self.weight
@@ -142,11 +141,11 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
             events = nest.GetStatus(self.multimeter)[0]["events"]
             senders = events['senders']
             rate_1 = events['rate'][
-                np.where(senders == self.rate_neuron_1)][-1]
+                np.where(senders == self.rate_neuron_1.get('global_id'))][-1]
             rate_2 = events['rate'][
-                np.where(senders == self.rate_neuron_2)][-1]
+                np.where(senders == self.rate_neuron_2.get('global_id'))][-1]
             rate_3 = events['rate'][
-                np.where(senders == self.rate_neuron_3)][-1]
+                np.where(senders == self.rate_neuron_3.get('global_id'))][-1]
 
             rates = np.array([rate_1, rate_2, rate_3])
 

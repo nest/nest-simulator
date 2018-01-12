@@ -572,30 +572,7 @@ def CGSelectImplementation(tag, library):
 
 
 @check_stack
-def DisconnectOneToOne(source, target, syn_spec):
-    """Disconnect a currently existing synapse.
-
-    Parameters
-    ----------
-    source : int
-        GID of presynaptic node
-    target : int
-        GID of postsynaptic node
-    syn_spec : str or dict
-        See Connect() for definition
-    """
-
-    sps(source)
-    sps(target)
-    if syn_spec is not None:
-        sps(syn_spec)
-        if is_string(syn_spec):
-            sr("cvlit")
-    sr('Disconnect')
-
-
-@check_stack
-def Disconnect(pre, post, conn_spec, syn_spec):
+def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     """Disconnect pre neurons from post neurons.
 
     Neurons in pre and post are disconnected using the specified disconnection
@@ -648,21 +625,20 @@ def Disconnect(pre, post, conn_spec, syn_spec):
 
     Notes
     -----
-    Disconnect does not iterate over subnets, it only connects explicitly
-    specified nodes.
+    Disconnect only disconnects explicitly specified nodes.
     """
 
     sps(pre)
     sps(post)
 
     if conn_spec is not None:
-        sps(conn_spec)
         if is_string(conn_spec):
-            sr("cvlit")
+            conn_spec = {'rule': conn_spec}
+        sps(conn_spec)
 
     if syn_spec is not None:
-        sps(syn_spec)
         if is_string(syn_spec):
-            sr("cvlit")
+            syn_spec= {'model': syn_spec}
+        sps(syn_spec)
 
     sr('Disconnect_g_g_D_D')

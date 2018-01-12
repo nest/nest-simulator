@@ -26,6 +26,19 @@ GIDCollection tests
 import unittest
 import nest
 
+try:
+    import numpy as np
+    HAVE_NUMPY = True
+except ImportError:
+    HAVE_NUMPY = False
+
+try:
+    import pandas
+    import pandas.util.testing as pt
+    HAVE_PANDAS = True
+except ImportError:
+    HAVE_PANDAS = False
+
 
 @nest.check_stack
 class TestGIDCollection(unittest.TestCase):
@@ -88,17 +101,28 @@ class TestGIDCollection(unittest.TestCase):
         """Index of GIDCollections"""
 
         n = nest.Create('iaf_psc_alpha', 5)
-        self.assertEqual(n[0], 1)
-        self.assertEqual(n[2], 3)
-        self.assertEqual(n[4], 5)
+        gc_0 = nest.GIDCollection([1])
+        gc_2 = nest.GIDCollection([3])
+        gc_4 = nest.GIDCollection([5])
+        
+        self.assertEqual(n[0], gc_0)
+        self.assertEqual(n[2], gc_2)
+        self.assertEqual(n[4], gc_4)
+        self.assertEqual(n[-1], gc_4)
+        self.assertEqual(n[-3], gc_2)
         with self.assertRaises(nest.NESTError):
             n[7]
 
         nest.ResetKernel()
 
         nodes = nest.Create("iaf_psc_alpha", 10)
+        counter = 1
+        for gid in nodes:
+            self.assertEqual(gid, counter)
+            counter += 1
         for i in range(10):
-            self.assertEqual(i + 1, nodes[i])
+            gc = nest.GIDCollection([i+1])
+            self.assertEqual(gc, nodes[i])
 
     def test_slicing(self):
         """Slices of GIDCollections"""
@@ -252,9 +276,9 @@ class TestGIDCollection(unittest.TestCase):
                                    num_a + num_b + num_c + 1)))
         self.assertEqual(nodes_list, compare_list)
 
-        self.assertEqual(nodes[2], 5)
-        self.assertEqual(nodes[5], 26)
-        self.assertEqual(nodes[34], 55)
+        self.assertEqual(nodes[2], nest.GIDCollection([5]))
+        self.assertEqual(nodes[5], nest.GIDCollection([26]))
+        self.assertEqual(nodes[34], nest.GIDCollection([55]))
 
         n_slice_first = nodes[:10]
         n_slice_middle = nodes[2:7]
@@ -333,7 +357,7 @@ class TestGIDCollection(unittest.TestCase):
         nest.ResetKernel()
 
         n = nest.Create('iaf_psc_alpha', 2)
-        nest.Connect(nest.GIDCollection([n[0]]), nest.GIDCollection([n[1]]))
+        nest.Connect(n[0], n[1])
         self.assertEqual(nest.GetKernelStatus('num_connections'), 1)
 
     def test_SetStatus_and_GetStatus(self):
@@ -369,6 +393,7 @@ class TestGIDCollection(unittest.TestCase):
         nest.SetStatus(n, [{'V_m': 10.}, {'V_m': -10.}, {'V_m': -20.}])
         self.assertEqual(nest.GetStatus(n, 'V_m'), (10., -10., -20.))
 
+    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_get(self):
         """
         Test that get function works as expected.
@@ -376,12 +401,11 @@ class TestGIDCollection(unittest.TestCase):
 
         nodes = nest.Create('iaf_psc_alpha', 10)
 
-        g = nodes.get('C_m')
-        C_m = g['C_m']
-        gids = g['GID']
-        E_L = nodes.get('E_L')['E_L']
-        V_m = nodes.get('V_m')['V_m']
-        t_ref = nodes.get('t_ref')['t_ref']
+        C_m = nodes.get('C_m')
+        gids = nodes.get('global_id')
+        E_L = nodes.get('E_L')
+        V_m = nodes.get('V_m')
+        t_ref = nodes.get('t_ref')
         g = nodes.get(['local', 'thread', 'vp'])
         local = g['local']
         thread = g['thread']
@@ -389,7 +413,6 @@ class TestGIDCollection(unittest.TestCase):
 
         self.assertEqual(C_m, (250.0, 250.0, 250.0, 250.0, 250.0,
                                250.0, 250.0, 250.0, 250.0, 250.0))
-        self.assertEqual(gids, (1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
         self.assertEqual(E_L, (-70.0, -70.0, -70.0, -70.0, -70.0,
                                -70.0, -70.0, -70.0, -70.0, -70.0))
         self.assertEqual(V_m, (-70.0, -70.0, -70.0, -70.0, -70.0,
@@ -400,8 +423,7 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(thread, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
         self.assertEqual(vp, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
-        g_reference = {'GID': (1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
-                       'local': (True, True, True, True, True,
+        g_reference = {'local': (True, True, True, True, True,
                                  True, True, True, True, True),
                        'thread': (0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                        'vp': (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)}
@@ -411,13 +433,166 @@ class TestGIDCollection(unittest.TestCase):
         nest.ResetKernel()
         nodes = nest.Create('iaf_psc_alpha', 10)
 
-        V_m = nodes[2:5].get('V_m')['V_m']
+        V_m = nodes[2:5].get('V_m')
         g = nodes[5:7].get(['t_ref', 'tau_m'])
-        C_m = nodes[2:9:2].get('C_m')['C_m']
+        C_m = nodes[2:9:2].get('C_m')
 
         self.assertEqual(V_m, (-70.0, -70.0, -70.0))
         self.assertEqual(g['t_ref'], (2.0, 2.0))
         self.assertEqual(C_m, (250.0, 250.0, 250.0, 250.0))
+
+        # Testing different input for different sizes of GIDCollections
+        single_sd = nest.Create('spike_detector', 1)
+        multi_sd = nest.Create('spike_detector', 10)
+        empty_array_float = np.array([], dtype=np.float64)
+        empty_array_int = np.array([], dtype=np.int64)
+
+        # Single node, literal parameter
+        self.assertEqual(single_sd.get('start'), 0.0)
+
+        # Single node, array parameter
+        self.assertEqual(single_sd.get(['start', 'to_file']),
+                         {'start': 0.0, 'to_file': False})
+
+        # Single node, hierarchical with literal parameter
+        np.testing.assert_array_equal(single_sd.get('events', 'times'),
+                                      empty_array_float)
+
+        # Multiple nodes, hierarchical with literal parameter
+        values = multi_sd.get('events', 'times')
+        for v in values:
+            np.testing.assert_array_equal(v, empty_array_float)
+
+        # Single node, hierarchical with array parameter
+        values = single_sd.get('events', ['senders', 'times'])
+        self.assertEqual(len(values), 2)
+        self.assertTrue('senders' in values)
+        self.assertTrue('times' in values)
+        np.testing.assert_array_equal(values['senders'], empty_array_int)
+        np.testing.assert_array_equal(values['times'], empty_array_float)
+
+        # Multiple nodes, hierarchical with array parameter
+        values = multi_sd.get('events', ['senders', 'times'])
+        self.assertEqual(len(values), len(multi_sd))
+        for v in values:
+            self.assertEqual(len(v), 2)
+            self.assertTrue('senders' in v)
+            self.assertTrue('times' in v)
+            np.testing.assert_array_equal(v['senders'], empty_array_int)
+            np.testing.assert_array_equal(v['times'], empty_array_float)
+
+        # Single node, no parameter (gets all values)
+        values = single_sd.get()
+        self.assertEqual(len(values.keys()), 38)
+        self.assertEqual(values['start'], 0.0)
+
+        # Multiple nodes, no parameter (gets all values)
+        values = multi_sd.get()
+        self.assertEqual(len(values.keys()), 38)
+        self.assertEqual(values['start'],
+                         tuple(0.0 for i in range(len(multi_sd))))
+
+    @unittest.skipIf(not HAVE_PANDAS, 'Pandas package is not available')
+    def test_get_pandas(self):
+        """
+        Test that get function with Pandas output works as expected.
+        """
+        single_sd = nest.Create('spike_detector', 1)
+        multi_sd = nest.Create('spike_detector', 10)
+        empty_array_float = np.array([], dtype=np.float64)
+
+        # Single node, literal parameter
+        pt.assert_frame_equal(single_sd.get('start', pandas_output=True),
+                              pandas.DataFrame({'start': [0.0]},
+                                               index=tuple(single_sd)))
+
+        # Multiple nodes, literal parameter
+        pt.assert_frame_equal(multi_sd.get('start', pandas_output=True),
+                              pandas.DataFrame(
+                                  {'start': [0.0 for i in range(
+                                      len(multi_sd))]},
+                                  index=tuple(multi_sd)))
+
+        # Single node, array parameter
+        pt.assert_frame_equal(single_sd.get(['start', 'n_events'],
+                                            pandas_output=True),
+                              pandas.DataFrame({'start': [0.0],
+                                                'n_events': [0]},
+                                               index=tuple(single_sd)))
+
+        # Multiple nodes, array parameter
+        ref_dict = {'start': [0.0 for i in range(len(multi_sd))],
+                    'n_events': [0]}
+        pt.assert_frame_equal(multi_sd.get(['start', 'n_events'],
+                                           pandas_output=True),
+                              pandas.DataFrame(ref_dict,
+                                               index=tuple(multi_sd)))
+
+        # Single node, hierarchical with literal parameter
+        pt.assert_frame_equal(single_sd.get('events', 'times',
+                                            pandas_output=True),
+                              pandas.DataFrame({'times': [[]]},
+                                               index=tuple(single_sd)))
+
+        # Multiple nodes, hierarchical with literal parameter
+        ref_dict = {'times': [empty_array_float
+                              for i in range(len(multi_sd))]}
+        pt.assert_frame_equal(multi_sd.get('events', 'times',
+                                           pandas_output=True),
+                              pandas.DataFrame(ref_dict,
+                                               index=tuple(multi_sd)))
+
+        # Single node, hierarchical with array parameter
+        pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
+                                            pandas_output=True),
+                              pandas.DataFrame({'times': [[]],
+                                                'senders': [[]]},
+                                               index=tuple(single_sd)))
+
+        # Multiple nodes, hierarchical with array parameter
+        ref_dict = {'times': [[] for i in range(len(multi_sd))],
+                    'senders': [[] for i in range(len(multi_sd))]}
+        pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
+                                           pandas_output=True),
+                              pandas.DataFrame(ref_dict,
+                                               index=tuple(multi_sd)))
+
+        # Single node, no parameter (gets all values)
+        values = single_sd.get(pandas_output=True)
+        self.assertEqual(values.shape, (1, 38))
+        self.assertEqual(values['start'][tuple(single_sd)[0]], 0.0)
+
+        # Multiple nodes, no parameter (gets all values)
+        values = multi_sd.get(pandas_output=True)
+        self.assertEqual(values.shape, (len(multi_sd), 38))
+        pt.assert_series_equal(values['start'],
+                               pandas.Series({key: 0.0
+                                              for key in tuple(multi_sd)},
+                                             dtype=np.float64,
+                                             name='start'))
+
+        # With data in events
+        nodes = nest.Create('iaf_psc_alpha', 10)
+        pg = nest.Create('poisson_generator', {'rate': 70000.0})
+        nest.Connect(pg, nodes)
+        nest.Connect(nodes, single_sd)
+        nest.Connect(nodes, multi_sd, 'one_to_one')
+        nest.Simulate(40)
+
+        ref_dict = {'times': [[31.8, 36.1, 38.5]],
+                    'senders': [[17, 12, 20]]}
+        pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
+                                            pandas_output=True),
+                              pandas.DataFrame(ref_dict,
+                                               index=tuple(single_sd)))
+
+        ref_dict = {'times': [[36.1], [], [], [], [], [31.8], [], [], [38.5],
+                              []],
+                    'senders': [[12], [], [], [], [], [17], [], [], [20], []]}
+        pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
+                                           pandas_output=True),
+                              pandas.DataFrame(ref_dict,
+                                               index=tuple(multi_sd)))
 
     def test_set(self):
         """
@@ -427,21 +602,27 @@ class TestGIDCollection(unittest.TestCase):
         nodes = nest.Create('iaf_psc_alpha', 10)
 
         nodes.set({'C_m': 100.0})
-        C_m = nodes.get('C_m')['C_m']
+        C_m = nodes.get('C_m')
         self.assertEqual(C_m, (100.0, 100.0, 100.0, 100.0, 100.0,
                                100.0, 100.0, 100.0, 100.0, 100.0))
 
         nodes.set('tau_Ca', 500.0)
-        tau_Ca = nodes.get('tau_Ca')['tau_Ca']
+        tau_Ca = nodes.get('tau_Ca')
         self.assertEqual(tau_Ca, (500.0, 500.0, 500.0, 500.0, 500.0,
                                   500.0, 500.0, 500.0, 500.0, 500.0))
 
         nodes.set(({'V_m': 10.0}, {'V_m': 20.0}, {'V_m': 30.0}, {'V_m': 40.0},
                    {'V_m': 50.0}, {'V_m': 60.0}, {'V_m': 70.0}, {'V_m': 80.0},
                    {'V_m': 90.0}, {'V_m': -100.0}))
-        V_m = nodes.get('V_m')['V_m']
+        V_m = nodes.get('V_m')
         self.assertEqual(V_m, (10.0, 20.0, 30.0, 40.0, 50.0,
                                60.0, 70.0, 80.0, 90.0, -100.0))
+
+        nodes.set('V_reset', [-85., -82., -80., -77., -75.,
+                              -72., -70., -67., -65., -62.])
+        V_reset = nodes.get('V_reset')
+        self.assertEqual(V_reset, (-85., -82., -80., -77., -75.,
+                                   -72., -70., -67., -65., -62.))
 
         nodes.set({'t_ref': 44.0, 'tau_m': 2.0, 'tau_minus': 42.0})
         g = nodes.get(['t_ref', 'tau_m', 'tau_minus'])
@@ -462,14 +643,13 @@ class TestGIDCollection(unittest.TestCase):
         nodes[2:5].set(({'V_m': -50.0}, {'V_m': -40.0}, {'V_m': -30.0}))
         nodes[5:7].set({'t_ref': 4.4, 'tau_m': 3.0})
         nodes[2:9:2].set('C_m', 111.0)
-        V_m = nodes.get('V_m')['V_m']
+        V_m = nodes.get('V_m')
         g = nodes.get(['t_ref', 'tau_m'])
-        C_m = nodes.get('C_m')['C_m']
+        C_m = nodes.get('C_m')
 
         self.assertEqual(V_m, (-70.0, -70.0, -50.0, -40.0, -30.0,
                                -70.0, -70.0, -70.0, -70.0, -70.0,))
-        self.assertEqual(g, {'GID': (1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
-                             't_ref': (2.0, 2.0, 2.0, 2.0, 2.0,
+        self.assertEqual(g, {'t_ref': (2.0, 2.0, 2.0, 2.0, 2.0,
                                        4.4, 4.4, 2.0, 2.0, 2.0),
                              'tau_m': (10.0, 10.0, 10.0, 10.0, 10.0,
                                        3.00, 3.00, 10.0, 10.0, 10.0)})
@@ -541,6 +721,7 @@ def suite():
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
+
 
 if __name__ == "__main__":
     run()

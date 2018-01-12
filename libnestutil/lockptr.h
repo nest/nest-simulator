@@ -141,12 +141,15 @@ class lockPTR
     removeReference( void )
     {
       assert( number_of_references > 0 );
+
 #pragma omp atomic update // To avoid race conditions.
       --number_of_references;
+
       if ( number_of_references == 0 )
       {
-#pragma omp single nowait // Only one thread deletes this. Using nowait to avoid
-                          // deadlock if the delete is recursive.
+        // Only one thread deletes this. Using nowait to avoid deadlock if the
+        // delete is recursive.
+#pragma omp single nowait
         {
           delete this;
         }
@@ -224,8 +227,8 @@ public:
 
   lockPTR< D > operator=( const lockPTR< D >& spd )
   {
-    assert(obj != NULL);
-    assert(spd.obj != NULL);
+    assert( obj != NULL );
+    assert( spd.obj != NULL );
 
     // The following order of the expressions protects
     // against a=a;

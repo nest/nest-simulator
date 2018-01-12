@@ -179,7 +179,7 @@ def SetStatus(nodes, params, val=None):
         Dictionary of parameters or list of dictionaries of parameters of
         same length as nodes. If val is given, this has to be the name of
         a model property as a str.
-    val : str, optional
+    val : int, list, optional
         If given, params has to be the name of a model property.
 
     Raises

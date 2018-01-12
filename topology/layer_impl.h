@@ -352,10 +352,6 @@ Layer< D >::dump_connections( std::ostream& out,
       double weight = getValue< double >( result_dict, names::weight );
       double delay = getValue< double >( result_dict, names::delay );
 
-      Node const* const target =
-        kernel().node_manager.get_node_or_proxy( target_gid );
-      assert( target );
-
       // Print source, target, weight, delay, rports
       out << source_gid << ' ' << target_gid << ' ' << weight << ' ' << delay;
 
@@ -363,9 +359,8 @@ Layer< D >::dump_connections( std::ostream& out,
       target_layer.unlock();
 
       out << ' ';
-      tgt_layer->compute_displacement( source_pos,
-                   tgt_layer->gid_collection_->find( target->get_gid() ) )
-        .print( out );
+      const index tgid = tgt_layer->gid_collection_->find( target_gid );
+      tgt_layer->compute_displacement( source_pos, tgid ).print( out );
       out << '\n';
     }
   }

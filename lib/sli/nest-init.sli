@@ -88,6 +88,32 @@ def
 % The following version allows extraction of a GID from a GIDCollection
 /get [/gidcollectiontype /integertype] { get_g_i } def
 
+% This version gets all values from all nodes. The same as GetStatus, but
+% concatenates into a single dictionary.
+/get [/gidcollectiontype]
+{
+  << >> begin
+  GetStatus
+  /d << >> def
+  size 1 neq
+  { % if not a layer or single GIDCollection
+    dup First {d rollu 1 arraystore put_d} forall
+    Rest
+    {
+      {
+        exch dup d dup rolld get
+        4 -1 roll 1 arraystore join
+        rollu exch rolld put_d
+      } forall
+    } forall
+    d
+  }
+  {
+    0 get
+  } ifelse
+  end
+} def
+
 % Get parameter value of all GIDs in GIDCollection
 /get [/gidcollectiontype /literaltype]
 {
@@ -99,16 +125,13 @@ def
     exch
     << >> begin
     /value Set
-    dup GetStatus dup type /arraytype eq
+
+    GetStatus dup size 1 neq
     { % if not a layer
-      pop % remove status array from stack
-      dup cva /GID exch 2 arraystore
-      exch { GetStatus value get } Map
-      value exch 2 arraystore join cvdict
+      { value get } Map
     }
     { % if a layer
-      value get value exch 2 arraystore cvdict
-      exch pop % remove GIDCollection from stack
+      0 get value get
     } ifelse
     end
   } ifelse
@@ -117,39 +140,9 @@ def
 % Get parameter values of GIDCollection from an array of parameters
 /get [/gidcollectiontype /arraytype]
 {
-  exch dup size 1 eq
-  { % if size == 1
-    0 get_g_i GetStatus exch get_d_a
-  }
-  { % if size > 1
-    exch
-    << >> begin
-    /value_array Set
-    dup /gc Set
-    dup GetStatus dup type /arraytype eq
-    { % if not a layer
-      pop % remove status array from stack
-      cva /GID exch 2 arraystore
-      value_array
-      {
-        dup /value Set
-        gc { GetStatus value get } Map
-        2 arraystore join
-      } forall
-      cvdict
-    }
-    { % if a layer
-      /status Set
-      []
-      value_array
-      {
-        dup status exch get 2 arraystore join
-      } forall
-      cvdict
-      exch pop % remove GIDCollection from stack
-    } ifelse
-    end
-    } ifelse
+  exch
+  dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
+  0 get_g_i GetStatus exch get_d_a
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

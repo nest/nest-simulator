@@ -169,6 +169,16 @@ public:
   void
   disconnect( Node& target, index sgid, thread target_thread, index syn_id );
 
+
+  /**
+   * Check whether a connection between the given source and target
+   * nodes has to be established on the given thread with id tid.
+   *
+   * \returns true if the connection should be made, false otherwise.
+   */
+  bool
+  connection_required(Node*& source, Node*& target, thread tid);
+
   /**
    * Connect, using a dictionary with arrays.
    * The connection rule is based on the details of the dictionary entries

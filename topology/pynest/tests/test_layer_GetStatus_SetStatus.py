@@ -83,9 +83,9 @@ class GetSetTestCase(unittest.TestCase):
         ext = nest.GetStatus(lyr, keys=['extent'])
         rows_cols = nest.GetStatus(lyr, keys=['rows', 'columns'])
 
-        self.assertEqual(cntr, (0.0, 0.0))
-        self.assertEqual(ext, ((4., 4.),))
-        self.assertEqual(rows_cols, (2, 4))
+        self.assertEqual(cntr, ((0.0, 0.0),))
+        self.assertEqual(ext, (((4., 4.),),))
+        self.assertEqual(rows_cols, ((2, 4),))
 
     def test_LayerSetStatus(self):
         """Test SetStatus on layer GIDCollection."""

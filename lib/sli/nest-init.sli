@@ -95,8 +95,8 @@ def
   << >> begin
   GetStatus
   /d << >> def
-  dup type /arraytype eq
-  { % if not a layer
+  size 1 neq
+  { % if not a layer or single GIDCollection
     dup First {d rollu 1 arraystore put_d} forall
     Rest
     {
@@ -107,7 +107,10 @@ def
       } forall
     } forall
     d
-  } if
+  }
+  {
+    0 get
+  } ifelse
   end
 } def
 
@@ -122,14 +125,13 @@ def
     exch
     << >> begin
     /value Set
-    dup GetStatus dup type /arraytype eq
+
+    GetStatus dup size 1 neq
     { % if not a layer
-      pop % remove status array from stack
-      { GetStatus value get } Map
+      { value get } Map
     }
     { % if a layer
-      value get
-      exch pop % remove GIDCollection from stack
+      0 get value get
     } ifelse
     end
   } ifelse

@@ -329,12 +329,19 @@ NodeManager::restore_nodes( const ArrayDatum& node_list )
     return;
   }
 
+
+  //todo481: why does this not use an iterator? The check above is
+  //also not needed as the loop anyway won't run if first == end.
   for ( Token* node_t = first; node_t != end; ++node_t )
   {
     DictionaryDatum node_props = getValue< DictionaryDatum >( *node_t );
     std::string model_name = ( *node_props )[ names::model ];
     index model_id = kernel().model_manager.get_model_id( model_name.c_str() );
     GIDCollectionPTR node = add_node( model_id );
+    //todo481: The call below is unsafe. It will most likely not
+    //return the correct pointer, as nodes are allocated round robin.
+    //Actually it is unclear to me how setting the status would work
+    //in a distributed scenario.
     Node* node_ptr = get_node_or_proxy( ( *node->begin() ).gid );
     // we call directly set_status on the node
     // to bypass checking of unused dictionary items.
@@ -398,9 +405,20 @@ NodeManager::get_node_or_proxy( index gid, thread t )
 Node*
 NodeManager::get_node_or_proxy( index gid )
 {
-  thread t =
-    kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
-  Node* node = get_node_or_proxy( gid, t );
+  assert( 0 < gid and gid <= size() );
+
+  thread vp = kernel().vp_manager.suggest_vp( gid );
+  if ( not kernel().vp_manager.is_local_vp( vp ) )
+  {
+    return 0;
+  }
+
+  thread t = kernel().vp_manager.vp_to_thread( vp );
+  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+  if ( node == 0 )
+  {
+    return kernel().model_manager.get_proxy_node( t, gid );
+  }
 
   return node;
 }

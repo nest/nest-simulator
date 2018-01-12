@@ -26,7 +26,7 @@
 set -e
 
 # Activate Python3 environment
-source activate py3
+source activate base
 
 # NEST environment
 source /home/nest/nest-install/bin/nest_vars.sh
@@ -41,7 +41,7 @@ if [ "$1" = 'interactive' ]; then
 	echo Starting: $name
 
 	# Start
-	exec /usr/bin/python /home/nest/data/$name
+	exec /home/nest/miniconda/envs/py3/bin/python /home/nest/data/$name
 fi
 
 exec "$@"

@@ -49,7 +49,8 @@ configuration options please change the 'Dockerfile'. See:
 -   with Jupyter Notebook
 
         sh nest-docker.sh run notebook VERSION  
-                    
+        
+    VESRION is 2.12.0, 2.14.0 or all.               
     Open the displayed URL in your browser and have fun with Jupyter 
     Notebook and NEST.
     

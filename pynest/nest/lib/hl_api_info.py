@@ -282,10 +282,10 @@ def GetStatus(nodes, keys=None):
     if keys is None:
         cmd = 'GetStatus'
     elif is_literal(keys):
-        cmd = 'GetStatus dup type /dictionarytype eq {{ /{0} get }}{{ {{ /{0} get }} Map }}ifelse'.format(keys)
+        cmd = 'GetStatus {{ /{0} get }} Map'.format(keys)
     elif is_iterable(keys):
         keys_str = " ".join("/{0}".format(x) for x in keys)
-        cmd = 'GetStatus dup type /dictionarytype eq {{ [ [ {0} ] ] get }}{{ {{ [ [ {0} ] ] get }} Map }}ifelse'.format(keys_str)
+        cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)
     else:
         raise TypeError("keys should be either a string or an iterable")
 

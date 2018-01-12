@@ -209,8 +209,8 @@ example brunel_delta_nest.py.
 '''
 
 data = nest.GetStatus(multimeter)[0]['events']
-rates_ex = data['rate'][numpy.where(data['senders'] == siegert_ex)]
-rates_in = data['rate'][numpy.where(data['senders'] == siegert_in)]
-times = data['times'][numpy.where(data['senders'] == siegert_in)]
+rates_ex = data['rate'][numpy.where(data['senders'] == nest.GetStatus(siegert_ex, 'global_id')[0])]
+rates_in = data['rate'][numpy.where(data['senders'] == nest.GetStatus(siegert_in, 'global_id')[0])]
+times = data['times'][numpy.where(data['senders'] == nest.GetStatus(siegert_in, 'global_id')[0])]
 print("Excitatory rate   : %.2f Hz" % rates_ex[-1])
 print("Inhibitory rate   : %.2f Hz" % rates_in[-1])

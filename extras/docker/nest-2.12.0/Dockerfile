@@ -24,9 +24,6 @@ RUN wget https://github.com/nest/nest-simulator/releases/download/v2.12.0/nest-2
 
 WORKDIR /home/nest/nest-build
 
-#ENV PATH=/home/nest/miniconda/bin:${PATH}
-#RUN /bin/bash -c "source activate py3"
-
 # Install NEST 2.12.0
 
 RUN cmake -DCMAKE_INSTALL_PREFIX:PATH=/home/nest/nest-install \

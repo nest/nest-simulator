@@ -24,9 +24,6 @@ RUN wget https://github.com/nest/nest-simulator/archive/v2.14.0.tar.gz && \
 
 WORKDIR /home/nest/nest-build
 
-#ENV PATH=/home/nest/miniconda/bin:${PATH}
-#RUN /bin/bash -c "source activate py3"
-
 RUN cmake -DCMAKE_INSTALL_PREFIX:PATH=/home/nest/nest-install \
     -Dwith-python=3 \
     -Dwith-mpi:BOOL=$WITH_MPI \

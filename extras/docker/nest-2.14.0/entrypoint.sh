@@ -25,9 +25,6 @@
 
 set -e
 
-# Activate Python3 environment
-source activate base
-
 # NEST environment
 source /home/nest/nest-install/bin/nest_vars.sh
 

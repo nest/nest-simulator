@@ -54,8 +54,8 @@ M_ERROR setverbosity
              /threshold_lin_rate_parrot   % rate neuron
              /siegert_neuron              % rate neuron
              /gauss_rate_ipn              % rate neuron
-             /sigm_rate_ipn               % rate neuron
-             /sigm_rate_parrot            % rate neuron
+             /sigmoid_rate_gg_1998_ipn    % rate neuron
+             /sigmoid_rate_gg_1998_parrot % rate neuron
              /sigmoid_rate_ipn            % rate neuron
              /parrot_neuron
              /parrot_neuron_ps

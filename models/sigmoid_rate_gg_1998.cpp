@@ -1,5 +1,5 @@
 /*
- *  sigm_rate.cpp
+ *  sigmoid_rate_gg_1998.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,19 +20,19 @@
  *
  */
 
-#include "sigm_rate.h"
+#include "sigmoid_rate_gg_1998.h"
 
 namespace nest
 {
 
 void
-nonlinearities_sigm_rate::get( DictionaryDatum& d ) const
+nonlinearities_sigmoid_rate_gg_1998::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::g, g_ );
 }
 
 void
-nonlinearities_sigm_rate::set( const DictionaryDatum& d )
+nonlinearities_sigmoid_rate_gg_1998::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::g, g_ );
 }
@@ -43,19 +43,19 @@ nonlinearities_sigm_rate::set( const DictionaryDatum& d )
  */
 template <>
 void
-RecordablesMap< nest::sigm_rate_ipn >::create()
+RecordablesMap< nest::sigmoid_rate_gg_1998_ipn >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::rate, &nest::sigm_rate_ipn::get_rate_ );
-  insert_( names::noise, &nest::sigm_rate_ipn::get_noise_ );
+  insert_( names::rate, &nest::sigmoid_rate_gg_1998_ipn::get_rate_ );
+  insert_( names::noise, &nest::sigmoid_rate_gg_1998_ipn::get_noise_ );
 }
 
 template <>
 void
-RecordablesMap< nest::sigm_rate_parrot >::create()
+RecordablesMap< nest::sigmoid_rate_gg_1998_parrot >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::rate, &nest::sigm_rate_parrot::get_rate_ );
+  insert_( names::rate, &nest::sigmoid_rate_gg_1998_parrot::get_rate_ );
 }
 
 } // namespace nest

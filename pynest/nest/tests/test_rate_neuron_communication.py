@@ -79,7 +79,7 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         self.rate_neuron_5 = nest.Create(
             'lin_rate_ipn', params=self.neuron_params3)
         self.parrot_neuron = nest.Create(
-            'sigm_rate_parrot')
+            'sigmoid_rate_gg_1998_parrot')
 
         self.multimeter = nest.Create("multimeter",
                                       params={'record_from': ['rate'],

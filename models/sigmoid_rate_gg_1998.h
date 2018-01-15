@@ -1,5 +1,5 @@
 /*
- *  sigm_rate.h
+ *  sigmoid_rate_gg_1998.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SIGM_RATE_H
-#define SIGM_RATE_H
+#ifndef SIGMOID_RATE_GG_1998_H
+#define SIGMOID_RATE_GG_1998_H
 
 // Includes from c++:
 #include <cmath>
@@ -37,13 +37,13 @@ namespace nest
 {
 
 /* BeginDocumentation
-Name: sigm_rate - rate model with sigmoidal gain function as defined
-in [1].
+Name: sigmoid_rate_gg_1998 - rate model with sigmoidal gain function
+as defined in [1].
 
 Description:
 
- sigm_rate is an implementation of a nonlinear rate model with input
- function input(h) = ( g * h )^4 / ( .1^4 + ( g * h )^4 ).
+ sigmoid_rate_gg_1998 is an implementation of a nonlinear rate model with
+ input function input(h) = ( g * h )^4 / ( .1^4 + ( g * h )^4 ).
  The boolean parameter linear_summation determines whether the input
  function is applied to the summed up incoming connections
  (= True, default value) or to each input individually (= False).
@@ -98,7 +98,7 @@ Author: Mario Senden, Jan Hahne, Jannis Schuecker
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 
-class nonlinearities_sigm_rate
+class nonlinearities_sigmoid_rate_gg_1998
 {
 private:
   /** gain factor of gain function */
@@ -106,7 +106,7 @@ private:
 
 public:
   /** sets default parameters */
-  nonlinearities_sigm_rate()
+  nonlinearities_sigmoid_rate_gg_1998()
     : g_( 1.0 )
   {
   }
@@ -120,32 +120,34 @@ public:
 };
 
 inline double
-nonlinearities_sigm_rate::input( double h )
+nonlinearities_sigmoid_rate_gg_1998::input( double h )
 {
   return pow( g_ * h, 4. ) / ( pow( .1, 4. ) + pow( g_ * h, 4. ) );
 }
 
 inline double
-nonlinearities_sigm_rate::mult_coupling_ex( double rate )
+nonlinearities_sigmoid_rate_gg_1998::mult_coupling_ex( double rate )
 {
   return 1.;
 }
 
 inline double
-nonlinearities_sigm_rate::mult_coupling_in( double rate )
+nonlinearities_sigmoid_rate_gg_1998::mult_coupling_in( double rate )
 {
   return 1.;
 }
 
-typedef rate_neuron_ipn< nest::nonlinearities_sigm_rate > sigm_rate_ipn;
-typedef parrot_rate_neuron< nest::nonlinearities_sigm_rate > sigm_rate_parrot;
+typedef rate_neuron_ipn< nest::nonlinearities_sigmoid_rate_gg_1998 >
+  sigmoid_rate_gg_1998_ipn;
+typedef parrot_rate_neuron< nest::nonlinearities_sigmoid_rate_gg_1998 >
+  sigmoid_rate_gg_1998_parrot;
 
 template <>
-void RecordablesMap< sigm_rate_ipn >::create();
+void RecordablesMap< sigmoid_rate_gg_1998_ipn >::create();
 template <>
-void RecordablesMap< sigm_rate_parrot >::create();
+void RecordablesMap< sigmoid_rate_gg_1998_parrot >::create();
 
 } // namespace nest
 
 
-#endif /* #ifndef SIGM_RATE_H */
+#endif /* #ifndef SIGMOID_RATE_GG_1998_H */

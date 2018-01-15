@@ -338,7 +338,10 @@ class TestGrowthCurve(unittest.TestCase):
                 testing.assert_almost_equal(
                     self.se_nest[n_i], self.se_python[sei_i], decimal=5)
 
-    def plot(self):
+    def _plot(self):
+        """
+        Can be called by tearDown() to cross-check tests.
+        """
         try:
             import pylab
             from nest import raster_plot
@@ -485,7 +488,7 @@ class TestGrowthCurve(unittest.TestCase):
 
     def tearDown(self):
         # uncomment this line if you want to plot values
-        # self.plot()
+        # self._plot()
         return
 
 

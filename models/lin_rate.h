@@ -43,7 +43,7 @@ Description:
  coupling of the input with coupling factors
  mult_coupling_ex(rate) = g_ex_ * ( theta_ex_ - rate ) and
  mult_coupling_in(rate) = g_in_ * ( theta_in_ + rate ).
- The multiplicative coupling can be switched on and of via
+ The multiplicative coupling can be switched on and off via
  the boolean parameter mult_coupling (default=false).
 
  The model supports connections to other rate models with either zero or
@@ -112,8 +112,8 @@ public:
     , mult_coupling_( false )
     , g_ex_( 1.0 )
     , g_in_( 1.0 )
-    , theta_ex_( 1.0 )
-    , theta_in_( 1.0 )
+    , theta_ex_( 0.0 )
+    , theta_in_( 0.0 )
   {
   }
 

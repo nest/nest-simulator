@@ -189,8 +189,7 @@ private:
       instant_rates_ex_; //!< buffer for rate vector received
     // by RateConnectionInstantaneous from excitatory neurons
     std::vector< double >
-      instant_rates_in_;                  //!< buffer for rate vector received
-    std::vector< double > instant_rates_; //!< buffer for rate vector received
+      instant_rates_in_; //!< buffer for rate vector received
     // by RateConnectionInstantaneous
     std::vector< double >
       last_y_values; //!< remembers y_values from last wfr_update

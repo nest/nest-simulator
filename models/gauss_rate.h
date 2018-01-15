@@ -40,7 +40,7 @@ Name: gauss_rate - rate model with Gaussian gain function
 Description:
 
  gauss_rate is an implementation of a nonlinear rate model with input
- function input(h) = g * exp( ( x - mu )^2 / ( 2 * sigma^2 ) ).
+ function input(h) = g * exp( -( x - mu )^2 / ( 2 * sigma^2 ) ).
  The boolean parameter linear_summation determines whether the input
  function is applied to the summed up incoming connections
  (= True, default value) or to each input individually (= False).

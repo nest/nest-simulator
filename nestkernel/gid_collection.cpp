@@ -351,7 +351,8 @@ GIDCollectionPrimitive::local_begin( GIDCollectionPTR cp ) const
     kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
   size_t vp_first_node = kernel().vp_manager.suggest_vp( first_ );
   size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
-  if ( offset > size() ) // Too few GIDs to be shared among all vps.
+
+  if ( offset >= size() ) // Too few GIDs to be shared among all vps.
   {
     return const_iterator( cp, *this, size() );
   }
@@ -377,7 +378,6 @@ GIDCollectionPrimitive::MPI_local_begin( GIDCollectionPTR cp ) const
   {
     return const_iterator( cp, *this, offset, num_processes );
   }
-  return const_iterator( cp, *this, offset, num_processes );
 }
 
 GIDCollectionPTR

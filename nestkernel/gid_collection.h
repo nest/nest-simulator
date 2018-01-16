@@ -123,7 +123,6 @@ private:
    * @param collection  Collection to iterate over
    * @param offset  Index of collection element iterator points to
    * @param step    Step for skipping due to e.g. slicing
-   * @param model_type   ID of the model to iterate over
    */
   explicit gc_const_iterator( GIDCollectionPTR collection_ptr,
     const GIDCollectionPrimitive& collection,
@@ -137,7 +136,6 @@ private:
    * @param part    Index of part of collection iterator points to
    * @param offset  Index of element in GC part that iterator points to
    * @param step    Step for skipping due to e.g. slicing
-   * @param model_type   ID of the model to iterate over
    */
   explicit gc_const_iterator( GIDCollectionPTR collection_ptr,
     const GIDCollectionComposite& collection,

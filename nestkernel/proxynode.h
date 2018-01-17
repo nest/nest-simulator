@@ -107,6 +107,11 @@ public:
 
   bool is_proxy() const;
 
+  thread get_thread() const
+  {
+    assert( false );
+  }
+
 private:
   void
   init_state_( const Node& )

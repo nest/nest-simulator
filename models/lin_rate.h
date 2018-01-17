@@ -95,8 +95,6 @@ class nonlinearities_lin_rate
 private:
   /** gain factor of gain function */
   double g_;
-  /** use multiplicative coupling? */
-  bool mult_coupling_;
   /** linear factor in multiplicative excitatory coupling*/
   double g_ex_;
   /** linear factor in multiplicative inhibitory coupling*/
@@ -109,7 +107,6 @@ public:
   /** sets default parameters */
   nonlinearities_lin_rate()
     : g_( 1.0 )
-    , mult_coupling_( false )
     , g_ex_( 1.0 )
     , g_in_( 1.0 )
     , theta_ex_( 0.0 )
@@ -134,23 +131,13 @@ nonlinearities_lin_rate::input( double h )
 inline double
 nonlinearities_lin_rate::mult_coupling_ex( double rate )
 {
-  if ( mult_coupling_ )
-  {
-    return g_ex_ * ( theta_ex_ - rate );
-  }
-
-  return 1.;
+  return g_ex_ * ( theta_ex_ - rate );
 }
 
 inline double
 nonlinearities_lin_rate::mult_coupling_in( double rate )
 {
-  if ( mult_coupling_ )
-  {
-    return g_in_ * ( theta_in_ + rate );
-  }
-
-  return 1.;
+  return g_in_ * ( theta_in_ + rate );
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_lin_rate > lin_rate_ipn;

@@ -70,6 +70,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::Parameters_()
   , mean_( 0.0 )
   , linear_summation_( true )
   , rectify_output_( false )
+  , mult_coupling_( false )
 {
   recordablesMap_.create();
 }
@@ -96,6 +97,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::get(
   def< double >( d, names::mean, mean_ );
   def< bool >( d, names::linear_summation, linear_summation_ );
   def< bool >( d, names::rectify_output, rectify_output_ );
+  def< bool >( d, names::mult_coupling, mult_coupling_ );
 }
 
 template < class TNonlinearities >
@@ -109,6 +111,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set(
   updateValue< double >( d, names::std, std_ );
   updateValue< bool >( d, names::linear_summation, linear_summation_ );
   updateValue< bool >( d, names::rectify_output, rectify_output_ );
+  updateValue< bool >( d, names::mult_coupling, mult_coupling_ );
 
   if ( tau_ <= 0 )
     throw BadProperty( "Time constant must be > 0." );
@@ -271,73 +274,73 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
     S_.rate_ = V_.P1_ * new_rates[ lag ] + V_.P2_ * P_.mean_
       + V_.input_noise_factor_ * S_.noise_;
 
-    if ( called_from_wfr_update ) // use get_value_wfr_update to keep values in
-                                  // buffer
+    double delayed_rates_in = 0;
+    double delayed_rates_ex = 0;
+    if ( called_from_wfr_update )
     {
-      if ( P_.linear_summation_ )
+      // use get_value_wfr_update to keep values in buffer
+      delayed_rates_in = B_.delayed_rates_in_.get_value_wfr_update( lag );
+      delayed_rates_ex = B_.delayed_rates_ex_.get_value_wfr_update( lag );
+    }
+    else
+    {
+      // use get_value to clear values in buffer after reading
+      delayed_rates_in = B_.delayed_rates_in_.get_value( lag );
+      delayed_rates_ex = B_.delayed_rates_ex_.get_value( lag );
+    }
+    double instant_rates_in = B_.instant_rates_in_[ lag ];
+    double instant_rates_ex = B_.instant_rates_ex_[ lag ];
+    double H_ex = 1.; // valid value for non-multiplicative coupling
+    double H_in = 1.; // valid value for non-multiplicative coupling
+    if ( P_.mult_coupling_ )
+    {
+      H_ex = nonlinearities_.mult_coupling_ex( new_rates[ lag ] );
+      H_in = nonlinearities_.mult_coupling_in( new_rates[ lag ] );
+    }
+
+    if ( P_.linear_summation_ )
+    {
+      // In this case we explicitly need to distinguish the cases of
+      // multiplicative coupling and non-multiplicative coupling in
+      // order to compute input( ex + in ) instead of input(ex) + input(in) in
+      // the non-multiplicative case.
+      if ( P_.mult_coupling_ )
       {
-        S_.rate_ += V_.P2_
-          * nonlinearities_.mult_coupling_ex( new_rates[ lag ] )
-          * nonlinearities_.input( B_.delayed_rates_ex_.get_value_wfr_update(
-                                     lag ) + B_.instant_rates_ex_[ lag ] );
-        S_.rate_ += V_.P2_
-          * nonlinearities_.mult_coupling_in( new_rates[ lag ] )
-          * nonlinearities_.input( B_.delayed_rates_in_.get_value_wfr_update(
-                                     lag ) + B_.instant_rates_in_[ lag ] );
+        S_.rate_ += V_.P2_ * H_ex
+          * nonlinearities_.input( delayed_rates_ex + instant_rates_ex );
+        S_.rate_ += V_.P2_ * H_in
+          * nonlinearities_.input( delayed_rates_in + instant_rates_in );
       }
       else
       {
         S_.rate_ += V_.P2_
-          * nonlinearities_.mult_coupling_ex( new_rates[ lag ] )
-          * ( B_.delayed_rates_ex_.get_value_wfr_update( lag )
-                      + B_.instant_rates_ex_[ lag ] );
-        S_.rate_ += V_.P2_
-          * nonlinearities_.mult_coupling_in( new_rates[ lag ] )
-          * ( B_.delayed_rates_in_.get_value_wfr_update( lag )
-                      + B_.instant_rates_in_[ lag ] );
+          * nonlinearities_.input( delayed_rates_ex + instant_rates_ex
+              + delayed_rates_in + instant_rates_in );
       }
+    }
+    else
+    {
+      // In this case multiplicative and non-multiplicative coupling
+      // can be handled with the same code.
+      S_.rate_ += V_.P2_ * H_ex * ( delayed_rates_ex + instant_rates_ex );
+      S_.rate_ += V_.P2_ * H_in * ( delayed_rates_in + instant_rates_in );
+    }
 
-      if ( P_.rectify_output_ and S_.rate_ < 0 )
-      {
-        S_.rate_ = 0;
-      }
+    if ( P_.rectify_output_ and S_.rate_ < 0 )
+    {
+      S_.rate_ = 0;
+    }
 
+    if ( called_from_wfr_update )
+    {
       // check if deviation from last iteration exceeds wfr_tol
       wfr_tol_exceeded = wfr_tol_exceeded
         or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
       // update last_y_values for next wfr iteration
       B_.last_y_values[ lag ] = S_.rate_;
     }
-    else // use get_value to clear values in buffer after reading
+    else
     {
-      if ( P_.linear_summation_ )
-      {
-        S_.rate_ += V_.P2_
-          * nonlinearities_.mult_coupling_ex( new_rates[ lag ] )
-          * nonlinearities_.input( B_.delayed_rates_ex_.get_value( lag )
-              + B_.instant_rates_ex_[ lag ] );
-        S_.rate_ += V_.P2_
-          * nonlinearities_.mult_coupling_in( new_rates[ lag ] )
-          * nonlinearities_.input( B_.delayed_rates_in_.get_value( lag )
-              + B_.instant_rates_in_[ lag ] );
-      }
-      else
-      {
-        S_.rate_ += V_.P2_
-          * nonlinearities_.mult_coupling_ex( new_rates[ lag ] )
-          * ( B_.delayed_rates_ex_.get_value( lag )
-                      + B_.instant_rates_ex_[ lag ] );
-        S_.rate_ += V_.P2_
-          * nonlinearities_.mult_coupling_in( new_rates[ lag ] )
-          * ( B_.delayed_rates_in_.get_value( lag )
-                      + B_.instant_rates_in_[ lag ] );
-      }
-
-      if ( P_.rectify_output_ and S_.rate_ < 0 )
-      {
-        S_.rate_ = 0;
-      }
-
       // rate logging
       B_.logger_.record_data( origin.get_steps() + lag );
     }

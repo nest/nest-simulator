@@ -149,6 +149,9 @@ private:
     **/
     bool rectify_output_;
 
+    /** use multiplicative coupling? Default is false */
+    bool mult_coupling_;
+
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary

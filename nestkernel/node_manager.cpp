@@ -410,7 +410,7 @@ NodeManager::get_node_or_proxy( index gid )
   thread vp = kernel().vp_manager.suggest_vp( gid );
   if ( not kernel().vp_manager.is_local_vp( vp ) )
   {
-    return 0;
+    return kernel().model_manager.get_proxy_node( 0, gid );
   }
 
   thread t = kernel().vp_manager.vp_to_thread( vp );

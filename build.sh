@@ -170,7 +170,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
 
   # The following command line parameters indicate whether static code analysis error messages
   # will cause the Travis CI build to fail or are ignored.
-  IGNORE_MSG_VERA=true
+  IGNORE_MSG_VERA=false
   IGNORE_MSG_CPPCHECK=true
   IGNORE_MSG_CLANG_FORMAT=false
   IGNORE_MSG_PEP8=false

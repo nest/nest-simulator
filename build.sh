@@ -101,9 +101,15 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 
   echo "MSGBLD0010: Initializing VERA++ static code analysis."
+  git clone https://github.com/verateam/vera.git
+  cd vera
+  cmake -DCMAKE_INSTALL_PREFIX=/usr -DVERA_LUA=OFF -DVERA_USE_SYSTEM_BOOST=ON
+  sudo make install
+  cd ..
+  rm -fr ./vera
   # Add the NEST profile to the VERA++ profiles.
   sudo cp ./extras/vera++.profile /usr/lib/vera++/profiles/nest
-  echo "MSGBLD0020: VERA++ initialization completed."  
+  echo "MSGBLD0020: VERA++ initialization completed."
 
   if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
     echo "MSGBLD0030: Installing CPPCHECK version 1.69."

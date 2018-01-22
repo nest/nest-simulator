@@ -293,7 +293,9 @@ siegert_neuron::handles_test_event( DiffusionConnectionEvent&,
     return 1;
   }
   else
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
 }
 
 inline port

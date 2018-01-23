@@ -328,6 +328,24 @@ class TestConnectome(unittest.TestCase):
                               'port': [0, 1, 0, 1]},
                              index=conns.get('source'))))
 
+    def test_empty(self):
+        """
+        Test get on empty Connectome and after a ResetKernel
+        """
+        conns = nest.GetConnections()
+        self.assertEqual(len(conns), 0)
+        self.assertEqual(conns.get(), ())
+        
+        nrns = nest.Create('iaf_psc_alpha', 2)
+        nest.Connect(nrns, nrns, 'one_to_one')
+        conns = nest.GetConnections()
+        self.assertEqual(len(conns), 2)
+        
+        nest.ResetKernel()
+        self.assertEqual(conns.get(), ())
+        conns.set('weight', 10.)
+        self.assertEqual(conns.get('weight'), ())
+
 
 def suite():
     suite = unittest.makeSuite(TestConnectome, 'test')

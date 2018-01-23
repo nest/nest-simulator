@@ -470,7 +470,7 @@ class Connectome(object):
     Class for Connections.
 
     Connectome represents the connections of a network. The class supports
-    get(), set() and len().
+    get(), set(), len() and equality.
 
     A Connectome is created by the ``GetConnections`` function.
     """
@@ -582,8 +582,10 @@ class Connectome(object):
         """
         if pandas_output and not HAVE_PANDAS:
             raise ImportError('Pandas could not be imported')
-        
-        if self.__len__() == 0:
+
+        # Return empty tuple if we have no connections or if we have done a
+        # nest.ResetKernel()
+        if self.__len__() == 0 or nest.GetKernelStatus()['network_size'] == 0:
             return ()
 
         if keys is None:
@@ -614,7 +616,7 @@ class Connectome(object):
                     for count, key in enumerate(keys):
                         final_result[key].append(val[count])
             else:
-                # Restult is a tuple with a single value, a tuple with values
+                # Result is a tuple with a single value, a tuple with values
                 # in the same order as parameters in keys
                 for count, key in enumerate(keys):
                     final_result[key] = result[0][count]
@@ -627,7 +629,7 @@ class Connectome(object):
                     final_result[key] = []
                 # Then set the values
                 for val in result:
-                    # get a dictionary
+                    # Get a dictionary
                     for key, value in val.items():
                         final_result[key].append(value)
             else:
@@ -668,10 +670,9 @@ class Connectome(object):
         """
 
         # This was added to ensure that the function is a nop (instead of,
-        # for instance, raising an exception) when applied to an empty list,
-        # which is an artifact of the API operating on lists, rather than
-        # relying on language idioms, such as comprehensions
-        if self.__len__() == 0:
+        # for instance, raising an exception) when applied to an empty
+        # Connectome, or after having done a nest.ResetKernel().
+        if self.__len__() == 0  or nest.GetKernelStatus()['network_size'] == 0:
             return
 
         if val is not None and nest.is_literal(params):

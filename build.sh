@@ -101,12 +101,14 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 
   echo "MSGBLD0010: Initializing VERA++ static code analysis."
-  git clone https://github.com/verateam/vera.git
-  cd vera
+  wget --no-verbose https://bitbucket.org/verateam/vera/downloads/vera++-1.3.0.tar.gz
+  tar -xzf vera++-1.3.0.tar.gz
+  cd vera++-1.3.0
   cmake -DCMAKE_INSTALL_PREFIX=/usr -DVERA_LUA=OFF -DVERA_USE_SYSTEM_BOOST=ON
   sudo make install
   cd ..
-  rm -fr ./vera
+  rm -fr ./vera++-1.3.0
+  rm -f ./vera++-1.3.0.tar.gz
   # Add the NEST profile to the VERA++ profiles.
   sudo cp ./extras/vera++.profile /usr/lib/vera++/profiles/nest
   echo "MSGBLD0020: VERA++ initialization completed."

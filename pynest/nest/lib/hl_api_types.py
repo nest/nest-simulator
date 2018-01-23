@@ -516,9 +516,38 @@ class Connectome(object):
         return True
 
     def __neq__(self, other):
-        if not isinstance(other, GIDCollection):
+        if not isinstance(other, Connectome):
             return NotImplemented
         return not self == other
+
+    def __str__(self):
+        """
+        Printing a Connectome returns something of the form:
+            *--------*-------------*
+            | source | 1, 1, 2, 2, |
+            *--------*-------------*
+            | target | 1, 2, 1, 2, |
+            *--------*-------------*
+        """
+        src = self.get('source')
+        trgt = self.get('target')
+
+        if isinstance(src, int):
+            src = [src]
+        if isinstance(trgt, int):
+            trgt = [trgt]
+
+        source = '| source | ' + ''.join(str(e)+', ' for e in src) + '|'
+        target = '| target | ' + ''.join(str(e)+', ' for e in trgt) + '|'
+
+        if len(src) < 35:
+            borderline = '*--------*' + '-'*(len(source) - 12) + '-*'
+        else:
+            borderline = '*--------*' + '-'*3*35 + '-*'
+
+        result = (borderline + '\n' + source + '\n' + borderline + '\n' +
+                  target + '\n' + borderline)
+        return result
 
     def get(self, keys=None, pandas_output=False):
         """

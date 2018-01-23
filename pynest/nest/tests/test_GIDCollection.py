@@ -601,16 +601,19 @@ class TestGIDCollection(unittest.TestCase):
 
         nodes = nest.Create('iaf_psc_alpha', 10)
 
+        # Dict to set same value for all nodes.
         nodes.set({'C_m': 100.0})
         C_m = nodes.get('C_m')
         self.assertEqual(C_m, (100.0, 100.0, 100.0, 100.0, 100.0,
                                100.0, 100.0, 100.0, 100.0, 100.0))
 
+        # Set same value for all nodes.
         nodes.set('tau_Ca', 500.0)
         tau_Ca = nodes.get('tau_Ca')
         self.assertEqual(tau_Ca, (500.0, 500.0, 500.0, 500.0, 500.0,
                                   500.0, 500.0, 500.0, 500.0, 500.0))
 
+        # List of dicts, where each dict corresponds to a single node.
         nodes.set(({'V_m': 10.0}, {'V_m': 20.0}, {'V_m': 30.0}, {'V_m': 40.0},
                    {'V_m': 50.0}, {'V_m': 60.0}, {'V_m': 70.0}, {'V_m': 80.0},
                    {'V_m': 90.0}, {'V_m': -100.0}))
@@ -618,12 +621,17 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(V_m, (10.0, 20.0, 30.0, 40.0, 50.0,
                                60.0, 70.0, 80.0, 90.0, -100.0))
 
+        # Set value of a parameter based on list. List must be length of nodes.
         nodes.set('V_reset', [-85., -82., -80., -77., -75.,
                               -72., -70., -67., -65., -62.])
         V_reset = nodes.get('V_reset')
         self.assertEqual(V_reset, (-85., -82., -80., -77., -75.,
                                    -72., -70., -67., -65., -62.))
 
+        with self.assertRaises(TypeError):
+            nodes.set('V_reset', [-85., -82., -80., -77., -75.])
+
+        # Set different parameters with a dictionary.
         nodes.set({'t_ref': 44.0, 'tau_m': 2.0, 'tau_minus': 42.0})
         g = nodes.get(['t_ref', 'tau_m', 'tau_minus'])
         self.assertEqual(g['t_ref'], (44.0, 44.0, 44.0, 44.0, 44.0,
@@ -636,7 +644,7 @@ class TestGIDCollection(unittest.TestCase):
         with self.assertRaises(nest.NESTError):
             nodes.set({'vp': 2})
 
-        # Now check that it works with sliced GIDCollections
+        # Now check that it works with sliced GIDCollections.
         nest.ResetKernel()
         nodes = nest.Create('iaf_psc_alpha', 10)
 

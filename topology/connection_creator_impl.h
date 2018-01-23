@@ -219,7 +219,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
     const int thread_id = kernel().vp_manager.get_thread_id();
     try
     {
-      GIDCollection::const_iterator target_begin = target_gc->local_begin();
+      GIDCollection::const_iterator target_begin = target_gc->begin();
       GIDCollection::const_iterator target_end = target_gc->end();
 
       for ( GIDCollection::const_iterator tgt_it = target_begin;
@@ -229,23 +229,24 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
         Node* const tgt =
           kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
 
-        assert( not tgt->is_proxy() );
-
-        const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
-
-        if ( mask_.valid() )
+	if ( not tgt->is_proxy() )
         {
-          connect_to_target_( pool.masked_begin( target_pos ),
-            pool.masked_end(),
-            tgt,
-            target_pos,
-            thread_id,
-            source );
-        }
-        else
-        {
-          connect_to_target_(
-            pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
+          const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+
+          if ( mask_.valid() )
+          {
+            connect_to_target_( pool.masked_begin( target_pos ),
+              pool.masked_end(),
+              tgt,
+              target_pos,
+              thread_id,
+              source );
+          }
+          else
+          {
+            connect_to_target_(
+              pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
+          }
         }
       } // for target_begin
     }

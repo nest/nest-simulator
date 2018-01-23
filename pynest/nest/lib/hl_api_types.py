@@ -67,7 +67,9 @@ class GIDCollection(object):
 
     GIDCollection represents the nodes of a network. The class supports
     iteration, concatination, indexing, slicing, membership, convertion to and
-    from lists, test for membership, and test for equality.
+    from lists, test for membership, and test for equality. By using the
+    membership functions ``get(.)`` and ``set(.)``, you can get and set desired
+    parameters.
 
     A GIDCollection is created by the ``Create`` function, or by converting a
     list of nodes to a GIDCollection with ``nest.GIDCollection(list)``.
@@ -100,7 +102,7 @@ class GIDCollection(object):
             Inrns = nest.Create('iaf_psc_alpha', 400)
             nrns = Enrns + Inrns
 
-            # Indexing, slicing and membership
+            # Slicing and membership
             print(new_gc[2])
             print(new_gc[1:2])
             6 in new_gc
@@ -420,7 +422,7 @@ class GIDCollection(object):
         """
         NB! This is the same implementation as SetStatus
 
-        Set the parameters of nodes or connections to params.
+        Set the parameters of nodes or layers to params.
 
         If val is given, params has to be the name of an attribute, which is
         set to val on the nodes. val can be a single value or a list of the

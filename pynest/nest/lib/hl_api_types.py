@@ -540,6 +540,7 @@ class Connectome(object):
         source = '| source | ' + ''.join(str(e)+', ' for e in src) + '|'
         target = '| target | ' + ''.join(str(e)+', ' for e in trgt) + '|'
 
+        # 35 is arbitrarily chosen.
         if len(src) < 35:
             borderline = '*--------*' + '-'*(len(source) - 12) + '-*'
         else:

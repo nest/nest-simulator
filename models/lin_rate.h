@@ -39,12 +39,14 @@ Name: lin_rate - Linear rate model
 Description:
 
  lin_rate is an implementation of a linear rate model with
- input function input(h) = g * h. The model supports multiplicative
- coupling of the input with coupling factors
- mult_coupling_ex(rate) = g_ex_ * ( theta_ex_ - rate ) and
+ input function input(h) = g * h.
+ The model supports multiplicative coupling which can
+ be switched on and off via the boolean parameter mult_coupling
+ (default=false). In case multiplicative coupling is actived
+ the excitatory input of the model is multiplied with the function
+ mult_coupling_ex(rate) = g_ex_ * ( theta_ex_ - rate )
+ and the inhibitory input is multiplied with the function
  mult_coupling_in(rate) = g_in_ * ( theta_in_ + rate ).
- The multiplicative coupling can be switched on and off via
- the boolean parameter mult_coupling (default=false).
 
  The model supports connections to other rate models with either zero or
  non-zero delay, and uses the secondary_event concept introduced with
@@ -59,7 +61,7 @@ Parameters:
  lambda              double - Passive decay rate.
  mean                double - Mean of Gaussian white noise.
  std                 double - Standard deviation of Gaussian white noise.
- g                   double - Linear factor in input function.
+ g                   double - Gain parameter
  mult_coupling       bool   - Switch to enable/disable multiplicative coupling.
  g_ex                double - Linear factor in multiplicative coupling.
  g_in                double - Linear factor in multiplicative coupling.

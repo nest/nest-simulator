@@ -23,8 +23,13 @@
 #ifndef RATE_NEURON_IPN_H
 #define RATE_NEURON_IPN_H
 
+// Generated includes:
 #include "config.h"
 
+// C++ includes:
+#include <string>
+
+// Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
@@ -36,7 +41,6 @@
 #include "recordables_map.h"
 #include "universal_data_logger.h"
 
-#include <string>
 
 namespace nest
 {
@@ -49,6 +53,12 @@ namespace nest
  *  - input (nonlinearity that is applied to the input)
  *  - mult_coupling_ex (factor of multiplicative coupling for excitatory input)
  *  - mult_coupling_in (factor of multiplicative coupling for inhibitory input)
+ *
+ * The boolean parameter linear_summation determines whether the input function
+ * is applied to the summed up incoming connections (= True, default value) or
+ * to each input individually (= False). In case of multiplicative coupling the
+ * nonlinearity is applied separately to the summed excitatory and inhibitory
+ * inputs if linear_summation=True.
  *
  * References:
  *

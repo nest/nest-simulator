@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# rate_neuron_DM.py
+# rate_neuron_dm.py
 #
 # This file is part of NEST.
 #

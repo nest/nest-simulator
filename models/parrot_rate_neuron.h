@@ -23,8 +23,13 @@
 #ifndef PARROT_RATE_NEURON_H
 #define PARROT_RATE_NEURON_H
 
+// Generated includes:
 #include "config.h"
 
+// C++ includes:
+#include <string>
+
+// Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
@@ -36,7 +41,6 @@
 #include "recordables_map.h"
 #include "universal_data_logger.h"
 
-#include <string>
 
 namespace nest
 {
@@ -68,7 +72,8 @@ Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
 Parameters:
-No parameters to be set in the status dictionary.
+All Parameters from the class Nonlinearities can be set in the
+status dictionary.
 
 Author: Mario Senden, Jan Hahne, Jannis Schuecker
 FirstVersion: November 2017

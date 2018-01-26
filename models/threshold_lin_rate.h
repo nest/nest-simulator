@@ -44,9 +44,8 @@ Description:
 
  threshold_lin_rate is an implementation of a nonlinear rate model with input
  function input(h) = min( max( g * ( h - theta ), 0 ), alpha ).
- The boolean parameter linear_summation determines whether the input function
- is applied to the summed up incoming connections (= True, default value)
- or to each input individually (= False).
+ Input transformation can either be applied to individual inputs
+ or to the sum of all inputs.
 
  The model supports connections to other rate models with either zero or
  non-zero delay, and uses the secondary_event concept introduced with

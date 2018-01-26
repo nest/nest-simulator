@@ -19,6 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+# needs a NEST and source nest_vars.sh
 . $HOME/work-nest/nest-git/install-mpi-off/bin/nest_vars.sh
 
 myhome=$PWD

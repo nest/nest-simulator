@@ -74,7 +74,6 @@ set( models_sources
     music_message_in_proxy.h music_message_in_proxy.cpp
     noise_generator.h noise_generator.cpp
     parrot_neuron.h parrot_neuron.cpp
-    parrot_rate_neuron.h parrot_rate_neuron_impl.h
     poisson_generator.h poisson_generator.cpp
     pp_psc_delta.h pp_psc_delta.cpp
     pp_pop_psc_delta.h pp_pop_psc_delta.cpp
@@ -85,6 +84,7 @@ set( models_sources
     rate_connection_instantaneous.h
     rate_neuron_opn.h rate_neuron_opn_impl.h
     rate_neuron_ipn.h rate_neuron_ipn_impl.h
+    rate_transformer_node.h rate_transformer_node_impl.h
     siegert_neuron.h siegert_neuron.cpp
     sigmoid_rate.h sigmoid_rate.cpp
     sigmoid_rate_gg_1998.h sigmoid_rate_gg_1998.cpp

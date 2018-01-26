@@ -70,10 +70,10 @@ RecordablesMap< nest::lin_rate_opn >::create()
 
 template <>
 void
-RecordablesMap< nest::lin_rate_parrot >::create()
+RecordablesMap< nest::rate_transformer_lin >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::rate, &nest::lin_rate_parrot::get_rate_ );
+  insert_( names::rate, &nest::rate_transformer_lin::get_rate_ );
 }
 
 } // namespace nest

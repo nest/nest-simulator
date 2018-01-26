@@ -29,6 +29,8 @@
 // Includes from models:
 #include "rate_neuron_ipn.h"
 #include "rate_neuron_ipn_impl.h"
+#include "rate_transformer_node.h"
+#include "rate_transformer_node_impl.h"
 
 
 namespace nest
@@ -136,9 +138,13 @@ nonlinearities_sigmoid_rate::mult_coupling_in( double rate )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_sigmoid_rate > sigmoid_rate_ipn;
+typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate >
+  rate_transformer_sigmoid;
 
 template <>
 void RecordablesMap< sigmoid_rate_ipn >::create();
+template <>
+void RecordablesMap< rate_transformer_sigmoid >::create();
 
 } // namespace nest
 

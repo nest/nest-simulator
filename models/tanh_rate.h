@@ -28,6 +28,8 @@
 #include "rate_neuron_ipn_impl.h"
 #include "rate_neuron_opn.h"
 #include "rate_neuron_opn_impl.h"
+#include "rate_transformer_node.h"
+#include "rate_transformer_node_impl.h"
 
 
 namespace nest
@@ -134,11 +136,15 @@ nonlinearities_tanh_rate::mult_coupling_in( double rate )
 
 typedef rate_neuron_ipn< nest::nonlinearities_tanh_rate > tanh_rate_ipn;
 typedef rate_neuron_opn< nest::nonlinearities_tanh_rate > tanh_rate_opn;
+typedef rate_transformer_node< nest::nonlinearities_tanh_rate >
+  rate_transformer_tanh;
 
 template <>
 void RecordablesMap< tanh_rate_ipn >::create();
 template <>
 void RecordablesMap< tanh_rate_opn >::create();
+template <>
+void RecordablesMap< rate_transformer_tanh >::create();
 
 } // namespace nest
 

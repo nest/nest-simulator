@@ -52,10 +52,10 @@ RecordablesMap< nest::sigmoid_rate_gg_1998_ipn >::create()
 
 template <>
 void
-RecordablesMap< nest::sigmoid_rate_gg_1998_parrot >::create()
+RecordablesMap< nest::rate_transformer_sigmoid_gg_1998 >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::rate, &nest::sigmoid_rate_gg_1998_parrot::get_rate_ );
+  insert_( names::rate, &nest::rate_transformer_sigmoid_gg_1998::get_rate_ );
 }
 
 } // namespace nest

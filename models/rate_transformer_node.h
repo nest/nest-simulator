@@ -1,5 +1,5 @@
 /*
- *  parrot_rate_neuron.h
+ *  rate_transformer_node.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef PARROT_RATE_NEURON_H
-#define PARROT_RATE_NEURON_H
+#ifndef RATE_TRANSFORMER_NODE_H
+#define RATE_TRANSFORMER_NODE_H
 
 // Generated includes:
 #include "config.h"
@@ -46,8 +46,8 @@ namespace nest
 {
 
 /* BeginDocumentation
-Name: parrot_rate_neuron - Rate neuron that sums up incoming rates and applies
-                           a nonlinearity specified via the template.
+Name: rate_transformer_node - Rate neuron that sums up incoming rates
+                and applies a nonlinearity specified via the template.
 
 Description:
 
@@ -63,7 +63,7 @@ one time step later at the receiving rate neurons as with a direct connection.
 
 Remarks:
 
-- Weights on connections from and to the parrot_rate_neuron
+- Weights on connections from and to the rate_transformer_node
   are handled as usual.
 - Delays are honored on incoming and outgoing connections.
 
@@ -79,14 +79,14 @@ Author: Mario Senden, Jan Hahne, Jannis Schuecker
 FirstVersion: November 2017
 */
 template < class TNonlinearities >
-class parrot_rate_neuron : public Archiving_Node
+class rate_transformer_node : public Archiving_Node
 {
 
 public:
   typedef Node base;
 
-  parrot_rate_neuron();
-  parrot_rate_neuron( const parrot_rate_neuron& );
+  rate_transformer_node();
+  rate_transformer_node( const rate_transformer_node& );
 
   /**
    * Import sets of overloaded virtual functions.
@@ -134,8 +134,8 @@ private:
   bool wfr_update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< parrot_rate_neuron< TNonlinearities > >;
-  friend class UniversalDataLogger< parrot_rate_neuron< TNonlinearities > >;
+  friend class RecordablesMap< rate_transformer_node< TNonlinearities > >;
+  friend class UniversalDataLogger< rate_transformer_node< TNonlinearities > >;
 
 
   // ----------------------------------------------------------------
@@ -166,8 +166,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( parrot_rate_neuron& );
-    Buffers_( const Buffers_&, parrot_rate_neuron& );
+    Buffers_( rate_transformer_node& );
+    Buffers_( const Buffers_&, rate_transformer_node& );
 
     // buffer for rate vector received by DelayRateConnection
     RingBuffer delayed_rates_;
@@ -179,7 +179,7 @@ private:
     std::vector< double > last_y_values;
 
     //! Logger for all analog data
-    UniversalDataLogger< parrot_rate_neuron > logger_;
+    UniversalDataLogger< rate_transformer_node > logger_;
   };
 
   // ----------------------------------------------------------------
@@ -198,13 +198,13 @@ private:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< parrot_rate_neuron< TNonlinearities > >
+  static RecordablesMap< rate_transformer_node< TNonlinearities > >
     recordablesMap_;
 };
 
 template < class TNonlinearities >
 inline void
-parrot_rate_neuron< TNonlinearities >::update( Time const& origin,
+rate_transformer_node< TNonlinearities >::update( Time const& origin,
   const long from,
   const long to )
 {
@@ -213,7 +213,7 @@ parrot_rate_neuron< TNonlinearities >::update( Time const& origin,
 
 template < class TNonlinearities >
 inline bool
-parrot_rate_neuron< TNonlinearities >::wfr_update( Time const& origin,
+rate_transformer_node< TNonlinearities >::wfr_update( Time const& origin,
   const long from,
   const long to )
 {
@@ -226,7 +226,7 @@ parrot_rate_neuron< TNonlinearities >::wfr_update( Time const& origin,
 
 template < class TNonlinearities >
 inline port
-parrot_rate_neuron< TNonlinearities >::handles_test_event(
+rate_transformer_node< TNonlinearities >::handles_test_event(
   InstantaneousRateConnectionEvent&,
   rport receptor_type )
 {
@@ -237,7 +237,7 @@ parrot_rate_neuron< TNonlinearities >::handles_test_event(
 
 template < class TNonlinearities >
 inline port
-parrot_rate_neuron< TNonlinearities >::handles_test_event(
+rate_transformer_node< TNonlinearities >::handles_test_event(
   DelayedRateConnectionEvent&,
   rport receptor_type )
 {
@@ -248,7 +248,7 @@ parrot_rate_neuron< TNonlinearities >::handles_test_event(
 
 template < class TNonlinearities >
 inline port
-parrot_rate_neuron< TNonlinearities >::handles_test_event(
+rate_transformer_node< TNonlinearities >::handles_test_event(
   DataLoggingRequest& dlr,
   rport receptor_type )
 {
@@ -259,7 +259,7 @@ parrot_rate_neuron< TNonlinearities >::handles_test_event(
 
 template < class TNonlinearities >
 inline void
-parrot_rate_neuron< TNonlinearities >::get_status( DictionaryDatum& d ) const
+rate_transformer_node< TNonlinearities >::get_status( DictionaryDatum& d ) const
 {
   S_.get( d );
   Archiving_Node::get_status( d );
@@ -270,7 +270,7 @@ parrot_rate_neuron< TNonlinearities >::get_status( DictionaryDatum& d ) const
 
 template < class TNonlinearities >
 inline void
-parrot_rate_neuron< TNonlinearities >::set_status( const DictionaryDatum& d )
+rate_transformer_node< TNonlinearities >::set_status( const DictionaryDatum& d )
 {
   State_ stmp = S_; // temporary copy in case of errors
   stmp.set( d );    // throws if BadProperty
@@ -289,4 +289,4 @@ parrot_rate_neuron< TNonlinearities >::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-#endif /* #ifndef PARROT_RATE_NEURON_H */
+#endif /* #ifndef RATE_TRANSFORMER_NODE_H */

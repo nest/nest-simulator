@@ -54,4 +54,12 @@ RecordablesMap< nest::gauss_rate_ipn >::create()
   insert_( names::noise, &nest::gauss_rate_ipn::get_noise_ );
 }
 
+template <>
+void
+RecordablesMap< nest::rate_transformer_gauss >::create()
+{
+  // use standard names whereever you can for consistency!
+  insert_( names::rate, &nest::rate_transformer_gauss::get_rate_ );
+}
+
 } // namespace nest

@@ -1,5 +1,5 @@
 /*
- *  parrot_rate_neuron_impl.h
+ *  rate_transformer_node_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef PARROT_RATE_NEURON_IMPL_H
-#define PARROT_RATE_NEURON_IMPL_H
+#ifndef RATE_TRANSFORMER_NODE_IMPL_H
+#define RATE_TRANSFORMER_NODE_IMPL_H
 
-#include "parrot_rate_neuron.h"
+#include "rate_transformer_node.h"
 
 // C++ includes:
 #include <cmath> // in case we need isnan() // fabs
@@ -55,15 +55,15 @@ namespace nest
  * ---------------------------------------------------------------- */
 
 template < class TNonlinearities >
-RecordablesMap< parrot_rate_neuron< TNonlinearities > >
-  parrot_rate_neuron< TNonlinearities >::recordablesMap_;
+RecordablesMap< rate_transformer_node< TNonlinearities > >
+  rate_transformer_node< TNonlinearities >::recordablesMap_;
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
 template < class TNonlinearities >
-nest::parrot_rate_neuron< TNonlinearities >::State_::State_()
+nest::rate_transformer_node< TNonlinearities >::State_::State_()
   : rate_( 0.0 )
 {
 }
@@ -74,7 +74,7 @@ nest::parrot_rate_neuron< TNonlinearities >::State_::State_()
 
 template < class TNonlinearities >
 void
-nest::parrot_rate_neuron< TNonlinearities >::State_::get(
+nest::rate_transformer_node< TNonlinearities >::State_::get(
   DictionaryDatum& d ) const
 {
   def< double >( d, names::rate, rate_ ); // Rate
@@ -82,23 +82,23 @@ nest::parrot_rate_neuron< TNonlinearities >::State_::get(
 
 template < class TNonlinearities >
 void
-nest::parrot_rate_neuron< TNonlinearities >::State_::set(
+nest::rate_transformer_node< TNonlinearities >::State_::set(
   const DictionaryDatum& d )
 {
   updateValue< double >( d, names::rate, rate_ ); // Rate
 }
 
 template < class TNonlinearities >
-nest::parrot_rate_neuron< TNonlinearities >::Buffers_::Buffers_(
-  parrot_rate_neuron< TNonlinearities >& n )
+nest::rate_transformer_node< TNonlinearities >::Buffers_::Buffers_(
+  rate_transformer_node< TNonlinearities >& n )
   : logger_( n )
 {
 }
 
 template < class TNonlinearities >
-nest::parrot_rate_neuron< TNonlinearities >::Buffers_::Buffers_(
+nest::rate_transformer_node< TNonlinearities >::Buffers_::Buffers_(
   const Buffers_&,
-  parrot_rate_neuron< TNonlinearities >& n )
+  rate_transformer_node< TNonlinearities >& n )
   : logger_( n )
 {
 }
@@ -108,7 +108,7 @@ nest::parrot_rate_neuron< TNonlinearities >::Buffers_::Buffers_(
  * ---------------------------------------------------------------- */
 
 template < class TNonlinearities >
-nest::parrot_rate_neuron< TNonlinearities >::parrot_rate_neuron()
+nest::rate_transformer_node< TNonlinearities >::rate_transformer_node()
   : Archiving_Node()
   , S_()
   , B_( *this )
@@ -118,8 +118,8 @@ nest::parrot_rate_neuron< TNonlinearities >::parrot_rate_neuron()
 }
 
 template < class TNonlinearities >
-nest::parrot_rate_neuron< TNonlinearities >::parrot_rate_neuron(
-  const parrot_rate_neuron& n )
+nest::rate_transformer_node< TNonlinearities >::rate_transformer_node(
+  const rate_transformer_node& n )
   : Archiving_Node( n )
   , nonlinearities_( n.nonlinearities_ )
   , S_( n.S_ )
@@ -134,15 +134,15 @@ nest::parrot_rate_neuron< TNonlinearities >::parrot_rate_neuron(
 
 template < class TNonlinearities >
 void
-nest::parrot_rate_neuron< TNonlinearities >::init_state_( const Node& proto )
+nest::rate_transformer_node< TNonlinearities >::init_state_( const Node& proto )
 {
-  const parrot_rate_neuron& pr = downcast< parrot_rate_neuron >( proto );
+  const rate_transformer_node& pr = downcast< rate_transformer_node >( proto );
   S_ = pr.S_;
 }
 
 template < class TNonlinearities >
 void
-nest::parrot_rate_neuron< TNonlinearities >::init_buffers_()
+nest::rate_transformer_node< TNonlinearities >::init_buffers_()
 {
   B_.delayed_rates_.clear(); // includes resize
 
@@ -157,7 +157,7 @@ nest::parrot_rate_neuron< TNonlinearities >::init_buffers_()
 
 template < class TNonlinearities >
 void
-nest::parrot_rate_neuron< TNonlinearities >::calibrate()
+nest::rate_transformer_node< TNonlinearities >::calibrate()
 {
   B_.logger_
     .init(); // ensures initialization in case mm connected after Simulate
@@ -169,7 +169,7 @@ nest::parrot_rate_neuron< TNonlinearities >::calibrate()
 
 template < class TNonlinearities >
 bool
-nest::parrot_rate_neuron< TNonlinearities >::update_( Time const& origin,
+nest::rate_transformer_node< TNonlinearities >::update_( Time const& origin,
   const long from,
   const long to,
   const bool called_from_wfr_update )
@@ -243,7 +243,7 @@ nest::parrot_rate_neuron< TNonlinearities >::update_( Time const& origin,
 
 template < class TNonlinearities >
 void
-nest::parrot_rate_neuron< TNonlinearities >::handle(
+nest::rate_transformer_node< TNonlinearities >::handle(
   InstantaneousRateConnectionEvent& e )
 {
   size_t i = 0;
@@ -258,7 +258,7 @@ nest::parrot_rate_neuron< TNonlinearities >::handle(
 
 template < class TNonlinearities >
 void
-nest::parrot_rate_neuron< TNonlinearities >::handle(
+nest::rate_transformer_node< TNonlinearities >::handle(
   DelayedRateConnectionEvent& e )
 {
   size_t i = 0;
@@ -275,11 +275,11 @@ nest::parrot_rate_neuron< TNonlinearities >::handle(
 
 template < class TNonlinearities >
 void
-nest::parrot_rate_neuron< TNonlinearities >::handle( DataLoggingRequest& e )
+nest::rate_transformer_node< TNonlinearities >::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
 } // namespace
 
-#endif /* #ifndef PARROT_RATE_NEURON_IMPL_H */
+#endif /* #ifndef RATE_TRANSFORMER_NODE_IMPL_H */

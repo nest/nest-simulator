@@ -58,3 +58,8 @@ lib/sli/rcsinfo.sli
 extras/emacs/sli.el
 extras/nest_vars.sh
 
+/extras/help_generator/more-example-networks/
+/extras/help_generator/py-original/
+/extras/help_generator/py-sample-notebooks/
+/extras/help_generator/py_sample/
+/extras/help_generator/slider.txt

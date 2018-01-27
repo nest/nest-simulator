@@ -145,6 +145,7 @@ template <>
 void RecordablesMap< gauss_rate_ipn >::create();
 template <>
 void RecordablesMap< rate_transformer_gauss >::create();
+
 } // namespace nest
 
 

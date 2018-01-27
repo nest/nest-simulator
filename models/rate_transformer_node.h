@@ -51,12 +51,12 @@ Name: rate_transformer_node - Rate neuron that sums up incoming rates
 
 Description:
 
-The parrot rate neuron simply sums up all incoming rates and applies
+The rate transformer node simply sums up all incoming rates and applies
 the nonlinearity specified in the function input of the template class.
 An important application is to provide the possibility to
 apply different nonlinearities to different incoming connections of the
 same rate neuron by connecting the sending rate neurons to the
-parrot rate neuron and connecting the parrot rate neuron to the
+rate transformer node and connecting the rate transformer node to the
 receiving rate neuron instead of using a direct connection.
 Please note that for instantaneous rate connections the rate arrives
 one time step later at the receiving rate neurons as with a direct connection.
@@ -72,7 +72,7 @@ Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
 Parameters:
-All Parameters from the class Nonlinearities can be set in the
+Only the parameters from the class Nonlinearities can be set in the
 status dictionary.
 
 Author: Mario Senden, Jan Hahne, Jannis Schuecker

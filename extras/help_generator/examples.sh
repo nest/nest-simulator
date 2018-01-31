@@ -92,7 +92,7 @@ for i in $EXAMPLES ; do
         runner=nest
     elif [ $ext = py ] ; then
 		#in letzte Zeile Bild Erzeugung einfügen
-		echo "import pylab \npylab.savefig('$imgdir/$examplename.png')" >> $example
+		echo "import pylab \npylab.savefig('$imgdir/$examplename.svg')" >> $example
 		# Bilder generieren
 		#ipython $value
     

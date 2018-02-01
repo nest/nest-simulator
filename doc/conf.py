@@ -35,7 +35,7 @@ import os
 
 import pip
 
-pip.main(['install', 'Sphinx==1.5.0'])
+# pip.main(['install', 'Sphinx==1.5.0'])
 pip.main(['install', 'sphinx-gallery'])
 
 import sphinx_gallery
@@ -249,4 +249,3 @@ texinfo_documents = [
 #    html_theme = 'alabaster'
 # else:
 #    html_theme = 'nat'
-applehelp_disable_external_tools = True

@@ -31,7 +31,9 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
-import sphinx_gallery
+import pip
+import subprocess
+
 # import shlex
 # import recommonmark
 from recommonmark.parser import CommonMarkParser
@@ -47,6 +49,9 @@ source_parsers = {
     '.md': CommonMarkParser
 }
 
+pip.main(['install', 'sphinx-gallery'])
+
+import sphinx_gallery
 
 # -- Checking for pandoc --------------------------------------------------
 

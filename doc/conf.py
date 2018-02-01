@@ -31,7 +31,14 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
+
+
 import pip
+
+pip.main(['install', 'Sphinx==1.5.0'])
+pip.main(['install', 'sphinx-gallery'])
+
+import sphinx_gallery
 import subprocess
 
 # import shlex
@@ -48,10 +55,6 @@ source_suffix = ['.rst', '.md']
 source_parsers = {
     '.md': CommonMarkParser
 }
-
-pip.main(['install', 'sphinx-gallery'])
-
-import sphinx_gallery
 
 # -- Checking for pandoc --------------------------------------------------
 

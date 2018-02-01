@@ -18,7 +18,7 @@ Table of Contents
    installation
    basics
    tutorials/index
-   examples/index
+
    guides/index
    quickref
 
@@ -36,7 +36,6 @@ Table of Contents
    :caption: Getting Involved
 
     Contact Us <http://www.nest-simulator.org/community/>
-    :doc:`citing-nest`
     Publications <http://www.nest-simulator.org/publications/>
     Developer Space <https://nest.github.io/nest-simulator/>
     NEST-Initiative <http://www.nest-initiative.org/>

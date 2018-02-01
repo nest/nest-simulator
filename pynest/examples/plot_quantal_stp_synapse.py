@@ -26,7 +26,7 @@ Compare Tsodyks-Markram Synapse models.
 This script compares the two variants of the Tsodyks/Markram synapse in NEST.
 '''
 
-import nest
+#import nest
 import nest.voltage_trace
 import numpy
 import pylab

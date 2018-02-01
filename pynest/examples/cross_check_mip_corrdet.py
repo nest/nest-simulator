@@ -19,9 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest
-from matplotlib.pylab import *
-
 '''
 Auto- and crosscorrelation functions for spike trains.
 
@@ -39,6 +36,9 @@ tbin:    bin size
 spike1:  first spike train [tspike...]
 spike2:  second spike train [tspike...]
 '''
+
+import nest
+from matplotlib.pylab import *
 
 
 def corr_spikes_sorted(spike1, spike2, tbin, tau_max, h):

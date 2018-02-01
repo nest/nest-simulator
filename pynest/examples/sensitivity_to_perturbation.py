@@ -22,6 +22,7 @@
 '''
 Sensitivity to perturbation
 ---------------------------
+
 This script simulates a network in two successive trials, which
 are identical except for one extra input spike in the second realisation.
 (a small perturbation). The network consists of recurrent, randomly

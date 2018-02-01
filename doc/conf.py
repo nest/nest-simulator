@@ -249,3 +249,4 @@ texinfo_documents = [
 #    html_theme = 'alabaster'
 # else:
 #    html_theme = 'nat'
+applehelp_disable_external_tools = True

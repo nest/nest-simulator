@@ -31,6 +31,7 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
+import sphinx_gallery
 # import shlex
 # import recommonmark
 from recommonmark.parser import CommonMarkParser

@@ -80,7 +80,14 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.mathjax',
+    'sphinx_gallery.gen_gallery',
 ]
+
+sphinx_gallery_conf = {
+    # path to your examples scripts
+    'examples_dirs' : '../pynest/examples',
+    # path where to save gallery generated examples
+    'gallery_dirs'  : 'auto_examples'}
 
 mathjax_path = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX" \
               "-AMS-MML_HTMLorMML"

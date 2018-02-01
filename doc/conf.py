@@ -35,7 +35,7 @@ import os
 
 import pip
 
-# pip.main(['install', 'Sphinx==1.5.0'])
+pip.main(['install', 'Sphinx==1.6.2'])
 pip.main(['install', 'sphinx-gallery'])
 
 import sphinx_gallery

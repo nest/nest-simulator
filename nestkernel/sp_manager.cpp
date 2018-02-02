@@ -830,12 +830,12 @@ nest::SPManager::global_shuffle( std::vector< index >& v, size_t n )
   std::sort( v.begin(), v.end() ); // TODO@5g: remove
 
   // shuffle res using the global random number generator
-  uint N = v.size();
+  unsigned int N = v.size();
   std::vector< index > v2;
   index tmp;
-  uint rnd;
+  unsigned int rnd;
   std::vector< index >::iterator rndi;
-  for ( uint i = 0; i < n; i++ )
+  for ( unsigned int i = 0; i < n; i++ )
   {
     N = v.size();
     rnd = kernel().rng_manager.get_grng()->ulrand( N );

@@ -39,7 +39,7 @@ if os.environ.get('READTHEDOCS', None) == 'True':
     # So that we can build documentation using seaborn
     install_requires = ['seaborn']
 
-    build_line = "bash ./build.sh"
+    build_line = "bash ./readthedocs-build.sh"
     args = shlex.split(build_line)
     print(args)
     p = subprocess.Popen(args)

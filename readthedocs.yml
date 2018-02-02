@@ -1,0 +1,15 @@
+# Build PDF & ePub
+formats:
+    - epub
+    - pdf
+
+requirements_file: requirements.txt
+
+build:
+    image: 2.0
+
+python:
+    version: 3.5
+
+python:
+   setup_py_install: true

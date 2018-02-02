@@ -31,6 +31,16 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
+
+
+import pip
+
+# pip.main(['install', 'Sphinx==1.5.6'])
+pip.main(['install', 'sphinx-gallery'])
+
+import sphinx_gallery
+import subprocess
+
 # import shlex
 # import recommonmark
 from recommonmark.parser import CommonMarkParser
@@ -41,11 +51,10 @@ from subprocess import check_output, CalledProcessError
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
-
+source_suffix = ['.rst', '.md']
 source_parsers = {
     '.md': CommonMarkParser
 }
-source_suffix = ['.rst', '.md']
 
 # -- Checking for pandoc --------------------------------------------------
 
@@ -88,7 +97,9 @@ sphinx_gallery_conf = {
     # path to your examples scripts
     'examples_dirs' : '../pynest/examples',
     # path where to save gallery generated examples
-    'gallery_dirs'  : 'auto_examples'}
+    'gallery_dirs'  : 'auto_examples',
+    'backreferences_dir': False
+}
 
 mathjax_path = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX" \
               "-AMS-MML_HTMLorMML"

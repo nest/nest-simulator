@@ -21,7 +21,7 @@
 
 """
 Gap Junctions: Two neuron example
----------------------------------
+------------------
 
 This script simulates two Hodgkin-Huxley neurons of type `hh_psc_alpha_gap`
 connected by a gap junction. Both neurons receive a constant current of

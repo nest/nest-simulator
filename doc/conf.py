@@ -98,6 +98,7 @@ sphinx_gallery_conf = {
     'examples_dirs' : '../pynest/examples',
     # path where to save gallery generated examples
     'gallery_dirs'  : 'auto_examples',
+    'expected_failing_examples': ['../pynest/examples/plot_quantal_stp_synapse.py'],
     'backreferences_dir': False
 }
 

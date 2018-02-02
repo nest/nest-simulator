@@ -249,4 +249,8 @@ fi
 
 echo "MSGBLD0340: Build completed."
 
-source ./result/bin/nest_vars.sh
+ls -l
+
+cd ..
+
+. result/bin/nest_vars.sh

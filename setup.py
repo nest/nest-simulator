@@ -39,17 +39,15 @@ if os.environ.get('READTHEDOCS', None) == 'True':
     # So that we can build documentation using seaborn
     install_requires = ['seaborn']
 
+    build_line = "sh ./build.sh"
+    args = shlex.split(build_line)
+    print(args)
+    p = subprocess.Popen(args)
 
-
-build_line = "sh ./build.sh"
-args = shlex.split(build_line)
-print(args)
-p = subprocess.Popen(args)
-
-source_line = "source ./result/bin/nest_vars.sh"
-args = shlex.split(source_line)
-print(args)
-p = subprocess.Popen(args)
+    source_line = "source ./result/bin/nest_vars.sh"
+    args = shlex.split(source_line)
+    print(args)
+    p = subprocess.Popen(args)
 
 
 

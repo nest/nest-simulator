@@ -8,38 +8,38 @@ Welcome to the  NEST simulator documentation!
 How the documentation is organized
 ####################################
 
-* `Tutorials <tutorials/index>` show you step by step how to get started with NEST. If you haven't used NEST before, this is a good place to start.
+* :doc:`Tutorials <tutorials/index>` show you step by step how to get started with NEST. If you haven't used NEST before, this is a good place to start.
 
-* `Example Networks <examples/index>`  describe specific use-cases of neural networks developed for NEST. The examples range frome simple `one neuron models </examples/one_neuron>` to more complex networks such as `Random Balanced Network Example with the Multisynapse Neuron Model <examples/brunel_exp_multisynapse_nest>`.
+* :doc:`Example Networks <examples/index>`  describe specific use-cases of neural networks developed for NEST. The examples range frome simple :doc:`one neuron models </examples/one_neuron>` to more complex networks such as :doc:`Random Balanced Network Example with the Multisynapse Neuron Model <examples/brunel_exp_multisynapse_nest>`.
 
-* `Topical Guides <guides/index>` provide deeper insight into several topics and concepts at an intermediate to high level. Here you can find guides to  `setting up your system with MUSIC <guides/using-nest-with-music>`, `Parallel Computing <guides/parallel-computing>`, details on `Gap Junction Simulations <guides/simulations-with-gap-junctions>` and `much more <guides/index>`.
+* :doc:`Topical Guides <guides/index>` provide deeper insight into several topics and concepts at an intermediate to high level. Here you can find guides to  :doc:`setting up your system with MUSIC <guides/using-nest-with-music>`, :doc:`Parallel Computing <guides/parallel-computing>`, details on :doc:`Gap Junction Simulations <guides/simulations-with-gap-junctions>` and :doc:`much more <guides/index>`.
 
-* `Reference Material <quickref>` contains the command index and APIs for a quick look up of terms.
+* :doc:`Reference Material <quickref>` contains the command index and APIs for a quick look up of terms.
 
 Getting Started
 ################
 
-* `Why use NEST <overview>`
+* :doc:`Why use NEST <overview>`
 
-* `Download <download>`
+* :doc:`Download <download>`
 
-* `Installation Instructions <installation>`
+* :doc:`Installation Instructions <installation>`
 
-* `The basics of NEST <basics>`
+* :doc:`The basics of NEST <basics>`
 
-* `Introduction to PyNEST <tutorials/introduction-to-pynest>`
+* :doc:`Introduction to PyNEST <tutorials/introduction-to-pynest>`
 
-	* `Part 1: Neurons and simple neural networks <tutorials/part-1-neurons-and-simple-neural-networks>`
-	* `Part 2: Populations of neurons <tutorials/part-2-populations-of-neurons>`
-	* `Part 3: Connecting networks with synapses <tutorials/part-3-connecting-networks-with-synapses>`
-	* `Part 4: Topologically structured networks <tutorials/part-4-topologically-structured-networks>`
+	* :doc:`Part 1: Neurons and simple neural networks <tutorials/part-1-neurons-and-simple-neural-networks>`
+	* :doc:`Part 2: Populations of neurons <tutorials/part-2-populations-of-neurons>`
+	* :doc:`Part 3: Connecting networks with synapses <tutorials/part-3-connecting-networks-with-synapses>`
+	* :doc:`Part 4: Topologically structured networks <tutorials/part-4-topologically-structured-networks>`
 
 Getting Help
 #############
 
-* Check out the `FAQs <faqs/index>` for common issues.
+* Check out the :doc:`FAQs <faqs/index>` for common issues.
 
-* Our `video series <tutorials/videos/index>` provides instructon and examples for those who want a walk through of how to use NEST'S interface.
+* Our :doc:`video series <tutorials/videos/index>` provides instructon and examples for those who want a walk through of how to use NEST'S interface.
 
 * Have a question or issue?  Ask our `Mailing List <http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user>`_
 
@@ -48,7 +48,7 @@ Getting Help
 Contribute
 ###########
 
-* Have you used NEST in an article or presentation? `Let us know <http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user>`_  and we will add it to our list of `publications <http://www.nest-simulator.org/publications/>`_ Find out how to `cite NEST here <citing-nest>`.
+* Have you used NEST in an article or presentation? `Let us know <http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user>`_  and we will add it to our list of `publications <http://www.nest-simulator.org/publications/>`_ Find out how to :doc:`cite NEST here <citing-nest>`.
 
 * If you have any comments or suggestions, please share them on our `Mailing List <http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user>`_ .
 

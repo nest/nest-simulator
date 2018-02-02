@@ -8,3 +8,4 @@ path.py
 cython==0.23.4
 statsmodels
 jupyter
+cmake

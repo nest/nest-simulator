@@ -10,7 +10,7 @@ pynest/pynestkernel.cpp
 .*
 *.log
 *.pyc
-Makefile
+
 build/
 
 /juqueen/

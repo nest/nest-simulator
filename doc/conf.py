@@ -84,6 +84,7 @@ extensions = [
 ]
 
 sphinx_gallery_conf = {
+    'doc_module': ('sphinx_gallery', 'numpy'),
     # path to your examples scripts
     'examples_dirs' : '../pynest/examples',
     # path where to save gallery generated examples

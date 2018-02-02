@@ -1,7 +1,6 @@
 # Build PDF & ePub
 formats:
-    - epub
-    - pdf
+    - none
 
 requirements_file: requirements.txt
 

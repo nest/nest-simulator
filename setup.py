@@ -44,7 +44,7 @@ if os.environ.get('READTHEDOCS', None) == 'True':
     print(args)
     p = subprocess.Popen(args)
 
-    source_line = "source ./result/bin/nest_vars.sh"
+    source_line = ". ./result/bin/nest_vars.sh"
     args = shlex.split(source_line)
     print(args)
     p = subprocess.Popen(args)

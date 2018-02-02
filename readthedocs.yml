@@ -6,10 +6,10 @@ formats:
 requirements_file: requirements.txt
 
 build:
-    image: 2.0
+    image: latest
 
 python:
-    version: 3.5
+    version: 3.6
 
 python:
    setup_py_install: true

@@ -70,7 +70,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::get(
   ( *d )[ names::rate_times ] = DoubleVectorDatum( times_ms );
   ( *d )[ names::rate_values ] =
     DoubleVectorDatum( new std::vector< double_t >( rate_values_ ) );
-  ( *d )[ names::allow_offgrid_spikes ] = BoolDatum( allow_offgrid_times_ );
+  ( *d )[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_times_ );
 }
 
 void
@@ -114,6 +114,25 @@ nest::inhomogeneous_poisson_generator::Parameters_::set(
   const bool times = d->known( names::rate_times );
   const bool rates = updateValue< std::vector< double_t > >(
     d, names::rate_values, rate_values_ );
+
+  // if offgrid flag changes, it must be done so either before any rates are
+  // set or when setting new rates (which removes old ones)
+  if ( d->known( names::allow_offgrid_times ) )
+  {
+    const bool flag_offgrid = d->lookup( names::allow_offgrid_times );
+
+    if ( flag_offgrid != allow_offgrid_times_
+      and not( times or rate_times_.empty() ) )
+    {
+      throw BadProperty(
+        "Option can only be set together with rate times "
+        "or if no rate times have been set." );
+    }
+    else
+    {
+      allow_offgrid_times_ = flag_offgrid;
+    }
+  }
 
   if ( times xor rates )
   {

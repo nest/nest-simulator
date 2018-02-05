@@ -169,8 +169,8 @@ private:
   StimulatingDevice< SpikeEvent > device_;
 
   Parameters_ P_;
-  Variables_ V_;
   Buffers_ B_;
+  Variables_ V_;
 };
 
 inline port

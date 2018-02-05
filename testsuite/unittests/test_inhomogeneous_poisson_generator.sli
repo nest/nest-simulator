@@ -34,13 +34,14 @@
 
 
    FirstVersion: December 2017
-   Author: Zajzon
+   Author: Barna Zajzon
  */
 
 (unittest) run
 /unittest using
 
-% check a simple working use case
+% Test 1.a
+% Rate times and values must be set together.
 {
   ResetKernel
   0 <<
@@ -51,8 +52,137 @@
   /inhomogeneous_poisson_generator Create /ipg Set
   ipg <<
         /rate_times [1.]
+  >> SetStatus
+}
+fail_or_die
+
+% Test 1.b
+% Rate times and values must be set together.
+{
+  ResetKernel
+  0 <<
+      /local_num_threads 1
+      /resolution 0.1
+  >> SetStatus
+
+  /inhomogeneous_poisson_generator Create /ipg Set
+  ipg <<
         /rate_values [10.]
   >> SetStatus
-  10.0 Simulate
 }
-assert_or_die
+fail_or_die
+
+% Test 2
+% Length of rate times and values must match.
+{
+  ResetKernel
+  0 <<
+      /local_num_threads 1
+      /resolution 0.1
+  >> SetStatus
+
+  /inhomogeneous_poisson_generator Create /ipg Set
+  ipg <<
+        /rate_times [1. 2.]
+        /rate_values [10.]
+  >> SetStatus
+}
+fail_or_die
+
+% Test 3
+% Rate times must be strictly increasing.
+{
+  ResetKernel
+  0 <<
+      /local_num_threads 1
+      /resolution 0.1
+  >> SetStatus
+
+  /inhomogeneous_poisson_generator Create /ipg Set
+  ipg <<
+        /rate_times [1. 5. 3.]
+        /rate_values [10. 20. 5.]
+  >> SetStatus
+}
+fail_or_die
+
+% Test 4.a
+% Try offgrid time point.
+{
+  ResetKernel
+  0 <<
+      /local_num_threads 1
+      /resolution 0.1
+  >> SetStatus
+
+  /inhomogeneous_poisson_generator Create /ipg Set
+  ipg <<
+        /rate_times [1.23]
+        /rate_values [10.]
+  >> SetStatus
+}
+fail_or_die
+
+% Test 4.b
+% Try wrong time point representation but allow offgrid times.
+{
+  ResetKernel
+  0 <<
+      /local_num_threads 1
+      /resolution 0.1
+  >> SetStatus
+
+  /ipg /inhomogeneous_poisson_generator << /allow_offgrid_times true >> Create def
+
+  ipg <<
+        /rate_times [1.23]
+        /rate_values [10.]
+  >> SetStatus
+}
+pass_or_die
+
+% Test 5.a
+% allow_offgrid_times can't be modified separately after rates have been set.
+{
+  ResetKernel
+  0 <<
+      /local_num_threads 1
+      /resolution 0.1
+  >> SetStatus
+
+  /ipg /inhomogeneous_poisson_generator Create def
+
+  ipg <<
+      /rate_times [1.2]
+      /rate_values [10.]
+  >> SetStatus
+
+  ipg <<
+      /allow_offgrid_times true
+  >> SetStatus
+}
+fail_or_die
+
+% Test 5.b
+% allow_offgrid_times can't be modified separately after rates have been set.
+{
+  ResetKernel
+  0 <<
+      /local_num_threads 1
+      /resolution 0.1
+  >> SetStatus
+
+  /ipg /inhomogeneous_poisson_generator << /allow_offgrid_times true >> Create def
+
+  ipg <<
+      /rate_times [1.23]
+      /rate_values [10.]
+  >> SetStatus
+
+  ipg <<
+      /allow_offgrid_times false
+      /rate_times [1.25]
+      /rate_values [10.]
+  >> SetStatus
+}
+fail_or_die

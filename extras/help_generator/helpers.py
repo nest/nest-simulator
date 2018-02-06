@@ -77,3 +77,30 @@ def create_helpdirs(path):
     """
     makedirs(os.path.join(path, 'sli'))
     makedirs(os.path.join(path, 'cc'))
+
+    
+def help_generation_required(print_msg = True):
+    """
+    Check whether help extraction/installation is required.
+
+    The check is based on the setting of the environment variable
+    NEST_INSTALL_NODOC. If the variable is set, this function returns
+    False, if not, it returns True.
+
+    A corresponding message is printed if print_msg is True. The
+    message is omitted if print_msg is set to False.
+    """
+    
+    blue = "\033[94m"
+    noblue = "\033[0m"
+    
+    if os.environ.has_key("NEST_INSTALL_NODOC"):
+        if print_msg:
+            msg = "Not extracting help information due to 'make install-nodoc'."
+            print(blue + msg + noblue)
+        return False
+    else:
+        if print_msg:
+            msg = "Extracting help information. This may take a little while."
+            print(blue + msg + noblue)
+        return True

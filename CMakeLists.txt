@@ -361,4 +361,8 @@ install( FILES LICENSE README.md NEWS
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 
+add_custom_target( install-nodoc
+  COMMAND make NEST_INSTALL_NODOC=true install
+)
+
 nest_print_config_summary()

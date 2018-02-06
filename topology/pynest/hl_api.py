@@ -28,35 +28,27 @@ NEST:
 
 1.  Function names are the same as in SLI.
 2.  Nodes are identified by their GIDs.
-3.  GIDs are always given as tuples or lists of integer(s).
-4.  Commands returning GIDs return them as tuples.
+3.  GIDs are given as GIDCollection.
+4.  Commands returning GIDs return them as tuples or GIDCollection.
 5.  Other arguments can be
 
     * single items that are applied to all entries in a GID list
-    * a list of the same length as the given list of GID(s) where each item is
+    * a list of the same length as the given GIDCollection where each item is
       matched with the pertaining GID.
 
     **Example**
         ::
 
-            layers = CreateLayer(({...}, {...}, {...}))
+            layer = CreateLayer({...})
 
-    creates three layers and returns a tuple of three GIDs.
+    creates a layer and returns a GIDCollection with the GIDs in the layer.
         ::
 
-            ConnectLayers(layers[:2], layers[1:], {...})
+            ConnectLayers(layer, layer, {...})
 
-    connects `layers[0]` to `layers[1]` and `layers[1]` to `layers[2]` \
-using the same dictionary to specify both connections.
-        ::
+    connects `layer` to `layer` using a dictionary to specify the connections.
 
-            ConnectLayers(layers[:2], layers[1:], ({...}, {...}))
 
-    connects the same layers, but the `layers[0]` to `layers[1]` connection
-    is specified by the first dictionary, the `layers[1]` to `layers[2]`
-    connection by the second.
-    
-    
 Functions in the Topology module:
   - CreateMask(masktype, specs, anchor=None)
   - CreateParameter(parametertype, specs)
@@ -112,9 +104,9 @@ def CreateMask(masktype, specs, anchor=None):
         are different types for 2- and 3-dimensional layers.
     specs : dict
         Dictionary specifying the parameters of the provided `masktype`,
-        see **Notes**.
+        see **Mask types**.
     anchor : [tuple/list of floats | dict with the keys `'column'` and \
-`'row'` (for grid masks only)], optional, default: None
+        `'row'` (for grid masks only)], optional, default: None
         By providing anchor coordinates, the location of the mask relative to
         the driver node can be changed. The list of coordinates has a length
         of 2 or 3 dependent on the number of dimensions.
@@ -127,8 +119,8 @@ def CreateMask(masktype, specs, anchor=None):
 
     See also
     --------
-    ConnectLayers: Connect two (lists of) layers pairwise according to
-        specified projections. ``Mask`` objects can be passed in a connection
+    ConnectLayers: Connect two layers pairwise according to specified
+        projections. ``Mask`` objects can be passed in a connection
         dictionary with the key `'mask'`.
 
 
@@ -244,11 +236,11 @@ def CreateParameter(parametertype, specs):
     Parameters
     ----------
     parametertype : {'constant', 'linear', 'exponential', 'gaussian', \
-'gaussian2D', 'uniform', 'normal', 'lognormal'}
+        'gaussian2D', 'uniform', 'normal', 'lognormal'}
         Function types with or without distance dependency
     specs : dict
         Dictionary specifying the parameters of the provided
-        `'parametertype'`, see **Notes**.
+        `'parametertype'`, see **Parameter types**.
 
 
     Returns
@@ -258,7 +250,7 @@ def CreateParameter(parametertype, specs):
 
     See also
     --------
-    ConnectLayers : Connect two (lists of) layers pairwise according to
+    ConnectLayers : Connect two layers pairwise according to
         specified projections. Parameters can be used to specify the
         parameters `'kernel'`, `'weights'` and `'delays'` in the
         connection dictionary.
@@ -370,7 +362,7 @@ def CreateParameter(parametertype, specs):
 
 def CreateLayer(specs):
     """
-    Create a Topology layer(s) according to given specifications.
+    Create a Topology layer according to given specifications.
 
     The Topology module organizes neuronal networks in layers. A layer is a
     special type of GIDCollection which contains information about the spatial
@@ -390,7 +382,7 @@ def CreateLayer(specs):
     Parameters
     ----------
     specs : dict
-        Dictionary with layer specifications, see **Notes**.
+        Dictionary with layer specifications, see **Other parameters**.
 
     Returns
     -------
@@ -484,14 +476,10 @@ def ConnectLayers(pre, post, projections):
     Pairwise connect of pre- and postsynaptic layers.
 
     `pre` and `post` must be GIDCollections. The GIDs
-    must refer to layers created with ``CreateLayers``. Layers in the `pre`
-    and `post` lists are connected pairwise.
+    must refer to layers created with ``CreateLayers``. Layers in `pre`
+    and `post` are connected pairwise.
 
-    * If `projections` is a single dictionary, it applies to all pre-post
-      pairs.
-    * If `projections` is a tuple/list of dictionaries, it must have the same
-      length as `pre` and `post` and each dictionary is matched with the proper
-      pre-post pair.
+    `projections` is a single dictionary, and applies to all pre-post pairs.
 
     A minimal call of ``ConnectLayers`` expects a source layer `pre`, a
     target layer `post` and a connection dictionary `projections`
@@ -509,8 +497,8 @@ def ConnectLayers(pre, post, projections):
         GIDCollection with GIDs of presynaptic layers (sources)
     post : GIDCollection
        GIDCollection with GIDs of postsynaptic layers (targets)
-    projections : (tuple/list of) dict(s)
-        Dictionary or list of dictionaries specifying projection properties
+    projections : dict
+        Dictionary specifying projection properties
 
 
     Returns
@@ -521,7 +509,7 @@ def ConnectLayers(pre, post, projections):
 
     See also
     --------
-    CreateLayer : Create one or more Topology layer(s).
+    CreateLayer : Create a Topology layer(s).
     CreateMask : Create a ``Mask`` object. Documentation on available spatial
         masks. Masks can be used to specify the key `'mask'` of the
         connection dictionary.
@@ -657,7 +645,7 @@ def GetPosition(nodes):
     Parameters
     ----------
     nodes : GIDCollection
-        GIDCollection of nodes we want the Positions to
+        GIDCollection of nodes we want the positions to
 
 
     Returns
@@ -699,7 +687,7 @@ def GetPosition(nodes):
             pos = GetPosition(l)
 
             # retrieve positions of the first node in the layer
-            pos = GetPosition(l[:1])
+            pos = GetPosition(l[0])
 
             # retrieve positions of node 4
             pos = GetPosition(l[4:5])
@@ -714,7 +702,7 @@ def GetPosition(nodes):
 
 def Displacement(from_arg, to_arg):
     """
-    Get vector of lateral displacement from node(s) `from_arg`
+    Get vector of lateral displacement from node(s)/Position(s) `from_arg`
     to node(s) `to_arg`.
 
     Displacement is the shortest displacement, taking into account
@@ -731,8 +719,8 @@ def Displacement(from_arg, to_arg):
     
     Parameters
     ----------
-    from_arg : GIDCollection
-        GIDCollection of GIDs
+    from_arg : GIDCollection or tuple/list with tuple(s)/list(s) of floats
+        GIDCollection of GIDs or tuple/list of position(s)
     to_arg : GIDCollection
         GIDCollection of GIDs
     
@@ -768,7 +756,7 @@ def Displacement(from_arg, to_arg):
                                 'elements'  : 'iaf_psc_alpha'})
     
             # displacement between node 2 and 3
-            print(Displacement(l[1:2], l[2:3]))
+            print(Displacement(l[1], l[2]))
 
             # displacment between the position (0.0., 0.0) and node 2
             print(Displacement([(0.0, 0.0)], l[1:2]))
@@ -789,7 +777,7 @@ def Displacement(from_arg, to_arg):
 
 def Distance(from_arg, to_arg):
     """
-    Get lateral distances from node(s) from_arg to node(s) to_arg.
+    Get lateral distances from node(s)/position(s) from_arg to node(s) to_arg.
 
     The distance between two nodes is the length of its displacement.
 
@@ -806,8 +794,8 @@ def Distance(from_arg, to_arg):
 
     Parameters
     ----------
-    from_arg : GIDCollection or tuple/list with tuples/lists of floats
-        GIDCollection of GIDs or position(s)
+    from_arg : GIDCollection or tuple/list with tuple(s)/list(s) of floats
+        GIDCollection of GIDs or tuple/list of position(s)
     to_arg : GIDCollection
         GIDCollection of GIDs
 
@@ -843,7 +831,7 @@ def Distance(from_arg, to_arg):
                                 'elements'  : 'iaf_psc_alpha'})
 
             # distance between node 2 and 3
-            print(Distance(l[1:2], l[2:3]))
+            print(Distance(l[1], l[2]))
 
             # distance between the position (0.0., 0.0) and node 2
             print(l.Distance([(0.0, 0.0)], l[1:2]))
@@ -1318,14 +1306,15 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
     """
     if not isinstance(sources, nest.GIDCollection):
         raise ValueError("sources must be a GIDCollection.")
-    
-    # TODO481 some sort of list comprehension
+
     result = []
     for nodes in GetTargetNodes(sources, tgt_layer, syn_model):
         node_results = []
         for gid in nodes:
+            # The GIDs in the layers are continuos, so we can use the gid to
+            # find the index in the layer.
             index = gid - tgt_layer[0].get('global_id')
-            gc = tgt_layer[index:index + 1]
+            gc = tgt_layer[index]
             gp = GetPosition(gc)
             node_results.append(gp)
         result.append( node_results )
@@ -1690,7 +1679,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
 
             # plot mask and kernel of the center element
             tp.PlotKernel(ax,
-                l[ctr_elem-1:ctr_elem],
+                l[ctr_elem],
                 mask=mask_dict,
                 kern=kernel_dict)
     """
@@ -1774,8 +1763,8 @@ def SelectNodesByMask(layer, anchor, mask_obj):
 
     Parameters
     ----------
-    layer : tuple/list of int
-        List containing the single layer to select nodes from.
+    layer : GIDCollection
+        GIDCollection with GIDs of the layer to select nodes from.
     anchor : tuple/list of double
         List containing center position of the layer. This is the point from
         where we start to search.

@@ -433,68 +433,10 @@ nest::ConnectionManager::connect( index sgid,
   double d,
   double w )
 {
-  const thread tid = kernel().vp_manager.get_thread_id();
   Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
-
-  // target is a normal node or device with proxies
-  if ( target->has_proxies() )
+  if ( connection_required(source, target, target_thread) )
   {
     connect_( *source, *target, sgid, target_thread, syn, d, w );
-  }
-  else if ( target->local_receiver() ) // target is a normal device
-  {
-    // connections to music proxies or similar devices with one node
-    // per process have to be established even though the source may
-    // be a proxy, but still only if the source is on the local
-    // process.
-    if ( target->one_node_per_process() )
-    {
-      if ( kernel().node_manager.is_local_node( source ) )
-      {
-        connect_( *source, *target, sgid, target_thread, syn, d, w );
-      }
-      return;
-    }
-
-    // make sure source is on this MPI rank
-    if ( source->is_proxy() )
-    {
-      return;
-    }
-
-    // make sure connections are only created on the thread of the device
-    if ( ( source->get_thread() != target_thread )
-      && ( source->has_proxies() ) )
-    {
-      return;
-    }
-
-    if ( source->has_proxies() ) // normal neuron->device connection
-    {
-      connect_( *source, *target, sgid, target_thread, syn, d, w );
-    }
-    else // create device->device connections on suggested thread of target
-    {
-      target_thread = kernel().vp_manager.vp_to_thread(
-        kernel().vp_manager.suggest_vp( target->get_gid() ) );
-      if ( target_thread == tid )
-      {
-        source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
-        target = kernel().node_manager.get_node_or_proxy(
-          target->get_gid(), target_thread );
-        connect_( *source, *target, sgid, target_thread, syn, d, w );
-      }
-    }
-  }
-  else // globally receiving devices, e.g., volume transmitter
-  {
-    // we do not allow to connect a device to a global receiver at the moment
-    if ( not source->has_proxies() )
-    {
-      throw IllegalConnection( "The models " + target->get_name() + " and "
-        + source->get_name() + " cannot be connected." );
-    }
-    connect_( *source, *target, sgid, tid, syn, d, w );
   }
 }
 
@@ -508,68 +450,10 @@ nest::ConnectionManager::connect( index sgid,
   double d,
   double w )
 {
-  const thread tid = kernel().vp_manager.get_thread_id();
   Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
-
-  // target is a normal node or device with proxies
-  if ( target->has_proxies() )
+  if ( connection_required(source, target, target_thread) )
   {
     connect_( *source, *target, sgid, target_thread, syn, params, d, w );
-  }
-  else if ( target->local_receiver() ) // target is a normal device
-  {
-    // connections to music proxies or similar devices with one node
-    // per process have to be established even though the source may
-    // be a proxy, but still only if the source is on the local
-    // process.
-    if ( target->one_node_per_process() )
-    {
-      if ( kernel().node_manager.is_local_node( source ) )
-      {
-        connect_( *source, *target, sgid, target_thread, syn, params, d, w );
-      }
-      return;
-    }
-
-    // make sure source is on this MPI rank
-    if ( source->is_proxy() )
-    {
-      return;
-    }
-
-    // make sure connections are only created on the thread of the device
-    if ( ( source->get_thread() != target_thread )
-      && ( source->has_proxies() ) )
-    {
-      return;
-    }
-
-    if ( source->has_proxies() ) // normal neuron->device connection
-    {
-      connect_( *source, *target, sgid, target_thread, syn, params, d, w );
-    }
-    else // create device->device connections on suggested thread of target
-    {
-      target_thread = kernel().vp_manager.vp_to_thread(
-        kernel().vp_manager.suggest_vp( target->get_gid() ) );
-      if ( target_thread == tid )
-      {
-        source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
-        target = kernel().node_manager.get_node_or_proxy(
-          target->get_gid(), target_thread );
-        connect_( *source, *target, sgid, target_thread, syn, params, d, w );
-      }
-    }
-  }
-  else // globally receiving devices, e.g., volume transmitter
-  {
-    // we do not allow to connect a device to a global receiver at the moment
-    if ( not source->has_proxies() )
-    {
-      throw IllegalConnection( "The models " + target->get_name() + " and "
-        + source->get_name() + " cannot be connected." );
-    }
-    connect_( *source, *target, sgid, tid, syn, params, d, w );
   }
 }
 
@@ -580,85 +464,22 @@ nest::ConnectionManager::connect( index sgid,
   DictionaryDatum& params,
   index syn )
 {
-  const thread tid = kernel().vp_manager.get_thread_id();
-
-  // make sure target is on this MPI rank
-  if ( not kernel().node_manager.is_local_gid( tgid ) )
-  {
-    return false;
-  }
-
+  thread tid = kernel().vp_manager.get_thread_id();
   Node* target = kernel().node_manager.get_node_or_proxy( tgid, tid );
   thread target_thread = target->get_thread();
   Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
-
-  // target is a normal node or device with proxies
-  if ( target->has_proxies() )
+  
+  if ( connection_required(source, target, target_thread) )
   {
     connect_( *source, *target, sgid, target_thread, syn, params );
+    return true;
   }
-  else if ( target->local_receiver() ) // target is a normal device
-  {
-    // connections to music proxies or similar devices with one node
-    // per process have to be established even though the source may
-    // be a proxy, but still only if the source is on the local
-    // process.
-    if ( target->one_node_per_process() )
-    {
-      if ( kernel().node_manager.is_local_node( source ) )
-      {
-        connect_( *source, *target, sgid, target_thread, syn, params );
-        return true;
-      }
-      return false;
-    }
 
-    // make sure source is on this MPI rank
-    if ( source->is_proxy() )
-    {
-      return false;
-    }
-
-    // make sure connections are only created on the thread of the device
-    if ( ( source->get_thread() != target_thread )
-      && ( source->has_proxies() ) )
-    {
-      return false;
-    }
-
-    if ( source->has_proxies() ) // normal neuron->device connection
-    {
-      connect_( *source, *target, sgid, target_thread, syn, params );
-    }
-    else // create device->device connections on suggested thread of target
-    {
-      target_thread = kernel().vp_manager.vp_to_thread(
-        kernel().vp_manager.suggest_vp( target->get_gid() ) );
-      if ( target_thread == tid )
-      {
-        source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
-        target = kernel().node_manager.get_node_or_proxy(
-          target->get_gid(), target_thread );
-        connect_( *source, *target, sgid, target_thread, syn, params );
-      }
-    }
-  }
-  else // globally receiving devices, e.g., volume transmitter
-  {
-    // we do not allow to connect a device to a global receiver at the moment
-    if ( not source->has_proxies() )
-    {
-      throw IllegalConnection( "The models " + target->get_name() + " and "
-        + source->get_name() + " cannot be connected." );
-    }
-    connect_( *source, *target, sgid, tid, syn, params );
-  }
-  // We did not exit prematurely due to proxies, so we have connected.
-  return true;
+  return false;
 }
 
 /*
- Connection::Manager::connect()
+ ConnectionManager::connect()
 
  Here a short description of the logic of the following connect() methods
  (from a mail conversation between HEP and MH, 2013-07-03)
@@ -1462,4 +1283,85 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
       }
     }
   }
+}
+
+bool
+nest::ConnectionManager::connection_required( Node*& source, Node*& target, thread tid )
+{
+  // The caller has to check and guarantee that the target is not a
+  // proxy and that it is on thread tid.
+  assert( not target->is_proxy() );
+  thread target_vp = target->get_vp();
+  assert( kernel().vp_manager.is_local_vp( target_vp ) );
+  assert( kernel().vp_manager.vp_to_thread( target_vp ) == tid );
+
+  // Connections to nodes with proxies (neurons or devices with
+  // proxies) which are local to tid have always to be
+  // established, independently of where and what type the source node
+  // is.
+  if ( target->has_proxies() )
+  {
+    return true;
+  }
+
+  // Local receivers are all devices that collect data only from
+  // thread-local nodes.
+  if ( target->local_receiver() )
+  {
+    // Connections to nodes with one node per process (MUSIC proxies
+    // or similar devices) have to be established by the thread of the
+    // target if the source is on the local process even though the
+    // source may be a proxy on tid.
+    const bool source_is_local = kernel().node_manager.is_local_node( source );
+    if ( target->one_node_per_process() && source_is_local )
+    {
+      return true;
+    }
+
+    // Connections from nodes with proxies (neurons or devices with
+    // proxies) to devices are only created if source is not a proxy
+    // and source and target are both on thread tid
+    const thread source_thread = source->get_thread();
+    const bool source_is_proxy = source->is_proxy();
+    if ( source->has_proxies() and source_thread == tid and not source_is_proxy )
+    {
+      return true;
+    }
+
+    // Connections from devices to devices are established only on the
+    // vp that is suggested for the target node. In this case, we also
+    // set the pointer to the source node on the target's thread.
+    if ( not source->has_proxies() )
+    {
+      const index target_gid = target->get_gid();
+      target_vp = kernel().vp_manager.suggest_vp( target_gid );
+      const bool target_vp_local = kernel().vp_manager.is_local_vp( target_vp );
+      const thread target_thread = kernel().vp_manager.vp_to_thread( target_vp);
+
+      if ( target_vp_local && target_thread == tid )
+      {
+	const index source_gid = source->get_gid();
+        source = kernel().node_manager.get_node_or_proxy( source_gid, target_thread );
+	return true;
+      }
+    }
+  }
+  
+  // Globally receiving nodes (e.g. the volume transmitter) have to be
+  // connected regardless of where the source is. However, we
+  // currently prohibit connections from devices to global receivers.
+  else
+  {
+    if ( source->has_proxies() )
+    {
+      return true;
+    }
+    
+    std::string msg = String::compose( "Devices ('%1' in this case) cannot be "
+        "connected to global receivers ('%2' in this case).", source->get_name(),
+        source->get_name() );
+    throw IllegalConnection( msg );
+  }
+
+  return false;
 }

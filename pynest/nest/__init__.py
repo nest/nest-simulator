@@ -25,7 +25,7 @@ Initializer of PyNEST.
 
 import sys
 import os
-from copy import copy
+import copy
 
 # This is a workaround for readline import errors encountered with Anaconda
 # Python running on Ubuntu, when invoked from the terminal
@@ -197,7 +197,13 @@ def init(argv):
         return
 
     quiet = False
-    nest_argv = copy(argv)
+
+    # Some commandline arguments of NEST and Python have the same
+    # name, but different meaning. To avoid unintended behavior, we
+    # handle NEST's arguments here and pass it a modified copy, while
+    # we leave the original list unchanged for further use by the user
+    # or other modules.
+    nest_argv = copy.copy(argv)
 
     if "--quiet" in nest_argv:
         quiet = True

@@ -41,7 +41,7 @@ Author: Hans Ekkehard Plesser, 2016-03-18
   << 
     /rows 3 
     /columns 3
-    /elements /iaf_neuron
+    /elements /iaf_psc_alpha
   >>
   CreateLayer
   dup

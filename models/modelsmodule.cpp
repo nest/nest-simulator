@@ -50,6 +50,7 @@
 #include "aeif_cond_exp.h"
 #include "aeif_psc_alpha.h"
 #include "aeif_psc_exp.h"
+#include "aeif_psc_delta.h"
 #include "amat2_psc_exp.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
@@ -62,7 +63,6 @@
 #include "iaf_cond_alpha_mc.h"
 #include "iaf_cond_exp.h"
 #include "iaf_cond_exp_sfa_rr.h"
-#include "iaf_neuron.h"
 #include "iaf_psc_alpha.h"
 #include "iaf_psc_alpha_multisynapse.h"
 #include "iaf_psc_delta.h"
@@ -195,9 +195,6 @@ ModelsModule::init( SLIInterpreter* )
     "threshold_lin_rate_opn" );
   kernel().model_manager.register_node_model< threshold_lin_rate_ipn >(
     "threshold_lin_rate_ipn" );
-  kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron",
-    /* private_model */ false,
-    /* deprecation_info */ "NEST 3.0" );
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >(
     "iaf_psc_alpha" );
@@ -368,6 +365,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< aeif_psc_alpha >(
     "aeif_psc_alpha" );
   kernel().model_manager.register_node_model< aeif_psc_exp >( "aeif_psc_exp" );
+  kernel().model_manager.register_node_model< aeif_psc_delta >(
+    "aeif_psc_delta" );
   kernel().model_manager.register_node_model< ht_neuron >( "ht_neuron" );
   kernel().model_manager.register_node_model< aeif_cond_beta_multisynapse >(
     "aeif_cond_beta_multisynapse" );

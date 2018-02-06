@@ -1,5 +1,5 @@
 /*
- *  hh_psc_alpha.h
+ *  aeif_psc_delta.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef HH_PSC_ALPHA_H
-#define HH_PSC_ALPHA_H
+#ifndef AEIF_PSC_delta_H
+#define AEIF_PSC_delta_H
 
 // Generated includes:
 #include "config.h"
@@ -32,7 +32,6 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
-#include <gsl/gsl_sf_exp.h>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -42,6 +41,73 @@
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
+
+/* BeginDocumentation
+Name: aeif_psc_delta - Current-based adaptive exponential integrate-and-fire
+neuron model according to Brette and Gerstner (2005) with delta synapse.
+
+Description:
+
+aeif_psc_delta is the adaptive exponential integrate and fire neuron
+according to Brette and Gerstner (2005), with post-synaptic currents
+in the form of delta spikes.
+
+This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
+solver with adaptive stepsize to integrate the differential equation.
+
+The membrane potential is given by the following differential equation:
+C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)+I(t)+I_e
+
+and
+
+tau_w * dw/dt= a(V-E_L) -W
+
+I(t) = J Sum_k delta(t - t^k).
+
+Here delta is the dirac delta function and k indexes incoming
+spikes. This is implemented such that V_m will be incremented/decremented by
+the value of J after a spike.
+
+Parameters:
+The following parameters can be set in the status dictionary.
+
+Dynamic state variables:
+  V_m        double - Membrane potential in mV
+  w          double - Spike-adaptation current in pA.
+
+Membrane Parameters:
+  C_m        double - Capacity of the membrane in pF
+  t_ref      double - Duration of refractory period in ms.
+  V_reset    double - Reset value for V_m after a spike. In mV.
+  E_L        double - Leak reversal potential in mV.
+  g_L        double - Leak conductance in nS.
+  I_e        double - Constant external input current in pA.
+
+Spike adaptation parameters:
+  a          double - Subthreshold adaptation in nS.
+  b          double - Spike-triggered adaptation in pA.
+  Delta_T    double - Slope factor in mV
+  tau_w      double - Adaptation time constant in ms
+  V_th       double - Spike initiation threshold in mV
+  V_peak     double - Spike detection threshold in mV.
+
+Integration parameters
+  gsl_error_tol  double - This parameter controls the admissible error of the
+                          GSL integrator. Reduce it if NEST complains about
+                          numerical instabilities.
+
+Author: Mikkel Elle Lepperød adapted from aeif_psc_exp and iaf_psc_delta
+
+Sends: SpikeEvent
+
+Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+
+References: Brette R and Gerstner W (2005) Adaptive Exponential
+            Integrate-and-Fire Model as an Effective Description of
+            Neuronal Activity. J Neurophysiol 94:3637-3642
+
+SeeAlso: iaf_psc_delta, aeif_cond_exp, aeif_psc_exp
+*/
 
 namespace nest
 {
@@ -55,81 +121,15 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int hh_psc_alpha_dynamics( double, const double*, double*, void* );
+extern "C" int aeif_psc_delta_dynamics( double, const double*, double*, void* );
 
-/* BeginDocumentation
-Name: hh_psc_alpha - Hodgkin Huxley neuron model.
-
-Description:
-
- hh_psc_alpha is an implementation of a spiking neuron using the Hodkin-Huxley
- formalism.
-
- (1) Post-synaptic currents
- Incoming spike events induce a post-synaptic change of current modelled
- by an alpha function. The alpha function is normalised such that an event of
- weight 1.0 results in a peak current of 1 pA.
-
-
- (2) Spike Detection
- Spike detection is done by a combined threshold-and-local-maximum search: if
- there is a local maximum above a certain threshold of the membrane potential,
- it is considered a spike.
-
-Parameters:
-
- The following parameters can be set in the status dictionary.
-
- V_m        double - Membrane potential in mV
- E_L        double - Resting membrane potential in mV.
- g_L        double - Leak conductance in nS.
- C_m        double - Capacity of the membrane in pF.
- tau_ex     double - Rise time of the excitatory synaptic alpha function in ms.
- tau_in     double - Rise time of the inhibitory synaptic alpha function in ms.
- E_Na       double - Sodium reversal potential in mV.
- g_Na       double - Sodium peak conductance in nS.
- E_K        double - Potassium reversal potential in mV.
- g_K        double - Potassium peak conductance in nS.
- Act_m      double - Activation variable m
- Act_h      double - Activation variable h
- Inact_n    double - Inactivation variable n
- I_e        double - Constant external input current in pA.
-
-Problems/Todo:
-
- better spike detection
- initial wavelet/spike at simulation onset
-
-References:
-
- Spiking Neuron Models:
- Single Neurons, Populations, Plasticity
- Wulfram Gerstner, Werner Kistler,  Cambridge University Press
-
- Theoretical Neuroscience:
- Computational and Mathematical Modeling of Neural Systems
- Peter Dayan, L. F. Abbott, MIT Press (parameters taken from here)
-
- Hodgkin, A. L. and Huxley, A. F.,
- A Quantitative Description of Membrane Current
- and Its Application to Conduction and Excitation in Nerve,
- Journal of Physiology, 117, 500-544 (1952)
-
-Sends: SpikeEvent
-
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
-
-Authors: Schrader
-SeeAlso: hh_cond_exp_traub
-*/
-
-class hh_psc_alpha : public Archiving_Node
+class aeif_psc_delta : public Archiving_Node
 {
 
 public:
-  hh_psc_alpha();
-  hh_psc_alpha( const hh_psc_alpha& );
-  ~hh_psc_alpha();
+  aeif_psc_delta();
+  aeif_psc_delta( const aeif_psc_delta& );
+  ~aeif_psc_delta();
 
   /**
    * Import sets of overloaded virtual functions.
@@ -149,26 +149,6 @@ public:
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
-  /**
-   * Return membrane potential at time t.
-potentials_.connect_logging_device();
-   * This function is not thread-safe and should not be used in threaded
-   * contexts to access the current membrane potential values.
-   * @param Time the current network time
-   *
-   */
-  double get_potential( Time const& ) const;
-
-  /**
-   * Define current membrane potential.
-   * This function is thread-safe and should be used in threaded
-   * contexts to change the current membrane potential value.
-   * @param Time     the current network time
-   * @param double new value of the mebrane potential
-   *
-   */
-  void set_potential( Time const&, double );
-
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
@@ -176,18 +156,18 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  void update( Time const&, const long, const long );
+  void update( const Time&, const long, const long );
 
   // END Boilerplate function declarations ----------------------------
 
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int hh_psc_alpha_dynamics( double, const double*, double*, void* );
+  friend int aeif_psc_delta_dynamics( double, const double*, double*, void* );
 
-  // The next two classes need to be friend to access the State_ class/member
-  friend class RecordablesMap< hh_psc_alpha >;
-  friend class UniversalDataLogger< hh_psc_alpha >;
+  // The next two classes need to be friends to access the State_ class/member
+  friend class RecordablesMap< aeif_psc_delta >;
+  friend class UniversalDataLogger< aeif_psc_delta >;
 
 private:
   // ----------------------------------------------------------------
@@ -195,17 +175,25 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double t_ref_;   //!< refractory time in ms
-    double g_Na;     //!< Sodium Conductance in nS
-    double g_K;      //!< Potassium Conductance in nS
-    double g_L;      //!< Leak Conductance in nS
-    double C_m;      //!< Membrane Capacitance in pF
-    double E_Na;     //!< Sodium Reversal Potential in mV
-    double E_K;      //!< Potassium Reversal Potential in mV
-    double E_L;      //!< Leak reversal Potential (aka resting potential) in mV
-    double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
-    double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double I_e;      //!< Constant Current in pA
+    double V_peak_;  //!< Spike detection threshold in mV
+    double V_reset_; //!< Reset Potential in mV
+
+    double t_ref_; //!< Refractory period in ms
+
+    double g_L;     //!< Leak Conductance in nS
+    double C_m;     //!< Membrane Capacitance in pF
+    double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
+    double Delta_T; //!< Slope faktor in ms.
+    double tau_w;   //!< adaptation time-constant in ms.
+    double a;       //!< Subthreshold adaptation in nS.
+    double b;       //!< Spike-triggered adaptation in pA
+    double V_th;    //!< Spike threshold in mV.
+    double t_ref;   //!< Refractory period in ms.
+    double I_e;     //!< Intrinsic current in pA.
+
+    double gsl_error_tol;  //!< error bound for GSL integrator
+    bool with_refr_input_; //!< spikes arriving during refractory period are
+                           //!< counted
 
     Parameters_(); //!< Sets default parameter values
 
@@ -223,7 +211,10 @@ public:
    */
   struct State_
   {
-
+    /** Accumulate spikes arriving during refractory period, discounted for
+        decay until end of refractory period.
+    */
+    double refr_spikes_buffer_;
     /**
      * Enumeration identifying elements in state array State_::y_.
      * The state vector must be passed to GSL as a C array. This enum
@@ -233,53 +224,44 @@ public:
     enum StateVecElems
     {
       V_M = 0,
-      HH_M,   // 1
-      HH_H,   // 2
-      HH_N,   // 3
-      DI_EXC, // 4
-      I_EXC,  // 5
-      DI_INH, // 6
-      I_INH,  // 7
+      W,
       STATE_VEC_SIZE
     };
 
-
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
-    int r_; //!< number of refractory steps remaining
+    unsigned int r_; //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, const Parameters_& );
   };
 
   // ----------------------------------------------------------------
 
-private:
   /**
    * Buffers of the model.
    */
   struct Buffers_
   {
-    Buffers_( hh_psc_alpha& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, hh_psc_alpha& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_psc_delta& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_psc_delta& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
-    UniversalDataLogger< hh_psc_alpha > logger_;
+    UniversalDataLogger< aeif_psc_delta > logger_;
 
     /** buffers and sums up incoming spikes/currents */
-    RingBuffer spike_exc_;
-    RingBuffer spike_inh_;
+    RingBuffer spikes_;
     RingBuffer currents_;
 
     /** GSL ODE stuff */
     gsl_odeiv_step* s_;    //!< stepping function
     gsl_odeiv_control* c_; //!< adaptive stepsize control function
     gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_system sys_; //!< struct describing the GSL system
 
     // IntergrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
@@ -305,13 +287,19 @@ private:
    */
   struct Variables_
   {
-    /** initial value to normalise excitatory synaptic current */
-    double PSCurrInit_E_;
+    /**
+     * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
+     * P.V_th if Delta_T == 0.
+     */
+    double V_peak_;
 
-    /** initial value to normalise inhibitory synaptic current */
-    double PSCurrInit_I_;
+    unsigned int refractory_counts_;
 
-    int RefractoryCounts_;
+    double Delta_T_inv_;
+
+    double C_m_inv_;
+
+    double tau_w_inv_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -332,12 +320,11 @@ private:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< hh_psc_alpha > recordablesMap_;
+  static RecordablesMap< aeif_psc_delta > recordablesMap_;
 };
 
-
 inline port
-hh_psc_alpha::send_test_event( Node& target,
+aeif_psc_delta::send_test_event( Node& target,
   rport receptor_type,
   synindex,
   bool )
@@ -348,9 +335,8 @@ hh_psc_alpha::send_test_event( Node& target,
   return target.handles_test_event( e, receptor_type );
 }
 
-
 inline port
-hh_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
+aeif_psc_delta::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -360,7 +346,7 @@ hh_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-hh_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
+aeif_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -370,7 +356,8 @@ hh_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-hh_psc_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+aeif_psc_delta::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -380,7 +367,7 @@ hh_psc_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 }
 
 inline void
-hh_psc_alpha::get_status( DictionaryDatum& d ) const
+aeif_psc_delta::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -390,12 +377,12 @@ hh_psc_alpha::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-hh_psc_alpha::set_status( const DictionaryDatum& d )
+aeif_psc_delta::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
+  stmp.set( d, ptmp );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -411,4 +398,4 @@ hh_psc_alpha::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL
-#endif // HH_PSC_ALPHA_H
+#endif // AEIF_PSC_delta_H

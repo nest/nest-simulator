@@ -55,7 +55,7 @@ skip_if_not_threaded
                          /withgid true 
                          /withtime true 
                       >> Create def
-  /pnet [ total_vps ] { ; /iaf_neuron Create } Table def
+  /pnet [ total_vps ] { ; /iaf_psc_alpha Create } Table def
 
   [pg] pnet Connect
   pnet [sd] Connect

@@ -54,10 +54,10 @@
     /max_delay bigdelay 2 mul  % biggest delay expected by user
   >> SetStatus
 
-  /iaf_neuron Create /neuron1 Set
+  /iaf_psc_alpha Create /neuron1 Set
   neuron1 << /I_e 1450.0 >> SetStatus
 
-  /iaf_neuron Create /neuron2 Set
+  /iaf_psc_alpha Create /neuron2 Set
 
 
   neuron1 neuron2 100.0 smalldelay Connect

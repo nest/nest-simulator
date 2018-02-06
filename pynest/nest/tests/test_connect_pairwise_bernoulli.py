@@ -70,7 +70,7 @@ class TestPairwiseBernoulli(TestParams):
         # test that autapses exist
         conn_params['p'] = 1.
         conn_params['autapses'] = True
-        pop = hf.nest.Create('iaf_neuron', N)
+        pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
@@ -80,7 +80,7 @@ class TestPairwiseBernoulli(TestParams):
         # test that autapses were excluded
         conn_params['p'] = 1.
         conn_params['autapses'] = False
-        pop = hf.nest.Create('iaf_neuron', N)
+        pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)

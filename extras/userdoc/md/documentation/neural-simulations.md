@@ -232,7 +232,7 @@ created above:
     I_e                      doubletype          0
     local                    booltype            true
     local_id                 integertype         1
-    model                    literaltype         iaf_neuron
+    model                    literaltype         iaf_psc_alpha
     node_type                literaltype         neuron
     parent                   integertype         0
     recordables              arraytype           <arraytype>
@@ -240,7 +240,8 @@ created above:
     tau_m                    doubletype          10
     tau_minus                doubletype          20
     tau_minus_triplet        doubletype          110
-    tau_syn                  doubletype          2
+    tau_syn_ex               doubletype          2
+    tau_syn_in               doubletype          2
     thread                   integertype         0
     t_ref                    doubletype          2
     t_spike                  doubletype          -1

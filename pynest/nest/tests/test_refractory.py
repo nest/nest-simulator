@@ -82,7 +82,6 @@ neurons_V_clamped = [
     'iaf_cond_alpha_mc',
     'iaf_cond_exp',
     'iaf_cond_exp_sfa_rr',
-    'iaf_neuron',
     'iaf_psc_alpha',
     'iaf_psc_alpha_multisynapse',
     'iaf_psc_delta',

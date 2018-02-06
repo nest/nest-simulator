@@ -25,22 +25,8 @@
    tests the device correlospinmatrix detector
 */
 
-
-
-
 (unittest) run
 /unittest using
-
-
-ResetKernel
-
-0.1 /h Set
-
-<< 
-      /local_num_threads 1 
-      /resolution h
-  >> SetKernelStatus
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 %
@@ -71,8 +57,6 @@ ResetKernel
 ]
 def
 
-
-modeldict begin
 
 /sg1 /spike_generator Create def
 /sg2 /spike_generator Create def
@@ -105,4 +89,3 @@ expected_corr                            % expected result
 eq
 assert_or_die
 
-modeldict end

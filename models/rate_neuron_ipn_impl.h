@@ -118,7 +118,9 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set(
     throw BadProperty( "Time constant must be > 0." );
   }
   if ( lambda_ < 0 )
+  {
     throw BadProperty( "Passive decay rate must be >= 0." );
+  }
   if ( std_ < 0 )
   {
     throw BadProperty( "Standard deviation of noise must not be negative." );

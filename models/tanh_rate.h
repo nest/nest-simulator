@@ -28,6 +28,8 @@
 #include "rate_neuron_ipn_impl.h"
 #include "rate_neuron_opn.h"
 #include "rate_neuron_opn_impl.h"
+#include "rate_transformer_node.h"
+#include "rate_transformer_node_impl.h"
 
 
 namespace nest
@@ -37,10 +39,10 @@ Name: tanh_rate - rate model with hyperbolic tangent non-linearity
 
 Description:
 
- tanh_rate is an implementation of a non-linear rate model with either
- input (tanh_rate_ipn) or output noise (tanh_rate_opn) and gain function
- Phi(h) = tanh(g * (h-theta)) and Psi(h) = h for linear_summation = True
- Phi(h) = h and Psi(h) = tanh(g * (h-theta)) for linear_summation = False.
+ tanh_rate is an implementation of a nonlinear rate model with input function
+ input(h) = tanh(g * (h-theta)).
+ Input transformation can either be applied to individual inputs
+ or to the sum of all inputs.
 
  The model supports connections to other rate models with either zero or
  non-zero delay, and uses the secondary_event concept introduced with
@@ -56,7 +58,8 @@ Parameters:
  std                 double - Standard deviation of Gaussian white noise.
  g                   double - Gain parameter
  theta               double - Inflection point
- linear_summation    boolean - specifies type of non-linearity (see above)
+ linear_summation    bool   - Specifies type of non-linearity (see above)
+ rectify_output      bool   - Switch to restrict rate to values >= 0
 
 Note:
 The boolean parameter linear_summation determines whether the
@@ -88,7 +91,7 @@ Author: David Dahmen, Jan Hahne, Jannis Schuecker
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 
-class gainfunction_tanh_rate
+class nonlinearities_tanh_rate
 {
 private:
   /** gain factor of gain function */
@@ -99,7 +102,7 @@ private:
 
 public:
   /** sets default parameters */
-  gainfunction_tanh_rate()
+  nonlinearities_tanh_rate()
     : g_( 1.0 )
     , theta_( 0.0 )
   {
@@ -108,21 +111,40 @@ public:
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  double operator()( double h ); // non-linearity
+  double input( double h );               // non-linearity on input
+  double mult_coupling_ex( double rate ); // factor of multiplicative coupling
+  double mult_coupling_in( double rate ); // factor of multiplicative coupling
 };
 
-inline double gainfunction_tanh_rate::operator()( double h )
+inline double
+nonlinearities_tanh_rate::input( double h )
 {
   return tanh( g_ * ( h - theta_ ) );
 }
 
-typedef rate_neuron_ipn< nest::gainfunction_tanh_rate > tanh_rate_ipn;
-typedef rate_neuron_opn< nest::gainfunction_tanh_rate > tanh_rate_opn;
+inline double
+nonlinearities_tanh_rate::mult_coupling_ex( double rate )
+{
+  return 1.;
+}
+
+inline double
+nonlinearities_tanh_rate::mult_coupling_in( double rate )
+{
+  return 1.;
+}
+
+typedef rate_neuron_ipn< nest::nonlinearities_tanh_rate > tanh_rate_ipn;
+typedef rate_neuron_opn< nest::nonlinearities_tanh_rate > tanh_rate_opn;
+typedef rate_transformer_node< nest::nonlinearities_tanh_rate >
+  rate_transformer_tanh;
 
 template <>
 void RecordablesMap< tanh_rate_ipn >::create();
 template <>
 void RecordablesMap< tanh_rate_opn >::create();
+template <>
+void RecordablesMap< rate_transformer_tanh >::create();
 
 } // namespace nest
 

@@ -1,5 +1,5 @@
 /*
- *  threshold_lin_rate.h
+ *  sigmoid_rate_gg_1998.h
  *
  *  This file is part of NEST.
  *
@@ -20,30 +20,30 @@
  *
  */
 
-#ifndef THRESHOLD_LIN_RATE_H
-#define THRESHOLD_LIN_RATE_H
+#ifndef SIGMOID_RATE_GG_1998_H
+#define SIGMOID_RATE_GG_1998_H
 
-// C++ includes:
-#include <algorithm>
+// Includes from c++:
+#include <cmath>
 
 // Includes from models:
 #include "rate_neuron_ipn.h"
 #include "rate_neuron_ipn_impl.h"
-#include "rate_neuron_opn.h"
-#include "rate_neuron_opn_impl.h"
 #include "rate_transformer_node.h"
 #include "rate_transformer_node_impl.h"
 
 
 namespace nest
 {
+
 /* BeginDocumentation
-Name: threshold_lin_rate - rate model with threshold-linear gain function
+Name: sigmoid_rate_gg_1998 - rate model with sigmoidal gain function
+as defined in [1].
 
 Description:
 
- threshold_lin_rate is an implementation of a nonlinear rate model with input
- function input(h) = min( max( g * ( h - theta ), 0 ), alpha ).
+ sigmoid_rate_gg_1998 is an implementation of a nonlinear rate model with
+ input function input(h) = ( g * h )^4 / ( .1^4 + ( g * h )^4 ).
  Input transformation can either be applied to individual inputs
  or to the sum of all inputs.
 
@@ -59,11 +59,9 @@ Parameters:
  tau                 double - Time constant of rate dynamics in ms.
  mean                double - Mean of Gaussian white noise.
  std                 double - Standard deviation of Gaussian white noise.
- g                   double - Gain parameter
- theta               double - First Threshold
- alpha               double - Second Threshold
- linear_summation    bool   - Specifies type of non-linearity (see above)
- rectify_output      bool   - Switch to restrict rate to values >= 0
+ g                   double - Gain parameter.
+ linear_summation    bool   - Specifies type of non-linearity (see above).
+ rectify_output      bool   - Switch to restrict rate to values >= 0.
 
 Note:
 The boolean parameter linear_summation determines whether the
@@ -74,13 +72,17 @@ then summed up (false). Default is true.
 
 References:
 
- [1] Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
+ [1] Gancarz, G., & Grossberg, S. (1998).
+ A neural model of the saccade generator in the reticular formation.
+ Neural Networks, 11(7), 1159–1174. doi: 10.1016/S0893-6080(98)00096-3
+
+ [2] Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
  Bolten, M., Helias, M. and Diesmann, M. (2017).
  Integration of Continuous-Time Dynamics in a
  Spiking Neural Network Simulator.
  Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
 
- [2] Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
+ [3] Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
  Bolten, M., Frommer, A. and Diesmann, M. (2015).
  A unified framework for spiking and gap-junction interactions
  in distributed neuronal network simulations.
@@ -91,28 +93,20 @@ Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
+Author: Mario Senden, Jan Hahne, Jannis Schuecker
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 
-class nonlinearities_threshold_lin_rate
+class nonlinearities_sigmoid_rate_gg_1998
 {
 private:
   /** gain factor of gain function */
   double g_;
 
-  /** threshold of gain function */
-  double theta_;
-
-  /** second threshold of gain function */
-  double alpha_;
-
 public:
   /** sets default parameters */
-  nonlinearities_threshold_lin_rate()
+  nonlinearities_sigmoid_rate_gg_1998()
     : g_( 1.0 )
-    , theta_( 0.0 )
-    , alpha_( std::numeric_limits< double >::infinity() )
   {
   }
 
@@ -125,38 +119,34 @@ public:
 };
 
 inline double
-nonlinearities_threshold_lin_rate::input( double h )
+nonlinearities_sigmoid_rate_gg_1998::input( double h )
 {
-  return std::min( std::max( g_ * ( h - theta_ ), 0. ), alpha_ );
+  return pow( g_ * h, 4. ) / ( pow( .1, 4. ) + pow( g_ * h, 4. ) );
 }
 
 inline double
-nonlinearities_threshold_lin_rate::mult_coupling_ex( double rate )
+nonlinearities_sigmoid_rate_gg_1998::mult_coupling_ex( double rate )
 {
   return 1.;
 }
 
 inline double
-nonlinearities_threshold_lin_rate::mult_coupling_in( double rate )
+nonlinearities_sigmoid_rate_gg_1998::mult_coupling_in( double rate )
 {
   return 1.;
 }
 
-typedef rate_neuron_ipn< nest::nonlinearities_threshold_lin_rate >
-  threshold_lin_rate_ipn;
-typedef rate_neuron_opn< nest::nonlinearities_threshold_lin_rate >
-  threshold_lin_rate_opn;
-typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate >
-  rate_transformer_threshold_lin;
+typedef rate_neuron_ipn< nest::nonlinearities_sigmoid_rate_gg_1998 >
+  sigmoid_rate_gg_1998_ipn;
+typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate_gg_1998 >
+  rate_transformer_sigmoid_gg_1998;
 
 template <>
-void RecordablesMap< threshold_lin_rate_ipn >::create();
+void RecordablesMap< sigmoid_rate_gg_1998_ipn >::create();
 template <>
-void RecordablesMap< threshold_lin_rate_opn >::create();
-template <>
-void RecordablesMap< rate_transformer_threshold_lin >::create();
+void RecordablesMap< rate_transformer_sigmoid_gg_1998 >::create();
 
 } // namespace nest
 
 
-#endif /* #ifndef THRESHOLD_LIN_RATE_H */
+#endif /* #ifndef SIGMOID_RATE_GG_1998_H */

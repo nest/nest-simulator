@@ -275,8 +275,9 @@ extern const Name index_map;               //!< Parameters for MUSIC devices
 extern const Name individual_spike_trains; //!< Generator parameters
 extern const Name inh_conductance;         //!< Recorder parameter
 extern const Name init_flag; //!< Used by stdp_connection_facetshw_hom
-extern const Name instant_unblock_NMDA; //!< specific to Hill-Tononi
-extern const Name instantiations;       //!< model paramater
+extern const Name initial_connector_capacity; //!< Initial Connector capacity
+extern const Name instant_unblock_NMDA;       //!< specific to Hill-Tononi
+extern const Name instantiations;             //!< model paramater
 extern const Name
   Interpol_Order;           //!< Interpolation order (precise timing neurons)
 extern const Name interval; //!< Recorder parameter
@@ -285,9 +286,12 @@ extern const Name is_refractory; //!< Neuron is in refractory period (debugging)
 extern const Name Kplus;         //!< Used by stdp_connection_facetshw_hom
 extern const Name Kplus_triplet; //!< Used by stdp_connection_facetshw_hom
 
-extern const Name label;      //!< Miscellaneous parameters
-extern const Name lambda;     //!< stdp_synapse parameter
-extern const Name lambda_0;   //!< Specific to gif models
+extern const Name label;    //!< Miscellaneous parameters
+extern const Name lambda;   //!< stdp_synapse parameter
+extern const Name lambda_0; //!< Specific to gif models
+extern const Name
+  large_connector_growth_factor;         //! Growth factor for large connectors
+extern const Name large_connector_limit; //! Cutoff for large connectors
 extern const Name len_kernel; //!< Specific to population point process model
                               //!< (pp_pop_psc_delta)
 extern const Name linear;     //!< Parameter for MSP growth curves
@@ -313,10 +317,12 @@ extern const Name model;         //!< Node parameter
 extern const Name mother_rng;    //!< Specific to mip_generator
 extern const Name mother_seed;   //!< Specific to mip_generator
 extern const Name ms_per_tic;    //!< Simulation-related
-extern const Name mu;            //!< Used by stdp_dopa_connection
-extern const Name mu_minus;      //!< stdp_synapse parameter
-extern const Name mu_plus;       //!< stdp_synapse parameter
-extern const Name multapses;     //!< Connectivity-related
+extern const Name mu;        //!< Used by stdp_dopa_connection and rate models
+                             //(Gaussian gain function (tuning peak))
+extern const Name mu_minus;  //!< stdp_synapse parameter
+extern const Name mu_plus;   //!< stdp_synapse parameter
+extern const Name multapses; //!< Connectivity-related
+extern const Name mult_coupling; //!< Specific to rate models
 extern const Name music_channel; //!< Parameters for MUSIC devices
 
 extern const Name n;          //!< Number of synaptic release sites (int >=0)
@@ -396,7 +402,8 @@ extern const Name record_from;            //!< Recorder parameter
 extern const Name record_to;              //!< Recorder parameter
 extern const Name
   recordables; //!< List of recordable state data (Device parameters)
-extern const Name recorder; //!< Node type
+extern const Name recorder;       //!< Node type
+extern const Name rectify_output; //!< Specific to rate models
 extern const Name
   refractory_input; //!< Spikes arriving during refractory period are counted
                     //!< (precise timing neurons)
@@ -424,14 +431,16 @@ extern const Name sdev;             //!< Used in pulsepacket_generator
 extern const Name send_buffer_size; //!< mpi-related
 extern const Name senders;          //!< Recorder parameter
 extern const Name shift_now_spikes; //!< Used by spike_generator
-extern const Name sigmoid;          //!< Sigmoid MSP growth curve
-extern const Name size_of;          //!< Connection parameters
-extern const Name soma_curr;        //!< Used by iaf_cond_alpha_mc
-extern const Name soma_exc;         //!< Used by iaf_cond_alpha_mc
-extern const Name soma_inh;         //!< Used by iaf_cond_alpha_mc
-extern const Name source;           //!< Connection parameters
-extern const Name spike; //!< true if the neuron spikes and false if not.
-                         //!< (sli_neuron)
+extern const Name
+  sigma; //!< Specific to rate models (Gaussian gain function (tuning spread))
+extern const Name sigmoid;   //!< Sigmoid MSP growth curve
+extern const Name size_of;   //!< Connection parameters
+extern const Name soma_curr; //!< Used by iaf_cond_alpha_mc
+extern const Name soma_exc;  //!< Used by iaf_cond_alpha_mc
+extern const Name soma_inh;  //!< Used by iaf_cond_alpha_mc
+extern const Name source;    //!< Connection parameters
+extern const Name spike;     //!< true if the neuron spikes and false if not.
+                             //!< (sli_neuron)
 extern const Name spike_multiplicities;           //!x Used by spike_generator
 extern const Name spike_times;                    //!< Recorder parameter
 extern const Name spike_weights;                  //!< Used by spike_generator
@@ -528,7 +537,11 @@ extern const Name tau_v;           //!< Specific to amat2_*
 extern const Name tau_vacant;      //!< Parameter for MSP dynamics
 extern const Name tau_w; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name theta; //!< Did not compile without (theta neuron problem)
-extern const Name theta_eq;                //!< specific to Hill & Tononi 2005
+extern const Name theta_eq; //!< specific to Hill & Tononi 2005
+extern const Name theta_ex; //!< specific to rate neurons (offset excitatory
+// multiplicative coupling)
+extern const Name theta_in; //!< specific to rate neurons (offset inhibitory
+// multiplicative coupling)
 extern const Name thread;                  //!< Node parameter
 extern const Name thread_local_id;         //!< Thead-local ID of node,
                                            //!< see Kunkel et al 2014, Sec 3.3.2

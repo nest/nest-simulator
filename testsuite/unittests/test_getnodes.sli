@@ -27,8 +27,8 @@
 
    Description:
 
-   This test generates 10 iaf_neurons, 1 iaf_psc_alpha neuron and 10
-   iaf_psc_delta_neurons. It then uses GetGlobalNodes to retrieve these
+   This test generates 10 iaf_psc_alpha, 10 iaf_psc_delta and 10
+   iaf_psc_exp neurons. It then uses GetGlobalNodes to retrieve these
    different sets of neurons from the network.
 
    FirstVersion: January 2012
@@ -38,21 +38,21 @@
 (unittest) run
 /unittest using
 
-/iaf_neuron 10 Create /n1 Set
-/iaf_psc_alpha 10 Create /n2 Set
-/iaf_psc_delta 10 Create /n3 Set
+/iaf_psc_alpha 10 Create /n1 Set
+/iaf_psc_delta 10 Create /n2 Set
+/iaf_psc_exp 10 Create /n3 Set
 
 /set1 [n1 ] Range def
 /set2 [n1 1 add n2 ] Range def
 /set3 [n2 1 add n3 ] Range def
 
-0 << /model /iaf_neuron >> GetGlobalNodes
+0 << /model /iaf_psc_alpha >> GetGlobalNodes
 set1 eq assert_or_die
 
-0 << /model /iaf_psc_alpha >> GetGlobalNodes
+0 << /model /iaf_psc_delta >> GetGlobalNodes
 set2 eq assert_or_die
 
-0 << /model /iaf_psc_delta >> GetGlobalNodes
+0 << /model /iaf_psc_exp >> GetGlobalNodes
 set3 eq assert_or_die
 
 endusing

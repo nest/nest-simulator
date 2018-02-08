@@ -27,7 +27,8 @@
 
    Description:
 
-   This test generates 100 iaf_neurons and connects them with different synapses.
+   This test generates 100 iaf_psc_alpha neurons and connects
+   them with different synapses.
 
    SeeAlso: GetConnections
 
@@ -51,7 +52,7 @@
 /build_net
 {
   % create 100 neurons, connect (2n-1) -> 2n for n=1..50  
-  /iaf_neuron 100 Create ;
+  /iaf_psc_alpha 100 Create ;
   /static_sources [ 1 69 2 ] Range def 
   /static_targets static_sources 1 add def
   /stdp_sources [ 31 99 2 ] Range def

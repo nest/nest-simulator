@@ -57,17 +57,17 @@ Author: February 2012, Kunkel
 
 [1 2 4] % check for 1, 2 and 4 processes
 {
-  /iaf_neuron 2 Create ; % gids 1,2
+  /iaf_psc_alpha 2 Create ; % gids 1,2
 
   /subnet 2 Create ;     % gids 3,4
   3 ChangeSubnet
 
-  /iaf_neuron 2 Create ; % gids 5,6
+  /iaf_psc_alpha 2 Create ; % gids 5,6
 
   /subnet 2 Create ;     % gids 7,8
   8 ChangeSubnet
 
-  /iaf_neuron 2 Create ; % gids 9,10
+  /iaf_psc_alpha 2 Create ; % gids 9,10
   0 GetGlobalNodes [1 2 3 4 5 6 7 8 9 10] eq
   3 GetGlobalNodes [5 6 7 8 9 10] eq and
   8 GetGlobalNodes [9 10] eq and

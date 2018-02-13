@@ -61,8 +61,10 @@ Dictionary::clear()
     Token* tok = &i->second;
     Datum* datum = tok->datum();
     DictionaryDatum* d = dynamic_cast< DictionaryDatum* >( datum );
-    if ( !d )
+    if ( not d )
+    {
       continue;
+    }
 
     Dictionary* dt = d->get();
     d->unlock();
@@ -111,13 +113,17 @@ Dictionary::add_dict( const std::string& target, SLIInterpreter& i )
 
   for ( TokenMap::const_iterator it = TokenMap::begin(); it != TokenMap::end();
         ++it )
-    if ( !targetdict->known( it->first ) )
+  {
+    if ( not targetdict->known( it->first ) )
+    {
       targetdict->insert( it->first, it->second );
+    }
     else
     {
       throw UndefinedName( ( it->first ).toString() );
       //      throw DictError();
     }
+  }
 }
 
 void
@@ -125,7 +131,9 @@ Dictionary::remove( const Name& n )
 {
   TokenMap::iterator it = find( n );
   if ( it != end() )
+  {
     erase( it );
+  }
 }
 
 void
@@ -142,7 +150,9 @@ Dictionary::remove_dict( const std::string& target, SLIInterpreter& i )
   {
     TokenMap::iterator tgt_it = targetdict->find( it->first );
     if ( tgt_it != targetdict->end() )
+    {
       targetdict->erase( tgt_it );
+    }
   }
 }
 
@@ -178,8 +188,10 @@ Dictionary::all_accessed_( std::string& missed, std::string prefix ) const
   for ( TokenMap::const_iterator it = TokenMap::begin(); it != TokenMap::end();
         ++it )
   {
-    if ( !it->second.accessed() )
+    if ( not it->second.accessed() )
+    {
       missed = missed + " " + prefix + it->first.toString();
+    }
     else if ( it->second.is_a< DictionaryDatum >() )
     {
       // recursively check if nested dictionary content was accessed

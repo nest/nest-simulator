@@ -42,15 +42,15 @@ nest.ResetKernel()
 # Second, the nodes (neurons and devices) are created using `Create()`.
 # We store the returned handles in variables for later reference.
 # The `Create` function also allow you to create multiple nodes
-# e.g. nest.Create('iaf_neuron',5)
+# e.g. nest.Create('iaf_psc_alpha',5)
 # Also default parameters of the model can be configured using 'Create'
 # by including a list of parameter dictionaries
-# e.g. `nest.Create("iaf_neuron", params=[{'I_e':376.0}])`
+# e.g. `nest.Create("iaf_psc_alpha", params=[{'I_e':376.0}])`
 # or `nest.Create("voltmeter", [{"withgid": True, "withtime": True}])`.
 # In this example we will configure these parameters in an additional
 # step, which is explained in the third section.
 
-neuron = nest.Create("iaf_neuron")
+neuron = nest.Create("iaf_psc_alpha")
 voltmeter = nest.Create("voltmeter")
 # Third, the neuron and the voltmeter are configured using
 # `SetStatus()`, which expects a list of node handles and a list of

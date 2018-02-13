@@ -31,11 +31,27 @@ if ( IS_BLUEGENE AND static-libraries )
         )
 endif ()
 
+if ( NOT APPLE )
+    set_target_properties( nest
+        PROPERTIES
+        LINK_FLAGS "-Wl,--no-as-needed"
+        )
+endif ()
+
 add_library( nest_lib ${nest_sources} )
-set_target_properties( nest_lib
-    PROPERTIES
-    OUTPUT_NAME nest
-    )
+
+if ( NOT APPLE )
+    set_target_properties( nest_lib
+        PROPERTIES
+        OUTPUT_NAME nest
+        LINK_FLAGS "-Wl,--no-as-needed"
+        )
+else ()
+    set_target_properties( nest_lib
+        PROPERTIES
+        OUTPUT_NAME nest
+        )
+endif ()
 
 target_link_libraries( nest
     nestutil nestkernel random sli_lib sli_readline
@@ -83,3 +99,7 @@ install( TARGETS nest nest_lib
 
 install( FILES sli/models-init.sli
     DESTINATION ${CMAKE_INSTALL_DATADIR}/sli )
+
+FILTER_HEADERS("${nest_sources}" install_headers )
+install( FILES ${install_headers}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

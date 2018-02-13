@@ -73,7 +73,9 @@ posix_signal( int signo, Sigfunc* func )
 #endif
   }
   if ( sigaction( signo, &act, &oact ) < 0 )
+  {
     return ( SIG_ERR );
+  }
   return ( oact.sa_handler );
 }
 

@@ -44,6 +44,22 @@ M_ERROR setverbosity
 /skip_list [ 
              /ginzburg_neuron             % binary neuron
              /mcculloch_pitts_neuron      % binary neuron
+             /lin_rate_ipn                % rate neuron
+             /lin_rate_opn                % rate neuron
+             /tanh_rate_ipn               % rate neuron
+             /tanh_rate_opn               % rate neuron
+             /threshold_lin_rate_ipn      % rate neuron
+             /threshold_lin_rate_opn      % rate neuron
+             /siegert_neuron              % rate neuron
+             /gauss_rate_ipn              % rate neuron
+             /sigmoid_rate_gg_1998_ipn    % rate neuron
+             /sigmoid_rate_ipn            % rate neuron
+             /rate_transformer_lin             % rate transformer
+             /rate_transformer_tanh            % rate transformer
+             /rate_transformer_threshold_lin   % rate transformer
+             /rate_transformer_gauss           % rate transformer
+             /rate_transformer_sigmoid         % rate transformer
+             /rate_transformer_sigmoid_gg_1998 % rate transformer
              /parrot_neuron
              /parrot_neuron_ps
              /iaf_cond_alpha_mc    % cannot readout V_m directly
@@ -61,13 +77,15 @@ M_ERROR setverbosity
                                   /receptor_type 1 >>
    /iaf_psc_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
-   /gif_psc_exp_multisynapse << /params << /taus_syn [ 1.0 ] >>
+   /gif_psc_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
-   /gif_cond_exp_multisynapse << /params << /taus_syn [ 1.0 ] >>
+   /gif_cond_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
-   /aeif_cond_alpha_multisynapse << /params << /taus_syn [ 1.0 ] >>
+   /aeif_cond_alpha_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
-   /aeif_cond_beta_multisynapse << /params << /taus_decay [ 1.0 ] >>
+   /aeif_cond_beta_multisynapse << /params << /E_rev [ 0.0 ] 
+                                              /tau_rise [ 1.0 ]
+                                              /tau_decay [ 1.0 ] >>
                                   /receptor_type 1 >>
    /iaf_cond_alpha_mc << /receptor_type 1 >>
    /ht_neuron << /receptor_type 1 >>

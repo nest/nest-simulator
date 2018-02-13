@@ -39,11 +39,7 @@
 
 % The following test needs the model hh_psc_alpha_gap, so
 % this test should only run if we have GSL
-statusdict/have_gsl :: not
-{
-  exit_test_gracefully
-}
-if
+skip_if_without_gsl
 
 M_ERROR setverbosity
 
@@ -54,56 +50,84 @@ M_ERROR setverbosity
   2.0 /wfr_comm Set
   0 << /wfr_comm_interval wfr_comm >> SetStatus
 
-  /iaf_neuron Create /neuron_no_gap Set
+  /iaf_psc_alpha Create /neuron_no_gap Set
   /hh_psc_alpha_gap Create /neuron_gap Set
 } def
 
 % Check that accurate gap-junction connections can be created
 {
   setup
-  neuron_gap neuron_gap /gap_junction Connect
+  [neuron_gap] [neuron_gap]
+  << /rule /one_to_one /make_symmetric true >> 
+  << /model /gap_junction >> 
+  Connect
 } pass_or_die
 
 {
   setup
-  neuron_gap neuron_gap << /weight 2.0 >> /gap_junction Connect
+  [neuron_gap] [neuron_gap]
+  << /rule /one_to_one /make_symmetric true >> 
+  << /model /gap_junction /weight 2.0 >> 
+  Connect
 } pass_or_die
 
 {
   setup
-  [neuron_gap] [neuron_gap] << /rule /all_to_all >> << /weight 2.0 >> Connect
+  [neuron_gap] [neuron_gap]
+  << /rule /all_to_all >> 
+  << /model /gap_junction >> 
+  Connect
 } pass_or_die
 
 % Check that delay cannot be set for gap-junction connections
 {
   setup
-  neuron_gap neuron_gap 2.0 2.0 /gap_junction Connect
+  [neuron_gap] [neuron_gap]
+  << /rule /one_to_one /make_symmetric true >> 
+  << /model /gap_junction /delay 2.0 >> 
+  Connect
 } fail_or_die
 
 {
   setup
-  neuron_gap neuron_gap << /delay 2.0 >> /gap_junction Connect
-} fail_or_die
-
-{
-  setup
-  [neuron_gap] [neuron_gap] << /rule /all_to_all >> << /delay 2.0 >> /gap_junction Connect
+  [neuron_gap] [neuron_gap]
+  << /rule /all_to_all >> 
+  << /model /gap_junction /delay 2.0 >> 
+  Connect
 } fail_or_die
 
 % Check that illegal gap-junction connections cannot be created
 {
   setup
-  neuron_no_gap neuron_no_gap << /weight 2.0 >> /gap_junction Connect
+  [neuron_no_gap] [neuron_no_gap]
+  << /rule /one_to_one /make_symmetric true >> 
+  << /model /gap_junction >> 
+  Connect
 } fail_or_die
 
 {
   setup
-  neuron_no_gap neuron_gap << /weight 2.0 >> /gap_junction Connect
+  [neuron_no_gap] [neuron_gap]
+  << /rule /one_to_one /make_symmetric true >> 
+  << /model /gap_junction >> 
+  Connect
 } fail_or_die
 
 {
   setup
-  neuron_gap neuron_no_gap << /weight 2.0 >> /gap_junction Connect
+  [neuron_gap] [neuron_no_gap]
+  << /rule /one_to_one /make_symmetric true >> 
+  << /model /gap_junction >> 
+  Connect
+} fail_or_die
+
+% Check that non-symmetric gap-junction connections cannot be created
+{
+  setup
+  [neuron_gap] [neuron_gap]
+  << /rule /one_to_one /make_symmetric false >> 
+  << /model /gap_junction /weight 2.0 >> 
+  Connect
 } fail_or_die
 
 % Check that gap-junction connections contribute to the min_delay with wfr_comm_interval
@@ -117,7 +141,10 @@ M_ERROR setverbosity
   0 /min_delay get /old_min Set
 
   % ... then create a gap-junction connection
-  neuron_gap neuron_gap /gap_junction Connect
+  [neuron_gap] [neuron_gap]
+  << /rule /one_to_one /make_symmetric true >> 
+  << /model /gap_junction >> 
+  Connect
 
   0 /max_delay get /new_max Set
   0 /min_delay get /new_min Set
@@ -151,7 +178,10 @@ M_ERROR setverbosity
   0 /min_delay get /old_min Set
 
   % ... then create a gap-junction connection
-  neuron_gap neuron_gap /gap_junction Connect
+  [neuron_gap] [neuron_gap]
+  << /rule /one_to_one /make_symmetric true >> 
+  << /model /gap_junction >> 
+  Connect
 
   0 /max_delay get /new_max Set
   0 /min_delay get /new_min Set

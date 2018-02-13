@@ -184,4 +184,4 @@ pylab.plot(vm_ref_mean)
 Finally, print the mean-suqared error between the trial-average and
 the reference trace. The value should be < 10^-9.
 '''
-print (numpy.mean((vm_ref_mean - vm_mean) ** 2))
+print(numpy.mean((vm_ref_mean - vm_mean) ** 2))

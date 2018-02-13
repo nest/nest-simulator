@@ -31,21 +31,31 @@
 #include "nest_types.h"
 #include "node.h"
 #include "stimulating_device.h"
+#include "universal_data_logger.h"
 
 /* BeginDocumentation
    Name: ac_generator - provides AC input current
    Description:
 
-   This device produce an ac-current which are sent by a current event.
+   This device produce an ac-current which are sent by a CurrentEvent. The
+   current is given by
+
+           I(t) = offset + amplitude * sin ( om * t + phi )
+
+   where
+
+       om  = 2 * pi * frequency
+       phi = phase / 180 * pi
+
    The parameters are
+
    amplitude   double -  Amplitude of sine current in pA
    offset      double -  Constant amplitude offset in pA
-   phase       double -  Phase of sine current (0-360 deg)
    frequency   double -  Frequency in Hz
-   4) The
+   phase       double -  Phase of sine current (0-360 deg)
 
-   The currents are updated every time step by exact integration schemes from
-   [1]
+   Setting start and stop (see StimulatingDevice) only windows the current
+   as defined above. It does not shift the time axis.
 
    References:
    [1] S. Rotter and M. Diesmann, Exact digital simulation of time-
@@ -56,7 +66,7 @@
 
    Author: Johan Hake, Spring 2003
 
-   SeeAlso: Device, StimulatingDevice, dc_generator
+   SeeAlso: Device, StimulatingDevice, dc_generator, step_current_generator
 */
 
 namespace nest
@@ -76,8 +86,22 @@ public:
 
   port send_test_event( Node&, rport, synindex, bool );
 
+  using Node::handle;
+  using Node::handles_test_event;
+
+  void handle( DataLoggingRequest& );
+
+  port handles_test_event( DataLoggingRequest&, rport );
+
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
+
+  //! Allow multimeter to connect to local instances
+  bool
+  local_receiver() const
+  {
+    return true;
+  }
 
 private:
   void init_state_( const Node& );
@@ -97,9 +121,11 @@ private:
     double phi_deg_; //!< Phase of sine current (0-360 deg)
 
     Parameters_(); //!< Sets default parameter values
+    Parameters_( const Parameters_& );
+    Parameters_& operator=( const Parameters_& p );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void set( const DictionaryDatum& ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -108,10 +134,30 @@ private:
   {
     double y_0_;
     double y_1_;
+    double I_; //!< Instantaneous current value; used for recording current
+               //!< Required to handle current values when device is inactive
 
     State_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+  };
+
+  // ------------------------------------------------------------
+
+  // The next two classes need to be friends to access the State_ class/member
+  friend class RecordablesMap< ac_generator >;
+  friend class UniversalDataLogger< ac_generator >;
+
+  // ------------------------------------------------------------
+
+  /**
+   * Buffers of the model.
+   */
+  struct Buffers_
+  {
+    Buffers_( ac_generator& );
+    Buffers_( const Buffers_&, ac_generator& );
+    UniversalDataLogger< ac_generator > logger_;
   };
 
   // ------------------------------------------------------------
@@ -128,12 +174,20 @@ private:
     double A_11_;
   };
 
+  double
+  get_I_() const
+  {
+    return S_.I_;
+  }
+
   // ------------------------------------------------------------
 
   StimulatingDevice< CurrentEvent > device_;
+  static RecordablesMap< ac_generator > recordablesMap_;
   Parameters_ P_;
   State_ S_;
   Variables_ V_;
+  Buffers_ B_;
 };
 
 inline port
@@ -150,12 +204,24 @@ ac_generator::send_test_event( Node& target,
   return target.handles_test_event( e, receptor_type );
 }
 
+inline port
+ac_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+{
+  if ( receptor_type != 0 )
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
+  return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
+}
+
 inline void
 ac_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
   device_.get_status( d );
+
+  ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

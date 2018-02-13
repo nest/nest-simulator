@@ -50,15 +50,3 @@ nest::SiblingContainer::SiblingContainer( const SiblingContainer& c )
   , nodes_( c.nodes_ )
 {
 }
-
-nest::Node*
-nest::SiblingContainer::get_thread_sibling_safe_( index i ) const
-{
-  return nodes_.at( i ); // with range check
-}
-
-nest::Node*
-nest::SiblingContainer::get_thread_sibling_( index i ) const
-{
-  return nodes_[ i ]; // without range check
-}

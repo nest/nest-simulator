@@ -390,10 +390,14 @@ template < int D, class T, int max_capacity, int max_depth >
 Ntree< D, T, max_capacity, max_depth >::~Ntree()
 {
   if ( leaf_ )
-    return; // if T is a vector class, we do not delete the pointees
+  {
+    return;
+  } // if T is a vector class, we do not delete the pointees
 
   for ( size_t n = 0; n < static_cast< size_t >( N ); ++n )
+  {
     delete children_[ n ]; // calls destructor in child, thus recursing
+  }
 }
 
 template < int D, class T, int max_capacity, int max_depth >
@@ -406,7 +410,9 @@ Ntree< D, T, max_capacity, max_depth >::iterator::iterator( Ntree& q, index n )
 
   // First ancestor
   while ( top_->parent_ )
+  {
     top_ = top_->parent_;
+  }
 }
 
 template < int D, class T, int max_capacity, int max_depth >

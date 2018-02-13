@@ -69,7 +69,7 @@ SeeAlso: gif_psc_exp_multisynapse, testsuite::test_gif_psc_exp
   /gif_psc_exp_multisynapse Create /neuron Set
   neuron params SetStatus
 
-  neuron << /taus_syn [8.0 4.0]>> SetStatus
+  neuron << /tau_syn [8.0 4.0]>> SetStatus
 
   /spike_generator Create /sg1 Set
   sg1 << /spike_times [10.0 20.0 30.0]>> SetStatus

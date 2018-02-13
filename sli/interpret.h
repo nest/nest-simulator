@@ -174,6 +174,8 @@ public:
   static const int M_STATUS; //!< Predefined error level for status messages
   //! Predefined error level for informational messages
   static const int M_INFO;
+  static const int M_DEPRECATED; //!< Predefined error level for deprecation
+                                 //!< warnings
   static const int M_WARNING; //!< Predefined error level for warning messages
   static const int M_ERROR;   //!< Predefined error level for error messages
   static const int M_FATAL;   //!< Predefined error level for failure messages
@@ -186,6 +188,7 @@ private:
   static char const* const M_DEBUG_NAME;
   static char const* const M_STATUS_NAME;
   static char const* const M_INFO_NAME;
+  static char const* const M_DEPRECATED_NAME;
   static char const* const M_WARNING_NAME;
   static char const* const M_ERROR_NAME;
   static char const* const M_FATAL_NAME;
@@ -279,8 +282,9 @@ public:
   int execute_debug_( size_t exitlevel = 0 );
 
   void createdouble( Name const&, double );
-  void createcommand( Name const&, SLIFunction const* );
-  void createcommand( Name const&, Name const&, SLIFunction const* );
+  void createcommand( Name const&,
+    SLIFunction const*,
+    std::string deprecation_info = std::string() );
   void createconstant( Name const&, const Token& );
 
 
@@ -380,9 +384,9 @@ public:
    * calls during debugging.
    */
   void
-  set_call_depth( int l )
+  set_call_depth( int depth )
   {
-    call_depth_ = l;
+    call_depth_ = depth;
   }
 
   /**
@@ -784,6 +788,7 @@ public:
    *  SLIInterpreter::M_DEBUG=5,  display debugging messages and above \n
    *  SLIInterpreter::M_DEBUG=7,  display status messages and above \n
    *  SLIInterpreter::M_INFO=10, display information messages and above \n
+   *  SLIInterpreter::M_DEPRECATED=18, display deprecation warnings and above \n
    *  SLIInterpreter::M_WARNING=20, display warning messages and above \n
    *  SLIInterpreter::M_ERROR=30, display error messages and above \n
    *  SLIInterpreter::M_FATAL=40, display failure messages and above \n
@@ -806,6 +811,7 @@ public:
    *  SLIInterpreter::M_DEBUG=5, a debugging message \n
    *  SLIInterpreter::M_DEBUG=7, a status message \n
    *  SLIInterpreter::M_INFO=10, an informational message \n
+   *  SLIInterpreter::M_DEPRECATED=18, a deprecation warning \n
    *  SLIInterpreter::M_WARNING=20, a warning message \n
    *  SLIInterpreter::M_ERROR=30, an error message \n
    *  SLIInterpreter::M_FATAL=40, a failure message. \n
@@ -904,7 +910,9 @@ inline void
 SLIInterpreter::assert_stack_load( size_t n )
 {
   if ( OStack.load() < n )
+  {
     throw StackUnderflow( n, OStack.load() );
+  }
 }
 
 

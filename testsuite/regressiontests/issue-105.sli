@@ -44,7 +44,7 @@ M_ERROR setverbosity
   
   0 << /resolution 0.1 >> SetStatus
   
-  /n /iaf_neuron Create def
+  /n /iaf_psc_alpha Create def
   
   [  0.81 0.82 0.8499 ]
   {
@@ -69,7 +69,7 @@ M_ERROR setverbosity
   
   0 << /resolution 0.1 >> SetStatus
   
-  /n /iaf_neuron Create def
+  /n /iaf_psc_alpha Create def
   
   /delays [ 0.81 0.82 0.8499 ] def
   
@@ -100,7 +100,7 @@ M_ERROR setverbosity
   
   0 << /resolution 0.1 >> SetStatus
   
-  /n /iaf_neuron Create def
+  /n /iaf_psc_alpha Create def
   
   [ 0.85 0.86 0.8999 ]
   {
@@ -125,7 +125,7 @@ M_ERROR setverbosity
   
   0 << /resolution 0.1 >> SetStatus
   
-  /n /iaf_neuron Create def
+  /n /iaf_psc_alpha Create def
   
   % test delays must be longer than 1.0, since we
   % first create default connections with delay 1
@@ -165,7 +165,7 @@ M_ERROR setverbosity
 
   0 << /min_delay min_delay /max_delay max_delay >> SetStatus
   
-  /n /iaf_neuron Create def
+  /n /iaf_psc_alpha Create def
   
   [ n ] dup /one_to_one << /delay min_delay >> Connect
   [ n ] dup /one_to_one << /delay max_delay >> Connect
@@ -183,7 +183,7 @@ M_ERROR setverbosity
   
   0 << /min_delay min_delay /max_delay max_delay >> SetStatus
   
-  /n /iaf_neuron Create def
+  /n /iaf_psc_alpha Create def
   
   [ n ] dup /one_to_one << /delay min_delay >> Connect
   [ n ] dup /one_to_one << /delay max_delay >> Connect

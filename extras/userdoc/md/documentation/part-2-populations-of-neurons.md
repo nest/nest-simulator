@@ -14,9 +14,16 @@ to:
 -   set up devices to start, stop and save data to file
 -   reset simulations
 
-For more information on the usage of NEST, please visit:
-[Documentation](documentation.md). To carry out the code snippets in
-this handout, you need to import `nest` and `numpy`.
+For more information on the usage of PyNEST, please see the other sections of
+this primer: 
+
+-   [Part 1: Neurons and simple neural networks](part-1-neurons-and-simple-neural-networks.md)
+-   [Part 3: Connecting networks with synapses](part-3-connecting-networks-with-synapses.md)
+-   [Part 4: Topologically structured networks](part-4-topologically-structured-networks.md)
+
+More advanced examples can be found at [Example Networks](http://www.nest-simulator.org/more-example-networks/), or have a 
+look at at the source directory of your NEST installation in the 
+subdirectory: `pynest/examples/`. 
 
 ## Creating parameterised populations of nodes
 
@@ -24,13 +31,13 @@ In the previous handout, we introduced the function
 `Create(model, n=1, params=None)`. Its mandatory argument is the model name,
 which determines what type the nodes to be created should be. Its two optional
 arguments are `n`, which gives the number of nodes to be created
-(default: $$1$$) and `params`, which is a dictionary giving the parameters with
+(default: 1) and `params`, which is a dictionary giving the parameters with
 which the nodes should be initialised. So the most basic way of creating a batch
 of identically parameterised neurons is to exploit the optional arguments of
 `Create()`:
 
     ndict = {"I_e": 200.0, "tau_m": 20.0}
-    neuronpop = nest.Create("iaf_neuron", 100, params=ndict)
+    neuronpop = nest.Create("iaf_psc_alpha", 100, params=ndict)
 
 The variable `neuronpop` is a list of all the ids of the created neurons.
 
@@ -46,10 +53,10 @@ have the same parameters. The defaults of a model can be queried with
 is a dictionary containing the desired parameter/value pairings. For example:
 
     ndict = {"I_e": 200.0, "tau_m": 20.0}
-    nest.SetDefaults("iaf_neuron", ndict)
-    neuronpop1 = nest.Create("iaf_neuron", 100)
-    neuronpop2 = nest.Create("iaf_neuron", 100)
-    neuronpop3 = nest.Create("iaf_neuron", 100)
+    nest.SetDefaults("iaf_psc_alpha", ndict)
+    neuronpop1 = nest.Create("iaf_psc_alpha", 100)
+    neuronpop2 = nest.Create("iaf_psc_alpha", 100)
+    neuronpop3 = nest.Create("iaf_psc_alpha", 100)
 
 The three populations are now identically parameterised with the usual model
 default values for all parameters except `I_e` and `tau_m`, which have the
@@ -63,25 +70,30 @@ you can use the name of the model to indicate what role it plays in the
 simulation. Set up your customised model in two steps using `SetDefaults()`:
 
     edict = {"I_e": 200.0, "tau_m": 20.0}
-    nest.CopyModel("iaf_neuron", "exc_iaf_neuron")
-    nest.SetDefaults("exc_iaf_neuron", edict)
+    nest.CopyModel("iaf_psc_alpha", "exc_iaf_psc_alpha")
+    nest.SetDefaults("exc_iaf_psc_alpha", edict)
 
 or in one step:
 
     idict = {"I_e": 300.0}
-    nest.CopyModel("iaf_neuron", "inh_iaf_neuron", params=idict)
+    nest.CopyModel("iaf_psc_alpha", "inh_iaf_psc_alpha", params=idict)
 
 Either way, the newly defined models can now be used to generate neuron
 populations and will also be returned by the function `Models()`.
 
-    epop1 = nest.Create("exc_iaf_neuron", 100)
-    epop2 = nest.Create("exc_iaf_neuron", 100)
-    ipop1 = nest.Create("inh_iaf_neuron", 30)
-    ipop2 = nest.Create("inh_iaf_neuron", 30)
+    epop1 = nest.Create("exc_iaf_psc_alpha", 100)
+    epop2 = nest.Create("exc_iaf_psc_alpha", 100)
+    ipop1 = nest.Create("inh_iaf_psc_alpha", 30)
+    ipop2 = nest.Create("inh_iaf_psc_alpha", 30)
 
-Once you have set up your populations of neurons, the function `PrintNetwork()`
-gives you a simple text output of the network that can help you to check whether
-you have done what you intended to.
+It is also possible to create populations with an inhomogeneous set of
+parameters. You would typically create the complete set of parameters,
+depending on experimental constraints, and then create all the neurons
+in one go. To do this supply a list of dictionaries of the same length
+as the number of neurons (or synapses) created:
+
+    parameter_list = [{"I_e": 200.0, "tau_m": 20.0}, {"I_e": 150.0, "tau_m": 30.0}]
+    epop3 = nest.Create("exc_iaf_psc_alpha", 2, parameter_list)
 
 ## Setting parameters for populations of neurons
 
@@ -93,14 +105,14 @@ population and set the status of each one:
     Vth=-55.                  
     Vrest=-70.               
     for neuron in epop1:
-        nest.SetStatus([neuron], {"V_m": Vrest+(Vth-Vrest)\*numpy.random.rand()})
+        nest.SetStatus([neuron], {"V_m": Vrest+(Vth-Vrest)*numpy.random.rand()})
 
 However, `SetStatus()` expects a list of nodes and can set the parameters for
 each of them, which is more efficient, and thus to be preferred. One way to do
 it is to give a list of dictionaries which is the same length as the number of
 nodes to be parameterised, for example using a list comprehension:
 
-    dVms =  [{"V_m": Vrest+(Vth-Vrest)\*numpy.random.rand()} for x in epop1]
+    dVms =  [{"V_m": Vrest+(Vth-Vrest)*numpy.random.rand()} for x in epop1]
     nest.SetStatus(epop1, dVms)
 
 If we only need to randomise one parameter then there is a more concise way by
@@ -108,12 +120,48 @@ passing in the name of the parameter and a list of its desired values. Once
 again, the list must be the same size as the number of nodes to be
 parameterised:
 
-    Vms = Vrest+(Vth-Vrest)\*numpy.random.rand(len(epop1))
+    Vms = Vrest+(Vth-Vrest)*numpy.random.rand(len(epop1))
     nest.SetStatus(epop1, "V_m", Vms)
 
 Note that we are being rather lax with random numbers here. Really we have to
 take more care with them, especially if we are using multiple threads or
 distributing over multiple machines. We will worry about this later.
+
+## Generating populations of neurons with deterministic connections
+
+In the previous handout two neurons were connected using synapse 
+specifications. In this section we extend this example to two populations of 
+ten neurons each.
+
+    import pylab
+    import nest
+    pop1 = nest.Create("iaf_psc_alpha", 10)
+    nest.SetStatus(pop1, {"I_e": 376.0})
+    pop2 = nest.Create("iaf_psc_alpha", 10)
+    multimeter = nest.Create("multimeter", 10)
+    nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
+
+If no connectivity pattern is specified, the populations are connected via 
+the default rule, namely `all_to_all`. Each neuron of `pop1` is connected 
+to every neuron in `pop2`, resulting in $10^2$ connections.
+
+    nest.Connect(pop1, pop2, syn_spec={"weight":20.0})
+
+Alternatively, the neurons can be connected with the `one_to_one`. This 
+means that the first neuron in `pop1` is connected to the first neuron in 
+`pop2`, the second to the second, etc., creating ten connections in total.
+
+    nest.Connect(pop1, pop2, "one_to_one", syn_spec={"weight":20.0, "delay":1.0})
+
+Finally, the multimeters are connected using the default rule
+
+    nest.Connect(multimeter, pop2)
+
+Here we have just used very simple connection schemes. Connectivity patterns 
+requiring the specification of further parameters, such as in-degree or 
+connection probabilities, must be defined in a dictionary containing the key 
+`rule` and the key for parameters associated to the rule. Please see 
+[Connection management][cm] for an illustrated guide to the usage of `Connect`.
 
 ## Connecting populations with random connections
 
@@ -162,23 +210,23 @@ generated by iterating through all possible source-target pairs and creating
 each connection with the probability `p` (keyword `p`).
 
 In addition to the rule specific parameters `indegree`, `outdegree`, `N` and
-`p`, the `conn_spec` can contain the keywords `autapses` and `multapses` (set to
-    `False` or `True`) allowing or forbidding self-connections and multiple
-    connections between two neurons, respectively.
+`p`, the `conn_spec` can contain the keywords `autapses` and `multapses` (set
+to `False` or `True`) allowing or forbidding self-connections and multiple 
+connections between two neurons, respectively.
 
 Note that for all connectivity rules, it is perfectly legitimate to have the
-same population simultaneously in the role of `pre` and `post`. For more
-information on connecting neurons, please read the documentation of the
-`Connect` function and consult the guide at [Connection Management](connection-management.md).
+same population simultaneously in the role of `pre` and `post`. 
+
+For more information on connecting neurons, please read the documentation of 
+the `Connect` function and consult the guide at [Connection management][cm].
 
 ## Specifying the behaviour of devices
 
 All devices implement a basic timing capacity; the parameter `start`
-(default $$0$$) determines the beginning of the device’s activity and the
-parameter `stop` (default: $$∞$$) its end. These values are taken relative to
-the value of `origin` (default: $$0$$). For example, the following example
-creates a `poisson_generator` which is only active between $$100$$ and $$150 
-ms$$:
+(default 0) determines the beginning of the device's activity and the
+parameter `stop` (default: $∞$) its end. These values are taken relative to
+the value of `origin` (default: 0). For example, the following example
+creates a `poisson_generator` which is only active between 100 and 150ms:
 
     pg = nest.Create("poisson_generator")
     nest.SetStatus(pg, {"start": 100.0, "stop": 150.0})
@@ -194,7 +242,6 @@ the specification of where data is stored over the parameters `to_memory`
 (default: `False`). The following code sets up a `multimeter` to record data to
 a named file:
 
-     sourceCode
     recdict = {"to_memory" : False, "to_file" : True, "label" : "epop_mp"}
     mm1 = nest.Create("multimeter", params=recdict)
 
@@ -211,8 +258,7 @@ It often occurs that we need to reset a simulation. For example, if you are
 developing a script, then you may need to run it from the `ipython` console
 multiple times before you are happy with its behaviour. In this case, it is
 useful to use the function `ResetKernel()`. This gets rid of all nodes you have
-created, any customised models you created, and resets the internal clock to
-$$0$$.
+created, any customised models you created, and resets the internal clock to 0.
 
 The other main use of resetting is when you need to run a simulation in a loop,
 for example to test different parameter settings. In this case there is
@@ -228,32 +274,49 @@ from recording devices.
 
 These are the new functions we introduced for the examples in this handout.
 
-### Getting information about NEST
 
-`PrintNetwork(depth=1, subnet=None)`:  
-Print the network tree up to `depth`, starting at `subnet`. If `subnet` is
-omitted, the current sub-network is used instead.
+### Getting and setting basic settings and parameters of NEST
+
+-   [`GetKernelStatus(keys=none)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_simulation-GetKernelStatus):
+
+    Obtain parameters of the simulation kernel.
+    Returns:
+    
+    - Parameter dictionary if called without argument
+    - Single parameter value if called with single parameter name
+    - List of parameter values if called with list of parameter names
+    - Set parameters for the simulation kernel.
 
 ### Models
 
-`GetDefaults(model)`:  
-Return a dictionary with the default parameters of the given `model`, specified
-by a string.
+-   [`GetDefaults(model)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_models-GetDefaults):
 
-`SetDefaults(model, params)`:  
-Set the default parameters of the given `model` to the values specified in the
-`params` dictionary.
+    Return a dictionary with the default parameters of the given
+    `model`, specified by a string.
 
-`CopyModel(existing, new, params=None)`:  
-Create a `new` model by copying an `existing` one. Default parameters can be
-given as `params`, or else are taken from `existing`.
+-    [`SetDefaults(model, params)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_models-SetDefaults):
+
+    Set the default parameters of the given `model` to the
+    values specified in the `params` dictionary.
+
+-   [`CopyModel(existing, new, params=None)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_models-CopyModel):
+
+    Create a `new` model by copying an `existing` one.
+    Default parameters can be given as `params`, or else are
+    taken from `existing`.
 
 ### Simulation control
 
-`ResetKernel()`:  
-Reset the simulation kernel. This will destroy the network as well as all custom
-models created with `CopyModel()`. The parameters of built-in models are reset
-to their defaults. Calling this function is equivalent to restarting NEST.
+-   [`ResetKernel()`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_simulation-ResetKernel):
 
-`ResetNetwork()`:  
-Reset all nodes and connections to the defaults of their respective model.
+    Reset the simulation kernel. This will destroy the network as well
+    as all custom models created with  `CopyModel()`. The
+    parameters of built-in models are reset to their defaults. Calling
+    this function is equivalent to restarting NEST.
+
+-   [`ResetNetwork()`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_simulation-ResetNetwork):
+
+    Reset all nodes and connections to the defaults of their
+    respective model.
+
+[cm]: connection_management.md "Connection management"

@@ -35,9 +35,10 @@ CharCode::Range( size_t code, char lc, char uc )
 
   assert( lower <= upper );
   assert( upper < size() );
-
   for ( size_t i = lower; i <= upper; ++i )
+  {
     ( *this )[ i ] = code;
+  }
 }
 
 void

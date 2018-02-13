@@ -25,6 +25,9 @@ import matplotlib.pyplot as plt
 import nest
 import numpy as np
 
+# seed NumPy RNG to ensure identical results for runs with random placement
+np.random.seed(1234567)
+
 
 def beautify_layer(l, fig=plt.gcf(), xlabel=None, ylabel=None,
                    xlim=None, ylim=None, xticks=None, yticks=None, dx=0, dy=0):
@@ -66,13 +69,13 @@ def beautify_layer(l, fig=plt.gcf(), xlabel=None, ylabel=None,
 
 nest.ResetKernel()
 
-# { layer1 #}
+#{ layer1 #}
 import nest.topology as tp
 
 l = tp.CreateLayer({'rows': 5,
                     'columns': 5,
-                    'elements': 'iaf_neuron'})
-# { end #}
+                    'elements': 'iaf_psc_alpha'})
+#{ end #}
 
 fig = tp.PlotLayer(l, nodesize=50)
 beautify_layer(l, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)')
@@ -92,27 +95,27 @@ plt.savefig('../user_manual_figures/layer1.png', bbox_inches='tight',
             bbox_extra_artists=tx)
 
 print("#{ layer1s.log #}")
-# { layer1s #}
+#{ layer1s #}
 print(nest.GetStatus(l)[0]['topology'])
-# { end #}
+#{ end #}
 print("#{ end.log #}")
 
 print("#{ layer1p.log #}")
-# { layer1p #}
-nest.PrintNetwork(depth=2)
-# { end #}
+#{ layer1p #}
+nest.PrintNetwork(depth=3)
+#{ end #}
 print("#{ end.log #}")
 
 # --------------------------------------------------
 
 nest.ResetKernel()
 
-# { layer2 #}
+#{ layer2 #}
 l = tp.CreateLayer({'rows': 5,
                     'columns': 5,
                     'extent': [2.0, 0.5],
-                    'elements': 'iaf_neuron'})
-# { end #}
+                    'elements': 'iaf_psc_alpha'})
+#{ end #}
 
 fig = tp.PlotLayer(l, nodesize=50)
 beautify_layer(l, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)')
@@ -135,13 +138,13 @@ plt.savefig('../user_manual_figures/layer2.png', bbox_inches='tight',
 
 nest.ResetKernel()
 
-# { layer3 #}
-l1 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_neuron'})
-l2 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_neuron',
+#{ layer3 #}
+l1 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_psc_alpha'})
+l2 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_psc_alpha',
                      'center': [-1., 1.]})
-l3 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_neuron',
+l3 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_psc_alpha',
                      'center': [1.5, 0.5]})
-# { end #}
+#{ end #}
 
 fig = tp.PlotLayer(l1, nodesize=50)
 tp.PlotLayer(l2, nodesize=50, nodecolor='g', fig=fig)
@@ -157,13 +160,13 @@ plt.savefig('../user_manual_figures/layer3.png', bbox_inches='tight')
 
 nest.ResetKernel()
 
-# { layer3a #}
+#{ layer3a #}
 nc, nr = 5, 3
 d = 0.1
-l = tp.CreateLayer({'columns': nc, 'rows': nr, 'elements': 'iaf_neuron',
+l = tp.CreateLayer({'columns': nc, 'rows': nr, 'elements': 'iaf_psc_alpha',
                     'extent': [nc * d, nr * d], 'center': [nc * d / 2., 0.]})
 
-# { end #}
+#{ end #}
 
 fig = tp.PlotLayer(l, nodesize=100)
 plt.plot(0, 0, 'x', markersize=20, c='k', mew=3)
@@ -180,14 +183,14 @@ plt.savefig('../user_manual_figures/layer3a.png', bbox_inches='tight')
 
 nest.ResetKernel()
 
-# { layer4 #}
+#{ layer4 #}
 import numpy as np
 
 pos = [[np.random.uniform(-0.5, 0.5), np.random.uniform(-0.5, 0.5)]
        for j in range(50)]
 l = tp.CreateLayer({'positions': pos,
-                    'elements': 'iaf_neuron'})
-# { end #}
+                    'elements': 'iaf_psc_alpha'})
+#{ end #}
 
 fig = tp.PlotLayer(l, nodesize=50)
 beautify_layer(l, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)',
@@ -200,14 +203,14 @@ plt.savefig('../user_manual_figures/layer4.png', bbox_inches='tight')
 
 nest.ResetKernel()
 
-# { layer4_3d #}
+#{ layer4_3d #}
 import numpy as np
 
 pos = [[np.random.uniform(-0.5, 0.5), np.random.uniform(-0.5, 0.5),
         np.random.uniform(-0.5, 0.5)] for j in range(200)]
 l = tp.CreateLayer({'positions': pos,
-                    'elements': 'iaf_neuron'})
-# { end #}
+                    'elements': 'iaf_psc_alpha'})
+#{ end #}
 
 fig = tp.PlotLayer(l, nodesize=50)
 
@@ -217,11 +220,11 @@ plt.savefig('../user_manual_figures/layer4_3d.png', bbox_inches='tight')
 
 nest.ResetKernel()
 
-# { player #}
+#{ player #}
 lp = tp.CreateLayer({'rows': 1, 'columns': 5, 'extent': [5., 1.],
-                     'elements': 'iaf_neuron',
+                     'elements': 'iaf_psc_alpha',
                      'edge_wrap': True})
-# { end #}
+#{ end #}
 
 # fake plot with layer on line and circle
 clist = [(0, 0, 1), (0.35, 0, 1), (0.6, 0, 1), (0.8, 0, 1), (1.0, 0, 1)]
@@ -274,10 +277,10 @@ plt.savefig('../user_manual_figures/player.png', bbox_inches='tight')
 
 nest.ResetKernel()
 
-# { layer6 #}
+#{ layer6 #}
 l = tp.CreateLayer({'rows': 1, 'columns': 2,
                     'elements': ['iaf_cond_alpha', 'poisson_generator']})
-# { end #}
+#{ end #}
 
 print("#{ layer6 #}")
 nest.PrintNetwork(depth=3)
@@ -287,11 +290,11 @@ print("#{ end #}")
 
 nest.ResetKernel()
 
-# { layer7 #}
+#{ layer7 #}
 l = tp.CreateLayer({'rows': 1, 'columns': 2,
                     'elements': ['iaf_cond_alpha', 10, 'poisson_generator',
                                  'noise_generator', 2]})
-# { end #}
+#{ end #}
 
 print("#{ layer7 #}")
 nest.PrintNetwork(depth=3)
@@ -301,23 +304,23 @@ print("#{ end #}")
 
 nest.ResetKernel()
 
-# { layer10 #}
+#{ layer10 #}
 for lyr in ['L23', 'L4', 'L56']:
-    nest.CopyModel('iaf_neuron', lyr + 'pyr')
-    nest.CopyModel('iaf_neuron', lyr + 'in', {'V_th': -52.})
+    nest.CopyModel('iaf_psc_alpha', lyr + 'pyr')
+    nest.CopyModel('iaf_psc_alpha', lyr + 'in', {'V_th': -52.})
 l = tp.CreateLayer({'rows': 20, 'columns': 20, 'extent': [0.5, 0.5],
                     'elements': ['L23pyr', 3, 'L23in',
                                  'L4pyr', 3, 'L4in',
                                  'L56pyr', 3, 'L56in']})
-# { end #}
+#{ end #}
 
 # --------------------------------------------------
 
 nest.ResetKernel()
 
-# { vislayer #}
+#{ vislayer #}
 l = tp.CreateLayer({'rows': 21, 'columns': 21,
-                    'elements': 'iaf_neuron'})
+                    'elements': 'iaf_psc_alpha'})
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 0.4}},
             'kernel': {'gaussian': {'p_center': 1.0, 'sigma': 0.15}}}
@@ -328,5 +331,5 @@ tp.PlotTargets(ctr, l, fig=fig,
                mask=conndict['mask'], kernel=conndict['kernel'],
                src_size=250, tgt_color='red', tgt_size=20,
                kernel_color='green')
-# { end #}
+#{ end #}
 plt.savefig('../user_manual_figures/vislayer.png', bbox_inches='tight')

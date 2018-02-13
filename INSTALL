@@ -11,26 +11,23 @@ NEST is installed with `cmake` (at least v2.8.12). In the simplest case, the com
     make
     make install
 
-should build and install NEST to <install-path>. Detailed installation 
-instructions can be found below.
+should build and install NEST to `/install/path`, which should be an absolute
+path. Detailed installation  instructions can be found below, including 
+instructions for macOS, BlueGene/Q and Fujitsu Sparc64 systems.
 
 Choice of CMake Version
 =======================
 
-We recommend to use `cmake` v3.4, even though installing NEST with
+We recommend to use `cmake` v3.4 or later, even though installing NEST with
 `cmake` v2.8.12 will in most cases work properly.
 For more detailed information please see below: `Python3 Binding (PyNEST)`
 
 Choice of compiler
 ==================
 
-NEST has successfully been compiled with a range of compilers, including
-GNU gcc/g++, Intel icc/icpc, Pathscale, Portland and IBM compilers.
-
-One caveat: you should compile NEST with the same compiler and version as
-your Python. Strange crashes have been observed on importing NEST when
-compiling NEST with g++ 4.3 or later on OSX and importing it into Python
-compiled with the standard gcc 4.0 compiler.
+The default compiler for NEST is GNU gcc/g++, but NEST has also successfully 
+been compiled with other compilers, including Intel icc/icpc, Pathscale, 
+Portland and IBM compilers.
 
 To select a specific compiler, please add the following flags to your `cmake`
 line:
@@ -158,6 +155,25 @@ and its corresponding libraries correctly. To circumvent such a problem followin
         -DPYTHON_INCLUDE_DIR=/usr/include/python3.4 \
         -DPYTHON_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.4m \
         </path/to/NEST/src>
+        
+Compiling for Apple OSX/macOS
+=============================
+
+NEST can currently not be compiled with the clang/clang++ compilers shipping
+with macOS. Therefore, you first need to install GCC 6.3 or later. The easiest
+way to install all required software is using Homebrew (from http://brew.sh).
+
+  brew install gcc cmake gsl open-mpi libtool
+  
+will install all required prequisites. You can then configure NEST with 
+
+  cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+        -DCMAKE_C_COMPILER=gcc-6\
+        -DCMAKE_CXX_COMPILER=g++-6 \
+        </path/to/NEST/src>
+
+For detailed information on installing NEST under OSX/macOS, please see the
+"macOS" section of http://www.nest-simulator.org/installation.
 
 Compiling for BlueGene/Q
 ========================

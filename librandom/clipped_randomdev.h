@@ -149,11 +149,12 @@ ClippedRedrawContinuousRandomDev< BaseRDV >::set_status(
   double new_min = min_;
   double new_max = max_;
 
-  updateValue< double >( d, "low", new_min );
-  updateValue< double >( d, "high", new_max );
-
+  updateValue< double >( d, names::low, new_min );
+  updateValue< double >( d, names::high, new_max );
   if ( new_min >= new_max )
+  {
     throw BadParameterValue( "Clipped RDVs require low < high." );
+  }
 
   min_ = new_min;
   max_ = new_max;
@@ -166,8 +167,8 @@ ClippedRedrawContinuousRandomDev< BaseRDV >::get_status(
 {
   BaseRDV::get_status( d );
 
-  def< double >( d, "low", min_ );
-  def< double >( d, "high", max_ );
+  def< double >( d, names::low, min_ );
+  def< double >( d, names::high, max_ );
 }
 
 template < typename BaseRDV >
@@ -265,11 +266,12 @@ ClippedRedrawDiscreteRandomDev< BaseRDV >::set_status(
   long new_min = min_;
   long new_max = max_;
 
-  updateValue< long >( d, "low", new_min );
-  updateValue< long >( d, "high", new_max );
-
+  updateValue< long >( d, names::low, new_min );
+  updateValue< long >( d, names::high, new_max );
   if ( new_min >= new_max )
+  {
     throw BadParameterValue( "Clipped RDVs require low < high." );
+  }
 
   min_ = new_min;
   max_ = new_max;
@@ -282,8 +284,8 @@ ClippedRedrawDiscreteRandomDev< BaseRDV >::get_status(
 {
   BaseRDV::get_status( d );
 
-  def< long >( d, "low", min_ );
-  def< long >( d, "high", max_ );
+  def< long >( d, names::low, min_ );
+  def< long >( d, names::high, max_ );
 }
 
 template < typename BaseRDV >
@@ -400,11 +402,12 @@ ClippedToBoundaryContinuousRandomDev< BaseRDV >::set_status(
   double new_min = min_;
   double new_max = max_;
 
-  updateValue< double >( d, "low", new_min );
-  updateValue< double >( d, "high", new_max );
-
+  updateValue< double >( d, names::low, new_min );
+  updateValue< double >( d, names::high, new_max );
   if ( new_min >= new_max )
+  {
     throw BadParameterValue( "Clipped RDVs require low < high." );
+  }
 
   min_ = new_min;
   max_ = new_max;
@@ -417,8 +420,8 @@ ClippedToBoundaryContinuousRandomDev< BaseRDV >::get_status(
 {
   BaseRDV::get_status( d );
 
-  def< double >( d, "low", min_ );
-  def< double >( d, "high", max_ );
+  def< double >( d, names::low, min_ );
+  def< double >( d, names::high, max_ );
 }
 
 template < typename BaseRDV >
@@ -434,9 +437,13 @@ inline double ClippedToBoundaryContinuousRandomDev< BaseRDV >::operator()(
 {
   const double value = BaseRDV::operator()( r );
   if ( value < min_ )
+  {
     return min_;
+  }
   if ( value > max_ )
+  {
     return max_;
+  }
   return value;
 }
 
@@ -520,11 +527,12 @@ ClippedToBoundaryDiscreteRandomDev< BaseRDV >::set_status(
   long new_min = min_;
   long new_max = max_;
 
-  updateValue< long >( d, "low", new_min );
-  updateValue< long >( d, "high", new_max );
-
+  updateValue< long >( d, names::low, new_min );
+  updateValue< long >( d, names::high, new_max );
   if ( new_min >= new_max )
+  {
     throw BadParameterValue( "Clipped RDVs require low < high." );
+  }
 
   min_ = new_min;
   max_ = new_max;
@@ -537,8 +545,8 @@ ClippedToBoundaryDiscreteRandomDev< BaseRDV >::get_status(
 {
   BaseRDV::get_status( d );
 
-  def< long >( d, "low", min_ );
-  def< long >( d, "high", max_ );
+  def< long >( d, names::low, min_ );
+  def< long >( d, names::high, max_ );
 }
 
 template < typename BaseRDV >
@@ -553,9 +561,13 @@ inline double ClippedToBoundaryDiscreteRandomDev< BaseRDV >::operator()(
 {
   const double value = BaseRDV::operator()( r );
   if ( value < min_ )
+  {
     return min_;
+  }
   if ( value > max_ )
+  {
     return max_;
+  }
   return value;
 }
 
@@ -572,9 +584,13 @@ ClippedToBoundaryDiscreteRandomDev< BaseRDV >::ldev( RngPtr r ) const
 {
   const long value = BaseRDV::ldev( r );
   if ( value < min_ )
+  {
     return min_;
+  }
   if ( value > max_ )
+  {
     return max_;
+  }
   return value;
 }
 

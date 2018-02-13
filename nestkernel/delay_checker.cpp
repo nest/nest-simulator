@@ -60,8 +60,8 @@ nest::DelayChecker::calibrate( const TimeConverter& tc )
 void
 nest::DelayChecker::get_status( DictionaryDatum& d ) const
 {
-  ( *d )[ "min_delay" ] = get_min_delay().get_ms();
-  ( *d )[ "max_delay" ] = get_max_delay().get_ms();
+  ( *d )[ names::min_delay ] = get_min_delay().get_ms();
+  ( *d )[ names::max_delay ] = get_max_delay().get_ms();
 }
 
 void
@@ -73,7 +73,8 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
   // a min delay that is one step too small. We can detect this by an
   // additional test.
   double delay_tmp = 0.0;
-  bool min_delay_updated = updateValue< double >( d, "min_delay", delay_tmp );
+  bool min_delay_updated =
+    updateValue< double >( d, names::min_delay, delay_tmp );
   Time new_min_delay;
   if ( min_delay_updated )
   {
@@ -86,7 +87,8 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
   }
 
   // For the maximum delay, we always round up, using ms_stamp
-  bool max_delay_updated = updateValue< double >( d, "max_delay", delay_tmp );
+  bool max_delay_updated =
+    updateValue< double >( d, names::max_delay, delay_tmp );
   Time new_max_delay = Time( Time::ms_stamp( delay_tmp ) );
 
   if ( min_delay_updated xor max_delay_updated )
@@ -127,8 +129,10 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
   const double new_delay_ms = Time::delay_steps_to_ms( new_delay );
 
   if ( new_delay < Time::get_resolution().get_steps() )
+  {
     throw BadDelay(
       new_delay_ms, "Delay must be greater than or equal to resolution" );
+  }
 
   // if already simulated, the new delay has to be checked against the
   // min_delay and the max_delay which have been used during simulation
@@ -138,11 +142,12 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
       new_delay < kernel().connection_manager.get_min_delay();
     const bool bad_max_delay =
       new_delay > kernel().connection_manager.get_max_delay();
-
     if ( bad_min_delay || bad_max_delay )
+    {
       throw BadDelay( new_delay_ms,
         "Minimum and maximum delay cannot be changed "
         "after Simulate has been called." );
+    }
   }
 
   const bool new_min_delay = new_delay < min_delay_.get_steps();
@@ -159,7 +164,9 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
     else
     {
       if ( not freeze_delay_update_ )
+      {
         min_delay_ = Time( Time::step( new_delay ) );
+      }
     }
   }
 
@@ -174,7 +181,9 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
     else
     {
       if ( not freeze_delay_update_ )
+      {
         max_delay_ = Time( Time::step( new_delay ) );
+      }
     }
   }
 }
@@ -187,8 +196,10 @@ nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1,
   const delay hdelay = std::max( new_delay1, new_delay2 );
 
   if ( ldelay < Time::get_resolution().get_steps() )
+  {
     throw BadDelay( Time::delay_steps_to_ms( ldelay ),
       "Delay must be greater than or equal to resolution" );
+  }
 
   if ( kernel().simulation_manager.has_been_simulated() )
   {
@@ -196,14 +207,16 @@ nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1,
       ldelay < kernel().connection_manager.get_min_delay();
     const bool bad_max_delay =
       hdelay > kernel().connection_manager.get_max_delay();
-
     if ( bad_min_delay )
+    {
       throw BadDelay( Time::delay_steps_to_ms( ldelay ),
         "Minimum delay cannot be changed after Simulate has been called." );
-
+    }
     if ( bad_max_delay )
+    {
       throw BadDelay( Time::delay_steps_to_ms( hdelay ),
         "Maximum delay cannot be changed after Simulate has been called." );
+    }
   }
 
   const bool new_min_delay = ldelay < min_delay_.get_steps();
@@ -220,7 +233,9 @@ nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1,
     else
     {
       if ( not freeze_delay_update_ )
+      {
         min_delay_ = Time( Time::step( ldelay ) );
+      }
     }
   }
 
@@ -235,7 +250,9 @@ nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1,
     else
     {
       if ( not freeze_delay_update_ )
+      {
         max_delay_ = Time( Time::step( hdelay ) );
+      }
     }
   }
 }

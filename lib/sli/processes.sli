@@ -703,7 +703,7 @@ Bugs: No error message is raised, if Flag=1 or Flag=2 and the given
       but it is raised in a child process of SLI, and -after- standard
       output has been redirected. The error message can be read from
       the "mouth"-pipe!
-       "spawn" always returns sucessful if Flag=1 or Flag=2. However,
+      "spawn" always returns successful if Flag=1 or Flag=2. However,
       excution of the UNIX command may have failed in the child process.
       This may be a bug or a feature, whatever you like best ;->
 

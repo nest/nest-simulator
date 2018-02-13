@@ -10,8 +10,16 @@ networks. When you have worked through this material you will be able to:
 -   Connect populations using profiles
 -   Visualise the connectivity
 
-For more information on the usage of NEST, please visit:
-[Documentation](documentation.md))
+For more information on the usage of PyNEST, please see the other sections of
+this primer: 
+
+-   [Part 1: Neurons and simple neural networks](part-1-neurons-and-simple-neural-networks.md)
+-   [Part 2: Populations of neurons](part-2-populations-of-neurons.md)
+-   [Part 3: Connecting networks with synapses](part-3-connecting-networks-with-synapses.md)
+
+More advanced examples can be found at [Example Networks](http://www.nest-simulator.org/more-example-networks/), or have a 
+look at at the source directory of your NEST installation in the 
+subdirectory: `pynest/examples/`. 
 
 ## Incorporating structure in networks of point neurons
 
@@ -35,7 +43,7 @@ selected connections between networks using `Connect()`. If we want to create
 network models that incorporate the spatial location and spatial connectivity
 profiles, it is time to turn to the `topology` module. **NOTE:** Full
 documentation for usage of the topology module is present in NEST Topology
-Users Manual (NTUM) \[1\], which in the following pages is referenced as a
+Users Manual (NTUM) [\[1\]](#1), which in the following pages is referenced as a
 full-source.
 
 ## The nest.topology module
@@ -91,13 +99,29 @@ We next have to decide whether the nodes should be placed in a **grid-based** or
 of our network be regularly and evenly placed within a 2D network, or do we need
 to tell them where they should be located?".
 
-A ![Example of (A) on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.](../../img/grid.png)
-B ![Example of (A) on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.](../../img/free.png)
+<table>
+<tr>
+<td>
+A
+<img src="../../img/grid.png" alt="Example of (A) on-grid and (B) off-grid, 
+in which the neurons are positioned as grid+jitter." title="Example of (A) 
+on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.">
+</td>
+<td>
+B
+<img src="../../img/free.png" alt="Example of (A) on-grid and (B) off-grid, 
+in which the neurons are positioned as grid+jitter." title="Example of (A) 
+on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.">
+</td>
+</tr>
+</table>
 
-Figure 1: Example of (A) on-grid and (B) off-grid, in which the neurons are
-positioned as grid+jitter.
 
-### 1) On-grid
+Figure 1<a id="figure-1"></a>: Example of (A) on-grid and (B) off-grid, in 
+which the neurons are positioned as grid+jitter.
+
+
+### 1 - On-grid
 
 we have to explicitly specify the size and spacing of the grid, by the number or
 rows *m* and columns *n* as well as the extent (layer size). The grid spacing i
@@ -105,23 +129,23 @@ then determined from these, and *n*x*m* elements are arranged symmetrically.
 Note that we can also specify a center to the grid, else the default offset is
 the origin.
 
-The following snippet produces Fig. \[fig:onoffgrid\]A:
+The following snippet produces Fig. A:
 
     layer_dict_ex = {"extent" : [2.,2.], # the size of the layer in mm
-            "rows" : 10, # the number of rows in this layer ...
-            "columns" : 10, # ... and the number of columns
-            "elements" : "iaf_neuron"} # the element at each (x,y) coordinate in the grid
+                     "rows" : 10, # the number of rows in this layer ...
+                     "columns" : 10, # ... and the number of columns
+                     "elements" : "iaf_psc_alpha"} # the element at each (x,y) coordinate in the grid
 
-### 2) Off grid
+### 2 - Off grid
 
-we define only the elements, their positions and the extent. The number of
-elements created is equivalent to the length of the list of positions. This
+we define only the elements, their positions and the extent. The number of 
+elements created is equivalent to the length of the list of positions. This 
 option allows much more flexibility in how we distribute neurons. Note that we
 should also specify the extent, if the positions fall outside of the default
 (extent size = \[1,1\] and origin as the center). See Section 2.2 in NUTM for
 more details.
 
-The following snippet produces Fig. \[fig:onoffgrid\] B:
+The following snippet produces Fig. B:
 
     import numpy as np
     # grid with jitter
@@ -131,7 +155,7 @@ The following snippet produces Fig. \[fig:onoffgrid\] B:
     poss = [[p[0]+np.random.uniform(-jit,jit),p[1]+np.random.uniform(-jit,jit)] for p in poss]
     layer_dict_ex = {"positions": poss,
             "extent" : [1.1,1.1],
-            "elements" : "iaf_neuron"}
+            "elements" : "iaf_psc_alpha"}
 
 Note: The topology module does support 3D `layer`s, but this is outside the
 scope of this handout.
@@ -161,8 +185,8 @@ For a simple example, let’s consider a grid of elements, where each element
 comprises of 4 pyramidal cells, 1 interneuron, 1 poisson generator and 1 noise
 generator. The corresponding code is:
 
-    nest.CopyModel("iaf_neuron","pyr")
-    nest.CopyModel("iaf_neuron","inh", {"V_th": -52.})
+    nest.CopyModel("iaf_psc_alpha","pyr")
+    nest.CopyModel("iaf_psc_alpha","inh", {"V_th": -52.})
     comp_layer = topp.CreateLayer({"rows":5,"columns":5,
             "elements": ["pyr",4,"inh","poisson_generator","noise_generator"]})
 
@@ -184,15 +208,43 @@ constraints, as well as reading through the different examples listed there.
 Here are some representative examples for setting up a connectivity profile, and
 the following table lists the parameters that can be used.
 
-A ![Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.](../../img/sample1_circgauss.png)
+<table>
+<tr>
+<td style="max-width: 400px;">
+ A
+<img src ="../../img/sample1_circgauss.png" alt="Examples of 
+connectivity for each of the connectivity dictionaries mentioned in the 
+following Python code snippet." title="Examples of connectivity for each of 
+the connectivity dictionaries mentioned in the following Python code snippet.">
+</td>
+<td style="max-width: 400px;">
+B
+<img src ="../../img/sample2_rectanchor.png" alt="Examples of connectivity 
+for each of the connectivity dictionaries mentioned in the following Python 
+code snippet." title="Examples of connectivity for each of the connectivity 
+dictionaries mentioned in the following Python code snippet.">
+</td>
+</tr>
+<tr>
+<td style="max-width: 400px;">
+ C
+<img src ="../../img/sample3_doughnutlinear.png" alt="Examples of 
+connectivity for each of the connectivity dictionaries mentioned in the 
+following Python code snippet." title="Examples of connectivity for each of 
+the connectivity dictionaries mentioned in the following Python code snippet.">
+</td>
+<td style="max-width: 400px;">
+D
+<img src ="../../img/sample4_gaussweights.png" alt="Examples of 
+connectivity for each of the connectivity dictionaries mentioned in the 
+following Python code snippet." title="Examples of connectivity for each of 
+dictionaries mentioned in the following Python code snippet.">
+</td>
+</tr>
+</table>
 
-B ![Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.](../../img/sample2_rectanchor.png)
- C ![Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.](../../img/sample3_doughnutlinear.png)
-
-D ![Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.](../../img/sample4_gaussweights.png)
-
-Figure 2: Examples of connectivity for each of the connectivity dictionaries
-mentioned in the following Python code snippet.
+Figure 2<a id="figure-2"></a>: Examples of connectivity for each of the 
+connectivity dictionaries mentioned in the following Python code snippet.
 
     # Circular mask, gaussian kernel.
     conn1 = {  "connection_type":"divergent",
@@ -247,8 +299,8 @@ Connecting layers is the easiest step: having defined a source layer, a target
 layer and a connection dictionary, we simply use the function
 `topp.ConnectLayers()`:
 
-    ex_layer = topp.CreateLayer({"rows":5,"columns":5,"elements":"iaf_neuron"})
-    in_layer = topp.CreateLayer({"rows":4,"columns":4,"elements":"iaf_neuron"})
+    ex_layer = topp.CreateLayer({"rows":5,"columns":5,"elements":"iaf_psc_alpha"})
+    in_layer = topp.CreateLayer({"rows":4,"columns":4,"elements":"iaf_psc_alpha"})
     conn_dict_ex = {"connection_type":"divergent","mask":{"circular":{"radius":0.5}}}
     # And now we connect E->I
     topp.ConnectLayers(ex_layer,in_layer,conn_dict_ex)
@@ -269,16 +321,24 @@ times and connect to the same layer:
 There are two main methods that we can use for checking that our network was
 built correctly:
 
--   **nest.PrintNetworks(depth=1)** which prints out all the neurons and
-    subnetworks within the network in text form. This is a good manner in which
-    to inspect the hierarchy of composite layers;
+-   [`nest.PrintNetwork(depth=1)`](http://www.nest-simulator.org/cc/PrintNetwork/) 
 
--   **create plots using functions in `nest.topology`**. There are three
-    functions that can be combined: `PlotLayer`, `PlotTargets` and `PlotKernel`,
+    which prints out all the neurons and subnetworks within the network in 
+    text form. This is a good manner in which to inspect the hierarchy of 
+    composite layers;
+
+-   [create plots using functions in `nest.topology`](http://www.nest-simulator.org/pynest-topology/) 
+
+    There are three functions that can be combined: 
+    
+    - [`PlotLayer`](http://www.nest-simulator.org/pynest-topology/#hl_api_PlotLayer)
+    - [`PlotTargets`](http://www.nest-simulator.org/pynest-topology/#hl_api_PlotTargets)
+    - [`PlotKernel`](http://www.nest-simulator.org/pynest-topology/#hl_api_PlotKernel)
+    
     which allow us to generate the plots used with NUTM and this handout. See
     Section 4.2 of NTUM for more details.
 
-Other useful functions that may be of help, in addition to those already
+Other useful functions that may be of help, in addition to those already 
 listed in NTUM Section 4.1, are:
 
 | Function                         | Description                                                                               |
@@ -290,9 +350,5 @@ listed in NTUM Section 4.1, are:
 
 ## References
 
-\[1\]  Hans Ekkehard Plesser and Håkon Enger NEST Topology User Manual
-
-## Acknowledgments
-
-This handout is based on a previous document by Sarah Jarvis, many thanks to
-her.
+\[1\]<a id="1"></a>  Hans Ekkehard Plesser and Håkon Enger NEST Topology User
+ Manual, <http://www.nest-simulator.org/wp-content/uploads/2015/04/Topology_UserManual.pdf>

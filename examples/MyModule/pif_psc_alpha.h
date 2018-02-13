@@ -347,7 +347,9 @@ mynest::pif_psc_alpha::handles_test_event( nest::SpikeEvent&,
   // to handle @c SpikeEvent on port 0. You need to extend the function
   // if you want to differentiate between input ports.
   if ( receptor_type != 0 )
+  {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -360,7 +362,9 @@ mynest::pif_psc_alpha::handles_test_event( nest::CurrentEvent&,
   // to handle @c CurrentEvent on port 0. You need to extend the function
   // if you want to differentiate between input ports.
   if ( receptor_type != 0 )
+  {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -374,7 +378,9 @@ mynest::pif_psc_alpha::handles_test_event( nest::DataLoggingRequest& dlr,
   // The function also tells the built-in UniversalDataLogger that this node
   // is recorded from and that it thus needs to collect data during simulation.
   if ( receptor_type != 0 )
+  {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
+  }
 
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }

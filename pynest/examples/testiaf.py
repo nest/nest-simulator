@@ -50,7 +50,7 @@ def build_network(dt):
     nest.ResetKernel()
     nest.SetKernelStatus({"local_num_threads": 1, "resolution": dt})
 
-    neuron = nest.Create('iaf_neuron')
+    neuron = nest.Create('iaf_psc_alpha')
     nest.SetStatus(neuron, "I_e", 376.0)
 
     vm = nest.Create('voltmeter')
@@ -66,7 +66,7 @@ def build_network(dt):
 '''
 The function build_network takes the resolution as argument.
 First the Kernel is reset and the number of threads is set to zero as
-well as the resolution to the specified value dt.  The iaf_neuron is
+well as the resolution to the specified value dt.  The iaf_psc_alpha is
 created and the handle is stored in the variable neuron The status of
 the neuron is changed so it receives an external current.  Next the
 voltmeter is created and the handle stored in vm and the option

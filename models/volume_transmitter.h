@@ -63,9 +63,9 @@ framework presented in [1].
 
 Examples:
 /volume_transmitter Create /vol Set
-/iaf_neuron Create /pre_neuron Set
-/iaf_neuron Create /post_neuron Set
-/iaf_neuron Create /neuromod_neuron Set
+/iaf_psc_alpha Create /pre_neuron Set
+/iaf_psc_alpha Create /post_neuron Set
+/iaf_psc_alpha Create /neuromod_neuron Set
 /stdp_dopamine_synapse  << /vt vol >>  SetDefaults
 neuromod_neuron vol Connect
 pre_neuron post_neuron /stdp_dopamine_synapse Connect
@@ -178,7 +178,9 @@ inline port
 volume_transmitter::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 

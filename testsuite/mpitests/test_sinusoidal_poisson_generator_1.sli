@@ -39,7 +39,7 @@ See also: testsuite::test_sinusoidal_poisson_generator_2, testsuite::test_sinuso
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 
 /total_vps 4 def

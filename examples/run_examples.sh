@@ -70,15 +70,15 @@ for i in $EXAMPLES ; do
         runner=python
     fi
 
-    echo ">>> RUNNING: $workdir$example"
+    echo ">>> RUNNING: $workdir/$example"
 
     set +e
     $runner $example
 
     if [ $? != 0 ] ; then
-        echo ">>> FAILURE: $workdir$example"
+        echo ">>> FAILURE: $workdir/$example"
         FAILURES=$(( $FAILURES + 1 ))
-        OUTPUT=$(printf "        %s\n        %s\n" "$OUTPUT" "$workdir$example")
+        OUTPUT=$(printf "        %s\n        %s\n" "$OUTPUT" "$workdir/$example")
     else
         echo ">>> SUCCESS: $example"
     fi

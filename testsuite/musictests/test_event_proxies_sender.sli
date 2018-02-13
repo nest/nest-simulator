@@ -23,14 +23,14 @@
 (unittest) run
 /unittest using
 
-statusdict/have_music :: not { exit_test_gracefully } if
+skip_if_without_music
 
 M_ERROR setverbosity
 
 /spike_generator Create /sg Set
 sg << /spike_times [1.0 1.5 2.0 ]>> SetStatus
 
-/iaf_neuron Create /n Set
+/iaf_psc_alpha Create /n Set
 
 sg n << /weight 750.0 >> Connect
 

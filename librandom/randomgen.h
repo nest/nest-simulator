@@ -198,6 +198,9 @@
 // Includes from libnestutil:
 #include "lockptr.h"
 
+// Includes from librandom:
+#include "librandom_names.h"
+
 /**
  * Namespace for random number generators.
  */
@@ -286,7 +289,7 @@ private:
 
 /**
  * Factory class for random generators.
- * @ingroup RandomNumberGenerators
+ * @ingroup RandomNumberGenerators
  */
 class GenericRNGFactory
 {
@@ -308,7 +311,7 @@ public:
 /**
  * Concrete template for factories for built-in
  * (non GSL) random generators.
- * @ingroup RandomNumberGenerators
+ * @ingroup RandomNumberGenerators
  */
 template < typename Generator >
 class BuiltinRNGFactory : public GenericRNGFactory

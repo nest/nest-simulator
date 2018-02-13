@@ -183,7 +183,9 @@ DropOddSpikeConnection< targetidentifierT >::send( nest::Event& e,
   const CommonPropertiesType& props )
 {
   if ( e.get_stamp().get_steps() % 2 ) // stamp is odd, drop it
+  {
     return;
+  }
 
   // Even time stamp, we send the spike using the normal sending mechanism
   // send the spike to the target

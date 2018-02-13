@@ -27,9 +27,11 @@
 #include "connector_model.h"
 #include "nest_types.h"
 #include "node.h"
+#include "sibling_container.h"
 
 // Includes from sli:
 #include "dictdatum.h"
+
 
 namespace nest
 {
@@ -81,7 +83,22 @@ public:
    */
   Node* get_node();
 
+  /**
+   * get gid of volume transmitter
+   */
   long get_vt_gid() const;
+
+  /**
+   * get weight_recorder
+   */
+  const SiblingContainer* get_weight_recorder() const;
+
+
+private:
+  /**
+   * weight recorder
+   */
+  const SiblingContainer* weight_recorder_;
 };
 
 inline long
@@ -89,6 +106,13 @@ CommonSynapseProperties::get_vt_gid() const
 {
   return -1;
 }
+
+inline const SiblingContainer*
+CommonSynapseProperties::get_weight_recorder() const
+{
+  return weight_recorder_;
+}
+
 
 } // of namespace nest
 

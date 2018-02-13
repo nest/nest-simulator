@@ -65,7 +65,9 @@ parrot_neuron_ps::update( Time const& origin, long const from, long const to )
 
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
+  {
     B_.events_.prepare_delivery();
+  }
 
   for ( long lag = from; lag < to; ++lag )
   {
@@ -77,7 +79,7 @@ parrot_neuron_ps::update( Time const& origin, long const from, long const to )
     bool end_of_refract;
 
     while ( B_.events_.get_next_spike(
-      T, ev_offset, ev_multiplicity, end_of_refract ) )
+      T, false, ev_offset, ev_multiplicity, end_of_refract ) )
     {
       const unsigned long multiplicity =
         static_cast< unsigned long >( ev_multiplicity );

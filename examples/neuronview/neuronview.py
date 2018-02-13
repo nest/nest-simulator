@@ -34,7 +34,7 @@ import matplotlib.gridspec as gridspec            # noqa
 import os     # noqa
 import nest   # noqa
 
-default_neuron = "iaf_neuron"
+default_neuron = "iaf_psc_alpha"
 default_stimulator = "dc_generator"
 
 

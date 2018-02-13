@@ -323,9 +323,9 @@ TsodyksConnectionHom< targetidentifierT >::get_status(
 {
   ConnectionBase::get_status( d );
 
-  def< double >( d, "x", x_ );
-  def< double >( d, "y", y_ );
-  def< double >( d, "u", u_ );
+  def< double >( d, names::x, x_ );
+  def< double >( d, names::y, y_ );
+  def< double >( d, names::u, u_ );
 }
 
 template < typename targetidentifierT >
@@ -337,18 +337,20 @@ TsodyksConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   // synapse untouched in case of invalid parameter values
   double x = x_;
   double y = y_;
-  updateValue< double >( d, "x", x );
-  updateValue< double >( d, "y", y );
+  updateValue< double >( d, names::x, x );
+  updateValue< double >( d, names::y, y );
 
   if ( x + y > 1.0 )
+  {
     throw BadProperty( "x + y must be <= 1.0." );
+  }
 
   x_ = x;
   y_ = y;
 
   ConnectionBase::set_status( d, cm );
 
-  updateValue< double >( d, "u", u_ );
+  updateValue< double >( d, names::u, u_ );
 }
 
 } // namespace

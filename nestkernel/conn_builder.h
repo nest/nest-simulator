@@ -54,6 +54,7 @@ namespace nest
 {
 class Node;
 class ConnParameter;
+class SparseNodeArray;
 
 /**
  * Abstract base class for ConnBuilders.
@@ -90,7 +91,7 @@ public:
   index
   get_synapse_model() const
   {
-    return synapse_model_;
+    return synapse_model_id_;
   }
 
   bool
@@ -99,15 +100,30 @@ public:
     return default_delay_;
   }
 
-  void set_pre_synaptic_element_name( std::string name );
-  void set_post_synaptic_element_name( std::string name );
+  void set_pre_synaptic_element_name( const std::string& name );
+  void set_post_synaptic_element_name( const std::string& name );
 
-  int change_connected_synaptic_elements( index, index, const int, int );
+  bool all_parameters_scalar_() const;
+
+  bool change_connected_synaptic_elements( index, index, const int, int );
 
   virtual bool
   supports_symmetric() const
   {
     return false;
+  }
+
+  virtual bool
+  is_symmetric() const
+  {
+    return false;
+  }
+
+  //! Return true if rule is applicable only to nodes with proxies
+  virtual bool
+  requires_proxies() const
+  {
+    return true;
   }
 
 protected:
@@ -144,27 +160,52 @@ protected:
    * node is not located on the current thread or MPI-process and read of an
    * array.
    */
-  void skip_conn_parameter_( thread );
+  void skip_conn_parameter_( thread, size_t n_skip = 1 );
+
+  /**
+   * Returns true if conventional looping over targets is indicated.
+   *
+   * Conventional looping over targets must be used if
+   * - any connection parameter requires skipping
+   * - targets are not given as a simple range (lookup otherwise too slow)
+   *
+   * Conventional looping should be used if
+   * - the number of targets is smaller than the number of local nodes
+   *
+   * For background, see Ippen et al (2017).
+   *
+   * @return true if conventional looping is to be used
+   */
+  bool loop_over_targets_() const;
 
   GIDCollection const* sources_;
   GIDCollection const* targets_;
 
   bool autapses_;
   bool multapses_;
-  bool symmetric_;
+  bool make_symmetric_;
 
   //! buffer for exceptions raised in threads
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
 
   // Name of the pre synaptic and post synaptic elements for this connection
   // builder
-  std::string pre_synaptic_element_name;
-  std::string post_synaptic_element_name;
+  Name pre_synaptic_element_name_;
+  Name post_synaptic_element_name_;
+
+  bool use_pre_synaptic_element_;
+  bool use_post_synaptic_element_;
+
+  inline bool
+  use_structural_plasticity_() const
+  {
+    return use_pre_synaptic_element_ and use_post_synaptic_element_;
+  }
 
 private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;
 
-  index synapse_model_;
+  index synapse_model_id_;
 
   //! indicate that weight and delay should not be set per synapse
   bool default_weight_and_delay_;
@@ -185,9 +226,6 @@ private:
   //! dictionaries to pass to connect function, one per thread
   std::vector< DictionaryDatum > param_dicts_;
 
-  //! pointers to connection parameters specified as arrays
-  std::vector< ConnParameter* > parameters_requiring_skipping_;
-
   /**
    * Collects all array paramters in a vector.
    *
@@ -197,12 +235,9 @@ private:
    */
   void register_parameters_requiring_skipping_( ConnParameter& param );
 
-  // check for synapse specific errors or warnings
-  // This is a temporary function which should be removed once all parameter
-  // types work with Connect.
-  // The remaining error and warnings should then be handled within the synapse
-  // model.
-  void check_synapse_params_( std::string, const DictionaryDatum& );
+protected:
+  //! pointers to connection parameters specified as arrays
+  std::vector< ConnParameter* > parameters_requiring_skipping_;
 };
 
 class OneToOneBuilder : public ConnBuilder
@@ -211,15 +246,18 @@ public:
   OneToOneBuilder( const GIDCollection& sources,
     const GIDCollection& targets,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_spec )
-    : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  {
-  }
+    const DictionaryDatum& syn_spec );
 
   bool
   supports_symmetric() const
   {
     return true;
+  }
+
+  bool
+  requires_proxies() const
+  {
+    return false;
   }
 
 protected:
@@ -240,11 +278,26 @@ public:
   {
   }
 
+  bool
+  is_symmetric() const
+  {
+    return *sources_ == *targets_ && all_parameters_scalar_();
+  }
+
+  bool
+  requires_proxies() const
+  {
+    return false;
+  }
+
 protected:
   void connect_();
   void sp_connect_();
   void disconnect_();
   void sp_disconnect_();
+
+private:
+  void inner_connect_( const int, librandom::RngPtr&, Node*, index, bool );
 };
 
 
@@ -260,6 +313,7 @@ protected:
   void connect_();
 
 private:
+  void inner_connect_( const int, librandom::RngPtr&, Node*, index, bool );
   long indegree_;
 };
 
@@ -305,6 +359,7 @@ protected:
   void connect_();
 
 private:
+  void inner_connect_( const int, librandom::RngPtr&, Node*, index );
   double p_; //!< connection probability
 };
 
@@ -319,12 +374,12 @@ public:
   std::string
   get_pre_synaptic_element_name() const
   {
-    return pre_synaptic_element_name;
+    return pre_synaptic_element_name_.toString();
   }
   std::string
   get_post_synaptic_element_name() const
   {
-    return post_synaptic_element_name;
+    return post_synaptic_element_name_.toString();
   }
 
   /**
@@ -351,13 +406,15 @@ ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
 }
 
 inline void
-ConnBuilder::skip_conn_parameter_( thread target_thread )
+ConnBuilder::skip_conn_parameter_( thread target_thread, size_t n_skip )
 {
   for ( std::vector< ConnParameter* >::iterator it =
           parameters_requiring_skipping_.begin();
         it != parameters_requiring_skipping_.end();
         ++it )
-    ( *it )->skip( target_thread );
+  {
+    ( *it )->skip( target_thread, n_skip );
+  }
 }
 
 } // namespace nest

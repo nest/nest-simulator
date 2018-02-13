@@ -45,7 +45,7 @@ FirstVersion: July 2008
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 /threads 4 def
 
@@ -61,7 +61,7 @@ ResetKernel
 0 << /local_num_threads threads >> SetStatus
 
 % check if modulo node distribution works
-/iaf_neuron 4 Create ;
+/iaf_psc_alpha 4 Create ;
 [1 2 3 4 ] {
   dup threads mod exch [ /vp ] get eq assert_or_die
 } forall

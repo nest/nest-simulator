@@ -82,6 +82,47 @@ ArrayDatum get_connections( const DictionaryDatum& dict );
 
 void simulate( const double& t );
 void resume_simulation();
+/**
+ * @fn run(const double& time)
+ * @brief Run a partial simulation for `time` ms
+ *
+ * Runs a partial simulation for `time` ms
+ * after a call to prepare() and before a cleanup().
+ * Can be called multiple times between a prepare()/cleanup()
+ * pair to divide a simulation into multiple pieces with access
+ * to the API in between.
+ *
+ * Thus, simulate(t) = prepare(); run(t/2); run(t/2); cleanup()
+ *
+ * @see prepare()
+ * @see cleanup()
+ */
+void run( const double& t );
+
+/**
+ * @fn prepare()
+ * @brief do calibrations for network, open files, ... before run()
+ *
+ * Prepares a simulation before calling any number of run(t_n)
+ * calls to actually run the simulation
+ *
+ * @see run()
+ * @see cleanup()
+ */
+void prepare();
+
+/**
+ * @fn cleanup()
+ * @brief do cleanup after a simulation, such as closing files
+ *
+ * Do cleanup to end a simulation using run() commands.
+ * After calling cleanup(), further run() calls must only happen
+ * after another call to prepare()
+ *
+ * @see run()
+ * @see prepare()
+ */
+void cleanup();
 
 void copy_model( const Name& oldmodname,
   const Name& newmodname,

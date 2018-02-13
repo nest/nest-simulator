@@ -114,6 +114,11 @@ public:
    */
   int get_num_virtual_processes() const;
 
+  /**
+   * Fails if NEST is in thread-parallel section.
+   */
+  static void assert_single_threaded();
+
 private:
   const bool force_singlethreading_;
   index n_threads_; //!< Number of threads per process.

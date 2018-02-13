@@ -38,7 +38,7 @@ FirstVersion: April 2014
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 
 [2 3]
@@ -51,9 +51,9 @@ is_threaded not { exit_test_gracefully } if
     >> SetStatus
     
    
-    /iaf_neuron 1 Create pop
+    /iaf_psc_alpha 1 Create pop
     /spike_detector 2 Create pop
-    /iaf_neuron 1 Create pop
+    /iaf_psc_alpha 1 Create pop
     /spike_detector 2 Create pop 
 
     Rank 0 gt

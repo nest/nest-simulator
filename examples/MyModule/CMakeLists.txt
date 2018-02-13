@@ -23,9 +23,9 @@ cmake_minimum_required( VERSION 2.8.12 )
 # illustrative reasons this module is called 'my' (change SHORT_NAME to your
 # preferred module name). NEST requires you to extend the 'SLIModule' (see
 # mymodule.h and mymodule.cpp as an example) and provide a module header
-# (see MODULE_HEADER). The subsequent instructions 
+# (see MODULE_HEADER). The subsequent instructions
 #
-# The configuration requires a compiled and installed NEST; if `nest-config` is 
+# The configuration requires a compiled and installed NEST; if `nest-config` is
 # not in the PATH, please specify the absolute path with `-Dwith-nest=...`.
 #
 # For more informations on how to extend and use your module see:
@@ -100,12 +100,9 @@ project( ${MODULE_NAME} CXX )
 execute_process(
     COMMAND ${NEST_CONFIG} --prefix
     RESULT_VARIABLE RES_VAR
-    OUTPUT_VARIABLE NEST_PREFIX
+    OUTPUT_VARIABLE NEST_INSTALL_PREFIX
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-
-# Use the `NEST_PREFIX` as `CMAKE_INSTALL_PREFIX`.
-set( CMAKE_INSTALL_PREFIX "${NEST_PREFIX}" CACHE STRING "Install path prefix, prepended onto install directories." FORCE )
 
 # Get the CXXFLAGS.
 execute_process(
@@ -164,7 +161,7 @@ execute_process(
 execute_process(
     COMMAND ${NEST_CONFIG} --datadir
     RESULT_VARIABLE RES_VAR
-    OUTPUT_VARIABLE NEST_DATADIR
+    OUTPUT_VARIABLE NEST_INSTALL_DATADIR
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
@@ -172,7 +169,7 @@ execute_process(
 execute_process(
     COMMAND ${NEST_CONFIG} --docdir
     RESULT_VARIABLE RES_VAR
-    OUTPUT_VARIABLE NEST_DOCDIR
+    OUTPUT_VARIABLE NEST_INSTALL_DOCDIR
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
@@ -187,10 +184,13 @@ execute_process(
 # on OS X
 set( CMAKE_MACOSX_RPATH ON )
 
-# Install all stuff to NEST's install directories.
-set( CMAKE_INSTALL_LIBDIR ${NEST_LIBDIR}/nest CACHE STRING "object code libraries (lib/nest or lib64/nest or lib/<multiarch-tuple>/nest on Debian)" FORCE )
-set( CMAKE_INSTALL_DOCDIR ${NEST_DOCDIR} CACHE STRING "documentation root (DATAROOTDIR/doc/nest)" FORCE )
-set( CMAKE_INSTALL_DATADIR ${NEST_DATADIR} CACHE STRING "read-only architecture-independent data (DATAROOTDIR/nest)" FORCE )
+# Use the NEST_INSTALL_* variables as CMAKE_INSTALL_*, if not set explicitly.
+if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
+  set( CMAKE_INSTALL_PREFIX "${NEST_INSTALL_PREFIX}" CACHE STRING "Install path prefix, prepended onto install directories." FORCE )
+  set( CMAKE_INSTALL_LIBDIR "${NEST_LIBDIR}/nest" CACHE STRING "object code libraries (lib/nest or lib64/nest or lib/<multiarch-tuple>/nest on Debian)" FORCE )
+  set( CMAKE_INSTALL_DOCDIR "${NEST_INSTALL_DOCDIR}" CACHE STRING "documentation root (DATAROOTDIR/doc/nest)" FORCE )
+  set( CMAKE_INSTALL_DATADIR "${NEST_INSTALL_DATADIR}" CACHE STRING "read-only architecture-independent data (DATAROOTDIR/nest)" FORCE )
+endif ()
 
 include( GNUInstallDirs )
 
@@ -264,21 +264,36 @@ set_target_properties( ${MODULE_NAME}_lib
 
 # Install library, header and sli init files.
 install( TARGETS ${MODULE_NAME}_lib DESTINATION ${CMAKE_INSTALL_LIBDIR} )
-install( FILES ${MODULE_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} )
+install( FILES ${MODULE_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${MODULE_NAME} )
 install( DIRECTORY sli DESTINATION ${CMAKE_INSTALL_DATADIR} )
 
 # Install help.
-set( HELPDIRS "${PROJECT_SOURCE_DIR}:${PROJECT_SOURCE_DIR}/sli" )
-install( CODE
-    "execute_process(COMMAND ${CMAKE_COMMAND}
-          -DDOC_DIR='${CMAKE_INSTALL_FULL_DOCDIR}'
-          -DDATA_DIR='${CMAKE_INSTALL_FULL_DATADIR}'
-          -DHELPDIRS='${HELPDIRS}'
-          -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
-          -P ${CMAKE_INSTALL_FULL_DOCDIR}/generate_help.cmake
-        WORKING_DIRECTORY \"${PROJECT_BINARY_DIR}\"
-      )"
+if ( NOT CMAKE_CROSSCOMPILING )
+  add_custom_target( generate_help ALL )
+  # Extract help from all source files in the source code, put them in
+  # doc/help and generate a local help index in the build directory containing
+  # links to the help files.
+  add_custom_command( TARGET generate_help POST_BUILD
+    COMMAND python -B generate_help.py "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}"
+    COMMAND python -B generate_helpindex.py "${PROJECT_BINARY_DIR}/doc"
+    WORKING_DIRECTORY "${NEST_INSTALL_PREFIX}/${NEST_INSTALL_DATADIR}/help_generator"
+    COMMENT "Extracting help information; this may take a litte while."
     )
+  # Copy the local doc/help directory to the global installation
+  # directory for documentation.
+  install( DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc/help"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
+    )
+  # Update the global help index to contain all help files that are
+  # located in the global installation directory for documentation.
+  install( CODE
+    "execute_process(
+      COMMAND python -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
+      WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${NEST_INSTALL_DATADIR}/help_generator\"
+    )"
+    )
+endif ()
+
 
 message( "" )
 message( "-------------------------------------------------------" )
@@ -294,9 +309,24 @@ message( "NEST libraries flags : ${NEST_LIBS}" )
 message( "" )
 message( "-------------------------------------------------------" )
 message( "" )
-message( "You can build and install ${MODULE_NAME} now, using" )
+message( "You can now build and install '${MODULE_NAME}' using" )
 message( "  make" )
 message( "  make install" )
 message( "" )
-message( "${MODULE_NAME} will be installed to: ${CMAKE_INSTALL_FULL_LIBDIR}" )
+message( "The library file lib${MODULE_NAME}.so will be installed to" )
+message( "  ${CMAKE_INSTALL_FULL_LIBDIR}" )
+message( "Help files will be installed to" )
+message( "  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}" )
 message( "" )
+message( "The module can be loaded into NEST using" )
+message( "  (${MODULE_NAME}) Install        (in SLI)" )
+message( "  nest.Install('${MODULE_NAME}')  (in PyNEST)" )
+message( "" )
+
+if( NOT "${CMAKE_INSTALL_PREFIX}" EQUAL "${NEST_INSTALL_PREFIX}" )
+  message( "The module will be installed into a non-default location!" )
+  message( "Make sure to set the environment variables:" )
+  message( "  export NEST_MODULE_PATH=${CMAKE_INSTALL_FULL_LIBDIR}:$NEST_MODULE_PATH" )
+  message( "  export SLI_PATH=${CMAKE_INSTALL_FULL_DATADIR}/sli:$SLI_PATH" )
+  message( "" )
+endif ()

@@ -41,6 +41,7 @@
 
 // Includes from nestkernel:
 #include "dynamicloader.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest.h"
 #include "nestmodule.h"
@@ -201,9 +202,10 @@ CYTHON_unpackConnectionGeneratorDatum( PyObject* obj )
   ConnectionGenerator* cg = NULL;
 
   cg = PNS::unpackConnectionGenerator( obj );
-
   if ( cg != NULL )
+  {
     ret = static_cast< Datum* >( new nest::ConnectionGeneratorDatum( cg ) );
+  }
 
   return ret;
 }

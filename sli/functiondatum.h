@@ -49,6 +49,12 @@ class FunctionDatum : public TypedDatum< &SLIInterpreter::Functiontype >
 
   Name name;
 
+  /** If not empty string, it should contain string with version for which
+   *  feature is deprecated.
+   */
+  std::string deprecation_info_;
+  bool deprecation_warning_issued_;
+
   Datum*
   clone( void ) const
   {
@@ -75,13 +81,19 @@ public:
   FunctionDatum( FunctionDatum const& fd )
     : TypedDatum< &SLIInterpreter::Functiontype >( fd )
     , name( fd.name )
+    , deprecation_info_( fd.deprecation_info_ )
+    , deprecation_warning_issued_( false )
   {
     set_executable();
   }
 
-  FunctionDatum( Name const& n, SLIFunction const* f )
+  FunctionDatum( Name const& n,
+    SLIFunction const* f,
+    const std::string& deprecation_info )
     : TypedDatum< &SLIInterpreter::Functiontype >()
     , name( n )
+    , deprecation_info_( deprecation_info )
+    , deprecation_warning_issued_( false )
   {
     //! Here, we shortcut the default action of the type object and directly
     //! place the function pointer in the datum's action field. Thus, we
@@ -90,6 +102,20 @@ public:
     set_executable();
   }
 
+  void
+  execute( SLIInterpreter* i )
+  {
+    if ( not( deprecation_warning_issued_ or deprecation_info_.empty() ) )
+    {
+      i->message( SLIInterpreter::M_DEPRECATED,
+        "SLIInterpreter",
+        ( "SLI function " + name.toString() + " is deprecated in "
+          + deprecation_info_ + "." ).c_str() );
+      deprecation_warning_issued_ = true;
+    }
+
+    action->execute( i );
+  }
 
   void
   print( std::ostream& o ) const
@@ -115,9 +141,10 @@ public:
   {
     const FunctionDatum* fd =
       dynamic_cast< FunctionDatum* >( const_cast< Datum* >( dat ) );
-
     if ( fd == NULL )
+    {
       return false;
+    }
 
     return action == fd->action;
   }
@@ -133,14 +160,18 @@ public:
   static void* operator new( size_t size )
   {
     if ( size != sizeof( FunctionDatum ) )
+    {
       return ::operator new( size );
+    }
     return memory.alloc();
   }
 
   static void operator delete( void* p, size_t size )
   {
     if ( p == NULL )
+    {
       return;
+    }
     if ( size != sizeof( FunctionDatum ) )
     {
       ::operator delete( p );

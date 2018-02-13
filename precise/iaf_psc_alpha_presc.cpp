@@ -126,46 +126,67 @@ nest::iaf_psc_alpha_presc::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::I_e, I_e_ );
 
   if ( updateValue< double >( d, names::V_th, U_th_ ) )
+  {
     U_th_ -= E_L_;
+  }
   else
+  {
     U_th_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_min, U_min_ ) )
+  {
     U_min_ -= E_L_;
+  }
   else
+  {
     U_min_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
+  {
     U_reset_ -= E_L_;
+  }
   else
+  {
     U_reset_ -= delta_EL;
+  }
 
   long tmp;
   if ( updateValue< long >( d, names::Interpol_Order, tmp ) )
   {
     if ( NO_INTERPOL <= tmp && tmp < END_INTERP_ORDER )
+    {
       Interpol_ = static_cast< interpOrder >( tmp );
+    }
     else
+    {
       throw BadProperty(
         "Invalid interpolation order. "
         "Valid orders are 0, 1, 2, 3." );
+    }
   }
-
   if ( U_reset_ >= U_th_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
-
+  }
   if ( U_reset_ < U_min_ )
+  {
     throw BadProperty(
       "Reset potential must be greater equal minimum potential." );
-
+  }
   if ( c_m_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time must not be negative." );
-
+  }
   if ( tau_m_ <= 0 || tau_syn_ <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 
   return delta_EL;
 }
@@ -183,9 +204,13 @@ nest::iaf_psc_alpha_presc::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
+  {
     y3_ -= p.E_L_;
+  }
   else
+  {
     y3_ -= delta_EL;
+  }
 }
 
 nest::iaf_psc_alpha_presc::Buffers_::Buffers_( iaf_psc_alpha_presc& n )
@@ -540,13 +565,18 @@ nest::iaf_psc_alpha_presc::thresh_find2_( double const dt ) const
   const double sqr_ = std::sqrt( b * b - 4 * a * c + 4 * a * P_.U_th_ );
   const double tau1 = ( -b + sqr_ ) / ( 2 * a );
   const double tau2 = ( -b - sqr_ ) / ( 2 * a );
-
   if ( tau1 >= 0 )
+  {
     return tau1;
+  }
   else if ( tau2 >= 0 )
+  {
     return tau2;
+  }
   else
+  {
     return thresh_find1_( dt );
+  }
 }
 
 double
@@ -615,8 +645,12 @@ nest::iaf_psc_alpha_presc::thresh_find3_( double const dt ) const
 
   double tau = ( tau1 >= 0 ) ? tau1 : 2 * h_ms_;
   if ( ( tau2 >= 0 ) && ( tau2 < tau ) )
+  {
     tau = tau2;
+  }
   if ( ( tau3 >= 0 ) && ( tau3 < tau ) )
+  {
     tau = tau3;
+  }
   return ( tau <= h_ms_ ) ? tau : thresh_find2_( dt );
 }

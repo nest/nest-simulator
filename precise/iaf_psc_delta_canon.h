@@ -358,10 +358,9 @@ private:
    */
   struct Variables_
   {
-    double exp_t_;     //!< @$ e^{-t/\tau_m} @$
-    double expm1_t_;   //!< @$ e^{-t/\tau_m} - 1 @$
-    double v_inf_;     //!< @$ \frac{I_e\tau_m}{c_m} @$
-    double I_contrib_; //!< @$ \frac{I_e\tau_m}{c_m} (1-e^{-t/\tau_m})@$
+    double exp_t_;   //!< @$ e^{-t/\tau_m} @$
+    double expm1_t_; //!< @$ e^{-t/\tau_m} - 1 @$
+    double R_;       //!< @$ \frac{\tau_m}{c_m} @$
 
     double h_ms_; //!< duration of time step [ms]
 
@@ -417,7 +416,9 @@ inline port
 iaf_psc_delta_canon::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -425,7 +426,9 @@ inline port
 iaf_psc_delta_canon::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -434,7 +437,9 @@ iaf_psc_delta_canon::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

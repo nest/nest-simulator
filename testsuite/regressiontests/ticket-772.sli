@@ -42,28 +42,28 @@
 
 M_ERROR setverbosity
 
-is_threaded_with_openmp not { exit_test_gracefully } if
+skip_if_not_threaded
 
 [1 2] /n Set
 
 {
   ResetKernel
   
-  /iaf_neuron 2 Create
+  /iaf_psc_alpha 2 Create
   n [1] << /rule /all_to_all >> << /model /static_synapse /weight 1 /delay 4 >> Connect
 } pass_or_die
 
 {
   ResetKernel
   
-  /iaf_neuron 2 Create
+  /iaf_psc_alpha 2 Create
   n [1] << /rule /all_to_all >> << /model /static_synapse /weight [1 1] cv_iv /delay [4 6] cv_iv >> Connect
 } pass_or_die
 
 {
   ResetKernel
   
-  /iaf_neuron 2 Create
+  /iaf_psc_alpha 2 Create
   n n << /rule /one_to_one >> << /model /static_synapse /weight [1 1] cv_iv /delay [4 6] cv_iv >> Connect
 } pass_or_die
 

@@ -100,7 +100,7 @@ nest::iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::C_m, c_m_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::t_ref, t_ref_ );
-  def< bool >( d, "refractory_input", with_refr_input_ );
+  def< bool >( d, names::refractory_input, with_refr_input_ );
 }
 
 double
@@ -113,38 +113,54 @@ nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
   const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  {
     V_reset_ -= E_L_;
+  }
   else
+  {
     V_reset_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_th, V_th_ ) )
+  {
     V_th_ -= E_L_;
+  }
   else
+  {
     V_th_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_min, V_min_ ) )
+  {
     V_min_ -= E_L_;
+  }
   else
+  {
     V_min_ -= delta_EL;
+  }
 
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, c_m_ );
   updateValue< double >( d, names::tau_m, tau_m_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
-
   if ( V_reset_ >= V_th_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
-
+  }
   if ( c_m_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be >0." );
-
+  }
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time must not be negative." );
-
+  }
   if ( tau_m_ <= 0 )
+  {
     throw BadProperty( "Membrane time constant must be > 0." );
+  }
 
-  updateValue< bool >( d, "refractory_input", with_refr_input_ );
+  updateValue< bool >( d, names::refractory_input, with_refr_input_ );
 
   return delta_EL;
 }
@@ -162,9 +178,13 @@ nest::iaf_psc_delta::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
+  {
     y3_ -= p.E_L_;
+  }
   else
+  {
     y3_ -= delta_EL;
+  }
 }
 
 nest::iaf_psc_delta::Buffers_::Buffers_( iaf_psc_delta& n )
@@ -230,23 +250,20 @@ nest::iaf_psc_delta::calibrate()
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
 
 
-  // TauR specifies the length of the absolute refractory period as
+  // t_ref_ specifies the length of the absolute refractory period as
   // a double in ms. The grid based iaf_psp_delta can only handle refractory
   // periods that are integer multiples of the computation step size (h).
   // To ensure consistency with the overall simulation scheme such conversion
   // should be carried out via objects of class nest::Time. The conversion
   // requires 2 steps:
-  //     1. A time object r is constructed defining  representation of
-  //        TauR in tics. This representation is then converted to computation
+  //     1. A time object r is constructed, defining representation of
+  //        t_ref_ in tics. This representation is then converted to computation
   //        time steps again by a strategy defined by class nest::Time.
   //     2. The refractory time in units of steps is read out get_steps(), a
   //        member function of class nest::Time.
   //
-  // The definition of the refractory period of the iaf_psc_delta is consistent
-  // the one of iaf_neuron_ps.
-  //
-  // Choosing a TauR that is not an integer multiple of the computation time
-  // step h will leed to accurate (up to the resolution h) and self-consistent
+  // Choosing a t_ref_ that is not an integer multiple of the computation time
+  // step h will lead to accurate (up to the resolution h) and self-consistent
   // results. However, a neuron model capable of operating with real valued
   // spike time may exhibit a different effective refractory time.
 
@@ -293,10 +310,14 @@ nest::iaf_psc_delta::update( Time const& origin,
       // read spikes from buffer and accumulate them, discounting
       // for decay until end of refractory period
       if ( P_.with_refr_input_ )
+      {
         S_.refr_spikes_buffer_ +=
           B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / P_.tau_m_ );
+      }
       else
-        B_.spikes_.get_value( lag ); // clear buffer entry, ignore spike
+      {
+        B_.spikes_.get_value( lag );
+      } // clear buffer entry, ignore spike
 
       --S_.r_;
     }

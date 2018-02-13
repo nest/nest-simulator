@@ -61,8 +61,8 @@
 /* Author:                                                  */
 /*  Hans Ekkehard Plesser                                   */
 /*                                                          */
-/* References:						    */
-/*  [0] always reserved for Stroustrup		            */
+/* References:                                              */
+/*  [0] always reserved for Stroustrup                      */
 /*  [1] L. Devroye, "Non-Uniform Random Variate Generation",*/
 /*      Springer, 1986                                      */
 /*                                                          */

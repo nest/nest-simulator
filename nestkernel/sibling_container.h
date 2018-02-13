@@ -45,9 +45,6 @@ namespace nest
  */
 class SiblingContainer : public Node
 {
-  friend class NodeManager;
-  friend class Subnet;
-
 public:
   SiblingContainer();
 
@@ -97,10 +94,10 @@ public:
    */
   std::vector< Node* >::const_iterator end() const;
 
+  size_t num_thread_siblings() const;
+  Node* get_thread_sibling( index ) const;
+
 protected:
-  size_t num_thread_siblings_() const;
-  Node* get_thread_sibling_( index ) const;
-  Node* get_thread_sibling_safe_( index ) const;
   void
   init_node_( const Node& )
   {
@@ -171,7 +168,7 @@ SiblingContainer::empty() const
 }
 
 inline size_t
-SiblingContainer::num_thread_siblings_() const
+SiblingContainer::num_thread_siblings() const
 {
   return nodes_.size();
 }
@@ -192,6 +189,12 @@ inline bool
 SiblingContainer::is_subnet() const
 {
   return empty() ? false : nodes_[ 0 ]->is_subnet();
+}
+
+inline Node*
+SiblingContainer::get_thread_sibling( index i ) const
+{
+  return nodes_[ i ]; // without range check
 }
 
 } // namespace

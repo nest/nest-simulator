@@ -27,11 +27,13 @@ namespace nest
 
 ConnectorModel::ConnectorModel( const std::string name,
   bool is_primary,
-  bool has_delay )
+  bool has_delay,
+  bool requires_symmetric )
   : name_( name )
   , default_delay_needs_check_( true )
   , is_primary_( is_primary )
   , has_delay_( has_delay )
+  , requires_symmetric_( requires_symmetric )
 {
 }
 
@@ -41,6 +43,7 @@ ConnectorModel::ConnectorModel( const ConnectorModel& cm,
   , default_delay_needs_check_( true )
   , is_primary_( cm.is_primary_ )
   , has_delay_( cm.has_delay_ )
+  , requires_symmetric_( cm.requires_symmetric_ )
 {
 }
 

@@ -45,7 +45,7 @@ def simple():
 
     N = 40
 
-    modelList = [('iaf_neuron', m, {}) for m in ['E', 'I']]
+    modelList = [('iaf_psc_alpha', m, {}) for m in ['E', 'I']]
 
     layerList = [('IG', {'columns': N, 'rows': N, 'extent': [1.0, 1.0],
                          'elements': 'poisson_generator'}),

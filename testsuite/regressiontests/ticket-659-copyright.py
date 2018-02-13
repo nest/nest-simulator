@@ -23,6 +23,10 @@ import os
 import sys
 import re
 
+# Use encoding-aware Py3 open also in Py2
+if sys.version_info[0] < 3:
+    from io import open
+
 EXIT_SUCCESS = 0
 EXIT_BAD_HEADER = 20
 EXIT_NO_SOURCE = 126
@@ -38,6 +42,7 @@ exclude_dirs = [
     'libltdl',
     '.git',
     'CMakeFiles',
+    'result',  # ignore files in $NEST_RESULT of travis-ci builds
 ]
 
 # match all file names against these regular expressions. if a match
@@ -56,6 +61,8 @@ exclude_files = [
     'libnestutil/sparsetable.h',
     'libnestutil/template_util.h',
     'libnestutil/type_traits.h',
+    'librandom/knuthlfg.cpp',
+    'librandom/knuthlfg.h',
     'librandom/mt19937.cpp',
     'librandom/mt19937.h',
     'nestrc.sli',
@@ -106,7 +113,7 @@ for dirpath, _, fnames in os.walk(source_dir):
                 for exclude_file in exclude_files]):
             continue
 
-        with open(tested_file) as source_file:
+        with open(tested_file, encoding='utf-8') as source_file:
             total_files += 1
             for template_line in template_contents[extension]:
                 try:

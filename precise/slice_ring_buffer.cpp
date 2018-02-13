@@ -48,7 +48,9 @@ nest::SliceRingBuffer::resize()
 #ifndef HAVE_STL_VECTOR_CAPACITY_BASE_UNITY
   // create 1-element buffers
   for ( size_t j = 0; j < queue_.size(); ++j )
+  {
     queue_[ j ].reserve( 1 );
+  }
 #endif
 }
 
@@ -56,7 +58,9 @@ void
 nest::SliceRingBuffer::clear()
 {
   for ( size_t j = 0; j < queue_.size(); ++j )
+  {
     queue_[ j ].clear();
+  }
 }
 
 void

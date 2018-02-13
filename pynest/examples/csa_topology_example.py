@@ -35,6 +35,9 @@ http://dx.doi.org/10.3389/fninf.2014.00043
 
 For a related example, see csa_example.py
 
+This example uses the function GetLeaves, which is deprecated. A deprecation
+warning is therefore issued. For details about deprecated functions, see
+documentation.
 """
 
 """
@@ -80,12 +83,12 @@ def geometryFunction(topologyLayer):
     return geometry_function
 
 """
-We create two layers that have 20x20 neurons of type `iaf_neuron`.
+We create two layers that have 20x20 neurons of type `iaf_psc_alpha`.
 """
 
-pop1 = topo.CreateLayer({'elements': 'iaf_neuron',
+pop1 = topo.CreateLayer({'elements': 'iaf_psc_alpha',
                          'rows': 20, 'columns': 20})
-pop2 = topo.CreateLayer({'elements': 'iaf_neuron',
+pop2 = topo.CreateLayer({'elements': 'iaf_psc_alpha',
                          'rows': 20, 'columns': 20})
 
 """
@@ -113,7 +116,12 @@ the parameters weight and delay to positions in the value set
 associated with the connection set.
 """
 
-nest.CGConnect(pop1, pop2, cs, {"weight": 0, "delay": 1})
+# This is a work-around until NEST 3.0 is released. It will issue a deprecation
+# warning.
+pop1_gids = nest.GetLeaves(pop1)[0]
+pop2_gids = nest.GetLeaves(pop2)[0]
+
+nest.CGConnect(pop1_gids, pop2_gids, cs, {"weight": 0, "delay": 1})
 
 """
 Finally, we use the `PlotTargets` function to show all targets in

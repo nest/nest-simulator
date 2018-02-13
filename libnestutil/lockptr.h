@@ -117,9 +117,11 @@ class lockPTR
     {
       assert( number_of_references == 0 ); // This will invalidate the still
                                            // existing pointer!
-      assert( !locked );
-      if ( ( pointee != NULL ) && deletable && ( !locked ) )
+      assert( not locked );
+      if ( ( pointee != NULL ) && deletable && ( not locked ) )
+      {
         delete pointee;
+      }
     }
 
     D*
@@ -232,21 +234,21 @@ public:
   lockPTR< D > operator=( D& s )
   {
     *this = lockPTR< D >( s );
-    assert( !( obj->isdeletable() ) );
+    assert( not( obj->isdeletable() ) );
     return *this;
   }
 
   lockPTR< D > operator=( D const& s )
   {
     *this = lockPTR< D >( s );
-    assert( !( obj->isdeletable() ) );
+    assert( not( obj->isdeletable() ) );
     return *this;
   }
 
   D*
   get( void )
   {
-    assert( !obj->islocked() );
+    assert( not obj->islocked() );
     obj->lock(); // Try to lock Object
     return obj->get();
   }
@@ -254,7 +256,7 @@ public:
   D*
   get( void ) const
   {
-    assert( !obj->islocked() );
+    assert( not obj->islocked() );
 
     obj->lock(); // Try to lock Object
     return obj->get();
@@ -288,7 +290,8 @@ public:
   }
 
 
-  bool operator!() const //!< returns true if and only if obj->pointee == NULL
+  bool operator not()
+    const //!< returns true if and only if obj->pointee == NULL
   {
     // assert(obj != NULL);
 

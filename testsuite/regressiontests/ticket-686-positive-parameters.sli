@@ -46,7 +46,8 @@ M_ERROR setverbosity
 /skipped_models 
   [ /correlation_detector 
     /correlomatrix_detector
-    /correlospinmatrix_detector ] 
+    /correlospinmatrix_detector 
+    /siegert_neuron ] 
 def
 skipped_models { modeldict exch undef } forall
 

@@ -67,14 +67,18 @@ BoolDatum::print( std::ostream& out ) const
 void* BoolDatum::operator new( size_t size )
 {
   if ( size != memory.size_of() )
+  {
     return ::operator new( size );
+  }
   return memory.alloc();
 }
 
 void BoolDatum::operator delete( void* p, size_t size )
 {
   if ( p == NULL )
+  {
     return;
+  }
   if ( size != memory.size_of() )
   {
     ::operator delete( p );

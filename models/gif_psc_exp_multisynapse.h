@@ -119,7 +119,7 @@
     V_T_star   double - Base threshold in mV
 
   Synaptic parameters
-    taus_syn  vector of double - Time constants of the synaptic currents in ms.
+    tau_syn  vector of double - Time constants of the synaptic currents in ms.
 
   References:
 
@@ -222,8 +222,6 @@ private:
     /** Time constants of synaptic currents in ms */
     std::vector< double > tau_syn_;
 
-    size_t num_of_receptors_;
-
     /** boolean flag which indicates whether the neuron has connections */
     bool has_connections_;
 
@@ -234,6 +232,13 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum& ); //!< Set values from dictionary
+
+    //! Return the number of receptor ports
+    inline size_t
+    n_receptors_() const
+    {
+      return tau_syn_.size();
+    }
   };
 
   // ----------------------------------------------------------------
@@ -363,8 +368,10 @@ inline port
 gif_psc_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type <= 0
-    || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
+    || receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
+  }
 
   P_.has_connections_ = true;
   return receptor_type;
@@ -375,7 +382,9 @@ gif_psc_exp_multisynapse::handles_test_event( CurrentEvent&,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -384,7 +393,9 @@ gif_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

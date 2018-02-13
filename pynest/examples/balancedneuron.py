@@ -75,7 +75,7 @@ Third, the nodes are created using `Create`. We store the returned
 handles in variables for later reference.
 '''
 
-neuron = nest.Create("iaf_neuron")
+neuron = nest.Create("iaf_psc_alpha")
 noise = nest.Create("poisson_generator", 2)
 voltmeter = nest.Create("voltmeter")
 spikedetector = nest.Create("spike_detector")
@@ -93,7 +93,7 @@ nest.SetStatus(noise, [{"rate": n_ex * r_ex}, {"rate": n_in * r_in}])
 nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 '''
-Fifth, the `iaf_neuron` is connected to the `spike_detector` and the
+Fifth, the `iaf_psc_alpha` is connected to the `spike_detector` and the
 `voltmeter`, as are the two Poisson generators to the neuron. The
 command `Connect` has different variants. Plain `Connect` just takes
 the handles of pre- and post-synaptic nodes and uses the default

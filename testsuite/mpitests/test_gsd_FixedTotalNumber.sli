@@ -53,7 +53,7 @@ FirstVersion: February 2014
 	 /grng_seed 10
        >> SetStatus
     
-     /iaf_neuron 10 Create pop
+     /iaf_psc_alpha 10 Create pop
      [1 10] Range /pop_a Set
      pop_a pop_a << /rule /fixed_total_number /N 10 >> << /model /static_synapse /weight 1. /delay 1. >> Connect
     

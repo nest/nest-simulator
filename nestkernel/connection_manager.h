@@ -173,16 +173,27 @@ public:
   void subnet_connect( Subnet&, Subnet&, int, index syn );
 
   /**
-   * Connect from an array of dictionaries.
+   * Connect, using a dictionary with arrays.
+   * The connection rule is based on the details of the dictionary entries
+   * source and target.
+   * If source and target are both either a GID or a list of GIDs with equal
+   * size, then source and target are connected one-to-one.
+   * If source is a gid and target is a list of GIDs then the sources is
+   * connected to all targets.
+   * If source is a list of GIDs and target is a GID, then all sources are
+   * connected to the target.
+   * At this stage, the task of connect is to separate the dictionary into one
+   * for each thread and then to forward the connect call to the connectors who
+   * can then deal with the details of the connection.
    */
-  bool connect( ArrayDatum& connectome );
+  bool data_connect_connectome( const ArrayDatum& connectome );
 
   /**
    * Connect one source node with many targets.
-   * The dictionary d contains arrays for all the connections of type syn.
-   * AKA DataConnect
+   * The dictionary d contains arrays for all the outgoing connections of type
+   * syn.
    */
-  void divergent_connect( index s, DictionaryDatum d, index syn );
+  void data_connect_single( const index s, DictionaryDatum d, const index syn );
 
   // aka conndatum GetStatus
   DictionaryDatum
@@ -230,9 +241,11 @@ public:
   void get_sources( std::vector< index > targets,
     std::vector< std::vector< index > >& sources,
     index synapse_model );
-  void get_targets( std::vector< index > sources,
+
+  void get_targets( const std::vector< index >& sources,
     std::vector< std::vector< index > >& targets,
-    index synapse_model );
+    const index synapse_model,
+    const std::string& post_synaptic_element );
 
   /**
    * Triggered by volume transmitter in update.
@@ -281,6 +294,25 @@ public:
    */
   DelayChecker& get_delay_checker();
 
+  /**
+   * Returns initial connector capacity.
+   * When a connector is first created, it starts with this capacity
+   * (if >= connector_cutoff).
+   */
+  size_t get_initial_connector_capacity() const;
+
+  /**
+   * Return large connector limit.
+   * Capacity doubling is used up to this limit.
+   */
+  size_t get_large_connector_limit() const;
+
+  /**
+   * Returns large connector growth factor.
+   * This capacity growth factor is used beyond the large connector limit.
+   */
+  double get_large_connector_growth_factor() const;
+
 private:
   /**
    * Update delay extrema to current values.
@@ -309,6 +341,8 @@ private:
 
   ConnectorBase*
   validate_source_entry_( thread tid, index s_gid, synindex syn_id );
+
+  ConnectorBase* validate_source_entry_( thread tid, index s_gid );
 
   /**
    * Connect is used to establish a connection between a sender and
@@ -373,6 +407,18 @@ private:
   delay min_delay_; //!< Value of the smallest delay in the network.
 
   delay max_delay_; //!< Value of the largest delay in the network in steps.
+
+  /**
+   * When a connector is first created, it starts with this capacity
+   * (if >= connector_cutoff)
+   */
+  size_t initial_connector_capacity_;
+
+  //! Capacity doubling is used up to this limit
+  size_t large_connector_limit_;
+
+  //! Capacity growth factor to use beyond the limit
+  double large_connector_growth_factor_;
 };
 
 inline DictionaryDatum&
@@ -391,6 +437,24 @@ inline delay
 ConnectionManager::get_max_delay() const
 {
   return max_delay_;
+}
+
+inline size_t
+ConnectionManager::get_initial_connector_capacity() const
+{
+  return initial_connector_capacity_;
+}
+
+inline size_t
+ConnectionManager::get_large_connector_limit() const
+{
+  return large_connector_limit_;
+}
+
+inline double
+ConnectionManager::get_large_connector_growth_factor() const
+{
+  return large_connector_growth_factor_;
 }
 
 } // namespace nest

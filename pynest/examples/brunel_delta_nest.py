@@ -28,7 +28,7 @@ the basis of the network used in
 
 Brunel N, Dynamics of Sparsely Connected Networks of Excitatory and
 Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
-183–208 (2000).
+183-208 (2000).
 
 When connecting the network customary synapse models are used, which
 allow for querying the number of created synapses. Using spike

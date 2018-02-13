@@ -38,7 +38,7 @@ Synopsis:
 Priority (From) (Message) message ->
 
 where "Priority" may be any positive integer, or one of the following:
-M_DEBUG, M_STATUS, M_INFO, M_WARNING, M_ERROR, M_FATAL
+M_DEBUG, M_STATUS, M_INFO, M_DEPRECATED, M_WARNING, M_ERROR, M_FATAL
 
 Description: 
 Display a message, if priority is higher than current verbosity-level. 
@@ -87,15 +87,19 @@ Examples: Short form:
               issues something like
           % Jul 21 16:24:12 SLI[10] Your last action had no effect 
 
-          4. (Result may be invalid) M_WARNING message
+          4. (Function is deprecated) M_DEPRECATED message
+              issues something like
+          % Jul 21 16:24:12 SLI[18] Function is deprecated 
+
+          5. (Result may be invalid) M_WARNING message
               issues something like
           % Jul 21 16:24:24 SLI[20] Result may be invalid  
 
-          5. (This should never happen!) M_ERROR message
+          6. (This should never happen!) M_ERROR message
               issues something like
           % Jul 21 16:24:36 SLI[30] This should never happen!
 
-          6. (It's all broken, let's go home.) M_FATAL message
+          7. (It's all broken, let's go home.) M_FATAL message
               issues something like
           % Jul 21 16:24:36 SLI[40] It's all broken, let's go home.
 
@@ -116,15 +120,16 @@ FirstVersion: Apr 9 1999
 Remarks: 
          M_* values are defined in system dictionary.
          You may introduce new priority levels in the user dictionary if convenient.
-         Standard values are: M_ALL    = 0
-                              M_DEBUG   = 5
-                              M_STATUS  = 7
-                              M_INFO    = 10
-                              M_WARNING = 20
-                              M_ERROR   = 30
-                              M_FATAL   = 40
-                              M_QUIET   = 100
-         Standard output:     M_OUT     = cout
+         Standard values are: M_ALL        = 0
+                              M_DEBUG      = 5
+                              M_STATUS     = 7
+                              M_INFO       = 10
+                              M_DEPRECATED = 18
+                              M_WARNING    = 20
+                              M_ERROR      = 30
+                              M_FATAL      = 40
+                              M_QUIET      = 100
+         Standard output:     M_OUT        = cout
 
 SeeAlso: setverbosity
 */
@@ -134,14 +139,15 @@ systemdict begin %this is unnessessary, if misc_helpers.sli is called from sli-i
   %               but that's not sure, and it won't harm anyway...
 
   %Define error levels:
-  /M_ALL      0 def
-  /M_DEBUG    5 def
-  /M_STATUS   7 def
-  /M_INFO    10 def
-  /M_WARNING 20 def
-  /M_ERROR   30 def
-  /M_FATAL   40 def
-  /M_QUIET  100 def
+  /M_ALL        0 def
+  /M_DEBUG      5 def
+  /M_STATUS     7 def
+  /M_INFO       10 def
+  /M_DEPRECATED 18 def
+  /M_WARNING    20 def
+  /M_ERROR      30 def
+  /M_FATAL      40 def
+  /M_QUIET      100 def
   
 end %systemdict
 
@@ -170,6 +176,7 @@ VerbosityLevel setverbosity -> -
 M_DEBUG        setverbosity -> -
 M_STATUS       setverbosity -> -
 M_INFO         setverbosity -> -
+M_DEPRECATED   setverbosity -> -
 M_WARNING      setverbosity -> -
 M_ERROR        setverbosity -> -
 M_FATAL        setverbosity -> -
@@ -190,6 +197,7 @@ Parameters:
      M_DEBUG=5,  display debugging messages and above
      M_STATUS=7,  display status messages and above
      M_INFO=10, display information messages and above
+     M_DEPRECATED=18, display deprecation warnings and above
      M_WARNING=20, display warning messages and above
      M_ERROR=30, display error messages and above
      M_FATAL=40, display failure messages and above
@@ -223,6 +231,7 @@ Remarks:
                        M_DEBUG   = 5
                        M_STATUS  = 7
                        M_INFO    = 10
+                       M_DEPRECATED = 18
                        M_WARNING = 20
                        M_ERROR   = 30
                        M_FATAL   = 40

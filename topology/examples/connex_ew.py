@@ -22,7 +22,7 @@
 '''
 NEST Topology Module Example
 
-Create two 30x30 layers of iaf_neurons with edge_wrap,
+Create two 30x30 layers of iaf_psc_alpha neurons with edge_wrap,
 connect with circular mask, flat probability,
 visualize.
 
@@ -40,9 +40,9 @@ nest.ResetKernel()
 
 # create two test layers
 a = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_neuron'})
+                      'elements': 'iaf_psc_alpha'})
 b = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_neuron', 'edge_wrap': True})
+                      'elements': 'iaf_psc_alpha', 'edge_wrap': True})
 
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 0.5}},

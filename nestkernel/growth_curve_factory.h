@@ -31,6 +31,7 @@ namespace nest
 
 class GrowthCurveGaussian;
 class GrowthCurveLinear;
+class GrowthCurveSigmoid;
 
 /**
  * Generic factory class for GrowthCurve objects.

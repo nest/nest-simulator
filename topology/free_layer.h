@@ -123,7 +123,9 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     positions_.reserve( this->local_size() );
 
     if ( this->local_size() == 0 )
+    {
       return; // nothing more to do
+    }
 
     const index nodes_per_depth = this->global_size() / this->depth_;
     const index first_lid = this->nodes_[ 0 ]->get_lid();
@@ -144,10 +146,11 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
       Position< D > point = getValue< std::vector< double > >(
         pos[ ( *i )->get_lid() % nodes_per_depth ] );
-
       if ( not( ( point >= this->lower_left_ )
              and ( point < this->lower_left_ + this->extent_ ) ) )
+      {
         throw BadProperty( "Node position outside of layer" );
+      }
 
       positions_.push_back( point );
     }
@@ -218,14 +221,18 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
 
     if ( filter.select_model()
       && ( ( *node_it )->get_model_id() != filter.model ) )
+    {
       continue;
+    }
 
     // Push GID into array to communicate
     local_gid_pos.push_back( ( *node_it )->get_gid() );
     // Push coordinates one by one
     for ( int j = 0; j < D; ++j )
+    {
       local_gid_pos.push_back( positions_[ ( *node_it )->get_subnet_index()
         % positions_.size() ][ j ] );
+    }
   }
 
   // This array will be filled with GID,pos_x,pos_y[,pos_z] for global nodes:
@@ -292,7 +299,9 @@ FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
 
     if ( filter.select_model()
       && ( ( *node_it )->get_model_id() != filter.model ) )
+    {
       continue;
+    }
 
     tree.insert( std::pair< Position< D >, index >(
       positions_[ ( *node_it )->get_subnet_index() % positions_.size() ],

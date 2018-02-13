@@ -120,19 +120,31 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  {
     V_reset_ -= E_L_;
+  }
   else
+  {
     V_reset_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
+  {
     Theta_ -= E_L_;
+  }
   else
+  {
     Theta_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_min, LowerBound_ ) )
+  {
     LowerBound_ -= E_L_;
+  }
   else
+  {
     LowerBound_ -= delta_EL;
+  }
 
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
@@ -142,19 +154,28 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::t_ref, TauR_ );
 
   if ( C_ <= 0.0 )
+  {
     throw BadProperty( "Capacitance must be > 0." );
+  }
 
   if ( Tau_ <= 0.0 )
+  {
     throw BadProperty( "Membrane time constant must be > 0." );
+  }
 
   if ( tau_ex_ <= 0.0 || tau_in_ <= 0.0 )
+  {
     throw BadProperty( "All synaptic time constants must be > 0." );
+  }
 
   if ( TauR_ < 0.0 )
+  {
     throw BadProperty( "The refractory time t_ref can't be negative." );
-
+  }
   if ( V_reset_ >= Theta_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
+  }
 
   return delta_EL;
 }
@@ -171,9 +192,13 @@ iaf_psc_alpha::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
+  {
     y3_ -= p.E_L_;
+  }
   else
+  {
     y3_ -= delta_EL;
+  }
 }
 
 iaf_psc_alpha::Buffers_::Buffers_( iaf_psc_alpha& n )
@@ -309,8 +334,11 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
       // lower bound of membrane potential
       S_.y3_ = ( S_.y3_ < P_.LowerBound_ ? P_.LowerBound_ : S_.y3_ );
     }
-    else // neuron is absolute refractory
+    else
+    {
+      // neuron is absolute refractory
       --S_.r_;
+    }
 
     // alpha shape EPSCs
     S_.I_ex_ = V_.P21_ex_ * S_.dI_ex_ + V_.P22_ex_ * S_.I_ex_;
@@ -361,13 +389,17 @@ iaf_psc_alpha::handle( SpikeEvent& e )
   const double s = e.get_weight() * e.get_multiplicity();
 
   if ( e.get_weight() > 0.0 )
+  {
     B_.ex_spikes_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       s );
+  }
   else
+  {
     B_.in_spikes_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       s );
+  }
 }
 
 void

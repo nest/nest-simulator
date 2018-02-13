@@ -147,6 +147,8 @@ namespace nest
                     contents. If set to false, the file will remain open after
                     ResetNetwork, so you can record continuously. NB:
                     the file is always closed upon ResetKernel. (Default: true).
+  /use_gid_in_filename - Determines if the GID is used in the file name of the
+  recording device. Setting this to false can lead to conflicting file names.
 
   The following parameters control how output is formatted:
   /withtime      - boolean value which specifies whether the network time should
@@ -174,10 +176,12 @@ namespace nest
   /binary        - if set to true, data is written in binary mode to files
                    instead of ASCII. This setting affects file output only, not
                    screen output (default: false)
-  /fbuffer_size  - the size of the buffer to use for writing to files. The
-                   default size is determined by the implementation of the C++
-                   standard library. To obtain an unbuffered file stream, use a
-                   buffer size of 0.
+  /fbuffer_size  - the size of the buffer to use for writing to files. Setting
+                   this value to 0 will reduce buffering to a system-dependent
+                   minimum. Set /flush_after_simulate to true to ensure that all
+                   pending data is written to file before Simulate returns. A
+                   value of -1 shows that the system default is in use. This
+                   value can only be changed before Simulate is called.
 
   Data recorded in memory is available through the following parameter:
   /n_events      - Number of events collected or sampled. n_events can be set to
@@ -247,7 +251,8 @@ public:
   {
     SPIKE_DETECTOR,
     MULTIMETER,
-    SPIN_DETECTOR
+    SPIN_DETECTOR,
+    WEIGHT_RECORDER
   };
 
   /**
@@ -258,12 +263,18 @@ public:
    * @param Default value for withtime property
    * @param Default value for withgid property
    * @param Default value for withweight property
+   * @param Default value for withtargetgid property
+   * @param Default value for withport property
+   * @param Default value for withrport property
    */
   RecordingDevice( const Node&,
     Mode,
     const std::string&,
     bool,
     bool,
+    bool = false,
+    bool = false,
+    bool = false,
     bool = false );
 
   /**
@@ -296,6 +307,11 @@ public:
 
   /**
    * Flush output stream if requested.
+   */
+  void post_run_cleanup();
+
+  /**
+   * Close output stream if requested.
    */
   void finalize();
 
@@ -411,9 +427,31 @@ private:
   void print_weight_( std::ostream&, double );
 
   /**
-   * Store data in internal structure.
+   * Print the target gid of an event.
    */
-  void store_data_( index, const Time&, double, double );
+  void print_target_( std::ostream&, index );
+
+  /**
+   * Print the port of an event.
+   */
+  void print_port_( std::ostream&, long );
+
+  /**
+   * Print the rport of an event.
+   */
+  void print_rport_( std::ostream&, long );
+
+  /**
+   * Store data in internal structure.
+   * @param store sender gid of event
+   * @param store timestamp of event
+   * @param store offset of event
+   * @param store weight of event
+   * @param store target gid of event
+   * @param store port of event
+   * @param store rport of event
+   */
+  void store_data_( index, const Time&, double, double, index, long, long );
 
   /**
    * Clear data in internal structure, and call clear_data_hook().
@@ -438,6 +476,18 @@ private:
   struct Buffers_
   {
     std::ofstream fs_; //!< the file to write the recorded data to
+
+    /**
+     * Manually managed output buffer.
+     *
+     * This pointer is zero unless the user explicitly sets fbuffer_size_
+     * to a value greater than zero.
+     */
+    char* fbuffer_;
+    long fbuffer_size_; //!< size of fbuffer_; -1: not yet set
+
+    Buffers_();
+    ~Buffers_();
   };
 
   // ------------------------------------------------------------------
@@ -454,6 +504,9 @@ private:
     bool withgid_;        //!< true if element GID is to be printed, default
     bool withtime_;       //!< true if time of event is to be printed, default
     bool withweight_;     //!< true if weight of event is to be printed
+    bool withtargetgid_;  //!< true if target GID is to be printed, default
+    bool withport_;       //!< true if port is to be printed, default
+    bool withrport_;      //!< true if rport is to be printed, default
 
     long precision_;  //!< precision of doubles written to file
     bool scientific_; //!< use scientific format if true, else fixed
@@ -462,30 +515,40 @@ private:
     bool user_set_precision_;     //!< true if user set precision
 
     bool binary_; //!< true if to write files in binary mode instead of ASCII
-    long fbuffer_size_;     //!< the buffer size to use when writing to file
-    long fbuffer_size_old_; //!< the buffer size to use when writing
-                            //!< to file (old)
+    long fbuffer_size_; //!< output buffer size; -1 until set by user
 
     std::string label_;    //!< a user-defined label for symbolic device names.
     std::string file_ext_; //!< the file name extension to use, without .
     std::string filename_; //!< the filename, if recording to a file (read-only)
     bool close_after_simulate_; //!< if true, finalize() shall close the stream
-    bool flush_after_simulate_; //!< if true, finalize() shall flush the stream
+    bool flush_after_simulate_; //!< if true, post_run_cleanup() flushes stream
     bool flush_records_;        //!< if true, flush stream after each output
     bool close_on_reset_;       //!< if true, close stream in init_buffers()
+
+    bool use_gid_in_filename_;
 
     /**
      * Set default parameter values.
      * @param Default file name extension, excluding ".".
      * @param Default value for withtime property
      * @param Default value for withgid property
+     * @param Default value for withweight property
+     * @param Default value for withtargetgid property
+     * @param Default value for withport property
+     * @param Default value for withrport property
      */
-    Parameters_( const std::string&, bool, bool, bool );
+    Parameters_( const std::string&, bool, bool, bool, bool, bool, bool );
 
     //! Store current values in dictionary
     void get( const RecordingDevice&, DictionaryDatum& ) const;
-    //! Set values from dictionary
-    void set( const RecordingDevice&, const Buffers_&, const DictionaryDatum& );
+
+    /**
+     * Set values from dictionary.
+     *
+     * @note `Buffers_&` cannot be `const` because `basic_ofstream::is_open()`
+     * is not `const` in C++98  (cf C++ Standard §27.8.1.10).
+     */
+    void set( const RecordingDevice&, Buffers_&, const DictionaryDatum& );
   };
 
   // ------------------------------------------------------------------
@@ -494,6 +557,9 @@ private:
   {
     size_t events_;                         //!< Event counter
     std::vector< long > event_senders_;     //!< List of event sender ids
+    std::vector< long > event_targets_;     //!< List of event targets ids
+    std::vector< long > event_ports_;       //!< List of event ports
+    std::vector< long > event_rports_;      //!< List of event rports
     std::vector< double > event_times_ms_;  //!< List of event times in ms
     std::vector< long > event_times_steps_; //!< List of event times in steps
     //! List of event time offsets
@@ -515,7 +581,6 @@ private:
   Parameters_ P_;
   State_ S_;
   Buffers_ B_;
-  Buffers_ V_;
 };
 
 inline bool
@@ -575,14 +640,18 @@ RecordingDevice::print_value( const ValueT& value, bool endrecord )
   {
     std::cout << value << '\t';
     if ( endrecord )
+    {
       std::cout << '\n';
+    }
   }
 
   if ( P_.to_file_ )
   {
     B_.fs_ << value << '\t';
     if ( endrecord )
+    {
       B_.fs_ << '\n';
+    }
   }
 }
 
@@ -595,7 +664,9 @@ RecordingDevice::set_status( const DictionaryDatum& d, DataT& data )
 
   // if n_events is 0, also clear event data
   if ( S_.events_ == 0 )
+  {
     data.clear();
+  }
 }
 
 } // namespace

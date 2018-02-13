@@ -97,7 +97,10 @@ class ConnectorModel
 {
 
 public:
-  ConnectorModel( const std::string, bool is_primary, bool has_delay );
+  ConnectorModel( const std::string,
+    bool is_primary,
+    bool has_delay,
+    bool requires_symmetric );
   ConnectorModel( const ConnectorModel&, const std::string );
   virtual ~ConnectorModel()
   {
@@ -147,6 +150,11 @@ public:
 
   virtual const CommonSynapseProperties& get_common_properties() const = 0;
 
+  /**
+   * Checks to see if illegal parameters are given in syn_spec.
+   */
+  virtual void check_synapse_params( const DictionaryDatum& ) const = 0;
+
   virtual SecondaryEvent* get_event() const = 0;
 
   virtual void set_syn_id( synindex syn_id ) = 0;
@@ -171,6 +179,12 @@ public:
     return has_delay_;
   }
 
+  bool
+  requires_symmetric() const
+  {
+    return requires_symmetric_;
+  }
+
 protected:
   std::string name_;
   //! Flag indicating, that the default delay must be checked
@@ -178,6 +192,8 @@ protected:
   //! indicates, whether this ConnectorModel belongs to a primary connection
   bool is_primary_;
   bool has_delay_; //!< indicates, that ConnectorModel has a delay
+  bool requires_symmetric_;
+  //!< indicates, that ConnectorModel requires symmetric connections
 
 }; // ConnectorModel
 
@@ -196,8 +212,9 @@ private:
 public:
   GenericConnectorModel( const std::string name,
     bool is_primary,
-    bool has_delay )
-    : ConnectorModel( name, is_primary, has_delay )
+    bool has_delay,
+    bool requires_symmetric )
+    : ConnectorModel( name, is_primary, has_delay, requires_symmetric )
     , receptor_type_( 0 )
   {
   }
@@ -237,6 +254,12 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
+
+  void
+  check_synapse_params( const DictionaryDatum& syn_spec ) const
+  {
+    default_connection_.check_synapse_params( syn_spec );
+  }
 
   typename ConnectionT::CommonPropertiesType const&
   get_common_properties() const
@@ -289,10 +312,13 @@ private:
   typename ConnectionT::EventType* pev_;
 
 public:
-  GenericSecondaryConnectorModel( const std::string name, bool has_delay )
+  GenericSecondaryConnectorModel( const std::string name,
+    bool has_delay,
+    bool requires_symmetric )
     : GenericConnectorModel< ConnectionT >( name,
         /*is _primary=*/false,
-        has_delay )
+        has_delay,
+        requires_symmetric )
     , pev_( 0 )
   {
     pev_ = new typename ConnectionT::EventType();
@@ -318,7 +344,9 @@ public:
   {
     std::vector< SecondaryEvent* > prototype_events( n, NULL );
     for ( size_t i = 0; i < n; i++ )
+    {
       prototype_events[ i ] = new typename ConnectionT::EventType();
+    }
 
     return prototype_events;
   }
@@ -327,7 +355,9 @@ public:
   ~GenericSecondaryConnectorModel()
   {
     if ( pev_ != 0 )
+    {
       delete pev_;
+    }
   }
 
   typename ConnectionT::EventType*

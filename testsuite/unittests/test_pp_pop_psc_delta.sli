@@ -65,8 +65,8 @@ SeeAlso: pp_pop_psc_delta, testsuite::test_pp_psc_delta
       /delta_u 1.0
       /tau_m  10.0
       /C_m   15.0
-      /taus_eta [10.0 300.0]
-      /vals_eta [3.0  1.0  ]
+      /tau_eta [10.0 300.0]
+      /val_eta [3.0  1.0  ]
       /len_kernel  5.0
       /I_e -0.5 
     >> /params_pop Set
@@ -114,8 +114,8 @@ SeeAlso: pp_pop_psc_delta, testsuite::test_pp_psc_delta
       /delta_u 5.0
       /tau_m  9.0
       /C_m   5.0
-      /taus_eta [15.0 200.0]
-      /vals_eta [4.0  2.0  ]
+      /tau_eta [15.0 200.0]
+      /val_eta [4.0  2.0  ]
       /len_kernel  5.0
       /I_e 1.0 
     >> /params_pop Set
@@ -163,8 +163,8 @@ SeeAlso: pp_pop_psc_delta, testsuite::test_pp_psc_delta
       /delta_u 3.0
       /tau_m  5.0
       /C_m   10.0
-      /taus_eta [25.0 100.0]
-      /vals_eta [5.0  1.0  ]
+      /tau_eta [25.0 100.0]
+      /val_eta [5.0  1.0  ]
       /len_kernel  7.0
       /I_e 8.0 
     >> /params_pop Set

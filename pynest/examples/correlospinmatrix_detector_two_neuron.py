@@ -63,14 +63,14 @@ stat = nest.GetStatus(csd)[0]
 c = stat["count_covariance"]
 
 m = np.zeros(2, dtype=float)
-for i in xrange(2):
+for i in range(2):
     m[i] = c[i][i][int(tau_max / h)] * (h / T)
 
-print 'mean activities =', m
+print('mean activities =', m)
 
 cmat = np.zeros((2, 2, int(2 * tau_max / h) + 1), dtype=float)
-for i in xrange(2):
-    for j in xrange(2):
+for i in range(2):
+    for j in range(2):
         cmat[i, j] = c[i][j] * (h / T) - m[i] * m[j]
 
 ts = np.arange(-tau_max, tau_max + h, h)

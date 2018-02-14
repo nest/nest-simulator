@@ -78,7 +78,6 @@ set( models_sources
     parrot_neuron.h parrot_neuron.cpp
     poisson_generator.h poisson_generator.cpp
     pp_psc_delta.h pp_psc_delta.cpp
-    gif_pop_psc_exp.h gif_pop_psc_exp.cpp
     pp_pop_psc_delta.h pp_pop_psc_delta.cpp
     ppd_sup_generator.h ppd_sup_generator.cpp
     pulsepacket_generator.h pulsepacket_generator.cpp

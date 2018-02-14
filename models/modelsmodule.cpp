@@ -87,6 +87,8 @@
 #include "gif_psc_exp_multisynapse.h"
 #include "gif_cond_exp.h"
 #include "gif_cond_exp_multisynapse.h"
+#include "gif_pop_psc_exp.h"
+
 
 // Stimulation devices
 #include "ac_generator.h"

@@ -43,6 +43,7 @@ set( models_sources
     gif_psc_exp_multisynapse.h gif_psc_exp_multisynapse.cpp
     gif_cond_exp.h gif_cond_exp.cpp
     gif_cond_exp_multisynapse.h gif_cond_exp_multisynapse.cpp
+    gif_pop_psc_exp.h gif_pop_psc_exp.cpp
     ginzburg_neuron.h ginzburg_neuron.cpp
     hh_cond_exp_traub.h hh_cond_exp_traub.cpp
     hh_psc_alpha.h hh_psc_alpha.cpp
@@ -77,7 +78,6 @@ set( models_sources
     parrot_neuron.h parrot_neuron.cpp
     poisson_generator.h poisson_generator.cpp
     pp_psc_delta.h pp_psc_delta.cpp
-    gif_pop_psc_exp.h gif_pop_psc_exp.cpp
     pp_pop_psc_delta.h pp_pop_psc_delta.cpp
     ppd_sup_generator.h ppd_sup_generator.cpp
     pulsepacket_generator.h pulsepacket_generator.cpp

@@ -118,17 +118,17 @@ class Network;
 
    References:
 
-   [1] Tilo Schwalger, Moritz Deger, Wulfram Gerstner - Towards a theory of
-       cortical columns: From spiking neurons to interacting neural populations
-       of finite size.
-       Preprint: arXiv:1611.00294 [q-bio.NC] https://arxiv.org/abs/1611.00294
+   [1] Towards a theory of cortical columns: From spiking neurons to 
+       interacting neural populations of finite size
+       Tilo Schwalger, Moritz Deger, Wulfram Gerstner
+       PLoS Comput Biol 2017
+       https://doi.org/10.1371/journal.pcbi.1005507
 
    Sends: SpikeEvent
 
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-   Author:  Nov 2016, Moritz Deger (mdeger@uni-koeln.de), Tilo Schwalger, Hesam
-   Setareh
+   Authors: Nov 2016, Moritz Deger, Tilo Schwalger, Hesam Setareh
    SeeAlso: gif_psc_exp, pp_pop_psc_delta, spike_dilutor
 */
 

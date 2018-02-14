@@ -78,7 +78,7 @@ nest::gif_pop_psc_exp::Parameters_::Parameters_()
   , E_L_( 0. )         // mV
   , tau_syn_ex_( 3.0 ) // ms
   , tau_syn_in_( 6.0 ) // ms
-  , BinoRand_( true  ) // bool
+  , BinoRand_( true )  // bool
 {
   tau_sfa_.clear();
   q_sfa_.clear();
@@ -341,7 +341,7 @@ nest::gif_pop_psc_exp::calibrate()
       V_.lambda_.push_back( 0 ); // line 3
 
       theta_tmp_ = adaptation_kernel( P_.len_kernel_ - k ); // line 4
-      V_.theta_.push_back( theta_tmp_ ); // line 4
+      V_.theta_.push_back( theta_tmp_ );                    // line 4
       V_.theta_tld_.push_back( P_.Delta_V_
         * ( 1. - std::exp( -theta_tmp_ / P_.Delta_V_ ) )
         / static_cast< double >( P_.N_ ) ); // line 5
@@ -508,7 +508,7 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     // main update routine, Fig. 10
     double h_tot_;
     // this is the Schwalger2016 membrane and synapse update method
-    h_tot_ = ( P_.I_e_ + S_.y0_ ) * V_.P20_ + P_.E_L_; // line 5
+    h_tot_ = ( P_.I_e_ + S_.y0_ ) * V_.P20_ + P_.E_L_; // line 6
 
     // get the input spikes from the buffers
     // We are getting spike numbers weighted with synaptic weights here,
@@ -526,7 +526,7 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     double JNy_ex_ = S_.I_syn_ex_ / P_.c_m_;
     double JNy_in_ = S_.I_syn_in_ / P_.c_m_;
 
-    // membrane update (line 9)
+    // membrane update (line 10)
     double h_ex_ =
       P_.tau_m_
       * ( JNA_ex_
@@ -541,7 +541,7 @@ nest::gif_pop_psc_exp::update( Time const& origin,
             / ( P_.tau_syn_in_ - P_.tau_m_ ) );
     h_tot_ += h_ex_ + h_in_;
 
-    // update EPSCs & IPSCs (line 10)
+    // update EPSCs & IPSCs (line 11)
     JNy_ex_ = JNA_ex_ + ( JNy_ex_ - JNA_ex_ ) * V_.P11_ex_;
     JNy_in_ = JNA_in_ + ( JNy_in_ - JNA_in_ ) * V_.P11_in_;
 
@@ -552,7 +552,7 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     // Set new input current
     S_.y0_ = B_.currents_.get_value( lag );
 
-    // BEGIN PROCEDURE update population, Fig. 11
+    // begin procedure update population, Fig. 12
     double W_ = 0, X_ = 0, Y_ = 0, Z_ = 0; // line 2
     S_.theta_hat_ = P_.V_T_star_;          // line 2, initialize theta
 
@@ -570,44 +570,45 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     // compute free escape rate
     double lambda_tld_ = escrate( S_.V_m_ - S_.theta_hat_ ); // line 8
     double P_free_ = 1 - std::exp( -0.5 * ( V_.lambda_free_ + lambda_tld_ )
-                           * V_.h_ / 1000. ); // line 9
-    V_.lambda_free_ = lambda_tld_;            // line 10
+                           * V_.h_ / 1000. );         // line 9
+    V_.lambda_free_ = lambda_tld_;                    // line 10
+    S_.theta_hat_ -= V_.n_[ 0 ] * V_.theta_tld_[ 0 ]; // line 11
 
-    for ( int l_ = 0; l_ < P_.len_kernel_; l_++ )
+    for ( int l = 0; l < P_.len_kernel_; l++ )
     {
-      X_ += V_.m_[ l_ ]; // line 11
+      X_ += V_.m_[ l ]; // line 12
     }
 
     // use a local theta_hat to reserve S_.theta_hat_ for the free threshold,
     // which is a recordable
     double theta_hat_ = S_.theta_hat_;
     double theta_;
-    for ( int l_ = 0; l_ < P_.len_kernel_ - V_.k_ref_; l_++ ) // line 12
+    for ( int l = 0; l < P_.len_kernel_ - V_.k_ref_; l++ ) // line 13
     {
-      int k = ( V_.k0_ + l_ ) % P_.len_kernel_; // line 13
-      theta_hat_ = theta_hat_ + V_.n_[ k ] * V_.theta_tld_[ l_ ]; // line 14
-      theta_ = V_.theta_[ l_ ] + theta_hat_; // line 15
-      V_.u_[ k ] = ( V_.u_[ k ] - P_.E_L_ ) * V_.P22_ + h_tot_; // line 16
-      lambda_tld_ = escrate( V_.u_[ k ] - theta_ ); // line 17
+      int k = ( V_.k0_ + l ) % P_.len_kernel_;                  // line 14
+      theta_ = V_.theta_[ l ] + theta_hat_;                     // line 15
+      theta_hat_ += V_.n_[ k ] * V_.theta_tld_[ l ];            // line 16
+      V_.u_[ k ] = ( V_.u_[ k ] - P_.E_L_ ) * V_.P22_ + h_tot_; // line 17
+      lambda_tld_ = escrate( V_.u_[ k ] - theta_ );             // line 18
       double P_lambda_ =
         0.5 * ( lambda_tld_ + V_.lambda_[ k ] ) * V_.h_ / 1000.;
       if ( P_lambda_ > 0.01 )
       {
-        P_lambda_ = 1. - std::exp( -P_lambda_ ); // line 19
+        P_lambda_ = 1. - std::exp( -P_lambda_ ); // line 20
       }
-      V_.lambda_[ k ] = lambda_tld_;    // line 20
-      Y_ = Y_ + P_lambda_ * V_.v_[ k ]; // line 21
-      Z_ = Z_ + V_.v_[ k ];             // line 22
-      W_ = W_ + P_lambda_ * V_.m_[ k ]; // line 23
+      V_.lambda_[ k ] = lambda_tld_; // line 21
+      Y_ += P_lambda_ * V_.v_[ k ];  // line 22
+      Z_ += V_.v_[ k ];              // line 23
+      W_ += P_lambda_ * V_.m_[ k ];  // line 24
       V_.v_[ k ] = ( 1. - P_lambda_ ) * ( 1. - P_lambda_ ) * V_.v_[ k ]
         + P_lambda_ * V_.m_[ k ];
-      V_.m_[ k ] = ( 1. - P_lambda_ ) * V_.m_[ k ]; // line 25
-    } // line 26
+      V_.m_[ k ] = ( 1. - P_lambda_ ) * V_.m_[ k ]; // line 26
+    }                                               // line 27
 
     double P_Lambda_;
     if ( ( Z_ + V_.z_ ) > 0.0 )
     {
-      P_Lambda_ = ( Y_ + P_free_ * V_.z_ ) / ( Z_ + V_.z_ ); // line 27
+      P_Lambda_ = ( Y_ + P_free_ * V_.z_ ) / ( Z_ + V_.z_ ); // line 28
     }
     else
     {
@@ -616,29 +617,29 @@ nest::gif_pop_psc_exp::update( Time const& origin,
 
     // finally compute expected number of spikes and draw a random number
     S_.n_expect_ =
-      W_ + P_free_ * V_.x_ + P_Lambda_ * ( P_.N_ - X_ - V_.x_ ); // line 28
-    if (P_.BinoRand_)
+      W_ + P_free_ * V_.x_ + P_Lambda_ * ( P_.N_ - X_ - V_.x_ ); // line 29
+    if ( P_.BinoRand_ )
     {
-        S_.n_spikes_ = draw_binomial( S_.n_expect_ ); // line 29
+      S_.n_spikes_ = draw_binomial( S_.n_expect_ );
     }
     else
     {
-        S_.n_spikes_ = draw_poisson( S_.n_expect_ ); //line 29
+      S_.n_spikes_ = draw_poisson( S_.n_expect_ );
     }
 
-    // line 30: update z
+    // line 31: update z
     V_.z_ = ( 1 - P_free_ ) * ( 1 - P_free_ ) * V_.z_ + V_.x_ * P_free_
       + V_.v_[ V_.k0_ ];
-    // line 31: update x
+    // line 32: update x
     V_.x_ = V_.x_ * ( 1 - P_free_ ) + V_.m_[ V_.k0_ ];
 
-    V_.n_[ V_.k0_ ] = S_.n_spikes_; // line 32
+    V_.n_[ V_.k0_ ] = S_.n_spikes_; // line 33
     V_.m_[ V_.k0_ ] = S_.n_spikes_; // line 33
     V_.v_[ V_.k0_ ] = 0;            // line 34
     V_.u_[ V_.k0_ ] = P_.V_reset_;  // line 35
     V_.lambda_[ V_.k0_ ] = 0.;      // line 36
-    
-    // END PROCEDURE update population
+
+    // end procedure update population
 
     // shift rotating index
     V_.k0_ = ( V_.k0_ + 1 ) % P_.len_kernel_; // line 16
@@ -652,16 +653,10 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     // this number as the multiplicity parameter
     if ( S_.n_spikes_ > 0 ) // Is there any spike?
     {
-//          SpikeEvent se;
-//          se.set_multiplicity( S_.n_spikes_ );
-//          kernel().event_delivery_manager.send( *this, se, lag );
-
-        // how spike_generator.cpp sends its spikes
-        SpikeEvent* se;
-        se = new SpikeEvent;
-        se->set_multiplicity( S_.n_spikes_ );
-        kernel().event_delivery_manager.send( *this, *se, lag );
-        delete se;
+      SpikeEvent* se;
+      se = new SpikeEvent;
+      se->set_multiplicity( S_.n_spikes_ );
+      kernel().event_delivery_manager.send( *this, *se, lag );
     }
   }
 }
@@ -676,12 +671,14 @@ gif_pop_psc_exp::handle( SpikeEvent& e )
   if ( s > 0.0 )
   {
     B_.ex_spikes_.add_value( e.get_rel_delivery_steps(
-      kernel().simulation_manager.get_slice_origin() ), s );
+                               kernel().simulation_manager.get_slice_origin() ),
+      s );
   }
   else
   {
     B_.in_spikes_.add_value( e.get_rel_delivery_steps(
-      kernel().simulation_manager.get_slice_origin() ), s );
+                               kernel().simulation_manager.get_slice_origin() ),
+      s );
   }
 }
 
@@ -694,8 +691,9 @@ nest::gif_pop_psc_exp::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps(
-    kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void

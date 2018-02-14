@@ -87,7 +87,6 @@ class Network;
 
    The following parameters can be set in the status dictionary.
 
-   V_m        double - Membrane potential in mV.
    V_reset    double - Membrane potential is reset to this value in mV after a
    spike.
    V_T_star   double - Threshold level of the membrane potential in mV.
@@ -128,7 +127,8 @@ class Network;
 
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-   Author:  Nov 2016, Moritz Deger (mdeger@uni-koeln.de) & Tilo Schwalger
+   Author:  Nov 2016, Moritz Deger (mdeger@uni-koeln.de), Tilo Schwalger, Hesam
+   Setareh
    SeeAlso: gif_psc_exp, pp_pop_psc_delta, spike_dilutor
 */
 
@@ -233,7 +233,7 @@ private:
 
     /** Array of adaptation amplitudes */
     std::vector< double > q_sfa_;
-    
+
     /** Binomial random number switch */
     bool BinoRand_;
 
@@ -312,7 +312,8 @@ private:
     librandom::RngPtr rng_; // random number generator of own thread
 
     librandom::PoissonRandomDev poisson_dev_; // Poisson random number generator
-    librandom::GSL_BinomialRandomDev bino_dev_; // Binomial random number generator
+    librandom::GSL_BinomialRandomDev
+      bino_dev_; // Binomial random number generator
 
     double x_;                     // internal variable of population dynamics
     double z_;                     // internal variable of population dynamics

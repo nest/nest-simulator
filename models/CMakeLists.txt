@@ -43,6 +43,7 @@ set( models_sources
     gif_psc_exp_multisynapse.h gif_psc_exp_multisynapse.cpp
     gif_cond_exp.h gif_cond_exp.cpp
     gif_cond_exp_multisynapse.h gif_cond_exp_multisynapse.cpp
+    gif_pop_psc_exp.h gif_pop_psc_exp.cpp
     ginzburg_neuron.h ginzburg_neuron.cpp
     hh_cond_exp_traub.h hh_cond_exp_traub.cpp
     hh_psc_alpha.h hh_psc_alpha.cpp

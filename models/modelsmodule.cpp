@@ -87,6 +87,8 @@
 #include "gif_psc_exp_multisynapse.h"
 #include "gif_cond_exp.h"
 #include "gif_cond_exp_multisynapse.h"
+#include "gif_pop_psc_exp.h"
+
 
 // Stimulation devices
 #include "ac_generator.h"
@@ -248,6 +250,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
   kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >(
     "gif_psc_exp_multisynapse" );
+  kernel().model_manager.register_node_model< gif_pop_psc_exp >( "gif_pop_psc_exp" );
 
   kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );

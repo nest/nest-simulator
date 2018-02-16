@@ -21,20 +21,16 @@
 
 """Simulate a Winner-Take-All network that switches stochastically.
 Compares population model simulation to populations of single neurons.
-Replicates TS figure 6B,E of preprint:
-Towards a theory of cortical columns: From spiking neurons to interacting neural populations of finite size
-Authors: Tilo Schwalger, Moritz Deger, Wulfram Gerstner
-arXiv:1611.00294 [q-bio.NC]
-https://arxiv.org/abs/1611.00294
-Oct 2016, Moritz Deger, mdeger@uni-koeln.de"""
+Similar to figure 7B,E of the paper:
+       Towards a theory of cortical columns: From spiking neurons to
+       interacting neural populations of finite size
+       Tilo Schwalger, Moritz Deger, Wulfram Gerstner
+       PLoS Comput Biol 2017
+       https://doi.org/10.1371/journal.pcbi.1005507"""
+
 
 
 import numpy as np
-import sys
-path1 = '/home/deger/repos/inteqfnc/nest-github-mdeger_bin/lib/python2.7/site-packages/'
-path2 = '/mnt/disk2/moritz/repos/svn_inteqfnc/trunk/nest-github-mdeger_bin/lib/python2.7/site-packages/'
-sys.path.append(path1)
-sys.path.append(path2)
 import nest
 import pylab
 import time

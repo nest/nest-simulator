@@ -43,14 +43,16 @@ ResetKernel
 
 
 % create set of neurons
-/iaf_psc_alpha 20 Create
+/iaf_psc_alpha 20 Create /neurons Set
 
 % connect two neurons (prime number to increase variations of thread placement)
-5 13 /static_synapse Connect
-5 13 /static_synapse_hpc Connect
+neurons [5] Take  /n1 Set
+neurons [13] Take /n2 Set
+n1 n2 << >> /static_synapse Connect
+n1 n2 << >> /static_synapse_hpc Connect
 
 % store info from target neuron for comparison 
-13 GetStatus /target_dict Set
+n2 GetStatus 0 get /target_dict Set
 
 << >> GetConnections 0 get GetStatus /conn_dict Set
 << >> GetConnections 1 get GetStatus /conn_hpc_dict Set

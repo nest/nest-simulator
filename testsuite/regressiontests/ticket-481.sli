@@ -73,8 +73,8 @@ M_ERROR setverbosity
  /voltmeter << /interval dt >>                         Create /vm1 Set
  /voltmeter << /interval dt >>                         Create /vm2 Set
 
- pg 0 get n1 0 get syn1 Connect
- pg 0 get n2 0 get syn2 Connect
+ pg n1 << >> syn1 Connect
+ pg n2 << >> syn2 Connect
    
  vm1 n1 Connect
  vm2 n2 Connect  

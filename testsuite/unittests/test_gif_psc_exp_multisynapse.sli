@@ -87,8 +87,8 @@ SeeAlso: gif_psc_exp_multisynapse, testsuite::test_gif_psc_exp
 
   neuron sd Connect
 
-  sg1 0 get neuron 0 get << /weight 1.0 /receptor_type 1 >> Connect
-  sg2 0 get neuron 0 get << /weight 1.0 /receptor_type 2 >> Connect
+  sg1 neuron << >> << /receptor_type 1 >> Connect
+  sg2 neuron << >> << /receptor_type 2 >> Connect
 
   150.0 Simulate
 

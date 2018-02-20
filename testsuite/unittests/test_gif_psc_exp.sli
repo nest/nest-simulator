@@ -81,7 +81,7 @@ SeeAlso: gif_psc_exp, testsuite::test_gif_psc_exp_multisynapse
 
   neuron sd Connect
 
-  sg 0 get neuron 0 get << /weight 1.0 >> Connect
+  sg neuron Connect
 
   150.0 Simulate
 

@@ -617,34 +617,25 @@ def
    Name: Connect - Establish a connection between two nodes or lists of nodes.
 
    Synopsis:
-   source target                        Connect
-   source target              syn_model Connect
-   source target weight delay           Connect
-   source target weight delay syn_model Connect
-   source target params                 Connect
-   source target params       syn_model Connect
-   
-   sources targets                      Connect
-   sources targets conn_rule            Connect
-   sources targets conn_spec            Connect
-   sources targets conn_rule syn_model  Connect
-   sources targets conn_spec syn_model  Connect
-   sources targets conn_rule syn_spec   Connect
-   sources targets conn_spec syn_spec   Connect
+   sources targets                        Connect
+   sources targets weight delay           Connect
+   sources targets weight delay syn_model Connect
+   sources targets conn_rule              Connect
+   sources targets conn_spec              Connect
+   sources targets conn_rule syn_model    Connect
+   sources targets conn_spec syn_model    Connect
+   sources targets conn_rule syn_spec     Connect
+   sources targets conn_spec syn_spec     Connect
 
    Parameters:
-   source     integer  - the GID of the source
-   target     integer  - the GID of the target
-   weight     double   - the weight of the connection
-   delay      double   - the delay of the connection
-   params     dict     - dictionary with synapse parameters
-
-   sources    array/intvector/gidcollection  - the GIDs of the sources
-   targets    array/intvector/gidcollection  - the GIDs of the targets
-   syn_model  literal  - the name of the synapse model, see synapsedict
-   syn_spec   dict     - dictionary with synapse model specification (see Options)
-   conn_rule  literal  - the name of the connection rule, see connruledict
-   conn_spec  dict     - dictionary with connectivity specification (see Options)
+   sources    gidcollection  - the GIDs of the sources
+   targets    gidcollection  - the GIDs of the targets
+   weight     double         - the weight of the connection
+   delay      double         - the delay of the connection
+   conn_rule  literal        - the name of the connection rule, see connruledict
+   conn_spec  dict           - dictionary with connectivity specification (see Options)
+   syn_model  literal        - the name of the synapse model, see synapsedict
+   syn_spec   dict           - dictionary with synapse model specification (see Options)
 
    Options:
    /conn_spec - dictionary with connectivity specification, must at least contain /rule
@@ -667,22 +658,18 @@ def
    number of elements. Others may have additional parameters,
    e.g. connection probability /p for /pairwise_binomial.
 
-   The variants with two global ids as arguments implicitly connect
-   the two neurons using the all_to_all rule. If given, weight, delay,
-   syn_model, and params are used for the connection.
-
    The variants with only literal arguments /conn_rule or /syn_model
-   are shorthand for the corresponding calls with a connectivity or
+   are shorthand for the corresponding calls with connectivity or
    synapse specification dictionaries as explained in the Options
    section.  The literals are expanded to << /rule /conn_rule >> and
    << /model /syn_model >>, respectively.
 
    Parameters for connectivity rules must have fixed values.
 
-   Parameters for synapses may be fixed single values and random deviate
+   Parameters for synapses may be fixed single values, arrays or random deviate
    specifications.
 
-   SeeAlso: synapsedict, connruledict, cvgidcollection
+   SeeAlso: synapsedict, connruledict, cvgidcollection, GetOptions
 
    Author: Hannah Bos, Hans Ekkehard Plesser, Jochen Martin Eppler
 
@@ -719,151 +706,96 @@ def
 
 %%% Variants of Connect
 
-/Connect_i_i_l
-{
-  /ciil_model Set
-  dup cvgidcollection
-  exch
-  dup cvgidcollection
-  exch
-  /one_to_one
-  ciil_model
-  Connect
-} def
-
-/Connect_i_i_d_d_l
-{
-  /ciiddl_model Set
-  /ciiddl_delay Set
-  /ciiddl_weight Set
-  dup cvgidcollection
-  exch
-  dup cvgidcollection
-  exch
-  << /rule /one_to_one >>
-  << /model ciiddl_model /weight ciiddl_weight /delay ciiddl_delay >>
-  Connect
-} def
-
-/Connect_i_i_D_l
-{
-  /ciiDl_model Set
-  /ciiDl_syn_spec Set
-  dup cvgidcollection
-  exch
-  dup cvgidcollection
-  exch
-  << /rule /one_to_one >>
-  << /model ciiDl_model >> /ciiDl_syn_spec JoinTo
-  ciiDl_syn_spec
-  Connect
-} def
-
 /Connect trie
 
-  % Connect two nodes using default synapse model
-  [/integertype /integertype] {
-      /Connect /syn_spec GetOption /model get
-      Connect_i_i_l
-  } bind addtotrie
-
-  % Connect two nodes using given synapse model
-  [/integertype /integertype /literaltype]
-      /Connect_i_i_l load addtotrie
-
-  % Connect two nodes using given weight and delay and default synapse model
-  [/integertype /integertype /doubletype /doubletype] {
-      /Connect /syn_spec GetOption /model get
-      Connect_i_i_d_d_l
-  } bind addtotrie
-
-  % Connect two nodes using given weight, delay, and synapse model
-  [/integertype /integertype /doubletype /doubletype /literaltype]
-      /Connect_i_i_d_d_l load addtotrie
-
-  % Connect two nodes using given weight and delay and default synapse model
-  [/integertype /integertype /dictionarytype] {
-      /Connect /syn_spec GetOption /model get
-      Connect_i_i_D_l
-  } bind addtotrie
-
-  % Connect two nodes using given synapse parameters and synapse model
-  [/integertype /integertype /dictionarytype /literaltype]
-      /Connect_i_i_D_l load addtotrie
-  
-  
-  % Connect two GIDCollections, each containing one GID, using given weight and 
-  % delay and default synapse model
-  [/gidcollectiontype /gidcollectiontype /doubletype /doubletype] {
-      /Connect /syn_spec GetOption /model get
-      5 3 roll
-      dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
-      0 get
-      exch dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
-      0 get exch
-      5 2 roll
-      Connect_i_i_d_d_l
-  } bind addtotrie
-  
-  % Connect two GIDCollections, each containing one GID, using given weight and 
-  % delay and synapse model
-  [/gidcollectiontype /gidcollectiontype /doubletype /doubletype /literaltype] {
-      5 3 roll
-      dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
-      0 get
-      exch dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
-      0 get exch
-      5 2 roll
-      Connect_i_i_d_d_l
-  } bind addtotrie
-
-  % We create the type trie for the list variants using a loop
+  % We create the type trie for the different variants using a loop  
   [/arraytype /intvectortype /gidcollectiontype] {
       /gidlisttype Set
 
-      % Connect nodes from two lists of GIDs using default rule and
-      % default syn_model
+      % Variant: sources targets Connect
+      % Connect nodes from two sets of GIDs using the default rule and
+      % synapse model
       [gidlisttype gidlisttype] {
-	  cvgidcollection exch % convert targets to gidcollection
-	  cvgidcollection exch % convert sources to gidcollection
-	  /Connect /conn_spec GetOption % use defaults
-	  /Connect /syn_spec GetOption  % use defaults
-	  Connect_g_g_D_D
+          cvgidcollection exch  % convert targets to gidcollection
+          cvgidcollection exch  % convert sources to gidcollection
+          /Connect /conn_spec GetOption  % use default conn_spec
+          /Connect /syn_spec GetOption   % use default syn_spec
+          Connect_g_g_D_D
       } bind addtotrie
 
-      % Connect nodes from two lists of GIDs using given rule and
+      % Variant: sources targets weight delay Connect
+      % Connect nodes from two sets of GIDs using the default rule and
+      % synapse model but with the given weight and delay
+      [gidlisttype gidlisttype /doubletype /doubletype] {
+          mark 3 1 roll         % put a mark before weight and delay
+          /weight 3 1 roll      % add a label for the weight
+          /delay 2 1 roll       % add a label for the delay
+          >>                    % create the syn_spec dictionary
+          /syn_spec :Connect_complete_dict    % fill in missing defaults
+          /Connect /conn_spec GetOption exch  % use default conn_spec
+          4 2 roll              % bring sources and targets to top
+          cvgidcollection exch  % convert targets to gidcollection
+          cvgidcollection exch  % convert sources to gidcollection
+          4 2 roll              % bring sources and targets to bottom 
+          Connect_g_g_D_D
+      } bind addtotrie
+
+
+      % Variant: sources targets weight delay syn_model Connect
+      % Connect nodes from two sets of GIDs using the default rule and
+      % the given weight, delay and synapse model
+	[gidlisttype gidlisttype /doubletype /doubletype /literaltype] {
+	    
+          mark 4 1 roll         % put a mark before weight and delay
+          /weight 4 1 roll      % add a label for the weight
+          /delay 3 1 roll       % add a label for the delay
+          /model 2 1 roll       % add a label for the synapse model
+          >>                    % create the syn_spec dictionary
+          /syn_spec :Connect_complete_dict    % fill in missing defaults
+          /Connect /conn_spec GetOption exch  % use default conn_spec
+          4 2 roll              % bring sources and targets to top
+          cvgidcollection exch  % convert targets to gidcollection
+          cvgidcollection exch  % convert sources to gidcollection
+          4 2 roll              % bring sources and targets to bottom 
+          Connect_g_g_D_D
+      } bind addtotrie
+
+      % Variant: sources targets conn_rule Connect
+      % Connect nodes from two sets of GIDs using the given rule and
       % default synapse model
       [gidlisttype gidlisttype /literaltype] {
-	  mark exch /rule exch >> % create the conn_spec dictionary
-	  /conn_spec :Connect_complete_dict % fill in missing defaults
-	  3 1 roll                % bring sources and targets to top
-	  cvgidcollection exch    % convert targets to gidcollection
-	  cvgidcollection exch    % convert sources to gidcollection
-	  3 2 roll                % bring sources and targets to bottom 
-	  /Connect /syn_spec GetOption % use defaults
+	  mark exch /rule exch >>  % create the conn_spec dictionary
+	  /conn_spec :Connect_complete_dict  % fill in missing defaults
+	  3 1 roll                 % bring sources and targets to top
+	  cvgidcollection exch     % convert targets to gidcollection
+	  cvgidcollection exch     % convert sources to gidcollection
+	  3 2 roll                 % bring sources and targets to bottom 
+	  /Connect /syn_spec GetOption  % use default syn_spec
 	  Connect_g_g_D_D
       } bind addtotrie
 
-      % Connect nodes from two lists of GIDs using given rule
-      % paramters and default synapse model
+      % Variant: sources targets conn_spec Connect
+      % Connect nodes from two sets of GIDs using the given connectivity
+      % specification and default synapse model
       [gidlisttype gidlisttype /dictionarytype] {
-	  /conn_spec :Connect_complete_dict % fill in missing defaults
-	  3 1 roll                  % bring sources and targets to top
-	  cvgidcollection exch      % convert targets to gidcollection
-	  cvgidcollection exch      % convert sources to gidcollection
-	  3 2 roll                  % bring sources and targets to bottom 
-	  /Connect /syn_spec GetOption % use defaults
+	  /conn_spec :Connect_complete_dict  % fill in missing defaults
+	  3 1 roll              % bring sources and targets to top
+	  cvgidcollection exch  % convert targets to gidcollection
+	  cvgidcollection exch  % convert sources to gidcollection
+	  3 2 roll              % bring sources and targets to bottom 
+	  /Connect /syn_spec GetOption  % use default syn_spec
 	  Connect_g_g_D_D
       } bind addtotrie
 
-      % Connect nodes from two lists of GIDs using given rule and
-      % given synapse model
+      % Variant: sources targets conn_rule syn_model Connect
+      % Connect nodes from two sets of GIDs using the given rule and
+      % synapse model
       [gidlisttype gidlisttype /literaltype /literaltype] {
-	  mark exch /model exch >> % create the syn_spec dictionary
-	  /syn_spec :Connect_complete_dict  % fill in missing defaults
+	  mark exch /model exch >>  % create the syn_spec dictionary
+	  /syn_spec :Connect_complete_dict   % fill in missing defaults
 	  exch                      % exchange syn_spec and conn_spec		
-	  mark exch /rule exch >> % create the conn_spec dictionary
-	  /conn_spec :Connect_complete_dict % fill in missing defaults
+	  mark exch /rule exch >>   % create the conn_spec dictionary
+	  /conn_spec :Connect_complete_dict  % fill in missing defaults
 	  exch                      % exchange syn_spec and conn_spec		
 	  4 2 roll                  % bring sources and targets to top
 	  cvgidcollection exch      % convert targets to gidcollection
@@ -872,27 +804,30 @@ def
 	  Connect_g_g_D_D
       } bind addtotrie
 
-      % Connect nodes from two lists of GIDs using given rule and
-      % given syn_spec
+      % Variant: sources targets conn_spec syn_model Connect
+      % Connect nodes from two sets of GIDs using the given rule and
+      % synapse specification
       [gidlisttype gidlisttype /literaltype /dictionarytype] {
-	  /syn_spec :Connect_complete_dict  % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
-	  mark exch /rule exch >> % create the conn_spec dictionary
-	  /conn_spec :Connect_complete_dict % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
-	  4 2 roll                  % bring sources and targets to top
-	  cvgidcollection exch      % convert targets to gidcollection
-	  cvgidcollection exch      % convert sources to gidcollection
-	  4 2 roll                  % bring sources and targets to bottom 
+	  /syn_spec :Connect_complete_dict   % fill in missing defaults
+	  exch                     % exchange syn_spec and conn_spec		
+	  mark exch /rule exch >>  % create the conn_spec dictionary
+	  /conn_spec :Connect_complete_dict  % fill in missing defaults
+	  exch                     % exchange syn_spec and conn_spec		
+	  4 2 roll                 % bring sources and targets to top
+	  cvgidcollection exch     % convert targets to gidcollection
+	  cvgidcollection exch     % convert sources to gidcollection
+	  4 2 roll                 % bring sources and targets to bottom 
 	  Connect_g_g_D_D
       } bind addtotrie
 
-      % Connect two lists using the given rule parameters and synapse model
+      % Variant: sources targets conn_rule syn_spec Connect	
+      % Connect nodes from two sets of GIDs using the given connectivity
+      % specification and synapse model
       [gidlisttype gidlisttype /dictionarytype /literaltype] {
-	  mark exch /model exch >> % create the syn_spec dictionary
-	  /syn_spec :Connect_complete_dict  % fill in missing defaults
+	  mark exch /model exch >>  % create the syn_spec dictionary
+	  /syn_spec :Connect_complete_dict   % fill in missing defaults
 	  exch                      % exchange syn_spec and conn_spec		
-	  /conn_spec :Connect_complete_dict % fill in missing defaults
+	  /conn_spec :Connect_complete_dict  % fill in missing defaults
 	  exch                      % exchange syn_spec and conn_spec		
 	  4 2 roll                  % bring sources and targets to top
 	  cvgidcollection exch      % convert targets to gidcollection
@@ -901,17 +836,18 @@ def
 	  Connect_g_g_D_D
       } bind addtotrie
       
-      % Connect two lists using the given rule parameters and synapse
-      % parameters
+      % Variant: sources targets conn_spec syn_spec Connect
+      % Connect nodes from two sets of GIDs using the given connectivity
+      % and synapse specifications
       [gidlisttype gidlisttype /dictionarytype /dictionarytype] {
-	  /syn_spec :Connect_complete_dict  % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
-	  /conn_spec :Connect_complete_dict % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
-	  4 2 roll                  % bring sources and targets to top
-	  cvgidcollection exch      % convert targets to gidcollection
-	  cvgidcollection exch      % convert sources to gidcollection
-	  4 2 roll                  % bring sources and targets to bottom 
+	  /syn_spec :Connect_complete_dict   % fill in missing defaults
+	  exch                  % exchange syn_spec and conn_spec		
+	  /conn_spec :Connect_complete_dict  % fill in missing defaults
+	  exch                  % exchange syn_spec and conn_spec		
+	  4 2 roll              % bring sources and targets to top
+	  cvgidcollection exch  % convert targets to gidcollection
+	  cvgidcollection exch  % convert sources to gidcollection
+	  4 2 roll              % bring sources and targets to bottom 
 	  Connect_g_g_D_D
       } bind addtotrie
 

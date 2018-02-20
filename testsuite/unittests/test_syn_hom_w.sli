@@ -74,11 +74,9 @@ sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
     /delay 1.0
 >> SetDefaults
 
-sg 0 get neuron 0 get /static_synapse_hom_w Connect
-
-vm 0 get neuron 0 get /static_synapse_hom_w Connect
-
-neuron 0 get sd 0 get /static_synapse_hom_w Connect
+sg neuron << >> /static_synapse_hom_w Connect
+vm neuron << >> /static_synapse_hom_w Connect
+neuron sd << >> /static_synapse_hom_w Connect
 
 7.0 Simulate
 

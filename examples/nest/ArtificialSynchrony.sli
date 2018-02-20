@@ -223,11 +223,8 @@ modeldict begin
            {volt  <<  /label (voltmeter-Grid-) strength cvs join >> SetStatus} ifelse
   (-DONE-) =
 
-  neurons {
-   dup
-   %  detec 1.0 h Connect               % connect spike_detector
-   volt 0 get exch 1.0 h Connect              % connect voltmeter
-  } forall
+  % neurons detec 1.0 h Connect         % connect spike_detector
+  volt neurons 1.0 h Connect            % connect voltmeter
 
   10000 Simulate                        % simulate for 10s
 

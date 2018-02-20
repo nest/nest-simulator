@@ -173,8 +173,8 @@ fail_or_die
       dflts /receptor_types get cva length 0 geq
       {
         { ResetKernel 
-          mod 2 Create ; 
-          1 2 /static_synapse Connect 
+          mod Create mod Create
+          << >> /static_synapse Connect 
         } fail_or_die 
       } if
     } if 

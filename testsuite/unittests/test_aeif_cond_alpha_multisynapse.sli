@@ -90,7 +90,7 @@ sg << /spike_times [spike_time] >> SetStatus
  	/voltmeter Create /vm_for_single_synapse_neuron Set
  	vm_for_single_synapse_neuron << /withtime true /time_in_steps true /interval 0.1 /precision 5 >> SetStatus
  
-	vm_for_single_synapse_neuron 0 get singlesynapse_neuron 0 get 1. 8. /static_synapse Connect
+	vm_for_single_synapse_neuron singlesynapse_neuron 1. 8. /static_synapse Connect
  	vm_for_single_synapse_neuron
   
 } MapThread /vms_for_single_synapse_neuron Set

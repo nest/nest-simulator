@@ -123,7 +123,7 @@ delays length 1 arraystore Range /synapses_idx exch def
 } ScanThread
 
 % connects voltmeter
-vm 0 get multisynapse_neuron 0 get 1. 8. /static_synapse Connect
+vm multisynapse_neuron 1. 8. /static_synapse Connect
 
 simulation_t ms Simulate % run simulation
 

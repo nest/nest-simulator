@@ -74,7 +74,7 @@ n2 n3 1.0 6.0 Connect
 1.0 6.0 check_min_max_delay
 
 % test 5: check if min_delay is updated in 'gid gid params Connect'
-n2 0 get n3 0 get << /delay 0.5 >> Connect
+n2 n3 << >> << /delay 0.5 >> Connect
 0.5 6.0 check_min_max_delay
 
 % test 6: check if SetStatus sets min_delay

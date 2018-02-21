@@ -88,10 +88,8 @@ fi
 
 if [ "$xLIBNEUROSIM" = "1" ] ; then
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
-    chmod +x libneurosim_install.sh
-    ./libneurosim_install.sh
-    chmod +x csa_install.sh
-    ./csa_install.sh
+    chmod +x libneurosim-csa_install.sh
+    ./libneurosim-csa_install.sh
 else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi

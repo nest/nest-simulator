@@ -74,6 +74,9 @@ nest::ConnectionManager::ConnectionManager()
   , connbuilder_factories_()
   , min_delay_( 1 )
   , max_delay_( 1 )
+  , initial_connector_capacity_( CONFIG_CONNECTOR_CUTOFF )
+  , large_connector_limit_( CONFIG_CONNECTOR_CUTOFF * 2 )
+  , large_connector_growth_factor_( 1.5 )
 {
 }
 
@@ -130,6 +133,49 @@ nest::ConnectionManager::finalize()
 void
 nest::ConnectionManager::set_status( const DictionaryDatum& d )
 {
+  long initial_connector_capacity = initial_connector_capacity_;
+  if ( updateValue< long >(
+         d, names::initial_connector_capacity, initial_connector_capacity ) )
+  {
+    if ( initial_connector_capacity < CONFIG_CONNECTOR_CUTOFF )
+    {
+      throw KernelException(
+        "The initial connector capacity should be higher or equal to "
+        "connector_cutoff value specified via cmake flag [default 3]" );
+    }
+
+    initial_connector_capacity_ = initial_connector_capacity;
+  }
+
+  long large_connector_limit = large_connector_limit_;
+  if ( updateValue< long >(
+         d, names::large_connector_limit, large_connector_limit ) )
+  {
+    if ( large_connector_limit < CONFIG_CONNECTOR_CUTOFF )
+    {
+      throw KernelException(
+        "The large connector limit should be higher or equal to "
+        "connector_cutoff value specified via cmake flag [default 3]" );
+    }
+
+    large_connector_limit_ = large_connector_limit;
+  }
+
+  double large_connector_growth_factor = large_connector_growth_factor_;
+  if ( updateValue< double >( d,
+         names::large_connector_growth_factor,
+         large_connector_growth_factor ) )
+  {
+    if ( large_connector_growth_factor <= 1.0 )
+    {
+      throw KernelException(
+        "The large connector capacity growth factor should be higher than "
+        "1.0" );
+    }
+
+    large_connector_growth_factor_ = large_connector_growth_factor;
+  }
+
   for ( size_t i = 0; i < delay_checkers_.size(); ++i )
   {
     delay_checkers_[ i ].set_status( d );
@@ -150,6 +196,12 @@ nest::ConnectionManager::get_status( DictionaryDatum& d )
     d, names::min_delay, Time( Time::step( min_delay_ ) ).get_ms() );
   def< double >(
     d, names::max_delay, Time( Time::step( max_delay_ ) ).get_ms() );
+
+  def< long >(
+    d, names::initial_connector_capacity, initial_connector_capacity_ );
+  def< long >( d, names::large_connector_limit, large_connector_limit_ );
+  def< double >(
+    d, names::large_connector_growth_factor, large_connector_growth_factor_ );
 
   size_t n = get_num_connections();
   def< long >( d, names::num_connections, n );

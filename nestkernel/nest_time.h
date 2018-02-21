@@ -144,6 +144,8 @@ class Time
   // delay: steps, signed long
   // double: milliseconds (double!)
 
+  friend class TimeConverter;
+
   /////////////////////////////////////////////////////////////
   // Range: Limits & conversion factors for different types
   /////////////////////////////////////////////////////////////

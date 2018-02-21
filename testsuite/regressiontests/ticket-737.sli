@@ -51,7 +51,7 @@ ResetKernel
   stimulators
   {
     Create /stim Set
-    /iaf_neuron Create /n Set
+    /iaf_psc_alpha Create /n Set
     stim n /static_synapse Connect
     stim n /static_synapse Connect
   } forall
@@ -64,7 +64,7 @@ ResetKernel
   {
     /stimname Set
     stimname Create /stim Set
-    /iaf_neuron Create /n Set
+    /iaf_psc_alpha Create /n Set
     /synmodel stimname cvs (_syn) join cvlit def
     /static_synapse synmodel CopyModel
     stim n synmodel Connect
@@ -80,7 +80,7 @@ stimulators
 {
   /stimname Set
   stimname Create /stim Set
-  /iaf_neuron Create /n Set
+  /iaf_psc_alpha Create /n Set
   /synmodel stimname cvs (_syn) join cvlit def
   /static_synapse synmodel CopyModel
   stim n /static_synapse Connect

@@ -34,7 +34,7 @@ HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 class LabeledSynapsesTestCase(unittest.TestCase):
     """Test labeled synapses"""
 
-    def default_network(self):
+    def default_network(self, syn_model):
         nest.ResetKernel()
         # set volume transmitter for stdp_dopamine_synapse_lbl
         vol = nest.Create('volume_transmitter', 3)
@@ -42,10 +42,32 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         nest.SetDefaults('stdp_dopamine_synapse_lbl', {'vt': vol[1]})
         nest.SetDefaults('stdp_dopamine_synapse_hpc', {'vt': vol[2]})
 
+        self.rate_model_connections = [
+            'rate_connection_instantaneous',
+            'rate_connection_instantaneous_lbl',
+            'rate_connection_delayed',
+            'rate_connection_delayed_lbl'
+        ]
+
+        self.siegert_connections = [
+            'diffusion_connection',
+            'diffusion_connection_lbl'
+        ]
+
         # create neurons that accept all synapse connections (especially gap
         # junctions)... hh_psc_alpha_gap is only available with GSL, hence the
         # skipIf above
-        return nest.Create("hh_psc_alpha_gap", 5)
+        neurons = nest.Create("hh_psc_alpha_gap", 5)
+
+        # in case of rate model connections use the lin_rate_ipn model instead
+        if syn_model in self.rate_model_connections:
+            neurons = nest.Create("lin_rate_ipn", 5)
+
+        # in case of siegert connections use the siegert_neuron model instead
+        if syn_model in self.siegert_connections:
+            neurons = nest.Create("siegert_neuron", 5)
+
+        return neurons
 
     def test_SetLabelToSynapseOnConnect(self):
         """Set a label to a labeled synapse on connect."""
@@ -53,7 +75,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a = self.default_network()
+            a = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
@@ -75,7 +97,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a = self.default_network()
+            a = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
@@ -107,7 +129,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a = self.default_network()
+            a = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
@@ -130,14 +152,19 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a = self.default_network()
+            a = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
 
             # some more connections
+            synapse_type = "static_synapse"
+            if syn in self.rate_model_connections:
+                synapse_type = "rate_connection_instantaneous"
+            if syn in self.siegert_connections:
+                synapse_type = "diffusion_connection"
             nest.Connect(a, a, {"rule": "one_to_one"},
-                         {"model": "static_synapse"})
+                         {"model": synapse_type})
             # set a label during connection
             nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
                          {"model": syn, "synapse_label": 123})
@@ -154,7 +181,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if not s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a = self.default_network()
+            a = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')

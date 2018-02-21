@@ -86,6 +86,17 @@ else
     CONFIGURE_READLINE="-Dwith-readline=OFF"
 fi
 
+if [ "$xLIBNEUROSIM" = "1" ] ; then
+    CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
+    chmod +x libneurosim_install.sh
+    ./libneurosim_install.sh
+    chmod +x csa_install.sh
+    ./csa_install.sh
+else
+    CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
+fi
+
+
 NEST_VPATH=build
 NEST_RESULT=result
 NEST_RESULT=$(readlink -f $NEST_RESULT)
@@ -179,6 +190,7 @@ cmake \
   $CONFIGURE_GSL \
   $CONFIGURE_LTDL \
   $CONFIGURE_READLINE \
+  $CONFIGURE_LIBNEUROSIM \
   ..
 echo "MSGBLD0240: CMake configure completed."
 
@@ -203,6 +215,8 @@ echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 echo "+               R U N   N E S T   T E S T S U I T E                           +"
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "MSGBLD0290: Running make installcheck."
+export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
+export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
 make installcheck
 echo "MSGBLD0300: Make installcheck completed."
 

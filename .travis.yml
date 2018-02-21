@@ -27,36 +27,39 @@ sudo: required
 dist: trusty
 
 #https://blog.travis-ci.com/2017-06-19-trusty-updates-2017-Q2
+
 group: deprecated-2017Q2
 
 env:
   matrix:
    # We don't have to run a full matrix here, because most of the options are
-   # independent. This means that we can test them together in the full build.
+   # independent. This means we only need a minimal and maximal configuration
+   # and some additional jobs for interdependent options.
    # See also https://docs.travis-ci.com/user/caching/#Caches-and-build-matrices
-   - xTHREADING=0 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
-   - xTHREADING=0 xMPI=1 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
-   - xTHREADING=1 xMPI=0 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
-   - xTHREADING=1 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
-   - xTHREADING=0 xMPI=1 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
-   - xTHREADING=0 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
-   - xTHREADING=1 xMPI=1 xGSL=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
+   - xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
+   - xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
+   - xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
+   - xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
+   - xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
+   - xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
+   - xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
 python:
   - 2.7.13
-  - 3.4.4
+  - 3.4.
+
 matrix:
     exclude:
-    - env: xTHREADING=0 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
+    - env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
       python: 3.4.4
-    - env: xTHREADING=0 xMPI=1 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
+    - env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
       python: 3.4.4
-    - env: xTHREADING=1 xMPI=0 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
+    - env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
       python: 3.4.4
-    - env: xTHREADING=1 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
+    - env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
       python: 3.4.4
-    - env: xTHREADING=0 xMPI=1 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
+    - env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
       python: 3.4.4
-    - env: xTHREADING=0 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
+    - env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
       python: 3.4.4
 
     # Notify immediately when a build job fails.
@@ -105,6 +108,7 @@ before_install:
   
   # Install packages required by NEST.
   # (Please see also: http://www.nest-simulator.org/installation/#standard-configuration)
+
   # terminaltables is required by parse_travis_log.py to create the build summary.
    - pip install cython scipy matplotlib terminaltables mpi4py
     
@@ -112,10 +116,39 @@ install:
    - which cython
    - cython --version
    - which python
+   - python --version
+   - which pip
+   - which nosetests
+   - nosetests --version
+   - nosetests --plugins
    - which cmake
    - cmake --version
+=======
+#  - sudo apt-get install -y build-essential cmake libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib ipython
+
+ #  - sudo pip install "nose-capturestderr==1.2"
+
+  # Install libneurosim
+  - git clone https://github.com/INCF/libneurosim.git
+  - pushd libneurosim
+  - ./autogen.sh
+  - ./configure --prefix=$HOME/.cache/libneurosim.install --with-mpi
+  - make
+  - make install
+  - popd
+
+  # Install csa
+  - git clone https://github.com/INCF/csa.git
+  - pushd csa
+  - ./autogen.sh
+  - ./configure --with-libneurosim=$HOME/.cache/libneurosim.install --prefix=$HOME/.cache/csa.install
+  - make
+  - make install
+  - popd
+
 
 before_script:
+   # Change directory back to the NEST source code directory.
    - cd $SOURCEDIR
    - chmod +x build.sh
 script:

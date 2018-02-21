@@ -1,0 +1,395 @@
+/*
+ *  structural_plasticity_benchmark.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+    This script simulates a network with two populations, 80% Excitatory, 20% Inhibitory,
+    initially without connections and relies on structuraly plasticity to generate
+    the connectivity. It uses Gaussian growth curves with different parameters for excitatory
+    and inhibitory synaptic elements.
+
+    Authors: Jakob Jordan, original implementation by Sandra Diaz in PyNEST
+*/
+
+%%% PARAMETER SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% define all relevant parameters: changes should be made here
+% all data is placed in the userdict dictionary
+
+/overwrite_files true def
+/seed 123 def
+
+/nvp 2 def              % total number of virtual processes
+/n_neurons 6000 def     % total number of neurons
+/gamma 0.8 def          % relative size of excitatory population
+
+/psp_e 1.0 def          % PSP of synapses created between neurons in the network (mV)
+/g -1.0 def             % IPSP amplitude relative to EPSP amplitude
+/psp_ext 0.0106 def     % mean EPSP amplitude for external input (mV)
+/bg_rate 10000.0 def    % rate of background Poisson input at each external input synapse (spikes/s)
+/delay 1. def           % delay of all connections (ms)
+
+/simtime 12600. def       % total simulation time (ms)
+/presimtime 50. ms def  % simulation time until reaching equilibrium (ms)
+/dt 0.1 ms def          % simulation step size (ms)
+/record_spikes true def % switch to record spikes of excitatory neurons to file
+/path_name (.) def      % path where all files will have to be written
+/log_file (log) def     % naming scheme for the log files
+
+% structural plasticity parameters
+
+/sp_update_interval 100 def % update interval of structural plasticity in simulation steps
+/sp_record_interval 1000 def  % recording of structural plasticity status (Ca, #Axons) (ms)
+
+% Growth curves for synaptic elements of excitatory neurons
+% Excitatory synaptic elements
+/growth_curve_e_e <<
+                      /growth_curve /gaussian
+                      /growth_rate 0.0001
+                      /continuous false
+                      /eta 0.0
+                      /eps 0.05
+                  >> def
+
+% Inhibitory synaptic elements
+/growth_curve_e_i <<
+                      /growth_curve /gaussian
+                      /growth_rate 0.0001
+                      /continuous false
+                      /eta 0.0
+                      /eps growth_curve_e_e /eps get
+                  >> def
+
+% Growth curves for synaptic elements of inhibitory neurons
+% Excitatory synaptic elements
+/growth_curve_i_e <<
+                      /growth_curve /gaussian
+                      /growth_rate 0.0004
+                      /continuous false
+                      /eta 0.0
+                      /eps 0.2
+                  >> def
+
+% Inhibitory synaptic elements
+/growth_curve_i_i <<
+                      /growth_curve /gaussian
+                      /growth_rate 0.0001
+                      /continuous false
+                      /eta 0.0
+                      /eps growth_curve_i_e /eps get
+                  >> def
+
+% neuron model parameters
+
+/model_params <<
+                  /tau_m 10.0        % membrane time constant (ms)
+                  /tau_syn_ex 0.5     % excitatory synaptic time constant (ms)
+                  /tau_syn_in 0.5     % inhibitory synaptic time constant (ms)
+                  /t_ref 2.0          % absolute refractory period (ms)
+                  /E_L -65.0          % resting membrane potential (mV)
+                  /V_th -50.0         % spike threshold (mV)
+                  /C_m 250.0          % membrane capacitance (pF)
+                  /V_reset -65.0      % reset potential (mV)
+              >> def
+
+%%% FUNCTION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ------------------------------------------------------------------------------------
+
+/*
+    This function defines a logger class used to properly log memory and timing
+    information from network simulations. It is used by hpc_benchmark.sli to
+    store the information to the log files.
+*/
+
+/logger
+<<
+    /max_rank_cout 5  % copy output to cout for ranks 0..max_rank_cout-1
+    /max_rank_log 30  % write to log files for ranks 0..max_rank_log-1
+    /line_counter 0
+
+    % constructor
+    % expects file name on stack
+    /init
+    {
+	Rank max_rank_log lt {
+
+            (_) join
+
+	    % convert rank to string, prepend 0 if necessary to make
+            % numbers equally wide for all ranks
+            Rank cvs 
+            dup length max_rank_log cvs length exch sub
+            {
+	      48 prepend   % 48 is ASCII code for 0
+            }
+            repeat
+            join
+            (.dat) join
+
+            /f exch (w) ofsopen
+	    {
+		def
+	    }
+	    {
+		/Logger_init /CannotOpenFile raiseerror
+	    }
+	    ifelse
+
+	} if
+    }
+
+    % logging function
+    % expects one operand on stack to write to file
+    /log
+    {
+      /value Set
+	Rank max_rank_log lt {
+	    f line_counter <- ( ) <- Rank <- ( ) <- value <- (\n) <- pop
+	    /line_counter line_counter 1 add def
+	} if
+        Rank max_rank_cout lt {
+            cout Rank <- ( ) <- value <- endl flush pop
+            cerr Rank <- ( ) <- value <- endl flush pop
+	} if
+    }
+
+    % closes file
+    /done
+    {
+	Rank max_rank_log lt {
+	    f close
+	} if
+    }
+
+>> def
+
+% calculates the psc amplitude from the psp amplitude for alpha synapses
+/derive_psc_parameters
+{
+    model_params using
+
+    % factors for transforming PSP amplitude to PSC amplitude
+    /re tau_m tau_syn_ex div def
+    /de tau_syn_ex tau_m sub def
+    /ri tau_m tau_syn_in div def
+    /di tau_syn_in tau_m sub def
+
+    /psc_e_over_psp_e 1. 1. C_m div tau_m mul tau_syn_ex mul de div re tau_m de div pow re tau_syn_ex de div pow sub mul div def
+    /psc_i_over_psp_i 1. 1. C_m div tau_m mul tau_syn_in mul de div ri tau_m di div pow ri tau_syn_in di div pow sub mul div def
+
+    /psc_e psc_e_over_psp_e psp_e mul def
+    /psc_i psc_e_over_psp_e psp_e g mul mul def
+    /psc_ext psc_e_over_psp_e psp_ext mul def
+
+    endusing
+
+} def
+
+/derive_network_parameters
+{
+    /n_neurons_e n_neurons gamma mul cvi def
+    /n_neurons_i n_neurons n_neurons_e sub def
+} def
+
+% sets kernel configuration and structural plasticity settings
+/prepare_kernel
+{
+    % open log file
+    log_file logger /init call
+
+    ResetKernel
+    M_ERROR setverbosity
+
+    0 <<
+        /resolution dt
+        /total_num_virtual_procs nvp
+        /overwrite_files overwrite_files
+        /rng_seeds [0 nvp 1 sub] Range seed add
+        /grng_seed seed nvp add
+      >> SetStatus
+
+    EnableStructuralPlasticity
+
+    /static_synapse /synapse_ex CopyModel
+    /synapse_ex << /weight psc_e /delay delay >> SetDefaults
+    /static_synapse /synapse_in CopyModel
+    /synapse_in << /weight psc_i /delay delay >> SetDefaults
+
+    <<
+        /structural_plasticity_update_interval sp_update_interval
+        /structural_plasticity_synapses <<
+                                            /synapse_ex <<
+                                                            /model /synapse_ex
+                                                            /post_synaptic_element /den_ex
+                                                            /pre_synaptic_element /axon_ex
+                                                        >>
+                                            /synapse_in <<
+                                                            /model /synapse_in
+                                                            /post_synaptic_element /den_in
+                                                            /pre_synaptic_element /axon_in
+                                                        >>
+                                        >>
+    >> SetStructuralPlasticityStatus
+
+} def
+
+% create neurons
+/create_nodes
+{
+    /min_gid_neurons_e 1 def
+    /iaf_psc_alpha n_neurons_e <<
+                                   /synaptic_elements <<
+                                                          /den_ex growth_curve_e_e
+                                                          /den_in growth_curve_e_i
+                                                          /axon_ex growth_curve_e_e
+                                                      >>
+                               >> Create /max_gid_neurons_e Set
+    /nodes_e min_gid_neurons_e max_gid_neurons_e cvgidcollection def
+
+    /min_gid_neurons_i max_gid_neurons_e 1 add def
+    /iaf_psc_alpha n_neurons_i <<
+                                   /synaptic_elements <<
+                                                          /den_ex growth_curve_i_e
+                                                          /den_in growth_curve_i_i
+                                                          /axon_in growth_curve_i_i
+                                                      >>
+                               >> Create /max_gid_neurons_i Set
+    /nodes_i min_gid_neurons_i max_gid_neurons_i cvgidcollection def
+} def
+
+% connects simulation and recording devices
+/connect_stim_and_recording
+{
+    /poisson_generator 1 << /rate bg_rate >> Create dup cvgidcollection /noise Set
+    noise nodes_e << /rule /all_to_all >> << /weight psc_ext /delay delay >> Connect
+    noise nodes_i << /rule /all_to_all >> << /weight psc_ext /delay delay >> Connect
+
+    record_spikes {
+        /spike_detector 1 << /to_file true >> Create dup cvgidcollection /spike_detector Set
+        nodes_e spike_detector Connect
+        nodes_i spike_detector Connect
+    } if
+} def
+
+% records the current Ca concentration for excitatory and inhibitory neurons
+/record_local_ca_concentration
+{
+    /t Set
+    % get Ca concentration for all local excitatory neurons
+    /ca_e 0. def
+    0 GetLocalNodes {
+        /gid Set
+        gid min_gid_neurons_e gt gid max_gid_neurons_e lt and
+        {
+            ca_e gid GetStatus /Ca get add
+            /ca_e Set
+        } if
+    } forall
+
+    % get Ca concentration for all local inhibitory neurons
+    /ca_i 0. def
+    0 GetLocalNodes {
+        /gid Set
+        gid min_gid_neurons_i gt gid max_gid_neurons_i lt and
+        {
+            ca_i gid GetStatus /Ca get add
+            /ca_i Set
+        } if
+    } forall
+
+    t cvs ( ) join ca_e cvs join ( # Ca concentration ex) join logger /log call
+    t cvs ( ) join ca_i cvs join ( # Ca concentration in) join logger /log call
+} def
+
+% records the current number of axonal synaptic elements for excitatory and inhibitory neurons
+/record_local_number_of_axons
+{
+    /t Set
+    % get synaptic elements from all local excitatory neurons
+    /syn_e 0 def
+    0 GetLocalNodes {
+        /gid Set
+        gid min_gid_neurons_e gt gid max_gid_neurons_e lt and
+        {
+            gid GetStatus /synaptic_elements get /axon_ex get /z_connected get syn_e add
+            /syn_e Set
+        } if
+    } forall
+
+    % get synaptic elements from all local inhibitory neurons
+    /syn_i 0 def
+    0 GetLocalNodes {
+        /gid Set
+        gid min_gid_neurons_i gt gid max_gid_neurons_i lt and
+        {
+            gid GetStatus /synaptic_elements get /axon_in get /z_connected get syn_i add
+            /syn_i Set
+        } if
+    } forall
+
+    t cvs ( ) join syn_e cvs join ( # axon count ex) join logger /log call
+    t cvs ( ) join syn_i cvs join ( # axon count in) join logger /log call
+} def
+
+% records the total number of spikes generated locally
+/record_local_number_of_spikes
+{
+    /t Set
+    t cvs ( ) join 0 GetStatus /local_spike_counter get cvs join ( # local spike count) join logger /log call
+} def
+
+%%% SIMULATION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+derive_psc_parameters
+derive_network_parameters
+
+prepare_kernel
+create_nodes
+connect_stim_and_recording
+
+/runtime 0. def % keeps track of simulation time
+
+% simulate for a short time to separate initial transients
+tic
+presimtime Simulate
+toc /presim_duration Set
+runtime presimtime add /runtime Set
+runtime cvs ( ) join presim_duration cvs join ( # presim_time) join logger /log call
+
+% simulate in multiple steps to allow for recording of network status at particular intervals
+/sim_duration 0. def % keeps track of wallclock time
+{
+    tic
+    sp_record_interval Simulate
+    toc sim_duration add /sim_duration Set
+    runtime sp_record_interval add /runtime Set
+    runtime cvs ( ) join sim_duration cvs join ( # sim_time) join logger /log call
+
+    runtime record_local_ca_concentration
+    runtime record_local_number_of_axons
+    runtime record_local_number_of_spikes
+
+    runtime sp_record_interval add simtime gt
+    {
+        exit
+    } if
+} loop

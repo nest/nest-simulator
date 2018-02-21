@@ -59,9 +59,17 @@ M_ERROR setverbosity
              /ginzburg_neuron             % binary neuron
              /mcculloch_pitts_neuron      % binary neuron
              /pp_pop_psc_delta            % population model, not suitable for STDP
+             /lin_rate_ipn                % rate neuron
+             /lin_rate_opn                % rate neuron
+             /tanh_rate_ipn               % rate neuron
+             /tanh_rate_opn               % rate neuron
+             /threshold_lin_rate_ipn      % rate neuron
+             /threshold_lin_rate_opn      % rate neuron
+             /siegert_neuron              % rate neuron
              /music_event_out_proxy       % MUSIC port
              /music_event_in_proxy        % MUSIC port
              /music_message_in_proxy      % MUSIC port
+             /music_cont_out_proxy        % MUSIC port
              /music_cont_in_proxy         % MUSIC port
            ] def    
 
@@ -69,6 +77,7 @@ M_ERROR setverbosity
 /extra_params <<
    /aeif_psc_alpha << /initial_weight 80.0 >>
    /aeif_psc_exp << /initial_weight 80.0 >>
+   /aeif_psc_delta << /initial_weight 80.0 >>
    /gif_psc_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
    /gif_cond_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>

@@ -42,15 +42,21 @@ __author__ = 'naveau'
 
 
 def suite():
-    # MPI tests
     if HAVE_MPI:
         try:
-            # Get the MPI command
-            command = nest.sli_func(
-                "mpirun", 2, "python", "test_sp/mpitest_issue_578_sp.py")
-            print ("Executing test with command: " + command)
-            command = command.split()
-            call(command)
+            mpitests = ["mpitest_issue_578_sp.py"]
+            path = os.path.dirname(__file__)
+            for test in mpitests:
+                test = os.path.join(path, test)
+                command = nest.sli_func("mpirun", 2, "python", test)
+                print ("Executing test with command: " + command)
+                command = command.split()
+                my_env = os.environ.copy()
+                try:
+                    my_env.pop("DELAY_PYNEST_INIT")
+                except:
+                    pass
+                call(command, env=my_env)
         except:
             print (sys.exc_info()[0])
             print ("Test call with MPI ended in error")

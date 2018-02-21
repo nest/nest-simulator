@@ -489,7 +489,11 @@ nest::SimulationManager::run( Time const& t )
 
   to_do_ += t.get_steps();
   to_do_total_ = to_do_;
-  assert( to_do_ != 0 );
+
+  if ( to_do_ == 0 )
+  {
+    return;
+  }
 
   // Reset profiling timers and counters within event_delivery_manager
   kernel().event_delivery_manager.reset_timers_counters();

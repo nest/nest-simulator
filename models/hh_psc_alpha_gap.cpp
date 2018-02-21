@@ -418,10 +418,10 @@ nest::hh_psc_alpha_gap::init_buffers_()
   // per min_delay step)
 
   // resize interpolation_coefficients depending on interpolation order
-  const size_t quantity = kernel().connection_manager.get_min_delay()
+  const size_t buffer_size = kernel().connection_manager.get_min_delay()
     * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 );
 
-  B_.interpolation_coefficients.resize( quantity, 0.0 );
+  B_.interpolation_coefficients.resize( buffer_size, 0.0 );
 
   B_.last_y_values.resize( kernel().connection_manager.get_min_delay(), 0.0 );
 
@@ -491,23 +491,23 @@ bool
 nest::hh_psc_alpha_gap::update_( Time const& origin,
   const long from,
   const long to,
-  const bool wfr_update )
+  const bool called_from_wfr_update )
 {
 
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  bool done = true;
   const size_t interpolation_order =
     kernel().simulation_manager.get_wfr_interpolation_order();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
+  bool wfr_tol_exceeded = false;
 
   // allocate memory to store the new interpolation coefficients
   // to be sent by gap event
-  const size_t quantity =
+  const size_t buffer_size =
     kernel().connection_manager.get_min_delay() * ( interpolation_order + 1 );
-  std::vector< double > new_coefficients( quantity, 0.0 );
+  std::vector< double > new_coefficients( buffer_size, 0.0 );
 
   // parameters needed for piecewise interpolation
   double y_i = 0.0, y_ip1 = 0.0, hf_i = 0.0, hf_ip1 = 0.0;
@@ -520,7 +520,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
     // determine the current section
     B_.lag_ = lag;
 
-    if ( wfr_update )
+    if ( called_from_wfr_update )
     {
       y_i = S_.y_[ State_::V_M ];
       if ( interpolation_order == 3 )
@@ -562,7 +562,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
       }
     }
 
-    if ( not wfr_update )
+    if ( not called_from_wfr_update )
     {
       S_.y_[ State_::DI_EXC ] +=
         B_.spike_exc_.get_value( lag ) * V_.PSCurrInit_E_;
@@ -593,15 +593,15 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
       // set new input current
       B_.I_stim_ = B_.currents_.get_value( lag );
     }
-    else // if(wfr_update)
+    else // if(called_from_wfr_update)
     {
       S_.y_[ State_::DI_EXC ] +=
         B_.spike_exc_.get_value_wfr_update( lag ) * V_.PSCurrInit_E_;
       S_.y_[ State_::DI_INH ] +=
         B_.spike_inh_.get_value_wfr_update( lag ) * V_.PSCurrInit_I_;
-      // check deviation from last iteration
-      done = ( fabs( S_.y_[ State_::V_M ] - B_.last_y_values[ lag ] )
-               <= wfr_tol ) && done;
+      // check if deviation from last iteration exceeds wfr_tol
+      wfr_tol_exceeded = wfr_tol_exceeded
+        or fabs( S_.y_[ State_::V_M ] - B_.last_y_values[ lag ] ) > wfr_tol;
       B_.last_y_values[ lag ] = S_.y_[ State_::V_M ];
 
       // update different interpolations
@@ -641,8 +641,9 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 
   } // end for-loop
 
-  // if not wfr_update perform constant extrapolation and reset last_y_values
-  if ( not wfr_update )
+  // if not called_from_wfr_update perform constant extrapolation
+  // and reset last_y_values
+  if ( not called_from_wfr_update )
   {
     for ( long temp = from; temp < to; ++temp )
     {
@@ -650,8 +651,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
         S_.y_[ State_::V_M ];
     }
 
-    B_.last_y_values.clear();
-    B_.last_y_values.resize( kernel().connection_manager.get_min_delay(), 0.0 );
+    std::vector< double >( kernel().connection_manager.get_min_delay(), 0.0 )
+      .swap( B_.last_y_values );
   }
 
   // Send gap-event
@@ -661,10 +662,10 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 
   // Reset variables
   B_.sumj_g_ij_ = 0.0;
-  B_.interpolation_coefficients.clear();
-  B_.interpolation_coefficients.resize( quantity, 0.0 );
+  std::vector< double >( buffer_size, 0.0 )
+    .swap( B_.interpolation_coefficients );
 
-  return done;
+  return wfr_tol_exceeded;
 }
 
 void
@@ -719,7 +720,7 @@ nest::hh_psc_alpha_gap::handle( GapJunctionEvent& e )
   {
     B_.interpolation_coefficients[ i ] +=
       e.get_weight() * e.get_coeffvalue( it );
-    i++;
+    ++i;
   }
 }
 

@@ -487,7 +487,7 @@ private:
                                              //communication of spikes was
                                              //changed
 
-  std::vector< unsigned int > completed_count_;
+  std::vector< unsigned int > completed_count_; // TODO@5g: rename? -> Jakob
 };
 
 inline void

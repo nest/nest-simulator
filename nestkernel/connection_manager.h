@@ -338,14 +338,14 @@ public:
    */
   DelayChecker& get_delay_checker();
 
-  //! Removes provessed entries from source table
+  //! Removes processed entries from source table
   void clean_source_table( const thread tid );
 
   //! Clears all entries in source table
   void clear_source_table( const thread tid );
 
   //! Returns true if source table is kept after building network
-  bool get_keep_source_table() const;
+  bool get_keep_source_table() const; // TODO@5g: rename?
 
   //! Returns true if source table was cleared
   bool is_source_table_cleared() const;
@@ -413,7 +413,6 @@ public:
     const index lcid,
     const bool subsequent_targets );
 
-  //! See source_table.h
   void no_targets_to_process( const thread tid );
 
   const std::vector< size_t >& get_secondary_send_buffer_positions(
@@ -434,11 +433,11 @@ public:
 
   void resize_connections();
 
-  void check_primary_connections_exist();
+  void check_primary_connections_exist(); // TODO@5g: -> sync_has_primary_connections -> Jari
 
   void check_secondary_connections_exist();
 
-  bool primary_connections_exist() const;
+  bool primary_connections_exist() const; // TODO@5g: -> has_primary_connections -> Jari
 
   bool secondary_connections_exist() const;
 
@@ -585,7 +584,8 @@ private:
 
   /** A structure to hold the Connector objects which in turn hold the
    * connection information. Corresponds to a three dimensional
-   * structure: threads|synapses|connections */
+   * structure: threads|synapses|connections
+   */
   std::vector< std::vector< ConnectorBase* >* > connections_5g_;
 
   /**
@@ -617,7 +617,7 @@ private:
   /** A structure to count the number of synapses of a specific
    * type. Arranged in a 2d structure: threads|synapsetypes.
    */
-  std::vector< std::vector< size_t > > vv_num_connections_;
+  std::vector< std::vector< size_t > > vv_num_connections_; // TODO@5g: num_connections_ -> Jari
 
   /**
    * BeginDocumentation

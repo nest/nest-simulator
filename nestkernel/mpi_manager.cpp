@@ -739,6 +739,12 @@ nest::MPIManager::communicate_Alltoall( unsigned int* send_buffer,
     comm );
 }
 
+// TODO@5g: create separate function for communication of spikes?
+// void
+// nest::MPIManager::communicate_spike_data_Alltoall()
+// {
+// }						      
+
 void
 nest::MPIManager::communicate_secondary_events_Alltoall(
   unsigned int* send_buffer,

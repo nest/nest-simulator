@@ -85,8 +85,8 @@ class TestDisconnectSingle(unittest.TestCase):
                 if mpi_test:
                     conns = self.comm.allgather(conns)
                     conns = filter(None, conns)
+                assert len(list(conns)) == 1
 
-                assert len(conns) == 1
                 nest.DisconnectOneToOne(neurons[0], neurons[2], syn_dict)
                 conns = nest.GetConnections(
                     [neurons[0]], [neurons[2]], syn_model)
@@ -94,7 +94,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     conns = self.comm.allgather(conns)
                     conns = filter(None, conns)
 
-                assert len(conns) == 0
+                assert len(list(conns)) == 0
 
                 # Assert that one can not delete a non existent connection
                 conns1 = nest.GetConnections(
@@ -102,8 +102,8 @@ class TestDisconnectSingle(unittest.TestCase):
                 if mpi_test:
                     conns1 = self.comm.allgather(conns1)
                     conns1 = filter(None, conns1)
+                assert len(list(conns1)) == 0
 
-                assert len(conns1) == 0
                 try:
                     nest.DisconnectOneToOne(neurons[0], neurons[1], syn_dict)
                     assertFail()

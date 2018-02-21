@@ -493,9 +493,9 @@ public:
     sort::sort( sources, C_ );
   }
 
-  void
+  void // TODO@5g: -> has_subsequent_targets
   set_has_source_subsequent_targets( const index lcid,
-    const bool subsequent_targets )
+    const bool subsequent_targets ) 
   {
     C_[ lcid ].set_has_source_subsequent_targets( subsequent_targets );
   }

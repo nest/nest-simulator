@@ -52,7 +52,7 @@
 namespace nest
 {
 
-//TODO@5g: can we remove the ConnectorBase class?
+//TODO@5g: can we remove syn_id from all functions? -> Susi
 
 /**
  * Base clase to allow storing Connectors for different synapse types
@@ -62,7 +62,7 @@ class ConnectorBase
 {
 
 public:
-  unsigned int call_count;
+  unsigned int call_count; //TODO@5g: remove
 
    // destructor needs to be declared virtual to avoid undefined
    // behaviour, avoid possible memory leak and needs to be defined to
@@ -222,10 +222,13 @@ template < typename ConnectionT >
 class Connector : public ConnectorBase
 {
 private:
+
   std::vector< ConnectionT > C_;
   const synindex syn_id_;
 
 public:
+  unsigned int call_count; //TODO@5g: remove
+
   explicit Connector( const synindex syn_id )
     : syn_id_( syn_id )
   {
@@ -249,6 +252,7 @@ public:
     def< long >( dict, names::target, C_[ lcid ].get_target( tid )->get_gid() );
   }
 
+  // TODO@5g: move cm to end of argument list -> Susi
   void
   set_synapse_status( const synindex syn_id,
     ConnectorModel& cm,
@@ -296,17 +300,19 @@ public:
     return *this;
   }
 
+  // TODO@5g: is this used and if so, why? -> Susi
   ConnectionT&
-  at( const size_t i )
+  at( const size_t i ) // TODO@5g: i -> lcid
   {
     if ( i >= C_.size() || i < 0 )
     {
       throw std::out_of_range( String::compose(
         "Invalid attempt to access a connection: index %1 out of range.", i ) );
     }
-    return C_[ i ];
+    return C_[ i ]; // ?? should check via std::vector.at( )
   }
 
+  // TODO@5g: can the two functions below be unified? -> Susi
   void
   get_connection( const index source_gid,
     const index target_gid,
@@ -320,10 +326,10 @@ public:
     if ( not C_[ lcid ].is_disabled() )
     {
       if ( synapse_label == UNLABELED_CONNECTION
-        || C_[ lcid ].get_label() == synapse_label )
+        or C_[ lcid ].get_label() == synapse_label )
       {
         const index current_target_gid = C_[ lcid ].get_target( tid )->get_gid();
-        if ( current_target_gid == target_gid || target_gid == 0 )
+        if ( current_target_gid == target_gid or target_gid == 0 )
         {
           conns.push_back( ConnectionDatum(
             ConnectionID( source_gid, current_target_gid, tid, syn_id, lcid ) ) );
@@ -341,15 +347,15 @@ public:
     std::deque< ConnectionID >& conns ) const
   {
     assert( syn_id_ == syn_id );
-    for ( size_t i = 0; i < C_.size(); ++i )
+    for ( size_t i = 0; i < C_.size(); ++i ) // TODO@5g: i -> lcid
     {
       if ( not C_[ i ].is_disabled() )
       {
         const index current_target_gid = C_[ i ].get_target( tid )->get_gid();
-        if ( current_target_gid == target_gid || target_gid == 0 )
+        if ( current_target_gid == target_gid or target_gid == 0 )
         {
           if ( synapse_label == UNLABELED_CONNECTION
-               || C_[ i ].get_label() == synapse_label )
+               or C_[ i ].get_label() == synapse_label )
           {
             conns.push_back( ConnectionDatum(
                                ConnectionID( source_gid, current_target_gid, tid, syn_id, i ) ) );
@@ -374,6 +380,7 @@ public:
     }
   }
 
+  // TODO@5g: fix order of arguments
   void
   get_target_gids( const thread tid,
     const index start_lcid,
@@ -405,12 +412,13 @@ public:
     return C_[ lcid ].get_target( tid )->get_gid();
   }
 
+  // TODO@5g: fix order of arguments
   void
   send_to_all( Event& e, const thread tid, const std::vector< ConnectorModel* >& cm )
   {
-    for ( size_t i = 0; i < C_.size(); ++i )
+    for ( size_t i = 0; i < C_.size(); ++i ) // TODO@5g: i -> lcid
     {
-      e.set_port( i ); // TODO@5g: does this make sense?
+      e.set_port( i );
       assert( not C_[ i ].is_disabled() );
       C_[ i ].send( e,
         tid,
@@ -419,6 +427,7 @@ public:
     }
   }
 
+  // TODO@5g: fix order of arguments
   bool
   send( const thread tid,
     const synindex syn_id,
@@ -426,11 +435,11 @@ public:
     Event& e,
     const std::vector< ConnectorModel* >& cm )
   {
-#ifndef DISABLE_TIMING
+#ifndef DISABLE_TIMING // TODO@5g: remove
     ++call_count;
 #endif
 
-    e.set_port( lcid ); // TODO@5g: does this make sense?
+    e.set_port( lcid );
     if ( not C_[ lcid ].is_disabled() )
     {
       typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();

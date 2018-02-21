@@ -119,28 +119,28 @@ install:
    - nosetests --plugins
    - which cmake
    - cmake --version
-=======
-#  - sudo apt-get install -y build-essential cmake libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib ipython
+   
+   #  - sudo apt-get install -y build-essential cmake libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib ipython
 
- #  - sudo pip install "nose-capturestderr==1.2"
+   #  - sudo pip install "nose-capturestderr==1.2"
+   
+   # Install libneurosim
+   - git clone https://github.com/INCF/libneurosim.git
+   - pushd libneurosim
+   - ./autogen.sh
+   - ./configure --prefix=$HOME/.cache/libneurosim.install --with-mpi
+   - make
+   - make install
+   - popd
 
-  # Install libneurosim
-  - git clone https://github.com/INCF/libneurosim.git
-  - pushd libneurosim
-  - ./autogen.sh
-  - ./configure --prefix=$HOME/.cache/libneurosim.install --with-mpi
-  - make
-  - make install
-  - popd
-
-  # Install csa
-  - git clone https://github.com/INCF/csa.git
-  - pushd csa
-  - ./autogen.sh
-  - ./configure --with-libneurosim=$HOME/.cache/libneurosim.install --prefix=$HOME/.cache/csa.install
-  - make
-  - make install
-  - popd
+   # Install csa
+   - git clone https://github.com/INCF/csa.git
+   - pushd csa
+   - ./autogen.sh
+   - ./configure --with-libneurosim=$HOME/.cache/libneurosim.install --prefix=$HOME/.cache/csa.install
+   - make
+   - make install
+   - popd
 
 
 before_script:

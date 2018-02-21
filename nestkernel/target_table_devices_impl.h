@@ -76,7 +76,6 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
 inline void
 nest::TargetTableDevices::add_connection_from_device( Node& source,
   Node& target,
-  const index s_gid,
   const thread tid,
   const synindex syn_id,
   const double d,
@@ -99,7 +98,6 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
 inline void
 nest::TargetTableDevices::add_connection_from_device( Node& source,
   Node& target,
-  const index s_gid,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& p,
@@ -157,21 +155,21 @@ inline void
 nest::TargetTableDevices::get_synapse_status_to_device( const thread tid,
   const index source_gid,
   const synindex syn_id,
-  DictionaryDatum& d,
-  const port p ) const
+  DictionaryDatum& dict,
+  const index lcid ) const
 {
   const index lid = kernel().vp_manager.gid_to_lid( source_gid );
-  ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_synapse_status( tid, syn_id, d, p );
+  ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_synapse_status( tid, syn_id, lcid, dict );
 }
 
 inline void
 nest::TargetTableDevices::get_synapse_status_from_device( const thread tid,
   const index ldid,
   const synindex syn_id,
-  DictionaryDatum& d,
-  const port p ) const
+  DictionaryDatum& dict,
+  const index lcid ) const
 {
-  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->get_synapse_status( tid, syn_id, d, p );
+  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->get_synapse_status( tid, syn_id, lcid, dict );
 }
 
 inline void
@@ -179,11 +177,11 @@ nest::TargetTableDevices::set_synapse_status_to_device( const thread tid,
   const index source_gid,
   const synindex syn_id,
   ConnectorModel& cm,
-  const DictionaryDatum& d,
-  const port p )
+  const DictionaryDatum& dict,
+  const index lcid )
 {
   const index lid = kernel().vp_manager.gid_to_lid( source_gid );
-  ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->set_synapse_status( syn_id, cm, d, p );
+  ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->set_synapse_status( syn_id, cm, dict, lcid );
 }
 
 inline void
@@ -191,11 +189,11 @@ nest::TargetTableDevices::set_synapse_status_from_device( const thread tid,
   const index ldid,
   const synindex syn_id,
   ConnectorModel& cm,
-  const DictionaryDatum& d,
-  const port p )
+  const DictionaryDatum& dict,
+  const index lcid )
 {
   ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->set_synapse_status(
-    syn_id, cm, d, p );
+    syn_id, cm, dict, lcid );
 }
 
 #endif /* TARGET_TABLE_DEVICES_IMPL_H */

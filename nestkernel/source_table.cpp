@@ -286,9 +286,10 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     unique_secondary_source_gid_syn_id_.clear();
   }
 
-  // collect all unique combinations of source gid and syn id across
-  // all threads on this process; makes sure secondary events are not
-  // duplicated for targets on the same process but different threads
+  // collect all unique pairs of source gid and synapse-type id
+  // corresponding to continuous-data connections on this MPI rank;
+  // using a set makes sure secondary events are not duplicated for
+  // targets on the same process but different threads
   for ( size_t syn_id = 0; syn_id < sources_[ tid ]->size();
         ++syn_id )
   {
@@ -312,8 +313,8 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
 
 #pragma omp single
   {
-    // compute offsets in receive buffer for all unique combinations
-    // of source gid and synapse type
+    // compute receive buffer positions for all unique pairs of source
+    // gid and synapse-type id on this MPI rank
     std::vector< size_t > recv_buffer_position_by_rank(
       kernel().mpi_manager.get_num_processes(), 0 );
     for ( size_t rank = 0; rank < recv_buffer_position_by_rank.size(); ++rank )

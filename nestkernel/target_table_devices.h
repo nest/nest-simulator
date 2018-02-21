@@ -86,14 +86,12 @@ public:
   //! add a connection from the device source to the neuron target
   void add_connection_from_device( Node& source,
     Node& target,
-    const index s_gid,
     const thread tid,
     const synindex syn_id,
     const double d,
     const double w );
   void add_connection_from_device( Node& source,
     Node& target,
-    const index s_gid,
     const thread tid,
     const synindex syn_id,
     const DictionaryDatum& p,
@@ -146,25 +144,25 @@ public:
   void get_synapse_status_to_device( const thread tid,
     const index source_gid,
     const synindex syn_id,
-    DictionaryDatum& d,
-    const port p ) const;
+    DictionaryDatum& dict,
+    const index lcid ) const;
   void get_synapse_status_from_device( const thread tid,
     const index ldid,
     const synindex syn_id,
-    DictionaryDatum& d,
-    const port p ) const;
+    DictionaryDatum& dict,
+    const index lcid ) const;
   void set_synapse_status_to_device( const thread tid,
     const index source_gid,
     const synindex syn_id,
     ConnectorModel& cm,
-    const DictionaryDatum& d,
-    const port p );
+    const DictionaryDatum& dict,
+    const index lcid );
   void set_synapse_status_from_device( const thread tid,
     const index ldid,
     const synindex syn_id,
     ConnectorModel& cm,
-    const DictionaryDatum& d,
-    const port p );
+    const DictionaryDatum& dict,
+    const index lcid );
 };
 
 } // namespace nest

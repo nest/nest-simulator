@@ -115,9 +115,15 @@ public:
    * \param d Delay of the connection (in ms).
    * \param w Weight of the connection.
    */
+  //TODO@5g: rename s -> sgid -> Susi
+  //TODO@5g: rename d -> delay
+  //TODO@5g: rename w -> weight
+  //TODO@5g: rename p -> params
+  //TODO@5g: rename s -> source
+  //TODO@5g: rename r -> target
   void connect( const index s,
     Node* target,
-    thread target_thread,
+    const thread target_thread,
     const synindex syn_id,
     const double_t d = numerics::nan,
     const double_t w = numerics::nan );
@@ -214,14 +220,14 @@ public:
     const index target_gid,
     const thread tid,
     const synindex syn_id,
-    const port p ) const;
+    const index lcid ) const;
 
   // aka conndatum SetStatus
   void set_synapse_status( const index source_gid,
     const index target_gid,
     const thread tid,
     const synindex syn_id,
-    const port p,
+    const index lcid,
     const DictionaryDatum& dict );
 
   /**
@@ -295,7 +301,7 @@ public:
 
   void send( thread t, index sgid, Event& e );
 
-  void send_secondary( thread t, SecondaryEvent& e );
+  // void send_secondary( thread t, SecondaryEvent& e );
 
   void send_5g( const thread tid,
     const synindex syn_id,
@@ -565,14 +571,12 @@ private:
    */
   void connect_from_device_( Node& s,
     Node& r,
-    const index s_gid,
     const thread tid,
     const synindex syn_id,
     const double d = NAN,
     const double w = NAN );
   void connect_from_device_( Node& s,
     Node& r,
-    const index s_gid,
     const thread tid,
     const synindex syn_id,
     const DictionaryDatum& p,

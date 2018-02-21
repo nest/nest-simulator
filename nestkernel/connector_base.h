@@ -52,6 +52,8 @@
 namespace nest
 {
 
+//TODO@5g: can we remove the ConnectorBase class?
+
 /**
  * Base clase to allow storing Connectors for different synapse types
  * in vectors. We define the interface here to avoid casting.
@@ -72,15 +74,15 @@ public:
    */
   virtual void get_synapse_status( const thread tid,
     const synindex syn_id,
-    DictionaryDatum& d,
-    const index lcid ) const = 0;
+    const index lcid,
+    DictionaryDatum& dict ) const = 0;
 
   /** Sets status of synapse of type syn_id at position lcid according
    * to dictionary d.
    */
   virtual void set_synapse_status( const synindex syn_id,
     ConnectorModel& cm,
-    const DictionaryDatum& d,
+    const DictionaryDatum& dict,
     const index lcid ) = 0;
 
   /** Returns the number of connections of type syn_id.
@@ -236,27 +238,27 @@ public:
   }
 
   void
-  get_synapse_status( const thread tid, const synindex syn_id, DictionaryDatum& d, const index lcid ) const
+  get_synapse_status( const thread tid, const synindex syn_id, const index lcid, DictionaryDatum& dict ) const
   {
     assert( syn_id == syn_id_ );
     assert( lcid >= 0 && lcid < C_.size() );
-    C_[ lcid ].get_status( d );
+    C_[ lcid ].get_status( dict );
 
     // set target gid here, where tid is available; necessary for hpc
     // synapses using TargetIdentifierIndex
-    def< long >( d, names::target, C_[ lcid ].get_target( tid )->get_gid() );
+    def< long >( dict, names::target, C_[ lcid ].get_target( tid )->get_gid() );
   }
 
   void
   set_synapse_status( const synindex syn_id,
     ConnectorModel& cm,
-    const DictionaryDatum& d,
+    const DictionaryDatum& dict,
     const index lcid )
   {
     assert( syn_id == syn_id_ );
     assert( lcid >= 0 && lcid < C_.size() );
     C_[ lcid ].set_status(
-      d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
+      dict, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
   }
 
   size_t

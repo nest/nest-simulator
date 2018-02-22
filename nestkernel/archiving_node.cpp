@@ -29,6 +29,10 @@
 
 #include "archiving_node.h"
 
+// C++ includes:
+#include <iomanip>
+#include <limits>
+
 // Includes from sli:
 #include "dictutils.h"
 
@@ -102,6 +106,13 @@ nest::Archiving_Node::get_K_value( double t )
   {
     if ( t > history_[ i ].t_ )
     {
+      // check if entry was accepted by mistake
+      if ( ( t - history_[ i ].t_ ) < ( 0.5 * Time::get_resolution().get_ms() ) )
+      {
+	std::cout << "Archiving_Node::get_K_value at "
+		  << std::setprecision( std::numeric_limits<long double>::digits10 + 1 )
+		  << t << ", history entry at " << history_[ i ].t_ << std::endl;
+      }
       return ( history_[ i ].Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
     }
@@ -170,6 +181,24 @@ nest::Archiving_Node::get_history( double t1,
       ++runner;
     }
     *finish = runner;
+
+    // check if start entry was included by mistake
+    if ( (*start)->t_ - t1 > -0.5 * Time::get_resolution().get_ms() &&
+    	 (*start)->t_ - t1 < 0.5 * Time::get_resolution().get_ms() )
+    {
+      std::cout << "Archiving_Node::get_history t1 = "
+    		<< std::setprecision(std::numeric_limits<long double>::digits10 + 1)
+    		<< t1 << ", start history entry t = " << (*start)->t_ << std::endl;
+    }
+    // check if finish entry was excluded by mistake
+    if ( (*finish) != history_.end()
+    	 && (*finish)->t_ - t2 > -0.5 * Time::get_resolution().get_ms()
+    	 && (*finish)->t_ - t2 < 0.5 * Time::get_resolution().get_ms() )
+    {
+      std::cout << "Archiving_Node::get_history t2 = "
+    		<< std::setprecision(std::numeric_limits<long double>::digits10 + 1)
+    		<< t2 << ", finish history entry t = " << (*finish)->t_ << std::endl;
+    }
   }
 }
 

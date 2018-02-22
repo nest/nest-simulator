@@ -58,6 +58,8 @@
 
 // C++ includes:
 #include <cmath>
+#include <iomanip>
+#include <limits>
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -260,6 +262,13 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
     if ( minus_dt == 0 )
     {
       continue;
+    }
+    // check if entry was accepted by mistake
+    if ( minus_dt > -0.5 * Time::get_resolution().get_ms() )
+    {
+      std::cout << "STDPPLConnectionHom::send minus_dt = "
+    		<< std::setprecision( std::numeric_limits<long double>::digits10 + 1 )
+    		<< minus_dt << std::endl;
     }
     weight_ = facilitate_(
       weight_, Kplus_ * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );

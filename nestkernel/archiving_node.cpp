@@ -85,7 +85,8 @@ Archiving_Node::register_stdp_connection( double t_first_read )
   // For details see bug #218. MH 08-04-22
 
   for ( std::deque< histentry >::iterator runner = history_.begin();
-        runner != history_.end() && runner->t_ <= t_first_read;
+        runner != history_.end() && ( t_first_read - runner->t_ > -0.5
+                                        * Time::get_resolution().get_ms() );
         ++runner )
   {
     ( runner->access_counter_ )++;
@@ -104,15 +105,8 @@ nest::Archiving_Node::get_K_value( double t )
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    if ( t > history_[ i ].t_ )
+    if ( t - history_[ i ].t_ > 0.5 * Time::get_resolution().get_ms() )
     {
-      // check if entry was accepted by mistake
-      if ( ( t - history_[ i ].t_ ) < ( 0.5 * Time::get_resolution().get_ms() ) )
-      {
-	std::cout << "Archiving_Node::get_K_value at "
-		  << std::setprecision( std::numeric_limits<long double>::digits10 + 1 )
-		  << t << ", history entry at " << history_[ i ].t_ << std::endl;
-      }
       return ( history_[ i ].Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
     }
@@ -137,7 +131,7 @@ nest::Archiving_Node::get_K_values( double t,
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    if ( t > history_[ i ].t_ )
+    if ( t - history_[ i ].t_ > 0.5 * Time::get_resolution().get_ms() )
     {
       triplet_K_value = ( history_[ i ].triplet_Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_triplet_inv_ ) );
@@ -170,35 +164,19 @@ nest::Archiving_Node::get_history( double t1,
   else
   {
     std::deque< histentry >::iterator runner = history_.begin();
-    while ( ( runner != history_.end() ) && ( runner->t_ <= t1 ) )
+    while ( ( runner != history_.end() )
+      && ( t1 - runner->t_ > -0.5 * Time::get_resolution().get_ms() ) )
     {
       ++runner;
     }
     *start = runner;
-    while ( ( runner != history_.end() ) && ( runner->t_ <= t2 ) )
+    while ( ( runner != history_.end() )
+      && ( t2 - runner->t_ > -0.5 * Time::get_resolution().get_ms() ) )
     {
       ( runner->access_counter_ )++;
       ++runner;
     }
     *finish = runner;
-
-    // check if start entry was included by mistake
-    if ( (*start)->t_ - t1 > -0.5 * Time::get_resolution().get_ms() &&
-    	 (*start)->t_ - t1 < 0.5 * Time::get_resolution().get_ms() )
-    {
-      std::cout << "Archiving_Node::get_history t1 = "
-    		<< std::setprecision(std::numeric_limits<long double>::digits10 + 1)
-    		<< t1 << ", start history entry t = " << (*start)->t_ << std::endl;
-    }
-    // check if finish entry was excluded by mistake
-    if ( (*finish) != history_.end()
-    	 && (*finish)->t_ - t2 > -0.5 * Time::get_resolution().get_ms()
-    	 && (*finish)->t_ - t2 < 0.5 * Time::get_resolution().get_ms() )
-    {
-      std::cout << "Archiving_Node::get_history t2 = "
-    		<< std::setprecision(std::numeric_limits<long double>::digits10 + 1)
-    		<< t2 << ", finish history entry t = " << (*finish)->t_ << std::endl;
-    }
   }
 }
 

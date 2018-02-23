@@ -259,11 +259,9 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
     // Pfister et al, 2006
     double ky = start->triplet_Kminus_ - 1.0;
     ++start;
-    if ( minus_dt == 0 )
-    {
-      continue;
-    }
-
+    // get_history() should make sure that
+    // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
+    assert( minus_dt < -0.5 * Time::get_resolution().get_ms() );
     weight_ =
       facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ), ky );
   }

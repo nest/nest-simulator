@@ -302,10 +302,9 @@ STDPConnectionHom< targetidentifierT >::send( Event& e,
   {
     minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
     ++start;
-    if ( minus_dt == 0 )
-    {
-      continue;
-    }
+    // get_history() should make sure that
+    // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
+    assert( minus_dt < -0.5 * Time::get_resolution().get_ms() );
     weight_ =
       facilitate_( weight_, Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
   }

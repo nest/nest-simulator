@@ -485,8 +485,10 @@ index NodeManager::add_node( index mod, long n ) // no_p
   }
 
   // resize the target table for delivery of events to devices to make
-  // sure the first dimension matches the number of local nodes
-  kernel().connection_manager.resize_target_table_devices();
+  // sure the first dimension matches the number of local nodes and
+  // the second dimension matches number of synapse types
+  kernel().connection_manager.resize_target_table_devices_to_number_of_neurons();
+  kernel().connection_manager.resize_target_table_devices_to_number_of_synapse_types();
 
   return max_gid - 1;
 }

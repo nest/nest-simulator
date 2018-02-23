@@ -1802,11 +1802,17 @@ void
 nest::ConnectionManager::resize_connections()
 {
   kernel().vp_manager.assert_single_threaded();
+
+  // resize data structures for connections between neurons
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     connections_5g_[ tid ]->resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
     source_table_.resize_sources( tid );
   }
+
+  // resize data structures for connections between neurons and
+  // devices
+  target_table_devices_.resize_to_number_of_synapse_types();
 }
 
 void

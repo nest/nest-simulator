@@ -42,9 +42,8 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
 {
   const index lid = kernel().vp_manager.gid_to_lid( s_gid );
   assert( lid < target_to_devices_[ tid ]->size() );
-  // make sure this neuron has support for all synapse types
-  ( *target_to_devices_[ tid ] )[ lid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
-  // add connection to device
+  assert( syn_id < ( *target_to_devices_[ tid ] )[ lid ].size() );
+
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
     .add_connection_5g(
@@ -63,9 +62,8 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
 {
   const index lid = kernel().vp_manager.gid_to_lid( s_gid );
   assert( lid < target_to_devices_[ tid ]->size() );
-  // make sure this neuron has support for all synapse types
-  ( *target_to_devices_[ tid ] )[ lid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
-  // add connection to device
+  assert( syn_id < ( *target_to_devices_[ tid ] )[ lid ].size() );
+
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
     .add_connection_5g(
@@ -84,13 +82,13 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
   const index ldid = source.get_local_device_id();
   assert( ldid != invalid_index );
   assert( ldid < target_from_devices_[ tid ]->size() );
-  // make sure this device has support for all synapse types
-  ( *target_from_devices_[ tid ] )[ ldid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
-  // add connection from device
+  assert( syn_id < ( *target_from_devices_[ tid ] )[ ldid ].size() );
+
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
     .add_connection_5g(
       source, target, &( *target_from_devices_[ tid ] )[ ldid ], syn_id, d, w );
+
   // store gid of sending device
   ( *sending_devices_gids_[ tid ] )[ ldid ] = source.get_gid();
 }
@@ -107,13 +105,13 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
   const index ldid = source.get_local_device_id();
   assert( ldid != invalid_index );
   assert( ldid < target_from_devices_[ tid ]->size() );
-  // make sure this device has support for all synapse types
-  ( *target_from_devices_[ tid ] )[ ldid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
-  // add connection from device
+  assert( syn_id < ( *target_from_devices_[ tid ] )[ ldid ].size() );
+
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
     .add_connection_5g(
       source, target, &( *target_from_devices_[ tid ] )[ ldid ], syn_id, p, d, w );
+
   // store gid of sending device
   ( *sending_devices_gids_[ tid ] )[ ldid ] = source.get_gid();
 }

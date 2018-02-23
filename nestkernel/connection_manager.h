@@ -352,7 +352,9 @@ public:
 
   void prepare_target_table( const thread tid );
 
-  void resize_target_table_devices();
+  void resize_target_table_devices_to_number_of_neurons();
+
+  void resize_target_table_devices_to_number_of_synapse_types();
 
   bool get_next_target_data( const thread tid,
     const thread rank_start,
@@ -701,9 +703,15 @@ ConnectionManager::is_source_table_cleared() const
 }
 
 inline void
-ConnectionManager::resize_target_table_devices()
+ConnectionManager::resize_target_table_devices_to_number_of_neurons()
 {
-  target_table_devices_.resize();
+  target_table_devices_.resize_to_number_of_neurons();
+}
+
+inline void
+ConnectionManager::resize_target_table_devices_to_number_of_synapse_types()
+{
+  target_table_devices_.resize_to_number_of_synapse_types();
 }
 
 inline void

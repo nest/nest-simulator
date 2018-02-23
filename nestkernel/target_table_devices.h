@@ -117,15 +117,10 @@ public:
     const std::vector< ConnectorModel* >& cm );
 
   //! resize vectors according to number of local nodes
-  void resize();
+  void resize_to_number_of_neurons();
 
-  //! returns the number of connections from neurons to devices
-  size_t get_num_connections_to_devices_( const thread tid,
-    const synindex synapse_id ) const;
-
-  //! returns the number of connections from devices
-  size_t get_num_connections_from_devices_( const thread tid,
-    const synindex synapse_id ) const;
+  //! resize vectors according to number of available synapse types
+  void resize_to_number_of_synapse_types();
 
   //! gets all connections from neurons to devices
   void get_connections_to_devices_(

@@ -27,9 +27,6 @@
 #include "connector_base.h"
 #include "vp_manager_impl.h"
 
-// Includes from SLI:
-// #include "arraydatum.h"
-
 nest::TargetTableDevices::TargetTableDevices()
 {
 }
@@ -109,7 +106,7 @@ nest::TargetTableDevices::finalize()
 }
 
 void
-nest::TargetTableDevices::resize()
+nest::TargetTableDevices::resize_to_number_of_neurons()
 {
   const thread num_threads = kernel().vp_manager.get_num_threads();
   for ( thread tid = 0; tid < num_threads; ++tid )
@@ -123,40 +120,23 @@ nest::TargetTableDevices::resize()
   }
 }
 
-size_t
-nest::TargetTableDevices::get_num_connections_to_devices_( const thread tid,
-  const synindex syn_id ) const
+void
+nest::TargetTableDevices::resize_to_number_of_synapse_types()
 {
-  size_t num_connections = 0;
-  for ( size_t lid = 0; lid < ( *target_to_devices_[ tid ] ).size(); ++lid )
+  const thread num_threads = kernel().vp_manager.get_num_threads();
+  for ( thread tid = 0; tid < num_threads; ++tid )
   {
-    // make sure this device has support for all synapse types
-    ( *target_to_devices_[ tid ] )[ lid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
-
-    if ( ( *target_to_devices_[ tid ] )[ lid ].size() > 0 )
+    for ( index lid = 0; lid < target_to_devices_[ tid ]->size(); ++lid )
     {
-      num_connections += ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_num_connections( syn_id );
+      // make sure this device has support for all synapse types
+      ( *target_to_devices_[ tid ] )[ lid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
+    }
+    for ( index ldid = 0; ldid < target_from_devices_[ tid ]->size(); ++ldid )
+    {
+      // make sure this device has support for all synapse types
+      ( *target_from_devices_[ tid ] )[ ldid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
     }
   }
-  return num_connections;
-}
-
-size_t
-nest::TargetTableDevices::get_num_connections_from_devices_( const thread tid,
-  const synindex syn_id ) const
-{
-  size_t num_connections = 0;
-  for ( size_t ldid = 0; ldid < ( *target_to_devices_[ tid ] ).size(); ++ldid )
-  {
-    // make sure this device has support for all synapse types
-    ( *target_from_devices_[ tid ] )[ ldid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
-
-    if ( ( *target_from_devices_[ tid ] )[ ldid ].size() > 0 )
-    {
-      num_connections += ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->get_num_connections( syn_id );
-    }
-  }
-  return num_connections;
 }
 
 void
@@ -203,9 +183,6 @@ nest::TargetTableDevices::get_connections_to_device_for_lid_(
   const long synapse_label,
   std::deque< ConnectionID >& conns ) const
 {
-  // make sure this device has support for all synapse types
-  ( *target_to_devices_[ tid ] )[ lid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
-
   if ( ( *target_to_devices_[ tid ] )[ lid ].size() > 0 )
   {
     const index source_gid = kernel().vp_manager.lid_to_gid( lid );
@@ -242,9 +219,6 @@ nest::TargetTableDevices::get_connections_from_devices_(
     if ( source_gid > 0 and ( requested_source_gid == source_gid or requested_source_gid == 0 ) )
     {
       const index ldid = source->get_local_device_id();
-
-      // make sure this device has support for all synapse types
-      ( *target_from_devices_[ tid ] )[ ldid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
 
       if ( ( *target_from_devices_[ tid ] )[ ldid ].size() > 0 )
       {

@@ -27,12 +27,12 @@ namespace nest
 {
 
 /**
- * Tuple to store position in 3d vector of sources.
+ * Three-tuple to store position in 3d vector of sources.
  **/
 struct SourceTablePosition
 {
   long tid;       //!< thread index
-  long syn_id; //!< synapse-type index
+  long syn_id;    //!< synapse-type index
   long lcid;      //!< local connection index
   SourceTablePosition();
   SourceTablePosition( const long tid, const long syn_id, const long lcid );
@@ -73,7 +73,7 @@ inline bool operator==( const SourceTablePosition& lhs,
 inline bool operator!=( const SourceTablePosition& lhs,
   const SourceTablePosition& rhs )
 {
-  return !operator==( lhs, rhs );
+  return not operator==( lhs, rhs );
 }
 
 inline bool operator<( const SourceTablePosition& lhs,
@@ -105,13 +105,13 @@ inline bool operator>( const SourceTablePosition& lhs,
 inline bool operator<=( const SourceTablePosition& lhs,
   const SourceTablePosition& rhs )
 {
-  return !operator>( lhs, rhs );
+  return not operator>( lhs, rhs );
 }
 
 inline bool operator>=( const SourceTablePosition& lhs,
   const SourceTablePosition& rhs )
 {
-  return !operator<( lhs, rhs );
+  return not operator<( lhs, rhs );
 }
 
 } // namespace nest

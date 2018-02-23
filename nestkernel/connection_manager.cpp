@@ -846,7 +846,7 @@ nest::ConnectionManager::find_connection_unsorted( const thread tid,
 {
   std::vector< index > matching_lcids;
 
-  source_table_.find_all_sources( tid, sgid, syn_id, matching_lcids );
+  source_table_.find_all_sources_unsorted( tid, sgid, syn_id, matching_lcids );
   if ( matching_lcids.size() > 0 )
   {
     const index lcid =
@@ -1560,7 +1560,7 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
 
       // find targets in unsorted part of connections
       std::vector< index > matching_lcids;
-      source_table_.find_all_sources(
+      source_table_.find_all_sources_unsorted(
         tid, sources[ i ], syn_id, matching_lcids );
 
       // unsorted part should always be empty

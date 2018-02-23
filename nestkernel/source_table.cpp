@@ -68,7 +68,7 @@ nest::SourceTable::finalize()
 {
   if ( not is_cleared() )
   {
-    for ( size_t tid = 0; tid < sources_.size(); ++tid )
+    for ( thread tid = 0; tid < sources_.size(); ++tid )
     {
       clear( tid );
     }
@@ -366,7 +366,7 @@ bool
 nest::SourceTable::get_next_target_data( const thread tid,
   const thread rank_start,
   const thread rank_end,
-  thread& target_rank,
+  thread& source_rank,
   TargetData& next_target_data )
 {
   SourceTablePosition& current_position = *current_positions_[ tid ];
@@ -536,9 +536,9 @@ nest::SourceTable::get_next_target_data( const thread tid,
 
         // convert receive buffer position to send buffer position
         // according to buffer layout of MPIAlltoall
-        const size_t send_buffer_pos = // TODO@5g: kernel().mpi_manager.recv_buffer_pos_to_send_buffer_pos( recv_buffer_pos, target_rank )
+        const size_t send_buffer_pos = // TODO@5g: kernel().mpi_manager.recv_buffer_pos_to_send_buffer_pos( recv_buffer_pos, source_rank )
           kernel().mpi_manager.get_rank() * kernel().mpi_manager.get_chunk_size_secondary_events()
-          + ( recv_buffer_pos - target_rank * kernel().mpi_manager.get_chunk_size_secondary_events() );
+          + ( recv_buffer_pos - source_rank * kernel().mpi_manager.get_chunk_size_secondary_events() );
 
         reinterpret_cast< SecondaryTargetData* >( &next_target_data )
           ->set_send_buffer_pos( send_buffer_pos );

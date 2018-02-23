@@ -760,7 +760,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
   const unsigned int half_completed_count =
     kernel().vp_manager.get_num_threads();
   const unsigned int max_completed_count = 2 * half_completed_count;
-p
+
   bool me_completed_tid;
   bool others_completed_tid;
   kernel().connection_manager.prepare_target_table( tid );
@@ -854,7 +854,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid )
     kernel().vp_manager.get_assigned_ranks( tid );
 
   unsigned int num_target_data_written = 0;
-  thread target_rank;
+  thread source_rank;
   TargetData next_target_data;
   bool valid_next_target_data;
   bool is_source_table_read = true;
@@ -891,11 +891,11 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid )
       kernel().connection_manager.get_next_target_data( tid,
         assigned_ranks.begin,
         assigned_ranks.end,
-        target_rank,
+        source_rank,
         next_target_data );
     if ( valid_next_target_data ) // add valid entry to MPI buffer
     {
-      const unsigned int lr_idx = target_rank % assigned_ranks.max_size;
+      const unsigned int lr_idx = source_rank % assigned_ranks.max_size;
       if ( send_buffer_idx[ lr_idx ] == send_buffer_end[ lr_idx ] )
       {
         // entry does not fit in this part of the MPI buffer any more,
@@ -929,11 +929,11 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid )
     else // all connections have been processed
     {
       // mark end of valid data for each rank
-      for ( thread target_rank = assigned_ranks.begin;
-            target_rank < assigned_ranks.end;
-            ++target_rank )
+      for ( thread source_rank = assigned_ranks.begin;
+            source_rank < assigned_ranks.end;
+            ++source_rank )
       {
-        const thread lr_idx = target_rank % assigned_ranks.max_size;
+        const thread lr_idx = source_rank % assigned_ranks.max_size;
         if ( send_buffer_idx[ lr_idx ] > send_buffer_begin[ lr_idx ] )
         {
           send_buffer_target_data_[ send_buffer_idx[ lr_idx ] - 1 ].set_end_marker();
@@ -955,11 +955,11 @@ nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid )
   const AssignedRanks assigned_ranks =
     kernel().vp_manager.get_assigned_ranks( tid );
 
-  for ( thread target_rank = assigned_ranks.begin;
-        target_rank < assigned_ranks.end;
-        ++target_rank )
+  for ( thread source_rank = assigned_ranks.begin;
+        source_rank < assigned_ranks.end;
+        ++source_rank )
   {
-    const thread idx = ( target_rank + 1 ) * send_recv_count_target_data_per_rank_ - 1;
+    const thread idx = ( source_rank + 1 ) * send_recv_count_target_data_per_rank_ - 1;
     send_buffer_target_data_[ idx ].set_complete_marker();
   }
 }

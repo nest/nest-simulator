@@ -604,7 +604,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
             ( *iiit ).get_lcid(),
             lag,
             ( *iiit ).get_offset() );
-          ( *iiit ).set_processed( true ); // mark entry for removal
+          ( *iiit ).set_is_processed( true ); // mark entry for removal
           ++send_buffer_position.idx[ lr_idx ];
           ++send_buffer_position.num_spike_data_written;
         }

@@ -39,17 +39,17 @@ namespace nest
  */
 class SpikeData
 {
-private:
+protected:
+  const static unsigned int default_marker_ = 0;
   const static unsigned int end_marker_ = 1;
   const static unsigned int complete_marker_ = 2;
   const static unsigned int invalid_marker_ = 3;
 
-protected:
   index lcid_ : 27;         //!< local connection index
   unsigned int marker_ : 2; //!< status flag
   unsigned int lag_ : 14;   //!< lag in this min-delay interval
   thread tid_ : 10;         //!< thread index
-  synindex syn_id_ : 8;  //!< synapse-type index
+  synindex syn_id_ : 8;     //!< synapse-type index
 
 public:
   SpikeData();
@@ -79,7 +79,7 @@ public:
 
 inline SpikeData::SpikeData()
   : lcid_( 0 )
-  , marker_( 0 )
+  , marker_( default_marker_ )
   , lag_( 0 )
   , tid_( 0 )
   , syn_id_( 0 )
@@ -88,7 +88,7 @@ inline SpikeData::SpikeData()
 
 inline SpikeData::SpikeData( const SpikeData& rhs )
   : lcid_( rhs.lcid_ )
-  , marker_( 0 ) // always initialize with default marker
+  , marker_( default_marker_ )
   , lag_( rhs.lag_ )
   , tid_( rhs.tid_ )
   , syn_id_( rhs.syn_id_ )
@@ -100,7 +100,7 @@ inline SpikeData::SpikeData( const thread tid,
   const index lcid,
   const unsigned int lag )
   : lcid_( lcid )
-  , marker_( 0 ) // always initialize with default marker
+  , marker_( default_marker_ )
   , lag_( lag )
   , tid_( tid )
   , syn_id_( syn_id )
@@ -120,7 +120,7 @@ SpikeData::set( const thread tid,
   assert( lag < 16384 );
 
   lcid_ = lcid;
-  marker_ = 0; // always initialize with default marker
+  marker_ = default_marker_;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;
@@ -153,7 +153,7 @@ SpikeData::get_syn_id() const
 inline void
 SpikeData::reset_marker()
 {
-  marker_ = 0;
+  marker_ = default_marker_;
 }
 
 inline void
@@ -247,7 +247,7 @@ OffGridSpikeData::set( const thread tid,
   assert( lag < 16384 );
 
   lcid_ = lcid;
-  marker_ = 0; // always initialize with default marker
+  marker_ = default_marker_;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;

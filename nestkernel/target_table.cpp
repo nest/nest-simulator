@@ -80,16 +80,19 @@ nest::TargetTable::finalize()
 void
 nest::TargetTable::prepare( const thread tid )
 {
-  // add one to max_num_local_nodes to avoid overflow in case of
-  // rounding errors
-  targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes() + 1,
+  // add one to max_num_local_nodes to avoid possible overflow in case
+  // of rounding errors
+  const size_t num_local_nodes = kernel().node_manager.get_max_num_local_nodes() + 1;
+
+  targets_[ tid ]->resize( num_local_nodes,
     std::vector< Target >( 0, Target() ) );
 
-  ( *secondary_send_buffer_pos_[ tid ] ).resize( kernel().node_manager.get_max_num_local_nodes() + 1);
+  ( *secondary_send_buffer_pos_[ tid ] ).resize( num_local_nodes );
 
-  for ( size_t lid = 0; lid < kernel().node_manager.get_max_num_local_nodes() + 1; ++lid )
+  for ( size_t lid = 0; lid < num_local_nodes; ++lid )
   {
-    ( *secondary_send_buffer_pos_[ tid ] )[ lid ].resize( 64 );
+    // resize to maximal possible synapse-type index
+    ( *secondary_send_buffer_pos_[ tid ] )[ lid ].resize( kernel().model_manager.get_num_synapse_prototypes() );
   }
 }
 

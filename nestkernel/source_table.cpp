@@ -68,7 +68,7 @@ nest::SourceTable::finalize()
 {
   if ( not is_cleared() )
   {
-    for ( thread tid = 0; tid < sources_.size(); ++tid )
+    for ( thread tid = 0; tid < static_cast< thread >( sources_.size() ); ++tid )
     {
       clear( tid );
     }
@@ -518,7 +518,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
         kernel().vp_manager.suggest_vp( current_source.get_gid() ) ) );
       if ( current_source.is_primary() )
       {
-        next_target_data.is_primary( true );
+        next_target_data.set_is_primary( true );
         // we store the thread index of the source table, not our own tid!
         next_target_data.set_tid( current_position.tid );
         next_target_data.set_syn_id(
@@ -527,7 +527,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
       }
       else
       {
-        next_target_data.is_primary( false );
+        next_target_data.set_is_primary( false );
         const size_t recv_buffer_pos =
           kernel().connection_manager.get_secondary_recv_buffer_position(
             current_position.tid,

@@ -37,16 +37,18 @@ namespace nest
  * neuron on a (remote) machine. Used in TargetTable for presynaptic
  * part of connection infrastructure.
  */
-class Target
+class Target // TODO@5g: write tests for reading and writing fields -> Jakob
 {
 private:
   unsigned long data_;
+
   // define masks to select correct bits in data_
   static const unsigned long lcid_mask = 0x0000000007FFFFFF;
   static const unsigned long rank_mask = 0x00007FFFF8000000;
   static const unsigned long tid_mask = 0x01FF800000000000;
   static const unsigned long syn_id_mask = 0x7E00000000000000;
   static const unsigned long processed_mask = 0x8000000000000000;
+
   // define shifts to arrive at correct bits; note: the size of these
   // variables is most likely not enough for exascale computers, or
   // very small number of threads; if any issues are encountered with
@@ -57,6 +59,12 @@ private:
   static const size_t tid_shift = 47;
   static const size_t syn_id_shift = 57;
   static const size_t processed_shift = 63;
+
+  // maximal sizes are determined by bitshifts
+  static const int max_lcid_ = 134217728; // 2 ** 27
+  static const int max_rank_ = 1048576; // 2 ** 20
+  static const int max_tid_ = 1024; // 2 ** 10
+  static const int max_syn_id_ = 64; // 2 ** 6
 
 public:
   Target();
@@ -73,7 +81,7 @@ public:
   unsigned int get_tid() const;
   void set_syn_id( const unsigned char syn_id );
   unsigned char get_syn_id() const;
-  void set_processed( const bool processed );
+  void set_is_processed( const bool processed );
   bool is_processed() const;
   double get_offset() const;
 };
@@ -86,7 +94,7 @@ inline Target::Target()
 inline Target::Target( const Target& target )
   : data_( target.data_ )
 {
-  set_processed( false ); // always initialize as non-processed
+  set_is_processed( false ); // always initialize as non-processed
 }
 
 inline Target::Target( const thread tid,
@@ -95,21 +103,21 @@ inline Target::Target( const thread tid,
   const index lcid )
   : data_( 0 )
 {
-  assert( tid < 1024 );
-  assert( rank < 1048576 );
-  assert( syn_id < 64 );
-  assert( lcid < 134217728 );
+  assert( tid < max_tid_ );
+  assert( rank < max_rank_ );
+  assert( syn_id < max_syn_id_ );
+  assert( lcid < max_lcid_ );
   set_lcid( lcid );
   set_rank( rank );
   set_tid( tid );
   set_syn_id( syn_id );
-  set_processed( false ); // always initialize as non-processed
+  set_is_processed( false ); // always initialize as non-processed
 }
 
 inline void
 Target::set_lcid( const size_t lcid )
 {
-  assert( lcid < 134217728 );
+  assert( lcid < max_lcid_ );
   // reset corresponding bits using complement of mask and write new
   // bits by shifting input appropiately. need to cast to long first,
   // to avoid overflow of input by left shifts.
@@ -126,7 +134,7 @@ Target::get_lcid() const
 inline void
 Target::set_rank( const unsigned int rank )
 {
-  assert( rank < 1048576 );
+  assert( rank < max_rank_ );
   data_ = ( data_ & ( ~rank_mask ) )
     | ( static_cast< unsigned long >( rank ) << rank_shift );
 }
@@ -140,7 +148,7 @@ Target::get_rank() const
 inline void
 Target::set_tid( const unsigned int tid )
 {
-  assert( tid < 1024 );
+  assert( tid < max_tid_ );
   data_ = ( data_ & ( ~tid_mask ) )
     | ( static_cast< unsigned long >( tid ) << tid_shift );
 }
@@ -154,7 +162,7 @@ Target::get_tid() const
 inline void
 Target::set_syn_id( const unsigned char syn_id )
 {
-  assert( syn_id < 64 );
+  assert( syn_id < max_syn_id_ );
   data_ = ( data_ & ( ~syn_id_mask ) )
     | ( static_cast< unsigned long >( syn_id ) << syn_id_shift );
 }
@@ -166,7 +174,7 @@ Target::get_syn_id() const
 }
 
 inline void
-Target::set_processed( const bool processed )
+Target::set_is_processed( const bool processed )
 {
   data_ = ( data_ & ( ~processed_mask ) )
     | ( static_cast< unsigned long >( processed ) << processed_shift );

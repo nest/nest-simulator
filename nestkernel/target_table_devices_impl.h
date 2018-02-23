@@ -133,6 +133,7 @@ nest::TargetTableDevices::send_to_device( const thread tid,
   }
 }
 
+// TODO@5g: move to .h?
 inline void
 nest::TargetTableDevices::send_from_device( const thread tid,
   const index ldid,
@@ -160,6 +161,7 @@ nest::TargetTableDevices::get_synapse_status_to_device( const thread tid,
   ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_synapse_status( tid, syn_id, lcid, dict );
 }
 
+// TODO@5g: move to .h?
 inline void
 nest::TargetTableDevices::get_synapse_status_from_device( const thread tid,
   const index ldid,
@@ -182,6 +184,7 @@ nest::TargetTableDevices::set_synapse_status_to_device( const thread tid,
   ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->set_synapse_status( syn_id, cm, dict, lcid );
 }
 
+// TODO@5g: move to .h?
 inline void
 nest::TargetTableDevices::set_synapse_status_from_device( const thread tid,
   const index ldid,

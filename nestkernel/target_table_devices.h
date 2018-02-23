@@ -150,7 +150,8 @@ public:
     std::deque< ConnectionID >& conns ) const;
 
   //! gets all connections between neurons and devices
-  void get_connections( const index requested_source_gid,
+  void get_connections(
+    const index requested_source_gid,
     const index requested_target_gid,
     const thread tid,
     const synindex synapse_id,

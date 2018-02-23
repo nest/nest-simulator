@@ -725,6 +725,8 @@ nest::MPIManager::communicate_Allgather( std::vector< long >& buffer )
   MPI_Allgather( &my_val, 1, MPI_LONG, &buffer[ 0 ], 1, MPI_LONG, comm );
 }
 
+
+// TODO@5g: create non-MPI counterpart
 void
 nest::MPIManager::communicate_Alltoall( unsigned int* send_buffer,
   unsigned int* recv_buffer,

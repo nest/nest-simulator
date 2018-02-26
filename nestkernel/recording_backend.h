@@ -26,6 +26,11 @@
 // C++ includes:
 #include <vector>
 
+// Includes from sli:
+#include "dictdatum.h"
+#include "name.h"
+
+
 namespace nest
 {
 

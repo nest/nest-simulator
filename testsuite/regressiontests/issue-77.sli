@@ -66,6 +66,15 @@ M_ERROR setverbosity
              /threshold_lin_rate_ipn      % rate neuron
              /threshold_lin_rate_opn      % rate neuron
              /siegert_neuron              % rate neuron
+             /gauss_rate_ipn              % rate neuron
+             /sigmoid_rate_gg_1998_ipn    % rate neuron
+             /sigmoid_rate_ipn            % rate neuron
+             /rate_transformer_lin             % rate transformer
+             /rate_transformer_tanh            % rate transformer
+             /rate_transformer_threshold_lin   % rate transformer
+             /rate_transformer_gauss           % rate transformer
+             /rate_transformer_sigmoid         % rate transformer
+             /rate_transformer_sigmoid_gg_1998 % rate transformer
              /music_event_out_proxy       % MUSIC port
              /music_event_in_proxy        % MUSIC port
              /music_message_in_proxy      % MUSIC port

@@ -52,6 +52,7 @@
 #include "aeif_psc_exp.h"
 #include "aeif_psc_delta.h"
 #include "amat2_psc_exp.h"
+#include "gauss_rate.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
 #include "hh_psc_alpha.h"
@@ -79,6 +80,8 @@
 #include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
 #include "siegert_neuron.h"
+#include "sigmoid_rate.h"
+#include "sigmoid_rate_gg_1998.h"
 #include "gif_psc_exp.h"
 #include "gif_psc_exp_multisynapse.h"
 #include "gif_cond_exp.h"
@@ -186,16 +189,41 @@ ModelsModule::commandstring( void ) const
 void
 ModelsModule::init( SLIInterpreter* )
 {
-  kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
+  // rate models with input noise
+  kernel().model_manager.register_node_model< gauss_rate_ipn >(
+    "gauss_rate_ipn" );
   kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
-  kernel().model_manager.register_node_model< tanh_rate_opn >(
-    "tanh_rate_opn" );
+  kernel().model_manager.register_node_model< sigmoid_rate_ipn >(
+    "sigmoid_rate_ipn" );
+  kernel().model_manager.register_node_model< sigmoid_rate_gg_1998_ipn >(
+    "sigmoid_rate_gg_1998_ipn" );
   kernel().model_manager.register_node_model< tanh_rate_ipn >(
     "tanh_rate_ipn" );
-  kernel().model_manager.register_node_model< threshold_lin_rate_opn >(
-    "threshold_lin_rate_opn" );
   kernel().model_manager.register_node_model< threshold_lin_rate_ipn >(
     "threshold_lin_rate_ipn" );
+
+  // rate models with output noise
+  kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
+  kernel().model_manager.register_node_model< tanh_rate_opn >(
+    "tanh_rate_opn" );
+  kernel().model_manager.register_node_model< threshold_lin_rate_opn >(
+    "threshold_lin_rate_opn" );
+
+  // rate transformer nodes
+  kernel().model_manager.register_node_model< rate_transformer_gauss >(
+    "rate_transformer_gauss" );
+  kernel().model_manager.register_node_model< rate_transformer_lin >(
+    "rate_transformer_lin" );
+  kernel().model_manager.register_node_model< rate_transformer_sigmoid >(
+    "rate_transformer_sigmoid" );
+  kernel()
+    .model_manager.register_node_model< rate_transformer_sigmoid_gg_1998 >(
+      "rate_transformer_sigmoid_gg_1998" );
+  kernel().model_manager.register_node_model< rate_transformer_tanh >(
+    "rate_transformer_tanh" );
+  kernel().model_manager.register_node_model< rate_transformer_threshold_lin >(
+    "rate_transformer_threshold_lin" );
+
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >(
     "iaf_psc_alpha" );

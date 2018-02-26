@@ -186,3 +186,20 @@ fail_or_die
   >> SetStatus
 }
 fail_or_die
+
+% Test 6
+% time points should lie strictly in the future.
+{
+  ResetKernel
+  0 <<
+      /local_num_threads 1
+      /resolution 0.1
+  >> SetStatus
+
+  /inhomogeneous_poisson_generator Create /ipg Set
+  ipg <<
+        /rate_times [0.]
+        /rate_values [30.]
+  >> SetStatus
+}
+fail_or_die

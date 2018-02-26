@@ -79,6 +79,11 @@ nest::inhomogeneous_poisson_generator::Parameters_::
 {
   Time t_rate;
 
+  if ( t <= kernel().simulation_manager.get_time().get_ms() )
+  {
+    throw BadProperty( "Time points must lie strictly in the future." );
+  }
+
   // we need to force the rate time to the grid;
   // first, convert the rate time to tics, may not be on grid
   t_rate = Time::ms( t );

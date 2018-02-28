@@ -40,9 +40,6 @@ find_program( MUSIC_EXECUTABLE
     NAMES music
     HINTS ${MUSIC_ROOT_DIR}/bin
     )
-set( MUSIC_LIBRARIES "${MUSIC_LIBRARY}" )
-set( MUSIC_INCLUDE_DIRS "${MUSIC_INCLUDE_DIR}" )
-
 
 if ( NOT MUSIC_EXECUTABLE STREQUAL "MUSIC_EXECUTABLE-NOTFOUND" )
   execute_process(
@@ -68,5 +65,10 @@ find_package_handle_standard_args( Music
   VERSION_VAR
     MUSIC_VERSION
     )
+
+if ( MUSIC_FOUND )
+  set( MUSIC_LIBRARIES "${MUSIC_LIBRARY}" )
+  set( MUSIC_INCLUDE_DIRS "${MUSIC_INCLUDE_DIR}" )
+endif ()
 
 mark_as_advanced( MUSIC_ROOT_DIR MUSIC_INCLUDE_DIR MUSIC_LIBRARY MUSIC_EXECUTABLE )

@@ -42,8 +42,6 @@ find_library( NCURSES_LIBRARY       # readline depends on libncurses, or similar
     NAMES ncurses ncursesw curses termcap
     HINTS ${READLINE_ROOT_DIR}/lib
     )
-set( READLINE_LIBRARIES "${READLINE_LIBRARY}" "${NCURSES_LIBRARY}" )
-set( READLINE_INCLUDE_DIRS "${READLINE_INCLUDE_DIR}" )
 
 if ( EXISTS "${READLINE_INCLUDE_DIR}/readline/readline.h" )
   file( STRINGS "${READLINE_INCLUDE_DIR}/readline/readline.h" readline_h_content
@@ -65,5 +63,10 @@ find_package_handle_standard_args( Readline
   VERSION_VAR
     READLINE_VERSION
     )
+
+if ( READLINE_FOUND )
+  set( READLINE_LIBRARIES "${READLINE_LIBRARY}" "${NCURSES_LIBRARY}" )
+  set( READLINE_INCLUDE_DIRS "${READLINE_INCLUDE_DIR}" )
+endif ()
 
 mark_as_advanced( READLINE_ROOT_DIR READLINE_INCLUDE_DIR READLINE_LIBRARY NCURSES_LIBRARY )

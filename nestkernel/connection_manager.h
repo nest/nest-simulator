@@ -97,37 +97,12 @@ public:
     const DictionaryDatum&,
     const DictionaryDatum& );
 
-  /**
-   * Connect two nodes. The source node is defined by its global ID.
-   * The target node is defined by the node. The connection is
-   * established on the thread/process that owns the target node.
-   *
-   * The parameters delay and weight have the default value numerics::nan.
-   * numerics::nan is a special value, which describes double values that
-   * are not a number. If delay or weight is omitted in a connect call,
-   * numerics::nan indicates this and weight/delay are set only, if they are
-   *valid.
-   *
-   * \param s GID of the sending Node.
-   * \param target Pointer to target Node.
-   * \param target_thread Thread that hosts the target node.
-   * \param syn The synapse model to use.
-   * \param d Delay of the connection (in ms).
-   * \param w Weight of the connection.
-   */
   //TODO@5g: rename s -> sgid -> Susi
   //TODO@5g: rename d -> delay
   //TODO@5g: rename w -> weight
   //TODO@5g: rename p -> params
   //TODO@5g: rename s -> source
   //TODO@5g: rename r -> target
-  void connect( const index s,
-    Node* target,
-    const thread target_thread,
-    const synindex syn_id,
-    const double_t d = numerics::nan,
-    const double_t w = numerics::nan );
-
   /**
    * Connect two nodes. The source node is defined by its global ID.
    * The target node is defined by the node. The connection is
@@ -507,13 +482,6 @@ private:
     const index s_gid,
     const thread tid,
     const synindex syn_id,
-    const double d = numerics::nan,
-    const double w = numerics::nan );
-  void connect_( Node& s,
-    Node& r,
-    const index s_gid,
-    const thread tid,
-    const synindex syn_id,
     const DictionaryDatum& params,
     const double d = numerics::nan,
     const double w = numerics::nan );
@@ -541,13 +509,6 @@ private:
     const index s_gid,
     const thread tid,
     const synindex syn_id,
-    const double d = NAN,
-    const double w = NAN );
-  void connect_to_device_( Node& s,
-    Node& r,
-    const index s_gid,
-    const thread tid,
-    const synindex syn_id,
     const DictionaryDatum& params,
     const double d = NAN,
     const double w = NAN );
@@ -570,12 +531,6 @@ private:
    * \param w The weight of the connection (optional).
    * \param p The parameters for the connection.
    */
-  void connect_from_device_( Node& s,
-    Node& r,
-    const thread tid,
-    const synindex syn_id,
-    const double d = NAN,
-    const double w = NAN );
   void connect_from_device_( Node& s,
     Node& r,
     const thread tid,

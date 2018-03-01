@@ -436,72 +436,6 @@ nest::ConnectionManager::update_delay_extrema_()
 
 //TODO@5g: check why pointers and references are mixed and which can be consts -> Jakob
 //TODO@5g: compare to other connect function -> same logic? -> Jakob
-// gid node thread syn_id delay weight
-void
-nest::ConnectionManager::connect( const index sgid,
-  Node* target,
-  const thread target_thread,
-  const synindex syn_id,
-  const double d,
-  const double w )
-{
-  kernel().model_manager.assert_valid_syn_id( syn_id );
-
-  have_connections_changed_ = true;
-
-  Node* const source = kernel().node_manager.get_node( sgid, target_thread );
-  const thread tid = kernel().vp_manager.get_thread_id();
-
-  // normal nodes and devices with proxies -> normal nodes and devices with
-  // proxies
-  if ( source->has_proxies() && target->has_proxies() )
-  {
-    connect_( *source, *target, sgid, target_thread, syn_id, d, w );
-  }
-  // normal nodes and devices with proxies -> normal devices
-  else if ( source->has_proxies() && not target->has_proxies() and target->local_receiver() )
-  {
-    if ( source->is_proxy() or ( not source->is_proxy() and source->get_thread() != tid ) )
-    {
-      return;
-    }
-
-    connect_to_device_( *source, *target, sgid, target_thread, syn_id, d, w );
-  }
-  // normal devices -> normal nodes and devices with proxies
-  else if ( not source->has_proxies() && target->has_proxies() )
-  {
-    connect_from_device_( *source, *target, target_thread, syn_id, d, w );
-  }
-  // normal devices -> normal devices
-  else if ( not source->has_proxies() && not target->has_proxies() )
-  {
-    // create connection only on suggested thread of target
-    const thread suggested_thread = kernel().vp_manager.vp_to_thread(
-      kernel().vp_manager.suggest_vp( target->get_gid() ) );
-    if ( suggested_thread == tid )
-    {
-      connect_from_device_( *source, *target, suggested_thread, syn_id, d, w );
-    }
-  }
-  // globally receiving devices
-  // e.g., volume transmitter
-  else if ( not target->has_proxies() && not target->local_receiver() )
-  {
-    // we do not allow to connect a device to a global receiver at the moment
-    if ( not source->has_proxies() )
-    {
-      return;
-    }
-    target = kernel().node_manager.get_node( target->get_gid(), tid );
-    connect_( *source, *target, sgid, tid, syn_id, d, w );
-  }
-  else
-  {
-    assert( false );
-  }
-}
-
 // gid node thread syn_id dict delay weight
 void
 nest::ConnectionManager::connect( const index sgid,
@@ -653,49 +587,6 @@ nest::ConnectionManager::connect( const index sgid,
   return true;
 }
 
-/**
- * The parameters delay and weight have the default value NAN.
- */
-void
-nest::ConnectionManager::connect_( Node& s,
-  Node& r,
-  const index s_gid,
-  const thread tid,
-  const synindex syn_id,
-  const double d,
-  const double w )
-{
-  const bool is_primary = kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary();
-
-  kernel()
-    .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection_5g( s, r, connections_5g_[ tid ], syn_id, d, w );
-
-  source_table_.add_source( tid,
-    syn_id,
-    s_gid,
-    is_primary );
-
-  //TODO@5g: abstract in function -> Jari
-  // inline void nest::ConnectionManager::increase_connection_count( tid, syn_id ) {
-  if ( vv_num_connections_[ tid ].size() <= syn_id )
-  {
-    vv_num_connections_[ tid ].resize( syn_id + 1 );
-  }
-  ++vv_num_connections_[ tid ][ syn_id ];
-  // }
-  // increase_connection_count( tid, syn_id );
-
-  if ( is_primary )
-  {
-    primary_connections_exist_ = true;
-  }
-  else
-  {
-    secondary_connections_exist_ = true;
-  }
-}
-
 void
 nest::ConnectionManager::connect_( Node& s,
   Node& r,
@@ -738,25 +629,6 @@ nest::ConnectionManager::connect_to_device_( Node& s,
   const index s_gid,
   const thread tid,
   const synindex syn_id,
-  const double d,
-  const double w )
-{
-  // create entries in connection structure for connections to devices
-  target_table_devices_.add_connection_to_device( s, r, s_gid, tid, syn_id, d, w );
-
-  if ( vv_num_connections_[ tid ].size() <= syn_id )
-  {
-    vv_num_connections_[ tid ].resize( syn_id + 1 );
-  }
-  ++vv_num_connections_[ tid ][ syn_id ];
-}
-
-void
-nest::ConnectionManager::connect_to_device_( Node& s,
-  Node& r,
-  const index s_gid,
-  const thread tid,
-  const synindex syn_id,
   const DictionaryDatum& params,
   const double d,
   const double w )
@@ -764,25 +636,6 @@ nest::ConnectionManager::connect_to_device_( Node& s,
   // create entries in connection structure for connections to devices
   target_table_devices_.add_connection_to_device(
     s, r, s_gid, tid, syn_id, params, d, w );
-
-  if ( vv_num_connections_[ tid ].size() <= syn_id )
-  {
-    vv_num_connections_[ tid ].resize( syn_id + 1 );
-  }
-  ++vv_num_connections_[ tid ][ syn_id ];
-}
-
-void
-nest::ConnectionManager::connect_from_device_( Node& s,
-  Node& r,
-  const thread tid,
-  const synindex syn_id,
-  const double d,
-  const double w )
-{
-  // create entries in connections vector of devices
-  target_table_devices_.add_connection_from_device(
-    s, r, tid, syn_id, d, w );
 
   if ( vv_num_connections_[ tid ].size() <= syn_id )
   {

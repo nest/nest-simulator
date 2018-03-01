@@ -72,14 +72,7 @@ public:
   //! delete data structure
   void finalize();
 
-  //! add a connection from the neuron source to the device target // TODO@5g: unify the two functions below?
-  void add_connection_to_device( Node& source,
-    Node& target,
-    const index s_gid,
-    const thread tid,
-    const synindex syn_id,
-    const double d,
-    const double w );
+  //! add a connection from the neuron source to the device target
   void add_connection_to_device( Node& source,
     Node& target,
     const index s_gid,
@@ -90,12 +83,6 @@ public:
     const double w );
 
   //! add a connection from the device source to the neuron target
-  void add_connection_from_device( Node& source,
-    Node& target,
-    const thread tid,
-    const synindex syn_id,
-    const double d,
-    const double w );
   void add_connection_from_device( Node& source,
     Node& target,
     const thread tid,

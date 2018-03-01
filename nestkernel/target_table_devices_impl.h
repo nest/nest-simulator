@@ -37,25 +37,6 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
   const index s_gid,
   const thread tid,
   const synindex syn_id,
-  const double d,
-  const double w )
-{
-  const index lid = kernel().vp_manager.gid_to_lid( s_gid );
-  assert( lid < target_to_devices_[ tid ]->size() );
-  assert( syn_id < ( *target_to_devices_[ tid ] )[ lid ].size() );
-
-  kernel()
-    .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection_5g(
-      source, target, &( *target_to_devices_[ tid ] )[ lid ], syn_id, d, w );
-}
-
-inline void
-nest::TargetTableDevices::add_connection_to_device( Node& source,
-  Node& target,
-  const index s_gid,
-  const thread tid,
-  const synindex syn_id,
   const DictionaryDatum& p,
   const double d,
   const double w )
@@ -68,29 +49,6 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
     .model_manager.get_synapse_prototype( syn_id, tid )
     .add_connection_5g(
       source, target, &( *target_to_devices_[ tid ] )[ lid ], syn_id, p, d, w );
-}
-
-// TODO@5g: unify these two functions below?
-inline void
-nest::TargetTableDevices::add_connection_from_device( Node& source,
-  Node& target,
-  const thread tid,
-  const synindex syn_id,
-  const double d,
-  const double w )
-{
-  const index ldid = source.get_local_device_id();
-  assert( ldid != invalid_index );
-  assert( ldid < target_from_devices_[ tid ]->size() );
-  assert( syn_id < ( *target_from_devices_[ tid ] )[ ldid ].size() );
-
-  kernel()
-    .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection_5g(
-      source, target, &( *target_from_devices_[ tid ] )[ ldid ], syn_id, d, w );
-
-  // store gid of sending device
-  ( *sending_devices_gids_[ tid ] )[ ldid ] = source.get_gid();
 }
 
 inline void

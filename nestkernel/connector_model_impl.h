@@ -192,46 +192,6 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >* hetconn,
   const synindex syn_id,
-  const double delay,
-  const double weight )
-{
-  if ( not numerics::is_nan( delay ) && has_delay_ )
-  {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-      delay );
-  }
-
-  // create a new instance of the default connection
-  ConnectionT c = ConnectionT( default_connection_ );
-  if ( not numerics::is_nan( weight ) )
-  {
-    c.set_weight( weight );
-  }
-  if ( not numerics::is_nan( delay ) )
-  {
-    c.set_delay( delay );
-  }
-  else
-  {
-    // tell the connector model, that we used the default delay
-    used_default_delay();
-  }
-  add_connection_5g_( src, tgt, hetconn, syn_id, c, receptor_type_ );
-}
-
-/**
- * delay and weight have the default value numerics::nan.
- * numerics::nan is a special value, which describes double values that
- * are not a number. If delay or weight is omitted in an add_connection call,
- * numerics::nan indicates this and weight/delay are set only, if they are
- * valid.
- */
-template < typename ConnectionT >
-void
-GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
-  Node& tgt,
-  std::vector< ConnectorBase* >* hetconn,
-  const synindex syn_id,
   const DictionaryDatum& p,
   const double delay,
   const double weight )

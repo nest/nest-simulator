@@ -41,9 +41,10 @@ Selector::Selector( const DictionaryDatum& d )
 {
   if ( updateValue< long >( d, names::lid, depth ) )
   {
-
     if ( depth <= 0 )
+    {
       throw BadProperty( "lid must be >0" );
+    }
 
     depth -= 1; // lid starts at 1 for backwards compatibility
   }
@@ -56,8 +57,9 @@ Selector::Selector( const DictionaryDatum& d )
       kernel().model_manager.get_modeldict()->lookup( modelname );
 
     if ( model_token.empty() )
+    {
       throw UnknownModelName( modelname );
-
+    }
     model = static_cast< long >( model_token );
   }
 }

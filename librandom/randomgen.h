@@ -198,6 +198,9 @@
 // Includes from libnestutil:
 #include "lockptr.h"
 
+// Includes from librandom:
+#include "librandom_names.h"
+
 /**
  * Namespace for random number generators.
  */

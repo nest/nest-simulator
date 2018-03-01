@@ -1,0 +1,53 @@
+/*
+ *  test_event_proxies_issue-696_receiver.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+(unittest) run
+/unittest using
+
+statusdict/have_music :: not { exit_test_gracefully } if
+
+M_ERROR setverbosity
+
+11 /N_NEURONS Set
+
+/subnet Create /NG Set
+NG ChangeSubnet
+/iaf_psc_alpha N_NEURONS Create pop
+0 ChangeSubnet
+NG GetGlobalNodes /neurons Set
+
+/subnet Create /INP Set
+INP ChangeSubnet
+/music_event_in_proxy N_NEURONS Create pop
+0 ChangeSubnet
+INP GetGlobalNodes /inputs Set
+
+inputs
+{
+    /channel Set
+    /n Set
+    n << /port_name (in) /music_channel channel >> SetStatus
+    n neurons channel get << /weight 750.0 >> Connect
+}
+forallindexed
+
+1 Simulate

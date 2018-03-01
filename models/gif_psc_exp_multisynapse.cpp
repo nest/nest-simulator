@@ -159,54 +159,75 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
   updateValue< std::vector< double > >( d, names::q_stc, q_stc_ );
 
   if ( tau_sfa_.size() != q_sfa_.size() )
+  {
     throw BadProperty( String::compose(
       "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
       "tau_sfa: %1\nSize of q_sfa: %2",
       tau_sfa_.size(),
       q_sfa_.size() ) );
+  }
 
   if ( tau_stc_.size() != q_stc_.size() )
+  {
     throw BadProperty( String::compose(
       "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
       "tau_stc: %1\nSize of q_stc: %2",
       tau_stc_.size(),
       q_stc_.size() ) );
-
+  }
   if ( g_L_ <= 0 )
+  {
     throw BadProperty( "Membrane conductance must be strictly positive." );
-
+  }
   if ( Delta_V_ <= 0 )
+  {
     throw BadProperty( "Delta_V must be strictly positive." );
-
+  }
   if ( c_m_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time must not be negative." );
-
+  }
   if ( lambda_0_ < 0 )
+  {
     throw BadProperty( "lambda_0 must not be negative." );
+  }
 
   for ( size_t i = 0; i < tau_sfa_.size(); i++ )
+  {
     if ( tau_sfa_[ i ] <= 0 )
+    {
       throw BadProperty( "All time constants must be strictly positive." );
+    }
+  }
 
   for ( size_t i = 0; i < tau_stc_.size(); i++ )
+  {
     if ( tau_stc_[ i ] <= 0 )
+    {
       throw BadProperty( "All time constants must be strictly positive." );
+    }
+  }
 
   std::vector< double > tau_tmp;
   if ( updateValue< std::vector< double > >( d, names::tau_syn, tau_tmp ) )
   {
     if ( has_connections_ && tau_tmp.size() < tau_syn_.size() )
+    {
       throw BadProperty(
         "The neuron has connections, "
         "therefore the number of ports cannot be reduced." );
+    }
 
     for ( size_t i = 0; i < tau_tmp.size(); ++i )
     {
       if ( tau_tmp[ i ] <= 0 )
+      {
         throw BadProperty( "All synaptic time constants must be > 0." );
+      }
     }
 
     tau_syn_ = tau_tmp;

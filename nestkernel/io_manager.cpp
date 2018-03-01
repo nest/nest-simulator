@@ -58,7 +58,7 @@ void
 nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
 {
   std::string tmp;
-  if ( updateValue< std::string >( d, "data_path", tmp ) )
+  if ( updateValue< std::string >( d, names::data_path, tmp ) )
   {
     DIR* testdir = opendir( tmp.c_str() );
     if ( testdir != NULL )
@@ -88,13 +88,17 @@ nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
     }
   }
 
-  if ( updateValue< std::string >( d, "data_prefix", tmp ) )
+  if ( updateValue< std::string >( d, names::data_prefix, tmp ) )
   {
     if ( tmp.find( '/' ) == std::string::npos )
+    {
       data_prefix_ = tmp;
+    }
     else
+    {
       LOG(
         M_ERROR, "SetStatus", "Data prefix must not contain path elements." );
+    }
   }
 }
 
@@ -105,13 +109,19 @@ nest::IOManager::initialize()
   DictionaryDatum dict( new Dictionary );
   char* data_path = std::getenv( "NEST_DATA_PATH" );
   if ( data_path )
-    ( *dict )[ "data_path" ] = std::string( data_path );
+  {
+    ( *dict )[ names::data_path ] = std::string( data_path );
+  }
   char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
   if ( data_prefix )
-    ( *dict )[ "data_prefix" ] = std::string( data_prefix );
-  if ( !dict->empty() )
+  {
+    ( *dict )[ names::data_prefix ] = std::string( data_prefix );
+  }
+  if ( not dict->empty() )
+  {
     set_data_path_prefix_( dict );
-
+  }
+  
   recording_backends_.insert(std::make_pair( "ascii", new RecordingBackendASCII() ) );
   recording_backends_.insert(std::make_pair( "memory", new RecordingBackendMemory() ) );
   recording_backends_.insert(std::make_pair( "screen", new RecordingBackendScreen() ) );
@@ -145,7 +155,7 @@ void
 nest::IOManager::set_status( const DictionaryDatum& d )
 {
   set_data_path_prefix_( d );
-  updateValue< bool >( d, "overwrite_files", overwrite_files_ );
+  updateValue< bool >( d, names::overwrite_files, overwrite_files_ );
 
   DictionaryDatum recording_backends;
   if ( updateValue< DictionaryDatum >( d, names::recording_backends, recording_backends ) )
@@ -165,9 +175,9 @@ nest::IOManager::set_status( const DictionaryDatum& d )
 void
 nest::IOManager::get_status( DictionaryDatum& d )
 {
-  ( *d )[ "data_path" ] = data_path_;
-  ( *d )[ "data_prefix" ] = data_prefix_;
-  ( *d )[ "overwrite_files" ] = overwrite_files_;
+  ( *d )[ names::data_path ] = data_path_;
+  ( *d )[ names::data_prefix ] = data_prefix_;
+  ( *d )[ names::overwrite_files ] = overwrite_files_;
 
   DictionaryDatum recording_backends( new Dictionary );
   std::map< Name, RecordingBackend* >::const_iterator it;

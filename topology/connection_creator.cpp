@@ -87,7 +87,9 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
         kernel().model_manager.get_synapsedict()->lookup( syn_name );
 
       if ( synmodel.empty() )
+      {
         throw UnknownSynapseType( syn_name );
+      }
 
       synapse_model_ = static_cast< index >( synmodel );
     }
@@ -123,11 +125,15 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   DictionaryDatum syn_defaults =
     kernel().model_manager.get_connector_defaults( synapse_model_ );
   if ( not weight_.valid() )
+  {
     weight_ =
       TopologyModule::create_parameter( ( *syn_defaults )[ names::weight ] );
+  }
   if ( not delay_.valid() )
+  {
     delay_ =
       TopologyModule::create_parameter( ( *syn_defaults )[ names::delay ] );
+  }
 
   if ( connection_type == names::convergent )
   {

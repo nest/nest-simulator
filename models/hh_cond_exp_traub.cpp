@@ -157,9 +157,10 @@ nest::hh_cond_exp_traub::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   y_[ 0 ] = p.E_L;
-
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = 0.0;
+  }
 
   // equilibrium values for (in)activation variables
   const double alpha_n =
@@ -181,16 +182,19 @@ nest::hh_cond_exp_traub::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
 }
 
 nest::hh_cond_exp_traub::State_& nest::hh_cond_exp_traub::State_::operator=(
   const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
-
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
   r_ = s.r_;
   return *this;
 }
@@ -209,7 +213,7 @@ nest::hh_cond_exp_traub::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::E_Na, E_Na );
   def< double >( d, names::E_K, E_K );
   def< double >( d, names::E_L, E_L );
-  def< double >( d, "V_T", V_T );
+  def< double >( d, names::V_T, V_T );
   def< double >( d, names::E_ex, E_ex );
   def< double >( d, names::E_in, E_in );
   def< double >( d, names::tau_syn_ex, tau_synE );
@@ -228,7 +232,7 @@ nest::hh_cond_exp_traub::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_Na, E_Na );
   updateValue< double >( d, names::E_K, E_K );
   updateValue< double >( d, names::E_L, E_L );
-  updateValue< double >( d, "V_T", V_T );
+  updateValue< double >( d, names::V_T, V_T );
   updateValue< double >( d, names::E_ex, E_ex );
   updateValue< double >( d, names::E_in, E_in );
   updateValue< double >( d, names::tau_syn_ex, tau_synE );
@@ -269,9 +273,10 @@ nest::hh_cond_exp_traub::State_::set( const DictionaryDatum& d,
   updateValue< double >( d, names::Act_m, y_[ HH_M ] );
   updateValue< double >( d, names::Act_h, y_[ HH_H ] );
   updateValue< double >( d, names::Inact_n, y_[ HH_N ] );
-
   if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
+  {
     throw BadProperty( "All (in)activation variables must be non-negative." );
+  }
 }
 
 nest::hh_cond_exp_traub::Buffers_::Buffers_( hh_cond_exp_traub& n )
@@ -320,11 +325,17 @@ nest::hh_cond_exp_traub::~hh_cond_exp_traub()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -354,20 +365,32 @@ nest::hh_cond_exp_traub::init_buffers_()
   B_.I_stim_ = 0.0;
 
   if ( B_.s_ == 0 )
+  {
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_step_reset( B_.s_ );
+  }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
+  }
   else
+  {
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
+  }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_evolve_reset( B_.e_ );
+  }
 
   B_.sys_.function = hh_cond_exp_traub_dynamics;
   B_.sys_.jacobian = 0;
@@ -414,9 +437,10 @@ nest::hh_cond_exp_traub::update( Time const& origin,
         B_.step_,             // ...to t=t+h
         &B_.IntegrationStep_, // integration window (written on!)
         S_.y_ );              // neuron state
-
       if ( status != GSL_SUCCESS )
+      {
         throw GSLSolverFailure( get_name(), status );
+      }
     }
 
     S_.y_[ State_::G_EXC ] += B_.spike_exc_.get_value( lag );

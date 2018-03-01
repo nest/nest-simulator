@@ -96,7 +96,9 @@ private:
     removereference( void )
     {
       if ( --refs == 0 )
+      {
         delete this;
+      }
     }
 
     TypeNode( const Name& n )
@@ -120,9 +122,13 @@ private:
     ~TypeNode()
     {
       if ( next != NULL )
+      {
         next->removereference();
+      }
       if ( alt != NULL )
+      {
         alt->removereference();
+      }
     }
     void toTokenArray( TokenArray& ) const;
     void info( std::ostream&, std::vector< TypeNode const* >& ) const;
@@ -151,7 +157,9 @@ public:
     : root( tt.root )
   {
     if ( root != NULL )
+    {
       root->addreference();
+    }
   }
 
   ~TypeTrie();
@@ -178,7 +186,9 @@ public:
 inline TypeTrie::~TypeTrie()
 {
   if ( root != NULL )
+  {
     root->removereference();
+  }
 }
 /*_____ end ~TypeTrie() __________________________________________*/
 
@@ -221,17 +231,24 @@ TypeTrie::lookup( const TokenStack& st ) const
     // Step 1: find the type at the current stack level in the
     // list of alternatives. Unfortunately, this search is O(n).
 
-    while ( !equals( find_type, pos->type ) )
+    while ( not equals( find_type, pos->type ) )
+    {
       if ( pos->alt != NULL )
+      {
         pos = pos->alt;
+      }
       else
+      {
         throw ArgumentType( level );
+      }
+    }
 
     // Now go to the next argument.
     pos = pos->next;
-
     if ( pos->type == sli::object )
+    {
       return pos->func;
+    }
 
     ++level;
   }

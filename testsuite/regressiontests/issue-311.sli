@@ -38,7 +38,7 @@ Author: Hans Ekkehard Plesser, 2016-11-02
 
 M_ERROR setverbosity
 
-modeldict /aeif_cond_alpha known not { exit_test_gracefully } if
+modeldict /aeif_cond_alpha known not { /skipped exit_test_gracefully } if
 
 % Execute in stopped context so exception does not propagate out
 % pathological parameters to trigger numerical exception

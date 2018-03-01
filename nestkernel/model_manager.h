@@ -180,15 +180,25 @@ public:
   void set_model_defaults( Name name, DictionaryDatum params );
 
   /**
-   * Register a synape with default Connector and without any common properties.
+   * Register a synape model with default Connector and without any common
+   * properties. Convenience function that used the default Connector model
+   * GenericConnectorModel.
    * @param name The name under which the ConnectorModel will be registered.
-   * @return an ID for the synapse prototype.
    */
-  template < class ConnectionT >
+  template < typename ConnectionT >
   void register_connection_model( const std::string& name,
     bool requires_symmetric = false );
 
-  template < class ConnectionT >
+  /**
+   * Register a synape model with a custom Connector model and without any
+   * common properties.
+   * @param name The name under which the ConnectorModel will be registered.
+   */
+  template < typename ConnectionT, template < typename > class ConnectorModelT >
+  void register_connection_model( const std::string& name,
+    bool requires_symmetric = false );
+
+  template < typename ConnectionT >
   void register_secondary_connection_model( const std::string& name,
     bool has_delay = true,
     bool requires_symmetric = false );
@@ -354,7 +364,7 @@ private:
    Name: modeldict - dictionary containing all devices and models of NEST
    Description:
    'modeldict info' shows the contents of the dictionary
-   SeeAlso: info, Device, RecordingDevice, subnet
+   SeeAlso: info, Device, RecordingDevice
    */
   DictionaryDatum modeldict_; //!< Dictionary of all models
 
@@ -390,7 +400,9 @@ inline Model*
 ModelManager::get_model( index m ) const
 {
   if ( m >= models_.size() || models_[ m ] == 0 )
+  {
     throw UnknownModelID( m );
+  }
 
   return models_[ m ];
 }
@@ -466,7 +478,9 @@ inline void
 ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
 {
   if ( syn_id >= prototypes_[ t ].size() || prototypes_[ t ][ syn_id ] == 0 )
+  {
     throw UnknownSynapseType( syn_id );
+  }
 }
 
 inline bool
@@ -483,12 +497,16 @@ ModelManager::delete_secondary_events_prototypes()
     if ( secondary_connector_models_[ i ] != NULL )
     {
       for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
+      {
         delete secondary_events_prototypes_[ j ][ i ];
+      }
     }
   }
 
   for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
+  {
     secondary_events_prototypes_[ j ].clear();
+  }
   secondary_events_prototypes_.clear();
 }
 

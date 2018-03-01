@@ -67,11 +67,7 @@
 >> SetStatus
 
 % This test should only run if we have GSL
-statusdict/have_gsl :: not
-{
-  exit_test_gracefully
-}
-if
+skip_if_without_gsl
 
 /tolerance   	1e-2 def %mV
 /simulation_t	300 def %ms

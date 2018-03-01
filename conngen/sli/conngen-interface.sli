@@ -20,66 +20,64 @@
  *
  */
 
-/CGConnect_cg_i_i_l {
-  << >> exch
-  CGConnect_cg_i_i_D_l
-} def
 
-/CGConnect_cg_iV_iV_l {
-  << >> exch
-  CGConnect_cg_iV_iV_D_l
-} def
+/CGConnect trie
 
-/CGConnect_cg_a_a_D_l {
-  4 3 roll  % stack: cg trg param syntype src
-  cv_iv     % convert src to intvectortype
-  4 -3 roll % stack: cg src trg param syntype
-  3 2 roll  % stack: cg trg param syntype src
-  cv_iv     % convert trg to intvectortype
-  3 -2 roll % stack: cg src trg param syntype
-  CGConnect_cg_iV_iV_D_l
-} def
+  % We create the type trie for the list variants using a loop
+  [/arraytype /intvectortype /gidcollectiontype] {
+    /gidlisttype Set
 
-/CGConnect_cg_a_a_l {
-  << >> exch
-  CGConnect_cg_a_a_D_l
-} def
+    % using empty parameter map and default synapse model
+    [/connectiongeneratortype gidlisttype gidlisttype] {
+      % stack: cg src trg
+      cvgidcollection  % convert trg to gidcollection
+      exch             % stack: cg trg src
+      cvgidcollection  % convert src to gidcollection
+      exch             % stack: cg src trg
+      << >>            % stack: cg src trg params
+      /Connect /syn_spec GetOption /model get % stack: cg src trg params synmodel
+      CGConnect_cg_g_g_D_l
+    } bind addtotrie
 
-/CGConnect_main trie
-  [/connectiongeneratortype /integertype /integertype /dictionarytype /literaltype]
-    /CGConnect_cg_i_i_D_l load addtotrie
-  [/connectiongeneratortype /integertype /integertype /literaltype]
-    /CGConnect_cg_i_i_l load addtotrie
-  [/connectiongeneratortype /intvectortype /intvectortype /dictionarytype /literaltype]
-    /CGConnect_cg_iV_iV_D_l load addtotrie
-  [/connectiongeneratortype /intvectortype /intvectortype /literaltype]
-    /CGConnect_cg_iV_iV_l load addtotrie
-  [/connectiongeneratortype /arraytype /arraytype /dictionarytype /literaltype]
-    /CGConnect_cg_a_a_D_l load addtotrie
-  [/connectiongeneratortype /arraytype /arraytype /literaltype]
-    /CGConnect_cg_a_a_l load addtotrie
-def
+    % using given parameter map and default synapse model
+    [/connectiongeneratortype gidlisttype gidlisttype /dictionarytype ] {
+      % stack: cg src trg params
+      3 2 roll         % stack: cg trg params src
+      cvgidcollection  % convert src to gidcollection
+      3 -2 roll        % stack: cg src trg params
+      exch             % stack: cg src params trg
+      cvgidcollection  % convert trg to gidcollection
+      exch             % stack: cg src trg params
+      /Connect /syn_spec GetOption /model get  % stack: cg src trg params synmodel
+      CGConnect_cg_g_g_D_l
+    } bind addtotrie
 
-/CGConnect [/literaltype] {
-  CGConnect_main
-} def
+    % using empty parameter map and given synapse model
+    [/connectiongeneratortype gidlisttype gidlisttype /literaltype ] {
+      % stack: cg src trg synmodel
+      3 2 roll         % stack: cg trg synmodel src
+      cvgidcollection  % convert src to gidcollection
+      3 -2 roll        % stack: cg src trg synmodel
+      exch             % stack: cg src synmodel trg
+      cvgidcollection  % convert trg to gidcollection
+      exch             % stack: cg src trg synmodel
+      << >>            % stack: cg src trg synmodel params
+      exch             % stack: cg src trg params synmodel
+      CGConnect_cg_g_g_D_l
+    } bind addtotrie
 
-/CGConnect [/anytype] {
-  /Connect /syn_spec GetOption /model get
-  CGConnect_main
-} def
+    % using given parameter map and synapse model
+    [/connectiongeneratortype gidlisttype gidlisttype /dictionarytype /literaltype ] {
+      % stack: cg src trg params synmodel
+      4 3 roll         % stack: cg trg params synmodel src
+      cvgidcollection  % convert src to gidcollection
+      4 -3 roll        % stack: cg src trg params synmodel
+      3 2 roll         % stack: cg src params synmodel trg
+      cvgidcollection  % convert trg to gidcollection
+      3 -2 roll        % stack: cg src trg params synmodel
+      CGConnect_cg_g_g_D_l
+    } bind addtotrie
 
-% ---------------------------
+  } forall
 
-/cgsetmask_cg_a_a {
-  cv_iv           % convert target to intvectortype
-  exch cv_iv exch % convert source to intvectortype
-  cgsetmask_cg_iV_iV
-} def
-
-/cgsetmask trie
-  [/connectiongeneratortype /intvectortype /intvectortype]
-    /cgsetmask_cg_iV_iV load addtotrie
-  [/connectiongeneratortype /arraytype /arraytype]
-    /cgsetmask_cg_a_a load addtotrie
 def

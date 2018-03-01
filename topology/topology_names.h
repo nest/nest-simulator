@@ -76,7 +76,6 @@ extern const Name mean_x;
 extern const Name mean_y;
 extern const Name min;
 extern const Name minor_axis;
-extern const Name mu;
 extern const Name number_of_connections;
 extern const Name outer_radius;
 extern const Name p_center;
@@ -94,12 +93,9 @@ extern const Name sigma_x;
 extern const Name sigma_y;
 extern const Name sources;
 extern const Name spherical;
-extern const Name tau;
 extern const Name topology;
 extern const Name upper_right;
 extern const Name volume;
-// extern const Name x; // this name is already defined in nest_names
-extern const Name y;
 }
 }
 

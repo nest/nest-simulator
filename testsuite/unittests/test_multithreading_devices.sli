@@ -39,7 +39,7 @@ FirstVersion: May 2010
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 % arrays to store the event dictionaries and n_events for the
 % different trials

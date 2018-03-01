@@ -45,7 +45,7 @@ namespace nest
    potentials (V_syn), waveforms that include a spike and the subsequent
    after-hyperpolarization (V_spike) and Gaussian-distributed white noise.
 
-   The postsynaptic potential is described by alpha function where where
+   The postsynaptic potential is described by alpha function where
    U_epsp is the maximal amplitude of the EPSP and tau_epsp is the time to
    peak of the EPSP.
 
@@ -286,7 +286,9 @@ inline port
 iaf_chs_2007::handles_test_event( SpikeEvent&, port receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -294,7 +296,9 @@ inline port
 iaf_chs_2007::handles_test_event( DataLoggingRequest& dlr, port receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

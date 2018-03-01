@@ -99,7 +99,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   TimeConverter time_converter;
 
   double time;
-  if ( updateValue< double >( d, "time", time ) )
+  if ( updateValue< double >( d, names::time, time ) )
   {
     if ( time != 0.0 )
     {
@@ -124,16 +124,16 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     }
   }
 
-  updateValue< bool >( d, "print_time", print_time_ );
+  updateValue< bool >( d, names::print_time, print_time_ );
 
   // tics_per_ms and resolution must come after local_num_thread /
   // total_num_threads because they might reset the network and the time
   // representation
   double tics_per_ms = 0.0;
   bool tics_per_ms_updated =
-    updateValue< double >( d, "tics_per_ms", tics_per_ms );
+    updateValue< double >( d, names::tics_per_ms, tics_per_ms );
   double resd = 0.0;
-  bool res_updated = updateValue< double >( d, "resolution", resd );
+  bool res_updated = updateValue< double >( d, names::resolution, resd );
 
   if ( tics_per_ms_updated || res_updated )
   {
@@ -240,7 +240,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   // must be set before nodes are created.
   // Important: wfr_comm_interval_ may change depending on use_wfr_
   bool wfr;
-  if ( updateValue< bool >( d, "use_wfr", wfr ) )
+  if ( updateValue< bool >( d, names::use_wfr, wfr ) )
   {
     if ( kernel().node_manager.size() > 1 )
     {
@@ -266,7 +266,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   // connections are created. If use_wfr_ is false wfr_comm_interval_ is set to
   // the resolution whenever the resolution changes.
   double wfr_interval;
-  if ( updateValue< double >( d, "wfr_comm_interval", wfr_interval ) )
+  if ( updateValue< double >( d, names::wfr_comm_interval, wfr_interval ) )
   {
     if ( not use_wfr_ )
     {
@@ -303,7 +303,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // set the convergence tolerance for the waveform relaxation method
   double tol;
-  if ( updateValue< double >( d, "wfr_tol", tol ) )
+  if ( updateValue< double >( d, names::wfr_tol, tol ) )
   {
     if ( tol < 0.0 )
     {
@@ -319,7 +319,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // set the maximal number of iterations for the waveform relaxation method
   long max_iter;
-  if ( updateValue< long >( d, "wfr_max_iterations", max_iter ) )
+  if ( updateValue< long >( d, names::wfr_max_iterations, max_iter ) )
   {
     if ( max_iter <= 0 )
     {
@@ -336,7 +336,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // set the interpolation order for the waveform relaxation method
   long interp_order;
-  if ( updateValue< long >( d, "wfr_interpolation_order", interp_order ) )
+  if ( updateValue< long >( d, names::wfr_interpolation_order, interp_order ) )
   {
     if ( ( interp_order < 0 ) || ( interp_order == 2 ) || ( interp_order > 3 ) )
     {
@@ -354,23 +354,23 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 void
 nest::SimulationManager::get_status( DictionaryDatum& d )
 {
-  def< double >( d, "ms_per_tic", Time::get_ms_per_tic() );
-  def< double >( d, "tics_per_ms", Time::get_tics_per_ms() );
-  def< long >( d, "tics_per_step", Time::get_tics_per_step() );
-  def< double >( d, "resolution", Time::get_resolution().get_ms() );
+  def< double >( d, names::ms_per_tic, Time::get_ms_per_tic() );
+  def< double >( d, names::tics_per_ms, Time::get_tics_per_ms() );
+  def< long >( d, names::tics_per_step, Time::get_tics_per_step() );
+  def< double >( d, names::resolution, Time::get_resolution().get_ms() );
 
-  def< double >( d, "T_min", Time::min().get_ms() );
-  def< double >( d, "T_max", Time::max().get_ms() );
+  def< double >( d, names::T_min, Time::min().get_ms() );
+  def< double >( d, names::T_max, Time::max().get_ms() );
 
-  def< double >( d, "time", get_time().get_ms() );
-  def< long >( d, "to_do", to_do_ );
-  def< bool >( d, "print_time", print_time_ );
+  def< double >( d, names::time, get_time().get_ms() );
+  def< long >( d, names::to_do, to_do_ );
+  def< bool >( d, names::print_time, print_time_ );
 
-  def< bool >( d, "use_wfr", use_wfr_ );
-  def< double >( d, "wfr_comm_interval", wfr_comm_interval_ );
-  def< double >( d, "wfr_tol", wfr_tol_ );
-  def< long >( d, "wfr_max_iterations", wfr_max_iterations_ );
-  def< long >( d, "wfr_interpolation_order", wfr_interpolation_order_ );
+  def< bool >( d, names::use_wfr, use_wfr_ );
+  def< double >( d, names::wfr_comm_interval, wfr_comm_interval_ );
+  def< double >( d, names::wfr_tol, wfr_tol_ );
+  def< long >( d, names::wfr_max_iterations, wfr_max_iterations_ );
+  def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
 }
 
 void
@@ -489,7 +489,11 @@ nest::SimulationManager::run( Time const& t )
 
   to_do_ += t.get_steps();
   to_do_total_ = to_do_;
-  assert( to_do_ != 0 );
+
+  if ( to_do_ == 0 )
+  {
+    return;
+  }
 
   // Reset profiling timers and counters within event_delivery_manager
   kernel().event_delivery_manager.reset_timers_counters();
@@ -644,6 +648,8 @@ nest::SimulationManager::update_()
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
     kernel().vp_manager.get_num_threads() );
+  bool exception_raised = false; // none raised on any thread
+
 // parallel section begins
 #pragma omp parallel
   {
@@ -836,6 +842,17 @@ nest::SimulationManager::update_()
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
       {
+        // check if any thread in parallel section raised an exception
+        for ( index thrd = 0; thrd < kernel().vp_manager.get_num_threads();
+              ++thrd )
+        {
+          if ( exceptions_raised.at( thrd ).valid() )
+          {
+            exception_raised = true;
+            break;
+          }
+        }
+
         // gather only at end of slice
         if ( to_step_ == kernel().connection_manager.get_min_delay() )
         {
@@ -864,8 +881,8 @@ nest::SimulationManager::update_()
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 
-    } while ( to_do_ > 0 and not exit_on_user_signal_
-      and not exceptions_raised.at( thrd ) );
+    } while (
+      to_do_ > 0 and not exit_on_user_signal_ and not exception_raised );
 
     // End of the slice, we update the number of synaptic elements
     for ( std::vector< Node* >::const_iterator i =

@@ -46,10 +46,10 @@ TsodyksHomCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonPropertiesHomW::get_status( d );
 
-  def< double >( d, "U", U_ );
-  def< double >( d, "tau_psc", tau_psc_ );
-  def< double >( d, "tau_rec", tau_rec_ );
-  def< double >( d, "tau_fac", tau_fac_ );
+  def< double >( d, names::U, U_ );
+  def< double >( d, names::tau_psc, tau_psc_ );
+  def< double >( d, names::tau_rec, tau_rec_ );
+  def< double >( d, names::tau_fac, tau_fac_ );
 }
 
 void
@@ -58,21 +58,29 @@ TsodyksHomCommonProperties::set_status( const DictionaryDatum& d,
 {
   CommonPropertiesHomW::set_status( d, cm );
 
-  updateValue< double >( d, "U", U_ );
+  updateValue< double >( d, names::U, U_ );
   if ( U_ > 1.0 || U_ < 0.0 )
+  {
     throw BadProperty( "U must be in [0,1]." );
+  }
 
-  updateValue< double >( d, "tau_psc", tau_psc_ );
+  updateValue< double >( d, names::tau_psc, tau_psc_ );
   if ( tau_psc_ <= 0.0 )
+  {
     throw BadProperty( "tau_psc must be > 0." );
+  }
 
-  updateValue< double >( d, "tau_rec", tau_rec_ );
+  updateValue< double >( d, names::tau_rec, tau_rec_ );
   if ( tau_rec_ <= 0.0 )
+  {
     throw BadProperty( "tau_rec must be > 0." );
+  }
 
-  updateValue< double >( d, "tau_fac", tau_fac_ );
+  updateValue< double >( d, names::tau_fac, tau_fac_ );
   if ( tau_fac_ < 0.0 )
+  {
     throw BadProperty( "tau_fac must be >= 0." );
+  }
 }
 
 } // of namespace nest

@@ -65,9 +65,12 @@ runner = unittest.TextTestRunner(verbosity=2, stream=sys.stdout)
 result = runner.run(nest.tests.suite())
 result_topo = runner.run(nest.topology.tests.suite())
 
+total = result.testsRun + result_topo.testsRun
+failed = len(result.failures) + len(result.errors) + len(result_topo.failures) + len(result_topo.errors)
+skipped = len(result.skipped) + len(result_topo.skipped)
+passed = total - failed - skipped
+
 # We return the numbers of tests via a temporaty file
 file_handle = open("pynest_test_numbers.log", "w")
-file_handle.write(str(result.testsRun + result_topo.testsRun) + " ")
-file_handle.write(str(len(result.failures)+len(result.errors) + len(result_topo.failures)+len(result_topo.errors)) + " ")
-file_handle.write(str(result.testsRun + result_topo.testsRun - len(result.failures) - len(result.errors) - len(result_topo.failures) - len(result_topo.errors)) + "\n")
+file_handle.write("{} {} {} {}\n".format(total, passed, skipped, failed))
 file_handle.close()

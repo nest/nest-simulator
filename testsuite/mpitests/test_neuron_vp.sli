@@ -39,7 +39,7 @@
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 [1 2 4]
 {
@@ -49,10 +49,10 @@ is_threaded not { exit_test_gracefully } if
 
   /subnet Create /net Set
   net ChangeSubnet
-    /iaf_neuron Create /n1 Set
-    /iaf_neuron Create /n2 Set
-    /iaf_neuron Create /n3 Set
-    /iaf_neuron Create /n4 Set
+    /iaf_psc_alpha Create /n1 Set
+    /iaf_psc_alpha Create /n2 Set
+    /iaf_psc_alpha Create /n3 Set
+    /iaf_psc_alpha Create /n4 Set
   0 ChangeSubnet
 
   net GetGlobalNodesInfo /nodes Set

@@ -135,32 +135,41 @@ nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d )
 
 
   if ( tau_eta_.size() != val_eta_.size() )
+  {
     throw BadProperty( String::compose(
       "'tau_eta' and 'val_eta' need to have the same dimension.\nSize of "
       "tau_eta: %1\nSize of val_eta: %2",
       tau_eta_.size(),
       val_eta_.size() ) );
-
+  }
   if ( c_m_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( tau_m_ <= 0 )
+  {
     throw BadProperty( "The time constants must be strictly positive." );
+  }
 
   for ( unsigned int i = 0; i < tau_eta_.size(); i++ )
   {
     if ( tau_eta_[ i ] <= 0 )
+    {
       throw BadProperty( "All time constants must be strictly positive." );
+    }
   }
-
   if ( N_ <= 0 )
+  {
     throw BadProperty( "Number of neurons must be positive." );
-
+  }
   if ( rho_0_ < 0 )
+  {
     throw BadProperty( "Rho_0 cannot be negative." );
-
+  }
   if ( delta_u_ <= 0 )
+  {
     throw BadProperty( "Delta_u must be positive." );
+  }
 }
 
 void
@@ -240,10 +249,14 @@ nest::pp_pop_psc_delta::calibrate()
 {
 
   if ( P_.tau_eta_.size() == 0 )
+  {
     throw BadProperty( "Time constant array should not be empty. " );
+  }
 
   if ( P_.val_eta_.size() == 0 )
+  {
     throw BadProperty( "Adaptation value array should not be empty. " );
+  }
 
   B_.logger_.init();
 
@@ -254,8 +267,12 @@ nest::pp_pop_psc_delta::calibrate()
   double tau_eta_max = -1; // finding max of tau_eta_
 
   for ( unsigned int j = 0; j < P_.tau_eta_.size(); j++ )
+  {
     if ( P_.tau_eta_.at( j ) > tau_eta_max )
+    {
       tau_eta_max = P_.tau_eta_.at( j );
+    }
+  }
 
   V_.len_eta_ = tau_eta_max * ( P_.len_kernel_ / V_.h_ );
 
@@ -263,26 +280,32 @@ nest::pp_pop_psc_delta::calibrate()
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
 
   // initializing internal state
-  if ( !S_.initialized_ )
+  if ( not S_.initialized_ )
   {
 
     V_.len_eta_ = tau_eta_max * ( P_.len_kernel_ / V_.h_ );
 
     for ( int j = 0; j < V_.len_eta_; j++ )
+    {
       S_.n_spikes_past_.push_back( 0 );
+    }
 
     std::vector< double > ts;
     ts.clear();
     for ( int j = 0; j < V_.len_eta_; j++ )
+    {
       ts.push_back( j * V_.h_ );
+    }
 
     double temp = 0;
 
     for ( int j = 0; j < V_.len_eta_; j++ )
     {
       for ( unsigned int i = 0; i < P_.tau_eta_.size(); i++ )
+      {
         temp +=
           std::exp( -ts[ j ] / P_.tau_eta_.at( i ) ) * ( -P_.val_eta_.at( i ) );
+      }
 
       V_.theta_kernel_.push_back( temp );
       V_.eta_kernel_.push_back( std::exp( temp ) - 1 );
@@ -344,18 +367,24 @@ nest::pp_pop_psc_delta::update( Time const& origin,
     S_.thetas_ages_.push_back( integral );
 
     for ( unsigned int i = 1; i < V_.eta_kernel_.size(); i++ )
+    {
       S_.thetas_ages_.push_back(
         S_.thetas_ages_[ i - 1 ] - tmp_vector[ i - 1 ] );
+    }
 
     for ( unsigned int i = 0; i < V_.eta_kernel_.size(); i++ )
+    {
       S_.thetas_ages_[ i ] += V_.theta_kernel_[ i ];
+    }
 
     S_.thetas_ages_.push_back( 0 );
 
     // get_escape_rate
     for ( unsigned int i = 0; i < S_.rhos_ages_.size(); i++ )
+    {
       S_.rhos_ages_[ i ] =
         P_.rho_0_ * std::exp( ( S_.h_ + S_.thetas_ages_[ i ] ) / P_.delta_u_ );
+    }
 
 
     double p_argument;
@@ -384,7 +413,9 @@ nest::pp_pop_psc_delta::update( Time const& origin,
         }
       }
       else
+      {
         S_.n_spikes_ages_[ i ] = 0;
+      }
     }
 
 
@@ -394,15 +425,19 @@ nest::pp_pop_psc_delta::update( Time const& origin,
     int temp_sum = 0;
     for ( unsigned int i = 0; i < S_.n_spikes_ages_.size();
           i++ ) // cumulative sum
+    {
       temp_sum += S_.n_spikes_ages_[ i ];
+    }
 
     S_.n_spikes_past_[ S_.p_n_spikes_past_ ] = temp_sum;
 
 
     // update_age_occupations
     for ( unsigned int i = 0; i < S_.age_occupations_.size(); i++ )
+    {
       S_.age_occupations_[ ( S_.p_age_occupations_ + i )
         % S_.age_occupations_.size() ] -= S_.n_spikes_ages_[ i ];
+    }
 
     int last_element_value =
       S_.age_occupations_[ ( S_.p_age_occupations_ - 1

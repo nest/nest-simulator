@@ -41,7 +41,10 @@
 
 namespace nest
 {
-class TopologyModule;
+class AbstractMask;
+
+typedef lockPTRDatum< AbstractMask, &TopologyModule::MaskType > MaskDatum;
+
 
 /**
  * Abstract base class for masks with unspecified dimension.
@@ -91,8 +94,6 @@ public:
    */
   virtual AbstractMask* minus_mask( const AbstractMask& other ) const = 0;
 };
-
-typedef lockPTRDatum< AbstractMask, &TopologyModule::MaskType > MaskDatum;
 
 /**
  * Abstract base class for masks with given dimension.

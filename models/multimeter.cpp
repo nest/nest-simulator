@@ -45,22 +45,26 @@ Multimeter::Multimeter( const Multimeter& n )
 port
 Multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
-  DataLoggingRequest e( P_.interval_, P_.record_from_ );
+  DataLoggingRequest e( P_.interval_, P_.offset_, P_.record_from_ );
   e.set_sender( *this );
   port p = target.handles_test_event( e, receptor_type );
   if ( p != invalid_port_ and not is_model_prototype() )
+  {
     B_.has_targets_ = true;
+  }
   return p;
 }
 
 nest::Multimeter::Parameters_::Parameters_()
   : interval_( Time::ms( 1.0 ) )
+  , offset_( Time::ms( 0. ) )
   , record_from_()
 {
 }
 
 nest::Multimeter::Parameters_::Parameters_( const Parameters_& p )
   : interval_( p.interval_ )
+  , offset_( p.offset_ )
   , record_from_( p.record_from_ )
 {
   interval_.calibrate();
@@ -75,9 +79,12 @@ void
 nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::interval ] = interval_.get_ms();
+  ( *d )[ names::offset ] = offset_.get_ms();
   ArrayDatum ad;
   for ( size_t j = 0; j < record_from_.size(); ++j )
+  {
     ad.push_back( LiteralDatum( record_from_[ j ] ) );
+  }
   ( *d )[ names::record_from ] = ad;
 }
 
@@ -86,27 +93,54 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
   const Buffers_& b )
 {
   if ( b.has_targets_
-    && ( d->known( names::interval ) || d->known( names::record_from ) ) )
+    && ( d->known( names::interval ) || d->known( names::offset )
+         || d->known( names::record_from ) ) )
+  {
     throw BadProperty(
-      "The recording interval and the list of properties to record "
-      "cannot be changed after the multimeter has been connected to "
-      "nodes." );
+      "The recording interval, the interval offset and the list of properties "
+      "to record cannot be changed after the multimeter has been connected "
+      "to nodes." );
+  }
 
   double v;
   if ( updateValue< double >( d, names::interval, v ) )
   {
     if ( Time( Time::ms( v ) ) < Time::get_resolution() )
+    {
       throw BadProperty(
         "The sampling interval must be at least as long "
         "as the simulation resolution." );
+    }
 
     // see if we can represent interval as multiple of step
     interval_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( std::abs( 1 - interval_.get_ms() / v ) > 10
-        * std::numeric_limits< double >::epsilon() )
+    if ( not interval_.is_multiple_of( Time::get_resolution() ) )
+    {
       throw BadProperty(
         "The sampling interval must be a multiple of "
         "the simulation resolution" );
+    }
+  }
+
+  if ( updateValue< double >( d, names::offset, v ) )
+  {
+    // if offset is different from the default value (0), it must be at least
+    // as large as the resolution
+    if ( v != 0 && Time( Time::ms( v ) ) < Time::get_resolution() )
+    {
+      throw BadProperty(
+        "The offset for the sampling interval must be at least as long as the "
+        "simulation resolution." );
+    }
+
+    // see if we can represent offset as multiple of step
+    offset_ = Time::step( Time( Time::ms( v ) ).get_steps() );
+    if ( not offset_.is_multiple_of( Time::get_resolution() ) )
+    {
+      throw BadProperty(
+        "The offset for the sampling interval must be a multiple of the "
+        "simulation resolution" );
+    }
   }
 
   // extract data
@@ -116,12 +150,14 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
 
     ArrayDatum ad = getValue< ArrayDatum >( d, names::record_from );
     for ( Token* t = ad.begin(); t != ad.end(); ++t )
+    {
       record_from_.push_back( Name( getValue< std::string >( *t ) ) );
+    }
   }
 }
 
 void
-Multimeter::init_state_( const Node& )
+Multimeter::init_state_( const Node& np )
 {
   // const Multimeter& asd = dynamic_cast< const Multimeter& >( np );
   // device_.init_state( asd.device_ );
@@ -149,7 +185,9 @@ Multimeter::update( Time const& origin, const long from, const long )
      we do nothing.
    */
   if ( origin.get_steps() == 0 || from != 0 )
+  {
     return;
+  }
 
   // We send a request to each of our targets.
   // The target then immediately returns a DataLoggingReply event,
@@ -167,7 +205,7 @@ Multimeter::handle( DataLoggingReply& reply )
 {
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
-  
+
   // count records that have been skipped during inactivity
   size_t inactive_skipped = 0;
 
@@ -175,9 +213,11 @@ Multimeter::handle( DataLoggingReply& reply )
   for ( size_t j = 0; j < info.size(); ++j )
   {
     if ( not info[ j ].timestamp.is_finite() )
+    {
       break;
+    }
 
-    if ( !is_active( info[ j ].timestamp ) )
+    if ( not is_active( info[ j ].timestamp ) )
     {
       ++inactive_skipped;
       continue;

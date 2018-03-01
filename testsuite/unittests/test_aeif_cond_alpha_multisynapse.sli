@@ -44,11 +44,7 @@
 /unittest using
 
 % This test should only run if we have GSL
-statusdict/have_gsl :: not
-{
-  exit_test_gracefully
-}
-if
+skip_if_without_gsl
 
 0
 << 

@@ -82,8 +82,8 @@ public:
    * @code
    * catch(IllegalOperation &e)
    * {
-   * 	 i->error("ChangeSubnet","Target node must be a subnet.");
-   *	 i->raiseerror(e.what());
+   *   i->error("ChangeSubnet","Target node must be a subnet.");
+   *   i->raiseerror(e.what());
    *   return;
    * }
    *@endcode

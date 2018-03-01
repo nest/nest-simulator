@@ -165,7 +165,9 @@ inline port
 weight_recorder::handles_test_event( WeightRecorderEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 

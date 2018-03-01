@@ -52,14 +52,14 @@ Author: Hans Ekkehard Plesser, 2010-09-24
  0 ChangeSubnet
  /voltmeter 2 Create  ;   % gid 4,5
 
- /iaf_neuron 2 Create ;   % gid 6,7
+ /iaf_psc_alpha 2 Create ;   % gid 6,7
 
  s2 ChangeSubnet
- /iaf_neuron 6 Create ;   % gid 8,9,10,11,12,13
+ /iaf_psc_alpha 6 Create ;   % gid 8,9,10,11,12,13
  s1 ChangeSubnet
- /iaf_neuron 4 Create ;   % gid 14,15,16,17
+ /iaf_psc_alpha 4 Create ;   % gid 14,15,16,17
  s3 ChangeSubnet
- /iaf_neuron 3 Create ;   % gid 18,19,20
+ /iaf_psc_alpha 3 Create ;   % gid 18,19,20
 
  0 GetGlobalNodes    Sort [1 20] Range eq % 1..20
  0 GetGlobalLeaves   Sort [4 20] Range eq  % 4..20

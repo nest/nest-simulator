@@ -1,0 +1,96 @@
+/*
+ *  issue-737-threads.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::issue-737-threads
+
+Synopsis: (issue-737-threads) run -> NEST exits if test fails
+
+Description:
+This test ensures that NEST raises an error if the user tries to
+set c or n in the stdp_dopamine_synapse specification given to the Connect call
+when we have more than one thread.
+
+Author: Stine B. Vennemo
+FirstVersion: May 2017
+SeeAlso: testsuite::issue-735, testsuite::issue-737
+*/
+
+(unittest) run
+/unittest using
+
+skip_if_not_threaded
+
+% Test multithreaded c in syn_spec for stdp_dopamine_synapse model
+{
+  ResetKernel
+  
+  0 << /local_num_threads 4 >> SetStatus
+  
+  /n /iaf_psc_alpha Create def
+  /vt /volume_transmitter Create def
+  /stdp_dopamine_synapse << /vt vt >> SetDefaults
+  [n] [n] << /rule /one_to_one >> << /model /stdp_dopamine_synapse /c 2.0 >> Connect
+
+} fail_or_die
+
+% Test multithreaded n in syn_spec for stdp_dopamine_synapse model
+{
+  ResetKernel
+  
+  0 << /local_num_threads 4 >> SetStatus
+  
+  /gid /iaf_psc_alpha Create def
+  /vt /volume_transmitter Create def
+  /stdp_dopamine_synapse << /vt vt >> SetDefaults
+  [gid] [gid] << /rule /one_to_one >> << /model /stdp_dopamine_synapse /n 2.0 >> Connect
+
+} fail_or_die
+
+% Test multithreaded c in syn_spec for CopyModel of stdp_dopamine_synapse model
+{
+  ResetKernel
+  
+  0 << /local_num_threads 4 >> SetStatus
+  
+  /n /iaf_psc_alpha Create def
+  /vt /volume_transmitter Create def
+  /stdp_dopamine_synapse /mysyn << /vt vt >> CopyModel
+  [n] [n] << /rule /one_to_one >> << /model /mysyn /c 2.0 >> Connect
+
+} fail_or_die
+
+% Test multithreaded n in syn_spec for CopyModel of stdp_dopamine_synapse model
+{
+  ResetKernel
+  
+  0 << /local_num_threads 4 >> SetStatus
+  
+  /gid /iaf_psc_alpha Create def
+  /vt /volume_transmitter Create def
+  /stdp_dopamine_synapse /mysyn << /vt vt >> CopyModel
+  [gid] [gid] << /rule /one_to_one >> << /model /mysyn /n 2.0 >> Connect
+
+} fail_or_die
+
+endusing

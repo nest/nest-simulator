@@ -91,10 +91,10 @@ def
 {
   << >> begin
    /build_net { 
-     /iaf_neuron << /I_e 50.0 >> SetDefaults 
+     /iaf_psc_alpha << /I_e 50.0 >> SetDefaults
      /multimeter << /record_from [ /V_m ] /interval 0.5 >> SetDefaults
-     /n  /iaf_neuron Create def  
-     /mm /multimeter Create def  
+     /n  /iaf_psc_alpha Create def  
+     /mm /multimeter Create def
      mm n Connect
    } def
  
@@ -127,12 +127,12 @@ def
 {
   << >> begin
    /build_net { 
-     /iaf_neuron << /I_e 50.0 >> SetDefaults 
+     /iaf_psc_alpha << /I_e 50.0 >> SetDefaults 
      /multimeter << /record_from [ /V_m ]
                     /interval 0.5 
                     /time_in_steps true >> SetDefaults
-     /nc /iaf_neuron Create def  
-     /np /iaf_neuron Create def  
+     /nc /iaf_psc_alpha Create def
+     /np /iaf_psc_alpha Create def
      /mm /multimeter Create def  
      mm nc Connect
      mm np Connect

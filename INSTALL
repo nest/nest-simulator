@@ -11,9 +11,9 @@ NEST is installed with `cmake` (at least v2.8.12). In the simplest case, the com
     make
     make install
 
-should build and install NEST to <install-path>. Detailed installation 
-instructions can be found below, including instructions for macOS, BlueGene/Q
-and Fujitsu Sparc64 systems.
+should build and install NEST to `/install/path`, which should be an absolute
+path. Detailed installation  instructions can be found below, including 
+instructions for macOS, BlueGene/Q and Fujitsu Sparc64 systems.
 
 Choice of CMake Version
 =======================

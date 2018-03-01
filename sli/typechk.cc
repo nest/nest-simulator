@@ -175,7 +175,9 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
   while ( type != pos->type )
   {
     if ( pos->alt == NULL )
+    {
       pos->alt = new TypeNode( type );
+    }
 
     if ( pos->type == sli::any )
     {
@@ -195,10 +197,12 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
       pos->next = NULL;
 
       // this  while() cycle will terminate, as
-      // pos->type==type by asignment.
+      // pos->type==type by assignment.
     }
     else
+    {
       pos = pos->alt; // pos->alt is always defined here.
+    }
   }
 
   return pos;
@@ -216,7 +220,7 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
              Insert will overwrite a function with identical parameter
              list which might be already in the trie.
 
-  Bugs:	   If a represents a parameter-list which is already
+  Bugs:      If a represents a parameter-list which is already
              present, nothing happens, just a warning is
              issued.
 
@@ -236,15 +240,16 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
 
   // Functions with no parameters are possible, but useless in trie
   // structures, so it is best to forbid them!
-  assert( !a.empty() );
+  assert( not a.empty() );
 
   for ( unsigned int level = 0; level < a.size(); ++level )
   {
 
     pos = getalternative( pos, a[ level ] );
-
     if ( pos->next == NULL )
+    {
       pos->next = new TypeNode( empty );
+    }
     pos = pos->next;
   }
 
@@ -260,11 +265,13 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
     pos->func.move( f );
   }
   else
+  {
     std::cout << "Method 'TypeTrie::InsertFunction'" << std::endl
               << "Warning! Ambigous Function Definition ." << std::endl
               << "A function with longer, but identical initial parameter "
               << "list is already present!" << std::endl
               << "Nothing was changed." << std::endl;
+  }
 }
 
 /*_____ end InsertFunction() _____________________________________*/
@@ -275,7 +282,9 @@ TypeTrie::toTokenArray( TokenArray& a ) const
 {
   a.clear();
   if ( root != NULL )
+  {
     root->toTokenArray( a );
+  }
 }
 
 void
@@ -283,7 +292,8 @@ TypeTrie::info( std::ostream& out ) const
 {
   std::vector< TypeNode const* > tl;
   tl.reserve( 5 );
-
   if ( root != NULL )
+  {
     root->info( out, tl );
+  }
 }

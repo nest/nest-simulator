@@ -22,13 +22,13 @@
 
 
 /* BeginDocumentation
-Name: testsuite::test_iaf_1to2 - sli script for test of iaf_neuron spike interaction 
+Name: testsuite::test_iaf_1to2 - sli script for test of iaf_psc_alpha spike interaction
 
 Synopsis: (test_iaf_1to2) run -> compare response with reference data
 
 Description:
 
- test_iaf_1to2 checks the spike interaction of two iaf_neuron model
+ test_iaf_1to2 checks the spike interaction of two iaf_psc_alpha model
  neurons.
 
  In order to obtain identical results for different computation step
@@ -83,7 +83,7 @@ M_INFO setverbosity
       /iaf_psc_alpha Create /neuron1 Set
       neuron1 << /I_e 1450.0 >> SetStatus
 
-      /iaf_neuron Create /neuron2 Set
+      /iaf_psc_alpha Create /neuron2 Set
 
       /voltmeter Create /vm Set
       vm << /time_in_steps true /interval h >> SetStatus

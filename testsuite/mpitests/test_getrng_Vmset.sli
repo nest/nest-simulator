@@ -42,7 +42,7 @@ SeeAlso:
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 [1 2 4]
 {
@@ -56,7 +56,7 @@ is_threaded not { exit_test_gracefully } if
  /rng GetGlobalRNG def
 
  % create four neurons
- /n /iaf_neuron 4 Create def
+ /n /iaf_psc_alpha 4 Create def
 
  % initialize membrane potential randomly from global RNG.
  % The SetStatus is ignored for non-local neurons but still the random number are drawn.
@@ -73,7 +73,7 @@ is_threaded not { exit_test_gracefully } if
 
  0 << /total_num_virtual_procs 4 >> SetStatus
 
- /n /iaf_neuron 4 Create def
+ /n /iaf_psc_alpha 4 Create def
 
  % initialize membrane potential using the RNG assigned to the virtual process the 
  % neuron lives on. Also with this method each neuron receives a well defined random

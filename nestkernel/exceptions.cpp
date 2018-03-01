@@ -36,13 +36,12 @@ nest::UnknownModelName::message() const
 {
   std::ostringstream msg;
   msg << "/" << n_.toString() + " is not a known model name. "
-    "Please check the modeldict for a list of available models."
+    "Please check the modeldict for a list of available models.";
 #ifndef HAVE_GSL
-    " A frequent cause for this error is that NEST was compiled "
-    "without the GNU Scientific Library, which is required for "
-    "the conductance-based neuron models."
+  msg << " A frequent cause for this error is that NEST was compiled "
+         "without the GNU Scientific Library, which is required for "
+         "the conductance-based neuron models.";
 #endif
-    ;
   return msg.str();
 }
 
@@ -173,18 +172,26 @@ std::string
 nest::IllegalConnection::message() const
 {
   if ( msg_.empty() )
+  {
     return "Creation of connection is not possible.";
+  }
   else
+  {
     return "Creation of connection is not possible because:\n" + msg_;
+  }
 }
 
 std::string
 nest::InexistentConnection::message() const
 {
   if ( msg_.empty() )
+  {
     return "Deletion of connection is not possible.";
+  }
   else
+  {
     return "Deletion of connection is not possible because:\n" + msg_;
+  }
 }
 
 std::string

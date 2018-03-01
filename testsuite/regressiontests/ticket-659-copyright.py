@@ -42,6 +42,7 @@ exclude_dirs = [
     'libltdl',
     '.git',
     'CMakeFiles',
+    'result',  # ignore files in $NEST_RESULT of travis-ci builds
 ]
 
 # match all file names against these regular expressions. if a match
@@ -60,6 +61,8 @@ exclude_files = [
     'libnestutil/sparsetable.h',
     'libnestutil/template_util.h',
     'libnestutil/type_traits.h',
+    'librandom/knuthlfg.cpp',
+    'librandom/knuthlfg.h',
     'librandom/mt19937.cpp',
     'librandom/mt19937.h',
     'nestrc.sli',

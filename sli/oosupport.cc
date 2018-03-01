@@ -73,5 +73,7 @@ OOSupportModule::CallMemberFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop( 2 );
   }
   else
+  {
     i->raiseerror( "UnknownMember" );
+  }
 }

@@ -1,0 +1,111 @@
+/*
+ *  issue-735.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::issue-735
+
+Synopsis: (issue-735) run -> NEST exits if test fails
+
+Description:
+This test ensures that NEST raises an error if the user tries to
+set stdp parameters that cannot be set on stdp_dopamine_synapse.
+
+Author: Hans Ekkehard Plesser
+FirstVersion: May 2017
+SeeAlso:
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+% param_name copy_model? param_on_connect?
+/check_param [ /literaltype /booltype /booltype ]
+{
+  /param_on_connect Set
+  /copy_model Set
+  /pname Set
+  pname cvs ( ) join copy_model cvs join ( ) join param_on_connect cvs join ==
+
+  ResetKernel
+
+  /n /iaf_psc_alpha Create def
+  /vt /volume_transmitter Create def
+
+  copy_model
+  {
+    /stdp_dopamine_synapse /mysyn << /vt vt >> CopyModel
+    /syn_model /mysyn def
+  }
+  {
+    /stdp_dopamine_synapse << /vt vt >> SetDefaults
+    /syn_model /stdp_dopamine_synapse def
+  }
+  ifelse
+  
+  param_on_connect
+  {
+    [ n ] [ n ] 
+    << /rule /one_to_one >> 
+    << /model syn_model /weight 2.0 pname 1.0 >>
+    Connect
+  }
+  {
+    n n syn_model Connect
+    << >> GetConnections 0 get 
+    << pname 1.0 /weight 2.0 >> SetStatus
+  }
+  ifelse
+}
+def
+
+% test on base model, SetStatus after Connect
+[ /A_minus /A_plus /Wmax /Wmin /b /tau_c /tau_n /tau_plus ]
+{
+  { false false check_param } fail_or_die
+}
+forall
+
+% test on copied model, SetStatus after Connect
+[ /A_minus /A_plus /Wmax /Wmin /b /tau_c /tau_n /tau_plus ]
+{
+  { true false check_param } fail_or_die
+}
+forall
+
+% test on base model, Connect setting parameters
+[ /A_minus /A_plus /Wmax /Wmin /b /tau_c /tau_n /tau_plus ]
+{
+  { false true check_param  } fail_or_die
+}
+forall
+
+% test on copied model, SetStatus after Connect
+[ /A_minus /A_plus /Wmax /Wmin /b /tau_c /tau_n /tau_plus ]
+{
+  { true true check_param } fail_or_die
+}
+forall
+
+endusing

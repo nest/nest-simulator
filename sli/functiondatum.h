@@ -141,9 +141,10 @@ public:
   {
     const FunctionDatum* fd =
       dynamic_cast< FunctionDatum* >( const_cast< Datum* >( dat ) );
-
     if ( fd == NULL )
+    {
       return false;
+    }
 
     return action == fd->action;
   }
@@ -159,14 +160,18 @@ public:
   static void* operator new( size_t size )
   {
     if ( size != sizeof( FunctionDatum ) )
+    {
       return ::operator new( size );
+    }
     return memory.alloc();
   }
 
   static void operator delete( void* p, size_t size )
   {
     if ( p == NULL )
+    {
       return;
+    }
     if ( size != sizeof( FunctionDatum ) )
     {
       ::operator delete( p );

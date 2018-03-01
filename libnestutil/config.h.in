@@ -42,9 +42,9 @@
 #define NEST_HOSTCPU "@NEST_TARGET_ARCH@"
 #define NEST_HOSTVENDOR "@NEST_TARGET_VENDOR@"
 
-#define NEST_PREFIX  "@CMAKE_INSTALL_PREFIX@"
-#define NEST_DATADIR "@CMAKE_INSTALL_DATADIR@"
-#define NEST_DOCDIR  "@CMAKE_INSTALL_DOCDIR@"
+#define NEST_INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@"
+#define NEST_INSTALL_DATADIR "@CMAKE_INSTALL_DATADIR@"
+#define NEST_INSTALL_DOCDIR "@CMAKE_INSTALL_DOCDIR@"
 
 #define NEST_EXITCODE_ABORT @NEST_EXITCODE_ABORT@
 #define NEST_EXITCODE_SEGFAULT @NEST_EXITCODE_SEGFAULT@
@@ -57,6 +57,9 @@
 
 /* tics per step in simulation */
 #define CONFIG_TICS_PER_STEP @tics_per_step@
+
+/* when to truncate the recursive instantiation of the connector */
+#define CONFIG_CONNECTOR_CUTOFF @connector_cutoff@
 
 /* define if the compiler does not include *.h headers ISO conformant */
 #cmakedefine HAVE_ALPHA_CXX_STD_BUG 1

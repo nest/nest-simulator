@@ -109,7 +109,7 @@ FirstVersion: 20140402
 
 {
   /MT19937 /exponential << /lambda -1. >> run_test
-} fail_or_die
+} assert_or_die
 
 {
   /MT19937 /exponential_clipped << /min 0. /max -1. >> run_test

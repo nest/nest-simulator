@@ -21,26 +21,28 @@
 # This is the Travis CI top-level script to setup and run the NEST build and test environment. 
 
 
-language: generic
+language: minimal
 
 # Required for Ubuntu Trusty (14.04 LTS).
 sudo: required
 dist: trusty
+#https://blog.travis-ci.com/2017-06-19-trusty-updates-2017-Q2
 
 env:
   matrix:
     # We don't have to run a full matrix here, because most of the options are
-    # independent. This means that we can test them together in the full build.
+    # independent. This means we only need a minimal and maximal configuration
+    # and some additional jobs for interdependent options.
     # See also https://docs.travis-ci.com/user/caching/#Caches-and-build-matrices
-    - xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
-    - xTHREADING=0 xMPI=0 xSIONLIB=1 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only SIONLIB
-    - xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
-    - xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
-    - xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
-    - xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
-    - xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
-    - xTHREADING=1 xMPI=1 xSIONLIB=0 xGSL=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
-    - xTHREADING=1 xMPI=1 xSIONLIB=1 xGSL=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full + SIONLIB
+    - xTHREADING=0 xMPI=0 xSIONLIB=0 xLIBNEUROSIM=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
+    - xTHREADING=0 xMPI=0 xSIONLIB=1 xLIBNEUROSIM=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only SIONLIB
+    - xTHREADING=0 xMPI=1 xSIONLIB=0 xLIBNEUROSIM=0 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
+    - xTHREADING=1 xMPI=0 xSIONLIB=0 xLIBNEUROSIM=0 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
+    - xTHREADING=1 xMPI=0 xSIONLIB=0 xLIBNEUROSIM=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
+    - xTHREADING=0 xMPI=1 xSIONLIB=0 xLIBNEUROSIM=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
+    - xTHREADING=0 xMPI=0 xSIONLIB=0 xLIBNEUROSIM=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
+    - xTHREADING=1 xMPI=1 xSIONLIB=0 xLIBNEUROSIM=1 xGSL=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
+    - xTHREADING=1 xMPI=1 xSIONLIB=1 xLIBNEUROSIM=1 xGSL=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full + SIONLIB
 matrix:
   # Do notify immediately about it when a job of a build fails.
   fast_finish: true
@@ -81,7 +83,10 @@ before_install:
   - sudo apt-get install -y openmpi-bin libopenmpi-dev
 
   # Install nose framework for the Python testsuite.
+  # (Please note that the nose-capturestderr plugin is needed to suppress NEST output to stderr which may interfere 
+  #  with the nosetests output hindering correct log-parsing. stdout it captured by default.)
   - sudo apt-get install -y python-nose
+  - sudo pip install "nose-capturestderr==1.2"
 
   # Install VERA++ and pep8 for static code analysis.
   - sudo apt-get install -y vera++ pep8
@@ -102,15 +107,33 @@ before_install:
   - make install
   - cd $HOME/build
 
-  # Install current MUSIC version.
+  # Install libneurosim
+  - git clone https://github.com/INCF/libneurosim.git
+  - pushd libneurosim
+  - ./autogen.sh
+  - ./configure --prefix=$HOME/.cache/libneurosim.install --with-mpi
+  - make
+  - make install
+  - popd
+
+  # Install csa
+  - git clone https://github.com/INCF/csa.git
+  - pushd csa
+  - ./autogen.sh
+  - ./configure --with-libneurosim=$HOME/.cache/libneurosim.install --prefix=$HOME/.cache/csa.install
+  - make
+  - make install
+  - popd
+
+  # Install MUSIC
   - sudo apt-get install -y python-mpi4py
   - git clone https://github.com/INCF/MUSIC.git music
-  - cd music
+  - pushd music
   - ./autogen.sh
   - ./configure --prefix=$HOME/.cache/music.install
   - make
   - make install
-  - cd $HOME/build
+  - popd
 
   # Change directory back to the NEST source code directory.
   - cd $SOURCEDIR
@@ -121,6 +144,9 @@ install:
   - which python
   - python --version
   - which pip
+  - which nosetests
+  - nosetests --version
+  - nosetests --plugins
   - which cmake
   - cmake --version
 

@@ -125,9 +125,7 @@ nest::sli_neuron::calibrate()
 {
   B_.logger_.init();
 
-  bool terminate = false;
-
-  if ( !state_->known( names::calibrate ) )
+  if ( not state_->known( names::calibrate ) )
   {
     std::string msg = String::compose(
       "Node %1 has no /calibrate function in its status dictionary.",
@@ -135,7 +133,7 @@ nest::sli_neuron::calibrate()
     throw BadProperty( msg );
   }
 
-  if ( !state_->known( names::update ) )
+  if ( not state_->known( names::update ) )
   {
     std::string msg = String::compose(
       "Node %1 has no /update function in its status dictionary", get_gid() );
@@ -183,7 +181,9 @@ nest::sli_neuron::update( Time const& origin, const long from, const long to )
 
     bool spike_emission = false;
     if ( state_->known( names::spike ) )
+    {
       spike_emission = ( *state_ )[ names::spike ];
+    }
 
     // threshold crossing
     if ( spike_emission )
@@ -231,13 +231,17 @@ nest::sli_neuron::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
+  {
     B_.ex_spikes_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
+  {
     B_.in_spikes_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
 }
 
 void

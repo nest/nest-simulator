@@ -148,7 +148,14 @@ sg <<
      /stop 3.0              % in ms
    >> SetStatus
 
-/iaf_neuron Create /neuron Set
+
+/tau_syn P /tau_syn get def
+P /tau_syn_ex tau_syn put
+P /tau_syn_in tau_syn put
+P /tau_syn undef
+
+
+/iaf_psc_alpha Create /neuron Set
 neuron P SetStatus
 
 

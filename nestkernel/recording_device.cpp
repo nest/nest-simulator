@@ -29,6 +29,7 @@
 nest::RecordingDevice::Parameters_::Parameters_()
   : label_()
   , time_in_steps_( false )
+  , use_gid_in_filename_( true )
 {
   record_to_.push_back( LiteralDatum( Name( "memory" ) ) );
 }
@@ -39,6 +40,7 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& device,
 {
   ( *d )[ names::label ] = label_;
   ( *d )[ names::time_in_steps ] = time_in_steps_;
+  ( *d )[ names::use_gid_in_filename ] = use_gid_in_filename_;
   ( *d )[ names::record_to ] = record_to_;
 }
 
@@ -73,6 +75,18 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice&,
       }
       record_to_.push_back( LiteralDatum( backend_name ) );
     }
+  }
+  
+  bool tmp_use_gid_in_filename = true;
+  updateValue< bool >( d, names::use_gid_in_filename, tmp_use_gid_in_filename );
+  if ( not tmp_use_gid_in_filename and label_.empty() )
+  {
+    throw BadProperty(
+      "If /use_gid_in_filename is false, /label must be specified." );
+  }
+  else
+  {
+    use_gid_in_filename_ = tmp_use_gid_in_filename;
   }
 }
 

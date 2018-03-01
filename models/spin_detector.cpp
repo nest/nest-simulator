@@ -42,18 +42,15 @@
 #include "integerdatum.h"
 
 nest::spin_detector::spin_detector()
-  : Node()
-  , last_in_gid_( 0 )
+  : last_in_gid_( 0 )
   , t_last_in_spike_( Time::neg_inf() )
-  , user_set_precise_times_( false )
 {
 }
 
 nest::spin_detector::spin_detector( const spin_detector& n )
-  : Node( n )
+  : RecordingDevice( n )
   , last_in_gid_( 0 )
   , t_last_in_spike_( Time::neg_inf() ) // mark as not initialized
-  , user_set_precise_times_( n.user_set_precise_times_ )
 {
 }
 
@@ -98,11 +95,17 @@ nest::spin_detector::update( Time const&, const long, const long )
   B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].clear();
 }
 
+nest::RecordingDevice::Type
+nest::spin_detector::get_type() const
+{
+  return RecordingDevice::SPIN_DETECTOR;
+}
+
 void
 nest::spin_detector::get_status( DictionaryDatum& d ) const
 {
   // get the data from the device
-  // device_.get_status( d ); //FIXME
+  RecordingDevice::get_status( d );
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
@@ -113,23 +116,21 @@ nest::spin_detector::get_status( DictionaryDatum& d ) const
     std::vector< Node* >::const_iterator sibling;
     for ( sibling = siblings->begin() + 1; sibling != siblings->end();
           ++sibling )
+    {
       ( *sibling )->get_status( d );
+    }
   }
 }
 
 void
 nest::spin_detector::set_status( const DictionaryDatum& d )
 {
-  if ( d->known( names::precise_times ) )
-    user_set_precise_times_ = true;
-
-  // device_.set_status( d ); //FIXME
+  RecordingDevice::set_status( d );
 }
 
 
 void
 nest::spin_detector::handle( SpikeEvent& e )
-
 {
   // accept spikes only if detector was active when spike was
   // emitted
@@ -141,29 +142,35 @@ nest::spin_detector::handle( SpikeEvent& e )
     if ( kernel()
            .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
            ->has_proxies() )
+    {
       // events from central queue
       dest_buffer = kernel().event_delivery_manager.read_toggle();
+    }
     else
+    {
       // locally delivered events
       dest_buffer = kernel().event_delivery_manager.write_toggle();
+    }
 
 
     // The following logic implements the decoding
-    // A single spike signals a transition to 0 state, two spikes in same time
-    // step signal the transition to 1 state.
+    // A single spike signals a transition to the 0 state, two
+    // spikes at the same time step signal a transition to the 1
+    // state.
     //
-    // Remember the global id of the sender of the last spike being received
-    // this assumes that several spikes being sent by the same neuron in the
-    // same time step are received consecutively or are conveyed by setting the
-    // multiplicity accordingly.
+    // Remember the global id of the sender of the last spike being
+    // received this assumes that several spikes being sent by the
+    // same neuron in the same time step are received consecutively or
+    // are conveyed by setting the multiplicity accordingly.
 
     long m = e.get_multiplicity();
     index gid = e.get_sender_gid();
     const Time& t_spike = e.get_stamp();
 
     if ( m == 1 )
-    { // multiplicity == 1, either a single 1->0 event or the first or second of
-      // a pair of 0->1 events
+    {
+      // multiplicity == 1, either a single 1->0 event or the first or
+      // second of a pair of 0->1 events
       if ( gid == last_in_gid_ && t_spike == t_last_in_spike_ )
       {
         // received twice the same gid, so transition 0->1
@@ -175,7 +182,7 @@ nest::spin_detector::handle( SpikeEvent& e )
         // count this event negatively, assuming it comes as single event
         // transition 1->0
         Event* event = e.clone();
-        // assume it will stay alone, so meaning a down transition
+        // assume it will stay alone, so meaning a 1->0 transition
         event->set_weight( 0 );
         B_.spikes_[ dest_buffer ].push_back( event );
       }

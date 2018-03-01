@@ -859,6 +859,12 @@ NodeManager::check_wfr_use()
   GapJunctionEvent::set_coeff_length(
     kernel().connection_manager.get_min_delay()
     * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 ) );
+  InstantaneousRateConnectionEvent::set_coeff_length(
+    kernel().connection_manager.get_min_delay() );
+  DelayedRateConnectionEvent::set_coeff_length(
+    kernel().connection_manager.get_min_delay() );
+  DiffusionConnectionEvent::set_coeff_length(
+    kernel().connection_manager.get_min_delay() );
 }
 
 void
@@ -910,7 +916,7 @@ NodeManager::set_status( index gid, const DictionaryDatum& d )
 void
 NodeManager::get_status( DictionaryDatum& d )
 {
-  def< long >( d, "network_size", size() );
+  def< long >( d, names::network_size, size() );
 
   std::map< long, size_t > sna_cts = local_nodes_.get_step_ctr();
   DictionaryDatum cdict( new Dictionary );

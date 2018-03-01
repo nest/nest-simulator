@@ -129,7 +129,7 @@ RegexpModule::RegcompFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 2 );
   Token rt( new RegexDatum( MyRegex ) );
   i->OStack.push_move( rt );
-  if ( !e )
+  if ( not e )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }

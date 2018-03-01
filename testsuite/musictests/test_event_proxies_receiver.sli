@@ -23,14 +23,14 @@
 (unittest) run
 /unittest using
 
-statusdict/have_music :: not { exit_test_gracefully } if
+skip_if_without_music
 
 M_ERROR setverbosity
 
 /music_event_in_proxy Create /meip Set
 meip << /port_name (spikes_in) /music_channel 0 >> SetStatus
 
-/iaf_neuron Create /n Set
+/iaf_psc_alpha Create /n Set
 
 meip n << /weight 750.0 >> Connect
 

@@ -243,8 +243,12 @@ Subnet::add_node( Node* n )
   const index lid = gids_.size();
   const index mid = n->get_model_id();
   if ( ( homogeneous_ ) && ( lid > 0 ) )
+  {
     if ( mid != last_mid_ )
+    {
       homogeneous_ = false;
+    }
+  }
   n->set_lid_( lid );
   n->set_subnet_index_( nodes_.size() );
   nodes_.push_back( n );
@@ -262,8 +266,12 @@ Subnet::add_remote_node( index gid, index mid )
 {
   const index lid = gids_.size();
   if ( ( homogeneous_ ) && ( lid > 0 ) )
+  {
     if ( mid != last_mid_ )
+    {
       homogeneous_ = false;
+    }
+  }
   last_mid_ = mid;
   gids_.push_back( gid );
   return lid;
@@ -330,8 +338,9 @@ Subnet::at_lid( index lid ) const
   assert( local_size() == global_size() );
 
   if ( lid >= nodes_.size() )
+  {
     throw UnknownNode();
-
+  }
   return nodes_[ lid ];
 }
 

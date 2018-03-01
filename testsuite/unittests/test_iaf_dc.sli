@@ -21,14 +21,14 @@
  */
 
  /* BeginDocumentation
-Name: testsuite::test_iaf_dc - sli script for test of iaf_neuron with external DC current
+Name: testsuite::test_iaf_dc - sli script for test of iaf_psc_alpha with external DC current
 
 Synopsis: (test_iaf_dc) run -> compare cout with comments in file
 
 
 Description:
 
- test_iaf_dc.sli is a test of a specific feature of the iaf_neuron
+ test_iaf_dc.sli is a test of a specific feature of the iaf_psc_alpha
  model. It is tested at which time and how an external DC current affects 
  the state of the neuron, the membrane potential in particular.
 
@@ -66,7 +66,7 @@ References:
       81:381-402.
 
 Author:  February 2004, Diesmann, Gewaltig, Plesser
-SeeAlso: iaf_neuron, testsuite::test_iaf_dc_aligned, testsuite::test_iaf_dc_aligned_delay, testsuite::test_iaf_dc_aligned_stop
+SeeAlso: iaf_psc_alpha, testsuite::test_iaf_dc_aligned, testsuite::test_iaf_dc_aligned_delay, testsuite::test_iaf_dc_aligned_stop
 */
 
 (unittest) run
@@ -81,7 +81,7 @@ ResetKernel
       /resolution h
     >> SetStatus
 
-/iaf_neuron Create /neuron Set
+/iaf_psc_alpha Create /neuron Set
 
 /dc_generator Create /dc_gen Set
 dc_gen <<  /amplitude 1000. >> SetStatus

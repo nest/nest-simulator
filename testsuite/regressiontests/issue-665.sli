@@ -38,7 +38,7 @@ SeeAlso:
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 % First set of tests: Single generator to neuron layer
 /gen_to_layer_test

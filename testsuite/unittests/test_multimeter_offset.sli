@@ -1,0 +1,195 @@
+/*
+ *  test_multimeter_offset.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+Name: testsuite::test_multimeter_offset - Test if offset attribute works properly
+ 
+Synopsis: (test_multimeter_offset) run -> NEST exits if test fails
+
+Description:
+  This test checks if the offset attribute of multimeter works as expected;
+  contains 3 tests:
+
+  1) checks if recorded times are indeed relative to an offset, and the first
+     sampled time point is the offset itself
+  2) check if data logger is initialized correctly
+  3) ensures offset can only be set before the multimeter is connected to nodes
+  4) ensures offset works correctly even if origin, start and stop are modified
+
+Author: Barna Zajzon, 2017-03-10 
+ */
+
+(unittest) run
+/unittest using
+
+% use power-of-two resolution to avoid roundof problems
+/res -3 dexp def
+
+
+% Test 1
+% checks if recorded times are indeed relative to an offset
+{
+  /simtime 15. def % simulation time
+  /recoffs 5.  def % offset time --- different from default
+  /recint  3.  def % recording interval --- different from default
+
+  /recs    [/V_m]       def % recording devices
+  /refdata [5. 8. 11. 14.] def % offset data
+
+  ResetKernel
+  0 << /resolution res >> SetStatus
+
+  /n /iaf_psc_alpha Create def
+
+  /mm /multimeter << /interval recint /offset recoffs /record_from recs >>
+    Create def
+
+  % connect and simulate
+  mm n Connect
+  simtime Simulate
+
+  % check results
+  /result mm /events get def
+  result /times get cva
+
+  % compare to reference data
+  refdata eq
+}
+assert_or_die
+
+
+% Test 2
+% check if data logger is initialized correctly
+{
+  /simtimeinit  10. def % initial simulation time
+  /simtime      20. def % second simulation time
+  /recoffs      5.  def % offset time --- different from default
+  /recint       3.  def % recording interval --- different from default
+  /recstart     20. def % start of recording window
+  /recstop      30. def % end of recording window
+
+  /recs    [/V_m]        def % recording devices
+  /refdata [23. 26. 29.] def % offset data
+
+  ResetKernel
+  0 << /resolution res >> SetStatus
+
+  /n /iaf_psc_alpha Create def
+
+  /mm /multimeter << /start recstart /stop recstop
+    /interval recint /offset recoffs /record_from recs >> Create def
+
+  % connect and simulate
+  mm n Connect
+  simtimeinit Simulate
+
+  % create second multimeter
+  /mmtwo /multimeter << /start recstart /stop recstop
+    /interval recint /offset recoffs /record_from recs >> Create def
+
+  % connect second multimeter and simulate further
+  mmtwo n Connect
+  simtime Simulate
+
+  % check results
+  /result mm /events get def
+  result /times get cva
+
+  % compare first multimeter to reference data
+  refdata eq
+
+  % extract results for second multimeter
+  /resulttwo mmtwo /events get def
+  resulttwo /times get cva
+
+  % compare second multimeter to reference data
+  refdata eq
+}
+assert_or_die
+
+
+% Test 3
+% make sure offset cannot be changed after connecting to a node
+{
+  ResetKernel
+  
+  % create multimeter and node
+  /mm /multimeter Create def
+  /neuron /iaf_psc_exp Create def
+
+  % connect
+  mm neuron Connect
+
+  % changing offset should fail
+  mm << /offset 5. >> SetStatus
+}
+fail_or_die
+
+
+% Test 4
+% ensure offset behaves correctly with respect to origin / start / stop; set start and stop
+% different from their initial values, simulate, check recordings. Then modify origin,
+% simulate again, and check for consistency.
+{
+  /recint  3. def
+  /recoffs 5. def
+  /start   3. def
+  /stop    15. def
+  /origin  20. def
+  /simtime 20. def
+
+  /recs    [/V_m] def
+  /times_1 [5. 8. 11. 14.] def
+  /times_2 [5. 8. 11. 14. 26. 29. 32. 35.] def
+
+  ResetKernel
+  0 << /resolution res >> SetStatus
+
+  % create multimeter and node
+  /mm /multimeter
+    << /interval recint /offset recoffs /start start /stop stop /record_from recs >>
+    Create def
+  /neuron /iaf_psc_exp Create def
+
+  % connect and simulate
+  mm neuron Connect
+  simtime Simulate
+
+  % check results
+  /result mm /events get /times get cva
+
+  % compare to first reference data
+  times_1 eq
+
+  % change origin; this shouldn't affect the offset but only shift start-stop window
+  mm << /origin origin >> SetStatus
+  simtime Simulate
+
+  % check results
+  /result mm /events get /times get cva
+
+  % compare to extended reference
+  times_2 eq
+}
+assert_or_die
+
+endusing

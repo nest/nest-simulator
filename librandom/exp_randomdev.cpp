@@ -31,10 +31,12 @@ librandom::ExpRandomDev::set_status( const DictionaryDatum& d )
 {
   double new_lambda = lambda_;
 
-  updateValue< double >( d, "lambda", new_lambda );
+  updateValue< double >( d, names::lambda, new_lambda );
 
-  if ( new_lambda <= 0. )
-    throw BadParameterValue( "Exponential RDV: lambda > 0 required." );
+  if ( new_lambda == 0. )
+  {
+    throw BadParameterValue( "Exponential RDV: lambda != 0 required." );
+  }
 
   lambda_ = new_lambda;
 }
@@ -44,5 +46,5 @@ librandom::ExpRandomDev::get_status( DictionaryDatum& d ) const
 {
   RandomDev::get_status( d );
 
-  def< double >( d, "lambda", lambda_ );
+  def< double >( d, names::lambda, lambda_ );
 }

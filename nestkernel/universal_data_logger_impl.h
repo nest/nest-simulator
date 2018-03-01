@@ -44,7 +44,9 @@ void
 nest::UniversalDataLogger< HostNode >::reset()
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
+  {
     it->reset();
+  }
 }
 
 template < typename HostNode >
@@ -52,7 +54,9 @@ void
 nest::UniversalDataLogger< HostNode >::init()
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
+  {
     it->init();
+  }
 }
 
 template < typename HostNode >
@@ -60,7 +64,9 @@ void
 nest::UniversalDataLogger< HostNode >::record_data( long step )
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
+  {
     it->record_data( host_, step );
+  }
 }
 
 template < typename HostNode >
@@ -86,13 +92,17 @@ void
 nest::UniversalDataLogger< HostNode >::DataLogger_::init()
 {
   if ( num_vars_ < 1 )
-    return; // not recording anything
+  {
+    return;
+  } // not recording anything
 
   // Next recording step is in current slice or beyond, indicates that
   // buffer is properly initialized.
   if ( next_rec_step_
     >= kernel().simulation_manager.get_slice_origin().get_steps() )
+  {
     return;
+  }
 
   // If we get here, the buffer has either never been initialized or has
   // been dormant during a period when the host node was frozen. We then
@@ -105,11 +115,20 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   // set next recording step to first multiple of rec_int_steps_
   // beyond current time, shifted one to left, since rec_step marks
   // left of update intervals, and we want time stamps at right end of
-  // update interval to be multiples of recording interval
+  // update interval to be multiples of recording interval. Need to add
+  // +1 because the division result is rounded down.
   next_rec_step_ =
     ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 )
       * rec_int_steps_
     - 1;
+
+  // if offset is not 0, adjust next recording step to account for it by
+  // going one interval step back and adding the offset
+  if ( recording_offset_.get_steps() != 0 )
+  {
+    next_rec_step_ =
+      next_rec_step_ - rec_int_steps_ + recording_offset_.get_steps();
+  }
 
   // number of data points per slice
   const long recs_per_slice =
@@ -131,7 +150,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::record_data(
   long step )
 {
   if ( num_vars_ < 1 || step < next_rec_step_ )
+  {
     return;
+  }
 
   const size_t wt = kernel().event_delivery_manager.write_toggle();
 
@@ -154,7 +175,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::record_data(
 
   // obtain data through access functions, calling via pointer-to-member
   for ( size_t j = 0; j < num_vars_; ++j )
+  {
     dest.data[ j ] = ( ( host ).*( node_access_[ j ] ) )();
+  }
 
   next_rec_step_ += rec_int_steps_;
 
@@ -172,7 +195,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host,
   const DataLoggingRequest& request )
 {
   if ( num_vars_ < 1 )
-    return; // nothing to do
+  {
+    return;
+  } // nothing to do
 
   // The following assertions will fire if the user forgot to call init()
   // on the data logger.
@@ -200,7 +225,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host,
   // Applying this mark here is less work than initializing all time stamps
   // to -infinity after each call to this function.
   if ( next_rec_[ rt ] < data_[ rt ].size() )
+  {
     data_[ rt ][ next_rec_[ rt ] ].timestamp = Time::neg_inf();
+  }
 
   // now create reply event and rigg it
   DataLoggingReply reply( data_[ rt ] );

@@ -76,7 +76,9 @@ Get_aFunction::execute( SLIInterpreter* i ) const
     i->OStack.push_move( objT );
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 void
@@ -128,7 +130,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
       continue;
     }
 
-    if ( !( ( id->get() >= 0 ) && ( ( size_t ) id->get() < obj->size() ) ) )
+    if ( not( ( id->get() >= 0 ) && ( ( size_t ) id->get() < obj->size() ) ) )
     {
       std::ostringstream sout;
       sout << "At position " << ( size_t )( t - idx->begin() ) << "."
@@ -177,7 +179,9 @@ Get_pFunction::execute( SLIInterpreter* i ) const
     i->OStack.push_move( objT );
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 void
@@ -200,7 +204,9 @@ Get_lpFunction::execute( SLIInterpreter* i ) const
     i->OStack.push_move( objT );
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 void
@@ -377,7 +383,9 @@ Insert_sFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop( 2 );
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 /*BeginDocumentation
@@ -413,7 +421,9 @@ InsertElement_sFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop( 2 );
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 /*BeginDocumentation:
@@ -469,7 +479,9 @@ Insert_aFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop( 2 );                // insert_move empties TokenArray *a2
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 void
@@ -491,7 +503,9 @@ InsertElement_aFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop( 2 );
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 void
@@ -568,10 +582,14 @@ Replace_sFunction::execute( SLIInterpreter* i ) const
       i->OStack.pop( 3 );
     }
     else
+    {
       i->raiseerror( i->PositiveIntegerExpectedError );
+    }
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 void
@@ -598,10 +616,14 @@ Replace_aFunction::execute( SLIInterpreter* i ) const
       i->OStack.pop( 3 );
     }
     else
+    {
       i->raiseerror( i->PositiveIntegerExpectedError );
+    }
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 /*BeginDocumentation
@@ -641,10 +663,14 @@ Erase_sFunction::execute( SLIInterpreter* i ) const
       i->OStack.pop( 2 );
     }
     else
+    {
       i->raiseerror( i->PositiveIntegerExpectedError );
+    }
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 void
@@ -670,10 +696,14 @@ Erase_aFunction::execute( SLIInterpreter* i ) const
       i->OStack.pop( 2 );
     }
     else
+    {
       i->raiseerror( i->PositiveIntegerExpectedError );
+    }
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 void
@@ -700,10 +730,14 @@ Erase_pFunction::execute( SLIInterpreter* i ) const
       i->OStack.pop( 2 );
     }
     else
+    {
       i->raiseerror( i->PositiveIntegerExpectedError );
+    }
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 
@@ -728,7 +762,9 @@ Put_sFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop( 2 );
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 
@@ -752,7 +788,9 @@ Put_aFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop( 2 );             // it will be poped.
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 
@@ -777,7 +815,9 @@ Put_pFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop( 2 );             // it will be poped.
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 
@@ -802,7 +842,9 @@ Put_lpFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop( 2 );             // it will be poped.
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 /* BeginDocumentation
@@ -998,7 +1040,9 @@ Reserve_aFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop();
   }
   else
+  {
     i->raiseerror( i->PositiveIntegerExpectedError );
+  }
 }
 
 /*BeginDocumentation
@@ -1032,7 +1076,9 @@ Resize_aFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop();
   }
   else
+  {
     i->raiseerror( i->PositiveIntegerExpectedError );
+  }
 }
 
 void
@@ -1047,9 +1093,13 @@ Empty_aFunction::execute( SLIInterpreter* i ) const
   assert( ad != NULL );
 
   if ( ad->empty() )
+  {
     i->OStack.push( i->baselookup( i->true_name ) );
+  }
   else
+  {
     i->OStack.push( i->baselookup( i->false_name ) );
+  }
 }
 
 void
@@ -1087,9 +1137,13 @@ Shrink_aFunction::execute( SLIInterpreter* i ) const
   assert( ad != NULL );
 
   if ( ad->shrink() )
+  {
     i->OStack.push( i->baselookup( i->true_name ) );
+  }
   else
+  {
     i->OStack.push( i->baselookup( i->false_name ) );
+  }
 }
 
 void
@@ -1141,7 +1195,9 @@ Reserve_sFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop();
   }
   else
+  {
     i->raiseerror( i->PositiveIntegerExpectedError );
+  }
 }
 
 void
@@ -1163,7 +1219,9 @@ Resize_sFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop();
   }
   else
+  {
     i->raiseerror( i->PositiveIntegerExpectedError );
+  }
 }
 
 
@@ -1179,9 +1237,13 @@ Empty_sFunction::execute( SLIInterpreter* i ) const
   assert( ad != NULL );
 
   if ( ad->empty() )
+  {
     i->OStack.push( i->baselookup( i->true_name ) );
+  }
   else
+  {
     i->OStack.push( i->baselookup( i->false_name ) );
+  }
 }
 
 /*BeginDocumentation
@@ -1233,10 +1295,14 @@ Getinterval_sFunction::execute( SLIInterpreter* i ) const
       i->OStack.pop( 2 );
     }
     else
+    {
       i->raiseerror( i->RangeCheckError );
+    }
   }
   else
+  {
     i->raiseerror( i->PositiveIntegerExpectedError );
+  }
 }
 
 
@@ -1264,10 +1330,14 @@ Getinterval_aFunction::execute( SLIInterpreter* i ) const
       i->OStack.pop( 2 );
     }
     else
+    {
       i->raiseerror( i->RangeCheckError );
+    }
   }
   else
+  {
     i->raiseerror( i->PositiveIntegerExpectedError );
+  }
 }
 
 
@@ -1436,7 +1506,9 @@ Get_sFunction::execute( SLIInterpreter* i ) const
     i->OStack.push_move( objT );
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 /*BeginDocumentation
@@ -1540,7 +1612,9 @@ IrepeatanyFunction::execute( SLIInterpreter* i ) const
     --( loopcount->get() );
   }
   else
+  {
     i->EStack.pop( 4 );
+  }
 }
 
 /* BeginDocumentation

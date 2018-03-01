@@ -216,7 +216,9 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
     minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
     ++start;
     if ( minus_dt == 0 )
+    {
       continue;
+    }
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_ ) );
   }
 
@@ -274,11 +276,11 @@ VogelsSprekelerConnection< targetidentifierT >::get_status(
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-  def< double >( d, "tau", tau_ );
-  def< double >( d, "alpha", alpha_ );
-  def< double >( d, "eta", eta_ );
-  def< double >( d, "Wmax", Wmax_ );
-  def< double >( d, "Kplus", Kplus_ );
+  def< double >( d, names::tau, tau_ );
+  def< double >( d, names::alpha, alpha_ );
+  def< double >( d, names::eta, eta_ );
+  def< double >( d, names::Wmax, Wmax_ );
+  def< double >( d, names::Kplus, Kplus_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 
@@ -290,11 +292,11 @@ VogelsSprekelerConnection< targetidentifierT >::set_status(
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, "tau", tau_ );
-  updateValue< double >( d, "alpha", alpha_ );
-  updateValue< double >( d, "eta", eta_ );
-  updateValue< double >( d, "Wmax", Wmax_ );
-  updateValue< double >( d, "Kplus", Kplus_ );
+  updateValue< double >( d, names::tau, tau_ );
+  updateValue< double >( d, names::alpha, alpha_ );
+  updateValue< double >( d, names::eta, eta_ );
+  updateValue< double >( d, names::Wmax, Wmax_ );
+  updateValue< double >( d, names::Kplus, Kplus_ );
 
   // check if weight_ and Wmax_ has the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )

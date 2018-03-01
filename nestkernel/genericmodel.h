@@ -80,6 +80,12 @@ public:
 
   SignalType sends_signal() const;
 
+  void sends_secondary_event( InstantaneousRateConnectionEvent& re );
+
+  void sends_secondary_event( DiffusionConnectionEvent& de );
+
+  void sends_secondary_event( DelayedRateConnectionEvent& re );
+
   Node const& get_prototype() const;
 
   void set_model_id( int );
@@ -209,6 +215,29 @@ GenericModel< ElementT >::sends_secondary_event( GapJunctionEvent& ge )
 }
 
 template < typename ElementT >
+inline void
+GenericModel< ElementT >::sends_secondary_event(
+  InstantaneousRateConnectionEvent& re )
+{
+  return proto_.sends_secondary_event( re );
+}
+
+template < typename ElementT >
+inline void
+GenericModel< ElementT >::sends_secondary_event( DiffusionConnectionEvent& de )
+{
+  return proto_.sends_secondary_event( de );
+}
+
+template < typename ElementT >
+inline void
+GenericModel< ElementT >::sends_secondary_event(
+  DelayedRateConnectionEvent& re )
+{
+  return proto_.sends_secondary_event( re );
+}
+
+template < typename ElementT >
 inline nest::SignalType
 GenericModel< ElementT >::sends_signal() const
 {
@@ -227,7 +256,7 @@ DictionaryDatum
 GenericModel< ElementT >::get_status_()
 {
   DictionaryDatum d = proto_.get_status_base();
-  ( *d )[ "elementsize" ] = sizeof( ElementT );
+  ( *d )[ names::elementsize ] = sizeof( ElementT );
   return d;
 }
 

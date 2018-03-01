@@ -36,7 +36,7 @@ Author: Maximilian Schmidt, 2014-01-28
 /unittest using
 
 {
-  /iaf_neuron 2 Create
+  /iaf_psc_alpha 2 Create
   1 2 Connect
   << /target [[1]] >> GetConnections
 } fail_or_die 

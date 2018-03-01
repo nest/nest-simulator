@@ -37,7 +37,9 @@ void
 GenericModel< ElementT >::deprecation_warning( const std::string& caller )
 {
   if ( deprecation_warning_issued_ or deprecation_info_.empty() )
+  {
     return;
+  }
 
   if ( not deprecation_info_.empty() )
   {

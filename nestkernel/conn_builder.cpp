@@ -1595,6 +1595,16 @@ nest::BernoulliBuilder::connect_()
     // get thread id
     const thread tid = kernel().vp_manager.get_thread_id();
 
+    // compute expected number of connections from binomial
+    // distribution; estimate an upper bound by assuming Gaussianity
+    const size_t max_num_connections =
+      std::ceil( float( targets_->size() ) * float( sources_->size() )
+		 / kernel().vp_manager.get_num_virtual_processes() );
+    const size_t expected_num_connections = max_num_connections * p_;
+    const size_t std_num_connections = std::sqrt( max_num_connections * p_ * (1 - p_ ) );
+    kernel().connection_manager.reserve_connections(
+      tid, get_synapse_model(), expected_num_connections + 3 * std_num_connections );
+
     try
     {
       // allocate pointer to thread specific random generator
@@ -1645,7 +1655,7 @@ nest::BernoulliBuilder::connect_()
       exceptions_raised_.at( tid ) =
         lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
     }
-  }
+  } // of omp parallel
 }
 
 void

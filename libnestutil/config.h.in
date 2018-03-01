@@ -193,7 +193,7 @@
 /* Use PS array construction semantics */
 #cmakedefine PS_ARRAYS 1
 
-/* Is SionLib available? */
+/* Is SIONlib available? */
 #cmakedefine HAVE_SIONLIB 1
 
 #endif // #ifndef CONFIG_H

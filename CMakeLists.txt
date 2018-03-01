@@ -50,7 +50,7 @@ set( external-modules OFF CACHE STRING "External NEST modules to be linked in, s
 # connect NEST with external projects
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
-set( with-sionlib OFF CACHE STRING "Request the use of SIONLIB. Optionally give the directory where SIONLIB is installed. [default=OFF]" )
+set( with-sionlib OFF CACHE STRING "Request the use of SIONlib. Optionally give the directory where SIONlib is installed. [default=OFF]" )
 
 # set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
@@ -280,8 +280,7 @@ set( ALL_LIBS
   "${LIBNEUROSIM_LIBRARIES}"
   "${MUSIC_LIBRARIES}"
   "${MPI_CXX_LIBRARIES}"
-  "${SIONLIB_LIBS}"
-  )
+  "${SIONLIB_LIBS}" )
 if ( with-libraries )
   set( ALL_LIBS "${ALL_LIBS};${with-libraries}" )
 endif ()
@@ -295,8 +294,7 @@ set( ALL_INCLUDES_tmp
   "${GSL_INCLUDE_DIRS}"
   "${LIBNEUROSIM_INCLUDE_DIRS}"
   "${MUSIC_INCLUDE_DIRS}"
-  "${MPI_CXX_INCLUDE_PATH}"
-  )
+  "${MPI_CXX_INCLUDE_PATH}" )
 set( ALL_INCLUDES "" )
 foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
   if ( INC AND NOT INC STREQUAL "" )

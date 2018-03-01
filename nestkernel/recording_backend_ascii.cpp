@@ -130,11 +130,11 @@ nest::RecordingBackendASCII::finalize()
     file_map::value_type::iterator f;
     for ( f = inner.begin(); f != inner.end(); ++f )
     {
-      std::ofstream* stream = f->second.second;
-      if ( stream != NULL )
+      if ( f->second.second != NULL )
       {
-	stream->close();
+	f->second.second->close();
 	delete f->second.second;
+	f->second.second = NULL;
       }
     }
   }

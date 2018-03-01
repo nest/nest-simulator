@@ -167,18 +167,17 @@ nest::ConnectionManager::get_delay_checker()
   return delay_checkers_[ kernel().vp_manager.get_thread_id() ];
 }
 
-// TODO@5g: rename d->dict everywhere in this file -> Jakob
 void
-nest::ConnectionManager::get_status( DictionaryDatum& d )
+nest::ConnectionManager::get_status( DictionaryDatum& dict )
 {
   update_delay_extrema_();
-  def< double >( d, names::min_delay, Time( Time::step( min_delay_ ) ).get_ms() );
-  def< double >( d, names::max_delay, Time( Time::step( max_delay_ ) ).get_ms() );
+  def< double >( dict, names::min_delay, Time( Time::step( min_delay_ ) ).get_ms() );
+  def< double >( dict, names::max_delay, Time( Time::step( max_delay_ ) ).get_ms() );
 
   const size_t n = get_num_connections();
-  def< long >( d, names::num_connections, n );
-  def< bool >( d, names::keep_source_table, keep_source_table_ );
-  def< bool >( d, names::sort_connections_by_source, sort_connections_by_source_ );
+  def< long >( dict, names::num_connections, n );
+  def< bool >( dict, names::keep_source_table, keep_source_table_ );
+  def< bool >( dict, names::sort_connections_by_source, sort_connections_by_source_ );
 }
 
 DictionaryDatum nest::ConnectionManager::get_synapse_status(
@@ -703,7 +702,7 @@ nest::ConnectionManager::connect_( Node& s,
   const index s_gid,
   const thread tid,
   const synindex syn_id,
-  const DictionaryDatum& p,
+  const DictionaryDatum& params,
   const double d,
   const double w )
 {
@@ -711,7 +710,7 @@ nest::ConnectionManager::connect_( Node& s,
 
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection_5g( s, r, connections_5g_[ tid ], syn_id, p, d, w );
+    .add_connection_5g( s, r, connections_5g_[ tid ], syn_id, params, d, w );
   source_table_.add_source( tid,
     syn_id,
     s_gid,
@@ -758,13 +757,13 @@ nest::ConnectionManager::connect_to_device_( Node& s,
   const index s_gid,
   const thread tid,
   const synindex syn_id,
-  const DictionaryDatum& p,
+  const DictionaryDatum& params,
   const double d,
   const double w )
 {
   // create entries in connection structure for connections to devices
   target_table_devices_.add_connection_to_device(
-    s, r, s_gid, tid, syn_id, p, d, w );
+    s, r, s_gid, tid, syn_id, params, d, w );
 
   if ( vv_num_connections_[ tid ].size() <= syn_id )
   {
@@ -797,13 +796,13 @@ nest::ConnectionManager::connect_from_device_( Node& s,
   Node& r,
   const thread tid,
   const synindex syn_id,
-  const DictionaryDatum& p,
+  const DictionaryDatum& params,
   const double d,
   const double w )
 {
   // create entries in connections vector of devices
   target_table_devices_.add_connection_from_device(
-    s, r, tid, syn_id, p, d, w );
+    s, r, tid, syn_id, params, d, w );
 
   if ( vv_num_connections_[ tid ].size() <= syn_id )
   {
@@ -892,7 +891,7 @@ nest::ConnectionManager::disconnect_5g( const thread tid,
 
 void
 nest::ConnectionManager::data_connect_single( const index source_id,
-  DictionaryDatum pars,
+  DictionaryDatum params,
   const index syn_id )
 {
   // We extract the parameters from the dictionary explicitly since getValue()
@@ -909,7 +908,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
   // rather than using the lookup operator.
   // We also do the parameter checking here so that we can later use unsafe
   // operations.
-  for ( di_s = ( *pars ).begin(); di_s != ( *pars ).end(); ++di_s )
+  for ( di_s = ( *params ).begin(); di_s != ( *params ).end(); ++di_s )
   {
     DoubleVectorDatum const* tmp =
       dynamic_cast< DoubleVectorDatum* >( di_s->second.datum() );
@@ -950,17 +949,17 @@ nest::ConnectionManager::data_connect_single( const index source_id,
     }
   }
 
-  const Token target_t = pars->lookup2( names::target );
+  const Token target_t = params->lookup2( names::target );
   DoubleVectorDatum const* ptarget_ids =
     static_cast< DoubleVectorDatum* >( target_t.datum() );
   const std::vector< double >& target_ids( **ptarget_ids );
 
   // Only to check consistent
-  const Token weight_t = pars->lookup2( names::weight );
+  const Token weight_t = params->lookup2( names::weight );
   DoubleVectorDatum const* pweights =
     static_cast< DoubleVectorDatum* >( weight_t.datum() );
 
-  const Token delay_t = pars->lookup2( names::delay );
+  const Token delay_t = params->lookup2( names::delay );
   DoubleVectorDatum const* pdelays =
     static_cast< DoubleVectorDatum* >( delay_t.datum() );
 
@@ -993,7 +992,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           src != global_sources.end();
           ++src )
     {
-      data_connect_single( src->get_gid(), pars, syn_id );
+      data_connect_single( src->get_gid(), params, syn_id );
     }
 
     return;
@@ -1033,7 +1032,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
 
       // here we fill a parameter dictionary with the values of the current loop
       // index.
-      for ( di_s = ( *pars ).begin(); di_s != ( *pars ).end(); ++di_s )
+      for ( di_s = ( *params ).begin(); di_s != ( *params ).end(); ++di_s )
       {
         DoubleVectorDatum const* tmp =
           static_cast< DoubleVectorDatum* >( di_s->second.datum() );

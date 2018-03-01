@@ -514,7 +514,7 @@ private:
     const index s_gid,
     const thread tid,
     const synindex syn_id,
-    const DictionaryDatum& p,
+    const DictionaryDatum& params,
     const double d = numerics::nan,
     const double w = numerics::nan );
 
@@ -548,7 +548,7 @@ private:
     const index s_gid,
     const thread tid,
     const synindex syn_id,
-    const DictionaryDatum& p,
+    const DictionaryDatum& params,
     const double d = NAN,
     const double w = NAN );
 
@@ -580,7 +580,7 @@ private:
     Node& r,
     const thread tid,
     const synindex syn_id,
-    const DictionaryDatum& p,
+    const DictionaryDatum& params,
     const double d = NAN,
     const double w = NAN );
 

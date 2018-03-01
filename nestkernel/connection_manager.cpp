@@ -1819,6 +1819,7 @@ nest::ConnectionManager::check_secondary_connections_exist()
   secondary_connections_exist_ = kernel().mpi_manager.any_true( secondary_connections_exist_ );
 }
 
+#ifndef DISABLE_COUNTS
 void
 nest::ConnectionManager::print_call_counts_connectors() const
 {
@@ -1836,3 +1837,4 @@ nest::ConnectionManager::print_call_counts_connectors() const
     std::cout << "# send_count" << std::endl;
   }
 }
+#endif

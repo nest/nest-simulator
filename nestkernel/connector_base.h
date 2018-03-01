@@ -60,7 +60,9 @@ class ConnectorBase
 {
 
 public:
+#ifndef DISABLE_COUNTS
   unsigned int call_count;
+#endif
 
    // destructor needs to be declared virtual to avoid undefined
    // behaviour, avoid possible memory leak and needs to be defined to
@@ -227,7 +229,9 @@ public:
   explicit Connector( const synindex syn_id )
     : syn_id_( syn_id )
   {
+#ifndef DISABLE_COUNTS
     call_count = 0;
+#endif
   }
 
   ~Connector()
@@ -424,7 +428,7 @@ public:
     Event& e,
     const std::vector< ConnectorModel* >& cm )
   {
-#ifndef DISABLE_TIMING
+#ifndef DISABLE_COUNTS
     ++call_count;
 #endif
 

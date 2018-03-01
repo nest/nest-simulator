@@ -1050,13 +1050,13 @@ nest::SimulationManager::update_()
                 << kernel().event_delivery_manager.comm_rounds_spike_data << ")"
                 << std::endl;
       std::cout << "0] CommStepsSecondaryEvents: " << kernel().event_delivery_manager.comm_steps_secondary_events << std::endl;
+#ifndef DISABLE_COUNTS
       std::cout << "0] CallCount deliver_events_5g_: ";
       for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
       {
         std::cout << kernel().event_delivery_manager.call_count_deliver_events_5g[ tid ] << " ";
       }
       std::cout << std::endl;
-#ifndef DISABLE_TIMING
       std::cout << "0] CallCount Connector::send(): " << std::endl;
       kernel().connection_manager.print_call_counts_connectors();
 #endif

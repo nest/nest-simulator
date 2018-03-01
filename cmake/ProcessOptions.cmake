@@ -107,6 +107,12 @@ function( NEST_PROCESS_DISABLE_TIMING )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_DISABLE_COUNTS )
+  if ( disable-counts )
+    add_definitions( "-DDISABLE_COUNTS" )
+  endif ()
+endfunction()
+
 function( NEST_PROCESS_K_COMPUTER )
   # is set in the Fujitsu-Sparc64.cmake file
   if ( k-computer )

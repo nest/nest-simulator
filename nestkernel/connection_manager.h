@@ -645,7 +645,9 @@ private:
 
   bool secondary_connections_exist_; //!< Whether secondary connections (e.g., gap junctions) exist
 
+#ifndef DISABLE_COUNTS
   void print_call_counts_connectors() const;
+#endif
 };
 
 inline DictionaryDatum&

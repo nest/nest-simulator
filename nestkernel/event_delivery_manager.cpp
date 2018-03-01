@@ -658,7 +658,9 @@ bool
 EventDeliveryManager::deliver_events_5g_( const thread tid,
   const std::vector< SpikeDataT >& recv_buffer )
 {
+#ifndef DISABLE_COUNTS
   ++call_count_deliver_events_5g[ tid ];
+#endif
 
   bool are_others_completed = true;
 

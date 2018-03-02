@@ -69,21 +69,22 @@ public:
    // avoid linker error, see, e.g., Meyers, S. (2005) p40ff
   virtual ~ConnectorBase(){};
 
-  /** Adds status of synapse of type syn_id at position lcid to
-   * dictionary d.
+  /**
+   * Adds status of synapse of type syn_id at position lcid to dictionary dict.
    */
   virtual void get_synapse_status( const thread tid,
     const synindex syn_id,
     const index lcid,
     DictionaryDatum& dict ) const = 0;
 
-  /** Sets status of synapse of type syn_id at position lcid according
-   * to dictionary d.
+  /**
+   * Sets status of synapse of type syn_id at position lcid according to
+   * dictionary dict.
    */
   virtual void set_synapse_status( const synindex syn_id,
-    ConnectorModel& cm,
-    const DictionaryDatum& dict,
-    const index lcid ) = 0;
+				   const index lcid,
+				   const DictionaryDatum& dict,
+				   ConnectorModel& cm ) = 0;
 
   /** Returns the number of connections of type syn_id.
    */
@@ -241,7 +242,10 @@ public:
   }
 
   void
-  get_synapse_status( const thread tid, const synindex syn_id, const index lcid, DictionaryDatum& dict ) const
+  get_synapse_status( const thread tid,
+		      const synindex syn_id,
+		      const index lcid,
+		      DictionaryDatum& dict ) const
   {
     assert( syn_id == syn_id_ );
     assert( lcid >= 0 && lcid < C_.size() );
@@ -252,12 +256,11 @@ public:
     def< long >( dict, names::target, C_[ lcid ].get_target( tid )->get_gid() );
   }
 
-  // TODO@5g: move cm to end of argument list -> Susi
   void
   set_synapse_status( const synindex syn_id,
-    ConnectorModel& cm,
-    const DictionaryDatum& dict,
-    const index lcid )
+		      const index lcid,
+		      const DictionaryDatum& dict,
+		      ConnectorModel& cm )
   {
     assert( syn_id == syn_id_ );
     assert( lcid >= 0 && lcid < C_.size() );

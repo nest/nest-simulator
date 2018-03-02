@@ -237,10 +237,9 @@ nest::ConnectionManager::set_synapse_status( const index source_gid,
   {
     if ( source->has_proxies() and target->has_proxies() and ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
     {
-      ( *connections_5g_[ tid ] )[ syn_id ]->set_synapse_status( syn_id,
-        kernel().model_manager.get_synapse_prototype( syn_id, tid ),
-        dict,
-        lcid );
+      ( *connections_5g_[ tid ] )[ syn_id ]->set_synapse_status(
+	syn_id, lcid, dict,
+	kernel().model_manager.get_synapse_prototype( syn_id, tid ) );
     }
     else if ( source->has_proxies() and not target->has_proxies() )
     {

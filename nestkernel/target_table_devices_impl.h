@@ -139,7 +139,7 @@ nest::TargetTableDevices::set_synapse_status_to_device( const thread tid,
   const index lcid )
 {
   const index lid = kernel().vp_manager.gid_to_lid( source_gid );
-  ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->set_synapse_status( syn_id, cm, dict, lcid );
+  ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->set_synapse_status( syn_id, lcid, dict, cm );
 }
 
 // TODO@5g: move to .h?
@@ -151,8 +151,7 @@ nest::TargetTableDevices::set_synapse_status_from_device( const thread tid,
   const DictionaryDatum& dict,
   const index lcid )
 {
-  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->set_synapse_status(
-    syn_id, cm, dict, lcid );
+  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->set_synapse_status( syn_id, lcid, dict, cm );
 }
 
 #endif /* TARGET_TABLE_DEVICES_IMPL_H */

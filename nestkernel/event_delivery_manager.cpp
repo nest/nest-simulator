@@ -46,13 +46,7 @@
 namespace nest
 {
 EventDeliveryManager::EventDeliveryManager()
-  : comm_steps_target_data( 0 )
-  , comm_rounds_target_data( 0 )
-  , comm_steps_spike_data( 0 )
-  , comm_rounds_spike_data( 0 )
-  , comm_steps_secondary_events( 0 )
-  , call_count_deliver_events_5g( std::vector< unsigned int >() )
-  , off_grid_spiking_( false )
+  : off_grid_spiking_( false )
   , moduli_()
   , slice_moduli_()
   , comm_marker_( 0 )
@@ -65,6 +59,14 @@ EventDeliveryManager::EventDeliveryManager()
   , buffer_size_spike_data_has_changed_( false )
   , completed_count_( std::vector< unsigned int >() )
 {
+#ifndef DISABLE_COUNTS
+  comm_steps_target_data = 0;
+  comm_rounds_target_data = 0;
+  comm_steps_spike_data = 0;
+  comm_rounds_spike_data = 0;
+  comm_steps_secondary_events = 0;
+  call_count_deliver_events_5g = std::vector< unsigned int >();
+#endif
 }
 
 EventDeliveryManager::~EventDeliveryManager()
@@ -82,7 +84,9 @@ EventDeliveryManager::initialize()
   spike_register_5g_.resize( num_threads, 0 );
   off_grid_spike_register_5g_.resize( num_threads, 0 );
   completed_count_.resize( num_threads, 0 );
+#ifndef DISABLE_COUNTS
   call_count_deliver_events_5g.resize( num_threads, 0 );
+#endif
 
 #pragma omp parallel
   {
@@ -336,7 +340,9 @@ EventDeliveryManager::reset_timers_counters()
 void
 EventDeliveryManager::gather_secondary_events( const bool done )
 {
+#ifndef DISABLE_COUNTS
   ++comm_steps_secondary_events;
+#endif
 
   // write done marker at last position in every chunk
   const size_t chunk_size =
@@ -393,10 +399,12 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
                                           std::vector< SpikeDataT >& send_buffer,
                                           std::vector< SpikeDataT >& recv_buffer )
 {
-#pragma omp single
+#ifndef DISABLE_COUNTS
+  if ( tid == 0 and kernel().mpi_manager.rank() < 30 )
   {
     ++comm_steps_spike_data;
   }
+#endif
 
   // counters to keep track of threads and ranks that have send out
   // all spikes
@@ -424,8 +432,14 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         resize_send_recv_buffers_spike_data_();
         buffer_size_spike_data_has_changed_ = false;
       }
-      sw_collocate_spike_data.start();
     } // of omp single; implicit barrier
+
+#ifndef DISABLE_TIMING
+    if ( tid == 0 and kernel().mpi_manager.rank() < 30 )
+    {
+      sw_collocate_spike_data.start();
+    }
+#endif
 
     // need to get new positions in case buffer size has changed
     SendBufferPosition send_buffer_position(
@@ -475,9 +489,11 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     // communicate spikes using a single thread
 #pragma omp single
     {
-      sw_collocate_spike_data.stop();
+#ifndef DISABLE_COUNTS
       ++comm_rounds_spike_data;
+#endif
 #ifndef DISABLE_TIMING
+      sw_collocate_spike_data.stop();
       kernel().mpi_manager.synchronize(); // to get an accurate time measurement across ranks
       sw_communicate_spike_data.start();
 #endif
@@ -490,8 +506,8 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
                                                  send_recv_count_in_int );
 #ifndef DISABLE_TIMING
       sw_communicate_spike_data.stop();
-#endif
       sw_deliver_spike_data.start();
+#endif
     } // of omp single; implicit barrier
 
     // deliver spikes from receive buffer to ring buffers
@@ -503,10 +519,12 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     // done
 #pragma omp barrier
 
-    #pragma omp single
+#ifndef DISABLE_TIMING
+    if ( tid == 0 and kernel().mpi_manager.rank() < 30 )
     {
       sw_deliver_spike_data.stop();
-    } // of omp single; implicit barrier
+    }
+#endif
 
     if ( completed_count == max_completed_count )
     {
@@ -727,10 +745,12 @@ EventDeliveryManager::gather_target_data( const thread tid )
 {
   assert( not kernel().connection_manager.is_source_table_cleared() );
 
-#pragma omp single
+#ifndef DISABLE_COUNTS
+  if ( tid == 0 and kernel().mpi_manager.rank() < 30 )
   {
     ++comm_steps_target_data;
   }
+#endif
 
   // when a thread does not have any more spike to collocate and when
   // it detects a remote MPI rank is finished this count is increased
@@ -759,8 +779,14 @@ EventDeliveryManager::gather_target_data( const thread tid )
       {
         configure_target_data_buffers();
       }
-      sw_collocate_target_data.start();
     } // of omp single; implicit barrier
+#ifndef DISABLE_TIMING
+    if ( tid == 0 and kernel().mpi_manager.rank() < 30 )
+    {
+      sw_collocate_target_data.start();
+    }
+#endif
+
     kernel().connection_manager.restore_source_table_entry_point( tid );
 
     me_completed_tid = collocate_target_data_buffers_( tid );
@@ -780,9 +806,11 @@ EventDeliveryManager::gather_target_data( const thread tid )
     kernel().connection_manager.clean_source_table( tid );
 #pragma omp single
     {
-      sw_collocate_target_data.stop();
+#ifndef DISABLE_COUNTS
       ++comm_rounds_target_data;
+#endif
 #ifndef DISABLE_TIMING
+      sw_collocate_target_data.stop();
       kernel().mpi_manager.synchronize(); // to get an accurate time measurement across ranks
       sw_communicate_target_data.start();
 #endif
@@ -795,18 +823,20 @@ EventDeliveryManager::gather_target_data( const thread tid )
         send_recv_count_target_data_in_int_per_rank_ );
 #ifndef DISABLE_TIMING
       sw_communicate_target_data.stop();
-#endif
       sw_distribute_target_data.start();
+#endif
     } // of omp single
 
     others_completed_tid = distribute_target_data_buffers_( tid );
     completed_count_[ tid ] += static_cast< unsigned int >( others_completed_tid );
 #pragma omp barrier
 
-#pragma omp single
+#ifndef DISABLE_TIMING
+    if ( tid == 0 and kernel().mpi_manager.rank() < 30 )
     {
       sw_distribute_target_data.stop();
-    } // of omp single; implicit barrier
+    }
+#endif
 
     completed_count = std::accumulate( completed_count_.begin(), completed_count_.end(), 0 );
 

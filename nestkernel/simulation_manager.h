@@ -189,6 +189,15 @@ private:
                             //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
+
+#ifndef DISABLE_TIMING
+  Stopwatch sw_prepare;
+  Stopwatch sw_simulate;
+  Stopwatch sw_restructure;
+  Stopwatch sw_sort;
+  Stopwatch sw_total;
+  Stopwatch sw_update;
+#endif
 };
 
 inline Time const&

@@ -23,6 +23,10 @@
 #ifndef SOURCE_TABLE_POSITION_H
 #define SOURCE_TABLE_POSITION_H
 
+// C++ includes:
+#include <cassert>
+#include <vector>
+
 namespace nest
 {
 
@@ -37,6 +41,11 @@ struct SourceTablePosition
   SourceTablePosition();
   SourceTablePosition( const long tid, const long syn_id, const long lcid );
   SourceTablePosition( const SourceTablePosition& rhs );
+
+  template< typename T>
+  void wrap_position( const std::vector< std::vector< T >* >& sources );
+
+  bool is_at_end() const;
 };
 
 inline SourceTablePosition::SourceTablePosition()
@@ -61,6 +70,59 @@ inline SourceTablePosition::SourceTablePosition(
   , syn_id( rhs.syn_id )
   , lcid( rhs.lcid )
 {
+}
+
+template< typename T>
+inline void SourceTablePosition::wrap_position( const std::vector< std::vector< T >* >& sources )
+{
+  // check for validity of indices and update if necessary
+  while ( true )
+  {
+    if ( lcid < 0 )
+    {
+      --syn_id;
+      if ( syn_id >= 0 )
+      {
+        lcid =
+          sources[ syn_id ]
+          ->size() - 1;
+        continue;
+      }
+      else
+      {
+        --tid;
+        if ( tid >= 0 )
+        {
+          syn_id =
+            sources.size() - 1;
+          if ( syn_id >= 0 )
+          {
+            lcid = sources[ syn_id ]->size() - 1;
+          }
+          continue;
+        }
+        else
+        {
+          assert( tid < 0 );
+          assert( syn_id < 0 );
+          assert( lcid < 0 );
+          return;
+        }
+      }
+    }
+  }
+}
+
+inline bool SourceTablePosition::is_at_end() const
+{
+  if ( tid < 0 and syn_id < 0 and lcid < 0 )
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 inline bool operator==( const SourceTablePosition& lhs,

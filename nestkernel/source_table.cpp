@@ -376,47 +376,10 @@ nest::SourceTable::get_next_target_data( const thread tid,
   while ( true )
   {
 
-    // TODO@5g: replace with something like -> Jakob
-    // current_position.wrap_position();
-    // if ( not current_position.is_at_end() )
-    // {
-    //   return false;
-    // }
-
-    // check for validity of indices and update if necessary
-    if ( current_position.lcid < 0 )
+    current_position.wrap_position( *sources_[ tid ] );
+    if ( not current_position.is_at_end() )
     {
-      --current_position.syn_id;
-      if ( current_position.syn_id >= 0 )
-      {
-        current_position.lcid =
-          ( *sources_[ current_position.tid ] )[ current_position.syn_id ]
-            ->size() - 1;
-        continue;
-      }
-      else
-      {
-        --current_position.tid;
-        if ( current_position.tid >= 0 )
-        {
-          current_position.syn_id =
-            ( *sources_[ current_position.tid ] ).size() - 1;
-          if ( current_position.syn_id >= 0 )
-          {
-            current_position.lcid =
-              ( *sources_[ current_position.tid ] )[ current_position
-                                                       .syn_id ]->size() - 1;
-          }
-          continue;
-        }
-        else
-        {
-          assert( current_position.tid < 0 );
-          assert( current_position.syn_id < 0 );
-          assert( current_position.lcid < 0 );
-          return false; // reached the end of the sources table
-        }
-      }
+      return false; // reached the end of the sources table
     }
 
     // if structural plasticity has created connections that have not

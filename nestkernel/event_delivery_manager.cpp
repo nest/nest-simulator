@@ -158,7 +158,7 @@ EventDeliveryManager::clear_pending_spikes()
 }
 
 void
-EventDeliveryManager::configure_target_data_buffers() //TODO@5g: ->resize_send_recv_buffers_target_data_ -> Jakob
+EventDeliveryManager::resize_send_recv_buffers_target_data()
 {
   // clear old target data buffers
   if ( send_buffer_target_data_ != NULL )
@@ -776,7 +776,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
       if ( kernel().mpi_manager.adaptive_target_buffers()
         && buffer_size_target_data_has_changed_ )
       {
-        configure_target_data_buffers();
+        resize_send_recv_buffers_target_data();
       }
       sw_collocate_target_data.start();
     } // of omp single; implicit barrier

@@ -224,7 +224,7 @@ public:
    */
   void configure_spike_data_buffers();
 
-  void configure_target_data_buffers();
+  void resize_send_recv_buffers_target_data();
 
   void configure_secondary_buffers();
 

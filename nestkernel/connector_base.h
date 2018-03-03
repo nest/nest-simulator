@@ -410,14 +410,14 @@ public:
   void
   send_to_all( Event& e, const thread tid, const std::vector< ConnectorModel* >& cm )
   {
+    typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
     for ( size_t i = 0; i < C_.size(); ++i )
     {
       e.set_port( i ); // TODO@5g: does this make sense?
       assert( not C_[ i ].is_disabled() );
       C_[ i ].send( e,
         tid,
-        static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
-          ->get_common_properties() );
+        cp );
     }
   }
 
@@ -432,14 +432,28 @@ public:
     ++call_count;
 #endif
 
-    e.set_port( lcid ); // TODO@5g: does this make sense?
-    if ( not C_[ lcid ].is_disabled() )
+    typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
+
+    index lcid_offset = 0;
+    while ( true )
     {
-      typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
-      C_[ lcid ].send( e, tid, cp );
-      send_weight_event( tid, syn_id, lcid, e, cp );
+      const bool is_disabled = C_[ lcid + lcid_offset ].is_disabled();
+      const bool has_source_subsequent_targets = C_[ lcid + lcid_offset ].has_source_subsequent_targets();
+
+      e.set_port( lcid + lcid_offset ); // TODO@5g: does this make sense?
+      if ( not is_disabled )
+      {
+        C_[ lcid + lcid_offset ].send( e, tid, cp );
+        send_weight_event( tid, syn_id, lcid + lcid_offset, e, cp );
+      }
+      if ( not has_source_subsequent_targets )
+      {
+        break;
+      }
+      ++lcid_offset;
     }
-    return C_[ lcid ].has_source_subsequent_targets();
+
+    return true;
   }
 
   // implemented in connector_base_impl.h

@@ -62,17 +62,14 @@ inline void
 ConnectionManager::send_5g( const thread tid,
   const synindex syn_id,
   const index lcid,
+  const std::vector< ConnectorModel* >& cm,
   Event& e )
 {
-  index lcid_offset = 0;
-  while ( ( *connections_5g_[ tid ] )[ syn_id ]->send( tid,
+  ( *connections_5g_[ tid ] )[ syn_id ]->send( tid,
     syn_id,
-    lcid + lcid_offset,
+    lcid,
     e,
-    kernel().model_manager.get_synapse_prototypes( tid ) ) )
-  {
-    ++lcid_offset;
-  }
+    cm );
 }
 
 inline void

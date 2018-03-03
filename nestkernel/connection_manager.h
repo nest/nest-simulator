@@ -300,6 +300,7 @@ public:
   void send_5g( const thread tid,
     const synindex syn_id,
     const index lcid,
+    const std::vector< ConnectorModel* >& cm,
     Event& e );
 
   /**

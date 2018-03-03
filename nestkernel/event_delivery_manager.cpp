@@ -680,6 +680,8 @@ EventDeliveryManager::deliver_events_5g_( const thread tid,
   ++call_count_deliver_events_5g[ tid ];
 #endif
 
+  const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_synapse_prototypes( tid );
+
   bool are_others_completed = true;
 
   // deliver only at end of time slice
@@ -725,7 +727,7 @@ EventDeliveryManager::deliver_events_5g_( const thread tid,
         se.set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
         se.set_offset( spike_data.get_offset() );
         kernel().connection_manager.send_5g(
-          tid, spike_data.get_syn_id(), spike_data.get_lcid(), se );
+          tid, spike_data.get_syn_id(), spike_data.get_lcid(), cm, se );
       }
 
       // is this the last spike from this rank?

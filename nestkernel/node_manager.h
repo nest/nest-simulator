@@ -172,16 +172,6 @@ public:
   Node* thread_lid_to_node( thread t, targetindex thread_local_id ) const;
 
   /**
-   * Increment total number of global spike detectors by 1
-   */
-  void increment_n_gsd();
-
-  /**
-   * Get total number of global spike detectors
-   */
-  index get_n_gsd();
-
-  /**
    * Get list of nodes on given thread.
    */
   const std::vector< Node* >& get_nodes_on_thread( thread ) const;
@@ -285,9 +275,6 @@ private:
 
   Model* siblingcontainer_model_; //!< The model for the SiblingContainer class
 
-  index n_gsd_; //!< Total number of global spike detectors, used for
-                //!< distributing them over recording processes
-
   /**
    * Data structure holding node pointers per thread.
    *
@@ -338,18 +325,6 @@ inline Node*
 NodeManager::thread_lid_to_node( thread t, targetindex thread_local_id ) const
 {
   return nodes_vec_[ t ][ thread_local_id ];
-}
-
-inline void
-NodeManager::increment_n_gsd()
-{
-  ++n_gsd_;
-}
-
-inline index
-NodeManager::get_n_gsd()
-{
-  return n_gsd_;
 }
 
 inline const std::vector< Node* >&

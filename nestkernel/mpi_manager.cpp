@@ -58,8 +58,6 @@ MPI_Datatype MPI_Type< unsigned long >::type = MPI_UNSIGNED_LONG;
 nest::MPIManager::MPIManager()
   : num_processes_( 1 )
   , rank_( 0 )
-  , n_rec_procs_( 0 )
-  , n_sim_procs_( 0 )
   , send_buffer_size_( 1 )
   , recv_buffer_size_( 1 )
   , use_mpi_( false )
@@ -130,7 +128,6 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 void
 nest::MPIManager::initialize()
 {
-  set_num_rec_processes( 0, true );
 }
 
 void
@@ -149,37 +146,6 @@ nest::MPIManager::get_status( DictionaryDatum& d )
   def< long >( d, names::num_processes, num_processes_ );
   def< long >( d, names::send_buffer_size, send_buffer_size_ );
   def< long >( d, names::receive_buffer_size, recv_buffer_size_ );
-}
-
-void
-nest::MPIManager::set_num_rec_processes( int nrp, bool called_by_reset )
-{
-  if ( kernel().node_manager.size() > 1 and not called_by_reset )
-  {
-    throw KernelException(
-      "Global spike detection mode must be enabled before nodes are created." );
-  }
-
-  if ( nrp >= num_processes_ )
-  {
-    throw KernelException(
-      "Number of processes used for recording must be smaller than total "
-      "number of processes." );
-  }
-  n_rec_procs_ = nrp;
-  n_sim_procs_ = num_processes_ - n_rec_procs_;
-
-  kernel().rng_manager.create_rngs_();
-
-  if ( nrp > 0 )
-  {
-    std::string msg = String::compose(
-      "Entering global spike detection mode with %1 recording MPI processes "
-      "and %2 simulating MPI processes.",
-      n_rec_procs_,
-      n_sim_procs_ );
-    LOG( M_INFO, "MPIManager::set_num_rec_processes", msg );
-  }
 }
 
 /**

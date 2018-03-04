@@ -1200,34 +1200,6 @@ NestModule::SetFakeNumProcesses_iFunction::execute( SLIInterpreter* i ) const
 }
 
 /* BeginDocumentation
-   Name: SetNumRecProcesses - Set the number of MPI processes dedicated to
-   recording spikes.
-   Synopsis: n_procs SetNumRecProcesses -> -
-   Description:
-   Sets the number of recording MPI processes to n_procs. Usually,
-   spike detectors are distributed over all processes and record
-   from local neurons only. If a number of processes is dedicated to
-   spike detection, each spike detector is hosted on one of these
-   processes and records globally from all simulating processes.
-   Availability: NEST 2.4
-   Authors: Susanne Kunkel, Maximilian Schmidt
-   FirstVersion: April 2014
-   SeeAlso: NumProcesses
-*/
-void
-NestModule::SetNumRecProcesses_iFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-  long n_rec_procs = getValue< long >( i->OStack.pick( 0 ) );
-
-  set_num_rec_processes( n_rec_procs );
-
-  i->OStack.pop( 1 );
-  i->EStack.pop();
-}
-
-
-/* BeginDocumentation
    Name: SyncProcesses - Synchronize all MPI processes.
    Synopsis: SyncProcesses -> -
    Availability: NEST 2.0
@@ -1756,7 +1728,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Rank", &rankfunction );
   i->createcommand( "NumProcesses", &numprocessesfunction );
   i->createcommand( "SetFakeNumProcesses", &setfakenumprocesses_ifunction );
-  i->createcommand( "SetNumRecProcesses", &setnumrecprocesses_ifunction );
   i->createcommand( "SyncProcesses", &syncprocessesfunction );
   i->createcommand(
     "TimeCommunication_i_i_b", &timecommunication_i_i_bfunction );

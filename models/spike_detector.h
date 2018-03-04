@@ -103,22 +103,16 @@ public:
   spike_detector();
   spike_detector( const spike_detector& );
 
-  void set_has_proxies( const bool hp );
   bool
   has_proxies() const
   {
-    return has_proxies_;
+    return false;
   }
-  bool
-  potential_global_receiver() const
-  {
-    return true;
-  }
-  void set_local_receiver( const bool lr );
+
   bool
   local_receiver() const
   {
-    return local_receiver_;
+    return true;
   }
 
   /**
@@ -182,22 +176,7 @@ private:
   };
 
   Buffers_ B_;
-
-  bool has_proxies_;
-  bool local_receiver_;
 };
-
-inline void
-spike_detector::set_has_proxies( const bool hp )
-{
-  has_proxies_ = hp;
-}
-
-inline void
-spike_detector::set_local_receiver( const bool lr )
-{
-  local_receiver_ = lr;
-}
 
 inline port
 spike_detector::handles_test_event( SpikeEvent&, rport receptor_type )

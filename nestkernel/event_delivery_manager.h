@@ -58,6 +58,7 @@ class TargetData;
 struct SendBufferPosition
 {
   size_t num_spike_data_written;
+  const unsigned int send_recv_count_per_rank;
   std::vector< unsigned int > idx;
   std::vector< unsigned int > begin;
   std::vector< unsigned int > end;
@@ -65,10 +66,12 @@ struct SendBufferPosition
     const unsigned int send_recv_count_per_rank );
 };
 
+// TODO@5g: allow access directly via rank, not rank index, needs lookup table -> Jakob
 inline SendBufferPosition::SendBufferPosition(
   const AssignedRanks& assigned_ranks,
   const unsigned int send_recv_count_per_rank )
   : num_spike_data_written( 0 )
+  , send_recv_count_per_rank( send_recv_count_per_rank )
 {
   idx.resize( assigned_ranks.size );
   begin.resize( assigned_ranks.size );
@@ -288,7 +291,7 @@ public:
 private:
 
   template< typename SpikeDataT >
-  void gather_spike_data_( const thread tid, const unsigned int& send_recv_count_in_int, std::vector< SpikeDataT >& send_buffer, std::vector< SpikeDataT >& recv_buffer );
+  void gather_spike_data_( const thread tid, std::vector< SpikeDataT >& send_buffer, std::vector< SpikeDataT >& recv_buffer );
 
   void resize_send_recv_buffers_spike_data_();
 
@@ -318,6 +321,7 @@ private:
    */
   template < typename SpikeDataT >
   void set_complete_marker_spike_data_( const AssignedRanks& assigned_ranks,
+   const SendBufferPosition& send_buffer_position,
     std::vector< SpikeDataT >& send_buffer );
 
   /**
@@ -359,13 +363,17 @@ private:
    * presynaptic to postsynaptic side. Builds TargetData objects from
    * SourceTable and connections information.
    */
-  bool collocate_target_data_buffers_( const thread tid );
+  bool collocate_target_data_buffers_( const thread tid,
+    const AssignedRanks& assigned_ranks,
+    SendBufferPosition& send_buffer_position );
 
   /**
    * Sets marker in MPI buffer that signals end of communication
    * across MPI ranks.
    */
-  void set_complete_marker_target_data_( const thread tid );
+  void set_complete_marker_target_data_( const thread tid,
+    const AssignedRanks& assigned_ranks,
+    const SendBufferPosition& send_buffer_position );
 
   /**
    * Reads TargetData objects from MPI buffers and creates Target
@@ -472,13 +480,6 @@ private:
 
   TargetData* send_buffer_target_data_;
   TargetData* recv_buffer_target_data_;
-
-  unsigned int send_recv_count_spike_data_per_rank_;
-  unsigned int send_recv_count_spike_data_in_int_per_rank_;
-  unsigned int send_recv_count_off_grid_spike_data_in_int_per_rank_;
-
-  unsigned int send_recv_count_target_data_per_rank_;
-  unsigned int send_recv_count_target_data_in_int_per_rank_;
 
   bool buffer_size_target_data_has_changed_; //!< whether size of MPI buffer for
                                              //communication of connections was

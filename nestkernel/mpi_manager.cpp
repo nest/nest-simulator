@@ -69,6 +69,11 @@ nest::MPIManager::MPIManager()
   , adaptive_spike_buffers_( true )
   , growth_factor_buffer_spike_data_( 1.5 )
   , growth_factor_buffer_target_data_( 1.5 )
+  , send_recv_count_spike_data_per_rank_( 0 )
+  , send_recv_count_spike_data_in_int_per_rank_( 0 )
+  , send_recv_count_off_grid_spike_data_in_int_per_rank_( 0 )
+  , send_recv_count_target_data_per_rank_( 0 )
+  , send_recv_count_target_data_in_int_per_rank_( 0 )
 #ifdef HAVE_MPI
   , comm_step_( std::vector< int >() )
   , COMM_OVERFLOW_ERROR( std::numeric_limits< unsigned int >::max() )
@@ -741,11 +746,26 @@ nest::MPIManager::communicate_Alltoall( unsigned int* send_buffer,
     comm );
 }
 
-// TODO@5g: create separate function for communication of spikes?
-// void
-// nest::MPIManager::communicate_spike_data_Alltoall()
-// {
-// }						      
+void
+nest::MPIManager::communicate_target_data_Alltoall( unsigned int* send_buffer,
+  unsigned int* recv_buffer )
+{
+  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_target_data_in_int_per_rank_ );
+}
+
+void
+nest::MPIManager::communicate_spike_data_Alltoall( unsigned int* send_buffer,
+  unsigned int* recv_buffer )
+{
+  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_spike_data_in_int_per_rank_ );
+}
+
+void
+nest::MPIManager::communicate_off_grid_spike_data_Alltoall( unsigned int* send_buffer,
+  unsigned int* recv_buffer )
+{
+  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank_ );
+}
 
 void
 nest::MPIManager::communicate_secondary_events_Alltoall(

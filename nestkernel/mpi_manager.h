@@ -45,6 +45,8 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
+#include "spike_data.h"
+#include "target_data.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -201,14 +203,28 @@ public:
   // int get_send_buffer_size();
   // int get_recv_buffer_size();
   bool is_mpi_used();
+
   size_t get_buffer_size_target_data() const;
+
+  unsigned int get_send_recv_count_target_data_per_rank() const;
+
   size_t get_buffer_size_spike_data() const;
+
+  unsigned int get_send_recv_count_spike_data_per_rank() const;
+
   size_t get_chunk_size_secondary_events() const;
+
   size_t get_buffer_size_secondary_events() const;
 
   void communicate_Alltoall( unsigned int* send_buffer,
     unsigned int* recv_buffer,
     const unsigned int send_recv_count );
+  void communicate_target_data_Alltoall( unsigned int* send_buffer,
+    unsigned int* recv_buffer );
+  void communicate_spike_data_Alltoall( unsigned int* send_buffer,
+    unsigned int* recv_buffer );
+  void communicate_off_grid_spike_data_Alltoall( unsigned int* send_buffer,
+    unsigned int* recv_buffer );
   void communicate_secondary_events_Alltoall( unsigned int* send_buffer,
     unsigned int* recv_buffer );
 
@@ -268,6 +284,13 @@ private:
                                  //spikes resize on the fly
   double growth_factor_buffer_spike_data_;
   double growth_factor_buffer_target_data_;
+
+  unsigned int send_recv_count_spike_data_per_rank_; // TODO@5g: assert these are not zero -> Jakob
+  unsigned int send_recv_count_spike_data_in_int_per_rank_;
+  unsigned int send_recv_count_off_grid_spike_data_in_int_per_rank_;
+
+  unsigned int send_recv_count_target_data_per_rank_;
+  unsigned int send_recv_count_target_data_in_int_per_rank_;
 
 #ifdef HAVE_MPI
   //! array containing communication partner for each step.
@@ -462,10 +485,22 @@ MPIManager::get_buffer_size_target_data() const
   return buffer_size_target_data_;
 }
 
+inline unsigned int
+MPIManager::get_send_recv_count_target_data_per_rank() const
+{
+  return send_recv_count_target_data_per_rank_;
+}
+
 inline size_t
 MPIManager::get_buffer_size_spike_data() const
 {
   return buffer_size_spike_data_;
+}
+
+inline unsigned int
+MPIManager::get_send_recv_count_spike_data_per_rank() const
+{
+  return send_recv_count_spike_data_per_rank_;
 }
 
 inline size_t
@@ -492,6 +527,15 @@ MPIManager::set_buffer_size_target_data( const size_t buffer_size )
   {
     buffer_size_target_data_ = max_buffer_size_target_data_;
   }
+  send_recv_count_target_data_per_rank_ = static_cast< size_t >(
+    floor( static_cast< double >( get_buffer_size_target_data() )
+           / static_cast< double >( get_num_processes() ) ) );
+  send_recv_count_target_data_in_int_per_rank_ = sizeof( TargetData )
+    / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
+
+  assert( send_recv_count_target_data_per_rank_
+	  * get_num_processes()
+	  <= get_buffer_size_target_data() );
 }
 
 inline void
@@ -506,6 +550,18 @@ MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
   {
     buffer_size_spike_data_ = max_buffer_size_spike_data_;
   }
+
+  send_recv_count_spike_data_per_rank_ = floor(
+    get_buffer_size_spike_data() / get_num_processes() );
+  send_recv_count_spike_data_in_int_per_rank_ = sizeof( SpikeData )
+    / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
+  send_recv_count_off_grid_spike_data_in_int_per_rank_ =
+    sizeof( OffGridSpikeData ) / sizeof( unsigned int )
+    * send_recv_count_spike_data_per_rank_;
+
+  assert( send_recv_count_spike_data_per_rank_
+          * get_num_processes()
+          <= get_buffer_size_spike_data() );
 }
 
 inline void

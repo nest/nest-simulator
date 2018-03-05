@@ -338,32 +338,6 @@ class TestGrowthCurve(unittest.TestCase):
                 testing.assert_almost_equal(
                     self.se_nest[n_i], self.se_python[sei_i], decimal=5)
 
-    def _plot(self):
-        """
-        Can be called by tearDown() to cross-check tests.
-        """
-        try:
-            import pylab
-            from nest import raster_plot
-            pylab.ion()
-            for i, sei in enumerate(self.se_integrator):
-                pylab.figure()
-                pylab.subplot(1, 2, 1)
-                pylab.title('Ca')
-                pylab.plot(self.sim_steps, self.ca_nest[0, :])
-                pylab.plot(self.sim_steps, self.ca_python[i])
-                pylab.legend(('nest', sei.__class__.__name__))
-                pylab.subplot(1, 2, 2)
-                pylab.title('Synaptic Element')
-                pylab.plot(self.sim_steps, self.se_nest[0, :])
-                pylab.plot(self.sim_steps, self.se_python[i])
-                pylab.legend(('nest', sei.__class__.__name__))
-                pylab.savefig('sp' + sei.__class__.__name__ + '.png')
-            raster_plot.from_device(self.spike_detector)
-            pylab.savefig('sp_raster_plot.png')
-        except ImportError:
-            pass
-
     def test_linear_growth_curve(self):
         beta_ca = 0.0001
         tau_ca = 10000.0
@@ -485,11 +459,6 @@ class TestGrowthCurve(unittest.TestCase):
                     self.se_nest[self.local_nodes.index(n), 30], expected[
                         self.pop.index(n)],
                     decimal=5)
-
-    def tearDown(self):
-        # uncomment this line if you want to plot values
-        # self._plot()
-        return
 
 
 def suite():

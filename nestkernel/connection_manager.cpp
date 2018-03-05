@@ -69,7 +69,7 @@ nest::ConnectionManager::ConnectionManager()
   , keep_source_table_( true )
   , have_connections_changed_( true )
   , sort_connections_by_source_( true )
-  , primary_connections_exist_( false )
+  , has_primary_connections_( false )
   , secondary_connections_exist_( false )
 {
 }
@@ -110,7 +110,7 @@ nest::ConnectionManager::initialize()
 
   std::vector< std::vector< size_t > > tmp3(
     kernel().vp_manager.get_num_threads(), std::vector< size_t >() );
-  vv_num_connections_.swap( tmp3 );
+  num_connections_.swap( tmp3 );
 
   // The following line is executed by all processes, no need to communicate
   // this change in delays.
@@ -606,15 +606,15 @@ nest::ConnectionManager::connect_( Node& s,
     s_gid,
     is_primary );
 
-  if ( vv_num_connections_[ tid ].size() <= syn_id )
+  if ( num_connections_[ tid ].size() <= syn_id )
   {
-    vv_num_connections_[ tid ].resize( syn_id + 1 );
+    num_connections_[ tid ].resize( syn_id + 1 );
   }
-  ++vv_num_connections_[ tid ][ syn_id ];
+  ++num_connections_[ tid ][ syn_id ];
 
   if ( is_primary )
   {
-    primary_connections_exist_ = true;
+    has_primary_connections_ = true;
   }
   else
   {
@@ -636,11 +636,11 @@ nest::ConnectionManager::connect_to_device_( Node& s,
   target_table_devices_.add_connection_to_device(
     s, r, s_gid, tid, syn_id, params, d, w );
 
-  if ( vv_num_connections_[ tid ].size() <= syn_id )
+  if ( num_connections_[ tid ].size() <= syn_id )
   {
-    vv_num_connections_[ tid ].resize( syn_id + 1 );
+    num_connections_[ tid ].resize( syn_id + 1 );
   }
-  ++vv_num_connections_[ tid ][ syn_id ];
+  ++num_connections_[ tid ][ syn_id ];
 }
 
 void
@@ -656,11 +656,11 @@ nest::ConnectionManager::connect_from_device_( Node& s,
   target_table_devices_.add_connection_from_device(
     s, r, tid, syn_id, params, d, w );
 
-  if ( vv_num_connections_[ tid ].size() <= syn_id )
+  if ( num_connections_[ tid ].size() <= syn_id )
   {
-    vv_num_connections_[ tid ].resize( syn_id + 1 );
+    num_connections_[ tid ].resize( syn_id + 1 );
   }
-  ++vv_num_connections_[ tid ][ syn_id ];
+  ++num_connections_[ tid ][ syn_id ];
 }
 
 nest::index
@@ -738,7 +738,7 @@ nest::ConnectionManager::disconnect_5g( const thread tid,
   source_table_.disable_connection( tid, syn_id, lcid );
 
   // TODO@5g: actract as function -> Jari
-  --vv_num_connections_[ tid ][ syn_id ];
+  --num_connections_[ tid ][ syn_id ];
 }
 
 void
@@ -1031,11 +1031,11 @@ size_t
 nest::ConnectionManager::get_num_connections() const
 {
   size_t num_connections = 0;
-  for ( index t = 0; t < vv_num_connections_.size(); ++t )
+  for ( index t = 0; t < num_connections_.size(); ++t )
   {
-    for ( index s = 0; s < vv_num_connections_[ t ].size(); ++s )
+    for ( index s = 0; s < num_connections_[ t ].size(); ++s )
     {
-      num_connections += vv_num_connections_[ t ][ s ];
+      num_connections += num_connections_[ t ][ s ];
     }
   }
 
@@ -1046,11 +1046,11 @@ size_t
 nest::ConnectionManager::get_num_connections( const synindex syn_id ) const
 {
   size_t num_connections = 0;
-  for ( index t = 0; t < vv_num_connections_.size(); ++t )
+  for ( index t = 0; t < num_connections_.size(); ++t )
   {
-    if ( vv_num_connections_[ t ].size() > syn_id )
+    if ( num_connections_[ t ].size() > syn_id )
     {
-      num_connections += vv_num_connections_[ t ][ syn_id ];
+      num_connections += num_connections_[ t ][ syn_id ];
     }
   }
 
@@ -1666,9 +1666,9 @@ nest::ConnectionManager::resize_connections()
 }
 
 void
-nest::ConnectionManager::check_primary_connections_exist()
+nest::ConnectionManager::sync_has_primary_connections()
 {
-  primary_connections_exist_ = kernel().mpi_manager.any_true( primary_connections_exist_ );
+  has_primary_connections_ = kernel().mpi_manager.any_true( has_primary_connections_ );
 }
 
 void

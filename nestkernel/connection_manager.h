@@ -410,11 +410,11 @@ public:
 
   void resize_connections();
 
-  void check_primary_connections_exist(); // TODO@5g: -> sync_has_primary_connections -> Jari
+  void sync_has_primary_connections();
 
   void check_secondary_connections_exist();
 
-  bool primary_connections_exist() const; // TODO@5g: -> has_primary_connections -> Jari
+  bool has_primary_connections() const; 
 
   bool secondary_connections_exist() const;
 
@@ -574,7 +574,7 @@ private:
   /** A structure to count the number of synapses of a specific
    * type. Arranged in a 2d structure: threads|synapsetypes.
    */
-  std::vector< std::vector< size_t > > vv_num_connections_; // TODO@5g: num_connections_ -> Jari
+  std::vector< std::vector< size_t > > num_connections_; // TODO@5g: num_connections_ -> Jari
 
   /**
    * BeginDocumentation
@@ -602,7 +602,7 @@ private:
 
   bool sort_connections_by_source_; //!< Whether to sort connections by source gid
 
-  bool primary_connections_exist_; //!< Whether primary connections (spikes) exist
+  bool has_primary_connections_; //!< Whether primary connections (spikes) exist
 
   bool secondary_connections_exist_; //!< Whether secondary connections (e.g., gap junctions) exist
 
@@ -773,9 +773,9 @@ ConnectionManager::get_source_gid( const thread tid,
 }
 
 inline bool
-ConnectionManager::primary_connections_exist() const
+ConnectionManager::has_primary_connections() const
 {
-  return primary_connections_exist_;
+  return has_primary_connections_;
 }
 
 inline bool

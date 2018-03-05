@@ -717,7 +717,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 
     // check whether primary and secondary connections exists on any
     // compute node
-    kernel().connection_manager.check_primary_connections_exist();
+    kernel().connection_manager.sync_has_primary_connections();
     kernel().connection_manager.check_secondary_connections_exist();
   }
 
@@ -977,7 +977,7 @@ nest::SimulationManager::update_()
       // gather and deliver only at end of slice, i.e., end of min_delay step
       if ( to_step_ == kernel().connection_manager.get_min_delay() )
       {
-        if ( kernel().connection_manager.primary_connections_exist() )
+        if ( kernel().connection_manager.has_primary_connections() )
         {
           kernel().event_delivery_manager.gather_spike_data( tid );
         }

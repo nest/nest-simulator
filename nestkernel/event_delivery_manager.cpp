@@ -525,8 +525,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   // TODO@5g: reset_complete_marker_( assigned_ranks, send_buffer_position, send_buffer ); -> Susi
   for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
-    const thread lr_idx = rank % assigned_ranks.max_size;
-    send_buffer[ send_buffer_position.end[ lr_idx ] - 1 ].reset_marker();
+    send_buffer[ send_buffer_position.end( rank ) - 1 ].reset_marker();
   }
 
   // assume empty, changed to false if any entry found
@@ -552,20 +551,13 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
       {
         assert( not iiit->is_processed() );
 
-	// TODO@5g: use (pseudo?)map in send_buffer_position -> Jakob
-	// -> send_buffer_position.idx[ rank ]
-	// -> send_buffer_position.idx( rank )
-        const thread lr_idx = iiit->get_rank() % assigned_ranks.max_size;
-        assert( lr_idx < assigned_ranks.size );
+        const thread rank = iiit->get_rank();
 
-        if ( send_buffer_position.idx[ lr_idx ]
-          == send_buffer_position.end[ lr_idx ] )
-        { // send-buffer slot of this assigned rank is full
+        if ( send_buffer_position.is_chunk_filled( rank ) )
+        {
           is_spike_register_empty = false;
-	  // if ( not send_buffer_position.has_empty_position() ) -> Jakob
-          if ( send_buffer_position.num_spike_data_written
-            == send_buffer_position.send_recv_count_per_rank * assigned_ranks.size )
-          { // send-buffer slots of all assigned ranks are full
+          if ( send_buffer_position.are_all_chunks_filled() )
+          {
             return is_spike_register_empty;
           }
           else
@@ -575,15 +567,14 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
         }
         else
         {
-          send_buffer[ send_buffer_position.idx[ lr_idx ] ].set(
+          send_buffer[ send_buffer_position.idx( rank ) ].set(
             ( *iiit ).get_tid(),
             ( *iiit ).get_syn_id(),
             ( *iiit ).get_lcid(),
             lag,
             ( *iiit ).get_offset() );
           ( *iiit ).set_is_processed( true ); // mark entry for removal
-          ++send_buffer_position.idx[ lr_idx ];
-          ++send_buffer_position.num_spike_data_written;
+          send_buffer_position.increase( rank );
         }
       }
     }
@@ -602,10 +593,8 @@ EventDeliveryManager::set_end_and_invalid_markers_(
   for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
     // thread-local index of (global) rank TODO@5g: [see above]
-    const thread lr_idx = rank % assigned_ranks.max_size;
-    assert( lr_idx < assigned_ranks.size );
-    if ( send_buffer_position.idx[ lr_idx ]
-      > send_buffer_position.begin[ lr_idx ] )
+    if ( send_buffer_position.idx( rank )
+      > send_buffer_position.begin( rank ) )
     {
       // set end marker at last position that contains a valid
       // entry. this could possibly be the last entry in this
@@ -615,15 +604,15 @@ EventDeliveryManager::set_end_and_invalid_markers_(
       // marker /at the last postition in a chunk/ leads effectively
       // to the same behaviour: afer this entry, the first entry of
       // the next chunk is read, i.e., the next element in the buffer
-      assert( send_buffer_position.idx[ lr_idx ] - 1
-        < send_buffer_position.end[ lr_idx ] );
-      send_buffer[ send_buffer_position.idx[ lr_idx ] - 1 ].set_end_marker();
+      assert( send_buffer_position.idx( rank ) - 1
+        < send_buffer_position.end( rank ) );
+      send_buffer[ send_buffer_position.idx( rank ) - 1 ].set_end_marker();
     }
     else
     {
-      assert( send_buffer_position.idx[ lr_idx ]
-        == send_buffer_position.begin[ lr_idx ] );
-      send_buffer[ send_buffer_position.begin[ lr_idx ] ].set_invalid_marker();
+      assert( send_buffer_position.idx( rank )
+        == send_buffer_position.begin( rank ) );
+      send_buffer[ send_buffer_position.begin( rank ) ].set_invalid_marker();
     }
   }
 }
@@ -641,9 +630,8 @@ EventDeliveryManager::set_complete_marker_spike_data_(
   {
     // use last entry for completion marker. for possible collision
     // with end marker, see comment in set_end_and_invalid_markers_
-    const thread lr_idx = target_rank % assigned_ranks.max_size;
     const thread idx =
-      send_buffer_position.end[ lr_idx ] - 1;
+      send_buffer_position.end( target_rank ) - 1;
     send_buffer[ idx ].set_complete_marker();
   }
 }
@@ -851,13 +839,12 @@ EventDeliveryManager::collocate_target_data_buffers_(
   // reset markers
   for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
-    const thread lr_idx = rank % assigned_ranks.max_size;
     // reset last entry to avoid accidentally communicating done
     // marker
-    send_buffer_target_data_[ send_buffer_position.end[ lr_idx ] - 1 ].reset_marker();
+    send_buffer_target_data_[ send_buffer_position.end( rank ) - 1 ].reset_marker();
     // set first entry to invalid to avoid accidentally reading
     // uninitialized parts of the receive buffer
-    send_buffer_target_data_[ send_buffer_position.begin[ lr_idx ] ].set_invalid_marker();
+    send_buffer_target_data_[ send_buffer_position.begin( rank ) ].set_invalid_marker();
   }
 
   while ( true )
@@ -870,8 +857,7 @@ EventDeliveryManager::collocate_target_data_buffers_(
         next_target_data );
     if ( valid_next_target_data ) // add valid entry to MPI buffer
     {
-      const unsigned int lr_idx = source_rank % assigned_ranks.max_size;
-      if ( send_buffer_position.idx[ lr_idx ] == send_buffer_position.end[ lr_idx ] )
+      if ( send_buffer_position.idx( source_rank ) == send_buffer_position.end( source_rank ) )
       {
         // entry does not fit in this part of the MPI buffer any more,
         // so we need to reject it
@@ -896,26 +882,24 @@ EventDeliveryManager::collocate_target_data_buffers_(
       }
       else
       {
-        send_buffer_target_data_[ send_buffer_position.idx[ lr_idx ] ] = next_target_data;
-        ++send_buffer_position.idx[ lr_idx ];
-        ++num_target_data_written;
+        send_buffer_target_data_[ send_buffer_position.idx( source_rank ) ] = next_target_data;
+        send_buffer_position.increase( source_rank );
       }
     }
     else // all connections have been processed
     {
       // mark end of valid data for each rank
-      for ( thread source_rank = assigned_ranks.begin;
-            source_rank < assigned_ranks.end;
-            ++source_rank )
+      for ( thread rank = assigned_ranks.begin;
+            rank < assigned_ranks.end;
+            ++rank )
       {
-        const thread lr_idx = source_rank % assigned_ranks.max_size;
-        if ( send_buffer_position.idx[ lr_idx ] > send_buffer_position.begin[ lr_idx ] )
+        if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
         {
-          send_buffer_target_data_[ send_buffer_position.idx[ lr_idx ] - 1 ].set_end_marker();
+          send_buffer_target_data_[ send_buffer_position.idx( rank ) - 1 ].set_end_marker();
         }
         else
         {
-          send_buffer_target_data_[ send_buffer_position.begin[ lr_idx ] ].set_invalid_marker();
+          send_buffer_target_data_[ send_buffer_position.begin( rank ) ].set_invalid_marker();
         }
       }
       return is_source_table_read;
@@ -928,12 +912,11 @@ nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid,
   const AssignedRanks& assigned_ranks,
   const SendBufferPosition& send_buffer_position )
 {
-  for ( thread source_rank = assigned_ranks.begin;
-        source_rank < assigned_ranks.end;
-        ++source_rank )
+  for ( thread rank = assigned_ranks.begin;
+        rank < assigned_ranks.end;
+        ++rank )
   {
-    const thread lr_idx = source_rank % assigned_ranks.max_size;
-    const thread idx = send_buffer_position.end[ lr_idx ] - 1;
+    const thread idx = send_buffer_position.end( rank ) - 1;
     send_buffer_target_data_[ idx ].set_complete_marker();
   }
 }

@@ -25,6 +25,7 @@
 
 // C++ includes:
 #include <cassert>
+#include <iostream>
 #include <vector>
 
 namespace nest
@@ -43,7 +44,7 @@ struct SourceTablePosition
   SourceTablePosition( const SourceTablePosition& rhs );
 
   template< typename T>
-  void wrap_position( const std::vector< std::vector< T >* >& sources );
+  void wrap_position( const std::vector< std::vector< std::vector< T >* >* >& sources );
 
   bool is_at_end() const;
 };
@@ -72,11 +73,12 @@ inline SourceTablePosition::SourceTablePosition(
 {
 }
 
+// TODO@5g: reorder ifs to make more intuitive -> Jakob
 template< typename T>
-inline void SourceTablePosition::wrap_position( const std::vector< std::vector< T >* >& sources )
+inline void SourceTablePosition::wrap_position( const std::vector< std::vector< std::vector< T >* >* >& sources )
 {
   // check for validity of indices and update if necessary
-  while ( true )
+  while ( true ) // TODO@5g: turn into while tid > 0 and syn_id > 0 and lcid > 0
   {
     if ( lcid < 0 )
     {
@@ -84,7 +86,7 @@ inline void SourceTablePosition::wrap_position( const std::vector< std::vector< 
       if ( syn_id >= 0 )
       {
         lcid =
-          sources[ syn_id ]
+          ( *sources[ tid ] )[ syn_id ]
           ->size() - 1;
         continue;
       }
@@ -94,10 +96,10 @@ inline void SourceTablePosition::wrap_position( const std::vector< std::vector< 
         if ( tid >= 0 )
         {
           syn_id =
-            sources.size() - 1;
+            ( *sources[ tid ] ).size() - 1;
           if ( syn_id >= 0 )
           {
-            lcid = sources[ syn_id ]->size() - 1;
+            lcid = ( *sources[ tid ] )[ syn_id ]->size() - 1;
           }
           continue;
         }
@@ -109,6 +111,10 @@ inline void SourceTablePosition::wrap_position( const std::vector< std::vector< 
           return;
         }
       }
+    }
+    else
+    {
+      return;
     }
   }
 }

@@ -376,8 +376,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
   while ( true )
   {
 
-    current_position.wrap_position( *sources_[ tid ] );
-    if ( not current_position.is_at_end() )
+    current_position.wrap_position( sources_ );
+    if ( current_position.is_at_end() )
     {
       return false; // reached the end of the sources table
     }

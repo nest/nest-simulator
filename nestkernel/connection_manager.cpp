@@ -1057,9 +1057,8 @@ nest::ConnectionManager::get_num_connections( const synindex syn_id ) const
   return num_connections;
 }
 
-// TODO@5g: params can be const? -> Jakob
 ArrayDatum
-nest::ConnectionManager::get_connections( DictionaryDatum params ) const
+nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
 {
   std::deque< ConnectionID > connectome;
 

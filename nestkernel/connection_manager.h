@@ -219,7 +219,7 @@ public:
    * The function then iterates all entries in source and collects the
    * connection IDs to all neurons in target.
    */
-  ArrayDatum get_connections( DictionaryDatum dict ) const;
+  ArrayDatum get_connections( const DictionaryDatum& params ) const;
 
   void get_connections( std::deque< ConnectionID >& connectome,
     TokenArray const* source,

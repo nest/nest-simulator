@@ -25,7 +25,6 @@ Initializer of PyNEST.
 
 import sys
 import os
-import copy
 
 # This is a workaround for readline import errors encountered with Anaconda
 # Python running on Ubuntu, when invoked from the terminal
@@ -203,7 +202,7 @@ def init(argv):
     # handle NEST's arguments here and pass it a modified copy, while
     # we leave the original list unchanged for further use by the user
     # or other modules.
-    nest_argv = copy.copy(argv)
+    nest_argv = argv[:]
 
     if "--quiet" in nest_argv:
         quiet = True
@@ -214,7 +213,7 @@ def init(argv):
         nest_argv.remove("--sli-debug")
         nest_argv.append("--debug")
 
-    initialized |= engine.init(nest_argv, __path__[0])
+    initialized = engine.init(nest_argv, __path__[0])
 
     if initialized:
         if not quiet:

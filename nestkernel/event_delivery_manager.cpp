@@ -204,17 +204,22 @@ EventDeliveryManager::configure_spike_data_buffers()
 {
   assert( kernel().connection_manager.get_min_delay() != 0 );
 
-  // void EventDeliveryManager::configure_spike_register() { ... }
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid ) // TODO@5g: separate function -> Jari
-  {
-    reset_spike_register_5g_( tid );
-    resize_spike_register_5g_( tid );
-  }
+  configure_spike_register();
 
   send_buffer_spike_data_.clear();
   send_buffer_off_grid_spike_data_.clear();
 
   resize_send_recv_buffers_spike_data_();
+}
+
+void
+EventDeliveryManager::configure_spike_register()
+{
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid ) 
+  {
+    reset_spike_register_5g_( tid );
+    resize_spike_register_5g_( tid );
+  }
 }
 
 void

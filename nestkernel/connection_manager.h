@@ -68,6 +68,7 @@ public:
 
   virtual void initialize();
   virtual void finalize();
+  virtual void delete_secondary_recv_buffer_pos();
 
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
@@ -574,7 +575,7 @@ private:
   /** A structure to count the number of synapses of a specific
    * type. Arranged in a 2d structure: threads|synapsetypes.
    */
-  std::vector< std::vector< size_t > > num_connections_; // TODO@5g: num_connections_ -> Jari
+  std::vector< std::vector< size_t > > num_connections_;
 
   /**
    * BeginDocumentation

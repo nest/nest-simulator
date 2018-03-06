@@ -320,10 +320,6 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     // gid and synapse-type id on this MPI rank
     std::vector< size_t > recv_buffer_position_by_rank(
       kernel().mpi_manager.get_num_processes(), 0 );
-    for ( size_t rank = 0; rank < recv_buffer_position_by_rank.size(); ++rank )
-    {
-      recv_buffer_position_by_rank[ rank ] = rank * kernel().mpi_manager.get_chunk_size_secondary_events();
-    }
 
     for ( std::set< std::pair< index, size_t > >::const_iterator cit = unique_secondary_source_gid_syn_id_.begin();
           cit != unique_secondary_source_gid_syn_id_.end(); ++cit )

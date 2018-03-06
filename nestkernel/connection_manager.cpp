@@ -131,7 +131,6 @@ nest::ConnectionManager::finalize()
 void
 nest::ConnectionManager::delete_secondary_recv_buffer_pos()
 {
-  // TODO@5g: abstract into function -> Jari
   for ( std::vector< std::vector< std::vector< size_t >* >* >::iterator it =
           secondary_recv_buffer_pos_.begin();
         it != secondary_recv_buffer_pos_.end();

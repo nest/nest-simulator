@@ -761,7 +761,7 @@ ConnectionManager::get_secondary_recv_buffer_position( const thread tid,
 inline size_t
 ConnectionManager::get_num_connections_( const thread tid, const synindex syn_id ) const
 {
-  return ( *connections_5g_[ tid ] )[ syn_id ]->get_num_connections( syn_id );
+  return ( *connections_5g_[ tid ] )[ syn_id ]->size();
 }
 
 inline index

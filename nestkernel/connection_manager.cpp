@@ -1183,7 +1183,7 @@ nest::ConnectionManager::get_connections(
       {
         // passing target_gid = 0 ignores target_gid while getting connections
         const size_t num_connections_in_thread =
-          connections->get_num_connections( syn_id );
+          connections->size();
         for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
         {
           const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
@@ -1276,7 +1276,7 @@ nest::ConnectionManager::get_connections(
       if ( connections != NULL )
       {
         const size_t num_connections_in_thread =
-          connections->get_num_connections( syn_id );
+          connections->size();
         for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
         {
           const index source_gid = source_table_.get_gid( tid, syn_id, lcid );

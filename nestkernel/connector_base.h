@@ -70,22 +70,28 @@ public:
   virtual ~ConnectorBase(){};
 
   /**
-   * Writes status of synapse type at position lcid to dictionary
-   * dict.
+   * Returns syn_id_ of synapse type of this Connector (index in list
+   * of synapse prototypes).
    */
-  virtual void get_synapse_status( const thread tid,
-    const index lcid, DictionaryDatum& dict ) const = 0;
+  virtual synindex get_syn_id() const = 0;
+  
+  /**
+   * Returns the number of connections in this Connector.
+   */
+  virtual size_t size() const = 0;
 
   /**
-   * Sets status of this synapse type at position lcid according to
+   * Writes status of connection at position lcid to dictionary dict.
+   */
+  virtual void get_synapse_status(
+    const thread tid, const index lcid, DictionaryDatum& dict ) const = 0;
+
+  /**
+   * Sets status of connection at position lcid according to
    * dictionary dict.
    */
-  virtual void set_synapse_status( const index lcid,
-    const DictionaryDatum& dict, ConnectorModel& cm ) = 0;
-
-  /** Returns the number of connections of type syn_id.
-   */
-  virtual size_t get_num_connections( const synindex syn_id ) const = 0;
+  virtual void set_synapse_status(
+    const index lcid, const DictionaryDatum& dict, ConnectorModel& cm ) = 0;
 
   /** Adds ConnectionID with given source and lcid to conns. If
    * target_gid is given, only add connection if target_gid matches
@@ -159,10 +165,6 @@ public:
     const double t_trig,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
-  /** Returns syn_id of synapse (index in list of prototypes).
-   */
-  virtual synindex get_syn_id() const = 0;
-
   /** Sorts connections be source.
    */
   virtual void
@@ -208,10 +210,6 @@ public:
 
   virtual void
   print_connections( const thread tid ) const = 0;
-
-  /** Returns the number of connections in this Connector.
-   */
-  virtual size_t size() const = 0;
 };
 
 /** Homogeneous connector, contains synapses of one particluar type (syn_id).
@@ -238,6 +236,18 @@ public:
     C_.clear();
   }
 
+  synindex
+  get_syn_id() const
+  {
+    return syn_id_;
+  }
+
+  size_t
+  size() const
+  {
+    return C_.size();
+  }
+
   void
   get_synapse_status( const thread tid,
     const index lcid, DictionaryDatum& dict ) const
@@ -261,27 +271,6 @@ public:
       dict, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
   }
 
-  size_t
-  get_num_connections( const synindex syn_id ) const
-  {
-    assert( syn_id == syn_id_ );
-    return C_.size();
-  }
-
-  size_t
-  get_num_connections( const index target_gid, const thread tid, const synindex syn_id ) const
-  {
-    size_t num_connections = 0;
-    assert( syn_id == syn_id_ );
-    for ( size_t i = 0; i < C_.size(); ++i )
-    {
-      if ( C_[ i ].get_target( tid )->get_gid() == target_gid )
-      {
-        ++num_connections;
-      }
-    }
-    return num_connections;
-  }
 
   Connector< ConnectionT >&
   push_back( const ConnectionT& c )
@@ -471,12 +460,6 @@ public:
             ->get_common_properties() );
   }
 
-  synindex
-  get_syn_id() const
-  {
-    return syn_id_;
-  }
-
   void
   reserve( const size_t count )
   {
@@ -566,12 +549,6 @@ public:
     }
     std::cout << std::endl;
     std::cout << "---------------------------------------\n";
-  }
-
-  size_t
-  size() const
-  {
-    return C_.size();
   }
 };
 

@@ -30,6 +30,7 @@
 
 // Includes from nestkernel:
 #include "connection_id.h"
+#include "connector_base.h"
 #include "event.h"
 #include "nest_types.h"
 
@@ -40,7 +41,6 @@
 namespace nest
 {
 class Node;
-class ConnectorBase;
 class ConnectorModel;
 
 /** This data structure stores the connections between local neurons
@@ -176,6 +176,21 @@ public:
     const index lcid );
 };
 
+inline void
+TargetTableDevices::get_synapse_status_from_device(
+  const thread tid, const index ldid, const synindex syn_id,
+  DictionaryDatum& dict, const index lcid ) const
+{
+  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
+}
+
+inline void
+TargetTableDevices::set_synapse_status_from_device(
+  const thread tid, const index ldid, const synindex syn_id,
+  ConnectorModel& cm, const DictionaryDatum& dict, const index lcid )
+{
+  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
+}
 } // namespace nest
 
 #endif

@@ -70,21 +70,18 @@ public:
   virtual ~ConnectorBase(){};
 
   /**
-   * Adds status of synapse of type syn_id at position lcid to dictionary dict.
+   * Writes status of synapse type at position lcid to dictionary
+   * dict.
    */
   virtual void get_synapse_status( const thread tid,
-    const synindex syn_id,
-    const index lcid,
-    DictionaryDatum& dict ) const = 0;
+    const index lcid, DictionaryDatum& dict ) const = 0;
 
   /**
-   * Sets status of synapse of type syn_id at position lcid according to
+   * Sets status of this synapse type at position lcid according to
    * dictionary dict.
    */
-  virtual void set_synapse_status( const synindex syn_id,
-				   const index lcid,
-				   const DictionaryDatum& dict,
-				   ConnectorModel& cm ) = 0;
+  virtual void set_synapse_status( const index lcid,
+    const DictionaryDatum& dict, ConnectorModel& cm ) = 0;
 
   /** Returns the number of connections of type syn_id.
    */
@@ -243,27 +240,23 @@ public:
 
   void
   get_synapse_status( const thread tid,
-		      const synindex syn_id,
-		      const index lcid,
-		      DictionaryDatum& dict ) const
+    const index lcid, DictionaryDatum& dict ) const
   {
-    assert( syn_id == syn_id_ );
     assert( lcid >= 0 && lcid < C_.size() );
+
     C_[ lcid ].get_status( dict );
 
-    // set target gid here, where tid is available; necessary for hpc
-    // synapses using TargetIdentifierIndex
+    // set target gid here, where tid is available
+    // necessary for hpc synapses using TargetIdentifierIndex
     def< long >( dict, names::target, C_[ lcid ].get_target( tid )->get_gid() );
   }
 
   void
-  set_synapse_status( const synindex syn_id,
-		      const index lcid,
-		      const DictionaryDatum& dict,
-		      ConnectorModel& cm )
+  set_synapse_status( const index lcid,
+    const DictionaryDatum& dict, ConnectorModel& cm )
   {
-    assert( syn_id == syn_id_ );
     assert( lcid >= 0 && lcid < C_.size() );
+ 
     C_[ lcid ].set_status(
       dict, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
   }

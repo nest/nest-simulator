@@ -112,7 +112,6 @@ private:
     std::string label_;    //!< A user-defined label for symbolic device names.
     bool time_in_steps_;   //!< Flag indicating if time is recorded in steps or ms
     ArrayDatum record_to_; //!< Array of recording backends to use
-    bool use_gid_in_filename_;
 
     Parameters_();
     void get( const RecordingDevice&, DictionaryDatum& ) const;

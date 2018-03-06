@@ -1497,7 +1497,7 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
   secondary_recv_buffer_pos_[ tid ]->resize(
     connections_5g_[ tid ]->size(), NULL );
 
-  const size_t chunk_size_secondary_events = kernel().mpi_manager.get_chunk_size_secondary_events();
+  const size_t chunk_size_secondary_events_in_int = kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
 
   // TODO@5g: loop over source_table_, not over connections_ -> but why?
   for ( synindex syn_id = 0; syn_id < connections_5g_[ tid ]->size();
@@ -1524,7 +1524,7 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
           const index gid = source_table_.get_gid( tid, syn_id, lcid );
 	  const thread rank = kernel().mpi_manager.get_process_id_of_gid( gid );
           ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] )[ lcid ] =
-	    buffer_pos_of_source_gid_syn_id_[ source_table_.pack_source_gid_and_syn_id( std::pair< index, synindex >( gid, syn_id ) ) ] + chunk_size_secondary_events * rank;
+	    buffer_pos_of_source_gid_syn_id_[ source_table_.pack_source_gid_and_syn_id( std::pair< index, synindex >( gid, syn_id ) ) ] + chunk_size_secondary_events_in_int * rank;
         }
       }
     }
@@ -1573,12 +1573,12 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid, const bool 
   // read waveform relaxation done marker from last position in every
   // chunk
   bool done = true;
-  const size_t chunk_size =
-    kernel().mpi_manager.get_chunk_size_secondary_events();
+  const size_t chunk_size_in_int =
+    kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
   for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes();
         ++rank )
   {
-    done = done && recv_buffer[ ( rank + 1 ) * chunk_size - 1 ];
+    done = done && recv_buffer[ ( rank + 1 ) * chunk_size_in_int - 1 ];
   }
   return done;
 }

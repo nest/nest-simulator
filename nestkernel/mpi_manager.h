@@ -212,9 +212,7 @@ public:
 
   unsigned int get_send_recv_count_spike_data_per_rank() const;
 
-  size_t get_chunk_size_secondary_events() const;
-
-  size_t get_buffer_size_secondary_events() const;
+  size_t get_buffer_size_secondary_events_in_int() const;
 
   void communicate_Alltoall( unsigned int* send_buffer,
     unsigned int* recv_buffer,
@@ -252,7 +250,10 @@ public:
   void set_buffer_size_target_data( size_t buffer_size );
   void set_buffer_size_spike_data( size_t buffer_size );
 
-  void set_chunk_size_secondary_events( const size_t chunk_size );
+  void set_chunk_size_secondary_events_in_int( const size_t chunk_size_in_int );
+  size_t get_chunk_size_secondary_events_in_int() const;
+
+  size_t recv_buffer_pos_to_send_buffer_pos_secondary_events( const size_t recv_buffer_pos, const thread source_rank );
 
   bool increase_buffer_size_target_data();
   bool increase_buffer_size_spike_data();
@@ -272,8 +273,8 @@ private:
                                        //communication of connections
   size_t buffer_size_spike_data_;      //!< total size of MPI buffer for
                                        //communication of spikes
-  size_t chunk_size_secondary_events_; //!< total size of MPI buffer for
-                                       //communication of secondary events
+  size_t chunk_size_secondary_events_in_int_; //!< total size of MPI buffer for
+                                              //communication of secondary events
   size_t max_buffer_size_target_data_; //!< maximal size of MPI buffer for
                                        //communication of connections
   size_t max_buffer_size_spike_data_;  //!< maximal size of MPI buffer for
@@ -504,15 +505,9 @@ MPIManager::get_send_recv_count_spike_data_per_rank() const
 }
 
 inline size_t
-MPIManager::get_chunk_size_secondary_events() const
+MPIManager::get_buffer_size_secondary_events_in_int() const
 {
-  return chunk_size_secondary_events_;
-}
-
-inline size_t
-MPIManager::get_buffer_size_secondary_events() const
-{
-  return chunk_size_secondary_events_ * get_num_processes();
+  return chunk_size_secondary_events_in_int_ * get_num_processes();
 }
 
 inline void
@@ -565,9 +560,23 @@ MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
 }
 
 inline void
-MPIManager::set_chunk_size_secondary_events( const size_t chunk_size )
+MPIManager::set_chunk_size_secondary_events_in_int( const size_t chunk_size_in_int )
 {
-  chunk_size_secondary_events_ = chunk_size;
+  assert( chunk_size_in_int >= 0 );
+  chunk_size_secondary_events_in_int_ = chunk_size_in_int;
+}
+
+inline size_t
+MPIManager::get_chunk_size_secondary_events_in_int() const
+{
+  return chunk_size_secondary_events_in_int_;
+}
+
+inline size_t
+MPIManager::recv_buffer_pos_to_send_buffer_pos_secondary_events( const size_t recv_buffer_pos, const thread source_rank )
+{
+  return get_rank() * get_chunk_size_secondary_events_in_int()
+          + ( recv_buffer_pos - source_rank * get_chunk_size_secondary_events_in_int() );
 }
 
 inline bool

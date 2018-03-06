@@ -55,6 +55,7 @@ MPI_Datatype MPI_Type< unsigned long >::type = MPI_UNSIGNED_LONG;
 
 #endif /* #ifdef HAVE_MPI */
 
+// TODO@5g: make sure all member variables are initialized
 nest::MPIManager::MPIManager()
   : num_processes_( 1 )
   , rank_( 0 )
@@ -63,6 +64,7 @@ nest::MPIManager::MPIManager()
   , use_mpi_( false )
   , buffer_size_target_data_( 1 )
   , buffer_size_spike_data_( 1 )
+  , chunk_size_secondary_events_in_int_( 0 )
   , max_buffer_size_target_data_( 16777216 )
   , max_buffer_size_spike_data_( 8388608 )
   , adaptive_target_buffers_( true )
@@ -201,7 +203,7 @@ nest::MPIManager::get_status( DictionaryDatum& dict )
   def< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
   def< size_t >( dict, names::buffer_size_target_data, buffer_size_target_data_ );
   def< size_t >( dict, names::buffer_size_spike_data, buffer_size_spike_data_ );
-  def< size_t >( dict, names::buffer_size_secondary_events, get_buffer_size_secondary_events() );
+  def< size_t >( dict, names::buffer_size_secondary_events, get_buffer_size_secondary_events_in_int() );
   def< size_t >( dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
   def< size_t >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
   def< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
@@ -773,10 +775,10 @@ nest::MPIManager::communicate_secondary_events_Alltoall(
   unsigned int* recv_buffer )
 {
   MPI_Alltoall( send_buffer,
-    chunk_size_secondary_events_,
+    chunk_size_secondary_events_in_int_,
     MPI_UNSIGNED,
     recv_buffer,
-    chunk_size_secondary_events_,
+    chunk_size_secondary_events_in_int_,
     MPI_UNSIGNED,
     comm );
 }

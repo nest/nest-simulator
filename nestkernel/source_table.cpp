@@ -339,7 +339,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     std::vector< long > max_uint_count(
       1, *std::max_element( recv_buffer_position_by_rank.begin(), recv_buffer_position_by_rank.end() ) );
     kernel().mpi_manager.communicate_Allreduce_max_in_place( max_uint_count );
-    kernel().mpi_manager.set_chunk_size_secondary_events(
+    kernel().mpi_manager.set_chunk_size_secondary_events_in_int(
       max_uint_count[ 0 ] + 1 );
 
   } // of omp single
@@ -495,9 +495,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
 
         // convert receive buffer position to send buffer position
         // according to buffer layout of MPIAlltoall
-        const size_t send_buffer_pos = // TODO@5g: kernel().mpi_manager.recv_buffer_pos_to_send_buffer_pos( recv_buffer_pos, source_rank )
-          kernel().mpi_manager.get_rank() * kernel().mpi_manager.get_chunk_size_secondary_events()
-          + ( recv_buffer_pos - source_rank * kernel().mpi_manager.get_chunk_size_secondary_events() );
+        const size_t send_buffer_pos = kernel().mpi_manager.recv_buffer_pos_to_send_buffer_pos_secondary_events( recv_buffer_pos, source_rank );
 
         reinterpret_cast< SecondaryTargetData* >( &next_target_data )
           ->set_send_buffer_pos( send_buffer_pos );

@@ -1506,7 +1506,7 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
   synindex last_syn_id = connections_5g_[ tid ]->size();
   for ( synindex syn_id = 0; syn_id < last_syn_id; ++syn_id )
   {
-    std::vector< size_t >* positions = ( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ];
+    std::vector< size_t >** positions = &( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ];
 
     if ( ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
     {
@@ -1514,11 +1514,12 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
            .model_manager.get_synapse_prototype( syn_id, tid )
            .is_primary() )
       {
-        positions = new std::vector< size_t >();
-        ( *positions ).resize( get_num_connections_( tid, syn_id ), 0 );
+        *positions = new std::vector< size_t >();
+        const size_t last_lcid = get_num_connections_( tid, syn_id );
+        ( **positions ).resize( last_lcid, 0 );
 
         for ( size_t lcid = 0;
-              lcid < get_num_connections_( tid, syn_id );
+              lcid < last_lcid;
               ++lcid )
         {
           // compute and store buffer position, this connection should
@@ -1526,7 +1527,7 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
           // TODO@5g: cleanup and make nice -> Jakob
           const index gid = source_table_.get_gid( tid, syn_id, lcid );
           const thread rank = kernel().mpi_manager.get_process_id_of_gid( gid );
-          ( *positions )[ lcid ] =
+          ( **positions )[ lcid ] =
               buffer_pos_of_source_gid_syn_id_[
                 source_table_.pack_source_gid_and_syn_id( gid, syn_id )
                 ] + chunk_size_secondary_events_in_int * rank;

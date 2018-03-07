@@ -287,9 +287,8 @@ class TestGrowthCurve(unittest.TestCase):
 
         # build
         self.pop = nest.Create('iaf_psc_alpha', 10)
-        self.local_nodes = nest.GetNodes([0],
-                                         {'model': 'iaf_psc_alpha'},
-                                         True)[0]
+        local_nodes = nest.GetNodes([0], {'model': 'iaf_psc_alpha'}, True)
+        self.local_nodes = local_nodes[0]
         self.spike_detector = nest.Create('spike_detector')
         nest.Connect(self.pop, self.spike_detector, 'all_to_all')
         noise = nest.Create('poisson_generator')

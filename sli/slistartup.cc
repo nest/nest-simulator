@@ -281,6 +281,8 @@ SLIStartup::SLIStartup( int argc, char** argv )
   for ( int i = 0; i < argc; ++i )
   {
     StringDatum* sd = new StringDatum( argv[ i ] );
+    ad.push_back( Token( sd ) );
+
     if ( *sd == "-d" || *sd == "--debug" )
     {
       debug_ = true;
@@ -333,8 +335,6 @@ SLIStartup::SLIStartup( int argc, char** argv )
       verbosity_ = SLIInterpreter::M_QUIET;
       continue;
     }
-
-    ad.push_back( Token( sd ) );
   }
   targs = ad;
 }

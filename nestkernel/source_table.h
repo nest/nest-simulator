@@ -83,13 +83,6 @@ private:
   //! vectors
   std::vector< std::vector< size_t >* > last_sorted_source_;
 
-  //! set of unique sources & synapse types, required to determine
-  //! secondary events MPI buffer positions
-  //! could be moved to SourceTable::compute_buffer_pos_for_unique_secondary_sources
-  //! to automatically drop the table once it is not needed anymore.
-  //! TODO@5g: discuss if we want to drop this
-  std::set< std::pair< index, size_t > > unique_secondary_source_gid_syn_id_;
-
 public:
   SourceTable();
   ~SourceTable();

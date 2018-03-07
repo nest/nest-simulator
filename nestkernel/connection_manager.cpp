@@ -1503,8 +1503,8 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
   const size_t chunk_size_secondary_events_in_int = kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
 
   // TODO@5g: loop over source_table_, not over connections_ -> but why?
-  const synindex syn_ids_end = connections_5g_[ tid ]->size();
-  for ( synindex syn_id = 0; syn_id < syn_ids_end; ++syn_id )
+  const synindex syn_id_end = connections_5g_[ tid ]->size();
+  for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
   {
     std::vector< size_t >*& positions = ( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ];
 
@@ -1522,12 +1522,12 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
         // read secondary events from
         for ( size_t lcid = 0; lcid < lcid_end; ++lcid )
         {
-          const index gid = source_table_.get_gid( tid, syn_id, lcid );
-          const thread rank = kernel().mpi_manager.get_process_id_of_gid( gid );
+          const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
+          const thread source_rank = kernel().mpi_manager.get_process_id_of_gid( source_gid );
           ( *positions )[ lcid ] =
               buffer_pos_of_source_gid_syn_id_[
-                source_table_.pack_source_gid_and_syn_id( gid, syn_id )
-                ] + chunk_size_secondary_events_in_int * rank;
+                source_table_.pack_source_gid_and_syn_id( source_gid, syn_id )
+                ] + chunk_size_secondary_events_in_int * source_rank;
         }
       }
     }
@@ -1541,8 +1541,8 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid, const bool 
 {
   const Time stamp = kernel().simulation_manager.get_slice_origin() + Time::step( 1 );
   const std::vector< std::vector< size_t >* >& positions_tid = ( *secondary_recv_buffer_pos_[ tid ] );
-  const synindex syn_ids_end = positions_tid.size();
-  for ( synindex syn_id = 0; syn_id < syn_ids_end; ++syn_id )
+  const synindex syn_id_end = positions_tid.size();
+  for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
   {
     if ( not called_from_wfr_update or ( called_from_wfr_update and kernel().model_manager.get_synapse_prototypes( tid )[ syn_id ]->supports_wfr() ) )
     {

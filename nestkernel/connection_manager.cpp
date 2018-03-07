@@ -1403,8 +1403,8 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
       if ( start_lcid != invalid_index )
       {
         ( *( *connections_5g_[ tid ] )[ syn_id ] )
-          .get_target_gids( tid, start_lcid, targets[ i ],
-                            post_synaptic_element );
+          .get_target_gids( tid, start_lcid, post_synaptic_element,
+                            targets[ i ] );
       }
 
       // find targets in unsorted part of connections

@@ -428,10 +428,13 @@ nest::ConnBuilder::single_connect_( index sgid,
 
   if ( param_dicts_.empty() ) // indicates we have no synapse params
   {
+    const DictionaryDatum params = new Dictionary;  // empty parameter dictionary
+                                                    // required by connect() calls
+
     if ( default_weight_and_delay_ )
     {
       kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_id_ );
+        sgid, &target, target_thread, synapse_model_id_, params );
     }
     else if ( default_weight_ )
     {
@@ -439,6 +442,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         &target,
         target_thread,
         synapse_model_id_,
+        params,
         delay_->value_double( target_thread, rng ) );
     }
     else if ( default_delay_ )
@@ -447,6 +451,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         &target,
         target_thread,
         synapse_model_id_,
+        params,
         numerics::nan,
         weight_->value_double( target_thread, rng ) );
     }
@@ -455,7 +460,7 @@ nest::ConnBuilder::single_connect_( index sgid,
       double delay = delay_->value_double( target_thread, rng );
       double weight = weight_->value_double( target_thread, rng );
       kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_id_, delay, weight );
+        sgid, &target, target_thread, synapse_model_id_, params, delay, weight );
     }
   }
   else

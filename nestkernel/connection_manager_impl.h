@@ -68,8 +68,8 @@ ConnectionManager::send_5g( const thread tid,
   ( *connections_5g_[ tid ] )[ syn_id ]->send( tid,
     syn_id,
     lcid,
-    e,
-    cm );
+    cm,
+    e );
 }
 
 inline void

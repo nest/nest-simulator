@@ -23,6 +23,9 @@
 #ifndef TARGET_DATA_H
 #define TARGET_DATA_H
 
+// C++ includes:
+#include <limits>
+
 // Includes from nestkernel:
 #include "nest_types.h"
 #include "target.h"
@@ -39,13 +42,15 @@ namespace nest
 class TargetDataBase
 {
 private:
-  unsigned int source_lid_ : 19;  //!< local id of presynaptic neuron
-  unsigned int source_tid_ : 10; //!< thread index of presynaptic neuron
-  unsigned int marker_ : 2;
-  bool is_primary_ : 1;
+  static const unsigned int default_marker_ = 0;
   static const unsigned int complete_marker_ = 1;
   static const unsigned int end_marker_ = 2;
   static const unsigned int invalid_marker_ = 3;
+
+  unsigned int source_lid_ : 19; //!< local id of presynaptic neuron
+  unsigned int source_tid_ : 10; //!< thread index of presynaptic neuron
+  unsigned int marker_ : 2;
+  bool is_primary_ : 1;
 
 protected:
   TargetDataBase();
@@ -63,14 +68,14 @@ public:
   void set_source_tid( const thread source_tid );
   index get_source_lid() const;
   thread get_source_tid() const;
-  void is_primary( const bool is_primary );
+  void set_is_primary( const bool is_primary );
   bool is_primary() const;
 };
 
 inline TargetDataBase::TargetDataBase()
   : source_lid_( 0 )
   , source_tid_( 0 )
-  , marker_( 0 )
+  , marker_( default_marker_ )
   , is_primary_( true )
 {
 }
@@ -82,7 +87,7 @@ inline TargetDataBase::~TargetDataBase()
 inline void
 TargetDataBase::reset_marker()
 {
-  marker_ = 0;
+  marker_ = default_marker_;
 }
 
 inline void
@@ -148,7 +153,7 @@ TargetDataBase::get_source_tid() const
 }
 
 inline void
-TargetDataBase::is_primary( const bool is_primary )
+TargetDataBase::set_is_primary( const bool is_primary )
 {
   is_primary_ = is_primary;
 }
@@ -163,7 +168,6 @@ class TargetData : public TargetDataBase
 {
 private:
   unsigned int lcid_ : 27;
-  // do not use just tid_ here as this variable is already declared in base class
   unsigned int tid_ : 10;
   unsigned int syn_id_ : 8;
 
@@ -237,15 +241,15 @@ public:
 
 inline SecondaryTargetData::SecondaryTargetData()
   : TargetDataBase()
-  , send_buffer_pos_( 4294967296 - 1 )
-  , syn_id_( 64 - 1)
+  , send_buffer_pos_( std::numeric_limits< unsigned int >::max() - 1 )
+  , syn_id_( std::numeric_limits< unsigned char >::max() - 1 )
 {
 }
 
 inline void
 SecondaryTargetData::set_send_buffer_pos( const size_t pos )
 {
-  assert( pos < 4294967296 );
+  assert( pos < std::numeric_limits< unsigned int >::max() );
   send_buffer_pos_ = pos;
 }
 
@@ -258,6 +262,7 @@ SecondaryTargetData::get_send_buffer_pos() const
 inline void
 SecondaryTargetData::set_syn_id( const synindex syn_id )
 {
+  assert( syn_id < std::numeric_limits< unsigned char >::max() );
   syn_id_ = syn_id;
 }
 

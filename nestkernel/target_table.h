@@ -74,32 +74,32 @@ public:
   //! delete data structure
   void finalize();
 
-  //! adjust targets table's size to number of local nodes
+  //! adjust targets_ to number of local nodes
   void prepare( const thread tid );
 
-  //! add entry to target table
+  //! add entry to targets_
   void add_target( const thread tid, const thread target_rank, const TargetData& target_data );
 
   //! returns all targets of a neuron. used to fill spike_register_5g_
-  //! in event_delivery_manager
+  //! in EventDeliveryManager
   const std::vector< Target >& get_targets( const thread tid,
     const index lid ) const;
 
   //! returns all MPI send buffer positions of a neuron. used to fill
-  //! MPI buffer in event_delivery_manager
+  //! MPI buffer in EventDeliveryManager
   const std::vector< size_t >& get_secondary_send_buffer_positions(
     const thread tid,
     const index lid,
     const synindex syn_id ) const;
 
-  //! clear all entries
+  //! clear all entries of targets_
   void clear( const thread tid );
 
   //! removes identical MPI send buffer positions to avoid writing
   //! data multiple times
   void compress_secondary_send_buffer_pos( const thread tid );
 
-  //! helper functions
+  //! helper functions // TODO@5g: remove
   void print_targets( const thread tid ) const;
   void print_secondary_send_buffer_pos( const thread tid ) const;
 };
@@ -114,6 +114,7 @@ inline const std::vector< size_t >&
 TargetTable::get_secondary_send_buffer_positions( const thread tid,
   const index lid, const synindex syn_id ) const
 {
+  assert( syn_id < ( *secondary_send_buffer_pos_[ tid ] )[ lid ].size() );
   return ( *secondary_send_buffer_pos_[ tid ] )[ lid ][ syn_id ];
 }
 

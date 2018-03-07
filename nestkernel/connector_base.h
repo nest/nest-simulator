@@ -52,6 +52,8 @@
 namespace nest
 {
 
+//TODO@5g: can we remove syn_id from all functions? -> Susi
+
 /**
  * Base clase to allow storing Connectors for different synapse types
  * in vectors. We define the interface here to avoid casting.
@@ -60,34 +62,34 @@ class ConnectorBase
 {
 
 public:
-#ifndef DISABLE_COUNTS
-  unsigned int call_count;
-#endif
-
    // destructor needs to be declared virtual to avoid undefined
    // behaviour, avoid possible memory leak and needs to be defined to
    // avoid linker error, see, e.g., Meyers, S. (2005) p40ff
   virtual ~ConnectorBase(){};
 
-  /** Adds status of synapse of type syn_id at position lcid to
-   * dictionary d.
+  /**
+   * Returns syn_id_ of synapse type of this Connector (index in list
+   * of synapse prototypes).
    */
-  virtual void get_synapse_status( const thread tid,
-    const synindex syn_id,
-    DictionaryDatum& d,
-    const index lcid ) const = 0;
+  virtual synindex get_syn_id() const = 0;
+  
+  /**
+   * Returns the number of connections in this Connector.
+   */
+  virtual size_t size() const = 0;
 
-  /** Sets status of synapse of type syn_id at position lcid according
-   * to dictionary d.
+  /**
+   * Writes status of connection at position lcid to dictionary dict.
    */
-  virtual void set_synapse_status( const synindex syn_id,
-    ConnectorModel& cm,
-    const DictionaryDatum& d,
-    const index lcid ) = 0;
+  virtual void get_synapse_status(
+    const thread tid, const index lcid, DictionaryDatum& dict ) const = 0;
 
-  /** Returns the number of connections of type syn_id.
+  /**
+   * Sets status of connection at position lcid according to
+   * dictionary dict.
    */
-  virtual size_t get_num_connections( const synindex syn_id ) const = 0;
+  virtual void set_synapse_status(
+    const index lcid, const DictionaryDatum& dict, ConnectorModel& cm ) = 0;
 
   /** Adds ConnectionID with given source and lcid to conns. If
    * target_gid is given, only add connection if target_gid matches
@@ -124,8 +126,8 @@ public:
    */
   virtual void get_target_gids( const thread tid,
     const index start_lcid,
-    std::vector< index >& target_gids,
-    const std::string post_synaptic_element) const = 0;
+    const std::string post_synaptic_element,
+    std::vector< index >& target_gids ) const = 0;
 
   /** For a given lcid, returns the gid of the corresponding target.
    */
@@ -134,18 +136,18 @@ public:
 
   /** Sends an event to all connections.
    */
-  virtual void send_to_all( Event& e,
-    const thread tid,
-    const std::vector< ConnectorModel* >& cm ) = 0;
+  virtual void send_to_all( const thread tid,
+    const std::vector< ConnectorModel* >& cm,
+    Event& e ) = 0;
 
   /** Sends an event to the specified connection, returning whether
    * the subsequent connection belongs to the same source.
    */
-  virtual bool send( const thread tid,
+  virtual index send( const thread tid,
     const synindex syn_id,
-    const unsigned int lcid,
-    Event& e,
-    const std::vector< ConnectorModel* >& cm ) = 0;
+    const index lcid,
+    const std::vector< ConnectorModel* >& cm,
+    Event& e ) = 0;
 
   virtual void send_weight_event( const thread tid,
     const synindex syn_id,
@@ -160,10 +162,6 @@ public:
     const std::vector< spikecounter >& dopa_spikes,
     const double t_trig,
     const std::vector< ConnectorModel* >& cm ) = 0;
-
-  /** Returns syn_id of synapse (index in list of prototypes).
-   */
-  virtual synindex get_syn_id() const = 0;
 
   /** Sorts connections be source.
    */
@@ -210,10 +208,6 @@ public:
 
   virtual void
   print_connections( const thread tid ) const = 0;
-
-  /** Returns the number of connections in this Connector.
-   */
-  virtual size_t size() const = 0;
 };
 
 /** Homogeneous connector, contains synapses of one particluar type (syn_id).
@@ -222,16 +216,15 @@ template < typename ConnectionT >
 class Connector : public ConnectorBase
 {
 private:
+
   std::vector< ConnectionT > C_;
   const synindex syn_id_;
 
 public:
+
   explicit Connector( const synindex syn_id )
     : syn_id_( syn_id )
   {
-#ifndef DISABLE_COUNTS
-    call_count = 0;
-#endif
   }
 
   ~Connector()
@@ -239,51 +232,41 @@ public:
     C_.clear();
   }
 
-  void
-  get_synapse_status( const thread tid, const synindex syn_id, DictionaryDatum& d, const index lcid ) const
+  synindex
+  get_syn_id() const
   {
-    assert( syn_id == syn_id_ );
-    assert( lcid >= 0 && lcid < C_.size() );
-    C_[ lcid ].get_status( d );
-
-    // set target gid here, where tid is available; necessary for hpc
-    // synapses using TargetIdentifierIndex
-    def< long >( d, names::target, C_[ lcid ].get_target( tid )->get_gid() );
-  }
-
-  void
-  set_synapse_status( const synindex syn_id,
-    ConnectorModel& cm,
-    const DictionaryDatum& d,
-    const index lcid )
-  {
-    assert( syn_id == syn_id_ );
-    assert( lcid >= 0 && lcid < C_.size() );
-    C_[ lcid ].set_status(
-      d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
+    return syn_id_;
   }
 
   size_t
-  get_num_connections( const synindex syn_id ) const
+  size() const
   {
-    assert( syn_id == syn_id_ );
     return C_.size();
   }
 
-  size_t
-  get_num_connections( const index target_gid, const thread tid, const synindex syn_id ) const
+  void
+  get_synapse_status( const thread tid,
+    const index lcid, DictionaryDatum& dict ) const
   {
-    size_t num_connections = 0;
-    assert( syn_id == syn_id_ );
-    for ( size_t i = 0; i < C_.size(); ++i )
-    {
-      if ( C_[ i ].get_target( tid )->get_gid() == target_gid )
-      {
-        ++num_connections;
-      }
-    }
-    return num_connections;
+    assert( lcid >= 0 && lcid < C_.size() );
+
+    C_[ lcid ].get_status( dict );
+
+    // set target gid here, where tid is available
+    // necessary for hpc synapses using TargetIdentifierIndex
+    def< long >( dict, names::target, C_[ lcid ].get_target( tid )->get_gid() );
   }
+
+  void
+  set_synapse_status( const index lcid,
+    const DictionaryDatum& dict, ConnectorModel& cm )
+  {
+    assert( lcid >= 0 && lcid < C_.size() );
+ 
+    C_[ lcid ].set_status(
+      dict, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
+  }
+
 
   Connector< ConnectionT >&
   push_back( const ConnectionT& c )
@@ -298,17 +281,19 @@ public:
     return *this;
   }
 
+  // TODO@5g: is this used and if so, why? -> Susi
   ConnectionT&
-  at( const size_t i )
+  at( const size_t lcid )
   {
-    if ( i >= C_.size() || i < 0 )
+    if ( lcid >= C_.size() || lcid < 0 )
     {
       throw std::out_of_range( String::compose(
-        "Invalid attempt to access a connection: index %1 out of range.", i ) );
+        "Invalid attempt to access a connection: index %1 out of range.", lcid ) );
     }
-    return C_[ i ];
+    return C_[ lcid ]; // ?? should check via std::vector.at( )
   }
 
+  // TODO@5g: can the two functions below be unified? -> Susi
   void
   get_connection( const index source_gid,
     const index target_gid,
@@ -322,10 +307,10 @@ public:
     if ( not C_[ lcid ].is_disabled() )
     {
       if ( synapse_label == UNLABELED_CONNECTION
-        || C_[ lcid ].get_label() == synapse_label )
+        or C_[ lcid ].get_label() == synapse_label )
       {
         const index current_target_gid = C_[ lcid ].get_target( tid )->get_gid();
-        if ( current_target_gid == target_gid || target_gid == 0 )
+        if ( current_target_gid == target_gid or target_gid == 0 )
         {
           conns.push_back( ConnectionDatum(
             ConnectionID( source_gid, current_target_gid, tid, syn_id, lcid ) ) );
@@ -343,18 +328,18 @@ public:
     std::deque< ConnectionID >& conns ) const
   {
     assert( syn_id_ == syn_id );
-    for ( size_t i = 0; i < C_.size(); ++i )
+    for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
     {
-      if ( not C_[ i ].is_disabled() )
+      if ( not C_[ lcid ].is_disabled() )
       {
-        const index current_target_gid = C_[ i ].get_target( tid )->get_gid();
-        if ( current_target_gid == target_gid || target_gid == 0 )
+        const index current_target_gid = C_[ lcid ].get_target( tid )->get_gid();
+        if ( current_target_gid == target_gid or target_gid == 0 )
         {
           if ( synapse_label == UNLABELED_CONNECTION
-               || C_[ i ].get_label() == synapse_label )
+               or C_[ lcid ].get_label() == synapse_label )
           {
             conns.push_back( ConnectionDatum(
-                               ConnectionID( source_gid, current_target_gid, tid, syn_id, i ) ) );
+                               ConnectionID( source_gid, current_target_gid, tid, syn_id, lcid ) ) );
           }
         }
       }
@@ -379,8 +364,8 @@ public:
   void
   get_target_gids( const thread tid,
     const index start_lcid,
-    std::vector< index >& target_gids,
-    const std::string post_synaptic_element ) const
+    const std::string post_synaptic_element,
+    std::vector< index >& target_gids ) const
   {
     index lcid = start_lcid;
     while ( true )
@@ -408,29 +393,26 @@ public:
   }
 
   void
-  send_to_all( Event& e, const thread tid, const std::vector< ConnectorModel* >& cm )
+  send_to_all( const thread tid, const std::vector< ConnectorModel* >& cm, Event& e )
   {
-    typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
-    for ( size_t i = 0; i < C_.size(); ++i )
+    for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
     {
-      e.set_port( i ); // TODO@5g: does this make sense?
-      assert( not C_[ i ].is_disabled() );
-      C_[ i ].send( e,
+      e.set_port( lcid );
+      assert( not C_[ lcid ].is_disabled() );
+      C_[ lcid ].send( e,
         tid,
-        cp );
+        static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
+          ->get_common_properties() );
     }
   }
 
-  bool
+  index
   send( const thread tid,
     const synindex syn_id,
-    const unsigned int lcid,
-    Event& e,
-    const std::vector< ConnectorModel* >& cm )
+    const index lcid,
+    const std::vector< ConnectorModel* >& cm ,
+    Event& e )
   {
-#ifndef DISABLE_COUNTS
-    ++call_count;
-#endif
 
     typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
 
@@ -453,7 +435,7 @@ public:
       ++lcid_offset;
     }
 
-    return true;
+    return 1 + lcid_offset; // event was delivered at least to one target
   }
 
   // implemented in connector_base_impl.h
@@ -482,12 +464,6 @@ public:
             ->get_common_properties() );
   }
 
-  synindex
-  get_syn_id() const
-  {
-    return syn_id_;
-  }
-
   void
   reserve( const size_t count )
   {
@@ -500,7 +476,7 @@ public:
     sort::sort( sources, C_ );
   }
 
-  void
+  void // TODO@5g: -> has_subsequent_targets
   set_has_source_subsequent_targets( const index lcid,
     const bool subsequent_targets )
   {
@@ -577,12 +553,6 @@ public:
     }
     std::cout << std::endl;
     std::cout << "---------------------------------------\n";
-  }
-
-  size_t
-  size() const
-  {
-    return C_.size();
   }
 };
 

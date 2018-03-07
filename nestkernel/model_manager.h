@@ -472,6 +472,7 @@ ModelManager::get_num_node_models() const
 inline size_t
 ModelManager::get_num_synapse_prototypes() const
 {
+  assert( prototypes_[ 0 ].size() <= invalid_synindex );
   return prototypes_[ 0 ].size();
 }
 
@@ -498,6 +499,7 @@ ModelManager::delete_secondary_events_prototypes()
   {
     for ( std::map< synindex, SecondaryEvent* >::iterator iit = (*it)->begin(); iit != (*it)->end(); ++iit )
     {
+      ( *iit->second ).clear_supported_syn_ids();
       delete iit->second;
     }
     (*it)->clear();

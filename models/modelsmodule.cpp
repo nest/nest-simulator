@@ -661,7 +661,8 @@ ModelsModule::init( SLIInterpreter* )
     .register_connection_model< BernoulliConnection< TargetIdentifierPtrRport > >(
       "bernoulli_synapse" );
 
-  kernel().connection_manager.resize_connections(); // TODO@5g: why needed? comment
+  // resize all connection tables to number of registered synapses
+  kernel().connection_manager.resize_connections();
 }
 
 } // namespace nest

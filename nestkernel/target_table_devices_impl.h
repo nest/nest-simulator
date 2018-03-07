@@ -37,69 +37,23 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
   const index s_gid,
   const thread tid,
   const synindex syn_id,
-  const double d,
-  const double w )
-{
-  const index lid = kernel().vp_manager.gid_to_lid( s_gid );
-  assert( lid < target_to_devices_[ tid ]->size() );
-  // make sure this neuron has support for all synapse types
-  ( *target_to_devices_[ tid ] )[ lid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
-  // add connection to device
-  kernel()
-    .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection_5g(
-      source, target, &( *target_to_devices_[ tid ] )[ lid ], syn_id, d, w );
-}
-
-inline void
-nest::TargetTableDevices::add_connection_to_device( Node& source,
-  Node& target,
-  const index s_gid,
-  const thread tid,
-  const synindex syn_id,
   const DictionaryDatum& p,
   const double d,
   const double w )
 {
   const index lid = kernel().vp_manager.gid_to_lid( s_gid );
   assert( lid < target_to_devices_[ tid ]->size() );
-  // make sure this neuron has support for all synapse types
-  ( *target_to_devices_[ tid ] )[ lid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
-  // add connection to device
+  assert( syn_id < ( *target_to_devices_[ tid ] )[ lid ].size() );
+
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
     .add_connection_5g(
       source, target, &( *target_to_devices_[ tid ] )[ lid ], syn_id, p, d, w );
 }
 
-// TODO@5g: unify these two functions below?
 inline void
 nest::TargetTableDevices::add_connection_from_device( Node& source,
   Node& target,
-  const index s_gid,
-  const thread tid,
-  const synindex syn_id,
-  const double d,
-  const double w )
-{
-  const index ldid = source.get_local_device_id();
-  assert( ldid != invalid_index );
-  assert( ldid < target_from_devices_[ tid ]->size() );
-  // make sure this device has support for all synapse types
-  ( *target_from_devices_[ tid ] )[ ldid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
-  // add connection from device
-  kernel()
-    .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection_5g(
-      source, target, &( *target_from_devices_[ tid ] )[ ldid ], syn_id, d, w );
-  // store gid of sending device
-  ( *sending_devices_gids_[ tid ] )[ ldid ] = source.get_gid();
-}
-
-inline void
-nest::TargetTableDevices::add_connection_from_device( Node& source,
-  Node& target,
-  const index s_gid,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& p,
@@ -109,13 +63,13 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
   const index ldid = source.get_local_device_id();
   assert( ldid != invalid_index );
   assert( ldid < target_from_devices_[ tid ]->size() );
-  // make sure this device has support for all synapse types
-  ( *target_from_devices_[ tid ] )[ ldid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
-  // add connection from device
+  assert( syn_id < ( *target_from_devices_[ tid ] )[ ldid ].size() );
+
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
     .add_connection_5g(
       source, target, &( *target_from_devices_[ tid ] )[ ldid ], syn_id, p, d, w );
+
   // store gid of sending device
   ( *sending_devices_gids_[ tid ] )[ ldid ] = source.get_gid();
 }
@@ -132,11 +86,12 @@ nest::TargetTableDevices::send_to_device( const thread tid,
   {
     if ( *it != NULL )
     {
-      ( *it )->send_to_all( e, tid, cm );
+      ( *it )->send_to_all( tid, cm, e);
     }
   }
 }
 
+// TODO@5g: move to .h?
 inline void
 nest::TargetTableDevices::send_from_device( const thread tid,
   const index ldid,
@@ -148,7 +103,7 @@ nest::TargetTableDevices::send_from_device( const thread tid,
   {
     if ( *it != NULL )
     {
-      ( *it )->send_to_all( e, tid, cm );
+      ( *it )->send_to_all( tid, cm, e );
     }
   }
 }
@@ -157,21 +112,14 @@ inline void
 nest::TargetTableDevices::get_synapse_status_to_device( const thread tid,
   const index source_gid,
   const synindex syn_id,
-  DictionaryDatum& d,
-  const port p ) const
+  DictionaryDatum& dict,
+  const index lcid ) const
 {
   const index lid = kernel().vp_manager.gid_to_lid( source_gid );
-  ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_synapse_status( tid, syn_id, d, p );
-}
-
-inline void
-nest::TargetTableDevices::get_synapse_status_from_device( const thread tid,
-  const index ldid,
-  const synindex syn_id,
-  DictionaryDatum& d,
-  const port p ) const
-{
-  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->get_synapse_status( tid, syn_id, d, p );
+  if ( ( *target_to_devices_[ tid ] )[ lid ][ syn_id ] != NULL )
+  {
+    ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
+  }
 }
 
 inline void
@@ -179,23 +127,14 @@ nest::TargetTableDevices::set_synapse_status_to_device( const thread tid,
   const index source_gid,
   const synindex syn_id,
   ConnectorModel& cm,
-  const DictionaryDatum& d,
-  const port p )
+  const DictionaryDatum& dict,
+  const index lcid )
 {
   const index lid = kernel().vp_manager.gid_to_lid( source_gid );
-  ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->set_synapse_status( syn_id, cm, d, p );
-}
-
-inline void
-nest::TargetTableDevices::set_synapse_status_from_device( const thread tid,
-  const index ldid,
-  const synindex syn_id,
-  ConnectorModel& cm,
-  const DictionaryDatum& d,
-  const port p )
-{
-  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->set_synapse_status(
-    syn_id, cm, d, p );
+  if ( ( *target_to_devices_[ tid ] )[ lid ][ syn_id ] != NULL )
+  {
+    ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
+  }
 }
 
 #endif /* TARGET_TABLE_DEVICES_IMPL_H */

@@ -431,14 +431,6 @@ nest::SimulationManager::prepare()
 
   kernel().model_manager.create_secondary_events_prototypes();
 
-  // TODO@5g-merge: is not called here in upstream
-  // TODO@5g-merge: exchanged with create_secondary_events_prototypes
-
-  // check whether waveform relaxation is used on any MPI process;
-  // needs to be called before update_connection_intrastructure_since
-  // it resizes coefficient arrays for secondary events
-  kernel().node_manager.check_wfr_use();
-
   // we have to do enter_runtime after prepare_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime
@@ -448,6 +440,11 @@ nest::SimulationManager::prepare()
       * kernel().connection_manager.get_min_delay();
     kernel().music_manager.enter_runtime( tick );
   }
+
+  // check whether waveform relaxation is used on any MPI process;
+  // needs to be called before update_connection_intrastructure_since
+  // it resizes coefficient arrays for secondary events
+  kernel().node_manager.check_wfr_use();
 
   if ( kernel().node_manager.have_nodes_changed()
     || kernel().connection_manager.have_connections_changed() )
@@ -556,10 +553,6 @@ nest::SimulationManager::run( Time const& t )
 
   // Reset profiling timers and counters within event_delivery_manager
   kernel().event_delivery_manager.reset_timers_counters();
-
-  // TODO@5g-merge: is only called here in upstream
-  // Check whether waveform relaxation is used on any MPI process
-  // kernel().node_manager.check_wfr_use();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -736,11 +729,11 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 #pragma omp single
   {
     kernel().connection_manager.compute_target_data_buffer_size();
-    kernel().event_delivery_manager.configure_target_data_buffers();
+    kernel().event_delivery_manager.resize_send_recv_buffers_target_data();
 
     // check whether primary and secondary connections exists on any
     // compute node
-    kernel().connection_manager.check_primary_connections_exist();
+    kernel().connection_manager.sync_has_primary_connections();
     kernel().connection_manager.check_secondary_connections_exist();
   }
 
@@ -807,9 +800,9 @@ nest::SimulationManager::update_()
       }
 
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
-        && ( clock_.get_steps() + from_step_ )
-            % kernel().sp_manager.get_structural_plasticity_update_interval()
-          == 0 )
+	   and ( ( clock_.get_steps() + from_step_ )
+		 % kernel().sp_manager.get_structural_plasticity_update_interval()
+		 == 0 ) )
       {
         for ( std::vector< Node* >::const_iterator i =
                 kernel().node_manager.get_nodes_on_thread( tid ).begin();
@@ -833,11 +826,15 @@ nest::SimulationManager::update_()
           ( *i )->decay_synaptic_elements_vacant();
         }
 
+	// after structural plasticity has created and deleted
+	// connections, update the connection infrastructure; implies
+	// complete removal of presynaptic part and reconstruction
+	// from postsynaptic data
         update_connection_infrastructure( tid );
 
       } // of structural plasticity
 
-      if ( from_step_ == 0 ) // deliver only at beginning of slice
+      if ( from_step_ == 0 )
       {
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
@@ -998,13 +995,10 @@ nest::SimulationManager::update_()
       }
 #endif
 
-      // gather only at end of slice
-      if ( to_step_ == kernel().connection_manager.get_min_delay() ) // gather
-                                                                     // only at
-                                                                     // end of
-                                                                     // slice
+      // gather and deliver only at end of slice, i.e., end of min_delay step
+      if ( to_step_ == kernel().connection_manager.get_min_delay() )
       {
-        if ( kernel().connection_manager.primary_connections_exist() )
+        if ( kernel().connection_manager.has_primary_connections() )
         {
           kernel().event_delivery_manager.gather_spike_data( tid );
         }

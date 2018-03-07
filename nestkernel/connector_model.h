@@ -63,12 +63,6 @@ public:
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
     const synindex syn_id,
-    const double delay = NAN,
-    const double weight = NAN ) = 0;
-  virtual void add_connection_5g( Node& src,
-    Node& tgt,
-    std::vector< ConnectorBase* >* hetconn,
-    const synindex syn_id,
     const DictionaryDatum& d,
     const double delay = NAN,
     const double weight = NAN ) = 0;
@@ -173,12 +167,6 @@ public:
   {
   }
 
-  void add_connection_5g( Node& src,
-    Node& tgt,
-    std::vector< ConnectorBase* >* hetconn,
-    const synindex syn_id,
-    const double delay,
-    const double weight );
   void add_connection_5g( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,

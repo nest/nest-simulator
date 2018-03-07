@@ -23,20 +23,30 @@
 #ifndef SOURCE_TABLE_POSITION_H
 #define SOURCE_TABLE_POSITION_H
 
+// C++ includes:
+#include <cassert>
+#include <iostream>
+#include <vector>
+
 namespace nest
 {
 
 /**
- * Tuple to store position in 3d vector of sources.
+ * Three-tuple to store position in 3d vector of sources.
  **/
 struct SourceTablePosition
 {
   long tid;       //!< thread index
-  long syn_id; //!< synapse-type index
+  long syn_id;    //!< synapse-type index
   long lcid;      //!< local connection index
   SourceTablePosition();
   SourceTablePosition( const long tid, const long syn_id, const long lcid );
   SourceTablePosition( const SourceTablePosition& rhs );
+
+  template< typename T>
+  void wrap_position( const std::vector< std::vector< std::vector< T >* >* >& sources );
+
+  bool is_at_end() const;
 };
 
 inline SourceTablePosition::SourceTablePosition()
@@ -63,6 +73,64 @@ inline SourceTablePosition::SourceTablePosition(
 {
 }
 
+// TODO@5g: reorder ifs to make more intuitive -> Jakob
+template< typename T>
+inline void SourceTablePosition::wrap_position( const std::vector< std::vector< std::vector< T >* >* >& sources )
+{
+  // check for validity of indices and update if necessary
+  while ( true ) // TODO@5g: turn into while tid > 0 and syn_id > 0 and lcid > 0
+  {
+    if ( lcid < 0 )
+    {
+      --syn_id;
+      if ( syn_id >= 0 )
+      {
+        lcid =
+          ( *sources[ tid ] )[ syn_id ]
+          ->size() - 1;
+        continue;
+      }
+      else
+      {
+        --tid;
+        if ( tid >= 0 )
+        {
+          syn_id =
+            ( *sources[ tid ] ).size() - 1;
+          if ( syn_id >= 0 )
+          {
+            lcid = ( *sources[ tid ] )[ syn_id ]->size() - 1;
+          }
+          continue;
+        }
+        else
+        {
+          assert( tid < 0 );
+          assert( syn_id < 0 );
+          assert( lcid < 0 );
+          return;
+        }
+      }
+    }
+    else
+    {
+      return;
+    }
+  }
+}
+
+inline bool SourceTablePosition::is_at_end() const
+{
+  if ( tid < 0 and syn_id < 0 and lcid < 0 )
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
 inline bool operator==( const SourceTablePosition& lhs,
   const SourceTablePosition& rhs )
 {
@@ -73,7 +141,7 @@ inline bool operator==( const SourceTablePosition& lhs,
 inline bool operator!=( const SourceTablePosition& lhs,
   const SourceTablePosition& rhs )
 {
-  return !operator==( lhs, rhs );
+  return not operator==( lhs, rhs );
 }
 
 inline bool operator<( const SourceTablePosition& lhs,
@@ -105,13 +173,13 @@ inline bool operator>( const SourceTablePosition& lhs,
 inline bool operator<=( const SourceTablePosition& lhs,
   const SourceTablePosition& rhs )
 {
-  return !operator>( lhs, rhs );
+  return not operator>( lhs, rhs );
 }
 
 inline bool operator>=( const SourceTablePosition& lhs,
   const SourceTablePosition& rhs )
 {
-  return !operator<( lhs, rhs );
+  return not operator<( lhs, rhs );
 }
 
 } // namespace nest

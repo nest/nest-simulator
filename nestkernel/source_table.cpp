@@ -68,7 +68,7 @@ nest::SourceTable::finalize()
 {
   if ( not is_cleared() )
   {
-    for ( size_t tid = 0; tid < sources_.size(); ++tid )
+    for ( thread tid = 0; tid < static_cast< thread >( sources_.size() ); ++tid )
     {
       clear( tid );
     }
@@ -148,9 +148,11 @@ nest::SourceTable::clean( const thread tid )
   // we can savely delete all larger entries since they will not be
   // touched any more.
   const SourceTablePosition max_position = find_maximal_position();
-  // we need to distinguish whether we are in the vector corresponding
-  // to max position or above. we can delete all entries above the
-  // maximal position, otherwise we need to respect to indices.
+
+  // if this thread corresponds to max_position's thread, we can only
+  // delete part of the sources table, with indices larger than those
+  // in max_position; if this thread is larger than max_positions's
+  // thread, we can delete all sources; otherwise we do nothing
   if ( max_position.tid == tid )
   {
     for ( synindex syn_id = max_position.syn_id;
@@ -204,6 +206,7 @@ nest::SourceTable::clean( const thread tid )
   else
   {
     // do nothing
+    assert( tid < max_position.tid );
   }
 }
 
@@ -231,27 +234,27 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
     return invalid_index;
   }
 
-  index i = max_size - 1;
+  index lcid = max_size - 1;
 
-  while ( ( *( *sources_[ tid ] )[ syn_id ] )[ i ].is_disabled() && i >= 0 )
+  while ( ( *( *sources_[ tid ] )[ syn_id ] )[ lcid ].is_disabled() && lcid >= 0 )
   {
-    --i;
+    --lcid;
   }
-  ++i; // i marks first disabled source, but the while loop only exits
-       // if i points at a not disabled element, hence we need to
-       // increase it by one again
+  ++lcid; // lcid marks first disabled source, but the while loop only
+	  // exits if lcid points at a not disabled element, hence we
+	  // need to increase it by one again
 
   ( *( *sources_[ tid ] )[ syn_id ] )
-    .erase( ( *( *sources_[ tid ] )[ syn_id ] ).begin() + i,
+    .erase( ( *( *sources_[ tid ] )[ syn_id ] ).begin() + lcid,
       ( *( *sources_[ tid ] )[ syn_id ] ).end() );
 
-  if ( i == max_size )
+  if ( lcid == max_size )
   {
     return invalid_index;
   }
   else
   {
-    return i;
+    return lcid;
   }
 }
 
@@ -281,14 +284,19 @@ void
 nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread tid,
   std::map< index, size_t >& buffer_pos_of_source_gid_syn_id )
 {
+  // set of unique sources & synapse types, required to determine
+  // secondary events MPI buffer positions
+  // initialized and deleted by thread 0 in this method
+  static std::set< std::pair< index, size_t > >* unique_secondary_source_gid_syn_id;
 #pragma omp single
   {
-    unique_secondary_source_gid_syn_id_.clear();
+    unique_secondary_source_gid_syn_id = new std::set< std::pair< index, size_t > >( );
   }
 
-  // collect all unique combinations of source gid and syn id across
-  // all threads on this process; makes sure secondary events are not
-  // duplicated for targets on the same process but different threads
+  // collect all unique pairs of source gid and synapse-type id
+  // corresponding to continuous-data connections on this MPI rank;
+  // using a set makes sure secondary events are not duplicated for
+  // targets on the same process but different threads
   for ( size_t syn_id = 0; syn_id < sources_[ tid ]->size();
         ++syn_id )
   {
@@ -296,14 +304,14 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
          .model_manager.get_synapse_prototype( syn_id, tid )
          .is_primary() )
     {
-      for ( std::vector< Source >::const_iterator cit =
+      for ( std::vector< Source >::const_iterator source_cit =
               ( *sources_[ tid ] )[ syn_id ]->begin();
-            cit != ( *sources_[ tid ] )[ syn_id ]->end();
-            ++cit )
+            source_cit != ( *sources_[ tid ] )[ syn_id ]->end();
+            ++source_cit )
       {
 #pragma omp critical
         {
-          unique_secondary_source_gid_syn_id_.insert( std::pair< index, synindex >( cit->get_gid(), syn_id ) );
+          ( *unique_secondary_source_gid_syn_id ).insert( std::make_pair( source_cit->get_gid(), syn_id ) );
         }
       }
     }
@@ -312,24 +320,20 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
 
 #pragma omp single
   {
-    // compute offsets in receive buffer for all unique combinations
-    // of source gid and synapse type
+    // compute receive buffer positions for all unique pairs of source
+    // gid and synapse-type id on this MPI rank
     std::vector< size_t > recv_buffer_position_by_rank(
       kernel().mpi_manager.get_num_processes(), 0 );
-    for ( size_t rank = 0; rank < recv_buffer_position_by_rank.size(); ++rank )
-    {
-      recv_buffer_position_by_rank[ rank ] = rank * kernel().mpi_manager.get_chunk_size_secondary_events();
-    }
 
-    for ( std::set< std::pair< index, size_t > >::const_iterator cit = unique_secondary_source_gid_syn_id_.begin();
-          cit != unique_secondary_source_gid_syn_id_.end(); ++cit )
+    for ( std::set< std::pair< index, size_t > >::const_iterator cit = ( *unique_secondary_source_gid_syn_id ).begin();
+          cit != ( *unique_secondary_source_gid_syn_id ).end(); ++cit )
     {
       const thread source_rank = kernel().mpi_manager.get_process_id_of_gid( cit->first );
       const size_t event_size = kernel()
         .model_manager.get_secondary_event_prototype( cit->second, tid )
         .size();
 
-      buffer_pos_of_source_gid_syn_id.insert( std::pair< index, size_t >( pack_source_gid_and_syn_id( *cit ), recv_buffer_position_by_rank[ source_rank ] ) );
+      buffer_pos_of_source_gid_syn_id.insert( std::make_pair( pack_source_gid_and_syn_id( cit->first, cit->second ), recv_buffer_position_by_rank[ source_rank ] ) );
       recv_buffer_position_by_rank[ source_rank ] += event_size;
     }
 
@@ -339,9 +343,9 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     std::vector< long > max_uint_count(
       1, *std::max_element( recv_buffer_position_by_rank.begin(), recv_buffer_position_by_rank.end() ) );
     kernel().mpi_manager.communicate_Allreduce_max_in_place( max_uint_count );
-    kernel().mpi_manager.set_chunk_size_secondary_events(
+    kernel().mpi_manager.set_chunk_size_secondary_events_in_int(
       max_uint_count[ 0 ] + 1 );
-
+    delete unique_secondary_source_gid_syn_id;
   } // of omp single
 }
 
@@ -362,50 +366,28 @@ bool
 nest::SourceTable::get_next_target_data( const thread tid,
   const thread rank_start,
   const thread rank_end,
-  thread& target_rank,
+  thread& source_rank,
   TargetData& next_target_data )
 {
   SourceTablePosition& current_position = *current_positions_[ tid ];
+
   // we stay in this loop either until we can return a valid
   // TargetData object or we have reached the end of the sources table
   while ( true )
   {
-    // check for validity of indices and update if necessary
-    if ( current_position.lcid < 0 )
+
+    current_position.wrap_position( sources_ );
+    if ( current_position.is_at_end() )
     {
-      --current_position.syn_id;
-      if ( current_position.syn_id >= 0 )
-      {
-        current_position.lcid =
-          ( *sources_[ current_position.tid ] )[ current_position.syn_id ]
-            ->size() - 1;
-        continue;
-      }
-      else
-      {
-        --current_position.tid;
-        if ( current_position.tid >= 0 )
-        {
-          current_position.syn_id =
-            ( *sources_[ current_position.tid ] ).size() - 1;
-          if ( current_position.syn_id >= 0 )
-          {
-            current_position.lcid =
-              ( *sources_[ current_position.tid ] )[ current_position
-                                                       .syn_id ]->size() - 1;
-          }
-          continue;
-        }
-        else
-        {
-          assert( current_position.tid < 0 );
-          assert( current_position.syn_id < 0 );
-          assert( current_position.lcid < 0 );
-          return false; // reached the end of the sources table
-        }
-      }
+      return false; // reached the end of the sources table
     }
 
+    // if structural plasticity has created connections that have not
+    // been sorted, stop reading after reaching first source that was
+    // sorted; assumes that presynaptic structure for sorted sources
+    // still exist and information about unsorted sources can be
+    // incrementally added
+    // TODO@5g: currently not used -> can be removed?
     if ( current_position.lcid
         < static_cast< long >(
             ( *last_sorted_source_[ current_position.tid ] )[ current_position
@@ -415,6 +397,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
         < ( *( *sources_[ current_position.tid ] )[ current_position
                                                       .syn_id ] ).size() )
     {
+      assert( false );
       return false;
     }
 
@@ -422,7 +405,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
     const Source& const_current_source =
       ( *( *sources_[ current_position.tid ] )[ current_position.syn_id ] )
         [ current_position.lcid ];
-    if ( const_current_source.is_processed() || const_current_source.is_disabled() )
+
+    if ( const_current_source.is_processed() or const_current_source.is_disabled() )
     {
       // looks like we've processed this already, let's
       // continue
@@ -430,13 +414,13 @@ nest::SourceTable::get_next_target_data( const thread tid,
       continue;
     }
 
-    // TODO@5g: this really is the source rank, isn't it? rename?
-    target_rank =
+    source_rank =
           kernel().mpi_manager.get_process_id_of_gid( const_current_source.get_gid() );
-    // now we need to determine whether this thread is
-    // responsible for this part of the MPI buffer; if not we
-    // just continue with the next iteration of the loop
-    if ( target_rank < rank_start || target_rank >= rank_end )
+
+    // determine whether this thread is responsible for this part of
+    // the MPI buffer; if not we just continue with the next iteration
+    // of the loop
+    if ( source_rank < rank_start or source_rank >= rank_end )
     {
       --current_position.lcid;
       continue;
@@ -450,7 +434,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
     current_source.set_processed( true );
 
     // we need to set the marker whether the entry following this
-    // entry, if existent, has the same source
+    // entry, if existent, has the same source; start by assuming it
+    // has a different source, only change if necessary
     kernel().connection_manager.set_has_source_subsequent_targets(
       current_position.tid,
       current_position.syn_id,
@@ -460,7 +445,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
              < static_cast< long >(
                  ( *sources_[ current_position.tid ] )[ current_position
                                                           .syn_id ]->size() )
-           && ( *( *sources_[ current_position.tid ] )
+           and ( *( *sources_[ current_position.tid ] )
                   [ current_position.syn_id ] )[ current_position.lcid + 1 ]
                 .get_gid() == current_source.get_gid() ) )
     {
@@ -471,21 +456,21 @@ nest::SourceTable::get_next_target_data( const thread tid,
         true );
     }
 
-    // we decrease the counter without returning a TargetData if the
-    // entry preceeding this entry has the same source, but only if it
-    // was not processed yet
-    if ( current_position.lcid - 1 > -1
-      && ( *( *sources_[ current_position.tid ] )
-             [ current_position.syn_id ] )[ current_position.lcid - 1 ].get_gid()
-        == current_source.get_gid()
-      && not( *( *sources_[ current_position.tid ] )
-                [ current_position.syn_id ] )[ current_position.lcid - 1 ]
-              .is_processed() )
+    // decrease the position without returning a TargetData if the
+    // entry preceeding this entry has the same source, but only if
+    // the preceeding entry was not processed yet
+    if (
+	( current_position.lcid - 1 >= 0 )
+	and ( ( *( *sources_[ current_position.tid ] )
+	      [ current_position.syn_id ] )[ current_position.lcid - 1 ].get_gid()
+	      == current_source.get_gid() )
+	and ( not ( *( *sources_[ current_position.tid ] )
+		    [ current_position.syn_id ] )[ current_position.lcid - 1 ].is_processed() )
+	)
     {
       --current_position.lcid;
       continue;
     }
-
     // otherwise we return a valid TargetData
     else
     {
@@ -496,8 +481,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
         kernel().vp_manager.suggest_vp( current_source.get_gid() ) ) );
       if ( current_source.is_primary() )
       {
-        next_target_data.is_primary( true );
-        // we store the thread index of the sources table, not our own tid
+        next_target_data.set_is_primary( true );
+        // we store the thread index of the source table, not our own tid!
         next_target_data.set_tid( current_position.tid );
         next_target_data.set_syn_id(
           current_position.syn_id );
@@ -505,7 +490,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
       }
       else
       {
-        next_target_data.is_primary( false );
+        next_target_data.set_is_primary( false );
         const size_t recv_buffer_pos =
           kernel().connection_manager.get_secondary_recv_buffer_position(
             current_position.tid,
@@ -514,9 +499,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
 
         // convert receive buffer position to send buffer position
         // according to buffer layout of MPIAlltoall
-        const size_t send_buffer_pos =
-          kernel().mpi_manager.get_rank() * kernel().mpi_manager.get_chunk_size_secondary_events()
-          + ( recv_buffer_pos - target_rank * kernel().mpi_manager.get_chunk_size_secondary_events() );
+        const size_t send_buffer_pos = kernel().mpi_manager.recv_buffer_pos_to_send_buffer_pos_secondary_events( recv_buffer_pos, source_rank );
 
         reinterpret_cast< SecondaryTargetData* >( &next_target_data )
           ->set_send_buffer_pos( send_buffer_pos );

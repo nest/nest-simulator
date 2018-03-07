@@ -50,39 +50,7 @@ namespace nest
 typedef MPIManager::OffGridSpike OffGridSpike;
 
 class TargetData;
-
-/**
- * Struct to simplify keeping track of write position in MPI buffer
- * while collocating spikes.
- */
-struct SendBufferPosition
-{
-  size_t num_spike_data_written;
-  std::vector< unsigned int > idx;
-  std::vector< unsigned int > begin;
-  std::vector< unsigned int > end;
-  SendBufferPosition( const AssignedRanks& assigned_ranks,
-    const unsigned int send_recv_count_per_rank );
-};
-
-inline SendBufferPosition::SendBufferPosition(
-  const AssignedRanks& assigned_ranks,
-  const unsigned int send_recv_count_per_rank )
-  : num_spike_data_written( 0 )
-{
-  idx.resize( assigned_ranks.size );
-  begin.resize( assigned_ranks.size );
-  end.resize( assigned_ranks.size );
-  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
-  {
-    // thread-local index of (global) rank
-    const thread lr_idx = rank % assigned_ranks.max_size;
-    assert( lr_idx < assigned_ranks.size );
-    idx[ lr_idx ] = rank * send_recv_count_per_rank;
-    begin[ lr_idx ] = rank * send_recv_count_per_rank;
-    end[ lr_idx ] = ( rank + 1 ) * send_recv_count_per_rank;
-  }
-}
+class SendBufferPosition;
 
 class EventDeliveryManager : public ManagerInterface
 {
@@ -224,7 +192,9 @@ public:
    */
   void configure_spike_data_buffers();
 
-  void configure_target_data_buffers();
+  void configure_spike_register();
+
+  void resize_send_recv_buffers_target_data();
 
   void configure_secondary_buffers();
 
@@ -292,7 +262,7 @@ public:
 private:
 
   template< typename SpikeDataT >
-  void gather_spike_data_( const thread tid, const unsigned int& send_recv_count_in_int, std::vector< SpikeDataT >& send_buffer, std::vector< SpikeDataT >& recv_buffer );
+  void gather_spike_data_( const thread tid, std::vector< SpikeDataT >& send_buffer, std::vector< SpikeDataT >& recv_buffer );
 
   void resize_send_recv_buffers_spike_data_();
 
@@ -322,6 +292,7 @@ private:
    */
   template < typename SpikeDataT >
   void set_complete_marker_spike_data_( const AssignedRanks& assigned_ranks,
+   const SendBufferPosition& send_buffer_position,
     std::vector< SpikeDataT >& send_buffer );
 
   /**
@@ -363,13 +334,17 @@ private:
    * presynaptic to postsynaptic side. Builds TargetData objects from
    * SourceTable and connections information.
    */
-  bool collocate_target_data_buffers_( const thread tid );
+  bool collocate_target_data_buffers_( const thread tid,
+    const AssignedRanks& assigned_ranks,
+    SendBufferPosition& send_buffer_position );
 
   /**
    * Sets marker in MPI buffer that signals end of communication
    * across MPI ranks.
    */
-  void set_complete_marker_target_data_( const thread tid );
+  void set_complete_marker_target_data_( const thread tid,
+    const AssignedRanks& assigned_ranks,
+    const SendBufferPosition& send_buffer_position );
 
   /**
    * Reads TargetData objects from MPI buffers and creates Target
@@ -477,13 +452,6 @@ private:
   TargetData* send_buffer_target_data_;
   TargetData* recv_buffer_target_data_;
 
-  unsigned int send_recv_count_spike_data_per_rank_;
-  unsigned int send_recv_count_spike_data_in_int_per_rank_;
-  unsigned int send_recv_count_off_grid_spike_data_in_int_per_rank_;
-
-  unsigned int send_recv_count_target_data_per_rank_;
-  unsigned int send_recv_count_target_data_in_int_per_rank_;
-
   bool buffer_size_target_data_has_changed_; //!< whether size of MPI buffer for
                                              //communication of connections was
                                              //changed
@@ -491,7 +459,7 @@ private:
                                              //communication of spikes was
                                              //changed
 
-  std::vector< unsigned int > completed_count_;
+  std::vector< unsigned int > completed_count_; // TODO@5g: rename? -> Jakob
 };
 
 inline void

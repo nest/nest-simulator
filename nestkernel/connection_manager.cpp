@@ -1500,31 +1500,33 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
   const size_t chunk_size_secondary_events_in_int = kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
 
   // TODO@5g: loop over source_table_, not over connections_ -> but why?
-  for ( synindex syn_id = 0; syn_id < connections_5g_[ tid ]->size();
-        ++syn_id )
+  synindex last_syn_id = connections_5g_[ tid ]->size();
+  for ( synindex syn_id = 0; syn_id < last_syn_id; ++syn_id )
   {
+    std::vector< size_t >* positions = ( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ];
+
     if ( ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
     {
       if ( not kernel()
            .model_manager.get_synapse_prototype( syn_id, tid )
            .is_primary() )
       {
-        ( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] =
-          new std::vector< size_t >();
-        ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] )
-          .resize( get_num_connections_( tid, syn_id ), 0 );
+        positions = new std::vector< size_t >();
+        ( *positions ).resize( get_num_connections_( tid, syn_id ), 0 );
 
         for ( size_t lcid = 0;
               lcid < get_num_connections_( tid, syn_id );
               ++lcid )
         {
-	  // compute and store buffer position, this connection should
-	  // read secondary events from
-	  // TODO@5g: cleanup and make nice -> Jakob
+          // compute and store buffer position, this connection should
+          // read secondary events from
+          // TODO@5g: cleanup and make nice -> Jakob
           const index gid = source_table_.get_gid( tid, syn_id, lcid );
-	  const thread rank = kernel().mpi_manager.get_process_id_of_gid( gid );
-          ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] )[ lcid ] =
-	    buffer_pos_of_source_gid_syn_id_[ source_table_.pack_source_gid_and_syn_id( std::pair< index, synindex >( gid, syn_id ) ) ] + chunk_size_secondary_events_in_int * rank;
+          const thread rank = kernel().mpi_manager.get_process_id_of_gid( gid );
+          ( *positions )[ lcid ] =
+              buffer_pos_of_source_gid_syn_id_[
+                source_table_.pack_source_gid_and_syn_id( gid, syn_id )
+                ] + chunk_size_secondary_events_in_int * rank;
         }
       }
     }
@@ -1537,21 +1539,24 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid, const bool 
   std::vector< unsigned int >& recv_buffer )
 {
   const Time stamp = kernel().simulation_manager.get_slice_origin() + Time::step( 1 );
+  const std::vector< std::vector< size_t >* >& tid_positions = ( *secondary_recv_buffer_pos_[ tid ] );
+  const synindex last_syn_id = tid_positions.size();
   for ( synindex syn_id = 0;
-        syn_id < ( *secondary_recv_buffer_pos_[ tid ] ).size();
+        syn_id < last_syn_id;
         ++syn_id )
   {
     if ( not called_from_wfr_update or ( called_from_wfr_update and kernel().model_manager.get_synapse_prototypes( tid )[ syn_id ]->supports_wfr() ) )
     {
-      if ( ( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] != NULL )
+      if ( tid_positions[ syn_id ] != NULL )
       {
         SecondaryEvent& prototype = kernel().model_manager.get_secondary_event_prototype( syn_id, tid );
 
         index lcid = 0;
-        while ( lcid < ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] ).size() )
+        const size_t last_lcid = ( *tid_positions[ syn_id ] ).size();
+        while ( lcid < last_lcid )
         {
           std::vector< unsigned int >::iterator readpos = recv_buffer.begin()
-            + ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] )[ lcid ];
+            + ( *tid_positions[ syn_id ] )[ lcid ];
           prototype << readpos;
           prototype.set_stamp( stamp );
 

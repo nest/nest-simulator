@@ -300,14 +300,14 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
          .model_manager.get_synapse_prototype( syn_id, tid )
          .is_primary() )
     {
-      for ( std::vector< Source >::const_iterator cit =
+      for ( std::vector< Source >::const_iterator source_cit =
               ( *sources_[ tid ] )[ syn_id ]->begin();
-            cit != ( *sources_[ tid ] )[ syn_id ]->end();
-            ++cit )
+            source_cit != ( *sources_[ tid ] )[ syn_id ]->end();
+            ++source_cit )
       {
 #pragma omp critical
         {
-          unique_secondary_source_gid_syn_id_.insert( std::pair< index, synindex >( cit->get_gid(), syn_id ) );
+          unique_secondary_source_gid_syn_id_.insert( std::make_pair( source_cit->get_gid(), syn_id ) );
         }
       }
     }
@@ -329,7 +329,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
         .model_manager.get_secondary_event_prototype( cit->second, tid )
         .size();
 
-      buffer_pos_of_source_gid_syn_id.insert( std::pair< index, size_t >( pack_source_gid_and_syn_id( *cit ), recv_buffer_position_by_rank[ source_rank ] ) );
+      buffer_pos_of_source_gid_syn_id.insert( std::make_pair( pack_source_gid_and_syn_id( cit->first, cit->second ), recv_buffer_position_by_rank[ source_rank ] ) );
       recv_buffer_position_by_rank[ source_rank ] += event_size;
     }
 

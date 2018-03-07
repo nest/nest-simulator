@@ -49,54 +49,74 @@ M_ERROR setverbosity
 
 modeldict keys{
 
-    /model Set
+  /model Set
 
-    % check if both membrane potential can be measured....
-    /record_VM model GetDefaults /recordables known def
-    record_VM {	model GetDefaults /recordables get { /V_m eq {true} if } forall count 1 eq {; /record_VM true def} {/record_VM false def} ifelse } if
+  % check if both membrane potential can be measured....
+  /model_defaults model GetDefaults def
+  
+  model_defaults /recordables known
+  {
+    /recordable_VM 
+      model GetDefaults /recordables get /V_m MemberQ
+    def
+  }
+  {
+    /recordable_VM false def
+  }
+  ifelse
+  
+  % .... and I_e can be set
+  /has_IE model GetDefaults /I_e known def
 
-    % .... and I_e can be set
-    model GetDefaults /I_e known record_VM and
-    {
-    
-	ResetKernel
+  recordable_VM has_IE and
+  {    
+    model =only (\t: ) =only
 
-	% special case for Poisson Neuron
-	model /pp_psc_delta eq { model << /c_2 0.0 >> SetDefaults} if 
+	  ResetKernel
+
+	  % special case
+	  model /pp_psc_delta eq { model << /c_2 0.0 >> SetDefaults} if 
 	
-	model =only (\t: ) =only
+	  model Create /n1 Set
+	  model Create /n2 Set
 
-	%executive
-	
-	model Create /n1 Set
-	model Create /n2 Set
+	  %take into account synaptic delay
+	  /dc_generator <</start 99. >> Create /dc Set
 
-	%take into account synaptic delay
-	/dc_generator <</start 99. >> Create /dc Set
+	  % todo: make sure that this procedure is 'stopped' if and 
+	  % only if current events are not supported!
+	  {
+	    dc n1 Connect
+	    dc << /amplitude amp >> SetStatus
+      100 Simulate
 
-	% todo: make sure that this procedure is 'stopped' if and only if current events are not supported!
-	{dc n1 Connect
+     	n2 << /I_e amp >> SetStatus
+ 	    300 Simulate
 
-	dc << /amplitude amp >> SetStatus
-
-	100 Simulate
-	n2 << /I_e amp >> SetStatus
-
-	300 Simulate
-
-	% compare final membrane potentials
-	n1 GetStatus /V_m get n2 GetStatus /V_m get eq dup {(pass) =}{ (failed: unequal voltages) =  executive } ifelse res exch append /res Set
-
-	} stopped {  clear (DC not allowed) = errordict /newerror false put  } if % skip models that don't support current event
-    }
-    if   % model GetDefaults /I_e known record_VM and
+	    % compare final membrane potentials
+	    /V1 n1 GetStatus /V_m get def 
+	    /V2 n2 GetStatus /V_m get def
+	    V1 V2 eq 
+	    dup 
+	      { (pass) = V1 =only ( vs ) =only V2 = }
+	      { (failed: unequal voltages ) =only 
+	        V1 =only ( vs ) =only V2 = } 
+	    ifelse 
+	    res exch append /res Set
+	  } 
+	  stopped 
+	  {  
+	    clear (DC not allowed) = 
+	    errordict /newerror false put  
+	  } 
+	  if % skip models that don't support current event
+  }
+  if % recordable_VM has_IE and
 } forall % modeldict keys
 
 % combine results, one bool left on stack
 res First res Rest { and } Fold
+} 
+assert_or_die
 
-
-} assert_or_die
 endusing
-
-

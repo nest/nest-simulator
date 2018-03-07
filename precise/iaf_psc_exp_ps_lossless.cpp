@@ -113,26 +113,18 @@ void nest::iaf_psc_exp_ps_lossless::Parameters_::get(DictionaryDatum & d) const
 
 double nest::iaf_psc_exp_ps_lossless::Parameters_::set(const DictionaryDatum & d)
 {
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
+  const double ELold = E_L_;
+  updateValue< double >( d, names::E_L, E_L_ );
+  const double delta_EL = E_L_ - ELold;
+
   updateValue<double>(d, names::tau_m, tau_m_);
   updateValue<double>(d, names::tau_syn_ex, tau_ex_);
   updateValue<double>(d, names::tau_syn_in, tau_in_);
   updateValue<double>(d, names::C_m, c_m_);
   updateValue<double>(d, names::t_ref, t_ref_);
   updateValue<double>(d, names::I_e, I_e_);
-
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
-  const double ELold = E_L_;
-  updateValue<double>(d, names::E_L, E_L_);
-  const double delta_EL = E_L_ - ELold;
-
-  if(updateValue<double>(d, names::V_reset, U_reset_))
-  {
-    U_reset_ -= E_L_;
-  }
-  else
-  {
-    U_reset_ -= delta_EL;
-  }
 
   if (updateValue<double>(d, names::V_th, U_th_))
   {
@@ -151,7 +143,16 @@ double nest::iaf_psc_exp_ps_lossless::Parameters_::set(const DictionaryDatum & d
   {
     U_min_ -= delta_EL;
   }
-  
+
+  if(updateValue<double>(d, names::V_reset, U_reset_))
+  {
+    U_reset_ -= E_L_;
+  }
+  else
+  {
+    U_reset_ -= delta_EL;
+  }
+
   if ( U_reset_ >= U_th_ )
     throw BadProperty("Reset potential must be smaller than threshold.");
   

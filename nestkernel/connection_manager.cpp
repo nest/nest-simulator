@@ -1563,8 +1563,8 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid, const bool 
                  .send( tid,
                         syn_id,
                         lcid,
-                        prototype,
-                        kernel().model_manager.get_synapse_prototypes( tid ) ) )
+                        kernel().model_manager.get_synapse_prototypes( tid ),
+                        prototype ) )
           {
             ++lcid;
           }

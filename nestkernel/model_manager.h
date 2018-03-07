@@ -499,6 +499,7 @@ ModelManager::delete_secondary_events_prototypes()
   {
     for ( std::map< synindex, SecondaryEvent* >::iterator iit = (*it)->begin(); iit != (*it)->end(); ++iit )
     {
+      ( *iit->second ).clear_supported_syn_ids();
       delete iit->second;
     }
     (*it)->clear();

@@ -121,15 +121,19 @@ void DiffusionConnectionEvent::operator()()
   receiver_->handle( *this );
 }
 
+std::vector< synindex > GapJunctionEvent::pristine_supported_syn_ids_;
 std::vector< synindex > GapJunctionEvent::supported_syn_ids_;
 size_t GapJunctionEvent::coeff_length_ = 0;
 
+std::vector< synindex > InstantaneousRateConnectionEvent::pristine_supported_syn_ids_;
 std::vector< synindex > InstantaneousRateConnectionEvent::supported_syn_ids_;
 size_t InstantaneousRateConnectionEvent::coeff_length_ = 0;
 
+std::vector< synindex > DelayedRateConnectionEvent::pristine_supported_syn_ids_;
 std::vector< synindex > DelayedRateConnectionEvent::supported_syn_ids_;
 size_t DelayedRateConnectionEvent::coeff_length_ = 0;
 
+std::vector< synindex > DiffusionConnectionEvent::pristine_supported_syn_ids_;
 std::vector< synindex > DiffusionConnectionEvent::supported_syn_ids_;
 size_t DiffusionConnectionEvent::coeff_length_ = 0;
 }

@@ -137,6 +137,7 @@ nest::TargetTable::add_target( const thread tid, const thread target_rank, const
       reinterpret_cast< const SecondaryTargetData* >( &target_data )
         ->get_syn_id();
 
+    assert( syn_id < ( *secondary_send_buffer_pos_[ tid ] )[ lid ].size() );
     ( *secondary_send_buffer_pos_[ tid ] )[ lid ][ syn_id ].push_back(
       send_buffer_pos );
   }

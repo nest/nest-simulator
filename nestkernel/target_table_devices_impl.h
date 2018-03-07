@@ -116,7 +116,10 @@ nest::TargetTableDevices::get_synapse_status_to_device( const thread tid,
   const index lcid ) const
 {
   const index lid = kernel().vp_manager.gid_to_lid( source_gid );
-  ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
+  if ( ( *target_to_devices_[ tid ] )[ lid ][ syn_id ] != NULL )
+  {
+    ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
+  }
 }
 
 inline void
@@ -128,7 +131,10 @@ nest::TargetTableDevices::set_synapse_status_to_device( const thread tid,
   const index lcid )
 {
   const index lid = kernel().vp_manager.gid_to_lid( source_gid );
-  ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
+  if ( ( *target_to_devices_[ tid ] )[ lid ][ syn_id ] != NULL )
+  {
+    ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
+  }
 }
 
 #endif /* TARGET_TABLE_DEVICES_IMPL_H */

@@ -200,11 +200,14 @@ DictionaryDatum nest::ConnectionManager::get_synapse_status(
   const Node* source = kernel().node_manager.get_node( source_gid, tid );
   const Node* target = kernel().node_manager.get_node( target_gid, tid );
 
-  if ( source->has_proxies() and target->has_proxies() and ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
+  // synapses from neurons to neurons and from neurons to globally
+  // receiving devices
+  if ( ( source->has_proxies() and target->has_proxies() and ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
+         or ( ( source->has_proxies() and not target->has_proxies() and not target->local_receiver() and ( *connections_5g_[ tid ] )[ syn_id ] != NULL ) ) )
   {
     ( *connections_5g_[ tid ] )[ syn_id ]->get_synapse_status( tid, lcid, dict );
   }
-  else if ( source->has_proxies() and not target->has_proxies() )
+  else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() )
   {
     target_table_devices_.get_synapse_status_to_device(
       tid, source_gid, syn_id, dict, lcid );
@@ -238,12 +241,15 @@ nest::ConnectionManager::set_synapse_status( const index source_gid,
 
   try
   {
-    if ( source->has_proxies() and target->has_proxies() and ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
+    // synapses from neurons to neurons and from neurons to globally
+    // receiving devices
+    if ( ( source->has_proxies() and target->has_proxies() and ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
+         or ( ( source->has_proxies() and not target->has_proxies() and not target->local_receiver() and ( *connections_5g_[ tid ] )[ syn_id ] != NULL ) ) )
     {
       ( *connections_5g_[ tid ] )[ syn_id ]->set_synapse_status(
 	  lcid, dict, kernel().model_manager.get_synapse_prototype( syn_id, tid ) );
     }
-    else if ( source->has_proxies() and not target->has_proxies() )
+    else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() )
     {
       target_table_devices_.set_synapse_status_to_device( tid,
         source_gid,

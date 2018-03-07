@@ -68,8 +68,7 @@ ConnectionManager::send_5g( const thread tid,
   while ( ( *connections_5g_[ tid ] )[ syn_id ]->send( tid,
     syn_id,
     lcid + lcid_offset,
-    e,
-    kernel().model_manager.get_synapse_prototypes( tid ) ) )
+    kernel().model_manager.get_synapse_prototypes( tid ), e ) )
   {
     ++lcid_offset;
   }

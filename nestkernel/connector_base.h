@@ -62,8 +62,6 @@ class ConnectorBase
 {
 
 public:
-  unsigned int call_count; //TODO@5g: remove
-
    // destructor needs to be declared virtual to avoid undefined
    // behaviour, avoid possible memory leak and needs to be defined to
    // avoid linker error, see, e.g., Meyers, S. (2005) p40ff
@@ -148,8 +146,8 @@ public:
   virtual bool send( const thread tid,
     const synindex syn_id,
     const unsigned int lcid,
-    Event& e,
-    const std::vector< ConnectorModel* >& cm ) = 0;
+    const std::vector< ConnectorModel* >& cm,
+    Event& e ) = 0;
 
   virtual void send_weight_event( const thread tid,
     const synindex syn_id,
@@ -223,12 +221,10 @@ private:
   const synindex syn_id_;
 
 public:
-  unsigned int call_count; //TODO@5g: remove
 
   explicit Connector( const synindex syn_id )
     : syn_id_( syn_id )
   {
-    call_count = 0;
   }
 
   ~Connector()
@@ -287,14 +283,14 @@ public:
 
   // TODO@5g: is this used and if so, why? -> Susi
   ConnectionT&
-  at( const size_t i ) // TODO@5g: i -> lcid
+  at( const size_t lcid )
   {
-    if ( i >= C_.size() || i < 0 )
+    if ( lcid >= C_.size() || lcid < 0 )
     {
       throw std::out_of_range( String::compose(
-        "Invalid attempt to access a connection: index %1 out of range.", i ) );
+        "Invalid attempt to access a connection: index %1 out of range.", lcid ) );
     }
-    return C_[ i ]; // ?? should check via std::vector.at( )
+    return C_[ lcid ]; // ?? should check via std::vector.at( )
   }
 
   // TODO@5g: can the two functions below be unified? -> Susi
@@ -332,18 +328,18 @@ public:
     std::deque< ConnectionID >& conns ) const
   {
     assert( syn_id_ == syn_id );
-    for ( size_t i = 0; i < C_.size(); ++i ) // TODO@5g: i -> lcid
+    for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
     {
-      if ( not C_[ i ].is_disabled() )
+      if ( not C_[ lcid ].is_disabled() )
       {
-        const index current_target_gid = C_[ i ].get_target( tid )->get_gid();
+        const index current_target_gid = C_[ lcid ].get_target( tid )->get_gid();
         if ( current_target_gid == target_gid or target_gid == 0 )
         {
           if ( synapse_label == UNLABELED_CONNECTION
-               or C_[ i ].get_label() == synapse_label )
+               or C_[ lcid ].get_label() == synapse_label )
           {
             conns.push_back( ConnectionDatum(
-                               ConnectionID( source_gid, current_target_gid, tid, syn_id, i ) ) );
+                               ConnectionID( source_gid, current_target_gid, tid, syn_id, lcid ) ) );
           }
         }
       }
@@ -396,32 +392,27 @@ public:
     return C_[ lcid ].get_target( tid )->get_gid();
   }
 
-  // TODO@5g: fix order of arguments
   void
   send_to_all( const thread tid, const std::vector< ConnectorModel* >& cm, Event& e )
   {
-    for ( size_t i = 0; i < C_.size(); ++i ) // TODO@5g: i -> lcid
+    for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
     {
-      e.set_port( i );
-      assert( not C_[ i ].is_disabled() );
-      C_[ i ].send( e,
+      e.set_port( lcid );
+      assert( not C_[ lcid ].is_disabled() );
+      C_[ lcid ].send( e,
         tid,
         static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
           ->get_common_properties() );
     }
   }
 
-  // TODO@5g: fix order of arguments
   bool
   send( const thread tid,
     const synindex syn_id,
     const unsigned int lcid,
-    Event& e,
-    const std::vector< ConnectorModel* >& cm )
+    const std::vector< ConnectorModel* >& cm ,
+    Event& e )
   {
-#ifndef DISABLE_TIMING // TODO@5g: remove
-    ++call_count;
-#endif
 
     e.set_port( lcid );
     if ( not C_[ lcid ].is_disabled() )

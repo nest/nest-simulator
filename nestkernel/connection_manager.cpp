@@ -156,12 +156,20 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
   updateValue< bool >( d, names::keep_source_table, keep_source_table_ );
   if ( not keep_source_table_
     and kernel().sp_manager.is_structural_plasticity_enabled() )
-  {
+  {  // synapses from neurons to neurons and from neurons to globally
+  // receiving devices
+
     throw KernelException(
-      "Structural plasticity can not be enabled if source table is not kept." );
+      "If structural plasticity is enabled, keep_source_table can not be set to false." );
   }
 
   updateValue< bool >( d, names::sort_connections_by_source, sort_connections_by_source_ );
+  if ( not sort_connections_by_source_
+    and kernel().sp_manager.is_structural_plasticity_enabled() )
+  {
+    throw KernelException(
+      "If structural plasticity is enabled, sort_connections_by_source can not be set to false." );
+  }
 }
 
 nest::DelayChecker&
@@ -450,8 +458,8 @@ nest::ConnectionManager::connect( const index sgid,
   thread target_thread,
   const synindex syn_id,
   const DictionaryDatum& params,
-  const double d,
-  const double w )
+  const double delay,
+  const double weight )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
@@ -464,7 +472,7 @@ nest::ConnectionManager::connect( const index sgid,
   // proxies
   if ( source->has_proxies() and target->has_proxies() )
   {
-    connect_( *source, *target, sgid, target_thread, syn_id, params, d, w );
+    connect_( *source, *target, sgid, target_thread, syn_id, params, delay, weight );
   }
   // normal nodes and devices with proxies -> normal devices
   else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() )
@@ -477,13 +485,13 @@ nest::ConnectionManager::connect( const index sgid,
     }
 
     connect_to_device_(
-      *source, *target, sgid, target_thread, syn_id, params, d, w );
+      *source, *target, sgid, target_thread, syn_id, params, delay, weight );
   }
   // normal devices -> normal nodes and devices with proxies
   else if ( not source->has_proxies() and target->has_proxies() )
   {
     connect_from_device_(
-      *source, *target, target_thread, syn_id, params, d, w );
+      *source, *target, target_thread, syn_id, params, delay, weight );
   }
   // normal devices -> normal devices
   else if ( not source->has_proxies() and not target->has_proxies() )
@@ -495,7 +503,7 @@ nest::ConnectionManager::connect( const index sgid,
     if ( suggested_thread == tid )
     {
       connect_from_device_(
-        *source, *target, suggested_thread, syn_id, params, d, w );
+        *source, *target, suggested_thread, syn_id, params, delay, weight );
     }
   }
   // globally receiving devices
@@ -508,7 +516,7 @@ nest::ConnectionManager::connect( const index sgid,
       return;
     }
     target = kernel().node_manager.get_node( target->get_gid(), tid );
-    connect_( *source, *target, sgid, tid, syn_id, params, d, w );
+    connect_( *source, *target, sgid, tid, syn_id, params, delay, weight );
   }
   else
   {
@@ -601,14 +609,14 @@ nest::ConnectionManager::connect_( Node& s,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& params,
-  const double d,
-  const double w )
+  const double delay,
+  const double weight )
 {
   const bool is_primary = kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary();
 
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection_5g( s, r, connections_5g_[ tid ], syn_id, params, d, w );
+    .add_connection_5g( s, r, connections_5g_[ tid ], syn_id, params, delay, weight );
   source_table_.add_source( tid,
     syn_id,
     s_gid,
@@ -637,12 +645,12 @@ nest::ConnectionManager::connect_to_device_( Node& s,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& params,
-  const double d,
-  const double w )
+  const double delay,
+  const double weight )
 {
   // create entries in connection structure for connections to devices
   target_table_devices_.add_connection_to_device(
-    s, r, s_gid, tid, syn_id, params, d, w );
+    s, r, s_gid, tid, syn_id, params, delay, weight );
 
   if ( num_connections_[ tid ].size() <= syn_id )
   {
@@ -657,12 +665,12 @@ nest::ConnectionManager::connect_from_device_( Node& s,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& params,
-  const double d,
-  const double w )
+  const double delay,
+  const double weight )
 {
   // create entries in connections vector of devices
   target_table_devices_.add_connection_from_device(
-    s, r, tid, syn_id, params, d, w );
+    s, r, tid, syn_id, params, delay, weight );
 
   if ( num_connections_[ tid ].size() <= syn_id )
   {
@@ -1420,9 +1428,6 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
 
       // unsorted part should always be empty
       assert( matching_lcids.size() == 0 );
-
-      //TODO@5g: make sure sort_connections_by_source == false and
-      //enable_structural_plasticity == true is not possible -> Susi
     }
   }
 }
@@ -1565,8 +1570,8 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid, const bool 
                  .send( tid,
                         syn_id,
                         lcid,
-                        prototype,
-                        kernel().model_manager.get_synapse_prototypes( tid ) ) )
+                        kernel().model_manager.get_synapse_prototypes( tid ),
+                        prototype ) )
           {
             ++lcid;
           }
@@ -1680,22 +1685,4 @@ void
 nest::ConnectionManager::check_secondary_connections_exist()
 {
   secondary_connections_exist_ = kernel().mpi_manager.any_true( secondary_connections_exist_ );
-}
-
-void
-nest::ConnectionManager::print_call_counts_connectors() const
-{
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    std::cout << tid << ": ";
-    for ( synindex syn_id = 0; syn_id < ( *connections_5g_[ tid ] ).size();
-          ++syn_id )
-    {
-      if ( ( *connections_5g_[ tid ] )[ syn_id ] != NULL and ( *( *connections_5g_[ tid ] )[ syn_id ] ).call_count > 0 )
-      {
-        std::cout << ( int ) syn_id << " " << ( *( *connections_5g_[ tid ] )[ syn_id ] ).call_count << " | ";
-      }
-    }
-    std::cout << "# send_count" << std::endl;
-  }
 }

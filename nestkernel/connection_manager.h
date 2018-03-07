@@ -98,12 +98,6 @@ public:
     const DictionaryDatum&,
     const DictionaryDatum& );
 
-  //TODO@5g: rename s -> sgid -> Susi
-  //TODO@5g: rename d -> delay
-  //TODO@5g: rename w -> weight
-  //TODO@5g: rename p -> params
-  //TODO@5g: rename s -> source
-  //TODO@5g: rename r -> target
   /**
    * Connect two nodes. The source node is defined by its global ID.
    * The target node is defined by the node. The connection is
@@ -115,34 +109,34 @@ public:
    * numerics::nan indicates this and weight/delay are set only, if they are
    *valid.
    *
-   * \param s GID of the sending Node.
+   * \param sgid GID of the sending Node.
    * \param target Pointer to target Node.
    * \param target_thread Thread that hosts the target node.
    * \param syn The synapse model to use.
    * \param params parameter dict to configure the synapse
-   * \param d Delay of the connection (in ms).
-   * \param w Weight of the connection.
+   * \param delay Delay of the connection (in ms).
+   * \param weight Weight of the connection.
    */
-  void connect( const index s,
+  void connect( const index sgid,
     Node* target,
     thread target_thread,
     const synindex syn_id,
     const DictionaryDatum& params,
-    const double_t d = numerics::nan,
-    const double_t w = numerics::nan );
+    const double_t delay = numerics::nan,
+    const double_t weight = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
    *
-   * \param s GID of the sending Node.
+   * \param sgid GID of the sending Node.
    * \param target pointer to target Node.
    * \param target_thread thread that hosts the target node
    * \param params parameter dict to configure the synapse
    * \param syn The synapse model to use.
    */
-  bool connect( const index s, const index r, const DictionaryDatum& params, const synindex syn_id );
+  bool connect( const index sgid, const index target, const DictionaryDatum& params, const synindex syn_id );
 
   index find_connection_sorted( const thread tid,
     const synindex syn_id,
@@ -350,6 +344,13 @@ public:
   void add_target( const thread tid, const thread target_rank, const TargetData& target_data );
 
   /**
+   * Return sort_connections_by_source_, which indicates whether
+   * connections_ and source_table_ should be sorted according to
+   * source gid.
+   */
+  bool get_sort_connections_by_source() const;
+
+  /**
    * Sorts connections in the presynaptic infrastructure by increasing
    * source gid.
    */
@@ -470,23 +471,23 @@ private:
    * numerics::nan indicates this and weight/delay are set only, if they are
    *valid.
    *
-   * \param s A reference to the sending Node.
-   * \param r A reference to the receiving Node.
+   * \param source A reference to the sending Node.
+   * \param target A reference to the receiving Node.
    * \param s_gid The global id of the sending Node.
    * \param tid The thread of the target node.
    * \param syn The synapse model to use.
-   * \param d The delay of the connection (optional).
-   * \param w The weight of the connection (optional).
+   * \param delay The delay of the connection (optional).
+   * \param weight The weight of the connection (optional).
    * \param p The parameters for the connection.
    */
-  void connect_( Node& s,
-    Node& r,
+  void connect_( Node& source,
+    Node& target,
     const index s_gid,
     const thread tid,
     const synindex syn_id,
     const DictionaryDatum& params,
-    const double d = numerics::nan,
-    const double w = numerics::nan );
+    const double delay = numerics::nan,
+    const double weight = numerics::nan );
 
   /**
    * connect_to_device_ is used to establish a connection between a sender and
@@ -497,23 +498,23 @@ private:
    * are not a number. If delay or weight is omitted in an connect call,
    * NAN indicates this and weight/delay are set only, if they are valid.
    *
-   * \param s A reference to the sending Node.
-   * \param r A reference to the receiving Node.
+   * \param source A reference to the sending Node.
+   * \param target A reference to the receiving Node.
    * \param s_gid The global id of the sending Node.
    * \param tid The thread of the target node.
    * \param syn The synapse model to use.
-   * \param d The delay of the connection (optional).
-   * \param w The weight of the connection (optional).
+   * \param delay The delay of the connection (optional).
+   * \param weight The weight of the connection (optional).
    * \param p The parameters for the connection.
    */
-  void connect_to_device_( Node& s,
-    Node& r,
+  void connect_to_device_( Node& source,
+    Node& target,
     const index s_gid,
     const thread tid,
     const synindex syn_id,
     const DictionaryDatum& params,
-    const double d = NAN,
-    const double w = NAN );
+    const double delay = NAN,
+    const double weight = NAN );
 
   /**
    * connect_from_device_ is used to establish a connection between a sender and
@@ -524,22 +525,22 @@ private:
    * are not a number. If delay or weight is omitted in an connect call,
    * NAN indicates this and weight/delay are set only, if they are valid.
    *
-   * \param s A reference to the sending Node.
-   * \param r A reference to the receiving Node.
+   * \param source A reference to the sending Node.
+   * \param target A reference to the receiving Node.
    * \param s_gid The global id of the sending Node.
    * \param tid The thread of the target node.
    * \param syn The synapse model to use.
-   * \param d The delay of the connection (optional).
-   * \param w The weight of the connection (optional).
+   * \param delay The delay of the connection (optional).
+   * \param weight The weight of the connection (optional).
    * \param p The parameters for the connection.
    */
-  void connect_from_device_( Node& s,
-    Node& r,
+  void connect_from_device_( Node& source,
+    Node& target,
     const thread tid,
     const synindex syn_id,
     const DictionaryDatum& params,
-    const double d = NAN,
-    const double w = NAN );
+    const double delay = NAN,
+    const double weight = NAN );
 
   /** A structure to hold the Connector objects which in turn hold the
    * connection information. Corresponds to a three dimensional
@@ -607,8 +608,6 @@ private:
   bool has_primary_connections_; //!< Whether primary connections (spikes) exist
 
   bool secondary_connections_exist_; //!< Whether secondary connections (e.g., gap junctions) exist
-
-  void print_call_counts_connectors() const;
 };
 
 inline DictionaryDatum&
@@ -784,6 +783,12 @@ inline bool
 ConnectionManager::secondary_connections_exist() const
 {
   return secondary_connections_exist_;
+}
+
+inline bool
+ConnectionManager::get_sort_connections_by_source() const
+{
+  return sort_connections_by_source_;
 }
   
 } // namespace nest

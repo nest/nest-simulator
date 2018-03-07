@@ -1049,10 +1049,6 @@ nest::SimulationManager::update_()
         std::cout << kernel().event_delivery_manager.call_count_deliver_events_5g[ tid ] << " ";
       }
       std::cout << std::endl;
-#ifndef DISABLE_TIMING
-      std::cout << "0] CallCount Connector::send(): " << std::endl;
-      kernel().connection_manager.print_call_counts_connectors();
-#endif
     }
 
   } // of omp parallel

@@ -65,7 +65,7 @@ class TestDisconnectSingle(unittest.TestCase):
         for syn_model in nest.Models('synapses'):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
-                print syn_model
+                print(syn_model)
                 nest.SetKernelStatus(
                     {
                         'resolution': 0.1,
@@ -105,7 +105,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     nest.DisconnectOneToOne(neurons[0], neurons[1], syn_dict)
                     assert False
                 except nest.NESTError:
-                    print ("Synapse deletion ok: " + syn_model)
+                    print("Synapse deletion ok: " + syn_model)
 
 
 def suite():

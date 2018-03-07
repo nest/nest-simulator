@@ -114,6 +114,7 @@ inline const std::vector< size_t >&
 TargetTable::get_secondary_send_buffer_positions( const thread tid,
   const index lid, const synindex syn_id ) const
 {
+  assert( syn_id < ( *secondary_send_buffer_pos_[ tid ] )[ lid ].size() );
   return ( *secondary_send_buffer_pos_[ tid ] )[ lid ][ syn_id ];
 }
 

@@ -613,11 +613,11 @@ MPIManager::increase_buffer_size_spike_data()
   {
     if ( buffer_size_spike_data_ * growth_factor_buffer_spike_data_ < max_buffer_size_spike_data_ )
     {
-      buffer_size_spike_data_ = static_cast< size_t >( floor( buffer_size_spike_data_ * growth_factor_buffer_spike_data_ ) );
+      set_buffer_size_spike_data( floor( buffer_size_spike_data_ * growth_factor_buffer_spike_data_ ) );
     }
     else
     {
-      buffer_size_spike_data_ = max_buffer_size_spike_data_;
+      set_buffer_size_spike_data( max_buffer_size_spike_data_ );
     }
     return true;
   }

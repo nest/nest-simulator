@@ -94,7 +94,7 @@ namespace nest
    * from this one.
    * @todo Implement current input in consistent way.
    */
-  class iaf_psc_exp_ps_lossless : public Node
+  class iaf_psc_exp_ps_lossless : public Archiving_Node
   {
   public:
     /** Basic constructor.
@@ -145,7 +145,6 @@ namespace nest
      * only through a Node*. 
      */
     //@{
-    void init_node_(const Node & proto);
     void init_state_(const Node & proto);
     void init_buffers_();
     void calibrate();
@@ -173,8 +172,6 @@ namespace nest
     // The next two classes need to be friends to access the State_ class/member
     friend class RecordablesMap<iaf_psc_exp_ps_lossless>;
     friend class UniversalDataLogger<iaf_psc_exp_ps_lossless>;
-    
-    void set_spiketime(Time const &);
     
     /**
      * Propagate neuron state.

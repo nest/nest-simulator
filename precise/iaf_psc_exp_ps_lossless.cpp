@@ -207,7 +207,7 @@ void nest::iaf_psc_exp_ps_lossless::State_::set(const DictionaryDatum & d, const
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless()
-  : Node(),
+  : Archiving_Node(),
     P_(),
     S_(),
     B_(*this)
@@ -216,7 +216,7 @@ nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless()
 }
 
 nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless(const iaf_psc_exp_ps_lossless & n)
-  : Node(n),
+  : Archiving_Node(n),
     P_(n.P_),
     S_(n.S_),
     B_(n.B_, *this)
@@ -225,14 +225,6 @@ nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless(const iaf_psc_exp_ps_loss
 /* ---------------------------------------------------------------- 
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void nest::iaf_psc_exp_ps_lossless::init_node_(const Node& proto)
-{
-  const iaf_psc_exp_ps_lossless & pr = downcast<iaf_psc_exp_ps_lossless>(proto);
-
-  P_ = pr.P_;
-  S_ = pr.S_;
-}
 
 void nest::iaf_psc_exp_ps_lossless::init_state_(const Node& proto)
 {
@@ -471,12 +463,6 @@ void nest::iaf_psc_exp_ps_lossless::handle(DataLoggingRequest &e)
 
 // auxiliary functions ---------------------------------------------
 
-inline 
-void nest::iaf_psc_exp_ps_lossless::set_spiketime(const Time & now)
-{
-  S_.last_spike_step_ = now.get_steps();
-}
-
 void nest::iaf_psc_exp_ps_lossless::propagate_(const double dt)
 {
   const double expm1_tau_ex = numerics::expm1(-dt/P_.tau_ex_);
@@ -502,19 +488,18 @@ void nest::iaf_psc_exp_ps_lossless::emit_spike_(const Time & origin, const long 
   // we know that the potential is subthreshold at t0, super at t0+dt
   
   // compute spike time relative to beginning of step
-  const double spike_offset = V_.h_ms_ - (t0 + bisectioning_(dt));
-  
-  set_spiketime(Time::step(origin.get_steps() + lag + 1));
-  S_.last_spike_offset_ = spike_offset;  
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
+  S_.last_spike_offset_ = V_.h_ms_ - (t0 + bisectioning_(dt));
   
   // reset neuron and make it refractory
   S_.y2_ = P_.U_reset_;
   S_.is_refractory_ = true;
   
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   
-  se.set_offset(spike_offset);
+  se.set_offset( S_.last_spike_offset_ );
   kernel().event_delivery_manager.send(*this, se, lag);
 }
 
@@ -524,7 +509,7 @@ void nest::iaf_psc_exp_ps_lossless::emit_instant_spike_(const Time & origin, con
   assert( S_.y2_ >= P_.U_th_ );  // ensure we are superthreshold
   
   // set stamp and offset for spike
-  set_spiketime(Time::step(origin.get_steps() + lag + 1));
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
   S_.last_spike_offset_ = spike_offs;
   
   // reset neuron and make it refractory
@@ -532,9 +517,10 @@ void nest::iaf_psc_exp_ps_lossless::emit_instant_spike_(const Time & origin, con
   S_.is_refractory_ = true;
   
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   
-  se.set_offset(S_.last_spike_offset_);
+  se.set_offset( S_.last_spike_offset_ );
   kernel().event_delivery_manager.send(*this, se, lag);
 }
 

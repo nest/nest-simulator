@@ -472,7 +472,7 @@ ModelManager::get_num_node_models() const
 inline size_t
 ModelManager::get_num_synapse_prototypes() const
 {
-  assert( prototypes_[ 0 ].size() < invalid_synindex );
+  assert( prototypes_[ 0 ].size() <= invalid_synindex );
   return prototypes_[ 0 ].size();
 }
 

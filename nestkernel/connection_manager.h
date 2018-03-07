@@ -349,6 +349,13 @@ public:
   void add_target( const thread tid, const thread target_rank, const TargetData& target_data );
 
   /**
+   * Return sort_connections_by_source_, which indicates whether
+   * connections_ and source_table_ should be sorted according to
+   * source gid.
+   */
+  bool get_sort_connections_by_source() const;
+
+  /**
    * Sorts connections in the presynaptic infrastructure by increasing
    * source gid.
    */
@@ -783,6 +790,12 @@ inline bool
 ConnectionManager::secondary_connections_exist() const
 {
   return secondary_connections_exist_;
+}
+
+inline bool
+ConnectionManager::get_sort_connections_by_source() const
+{
+  return sort_connections_by_source_;
 }
   
 } // namespace nest

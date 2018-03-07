@@ -135,12 +135,12 @@ public:
   void update_structural_plasticity( SPBuilder* );
 
   /**
-   * Enable  structural plasticity
+   * Enable structural plasticity
    */
   void enable_structural_plasticity();
 
   /**
-   * Disable  structural plasticity
+   * Disable structural plasticity
    */
   void disable_structural_plasticity();
 

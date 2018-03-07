@@ -284,9 +284,13 @@ void
 nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread tid,
   std::map< index, size_t >& buffer_pos_of_source_gid_syn_id )
 {
+  // set of unique sources & synapse types, required to determine
+  // secondary events MPI buffer positions
+  // initialized and deleted by thread 0 in this method
+  static std::set< std::pair< index, size_t > >* unique_secondary_source_gid_syn_id;
 #pragma omp single
   {
-    unique_secondary_source_gid_syn_id_.clear();
+    unique_secondary_source_gid_syn_id = new std::set< std::pair< index, size_t > >( );
   }
 
   // collect all unique pairs of source gid and synapse-type id
@@ -300,14 +304,14 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
          .model_manager.get_synapse_prototype( syn_id, tid )
          .is_primary() )
     {
-      for ( std::vector< Source >::const_iterator cit =
+      for ( std::vector< Source >::const_iterator source_cit =
               ( *sources_[ tid ] )[ syn_id ]->begin();
-            cit != ( *sources_[ tid ] )[ syn_id ]->end();
-            ++cit )
+            source_cit != ( *sources_[ tid ] )[ syn_id ]->end();
+            ++source_cit )
       {
 #pragma omp critical
         {
-          unique_secondary_source_gid_syn_id_.insert( std::pair< index, synindex >( cit->get_gid(), syn_id ) );
+          ( *unique_secondary_source_gid_syn_id ).insert( std::make_pair( source_cit->get_gid(), syn_id ) );
         }
       }
     }
@@ -321,15 +325,15 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     std::vector< size_t > recv_buffer_position_by_rank(
       kernel().mpi_manager.get_num_processes(), 0 );
 
-    for ( std::set< std::pair< index, size_t > >::const_iterator cit = unique_secondary_source_gid_syn_id_.begin();
-          cit != unique_secondary_source_gid_syn_id_.end(); ++cit )
+    for ( std::set< std::pair< index, size_t > >::const_iterator cit = ( *unique_secondary_source_gid_syn_id ).begin();
+          cit != ( *unique_secondary_source_gid_syn_id ).end(); ++cit )
     {
       const thread source_rank = kernel().mpi_manager.get_process_id_of_gid( cit->first );
       const size_t event_size = kernel()
         .model_manager.get_secondary_event_prototype( cit->second, tid )
         .size();
 
-      buffer_pos_of_source_gid_syn_id.insert( std::pair< index, size_t >( pack_source_gid_and_syn_id( *cit ), recv_buffer_position_by_rank[ source_rank ] ) );
+      buffer_pos_of_source_gid_syn_id.insert( std::make_pair( pack_source_gid_and_syn_id( cit->first, cit->second ), recv_buffer_position_by_rank[ source_rank ] ) );
       recv_buffer_position_by_rank[ source_rank ] += event_size;
     }
 
@@ -341,7 +345,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     kernel().mpi_manager.communicate_Allreduce_max_in_place( max_uint_count );
     kernel().mpi_manager.set_chunk_size_secondary_events_in_int(
       max_uint_count[ 0 ] + 1 );
-
+    delete unique_secondary_source_gid_syn_id;
   } // of omp single
 }
 

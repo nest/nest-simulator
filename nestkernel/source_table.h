@@ -83,10 +83,6 @@ private:
   //! vectors
   std::vector< std::vector< size_t >* > last_sorted_source_;
 
-  //! set of unique sources & synapse types, required to determine
-  //! secondary events MPI buffer positions
-  std::set< std::pair< index, size_t > > unique_secondary_source_gid_syn_id_;
-
 public:
   SourceTable();
   ~SourceTable();
@@ -211,7 +207,7 @@ public:
 
   //! encodes combination of global id and synapse types as single
   //! long number
-  index pack_source_gid_and_syn_id( const std::pair< index, synindex >& source_gid_syn_id ) const;
+  index pack_source_gid_and_syn_id( const index source_gid, const synindex syn_id ) const;
 };
 
 inline void
@@ -492,13 +488,13 @@ SourceTable::num_unique_sources( const thread tid, const synindex syn_id ) const
 }
 
 inline index
-SourceTable::pack_source_gid_and_syn_id( const std::pair< index, synindex >& source_gid_syn_id ) const
+SourceTable::pack_source_gid_and_syn_id( const index source_gid, const synindex syn_id ) const
 {
-  assert( source_gid_syn_id.first < 72057594037927936 );
-  assert( source_gid_syn_id.second < invalid_synindex );
+  assert( source_gid < 72057594037927936 );
+  assert( syn_id < invalid_synindex );
   // syn_id is maximally 256, so shifting gid by 8 bits and storing
   // syn_id in the lowest 8 leads to a unique number
-  return ( source_gid_syn_id.first << 8 ) + source_gid_syn_id.second;
+  return ( source_gid << 8 ) + syn_id;
 }
 
 } // namespace nest

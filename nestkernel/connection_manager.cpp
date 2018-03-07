@@ -1518,13 +1518,10 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
         const size_t last_lcid = get_num_connections_( tid, syn_id );
         ( *positions ).resize( last_lcid, 0 );
 
-        for ( size_t lcid = 0;
-              lcid < last_lcid;
-              ++lcid )
+        // compute and store buffer position, this connection should
+        // read secondary events from
+        for ( size_t lcid = 0; lcid < last_lcid; ++lcid )
         {
-          // compute and store buffer position, this connection should
-          // read secondary events from
-          // TODO@5g: cleanup and make nice -> Jakob
           const index gid = source_table_.get_gid( tid, syn_id, lcid );
           const thread rank = kernel().mpi_manager.get_process_id_of_gid( gid );
           ( *positions )[ lcid ] =

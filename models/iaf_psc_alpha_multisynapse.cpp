@@ -339,7 +339,9 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
       S_.V_m_ = ( S_.V_m_ < P_.LowerBound_ ? P_.LowerBound_ : S_.V_m_ );
     }
     else // neuron is absolute refractory
+    {
       --S_.refractory_steps_;
+    }
 
     for ( size_t i = 0; i < P_.n_receptors_(); i++ )
     {

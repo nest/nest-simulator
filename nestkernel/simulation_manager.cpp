@@ -137,6 +137,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     updateValue< double >( d, names::tics_per_ms, tics_per_ms );
   double resd = 0.0;
   bool res_updated = updateValue< double >( d, names::resolution, resd );
+  double integer_part; // Dummy variable to be used with std::modf().
 
   if ( tics_per_ms_updated || res_updated )
   {
@@ -176,6 +177,13 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "unchanged." );
         throw KernelException();
       }
+      else if ( std::modf( resd * tics_per_ms, &integer_part ) != 0 )
+      {
+        LOG( M_ERROR,
+          "SimulationManager::set_status",
+          "Resolution must be a multiple of the tic length. Value unchanged." );
+        throw KernelException();
+      }
       else
       {
         nest::Time::set_resolution( tics_per_ms, resd );
@@ -206,6 +214,13 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "SimulationManager::set_status",
           "Resolution must be greater than or equal to one tic. Value "
           "unchanged." );
+        throw KernelException();
+      }
+      else if ( std::modf( resd / Time::get_ms_per_tic(), &integer_part ) != 0 )
+      {
+        LOG( M_ERROR,
+          "SimulationManager::set_status",
+          "Resolution must be a multiple of the tic length. Value unchanged." );
         throw KernelException();
       }
       else

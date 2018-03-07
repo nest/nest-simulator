@@ -227,11 +227,11 @@ function( NEST_PROCESS_EXTERNAL_MODULES )
       # find module header
       find_file( ${mod}_EXT_MOD_INCLUDE
           NAMES ${mod}module.h
-          HINTS "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
+          HINTS "${CMAKE_INSTALL_FULL_INCLUDEDIR}/${mod}module"
           )
       if ( ${mod}_EXT_MOD_INCLUDE STREQUAL "${mod}_EXT_MOD_INCLUDE-NOTFOUND" )
         message( FATAL_ERROR "Cannot find header for external module '${mod}'. "
-          "Should be '${CMAKE_INSTALL_FULL_INCLUDEDIR}/${mod}module.h' ." )
+          "Should be '${CMAKE_INSTALL_FULL_INCLUDEDIR}/${mod}module/${mod}module.h' ." )
       endif ()
       list( APPEND EXTERNAL_MODULE_INCLUDES ${${mod}_EXT_MOD_INCLUDE} )
 

@@ -1,5 +1,5 @@
 /*
- *  exp_randomdev.cpp
+ *  issue-888.sli
  *
  *  This file is part of NEST.
  *
@@ -20,31 +20,28 @@
  *
  */
 
-#include "exp_randomdev.h"
+/* BeginDocumentation
 
-// Includes from sli:
-#include "dictutils.h"
-#include "sliexceptions.h"
+Name: testsuite::issue-888 Ensure that the resolution is set as a multiple of tics.
 
-void
-librandom::ExpRandomDev::set_status( const DictionaryDatum& d )
+Synopsis: (issue-888) run -> NEST exits if test fails
+
+Author: Håkon Mørk, 2018-03-05
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+% Only setting resolution.
 {
-  double new_lambda = lambda_;
+  ResetKernel
+  0 << /resolution 0.03125 >> SetStatus
+} fail_or_die
 
-  updateValue< double >( d, names::lambda, new_lambda );
-
-  if ( new_lambda == 0. )
-  {
-    throw BadParameterValue( "Exponential RDV: lambda != 0 required." );
-  }
-
-  lambda_ = new_lambda;
-}
-
-void
-librandom::ExpRandomDev::get_status( DictionaryDatum& d ) const
+% Setting both resolution and tics per ms.
 {
-  RandomDev::get_status( d );
-
-  def< double >( d, names::lambda, lambda_ );
-}
+  ResetKernel
+  0 << /tics_per_ms 1000. /resolution 0.03125 >> SetStatus
+} fail_or_die

@@ -168,6 +168,11 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
     throw KernelException(
       "If structural plasticity is enabled, sort_connections_by_source can not be set to false." );
   }
+  //  Need to update the saved values if we have changed the delay bounds.
+  if ( d->known( names::min_delay ) or d->known( names::max_delay ) )
+  {
+    update_delay_extrema_();
+  }
 }
 
 nest::DelayChecker&

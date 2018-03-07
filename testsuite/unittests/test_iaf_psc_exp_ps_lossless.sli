@@ -96,7 +96,7 @@ neuron sp_det 1.0 h Connect
                                
  vm [/events [/times /V_m]] get cva   % array of recorded data
   6 ToUnitTestPrecision                      % to precision of reference
-  Transpose                                  % all recorded tuples
+  Transpose           dup ==                       % all recorded tuples
   {First test_times exch MemberQ } Select    % those with reference
  eq                                          % compare
 }
@@ -113,73 +113,64 @@ neuron sp_det 1.0 h Connect
 [
 [ 1       -70      ] %<----- The earliest time dc_gen can be switched on.
 [ 2       -70      ] %<----- The DC current arrives at the neuron, it is
-[ 3       -70      ] %       reflected in the neuron's state variable y0,
-[ 4       -70      ] %       (initial condition) but has not yet affected 
-%                    %       the membrane potential.
+[ 3       -69.602  ] %<-     reflected in the neuron's state variable y0,
+[ 4       -69.2079 ] %  |    (initial condition) but has not yet affected
+[ 5       -68.8178 ] %  |    the membrane potential.
+[ 6       -68.4316 ] %  |
+[ 7       -68.0492 ] %   --- the effect of the DC current is visible in the
+[ 8       -67.6706 ] %       membrane potential
+[ 9       -67.2958 ] %
+[ 10      -66.9247 ] %
+%
 % ...
 %
-[ 20       -70     ] 
-[ 21      -68.9055 ] %      the effect of the DC current is visible in the
-[ 22      -67.8219 ] %      membrane potential
-[ 23      -66.749  ] 
-[ 24      -65.6868 ] 
-[ 25      -64.6352 ] 
-[ 26      -63.5941 ] 
-[ 27      -62.5633 ] 
-[ 28      -61.5428 ] 
-[ 29      -60.5324 ] 
-[ 30      -59.5321 ] 
-[ 31      -58.5418 ] 
-[ 32      -57.5612 ] 
-[ 33      -56.5905 ] 
-[ 34      -55.6294 ] 
-[ 35      -54.6779 ] %<---- The membrane potential crossed threshold in the
-[ 36      -70      ] %      step 3.5 ms -> 3.6 ms. The membrane potential is
-[ 37      -70      ] %      reset (no super-threshold values can be observed)
-%                    %      The spike is reported at 3.6 ms
-% ...
+[ 45      -56.0204 ] %
+[ 46      -55.7615 ] %
+[ 47      -55.5051 ] %
+[ 48      -55.2513 ] %
+[ 49      -55.0001 ] %
+[ 50      -70      ] % <---- The membrane potential crossed threshold in the
+[ 51      -70      ] %       step 4.9 ms -> 5.0 ms. The membrane potential is 
+[ 52      -70      ] %       reset (no super-threshold values can be observed).
+[ 53      -70      ] %       The spike is reported at 5.0 ms
+[ 54      -70      ] %
+[ 55      -70      ] %
+[ 56      -70      ] %
+[ 57      -70      ] %
+[ 58      -70      ] %
+[ 59      -70      ] %
+[ 60      -70      ] %
+[ 61      -70      ] %
+[ 62      -70      ] %
+[ 63      -70      ] %
+[ 64      -70      ] %
+[ 65      -70      ] %
+[ 66      -70      ] %
+[ 67      -70      ] %
+[ 68      -70      ] %
+[ 69      -70      ] %
+[ 70      -70      ] % <---- The last point in time at which the membrane potential
+[ 71      -69.602  ] % <-    is clamped. The fact that the neuron is not refractory
+[ 72      -69.2079 ] %   |   anymore is reflected in the state variable r==0.
+[ 73      -68.8178 ] %   |   The neuron was refractory for 2.0 ms.
+[ 74      -68.4316 ] %   |
+[ 75      -68.0492 ] %   --- The membrane potential starts to increase 
+[ 76      -67.6706 ] %       immediately afterwards and the neuron can generate 
+[ 77      -67.2958 ] %       spikes again (at this resolution reported with time
+[ 78      -66.9247 ] %       stamp 7.1 ms on the grid)
+[ 79      -66.5572 ] % <--
+]                    %    |
+%                         |
+%                          - The simulation was run for 8.0 ms. However, in the step
+%                            7.9 ms -> 8.0 ms the voltmeter necessarily receives the
+%                            voltages that occurred at time 7.9 ms (delay h). This 
+%                            results in different end times of the recorded voltage 
+%                            traces at different resolutions. In the current 
+%                            simulation kernel there is no general cure for this 
+%                            problem. One workaround is to end the simulation script
+%                            with "h Simulate", thereby making the script resolution
+%                            dependent.
 %
-[ 50      -70      ]  
-[ 51      -70      ]        
-[ 52      -70      ]        
-[ 53      -70      ] 
-[ 54      -70      ] 
-[ 55      -70      ] 
-[ 56      -68.9055 ] %<---- The membrane potential starts to increase again
-[ 57      -67.8219 ] %      and the neuron generates spikes again
-[ 58      -66.749  ] 
-[ 59      -65.6868 ] 
-[ 60      -64.6352 ] 
-[ 61      -63.5941 ] 
-[ 62      -62.5633 ] 
-[ 63      -61.5428 ] 
-[ 64      -60.5324 ] 
-[ 65      -59.5321 ] 
-[ 66      -58.5418 ] 
-[ 67      -57.5612 ] 
-[ 68      -56.5905 ] 
-[ 69      -55.6294 ] 
-[ 70      -54.6779 ] 
-[ 71      -70      ] 
-[ 72      -70      ] 
-[ 73      -70      ] 
-[ 74      -70      ] 
-[ 75      -70      ] 
-[ 76      -70      ] 
-[ 77      -70      ] 
-[ 78      -70      ] 
-[ 79      -70      ] %<---- The last point in time in which the membrane potential
-]                    %      is clamped.
-                     %      The simulation was run for 8.0 ms. However, in the step
-                     %      7.9 ms -> 8.0 ms the voltmeter necessarily receives the
-                     %      voltages that occurred at time 7.9 ms (delay h). This
-                     %      results in different end times of the recorded voltage
-                     %      traces at different resolutions. In the current
-                     %      simulation kernel there is no general cure for this
-                     %      problem. One workaround is to end the simulation script
-                     %      with "h Simulate", thereby making the script resolution
-                     %      dependent.
-
 
 exch assert_or_die
 

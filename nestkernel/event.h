@@ -853,6 +853,8 @@ public:
     std::vector< unsigned int >::iterator& pos ) = 0;
 
   virtual const std::vector< synindex >& get_supported_syn_ids() const = 0;
+
+  virtual void clear_supported_syn_ids() = 0;
 };
 
 /**
@@ -961,6 +963,7 @@ class GapJunctionEvent : public SecondaryEvent
 private:
   // we chose std::vector over std::set because we expect this always to be
   // short
+  static std::vector< synindex > pristine_supported_syn_ids_;
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
@@ -987,6 +990,7 @@ public:
   set_syn_id( const synindex synid )
   {
     VPManager::assert_single_threaded();
+    pristine_supported_syn_ids_.push_back( synid );
     supported_syn_ids_.push_back( synid );
   }
 
@@ -1008,6 +1012,15 @@ public:
   get_supported_syn_ids() const
   {
     return supported_syn_ids_;
+  }
+
+  void clear_supported_syn_ids()
+  {
+    supported_syn_ids_.clear();
+    for ( size_t i = 0; i < pristine_supported_syn_ids_.size(); ++i )
+    {
+      supported_syn_ids_.push_back( pristine_supported_syn_ids_[ i ] );
+    }
   }
 
   static void
@@ -1105,6 +1118,7 @@ class InstantaneousRateConnectionEvent : public SecondaryEvent
 private:
   // we chose std::vector over std::set because we expect this always to be
   // short
+  static std::vector< synindex > pristine_supported_syn_ids_;
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
@@ -1131,6 +1145,7 @@ public:
   set_syn_id( const synindex synid )
   {
     VPManager::assert_single_threaded();
+    pristine_supported_syn_ids_.push_back( synid );
     supported_syn_ids_.push_back( synid );
   }
 
@@ -1152,6 +1167,15 @@ public:
   get_supported_syn_ids() const
   {
     return supported_syn_ids_;
+  }
+
+  void clear_supported_syn_ids()
+  {
+    supported_syn_ids_.clear();
+    for ( size_t i = 0; i < pristine_supported_syn_ids_.size(); ++i )
+    {
+      supported_syn_ids_.push_back( pristine_supported_syn_ids_[ i ] );
+    }
   }
 
   static void
@@ -1253,6 +1277,7 @@ class DiffusionConnectionEvent : public SecondaryEvent
 private:
   // we chose std::vector over std::set because we expect this always to be
   // short
+  static std::vector< synindex > pristine_supported_syn_ids_;
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
@@ -1284,6 +1309,7 @@ public:
   set_syn_id( const synindex synid )
   {
     VPManager::assert_single_threaded();
+    pristine_supported_syn_ids_.push_back( synid );
     supported_syn_ids_.push_back( synid );
   }
 
@@ -1305,6 +1331,15 @@ public:
   get_supported_syn_ids() const
   {
     return supported_syn_ids_;
+  }
+
+  void clear_supported_syn_ids()
+  {
+    supported_syn_ids_.clear();
+    for ( size_t i = 0; i < pristine_supported_syn_ids_.size(); ++i )
+    {
+      supported_syn_ids_.push_back( pristine_supported_syn_ids_[ i ] );
+    }
   }
 
   static void
@@ -1422,6 +1457,7 @@ class DelayedRateConnectionEvent : public SecondaryEvent
 private:
   // we chose std::vector over std::set because we expect this always to be
   // short
+  static std::vector< synindex > pristine_supported_syn_ids_;
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
@@ -1448,6 +1484,7 @@ public:
   set_syn_id( const synindex synid )
   {
     VPManager::assert_single_threaded();
+    pristine_supported_syn_ids_.push_back( synid );
     supported_syn_ids_.push_back( synid );
   }
 
@@ -1469,6 +1506,15 @@ public:
   get_supported_syn_ids() const
   {
     return supported_syn_ids_;
+  }
+
+  void clear_supported_syn_ids()
+  {
+    supported_syn_ids_.clear();
+    for ( size_t i = 0; i < pristine_supported_syn_ids_.size(); ++i )
+    {
+      supported_syn_ids_.push_back( pristine_supported_syn_ids_[ i ] );
+    }
   }
 
   static void

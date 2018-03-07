@@ -20,7 +20,6 @@
  *
  */
 
-
 #ifndef IAF_PSC_EXP_PS_LOSSLESS_H
 #define IAF_PSC_EXP_PS_LOSSLESS_H
 
@@ -35,10 +34,9 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
+#include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
-#include "stopwatch.h"
-#include "arraydatum.h"
 
 // Includes from precise:
 #include "slice_ring_buffer.h"
@@ -98,11 +96,7 @@ namespace nest
    */
   class iaf_psc_exp_ps_lossless : public Node
   {
-    
-    class Network;
-    
   public:
-    
     /** Basic constructor.
         This constructor should only be used by GenericModel to create 
         model prototype instances.
@@ -120,24 +114,21 @@ namespace nest
     
     /**
      * Import sets of overloaded virtual functions.
-     * We need to explicitly include sets of overloaded
-     * virtual functions into the current scope.
-     * According to the SUN C++ FAQ, this is the correct
-     * way of doing things, although all other compilers
-     * happily live without.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+     * Hiding
      */
-    using Node::handles_test_event;
     using Node::handle;
+    using Node::handles_test_event;
     
     port send_test_event( Node&, rport, synindex, bool );
     
-    void handle(SpikeEvent &);
-    void handle(CurrentEvent &);
-    void handle(DataLoggingRequest &);
-    
-    port handles_test_event(SpikeEvent &, port);
-    port handles_test_event(CurrentEvent &, port);
-    port handles_test_event(DataLoggingRequest &, port);
+    port handles_test_event( SpikeEvent&, port );
+    port handles_test_event( CurrentEvent&, port );
+    port handles_test_event( DataLoggingRequest&, port );
+
+    void handle( SpikeEvent & );
+    void handle( CurrentEvent & );
+    void handle( DataLoggingRequest & );
     
     bool is_off_grid() const  // uses off_grid events
     {
@@ -291,8 +282,8 @@ namespace nest
     struct State_
     {
       double y0_;  //!< External input current
-      double I_syn_ex_;  //!< Exc. exponetial current
-      double I_syn_in_;  //!< Inh. exponetial current
+      double I_syn_ex_;  //!< Exc. exponential current
+      double I_syn_in_;  //!< Inh. exponential current
       double y2_;  //!< Membrane potential (relative to resting potential)
       
       bool is_refractory_;  //!< True while refractory

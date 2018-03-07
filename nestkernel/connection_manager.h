@@ -68,6 +68,7 @@ public:
 
   virtual void initialize();
   virtual void finalize();
+  virtual void delete_secondary_recv_buffer_pos();
 
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
@@ -238,11 +239,11 @@ public:
   size_t get_num_connections( const synindex syn_id ) const;
 
   void get_sources( const std::vector< index >& targets,
-    std::vector< std::vector< index > >& sources,
-    const index syn_id );
+    const index syn_id,
+    std::vector< std::vector< index > >& sources );
   void get_targets( const std::vector< index >& sources,
-    std::vector< std::vector< index > >& targets,
-    const index syn_id, const std::string& post_synaptic_element );
+    const index syn_id, const std::string& post_synaptic_element, 
+    std::vector< std::vector< index > >& targets );
 
   const std::vector< Target >& get_targets( const thread tid,
     const index lid ) const;
@@ -574,7 +575,7 @@ private:
   /** A structure to count the number of synapses of a specific
    * type. Arranged in a 2d structure: threads|synapsetypes.
    */
-  std::vector< std::vector< size_t > > num_connections_; // TODO@5g: num_connections_ -> Jari
+  std::vector< std::vector< size_t > > num_connections_;
 
   /**
    * BeginDocumentation

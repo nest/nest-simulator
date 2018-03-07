@@ -128,8 +128,8 @@ public:
    */
   virtual void get_target_gids( const thread tid,
     const index start_lcid,
-    std::vector< index >& target_gids,
-    const std::string post_synaptic_element) const = 0;
+    const std::string post_synaptic_element,
+    std::vector< index >& target_gids ) const = 0;
 
   /** For a given lcid, returns the gid of the corresponding target.
    */
@@ -138,9 +138,9 @@ public:
 
   /** Sends an event to all connections.
    */
-  virtual void send_to_all( Event& e,
-    const thread tid,
-    const std::vector< ConnectorModel* >& cm ) = 0;
+  virtual void send_to_all( const thread tid,
+    const std::vector< ConnectorModel* >& cm,
+    Event& e ) = 0;
 
   /** Sends an event to the specified connection, returning whether
    * the subsequent connection belongs to the same source.
@@ -365,12 +365,11 @@ public:
     }
   }
 
-  // TODO@5g: fix order of arguments
   void
   get_target_gids( const thread tid,
     const index start_lcid,
-    std::vector< index >& target_gids,
-    const std::string post_synaptic_element ) const
+    const std::string post_synaptic_element,
+    std::vector< index >& target_gids ) const
   {
     index lcid = start_lcid;
     while ( true )
@@ -399,7 +398,7 @@ public:
 
   // TODO@5g: fix order of arguments
   void
-  send_to_all( Event& e, const thread tid, const std::vector< ConnectorModel* >& cm )
+  send_to_all( const thread tid, const std::vector< ConnectorModel* >& cm, Event& e )
   {
     for ( size_t i = 0; i < C_.size(); ++i ) // TODO@5g: i -> lcid
     {

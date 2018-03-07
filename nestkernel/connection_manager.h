@@ -241,6 +241,7 @@ public:
   void get_sources( const std::vector< index >& targets,
     const index syn_id,
     std::vector< std::vector< index > >& sources );
+  // TODO@5g: get_targets overloading necessary?
   void get_targets( const std::vector< index >& sources,
     const index syn_id, const std::string& post_synaptic_element, 
     std::vector< std::vector< index > >& targets );

@@ -207,7 +207,7 @@ public:
 
   //! encodes combination of global id and synapse types as single
   //! long number
-  index pack_source_gid_and_syn_id( const index& source_gid, const synindex& syn_id ) const;
+  index pack_source_gid_and_syn_id( const index source_gid, const synindex syn_id ) const;
 };
 
 inline void
@@ -488,7 +488,7 @@ SourceTable::num_unique_sources( const thread tid, const synindex syn_id ) const
 }
 
 inline index
-SourceTable::pack_source_gid_and_syn_id( const index& source_gid, const synindex& syn_id ) const
+SourceTable::pack_source_gid_and_syn_id( const index source_gid, const synindex syn_id ) const
 {
   assert( source_gid < 72057594037927936 );
   assert( syn_id < invalid_synindex );

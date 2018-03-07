@@ -37,7 +37,7 @@ namespace nest
 class Time;
 /**
  * Class to convert times from one representation to another.
- * Createing an object of TimeCOnverter at a current time representation
+ * Creating an object of TimeConverter at a current time representation
  * saves the current values of TICS_PER_MS and TICS_PER_STEP.
  * After having changed the time representation,
  * the members from_old_steps and from_old_tics can be used

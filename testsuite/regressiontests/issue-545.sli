@@ -1,0 +1,103 @@
+/*
+ *  issue-545.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::issue-545
+
+Synopsis: (issue-545) run -> NEST exits if test fails
+
+Description:
+This test ensures that calling SetDefaults with a wrong datatype raises
+an exception. 
+
+Author: Jan Hahne
+FirstVersion: April 2017
+SeeAlso:
+*/
+
+(unittest) run
+/unittest using
+
+{
+  ResetKernel
+  /stdp_synapse << /tau_plus 10. >> SetDefaults
+  /stdp_synapse GetDefaults /tau_plus get
+  10. eq
+}
+assert_or_die
+
+{
+  ResetKernel
+  /iaf_psc_alpha << /C_m 10. >> SetDefaults
+  /iaf_psc_alpha GetDefaults /C_m get
+  10. eq
+}
+assert_or_die
+
+{
+  ResetKernel
+  /iaf_psc_alpha << /C_m 10 >> SetDefaults
+}
+fail_or_die
+
+{
+  ResetKernel
+  /stdp_synapse << /tau_plus 10 >> SetDefaults
+}
+fail_or_die
+
+skip_if_not_threaded
+
+{
+  ResetKernel
+  0 << /local_num_threads 4 >> SetStatus
+  /stdp_synapse << /tau_plus 10. >> SetDefaults
+  /stdp_synapse GetDefaults /tau_plus get
+  10. eq
+}
+assert_or_die
+
+{
+  ResetKernel
+  0 << /local_num_threads 4 >> SetStatus
+  /iaf_psc_alpha << /C_m 10. >> SetDefaults
+  /iaf_psc_alpha GetDefaults /C_m get
+  10. eq
+}
+assert_or_die
+
+{
+  ResetKernel
+  0 << /local_num_threads 4 >> SetStatus
+  /iaf_psc_alpha << /C_m 10 >> SetDefaults
+}
+fail_or_die
+
+{
+  ResetKernel
+  0 << /local_num_threads 4 >> SetStatus
+  /stdp_synapse << /tau_plus 10 >> SetDefaults
+}
+fail_or_die
+
+endusing

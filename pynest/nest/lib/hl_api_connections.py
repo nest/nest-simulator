@@ -27,6 +27,7 @@ from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
+from .hl_api_subnets import GetChildren
 import numpy
 
 
@@ -66,7 +67,6 @@ def GetConnections(source=None, target=None, synapse_model=None,
     Raises
     ------
     TypeError
-        Description
     """
 
     params = {}
@@ -118,7 +118,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     Raises
     ------
     kernel.NESTError
-        Description
 
     Notes
     -----
@@ -180,23 +179,33 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     In the case of scalar parameters, all keys must be doubles
     except for 'receptor_type' which must be initialised with an integer.
 
-    Parameter arrays are only available for the rules 'one_to_one' and
-    'all_to_all':
+    Parameter arrays are available for the rules 'one_to_one',
+    'all_to_all', 'fixed_indegree' and 'fixed_outdegree':
     - For 'one_to_one' the array has to be a one-dimensional
       NumPy array with length len(pre).
     - For 'all_to_all' the array has to be a two-dimensional NumPy array
       with shape (len(post), len(pre)), therefore the rows describe the
       target and the columns the source neurons.
+    - For 'fixed_indegree' the array has to be a two-dimensional NumPy array
+      with shape (len(post), indegree), where indegree is the number of
+      incoming connections per target neuron, therefore the rows describe the
+      target and the columns the connections converging to the target neuron,
+      regardless of the identity of the source neurons.
+    - For 'fixed_outdegree' the array has to be a two-dimensional NumPy array
+      with shape (len(pre), outdegree), where outdegree is the number of
+      outgoing connections per source neuron, therefore the rows describe the
+      source and the columns the connections starting from the source neuron
+      regardless of the identity of the target neuron.
 
     Any distributed parameter must be initialised with a further dictionary
     specifying the distribution type ('distribution', e.g. 'normal') and
     any distribution-specific parameters (e.g. 'mu' and 'sigma').
 
     To see all available distributions, run:
-    nest.slirun(’rdevdict info’)
+    nest.slirun('rdevdict info')
 
     To get information on a particular distribution, e.g. 'binomial', run:
-    nest.help(’rdevdict::binomial’)
+    nest.help('rdevdict::binomial')
 
     Most common available distributions and associated parameters
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -300,12 +309,37 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                                     "a scalar or a dictionary.")
                             else:
                                 syn_spec[key] = value.flatten()
+                        elif rule == 'fixed_indegree':
+                            indegree = conn_spec['indegree']
+                            if value.shape[0] != len(post) or \
+                                    value.shape[1] != indegree:
+                                raise kernel.NESTError(
+                                    "'" + key + "' has to be an array of "
+                                    "dimension " + str(len(post)) + "x" +
+                                    str(indegree) +
+                                    " (n_target x indegree), " +
+                                    "a scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value.flatten()
+                        elif rule == 'fixed_outdegree':
+                            outdegree = conn_spec['outdegree']
+                            if value.shape[0] != len(pre) or \
+                                    value.shape[1] != outdegree:
+                                raise kernel.NESTError(
+                                    "'" + key + "' has to be an array of "
+                                    "dimension " + str(len(pre)) + "x" +
+                                    str(outdegree) +
+                                    " (n_sources x outdegree), " +
+                                    "a scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value.flatten()
                         else:
                             raise kernel.NESTError(
                                 "'" + key + "' has the wrong type. "
                                 "Two-dimensional parameter arrays can "
-                                "only be used in conjunction with rule "
-                                "'all_to_all'.")
+                                "only be used in conjunction with rules "
+                                "'all_to_all', 'fixed_indegree' or "
+                                "'fixed_outdegree'.")
             sps(syn_spec)
         else:
             raise kernel.NESTError(
@@ -315,6 +349,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 
 
 @check_stack
+@deprecated('', 'DataConnect is deprecated and will be removed in NEST 3.0.\
+Use Connect() with one_to_one rule instead.')
 def DataConnect(pre, params=None, model="static_synapse"):
     """Connect neurons from lists of connection data.
 
@@ -399,42 +435,34 @@ def DataConnect(pre, params=None, model="static_synapse"):
         SetKernelStatus({'dict_miss_is_error': dict_miss})
 
 
-def _is_subnet_instance(gids):
-    """Returns true if all gids point to subnet or derived type.
-
-    Parameters
-    ----------
-    gids : TYPE
-        Description
-
-    Returns
-    -------
-    bool:
-        true if all gids point to subnet or derived type
-    """
-
-    try:
-        GetChildren(gids)
-        return True
-    except kernel.NESTError:
-        return False
-
-
 @check_stack
 def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
-    """
-    Connect neurons from pre to neurons from post using connectivity
-    specified by the connection generator cg.
+    """Connect neurons using the Connection Generator Interface.
+
+    Potential pre-synaptic neurons are taken from pre, potential
+    post-synaptic neurons are taken from post. The connection
+    generator cg specifies the exact connectivity to be set up. The
+    parameter_map can either be None or a dictionary that maps the
+    keys "weight" and "delay" to their integer indices in the value
+    set of the connection generator.
 
     This function is only available if NEST was compiled with
     support for libneurosim.
 
+    For further information, see
+    * The NEST documentation on using the CG Interface at
+      http://nest-simulator.org/connection-generator-interface
+    * The GitHub repository and documentation for libneurosim at
+      https://github.com/INCF/libneurosim/
+    * The publication about the Connection Generator Interface at
+      https://doi.org/10.3389/fninf.2014.00043
+
     Parameters
     ----------
-    pre : list
-        must contain 1 subnet, or a list of GIDs
-    post : list
-        must contain 1 subnet, or a list of GIDs
+    pre : list or numpy.array
+        must contain a list of GIDs
+    post : list or numpy.array
+        must contain a list of GIDs
     cg : connection generator
         libneurosim connection generator to use
     parameter_map : dict, optional
@@ -457,28 +485,13 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
     if parameter_map is None:
         parameter_map = {}
 
-    if _is_subnet_instance(pre[:1]):
-
-        if not _is_subnet_instance(post[:1]):
-            raise kernel.NESTError(
-                "if pre is a subnet, post also has to be a subnet")
-
-        if len(pre) > 1 or len(post) > 1:
-            raise kernel.NESTError(
-                "the length of pre and post has to be 1 if subnets " +
-                "are given")
-
-        sli_func('CGConnect', cg, pre[0], post[0],
-                 parameter_map, '/'+model, litconv=True)
-
-    else:
-        sli_func('CGConnect', cg, pre, post,
-                 parameter_map, '/'+model, litconv=True)
+    sli_func('CGConnect', cg, pre, post,
+             parameter_map, '/' + model, litconv=True)
 
 
 @check_stack
 def CGParse(xml_filename):
-    """Parse an XML file and return the correcponding connection
+    """Parse an XML file and return the corresponding connection
     generator cg.
 
     The library to provide the parsing can be selected
@@ -492,7 +505,6 @@ def CGParse(xml_filename):
     Raises
     ------
     kernel.NESTError
-        Description
     """
 
     sr("statusdict/have_libneurosim ::")
@@ -523,7 +535,6 @@ def CGSelectImplementation(tag, library):
     Raises
     ------
     kernel.NESTError
-        Description
     """
 
     sr("statusdict/have_libneurosim ::")

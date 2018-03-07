@@ -22,7 +22,7 @@
 
 
  /* BeginDocumentation
-Name: testsuite::test_step_current_generator - minimal test of noise_generator
+Name: testsuite::test_step_current_generator - minimal test of step_current_generator
 
 Synopsis: (test_step_current_generator) run -> dies if assertion fails
 
@@ -89,7 +89,7 @@ ResetKernel
   ResetKernel
   0 << /resolution 0.1 >> SetStatus
   /scg /step_current_generator Create def
-  /nrn /iaf_neuron Create def
+  /nrn /iaf_psc_alpha Create def
   /vm  /voltmeter Create def
 
   % no spiking, all parameters 1, 0 leak potential

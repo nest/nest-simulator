@@ -115,6 +115,7 @@ class aeif_cond_alpha_RK5 : public Archiving_Node
 {
 
 public:
+  typedef void ( aeif_cond_alpha_RK5::*func_ptr )( const double*, double* );
   aeif_cond_alpha_RK5();
   aeif_cond_alpha_RK5( const aeif_cond_alpha_RK5& );
   ~aeif_cond_alpha_RK5();
@@ -148,6 +149,7 @@ private:
   void update( Time const&, const long, const long );
 
   inline void aeif_cond_alpha_RK5_dynamics( const double*, double* );
+  inline void aeif_cond_alpha_RK5_dynamics_DT0( const double*, double* );
 
   // END Boilerplate function declarations ----------------------------
 
@@ -228,7 +230,7 @@ public:
     double yin[ STATE_VEC_SIZE ];  //!< Runge-Kutta variable
     double ynew[ STATE_VEC_SIZE ]; //!< 5th order update
     double yref[ STATE_VEC_SIZE ]; //!< 4th order update
-    int r_;                        //!< number of refractory steps remaining
+    unsigned int r_;               //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -288,7 +290,16 @@ public:
     /** initial value to normalise inhibitory synaptic conductance */
     double g0_in_;
 
-    int RefractoryCounts_;
+    /**
+     * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
+     * P.V_th if Delta_T == 0.
+     */
+    double V_peak;
+
+    /** pointer to the rhs function giving the dynamics to the ODE solver **/
+    func_ptr model_dynamics;
+
+    unsigned int refractory_counts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -328,7 +339,9 @@ inline port
 aeif_cond_alpha_RK5::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -336,7 +349,9 @@ inline port
 aeif_cond_alpha_RK5::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -345,7 +360,9 @@ aeif_cond_alpha_RK5::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
@@ -379,12 +396,60 @@ aeif_cond_alpha_RK5::set_status( const DictionaryDatum& d )
 }
 
 /**
- * Function computing right-hand side of ODE for the ODE solver.
+ * Function computing right-hand side of ODE for the ODE solver if Delta_T != 0.
  * @param y State vector (input).
  * @param f Derivatives (output).
  */
 inline void
 aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics( const double y[],
+  double f[] )
+{
+  // a shorthand
+  typedef aeif_cond_alpha_RK5::State_ S;
+
+  // y[] is the current internal state of the integrator (yin), not the state
+  // vector in the node, node.S_.y[].
+
+  // The following code is verbose for the sake of clarity. We assume that a
+  // good compiler will optimize the verbosity away ...
+
+  // shorthand for state variables
+  const double& V = std::min( y[ S::V_M ], P_.V_peak_ );
+  const double& dg_ex = y[ S::DG_EXC ];
+  const double& g_ex = y[ S::G_EXC ];
+  const double& dg_in = y[ S::DG_INH ];
+  const double& g_in = y[ S::G_INH ];
+  const double& w = y[ S::W ];
+
+  const double I_syn_exc = g_ex * ( V - P_.E_ex );
+  const double I_syn_inh = g_in * ( V - P_.E_in );
+
+  // for this function the exponential must still be bounded
+  // otherwise issue77.sli fails because of numerical instability or
+  // the value of w undergoes jumps because of V's divergence.
+  const double exp_arg = std::min( ( V - P_.V_th ) / P_.Delta_T, 10. );
+  const double I_spike = P_.Delta_T * std::exp( exp_arg );
+
+  // dv/dt
+  f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
+                  - w + P_.I_e + B_.I_stim_ ) / P_.C_m;
+  f[ S::DG_EXC ] = -dg_ex / P_.tau_syn_ex;
+  f[ S::G_EXC ] = dg_ex - g_ex / P_.tau_syn_ex; // Synaptic Conductance (nS)
+
+  f[ S::DG_INH ] = -dg_in / P_.tau_syn_in;
+  f[ S::G_INH ] = dg_in - g_in / P_.tau_syn_in; // Synaptic Conductance (nS)
+
+  // Adaptation current w.
+  f[ S::W ] = ( P_.a * ( V - P_.E_L ) - w ) / P_.tau_w;
+}
+
+/**
+ * Function computing right-hand side of ODE for the ODE solver if Delta_T == 0.
+ * @param y State vector (input).
+ * @param f Derivatives (output).
+ */
+inline void
+aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics_DT0( const double y[],
   double f[] )
 {
   // a shorthand
@@ -407,19 +472,9 @@ aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics( const double y[],
   const double I_syn_exc = g_ex * ( V - P_.E_ex );
   const double I_syn_inh = g_in * ( V - P_.E_in );
 
-  // We pre-compute the argument of the exponential
-  const double exp_arg = ( V - P_.V_th ) / P_.Delta_T;
-
-  // Upper bound for exponential argument to avoid numerical instabilities
-  const double MAX_EXP_ARG = 10.;
-
-  // If the argument is too large, we clip it.
-  const double I_spike =
-    P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
-
   // dv/dt
-  f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
-                  - w + P_.I_e + B_.I_stim_ ) / P_.C_m;
+  f[ S::V_M ] = ( -P_.g_L * ( V - P_.E_L ) - I_syn_exc - I_syn_inh - w + P_.I_e
+                  + B_.I_stim_ ) / P_.C_m;
   f[ S::DG_EXC ] = -dg_ex / P_.tau_syn_ex;
   f[ S::G_EXC ] = dg_ex - g_ex / P_.tau_syn_ex; // Synaptic Conductance (nS)
 

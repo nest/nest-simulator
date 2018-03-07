@@ -28,8 +28,8 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "nodelist.h"
 #include "mpi_manager_impl.h"
+#include "nodelist.h"
 #include "subnet.h"
 
 // Includes from sli:
@@ -96,13 +96,17 @@ get_vp_rng_of_gid( index target )
 {
   Node* target_node = kernel().node_manager.get_node( target );
 
-  if ( !kernel().node_manager.is_local_node( target_node ) )
+  if ( not kernel().node_manager.is_local_node( target_node ) )
+  {
     throw LocalNodeExpected( target );
+  }
 
   // Only nodes with proxies have a well-defined VP and thus thread.
   // Asking for the VP of, e.g., a subnet or spike_detector is meaningless.
-  if ( !target_node->has_proxies() )
+  if ( not target_node->has_proxies() )
+  {
     throw NodeWithProxiesExpected( target );
+  }
 
   return kernel().rng_manager.get_rng( target_node->get_thread() );
 }
@@ -201,7 +205,9 @@ create( const Name& model_name, const index n_nodes )
   const Token model =
     kernel().model_manager.get_modeldict()->lookup( model_name );
   if ( model.empty() )
+  {
     throw UnknownModelName( model_name );
+  }
 
   // create
   const index model_id = static_cast< index >( model );
@@ -256,6 +262,41 @@ simulate( const double& time )
 }
 
 void
+run( const double& time )
+{
+  const Time t_sim = Time::ms( time );
+
+  if ( time < 0 )
+  {
+    throw BadParameter( "The simulation time cannot be negative." );
+  }
+  if ( not t_sim.is_finite() )
+  {
+    throw BadParameter( "The simulation time must be finite." );
+  }
+  if ( not t_sim.is_grid_time() )
+  {
+    throw BadParameter(
+      "The simulation time must be a multiple "
+      "of the simulation resolution." );
+  }
+
+  kernel().simulation_manager.run( t_sim );
+}
+
+void
+prepare()
+{
+  kernel().simulation_manager.prepare();
+}
+
+void
+cleanup()
+{
+  kernel().simulation_manager.cleanup();
+}
+
+void
 copy_model( const Name& oldmodname,
   const Name& newmodname,
   const DictionaryDatum& dict )
@@ -279,13 +320,13 @@ get_model_defaults( const Name& modelname )
 
   DictionaryDatum dict;
 
-  if ( !nodemodel.empty() )
+  if ( not nodemodel.empty() )
   {
     const long model_id = static_cast< long >( nodemodel );
     Model* m = kernel().model_manager.get_model( model_id );
     dict = m->get_status();
   }
-  else if ( !synmodel.empty() )
+  else if ( not synmodel.empty() )
   {
     const long synapse_id = static_cast< long >( synmodel );
     dict = kernel().model_manager.get_connector_defaults( synapse_id );
@@ -333,7 +374,9 @@ get_nodes( const index node_id,
   Subnet* subnet =
     dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
   if ( subnet == NULL )
+  {
     throw SubnetExpected();
+  }
 
   LocalNodeList localnodes( *subnet );
   std::vector< MPIManager::NodeAddressingData > globalnodes;

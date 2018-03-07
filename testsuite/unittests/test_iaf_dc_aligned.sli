@@ -21,7 +21,7 @@
  */
 
  /* BeginDocumentation
-Name: testsuite::test_iaf_dc_aligned - sli script for test of iaf_neuron resolution independence 
+Name: testsuite::test_iaf_dc_aligned - sli script for test of iaf_psc_alpha resolution independence
 
 Synopsis: (test_iaf_dc_aligned) run -> compare response with reference data
 
@@ -126,7 +126,7 @@ SeeAlso: testsuite::test_iaf_dc, testsuite::test_iaf_dc_aligned_delay, testsuite
          /resolution h
        >> SetStatus
 
-  /iaf_neuron Create /neuron Set
+  /iaf_psc_alpha Create /neuron Set
 
   /dc_generator Create /dc_gen Set
   dc_gen <<  

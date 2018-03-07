@@ -41,8 +41,8 @@ nest.ResetKernel()
 nest.set_verbosity('M_WARNING')
 
 # create two test layers
-nest.CopyModel('iaf_neuron', 'pyr')
-nest.CopyModel('iaf_neuron', 'in')
+nest.CopyModel('iaf_psc_alpha', 'pyr')
+nest.CopyModel('iaf_psc_alpha', 'in')
 
 a = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
                       'elements': ['pyr', 'in']})

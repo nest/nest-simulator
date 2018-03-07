@@ -39,9 +39,9 @@ nest.ResetKernel()
 
 # create two test layers
 a = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_neuron'})
+                      'elements': 'iaf_psc_alpha'})
 b = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_neuron'})
+                      'elements': 'iaf_psc_alpha'})
 
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 3.0}},

@@ -250,8 +250,8 @@ private:
   {
     // state variables
     double i_0_;      //!< synaptic dc input current, variable 0
-    double i_syn_ex_; //!< postsynaptic current for exc. inputs, variable 1
-    double i_syn_in_; //!< postsynaptic current for inh. inputs, variable 2
+    double I_syn_ex_; //!< postsynaptic current for exc. inputs, variable 1
+    double I_syn_in_; //!< postsynaptic current for inh. inputs, variable 2
     double V_m_;      //!< membrane potential, variable 3
     double V_th_1_;   //!< short time adaptive threshold (related to tau_1_),
                       //!< variable 4
@@ -335,20 +335,34 @@ private:
   // ----------------------------------------------------------------
 
   //! Read out state variables, used by UniversalDataLogger
-  double
+  inline double
   get_V_m_() const
   {
     return S_.V_m_ + P_.E_L_;
   }
-  double
+
+  inline double
   get_V_th_() const
   {
     return P_.E_L_ + P_.omega_ + S_.V_th_1_ + S_.V_th_2_ + S_.V_th_v_;
   }
-  double
+
+  inline double
   get_V_th_v_() const
   {
     return S_.V_th_v_;
+  }
+
+  inline double
+  get_I_syn_ex_() const
+  {
+    return S_.I_syn_ex_;
+  }
+
+  inline double
+  get_I_syn_in_() const
+  {
+    return S_.I_syn_in_;
   }
 
   // ----------------------------------------------------------------
@@ -387,7 +401,9 @@ inline port
 amat2_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -395,7 +411,9 @@ inline port
 amat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -404,7 +422,9 @@ amat2_psc_exp::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

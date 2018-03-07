@@ -31,12 +31,25 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
+
+namespace nest
+{
+RecordablesMap< ac_generator > ac_generator::recordablesMap_;
+
+template <>
+void
+RecordablesMap< ac_generator >::create()
+{
+  insert_( Name( names::I ), &ac_generator::get_I_ );
+}
+}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -50,12 +63,46 @@ nest::ac_generator::Parameters_::Parameters_()
 {
 }
 
-nest::ac_generator::State_::State_()
-  : y_0_( 0.0 )
-  , y_1_( 0.0 ) // pA
+nest::ac_generator::Parameters_::Parameters_( const Parameters_& p )
+  : amp_( p.amp_ )
+  , offset_( p.offset_ )
+  , freq_( p.freq_ )
+  , phi_deg_( p.phi_deg_ )
 {
 }
 
+nest::ac_generator::Parameters_& nest::ac_generator::Parameters_::operator=(
+  const Parameters_& p )
+{
+  if ( this == &p )
+  {
+    return *this;
+  }
+
+  amp_ = p.amp_;
+  offset_ = p.offset_;
+  freq_ = p.freq_;
+  phi_deg_ = p.phi_deg_;
+
+  return *this;
+}
+
+nest::ac_generator::State_::State_()
+  : y_0_( 0.0 )
+  , y_1_( 0.0 ) // pA
+  , I_( 0.0 )   // pA
+{
+}
+
+nest::ac_generator::Buffers_::Buffers_( ac_generator& n )
+  : logger_( n )
+{
+}
+
+nest::ac_generator::Buffers_::Buffers_( const Buffers_&, ac_generator& n )
+  : logger_( n )
+{
+}
 
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions
@@ -73,8 +120,8 @@ nest::ac_generator::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::ac_generator::State_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ "y_0" ] = y_0_;
-  ( *d )[ "y_1" ] = y_1_;
+  ( *d )[ names::y_0 ] = y_0_;
+  ( *d )[ names::y_1 ] = y_1_;
 }
 
 void
@@ -96,7 +143,9 @@ nest::ac_generator::ac_generator()
   , device_()
   , P_()
   , S_()
+  , B_( *this )
 {
+  recordablesMap_.create();
 }
 
 nest::ac_generator::ac_generator( const ac_generator& n )
@@ -104,6 +153,7 @@ nest::ac_generator::ac_generator( const ac_generator& n )
   , device_( n.device_ )
   , P_( n.P_ )
   , S_( n.S_ )
+  , B_( n.B_, *this )
 {
 }
 
@@ -125,11 +175,14 @@ void
 nest::ac_generator::init_buffers_()
 {
   device_.init_buffers();
+  B_.logger_.reset();
 }
 
 void
 nest::ac_generator::calibrate()
 {
+  B_.logger_.init();
+
   device_.calibrate();
 
   const double h = Time::get_resolution().get_ms();
@@ -153,16 +206,34 @@ nest::ac_generator::calibrate()
 void
 nest::ac_generator::update( Time const& origin, const long from, const long to )
 {
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( from < to );
+
   long start = origin.get_steps();
 
   CurrentEvent ce;
   for ( long lag = from; lag < to; ++lag )
+  {
+    // We need to iterate the oscillator throughout all steps, even when the
+    // device is not active, since inactivity only windows the oscillator.
+    const double y_0 = S_.y_0_;
+    S_.y_0_ = V_.A_00_ * y_0 + V_.A_01_ * S_.y_1_;
+    S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
+
+    S_.I_ = 0.0;
     if ( device_.is_active( Time::step( start + lag ) ) )
     {
-      const double y_0 = S_.y_0_;
-      S_.y_0_ = V_.A_00_ * y_0 + V_.A_01_ * S_.y_1_;
-      S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
-      ce.set_current( S_.y_1_ + P_.offset_ );
+      S_.I_ = S_.y_1_ + P_.offset_;
+      ce.set_current( S_.I_ );
       kernel().event_delivery_manager.send( *this, ce, lag );
     }
+    B_.logger_.record_data( origin.get_steps() + lag );
+  }
+}
+
+void
+nest::ac_generator::handle( DataLoggingRequest& e )
+{
+  B_.logger_.handle( e );
 }

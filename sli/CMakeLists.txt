@@ -96,7 +96,7 @@ target_link_libraries( sli_readline sli_lib nestutil ${READLINE_LIBRARIES} )
 
 # add the executable
 add_executable( sli puresli.cc )
-target_link_libraries( sli sli_lib sli_readline )
+target_link_libraries( sli sli_lib sli_readline ${GSL_LIBRARIES} )
 
 target_include_directories( sli PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
@@ -123,56 +123,6 @@ install( TARGETS sli_readline sli_lib sli
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
-# DIRS for help
-# 
-# base dirs + dirs/sli
-
-set( __HELPDIRS libnestutil sli librandom lib nestkernel nest ${SLI_MODULES} )
-foreach ( child ${__HELPDIRS} )
-  if ( IS_DIRECTORY "${PROJECT_SOURCE_DIR}/${child}" )
-    set( HELPDIRS "${HELPDIRS}${PROJECT_SOURCE_DIR}/${child}:" )
-    # Automatically include sli directory if it exists
-    if ( IS_DIRECTORY "${PROJECT_SOURCE_DIR}/${child}/sli" )
-      set( HELPDIRS "${HELPDIRS}${PROJECT_SOURCE_DIR}/${child}/sli:" )
-    endif ()
-  endif ()
-endforeach ()
-
-# testsuite dirs
-file( GLOB children ${PROJECT_SOURCE_DIR}/testsuite/*/ )
-foreach ( child ${children} )
-  if ( IS_DIRECTORY ${child} )
-    set( HELPDIRS "${HELPDIRS}${child}:" )
-  endif ()
-  if ( IS_DIRECTORY ${child}/pass )
-    set( HELPDIRS "${HELPDIRS}${child}/pass:" )
-  endif ()
-  if ( IS_DIRECTORY ${child}/fail )
-    set( HELPDIRS "${HELPDIRS}${child}/fail:" )
-  endif ()
-endforeach ()
-
-if ( NOT CMAKE_CROSSCOMPILING )
-  # install help (depends on sli and lib/sli/* installed)
-  install( CODE
-      "execute_process(
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_INSTALL_FULL_DOCDIR}/help/sli
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_INSTALL_FULL_DOCDIR}/help/cc
-        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_FULL_DOCDIR}/help/helpindex.html
-        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_FULL_DOCDIR}/help/helpindex.hlp
-
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_FULL_DOCDIR}/help
-        COMMAND ${CMAKE_COMMAND}
-            -DDOC_DIR='${CMAKE_INSTALL_FULL_DOCDIR}'
-            -DDATA_DIR='${CMAKE_INSTALL_FULL_DATADIR}'
-            -DHELPDIRS='${HELPDIRS}'
-            -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
-            -P ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
-          WORKING_DIRECTORY \"${PROJECT_BINARY_DIR}\"
-        )"
-      )
-endif ()
-
-install( FILES ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )
+FILTER_HEADERS("${sli_sources}" install_headers )
+install( FILES ${install_headers} gnureadline.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

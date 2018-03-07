@@ -129,12 +129,12 @@ References:
 
 Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
 model for the large, fluctuating synaptic conductance state typical of
-neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159–175.
+neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
 
 Bernander, O ., Douglas, R. J., Martin, K. A. C., & Koch, C. (1991).
 Synaptic background activity influences spatiotemporal integration in
 single pyramidal cells.  Proc. Natl. Acad. Sci. USA, 88(24),
-11569–11573.
+11569-11573.
 
 Author: Plesser
 
@@ -477,9 +477,13 @@ iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, rport receptor_type )
     || receptor_type >= SUP_SPIKE_RECEPTOR )
   {
     if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    {
       throw UnknownReceptorType( receptor_type, get_name() );
+    }
     else
+    {
       throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
+    }
   }
   return receptor_type - MIN_SPIKE_RECEPTOR;
 }
@@ -490,10 +494,14 @@ iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, rport receptor_type )
   if ( receptor_type < MIN_CURR_RECEPTOR || receptor_type >= SUP_CURR_RECEPTOR )
   {
     if ( receptor_type >= 0 && receptor_type < MIN_CURR_RECEPTOR )
+    {
       throw IncompatibleReceptorType(
         receptor_type, get_name(), "CurrentEvent" );
+    }
     else
+    {
       throw UnknownReceptorType( receptor_type, get_name() );
+    }
   }
   return receptor_type - MIN_CURR_RECEPTOR;
 }
@@ -505,10 +513,14 @@ iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr,
   if ( receptor_type != 0 )
   {
     if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    {
       throw UnknownReceptorType( receptor_type, get_name() );
+    }
     else
+    {
       throw IncompatibleReceptorType(
         receptor_type, get_name(), "DataLoggingRequest" );
+    }
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
@@ -528,17 +540,17 @@ iaf_cond_alpha_mc::get_status( DictionaryDatum& d ) const
    * a seg fault on exit, see #328
    */
   DictionaryDatum receptor_dict_ = new Dictionary();
-  ( *receptor_dict_ )[ Name( "soma_exc" ) ] = SOMA_EXC;
-  ( *receptor_dict_ )[ Name( "soma_inh" ) ] = SOMA_INH;
-  ( *receptor_dict_ )[ Name( "soma_curr" ) ] = I_SOMA;
+  ( *receptor_dict_ )[ names::soma_exc ] = SOMA_EXC;
+  ( *receptor_dict_ )[ names::soma_inh ] = SOMA_INH;
+  ( *receptor_dict_ )[ names::soma_curr ] = I_SOMA;
 
-  ( *receptor_dict_ )[ Name( "proximal_exc" ) ] = PROX_EXC;
-  ( *receptor_dict_ )[ Name( "proximal_inh" ) ] = PROX_INH;
-  ( *receptor_dict_ )[ Name( "proximal_curr" ) ] = I_PROX;
+  ( *receptor_dict_ )[ names::proximal_exc ] = PROX_EXC;
+  ( *receptor_dict_ )[ names::proximal_inh ] = PROX_INH;
+  ( *receptor_dict_ )[ names::proximal_curr ] = I_PROX;
 
-  ( *receptor_dict_ )[ Name( "distal_exc" ) ] = DIST_EXC;
-  ( *receptor_dict_ )[ Name( "distal_inh" ) ] = DIST_INH;
-  ( *receptor_dict_ )[ Name( "distal_curr" ) ] = I_DIST;
+  ( *receptor_dict_ )[ names::distal_exc ] = DIST_EXC;
+  ( *receptor_dict_ )[ names::distal_inh ] = DIST_INH;
+  ( *receptor_dict_ )[ names::distal_curr ] = I_DIST;
 
   ( *d )[ names::receptor_types ] = receptor_dict_;
 }

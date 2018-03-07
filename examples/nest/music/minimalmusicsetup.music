@@ -1,13 +1,11 @@
-
 stoptime=0.01
 
 [from]
-  binary=nest
+  binary=./minimalmusicsetup_sendnest.py
   np=1
-  args=minimalmusicsetup_sendnest.sli
 
 [to]
-  binary=nest
+  binary=./minimalmusicsetup_receivenest.py
   np=1
-  args=minimalmusicsetup_receivenest.sli
-  from.spikes_out -> to.spikes_in [1]
+
+from.spikes_out -> to.spikes_in [1]

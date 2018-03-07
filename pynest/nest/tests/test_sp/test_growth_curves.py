@@ -23,11 +23,10 @@ from scipy.integrate import quad
 import math
 import numpy
 from numpy import testing
-import pylab
 import unittest
 import nest
-from nest import raster_plot
 import time
+HAVE_OPENMP = nest.sli_func("is_threaded")
 
 
 class SynapticElementIntegrator(object):
@@ -216,6 +215,52 @@ class GaussianNumericSEI(SynapticElementIntegrator):
         )
 
 
+class SigmoidNumericSEI(SynapticElementIntegrator):
+
+    """
+    Compute the number of synaptic element corresponding to a
+    sigmoid growth curve
+    dse/dCa = nu * ((2.0 / exp( (Ca - eps)/psi)) - 1.0)
+
+    Use numerical integration (see scipy.integrate.quad)
+    """
+
+    def __init__(self, eps=0.7, growth_rate=1.0, psi=0.1, *args, **kwargs):
+        """
+        Constructor
+
+        :param eps: set point
+        :param psi: controls width of growth curve
+        :param growth_rate: scaling of the growth curve
+
+        .. seealso:: SynapticElementIntegrator()
+        """
+        super(SigmoidNumericSEI, self).__init__(*args, **kwargs)
+        self.eps = eps
+        self.psi = psi
+        self.growth_rate = growth_rate
+
+    def get_se(self, t):
+        """
+        :param t (float): current time
+        :return: Number of synaptic element
+        """
+        assert t >= self.t_minus
+        se = self.se_minus + quad(self.growth_curve, self.t_minus, t)[0]
+        if se > 0:
+            return se
+        else:
+            return 0
+
+    def growth_curve(self, t):
+        return self.growth_rate * (
+            (2.0 / (1.0 + math.exp(
+                (self.get_ca(t) - self.eps) / self.psi
+            ))) - 1.0
+        )
+
+
+@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
 class TestGrowthCurve(unittest.TestCase):
     """
     Unittest class to test the GrowthCurve used with nest
@@ -225,6 +270,7 @@ class TestGrowthCurve(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus({"total_num_virtual_procs": 4})
         nest.ResetNetwork()
+        nest.set_verbosity('M_DEBUG')
 
         self.sim_time = 10000
         self.sim_step = 100
@@ -240,8 +286,9 @@ class TestGrowthCurve(unittest.TestCase):
         self.se_python = None
 
         # build
-        self.pop = nest.Create('iaf_neuron', 10)
-        self.local_nodes = nest.GetNodes([0], {'model': 'iaf_neuron'}, True)[0]
+        self.pop = nest.Create('iaf_psc_alpha', 10)
+        local_nodes = nest.GetNodes([0], {'model': 'iaf_psc_alpha'}, True)
+        self.local_nodes = local_nodes[0]
         self.spike_detector = nest.Create('spike_detector')
         nest.Connect(self.pop, self.spike_detector, 'all_to_all')
         noise = nest.Create('poisson_generator')
@@ -290,24 +337,6 @@ class TestGrowthCurve(unittest.TestCase):
                 testing.assert_almost_equal(
                     self.se_nest[n_i], self.se_python[sei_i], decimal=5)
 
-    def plot(self):
-        pylab.ion()
-        for i, sei in enumerate(self.se_integrator):
-            pylab.figure()
-            pylab.subplot(1, 2, 1)
-            pylab.title('Ca')
-            pylab.plot(self.sim_steps, self.ca_nest[0, :])
-            pylab.plot(self.sim_steps, self.ca_python[i])
-            pylab.legend(('nest', sei.__class__.__name__))
-            pylab.subplot(1, 2, 2)
-            pylab.title('Synaptic Element')
-            pylab.plot(self.sim_steps, self.se_nest[0, :])
-            pylab.plot(self.sim_steps, self.se_python[i])
-            pylab.legend(('nest', sei.__class__.__name__))
-            pylab.savefig('sp' + sei.__class__.__name__ + '.png')
-        raster_plot.from_device(self.spike_detector)
-        pylab.savefig('sp_raster_plot.png')
-
     def test_linear_growth_curve(self):
         beta_ca = 0.0001
         tau_ca = 10000.0
@@ -337,7 +366,7 @@ class TestGrowthCurve(unittest.TestCase):
 
         # check that we got the same values from one run to another
         # expected = self.se_nest[:, 10]
-        # print self.se_nest[:, 10].__repr__()
+        # print(self.se_nest[:, 10].__repr__())
         expected = numpy.array([
             0.08376263, 0.08374046, 0.08376031, 0.08376756, 0.08375428,
             0.08378699, 0.08376784, 0.08369779, 0.08374215, 0.08370484
@@ -377,7 +406,7 @@ class TestGrowthCurve(unittest.TestCase):
 
         # check that we got the same values from one run to another
         # expected = self.se_nest[:, 30]
-        # print self.se_nest[:, 30].__repr__()
+        # print(self.se_nest[:, 30].__repr__())
         expected = numpy.array([
             0.10044035, 0.10062526, 0.1003149, 0.10046311, 0.1005713,
             0.10031755, 0.10032216, 0.10040191, 0.10058179, 0.10068598
@@ -390,15 +419,51 @@ class TestGrowthCurve(unittest.TestCase):
                         self.pop.index(n)],
                     decimal=5)
 
-    def tearDown(self):
-        # uncomment this line if you want to plot values
-        # self.plot()
-        return
+    def test_sigmoid_growth_curve(self):
+        beta_ca = 0.0001
+        tau_ca = 10000.0
+        growth_rate = 0.0001
+        eps = 0.10
+        psi = 0.10
+        nest.SetStatus(
+            self.local_nodes,
+            {
+                'beta_Ca': beta_ca,
+                'tau_Ca': tau_ca,
+                'synaptic_elements': {
+                    'se': {
+                        'growth_curve': 'sigmoid',
+                        'growth_rate': growth_rate,
+                        'eps': eps, 'psi': 0.1, 'z': 0.0
+                    }
+                }
+            }
+        )
+        self.se_integrator.append(
+            SigmoidNumericSEI(tau_ca=tau_ca, beta_ca=beta_ca,
+                              eps=eps, psi=psi, growth_rate=growth_rate))
+        self.simulate()
+
+        # check that we got the same values from one run to another
+        # expected = self.se_nest[:, 30]
+        # print self.se_nest[:, 30].__repr__()
+        expected = numpy.array([
+            0.07801164,  0.07796841,  0.07807825,  0.07797382,  0.07802574,
+            0.07805961,  0.07808139,  0.07794451,  0.07799474,  0.07794458
+        ])
+
+        for n in self.pop:
+            if n in self.local_nodes:
+                testing.assert_almost_equal(
+                    self.se_nest[self.local_nodes.index(n), 30], expected[
+                        self.pop.index(n)],
+                    decimal=5)
 
 
 def suite():
     test_suite = unittest.makeSuite(TestGrowthCurve, 'test')
     return test_suite
+
 
 if __name__ == '__main__':
     unittest.main()

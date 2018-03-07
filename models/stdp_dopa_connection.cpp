@@ -55,20 +55,23 @@ void
 STDPDopaCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
-
   if ( vt_ != 0 )
-    def< long >( d, "vt", vt_->get_gid() );
+  {
+    def< long >( d, names::vt, vt_->get_gid() );
+  }
   else
-    def< long >( d, "vt", -1 );
+  {
+    def< long >( d, names::vt, -1 );
+  }
 
-  def< double >( d, "A_plus", A_plus_ );
-  def< double >( d, "A_minus", A_minus_ );
-  def< double >( d, "tau_plus", tau_plus_ );
-  def< double >( d, "tau_c", tau_c_ );
-  def< double >( d, "tau_n", tau_n_ );
-  def< double >( d, "b", b_ );
-  def< double >( d, "Wmin", Wmin_ );
-  def< double >( d, "Wmax", Wmax_ );
+  def< double >( d, names::A_plus, A_plus_ );
+  def< double >( d, names::A_minus, A_minus_ );
+  def< double >( d, names::tau_plus, tau_plus_ );
+  def< double >( d, names::tau_c, tau_c_ );
+  def< double >( d, names::tau_n, tau_n_ );
+  def< double >( d, names::b, b_ );
+  def< double >( d, names::Wmin, Wmin_ );
+  def< double >( d, names::Wmax, Wmax_ );
 }
 
 void
@@ -78,33 +81,38 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d,
   CommonSynapseProperties::set_status( d, cm );
 
   long vtgid;
-  if ( updateValue< long >( d, "vt", vtgid ) )
+  if ( updateValue< long >( d, names::vt, vtgid ) )
   {
-    vt_ = dynamic_cast< volume_transmitter* >(
-      kernel().node_manager.get_node( vtgid ) );
-
+    vt_ = dynamic_cast< volume_transmitter* >( kernel().node_manager.get_node(
+      vtgid, kernel().vp_manager.get_thread_id() ) );
     if ( vt_ == 0 )
+    {
       throw BadProperty( "Dopamine source must be volume transmitter" );
+    }
   }
 
-  updateValue< double >( d, "A_plus", A_plus_ );
-  updateValue< double >( d, "A_minus", A_minus_ );
-  updateValue< double >( d, "tau_plus", tau_plus_ );
-  updateValue< double >( d, "tau_c", tau_c_ );
-  updateValue< double >( d, "tau_n", tau_n_ );
-  updateValue< double >( d, "b", b_ );
-  updateValue< double >( d, "Wmin", Wmin_ );
-  updateValue< double >( d, "Wmax", Wmax_ );
+  updateValue< double >( d, names::A_plus, A_plus_ );
+  updateValue< double >( d, names::A_minus, A_minus_ );
+  updateValue< double >( d, names::tau_plus, tau_plus_ );
+  updateValue< double >( d, names::tau_c, tau_c_ );
+  updateValue< double >( d, names::tau_n, tau_n_ );
+  updateValue< double >( d, names::b, b_ );
+  updateValue< double >( d, names::Wmin, Wmin_ );
+  updateValue< double >( d, names::Wmax, Wmax_ );
 }
 
 Node*
 STDPDopaCommonProperties::get_node()
 {
   if ( vt_ == 0 )
+  {
     throw BadProperty(
       "No volume transmitter has been assigned to the dopamine synapse." );
+  }
   else
+  {
     return vt_;
+  }
 }
 
 } // of namespace nest

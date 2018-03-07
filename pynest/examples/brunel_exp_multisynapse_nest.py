@@ -28,7 +28,7 @@ the basis of the network used in
 
 Brunel N, Dynamics of Sparsely Connected Networks of Excitatory and
 Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
-183–208 (2000).
+183-208 (2000).
 
 The example demonstrate the usage of the multisynapse neuron
 model. Each spike arriving at the neuron triggers an exponential

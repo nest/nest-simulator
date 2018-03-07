@@ -46,7 +46,9 @@ By default, GID and time of each spike is recorded.
 
 The spike detector can also record spike times with full precision
 from neurons emitting precisely timed spikes. Set /precise_times to
-achieve this.
+achieve this. If there are precise models and /precise_times is not
+set, it will be set to True at the start of the simulation and
+/precision will be increased to 15 from its default value of 3.
 
 Any node from which spikes are to be recorded, must be connected to
 the spike detector using a normal connect command. Any connection weight
@@ -141,6 +143,7 @@ private:
   void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
+  void post_run_cleanup();
   void finalize();
 
   /**
@@ -182,7 +185,6 @@ private:
   RecordingDevice device_;
   Buffers_ B_;
 
-  bool user_set_precise_times_;
   bool has_proxies_;
   bool local_receiver_;
 };
@@ -203,9 +205,18 @@ inline port
 spike_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
+
+inline void
+spike_detector::post_run_cleanup()
+{
+  device_.post_run_cleanup();
+}
+
 
 inline void
 spike_detector::finalize()

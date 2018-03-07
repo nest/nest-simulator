@@ -1,4 +1,9 @@
-# The Neural Simulation Tool - NEST [![Build Status](https://travis-ci.org/nest/nest-simulator.svg?branch=master)](https://travis-ci.org/nest/nest-simulator)
+# The Neural Simulation Tool - NEST 
+
+[![Build Status](https://travis-ci.org/nest/nest-simulator.svg?branch=master)](https://travis-ci.org/nest/nest-simulator)
+[![License](http://img.shields.io/:license-GPLv2+-green.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.882971.svg)](http://dx.doi.org/10.5281/zenodo.882971)
+[![Latest Version](https://img.shields.io/badge/latest%20version-2.14.0-brightgreen.svg)](https://github.com/nest/nest-simulator/releases/tag/v2.14.0)
 
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact
@@ -105,65 +110,46 @@ you received in the NEST sources.
 
 ## Citing NEST
 
-Please cite NEST if you use it in your work.  If you use this version of NEST,
-please cite it as `Bos, Hannah et al. (2015).  NEST 2.10.0. Zenodo.
-10.5281/zenodo.44222`.  The full citation is available in different formats on
-[Zenodo](http://dx.doi.org/10.5281/zenodo.44222).
+Please cite NEST if you use it in your work.
 
-Here is a suitable BibTeX entry:
+If you use NEST 2.14.0, please cite it as **Peyser, Alexander et al. (2017).
+NEST 2.14.0. Zenodo. 10.5281/zenodo.882971**. The full citation is available
+in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.882971).
 
-```latex
-@misc{bos_2015_44222,
-  author       = {Bos, Hannah and
-                  Morrison, Abigail and
-                  Peyser, Alexander and
-                  Hahne, Jan and
-                  Helias, Moritz and
-                  Kunkel, Susanne and
-                  Ippen, Tammo and
-                  Eppler, Jochen Martin and
-                  Schmidt, Maximilian and
-                  Seeholzer, Alex and
-                  Djurfeldt, Mikael and
-                  Diaz, Sandra and
-                  Morén, Janne and
-                  Deepu, Rajalekshmi and
-                  Stocco, Teo and
-                  Deger, Moritz and
-                  Michler, Frank and
-                  Plesser, Hans Ekkehard},
-  title        = {NEST 2.10.0},
-  month        = dec,
-  year         = 2015,
-  doi          = {10.5281/zenodo.44222},
-  url          = {http://dx.doi.org/10.5281/zenodo.44222}
-}
-```
+If you use NEST 2.12.0, please cite it as **Kunkel, Susanne et al. (2017).
+NEST 2.12.0. Zenodo. 10.5281/zenodo.259534**. The full citation is available
+in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.259534).
 
-If you use  NEST v2.8.0, please cite it as `Eppler, Jochen Martin et al. (2015).
-NEST 2.8.0. Zenodo. 10.5281/zenodo.32969`. The full citation is available in
-different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.32969).
+If you use NEST v2.10.0, please cite it as **Bos, Hannah et al. (2015).
+NEST 2.10.0. Zenodo. 10.5281/zenodo.44222**. The full citation is available
+in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.44222).
 
-For all other versions below NEST v2.8.0 please use: [Gewaltig M-O & Diesmann M
-(2007) NEST (Neural Simulation Tool) Scholarpedia
+If you use NEST v2.8.0, please cite it as **Eppler, Jochen Martin et al. (2015).
+NEST 2.8.0. Zenodo. 10.5281/zenodo.32969**. The full citation is available
+in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.32969).
+
+For all versions below NEST v2.8.0 and for citing NEST without referring to a
+specific version, please use: [Gewaltig M-O & Diesmann M (2007) NEST (Neural
+Simulation Tool) Scholarpedia
 2(4):1430](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool)).
 
 Here is a suitable BibTeX entry:
 
 ```latex
 @ARTICLE{Gewaltig:NEST,
-  author = {Marc-Oliver Gewaltig and Markus Diesmann},
-  title = {NEST (NEural Simulation Tool)},
+  author  = {Marc-Oliver Gewaltig and Markus Diesmann},
+  title   = {NEST (NEural Simulation Tool)},
   journal = {Scholarpedia},
-  year = {2007},
-  volume = {2},
-  pages = {1430},
-  number = {4}
+  year    = {2007},
+  volume  = {2},
+  pages   = {1430},
+  number  = {4}
 }
 ```
 
 Please get in touch with us about your publications that used NEST, we will add
-it to our publication list, thus making it visible to potential readers.
+them to our [publication list](http://www.nest-simulator.org/publications), thus
+making them visible to potential readers.
 
 ## Editor support
 

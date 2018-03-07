@@ -214,11 +214,11 @@ class StructralPlasticityExample:
         size excitatory neurons and another one with 20% of the total network
         size of inhibitory neurons.
         '''
-        self.nodes_e = nest.Create('iaf_neuron',
+        self.nodes_e = nest.Create('iaf_psc_alpha',
                                    self.number_excitatory_neurons,
                                    {'synaptic_elements': synaptic_elements})
 
-        self.nodes_i = nest.Create('iaf_neuron',
+        self.nodes_i = nest.Create('iaf_psc_alpha',
                                    self.number_inhibitory_neurons,
                                    {'synaptic_elements': synaptic_elements_i})
         nest.SetStatus(self.nodes_e, 'synaptic_elements', synaptic_elements)

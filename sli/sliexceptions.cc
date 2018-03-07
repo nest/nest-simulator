@@ -31,36 +31,46 @@
 // Includes from sli:
 #include "interpret.h"
 
-WrappedThreadException::WrappedThreadException( std::exception& exc )
+WrappedThreadException::WrappedThreadException( const std::exception& exc )
   : SLIException( exc.what() )
 {
-  SLIException* se = dynamic_cast< SLIException* >( &exc );
+  SLIException const* se = dynamic_cast< SLIException const* >( &exc );
   if ( se )
+  {
     message_ = se->message();
+  }
   else
+  {
     message_ = std::string( "C++ exception: " ) + exc.what();
+  }
 }
 
 std::string
-DivisionByZero::message()
+DivisionByZero::message() const
 {
   return "You cannot divide by zero.";
 }
 
 std::string
-TypeMismatch::message()
+TypeMismatch::message() const
 {
-  if ( !provided_.empty() && !expected_.empty() )
+  if ( not provided_.empty() && not expected_.empty() )
+  {
     return "Expected datatype: " + expected_ + "\nProvided datatype: "
       + provided_;
-  else if ( !expected_.empty() )
+  }
+  else if ( not expected_.empty() )
+  {
     return "Expected datatype: " + expected_;
+  }
   else
+  {
     return "The expected datatype is unknown in the current context.";
+  }
 }
 
 std::string
-RangeCheck::message()
+RangeCheck::message() const
 {
   if ( size_ > 0 )
   {
@@ -78,7 +88,7 @@ RangeCheck::message()
 }
 
 std::string
-ArgumentType::message()
+ArgumentType::message() const
 {
   std::ostringstream out;
 
@@ -87,58 +97,72 @@ ArgumentType::message()
   {
     out << " the ";
     if ( where == 1 )
+    {
       out << "first";
+    }
     else if ( where == 2 )
+    {
       out << "second";
+    }
     else if ( where == 3 )
+    {
       out << "third";
+    }
     else
+    {
       out << where << "th";
+    }
     out << " parameter";
   }
   else
+  {
     out << " one or more parameters";
+  }
   out << " did not match the argument(s) of this function.";
 
   return out.str();
 }
 
 std::string
-BadParameterValue::message()
+BadParameterValue::message() const
 {
   return msg_;
 }
 
 
 std::string
-UndefinedName::message()
+UndefinedName::message() const
 {
   return "Key '/" + name_ + "' does not exist in dictionary.";
 }
 
 std::string
-EntryTypeMismatch::message()
+EntryTypeMismatch::message() const
 {
   return "Expected datatype: " + expected_ + "\nProvided datatype: "
     + provided_;
 }
 
 std::string
-StackUnderflow::message()
+StackUnderflow::message() const
 {
   std::ostringstream out;
   if ( needed )
   {
     out << "Command needs (at least) " << needed << " argument(s)";
     if ( given )
+    {
       out << ", but the stack has only " << given;
+    }
     out << ".";
   }
   else
   {
     out << "Command needs more arguments";
     if ( given )
+    {
       out << "than " << given;
+    }
     out << ".";
   }
 
@@ -146,13 +170,13 @@ StackUnderflow::message()
 }
 
 std::string
-IOError::message()
+IOError::message() const
 {
   return std::string();
 }
 
 std::string
-SystemSignal::message()
+SystemSignal::message() const
 {
   std::ostringstream out;
   out << "The operation was interrupted by the system signal " << signal_
@@ -161,13 +185,13 @@ SystemSignal::message()
 }
 
 std::string
-UnaccessedDictionaryEntry::message()
+UnaccessedDictionaryEntry::message() const
 {
   return "Unused dictionary items: " + msg_;
 }
 
 std::string
-DynamicModuleManagementError::message()
+DynamicModuleManagementError::message() const
 {
   if ( msg_.empty() )
   {
@@ -180,13 +204,13 @@ DynamicModuleManagementError::message()
 }
 
 std::string
-NamingConflict::message()
+NamingConflict::message() const
 {
   return msg_;
 }
 
 std::string
-NotImplemented::message()
+NotImplemented::message() const
 {
   return msg_;
 }

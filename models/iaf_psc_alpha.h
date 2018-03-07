@@ -102,7 +102,7 @@ Remarks:
   If tau_m is very close to tau_syn_ex or tau_syn_in, the model
   will numerically behave as if tau_m is equal to tau_syn_ex or
   tau_syn_in, respectively, to avoid numerical instabilities.
-  For details, please see IAF_Neruons_Singularity.ipynb in
+  For details, please see IAF_neurons_singularity.ipynb in
   the NEST source code (docs/model_details).
 
 References:
@@ -221,10 +221,10 @@ private:
   {
 
     double y0_; //!< Constant current
-    double y1_ex_;
-    double y2_ex_;
-    double y1_in_;
-    double y2_in_;
+    double dI_ex_;
+    double I_ex_;
+    double dI_in_;
+    double I_in_;
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
     double y3_;
 
@@ -293,31 +293,34 @@ private:
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double
+  inline double
   get_V_m_() const
   {
     return S_.y3_ + P_.E_L_;
   }
 
-  double
+  inline double
   get_weighted_spikes_ex_() const
   {
     return V_.weighted_spikes_ex_;
   }
-  double
+
+  inline double
   get_weighted_spikes_in_() const
   {
     return V_.weighted_spikes_in_;
   }
-  double
-  get_input_currents_ex_() const
+
+  inline double
+  get_I_syn_ex_() const
   {
-    return S_.y1_ex_;
+    return S_.I_ex_;
   }
-  double
-  get_input_currents_in_() const
+
+  inline double
+  get_I_syn_in_() const
   {
-    return S_.y1_in_;
+    return S_.I_in_;
   }
 
   // Data members -----------------------------------------------------------
@@ -354,7 +357,9 @@ inline port
 iaf_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -362,7 +367,9 @@ inline port
 iaf_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -371,7 +378,9 @@ iaf_psc_alpha::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

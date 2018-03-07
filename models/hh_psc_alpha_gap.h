@@ -69,7 +69,7 @@ Description:
  additionally supports gap junctions.
 
 
- (1) Post-syaptic currents
+ (1) Post-synaptic currents
  Incoming spike events induce a post-synaptic change of current modelled
  by an alpha function. The alpha function is normalised such that an event of
  weight 1.0 results in a peak current of 1 pA.
@@ -134,7 +134,6 @@ Receives: SpikeEvent, GapJunctionEvent, CurrentEvent, DataLoggingRequest
 Author: Jan Hahne, Moritz Helias, Susanne Kunkel
 SeeAlso: hh_psc_alpha, hh_cond_exp_traub, gap_junction
 */
-
 class hh_psc_alpha_gap : public Archiving_Node
 {
 
@@ -155,7 +154,6 @@ public:
   using Node::sends_secondary_event;
 
   port send_test_event( Node& target, rport receptor_type, synindex, bool );
-
 
   void handle( SpikeEvent& );
   void handle( CurrentEvent& );
@@ -199,7 +197,12 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
+
+  /** This is the actual update function. The additional boolean parameter
+   * determines if the function is called by update (false) or wfr_update (true)
+   */
   bool update_( Time const&, const long, const long, const bool );
+
   void update( Time const&, const long, const long );
   bool wfr_update( Time const&, const long, const long );
 
@@ -382,12 +385,11 @@ hh_psc_alpha_gap::wfr_update( Time const& origin,
   const long from,
   const long to )
 {
-  bool done = false;
   State_ old_state = S_; // save state before wfr_update
-  done = update_( origin, from, to, true );
+  const bool wfr_tol_exceeded = update_( origin, from, to, true );
   S_ = old_state; // restore old state
 
-  return done;
+  return not wfr_tol_exceeded;
 }
 
 inline port
@@ -406,7 +408,9 @@ inline port
 hh_psc_alpha_gap::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -414,7 +418,9 @@ inline port
 hh_psc_alpha_gap::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -423,7 +429,9 @@ hh_psc_alpha_gap::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
@@ -431,7 +439,9 @@ inline port
 hh_psc_alpha_gap::handles_test_event( GapJunctionEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 

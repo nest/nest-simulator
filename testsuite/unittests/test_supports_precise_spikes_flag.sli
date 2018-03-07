@@ -1,0 +1,36 @@
+/*
+ *  test_supports_precise_spikes_flag.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+ 
+/* BeginDocumentation
+
+Name: testsuite::test_supports_precise_spikes_flag - Checks that the 
+supports_precise_flag is a) available b) is set correctly by the precise and
+normal neuronal models.
+
+Author: Dimitri Plotnikov, 2016-09-09
+*/
+
+(unittest) run
+/unittest using
+
+{ /iaf_psc_exp GetDefaults /supports_precise_spikes get not } assert_or_die
+{ /parrot_neuron_ps GetDefaults /supports_precise_spikes get } assert_or_die

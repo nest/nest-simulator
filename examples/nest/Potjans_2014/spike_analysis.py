@@ -57,16 +57,16 @@ gids = []
 for l in gidfile:
     a = l.split()
     gids.append([int(a[0]), int(a[1])])
-print 'Global IDs:'
-print gids
-print
+print('Global IDs:')
+print(gids)
+print()
 
 # number of populations
 
 num_pops = len(gids)
-print 'Number of populations:'
-print num_pops
-print
+print('Number of populations:')
+print(num_pops)
+print()
 
 # first GID in each population
 
@@ -98,9 +98,9 @@ last_gids = [int(np.sum(pop_sizes[:i + 1]))
 
 Pop_sizes = [pop_sizes[i:i + 2]
              for i in xrange(0, len(pop_sizes), 2)]
-print 'Population sizes:'
-print Pop_sizes
-print
+print('Population sizes:')
+print(Pop_sizes)
+print()
 
 Raw_first_gids = [raw_first_gids[i:i + 2] for i in
                   xrange(0, len(raw_first_gids), 2)]
@@ -112,9 +112,9 @@ Last_gids = [last_gids[i:i + 2] for i in xrange(0, len(last_gids), 2)]
 # total number of neurons in the simulation
 
 num_neurons = last_gids[len(last_gids) - 1]
-print 'Total number of neurons:'
-print num_neurons
-print
+print('Total number of neurons:')
+print(num_neurons)
+print()
 
 # load spikes from gdf files, correct GIDs and merge them in population files,
 # and store spike trains
@@ -135,8 +135,8 @@ for layer in ['0', '1', '2', '3']:
         file_pattern = os.path.join(datapath,
                                     'spikes_{}_{}*'.format(layer, population))
         files = glob.glob(file_pattern)
-        print 'Merge ' + str(
-            len(files)) + ' spike files from L' + layer + 'P' + population
+        print('Merge ' + str(
+            len(files)) + ' spike files from L' + layer + 'P' + population)
         if files:
             merged_file = open(output, 'w')
             for f in files:
@@ -190,9 +190,9 @@ for i in np.arange(num_pops):
     rates.append(temp / (rec_sizes[i] * (T - T_start)) * 1e3)
     temp = 0
 
-print
-print 'Firing rates:'
-print rates
+print()
+print('Firing rates:')
+print(rates)
 
 plt.figure(2)
 ticks = np.arange(num_pops)

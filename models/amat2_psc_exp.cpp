@@ -60,6 +60,8 @@ RecordablesMap< amat2_psc_exp >::create()
   insert_( names::V_m, &amat2_psc_exp::get_V_m_ );
   insert_( names::V_th, &amat2_psc_exp::get_V_th_ );
   insert_( names::V_th_v, &amat2_psc_exp::get_V_th_v_ );
+  insert_( names::I_syn_ex, &amat2_psc_exp::get_I_syn_ex_ );
+  insert_( names::I_syn_in, &amat2_psc_exp::get_I_syn_in_ );
 }
 }
 
@@ -89,8 +91,8 @@ nest::amat2_psc_exp::Parameters_::Parameters_()
 
 nest::amat2_psc_exp::State_::State_()
   : i_0_( 0.0 )
-  , i_syn_ex_( 0.0 )
-  , i_syn_in_( 0.0 )
+  , I_syn_ex_( 0.0 )
+  , I_syn_in_( 0.0 )
   , V_m_( 0.0 )
   , V_th_1_( 0.0 ) // relative to omega_
   , V_th_2_( 0.0 ) // relative to omega_
@@ -146,28 +148,37 @@ nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_v, tau_v_ );
 
   if ( updateValue< double >( d, names::omega, omega_ ) )
+  {
     omega_ -= E_L_;
+  }
   else
+  {
     omega_ -= delta_EL;
-
+  }
   if ( C_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0
     || tau_2_ <= 0
     || tau_v_ <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
-
+  }
   if ( Tau_ == tau_ex_ || Tau_ == tau_in_ || Tau_ == tau_v_ )
+  {
     throw BadProperty(
       "tau_m must differ from tau_syn_ex, tau_syn_in and tau_v. "
       "See note in documentation." );
+  }
 
   if ( tau_v_ == tau_ex_
     || tau_v_ == tau_in_ ) // tau_v_ == tau_m_  checked above
+  {
     throw BadProperty(
       "tau_v must differ from tau_syn_ex, tau_syn_in and tau_m. "
       "See note in documentation." );
+  }
 
   return delta_EL;
 }
@@ -191,9 +202,13 @@ nest::amat2_psc_exp::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
+  {
     V_m_ -= p.E_L_;
+  }
   else
+  {
     V_m_ -= delta_EL;
+  }
 
   updateValue< double >( d, names::V_th_alpha_1, V_th_1_ );
   updateValue< double >( d, names::V_th_alpha_2, V_th_2_ );
@@ -368,8 +383,10 @@ nest::amat2_psc_exp::calibrate()
   V_.RefractoryCountsTot_ = Time( Time::ms( P_.tau_ref_ ) ).get_steps();
 
   if ( V_.RefractoryCountsTot_ < 1 )
+  {
     throw BadProperty(
       "Total refractory time must be at least one time step." );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -390,17 +407,17 @@ nest::amat2_psc_exp::update( Time const& origin,
   {
 
     // evolve voltage dependency (6,7)
-    S_.V_th_v_ = ( P_.I_e_ + S_.i_0_ ) * V_.P70_ + S_.i_syn_ex_ * V_.P71_
-      + S_.i_syn_in_ * V_.P72_ + S_.V_m_ * V_.P73_ + S_.V_th_dv_ * V_.P76_
+    S_.V_th_v_ = ( P_.I_e_ + S_.i_0_ ) * V_.P70_ + S_.I_syn_ex_ * V_.P71_
+      + S_.I_syn_in_ * V_.P72_ + S_.V_m_ * V_.P73_ + S_.V_th_dv_ * V_.P76_
       + S_.V_th_v_ * V_.P77_;
 
-    S_.V_th_dv_ = ( P_.I_e_ + S_.i_0_ ) * V_.P60_ + S_.i_syn_ex_ * V_.P61_
-      + S_.i_syn_in_ * V_.P62_ + S_.V_m_ * V_.P63_ + S_.V_th_dv_ * V_.P66_;
+    S_.V_th_dv_ = ( P_.I_e_ + S_.i_0_ ) * V_.P60_ + S_.I_syn_ex_ * V_.P61_
+      + S_.I_syn_in_ * V_.P62_ + S_.V_m_ * V_.P63_ + S_.V_th_dv_ * V_.P66_;
 
 
     // evolve membrane potential (3)
-    S_.V_m_ = ( P_.I_e_ + S_.i_0_ ) * V_.P30_ + S_.i_syn_ex_ * V_.P31_
-      + S_.i_syn_in_ * V_.P32_ + S_.V_m_ * V_.P33_;
+    S_.V_m_ = ( P_.I_e_ + S_.i_0_ ) * V_.P30_ + S_.I_syn_ex_ * V_.P31_
+      + S_.I_syn_in_ * V_.P32_ + S_.V_m_ * V_.P33_;
 
 
     // evolve adaptive threshold (4,5)
@@ -408,11 +425,11 @@ nest::amat2_psc_exp::update( Time const& origin,
     S_.V_th_2_ *= V_.P55_;
 
     // exponential decaying PSCs (1,2)
-    S_.i_syn_ex_ *= V_.P11_;
-    S_.i_syn_in_ *= V_.P22_;
-    S_.i_syn_ex_ +=
+    S_.I_syn_ex_ *= V_.P11_;
+    S_.I_syn_in_ *= V_.P22_;
+    S_.I_syn_ex_ +=
       B_.spikes_ex_.get_value( lag ); // the spikes arriving at T+1 have an
-    S_.i_syn_in_ +=
+    S_.I_syn_in_ +=
       B_.spikes_in_.get_value( lag ); // the spikes arriving at T+1 have an
 
 
@@ -434,7 +451,9 @@ nest::amat2_psc_exp::update( Time const& origin,
       }
     }
     else
-      --S_.r_; // neuron is totally refractory (cannot generate spikes)
+    {
+      --S_.r_;
+    } // neuron is totally refractory (cannot generate spikes)
 
     // set new input current
     S_.i_0_ = B_.currents_.get_value( lag );
@@ -451,13 +470,17 @@ nest::amat2_psc_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
+  {
     B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
+  {
     B_.spikes_in_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
 }
 
 void

@@ -1,7 +1,19 @@
 #!/bin/bash
 
-# Requires nest in Pythonpath
 # Requires Matplotlib 1.0.0
+python -c "import matplotlib" > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "Python module 'matplotlib' not found. Exiting."
+    exit 1
+fi
+
+# Requires nest in PYTHONPATH
+python -c "import nest" > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "Python module 'nest' not found. Exiting."
+    exit 1
+fi
+
 
 # Programs to use
 LATEX=pdflatex

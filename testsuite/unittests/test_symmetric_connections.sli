@@ -29,14 +29,17 @@ Synopsis: (test_symmetric_connections) run -> NEST exits if test fails
 
 Description: 
 This test ensures that the functionality to create symmetric connections
-works properly.
+via flag "make_symmetric" works properly. It also ensures that the 
+built-in property "requires_symmetric" for synapse models works properly.
 
 In more detail the test ensures that
-- the symmetric flag works properly with one-to-one connection rule
-- the usage of the symmetric flag with any other connections throws
+- the "make_symmetric" flag works properly with one-to-one connection rule
+- the usage of the "make_symmetric" flag with any other connections throws
   an NotImplemented exception
+- synapse models that "require_symmetric" cannot be created without
+  "make_symmetric" except for suitable uniform all-to-all connections
 
-Author: Jan Hahne, 2016-04-22
+Author: Jan Hahne, 2016-04-22, updated 2016-11-02
 */
 
 (unittest) run
@@ -54,35 +57,35 @@ M_ERROR setverbosity
   /set2 6 10 cvgidcollection def
 } def
 
-% Check that symmetric flag cannot be used with other connection rules than one_to_one
+% Check that make_symmetric flag cannot be used with other connection rules than one_to_one
 {
   setup
-  set1 set2 << /rule /all_to_all /symmetric true >> /static_synapse Connect
+  set1 set2 << /rule /all_to_all /make_symmetric true >> /static_synapse Connect
 }
 fail_or_die
 
 {
   setup
-  set1 set2 << /rule /fixed_indegree /indegree 3 /symmetric true >> /static_synapse Connect
+  set1 set2 << /rule /fixed_indegree /indegree 3 /make_symmetric true >> /static_synapse Connect
 }
 fail_or_die
 
 {
   setup
-  set1 set2 << /rule /fixed_outdegree /outdegree 3 /symmetric true >> /static_synapse Connect
+  set1 set2 << /rule /fixed_outdegree /outdegree 3 /make_symmetric true >> /static_synapse Connect
 }
 fail_or_die
 
 {
   setup
-  set1 set2 << /rule /fixed_total_number /N 3 /symmetric true >> /static_synapse Connect
+  set1 set2 << /rule /fixed_total_number /N 3 /make_symmetric true >> /static_synapse Connect
 }
 fail_or_die
 
-% Check that symmetric flag works properly for basic one_to_one connections
+% Check that make_symmetric flag works properly for basic one_to_one connections
 {
   setup
-  set1 set2 << /rule /one_to_one /symmetric true >> /static_synapse Connect
+  set1 set2 << /rule /one_to_one /make_symmetric true >> /static_synapse Connect
 
   << /source [1 5] Range >> GetConnections /fwd Set
   << /source [6 10] Range >> GetConnections /bck Set
@@ -98,12 +101,12 @@ fail_or_die
   true exch { and } Fold
 } assert_or_die
 
-% Check that symmetric flag cannot be used with random parameters
+% Check that make_symmetric flag cannot be used with random parameters
 {
   setup
   set1 set2 
   << /rule /one_to_one 
-     /symmetric true >> 
+     /make_symmetric true >> 
   << /model /stdp_synapse 
      /weight << /distribution  /uniform >> >> 
   Connect
@@ -114,20 +117,20 @@ fail_or_die
   setup
   set1 set2 
   << /rule /one_to_one 
-     /symmetric true >> 
+     /make_symmetric true >> 
   << /model /stdp_synapse 
      /alpha << /distribution  /uniform >> >> 
   Connect
 }
 fail_or_die
 
-% Check that symmetric flag works properly for one_to_one connections
+% Check that make_symmetric flag works properly for one_to_one connections
 % containing array-parameters
 {
   setup
   set1 set2 
   << /rule /one_to_one 
-     /symmetric true >> 
+     /make_symmetric true >> 
   << /model /stdp_synapse 
      /weight <. 1.0 2.0 3.0 4.0 5.0 .>
      /delay <. 1.5 2.5 3.5 4.5 5.5 .>
@@ -148,5 +151,88 @@ fail_or_die
   } MapThread
   true exch { and } Fold
 } assert_or_die
+
+
+% The now following tests need the synapse model
+% gap_junction (which has require_make_symmetric=true) and
+% ergo the model hh_psc_alpha_gap, so
+% this test should only run if we have GSL
+skip_if_without_gsl
+
+/setup2
+{
+  ResetKernel
+  
+  /hh_psc_alpha_gap 4 Create
+  
+  /set1 1 2 cvgidcollection def
+  /set2 3 4 cvgidcollection def
+} def
+
+% Check that connections that require_symmetric cannot be created without make_symmetric=true
+{
+  setup2
+  set1 set2 << /rule /one_to_one /make_symmetric false >> /gap_junction Connect
+}
+fail_or_die
+
+{
+  setup2
+  set1 set2 << /rule /fixed_indegree /indegree 3 /make_symmetric false >> /gap_junction Connect
+}
+fail_or_die
+
+{
+  setup2
+  set1 set2 << /rule /fixed_outdegree /outdegree 3 /make_symmetric false >> /gap_junction Connect
+}
+fail_or_die
+
+{
+  setup2
+  set1 set2 << /rule /fixed_total_number /N 3 /make_symmetric false >> /gap_junction Connect
+}
+fail_or_die
+
+% Check that all-to-all connection can only be created with scalar parameters and
+% sources == targets. These connections are inherently symmetric.
+{
+  setup2
+  set1 set2 << /rule /all_to_all /make_symmetric false >> /gap_junction Connect
+}
+fail_or_die
+
+{
+  setup2
+  set1 set1 
+  << /rule /all_to_all /make_symmetric false >> 
+  << /model /gap_junction /weight <. 1.0 2.0 3.0 4.0 .> >> 
+  Connect
+}
+fail_or_die
+
+{
+  setup2
+  set1 set1 
+  << /rule /all_to_all /make_symmetric false >> 
+  << /model /gap_junction /weight << /distribution  /uniform >> >> 
+  Connect
+}
+fail_or_die
+
+{
+  setup2
+  set1 set1 << /rule /all_to_all /make_symmetric false >> /gap_junction Connect
+}
+pass_or_die
+
+{
+  setup2
+  set1 set1 
+  << /rule /all_to_all /make_symmetric false >> 
+  << /model /gap_junction /weight 2.0 >> 
+  Connect
+}
+pass_or_die
 
 endusing

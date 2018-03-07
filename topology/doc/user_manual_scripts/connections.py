@@ -27,6 +27,9 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.axes3d import Axes3D
 import numpy as np
 
+# seed NumPy RNG to ensure identical results for runs with random placement
+np.random.seed(7654321)
+
 
 def beautify_layer(l, fig=plt.gcf(), xlabel=None, ylabel=None,
                    xlim=None, ylim=None, xticks=None, yticks=None, dx=0, dy=0):
@@ -94,14 +97,14 @@ def conn_figure(fig, layer, connd, targets=None, showmask=True, showkern=False,
 
 # Simple connection
 
-# { conn1 #}
+#{ conn1 #}
 l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
-                    'elements': 'iaf_neuron'})
+                    'elements': 'iaf_psc_alpha'})
 conndict = {'connection_type': 'divergent',
             'mask': {'rectangular': {'lower_left': [-2., -1.],
                                      'upper_right': [2., 1.]}}}
 tp.ConnectLayers(l, l, conndict)
-# { end #}
+#{ end #}
 
 fig = plt.figure()
 fig.add_subplot(121)
@@ -111,7 +114,7 @@ conn_figure(fig, l, conndict,
 
 # same another time, with periodic bcs
 lpbc = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
-                       'elements': 'iaf_neuron', 'edge_wrap': True})
+                       'elements': 'iaf_psc_alpha', 'edge_wrap': True})
 tp.ConnectLayers(lpbc, lpbc, conndict)
 fig.add_subplot(122)
 conn_figure(fig, lpbc, conndict, showmask=False,
@@ -128,7 +131,7 @@ plt.savefig('../user_manual_figures/conn1.png', bbox_inches='tight')
 def free_mask_fig(fig, loc, cdict):
     nest.ResetKernel()
     l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
-                        'elements': 'iaf_neuron'})
+                        'elements': 'iaf_psc_alpha'})
     tp.ConnectLayers(l, l, cdict)
 
     fig.add_subplot(loc)
@@ -137,47 +140,47 @@ def free_mask_fig(fig, loc, cdict):
 
 fig = plt.figure()
 
-# { conn2r #}
+#{ conn2r #}
 conndict = {'connection_type': 'divergent',
             'mask': {'rectangular': {'lower_left': [-2., -1.],
                                      'upper_right': [2., 1.]}}}
-# { end #}
+#{ end #}
 free_mask_fig(fig, 231, conndict)
 
-# { conn2ro #}
+#{ conn2ro #}
 conndict = {'connection_type': 'divergent',
             'mask': {'rectangular': {'lower_left': [-2., -1.],
                                      'upper_right': [2., 1.]},
                      'anchor': [-1.5, -1.5]}}
-# { end #}
+#{ end #}
 free_mask_fig(fig, 234, conndict)
 
-# { conn2c #}
+#{ conn2c #}
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 2.0}}}
-# { end #}
+#{ end #}
 free_mask_fig(fig, 232, conndict)
 
-# { conn2co #}
+#{ conn2co #}
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 2.0},
                      'anchor': [-2.0, 0.0]}}
-# { end #}
+#{ end #}
 free_mask_fig(fig, 235, conndict)
 
-# { conn2d #}
+#{ conn2d #}
 conndict = {'connection_type': 'divergent',
             'mask': {'doughnut': {'inner_radius': 1.5,
                                   'outer_radius': 3.}}}
-# { end #}
+#{ end #}
 free_mask_fig(fig, 233, conndict)
 
-# { conn2do #}
+#{ conn2do #}
 conndict = {'connection_type': 'divergent',
             'mask': {'doughnut': {'inner_radius': 1.5,
                                   'outer_radius': 3.},
                      'anchor': [1.5, 1.5]}}
-# { end #}
+#{ end #}
 free_mask_fig(fig, 236, conndict)
 
 plt.savefig('../user_manual_figures/conn2.png', bbox_inches='tight')
@@ -217,7 +220,7 @@ def free_mask_3d_fig(fig, loc, cdict):
     nest.ResetKernel()
     l = tp.CreateLayer(
         {'rows': 11, 'columns': 11, 'layers': 11, 'extent': [11., 11., 11.],
-         'elements': 'iaf_neuron'})
+         'elements': 'iaf_psc_alpha'})
     tp.ConnectLayers(l, l, cdict)
 
     fig.add_subplot(loc, projection='3d')
@@ -227,17 +230,17 @@ def free_mask_3d_fig(fig, loc, cdict):
 
 fig = plt.figure()
 
-# { conn_3d_a #}
+#{ conn_3d_a #}
 conndict = {'connection_type': 'divergent',
             'mask': {'box': {'lower_left': [-2., -1., -1.],
                              'upper_right': [2., 1., 1.]}}}
-# { end #}
+#{ end #}
 free_mask_3d_fig(fig, 121, conndict)
 
-# { conn_3d_b #}
+#{ conn_3d_b #}
 conndict = {'connection_type': 'divergent',
             'mask': {'spherical': {'radius': 2.5}}}
-# { end #}
+#{ end #}
 free_mask_3d_fig(fig, 122, conndict)
 
 plt.savefig('../user_manual_figures/conn_3d.png', bbox_inches='tight')
@@ -250,7 +253,7 @@ plt.savefig('../user_manual_figures/conn_3d.png', bbox_inches='tight')
 def grid_mask_fig(fig, loc, cdict):
     nest.ResetKernel()
     l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
-                        'elements': 'iaf_neuron'})
+                        'elements': 'iaf_psc_alpha'})
     tp.ConnectLayers(l, l, cdict)
 
     fig.add_subplot(loc)
@@ -260,24 +263,24 @@ def grid_mask_fig(fig, loc, cdict):
 
 fig = plt.figure()
 
-# { conn3 #}
+#{ conn3 #}
 conndict = {'connection_type': 'divergent',
             'mask': {'grid': {'rows': 3, 'columns': 5}}}
-# { end #}
+#{ end #}
 grid_mask_fig(fig, 131, conndict)
 
-# { conn3c #}
+#{ conn3c #}
 conndict = {'connection_type': 'divergent',
             'mask': {'grid': {'rows': 3, 'columns': 5},
                      'anchor': {'row': 1, 'column': 2}}}
-# { end #}
+#{ end #}
 grid_mask_fig(fig, 132, conndict)
 
-# { conn3x #}
+#{ conn3x #}
 conndict = {'connection_type': 'divergent',
             'mask': {'grid': {'rows': 3, 'columns': 5},
                      'anchor': {'row': -1, 'column': 2}}}
-# { end #}
+#{ end #}
 grid_mask_fig(fig, 133, conndict)
 
 plt.savefig('../user_manual_figures/conn3.png', bbox_inches='tight')
@@ -290,7 +293,7 @@ plt.savefig('../user_manual_figures/conn3.png', bbox_inches='tight')
 def kernel_fig(fig, loc, cdict, showkern=True):
     nest.ResetKernel()
     l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
-                        'elements': 'iaf_neuron'})
+                        'elements': 'iaf_psc_alpha'})
     tp.ConnectLayers(l, l, cdict)
 
     fig.add_subplot(loc)
@@ -300,43 +303,48 @@ def kernel_fig(fig, loc, cdict, showkern=True):
 
 fig = plt.figure()
 
-# { conn4cp #}
+#{ conn4cp #}
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 4.}},
             'kernel': 0.5}
-# { end #}
+#{ end #}
 kernel_fig(fig, 231, conndict)
 
-# { conn4g #}
+#{ conn4g #}
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 4.}},
-            'kernel': {'gaussian': {'p_center': 1.0, 'sigma': 1.}}}
-# { end #}
+            'kernel': {'gaussian': {'p_center': 1.0,
+                                    'sigma': 1.}}}
+#{ end #}
 kernel_fig(fig, 232, conndict)
 
-# { conn4gx #}
+#{ conn4gx #}
 conndict = {'connection_type': 'divergent',
-            'mask': {'circular': {'radius': 4.}, 'anchor': [1.5, 1.5]},
-            'kernel': {'gaussian': {'p_center': 1.0, 'sigma': 1.,
+            'mask': {'circular': {'radius': 4.},
+                     'anchor': [1.5, 1.5]},
+            'kernel': {'gaussian': {'p_center': 1.0,
+                                    'sigma': 1.,
                                     'anchor': [1.5, 1.5]}}}
-# { end #}
+#{ end #}
 kernel_fig(fig, 233, conndict)
 plt.draw()
 
-# { conn4cut #}
+#{ conn4cut #}
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 4.}},
-            'kernel': {'gaussian': {'p_center': 1.0, 'sigma': 1.,
+            'kernel': {'gaussian': {'p_center': 1.0,
+                                    'sigma': 1.,
                                     'cutoff': 0.5}}}
-# { end #}
+#{ end #}
 kernel_fig(fig, 234, conndict)
 
-# { conn42d #}
+#{ conn42d #}
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 4.}},
             'kernel': {'gaussian2D': {'p_center': 1.0,
-                                      'sigma_x': 1., 'sigma_y': 3.}}}
-# { end #}
+                                      'sigma_x': 1.,
+                                      'sigma_y': 3.}}}
+#{ end #}
 kernel_fig(fig, 235, conndict, showkern=False)
 
 plt.savefig('../user_manual_figures/conn4.png', bbox_inches='tight')
@@ -373,32 +381,36 @@ def wd_fig(fig, loc, ldict, cdict, what, rpos=None,
 
 fig = plt.figure()
 
-# { conn5lin #}
+#{ conn5lin #}
 ldict = {'rows': 1, 'columns': 51,
          'extent': [51., 1.], 'center': [25., 0.],
-         'elements': 'iaf_neuron'}
+         'elements': 'iaf_psc_alpha'}
 cdict = {'connection_type': 'divergent',
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}},
-         'weights': {'linear': {'c': 1.0, 'a': -0.05, 'cutoff': 0.0}},
+         'weights': {'linear': {'c': 1.0,
+                                'a': -0.05,
+                                'cutoff': 0.0}},
          'delays': {'linear': {'c': 0.1, 'a': 0.02}}}
-# { end #}
+#{ end #}
 wd_fig(fig, 311, ldict, cdict, 'weight', label='Weight')
 wd_fig(fig, 311, ldict, cdict, 'delay', label='Delay', clr='red')
 fig.gca().legend()
 
 lpdict = {'rows': 1, 'columns': 51, 'extent': [51., 1.], 'center': [25., 0.],
-          'elements': 'iaf_neuron', 'edge_wrap': True}
-# { conn5linpbc #}
+          'elements': 'iaf_psc_alpha', 'edge_wrap': True}
+#{ conn5linpbc #}
 cdict = {'connection_type': 'divergent',
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}},
-         'weights': {'linear': {'c': 1.0, 'a': -0.05, 'cutoff': 0.0}},
+         'weights': {'linear': {'c': 1.0,
+                                'a': -0.05,
+                                'cutoff': 0.0}},
          'delays': {'linear': {'c': 0.1, 'a': 0.02}}}
-# { end #}
+#{ end #}
 wd_fig(fig, 312, lpdict, cdict, 'weight', label='Weight')
 wd_fig(fig, 312, lpdict, cdict, 'delay', label='Delay', clr='red')
-fig.gca().legend()
+fig.gca().legend(loc=1)
 
 cdict = {'connection_type': 'divergent',
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
@@ -407,30 +419,30 @@ cdict = {'connection_type': 'divergent',
 wd_fig(fig, 313, ldict, cdict, 'weight', label='Linear',
        rpos=[25., 0.], clr='orange')
 
-# { conn5exp #}
+#{ conn5exp #}
 cdict = {'connection_type': 'divergent',
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}},
          'weights': {'exponential': {'a': 1., 'tau': 5.}}}
-# { end #}
+#{ end #}
 wd_fig(fig, 313, ldict, cdict, 'weight', label='Exponential',
        rpos=[25., 0.])
 
-# { conn5gauss #}
+#{ conn5gauss #}
 cdict = {'connection_type': 'divergent',
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}},
          'weights': {'gaussian': {'p_center': 1., 'sigma': 5.}}}
-# { end #}
+#{ end #}
 wd_fig(fig, 313, ldict, cdict, 'weight', label='Gaussian', clr='green',
        rpos=[25., 0.])
 
-# { conn5uniform #}
+#{ conn5uniform #}
 cdict = {'connection_type': 'divergent',
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}},
          'weights': {'uniform': {'min': 0.2, 'max': 0.8}}}
-# { end #}
+#{ end #}
 wd_fig(fig, 313, ldict, cdict, 'weight', label='Uniform', clr='red',
        rpos=[25., 0.])
 
@@ -474,27 +486,27 @@ def pn_fig(fig, loc, ldict, cdict,
 
 fig = plt.figure()
 
-# { conn6 #}
+#{ conn6 #}
 pos = [[np.random.uniform(-1., 1.), np.random.uniform(-1., 1.)]
        for j in range(1000)]
 ldict = {'positions': pos, 'extent': [2., 2.],
-         'elements': 'iaf_neuron', 'edge_wrap': True}
+         'elements': 'iaf_psc_alpha', 'edge_wrap': True}
 cdict = {'connection_type': 'divergent',
          'mask': {'circular': {'radius': 1.0}},
          'kernel': {'linear': {'c': 1., 'a': -2., 'cutoff': 0.0}},
          'number_of_connections': 50,
          'allow_multapses': True, 'allow_autapses': False}
-# { end #}
+#{ end #}
 pn_fig(fig, 111, ldict, cdict)
 
 plt.savefig('../user_manual_figures/conn6.png', bbox_inches='tight')
 
 # -----------------------------
 
-# { conn7 #}
+#{ conn7 #}
 nest.ResetKernel()
-nest.CopyModel('iaf_neuron', 'pyr')
-nest.CopyModel('iaf_neuron', 'in')
+nest.CopyModel('iaf_psc_alpha', 'pyr')
+nest.CopyModel('iaf_psc_alpha', 'in')
 ldict = {'rows': 10, 'columns': 10, 'elements': ['pyr', 'in']}
 cdict_p2i = {'connection_type': 'divergent',
              'mask': {'circular': {'radius': 0.5}},
@@ -509,15 +521,15 @@ cdict_i2p = {'connection_type': 'divergent',
 l = tp.CreateLayer(ldict)
 tp.ConnectLayers(l, l, cdict_p2i)
 tp.ConnectLayers(l, l, cdict_i2p)
-# { end #}
+#{ end #}
 
 
 # ----------------------------
 
-# { conn8 #}
+#{ conn8 #}
 nest.ResetKernel()
-nest.CopyModel('iaf_neuron', 'pyr')
-nest.CopyModel('iaf_neuron', 'in')
+nest.CopyModel('iaf_psc_alpha', 'pyr')
+nest.CopyModel('iaf_psc_alpha', 'in')
 nest.CopyModel('static_synapse', 'exc', {'weight': 2.0})
 nest.CopyModel('static_synapse', 'inh', {'weight': -8.0})
 ldict = {'rows': 10, 'columns': 10, 'elements': ['pyr', 'in']}
@@ -536,15 +548,15 @@ cdict_i2p = {'connection_type': 'divergent',
 l = tp.CreateLayer(ldict)
 tp.ConnectLayers(l, l, cdict_p2i)
 tp.ConnectLayers(l, l, cdict_i2p)
-# { end #}
+#{ end #}
 
 
 # ----------------------------
 
-# { conn9 #}
-nrns = tp.CreateLayer({'rows': 20,
-                       'columns': 20,
-                       'elements': 'iaf_neuron'})
+#{ conn9 #}
+nrn_layer = tp.CreateLayer({'rows': 20,
+                            'columns': 20,
+                            'elements': 'iaf_psc_alpha'})
 
 stim = tp.CreateLayer({'rows': 1,
                        'columns': 1,
@@ -554,13 +566,13 @@ cdict_stim = {'connection_type': 'divergent',
               'mask': {'circular': {'radius': 0.1},
                        'anchor': [0.2, 0.2]}}
 
-tp.ConnectLayers(stim, nrns, cdict_stim)
-# { end #}
+tp.ConnectLayers(stim, nrn_layer, cdict_stim)
+#{ end #}
 
 
 # ----------------------------
 
-# { conn10 #}
+#{ conn10 #}
 rec = tp.CreateLayer({'rows': 1,
                       'columns': 1,
                       'elements': 'spike_detector'})
@@ -569,5 +581,13 @@ cdict_rec = {'connection_type': 'convergent',
              'mask': {'circular': {'radius': 0.1},
                       'anchor': [-0.2, 0.2]}}
 
-tp.ConnectLayers(nrns, rec, cdict_rec)
-# { end #}
+tp.ConnectLayers(nrn_layer, rec, cdict_rec)
+#{ end #}
+
+# ----------------------------
+
+#{ conn11 #}
+rec = nest.Create('spike_detector')
+nrns = nest.GetLeaves(nrn_layer, local_only=True)[0]
+nest.Connect(nrns, rec)
+#{ end #}

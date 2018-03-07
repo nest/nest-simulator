@@ -55,7 +55,7 @@ ResetKernel
 
 % Check that use_wfr cannot be set after nodes are created
 {
-  /iaf_neuron Create
+  /iaf_psc_alpha Create
   0 << /use_wfr true >> SetStatus
 } fail_or_die
 
@@ -112,11 +112,7 @@ ResetKernel
 
 % The now following test needs the model hh_psc_alpha_gap, so
 % this test should only run if we have GSL
-statusdict/have_gsl :: not
-{
-  exit_test_gracefully
-}
-if
+skip_if_without_gsl
 
 ResetKernel
 

@@ -27,6 +27,10 @@ EXPERIMENTAL example of 3d layer.
 3d layers are currently not supported, use at your own risk!
 
 Hans Ekkehard Plesser, UMB
+
+This example uses the function GetChildren, which is deprecated. A deprecation
+warning is therefore issued. For details about deprecated functions, see
+documentation.
 '''
 
 import nest
@@ -49,14 +53,17 @@ l1 = topo.CreateLayer(
     {'extent': [1.5, 1.5, 1.5],  # must specify 3d extent AND center
      'center': [0., 0., 0.],
      'positions': pos,
-     'elements': 'iaf_neuron'})
+     'elements': 'iaf_psc_alpha'})
 
 # visualize
 # xext, yext = nest.GetStatus(l1, 'topology')[0]['extent']
 # xctr, yctr = nest.GetStatus(l1, 'topology')[0]['center']
 
+# l1_children is a work-around until NEST 3.0 is released
+l1_children = nest.GetChildren(l1)[0]
+
 # extract position information, transpose to list of x, y and z positions
-xpos, ypos, zpos = zip(*topo.GetPosition(nest.GetChildren(l1)[0]))
+xpos, ypos, zpos = zip(*topo.GetPosition(l1_children))
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.scatter(xpos, ypos, zpos, s=15, facecolor='b', edgecolor='none')

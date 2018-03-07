@@ -30,9 +30,38 @@
    and independent of network size (indegree=11250).
 
    This is the standard network investigated in:
-   Morrison et al (2007). Spike-timing-dependent plasticity in balanced random networks Neural Comput 19(6):1437-67
-   Helias et al (2012). Supercomputers ready for use as discovery machines for neuroscience Front. Neuroinform. 6:26,
-   Kunkel et al (2014). Spiking network simulation code for petascale computers. Front. Neuroinform. 8:78
+   Morrison et al (2007). Spike-timing-dependent plasticity in balanced random
+     networks. Neural Comput 19(6):1437-67
+   Helias et al (2012). Supercomputers ready for use as discovery machines for
+     neuroscience. Front. Neuroinform. 6:26
+   Kunkel et al (2014). Spiking network simulation code for petascale 
+     computers. Front. Neuroinform. 8:78
+     
+   A note on scaling
+   -----------------
+   
+   This benchmark was originally developed for very large-scale simulations on
+   supercomputers with more than 1 million neurons in the network and 
+   11.250 incoming synapses per neuron. For such large networks, input to a
+   single neuron will be little correlated and network activity will remain
+   stable for long periods of time. 
+   
+   The original network size corresponds to a scale parameter of 100 or more.
+   In order to make it possible to test this benchmark script on desktop
+   computers, the scale parameter is set to 1 below, while the number of
+   11.250 incoming synapses per neuron is retained. In this limit, correlations
+   in input to neurons are large and will lead to increasing synaptic weights.
+   Over time, network dynamics will therefore become unstable and all neurons
+   in the network will fire in synchrony, leading to extremely slow simulation
+   speeds.
+   
+   Therefore, the presimulation time is reduced to 50 ms below and the
+   simulation time to 250 ms, while we usually use 100 ms presimulation and
+   1000 ms simulation time.
+   
+   For meaningful use of this benchmark, you should use a scale > 10 and check
+   that the firing rate reported at the end of the benchmark is below 10 spikes
+   per second. 
 */
   
 %%% PARAMETER SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -41,9 +70,10 @@
 % all data is placed in the userdict dictionary
 
 /nvp 1 def              % total number of virtual processes
-/scale 2 def            % scaling factor of the network size, total network size = scale*11250 neurons
-/simtime 1000. def      % total simulation time in ms
-/presimtime 100. ms def % simulation time until reaching equilibrium
+/scale 1.0 def          % scaling factor of the network size, 
+                        % total network size = scale*11250 neurons
+/simtime 250. def       % total simulation time in ms
+/presimtime 50. ms def % simulation time until reaching equilibrium
 /dt 0.1 ms def          % simulation step
 /record_spikes true def % switch to record spikes of excitatory neurons to file
 /path_name (.) def      % path where all files will have to be written
@@ -92,7 +122,12 @@ def
   
 } def
 
-% Inverting this equation numerically leads to tau_syn = 0.32582722403722841 ms, as specified in model_params below.
+% Inverting this equation numerically leads to tau_syn = 0.32582722403722841 ms,
+% as specified in model_params below.
+
+/tau_syn 0.32582722403722841 ms def
+
+/tau_syn 0.32582722403722841 ms def
 
 % -------------------------------------------------------------------------------------
 
@@ -106,14 +141,15 @@ def
 
   /model_params
   <<
-    % Set variables for iaf_neuron
+    % Set variables for iaf_psc_alpha
     /E_L     0.0  mV  % Resting membrane potential (mV)
     /C_m   250.0  pF  % Capacity of the membrane (pF)
     /tau_m  10.0  ms  % Membrane time constant (ms)
     /t_ref 0.5  ms  % duration of refractory period (ms)
     /V_th   20.0  mV  % Threshold (mV)
     /V_reset 0.0  mV  % Reset Potential (mV)
-    /tau_syn  0.32582722403722841 ms  % time const. postsynaptic excitatory currents (ms)
+    /tau_syn_ex   tau_syn % time const. postsynaptic excitatory currents (ms)
+    /tau_syn_in   tau_syn % time const. postsynaptic inhibitory currents (ms)
     /tau_minus 30.0 ms %time constant for STDP (depression)
     % V can be randomly initialized see below
     /V_m 5.7 mV % mean value of membrane potential
@@ -171,18 +207,18 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
      /overwrite_files true
   >> SetStatus
 
-  /iaf_neuron    model_params    SetDefaults
+  /iaf_psc_alpha    model_params    SetDefaults
   M_INFO (BuildNetwork)
   (Creating excitatory population.) message  % show message
-  /iaf_neuron [NE] LayoutNetwork /E_net Set  % subnet gets own gid
+  /iaf_psc_alpha [NE] LayoutNetwork /E_net Set  % subnet gets own gid
   /E_from E_net 1 add def                    % gid of first child
-  /E_to 0 GetStatus /network_size get 1 sub def % gid of last child
+  /E_to E_from NE add 1 sub def              % gid of last child
   
   M_INFO (BuildNetwork)
   (Creating inhibitory population.) message  % show message
-  /iaf_neuron [NI] LayoutNetwork /I_net Set  % subnet gets own gid
+  /iaf_psc_alpha [NI] LayoutNetwork /I_net Set  % subnet gets own gid
   /I_from I_net 1 add def                    % gid of first child
-  /I_to 0 GetStatus /network_size get 1 sub def % gid of last child
+  /I_to I_from NI add 1 sub def              % gid of last child
 
   randomize_Vm
   {

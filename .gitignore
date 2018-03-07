@@ -9,6 +9,7 @@ pynest/pynestkernel.cpp
 *.la
 .*
 *.log
+*.pyc
 Makefile
 build/
 
@@ -55,3 +56,4 @@ doc/normaldoc.conf
 lib/sli/rcsinfo.sli
 extras/emacs/sli.el
 extras/nest_vars.sh
+

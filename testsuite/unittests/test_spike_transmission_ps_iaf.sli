@@ -45,7 +45,7 @@ ResetKernel
       /resolution h
      >> SetStatus
 
-/iaf_neuron Create /n Set
+/iaf_psc_alpha Create /n Set
  
 /poisson_generator_ps Create /p Set
 p << /rate  10000. >> SetStatus

@@ -79,7 +79,7 @@
 Håkon Enger\\[1ex]
 \normalsize Department of Mathematical Sciences and Technology\\\normalsize Norwegian University of Life Sciences\\
 \normalsize 1432 Ås, Norway}
-\date{NEST 2.2, 2.4, and 2.6 (r9977 or later)\\[8cm]
+\date{NEST 2.12\\[8cm]
 \centerline{\includegraphics{nest-initiative.pdf}}}
 
 
@@ -92,22 +92,22 @@ Håkon Enger\\[1ex]
   Topology Module for the NEST Neural Simulation Tool.
 
   Rüdiger Kupper wrote a first topology library for NEST many years
-  ago entirly in SLI (actually, it pre-dates the NEST kernel).  Kittel
+  ago entirely in SLI (actually, it pre-dates the NEST kernel).  Kittel
   Austvoll and Hans Ekkehard Plesser designed and wrote a completely
   new Topology library in 2007/8. That library has been available with
-  the NEST 1.9.x pre-releases since.
+  the NEST~1.9.x pre-releases since.
 
-  For NEST 2.0, Håkon Enger and Hans Ekkehard Plesser re-factored
+  For NEST~2.0, Håkon Enger and Hans Ekkehard Plesser re-factored
   parts of the Topology library code, improved and extended the PyNEST
   interface for the Topology library, fixed bugs and added tests.
 
-  For NEST 2.2, Håkon Enger rewrote most of the Topology library code,
+  For NEST~2.2, Håkon Enger rewrote most of the Topology library code,
   thereby improving performance considerably.
 
-  This User Manual describes the NEST 2.2 and 2.4 versions of the NEST Topology
-  Library. Please see Chapter~\ref{sec:changes} for a summary of
-  changes to 2.2. There are no changes in Topology from 2.2 to 2.4. In
-  NEST 2.6, Topology functions check their arguments more carefully.
+  This User Manual describes the NEST~2.12 version of the NEST Topology
+  Library. There have been no major changes to the Topology library since 
+  NEST~2.2, although Topology functions check their arguments more carefully
+  since NEST~2.6.
 
   We plan further improvements to the Topology Module in the future, 
   which may include changes to the API to remove some of the remaining
@@ -129,7 +129,7 @@ layers with probabilities and properties depending on the relative
 placement of neurons.  This permits the creation of complex networks
 with spatial structure.
 
-This user manual provides an introdcution to the functionality
+This user manual provides an introduction to the functionality
 provided by the Topology Module. It is based exclusively on the
 PyNEST, the Python interface to NEST \citep{Eppl:2008(12)}. NEST users
 using the SLI interface should be able to map instructions to
@@ -138,11 +138,9 @@ reference manual. Please consult the online documentation in PyNEST
 for details; where appropriate, that documentation also points to
 relevant SLI documentation.
 
-This manual describes the Topology Module included with NEST~2.2 and~2.4, code
-revision 9977 or later.  This version differs from older ones in some
-important aspects as detailed in Section~\ref{sec:changes}. In our
-experience, though, most scripts using the Topology Module can be
-ported to the new version with minimal changes.
+This manual describes the Topology Module included with NEST~2.12;
+the user interface and behavior of the module has not changed 
+significantly since NEST~2.2.
 
 In the next chapter of this manual, we introduce Topology layers,
 which place neurons in space. In Chapter~\ref{sec:connections} we then
@@ -208,7 +206,7 @@ properties:
 \item The \lstinline!'elements'! entry of the dictionary passed to
   \lstinline!CreateLayer! determines the
   \emph{elements}\index{element} of the layer. In this case, the layer
-  contains \lstinline!iaf_neuron!s.
+  contains \lstinline!iaf_psc_alpha! neurons.
 \item The \emph{center}\index{center} of the layer is at the origin of
   the coordinate system, $(0,0)$. 
 \item The \emph{extent}\index{extent} or size of the layer is $1\times
@@ -238,18 +236,12 @@ in x- and y-direction.
   conventions, indices run from 0. 
 \end{itemize}
 
-\textbf{Note}: The \textbf{definition of the extent has changed} from
-NEST~1.9 to NEST~2.0. In NEST~1.9, the outermost elements of the layer
-were placed on the limits of the extent. When working with periodic
-boundary conditions (see Sec.~\ref{sec:periodic}), Topology then
-silently padded the layer with half a grid spacing on all sides, to
-ensure that nodes at opposite edges did not coincide.
 
 \subsection{Setting the extent}\label{sec:setextent}
 
 Layers have a default extent of $1\times 1$. 
 You can specify a different extent of a layer, i.e., its size in $x$- and
-$y$-direction by adding and \lstinline!'extent'! entry to the
+$y$-direction by adding an \lstinline!'extent'! entry to the
 dictionary passed to \lstinline!CreateLayer!:
 %
 \lstinputlisting[linerange=layer2-end]{user_manual_scripts/layers.py}
@@ -277,7 +269,7 @@ The center is given as a two-element tuple of floats.
 Changing the center does not affect grid indices: For each of the
 three layers in Fig.~\ref{fig:layer3}, grid indices run from 0 to 4
 through columns and rows, respectively, even though elements in these
-three layers have different positions in the gobal coordinate system.
+three layers have different positions in the global coordinate system.
 
 \subsection{Constructing a layer: an example}\label{sec:fixedlayerexample}
 
@@ -311,10 +303,11 @@ the circle the center of the layer.}
 \emph{Free layers}\index{free layer} do not restrict node positions to
 a grid, but allow free placement within the extent. To this end, the
 user needs to specify the positions of all nodes explicitly. The
-following code creates a layer of 50 \lstinline!iaf_neurons! uniformly
-distributed in a layer with extent $1\times 1$, i.e., spanning the
-square $[-0.5,0.5]\times[-0.5,0.5]$:
+following code creates a layer of 50 \lstinline!iaf_psc_alpha! neurons
+uniformly distributed in a layer with extent $1\times 1$, i.e.,
+spanning the square $[-0.5,0.5]\times[-0.5,0.5]$:
 %
+\newline
 \lstinputlisting[linerange=layer4-end]{user_manual_scripts/layers.py}
 \scriptfig{layer4}{0.5}{Layer with freely spaced elements.}%
 {A free layer with 50 elements uniformly distributed in an extent of
@@ -333,7 +326,7 @@ Note the following points:
   of the elements. One layer element is created per element in the
   \lstinline!'positions'! entry.
 \item All layer element positions must be \emph{within} the layer's
-  extent. Elements may be place on the perimeter of the extent as long
+  extent. Elements may be placed on the perimeter of the extent as long
   as no periodic boundary conditions are used; see Sec.~\ref{sec:periodic}.
 \item Element positions in free layers are \emph{not} shifted when
   specifying the \lstinline!'center'! of the layer. The user must make
@@ -375,7 +368,7 @@ for a one-dimensional layer, which turns from a line to a ring upon
 introduction of periodic boundary conditions. 
 
 You specify periodic boundary conditions for a layer using the
-dictionary entry \lstinline!edge_wrap!\index{egde\_wrap}:
+dictionary entry \lstinline!edge_wrap!\index{edge\_wrap}:
 %
 \lstinputlisting[linerange=player-end]{user_manual_scripts/layers.py}
 \scriptfig{player}{0.8}{Periodic boundary conditions.}%
@@ -388,7 +381,7 @@ dictionary entry \lstinline!edge_wrap!\index{egde\_wrap}:
   Note that the element at $(2,0)$ now is a nearest
   neighbor to the element at $(-2,0)$.
   Right: Layer with periodic boundary condition arranged on a circle
-  to illustrate neighborhood relationsships.}
+  to illustrate neighborhood relationships.}
 
 Note that the longest possible distance between two elements in a
 layer without periodic boundary conditions is
@@ -432,7 +425,8 @@ The \lstinline!'topology'! entry is read-only.
 \lstinputlisting[linerange=layer1p.log-end.log]{user_manual_scripts/layers.log}
 %
 The $5\times 5$ layer created above appears here as a
-\lstinline!topology_layer_grid! subnet of 25 \lstinline!iaf_neuron!s.
+\lstinline!topology_layer_grid! subnet of 25 \lstinline!iaf_psc_alpha!
+neurons.
 Only Topology connection and visualization functions heed the spatial
 structure of the layer.
 \end{itemize}
@@ -500,8 +494,8 @@ spanning $0.5^\circ\times 0.5^\circ$ of visual space. Neurons within each
 microcolumn are organized into L2/3, L4, and L56
 subpopulations. Each subpopulation consists of three pyramidal cells
 and one interneuron. All pyramidal cells are modeled as NEST
-\lstinline!iaf_neuron!s with default parameter values, while
-interneurons are \lstinline!iaf_neuron!s with threshold voltage
+\lstinline!iaf_psc_alpha! neurons with default parameter values, while
+interneurons are \lstinline!iaf_psc_alpha! neurons with threshold voltage
 $V_{\text{th}}=-52$mV. 
 \end{quote}
 How should you implement such a network using the Topology module?
@@ -538,12 +532,12 @@ We begin by introducing important terminology:
   \lstinline!CreateLayers!.
 \item[Source\index{source}] The \emph{source} of a single connection
   is the node sending signals (usually spikes). In a projection, the
-  source layer\index{source layer} is the layer from which source node
+  source layer\index{source layer} is the layer from which source nodes
   are chosen.
 \item[Target\index{target}]
 The \emph{target} of a single connection
   is the node receiving signals (usually spikes). In a projection, the
-  target layer\index{target layer} is the layer from which source node
+  target layer\index{target layer} is the layer from which target nodes
   are chosen.
 \item[Connection type\index{connection type}] The \emph{connection
     type} determines how nodes are selected when
@@ -573,14 +567,14 @@ The \emph{target} of a single connection
 \item[Displacement\index{displacement}] The \emph{displacement}
   between a driver and a pool node is the shortest vector connecting
   the driver to the pool node, taking
-  boundary conditions into accout.
+  boundary conditions into account.
 \item[Distance\index{distance}] The \emph{distance} between a driver
   and a pool node is the length of their displacement.
 \item[Mask\index{mask}] The \emph{mask} defines which pool nodes are
   at all considered as potential targets for each driver node. See
   Sec.~\ref{sec:conn_masks} for details.
 \item[Kernel\index{kernel}] The \emph{kernel} is a function returning
-  a (possibly distance- or displacment-dependent) 
+  a (possibly distance- or displacement-dependent) 
   probability for creating a connection between a driver and a pool
   node. The default kernel is $1$, i.e., connections are created with
   certainty. See Sec.~\ref{sec:conn_kernels} for details.
@@ -608,14 +602,14 @@ Connections between Topology layers are created by calling
   or \lstinline!'divergent'!.
 \end{description}
 \end{enumerate}
-I many cases, the connection dictionary will also contain
+In many cases, the connection dictionary will also contain
 \begin{description}
 \item['mask'] a mask specification as described in
   Sec.~\ref{sec:conn_masks}.
 \end{description}
 Only neurons within the mask are considered as potential sources or
-targets. If no mask is given, the all neurons in the respective layer
-are consider sources or targets.
+targets. If no mask is given, all neurons in the respective layer
+are considered sources or targets.
 
 Here is a simple example, cf.~\ref{fig:conn1}:
 %
@@ -624,7 +618,7 @@ Here is a simple example, cf.~\ref{fig:conn1}:
 {Left: Minimal connection example from a layer onto itself using a
   rectangular mask shown as red line for the node at $(0,0)$ (marked
   light red). The targets of this node are marked with red dots. The targets
-  for the node at $(4,5)$ (marked light orange) are marked with orange
+  for the node at $(4,5)$ are marked with yellow
   dots. This node has fewer targets since it is at the corner and many
   potential targets are beyond the layer.
 Right: The effect of periodic boundary conditions\index{periodic
@@ -690,7 +684,7 @@ free and grid-based layers. They are illustrated in Fig.~\ref{fig:conn2}.
 The masks are
 \begin{description}
 \item[Rectangular\index{rectangular}] All nodes within a rectangular
-  area are connected. The area is speficied by its lower left and
+  area are connected. The area is specified by its lower left and
   upper right corners, measured in the same unit as element
   coordinates. Example:
 \lstinputlisting[linerange=conn2r-end]{user_manual_scripts/connections.py}
@@ -730,7 +724,7 @@ using the \lstinline!'anchor'! parameter.}
 Similarly, there are two mask types that can be used for 3D layers\index{3D layers},
 \begin{description}
 \item[Box\index{box}] All nodes within a cuboid volume are connected. The
-  area is speficied by its lower left and upper right corners, measured in
+  area is specified by its lower left and upper right corners, measured in
   the same unit as element coordinates. Example:
   \lstinputlisting[linerange=conn_3d_a-end]{user_manual_scripts/connections.py}
 \item[Spherical\index{spherical}] All nodes within a sphere are
@@ -803,7 +797,7 @@ rules\index{probabilistic connection rules}. Topology supports
 probabilistic connections through \emph{kernels}\index{kernel}. A
 kernel is a function mapping the distance (or displacement) between a
 driver and a pool node to a connection probability. Topology then
-generates a connections according to this probability.
+generates a connection according to this probability.
 
 Probabilistic connections can be generated in two different ways using
 Topology:
@@ -822,7 +816,7 @@ Topology:
 \end{description}
 
 Available kernel functions are shown in Table~\ref{tab:kernels}. More
-kernel function may be created in a NEST extension module. This is covered
+kernel functions may be created in a NEST extension module. This is covered
 in Chapter~\ref{ch:extending}.
 
 \begin{table}
@@ -880,6 +874,13 @@ $p \in [\text{min},\text{max})$ lognormal with given $\mu$ and $\sigma$ \\
 \label{tab:kernels}
 \end{table}
 
+\scriptfig{conn4}{0.9}{Kernel functions}%
+{Illustration of various kernel functions. Top left: constant kernel,
+  $p=0.5$. Top center: Gaussian kernel, green dashed lines show
+  $\sigma$, $2\sigma$, $3\sigma$. Top right: Same Gaussian kernel
+  anchored at $(1.5,1.5)$. Bottom left: Same Gaussian kernel, but all
+  $p<0.5$ treated as $p=0$. Bottom center: 2D-Gaussian.}
+
 Several examples follow. They are illustrated in Fig.~\ref{fig:conn4}.
 \begin{description}
 \item[Constant\index{constant kernel}] The simplest kernel is a fixed connection
@@ -888,13 +889,14 @@ Several examples follow. They are illustrated in Fig.~\ref{fig:conn4}.
 \item[Gaussian\index{Gaussian kernel}] This kernel is distance dependent. In the example,
   connection probability is 1 for $d=0$ and falls off with a
   ``standard deviation'' of $\sigma=1$:
+\newline
 \lstinputlisting[linerange=conn4g-end]{user_manual_scripts/connections.py} 
-\item[Excentric Gaussian\index{excentric kernel}] In this example, both kernel and mask have
+\item[Eccentric Gaussian\index{eccentric kernel}] In this example, both kernel and mask have
   been moved using anchors:
 \lstinputlisting[linerange=conn4gx-end]{user_manual_scripts/connections.py} 
 Note that the anchor for the kernel is specified inside the dictionary
 containing the parameters for the Gaussian.
-\item[Cut-off Gaussian\index{cut-off kernel}] In this example, all probabilties less than
+\item[Cut-off Gaussian\index{cut-off kernel}] In this example, all probabilities less than
   $0.5$ are set to zero:
 \lstinputlisting[linerange=conn4cut-end]{user_manual_scripts/connections.py} 
 \item[2D Gaussian\index{2D Gaussian kernel}] We conclude with an
@@ -903,12 +905,6 @@ containing the parameters for the Gaussian.
   displacement, not only on distance:
 \lstinputlisting[linerange=conn42d-end]{user_manual_scripts/connections.py} 
 \end{description}
-\scriptfig{conn4}{0.9}{Kernel functions}%
-{Illustration of various kernel functions. Top left: constant kernel,
-  $p=0.5$. Top center: Gaussian kernel, green dashed lines show
-  $\sigma$, $2\sigma$, $3\sigma$. Top right: Same Gaussian kernel
-  anchored at $(1.5,1.5)$. Bottom left: Same Gaussian kernel, but all
-  $p<0.5$ treated as $p=0$. Bottom center: 2D-Gaussian.}
 Note that for pool layers with periodic boundary conditions, Topology
 always uses the shortest possible displacement vector from driver
 to pool neuron as argument to the kernel function.
@@ -919,7 +915,7 @@ to pool neuron as argument to the kernel function.
 The functions presented in Table~\ref{tab:kernels} can also be used to
 specify distance-dependent or randomized weights and delays\index{distance-dependent
   weight}\index{distance-dependent delay}\index{randomized
-  delay}\index{randomized weight}for the connections
+  delay}\index{randomized weight} for the connections
 created by \lstinline!ConnectLayers!.
 
 Figure~\ref{fig:conn5} illustrates weights and delays generated using
@@ -935,7 +931,7 @@ Results are shown in the top panel of Fig.~\ref{fig:conn5}.
 Connection weights and delays are shown for the leftmost neuron as
 driver. Weights drop linearly from $1$. From the node at $(20,0)$ on,
 the cutoff sets weights to 0. There are no connections to nodes beyond
-$(25,0)$ since as the mask extends only 25 units to the right of the
+$(25,0)$, since the mask extends only 25 units to the right of the
 driver. Delays increase in a stepwise linear fashion\index{delays, stepwise}, as NEST requires
 delays to be multiples of the simulation resolution. 
 \item[Linear example with periodic boundary conditions\index{periodic
@@ -991,21 +987,6 @@ make sense. In general, we recommend to use periodic boundary
 conditions only when connection masks are significantly smaller than
 the layers they are applied to.
 
-\emph{Important changes upon NEST 2.0}: 
-\begin{itemize}
-\item Prior to NEST~2.0, oversized
-masks were not prohibited by default and you may have created networks
-with oversized masks by accident. You will now get a NEST error
-message in this case. You can force Topology to accept oversized
-masks\index{oversized mask}
-by adding \lstinline!'allow_oversized_mask': True! to the connection
-dictionary. Be sure to inspect the results, e.g., using
-\lstinline!DumpLayerConnections!.
-\item Distance- and displacement-dependent kernel, weight and delay
-  functions did not handle periodic boundary conditions correctly
-  prior to NEST~2.0.
-\end{itemize}
-
 
 \section{Prescribed number of connections}\label{sec:prescribed_numbers}
 
@@ -1036,7 +1017,7 @@ Connection generation now proceeds in a different way than before:
   with the spatial profile given by the kernel.
 \item If you prohibit multapses\index{multapse} (cf Sec.~\ref{sec:terminology}) and
   prescribe a number of connections greater than the number of pool nodes
-  in the mask, \lstinline!ConnectLayers! may get stuck in an infinte
+  in the mask, \lstinline!ConnectLayers! may get stuck in an infinite
   loop and NEST will hang\index{infinite loop}\index{hang}. Keep in
   mind that the number of nodes within the mask may vary considerably
   for free layers with randomly placed nodes. 
@@ -1063,7 +1044,7 @@ Fig.~\ref{fig:conn6}.
 \scriptfig{conn6}{0.5}{Distribution of connection distances}%
 {Distribution of distances between source and target for a network of
   1000 randomly placed nodes, a fixed fan out of 50 connections and a
-  connection probability decaying linerarly from 1 to 0 at
+  connection probability decaying linearly from 1 to 0 at
   $d=0.5$. The red line is the expected distribution from Eq.~\ref{eq:ptheo}.}
 
 Functions determining weight and delay as function of
@@ -1085,11 +1066,11 @@ following principles:
 \item If only nodes of a given model\index{model} within each element
   shall be considered as sources or targets then this can be achieved
   by adding a \lstinline!'sources'! or \lstinline!'targets'! entry to
-  the connection dictionary, which speficies the model to connect.
+  the connection dictionary, which specifies the model to connect.
 \end{itemize}
 This is exemplified by the following code, which connects pyramidal
 cells (\lstinline!pyr!) to interneurons (\lstinline!in!) with a
-circular mask and uniform probablity and interneurons to pyramidal
+circular mask and uniform probability and interneurons to pyramidal
 cells with a rectangular mask unit probability.
 \lstinputlisting[linerange=conn7-end]{user_manual_scripts/connections.py}
 
@@ -1116,11 +1097,25 @@ For connecting the device layer to a neuron layer, an appropriate mask
 needs to be specified and optionally also an anchor for shifting the
 center of the mask.
 As demonstrated in the following example, stimulation devices require the
-divergent and recording devices the convergent connection type:
+divergent connection type
 \lstinputlisting[linerange=conn9-end]{user_manual_scripts/connections.py}
+while recording devices require the convergent connection type (see also
+Sec.~\ref{sec:rec_dev}):
 \lstinputlisting[linerange=conn10-end]{user_manual_scripts/connections.py}
 
+\section{Layers and recording devices}\label{sec:rec_dev}
 
+Generally, one should not create a layer of recording devices, especially
+spike detectors, to record from a topology layer. Instead, create a single 
+spike detector, and connect all neurons in the layer to that spike detector
+using a normal connect command:
+\lstinputlisting[linerange=conn11-end]{user_manual_scripts/connections.py}
+
+Connections to a layer of recording devices as described in 
+Sec.~\ref{sec:dev_subregions}, such as spike detectors, are
+only possible using the convergent connection type without a fixed number
+of connections. Note that voltmeter and multimeter are not suffering from
+this restriction, since they are connected as sources, not as targets. 
 
 \chapter{Inspecting Layers}\label{sec:inspection}
 
@@ -1206,7 +1201,7 @@ circle is the mask, the dashed green lines mark $\sigma$, $2\sigma$
 and $3\sigma$ of the Gaussian kernel.}
 
 The following code shows a practical example: A $21\times21$ network
-which connects to itself with divegent Gaussian connections. The
+which connects to itself with divergent Gaussian connections. The
 resulting graphics is shown in Fig.~\ref{fig:vislayer}. All
 elements and the targets of the center neuron are shown, as well as
 mask and kernel.
@@ -1242,7 +1237,7 @@ cd mmb
   \lstinline!nest-config! is not in your path, you need to provided it
   explicitly like this
 \begin{lstlisting}[language=bash]
-cmake -DWITH_NEST=${NEST_INSTALL_DIR}/bin/nest-config ../MyModule
+cmake -Dwith-nest=${NEST_INSTALL_DIR}/bin/nest-config ../MyModule
 \end{lstlisting}
 \item MyModule will then be installed to \lstinline!${NEST_INSTALL_DIR}!. This
   ensures that NEST will be able to find initializing SLI files for the
@@ -1337,7 +1332,7 @@ available to be used in connections, e.g.
 \begin{lstlisting}
 nest.Install('mymodule')
 l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [1.,1.],
-                        'elements': 'iaf_neuron'})
+                        'elements': 'iaf_psc_alpha'})
 tp.ConnectLayers(l,l,{'connection_type': 'convergent',
             'mask': {'circular': {'radius': 0.5}},
             'kernel': {'affine2d': {'a': 1.0, 'b': 2.0, 'c': 0.5}}})
@@ -1422,7 +1417,7 @@ in connections, e.g.
 \begin{lstlisting}
 nest.Install('mymodule')
 l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [1.,1.],
-                        'elements': 'iaf_neuron'})
+                        'elements': 'iaf_psc_alpha'})
 tp.ConnectLayers(l,l,{'connection_type': 'convergent',
             'mask': {'elliptic': {'r_x': 0.5, 'r_y': 0.25}}})
 \end{lstlisting}
@@ -1483,11 +1478,13 @@ Topology Module from the 1.9-xxxx to the 2.0 version.
   Sec.~\ref{sec:conn_masks} and \ref{sec:conn_kernels}.
 \item Functions computing connection probabilities, weights and delays
   as functions of distance between source and target nodes now handle
-  periodic boudary conditions correctly.
+  periodic boundary conditions correctly.
 \item Masks with a diameter larger than the diameter of the layer they
   are applied to are now prohibited by default. This avoids multiple
   connections when masks overwrap.
 \end{itemize}
+
+
 
 \bibliographystyle{plainnat}
 \bibliography{../../extras/bibliography/nest.bib}

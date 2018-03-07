@@ -44,7 +44,7 @@ M_ERROR setverbosity
 /num_threads 4 def
 /blocksize 11 def   % number of neurons to create / freeze, intentionally not multiple of num_threads 
 /simtime 10. def
-/Vmref /iaf_neuron GetDefaults /V_m get def
+/Vmref /iaf_psc_alpha GetDefaults /V_m get def
 
 ResetKernel
 
@@ -58,7 +58,7 @@ if
 % first test: one block of neurons
 {
   % hyperpolarizing, avoids spikes
-  /iaf_neuron blocksize << /I_e -50.0 >> Create 
+  /iaf_psc_alpha blocksize << /I_e -50.0 >> Create
   simtime Simulate
   true 0 GetGlobalLeaves { /V_m get Vmref lt and } Fold
 } assert_or_die
@@ -69,7 +69,7 @@ if
   0 GetGlobalLeaves { << /V_m Vmref >> SetStatus } forall
   
   % add more neurons
-  /iaf_neuron blocksize << /I_e -50.0 >> Create 
+  /iaf_psc_alpha blocksize << /I_e -50.0 >> Create
   simtime Simulate
   true 0 GetGlobalLeaves { /V_m get Vmref lt and } Fold
 } assert_or_die

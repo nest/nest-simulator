@@ -24,6 +24,7 @@ Functions for simulation control
 """
 
 from .hl_api_helper import *
+from contextlib import contextmanager
 
 
 @check_stack
@@ -38,6 +39,71 @@ def Simulate(t):
 
     sps(float(t))
     sr('ms Simulate')
+
+
+@check_stack
+def Run(t):
+    """Simulate the network for t milliseconds.
+
+    Parameters
+    ----------
+    t : float
+        Time to simulate in ms
+
+    Call between Prepare and Cleanup calls, or within an
+    with RunManager: clause
+    Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
+    Prepare() must be called before to calibrate, etc; Cleanup() afterward to
+    close files, cleanup handles and so on. After Cleanup(), Prepare() can and
+    must be called before more Run() calls.
+    Any calls to set_status between Prepare() and Cleanup() have undefined
+    behavior.
+    """
+
+    sps(float(t))
+    sr('ms Run')
+
+
+@check_stack
+def Prepare():
+    """Prepares network before a Run call. Not needed for Simulate.
+
+    See Run(t), Cleanup(). Call before any sequence of Runs(). Do all
+    set_status calls before Prepare().
+    """
+
+    sr('Prepare')
+
+
+@check_stack
+def Cleanup():
+    """Cleans up resources after a Run call. Not needed for Simulate.
+
+    See Run(t), Prepare().
+    Closes state for a series of runs, such as flushing and closing files.
+    A Prepare() is needed after a Cleanup() before any more calls to Run().
+    """
+    sr('Cleanup')
+
+
+@contextmanager
+def RunManager():
+    """ContextManager for Run.
+
+    Calls Prepare() before a series of Run() calls,
+    and  adds a Cleanup() at end.
+
+    So:
+    with RunManager():
+        for i in range(10):
+            Run()
+    """
+
+    Prepare()
+    try:
+        yield
+    finally:
+        Cleanup()
 
 
 @check_stack
@@ -168,14 +234,27 @@ def SetStructuralPlasticityStatus(params):
 
 
 @check_stack
-def GetStructuralPlasticityStatus(params):
+def GetStructuralPlasticityStatus(keys=None):
     """Get the current structural plasticity parameters for the network
     simulation.
+
+    Parameters
+    ---------
+    keys : str or list, optional
+        Keys indicating the values of interest to be retrieved by the get call
     """
 
-    sps(params)
+    sps({})
     sr('GetStructuralPlasticityStatus')
-    return spp()
+    d = spp()
+    if keys is None:
+        return d
+    elif is_literal(keys):
+        return d[keys]
+    elif is_iterable(keys):
+        return tuple(d[k] for k in keys)
+    else:
+        raise TypeError("keys must be either empty, a string or a list")
 
 
 @check_stack

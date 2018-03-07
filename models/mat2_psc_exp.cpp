@@ -136,21 +136,28 @@ nest::mat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::alpha_2, alpha_2_ );
 
   if ( updateValue< double >( d, names::omega, omega_ ) )
+  {
     omega_ -= E_L_;
+  }
   else
+  {
     omega_ -= delta_EL;
-
+  }
   if ( C_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0
     || tau_2_ <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
-
+  }
   if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
+  {
     throw BadProperty(
       "Membrane and synapse time constant(s) must differ."
       "See note in documentation." );
+  }
 
   return delta_EL;
 }
@@ -173,9 +180,13 @@ nest::mat2_psc_exp::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
+  {
     V_m_ -= p.E_L_;
+  }
   else
+  {
     V_m_ -= delta_EL;
+  }
 
   updateValue< double >( d, names::V_th_alpha_1, V_th_1_ );
   updateValue< double >( d, names::V_th_alpha_2, V_th_2_ );
@@ -281,7 +292,7 @@ nest::mat2_psc_exp::calibrate()
   // To ensure consistency with the overall simulation scheme such conversion
   // should be carried out via objects of class nest::Time. The conversion
   // requires 2 steps:
-  //     1. A time object r is constructed defining representation of
+  //     1. A time object r is constructed, defining representation of
   //        tau_ref_ in tics. This representation is then converted to
   //        computation time steps again by a strategy defined by class
   //        nest::Time.
@@ -289,15 +300,17 @@ nest::mat2_psc_exp::calibrate()
   //        member function of class nest::Time.
   //
   // Choosing a tau_ref_ that is not an integer multiple of the computation time
-  // step h will leed to accurate (up to the resolution h) and self-consistent
+  // step h will lead to accurate (up to the resolution h) and self-consistent
   // results. However, a neuron model capable of operating with real valued
   // spike time may exhibit a different effective refractory time.
 
   V_.RefractoryCountsTot_ = Time( Time::ms( P_.tau_ref_ ) ).get_steps();
 
   if ( V_.RefractoryCountsTot_ < 1 )
+  {
     throw BadProperty(
       "Total refractory time must be at least one time step." );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -348,7 +361,9 @@ nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
       }
     }
     else
-      --S_.r_; // neuron is totally refractory (cannot generate spikes)
+    {
+      --S_.r_;
+    } // neuron is totally refractory (cannot generate spikes)
 
     // set new input current
     S_.i_0_ = B_.currents_.get_value( lag );
@@ -365,13 +380,17 @@ nest::mat2_psc_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
+  {
     B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
+  {
     B_.spikes_in_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
 }
 
 void

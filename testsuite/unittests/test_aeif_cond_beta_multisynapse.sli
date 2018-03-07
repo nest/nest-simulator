@@ -1,0 +1,321 @@
+/*
+ *  test_aeif_cond_beta_multisynapse.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+ 
+ /* BeginDocumentation
+   Name: testsuite::test_aeif_cond_beta_multisynapse - sli script for the aeif multisynapse model with synaptic conductance modeled by a double exponential function
+
+   Synopsis: (test_aeif_cond_beta_multisynapse) run
+
+   Description:
+   This test creates a multisynapse neuron with three receptor ports with
+   different synaptic rise times and decay times, and connect it to
+   two excitatory and one inhibitory signals. At the end, the script compares
+   the simulated values of V(t) with an approximate analytical formula, which
+   can be derived as follows:
+   For small excitatory inputs the synaptic current can be approximated as
+   I(t)=g(t)[Vrest-Eex]
+   where g(t) is the synaptic conductance, Vrest is the resting potential and
+   Eex is the excitatory reverse potential (see Roth and van Rossum, p. 144).
+   Using the LIF model, the differential equation for the membrane potential
+   can be written as
+   tau_m dv/dt = -v + G
+   where tau_m = Cm/gL, v = Vm - Vrest, and G=g(t)(Eex-Vrest)/gL
+   Using a first-order Taylor expansion of v around a generic time t0:
+   v(t0+tau_m)=v(t0)+tau_m dv/dt + O(tau_m^2)
+   and substituting t=t0+tau_m we get
+   v(t)=G(t-tau_m)
+   This approximation is valid for small excitatory inputs if tau_m is small
+   compared to the time scale of variation of G(t). Basically, this happens
+   when the synaptic rise time and decay time are much greater than tau_m.
+   An analogous approximation can be derived for small inhibitory inputs.
+
+   References
+   A. Roth and M.C.W. van Rossum, Modeling synapses, in Computational
+   Modeling Methods for Neuroscientists, MIT Press 2013, Chapter 6, pp. 139-159
+
+   SeeAlso:
+
+   FirstVersion: August 2016
+   Author: Bruno Golosio
+ */
+ 
+(unittest) run
+/unittest using
+
+0
+<< 
+    /overwrite_files true
+>> SetStatus
+
+% This test should only run if we have GSL
+skip_if_without_gsl
+
+/tolerance   	1e-2 def %mV
+/simulation_t	300 def %ms
+/V_peak		0. def
+/a 		4. def
+/b 		80.5 def
+/E_rev		[20.0 0.0 -85.0] def % synaptic reversal potentials  
+/tau_decay     [40.0 20.0 30.0] def % synaptic decay times  
+/tau_rise	[20.0 10.0 5.0] def % synaptic rise times  
+/weights	[0.1 0.2 0.15] def % synaptic weights
+/delays     	[1. 100. 130.] def % ms - synaptic delays
+/spike_time 	10. def
+/dt         	0.1 def % time step
+/Vrest          -70.6 def % resting potential
+/g_L            300.0 def
+
+/spike_generator Create /sg Set
+sg << /spike_times [spike_time] >> SetStatus % generates a single peak
+
+% Creates a voltmeter
+/voltmeter Create /vm Set
+vm << /withtime true
+/time_in_steps true
+/interval dt
+/to_file true
+/precision 5 >> SetStatus
+
+% Creates one aeif_conf_beta_multisynapse neuron
+/aeif_cond_beta_multisynapse Create /multisynapse_neuron Set
+multisynapse_neuron << /E_rev E_rev
+                       /tau_decay tau_decay
+                       /tau_rise tau_rise
+                       /V_peak V_peak
+                       /a a
+                       /b b
+                       /E_L Vrest
+                       /g_L g_L >> SetStatus
+
+% creates an array of synaptic indexes 
+delays length 1 arraystore Range /synapses_idx exch def
+
+[delays weights synapses_idx] % loop on synaptic receptor ports
+{
+	/syn_id exch def
+	/W exch def
+	/delay exch def
+	% connect spike generator to each port
+	[sg] [multisynapse_neuron] /one_to_one <<
+	/model /static_synapse
+	/delay delay
+	/weight W
+	/receptor_type syn_id >> Connect
+	
+} ScanThread
+
+% connects voltmeter
+vm multisynapse_neuron 1. 8. /static_synapse Connect
+
+simulation_t ms Simulate % run simulation
+
+% Gets the membrane voltage of the multisynapse neuron
+/d vm GetStatus /events get def
+d /V_m get cva /Vms Set
+d /times get cva /ts Set % get times
+
+% loop on time steps
+[ts Vms]
+{
+	Vrest sub /V_cur exch def % subtracts resting potential from V 
+	dt mul /t_cur exch def % current time in ms
+	[E_rev tau_rise tau_decay weights delays] % loop on connections
+	{
+		/delay exch def % synaptic delay
+		/W exch def % synaptic weight
+		/td exch def % synaptic decay time
+		/tr exch def % synaptic rise time
+                /Er exch def % synaptic reversal potential
+
+		spike_time delay add /t0 exch def % peak starting time
+		% Evaluates the driving force		
+		Er Vrest sub
+		/Vforce exch def
+		% coefficient for approximate linear relationship
+		% between V(t) and g(t)
+		%coeff=W*Vforce/g_L
+		/coeff W Vforce mul g_L div def
+
+		%t_p = td*tr / (td - tr) * np.log(td/tr) # peak time
+		/t_p td tr mul td tr sub div td tr div ln mul def
+		% normalization coefficient for synaptic conductance
+		%g0 = coeff/(np.exp(-t_p/taud)-np.exp(-t_p/taur))
+		/g0 coeff t_p td div neg exp t_p tr div neg exp sub div def
+
+		/t_rel t_cur t0 sub def % time relative to peak starting time
+		t_rel 0. lt {0.}
+		{ 
+		  % approximate analytical calculation of V(t)
+		  % (contribution from each connection)
+	  	  %y=g0*(np.exp(-(t-t0)/taud)-np.exp(-(t-t0)/taur))
+	  	  g0 t_rel td div neg exp t_rel tr div neg exp sub mul
+		}
+		ifelse
+	}  ScanThread
+	add add /Vtheor exch def % approximate analytical calculation of V(t)
+	% V_cur cvs ( ) join Vtheor cvs join = % display V simul. and theor.
+	V_cur Vtheor sub abs /Vdiff exch def % absolute value of the difference
+	Vdiff tolerance lt true eq assert_or_die % compare with tolerance
+} ScanThread
+
+% ---------------------------
+
+% The following tests address #547
+% - Test that t_ref == 0 shows no refractoriness
+% - Test that t_ref == h shows 1 step refractoriness
+% - Test that w-dynamics during refractoriness is based on V==V_reset
+
+% test for t_ref == 0
+{ 
+  << >> begin
+  ResetKernel
+  /res 0.1 def
+  /V_reset -111. def
+  
+  0 << /resolution res >> SetStatus
+  /nrn /aeif_cond_beta_multisynapse 
+    << /w 0. /a 0. /b 0. /Delta_T 0. /t_ref 0. /I_e 1000.
+       /V_reset V_reset >>
+    Create
+  def
+  
+  /sd /spike_detector << /time_in_steps true >> Create def
+  /vm /voltmeter << /withtime true /time_in_steps true
+                    /interval res >> Create def
+  
+  nrn sd Connect
+  vm nrn Connect
+  
+  10 Simulate
+  /stime sd /events get /times get cva 0 get def
+  [ vm /events get dup /times get cva exch /V_m get cva ] Transpose dup
+  { First stime eq } Select First  % time/voltage at spike
+  Last V_reset eq  % V_m == V_reset at spike time
+  exch
+  { First stime 1 add eq } Select First % time/voltage step after spike
+  Last V_reset gt   % V_m > V_reset one step after spike
+  and
+  end
+} assert_or_die
+     
+% test for t_ref == resolution
+{ 
+  << >> begin
+  ResetKernel
+  /res 0.1 def
+  /V_reset -111. def
+  
+  0 << /resolution res >> SetStatus
+  /nrn /aeif_cond_beta_multisynapse 
+    << /w 0. /a 0. /b 0. /Delta_T 0. /t_ref res /I_e 1000.
+       /V_reset V_reset >>
+    Create
+  def
+  
+  /sd /spike_detector << /time_in_steps true >> Create def
+  /vm /voltmeter << /withtime true /time_in_steps true
+                    /interval res >> Create def
+  
+  nrn sd Connect
+  vm nrn Connect
+  
+  10 Simulate
+  /stime sd /events get /times get cva 0 get def
+  [ vm /events get dup /times get cva exch /V_m get cva ] Transpose
+  /result Set
+  
+  result { First stime eq } Select First  % time/voltage at spike
+  Last V_reset eq  % V_m == V_reset at spike time
+
+  result { First stime 1 add eq } Select First % time/voltage step after spike
+  Last V_reset eq   % V_m == V_reset one step after spike
+
+  result { First stime 2 add eq } Select First % time/voltage two steps after spike
+  Last V_reset gt   % V_m > V_reset two steps after spike
+ 
+  and and
+
+  end
+} assert_or_die
+
+% test w-dynamics based on clamped V
+{ 
+  << >> begin
+  ResetKernel
+  /res 1.0 def
+  /V_reset -111. def
+  /E_L -70. def
+  /t_ref 100. def
+  /a 10. def
+  /b 100. def
+  /tau_w 1.0 def
+  
+  0 << /resolution res >> SetStatus
+  /nrn /aeif_cond_beta_multisynapse 
+    << /w 0. /a a /b b /tau_w tau_w /Delta_T 0. /t_ref t_ref /I_e 1000.
+       /E_L E_L /V_reset V_reset >>
+    Create
+  def
+  
+  /sd /spike_detector << /time_in_steps true >> Create def
+  /vm /multimeter << /withtime true /time_in_steps true
+                     /interval res /record_from [ /V_m /w ] >> Create def
+  
+  nrn sd Connect
+  vm nrn Connect
+  
+  50 Simulate
+  /stime sd /events get /times get cva 0 get def
+  /mme vm /events get def
+  [ mme /times get cva mme /V_m get cva mme /w get cva] Transpose
+  /result Set
+  
+  result { First stime eq } Select First  % time/voltage/w at spike
+  arrayload ; 
+  /w0 Set
+  /V0 Set
+  /t0 Set
+  
+  result { First stime 20 add eq } Select First % time/voltage 20 steps after spike
+  arrayload ;
+  /w1 Set
+  /V1 Set
+  /t1 Set
+  /dt t1 t0 sub res mul def
+  dt t_ref lt   % still refractory
+  V0 V1 eq V0 V_reset eq and   % V_m clamped
+ 
+  % expected w
+  /w_theory
+     w0 dt tau_w div neg exp mul 
+     V_reset E_L sub a mul 1 dt tau_w div neg exp sub mul
+     add
+  def
+  
+  w1 w_theory div 8 ToUnitTestPrecision 1 eq
+  
+  and
+
+  end
+} assert_or_die
+
+endusing

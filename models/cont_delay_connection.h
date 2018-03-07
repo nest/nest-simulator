@@ -141,6 +141,11 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   /**
+   * Issue warning if delay is given in syn_spec.
+   */
+  void check_synapse_params( const DictionaryDatum& d ) const;
+
+  /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
    * \param t_lastspike Point in time of last spike sent.

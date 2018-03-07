@@ -41,7 +41,7 @@ EventDeliveryManager::send( Node& source, EventT& e, const long lag )
   thread t = source.get_thread();
   index gid = source.get_gid();
 
-  assert( !source.has_proxies() );
+  assert( not source.has_proxies() );
   kernel().connection_manager.send( t, gid, e );
 }
 
@@ -59,12 +59,18 @@ EventDeliveryManager::send< SpikeEvent >( Node& source,
   if ( source.has_proxies() )
   {
     if ( source.is_off_grid() )
+    {
       send_offgrid_remote( t, e, lag );
+    }
     else
+    {
       send_remote( t, e, lag );
+    }
   }
   else
+  {
     send_local( t, source, e );
+  }
 }
 
 template <>
@@ -78,7 +84,7 @@ EventDeliveryManager::send< DSSpikeEvent >( Node& source,
   e.set_sender( source );
   thread t = source.get_thread();
 
-  assert( !source.has_proxies() );
+  assert( not source.has_proxies() );
   send_local( t, source, e );
 }
 

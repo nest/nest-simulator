@@ -94,7 +94,9 @@ FilesystemModule::FileNamesFunction::execute( SLIInterpreter* i ) const
     i->OStack.push_move( array_token );
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -105,7 +107,7 @@ FilesystemModule::SetDirectoryFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = chdir( sd->c_str() );
   i->OStack.pop();
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -140,7 +142,9 @@ FilesystemModule::DirectoryFunction::execute( SLIInterpreter* i ) const
   while ( getcwd( path_buffer, size - 1 ) == NULL )
   { // try again with a bigger buffer!
     if ( errno != ERANGE )
+    {
       i->raiseerror( i->BadIOError ); // size wasn't reason
+    }
     delete[] path_buffer;
     size += SIZE;
     path_buffer = new char[ size ];
@@ -163,7 +167,7 @@ FilesystemModule::MoveFileFunction::execute( SLIInterpreter* i ) const
   assert( src != NULL );
   assert( dst != NULL );
   int s = link( src->c_str(), dst->c_str() );
-  if ( !s )
+  if ( not s )
   {
     s = unlink( src->c_str() );
     if ( s ) // failed to remove old link: undo everything
@@ -173,7 +177,7 @@ FilesystemModule::MoveFileFunction::execute( SLIInterpreter* i ) const
     };
   };
   i->OStack.pop( 2 );
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -196,7 +200,7 @@ FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
   assert( dst != NULL );
 
   std::ofstream deststream( dst->c_str() );
-  if ( !deststream )
+  if ( not deststream )
   {
     i->message( SLIInterpreter::M_ERROR,
       "CopyFile",
@@ -206,7 +210,7 @@ FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
   }
 
   std::ifstream sourcestream( src->c_str() );
-  if ( !sourcestream )
+  if ( not sourcestream )
   {
     i->message(
       SLIInterpreter::M_ERROR, "CopyFile", "Could not open source file." );
@@ -217,7 +221,7 @@ FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
   // copy while file in one call (see Josuttis chap 13.9 (File Access), p. 631)
   deststream << sourcestream.rdbuf();
 
-  if ( !deststream )
+  if ( not deststream )
   {
     i->message( SLIInterpreter::M_ERROR, "CopyFile", "Error copying file." );
     i->raiseerror( i->BadIOError );
@@ -238,7 +242,7 @@ FilesystemModule::DeleteFileFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = unlink( sd->c_str() );
   i->OStack.pop();
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -257,7 +261,7 @@ FilesystemModule::MakeDirectoryFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = mkdir( sd->c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP );
   i->OStack.pop();
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -276,7 +280,7 @@ FilesystemModule::RemoveDirectoryFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = rmdir( sd->c_str() );
   i->OStack.pop();
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -312,7 +316,9 @@ FilesystemModule::TmpNamFunction::execute( SLIInterpreter* i ) const
   char* env = getenv( "TMPDIR" );
   std::string tmpdir( "/tmp" );
   if ( env )
+  {
     tmpdir = std::string( env );
+  }
 
   std::string tempfile;
   do
@@ -354,7 +360,7 @@ FilesystemModule::CompareFilesFunction::execute( SLIInterpreter* i ) const
   std::ifstream as( flA->c_str(), std::ifstream::in | std::ifstream::binary );
   std::ifstream bs( flB->c_str(), std::ifstream::in | std::ifstream::binary );
 
-  if ( !( as.good() && bs.good() ) )
+  if ( not( as.good() && bs.good() ) )
   {
     as.close();
     bs.close();
@@ -367,21 +373,29 @@ FilesystemModule::CompareFilesFunction::execute( SLIInterpreter* i ) const
     const int ac = as.get();
     const int bc = bs.get();
 
-    if ( !( as.fail() || bs.fail() ) )
+    if ( not( as.fail() || bs.fail() ) )
+    {
       equal = ac == bc;
+    }
   }
 
   if ( as.fail() != bs.fail() )
+  {
     equal = false; // different lengths
+  }
 
   as.close();
   bs.close();
 
   i->OStack.pop( 2 );
   if ( equal )
+  {
     i->OStack.push( i->baselookup( i->true_name ) );
+  }
   else
+  {
     i->OStack.push( i->baselookup( i->false_name ) );
+  }
 
   i->EStack.pop();
 }

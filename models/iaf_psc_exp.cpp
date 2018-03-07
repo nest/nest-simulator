@@ -59,8 +59,8 @@ RecordablesMap< iaf_psc_exp >::create()
   insert_( names::V_m, &iaf_psc_exp::get_V_m_ );
   insert_( names::weighted_spikes_ex, &iaf_psc_exp::get_weighted_spikes_ex_ );
   insert_( names::weighted_spikes_in, &iaf_psc_exp::get_weighted_spikes_in_ );
-  insert_( names::input_currents_ex, &iaf_psc_exp::get_input_currents_ex_ );
-  insert_( names::input_currents_in, &iaf_psc_exp::get_input_currents_in_ );
+  insert_( names::I_syn_ex, &iaf_psc_exp::get_I_syn_ex_ );
+  insert_( names::I_syn_in, &iaf_psc_exp::get_I_syn_in_ );
 }
 }
 
@@ -118,14 +118,22 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d )
   const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  {
     V_reset_ -= E_L_;
+  }
   else
+  {
     V_reset_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
+  {
     Theta_ -= E_L_;
+  }
   else
+  {
     Theta_ -= delta_EL;
+  }
 
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
@@ -133,19 +141,23 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_ex, tau_ex_ );
   updateValue< double >( d, names::tau_syn_in, tau_in_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
-
   if ( V_reset_ >= Theta_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
-
+  }
   if ( C_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+  {
     throw BadProperty(
       "Membrane and synapse time constants must be strictly positive." );
-
+  }
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time must not be negative." );
+  }
 
   return delta_EL;
 }
@@ -162,9 +174,13 @@ nest::iaf_psc_exp::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
+  {
     V_m_ -= p.E_L_;
+  }
   else
+  {
     V_m_ -= delta_EL;
+  }
 }
 
 nest::iaf_psc_exp::Buffers_::Buffers_( iaf_psc_exp& n )
@@ -253,20 +269,20 @@ nest::iaf_psc_exp::calibrate()
   V_.P20_ = P_.Tau_ / P_.C_ * ( 1.0 - V_.P22_ );
   // P20_ = h/C_;
 
-  // TauR specifies the length of the absolute refractory period as
+  // t_ref_ specifies the length of the absolute refractory period as
   // a double in ms. The grid based iaf_psc_exp can only handle refractory
   // periods that are integer multiples of the computation step size (h).
   // To ensure consistency with the overall simulation scheme such conversion
   // should be carried out via objects of class nest::Time. The conversion
   // requires 2 steps:
-  //     1. A time object r is constructed defining  representation of
-  //        TauR in tics. This representation is then converted to computation
+  //     1. A time object r is constructed, defining representation of
+  //        t_ref_ in tics. This representation is then converted to computation
   //        time steps again by a strategy defined by class nest::Time.
   //     2. The refractory time in units of steps is read out get_steps(), a
   //        member function of class nest::Time.
   //
-  // Choosing a TauR that is not an integer multiple of the computation time
-  // step h will leed to accurate (up to the resolution h) and self-consistent
+  // Choosing a t_ref_ that is not an integer multiple of the computation time
+  // step h will lead to accurate (up to the resolution h) and self-consistent
   // results. However, a neuron model capable of operating with real valued
   // spike time may exhibit a different effective refractory time.
 
@@ -286,10 +302,14 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
   for ( long lag = from; lag < to; ++lag )
   {
     if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
+    {
       S_.V_m_ = S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_
         + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
+    }
     else
-      --S_.r_ref_; // neuron is absolute refractory
+    {
+      --S_.r_ref_;
+    } // neuron is absolute refractory
 
     // exponential decaying PSCs
     S_.i_syn_ex_ *= V_.P11ex_;
@@ -333,13 +353,17 @@ nest::iaf_psc_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
+  {
     B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
+  {
     B_.spikes_in_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
 }
 
 void

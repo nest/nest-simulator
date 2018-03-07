@@ -150,6 +150,18 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   /**
+   * Check syn_spec dictionary for parameters that are not allowed with the
+   * given connection.
+   *
+   * Will issue warning or throw error if an illegal parameter is found. The
+   * method does nothing if no illegal parameter is found.
+   *
+   * @note Classes requiring checks need to override the function with their own
+   * implementation, as this base class implementation does not do anything.
+   */
+  void check_synapse_params( const DictionaryDatum& d ) const;
+
+  /**
    * Calibrate the delay of this connection to the desired resolution.
    */
   void calibrate( const TimeConverter& );
@@ -288,8 +300,10 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   // interpreted in target?
   // note that we here use a bitwise and operation (&), because we interpret
   // each bit in the signal type as a collection of individual flags
-  if ( !( source.sends_signal() & target.receives_signal() ) )
+  if ( not( source.sends_signal() & target.receives_signal() ) )
+  {
     throw IllegalConnection();
+  }
 
   target_.set_target( &target );
 }
@@ -319,13 +333,22 @@ Connection< targetidentifierT >::set_status( const DictionaryDatum& d,
 
 template < typename targetidentifierT >
 inline void
+Connection< targetidentifierT >::check_synapse_params(
+  const DictionaryDatum& d ) const
+{
+}
+
+template < typename targetidentifierT >
+inline void
 Connection< targetidentifierT >::calibrate( const TimeConverter& tc )
 {
   Time t = tc.from_old_steps( syn_id_delay_.delay );
   syn_id_delay_.delay = t.get_steps();
 
   if ( syn_id_delay_.delay == 0 )
+  {
     syn_id_delay_.delay = 1;
+  }
 }
 
 template < typename targetidentifierT >

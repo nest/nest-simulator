@@ -52,12 +52,12 @@ STDPHomCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
-  def< double >( d, "tau_plus", tau_plus_ );
-  def< double >( d, "lambda", lambda_ );
-  def< double >( d, "alpha", alpha_ );
-  def< double >( d, "mu_plus", mu_plus_ );
-  def< double >( d, "mu_minus", mu_minus_ );
-  def< double >( d, "Wmax", Wmax_ );
+  def< double >( d, names::tau_plus, tau_plus_ );
+  def< double >( d, names::lambda, lambda_ );
+  def< double >( d, names::alpha, alpha_ );
+  def< double >( d, names::mu_plus, mu_plus_ );
+  def< double >( d, names::mu_minus, mu_minus_ );
+  def< double >( d, names::Wmax, Wmax_ );
 }
 
 void
@@ -66,12 +66,12 @@ STDPHomCommonProperties::set_status( const DictionaryDatum& d,
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  updateValue< double >( d, "tau_plus", tau_plus_ );
-  updateValue< double >( d, "lambda", lambda_ );
-  updateValue< double >( d, "alpha", alpha_ );
-  updateValue< double >( d, "mu_plus", mu_plus_ );
-  updateValue< double >( d, "mu_minus", mu_minus_ );
-  updateValue< double >( d, "Wmax", Wmax_ );
+  updateValue< double >( d, names::tau_plus, tau_plus_ );
+  updateValue< double >( d, names::lambda, lambda_ );
+  updateValue< double >( d, names::alpha, alpha_ );
+  updateValue< double >( d, names::mu_plus, mu_plus_ );
+  updateValue< double >( d, names::mu_minus, mu_minus_ );
+  updateValue< double >( d, names::Wmax, Wmax_ );
 }
 
 } // of namespace nest

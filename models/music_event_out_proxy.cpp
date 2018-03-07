@@ -79,8 +79,10 @@ nest::music_event_out_proxy::Parameters_::set( const DictionaryDatum& d,
   //  if(d->known(names::port_name) && s.published_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
-  if ( !s.published_ )
+  if ( not s.published_ )
+  {
     updateValue< string >( d, names::port_name, port_name_ );
+  }
 }
 
 void
@@ -141,19 +143,25 @@ void
 nest::music_event_out_proxy::calibrate()
 {
   // only publish the output port once,
-  if ( !S_.published_ )
+  if ( not S_.published_ )
   {
     MUSIC::Setup* s = kernel().music_manager.get_music_setup();
     if ( s == 0 )
+    {
       throw MUSICSimulationHasRun( get_name() );
+    }
 
     V_.MP_ = s->publishEventOutput( P_.port_name_ );
 
-    if ( !V_.MP_->isConnected() )
+    if ( not V_.MP_->isConnected() )
+    {
       throw MUSICPortUnconnected( get_name(), P_.port_name_ );
+    }
 
-    if ( !V_.MP_->hasWidth() )
+    if ( not V_.MP_->hasWidth() )
+    {
       throw MUSICPortHasNoWidth( get_name(), P_.port_name_ );
+    }
 
     S_.port_width_ = V_.MP_->width();
 
@@ -161,8 +169,12 @@ nest::music_event_out_proxy::calibrate()
     // beyond the width of the port
     std::vector< MUSIC::GlobalIndex >::const_iterator it;
     for ( it = V_.index_map_.begin(); it != V_.index_map_.end(); ++it )
+    {
       if ( *it > S_.port_width_ )
+      {
         throw UnknownReceptorType( *it, get_name() );
+      }
+    }
 
     // The permutation index map, contains global_index[local_index]
     V_.music_perm_ind_ = new MUSIC::PermutationIndex(
@@ -227,7 +239,9 @@ nest::music_event_out_proxy::handle( SpikeEvent& e )
   {
 #endif
     for ( int i = 0; i < e.get_multiplicity(); ++i )
+    {
       V_.MP_->insertEvent( time, MUSIC::GlobalIndex( receiver_port ) );
+    }
 #ifdef _OPENMP
   }
 #endif

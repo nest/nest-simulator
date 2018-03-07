@@ -23,8 +23,7 @@
  /* BeginDocumentation
 Name: test_tsodyks_facilitating - sli script for overall test of tsodyks synapse models
 
-Synopsis: (test_tsodyks_facilitating) run -> compare cout with comments in file
-
+Synopsis:(test_tsodyks_facilitating) run -> compare cout with comments in file
 
 Description:
 Script to test Tsodyks short term plasticity facilitating synapses according to
@@ -32,133 +31,24 @@ Script to test Tsodyks short term plasticity facilitating synapses according to
 Misha Tsodyks, Klaus Pawelzik, Henry Markram
 Neural computation 10, 821--853 (1998)
 
-reproduces figure 1 B,(C)
+Reproduces figure 1 B, (C)
 
+Revised by Hans Ekkehard Plesser 2016 using explicit input spike train.
 
-author:  Markus Diesmann, Moritz Helias
-date:	 March 2006
-
+Author:  Markus Diesmann, Moritz Helias
+FirstVersion: March 2006
 */
 
 (unittest) run
 /unittest using
 
+% -------
+%
+% Expected solution
+%
+% -------
 
-[/tsodyks_synapse /tsodyks_synapse_hom] {
-/tsodyks_model Set
-
-ResetKernel      % clear all existing network elements
-
-
-userdict begin
-
-      1 /local_num_threads Set
-      8 /total_num_virtual_procs Set
-      0.1 /h Set
-
-      /Tau 60.0 def	     % membrane time constant
-      /Theta 15.0 def	     % threshold
-      /E_L 0.0 def	     % reset potential of Vm
-      /C Tau 1.0 div def     % Tau [ms] / 1.0 GOhm in NEST units
-      /TauR 2.0 def	     % refractory time
-      /Tau_psc 1.5 def       % time constant of PSC (=Tau_inact)
-      /Tau_rec 130.0 def     % recovery time
-      /Tau_fac 530.0 def     % facilitation time
-      /U 0.03 def	     % facilitation parameter U
-      /A 1540.0 def	     % PSC weight in pA
-      /f 20.0 1000.0 div def % frequency in Hz given converted to 1/ms
-
-      /Tend 1200.0 def	     % simulation time
-      /TIstart 50.0 def      % start of current
-      /TIend 1050.0 def      % end of current
-      
-      
-      % set resolution and limits on delays
-      % limits must be set BEFORE connecting any elements
-      0
-      <<
-        /resolution h
-	/local_num_threads local_num_threads
-%       /total_num_virtual_procs total_num_virtual_procs
-      >> SetStatus
-
-      cout 15 setprecision
-
-      tsodyks_model
-      << /tau_psc Tau_psc 
-         /tau_rec Tau_rec
-	 /tau_fac Tau_fac
-	 /U U
-	 /delay 0.1
-	 /weight A
-	 /u 0.0
-	 /x 1.0
-      >> SetDefaults
- 
-      /iaf_tum_2000 Create /neuron1 Set
-
-      neuron1 << /tau_m Tau
-	         /t_ref_tot TauR
-		 /t_ref_abs TauR
-		 /tau_syn_ex Tau_psc
-		 /tau_syn_in Tau_psc
-		 /C_m C
-		 /V_reset E_L
-		 /E_L E_L
-		 /V_m E_L
-		 /V_th Theta
-      >> SetStatus
-    
-      % neuron1 GetStatus info
-      
-      /iaf_tum_2000 Create /neuron2 Set
-
-      neuron2 << /tau_m Tau
-	         /t_ref_tot TauR
-		 /t_ref_abs TauR
-		 /tau_syn_ex Tau_psc
-		 /tau_syn_in Tau_psc
-		 /C_m C
-		 /V_reset E_L
-		 /E_L E_L
-		 /V_th Theta
-		 /V_m E_L
-      >> SetStatus
-   
-      % neuron2 GetStatus info
-	      
-      /I0 Theta C mul Tau div 1.0 1.0 f div TauR sub Tau div neg exp sub div def
-      
-      /dc_generator Create /dc_gen Set
-      dc_gen << /amplitude I0 /start TIstart /stop TIend >> SetStatus
-
-      /voltmeter Create /vm Set
-	  
-      vm << /withtime true
-	    /to_memory true
-	    /interval 25.0
-      >> SetStatus
-
-      /spike_detector Create /sp_det Set
-      sp_det << /withtime true /withgid true >> SetStatus
-
-      dc_gen neuron1 Connect
-
-      vm neuron2 Connect
-
-      neuron1 neuron2 tsodyks_model Connect
-
-      Tend Simulate
-
-      vm [/events [/times /V_m]] get cva
-      6 ToUnitTestPrecision
-      Transpose /vm_sim Set  % array of recorded data
-
-      % to print to screen
-      %vm_sim {
-      %  ==	  
-      %} forall
-
+/vm_expected
 [
 [25 0]
 [50 0]
@@ -207,14 +97,109 @@ userdict begin
 [1125 3.185220000000000e+00]
 [1150 2.099830000000000e+00]
 [1175 1.384290000000000e+00]
-] /vm_expected Set
+]
+def
 
-vm_sim vm_expected eq assert_or_die
+% ---------
+% Model parameters
+% ---------
 
-end
+/local_num_threads 1 def
+/h 0.1 def
+
+/Tau 60.0 def        % membrane time constant
+/Theta 15.0 def      % threshold
+/E_L 0.0 def         % reset potential of Vm
+/R 1.0 def
+/C Tau R div def     % Tau [ms] / 1.0 GOhm in NEST units
+/TauR 2.0 def        % refractory time
+/Tau_psc 1.5 def     % time constant of PSC (=Tau_inact)
+/Tau_rec 130.0 def   % recovery time
+/Tau_fac 530.0 def   % facilitation time
+/U 0.03 def          % facilitation parameter U
+/A 1540.0 def        % PSC weight in pA
+
+/input_train 
+[
+    98.1             % first spike [ms]
+  1050.0             % last spike [ms]
+    50.1             % interspike interval [ms]
+] Range def
+
+/T_sim 1200. def     % simulation time [ms]     
+
+% ---------
+
+[/tsodyks_synapse /tsodyks_synapse_hom] 
+{
+  /synapse_model Set
+
+  ResetKernel      % clear all existing network elements
+
+  
+  % set resolution and limits on delays
+  % limits must be set BEFORE connecting any elements
+  0
+  <<
+    /resolution h
+    /local_num_threads local_num_threads
+  >> SetStatus
+
+  /sg /spike_generator << /spike_times input_train >> Create def
+  /pn /parrot_neuron Create def
+  
+  /neuron 
+    /iaf_tum_2000
+    << /tau_m Tau
+       /t_ref_tot TauR
+       /t_ref_abs TauR
+       /tau_syn_ex Tau_psc
+       /tau_syn_in Tau_psc
+       /C_m C
+       /V_reset E_L
+       /E_L E_L
+       /V_th Theta
+       /V_m E_L >>
+  Create def
+
+  /vm 
+    /voltmeter 
+    << /withtime true
+       /to_memory true
+       /interval 25.0
+    >>
+  Create def
+
+  synapse_model 
+  << /tau_psc Tau_psc 
+     /tau_rec Tau_rec
+  	 /tau_fac Tau_fac
+  	 /U U
+  	 /delay 0.1
+  	 /weight A
+  	 /u 0.0
+  	 /x 1.0
+  >> SetDefaults
+
+  sg pn Connect   % pn required, devices cannot project to plastic synapses
+  pn neuron synapse_model Connect
+  vm neuron Connect
+
+  T_sim Simulate
+
+  % compare results to expected voltage trace
+  vm [/events [/times /V_m]] get cva
+  6 ToUnitTestPrecision
+  Transpose /vm_sim Set  % array of recorded data
+
+  % to print to screen
+  vm_sim {
+    ==	  
+  } forall
+
+  vm_sim vm_expected eq assert_or_die
 
 } forall % tsodyks models
 
 endusing % unittest
-
 

@@ -37,7 +37,7 @@ Author:  December 2012, Plesser, based on test_mini_brunel_ps.sli
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 /total_vps 4 def
 
@@ -55,7 +55,7 @@ is_threaded not { exit_test_gracefully } if
                          /withgid true 
                          /withtime true 
                       >> Create def
-  /pnet [ total_vps ] { ; /iaf_neuron Create } Table def
+  /pnet [ total_vps ] { ; /iaf_psc_alpha Create } Table def
 
   [pg] pnet Connect
   pnet [sd] Connect

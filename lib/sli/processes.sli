@@ -703,7 +703,7 @@ Bugs: No error message is raised, if Flag=1 or Flag=2 and the given
       but it is raised in a child process of SLI, and -after- standard
       output has been redirected. The error message can be read from
       the "mouth"-pipe!
-       "spawn" always returns sucessful if Flag=1 or Flag=2. However,
+      "spawn" always returns successful if Flag=1 or Flag=2. However,
       excution of the UNIX command may have failed in the child process.
       This may be a bug or a feature, whatever you like best ;->
 
@@ -1219,26 +1219,6 @@ ifelse
 statusdict/exitcodes :: /restart_serial 4 put
 
 
-% experimental, MD 090413
-/mpirun_call 
-{
- /mpirun lookup   % better mpirun_name
- {pop}
- {
-  M_FATAL (mpirun_call) (Cannot find definition of SLI command /mpirun.) message
-  M_FATAL (mpirun_call) (Please consult ~/.nestrc to learn how to provide) message
-  M_FATAL (mpirun_call) (NEST with this command.) message
- } ifelse
-
- mpirun 0 shpawn % arguments of mpirun are identical to the ones of mpirun_call
- pop             % don't know what to do with the boolean returnd by shpawn
-
- % return value is return value of command
-}
-def
-
-
-
 
 /* BeginDocumentation
 Name: nest_serial  - Returns a non-distributed call of nest as a string
@@ -1277,7 +1257,9 @@ SeeAlso: nest_indirect
   /mpirun lookup   
   {
    pop
-   1 exch mpirun
+   1 exch
+   statusdict/prefix :: (/bin/nest ) join exch
+   mpirun
   } 
   {
    M_FATAL (nest_serial) (Command nest may fail because NEST was compiled with )

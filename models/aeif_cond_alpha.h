@@ -102,7 +102,7 @@ Integration parameters
                           GSL integrator. Reduce it if NEST complains about
                           numerical instabilities.
 
-Author: Marc-Oliver Gewaltig
+Author: Marc-Oliver Gewaltig; full revision by Tanguy Fardet on December 2016
 
 Sends: SpikeEvent
 
@@ -118,7 +118,7 @@ SeeAlso: iaf_cond_alpha, aeif_cond_exp
 namespace nest
 {
 /**
- * Function computing right-hand side of ODE for GSL solver.
+ * Function computing right-hand side of ODE for GSL solver if Delta_T != 0.
  * @note Must be declared here so we can befriend it in class.
  * @note Must have C-linkage for passing to GSL. Internally, it is
  *       a first-class C++ function, but cannot be a member function
@@ -129,6 +129,19 @@ namespace nest
  */
 extern "C" int
 aeif_cond_alpha_dynamics( double, const double*, double*, void* );
+
+/**
+ * Function computing right-hand side of ODE for GSL solver if Delta_T == 0.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int
+aeif_cond_alpha_dynamics_DT0( double, const double*, double*, void* );
 
 class aeif_cond_alpha : public Archiving_Node
 {
@@ -238,7 +251,7 @@ public:
 
     double y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for
                                  //!< GSL solver
-    int r_;                      //!< number of refractory steps remaining
+    unsigned int r_;             //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -270,7 +283,7 @@ public:
     gsl_odeiv_step* s_;    //!< stepping function
     gsl_odeiv_control* c_; //!< adaptive stepsize control function
     gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_system sys_; //!< struct describing the GSL system
 
     // IntergrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
@@ -302,7 +315,13 @@ public:
     /** initial value to normalise inhibitory synaptic conductance */
     double g0_in_;
 
-    int RefractoryCounts_;
+    /**
+     * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
+     * P.V_th if Delta_T == 0.
+     */
+    double V_peak;
+
+    unsigned int refractory_counts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -342,7 +361,9 @@ inline port
 aeif_cond_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -350,7 +371,9 @@ inline port
 aeif_cond_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -359,7 +382,9 @@ aeif_cond_alpha::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

@@ -124,13 +124,18 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s )
                           "is missing.");
   */
   if ( U_epsp_ < 0 )
+  {
     throw BadProperty( "EPSP cannot be negative." );
+  }
 
   if ( U_reset_ < 0 ) // sign switched above
+  {
     throw BadProperty( "Reset potential cannot be negative." );
-
+  }
   if ( tau_epsp_ <= 0 || tau_reset_ <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 }
 
 void
@@ -253,7 +258,7 @@ nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
     // exponentially decaying ahp
     S_.V_spike_ *= V_.P30_;
 
-    double noise_term = P_.U_noise_ > 0.0 && !P_.noise_.empty()
+    double noise_term = P_.U_noise_ > 0.0 && not P_.noise_.empty()
       ? P_.U_noise_ * P_.noise_[ S_.position_++ ]
       : 0.0;
 
@@ -283,9 +288,11 @@ nest::iaf_chs_2007::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
+  {
     B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
 }
 
 void

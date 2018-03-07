@@ -1,0 +1,83 @@
+/*
+ *  issue-463.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::issue-463 Simple failing test for connection with parameter arrays and connection rule fixed_indegree, with more than one virtual process
+
+Synopsis: (issue-463) run -> NEST exits if test fails
+
+Description:
+This script creates connections between neurons with parameter arrays and connection rule fixed_indegree, with more than one virtual process, and checks that created connection parameters coincide with array elements.
+
+Author: Bruno Golosio
+FirstVersion: August 2016
+SeeAlso:
+*/
+
+(unittest) run
+/unittest using
+
+skip_if_not_threaded
+
+M_ERROR setverbosity
+
+0 << /total_num_virtual_procs 4 >> SetStatus
+
+% Create source and target neurons
+/iaf_psc_alpha 20 Create
+/net1 [1 10] Range def
+/net2 [11 20] Range def
+
+% weight array is made of integers from 1 to 50
+/Warr [1 50] Range cv_dv def
+
+% Define connection and synapse dictionaries
+/syn_dict << /model /static_synapse /weight Warr >> def
+/conn_dict << /rule /fixed_indegree /indegree 5 >> def
+
+net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
+
+/Warr1 [] def  % create empty array
+
+net2 % loop on all neurons of target subnet
+{
+        /neuron2 exch def
+        % gets all connections to the target neuron
+        /conn << /target [neuron2] >> GetConnections def
+
+        /sdict_lst conn GetSynapseStatus def % gets info on synapses
+
+        sdict_lst % loop on synapses that connect to target neuron
+        {
+             /sdict exch def
+             /w sdict /weight get def  % gets synaptic weight
+             /Warr1 Warr1 w append def % append the weight to Warr1
+        } forall
+        /Warr1 Warr1 Sort def % sorts the elements of Warr1
+} forall
+
+/Warr1 Warr1 [1 50] Range sub def % Warr1 = Warr1 - [1,...,50]
+
+Warr1 {
+        0.0 eq assert_or_die % checks the elements of Warr1
+} forall

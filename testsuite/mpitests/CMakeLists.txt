@@ -1,4 +1,4 @@
-# testsuite/mpitests/CMakeLists.txt
+# CMakeLists.txt
 #
 # This file is part of NEST.
 #

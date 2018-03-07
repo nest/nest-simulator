@@ -144,6 +144,8 @@ class Time
   // delay: steps, signed long
   // double: milliseconds (double!)
 
+  friend class TimeConverter;
+
   /////////////////////////////////////////////////////////////
   // Range: Limits & conversion factors for different types
   /////////////////////////////////////////////////////////////
@@ -152,6 +154,7 @@ protected:
   struct Range
   {
     static tic_t TICS_PER_STEP;
+    static double TICS_PER_STEP_INV;
     static tic_t TICS_PER_STEP_RND;
 
     static double TICS_PER_MS;
@@ -259,13 +262,8 @@ public:
   struct ms
   {
     double t;
-
     explicit ms( double t )
       : t( t )
-    {
-    }
-    explicit ms( long t )
-      : t( static_cast< double >( t ) )
     {
     }
 
@@ -279,10 +277,6 @@ public:
     double t;
     explicit ms_stamp( double t )
       : t( t )
-    {
-    }
-    explicit ms_stamp( long t )
-      : t( static_cast< double >( t ) )
     {
     }
   };
@@ -396,7 +390,22 @@ public:
   bool
   is_neg_inf() const
   {
-    return tics == LIM_NEG_INF.tics;
+    return tics <= LIM_NEG_INF.tics; // currently tics can never
+                                     // become smaller than
+                                     // LIM_NEG_INF.tics. however if
+                                     // LIM_NEG_INF.tics represent
+                                     // negative infinity, any smaller
+                                     // value cannot be larger and
+                                     // thus must be infinity as
+                                     // well. to be on the safe side
+                                     // we use less-or-equal instead
+                                     // of just equal.
+  }
+
+  bool
+  is_pos_inf() const
+  {
+    return tics >= LIM_POS_INF.tics; // see comment for is_neg_inf()
   }
 
   bool
@@ -455,7 +464,9 @@ public:
   range()
   {
     if ( time_abs( tics ) < LIM_MAX.tics )
+    {
       return;
+    }
     tics = ( tics < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics;
   }
 
@@ -499,24 +510,32 @@ public:
   double
   get_ms() const
   {
-    if ( tics == LIM_POS_INF.tics )
+    if ( is_pos_inf() )
+    {
       return LIM_POS_INF_ms;
-    if ( tics == LIM_NEG_INF.tics )
+    }
+    if ( is_neg_inf() )
+    {
       return LIM_NEG_INF_ms;
+    }
     return Range::MS_PER_TIC * tics;
   }
 
   delay
   get_steps() const
   {
-    if ( tics == LIM_POS_INF.tics )
+    if ( is_pos_inf() )
+    {
       return LIM_POS_INF.steps;
-    if ( tics == LIM_NEG_INF.tics )
+    }
+    if ( is_neg_inf() )
+    {
       return LIM_NEG_INF.steps;
+    }
 
     // round tics up to nearest step
     // by adding TICS_PER_STEP-1 before division
-    return ( tics + Range::TICS_PER_STEP_RND ) / Range::TICS_PER_STEP;
+    return ( tics + Range::TICS_PER_STEP_RND ) * Range::TICS_PER_STEP_INV;
   }
 
   /**
@@ -596,12 +615,17 @@ inline Time operator*( const long factor, const Time& t )
   const tic_t n = factor * t.tics;
   // if no overflow:
   if ( t.tics == 0 || n / t.tics == factor )
+  {
     return Time::tic( n ); // check range
-
+  }
   if ( ( t.tics > 0 && factor > 0 ) || ( t.tics < 0 && factor < 0 ) )
+  {
     return Time( Time::LIM_POS_INF.tics );
+  }
   else
+  {
     return Time( Time::LIM_NEG_INF.tics );
+  }
 }
 
 inline Time operator*( const Time& t, long factor )

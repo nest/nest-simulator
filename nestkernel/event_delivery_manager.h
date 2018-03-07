@@ -351,7 +351,9 @@ EventDeliveryManager::send_remote( thread t, SpikeEvent& e, const long lag )
 {
   // Put the spike in a buffer for the remote machines
   for ( int i = 0; i < e.get_multiplicity(); ++i )
+  {
     spike_register_[ t ][ lag ].push_back( e.get_sender().get_gid() );
+  }
 }
 
 inline void
@@ -362,7 +364,9 @@ EventDeliveryManager::send_offgrid_remote( thread t,
   // Put the spike in a buffer for the remote machines
   OffGridSpike ogs( e.get_sender().get_gid(), e.get_offset() );
   for ( int i = 0; i < e.get_multiplicity(); ++i )
+  {
     offgrid_spike_register_[ t ][ lag ].push_back( ogs );
+  }
 }
 
 inline bool

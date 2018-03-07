@@ -114,7 +114,7 @@ private:
     double C_;
 
     /** Refractory period in ms. */
-    double TauR_;
+    double refractory_time_;
 
     /** Resting potential in mV. */
     double E_L_;
@@ -136,12 +136,10 @@ private:
     /** Time constants of synaptic currents in ms. */
     std::vector< double > tau_syn_;
 
-    // type is long because other types are not put through in GetStatus
-    std::vector< long > receptor_types_;
-    size_t num_of_receptors_;
-
     // boolean flag which indicates whether the neuron has connections
     bool has_connections_;
+
+    size_t n_receptors_() const; //!< Returns the size of tau_syn_
 
     Parameters_(); //!< Sets default parameter values
 
@@ -160,15 +158,15 @@ private:
    */
   struct State_
   {
-    double y0_; //!< Constant current
+    double I_const_; //!< Constant current
     std::vector< double > y1_syn_;
     std::vector< double > y2_syn_;
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double y3_;
+    double V_m_;
     double current_; //! This is the current in a time step. This is only here
                      //! to allow logging
 
-    int r_; //!< Number of refractory steps remaining
+    int refractory_steps_; //!< Number of refractory steps remaining
 
     State_(); //!< Default initialization
 
@@ -229,7 +227,7 @@ private:
   double
   get_V_m_() const
   {
-    return S_.y3_ + P_.E_L_;
+    return S_.V_m_ + P_.E_L_;
   }
   double
   get_current_() const
@@ -256,6 +254,12 @@ private:
   static RecordablesMap< iaf_psc_alpha_multisynapse > recordablesMap_;
 };
 
+inline size_t
+iaf_psc_alpha_multisynapse::Parameters_::n_receptors_() const
+{
+  return tau_syn_.size();
+}
+
 inline port
 iaf_psc_alpha_multisynapse::send_test_event( Node& target,
   rport receptor_type,
@@ -273,7 +277,9 @@ iaf_psc_alpha_multisynapse::handles_test_event( CurrentEvent&,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -282,7 +288,9 @@ iaf_psc_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

@@ -86,7 +86,7 @@ dc = nest.Create('dc_generator')
 We create a multimeter to record
 
 - membrane potential `V_m`
-- threshold value `Theta`
+- threshold value `theta`
 - intrinsic currents `I_NaP`, `I_KNa`, `I_T`, `I_h`
 
 by passing these names in the `record_from` list.
@@ -111,7 +111,7 @@ recording interval as well; the default recording resolution is 1 ms.
 # we want at 0.1ms resolution
 mm = nest.Create('multimeter',
                  params={'interval': 0.1,
-                         'record_from': ['V_m', 'Theta',
+                         'record_from': ['V_m', 'theta',
                                          'I_NaP', 'I_KNa', 'I_T', 'I_h']}
                  )
 
@@ -159,7 +159,7 @@ single subplot and plot at first membrane potential and threshold.
 fig = plt.figure()
 Vax = fig.add_subplot(111)
 Vax.plot(t, data['V_m'], 'b-', lw=2, label=r'$V_m$')
-Vax.plot(t, data['Theta'], 'g-', lw=2, label=r'$\Theta$')
+Vax.plot(t, data['theta'], 'g-', lw=2, label=r'$\Theta$')
 Vax.set_ylim(-80., 0.)
 Vax.set_ylabel('Voltageinf [mV]')
 Vax.set_xlabel('Time [ms]')

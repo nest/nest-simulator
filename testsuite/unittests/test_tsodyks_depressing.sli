@@ -31,7 +31,9 @@ Script to test Tsodyks short term plasticity depressing synapses according to
 Misha Tsodyks, Klaus Pawelzik, Henry Markram
 Neural computation 10, 821--853 (1998)
 
-reproduces figure 1 A
+Reproduces figure 1 A
+
+Revised by Hans Ekkehard Plesser 2016 using explicit input spike train.
 
 Author:  Markus Diesmann, Moritz Helias
 FirstVersion: March 2006
@@ -40,172 +42,162 @@ FirstVersion: March 2006
 (unittest) run
 /unittest using
 
+% -------
+%
+% Expected solution
+%
+% -------
 
-[/tsodyks_synapse /tsodyks_synapse_hom] {
-/tsodyks_model Set
-
-ResetKernel      % clear all existing network elements
-
-
-userdict begin
-
-      1 /local_num_threads Set
-      8 /total_num_virtual_procs Set
-      0.1 /h Set
-
-      /Tau 40.0 def	     % membrane time constant
-      /Theta 15.0 def	     % threshold
-      /E_L 0.0 def	     % reset potential of Vm
-      /R 1.0 def
-      /C Tau R div def         % Tau [ms] / 1.0 GOhm in NEST units
-      /TauR 2.0 def	     % refractory time
-      /Tau_psc 3.0 def       % time constant of PSC (=Tau_inact)
-      /Tau_rec 800.0 def     % recovery time
-      /Tau_fac 0.0 def     % facilitation time
-      /U 0.5 def	     % facilitation parameter U
-      /A 250.0 def	     % PSC weight in pA
-      /f 20.0 1000.0 div def % frequency in Hz given converted to 1/ms
-
-      /Tend 1200.0 def	     % simulation time
-      /TIstart 50.0 def      % start time of current
-      /TIend 1050.0 def      % end time of current
-  
-      
-      % set resolution and limits on delays
-      % limits must be set BEFORE connecting any elements
-      0
-      <<
-        /resolution h
-	/local_num_threads local_num_threads
-%       /total_num_virtual_procs total_num_virtual_procs
-      >> SetStatus
-
-      cout 15 setprecision
-
-      tsodyks_model
-      << /tau_psc Tau_psc 
-         /tau_rec Tau_rec
-	 /tau_fac Tau_fac
-	 /U U
-	 /delay 0.1
-	 /weight A
-	 /u 0.0
-	 /x 1.0
-      >> SetDefaults
-
-      /iaf_tum_2000 Create /neuron1 Set
-    
-      neuron1 << /tau_m Tau
-	         /t_ref_tot TauR
-                 /t_ref_abs TauR
-		 /tau_syn_ex Tau_psc
-		 /tau_syn_in Tau_psc
-		 /C_m C
-		 /V_reset E_L
-		 /E_L E_L
-		 /V_th Theta
-		 /V_m E_L
-              >> SetStatus
-      % neuron1 GetStatus info
-      
-      /iaf_tum_2000 Create /neuron2 Set
-
-      neuron2 << /tau_m Tau
-	         /t_ref_tot TauR
-                 /t_ref_abs TauR
-		 /tau_syn_ex Tau_psc
-		 /tau_syn_in Tau_psc
-		 /C_m C
-		 /V_reset E_L
-		 /E_L E_L
-		 /V_th Theta
-		 /V_m E_L
-              >> SetStatus
-    % neuron2 GetStatus info
-	      
-      /I0 Theta C mul Tau div 1.0 1.0 f div TauR sub Tau div neg exp sub div def
-      
-      /dc_generator Create /dc_gen Set
-      dc_gen << /amplitude I0 /start TIstart /stop TIend >> SetStatus
-
-      /voltmeter Create /vm Set
-      vm << /withtime true
-	    /to_memory true
-	    /interval 25.0
-         >> SetStatus
-
-      dc_gen neuron1 Connect
-
-      vm neuron2 Connect
-
-      neuron1 neuron2 tsodyks_model Connect
-
-      Tend Simulate
-
-      % compare results to expected voltage trace
-      vm [/events [/times /V_m]] get cva
-      6 ToUnitTestPrecision
-      Transpose /vm_sim Set  % array of recorded data
-
-      % to print to screen
-      %vm_sim {
-      %  ==	  
-      %} forall
-
-      
+/vm_expected
 [
-[25 0]
-[50 0]
-[75 0]
-[100 2.401350000000000e+00]
-[125 5.302440000000000e+00]
-[150 4.108330000000000e+00]
-[175 4.322170000000000e+00]
-[200 3.053390000000000e+00]
-[225 2.871240000000000e+00]
-[250 2.028640000000000e+00]
-[275 1.908020000000000e+00]
-[300 1.396960000000000e+00]
-[325 1.375850000000000e+00]
-[350 1.057780000000000e+00]
-[375 1.103490000000000e+00]
-[400 8.865690000000001e-01]
-[425 9.693530000000000e-01]
-[450 8.028760000000000e-01]
-[475 9.046710000000000e-01]
-[500 7.626880000000000e-01]
-[525 8.738550000000000e-01]
-[550 7.435880000000000e-01]
-[575 8.592780000000000e-01]
-[600 7.345670000000000e-01]
-[625 8.524119999999999e-01]
-[650 7.303210000000000e-01]
-[675 8.491860000000000e-01]
-[700 7.283280000000000e-01]
-[725 8.476730000000000e-01]
-[750 7.273930000000000e-01]
-[775 8.469640000000001e-01]
-[800 7.269550000000000e-01]
-[825 8.466320000000001e-01]
-[850 7.267500000000000e-01]
-[875 8.464760000000000e-01]
-[900 7.266540000000000e-01]
-[925 8.464030000000000e-01]
-[950 7.266089999999999e-01]
-[975 8.463690000000000e-01]
-[1000 7.265880000000000e-01]
-[1025 8.463530000000000e-01]
-[1050 7.265779999999999e-01]
-[1075 8.463460000000000e-01]
-[1100 4.531260000000000e-01]
-[1125 2.425410000000000e-01]
-[1150 1.298230000000000e-01]
-[1175 6.948920000000000e-02]
-] /vm_expected Set
+  [25 0]
+  [50 0]
+  [75 0]
+  [100 2.401350000000000e+00]
+  [125 5.302440000000000e+00]
+  [150 4.108330000000000e+00]
+  [175 4.322170000000000e+00]
+  [200 3.053390000000000e+00]
+  [225 2.871240000000000e+00]
+  [250 2.028640000000000e+00]
+  [275 1.908020000000000e+00]
+  [300 1.396960000000000e+00]
+  [325 1.375850000000000e+00]
+  [350 1.057780000000000e+00]
+  [375 1.103490000000000e+00]
+  [400 8.865690000000001e-01]
+  [425 9.693530000000000e-01]
+  [450 8.028760000000000e-01]
+  [475 9.046710000000000e-01]
+  [500 7.626880000000000e-01]
+  [525 8.738550000000000e-01]
+  [550 7.435880000000000e-01]
+  [575 8.592780000000000e-01]
+  [600 7.345670000000000e-01]
+  [625 8.524119999999999e-01]
+  [650 7.303210000000000e-01]
+  [675 8.491860000000000e-01]
+  [700 7.283280000000000e-01]
+  [725 8.476730000000000e-01]
+  [750 7.273930000000000e-01]
+  [775 8.469640000000001e-01]
+  [800 7.269550000000000e-01]
+  [825 8.466320000000001e-01]
+  [850 7.267500000000000e-01]
+  [875 8.464760000000000e-01]
+  [900 7.266540000000000e-01]
+  [925 8.464030000000000e-01]
+  [950 7.266089999999999e-01]
+  [975 8.463690000000000e-01]
+  [1000 7.265880000000000e-01]
+  [1025 8.463530000000000e-01]
+  [1050 7.265779999999999e-01]
+  [1075 8.463460000000000e-01]
+  [1100 4.531260000000000e-01]
+  [1125 2.425410000000000e-01]
+  [1150 1.298230000000000e-01]
+  [1175 6.948920000000000e-02]
+]
+def
 
-vm_sim vm_expected eq assert_or_die
+% ---------
+% Model parameters
+% ---------
 
-end
+/local_num_threads 1 def
+/h 0.1 def
+
+/Tau 40.0 def        % membrane time constant
+/Theta 15.0 def      % threshold
+/E_L 0.0 def         % reset potential of Vm
+/R 1.0 def
+/C Tau R div def     % Tau [ms] / 1.0 GOhm in NEST units
+/TauR 2.0 def        % refractory time
+/Tau_psc 3.0 def     % time constant of PSC (=Tau_inact)
+/Tau_rec 800.0 def   % recovery time
+/Tau_fac 0.0 def     % facilitation time: 0 == no facilitation
+/U 0.5 def           % facilitation parameter U
+/A 250.0 def         % PSC weight in pA
+
+/input_train 
+[
+    98.0             % first spike [ms]
+  1048.0             % last spike [ms]
+    50.0             % interspike interval [ms]
+] Range def
+
+/T_sim 1200. def     % simulation time [ms]     
+
+% ---------
+
+[/tsodyks_synapse /tsodyks_synapse_hom] 
+{
+  /synapse_model Set
+
+  ResetKernel      % clear all existing network elements
+
+  
+  % set resolution and limits on delays
+  % limits must be set BEFORE connecting any elements
+  0
+  <<
+    /resolution h
+    /local_num_threads local_num_threads
+  >> SetStatus
+
+  /sg /spike_generator << /spike_times input_train >> Create def
+  /pn /parrot_neuron Create def
+  
+  /neuron 
+    /iaf_tum_2000
+    << /tau_m Tau
+       /t_ref_tot TauR
+       /t_ref_abs TauR
+       /tau_syn_ex Tau_psc
+       /tau_syn_in Tau_psc
+       /C_m C
+       /V_reset E_L
+       /E_L E_L
+       /V_th Theta
+       /V_m E_L >>
+  Create def
+
+  /vm 
+    /voltmeter 
+    << /withtime true
+       /to_memory true
+       /interval 25.0
+    >>
+  Create def
+
+  synapse_model 
+  << /tau_psc Tau_psc 
+     /tau_rec Tau_rec
+  	 /tau_fac Tau_fac
+  	 /U U
+  	 /delay 0.1
+  	 /weight A
+  	 /u 0.0
+  	 /x 1.0
+  >> SetDefaults
+
+  sg pn Connect   % pn required, devices cannot project to plastic synapses
+  pn neuron synapse_model Connect
+  vm neuron Connect
+
+  T_sim Simulate
+
+  % compare results to expected voltage trace
+  vm [/events [/times /V_m]] get cva
+  6 ToUnitTestPrecision
+  Transpose /vm_sim Set  % array of recorded data
+
+  % to print to screen
+  vm_sim {
+    ==	  
+  } forall
+
+  vm_sim vm_expected eq assert_or_die
 
 } forall % tsodyks models
 

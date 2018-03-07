@@ -87,14 +87,20 @@ nest::aeif_cond_alpha_dynamics( double,
   const nest::aeif_cond_alpha& node =
     *( reinterpret_cast< nest::aeif_cond_alpha* >( pnode ) );
 
+  const bool is_refractory = node.S_.r_ > 0;
+
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
 
-  // shorthand for state variables
-  const double& V = y[ S::V_M ];
+  // Clamp membrane potential to V_reset while refractory, otherwise bound
+  // it to V_peak. Do not use V_.V_peak_ here, since that is set to V_th if
+  // Delta_T == 0.
+  const double& V =
+    is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
+  // shorthand for the other state variables
   const double& dg_ex = y[ S::DG_EXC ];
   const double& g_ex = y[ S::G_EXC ];
   const double& dg_in = y[ S::DG_INH ];
@@ -104,20 +110,16 @@ nest::aeif_cond_alpha_dynamics( double,
   const double I_syn_exc = g_ex * ( V - node.P_.E_ex );
   const double I_syn_inh = g_in * ( V - node.P_.E_in );
 
-  // We pre-compute the argument of the exponential
-  const double exp_arg = ( V - node.P_.V_th ) / node.P_.Delta_T;
-
-  // Upper bound for exponential argument to avoid numerical instabilities
-  const double MAX_EXP_ARG = 10.;
-
-  // If the argument is too large, we clip it.
-  const double I_spike =
-    node.P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
+  const double I_spike = node.P_.Delta_T == 0.
+    ? 0.
+    : ( node.P_.g_L * node.P_.Delta_T
+        * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] =
-    ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
-      - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = is_refractory
+    ? 0.
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - I_syn_exc - I_syn_inh - w
+        + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::DG_EXC ] = -dg_ex / node.P_.tau_syn_ex;
   // Synaptic Conductance (nS)
@@ -133,12 +135,13 @@ nest::aeif_cond_alpha_dynamics( double,
   return GSL_SUCCESS;
 }
 
+
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
 nest::aeif_cond_alpha::Parameters_::Parameters_()
-  : V_peak_( 0.0 )    // mV, should not be larger that V_th+10
+  : V_peak_( 0.0 )    // mV
   , V_reset_( -60.0 ) // mV
   , t_ref_( 0.0 )     // ms
   , g_L( 30.0 )       // nS
@@ -163,23 +166,28 @@ nest::aeif_cond_alpha::State_::State_( const Parameters_& p )
 {
   y_[ 0 ] = p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = 0;
+  }
 }
 
 nest::aeif_cond_alpha::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
 }
 
 nest::aeif_cond_alpha::State_& nest::aeif_cond_alpha::State_::operator=(
   const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
-
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
   r_ = s.r_;
   return *this;
 }
@@ -236,11 +244,35 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
 
-  if ( V_peak_ <= V_th )
-    throw BadProperty( "V_peak must be larger than threshold." );
-
   if ( V_reset_ >= V_peak_ )
+  {
     throw BadProperty( "Ensure that: V_reset < V_peak ." );
+  }
+
+  if ( Delta_T < 0. )
+  {
+    throw BadProperty( "Delta_T must be positive." );
+  }
+  else if ( Delta_T > 0. )
+  {
+    // check for possible numerical overflow with the exponential divergence at
+    // spike time, keep a 1e20 margin for the subsequent calculations
+    const double max_exp_arg =
+      std::log( std::numeric_limits< double >::max() / 1e20 );
+    if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg )
+    {
+      throw BadProperty(
+        "The current combination of V_peak, V_th and Delta_T"
+        "will lead to numerical overflow at spike time; try"
+        "for instance to increase Delta_T or to reduce V_peak"
+        "to avoid this problem." );
+    }
+  }
+
+  if ( V_peak_ < V_th )
+  {
+    throw BadProperty( "V_peak >= V_th required." );
+  }
 
   if ( C_m <= 0 )
   {
@@ -248,13 +280,19 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
   }
 
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time cannot be negative." );
+  }
 
   if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 
   if ( gsl_error_tol <= 0. )
+  {
     throw BadProperty( "The gsl_error_tol must be strictly positive." );
+  }
 }
 
 void
@@ -278,9 +316,10 @@ nest::aeif_cond_alpha::State_::set( const DictionaryDatum& d,
   updateValue< double >( d, names::g_in, y_[ G_INH ] );
   updateValue< double >( d, names::dg_in, y_[ DG_INH ] );
   updateValue< double >( d, names::w, y_[ W ] );
-
   if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 )
+  {
     throw BadProperty( "Conductances must not be negative." );
+  }
 }
 
 nest::aeif_cond_alpha::Buffers_::Buffers_( aeif_cond_alpha& n )
@@ -328,11 +367,17 @@ nest::aeif_cond_alpha::~aeif_cond_alpha()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -362,26 +407,38 @@ nest::aeif_cond_alpha::init_buffers_()
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
   if ( B_.s_ == 0 )
+  {
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_step_reset( B_.s_ );
+  }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
+  }
   else
+  {
     gsl_odeiv_control_init(
       B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
+  }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_evolve_reset( B_.e_ );
+  }
 
-  B_.sys_.function = aeif_cond_alpha_dynamics;
   B_.sys_.jacobian = NULL;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
+  B_.sys_.function = aeif_cond_alpha_dynamics;
 
   B_.I_stim_ = 0.0;
 }
@@ -392,10 +449,20 @@ nest::aeif_cond_alpha::calibrate()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
+  // set the right threshold and GSL function depending on Delta_T
+  if ( P_.Delta_T > 0. )
+  {
+    V_.V_peak = P_.V_peak_;
+  }
+  else
+  {
+    V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
+  }
+
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
-  V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_
+  V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
+  assert( V_.refractory_counts_
     >= 0 ); // since t_ref_ >= 0, this can only fail in error
 }
 
@@ -416,9 +483,6 @@ nest::aeif_cond_alpha::update( Time const& origin,
   for ( long lag = from; lag < to; ++lag )
   {
     double t = 0.0;
-
-    if ( S_.r_ > 0 )
-      --S_.r_;
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
@@ -443,30 +507,50 @@ nest::aeif_cond_alpha::update( Time const& origin,
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
-
       if ( status != GSL_SUCCESS )
+      {
         throw GSLSolverFailure( get_name(), status );
+      }
 
       // check for unreasonable values; we allow V_M to explode
       if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
         || S_.y_[ State_::W ] > 1e6 )
+      {
         throw NumericalInstability( get_name() );
+      }
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
       if ( S_.r_ > 0 )
+      {
         S_.y_[ State_::V_M ] = P_.V_reset_;
-      else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ )
+      }
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak )
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
-        S_.r_ = V_.RefractoryCounts_;
+
+        /* Initialize refractory step counter.
+         * - We need to add 1 to compensate for count-down immediately after
+         *   while loop.
+         * - If neuron has no refractory time, set to 0 to avoid refractory
+         *   artifact inside while loop.
+         */
+        S_.r_ = V_.refractory_counts_ > 0 ? V_.refractory_counts_ + 1 : 0;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
+
+    // decrement refractory count
+    if ( S_.r_ > 0 )
+    {
+      --S_.r_;
+    }
+
+    // apply spikes
     S_.y_[ State_::DG_EXC ] += B_.spike_exc_.get_value( lag ) * V_.g0_ex_;
     S_.y_[ State_::DG_INH ] += B_.spike_inh_.get_value( lag ) * V_.g0_in_;
 
@@ -484,13 +568,17 @@ nest::aeif_cond_alpha::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
+  {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
+  {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
-      -e.get_weight() * e.get_multiplicity() ); // keep conductances positive
+      -e.get_weight() * e.get_multiplicity() );
+  } // keep conductances positive
 }
 
 void

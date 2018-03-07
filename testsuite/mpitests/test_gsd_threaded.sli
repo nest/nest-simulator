@@ -39,7 +39,7 @@ FirstVersion: February 2014
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 
 [2 3]

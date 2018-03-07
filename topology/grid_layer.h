@@ -112,9 +112,9 @@ public:
   {
   }
 
-  GridLayer( const GridLayer& l )
-    : Layer< D >( l )
-    , dims_( l.dims_ )
+  GridLayer( const GridLayer& layer )
+    : Layer< D >( layer )
+    , dims_( layer.dims_ )
   {
   }
 
@@ -190,9 +190,13 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
   Position< D, index > new_dims = dims_;
   updateValue< long >( d, names::columns, new_dims[ 0 ] );
   if ( D >= 2 )
+  {
     updateValue< long >( d, names::rows, new_dims[ 1 ] );
+  }
   if ( D >= 3 )
+  {
     updateValue< long >( d, names::layers, new_dims[ 2 ] );
+  }
 
   index new_size = this->depth_;
   for ( int i = 0; i < D; ++i )
@@ -221,9 +225,13 @@ GridLayer< D >::get_status( DictionaryDatum& d ) const
 
   ( *topology_dict )[ names::columns ] = dims_[ 0 ];
   if ( D >= 2 )
+  {
     ( *topology_dict )[ names::rows ] = dims_[ 1 ];
+  }
   if ( D >= 3 )
+  {
     ( *topology_dict )[ names::layers ] = dims_[ 2 ];
+  }
 }
 
 template < int D >
@@ -277,7 +285,9 @@ GridLayer< D >::gridpos_to_lid( Position< D, int > pos ) const
     {
       pos[ i ] %= int( dims_[ i ] );
       if ( pos[ i ] < 0 )
+      {
         pos[ i ] += dims_[ i ];
+      }
     }
   }
 
@@ -332,7 +342,9 @@ GridLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
 
     if ( filter.select_model()
       && ( ( *node_it )->get_model_id() != filter.model ) )
+    {
       continue;
+    }
 
     tree.insert( std::pair< Position< D >, index >(
       lid_to_position( ( *node_it )->get_lid() ), ( *node_it )->get_gid() ) );
@@ -353,13 +365,17 @@ GridLayer< D >::insert_global_positions_( Ins iter, const Selector& filter )
     i = nodes_per_layer * filter.depth;
     lid_end = nodes_per_layer * ( filter.depth + 1 );
     if ( ( i >= this->gids_.size() ) or ( lid_end > this->gids_.size() ) )
+    {
       throw BadProperty( "Selected depth out of range" );
+    }
   }
 
   Multirange::iterator gi = this->gids_.begin();
   // Advance iterator to first gid at selected depth
   for ( index j = 0; j < i; ++j )
+  {
     ++gi;
+  }
 
   for ( ; ( gi != this->gids_.end() ) && ( i < lid_end ); ++gi, ++i )
   {
@@ -367,8 +383,9 @@ GridLayer< D >::insert_global_positions_( Ins iter, const Selector& filter )
     if ( filter.select_model()
       && ( ( int ) kernel().modelrange_manager.get_model_id( *gi )
            != filter.model ) )
+    {
       continue;
-
+    }
     *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), *gi );
   }
 }
@@ -418,8 +435,8 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
 {
   layer_size_ = layer.global_size() / layer.depth_;
 
-  Position< D, int > ll;
-  Position< D, int > ur;
+  Position< D, int > lower_left;
+  Position< D, int > upper_right;
   Box< D > bbox = mask.get_bbox();
   bbox.lower_left += anchor;
   bbox.upper_right += anchor;
@@ -427,21 +444,22 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
   {
     if ( layer.periodic_[ i ] )
     {
-      ll[ i ] = ceil( ( bbox.lower_left[ i ] - layer.lower_left_[ i ] )
+      lower_left[ i ] = ceil( ( bbox.lower_left[ i ] - layer.lower_left_[ i ] )
           * layer_.dims_[ i ] / layer.extent_[ i ]
         - 0.5 );
-      ur[ i ] = round( ( bbox.upper_right[ i ] - layer.lower_left_[ i ] )
-        * layer_.dims_[ i ] / layer.extent_[ i ] );
+      upper_right[ i ] =
+        round( ( bbox.upper_right[ i ] - layer.lower_left_[ i ] )
+          * layer_.dims_[ i ] / layer.extent_[ i ] );
     }
     else
     {
-      ll[ i ] = std::min(
+      lower_left[ i ] = std::min(
         index( std::max( ceil( ( bbox.lower_left[ i ] - layer.lower_left_[ i ] )
                              * layer_.dims_[ i ] / layer.extent_[ i ]
                            - 0.5 ),
           0.0 ) ),
         layer.dims_[ i ] );
-      ur[ i ] = std::min(
+      upper_right[ i ] = std::min(
         index(
           std::max( round( ( bbox.upper_right[ i ] - layer.lower_left_[ i ] )
                       * layer_.dims_[ i ] / layer.extent_[ i ] ),
@@ -452,23 +470,29 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
   if ( D > 1 )
   {
     // grid layer uses "matrix convention", i.e. reversed y axis
-    int tmp = ll[ 1 ];
-    ll[ 1 ] = layer.dims_[ 1 ] - ur[ 1 ];
-    ur[ 1 ] = layer.dims_[ 1 ] - tmp;
+    int tmp = lower_left[ 1 ];
+    lower_left[ 1 ] = layer.dims_[ 1 ] - upper_right[ 1 ];
+    upper_right[ 1 ] = layer.dims_[ 1 ] - tmp;
   }
 
-  node_ = MultiIndex< D >( ll, ur );
+  node_ = MultiIndex< D >( lower_left, upper_right );
 
   if ( filter_.select_depth() )
+  {
     depth_ = filter_.depth;
+  }
   else
+  {
     depth_ = 0;
+  }
 
   if ( ( not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) )
     or ( filter_.select_model() && ( kernel().modelrange_manager.get_model_id(
                                        layer_.gids_[ depth_ * layer_size_ ] )
                                      != index( filter_.model ) ) ) )
+  {
     ++( *this );
+  }
 }
 
 template < int D >
@@ -485,7 +509,9 @@ typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::
 operator++()
 {
   if ( depth_ == -1 )
-    return *this; // Invalid (end) iterator
+  {
+    return *this;
+  } // Invalid (end) iterator
 
   if ( not filter_.select_depth() )
   {
@@ -499,9 +525,13 @@ operator++()
       if ( filter_.select_model() && ( kernel().modelrange_manager.get_model_id(
                                          layer_.gids_[ depth_ * layer_size_ ] )
                                        != index( filter_.model ) ) )
+      {
         return operator++();
+      }
       else
+      {
         return *this;
+      }
     }
   }
 
@@ -523,7 +553,9 @@ operator++()
   if ( filter_.select_model()
     && ( kernel().modelrange_manager.get_model_id(
            layer_.gids_[ depth_ * layer_size_ ] ) != index( filter_.model ) ) )
+  {
     return operator++();
+  }
 
   return *this;
 }

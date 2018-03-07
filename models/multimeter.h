@@ -109,6 +109,7 @@ senders                  intvectortype       <intvectortype>
 times                    doublevectortype    <doublevectortype>
 t_ref_remaining          doublevectortype    <doublevectortype>
 V_m                      doublevectortype    <doublevectortype>
+rate                     doublevectortype    <doublevectortype>
 --------------------------------------------------
 Total number of entries: 6
 
@@ -117,7 +118,8 @@ Sends: DataLoggingRequest
 
 FirstVersion: 2009-04-01
 
-Author: Hans Ekkehard Plesser
+Author: Hans Ekkehard Plesser, Barna Zajzon (added offset support March 2017)
+
 
 SeeAlso: Device, RecordingDevice
 */
@@ -137,10 +139,10 @@ namespace nest
  * and that the sampling device then sends a Request for data
  * with a given time stamp.
  *
- * Start and stop are handled as follows: the first recorded
- * data is with time stamp origin+start+1, the last recorded one
- * that with time stamp origin+stop. Only such times are recorded
- * for which (T-(origin+start)) mod interval is zero.
+ * Data is recorded at time steps T for which
+ *   start < T - origin <= stop
+ * and
+ *   ( T - offset ) mod interval == 0.
  *
  * The recording interval defaults to 1ms; this entails that
  * the simulation resolution cannot be set to larger values than
@@ -192,6 +194,7 @@ protected:
   void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
+  void post_run_cleanup();
   void finalize();
 
   /**
@@ -237,7 +240,8 @@ private:
 
   struct Parameters_
   {
-    Time interval_;                   //!< recording interval, in ms
+    Time interval_; //!< recording interval, in ms
+    Time offset_;   //!< offset relative to which interval is calculated, in ms
     std::vector< Name > record_from_; //!< which data to record
 
     Parameters_();
@@ -325,7 +329,9 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
     std::vector< Node* >::const_iterator sibling;
     for ( sibling = siblings->begin() + 1; sibling != siblings->end();
           ++sibling )
+    {
       ( *sibling )->get_status( d );
+    }
   }
 
   P_.get( d );
@@ -337,7 +343,9 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
   // protect Multimeter from being frozen
   bool freeze = false;
   if ( updateValue< bool >( d, names::frozen, freeze ) && freeze )
+  {
     throw BadProperty( "Multimeter cannot be frozen." );
+  }
 
   Parameters_ ptmp = P_;
   ptmp.set( d, B_ );

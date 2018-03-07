@@ -416,15 +416,6 @@ IforallindexedarrayFunction::execute( SLIInterpreter* i ) const
     i->OStack.push_by_pointer( new IntegerDatum( cnt ) ); // push index to user
     ++cnt;
     i->EStack.push( i->EStack.pick( 1 ) );
-    // if(i->step_mode())
-    // {
-    // 	std::cerr << "forallindexed:"
-    // 		  << " Limit: " << limit->get()
-    // 		  << " Pos: " << count->get() -1
-    // 		  << " Iterator: ";
-    // 	i->OStack.pick(1).pprint(std::cerr);
-    // 	std::cerr << std::endl;
-    // }
   }
   else
   {

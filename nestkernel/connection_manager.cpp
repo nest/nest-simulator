@@ -450,8 +450,8 @@ nest::ConnectionManager::connect( const index sgid,
   thread target_thread,
   const synindex syn_id,
   const DictionaryDatum& params,
-  const double d,
-  const double w )
+  const double delay,
+  const double weight )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
@@ -464,7 +464,7 @@ nest::ConnectionManager::connect( const index sgid,
   // proxies
   if ( source->has_proxies() and target->has_proxies() )
   {
-    connect_( *source, *target, sgid, target_thread, syn_id, params, d, w );
+    connect_( *source, *target, sgid, target_thread, syn_id, params, delay, weight );
   }
   // normal nodes and devices with proxies -> normal devices
   else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() )
@@ -477,13 +477,13 @@ nest::ConnectionManager::connect( const index sgid,
     }
 
     connect_to_device_(
-      *source, *target, sgid, target_thread, syn_id, params, d, w );
+      *source, *target, sgid, target_thread, syn_id, params, delay, weight );
   }
   // normal devices -> normal nodes and devices with proxies
   else if ( not source->has_proxies() and target->has_proxies() )
   {
     connect_from_device_(
-      *source, *target, target_thread, syn_id, params, d, w );
+      *source, *target, target_thread, syn_id, params, delay, weight );
   }
   // normal devices -> normal devices
   else if ( not source->has_proxies() and not target->has_proxies() )
@@ -495,7 +495,7 @@ nest::ConnectionManager::connect( const index sgid,
     if ( suggested_thread == tid )
     {
       connect_from_device_(
-        *source, *target, suggested_thread, syn_id, params, d, w );
+        *source, *target, suggested_thread, syn_id, params, delay, weight );
     }
   }
   // globally receiving devices
@@ -508,7 +508,7 @@ nest::ConnectionManager::connect( const index sgid,
       return;
     }
     target = kernel().node_manager.get_node( target->get_gid(), tid );
-    connect_to_device_( *source, *target, sgid, tid, syn_id, params, d, w );
+    connect_to_device_( *source, *target, sgid, tid, syn_id, params, delay, weight );
   }
   else
   {
@@ -601,14 +601,14 @@ nest::ConnectionManager::connect_( Node& s,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& params,
-  const double d,
-  const double w )
+  const double delay,
+  const double weight )
 {
   const bool is_primary = kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary();
 
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection_5g( s, r, connections_5g_[ tid ], syn_id, params, d, w );
+    .add_connection_5g( s, r, connections_5g_[ tid ], syn_id, params, delay, weight );
   source_table_.add_source( tid,
     syn_id,
     s_gid,
@@ -637,12 +637,12 @@ nest::ConnectionManager::connect_to_device_( Node& s,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& params,
-  const double d,
-  const double w )
+  const double delay,
+  const double weight )
 {
   // create entries in connection structure for connections to devices
   target_table_devices_.add_connection_to_device(
-    s, r, s_gid, tid, syn_id, params, d, w );
+    s, r, s_gid, tid, syn_id, params, delay, weight );
 
   if ( num_connections_[ tid ].size() <= syn_id )
   {
@@ -657,12 +657,12 @@ nest::ConnectionManager::connect_from_device_( Node& s,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& params,
-  const double d,
-  const double w )
+  const double delay,
+  const double weight )
 {
   // create entries in connections vector of devices
   target_table_devices_.add_connection_from_device(
-    s, r, tid, syn_id, params, d, w );
+    s, r, tid, syn_id, params, delay, weight );
 
   if ( num_connections_[ tid ].size() <= syn_id )
   {

@@ -1503,8 +1503,8 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
   const size_t chunk_size_secondary_events_in_int = kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
 
   // TODO@5g: loop over source_table_, not over connections_ -> but why?
-  synindex last_syn_id = connections_5g_[ tid ]->size();
-  for ( synindex syn_id = 0; syn_id < last_syn_id; ++syn_id )
+  const synindex syn_ids_end = connections_5g_[ tid ]->size();
+  for ( synindex syn_id = 0; syn_id < syn_ids_end; ++syn_id )
   {
     std::vector< size_t >*& positions = ( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ];
 
@@ -1515,12 +1515,12 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
            .is_primary() )
       {
         positions = new std::vector< size_t >();
-        const size_t last_lcid = get_num_connections_( tid, syn_id );
-        ( *positions ).resize( last_lcid, 0 );
+        const size_t lcid_end = get_num_connections_( tid, syn_id );
+        ( *positions ).resize( lcid_end, 0 );
 
         // compute and store buffer position, this connection should
         // read secondary events from
-        for ( size_t lcid = 0; lcid < last_lcid; ++lcid )
+        for ( size_t lcid = 0; lcid < lcid_end; ++lcid )
         {
           const index gid = source_table_.get_gid( tid, syn_id, lcid );
           const thread rank = kernel().mpi_manager.get_process_id_of_gid( gid );
@@ -1540,24 +1540,22 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid, const bool 
   std::vector< unsigned int >& recv_buffer )
 {
   const Time stamp = kernel().simulation_manager.get_slice_origin() + Time::step( 1 );
-  const std::vector< std::vector< size_t >* >& tid_positions = ( *secondary_recv_buffer_pos_[ tid ] );
-  const synindex last_syn_id = tid_positions.size();
-  for ( synindex syn_id = 0;
-        syn_id < last_syn_id;
-        ++syn_id )
+  const std::vector< std::vector< size_t >* >& positions_tid = ( *secondary_recv_buffer_pos_[ tid ] );
+  const synindex syn_ids_end = positions_tid.size();
+  for ( synindex syn_id = 0; syn_id < syn_ids_end; ++syn_id )
   {
     if ( not called_from_wfr_update or ( called_from_wfr_update and kernel().model_manager.get_synapse_prototypes( tid )[ syn_id ]->supports_wfr() ) )
     {
-      if ( tid_positions[ syn_id ] != NULL )
+      if ( positions_tid[ syn_id ] != NULL )
       {
         SecondaryEvent& prototype = kernel().model_manager.get_secondary_event_prototype( syn_id, tid );
 
         index lcid = 0;
-        const size_t last_lcid = ( *tid_positions[ syn_id ] ).size();
-        while ( lcid < last_lcid )
+        const size_t lcid_end = ( *positions_tid[ syn_id ] ).size();
+        while ( lcid < lcid_end )
         {
           std::vector< unsigned int >::iterator readpos = recv_buffer.begin()
-            + ( *tid_positions[ syn_id ] )[ lcid ];
+            + ( *positions_tid[ syn_id ] )[ lcid ];
           prototype << readpos;
           prototype.set_stamp( stamp );
 

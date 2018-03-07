@@ -67,6 +67,7 @@ nest::SimulationManager::initialize()
   Time::reset_resolution();
   clock_.calibrate();
 
+  prepared_ = false;
   simulating_ = false;
   simulated_ = false;
   exit_on_user_signal_ = false;
@@ -430,6 +431,7 @@ nest::SimulationManager::prepare()
       * kernel().connection_manager.get_min_delay();
     kernel().music_manager.enter_runtime( tick );
   }
+  prepared_ = true;
 }
 
 void
@@ -487,6 +489,13 @@ nest::SimulationManager::run( Time const& t )
 {
   assert_valid_simtime( t );
 
+  if ( not prepared_ )
+  {
+    std::string msg = "Run called without calling Prepare.";
+    LOG( M_ERROR, "SimulationManager::run", msg );
+    throw KernelException();
+  }
+
   to_do_ += t.get_steps();
   to_do_total_ = to_do_;
 
@@ -542,6 +551,13 @@ nest::SimulationManager::run( Time const& t )
 void
 nest::SimulationManager::cleanup()
 {
+  if ( not prepared_ )
+  {
+    std::string msg = "Cleanup called without calling Prepare.";
+    LOG( M_ERROR, "SimulationManager::cleanup", msg );
+    throw KernelException();
+  }
+
   if ( not simulated_ )
   {
     return;
@@ -561,6 +577,7 @@ nest::SimulationManager::cleanup()
   }
 
   kernel().node_manager.finalize_nodes();
+  prepared_ = false;
 }
 
 void

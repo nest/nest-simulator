@@ -20,8 +20,6 @@
  *
  */
 
-//TODO@5g: replace all && with and, all || with or
-
 #include "connection_manager.h"
 
 // Generated includes:
@@ -157,7 +155,7 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
 
   updateValue< bool >( d, names::keep_source_table, keep_source_table_ );
   if ( not keep_source_table_
-    && kernel().sp_manager.is_structural_plasticity_enabled() )
+    and kernel().sp_manager.is_structural_plasticity_enabled() )
   {
     throw KernelException(
       "Structural plasticity can not be enabled if source table is not kept." );
@@ -476,13 +474,13 @@ nest::ConnectionManager::connect( const index sgid,
       *source, *target, sgid, target_thread, syn_id, params, d, w );
   }
   // normal devices -> normal nodes and devices with proxies
-  else if ( not source->has_proxies() && target->has_proxies() )
+  else if ( not source->has_proxies() and target->has_proxies() )
   {
     connect_from_device_(
       *source, *target, target_thread, syn_id, params, d, w );
   }
   // normal devices -> normal devices
-  else if ( not source->has_proxies() && not target->has_proxies() )
+  else if ( not source->has_proxies() and not target->has_proxies() )
   {
     // create connection only on suggested thread of target
     const thread tid = kernel().vp_manager.get_thread_id();
@@ -496,7 +494,7 @@ nest::ConnectionManager::connect( const index sgid,
   }
   // globally receiving devices
   // e.g., volume transmitter
-  else if ( not target->has_proxies() && not target->local_receiver() )
+  else if ( not target->has_proxies() and not target->local_receiver() )
   {
     // we do not allow to connect a device to a global receiver at the moment
     if ( not source->has_proxies() )
@@ -537,7 +535,7 @@ nest::ConnectionManager::connect( const index sgid,
 
   // normal nodes and devices with proxies -> normal nodes and devices with
   // proxies
-  if ( source->has_proxies() && target->has_proxies() )
+  if ( source->has_proxies() and target->has_proxies() )
   {
     connect_( *source, *target, sgid, target_thread, syn_id, params );
   }
@@ -553,12 +551,12 @@ nest::ConnectionManager::connect( const index sgid,
     connect_to_device_( *source, *target, sgid, target_thread, syn_id, params );
   }
   // normal devices -> normal nodes and devices with proxies
-  else if ( not source->has_proxies() && target->has_proxies() )
+  else if ( not source->has_proxies() and target->has_proxies() )
   {
     connect_from_device_( *source, *target, target_thread, syn_id, params );
   }
   // normal devices -> normal devices
-  else if ( not source->has_proxies() && not target->has_proxies() )
+  else if ( not source->has_proxies() and not target->has_proxies() )
   {
     // create connection only on suggested thread of target
     target_thread = kernel().vp_manager.vp_to_thread(
@@ -571,7 +569,7 @@ nest::ConnectionManager::connect( const index sgid,
   }
   // globally receiving devices
   // e.g., volume transmitter
-  else if ( not target->has_proxies() && not target->local_receiver() )
+  else if ( not target->has_proxies() and not target->local_receiver() )
   {
     // we do not allow to connect a device to a global receiver at the moment
     if ( not source->has_proxies() )
@@ -820,7 +818,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
 
 
   bool complete_wd_lists = ( ( *ptarget_ids )->size() == ( *pweights )->size()
-    && ( *pweights )->size() == ( *pdelays )->size() );
+    and ( *pweights )->size() == ( *pdelays )->size() );
   // check if we have consistent lists for weights and delays
   if ( not complete_wd_lists )
   {
@@ -1360,11 +1358,10 @@ nest::ConnectionManager::get_source_gids_( const thread tid,
   }
 }
 
-// TODO@5g: fix order of arguments (sources should be last) -> Jakob
 void
 nest::ConnectionManager::get_sources( const std::vector< index >& targets,
-  std::vector< std::vector< index > >& sources,
-  const index syn_id )
+  const index syn_id,
+  std::vector< std::vector< index > >& sources )
 {
   sources.resize( targets.size() );
   for ( std::vector< std::vector< index > >::iterator i = sources.begin();
@@ -1383,11 +1380,10 @@ nest::ConnectionManager::get_sources( const std::vector< index >& targets,
   }
 }
 
-// TODO@5g: fix order of arguments (targets should be last) -> Jakob
 void
 nest::ConnectionManager::get_targets( const std::vector< index >& sources,
-  std::vector< std::vector< index > >& targets,
-  const index syn_id, const std::string& post_synaptic_element )
+  const index syn_id, const std::string& post_synaptic_element,
+  std::vector< std::vector< index > >& targets )
 {
   targets.resize( sources.size() );
   for ( std::vector< std::vector< index > >::iterator i = targets.begin();
@@ -1582,7 +1578,7 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid, const bool 
   for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes();
         ++rank )
   {
-    done = done && recv_buffer[ ( rank + 1 ) * chunk_size_in_int - 1 ];
+    done = done and recv_buffer[ ( rank + 1 ) * chunk_size_in_int - 1 ];
   }
   return done;
 }

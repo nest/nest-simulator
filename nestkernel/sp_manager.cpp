@@ -599,7 +599,7 @@ SPManager::delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
   std::vector< int >::iterator n_it;
 
   kernel().connection_manager.get_targets(
-    pre_deleted_id, connectivity, synapse_model, se_post_name );
+    pre_deleted_id, synapse_model, se_post_name, connectivity );
 
   id_it = pre_deleted_id.begin();
   n_it = pre_deleted_n.begin();
@@ -704,7 +704,7 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
 
   // Retrieve the connected sources
   kernel().connection_manager.get_sources(
-    post_deleted_id, connectivity, synapse_model );
+    post_deleted_id, synapse_model, connectivity );
 
   id_it = post_deleted_id.begin();
   n_it = post_deleted_n.begin();

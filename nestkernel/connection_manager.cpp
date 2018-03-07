@@ -502,7 +502,7 @@ nest::ConnectionManager::connect( const index sgid,
       return;
     }
     target = kernel().node_manager.get_node( target->get_gid(), tid );
-    connect_to_device_( *source, *target, sgid, tid, syn_id, params, d, w );
+    connect_( *source, *target, sgid, tid, syn_id, params, d, w );
   }
   else
   {

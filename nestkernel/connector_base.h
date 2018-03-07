@@ -148,8 +148,8 @@ public:
   virtual bool send( const thread tid,
     const synindex syn_id,
     const unsigned int lcid,
-    Event& e,
-    const std::vector< ConnectorModel* >& cm ) = 0;
+    const std::vector< ConnectorModel* >& cm,
+    Event& e ) = 0;
 
   virtual void send_weight_event( const thread tid,
     const synindex syn_id,
@@ -396,7 +396,6 @@ public:
     return C_[ lcid ].get_target( tid )->get_gid();
   }
 
-  // TODO@5g: fix order of arguments
   void
   send_to_all( const thread tid, const std::vector< ConnectorModel* >& cm, Event& e )
   {
@@ -411,13 +410,12 @@ public:
     }
   }
 
-  // TODO@5g: fix order of arguments
   bool
   send( const thread tid,
     const synindex syn_id,
     const unsigned int lcid,
-    Event& e,
-    const std::vector< ConnectorModel* >& cm )
+    const std::vector< ConnectorModel* >& cm ,
+    Event& e )
   {
 #ifndef DISABLE_TIMING // TODO@5g: remove
     ++call_count;

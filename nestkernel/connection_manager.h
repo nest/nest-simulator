@@ -241,6 +241,7 @@ public:
   void get_sources( const std::vector< index >& targets,
     const index syn_id,
     std::vector< std::vector< index > >& sources );
+  // TODO@5g: get_targets overloading necessary?
   void get_targets( const std::vector< index >& sources,
     const index syn_id, const std::string& post_synaptic_element, 
     std::vector< std::vector< index > >& targets );
@@ -347,6 +348,13 @@ public:
   void restore_source_table_entry_point( const thread tid );
 
   void add_target( const thread tid, const thread target_rank, const TargetData& target_data );
+
+  /**
+   * Return sort_connections_by_source_, which indicates whether
+   * connections_ and source_table_ should be sorted according to
+   * source gid.
+   */
+  bool get_sort_connections_by_source() const;
 
   /**
    * Sorts connections in the presynaptic infrastructure by increasing
@@ -783,6 +791,12 @@ inline bool
 ConnectionManager::secondary_connections_exist() const
 {
   return secondary_connections_exist_;
+}
+
+inline bool
+ConnectionManager::get_sort_connections_by_source() const
+{
+  return sort_connections_by_source_;
 }
   
 } // namespace nest

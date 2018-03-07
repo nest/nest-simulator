@@ -158,10 +158,16 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
     and kernel().sp_manager.is_structural_plasticity_enabled() )
   {
     throw KernelException(
-      "Structural plasticity can not be enabled if source table is not kept." );
+      "If structural plasticity is enabled, keep_source_table can not be set to false." );
   }
 
   updateValue< bool >( d, names::sort_connections_by_source, sort_connections_by_source_ );
+  if ( not sort_connections_by_source_
+    and kernel().sp_manager.is_structural_plasticity_enabled() )
+  {
+    throw KernelException(
+      "If structural plasticity is enabled, sort_connections_by_source can not be set to false." );
+  }
 }
 
 nest::DelayChecker&
@@ -1403,8 +1409,8 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
       if ( start_lcid != invalid_index )
       {
         ( *( *connections_5g_[ tid ] )[ syn_id ] )
-          .get_target_gids( tid, start_lcid, targets[ i ],
-                            post_synaptic_element );
+          .get_target_gids( tid, start_lcid, post_synaptic_element,
+                            targets[ i ] );
       }
 
       // find targets in unsorted part of connections
@@ -1414,9 +1420,6 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
 
       // unsorted part should always be empty
       assert( matching_lcids.size() == 0 );
-
-      //TODO@5g: make sure sort_connections_by_source == false and
-      //enable_structural_plasticity == true is not possible -> Susi
     }
   }
 }

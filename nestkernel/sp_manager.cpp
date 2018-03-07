@@ -862,7 +862,12 @@ nest::SPManager::enable_structural_plasticity()
   if ( not kernel().connection_manager.get_keep_source_table() )
   {
     throw KernelException(
-      "Structural plasticity can not be enabled if source table is not kept." );
+      "Structural plasticity can not be enabled if keep_source_table has been set to false." );
+  }
+  if ( not kernel().connection_manager.get_sort_connections_by_source() )
+  {
+    throw KernelException(
+      "Structural plasticity can not be enabled if sort_connections_by_source has been set to false." );
   }
   structural_plasticity_enabled_ = true;
 }

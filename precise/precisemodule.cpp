@@ -54,7 +54,7 @@
 #include "iaf_psc_exp_ps.h"
 #include "parrot_neuron_ps.h"
 #include "poisson_generator_ps.h"
-#include "iaf_psc_exp_ps_lossless.h" 
+#include "iaf_psc_exp_ps_lossless.h"
 
 namespace nest
 {

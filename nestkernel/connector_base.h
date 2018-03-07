@@ -62,8 +62,6 @@ class ConnectorBase
 {
 
 public:
-  unsigned int call_count; //TODO@5g: remove
-
    // destructor needs to be declared virtual to avoid undefined
    // behaviour, avoid possible memory leak and needs to be defined to
    // avoid linker error, see, e.g., Meyers, S. (2005) p40ff
@@ -223,12 +221,10 @@ private:
   const synindex syn_id_;
 
 public:
-  unsigned int call_count; //TODO@5g: remove
 
   explicit Connector( const synindex syn_id )
     : syn_id_( syn_id )
   {
-    call_count = 0;
   }
 
   ~Connector()
@@ -417,9 +413,6 @@ public:
     const std::vector< ConnectorModel* >& cm ,
     Event& e )
   {
-#ifndef DISABLE_TIMING // TODO@5g: remove
-    ++call_count;
-#endif
 
     e.set_port( lcid );
     if ( not C_[ lcid ].is_disabled() )

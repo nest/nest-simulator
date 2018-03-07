@@ -1678,21 +1678,3 @@ nest::ConnectionManager::check_secondary_connections_exist()
 {
   secondary_connections_exist_ = kernel().mpi_manager.any_true( secondary_connections_exist_ );
 }
-
-void
-nest::ConnectionManager::print_call_counts_connectors() const
-{
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    std::cout << tid << ": ";
-    for ( synindex syn_id = 0; syn_id < ( *connections_5g_[ tid ] ).size();
-          ++syn_id )
-    {
-      if ( ( *connections_5g_[ tid ] )[ syn_id ] != NULL and ( *( *connections_5g_[ tid ] )[ syn_id ] ).call_count > 0 )
-      {
-        std::cout << ( int ) syn_id << " " << ( *( *connections_5g_[ tid ] )[ syn_id ] ).call_count << " | ";
-      }
-    }
-    std::cout << "# send_count" << std::endl;
-  }
-}

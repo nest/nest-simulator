@@ -1241,4 +1241,47 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
   recv_buffer.swap( send_buffer );
 }
 
+//////////////////////////////////////
+
+void
+nest::MPIManager::communicate_target_data_Alltoall( unsigned int* send_buffer,
+  unsigned int* recv_buffer )
+{
+    // null op is to transfer from send_buffer to recv_buffer
+    memmove(recv_buffer, send_buffer, send_recv_count_target_data_in_int_per_rank_ * sizeof(recv_buffer[0]) );
+}
+
+void
+nest::MPIManager::communicate_spike_data_Alltoall( unsigned int* send_buffer,
+  unsigned int* recv_buffer )
+{
+    // null op is to transfer from send_buffer to recv_buffer
+    memmove(recv_buffer, send_buffer, send_recv_count_spike_data_in_int_per_rank_ * sizeof(recv_buffer[0]));
+}
+
+void
+nest::MPIManager::communicate_off_grid_spike_data_Alltoall( unsigned int* send_buffer,
+  unsigned int* recv_buffer )
+{
+    // null op is to transfer from send_buffer to recv_buffer
+    memmove(recv_buffer, send_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank_ * sizeof(recv_buffer[0]));
+}
+
+void
+nest::MPIManager::communicate_secondary_events_Alltoall(
+  unsigned int* send_buffer,
+  unsigned int* recv_buffer )
+{
+        // null op is to transfer from send_buffer to recv_buffer
+    memmove(recv_buffer, send_buffer, chunk_size_secondary_events_in_int_ * sizeof(recv_buffer[0]));
+}
+
+void
+nest::MPIManager::communicate_Allreduce_max_in_place(
+  std::vector< long >& buffer )
+{
+    // Null operator for ranks == 1
+    // Max already is the input
+}
+
 #endif /* #ifdef HAVE_MPI */

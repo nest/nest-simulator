@@ -22,7 +22,6 @@ set( nestutil_sources
     numerics.h numerics.cpp
     propagator_stability.h propagator_stability.cpp
     lockptr.h
-    template_util.h
     compose.hpp
     string_utils.h
     logging.h

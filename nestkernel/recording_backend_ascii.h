@@ -104,8 +104,8 @@ private:
 
   struct Parameters_
   {
-    long precision_;       //!< Number of decimal places to use for values
-    std::string file_ext_; //!< File name extension to use, without leading "."
+    long precision_;           //!< Number of decimal places to use for values
+    std::string file_ext_;     //!< File name extension to use, without leading "."
 
     Parameters_();
 

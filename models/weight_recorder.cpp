@@ -52,6 +52,7 @@ nest::weight_recorder::weight_recorder( const weight_recorder& n )
   : RecordingDevice( n )
   , P_( n.P_ )
 {
+    RecordingDevice::set_record_targets( true );
 }
 
 nest::weight_recorder::Parameters_::Parameters_()
@@ -98,29 +99,21 @@ nest::weight_recorder::init_state_( const Node& np )
 void
 nest::weight_recorder::init_buffers_()
 {
-  B_.events_ = std::vector< WeightRecorderEvent >();
 }
 
 void
 nest::weight_recorder::calibrate()
 {
   RecordingDevice::calibrate();
-  RecordingDevice::enroll();
+  
+  std::vector< Name > value_names;
+  value_names.push_back( names::weights );
+  RecordingDevice::enroll(value_names);
 }
 
 void
 nest::weight_recorder::update( Time const&, const long from, const long to )
 {
-  for ( std::vector< WeightRecorderEvent >::iterator e = B_.events_.begin();
-        e != B_.events_.end();
-        ++e )
-  {
-    RecordingDevice::write( *e );
-  }
-
-  // do not use swap here to clear, since we want to keep the reserved()
-  // memory for the next round
-  B_.events_.clear();
 }
 
 nest::RecordingDevice::Type
@@ -167,20 +160,21 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   // emitted
   if ( is_active( e.get_stamp() ) )
   {
-    // P_senders_ is defined and sender is not in it
-    // or P_targets_ is defined and receiver is not in it
-    if ( ( not P_.senders_.empty()
-           and not std::binary_search(
-                 P_.senders_.begin(), P_.senders_.end(), e.get_sender_gid() ) )
-      or ( not P_.targets_.empty()
-           and not std::binary_search( P_.targets_.begin(),
-                 P_.targets_.end(),
-                 e.get_receiver_gid() ) ) )
+    bool senders_set = not P_.senders_.empty();
+    bool sender_gid_in_senders = std::binary_search(
+	P_.senders_.begin(), P_.senders_.end(), e.get_sender_gid() );
+    bool targets_set = not P_.targets_.empty();
+    bool receiver_gid_in_targets = std::binary_search(
+	P_.targets_.begin(), P_.targets_.end(), e.get_receiver_gid() );
+    
+    if ( ( senders_set and not sender_gid_in_senders )
+	 or ( targets_set  and not receiver_gid_in_targets ) )
     {
       return;
     }
 
-    WeightRecorderEvent* event = e.clone();
-    B_.events_.push_back( *event );
+    std::vector< double > values;
+    values.push_back( e.get_weight() );
+    RecordingDevice::write( e, values );
   }
 }

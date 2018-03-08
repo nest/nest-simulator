@@ -122,6 +122,11 @@ private:
 
       senders_.push_back( sender );
 
+      if ( record_targets_ )
+      {
+        targets_.push_back( event.get_receiver_gid() );
+      }
+      
       if ( time_in_steps_ )
       {
         times_steps_.push_back( stamp.get_steps() );
@@ -161,6 +166,12 @@ private:
       initialize_property_intvector( events, names::senders );
       append_property( events, names::senders, senders_ );
 
+      if ( record_targets_ )
+      {
+        initialize_property_intvector( events, names::targets );
+        append_property( events,  names::targets, targets_ );
+      }	  
+
       if ( time_in_steps_ )
       {
         initialize_property_intvector( events, names::times );
@@ -189,9 +200,16 @@ private:
     }
 
     void
+    set_record_targets( bool record_targets )
+    {
+      record_targets_ = record_targets;
+    }
+    
+    void
     clear()
     {
       senders_.clear();
+      targets_.clear();
       times_ms_.clear();
       times_steps_.clear();
       times_offset_.clear();
@@ -206,12 +224,14 @@ private:
     Recordings();
 
     std::vector< long > senders_; //!< sender gids of the events
+    std::vector< long > targets_; //!< receiver gids of the events
     std::vector< double > times_ms_; //!< times of registered events in ms
     std::vector< long > times_steps_; //!< times of registered events in steps
     std::vector< double > times_offset_; //!< offsets of registered events if time_in_steps_
     std::vector< std::vector< double > > extra_data_;
     std::vector< Name > extra_data_names_;
     bool time_in_steps_;
+    bool record_targets_;
   };
 
   /**

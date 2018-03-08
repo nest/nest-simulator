@@ -60,6 +60,9 @@ nest::RecordingBackendMemory::enroll( const RecordingDevice& device,
 
   bool time_in_steps = device.get_time_in_steps();
   data_[ t ].find( gid )->second->set_time_in_steps( time_in_steps );
+
+  bool record_targets = device.get_record_targets();
+  data_[ t ].find( gid )->second->set_record_targets( record_targets );  
 }
 
 void
@@ -122,7 +125,7 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
   {
     return;
   }
-
+  
   index sender = event.get_sender_gid();
   data_[ t ][ gid ]->push_back( sender, event );
 }
@@ -134,7 +137,7 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
 {
   thread t = device.get_thread();
   index gid = device.get_gid();
-
+  
   if ( data_[ t ].find( gid ) == data_[ t ].end() )
   {
     return;

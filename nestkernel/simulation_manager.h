@@ -170,7 +170,8 @@ private:
   timeval t_slice_begin_; //!< Wall-clock time at the begin of a time slice
   timeval t_slice_end_;   //!< Wall-clock time at the end of time slice
   long t_real_;   //!< Accumulated wall-clock time spent simulating (in us)
-  bool prepared_; //!< indicates whether the SimulationManager has already been
+  bool prepared_; //!< Indicates whether the SimulationManager is in a prepared
+                  //!< state
   bool simulating_; //!< true if simulation in progress
   bool simulated_; //!< indicates whether the SimulationManager has already been
                    //!< simulated for sometime

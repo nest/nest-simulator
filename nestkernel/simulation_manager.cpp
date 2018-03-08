@@ -379,6 +379,13 @@ nest::SimulationManager::prepare()
 {
   assert( kernel().is_initialized() );
 
+  if ( prepared_ )
+  {
+    std::string msg = "Prepare called twice.";
+    LOG( M_ERROR, "SimulationManager::prepare", msg );
+    throw KernelException();
+  }
+
   if ( inconsistent_state_ )
   {
     throw KernelException(

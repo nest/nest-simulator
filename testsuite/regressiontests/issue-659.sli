@@ -47,6 +47,13 @@ M_ERROR setverbosity
 } fail_or_die
 
 {
+  % Prepare twice.
+  ResetKernel
+  Prepare
+  Prepare
+} fail_or_die
+
+{
   % Run after cleanup, without prepare.
   ResetKernel
   Prepare

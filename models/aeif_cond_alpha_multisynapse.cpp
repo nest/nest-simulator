@@ -324,10 +324,10 @@ aeif_cond_alpha_multisynapse::State_::get( DictionaryDatum& d ) const
               / State_::NUM_STATE_ELEMENTS_PER_RECEPTOR );
         ++i )
   {
-    dg->push_back( y_[ State_::DG
-      + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );
-    g->push_back( y_[ State_::G
-      + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );
+    dg->push_back(
+      y_[ State_::DG + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );
+    g->push_back(
+      y_[ State_::G + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );
   }
 
   ( *d )[ names::dg ] = DoubleVectorDatum( dg );
@@ -584,8 +584,7 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
 
     for ( size_t i = 0; i < P_.n_receptors(); ++i )
     {
-      S_.y_[ State_::DG
-        + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] +=
+      S_.y_[ State_::DG + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] +=
         B_.spikes_[ i ].get_value( lag ) * V_.g0_[ i ]; // add incoming spike
     }
     // set new input current

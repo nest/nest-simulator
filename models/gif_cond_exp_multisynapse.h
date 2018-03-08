@@ -240,7 +240,7 @@ private:
     double V_reset_;
     double Delta_V_;
     double V_T_star_;
-    double lambda_0_; /** 1/s */
+    double lambda_0_; /** 1/ms */
 
     /** Refractory period in ms. */
     double t_ref_;
@@ -305,10 +305,10 @@ private:
       STATE_VEC_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;        //!< V_M
-    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;        //!< G
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1; //!< V_M
+    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1; //!< G
 
-    std::vector< double > y_;        //!< neuron state
+    std::vector< double > y_; //!< neuron state
 
     double I_stim_; //!< This is piecewise constant external current
     double sfa_; //!< This is the change of the 'threshold' due to adaptation.

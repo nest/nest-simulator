@@ -127,7 +127,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::Parameters_()
   , V_reset_( -55.0 )  // mV
   , Delta_V_( 0.5 )    // mV
   , V_T_star_( -35 )   // mV
-  , lambda_0_( 1. )    // 1/s
+  , lambda_0_( 0.001 ) // 1/ms
   , t_ref_( 4.0 )      // ms
   , c_m_( 80.0 )       // pF
   , tau_stc_()         // ms
@@ -390,8 +390,8 @@ nest::gif_cond_exp_multisynapse::State_::set( const DictionaryDatum& d,
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-                + State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * p.n_receptors(),
-                0.0 );
+      + State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * p.n_receptors(),
+    0.0 );
 
   sfa_elems_.resize( p.tau_sfa_.size(), 0.0 );
   stc_elems_.resize( p.tau_stc_.size(), 0.0 );
@@ -478,8 +478,10 @@ void
 nest::gif_cond_exp_multisynapse::init_buffers_()
 {
   B_.spikes_.resize( P_.n_receptors() );
-  for (size_t i =0; i < P_.n_receptors(); ++i)
-    B_.spikes_[i].clear();   // includes resize
+  for ( size_t i = 0; i < P_.n_receptors(); ++i )
+  {
+    B_.spikes_[ i ].clear(); // includes resize
+  }
 
   B_.currents_.clear(); //!< includes resize
   B_.logger_.reset();   //!< includes resize
@@ -618,8 +620,8 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin,
 
     for ( size_t i = 0; i < P_.n_receptors(); i++ )
     {
-      S_.y_[ State_::G + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR
-                           * i ) ] += B_.spikes_[ i ].get_value( lag );
+      S_.y_[ State_::G + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] +=
+        B_.spikes_[ i ].get_value( lag );
     }
 
     if ( S_.r_ref_ == 0 ) // neuron is not in refractory period

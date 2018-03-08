@@ -85,10 +85,25 @@ nest::MPIManager::MPIManager()
 {
 }
 
+#ifndef HAVE_MPI
 void
 nest::MPIManager::init_mpi( int* argc, char** argv[] )
 {
-#ifdef HAVE_MPI
+  // if ! HAVE_MPI, initialize process entries for 1 rank
+  // use 2 processes entries (need at least two
+  // entries per process to use flag of first entry as validity and
+  // last entry to communicate end of communication)
+    kernel().mpi_manager.set_buffer_size_target_data(
+        2  );
+    kernel().mpi_manager.set_buffer_size_spike_data(
+        2  );
+}
+
+#else /* HAVE_MPI */
+
+void
+nest::MPIManager::init_mpi( int* argc, char** argv[] )
+{
   int init;
   MPI_Initialized( &init );
 
@@ -143,8 +158,8 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   MPI_Type_commit( &MPI_OFFGRID_SPIKE );
 
   use_mpi_ = true;
-#endif /* #ifdef HAVE_MPI */
 }
+#endif /* #ifdef HAVE_MPI */
 
 void
 nest::MPIManager::initialize()

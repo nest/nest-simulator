@@ -25,6 +25,7 @@ set( nestutil_sources
     template_util.h
     compose.hpp
     string_utils.h
+    sort.h
     logging.h
     logging_event.h logging_event.cpp
     )

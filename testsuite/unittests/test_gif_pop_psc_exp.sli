@@ -30,7 +30,7 @@ Description:
  
  This script simulate an inhibitory population with the population model. After each simulation, it calculates
  the mean and variance of population rate and compare them with desired values. The simulated values should be 
- in a acceptable margine.
+ in a acceptable margin.
 
 
 Author:  December 2017, Setareh, Schwalger
@@ -41,8 +41,8 @@ SeeAlso: gif_pop_psc_exp, testsuite::test_pp_pop_psc_delta
 (unittest) run
 /unittest using
 
-1.0 /err_mean Set      % error margine for mean rate (Hz)
-6.0 /err_var Set       % error margine for variance of rate (Hz^2)
+1.0 /err_mean Set      % error margin for mean rate (Hz)
+6.0 /err_var Set       % error margin for variance of rate (Hz^2)
 0.5 /res Set           % simulation time step (ms)
 10000.0 /T Set         % simulation duration (ms)
 1000.0 /start_time Set % time for starting calculating mean and variance (ms)

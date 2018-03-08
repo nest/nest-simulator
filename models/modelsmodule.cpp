@@ -78,7 +78,6 @@
 #include "mcculloch_pitts_neuron.h"
 #include "parrot_neuron.h"
 #include "pp_pop_psc_delta.h"
-#include "gif_pop_psc_exp.h"
 #include "pp_psc_delta.h"
 #include "siegert_neuron.h"
 #include "sigmoid_rate.h"
@@ -88,7 +87,6 @@
 #include "gif_cond_exp.h"
 #include "gif_cond_exp_multisynapse.h"
 #include "gif_pop_psc_exp.h"
-
 
 // Stimulation devices
 #include "ac_generator.h"

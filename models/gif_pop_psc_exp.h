@@ -24,10 +24,8 @@
 #define PP_POP_PSC_BETA_H
 
 #include "nest.h"
-#include "event.h"
 #include "node.h"
 #include "ring_buffer.h"
-#include "connection.h"
 #include "poisson_randomdev.h"
 #include "gsl_binomial_randomdev.h"
 #include "universal_data_logger.h"
@@ -104,8 +102,8 @@ class Network;
    tau_syn_in double - Time constant for inhibitory synaptic currents in ms.
    tau_sfa    double vector  - Adaptation time constants in ms.
    q_sfa      double vector  - Adaptation kernel amplitudes in ms.
-   BinoRand    bool   - If True, binomial random numbers are used, otherwise
-                        we use Poisson distributed spike counts.
+   BinoRand   bool   - If True, binomial random numbers are used, otherwise
+                       we use Poisson distributed spike counts.
 
 
    Parameter translation to gif_psc_exp:
@@ -200,7 +198,7 @@ private:
     /** Membrane capacitance in pF. */
     double c_m_;
 
-    /** Absolulte refractory period in ms */
+    /** Absolute refractory period in ms */
     double t_ref_;
 
     /** ------------ */
@@ -258,7 +256,7 @@ private:
     long n_spikes_;    // number of spikes
     double theta_hat_; // adapting threshold for non-refractory neurons
 
-    // internal switch signalling that state vectors are initialized
+    // internal switch signaling that state vectors are initialized
     bool initialized_;
 
     State_(); //!< Default initialization

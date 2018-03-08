@@ -385,8 +385,6 @@ public:
     const synindex syn_id,
     const size_t count );
 
-  // void remove_disabled_connections( const thread tid );
-
   void set_has_source_subsequent_targets( const thread tid,
     const synindex syn_id,
     const index lcid,

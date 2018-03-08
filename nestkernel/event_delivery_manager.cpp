@@ -417,7 +417,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     } // of omp single; implicit barrier
 
 #ifndef DISABLE_TIMING
-    if ( tid == 0 and kernel().mpi_manager.rank() < 30 )
+    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
     {
       sw_collocate_spike_data.start();
     }
@@ -510,7 +510,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 #pragma omp barrier
 
 #ifndef DISABLE_TIMING
-    if ( tid == 0 and kernel().mpi_manager.rank() < 30 )
+    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
     {
       sw_deliver_spike_data.stop();
     }
@@ -738,7 +738,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
   assert( not kernel().connection_manager.is_source_table_cleared() );
 
 #ifndef DISABLE_COUNTS
-  if ( tid == 0 and kernel().mpi_manager.rank() < 30 )
+  if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
   {
     ++comm_steps_target_data;
   }
@@ -778,7 +778,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
       }
     } // of omp single; implicit barrier
 #ifndef DISABLE_TIMING
-    if ( tid == 0 and kernel().mpi_manager.rank() < 30 )
+    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
     {
       sw_collocate_target_data.start();
     }
@@ -830,7 +830,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
 #pragma omp barrier
 
 #ifndef DISABLE_TIMING
-    if ( tid == 0 and kernel().mpi_manager.rank() < 30 )
+    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
     {
       sw_distribute_target_data.stop();
     }

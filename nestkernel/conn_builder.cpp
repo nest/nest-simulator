@@ -57,7 +57,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   , autapses_( true )
   , multapses_( true )
   , make_symmetric_( false )
-  , own_symmetric_( false )
+  , creates_symmetric_connections_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
   , synapse_model_id_( kernel().model_manager.get_synapsedict()->lookup(
       "static_synapse" ) )
@@ -354,7 +354,7 @@ nest::ConnBuilder::connect()
   else
   {
     connect_();
-    if ( make_symmetric_ and not own_symmetric_ )
+    if ( make_symmetric_ and not creates_symmetric_connections_ )
     {
       // call reset on all parameters
       if ( weight_ )
@@ -1706,8 +1706,8 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( const GIDCollection&
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
   , p_( ( *conn_spec )[ names::p ] )
 {
-  own_symmetric_ = true; // this connector takes care of symmetric
-                         // connections on its own
+  creates_symmetric_connections_ = true; // this connector takes care of symmetric
+                                         // connections on its own
 
   if ( p_ < 0 or 1 <= p_ )
   {

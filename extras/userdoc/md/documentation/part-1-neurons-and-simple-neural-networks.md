@@ -259,9 +259,10 @@ Now we are ready to display the data in a figure. To this end, we make use of
     pylab.figure(1)
     pylab.plot(ts, Vms)
 
-The second line opens a figure (with the number 1), and the third line actually produces the plot. You can’t see it yet
-because we have not used `pylab.show()`. Before we do that, we proceed
-analogously to obtain and display the spikes from the spike detector.
+The second line opens a figure (with the number 1), and the third line actually
+produces the plot. You can’t see it yet because we have not used `pylab.show()`.
+Before we do that, we proceed analogously to obtain and display the spikes from
+ the spike detector.
 
     dSD = nest.GetStatus(spikedetector,keys="events")[0]
     evs = dSD["senders"]

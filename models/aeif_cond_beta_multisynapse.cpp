@@ -41,12 +41,13 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
+namespace nest // template specialization must be placed in namespace
+{
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
-
-namespace nest // template specialization must be placed in namespace
-{
+ 
 // Override the create() method with one call to
 // DynamicRecordablesMap::insert() for each quantity to be recorded.
 template <>
@@ -63,7 +64,6 @@ DynamicRecordablesMap< aeif_cond_beta_multisynapse >::create(
 
   host.insert_conductance_recordables();
 }
-
 
 Name
 aeif_cond_beta_multisynapse::get_g_receptor_name( size_t receptor )

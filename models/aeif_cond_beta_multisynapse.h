@@ -208,13 +208,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-  DataAccessFunctor< aeif_cond_beta_multisynapse > get_data_access_functor(
-    size_t elem );
-  inline double
-  get_state_element( size_t elem )
-  {
-    return S_.y_[ elem ];
-  };
 
 private:
   void init_state_( const Node& proto );
@@ -222,9 +215,10 @@ private:
   void calibrate();
   void update( Time const&, const long, const long );
 
-  // The next two classes need to be friends to access the State_ class/member
+  // The next three classes need to be friends to access the State_ class/member
   friend class DynamicRecordablesMap< aeif_cond_beta_multisynapse >;
-  friend class UniversalDataLogger< aeif_cond_beta_multisynapse >;
+  friend class DynamicUniversalDataLogger< aeif_cond_beta_multisynapse >;
+  friend class DataAccessFunctor< aeif_cond_beta_multisynapse >;
 
   // ----------------------------------------------------------------
 
@@ -389,12 +383,20 @@ private:
   Variables_ V_;
   Buffers_ B_;
   /** @} */
-
-
+  
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Mapping of recordables names to access functions
   DynamicRecordablesMap< aeif_cond_beta_multisynapse > recordablesMap_;
+  
+  // Data Access Functor getter
+  DataAccessFunctor< aeif_cond_beta_multisynapse > get_data_access_functor(
+    size_t elem );
+  inline double
+  get_state_element( size_t elem )
+  {
+    return S_.y_[ elem ];
+  };
 
   // Utility function that inserts the synaptic conductances to the
   // recordables map

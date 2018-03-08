@@ -329,13 +329,14 @@ d /times get cva /ts Set % get times
 {
   << >> begin
   ResetKernel
-  
+  true
   /nrn /aeif_cond_beta_multisynapse Create def
   
   /mm /multimeter << /withtime true /time_in_steps true
                      /interval 1.0 /record_from [ /V_m /w /g_1 ] >> Create def
   
   mm nrn Connect
+  end
 }
 assert_or_die
 
@@ -366,6 +367,7 @@ assert_or_die
   /len3 1 GetStatus /recordables get length def
   
   len1 5 eq len2 4 eq and len3 6 eq and
+  end
 }
 assert_or_die
 
@@ -506,6 +508,7 @@ assert_or_die
     /theo_g t0 W tau2 tau1 t beta_function def
     sim_g theo_g sub { abs } Map Max tolerance leq and
   } ScanThread
+  end
 }
 assert_or_die
 

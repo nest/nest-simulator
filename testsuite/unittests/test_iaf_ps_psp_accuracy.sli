@@ -22,7 +22,7 @@
 
 
 /* BeginDocumentation
-Name: testsuite::test_iaf_ps_psp_accuracy - test of iaf_neuron accuracy of PSP
+Name: testsuite::test_iaf_ps_psp_accuracy - test of precise integrate-and-fire neurons' accuracy of PSP
 
 Synopsis: (test_iaf_ps_psp_accuracy) run -> compare one voltage with analytics
 
@@ -30,9 +30,9 @@ Description:
 
 code updated for NEST 2 but not yet this comment
 
- test_iaf_psp.sli checks the voltage response of the iaf_neuron
- model neuron to a single incoming spike. The voltage excursion is
- called post-synaptic potential (PSP). In the iaf_neuron model neuron
+ test_iaf_ps_psp_accuracy.sli checks the voltage response of the precise versions of the iaf_psc_alpha
+ model neurons to a single incoming spike. The voltage excursion is
+ called post-synaptic potential (PSP). In the model neurons
  the post-synaptic current is described by an alpha-function 
  (see [1] and references therein). The resulting PSP has a finite 
  rise-time, with voltage and current beeing zero in the initial 
@@ -45,7 +45,7 @@ code updated for NEST 2 but not yet this comment
  The weight of the connection specifies the peak value (amplitude)
  of the post-synaptic current (PSC) in pA.
 
- The subthreshold dynamics of the iaf_neuron is integrated exactly.
+ The subthreshold dynamics of the model neurons is integrated exactly.
  Therefore, it is suitable to check whether the simulation kernel 
  produces results independent of the computation step size
  (resolution).

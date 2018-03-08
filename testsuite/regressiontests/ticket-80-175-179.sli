@@ -24,14 +24,14 @@
    Test for Tickets 80 and 175.
 
    This test verifies that:
-   voltmeter and spike_detector record identical signals from iaf_neuron
+   voltmeter and spike_detector record identical signals from iaf_psc_alpha
    driven by internal dc independent of how simulation time is blocked
    and how elements are placed in script. Additionally, two spike generators,
    placed before and after the recorders, emit the same spike trains that
    are expected from the neurons for the given parameters.
 
    Protocol:
-   1. One iaf_neuron created before voltmeters and spike detectors, one after.
+   1. One iaf_psc_alpha created before voltmeters and spike detectors, one after.
    2. Devices recording from both neurons.
    3. Neurons driven by internal dc current.
    4. Resolution fixed, but simulation time subdivided in different ways.
@@ -86,12 +86,12 @@ M_ERROR setverbosity
     0 << /resolution resolution
          /overwrite_files true >> SetStatus
   
-    /iaf_neuron iaf_params SetDefaults
+    /iaf_psc_alpha iaf_params SetDefaults
     /voltmeter vm_params  SetDefaults
     /spike_detector sd_params SetDefaults
     /spike_generator sg_params SetDefaults
 
-    /iaf_neuron Create /n_pre Set
+    /iaf_psc_alpha Create /n_pre Set
     /spike_generator Create /sg_pre Set
 
     [ /spike_detector Create
@@ -103,7 +103,7 @@ M_ERROR setverbosity
       /voltmeter Create
     ] /vms Set
 
-    /iaf_neuron Create /n_post Set
+    /iaf_psc_alpha Create /n_post Set
     /spike_generator Create /sg_post Set
 
     [[n_pre n_post sg_pre sg_post] sds] { Connect true } MapThread ;

@@ -58,6 +58,9 @@
 /* tics per step in simulation */
 #define CONFIG_TICS_PER_STEP @tics_per_step@
 
+/* when to truncate the recursive instantiation of the connector */
+#define CONFIG_CONNECTOR_CUTOFF @connector_cutoff@
+
 /* define if the compiler does not include *.h headers ISO conformant */
 #cmakedefine HAVE_ALPHA_CXX_STD_BUG 1
 

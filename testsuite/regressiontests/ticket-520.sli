@@ -44,8 +44,8 @@ M_ERROR setverbosity
 
   0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
   
-  /n1 /iaf_neuron << /I_e 100. >> Create def
-  /n2 /iaf_neuron << /I_e 100. >> Create def
+  /n1 /iaf_psc_alpha << /I_e 100. >> Create def
+  /n2 /iaf_psc_alpha << /I_e 100. >> Create def
   /m1 /multimeter << /record_from [/V_m] /withtime true /withgid true >> Create def
   m1 n1 Connect
   m1 n2 Connect
@@ -67,8 +67,8 @@ assert_or_die
 
   0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
   
-  /n1 /iaf_neuron Create def
-  /n2 /iaf_neuron Create def
+  /n1 /iaf_psc_alpha Create def
+  /n2 /iaf_psc_alpha Create def
   /m1 /multimeter << /record_from [/V_m] /withtime true /withgid false /to_accumulator true >> Create def
   m1 n1 Connect
   m1 n2 Connect
@@ -91,8 +91,8 @@ assert_or_die
 
   0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
   
-  /n1 /iaf_neuron << /I_e 100. >> Create def
-  /n2 /iaf_neuron << /I_e 100. >> Create def
+  /n1 /iaf_psc_alpha << /I_e 100. >> Create def
+  /n2 /iaf_psc_alpha << /I_e 100. >> Create def
   /m1 /multimeter << /record_from [/V_m] /withtime true /withgid true >> Create def
   /m2 /multimeter << /record_from [/V_m] /withtime true /withgid true >> Create def
   m1 n1 Connect
@@ -122,8 +122,8 @@ assert_or_die
 
   0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
   
-  /n1 /iaf_neuron Create def
-  /n2 /iaf_neuron Create def
+  /n1 /iaf_psc_alpha Create def
+  /n2 /iaf_psc_alpha Create def
   /m1 /multimeter << /record_from [/V_m] /withtime true /withgid false /to_accumulator true >> Create def
   /m2 /multimeter << /record_from [/V_m] /withtime true /withgid false /to_accumulator true >> Create def
   m1 n1 Connect
@@ -155,8 +155,8 @@ assert_or_die
 
   0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
   
-  /n1 /iaf_neuron << /I_e 100. >> Create def
-  /n2 /iaf_neuron << /I_e 100. >> Create def
+  /n1 /iaf_psc_alpha << /I_e 100. >> Create def
+  /n2 /iaf_psc_alpha << /I_e 100. >> Create def
   /m1 /multimeter << /record_from [/V_m] /withtime true /time_in_steps true /withgid true >> Create def
   m1 n1 Connect
   m1 n2 Connect
@@ -178,8 +178,8 @@ assert_or_die
 
   0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
   
-  /n1 /iaf_neuron Create def
-  /n2 /iaf_neuron Create def
+  /n1 /iaf_psc_alpha Create def
+  /n2 /iaf_psc_alpha Create def
   /m1 /multimeter << /record_from [/V_m] /withtime true /time_in_steps true /withgid false /to_accumulator true >> Create def
   m1 n1 Connect
   m1 n2 Connect
@@ -202,8 +202,8 @@ assert_or_die
 
   0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
   
-  /n1 /iaf_neuron << /I_e 100. >> Create def
-  /n2 /iaf_neuron << /I_e 100. >> Create def
+  /n1 /iaf_psc_alpha << /I_e 100. >> Create def
+  /n2 /iaf_psc_alpha << /I_e 100. >> Create def
   /m1 /multimeter << /record_from [/V_m] /withtime true /time_in_steps true /withgid true >> Create def
   /m2 /multimeter << /record_from [/V_m] /withtime true /time_in_steps true /withgid true >> Create def
   m1 n1 Connect
@@ -233,8 +233,8 @@ assert_or_die
 
   0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
   
-  /n1 /iaf_neuron Create def
-  /n2 /iaf_neuron Create def
+  /n1 /iaf_psc_alpha Create def
+  /n2 /iaf_psc_alpha Create def
   /m1 /multimeter << /record_from [/V_m] /withtime true /time_in_steps true /withgid false /to_accumulator true >> Create def
   /m2 /multimeter << /record_from [/V_m] /withtime true /time_in_steps true /withgid false /to_accumulator true >> Create def
   m1 n1 Connect

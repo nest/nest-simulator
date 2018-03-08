@@ -47,3 +47,7 @@ install( TARGETS nestutil
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
+
+FILTER_HEADERS("${nestutil_sources}" install_headers )
+install( FILES ${install_headers} ${PROJECT_BINARY_DIR}/libnestutil/config.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

@@ -17,8 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>
 
-cmake_minimum_required( VERSION 2.8.12 )
-# juqueen 2.8.12.2
+cmake_minimum_required( VERSION 3.1 )
 
 # add cmake modules: for all `include(...)` first look here
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
@@ -41,6 +40,7 @@ set( NEST_VERSION_PRGNAME "${PROJECT_NAME}-${NEST_VERSION_VERSION}" )
 # set NEST defaults
 set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time. [default 1000.0]" )
 set( tics_per_step "100" CACHE STRING "Specify resolution. [default 100]" )
+set( connector_cutoff "3" CACHE STRING "Specify when to truncate the recursive instantiation of the connector. [default 3]" )
 option( with-ps-arrays "Use PS array construction semantics. [default=ON]" ON )
 
 # add user modules
@@ -270,6 +270,7 @@ set( ALL_LIBS
   "-lrandom"
   "-lsli"
   "-lnestkernel"
+  "-ltopology"
   "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${READLINE_LIBRARIES}"
@@ -284,13 +285,7 @@ string( REPLACE ";" " " ALL_LIBS "${ALL_LIBS}" )
 
 # all includes
 set( ALL_INCLUDES_tmp
-  "${PROJECT_SOURCE_DIR}/libnestutil"
-  "${PROJECT_BINARY_DIR}/libnestutil"
-  "${PROJECT_SOURCE_DIR}/librandom"
-  "${PROJECT_SOURCE_DIR}/sli"
-  "${PROJECT_SOURCE_DIR}/topology"
-  "${PROJECT_SOURCE_DIR}/nestkernel"
-  "${PROJECT_SOURCE_DIR}/nest"
+  "${CMAKE_INSTALL_FULL_INCLUDEDIR}/nest"
   "${LTDL_INCLUDE_DIRS}"
   "${READLINE_INCLUDE_DIRS}"
   "${GSL_INCLUDE_DIRS}"

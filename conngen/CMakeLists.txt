@@ -42,3 +42,7 @@ install( TARGETS conngen
 
 install( DIRECTORY sli
     DESTINATION ${CMAKE_INSTALL_DATADIR} )
+
+FILTER_HEADERS("${conngen_sources}" install_headers )
+install( FILES ${install_headers}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

@@ -26,6 +26,7 @@ set( models_sources
     aeif_cond_exp.h aeif_cond_exp.cpp
     aeif_psc_alpha.h aeif_psc_alpha.cpp
     aeif_psc_exp.h aeif_psc_exp.cpp
+    aeif_psc_delta.h aeif_psc_delta.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
     bernoulli_connection.h
     binary_neuron.h
@@ -38,6 +39,7 @@ set( models_sources
     erfc_neuron.h erfc_neuron.cpp
     gamma_sup_generator.h gamma_sup_generator.cpp
     gap_junction.h
+    gauss_rate.h gauss_rate.cpp
     gif_psc_exp.h gif_psc_exp.cpp
     gif_psc_exp_multisynapse.h gif_psc_exp_multisynapse.cpp
     gif_cond_exp.h gif_cond_exp.cpp
@@ -54,7 +56,6 @@ set( models_sources
     iaf_cond_alpha_mc.h iaf_cond_alpha_mc.cpp
     iaf_cond_exp.h iaf_cond_exp.cpp
     iaf_cond_exp_sfa_rr.h iaf_cond_exp_sfa_rr.cpp
-    iaf_neuron.h iaf_neuron.cpp
     iaf_psc_alpha.h iaf_psc_alpha.cpp
     iaf_psc_alpha_multisynapse.h iaf_psc_alpha_multisynapse.cpp
     iaf_psc_exp_multisynapse.h iaf_psc_exp_multisynapse.cpp
@@ -85,7 +86,10 @@ set( models_sources
     rate_connection_instantaneous.h
     rate_neuron_opn.h rate_neuron_opn_impl.h
     rate_neuron_ipn.h rate_neuron_ipn_impl.h
+    rate_transformer_node.h rate_transformer_node_impl.h
     siegert_neuron.h siegert_neuron.cpp
+    sigmoid_rate.h sigmoid_rate.cpp
+    sigmoid_rate_gg_1998.h sigmoid_rate_gg_1998.cpp
     sinusoidal_poisson_generator.h sinusoidal_poisson_generator.cpp
     sinusoidal_gamma_generator.h sinusoidal_gamma_generator.cpp
     spike_detector.h spike_detector.cpp
@@ -128,3 +132,7 @@ install( TARGETS models
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
+
+FILTER_HEADERS("${models_sources}" install_headers )
+install( FILES ${install_headers}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

@@ -33,7 +33,7 @@ from . import test_get_sp_status
 
 HAVE_MPI = nest.sli_func("statusdict/have_mpi ::")
 if HAVE_MPI:
-    print ("Testing with MPI")
+    print("Testing with MPI")
     from subprocess import call
     import sys
     import os
@@ -49,7 +49,7 @@ def suite():
             for test in mpitests:
                 test = os.path.join(path, test)
                 command = nest.sli_func("mpirun", 2, "python", test)
-                print ("Executing test with command: " + command)
+                print("Executing test with command: " + command)
                 command = command.split()
                 my_env = os.environ.copy()
                 try:
@@ -58,8 +58,8 @@ def suite():
                     pass
                 call(command, env=my_env)
         except:
-            print (sys.exc_info()[0])
-            print ("Test call with MPI ended in error")
+            print(sys.exc_info()[0])
+            print("Test call with MPI ended in error")
             raise
     test_suite = unittest.TestSuite()
 

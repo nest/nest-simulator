@@ -179,12 +179,16 @@ DiffusionConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
+  {
     throw BadProperty( "diffusion_connection has no delay." );
+  }
   // If the parameter weight is set, we throw a BadProperty
   if ( d->known( names::weight ) )
+  {
     throw BadProperty(
       "Please use the parameters drift_factor and "
       "diffusion_factor to specifiy the weights." );
+  }
 
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::drift_factor, drift_factor_ );

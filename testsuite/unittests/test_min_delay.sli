@@ -39,8 +39,8 @@
 
 /delay 2.5 def
  
-/iaf_neuron Create
-/iaf_neuron Create
+/iaf_psc_alpha Create
+/iaf_psc_alpha Create
 1.0 delay Connect
 
 { 0 GetStatus /min_delay get delay eq } assert_or_die

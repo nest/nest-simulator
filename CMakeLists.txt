@@ -17,8 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>
 
-cmake_minimum_required( VERSION 2.8.12 )
-# juqueen 2.8.12.2
+cmake_minimum_required( VERSION 3.1 )
 
 # add cmake modules: for all `include(...)` first look here
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
@@ -28,7 +27,7 @@ set( NEST_USER_EMAIL "nest_user@nest-initiative.org" )
 
 # VERSION exported to libnestutil/config.h, extras/create_release.sh
 set( NEST_VERSION_MAJOR 2 )
-set( NEST_VERSION_MINOR 12 )
+set( NEST_VERSION_MINOR 14 )
 set( NEST_VERSION_PATCHLEVEL 0 )
 
 set( NEST_VERSION_VERSION "${NEST_VERSION_MAJOR}.${NEST_VERSION_MINOR}.${NEST_VERSION_PATCHLEVEL}" )
@@ -41,6 +40,7 @@ set( NEST_VERSION_PRGNAME "${PROJECT_NAME}-${NEST_VERSION_VERSION}" )
 # set NEST defaults
 set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time. [default 1000.0]" )
 set( tics_per_step "100" CACHE STRING "Specify resolution. [default 100]" )
+set( connector_cutoff "3" CACHE STRING "Specify when to truncate the recursive instantiation of the connector. [default 3]" )
 option( with-ps-arrays "Use PS array construction semantics. [default=ON]" ON )
 
 # add user modules
@@ -91,17 +91,12 @@ include( GNUInstallDirs )
 #################        Do not install into /usr/local        #################
 ################################################################################
 
+get_filename_component(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
+# If CMAKE_INSTALL_PREFIX is omitted CMake will set the installation prefix to its default '/usr/local'.
+# This is not desired. A subdirectory is allowed, e.g. 'usr/local/nest'.
 if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
-  # no prefix given?
-  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'. "
-                    "Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
+  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'. Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
 endif ()
-
-################################################################################
-#################    Use absolute path for CMAKE_NEST_PREFIX   #################
-################################################################################
-
-get_filename_component(CMAKE_NEST_PREFIX ${CMAKE_INSTALL_PREFIX} REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
 
 ################################################################################
 ##################           Find utility programs            ##################
@@ -188,22 +183,22 @@ file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 
 if ( HAVE_PYTHON )
   add_custom_target( installcheck
-      #COMMAND ${CMAKE_MAKE_PROGRAM} install
-      COMMAND export PATH="${CMAKE_INSTALL_FULL_BINDIR}:$ENV{PATH}" &&
-      export PYTHON="${PYTHON}" &&
-      export PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}:$ENV{PYTHONPATH}" &&
+    COMMAND ${CMAKE_COMMAND} -E env
+      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
+      PYTHON="${PYTHON}"
+      NEST_PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}"
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
-      WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-      COMMENT "Execute NEST's testsuite...."
-      )
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+    COMMENT "Execute NEST's testsuite...."
+  )
 else ()
   add_custom_target( installcheck
-      #COMMAND ${CMAKE_MAKE_PROGRAM} install
-      COMMAND export PATH="${CMAKE_INSTALL_FULL_BINDIR}:$ENV{PATH}" &&
+    COMMAND ${CMAKE_COMMAND} -E env
+      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
-      WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-      COMMENT "Execute NEST's testsuite...."
-      )
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+    COMMENT "Execute NEST's testsuite...."
+  )
 endif ()
 
 add_custom_target( check
@@ -275,6 +270,7 @@ set( ALL_LIBS
   "-lrandom"
   "-lsli"
   "-lnestkernel"
+  "-ltopology"
   "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${READLINE_LIBRARIES}"
@@ -289,13 +285,7 @@ string( REPLACE ";" " " ALL_LIBS "${ALL_LIBS}" )
 
 # all includes
 set( ALL_INCLUDES_tmp
-  "${PROJECT_SOURCE_DIR}/libnestutil"
-  "${PROJECT_BINARY_DIR}/libnestutil"
-  "${PROJECT_SOURCE_DIR}/librandom"
-  "${PROJECT_SOURCE_DIR}/sli"
-  "${PROJECT_SOURCE_DIR}/topology"
-  "${PROJECT_SOURCE_DIR}/nestkernel"
-  "${PROJECT_SOURCE_DIR}/nest"
+  "${CMAKE_INSTALL_FULL_INCLUDEDIR}/nest"
   "${LTDL_INCLUDE_DIRS}"
   "${READLINE_INCLUDE_DIRS}"
   "${GSL_INCLUDE_DIRS}"

@@ -81,10 +81,9 @@ for.
 
     dir(nest)
 
-
-One such command is `nest.Models()`, which will return a list of all the
+One such command is `nest.Models?`, which will return a list of all the
 available models you can use. If you want to obtain more information about a
-particular command, you may use Python’s standard help system.
+particular command, you may use IPython’s standard help system.
 
     nest.Models?
 
@@ -288,7 +287,7 @@ you have to adapt the model created in the previous part. Save your code
 under a new name, in the next section you will also work on this code.
 Create an extra neuron with the background current given a different value:
 
-    neuron2 = nest.Create("iaf_neuron")
+    neuron2 = nest.Create("iaf_psc_alpha")
     nest.SetStatus(neuron2 , {"I_e": 370.0})
 
 now connect this newly created neuron to the multimeter:
@@ -388,7 +387,7 @@ current, and add a second neuron.
     nest.SetStatus(neuron1, {"I_e": 376.0})
     neuron2 = nest.Create("iaf_psc_alpha")
     multimeter = nest.Create("multimeter")
-    nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]}
+    nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
 
 We now connect `neuron1` to `neuron2`, and record the membrane potential from
 `neuron2` so we can observe the postsynaptic potentials caused by the spikes of

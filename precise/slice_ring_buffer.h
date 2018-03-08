@@ -98,6 +98,9 @@ public:
    *                   should never contain spikes with smaller
    *                   stamps.  Spikes with larger stamps are
    *                   left in queue.
+   * @param accumulate_simultaneous If true, return summed weight
+   *                   of simultaneous input spikes, otherwise return
+   *                   one spike at a time.
    * @param ps_offset  PS-sense offset of spike time
    * @param weight     Spike weight
    * @param end_of_refract True if spike is pseudo-spike marking
@@ -105,10 +108,9 @@ public:
    * @returns          true if spike available, false otherwise
    * @note             If return from refractoriness coincides with
    *                   a spike, return from refractoriness is returned.
-   *                   If several spikes coincide, the sum of their
-   *                   weights is returned a single spike.
    */
   bool get_next_spike( const long req_stamp,
+    bool accumulate_simultaneous,
     double& ps_offset,
     double& weight,
     bool& end_of_refract );
@@ -180,6 +182,7 @@ SliceRingBuffer::add_refractory( const long stamp, const double ps_offset )
 
 inline bool
 SliceRingBuffer::get_next_spike( const long req_stamp,
+  bool accumulate_simultaneous,
   double& ps_offset,
   double& weight,
   bool& end_of_refract )
@@ -205,17 +208,20 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
   }
   else if ( deliver_->back().stamp_ == req_stamp )
   {
-    // we have an event to deliver, register its offset
+    // we have an event to deliver
     ps_offset = deliver_->back().ps_offset_;
+    weight = deliver_->back().weight_;
+    deliver_->pop_back();
 
-    // accumulate weights of all spikes with same stamp
-    // AND offset
-    weight = 0.0; // accumulate weights of all
-    while ( not deliver_->empty() && deliver_->back().ps_offset_ == ps_offset
-      && deliver_->back().stamp_ == req_stamp )
+    if ( accumulate_simultaneous )
     {
-      weight += deliver_->back().weight_;
-      deliver_->pop_back();
+      // add weights of all spikes with same stamp and offset
+      while ( not deliver_->empty() and deliver_->back().ps_offset_ == ps_offset
+        and deliver_->back().stamp_ == req_stamp )
+      {
+        weight += deliver_->back().weight_;
+        deliver_->pop_back();
+      }
     }
 
     return true;

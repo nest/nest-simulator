@@ -80,6 +80,13 @@ else
     CONFIGURE_READLINE="-Dwith-readline=OFF"
 fi
 
+if [ "$xLIBNEUROSIM" = "1" ] ; then
+    CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
+else
+    CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
+fi
+
+
 NEST_VPATH=build
 NEST_RESULT=result
 NEST_RESULT=$(readlink -f $NEST_RESULT)
@@ -94,9 +101,17 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 
   echo "MSGBLD0010: Initializing VERA++ static code analysis."
+  wget --no-verbose https://bitbucket.org/verateam/vera/downloads/vera++-1.3.0.tar.gz
+  tar -xzf vera++-1.3.0.tar.gz
+  cd vera++-1.3.0
+  cmake -DCMAKE_INSTALL_PREFIX=/usr -DVERA_LUA=OFF -DVERA_USE_SYSTEM_BOOST=ON
+  sudo make install
+  cd ..
+  rm -fr ./vera++-1.3.0
+  rm -f ./vera++-1.3.0.tar.gz
   # Add the NEST profile to the VERA++ profiles.
   sudo cp ./extras/vera++.profile /usr/lib/vera++/profiles/nest
-  echo "MSGBLD0020: VERA++ initialization completed."  
+  echo "MSGBLD0020: VERA++ initialization completed."
 
   if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
     echo "MSGBLD0030: Installing CPPCHECK version 1.69."
@@ -163,7 +178,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
 
   # The following command line parameters indicate whether static code analysis error messages
   # will cause the Travis CI build to fail or are ignored.
-  IGNORE_MSG_VERA=true
+  IGNORE_MSG_VERA=false
   IGNORE_MSG_CPPCHECK=true
   IGNORE_MSG_CLANG_FORMAT=false
   IGNORE_MSG_PEP8=false
@@ -200,6 +215,7 @@ cmake \
   $CONFIGURE_GSL \
   $CONFIGURE_LTDL \
   $CONFIGURE_READLINE \
+  $CONFIGURE_LIBNEUROSIM \
   ..
 echo "MSGBLD0240: CMake configure completed."
 
@@ -224,6 +240,8 @@ echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 echo "+               R U N   N E S T   T E S T S U I T E                           +"
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "MSGBLD0290: Running make installcheck."
+export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
+export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
 make installcheck
 echo "MSGBLD0300: Make installcheck completed."
 

@@ -303,10 +303,11 @@ the circle the center of the layer.}
 \emph{Free layers}\index{free layer} do not restrict node positions to
 a grid, but allow free placement within the extent. To this end, the
 user needs to specify the positions of all nodes explicitly. The
-following code creates a layer of 50 \lstinline!iaf_psc_alpha! neurons uniformly
-distributed in a layer with extent $1\times 1$, i.e., spanning the
-square $[-0.5,0.5]\times[-0.5,0.5]$:
+following code creates a layer of 50 \lstinline!iaf_psc_alpha! neurons
+uniformly distributed in a layer with extent $1\times 1$, i.e.,
+spanning the square $[-0.5,0.5]\times[-0.5,0.5]$:
 %
+\newline
 \lstinputlisting[linerange=layer4-end]{user_manual_scripts/layers.py}
 \scriptfig{layer4}{0.5}{Layer with freely spaced elements.}%
 {A free layer with 50 elements uniformly distributed in an extent of
@@ -888,6 +889,7 @@ Several examples follow. They are illustrated in Fig.~\ref{fig:conn4}.
 \item[Gaussian\index{Gaussian kernel}] This kernel is distance dependent. In the example,
   connection probability is 1 for $d=0$ and falls off with a
   ``standard deviation'' of $\sigma=1$:
+\newline
 \lstinputlisting[linerange=conn4g-end]{user_manual_scripts/connections.py} 
 \item[Eccentric Gaussian\index{eccentric kernel}] In this example, both kernel and mask have
   been moved using anchors:

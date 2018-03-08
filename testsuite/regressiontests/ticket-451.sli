@@ -39,7 +39,7 @@ Author: Hans Ekkehard Plesser, 2010-09-20
 
 M_INFO setverbosity
 
-/iaf_neuron 3 Create ;
+/iaf_psc_alpha 3 Create ;
 
 {
 [1 2 3] [1] << /rule /fixed_indegree /indegree 4 /multapses false /autapses true >> Connect

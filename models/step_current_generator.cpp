@@ -28,6 +28,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
+#include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
@@ -51,14 +52,16 @@ RecordablesMap< step_current_generator >::create()
  * ---------------------------------------------------------------- */
 
 nest::step_current_generator::Parameters_::Parameters_()
-  : amp_times_()  // ms
+  : amp_time_stamps_()
   , amp_values_() // pA
+  , allow_offgrid_amp_times_( false )
 {
 }
 
 nest::step_current_generator::Parameters_::Parameters_( const Parameters_& p )
-  : amp_times_( p.amp_times_ )
+  : amp_time_stamps_( p.amp_time_stamps_ )
   , amp_values_( p.amp_values_ )
+  , allow_offgrid_amp_times_( p.allow_offgrid_amp_times_ )
 {
 }
 
@@ -71,8 +74,9 @@ nest::step_current_generator::Parameters_&
     return *this;
   }
 
-  amp_times_ = p.amp_times_;
+  amp_time_stamps_ = p.amp_time_stamps_;
   amp_values_ = p.amp_values_;
+  allow_offgrid_amp_times_ = p.allow_offgrid_amp_times_;
 
   return *this;
 }
@@ -83,13 +87,17 @@ nest::step_current_generator::State_::State_()
 }
 
 nest::step_current_generator::Buffers_::Buffers_( step_current_generator& n )
-  : logger_( n )
+  : idx_( 0 )
+  , amp_( 0 )
+  , logger_( n )
 {
 }
 
 nest::step_current_generator::Buffers_::Buffers_( const Buffers_&,
   step_current_generator& n )
-  : logger_( n )
+  : idx_( 0 )
+  , amp_( 0 )
+  , logger_( n )
 {
 }
 
@@ -100,48 +108,128 @@ nest::step_current_generator::Buffers_::Buffers_( const Buffers_&,
 void
 nest::step_current_generator::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ names::amplitude_times ] =
-    DoubleVectorDatum( new std::vector< double >( amp_times_ ) );
+  std::vector< double >* times_ms = new std::vector< double >();
+  times_ms->reserve( amp_time_stamps_.size() );
+  for ( std::vector< Time >::const_iterator it = amp_time_stamps_.begin();
+        it != amp_time_stamps_.end();
+        ++it )
+  {
+    times_ms->push_back( it->get_ms() );
+  }
+  ( *d )[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
   ( *d )[ names::amplitude_values ] =
     DoubleVectorDatum( new std::vector< double >( amp_values_ ) );
+  ( *d )[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_amp_times_ );
+}
+
+nest::Time
+nest::step_current_generator::Parameters_::validate_time_( double t,
+  const Time& t_previous )
+{
+  if ( t <= 0.0 )
+  {
+    throw BadProperty(
+      "Amplitude can only be changed at strictly "
+      "positive times (t > 0)." );
+  }
+
+  // Force the amplitude change time to the grid
+  // First, convert the time to tics, may not be on grid
+  Time t_amp = Time::ms( t );
+  if ( not t_amp.is_grid_time() )
+  {
+    if ( allow_offgrid_amp_times_ )
+    {
+      // In this case, we need to round to the end of the step
+      // in which t lies, ms_stamp does that for us.
+      t_amp = Time::ms_stamp( t );
+    }
+    else
+    {
+      std::stringstream msg;
+      msg << "step_current_generator: Time point " << t
+          << " is not representable in current resolution.";
+      throw BadProperty( msg.str() );
+    }
+  }
+
+  assert( t_amp.is_grid_time() );
+
+  // t_amp is now the correct time stamp given the chosen options
+  if ( t_amp <= t_previous )
+  {
+    throw BadProperty(
+      "step_current_generator: amplitude "
+      "times must be at strictly increasing "
+      "time steps." );
+  }
+
+  // when we get here, we know that the spike time is valid
+  return t_amp;
 }
 
 void
 nest::step_current_generator::Parameters_::set( const DictionaryDatum& d,
   Buffers_& b )
 {
-  const bool ut =
-    updateValue< std::vector< double > >( d, "amplitude_times", amp_times_ );
-  const bool uv =
-    updateValue< std::vector< double > >( d, "amplitude_values", amp_values_ );
-  if ( ut xor uv )
+  std::vector< double > new_times;
+  const bool times_changed = updateValue< std::vector< double > >(
+    d, names::amplitude_times, new_times );
+  const bool values_changed = updateValue< std::vector< double > >(
+    d, names::amplitude_values, amp_values_ );
+  const bool allow_offgrid_changed = updateValue< bool >(
+    d, names::allow_offgrid_times, allow_offgrid_amp_times_ );
+
+  if ( times_changed xor values_changed )
   {
     throw BadProperty( "Amplitude times and values must be reset together." );
   }
 
-  if ( amp_times_.size() != amp_values_.size() )
+  if ( allow_offgrid_changed
+    and not( times_changed or amp_time_stamps_.empty() ) )
+  {
+    // times_changed implies values_changed
+    throw BadProperty(
+      "allow_offgrid_times can only be changed before "
+      "amplitude_times have been set, or together with "
+      "amplitude_times and amplitude_values." );
+  }
+
+  const size_t times_size =
+    times_changed ? new_times.size() : amp_time_stamps_.size();
+
+  if ( times_size != amp_values_.size() )
   {
     throw BadProperty( "Amplitude times and values have to be the same size." );
   }
 
-  // ensure amp times are strictly monotonically increasing
-  if ( not amp_times_.empty() )
+  if ( times_changed )
   {
-    std::vector< double >::const_iterator prev = amp_times_.begin();
-    for ( std::vector< double >::const_iterator next = prev + 1;
-          next != amp_times_.end();
-          ++next, ++prev )
+    std::vector< Time > new_stamps;
+    new_stamps.reserve( times_size );
+
+    if ( not new_times.empty() )
     {
-      if ( *prev >= *next )
+      // insert first change, we are sure we have one
+      new_stamps.push_back(
+        validate_time_( new_times[ 0 ], Time( Time::ms( 0 ) ) ) );
+
+      // insert all others
+      for ( size_t idx = 1; idx < times_size; ++idx )
       {
-        throw BadProperty( "Amplitude times must strictly increasing." );
+        new_stamps.push_back(
+          validate_time_( new_times[ idx ], new_stamps[ idx - 1 ] ) );
       }
     }
+
+    // if we get here, all times have been successfully converted
+    amp_time_stamps_.swap( new_stamps );
   }
-  if ( ut && uv )
+
+  if ( times_changed or values_changed )
   {
-    b.idx_ = 0;
-  } // reset if we got new data
+    b.idx_ = 0; // reset if we got new data
+  }
 }
 
 
@@ -215,15 +303,15 @@ nest::step_current_generator::update( Time const& origin,
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  assert( P_.amp_times_.size() == P_.amp_values_.size() );
+  assert( P_.amp_time_stamps_.size() == P_.amp_values_.size() );
 
   const long t0 = origin.get_steps();
 
   // Skip any times in the past. Since we must send events proactively,
   // idx_ must point to times in the future.
   const long first = t0 + from;
-  while ( B_.idx_ < P_.amp_times_.size()
-    && Time( Time::ms( P_.amp_times_[ B_.idx_ ] ) ).get_steps() <= first )
+  while ( B_.idx_ < P_.amp_time_stamps_.size()
+    && P_.amp_time_stamps_[ B_.idx_ ].get_steps() <= first )
   {
     ++B_.idx_;
   }
@@ -237,9 +325,8 @@ nest::step_current_generator::update( Time const& origin,
     // Keep the amplitude up-to-date at all times.
     // We need to change the amplitude one step ahead of time, see comment
     // on class SimulatingDevice.
-    if ( B_.idx_ < P_.amp_times_.size()
-      && curr_time + 1
-        == Time( Time::ms( P_.amp_times_[ B_.idx_ ] ) ).get_steps() )
+    if ( B_.idx_ < P_.amp_time_stamps_.size()
+      && curr_time + 1 == P_.amp_time_stamps_[ B_.idx_ ].get_steps() )
     {
       B_.amp_ = P_.amp_values_[ B_.idx_ ];
       B_.idx_++;

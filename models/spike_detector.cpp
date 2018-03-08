@@ -42,21 +42,19 @@
 #include "integerdatum.h"
 
 nest::spike_detector::spike_detector()
-  : Node()
+  : DeviceNode()
   // record time and gid
   , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true )
   , has_proxies_( false )
   , local_receiver_( true )
-  , local_device_id_( invalid_index )
 {
 }
 
 nest::spike_detector::spike_detector( const spike_detector& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( *this, n.device_ )
   , has_proxies_( false )
   , local_receiver_( true )
-  , local_device_id_( invalid_index ) // copy must get its own device id
 {
 }
 

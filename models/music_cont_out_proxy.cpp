@@ -197,7 +197,7 @@ nest::music_cont_out_proxy::State_::get( DictionaryDatum& d ) const
  * ---------------------------------------------------------------- */
 
 nest::music_cont_out_proxy::music_cont_out_proxy()
-  : Node()
+  : DeviceNode()
   , P_()
   , S_()
   , B_()
@@ -206,7 +206,7 @@ nest::music_cont_out_proxy::music_cont_out_proxy()
 
 nest::music_cont_out_proxy::music_cont_out_proxy(
   const music_cont_out_proxy& n )
-  : Node( n )
+  : DeviceNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_ )

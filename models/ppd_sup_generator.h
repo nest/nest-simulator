@@ -34,7 +34,7 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "stimulating_device.h"
 
 /*BeginDocumentation
@@ -88,7 +88,7 @@ namespace nest
  *
  * @ingroup Devices
  */
-class ppd_sup_generator : public Node
+class ppd_sup_generator : public DeviceNode
 {
 
 public:
@@ -117,9 +117,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  void set_local_device_id( const index ldid );
-  index get_local_device_id() const;
 
 private:
   void init_state_( const Node& );
@@ -235,8 +232,6 @@ private:
   Parameters_ P_;
   Variables_ V_;
   Buffers_ B_;
-
-  index local_device_id_;
 };
 
 inline port
@@ -286,18 +281,6 @@ ppd_sup_generator::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
-}
-
-inline void
-ppd_sup_generator::set_local_device_id( const index ldid )
-{
-  local_device_id_ = ldid;
-}
-
-inline index
-ppd_sup_generator::get_local_device_id() const
-{
-  return local_device_id_;
 }
 
 } // namespace

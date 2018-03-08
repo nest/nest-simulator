@@ -31,7 +31,7 @@
 #include "event.h"
 #include "exceptions.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "recording_device.h"
 
 /* BeginDocumentation
@@ -103,7 +103,7 @@ namespace nest
  *
  * @ingroup Devices
  */
-class spin_detector : public Node
+class spin_detector : public DeviceNode
 {
 
 public:
@@ -138,9 +138,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  void set_local_device_id( const index ldid );
-  index get_local_device_id() const;
 
 private:
   void init_state_( Node const& );
@@ -189,8 +186,6 @@ private:
   Buffers_ B_;
   index last_in_gid_;
   Time t_last_in_spike_;
-
-  index local_device_id_;
 };
 
 inline port
@@ -219,18 +214,6 @@ inline SignalType
 spin_detector::receives_signal() const
 {
   return BINARY;
-}
-
-inline void
-spin_detector::set_local_device_id( const index ldid )
-{
-  local_device_id_ = ldid;
-}
-
-inline index
-spin_detector::get_local_device_id() const
-{
-  return local_device_id_;
 }
 
 } // namespace

@@ -238,7 +238,7 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d,
  * ---------------------------------------------------------------- */
 
 nest::step_current_generator::step_current_generator()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
   , S_()
@@ -249,7 +249,7 @@ nest::step_current_generator::step_current_generator()
 
 nest::step_current_generator::step_current_generator(
   const step_current_generator& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
   , S_( n.S_ )

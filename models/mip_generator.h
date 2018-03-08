@@ -35,7 +35,7 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "stimulating_device.h"
 
 namespace nest
@@ -98,7 +98,7 @@ SeeAlso: Device
  *       Most important: If RNG is changed in prototype by SetDefaults,
  *       then this is
  */
-class mip_generator : public Node
+class mip_generator : public DeviceNode
 {
 
 public:
@@ -133,9 +133,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  void set_local_device_id( const index ldid );
-  index get_local_device_id() const;
 
 private:
   void init_state_( const Node& );
@@ -184,8 +181,6 @@ private:
   StimulatingDevice< SpikeEvent > device_;
   Parameters_ P_;
   Variables_ V_;
-
-  index local_device_id_;
 };
 
 inline port
@@ -230,18 +225,6 @@ mip_generator::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
-}
-
-inline void
-mip_generator::set_local_device_id( const index ldid )
-{
-  local_device_id_ = ldid;
-}
-
-inline index
-mip_generator::get_local_device_id() const
-{
-  return local_device_id_;
 }
 
 } // namespace nest

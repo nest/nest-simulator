@@ -300,7 +300,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
  * ---------------------------------------------------------------- */
 
 nest::spike_generator::spike_generator()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
   , S_()
@@ -308,7 +308,7 @@ nest::spike_generator::spike_generator()
 }
 
 nest::spike_generator::spike_generator( const spike_generator& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
   , S_( n.S_ )

@@ -23,7 +23,6 @@
 #ifndef SPIKE_DETECTOR_H
 #define SPIKE_DETECTOR_H
 
-
 // C++ includes:
 #include <vector>
 
@@ -31,7 +30,7 @@
 #include "event.h"
 #include "exceptions.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "recording_device.h"
 
 /* BeginDocumentation
@@ -96,7 +95,7 @@ namespace nest
  *
  * @ingroup Devices
  */
-class spike_detector : public Node
+class spike_detector : public DeviceNode
 {
 
 public:
@@ -138,9 +137,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  void set_local_device_id( const index ldid );
-  index get_local_device_id() const;
 
 private:
   void init_state_( Node const& );
@@ -190,8 +186,6 @@ private:
 
   bool has_proxies_;
   bool local_receiver_;
-
-  index local_device_id_;
 };
 
 inline void
@@ -233,18 +227,6 @@ inline SignalType
 spike_detector::receives_signal() const
 {
   return ALL;
-}
-
-inline void
-spike_detector::set_local_device_id( const index ldid )
-{
-  local_device_id_ = ldid;
-}
-
-inline index
-spike_detector::get_local_device_id() const
-{
-  return local_device_id_;
 }
 
 } // namespace

@@ -39,7 +39,7 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -88,7 +88,7 @@ namespace nest
  * MUSIC port. The timestamps of the events also contain offsets,
  * which makes it also useful for precise spikes.
  */
-class music_cont_in_proxy : public Node
+class music_cont_in_proxy : public DeviceNode
 {
 
 public:

@@ -101,14 +101,14 @@ nest::music_cont_in_proxy::State_::set( const DictionaryDatum&,
  * ---------------------------------------------------------------- */
 
 nest::music_cont_in_proxy::music_cont_in_proxy()
-  : Node()
+  : DeviceNode()
   , P_()
   , S_()
 {
 }
 
 nest::music_cont_in_proxy::music_cont_in_proxy( const music_cont_in_proxy& n )
-  : Node( n )
+  : DeviceNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
 {

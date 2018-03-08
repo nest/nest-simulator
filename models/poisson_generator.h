@@ -35,7 +35,7 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "stimulating_device.h"
 
 namespace nest
@@ -100,7 +100,7 @@ Remarks:
 SeeAlso: poisson_generator_ps, Device, parrot_neuron
 */
 
-class poisson_generator : public Node
+class poisson_generator : public DeviceNode
 {
 
 public:
@@ -123,16 +123,11 @@ public:
    * Hiding
    */
   using Node::event_hook;
-  using Node::set_local_device_id;
-  using Node::get_local_device_id;
 
   port send_test_event( Node&, rport, synindex, bool );
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  void set_local_device_id( const index ldid );
-  index get_local_device_id() const;
 
 private:
   void init_state_( const Node& );
@@ -169,8 +164,6 @@ private:
   StimulatingDevice< SpikeEvent > device_;
   Parameters_ P_;
   Variables_ V_;
-
-  index local_device_id_;
 };
 
 inline port
@@ -215,18 +208,6 @@ poisson_generator::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
-}
-
-inline void
-poisson_generator::set_local_device_id( const index ldid )
-{
-  local_device_id_ = ldid;
-}
-
-inline index
-poisson_generator::get_local_device_id() const
-{
-  return local_device_id_;
 }
 
 } // namespace nest

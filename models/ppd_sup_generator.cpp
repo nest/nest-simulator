@@ -177,14 +177,14 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d )
  * ---------------------------------------------------------------- */
 
 nest::ppd_sup_generator::ppd_sup_generator()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
 {
 }
 
 nest::ppd_sup_generator::ppd_sup_generator( const ppd_sup_generator& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
 {

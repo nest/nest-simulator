@@ -84,7 +84,8 @@ public:
 
   // subnet does not require local id; needs to be defined here to
   // avoid exception in node_manager::add_node
-  void set_local_device_id( const index ldid ){};
+  void set_local_device_id( const index ldid ) {}
+  index get_local_device_id() const { return invalid_index; }
 
   bool has_proxies() const;
 

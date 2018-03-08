@@ -37,6 +37,9 @@
 #include "source.h"
 #include "source_table_position.h"
 
+// Includes from libnestutil
+#include "vector_util.h"
+
 namespace nest
 {
 
@@ -218,12 +221,7 @@ SourceTable::add_source( const thread tid,
 {
   const Source src( gid, is_primary );
 
-  // use 1.5 growth strategy (see, e.g.,
-  // https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md)
-  if ( ( *sources_[ tid ] )[ syn_id ]->size() == ( *sources_[ tid ] )[ syn_id ]->capacity() )
-  {
-    ( *sources_[ tid ] )[ syn_id ]->reserve( ( ( *sources_[ tid ] )[ syn_id ]->size() * 3 + 1 ) / 2 );
-  }
+  vector_util::grow( ( *( *sources_[ tid ] )[ syn_id ] ) );
 
   ( *sources_[ tid ] )[ syn_id ]->push_back( src );
 }

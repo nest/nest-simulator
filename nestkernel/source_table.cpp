@@ -236,7 +236,7 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
 
   index lcid = max_size - 1;
 
-  while ( ( *( *sources_[ tid ] )[ syn_id ] )[ lcid ].is_disabled() && lcid >= 0 )
+  while ( ( *( *sources_[ tid ] )[ syn_id ] )[ lcid ].is_disabled() )
   {
     --lcid;
   }

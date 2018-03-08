@@ -174,7 +174,7 @@ Installation instructions here have been tested under OS X 10.11 *El Capitan* an
 
         mkdir NEST       # directory for all NEST stuff
         cd NEST
-        tar zxf nest-2.12.0.tar.gz
+        tar zxf nest-2.14.0.tar.gz
         mkdir bld
         cd bld
 

@@ -100,12 +100,12 @@ project( ${MODULE_NAME} CXX )
 execute_process(
     COMMAND ${NEST_CONFIG} --prefix
     RESULT_VARIABLE RES_VAR
-    OUTPUT_VARIABLE NEST_PREFIX
+    OUTPUT_VARIABLE NEST_INSTALL_PREFIX
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-# Use the `NEST_PREFIX` as `CMAKE_INSTALL_PREFIX`.
-set( CMAKE_INSTALL_PREFIX "${NEST_PREFIX}" CACHE STRING "Install path prefix, prepended onto install directories." FORCE )
+# Use the NEST_INSTALL_PREFIX as CMAKE_INSTALL_PREFIX.
+set( CMAKE_INSTALL_PREFIX "${NEST_INSTALL_PREFIX}" CACHE STRING "Install path prefix, prepended onto install directories." FORCE )
 
 # Get the CXXFLAGS.
 execute_process(
@@ -164,7 +164,7 @@ execute_process(
 execute_process(
     COMMAND ${NEST_CONFIG} --datadir
     RESULT_VARIABLE RES_VAR
-    OUTPUT_VARIABLE NEST_DATADIR
+    OUTPUT_VARIABLE NEST_INSTALL_DATADIR
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
@@ -172,7 +172,7 @@ execute_process(
 execute_process(
     COMMAND ${NEST_CONFIG} --docdir
     RESULT_VARIABLE RES_VAR
-    OUTPUT_VARIABLE NEST_DOCDIR
+    OUTPUT_VARIABLE NEST_INSTALL_DOCDIR
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
@@ -189,8 +189,8 @@ set( CMAKE_MACOSX_RPATH ON )
 
 # Install all stuff to NEST's install directories.
 set( CMAKE_INSTALL_LIBDIR ${NEST_LIBDIR}/nest CACHE STRING "object code libraries (lib/nest or lib64/nest or lib/<multiarch-tuple>/nest on Debian)" FORCE )
-set( CMAKE_INSTALL_DOCDIR ${NEST_DOCDIR} CACHE STRING "documentation root (DATAROOTDIR/doc/nest)" FORCE )
-set( CMAKE_INSTALL_DATADIR ${NEST_DATADIR} CACHE STRING "read-only architecture-independent data (DATAROOTDIR/nest)" FORCE )
+set( CMAKE_INSTALL_DOCDIR ${NEST_INSTALL_DOCDIR} CACHE STRING "documentation root (DATAROOTDIR/doc/nest)" FORCE )
+set( CMAKE_INSTALL_DATADIR ${NEST_INSTALL_DATADIR} CACHE STRING "read-only architecture-independent data (DATAROOTDIR/nest)" FORCE )
 
 include( GNUInstallDirs )
 
@@ -276,7 +276,7 @@ if ( NOT CMAKE_CROSSCOMPILING )
   add_custom_command( TARGET generate_help POST_BUILD
     COMMAND python -B generate_help.py "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}"
     COMMAND python -B generate_helpindex.py "${PROJECT_BINARY_DIR}/doc"
-    WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${NEST_DATADIR}/help_generator"
+    WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${NEST_INSTALL_DATADIR}/help_generator"
     COMMENT "Extracting help information; this may take a litte while."
     )
   # Copy the local doc/help directory to the global installation
@@ -289,7 +289,7 @@ if ( NOT CMAKE_CROSSCOMPILING )
   install( CODE
     "execute_process(
       COMMAND python -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
-      WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${NEST_DATADIR}/help_generator\"
+      WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${NEST_INSTALL_DATADIR}/help_generator\"
     )"
     )
 endif ()

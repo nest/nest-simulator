@@ -1270,6 +1270,11 @@ public:
       push_back( conn );
     }
   }
+  void
+  reduce_primary()
+  {
+    --primary_end_;
+  }
 };
 
 } // of namespace nest

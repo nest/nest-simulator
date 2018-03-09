@@ -43,6 +43,10 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         # neuron parameters
         self.neuron_params = {'tau': 5., 'std': 0.}
+        self.neuron_params2 = self.neuron_params.copy()
+        self.neuron_params2.update({'mult_coupling': True})
+        self.neuron_params3 = self.neuron_params.copy()
+        self.neuron_params3.update({'rectify_output': True, 'rate': 1.})
         self.drive = 1.5
         self.delay = 2.
         self.weight = 0.5
@@ -60,6 +64,9 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         self.rate_neuron_drive = nest.Create(
             'lin_rate_ipn', params={'rate': self.drive,
                                     'mean': self.drive, 'std': 0.})
+        self.rate_neuron_negative_drive = nest.Create(
+            'lin_rate_ipn', params={'rate': -self.drive,
+                                    'mean': -self.drive, 'std': 0.})
 
         self.rate_neuron_1 = nest.Create(
             'lin_rate_ipn', params=self.neuron_params)
@@ -67,6 +74,12 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
             'tanh_rate_ipn', params=self.neuron_params)
         self.rate_neuron_3 = nest.Create(
             'threshold_lin_rate_ipn', params=self.neuron_params)
+        self.rate_neuron_4 = nest.Create(
+            'lin_rate_ipn', params=self.neuron_params2)
+        self.rate_neuron_5 = nest.Create(
+            'lin_rate_ipn', params=self.neuron_params3)
+        self.parrot_neuron = nest.Create(
+            'rate_transformer_sigmoid_gg_1998')
 
         self.multimeter = nest.Create("multimeter",
                                       params={'record_from': ['rate'],
@@ -74,10 +87,13 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         # record rates and connect neurons
         self.neurons = self.rate_neuron_1 + \
-            self.rate_neuron_2 + self.rate_neuron_3
+            self.rate_neuron_2 + self.rate_neuron_3 + self.rate_neuron_4 + \
+            self.rate_neuron_5
 
         nest.Connect(
             self.multimeter, self.neurons, 'all_to_all', {'delay': 10.})
+        nest.Connect(
+            self.multimeter, self.parrot_neuron, 'all_to_all', {'delay': 10.})
 
         nest.Connect(self.rate_neuron_drive, self.rate_neuron_1,
                      'all_to_all', {'model': 'rate_connection_delayed',
@@ -89,6 +105,18 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
                                     'weight': self.weight})
 
         nest.Connect(self.rate_neuron_drive, self.rate_neuron_3,
+                     'all_to_all', {'model': 'rate_connection_instantaneous',
+                                    'weight': self.weight})
+
+        nest.Connect(self.rate_neuron_drive, self.rate_neuron_4,
+                     'all_to_all', {'model': 'rate_connection_instantaneous',
+                                    'weight': self.weight})
+
+        nest.Connect(self.rate_neuron_negative_drive, self.rate_neuron_5,
+                     'all_to_all', {'model': 'rate_connection_instantaneous',
+                                    'weight': self.weight})
+
+        nest.Connect(self.rate_neuron_drive, self.parrot_neuron,
                      'all_to_all', {'model': 'rate_connection_instantaneous',
                                     'weight': self.weight})
 
@@ -147,22 +175,66 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
                 np.where(senders == self.rate_neuron_2)][-1]
             rate_3 = events['rate'][
                 np.where(senders == self.rate_neuron_3)][-1]
+            rate_4 = events['rate'][
+                np.where(senders == self.rate_neuron_4)][-1]
 
-            rates = np.array([rate_1, rate_2, rate_3])
+            rates = np.array([rate_1, rate_2, rate_3, rate_4])
+
+            # for multiplicative coupling
+            a = g * self.drive * self.weight * \
+                nest.GetStatus(self.rate_neuron_4)[0]['g_ex']
+            theta = nest.GetStatus(self.rate_neuron_4)[0]['theta_ex']
 
             if ls:
+
                 rates_test = np.array(
                     [g * self.drive * self.weight,
                      np.tanh(g * self.drive * self.weight),
                      g * self.drive * self.weight * H(self.drive *
-                                                      self.weight)])
+                                                      self.weight),
+                     a * theta / (1 + a)])
             else:
                 rates_test = np.array(
                     [g * self.drive * self.weight,
                      self.weight * np.tanh(g * self.drive),
-                     self.weight * self.drive * g * H(self.drive)])
+                     self.weight * self.drive * g * H(self.drive),
+                     a * theta / (1 + a)])
 
             self.assertTrue(np.allclose(rates, rates_test))
+
+    def test_RectifyOutput(self):
+        """Check the rectification of the output"""
+
+        # simulate
+        nest.Simulate(self.simtime)
+
+        # get activity from rate neuron
+        events = nest.GetStatus(self.multimeter)[0]["events"]
+        senders = events['senders']
+        rate_5 = events['rate'][np.where(senders == self.rate_neuron_5)]
+
+        value = rate_5[-1]
+        value_test = 0.
+        self.assertTrue(np.isclose(value, value_test))
+
+    def test_ParrotRateNeuron(self):
+        """Check the parrot rate neuron with sigm non-linearity"""
+
+        nest.SetStatus(self.parrot_neuron, {'g': 0.1})
+
+        # simulate
+        nest.Simulate(self.simtime)
+
+        # get activity from rate neuron
+        events = nest.GetStatus(self.multimeter)[0]["events"]
+        senders = events['senders']
+        parrot_rate = events['rate'][np.where(senders == self.parrot_neuron)]
+
+        value = parrot_rate[-1]
+        g = nest.GetStatus(self.parrot_neuron)[0]['g']
+        value_test = (g * self.weight * self.drive)**4 / \
+            (0.1**4 + (g * self.weight * self.drive)**4)
+        self.assertTrue(np.isclose(value, value_test))
 
 
 def suite():

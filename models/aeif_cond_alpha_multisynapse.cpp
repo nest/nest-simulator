@@ -126,7 +126,7 @@ aeif_cond_alpha_multisynapse_dynamics( double,
   double I_syn = 0.0;
   for ( size_t i = 0; i < node.P_.n_receptors(); ++i )
   {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    const size_t j = i * S::NUM_STATE_ELEMENTS_PER_RECEPTOR;
     I_syn += y[ S::G + j ] * ( node.P_.E_rev[ i ] - V );
   }
 
@@ -145,7 +145,7 @@ aeif_cond_alpha_multisynapse_dynamics( double,
 
   for ( size_t i = 0; i < node.P_.n_receptors(); ++i )
   {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    const size_t j = i * S::NUM_STATE_ELEMENTS_PER_RECEPTOR;
     // Synaptic conductance derivative dG/dt
     f[ S::DG + j ] = -y[ S::DG + j ] / node.P_.tau_syn[ i ];
     f[ S::G + j ] = y[ S::DG + j ] - y[ S::G + j ] / node.P_.tau_syn[ i ];
@@ -348,13 +348,13 @@ aeif_cond_alpha_multisynapse::State_::get( DictionaryDatum& d ) const
 
   for ( size_t i = 0;
         i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS )
-              / State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
+              / State_::NUM_STATE_ELEMENTS_PER_RECEPTOR );
         ++i )
   {
-    dg->push_back( y_[ State_::DG
-      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
-    g->push_back( y_[ State_::G
-      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
+    dg->push_back(
+      y_[ State_::DG + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );
+    g->push_back(
+      y_[ State_::G + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );
   }
 
   ( *d )[ names::dg ] = DoubleVectorDatum( dg );
@@ -509,7 +509,7 @@ aeif_cond_alpha_multisynapse::calibrate()
 
   B_.spikes_.resize( P_.n_receptors() );
   S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.n_receptors() ),
+      + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * P_.n_receptors() ),
     0.0 );
 
   // reallocate instance of stepping function for ODE GSL solver
@@ -612,8 +612,7 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
 
     for ( size_t i = 0; i < P_.n_receptors(); ++i )
     {
-      S_.y_[ State_::DG
-        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
+      S_.y_[ State_::DG + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] +=
         B_.spikes_[ i ].get_value( lag ) * V_.g0_[ i ]; // add incoming spike
     }
     // set new input current

@@ -17,8 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>
 
-cmake_minimum_required( VERSION 2.8.12 )
-# juqueen 2.8.12.2
+cmake_minimum_required( VERSION 3.1 )
 
 # add cmake modules: for all `include(...)` first look here
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
@@ -271,6 +270,7 @@ set( ALL_LIBS
   "-lrandom"
   "-lsli"
   "-lnestkernel"
+  "-ltopology"
   "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${READLINE_LIBRARIES}"

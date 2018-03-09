@@ -119,14 +119,14 @@
 
   Spike adaptation and firing intensity parameters:
     q_stc      vector of double - Values added to spike-triggered currents (stc)
-                                  after each spike emission in nA.
+                                  after each spike emission in pA.
     tau_stc    vector of double - Time constants of stc variables in ms.
     q_sfa      vector of double - Values added to spike-frequency adaptation
                                   (sfa) after each spike emission in mV.
     tau_sfa    vector of double - Time constants of sfa variables in ms.
     Delta_V    double - Stochasticity level in mV.
     lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
-    V_T_star   double - Base threshold in mV
+    V_T_star   double - Base threshold in mV.
 
   Synaptic parameters
     tau_syn    double vector - Time constants of the synaptic conductance
@@ -312,8 +312,7 @@ private:
     static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 3; //!< V_M, SFA, STC
     static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 1; //!< G
 
-    std::vector< double > y_;        //!< neuron state
-    unsigned int size_neuron_state_; // size of neuron state array
+    std::vector< double > y_; //!< neuron state
 
     double I_stim_; //!< This is piecewise constant external current
 

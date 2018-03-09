@@ -148,6 +148,15 @@ private:
   unsigned int marker_ : 2;
   bool is_primary_ : 1; //!< TargetData has TargetDataFields
                         //!< else has SecondaryTargetDataFields
+
+  //!< check legal size
+  static struct StaticAssert {
+      StaticAssert() {
+        assert( sizeof( TargetData ) == 12 );
+        //assert( sizeof( SecondaryTargetDataFields ) == 12 );
+      }
+  } static_assert_sizes;
+
 public:
   //<! variant fields
   union {
@@ -155,6 +164,7 @@ public:
       SecondaryTargetDataFields secondary_data;
   };
 
+  
   void reset_marker();
   void set_complete_marker();
   void set_end_marker();

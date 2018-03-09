@@ -65,9 +65,6 @@ private:
     secondary_send_buffer_pos_;
 
 public:
-  TargetTable();
-  ~TargetTable();
-
   //! initialize data structures
   void initialize();
 

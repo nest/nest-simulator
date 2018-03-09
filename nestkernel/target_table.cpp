@@ -25,17 +25,6 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
-nest::TargetTable::TargetTable()
-{
-  assert( sizeof( Target ) == 8 );
-  assert( sizeof( TargetData ) == 12 );
-  //assert( sizeof( SecondaryTargetDataFields ) == 12 );
-}
-
-nest::TargetTable::~TargetTable()
-{
-}
-
 void
 nest::TargetTable::initialize()
 {

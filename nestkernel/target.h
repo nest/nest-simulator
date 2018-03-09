@@ -66,6 +66,14 @@ private:
   static const int max_tid_ = 1024; // 2 ** 10
   static const int max_syn_id_ = 64; // 2 ** 6
 
+  //!< check legal size
+  static struct StaticAssert {
+      StaticAssert() {
+        assert( sizeof( Target ) == 8 );
+      }
+  } static_assert_sizes;
+
+
 public:
   Target();
   Target( const Target& target );

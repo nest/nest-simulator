@@ -29,6 +29,7 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 #include "target.h"
+#include "is_legal.h"
 
 namespace nest
 {
@@ -149,21 +150,12 @@ private:
   bool is_primary_ : 1; //!< TargetData has TargetDataFields
                         //!< else has SecondaryTargetDataFields
 
-  //!< check legal size
-  static struct StaticAssert {
-      StaticAssert() {
-        assert( sizeof( TargetData ) == 12 );
-        //assert( sizeof( SecondaryTargetDataFields ) == 12 );
-      }
-  } static_assert_sizes;
-
 public:
   //<! variant fields
   union {
       TargetDataFields target_data;
       SecondaryTargetDataFields secondary_data;
   };
-
   
   void reset_marker();
   void set_complete_marker();
@@ -179,6 +171,12 @@ public:
   void set_is_primary( const bool is_primary );
   bool is_primary() const;
 };
+
+//!< check legal size
+static const IsLegal<sizeof(TargetData) == 12>::is_legal
+    success_target_data_size = NULL;
+//assert( sizeof( SecondaryTargetDataFields ) == 12 );
+
 
 inline void
 TargetData::reset_marker()

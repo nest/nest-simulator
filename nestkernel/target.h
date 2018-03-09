@@ -28,6 +28,7 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
+#include "is_legal.h"
 
 namespace nest
 {
@@ -66,14 +67,6 @@ private:
   static const int max_tid_ = 1024; // 2 ** 10
   static const int max_syn_id_ = 64; // 2 ** 6
 
-  //!< check legal size
-  static struct StaticAssert {
-      StaticAssert() {
-        assert( sizeof( Target ) == 8 );
-      }
-  } static_assert_sizes;
-
-
 public:
   Target();
   Target( const Target& target );
@@ -93,6 +86,10 @@ public:
   bool is_processed() const;
   double get_offset() const;
 };
+
+//!< check legal size
+static const IsLegal<sizeof(Target) == 8>::is_legal
+    success_target_size = NULL;
 
 inline Target::Target()
   : data_( 0 )

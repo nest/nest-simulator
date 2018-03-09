@@ -431,7 +431,7 @@ extern const Name sdev;             //!< Used in pulsepacket_generator
 extern const Name send_buffer_size; //!< mpi-related
 extern const Name senders;          //!< Recorder parameter
 extern const Name shift_now_spikes; //!< Used by spike_generator
-extern const Name sigma; //!< For rate models (Gaussian gain function (tuning spread))
+extern const Name sigma; //!< For rate models (Gaussian gain function)
                          //!< or inverse steepness of erfc_neuron
 extern const Name sigmoid;   //!< Sigmoid MSP growth curve
 extern const Name size_of;   //!< Connection parameters

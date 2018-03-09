@@ -23,16 +23,19 @@
 /* Point process population model with exponential postsynaptic currents and
  * adaptation */
 
-/* [1]: line numbers in comments refer to the algorithm pseudocode in 
-Figures 11 and 12 of the paper
-Schwalger T, Deger M, Gerstner W (2017) Towards a theory of cortical columns: 
-From spiking neurons to interacting neural populations of finite size. 
-PLoS Comput Biol 13(4): e1005507. 
-https://doi.org/10.1371/journal.pcbi.1005507 */
+/* [1]: Line numbers in comments refer to the algorithm pseudocode in 
+        Figures 11 and 12 of the paper
+        Schwalger T, Deger M, Gerstner W (2017) 
+        Towards a theory of cortical columns: From spiking neurons to 
+        interacting neural populations of finite size. 
+        PLoS Comput Biol 13(4): e1005507. 
+        https://doi.org/10.1371/journal.pcbi.1005507 */
 
 #include "gif_pop_psc_exp.h"
 #include "universal_data_logger_impl.h"
 #include "compose.hpp"
+
+#ifdef HAVE_GSL
 
 namespace nest
 {
@@ -88,8 +91,8 @@ nest::gif_pop_psc_exp::State_::State_()
   , I_syn_ex_( 0.0 )
   , I_syn_in_( 0.0 )
   , V_m_( 0.0 )
-  , theta_hat_( 0.0 )   // initialization value has no effect for theta_hat_
   , n_expect_( 0.0 )
+  , theta_hat_( 0.0 )   // initialization value has no effect for theta_hat_
   , n_spikes_( 0 )
   , initialized_( false )
 {
@@ -329,7 +332,7 @@ nest::gif_pop_psc_exp::calibrate()
     V_.theta_.clear();
     V_.theta_tld_.clear();
 
-    double theta_tmp_;
+    double theta_tmp;
     for ( int k = 0; k < P_.len_kernel_; ++k ) // InitPopulations
     {
       V_.n_.push_back( 0 );      // line 3 of [1]
@@ -338,10 +341,10 @@ nest::gif_pop_psc_exp::calibrate()
       V_.u_.push_back( 0 );      // line 3 of [1]
       V_.lambda_.push_back( 0 ); // line 3 of [1]
 
-      theta_tmp_ = adaptation_kernel( P_.len_kernel_ - k ); // line 4 of [1]
-      V_.theta_.push_back( theta_tmp_ );                    // line 4 of [1]
+      theta_tmp = adaptation_kernel( P_.len_kernel_ - k ); // line 4 of [1]
+      V_.theta_.push_back( theta_tmp );                    // line 4 of [1]
       V_.theta_tld_.push_back( P_.Delta_V_
-        * ( 1. - std::exp( -theta_tmp_ / P_.Delta_V_ ) )
+        * ( 1. - std::exp( -theta_tmp / P_.Delta_V_ ) )
         / static_cast< double >( P_.N_ ) ); // line 5 of [1]
     }
 
@@ -463,13 +466,13 @@ nest::gif_pop_psc_exp::adaptation_kernel( const int k )
   // kernel at a time lag given by k time steps.
   // See below Eq. (87) of [1]. There is no division by tau here because 
   // theta_tmp_ must be in units voltage just as q_sfa_.
-  double theta_tmp_ = 0.;
+  double theta_tmp = 0.;
   for ( uint j = 0; j < P_.tau_sfa_.size(); ++j )
   {
-    theta_tmp_ +=
+    theta_tmp +=
       P_.q_sfa_[ j ] * std::exp( -k * V_.h_ / P_.tau_sfa_[ j ] ); 
   }
-  return theta_tmp_;
+  return theta_tmp;
 }
 
 
@@ -506,7 +509,7 @@ nest::gif_pop_psc_exp::update( Time const& origin,
   for ( long lag = from; lag < to; ++lag )
   {
 
-    // main update routine, Fig. 10
+    // main update routine, see Fig. 11 of [1]
     double h_tot_;
     // this is the Schwalger2016 membrane and synapse update method
     h_tot_ = ( P_.I_e_ + S_.y0_ ) * V_.P20_ + P_.E_L_; // line 6 of [1]
@@ -516,40 +519,40 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     // but Schwalger2016 uses A(t), which implies division by J, N and dt,
     // which we do not know. However, these rescalings are undone below,
     // so the quantities used here are equivalent.
-    double JNA_ex_ = B_.ex_spikes_.get_value( lag ) / V_.h_;
-    double JNA_in_ = B_.in_spikes_.get_value( lag ) / V_.h_;
+    double JNA_ex = B_.ex_spikes_.get_value( lag ) / V_.h_;
+    double JNA_in = B_.in_spikes_.get_value( lag ) / V_.h_;
 
     // rescale inputs to voltage scale used in Schwalger2016
-    JNA_ex_ *= P_.tau_syn_ex_ / P_.c_m_;
-    JNA_in_ *= P_.tau_syn_in_ / P_.c_m_;
+    JNA_ex *= P_.tau_syn_ex_ / P_.c_m_;
+    JNA_in *= P_.tau_syn_in_ / P_.c_m_;
 
     // translate synaptic currents into Schwalger2016 definition
-    double JNy_ex_ = S_.I_syn_ex_ / P_.c_m_;
-    double JNy_in_ = S_.I_syn_in_ / P_.c_m_;
+    double JNy_ex = S_.I_syn_ex_ / P_.c_m_;
+    double JNy_in = S_.I_syn_in_ / P_.c_m_;
 
     // membrane update (line 10 of [1])
-    double h_ex_tmpvar_ = ( P_.tau_syn_ex_ * V_.P11_ex_ * ( JNy_ex_ - JNA_ex_ )
-              - V_.P22_ * ( P_.tau_syn_ex_ * JNy_ex_ - P_.tau_m_ * JNA_ex_ ) );
-    double h_in_tmpvar_ = ( P_.tau_syn_in_ * V_.P11_in_ * ( JNy_in_ - JNA_in_ )
-              - V_.P22_ * ( P_.tau_syn_in_ * JNy_in_ - P_.tau_m_ * JNA_in_ ) );
-    double h_ex_ = P_.tau_m_ * ( JNA_ex_ + 
-                    h_ex_tmpvar_ / ( P_.tau_syn_ex_ - P_.tau_m_ ) );
-    double h_in_ = P_.tau_m_ * ( JNA_in_ + 
-                    h_in_tmpvar_ / ( P_.tau_syn_in_ - P_.tau_m_ ) );
-    h_tot_ += h_ex_ + h_in_;
+    const double h_ex_tmpvar = ( P_.tau_syn_ex_ * V_.P11_ex_ * ( JNy_ex - JNA_ex )
+              - V_.P22_ * ( P_.tau_syn_ex_ * JNy_ex - P_.tau_m_ * JNA_ex ) );
+    const double h_in_tmpvar = ( P_.tau_syn_in_ * V_.P11_in_ * ( JNy_in - JNA_in )
+              - V_.P22_ * ( P_.tau_syn_in_ * JNy_in - P_.tau_m_ * JNA_in ) );
+    const double h_ex = P_.tau_m_ * ( JNA_ex + 
+                    h_ex_tmpvar / ( P_.tau_syn_ex_ - P_.tau_m_ ) );
+    const double h_in = P_.tau_m_ * ( JNA_in + 
+                    h_in_tmpvar / ( P_.tau_syn_in_ - P_.tau_m_ ) );
+    h_tot_ += h_ex + h_in;
 
     // update EPSCs & IPSCs (line 11 of [1])
-    JNy_ex_ = JNA_ex_ + ( JNy_ex_ - JNA_ex_ ) * V_.P11_ex_;
-    JNy_in_ = JNA_in_ + ( JNy_in_ - JNA_in_ ) * V_.P11_in_;
+    JNy_ex = JNA_ex + ( JNy_ex - JNA_ex ) * V_.P11_ex_;
+    JNy_in = JNA_in + ( JNy_in - JNA_in ) * V_.P11_in_;
 
     // store the updated currents, translated back
-    S_.I_syn_ex_ = JNy_ex_ * P_.c_m_;
-    S_.I_syn_in_ = JNy_in_ * P_.c_m_;
+    S_.I_syn_ex_ = JNy_ex * P_.c_m_;
+    S_.I_syn_in_ = JNy_in * P_.c_m_;
 
     // Set new input current
     S_.y0_ = B_.currents_.get_value( lag );
 
-    // begin procedure update population, Fig. 12
+    // begin procedure update population, see Fig. 12 of [1]
     double W_ = 0, X_ = 0, Y_ = 0, Z_ = 0; // line 2 of [1]
     S_.theta_hat_ = P_.V_T_star_;          // line 2, initialize theta
 
@@ -558,54 +561,56 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     // compute free adaptation state
     for ( uint j = 0; j < P_.tau_sfa_.size(); ++j ) // line 4 of [1]
     {
-      double g_j_tmp_ = ( 1. - V_.Q30_[ j ] ) * V_.n_[ V_.k0_ ]
+      const double g_j_tmp = ( 1. - V_.Q30_[ j ] ) * V_.n_[ V_.k0_ ]
           / ( static_cast< double >( P_.N_ ) * V_.h_ );
-      V_.g_[ j ] = V_.g_[ j ] * V_.Q30_[ j ] + g_j_tmp_; // line 5 of [1]
-      S_.theta_hat_ = S_.theta_hat_ + V_.Q30K_[ j ] * V_.g_[ j ]; // line 6
+      V_.g_[ j ] = V_.g_[ j ] * V_.Q30_[ j ] + g_j_tmp; // line 5 of [1]
+      S_.theta_hat_ += V_.Q30K_[ j ] * V_.g_[ j ]; // line 6 of [1]
     }
 
     // compute free escape rate
-    double lambda_tld_ = escrate( S_.V_m_ - S_.theta_hat_ ); // line 8 of [1]
-    double P_free_ = 1 - std::exp( -0.5 * ( V_.lambda_free_ + lambda_tld_ )
-                           * V_.h_ / 1000. );         // line 9 of [1]
-    V_.lambda_free_ = lambda_tld_;                    // line 10
+    double lambda_tld = escrate( S_.V_m_ - S_.theta_hat_ ); // line 8 of [1]
+    const double P_free = 1 - std::exp( -0.0005 * 
+        ( V_.lambda_free_ + lambda_tld ) * V_.h_ );         // line 9 of [1]
+    V_.lambda_free_ = lambda_tld;                    // line 10
     S_.theta_hat_ -= V_.n_[ 0 ] * V_.theta_tld_[ 0 ]; // line 11
 
-    for ( int l = 0; l < P_.len_kernel_; ++l )
+    for ( int k_marked = 0; k_marked < P_.len_kernel_; ++k_marked )
     {
-      X_ += V_.m_[ l ]; // line 12 of [1]
+      X_ += V_.m_[ k_marked ]; // line 12 of [1]
     }
 
     // use a local theta_hat to reserve S_.theta_hat_ for the free threshold,
     // which is a recordable
     double theta_hat_ = S_.theta_hat_;
-    double theta_;
-    for ( int l = 0; l < P_.len_kernel_ - V_.k_ref_; ++l ) // line 13 of [1]
+    double theta;
+    // line 13 of [1]
+    for ( int k_marked = 0; k_marked < P_.len_kernel_ - V_.k_ref_; ++k_marked )
     {
-      int k = ( V_.k0_ + l ) % P_.len_kernel_;                  // line 14
-      theta_ = V_.theta_[ l ] + theta_hat_;                     // line 15
-      theta_hat_ += V_.n_[ k ] * V_.theta_tld_[ l ];            // line 16
+      int k = ( V_.k0_ + k_marked ) % P_.len_kernel_;           // line 14
+      theta = V_.theta_[ k_marked ] + theta_hat_;                   // line 15
+      theta_hat_ += V_.n_[ k ] * V_.theta_tld_[ k_marked ];          // line 16
       V_.u_[ k ] = ( V_.u_[ k ] - P_.E_L_ ) * V_.P22_ + h_tot_; // line 17
-      lambda_tld_ = escrate( V_.u_[ k ] - theta_ );             // line 18
+      lambda_tld = escrate( V_.u_[ k ] - theta );             // line 18
       double P_lambda_ =
-        0.5 * ( lambda_tld_ + V_.lambda_[ k ] ) * V_.h_ / 1000.;
+        0.0005 * ( lambda_tld + V_.lambda_[ k ] ) * V_.h_;
       if ( P_lambda_ > 0.01 )
       {
         P_lambda_ = 1. - std::exp( -P_lambda_ ); // line 20 of [1]
       }
-      V_.lambda_[ k ] = lambda_tld_; // line 21 of [1]
+      V_.lambda_[ k ] = lambda_tld; // line 21 of [1]
       Y_ += P_lambda_ * V_.v_[ k ];  // line 22
       Z_ += V_.v_[ k ];              // line 23
       W_ += P_lambda_ * V_.m_[ k ];  // line 24
-      V_.v_[ k ] = ( 1. - P_lambda_ ) * ( 1. - P_lambda_ ) * V_.v_[ k ]
-        + P_lambda_ * V_.m_[ k ];
-      V_.m_[ k ] = ( 1. - P_lambda_ ) * V_.m_[ k ]; // line 26 of [1]
-    }                                               // line 27
+      
+      const double ompl = ( 1. - P_lambda_ );
+      V_.v_[ k ] = ompl * ompl * V_.v_[ k ] + P_lambda_ * V_.m_[ k ];
+      V_.m_[ k ] = ompl * V_.m_[ k ]; // line 26 of [1]
+    }                                               // line 27 of [1]
 
     double P_Lambda_;
     if ( ( Z_ + V_.z_ ) > 0.0 )
     {
-      P_Lambda_ = ( Y_ + P_free_ * V_.z_ ) / ( Z_ + V_.z_ ); // line 28 of [1]
+      P_Lambda_ = ( Y_ + P_free * V_.z_ ) / ( Z_ + V_.z_ ); // line 28 of [1]
     }
     else
     {
@@ -614,7 +619,7 @@ nest::gif_pop_psc_exp::update( Time const& origin,
 
     // finally compute expected number of spikes and draw a random number
     S_.n_expect_ =
-      W_ + P_free_ * V_.x_ + P_Lambda_ * ( P_.N_ - X_ - V_.x_ ); // line 29
+      W_ + P_free * V_.x_ + P_Lambda_ * ( P_.N_ - X_ - V_.x_ ); // line 29
     if ( P_.BinoRand_ )
     {
       S_.n_spikes_ = draw_binomial( S_.n_expect_ );
@@ -625,10 +630,10 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     }
 
     // line 31 of [1]: update z
-    V_.z_ = ( 1 - P_free_ ) * ( 1 - P_free_ ) * V_.z_ + V_.x_ * P_free_
-      + V_.v_[ V_.k0_ ];
+    const double ompf = ( 1 - P_free );
+    V_.z_ = ompf * ompf * V_.z_ + V_.x_ * P_free + V_.v_[ V_.k0_ ];
     // line 32 of [1]: update x
-    V_.x_ = V_.x_ * ( 1 - P_free_ ) + V_.m_[ V_.k0_ ];
+    V_.x_ = V_.x_ * ompf + V_.m_[ V_.k0_ ];
 
     V_.n_[ V_.k0_ ] = S_.n_spikes_; // line 33 of [1]
     V_.m_[ V_.k0_ ] = S_.n_spikes_; // line 33
@@ -700,3 +705,5 @@ nest::gif_pop_psc_exp::handle( DataLoggingRequest& e )
 }
 
 } // namespace
+
+#endif /* HAVE_GSL */

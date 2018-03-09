@@ -30,6 +30,7 @@
 #include "gsl_binomial_randomdev.h"
 #include "universal_data_logger.h"
 
+#ifdef HAVE_GSL
 
 namespace nest
 {
@@ -471,4 +472,5 @@ gif_pop_psc_exp::set_status( const DictionaryDatum& d )
 } // namespace
 
 
+#endif /* HAVE_GSL */
 #endif /* #ifndef PP_POP_PSC_BETA_H */

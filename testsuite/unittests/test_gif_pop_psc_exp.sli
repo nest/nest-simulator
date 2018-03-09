@@ -60,7 +60,7 @@ T 1 sub res div start_step sub int /remaining_step Set
     ResetKernel
     0 << 
        /resolution res
-     >> SetStatus
+      >> SetStatus
 
     /gif_pop_psc_exp Create /node Set
 
@@ -106,7 +106,7 @@ T 1 sub res div start_step sub int /remaining_step Set
     err_mean leq assert_or_die
 
     var_rate expected_var sub abs
-    err_var leq assert_or_die    
+    err_var leq assert_or_die
 } def
 
 inh_test

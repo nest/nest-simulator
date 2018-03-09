@@ -214,17 +214,33 @@ public:
 
   size_t get_buffer_size_secondary_events_in_int() const;
 
-  void communicate_Alltoall( unsigned int* send_buffer,
-    unsigned int* recv_buffer,
+#ifdef HAVE_MPI
+  void communicate_Alltoall_(
+    void* send_buffer,
+    void* recv_buffer,
     const unsigned int send_recv_count );
-  void communicate_target_data_Alltoall( unsigned int* send_buffer,
-    unsigned int* recv_buffer );
-  void communicate_spike_data_Alltoall( unsigned int* send_buffer,
-    unsigned int* recv_buffer );
-  void communicate_off_grid_spike_data_Alltoall( unsigned int* send_buffer,
-    unsigned int* recv_buffer );
-  void communicate_secondary_events_Alltoall( unsigned int* send_buffer,
-    unsigned int* recv_buffer );
+
+  void communicate_secondary_events_Alltoall_(
+    void* send_buffer,
+    void* recv_buffer );
+#endif // HAVE_MPI
+
+  template<class D>
+  void communicate_Alltoall( std::vector<D>& send_buffer,
+    std::vector<D>& recv_buffer,
+    const unsigned int send_recv_count );
+  template<class D>
+  void communicate_target_data_Alltoall( std::vector<D>& send_buffer,
+    std::vector<D>& recv_buffer );
+  template<class D>
+  void communicate_spike_data_Alltoall( std::vector<D>& send_buffer,
+    std::vector<D>& recv_buffer );
+  template<class D>
+  void communicate_off_grid_spike_data_Alltoall( std::vector<D>& send_buffer,
+    std::vector<D>& recv_buffer );
+  template<class D>
+  void communicate_secondary_events_Alltoall( std::vector<D>& send_buffer,
+    std::vector<D>& recv_buffer );
 
   void synchronize();
 
@@ -725,7 +741,74 @@ MPIManager::time_communicate_alltoallv( int, int )
 {
   return 0.0;
 }
-#endif
+
+#endif /* HAVE_MPI */
+
+#ifdef HAVE_MPI
+template<class D>
+void MPIManager::communicate_Alltoall( std::vector<D>& send_buffer,
+    std::vector<D>& recv_buffer,
+    const unsigned int send_recv_count )
+{
+    void* send_buffer_int = static_cast<void*>(&send_buffer[0]);
+    void* recv_buffer_int = static_cast<void*>(&recv_buffer[0]);
+    
+    communicate_Alltoall_(send_buffer_int, recv_buffer_int, send_recv_count);
 }
+
+template<class D>
+void MPIManager::communicate_secondary_events_Alltoall( std::vector<D>& send_buffer,
+    std::vector<D>& recv_buffer )
+{
+    void* send_buffer_int = static_cast<void*>(&send_buffer[0]);
+    void* recv_buffer_int = static_cast<void*>(&recv_buffer[0]);
+    
+    communicate_secondary_events_Alltoall_(send_buffer_int,
+        recv_buffer_int);
+}
+
+
+#else //HAVE_MPI
+template<class D>
+void MPIManager::MPIManager::communicate_Alltoall( std::vector<D>& send_buffer,
+    std::vector<D>& recv_buffer,
+    const unsigned int send_recv_count )
+{
+    recv_buffer.swap( send_buffer );
+}
+
+template<class D>
+void MPIManager::communicate_secondary_events_Alltoall( std::vector<D>& send_buffer,
+    std::vector<D>& recv_buffer )
+{
+    recv_buffer.swap( send_buffer );
+}
+
+#endif //HAVE_MPI
+
+template<class D>
+void MPIManager::communicate_target_data_Alltoall( std::vector<D>& send_buffer,
+  std::vector<D>& recv_buffer )
+{
+  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_target_data_in_int_per_rank_ );
+}
+
+template<class D>
+void MPIManager::communicate_spike_data_Alltoall( std::vector<D>& send_buffer,
+  std::vector<D>& recv_buffer )
+{
+  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_spike_data_in_int_per_rank_ );
+}
+
+template<class D>
+void MPIManager::communicate_off_grid_spike_data_Alltoall( std::vector<D>& send_buffer,
+  std::vector<D>& recv_buffer )
+{
+  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank_ );
+}
+
+}
+
+
 
 #endif /* MPI_MANAGER_H */

@@ -117,7 +117,7 @@ class Network;
 
    References:
 
-   [1] Towards a theory of cortical columns: From spiking neurons to 
+   [1] Towards a theory of cortical columns: From spiking neurons to
        interacting neural populations of finite size
        Tilo Schwalger, Moritz Deger, Wulfram Gerstner
        PLoS Comput Biol 2017
@@ -254,8 +254,8 @@ private:
     double I_syn_in_;  // synaptic current
     double V_m_;       // membrane potential
     double n_expect_;  // expected spike number
-    long n_spikes_;    // number of spikes
     double theta_hat_; // adapting threshold for non-refractory neurons
+    long n_spikes_;    // number of spikes
 
     // internal switch signaling that state vectors are initialized
     bool initialized_;

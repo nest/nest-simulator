@@ -23,12 +23,12 @@
 /* Point process population model with exponential postsynaptic currents and
  * adaptation */
 
-/* [1]: Line numbers in comments refer to the algorithm pseudocode in 
+/* [1]: Line numbers in comments refer to the algorithm pseudocode in
         Figures 11 and 12 of the paper
-        Schwalger T, Deger M, Gerstner W (2017) 
-        Towards a theory of cortical columns: From spiking neurons to 
-        interacting neural populations of finite size. 
-        PLoS Comput Biol 13(4): e1005507. 
+        Schwalger T, Deger M, Gerstner W (2017)
+        Towards a theory of cortical columns: From spiking neurons to
+        interacting neural populations of finite size.
+        PLoS Comput Biol 13(4): e1005507.
         https://doi.org/10.1371/journal.pcbi.1005507 */
 
 #include "gif_pop_psc_exp.h"
@@ -332,7 +332,6 @@ nest::gif_pop_psc_exp::calibrate()
     V_.theta_.clear();
     V_.theta_tld_.clear();
 
-    double theta_tmp;
     for ( int k = 0; k < P_.len_kernel_; ++k ) // InitPopulations
     {
       V_.n_.push_back( 0 );      // line 3 of [1]
@@ -340,8 +339,8 @@ nest::gif_pop_psc_exp::calibrate()
       V_.v_.push_back( 0 );      // line 3 of [1]
       V_.u_.push_back( 0 );      // line 3 of [1]
       V_.lambda_.push_back( 0 ); // line 3 of [1]
-
-      theta_tmp = adaptation_kernel( P_.len_kernel_ - k ); // line 4 of [1]
+      
+      const double theta_tmp = adaptation_kernel( P_.len_kernel_ - k );
       V_.theta_.push_back( theta_tmp );                    // line 4 of [1]
       V_.theta_tld_.push_back( P_.Delta_V_
         * ( 1. - std::exp( -theta_tmp / P_.Delta_V_ ) )
@@ -464,13 +463,13 @@ nest::gif_pop_psc_exp::adaptation_kernel( const int k )
 {
   // this function computes the value of the sum of exponentials adaptation
   // kernel at a time lag given by k time steps.
-  // See below Eq. (87) of [1]. There is no division by tau here because 
+  // See below Eq. (87) of [1]. There is no division by tau here because
   // theta_tmp_ must be in units voltage just as q_sfa_.
   double theta_tmp = 0.;
   for ( uint j = 0; j < P_.tau_sfa_.size(); ++j )
   {
     theta_tmp +=
-      P_.q_sfa_[ j ] * std::exp( -k * V_.h_ / P_.tau_sfa_[ j ] ); 
+      P_.q_sfa_[ j ] * std::exp( -k * V_.h_ / P_.tau_sfa_[ j ] );
   }
   return theta_tmp;
 }
@@ -531,13 +530,15 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     double JNy_in = S_.I_syn_in_ / P_.c_m_;
 
     // membrane update (line 10 of [1])
-    const double h_ex_tmpvar = ( P_.tau_syn_ex_ * V_.P11_ex_ * ( JNy_ex - JNA_ex )
-              - V_.P22_ * ( P_.tau_syn_ex_ * JNy_ex - P_.tau_m_ * JNA_ex ) );
-    const double h_in_tmpvar = ( P_.tau_syn_in_ * V_.P11_in_ * ( JNy_in - JNA_in )
-              - V_.P22_ * ( P_.tau_syn_in_ * JNy_in - P_.tau_m_ * JNA_in ) );
-    const double h_ex = P_.tau_m_ * ( JNA_ex + 
+    const double h_ex_tmpvar = ( P_.tau_syn_ex_ * V_.P11_ex_ *
+        ( JNy_ex - JNA_ex ) - V_.P22_ *
+        ( P_.tau_syn_ex_ * JNy_ex - P_.tau_m_ * JNA_ex ) );
+    const double h_in_tmpvar = ( P_.tau_syn_in_ * V_.P11_in_ *
+        ( JNy_in - JNA_in ) - V_.P22_ *
+        ( P_.tau_syn_in_ * JNy_in - P_.tau_m_ * JNA_in ) );
+    const double h_ex = P_.tau_m_ * ( JNA_ex +
                     h_ex_tmpvar / ( P_.tau_syn_ex_ - P_.tau_m_ ) );
-    const double h_in = P_.tau_m_ * ( JNA_in + 
+    const double h_in = P_.tau_m_ * ( JNA_in +
                     h_in_tmpvar / ( P_.tau_syn_in_ - P_.tau_m_ ) );
     h_tot_ += h_ex + h_in;
 
@@ -569,7 +570,7 @@ nest::gif_pop_psc_exp::update( Time const& origin,
 
     // compute free escape rate
     double lambda_tld = escrate( S_.V_m_ - S_.theta_hat_ ); // line 8 of [1]
-    const double P_free = 1 - std::exp( -0.0005 * 
+    const double P_free = 1 - std::exp( -0.0005 *
         ( V_.lambda_free_ + lambda_tld ) * V_.h_ );         // line 9 of [1]
     V_.lambda_free_ = lambda_tld;                    // line 10
     S_.theta_hat_ -= V_.n_[ 0 ] * V_.theta_tld_[ 0 ]; // line 11
@@ -582,15 +583,15 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     // use a local theta_hat to reserve S_.theta_hat_ for the free threshold,
     // which is a recordable
     double theta_hat_ = S_.theta_hat_;
-    double theta;
+
     // line 13 of [1]
     for ( int k_marked = 0; k_marked < P_.len_kernel_ - V_.k_ref_; ++k_marked )
     {
-      int k = ( V_.k0_ + k_marked ) % P_.len_kernel_;           // line 14
-      theta = V_.theta_[ k_marked ] + theta_hat_;                   // line 15
-      theta_hat_ += V_.n_[ k ] * V_.theta_tld_[ k_marked ];          // line 16
-      V_.u_[ k ] = ( V_.u_[ k ] - P_.E_L_ ) * V_.P22_ + h_tot_; // line 17
-      lambda_tld = escrate( V_.u_[ k ] - theta );             // line 18
+      int k = ( V_.k0_ + k_marked ) % P_.len_kernel_;         // line 14 of [1]
+      const double theta = V_.theta_[ k_marked ] + theta_hat_;   // line 15
+      theta_hat_ += V_.n_[ k ] * V_.theta_tld_[ k_marked ];      // line 16
+      V_.u_[ k ] = ( V_.u_[ k ] - P_.E_L_ ) * V_.P22_ + h_tot_;  // line 17
+      lambda_tld = escrate( V_.u_[ k ] - theta );                // line 18
       double P_lambda_ =
         0.0005 * ( lambda_tld + V_.lambda_[ k ] ) * V_.h_;
       if ( P_lambda_ > 0.01 )

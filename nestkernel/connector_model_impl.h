@@ -242,9 +242,11 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   }
 
   if ( !p->empty() )
+  {
     connection.set_status( p, *this ); // reference to connector model needed here to
                               // check delay (maybe this
                               // could be done one level above?)
+  }
 
   // We must use a local variable here to hold the actual value of the
   // receptor type. We must not change the receptor_type_ data member, because

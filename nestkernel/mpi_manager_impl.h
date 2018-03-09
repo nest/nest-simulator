@@ -39,7 +39,7 @@
 #include "kernel_manager.h"
 
 inline nest::thread
-nest::MPIManager::get_process_id( const thread vp ) const
+nest::MPIManager::get_process_id_of_vp( const thread vp ) const
 {
   if ( vp
     >= static_cast< thread >( n_sim_procs_

@@ -236,7 +236,7 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
 
   index lcid = max_size - 1;
 
-  while ( ( *( *sources_[ tid ] )[ syn_id ] )[ lcid ].is_disabled() and lcid >= 0 )
+  while ( ( *( *sources_[ tid ] )[ syn_id ] )[ lcid ].is_disabled() )
   {
     --lcid;
   }
@@ -392,7 +392,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
         < static_cast< long >(
             ( *last_sorted_source_[ current_position.tid ] )[ current_position
                                                                 .syn_id ] )
-      and ( *last_sorted_source_[ current_position.tid ] )[ current_position
+      && ( *last_sorted_source_[ current_position.tid ] )[ current_position
                                                              .syn_id ]
         < ( *( *sources_[ current_position.tid ] )[ current_position
                                                       .syn_id ] ).size() )

@@ -138,7 +138,7 @@ def
     /V_m 5.7 mV % mean value of membrane potential
   >>
 
-  /randomize_Vm false
+  /randomize_Vm true
   /mean_potential 5.7 mV  % Note that Kunkel et al. (2014) report different values. The values
   /sigma_potential 7.2 mV % in the paper were used for the benchmarks on K, the values given
                           % here were used for the benchmark on JUQUEEN.

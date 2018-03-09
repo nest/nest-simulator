@@ -153,7 +153,7 @@ brunel_params = {
     # Note that Kunkel et al. (2014) report different values. The values
     # in the paper were used for the benchmarks on K, the values given
     # here were used for the benchmark on JUQUEEN.
-    'randomize_Vm': False,
+    'randomize_Vm': True,
     'mean_potential': 5.7,
     'sigma_potential': 7.2,
 

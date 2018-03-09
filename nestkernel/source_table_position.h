@@ -24,6 +24,7 @@
 #define SOURCE_TABLE_POSITION_H
 
 // C++ includes:
+#include <cassert>
 #include <iostream>
 #include <vector>
 
@@ -96,6 +97,9 @@ inline void SourceTablePosition::wrap_position( const std::vector< std::vector< 
       continue;
     }
 
+    assert( tid < 0 );
+    assert( syn_id < 0 );
+    assert( lcid < 0 );
     return;
   }
 }

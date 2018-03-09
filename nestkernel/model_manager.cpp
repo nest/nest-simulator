@@ -598,34 +598,6 @@ ModelManager::create_secondary_events_prototypes()
   }
 }
 
-/* TODO@5g: upstream version
-void
-ModelManager::create_secondary_events_prototypes()
-{
-  if ( secondary_events_prototypes_.size()
-    < kernel().vp_manager.get_num_threads() )
-  {
-    delete_secondary_events_prototypes();
-    std::vector< SecondaryEvent* > prototype;
-    prototype.resize( secondary_connector_models_.size(), NULL );
-    secondary_events_prototypes_.resize(
-      kernel().vp_manager.get_num_threads(), prototype );
-
-    for ( size_t i = 0; i < secondary_connector_models_.size(); i++ )
-    {
-      if ( secondary_connector_models_[ i ] != NULL )
-      {
-        prototype = secondary_connector_models_[ i ]->create_event(
-          kernel().vp_manager.get_num_threads() );
-        for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
-        {
-          secondary_events_prototypes_[ j ][ i ] = prototype[ j ];
-        }
-      }
-    }
-  }
-} */
-
 synindex
 ModelManager::register_connection_model_( ConnectorModel* cf )
 {

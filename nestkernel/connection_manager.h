@@ -365,6 +365,10 @@ public:
    * communicated. False otherwise.
    */
   bool have_connections_changed() const;
+
+  /** Sets flag indicating whether connection information needs to be
+   *  communicated.
+   */
   void set_have_connections_changed( const bool changed );
 
   /**

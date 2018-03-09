@@ -40,7 +40,6 @@
 namespace nest
 {
 
-// TODO@5g: change types into thread
 struct AssignedRanks
 {
   thread begin;

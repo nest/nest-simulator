@@ -1110,16 +1110,6 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
 
   size_t syn_id = 0;
 
-  // TODO@5g-margathon: why do we need to do this? can this be removed?
-  // #ifdef _OPENMP
-  //   std::string msg;
-  //   msg =
-  //     String::compose( "Setting OpenMP num_threads to %1.",
-  //     kernel().vp_manager.get_num_threads() );
-  //   LOG( M_DEBUG, "ConnectionManager::get_connections", msg );
-  //   omp_set_num_threads( kernel().vp_manager.get_num_threads() );
-  // #endif
-
   // First we check, whether a synapse model is given.
   // If not, we will iterate all.
   if ( not syn_model_t.empty() )
@@ -1661,7 +1651,6 @@ nest::ConnectionManager::print_source_table( const thread tid ) const
   {
     if ( connectors[ syn_id ] != NULL )
     {
-
       source_table_.print_sources( tid, syn_id );
     }
   }

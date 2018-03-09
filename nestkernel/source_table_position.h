@@ -73,49 +73,34 @@ inline SourceTablePosition::SourceTablePosition(
 {
 }
 
-// TODO@5g: reorder ifs to make more intuitive -> Jakob
 template< typename T>
 inline void SourceTablePosition::wrap_position( const std::vector< std::vector< std::vector< T >* >* >& sources )
 {
   // check for validity of indices and update if necessary
-  while ( true ) // TODO@5g: turn into while tid > 0 and syn_id > 0 and lcid > 0
+  while ( lcid < 0 )
   {
-    if ( lcid < 0 )
+    --syn_id;
+    if ( syn_id >= 0 )
     {
-      --syn_id;
+      lcid = ( *sources[ tid ] )[ syn_id ]->size() - 1;
+      continue;
+    }
+
+    --tid;
+    if ( tid >= 0 )
+    {
+      syn_id = ( *sources[ tid ] ).size() - 1;
       if ( syn_id >= 0 )
       {
-        lcid =
-          ( *sources[ tid ] )[ syn_id ]
-          ->size() - 1;
-        continue;
+        lcid = ( *sources[ tid ] )[ syn_id ]->size() - 1;
       }
-      else
-      {
-        --tid;
-        if ( tid >= 0 )
-        {
-          syn_id =
-            ( *sources[ tid ] ).size() - 1;
-          if ( syn_id >= 0 )
-          {
-            lcid = ( *sources[ tid ] )[ syn_id ]->size() - 1;
-          }
-          continue;
-        }
-        else
-        {
-          assert( tid < 0 );
-          assert( syn_id < 0 );
-          assert( lcid < 0 );
-          return;
-        }
-      }
+      continue;
     }
-    else
-    {
-      return;
-    }
+
+    assert( tid < 0 );
+    assert( syn_id < 0 );
+    assert( lcid < 0 );
+    return;
   }
 }
 

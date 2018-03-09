@@ -190,7 +190,7 @@ template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   Node& tgt,
-  std::vector< ConnectorBase* >* hetconn,
+  std::vector< ConnectorBase* >* thread_local_connectors,
   const synindex syn_id,
   const DictionaryDatum& p,
   const double delay,
@@ -229,22 +229,24 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   }
 
   // create a new instance of the default connection
-  ConnectionT c = ConnectionT( default_connection_ );
+  ConnectionT connection = ConnectionT( default_connection_ );
 
   if ( not numerics::is_nan( weight ) )
   {
-    c.set_weight( weight );
+    connection.set_weight( weight );
   }
 
   if ( not numerics::is_nan( delay ) )
   {
-    c.set_delay( delay );
+    connection.set_delay( delay );
   }
 
-  if ( !p->empty() )
-    c.set_status( p, *this ); // reference to connector model needed here to
+  if ( not p->empty() )
+  {
+    connection.set_status( p, *this ); // reference to connector model needed here to
                               // check delay (maybe this
                               // could be done one level above?)
+  }
 
   // We must use a local variable here to hold the actual value of the
   // receptor type. We must not change the receptor_type_ data member, because
@@ -256,7 +258,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
 #endif
   updateValue< long >( p, names::receptor_type, actual_receptor_type );
 
-  add_connection_5g_( src, tgt, hetconn, syn_id, c, actual_receptor_type );
+  add_connection_5g_( src, tgt, thread_local_connectors, syn_id, connection, actual_receptor_type );
 }
 
 
@@ -264,53 +266,53 @@ template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
   Node& tgt,
-  std::vector< ConnectorBase* >* hetconn,
+  std::vector< ConnectorBase* >* thread_local_connectors,
   const synindex syn_id,
-  ConnectionT& c,
+  ConnectionT& connection,
   const rport receptor_type )
 {
   assert( syn_id != invalid_synindex );
 
-  if ( ( *hetconn )[ syn_id ] == NULL )
+  if ( ( *thread_local_connectors )[ syn_id ] == NULL )
   {
     // no homogeneous Connector with this syn_id exists, we need to create a new homogeneous Connector
-    ( *hetconn )[ syn_id ] = new Connector< ConnectionT >( syn_id );
+    ( *thread_local_connectors )[ syn_id ] = new Connector< ConnectionT >( syn_id );
   }
 
-  ConnectorBase* conn = ( *hetconn )[ syn_id ];
+  ConnectorBase* connector = ( *thread_local_connectors )[ syn_id ];
   // the following line will throw an exception, if it does not work
-  c.check_connection( src, tgt, receptor_type, get_common_properties() );
+  connection.check_connection( src, tgt, receptor_type, get_common_properties() );
 
-  assert( conn != 0 );
+  assert( connector != 0 );
 
   Connector< ConnectionT >* vc =
-    static_cast< Connector< ConnectionT >* >( conn );
-  conn = &vc->push_back( c );
+    static_cast< Connector< ConnectionT >* >( connector );
+  connector = &vc->push_back( connection );
 
-  ( *hetconn )[ syn_id ] = conn;
+  ( *thread_local_connectors )[ syn_id ] = connector;
 }
 
 template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::reserve_connections(
-  std::vector< ConnectorBase* >* hetconn,
+  std::vector< ConnectorBase* >* thread_local_connectors,
   const synindex syn_id,
   const size_t count )
 {
   assert( syn_id != invalid_synindex );
 
-  if ( ( *hetconn )[ syn_id ] == NULL )
+  if ( ( *thread_local_connectors )[ syn_id ] == NULL )
   {
     // no homogeneous Connector with this syn_id exists, we need to create a new homogeneous Connector
-    ( *hetconn )[ syn_id ] = new Connector< ConnectionT >( syn_id );
+    ( *thread_local_connectors )[ syn_id ] = new Connector< ConnectionT >( syn_id );
   }
 
-  ConnectorBase* conn = ( *hetconn )[ syn_id ];
-  assert( conn != 0 );
+  ConnectorBase* connector = ( *thread_local_connectors )[ syn_id ];
+  assert( connector != 0 );
 
-  conn->reserve( conn->size() + count );
+  connector->reserve( connector->size() + count );
 
-  ( *hetconn )[ syn_id ] = conn;
+  ( *thread_local_connectors )[ syn_id ] = connector;
 }
 
 } // namespace nest

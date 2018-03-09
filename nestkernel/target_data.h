@@ -72,11 +72,9 @@ public:
   bool is_primary() const;
 };
 
+// Just to set protected: members must always be
+// explicitly set
 inline TargetDataBase::TargetDataBase()
-  : source_lid_( 0 )
-  , source_tid_( 0 )
-  , marker_( default_marker_ )
-  , is_primary_( true )
 {
 }
 
@@ -172,7 +170,8 @@ private:
   unsigned int syn_id_ : 8;
 
 public:
-  TargetData();
+  // Members must be set explicitly -- no defaults
+  // Done this way to create large vector without preconstruction
   void set_lcid( const index lcid );
   index get_lcid() const;
   void set_tid( const thread tid );
@@ -180,14 +179,6 @@ public:
   void set_syn_id( const synindex syn_id );
   synindex get_syn_id() const;
 };
-
-inline TargetData::TargetData()
-  : TargetDataBase()
-  , lcid_( 0 )
-  , tid_( 0 )
-  , syn_id_( 0 )
-{
-}
 
 inline void
 TargetData::set_lcid( const index lcid )
@@ -232,19 +223,13 @@ private:
   unsigned char syn_id_;
 
 public:
-  SecondaryTargetData();
+  // Members must be set explicitly -- no defaults
+  // Done this way to create large vector without preconstruction
   void set_send_buffer_pos( const size_t pos );
   size_t get_send_buffer_pos() const;
   void set_syn_id( const synindex syn_id );
   synindex get_syn_id() const;
 };
-
-inline SecondaryTargetData::SecondaryTargetData()
-  : TargetDataBase()
-  , send_buffer_pos_( std::numeric_limits< unsigned int >::max() - 1 )
-  , syn_id_( std::numeric_limits< unsigned char >::max() - 1 )
-{
-}
 
 inline void
 SecondaryTargetData::set_send_buffer_pos( const size_t pos )

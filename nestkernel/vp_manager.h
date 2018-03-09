@@ -74,7 +74,7 @@ public:
    * n_threads_, the corresponding value in the Communicator, and
    * the OpenMP number of threads.
    */
-  void set_num_threads( thread n_threads );
+  void set_num_threads( const thread n_threads );
 
   /**
    * Get number of threads.
@@ -85,12 +85,12 @@ public:
   /**
    * Returns true if the given global node exists on this vp.
    */
-  bool is_vp_local( index gid ) const;
+  bool is_gid_vp_local( const index gid ) const;
 
   /**
    * Returns thread local index of a given global node.
    */
-  index gid_to_lid( index gid ) const;
+  index gid_to_lid( const index gid ) const;
 
   /**
    * Returns the global id of a given local index
@@ -110,7 +110,7 @@ public:
    * T the number of threads. This may be used by Network::add_node()
    * if the user has not specified anything.
    */
-  thread suggest_vp( index ) const;
+  thread suggest_vp_for_gid( const index gid ) const;
 
   /**
    * Return a thread number for a given global recording node id.
@@ -120,22 +120,22 @@ public:
    * T the number of threads. This may be used by Network::add_node()
    * if the user has not specified anything.
    */
-  thread suggest_rec_vp( index ) const;
+  thread suggest_rec_vp_for_gid( const index gid ) const;
 
   /**
    * Convert a given VP ID to the corresponding thread ID
    */
-  thread vp_to_thread( thread vp ) const;
+  thread vp_to_thread( const thread vp ) const;
 
   /**
    * Convert a given thread ID to the corresponding VP ID
    */
-  thread thread_to_vp( thread t ) const;
+  thread thread_to_vp( const thread tid ) const;
 
   /**
    * Return true, if the given VP is on the local machine
    */
-  bool is_local_vp( thread ) const;
+  bool is_local_vp( const thread tid ) const;
 
   /**
    * Returns the number of virtual processes.

@@ -513,7 +513,7 @@ nest::ConnectionManager::connect( const index sgid,
     // create connection only on suggested thread of target
     const thread tid = kernel().vp_manager.get_thread_id();
     const thread suggested_thread = kernel().vp_manager.vp_to_thread(
-      kernel().vp_manager.suggest_vp( target->get_gid() ) );
+      kernel().vp_manager.suggest_vp_for_gid( target->get_gid() ) );
     if ( suggested_thread == tid )
     {
       connect_from_device_(
@@ -588,7 +588,7 @@ nest::ConnectionManager::connect( const index sgid,
   {
     // create connection only on suggested thread of target
     target_thread = kernel().vp_manager.vp_to_thread(
-      kernel().vp_manager.suggest_vp( target->get_gid() ) );
+      kernel().vp_manager.suggest_vp_for_gid( target->get_gid() ) );
     if ( target_thread == tid )
     {
       connect_from_device_(

@@ -41,14 +41,14 @@ VPManager::get_vp() const
 }
 
 inline thread
-VPManager::suggest_vp( const index gid ) const
+VPManager::suggest_vp_for_gid( const index gid ) const
 {
   return gid
     % ( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() );
 }
 
 inline thread
-VPManager::vp_to_thread( thread vp ) const
+VPManager::vp_to_thread( const thread vp ) const
 {
   if ( vp >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes()
                * get_num_threads() ) )
@@ -72,7 +72,7 @@ VPManager::get_num_virtual_processes() const
 }
 
 inline bool
-VPManager::is_local_vp( thread vp ) const
+VPManager::is_local_vp( const thread vp ) const
 {
   return kernel().mpi_manager.get_process_id_of_vp( vp )
     == kernel().mpi_manager.get_rank();
@@ -80,7 +80,7 @@ VPManager::is_local_vp( thread vp ) const
 
 
 inline thread
-VPManager::suggest_rec_vp( index gid ) const
+VPManager::suggest_rec_vp_for_gid( const index gid ) const
 {
   return gid
     % ( kernel().mpi_manager.get_num_rec_processes() * get_num_threads() )
@@ -88,13 +88,13 @@ VPManager::suggest_rec_vp( index gid ) const
 }
 
 inline thread
-VPManager::thread_to_vp( thread t ) const
+VPManager::thread_to_vp( const thread tid ) const
 {
   if ( kernel().mpi_manager.get_rank()
     >= static_cast< int >( kernel().mpi_manager.get_num_sim_processes() ) )
   {
     // Rank is a recording process
-    return t * kernel().mpi_manager.get_num_rec_processes()
+    return tid * kernel().mpi_manager.get_num_rec_processes()
       + kernel().mpi_manager.get_rank()
       - kernel().mpi_manager.get_num_sim_processes()
       + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
@@ -102,13 +102,13 @@ VPManager::thread_to_vp( thread t ) const
   else
   {
     // Rank is a simulating process
-    return t * kernel().mpi_manager.get_num_sim_processes()
+    return tid * kernel().mpi_manager.get_num_sim_processes()
       + kernel().mpi_manager.get_rank();
   }
 }
 
 inline bool
-VPManager::is_vp_local( const index gid ) const
+VPManager::is_gid_vp_local( const index gid ) const
 {
   return ( gid % ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() )
            == static_cast< index >( get_vp() ) );

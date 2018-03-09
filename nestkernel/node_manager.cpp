@@ -261,7 +261,7 @@ index NodeManager::add_node( index mod, long n ) // no_p
 
     for ( size_t gid = min_gid; gid < max_gid; ++gid )
     {
-      const thread vp = kernel().vp_manager.suggest_rec_vp( get_n_gsd() );
+      const thread vp = kernel().vp_manager.suggest_rec_vp_for_gid( get_n_gsd() );
       const thread tid = kernel().vp_manager.vp_to_thread( vp );
 
       if ( kernel().vp_manager.is_local_vp( vp ) )
@@ -314,7 +314,7 @@ index NodeManager::add_node( index mod, long n ) // no_p
 
     size_t gid;
     if ( kernel().vp_manager.is_local_vp(
-           kernel().vp_manager.suggest_vp( min_gid ) ) )
+           kernel().vp_manager.suggest_vp_for_gid( min_gid ) ) )
     {
       gid = min_gid;
     }
@@ -335,7 +335,7 @@ index NodeManager::add_node( index mod, long n ) // no_p
     // gid after min_gid-1
     while ( gid < max_gid )
     {
-      const thread vp = kernel().vp_manager.suggest_vp( gid );
+      const thread vp = kernel().vp_manager.suggest_vp_for_gid( gid );
       const thread t = kernel().vp_manager.vp_to_thread( vp );
 
       if ( kernel().vp_manager.is_local_vp( vp ) )
@@ -364,7 +364,7 @@ index NodeManager::add_node( index mod, long n ) // no_p
     }
     // if last gid is not on this process, we need to add it as a remote node
     if ( not kernel().vp_manager.is_local_vp(
-           kernel().vp_manager.suggest_vp( max_gid - 1 ) ) )
+           kernel().vp_manager.suggest_vp_for_gid( max_gid - 1 ) ) )
     {
       local_nodes_.add_remote_node( max_gid - 1 ); // ensures max_gid is correct
       current_->add_remote_node( max_gid - 1, mod );
@@ -416,7 +416,7 @@ index NodeManager::add_node( index mod, long n ) // no_p
     for ( index gid = min_gid; gid < max_gid; ++gid )
     {
       const thread tid = kernel().vp_manager.vp_to_thread(
-        kernel().vp_manager.suggest_vp( gid ) );
+        kernel().vp_manager.suggest_vp_for_gid( gid ) );
 
       // keep track of number of local devices
       ++num_local_devices_;

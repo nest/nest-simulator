@@ -1455,7 +1455,7 @@ nest::FixedTotalNumberBuilder::connect_()
     size_targets / kernel().mpi_manager.get_num_processes() );
   for ( size_t t = 0; t < targets_->size(); t++ )
   {
-    int vp = kernel().vp_manager.suggest_vp( ( *targets_ )[ t ] );
+    int vp = kernel().vp_manager.suggest_vp_for_gid( ( *targets_ )[ t ] );
     ++number_of_targets_on_vp[ vp ];
     if ( kernel().vp_manager.is_local_vp( vp ) )
     {
@@ -1533,7 +1533,7 @@ nest::FixedTotalNumberBuilder::connect_()
               it != local_targets.end();
               ++it )
         {
-          if ( kernel().vp_manager.suggest_vp( *it ) == vp_id )
+          if ( kernel().vp_manager.suggest_vp_for_gid( *it ) == vp_id )
           {
             thread_local_targets.push_back( *it );
           }

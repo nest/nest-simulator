@@ -614,11 +614,11 @@ inline Time operator*( const long factor, const Time& t )
 {
   const tic_t n = factor * t.tics;
   // if no overflow:
-  if ( t.tics == 0 || n / t.tics == factor )
+  if ( t.tics == 0 or n / t.tics == factor )
   {
     return Time::tic( n ); // check range
   }
-  if ( ( t.tics > 0 and factor > 0 ) || ( t.tics < 0 and factor < 0 ) )
+  if ( ( t.tics > 0 and factor > 0 ) or ( t.tics < 0 and factor < 0 ) )
   {
     return Time( Time::LIM_POS_INF.tics );
   }

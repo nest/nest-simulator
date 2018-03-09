@@ -207,7 +207,7 @@ ModelManager::get_status( DictionaryDatum& )
 index
 ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
 {
-  if ( modeldict_->known( new_name ) || synapsedict_->known( new_name ) )
+  if ( modeldict_->known( new_name ) or synapsedict_->known( new_name ) )
   {
     throw NewModelNameExists( new_name );
   }

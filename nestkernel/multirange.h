@@ -145,7 +145,7 @@ inline Multirange::iterator::iterator( RangeVector::const_iterator iter,
 
 inline bool Multirange::iterator::operator!=( const iterator& other ) const
 {
-  return ( other.pair_iter_ != pair_iter_ ) || ( other.n_ != n_ );
+  return ( other.pair_iter_ != pair_iter_ ) or ( other.n_ != n_ );
 }
 
 inline index Multirange::iterator::operator*() const

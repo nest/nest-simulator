@@ -285,7 +285,7 @@ public:
   ConnectionT&
   at( const size_t lcid )
   {
-    if ( lcid >= C_.size() || lcid < 0 )
+    if ( lcid >= C_.size() or lcid < 0 )
     {
       throw std::out_of_range( String::compose(
         "Invalid attempt to access a connection: index %1 out of range.", lcid ) );

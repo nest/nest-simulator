@@ -208,7 +208,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
           {
             const Token token = node_status->lookup( i->first );
             if ( not( token == i->second
-                   || token.matches_as_string( i->second ) ) )
+                   or token.matches_as_string( i->second ) ) )
             {
               match = false;
               break;
@@ -290,7 +290,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
           {
             const Token token = node_status->lookup( i->first );
             if ( not( token == i->second
-                   || token.matches_as_string( i->second ) ) )
+                   or token.matches_as_string( i->second ) ) )
             {
               match = false;
               break;
@@ -370,7 +370,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
         {
           const Token token = node_status->lookup( i->first );
           if ( not(
-                 token == i->second || token.matches_as_string( i->second ) ) )
+                 token == i->second or token.matches_as_string( i->second ) ) )
           {
             match = false;
             break;

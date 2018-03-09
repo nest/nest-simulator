@@ -139,7 +139,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   bool res_updated = updateValue< double >( d, names::resolution, resd );
   double integer_part; // Dummy variable to be used with std::modf().
 
-  if ( tics_per_ms_updated || res_updated )
+  if ( tics_per_ms_updated or res_updated )
   {
     if ( kernel().node_manager.size() > 1 ) // root always exists
     {
@@ -200,7 +200,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         // to resolution if no wfr is used explicitly set wfr_comm_interval
         // to resolution because communication in every step is needed
         if ( wfr_comm_interval_ < Time::get_resolution().get_ms()
-          || not use_wfr_ )
+          or not use_wfr_ )
         {
           wfr_comm_interval_ = Time::get_resolution().get_ms();
         }
@@ -238,7 +238,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         // to resolution if no wfr is used explicitly set wfr_comm_interval
         // to resolution because communication in every step is needed
         if ( wfr_comm_interval_ < Time::get_resolution().get_ms()
-          || not use_wfr_ )
+          or not use_wfr_ )
         {
           wfr_comm_interval_ = Time::get_resolution().get_ms();
         }
@@ -356,7 +356,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   long interp_order;
   if ( updateValue< long >( d, names::wfr_interpolation_order, interp_order ) )
   {
-    if ( ( interp_order < 0 ) || ( interp_order == 2 ) || ( interp_order > 3 ) )
+    if ( ( interp_order < 0 ) or ( interp_order == 2 ) or ( interp_order > 3 ) )
     {
       LOG( M_ERROR,
         "SimulationManager::set_status",
@@ -462,7 +462,7 @@ nest::SimulationManager::prepare()
   kernel().node_manager.check_wfr_use();
 
   if ( kernel().node_manager.have_nodes_changed()
-    || kernel().connection_manager.have_connections_changed() )
+    or kernel().connection_manager.have_connections_changed() )
   {
 #pragma omp parallel
     {

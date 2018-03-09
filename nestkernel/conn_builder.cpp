@@ -155,7 +155,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   else
   {
     if ( syn_spec->known( names::pre_synaptic_element )
-      || syn_spec->known( names::post_synaptic_element ) )
+      or syn_spec->known( names::post_synaptic_element ) )
     {
       throw BadProperty(
         "In order to use structural plasticity, both a pre and post synaptic "
@@ -211,8 +211,8 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
             ++it )
       {
         if ( it->first == names::receptor_type
-          || it->first == names::music_channel
-          || it->first == names::synapse_label )
+          or it->first == names::music_channel
+          or it->first == names::synapse_label )
         {
           ( *param_dicts_[ tid ] )[ it->first ] =
             Token( new IntegerDatum( 0 ) );
@@ -473,8 +473,8 @@ nest::ConnBuilder::single_connect_( index sgid,
           ++it )
     {
       if ( it->first == names::receptor_type
-        || it->first == names::music_channel
-        || it->first == names::synapse_label )
+        or it->first == names::music_channel
+        or it->first == names::synapse_label )
       {
         try
         {
@@ -1259,7 +1259,7 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
       s_id = rng->ulrand( n_rnd );
       sgid = ( *sources_ )[ s_id ];
     } while ( ( not autapses_ and sgid == tgid )
-      || ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
+      or ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
 
     if ( not multapses_ )
     {

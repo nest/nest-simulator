@@ -253,7 +253,7 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_Ca, new_tau_Ca );
   updateValue< double >( d, names::beta_Ca, new_beta_Ca );
 
-  if ( new_tau_minus <= 0.0 || new_tau_minus_triplet <= 0.0 )
+  if ( new_tau_minus <= 0.0 or new_tau_minus_triplet <= 0.0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }

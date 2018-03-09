@@ -88,7 +88,7 @@ namespace nest
    spikes emitted in a time step, and can be monitored using a multimeter.
 
    EDIT Nov 2016: pp_pop_psc_delta is now deprecated, because a new and
-   presumably much faster population model implementation is now available, see 
+   presumably much faster population model implementation is now available, see
    gif_pop_psc_exp.
 
 
@@ -146,7 +146,8 @@ namespace nest
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
    Author: May 2014, Setareh, Deger
-   SeeAlso: gif_pop_psc_exp, pp_psc_delta, ppd_sup_generator, gamma_sup_generator
+   SeeAlso: gif_pop_psc_exp, pp_psc_delta, ppd_sup_generator,
+   gamma_sup_generator
 */
 
 /**

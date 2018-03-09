@@ -316,8 +316,6 @@ private:
     unsigned int size_neuron_state_; // size of neuron state array
 
     double I_stim_; //!< This is piecewise constant external current
-    double sfa_; //!< This is the change of the 'threshold' due to adaptation.
-    double stc_; //!< Spike-triggered current.
 
     std::vector< double > sfa_elems_; //!< Vector of adaptation parameters.
     std::vector< double > stc_elems_; //!< Vector of spike-triggered parameters.

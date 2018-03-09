@@ -134,6 +134,12 @@ nest::gif_cond_exp_multisynapse_dynamics( double,
   f[ S::V_M ] = is_refractory ? 0.0 : ( I_L + node.S_.I_stim_ + node.P_.I_e_
                                         + I_syn - stc ) / node.P_.c_m_;
 
+  // Hackish output dE_sfa/dt and dI_stc/dt
+  // This is necessary because I_stc and E_sfa must be in the state vector y_
+  // for logging purposes
+  f[ S::STC ] = 0.;
+  f[ S::SFA ] = 0.;
+
   // outputs: dg/dt
   for ( size_t i = 0; i < node.P_.n_receptors(); i++ )
   {
@@ -415,8 +421,6 @@ nest::gif_cond_exp_multisynapse::State_::set( const DictionaryDatum& d,
   const Parameters_& p )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::E_sfa, y_[ SFA ] );
-  updateValue< double >( d, names::I_stc, y_[ STC ] );
 }
 
 nest::gif_cond_exp_multisynapse::Buffers_::Buffers_(
@@ -505,7 +509,8 @@ nest::gif_cond_exp_multisynapse::init_buffers_()
   B_.logger_.reset();   //!< includes resize
   Archiving_Node::clear_history();
 
-  const int state_size = 1 + ( State_::STATE_VEC_SIZE - 1 ) * P_.n_receptors();
+  const int state_size = State_::NUMBER_OF_FIXED_STATES_ELEMENTS +
+    ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) * P_.n_receptors();
 
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;

@@ -44,26 +44,13 @@
 
 namespace nest // template specialization must be placed in namespace
 {
-    
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
-//~ template <>
-//~ void
-//~ RecordablesMap< aeif_cond_alpha_multisynapse >::create()
-//~ {
-  //~ // use standard names wherever you can for consistency!
-  //~ insert_( names::V_m,
-    //~ &aeif_cond_alpha_multisynapse::
-      //~ get_y_elem_< aeif_cond_alpha_multisynapse::State_::V_M > );
-
-  //~ insert_( names::w,
-    //~ &aeif_cond_alpha_multisynapse::
-      //~ get_y_elem_< aeif_cond_alpha_multisynapse::State_::W > );
-//~ }
 template <>
 void
 DynamicRecordablesMap< aeif_cond_alpha_multisynapse >::create(

@@ -178,13 +178,16 @@ append
 {
   << >> begin
   ResetKernel
-  true
+  
   /nrn /aeif_cond_alpha_multisynapse Create def
   
   /mm /multimeter << /withtime true /time_in_steps true
                      /interval 1.0 /record_from [ /V_m /w /g_1 ] >> Create def
   
   mm nrn Connect
+  
+  /len 1 GetStatus /recordables get length def
+  len 3 eq
   end
 }
 assert_or_die

@@ -47,7 +47,7 @@ namespace nest // template specialization must be placed in namespace
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
- 
+
 // Override the create() method with one call to
 // DynamicRecordablesMap::insert() for each quantity to be recorded.
 template <>

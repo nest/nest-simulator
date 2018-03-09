@@ -379,10 +379,10 @@ private:
   /** @} */
 
   // Access functions for UniversalDataLogger -------------------------------
-  
+
   //! Mapping of recordables names to access functions
   DynamicRecordablesMap< aeif_cond_alpha_multisynapse > recordablesMap_;
-  
+
   // Data Access Functor getter
   DataAccessFunctor< aeif_cond_alpha_multisynapse > get_data_access_functor(
     size_t elem );

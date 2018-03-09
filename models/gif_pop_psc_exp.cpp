@@ -92,7 +92,7 @@ nest::gif_pop_psc_exp::State_::State_()
   , I_syn_in_( 0.0 )
   , V_m_( 0.0 )
   , n_expect_( 0.0 )
-  , theta_hat_( 0.0 )   // initialization value has no effect for theta_hat_
+  , theta_hat_( 0.0 ) // initialization value has no effect for theta_hat_
   , n_spikes_( 0 )
   , initialized_( false )
 {
@@ -339,9 +339,9 @@ nest::gif_pop_psc_exp::calibrate()
       V_.v_.push_back( 0 );      // line 3 of [1]
       V_.u_.push_back( 0 );      // line 3 of [1]
       V_.lambda_.push_back( 0 ); // line 3 of [1]
-      
+
       const double theta_tmp = adaptation_kernel( P_.len_kernel_ - k );
-      V_.theta_.push_back( theta_tmp );                    // line 4 of [1]
+      V_.theta_.push_back( theta_tmp ); // line 4 of [1]
       V_.theta_tld_.push_back( P_.Delta_V_
         * ( 1. - std::exp( -theta_tmp / P_.Delta_V_ ) )
         / static_cast< double >( P_.N_ ) ); // line 5 of [1]
@@ -416,7 +416,7 @@ nest::gif_pop_psc_exp::draw_poisson( const double n_expect_ )
     {
       n_t_ = static_cast< long >( V_.rng_->drand() < n_expect_ );
     }
-    
+
     // in case the number of spikes exceeds N, we clip it to prevent
     // runaway activity
     if ( n_t_ > P_.N_ )
@@ -468,8 +468,7 @@ nest::gif_pop_psc_exp::adaptation_kernel( const int k )
   double theta_tmp = 0.;
   for ( uint j = 0; j < P_.tau_sfa_.size(); ++j )
   {
-    theta_tmp +=
-      P_.q_sfa_[ j ] * std::exp( -k * V_.h_ / P_.tau_sfa_[ j ] );
+    theta_tmp += P_.q_sfa_[ j ] * std::exp( -k * V_.h_ / P_.tau_sfa_[ j ] );
   }
   return theta_tmp;
 }
@@ -530,16 +529,16 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     double JNy_in = S_.I_syn_in_ / P_.c_m_;
 
     // membrane update (line 10 of [1])
-    const double h_ex_tmpvar = ( P_.tau_syn_ex_ * V_.P11_ex_ *
-        ( JNy_ex - JNA_ex ) - V_.P22_ *
-        ( P_.tau_syn_ex_ * JNy_ex - P_.tau_m_ * JNA_ex ) );
-    const double h_in_tmpvar = ( P_.tau_syn_in_ * V_.P11_in_ *
-        ( JNy_in - JNA_in ) - V_.P22_ *
-        ( P_.tau_syn_in_ * JNy_in - P_.tau_m_ * JNA_in ) );
-    const double h_ex = P_.tau_m_ * ( JNA_ex +
-                    h_ex_tmpvar / ( P_.tau_syn_ex_ - P_.tau_m_ ) );
-    const double h_in = P_.tau_m_ * ( JNA_in +
-                    h_in_tmpvar / ( P_.tau_syn_in_ - P_.tau_m_ ) );
+    const double h_ex_tmpvar =
+      ( P_.tau_syn_ex_ * V_.P11_ex_ * ( JNy_ex - JNA_ex )
+        - V_.P22_ * ( P_.tau_syn_ex_ * JNy_ex - P_.tau_m_ * JNA_ex ) );
+    const double h_in_tmpvar =
+      ( P_.tau_syn_in_ * V_.P11_in_ * ( JNy_in - JNA_in )
+        - V_.P22_ * ( P_.tau_syn_in_ * JNy_in - P_.tau_m_ * JNA_in ) );
+    const double h_ex =
+      P_.tau_m_ * ( JNA_ex + h_ex_tmpvar / ( P_.tau_syn_ex_ - P_.tau_m_ ) );
+    const double h_in =
+      P_.tau_m_ * ( JNA_in + h_in_tmpvar / ( P_.tau_syn_in_ - P_.tau_m_ ) );
     h_tot_ += h_ex + h_in;
 
     // update EPSCs & IPSCs (line 11 of [1])
@@ -563,16 +562,17 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     for ( uint j = 0; j < P_.tau_sfa_.size(); ++j ) // line 4 of [1]
     {
       const double g_j_tmp = ( 1. - V_.Q30_[ j ] ) * V_.n_[ V_.k0_ ]
-          / ( static_cast< double >( P_.N_ ) * V_.h_ );
+        / ( static_cast< double >( P_.N_ ) * V_.h_ );
       V_.g_[ j ] = V_.g_[ j ] * V_.Q30_[ j ] + g_j_tmp; // line 5 of [1]
-      S_.theta_hat_ += V_.Q30K_[ j ] * V_.g_[ j ]; // line 6 of [1]
+      S_.theta_hat_ += V_.Q30K_[ j ] * V_.g_[ j ];      // line 6 of [1]
     }
 
     // compute free escape rate
     double lambda_tld = escrate( S_.V_m_ - S_.theta_hat_ ); // line 8 of [1]
-    const double P_free = 1 - std::exp( -0.0005 *
-        ( V_.lambda_free_ + lambda_tld ) * V_.h_ );         // line 9 of [1]
-    V_.lambda_free_ = lambda_tld;                    // line 10
+    const double P_free =
+      1 - std::exp( -0.0005 * ( V_.lambda_free_ + lambda_tld )
+            * V_.h_ );                                // line 9 of [1]
+    V_.lambda_free_ = lambda_tld;                     // line 10
     S_.theta_hat_ -= V_.n_[ 0 ] * V_.theta_tld_[ 0 ]; // line 11
 
     for ( int k_marked = 0; k_marked < P_.len_kernel_; ++k_marked )
@@ -587,26 +587,25 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     // line 13 of [1]
     for ( int k_marked = 0; k_marked < P_.len_kernel_ - V_.k_ref_; ++k_marked )
     {
-      int k = ( V_.k0_ + k_marked ) % P_.len_kernel_;         // line 14 of [1]
-      const double theta = V_.theta_[ k_marked ] + theta_hat_;   // line 15
-      theta_hat_ += V_.n_[ k ] * V_.theta_tld_[ k_marked ];      // line 16
-      V_.u_[ k ] = ( V_.u_[ k ] - P_.E_L_ ) * V_.P22_ + h_tot_;  // line 17
-      lambda_tld = escrate( V_.u_[ k ] - theta );                // line 18
-      double P_lambda_ =
-        0.0005 * ( lambda_tld + V_.lambda_[ k ] ) * V_.h_;
+      int k = ( V_.k0_ + k_marked ) % P_.len_kernel_;          // line 14 of [1]
+      const double theta = V_.theta_[ k_marked ] + theta_hat_; // line 15
+      theta_hat_ += V_.n_[ k ] * V_.theta_tld_[ k_marked ];    // line 16
+      V_.u_[ k ] = ( V_.u_[ k ] - P_.E_L_ ) * V_.P22_ + h_tot_; // line 17
+      lambda_tld = escrate( V_.u_[ k ] - theta );               // line 18
+      double P_lambda_ = 0.0005 * ( lambda_tld + V_.lambda_[ k ] ) * V_.h_;
       if ( P_lambda_ > 0.01 )
       {
         P_lambda_ = 1. - std::exp( -P_lambda_ ); // line 20 of [1]
       }
       V_.lambda_[ k ] = lambda_tld; // line 21 of [1]
-      Y_ += P_lambda_ * V_.v_[ k ];  // line 22
-      Z_ += V_.v_[ k ];              // line 23
-      W_ += P_lambda_ * V_.m_[ k ];  // line 24
-      
+      Y_ += P_lambda_ * V_.v_[ k ]; // line 22
+      Z_ += V_.v_[ k ];             // line 23
+      W_ += P_lambda_ * V_.m_[ k ]; // line 24
+
       const double ompl = ( 1. - P_lambda_ );
       V_.v_[ k ] = ompl * ompl * V_.v_[ k ] + P_lambda_ * V_.m_[ k ];
       V_.m_[ k ] = ompl * V_.m_[ k ]; // line 26 of [1]
-    }                                               // line 27 of [1]
+    }                                 // line 27 of [1]
 
     double P_Lambda_;
     if ( ( Z_ + V_.z_ ) > 0.0 )

@@ -38,6 +38,9 @@ SeeAlso: gif_pop_psc_exp, testsuite::test_pp_pop_psc_delta
 
 */
 
+% This test should only run if we have GSL
+statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
+
 (unittest) run
 /unittest using
 

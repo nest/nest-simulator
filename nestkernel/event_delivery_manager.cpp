@@ -54,8 +54,8 @@ EventDeliveryManager::EventDeliveryManager()
   , time_collocate_( 0.0 )
   , time_communicate_( 0.0 )
   , local_spike_counter_( std::vector< unsigned long >() )
-  , send_buffer_target_data_( NULL )
-  , recv_buffer_target_data_( NULL )
+  , send_buffer_target_data_(  )
+  , recv_buffer_target_data_(  )
   , buffer_size_target_data_has_changed_( false )
   , buffer_size_spike_data_has_changed_( false )
   , completed_count_( std::vector< unsigned int >() )
@@ -165,29 +165,11 @@ EventDeliveryManager::clear_pending_spikes()
 void
 EventDeliveryManager::resize_send_recv_buffers_target_data()
 {
-  // clear old target data buffers
-  if ( send_buffer_target_data_ != NULL )
-  {
-    free( send_buffer_target_data_ );
-    send_buffer_target_data_ = NULL;
-  }
-
-  if ( recv_buffer_target_data_ != NULL )
-  {
-    free( recv_buffer_target_data_ );
-    recv_buffer_target_data_ = NULL;
-  }
-
   // compute send receive counts and allocate memory for buffers
-  send_buffer_target_data_ = static_cast< TargetData* >(
-    malloc( kernel().mpi_manager.get_buffer_size_target_data()
-            * sizeof( TargetData ) ) );
-  recv_buffer_target_data_ = static_cast< TargetData* >(
-    malloc( kernel().mpi_manager.get_buffer_size_target_data()
-            * sizeof( TargetData ) ) );
-
-  assert( send_buffer_target_data_ != NULL );
-  assert( recv_buffer_target_data_ != NULL );
+  send_buffer_target_data_.resize(
+      kernel().mpi_manager.get_buffer_size_target_data());
+  recv_buffer_target_data_.resize(
+      kernel().mpi_manager.get_buffer_size_target_data());
 }
 
 void
@@ -342,7 +324,7 @@ EventDeliveryManager::gather_secondary_events( const bool done )
   sw_communicate_secondary_events.start();
 #endif
   kernel().mpi_manager.communicate_secondary_events_Alltoall(
-    &send_buffer_secondary_events_[ 0 ], &recv_buffer_secondary_events_[ 0 ] );
+    send_buffer_secondary_events_, recv_buffer_secondary_events_ );
 #ifndef DISABLE_TIMING
   sw_communicate_secondary_events.stop();
 #endif
@@ -479,20 +461,15 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       kernel().mpi_manager.synchronize(); // to get an accurate time measurement across ranks
       sw_communicate_spike_data.start();
 #endif
-      unsigned int* send_buffer_int =
-        reinterpret_cast< unsigned int* >( &send_buffer[ 0 ] );
-      unsigned int* recv_buffer_int =
-        reinterpret_cast< unsigned int* >( &recv_buffer[ 0 ] );
-
       if ( off_grid_spiking_ )
       {
-        kernel().mpi_manager.communicate_off_grid_spike_data_Alltoall( send_buffer_int,
-                                                                       recv_buffer_int );
+        kernel().mpi_manager.communicate_off_grid_spike_data_Alltoall( send_buffer,
+                                                                       recv_buffer );
       }
       else
       {
-        kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer_int,
-                                                              recv_buffer_int );
+        kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer,
+                                                              recv_buffer );
       }
 #ifndef DISABLE_TIMING
       sw_communicate_spike_data.stop();
@@ -813,12 +790,8 @@ EventDeliveryManager::gather_target_data( const thread tid )
       kernel().mpi_manager.synchronize(); // to get an accurate time measurement across ranks
       sw_communicate_target_data.start();
 #endif
-      unsigned int* send_buffer_int =
-        reinterpret_cast< unsigned int* >( &send_buffer_target_data_[ 0 ] );
-      unsigned int* recv_buffer_int =
-        reinterpret_cast< unsigned int* >( &recv_buffer_target_data_[ 0 ] );
-      kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_int,
-        recv_buffer_int );
+      kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_,
+        recv_buffer_target_data_ );
 #ifndef DISABLE_TIMING
       sw_communicate_target_data.stop();
       sw_distribute_target_data.start();

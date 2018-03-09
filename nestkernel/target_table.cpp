@@ -25,17 +25,6 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
-nest::TargetTable::TargetTable()
-{
-  assert( sizeof( Target ) == 8 );
-  assert( sizeof( TargetData ) == 12 );
-  assert( sizeof( SecondaryTargetData ) == 12 );
-}
-
-nest::TargetTable::~TargetTable()
-{
-}
-
 void
 nest::TargetTable::initialize()
 {
@@ -125,17 +114,22 @@ nest::TargetTable::add_target( const thread tid, const thread target_rank, const
 
   if ( target_data.is_primary() )
   {
+    const TargetDataFields& target_fields = target_data.target_data;
+
     ( *targets_[ tid ] )[ lid ].push_back(
-      Target( target_data.get_tid(), target_rank, target_data.get_syn_id(), target_data.get_lcid() ) );
+      Target( target_fields.get_tid(),
+              target_rank,
+              target_fields.get_syn_id(),
+              target_fields.get_lcid() ) );
   }
   else
   {
+    const SecondaryTargetDataFields& secondary_fields =
+        target_data.secondary_data;
     const size_t send_buffer_pos =
-      reinterpret_cast< const SecondaryTargetData* >( &target_data )
-        ->get_send_buffer_pos();
+      secondary_fields.get_send_buffer_pos();
     const synindex syn_id =
-      reinterpret_cast< const SecondaryTargetData* >( &target_data )
-        ->get_syn_id();
+      secondary_fields.get_syn_id();
 
     assert( syn_id < ( *secondary_send_buffer_pos_[ tid ] )[ lid ].size() );
     ( *secondary_send_buffer_pos_[ tid ] )[ lid ][ syn_id ].push_back(

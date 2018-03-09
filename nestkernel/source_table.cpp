@@ -483,14 +483,15 @@ nest::SourceTable::get_next_target_data( const thread tid,
       {
         next_target_data.set_is_primary( true );
         // we store the thread index of the source table, not our own tid!
-        next_target_data.set_tid( current_position.tid );
-        next_target_data.set_syn_id(
-          current_position.syn_id );
-        next_target_data.set_lcid( current_position.lcid );
+        TargetDataFields& target_fields = next_target_data.target_data;
+        target_fields.set_tid( current_position.tid );
+        target_fields.set_syn_id(current_position.syn_id );
+        target_fields.set_lcid( current_position.lcid );
       }
       else
       {
         next_target_data.set_is_primary( false );
+
         const size_t recv_buffer_pos =
           kernel().connection_manager.get_secondary_recv_buffer_position(
             current_position.tid,
@@ -501,10 +502,10 @@ nest::SourceTable::get_next_target_data( const thread tid,
         // according to buffer layout of MPIAlltoall
         const size_t send_buffer_pos = kernel().mpi_manager.recv_buffer_pos_to_send_buffer_pos_secondary_events( recv_buffer_pos, source_rank );
 
-        reinterpret_cast< SecondaryTargetData* >( &next_target_data )
-          ->set_send_buffer_pos( send_buffer_pos );
-        reinterpret_cast< SecondaryTargetData* >( &next_target_data )
-          ->set_syn_id( current_position.syn_id );
+        SecondaryTargetDataFields& secondary_fields
+            = next_target_data.secondary_data;
+        secondary_fields.set_send_buffer_pos( send_buffer_pos );
+        secondary_fields.set_syn_id( current_position.syn_id );
       }
       --current_position.lcid;
       return true; // found a valid entry

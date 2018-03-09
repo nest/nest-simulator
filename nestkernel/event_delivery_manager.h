@@ -449,8 +449,8 @@ private:
   std::vector< OffGridSpikeData > send_buffer_off_grid_spike_data_;
   std::vector< OffGridSpikeData > recv_buffer_off_grid_spike_data_;
 
-  TargetData* send_buffer_target_data_;
-  TargetData* recv_buffer_target_data_;
+  std::vector<TargetData> send_buffer_target_data_;
+  std::vector<TargetData> recv_buffer_target_data_;
 
   bool buffer_size_target_data_has_changed_; //!< whether size of MPI buffer for
                                              //communication of connections was

@@ -28,6 +28,7 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
+#include "is_legal.h"
 
 namespace nest
 {
@@ -85,6 +86,10 @@ public:
   bool is_processed() const;
   double get_offset() const;
 };
+
+//!< check legal size
+static const IsLegal<sizeof(Target) == 8>::is_legal
+    success_target_size = NULL;
 
 inline Target::Target()
   : data_( 0 )

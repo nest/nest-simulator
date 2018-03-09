@@ -747,11 +747,9 @@ nest::MPIManager::communicate_Allgather( std::vector< long >& buffer )
   MPI_Allgather( &my_val, 1, MPI_LONG, &buffer[ 0 ], 1, MPI_LONG, comm );
 }
 
-
-// TODO@5g: create non-MPI counterpart
 void
-nest::MPIManager::communicate_Alltoall( unsigned int* send_buffer,
-  unsigned int* recv_buffer,
+nest::MPIManager::communicate_Alltoall_( void* send_buffer,
+  void* recv_buffer,
   const unsigned int send_recv_count )
 {
   MPI_Alltoall( send_buffer,
@@ -763,31 +761,11 @@ nest::MPIManager::communicate_Alltoall( unsigned int* send_buffer,
     comm );
 }
 
-void
-nest::MPIManager::communicate_target_data_Alltoall( unsigned int* send_buffer,
-  unsigned int* recv_buffer )
-{
-  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_target_data_in_int_per_rank_ );
-}
 
 void
-nest::MPIManager::communicate_spike_data_Alltoall( unsigned int* send_buffer,
-  unsigned int* recv_buffer )
-{
-  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_spike_data_in_int_per_rank_ );
-}
-
-void
-nest::MPIManager::communicate_off_grid_spike_data_Alltoall( unsigned int* send_buffer,
-  unsigned int* recv_buffer )
-{
-  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank_ );
-}
-
-void
-nest::MPIManager::communicate_secondary_events_Alltoall(
-  unsigned int* send_buffer,
-  unsigned int* recv_buffer )
+nest::MPIManager::communicate_secondary_events_Alltoall_(
+  void* send_buffer,
+  void* recv_buffer )
 {
   MPI_Alltoall( send_buffer,
     chunk_size_secondary_events_in_int_,
@@ -1254,41 +1232,6 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
   std::vector< double >& recv_buffer )
 {
   recv_buffer.swap( send_buffer );
-}
-
-//////////////////////////////////////
-
-void
-nest::MPIManager::communicate_target_data_Alltoall( unsigned int* send_buffer,
-  unsigned int* recv_buffer )
-{
-    // null op is to transfer from send_buffer to recv_buffer
-    memmove(recv_buffer, send_buffer, send_recv_count_target_data_in_int_per_rank_ * sizeof(recv_buffer[0]) );
-}
-
-void
-nest::MPIManager::communicate_spike_data_Alltoall( unsigned int* send_buffer,
-  unsigned int* recv_buffer )
-{
-    // null op is to transfer from send_buffer to recv_buffer
-    memmove(recv_buffer, send_buffer, send_recv_count_spike_data_in_int_per_rank_ * sizeof(recv_buffer[0]));
-}
-
-void
-nest::MPIManager::communicate_off_grid_spike_data_Alltoall( unsigned int* send_buffer,
-  unsigned int* recv_buffer )
-{
-    // null op is to transfer from send_buffer to recv_buffer
-    memmove(recv_buffer, send_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank_ * sizeof(recv_buffer[0]));
-}
-
-void
-nest::MPIManager::communicate_secondary_events_Alltoall(
-  unsigned int* send_buffer,
-  unsigned int* recv_buffer )
-{
-        // null op is to transfer from send_buffer to recv_buffer
-    memmove(recv_buffer, send_buffer, chunk_size_secondary_events_in_int_ * sizeof(recv_buffer[0]));
 }
 
 void

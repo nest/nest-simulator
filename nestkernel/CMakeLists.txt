@@ -84,7 +84,7 @@ set( nestkernel_sources
     manager_interface.h
     target_table.h target_table.cpp
     target_table_devices.h target_table_devices.cpp target_table_devices_impl.h
-    target.h target_data.h
+    target.h target_data.h is_legal.h
     send_buffer_position.h
     source.h
     source_table.h source_table.cpp

@@ -391,9 +391,9 @@ void
 nest::gif_cond_exp_multisynapse::State_::get( DictionaryDatum& d,
   const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
-  def< double >( d, names::E_sfa, y_[ SFA ] );    // Adaptive threshold potential
-  def< double >( d, names::I_stc, y_[ STC ] );    // Spike-triggered current
+  def< double >( d, names::V_m, y_[ V_M ] );   // Membrane potential
+  def< double >( d, names::E_sfa, y_[ SFA ] ); // Adaptive threshold potential
+  def< double >( d, names::I_stc, y_[ STC ] ); // Spike-triggered current
 
 
   std::vector< double >* g = new std::vector< double >();
@@ -659,8 +659,8 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin,
     if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
     {
 
-      const double lambda = P_.lambda_0_
-        * std::exp( ( S_.y_[ State_::V_M ] - sfa ) / P_.Delta_V_ );
+      const double lambda =
+        P_.lambda_0_ * std::exp( ( S_.y_[ State_::V_M ] - sfa ) / P_.Delta_V_ );
 
       if ( lambda > 0.0 )
       {
@@ -762,7 +762,7 @@ nest::gif_cond_exp_multisynapse::set_status( const DictionaryDatum& d )
    * are added!
    */
   DynamicRecordablesMap< gif_cond_exp_multisynapse > rtmp =
-    recordablesMap_;                         // temporary copy in case of errors
+    recordablesMap_; // temporary copy in case of errors
   if ( ptmp.E_rev_.size() > P_.E_rev_.size() ) // Number of receptors increased
   {
     for ( size_t receptor = P_.E_rev_.size(); receptor < ptmp.E_rev_.size();

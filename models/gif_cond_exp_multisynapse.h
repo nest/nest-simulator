@@ -309,7 +309,7 @@ private:
       STATE_VEC_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 3;        //!< V_M, SFA, STC
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 3; //!< V_M, SFA, STC
     static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 1; //!< G
 
     std::vector< double > y_;        //!< neuron state
@@ -414,7 +414,6 @@ private:
   Variables_ V_;
   Buffers_ B_;
   /** @} */
-
 };
 
 inline port

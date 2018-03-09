@@ -509,8 +509,8 @@ nest::gif_cond_exp_multisynapse::init_buffers_()
   B_.logger_.reset();   //!< includes resize
   Archiving_Node::clear_history();
 
-  const int state_size = State_::NUMBER_OF_FIXED_STATES_ELEMENTS +
-    ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) * P_.n_receptors();
+  const int state_size = State_::NUMBER_OF_FIXED_STATES_ELEMENTS
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) * P_.n_receptors();
 
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;

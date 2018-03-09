@@ -55,21 +55,49 @@ namespace nest
  * Recordables map
  * ---------------------------------------------------------------- */
 
-RecordablesMap< gif_cond_exp_multisynapse >
-  gif_cond_exp_multisynapse::recordablesMap_;
-
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
 void
-RecordablesMap< gif_cond_exp_multisynapse >::create()
+DynamicRecordablesMap< gif_cond_exp_multisynapse >::create(
+  gif_cond_exp_multisynapse& host )
 {
   // use standard names wherever you can for consistency!
-  insert_( names::V_m,
-    &gif_cond_exp_multisynapse::
-      get_y_elem_< gif_cond_exp_multisynapse::State_::V_M > );
-  insert_( names::E_sfa, &gif_cond_exp_multisynapse::get_E_sfa_ );
-  insert_( names::I_stc, &gif_cond_exp_multisynapse::get_I_stc_ );
+  insert( names::V_m,
+    host.get_data_access_functor( gif_cond_exp_multisynapse::State_::V_M ) );
+  insert( names::E_sfa,
+    host.get_data_access_functor( gif_cond_exp_multisynapse::State_::SFA ) );
+  insert( names::I_stc,
+    host.get_data_access_functor( gif_cond_exp_multisynapse::State_::STC ) );
+
+  host.insert_conductance_recordables();
+}
+
+Name
+gif_cond_exp_multisynapse::get_g_receptor_name( size_t receptor )
+{
+  std::stringstream receptor_name;
+  receptor_name << "g_" << receptor + 1;
+  return Name( receptor_name.str() );
+}
+
+void
+gif_cond_exp_multisynapse::insert_conductance_recordables( size_t first )
+{
+  for ( size_t receptor = first; receptor < P_.E_rev_.size(); ++receptor )
+  {
+    size_t elem = gif_cond_exp_multisynapse::State_::G
+      + receptor * gif_cond_exp_multisynapse::State_::
+                     NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    recordablesMap_.insert(
+      get_g_receptor_name( receptor ), this->get_data_access_functor( elem ) );
+  }
+}
+
+DataAccessFunctor< gif_cond_exp_multisynapse >
+gif_cond_exp_multisynapse::get_data_access_functor( size_t elem )
+{
+  return DataAccessFunctor< gif_cond_exp_multisynapse >( this, elem );
 }
 } // namespace
 
@@ -91,7 +119,7 @@ nest::gif_cond_exp_multisynapse_dynamics( double,
   // good compiler will optimize the verbosity away ...
   const bool is_refractory = node.S_.r_ref_ > 0;
   const double& I_L = -node.P_.g_L_ * ( y[ S::V_M ] - node.P_.E_L_ );
-  const double& stc = node.S_.stc_;
+  const double& stc = y[ S::STC ];
   const double& V = is_refractory ? node.P_.V_reset_ : y[ S::V_M ];
 
   // I_syn = - sum_k g_k (V - E_rev_k).
@@ -146,8 +174,6 @@ nest::gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
   : y_( STATE_VEC_SIZE, 0.0 )
   , size_neuron_state_( 0 )
   , I_stim_( 0.0 )
-  , sfa_( 0.0 )
-  , stc_( 0.0 )
   , sfa_elems_()
   , stc_elems_()
   , r_ref_( 0 )
@@ -157,8 +183,6 @@ nest::gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
 
 nest::gif_cond_exp_multisynapse::State_::State_( const State_& s )
   : I_stim_( s.I_stim_ )
-  , sfa_( s.sfa_ )
-  , stc_( s.stc_ )
   , r_ref_( s.r_ref_ )
 {
   sfa_elems_.resize( s.sfa_elems_.size(), 0.0 );
@@ -199,9 +223,7 @@ nest::gif_cond_exp_multisynapse::State_&
   size_neuron_state_ = s.size_neuron_state_;
 
   I_stim_ = s.I_stim_;
-  sfa_ = s.sfa_;
   r_ref_ = s.r_ref_;
-  stc_ = s.stc_;
 
   return *this;
 }
@@ -370,8 +392,8 @@ nest::gif_cond_exp_multisynapse::State_::get( DictionaryDatum& d,
   const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
-  def< double >( d, names::E_sfa, sfa_ );    // Adaptive threshold potential
-  def< double >( d, names::I_stc, stc_ );    // Spike-triggered current
+  def< double >( d, names::E_sfa, y_[ SFA ] );    // Adaptive threshold potential
+  def< double >( d, names::I_stc, y_[ STC ] );    // Spike-triggered current
 
 
   std::vector< double >* g = new std::vector< double >();
@@ -393,6 +415,8 @@ nest::gif_cond_exp_multisynapse::State_::set( const DictionaryDatum& d,
   const Parameters_& p )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
+  updateValue< double >( d, names::E_sfa, y_[ SFA ] );
+  updateValue< double >( d, names::I_stc, y_[ STC ] );
 }
 
 nest::gif_cond_exp_multisynapse::Buffers_::Buffers_(
@@ -431,7 +455,7 @@ nest::gif_cond_exp_multisynapse::gif_cond_exp_multisynapse()
   , S_( P_ )
   , B_( *this )
 {
-  recordablesMap_.create();
+  recordablesMap_.create( *this );
 }
 
 nest::gif_cond_exp_multisynapse::gif_cond_exp_multisynapse(
@@ -441,6 +465,7 @@ nest::gif_cond_exp_multisynapse::gif_cond_exp_multisynapse(
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
+  recordablesMap_.create( *this );
 }
 
 nest::gif_cond_exp_multisynapse::~gif_cond_exp_multisynapse()
@@ -572,21 +597,24 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin,
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
+  double& sfa = S_.y_[ nest::gif_cond_exp_multisynapse::State_::SFA ];
+  double& stc = S_.y_[ nest::gif_cond_exp_multisynapse::State_::STC ];
+
   for ( long lag = from; lag < to; ++lag )
   {
 
     // exponential decaying stc and sfa elements
-    S_.stc_ = 0.0;
+    stc = 0.0;
     for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
     {
-      S_.stc_ += S_.stc_elems_[ i ];
+      stc += S_.stc_elems_[ i ];
       S_.stc_elems_[ i ] = V_.P_stc_[ i ] * S_.stc_elems_[ i ];
     }
 
-    S_.sfa_ = P_.V_T_star_;
+    sfa = P_.V_T_star_;
     for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ )
     {
-      S_.sfa_ += S_.sfa_elems_[ i ];
+      sfa += S_.sfa_elems_[ i ];
       S_.sfa_elems_[ i ] = V_.P_sfa_[ i ] * S_.sfa_elems_[ i ];
     }
 
@@ -632,7 +660,7 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin,
     {
 
       const double lambda = P_.lambda_0_
-        * std::exp( ( S_.y_[ State_::V_M ] - S_.sfa_ ) / P_.Delta_V_ );
+        * std::exp( ( S_.y_[ State_::V_M ] - sfa ) / P_.Delta_V_ );
 
       if ( lambda > 0.0 )
       {
@@ -713,6 +741,53 @@ void
 nest::gif_cond_exp_multisynapse::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
+}
+
+void
+nest::gif_cond_exp_multisynapse::set_status( const DictionaryDatum& d )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( d );         // throws if BadProperty
+  State_ stmp = S_;      // temporary copy in case of errors
+  stmp.set( d, ptmp );   // throws if BadProperty
+
+  // We now know that (ptmp, stmp) are consistent. We do not
+  // write them back to (P_, S_) before we are also sure that
+  // the properties to be set in the parent class are internally
+  // consistent.
+  Archiving_Node::set_status( d );
+
+  /*
+   * Here is where we must update the recordablesMap_ if new receptors
+   * are added!
+   */
+  DynamicRecordablesMap< gif_cond_exp_multisynapse > rtmp =
+    recordablesMap_;                         // temporary copy in case of errors
+  if ( ptmp.E_rev_.size() > P_.E_rev_.size() ) // Number of receptors increased
+  {
+    for ( size_t receptor = P_.E_rev_.size(); receptor < ptmp.E_rev_.size();
+          ++receptor )
+    {
+      size_t elem = gif_cond_exp_multisynapse::State_::G
+        + receptor * gif_cond_exp_multisynapse::State_::
+                       NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+      rtmp.insert(
+        get_g_receptor_name( receptor ), get_data_access_functor( elem ) );
+    }
+  }
+  else if ( ptmp.E_rev_.size() < P_.E_rev_.size() )
+  { // Number of receptors decreased
+    for ( size_t receptor = ptmp.E_rev_.size(); receptor < P_.E_rev_.size();
+          ++receptor )
+    {
+      rtmp.erase( get_g_receptor_name( receptor ) );
+    }
+  }
+
+  // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
+  S_ = stmp;
+  recordablesMap_ = rtmp;
 }
 
 #endif // HAVE_GSL

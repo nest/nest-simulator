@@ -131,3 +131,54 @@ clear
   t2_neuron2 eq rot
   t1_neuron2 eq and and
 } assert_or_die
+
+% --------------------------------------
+
+% The following tests address #800
+% - Test that the default recordables are V_m, E_sfa, I_stc and g_1
+% - Test that the recordable g's change when changing the number of receptor ports
+% test default recordables include g_1
+{
+  << >> begin
+  ResetKernel
+  
+  /nrn /gif_cond_exp_multisynapse Create def
+  
+  /mm /multimeter << /withtime true /time_in_steps true
+                     /interval 1.0 /record_from [ /V_m /E_sfa /I_stc /g_1 ] >> Create def
+  
+  mm nrn Connect
+  
+  /len 1 GetStatus /recordables get length def
+  len 4 eq
+  end
+}
+assert_or_die
+
+% test resize recordables
+{
+  << >> begin
+  ResetKernel
+  
+  /E_rev1    [0.0  0.0  -85.0] def
+  /E_rev2    [0.0  0.0] def
+  /E_rev3    [0.0  0.0  -85.0 0.] def
+  /tau_syn1  [5.0  1.0  25.0] def
+  /tau_syn2  [5.0  1.0] def
+  /tau_syn3  [5.0  1.0  25.0 50.] def
+  
+  /nrn /gif_cond_exp_multisynapse <<  
+    /E_rev E_rev1 /tau_syn tau_syn1
+      >> Create def
+  /len1 1 GetStatus /recordables get length def
+  
+  1 << /E_rev E_rev2 /tau_syn tau_syn2 >> SetStatus
+  /len2 1 GetStatus /recordables get length def
+  
+  1 << /E_rev E_rev3 /tau_syn tau_syn3 >> SetStatus
+  /len3 1 GetStatus /recordables get length def
+  
+  len1 6 eq len2 5 eq and len3 7 eq and
+  end
+}
+assert_or_die

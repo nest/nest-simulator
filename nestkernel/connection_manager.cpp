@@ -1198,14 +1198,10 @@ nest::ConnectionManager::get_connections(
 
   if ( source == 0 and target == 0 )
   {
-#ifdef _OPENMP
 #pragma omp parallel
     {
       thread tid = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-#endif
+
       std::deque< ConnectionID > conns_in_thread;
 
       ConnectorBase* connections = ( *connections_5g_[ tid ] )[ syn_id ];
@@ -1227,24 +1223,20 @@ nest::ConnectionManager::get_connections(
 
       if ( conns_in_thread.size() > 0 )
       {
-#ifdef _OPENMP
 #pragma omp critical( get_connections )
-#endif
-        extend_connectome( connectome, conns_in_thread );
+        {
+          extend_connectome( connectome, conns_in_thread );
+        }
       }
     } // of omp parallel
     return;
   } // if
   else if ( source == 0 and target != 0 )
   {
-#ifdef _OPENMP
 #pragma omp parallel
     {
       thread tid = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-#endif
+
       std::deque< ConnectionID > conns_in_thread;
 
       ConnectorBase* connections = ( *connections_5g_[ tid ] )[ syn_id ];
@@ -1278,24 +1270,20 @@ nest::ConnectionManager::get_connections(
 
       if ( conns_in_thread.size() > 0 )
       {
-#ifdef _OPENMP
 #pragma omp critical( get_connections )
-#endif
-        extend_connectome( connectome, conns_in_thread );
+        {
+          extend_connectome( connectome, conns_in_thread );
+        }
       }
     } // of omp parallel
     return;
   } // else if
   else if ( source != 0 )
   {
-#ifdef _OPENMP
 #pragma omp parallel
     {
       thread tid = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-#endif
+
       std::deque< ConnectionID > conns_in_thread;
 
       std::vector< index > sources;
@@ -1361,10 +1349,10 @@ nest::ConnectionManager::get_connections(
 
       if ( conns_in_thread.size() > 0 )
       {
-#ifdef _OPENMP
 #pragma omp critical( get_connections )
-#endif
-        extend_connectome( connectome, conns_in_thread );
+        {
+          extend_connectome( connectome, conns_in_thread );
+        }
       }
     } // of omp parallel
     return;

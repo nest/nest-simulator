@@ -271,7 +271,7 @@ nest::MPIManager::mpi_finalize( int exitcode )
   int initialized;
   MPI_Initialized( &initialized );
 
-  if ( finalized == 0 && initialized == 1 )
+  if ( finalized == 0 and initialized == 1 )
   {
     if ( exitcode == 0 )
     {
@@ -811,7 +811,7 @@ nest::MPIManager::synchronize()
 void
 nest::MPIManager::test_link( int sender, int receiver )
 {
-  assert( sender < get_num_processes() && receiver < get_num_processes() );
+  assert( sender < get_num_processes() and receiver < get_num_processes() );
 
   if ( get_num_processes() > 1 )
   {

@@ -409,7 +409,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     {
       completed_count = 0;
       if ( kernel().mpi_manager.adaptive_spike_buffers()
-        && buffer_size_spike_data_has_changed_ )
+        and buffer_size_spike_data_has_changed_ )
       {
         resize_send_recv_buffers_spike_data_();
         buffer_size_spike_data_has_changed_ = false;
@@ -772,7 +772,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
 #pragma omp single
     {
       if ( kernel().mpi_manager.adaptive_target_buffers()
-        && buffer_size_target_data_has_changed_ )
+        and buffer_size_target_data_has_changed_ )
       {
         resize_send_recv_buffers_target_data();
       }

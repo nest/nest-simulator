@@ -1247,7 +1247,7 @@ DiffusionConnectionEvent::get_diffusion_factor() const
 inline bool
 Event::is_valid() const
 {
-  return ( ( sender_ != NULL ) && ( receiver_ != NULL ) && ( d_ > 0 ) );
+  return ( ( sender_ != NULL ) and ( receiver_ != NULL ) and ( d_ > 0 ) );
 }
 
 inline void

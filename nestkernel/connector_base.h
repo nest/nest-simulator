@@ -248,7 +248,7 @@ public:
   get_synapse_status( const thread tid,
     const index lcid, DictionaryDatum& dict ) const
   {
-    assert( lcid >= 0 && lcid < C_.size() );
+    assert( lcid >= 0 and lcid < C_.size() );
 
     C_[ lcid ].get_status( dict );
 
@@ -261,7 +261,7 @@ public:
   set_synapse_status( const index lcid,
     const DictionaryDatum& dict, ConnectorModel& cm )
   {
-    assert( lcid >= 0 && lcid < C_.size() );
+    assert( lcid >= 0 and lcid < C_.size() );
  
     C_[ lcid ].set_status(
       dict, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
@@ -285,7 +285,7 @@ public:
   ConnectionT&
   at( const size_t lcid )
   {
-    if ( lcid >= C_.size() || lcid < 0 )
+    if ( lcid >= C_.size() or lcid < 0 )
     {
       throw std::out_of_range( String::compose(
         "Invalid attempt to access a connection: index %1 out of range.", lcid ) );

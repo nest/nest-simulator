@@ -282,7 +282,7 @@ public:
   bool
   is_symmetric() const
   {
-    return *sources_ == *targets_ && all_parameters_scalar_();
+    return *sources_ == *targets_ and all_parameters_scalar_();
   }
 
   bool

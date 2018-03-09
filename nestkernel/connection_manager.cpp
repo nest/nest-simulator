@@ -388,14 +388,14 @@ nest::ConnectionManager::connect( const GIDCollection& sources,
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
-  if ( !conn_spec->known( names::rule ) )
+  if ( not conn_spec->known( names::rule ) )
   {
     throw BadProperty( "Connectivity spec must contain connectivity rule." );
   }
   const Name rule_name =
     static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
 
-  if ( !connruledict_->known( rule_name ) )
+  if ( not connruledict_->known( rule_name ) )
   {
     throw BadProperty(
       String::compose( "Unknown connectivity rule: %1", rule_name ) );
@@ -887,7 +887,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "Target with ID %1 does not exist. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
         {
           msg += "\nDetails: " + e.message();
         }
@@ -920,7 +920,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "Target with ID %1 does not support the connection. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
         {
           msg += "\nDetails: " + e.message();
         }
@@ -933,7 +933,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "Target with ID %1 does not support the connection. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
         {
           msg += "\nDetails: " + e.message();
         }
@@ -948,7 +948,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "The connection will be ignored",
           source_id,
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
         {
           msg += "\nDetails: " + e.message();
         }

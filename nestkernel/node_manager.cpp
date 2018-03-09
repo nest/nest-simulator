@@ -227,7 +227,7 @@ index NodeManager::add_node( index mod, long n ) // no_p
     == static_cast< size_t >( n_threads ) );
   assert( subnet_container->get_thread_sibling( 0 ) == current_ );
 
-  if ( max_gid > local_nodes_.max_size() || max_gid < min_gid )
+  if ( max_gid > local_nodes_.max_size() or max_gid < min_gid )
   {
     LOG( M_ERROR,
       "NodeManager::add:node",
@@ -617,7 +617,7 @@ Node* NodeManager::get_node( index n, thread tid ) // no_p
     return node; // plain node
   }
 
-  if ( tid < 0 || tid >= static_cast< thread >( node->num_thread_siblings() ) )
+  if ( tid < 0 or tid >= static_cast< thread >( node->num_thread_siblings() ) )
   {
     throw UnknownNode();
   }
@@ -685,8 +685,8 @@ NodeManager::ensure_valid_thread_local_ids()
         for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
         {
           Node* node = local_nodes_.get_node_by_index( idx );
-          if (  not node->is_subnet() && ( node->get_thread() == tid
-                                       || node->num_thread_siblings() > 0 ) )
+          if (  not node->is_subnet() and ( node->get_thread() == tid
+                                       or node->num_thread_siblings() > 0 ) )
           {
             num_thread_local_nodes++;
             if ( node->node_uses_wfr() )

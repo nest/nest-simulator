@@ -277,7 +277,7 @@ SourceTable::save_entry_point( const thread tid )
 
     // if tid and syn_id are valid entries, also store valid entry for lcid
     if ( ( *current_positions_[ tid ] ).tid > -1
-      && ( *current_positions_[ tid ] ).syn_id > -1 )
+      and ( *current_positions_[ tid ] ).syn_id > -1 )
     {
       // either store current_position.lcid + 1, since this can
       // contain non-processed entry (see reject_last_target_data()) or

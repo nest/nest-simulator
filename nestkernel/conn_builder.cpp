@@ -107,7 +107,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   // separately. Important for hom_w synapses, on which weight cannot
   // be set. However, we use default weight and delay for _all_ types
   // of synapses.
-  default_weight_and_delay_ = ( default_weight_ && default_delay_ );
+  default_weight_and_delay_ = ( default_weight_ and default_delay_ );
 
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during
@@ -142,7 +142,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   // Structural plasticity parameters
   // Check if both pre and post synaptic element are provided
   if ( syn_spec->known( names::pre_synaptic_element )
-    && syn_spec->known( names::post_synaptic_element ) )
+    and syn_spec->known( names::post_synaptic_element ) )
   {
     pre_synaptic_element_name_ =
       getValue< std::string >( syn_spec, names::pre_synaptic_element );
@@ -155,7 +155,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   else
   {
     if ( syn_spec->known( names::pre_synaptic_element )
-      || syn_spec->known( names::post_synaptic_element ) )
+      or syn_spec->known( names::post_synaptic_element ) )
     {
       throw BadProperty(
         "In order to use structural plasticity, both a pre and post synaptic "
@@ -211,8 +211,8 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
             ++it )
       {
         if ( it->first == names::receptor_type
-          || it->first == names::music_channel
-          || it->first == names::synapse_label )
+          or it->first == names::music_channel
+          or it->first == names::synapse_label )
         {
           ( *param_dicts_[ tid ] )[ it->first ] =
             Token( new IntegerDatum( 0 ) );
@@ -473,8 +473,8 @@ nest::ConnBuilder::single_connect_( index sgid,
           ++it )
     {
       if ( it->first == names::receptor_type
-        || it->first == names::music_channel
-        || it->first == names::synapse_label )
+        or it->first == names::music_channel
+        or it->first == names::synapse_label )
       {
         try
         {
@@ -580,17 +580,17 @@ nest::ConnBuilder::all_parameters_scalar_() const
   bool all_scalar = true;
   if ( weight_ )
   {
-    all_scalar = all_scalar && weight_->is_scalar();
+    all_scalar = all_scalar and weight_->is_scalar();
   }
   if ( delay_ )
   {
-    all_scalar = all_scalar && delay_->is_scalar();
+    all_scalar = all_scalar and delay_->is_scalar();
   }
   for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
         it != synapse_params_.end();
         ++it )
   {
-    all_scalar = all_scalar && it->second->is_scalar();
+    all_scalar = all_scalar and it->second->is_scalar();
   }
   return all_scalar;
 }
@@ -1259,7 +1259,7 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
       s_id = rng->ulrand( n_rnd );
       sgid = ( *sources_ )[ s_id ];
     } while ( ( not autapses_ and sgid == tgid )
-      || ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
+      or ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
 
     if ( not multapses_ )
     {

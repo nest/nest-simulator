@@ -37,7 +37,7 @@ TimeConverter::TimeConverter()
 Time
 TimeConverter::from_old_steps( long s_old ) const
 {
-  if ( s_old == Time::LIM_NEG_INF.steps || s_old == Time::LIM_POS_INF.steps )
+  if ( s_old == Time::LIM_NEG_INF.steps or s_old == Time::LIM_POS_INF.steps )
   {
     return Time( Time::step( s_old ) );
   }
@@ -48,7 +48,7 @@ TimeConverter::from_old_steps( long s_old ) const
 Time
 TimeConverter::from_old_tics( tic_t t_old ) const
 {
-  if ( t_old == Time::LIM_NEG_INF.tics || t_old == Time::LIM_POS_INF.tics )
+  if ( t_old == Time::LIM_NEG_INF.tics or t_old == Time::LIM_POS_INF.tics )
   {
     return Time( Time::tic( t_old ) );
   }

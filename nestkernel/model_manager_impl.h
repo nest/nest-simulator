@@ -43,7 +43,7 @@ ModelManager::register_node_model( const Name& name,
   bool private_model,
   std::string deprecation_info )
 {
-  if ( not private_model && modeldict_->known( name ) )
+  if ( not private_model and modeldict_->known( name ) )
   {
     std::string msg = String::compose(
       "A model called '%1' already exists.\n"
@@ -64,7 +64,7 @@ ModelManager::register_preconf_node_model( const Name& name,
   bool private_model,
   std::string deprecation_info )
 {
-  if ( not private_model && modeldict_->known( name ) )
+  if ( not private_model and modeldict_->known( name ) )
   {
     std::string msg = String::compose(
       "A model called '%1' already exists.\n"

@@ -116,7 +116,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
         "changed." );
     }
 
-    if ( n_threads > 1 && force_singlethreading_ )
+    if ( n_threads > 1 and force_singlethreading_ )
     {
       LOG( M_WARNING,
         "VPManager::set_status",
@@ -185,7 +185,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     }
 
     long n_threads = n_vps / kernel().mpi_manager.get_num_processes();
-    if ( ( n_threads > 1 ) && ( force_singlethreading_ ) )
+    if ( ( n_threads > 1 ) and ( force_singlethreading_ ) )
     {
       LOG( M_WARNING,
         "VPManager::set_status",
@@ -211,7 +211,7 @@ void
 nest::VPManager::set_num_threads( nest::thread n_threads )
 {
   if ( kernel().sp_manager.is_structural_plasticity_enabled()
-    && ( n_threads > 1 ) )
+    and ( n_threads > 1 ) )
   {
     throw KernelException(
       "Multiple threads can not be used if structural plasticity is enabled" );

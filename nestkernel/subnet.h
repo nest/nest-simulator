@@ -246,7 +246,7 @@ Subnet::add_node( Node* n )
 {
   const index lid = gids_.size();
   const index mid = n->get_model_id();
-  if ( ( homogeneous_ ) && ( lid > 0 ) )
+  if ( ( homogeneous_ ) and ( lid > 0 ) )
   {
     if ( mid != last_mid_ )
     {
@@ -269,7 +269,7 @@ inline index
 Subnet::add_remote_node( index gid, index mid )
 {
   const index lid = gids_.size();
-  if ( ( homogeneous_ ) && ( lid > 0 ) )
+  if ( ( homogeneous_ ) and ( lid > 0 ) )
   {
     if ( mid != last_mid_ )
     {

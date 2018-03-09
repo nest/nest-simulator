@@ -392,7 +392,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
         < static_cast< long >(
             ( *last_sorted_source_[ current_position.tid ] )[ current_position
                                                                 .syn_id ] )
-      && ( *last_sorted_source_[ current_position.tid ] )[ current_position
+      and ( *last_sorted_source_[ current_position.tid ] )[ current_position
                                                              .syn_id ]
         < ( *( *sources_[ current_position.tid ] )[ current_position
                                                       .syn_id ] ).size() )

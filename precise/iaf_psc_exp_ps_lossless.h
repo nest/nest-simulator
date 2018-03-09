@@ -91,9 +91,7 @@ SeeAlso: iaf_psc_exp_ps
 namespace nest
 {
 /**
- * Leaky iaf neuron, exponential PSC synapses, canonical implementation.
- * @note Inherit privately from Node, so no classes can be derived
- * from this one.
+ * Leaky iaf neuron, exponential PSC synapses, lossless implementation.
  * @todo Implement current input in consistent way.
  */
 class iaf_psc_exp_ps_lossless : public Archiving_Node
@@ -159,8 +157,7 @@ private:
    *
    * Return from refractoriness is handled as a special event in the
    * queue, which is marked by a weight that is GSL_NAN.  This greatly
-   *simplifies
-   * the code.
+   * simplifies the code.
    *
    * For steps, during which no events occur, the precomputed propagator matrix
    * is used.  For other steps, the propagator matrix is computed as needed.
@@ -177,7 +174,6 @@ private:
 
   /**
    * Propagate neuron state.
-   * Propagate the neuron's state by dt.
    * @param dt Interval over which to propagate
    */
   void propagate_( const double dt );
@@ -339,8 +335,8 @@ private:
     double P21_in_;          //!< Progagator matrix element, 2nd row
     double P21_ex_;          //!< Progagator matrix element, 2nd row
     double y0_before_;       //!< y0_ at beginning of ministep
-    double I_syn_ex_before_; //!< y1_ at beginning of ministep
-    double I_syn_in_before_; //!< y1_ at beginning of ministep
+    double I_syn_ex_before_; //!< I_syn_ex_ at beginning of ministep
+    double I_syn_in_before_; //!< I_syn_in_ at beginning of ministep
     double y2_before_;       //!< y2_ at beginning of ministep
     double bisection_step_;  //!< if missed spike is detected,
                              //!< calculate time to emit spike

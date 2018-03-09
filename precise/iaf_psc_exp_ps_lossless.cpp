@@ -123,9 +123,9 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
-  const double ELold = E_L_;
+  const double E_L_old = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
-  const double delta_EL = E_L_ - ELold;
+  const double delta_E_L = E_L_ - E_L_old;
 
   updateValue< double >( d, names::tau_m, tau_m_ );
   updateValue< double >( d, names::tau_syn_ex, tau_ex_ );
@@ -140,7 +140,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d )
   }
   else
   {
-    U_th_ -= delta_EL;
+    U_th_ -= delta_E_L;
   }
 
   if ( updateValue< double >( d, names::V_min, U_min_ ) )
@@ -149,7 +149,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d )
   }
   else
   {
-    U_min_ -= delta_EL;
+    U_min_ -= delta_E_L;
   }
 
   if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
@@ -158,7 +158,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d )
   }
   else
   {
-    U_reset_ -= delta_EL;
+    U_reset_ -= delta_E_L;
   }
 
   if ( U_reset_ >= U_th_ )
@@ -169,7 +169,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d )
   if ( U_reset_ < U_min_ )
   {
     throw BadProperty(
-      "Reset potential must be greater equal minimum potential." );
+      "Reset potential must be greater than or equal to minimum potential." );
   }
 
   if ( c_m_ <= 0 )
@@ -194,7 +194,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d )
       "See note in documentation." );
   }
 
-  return delta_EL;
+  return delta_E_L;
 }
 
 void
@@ -207,7 +207,7 @@ nest::iaf_psc_exp_ps_lossless::State_::get( DictionaryDatum& d,
     d, names::t_spike, Time( Time::step( last_spike_step_ ) ).get_ms() );
   def< double >( d, names::offset, last_spike_offset_ );
   def< double >( d, names::I_syn_ex, I_syn_ex_ );
-  def< double >( d, names::I_syn_in, I_syn_in_ ); // y1 state
+  def< double >( d, names::I_syn_in, I_syn_in_ );
   def< double >( d, names::I_syn, I_syn_ex_ + I_syn_in_ );
 }
 
@@ -276,8 +276,8 @@ nest::iaf_psc_exp_ps_lossless::init_buffers_()
 void
 nest::iaf_psc_exp_ps_lossless::calibrate()
 {
-  B_.logger_
-    .init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   V_.h_ms_ = Time::get_resolution().get_ms();
 
@@ -368,7 +368,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin,
     bool end_of_refract;
 
     if ( not B_.events_.get_next_spike(
-           T, true, ev_offset, ev_weight, end_of_refract ) )
+           T, false, ev_offset, ev_weight, end_of_refract ) )
     {
       // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
@@ -451,7 +451,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin,
         V_.y2_before_ = S_.y2_;
         last_offset = ev_offset;
       } while ( B_.events_.get_next_spike(
-        T, true, ev_offset, ev_weight, end_of_refract ) );
+        T, false, ev_offset, ev_weight, end_of_refract ) );
 
       // no events remaining, plain update step across remainder
       // of interval

@@ -106,7 +106,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
       }
     }
   }
-  else if ( n_threads_updated && kernel().node_manager.size() == 0 )
+  else if ( n_threads_updated and kernel().node_manager.size() == 0 )
   {
     LOG( M_WARNING,
       "RNGManager::set_status",
@@ -170,7 +170,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     // pre-seeded grng that can be used directly, no seeding required
     updateValue< librandom::RngDatum >( d, names::grng, grng_ );
   }
-  else if ( n_threads_updated && kernel().node_manager.size() == 0 )
+  else if ( n_threads_updated and kernel().node_manager.size() == 0 )
   {
     LOG( M_WARNING,
       "RNGManager::set_status",

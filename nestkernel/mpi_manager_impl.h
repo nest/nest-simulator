@@ -107,7 +107,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   bool remote )
 {
   size_t np = get_num_processes();
-  if ( np > 1 && remote )
+  if ( np > 1 and remote )
   {
     std::vector< long > localnodes;
     for ( typename NodeListType::iterator n = local_nodes.begin();
@@ -177,7 +177,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 {
   size_t np = get_num_processes();
 
-  if ( np > 1 && remote )
+  if ( np > 1 and remote )
   {
     std::vector< long > localnodes;
     if ( params->empty() )

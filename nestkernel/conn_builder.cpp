@@ -107,7 +107,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   // separately. Important for hom_w synapses, on which weight cannot
   // be set. However, we use default weight and delay for _all_ types
   // of synapses.
-  default_weight_and_delay_ = ( default_weight_ && default_delay_ );
+  default_weight_and_delay_ = ( default_weight_ and default_delay_ );
 
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during
@@ -142,7 +142,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   // Structural plasticity parameters
   // Check if both pre and post synaptic element are provided
   if ( syn_spec->known( names::pre_synaptic_element )
-    && syn_spec->known( names::post_synaptic_element ) )
+    and syn_spec->known( names::post_synaptic_element ) )
   {
     pre_synaptic_element_name_ =
       getValue< std::string >( syn_spec, names::pre_synaptic_element );
@@ -580,17 +580,17 @@ nest::ConnBuilder::all_parameters_scalar_() const
   bool all_scalar = true;
   if ( weight_ )
   {
-    all_scalar = all_scalar && weight_->is_scalar();
+    all_scalar = all_scalar and weight_->is_scalar();
   }
   if ( delay_ )
   {
-    all_scalar = all_scalar && delay_->is_scalar();
+    all_scalar = all_scalar and delay_->is_scalar();
   }
   for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
         it != synapse_params_.end();
         ++it )
   {
-    all_scalar = all_scalar && it->second->is_scalar();
+    all_scalar = all_scalar and it->second->is_scalar();
   }
   return all_scalar;
 }

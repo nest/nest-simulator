@@ -86,7 +86,7 @@ Multirange::push_back( index x )
     return;
   }
 
-  if ( ( not ranges_.empty() ) && ( ranges_.back().second + 1 == x ) )
+  if ( ( not ranges_.empty() ) and ( ranges_.back().second + 1 == x ) )
   {
     ++ranges_.back().second;
   }
@@ -109,7 +109,7 @@ Multirange::contains( index x )
 {
   for ( size_t i = 0; i < ranges_.size(); i++ )
   {
-    if ( ranges_[ i ].first <= x && x <= ranges_[ i ].second )
+    if ( ranges_[ i ].first <= x and x <= ranges_[ i ].second )
     {
       return true;
     }

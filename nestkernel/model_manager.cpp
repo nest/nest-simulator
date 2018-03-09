@@ -88,8 +88,8 @@ ModelManager::~ModelManager()
 void
 ModelManager::initialize()
 {
-  if ( subnet_model_ == 0 && siblingcontainer_model_ == 0
-    && proxynode_model_ == 0 )
+  if ( subnet_model_ == 0 and siblingcontainer_model_ == 0
+    and proxynode_model_ == 0 )
   {
     // initialize these models only once outside of the constructor
     // as the node model asks for the # of threads to setup slipools

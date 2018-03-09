@@ -166,7 +166,7 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
 
   ( *d )[ names::use_gid_in_filename ] = use_gid_in_filename_;
 
-  if ( to_file_ && not filename_.empty() )
+  if ( to_file_ and not filename_.empty() )
   {
     initialize_property_array( d, names::filenames );
     append_property( d, names::filenames, filename_ );
@@ -273,7 +273,7 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
         to_screen_ = true;
       }
       else if ( rd.mode_ == RecordingDevice::MULTIMETER
-        && ( *t == LiteralDatum( names::accumulator )
+        and ( *t == LiteralDatum( names::accumulator )
                   || *t == Token( names::accumulator.toString() ) ) )
       {
         to_accumulator_ = true;
@@ -296,7 +296,7 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
     }
   }
 
-  if ( ( rec_change || have_record_to ) && to_file_ && to_memory_ )
+  if ( ( rec_change || have_record_to ) and to_file_ and to_memory_ )
   {
     LOG( M_INFO,
       "RecordingDevice::set_status",
@@ -304,7 +304,7 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   }
 
   if ( to_accumulator_
-    && ( to_file_ || to_screen_ || to_memory_ || withgid_ || withweight_ ) )
+    and ( to_file_ || to_screen_ || to_memory_ || withgid_ || withweight_ ) )
   {
     to_file_ = to_screen_ = to_memory_ = withgid_ = withweight_ = false;
     LOG( M_WARNING,
@@ -546,7 +546,7 @@ nest::RecordingDevice::init_buffers()
   // we only close files here, opening is left to calibrate()
   // we must not touch B_.fbuffer_ here, as it will be used
   // as long as B_.fs_ exists.
-  if ( P_.close_on_reset_ && B_.fs_.is_open() )
+  if ( P_.close_on_reset_ and B_.fs_.is_open() )
   {
     B_.fs_.close();
     P_.filename_.clear(); // filename_ only visible while file open
@@ -767,7 +767,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  if ( not P_.to_file_ && B_.fs_.is_open() )
+  if ( not P_.to_file_ and B_.fs_.is_open() )
   {
     B_.fs_.close();
     P_.filename_.clear();

@@ -185,7 +185,7 @@ SPManager::set_status( const DictionaryDatum& d )
     // check that the user defined the min and max delay properly, if the
     // default delay is not used.
     if ( not conn_builder->get_default_delay()
-      && not kernel().connection_manager.get_user_set_delay_extrema() )
+      and not kernel().connection_manager.get_user_set_delay_extrema() )
     {
       throw BadProperty(
         "Structural Plasticity: to use different delays for synapses you must "
@@ -256,7 +256,7 @@ SPManager::disconnect_single( index sgid,
 
   // Disconnect if Structural plasticity is activated
   if ( syn->known( names::pre_synaptic_element )
-    && syn->known( names::post_synaptic_element ) )
+    and syn->known( names::post_synaptic_element ) )
   {
     GIDCollection* sources = new GIDCollection();
     GIDCollection* targets = new GIDCollection();
@@ -298,7 +298,7 @@ SPManager::disconnect( const index sgid,
       return;
     }
     if ( ( source->get_thread() != target_thread )
-      && ( source->has_proxies() ) )
+      and ( source->has_proxies() ) )
     {
       target_thread = source->get_thread();
       target = kernel().node_manager.get_node( target->get_gid(), sgid );
@@ -510,7 +510,7 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
   kernel().mpi_manager.communicate(
     post_vacant_n, post_vacant_n_global, displacements );
 
-  if ( pre_vacant_id_global.size() > 0 && post_vacant_id_global.size() > 0 )
+  if ( pre_vacant_id_global.size() > 0 and post_vacant_id_global.size() > 0 )
   {
     create_synapses( pre_vacant_id_global,
       pre_vacant_n_global,
@@ -604,7 +604,7 @@ SPManager::delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
   id_it = pre_deleted_id.begin();
   n_it = pre_deleted_n.begin();
   connectivity_it = connectivity.begin();
-  for ( ; id_it != pre_deleted_id.end() && n_it != pre_deleted_n.end();
+  for ( ; id_it != pre_deleted_id.end() and n_it != pre_deleted_n.end();
         id_it++, n_it++, connectivity_it++ )
   {
     // Communicate the list of targets
@@ -710,7 +710,7 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
   n_it = post_deleted_n.begin();
   connectivity_it = connectivity.begin();
 
-  for ( ; id_it != post_deleted_id.end() && n_it != post_deleted_n.end();
+  for ( ; id_it != post_deleted_id.end() and n_it != post_deleted_n.end();
         id_it++, n_it++, connectivity_it++ )
   {
     // Communicate the list of sources
@@ -805,7 +805,7 @@ nest::SPManager::serialize_id( std::vector< index >& id,
   int j;
   id_it = id.begin();
   n_it = n.begin();
-  for ( ; id_it != id.end() && n_it != n.end(); id_it++, n_it++ )
+  for ( ; id_it != id.end() and n_it != n.end(); id_it++, n_it++ )
   {
     for ( j = 0; j < ( *n_it ); j++ )
     {

@@ -685,7 +685,7 @@ NodeManager::ensure_valid_thread_local_ids()
         for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
         {
           Node* node = local_nodes_.get_node_by_index( idx );
-          if (  not node->is_subnet() && ( node->get_thread() == tid
+          if (  not node->is_subnet() and ( node->get_thread() == tid
                                        || node->num_thread_siblings() > 0 ) )
           {
             num_thread_local_nodes++;

@@ -224,7 +224,7 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device(
   const index mm_gid = req.get_sender().get_gid();
   const size_t n_loggers = data_loggers_.size();
   size_t j = 0;
-  while ( j < n_loggers && data_loggers_[ j ].get_mm_gid() != mm_gid )
+  while ( j < n_loggers and data_loggers_[ j ].get_mm_gid() != mm_gid )
   {
     ++j;
   }
@@ -280,7 +280,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_(
 
   num_vars_ = node_access_.size();
 
-  if ( num_vars_ > 0 && req.get_recording_interval() < Time::step( 1 ) )
+  if ( num_vars_ > 0 and req.get_recording_interval() < Time::step( 1 ) )
   {
     throw IllegalConnection(
       "UniversalDataLogger::connect_logging_device(): "

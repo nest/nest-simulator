@@ -85,7 +85,7 @@ nest::Subnet::get_dimensions_( std::vector< int >& dim ) const
   {
     return;
   }
-  if ( homogeneous_ && ( dynamic_cast< Subnet* >( nodes_.at( 0 ) ) != NULL ) )
+  if ( homogeneous_ and ( dynamic_cast< Subnet* >( nodes_.at( 0 ) ) != NULL ) )
   {
     bool homog = true;
     for ( size_t i = 0; i < nodes_.size() - 1; ++i )

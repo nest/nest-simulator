@@ -96,7 +96,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
     throw BadProperty( "Both min_delay and max_delay have to be specified" );
   }
 
-  if ( min_delay_updated && max_delay_updated )
+  if ( min_delay_updated and max_delay_updated )
   {
     if ( kernel().connection_manager.get_num_connections() > 0 )
     {

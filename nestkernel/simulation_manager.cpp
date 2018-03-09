@@ -165,7 +165,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "created. Please call ResetKernel first." );
       throw KernelException();
     }
-    else if ( res_updated && tics_per_ms_updated ) // only allow TICS_PER_MS to
+    else if ( res_updated and tics_per_ms_updated ) // only allow TICS_PER_MS to
                                                    // be changed together with
                                                    // resolution
     {
@@ -915,7 +915,7 @@ nest::SimulationManager::update_()
                 i != thread_local_wfr_nodes.end();
                 ++i )
           {
-            done_p = wfr_update_( *i ) && done_p;
+            done_p = wfr_update_( *i ) and done_p;
           }
 
 // add done value of thread p to done vector
@@ -931,7 +931,7 @@ nest::SimulationManager::update_()
             // check whether all threads are done
             for ( size_t i = 0; i < done.size(); ++i )
             {
-              done_all = done[ i ] && done_all;
+              done_all = done[ i ] and done_all;
             }
 
             // gather SecondaryEvents (e.g. GapJunctionEvents)

@@ -384,7 +384,7 @@ public:
   bool
   is_finite() const
   {
-    return tics != LIM_POS_INF.tics && tics != LIM_NEG_INF.tics;
+    return tics != LIM_POS_INF.tics and tics != LIM_NEG_INF.tics;
   }
 
   bool
@@ -416,7 +416,7 @@ public:
   bool
   is_step() const
   {
-    return tics > 0 && is_grid_time();
+    return tics > 0 and is_grid_time();
   }
 
   bool
@@ -618,7 +618,7 @@ inline Time operator*( const long factor, const Time& t )
   {
     return Time::tic( n ); // check range
   }
-  if ( ( t.tics > 0 && factor > 0 ) || ( t.tics < 0 && factor < 0 ) )
+  if ( ( t.tics > 0 and factor > 0 ) || ( t.tics < 0 and factor < 0 ) )
   {
     return Time( Time::LIM_POS_INF.tics );
   }

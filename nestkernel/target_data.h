@@ -173,7 +173,7 @@ public:
 };
 
 //!< check legal size
-static const StaticAssert<sizeof(TargetData) == 12>::success
+typedef StaticAssert<sizeof(TargetData) == 12>::success
     success_target_data_size;
 
 inline void

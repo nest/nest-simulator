@@ -88,8 +88,7 @@ public:
 };
 
 //!< check legal size
-static const StaticAssert<sizeof(Target) == 8>::success
-    success_target_size;
+typedef StaticAssert<sizeof(Target) == 8>::success success_target_size;
 
 inline Target::Target()
   : data_( 0 )

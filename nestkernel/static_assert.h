@@ -27,7 +27,9 @@ namespace nest {
 
 // Compile time assertions
 // use:
-// static const StaticAssert<bool-test>::success unique_var_name;
+// static const StaticAssert<bool-test>::success unique-var-name;
+//   or
+// typedef StaticAssert<bool-test>::sucess unique-type-name;
 //
 // Does nothing if the bool-test is true,
 //

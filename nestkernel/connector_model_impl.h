@@ -241,7 +241,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
     connection.set_delay( delay );
   }
 
-  if ( !p->empty() )
+  if ( not p->empty() )
   {
     connection.set_status( p, *this ); // reference to connector model needed here to
                               // check delay (maybe this

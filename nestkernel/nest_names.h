@@ -390,8 +390,10 @@ extern const Name q_rr;  //!< Other adaptation
 extern const Name q_sfa; //!< Other adaptation
 extern const Name q_stc; //!< Specific to gif models
 
-extern const Name rate; //!< Specific to ppd_sup_generator,
-                        //!< gamma_sup_generator and rate models
+extern const Name rate_times;  //!< Inhibitory Poisson Generator
+extern const Name rate_values; //!< Inhibitory Poisson Generator
+extern const Name
+  rate; //!< Specific to ppd_sup_generator and gamma_sup_generator
 extern const Name readout_cycle_duration; //!< Used by
                                           //!< stdp_connection_facetshw_hom
 extern const Name receive_buffer_size;    //!< mpi-related

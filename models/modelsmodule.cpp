@@ -94,6 +94,7 @@
 #include "mip_generator.h"
 #include "noise_generator.h"
 #include "poisson_generator.h"
+#include "inhomogeneous_poisson_generator.h"
 #include "ppd_sup_generator.h"
 #include "pulsepacket_generator.h"
 #include "sinusoidal_gamma_generator.h"
@@ -250,6 +251,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
   kernel().model_manager.register_node_model< spike_generator >(
     "spike_generator" );
+  kernel().model_manager.register_node_model< inhomogeneous_poisson_generator >(
+    "inhomogeneous_poisson_generator" );
   kernel().model_manager.register_node_model< poisson_generator >(
     "poisson_generator" );
   kernel().model_manager.register_node_model< pulsepacket_generator >(

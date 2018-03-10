@@ -344,6 +344,8 @@ const Name q_rr( "q_rr" );
 const Name q_sfa( "q_sfa" );
 const Name q_stc( "q_stc" );
 
+const Name rate_times( "rate_times" );
+const Name rate_values( "rate_values" );
 const Name rate( "rate" );
 const Name readout_cycle_duration( "readout_cycle_duration" );
 const Name receive_buffer_size( "receive_buffer_size" );

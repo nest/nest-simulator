@@ -77,8 +77,8 @@ iaf_psc_alpha_multisynapse::insert_current_recordables( size_t first )
   for ( size_t receptor = first; receptor < P_.tau_syn_.size(); ++receptor )
   {
     size_t elem = iaf_psc_alpha_multisynapse::State_::I_SYN
-      + receptor * iaf_psc_alpha_multisynapse::State_::
-                     NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+      + receptor
+        * iaf_psc_alpha_multisynapse::State_::NUM_STATE_ELEMENTS_PER_RECEPTOR;
     recordablesMap_.insert(
       get_i_syn_name( receptor ), this->get_data_access_functor( elem ) );
   }
@@ -353,7 +353,7 @@ iaf_psc_alpha_multisynapse::calibrate()
 
   B_.spikes_.resize( P_.n_receptors_() );
   S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.n_receptors_() ),
+      + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * P_.n_receptors_() ),
     0.0 );
 
   V_.P33_ = std::exp( -h / P_.Tau_ );
@@ -419,8 +419,8 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
         V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
 
       // Store y2_syn in I_SYN
-      S_.y_[ State_::I_SYN + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                               * i ) ] = S_.y2_syn_[ i ];
+      S_.y_[ State_::I_SYN + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] =
+        S_.y2_syn_[ i ];
     }
 
     if ( S_.V_m_ >= P_.Theta_ ) // threshold crossing
@@ -520,8 +520,8 @@ iaf_psc_alpha_multisynapse::set_status( const DictionaryDatum& d )
           ++i_syn )
     {
       size_t elem = iaf_psc_alpha_multisynapse::State_::I_SYN
-        + i_syn * iaf_psc_alpha_multisynapse::State_::
-                    NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+        + i_syn
+          * iaf_psc_alpha_multisynapse::State_::NUM_STATE_ELEMENTS_PER_RECEPTOR;
       rtmp.insert( get_i_syn_name( i_syn ), get_data_access_functor( elem ) );
     }
   }

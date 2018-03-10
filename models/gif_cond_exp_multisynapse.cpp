@@ -87,8 +87,8 @@ gif_cond_exp_multisynapse::insert_conductance_recordables( size_t first )
   for ( size_t receptor = first; receptor < P_.E_rev_.size(); ++receptor )
   {
     size_t elem = gif_cond_exp_multisynapse::State_::G
-      + receptor * gif_cond_exp_multisynapse::State_::
-                     NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+      + receptor
+        * gif_cond_exp_multisynapse::State_::NUM_STATE_ELEMENTS_PER_RECEPTOR;
     recordablesMap_.insert(
       get_g_receptor_name( receptor ), this->get_data_access_functor( elem ) );
   }
@@ -517,7 +517,7 @@ nest::gif_cond_exp_multisynapse::init_buffers_()
   Archiving_Node::clear_history();
 
   const int state_size = State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) * P_.n_receptors();
+    + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR ) * P_.n_receptors();
 
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
@@ -770,8 +770,8 @@ nest::gif_cond_exp_multisynapse::set_status( const DictionaryDatum& d )
           ++receptor )
     {
       size_t elem = gif_cond_exp_multisynapse::State_::G
-        + receptor * gif_cond_exp_multisynapse::State_::
-                       NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+        + receptor
+          * gif_cond_exp_multisynapse::State_::NUM_STATE_ELEMENTS_PER_RECEPTOR;
       rtmp.insert(
         get_g_receptor_name( receptor ), get_data_access_functor( elem ) );
     }

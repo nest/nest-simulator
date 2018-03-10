@@ -80,8 +80,8 @@ aeif_cond_alpha_multisynapse::insert_conductance_recordables( size_t first )
   for ( size_t receptor = first; receptor < P_.E_rev.size(); ++receptor )
   {
     size_t elem = aeif_cond_alpha_multisynapse::State_::G
-      + receptor * aeif_cond_alpha_multisynapse::State_::
-                     NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+      + receptor
+        * aeif_cond_alpha_multisynapse::State_::NUM_STATE_ELEMENTS_PER_RECEPTOR;
     recordablesMap_.insert(
       get_g_receptor_name( receptor ), this->get_data_access_functor( elem ) );
   }
@@ -702,7 +702,7 @@ aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
     {
       size_t elem = aeif_cond_alpha_multisynapse::State_::G
         + receptor * aeif_cond_alpha_multisynapse::State_::
-                       NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+                       NUM_STATE_ELEMENTS_PER_RECEPTOR;
       rtmp.insert(
         get_g_receptor_name( receptor ), get_data_access_functor( elem ) );
     }

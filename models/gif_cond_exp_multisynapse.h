@@ -24,7 +24,6 @@
 #define GIF_COND_EXP_MULTISYNAPSE_H
 
 #include "config.h"
-#include <sstream>
 
 #ifdef HAVE_GSL
 
@@ -224,10 +223,9 @@ private:
   friend int
   gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
 
-  // The next three classes need to be friends to access the State_ class/member
-  friend class DynamicRecordablesMap< gif_cond_exp_multisynapse >;
-  friend class DynamicUniversalDataLogger< gif_cond_exp_multisynapse >;
-  friend class DataAccessFunctor< gif_cond_exp_multisynapse >;
+  // The next two classes need to be friends to access the State_ class/member
+  friend class RecordablesMap< gif_cond_exp_multisynapse >;
+  friend class UniversalDataLogger< gif_cond_exp_multisynapse >;
 
   // ----------------------------------------------------------------
 
@@ -303,18 +301,18 @@ private:
     enum StateVecElems
     {
       V_M = 0,
-      SFA, // 1
-      STC, // 2
-      G,   // 3
+      G,
       STATE_VEC_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 3; //!< V_M, SFA, STC
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1; //!< V_M
     static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1; //!< G
 
     std::vector< double > y_; //!< neuron state
 
     double I_stim_; //!< This is piecewise constant external current
+    double sfa_; //!< This is the change of the 'threshold' due to adaptation.
+    double stc_; //!< Spike-triggered current.
 
     std::vector< double > sfa_elems_; //!< Vector of adaptation parameters.
     std::vector< double > stc_elems_; //!< Vector of spike-triggered parameters.
@@ -346,7 +344,7 @@ private:
     RingBuffer currents_;
 
     //! Logger for all analog data
-    DynamicUniversalDataLogger< gif_cond_exp_multisynapse > logger_;
+    UniversalDataLogger< gif_cond_exp_multisynapse > logger_;
 
     /** GSL ODE stuff */
     gsl_odeiv_step* s_;    //!< stepping function
@@ -380,23 +378,27 @@ private:
 
   // Access functions for UniversalDataLogger -----------------------
 
-  //! Mapping of recordables names to access functions
-  DynamicRecordablesMap< gif_cond_exp_multisynapse > recordablesMap_;
-
-  // Data Access Functor getter
-  DataAccessFunctor< gif_cond_exp_multisynapse > get_data_access_functor(
-    size_t elem );
-  inline double
-  get_state_element( size_t elem )
+  //! Read out state vector elements, used by UniversalDataLogger
+  template < State_::StateVecElems elem >
+  double
+  get_y_elem_() const
   {
     return S_.y_[ elem ];
-  };
+  }
 
-  // Utility function that inserts the synaptic conductances to the
-  // recordables map
+  //! Read out the adaptive threshold potential
+  double
+  get_E_sfa_() const
+  {
+    return S_.sfa_;
+  }
 
-  Name get_g_receptor_name( size_t receptor );
-  void insert_conductance_recordables( size_t first = 0 );
+  //! Read out the spike-triggered current
+  double
+  get_I_stc_() const
+  {
+    return S_.stc_;
+  }
 
   // ----------------------------------------------------------------
 
@@ -411,6 +413,9 @@ private:
   Variables_ V_;
   Buffers_ B_;
   /** @} */
+
+  //! Mapping of recordables names to access functions
+  static RecordablesMap< gif_cond_exp_multisynapse > recordablesMap_;
 };
 
 inline port
@@ -467,8 +472,26 @@ gif_cond_exp_multisynapse::get_status( DictionaryDatum& d ) const
   P_.get( d );
   S_.get( d, P_ );
   Archiving_Node::get_status( d );
-
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
+}
+
+inline void
+gif_cond_exp_multisynapse::set_status( const DictionaryDatum& d )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( d );         // throws if BadProperty
+  State_ stmp = S_;      // temporary copy in case of errors
+  stmp.set( d, ptmp );   // throws if BadProperty
+
+  // We now know that (ptmp, stmp) are consistent. We do not
+  // write them back to (P_, S_) before we are also sure that
+  // the properties to be set in the parent class are internally
+  // consistent.
+  Archiving_Node::set_status( d );
+
+  // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
+  S_ = stmp;
 }
 
 } // namespace

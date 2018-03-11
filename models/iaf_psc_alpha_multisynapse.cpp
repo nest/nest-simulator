@@ -67,7 +67,7 @@ Name
 iaf_psc_alpha_multisynapse::get_i_syn_name( size_t elem )
 {
   std::stringstream i_syn_name;
-  i_syn_name << "i_syn_" << elem + 1;
+  i_syn_name << "I_syn_" << elem + 1;
   return Name( i_syn_name.str() );
 }
 
@@ -90,7 +90,6 @@ iaf_psc_alpha_multisynapse::get_data_access_functor( size_t elem )
   return DataAccessFunctor< iaf_psc_alpha_multisynapse >( this, elem );
 }
 
-
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
@@ -110,8 +109,7 @@ iaf_psc_alpha_multisynapse::Parameters_::Parameters_()
 }
 
 iaf_psc_alpha_multisynapse::State_::State_()
-  : y_( STATE_VECTOR_MIN_SIZE, 0. )
-  , I_const_( 0.0 )
+  : I_const_( 0.0 )
   , V_m_( 0.0 )
   , current_( 0.0 )
   , refractory_steps_( 0 )
@@ -119,33 +117,6 @@ iaf_psc_alpha_multisynapse::State_::State_()
   y1_syn_.clear();
   y2_syn_.clear();
 }
-
-iaf_psc_alpha_multisynapse::State_::State_( const State_& s )
-  : I_const_( s.I_const_ )
-  , V_m_( s.V_m_ )
-  , current_( s.current_ )
-  , refractory_steps_( s.refractory_steps_ )
-{
-  y1_syn_ = s.y1_syn_;
-  y2_syn_ = s.y2_syn_;
-  y_ = s.y_;
-}
-
-iaf_psc_alpha_multisynapse::State_& iaf_psc_alpha_multisynapse::State_::
-operator=( const State_& s )
-{
-  assert( this != &s ); // would be bad logical error in program
-
-  I_const_ = s.I_const_;
-  V_m_ = s.V_m_;
-  current_ = s.current_;
-  refractory_steps_ = s.refractory_steps_;
-  y_ = s.y_;
-  y1_syn_ = s.y1_syn_;
-  y2_syn_ = s.y2_syn_;
-  return *this;
-}
-
 
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
@@ -270,9 +241,6 @@ iaf_psc_alpha_multisynapse::State_::set( const DictionaryDatum& d,
   {
     V_m_ -= delta_EL;
   }
-
-  // Update state vector value
-  y_[ V_M ] = V_m_;
 }
 
 iaf_psc_alpha_multisynapse::Buffers_::Buffers_( iaf_psc_alpha_multisynapse& n )
@@ -352,9 +320,6 @@ iaf_psc_alpha_multisynapse::calibrate()
   V_.PSCInitialValues_.resize( P_.n_receptors_() );
 
   B_.spikes_.resize( P_.n_receptors_() );
-  S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-      + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * P_.n_receptors_() ),
-    0.0 );
 
   V_.P33_ = std::exp( -h / P_.Tau_ );
   V_.P30_ = 1 / P_.C_ * ( 1 - V_.P33_ ) * P_.Tau_;
@@ -417,10 +382,6 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
       // collect spikes
       S_.y1_syn_[ i ] +=
         V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
-
-      // Store y2_syn in I_SYN
-      S_.y_[ State_::I_SYN + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] =
-        S_.y2_syn_[ i ];
     }
 
     if ( S_.V_m_ >= P_.Theta_ ) // threshold crossing
@@ -439,10 +400,6 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
 
     // set new input current
     S_.I_const_ = B_.currents_.get_value( lag );
-
-    // state vector update
-    S_.y_[ State_::V_M ] = S_.V_m_;
-    S_.y_[ State_::I ] = S_.current_;
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );

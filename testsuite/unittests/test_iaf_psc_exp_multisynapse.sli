@@ -149,4 +149,51 @@ vm npost 1.0 h Connect
 
 exch assert_or_die
 
+% --------------------------------------------
+
+% The following tests address #800
+% - Test that the default recordables are V_m, w and I_syn_1
+% - Test that the recordable I_syn's change when changing the number of receptor ports
+
+% test default recordables include I_syn_1
+{
+  << >> begin
+  ResetKernel
+  
+  /nrn /iaf_psc_exp_multisynapse Create def
+  
+  /mm /multimeter << /withtime true /time_in_steps true
+                     /interval 1.0 /record_from [ /V_m /currents /I_syn_1 ] >> Create def
+  
+  mm nrn Connect
+  
+  /len 1 GetStatus /recordables get length def
+  len 3 eq
+  end
+}
+assert_or_die
+
+% test resize recordables
+{
+  << >> begin
+  ResetKernel
+  
+  /tau_syn1  [5.0  1.0  25.0] def
+  /tau_syn2  [5.0  1.0] def
+  /tau_syn3  [5.0  1.0  25.0 50.] def
+  
+  /nrn /iaf_psc_exp_multisynapse << /tau_syn tau_syn1 >> Create def
+  /len1 1 GetStatus /recordables get length def
+  
+  1 << /tau_syn tau_syn2 >> SetStatus
+  /len2 1 GetStatus /recordables get length def
+  
+  1 << /tau_syn tau_syn3 >> SetStatus
+  /len3 1 GetStatus /recordables get length def
+  
+  len1 5 eq len2 4 eq and len3 6 eq and
+  end
+}
+assert_or_die
+
 endusing

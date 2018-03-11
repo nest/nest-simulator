@@ -181,8 +181,6 @@ private:
     static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2; // V_M, I
     static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1; // I_SYN
 
-    std::vector< double > y_; //!< neuron state
-
     double I_const_; //!< Constant current
     std::vector< double > y1_syn_;
     std::vector< double > y2_syn_;
@@ -194,8 +192,6 @@ private:
     int refractory_steps_; //!< Number of refractory steps remaining
 
     State_(); //!< Default initialization
-    State_( const State_& );
-    State_& operator=( const State_& );
 
     void get( DictionaryDatum&, const Parameters_& ) const;
 
@@ -248,20 +244,6 @@ private:
 
   }; // Variables
 
-  // Access functions for UniversalDataLogger -------------------------------
-
-  //! Read out the real membrane potential
-  double
-  get_V_m_() const
-  {
-    return S_.V_m_ + P_.E_L_;
-  }
-  double
-  get_current_() const
-  {
-    return S_.current_;
-  }
-
   // Data members -----------------------------------------------------------
 
   /**
@@ -286,7 +268,18 @@ private:
   inline double
   get_state_element( size_t elem )
   {
-    return S_.y_[ elem ];
+    if ( elem == State_::V_M )
+    {
+      return S_.V_m_ + P_.E_L_;
+    }
+    else if ( elem == State_::I )
+    {
+      return S_.current_;
+    }
+    else
+    {
+      return S_.y2_syn_[ elem - S_.NUMBER_OF_FIXED_STATES_ELEMENTS ];
+    }
   };
 
   // Utility function that inserts the synaptic conductances to the

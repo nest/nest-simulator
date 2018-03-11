@@ -91,11 +91,10 @@ n_syn { true } repeat n_syn arraystore eq assert_or_die
 % --------------------------------------------
 
 % The following tests address #800
-% - Test that the default recordables are V_m, w and g_1
-% - Test that the recordable g's change when changing the number of receptor ports
-% - Test that g has alpha function dynamics
+% - Test that the default recordables are V_m, w and I_syn_1
+% - Test that the recordable I_syn's change when changing the number of receptor ports
 
-% test default recordables include i_syn_1
+% test default recordables include I_syn_1
 {
   << >> begin
   ResetKernel
@@ -103,7 +102,7 @@ n_syn { true } repeat n_syn arraystore eq assert_or_die
   /nrn /iaf_psc_alpha_multisynapse Create def
   
   /mm /multimeter << /withtime true /time_in_steps true
-                     /interval 1.0 /record_from [ /V_m /currents /i_syn_1 ] >> Create def
+                     /interval 1.0 /record_from [ /V_m /currents /I_syn_1 ] >> Create def
   
   mm nrn Connect
   

@@ -23,6 +23,9 @@
 #ifndef IAF_PSC_EXP_MULTISYNAPSE_H
 #define IAF_PSC_EXP_MULTISYNAPSE_H
 
+// Generated includes:
+#include <sstream>
+
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
@@ -92,8 +95,9 @@ private:
   void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< iaf_psc_exp_multisynapse >;
-  friend class UniversalDataLogger< iaf_psc_exp_multisynapse >;
+  friend class DynamicRecordablesMap< iaf_psc_exp_multisynapse >;
+  friend class DynamicUniversalDataLogger< iaf_psc_exp_multisynapse >;
+  friend class DataAccessFunctor< iaf_psc_exp_multisynapse >;
 
   // ----------------------------------------------------------------
 
@@ -150,6 +154,25 @@ private:
    */
   struct State_
   {
+
+    /**
+     * Enumeration identifying elements in state vector State_::y_.
+     * This enum identifies the elements of the vector. The last element
+     * of this (I_SYN, ) will be repeated n times at the end of the
+     * state vector State_::y with n being the number of synapses.
+     * As a first step this vector will only be used for logging.
+     */
+    enum StateVecElems
+    {
+      V_M = 0,
+      I,     // 1
+      I_SYN, // 2
+      STATE_VECTOR_MIN_SIZE
+    };
+
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2; // V_M, I
+    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1; // I_SYN
+
     double I_const_; //!< synaptic dc input current, variable 0
     std::vector< double > i_syn_;
     double V_m_;     //!< membrane potential, variable 2
@@ -186,7 +209,7 @@ private:
     RingBuffer currents_;
 
     //! Logger for all analog data
-    UniversalDataLogger< iaf_psc_exp_multisynapse > logger_;
+    DynamicUniversalDataLogger< iaf_psc_exp_multisynapse > logger_;
   };
 
   // ----------------------------------------------------------------
@@ -215,15 +238,6 @@ private:
 
   }; // Variables
 
-  // Access functions for UniversalDataLogger -------------------------------
-
-  //! Read out the real membrane potential
-  double
-  get_V_m_() const
-  {
-    return S_.V_m_ + P_.E_L_;
-  }
-
   /**
    * @defgroup iaf_psc_exp_multisynapse_data
    * Instances of private data structures for the different types
@@ -238,7 +252,33 @@ private:
   /** @} */
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< iaf_psc_exp_multisynapse > recordablesMap_;
+  DynamicRecordablesMap< iaf_psc_exp_multisynapse > recordablesMap_;
+
+  // Data Access Functor getter
+  DataAccessFunctor< iaf_psc_exp_multisynapse > get_data_access_functor(
+    size_t elem );
+  inline double
+  get_state_element( size_t elem )
+  {
+    if ( elem == State_::V_M )
+    {
+      return S_.V_m_ + P_.E_L_;
+    }
+    else if ( elem == State_::I )
+    {
+      return S_.current_;
+    }
+    else
+    {
+      return S_.i_syn_[ elem - S_.NUMBER_OF_FIXED_STATES_ELEMENTS ];
+    }
+  };
+
+  // Utility function that inserts the synaptic conductances to the
+  // recordables map
+
+  Name get_i_syn_name( size_t elem );
+  void insert_current_recordables( size_t first = 0 );
 };
 
 inline size_t
@@ -289,25 +329,6 @@ iaf_psc_exp_multisynapse::get_status( DictionaryDatum& d ) const
   Archiving_Node::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
-}
-
-inline void
-iaf_psc_exp_multisynapse::set_status( const DictionaryDatum& d )
-{
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
-
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
-  Archiving_Node::set_status( d );
-
-  // if we get here, temporaries contain consistent set of properties
-  P_ = ptmp;
-  S_ = stmp;
 }
 
 } // namespace

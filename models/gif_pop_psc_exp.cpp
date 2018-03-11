@@ -332,7 +332,8 @@ nest::gif_pop_psc_exp::calibrate()
     V_.theta_.clear();
     V_.theta_tld_.clear();
 
-    for ( int k = 0; k < P_.len_kernel_; ++k ) // InitPopulations
+    // Procedure InitPopulations, see Fig. 11 of [1]
+    for ( int k = 0; k < P_.len_kernel_; ++k )
     {
       V_.n_.push_back( 0 );      // line 3 of [1]
       V_.m_.push_back( 0 );      // line 3 of [1]
@@ -464,7 +465,7 @@ nest::gif_pop_psc_exp::adaptation_kernel( const int k )
   // this function computes the value of the sum of exponentials adaptation
   // kernel at a time lag given by k time steps.
   // See below Eq. (87) of [1]. There is no division by tau here because
-  // theta_tmp_ must be in units voltage just as q_sfa_.
+  // theta_tmp must be in units voltage just as q_sfa_.
   double theta_tmp = 0.;
   for ( uint j = 0; j < P_.tau_sfa_.size(); ++j )
   {
@@ -478,7 +479,7 @@ inline int
 nest::gif_pop_psc_exp::get_history_size()
 {
   // This function automatically determines a suitable history kernel size,
-  // see Schwalger2016, Eq. (90).
+  // see [1], Eq. (86) and Fig 11, Procedure GetHistoryLength.
   double tmax = 20000.; // ms, maximum automatic kernel length
 
   int k = tmax / V_.h_;
@@ -506,25 +507,25 @@ nest::gif_pop_psc_exp::update( Time const& origin,
 
   for ( long lag = from; lag < to; ++lag )
   {
-
     // main update routine, see Fig. 11 of [1]
     double h_tot_;
-    // this is the Schwalger2016 membrane and synapse update method
+    // this is the membrane and synapse update method of [1]
     h_tot_ = ( P_.I_e_ + S_.y0_ ) * V_.P20_ + P_.E_L_; // line 6 of [1]
 
     // get the input spikes from the buffers
     // We are getting spike numbers weighted with synaptic weights here,
-    // but Schwalger2016 uses A(t), which implies division by J, N and dt,
-    // which we do not know. However, these rescalings are undone below,
+    // but [1] uses A(t), which implies division by J, N and dt, which we do
+    // not know here (e.g. J is stored externally to the model in NEST).
+    // However, these rescalings are undone below,
     // so the quantities used here are equivalent.
     double JNA_ex = B_.ex_spikes_.get_value( lag ) / V_.h_;
     double JNA_in = B_.in_spikes_.get_value( lag ) / V_.h_;
 
-    // rescale inputs to voltage scale used in Schwalger2016
+    // rescale inputs to voltage scale used in [1]
     JNA_ex *= P_.tau_syn_ex_ / P_.c_m_;
     JNA_in *= P_.tau_syn_in_ / P_.c_m_;
 
-    // translate synaptic currents into Schwalger2016 definition
+    // translate synaptic currents into [1]'s definition
     double JNy_ex = S_.I_syn_ex_ / P_.c_m_;
     double JNy_in = S_.I_syn_in_ / P_.c_m_;
 
@@ -643,10 +644,12 @@ nest::gif_pop_psc_exp::update( Time const& origin,
 
     // end procedure update population
 
-    // shift rotating index
-    V_.k0_ = ( V_.k0_ + 1 ) % P_.len_kernel_; // line 16 of [1]
+    // back in Fig 11 of [1], main update procedure
 
-    // end of main update routine, Fig. 10
+    // shift rotating index
+    V_.k0_ = ( V_.k0_ + 1 ) % P_.len_kernel_; // line 17 of [1]
+
+    // end of main update routine, Fig. 11
 
     // Voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );

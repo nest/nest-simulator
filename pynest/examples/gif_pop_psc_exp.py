@@ -29,7 +29,7 @@
 # dynamics derived in the paper [Schwalger et al. PLoS Comput
 # Biol. 2017]. The stochastic population dynamics is implemented in
 # the NEST model gif_pop_psc_exp. We demonstrate this model using the
-# example of a Brunel network of two coupled populations, one excitory
+# example of a Brunel network of two coupled populations, one excitatory
 # and one inhibitory population.
 #
 # Note that the population model represents the mesoscopic level

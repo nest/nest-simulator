@@ -364,7 +364,8 @@ const Name std_mod( "std_mod" );
 const Name stimulator( "stimulator" );
 const Name stop( "stop" );
 const Name structural_plasticity_synapses( "structural_plasticity_synapses" );
-const Name structural_plasticity_update_interval( "structural_plasticity_update_interval" );
+const Name structural_plasticity_update_interval(
+  "structural_plasticity_update_interval" );
 const Name structure( "structure" );
 const Name supports_precise_spikes( "supports_precise_spikes" );
 const Name synapse_id( "synapse_id" );

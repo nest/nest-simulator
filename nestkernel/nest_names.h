@@ -39,7 +39,7 @@ namespace nest
  */
 namespace names
 {
-    
+
 extern const Name a;
 extern const Name a_acausal;
 extern const Name a_causal;

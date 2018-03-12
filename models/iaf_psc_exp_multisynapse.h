@@ -154,24 +154,27 @@ private:
    */
   struct State_
   {
-
     /**
-     * Enumeration identifying elements in state vector State_::y_.
-     * This enum identifies the elements of the vector. The last element
-     * of this (I_SYN, ) will be repeated n times at the end of the
-     * state vector State_::y with n being the number of synapses.
-     * As a first step this vector will only be used for logging.
+     * Enumeration identifying recordable state elements.
+     * This enum identifies the element that will be recorded when
+     * calling get_state_element. The first two (V_M and I) are fixed
+     * sized state elements, while the third (I_SYN) represents the
+     * synaptic current at each receptor, thus it can have a variable
+     * size. The current at each receptor is read out from the vector
+     * i_syn_. To get the synaptic current's value at synapse k, one
+     * must call get_state_element as:
+     * get_state_element( State_::I_SYN + k *
+     *    State_::NUM_STATE_ELEMENTS_PER_RECEPTOR )
      */
     enum StateVecElems
     {
       V_M = 0,
-      I,     // 1
-      I_SYN, // 2
-      STATE_VECTOR_MIN_SIZE
+      I,    // 1
+      I_SYN // 2
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2; // V_M, I
-    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1; // I_SYN
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = I_SYN; // V_M, I
+    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;     // I_SYN
 
     double I_const_; //!< synaptic dc input current, variable 0
     std::vector< double > i_syn_;

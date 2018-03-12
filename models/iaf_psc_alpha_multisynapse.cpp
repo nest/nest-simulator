@@ -57,7 +57,7 @@ DynamicRecordablesMap< iaf_psc_alpha_multisynapse >::create(
   insert( names::V_m,
     host.get_data_access_functor( iaf_psc_alpha_multisynapse::State_::V_M ) );
 
-  insert( names::currents,
+  insert( names::I_syn,
     host.get_data_access_functor( iaf_psc_alpha_multisynapse::State_::I ) );
 
   host.insert_current_recordables();

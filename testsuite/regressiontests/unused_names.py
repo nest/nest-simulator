@@ -80,7 +80,9 @@ names_defined.sort()
 
 from subprocess import check_output
 
-names_used_raw = check_output(["grep", "-ro", "names::[A-Za-Z0-9_]*", source_dir])
+grep_cmd = ["grep", "-ro", "names::[A-Za-Z0-9_]*", source_dir]
+names_used_raw = check_output(grep_cmd)
+
 names_used = set()
 for line in names_used_raw.split("\n"):
     if "::" in line:

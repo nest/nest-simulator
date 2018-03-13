@@ -1,5 +1,5 @@
 /*
- *  is_legal.h
+ *  static_assert.h
  *
  *  This file is part of NEST.
  *

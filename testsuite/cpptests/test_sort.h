@@ -36,6 +36,20 @@
 namespace nest
 {
 
+const bool
+is_sorted( std::vector< size_t >::const_iterator begin,
+  std::vector< size_t >::const_iterator end )
+{
+  for ( std::vector< size_t >::const_iterator it = begin; it < --end; )
+  {
+    if ( *it > *( ++it ) )
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
 BOOST_AUTO_TEST_SUITE( test_sort )
 
 BOOST_AUTO_TEST_CASE( test_random )
@@ -53,8 +67,8 @@ BOOST_AUTO_TEST_CASE( test_random )
   
   sort::sort( vec0, vec1 );
 
-  BOOST_CHECK( std::is_sorted( vec0.begin(), vec0.end() ) );
-  BOOST_CHECK( std::is_sorted( vec1.begin(), vec1.end() ) );
+  BOOST_REQUIRE( is_sorted( vec0.begin(), vec0.end() ) );
+  BOOST_REQUIRE( is_sorted( vec1.begin(), vec1.end() ) );
 }
 
 BOOST_AUTO_TEST_CASE( test_linear )
@@ -71,8 +85,8 @@ BOOST_AUTO_TEST_CASE( test_linear )
 
   sort::sort( vec0, vec1 );
 
-  BOOST_CHECK( std::is_sorted( vec0.begin(), vec0.end() ) );
-  BOOST_CHECK( std::is_sorted( vec1.begin(), vec1.end() ) );
+  BOOST_REQUIRE( is_sorted( vec0.begin(), vec0.end() ) );
+  BOOST_REQUIRE( is_sorted( vec1.begin(), vec1.end() ) );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

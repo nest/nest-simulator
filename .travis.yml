@@ -95,6 +95,9 @@ before_install:
   # Required for building cppcheck-1.69.
   - sudo apt-get install -y libpcre3 libpcre3-dev
 
+  # Install boost libraries required for cpp test suite
+  - sudo apt-get install -y libboost-test-dev
+
   # Install jq to process JSON output from GitHub API.
   - sudo apt-get install -y jq
 

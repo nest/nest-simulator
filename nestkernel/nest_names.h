@@ -36,6 +36,15 @@ namespace nest
  * O(log n), for n the number of Names already created. Using
  * predefined names makes data exchange much more efficient as it
  * uses integer comparisons instead of string comparisons internally.
+ *
+ * The Name declarations below and the definitions in nest_names.cpp
+ * are sorted alphabetically with lower case letters preceding upper
+ * case letters. The ordering of the names has to be the same in both
+ * this file and the .cpp file.
+ *
+ * See testsuite/unittests/test_unused_names.py for a test that checks
+ * if a) Name declarations and definitions are consistent
+ *    b) all Name objects defined are also actually used.
  */
 namespace names
 {

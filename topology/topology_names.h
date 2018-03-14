@@ -88,7 +88,6 @@ extern const Name rectangular;
 extern const Name rho;
 extern const Name row;
 extern const Name rows; //!< Number of rows in a layer or mask
-extern const Name sigma;
 extern const Name sigma_x;
 extern const Name sigma_y;
 extern const Name sources;

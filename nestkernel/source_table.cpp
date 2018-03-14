@@ -479,6 +479,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
         kernel().vp_manager.gid_to_lid( current_source.get_gid() ) );
       next_target_data.set_source_tid( kernel().vp_manager.vp_to_thread(
         kernel().vp_manager.suggest_vp( current_source.get_gid() ) ) );
+      next_target_data.reset_marker();
+
       if ( current_source.is_primary() )
       {
         next_target_data.set_is_primary( true );

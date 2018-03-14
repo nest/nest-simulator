@@ -105,7 +105,6 @@ before_install:
   
   # Install packages required by NEST.
   # (Please see also: http://www.nest-simulator.org/installation/#standard-configuration)
-
   # terminaltables is required by parse_travis_log.py to create the build summary.
    - pip install cython scipy matplotlib terminaltables mpi4py
     

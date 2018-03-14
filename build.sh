@@ -168,7 +168,6 @@ chmod +x ./extras/static_code_analysis.sh
 
 # End of Static code analysis.
 
-
 cd "$NEST_VPATH"
 cp ../examples/sli/nestrc.sli ~/.nestrc
 

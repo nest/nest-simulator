@@ -60,6 +60,7 @@ def beautify_layer(l, fig=plt.gcf(), xlabel=None, ylabel=None,
     ax.set_xticks(xticks)
     ax.set_yticks(yticks)
     ax.grid(True)
+    ax.set_axisbelow(True)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     return
@@ -139,10 +140,16 @@ plt.savefig('../user_manual_figures/layer2.png', bbox_inches='tight',
 nest.ResetKernel()
 
 #{ layer3 #}
-l1 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_psc_alpha'})
-l2 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_psc_alpha',
+l1 = tp.CreateLayer({'rows': 5,
+                     'columns': 5,
+                     'elements': 'iaf_psc_alpha'})
+l2 = tp.CreateLayer({'rows': 5,
+                     'columns': 5,
+                     'elements': 'iaf_psc_alpha',
                      'center': [-1., 1.]})
-l3 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_psc_alpha',
+l3 = tp.CreateLayer({'rows': 5,
+                     'columns': 5,
+                     'elements': 'iaf_psc_alpha',
                      'center': [1.5, 0.5]})
 #{ end #}
 
@@ -163,8 +170,11 @@ nest.ResetKernel()
 #{ layer3a #}
 nc, nr = 5, 3
 d = 0.1
-l = tp.CreateLayer({'columns': nc, 'rows': nr, 'elements': 'iaf_psc_alpha',
-                    'extent': [nc * d, nr * d], 'center': [nc * d / 2., 0.]})
+l = tp.CreateLayer({'columns': nc,
+                    'rows': nr,
+                    'elements': 'iaf_psc_alpha',
+                    'extent': [nc * d, nr * d],
+                    'center': [nc * d / 2., 0.]})
 
 #{ end #}
 
@@ -279,7 +289,8 @@ nest.ResetKernel()
 
 #{ layer6 #}
 l = tp.CreateLayer({'rows': 1, 'columns': 2,
-                    'elements': ['iaf_cond_alpha', 'poisson_generator']})
+                    'elements': ['iaf_cond_alpha',
+                                 'poisson_generator']})
 #{ end #}
 
 print("#{ layer6 #}")
@@ -292,7 +303,8 @@ nest.ResetKernel()
 
 #{ layer7 #}
 l = tp.CreateLayer({'rows': 1, 'columns': 2,
-                    'elements': ['iaf_cond_alpha', 10, 'poisson_generator',
+                    'elements': ['iaf_cond_alpha', 10,
+                                 'poisson_generator',
                                  'noise_generator', 2]})
 #{ end #}
 

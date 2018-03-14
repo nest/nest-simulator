@@ -25,6 +25,8 @@ import numpy as np
 
 __author__ = 'naveau'
 
+__author__ = 'naveau'
+
 try:
     from mpi4py import MPI
 except ImportError:
@@ -52,20 +54,21 @@ class TestDisconnectSingle(unittest.TestCase):
             'stdp_dopamine_synapse_lbl',
             'stdp_dopamine_synapse_hpc',
             'stdp_dopamine_synapse_hpc_lbl',
+            'rate_connection_instantaneous',
+            'rate_connection_instantaneous_lbl',
+            'rate_connection_delayed',
+            'rate_connection_delayed_lbl',
             'gap_junction',
             'gap_junction_lbl',
             'diffusion_connection',
             'diffusion_connection_lbl',
-            'rate_connection_instantaneous',
-            'rate_connection_instantaneous_lbl',
-            'rate_connection_delayed',
-            'rate_connection_delayed_lbl'
         ]
 
     def test_synapse_deletion_one_to_one_no_sp(self):
         for syn_model in nest.Models('synapses'):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
+                print(syn_model)
                 nest.SetKernelStatus(
                     {
                         'resolution': 0.1,
@@ -106,9 +109,9 @@ class TestDisconnectSingle(unittest.TestCase):
 
                 try:
                     nest.DisconnectOneToOne(neurons[0], neurons[1], syn_dict)
-                    assertFail()
-                except:
-                    print ("Synapse deletion ok: " + syn_model)
+                    assert False
+                except nest.NESTError:
+                    print("Synapse deletion ok: " + syn_model)
 
 
 def suite():

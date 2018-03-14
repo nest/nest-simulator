@@ -216,7 +216,9 @@ if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
     export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
     export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
 elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
-    export PYTHONPATH=$HOME/.cache/csa.install/lib/python3.4/site-packages:$PYTHONPATH
+    ls /usr/lib/x86_64-linux-gnu/
+    export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
+    #export PYTHONPATH=$HOME/.cache/csa.install/lib/python3.4/site-packages:$PYTHONPATH
     export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
 fi
 make installcheck

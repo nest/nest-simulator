@@ -22,6 +22,8 @@
 import os
 import sys
 import re
+from subprocess import check_output
+
 
 # Use encoding-aware Py3 open also in Py2
 if sys.version_info[0] < 3:
@@ -79,8 +81,8 @@ names_defined = list(names_defined)
 names_defined.sort()
 
 
-from subprocess import check_output
-
+# We call to recursive grep in the shell here, because that's much
+# simpler than recursive file iteration and regex matching in Python
 grep_cmd = ["grep", "-ro", "names::[A-Za-Z0-9_]*", source_dir]
 names_used_raw = check_output(grep_cmd)
 
@@ -93,6 +95,7 @@ for line in names_used_raw.split("\n"):
 
 names_used = list(names_used)
 names_used.sort()
+
 
 for d, u in zip(names_defined, names_used):
     if d != u:

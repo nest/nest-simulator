@@ -59,6 +59,7 @@ M_ERROR setverbosity
              /ginzburg_neuron             % binary neuron
              /mcculloch_pitts_neuron      % binary neuron
              /pp_pop_psc_delta            % population model, not suitable for STDP
+             /gif_pop_psc_exp             % population model, not suitable for STDP
              /lin_rate_ipn                % rate neuron
              /lin_rate_opn                % rate neuron
              /tanh_rate_ipn               % rate neuron

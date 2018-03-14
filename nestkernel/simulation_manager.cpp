@@ -741,6 +741,8 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   }
 #endif
 
+#pragma omp barrier // wait for all threads to finish sorting
+
 #pragma omp single
   {
     kernel().connection_manager.compute_target_data_buffer_size();

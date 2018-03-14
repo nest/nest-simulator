@@ -77,14 +77,12 @@ for names_file in names_files:
         else:
             names_defined.add(h)
 
-names_defined = list(names_defined)
-names_defined.sort()
-
 
 # We call to recursive grep in the shell here, because that's much
 # simpler than recursive file iteration and regex matching in Python
 grep_cmd = ["grep", "-ro", "names::[A-Za-Z0-9_]*", source_dir]
 names_used_raw = check_output(grep_cmd)
+
 
 names_used = set()
 for line in names_used_raw.split("\n"):
@@ -93,13 +91,11 @@ for line in names_used_raw.split("\n"):
         if name != "":
             names_used.add(name)
 
-names_used = list(names_used)
-names_used.sort()
 
+names_unused = names_defined - names_used
+if len(names_unused) != 0:
+    print("Unused Name definition(s): " + ", ".join(names_unused))
+    sys.exit(EXIT_UNUSED_NAME)
 
-for d, u in zip(names_defined, names_used):
-    if d != u:
-        print("Unused Name definition: {}".format(d))
-        sys.exit(EXIT_UNUSED_NAME)
 
 sys.exit(EXIT_SUCCESS)

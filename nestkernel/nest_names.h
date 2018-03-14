@@ -225,6 +225,7 @@ extern const Name I_h;
 extern const Name I_KNa;
 extern const Name I_NaP;
 extern const Name I_stc;
+extern const Name I_syn;
 extern const Name I_syn_ex;
 extern const Name I_syn_in;
 extern const Name I_T;

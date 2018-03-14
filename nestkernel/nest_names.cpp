@@ -203,6 +203,7 @@ const Name I_h( "I_h" );
 const Name I_KNa( "I_KNa" );
 const Name I_NaP( "I_NaP" );
 const Name I_stc( "I_stc" );
+const Name I_syn( "I_syn" );
 const Name I_syn_ex( "I_syn_ex" );
 const Name I_syn_in( "I_syn_in" );
 const Name I_T( "I_T" );

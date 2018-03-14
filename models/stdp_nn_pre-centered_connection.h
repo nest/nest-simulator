@@ -31,15 +31,22 @@
   Description:
    stdp_nn_pre-centered_synapse is a connector to create synapses with spike
    time dependent plasticity with the presynaptic-centered nearest-neighbour
-   spike pairing scheme, as described in [1]. Each presynaptic spike is taken
-   into account in the STDP weight change rule with the nearest preceding
-   postsynaptic one and the nearest succeeding postsynaptic one (instead of
-   pairing with all spikes, like in stdp_synapse). So, when a presynaptic
-   spike occurs, it is accounted in the depression rule with the nearest
-   preceding postsynaptic one; and when a postsynaptic spike occurs, it is
-   accounted in the facilitation rule with all preceding presynaptic spikes
-   that were not earlier than the previous postsynaptic spike. For a clear
-   illustration of this scheme see fig. 7B in [2].
+   spike pairing scheme, as described in [1].
+
+   Each presynaptic spike is taken into account in the STDP weight change rule
+   with the nearest preceding postsynaptic one and the nearest succeeding
+   postsynaptic one (instead of pairing with all spikes, like in stdp_synapse).
+   So, when a presynaptic spike occurs, it is accounted in the depression rule
+   with the nearest preceding postsynaptic one; and when a postsynaptic spike
+   occurs, it is accounted in the facilitation rule with all preceding
+   presynaptic spikes that were not earlier than the previous postsynaptic
+   spike. For a clear illustration of this scheme see fig. 7B in [2].
+
+   The pairs exactly coinciding (so that presynaptic_spike == postsynaptic_spike
+   + dendritic_delay), leading to zero delta_t, are discarded. In this case the
+   concerned pre/postsynaptic spike is paired with the second latest preceding
+   post/presynaptic one (for example, pre=={10 ms; 20 ms} and post=={20 ms} will
+   result in a potentiation pair 20-to-10).
 
    The implementation involves two additional variables - presynaptic and
    postsynaptic traces [2]. The presynaptic trace decays exponentially over
@@ -254,16 +261,23 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
   // to account.
   while ( start != finish )
   {
-    double minus_dt;
-
     // facilitation due to the first post-synaptic spike start->t_
     // since the previous pre-synaptic spike t_lastspike
+    
+    double minus_dt;
     minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
-    if ( minus_dt != 0 )
+    
+    if ( minus_dt == 0 )
     {
-      weight_ =
-        facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ) );
+      // By convention, discard such a pair
+      // and pick the next postsynaptic spike.
+      ++start;
+      continue;
     }
+    
+    weight_ =
+      facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ) );
+std::cerr << "Facilitate " << t_lastspike << " - " << (start->t_ + dendritic_delay) << '\n';
 
     // According to the presynaptic-centered nearest-neighbour scheme,
     // a postsynaptic spike
@@ -272,7 +286,9 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
     // and all the preceding presynaptic spikes are forgotten.
     Kplus_ = 0;
 
-    ++start;
+    // The minus_dt == 0 case
+    // was the only reason for while instead of if(start != finish).
+    break;    
   }
 
   // depression due to the latest post-synaptic spike finish->t_
@@ -284,6 +300,7 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
     value_to_throw_away // discard triplet_Kminus
     );
   weight_ = depress_( weight_, nearest_neighbor_Kminus );
+//std::cerr << "Depress " << (t_spike - dendritic_delay) << " - " << finish->t_ << '\n';
 
   Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) / tau_plus_ ) + 1.0;
 

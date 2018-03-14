@@ -31,14 +31,21 @@
   Description:
    stdp_nn_restr_synapse is a connector to create synapses with spike time
    dependent plasticity with the restricted symmetric nearest-neighbour spike
-   pairing scheme (fig. 7C in [1]). When a presynaptic spike occurs, it is
-   taken into account in the depression part of the STDP weight change rule
-   with the nearest preceding postsynaptic one, but only if the latter occured
-   not earlier than the previous presynaptic one. When a postsynaptic spike
-   occurs, it is accounted in the facilitation rule with the nearest preceding
-   presynaptic one, but only if the latter occured not earlier than the
-   previous postsynaptic one. So, a spike can participate neither in two
-   depression pairs nor in two potentiation pairs.
+   pairing scheme (fig. 7C in [1]).
+
+   When a presynaptic spike occurs, it is taken into account in the depression
+   part of the STDP weight change rule with the nearest preceding postsynaptic
+   one, but only if the latter occured not earlier than the previous presynaptic
+   one. When a postsynaptic spike occurs, it is accounted in the facilitation
+   rule with the nearest preceding presynaptic one, but only if the latter
+   occured not earlier than the previous postsynaptic one. So, a spike can
+   participate neither in two depression pairs nor in two potentiation pairs.
+
+   The pairs exactly coinciding (so that presynaptic_spike == postsynaptic_spike
+   + dendritic_delay), leading to zero delta_t, are discarded. In this case the
+   concerned pre/postsynaptic spike is paired with the second latest preceding
+   post/presynaptic one (for example, pre=={10 ms; 20 ms} and post=={20 ms} will
+   result in a potentiation pair 20-to-10).
 
    The implementation relies on an additional variable - the postsynaptic
    eligibility trace [1] (implemented on the postsynaptic neuron side). It

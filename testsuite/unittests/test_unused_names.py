@@ -21,6 +21,7 @@
 
 import os
 import sys
+import re
 
 # Use encoding-aware Py3 open also in Py2
 if sys.version_info[0] < 3:
@@ -46,25 +47,25 @@ names_files = [
     "topology/topology_names",
 ]
 
+
+def get_names(fname, pattern):
+    names = []
+    with open(fname) as names_file:
+        lines = names_file.readlines()
+        for line in lines:
+            match = re.search(pattern, line)
+            if match:
+                names.append(match.group(1))
+    names.sort()
+    return names
+
+
 names_defined = set()
 for names_file in names_files:
     fname = os.path.join(source_dir, names_file)
 
-    names_header = []
-    with open(fname + ".h") as names_file:
-        lines = names_file.readlines()
-        for line in lines:
-            if "extern const Name" in line:
-                names_header.append(line.split("Name ")[1].split(";")[0])
-    names_header.sort()
-
-    names_source = []
-    with open(fname + ".cpp") as names_file:
-        lines = names_file.readlines()
-        for line in lines:
-            if "const Name" in line:
-                names_source.append(line.split("Name ")[1].split("(")[0])
-    names_source.sort()
+    names_header = get_names(fname + ".h", "extern\s+const\s+Name\s+(\w+)\s*;")
+    names_source = get_names(fname + ".cpp", "const\s+Name\s+(\w+)\(.*")
 
     for h, s in zip(names_header, names_source):
         if h != s:

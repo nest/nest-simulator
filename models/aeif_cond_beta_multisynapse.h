@@ -25,6 +25,7 @@
 
 // Generated includes:
 #include "config.h"
+#include <sstream>
 
 #ifdef HAVE_GSL
 
@@ -214,9 +215,10 @@ private:
   void calibrate();
   void update( Time const&, const long, const long );
 
-  // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< aeif_cond_beta_multisynapse >;
-  friend class UniversalDataLogger< aeif_cond_beta_multisynapse >;
+  // The next three classes need to be friends to access the State_ class/member
+  friend class DynamicRecordablesMap< aeif_cond_beta_multisynapse >;
+  friend class DynamicUniversalDataLogger< aeif_cond_beta_multisynapse >;
+  friend class DataAccessFunctor< aeif_cond_beta_multisynapse >;
 
   // ----------------------------------------------------------------
 
@@ -261,7 +263,7 @@ private:
     n_receptors() const
     {
       return E_rev.size();
-    }
+    };
   };
 
   // ----------------------------------------------------------------
@@ -317,7 +319,7 @@ private:
     Buffers_( const Buffers_&, aeif_cond_beta_multisynapse& );
 
     //! Logger for all analog data
-    UniversalDataLogger< aeif_cond_beta_multisynapse > logger_;
+    DynamicUniversalDataLogger< aeif_cond_beta_multisynapse > logger_;
 
     /** buffers and sums up incoming spikes/currents */
     std::vector< RingBuffer > spikes_;
@@ -367,16 +369,6 @@ private:
     unsigned int refractory_counts_;
   };
 
-  // Access functions for UniversalDataLogger -------------------------------
-
-  //! Read out state vector elements, used by UniversalDataLogger
-  template < State_::StateVecElems elem >
-  double
-  get_y_elem_() const
-  {
-    return S_.y_[ elem ];
-  }
-
   // Data members -----------------------------------------------------------
 
   /**
@@ -392,8 +384,25 @@ private:
   Buffers_ B_;
   /** @} */
 
+  // Access functions for UniversalDataLogger -------------------------------
+
   //! Mapping of recordables names to access functions
-  static RecordablesMap< aeif_cond_beta_multisynapse > recordablesMap_;
+  DynamicRecordablesMap< aeif_cond_beta_multisynapse > recordablesMap_;
+
+  // Data Access Functor getter
+  DataAccessFunctor< aeif_cond_beta_multisynapse > get_data_access_functor(
+    size_t elem );
+  inline double
+  get_state_element( size_t elem )
+  {
+    return S_.y_[ elem ];
+  };
+
+  // Utility function that inserts the synaptic conductances to the
+  // recordables map
+
+  Name get_g_receptor_name( size_t receptor );
+  void insert_conductance_recordables( size_t first = 0 );
 };
 
 inline port
@@ -438,25 +447,6 @@ aeif_cond_beta_multisynapse::get_status( DictionaryDatum& d ) const
   Archiving_Node::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
-}
-
-inline void
-aeif_cond_beta_multisynapse::set_status( const DictionaryDatum& d )
-{
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
-
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
-  Archiving_Node::set_status( d );
-
-  // if we get here, temporaries contain consistent set of properties
-  P_ = ptmp;
-  S_ = stmp;
 }
 
 } // namespace

@@ -21,8 +21,6 @@
 # This is the Travis CI top-level script to setup and run the NEST build and test environment. 
 
 language: python
-virtualenv:
-  system_site_packages: true
 
 # Using the container infrastructure for Ubuntu Trusty (14.04 LTS).
 sudo: required

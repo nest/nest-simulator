@@ -3,7 +3,7 @@
 git clone https://github.com/INCF/libneurosim.git libneurosim
 cd libneurosim
 ./autogen.sh
-./configure --prefix=$HOME/.cache/libneurosim.install --with-mpi
+./configure --prefix=$HOME/.cache/libneurosim.install --with-mpi --PYTHON_INCLUDE=/opt/python/3.5-dev/include/python3.5m/Python.h
 make
 make install
 cd ..

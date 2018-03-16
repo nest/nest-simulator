@@ -54,7 +54,8 @@ if [ "$xPYTHON" = "1" ] ; then
    if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
       CONFIGURE_PYTHON="-DPYTHON-LIBRARY=~/virtualenv/python2.7.13/lib/python2.7 -DPYTHON_INCLUDE_DIR=~/virtualenv/python2.7.13/include/python2.7"
    elif [ "$TRAVIS_PYTHON_VERSION" == "3.5-dev" ]; then
-       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.5-dev/include/python3.5m/"
+      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.5-dev/include/python3.5m/"
+      export PYTHONPATH=~/travis/virtualenv/python3.5-dev/lib/python3.5/site-packages:$PYTHONPATH
    fi
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"

@@ -456,6 +456,58 @@ private:
   double c_, p_center_, mean_x_, sigma_x_, mean_y_, sigma_y_, rho_;
 };
 
+/**
+ * Gamma parameter p(d) = d^(kappa-1)*exp(-d/theta)/(theta^kappa*Gamma(kappa))
+ */
+class GammaParameter : public RadialParameter
+{
+public:
+  /**
+   * Parameters:
+   * kappa    - shape of gamma distribution
+   * theta    - scale of gamma distribution
+   */
+  GammaParameter( const DictionaryDatum& d )
+    : RadialParameter( d )
+    , kappa_( 1.0 )
+    , theta_( 1.0 )
+  {
+    updateValue< double >( d, names::kappa, kappa_ );
+    updateValue< double >( d, names::theta, theta_ );
+    if ( kappa_ < 1 )
+    {
+      throw BadProperty(
+        "topology::GammaParameter: "
+        "kappa >= 1 required." );
+    }
+    if ( theta_ < 1 )
+    {
+      throw BadProperty(
+        "topology::GammaParameter: "
+        "theta >= 1 required." );
+    }
+    beta_ = 1. / theta_;
+    delta_ = std::pow( beta_, kappa_ ) / tgamma( kappa_ );
+  }
+  double beta_;
+  double delta_;
+
+  double
+  raw_value( double x ) const
+  {
+    return std::pow( x, kappa_ - 1. ) * std::exp( -1. * beta_ * x ) * delta_;
+  }
+
+  TopologyParameter*
+  clone() const
+  {
+    return new GammaParameter( *this );
+  }
+
+private:
+  double kappa_, theta_;
+};
+
 
 /**
  * Random parameter with uniform distribution in [min,max)

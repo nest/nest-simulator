@@ -53,6 +53,7 @@ from . import test_rate_neuron
 from . import test_rate_neuron_communication
 from . import test_siegert_neuron
 from . import test_use_gid_in_filename
+from . import test_topology_gamma_kernel
 
 
 def suite():
@@ -88,6 +89,7 @@ def suite():
     suite.addTest(test_rate_neuron_communication.suite())
     suite.addTest(test_siegert_neuron.suite())
     suite.addTest(test_use_gid_in_filename.suite())
+    suite.addTest(test_topology_gamma_kernel.suite())
 
     return suite
 

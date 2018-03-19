@@ -27,6 +27,7 @@ from .hl_api_helper import *
 import sys
 import os
 import webbrowser
+from distutils.util import strtobool
 
 
 @check_stack
@@ -91,7 +92,7 @@ def helpdesk():
 
 
 @check_stack
-def help(obj=None, pager=None):
+def help(obj=None, pager=None, return_text=False):
     """Show the help page for the given object using the given pager.
 
     The default pager is more.
@@ -102,10 +103,15 @@ def help(obj=None, pager=None):
         Object to display help for
     pager : str, optional
         Pager to use
+    return_text : bool, optional
+        Option for returning the help text
     """
     hlpobj = obj
     if hlpobj is not None:
-        show_help_with_pager(hlpobj, pager)
+        if bool(strtobool(return_text)):
+            return load_help(hlpobj)
+        else:
+            show_help_with_pager(hlpobj, pager)
 
     else:
         print("Type 'nest.helpdesk()' to access the online documentation "

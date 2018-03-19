@@ -134,12 +134,14 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
         else:
             path = os.path.join(helpdir, 'cc')
 
-        f_file_name = open('{}/{}.html'.format(path, name), 'w', encoding='utf-8')
+        f_file_name = open('{}/{}.html'.format(path, name), 'w',
+                           encoding='utf-8')
         "{}/{}.html".format(path, name)
         f_file_name.write(cmdindexstring)
         f_file_name.close()
 
-        f_file_name_hlp = open('{}/{}.hlp'.format(path, name), 'w', encoding='utf-8')
+        f_file_name_hlp = open('{}/{}.hlp'.format(path, name), 'w',
+                               encoding='utf-8')
         f_file_name_hlp.write('\n'.join(hlplist))
         f_file_name_hlp.close()
 
@@ -155,15 +157,18 @@ def write_helpindex(helpdir):
     hlp_list = []
 
     # Loading Template for helpindex.html
-    ftemplate = open(os.path.join('templates', 'helpindex.tpl.html'), 'r', encoding='utf-8')
+    ftemplate = open(os.path.join('templates', 'helpindex.tpl.html'), 'r',
+                     encoding='utf-8')
     templ = ftemplate.read()
     ftemplate.close()
     # Loading Template for CSS
-    cssf = open(os.path.join('templates', 'nest.tpl.css'), 'r', encoding='utf-8')
+    cssf = open(os.path.join('templates', 'nest.tpl.css'), 'r',
+                encoding='utf-8')
     csstempl = cssf.read()
     cssf.close()
     # Loading Template for footer
-    footerf = open(os.path.join('templates', 'footer.tpl.html'), 'r', encoding='utf-8')
+    footerf = open(os.path.join('templates', 'footer.tpl.html'), 'r',
+                   encoding='utf-8')
     footertempl = footerf.read()
     footerf.close()
 
@@ -223,12 +228,14 @@ def write_helpindex(helpdir):
     indexstring = s.substitute(indexbody=htmlstring, css=csstempl,
                                footer=footertempl)
 
-    f_helpindex = open(os.path.join(helpdir, 'helpindex.html'), 'w', encoding='utf-8')
+    f_helpindex = open(os.path.join(helpdir, 'helpindex.html'), 'w',
+                       encoding='utf-8')
     f_helpindex.write(indexstring)
     f_helpindex.close()
 
     # Todo: using string template for .hlp
-    f_helphlpindex = open(os.path.join(helpdir, 'helpindex.hlp'), 'w', encoding='utf-8')
+    f_helphlpindex = open(os.path.join(helpdir, 'helpindex.hlp'), 'w',
+                          encoding='utf-8')
     f_helphlpindex.write('\n'.join(hlp_list))
     f_helphlpindex.close()
 

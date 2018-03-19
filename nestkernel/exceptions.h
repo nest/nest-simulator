@@ -911,6 +911,35 @@ private:
   const std::string model_;
 };
 
+/**
+ * Exception to be thrown if when trying to delete an entry from
+ * DynamicRecordablesMap that does not exist.
+ * @ingroup KernelExceptions
+ */
+class KeyError : public KernelException
+{
+  const Name key_;
+  const std::string map_type_;
+  const std::string map_op_;
+
+public:
+  KeyError( const Name& key,
+    const std::string& map_type,
+    const std::string& map_op )
+    : KernelException( "KeyError" )
+    , key_( key )
+    , map_type_( map_type )
+    , map_op_( map_op )
+  {
+  }
+
+  ~KeyError() throw()
+  {
+  }
+  std::string message() const;
+};
+
+
 #ifdef HAVE_MUSIC
 /**
  * Exception to be thrown if a music_event_out_proxy is generated, but the music

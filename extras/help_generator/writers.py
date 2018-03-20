@@ -41,15 +41,15 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
     Write html for integration in NEST Help-System
     """
     # Loading Template for commands
-    ftemplate = open('templates/cmd.tpl.html', mode='r', encoding='utf-8')
+    ftemplate = open('templates/cmd.tpl.html', encoding='utf-8')
     templ = ftemplate.read()
     ftemplate.close()
     # Loading Template for CSS
-    cssf = open('templates/nest.tpl.css', mode='r', encoding='utf-8')
+    cssf = open('templates/nest.tpl.css', encoding='utf-8')
     csstempl = cssf.read()
     cssf.close()
     # Loading Template for footer
-    footerf = open('templates/footer.tpl.html', mode='r', encoding='utf-8')
+    footerf = open('templates/footer.tpl.html', encoding='utf-8')
     footertempl = footerf.read()
     footerf.close()
 
@@ -157,17 +157,17 @@ def write_helpindex(helpdir):
     hlp_list = []
 
     # Loading Template for helpindex.html
-    ftemplate = open(os.path.join('templates', 'helpindex.tpl.html'), mode='r',
+    ftemplate = open(os.path.join('templates', 'helpindex.tpl.html'),
                      encoding='utf-8')
     templ = ftemplate.read()
     ftemplate.close()
     # Loading Template for CSS
-    cssf = open(os.path.join('templates', 'nest.tpl.css'), mode='r',
+    cssf = open(os.path.join('templates', 'nest.tpl.css'),
                 encoding='utf-8')
     csstempl = cssf.read()
     cssf.close()
     # Loading Template for footer
-    footerf = open(os.path.join('templates', 'footer.tpl.html'), mode='r',
+    footerf = open(os.path.join('templates', 'footer.tpl.html'),
                    encoding='utf-8')
     footertempl = footerf.read()
     footerf.close()
@@ -191,7 +191,7 @@ def write_helpindex(helpdir):
                          % doubles[0])
         for item in sorted(filelist,
                            key=lambda name: name.lower().rsplit('/', 1)[1]):
-            fitem = open(item, mode='r', encoding='utf-8')
+            fitem = open(item, encoding='utf-8')
             itemtext = fitem.read()
             fitem.close()
             # only the basename of the file

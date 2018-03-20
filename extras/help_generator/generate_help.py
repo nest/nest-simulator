@@ -28,6 +28,7 @@ The helpindex is built during installation in a separate step.
 """
 
 import os
+import io
 import re
 import sys
 import textwrap
@@ -73,7 +74,7 @@ dcs = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
 # searching for a sli_command_list
 for file in allfiles:
     if file.endswith('.sli'):
-        f = open(file, encoding='utf-8')
+        f = io.open(file, encoding='utf-8')
         filetext = f.read()
         f.close()
         items = re.findall(dcs, filetext, re.DOTALL)
@@ -93,7 +94,7 @@ dcs = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
 for fname in allfiles:
     # .py is for future use
     if not fname.endswith('.py'):
-        f = open(fname, encoding='utf-8')
+        f = io.open(fname, encoding='utf-8')
         filetext = f.read()
         f.close()
         # Multiline matching to find codeblock

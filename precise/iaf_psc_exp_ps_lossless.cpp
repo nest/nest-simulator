@@ -414,18 +414,20 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin,
       {
         // time is measured backward: inverse order in difference
         const double ministep = last_offset - ev_offset;
-
-        propagate_( ministep );
-
-        // check for threshold crossing during ministep
-        // this must be done before adding the input, since
-        // interpolation requires continuity
-
-        const double spike_time_max = is_spike_( ministep );
-
-        if ( not numerics::is_nan( spike_time_max ) )
+        assert( ministep >= 0.0 );
+        if ( ministep > 0.0 )
         {
-          emit_spike_( origin, lag, V_.h_ms_ - last_offset, spike_time_max );
+          propagate_( ministep );
+
+          // check for threshold crossing during ministep
+          // this must be done before adding the input, since
+          // interpolation requires continuity
+          const double spike_time_max = is_spike_( ministep );
+
+          if ( not numerics::is_nan( spike_time_max ) )
+          {
+            emit_spike_( origin, lag, V_.h_ms_ - last_offset, spike_time_max );
+          }
         }
 
         // handle event

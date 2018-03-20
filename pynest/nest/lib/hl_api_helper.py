@@ -449,7 +449,7 @@ def load_help(hlpobj, return_filename=False):
     Parameters
     ----------
     hlpobj : object
-        Object to display
+        Object to display help for
     return_filename : bool
         Option for returning filename
 

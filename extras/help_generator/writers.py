@@ -136,13 +136,13 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
             path = os.path.join(helpdir, 'cc')
 
         f_file_name = io.open('{}/{}.html'.format(path, name), mode='w',
-                           encoding='utf-8')
+                              encoding='utf-8')
         "{}/{}.html".format(path, name)
         f_file_name.write(cmdindexstring)
         f_file_name.close()
 
         f_file_name_hlp = io.open('{}/{}.hlp'.format(path, name), mode='w',
-                               encoding='utf-8')
+                                  encoding='utf-8')
         f_file_name_hlp.write('\n'.join(hlplist))
         f_file_name_hlp.close()
 
@@ -159,17 +159,17 @@ def write_helpindex(helpdir):
 
     # Loading Template for helpindex.html
     ftemplate = io.open(os.path.join('templates', 'helpindex.tpl.html'),
-                     encoding='utf-8')
+                        encoding='utf-8')
     templ = ftemplate.read()
     ftemplate.close()
     # Loading Template for CSS
     cssf = io.open(os.path.join('templates', 'nest.tpl.css'),
-                encoding='utf-8')
+                   encoding='utf-8')
     csstempl = cssf.read()
     cssf.close()
     # Loading Template for footer
     footerf = io.open(os.path.join('templates', 'footer.tpl.html'),
-                   encoding='utf-8')
+                      encoding='utf-8')
     footertempl = footerf.read()
     footerf.close()
 
@@ -230,13 +230,13 @@ def write_helpindex(helpdir):
                                footer=footertempl)
 
     f_helpindex = io.open(os.path.join(helpdir, 'helpindex.html'), mode='w',
-                       encoding='utf-8')
+                          encoding='utf-8')
     f_helpindex.write(indexstring)
     f_helpindex.close()
 
     # Todo: using string template for .hlp
     f_helphlpindex = io.open(os.path.join(helpdir, 'helpindex.hlp'), mode='w',
-                          encoding='utf-8')
+                             encoding='utf-8')
     f_helphlpindex.write('\n'.join(hlp_list))
     f_helphlpindex.close()
 

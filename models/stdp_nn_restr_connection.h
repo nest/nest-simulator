@@ -264,7 +264,8 @@ STDPNNRestrConnection< targetidentifierT >::send( Event& e,
     if ( minus_dt == 0 )
     {
       // Zero-interval pair is discarded, but in this case we should
-      // account the next postsynaptic spike in a facilitation pair.
+      // account the next postsynaptic spike, so that there still is a facilitation pair.
+      ++start;
       continue;
       // That's why all this is inside a while() loop instead of if().
     }

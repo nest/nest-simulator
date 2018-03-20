@@ -277,7 +277,6 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
     
     weight_ =
       facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ) );
-std::cerr << "Facilitate " << t_lastspike << " - " << (start->t_ + dendritic_delay) << '\n';
 
     // According to the presynaptic-centered nearest-neighbour scheme,
     // a postsynaptic spike
@@ -300,7 +299,6 @@ std::cerr << "Facilitate " << t_lastspike << " - " << (start->t_ + dendritic_del
     value_to_throw_away // discard triplet_Kminus
     );
   weight_ = depress_( weight_, nearest_neighbor_Kminus );
-//std::cerr << "Depress " << (t_spike - dendritic_delay) << " - " << finish->t_ << '\n';
 
   Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) / tau_plus_ ) + 1.0;
 

@@ -109,7 +109,7 @@ def help(obj=None, pager=None, return_text=False):
     hlpobj = obj
     if hlpobj is not None:
         if isinstance(return_text, str):
-            return_text = bool( strtobool(return_text) )
+            return_text = bool(strtobool(return_text))
         if return_text:
             return load_help(hlpobj)
         else:

@@ -415,7 +415,10 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin,
         // time is measured backward: inverse order in difference
         const double ministep = last_offset - ev_offset;
         assert( ministep >= 0.0 );
-        if ( ministep > 0.0 )
+
+        // dt == 0 may occur if two spikes arrive simultaneously;
+        // no propagation in that case; see #368
+        if ( ministep > 0 )
         {
           propagate_( ministep );
 
@@ -524,6 +527,10 @@ nest::iaf_psc_exp_ps_lossless::handle( DataLoggingRequest& e )
 void
 nest::iaf_psc_exp_ps_lossless::propagate_( const double dt )
 {
+  // dt == 0 may occur if two spikes arrive simultaneously;
+  // propagate_() shall not be called then; see #368.
+  assert( dt > 0 );
+
   const double expm1_tau_ex = numerics::expm1( -dt / P_.tau_ex_ );
   const double expm1_tau_in = numerics::expm1( -dt / P_.tau_in_ );
 
@@ -551,6 +558,10 @@ nest::iaf_psc_exp_ps_lossless::emit_spike_( const Time& origin,
   const double t0,
   const double dt )
 {
+  // dt == 0 may occur if two spikes arrive simultaneously;
+  // emit_spike_() shall not be called then; see #368.
+  assert( dt > 0 );
+
   // we know that the potential is subthreshold at t0, super at t0+dt
 
   // compute spike time relative to beginning of step
@@ -631,6 +642,10 @@ nest::iaf_psc_exp_ps_lossless::bisectioning_( const double dt ) const
 double
 nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
 {
+  // dt == 0 may occur if two spikes arrive simultaneously;
+  // is_spike_() shall not be called then; see #368.
+  assert( dt > 0 );
+
   const double I_0 = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
   const double V_0 = V_.y2_before_;
   const double exp_tau_s = numerics::expm1( dt / P_.tau_ex_ );

@@ -23,10 +23,27 @@
 balanced network with alpha synapses
 ----------------------------------------------------------------
 
-This script finds the appropiate parameter values for the external
-drive "eta" and the relative ratio of excitation and inhibition "g"
-for a balanced random network that lead to particular
-population-averaged rates, coefficients of variation and correlations.
+This script uses an optimization algorithm to find the appropiate
+parameter values for the external drive "eta" and the relative ratio
+of excitation and inhibition "g" for a balanced random network that
+lead to particular population-averaged rates, coefficients of
+variation and correlations.
+
+From an initial Gaussian search distribution parameterized with mean
+and standard deviation, individuals, i.e., networks are sampled. These
+networks are simulated and evaluated according to an objective
+function that measures how close the activity statistics are to their
+desired values (~fitness). From these fitness values the approximate
+natural gradient of the fitness landscape is computed and used to
+update the parameters of the search distribution. This procedure is
+repeated until the maximal number of function evaluations is reached
+or the width of the search distribution becomes extremely small.
+We use the following fitness function:
+
+ f = - alpha(r - r*)^2 - beta(cv - cv*)^2 - gamma(corr - corr*)^2
+
+where alpha, beta and gamma are weighting factors, and stars indicate
+target values.
 
 The network contains an excitatory and an inhibitory population on
 the basis of the network used in
@@ -40,7 +57,7 @@ The optimization algorithm (evolution strategies) is described in
 Wierstra et al. (2014). Natural evolution strategies. Journal of
 Machine Learning Research, 15(1), 949-980.
 
-Author: Jakob Jordan, based in brunel_alpha_nest.py
+Author: Jakob Jordan, based on brunel_alpha_nest.py
 Year: 2018
 
 '''
@@ -319,6 +336,44 @@ def optimize(func, mu, sigma, learning_rate_mu=None, learning_rate_sigma=None,
     parameters ("Separable natural evolution strategies").
     See Wierstra et al. (2014)
 
+    Parameters
+    ----------
+    func: function
+        The function to be maximized.
+    mu: float
+        Initial mean of the search distribution.
+    sigma: float
+        Initial standard deviation of the search distribution.
+    learning_rate_mu: float
+        Learning rate of mu.
+    learning_rate_sigma: float
+        Learning rate of sigma.
+    population_size: int
+        Number of individuals sampled in each generation.
+    fitness_shaping: bool
+        Whether to use fitness shaping, compensating for large
+        deviations in fitness, see Wierstra et al. (2014).
+    mirrored_sampling: bool
+        Whether to use mirrored sampling, i.e., evaluating a mirrored
+        sample for each sample, see Wierstra et al. (2014).
+    record_history: bool
+        Whether to record history of searhc distribution parameters,
+        fitness values and individuals.
+    max_generations: int
+        Maximal number of generations.
+    min_sigma: float
+        Minimal value for standard deviation of search
+        distribution. If any dimension has a value smaller than this,
+        the search is stoppped.
+    verbosity: bool
+        Whether to continously print progress information.
+
+    Returns
+    -------
+    dict
+        Dictionary of final parameters of search distribution and
+        history.
+
     '''
 
     if not isinstance(mu, np.ndarray):
@@ -421,7 +476,8 @@ def optimize_network(optimization_parameters, simulation_parameters):
         # analyse the result and compute fitness
         rate, cv, corr = compute_statistics(
             simulation_parameters, espikes, ispikes)
-        fitness = - optimization_parameters['fitness_weight_rate'] * (
+        fitness = \
+            - optimization_parameters['fitness_weight_rate'] * (
                 rate - optimization_parameters['target_rate']) ** 2 \
             - optimization_parameters['fitness_weight_cv'] * (
                 cv - optimization_parameters['target_cv']) ** 2 \
@@ -448,7 +504,7 @@ if __name__ == '__main__':
     simulation_parameters = {
         'seed': 123,
         'dt': 0.1,            # (ms) simulation resolution
-        'sim_time': 1000.,     # (ms) simulation duration
+        'sim_time': 1000.,    # (ms) simulation duration
         'warmup_time': 300.,  # (ms) duration ignored during analysis
         'delay': 1.5,         # (ms) synaptic delay
         'g': None,            # relative ratio of excitation and inhibition
@@ -463,7 +519,7 @@ if __name__ == '__main__':
     optimization_parameters = {
         'verbosity': 1,             # print progress over generations
         'max_generations': 20,      # maximal number of generations
-        'target_rate': 1.89,        # target rate in
+        'target_rate': 1.89,        # (Hz) target rate
         'target_corr': 0.0,         # target correlation
         'target_cv': 1.,            # target coefficient of variation
         'mu': [1., 3.],             # initial mean for search distribution
@@ -471,9 +527,11 @@ if __name__ == '__main__':
         'sigma': [0.15, 0.05],      # initial sigma for search
                                     # distribution (sigma(g), sigma(eta))
 
-        # hyperparameters of the fitness function
-        'fitness_weight_rate': 1.,  # relative weight of rate deviation
-        'fitness_weight_cv': 10.,    # relative weight of cv deviation
+        # hyperparameters of the fitness function; these are used to
+        # compensate for the different typical scales of the
+        # individual measures, rate ~ O(1), cv ~ (0.1), corr ~ O(0.01)
+        'fitness_weight_rate': 1.,    # relative weight of rate deviation
+        'fitness_weight_cv': 10.,     # relative weight of cv deviation
         'fitness_weight_corr': 100.,  # relative weight of corr deviation
     }
 
@@ -514,7 +572,7 @@ if __name__ == '__main__':
     for mu, sigma in zip(optimization_result['mu_history'],
                          optimization_result['sigma_history']):
         ellipse = Ellipse(
-            xy=mu, width=2*sigma[0], height=2*sigma[1], alpha=0.5, fc='k')
+            xy=mu, width=2 * sigma[0], height=2 * sigma[1], alpha=0.5, fc='k')
         ellipse.set_clip_box(ax2.bbox)
         ax2.add_artist(ellipse)
     ax2.plot(optimization_result['mu_history'][:, 0],

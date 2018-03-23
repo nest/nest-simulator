@@ -519,7 +519,7 @@ if __name__ == '__main__':
     optimization_parameters = {
         'verbosity': 1,             # print progress over generations
         'max_generations': 20,      # maximal number of generations
-        'target_rate': 1.89,        # (Hz) target rate
+        'target_rate': 1.89,        # (spikes/s) target rate
         'target_corr': 0.0,         # target correlation
         'target_cv': 1.,            # target coefficient of variation
         'mu': [1., 3.],             # initial mean for search distribution

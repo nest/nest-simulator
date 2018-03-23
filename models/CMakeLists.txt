@@ -44,6 +44,7 @@ set( models_sources
     gif_psc_exp_multisynapse.h gif_psc_exp_multisynapse.cpp
     gif_cond_exp.h gif_cond_exp.cpp
     gif_cond_exp_multisynapse.h gif_cond_exp_multisynapse.cpp
+    gif_pop_psc_exp.h gif_pop_psc_exp.cpp
     ginzburg_neuron.h ginzburg_neuron.cpp
     hh_cond_exp_traub.h hh_cond_exp_traub.cpp
     hh_psc_alpha.h hh_psc_alpha.cpp
@@ -76,6 +77,7 @@ set( models_sources
     music_message_in_proxy.h music_message_in_proxy.cpp
     noise_generator.h noise_generator.cpp
     parrot_neuron.h parrot_neuron.cpp
+    inhomogeneous_poisson_generator.h inhomogeneous_poisson_generator.cpp
     poisson_generator.h poisson_generator.cpp
     pp_psc_delta.h pp_psc_delta.cpp
     pp_pop_psc_delta.h pp_pop_psc_delta.cpp

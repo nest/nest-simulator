@@ -201,12 +201,6 @@ else ()
   )
 endif ()
 
-add_custom_target( check
-    COMMAND export CTEST_OUTPUT_ON_FAILURE=1 &&
-    ${CMAKE_CTEST_COMMAND} -C ${CMAKE_BUILD_TYPE}
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-    )
-
 ################################################################################
 ##################        Define Subdirectories here          ##################
 ################################################################################

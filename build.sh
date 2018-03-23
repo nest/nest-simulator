@@ -208,6 +208,7 @@ cmake \
   -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
   -Dwith-optimize=ON \
   -Dwith-warning=ON \
+  -Dwith-boost=ON \
   $CONFIGURE_THREADING \
   $CONFIGURE_MPI \
   $CONFIGURE_PYTHON \

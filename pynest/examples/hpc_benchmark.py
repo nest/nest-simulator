@@ -85,52 +85,47 @@ M_ERROR = 30
 
 params = {
     'nvp': 1,               # total number of virtual processes
-    'scale': 1.,           # scaling factor of the network size,
+    'scale': 1.,            # scaling factor of the network size
                             # total network size = scale*11250 neurons
     'simtime': 250.,        # total simulation time in ms
     'presimtime': 50.,      # simulation time until reaching equilibrium
     'dt': 0.1,              # simulation step
     'record_spikes': True,  # switch to record spikes of excitatory
                             # neurons to file
-    'path_name': '',        # path where all files will have to be written
+    'path_name': '.',       # path where all files will have to be written
     'log_file': 'log',      # naming scheme for the log files
 }
 
 # -----------------------------------------------------------------------------
 
-
 def convert_synapse_weight(tau_m, tau_syn, C_m):
-    '''Computes conversion factor for synapse weight from mV to pA
+    '''
+    Computes conversion factor for synapse weight from mV to pA
 
     This function is specific to the leaky integrate-and-fire neuron
     model with alpha-shaped postsynaptic currents.
 
     '''
+
+    # compute time to maximum of V_m after spike input
+    # to neuron at rest
     a = tau_m / tau_syn
     b = 1.0 / tau_syn - 1.0 / tau_m
-    # time of maximum
-    t_max = 1.0 / b * (-lambertwm1(-np.exp(-1.0 / a) / a).real - 1.0 / a)
-    # maximum of PSP for current of unit amplitude
+    t_rise = 1.0 / b * (-lambertwm1(-np.exp(-1.0 / a) / a).real - 1.0 / a)
+
     v_max = np.exp(1.0) / (tau_syn * C_m * b) * (
-        (np.exp(-t_max / tau_m) - np.exp(-t_max / tau_syn)) /
-        b - t_max * np.exp(-t_max / tau_syn))
+        (np.exp(-t_rise / tau_m) - np.exp(-t_rise / tau_syn)) /
+        b - t_rise * np.exp(-t_rise / tau_syn))
     return 1. / v_max
 
-
-# Rise time of synaptic currents
-# The synaptic rise time is chosen such that the rise time of the
-# evoked post-synaptic potential is 1.700759 ms.
-# For alpha-shaped postynaptic currents, the rise time of the post-synaptic
-# potential follows from the synaptic rise time as
-#
-# def PSP_rise_time(tau_m, tau_syn):
-#     a = tau_m / tau_syn
-#     b = 1.0 / tau_syn - 1.0 / tau_m
-#
-# Inverting this equation numerically leads to tau_syn =
-# 0.32582722403722841 ms, as specified in model_params below.
+# For compatiblity with earlier benchmarks, we require a rise time of
+# t_rise = 1.700759 ms and we choose tau_syn to achieve this for given
+# tau_m. This requires numerical inversion of the expression for t_rise
+# in convert_synapse_weight(). We computed this value once and hard-code 
+# it here.
 
 tau_syn = 0.32582722403722841
+
 
 # -----------------------------------------------------------------------------
 
@@ -156,12 +151,12 @@ brunel_params = {
         'V_m': 5.7  # mean value of membrane potential
     },
 
-    'randomize_Vm': True,
     # Note that Kunkel et al. (2014) report different values. The values
-    'mean_potential': 5.7,
     # in the paper were used for the benchmarks on K, the values given
-    'sigma_potential': 7.2,
     # here were used for the benchmark on JUQUEEN.
+    'randomize_Vm': True,
+    'mean_potential': 5.7,
+    'sigma_potential': 7.2,
 
     'delay': 1.5,  # synaptic delay, all connections(ms)
 
@@ -210,7 +205,7 @@ def build_network(logger):
         'resolution': params['dt'],
         'overwrite_files': True})
 
-    nest.SetDefaults('iaf_psc_alpha', brunel_params['model_params'])
+    nest.SetDefaults('iaf_psc_alpha', model_params)
 
     nest.message(M_INFO, 'build_network', 'Creating excitatory population.')
     E_neurons = nest.Create('iaf_psc_alpha', NE)
@@ -277,6 +272,11 @@ def build_network(logger):
     tic = time.time()
 
     nest.SetDefaults('static_synapse_hpc', {'delay': brunel_params['delay']})
+    nest.CopyModel('static_synapse_hpc', 'syn_std')
+    nest.CopyModel('static_synapse_hpc', 'syn_ex', 
+                   {'weight': JE_pA})
+    nest.CopyModel('static_synapse_hpc', 'syn_in', 
+                   {'weight': brunel_params['g'] * JE_pA})
 
     stdp_params['weight'] = JE_pA
     nest.SetDefaults('stdp_pl_synapse_hom_hpc', stdp_params)
@@ -285,10 +285,10 @@ def build_network(logger):
 
     # Connect Poisson generator to neuron
 
-    nest.Connect(E_stimulus, E_neurons, {'rule': 'all_to_all'}, {
-                 'model': 'static_synapse_hpc', 'weight': JE_pA})
-    nest.Connect(E_stimulus, I_neurons, {'rule': 'all_to_all'}, {
-                 'model': 'static_synapse_hpc', 'weight': JE_pA})
+    nest.Connect(E_stimulus, E_neurons, {'rule': 'all_to_all'}, 
+                 {'model': 'syn_ex'})
+    nest.Connect(E_stimulus, I_neurons, {'rule': 'all_to_all'},
+                 {'model': 'syn_ex'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> excitatory population.')
@@ -304,8 +304,7 @@ def build_network(logger):
     nest.Connect(I_neurons, E_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CI,
                      'autapses': False, 'multapses': True},
-                 {'model': 'static_synapse_hpc',
-                  'weight': JE_pA * brunel_params['g']})
+                 {'model': 'syn_in'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> inhibitory population.')
@@ -313,7 +312,7 @@ def build_network(logger):
     nest.Connect(E_neurons, I_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CE,
                      'autapses': False, 'multapses': True},
-                 {'model': 'static_synapse_hpc', 'weight': JE_pA})
+                 {'model': 'syn_ex'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting inhibitory -> inhibitory population.')
@@ -321,8 +320,7 @@ def build_network(logger):
     nest.Connect(I_neurons, I_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CI,
                      'autapses': False, 'multapses': True},
-                 {'model': 'static_synapse_hpc',
-                  'weight': JE_pA * brunel_params['g']})
+                 {'model': 'syn_in'})
 
     if params['record_spikes']:
         local_neurons = list(get_local_nodes(E_neurons))
@@ -382,6 +380,8 @@ def run_simulation():
         if params['record_spikes']:
             logger.log(str(compute_rate(sdet)) + ' # average rate')
 
+        print(nest.GetKernelStatus())
+        
 # -----------------------------------------------------------------------------
 
 

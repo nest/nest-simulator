@@ -64,6 +64,7 @@
    per second.
 '''
 
+from __future__ import print_function  # for Python 2
 import numpy as np
 import os
 import sys
@@ -137,7 +138,7 @@ brunel_params = {
     'NE': int(9000 * params['scale']),  # number of excitatory neurons
     'NI': int(2250 * params['scale']),  # number of inhibitory neurons
 
-    'Nrec': 100,  # number of neurons to record spikes from
+    'Nrec': 1000,  # number of neurons to record spikes from
 
     'model_params': {  # Set variables for iaf_psc_alpha
         'E_L': 0.0,  # Resting membrane potential(mV)
@@ -335,13 +336,16 @@ def build_network(logger):
             exit(1)
 
         nest.message(M_INFO, 'build_network', 'Connecting spike detectors.')
-        nest.Connect(local_neurons[:brunel_params['Nrec']], E_detector)
+        nest.Connect(local_neurons[:brunel_params['Nrec']], E_detector,
+                     'all_to_all', 'static_synapse_hpc')
 
     # read out time used for building
     BuildEdgeTime = time.time() - tic
 
     logger.log(str(BuildEdgeTime) + ' # build_edge_time')
     logger.log(str(memory_thisjob()) + ' # virt_mem_after_edges')
+
+    return E_detector if params['record_spikes'] else None
 
 
 def run_simulation():
@@ -355,7 +359,7 @@ def run_simulation():
 
         logger.log(str(memory_thisjob()) + ' # virt_mem_0')
 
-        build_network(logger)
+        sdet = build_network(logger)
 
         tic = time.time()
 
@@ -375,14 +379,13 @@ def run_simulation():
         logger.log(str(memory_thisjob()) + ' # virt_mem_after_sim')
         logger.log(str(SimCPUTime) + ' # sim_time')
 
-        time.sleep(5)
-
-        logger.log(str(compute_rate()) + ' # average rate')
+        if params['record_spikes']:
+            logger.log(str(compute_rate(sdet)) + ' # average rate')
 
 # -----------------------------------------------------------------------------
 
 
-def compute_rate():
+def compute_rate(sdet):
     '''Compute local approximation of average firing rate
 
     This approximation is based on the number of local nodes, number
@@ -391,10 +394,9 @@ def compute_rate():
 
     '''
 
-    n_local_spikes = nest.GetKernelStatus('local_spike_counter')
-    n_local_neurons = nest.GetKernelStatus(
-        'network_size') / nest.GetKernelStatus('num_processes')
-    simtime = nest.GetKernelStatus('time')
+    n_local_spikes = nest.GetStatus(sdet, 'n_events')[0]
+    n_local_neurons = brunel_params['Nrec']
+    simtime = params['simtime']
     return 1. * n_local_spikes / (n_local_neurons * simtime) * 1e3
 
 #  ----------------------------------------------------------------------------

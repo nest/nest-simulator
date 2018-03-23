@@ -98,6 +98,7 @@ params = {
 
 # -----------------------------------------------------------------------------
 
+
 def convert_synapse_weight(tau_m, tau_syn, C_m):
     '''
     Computes conversion factor for synapse weight from mV to pA
@@ -121,8 +122,9 @@ def convert_synapse_weight(tau_m, tau_syn, C_m):
 # For compatiblity with earlier benchmarks, we require a rise time of
 # t_rise = 1.700759 ms and we choose tau_syn to achieve this for given
 # tau_m. This requires numerical inversion of the expression for t_rise
-# in convert_synapse_weight(). We computed this value once and hard-code 
+# in convert_synapse_weight(). We computed this value once and hard-code
 # it here.
+
 
 tau_syn = 0.32582722403722841
 
@@ -273,9 +275,9 @@ def build_network(logger):
 
     nest.SetDefaults('static_synapse_hpc', {'delay': brunel_params['delay']})
     nest.CopyModel('static_synapse_hpc', 'syn_std')
-    nest.CopyModel('static_synapse_hpc', 'syn_ex', 
+    nest.CopyModel('static_synapse_hpc', 'syn_ex',
                    {'weight': JE_pA})
-    nest.CopyModel('static_synapse_hpc', 'syn_in', 
+    nest.CopyModel('static_synapse_hpc', 'syn_in',
                    {'weight': brunel_params['g'] * JE_pA})
 
     stdp_params['weight'] = JE_pA
@@ -285,7 +287,7 @@ def build_network(logger):
 
     # Connect Poisson generator to neuron
 
-    nest.Connect(E_stimulus, E_neurons, {'rule': 'all_to_all'}, 
+    nest.Connect(E_stimulus, E_neurons, {'rule': 'all_to_all'},
                  {'model': 'syn_ex'})
     nest.Connect(E_stimulus, I_neurons, {'rule': 'all_to_all'},
                  {'model': 'syn_ex'})
@@ -381,7 +383,7 @@ def run_simulation():
             logger.log(str(compute_rate(sdet)) + ' # average rate')
 
         print(nest.GetKernelStatus())
-        
+
 # -----------------------------------------------------------------------------
 
 

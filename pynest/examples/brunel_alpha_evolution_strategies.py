@@ -23,22 +23,23 @@
 balanced network with alpha synapses
 ----------------------------------------------------------------
 
-This script uses an optimization algorithm to find the appropiate
+This script uses an optimization algorithm to find the appropriate
 parameter values for the external drive "eta" and the relative ratio
 of excitation and inhibition "g" for a balanced random network that
 lead to particular population-averaged rates, coefficients of
 variation and correlations.
 
 From an initial Gaussian search distribution parameterized with mean
-and standard deviation, individuals, i.e., networks are sampled. These
-networks are simulated and evaluated according to an objective
-function that measures how close the activity statistics are to their
-desired values (~fitness). From these fitness values the approximate
-natural gradient of the fitness landscape is computed and used to
-update the parameters of the search distribution. This procedure is
-repeated until the maximal number of function evaluations is reached
-or the width of the search distribution becomes extremely small.
-We use the following fitness function:
+and standard deviation network parameters are sampled. Network
+realizations of these parameters are simulated and evaluated according
+to an objective function that measures how close the activity
+statistics are to their desired values (~fitness). From these fitness
+values the approximate natural gradient of the fitness landscape is
+computed and used to update the parameters of the search
+distribution. This procedure is repeated until the maximal number of
+function evaluations is reached or the width of the search
+distribution becomes extremely small.  We use the following fitness
+function:
 
  f = - alpha(r - r*)^2 - beta(cv - cv*)^2 - gamma(corr - corr*)^2
 
@@ -48,17 +49,18 @@ target values.
 The network contains an excitatory and an inhibitory population on
 the basis of the network used in
 
-Brunel N, Dynamics of Sparsely Connected Networks of Excitatory and
-Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
-183-208 (2000).
+Brunel N (2000). Dynamics of Sparsely Connected Networks of Excitatory
+and Inhibitory Spiking Neurons. Journal of Computational Neuroscience
+8, 183-208.
 
 The optimization algorithm (evolution strategies) is described in
 
 Wierstra et al. (2014). Natural evolution strategies. Journal of
 Machine Learning Research, 15(1), 949-980.
 
-Author: Jakob Jordan, based on brunel_alpha_nest.py
+Author: Jakob Jordan
 Year: 2018
+See Also: brunel_alpha_nest.py
 
 '''
 
@@ -131,7 +133,7 @@ def compute_correlations(binned_spiketrains):
 def compute_statistics(parameters, espikes, ispikes):
     '''Computes population-averaged rates coefficients of variation and
     correlations from recorded spikes of excitatory and inhibitory
-    population
+    populations
 
     '''
 
@@ -193,10 +195,10 @@ def simulate(parameters):
     # number of inhibitory neurons
     NI = parameters['N'] - NE
 
-    CE = int(parameters['epsilon'] * NE)  # number of excitatory
-                                          # synapses per neuron
-    CI = int(parameters['epsilon'] * NI)  # number of inhibitory
-                                          # synapses per neuron
+    # number of excitatory synapses per neuron
+    CE = int(parameters['epsilon'] * NE)
+    # number of inhibitory synapses per neuron
+    CI = int(parameters['epsilon'] * NI)
 
     tauSyn = 0.5  # synaptic time constant in ms
     tauMem = 20.0  # time constant of membrane potential in ms
@@ -216,8 +218,8 @@ def simulate(parameters):
     J = 0.1        # postsynaptic amplitude in mV
     J_unit = ComputePSPnorm(tauMem, CMem, tauSyn)
     J_ex = J / J_unit  # amplitude of excitatory postsynaptic current
-    J_in = -parameters['g'] * J_ex  # amplitude of inhibitory
-                                    # postsynaptic current
+    # amplitude of inhibitory postsynaptic current
+    J_in = -parameters['g'] * J_ex
 
     nu_th = (theta * CMem) / (J_ex * CE * exp(1) * tauMem * tauSyn)
     nu_ex = parameters['eta'] * nu_th
@@ -258,10 +260,14 @@ def simulate(parameters):
 
     if parameters['N_rec'] > NE:
         raise ValueError(
-            'Requested recording from {} neurons, but only {} in excitatory population'.format(parameters['N_rec'], NE))
+            'Requested recording from {} neurons, \
+            but only {} in excitatory population'.format(
+                parameters['N_rec'], NE))
     if parameters['N_rec'] > NI:
         raise ValueError(
-            'Requested recording from {} neurons, but only {} in inhibitory population'.format(parameters['N_rec'], NI))
+            'Requested recording from {} neurons, \
+            but only {} in inhibitory population'.format(
+                parameters['N_rec'], NI))
     nest.Connect(nodes_ex[:parameters['N_rec']], espikes)
     nest.Connect(nodes_in[:parameters['N_rec']], ispikes)
 
@@ -293,7 +299,8 @@ def default_population_size(dimensions):
 
 
 def default_learning_rate_mu():
-    '''Returns a default learning rate for mean of search distribution
+    '''Returns a default learning rate for the mean of the search
+    distribution
     See Wierstra et al. (2014)
 
     '''
@@ -301,8 +308,8 @@ def default_learning_rate_mu():
 
 
 def default_learning_rate_sigma(dimensions):
-    '''Returns a default learning rate for standard deviation of search
-    distribution for the given number of dimensions
+    '''Returns a default learning rate for the standard deviation of the
+    search distribution for the given number of dimensions
     See Wierstra et al. (2014)
 
     '''
@@ -357,7 +364,7 @@ def optimize(func, mu, sigma, learning_rate_mu=None, learning_rate_sigma=None,
         Whether to use mirrored sampling, i.e., evaluating a mirrored
         sample for each sample, see Wierstra et al. (2014).
     record_history: bool
-        Whether to record history of searhc distribution parameters,
+        Whether to record history of search distribution parameters,
         fitness values and individuals.
     max_generations: int
         Maximal number of generations.
@@ -366,7 +373,7 @@ def optimize(func, mu, sigma, learning_rate_mu=None, learning_rate_sigma=None,
         distribution. If any dimension has a value smaller than this,
         the search is stoppped.
     verbosity: bool
-        Whether to continously print progress information.
+        Whether to continuously print progress information.
 
     Returns
     -------
@@ -410,11 +417,12 @@ def optimize(func, mu, sigma, learning_rate_mu=None, learning_rate_sigma=None,
 
         # print status if enabled
         if verbosity > 0:
-            print('# Generation {:d} | fitness {:.3f} | mu {} | sigma {}'.format(
-                generation, np.mean(fitness),
-                ', '.join(str(np.round(mu_i, 3)) for mu_i in mu),
-                ', '.join(str(np.round(sigma_i, 3)) for sigma_i in sigma)
-            ))
+            print(
+                '# Generation {:d} | fitness {:.3f} | mu {} | sigma {}'.format(
+                    generation, np.mean(fitness),
+                    ', '.join(str(np.round(mu_i, 3)) for mu_i in mu),
+                    ', '.join(str(np.round(sigma_i, 3)) for sigma_i in sigma)
+                ))
 
         # apply fitness shaping if enabled
         if fitness_shaping:

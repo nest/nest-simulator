@@ -29,7 +29,7 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 #include "target.h"
-#include "is_legal.h"
+#include "static_assert.h"
 
 namespace nest
 {
@@ -173,10 +173,8 @@ public:
 };
 
 //!< check legal size
-static const IsLegal<sizeof(TargetData) == 12>::is_legal
-    success_target_data_size = NULL;
-//assert( sizeof( SecondaryTargetDataFields ) == 12 );
-
+typedef StaticAssert<sizeof(TargetData) == 12>::success
+    success_target_data_size;
 
 inline void
 TargetData::reset_marker()

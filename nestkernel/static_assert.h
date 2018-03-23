@@ -1,5 +1,5 @@
 /*
- *  is_legal.h
+ *  static_assert.h
  *
  *  This file is part of NEST.
  *
@@ -20,15 +20,30 @@
  *
  */
 
-#ifndef IS_LEGAL
-#define IS_LEGAL
+#ifndef STATIC_ASSERT
+#define STATIC_ASSERT
 
 namespace nest {
-template<bool L>
-struct IsLegal {};
+
+// Compile time assertions
+// use:
+// static const StaticAssert<bool-test>::success unique-var-name;
+//   or
+// typedef StaticAssert<bool-test>::sucess unique-type-name;
+//
+// Does nothing if the bool-test is true,
+//
+// if bool-test is false,
+// fails to compile because success is not defined
+
+template<bool>
+struct StaticAssert {};
 
 template<>
-struct IsLegal<true> {typedef void* is_legal;};
+struct StaticAssert<true> {
+    struct success {};
+};
+
 }
 
-#endif //IS_LEGAL
+#endif //STATIC_ASSERT

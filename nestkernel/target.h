@@ -28,7 +28,7 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
-#include "is_legal.h"
+#include "static_assert.h"
 
 namespace nest
 {
@@ -88,8 +88,7 @@ public:
 };
 
 //!< check legal size
-static const IsLegal<sizeof(Target) == 8>::is_legal
-    success_target_size = NULL;
+typedef StaticAssert<sizeof(Target) == 8>::success success_target_size;
 
 inline Target::Target()
   : data_( 0 )

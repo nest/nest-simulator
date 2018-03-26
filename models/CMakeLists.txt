@@ -36,6 +36,7 @@ set( models_sources
     correlospinmatrix_detector.h correlospinmatrix_detector.cpp
     dc_generator.h dc_generator.cpp
     diffusion_connection.h
+    erfc_neuron.h erfc_neuron.cpp
     gamma_sup_generator.h gamma_sup_generator.cpp
     gap_junction.h
     gauss_rate.h gauss_rate.cpp

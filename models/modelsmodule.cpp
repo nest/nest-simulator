@@ -52,6 +52,7 @@
 #include "aeif_psc_exp.h"
 #include "aeif_psc_delta.h"
 #include "amat2_psc_exp.h"
+#include "erfc_neuron.h"
 #include "gauss_rate.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
@@ -270,6 +271,7 @@ ModelsModule::init( SLIInterpreter* )
     "ppd_sup_generator" );
   kernel().model_manager.register_node_model< gamma_sup_generator >(
     "gamma_sup_generator" );
+  kernel().model_manager.register_node_model< erfc_neuron >( "erfc_neuron" );
   kernel().model_manager.register_node_model< ginzburg_neuron >(
     "ginzburg_neuron" );
   kernel().model_manager.register_node_model< mcculloch_pitts_neuron >(

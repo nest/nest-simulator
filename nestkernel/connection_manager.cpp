@@ -122,7 +122,7 @@ nest::ConnectionManager::finalize()
   target_table_.finalize();
   target_table_devices_.finalize();
   delete_connections_5g_();
-  
+
   delete_secondary_recv_buffer_pos();
 }
 
@@ -480,6 +480,17 @@ nest::ConnectionManager::connect( const index sgid,
   // normal nodes and devices with proxies -> normal devices
   else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() )
   {
+    // Connections to nodes with one node per process (MUSIC proxies
+    // or similar devices) have to be established by the thread of the
+    // target if the source is on the local process even though the
+    // source may be a proxy on target_thread.
+    if ( target->one_node_per_process() and not source->is_proxy() )
+    {
+      connect_to_device_(
+	  *source, *target, sgid, target_thread, syn_id, params, delay, weight );
+      return;
+    }
+
     // make sure source is on this MPI rank and on this thread
     //TODO@5g: make sure this logic is correct -> Jakob
     if ( source->is_proxy() or ( not source->is_proxy() and source->get_thread() != tid ) )

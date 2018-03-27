@@ -221,7 +221,7 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
  * ---------------------------------------------------------------- */
 
 nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
   , S_()
@@ -232,7 +232,7 @@ nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator()
 
 nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator(
   const sinusoidal_gamma_generator& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
   , S_( n.S_ )

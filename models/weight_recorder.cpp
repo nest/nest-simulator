@@ -43,7 +43,7 @@
 
 // record time, gid, weight and receiver gid
 nest::weight_recorder::weight_recorder()
-  : Node()
+  : DeviceNode()
   , device_( *this,
       RecordingDevice::WEIGHT_RECORDER,
       "csv",
@@ -55,18 +55,16 @@ nest::weight_recorder::weight_recorder()
   , has_proxies_( false )
   , local_receiver_( true )
   , P_()
-  , local_device_id_( invalid_index )
 {
 }
 
 nest::weight_recorder::weight_recorder( const weight_recorder& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( *this, n.device_ )
   , user_set_precise_times_( n.user_set_precise_times_ )
   , has_proxies_( false )
   , local_receiver_( true )
   , P_( n.P_ )
-  , local_device_id_( invalid_index ) // copy must get its own device id
 {
 }
 

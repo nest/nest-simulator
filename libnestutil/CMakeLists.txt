@@ -24,6 +24,7 @@ set( nestutil_sources
     lockptr.h
     compose.hpp
     string_utils.h
+    sort.h
     logging.h
     logging_event.h logging_event.cpp
     )

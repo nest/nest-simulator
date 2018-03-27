@@ -197,7 +197,7 @@ nest::music_cont_out_proxy::State_::get( DictionaryDatum& d ) const
  * ---------------------------------------------------------------- */
 
 nest::music_cont_out_proxy::music_cont_out_proxy()
-  : Node()
+  : DeviceNode()
   , P_()
   , S_()
   , B_()
@@ -206,7 +206,7 @@ nest::music_cont_out_proxy::music_cont_out_proxy()
 
 nest::music_cont_out_proxy::music_cont_out_proxy(
   const music_cont_out_proxy& n )
-  : Node( n )
+  : DeviceNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_ )
@@ -266,9 +266,9 @@ nest::music_cont_out_proxy::calibrate()
       // check whether the target is on this process
       if ( kernel().node_manager.is_local_gid( *t ) )
       {
-        Node* const target_node = kernel().node_manager.get_node( *t );
+	const DictionaryDatum params = new Dictionary();
         kernel().connection_manager.connect(
-          get_gid(), target_node, target_node->get_thread(), synmodel_id );
+	    get_gid(), *t, params, synmodel_id );
       }
     }
     std::vector< MUSIC::GlobalIndex > music_index_map;

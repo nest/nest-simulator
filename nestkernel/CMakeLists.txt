@@ -32,6 +32,7 @@ set( nestkernel_sources
     connector_model.h connector_model_impl.h connector_model.cpp
     connection_id.h connection_id.cpp
     device.h device.cpp
+    device_node.h
     dynamicloader.h dynamicloader.cpp
     event.h event.cpp
     exceptions.h exceptions.cpp

@@ -473,7 +473,7 @@ public:
   void
   sort_connections( std::vector< Source >& sources )
   {
-    sort::sort( sources, C_ );
+    sort( sources, C_ );
   }
 
   void // TODO@5g: -> has_subsequent_targets

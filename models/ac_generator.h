@@ -29,7 +29,7 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
@@ -71,7 +71,7 @@
 
 namespace nest
 {
-class ac_generator : public Node
+class ac_generator : public DeviceNode
 {
 
 public:
@@ -95,9 +95,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  void set_local_device_id( const index ldid );
-  index get_local_device_id() const;
 
   //! Allow multimeter to connect to local instances
   bool
@@ -191,8 +188,6 @@ private:
   State_ S_;
   Variables_ V_;
   Buffers_ B_;
-
-  index local_device_id_;
 };
 
 inline port
@@ -246,17 +241,6 @@ ac_generator::set_status( const DictionaryDatum& d )
   P_ = ptmp;
 }
 
-inline void
-ac_generator::set_local_device_id( const index ldid )
-{
-  local_device_id_ = ldid;
-}
-
-inline index
-ac_generator::get_local_device_id() const
-{
-  return local_device_id_;
-}
-}
+} // namespace
 
 #endif // AC_GENERATOR_H

@@ -38,7 +38,7 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
@@ -128,7 +128,7 @@ namespace nest
  *       the same synapse type, see #737. Once #681 is fixed, we need to add a
          check that his assumption holds.
  */
-class sinusoidal_gamma_generator : public Node
+class sinusoidal_gamma_generator : public DeviceNode
 {
 
 public:
@@ -152,9 +152,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  void set_local_device_id( const index ldid );
-  index get_local_device_id() const;
 
   //! Model can be switched between proxies (single spike train) and not
   bool
@@ -301,8 +298,6 @@ private:
   State_ S_;
   Variables_ V_;
   Buffers_ B_;
-
-  index local_device_id_;
 };
 
 inline port
@@ -378,18 +373,6 @@ sinusoidal_gamma_generator::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
-}
-
-inline void
-sinusoidal_gamma_generator::set_local_device_id( const index ldid )
-{
-  local_device_id_ = ldid;
-}
-
-inline index
-sinusoidal_gamma_generator::get_local_device_id() const
-{
-  return local_device_id_;
 }
 
 } // namespace

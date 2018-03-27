@@ -458,11 +458,15 @@ index NodeManager::add_node( index mod, long n ) // no_p
     // which have a single instance per MPI process.
     for ( index gid = min_gid; gid < max_gid; ++gid )
     {
+      // keep track of number of local devices
+      ++num_local_devices_;
+
       Node* newnode = model->allocate( 0 );
       newnode->set_gid_( gid );
       newnode->set_model_id( mod );
       newnode->set_thread( 0 );
       newnode->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
+      newnode->set_local_device_id( num_local_devices_ - 1 );
 
       // Register instance
       local_nodes_.add_local_node( *newnode );

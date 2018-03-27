@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE( test_random )
     vec1[ i ] = k;
   }
   
-  sort::sort( vec0, vec1 );
+  sort( vec0, vec1 );
 
   BOOST_REQUIRE( is_sorted( vec0.begin(), vec0.end() ) );
   BOOST_REQUIRE( is_sorted( vec1.begin(), vec1.end() ) );
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE( test_linear )
     vec1[ i ] = N - i - 1;
   }
 
-  sort::sort( vec0, vec1 );
+  sort( vec0, vec1 );
 
   BOOST_REQUIRE( is_sorted( vec0.begin(), vec0.end() ) );
   BOOST_REQUIRE( is_sorted( vec1.begin(), vec1.end() ) );

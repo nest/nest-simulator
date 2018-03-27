@@ -28,7 +28,7 @@
 
 #define INSERTION_SORT_CUTOFF 10 // use insertion sort for smaller arrays
 
-namespace sort
+namespace nest
 {
 /* exchanges elements i and j in vector vec */
 template < typename T >
@@ -134,7 +134,7 @@ quicksort3way( std::vector< T1 >& vec_sort,
   exchange_( vec_perm, lo, i - 1 );
   lt = i - 1;
 
-  // // adjust position of gt (useful for sorted arrays)
+  // adjust position of gt (useful for sorted arrays)
   while ( vec_sort[ gt ] > v )
   {
     --gt;
@@ -161,70 +161,6 @@ quicksort3way( std::vector< T1 >& vec_sort,
     }
   }
 
-  // Bentley-McIlroy 3-way partitioning
-  // size_t i = lo;
-  // size_t j = hi + 1;
-  // size_t p = lo;
-  // size_t q = hi + 1;
-  // T1 v = vec_sort[ lo ];
-  // while ( true )
-  // {
-  //   while ( vec_sort[ ++i ] < v )
-  //   {
-  //     if ( i == hi )
-  //     {
-  //       break;
-  //     }
-  //   }
-
-  //   while ( v < vec_sort[ --j ] )
-  //   {
-  //     if ( j == lo )
-  //     {
-  //       break;
-  //     }
-  //   }
-
-  //   // pointers cross
-  //   if ( i == j && vec_sort[i] == v )
-  //   {
-  //     exchange_(vec_sort, ++p, i);
-  //     exchange_(vec_perm, ++p, i);
-  //   }
-  //   if ( i >= j )
-  //   {
-  //     break;
-  //   }
-
-  //   exchange_(vec_sort, i, j);
-  //   exchange_(vec_perm, i, j);
-
-  //   if ( vec_sort[i] == v )
-  //   {
-  //     exchange_( vec_sort, ++p, i );
-  //     exchange_( vec_perm, ++p, i );
-  //   }
-  //   if ( vec_sort[j] == v )
-  //   {
-  //     exchange_(vec_sort, --q, j);
-  //   }
-  // }
-
-  // i = j + 1;
-  // for ( size_t k = lo; k <= p; k++ )
-  // {
-  //   exchange_( vec_sort, k, j-- );
-  //   exchange_( vec_perm, k, j-- );
-  // }
-  // for ( size_t k = hi; k >= q; k-- )
-  // {
-  //   exchange_( vec_sort, k, i++);
-  //   exchange_( vec_perm, k, i++);
-  // }
-
-  // quicksort3way( vec_sort, vec_perm, lo, j );
-  // quicksort3way( vec_sort, vec_perm, i, hi );
-
   quicksort3way( vec_sort, vec_perm, lo, lt - 1 );
   quicksort3way( vec_sort, vec_perm, gt + 1, hi );
 }
@@ -240,4 +176,4 @@ sort( std::vector< T1 >& vec_sort, std::vector< T2 >& vec_perm )
 
 } // namespace sort
 
-#endif // SORT_H
+#endif /* #ifndef SORT_H */

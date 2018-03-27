@@ -78,11 +78,9 @@ cg_connect( ConnectionGeneratorDatum& cg,
     {
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contain local nodes.
-      Node* const target_node =
-        kernel().node_manager.get_node( target_gids[ target ] );
-      const thread target_thread = target_node->get_thread();
+      const DictionaryDatum params = new Dictionary();
       kernel().connection_manager.connect(
-        source_gids[ source ], target_node, target_thread, synmodel_id );
+	  source_gids[ source ], target_gids[ target ], params, synmodel_id );
     }
   }
   else if ( num_parameters == 2 )
@@ -116,12 +114,10 @@ cg_connect( ConnectionGeneratorDatum& cg,
       Node* const target_node =
         kernel().node_manager.get_node( target_gids[ target ] );
       const thread target_thread = target_node->get_thread();
-      kernel().connection_manager.connect( source_gids[ source ],
-        target_node,
-        target_thread,
-        synmodel_id,
-        params[ d_idx ],
-        params[ w_idx ] );
+      const DictionaryDatum params_dict = new Dictionary();
+      kernel().connection_manager.connect(
+	  source_gids[ source ], target_node, target_thread, synmodel_id,
+	  params_dict, params[ d_idx ], params[ w_idx ] );
     }
   }
   else

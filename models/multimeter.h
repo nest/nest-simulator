@@ -30,7 +30,7 @@
 #include "connection.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "node.h"
+#include "device_node.h"
 #include "recording_device.h"
 #include "sibling_container.h"
 
@@ -155,7 +155,7 @@ namespace nest
  * @ingroup Devices
  * @see UniversalDataLogger
  */
-class Multimeter : public Node
+class Multimeter : public DeviceNode
 {
 
 public:
@@ -189,9 +189,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  void set_local_device_id( const index ldid );
-  index get_local_device_id() const;
 
 protected:
   void init_state_( Node const& );
@@ -310,8 +307,6 @@ private:
   State_ S_;
   Buffers_ B_;
   Variables_ V_;
-
-  index local_device_id_;
 };
 
 
@@ -366,18 +361,6 @@ inline SignalType
 nest::Multimeter::sends_signal() const
 {
   return ALL;
-}
-
-inline void
-Multimeter::set_local_device_id( const index ldid )
-{
-  local_device_id_ = ldid;
-}
-
-inline index
-Multimeter::get_local_device_id() const
-{
-  return local_device_id_;
 }
 
 } // Namespace

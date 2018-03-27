@@ -27,6 +27,7 @@ set( nestutil_sources
     sort.h
     logging.h
     logging_event.h logging_event.cpp
+    vector_util.h
     )
 
 add_library( nestutil ${nestutil_sources} )

@@ -25,6 +25,9 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
+// Includes from libnestutil
+#include "vector_util.h"
+
 void
 nest::TargetTable::initialize()
 {
@@ -105,12 +108,7 @@ nest::TargetTable::add_target( const thread tid, const thread target_rank, const
 {
   const index lid = target_data.get_source_lid();
 
-  // use 1.5 growth strategy (see, e.g.,
-  // https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md)
-  if ( ( *targets_[ tid ] )[ lid ].size() == ( *targets_[ tid ] )[ lid ].capacity() )
-  {
-    ( *targets_[ tid ] )[ lid ].reserve( ( ( *targets_[ tid ] )[ lid ].size() * 3 + 1 ) / 2 );
-  }
+  vector_util::grow( ( *targets_[ tid ] )[ lid ] );
 
   if ( target_data.is_primary() )
   {

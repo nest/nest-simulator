@@ -1617,18 +1617,20 @@ nest::ConnectionManager::compress_secondary_send_buffer_pos( const thread tid )
 void
 nest::ConnectionManager::remove_disabled_connections( const thread tid )
 {
-  for ( synindex syn_id = 0; syn_id < ( *connections_5g_[ tid ] ).size();
-        ++syn_id )
+  std::vector< ConnectorBase* >& connectors = *connections_5g_[ tid ];
+
+  for ( synindex syn_id = 0; syn_id < connectors.size(); ++syn_id )
   {
-    if ( ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
+    if ( connectors[ syn_id ] == NULL )
     {
-      const index first_disabled_index =
-        source_table_.remove_disabled_sources( tid, syn_id );
-      if ( first_disabled_index != invalid_index )
-      {
-        ( *( *connections_5g_[ tid ] )[ syn_id ] )
-          .remove_disabled_connections( first_disabled_index );
-      }
+      continue;
+    }
+    const index first_disabled_index =
+      source_table_.remove_disabled_sources( tid, syn_id );
+    if ( first_disabled_index != invalid_index )
+    {
+      ( *connectors[ syn_id ] )
+        .remove_disabled_connections( first_disabled_index );
     }
   }
 }
@@ -1636,13 +1638,16 @@ nest::ConnectionManager::remove_disabled_connections( const thread tid )
 void
 nest::ConnectionManager::print_connections( const thread tid ) const
 {
-  for ( synindex syn_id = 0; syn_id < ( *connections_5g_[ tid ] ).size();
+  const std::vector< ConnectorBase* >& connectors = *connections_5g_[ tid ];
+
+  for ( synindex syn_id = 0; syn_id < connectors.size();
         ++syn_id )
   {
-    if ( ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
+    if ( connectors[ syn_id ] != NULL )
     {
-      ( *( *connections_5g_[ tid ] )[ syn_id ] ).print_connections( tid );
+      continue;
     }
+    ( *connectors[ syn_id ] ).print_connections( tid );
   }
 }
 
@@ -1661,10 +1666,12 @@ nest::ConnectionManager::print_send_buffer_pos( const thread tid ) const
 void
 nest::ConnectionManager::print_source_table( const thread tid ) const
 {
-  for ( synindex syn_id = 0; syn_id < ( *connections_5g_[ tid ] ).size();
+  const std::vector< ConnectorBase* >& connectors = *connections_5g_[ tid ];
+
+  for ( synindex syn_id = 0; syn_id < connectors.size();
         ++syn_id )
   {
-    if ( ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
+    if ( connectors[ syn_id ] != NULL )
     {
 
       source_table_.print_sources( tid, syn_id );

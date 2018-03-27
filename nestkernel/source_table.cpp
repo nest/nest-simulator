@@ -159,34 +159,35 @@ nest::SourceTable::clean( const thread tid )
           syn_id < ( *sources_[ tid ] ).size();
           ++syn_id )
     {
-      if ( ( *sources_[ tid ] )[ syn_id ] != NULL )
+      if ( ( *sources_[ tid ] )[ syn_id ] == NULL )
       {
-        if ( max_position.syn_id == syn_id )
+        continue;
+      }
+      std::vector< Source >*& sources = ( *sources_[ tid ] )[ syn_id ];
+      if ( max_position.syn_id == syn_id )
+      {
+        // we need to add 2 to max_position.lcid since
+        // max_position.lcid + 1 can contain a valid entry which we
+        // do not want to delete.
+        if ( max_position.lcid + 2 < static_cast< long >( sources->size() ) )
         {
-          std::vector< Source >& sources = *( *sources_[ tid ] )[ syn_id ];
-          // we need to add 2 to max_position.lcid since
-          // max_position.lcid + 1 can contain a valid entry which we
-          // do not want to delete.
-          if ( max_position.lcid + 2 < static_cast< long >( sources.size() ) )
+          const size_t deleted_elements =
+            sources->end() - ( sources->begin() + max_position.lcid + 2 );
+          sources->erase(
+            sources->begin() + max_position.lcid + 2, sources->end() );
+          if ( deleted_elements > min_deleted_elements_ )
           {
-            const size_t deleted_elements =
-              sources.end() - ( sources.begin() + max_position.lcid + 2 );
-            sources.erase(
-              sources.begin() + max_position.lcid + 2, sources.end() );
-            if ( deleted_elements > min_deleted_elements_ )
-            {
-              std::vector< Source >( sources.begin(), sources.end() )
-                .swap( sources );
-            }
+            std::vector< Source >( sources->begin(), sources->end() )
+              .swap( *sources );
           }
         }
-        else
-        {
-          assert( max_position.syn_id < syn_id );
-          ( *sources_[ tid ] )[ syn_id ]->clear();
-          delete ( *sources_[ tid ] )[ syn_id ];
-          ( *sources_[ tid ] )[ syn_id ] = NULL;
-        }
+      }
+      else
+      {
+        assert( max_position.syn_id < syn_id );
+        sources->clear();
+        delete sources;
+        sources = NULL;
       }
     }
   }
@@ -195,12 +196,14 @@ nest::SourceTable::clean( const thread tid )
     for ( synindex syn_id = 0; syn_id < ( *sources_[ tid ] ).size();
           ++syn_id )
     {
-      if ( ( *sources_[ tid ] )[ syn_id ] != NULL )
+      if ( ( *sources_[ tid ] )[ syn_id ] == NULL )
       {
-        ( *sources_[ tid ] )[ syn_id ]->clear();
-        delete ( *sources_[ tid ] )[ syn_id ];
-        ( *sources_[ tid ] )[ syn_id ] = NULL;
+        continue;
       }
+      std::vector< Source >*& sources = ( *sources_[ tid ] )[ syn_id ];
+      sources->clear();
+      delete sources;
+      sources = NULL;
     }
   }
   else
@@ -227,35 +230,27 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
     return invalid_index;
   }
 
-  const index max_size = ( *( *sources_[ tid ] )[ syn_id ] ).size();
-
+  std::vector< Source >& mysources = *( *sources_[ tid ] )[ syn_id ];
+  const index max_size = mysources.size();
   if ( max_size == 0 )
   {
     return invalid_index;
   }
 
   index lcid = max_size - 1;
-
-  while ( ( *( *sources_[ tid ] )[ syn_id ] )[ lcid ].is_disabled() )
+  while ( mysources[ lcid ].is_disabled() && lcid >= 0 )
   {
     --lcid;
   }
   ++lcid; // lcid marks first disabled source, but the while loop only
-	  // exits if lcid points at a not disabled element, hence we
-	  // need to increase it by one again
-
-  ( *( *sources_[ tid ] )[ syn_id ] )
-    .erase( ( *( *sources_[ tid ] )[ syn_id ] ).begin() + lcid,
-      ( *( *sources_[ tid ] )[ syn_id ] ).end() );
-
+          // exits if lcid points at a not disabled element, hence we
+          // need to increase it by one again
+  mysources.erase( mysources.begin() + lcid, mysources.end() );
   if ( lcid == max_size )
   {
     return invalid_index;
   }
-  else
-  {
-    return lcid;
-  }
+  return lcid;
 }
 
 void

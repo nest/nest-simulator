@@ -380,16 +380,13 @@ ModelManager::set_synapse_defaults_( index model_id,
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised_(
     kernel().vp_manager.get_num_threads() );
-#ifdef _OPENMP
+
 // We have to run this in parallel to set the status on nodes that exist on each
 // thread, such as volume_transmitter.
 #pragma omp parallel
   {
     thread tid = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-#endif // clang-format on
+
     try
     {
       prototypes_[ tid ][ model_id ]->set_status( params );
@@ -600,34 +597,6 @@ ModelManager::create_secondary_events_prototypes()
     }
   }
 }
-
-/* TODO@5g: upstream version
-void
-ModelManager::create_secondary_events_prototypes()
-{
-  if ( secondary_events_prototypes_.size()
-    < kernel().vp_manager.get_num_threads() )
-  {
-    delete_secondary_events_prototypes();
-    std::vector< SecondaryEvent* > prototype;
-    prototype.resize( secondary_connector_models_.size(), NULL );
-    secondary_events_prototypes_.resize(
-      kernel().vp_manager.get_num_threads(), prototype );
-
-    for ( size_t i = 0; i < secondary_connector_models_.size(); i++ )
-    {
-      if ( secondary_connector_models_[ i ] != NULL )
-      {
-        prototype = secondary_connector_models_[ i ]->create_event(
-          kernel().vp_manager.get_num_threads() );
-        for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
-        {
-          secondary_events_prototypes_[ j ][ i ] = prototype[ j ];
-        }
-      }
-    }
-  }
-} */
 
 synindex
 ModelManager::register_connection_model_( ConnectorModel* cf )

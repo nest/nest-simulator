@@ -513,7 +513,7 @@ nest::ConnectionManager::connect( const index sgid,
     // create connection only on suggested thread of target
     const thread tid = kernel().vp_manager.get_thread_id();
     const thread suggested_thread = kernel().vp_manager.vp_to_thread(
-      kernel().vp_manager.suggest_vp( target->get_gid() ) );
+      kernel().vp_manager.suggest_vp_for_gid( target->get_gid() ) );
     if ( suggested_thread == tid )
     {
       connect_from_device_(
@@ -588,7 +588,7 @@ nest::ConnectionManager::connect( const index sgid,
   {
     // create connection only on suggested thread of target
     target_thread = kernel().vp_manager.vp_to_thread(
-      kernel().vp_manager.suggest_vp( target->get_gid() ) );
+      kernel().vp_manager.suggest_vp_for_gid( target->get_gid() ) );
     if ( target_thread == tid )
     {
       connect_from_device_(
@@ -1110,16 +1110,6 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
 
   size_t syn_id = 0;
 
-  // TODO@5g-margathon: why do we need to do this? can this be removed?
-  // #ifdef _OPENMP
-  //   std::string msg;
-  //   msg =
-  //     String::compose( "Setting OpenMP num_threads to %1.",
-  //     kernel().vp_manager.get_num_threads() );
-  //   LOG( M_DEBUG, "ConnectionManager::get_connections", msg );
-  //   omp_set_num_threads( kernel().vp_manager.get_num_threads() );
-  // #endif
-
   // First we check, whether a synapse model is given.
   // If not, we will iterate all.
   if ( not syn_model_t.empty() )
@@ -1198,14 +1188,10 @@ nest::ConnectionManager::get_connections(
 
   if ( source == 0 and target == 0 )
   {
-#ifdef _OPENMP
 #pragma omp parallel
     {
       thread tid = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-#endif
+
       std::deque< ConnectionID > conns_in_thread;
 
       ConnectorBase* connections = ( *connections_5g_[ tid ] )[ syn_id ];
@@ -1227,24 +1213,20 @@ nest::ConnectionManager::get_connections(
 
       if ( conns_in_thread.size() > 0 )
       {
-#ifdef _OPENMP
 #pragma omp critical( get_connections )
-#endif
-        extend_connectome( connectome, conns_in_thread );
+        {
+          extend_connectome( connectome, conns_in_thread );
+        }
       }
     } // of omp parallel
     return;
   } // if
   else if ( source == 0 and target != 0 )
   {
-#ifdef _OPENMP
 #pragma omp parallel
     {
       thread tid = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-#endif
+
       std::deque< ConnectionID > conns_in_thread;
 
       ConnectorBase* connections = ( *connections_5g_[ tid ] )[ syn_id ];
@@ -1278,24 +1260,20 @@ nest::ConnectionManager::get_connections(
 
       if ( conns_in_thread.size() > 0 )
       {
-#ifdef _OPENMP
 #pragma omp critical( get_connections )
-#endif
-        extend_connectome( connectome, conns_in_thread );
+        {
+          extend_connectome( connectome, conns_in_thread );
+        }
       }
     } // of omp parallel
     return;
   } // else if
   else if ( source != 0 )
   {
-#ifdef _OPENMP
 #pragma omp parallel
     {
       thread tid = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-#endif
+
       std::deque< ConnectionID > conns_in_thread;
 
       std::vector< index > sources;
@@ -1361,10 +1339,10 @@ nest::ConnectionManager::get_connections(
 
       if ( conns_in_thread.size() > 0 )
       {
-#ifdef _OPENMP
 #pragma omp critical( get_connections )
-#endif
-        extend_connectome( connectome, conns_in_thread );
+        {
+          extend_connectome( connectome, conns_in_thread );
+        }
       }
     } // of omp parallel
     return;
@@ -1673,7 +1651,6 @@ nest::ConnectionManager::print_source_table( const thread tid ) const
   {
     if ( connectors[ syn_id ] != NULL )
     {
-
       source_table_.print_sources( tid, syn_id );
     }
   }

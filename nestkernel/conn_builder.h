@@ -184,7 +184,7 @@ protected:
   bool autapses_;
   bool multapses_;
   bool make_symmetric_;
-  bool own_symmetric_;
+  bool creates_symmetric_connections_;
 
   //! buffer for exceptions raised in threads
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;

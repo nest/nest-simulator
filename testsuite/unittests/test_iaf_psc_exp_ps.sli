@@ -1,5 +1,5 @@
 /*
- *  test_iaf_psc_exp_ps_lossless.sli
+ *  test_iaf_psc_exp_ps.sli
  *
  *  This file is part of NEST.
  *
@@ -21,20 +21,13 @@
  */
 
  /* BeginDocumentation
-    Name: testsuite::test_iaf_psc_exp_ps_lossless - sli script for overall test of iaf_psc_exp_ps_lossless model
+    Name: testsuite::test_iaf_psc_exp_ps - sli script for overall test of iaf_psc_exp_ps model
 
-    Synopsis: (test_iaf_psc_exp_ps_lossless) run -> compares response to current step with reference data 
+    Synopsis: (test_iaf_psc_exp_ps) run -> compares response to current step with reference data 
 
     Description:
-    test_iaf_psc_exp_ps_lossless.sli is an overall test of the iaf_psc_exp_ps_lossless model connected
+    test_iaf_psc_exp_ps.sli is an overall test of the iaf_psc_exp_ps model connected
     to some useful devices.
-
-    The first part of this test is exactly the same as test_iaf_psc_exp_ps,
-    demonstrating the numerical equivalency of both models in usual conditions.
-    The only difference between the models, which is tested in the second part,
-    is the detection of double threshold crossings during a simulation step 
-    (so the membrane potential is again below V_th at the end of the step)
-    by the lossless model.
 
     A DC current is injected into the neuron using a current generator 
     device. The membrane potential as well as the spiking activity are 
@@ -62,7 +55,7 @@
     see the SeeAlso key below.    
 
     Author:  Jeyashree Krishnan, 2017
-    SeeAlso: iaf_psc_exp, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc, testsuite::iaf_psc_exp_ps
+    SeeAlso: iaf_psc_exp, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc, testsuite::test_iaf_psc_exp_ps_lossless
 */
 
 
@@ -78,7 +71,7 @@ ResetKernel
       /resolution h
   >> SetStatus
 
-/iaf_psc_exp_ps_lossless Create /neuron Set
+/iaf_psc_exp_ps Create /neuron Set
 
 /dc_generator Create /dc_gen Set
 dc_gen << /amplitude 1000. >> SetStatus
@@ -180,6 +173,4 @@ sp_det /events get /times get First stack    % prints spike time
 %
 
 exch assert_or_die
-
-% TODO: second part testing for region of missed spikes
 

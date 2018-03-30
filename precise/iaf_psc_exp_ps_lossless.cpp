@@ -654,21 +654,32 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
     numerics::expm1( dt / P_.tau_m_ - dt / P_.tau_ex_ );
   const double I_e = V_.y0_before_ + P_.I_e_;
 
-  double g =
+  /* Expressions for f and b below are rewritten but equivalent
+     to those given in Krishnan et al. 2018.
+     The expression for g given in the paper as eq.(49) is incorrect.
+     It can instead be constructed as a line through the points (see Fig.6):
+     (I_theta-I_e, V_th) and (i2, f(i2)) where i2=(I_theta-I_e)*exp(dt/tau_s).
+
+     Note that there is a typo in Algorithm 1 and 2 of the paper:
+     g and f are interchanged. (compare to Fig.6) 
+  */
+
+  double f =
     ( ( V_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * ( V_.a3_ - I_e * V_.a2_ )
         + V_.a3_ ) / V_.a4_ );
 
-  // no-spike, NS_1, (V <= f_h,I_e(I) and V < g_h,I_e(I))
+
+  // no-spike, NS_1, (V <= g_h,I_e(I) and V < f_h,I_e(I))
   if ( ( V_0
-         <= ( ( ( I_0 + I_e ) * ( V_.b1_ * exp_tau_m + V_.b2_ * exp_tau_s )
+         < ( ( ( I_0 + I_e ) * ( V_.b1_ * exp_tau_m + V_.b2_ * exp_tau_s )
                 + V_.b3_ * ( exp_tau_m - exp_tau_s ) )
-              / ( V_.b4_ * exp_tau_s ) ) ) and ( V_0 < g ) )
+              / ( V_.b4_ * exp_tau_s ) ) ) and ( V_0 <= f ) )
   {
     return numerics::nan;
   }
 
-  // spike, S_1, V >= g_h,I_e(I)
-  else if ( V_0 >= g )
+  // spike, S_1, V >= f_h,I_e(I)
+  else if ( V_0 >= f )
   {
     return dt;
   }

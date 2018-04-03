@@ -82,8 +82,8 @@ addons:
      - libpcre3-dev
      - llvm-3.6-dev
      - jq
-     - cppcheck
-     - vera++
+   #  - cppcheck
+   #  - vera++
      - pep8
 cache:
    directory:

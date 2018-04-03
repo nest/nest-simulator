@@ -110,9 +110,30 @@ echo "+               S T A T I C   C O D E   A N A L Y S I S                   
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 
 echo "MSGBLD0010: Initializing VERA++ static code analysis."
+wget --no-verbose https://bitbucket.org/verateam/vera/downloads/vera++-1.3.0.tar.gz
+tar -xzf vera++-1.3.0.tar.gz
+cd vera++-1.3.0
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DVERA_LUA=OFF -DVERA_USE_SYSTEM_BOOST=ON
+sudo make install
+cd ..
+rm -fr ./vera++-1.3.0
+rm -f ./vera++-1.3.0.tar.gz
  # Add the NEST profile to the VERA++ profiles.
 sudo cp ./extras/vera++.profile /usr/lib/vera++/profiles/nest
-echo "MSGBLD0020: VERA++ initialization completed."  
+echo "MSGBLD0020: VERA++ initialization completed."
+if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
+    echo "MSGBLD0030: Installing CPPCHECK version 1.69."
+    # Build cppcheck version 1.69
+    git clone https://github.com/danmar/cppcheck.git
+    cd cppcheck
+    git checkout tags/1.69
+    mkdir -p install
+    make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
+    cd ..
+    echo "MSGBLD0040: CPPCHECK installation completed."
+fi
+# Ensure that the cppcheck installation can be found.
+ export PATH=$HOME/.cache/bin:$PATH
 
 echo "MSGBLD0070: Retrieving changed files."
   # Note: BUG: Extracting the filenames may not work in all cases. 

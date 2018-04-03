@@ -85,6 +85,7 @@ addons:
    #  - cppcheck
    #  - vera++
      - pep8
+     - boost-build
 cache:
    directory:
      - $HOME/.cache

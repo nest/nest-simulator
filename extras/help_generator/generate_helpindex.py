@@ -30,10 +30,6 @@ help_dir.
 import os
 import sys
 from writers import write_helpindex
-from helpers import help_generation_required
-
-if not help_generation_required(False):
-    sys.exit(0)
 
 if len(sys.argv) != 2:
     print("Usage: python generate_helpindex.py <help_dir>")

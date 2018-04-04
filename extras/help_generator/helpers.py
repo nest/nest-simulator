@@ -21,6 +21,7 @@
 
 import re
 import os
+import shutil
 import errno
 
 
@@ -79,7 +80,18 @@ def create_helpdirs(path):
     makedirs(os.path.join(path, 'cc'))
 
 
-def help_generation_required(print_msg=True):
+def delete_helpdir(path):
+    """
+    Delete the directories for the help files.
+    """
+    try:
+        shutil.rmtree(path)
+    except OSError as exc:
+        if exc.errno != errno.ENOENT:
+            raise
+
+
+def help_generation_required():
     """
     Check whether help extraction/installation is required.
 
@@ -95,12 +107,10 @@ def help_generation_required(print_msg=True):
     noblue = "\033[0m"
 
     if "NEST_INSTALL_NODOC" in os.environ:
-        if print_msg:
-            msg = "Not extracting help information with 'make install-nodoc'."
-            print(blue + msg + noblue)
+        msg = "Not extracting help information for target 'install-nodoc'."
+        print(blue + msg + noblue)
         return False
     else:
-        if print_msg:
-            msg = "Extracting help information. This may take a little while."
-            print(blue + msg + noblue)
+        msg = "Extracting help information. This may take a little while."
+        print(blue + msg + noblue)
         return True

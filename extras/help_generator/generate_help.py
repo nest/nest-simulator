@@ -35,10 +35,8 @@ import textwrap
 
 from writers import coll_data
 from helpers import check_ifdef, create_helpdirs, cut_it
+from helpers import delete_helpdir
 from helpers import help_generation_required
-
-if not help_generation_required():
-    sys.exit(0)
 
 if len(sys.argv) != 3:
     print("Usage: python generate_help.py <source_dir> <build_dir>")
@@ -47,6 +45,11 @@ if len(sys.argv) != 3:
 source_dir, build_dir = sys.argv[1:]
 
 helpdir = os.path.join(build_dir, "doc", "help")
+delete_helpdir(helpdir)
+
+if not help_generation_required():
+    sys.exit(0)
+
 create_helpdirs(helpdir)
 
 allfiles = []

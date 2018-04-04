@@ -93,7 +93,7 @@ public:
 
   /**
    * Returns all targets of a neuron. Used to fill
-   * EventDeliveryManager::spike_register_5g_.
+   * EventDeliveryManager::spike_register_.
    */
   const std::vector< Target >& get_targets( const thread tid,
     const index lid ) const;

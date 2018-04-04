@@ -1099,11 +1099,11 @@ nest::SimulationManager::update_()
       std::cout << "0] CommStepsSecondaryEvents: "
                 << kernel().event_delivery_manager.comm_steps_secondary_events
                 << std::endl;
-      std::cout << "0] CallCount deliver_events_5g_: ";
+      std::cout << "0] CallCount deliver_events_: ";
       for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
       {
         std::cout
-          << kernel().event_delivery_manager.call_count_deliver_events_5g[ tid ]
+          << kernel().event_delivery_manager.call_count_deliver_events[ tid ]
           << " ";
       }
       std::cout << std::endl;

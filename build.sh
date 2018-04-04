@@ -55,8 +55,6 @@ if [ "$xPYTHON" = "1" ] ; then
       CONFIGURE_PYTHON="-DPYTHON-LIBRARY=~/virtualenv/python2.7.13/lib/python2.7 -DPYTHON_INCLUDE_DIR=~/virtualenv/python2.7.13/include/python2.7"
    elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.4.4/include/python3.4m/"
-       #CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.5-dev/include/python3.5m/"
-     #export PYTHONPATH=~/travis/virtualenv/python3.5-dev/lib/python3.5/site-packages:$PYTHONPATH
    fi
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
@@ -131,9 +129,21 @@ if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
     make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
     cd ..
     echo "MSGBLD0040: CPPCHECK installation completed."
+
+    echo "MSGBLD0050: Installing CLANG-FORMAT."
+    wget --no-verbose http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+    tar xf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+    # Copy and not move because '.cache' may aleady contain other subdirectories and files.
+    cp -R clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/* $HOME/.cache
+    echo "MSGBLD0060: CLANG-FORMAT installation completed."
+
+    # Remove these directories, otherwise the copyright-header check will complain.
+    rm -rf ./cppcheck
+    rm -rf ./clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
 fi
-# Ensure that the cppcheck installation can be found.
- export PATH=$HOME/.cache/bin:$PATH
+
+# Ensure that the cppcheck and clang-format installation can be found.
+export PATH=$HOME/.cache/bin:$PATH
 
 echo "MSGBLD0070: Retrieving changed files."
   # Note: BUG: Extracting the filenames may not work in all cases. 

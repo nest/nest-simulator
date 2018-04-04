@@ -43,7 +43,6 @@ exclude_dirs = [
     '.git',
     'CMakeFiles',
     'result',  # ignore files in $NEST_RESULT of travis-ci builds
-    'cppcheck',
 ]
 
 # match all file names against these regular expressions. if a match

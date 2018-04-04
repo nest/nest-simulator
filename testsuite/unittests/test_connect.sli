@@ -44,26 +44,7 @@ M_ERROR setverbosity
 (unittest) run
 /unittest using
 
-(Running Connect tests with argument type ') 1 type cvs join (') join =
-
-(  Testing variant "integer integer") =
-ResetKernel
-/iaf_psc_alpha 2 Create ;
-1 2 Connect
-<< /source 1 dup cvgidcollection >> GetConnections 0 get
-/target get 2 eq assert_or_die
-
-(  Testing variant "integer integer double double") =
-ResetKernel
-/iaf_psc_alpha 2 Create ;
-1 2 2.0 3.0 Connect
-<< /source 1 dup cvgidcollection >> GetConnections 0 get dup dup
-/target get 2 eq assert_or_die
-/weight get 2.0 eq assert_or_die
-/delay get 3.0 eq assert_or_die
-
-
-(Running Connect tests with argument type 'GIDCollection') =
+(Running Connect tests with legal arguments) =
 
 (  Testing variant "GIDCollection GIDCollection") =
 ResetKernel
@@ -72,6 +53,31 @@ ResetKernel
 a b Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
+
+(  Testing variant "GIDCollection GIDCollection double double") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b 2.0 3.0 Connect
+<< /source a >> GetConnections dup
+First dup dup
+/target get 4 eq assert_or_die
+/weight get 2.0 eq assert_or_die
+/delay get 3.0 eq assert_or_die
+Last /target get 6 eq assert_or_die
+
+(  Testing variant "GIDCollection GIDCollection double double literal") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b 2.0 3.0 /static_synapse Connect
+<< /source a >> GetConnections dup
+First dup dup dup
+/target get 4 eq assert_or_die
+/weight get 2.0 eq assert_or_die
+/delay get 3.0 eq assert_or_die
+/synapse_model get /static_synapse eq assert_or_die
 Last /target get 6 eq assert_or_die
 
 (  Testing variant "GIDCollection GIDCollection literal") =

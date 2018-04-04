@@ -143,7 +143,7 @@ ResetKernel
 /sdev potentials SDev def
 
  M_INFO 1 add (blancedneuron) (Mean: ) mean cvs join (mV) join message
- M_INFO 1 add (blancedneuron) (==> Distance from threshold: ) mean neuron GetStatus /V_th get sub cvs join (mV) join message
+ M_INFO 1 add (blancedneuron) (==> Distance from threshold: ) mean neuron GetStatus 0 get /V_th get sub cvs join (mV) join message
  M_INFO 1 add (blancedneuron) (SDev: ) sdev cvs join (mV) join message
 
 endusing % arr

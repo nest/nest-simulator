@@ -68,7 +68,7 @@ models
 {
   exch dup ==
   { 
-    Create 0 get dup pstack << /receptor_type 1 >> Connect
+    Create dup << >> << /receptor_type 1 >> Connect
     
     1 add  % index + 1 == num expected connections
     GetKernelStatus /num_connections get eq

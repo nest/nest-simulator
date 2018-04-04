@@ -70,7 +70,7 @@ assert_or_die
   /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create def
   
   /cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
-  sg 0 get n 0 get /cont_delay_synapse Connect
+  sg n << >> /cont_delay_synapse Connect
   n sd Connect
   
   10 Simulate
@@ -90,7 +90,7 @@ assert_or_die
   /n  /iaf_psc_delta_canon Create def
   /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create def
   
-  sg 0 get n 0 get 100. 1.0 /cont_delay_synapse Connect
+  sg n 100. 1.0 /cont_delay_synapse Connect
   << /source sg /synapse_model /cont_delay_synapse >> GetConnections
      { << /delay 1.7 >> SetStatus } 
   forall

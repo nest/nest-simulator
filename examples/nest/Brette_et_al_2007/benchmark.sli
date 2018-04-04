@@ -91,7 +91,7 @@
 % spike_det ComputeRate -> rate
 /ComputeRate
 {
-  GetStatus /n_events get /nspikes Set
+  GetStatus 0 get /n_events get /nspikes Set
   % We need to guess how many neurons we record from.
   % This assumes an even distribution of nodes across
   % processes, which is ok for the Brette_et_al_2007

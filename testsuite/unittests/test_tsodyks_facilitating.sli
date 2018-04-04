@@ -181,7 +181,7 @@ def
   >> SetDefaults
 
   sg pn Connect   % pn required, devices cannot project to plastic synapses
-  pn 0 get neuron 0 get synapse_model Connect
+  pn neuron << >> synapse_model Connect
   vm neuron Connect
 
   T_sim Simulate

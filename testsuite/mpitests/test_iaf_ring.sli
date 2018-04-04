@@ -68,11 +68,15 @@ SeeAlso: testsuite::test_iaf_i0, testsuite::test_getrng_neuron
   << /resolution h  >> SetKernelStatus
 
   /iaf_psc_alpha n Create /neurons Set
-  neurons 0 get << /I_e 1450.0 >> SetStatus
+  neurons [1] Take << /I_e 1450.0 >> SetStatus
 
-  neurons cva 2 1 Partition
+  [ n ] Range 2 1 Partition
   {
-    arrayload ; 1000.0 delay Connect
+    arrayload ;
+    1 arraystore neurons exch Take
+    exch
+    1 arraystore neurons exch Take
+    1000.0 delay Connect
   } forall
 
   /spike_detector  << /withtime true /time_in_steps true >> Create /sd Set
@@ -84,7 +88,7 @@ SeeAlso: testsuite::test_iaf_i0, testsuite::test_getrng_neuron
 
   simtime Simulate
 
-  pn /local get                                 
+  pn /local get
   { 
     sd [/events/times] get cva
   } if                                          

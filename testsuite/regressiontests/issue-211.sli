@@ -58,26 +58,26 @@ n1 n3 Connect
 n2 n3 Connect
 n2 n1 Connect
 n3 n1 Connect
-n2 0 get n1 0 get << /weight 1. >> Connect
+n2 n1 << >> << /weight 1. >> Connect
 
 % neuron-device
 n1 d4 Connect
 n1 n3 Connect
 n2 d4 Connect
 n3 d4 Connect
-n2 0 get d4 0 get << /weight 1. >> Connect
+n2 d4 << >> << /weight 1. >> Connect
 
 % device-neuron
 g5 n2 Connect
 g5 n3 Connect
 g5 n1 Connect
 g5 n1 Connect
-g5 0 get n3 0 get << /weight 1. >> Connect
+g5 n3 << >> << /weight 1. >> Connect
 
 % device-device
 g5 d4 Connect
 g5 d4 Connect
-g5 0 get d4 0 get << /weight 1. >> Connect
+g5 d4 << >> << /weight 1. >> Connect
 
 % neuron-globally receiving device (volume transmitter)
 n1 v6 Connect

@@ -25,22 +25,8 @@
    tests the device correlospinmatrix detector
 */
 
-
-
-
 (unittest) run
 /unittest using
-
-
-ResetKernel
-
-0.1 /h Set
-
-<< 
-      /local_num_threads 1 
-      /resolution h
-  >> SetKernelStatus
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 %
@@ -72,8 +58,6 @@ ResetKernel
 def
 
 
-modeldict begin
-
 /sg1 /spike_generator Create def
 /sg2 /spike_generator Create def
 /sg3 /spike_generator Create def
@@ -88,15 +72,15 @@ sg2 << /spike_times [15. 15. 20.] >> SetStatus  % binary pulse starting at 15. e
 
 sg1 GetStatus 0 get info
 
-sg1 0 get sd 0 get << /receptor_type 0 >> Connect
+sg1 sd << >> << /receptor_type 0 >> Connect
 
 % one final event needed so that last down transition will be detected
 sg3 << /spike_times [25.] >> SetStatus
 
 
-sg1 0 get csd 0 get << /receptor_type 0 >> Connect
-sg2 0 get csd 0 get << /receptor_type 1 >> Connect
-sg3 0 get csd 0 get << /receptor_type 2 >> Connect
+sg1 csd << >> << /receptor_type 0 >> Connect
+sg2 csd << >> << /receptor_type 1 >> Connect
+sg3 csd << >> << /receptor_type 2 >> Connect
 
 100. Simulate
 
@@ -105,4 +89,3 @@ expected_corr                            % expected result
 eq
 assert_or_die
 
-modeldict end

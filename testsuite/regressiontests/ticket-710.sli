@@ -41,7 +41,7 @@ M_ERROR setverbosity
 /iaf_psc_alpha Create /neuron Set
 /spike_detector Create /sd Set
 {
-neuron 0 get sd 0 get /static_synapse_hpc Connect
+neuron sd << >> /static_synapse_hpc Connect
 } pass_or_die
 
 endusing

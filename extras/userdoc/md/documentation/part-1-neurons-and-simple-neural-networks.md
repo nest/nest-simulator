@@ -66,6 +66,16 @@ Python interpreter.
 
     import nest
 
+
+It should be noted, however, that certain external packages must be imported *before* importing nest. 
+These include `sklearn` ([scikit-learn](http://scikit-learn.org/stable/index.html)) and `scipy` ([SciPy](https://www.scipy.org/)):
+
+    from sklearn.svm import LinearSVC
+    from scipy.special import erf
+
+    import nest
+
+
 As with every other module for Python, the available functions can be prompted
 for.
 
@@ -248,10 +258,10 @@ Now we are ready to display the data in a figure. To this end, we make use of
     pylab.figure(1)
     pylab.plot(ts, Vms)
 
-The second line opens a figure (with the number 1), the third line clears the
-window and the fourth line actually produces the plot. You can’t see it yet
-because we have not used `pylab.show()`. Before we do that, we proceed
-analogously to obtain and display the spikes from the spike detector.
+The second line opens a figure (with the number 1), and the third line actually
+produces the plot. You can’t see it yet because we have not used `pylab.show()`.
+Before we do that, we proceed analogously to obtain and display the spikes from
+ the spike detector.
 
     dSD = nest.GetStatus(spikedetector,keys="events")[0]
     evs = dSD["senders"]
@@ -327,8 +337,8 @@ to the synaptic model.
 
     syn_dict_ex = {"weight": 1.2}
     syn_dict_in = {"weight": -2.0}
-    nest.Connect([noise[0]], neuron, syn_spec=syn_dict_ex)
-    nest.Connect([noise[1]], neuron, syn_spec=syn_dict_in)
+    nest.Connect([noise_ex], neuron, syn_spec=syn_dict_ex)
+    nest.Connect([noise_in], neuron, syn_spec=syn_dict_in)
 
 <table><tr>
 <td style="max-width: 400px;">

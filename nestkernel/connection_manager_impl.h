@@ -96,7 +96,6 @@ ConnectionManager::restructure_connection_tables( const thread tid )
   assert( not source_table_.is_cleared() );
   target_table_.clear( tid );
   source_table_.reset_processed_flags( tid );
-  // TODO@5g: keep in order to only sort newly create connections?
   source_table_.reset_last_sorted_source( tid );
 }
 

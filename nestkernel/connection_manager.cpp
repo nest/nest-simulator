@@ -553,9 +553,8 @@ nest::ConnectionManager::connect( const index sgid,
     return false;
   }
 
-  // TODO@5g: could be const? -> Jakob
   Node* target = kernel().node_manager.get_node( tgid, tid );
-  thread target_thread = target->get_thread();
+  const thread target_thread = target->get_thread();
   Node* source = kernel().node_manager.get_node( sgid, target_thread );
 
   // normal nodes and devices with proxies -> normal nodes and devices with
@@ -1510,7 +1509,6 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
 
   const size_t chunk_size_secondary_events_in_int = kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
 
-  // TODO@5g: loop over source_table_, not over connections_ -> but why?
   const synindex syn_id_end = connections_5g_[ tid ]->size();
   for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
   {

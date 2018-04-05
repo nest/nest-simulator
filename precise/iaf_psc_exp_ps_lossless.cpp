@@ -666,15 +666,13 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
 
   const double f =
     ( ( V_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * ( V_.a3_ - I_e * V_.a2_ )
-        + V_.a3_ )
-      / V_.a4_ );
+        + V_.a3_ ) / V_.a4_ );
 
 
   // no-spike, NS_1, (V <= g_h,I_e(I) and V < f_h,I_e(I))
   if ( ( V_0 < ( ( ( I_0 + I_e ) * ( V_.b1_ * exp_tau_m + V_.b2_ * exp_tau_s )
                    + V_.b3_ * ( exp_tau_m - exp_tau_s ) )
-                 / ( V_.b4_ * exp_tau_s ) ) )
-    and ( V_0 <= f ) )
+                 / ( V_.b4_ * exp_tau_s ) ) ) and ( V_0 <= f ) )
   {
     return numerics::nan;
   }

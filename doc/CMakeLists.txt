@@ -30,27 +30,26 @@ if ( NOT CMAKE_CROSSCOMPILING )
     # problems with implementation of 're' in those.
     if( ${PYTHON_VERSION_STRING} VERSION_GREATER "2.7.7" )
 
-	# Extract help from all source files in the source code, put
-	# them in doc/help and generate a local help index in the build
-	# directory containing links to the help files.
-	install( CODE
+        # Extract help from all source files in the source code, put
+        # them in doc/help and generate a local help index in the
+        # build directory containing links to the help files.
+        install( CODE
           "execute_process(
              COMMAND ${PYTHON_EXECUTABLE} -B generate_help.py \"${PROJECT_SOURCE_DIR}\" \"${PROJECT_BINARY_DIR}\"
              WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"
              )"
           )
 
-	# Copy the local doc/help directory to the global installation
-	# directory for documentation.
-	install( DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
+        # Copy the local doc/help directory to the global installation
+        # directory for documentation.
+        install( DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
           DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
-	  OPTIONAL
+          OPTIONAL
           )
 
-	# Update the global help index to include all help files in
-        # the global installation directory for
-	# documentation.
-	install( CODE
+        # Update the global help index to include all help files in
+        # the global installation directory for documentation.
+        install( CODE
           "execute_process(
              COMMAND ${PYTHON_EXECUTABLE} -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
              WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"

@@ -153,6 +153,7 @@ def write_helpindex(helpdir):
 
     """
 
+    # We only have to generate a helpindex if the help directoy exists
     if not os.path.exists(helpdir):
         return
 

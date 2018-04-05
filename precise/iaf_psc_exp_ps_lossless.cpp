@@ -661,19 +661,20 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
      (I_theta-I_e, V_th) and (i2, f(i2)) where i2=(I_theta-I_e)*exp(dt/tau_s).
 
      Note that there is a typo in Algorithm 1 and 2 of the paper:
-     g and f are interchanged. (compare to Fig.6) 
+     g and f are interchanged. (compare to Fig.6)
   */
 
-  double f =
+  const double f =
     ( ( V_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * ( V_.a3_ - I_e * V_.a2_ )
-        + V_.a3_ ) / V_.a4_ );
+        + V_.a3_ )
+      / V_.a4_ );
 
 
   // no-spike, NS_1, (V <= g_h,I_e(I) and V < f_h,I_e(I))
-  if ( ( V_0
-         < ( ( ( I_0 + I_e ) * ( V_.b1_ * exp_tau_m + V_.b2_ * exp_tau_s )
-                + V_.b3_ * ( exp_tau_m - exp_tau_s ) )
-              / ( V_.b4_ * exp_tau_s ) ) ) and ( V_0 <= f ) )
+  if ( ( V_0 < ( ( ( I_0 + I_e ) * ( V_.b1_ * exp_tau_m + V_.b2_ * exp_tau_s )
+                   + V_.b3_ * ( exp_tau_m - exp_tau_s ) )
+                 / ( V_.b4_ * exp_tau_s ) ) )
+    and ( V_0 <= f ) )
   {
     return numerics::nan;
   }
@@ -694,7 +695,7 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
   // missed spike detected, S_2
   {
     return ( V_.a1_ / P_.tau_m_ * P_.tau_ex_ )
-      * std::log( V_.b1_ * I_0
-             / ( V_.a2_ * I_e - V_.a1_ * I_0 - V_.a4_ * V_0 ) );
+      * std::log(
+             V_.b1_ * I_0 / ( V_.a2_ * I_e - V_.a1_ * I_0 - V_.a4_ * V_0 ) );
   }
 }

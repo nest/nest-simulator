@@ -9,3 +9,4 @@ make
 make install
 cd ..
 rm -rf music
+

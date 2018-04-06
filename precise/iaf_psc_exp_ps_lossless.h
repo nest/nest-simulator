@@ -73,6 +73,11 @@ Parameters:
   V_min         double - Absolute lower value for the membrane potential.
   V_reset       double - Reset value for the membrane potential.
 
+Note: In the current implementation, tau_syn_ex and tau_syn_in must be equal.
+  This is because the state space would be 3-dimensional otherwise, which
+  makes the detection of threshold crossing more difficult [1].
+  Support for different time constants may be added in the future, see issue #921.
+
 References:
 [1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E
     (2018) Perfect Detection of Spikes in the Linear Sub-threshold

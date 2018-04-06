@@ -182,6 +182,14 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Refractory time must not be negative." );
   }
 
+  if ( tau_ex_ != tau_in_ )
+  {
+    throw BadProperty(
+      "Exc. and inh. synapse time constants must be equal in the current implementation."
+      " If you need unequal time constants, use iaf_psc_exp_ps for now."
+      " See note in documentation, and github issue #921" );
+  }
+
   if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
@@ -645,6 +653,9 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
   // dt == 0 may occur if two spikes arrive simultaneously;
   // is_spike_() shall not be called then; see #368.
   assert( dt > 0 );
+
+  // synapse time constants are assumed to be equal in this implementation
+  assert( P_.tau_ex_ == P_.tau_in_ );
 
   const double I_0 = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
   const double V_0 = V_.y2_before_;

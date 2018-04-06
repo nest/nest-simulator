@@ -231,6 +231,7 @@ reset
 /iaf_psc_exp_ps_lossless << 
       /tau_m 100.
       /tau_syn_ex 1.
+      /tau_syn_in 1.
       /C_m 250.
       /V_th -49.
    >> SetDefaults

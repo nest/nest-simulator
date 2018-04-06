@@ -266,7 +266,7 @@ function( NEST_PROCESS_WITH_LIBLTDL )
   if ( with-ltdl AND NOT static-libraries )
     if ( NOT ${with-ltdl} STREQUAL "ON" )
       # a path is set
-      set( LTDL_ROOT_DIR "${with-ltdl}" PARENT_SCOPE )
+      set( LTDL_ROOT_DIR "${with-ltdl}" )
     endif ()
 
     find_package( LTDL )

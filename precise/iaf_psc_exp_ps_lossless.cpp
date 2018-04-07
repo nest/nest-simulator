@@ -185,17 +185,17 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d )
   if ( tau_ex_ != tau_in_ )
   {
     throw BadProperty(
-      "Exc. and inh. synapse time constants must be equal in the current implementation."
+      "tau_syn_ex == tau_syn_in is required in the current implementation."
       " If you need unequal time constants, use iaf_psc_exp_ps for now."
       " See note in documentation, and github issue #921" );
   }
 
-  if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+  if ( tau_m_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
 
-  if ( tau_m_ == tau_ex_ || tau_m_ == tau_in_ )
+  if ( tau_m_ == tau_ex_ or tau_m_ == tau_in_ )
   {
     throw BadProperty(
       "Membrane and synapse time constant(s) must differ."

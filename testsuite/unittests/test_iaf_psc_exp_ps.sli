@@ -1,5 +1,5 @@
 /*
- *  test_iaf_psc_exp_ps_lossless.sli
+ *  test_iaf_psc_exp_ps.sli
  *
  *  This file is part of NEST.
  *
@@ -21,20 +21,13 @@
  */
 
  /* BeginDocumentation
-    Name: testsuite::test_iaf_psc_exp_ps_lossless - sli script for overall test of iaf_psc_exp_ps_lossless model
+    Name: testsuite::test_iaf_psc_exp_ps - sli script for overall test of iaf_psc_exp_ps model
 
-    Synopsis: (test_iaf_psc_exp_ps_lossless) run -> compares response to current step with reference data and tests lossless spike detection
+    Synopsis: (test_iaf_psc_exp_ps) run -> compares response to current step with reference data 
 
     Description:
-    test_iaf_psc_exp_ps_lossless.sli is an overall test of the iaf_psc_exp_ps_lossless model connected
+    test_iaf_psc_exp_ps.sli is an overall test of the iaf_psc_exp_ps model connected
     to some useful devices.
-
-    The first part of this test is exactly the same as test_iaf_psc_exp_ps,
-    demonstrating the numerical equivalency of both models in usual conditions.
-    The only difference between the models, which is tested in the second part,
-    is the detection of double threshold crossings during a simulation step 
-    (so the membrane potential is again below V_th at the end of the step)
-    by the lossless model.
 
     A DC current is injected into the neuron using a current generator 
     device. The membrane potential as well as the spiking activity are 
@@ -59,37 +52,10 @@
     call of vm below.
 
     Other test programs discuss the various aspects of this script in detail,
-    see the SeeAlso key below.
+    see the SeeAlso key below.    
 
-
-    The second part tests wether the lossless spike detection algorithm [1] is
-    working correctly.
-
-    The algorithm checks whether a spike is emitted on the basis of the neurons position 
-    in state space. There are 4 regions in state space (see [1]): NS1, NS2, S1 and S2.
-    S1 corresponds to threshold crossings that would also be detected by the lossy 
-    implementation /iaf_psc_exp_ps. S2 corresponds to crossings that would be missed.
-    The lossless model detects both.
-
-    The test brings 3 neurons into the state space regions NS2, S1 and S2,
-    which is done by keeping their membrane potential close to threshold and then 
-    sending a single spike to them, which, received via different synaptic weights,
-    sets the synaptic current such that the neurons are in the respective region.
-    The existence and precise times of the resulting spikes are compared to reference data.
-
-    If you need to reproduce the reference data, ask the authors of [1] for the script
-    regions_algorithm.py which they used to generate Fig. 6. Here you can adjust the
-    parameters as whished and obtain the respective regions. 
-    
-
-    References:
-    [1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E
-        (2018) Perfect Detection of Spikes in the Linear Sub-threshold
-        Dynamics of Point Neurons. Front. Neuroinform. 11:75.
-        doi: 10.3389/fninf.2017.00075
-
-    Author:  Jeyashree Krishnan, 2017, and Christian Keup, 2018
-    SeeAlso: iaf_psc_exp, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc, testsuite::iaf_psc_exp_ps
+    Author:  Jeyashree Krishnan, 2017
+    SeeAlso: iaf_psc_exp, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc, testsuite::test_iaf_psc_exp_ps_lossless
 */
 
 
@@ -105,7 +71,7 @@ ResetKernel
       /resolution h
   >> SetStatus
 
-/iaf_psc_exp_ps_lossless Create /neuron Set
+/iaf_psc_exp_ps Create /neuron Set
 
 /dc_generator Create /dc_gen Set
 dc_gen << /amplitude 1000. >> SetStatus
@@ -207,112 +173,4 @@ sp_det /events get /times get First stack    % prints spike time
 %
 
 exch assert_or_die
-
-
-
-
-%%%%%%%%%
-%
-% Beginning of 2nd part. Testing the spike detection algorithm 
-%
-
-ResetKernel
-
-reset
-
-(unittest) run
-/unittest using
-
-0 << 
-      /local_num_threads 1 
-      /resolution 1.     % low resolution is crucial.
-  >> SetStatus
-
-/iaf_psc_exp_ps_lossless << 
-      /tau_m 100.
-      /tau_syn_ex 1.
-      /tau_syn_in 1.
-      /C_m 250.
-      /V_th -49.
-   >> SetDefaults
-
-% 3 neurons that will test the detection of different types of threshold crossing
-/iaf_psc_exp_ps_lossless Create /nrn_nospike Set
-/iaf_psc_exp_ps_lossless Create /nrn_missingspike Set
-/iaf_psc_exp_ps_lossless Create /nrn_spike Set
-
-
-%syn weights of trigger spike that will put the nrn in the different state space regions
-55. /I_nospike Set
-70. /I_missingspike Set
-90. /I_spike Set
-
-%send one trigger spike to the nrns at specified time:
-
-/spike_generator << /precise_times true /spike_times [3.0] >> Create  /sp_gen  Set
-
-sp_gen nrn_nospike I_nospike 1. Connect
-sp_gen nrn_missingspike I_missingspike 1. Connect
-sp_gen nrn_spike I_spike 1. Connect
-
-
-%external current to keep nrns close to threshold:
-
-/dc_generator << /amplitude 52.5 >> Create  /dc_gen Set
-
-dc_gen nrn_nospike 1. 1. Connect
-dc_gen nrn_missingspike 1. 1. Connect
-dc_gen nrn_spike 1. 1. Connect
-
-
-%read out spike response of nrns:
-
-/spike_detector << /precise_times true >> SetDefaults
-
-/spike_detector Create /det_nospike Set
-nrn_nospike det_nospike Connect
-
-/spike_detector Create /det_missingspike Set
-nrn_missingspike det_missingspike Connect
-
-/spike_detector Create /det_spike Set
-nrn_spike det_spike Connect
-
-
-2 Simulate
-
-% set nrns close to threshold
-nrn_nospike << /V_m -49.001 >> SetStatus
-nrn_missingspike << /V_m -49.001 >> SetStatus
-nrn_spike << /V_m -49.001 >> SetStatus
-
-% swich off ext. current. This effect will reach the nrns at 3.0 due to syn delay,
-% so that the external current will be zero when the trigger spike arrives at 4.0 . 
-dc_gen << /amplitude 0. >> SetStatus  
-
-10 Simulate
-
-
-% get spike times
-
-det_nospike /events get /times get cva    % array of spike times (this one should be empty)
-  Total                                   % sum of array elements. works also for empty array
-  6 ToUnitTestPrecision
-  /time_nospike Set
-
-det_missingspike /events get /times get cva
-  Total
-  6 ToUnitTestPrecision
-  /time_missingspike Set
-
-det_spike /events get /times get cva
-  Total
-  6 ToUnitTestPrecision
-  /time_spike Set
-
-
-{ time_nospike 0 eq } assert_or_die
-{ time_missingspike 4.01442 eq } assert_or_die
-{ time_spike 4.00659 eq } assert_or_die
-
 

@@ -182,6 +182,14 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Refractory time must not be negative." );
   }
 
+  if ( tau_ex_ != tau_in_ )
+  {
+    throw BadProperty(
+      "Exc. and inh. synapse time constants must be equal in the current implementation."
+      " If you need unequal time constants, use iaf_psc_exp_ps for now."
+      " See note in documentation, and github issue #921" );
+  }
+
   if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
@@ -646,35 +654,49 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
   // is_spike_() shall not be called then; see #368.
   assert( dt > 0 );
 
+  // synapse time constants are assumed to be equal in this implementation
+  assert( P_.tau_ex_ == P_.tau_in_ );
+
   const double I_0 = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
   const double V_0 = V_.y2_before_;
   const double exp_tau_s = numerics::expm1( dt / P_.tau_ex_ );
   const double exp_tau_m = numerics::expm1( dt / P_.tau_m_ );
   const double exp_tau_m_s =
     numerics::expm1( dt / P_.tau_m_ - dt / P_.tau_ex_ );
+  const double I_e = V_.y0_before_ + P_.I_e_;
 
-  double g =
-    ( ( V_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * ( V_.a3_ - P_.I_e_ * V_.a2_ )
+  /* Expressions for f and b below are rewritten but equivalent
+     to those given in Krishnan et al. 2018.
+     The expression for g given in the paper as eq.(49) is incorrect.
+     It can instead be constructed as a line through the points (see Fig.6):
+     (I_theta-I_e, V_th) and (i2, f(i2)) where i2=(I_theta-I_e)*exp(dt/tau_s).
+
+     Note that there is a typo in Algorithm 1 and 2 of the paper:
+     g and f are interchanged. (compare to Fig.6)
+  */
+
+  const double f =
+    ( ( V_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * ( V_.a3_ - I_e * V_.a2_ )
         + V_.a3_ ) / V_.a4_ );
 
-  // no-spike, NS_1, (V <= f_h,I_e(I) and V < g_h,I_e(I))
-  if ( ( V_0
-         <= ( ( ( I_0 + P_.I_e_ ) * ( V_.b1_ * exp_tau_m + V_.b2_ * exp_tau_s )
-                + V_.b3_ * ( exp_tau_m - exp_tau_s ) )
-              / ( V_.b4_ * exp_tau_s ) ) ) and ( V_0 < g ) )
+
+  // no-spike, NS_1, (V <= g_h,I_e(I) and V < f_h,I_e(I))
+  if ( ( V_0 < ( ( ( I_0 + I_e ) * ( V_.b1_ * exp_tau_m + V_.b2_ * exp_tau_s )
+                   + V_.b3_ * ( exp_tau_m - exp_tau_s ) )
+                 / ( V_.b4_ * exp_tau_s ) ) ) and ( V_0 <= f ) )
   {
     return numerics::nan;
   }
 
-  // spike, S_1, V >= g_h,I_e(I)
-  else if ( V_0 >= g )
+  // spike, S_1, V >= f_h,I_e(I)
+  else if ( V_0 >= f )
   {
     return dt;
   }
   // no-spike, NS_2, V < b(I)
-  else if ( V_0 < ( V_.c1_ * P_.I_e_ + V_.c2_ * I_0
+  else if ( V_0 < ( V_.c1_ * I_e + V_.c2_ * I_0
                     + V_.c3_ * std::pow( I_0, V_.c4_ )
-                      * std::pow( ( V_.c5_ - P_.I_e_ ), V_.c6_ ) ) )
+                      * std::pow( ( V_.c5_ - I_e ), V_.c6_ ) ) )
   {
     return numerics::nan;
   }
@@ -682,7 +704,7 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
   // missed spike detected, S_2
   {
     return ( V_.a1_ / P_.tau_m_ * P_.tau_ex_ )
-      * std::log( V_.b1_ * I_0
-             / ( V_.a2_ * P_.I_e_ - V_.a1_ * I_0 - V_.a4_ * V_0 ) );
+      * std::log(
+             V_.b1_ * I_0 / ( V_.a2_ * I_e - V_.a1_ * I_0 - V_.a4_ * V_0 ) );
   }
 }

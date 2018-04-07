@@ -73,6 +73,11 @@ Parameters:
   V_min         double - Absolute lower value for the membrane potential.
   V_reset       double - Reset value for the membrane potential.
 
+Note: In the current implementation, tau_syn_ex and tau_syn_in must be equal.
+  This is because the state space would be 3-dimensional otherwise, which
+  makes the detection of threshold crossing more difficult [1].
+  Support for different time constants may be added in the future, see issue #921.
+
 References:
 [1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E
     (2018) Perfect Detection of Spikes in the Linear Sub-threshold
@@ -224,8 +229,8 @@ private:
    * threshold line V < \theta, envelope, V > b(I_e) and line corresponding to
    * the final timestep
    * V > f(h, I) (or) linear approximation of the envelope, V < g(h, I_e).
-   * Propagate the neuron's state by dt.
-   * @returns time to emit spike.
+   * Note that in Algorithm 1 and 2 of [1], a typo interchanges g and f.
+   * @returns time interval in which threshold was crossed, or nan.
    */
   double is_spike_( const double );
 

@@ -80,8 +80,6 @@ nest::ConnectionManager::~ConnectionManager()
   // back to the system anyway. Hence, why bother cleaning up our highly
   // scattered connection infrastructure? They do not have any open files, which
   // need to be closed or similar.
-  // source_table_.finalize();
-  // delete_connections_5g_();
 }
 
 void
@@ -520,8 +518,7 @@ nest::ConnectionManager::connect( const index sgid,
         *source, *target, suggested_thread, syn_id, params, delay, weight );
     }
   }
-  // globally receiving devices
-  // e.g., volume transmitter
+  // globally receiving devices, e.g. volume transmitter
   else if ( not target->has_proxies() and not target->local_receiver() )
   {
     // we do not allow to connect a device to a global receiver at the moment
@@ -595,8 +592,7 @@ nest::ConnectionManager::connect( const index sgid,
         *source, *target, target_thread, syn_id, params );
     }
   }
-  // globally receiving devices
-  // e.g., volume transmitter
+  // globally receiving devices, e.g. volume transmitter
   else if ( not target->has_proxies() and not target->local_receiver() )
   {
     // we do not allow to connect a device to a global receiver at the moment
@@ -970,22 +966,6 @@ nest::ConnectionManager::data_connect_single( const index source_id,
   }
 }
 
-/**
- * Connect, using a dictionary with arrays.
- * The connection rule is based on the details of the dictionary entries source
- * and target.
- * If source and target are both either a GID or a list of GIDs with equal size,
- * then source and target are connected one-to-one.
- * If source is a gid and target is a list of GIDs then the sources is
- * connected to all targets.
- * If source is a list of GIDs and target is a GID, then all sources are
- * connected to the target.
- * At this stage, the task of connect is to separate the dictionary into one
- * for each thread and then to forward the connect call to the connectors who
- * can then deal with the details of the connection.
- *
- * @note This method is used only by DataConnect.
- */
 bool
 nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
 {

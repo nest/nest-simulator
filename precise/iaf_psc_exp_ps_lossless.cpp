@@ -410,7 +410,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin,
     }
     else
     {
-      // We only get here if there is at least on event,
+      // We only get here if there is at least one event,
       // which has been read above.  We can therefore use
       // a do-while loop.
 

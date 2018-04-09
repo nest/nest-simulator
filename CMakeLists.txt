@@ -17,8 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>
 
-cmake_minimum_required( VERSION 2.8.12 )
-# juqueen 2.8.12.2
+cmake_minimum_required( VERSION 3.1 )
 
 # add cmake modules: for all `include(...)` first look here
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
@@ -202,12 +201,6 @@ else ()
   )
 endif ()
 
-add_custom_target( check
-    COMMAND export CTEST_OUTPUT_ON_FAILURE=1 &&
-    ${CMAKE_CTEST_COMMAND} -C ${CMAKE_BUILD_TYPE}
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-    )
-
 ################################################################################
 ##################        Define Subdirectories here          ##################
 ################################################################################
@@ -271,6 +264,7 @@ set( ALL_LIBS
   "-lrandom"
   "-lsli"
   "-lnestkernel"
+  "-ltopology"
   "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${READLINE_LIBRARIES}"
@@ -360,5 +354,9 @@ configure_file(
 install( FILES LICENSE README.md NEWS
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
+
+add_custom_target( install-nodoc
+  COMMAND make NEST_INSTALL_NODOC=true install
+)
 
 nest_print_config_summary()

@@ -226,7 +226,9 @@ nest::rate_transformer_node< TNonlinearities >::update_( Time const& origin,
 
     // modifiy new_rates for rate-neuron-event as proxy for next min_delay
     for ( long temp = from; temp < to; ++temp )
+    {
       new_rates[ temp ] = S_.rate_;
+    }
   }
 
   // Send rate-neuron-event

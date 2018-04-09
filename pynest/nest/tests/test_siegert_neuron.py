@@ -89,7 +89,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         self.siegert_drive = nest.Create(
             'siegert_neuron', 1, params={'mean': self.rate_ex})
         J_mu_ex = neuron_status['tau_m'] * 1e-3 * self.J
-        J_sigma_ex = neuron_status['tau_m'] * 1e-3 * self.J**2
+        J_sigma_ex = neuron_status['tau_m'] * 1e-3 * self.J ** 2
         syn_dict = {'drift_factor': J_mu_ex, 'diffusion_factor':
                     J_sigma_ex, 'model': 'diffusion_connection'}
         nest.Connect(

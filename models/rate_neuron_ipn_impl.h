@@ -114,11 +114,17 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set(
   updateValue< bool >( d, names::mult_coupling, mult_coupling_ );
 
   if ( tau_ <= 0 )
+  {
     throw BadProperty( "Time constant must be > 0." );
+  }
   if ( lambda_ < 0 )
+  {
     throw BadProperty( "Passive decay rate must be >= 0." );
+  }
   if ( std_ < 0 )
+  {
     throw BadProperty( "Standard deviation of noise must not be negative." );
+  }
 }
 
 template < class TNonlinearities >
@@ -359,7 +365,9 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
 
     // modifiy new_rates for rate-neuron-event as proxy for next min_delay
     for ( long temp = from; temp < to; ++temp )
+    {
       new_rates[ temp ] = S_.rate_;
+    }
 
     // create new random numbers
     B_.random_numbers.resize( buffer_size, numerics::nan );

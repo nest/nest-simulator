@@ -152,6 +152,11 @@ def write_helpindex(helpdir):
     ---------------------------------------
 
     """
+
+    # We only have to generate a helpindex if the help directory exists
+    if not os.path.exists(helpdir):
+        return
+
     filelist = glob.glob(os.path.join(helpdir, '*', '*.hlp'))
     html_list = []
     hlp_list = []

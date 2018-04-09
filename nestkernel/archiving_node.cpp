@@ -33,6 +33,9 @@
 #include <iomanip>
 #include <limits>
 
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
 // Includes from sli:
 #include "dictutils.h"
 
@@ -85,8 +88,9 @@ Archiving_Node::register_stdp_connection( double t_first_read )
   // For details see bug #218. MH 08-04-22
 
   for ( std::deque< histentry >::iterator runner = history_.begin();
-        runner != history_.end() && ( t_first_read - runner->t_ > -0.5
-                                        * Time::get_resolution().get_ms() );
+        runner != history_.end()
+          && ( t_first_read - runner->t_ > -1.0
+                 * kernel().connection_manager.get_stdp_eps() );
         ++runner )
   {
     ( runner->access_counter_ )++;
@@ -105,7 +109,8 @@ nest::Archiving_Node::get_K_value( double t )
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    if ( t - history_[ i ].t_ > 0.5 * Time::get_resolution().get_ms() )
+    if ( t - history_[ i ].t_ > 1.0
+        * kernel().connection_manager.get_stdp_eps() )
     {
       return ( history_[ i ].Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
@@ -131,7 +136,8 @@ nest::Archiving_Node::get_K_values( double t,
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    if ( t - history_[ i ].t_ > 0.5 * Time::get_resolution().get_ms() )
+    if ( t - history_[ i ].t_ > 1.0
+        * kernel().connection_manager.get_stdp_eps() )
     {
       triplet_K_value = ( history_[ i ].triplet_Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_triplet_inv_ ) );
@@ -165,13 +171,15 @@ nest::Archiving_Node::get_history( double t1,
   {
     std::deque< histentry >::iterator runner = history_.begin();
     while ( ( runner != history_.end() )
-      && ( t1 - runner->t_ > -0.5 * Time::get_resolution().get_ms() ) )
+      && ( t1 - runner->t_ > -1.0
+                * kernel().connection_manager.get_stdp_eps() ) )
     {
       ++runner;
     }
     *start = runner;
     while ( ( runner != history_.end() )
-      && ( t2 - runner->t_ > -0.5 * Time::get_resolution().get_ms() ) )
+      && ( t2 - runner->t_ > -1.0
+                * kernel().connection_manager.get_stdp_eps() ) )
     {
       ( runner->access_counter_ )++;
       ++runner;

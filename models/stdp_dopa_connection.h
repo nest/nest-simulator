@@ -452,8 +452,8 @@ STDPDopaConnection< targetidentifierT >::process_dopa_spikes_(
   // process dopa spikes in (t0, t1]
   // propagate weight from t0 to t1
   if ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 )
-    && ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -0.5
-           * Time::get_resolution().get_ms() ) )
+    && ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0
+           * kernel().connection_manager.get_stdp_eps() ) )
   {
     // there is at least 1 dopa spike in (t0, t1]
     // propagate weight up to first dopa spike and update dopamine trace
@@ -469,8 +469,8 @@ STDPDopaConnection< targetidentifierT >::process_dopa_spikes_(
     // process remaining dopa spikes in (t0, t1]
     double cd;
     while ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 )
-      && ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -0.5
-                * Time::get_resolution().get_ms() ) )
+      && ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0
+                * kernel().connection_manager.get_stdp_eps() ) )
     {
       // propagate weight up to next dopa spike and update dopamine trace
       // weight and dopamine trace n are at time of last dopa spike td but
@@ -568,7 +568,8 @@ STDPDopaConnection< targetidentifierT >::send( Event& e,
     t0 = start->t_ + dendritic_delay;
     minus_dt = t_last_update_ - t0;
     // only depression if pre- and postsyn. spike occur at the same time
-    if ( t_spike - start->t_ > 0.5 * Time::get_resolution().get_ms() )
+    if ( t_spike - start->t_ > 1.0
+        * kernel().connection_manager.get_stdp_eps() )
     {
       facilitate_( Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
     }

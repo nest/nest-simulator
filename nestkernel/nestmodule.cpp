@@ -1699,6 +1699,24 @@ NestModule::DisableStructuralPlasticity_Function::execute(
   i->EStack.pop();
 }
 
+/**
+ * Set epsilon that is used for comparing spike times in STDP.
+ * Spike times in STDP synapses are currently represented as double
+ * values. The epsilon defines the maximum distance between spike
+ * times that is still considered 0.
+ */
+void
+NestModule::SetStdpEps_dFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  const double stdp_eps = getValue< double >( i->OStack.top() );
+
+  kernel().connection_manager.set_stdp_eps( stdp_eps );
+
+  i->OStack.pop();
+  i->EStack.pop();
+}
+
 void
 NestModule::init( SLIInterpreter* i )
 {
@@ -1794,6 +1812,9 @@ NestModule::init( SLIInterpreter* i )
     "GetStructuralPlasticityStatus", &getstructuralplasticitystatus_function );
   i->createcommand( "Disconnect", &disconnect_i_i_lfunction );
   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
+
+  i->createcommand( "SetStdpEps", &setstdpeps_dfunction );
+
   // Add connection rules
   kernel().connection_manager.register_conn_builder< OneToOneBuilder >(
     "one_to_one" );

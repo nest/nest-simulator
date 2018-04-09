@@ -77,6 +77,7 @@ nest::ConnectionManager::ConnectionManager()
   , initial_connector_capacity_( CONFIG_CONNECTOR_CUTOFF )
   , large_connector_limit_( CONFIG_CONNECTOR_CUTOFF * 2 )
   , large_connector_growth_factor_( 1.5 )
+  , stdp_eps_( 1.0e-6 )
 {
 }
 

@@ -84,7 +84,7 @@ grep_cmd = ["grep", "-ro", "names::[A-Za-Z0-9_]*", source_dir]
 names_used_raw = check_output(grep_cmd)
 
 if isinstance(names_used_raw, bytes):
-        names_used_raw = str(names_used_raw.decode())
+    names_used_raw = str(names_used_raw.decode())
 
 names_used = set()
 for line in names_used_raw.split("\n"):

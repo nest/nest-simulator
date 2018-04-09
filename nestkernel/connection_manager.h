@@ -543,6 +543,11 @@ private:
     const double delay = NAN,
     const double weight = NAN );
 
+  /** Increases the connection count.
+   */
+  void increase_connection_count( const thread tid,
+    const synindex syn_id );
+
   /** A structure to hold the Connector objects which in turn hold the
    * connection information. Corresponds to a three dimensional
    * structure: threads|synapses|connections

@@ -801,15 +801,19 @@ echo
 echo "Phase 8: Running C++ tests"
 echo "--------------------------"
 
-CPP_TEST_OUTPUT="$(run_all_cpptests 2>&1)"
-echo "$CPP_TEST_OUTPUT"
-CPP_TEST_TOTAL=$(echo "$CPP_TEST_OUTPUT" | sed -nr 's/.*Running ([0-9]+).*/\1/p')
-CPP_TEST_FAILED=$(echo "$CPP_TEST_OUTPUT" | sed -nr 's/.*([0-9]+) failure.*/\1/p')
-[ -z "$CPP_TEST_FAILED" ] && CPP_TEST_FAILED=0
-CPP_TEST_PASS=$(( $CPP_TEST_TOTAL - $CPP_TEST_FAILED ))
-TEST_TOTAL=$(( $TEST_TOTAL + $CPP_TEST_TOTAL ))
-TEST_PASSED=$(( $TEST_PASSED + $CPP_TEST_PASS ))
-TEST_FAILED=$(( $TEST_FAILED + $CPP_TEST_FAILED ))
+if type run_all_cpptests > /dev/null; then
+  CPP_TEST_OUTPUT="$(run_all_cpptests 2>&1)"
+  echo "$CPP_TEST_OUTPUT"
+  CPP_TEST_TOTAL=$(echo "$CPP_TEST_OUTPUT" | sed -nr 's/.*Running ([0-9]+).*/\1/p')
+  CPP_TEST_FAILED=$(echo "$CPP_TEST_OUTPUT" | sed -nr 's/.*([0-9]+) failure.*/\1/p')
+  [ -z "$CPP_TEST_FAILED" ] && CPP_TEST_FAILED=0
+  CPP_TEST_PASS=$(( $CPP_TEST_TOTAL - $CPP_TEST_FAILED ))
+  TEST_TOTAL=$(( $TEST_TOTAL + $CPP_TEST_TOTAL ))
+  TEST_PASSED=$(( $TEST_PASSED + $CPP_TEST_PASS ))
+  TEST_FAILED=$(( $TEST_FAILED + $CPP_TEST_FAILED ))
+else
+  echo "  Not running C++ tests because NEST was compiled without Boost."
+fi
 
 echo
 echo "NEST Testsuite Summary"

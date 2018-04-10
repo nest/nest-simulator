@@ -178,6 +178,11 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
   {
     delay_checkers_[ i ].set_status( d );
   }
+  //  Need to update the saved values if we have changed the delay bounds.
+  if ( d->known( names::min_delay ) or d->known( names::max_delay ) )
+  {
+    update_delay_extrema_();
+  }
 }
 
 nest::DelayChecker&

@@ -25,8 +25,6 @@
 
 /*
     This file is part of the NEST topology module.
-    Author: Kittel Austvoll
-
 */
 
 // Includes from sli:
@@ -34,12 +32,14 @@
 
 namespace nest
 {
+
 /**
  * This namespace contains Name objects that are used by the topology
  * module. See nest_names.h for more info.
  */
 namespace names
 {
+
 extern const Name allow_autapses;
 extern const Name allow_multapses;
 extern const Name allow_oversized_mask;
@@ -53,21 +53,18 @@ extern const Name columns;
 extern const Name connection_type;
 extern const Name convergent;
 extern const Name cutoff;
-extern const Name depth;
 extern const Name divergent;
-extern const Name doughnut;
 extern const Name edge_wrap;
 extern const Name elements;
-extern const Name elliptical;
 extern const Name ellipsoidal;
+extern const Name elliptical;
 extern const Name extent;
-extern const Name grid3d;
 extern const Name grid;
+extern const Name grid3d;
 extern const Name inner_radius;
 extern const Name kernel;
 extern const Name layer;
 extern const Name layers;
-extern const Name lid;
 extern const Name lower_left;
 extern const Name major_axis;
 extern const Name mask;
@@ -79,7 +76,6 @@ extern const Name minor_axis;
 extern const Name number_of_connections;
 extern const Name outer_radius;
 extern const Name p_center;
-extern const Name points;
 extern const Name polar_angle;
 extern const Name polar_axis;
 extern const Name positions;
@@ -87,15 +83,15 @@ extern const Name radius;
 extern const Name rectangular;
 extern const Name rho;
 extern const Name row;
-extern const Name rows; //!< Number of rows in a layer or mask
+extern const Name rows;
 extern const Name sigma;
 extern const Name sigma_x;
 extern const Name sigma_y;
-extern const Name sources;
 extern const Name spherical;
 extern const Name upper_right;
-extern const Name volume;
-}
-}
+
+} // namespace names
+
+} // namespace nest
 
 #endif

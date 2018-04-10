@@ -89,26 +89,25 @@ Mask< D >::outside( const Box< D >& b ) const
 
 template < int D >
 bool
-BoxMask< D >::inside( const Position< D >& p ) const
-{
-  return ( p >= lower_left_ ) && ( p <= upper_right_ );
-}
-
-template < int D >
-bool
 BoxMask< D >::inside( const Box< D >& b ) const
 {
-  return ( b.lower_left >= lower_left_ ) && ( b.upper_right <= upper_right_ );
+  return ( inside( b.lower_left ) and inside( b.upper_right ) );
 }
 
 template < int D >
 bool
 BoxMask< D >::outside( const Box< D >& b ) const
 {
+  // Note: There could be some inconsistencies with the boundaries. For the
+  // inside() function we had to add an epsilon because of rounding errors that
+  // can occur if GIDs are on the boundary if we have rotation. This might lead
+  // to overlap of the inside and outside functions. None of the tests have
+  // picked up any problems with this potential overlap as of yet (autumn 2017),
+  // so we don't know if it is an actual problem.
   for ( int i = 0; i < D; ++i )
   {
-    if ( ( b.upper_right[ i ] < lower_left_[ i ] )
-      || ( b.lower_left[ i ] > upper_right_[ i ] ) )
+    if ( ( b.upper_right[ i ] < min_values_[ i ] )
+      || ( b.lower_left[ i ] > max_values_[ i ] ) )
     {
       return true;
     }
@@ -120,7 +119,7 @@ template < int D >
 Box< D >
 BoxMask< D >::get_bbox() const
 {
-  return Box< D >( lower_left_, upper_right_ );
+  return Box< D >( min_values_, max_values_ );
 }
 
 template < int D >
@@ -139,6 +138,8 @@ BoxMask< D >::get_dict() const
   def< DictionaryDatum >( d, get_name(), maskd );
   def< std::vector< double > >( maskd, names::lower_left, lower_left_ );
   def< std::vector< double > >( maskd, names::upper_right, upper_right_ );
+  def< double >( maskd, names::azimuth_angle, azimuth_angle_ );
+  def< double >( maskd, names::polar_angle, polar_angle_ );
   return d;
 }
 

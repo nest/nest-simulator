@@ -101,9 +101,17 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 
   echo "MSGBLD0010: Initializing VERA++ static code analysis."
+  wget --no-verbose https://bitbucket.org/verateam/vera/downloads/vera++-1.3.0.tar.gz
+  tar -xzf vera++-1.3.0.tar.gz
+  cd vera++-1.3.0
+  cmake -DCMAKE_INSTALL_PREFIX=/usr -DVERA_LUA=OFF -DVERA_USE_SYSTEM_BOOST=ON
+  sudo make install
+  cd ..
+  rm -fr ./vera++-1.3.0
+  rm -f ./vera++-1.3.0.tar.gz
   # Add the NEST profile to the VERA++ profiles.
   sudo cp ./extras/vera++.profile /usr/lib/vera++/profiles/nest
-  echo "MSGBLD0020: VERA++ initialization completed."  
+  echo "MSGBLD0020: VERA++ initialization completed."
 
   if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
     echo "MSGBLD0030: Installing CPPCHECK version 1.69."
@@ -170,7 +178,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
 
   # The following command line parameters indicate whether static code analysis error messages
   # will cause the Travis CI build to fail or are ignored.
-  IGNORE_MSG_VERA=true
+  IGNORE_MSG_VERA=false
   IGNORE_MSG_CPPCHECK=true
   IGNORE_MSG_CLANG_FORMAT=false
   IGNORE_MSG_PEP8=false

@@ -23,10 +23,8 @@ from scipy.integrate import quad
 import math
 import numpy
 from numpy import testing
-import pylab
 import unittest
 import nest
-from nest import raster_plot
 import time
 HAVE_OPENMP = nest.sli_func("is_threaded")
 
@@ -337,24 +335,6 @@ class TestGrowthCurve(unittest.TestCase):
                 testing.assert_almost_equal(
                     self.se_nest[n_i], self.se_python[sei_i], decimal=5)
 
-    def plot(self):
-        pylab.ion()
-        for i, sei in enumerate(self.se_integrator):
-            pylab.figure()
-            pylab.subplot(1, 2, 1)
-            pylab.title('Ca')
-            pylab.plot(self.sim_steps, self.ca_nest[0, :])
-            pylab.plot(self.sim_steps, self.ca_python[i])
-            pylab.legend(('nest', sei.__class__.__name__))
-            pylab.subplot(1, 2, 2)
-            pylab.title('Synaptic Element')
-            pylab.plot(self.sim_steps, self.se_nest[0, :])
-            pylab.plot(self.sim_steps, self.se_python[i])
-            pylab.legend(('nest', sei.__class__.__name__))
-            pylab.savefig('sp' + sei.__class__.__name__ + '.png')
-        raster_plot.from_device(self.spike_detector)
-        pylab.savefig('sp_raster_plot.png')
-
     def test_linear_growth_curve(self):
         beta_ca = 0.0001
         tau_ca = 10000.0
@@ -468,7 +448,7 @@ class TestGrowthCurve(unittest.TestCase):
 
         # check that we got the same values from one run to another
         # expected = self.se_nest[:, 30]
-        # print self.se_nest[:, 30].__repr__()
+        # print(self.se_nest[:, 30].__repr__())
         expected = numpy.array([
             0.07801164,  0.07796841,  0.07807825,  0.07797382,  0.07802574,
             0.07805961,  0.07808139,  0.07794451,  0.07799474,  0.07794458
@@ -483,15 +463,11 @@ class TestGrowthCurve(unittest.TestCase):
                     pop_as_list.index(n)],
                 decimal=5)
 
-    def tearDown(self):
-        # uncomment this line if you want to plot values
-        # self.plot()
-        return
-
 
 def suite():
     test_suite = unittest.makeSuite(TestGrowthCurve, 'test')
     return test_suite
+
 
 if __name__ == '__main__':
     unittest.main()

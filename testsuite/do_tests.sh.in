@@ -544,6 +544,8 @@ CODES_FAILURE=\
 ' 4 Failed: re-run serial,'\
 ' 10 Failed: unknown error,'\
 ' 20 Failed: inconsistent copyright header(s),'\
+' 30 Failed: inconsistent Name definition(s)/declaration(s),'\
+' 31 Failed: unused Name definition(s),'\
 ' 125 Failed: unknown C++ exception,'\
 ' 126 Failed: error in test script,'\
 ' 127 Failed: fatal error,'\

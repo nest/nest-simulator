@@ -26,6 +26,8 @@ import unittest
 import numpy as np
 from scipy.interpolate import interp1d
 
+from collections import defaultdict
+
 import nest
 
 """
@@ -45,7 +47,8 @@ Rationale of the test:
   - all models should be close to the reference LSODAR when
     submitted to the same excitatory current.
   - for ``Delta_T = 0.``, ``a = 0.`` and ``b = 0.``, starting from ``w = 0.``,
-    models should behave as the associated iaf model.
+    models should behave as the associated iaf model. This is tested both with
+    spike input and direct current input.
 
 Details:
   The models are compared and we assess that the difference between the
@@ -66,6 +69,7 @@ di_tolerances_lsodar = {
     "aeif_cond_exp": {"V_m": 5e-4, "w": 1e-4},
     "aeif_psc_alpha": {"V_m": 5e-4, "w": 1e-4},
     "aeif_psc_exp": {"V_m": 5e-4, "w": 1e-4},
+    "aeif_psc_delta": {"V_m": 5e-4, "w": 1e-4},
     "aeif_cond_alpha_multisynapse": {"V_m": 5e-4, "w": 1e-4},
     "aeif_cond_beta_multisynapse": {"V_m": 5e-4, "w": 1e-4},
     "aeif_cond_alpha_RK5": {"V_m": 5e-3, "w": 2e-3}
@@ -77,6 +81,7 @@ di_tolerances_iaf = {
     "aeif_cond_alpha": {"V_m": 2e-3, "g_ex": 1e-6},
     "aeif_cond_exp": {"V_m": 5e-4, "g_ex": 1e-6},
     "aeif_psc_alpha": {"V_m": 5e-3, "I_syn_ex": 1e-6},
+    "aeif_psc_delta": {"V_m": 5e-3},
     "aeif_psc_exp": {"V_m": 5e-3, "I_syn_ex": 1e-6},
     "aeif_cond_alpha_RK5": {"V_m": 2e-3, "g_ex": 1e-6}
 }
@@ -91,6 +96,7 @@ models = [
     "aeif_cond_alpha",
     "aeif_cond_exp",
     "aeif_psc_alpha",
+    "aeif_psc_delta",
     "aeif_psc_exp",
     "aeif_cond_alpha_multisynapse",
     "aeif_cond_beta_multisynapse",
@@ -134,6 +140,12 @@ aeif_DT0 = {
     'tau_syn_ex': 0.2
 }
 
+aeif_DT0_delta = aeif_DT0.copy()
+aeif_DT0_delta.pop('tau_syn_ex')
+
+DT0_params = defaultdict(lambda: aeif_DT0)
+DT0_params["aeif_psc_delta"] = aeif_DT0_delta
+
 iaf_param_base = {
     'V_reset': -60.,
     'V_th': -55.,
@@ -147,12 +159,15 @@ iaf_param_base = {
 
 iaf_param_psc = iaf_param_base.copy()
 iaf_param_psc.update({'tau_m': aeif_DT0['C_m'] / aeif_DT0['g_L']})
+iaf_param_psc_delta = iaf_param_psc.copy()
+iaf_param_psc_delta.pop('tau_syn_ex')
 iaf_param_cond = iaf_param_base.copy()
 iaf_param_cond.update({'g_L': 16.7})
 
 di_iaf_param = {
     "psc_alpha": iaf_param_psc,
     "psc_exp": iaf_param_psc,
+    "psc_delta": iaf_param_psc_delta,
     "cond_alpha": iaf_param_cond,
     "cond_exp": iaf_param_cond
 }
@@ -163,13 +178,14 @@ di_iaf_param = {
 # -------------------------
 #
 
-lst_syn_types = ["cond_alpha", "cond_exp", "psc_alpha", "psc_exp"]
+lst_syn_types = ["cond_alpha", "cond_exp", "psc_alpha", "psc_exp", "psc_delta"]
 
 di_syn_types = {
     "aeif_cond_alpha": "cond_alpha",
     "aeif_cond_exp": "cond_exp",
     "aeif_psc_alpha": "psc_alpha",
     "aeif_psc_exp": "psc_exp",
+    "aeif_psc_delta": "psc_delta",
     "aeif_cond_alpha_RK5": "cond_alpha"
 }
 
@@ -249,8 +265,7 @@ class AEIFTestCase(unittest.TestCase):
                                     model, var, diff, di_tol[model][var]))
 
     @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
-    def testClosenessNestLSODAR(self):
-
+    def test_closeness_nest_lsodar(self):
         # Compare models to the LSODAR implementation.
 
         simtime = 100.
@@ -281,37 +296,40 @@ class AEIFTestCase(unittest.TestCase):
         self.assert_pass_tolerance(rel_diff, di_tolerances_lsodar)
 
     @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
-    def testIafBehaviour(self):
-
-        # The models should behave as iaf_cond_* if a == 0., b == 0. and
-        # Delta_T == 0.
+    def test_iaf_spike_input(self):
+        # Test that the models behave as iaf_* if a == 0., b == 0. and
+        # Delta_T == 0 due to random spike input.
 
         simtime = 200.
         # create the neurons and devices
         refs = {syn_type: nest.Create("iaf_" + syn_type,
                 params=di_iaf_param[syn_type]) for syn_type in lst_syn_types}
         ref_mm = {syn_type: nest.Create("multimeter") for syn_type in refs}
-        neurons = {model: nest.Create(model, params=aeif_DT0)
+        neurons = {model: nest.Create(model, params=DT0_params[model])
                    for model in models if "multisynapse" not in model}
         multimeters = {model: nest.Create("multimeter") for model in neurons}
         pg = nest.Create("poisson_generator", params={"rate": 10000.})
         pn = nest.Create("parrot_neuron")
 
         # connect them and simulate
-        recordables = {"cond": ["V_m", "g_ex"], "psc": ["V_m", "I_syn_ex"]}
+        recordables = {"cond_alpha": ["V_m", "g_ex"],
+                       "cond_exp": ["V_m", "g_ex"],
+                       "psc_exp": ["V_m", "I_syn_ex"],
+                       "psc_alpha": ["V_m", "I_syn_ex"],
+                       "psc_delta": ["V_m"]}
         nest.Connect(pg, pn)
         for model, mm in iter(multimeters.items()):
             syn_type = di_syn_types[model]
             key = syn_type[:syn_type.index('_')]
             nest.SetStatus(mm, {"interval": self.resol,
-                                "record_from": recordables[key]})
+                                "record_from": recordables[syn_type]})
             nest.Connect(mm, neurons[model])
             weight = 80. if key == "psc" else 1.
             nest.Connect(pn, neurons[model], syn_spec={'weight': weight})
         for syn_type, mm in iter(ref_mm.items()):
             key = syn_type[:syn_type.index('_')]
             nest.SetStatus(mm, {"interval": self.resol,
-                                "record_from": recordables[key]})
+                                "record_from": recordables[syn_type]})
             nest.Connect(mm, refs[syn_type])
             weight = 80. if key == "psc" else 1.
             nest.Connect(pn, refs[syn_type], syn_spec={'weight': weight})
@@ -326,7 +344,49 @@ class AEIFTestCase(unittest.TestCase):
                 {model: multimeters[model]},
                 aeif_DT0,
                 ref_data,
-                recordables[key])
+                recordables[syn_type])
+            self.assert_pass_tolerance(rel_diff, di_tolerances_iaf)
+
+    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
+    def test_iaf_dc_input(self):
+        # Test that the models behave as iaf_* if a == 0., b == 0. and
+        # Delta_T == 0 due to direct current input.
+
+        simtime = 200.
+        # create the neurons and devices
+        refs = {syn_type: nest.Create("iaf_" + syn_type,
+                params=di_iaf_param[syn_type]) for syn_type in lst_syn_types}
+        ref_mm = {syn_type: nest.Create("multimeter") for syn_type in refs}
+        neurons = {model: nest.Create(model, params=DT0_params[model])
+                   for model in models if "multisynapse" not in model}
+        multimeters = {model: nest.Create("multimeter") for model in neurons}
+        dcg = nest.Create("dc_generator", params={"amplitude": 250.0,
+                                                  "start": 50.0,
+                                                  "stop": 150.0})
+
+        # connect them and simulate
+        for model, mm in iter(multimeters.items()):
+            syn_type = di_syn_types[model]
+            nest.SetStatus(mm, {"interval": self.resol,
+                                "record_from": ["V_m"]})
+            nest.Connect(mm, neurons[model])
+            nest.Connect(dcg, neurons[model])
+        for syn_type, mm in iter(ref_mm.items()):
+            nest.SetStatus(mm, {"interval": self.resol,
+                                "record_from": ["V_m"]})
+            nest.Connect(mm, refs[syn_type])
+            nest.Connect(dcg, refs[syn_type])
+        nest.Simulate(simtime)
+
+        # compute the relative differences and assert tolerance
+        for model in neurons:
+            syn_type = di_syn_types[model]
+            ref_data = nest.GetStatus(ref_mm[syn_type], "events")[0]
+            rel_diff = self.compute_difference(
+                {model: multimeters[model]},
+                aeif_DT0,
+                ref_data,
+                ["V_m"])
             self.assert_pass_tolerance(rel_diff, di_tolerances_iaf)
 
 

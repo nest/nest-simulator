@@ -28,7 +28,8 @@
 #include "rate_neuron_ipn_impl.h"
 #include "rate_neuron_opn.h"
 #include "rate_neuron_opn_impl.h"
-
+#include "rate_transformer_node.h"
+#include "rate_transformer_node_impl.h"
 
 namespace nest
 {
@@ -37,9 +38,15 @@ Name: lin_rate - Linear rate model
 
 Description:
 
- lin_rate is an implementation of a linear rate model with either
- input (lin_rate_ipn) or output noise (lin_rate_opn) and gain function
- Phi(h) = g * h.
+ lin_rate is an implementation of a linear rate model with
+ input function input(h) = g * h.
+ The model supports multiplicative coupling which can
+ be switched on and off via the boolean parameter mult_coupling
+ (default=false). In case multiplicative coupling is actived
+ the excitatory input of the model is multiplied with the function
+ mult_coupling_ex(rate) = g_ex_ * ( theta_ex_ - rate )
+ and the inhibitory input is multiplied with the function
+ mult_coupling_in(rate) = g_in_ * ( theta_in_ + rate ).
 
  The model supports connections to other rate models with either zero or
  non-zero delay, and uses the secondary_event concept introduced with
@@ -51,9 +58,16 @@ Parameters:
 
  rate                double - Rate (unitless)
  tau                 double - Time constant of rate dynamics in ms.
+ lambda              double - Passive decay rate.
  mean                double - Mean of Gaussian white noise.
  std                 double - Standard deviation of Gaussian white noise.
  g                   double - Gain parameter
+ mult_coupling       bool   - Switch to enable/disable multiplicative coupling.
+ g_ex                double - Linear factor in multiplicative coupling.
+ g_in                double - Linear factor in multiplicative coupling.
+ theta_ex            double - Shift in multiplicative coupling.
+ theta_in            double - Shift in multiplicative coupling.
+ rectify_output      bool   - Switch to restrict rate to values >= 0
 
 References:
 
@@ -78,37 +92,68 @@ Author: David Dahmen, Jan Hahne, Jannis Schuecker
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 
-class gainfunction_lin_rate
+class nonlinearities_lin_rate
 {
 private:
   /** gain factor of gain function */
   double g_;
+  /** linear factor in multiplicative excitatory coupling*/
+  double g_ex_;
+  /** linear factor in multiplicative inhibitory coupling*/
+  double g_in_;
+  /** offset in multiplicative coupling*/
+  double theta_ex_;
+  double theta_in_;
 
 public:
   /** sets default parameters */
-  gainfunction_lin_rate()
+  nonlinearities_lin_rate()
     : g_( 1.0 )
+    , g_ex_( 1.0 )
+    , g_in_( 1.0 )
+    , theta_ex_( 0.0 )
+    , theta_in_( 0.0 )
   {
   }
 
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  double operator()( double h ); // non-linearity
+  double input( double h );               // non-linearity on input
+  double mult_coupling_ex( double rate ); // factor of multiplicative coupling
+  double mult_coupling_in( double rate ); // factor of multiplicative coupling
 };
 
-inline double gainfunction_lin_rate::operator()( double h )
+inline double
+nonlinearities_lin_rate::input( double h )
 {
   return g_ * h;
 }
 
-typedef rate_neuron_ipn< nest::gainfunction_lin_rate > lin_rate_ipn;
-typedef rate_neuron_opn< nest::gainfunction_lin_rate > lin_rate_opn;
+inline double
+nonlinearities_lin_rate::mult_coupling_ex( double rate )
+{
+  return g_ex_ * ( theta_ex_ - rate );
+}
+
+inline double
+nonlinearities_lin_rate::mult_coupling_in( double rate )
+{
+  return g_in_ * ( theta_in_ + rate );
+}
+
+typedef rate_neuron_ipn< nest::nonlinearities_lin_rate > lin_rate_ipn;
+typedef rate_neuron_opn< nest::nonlinearities_lin_rate > lin_rate_opn;
+typedef rate_transformer_node< nest::nonlinearities_lin_rate >
+  rate_transformer_lin;
 
 template <>
 void RecordablesMap< lin_rate_ipn >::create();
 template <>
 void RecordablesMap< lin_rate_opn >::create();
+template <>
+void RecordablesMap< rate_transformer_lin >::create();
+
 
 } // namespace nest
 

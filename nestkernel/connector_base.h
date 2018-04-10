@@ -470,7 +470,7 @@ public:
   void
   sort_connections( std::vector< Source >& sources )
   {
-    sort( sources, C_ );
+    nest::sort( sources, C_ );
   }
 
   void // TODO@5g: -> has_subsequent_targets

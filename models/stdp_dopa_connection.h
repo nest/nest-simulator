@@ -567,7 +567,7 @@ STDPDopaConnection< targetidentifierT >::send( Event& e,
     process_dopa_spikes_( dopa_spikes, t0, start->t_ + dendritic_delay, cp );
     t0 = start->t_ + dendritic_delay;
     minus_dt = t_last_update_ - t0;
-    // faciltate only in case of post- after presyn. spike
+    // facilitate only in case of post- after presyn. spike
     // skip facilitation if pre- and postsyn. spike occur at the same time
     if ( t_spike - start->t_ > kernel().connection_manager.get_stdp_eps() )
     {

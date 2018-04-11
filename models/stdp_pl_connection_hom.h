@@ -58,8 +58,6 @@
 
 // C++ includes:
 #include <cmath>
-#include <iomanip>
-#include <limits>
 
 // Includes from nestkernel:
 #include "connection.h"

@@ -29,10 +29,6 @@
 
 #include "archiving_node.h"
 
-// C++ includes:
-#include <iomanip>
-#include <limits>
-
 // Includes from nestkernel:
 #include "kernel_manager.h"
 

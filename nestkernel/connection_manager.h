@@ -425,7 +425,7 @@ private:
   double large_connector_growth_factor_;
 
   //! Maximum distance between (double) spike times in STDP that is
-  //! still considered 0
+  //! still considered 0. See issue #894
   double stdp_eps_;
 };
 
@@ -469,12 +469,6 @@ inline double
 ConnectionManager::get_stdp_eps() const
 {
   return stdp_eps_;
-}
-
-inline void
-ConnectionManager::set_stdp_eps( const double stdp_eps )
-{
-  stdp_eps_ = stdp_eps;
 }
 
 } // namespace nest

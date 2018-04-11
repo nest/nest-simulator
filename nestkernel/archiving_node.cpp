@@ -109,8 +109,7 @@ nest::Archiving_Node::get_K_value( double t )
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    if ( t - history_[ i ].t_ > 1.0
-        * kernel().connection_manager.get_stdp_eps() )
+    if ( t - history_[ i ].t_ > kernel().connection_manager.get_stdp_eps() )
     {
       return ( history_[ i ].Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
@@ -136,8 +135,7 @@ nest::Archiving_Node::get_K_values( double t,
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    if ( t - history_[ i ].t_ > 1.0
-        * kernel().connection_manager.get_stdp_eps() )
+    if ( t - history_[ i ].t_ > kernel().connection_manager.get_stdp_eps() )
     {
       triplet_K_value = ( history_[ i ].triplet_Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_triplet_inv_ ) );

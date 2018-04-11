@@ -1704,6 +1704,8 @@ NestModule::DisableStructuralPlasticity_Function::execute(
  * Spike times in STDP synapses are currently represented as double
  * values. The epsilon defines the maximum distance between spike
  * times that is still considered 0.
+ *
+ * Note: See issue #894
  */
 void
 NestModule::SetStdpEps_dFunction::execute( SLIInterpreter* i ) const

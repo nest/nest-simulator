@@ -235,12 +235,13 @@ public:
   void get_sources( const std::vector< index >& targets,
     const index syn_id,
     std::vector< std::vector< index > >& sources );
-  // TODO@5g: get_targets overloading necessary?
+
   void get_targets( const std::vector< index >& sources,
     const index syn_id, const std::string& post_synaptic_element, 
     std::vector< std::vector< index > >& targets );
 
-  const std::vector< Target >& get_targets( const thread tid,
+  const std::vector< Target >& get_remote_targets_of_local_node(
+    const thread tid,
     const index lid ) const;
 
   index get_target_gid( const thread tid,
@@ -315,7 +316,7 @@ public:
   void clear_source_table( const thread tid );
 
   //! Returns true if source table is kept after building network
-  bool get_keep_source_table() const; // TODO@5g: rename?
+  bool get_keep_source_table() const;
 
   //! Returns true if source table was cleared
   bool is_source_table_cleared() const;
@@ -713,7 +714,7 @@ ConnectionManager::prepare_target_table( const thread tid )
 }
 
 inline const std::vector< Target >&
-ConnectionManager::get_targets( const thread tid, const index lid ) const
+ConnectionManager::get_remote_targets_of_local_node( const thread tid, const index lid ) const
 {
   return target_table_.get_targets( tid, lid );
 }

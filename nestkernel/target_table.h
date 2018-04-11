@@ -80,12 +80,12 @@ public:
   void finalize();
 
   /**
-   * Adjusts #targets_ to number of local nodes.
+   * Adjusts targets_ to number of local nodes.
    */
   void prepare( const thread tid );
 
   /**
-   * Adds entry to #targets_.
+   * Adds entry to targets_.
    */
   void add_target( const thread tid,
     const thread target_rank,
@@ -108,7 +108,7 @@ public:
     const synindex syn_id ) const;
 
   /**
-   * Clears all entries of #targets_.
+   * Clears all entries of targets_.
    */
   void clear( const thread tid );
 

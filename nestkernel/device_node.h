@@ -29,6 +29,9 @@
 namespace nest
 {
 
+/**
+ * Base class for device objects.
+ */
 class DeviceNode : public Node
 {
 

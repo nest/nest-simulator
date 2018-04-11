@@ -42,11 +42,35 @@ private:
 
 public:
   // Members must be set explicitly -- no defaults
+
+  /**
+   * Sets the local connection ID.
+   */
   void set_lcid( const index lcid );
+
+  /**
+   * Returns the local connection ID.
+   */
   index get_lcid() const;
+
+  /**
+   * Sets the target ID.
+   */
   void set_tid( const thread tid );
+
+  /**
+   * Returns the target ID.
+   */
   thread get_tid() const;
+
+  /**
+   * Sets the synapse-type ID.
+   */
   void set_syn_id( const synindex syn_id );
+
+  /**
+   * Returns the synapse-type ID.
+   */
   synindex get_syn_id() const;
 };
 

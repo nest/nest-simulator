@@ -71,14 +71,14 @@ private:
    */
   std::vector< bool > is_cleared_;
 
-  //! Needed during readout of #sources_.
+  //! Needed during readout of sources_.
   std::vector< SourceTablePosition* > current_positions_;
-  //! Needed during readout of #sources_.
+  //! Needed during readout of sources_.
   std::vector< SourceTablePosition* > saved_positions_;
 
   /**
    * If we detect an overflow in one of the MPI buffer parts, we save
-   * our current position in #sources_ to continue at that point in
+   * our current position in sources_ to continue at that point in
    * the next communication round, while filling up (possible)
    * remaining parts of the MPI buffer.
    */
@@ -89,7 +89,7 @@ private:
    * type and thread before a reallocation of the respective vector
    * is performed. Balances number of reallocations and memory usage.
    *
-   * \see SourceTable::clean()
+   * @see SourceTable::clean()
    */
   static const size_t min_deleted_elements_ = 1000000;
 
@@ -119,7 +119,7 @@ public:
   void reserve( const thread tid, const synindex syn_id, const size_t count );
 
   /**
-   * Adds a source to #sources_.
+   * Adds a source to sources_.
    */
   void add_source( const thread tid,
     const synindex syn_id,
@@ -127,17 +127,17 @@ public:
     const bool is_primary );
 
   /**
-   * Clears #sources_.
+   * Clears sources_.
    */
   void clear( const thread tid );
 
   /**
-   * Returns true if #sources_ has been cleared.
+   * Returns true if sources_ has been cleared.
    */
   bool is_cleared() const;
 
   /**
-   * Returns the next target data, according to the #current_positions_.
+   * Returns the next target data, according to the current_positions_.
    */
   bool get_next_target_data( const thread tid,
     const thread rank_start,
@@ -146,23 +146,23 @@ public:
     TargetData& next_target_data );
 
   /**
-   * Rejects the last target data, and resets the #current_positions_
+   * Rejects the last target data, and resets the current_positions_
    * accordingly.
    */
   void reject_last_target_data( const thread tid );
 
   /**
-   * Stores #current_positions_ in #saved_positions_.
+   * Stores current_positions_ in saved_positions_.
    */
   void save_entry_point( const thread tid );
 
   /**
-   * Restores #current_positions_ from #saved_positions_.
+   * Restores current_positions_ from saved_positions_.
    */
   void restore_entry_point( const thread tid );
 
   /**
-   * Resets #saved_positions_ to end of #sources_.
+   * Resets saved_positions_ to end of sources_.
    */
   void reset_entry_point( const thread tid );
 
@@ -180,13 +180,13 @@ public:
     const thread tid );
 
   /**
-   * Determines maximal #saved_positions_ after which it is save to
+   * Determines maximal saved_positions_ after which it is save to
    * delete sources during clean().
    */
   SourceTablePosition find_maximal_position() const;
 
   /**
-   * Resets all processed flags. needed for restructuring connection
+   * Resets all processed flags. Needed for restructuring connection
    * tables, e.g., during structural plasticity update.
    */
   void reset_processed_flags( const thread tid );
@@ -197,7 +197,7 @@ public:
   void clean( const thread tid );
 
   /**
-   * Sets #current_positions_ for this thread to minimal values so that
+   * Sets current_positions_ for this thread to minimal values so that
    * these are not considered in find_maximal_position().
    */
   void no_targets_to_process( const thread tid );
@@ -211,19 +211,19 @@ public:
     std::map< index, size_t >& buffer_pos_of_source_gid_syn_id_ );
 
   /**
-   * Sets #last_sorted_source_ to beginning of #sources_ to make sure
+   * Sets last_sorted_source_ to beginning of sources_ to make sure
    * all entries are considered during sorting of connections.
    */
   void reset_last_sorted_source( const thread tid );
 
   /**
-   * Sets #last_sorted_source_ to end of #sources_. This is done after
+   * Sets last_sorted_source_ to end of sources_. This is done after
    * sorting connections, to mark all entries as sorted.
    */
   void update_last_sorted_source( const thread tid );
 
   /**
-   * Finds the first entry in #sources_ at the given thread id and
+   * Finds the first entry in sources_ at the given thread id and
    * synapse type, that is equal to sgid.
    */
   index find_first_source( const thread tid,
@@ -231,7 +231,7 @@ public:
     const index sgid ) const;
 
   /**
-   * Finds all entries in #sources_ at the given thread id and synapse
+   * Finds all entries in sources_ at the given thread id and synapse
    * type, that are equal to sgid in range of unsorted sources.
    */
   void find_all_sources_unsorted( const thread tid,
@@ -240,14 +240,14 @@ public:
     std::vector< index >& matchings_lcids );
 
   /**
-   * Marks entry in #sources_ at given position as disabled.
+   * Marks entry in sources_ at given position as disabled.
    */
   void disable_connection( const thread tid,
     const synindex syn_id,
     const index lcid );
 
   /**
-   * Removes all entries from #sources_ that are marked as disabled.
+   * Removes all entries from sources_ that are marked as disabled.
    */
   index remove_disabled_sources( const thread tid, const synindex syn_id );
 
@@ -255,7 +255,7 @@ public:
   void print_sources( const thread tid, const synindex syn_id ) const;
 
   /**
-   * Returns global ids for entries in #sources_ for the given thread
+   * Returns global ids for entries in sources_ for the given thread
    * id, synapse type and local connections ids.
    */
   void get_source_gids( const thread tid,
@@ -265,14 +265,14 @@ public:
 
   /**
    * Returns the number of unique global ids for given thread id and
-   * synapse type in #sources_. This number corresponds to the number
+   * synapse type in sources_. This number corresponds to the number
    * of targets that need to be communicated during construction of
    * the presynaptic connection infrastructure.
    */
   size_t num_unique_sources( const thread tid, const synindex syn_id ) const;
 
   /**
-   * Resizes #sources_ according to total number of threads and
+   * Resizes sources_ according to total number of threads and
    * synapse types.
    */
   void resize_sources( const thread tid );
@@ -379,7 +379,7 @@ SourceTable::reset_entry_point( const thread tid )
 {
   // since we read the source table backwards, we need to set saved
   // values to the biggest possible value. these will be used to
-  // initialize #current_positions_ correctly upon calling
+  // initialize current_positions_ correctly upon calling
   // restore_entry_point. however, this can only be done if other
   // values have valid values.
   ( *saved_positions_[ tid ] ).tid = sources_.size() - 1;

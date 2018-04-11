@@ -59,6 +59,22 @@ public:
   {
   }
 
+  /**
+   * Adds a connection.
+   *
+   * @param src Source node
+   * @param tgt Target node
+   * @param hetconn Connector vector
+   * @param syn_id Synapse id
+   * @param d Parameter dictionary to configure the synapse
+   * @param delay Delay of the connection
+   * @param weight Weight of the connection
+   *
+   * Delay and weight have the default value NAN, a special value, which
+   * describes double values that are not a number. If delay or weight is
+   * omitted, NAN indicates this and weight/delay are set only if they are
+   * valid.
+   */
   virtual void add_connection_5g( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
@@ -67,6 +83,10 @@ public:
     const double delay = NAN,
     const double weight = NAN ) = 0;
 
+  /**
+   * Reserves the specified amount of connections at the specified index in the
+   * connection vector.
+   */
   virtual void reserve_connections( std::vector< ConnectorBase* >* hetconn,
     const synindex syn_id,
     const size_t count ) = 0;
@@ -122,15 +142,18 @@ public:
   }
 
 protected:
+  //! name of the ConnectorModel
   std::string name_;
-  //! Flag indicating, that the default delay must be checked
+  //! indicates whether the default delay must be checked
   bool default_delay_needs_check_;
-  //! indicates, whether this ConnectorModel belongs to a primary connection
+  //! indicates whether this ConnectorModel belongs to a primary connection
   bool is_primary_;
-  bool has_delay_; //!< indicates, that ConnectorModel has a delay
+  //! indicates whether ConnectorModel has a delay
+  bool has_delay_;
+  //! indicates that ConnectorModel requires symmetric connections
   bool requires_symmetric_;
-  //!< indicates, that ConnectorModel requires symmetric connections
-  bool supports_wfr_; //!< whether connection can be used during wfr update
+  //! indicates whether connection can be used during wfr update
+  bool supports_wfr_;
 
 }; // ConnectorModel
 

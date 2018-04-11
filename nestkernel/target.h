@@ -74,16 +74,60 @@ public:
     const thread rank,
     const synindex syn_id,
     const index lcid );
+
+  /**
+   * Sets the local connection ID.
+   */
   void set_lcid( const size_t lcid );
+
+  /**
+   * Returns the local connection ID.
+   */
   size_t get_lcid() const;
+
+  /**
+   * Sets the rank.
+   */
   void set_rank( const unsigned int rank );
+
+  /**
+   * Returns the rank.
+   */
   unsigned int get_rank() const;
+
+  /**
+   * Sets the target ID.
+   */
   void set_tid( const unsigned int tid );
+
+  /**
+   * Returns the target ID.
+   */
   unsigned int get_tid() const;
+
+  /**
+   * Sets the synapse-type ID.
+   */
   void set_syn_id( const unsigned char syn_id );
+
+  /**
+   * Returns the synapse-type ID.
+   */
   unsigned char get_syn_id() const;
+
+  /**
+   * Sets whether Target is processed.
+   */
   void set_is_processed( const bool processed );
+
+  /**
+   * Returns whether Target is processed.
+   */
   bool is_processed() const;
+
+  /**
+   * Returns offset.
+   */
   double get_offset() const;
 };
 

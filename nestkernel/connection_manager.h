@@ -131,7 +131,7 @@ public:
    * established on the thread/process that owns the target node.
    *
    * \param sgid GID of the sending Node.
-   * \param target Pointer to target Node.
+   * \param target GID of the target Node.
    * \param params Parameter dictionary to configure the synapse.
    * \param syn_id The synapse model to use.
    */
@@ -604,20 +604,21 @@ private:
 
   delay max_delay_; //!< Value of the largest delay in the network in steps.
 
-  bool keep_source_table_; //!< Whether to keep source table after connection
-                           //!< setup is complete.
+  //! Whether to keep source table after connection setup is complete.
+  bool keep_source_table_;
 
-  bool have_connections_changed_; //!< true if new connections have been created
-                                  //!< since startup or last call to simulate.
+  //! True if new connections have been created since startup or last call to
+  //! simulate.
+  bool have_connections_changed_;
 
-  bool
-    sort_connections_by_source_; //!< Whether to sort connections by source gid.
+  //! Whether to sort connections by source gid.
+  bool sort_connections_by_source_;
 
-  bool
-    has_primary_connections_; //!< Whether primary connections (spikes) exist.
+  //! Whether primary connections (spikes) exist.
+  bool has_primary_connections_;
 
-  bool secondary_connections_exist_; //!< Whether secondary connections (e.g.,
-                                     //!< gap junctions) exist
+  //! Whether secondary connections (e.g., gap junctions) exist.
+  bool secondary_connections_exist_;
 };
 
 inline DictionaryDatum&

@@ -93,12 +93,12 @@ public:
   index gid_to_lid( const index gid ) const;
 
   /**
-   * Returns the global id of a given local index
+   * Returns the global id of a given local index.
    */
   index lid_to_gid( const index lid ) const;
 
   /**
-   * Returns virtual process index
+   * Returns virtual process index.
    */
   thread get_vp() const;
 
@@ -149,7 +149,7 @@ public:
 
   /**
    * Returns the number of processes that are taken care of by a single thread
-   * while processing MPI buffers in a multithreaded environment
+   * while processing MPI buffers in a multithreaded environment.
    */
   thread get_num_assigned_ranks_per_thread() const;
 
@@ -159,7 +159,7 @@ public:
     const thread num_assigned_ranks_per_thread ) const;
 
   /**
-   * Returns assigned ranks per thread to fill MPI buffers. thread tid
+   * Returns assigned ranks per thread to fill MPI buffers. Thread tid
    * is responsible for all ranks in [assigned_ranks.begin,
    * assigned_ranks.end), which are in total assigned_ranks.size and
    * at most assigned_ranks.max_size

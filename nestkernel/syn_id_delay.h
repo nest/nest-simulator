@@ -83,12 +83,22 @@ struct SynIdDelay
     return this->subsequent_targets;
   }
 
+  /**
+   * Disables the synapse.
+   *
+   * @see is_disabled
+   */
   void
   disable()
   {
     disabled = true;
   }
 
+  /**
+   * Returns a flag denoting if the synapse is disabled.
+   *
+   * @see disable
+   */
   bool
   is_disabled() const
   {

@@ -125,7 +125,7 @@ public:
   thread get_process_id_of_vp( const thread vp ) const;
 
   /*
-   * Return the process id of the node with gid.
+   * Return the process id of the node with the specified gid.
    */
   thread get_process_id_of_gid( const index gid ) const;
 
@@ -204,14 +204,29 @@ public:
   // int get_recv_buffer_size();
   bool is_mpi_used();
 
+  /**
+   * Returns total size of MPI buffer for communication of connections.
+   */
   size_t get_buffer_size_target_data() const;
 
+  /**
+   * Returns size of MPI buffer for connections divided by number of processes.
+   */
   unsigned int get_send_recv_count_target_data_per_rank() const;
 
+  /**
+   * Returns total size of MPI buffer for communication of spikes.
+   */
   size_t get_buffer_size_spike_data() const;
 
+  /**
+   * Returns size of MPI buffer for spikes divided by number of processes.
+   */
   unsigned int get_send_recv_count_spike_data_per_rank() const;
 
+  /**
+   * Returns total size of MPI buffer for communication of secondary events.
+   */
   size_t get_buffer_size_secondary_events_in_int() const;
 
 #ifdef HAVE_MPI
@@ -251,7 +266,8 @@ public:
   bool grng_synchrony( unsigned long );
   bool any_true( const bool );
 
-  /** Benchmark communication time of different MPI methods
+  /**
+   * Benchmark communication time of different MPI methods
    *
    *  The methods `time_communicate*` can be used to benchmark the timing
    *  of different MPI communication methods.
@@ -271,10 +287,26 @@ public:
 
   size_t recv_buffer_pos_to_send_buffer_pos_secondary_events( const size_t recv_buffer_pos, const thread source_rank );
 
+  /**
+   * Increases the size of the MPI buffer for communication of connections if it
+   * needs to be increased. Returns whether the size was changed.
+   */
   bool increase_buffer_size_target_data();
+
+  /**
+   * Increases the size of the MPI buffer for communication of spikes if it
+   * needs to be increased. Returns whether the size was changed.
+   */
   bool increase_buffer_size_spike_data();
 
+  /**
+   * Returns whether MPI buffers for communication of connections are adaptive.
+   */
   bool adaptive_target_buffers() const;
+
+  /**
+   * Returns whether MPI buffers for communication of spikes are adaptive.
+   */
   bool adaptive_spike_buffers() const;
 
 private:

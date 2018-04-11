@@ -43,7 +43,8 @@ namespace nest
 class Node;
 class ConnectorModel;
 
-/** This data structure stores the connections between local neurons
+/**
+ * This data structure stores the connections between local neurons
  * and devices. The core structure is a two dimensional vector, which
  * is arranged as follows:
  * - first dim: threads
@@ -66,13 +67,19 @@ public:
   TargetTableDevices();
   ~TargetTableDevices();
 
-  //! initialize data structures
+  /**
+   * Initialize data structures.
+   */
   void initialize();
 
-  //! delete data structure
+  /**
+   * Delete data structure.
+   */
   void finalize();
 
-  //! add a connection from the neuron source to the device target
+  /**
+   * Adds a connection from the neuron source to the device target.
+   */
   void add_connection_to_device( Node& source,
     Node& target,
     const index s_gid,
@@ -82,7 +89,9 @@ public:
     const double d,
     const double w );
 
-  //! add a connection from the device source to the neuron target
+  /**
+   * Adds a connection from the device source to the neuron target.
+   */
   void add_connection_from_device( Node& source,
     Node& target,
     const thread tid,
@@ -91,25 +100,35 @@ public:
     const double d,
     const double w );
 
-  //! send a spike event to all targets of the source neuron
+  /**
+   * Sends a spike event to all targets of the source neuron.
+   */
   void send_to_device( const thread tid,
     const index s_gid,
     Event& e,
     const std::vector< ConnectorModel* >& cm );
 
-  //! send a spike event to all targets of the source device
+  /**
+   * Sends a spike event to all targets of the source device.
+   */
   void send_from_device( const thread tid,
     const index ldid,
     Event& e,
     const std::vector< ConnectorModel* >& cm );
 
-  //! resize vectors according to number of local nodes
+  /**
+   * Resizes vectors according to number of local nodes.
+   */
   void resize_to_number_of_neurons();
 
-  //! resize vectors according to number of available synapse types
+  /**
+   * Resizes vectors according to number of available synapse types.
+   */
   void resize_to_number_of_synapse_types();
 
-  //! gets all connections from neurons to devices
+  /**
+   * Returns all connections from neurons to devices.
+   */
   void get_connections_to_devices_(
     const index requested_source_gid,
     const index requested_target_gid,
@@ -118,7 +137,9 @@ public:
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const;
 
-  //! gets all connections from particular neuron to devices
+  /**
+   * Returns all connections from particular neuron to devices.
+   */
   void get_connections_to_device_for_lid_(
     const index lid,
     const index requested_target_gid,
@@ -127,7 +148,9 @@ public:
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const;
 
-  //! gets all connections from devices to neurons
+  /**
+   * Returns all connections from devices to neurons.
+   */
   void get_connections_from_devices_(
     const index requested_source_gid,
     const index requested_target_gid,
@@ -136,7 +159,9 @@ public:
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const;
 
-  //! gets all connections between neurons and devices
+  /**
+   * Returns all connections between neurons and devices.
+   */
   void get_connections(
     const index requested_source_gid,
     const index requested_target_gid,
@@ -145,21 +170,27 @@ public:
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const;
 
-  //! returns synapse status of connection from neuron to device
+  /**
+   * Returns synapse status of connection from neuron to device.
+   */
   void get_synapse_status_to_device( const thread tid,
     const index source_gid,
     const synindex syn_id,
     DictionaryDatum& dict,
     const index lcid ) const;
 
-  //! returns synapse status of connection from device to neuron
+  /**
+   * Returns synapse status of connection from device to neuron.
+   */
   void get_synapse_status_from_device( const thread tid,
     const index ldid,
     const synindex syn_id,
     DictionaryDatum& dict,
     const index lcid ) const;
 
-  //! sets synapse status of connection from neuron to device
+  /**
+   * Sets synapse status of connection from neuron to device.
+   */
   void set_synapse_status_to_device( const thread tid,
     const index source_gid,
     const synindex syn_id,
@@ -167,7 +198,9 @@ public:
     const DictionaryDatum& dict,
     const index lcid );
 
-  //! set synapse status of connection from device to neuron
+  /**
+   * Sets synapse status of connection from device to neuron.
+   */
   void set_synapse_status_from_device( const thread tid,
     const index ldid,
     const synindex syn_id,

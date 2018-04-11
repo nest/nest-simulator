@@ -30,7 +30,9 @@
 
 namespace nest
 {
-/* exchanges elements i and j in vector vec */
+/**
+ * Exchanges elements i and j in vector vec.
+ */
 template < typename T >
 inline void
 exchange_( std::vector< T >& vec, const size_t i, const size_t j )
@@ -40,8 +42,10 @@ exchange_( std::vector< T >& vec, const size_t i, const size_t j )
   vec[ j ] = tmp;
 }
 
-/* calculates the median of three elements */
-/* http://algs4.cs.princeton.edu/23quicksort/QuickX.java.html */
+/**
+ * Calculates the median of three elements.
+ * See http://algs4.cs.princeton.edu/23quicksort/QuickX.java.html.
+ */
 template < typename T >
 inline size_t
 median3_( const std::vector< T >& vec,
@@ -54,11 +58,13 @@ median3_( const std::vector< T >& vec,
       : ( ( vec[ k ] < vec[ j ] ) ? j : ( vec[ k ] < vec[ i ] ) ? k : i ) );
 }
 
-/* Insertion sort, adapted from Sedgewick & Wayne
- * (2011), Algorithms 4th edition, p251ff */
-/* sorts the two vectors vec_sort and vec_perm, by sorting the
+/**
+ * Insertion sort, adapted from Sedgewick & Wayne
+ * (2011), Algorithms 4th edition, p251ff.
+ * Sorts the two vectors vec_sort and vec_perm, by sorting the
  * entries in vec_sort and applying the same exchanges to
- * vec_perm */
+ * vec_perm.
+ */
 template < typename T1, typename T2 >
 void
 insertion_sort( std::vector< T1 >& vec_sort,
@@ -77,12 +83,15 @@ insertion_sort( std::vector< T1 >& vec_sort,
   }
 }
 
-/* Quicksort with 3-way partitioning, adapted from Sedgewick & Wayne
- * (2011), Algorithms 4th edition, p296ff */
-/* http://algs4.cs.princeton.edu/23quicksort/QuickX.java.html */
-/* recursively sorts the two vectors vec_sort and vec_perm, by
+/**
+ * Quicksort with 3-way partitioning, adapted from Sedgewick & Wayne
+ * (2011), Algorithms 4th edition, p296ff
+ * (see http://algs4.cs.princeton.edu/23quicksort/QuickX.java.html).
+ *
+ * Recursively sorts the two vectors vec_sort and vec_perm, by
  * sorting the entries in vec_sort and applying the same exchanges
- * to vec_perm */
+ * to vec_perm.
+ */
 template < typename T1, typename T2 >
 void
 quicksort3way( std::vector< T1 >& vec_sort,
@@ -165,8 +174,10 @@ quicksort3way( std::vector< T1 >& vec_sort,
   quicksort3way( vec_sort, vec_perm, gt + 1, hi );
 }
 
-/* sorts two vectors according to elements in
- * first vector. convenience function. */
+/**
+ * Sorts two vectors according to elements in
+ * first vector. Convenience function.
+ */
 template < typename T1, typename T2 >
 void
 sort( std::vector< T1 >& vec_sort, std::vector< T2 >& vec_perm )

@@ -35,7 +35,8 @@ namespace nest
 /**
  * Used to communicate spikes. These are the elements of the MPI
  * buffers.
- * SeeAlso: TargetData
+ *
+ * @see TargetData
  */
 class SpikeData
 {
@@ -58,22 +59,71 @@ public:
     const synindex syn_id,
     const index lcid,
     const unsigned int lag );
+
   void set( const thread tid,
     const synindex syn_id,
     const index lcid,
     const unsigned int lag,
     const double offset );
+
+  /**
+   * Returns local connection ID.
+   */
   index get_lcid() const;
+
+  /**
+   * Returns lag in min-delay interval.
+   */
   unsigned int get_lag() const;
+
+  /**
+   * Returns thread index.
+   */
   thread get_tid() const;
+
+  /**
+   * Returns synapse-type index.
+   */
   synindex get_syn_id() const;
+
+  /**
+   * Resets the status flag to default value.
+   */
   void reset_marker();
+
+  /**
+   * Sets the status flag to complete marker.
+   */
   void set_complete_marker();
+
+  /**
+   * Sets the status flag to end marker.
+   */
   void set_end_marker();
+
+  /**
+   * Sets the status flag to invalid marker.
+   */
   void set_invalid_marker();
+
+  /**
+   * Returns whether the marker is the complete marker.
+   */
   bool is_complete_marker() const;
+
+  /**
+   * Returns whether the marker is the end marker.
+   */
   bool is_end_marker() const;
+
+  /**
+   * Returns whether the marker is the invalid marker.
+   */
   bool is_invalid_marker() const;
+
+  /**
+   * Returns offset.
+   */
   double get_offset() const;
 };
 

@@ -546,7 +546,8 @@ private:
     const double delay = NAN,
     const double weight = NAN );
 
-  /** Increases the connection count.
+  /**
+   * Increases the connection count.
    */
   void increase_connection_count( const thread tid,
     const synindex syn_id );

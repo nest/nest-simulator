@@ -976,4 +976,27 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
   return are_others_completed;
 }
 
+void
+EventDeliveryManager::resize_spike_register_5g_( const thread tid )
+{
+  for ( std::vector< std::vector< std::vector< Target > > >::iterator it =
+          ( *spike_register_5g_[ tid ] ).begin();
+        it != ( *spike_register_5g_[ tid ] ).end();
+        ++it )
+  {
+    it->resize(
+      kernel().connection_manager.get_min_delay(), std::vector< Target >( 0 ) );
+  }
+
+  for (
+    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
+      ( *off_grid_spike_register_5g_[ tid ] ).begin();
+    it != ( *off_grid_spike_register_5g_[ tid ] ).end();
+    ++it )
+  {
+    it->resize( kernel().connection_manager.get_min_delay(),
+      std::vector< OffGridTarget >( 0 ) );
+  }
+}
+
 } // of namespace nest

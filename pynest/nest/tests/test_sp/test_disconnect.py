@@ -25,8 +25,6 @@ import numpy as np
 
 __author__ = 'naveau'
 
-__author__ = 'naveau'
-
 try:
     from mpi4py import MPI
 except ImportError:

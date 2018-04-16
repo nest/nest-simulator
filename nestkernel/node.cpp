@@ -447,18 +447,6 @@ nest::Node::get_history( double,
 }
 
 void
-Node::set_has_proxies( const bool )
-{
-  throw UnexpectedEvent();
-}
-
-void
-Node::set_local_receiver( const bool )
-{
-  throw UnexpectedEvent();
-}
-
-void
 Node::event_hook( DSSpikeEvent& e )
 {
   e.get_receiver().handle( e );

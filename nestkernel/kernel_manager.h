@@ -67,8 +67,6 @@
  total_num_virtual_procs       integertype - The total number of virtual processes
  local_num_threads             integertype - The local number of threads
  num_processes                 integertype - The number of MPI processes (read only)
- num_rec_processes             integertype - The number of MPI processes reserved for recording spikes
- num_sim_processes             integertype - The number of MPI processes reserved for simulating neurons
  off_grid_spiking              booltype    - Whether to transmit precise spike times in MPI
                                              communication (read only)
 

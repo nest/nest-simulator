@@ -33,7 +33,7 @@ namespace nest
 
 /**
  * Three-tuple to store position in 3d vector of sources.
- **/
+ */
 struct SourceTablePosition
 {
   long tid;       //!< thread index

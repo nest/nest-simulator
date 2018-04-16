@@ -45,7 +45,8 @@ namespace nest
 
 class TargetData;
 
-/** This data structure stores the global ids of presynaptic neurons
+/**
+ * This data structure stores the global ids of presynaptic neurons
  * during postsynaptic connection creation, before the connection
  * information has been transferred to the presynaptic side. The core
  * structure is the three dimensional sources vector, which is
@@ -60,157 +61,228 @@ class TargetData;
 class SourceTable
 {
 private:
-  //! 3d structure storing gids of presynaptic neurons
+  /**
+   * 3D structure storing gids of presynaptic neurons.
+   */
   std::vector< std::vector< std::vector< Source >* >* > sources_;
 
-  //! whether the 3d structure has been deleted
+  /**
+   * Whether the 3D structure has been deleted.
+   */
   std::vector< bool > is_cleared_;
 
-  //! these are needed during readout of sources_
+  //! Needed during readout of sources_.
   std::vector< SourceTablePosition* > current_positions_;
+  //! Needed during readout of sources_.
   std::vector< SourceTablePosition* > saved_positions_;
 
-  //! if we detect an overflow in one of the MPI buffer parts, we save
-  //! our current position in sources_ to continue at that point in
-  //! the next communication round, while filling up (possible)
-  //! remaining parts of the MPI buffer.
+  /**
+   * If we detect an overflow in one of the MPI buffer parts, we save
+   * our current position in sources_ to continue at that point in
+   * the next communication round, while filling up (possible)
+   * remaining parts of the MPI buffer.
+   */
   std::vector< bool > saved_entry_point_;
 
-  //! minimal number of sources that need to be deleted per synapse
-  //! type and thread before a reallocation of the respective vector
-  //! is performed; balances number of reallocations and memory usage;
-  //! see SourceTable::clean()
+  /**
+   * Minimal number of sources that need to be deleted per synapse
+   * type and thread before a reallocation of the respective vector
+   * is performed. Balances number of reallocations and memory usage.
+   *
+   * @see SourceTable::clean()
+   */
   static const size_t min_deleted_elements_ = 1000000;
 
-  //! stores the index of the end of the sorted sections in sources
-  //! vectors
+  /**
+   * Stores the index of the end of the sorted sections in sources vectors.
+   */
   std::vector< std::vector< size_t >* > last_sorted_source_;
 
 public:
   SourceTable();
   ~SourceTable();
 
-  //! initialize data structure
+  /**
+   * Initialize data structure.
+   */
   void initialize();
 
-  //! delete data structures
+  /**
+   * Delete data structures.
+   */
   void finalize();
 
-  //! reserve memory to avoid expensive reallocation of vectors during
-  //! connection creation
+  /**
+   * Reserve memory to avoid expensive reallocation of vectors during
+   * connection creation.
+   */
   void reserve( const thread tid, const synindex syn_id, const size_t count );
 
-  //! adds a source to sources_
+  /**
+   * Adds a source to sources_.
+   */
   void add_source( const thread tid,
     const synindex syn_id,
     const index gid,
     const bool is_primary );
 
-  //! clears sources_
+  /**
+   * Clears sources_.
+   */
   void clear( const thread tid );
 
-  //! returns true if sources_ has been cleared
+  /**
+   * Returns true if sources_ has been cleared.
+   */
   bool is_cleared() const;
 
-  //! returns the next target data, according to the current_positions_
+  /**
+   * Returns the next target data, according to the current_positions_.
+   */
   bool get_next_target_data( const thread tid,
     const thread rank_start,
     const thread rank_end,
     thread& source_rank,
     TargetData& next_target_data );
 
-  //! rejects the last target data, and resets the current_positions_
-  //! accordingly
+  /**
+   * Rejects the last target data, and resets the current_positions_
+   * accordingly.
+   */
   void reject_last_target_data( const thread tid );
 
-  //! stores current_positions_ in saved_positions_
+  /**
+   * Stores current_positions_ in saved_positions_.
+   */
   void save_entry_point( const thread tid );
 
-  //! restores current_positions_ from saved_positions_
+  /**
+   * Restores current_positions_ from saved_positions_.
+   */
   void restore_entry_point( const thread tid );
 
-  //! resets saved_positions_ to end of sources_
+  /**
+   * Resets saved_positions_ to end of sources_.
+   */
   void reset_entry_point( const thread tid );
 
-  //! returns the global id of the source at tid|syn_id|lcid
+  /**
+   * Returns the global id of the source at tid|syn_id|lcid.
+   */
   index
   get_gid( const thread tid, const synindex syn_id, const index lcid ) const;
 
-  //! returns a reference to all sources local on thread; necessary
-  //! for sorting
+  /**
+   * Returns a reference to all sources local on thread; necessary
+   * for sorting.
+   */
   std::vector< std::vector< Source >* >& get_thread_local_sources(
     const thread tid );
 
-  //! determines maximal saved_positions_ after which it is save to
-  //! delete sources during clean()
+  /**
+   * Determines maximal saved_positions_ after which it is save to
+   * delete sources during clean().
+   */
   SourceTablePosition find_maximal_position() const;
 
-  //! resets all processed flags. needed for restructuring connection
-  //! tables, e.g., during structural plasticity update
+  /**
+   * Resets all processed flags. Needed for restructuring connection
+   * tables, e.g., during structural plasticity update.
+   */
   void reset_processed_flags( const thread tid );
 
-  //! removes all entries marked as processed
+  /**
+   * Removes all entries marked as processed.
+   */
   void clean( const thread tid );
 
-  //! sets saved_positions for this thread to minimal values so that
-  //! these are not considered in find_maximal_position
+  /**
+   * Sets current_positions_ for this thread to minimal values so that
+   * these are not considered in find_maximal_position().
+   */
   void no_targets_to_process( const thread tid );
 
-  //! computes MPI buffer positions for unique combination of source
-  //! gid and synapse type across all threads for all secondary
-  //! connections
-  void compute_buffer_pos_for_unique_secondary_sources( const thread tid, std::map< index, size_t >& buffer_pos_of_source_gid_syn_id_ );
+  /**
+   * Computes MPI buffer positions for unique combination of source
+   * GID and synapse type across all threads for all secondary
+   * connections.
+   */
+  void compute_buffer_pos_for_unique_secondary_sources( const thread tid,
+    std::map< index, size_t >& buffer_pos_of_source_gid_syn_id_ );
 
-  //! sets last_sorted_source_ to beginning of sources_ to make sure
-  //! all entries are considered during sorting of connections
+  /**
+   * Sets last_sorted_source_ to beginning of sources_ to make sure
+   * all entries are considered during sorting of connections.
+   */
   void reset_last_sorted_source( const thread tid );
 
-  //! sets last_sorted_source_ to end of sources_; is done after
-  //! sorting connections, to mark all entries as sorted
+  /**
+   * Sets last_sorted_source_ to end of sources_. This is done after
+   * sorting connections, to mark all entries as sorted.
+   */
   void update_last_sorted_source( const thread tid );
 
-  //! finds the first entry in sources_ at the given thread id and
-  //! synapse type, that is equal to sgid
-  index find_first_source( const thread tid, const synindex syn_id, const index sgid ) const;
+  /**
+   * Finds the first entry in sources_ at the given thread id and
+   * synapse type, that is equal to sgid.
+   */
+  index find_first_source( const thread tid,
+    const synindex syn_id,
+    const index sgid ) const;
 
-  //! find all entries in sources_ at the given thread id and synapse
-  //! type, that are equal to sgid in range of unsorted sources
+  /**
+   * Finds all entries in sources_ at the given thread id and synapse
+   * type, that are equal to sgid in range of unsorted sources.
+   */
   void find_all_sources_unsorted( const thread tid,
     const index sgid,
     const synindex syn_id,
     std::vector< index >& matchings_lcids );
 
-  //! marks entry in sources_ at given position as disabled
+  /**
+   * Marks entry in sources_ at given position as disabled.
+   */
   void disable_connection( const thread tid,
     const synindex syn_id,
     const index lcid );
 
-  //! removes all entries from sources_ that are marked as disabled
+  /**
+   * Removes all entries from sources_ that are marked as disabled.
+   */
   index remove_disabled_sources( const thread tid, const synindex syn_id );
 
-  //TODO@5g: remove?
+  // TODO@5g: remove?
   void print_sources( const thread tid, const synindex syn_id ) const;
 
-  //! returns global ids for entries in sources_ for the given thread
-  //! id, synapse type and local connections ids
+  /**
+   * Returns global ids for entries in sources_ for the given thread
+   * id, synapse type and local connections ids.
+   */
   void get_source_gids( const thread tid,
     const synindex syn_id,
     const std::vector< index >& source_lcids,
     std::vector< index >& sources );
 
-  //! returns the number of unique global ids for given thread id and
-  //! synapse type in sources_; this number corresponds to the number
-  //! of targets that need to be communicated during construction of
-  //! the presynaptic connection infrastructure
+  /**
+   * Returns the number of unique global ids for given thread id and
+   * synapse type in sources_. This number corresponds to the number
+   * of targets that need to be communicated during construction of
+   * the presynaptic connection infrastructure.
+   */
   size_t num_unique_sources( const thread tid, const synindex syn_id ) const;
 
-  //! resizes sources_ according to total number of threads and
-  //! synapse types
+  /**
+   * Resizes sources_ according to total number of threads and
+   * synapse types.
+   */
   void resize_sources( const thread tid );
 
-  //! encodes combination of global id and synapse types as single
-  //! long number
-  index pack_source_gid_and_syn_id( const index source_gid, const synindex syn_id ) const;
+  /**
+   * Encodes combination of global id and synapse types as single
+   * long number.
+   */
+  index pack_source_gid_and_syn_id( const index source_gid,
+    const synindex syn_id ) const;
 };
 
 inline void

@@ -47,56 +47,79 @@ namespace nest
 class TargetTable
 {
 private:
-  //! stores targets of local neurons
-  //! three dimensional objects:
-  //! - first dim: threads
-  //! - second dim: local neurons
-  //! - third dim: targets
+  /**
+   * Stores targets of local neurons
+   * Three dimensional objects:
+   *   - first dim: threads
+   *   - second dim: local neurons
+   *   - third dim: targets
+   */
   std::vector< std::vector< std::vector< Target > >* > targets_;
 
-  //! stores MPI send buffer positions for secondary targets of local
-  //! neurons
-  //! four dimensional object:
-  //! - first dim: threads
-  //! - second dim: local neurons
-  //! - third dim: synapse types
-  //! - forth dim: MPI send buffer positions
+  /**
+   * Stores MPI send buffer positions for secondary targets of local
+   * neurons.
+   * Four dimensional object:
+   *   - first dim: threads
+   *   - second dim: local neurons
+   *   - third dim: synapse types
+   *   - forth dim: MPI send buffer positions
+   */
   std::vector< std::vector< std::vector< std::vector< size_t > > >* >
     secondary_send_buffer_pos_;
 
 public:
-  //! initialize data structures
+  /**
+   * Initializes data structures.
+   */
   void initialize();
 
-  //! delete data structure
+  /**
+   * Deletes data structure.
+   */
   void finalize();
 
-  //! adjust targets_ to number of local nodes
+  /**
+   * Adjusts targets_ to number of local nodes.
+   */
   void prepare( const thread tid );
 
-  //! add entry to targets_
-  void add_target( const thread tid, const thread target_rank, const TargetData& target_data );
+  /**
+   * Adds entry to targets_.
+   */
+  void add_target( const thread tid,
+    const thread target_rank,
+    const TargetData& target_data );
 
-  //! returns all targets of a neuron. used to fill spike_register_5g_
-  //! in EventDeliveryManager
+  /**
+   * Returns all targets of a neuron. Used to fill
+   * EventDeliveryManager::spike_register_5g_.
+   */
   const std::vector< Target >& get_targets( const thread tid,
     const index lid ) const;
 
-  //! returns all MPI send buffer positions of a neuron. used to fill
-  //! MPI buffer in EventDeliveryManager
+  /**
+   * Returns all MPI send buffer positions of a neuron. Used to fill
+   * MPI buffer in EventDeliveryManager.
+   */
   const std::vector< size_t >& get_secondary_send_buffer_positions(
     const thread tid,
     const index lid,
     const synindex syn_id ) const;
 
-  //! clear all entries of targets_
+  /**
+   * Clears all entries of targets_.
+   */
   void clear( const thread tid );
 
-  //! removes identical MPI send buffer positions to avoid writing
-  //! data multiple times
+  /**
+   * Removes identical MPI send buffer positions to avoid writing
+   * data multiple times.
+   */
   void compress_secondary_send_buffer_pos( const thread tid );
 
-  //! helper functions // TODO@5g: remove
+  // TODO@5g: remove
+  // Helper functions
   void print_targets( const thread tid ) const;
   void print_secondary_send_buffer_pos( const thread tid ) const;
 };

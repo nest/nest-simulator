@@ -247,24 +247,46 @@ public:
     return target_.get_rport();
   }
 
+  /**
+   * Sets a flag in the connection to signal that the following connection has
+   * the same source.
+   *
+   * @see has_source_subsequent_targets
+   */
   void
   set_has_source_subsequent_targets( const bool subsequent_targets )
   {
     syn_id_delay_.set_has_source_subsequent_targets( subsequent_targets );
   }
 
+  /**
+   * Returns a flag denoting whether the connection has source subsequent
+   * targets.
+   *
+   * @see set_has_source_subsequent_targets
+   */
   bool
   has_source_subsequent_targets() const
   {
     return syn_id_delay_.has_source_subsequent_targets();
   }
 
+  /**
+   * Disables the connection.
+   *
+   * @see is_disabled
+   */
   void
   disable()
   {
     syn_id_delay_.disable();
   }
 
+  /**
+   * Returns a flag denoting if the connection is disabled.
+   *
+   * @see disable
+   */
   bool
   is_disabled() const
   {

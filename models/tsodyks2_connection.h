@@ -183,7 +183,7 @@ private:
   double x_;       //!< current fraction of the synaptic weight
   double tau_rec_; //!< [ms] time constant for recovery
   double tau_fac_; //!< [ms] time constant for facilitation
-  double t_lastspike_;
+  double t_lastspike_; //!< time point of last spike emitted
 };
 
 

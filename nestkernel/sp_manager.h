@@ -124,10 +124,10 @@ public:
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
    *
-   * \param s GID of the sending Node.
+   * \param sgid GID of the sending Node.
    * \param target Pointer to target Node.
    * \param target_thread Thread that hosts the target node.
-   * \param syn The synapse model to use.
+   * \param syn_id The synapse model to use.
    */
   void disconnect( const index sgid, Node* target, thread target_thread, const index syn_id );
 

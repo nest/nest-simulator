@@ -35,7 +35,7 @@ namespace nest
 {
 
 /**
- * Struct to simplify keeping track of write position in MPI buffer
+ * This class simplifies keeping track of write position in MPI buffer
  * while collocating spikes.
  */
 class SendBufferPosition
@@ -54,11 +54,33 @@ public:
   SendBufferPosition( const AssignedRanks& assigned_ranks,
     const unsigned int send_recv_count_per_rank );
 
+  /**
+   * Returns current index of specified rank in MPI buffer.
+   */
   unsigned int idx( const thread rank ) const;
+
+  /**
+   * Returns begin index of specified rank in MPI buffer.
+   */
   unsigned int begin( const thread rank ) const;
+
+  /**
+   * Returns end index of specified rank in MPI buffer.
+   */
   unsigned int end( const thread rank ) const;
 
+  /**
+   * Returns whether the part of the buffer on the specified rank has been
+   * filled.
+   *
+   * @param rank Rank denoting which part of the buffer we check
+   */
   bool is_chunk_filled( const thread rank ) const;
+
+  /**
+   * Returns whether the parts of the  MPI buffer assigned to this thread has
+   * been filled.
+   */
   bool are_all_chunks_filled() const;
 
   void increase( const thread rank );

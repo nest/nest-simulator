@@ -155,7 +155,8 @@ public:
   // TODO: rename / precisely how defined?
   delay get_to_step() const;
 
-  void update_connection_infrastructure( const thread tid ); //!< sort source table and connections and create new target table
+  //! Sorts source table and connections and create new target table.
+  void update_connection_infrastructure( const thread tid );
 
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_

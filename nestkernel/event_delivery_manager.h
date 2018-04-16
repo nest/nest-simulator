@@ -311,14 +311,14 @@ private:
 
   /**
    * Resizes spike registers according minimal delay so it can
-   * accomodate all possible lags.
+   * accommodate all possible lags.
    */
   void resize_spike_register_5g_( const thread tid );
 
   /**
    * Returns true if spike has been moved to MPI buffer, such that it
    * can be removed by clean_spike_register. Required static function
-   * by std::remove_if
+   * by std::remove_if.
    */
   static bool is_marked_for_removal_( const Target& target );
 

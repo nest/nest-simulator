@@ -25,17 +25,22 @@
 
 namespace nest {
 
-// Compile time assertions
-// use:
-// static const StaticAssert<bool-test>::success unique-var-name;
-//   or
-// typedef StaticAssert<bool-test>::sucess unique-type-name;
-//
-// Does nothing if the bool-test is true,
-//
-// if bool-test is false,
-// fails to compile because success is not defined
-
+/**
+ * Compile time assertions.
+ * Usage:
+ * \code
+ * static const StaticAssert<bool-test>::success unique-var-name;
+ * \endcode
+ *
+ * or
+ *
+ * \code
+ * typedef StaticAssert<bool-test>::sucess unique-type-name;
+ * \endcode
+ *
+ * Allows compilation if the bool-test is true. If bool-test is false,
+ * fails to compile because success is not defined.
+ */
 template<bool>
 struct StaticAssert {};
 

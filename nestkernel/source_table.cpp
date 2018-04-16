@@ -145,7 +145,7 @@ nest::SourceTable::clean( const thread tid )
 {
   // find maximal position in source table among threads to make sure
   // unprocessed entries are not removed. given this maximal position,
-  // we can savely delete all larger entries since they will not be
+  // we can safely delete all larger entries since they will not be
   // touched any more.
   const SourceTablePosition max_position = find_maximal_position();
 
@@ -291,7 +291,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
   // collect all unique pairs of source gid and synapse-type id
   // corresponding to continuous-data connections on this MPI rank;
   // using a set makes sure secondary events are not duplicated for
-  // targets on the same process but different threads
+  // targets on the same process, but different threads
   for ( size_t syn_id = 0; syn_id < sources_[ tid ]->size();
         ++syn_id )
   {
@@ -380,7 +380,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
     // if structural plasticity has created connections that have not
     // been sorted, stop reading after reaching first source that was
     // sorted; assumes that presynaptic structure for sorted sources
-    // still exist and information about unsorted sources can be
+    // still exists and information about unsorted sources can be
     // incrementally added
     // TODO@5g: currently not used -> can be removed?
     if ( current_position.lcid
@@ -452,8 +452,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
     }
 
     // decrease the position without returning a TargetData if the
-    // entry preceeding this entry has the same source, but only if
-    // the preceeding entry was not processed yet
+    // entry preceding this entry has the same source, but only if
+    // the preceding entry was not processed yet
     if (
 	( current_position.lcid - 1 >= 0 )
 	and ( ( *( *sources_[ current_position.tid ] )

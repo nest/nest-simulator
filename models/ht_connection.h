@@ -157,7 +157,7 @@ private:
 
   double p_; //!< current pool size
 
-  double t_lastspike_;
+  double t_lastspike_; //!< Time point of last spike emitted
 };
 
 

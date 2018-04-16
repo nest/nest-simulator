@@ -179,13 +179,6 @@ GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
   default_connection_.set_syn_id( syn_id );
 }
 
-/**
- * delay and weight have the default value numerics::nan.
- * numerics::nan is a special value, which describes double values that
- * are not a number. If delay or weight is omitted in an add_connection call,
- * numerics::nan indicates this and weight/delay are set only, if they are
- * valid.
- */
 template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,

@@ -443,6 +443,41 @@ def __show_help_in_modal_window(objname, hlptxt):
     display(Javascript(s.substitute(jstitle=objname, jstext=hlptxt)))
 
 
+def load_help(hlpobj, return_filename=False):
+    """Returns documentation of the object
+
+    Parameters
+    ----------
+    hlpobj : object
+        Object to display help for
+    return_filename : bool
+        Option for returning filename
+
+    Returns
+    -------
+    string:
+        The documentation of the object.
+    string:
+        Filename for the object
+    """
+
+    helpdir = os.path.join(os.environ['NEST_INSTALL_DIR'], "share", "doc",
+                           "nest", "help")
+    objname = hlpobj + '.hlp'
+
+    # Searching the given object in all helpfiles
+    for dirpath, dirnames, files in os.walk(helpdir):
+        for hlp in files:
+            if hlp == objname:
+                objf = os.path.join(dirpath, objname)
+                with open(objf, 'r') as fhlp:
+                    hlptxt = fhlp.read()
+                if return_filename:
+                    return hlptxt, objf
+                else:
+                    return hlptxt
+
+
 def show_help_with_pager(hlpobj, pager):
     """Output of doc in python with pager or print
 
@@ -500,37 +535,17 @@ def show_help_with_pager(hlpobj, pager):
             rc.close()
         else:
             pager = 'more'
-    hlperror = True
-    # Searching the given object in all helpfiles, check the environment
+
+    # Load the helptext, check the environment
     # and display the helptext in the pager.
-    for dirpath, dirnames, files in os.walk(helpdir):
-        for hlp in files:
-            if hlp == objname:
-                hlperror = False
-                objf = os.path.join(dirpath, objname)
-                fhlp = open(objf, 'r')
-                hlptxt = fhlp.read()
-                # only for notebook
-                if __check_nb():
-                    if pager in consolepager:
-                        # only in notebook open modal window
-                        __show_help_in_modal_window(objname, hlptxt)
-                        fhlp.close()
-                        break
-                    else:
-                        subprocess.call([pager, objf])
-                        fhlp.close()
-                        break
-                else:
-                    if pager in consolepager:
-                        subprocess.call([pager, objf])
-                        fhlp.close()
-                        break
-                    else:
-                        subprocess.call([pager, objf])
-                        fhlp.close()
-                        break
-    if hlperror:
+    hlptxt, objf = load_help(hlpobj, return_filename=True)
+    if hlptxt:
+        if pager in consolepager and __check_nb():
+            # only in notebook open modal window
+            __show_help_in_modal_window(objname, hlptxt)
+        else:
+            subprocess.call([pager, objf])
+    else:
         print("Sorry, there is no help for '" + hlpobj + "'!")
 
 

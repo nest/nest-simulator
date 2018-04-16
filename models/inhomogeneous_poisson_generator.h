@@ -36,7 +36,6 @@
    The following parameters can be set in the status dictionary:
    rate_times   list of doubles - Times at which rate changes in ms
    rate_values  list of doubles - Rate of Poisson spike train in spikes/s
-   individual_spike_trains bool - See note below, default: true
    allow_offgrid_times     bool - If false, spike times will be rounded to the
                                   nearest step if they are less than tic/2 from
                                   the step, otherwise NEST reports an error.
@@ -46,20 +45,13 @@
                                   of the step. Default: false
 
   Examples:
-    The current can be altered in the following way:
+    The rate can be altered in the following way:
     /inhomogeneous_poisson_generator Create /sc Set
     sc << /rate_times [0.2 0.5] /rate_values [2.0 4.0] >> SetStatus
 
     The average firing rate of each realization of the Poisson process will be
     0.0 in the time interval [0, 0.2), 2.0 in the interval [0.2, 0.5)
     and 4.0 from then on.
-
-  Remarks:
-    Individual spike trains vs single spike train: by default, the generator
-    sends a different spike train to each of its targets.  If
-    /individual_spike_trains is set to false using either SetDefaults or
-    CopyModel before a generator node is created, the generator will send the
-    same spike train to all of its targets.
 
   Receives: DataLoggingRequest
 

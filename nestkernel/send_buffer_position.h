@@ -78,7 +78,8 @@ public:
   bool is_chunk_filled( const thread rank ) const;
 
   /**
-   * Returns whether the entire buffer has been filled.
+   * Returns whether the parts of the  MPI buffer assigned to this thread has
+   * been filled.
    */
   bool are_all_chunks_filled() const;
 

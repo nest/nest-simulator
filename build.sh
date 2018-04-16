@@ -62,8 +62,8 @@ fi
 
 if [ "$xMUSIC" = "1" ] ; then
     CONFIGURE_MUSIC="-Dwith-music=$HOME/.cache/music.install"
-    chmod +x music_install.sh
-    ./music_install.sh
+    chmod +x extras/install_music.sh
+    ./extras/music_install.sh
 else
     CONFIGURE_MUSIC="-Dwith-music=OFF"
 fi
@@ -88,8 +88,8 @@ fi
 
 if [ "$xLIBNEUROSIM" = "1" ] ; then
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
-    chmod +x libneurosim-csa_install.sh
-    ./libneurosim-csa_install.sh
+    chmod +x extras/install_csa-libneurosim.sh
+    ./extras/install_csa-libneurosim.sh
 else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
@@ -249,9 +249,7 @@ if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
     export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
     export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
 elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
-    ls /usr/lib/x86_64-linux-gnu/
     export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
-    #export PYTHONPATH=$HOME/.cache/csa.install/lib/python3.4/site-packages:$PYTHONPATH
     export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
 fi
 make installcheck

@@ -100,7 +100,7 @@ before_install:
    - export SOURCEDIR=$PWD
    - echo $PWD
    - ls $PWD
-   - cp extras/install_music.sh extras/install_libneurosim-csa.sh $HOME
+   - cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
    - cd $HOME/build
    - echo $PATH
   # Upgrade pip and setuptools

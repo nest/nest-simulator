@@ -63,7 +63,7 @@ fi
 if [ "$xMUSIC" = "1" ] ; then
     CONFIGURE_MUSIC="-Dwith-music=$HOME/.cache/music.install"
     chmod +x extras/install_music.sh
-    ./extras/music_install.sh
+    ./extras/install_music.sh
 else
     CONFIGURE_MUSIC="-Dwith-music=OFF"
 fi

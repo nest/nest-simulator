@@ -100,7 +100,7 @@ before_install:
    - export SOURCEDIR=$PWD
    - echo $PWD
    - ls $PWD
-   - cp music_install.sh libneurosim-csa_install.sh $HOME
+   - cp extras/install_music.sh extras/install_libneurosim-csa.sh $HOME
    - cd $HOME/build
    - echo $PATH
   # Upgrade pip and setuptools
@@ -111,8 +111,6 @@ before_install:
   # (Please see also: http://www.nest-simulator.org/installation/#standard-configuration)
   # Installing few packages using pip as the versions of the same in the travis package whitelist is a bit old. terminaltables is required by parse_travis_log.py to create the build summary.
    - pip install cython scipy matplotlib terminaltables mpi4py
-  # Install boost libraries required for VERA++ static code analysis from the ubuntu package repo.
-  # - sudo apt-get install -y libboost-program-options-dev
     
 install:
    - which cython

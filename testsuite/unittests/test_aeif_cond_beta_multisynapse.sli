@@ -68,20 +68,20 @@
 % This test should only run if we have GSL
 skip_if_without_gsl
 
-/tolerance   	1e-2 def %mV
-/simulation_t	300 def %ms
-/V_peak		0. def
-/a 		4. def
-/b 		80.5 def
-/E_rev		[20.0 0.0 -85.0] def % synaptic reversal potentials  
-/tau_decay     [40.0 20.0 30.0] def % synaptic decay times  
-/tau_rise	[20.0 10.0 5.0] def % synaptic rise times  
-/weights	[0.1 0.2 0.15] def % synaptic weights
-/delays     	[1. 100. 130.] def % ms - synaptic delays
-/spike_time 	10. def
-/dt         	0.1 def % time step
-/Vrest          -70.6 def % resting potential
-/g_L            300.0 def
+/tolerance    1e-2 def %mV
+/simulation_t 300 def %ms
+/V_peak   0. def
+/a    4. def
+/b    80.5 def
+/E_rev        [20.0 0.0 -85.0] def % synaptic reversal potentials  
+/tau_decay    [40.0 20.0 30.0] def % synaptic decay times  
+/tau_rise     [20.0 10.0 5.0] def % synaptic rise times  
+/weights      [0.1 0.2 0.15] def % synaptic weights
+/delays       [1. 100. 130.] def % ms - synaptic delays
+/spike_time   10. def
+/dt           0.1 def % time step
+/Vrest        -70.6 def % resting potential
+/g_L          300.0 def
 
 /spike_generator Create /sg Set
 sg << /spike_times [spike_time] >> SetStatus % generates a single peak
@@ -110,16 +110,15 @@ delays length 1 arraystore Range /synapses_idx exch def
 
 [delays weights synapses_idx] % loop on synaptic receptor ports
 {
-	/syn_id exch def
-	/W exch def
-	/delay exch def
-	% connect spike generator to each port
-	sg multisynapse_neuron /one_to_one <<
-	/model /static_synapse
-	/delay delay
-	/weight W
-	/receptor_type syn_id >> Connect
-	
+  /syn_id exch def
+  /W exch def
+  /delay exch def
+  % connect spike generator to each port
+  sg multisynapse_neuron /one_to_one <<
+  /model /static_synapse
+  /delay delay
+  /weight W
+  /receptor_type syn_id >> Connect
 } ScanThread
 
 % connects voltmeter
@@ -135,45 +134,45 @@ d /times get cva /ts Set % get times
 % loop on time steps
 [ts Vms]
 {
-	Vrest sub /V_cur exch def % subtracts resting potential from V 
-	dt mul /t_cur exch def % current time in ms
-	[E_rev tau_rise tau_decay weights delays] % loop on connections
-	{
-		/delay exch def % synaptic delay
-		/W exch def % synaptic weight
-		/td exch def % synaptic decay time
-		/tr exch def % synaptic rise time
+  Vrest sub /V_cur exch def % subtracts resting potential from V 
+  dt mul /t_cur exch def % current time in ms
+  [E_rev tau_rise tau_decay weights delays] % loop on connections
+  {
+    /delay exch def % synaptic delay
+    /W exch def % synaptic weight
+    /td exch def % synaptic decay time
+    /tr exch def % synaptic rise time
                 /Er exch def % synaptic reversal potential
 
-		spike_time delay add /t0 exch def % peak starting time
-		% Evaluates the driving force		
-		Er Vrest sub
-		/Vforce exch def
-		% coefficient for approximate linear relationship
-		% between V(t) and g(t)
-		%coeff=W*Vforce/g_L
-		/coeff W Vforce mul g_L div def
+    spike_time delay add /t0 exch def % peak starting time
+    % Evaluates the driving force   
+    Er Vrest sub
+    /Vforce exch def
+    % coefficient for approximate linear relationship
+    % between V(t) and g(t)
+    %coeff=W*Vforce/g_L
+    /coeff W Vforce mul g_L div def
 
-		%t_p = td*tr / (td - tr) * np.log(td/tr) # peak time
-		/t_p td tr mul td tr sub div td tr div ln mul def
-		% normalization coefficient for synaptic conductance
-		%g0 = coeff/(np.exp(-t_p/taud)-np.exp(-t_p/taur))
-		/g0 coeff t_p td div neg exp t_p tr div neg exp sub div def
+    %t_p = td*tr / (td - tr) * np.log(td/tr) # peak time
+    /t_p td tr mul td tr sub div td tr div ln mul def
+    % normalization coefficient for synaptic conductance
+    %g0 = coeff/(np.exp(-t_p/taud)-np.exp(-t_p/taur))
+    /g0 coeff t_p td div neg exp t_p tr div neg exp sub div def
 
-		/t_rel t_cur t0 sub def % time relative to peak starting time
-		t_rel 0. lt {0.}
-		{ 
-		  % approximate analytical calculation of V(t)
-		  % (contribution from each connection)
-	  	  %y=g0*(np.exp(-(t-t0)/taud)-np.exp(-(t-t0)/taur))
-	  	  g0 t_rel td div neg exp t_rel tr div neg exp sub mul
-		}
-		ifelse
-	}  ScanThread
-	add add /Vtheor exch def % approximate analytical calculation of V(t)
-	% V_cur cvs ( ) join Vtheor cvs join = % display V simul. and theor.
-	V_cur Vtheor sub abs /Vdiff exch def % absolute value of the difference
-	Vdiff tolerance lt true eq assert_or_die % compare with tolerance
+    /t_rel t_cur t0 sub def % time relative to peak starting time
+    t_rel 0. lt {0.}
+    { 
+      % approximate analytical calculation of V(t)
+      % (contribution from each connection)
+        %y=g0*(np.exp(-(t-t0)/taud)-np.exp(-(t-t0)/taur))
+        g0 t_rel td div neg exp t_rel tr div neg exp sub mul
+    }
+    ifelse
+  }  ScanThread
+  add add /Vtheor exch def % approximate analytical calculation of V(t)
+  % V_cur cvs ( ) join Vtheor cvs join = % display V simul. and theor.
+  V_cur Vtheor sub abs /Vdiff exch def % absolute value of the difference
+  Vdiff tolerance lt true eq assert_or_die % compare with tolerance
 } ScanThread
 
 % ---------------------------
@@ -316,5 +315,201 @@ d /times get cva /ts Set % get times
 
   end
 } assert_or_die
+
+
+% The following tests address #800
+% - Test that the default recordables are V_m, w and g_1
+% - Test that the recordable g's change when changing the number of receptor ports
+% - Test that g has beta function dynamics when tau_rise and tau_decay are
+%   different, and has alpha function dynamics when they are the same
+
+% test default recordables include g_1
+{
+  << >> begin
+  ResetKernel
+  /nrn /aeif_cond_beta_multisynapse Create def
+  
+  /mm /multimeter << /withtime true /time_in_steps true
+                     /interval 1.0 /record_from [ /V_m /w /g_1 ] >> Create def
+  
+  mm nrn Connect
+  
+  /len nrn /recordables get length def
+  len 3 eq
+  end
+}
+assert_or_die
+
+% test resize recordables
+{
+  << >> begin
+  ResetKernel
+  
+  /E_rev1        [0.0  0.0  -85.0] def
+  /E_rev2        [0.0  0.0] def
+  /E_rev3        [0.0  0.0  -85.0 0.] def
+  /tau_rise1     [5.0  1.0  25.0] def
+  /tau_rise2     [5.0  1.0] def
+  /tau_rise3     [5.0  1.0  25.0 50.] def
+  /tau_decay1    [20.0  10.0  85.0] def
+  /tau_decay2    [20.0  10.0] def
+  /tau_decay3    [20.0  10.0  85.0 100.] def
+  
+  /nrn /aeif_cond_beta_multisynapse <<  
+    /E_rev E_rev1 /tau_rise tau_rise1 /tau_decay tau_decay1
+      >> Create def
+  /len1 nrn /recordables get length def
+  
+  nrn << /E_rev E_rev2 /tau_rise tau_rise2 /tau_decay tau_decay2 >> SetStatus
+  /len2 nrn /recordables get length def
+  
+  nrn << /E_rev E_rev3 /tau_rise tau_rise3 /tau_decay tau_decay3 >> SetStatus
+  /len3 nrn /recordables get length def
+  
+  len1 5 eq len2 4 eq and len3 6 eq and
+  end
+}
+assert_or_die
+
+% test record g and check for beta function synapse
+{
+  << >> begin
+  ResetKernel
+  /E_rev       [0.0  0.0  -85.0 20.] def % synaptic reversal potentials  
+  /tau_decay   [40.0 20.0  30.0 25.] def % synaptic decay times  
+  /tau_rise    [20.0 10.0  5.0  25.] def % synaptic rise times  
+  /weights     [1.0  0.5   2.0  1.0] def % synaptic weights
+  /delays      [1.0  3.0   10.0 10.] def % ms - synaptic delays
+  /spike_time  10.  def    % time at which the single spike occurs
+  /dt          0.1  def    % time step
+  /total_t     500. def    % total simulation time
+  /tolerance   1e-7 def    % tolerable difference between theoretic and simulated beta synapse conductances
+
+  /alpha_function
+  {
+    % Call like t0 W tau t alpha_function
+    << /tau 1.0 /W 1.0 /t0 0. >>
+    begin
+      /t exch def
+      /tau exch def
+      /W exch def
+      /t0 exch def
+      
+      t
+      {
+        /tt exch def
+        tt t0 geq
+        {
+          /tdiff_over_tau tt t0 sub tau div def
+          tdiff_over_tau neg exp E tdiff_over_tau W mul mul mul
+        }
+        % else
+        {
+          0.
+        } ifelse
+      } Map
+    end
+  } def
+
+  /beta_function
+  {
+    % Call like t0 W tau_decay tau_rise t beta_function
+    << /tau1 1.0 /tau2 2.0 /W 1.0 /t0 0. >>
+    begin
+      /t exch def
+      /tau1 exch def
+      /tau2 exch def
+      /W exch def
+      /t0 exch def
+      
+      tau1 tau2 eq
+      { % Compute alpha function
+        t0 W tau1 t alpha_function
+      }
+      % else
+      { % Compute beta function
+        /tau1_inv tau1 inv def
+        /tau2_inv tau2 inv def
+        /inv_tau_diff tau1_inv tau2_inv sub def
+        /tpeak tau2 tau1 div ln inv_tau_diff div def
+        /den tpeak tau1 div neg exp tpeak tau2 div neg exp sub def
+        
+        t
+        {
+          /tt exch def
+          tt t0 geq
+          {
+            /tdiff tt t0 sub def
+            /num tdiff tau1 div neg exp tdiff tau2 div neg exp sub def
+            W num mul den div
+          }
+          % else
+          {
+            0.
+          } ifelse
+        } Map
+      } ifelse
+    end
+  } def
+
+  << /resolution dt >> SetKernelStatus
+
+  % Create a spike generator that generates a single spike
+  /spike_generator Create /sg Set
+  sg << /spike_times [spike_time] >> SetStatus % generates a single peak
+
+  % Create the multisynapse neuron
+  /nrn /aeif_cond_beta_multisynapse 
+    <<  /w 0. /a 0. /b 0. /Delta_T 0. /t_ref 0. /I_e 0.
+        /E_rev E_rev /tau_decay tau_decay /tau_rise tau_rise
+    >> Create def
+
+  % Create an array of synaptic indexes to loop through 
+  delays length 1 arraystore Range /synapses_idx exch def
+  [delays weights synapses_idx] % loop on synaptic receptor ports
+  {
+    /syn_id exch def
+    /W exch def
+    /delay exch def
+    % Connect spike generator to each port
+    sg nrn /one_to_one <<
+      /model /static_synapse
+      /delay delay
+      /weight W
+      /receptor_type syn_id >>
+      Connect
+  } ScanThread
+
+  % Create the multimeter that will record from the 3 conductance channels
+  /mm /multimeter << /withtime true /time_in_steps true
+                     /interval dt /record_from [ /g_1 /g_2 /g_3 /g_4 ] >> Create def
+
+  mm nrn Connect
+
+  % Simulate
+  total_t Simulate
+
+  % Get the conductances measured during the simulation
+  /t       mm /events get /times get cva dt mul def
+  /sim_g_1 mm /events get /g_1   get cva def
+  /sim_g_2 mm /events get /g_2   get cva def
+  /sim_g_3 mm /events get /g_3   get cva def
+  /sim_g_4 mm /events get /g_4   get cva def
+  /sim_gs [sim_g_1 sim_g_2 sim_g_3 sim_g_4] def
+
+  true
+  [delays weights tau_rise tau_decay sim_gs]
+  {
+    /sim_g  exch def
+    /tau2   exch def
+    /tau1   exch def
+    /W      exch def
+    /t0     exch spike_time add def
+    /theo_g t0 W tau2 tau1 t beta_function def
+    sim_g theo_g sub { abs } Map Max tolerance leq and
+  } ScanThread
+  end
+}
+assert_or_die
 
 endusing

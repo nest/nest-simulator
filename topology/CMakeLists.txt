@@ -78,6 +78,10 @@ install( FILES ${topo_mpitests}
     DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology/mpitests
     )
 
+FILTER_HEADERS("${topo_sources}" install_headers )
+install( FILES ${install_headers}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)
+
 if ( HAVE_PYTHON )
   install( CODE "execute_process(
     COMMAND ${PYTHON} setup.py build --build-base=${CMAKE_CURRENT_BINARY_DIR}/build

@@ -34,6 +34,11 @@ simulation using the iaf_psc_alpha model
 Sven Schrader, Nov 2008, Siegert implementation by Tom Tetzlaff
 '''
 
+'''
+First, we import all necessary modules for simulation and analysis. Scipy
+should be imported before nest.
+'''
+
 from scipy.special import erf
 from scipy.optimize import fmin
 

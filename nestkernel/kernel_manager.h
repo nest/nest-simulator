@@ -95,8 +95,8 @@
  data_prefix                   stringtype  - A common prefix for all data files
  overwrite_files               booltype    - Whether to overwrite existing data files
  print_time                    booltype    - Whether to print progress information during the simulation
-			      
- Network information	       
+
+ Network information
  network_size                  integertype - The number of nodes in the network (read only)
  num_connections               integertype - The number of connections in the network
                                              (read only, local only)

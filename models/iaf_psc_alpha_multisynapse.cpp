@@ -44,22 +44,51 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_psc_alpha_multisynapse >
-  nest::iaf_psc_alpha_multisynapse::recordablesMap_;
-
 namespace nest
 {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
 void
-RecordablesMap< iaf_psc_alpha_multisynapse >::create()
+DynamicRecordablesMap< iaf_psc_alpha_multisynapse >::create(
+  iaf_psc_alpha_multisynapse& host )
 {
-  // use standard names whereever you can for consistency!
-  insert_( names::V_m, &iaf_psc_alpha_multisynapse::get_V_m_ );
-  insert_( names::currents, &iaf_psc_alpha_multisynapse::get_current_ );
+  // use standard names wherever you can for consistency!
+  insert( names::V_m,
+    host.get_data_access_functor( iaf_psc_alpha_multisynapse::State_::V_M ) );
+
+  insert( names::I_syn,
+    host.get_data_access_functor( iaf_psc_alpha_multisynapse::State_::I ) );
+
+  host.insert_current_recordables();
 }
 
+Name
+iaf_psc_alpha_multisynapse::get_i_syn_name( size_t elem )
+{
+  std::stringstream i_syn_name;
+  i_syn_name << "I_syn_" << elem + 1;
+  return Name( i_syn_name.str() );
+}
+
+void
+iaf_psc_alpha_multisynapse::insert_current_recordables( size_t first )
+{
+  for ( size_t receptor = first; receptor < P_.tau_syn_.size(); ++receptor )
+  {
+    size_t elem = iaf_psc_alpha_multisynapse::State_::I_SYN
+      + receptor
+        * iaf_psc_alpha_multisynapse::State_::NUM_STATE_ELEMENTS_PER_RECEPTOR;
+    recordablesMap_.insert(
+      get_i_syn_name( receptor ), this->get_data_access_functor( elem ) );
+  }
+}
+
+DataAccessFunctor< iaf_psc_alpha_multisynapse >
+iaf_psc_alpha_multisynapse::get_data_access_functor( size_t elem )
+{
+  return DataAccessFunctor< iaf_psc_alpha_multisynapse >( this, elem );
+}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -88,7 +117,6 @@ iaf_psc_alpha_multisynapse::State_::State_()
   y1_syn_.clear();
   y2_syn_.clear();
 }
-
 
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
@@ -236,7 +264,7 @@ iaf_psc_alpha_multisynapse::iaf_psc_alpha_multisynapse()
   , S_()
   , B_( *this )
 {
-  recordablesMap_.create();
+  recordablesMap_.create( *this );
 }
 
 iaf_psc_alpha_multisynapse::iaf_psc_alpha_multisynapse(
@@ -246,6 +274,7 @@ iaf_psc_alpha_multisynapse::iaf_psc_alpha_multisynapse(
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
+  recordablesMap_.create( *this );
 }
 
 /* ----------------------------------------------------------------
@@ -339,7 +368,9 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
       S_.V_m_ = ( S_.V_m_ < P_.LowerBound_ ? P_.LowerBound_ : S_.V_m_ );
     }
     else // neuron is absolute refractory
+    {
       --S_.refractory_steps_;
+    }
 
     for ( size_t i = 0; i < P_.n_receptors_(); i++ )
     {
@@ -417,6 +448,53 @@ void
 iaf_psc_alpha_multisynapse::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
+}
+
+void
+iaf_psc_alpha_multisynapse::set_status( const DictionaryDatum& d )
+{
+  Parameters_ ptmp = P_;                 // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d ); // throws if BadProperty
+  State_ stmp = S_;                      // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+
+  // We now know that (ptmp, stmp) are consistent. We do not
+  // write them back to (P_, S_) before we are also sure that
+  // the properties to be set in the parent class are internally
+  // consistent.
+  Archiving_Node::set_status( d );
+
+  /*
+   * Here is where we must update the recordablesMap_ if new receptors
+   * are added!
+   */
+  DynamicRecordablesMap< iaf_psc_alpha_multisynapse > rtmp =
+    recordablesMap_; // temporary copy in case of errors
+  if ( ptmp.tau_syn_.size()
+    > P_.tau_syn_.size() ) // Number of receptors increased
+  {
+    for ( size_t i_syn = P_.tau_syn_.size(); i_syn < ptmp.tau_syn_.size();
+          ++i_syn )
+    {
+      size_t elem = iaf_psc_alpha_multisynapse::State_::I_SYN
+        + i_syn
+          * iaf_psc_alpha_multisynapse::State_::NUM_STATE_ELEMENTS_PER_RECEPTOR;
+      rtmp.insert( get_i_syn_name( i_syn ), get_data_access_functor( elem ) );
+    }
+  }
+  else if ( ptmp.tau_syn_.size() < P_.tau_syn_.size() )
+  { // Number of receptors decreased
+    for ( size_t i_syn = ptmp.tau_syn_.size(); i_syn < P_.tau_syn_.size();
+          ++i_syn )
+    {
+      rtmp.erase( get_i_syn_name( i_syn ) );
+    }
+  }
+
+  // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
+  S_ = stmp;
+  recordablesMap_ = rtmp;
 }
 
 } // namespace

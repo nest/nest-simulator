@@ -313,14 +313,17 @@ kernel_fig(fig, 231, conndict)
 #{ conn4g #}
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 4.}},
-            'kernel': {'gaussian': {'p_center': 1.0, 'sigma': 1.}}}
+            'kernel': {'gaussian': {'p_center': 1.0,
+                                    'sigma': 1.}}}
 #{ end #}
 kernel_fig(fig, 232, conndict)
 
 #{ conn4gx #}
 conndict = {'connection_type': 'divergent',
-            'mask': {'circular': {'radius': 4.}, 'anchor': [1.5, 1.5]},
-            'kernel': {'gaussian': {'p_center': 1.0, 'sigma': 1.,
+            'mask': {'circular': {'radius': 4.},
+                     'anchor': [1.5, 1.5]},
+            'kernel': {'gaussian': {'p_center': 1.0,
+                                    'sigma': 1.,
                                     'anchor': [1.5, 1.5]}}}
 #{ end #}
 kernel_fig(fig, 233, conndict)
@@ -329,7 +332,8 @@ plt.draw()
 #{ conn4cut #}
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 4.}},
-            'kernel': {'gaussian': {'p_center': 1.0, 'sigma': 1.,
+            'kernel': {'gaussian': {'p_center': 1.0,
+                                    'sigma': 1.,
                                     'cutoff': 0.5}}}
 #{ end #}
 kernel_fig(fig, 234, conndict)
@@ -338,7 +342,8 @@ kernel_fig(fig, 234, conndict)
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 4.}},
             'kernel': {'gaussian2D': {'p_center': 1.0,
-                                      'sigma_x': 1., 'sigma_y': 3.}}}
+                                      'sigma_x': 1.,
+                                      'sigma_y': 3.}}}
 #{ end #}
 kernel_fig(fig, 235, conndict, showkern=False)
 
@@ -383,7 +388,9 @@ ldict = {'rows': 1, 'columns': 51,
 cdict = {'connection_type': 'divergent',
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}},
-         'weights': {'linear': {'c': 1.0, 'a': -0.05, 'cutoff': 0.0}},
+         'weights': {'linear': {'c': 1.0,
+                                'a': -0.05,
+                                'cutoff': 0.0}},
          'delays': {'linear': {'c': 0.1, 'a': 0.02}}}
 #{ end #}
 wd_fig(fig, 311, ldict, cdict, 'weight', label='Weight')
@@ -396,12 +403,14 @@ lpdict = {'rows': 1, 'columns': 51, 'extent': [51., 1.], 'center': [25., 0.],
 cdict = {'connection_type': 'divergent',
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}},
-         'weights': {'linear': {'c': 1.0, 'a': -0.05, 'cutoff': 0.0}},
+         'weights': {'linear': {'c': 1.0,
+                                'a': -0.05,
+                                'cutoff': 0.0}},
          'delays': {'linear': {'c': 0.1, 'a': 0.02}}}
 #{ end #}
 wd_fig(fig, 312, lpdict, cdict, 'weight', label='Weight')
 wd_fig(fig, 312, lpdict, cdict, 'delay', label='Delay', clr='red')
-fig.gca().legend()
+fig.gca().legend(loc=1)
 
 cdict = {'connection_type': 'divergent',
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],

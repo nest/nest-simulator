@@ -36,30 +36,33 @@ class UseGidInFilenameTestCase(unittest.TestCase):
         """With GID"""
 
         nest.ResetKernel()
+        nest.SetKernelStatus({"overwrite_files": True})
+
         sg = nest.Create("poisson_generator", 1, {"rate": 100.})
         sd = nest.Create("spike_detector", 1, {"to_file": True,
                          "label": "sd", "use_gid_in_filename": True})
         nest.Connect(sg, sd)
-
         nest.Simulate(100)
 
-        self.assertTrue(os.path.exists(os.environ["NEST_DATA_PATH"] +
-                                       "/sd-2-0.gdf"))
+        fname = "sd-{}-0.gdf".format(sd.get("global_id"))
+        expected = os.path.join(os.environ["NEST_DATA_PATH"], fname)
+
+        self.assertTrue(os.path.exists(expected))
 
     def test_NoGid(self):
         """Without GID"""
 
         nest.ResetKernel()
+        nest.SetKernelStatus({"overwrite_files": True})
 
         sg = nest.Create("poisson_generator", 1, {"rate": 100.})
         sd = nest.Create("spike_detector", 1, {"to_file": True,
                          "label": "sd", "use_gid_in_filename": False})
         nest.Connect(sg, sd)
-
         nest.Simulate(100)
 
-        self.assertTrue(os.path.exists(os.environ["NEST_DATA_PATH"] +
-                                       "/sd-0.gdf"))
+        expected = os.path.join(os.environ["NEST_DATA_PATH"], "sd-0.gdf")
+        self.assertTrue(os.path.exists(expected))
 
 
 def suite():

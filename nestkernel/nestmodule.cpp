@@ -678,7 +678,7 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
    at T=0. The dynamic state comprises typically the membrane potential,
    synaptic currents, buffers holding input that has been delivered, but not
    yet become effective, and all events pending delivery. Technically, this
-   is achieve by calling init_state() on all nodes and forcing a call to
+   is achieved by calling init_state() on all nodes and forcing a call to
    init_buffers() upon the next call to Simulate. Node parameters, such as
    time constants and threshold potentials, are not affected.
 

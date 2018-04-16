@@ -125,7 +125,7 @@ def CreateMask(masktype, specs, anchor=None):
 
     Notes
     -----
-    -
+    - All angles must be given in degrees.
 
 
     **Mask types**
@@ -137,8 +137,9 @@ def CreateMask(masktype, specs, anchor=None):
         ::
 
             'rectangular' :
-                {'lower_left' : [float, float],
-                 'upper_right': [float, float]}
+                {'lower_left'   : [float, float],
+                 'upper_right'  : [float, float],
+                 'azimuth_angle': float  # default:0.0}
             #or
             'circular' :
                 {'radius' : float}
@@ -158,8 +159,10 @@ def CreateMask(masktype, specs, anchor=None):
         ::
 
             'box' :
-                {'lower_left' : [float, float, float],
-                 'upper_right' : [float, float, float]}
+                {'lower_left'  : [float, float, float],
+                 'upper_right' : [float, float, float],
+                 'azimuth_angle: float  # default: 0.0,
+                 'polar_angle  : float  # defualt: 0.0}
             #or
             'spherical' :
                 {'radius' : float}

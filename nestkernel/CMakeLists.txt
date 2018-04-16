@@ -33,7 +33,7 @@ set( nestkernel_sources
     dynamicloader.h dynamicloader.cpp
     event.h event.cpp
     exceptions.h exceptions.cpp
-    genericmodel.h
+    genericmodel.h genericmodel_impl.h
     gid_collection.h gid_collection.cpp
     histentry.h histentry.cpp
     model.h model.cpp
@@ -98,3 +98,7 @@ install( TARGETS nestkernel
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
+
+FILTER_HEADERS("${nestkernel_sources}" install_headers )
+install( FILES ${install_headers}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

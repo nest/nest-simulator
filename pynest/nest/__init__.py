@@ -195,11 +195,24 @@ def init(argv):
         return
 
     quiet = False
-    if argv.count("--quiet"):
-        quiet = True
-        argv.remove("--quiet")
 
-    initialized |= engine.init(argv, __path__[0])
+    # Some commandline arguments of NEST and Python have the same
+    # name, but different meaning. To avoid unintended behavior, we
+    # handle NEST's arguments here and pass it a modified copy, while
+    # we leave the original list unchanged for further use by the user
+    # or other modules.
+    nest_argv = argv[:]
+
+    if "--quiet" in nest_argv:
+        quiet = True
+        nest_argv.remove("--quiet")
+    if "--debug" in nest_argv:
+        nest_argv.remove("--debug")
+    if "--sli-debug" in nest_argv:
+        nest_argv.remove("--sli-debug")
+        nest_argv.append("--debug")
+
+    initialized = engine.init(nest_argv, __path__[0])
 
     if initialized:
         if not quiet:

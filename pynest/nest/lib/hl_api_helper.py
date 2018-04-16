@@ -558,7 +558,7 @@ def show_help_with_pager(hlpobj, pager):
     elif pager in consolepager:
         objf = get_help_filepath(hlpobj)
         if objf:
-            # Run the pager with the object file when pager found in consolepager.
+            # Run the pager with the object file.
             subprocess.call([pager, objf])
         else:
             print("Sorry, there is no help for '" + hlpobj + "'!")

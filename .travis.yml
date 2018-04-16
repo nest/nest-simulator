@@ -18,7 +18,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# This is the Travis CI top-level script to setup and run the NEST build and test environment. 
+# This is the Travis CI top-level script to setup and run the NEST
+# build and test environment.
 
 language: python
 
@@ -107,9 +108,10 @@ before_install:
    - pip install -U pip
    - pip install -U setuptools
   
-  # Install packages required by NEST.
-  # (Please see also: http://www.nest-simulator.org/installation/#standard-configuration)
-  # Installing few packages using pip as the versions of the same in the travis package whitelist is a bit old. terminaltables is required by parse_travis_log.py to create the build summary.
+  # Installing additional packages using pip as they only have
+  # outdated versions in the Travis package whitelist.
+  # terminaltables is required by parse_travis_log.py to create
+  # the build summary.
    - pip install cython scipy matplotlib terminaltables mpi4py
     
 install:

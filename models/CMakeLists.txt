@@ -56,7 +56,6 @@ set( models_sources
     iaf_cond_exp.h iaf_cond_exp.cpp
     iaf_cond_exp_sfa_rr.h iaf_cond_exp_sfa_rr.cpp
     iaf_psc_alpha.h iaf_psc_alpha.cpp
-    iaf_psc_alpha_gap.h iaf_psc_alpha_gap.cpp
     iaf_psc_alpha_multisynapse.h iaf_psc_alpha_multisynapse.cpp
     iaf_psc_exp_multisynapse.h iaf_psc_exp_multisynapse.cpp
     iaf_psc_delta.h iaf_psc_delta.cpp

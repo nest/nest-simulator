@@ -24,8 +24,8 @@
 #define TOPOLOGY_PARAMETER_H
 
 // C++ includes:
-#include <cmath>
 #include <limits>
+#include <math.h>
 
 // Includes from librandom:
 #include "normal_randomdev.h"
@@ -491,7 +491,10 @@ public:
     }
 
     inv_theta_ = 1. / theta_;
-    delta_ = std::pow( inv_theta_, kappa_ ) / std::tgamma( kappa_ );
+    // TODO: tgamma() is available from math.h as C99 function,
+    //       but was added to C++ only per C++11. Add std::
+    //       once we convert NEST compilation to C++11.
+    delta_ = std::pow( inv_theta_, kappa_ ) / tgamma( kappa_ );
   }
 
   double

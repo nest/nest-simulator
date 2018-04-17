@@ -400,8 +400,11 @@ class RotatedRectangularMask(unittest.TestCase):
 
         connections = nest.GetConnections()
 
-        for conn, conn_ref in zip(connections, ref):
-            conn_list = [conn[0], conn[1]]
+        sources = connections.get('source')
+        targets = connections.get('target')
+
+        for counter, conn_ref in enumerate(ref):
+            conn_list = [sources[counter], targets[counter]]
             self.assertEqual(conn_list, conn_ref)
 
 

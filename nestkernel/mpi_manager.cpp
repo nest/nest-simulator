@@ -91,10 +91,8 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   // use 2 processes entries (need at least two
   // entries per process to use flag of first entry as validity and
   // last entry to communicate end of communication)
-    kernel().mpi_manager.set_buffer_size_target_data(
-        2  );
-    kernel().mpi_manager.set_buffer_size_spike_data(
-        2  );
+  kernel().mpi_manager.set_buffer_size_target_data( 2 );
+  kernel().mpi_manager.set_buffer_size_spike_data( 2 );
 }
 
 #else /* HAVE_MPI */
@@ -199,11 +197,17 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
     set_buffer_size_spike_data( new_buffer_size_spike_data );
   }
 
-  updateValue< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
-  updateValue< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
+  updateValue< double >( dict,
+    names::growth_factor_buffer_spike_data,
+    growth_factor_buffer_spike_data_ );
+  updateValue< double >( dict,
+    names::growth_factor_buffer_target_data,
+    growth_factor_buffer_target_data_ );
 
-  updateValue< long >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
-  updateValue< long >( dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
+  updateValue< long >(
+    dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
+  updateValue< long >(
+    dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
 }
 
 // TODO@5g: replace strings with names::
@@ -213,13 +217,22 @@ nest::MPIManager::get_status( DictionaryDatum& dict )
   def< long >( dict, names::num_processes, num_processes_ );
   def< bool >( dict, names::adaptive_spike_buffers, adaptive_spike_buffers_ );
   def< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
-  def< size_t >( dict, names::buffer_size_target_data, buffer_size_target_data_ );
+  def< size_t >(
+    dict, names::buffer_size_target_data, buffer_size_target_data_ );
   def< size_t >( dict, names::buffer_size_spike_data, buffer_size_spike_data_ );
-  def< size_t >( dict, names::buffer_size_secondary_events, get_buffer_size_secondary_events_in_int() );
-  def< size_t >( dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
-  def< size_t >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
-  def< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
-  def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
+  def< size_t >( dict,
+    names::buffer_size_secondary_events,
+    get_buffer_size_secondary_events_in_int() );
+  def< size_t >(
+    dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
+  def< size_t >(
+    dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
+  def< double >( dict,
+    names::growth_factor_buffer_spike_data,
+    growth_factor_buffer_spike_data_ );
+  def< double >( dict,
+    names::growth_factor_buffer_target_data,
+    growth_factor_buffer_target_data_ );
 }
 
 /**
@@ -701,8 +714,7 @@ void
 nest::MPIManager::communicate_Allreduce_max_in_place(
   std::vector< long >& buffer )
 {
-  MPI_Allreduce(
-    MPI_IN_PLACE, &buffer[ 0 ], 1, MPI_LONG, MPI_MAX, comm );
+  MPI_Allreduce( MPI_IN_PLACE, &buffer[ 0 ], 1, MPI_LONG, MPI_MAX, comm );
 }
 
 void
@@ -729,8 +741,7 @@ nest::MPIManager::communicate_Alltoall_( void* send_buffer,
 
 
 void
-nest::MPIManager::communicate_secondary_events_Alltoall_(
-  void* send_buffer,
+nest::MPIManager::communicate_secondary_events_Alltoall_( void* send_buffer,
   void* recv_buffer )
 {
   MPI_Alltoall( send_buffer,
@@ -1204,8 +1215,8 @@ void
 nest::MPIManager::communicate_Allreduce_max_in_place(
   std::vector< long >& buffer )
 {
-    // Null operator for ranks == 1
-    // Max already is the input
+  // Null operator for ranks == 1
+  // Max already is the input
 }
 
 #endif /* #ifdef HAVE_MPI */

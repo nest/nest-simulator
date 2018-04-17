@@ -36,15 +36,16 @@ namespace nest
  */
 struct SourceTablePosition
 {
-  long tid;       //!< thread index
-  long syn_id;    //!< synapse-type index
-  long lcid;      //!< local connection index
+  long tid;    //!< thread index
+  long syn_id; //!< synapse-type index
+  long lcid;   //!< local connection index
   SourceTablePosition();
   SourceTablePosition( const long tid, const long syn_id, const long lcid );
   SourceTablePosition( const SourceTablePosition& rhs );
 
-  template< typename T>
-  void wrap_position( const std::vector< std::vector< std::vector< T >* >* >& sources );
+  template < typename T >
+  void wrap_position(
+    const std::vector< std::vector< std::vector< T >* >* >& sources );
 
   bool is_at_end() const;
 };
@@ -73,8 +74,10 @@ inline SourceTablePosition::SourceTablePosition(
 {
 }
 
-template< typename T>
-inline void SourceTablePosition::wrap_position( const std::vector< std::vector< std::vector< T >* >* >& sources )
+template < typename T >
+inline void
+SourceTablePosition::wrap_position(
+  const std::vector< std::vector< std::vector< T >* >* >& sources )
 {
   // check for validity of indices and update if necessary
   while ( lcid < 0 )
@@ -104,7 +107,8 @@ inline void SourceTablePosition::wrap_position( const std::vector< std::vector< 
   }
 }
 
-inline bool SourceTablePosition::is_at_end() const
+inline bool
+SourceTablePosition::is_at_end() const
 {
   if ( tid < 0 and syn_id < 0 and lcid < 0 )
   {

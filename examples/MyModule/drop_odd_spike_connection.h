@@ -142,9 +142,7 @@ public:
    * @param t Thread
    * @param cp Common properties to all synapses.
    */
-  void send( nest::Event& e,
-    nest::thread t,
-    const CommonPropertiesType& cp );
+  void send( nest::Event& e, nest::thread t, const CommonPropertiesType& cp );
 
   // The following methods contain mostly fixed code to forward the
   // corresponding tasks to corresponding methods in the base class and the w_

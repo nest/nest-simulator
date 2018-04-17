@@ -46,8 +46,10 @@ nest::TargetTableDevices::initialize()
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    target_to_devices_[ tid ] = new std::vector< std::vector< ConnectorBase* > >( 0 );
-    target_from_devices_[ tid ] = new std::vector< std::vector< ConnectorBase* > >( 0 );
+    target_to_devices_[ tid ] =
+      new std::vector< std::vector< ConnectorBase* > >( 0 );
+    target_from_devices_[ tid ] =
+      new std::vector< std::vector< ConnectorBase* > >( 0 );
     sending_devices_gids_[ tid ] = new std::vector< index >( 0 );
   } // of omp parallel
 }
@@ -55,16 +57,18 @@ nest::TargetTableDevices::initialize()
 void
 nest::TargetTableDevices::finalize()
 {
-  for ( std::vector< std::vector< std::vector< ConnectorBase* > >* >::iterator it =
-          target_to_devices_.begin();
-        it != target_to_devices_.end();
-        ++it )
+  for (
+    std::vector< std::vector< std::vector< ConnectorBase* > >* >::iterator it =
+      target_to_devices_.begin();
+    it != target_to_devices_.end();
+    ++it )
   {
-    for ( std::vector< std::vector< ConnectorBase* > >::iterator iit = ( *it )->begin();
+    for ( std::vector< std::vector< ConnectorBase* > >::iterator iit =
+            ( *it )->begin();
           iit != ( *it )->end();
           ++iit )
     {
-      for ( std::vector< ConnectorBase* >::iterator iiit =  ( *iit ).begin();
+      for ( std::vector< ConnectorBase* >::iterator iiit = ( *iit ).begin();
             iiit != ( *iit ).end();
             ++iiit )
       {
@@ -75,16 +79,18 @@ nest::TargetTableDevices::finalize()
     delete *it;
   }
   target_to_devices_.clear();
-  for ( std::vector< std::vector< std::vector< ConnectorBase* > >* >::iterator it =
-          target_from_devices_.begin();
-        it != target_from_devices_.end();
-        ++it )
+  for (
+    std::vector< std::vector< std::vector< ConnectorBase* > >* >::iterator it =
+      target_from_devices_.begin();
+    it != target_from_devices_.end();
+    ++it )
   {
-    for ( std::vector< std::vector< ConnectorBase* > >::iterator iit = ( *it )->begin();
+    for ( std::vector< std::vector< ConnectorBase* > >::iterator iit =
+            ( *it )->begin();
           iit != ( *it )->end();
           ++iit )
     {
-      for ( std::vector< ConnectorBase* >::iterator iiit =  ( *iit ).begin();
+      for ( std::vector< ConnectorBase* >::iterator iiit = ( *iit ).begin();
             iiit != ( *iit ).end();
             ++iiit )
       {
@@ -129,12 +135,14 @@ nest::TargetTableDevices::resize_to_number_of_synapse_types()
     for ( index lid = 0; lid < target_to_devices_[ tid ]->size(); ++lid )
     {
       // make sure this device has support for all synapse types
-      ( *target_to_devices_[ tid ] )[ lid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
+      ( *target_to_devices_[ tid ] )[ lid ].resize(
+        kernel().model_manager.get_num_synapse_prototypes(), NULL );
     }
     for ( index ldid = 0; ldid < target_from_devices_[ tid ]->size(); ++ldid )
     {
       // make sure this device has support for all synapse types
-      ( *target_from_devices_[ tid ] )[ ldid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
+      ( *target_from_devices_[ tid ] )[ ldid ].resize(
+        kernel().model_manager.get_num_synapse_prototypes(), NULL );
     }
   }
 }
@@ -152,31 +160,20 @@ nest::TargetTableDevices::get_connections_to_devices_(
   {
     const index lid = kernel().vp_manager.gid_to_lid( requested_source_gid );
     get_connections_to_device_for_lid_(
-      lid,
-      requested_target_gid,
-      tid,
-      syn_id,
-      synapse_label,
-      conns );
+      lid, requested_target_gid, tid, syn_id, synapse_label, conns );
   }
   else
   {
     for ( index lid = 0; lid < target_to_devices_[ tid ]->size(); ++lid )
     {
       get_connections_to_device_for_lid_(
-      lid,
-      requested_target_gid,
-      tid,
-      syn_id,
-      synapse_label,
-      conns );
+        lid, requested_target_gid, tid, syn_id, synapse_label, conns );
     }
   }
 }
 
 void
-nest::TargetTableDevices::get_connections_to_device_for_lid_(
-  const index lid,
+nest::TargetTableDevices::get_connections_to_device_for_lid_( const index lid,
   const index requested_target_gid,
   const thread tid,
   const synindex syn_id,
@@ -187,15 +184,11 @@ nest::TargetTableDevices::get_connections_to_device_for_lid_(
   {
     const index source_gid = kernel().vp_manager.lid_to_gid( lid );
     // not the root subnet and valid connector
-    if ( source_gid > 0 and ( *target_to_devices_[ tid ] )[ lid ][ syn_id ] != NULL )
+    if ( source_gid > 0
+      and ( *target_to_devices_[ tid ] )[ lid ][ syn_id ] != NULL )
     {
       ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_all_connections(
-        source_gid,
-        requested_target_gid,
-        tid,
-        syn_id,
-        synapse_label,
-        conns );
+        source_gid, requested_target_gid, tid, syn_id, synapse_label, conns );
     }
   }
 }
@@ -216,7 +209,8 @@ nest::TargetTableDevices::get_connections_from_devices_(
   {
     const Node* source = kernel().node_manager.get_node( *it, tid );
     const index source_gid = source->get_gid();
-    if ( source_gid > 0 and ( requested_source_gid == source_gid or requested_source_gid == 0 ) )
+    if ( source_gid > 0
+      and ( requested_source_gid == source_gid or requested_source_gid == 0 ) )
     {
       const index ldid = source->get_local_device_id();
 
@@ -225,13 +219,13 @@ nest::TargetTableDevices::get_connections_from_devices_(
         // not the root subnet and valid connector
         if ( ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ] != NULL )
         {
-          ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->get_all_connections(
-            source_gid,
-            requested_target_gid,
-            tid,
-            syn_id,
-            synapse_label,
-            conns );
+          ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]
+            ->get_all_connections( source_gid,
+              requested_target_gid,
+              tid,
+              syn_id,
+              synapse_label,
+              conns );
         }
       }
     }

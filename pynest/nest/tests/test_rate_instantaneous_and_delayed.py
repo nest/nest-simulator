@@ -90,8 +90,10 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
         times_2 = np.array(events['times'][np.where(senders == rate_neuron_2)])
         rate_2 = np.array(events['rate'][np.where(senders == rate_neuron_2)])
 
-        rate_2 = rate_2[times_2 > delay]  # get shifted rate_2
-        rate_1 = rate_1[:len(rate_2)]  # adjust length of rate_1 to be able to substract
+        # get shifted rate_2
+        rate_2 = rate_2[times_2 > delay]
+        # adjust length of rate_1 to be able to substract
+        rate_1 = rate_1[:len(rate_2)]
 
         assert(np.sum(np.abs(rate_2 - rate_1)) < 1e-12)
 

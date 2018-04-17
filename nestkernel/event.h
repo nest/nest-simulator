@@ -1006,7 +1006,8 @@ public:
     return supported_syn_ids_;
   }
 
-  void clear_supported_syn_ids()
+  void
+  clear_supported_syn_ids()
   {
     supported_syn_ids_.clear();
     for ( size_t i = 0; i < pristine_supported_syn_ids_.size(); ++i )

@@ -63,9 +63,9 @@ private:
 
   // maximal sizes are determined by bitshifts
   static const int max_lcid_ = 134217728; // 2 ** 27
-  static const int max_rank_ = 1048576; // 2 ** 20
-  static const int max_tid_ = 1024; // 2 ** 10
-  static const int max_syn_id_ = 64; // 2 ** 6
+  static const int max_rank_ = 1048576;   // 2 ** 20
+  static const int max_tid_ = 1024;       // 2 ** 10
+  static const int max_syn_id_ = 64;      // 2 ** 6
 
 public:
   Target();
@@ -132,7 +132,7 @@ public:
 };
 
 //!< check legal size
-typedef StaticAssert<sizeof(Target) == 8>::success success_target_size;
+typedef StaticAssert< sizeof( Target ) == 8 >::success success_target_size;
 
 inline Target::Target()
   : data_( 0 )

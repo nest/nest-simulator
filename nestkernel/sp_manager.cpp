@@ -245,7 +245,11 @@ SPManager::disconnect_single( index sgid,
   {
     if ( kernel().connection_manager.secondary_connections_exist() )
     {
-      kernel().model_manager.create_secondary_events_prototypes();  // necessary before updating connection infrastructure
+      kernel()
+        .model_manager.create_secondary_events_prototypes(); // necessary before
+                                                             // updating
+                                                             // connection
+                                                             // infrastructure
     }
 #pragma omp parallel
     {
@@ -289,7 +293,8 @@ SPManager::disconnect( const index sgid,
   // normal nodes and devices with proxies
   if ( target->has_proxies() )
   {
-    kernel().connection_manager.disconnect_5g( target_thread, syn_id, sgid, target->get_gid() );
+    kernel().connection_manager.disconnect_5g(
+      target_thread, syn_id, sgid, target->get_gid() );
   }
   else if ( target->local_receiver() ) // normal devices
   {
@@ -303,7 +308,8 @@ SPManager::disconnect( const index sgid,
       target_thread = source->get_thread();
       target = kernel().node_manager.get_node( target->get_gid(), sgid );
     }
-    kernel().connection_manager.disconnect_5g( target_thread, syn_id, sgid, target->get_gid() );
+    kernel().connection_manager.disconnect_5g(
+      target_thread, syn_id, sgid, target->get_gid() );
   }
   else // globally receiving devices iterate over all target threads
   {
@@ -317,7 +323,8 @@ SPManager::disconnect( const index sgid,
     {
       target = kernel().node_manager.get_node( target->get_gid(), t );
       target_thread = target->get_thread();
-      kernel().connection_manager.disconnect_5g( target_thread, syn_id, sgid, target->get_gid() );
+      kernel().connection_manager.disconnect_5g(
+        target_thread, syn_id, sgid, target->get_gid() );
     }
   }
 }
@@ -341,7 +348,11 @@ SPManager::disconnect( GIDCollection& sources,
   {
     if ( kernel().connection_manager.secondary_connections_exist() )
     {
-      kernel().model_manager.create_secondary_events_prototypes(); // necessary before updating connection infrastructure
+      kernel()
+        .model_manager.create_secondary_events_prototypes(); // necessary before
+                                                             // updating
+                                                             // connection
+                                                             // infrastructure
     }
 #pragma omp parallel
     {
@@ -862,12 +873,14 @@ nest::SPManager::enable_structural_plasticity()
   if ( not kernel().connection_manager.get_keep_source_table() )
   {
     throw KernelException(
-      "Structural plasticity can not be enabled if keep_source_table has been set to false." );
+      "Structural plasticity can not be enabled if keep_source_table has been "
+      "set to false." );
   }
   if ( not kernel().connection_manager.get_sort_connections_by_source() )
   {
     throw KernelException(
-      "Structural plasticity can not be enabled if sort_connections_by_source has been set to false." );
+      "Structural plasticity can not be enabled if sort_connections_by_source "
+      "has been set to false." );
   }
   structural_plasticity_enabled_ = true;
 }

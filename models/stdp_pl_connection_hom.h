@@ -146,9 +146,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e,
-    thread t,
-    const STDPPLHomCommonProperties& );
+  void send( Event& e, thread t, const STDPPLHomCommonProperties& );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {

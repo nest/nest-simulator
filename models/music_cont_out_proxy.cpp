@@ -266,9 +266,9 @@ nest::music_cont_out_proxy::calibrate()
       // check whether the target is on this process
       if ( kernel().node_manager.is_local_gid( *t ) )
       {
-	const DictionaryDatum params = new Dictionary();
+        const DictionaryDatum params = new Dictionary();
         kernel().connection_manager.connect(
-	    get_gid(), *t, params, synmodel_id );
+          get_gid(), *t, params, synmodel_id );
       }
     }
     std::vector< MUSIC::GlobalIndex > music_index_map;

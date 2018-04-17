@@ -130,7 +130,8 @@ Node::get_status_dict_()
 void
 Node::set_local_device_id( const index lsdid )
 {
-  assert( false && "set_local_device_id() called on a non-device node of type" );
+  assert(
+    false && "set_local_device_id() called on a non-device node of type" );
 }
 
 index

@@ -33,7 +33,8 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
-Name: iaf_psc_alpha_gap - Leaky integrate-and-fire neuron model with support for gap junctions.
+Name: iaf_psc_alpha_gap - Leaky integrate-and-fire neuron model with support for
+gap junctions.
 
 Description: TODO@5g: ALL OUTDATED
 
@@ -127,7 +128,8 @@ SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 namespace nest
 {
 /**
- * Leaky integrate-and-fire neuron with alpha-shaped PSCs and support for gap junctions.
+ * Leaky integrate-and-fire neuron with alpha-shaped PSCs and support for gap
+ * junctions.
  */
 class iaf_psc_alpha_gap : public Archiving_Node
 {

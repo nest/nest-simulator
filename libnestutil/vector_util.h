@@ -28,7 +28,7 @@
 namespace vector_util
 {
 
-template< typename T >
+template < typename T >
 inline void
 grow( std::vector< T >& v )
 {

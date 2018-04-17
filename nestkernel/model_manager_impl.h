@@ -88,8 +88,11 @@ void
 ModelManager::register_connection_model( const std::string& name,
   const bool requires_symmetric )
 {
-  ConnectorModel* cf = new ConnectorModelT< ConnectionT >(
-    name, /*is_primary=*/true, /*has_delay=*/true, requires_symmetric, /*supports_wfr*/false );
+  ConnectorModel* cf = new ConnectorModelT< ConnectionT >( name,
+    /*is_primary=*/true,
+    /*has_delay=*/true,
+    requires_symmetric,
+    /*supports_wfr*/ false );
   register_connection_model_( cf );
 
   if ( not ends_with( name, "_hpc" ) )

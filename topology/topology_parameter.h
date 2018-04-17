@@ -24,6 +24,7 @@
 #define TOPOLOGY_PARAMETER_H
 
 // C++ includes:
+#include <cmath>
 #include <limits>
 
 // Includes from librandom:
@@ -471,31 +472,33 @@ public:
     : RadialParameter( d )
     , kappa_( 1.0 )
     , theta_( 1.0 )
+    , inv_theta_( 1.0 / theta_ )
+    , delta_( 1.0 ) // consistent, cannot be computed explicitly here
   {
     updateValue< double >( d, names::kappa, kappa_ );
     updateValue< double >( d, names::theta, theta_ );
-    if ( kappa_ < 1 )
+    if ( kappa_ <= 0 )
     {
       throw BadProperty(
         "topology::GammaParameter: "
-        "kappa >= 1 required." );
+        "kappa > 0 required." );
     }
-    if ( theta_ < 1 )
+    if ( theta_ <= 0 )
     {
       throw BadProperty(
         "topology::GammaParameter: "
-        "theta >= 1 required." );
+        "theta > 0 required." );
     }
-    beta_ = 1. / theta_;
-    delta_ = std::pow( beta_, kappa_ ) / tgamma( kappa_ );
+
+    inv_theta_ = 1. / theta_;
+    delta_ = std::pow( inv_theta_, kappa_ ) / std::tgamma( kappa_ );
   }
-  double beta_;
-  double delta_;
 
   double
   raw_value( double x ) const
   {
-    return std::pow( x, kappa_ - 1. ) * std::exp( -1. * beta_ * x ) * delta_;
+    return std::pow( x, kappa_ - 1. ) * std::exp( -1. * inv_theta_ * x )
+      * delta_;
   }
 
   TopologyParameter*
@@ -505,7 +508,10 @@ public:
   }
 
 private:
-  double kappa_, theta_;
+  double kappa_;
+  double theta_;
+  double inv_theta_;
+  double delta_;
 };
 
 

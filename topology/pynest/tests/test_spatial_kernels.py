@@ -123,7 +123,7 @@ class SpatialTester(object):
         self._gauss = lambda D: (self._params['c'] +
                                  self._params['p_center'] *
                                  math.exp(-(D - self._params['mean']) ** 2 /
-                                        (2. * self._params['sigma'] ** 2)))
+                                          (2. * self._params['sigma'] ** 2)))
         self._gamma = lambda D: (D ** (self._params['kappa'] - 1) /
                                  (self._params['theta'] **
                                   self._params['kappa'] *
@@ -503,7 +503,7 @@ class SpatialTester(object):
         variance_num_targets = sum([p * (1. - p) for p in ps])
 
         if variance_num_targets == 0:
-            return math.nan, 1.0
+            return np.nan, 1.0
         else:
             sd = math.sqrt(variance_num_targets)
             z = abs((num_targets - expected_num_targets) / sd)
@@ -593,7 +593,7 @@ if PLOTTING_POSSIBLE:
             plt.plot(x, y, color='black', linewidth=3, label='Theory',
                      zorder=1)
             plt.hist(self._target_dists, bins=bins, histtype='step',
-                     linewidth=1, density=True, color='red',
+                     linewidth=1, normed=True, color='red',
                      label='Empirical', zorder=2)
             plt.ylim(ymin=0.)
 

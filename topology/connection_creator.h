@@ -198,8 +198,8 @@ ConnectionCreator::connect_( index s,
   double d,
   index syn )
 {
-  const DictionaryDatum params = new Dictionary;  // empty parameter dictionary
-                             // required by connect() calls
+  const DictionaryDatum params = new Dictionary; // empty parameter dictionary
+                                                 // required by connect() calls
 
   // check whether the target is on this process
   if ( kernel().node_manager.is_local_gid( target->get_gid() ) )

@@ -175,7 +175,11 @@ public:
     bool has_delay,
     bool requires_symmetric,
     bool supports_wfr )
-    : ConnectorModel( name, is_primary, has_delay, requires_symmetric, supports_wfr )
+    : ConnectorModel( name,
+        is_primary,
+        has_delay,
+        requires_symmetric,
+        supports_wfr )
     , receptor_type_( 0 )
   {
   }
@@ -321,7 +325,6 @@ public:
   {
     return pev_;
   }
-
 };
 
 } // namespace nest

@@ -230,9 +230,9 @@ public:
   }
 
 private:
-  double x_; //!< amount of resources in recovered state
-  double y_; //!< amount of resources in active state
-  double u_; //!< actual probability of release
+  double x_;           //!< amount of resources in recovered state
+  double y_;           //!< amount of resources in active state
+  double u_;           //!< actual probability of release
   double t_lastspike_; //!< time point of last spike emitted
 };
 

@@ -359,7 +359,8 @@ private:
   std::vector< Event* > event_prototypes_;
 
   std::vector< ConnectorModel* > secondary_connector_models_;
-  std::vector< std::map< synindex, SecondaryEvent* >* > secondary_events_prototypes_;
+  std::vector< std::map< synindex, SecondaryEvent* >* >
+    secondary_events_prototypes_;
 
   /* BeginDocumentation
    Name: modeldict - dictionary containing all devices and models of NEST
@@ -494,24 +495,30 @@ ModelManager::has_user_prototypes() const
 inline void
 ModelManager::delete_secondary_events_prototypes()
 {
-  for ( std::vector< std::map< synindex, SecondaryEvent* >* >::iterator it = secondary_events_prototypes_.begin();
-        it != secondary_events_prototypes_.end(); ++it )
+  for ( std::vector< std::map< synindex, SecondaryEvent* >* >::iterator it =
+          secondary_events_prototypes_.begin();
+        it != secondary_events_prototypes_.end();
+        ++it )
   {
-    for ( std::map< synindex, SecondaryEvent* >::iterator iit = (*it)->begin(); iit != (*it)->end(); ++iit )
+    for (
+      std::map< synindex, SecondaryEvent* >::iterator iit = ( *it )->begin();
+      iit != ( *it )->end();
+      ++iit )
     {
       ( *iit->second ).clear_supported_syn_ids();
       delete iit->second;
     }
-    (*it)->clear();
+    ( *it )->clear();
   }
   secondary_events_prototypes_.clear();
 }
 
 inline SecondaryEvent&
-ModelManager::get_secondary_event_prototype( const synindex syn_id, const thread tid ) const
+ModelManager::get_secondary_event_prototype( const synindex syn_id,
+  const thread tid ) const
 {
   assert_valid_syn_id( syn_id );
-  return *(*secondary_events_prototypes_[ tid ])[ syn_id ];
+  return *( *secondary_events_prototypes_[ tid ] )[ syn_id ];
 }
 
 } // namespace nest

@@ -54,10 +54,12 @@ class TargetTableDevices
 {
 private:
   //! 3d structure storing connections from neurons to devices
-  std::vector< std::vector< std::vector< ConnectorBase* > >* > target_to_devices_;
+  std::vector< std::vector< std::vector< ConnectorBase* > >* >
+    target_to_devices_;
 
   //! 3d structure storing connections from devices to neurons
-  std::vector< std::vector< std::vector< ConnectorBase* > >* > target_from_devices_;
+  std::vector< std::vector< std::vector< ConnectorBase* > >* >
+    target_from_devices_;
 
   //! 3d structure storing gids of sending devices (necessary for
   //! get_connections)
@@ -129,8 +131,7 @@ public:
   /**
    * Returns all connections from neurons to devices.
    */
-  void get_connections_to_devices_(
-    const index requested_source_gid,
+  void get_connections_to_devices_( const index requested_source_gid,
     const index requested_target_gid,
     const thread tid,
     const synindex synapse_id,
@@ -140,8 +141,7 @@ public:
   /**
    * Returns all connections from particular neuron to devices.
    */
-  void get_connections_to_device_for_lid_(
-    const index lid,
+  void get_connections_to_device_for_lid_( const index lid,
     const index requested_target_gid,
     const thread tid,
     const synindex syn_id,
@@ -151,8 +151,7 @@ public:
   /**
    * Returns all connections from devices to neurons.
    */
-  void get_connections_from_devices_(
-    const index requested_source_gid,
+  void get_connections_from_devices_( const index requested_source_gid,
     const index requested_target_gid,
     const thread tid,
     const synindex synapse_id,
@@ -162,8 +161,7 @@ public:
   /**
    * Returns all connections between neurons and devices.
    */
-  void get_connections(
-    const index requested_source_gid,
+  void get_connections( const index requested_source_gid,
     const index requested_target_gid,
     const thread tid,
     const synindex synapse_id,
@@ -210,19 +208,26 @@ public:
 };
 
 inline void
-TargetTableDevices::get_synapse_status_from_device(
-  const thread tid, const index ldid, const synindex syn_id,
-  DictionaryDatum& dict, const index lcid ) const
+TargetTableDevices::get_synapse_status_from_device( const thread tid,
+  const index ldid,
+  const synindex syn_id,
+  DictionaryDatum& dict,
+  const index lcid ) const
 {
-  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
+  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->get_synapse_status(
+    tid, lcid, dict );
 }
 
 inline void
-TargetTableDevices::set_synapse_status_from_device(
-  const thread tid, const index ldid, const synindex syn_id,
-  ConnectorModel& cm, const DictionaryDatum& dict, const index lcid )
+TargetTableDevices::set_synapse_status_from_device( const thread tid,
+  const index ldid,
+  const synindex syn_id,
+  ConnectorModel& cm,
+  const DictionaryDatum& dict,
+  const index lcid )
 {
-  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
+  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->set_synapse_status(
+    lcid, dict, cm );
 }
 } // namespace nest
 

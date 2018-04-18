@@ -178,11 +178,11 @@ public:
 
 private:
   double weight_;
-  double U_;       //!< unit increment of a facilitating synapse
-  double u_;       //!< dynamic value of probability of release
-  double x_;       //!< current fraction of the synaptic weight
-  double tau_rec_; //!< [ms] time constant for recovery
-  double tau_fac_; //!< [ms] time constant for facilitation
+  double U_;           //!< unit increment of a facilitating synapse
+  double u_;           //!< dynamic value of probability of release
+  double x_;           //!< current fraction of the synaptic weight
+  double tau_rec_;     //!< [ms] time constant for recovery
+  double tau_fac_;     //!< [ms] time constant for facilitation
   double t_lastspike_; //!< time point of last spike emitted
 };
 

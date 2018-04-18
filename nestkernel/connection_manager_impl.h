@@ -65,11 +65,7 @@ ConnectionManager::send_5g( const thread tid,
   const std::vector< ConnectorModel* >& cm,
   Event& e )
 {
-  ( *connections_5g_[ tid ] )[ syn_id ]->send( tid,
-    syn_id,
-    lcid,
-    cm,
-    e );
+  ( *connections_5g_[ tid ] )[ syn_id ]->send( tid, syn_id, lcid, cm, e );
 }
 
 inline void
@@ -105,7 +101,8 @@ ConnectionManager::set_has_source_subsequent_targets( const thread tid,
   const index lcid,
   const bool subsequent_targets )
 {
-  ( *connections_5g_[ tid ] )[ syn_id ]->set_has_source_subsequent_targets( lcid, subsequent_targets );
+  ( *connections_5g_[ tid ] )[ syn_id ]->set_has_source_subsequent_targets(
+    lcid, subsequent_targets );
 }
 
 } // namespace nest

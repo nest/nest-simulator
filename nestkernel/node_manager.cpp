@@ -353,9 +353,8 @@ index NodeManager::add_node( index mod, long n ) // no_p
     // The following loop creates n nodes. For each node, a wrapper is created
     // and filled with one instance per thread, in total n * n_thread nodes in
     // n wrappers.
-    local_nodes_.reserve(
-      std::ceil( static_cast< double >( max_gid )
-        / kernel().mpi_manager.get_num_processes() ) + 50 );
+    local_nodes_.reserve( std::ceil( static_cast< double >( max_gid )
+                            / kernel().mpi_manager.get_num_processes() ) + 50 );
     for ( index gid = min_gid; gid < max_gid; ++gid )
     {
       const thread tid = kernel().vp_manager.vp_to_thread(
@@ -434,8 +433,11 @@ index NodeManager::add_node( index mod, long n ) // no_p
   // resize the target table for delivery of events to devices to make
   // sure the first dimension matches the number of local nodes and
   // the second dimension matches number of synapse types
-  kernel().connection_manager.resize_target_table_devices_to_number_of_neurons();
-  kernel().connection_manager.resize_target_table_devices_to_number_of_synapse_types();
+  kernel()
+    .connection_manager.resize_target_table_devices_to_number_of_neurons();
+  kernel()
+    .connection_manager
+    .resize_target_table_devices_to_number_of_synapse_types();
 
   return max_gid - 1;
 }
@@ -522,9 +524,8 @@ NodeManager::next_local_gid_( index curr_gid ) const
 index
 NodeManager::get_max_num_local_nodes() const
 {
-  return static_cast< index >(
-    ceil( static_cast< double >(
-            size() ) / kernel().vp_manager.get_num_virtual_processes() ) );
+  return static_cast< index >( ceil( static_cast< double >( size() )
+    / kernel().vp_manager.get_num_virtual_processes() ) );
 }
 
 index
@@ -627,8 +628,9 @@ NodeManager::ensure_valid_thread_local_ids()
         for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
         {
           Node* node = local_nodes_.get_node_by_index( idx );
-          if (  not node->is_subnet() and ( node->get_thread() == tid
-                                       or node->num_thread_siblings() > 0 ) )
+          if ( not node->is_subnet()
+            and ( node->get_thread() == tid
+                  or node->num_thread_siblings() > 0 ) )
           {
             num_thread_local_nodes++;
             if ( node->node_uses_wfr() )

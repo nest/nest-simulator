@@ -238,9 +238,10 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
 
   if ( not p->empty() )
   {
-    connection.set_status( p, *this ); // reference to connector model needed here to
-                              // check delay (maybe this
-                              // could be done one level above?)
+    connection.set_status(
+      p, *this ); // reference to connector model needed here to
+                  // check delay (maybe this
+                  // could be done one level above?)
   }
 
   // We must use a local variable here to hold the actual value of the
@@ -253,7 +254,12 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
 #endif
   updateValue< long >( p, names::receptor_type, actual_receptor_type );
 
-  add_connection_5g_( src, tgt, thread_local_connectors, syn_id, connection, actual_receptor_type );
+  add_connection_5g_( src,
+    tgt,
+    thread_local_connectors,
+    syn_id,
+    connection,
+    actual_receptor_type );
 }
 
 
@@ -270,13 +276,16 @@ GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
 
   if ( ( *thread_local_connectors )[ syn_id ] == NULL )
   {
-    // no homogeneous Connector with this syn_id exists, we need to create a new homogeneous Connector
-    ( *thread_local_connectors )[ syn_id ] = new Connector< ConnectionT >( syn_id );
+    // no homogeneous Connector with this syn_id exists, we need to create a new
+    // homogeneous Connector
+    ( *thread_local_connectors )[ syn_id ] =
+      new Connector< ConnectionT >( syn_id );
   }
 
   ConnectorBase* connector = ( *thread_local_connectors )[ syn_id ];
   // the following line will throw an exception, if it does not work
-  connection.check_connection( src, tgt, receptor_type, get_common_properties() );
+  connection.check_connection(
+    src, tgt, receptor_type, get_common_properties() );
 
   assert( connector != 0 );
 
@@ -298,8 +307,10 @@ GenericConnectorModel< ConnectionT >::reserve_connections(
 
   if ( ( *thread_local_connectors )[ syn_id ] == NULL )
   {
-    // no homogeneous Connector with this syn_id exists, we need to create a new homogeneous Connector
-    ( *thread_local_connectors )[ syn_id ] = new Connector< ConnectionT >( syn_id );
+    // no homogeneous Connector with this syn_id exists, we need to create a new
+    // homogeneous Connector
+    ( *thread_local_connectors )[ syn_id ] =
+      new Connector< ConnectionT >( syn_id );
   }
 
   ConnectorBase* connector = ( *thread_local_connectors )[ syn_id ];

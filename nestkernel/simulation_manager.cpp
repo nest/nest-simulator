@@ -166,8 +166,8 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       throw KernelException();
     }
     else if ( res_updated and tics_per_ms_updated ) // only allow TICS_PER_MS to
-                                                   // be changed together with
-                                                   // resolution
+                                                    // be changed together with
+                                                    // resolution
     {
       if ( resd < 1.0 / tics_per_ms )
       {
@@ -757,7 +757,9 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   if ( kernel().connection_manager.secondary_connections_exist() )
   {
 #pragma omp barrier
-    kernel().connection_manager.compute_compressed_secondary_recv_buffer_positions( tid );
+    kernel()
+      .connection_manager.compute_compressed_secondary_recv_buffer_positions(
+        tid );
 #pragma omp single
     {
       kernel().event_delivery_manager.configure_secondary_buffers();
@@ -817,9 +819,10 @@ nest::SimulationManager::update_()
       }
 
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
-     and ( ( clock_.get_steps() + from_step_ )
-     % kernel().sp_manager.get_structural_plasticity_update_interval()
-     == 0 ) )
+        and ( ( clock_.get_steps() + from_step_ )
+                % kernel()
+                    .sp_manager.get_structural_plasticity_update_interval()
+              == 0 ) )
       {
         for ( std::vector< Node* >::const_iterator i =
                 kernel().node_manager.get_nodes_on_thread( tid ).begin();
@@ -843,10 +846,10 @@ nest::SimulationManager::update_()
           ( *i )->decay_synaptic_elements_vacant();
         }
 
-  // after structural plasticity has created and deleted
-  // connections, update the connection infrastructure; implies
-  // complete removal of presynaptic part and reconstruction
-  // from postsynaptic data
+        // after structural plasticity has created and deleted
+        // connections, update the connection infrastructure; implies
+        // complete removal of presynaptic part and reconstruction
+        // from postsynaptic data
         update_connection_infrastructure( tid );
 
       } // of structural plasticity
@@ -886,7 +889,8 @@ nest::SimulationManager::update_()
       // preliminary update of nodes that use waveform relaxtion, only
       // necessary if secondary connections exist and any node uses
       // wfr
-      if ( kernel().connection_manager.secondary_connections_exist() and kernel().node_manager.wfr_is_used() )
+      if ( kernel().connection_manager.secondary_connections_exist()
+        and kernel().node_manager.wfr_is_used() )
       {
 #pragma omp single
         {
@@ -947,8 +951,8 @@ nest::SimulationManager::update_()
 
           // deliver SecondaryEvents generated during wfr_update
           // returns the done value over all threads
-          done_p =
-            kernel().event_delivery_manager.deliver_secondary_events( tid, true );
+          done_p = kernel().event_delivery_manager.deliver_secondary_events(
+            tid, true );
 
           if ( done_p )
           {
@@ -971,7 +975,7 @@ nest::SimulationManager::update_()
         }
 
       } // of if(wfr_is_used)
-      // end of preliminary update
+        // end of preliminary update
 
 #ifndef DISABLE_TIMING
       if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
@@ -1025,7 +1029,8 @@ nest::SimulationManager::update_()
           {
             kernel().event_delivery_manager.gather_secondary_events( true );
           }
-          kernel().event_delivery_manager.deliver_secondary_events( tid, false );
+          kernel().event_delivery_manager.deliver_secondary_events(
+            tid, false );
         }
       }
 
@@ -1072,10 +1077,14 @@ nest::SimulationManager::update_()
     {
       sw_total.stop();
       sw_update.print( "0] Update time: " );
-      kernel().event_delivery_manager.sw_collocate_spike_data.print( "0] GatherSpikeData::collocate time: " );
-      kernel().event_delivery_manager.sw_communicate_spike_data.print( "0] GatherSpikeData::communicate time: " );
-      kernel().event_delivery_manager.sw_deliver_spike_data.print( "0] GatherSpikeData::deliver time: " );
-      kernel().event_delivery_manager.sw_communicate_secondary_events.print( "0] GatherSecondaryData::communicate time: " );
+      kernel().event_delivery_manager.sw_collocate_spike_data.print(
+        "0] GatherSpikeData::collocate time: " );
+      kernel().event_delivery_manager.sw_communicate_spike_data.print(
+        "0] GatherSpikeData::communicate time: " );
+      kernel().event_delivery_manager.sw_deliver_spike_data.print(
+        "0] GatherSpikeData::deliver time: " );
+      kernel().event_delivery_manager.sw_communicate_secondary_events.print(
+        "0] GatherSecondaryData::communicate time: " );
       sw_total.print( "0] Total time: " );
     }
 #endif
@@ -1087,11 +1096,15 @@ nest::SimulationManager::update_()
                 << kernel().event_delivery_manager.comm_steps_spike_data << " ("
                 << kernel().event_delivery_manager.comm_rounds_spike_data << ")"
                 << std::endl;
-      std::cout << "0] CommStepsSecondaryEvents: " << kernel().event_delivery_manager.comm_steps_secondary_events << std::endl;
+      std::cout << "0] CommStepsSecondaryEvents: "
+                << kernel().event_delivery_manager.comm_steps_secondary_events
+                << std::endl;
       std::cout << "0] CallCount deliver_events_5g_: ";
       for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
       {
-        std::cout << kernel().event_delivery_manager.call_count_deliver_events_5g[ tid ] << " ";
+        std::cout
+          << kernel().event_delivery_manager.call_count_deliver_events_5g[ tid ]
+          << " ";
       }
       std::cout << std::endl;
       std::cout << "0] CallCount Connector::send(): " << std::endl;

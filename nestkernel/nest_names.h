@@ -49,18 +49,18 @@ extern const Name A_std;
 extern const Name a_thresh_th; //!< Used by stdp_connection_facetshw_hom
 extern const Name a_thresh_tl; //!< Used by stdp_connection_facetshw_hom
 extern const Name A_upper;
-extern const Name acceptable_latency;   //!< Used in music_message_in_proxy
-extern const Name accumulator;          //!< Recorder parameter
-extern const Name Act_h;                //!< Specific to Hodgkin Huxley models
-extern const Name Act_m;                //!< Specific to Hodgkin Huxley models
-extern const Name activity;             //!< Used in pulsepacket_generator
+extern const Name acceptable_latency;     //!< Used in music_message_in_proxy
+extern const Name accumulator;            //!< Recorder parameter
+extern const Name Act_h;                  //!< Specific to Hodgkin Huxley models
+extern const Name Act_m;                  //!< Specific to Hodgkin Huxley models
+extern const Name activity;               //!< Used in pulsepacket_generator
 extern const Name adaptive_spike_buffers; //!< Used in MPIManager
 extern const Name adaptive_target_buffers; //!< Used in MPIManager
-extern const Name address;              //!< Node parameter
-extern const Name ahp_bug;              //!< Used in iaf_chxk_2008
-extern const Name allow_offgrid_spikes; //!< Used in spike_generator
-extern const Name allow_offgrid_times;  //!< Used in step_current_generator
-extern const Name alpha;                //!< stdp_synapse parameter
+extern const Name address;                 //!< Node parameter
+extern const Name ahp_bug;                 //!< Used in iaf_chxk_2008
+extern const Name allow_offgrid_spikes;    //!< Used in spike_generator
+extern const Name allow_offgrid_times;     //!< Used in step_current_generator
+extern const Name alpha;                   //!< stdp_synapse parameter
 extern const Name alpha_1; //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name alpha_2; //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name Aminus;  //!< Used by stdp_connection_facetshw_hom
@@ -79,9 +79,9 @@ extern const Name b;    //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name beta; //!< Specific to amat2_*
 extern const Name
   beta_Ca; //!< Increment in calcium concentration with each spike
-extern const Name binary; //!< Recorder parameter
-extern const Name buffer_size_spike_data;     //! Used in MPIManager
-extern const Name buffer_size_target_data;    //! Used in MPIManager
+extern const Name binary;                       //!< Recorder parameter
+extern const Name buffer_size_spike_data;       //! Used in MPIManager
+extern const Name buffer_size_target_data;      //! Used in MPIManager
 extern const Name buffer_size_secondary_events; //! Used in MPIManager
 
 extern const Name c;         //!< Specific to Izhikevich 2003
@@ -228,16 +228,16 @@ extern const Name g_sfa;         //!< Other adaptation
 extern const Name g_sp;          //!< Used by iaf_cond_alpha_mc
 extern const Name GABA_A;
 extern const Name GABA_B;
-extern const Name gamma;         //!< Specific to mirollo_strogatz_ps
-extern const Name gamma_shape;   //!< Specific to ppd_sup_generator and
-                                 //!< gamma_sup_generator
-extern const Name gaussian;      //!< Parameter for MSP growth curves
-extern const Name global_id;     //!< Node parameter
-extern const Name grng;          //!< Used in rng_manager
-extern const Name grng_seed;     //!< Seed
-extern const Name growth_curve;  //!< Growth curve for MSP dynamics
+extern const Name gamma;        //!< Specific to mirollo_strogatz_ps
+extern const Name gamma_shape;  //!< Specific to ppd_sup_generator and
+                                //!< gamma_sup_generator
+extern const Name gaussian;     //!< Parameter for MSP growth curves
+extern const Name global_id;    //!< Node parameter
+extern const Name grng;         //!< Used in rng_manager
+extern const Name grng_seed;    //!< Seed
+extern const Name growth_curve; //!< Growth curve for MSP dynamics
 extern const Name growth_factor_buffer_spike_data;  //<! Used in MPIManager
-extern const Name growth_factor_buffer_target_data;  //<! Used in MPIManager
+extern const Name growth_factor_buffer_target_data; //<! Used in MPIManager
 extern const Name growth_rate;   //!< Parameter of the growth curve for MSP
                                  //!< dynamics
 extern const Name gsl_error_tol; //!< GSL integrator tolerance
@@ -291,8 +291,8 @@ extern const Name interval; //!< Recorder parameter
 extern const Name is_refractory; //!< Neuron is in refractory period (debugging)
 
 extern const Name keep_source_table; //!< Used by ConnectionManager
-extern const Name Kplus;         //!< Used by stdp_connection_facetshw_hom
-extern const Name Kplus_triplet; //!< Used by stdp_connection_facetshw_hom
+extern const Name Kplus;             //!< Used by stdp_connection_facetshw_hom
+extern const Name Kplus_triplet;     //!< Used by stdp_connection_facetshw_hom
 
 extern const Name label;    //!< Miscellaneous parameters
 extern const Name lambda;   //!< stdp_synapse parameter
@@ -312,10 +312,10 @@ extern const Name lookuptable_0;       //!< Used in stdp_connection_facetshw_hom
 extern const Name lookuptable_1;       //!< Used in stdp_connection_facetshw_hom
 extern const Name lookuptable_2;       //!< Used in stdp_connection_facetshw_hom
 
-extern const Name make_symmetric; //!< Connectivity-related
+extern const Name make_symmetric;              //!< Connectivity-related
 extern const Name max_buffer_size_spike_data;  //!< Used in MPIManager
-extern const Name max_buffer_size_target_data;  //!< Used in MPIManager
-extern const Name max_delay;      //!< In ConnBuilder
+extern const Name max_buffer_size_target_data; //!< Used in MPIManager
+extern const Name max_delay;                   //!< In ConnBuilder
 extern const Name MAXERR; //!< Largest permissible error for adaptive stepsize
                           //!< (Brette & Gerstner 2005)
 extern const Name mean;   //!< Miscellaneous parameters
@@ -441,16 +441,17 @@ extern const Name sdev;             //!< Used in pulsepacket_generator
 extern const Name send_buffer_size; //!< mpi-related
 extern const Name senders;          //!< Recorder parameter
 extern const Name shift_now_spikes; //!< Used by spike_generator
-extern const Name sigma; //!< Specific to rate models (Gaussian gain function (tuning spread))
-extern const Name sigmoid;   //!< Sigmoid MSP growth curve
-extern const Name size_of;   //!< Connection parameters
-extern const Name soma_curr; //!< Used by iaf_cond_alpha_mc
-extern const Name soma_exc;  //!< Used by iaf_cond_alpha_mc
-extern const Name soma_inh;  //!< Used by iaf_cond_alpha_mc
-extern const Name sort_connections_by_source;  //<! Used by ConnectionManager
-extern const Name source;    //!< Connection parameters
-extern const Name spike;     //!< true if the neuron spikes and false if not.
-                             //!< (sli_neuron)
+extern const Name
+  sigma; //!< Specific to rate models (Gaussian gain function (tuning spread))
+extern const Name sigmoid;                    //!< Sigmoid MSP growth curve
+extern const Name size_of;                    //!< Connection parameters
+extern const Name soma_curr;                  //!< Used by iaf_cond_alpha_mc
+extern const Name soma_exc;                   //!< Used by iaf_cond_alpha_mc
+extern const Name soma_inh;                   //!< Used by iaf_cond_alpha_mc
+extern const Name sort_connections_by_source; //<! Used by ConnectionManager
+extern const Name source;                     //!< Connection parameters
+extern const Name spike; //!< true if the neuron spikes and false if not.
+                         //!< (sli_neuron)
 extern const Name spike_multiplicities;           //!x Used by spike_generator
 extern const Name spike_times;                    //!< Recorder parameter
 extern const Name spike_weights;                  //!< Used by spike_generator

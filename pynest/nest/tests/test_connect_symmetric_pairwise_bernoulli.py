@@ -37,7 +37,8 @@ class TestSymmetricPairwiseBernoulli(TestParams):
     # specify connection pattern and specific params
     rule = 'symmetric_pairwise_bernoulli'
     p = 0.5
-    conn_dict = {'rule': rule, 'p': p, 'multapses': True, 'autapses': False, 'make_symmetric': True}
+    conn_dict = {'rule': rule, 'p': p, 'multapses': True,
+                 'autapses': False, 'make_symmetric': True}
     # Critical values and number of iterations of two level test
     stat_dict = {'alpha2': 0.05, 'n_runs': 20}
 
@@ -136,7 +137,8 @@ class TestSymmetricPairwiseBernoulli(TestParams):
 
 
 def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestSymmetricPairwiseBernoulli)
+    suite = unittest.TestLoader().loadTestsFromTestCase(
+        TestSymmetricPairwiseBernoulli)
     return suite
 
 

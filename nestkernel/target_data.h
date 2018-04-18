@@ -158,9 +158,9 @@ SecondaryTargetDataFields::get_syn_id() const
  */
 class TargetData
 {
-    // Members must be set explicitly -- no defaults
-    // Done this way to create large vector without preconstruction
-    // and to handle variant fields
+  // Members must be set explicitly -- no defaults
+  // Done this way to create large vector without preconstruction
+  // and to handle variant fields
 
 private:
   static const unsigned int default_marker_ = 0;
@@ -176,9 +176,10 @@ private:
 
 public:
   //<! variant fields
-  union {
-      TargetDataFields target_data;
-      SecondaryTargetDataFields secondary_data;
+  union
+  {
+    TargetDataFields target_data;
+    SecondaryTargetDataFields secondary_data;
   };
 
   void reset_marker();
@@ -197,8 +198,8 @@ public:
 };
 
 //!< check legal size
-typedef StaticAssert<sizeof(TargetData) == 12>::success
-    success_target_data_size;
+typedef StaticAssert< sizeof( TargetData ) == 12 >::success
+  success_target_data_size;
 
 inline void
 TargetData::reset_marker()

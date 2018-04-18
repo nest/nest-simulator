@@ -108,7 +108,8 @@ const index invalid_index = SIZE_MAX;
  */
 typedef unsigned char synindex;
 // const synindex invalid_synindex = UCHAR_MAX;
-const synindex invalid_synindex = 63; // number of synapse types limited by size of syn_id in target.h
+const synindex invalid_synindex =
+  63; // number of synapse types limited by size of syn_id in target.h
 
 /**
  * Unsigned short type for compact target representation.

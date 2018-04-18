@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE( test_random )
     vec0[ i ] = k;
     vec1[ i ] = k;
   }
-  
+
   nest::sort( vec0, vec1 );
 
   BOOST_REQUIRE( is_sorted( vec0.begin(), vec0.end() ) );

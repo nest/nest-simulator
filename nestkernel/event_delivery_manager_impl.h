@@ -150,10 +150,12 @@ EventDeliveryManager::send_secondary( const Node& source, SecondaryEvent& e )
   // considered
   const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
   for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin();
-        cit != supported_syn_ids.end(); ++cit )
+        cit != supported_syn_ids.end();
+        ++cit )
   {
     const std::vector< size_t >& positions =
-      kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid, *cit );
+      kernel().connection_manager.get_secondary_send_buffer_positions(
+        tid, lid, *cit );
 
     for ( size_t i = 0; i < positions.size(); ++i )
     {

@@ -457,14 +457,14 @@ def get_help_filepath(hlpobj):
         Filepath of the help object.
     """
 
-    helpdir = os.path.join(os.environ['NEST_INSTALL_DIR'], "share", "doc",
-                           "nest", "help")
+    helpdir = os.path.join(sli_func("statusdict/prgdocdir ::"), "help")
     objname = hlpobj + '.hlp'
     for dirpath, dirnames, files in os.walk(helpdir):
         for hlp in files:
             if hlp == objname:
                 objf = os.path.join(dirpath, objname)
                 return objf
+    print("Sorry, there is no help for '" + hlpobj + "'!")
 
 
 def load_help(hlpobj):
@@ -508,8 +508,6 @@ def show_help_with_pager(hlpobj, pager):
             'Please source nest_vars.sh or define NEST_INSTALL_DIR manually.')
         return
 
-    helpdir = os.path.join(os.environ['NEST_INSTALL_DIR'], "share", "doc",
-                           "nest", "help")
     objname = hlpobj + '.hlp'
     consolepager = ['less', 'more', 'vi', 'vim', 'nano', 'emacs -nw',
                     'ed', 'editor']
@@ -546,22 +544,17 @@ def show_help_with_pager(hlpobj, pager):
         else:
             pager = 'more'
 
-    if __check_nb():
-        # Load the helptext, check the file exists.
-        hlptxt = load_help(hlpobj)
-        if hlptxt:
-            # Opens modal window only in notebook.
-            __show_help_in_modal_window(objname, hlptxt)
-        else:
-            print("Sorry, there is no help for '" + hlpobj + "'!")
-
-    elif pager in consolepager:
-        objf = get_help_filepath(hlpobj)
-        if objf:
+    objf = get_help_filepath(hlpobj)
+    if objf:
+        if __check_nb():
+            # Load the helptext, check the file exists.
+            hlptxt = load_help(hlpobj)
+            if hlptxt:
+                # Opens modal window only in notebook.
+                __show_help_in_modal_window(objname, hlptxt)
+        elif pager in consolepager:
             # Run the pager with the object file.
             subprocess.call([pager, objf])
-        else:
-            print("Sorry, there is no help for '" + hlpobj + "'!")
 
 
 @check_stack

@@ -31,6 +31,7 @@ structured neural networks, MSc thesis, Norwegian University of
 Life Science, 2013. http://hdl.handle.net/11250/189117.
 """
 
+import math
 import numpy as np
 import numpy.random as rnd
 import scipy.integrate
@@ -41,437 +42,31 @@ import unittest
 import nest
 import nest.topology as topo
 
-# Plotting not used in tests but included for controls, especially
-# when extending to further kernels.
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
 
-# Constants defining sensitivity of test (minimal p-value to pass)
+try:
+    # for debugging
+    from mpl_toolkits.mplot3d import Axes3D
+    import matplotlib.pyplot as plt
+    # make sure we can open a window; DISPLAY may not be set
+    fig = plt.figure()
+    plt.close(fig)
+    PLOTTING_POSSIBLE = True
+except:
+    PLOTTING_POSSIBLE = False
+
+# If False, tests will be run; otherwise, as single case will be
+# plotted.
+DEBUG_MODE = True
+
+# Constant defining sensitivity of test (minimal p-value to pass)
 P_MIN = 0.1
+
+# Seed for all simulations
 SEED = 1234567
 
 
 class SpatialTester(object):
     '''Tests for spatially structured networks.'''
-
-    def __init__(self, seed, dim, L, N, open_bc, x0, y0):
-        '''
-        Construct a test object.
-
-        Parameters
-        ----------
-            seed         : Random seed for test
-            dim          : Dimensions (2 or 3)
-            L: Side length of area / volume.
-            N: Number of nodes.
-            open_bc      : Network with open boundary conditions
-            x0, y0       : Location of source neuron; open_bc only
-        '''
-
-        if dim != 2 and open_bc:
-            raise ValueError("open_bc only supported for 2D")
-
-        self._seed = seed
-        self._dimensions = dim
-        self._L = float(L)
-        self._N = N
-        self._open_bc = open_bc
-        self._x_d, self._y_d = x0, y0
-
-        if (self._dimensions == 2):
-            if (self._open_bc):
-                self._max_dist = self._L * np.sqrt(2)
-            else:
-                self._max_dist = self._L / np.sqrt(2)
-        elif (self._dimensions == 3):
-            self._max_dist = self._L * np.sqrt(3) / 2
-
-        self._target_dists = None
-        self._all_dists = None
-
-    def _create_dist_data(self):
-
-        self._reset(self._seed)
-        self._build()
-        self._connect()
-
-        self._target_dists = sorted(self._target_distances())
-        self._all_dists = self._all_distances()
-
-    def _reset(self, seed):
-        '''Reset simulator and seed PRNGs.'''
-
-        pass
-
-    def _build(self):
-        '''Create populations.'''
-
-        raise NotImplementedError()
-
-    def _connect(self):
-        '''Connect populations.'''
-
-        raise NotImplementedError()
-
-    def _kernel(self, D):
-        '''Distance dependent probability function (kernel).'''
-
-        raise NotImplementedError()
-
-    def _positions(self):
-        '''Return list of position tuples for all nodes.'''
-
-        raise NotImplementedError()
-
-    def _target_positions(self):
-        '''Return list of position tuples of all connected target nodes.'''
-
-        raise NotImplementedError()
-
-    def _all_distances(self):
-        '''Return list with distances to all nodes.'''
-
-        raise NotImplementedError()
-
-    def _target_distances(self):
-        '''
-        Return list with distances from source node to all connected
-        target nodes.
-        '''
-
-        raise NotImplementedError()
-
-    def _roi_2d(self, x, y, L):
-        '''
-        Moves coordinates (x,y) to triangle area (x',y') in [0,L/2]X[0,x']
-        without loss of generality
-        '''
-        x = -x if (x >= -self._L / 2.) & (x < 0) else x
-        y = -y if (y >= -self._L / 2.) & (y < 0) else y
-        return np.array([x, y]) if x > y else np.array([y, x])
-
-    def _pdf(self, D):
-        '''
-        Unnormalized probability density function (PDF).
-
-        Parameters
-        ----------
-            D: Distance in interval [0, max_dist].
-
-        Return values
-        -------------
-            Unnormalized PDF at distance D.
-        '''
-
-        if self._dimensions == 2:
-            if self._open_bc:
-
-                # # move coordinates to right reference area:
-                x0, y0 = self._roi_2d(self._x_d, self._y_d, self._L)
-
-                # # define a,b,c,d; alpha,beta,gamma,delta:
-                a, b, c, d = self._L / 2. - np.array([x0, y0, -x0, -y0])
-                alpha = np.arccos(a / D) if a / D <= 1. else 0.
-                beta = np.arccos(b / D) if b / D <= 1. else 0.
-                gamma = np.arccos(c / D) if c / D <= 1. else 0.
-                delta = np.arccos(d / D) if d / D <= 1. else 0.
-                kofD = max(0., min(1., self._kernel(D)))
-                # # cases:
-                if (np.sqrt(a ** 2 + b ** 2) <= d):
-                    if D < 0.:
-                        return 0.
-                    if (D >= 0.) & (D < a):
-                        return 2 * np.pi * D * kofD
-                    if (D >= a) & (D < b):
-                        return 2 * D * (np.pi - alpha) * kofD
-                    if (D >= b) & (D < np.sqrt(a ** 2 + b ** 2)):
-                        return 2 * D * (np.pi - alpha - beta) * kofD
-                    if (D >= np.sqrt(a ** 2 + b ** 2)) & (D < d):
-                        return D * (3 * np.pi / 2. - alpha - beta) * kofD
-
-                    if (c >= np.sqrt(a ** 2 + d ** 2)):
-                        if (D >= d) & (D < np.sqrt(a ** 2 + d ** 2)):
-                            return D * (3 * np.pi / 2. - alpha - beta -
-                                        2 * delta) * kofD
-                        if (D >= np.sqrt(a ** 2 + d ** 2)) & (D < c):
-                            return D * (np.pi - beta - delta) * kofD
-                        if (D >= c) & (D < np.sqrt(b ** 2 + c ** 2)):
-                            return D * (np.pi - beta - delta -
-                                        2 * gamma) * kofD
-                        if ((D >= np.sqrt(b ** 2 + c ** 2)) &
-                           (D < np.sqrt(d ** 2 + c ** 2))):
-                            return D * (np.pi / 2. - delta - gamma) * kofD
-
-                    if (c < np.sqrt(a ** 2 + d ** 2)):
-                        if (D >= d) & (D < c):
-                            return D * (3 * np.pi / 2. - alpha - beta -
-                                        2 * delta) * kofD
-                        if (D >= c) & (D < np.sqrt(a ** 2 + d ** 2)):
-                            return D * (3 * np.pi / 2. - alpha - beta -
-                                        2 * (delta + gamma)) * kofD
-                        if ((D >= np.sqrt(a ** 2 + d ** 2)) &
-                           (D < np.sqrt(b ** 2 + c ** 2))):
-                            return D * (np.pi - beta - delta -
-                                        2 * gamma) * kofD
-                        if ((D >= np.sqrt(b ** 2 + c ** 2)) &
-                           (D < np.sqrt(d ** 2 + c ** 2))):
-                            return D * (np.pi / 2. - delta - gamma) * kofD
-                    if (D >= np.sqrt(d ** 2 + c ** 2)):
-                        return 0.
-
-                else:
-                    if D < 0:
-                        return 0.
-                    if (D >= 0) & (D < a):
-                        return 2 * np.pi * D * kofD
-                    if (D >= a) & (D < b):
-                        return 2 * D * (np.pi - alpha) * kofD
-                    if (D >= b) & (D < d):
-                        return 2 * D * (np.pi - alpha - beta) * kofD
-
-                    if (((np.sqrt(a ** 2 + b ** 2) > c) &
-                         (np.sqrt(a ** 2 + d ** 2) > c))):
-                        if (D >= d) & (D < c):
-                            return 2 * D * (np.pi - alpha - beta -
-                                            delta) * kofD
-                        if (D >= c) & (D < np.sqrt(a ** 2 + b ** 2)):
-                            return 2 * D * (np.pi - alpha - beta -
-                                            delta - gamma) * kofD
-                        if ((D >= np.sqrt(a ** 2 + b ** 2)) &
-                           (D < np.sqrt(a ** 2 + d ** 2))):
-                            return D * (3 * np.pi / 2. - alpha - beta -
-                                        2 * (delta + gamma)) * kofD
-                        if ((D >= np.sqrt(a ** 2 + d ** 2)) &
-                           (D < np.sqrt(b ** 2 + c ** 2))):
-                            return D * (np.pi - beta - delta -
-                                        2 * gamma) * kofD
-                        if ((D >= np.sqrt(b ** 2 + c ** 2)) &
-                           (D < np.sqrt(d ** 2 + c ** 2))):
-                            return D * (np.pi / 2. - delta - gamma) * kofD
-
-                    if (((np.sqrt(a ** 2 + b ** 2) <= c) &
-                         (np.sqrt(a ** 2 + d ** 2) <= c))):
-                        if (D >= d) & (D < np.sqrt(a ** 2 + b ** 2)):
-                            return 2 * D * (np.pi -
-                                            (alpha + beta + delta)) * kofD
-                        if ((D >= np.sqrt(a ** 2 + b ** 2)) &
-                           (D < np.sqrt(a ** 2 + d ** 2))):
-                            return D * (3 * np.pi / 2. - alpha - beta -
-                                        2 * delta) * kofD
-                        if (D < c) & (D >= np.sqrt(a ** 2 + d ** 2)):
-                            return D * (np.pi - beta - delta) * kofD
-                        if (D >= c) & (D < np.sqrt(b ** 2 + c ** 2)):
-                            return D * (np.pi - beta - delta -
-                                        2 * gamma) * kofD
-                        if ((D >= np.sqrt(b ** 2 + c ** 2)) &
-                           (D < np.sqrt(d ** 2 + c ** 2))):
-                            return D * (np.pi / 2. - delta - gamma) * kofD
-
-                    if (((np.sqrt(a ** 2 + b ** 2) < c) &
-                         (np.sqrt(a ** 2 + d ** 2) > c))):
-                        if (D >= d) & (D < np.sqrt(a ** 2 + b ** 2)):
-                            return 2 * D * (np.pi - alpha - beta -
-                                            delta) * kofD
-                        if (D >= np.sqrt(a ** 2 + b ** 2)) & (D < c):
-                            return D * (3 * np.pi / 2. - alpha - beta -
-                                        2 * delta) * kofD
-                        if (D >= c) & (D < np.sqrt(a ** 2 + d ** 2)):
-                            return D * (3 * np.pi / 2. - alpha - beta -
-                                        2 * (delta + gamma)) * kofD
-                        if ((D >= np.sqrt(a ** 2 + d ** 2)) &
-                           (D < np.sqrt(b ** 2 + c ** 2))):
-                            return D * (np.pi - beta - delta -
-                                        2 * gamma) * kofD
-                        if ((D >= np.sqrt(b ** 2 + c ** 2)) &
-                           (D < np.sqrt(d ** 2 + c ** 2))):
-                            return D * (np.pi / 2. - delta - gamma) * kofD
-                    if (D >= np.sqrt(d ** 2 + c ** 2)):
-                        return 0.
-
-            else:
-                if D <= self._L / 2.:
-                    return (max(0., min(1., self._kernel(D))) * np.pi * D)
-                elif self._L / 2. < D <= self._max_dist:
-                    return ((max(0., min(1., self._kernel(D))) * D *
-                             (np.pi - 4. * np.arccos(self._L / (D * 2.)))))
-                else:
-                    return 0.
-
-        elif self._dimensions == 3:
-            if D <= self._L / 2.:
-                return (max(0., min(1., self._kernel(D))) *
-                        4. * np.pi * D ** 2.)
-            elif self._L / 2. < D <= self._L / np.sqrt(2):
-                return (max(0., min(1., self._kernel(D))) *
-                        2. * np.pi * D * (3. * self._L - 4. * D))
-            elif self._L / np.sqrt(2) < D <= self._max_dist:
-                A = 4. * np.pi * D ** 2.
-                C = 2. * np.pi * D * (D - self._L / 2.)
-                alpha = np.arcsin(1. / np.sqrt(2. - self._L ** 2. /
-                                               (2. * D ** 2.)))
-                beta = np.pi / 2.
-                gamma = np.arcsin(np.sqrt((1. - .5 * (self._L / D) ** 2.) /
-                                          (1. - .25 * (self._L / D) ** 2.)))
-                T = D ** 2. * (alpha + beta + gamma - np.pi)
-                return (max(0., min(1., self._kernel(D))) *
-                        (A + 6. * C * (-1. + 4. * gamma / np.pi) - 48. * T))
-            else:
-                return 0.
-
-    def _cdf(self, D):
-        '''
-        Normalized cumulative distribution function (CDF).
-
-        Parameters
-        ----------
-            D: Iterable of distances in interval [0, max_dist].
-
-        Return values
-        -------------
-            List of CDF(d) for each distance d in D.
-        '''
-        cdf = []
-        last_d = 0.
-        for d in D:
-            cdf.append(scipy.integrate.quad(self._pdf, last_d, d)[0])
-            last_d = d
-
-        cdf = np.cumsum(cdf)
-        top = scipy.integrate.quad(self._pdf, 0, self._max_dist)[0]
-        normed_cdf = cdf / top
-
-        return normed_cdf
-
-    def ks_test(self):
-        '''
-        Perform a Kolmogorov-Smirnov GOF test on the distribution
-        of distances to connected nodes.
-
-        Return values
-        -------------
-            KS statistic.
-            p-value from KS test.
-        '''
-
-        if self._target_dists is None:
-            self._create_dist_data()
-
-        ks, p = scipy.stats.kstest(self._target_dists, self._cdf,
-                                   alternative='two_sided')
-
-        return ks, p
-
-    def z_test(self):
-        '''
-        Perform a Z-test on the total number of connections.
-
-        Return values
-        -------------
-            Standard score (z-score).
-            Two-sided p-value.
-        '''
-
-        if self._target_dists is None or self._all_dists is None:
-            self._create_dist_data()
-
-        num_targets = len(self._target_dists)
-
-        ps = ([max(0., min(1., self._kernel(D)))
-               for D in self._all_dists])
-        expected_num_targets = sum(ps)
-        variance_num_targets = sum([p * (1. - p) for p in ps])
-
-        if variance_num_targets == 0:
-            return np.nan, 1.0
-        else:
-            sd = np.sqrt(variance_num_targets)
-            z = abs((num_targets - expected_num_targets) / sd)
-            p = 2. * (1. - scipy.stats.norm.cdf(z))
-
-        return z, p
-
-    def show_network(self):
-        '''Plot nodes in the network.'''
-
-        # Adjust size of nodes in plot based on number of nodes.
-        nodesize = max(0.01, round(111. / 11 - self._N / 1100.))
-
-        figsize = (8, 6) if self._dimensions == 3 else (6, 6)
-        fig = plt.figure(figsize=figsize)
-        positions = self._positions()
-        connected = self._target_positions()
-        not_connected = set(positions) - set(connected)
-
-        x1 = [pos[0] for pos in not_connected]
-        y1 = [pos[1] for pos in not_connected]
-        x2 = [pos[0] for pos in connected]
-        y2 = [pos[1] for pos in connected]
-
-        if self._dimensions == 2:
-            plt.scatter(x1, y1, s=nodesize, marker='o', color='grey')
-            plt.scatter(x2, y2, s=nodesize, marker='o', color='red')
-        if self._dimensions == 3:
-            ax = fig.add_subplot(111, projection='3d')
-            z1 = [pos[2] for pos in not_connected]
-            z2 = [pos[2] for pos in connected]
-            ax.scatter(x1, y1, z1, s=nodesize, marker='o', color='grey')
-            ax.scatter(x2, y2, z2, s=nodesize, marker='o', color='red')
-
-        plt.xlabel(r'$x$', size=24)
-        plt.ylabel(r'$y$', size=24)
-        plt.xticks(size=16)
-        plt.yticks(size=16)
-        plt.xlim(-0.505, 0.505)
-        plt.ylim(-0.505, 0.505)
-        plt.subplots_adjust(bottom=0.15, left=0.17)
-
-    def show_CDF(self):
-        '''
-        Plot the cumulative distribution function (CDF) of
-        source-target distances.
-        '''
-
-        plt.figure()
-        x = np.linspace(0, self._max_dist, 1000)
-        cdf = self._cdf(x)
-        plt.plot(x, cdf, '-', color='black', linewidth=3,
-                 label='Theory', zorder=1)
-        y = [(i + 1.) / len(self._target_dists)
-             for i in range(len(self._target_dists))]
-        plt.step([0.0] + self._target_dists, [0.0] + y, color='red',
-                 linewidth=1, label='Empirical', zorder=2)
-        plt.ylim(0, 1)
-
-        plt.xlabel('Distance')
-        plt.ylabel('CDF')
-        plt.legend(loc='center right')
-
-    def show_PDF(self, bins=100):
-        '''
-        Plot the probability density function of source-target distances.
-
-        Parameters
-        ----------
-            bins: Number of histogram bins for PDF plot.
-        '''
-
-        plt.figure()
-        x = np.linspace(0, self._max_dist, 1000)
-        area = scipy.integrate.quad(self._pdf, 0, self._max_dist)[0]
-        y = np.array([self._pdf(D) for D in x]) / area
-        plt.plot(x, y, color='black', linewidth=3, label='Theory', zorder=1)
-        plt.hist(self._target_dists, bins=bins, histtype='step',
-                 linewidth=1, density=True, color='red',
-                 label='Empirical', zorder=2)
-        plt.ylim(ymin=0.)
-
-        plt.xlabel('Distance')
-        plt.ylabel('PDF')
-        plt.legend(loc='center right')
-
-
-class NESTSpatialTester(SpatialTester):
-    '''Tests for spatially structured networks generated by NEST.'''
 
     def __init__(self, seed, dim, L, N, kernel_name, kernel_params=None,
                  open_bc=False, x0=0., y0=0.):
@@ -499,8 +94,28 @@ class NESTSpatialTester(SpatialTester):
         default_params  : default set of parameters for kernel
         '''
 
-        SpatialTester.__init__(self, seed, dim, L, N, open_bc, x0, y0)
+        if dim != 2 and open_bc:
+            raise ValueError("open_bc only supported for 2D")
 
+        self._seed = seed
+        self._dimensions = dim
+        self._L = float(L)
+        self._N = N
+        self._open_bc = open_bc
+        self._x_d, self._y_d = x0, y0
+
+        if (self._dimensions == 2):
+            if (self._open_bc):
+                self._max_dist = self._L * np.sqrt(2)
+            else:
+                self._max_dist = self._L / np.sqrt(2)
+        elif (self._dimensions == 3):
+            self._max_dist = self._L * np.sqrt(3) / 2
+
+        self._target_dists = None
+        self._all_dists = None
+
+        # kernel functions
         self._constant = lambda D: self._params
         self._linear = lambda D: self._params['c'] + self._params['a'] * D
         self._exponential = lambda D: (self._params['c'] +
@@ -554,6 +169,16 @@ class NESTSpatialTester(SpatialTester):
             kerneldict = {kernel_name: self._params}
         self._conndict = {'connection_type': 'divergent',
                           'mask': maskdict, 'kernel': kerneldict}
+
+
+    def _create_distance_data(self):
+
+        self._reset(self._seed)
+        self._build()
+        self._connect()
+
+        self._target_dists = sorted(self._target_distances())
+        self._all_dists = self._all_distances()
 
     def _reset(self, seed):
         '''
@@ -636,6 +261,347 @@ class NESTSpatialTester(SpatialTester):
         return [tuple(pos) for pos in
                 topo.GetTargetPositions(self._driver, self._lt)[0]]
 
+    def _roi_2d(self, x, y, L):
+        '''
+        Moves coordinates (x,y) to triangle area (x',y') in [0,L/2]X[0,x']
+        without loss of generality
+        '''
+        x = -x if (x >= -self._L / 2.) and (x < 0) else x
+        y = -y if (y >= -self._L / 2.) and (y < 0) else y
+        return np.array([x, y]) if x > y else np.array([y, x])
+
+    def _pdf(self, D):
+        '''
+        Unnormalized probability density function (PDF).
+
+        Parameters
+        ----------
+            D: Distance in interval [0, max_dist], scalar.
+
+        Return values
+        -------------
+            Not-normalized PDF at distance D.
+        '''
+
+        # TODO: The code below can most likely be optimized noticeably
+        # by avoiding duplicate tests.
+        if self._dimensions == 2:
+            if self._open_bc:
+
+                # move coordinates to right reference area:
+                x0, y0 = self._roi_2d(self._x_d, self._y_d, self._L)
+
+                # define a,b,c,d; alpha,beta,gamma,delta:
+                a, b, c, d = self._L / 2. - np.array([x0, y0, -x0, -y0])
+                alpha = math.acos(a / D) if a / D <= 1. else 0.
+                beta = math.acos(b / D) if b / D <= 1. else 0.
+                gamma = math.acos(c / D) if c / D <= 1. else 0.
+                delta = math.acos(d / D) if d / D <= 1. else 0.
+                kofD = max(0., min(1., self._kernel(D)))
+
+                # cases:
+                if (math.sqrt(a ** 2 + b ** 2) <= d):
+                    if D < 0.:
+                        return 0.
+                    if (D >= 0.) and (D < a):
+                        return 2 * math.pi * D * kofD
+                    if (D >= a) and (D < b):
+                        return 2 * D * (math.pi - alpha) * kofD
+                    if (D >= b) and (D < math.sqrt(a ** 2 + b ** 2)):
+                        return 2 * D * (math.pi - alpha - beta) * kofD
+                    if (D >= math.sqrt(a ** 2 + b ** 2)) and (D < d):
+                        return D * (3 * math.pi / 2. - alpha - beta) * kofD
+
+                    if (c >= math.sqrt(a ** 2 + d ** 2)):
+                        if (D >= d) and (D < math.sqrt(a ** 2 + d ** 2)):
+                            return D * (3 * math.pi / 2. - alpha - beta -
+                                        2 * delta) * kofD
+                        if (D >= math.sqrt(a ** 2 + d ** 2)) and (D < c):
+                            return D * (math.pi - beta - delta) * kofD
+                        if (D >= c) and (D < math.sqrt(b ** 2 + c ** 2)):
+                            return D * (math.pi - beta - delta -
+                                        2 * gamma) * kofD
+                        if ((D >= math.sqrt(b ** 2 + c ** 2)) and
+                           (D < math.sqrt(d ** 2 + c ** 2))):
+                            return D * (math.pi / 2. - delta - gamma) * kofD
+
+                    if (c < math.sqrt(a ** 2 + d ** 2)):
+                        if (D >= d) and (D < c):
+                            return D * (3 * math.pi / 2. - alpha - beta -
+                                        2 * delta) * kofD
+                        if (D >= c) and (D < math.sqrt(a ** 2 + d ** 2)):
+                            return D * (3 * math.pi / 2. - alpha - beta -
+                                        2 * (delta + gamma)) * kofD
+                        if ((D >= math.sqrt(a ** 2 + d ** 2)) and
+                           (D < math.sqrt(b ** 2 + c ** 2))):
+                            return D * (math.pi - beta - delta -
+                                        2 * gamma) * kofD
+                        if ((D >= math.sqrt(b ** 2 + c ** 2)) and
+                           (D < math.sqrt(d ** 2 + c ** 2))):
+                            return D * (math.pi / 2. - delta - gamma) * kofD
+                    if (D >= math.sqrt(d ** 2 + c ** 2)):
+                        return 0.
+
+                else:
+                    if D < 0:
+                        return 0.
+                    if (D >= 0) and (D < a):
+                        return 2 * math.pi * D * kofD
+                    if (D >= a) and (D < b):
+                        return 2 * D * (math.pi - alpha) * kofD
+                    if (D >= b) and (D < d):
+                        return 2 * D * (math.pi - alpha - beta) * kofD
+
+                    if (((math.sqrt(a ** 2 + b ** 2) > c) and
+                         (math.sqrt(a ** 2 + d ** 2) > c))):
+                        if (D >= d) and (D < c):
+                            return 2 * D * (math.pi - alpha - beta -
+                                            delta) * kofD
+                        if (D >= c) and (D < math.sqrt(a ** 2 + b ** 2)):
+                            return 2 * D * (math.pi - alpha - beta -
+                                            delta - gamma) * kofD
+                        if ((D >= math.sqrt(a ** 2 + b ** 2)) and
+                           (D < math.sqrt(a ** 2 + d ** 2))):
+                            return D * (3 * math.pi / 2. - alpha - beta -
+                                        2 * (delta + gamma)) * kofD
+                        if ((D >= math.sqrt(a ** 2 + d ** 2)) and
+                           (D < math.sqrt(b ** 2 + c ** 2))):
+                            return D * (math.pi - beta - delta -
+                                        2 * gamma) * kofD
+                        if ((D >= math.sqrt(b ** 2 + c ** 2)) and
+                           (D < math.sqrt(d ** 2 + c ** 2))):
+                            return D * (math.pi / 2. - delta - gamma) * kofD
+
+                    if (((math.sqrt(a ** 2 + b ** 2) <= c) and
+                         (math.sqrt(a ** 2 + d ** 2) <= c))):
+                        if (D >= d) and (D < math.sqrt(a ** 2 + b ** 2)):
+                            return 2 * D * (math.pi -
+                                            (alpha + beta + delta)) * kofD
+                        if ((D >= math.sqrt(a ** 2 + b ** 2)) and
+                           (D < math.sqrt(a ** 2 + d ** 2))):
+                            return D * (3 * math.pi / 2. - alpha - beta -
+                                        2 * delta) * kofD
+                        if (D < c) and (D >= math.sqrt(a ** 2 + d ** 2)):
+                            return D * (math.pi - beta - delta) * kofD
+                        if (D >= c) and (D < math.sqrt(b ** 2 + c ** 2)):
+                            return D * (math.pi - beta - delta -
+                                        2 * gamma) * kofD
+                        if ((D >= math.sqrt(b ** 2 + c ** 2)) and
+                           (D < math.sqrt(d ** 2 + c ** 2))):
+                            return D * (math.pi / 2. - delta - gamma) * kofD
+
+                    if (((math.sqrt(a ** 2 + b ** 2) < c) and
+                         (math.sqrt(a ** 2 + d ** 2) > c))):
+                        if (D >= d) and (D < math.sqrt(a ** 2 + b ** 2)):
+                            return 2 * D * (math.pi - alpha - beta -
+                                            delta) * kofD
+                        if (D >= math.sqrt(a ** 2 + b ** 2)) and (D < c):
+                            return D * (3 * math.pi / 2. - alpha - beta -
+                                        2 * delta) * kofD
+                        if (D >= c) and (D < math.sqrt(a ** 2 + d ** 2)):
+                            return D * (3 * math.pi / 2. - alpha - beta -
+                                        2 * (delta + gamma)) * kofD
+                        if ((D >= math.sqrt(a ** 2 + d ** 2)) and
+                           (D < math.sqrt(b ** 2 + c ** 2))):
+                            return D * (math.pi - beta - delta -
+                                        2 * gamma) * kofD
+                        if ((D >= math.sqrt(b ** 2 + c ** 2)) and
+                           (D < math.sqrt(d ** 2 + c ** 2))):
+                            return D * (math.pi / 2. - delta - gamma) * kofD
+                    if (D >= math.sqrt(d ** 2 + c ** 2)):
+                        return 0.
+
+            else:
+                if D <= self._L / 2.:
+                    return (max(0., min(1., self._kernel(D))) * math.pi * D)
+                elif self._L / 2. < D <= self._max_dist:
+                    return ((max(0., min(1., self._kernel(D))) * D *
+                             (math.pi - 4. * math.acos(self._L / (D * 2.)))))
+                else:
+                    return 0.
+
+        elif self._dimensions == 3:
+            if D <= self._L / 2.:
+                return (max(0., min(1., self._kernel(D))) *
+                        4. * math.pi * D ** 2.)
+            elif self._L / 2. < D <= self._L / math.sqrt(2):
+                return (max(0., min(1., self._kernel(D))) *
+                        2. * math.pi * D * (3. * self._L - 4. * D))
+            elif self._L / math.sqrt(2) < D <= self._max_dist:
+                A = 4. * math.pi * D ** 2.
+                C = 2. * math.pi * D * (D - self._L / 2.)
+                alpha = math.asin(1. / math.sqrt(2. - self._L ** 2. /
+                                               (2. * D ** 2.)))
+                beta = math.pi / 2.
+                gamma = math.asin(math.sqrt((1. - .5 * (self._L / D) ** 2.) /
+                                          (1. - .25 * (self._L / D) ** 2.)))
+                T = D ** 2. * (alpha + beta + gamma - math.pi)
+                return (max(0., min(1., self._kernel(D))) *
+                        (A + 6. * C * (-1. + 4. * gamma / math.pi) - 48. * T))
+            else:
+                return 0.
+
+    def _cdf(self, D):
+        '''
+        Normalized cumulative distribution function (CDF).
+
+        Parameters
+        ----------
+            D: Iterable of distances in interval [0, max_dist].
+
+        Return values
+        -------------
+            List of CDF(d) for each distance d in D.
+        '''
+        cdf = []
+        last_d = 0.
+        for d in D:
+            cdf.append(scipy.integrate.quad(self._pdf, last_d, d)[0])
+            last_d = d
+
+        cdf = np.cumsum(cdf)
+        top = scipy.integrate.quad(self._pdf, 0, self._max_dist)[0]
+        normed_cdf = cdf / top
+
+        return normed_cdf
+
+    def ks_test(self):
+        '''
+        Perform a Kolmogorov-Smirnov GOF test on the distribution
+        of distances to connected nodes.
+
+        Return values
+        -------------
+            KS statistic.
+            p-value from KS test.
+        '''
+
+        if self._target_dists is None:
+            self._create_distance_data()
+
+        ks, p = scipy.stats.kstest(self._target_dists, self._cdf,
+                                   alternative='two_sided')
+
+        return ks, p
+
+    def z_test(self):
+        '''
+        Perform a Z-test on the total number of connections.
+
+        Return values
+        -------------
+            Standard score (z-score).
+            Two-sided p-value.
+        '''
+
+        if self._target_dists is None or self._all_dists is None:
+            self._create_distance_data()
+
+        num_targets = len(self._target_dists)
+
+        ps = ([max(0., min(1., self._kernel(D)))
+               for D in self._all_dists])
+        expected_num_targets = sum(ps)
+        variance_num_targets = sum([p * (1. - p) for p in ps])
+
+        if variance_num_targets == 0:
+            return np.nan, 1.0
+        else:
+            sd = np.sqrt(variance_num_targets)
+            z = abs((num_targets - expected_num_targets) / sd)
+            p = 2. * (1. - scipy.stats.norm.cdf(z))
+
+        return z, p
+
+
+if PLOTTING_POSSIBLE:
+    class PlottingSpatialTester(SpatialTester):
+        '''Add plotting capability to SpatialTester.'''
+
+        def __init__(self, seed, dim, L, N, kernel_name, kernel_params=None,
+                     open_bc=False, x0=0., y0=0.):
+            SpatialTester.__init__(self, seed, dim, L, N, kernel_name,
+                                   kernel_params, open_bc, x0, y0)
+
+        def show_network(self):
+            '''Plot nodes in the network.'''
+    
+            # Adjust size of nodes in plot based on number of nodes.
+            nodesize = max(0.01, round(111. / 11 - self._N / 1100.))
+    
+            figsize = (8, 6) if self._dimensions == 3 else (6, 6)
+            fig = plt.figure(figsize=figsize)
+            positions = self._positions()
+            connected = self._target_positions()
+            not_connected = set(positions) - set(connected)
+    
+            x1 = [pos[0] for pos in not_connected]
+            y1 = [pos[1] for pos in not_connected]
+            x2 = [pos[0] for pos in connected]
+            y2 = [pos[1] for pos in connected]
+    
+            if self._dimensions == 2:
+                plt.scatter(x1, y1, s=nodesize, marker='o', color='grey')
+                plt.scatter(x2, y2, s=nodesize, marker='o', color='red')
+            if self._dimensions == 3:
+                ax = fig.add_subplot(111, projection='3d')
+                z1 = [pos[2] for pos in not_connected]
+                z2 = [pos[2] for pos in connected]
+                ax.scatter(x1, y1, z1, s=nodesize, marker='o', color='grey')
+                ax.scatter(x2, y2, z2, s=nodesize, marker='o', color='red')
+    
+            plt.xlabel(r'$x$', size=24)
+            plt.ylabel(r'$y$', size=24)
+            plt.xticks(size=16)
+            plt.yticks(size=16)
+            plt.xlim(-0.505, 0.505)
+            plt.ylim(-0.505, 0.505)
+            plt.subplots_adjust(bottom=0.15, left=0.17)
+    
+        def show_CDF(self):
+            '''
+            Plot the cumulative distribution function (CDF) of
+            source-target distances.
+            '''
+    
+            plt.figure()
+            x = np.linspace(0, self._max_dist, 1000)
+            cdf = self._cdf(x)
+            plt.plot(x, cdf, '-', color='black', linewidth=3,
+                     label='Theory', zorder=1)
+            y = [(i + 1.) / len(self._target_dists)
+                 for i in range(len(self._target_dists))]
+            plt.step([0.0] + self._target_dists, [0.0] + y, color='red',
+                     linewidth=1, label='Empirical', zorder=2)
+            plt.ylim(0, 1)
+    
+            plt.xlabel('Distance')
+            plt.ylabel('CDF')
+            plt.legend(loc='center right')
+    
+        def show_PDF(self, bins=100):
+            '''
+            Plot the probability density function of source-target distances.
+    
+            Parameters
+            ----------
+                bins: Number of histogram bins for PDF plot.
+            '''
+    
+            plt.figure()
+            x = np.linspace(0, self._max_dist, 1000)
+            area = scipy.integrate.quad(self._pdf, 0, self._max_dist)[0]
+            y = np.array([self._pdf(D) for D in x]) / area
+            plt.plot(x, y, color='black', linewidth=3, label='Theory', zorder=1)
+            plt.hist(self._target_dists, bins=bins, histtype='step',
+                     linewidth=1, density=True, color='red',
+                     label='Empirical', zorder=2)
+            plt.ylim(ymin=0.)
+    
+            plt.xlabel('Distance')
+            plt.ylabel('PDF')
+            plt.legend(loc='center right')
+
 
 class TestSpatial2D(unittest.TestCase):
     """
@@ -644,7 +610,7 @@ class TestSpatial2D(unittest.TestCase):
 
     def test_constant(self):
         kernel = 'constant'
-        test = NESTSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
                                  kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -653,7 +619,7 @@ class TestSpatial2D(unittest.TestCase):
 
     def test_linear(self):
         kernel = 'linear'
-        test = NESTSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
                                  kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -662,7 +628,7 @@ class TestSpatial2D(unittest.TestCase):
 
     def test_exponential(self):
         kernel = 'exponential'
-        test = NESTSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
                                  kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -671,7 +637,7 @@ class TestSpatial2D(unittest.TestCase):
 
     def test_gaussian(self):
         kernel = 'gaussian'
-        test = NESTSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
                                  kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -680,7 +646,7 @@ class TestSpatial2D(unittest.TestCase):
 
     def test_gamma(self):
         kernel = 'gamma'
-        test = NESTSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
                                  kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -695,7 +661,7 @@ class TestSpatial2DOBC(unittest.TestCase):
 
     def test_constant(self):
         kernel = 'constant'
-        test = NESTSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
                                  kernel_name=kernel, open_bc=True)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -704,7 +670,7 @@ class TestSpatial2DOBC(unittest.TestCase):
 
     def test_linear(self):
         kernel = 'linear'
-        test = NESTSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
                                  kernel_name=kernel, open_bc=True)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -713,7 +679,7 @@ class TestSpatial2DOBC(unittest.TestCase):
 
     def test_exponential(self):
         kernel = 'exponential'
-        test = NESTSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
                                  kernel_name=kernel, open_bc=True)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -722,7 +688,7 @@ class TestSpatial2DOBC(unittest.TestCase):
 
     def test_gaussian(self):
         kernel = 'gaussian'
-        test = NESTSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
                                  kernel_name=kernel, open_bc=True)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -731,7 +697,7 @@ class TestSpatial2DOBC(unittest.TestCase):
 
     def test_gamma(self):
         kernel = 'gamma'
-        test = NESTSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
                                  kernel_name=kernel, open_bc=True)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -746,7 +712,7 @@ class TestSpatial3D(unittest.TestCase):
 
     def test_constant(self):
         kernel = 'constant'
-        test = NESTSpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
                                  kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -755,7 +721,7 @@ class TestSpatial3D(unittest.TestCase):
 
     def test_linear(self):
         kernel = 'linear'
-        test = NESTSpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
                                  kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -764,7 +730,7 @@ class TestSpatial3D(unittest.TestCase):
 
     def test_exponential(self):
         kernel = 'exponential'
-        test = NESTSpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
                                  kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -773,7 +739,7 @@ class TestSpatial3D(unittest.TestCase):
 
     def test_gaussian(self):
         kernel = 'gaussian'
-        test = NESTSpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
                                  kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -782,7 +748,7 @@ class TestSpatial3D(unittest.TestCase):
 
     def test_gamma(self):
         kernel = 'gamma'
-        test = NESTSpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
+        test = SpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
                                  kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
@@ -791,16 +757,17 @@ class TestSpatial3D(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    tests2d = unittest.TestLoader().loadTestsFromTestCase(TestSpatial2D)
-    tests2dobc = unittest.TestLoader().loadTestsFromTestCase(TestSpatial2DOBC)
-    tests3d = unittest.TestLoader().loadTestsFromTestCase(TestSpatial3D)
-    suite = unittest.TestSuite([tests2d, tests2dobc, tests3d])
-    unittest.TextTestRunner(verbosity=2).run(suite)
-
-    # code below for visualization and debugging
-    if False:
-        test = NESTSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
-                                 kernel_name='gamma')
+    
+    if not DEBUG_MODE:
+        suite = unittest.TestSuite([
+            unittest.TestLoader().loadTestsFromTestCase(TestSpatial2D),
+            unittest.TestLoader().loadTestsFromTestCase(TestSpatial2DOBC),
+            unittest.TestLoader().loadTestsFromTestCase(TestSpatial3D),
+            ])
+        unittest.TextTestRunner(verbosity=2).run(suite)
+    elif PLOTTING_POSSIBLE:
+        test = PlottingSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
+                                 kernel_name='gaussian')
         ks, p = test.ks_test()
         print('p-value of KS-test:', p)
         z, p = test.z_test()
@@ -809,3 +776,5 @@ if __name__ == '__main__':
         test.show_PDF()
         test.show_CDF()
         plt.show()
+    else:
+        assert False, "DEBUG_MODE makes sense only if PLOTTING_POSSIBLE"

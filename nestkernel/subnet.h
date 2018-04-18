@@ -82,17 +82,8 @@ public:
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
-  // subnet does not require local id; needs to be defined here to
-  // avoid exception in node_manager::add_node
-  void
-  set_local_device_id( const index ldid )
-  {
-  }
-  index
-  get_local_device_id() const
-  {
-    return invalid_index;
-  }
+  void set_local_device_id( const index ldid );
+  index get_local_device_id() const;
 
   bool has_proxies() const;
 
@@ -244,6 +235,8 @@ private:
   bool homogeneous_; //!< flag which indicates if the subnet contains different
                      //!< kinds of models.
   index last_mid_;   //!< model index of last child
+
+  index local_device_id_;
 };
 
 /**
@@ -390,6 +383,18 @@ inline bool
 Subnet::is_homogeneous() const
 {
   return homogeneous_;
+}
+
+inline void
+Subnet::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
+}
+
+inline index
+Subnet::get_local_device_id() const
+{
+  return local_device_id_;
 }
 
 } // namespace

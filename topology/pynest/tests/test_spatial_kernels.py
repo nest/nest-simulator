@@ -56,7 +56,7 @@ except:
 
 # If False, tests will be run; otherwise, as single case will be
 # plotted.
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 # Constant defining sensitivity of test (minimal p-value to pass)
 P_MIN = 0.1
@@ -169,7 +169,6 @@ class SpatialTester(object):
             kerneldict = {kernel_name: self._params}
         self._conndict = {'connection_type': 'divergent',
                           'mask': maskdict, 'kernel': kerneldict}
-
 
     def _create_distance_data(self):
 
@@ -431,10 +430,10 @@ class SpatialTester(object):
                 A = 4. * math.pi * D ** 2.
                 C = 2. * math.pi * D * (D - self._L / 2.)
                 alpha = math.asin(1. / math.sqrt(2. - self._L ** 2. /
-                                               (2. * D ** 2.)))
+                                                 (2. * D ** 2.)))
                 beta = math.pi / 2.
                 gamma = math.asin(math.sqrt((1. - .5 * (self._L / D) ** 2.) /
-                                          (1. - .25 * (self._L / D) ** 2.)))
+                                            (1. - .25 * (self._L / D) ** 2.)))
                 T = D ** 2. * (alpha + beta + gamma - math.pi)
                 return (max(0., min(1., self._kernel(D))) *
                         (A + 6. * C * (-1. + 4. * gamma / math.pi) - 48. * T))
@@ -525,21 +524,21 @@ if PLOTTING_POSSIBLE:
 
         def show_network(self):
             '''Plot nodes in the network.'''
-    
+
             # Adjust size of nodes in plot based on number of nodes.
             nodesize = max(0.01, round(111. / 11 - self._N / 1100.))
-    
+
             figsize = (8, 6) if self._dimensions == 3 else (6, 6)
             fig = plt.figure(figsize=figsize)
             positions = self._positions()
             connected = self._target_positions()
             not_connected = set(positions) - set(connected)
-    
+
             x1 = [pos[0] for pos in not_connected]
             y1 = [pos[1] for pos in not_connected]
             x2 = [pos[0] for pos in connected]
             y2 = [pos[1] for pos in connected]
-    
+
             if self._dimensions == 2:
                 plt.scatter(x1, y1, s=nodesize, marker='o', color='grey')
                 plt.scatter(x2, y2, s=nodesize, marker='o', color='red')
@@ -549,7 +548,7 @@ if PLOTTING_POSSIBLE:
                 z2 = [pos[2] for pos in connected]
                 ax.scatter(x1, y1, z1, s=nodesize, marker='o', color='grey')
                 ax.scatter(x2, y2, z2, s=nodesize, marker='o', color='red')
-    
+
             plt.xlabel(r'$x$', size=24)
             plt.ylabel(r'$y$', size=24)
             plt.xticks(size=16)
@@ -557,13 +556,13 @@ if PLOTTING_POSSIBLE:
             plt.xlim(-0.505, 0.505)
             plt.ylim(-0.505, 0.505)
             plt.subplots_adjust(bottom=0.15, left=0.17)
-    
+
         def show_CDF(self):
             '''
             Plot the cumulative distribution function (CDF) of
             source-target distances.
             '''
-    
+
             plt.figure()
             x = np.linspace(0, self._max_dist, 1000)
             cdf = self._cdf(x)
@@ -574,30 +573,31 @@ if PLOTTING_POSSIBLE:
             plt.step([0.0] + self._target_dists, [0.0] + y, color='red',
                      linewidth=1, label='Empirical', zorder=2)
             plt.ylim(0, 1)
-    
+
             plt.xlabel('Distance')
             plt.ylabel('CDF')
             plt.legend(loc='center right')
-    
+
         def show_PDF(self, bins=100):
             '''
             Plot the probability density function of source-target distances.
-    
+
             Parameters
             ----------
                 bins: Number of histogram bins for PDF plot.
             '''
-    
+
             plt.figure()
             x = np.linspace(0, self._max_dist, 1000)
             area = scipy.integrate.quad(self._pdf, 0, self._max_dist)[0]
             y = np.array([self._pdf(D) for D in x]) / area
-            plt.plot(x, y, color='black', linewidth=3, label='Theory', zorder=1)
+            plt.plot(x, y, color='black', linewidth=3, label='Theory',
+                     zorder=1)
             plt.hist(self._target_dists, bins=bins, histtype='step',
                      linewidth=1, density=True, color='red',
                      label='Empirical', zorder=2)
             plt.ylim(ymin=0.)
-    
+
             plt.xlabel('Distance')
             plt.ylabel('PDF')
             plt.legend(loc='center right')
@@ -611,7 +611,7 @@ class TestSpatial2D(unittest.TestCase):
     def test_constant(self):
         kernel = 'constant'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
-                                 kernel_name=kernel)
+                             kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -620,7 +620,7 @@ class TestSpatial2D(unittest.TestCase):
     def test_linear(self):
         kernel = 'linear'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
-                                 kernel_name=kernel)
+                             kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -629,7 +629,7 @@ class TestSpatial2D(unittest.TestCase):
     def test_exponential(self):
         kernel = 'exponential'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
-                                 kernel_name=kernel)
+                             kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -638,7 +638,7 @@ class TestSpatial2D(unittest.TestCase):
     def test_gaussian(self):
         kernel = 'gaussian'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
-                                 kernel_name=kernel)
+                             kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -647,7 +647,7 @@ class TestSpatial2D(unittest.TestCase):
     def test_gamma(self):
         kernel = 'gamma'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
-                                 kernel_name=kernel)
+                             kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -662,7 +662,7 @@ class TestSpatial2DOBC(unittest.TestCase):
     def test_constant(self):
         kernel = 'constant'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
-                                 kernel_name=kernel, open_bc=True)
+                             kernel_name=kernel, open_bc=True)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -671,7 +671,7 @@ class TestSpatial2DOBC(unittest.TestCase):
     def test_linear(self):
         kernel = 'linear'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
-                                 kernel_name=kernel, open_bc=True)
+                             kernel_name=kernel, open_bc=True)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -680,7 +680,7 @@ class TestSpatial2DOBC(unittest.TestCase):
     def test_exponential(self):
         kernel = 'exponential'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
-                                 kernel_name=kernel, open_bc=True)
+                             kernel_name=kernel, open_bc=True)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -689,7 +689,7 @@ class TestSpatial2DOBC(unittest.TestCase):
     def test_gaussian(self):
         kernel = 'gaussian'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
-                                 kernel_name=kernel, open_bc=True)
+                             kernel_name=kernel, open_bc=True)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -698,7 +698,7 @@ class TestSpatial2DOBC(unittest.TestCase):
     def test_gamma(self):
         kernel = 'gamma'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
-                                 kernel_name=kernel, open_bc=True)
+                             kernel_name=kernel, open_bc=True)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -713,7 +713,7 @@ class TestSpatial3D(unittest.TestCase):
     def test_constant(self):
         kernel = 'constant'
         test = SpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
-                                 kernel_name=kernel)
+                             kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -722,7 +722,7 @@ class TestSpatial3D(unittest.TestCase):
     def test_linear(self):
         kernel = 'linear'
         test = SpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
-                                 kernel_name=kernel)
+                             kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -731,7 +731,7 @@ class TestSpatial3D(unittest.TestCase):
     def test_exponential(self):
         kernel = 'exponential'
         test = SpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
-                                 kernel_name=kernel)
+                             kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -740,7 +740,7 @@ class TestSpatial3D(unittest.TestCase):
     def test_gaussian(self):
         kernel = 'gaussian'
         test = SpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
-                                 kernel_name=kernel)
+                             kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -749,7 +749,7 @@ class TestSpatial3D(unittest.TestCase):
     def test_gamma(self):
         kernel = 'gamma'
         test = SpatialTester(seed=SEED, dim=3, L=1.0, N=10000,
-                                 kernel_name=kernel)
+                             kernel_name=kernel)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
@@ -757,7 +757,7 @@ class TestSpatial3D(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    
+
     if not DEBUG_MODE:
         suite = unittest.TestSuite([
             unittest.TestLoader().loadTestsFromTestCase(TestSpatial2D),
@@ -767,7 +767,7 @@ if __name__ == '__main__':
         unittest.TextTestRunner(verbosity=2).run(suite)
     elif PLOTTING_POSSIBLE:
         test = PlottingSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
-                                 kernel_name='gaussian')
+                                     kernel_name='gaussian')
         ks, p = test.ks_test()
         print('p-value of KS-test:', p)
         z, p = test.z_test()

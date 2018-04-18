@@ -54,8 +54,7 @@ try:
 except:
     PLOTTING_POSSIBLE = False
 
-# If False, tests will be run; otherwise, as single case will be
-# plotted.
+# If False, tests will be run; otherwise, a single case will be plotted.
 DEBUG_MODE = False
 
 # Constant defining sensitivity of test (minimal p-value to pass)

@@ -73,7 +73,7 @@ public:
    * of synapse prototypes).
    */
   virtual synindex get_syn_id() const = 0;
-  
+
   /**
    * Returns the number of connections in this Connector.
    */
@@ -278,7 +278,7 @@ public:
     const DictionaryDatum& dict, ConnectorModel& cm )
   {
     assert( lcid >= 0 and lcid < C_.size() );
- 
+
     C_[ lcid ].set_status(
       dict, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
   }
@@ -466,14 +466,18 @@ public:
     const std::vector< ConnectorModel* >& cm )
   {
     for ( size_t i = 0; i < C_.size(); ++i )
+    {
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
              ->get_common_properties()
              .get_vt_gid() == vt_gid )
+      {
         C_[ i ].trigger_update_weight( tid,
           dopa_spikes,
           t_trig,
           static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
             ->get_common_properties() );
+      }
+    }
   }
 
   void

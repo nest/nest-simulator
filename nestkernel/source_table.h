@@ -325,8 +325,8 @@ SourceTable::reject_last_target_data( const thread tid )
   // source_table_impl.h)
   assert( ( *current_positions_[ tid ] ).lcid + 1
     < static_cast< long >
-	  ( ( *sources_[ ( *current_positions_[ tid ] ).tid ] )
-	    [ ( *current_positions_[ tid ] ).syn_id ]->size() ) );
+    ( ( *sources_[ ( *current_positions_[ tid ] ).tid ] )
+      [ ( *current_positions_[ tid ] ).syn_id ]->size() ) );
 
   ( *( *sources_[ ( *current_positions_[ tid ] ).tid ] )
     [ ( *current_positions_[ tid ] ).syn_id ] )
@@ -356,7 +356,7 @@ SourceTable::save_entry_point( const thread tid )
         ( *current_positions_[ tid ] ).lcid + 1,
         static_cast< long >(
           ( *sources_[ ( *current_positions_[ tid ] ).tid ] )
-	  [ ( *current_positions_[ tid ] ).syn_id ]->size() - 1 ) );
+    [ ( *current_positions_[ tid ] ).syn_id ]->size() - 1 ) );
     }
     else
     {

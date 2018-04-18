@@ -238,7 +238,7 @@ public:
     std::vector< std::vector< index > >& sources );
 
   void get_targets( const std::vector< index >& sources,
-    const index syn_id, const std::string& post_synaptic_element, 
+    const index syn_id, const std::string& post_synaptic_element,
     std::vector< std::vector< index > >& targets );
 
   const std::vector< Target >& get_remote_targets_of_local_node(
@@ -421,7 +421,7 @@ public:
 
   void check_secondary_connections_exist();
 
-  bool has_primary_connections() const; 
+  bool has_primary_connections() const;
 
   bool secondary_connections_exist() const;
 
@@ -808,7 +808,7 @@ ConnectionManager::get_sort_connections_by_source() const
 {
   return sort_connections_by_source_;
 }
-  
+
 } // namespace nest
 
 #endif /* CONNECTION_MANAGER_H */

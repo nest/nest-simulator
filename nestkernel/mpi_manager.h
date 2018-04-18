@@ -539,8 +539,8 @@ MPIManager::set_buffer_size_target_data( const size_t buffer_size )
     / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
 
   assert( send_recv_count_target_data_per_rank_
-	  * get_num_processes()
-	  <= get_buffer_size_target_data() );
+    * get_num_processes()
+    <= get_buffer_size_target_data() );
 }
 
 inline void
@@ -746,7 +746,7 @@ void MPIManager::communicate_Alltoall( std::vector<D>& send_buffer,
 {
     void* send_buffer_int = static_cast<void*>(&send_buffer[0]);
     void* recv_buffer_int = static_cast<void*>(&recv_buffer[0]);
-    
+
     communicate_Alltoall_(send_buffer_int, recv_buffer_int, send_recv_count);
 }
 
@@ -756,7 +756,7 @@ void MPIManager::communicate_secondary_events_Alltoall( std::vector<D>& send_buf
 {
     void* send_buffer_int = static_cast<void*>(&send_buffer[0]);
     void* recv_buffer_int = static_cast<void*>(&recv_buffer[0]);
-    
+
     communicate_secondary_events_Alltoall_(send_buffer_int,
         recv_buffer_int);
 }
@@ -802,7 +802,5 @@ void MPIManager::communicate_off_grid_spike_data_Alltoall( std::vector<D>& send_
 }
 
 }
-
-
 
 #endif /* MPI_MANAGER_H */

@@ -277,7 +277,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
 {
 
   const DictionaryDatum params = new Dictionary;  // empty parameter dictionary
-				                  // required by connect() calls
+                          // required by connect() calls
 
   // Source driven connect is actually implemented as target driven,
   // but with displacements computed in the target layer. The Mask has been
@@ -485,7 +485,7 @@ void
 ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 {
   const DictionaryDatum params = new Dictionary;  // empty parameter dictionary
-				                  // required by connect() calls
+                          // required by connect() calls
 
   // Convergent connections (fixed fan in)
   //
@@ -799,7 +799,7 @@ void
 ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
 {
   const DictionaryDatum params = new Dictionary;  // empty parameter dictionary
-                          			  // required by connect() calls
+                                  // required by connect() calls
 
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave

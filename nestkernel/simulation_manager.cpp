@@ -817,9 +817,9 @@ nest::SimulationManager::update_()
       }
 
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
-	   and ( ( clock_.get_steps() + from_step_ )
-		 % kernel().sp_manager.get_structural_plasticity_update_interval()
-		 == 0 ) )
+     and ( ( clock_.get_steps() + from_step_ )
+     % kernel().sp_manager.get_structural_plasticity_update_interval()
+     == 0 ) )
       {
         for ( std::vector< Node* >::const_iterator i =
                 kernel().node_manager.get_nodes_on_thread( tid ).begin();
@@ -843,10 +843,10 @@ nest::SimulationManager::update_()
           ( *i )->decay_synaptic_elements_vacant();
         }
 
-	// after structural plasticity has created and deleted
-	// connections, update the connection infrastructure; implies
-	// complete removal of presynaptic part and reconstruction
-	// from postsynaptic data
+  // after structural plasticity has created and deleted
+  // connections, update the connection infrastructure; implies
+  // complete removal of presynaptic part and reconstruction
+  // from postsynaptic data
         update_connection_infrastructure( tid );
 
       } // of structural plasticity

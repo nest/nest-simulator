@@ -80,7 +80,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
       // created by cg_set_masks() only contain local nodes.
       const DictionaryDatum params = new Dictionary();
       kernel().connection_manager.connect(
-	  source_gids[ source ], target_gids[ target ], params, synmodel_id );
+    source_gids[ source ], target_gids[ target ], params, synmodel_id );
     }
   }
   else if ( num_parameters == 2 )
@@ -116,8 +116,8 @@ cg_connect( ConnectionGeneratorDatum& cg,
       const thread target_thread = target_node->get_thread();
       const DictionaryDatum params_dict = new Dictionary();
       kernel().connection_manager.connect(
-	  source_gids[ source ], target_node, target_thread, synmodel_id,
-	  params_dict, params[ d_idx ], params[ w_idx ] );
+    source_gids[ source ], target_node, target_thread, synmodel_id,
+    params_dict, params[ d_idx ], params[ w_idx ] );
     }
   }
   else

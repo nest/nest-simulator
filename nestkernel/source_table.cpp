@@ -455,13 +455,13 @@ nest::SourceTable::get_next_target_data( const thread tid,
     // entry preceding this entry has the same source, but only if
     // the preceding entry was not processed yet
     if (
-	( current_position.lcid - 1 >= 0 )
-	and ( ( *( *sources_[ current_position.tid ] )
-	      [ current_position.syn_id ] )[ current_position.lcid - 1 ].get_gid()
-	      == current_source.get_gid() )
-	and ( not ( *( *sources_[ current_position.tid ] )
-		    [ current_position.syn_id ] )[ current_position.lcid - 1 ].is_processed() )
-	)
+  ( current_position.lcid - 1 >= 0 )
+  and ( ( *( *sources_[ current_position.tid ] )
+        [ current_position.syn_id ] )[ current_position.lcid - 1 ].get_gid()
+        == current_source.get_gid() )
+  and ( not ( *( *sources_[ current_position.tid ] )
+        [ current_position.syn_id ] )[ current_position.lcid - 1 ].is_processed() )
+  )
     {
       --current_position.lcid;
       continue;

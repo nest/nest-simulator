@@ -201,7 +201,7 @@ EventDeliveryManager::configure_spike_data_buffers()
 void
 EventDeliveryManager::configure_spike_register()
 {
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid ) 
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     reset_spike_register_5g_( tid );
     resize_spike_register_5g_( tid );
@@ -727,8 +727,8 @@ EventDeliveryManager::gather_target_data( const thread tid )
   // detect all remote ranks are done, we are allowed to stop
   // communication.
   unsigned int completed_count; // TODO@5g: use same strategy in
-				// gather_spike data? could use same
-				// completed_count_ vector -> Susi
+        // gather_spike data? could use same
+        // completed_count_ vector -> Susi
   const unsigned int half_completed_count =
     kernel().vp_manager.get_num_threads();
   const unsigned int max_completed_count = 2 * half_completed_count;

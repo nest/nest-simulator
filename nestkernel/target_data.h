@@ -161,7 +161,7 @@ class TargetData
     // Members must be set explicitly -- no defaults
     // Done this way to create large vector without preconstruction
     // and to handle variant fields
-    
+
 private:
   static const unsigned int default_marker_ = 0;
   static const unsigned int complete_marker_ = 1;
@@ -180,7 +180,7 @@ public:
       TargetDataFields target_data;
       SecondaryTargetDataFields secondary_data;
   };
-  
+
   void reset_marker();
   void set_complete_marker();
   void set_end_marker();

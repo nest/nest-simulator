@@ -256,7 +256,7 @@ nest::ConnectionManager::set_synapse_status( const index source_gid,
          or ( ( source->has_proxies() and not target->has_proxies() and not target->local_receiver() and ( *connections_5g_[ tid ] )[ syn_id ] != NULL ) ) )
     {
       ( *connections_5g_[ tid ] )[ syn_id ]->set_synapse_status(
-	  lcid, dict, kernel().model_manager.get_synapse_prototype( syn_id, tid ) );
+    lcid, dict, kernel().model_manager.get_synapse_prototype( syn_id, tid ) );
     }
     else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() )
     {
@@ -483,7 +483,7 @@ nest::ConnectionManager::connect( const index sgid,
     if ( target->one_node_per_process() and not source->is_proxy() )
     {
       connect_to_device_(
-	  *source, *target, sgid, target_thread, syn_id, params, delay, weight );
+    *source, *target, sgid, target_thread, syn_id, params, delay, weight );
       return;
     }
 
@@ -570,7 +570,7 @@ nest::ConnectionManager::connect( const index sgid,
     if ( target->one_node_per_process() and not source->is_proxy() )
     {
       connect_to_device_(
-	  *source, *target, sgid, target_thread, syn_id, params );
+    *source, *target, sgid, target_thread, syn_id, params );
       return true;
     }
 

@@ -106,11 +106,11 @@ class SpatialTester(object):
 
         if (self._dimensions == 2):
             if (self._open_bc):
-                self._max_dist = self._L * np.sqrt(2)
+                self._max_dist = self._L * math.sqrt(2)
             else:
-                self._max_dist = self._L / np.sqrt(2)
+                self._max_dist = self._L / math.sqrt(2)
         elif (self._dimensions == 3):
-            self._max_dist = self._L * np.sqrt(3) / 2
+            self._max_dist = self._L * math.sqrt(3) / 2
 
         self._target_dists = None
         self._all_dists = None
@@ -120,16 +120,16 @@ class SpatialTester(object):
         self._linear = lambda D: self._params['c'] + self._params['a'] * D
         self._exponential = lambda D: (self._params['c'] +
                                        self._params['a'] *
-                                       np.exp(-D / self._params['tau']))
+                                       math.exp(-D / self._params['tau']))
         self._gauss = lambda D: (self._params['c'] +
                                  self._params['p_center'] *
-                                 np.exp(-(D - self._params['mean']) ** 2 /
+                                 math.exp(-(D - self._params['mean']) ** 2 /
                                         (2. * self._params['sigma'] ** 2)))
         self._gamma = lambda D: (D ** (self._params['kappa'] - 1) /
                                  (self._params['theta'] **
                                   self._params['kappa'] *
                                   scipy.special.gamma(self._params['kappa'])) *
-                                 np.exp(-D / self._params['theta']))
+                                 math.exp(-D / self._params['theta']))
 
         kernels = {
             'constant': self._constant,
@@ -141,9 +141,9 @@ class SpatialTester(object):
 
         default_params = {
             'constant': 1.,
-            'linear': {'a': -np.sqrt(2) / self._L, 'c': 1.0},
+            'linear': {'a': -math.sqrt(2) / self._L, 'c': 1.0},
             'exponential': {'a': 1.0, 'c': 0.0, 'tau': -self._L /
-                            (np.sqrt(2) * np.log((.1 - 0) / 1))},
+                            (math.sqrt(2) * math.log((.1 - 0) / 1))},
             'gaussian': {'p_center': 1., 'sigma': self._L / 4.,
                          'mean': 0., 'c': 0.},
             'gamma': {'kappa': 3., 'theta': self._L / 4.}}
@@ -504,9 +504,9 @@ class SpatialTester(object):
         variance_num_targets = sum([p * (1. - p) for p in ps])
 
         if variance_num_targets == 0:
-            return np.nan, 1.0
+            return math.nan, 1.0
         else:
-            sd = np.sqrt(variance_num_targets)
+            sd = math.sqrt(variance_num_targets)
             z = abs((num_targets - expected_num_targets) / sd)
             p = 2. * (1. - scipy.stats.norm.cdf(z))
 

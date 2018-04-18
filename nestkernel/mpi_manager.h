@@ -755,7 +755,7 @@ MPIManager::communicate_Alltoall( std::vector< D >& send_buffer,
   void* send_buffer_int = static_cast< void* >( &send_buffer[ 0 ] );
   void* recv_buffer_int = static_cast< void* >( &recv_buffer[ 0 ] );
 
-    communicate_Alltoall_(send_buffer_int, recv_buffer_int, send_recv_count);
+  communicate_Alltoall_( send_buffer_int, recv_buffer_int, send_recv_count );
 }
 
 template < class D >
@@ -767,8 +767,7 @@ MPIManager::communicate_secondary_events_Alltoall(
   void* send_buffer_int = static_cast< void* >( &send_buffer[ 0 ] );
   void* recv_buffer_int = static_cast< void* >( &recv_buffer[ 0 ] );
 
-    communicate_secondary_events_Alltoall_(send_buffer_int,
-        recv_buffer_int);
+  communicate_secondary_events_Alltoall_( send_buffer_int, recv_buffer_int );
 }
 
 

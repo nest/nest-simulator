@@ -201,7 +201,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
     {
       throw BadParameter(
         "Parameter dictionary must not contain delay if delay is given "
-              "explicitly." );
+        "explicitly." );
     }
   }
   else

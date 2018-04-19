@@ -504,37 +504,27 @@ def show_help_with_pager(hlpobj, pager):
     consolepager = ['less', 'more', 'vi', 'vim', 'nano', 'emacs -nw',
                     'ed', 'editor']
 
-    # reading ~/.nestrc lookink for pager to use.
+    # check for pager command in ~/.nestrc if none provided in function call
     if pager is None:
-        # check if .netsrc exist
-        rc_file = os.path.join(os.environ['HOME'], '.nestrc')
-        if os.path.isfile(rc_file):
-            # open ~/.nestrc
-            rc = open(rc_file, 'r')
-            # The loop goes through the .nestrc line by line and checks
-            # it for the definition of a pager. Whether a pager is
-            # found or not, this pager is used or the standard pager 'more'.
-            for line in rc:
-                # the re checks if there are lines beginning with '%'
-                rctst = re.match(r'^\s?%', line)
-                if rctst is None:
-                    # the next re checks for a sth. like
-                    # '/page << /command (more)'
-                    # and returns the given pager.
-                    pypagers = re.findall(
-                        r'^\s?/page\s?<<\s?/command\s?\((\w*)', line)
-                    if pypagers:
-                        for pa in pypagers:
-                            if pa:
-                                pager = pa
-                            else:
-                                pager = 'more'
-                        break
-                    else:
-                        pager = 'more'
-            rc.close()
-        else:
-            pager = 'more'
+        # default to `more`
+        pager = 'more'
+
+        # Try to open ~/.nestrc safely
+        try:
+            with open(os.path.join(os.environ['HOME'], '.nestrc'), 'r') as rc:
+                for line in rc:
+                    # Go through the .nestrc line by line to check for the
+                    # definition of a pager using a regular expression
+                    # which matches lines of the format
+                    # ' /page << /command (more)'
+                    # but ignores comments (via the `(?!%)` part)
+                    for pa in re.findall(
+                            r'^\s?(?!%)\s?\/page\s?<<\s?\/command\s?\((\w*)',
+                            line):
+                        pager = pa
+        except:
+            print('Failed to open ~/.nestrc, using default pager')
+            pass
 
     # Load the helptext, check the environment
     # and display the helptext in the pager.

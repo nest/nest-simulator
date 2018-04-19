@@ -159,7 +159,8 @@ public:
   void handle( CurrentEvent& );
   void handle( DataLoggingRequest& );
 
-  bool is_off_grid() const
+  bool
+  is_off_grid() const
   {
     return true;
   }

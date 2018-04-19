@@ -281,7 +281,6 @@ GenericModel< ElementT >::get_model_id()
 {
   return proto_.get_model_id();
 }
-
 }
 
 #endif

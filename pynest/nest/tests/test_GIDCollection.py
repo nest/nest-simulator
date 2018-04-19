@@ -104,7 +104,7 @@ class TestGIDCollection(unittest.TestCase):
         gc_0 = nest.GIDCollection([1])
         gc_2 = nest.GIDCollection([3])
         gc_4 = nest.GIDCollection([5])
-        
+
         self.assertEqual(n[0], gc_0)
         self.assertEqual(n[2], gc_2)
         self.assertEqual(n[4], gc_4)

@@ -99,7 +99,7 @@ class BasicsTestCase(unittest.TestCase):
         d = topo.Displacement(l, l[:1])
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
-        
+
         # Displacement between gid 1 and 6. They are on the same y-axis, and
         # directly next to each other on the x-axis, so the displacement on
         # x-axis should be approximately -dx, while the displacement on the
@@ -108,7 +108,7 @@ class BasicsTestCase(unittest.TestCase):
         dx = 1. / ldict['columns']
         self.assertAlmostEqual(d[0][0], -dx, 3)
         self.assertEqual(d[0][1], 0.0)
-        
+
         # Displacement between gid 1 and 2. They are on the same x-axis, and
         # directly next to each other on the y-axis, so the displacement on
         # x-axis should be 0, while the displacement on the y-axis should be
@@ -125,22 +125,22 @@ class BasicsTestCase(unittest.TestCase):
         dx = 1. / ldict['columns']
         self.assertAlmostEqual(d[0][0], -dx, 3)
         self.assertEqual(d[0][1], 0.0)
-        
+
         d = topo.Displacement(l[:1], l2[1:2])
         dy = 1. / ldict['rows']
         self.assertEqual(d[0][0], 0.0)
         self.assertAlmostEqual(d[0][1], dy, 3)
-        
+
         # Test that an error is thrown if to_arg and from_arg have different
         # size.
         with self.assertRaises(nest.NESTError):
             d = topo.Displacement(l[1:3], l[2:7])
-            
+
         # position -> gids
         d = topo.Displacement([(0.0, 0.0)], l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
-            
+
         from numpy import array
 
         # position -> gids
@@ -152,7 +152,6 @@ class BasicsTestCase(unittest.TestCase):
         d = topo.Displacement([array([0.0, 0.0])] * len(l), l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
-
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Distance(self):
@@ -178,51 +177,51 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(len(d), len(l))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
         self.assertTrue(all([dd >= 0. for dd in d]))
-        
+
         # Distance between gid 1 and 6. They are on the same y-axis, and
         # directly next to each other on the x-axis, so the distance should be
         # approximately dx. The same is true for distance between gid 6 and 1.
         d = topo.Distance(l[:1], l[4:5])
         dx = 1. / ldict['columns']
         self.assertAlmostEqual(d[0], dx, 3)
-        
+
         d = topo.Distance(l[4:5], l[:1])
         self.assertAlmostEqual(d[0], dx, 3)
-        
+
         # Distance between gid 1 and 2. They are on the same x-axis, and
         # directly next to each other on the y-axis, so the distance should be
         # approximately dy. The same is true for distance between gid 2 and 1.
         d = topo.Distance(l[:1], l[1:2])
         dy = 1. / ldict['rows']
         self.assertAlmostEqual(d[0], dy, 3)
-        
+
         d = topo.Distance(l[1:2], l[:1])
         self.assertAlmostEqual(d[0], dy, 3)
-        
+
         # Test that we get correct results if to_arg and from_arg are from two
         # different layers
         l2 = topo.CreateLayer(ldict)
         d = topo.Distance(l[:1], l2[4:5])
         dx = 1. / ldict['columns']
         self.assertAlmostEqual(d[0], dx, 3)
-        
+
         d = topo.Distance(l[4:5], l2[:1])
         self.assertAlmostEqual(d[0], dx, 3)
-        
+
         d = topo.Distance(l[:1], l2[1:2])
         dy = 1. / ldict['rows']
         self.assertAlmostEqual(d[0], dy, 3)
-        
+
         d = topo.Distance(l[1:2], l2[:1])
         self.assertAlmostEqual(d[0], dy, 3)
-        
+
         # Test that an error is thrown if to_arg and from_arg have different
         # size.
         with self.assertRaises(nest.NESTError):
             d = topo.Distance(l[1:3], l[2:7])
-        
+
         # position -> gids
-        d = topo.Distance([[0.0, 0.0],], l)
+        d = topo.Distance([[0.0, 0.0], ], l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
         self.assertTrue(all([dd >= 0. for dd in d]))
@@ -310,7 +309,7 @@ class BasicsTestCase(unittest.TestCase):
 
         t = topo.GetTargetNodes(l[:1], l)
         self.assertEqual(len(t), 1)
-        
+
         p = topo.GetTargetPositions(l[:1], l)
         self.assertEqual(len(p), 1)
         self.assertTrue(all([len(pp) == 2 for pp in p[0]]))
@@ -331,13 +330,13 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(len(t), len(l))
         self.assertTrue(
             all([len(g) == 4 for g in t]))  # 2x2 mask  -> four targets
-        
+
         t = topo.GetTargetNodes(l[:1], l)
         self.assertEqual(t, ([1, 2, 4, 5],))
-        
+
         t = topo.GetTargetNodes(l[4:5], l)
         self.assertEqual(t, ([5, 6, 8, 9],))
-        
+
         t = topo.GetTargetNodes(l[8:9], l)
         self.assertEqual(t, ([1, 3, 7, 9],))
 

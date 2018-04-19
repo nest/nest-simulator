@@ -183,7 +183,8 @@ def from_device(detec, **kwargs):
             raise nest.NESTError("No events recorded!")
 
         if "title" not in kwargs:
-            kwargs["title"] = "Raster plot from device '%i'" % nest.GetStatus(detec[0], 'global_id')[0]
+            kwargs["title"] = "Raster plot from device '%i'" % nest.GetStatus(
+                detec[0], 'global_id')[0]
 
         if nest.GetStatus(detec)[0]["time_in_steps"]:
             xlabel = "Steps"

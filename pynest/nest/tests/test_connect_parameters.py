@@ -211,7 +211,7 @@ class TestParams(unittest.TestCase):
         hf.nest.ResetKernel()
         vol = hf.nest.Create('volume_transmitter')
         hf.nest.SetDefaults('stdp_dopamine_synapse',
-                            {'vt':vol.get('global_id')})
+                            {'vt': vol.get('global_id')})
         params = ['c', 'n']
         values = [0.153, 0.365]
         syn_params = {'model': 'stdp_dopamine_synapse'}

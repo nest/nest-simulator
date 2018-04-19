@@ -68,7 +68,7 @@ class PlottingTestCase(unittest.TestCase):
         topo.ConnectLayers(l, l, cdict)
 
         ctr = topo.FindCenterElement(l)
-        fig = topo.PlotTargets(l[ctr-1:ctr],l)
+        fig = topo.PlotTargets(l[ctr-1:ctr], l)
         fig.gca().set_title('Plain call')
 
         self.assertTrue(True)
@@ -87,7 +87,8 @@ class PlottingTestCase(unittest.TestCase):
 
         a2 = f.add_subplot(222)
         topo.PlotKernel(a2, l[ctr-1:ctr],
-            {'doughnut': {'inner_radius': 0.5, 'outer_radius': 0.75}})
+                        {'doughnut': {'inner_radius': 0.5,
+                                      'outer_radius': 0.75}})
 
         a3 = f.add_subplot(223)
         topo.PlotKernel(a3, l[ctr-1:ctr], {'rectangular':

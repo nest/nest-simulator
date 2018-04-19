@@ -57,10 +57,11 @@ public:
   {
   }
 
-  //TODO481 SetStatus, GetStatus, SetStatus must have flag
+  // TODO481 SetStatus, GetStatus, SetStatus must have flag
   void set_status( const DictionaryDatum&, bool ){};
 
-  void get_status( DictionaryDatum& d ) const
+  void
+  get_status( DictionaryDatum& d ) const
   {
     layer_->get_status( d );
   }
@@ -72,8 +73,16 @@ public:
     return layer_;
   }
 
-  void set_first_gid( index gid ) { first_gid_ = gid; }
-  const index get_first_gid() const { return first_gid_; }
+  void
+  set_first_gid( index gid )
+  {
+    first_gid_ = gid;
+  }
+  const index
+  get_first_gid() const
+  {
+    return first_gid_;
+  }
 
 private:
   const AbstractLayerPTR layer_; //!< layer object
@@ -84,11 +93,12 @@ AbstractLayerPTR get_layer( GIDCollectionPTR layer_gc );
 GIDCollectionPTR create_layer( const DictionaryDatum& layer_dict );
 ArrayDatum get_position( GIDCollectionPTR layer_gc );
 ArrayDatum displacement( GIDCollectionPTR layer_to_gc,
-  GIDCollectionPTR layer_from_gc);
+  GIDCollectionPTR layer_from_gc );
 ArrayDatum displacement( GIDCollectionPTR layer_gc, const ArrayDatum point );
 std::vector< double > distance( GIDCollectionPTR layer_to_gc,
   GIDCollectionPTR layer_from_gc );
-std::vector< double > distance( GIDCollectionPTR layer_gc, const ArrayDatum point );
+std::vector< double > distance( GIDCollectionPTR layer_gc,
+  const ArrayDatum point );
 MaskDatum create_mask( const DictionaryDatum& mask_dict );
 BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );

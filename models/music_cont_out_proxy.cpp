@@ -263,11 +263,12 @@ nest::music_cont_out_proxy::calibrate()
       if ( kernel().node_manager.is_local_gid( tgid ) )
       {
         // todo481 find the real node instead of just any
-        Node* const target_node = kernel().node_manager.get_node_or_proxy( tgid );
+        Node* const target_node =
+          kernel().node_manager.get_node_or_proxy( tgid );
         kernel().connection_manager.connect(
           get_gid(), target_node, target_node->get_thread(), synmodel_id );
 
-	for ( size_t j = 0; j < P_.record_from_.size(); ++j )
+        for ( size_t j = 0; j < P_.record_from_.size(); ++j )
         {
           music_index_map.push_back( P_.record_from_.size() * i + j );
         }

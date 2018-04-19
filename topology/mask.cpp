@@ -36,17 +36,25 @@ BallMask< 2 >::inside( const Box< 2 >& b ) const
 
   // Test if all corners are inside circle
 
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (0,0)
+  }
   p[ 0 ] = b.upper_right[ 0 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (0,1)
+  }
   p[ 1 ] = b.upper_right[ 1 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (1,1)
+  }
   p[ 0 ] = b.lower_left[ 0 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (1,0)
+  }
 
   return true;
 }
@@ -59,29 +67,45 @@ BallMask< 3 >::inside( const Box< 3 >& b ) const
 
   // Test if all corners are inside sphere
 
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (0,0,0)
+  }
   p[ 0 ] = b.upper_right[ 0 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (0,0,1)
+  }
   p[ 1 ] = b.upper_right[ 1 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (0,1,1)
+  }
   p[ 0 ] = b.lower_left[ 0 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (0,1,0)
+  }
   p[ 2 ] = b.upper_right[ 2 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (1,1,0)
+  }
   p[ 0 ] = b.upper_right[ 0 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (1,1,1)
+  }
   p[ 1 ] = b.lower_left[ 1 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (1,0,1)
+  }
   p[ 0 ] = b.lower_left[ 0 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (1,0,0)
+  }
 
   return true;
 }
@@ -504,5 +528,4 @@ EllipseMask< 3 >::inside( const Box< 3 >& b ) const
 
   return true;
 }
-
 }

@@ -482,7 +482,7 @@ TopologyModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 1 );
   if ( layer->size() == 1 )
   {
-    i->OStack.push( result[0] );
+    i->OStack.push( result[ 0 ] );
   }
   else
   {
@@ -547,12 +547,11 @@ TopologyModule::Displacement_g_gFunction::execute( SLIInterpreter* i ) const
   const GIDCollectionDatum layer_from =
     getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
 
-  if ( layer_to->size() != 1
-      and layer_from->size() != 1
-      and not ( layer_to->size() == layer_from->size() ) )
+  if ( layer_to->size() != 1 and layer_from->size() != 1
+    and not( layer_to->size() == layer_from->size() ) )
   {
     throw BadProperty(
-        "GIDCollections must have equal length or one must have size 1." );
+      "GIDCollections must have equal length or one must have size 1." );
   }
 
   ArrayDatum result = displacement( layer_to, layer_from );
@@ -569,8 +568,7 @@ TopologyModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
 
   const GIDCollectionDatum layer =
     getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
-  const ArrayDatum point =
-    getValue< ArrayDatum >( i->OStack.pick( 1 ) );
+  const ArrayDatum point = getValue< ArrayDatum >( i->OStack.pick( 1 ) );
 
   ArrayDatum result = displacement( layer, point );
 
@@ -634,12 +632,11 @@ TopologyModule::Distance_g_gFunction::execute( SLIInterpreter* i ) const
   const GIDCollectionDatum layer_from =
     getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
 
-  if ( layer_to->size() != 1
-      and layer_from->size() != 1
-      and not ( layer_to->size() == layer_from->size() ) )
+  if ( layer_to->size() != 1 and layer_from->size() != 1
+    and not( layer_to->size() == layer_from->size() ) )
   {
     throw BadProperty(
-        "GIDCollections must have equal length or one must have size 1." );
+      "GIDCollections must have equal length or one must have size 1." );
   }
 
   Token result = distance( layer_to, layer_from );
@@ -656,8 +653,7 @@ TopologyModule::Distance_a_gFunction::execute( SLIInterpreter* i ) const
 
   const GIDCollectionDatum layer =
     getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
-  const ArrayDatum point =
-    getValue< ArrayDatum >( i->OStack.pick( 1 ) );
+  const ArrayDatum point = getValue< ArrayDatum >( i->OStack.pick( 1 ) );
 
   Token result = distance( layer, point );
 

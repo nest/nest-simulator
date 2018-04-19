@@ -368,7 +368,7 @@ private:
 
   Model* proxynode_model_;
 
-  Node* create_proxynode_( thread t, int model_id);
+  Node* create_proxynode_( thread t, int model_id );
 
   //! Placeholders for remote nodes, one per thread
   std::vector< std::vector< Node* > > proxy_nodes_;

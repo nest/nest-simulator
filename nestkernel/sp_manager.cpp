@@ -242,7 +242,8 @@ SPManager::disconnect( index sgid,
       && ( source->has_proxies() ) )
     {
       target_thread = source->get_thread();
-      target = kernel().node_manager.get_node_or_proxy( target->get_gid(), target_thread );
+      target = kernel().node_manager.get_node_or_proxy(
+        target->get_gid(), target_thread );
     }
     // thread target_thread = target->get_thread();
 

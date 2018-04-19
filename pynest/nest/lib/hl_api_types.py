@@ -422,13 +422,13 @@ class GIDCollection(object):
     def set(self, params, val=None):
         """
         NB! This is the same implementation as SetStatus
-        
+
         Set the parameters of nodes or layers to params.
-    
+
         If val is given, params has to be the name of an attribute, which is
         set to val on the nodes. val can be a single value or a list of the
         same size as the GIDCollection.
-    
+
         Parameters
         ----------
         params : str or dict or list
@@ -437,7 +437,7 @@ class GIDCollection(object):
             the name of a model property as a str.
         val : int or list, optional
             If given, params has to be the name of a model property.
-    
+
         Raises
         ------
         TypeError
@@ -450,18 +450,20 @@ class GIDCollection(object):
         # relying on language idioms, such as comprehensions
         if self.__len__() == 0:
             return
-    
+
         if val is not None and nest.is_literal(params):
-            if nest.is_iterable(val) and not isinstance(val, (nest.uni_str, dict)):
+            if (nest.is_iterable(val) and not
+                    isinstance(val, (nest.uni_str, dict))):
                 params = [{params: x} for x in val]
             else:
                 params = {params: val}
-    
-        if (isinstance(params, list) and self.__len__() != len(params)) or (isinstance(params, tuple) and self.__len__() != len(params)):
+
+        if ((isinstance(params, list) and self.__len__() != len(params)) or
+                (isinstance(params, tuple) and self.__len__() != len(params))):
             raise TypeError(
                 "status dict must be a dict, or a list of dicts of length "
                 "len(nodes)")
-        
+
         nest.sli_func('SetStatus', self._datum, params)
 
 

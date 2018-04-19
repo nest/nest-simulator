@@ -61,7 +61,8 @@ nest::RNGManager::finalize()
 void
 nest::RNGManager::set_status( const DictionaryDatum& d )
 {
-  // Any changes in number of threads will be handled by VPManager::set_status(),
+  // Any changes in number of threads will be handled by
+  // VPManager::set_status(),
   // which will force re-initialization of RNGManager if necessary. This method
   // will only be called *after* such a reset.
 

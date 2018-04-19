@@ -127,7 +127,7 @@ and connecting the neurons using the `make_symmetric` flag for
 `one_to_one` connections.
 """
 n_connection = int(n_neuron * gap_per_neuron / 2)
-neuron_list = [ n for n in neurons]
+neuron_list = [n for n in neurons]
 connections = numpy.transpose(
     [random.sample(neuron_list, 2) for _ in range(n_connection)])
 

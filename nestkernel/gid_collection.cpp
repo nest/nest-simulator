@@ -254,7 +254,7 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last )
   const int first_model_id = kernel().modelrange_manager.get_model_id( first );
   for ( index gid = ++first; gid <= last; ++gid )
   {
-    const int model_id =  kernel().modelrange_manager.get_model_id( gid );
+    const int model_id = kernel().modelrange_manager.get_model_id( gid );
     if ( model_id != first_model_id )
     {
       throw BadProperty( "model ids does not match" );

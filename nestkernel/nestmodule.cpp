@@ -287,7 +287,7 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
   GIDCollectionDatum gc = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
   if ( not gc->valid() )
   {
-    throw KernelException("InvalidGIDCollection");
+    throw KernelException( "InvalidGIDCollection" );
   }
 
   size_t gc_size = gc->size();
@@ -297,14 +297,16 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
   if ( meta.valid() )
   {
     DictionaryDatum dict = DictionaryDatum( new Dictionary );
-    meta->get_status(dict);
+    meta->get_status( dict );
 
     ( *dict )[ names::network_size ] = gc_size;
 
-    GIDCollectionPrimitive* gcp = dynamic_cast<GIDCollectionPrimitive*>( &( *gc ) );
+    GIDCollectionPrimitive* gcp =
+      dynamic_cast< GIDCollectionPrimitive* >( &( *gc ) );
     assert( gcp != 0 && "object must be a GIDCollectionPrimitive" );
 
-    GIDCollectionDatum new_gc = GIDCollectionDatum( new GIDCollectionPrimitive( *gcp ) );
+    GIDCollectionDatum new_gc =
+      GIDCollectionDatum( new GIDCollectionPrimitive( *gcp ) );
     new_gc->set_metadata( GIDCollectionMetadataPTR( 0 ) );
     ( *dict )[ names::nodes ] = new_gc;
 
@@ -317,7 +319,7 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
 
     for ( GIDCollection::const_iterator it = gc->begin(); it < gc->end(); ++it )
     {
-      index node_id = (*it).gid;
+      index node_id = ( *it ).gid;
       DictionaryDatum dict = get_node_status( node_id );
       result.push_back( dict );
     }

@@ -193,7 +193,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         gid_list = topo.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (12, 17, 22,))
-	
+
     def test_EllipsoidalMask3D(self):
         """Simple ellipsoidal mask contains the correct GIDs"""
 

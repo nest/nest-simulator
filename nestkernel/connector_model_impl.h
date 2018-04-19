@@ -483,7 +483,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
           ( *hc )[ i ] = &vc->push_back( c );
           found = true;
         }
-      } // of for
+      }            // of for
       if ( found ) // we need to create a new entry for this type of connection
       {
         conn = pack_pointer( hc, b_has_primary, b_has_secondary );

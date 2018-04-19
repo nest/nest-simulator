@@ -458,7 +458,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
             S_.y3_ = 0.0;
           }
         } // S_.y3_ = P_.V_reset_;
-      } // if (rate > 0.0)
+      }   // if (rate > 0.0)
     }
     else // Neuron is within dead time
     {

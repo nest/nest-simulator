@@ -176,8 +176,7 @@ public:
    *
    * \returns true if the connection should be made, false otherwise.
    */
-  bool
-  connection_required(Node*& source, Node*& target, thread tid);
+  bool connection_required( Node*& source, Node*& target, thread tid );
 
   /**
    * Connect, using a dictionary with arrays.

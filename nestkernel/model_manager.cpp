@@ -88,7 +88,8 @@ ModelManager::initialize()
   {
     proxynode_model_ = new GenericModel< proxynode >( "proxynode", "" );
     proxynode_model_->set_type_id( 1 );
-    pristine_models_.push_back( std::pair< Model*, bool >( proxynode_model_, true ) );
+    pristine_models_.push_back(
+      std::pair< Model*, bool >( proxynode_model_, true ) );
   }
 
   // Re-create the model list from the clean prototypes
@@ -221,7 +222,8 @@ ModelManager::register_node_model_( Model* model, bool private_model )
 
   std::string name = model->get_name();
 
-  pristine_models_.push_back( std::pair< Model*, bool >( model, private_model ) );
+  pristine_models_.push_back(
+    std::pair< Model*, bool >( model, private_model ) );
   models_.push_back( model->clone( name ) );
 
 #pragma omp parallel

@@ -42,7 +42,7 @@ class GetSetTestCase(unittest.TestCase):
 
     def test_LayerGetStatus(self):
         """Test GetStatus on layer GIDCollection."""
-        
+
         ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         layer = topo.CreateLayer(ldict)

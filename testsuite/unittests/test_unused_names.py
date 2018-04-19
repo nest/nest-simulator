@@ -80,7 +80,7 @@ for names_file in names_files:
 
 # We call to recursive grep in the shell here, because that's much
 # simpler than recursive file iteration and regex matching in Python
-grep_cmd = ["grep", "-ro", "names::[A-Za-Z0-9_]*", source_dir]
+grep_cmd = ["grep", "-ro", "names::[A-Za-z0-9_]*", source_dir]
 names_used_raw = check_output(grep_cmd)
 
 if isinstance(names_used_raw, bytes):

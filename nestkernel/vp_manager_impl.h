@@ -75,8 +75,8 @@ VPManager::thread_to_vp( const thread tid ) const
 inline bool
 VPManager::is_gid_vp_local( const index gid ) const
 {
-  return ( gid % get_num_virtual_processes()
-           == static_cast< index >( get_vp() ) );
+  return (
+    gid % get_num_virtual_processes() == static_cast< index >( get_vp() ) );
 }
 
 inline index

@@ -85,7 +85,7 @@ nest::KernelManager::initialize()
   // "Core kernel managers" follow
   simulation_manager.initialize(); // independent of others
   modelrange_manager.initialize(); // independent of others
-  model_manager.initialize(); // depends on number of threads
+  model_manager.initialize();      // depends on number of threads
   // prerequisites:
   //   - vp_manager for number of threads
   //   - modelmanager for number of prototypes

@@ -300,8 +300,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 inline nest::thread
 nest::MPIManager::get_process_id_of_gid( const index gid ) const
 {
-  return gid % kernel().vp_manager.get_num_virtual_processes()
-    % num_processes_;
+  return gid % kernel().vp_manager.get_num_virtual_processes() % num_processes_;
 }
 
 #else // HAVE_MPI

@@ -41,8 +41,8 @@ class Source
 {
 private:
   unsigned long gid_ : 62; //!< gid of source
-  bool processed_ : 1; //!< whether this target has already been moved
-                       //!to the MPI buffer
+  bool processed_ : 1;     //!< whether this target has already been moved
+                           //!to the MPI buffer
   bool primary_ : 1;
   static const size_t disabled_marker_ = 4611686018427387904 - 1; // 2 ** 62 - 1
 

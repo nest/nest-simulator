@@ -428,8 +428,8 @@ nest::ConnBuilder::single_connect_( index sgid,
 
   if ( param_dicts_.empty() ) // indicates we have no synapse params
   {
-    const DictionaryDatum params = new Dictionary;  // empty parameter dictionary
-                                                    // required by connect() calls
+    const DictionaryDatum params = new Dictionary; // empty parameter dictionary
+    // required by connect() calls
 
     if ( default_weight_and_delay_ )
     {
@@ -459,8 +459,13 @@ nest::ConnBuilder::single_connect_( index sgid,
     {
       double delay = delay_->value_double( target_thread, rng );
       double weight = weight_->value_double( target_thread, rng );
-      kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_id_, params, delay, weight );
+      kernel().connection_manager.connect( sgid,
+        &target,
+        target_thread,
+        synapse_model_id_,
+        params,
+        delay,
+        weight );
     }
   }
   else
@@ -1604,11 +1609,13 @@ nest::BernoulliBuilder::connect_()
     // distribution; estimate an upper bound by assuming Gaussianity
     const size_t max_num_connections =
       std::ceil( float( targets_->size() ) * float( sources_->size() )
-		 / kernel().vp_manager.get_num_virtual_processes() );
+        / kernel().vp_manager.get_num_virtual_processes() );
     const size_t expected_num_connections = max_num_connections * p_;
-    const size_t std_num_connections = std::sqrt( max_num_connections * p_ * (1 - p_ ) );
-    kernel().connection_manager.reserve_connections(
-      tid, get_synapse_model(), expected_num_connections + 3 * std_num_connections );
+    const size_t std_num_connections =
+      std::sqrt( max_num_connections * p_ * ( 1 - p_ ) );
+    kernel().connection_manager.reserve_connections( tid,
+      get_synapse_model(),
+      expected_num_connections + 3 * std_num_connections );
 
     try
     {
@@ -1699,15 +1706,17 @@ nest::BernoulliBuilder::inner_connect_( const int tid,
 }
 
 
-nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( const GIDCollection& sources,
+nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder(
+  const GIDCollection& sources,
   const GIDCollection& targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
   , p_( ( *conn_spec )[ names::p ] )
 {
-  creates_symmetric_connections_ = true; // this connector takes care of symmetric
-                                         // connections on its own
+  creates_symmetric_connections_ =
+    true; // this connector takes care of symmetric
+          // connections on its own
 
   if ( p_ < 0 or 1 <= p_ )
   {
@@ -1736,16 +1745,17 @@ nest::SymmetricBernoulliBuilder::connect_()
 {
   // allocate pointer to thread specific random generator
   librandom::RngPtr grng = kernel().rng_manager.get_grng();
-  const unsigned long s = grng->ulrand( std::numeric_limits<unsigned int>::max() );
+  const unsigned long s =
+    grng->ulrand( std::numeric_limits< unsigned int >::max() );
 
 #pragma omp parallel
   {
     // get thread id
     const thread tid = kernel().vp_manager.get_thread_id();
 
-    // create a random generator for each thread, each using the same
-    // seed obtained from the global rng -> all threads across all
-    // processes generate identical random number streams
+// create a random generator for each thread, each using the same
+// seed obtained from the global rng -> all threads across all
+// processes generate identical random number streams
 #ifdef HAVE_GSL
     librandom::RngPtr rng(
       new librandom::GslRandomGen( gsl_rng_knuthran2002, s ) );
@@ -1799,7 +1809,7 @@ nest::SymmetricBernoulliBuilder::connect_()
 
         // choose indegree number of sources randomly from all sources
         size_t i = 0;
-        while( i < indegree )
+        while ( i < indegree )
         {
           sgid = ( *sources_ )[ rng->ulrand( sources_->size() ) ];
 
@@ -1807,7 +1817,8 @@ nest::SymmetricBernoulliBuilder::connect_()
           // connectivity, multapses might exist if the target neuron
           // with gid sgid draws the source with gid tgid while
           // choosing sources itself
-          if ( sgid == *tgid or previous_sgids.find( sgid ) != previous_sgids.end() )
+          if ( sgid == *tgid
+            or previous_sgids.find( sgid ) != previous_sgids.end() )
           {
             continue;
           }

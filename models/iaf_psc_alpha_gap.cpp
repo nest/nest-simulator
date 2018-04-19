@@ -56,8 +56,10 @@ RecordablesMap< iaf_psc_alpha_gap >::create()
 {
   // use standard names whereever you can for consistency!
   insert_( names::V_m, &iaf_psc_alpha_gap::get_V_m_ );
-  insert_( names::weighted_spikes_ex, &iaf_psc_alpha_gap::get_weighted_spikes_ex_ );
-  insert_( names::weighted_spikes_in, &iaf_psc_alpha_gap::get_weighted_spikes_in_ );
+  insert_(
+    names::weighted_spikes_ex, &iaf_psc_alpha_gap::get_weighted_spikes_ex_ );
+  insert_(
+    names::weighted_spikes_in, &iaf_psc_alpha_gap::get_weighted_spikes_in_ );
   insert_( names::I_syn_ex, &iaf_psc_alpha_gap::get_I_syn_ex_ );
   insert_( names::I_syn_in, &iaf_psc_alpha_gap::get_I_syn_in_ );
 }
@@ -316,7 +318,10 @@ iaf_psc_alpha_gap::calibrate()
  */
 
 bool
-iaf_psc_alpha_gap::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
+iaf_psc_alpha_gap::update_( Time const& origin,
+  const long from,
+  const long to,
+  const bool called_from_wfr_update )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
@@ -350,12 +355,11 @@ iaf_psc_alpha_gap::update_( Time const& origin, const long from, const long to, 
       y_i = S_.y3_;
       if ( interpolation_order == 3 )
       {
-        hf_i = V_.h_ * (
-          -S_.y3_ / P_.Tau_
-          + ( P_.I_e_ + S_.y0_ + S_.I_ex_ + S_.I_in_ ) / P_.C_ );
+        hf_i = V_.h_ * ( -S_.y3_ / P_.Tau_
+                         + ( P_.I_e_ + S_.y0_ + S_.I_ex_ + S_.I_in_ ) / P_.C_ );
       }
     }
-    
+
     if ( S_.r_ == 0 )
     {
       // neuron not refractory
@@ -426,8 +430,8 @@ iaf_psc_alpha_gap::update_( Time const& origin, const long from, const long to, 
       S_.dI_in_ += V_.IPSCInitialValue_ * V_.weighted_spikes_in_;
 
       // check if deviation from last iteration exceeds wfr_tol
-      wfr_tol_exceeded = wfr_tol_exceeded
-        or fabs( S_.y3_ - B_.last_y_values[ lag ] ) > wfr_tol;
+      wfr_tol_exceeded =
+        wfr_tol_exceeded or fabs( S_.y3_ - B_.last_y_values[ lag ] ) > wfr_tol;
       B_.last_y_values[ lag ] = S_.y3_;
 
       // update different interpolations
@@ -448,9 +452,9 @@ iaf_psc_alpha_gap::update_( Time const& origin, const long from, const long to, 
 
       case 3:
         y_ip1 = S_.y3_;
-        hf_ip1 = V_.h_ * (
-          -S_.y3_ / P_.Tau_
-          + ( P_.I_e_ + S_.y0_ + S_.I_ex_ + S_.I_in_ ) / P_.C_ );
+        hf_ip1 =
+          V_.h_ * ( -S_.y3_ / P_.Tau_
+                    + ( P_.I_e_ + S_.y0_ + S_.I_ex_ + S_.I_in_ ) / P_.C_ );
 
         new_coefficients[ lag * ( interpolation_order + 1 ) + 1 ] = hf_i;
         new_coefficients[ lag * ( interpolation_order + 1 ) + 2 ] =
@@ -471,8 +475,7 @@ iaf_psc_alpha_gap::update_( Time const& origin, const long from, const long to, 
   {
     for ( long temp = from; temp < to; ++temp )
     {
-      new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] =
-        S_.y3_;
+      new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] = S_.y3_;
     }
 
     std::vector< double >( kernel().connection_manager.get_min_delay(), 0.0 )

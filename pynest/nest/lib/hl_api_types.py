@@ -447,7 +447,7 @@ class GIDCollection(object):
         # This was added to ensure that the function is a nop (instead of,
         # for instance, raising an exception) when applied to an empty list,
         # which is an artifact of the API operating on lists, rather than
-        # relying on language idioms, such as comprehensions
+        # relying on language idioms, such as comprehensions.
         if self.__len__() == 0:
             return
 

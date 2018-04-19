@@ -197,7 +197,7 @@ fi   # Static code analysis.
 
 
 cd "$NEST_VPATH"
-cp ../examples/sli/nestrc.sli ~/.nestrc
+cp ../extras/nestrc.sli ~/.nestrc
 
 echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"

@@ -39,7 +39,7 @@ Author: Hans Ekkehard Plesser, 2010-06-28
 (unittest) run
 /unittest using
 
-/skip_if_without_gsl
+skip_if_without_gsl
 
 M_INFO setverbosity
 

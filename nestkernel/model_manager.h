@@ -505,7 +505,7 @@ ModelManager::delete_secondary_events_prototypes()
       iit != ( *it )->end();
       ++iit )
     {
-      ( *iit->second ).clear_supported_syn_ids();
+      ( *iit->second ).reset_supported_syn_ids();
       delete iit->second;
     }
     ( *it )->clear();

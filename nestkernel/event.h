@@ -853,7 +853,7 @@ public:
 
   virtual const std::vector< synindex >& get_supported_syn_ids() const = 0;
 
-  virtual void clear_supported_syn_ids() = 0;
+  virtual void reset_supported_syn_ids() = 0;
 };
 
 /**
@@ -1006,8 +1006,15 @@ public:
     return supported_syn_ids_;
   }
 
+  /**
+   * Resets the vector of supported syn ids to those originally
+   * registered via ModelsModule or user defined Modules, i.e.,
+   * removes all syn ids created by CopyModel. This is important to
+   * maintain consistency across ResetKernel, which removes all copied
+   * models.
+   */
   void
-  clear_supported_syn_ids()
+  reset_supported_syn_ids()
   {
     supported_syn_ids_.clear();
     for ( size_t i = 0; i < pristine_supported_syn_ids_.size(); ++i )

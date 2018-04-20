@@ -65,7 +65,6 @@
 #include "iaf_cond_exp.h"
 #include "iaf_cond_exp_sfa_rr.h"
 #include "iaf_psc_alpha.h"
-#include "iaf_psc_alpha_gap.h"
 #include "iaf_psc_alpha_multisynapse.h"
 #include "iaf_psc_delta.h"
 #include "iaf_psc_exp.h"
@@ -227,8 +226,6 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >(
     "iaf_psc_alpha" );
-  kernel().model_manager.register_node_model< iaf_psc_alpha_gap >(
-    "iaf_psc_alpha_gap" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_multisynapse >(
     "iaf_psc_alpha_multisynapse" );
   kernel().model_manager.register_node_model< iaf_psc_delta >(

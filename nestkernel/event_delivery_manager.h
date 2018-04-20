@@ -240,7 +240,6 @@ public:
    */
   virtual void reset_timers_counters();
 
-#ifndef DISABLE_TIMING
   Stopwatch sw_communicate_secondary_events;
   Stopwatch sw_collocate_spike_data;
   Stopwatch sw_communicate_spike_data;
@@ -248,9 +247,7 @@ public:
   Stopwatch sw_collocate_target_data;
   Stopwatch sw_communicate_target_data;
   Stopwatch sw_distribute_target_data;
-#endif
 
-#ifndef DISABLE_COUNTS
   unsigned int comm_steps_target_data;
   unsigned int comm_rounds_target_data;
   unsigned int comm_steps_spike_data;
@@ -258,7 +255,6 @@ public:
   unsigned int comm_steps_secondary_events;
 
   std::vector< unsigned int > call_count_deliver_events_5g;
-#endif
 
 private:
   template < typename SpikeDataT >

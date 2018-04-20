@@ -345,11 +345,6 @@ MPIManager::communicate( std::vector< long >& )
 }
 
 inline void
-MPIManager::communicate_connector_properties( DictionaryDatum& )
-{
-}
-
-inline void
 MPIManager::synchronize()
 {
 }

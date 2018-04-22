@@ -415,11 +415,8 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
 
     // collocate spikes to send buffer
-    me_completed_tid = collocate_spike_data_buffers_( tid,
-      assigned_ranks,
-      send_buffer_position,
-      spike_register_,
-      send_buffer );
+    me_completed_tid = collocate_spike_data_buffers_(
+      tid, assigned_ranks, send_buffer_position, spike_register_, send_buffer );
 
     if ( off_grid_spiking_ )
     {

@@ -224,8 +224,7 @@ nest::ConnectionManager::get_synapse_status( const index source_gid,
          and not target->local_receiver()
          and ( *connections_[ tid ] )[ syn_id ] != NULL ) ) )
   {
-    ( *connections_[ tid ] )[ syn_id ]->get_synapse_status(
-      tid, lcid, dict );
+    ( *connections_[ tid ] )[ syn_id ]->get_synapse_status( tid, lcid, dict );
   }
   else if ( source->has_proxies() and not target->has_proxies()
     and target->local_receiver() )
@@ -657,8 +656,7 @@ nest::ConnectionManager::connect_( Node& s,
 
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection(
-      s, r, connections_[ tid ], syn_id, params, delay, weight );
+    .add_connection( s, r, connections_[ tid ], syn_id, params, delay, weight );
   source_table_.add_source( tid, syn_id, s_gid, is_primary );
 
   increase_connection_count( tid, syn_id );

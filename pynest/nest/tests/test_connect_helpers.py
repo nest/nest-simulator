@@ -108,7 +108,7 @@ def get_connectivity_matrix(pop1, pop2):
     for conn in connections:
         source_id = conn[0]
         target_id = conn[1]
-        M[index_dic[target_id]][index_dic[source_id]] += 1
+        M[int(index_dic[target_id])][int(index_dic[source_id])] += 1
     return M
 
 

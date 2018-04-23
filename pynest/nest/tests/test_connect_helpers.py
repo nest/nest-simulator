@@ -101,9 +101,9 @@ def get_connectivity_matrix(pop1, pop2):
     index_dic = {}
     popArray1 = np.asarray(pop1)
     popArray2 = np.asarray(pop2)
-    for node in pop1:
+    for node in popArray1:
         index_dic[node] = np.where(popArray1 == node)[0][0]
-    for node in pop2:
+    for node in popArray2:
         index_dic[node] = np.where(popArray2 == node)[0][0]
     for conn in connections:
         source_id = conn[0]

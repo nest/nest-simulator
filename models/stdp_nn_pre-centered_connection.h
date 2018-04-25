@@ -263,10 +263,10 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
   {
     // facilitation due to the first post-synaptic spike start->t_
     // since the previous pre-synaptic spike t_lastspike
-    
+
     double minus_dt;
     minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
-    
+
     if ( minus_dt == 0 )
     {
       // By convention, discard such a pair
@@ -274,9 +274,8 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
       ++start;
       continue;
     }
-    
-    weight_ =
-      facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ) );
+
+    weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ) );
 
     // According to the presynaptic-centered nearest-neighbour scheme,
     // a postsynaptic spike
@@ -287,7 +286,7 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
 
     // The minus_dt == 0 case
     // was the only reason for while instead of if(start != finish).
-    break;    
+    break;
   }
 
   // depression due to the latest post-synaptic spike finish->t_

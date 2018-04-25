@@ -226,7 +226,9 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid )
         gid = ( min_gid / num_vps ) * num_vps + vp;
         // bad hack, need to improve ...
         if ( gid < min_gid )
+        {
           gid += num_vps;
+        }
       }
 
       while ( gid <= max_gid )

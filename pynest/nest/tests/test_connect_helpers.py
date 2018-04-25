@@ -99,12 +99,10 @@ def get_connectivity_matrix(pop1, pop2):
     M = np.zeros((len(pop2), len(pop1)))
     connections = nest.GetConnections(pop1, pop2)
     index_dic = {}
-    popArray1 = np.asarray([x for x in pop1])
-    popArray2 = np.asarray([x for x in pop2])
-    for node in popArray1:
-        index_dic[node] = np.where(popArray1 == node)[0][0]
-    for node in popArray2:
-        index_dic[node] = np.where(popArray2 == node)[0][0]
+    for count, node in enumerate(pop1):
+        index_dic[node] = count
+    for count, node in enumerate(pop2):
+        index_dic[node] = count
     for conn in connections:
         source_id = conn[0]
         target_id = conn[1]
@@ -122,12 +120,10 @@ def get_weighted_connectivity_matrix(pop1, pop2, label):
     M = np.zeros((len(pop2), len(pop1)))
     connections = nest.GetConnections(pop1, pop2)
     index_dic = {}
-    pop1 = np.asarray(pop1)
-    pop2 = np.asarray(pop2)
-    for node in pop1:
-        index_dic[node] = np.where(pop1 == node)[0][0]
-    for node in pop2:
-        index_dic[node] = np.where(pop2 == node)[0][0]
+    for count, node in enumerate(pop1):
+        index_dic[node] = count
+    for count, node in enumerate(pop2):
+        index_dic[node] = count
     for conn in connections:
         source_id = conn[0]
         target_id = conn[1]

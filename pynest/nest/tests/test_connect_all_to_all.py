@@ -24,7 +24,7 @@ import unittest
 import numpy as np
 import scipy.stats
 from . import test_connect_helpers as hf
-from .test_connect_parameters import TestParams
+from . test_connect_parameters import TestParams
 
 
 @hf.nest.check_stack
@@ -38,8 +38,6 @@ class TestAllToAll(TestParams):
     N2 = 7
     N1_array = 500
     N2_array = 10
-
-    # def testErrorMessages(self):
 
     def testConnectivity(self):
         self.setUpNetwork(self.conn_dict)

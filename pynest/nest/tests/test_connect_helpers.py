@@ -99,8 +99,8 @@ def get_connectivity_matrix(pop1, pop2):
     M = np.zeros((len(pop2), len(pop1)))
     connections = nest.GetConnections(pop1, pop2)
     index_dic = {}
-    popArray1 = np.asarray(pop1)
-    popArray2 = np.asarray(pop2)
+    popArray1 = np.asarray([x for x in pop1])
+    popArray2 = np.asarray([x for x in pop2])
     for node in popArray1:
         index_dic[node] = np.where(popArray1 == node)[0][0]
     for node in popArray2:

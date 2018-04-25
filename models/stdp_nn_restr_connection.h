@@ -252,27 +252,19 @@ STDPNNRestrConnection< targetidentifierT >::send( Event& e,
   // If there were no post-synaptic spikes between the current pre-synaptic one
   // t_spike and the previous pre-synaptic one t_lastspike, there are no pairs
   // to account.
-  while ( start != finish )
+  if ( start != finish )
   {
-    // This loop can be executed up to two times.
-
     double minus_dt;
 
     // facilitation due to the first post-synaptic spike start->t_
     // since the previous pre-synaptic spike t_lastspike
     minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
-    if ( minus_dt == 0 )
-    {
-      // Zero-interval pair is discarded, but in this case we should
-      // account the next postsynaptic spike, so that there still is a
-      // facilitation pair.
-      ++start;
-      continue;
-      // That's why all this is inside a while() loop instead of if().
-    }
+
+    // get_history() should make sure that
+    // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
+    assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
 
     weight_ = facilitate_( weight_, std::exp( minus_dt / tau_plus_ ) );
-    break;
   }
 
   // depression due to the latest post-synaptic spike finish->t_

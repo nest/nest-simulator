@@ -259,7 +259,7 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
   // If there were no post-synaptic spikes between the current pre-synaptic one
   // t_spike and the previous pre-synaptic one t_lastspike, there are no pairs
   // to account.
-  while ( start != finish )
+  if ( start != finish )
   {
     // facilitation due to the first post-synaptic spike start->t_
     // since the previous pre-synaptic spike t_lastspike
@@ -267,13 +267,9 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
     double minus_dt;
     minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
 
-    if ( minus_dt == 0 )
-    {
-      // By convention, discard such a pair
-      // and pick the next postsynaptic spike.
-      ++start;
-      continue;
-    }
+    // get_history() should make sure that
+    // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
+    assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
 
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ) );
 
@@ -283,10 +279,6 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
     // erases the state of the synapse,
     // and all the preceding presynaptic spikes are forgotten.
     Kplus_ = 0;
-
-    // The minus_dt == 0 case
-    // was the only reason for while instead of if(start != finish).
-    break;
   }
 
   // depression due to the latest post-synaptic spike finish->t_

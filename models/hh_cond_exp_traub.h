@@ -70,8 +70,16 @@ Description:
 
  (2) Spike Detection
  Spike detection is done by a combined threshold-and-local-maximum search: if
- there is a local maximum above a certain threshold of the membrane potential,
- it is considered a spike.
+ V_m >= V_T + 30 mV and membrane potential has dropped during a time step
+ (i.e., V_m has just passed a maximum), the neuron emits a spike.
+
+Note:
+ The spike-detection mechanism in this model means that as long as
+ V_m >= V_T + 30 mV and the membrane potential keeps falling (downward flank
+ of the action potential), the neuron would emit a spike on every time step.
+ It is therefore essential to have a sufficiently long absolute refractory
+ time to suppress spurious spikes. This behavior is consistent with the
+ original model in [1] with t_ref = 3 ms.
 
 Problems/Todo:
 Only the channel variables m,h,n are implemented. The original
@@ -103,8 +111,8 @@ Parameters:
 
 References:
 
-Traub, R.D. and Miles, R. (1991) Neuronal Networks of the Hippocampus.
-Cambridge University Press, Cambridge UK.
+[1] Traub, R.D. and Miles, R. (1991) Neuronal Networks of the Hippocampus.
+    Cambridge University Press, Cambridge UK.
 
 Sends: SpikeEvent
 

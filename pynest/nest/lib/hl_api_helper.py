@@ -508,42 +508,27 @@ def show_help_with_pager(hlpobj, pager):
             'Please source nest_vars.sh or define NEST_INSTALL_DIR manually.')
         return
 
-    objname = hlpobj + '.hlp'
     consolepager = ['less', 'more', 'vi', 'vim', 'nano', 'emacs -nw',
                     'ed', 'editor']
 
-    # reading ~/.nestrc lookink for pager to use.
+    # look up pager
     if pager is None:
-        # check if .netsrc exist
-        rc_file = os.path.join(os.environ['HOME'], '.nestrc')
-        if os.path.isfile(rc_file):
-            # open ~/.nestrc
-            rc = open(rc_file, 'r')
-            # The loop goes through the .nestrc line by line and checks
-            # it for the definition of a pager. Whether a pager is
-            # found or not, this pager is used or the standard pager 'more'.
-            for line in rc:
-                # the re checks if there are lines beginning with '%'
-                rctst = re.match(r'^\s?%', line)
-                if rctst is None:
-                    # the next re checks for a sth. like
-                    # '/page << /command (more)'
-                    # and returns the given pager.
-                    pypagers = re.findall(
-                        r'^\s?/page\s?<<\s?/command\s?\((\w*)', line)
-                    if pypagers:
-                        for pa in pypagers:
-                            if pa:
-                                pager = pa
-                            else:
-                                pager = 'more'
-                        break
-                    else:
-                        pager = 'more'
-            rc.close()
-        else:
-            pager = 'more'
+        pager = sli_func('/page /command GetOption')
+    
+        # pager == false if .nestrc does not define one    
+        if not pager:
+            # The following is based on
+            # https://stackoverflow.com/questions/377017
+            candidate = 'more'
+            if any(os.access(os.path.join(path, candidate), os.X_OK)
+                   for path in os.environ['PATH'].split(os.pathsep)):
+                pager = candidate
+            else:
+                print('NEST help requires a pager program. You can configure'
+                      'it in the .nestrc file in your home directory.')
+                return
 
+    objname = hlpobj + '.hlp'
     objf = get_help_filepath(hlpobj)
     if objf:
         if __check_nb():

@@ -508,23 +508,21 @@ def show_help_with_pager(hlpobj, pager):
             'Please source nest_vars.sh or define NEST_INSTALL_DIR manually.')
         return
 
-    consolepager = ['less', 'more', 'vi', 'vim', 'nano', 'emacs -nw',
-                    'ed', 'editor']
-
     # look up pager
     if pager is None:
         pager = sli_func('/page /command GetOption')
-    
-        # pager == false if .nestrc does not define one    
+
+        # pager == false if .nestrc does not define one
         if not pager:
-            # The following is based on
+            # Search for pager in path. The following is based on
             # https://stackoverflow.com/questions/377017
-            candidate = 'more'
-            if any(os.access(os.path.join(path, candidate), os.X_OK)
-                   for path in os.environ['PATH'].split(os.pathsep)):
-                pager = candidate
+            for candidate in ['less', 'more', 'cat']:
+                if any(os.access(os.path.join(path, candidate), os.X_OK)
+                       for path in os.environ['PATH'].split(os.pathsep)):
+                    pager = candidate
+                    break
             else:
-                print('NEST help requires a pager program. You can configure'
+                print('NEST help requires a pager program. You can configure '
                       'it in the .nestrc file in your home directory.')
                 return
 
@@ -537,9 +535,14 @@ def show_help_with_pager(hlpobj, pager):
             if hlptxt:
                 # Opens modal window only in notebook.
                 __show_help_in_modal_window(objname, hlptxt)
-        elif pager in consolepager:
+        else:
             # Run the pager with the object file.
-            subprocess.call([pager, objf])
+            try:
+                subprocess.check_call([pager, objf])
+            except (FileNotFoundError, subprocess.CalledProcessError):
+                print('Displaying help with pager {} failed. '
+                      'Please define a working parser in .nestrc '
+                      'in your home directory.'.format(pager))
 
 
 @check_stack

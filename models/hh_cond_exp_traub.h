@@ -57,33 +57,37 @@ extern "C" int
 hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
 
 /* BeginDocumentation
-Name: hh_cond_exp_traub - Hodgin Huxley based model, Traub modified.
+Name: hh_cond_exp_traub - Hodgkin-Huxley model for Brette et al (2007) review
 
 Description:
 
- hh_cond_exp_traub is an implementation of a modified Hodkin-Huxley model
+ hh_cond_exp_traub is an implementation of a modified Hodgkin-Huxley model
 
- (1) Post-synaptic currents
- Incoming spike events induce a post-synaptic change of conductance modeled
- by an exponential function. The exponential function is normalized such that an
- event of weight 1.0 results in a peak current of 1 nS.
+ This model was specifically developed for a major review of simulators [1],
+ based on a model of hippocampal pyramidal cells by Traub and Miles[2].
+ The key differences between the current model and the model in [2] are:
 
- (2) Spike Detection
- Spike detection is done by a combined threshold-and-local-maximum search: if
- V_m >= V_T + 30 mV and membrane potential has dropped during a time step
- (i.e., V_m has just passed a maximum), the neuron emits a spike.
+ - This model is a point neuron, not a compartmental model.
+ - This model includes only I_Na and I_K, with simpler I_K dynamics than
+   in [2], so it has only three instead of eight gating variables;
+   in particular, all Ca dynamics have been removed.
+ - Incoming spikes induce an instantaneous conductance change followed by
+   exponential decay instead of activation over time.
+
+ This model is primarily provided as reference implementation for hh_coba
+ example of the Brette et al (2007) review. Default parameter values are chosen
+ to match those used with NEST 1.9.10 when preparing data for [1]. Code for all
+ simulators covered is available from ModelDB [3].
 
 Note:
- The spike-detection mechanism in this model means that as long as
- V_m >= V_T + 30 mV and the membrane potential keeps falling (downward flank
- of the action potential), the neuron would emit a spike on every time step.
- It is therefore essential to have a sufficiently long absolute refractory
- time to suppress spurious spikes. This behavior is consistent with the
- original model in [1] with t_ref = 3 ms.
+ In this model, a spike is emitted if
 
-Problems/Todo:
-Only the channel variables m,h,n are implemented. The original
-contains variables called y,s,r,q and \chi.
+          V_m >= V_T + 30 mV and V_m has fallen during the current time step
+
+ To avoid that this leads to multiple spikes during the falling flank of a
+ spike, it is essential to chose a sufficiently long refractory period.
+ Traub and Miles used t_ref = 3 ms [2, p 118], while we used t_ref = 2 ms
+ in [2].
 
 Parameters:
 
@@ -100,7 +104,7 @@ Parameters:
                      function in ms.
  tau_syn_in double - Time constant of the inhibitory synaptic exponential
                      function in ms.
- t_ref      double - Duration of refractory period in ms.
+ t_ref      double - Duration of refractory period in ms (see Note).
  E_ex       double - Excitatory synaptic reversal potential in mV.
  E_in       double - Inhibitory synaptic reversal potential in mV.
  E_Na       double - Sodium reversal potential in mV.
@@ -111,8 +115,12 @@ Parameters:
 
 References:
 
-[1] Traub, R.D. and Miles, R. (1991) Neuronal Networks of the Hippocampus.
+[1] Brette R et al (2007) Simulation of networks of spiking neurons: A review
+    of tools and strategies. J Comp Neurosci 23:349-98.
+    doi 10.1007/s10827-007-0038-6
+[2] Traub RD and Miles R (1991) Neuronal Networks of the Hippocampus.
     Cambridge University Press, Cambridge UK.
+[3] http://modeldb.yale.edu/83319
 
 Sends: SpikeEvent
 

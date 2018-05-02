@@ -148,7 +148,7 @@ nest::hh_cond_exp_traub::Parameters_::Parameters_()
   , E_in( -80.0 )
   , tau_synE( 5.0 )  // Synaptic Time Constant Excitatory Synapse (ms)
   , tau_synI( 10.0 ) // Synaptic Time Constant Excitatory Synapse (ms)
-  , t_ref_( 3.0 )    // Refractory time in ms --- as in [1, p 118]
+  , t_ref_( 2.0 )    // Refractory time in ms
   , I_e( 0.0 )       // Stimulus Current (pA)
 {
 }

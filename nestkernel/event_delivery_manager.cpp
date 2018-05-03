@@ -701,8 +701,14 @@ EventDeliveryManager::deliver_events_5g_( const thread tid,
       {
         se.set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
         se.set_offset( spike_data.get_offset() );
-        kernel().connection_manager.send_5g(
-          tid, spike_data.get_syn_id(), spike_data.get_lcid(), cm, se );
+
+        index syn_id = spike_data.get_syn_id();
+        index lcid = spike_data.get_lcid();
+        index source_gid =
+          kernel().connection_manager.get_source_gid( tid, syn_id, lcid );
+        se.set_sender_gid( source_gid );
+
+        kernel().connection_manager.send_5g( tid, syn_id, lcid, cm, se );
       }
 
       // break if this was the last valid entry from this rank

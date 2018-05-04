@@ -181,7 +181,7 @@ GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 
 template < typename ConnectionT >
 void
-GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
+GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >* thread_local_connectors,
   const synindex syn_id,
@@ -254,7 +254,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
 #endif
   updateValue< long >( p, names::receptor_type, actual_receptor_type );
 
-  add_connection_5g_( src,
+  add_connection_( src,
     tgt,
     thread_local_connectors,
     syn_id,
@@ -265,7 +265,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
 
 template < typename ConnectionT >
 void
-GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
+GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >* thread_local_connectors,
   const synindex syn_id,

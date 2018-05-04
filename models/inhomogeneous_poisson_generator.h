@@ -71,7 +71,7 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "stimulating_device.h"
 
 #include <vector>
@@ -82,7 +82,7 @@
 namespace nest
 {
 
-class inhomogeneous_poisson_generator : public Node
+class inhomogeneous_poisson_generator: public DeviceNode
 {
 
 public:

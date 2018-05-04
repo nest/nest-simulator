@@ -110,7 +110,7 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
       / kernel().vp_manager.get_num_assigned_ranks_per_thread();
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
-      ( *spike_register_5g_[ tid ] )[ assigned_tid ][ lag ].push_back( *it );
+      ( *spike_register_[ tid ] )[ assigned_tid ][ lag ].push_back( *it );
     }
   }
 }
@@ -133,7 +133,7 @@ EventDeliveryManager::send_off_grid_remote( thread tid,
       / kernel().vp_manager.get_num_assigned_ranks_per_thread();
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
-      ( *off_grid_spike_register_5g_[ tid ] )[ assigned_tid ][ lag ].push_back(
+      ( *off_grid_spike_register_[ tid ] )[ assigned_tid ][ lag ].push_back(
         OffGridTarget( *it, e.get_offset() ) );
     }
   }

@@ -70,6 +70,7 @@ nest::SimulationManager::initialize()
   Time::reset_resolution();
   clock_.calibrate();
 
+  prepared_ = false;
   simulating_ = false;
   simulated_ = false;
   exit_on_user_signal_ = false;
@@ -396,6 +397,13 @@ nest::SimulationManager::prepare()
 {
   assert( kernel().is_initialized() );
 
+  if ( prepared_ )
+  {
+    std::string msg = "Prepare called twice.";
+    LOG( M_ERROR, "SimulationManager::prepare", msg );
+    throw KernelException();
+  }
+
   if ( inconsistent_state_ )
   {
     throw KernelException(
@@ -455,6 +463,7 @@ nest::SimulationManager::prepare()
       * kernel().connection_manager.get_min_delay();
     kernel().music_manager.enter_runtime( tick );
   }
+  prepared_ = true;
 
   // check whether waveform relaxation is used on any MPI process;
   // needs to be called before update_connection_intrastructure_since
@@ -551,6 +560,13 @@ nest::SimulationManager::run( Time const& t )
 {
   assert_valid_simtime( t );
 
+  if ( not prepared_ )
+  {
+    std::string msg = "Run called without calling Prepare.";
+    LOG( M_ERROR, "SimulationManager::run", msg );
+    throw KernelException();
+  }
+
 #ifndef DISABLE_TIMING
   if ( kernel().mpi_manager.get_rank() < 30 )
   {
@@ -618,6 +634,13 @@ nest::SimulationManager::run( Time const& t )
 void
 nest::SimulationManager::cleanup()
 {
+  if ( not prepared_ )
+  {
+    std::string msg = "Cleanup called without calling Prepare.";
+    LOG( M_ERROR, "SimulationManager::cleanup", msg );
+    throw KernelException();
+  }
+
   if ( not simulated_ )
   {
     return;
@@ -637,6 +660,7 @@ nest::SimulationManager::cleanup()
   }
 
   kernel().node_manager.finalize_nodes();
+  prepared_ = false;
 }
 
 void
@@ -649,7 +673,7 @@ nest::SimulationManager::call_update_()
 
   size_t num_active_nodes = kernel().node_manager.get_num_active_nodes();
   os << "Number of local nodes: " << num_active_nodes << std::endl;
-  os << "Simulaton time (ms): " << t_sim;
+  os << "Simulation time (ms): " << t_sim;
 
 #ifdef _OPENMP
   os << std::endl

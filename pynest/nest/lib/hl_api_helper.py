@@ -443,6 +443,51 @@ def __show_help_in_modal_window(objname, hlptxt):
     display(Javascript(s.substitute(jstitle=objname, jstext=hlptxt)))
 
 
+def get_help_filepath(hlpobj):
+    """Get file path of help object
+
+    Parameters
+    ----------
+    hlpobj : string
+        Object to display help for
+
+    Returns
+    -------
+    string:
+        Filepath of the help object.
+    """
+
+    helpdir = os.path.join(sli_func("statusdict/prgdocdir ::"), "help")
+    objname = hlpobj + '.hlp'
+    for dirpath, dirnames, files in os.walk(helpdir):
+        for hlp in files:
+            if hlp == objname:
+                objf = os.path.join(dirpath, objname)
+                return objf
+    print("Sorry, there is no help for '" + hlpobj + "'!")
+
+
+def load_help(hlpobj):
+    """Returns documentation of the object
+
+    Parameters
+    ----------
+    hlpobj : object
+        Object to display help for
+
+    Returns
+    -------
+    string:
+        The documentation of the object.
+    """
+
+    objf = get_help_filepath(hlpobj)
+    if objf:
+        with open(objf, 'r') as fhlp:
+            hlptxt = fhlp.read()
+        return hlptxt
+
+
 def show_help_with_pager(hlpobj, pager):
     """Output of doc in python with pager or print
 
@@ -463,8 +508,6 @@ def show_help_with_pager(hlpobj, pager):
             'Please source nest_vars.sh or define NEST_INSTALL_DIR manually.')
         return
 
-    helpdir = os.path.join(os.environ['NEST_INSTALL_DIR'], "share", "doc",
-                           "nest", "help")
     objname = hlpobj + '.hlp'
     consolepager = ['less', 'more', 'vi', 'vim', 'nano', 'emacs -nw',
                     'ed', 'editor']
@@ -500,38 +543,18 @@ def show_help_with_pager(hlpobj, pager):
             rc.close()
         else:
             pager = 'more'
-    hlperror = True
-    # Searching the given object in all helpfiles, check the environment
-    # and display the helptext in the pager.
-    for dirpath, dirnames, files in os.walk(helpdir):
-        for hlp in files:
-            if hlp == objname:
-                hlperror = False
-                objf = os.path.join(dirpath, objname)
-                fhlp = open(objf, 'r')
-                hlptxt = fhlp.read()
-                # only for notebook
-                if __check_nb():
-                    if pager in consolepager:
-                        # only in notebook open modal window
-                        __show_help_in_modal_window(objname, hlptxt)
-                        fhlp.close()
-                        break
-                    else:
-                        subprocess.call([pager, objf])
-                        fhlp.close()
-                        break
-                else:
-                    if pager in consolepager:
-                        subprocess.call([pager, objf])
-                        fhlp.close()
-                        break
-                    else:
-                        subprocess.call([pager, objf])
-                        fhlp.close()
-                        break
-    if hlperror:
-        print("Sorry, there is no help for '" + hlpobj + "'!")
+
+    objf = get_help_filepath(hlpobj)
+    if objf:
+        if __check_nb():
+            # Load the helptext, check the file exists.
+            hlptxt = load_help(hlpobj)
+            if hlptxt:
+                # Opens modal window only in notebook.
+                __show_help_in_modal_window(objname, hlptxt)
+        elif pager in consolepager:
+            # Run the pager with the object file.
+            subprocess.call([pager, objf])
 
 
 @check_stack

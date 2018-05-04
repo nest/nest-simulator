@@ -52,6 +52,7 @@
 #include "aeif_psc_exp.h"
 #include "aeif_psc_delta.h"
 #include "amat2_psc_exp.h"
+#include "erfc_neuron.h"
 #include "gauss_rate.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
@@ -86,6 +87,7 @@
 #include "gif_psc_exp_multisynapse.h"
 #include "gif_cond_exp.h"
 #include "gif_cond_exp_multisynapse.h"
+#include "gif_pop_psc_exp.h"
 
 // Stimulation devices
 #include "ac_generator.h"
@@ -94,6 +96,7 @@
 #include "mip_generator.h"
 #include "noise_generator.h"
 #include "poisson_generator.h"
+#include "inhomogeneous_poisson_generator.h"
 #include "ppd_sup_generator.h"
 #include "pulsepacket_generator.h"
 #include "sinusoidal_gamma_generator.h"
@@ -250,6 +253,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
   kernel().model_manager.register_node_model< spike_generator >(
     "spike_generator" );
+  kernel().model_manager.register_node_model< inhomogeneous_poisson_generator >(
+    "inhomogeneous_poisson_generator" );
   kernel().model_manager.register_node_model< poisson_generator >(
     "poisson_generator" );
   kernel().model_manager.register_node_model< pulsepacket_generator >(
@@ -266,6 +271,7 @@ ModelsModule::init( SLIInterpreter* )
     "ppd_sup_generator" );
   kernel().model_manager.register_node_model< gamma_sup_generator >(
     "gamma_sup_generator" );
+  kernel().model_manager.register_node_model< erfc_neuron >( "erfc_neuron" );
   kernel().model_manager.register_node_model< ginzburg_neuron >(
     "ginzburg_neuron" );
   kernel().model_manager.register_node_model< mcculloch_pitts_neuron >(
@@ -385,6 +391,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< gif_cond_exp >( "gif_cond_exp" );
   kernel().model_manager.register_node_model< gif_cond_exp_multisynapse >(
     "gif_cond_exp_multisynapse" );
+  kernel().model_manager.register_node_model< gif_pop_psc_exp >(
+    "gif_pop_psc_exp" );
 
   kernel().model_manager.register_node_model< aeif_cond_alpha >(
     "aeif_cond_alpha" );

@@ -28,6 +28,8 @@
 // C++ includes:
 #include <cassert>
 #include <cmath>
+#include <iomanip>
+#include <limits>
 #include <set>
 #include <algorithm>
 #include <vector>
@@ -69,6 +71,7 @@ nest::ConnectionManager::ConnectionManager()
   , sort_connections_by_source_( true )
   , has_primary_connections_( false )
   , secondary_connections_exist_( false )
+  , stdp_eps_( 1.0e-6 )
 {
 }
 
@@ -1553,6 +1556,34 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions(
         }
       }
     }
+  }
+}
+
+void
+nest::ConnectionManager::set_stdp_eps( const double stdp_eps )
+{
+  if ( not( stdp_eps < Time::get_resolution().get_ms() ) )
+  {
+    throw KernelException(
+      "The epsilon used for spike-time comparison in STDP must be less "
+      "than the simulation resolution." );
+  }
+  else if ( stdp_eps < 0 )
+  {
+    throw KernelException(
+      "The epsilon used for spike-time comparison in STDP must not be "
+      "negative." );
+  }
+  else
+  {
+    stdp_eps_ = stdp_eps;
+
+    std::ostringstream os;
+    os << "Epsilon for spike-time comparison in STDP was set to "
+       << std::setprecision( std::numeric_limits< long double >::digits10 )
+       << stdp_eps_ << ".";
+
+    LOG( M_INFO, "ConnectionManager::set_stdp_eps", os.str() );
   }
 }
 

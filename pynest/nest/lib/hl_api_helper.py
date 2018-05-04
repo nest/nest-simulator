@@ -487,6 +487,11 @@ def load_help(hlpobj):
             hlptxt = fhlp.read()
         return hlptxt
 
+def _is_executable(path, candidate):
+    """Returns true for executable files."""
+    
+    candidate = os.path.join(path, candidate)
+    return os.access(candidate, os.X_OK) and os.path.isfile(candidate)
 
 def show_help_with_pager(hlpobj, pager):
     """Output of doc in python with pager or print
@@ -508,7 +513,7 @@ def show_help_with_pager(hlpobj, pager):
             'Please source nest_vars.sh or define NEST_INSTALL_DIR manually.')
         return
 
-    # look up pager
+    # try to find a pager if not explicitly given
     if pager is None:
         pager = sli_func('/page /command GetOption')
 
@@ -517,14 +522,16 @@ def show_help_with_pager(hlpobj, pager):
             # Search for pager in path. The following is based on
             # https://stackoverflow.com/questions/377017
             for candidate in ['less', 'more', 'cat']:
-                if any(os.access(os.path.join(path, candidate), os.X_OK)
+                if any(_is_executable(path, candidate)
                        for path in os.environ['PATH'].split(os.pathsep)):
                     pager = candidate
                     break
-            else:
-                print('NEST help requires a pager program. You can configure '
-                      'it in the .nestrc file in your home directory.')
-                return
+
+    # check that we have a pager
+    if not pager:
+        print('NEST help requires a pager program. You can configure '
+              'it in the .nestrc file in your home directory.')
+        return
 
     objname = hlpobj + '.hlp'
     objf = get_help_filepath(hlpobj)
@@ -539,7 +546,7 @@ def show_help_with_pager(hlpobj, pager):
             # Run the pager with the object file.
             try:
                 subprocess.check_call([pager, objf])
-            except (FileNotFoundError, subprocess.CalledProcessError):
+            except (IOError, subprocess.CalledProcessError):
                 print('Displaying help with pager {} failed. '
                       'Please define a working parser in .nestrc '
                       'in your home directory.'.format(pager))

@@ -86,7 +86,7 @@ Archiving_Node::register_stdp_connection( double t_first_read )
   for ( std::deque< histentry >::iterator runner = history_.begin();
         runner != history_.end()
           and ( t_first_read - runner->t_ > -1.0
-                 * kernel().connection_manager.get_stdp_eps() );
+                  * kernel().connection_manager.get_stdp_eps() );
         ++runner )
   {
     ( runner->access_counter_ )++;

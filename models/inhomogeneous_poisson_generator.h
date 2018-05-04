@@ -82,7 +82,7 @@
 namespace nest
 {
 
-class inhomogeneous_poisson_generator: public DeviceNode
+class inhomogeneous_poisson_generator : public DeviceNode
 {
 
 public:

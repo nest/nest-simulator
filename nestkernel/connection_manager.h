@@ -436,6 +436,10 @@ public:
   index
   get_source_gid( const thread tid, const synindex syn_id, const index lcid );
 
+  double get_stdp_eps() const;
+
+  void set_stdp_eps( const double stdp_eps );
+
 private:
   size_t get_num_target_data( const thread tid ) const;
 
@@ -631,6 +635,10 @@ private:
 
   //! Whether secondary connections (e.g., gap junctions) exist.
   bool secondary_connections_exist_;
+
+  //! Maximum distance between (double) spike times in STDP that is
+  //! still considered 0. See issue #894
+  double stdp_eps_;
 };
 
 inline DictionaryDatum&
@@ -814,6 +822,12 @@ inline bool
 ConnectionManager::get_sort_connections_by_source() const
 {
   return sort_connections_by_source_;
+}
+
+inline double
+ConnectionManager::get_stdp_eps() const
+{
+  return stdp_eps_;
 }
 
 } // namespace nest

@@ -496,21 +496,19 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
   if ( start != finish ) // take only first postspike after last prespike
   {
     minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
+
+    // get_history() should make sure that
+    // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
+    assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
+
+    a_causal_ += std::exp( minus_dt / cp.tau_plus_ );
   }
 
   if ( start != finish ) // take only last postspike before current spike
   {
     --finish;
     plus_dt = ( finish->t_ + dendritic_delay ) - t_spike;
-  }
 
-  if ( minus_dt != 0 )
-  {
-    a_causal_ += std::exp( minus_dt / cp.tau_plus_ );
-  }
-
-  if ( plus_dt != 0 )
-  {
     a_acausal_ += std::exp( plus_dt / cp.tau_minus_ );
   }
 

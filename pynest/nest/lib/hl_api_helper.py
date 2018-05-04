@@ -40,7 +40,6 @@ from string import Template
 # There is no safety net, whatsoever.
 sps = spp = sr = pcd = kernel = None
 
-
 # These flags are used to print deprecation warnings only once. The
 # corresponding functions will be removed in the 2.6 release of NEST.
 _deprecation_warning = {'BackwardCompatibilityConnect': True}
@@ -112,6 +111,7 @@ def deprecated(alt_func_name, text=None):
     function:
         Decorator function
     """
+
     def deprecated_decorator(func):
         _deprecation_warning[func.__name__] = True
 
@@ -171,7 +171,6 @@ def is_string(obj):
         True if obj is a unicode string
     """
     return isinstance(obj, uni_str)
-
 
 __debug = False
 
@@ -390,7 +389,7 @@ def broadcast(item, length, allowed_types, name="item"):
     """
 
     if isinstance(item, allowed_types):
-        return length * (item,)
+        return length * (item, )
     elif len(item) == 1:
         return length * item
     elif len(item) != length:
@@ -446,6 +445,8 @@ def __show_help_in_modal_window(objname, hlptxt):
 def get_help_filepath(hlpobj):
     """Get file path of help object
 
+    Prints message if no help is available for hlpobj.
+
     Parameters
     ----------
     hlpobj : string
@@ -454,7 +455,7 @@ def get_help_filepath(hlpobj):
     Returns
     -------
     string:
-        Filepath of the help object.
+        Filepath of the help object or None if no help available
     """
 
     helpdir = os.path.join(sli_func("statusdict/prgdocdir ::"), "help")
@@ -464,7 +465,9 @@ def get_help_filepath(hlpobj):
             if hlp == objname:
                 objf = os.path.join(dirpath, objname)
                 return objf
-    print("Sorry, there is no help for '" + hlpobj + "'!")
+    else:
+        print("Sorry, there is no help for '" + hlpobj + "'.")
+        return None
 
 
 def load_help(hlpobj):
@@ -478,7 +481,7 @@ def load_help(hlpobj):
     Returns
     -------
     string:
-        The documentation of the object.
+        The documentation of the object or None if no help available
     """
 
     objf = get_help_filepath(hlpobj)
@@ -486,14 +489,18 @@ def load_help(hlpobj):
         with open(objf, 'r') as fhlp:
             hlptxt = fhlp.read()
         return hlptxt
+    else:
+        return None
 
-def _is_executable(path, candidate):
+
+def __is_executable(path, candidate):
     """Returns true for executable files."""
-    
+
     candidate = os.path.join(path, candidate)
     return os.access(candidate, os.X_OK) and os.path.isfile(candidate)
 
-def show_help_with_pager(hlpobj, pager):
+
+def show_help_with_pager(hlpobj, pager=None):
     """Output of doc in python with pager or print
 
     Parameters
@@ -501,10 +508,11 @@ def show_help_with_pager(hlpobj, pager):
     hlpobj : object
         Object to display
     pager: str, optional
-        pager to use, NO if you explicity do not want to use a pager
+        pager to use, False if you want to display help using print().
     """
+
     if sys.version_info < (2, 7, 8):
-        print("NEST help is only available with Python 2.7.8 or later. \n")
+        print("NEST help is only available with Python 2.7.8 or later.\n")
         return
 
     if 'NEST_INSTALL_DIR' not in os.environ:
@@ -513,6 +521,30 @@ def show_help_with_pager(hlpobj, pager):
             'Please source nest_vars.sh or define NEST_INSTALL_DIR manually.')
         return
 
+    # check that help is available
+    objf = get_help_filepath(hlpobj)
+    if objf is None:
+        return   # message is printed by get_help_filepath()
+
+    if __check_nb():
+        # Display help in notebook
+        # Load the helptext, check the file exists.
+        hlptxt = load_help(hlpobj)
+        if hlptxt:
+            # Opens modal window only in notebook.
+            objname = hlpobj + '.hlp'
+            __show_help_in_modal_window(objname, hlptxt)
+        return
+
+    if not pager and pager is not None:
+        # pager == False: display using print()
+        # Note: we cannot use "pager is False" as Numpy has its own False
+        hlptxt = load_help(hlpobj)
+        if hlptxt:
+            print(hlptxt)
+        return
+
+    # Help is to be displayed by pager
     # try to find a pager if not explicitly given
     if pager is None:
         pager = sli_func('/page /command GetOption')
@@ -522,7 +554,7 @@ def show_help_with_pager(hlpobj, pager):
             # Search for pager in path. The following is based on
             # https://stackoverflow.com/questions/377017
             for candidate in ['less', 'more', 'cat']:
-                if any(_is_executable(path, candidate)
+                if any(__is_executable(path, candidate)
                        for path in os.environ['PATH'].split(os.pathsep)):
                     pager = candidate
                     break
@@ -533,23 +565,12 @@ def show_help_with_pager(hlpobj, pager):
               'it in the .nestrc file in your home directory.')
         return
 
-    objname = hlpobj + '.hlp'
-    objf = get_help_filepath(hlpobj)
-    if objf:
-        if __check_nb():
-            # Load the helptext, check the file exists.
-            hlptxt = load_help(hlpobj)
-            if hlptxt:
-                # Opens modal window only in notebook.
-                __show_help_in_modal_window(objname, hlptxt)
-        else:
-            # Run the pager with the object file.
-            try:
-                subprocess.check_call([pager, objf])
-            except (IOError, subprocess.CalledProcessError):
-                print('Displaying help with pager {} failed. '
-                      'Please define a working parser in .nestrc '
-                      'in your home directory.'.format(pager))
+    try:
+        subprocess.check_call([pager, objf])
+    except (OSError, IOError, subprocess.CalledProcessError):
+        print('Displaying help with pager "{}" failed. '
+              'Please define a working parser in file .nestrc '
+              'in your home directory.'.format(pager))
 
 
 @check_stack

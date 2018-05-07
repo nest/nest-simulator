@@ -125,7 +125,7 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
             htmllist.append('<b>Source:</b><pre>%s</pre>' % value)
             hlplist.append('Source:\n\n%s' % value)
     htmllist.append('</div>')
-    htmlstring = ('\n'.join(htmllist))
+    htmlstring = (u'\n'.join(htmllist))
     cmdindexstring = s.substitute(indexbody=htmlstring, css=csstempl,
                                   title=name, footer=footertempl)
 
@@ -142,7 +142,7 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
 
         f_file_name_hlp = io.open(os.path.join(path, '{}.hlp'.format(name)),
                                   mode='w', encoding='utf-8')
-        f_file_name_hlp.write('\n'.join(hlplist))
+        f_file_name_hlp.write(u'\n'.join(hlplist))
         f_file_name_hlp.close()
 
 
@@ -229,7 +229,7 @@ def write_helpindex(helpdir):
         html_list.append('</table></center>')
 
     # html_list.append(footer)
-    htmlstring = ('\n'.join(html_list))
+    htmlstring = (u'\n'.join(html_list))
     indexstring = s.substitute(indexbody=htmlstring, css=csstempl,
                                footer=footertempl)
 
@@ -241,7 +241,7 @@ def write_helpindex(helpdir):
     # Todo: using string template for .hlp
     f_helphlpindex = io.open(os.path.join(helpdir, 'helpindex.hlp'), mode='w',
                              encoding='utf-8')
-    f_helphlpindex.write('\n'.join(hlp_list))
+    f_helphlpindex.write(u'\n'.join(hlp_list))
     f_helphlpindex.close()
 
 

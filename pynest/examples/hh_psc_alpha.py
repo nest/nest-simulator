@@ -23,7 +23,7 @@
 Example using hh_psc_alpha
 --------------------------
 
-This example produces a rate-response (FI) curve of the Hogkin-Huxley
+This example produces a rate-response (FI) curve of the Hodgkin-Huxley
 neuron  in response to a range of different current (DC) stimulations.
 The result is plotted using matplotlib.
 

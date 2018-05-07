@@ -21,6 +21,7 @@
 
 import nest
 import unittest
+import numpy as np
 
 __author__ = 'naveau'
 
@@ -83,13 +84,16 @@ class TestDisconnectSingle(unittest.TestCase):
                 if mpi_test:
                     conns = self.comm.allgather(conns)
                     conns = filter(None, conns)
-                assert len(conns) == 1
+
+                assert len(list(conns)) == 1
                 nest.Disconnect(neurons[0], neurons[2], syn_spec=syn_dict)
+
                 conns = nest.GetConnections(
                     neurons[0], neurons[2], syn_model)
                 if mpi_test:
                     conns = self.comm.allgather(conns)
                     conns = filter(None, conns)
+
                 assert len(list(conns)) == 0
 
                 # Assert that one can not delete a non existent connection
@@ -99,6 +103,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     conns1 = self.comm.allgather(conns1)
                     conns1 = filter(None, conns1)
                 assert len(list(conns1)) == 0
+
                 try:
                     nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_dict)
                     assert False

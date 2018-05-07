@@ -611,7 +611,7 @@ nest::SimulationManager::call_update_()
 
   size_t num_active_nodes = kernel().node_manager.get_num_active_nodes();
   os << "Number of local nodes: " << num_active_nodes << std::endl;
-  os << "Simulaton time (ms): " << t_sim;
+  os << "Simulation time (ms): " << t_sim;
 
 #ifdef _OPENMP
   os << std::endl

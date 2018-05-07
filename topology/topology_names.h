@@ -62,6 +62,7 @@ extern const Name extent;
 extern const Name grid;
 extern const Name grid3d;
 extern const Name inner_radius;
+extern const Name kappa;
 extern const Name kernel;
 extern const Name layer;
 extern const Name layers;
@@ -88,6 +89,8 @@ extern const Name sigma;
 extern const Name sigma_x;
 extern const Name sigma_y;
 extern const Name spherical;
+extern const Name theta;
+extern const Name topology;
 extern const Name upper_right;
 
 } // namespace names

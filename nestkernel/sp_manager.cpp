@@ -293,7 +293,7 @@ SPManager::disconnect( const index sgid,
   // normal nodes and devices with proxies
   if ( target->has_proxies() )
   {
-    kernel().connection_manager.disconnect_5g(
+    kernel().connection_manager.disconnect(
       target_thread, syn_id, sgid, target->get_gid() );
   }
   else if ( target->local_receiver() ) // normal devices
@@ -308,7 +308,7 @@ SPManager::disconnect( const index sgid,
       target_thread = source->get_thread();
       target = kernel().node_manager.get_node( target->get_gid(), sgid );
     }
-    kernel().connection_manager.disconnect_5g(
+    kernel().connection_manager.disconnect(
       target_thread, syn_id, sgid, target->get_gid() );
   }
   else // globally receiving devices iterate over all target threads
@@ -323,7 +323,7 @@ SPManager::disconnect( const index sgid,
     {
       target = kernel().node_manager.get_node( target->get_gid(), t );
       target_thread = target->get_thread();
-      kernel().connection_manager.disconnect_5g(
+      kernel().connection_manager.disconnect(
         target_thread, syn_id, sgid, target->get_gid() );
     }
   }
@@ -673,7 +673,7 @@ SPManager::delete_synapse( const index sgid,
     const thread target_thread = target->get_thread();
     if ( tid == target_thread )
     {
-      kernel().connection_manager.disconnect_5g( tid, syn_id, sgid, tgid );
+      kernel().connection_manager.disconnect( tid, syn_id, sgid, tgid );
 
       target->connect_synaptic_element( se_post_name, -1 );
     }

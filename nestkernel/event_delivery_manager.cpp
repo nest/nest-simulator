@@ -66,7 +66,7 @@ EventDeliveryManager::EventDeliveryManager()
   comm_steps_spike_data = 0;
   comm_rounds_spike_data = 0;
   comm_steps_secondary_events = 0;
-  call_count_deliver_events_5g = std::vector< unsigned int >();
+  call_count_deliver_events = std::vector< unsigned int >();
 #endif
 }
 
@@ -82,32 +82,32 @@ EventDeliveryManager::initialize()
   init_moduli();
   local_spike_counter_.resize( num_threads, 0 );
   reset_timers_counters();
-  spike_register_5g_.resize( num_threads, NULL );
-  off_grid_spike_register_5g_.resize( num_threads, NULL );
+  spike_register_.resize( num_threads, NULL );
+  off_grid_spike_register_.resize( num_threads, NULL );
   completed_count_.resize( num_threads, 0 );
 #ifndef DISABLE_COUNTS
-  call_count_deliver_events_5g.resize( num_threads, 0 ); // TODO@5g: remove
+  call_count_deliver_events.resize( num_threads, 0 ); // TODO@5g: remove
 #endif
 
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    if ( spike_register_5g_[ tid ] != 0 )
+    if ( spike_register_[ tid ] != 0 )
     {
-      delete ( spike_register_5g_[ tid ] );
+      delete ( spike_register_[ tid ] );
     }
-    spike_register_5g_[ tid ] =
+    spike_register_[ tid ] =
       new std::vector< std::vector< std::vector< Target > > >(
         num_threads,
         std::vector< std::vector< Target > >(
           kernel().connection_manager.get_min_delay(),
           std::vector< Target >( 0 ) ) );
 
-    if ( off_grid_spike_register_5g_[ tid ] != 0 )
+    if ( off_grid_spike_register_[ tid ] != 0 )
     {
-      delete ( off_grid_spike_register_5g_[ tid ] );
+      delete ( off_grid_spike_register_[ tid ] );
     }
-    off_grid_spike_register_5g_[ tid ] =
+    off_grid_spike_register_[ tid ] =
       new std::vector< std::vector< std::vector< OffGridTarget > > >(
         num_threads,
         std::vector< std::vector< OffGridTarget > >(
@@ -121,23 +121,23 @@ EventDeliveryManager::finalize()
 {
   // clear the spike buffers
   for ( std::vector< std::vector< std::vector< std::vector< Target > > >* >::
-          iterator it = spike_register_5g_.begin();
-        it != spike_register_5g_.end();
+          iterator it = spike_register_.begin();
+        it != spike_register_.end();
         ++it )
   {
     delete ( *it );
   };
-  spike_register_5g_.clear();
+  spike_register_.clear();
 
   for (
     std::vector< std::vector< std::vector< std::vector< OffGridTarget > > >* >::
-      iterator it = off_grid_spike_register_5g_.begin();
-    it != off_grid_spike_register_5g_.end();
+      iterator it = off_grid_spike_register_.begin();
+    it != off_grid_spike_register_.end();
     ++it )
   {
     delete ( *it );
   };
-  off_grid_spike_register_5g_.clear();
+  off_grid_spike_register_.clear();
 }
 
 void
@@ -206,8 +206,8 @@ EventDeliveryManager::configure_spike_register()
 {
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    reset_spike_register_5g_( tid );
-    resize_spike_register_5g_( tid );
+    reset_spike_register_( tid );
+    resize_spike_register_( tid );
   }
 }
 
@@ -415,18 +415,15 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
 
     // collocate spikes to send buffer
-    me_completed_tid = collocate_spike_data_buffers_( tid,
-      assigned_ranks,
-      send_buffer_position,
-      spike_register_5g_,
-      send_buffer );
+    me_completed_tid = collocate_spike_data_buffers_(
+      tid, assigned_ranks, send_buffer_position, spike_register_, send_buffer );
 
     if ( off_grid_spiking_ )
     {
       me_completed_tid += collocate_spike_data_buffers_( tid,
         assigned_ranks,
         send_buffer_position,
-        off_grid_spike_register_5g_,
+        off_grid_spike_register_,
         send_buffer );
     }
     else
@@ -484,7 +481,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     } // of omp single; implicit barrier
 
     // deliver spikes from receive buffer to ring buffers
-    others_completed_tid = deliver_events_5g_( tid, recv_buffer );
+    others_completed_tid = deliver_events_( tid, recv_buffer );
 #pragma omp atomic
     completed_count += others_completed_tid;
 
@@ -516,7 +513,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
   } // of while( true )
 
-  reset_spike_register_5g_( tid );
+  reset_spike_register_( tid );
 }
 
 template < typename TargetT, typename SpikeDataT >
@@ -644,11 +641,11 @@ EventDeliveryManager::set_complete_marker_spike_data_(
 
 template < typename SpikeDataT >
 bool
-EventDeliveryManager::deliver_events_5g_( const thread tid,
+EventDeliveryManager::deliver_events_( const thread tid,
   const std::vector< SpikeDataT >& recv_buffer )
 {
 #ifndef DISABLE_COUNTS
-  ++call_count_deliver_events_5g[ tid ];
+  ++call_count_deliver_events[ tid ];
 #endif
   const unsigned int send_recv_count_spike_data_per_rank =
     kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
@@ -708,7 +705,7 @@ EventDeliveryManager::deliver_events_5g_( const thread tid,
           kernel().connection_manager.get_source_gid( tid, syn_id, lcid );
         se.set_sender_gid( source_gid );
 
-        kernel().connection_manager.send_5g( tid, syn_id, lcid, cm, se );
+        kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
       }
 
       // break if this was the last valid entry from this rank
@@ -1005,11 +1002,11 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
 }
 
 void
-EventDeliveryManager::resize_spike_register_5g_( const thread tid )
+EventDeliveryManager::resize_spike_register_( const thread tid )
 {
   for ( std::vector< std::vector< std::vector< Target > > >::iterator it =
-          ( *spike_register_5g_[ tid ] ).begin();
-        it != ( *spike_register_5g_[ tid ] ).end();
+          ( *spike_register_[ tid ] ).begin();
+        it != ( *spike_register_[ tid ] ).end();
         ++it )
   {
     it->resize(
@@ -1018,8 +1015,8 @@ EventDeliveryManager::resize_spike_register_5g_( const thread tid )
 
   for (
     std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
-      ( *off_grid_spike_register_5g_[ tid ] ).begin();
-    it != ( *off_grid_spike_register_5g_[ tid ] ).end();
+      ( *off_grid_spike_register_[ tid ] ).begin();
+    it != ( *off_grid_spike_register_[ tid ] ).end();
     ++it )
   {
     it->resize( kernel().connection_manager.get_min_delay(),

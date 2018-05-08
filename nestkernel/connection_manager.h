@@ -150,7 +150,7 @@ public:
     const index sgid,
     const index tgid );
 
-  void disconnect_5g( const thread tid,
+  void disconnect( const thread tid,
     const synindex syn_id,
     const index sgid,
     const index tgid );
@@ -277,9 +277,7 @@ public:
 
   bool get_user_set_delay_extrema() const;
 
-  void send( thread t, index sgid, Event& e );
-
-  void send_5g( const thread tid,
+  void send( const thread tid,
     const synindex syn_id,
     const index lcid,
     const std::vector< ConnectorModel* >& cm,
@@ -436,6 +434,10 @@ public:
   index
   get_source_gid( const thread tid, const synindex syn_id, const index lcid );
 
+  double get_stdp_eps() const;
+
+  void set_stdp_eps( const double stdp_eps );
+
 private:
   size_t get_num_target_data( const thread tid ) const;
 
@@ -469,7 +471,7 @@ private:
   /**
    * Deletes all connections.
    */
-  void delete_connections_5g_();
+  void delete_connections_();
 
   /**
    * connect_ is used to establish a connection between a sender and
@@ -562,7 +564,7 @@ private:
    * connection information. Corresponds to a three dimensional
    * structure: threads|synapses|connections
    */
-  std::vector< std::vector< ConnectorBase* >* > connections_5g_;
+  std::vector< std::vector< ConnectorBase* >* > connections_;
 
   /**
    * A structure to hold the global ids of presynaptic neurons during
@@ -631,6 +633,10 @@ private:
 
   //! Whether secondary connections (e.g., gap junctions) exist.
   bool secondary_connections_exist_;
+
+  //! Maximum distance between (double) spike times in STDP that is
+  //! still considered 0. See issue #894
+  double stdp_eps_;
 };
 
 inline DictionaryDatum&
@@ -787,7 +793,7 @@ inline size_t
 ConnectionManager::get_num_connections_( const thread tid,
   const synindex syn_id ) const
 {
-  return ( *connections_5g_[ tid ] )[ syn_id ]->size();
+  return ( *connections_[ tid ] )[ syn_id ]->size();
 }
 
 inline index
@@ -814,6 +820,12 @@ inline bool
 ConnectionManager::get_sort_connections_by_source() const
 {
   return sort_connections_by_source_;
+}
+
+inline double
+ConnectionManager::get_stdp_eps() const
+{
+  return stdp_eps_;
 }
 
 } // namespace nest

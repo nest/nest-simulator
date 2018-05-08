@@ -408,3 +408,13 @@ nest::NumericalInstability::message() const
       << "updating " << model_ << ".";
   return msg.str();
 }
+
+std::string
+nest::KeyError::message() const
+{
+  std::ostringstream msg;
+  msg << "Key '" << key_.toString() << "' not found in map."
+      << "Error encountered with map type: '" << map_type_ << "'"
+      << " when applying operation: '" << map_op_ << "'";
+  return msg.str();
+}

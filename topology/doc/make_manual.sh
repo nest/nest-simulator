@@ -26,8 +26,9 @@ fname=Topology_UserManual
 
 # Clean-up
 rm -f ${fname}.{aux,bbl,blg,idx,ilg,ins,lof,log,lot,pdf,synctex.gz,toc}
-rm -f user_manual_figures/*
+rm -rf user_manual_figures
 rm -f user_namual_scripts/*.log
+mkdir user_manual_figures
 
 # Run scripts / -u ensures unbuffered output 
 cd user_manual_scripts
@@ -42,5 +43,6 @@ ${MKIDX}  ${fname}
 ${LATEX}  ${fname}
 ${LATEX}  ${fname}
 
-# remove temporary files
+# remove temporary files and figures
 rm -f ${fname}.{aux,bbl,blg,idx,ilg,ind,ins,lof,log,lot,synctex.gz,toc}
+rm -rf user_manual_figures

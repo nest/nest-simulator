@@ -210,7 +210,7 @@ class SpatialTester(object):
                        'edge_wrap': False}
             self._ls = topo.CreateLayer(ldict_s)
             self._lt = topo.CreateLayer(ldict_t)
-            self._driver = nest.GetLeaves(self._ls)[0]
+            self._driver = self._ls
         else:
             ldict_s = {'elements': 'iaf_psc_alpha',
                        'positions': [[0.] * self._dimensions],
@@ -228,7 +228,9 @@ class SpatialTester(object):
                        'edge_wrap': True}
             self._ls = topo.CreateLayer(ldict_s)
             self._lt = topo.CreateLayer(ldict_t)
-            self._driver = topo.FindCenterElement(self._ls)
+            cntr = topo.FindCenterElement(self._ls)
+            indx = cntr - self._ls[0].get('nodes').get('global_id')
+            self._driver = self._ls[indx:indx+1]
 
     def _connect(self):
         '''Connect populations.'''
@@ -238,20 +240,38 @@ class SpatialTester(object):
     def _all_distances(self):
         '''Return distances to all nodes in target population.'''
 
-        return topo.Distance(self._driver, nest.GetLeaves(self._lt)[0])
+        return topo.Distance(self._driver, self._lt)
 
     def _target_distances(self):
         '''Return distances from source node to connected nodes.'''
 
+        # Distance from source node to all nodes in target population
+        dist = topo.Distance(self._driver, self._lt)
+
+        # Target nodes
         connections = nest.GetConnections(source=self._driver)
         target_nodes = [conn[1] for conn in connections]
-        return topo.Distance(self._driver, target_nodes)
+
+        target_dist = []
+
+        # target_nodes and lt will both be sorted, so we can iterate through
+        # both to see if they match, and put the correct distance in a list
+        # containig target distances if true.
+        counter = 0
+        for indx, gid in enumerate(self._lt):
+            if gid == target_nodes[counter]:
+                target_dist.append(dist[indx])
+                counter += 1
+                # target_nodes might be shorter than lt
+                if counter == len(target_nodes):
+                    break
+
+        return target_dist
 
     def _positions(self):
         '''Return positions of all nodes.'''
-
         return [tuple(pos) for pos in
-                topo.GetPosition(nest.GetLeaves(self._lt)[0])]
+                topo.GetPosition(self._lt)]
 
     def _target_positions(self):
         '''Return positions of all connected target nodes.'''

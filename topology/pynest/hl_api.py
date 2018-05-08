@@ -1324,7 +1324,7 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
         for gid in nodes:
             # The GIDs in the layers are continuos, so we can use the gid to
             # find the index in the layer.
-            index = gid - tgt_layer[0].get('global_id')
+            index = gid - tgt_layer[0].get('nodes').get('global_id')
             gc = tgt_layer[index]
             gp = GetPosition(gc)
             node_results.append(gp)

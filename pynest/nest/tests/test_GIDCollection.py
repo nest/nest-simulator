@@ -664,6 +664,17 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(C_m, (250.0, 250.0, 111.0, 250.0, 111.0,
                                250.0, 111.0, 250.0, 111.0, 250.0))
 
+    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
+    def test_Convert_To_Numpy_Array(self):
+        """
+        Test that GIDCollection can be converted to numpy Array
+        """
+
+        n = nest.Create('iaf_psc_alpha', 5)
+        ref = np.array([1, 2, 3, 4, 5])
+        conv_arr = np.array(n)
+        np.testing.assert_array_equal(ref, conv_arr)
+
     def test_GetConnections(self):
         """
         GetConnection works as expected

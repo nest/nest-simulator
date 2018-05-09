@@ -335,12 +335,12 @@ class TestConnectome(unittest.TestCase):
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 0)
         self.assertEqual(conns.get(), ())
-        
+
         nrns = nest.Create('iaf_psc_alpha', 2)
         nest.Connect(nrns, nrns, 'one_to_one')
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 2)
-        
+
         nest.ResetKernel()
         self.assertEqual(conns.get(), ())
         conns.set('weight', 10.)

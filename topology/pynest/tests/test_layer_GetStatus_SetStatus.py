@@ -153,13 +153,13 @@ class GetSetTestCase(unittest.TestCase):
         nest.ResetKernel()
         ldict = {'elements': 'iaf_psc_alpha', 'rows': 1, 'columns': 1}
         layer = topo.CreateLayer(ldict)
-        
+
         self.assertEqual(len(layer), 1)
         center = layer.get('center')
         columns = layer.get('columns')
         columns_rows = layer.get(['columns', 'rows'])
         all_values = layer.get()
-        
+
         self.assertEqual(center, (0., 0.))
         self.assertEqual(columns, 1)
         self.assertEqual(columns_rows, {'columns': 1, 'rows': 1})

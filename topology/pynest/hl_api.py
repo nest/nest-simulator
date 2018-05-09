@@ -706,7 +706,6 @@ def GetPosition(nodes):
     return nest.sli_func('GetPosition', nodes)
 
 
-
 def Displacement(from_arg, to_arg):
     """
     Get vector of lateral displacement from node(s)/Position(s) `from_arg`
@@ -1327,13 +1326,13 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     connections = nest.GetConnections(sources, tgt_layer,
                                       synapse_model=syn_model)
-    srcs = connections.get('source') 
+    srcs = connections.get('source')
     tgts = connections.get('target')
     if isinstance(srcs, int):
         srcs = [srcs]
     if isinstance(tgts, int):
         tgts = [tgts]
-    
+
     # Make dictionary where the keys are the source gids, which is mapped to a
     # list with the positions of the targets connected to the source.
     src_tgt_pos_map = dict((sgid, []) for sgid in sources)

@@ -638,7 +638,8 @@ class Connectome(object):
                     final_result[key] = value
 
         if pandas_output:
-            index = self.get('source') if self.__len__() > 1 else (self.get('source'),)
+            index = (self.get('source') if self.__len__() > 1 else
+                     (self.get('source'),))
             if nest.is_literal(keys):
                 final_result = {keys: final_result}
             final_result = pandas.DataFrame(final_result, index=index)
@@ -673,13 +674,13 @@ class Connectome(object):
         # This was added to ensure that the function is a nop (instead of,
         # for instance, raising an exception) when applied to an empty
         # Connectome, or after having done a nest.ResetKernel().
-        if self.__len__() == 0  or nest.GetKernelStatus()['network_size'] == 0:
+        if self.__len__() == 0 or nest.GetKernelStatus()['network_size'] == 0:
             return
 
         if val is not None and nest.is_literal(params):
-            if (nest.is_iterable(val)
-                and not isinstance(val, (nest.uni_str, dict))):
-                    params = [{params: x} for x in val]
+            if (nest.is_iterable(val) and not
+                    isinstance(val, (nest.uni_str, dict))):
+                params = [{params: x} for x in val]
             else:
                 params = {params: val}
 

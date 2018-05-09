@@ -25,6 +25,7 @@
 
 // Includes from nestkernel:
 #include "connection_manager_impl.h"
+#include "connection_manager.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "source_table.h"
@@ -221,6 +222,19 @@ nest::SourceTable::reserve( const thread tid,
 {
   ( *sources_[ tid ] )[ syn_id ]->reserve(
     ( *sources_[ tid ] )[ syn_id ]->size() + count );
+}
+
+nest::index
+nest::SourceTable::get_gid( const thread tid,
+  const synindex syn_id,
+  const index lcid ) const
+{
+  if ( not kernel().connection_manager.get_keep_source_table() )
+  {
+    throw KernelException(
+      "Cannot use SourceTable::get_gid when get_keep_source_table is false" );
+  }
+  return ( *( *sources_[ tid ] )[ syn_id ] )[ lcid ].get_gid();
 }
 
 nest::index

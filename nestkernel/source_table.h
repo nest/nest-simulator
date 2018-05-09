@@ -407,14 +407,6 @@ SourceTable::reset_entry_point( const thread tid )
   }
 }
 
-inline index
-SourceTable::get_gid( const thread tid,
-  const synindex syn_id,
-  const index lcid ) const
-{
-  return ( *( *sources_[ tid ] )[ syn_id ] )[ lcid ].get_gid();
-}
-
 inline void
 SourceTable::reset_processed_flags( const thread tid )
 {

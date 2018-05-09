@@ -230,7 +230,7 @@ class SpatialTester(object):
             self._lt = topo.CreateLayer(ldict_t)
             cntr = topo.FindCenterElement(self._ls)
             indx = cntr - self._ls[0].get('nodes').get('global_id')
-            self._driver = self._ls[indx:indx+1]
+            self._driver = self._ls[indx]
 
     def _connect(self):
         '''Connect populations.'''

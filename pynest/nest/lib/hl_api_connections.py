@@ -28,7 +28,7 @@ from .hl_api_nodes import Create
 from .hl_api_types import GIDCollection
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
-import nest
+#import nest
 import numpy
 
 
@@ -77,8 +77,8 @@ def GetConnections(source=None, target=None, synapse_model=None,
             params['source'] = source
         else:
             try:
-                params['source'] = nest.GIDCollection(source)
-            except nest.NESTError:
+                params['source'] = GIDCollection(source)
+            except kernel.NESTError:
                 raise TypeError("source must be GIDCollection or convertible"
                                 " to GIDCollection")
 
@@ -87,8 +87,8 @@ def GetConnections(source=None, target=None, synapse_model=None,
             params['target'] = target
         else:
             try:
-                params['target'] = nest.GIDCollection(target)
-            except nest.NESTError:
+                params['target'] = GIDCollection(target)
+            except kernel.NESTError:
                 raise TypeError("target must be GIDCollection or convertible"
                                 " to GIDCollection")
 

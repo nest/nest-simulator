@@ -80,6 +80,7 @@ nest::iaf_psc_exp::Parameters_::Parameters_()
   , tau_in_( 2.0 )           // in ms
   , rho_( 0.01 )             // in 1/s
   , delta_( 0.0 )            // in mV
+  , time_driven_( false )
 {
 }
 
@@ -110,6 +111,7 @@ nest::iaf_psc_exp::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::rho, rho_ );
   def< double >( d, names::delta, delta_ );
+  def< bool >( d, names::time_driven, time_driven_ );
 }
 
 double
@@ -145,6 +147,8 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_ex, tau_ex_ );
   updateValue< double >( d, names::tau_syn_in, tau_in_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
+  updateValue< bool >( d, names::time_driven, time_driven_ );
+
   if ( V_reset_ >= Theta_ )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -200,12 +204,14 @@ nest::iaf_psc_exp::State_::set( const DictionaryDatum& d,
 }
 
 nest::iaf_psc_exp::Buffers_::Buffers_( iaf_psc_exp& n )
-  : logger_( n )
+  : activity_( std::vector< unsigned int >( 0 ) )
+  , logger_( n )
 {
 }
 
 nest::iaf_psc_exp::Buffers_::Buffers_( const Buffers_&, iaf_psc_exp& n )
-  : logger_( n )
+  : activity_( std::vector< unsigned int >( 0 ) )
+  , logger_( n )
 {
 }
 
@@ -307,6 +313,13 @@ nest::iaf_psc_exp::calibrate()
   assert( V_.RefractoryCounts_ >= 0 );
 
   V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+
+  if ( P_.time_driven_ )
+  {
+    const size_t buffer_size = kernel().connection_manager.get_min_delay();
+    B_.activity_.resize( buffer_size );
+    reset_activity_buffer_();
+  }
 }
 
 void
@@ -317,6 +330,11 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
   assert( from < to );
 
   const double h = Time::get_resolution().get_ms();
+
+  if ( P_.time_driven_ )
+  {
+    reset_activity_buffer_();
+  }
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
@@ -358,6 +376,11 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
+      if ( P_.time_driven_ )
+      {
+        set_activity_buffer_( lag );
+      }
+
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
     }
@@ -368,6 +391,13 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
+  }
+
+  if ( P_.time_driven_ )
+  {
+    TimeDrivenSpikeEvent tse;
+    tse.set_coeffarray( B_.activity_ );
+    kernel().event_delivery_manager.send_secondary( *this, tse );
   }
 }
 
@@ -419,4 +449,33 @@ void
 nest::iaf_psc_exp::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
+}
+
+void
+nest::iaf_psc_exp::handle( TimeDrivenSpikeEvent& e )
+{
+  assert( e.get_delay_steps() > 0 );
+  assert( P_.time_driven_ );
+
+  const delay d = e.get_delay_steps();
+
+  size_t lag = 0;
+  std::vector< unsigned int >::iterator it = e.begin();
+  // The call to get_coeffvalue( it ) in this loop also advances the iterator it
+  while ( it != e.end() )
+  {
+    const unsigned int v = e.get_coeffvalue( it );
+    if ( v > 0 ) // indicates spike at this lag
+    {
+      if ( e.get_weight() >= 0.0 )
+      {
+        B_.spikes_ex_.add_value( d + lag, e.get_weight() );
+      }
+      else
+      {
+        B_.spikes_in_.add_value( d + lag, e.get_weight() );
+      }
+    }
+    ++lag;
+  }
 }

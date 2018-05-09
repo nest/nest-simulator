@@ -435,6 +435,7 @@ public:
     rport receptor_type );
   virtual port handles_test_event( DelayedRateConnectionEvent&,
     rport receptor_type );
+  virtual port handles_test_event( TimeDrivenSpikeEvent&, rport receptor_type );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -471,6 +472,8 @@ public:
    * @throws IllegalConnection
    */
   virtual void sends_secondary_event( DelayedRateConnectionEvent& re );
+
+  virtual void sends_secondary_event( TimeDrivenSpikeEvent& e );
 
   /**
    * Register a STDP connection
@@ -585,6 +588,8 @@ public:
    * @throws UnexpectedEvent
    */
   virtual void handle( DelayedRateConnectionEvent& e );
+
+  virtual void handle( TimeDrivenSpikeEvent& e );
 
   /**
    * @defgroup SP_functions Structural Plasticity in NEST.

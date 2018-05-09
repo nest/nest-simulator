@@ -472,6 +472,7 @@ const Name tics_per_step( "tics_per_step" );
 const Name time( "time" );
 const Name time_collocate( "time_collocate" );
 const Name time_communicate( "time_communicate" );
+const Name time_driven( "time_driven" );
 const Name time_in_steps( "time_in_steps" );
 const Name times( "times" );
 const Name to_accumulator( "to_accumulator" );

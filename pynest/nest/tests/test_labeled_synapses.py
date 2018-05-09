@@ -59,6 +59,11 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             'clopath_synapse_lbl'
         ]
 
+        self.time_driven_spiking_connections = [
+            'time_driven_static_synapse',
+            'time_driven_static_synapse_lbl'
+        ]
+
         # create neurons that accept all synapse connections (especially gap
         # junctions)... hh_psc_alpha_gap is only available with GSL, hence the
         # skipIf above
@@ -75,6 +80,10 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         # in case of the clopath stdp synapse use the a supported model instead
         if syn_model in self.clopath_connections:
             neurons = nest.Create("hh_psc_alpha_clopath", 5)
+
+        # in case of time-driven spiking connections use a supported model instead
+        if syn_model in self.time_driven_spiking_connections:
+            neurons = nest.Create("iaf_psc_exp", 5, {'time_driven': True})
 
         return neurons
 

@@ -491,6 +491,7 @@ extern const Name tics_per_step;
 extern const Name time;
 extern const Name time_collocate;
 extern const Name time_communicate;
+extern const Name time_driven;
 extern const Name time_in_steps;
 extern const Name times;
 extern const Name to_accumulator;

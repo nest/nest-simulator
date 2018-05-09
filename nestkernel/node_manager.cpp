@@ -903,6 +903,8 @@ NodeManager::check_wfr_use()
     kernel().connection_manager.get_min_delay() );
   DiffusionConnectionEvent::set_coeff_length(
     kernel().connection_manager.get_min_delay() );
+  TimeDrivenSpikeEvent::set_coeff_length(
+    kernel().connection_manager.get_min_delay() );
 }
 
 void

@@ -1199,6 +1199,18 @@ public:
   weight get_diffusion_factor() const;
 };
 
+class TimeDrivenSpikeEvent
+  : public DataSecondaryEvent< unsigned int, TimeDrivenSpikeEvent >
+{
+public:
+  TimeDrivenSpikeEvent()
+  {
+  }
+
+  void operator()();
+  TimeDrivenSpikeEvent* clone() const;
+};
+
 template < typename DataType, typename Subclass >
 inline DataType
 DataSecondaryEvent< DataType, Subclass >::get_coeffvalue(
@@ -1254,6 +1266,12 @@ inline weight
 DiffusionConnectionEvent::get_diffusion_factor() const
 {
   return diffusion_factor_;
+}
+
+inline TimeDrivenSpikeEvent*
+TimeDrivenSpikeEvent::clone() const
+{
+  return new TimeDrivenSpikeEvent( *this );
 }
 
 //*************************************************************

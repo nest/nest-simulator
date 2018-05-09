@@ -120,6 +120,11 @@ void DiffusionConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }
+
+void TimeDrivenSpikeEvent::operator()()
+{
+  receiver_->handle( *this );
+}
 }
 
 nest::index

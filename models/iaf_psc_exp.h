@@ -159,16 +159,28 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
+  using Node::sends_secondary_event;
 
   port send_test_event( Node&, rport, synindex, bool );
 
   void handle( SpikeEvent& );
   void handle( CurrentEvent& );
   void handle( DataLoggingRequest& );
+  void handle( TimeDrivenSpikeEvent& );
 
   port handles_test_event( SpikeEvent&, rport );
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( TimeDrivenSpikeEvent&, rport );
+
+  void
+  sends_secondary_event( TimeDrivenSpikeEvent& )
+  {
+    if ( not P_.time_driven_ )
+    {
+      throw IllegalConnection( "Sending node is not in time-driven mode." );
+    }
+  }
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -182,6 +194,9 @@ private:
 
   // intensity function
   double phi_() const;
+
+  void reset_activity_buffer_();
+  void set_activity_buffer_( const long lag );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_exp >;
@@ -228,6 +243,9 @@ private:
 
     /** Width of threshold region in mV. **/
     double delta_;
+
+    /** Whether neuron sends TimeDrivenSpikeEvents. **/
+    bool time_driven_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -283,6 +301,10 @@ private:
     RingBuffer spikes_ex_;
     RingBuffer spikes_in_;
     std::vector< RingBuffer > currents_;
+
+    //! Buffers activity of neuron over one time step; only used in time-driven
+    //! mode
+    std::vector< unsigned int > activity_;
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_psc_exp > logger_;
@@ -379,7 +401,30 @@ nest::iaf_psc_exp::send_test_event( Node& target,
 {
   SpikeEvent e;
   e.set_sender( *this );
-  return target.handles_test_event( e, receptor_type );
+  const bool target_handles_spike_event =
+    target.handles_test_event( e, receptor_type );
+
+  if ( P_.time_driven_ )
+  {
+    TimeDrivenSpikeEvent tse;
+    tse.set_sender( *this );
+    bool target_handles_time_driven_spike_event;
+    try
+    {
+      target_handles_time_driven_spike_event =
+        target.handles_test_event( tse, receptor_type );
+    }
+    catch ( IllegalConnection& e )
+    {
+      target_handles_time_driven_spike_event = false;
+    }
+    return target_handles_spike_event
+      or target_handles_time_driven_spike_event;
+  }
+  else
+  {
+    return target_handles_spike_event;
+  }
 }
 
 inline port
@@ -419,6 +464,16 @@ iaf_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
+inline port
+iaf_psc_exp::handles_test_event( TimeDrivenSpikeEvent&, rport receptor_type )
+{
+  if ( receptor_type != 0 )
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
+  return 0;
+}
+
 inline void
 iaf_psc_exp::get_status( DictionaryDatum& d ) const
 {
@@ -453,6 +508,19 @@ iaf_psc_exp::phi_() const
 {
   assert( P_.delta_ > 0. );
   return P_.rho_ * std::exp( 1. / P_.delta_ * ( S_.V_m_ - P_.Theta_ ) );
+}
+
+inline void
+iaf_psc_exp::reset_activity_buffer_()
+{
+  B_.activity_.assign( B_.activity_.size(), 0 );
+}
+
+inline void
+iaf_psc_exp::set_activity_buffer_( const long lag )
+{
+  assert( static_cast< size_t >( lag ) < B_.activity_.size() );
+  B_.activity_[ lag ] = 1;
 }
 
 } // namespace

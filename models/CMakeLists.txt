@@ -115,6 +115,7 @@ set( models_sources
     step_rate_generator.h step_rate_generator.cpp
     tanh_rate.h tanh_rate.cpp
     threshold_lin_rate.h threshold_lin_rate.cpp
+    time_driven_static_connection.h
     tsodyks2_connection.h
     tsodyks_connection.h
     tsodyks_connection_hom.h tsodyks_connection_hom.cpp

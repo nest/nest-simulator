@@ -270,7 +270,6 @@ class GIDCollection(object):
                     result = pandas.DataFrame(result, index=index)
                 else:  # The GIDCollection is a layer
                     result = {key: (item,) for key, item in result.items()}
-                    print(result)
                     result = pandas.DataFrame(result,
                                               index=['layer']).transpose()
         #############################

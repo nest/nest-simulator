@@ -398,7 +398,6 @@ class BasicsTestCase(unittest.TestCase):
             self.assertAlmostEqual(positions[indx][0], p[0][indx][0])
             self.assertAlmostEqual(positions[indx][1], p[0][indx][1])
 
-
     def test_Parameter(self):
 
         x = topo.CreateParameter("constant", {"value": 2.0})

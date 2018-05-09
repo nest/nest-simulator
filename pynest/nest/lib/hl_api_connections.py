@@ -28,7 +28,6 @@ from .hl_api_nodes import Create
 from .hl_api_types import GIDCollection
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
-#import nest
 import numpy
 
 

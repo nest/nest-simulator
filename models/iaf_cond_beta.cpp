@@ -97,8 +97,8 @@ nest::iaf_cond_beta_dynamics( double,
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
-  const double I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex );
-  const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in );
+  const double I_syn_exc = ( y[ S::G_EXC ] + node.P_.g_ext_ex ) * ( y[ S::V_M ] - node.P_.E_ex );
+  const double I_syn_inh = ( y[ S::G_INH ] + node.P_.g_ext_in ) * ( y[ S::V_M ] - node.P_.E_in );
   const double I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
 
   // dV_m/dt
@@ -106,12 +106,12 @@ nest::iaf_cond_beta_dynamics( double,
     / node.P_.C_m;
 
   // d dg_exc/dt, dg_exc/dt
-  f[ 1 ] = -y[ S::DG_EXC ] / node.P_.tau_synE;
-  f[ 2 ] = y[ S::DG_EXC ] - ( y[ S::G_EXC ] / node.P_.tau_synE );
+  f[ 1 ] = -y[ S::DG_EXC ] / node.P_.tau_Erise;
+  f[ 2 ] = y[ S::DG_EXC ] - ( y[ S::G_EXC ] / node.P_.tau_Edecay );
 
   // d dg_exc/dt, dg_exc/dt
-  f[ 3 ] = -y[ S::DG_INH ] / node.P_.tau_synI;
-  f[ 4 ] = y[ S::DG_INH ] - ( y[ S::G_INH ] / node.P_.tau_synI );
+  f[ 3 ] = -y[ S::DG_INH ] / node.P_.tau_Irise;
+  f[ 4 ] = y[ S::DG_INH ] - ( y[ S::G_INH ] / node.P_.tau_Idecay );
 
   return GSL_SUCCESS;
 }
@@ -129,9 +129,13 @@ nest::iaf_cond_beta::Parameters_::Parameters_()
   , E_ex( 0.0 )      // mV
   , E_in( -85.0 )    // mV
   , E_L( -70.0 )     // mV
-  , tau_synE( 0.2 )  // ms
-  , tau_synI( 2.0 )  // ms
+  , tau_Erise( 0.2 )  // ms
+  , tau_Edecay( 0.2 )  // ms
+  , tau_Irise( 2.0 )  // ms
+  , tau_Idecay( 2.0 )  // ms
   , I_e( 0.0 )       // pA
+  , g_ext_ex( 0.0 )       // uS
+  , g_ext_in( 0.0 )       // uS
 {
 }
 
@@ -205,9 +209,13 @@ nest::iaf_cond_beta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::E_ex, E_ex );
   def< double >( d, names::E_in, E_in );
   def< double >( d, names::C_m, C_m );
-  def< double >( d, names::tau_syn_ex, tau_synE );
-  def< double >( d, names::tau_syn_in, tau_synI );
+  def< double >( d, names::tau_ex_rise, tau_Erise );
+  def< double >( d, names::tau_ex_decay, tau_Edecay );
+  def< double >( d, names::tau_in_rise, tau_Irise );
+  def< double >( d, names::tau_in_decay, tau_Idecay );
   def< double >( d, names::I_e, I_e );
+  def< double >( d, names::g_ext_ex, g_ext_ex );
+  def< double >( d, names::g_ext_in, g_ext_in );
 }
 
 void
@@ -225,10 +233,14 @@ nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::C_m, C_m );
   updateValue< double >( d, names::g_L, g_L );
 
-  updateValue< double >( d, names::tau_syn_ex, tau_synE );
-  updateValue< double >( d, names::tau_syn_in, tau_synI );
+  updateValue< double >( d, names::tau_ex_rise, tau_Erise );
+  updateValue< double >( d, names::tau_ex_decay, tau_Edecay );
+  updateValue< double >( d, names::tau_in_rise, tau_Irise );
+  updateValue< double >( d, names::tau_in_decay, tau_Idecay );
 
   updateValue< double >( d, names::I_e, I_e );
+  updateValue< double >( d, names::g_ext_ex, g_ext_ex );
+  updateValue< double >( d, names::g_ext_in, g_ext_in );
   if ( V_reset >= V_th )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -241,9 +253,13 @@ nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 || tau_synI <= 0 )
+  if ( tau_Erise <= 0 || tau_Edecay <= 0 || tau_Irise <= 0 || tau_Idecay <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
+  if ( g_ext_ex <= 0 || g_ext_in <= 0 )
+  {
+    throw BadProperty( "All conductances must be positive." );
   }
 }
 
@@ -360,14 +376,39 @@ nest::iaf_cond_beta::init_buffers_()
   B_.I_stim_ = 0.0;
 }
 
+double
+nest::iaf_cond_beta::get_normalisation_factor( double tau_rise,
+  double tau_decay )
+{
+  // Factor used to normalise the synaptic conductance such that
+  // an incoming event causes a post-synaptic conductance of 1.0. See:
+  // Roth and van Rossum, equations 6,5-6.6, in Computational Modeling
+  // Methods for Neuroscientists, by MIT Press.
+  // http://homepages.inf.ed.ac.uk/mvanross/reprints/roth_mvr_chap.pdf
+  // Note that t-t_0 = 0 and 
+  const double prefactor = ( 1 / tau_decay ) - ( 1 / tau_rise );
+  
+  const double t_peak =
+    ( tau_decay * tau_rise ) * std::log( tau_decay / tau_rise ) / ( tau_decay - tau_rise );
+  
+  const double normalisation_factor =
+    1 / ( std::exp( -t_peak / tau_decay ) - std::exp( -t_peak / tau_rise ) );
+
+  return prefactor * normalisation_factor;
+}
+
 void
 nest::iaf_cond_beta::calibrate()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  V_.PSConInit_E = 1.0 * numerics::e / P_.tau_synE;
-  V_.PSConInit_I = 1.0 * numerics::e / P_.tau_synI;
+  V_.PSConInit_E = 
+    nest::iaf_cond_beta::get_normalisation_factor( P_.tau_Erise, 
+      P_.tau_Edecay);
+  V_.PSConInit_I = 
+    nest::iaf_cond_beta::get_normalisation_factor( P_.tau_Irise, 
+      P_.tau_Idecay);
   V_.RefractoryCounts = Time( Time::ms( P_.t_ref ) ).get_steps();
 
   // since t_ref >= 0, this can only fail in error

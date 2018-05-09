@@ -56,18 +56,22 @@ at t = tau_syn.
 Parameters:
 The following parameters can be set in the status dictionary.
 
-V_m        double - Membrane potential in mV
-E_L        double - Leak reversal potential in mV.
-C_m        double - Capacity of the membrane in pF
-t_ref      double - Duration of refractory period in ms.
-V_th       double - Spike threshold in mV.
-V_reset    double - Reset potential of the membrane in mV.
-E_ex       double - Excitatory reversal potential in mV.
-E_in       double - Inhibitory reversal potential in mV.
-g_L        double - Leak conductance in nS;
-tau_syn_ex double - Rise time of the excitatory synaptic beta function in ms.
-tau_syn_in double - Rise time of the inhibitory synaptic beta function in ms.
-I_e        double - Constant input current in pA.
+V_m          double - Membrane potential in mV
+E_L          double - Leak reversal potential in mV.
+C_m          double - Capacity of the membrane in pF
+t_ref        double - Duration of refractory period in ms.
+V_th         double - Spike threshold in mV.
+V_reset      double - Reset potential of the membrane in mV.
+E_ex         double - Excitatory reversal potential in mV.
+E_in         double - Inhibitory reversal potential in mV.
+g_L          double - Leak conductance in nS;
+tau_ex_rise  double - Rise time of the excitatory synaptic beta function in ms.
+tau_ex_decay double - Rise time of the excitatory synaptic beta function in ms.
+tau_in_rise  double - Rise time of the inhibitory synaptic beta function in ms.
+tau_in_decay double - Rise time of the inhibitory synaptic beta function in ms.
+I_e          double - Constant input current in pA.
+G_ex        double - Constant external input conductance in uS.
+G_in        double - Constant external input conductance in uS.
 
 Sends: SpikeEvent
 
@@ -151,6 +155,7 @@ public:
 private:
   void init_state_( const Node& proto );
   void init_buffers_();
+  double get_normalisation_factor(double, double);
   void calibrate();
   void update( Time const&, const long, const long );
 
@@ -171,17 +176,21 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    double V_th;     //!< Threshold Potential in mV
-    double V_reset;  //!< Reset Potential in mV
-    double t_ref;    //!< Refractory period in ms
-    double g_L;      //!< Leak Conductance in nS
-    double C_m;      //!< Membrane Capacitance in pF
-    double E_ex;     //!< Excitatory reversal Potential in mV
-    double E_in;     //!< Inhibitory reversal Potential in mV
-    double E_L;      //!< Leak reversal Potential (aka resting potential) in mV
-    double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
-    double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double I_e;      //!< Constant Current in pA
+    double V_th;       //!< Threshold Potential in mV
+    double V_reset;    //!< Reset Potential in mV
+    double t_ref;      //!< Refractory period in ms
+    double g_L;        //!< Leak Conductance in nS
+    double C_m;        //!< Membrane Capacitance in pF
+    double E_ex;       //!< Excitatory reversal Potential in mV
+    double E_in;       //!< Inhibitory reversal Potential in mV
+    double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
+    double tau_Erise;  //!< Synaptic Rise Time Constant Excitatory Synapse in ms
+    double tau_Edecay; //!< Synaptic Decay Time Constant for Excitatory Synapse in ms
+    double tau_Irise;  //!< Synaptic Rise Time Constant Inhibitory Synapse in ms
+    double tau_Idecay; //!< Synaptic Decay Time Constant for Inhibitory Synapse in ms
+    double I_e;        //!< Constant Current in pA
+    double g_ext_ex;       //!< Constant External Excitatory Conductance in uS
+    double g_ext_in;       //!< Constant External Inhibitory Conductance in uS
 
     Parameters_(); //!< Set default parameter values
 

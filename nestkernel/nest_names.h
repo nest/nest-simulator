@@ -198,6 +198,8 @@ extern const Name g;             //!< Conductance or gain scaling in rate models
 extern const Name g_AMPA;        //!< specific to Hill & Tononi 2005
 extern const Name g_ahp;         //!< Specific to iaf_chxk_2008 neuron
 extern const Name g_ex;          //!< Excitatory conductance
+extern const Name g_ext_ex;          //!< Constant external excitatory conductance
+extern const Name g_ext_in;          //!< Constant external inhibitory conductance
 extern const Name g_GABA_A;      //!< specific to Hill & Tononi 2005
 extern const Name g_GABA_B;      //!< specific to Hill & Tononi 2005
 extern const Name g_in;          //!< inhibitory conductance
@@ -515,6 +517,10 @@ extern const Name tau_psc;           //!< Used by stdp_connection_facetshw_hom
 extern const Name
   tau_rec; //!< time constant for recovery (ms) (Tsodyks2_connection)
 extern const Name tau_reset;       //!< Specific to iaf_chs_2008 neuron
+extern const Name tau_ex_decay;        //!< Synapse excitatory decay constant (iaf_cond_beta)
+extern const Name tau_ex_rise;        //!< Synapse excitatory rise constant (iaf_cond_beta)
+extern const Name tau_in_decay;        //!< Synapse inhibitory decay constant (iaf_cond_beta)
+extern const Name tau_in_rise;        //!< Synapse inhibitory rise constant (iaf_cond_beta)
 extern const Name tau_rise;        //!< Synapse rise constant (beta fct rise)
 extern const Name tau_rise_AMPA;   //!< specific to Hill & Tononi 2005
 extern const Name tau_rise_GABA_A; //!< specific to Hill & Tononi 2005

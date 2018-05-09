@@ -101,12 +101,10 @@ def get_connectivity_matrix(pop1, pop2):
     sources = connections.get('source')
     targets = connections.get('target')
     index_dic = {}
-    pop1 = np.asarray(pop1)
-    pop2 = np.asarray(pop2)
-    for node in pop1:
-        index_dic[node] = np.where(pop1 == node)[0][0]
-    for node in pop2:
-        index_dic[node] = np.where(pop2 == node)[0][0]
+    for count, node in enumerate(pop1):
+        index_dic[node] = count
+    for count, node in enumerate(pop2):
+        index_dic[node] = count
     for counter, source in enumerate(sources):
         source_id = source
         target_id = targets[counter]
@@ -127,12 +125,10 @@ def get_weighted_connectivity_matrix(pop1, pop2, label):
     targets = connections.get('target')
     weights = connections.get(label)
     index_dic = {}
-    pop1 = np.asarray(pop1)
-    pop2 = np.asarray(pop2)
-    for node in pop1:
-        index_dic[node] = np.where(pop1 == node)[0][0]
-    for node in pop2:
-        index_dic[node] = np.where(pop2 == node)[0][0]
+    for count, node in enumerate(pop1):
+        index_dic[node] = count
+    for count, node in enumerate(pop2):
+        index_dic[node] = count
     for counter, weight in enumerate(weights):
         source_id = sources[counter]
         target_id = targets[counter]

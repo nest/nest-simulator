@@ -904,11 +904,11 @@ inline void
 GIDCollectionComposite::set_metadata( GIDCollectionMetadataPTR meta )
 {
   for ( std::vector< GIDCollectionPrimitive >::iterator gc = parts_.begin();
-      gc != parts_.end();
-      ++gc ) // iterate over GIDCollections
-    {
-      ( *gc ).set_metadata( meta );
-    }
+        gc != parts_.end();
+        ++gc ) // iterate over GIDCollections
+  {
+    ( *gc ).set_metadata( meta );
+  }
 }
 
 inline GIDCollectionMetadataPTR

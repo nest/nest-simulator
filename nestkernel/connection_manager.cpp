@@ -28,6 +28,8 @@
 // C++ includes:
 #include <cassert>
 #include <cmath>
+#include <iomanip>
+#include <limits>
 #include <set>
 #include <vector>
 
@@ -75,6 +77,7 @@ nest::ConnectionManager::ConnectionManager()
   , initial_connector_capacity_( CONFIG_CONNECTOR_CUTOFF )
   , large_connector_limit_( CONFIG_CONNECTOR_CUTOFF * 2 )
   , large_connector_growth_factor_( 1.5 )
+  , stdp_eps_( 1.0e-6 )
 {
 }
 
@@ -442,7 +445,7 @@ nest::ConnectionManager::connect( index sgid,
   double w )
 {
   Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
-  if ( connection_required(source, target, target_thread) )
+  if ( connection_required( source, target, target_thread ) )
   {
     connect_( *source, *target, sgid, target_thread, syn, d, w );
   }
@@ -459,7 +462,7 @@ nest::ConnectionManager::connect( index sgid,
   double w )
 {
   Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
-  if ( connection_required(source, target, target_thread) )
+  if ( connection_required( source, target, target_thread ) )
   {
     connect_( *source, *target, sgid, target_thread, syn, params, d, w );
   }
@@ -476,8 +479,8 @@ nest::ConnectionManager::connect( index sgid,
   Node* target = kernel().node_manager.get_node_or_proxy( tgid, tid );
   thread target_thread = target->get_thread();
   Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
-  
-  if ( connection_required(source, target, target_thread) )
+
+  if ( connection_required( source, target, target_thread ) )
   {
     connect_( *source, *target, sgid, target_thread, syn, params );
     return true;
@@ -1294,7 +1297,9 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
 }
 
 bool
-nest::ConnectionManager::connection_required( Node*& source, Node*& target, thread tid )
+nest::ConnectionManager::connection_required( Node*& source,
+  Node*& target,
+  thread tid )
 {
   // The caller has to check and guarantee that the target is not a
   // proxy and that it is on thread tid.
@@ -1331,7 +1336,8 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
     // and source and target are both on thread tid
     const thread source_thread = source->get_thread();
     const bool source_is_proxy = source->is_proxy();
-    if ( source->has_proxies() and source_thread == tid and not source_is_proxy )
+    if ( source->has_proxies() and source_thread == tid
+      and not source_is_proxy )
     {
       return true;
     }
@@ -1344,17 +1350,19 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
       const index target_gid = target->get_gid();
       target_vp = kernel().vp_manager.suggest_vp( target_gid );
       const bool target_vp_local = kernel().vp_manager.is_local_vp( target_vp );
-      const thread target_thread = kernel().vp_manager.vp_to_thread( target_vp);
+      const thread target_thread =
+        kernel().vp_manager.vp_to_thread( target_vp );
 
       if ( target_vp_local && target_thread == tid )
       {
-	const index source_gid = source->get_gid();
-        source = kernel().node_manager.get_node_or_proxy( source_gid, target_thread );
-	return true;
+        const index source_gid = source->get_gid();
+        source =
+          kernel().node_manager.get_node_or_proxy( source_gid, target_thread );
+        return true;
       }
     }
   }
-  
+
   // Globally receiving nodes (e.g. the volume transmitter) have to be
   // connected regardless of where the source is. However, we
   // currently prohibit connections from devices to global receivers.
@@ -1364,12 +1372,42 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
     {
       return true;
     }
-    
-    std::string msg = String::compose( "Devices ('%1' in this case) cannot be "
-        "connected to global receivers ('%2' in this case).", source->get_name(),
-        source->get_name() );
+
+    std::string msg = String::compose(
+      "Devices ('%1' in this case) cannot be "
+      "connected to global receivers ('%2' in this case).",
+      source->get_name(),
+      source->get_name() );
     throw IllegalConnection( msg );
   }
 
   return false;
+}
+
+void
+nest::ConnectionManager::set_stdp_eps( const double stdp_eps )
+{
+  if ( not( stdp_eps < Time::get_resolution().get_ms() ) )
+  {
+    throw KernelException(
+      "The epsilon used for spike-time comparison in STDP must be less "
+      "than the simulation resolution." );
+  }
+  else if ( stdp_eps < 0 )
+  {
+    throw KernelException(
+      "The epsilon used for spike-time comparison in STDP must not be "
+      "negative." );
+  }
+  else
+  {
+    stdp_eps_ = stdp_eps;
+
+    std::ostringstream os;
+    os << "Epsilon for spike-time comparison in STDP was set to "
+       << std::setprecision( std::numeric_limits< long double >::digits10 )
+       << stdp_eps_ << ".";
+
+    LOG( M_INFO, "ConnectionManager::set_stdp_eps", os.str() );
+  }
 }

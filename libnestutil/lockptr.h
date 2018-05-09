@@ -147,8 +147,8 @@ class lockPTR
 
       if ( number_of_references == 0 )
       {
-        // Only one thread deletes this. Using nowait to avoid deadlock if the
-        // delete is recursive.
+// Only one thread deletes this. Using nowait to avoid deadlock if the
+// delete is recursive.
 #pragma omp single nowait
         {
           delete this;

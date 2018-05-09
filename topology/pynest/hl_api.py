@@ -60,8 +60,9 @@ Functions in the Topology module:
   - DumpLayerConnections(source_layer, target_layer, synapse_model, outname)
   - FindCenterElement(layers)
   - GetTargetNodes(sources, tgt_layer, syn_model=None)
+  - GetTargetPositions(sources, tgt_layer, syn_model=None)
   - PlotLayer(layer, fig=None, nodecolor='b', nodesize=20)
-  - lotTargets(src_nrn, tgt_layer, ...)
+  - PlotTargets(src_nrn, tgt_layer, ...)
   - PlotKernel(ax, src_nrn, mask,...')
   - SelectNodesByMask(layer, anchor, mask_obj)
 
@@ -700,9 +701,10 @@ def GetPosition(nodes):
             pos = GetPosition(l[2:18])
     """
     if not isinstance(nodes, nest.GIDCollection):
-        raise TypeError("nodes must be a GIDCollection")
+        raise TypeError("nodes must be a layer GIDCollection")
 
     return nest.sli_func('GetPosition', nodes)
+
 
 
 def Displacement(from_arg, to_arg):
@@ -1257,22 +1259,22 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
 
 def GetTargetPositions(sources, tgt_layer, syn_model=None):
     """
-    Obtain positions of targets of a list of sources in a given target layer.
+    Obtain positions of targets to a given GIDCollection of sources.
 
 
     Parameters
     ----------
     sources : GIDCollection
         GIDCollection with GID(s) of source neurons
-    tgt_layer : GIDCollection (Layer)
-        GIDCollection with GIDs of tgt_layer
+    tgt_layer : GIDCollection
+        GIDCollection of tgt_layer
     syn_type : [None | str], optional, default: None
         Return only target positions for a given synapse model.
 
 
     Returns
     -------
-    out : tuple of tuple(s) of tuple(s) of floats
+    out : list of list(s) of tuple(s) of floats
         Positions of target neurons fulfilling the given criteria as a nested
         list, containing one list of positions per node in sources.
 
@@ -1319,18 +1321,28 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
     if not isinstance(sources, nest.GIDCollection):
         raise ValueError("sources must be a GIDCollection.")
 
-    result = []
-    for nodes in GetTargetNodes(sources, tgt_layer, syn_model):
-        node_results = []
-        for gid in nodes:
-            # The GIDs in the layers are continuos, so we can use the gid to
-            # find the index in the layer.
-            index = gid - tgt_layer[0].get('global_id')
-            gc = tgt_layer[index]
-            gp = GetPosition(gc)
-            node_results.append(gp)
-        result.append(node_results)
-    return result
+    # Find positions to all nodes in target layer
+    pos_all_tgts = GetPosition(tgt_layer)
+    first_tgt_gid = tgt_layer[0].get('nodes').get('global_id')
+
+    connections = nest.GetConnections(sources, tgt_layer,
+                                      synapse_model=syn_model)
+    srcs = connections.get('source') 
+    tgts = connections.get('target')
+    if isinstance(srcs, int):
+        srcs = [srcs]
+    if isinstance(tgts, int):
+        tgts = [tgts]
+    
+    # Make dictionary where the keys are the source gids, which is mapped to a
+    # list with the positions of the targets connected to the source.
+    src_tgt_pos_map = dict((sgid, []) for sgid in sources)
+    for i in range(len(connections)):
+        tgt_indx = tgts[i] - first_tgt_gid
+        src_tgt_pos_map[srcs[i]].append(pos_all_tgts[tgt_indx])
+
+    # Turn dict into list in same order as sources
+    return [src_tgt_pos_map[sgid] for sgid in sources]
 
 
 def _draw_extent(ax, xctr, yctr, xext, yext):

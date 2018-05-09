@@ -119,7 +119,9 @@ def
 {
   exch dup size 1 eq
   { % if size == 1
-    0 get_g_i GetStatus exch get 
+    /GIDColl Set
+    /value Set
+    GIDColl GetStatus 0 get value get
   }
   { % if size > 1
     exch

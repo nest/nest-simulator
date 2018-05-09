@@ -92,13 +92,13 @@ get_position( GIDCollectionPTR layer_gc )
   index first_gid = meta->get_first_gid();
 
   ArrayDatum result;
-  result.reserve(layer_gc->size());
+  result.reserve( layer_gc->size() );
 
   for ( GIDCollection::const_iterator it = layer_gc->begin();
         it < layer_gc->end();
         ++it )
   {
-    index gid = (*it).gid;
+    index gid = ( *it ).gid;
 
     if ( not kernel().node_manager.is_local_gid( gid ) )
     {
@@ -118,7 +118,7 @@ get_position( GIDCollectionPTR layer_gc )
 ArrayDatum
 displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
 {
-  ArrayDatum layer_to_positions = get_position(layer_to_gc);
+  ArrayDatum layer_to_positions = get_position( layer_to_gc );
 
   AbstractLayerPTR layer_from = get_layer( layer_from_gc );
   GIDCollectionMetadataPTR meta = layer_from_gc->get_metadata();
@@ -130,9 +130,9 @@ displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
   // If layer_from has size equal to one, but layer_to do not, we want the
   // displacement between every node in layer_to against the one in layer_from.
   // Likewise if layer_to has size 1 and layer_from do not.
-  if( layer_from_gc->size() == 1 )
+  if ( layer_from_gc->size() == 1 )
   {
-    index gid = layer_from_gc->operator [](0);
+    index gid = layer_from_gc->operator[]( 0 );
     if ( not kernel().node_manager.is_local_gid( gid ) )
     {
       throw KernelException(
@@ -141,11 +141,11 @@ displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
     const long lid = gid - first_gid;
 
     // If layer_from has size 1, we need to iterate over the layer_to positions
-    for(Token const* it = layer_to_positions.begin() ;
-        it != layer_to_positions.end();
-        ++ it )
+    for ( Token const* it = layer_to_positions.begin();
+          it != layer_to_positions.end();
+          ++it )
     {
-      std::vector< double > pos = getValue< std::vector< double > >(*it);
+      std::vector< double > pos = getValue< std::vector< double > >( *it );
       Token disp = layer_from->compute_displacement( pos, lid );
       result.push_back( disp );
     }
@@ -156,7 +156,7 @@ displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
           it < layer_from_gc->end();
           ++it )
     {
-      index gid = (*it).gid;
+      index gid = ( *it ).gid;
       if ( not kernel().node_manager.is_local_gid( gid ) )
       {
         throw KernelException(
@@ -165,7 +165,8 @@ displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
 
       const long lid = gid - first_gid;
 
-      std::vector< double > pos = getValue< std::vector< double > >(layer_to_positions[counter]);
+      std::vector< double > pos =
+        getValue< std::vector< double > >( layer_to_positions[ counter ] );
       Token disp = layer_from->compute_displacement( pos, lid );
       result.push_back( disp );
 
@@ -190,9 +191,11 @@ displacement( GIDCollectionPTR layer_gc, const ArrayDatum point )
 
   int counter = 0;
   ArrayDatum result;
-  for( GIDCollection::const_iterator it = layer_gc->begin() ; it != layer_gc->end() ; ++it )
+  for ( GIDCollection::const_iterator it = layer_gc->begin();
+        it != layer_gc->end();
+        ++it )
   {
-    index gid = (*it).gid;
+    index gid = ( *it ).gid;
     if ( not kernel().node_manager.is_local_gid( gid ) )
     {
       throw KernelException(
@@ -201,7 +204,8 @@ displacement( GIDCollectionPTR layer_gc, const ArrayDatum point )
 
     const long lid = gid - first_gid;
 
-    std::vector< double > pos = getValue< std::vector< double > >(point[counter]);
+    std::vector< double > pos =
+      getValue< std::vector< double > >( point[ counter ] );
     Token disp = layer->compute_displacement( pos, lid );
     result.push_back( disp );
 
@@ -218,7 +222,7 @@ displacement( GIDCollectionPTR layer_gc, const ArrayDatum point )
 std::vector< double >
 distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
 {
-  ArrayDatum layer_to_positions = get_position(layer_to_gc);
+  ArrayDatum layer_to_positions = get_position( layer_to_gc );
 
   AbstractLayerPTR layer_from = get_layer( layer_from_gc );
   GIDCollectionMetadataPTR meta = layer_from_gc->get_metadata();
@@ -230,9 +234,9 @@ distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
   // If layer_from has size equal to one, but layer_to do not, we want the
   // distance between every node in layer_to against the one in layer_from.
   // Likewise if layer_to has size 1 and layer_from do not.
-  if( layer_from_gc->size() == 1 )
+  if ( layer_from_gc->size() == 1 )
   {
-    index gid = layer_from_gc->operator [](0);
+    index gid = layer_from_gc->operator[]( 0 );
     if ( not kernel().node_manager.is_local_gid( gid ) )
     {
       throw KernelException(
@@ -241,11 +245,11 @@ distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
     const long lid = gid - first_gid;
 
     // If layer_from has size 1, we need to iterate over the layer_to positions
-    for(Token const* it = layer_to_positions.begin() ;
-        it != layer_to_positions.end();
-        ++ it )
+    for ( Token const* it = layer_to_positions.begin();
+          it != layer_to_positions.end();
+          ++it )
     {
-      std::vector< double > pos = getValue< std::vector< double > >(*it);
+      std::vector< double > pos = getValue< std::vector< double > >( *it );
       double disp = layer_from->compute_distance( pos, lid );
       result.push_back( disp );
     }
@@ -256,7 +260,7 @@ distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
           it < layer_from_gc->end();
           ++it )
     {
-      index gid = (*it).gid;
+      index gid = ( *it ).gid;
       if ( not kernel().node_manager.is_local_gid( gid ) )
       {
         throw KernelException(
@@ -265,7 +269,8 @@ distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
 
       const long lid = gid - first_gid;
 
-      std::vector< double > pos = getValue< std::vector< double > >(layer_to_positions[counter]);
+      std::vector< double > pos =
+        getValue< std::vector< double > >( layer_to_positions[ counter ] );
       double disp = layer_from->compute_distance( pos, lid );
       result.push_back( disp );
 
@@ -282,8 +287,7 @@ distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
 }
 
 std::vector< double >
-distance( GIDCollectionPTR layer_gc,
-  const ArrayDatum point )
+distance( GIDCollectionPTR layer_gc, const ArrayDatum point )
 {
   AbstractLayerPTR layer = get_layer( layer_gc );
   GIDCollectionMetadataPTR meta = layer_gc->get_metadata();
@@ -295,7 +299,7 @@ distance( GIDCollectionPTR layer_gc,
         it < layer_gc->end();
         ++it )
   {
-    index gid = (*it).gid;
+    index gid = ( *it ).gid;
     if ( not kernel().node_manager.is_local_gid( gid ) )
     {
       throw KernelException(
@@ -304,7 +308,8 @@ distance( GIDCollectionPTR layer_gc,
 
     const long lid = gid - first_gid;
 
-    std::vector< double > pos = getValue< std::vector< double > >(point[counter]);
+    std::vector< double > pos =
+      getValue< std::vector< double > >( point[ counter ] );
     double disp = layer->compute_distance( pos, lid );
     result.push_back( disp );
 

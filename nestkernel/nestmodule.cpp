@@ -287,7 +287,7 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
   GIDCollectionDatum gc = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
   if ( not gc->valid() )
   {
-    throw KernelException("InvalidGIDCollection");
+    throw KernelException( "InvalidGIDCollection" );
   }
 
   size_t gc_size = gc->size();
@@ -297,14 +297,16 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
   if ( meta.valid() )
   {
     DictionaryDatum dict = DictionaryDatum( new Dictionary );
-    meta->get_status(dict);
+    meta->get_status( dict );
 
     ( *dict )[ names::network_size ] = gc_size;
 
-    GIDCollectionPrimitive* gcp = dynamic_cast<GIDCollectionPrimitive*>( &( *gc ) );
+    GIDCollectionPrimitive* gcp =
+      dynamic_cast< GIDCollectionPrimitive* >( &( *gc ) );
     assert( gcp != 0 && "object must be a GIDCollectionPrimitive" );
 
-    GIDCollectionDatum new_gc = GIDCollectionDatum( new GIDCollectionPrimitive( *gcp ) );
+    GIDCollectionDatum new_gc =
+      GIDCollectionDatum( new GIDCollectionPrimitive( *gcp ) );
     new_gc->set_metadata( GIDCollectionMetadataPTR( 0 ) );
     ( *dict )[ names::nodes ] = new_gc;
 
@@ -317,7 +319,7 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
 
     for ( GIDCollection::const_iterator it = gc->begin(); it < gc->end(); ++it )
     {
-      index node_id = (*it).gid;
+      index node_id = ( *it ).gid;
       DictionaryDatum dict = get_node_status( node_id );
       result.push_back( dict );
     }
@@ -1673,6 +1675,26 @@ NestModule::DisableStructuralPlasticity_Function::execute(
   i->EStack.pop();
 }
 
+/**
+ * Set epsilon that is used for comparing spike times in STDP.
+ * Spike times in STDP synapses are currently represented as double
+ * values. The epsilon defines the maximum distance between spike
+ * times that is still considered 0.
+ *
+ * Note: See issue #894
+ */
+void
+NestModule::SetStdpEps_dFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  const double stdp_eps = getValue< double >( i->OStack.top() );
+
+  kernel().connection_manager.set_stdp_eps( stdp_eps );
+
+  i->OStack.pop();
+  i->EStack.pop();
+}
+
 void
 NestModule::init( SLIInterpreter* i )
 {
@@ -1780,6 +1802,9 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand(
     "GetStructuralPlasticityStatus", &getstructuralplasticitystatus_function );
   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
+
+  i->createcommand( "SetStdpEps", &setstdpeps_dfunction );
+
   // Add connection rules
   kernel().connection_manager.register_conn_builder< OneToOneBuilder >(
     "one_to_one" );

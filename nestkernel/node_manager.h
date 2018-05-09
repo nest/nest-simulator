@@ -137,7 +137,7 @@ public:
    *
    * @ingroup net_access
    */
-  Node* get_node_or_proxy( index gid, thread tid);
+  Node* get_node_or_proxy( index gid, thread tid );
 
   /**
    * Return pointer of the specified Node.

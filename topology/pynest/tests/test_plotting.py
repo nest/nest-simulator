@@ -82,18 +82,17 @@ class PlottingTestCase(unittest.TestCase):
         f = plt.figure()
         a1 = f.add_subplot(221)
         ctr = topo.FindCenterElement(l)
-        topo.PlotKernel(a1, l[ctr-1:ctr], {'circular': {'radius': 1.}},
+        topo.PlotKernel(a1, l[ctr-1], {'circular': {'radius': 1.}},
                         {'gaussian': {'sigma': 0.2}})
 
         a2 = f.add_subplot(222)
-        topo.PlotKernel(a2, l[ctr-1:ctr],
-                        {'doughnut':
-                         {'inner_radius': 0.5, 'outer_radius': 0.75}})
+        topo.PlotKernel(a2, l[ctr-1], {'doughnut': {'inner_radius': 0.5,
+                                                    'outer_radius': 0.75}})
 
         a3 = f.add_subplot(223)
-        topo.PlotKernel(a3, l[ctr-1:ctr], {'rectangular':
-                                           {'lower_left': [-.5, -.5],
-                                            'upper_right': [0.5, 0.5]}})
+        topo.PlotKernel(a3, l[ctr-1], {'rectangular':
+                                       {'lower_left': [-.5, -.5],
+                                        'upper_right': [0.5, 0.5]}})
 
         self.assertTrue(True)
 

@@ -485,6 +485,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } disablestructuralplasticity_function;
 
+  class SetStdpEps_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } setstdpeps_dfunction;
+
   //@}
 };
 

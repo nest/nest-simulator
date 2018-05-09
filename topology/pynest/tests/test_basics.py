@@ -292,11 +292,10 @@ class BasicsTestCase(unittest.TestCase):
         n = topo.FindCenterElement(l2)
         self.assertEqual(n, 14)
 
-    def test_GetTargetNodesPositions(self):
+    def test_GetTargetNodes(self):
         """Interface check for finding targets."""
-        # Not allowed anymore
-        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3,
-                 'columns': 3,
+
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         cdict = {'connection_type': 'divergent',
                  'synapse_model': 'stdp_synapse',
@@ -310,17 +309,10 @@ class BasicsTestCase(unittest.TestCase):
         t = topo.GetTargetNodes(l[:1], l)
         self.assertEqual(len(t), 1)
 
-        p = topo.GetTargetPositions(l[:1], l)
-        self.assertEqual(len(p), 1)
-        self.assertTrue(all([len(pp) == 2 for pp in p[0]]))
-
         t = topo.GetTargetNodes(l, l)
         self.assertEqual(len(t), len(l))
         # 2x2 mask -> four targets
         self.assertTrue(all([len(g) == 4 for g in t]))
-
-        p = topo.GetTargetPositions(l, l)
-        self.assertEqual(len(p), len(l))
 
         t = topo.GetTargetNodes(l, l, syn_model='static_synapse')
         self.assertEqual(len(t), len(l))
@@ -339,6 +331,72 @@ class BasicsTestCase(unittest.TestCase):
 
         t = topo.GetTargetNodes(l[8:9], l)
         self.assertEqual(t, ([1, 3, 7, 9],))
+
+    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
+    def test_GetTargetPositions(self):
+        """Test that GetTargetPosition works as expected"""
+
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 1, 'columns': 1,
+                 'extent': [1., 1.], 'edge_wrap': False}
+        cdict = {'connection_type': 'divergent',
+                 'synapse_model': 'stdp_synapse'}
+        l = topo.CreateLayer(ldict)
+        topo.ConnectLayers(l, l, cdict)
+
+        # Simple test with one gid in the layer, should be placed in the origin
+        p = topo.GetTargetPositions(l, l)
+        self.assertTrue(p, [[(0.0, 0.0)]])
+
+        # Test positions on a grid, we can calculate what they should be
+        nest.ResetKernel()
+        x_extent = 1.
+        y_extent = 1.
+        no_rows = 3
+        no_cols = 3
+
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': no_rows,
+                 'columns': no_cols, 'extent': [x_extent, y_extent],
+                 'edge_wrap': False}
+        l = topo.CreateLayer(ldict)
+        topo.ConnectLayers(l, l, cdict)
+
+        p = topo.GetTargetPositions(l[:1], l)
+        self.assertEqual(len(p), 1)
+        self.assertTrue(all([len(pp) == 2 for pp in p[0]]))
+
+        p = topo.GetTargetPositions(l, l)
+        self.assertEqual(len(p), len(l))
+
+        dx = x_extent / no_cols
+        dy = y_extent / no_rows
+
+        x = [-dx, -dx, -dx, 0.0, 0.0, 0.0, dx, dx, dx]
+        y = [dy, 0.0, -dy, dy, 0.0, -dy, dy, 0.0, -dy]
+
+        pos = [(x[i], y[i]) for i in range(len(x))]
+
+        for indx in range(len(pos)):
+            # 4 chosen randomly, they should all be the same, as all GIDs in
+            # the layer are connected
+            self.assertAlmostEqual(p[4][indx][0], pos[indx][0])
+            self.assertAlmostEqual(p[4][indx][1], pos[indx][1])
+
+        # Test that we get correct positions when we send in a positions array
+        # when creating the layer
+        nest.ResetKernel()
+
+        positions = [(numpy.random.uniform(-0.5, 0.5),
+                      numpy.random.uniform(-0.5, 0.5)) for _ in range(50)]
+        ldict = {'elements': 'iaf_psc_alpha', 'positions': positions,
+                 'extent': [1., 1.], 'edge_wrap': False}
+        l = topo.CreateLayer(ldict)
+        topo.ConnectLayers(l, l, cdict)
+
+        p = topo.GetTargetPositions(l[:1], l)
+
+        for indx in range(len(p[0])):
+            self.assertAlmostEqual(positions[indx][0], p[0][indx][0])
+            self.assertAlmostEqual(positions[indx][1], p[0][indx][1])
 
     def test_Parameter(self):
 

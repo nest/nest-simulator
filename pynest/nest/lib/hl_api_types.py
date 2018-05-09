@@ -270,7 +270,6 @@ class GIDCollection(object):
                     result = pandas.DataFrame(result, index=index)
                 else:  # The GIDCollection is a layer
                     result = {key: (item,) for key, item in result.items()}
-                    print(result)
                     result = pandas.DataFrame(result,
                                               index=['layer']).transpose()
         #############################
@@ -446,12 +445,13 @@ class GIDCollection(object):
         # This was added to ensure that the function is a nop (instead of,
         # for instance, raising an exception) when applied to an empty list,
         # which is an artifact of the API operating on lists, rather than
-        # relying on language idioms, such as comprehensions
+        # relying on language idioms, such as comprehensions.
         if self.__len__() == 0:
             return
 
         if val is not None and nest.is_literal(params):
-            if nest.is_iterable(val) and not isinstance(val, (nest.uni_str, dict)):
+            if (nest.is_iterable(val) and not
+                    isinstance(val, (nest.uni_str, dict))):
                 params = [{params: x} for x in val]
             else:
                 params = {params: val}

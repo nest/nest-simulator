@@ -25,10 +25,9 @@ Functions for connection handling
 
 from .hl_api_helper import *
 from .hl_api_nodes import Create
-from .hl_api_types import GIDCollection
+from .hl_api_types import GIDCollection, Connectome
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
-import nest
 import numpy
 
 
@@ -77,8 +76,8 @@ def GetConnections(source=None, target=None, synapse_model=None,
             params['source'] = source
         else:
             try:
-                params['source'] = nest.GIDCollection(source)
-            except nest.NESTError:
+                params['source'] = GIDCollection(source)
+            except kernel.NESTError:
                 raise TypeError("source must be GIDCollection or convertible"
                                 " to GIDCollection")
 
@@ -87,8 +86,8 @@ def GetConnections(source=None, target=None, synapse_model=None,
             params['target'] = target
         else:
             try:
-                params['target'] = nest.GIDCollection(target)
-            except nest.NESTError:
+                params['target'] = GIDCollection(target)
+            except kernel.NESTError:
                 raise TypeError("target must be GIDCollection or convertible"
                                 " to GIDCollection")
 
@@ -104,7 +103,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
     conns = spp()
 
     if isinstance(conns, tuple):
-        conns = nest.Connectome(None)
+        conns = Connectome(None)
 
     return conns
 
@@ -638,7 +637,7 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
 
     if syn_spec is not None:
         if is_string(syn_spec):
-            syn_spec= {'model': syn_spec}
+            syn_spec = {'model': syn_spec}
         sps(syn_spec)
 
     sr('Disconnect_g_g_D_D')

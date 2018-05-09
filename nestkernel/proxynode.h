@@ -89,8 +89,7 @@ public:
   {
   }
 
-  void
-  get_status( DictionaryDatum& ) const;
+  void get_status( DictionaryDatum& ) const;
 
   /**
    * Proxy nodes have no properties.
@@ -107,7 +106,8 @@ public:
 
   bool is_proxy() const;
 
-  thread get_thread() const
+  thread
+  get_thread() const
   {
     assert( false );
   }

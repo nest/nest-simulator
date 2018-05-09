@@ -104,7 +104,7 @@ class TestGIDCollection(unittest.TestCase):
         gc_0 = nest.GIDCollection([1])
         gc_2 = nest.GIDCollection([3])
         gc_4 = nest.GIDCollection([5])
-        
+
         self.assertEqual(n[0], gc_0)
         self.assertEqual(n[2], gc_2)
         self.assertEqual(n[4], gc_4)
@@ -663,6 +663,17 @@ class TestGIDCollection(unittest.TestCase):
                                        3.00, 3.00, 10.0, 10.0, 10.0)})
         self.assertEqual(C_m, (250.0, 250.0, 111.0, 250.0, 111.0,
                                250.0, 111.0, 250.0, 111.0, 250.0))
+
+    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
+    def test_Convert_To_Numpy_Array(self):
+        """
+        Test that GIDCollection can be converted to numpy Array
+        """
+
+        n = nest.Create('iaf_psc_alpha', 5)
+        ref = np.array([1, 2, 3, 4, 5])
+        conv_arr = np.array(n)
+        np.testing.assert_array_equal(ref, conv_arr)
 
     def test_GetConnections(self):
         """

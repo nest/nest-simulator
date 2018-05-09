@@ -102,9 +102,8 @@ The following parameters can be set in the status dictionary.
                         0-none, 1-linear, 2-quadratic, 3-cubic
 
 Remarks:
-If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-will numerically behave as if tau_m is equal to tau_syn_ex or
-tau_syn_in, respectively, to avoid numerical instabilities.
+If tau_m is very close to tau_syn, the model will numerically behave as
+if tau_m is equal to tau_syn, to avoid numerical instabilities.
 For details, please see IAF_Neruons_Singularity.ipynb in
 the NEST source code (docs/model_details).
 

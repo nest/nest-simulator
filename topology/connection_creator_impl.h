@@ -229,9 +229,10 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
         Node* const tgt =
           kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
 
-	if ( not tgt->is_proxy() )
+        if ( not tgt->is_proxy() )
         {
-          const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+          const Position< D > target_pos =
+            target.get_position( ( *tgt_it ).lid );
 
           if ( mask_.valid() )
           {

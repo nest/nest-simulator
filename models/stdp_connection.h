@@ -250,10 +250,9 @@ STDPConnection< targetidentifierT >::send( Event& e,
   {
     minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
     ++start;
-    if ( minus_dt == 0 )
-    {
-      continue;
-    }
+    // get_history() should make sure that
+    // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
+    assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ) );
   }
 

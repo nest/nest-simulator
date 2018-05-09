@@ -154,9 +154,12 @@ Plot rates of one excitatory and one inhibitory neuron
 '''
 
 data = nest.GetStatus(mm)[0]['events']
-rate_ex = data['rate'][numpy.where(data['senders'] == nest.GetStatus(n_e[0], 'global_id')[0])]
-rate_in = data['rate'][numpy.where(data['senders'] == nest.GetStatus(n_i[0], 'global_id')[0])]
-times = data['times'][numpy.where(data['senders'] == nest.GetStatus(n_e[0], 'global_id')[0])]
+rate_ex = data['rate'][
+    numpy.where(data['senders'] == nest.GetStatus(n_e[0], 'global_id')[0])]
+rate_in = data['rate'][
+    numpy.where(data['senders'] == nest.GetStatus(n_i[0], 'global_id')[0])]
+times = data['times'][
+    numpy.where(data['senders'] == nest.GetStatus(n_e[0], 'global_id')[0])]
 
 pylab.figure()
 pylab.plot(times, rate_ex, label='excitatory')

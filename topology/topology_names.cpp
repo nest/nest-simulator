@@ -54,6 +54,7 @@ const Name extent( "extent" );
 const Name grid( "grid" );
 const Name grid3d( "grid3d" );
 const Name inner_radius( "inner_radius" );
+const Name kappa( "kappa" );
 const Name kernel( "kernel" );
 const Name layer( "layer" );
 const Name layers( "layers" );
@@ -80,6 +81,7 @@ const Name sigma( "sigma" );
 const Name sigma_x( "sigma_x" );
 const Name sigma_y( "sigma_y" );
 const Name spherical( "spherical" );
+const Name theta( "theta" );
 const Name upper_right( "upper_right" );
 
 } // namespace names

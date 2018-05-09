@@ -109,7 +109,8 @@ class SiegertNeuronTestCase(unittest.TestCase):
         # get rate prediction from siegert neuron
         events = nest.GetStatus(self.multimeter)[0]["events"]
         senders = events['senders']
-        rate = events['rate'][np.where(senders == self.siegert_neuron.get('global_id'))]
+        rate = events['rate'][np.where(
+            senders == self.siegert_neuron.get('global_id'))]
         rate_prediction = rate[-1]
 
         # get simulated rate of integrate-and-fire neuron

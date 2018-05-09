@@ -192,7 +192,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 
   get_layer( gid_coll )->gid_collection_ = gid_coll;
 
-  layer_meta->set_first_gid( gid_coll->operator [](0) );
+  layer_meta->set_first_gid( gid_coll->operator[]( 0 ) );
 
   layer_local->set_status( layer_dict );
 

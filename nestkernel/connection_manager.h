@@ -176,8 +176,7 @@ public:
    *
    * \returns true if the connection should be made, false otherwise.
    */
-  bool
-  connection_required(Node*& source, Node*& target, thread tid);
+  bool connection_required( Node*& source, Node*& target, thread tid );
 
   /**
    * Connect, using a dictionary with arrays.
@@ -320,6 +319,10 @@ public:
    */
   double get_large_connector_growth_factor() const;
 
+  double get_stdp_eps() const;
+
+  void set_stdp_eps( const double stdp_eps );
+
 private:
   /**
    * Update delay extrema to current values.
@@ -426,6 +429,10 @@ private:
 
   //! Capacity growth factor to use beyond the limit
   double large_connector_growth_factor_;
+
+  //! Maximum distance between (double) spike times in STDP that is
+  //! still considered 0. See issue #894
+  double stdp_eps_;
 };
 
 inline DictionaryDatum&
@@ -462,6 +469,12 @@ inline double
 ConnectionManager::get_large_connector_growth_factor() const
 {
   return large_connector_growth_factor_;
+}
+
+inline double
+ConnectionManager::get_stdp_eps() const
+{
+  return stdp_eps_;
 }
 
 } // namespace nest

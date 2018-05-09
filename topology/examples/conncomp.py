@@ -43,26 +43,26 @@ nest.CopyModel('iaf_psc_alpha', 'pyr')
 nest.CopyModel('iaf_psc_alpha', 'in')
 
 a_pyr = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'pyr'})
+                          'elements': 'pyr'})
 a_in = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'in'})
+                         'elements': 'in'})
 
 b_pyr = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'pyr'})
+                          'elements': 'pyr'})
 b_in = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'in'})
+                         'elements': 'in'})
 
 
 topo.ConnectLayers(a_pyr, b_pyr, {'connection_type': 'divergent',
-                          'mask': {'circular': {'radius': 0.5}},
-                          'kernel': 0.5,
-                          'weights': 1.0,
-                          'delays': 1.0})
+                                  'mask': {'circular': {'radius': 0.5}},
+                                  'kernel': 0.5,
+                                  'weights': 1.0,
+                                  'delays': 1.0})
 topo.ConnectLayers(a_pyr, b_in, {'connection_type': 'divergent',
-                          'mask': {'circular': {'radius': 1.0}},
-                          'kernel': 0.2,
-                          'weights': 1.0,
-                          'delays': 1.0})
+                                 'mask': {'circular': {'radius': 1.0}},
+                                 'kernel': 0.2,
+                                 'weights': 1.0,
+                                 'delays': 1.0})
 
 pylab.clf()
 

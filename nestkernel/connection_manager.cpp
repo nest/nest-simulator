@@ -718,7 +718,7 @@ nest::ConnectionManager::increase_connection_count( const thread tid,
 }
 
 nest::index
-nest::ConnectionManager::find_connection_sorted( const thread tid,
+nest::ConnectionManager::find_connection( const thread tid,
   const synindex syn_id,
   const index sgid,
   const index tgid )
@@ -743,28 +743,6 @@ nest::ConnectionManager::find_connection_sorted( const thread tid,
   return invalid_index;
 }
 
-nest::index
-nest::ConnectionManager::find_connection_unsorted( const thread tid,
-  const synindex syn_id,
-  const index sgid,
-  const index tgid )
-{
-  std::vector< index > matching_lcids;
-
-  source_table_.find_all_sources_unsorted( tid, sgid, syn_id, matching_lcids );
-  if ( matching_lcids.size() > 0 )
-  {
-    const index lcid = ( *( *connections_[ tid ] )[ syn_id ] )
-                         .find_matching_target( tid, matching_lcids, tgid );
-    if ( lcid != invalid_index )
-    {
-      return lcid;
-    }
-  }
-
-  return invalid_index;
-}
-
 void
 nest::ConnectionManager::disconnect( const thread tid,
   const synindex syn_id,
@@ -775,11 +753,7 @@ nest::ConnectionManager::disconnect( const thread tid,
 
   assert( syn_id != invalid_synindex );
 
-  index lcid = find_connection_sorted( tid, syn_id, sgid, tgid );
-  if ( lcid == invalid_index )
-  {
-    lcid = find_connection_unsorted( tid, syn_id, sgid, tgid );
-  }
+  const index lcid = find_connection( tid, syn_id, sgid, tgid );
 
   if ( lcid == invalid_index ) // this function should only be called
                                // with a valid connection
@@ -1416,7 +1390,6 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
   {
     for ( size_t i = 0; i < sources.size(); ++i )
     {
-      // find targets in sorted part of connections
       const index start_lcid =
         source_table_.find_first_source( tid, syn_id, sources[ i ] );
       if ( start_lcid != invalid_index )
@@ -1425,14 +1398,6 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
           .get_target_gids(
             tid, start_lcid, post_synaptic_element, targets[ i ] );
       }
-
-      // find targets in unsorted part of connections
-      std::vector< index > matching_lcids;
-      source_table_.find_all_sources_unsorted(
-        tid, sources[ i ], syn_id, matching_lcids );
-
-      // unsorted part should always be empty
-      assert( matching_lcids.size() == 0 );
     }
   }
 }
@@ -1454,7 +1419,6 @@ nest::ConnectionManager::sort_connections( const thread tid )
       }
     }
     remove_disabled_connections( tid );
-    source_table_.update_last_sorted_source( tid );
   }
 }
 
@@ -1694,20 +1658,6 @@ void
 nest::ConnectionManager::print_send_buffer_pos( const thread tid ) const
 {
   target_table_.print_secondary_send_buffer_pos( tid );
-}
-
-void
-nest::ConnectionManager::print_source_table( const thread tid ) const
-{
-  const std::vector< ConnectorBase* >& connectors = *connections_[ tid ];
-
-  for ( synindex syn_id = 0; syn_id < connectors.size(); ++syn_id )
-  {
-    if ( connectors[ syn_id ] != NULL )
-    {
-      source_table_.print_sources( tid, syn_id );
-    }
-  }
 }
 
 void

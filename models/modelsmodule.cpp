@@ -63,6 +63,7 @@
 #include "iaf_chxk_2008.h"
 #include "iaf_cond_alpha.h"
 #include "iaf_cond_alpha_mc.h"
+#include "iaf_cond_beta.h"
 #include "iaf_cond_exp.h"
 #include "iaf_cond_exp_sfa_rr.h"
 #include "iaf_psc_alpha.h"
@@ -376,6 +377,8 @@ ModelsModule::init( SLIInterpreter* )
     "iaf_chxk_2008" );
   kernel().model_manager.register_node_model< iaf_cond_alpha >(
     "iaf_cond_alpha" );
+  kernel().model_manager.register_node_model< iaf_cond_beta >(
+    "iaf_cond_beta" );
   kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
   kernel().model_manager.register_node_model< iaf_cond_exp_sfa_rr >(
     "iaf_cond_exp_sfa_rr" );

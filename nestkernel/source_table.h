@@ -251,9 +251,6 @@ public:
    */
   index remove_disabled_sources( const thread tid, const synindex syn_id );
 
-  // TODO@5g: remove?
-  void print_sources( const thread tid, const synindex syn_id ) const;
-
   /**
    * Returns global ids for entries in sources_ for the given thread
    * id, synapse type and local connections ids.

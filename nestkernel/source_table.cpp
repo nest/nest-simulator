@@ -270,28 +270,6 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
 }
 
 void
-nest::SourceTable::print_sources( const thread tid,
-  const synindex syn_id ) const
-{
-  index prev_gid = 0;
-  std::cout << "-------------SOURCES-------------------\n";
-  for ( std::vector< Source >::const_iterator it =
-          ( *( *sources_[ tid ] )[ syn_id ] ).begin();
-        it != ( *( *sources_[ tid ] )[ syn_id ] ).end();
-        ++it )
-  {
-    if ( prev_gid != it->get_gid() )
-    {
-      std::cout << std::endl;
-      prev_gid = it->get_gid();
-    }
-    std::cout << "(" << it->get_gid() << ", " << it->is_disabled() << ")";
-  }
-  std::cout << std::endl;
-  std::cout << "---------------------------------------\n";
-}
-
-void
 nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources(
   const thread tid,
   std::map< index, size_t >& buffer_pos_of_source_gid_syn_id )

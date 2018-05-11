@@ -217,8 +217,6 @@ public:
    */
   virtual void remove_disabled_connections(
     const index first_disabled_index ) = 0;
-
-  virtual void print_connections( const thread tid ) const = 0;
 };
 
 /**
@@ -554,26 +552,6 @@ public:
   {
     assert( C_[ first_disabled_index ].is_disabled() );
     C_.erase( C_.begin() + first_disabled_index, C_.end() );
-  }
-
-  void
-  print_connections( const thread tid ) const
-  {
-    std::cout << "---------------------------------------\n";
-    for ( typename std::vector< ConnectionT >::const_iterator cit = C_.begin();
-          cit != C_.end();
-          ++cit )
-    {
-      std::cout << "(" << cit->get_target( tid )->get_gid() << ", "
-                << cit->is_disabled() << ", "
-                << cit->has_source_subsequent_targets() << ")";
-      if ( not cit->has_source_subsequent_targets() )
-      {
-        std::cout << std::endl;
-      }
-    }
-    std::cout << std::endl;
-    std::cout << "---------------------------------------\n";
   }
 };
 

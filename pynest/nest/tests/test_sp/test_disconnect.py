@@ -83,7 +83,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     neurons[0], neurons[2], syn_model)
                 if mpi_test:
                     print("rim with mpi")
-                    conns = self.comm.allgather(conns)
+                    conns = self.comm.allgather(conns.get('source'))
                     conns = list(filter(None, conns))
                 assert len(conns) == 1
 
@@ -92,7 +92,7 @@ class TestDisconnectSingle(unittest.TestCase):
                 conns = nest.GetConnections(
                     neurons[0], neurons[2], syn_model)
                 if mpi_test:
-                    conns = self.comm.allgather(conns)
+                    conns = self.comm.allgather(conns.get('source'))
                     conns = list(filter(None, conns))
                 assert len(conns) == 0
 
@@ -100,7 +100,7 @@ class TestDisconnectSingle(unittest.TestCase):
                 conns1 = nest.GetConnections(
                     neurons[:1], neurons[1:2], syn_model)
                 if mpi_test:
-                    conns1 = self.comm.allgather(conns1)
+                    conns1 = self.comm.allgather(conns1.get('source'))
                     conns1 = list(filter(None, conns1))
                 assert len(conns1) == 0
 

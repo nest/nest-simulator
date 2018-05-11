@@ -38,7 +38,7 @@ namespace nest
  * neuron on a (remote) machine. Used in TargetTable for presynaptic
  * part of connection infrastructure.
  */
-class Target // TODO@5g: write tests for reading and writing fields -> Jakob
+class Target
 {
 private:
   unsigned long data_;

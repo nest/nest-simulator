@@ -669,7 +669,7 @@ class TestGIDCollection(unittest.TestCase):
         """
         Test that GIDCollection can be converted to numpy Array
         """
- 
+
         n = nest.Create('iaf_psc_alpha', 5)
         ref = np.array([1, 2, 3, 4, 5])
         conv_arr = np.array(n)

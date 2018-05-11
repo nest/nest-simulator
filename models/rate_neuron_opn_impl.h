@@ -374,6 +374,8 @@ void
 nest::rate_neuron_opn< TNonlinearities >::handle(
   InstantaneousRateConnectionEvent& e )
 {
+  const double weight = e.get_weight();
+
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
@@ -381,26 +383,26 @@ nest::rate_neuron_opn< TNonlinearities >::handle(
   {
     if ( P_.linear_summation_ )
     {
-      if ( e.get_weight() >= 0.0 )
+      if ( weight >= 0.0 )
       {
-        B_.instant_rates_ex_[ i ] += e.get_weight() * e.get_coeffvalue( it );
+        B_.instant_rates_ex_[ i ] += weight * e.get_coeffvalue( it );
       }
       else
       {
-        B_.instant_rates_in_[ i ] += e.get_weight() * e.get_coeffvalue( it );
+        B_.instant_rates_in_[ i ] += weight * e.get_coeffvalue( it );
       }
     }
     else
     {
-      if ( e.get_weight() >= 0.0 )
+      if ( weight >= 0.0 )
       {
         B_.instant_rates_ex_[ i ] +=
-          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) );
+          weight * nonlinearities_.input( e.get_coeffvalue( it ) );
       }
       else
       {
         B_.instant_rates_in_[ i ] +=
-          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) );
+          weight * nonlinearities_.input( e.get_coeffvalue( it ) );
       }
     }
     i++;
@@ -412,6 +414,9 @@ void
 nest::rate_neuron_opn< TNonlinearities >::handle(
   DelayedRateConnectionEvent& e )
 {
+  const double weight = e.get_weight();
+  const long delay = e.get_delay();
+
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
@@ -419,28 +424,26 @@ nest::rate_neuron_opn< TNonlinearities >::handle(
   {
     if ( P_.linear_summation_ )
     {
-      if ( e.get_weight() >= 0.0 )
+      if ( weight >= 0.0 )
       {
-        B_.delayed_rates_ex_.add_value(
-          e.get_delay() + i, e.get_weight() * e.get_coeffvalue( it ) );
+        B_.delayed_rates_ex_.add_value( delay + i, weight * e.get_coeffvalue( it ) );
       }
       else
       {
-        B_.delayed_rates_in_.add_value(
-          e.get_delay() + i, e.get_weight() * e.get_coeffvalue( it ) );
+        B_.delayed_rates_in_.add_value( delay + i, weight * e.get_coeffvalue( it ) );
       }
     }
     else
     {
-      if ( e.get_weight() >= 0.0 )
+      if ( weight >= 0.0 )
       {
-        B_.delayed_rates_ex_.add_value( e.get_delay() + i,
-          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) ) );
+        B_.delayed_rates_ex_.add_value( delay + i,
+          weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
       else
       {
-        B_.delayed_rates_in_.add_value( e.get_delay() + i,
-          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) ) );
+        B_.delayed_rates_in_.add_value( delay + i,
+          weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
     }
     ++i;

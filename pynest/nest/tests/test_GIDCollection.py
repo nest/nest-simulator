@@ -673,7 +673,7 @@ class TestGIDCollection(unittest.TestCase):
         n = nest.Create('iaf_psc_alpha', 5)
         ref = np.array([1, 2, 3, 4, 5])
         conv_arr = np.array(n)
-        np.testing.assert_array_equal(ref, conv_arr)
+        self.assertTrue((ref == conv_arr).all())
 
     def test_GetConnections(self):
         """

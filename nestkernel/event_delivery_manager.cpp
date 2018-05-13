@@ -309,12 +309,8 @@ EventDeliveryManager::reset_timers_counters()
 }
 
 void
-EventDeliveryManager::gather_secondary_events( const bool done )
+EventDeliveryManager::write_done_marker_secondary_events_( const bool done )
 {
-#ifndef DISABLE_COUNTS
-  ++comm_steps_secondary_events;
-#endif
-
   // write done marker at last position in every chunk
   const size_t chunk_size_in_int =
     kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
@@ -324,6 +320,16 @@ EventDeliveryManager::gather_secondary_events( const bool done )
     send_buffer_secondary_events_[ ( rank + 1 ) * chunk_size_in_int - 1 ] =
       done;
   }
+}
+
+void
+EventDeliveryManager::gather_secondary_events( const bool done )
+{
+#ifndef DISABLE_COUNTS
+  ++comm_steps_secondary_events;
+#endif
+
+  write_done_marker_secondary_events_( done );
 
 #ifndef DISABLE_TIMING
   kernel().mpi_manager.synchronize(); // to get an accurate time measurement

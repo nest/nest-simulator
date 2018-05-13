@@ -216,6 +216,8 @@ public:
    */
   void gather_secondary_target_data();
 
+  void write_done_marker_secondary_events_( const bool done );
+
   void gather_secondary_events( const bool done );
 
   bool deliver_secondary_events( const thread tid,

@@ -664,7 +664,6 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(C_m, (250.0, 250.0, 111.0, 250.0, 111.0,
                                250.0, 111.0, 250.0, 111.0, 250.0))
 
-    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Convert_To_Numpy_Array(self):
         """
         Test that GIDCollection can be converted to numpy Array

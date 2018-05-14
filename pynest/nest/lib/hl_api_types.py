@@ -586,7 +586,8 @@ class Connectome(object):
 
         # Return empty tuple if we have no connections or if we have done a
         # nest.ResetKernel()
-        if self.__len__() == 0 or nest.GetKernelStatus()['network_size'] == 0:
+        num_conn = nest.GetKernelStatus('num_connections')
+        if self.__len__() == 0 or num_conn == 0:
             return ()
 
         if keys is None:

@@ -135,7 +135,7 @@ nest::Archiving_Node::get_K_values( double t,
       K_value = ( history_[ i ].Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
       nearest_neighbor_K_value =
-        std::exp( ( history_[ i ].t_ - t ) / tau_minus_ );
+        std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ );
       return;
     }
     i--;

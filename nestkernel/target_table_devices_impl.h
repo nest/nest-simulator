@@ -98,25 +98,6 @@ nest::TargetTableDevices::send_to_device( const thread tid,
   }
 }
 
-// TODO@5g: move to .h?
-inline void
-nest::TargetTableDevices::send_from_device( const thread tid,
-  const index ldid,
-  Event& e,
-  const std::vector< ConnectorModel* >& cm )
-{
-  for ( std::vector< ConnectorBase* >::iterator it =
-          ( *target_from_devices_[ tid ] )[ ldid ].begin();
-        it != ( *target_from_devices_[ tid ] )[ ldid ].end();
-        ++it )
-  {
-    if ( *it != NULL )
-    {
-      ( *it )->send_to_all( tid, cm, e );
-    }
-  }
-}
-
 inline void
 nest::TargetTableDevices::get_synapse_status_to_device( const thread tid,
   const index source_gid,

@@ -1670,47 +1670,6 @@ nest::ConnectionManager::remove_disabled_connections( const thread tid )
 }
 
 void
-nest::ConnectionManager::print_connections( const thread tid ) const
-{
-  const std::vector< ConnectorBase* >& connectors = *connections_[ tid ];
-
-  for ( synindex syn_id = 0; syn_id < connectors.size(); ++syn_id )
-  {
-    if ( connectors[ syn_id ] != NULL )
-    {
-      continue;
-    }
-    ( *connectors[ syn_id ] ).print_connections( tid );
-  }
-}
-
-void
-nest::ConnectionManager::print_targets( const thread tid ) const
-{
-  target_table_.print_targets( tid );
-}
-
-void
-nest::ConnectionManager::print_send_buffer_pos( const thread tid ) const
-{
-  target_table_.print_secondary_send_buffer_pos( tid );
-}
-
-void
-nest::ConnectionManager::print_source_table( const thread tid ) const
-{
-  const std::vector< ConnectorBase* >& connectors = *connections_[ tid ];
-
-  for ( synindex syn_id = 0; syn_id < connectors.size(); ++syn_id )
-  {
-    if ( connectors[ syn_id ] != NULL )
-    {
-      source_table_.print_sources( tid, syn_id );
-    }
-  }
-}
-
-void
 nest::ConnectionManager::resize_connections()
 {
   kernel().vp_manager.assert_single_threaded();

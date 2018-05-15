@@ -1585,7 +1585,8 @@ nest::ConnectionManager::set_stdp_eps( const double stdp_eps )
   }
 }
 
-// TODO@5gNOW: pass recv_buffer as const reference -> Jakob
+// recv_buffer can not be a const reference as iterators used in
+// secondary events must not be const
 bool
 nest::ConnectionManager::deliver_secondary_events( const thread tid,
   const bool called_from_wfr_update,

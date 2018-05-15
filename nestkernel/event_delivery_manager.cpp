@@ -86,7 +86,7 @@ EventDeliveryManager::initialize()
   off_grid_spike_register_.resize( num_threads, NULL );
   completed_count_.resize( num_threads, 0 );
 #ifndef DISABLE_COUNTS
-  call_count_deliver_events.resize( num_threads, 0 ); // TODO@5g: remove
+  call_count_deliver_events.resize( num_threads, 0 );
 #endif
 
 #pragma omp parallel
@@ -525,15 +525,10 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
     spike_register,
   std::vector< SpikeDataT >& send_buffer )
 {
-  // reset complete marker
-  // TODO@5g: reset_complete_marker_( assigned_ranks, send_buffer_position,
-  // send_buffer ); -> Susi
-  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
-  {
-    send_buffer[ send_buffer_position.end( rank ) - 1 ].reset_marker();
-  }
+  reset_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
 
-  // assume empty, changed to false if any entry found
+  // assume register is empty, will change to false if any entry can
+  // not be fit into the MPI buffer
   bool is_spike_register_empty = true;
 
   // first dimension: loop over writing thread
@@ -597,7 +592,7 @@ EventDeliveryManager::set_end_and_invalid_markers_(
 {
   for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
-    // thread-local index of (global) rank TODO@5g: [see above]
+    // thread-local index of (global) rank
     if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
     {
       // set end marker at last position that contains a valid
@@ -622,11 +617,24 @@ EventDeliveryManager::set_end_and_invalid_markers_(
 }
 
 template < typename SpikeDataT >
+void EventDeliveryManager::reset_complete_marker_spike_data_(
+  const AssignedRanks& assigned_ranks,
+  const SendBufferPosition& send_buffer_position,
+  std::vector< SpikeDataT >& send_buffer ) const
+{
+  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  {
+    const thread idx = send_buffer_position.end( rank ) - 1;
+    send_buffer[ idx ].reset_marker();
+  }
+}
+
+template < typename SpikeDataT >
 void
 EventDeliveryManager::set_complete_marker_spike_data_(
   const AssignedRanks& assigned_ranks,
   const SendBufferPosition& send_buffer_position,
-  std::vector< SpikeDataT >& send_buffer )
+  std::vector< SpikeDataT >& send_buffer ) const
 {
   for ( thread target_rank = assigned_ranks.begin;
         target_rank < assigned_ranks.end;
@@ -719,7 +727,6 @@ EventDeliveryManager::deliver_events_( const thread tid,
   return are_others_completed;
 }
 
-// TODO@5g: documentation
 void
 EventDeliveryManager::gather_target_data( const thread tid )
 {
@@ -953,8 +960,6 @@ nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid,
   }
 }
 
-// TODO@5g: can we also use a receive_buffer_position, similar to the
-// send_buffer_position during collocate?
 bool
 nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
 {

@@ -18,141 +18,130 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# This is the Travis CI top-level script to setup and run the NEST build and test environment. 
+# This is the Travis CI top-level script to setup and run the NEST
+# build and test environment.
 
+language: python
 
-language: minimal
-
-# Required for Ubuntu Trusty (14.04 LTS).
+# Using the Sudo-enabled Ubuntu Trusty (14.04 LTS).
 sudo: required
 dist: trusty
-#https://blog.travis-ci.com/2017-06-19-trusty-updates-2017-Q2
 
 env:
   matrix:
-    # We don't have to run a full matrix here, because most of the options are
-    # independent. This means we only need a minimal and maximal configuration
-    # and some additional jobs for interdependent options.
-    # See also https://docs.travis-ci.com/user/caching/#Caches-and-build-matrices
-    - xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
-    - xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
-    - xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
-    - xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
-    - xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
-    - xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
-    - xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
+   # We don't have to run a full matrix here, because most of the options are
+   # independent. This means we only need a minimal and maximal configuration
+   # and some additional jobs for interdependent options.
+   # See also https://docs.travis-ci.com/user/caching/#Caches-and-build-matrices
+   - xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
+   - xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
+   - xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
+   - xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
+   - xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
+   - xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
+   - xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
+python:
+  - 2.7.13
+  - 3.4.4
+
 matrix:
-  # Do notify immediately about it when a job of a build fails.
-  fast_finish: true
+    exclude:
+    - env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
+      python: 3.4.4
+    - env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
+      python: 3.4.4
+    - env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
+      python: 3.4.4
+    - env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
+      python: 3.4.4
+    - env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
+      python: 3.4.4
+    - env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
+      python: 3.4.4
+       	     
+    # Notify immediately when a build job fails.
+    fast_finish: true
+#https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
+addons:
+   apt:
+    sources:
+     - r-packages-trusty
+    packages:
+     - build-essential
+     - cmake
+     - libltdl-dev
+     - libreadline6-dev
+     - libncurses5-dev 
+     - libgsl0-dev
+     - python-all-dev
+     - python-numpy
+     - ipython
+     - pkg-config
+     - openmpi-bin
+     - libopenmpi-dev
+     - python-nose
+     - libpcre3
+     - libpcre3-dev
+     - llvm-3.6-dev
+     - jq
+     - pep8
+     - libboost-filesystem-dev
+     - libboost-regex-dev
+     - libboost-wave-dev
+     - libboost-python-dev
+     - libboost-program-options-dev
 cache:
-  directory:
-    - $HOME/.cache
+   directory:
+     - $HOME/.cache
 
 before_install:
-  - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-  - echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
-  - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-  - export SOURCEDIR=$PWD
-  - cd $HOME/build
-  - echo $PATH
-
-  # Update package repository status (-qq is more quiet).
-  - sudo rm -rf /var/lib/apt/lists/*
-  - ls /etc/apt/sources.list.d/
-  - sudo apt-get update -qq
-
-  # Remove automatically all unused packages.
-  - sudo apt-get autoremove
-
-  # Install packages required by NEST.
-  # (Please see also: http://www.nest-simulator.org/installation/#standard-configuration)
-  - sudo apt-get install -y build-essential cmake libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib ipython
-
-  # Install pip and Cython.
-  - wget https://bootstrap.pypa.io/get-pip.py
-  - sudo python get-pip.py
-  - sudo pip install -U setuptools
-  - pip install --user cython==0.23.4
-
-  # Install package terminaltables required by parse_travis_log.py to create the build summary.
-  - sudo pip install terminaltables
-
-  # Install OpenMPI.
-  - sudo apt-get install -y openmpi-bin libopenmpi-dev
-
-  # Install nose framework for the Python testsuite.
-  # (Please note that the nose-capturestderr plugin is needed to suppress NEST output to stderr which may interfere 
-  #  with the nosetests output hindering correct log-parsing. stdout it captured by default.)
-  - sudo apt-get install -y python-nose
-  - sudo pip install "nose-capturestderr==1.2"
-
-  # Install VERA++ and pep8 for static code analysis.
-  - sudo apt-get install -y vera++ pep8
-
-  # Required for building cppcheck-1.69.
-  - sudo apt-get install -y libpcre3 libpcre3-dev
-
-  # Install jq to process JSON output from GitHub API.
-  - sudo apt-get install -y jq
-
-  # Install libneurosim
-  - git clone https://github.com/INCF/libneurosim.git
-  - pushd libneurosim
-  - ./autogen.sh
-  - ./configure --prefix=$HOME/.cache/libneurosim.install --with-mpi
-  - make
-  - make install
-  - popd
-
-  # Install csa
-  - git clone https://github.com/INCF/csa.git
-  - pushd csa
-  - ./autogen.sh
-  - ./configure --with-libneurosim=$HOME/.cache/libneurosim.install --prefix=$HOME/.cache/csa.install
-  - make
-  - make install
-  - popd
-
-  # Install MUSIC
-  - sudo apt-get install -y python-mpi4py
-  - git clone https://github.com/INCF/MUSIC.git music
-  - pushd music
-  - ./autogen.sh
-  - ./configure --prefix=$HOME/.cache/music.install
-  - make
-  - make install
-  - popd
-
-  # Change directory back to the NEST source code directory.
-  - cd $SOURCEDIR
-
+   - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+   - echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
+   - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+   - export SOURCEDIR=$PWD
+   - echo $PWD
+   - ls $PWD
+   - cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
+   - cd $HOME/build
+   - echo $PATH
+  # Upgrade pip and setuptools
+   - pip install -U pip
+   - pip install -U setuptools
+  
+  # Installing additional packages using pip as they only have
+  # outdated versions in the Travis package whitelist.
+  # terminaltables is required by parse_travis_log.py to create
+  # the build summary.
+   - pip install cython scipy matplotlib terminaltables mpi4py
+    
 install:
-  - which cython
-  - cython --version
-  - which python
-  - python --version
-  - which pip
-  - which nosetests
-  - nosetests --version
-  - nosetests --plugins
-  - which cmake
-  - cmake --version
-
+   - which cython
+   - cython --version
+   - which python
+   - python --version
+   - which pip
+   - which nosetests
+   - nosetests --version
+   - nosetests --plugins
+   - which cmake
+   - cmake --version
+  
 before_script:
-  - chmod +x build.sh
-
+   # Change directory back to the NEST source code directory.
+   - cd $SOURCEDIR
+   - chmod +x build.sh
 script:
-  - set -o pipefail
-  - ./build.sh 2>&1 | tee build.sh.log
-  - python extras/parse_travis_log.py build.sh.log
+   - set -o pipefail
+   - ./build.sh 2>&1 | tee build.sh.log
+   - python extras/parse_travis_log.py build.sh.log
 
 before_deploy:
-  - cd $TRAVIS_BUILD_DIR/build
-  - tar -zcvf reports.tar.gz ./reports
-  - tar -zcvf docs.tar.gz $TRAVIS_BUILD_DIR/result/share/doc/nest/*.*
-  - mkdir -p $TRAVIS_BUILD_DIR/build/artefacts_upload
-  - mv docs.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
-  - mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+   - cd $TRAVIS_BUILD_DIR/build
+   - tar -zcvf reports.tar.gz ./reports
+   - tar -zcvf docs.tar.gz $TRAVIS_BUILD_DIR/result/share/doc/nest/*.*
+   - mkdir -p $TRAVIS_BUILD_DIR/build/artefacts_upload
+   - mv docs.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+   - mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
 
 # S3 Deployment (Uploading the Travis CI build artefacts to Amazon S3).
 deploy:
@@ -170,3 +159,4 @@ deploy:
   local-dir: "$TRAVIS_BUILD_DIR/build/artefacts_upload"
   upload-dir: "$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER"
   acl: bucket_owner_full_control
+

@@ -39,6 +39,7 @@ from . import test_dumping
 from . import test_plotting
 from . import test_random_parameter
 from . import test_selection_function_and_elliptical_mask
+from . import test_spatial_kernels
 
 
 def suite():
@@ -50,6 +51,7 @@ def suite():
     suite.addTest(test_plotting.suite())
     suite.addTest(test_random_parameter.suite())
     suite.addTest(test_selection_function_and_elliptical_mask.suite())
+    suite.addTest(test_spatial_kernels.suite())
 
     return suite
 

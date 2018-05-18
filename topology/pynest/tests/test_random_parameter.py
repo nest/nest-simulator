@@ -65,7 +65,7 @@ class RandomParameterTestCase(unittest.TestCase):
 
         # Create layer and connect with given weight distribution
         layer = topo.CreateLayer(
-            {'rows': rows, 'columns': cols, 'elements': 'iaf_neuron'})
+            {'rows': rows, 'columns': cols, 'elements': 'iaf_psc_alpha'})
         topo.ConnectLayers(layer, layer, {'connection_type': 'convergent',
                                           'number_of_connections': Nconn,
                                           'weights': weight_dict})

@@ -23,11 +23,16 @@
 #ifndef THRESHOLD_LIN_RATE_H
 #define THRESHOLD_LIN_RATE_H
 
+// C++ includes:
+#include <algorithm>
+
 // Includes from models:
 #include "rate_neuron_ipn.h"
 #include "rate_neuron_ipn_impl.h"
 #include "rate_neuron_opn.h"
 #include "rate_neuron_opn_impl.h"
+#include "rate_transformer_node.h"
+#include "rate_transformer_node_impl.h"
 
 
 namespace nest
@@ -37,13 +42,10 @@ Name: threshold_lin_rate - rate model with threshold-linear gain function
 
 Description:
 
- threshold_lin_rate is an implementation of a non-linear rate model with either
- input (threshold_lin_rate_ipn) or output noise (threshold_lin_rate_opn) and
-gain
- function
- Phi(h) = g * (h-theta) * H(h-theta) and Psi(h) = h for linear_summation = True
- Phi(h) = h and Psi(h) = g * (h-theta) * H(h-theta) for linear_summation = False
- with Heaviside function H.
+ threshold_lin_rate is an implementation of a nonlinear rate model with input
+ function input(h) = min( max( g * ( h - theta ), 0 ), alpha ).
+ Input transformation can either be applied to individual inputs
+ or to the sum of all inputs.
 
  The model supports connections to other rate models with either zero or
  non-zero delay, and uses the secondary_event concept introduced with
@@ -58,8 +60,10 @@ Parameters:
  mean                double - Mean of Gaussian white noise.
  std                 double - Standard deviation of Gaussian white noise.
  g                   double - Gain parameter
- theta               double - Threshold
- linear_summation    boolean - specifies type of non-linearity (see above)
+ theta               double - First Threshold
+ alpha               double - Second Threshold
+ linear_summation    bool   - Specifies type of non-linearity (see above)
+ rectify_output      bool   - Switch to restrict rate to values >= 0
 
 Note:
 The boolean parameter linear_summation determines whether the
@@ -91,7 +95,7 @@ Author: David Dahmen, Jan Hahne, Jannis Schuecker
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 
-class gainfunction_threshold_lin_rate
+class nonlinearities_threshold_lin_rate
 {
 private:
   /** gain factor of gain function */
@@ -100,38 +104,57 @@ private:
   /** threshold of gain function */
   double theta_;
 
+  /** second threshold of gain function */
+  double alpha_;
+
 public:
   /** sets default parameters */
-  gainfunction_threshold_lin_rate()
+  nonlinearities_threshold_lin_rate()
     : g_( 1.0 )
     , theta_( 0.0 )
+    , alpha_( std::numeric_limits< double >::infinity() )
   {
   }
 
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  double operator()( double h ); // non-linearity
+  double input( double h );               // non-linearity on input
+  double mult_coupling_ex( double rate ); // factor of multiplicative coupling
+  double mult_coupling_in( double rate ); // factor of multiplicative coupling
 };
 
-inline double gainfunction_threshold_lin_rate::operator()( double h )
+inline double
+nonlinearities_threshold_lin_rate::input( double h )
 {
-  if ( h > theta_ )
-  {
-    return g_ * ( h - theta_ );
-  }
-  return 0.0;
+  return std::min( std::max( g_ * ( h - theta_ ), 0. ), alpha_ );
 }
 
-typedef rate_neuron_ipn< nest::gainfunction_threshold_lin_rate >
+inline double
+nonlinearities_threshold_lin_rate::mult_coupling_ex( double rate )
+{
+  return 1.;
+}
+
+inline double
+nonlinearities_threshold_lin_rate::mult_coupling_in( double rate )
+{
+  return 1.;
+}
+
+typedef rate_neuron_ipn< nest::nonlinearities_threshold_lin_rate >
   threshold_lin_rate_ipn;
-typedef rate_neuron_opn< nest::gainfunction_threshold_lin_rate >
+typedef rate_neuron_opn< nest::nonlinearities_threshold_lin_rate >
   threshold_lin_rate_opn;
+typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate >
+  rate_transformer_threshold_lin;
 
 template <>
 void RecordablesMap< threshold_lin_rate_ipn >::create();
 template <>
 void RecordablesMap< threshold_lin_rate_opn >::create();
+template <>
+void RecordablesMap< rate_transformer_threshold_lin >::create();
 
 } // namespace nest
 

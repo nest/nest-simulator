@@ -31,8 +31,18 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
+
+import pip
+
+# pip.main(['install', 'Sphinx==1.5.6'])
+pip.main(['install', 'sphinx-gallery'])
+
+import sphinx_gallery
+import subprocess
+
 import shlex
 import recommonmark
+
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
 from subprocess import check_output, CalledProcessError
@@ -41,11 +51,10 @@ from subprocess import check_output, CalledProcessError
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
-
+source_suffix = ['.rst', '.md']
 source_parsers = {
     '.md': CommonMarkParser
 }
-source_suffix = ['.rst', '.md']
 
 # -- Checking for pandoc --------------------------------------------------
 
@@ -79,9 +88,23 @@ for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.todo',
+    'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'nbspinx',
+    'sphinx_gallery.gen_gallery',
 ]
+
+sphinx_gallery_conf = {
+    'doc_module': ('sphinx_gallery', 'numpy'),
+    # path to your examples scripts
+    'examples_dirs' : '../pynest/examples',
+    # path where to save gallery generated examples
+    'gallery_dirs'  : 'auto_examples',
+    'backreferences_dir': False
+}
 
 mathjax_path = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX" \
               "-AMS-MML_HTMLorMML"
@@ -137,7 +160,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-# html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -164,7 +187,9 @@ github_doc_root = ''
 
 
 def setup(app):
-    app.add_stylesheet('css/my_styles.css')
+    # app.add_stylesheet('css/my_styles.css')
+    app.add_stylesheet('css/custom.css')
+    app.add_javascript("js/custom.js")
     app.add_config_value('recommonmark_config', {
             'auto_toc_tree_section': 'Contents',
             'enable_inline_math': True,
@@ -172,6 +197,7 @@ def setup(app):
             'enable_eval_rst': True
             }, True)
     app.add_transform(AutoStructify)
+
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -224,3 +250,8 @@ texinfo_documents = [
 ]
 
 # -- Options for readthedocs ----------------------------------------------
+# on_rtd = os.environ.get('READTHEDOCS') == 'True'
+# if on_rtd:
+#    html_theme = 'alabaster'
+# else:
+#    html_theme = 'nat'

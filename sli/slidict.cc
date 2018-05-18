@@ -735,7 +735,7 @@ BeginDocumentation
    Examples:
    modeldict /iaf_psc_alpha known -> true
    modeldict /parkinson_neuron known -> false
-   /iaf_psc_alpha_presc Create /Interpol_Order know -> true
+   /iaf_psc_alpha_presc GetDefaults /Interpol_Order known -> true
 
    Author: docu edited by Sirko Straube
 

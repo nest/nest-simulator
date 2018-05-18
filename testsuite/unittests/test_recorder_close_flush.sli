@@ -25,7 +25,7 @@
 Name: testsuite::test_recorde_close_flush - test {close,flush}_after_simulate flags for recording devices
 
 Description:
-Two voltmeters record from an iaf_neuron driven by an intrisic
+Two voltmeters record from an iaf_psc_alpha driven by an intrisic
 current. One voltmeter has close_after_simulate set, the other
 flush_after_simulate. After simulating for 100ms, the two files must
 have identical content. After simulating for another 100ms, the
@@ -72,7 +72,7 @@ FirstVersion: August 2008
   }
   ifelse
 
-  /iaf_neuron Create /n Set
+  /iaf_psc_alpha Create /n Set
   n << /I_e 100.0 >> SetStatus
 
   mm n Connect

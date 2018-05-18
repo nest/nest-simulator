@@ -40,12 +40,13 @@ from string import Template
 from helpers import makedirs
 from subprocess import check_output
 
-if len(sys.argv) != 4:
-    print("Usage: python webdoc.py <html_> <md_dir> <nb_dir>")
+if len(sys.argv) != 5:
+    print("Usage: python webdoc.py <html_> <md_dir> <nb_dir> <index_dir>")
     # python webdoc.py ../../pynest/examples ~/000-md ~/000-html ~/000-nb
     sys.exit(1)
 
-html_, md_dir, nb_dir = sys.argv[1:]
+html_, md_dir, nb_dir, index_dir = sys.argv[1:]
+
 
 makedirs(md_dir)
 makedirs(nb_dir)
@@ -55,7 +56,7 @@ doc_dir = '../../doc'
 img_dir = '../userdoc/img'
 
 
-def examples_to_md(example):
+def examples_to_md(example, index_file, f_index):
     """Parse the examples."""
     if example:
         base = os.path.splitext(example)[0]
@@ -221,7 +222,8 @@ def examples_to_md(example):
         Create an index file
         """
         link = '- [{}]({})\n'.format(the_name, the_name)
-        return link
+
+        f_index.write(link)
 
 
 def gen_examples():
@@ -230,15 +232,18 @@ def gen_examples():
 
     :return: pyfi - fill path to example file
     """
+    index_file = ('{}/index.md'.format(index_dir))
+    f_index = open(index_file, 'w')
     for dirpath, dirnames, files in os.walk(html_):
         if 'LeNovere_2012' in dirnames:
             dirnames.remove('LeNovere_2012')
         if 'Potjans_2014' in dirnames:
             dirnames.remove('Potjans_2014')
         for pyfile in files:
-            if pyfile.endswith(('.py')):
+            if pyfile.endswith('.py'):
                 pyfi = os.path.join(dirpath, pyfile)
-                examples_to_md(pyfi)
+                examples_to_md(pyfi, index_file, f_index)
+    f_index.close()
 
 
 def gen_notebook(comblocks, codblocks, example):

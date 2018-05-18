@@ -726,7 +726,7 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
    at T=0. The dynamic state comprises typically the membrane potential,
    synaptic currents, buffers holding input that has been delivered, but not
    yet become effective, and all events pending delivery. Technically, this
-   is achieve by calling init_state() on all nodes and forcing a call to
+   is achieved by calling init_state() on all nodes and forcing a call to
    init_buffers() upon the next call to Simulate. Node parameters, such as
    time constants and threshold potentials, are not affected.
 
@@ -974,7 +974,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    - Each Node is shown on a separate line, showing its model name followed
    by its in global id in brackets.
 
-   +-[0] Subnet Dim=[1]
+   +-[0] subnet Dim=[1]
    |
    +- iaf_psc_alpha [1]
 
@@ -983,7 +983,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    sequence, then the number of consecutive nodes, then the global id of
    the last node in the sequence.
 
-   +-[0] Subnet Dim=[1]
+   +-[0] subnet Dim=[1]
    |
    +- iaf_psc_alpha [1]..(2)..[2]
 
@@ -1005,90 +1005,89 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    SLI [3] 0 2 PrintNetwork
    +-[0] root dim=[12]
       |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
    SLI [3] 0 3 PrintNetwork
    +-[0] root dim=[12]
       |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
-          |
-          +-[1] subnet dim=[5 6]
-          +-[2] subnet dim=[5 6]
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
+         |
+         +-[1] subnet dim=[5 6]
+         +-[2] subnet dim=[5 6]
    SLI [3] 0 4 PrintNetwork
    +-[0] root dim=[12]
       |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
-          |
-          +-[1] subnet dim=[5 6]
-          |  |
-          |  +-[1] subnet dim=[6]
-          |  +-[2] subnet dim=[6]
-          |  +-[3] subnet dim=[6]
-          |  +-[4] subnet dim=[6]
-          |  +-[5] subnet dim=[6]
-          +-[2] subnet dim=[5 6]
-             |
-             +-[1] subnet dim=[6]
-             +-[2] subnet dim=[6]
-             +-[3] subnet dim=[6]
-             +-[4] subnet dim=[6]
-             +-[5] subnet dim=[6]
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
+         |
+         +-[1] subnet dim=[5 6]
+         |  |
+         |  +-[1] subnet dim=[6]
+         |  +-[2] subnet dim=[6]
+         |  +-[3] subnet dim=[6]
+         |  +-[4] subnet dim=[6]
+         |  +-[5] subnet dim=[6]
+         +-[2] subnet dim=[5 6]
+            |
+            +-[1] subnet dim=[6]
+            +-[2] subnet dim=[6]
+            +-[3] subnet dim=[6]
+            +-[4] subnet dim=[6]
+            +-[5] subnet dim=[6]
    SLI [3] 0 5 PrintNetwork
    +-[0] root dim=[12]
       |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
-          |
-          +-[1] subnet dim=[5 6]
-          |  |
-          |  +-[1] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[2] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[3] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[4] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[5] subnet dim=[6]
-          |     |
-          |     +- [1]...[6] dc_generator
-          |
-          +-[2] subnet dim=[5 6]
-             |
-             +-[1] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[2] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[3] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[4] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[5] subnet dim=[6]
-                |
-                +- [1]...[6] dc_generator
-
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
+         |
+         +-[1] subnet dim=[5 6]
+         |  |
+         |  +-[1] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |
+         |  +-[2] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |
+         |  +-[3] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |
+         |  +-[4] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |
+         |  +-[5] subnet dim=[6]
+         |     |
+         |     +-[1]...[6] dc_generator
+         |
+         +-[2] subnet dim=[5 6]
+            |
+            +-[1] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |
+            +-[2] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |
+            +-[3] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |
+            +-[4] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |
+            +-[5] subnet dim=[6]
+               |
+               +-[1]...[6] dc_generator
 
    Availability: NEST
    Author: Marc-Oliver Gewaltig, Jochen Martin Eppler
@@ -1700,6 +1699,26 @@ NestModule::DisableStructuralPlasticity_Function::execute(
   i->EStack.pop();
 }
 
+/**
+ * Set epsilon that is used for comparing spike times in STDP.
+ * Spike times in STDP synapses are currently represented as double
+ * values. The epsilon defines the maximum distance between spike
+ * times that is still considered 0.
+ *
+ * Note: See issue #894
+ */
+void
+NestModule::SetStdpEps_dFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  const double stdp_eps = getValue< double >( i->OStack.top() );
+
+  kernel().connection_manager.set_stdp_eps( stdp_eps );
+
+  i->OStack.pop();
+  i->EStack.pop();
+}
+
 void
 NestModule::init( SLIInterpreter* i )
 {
@@ -1795,6 +1814,9 @@ NestModule::init( SLIInterpreter* i )
     "GetStructuralPlasticityStatus", &getstructuralplasticitystatus_function );
   i->createcommand( "Disconnect", &disconnect_i_i_lfunction );
   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
+
+  i->createcommand( "SetStdpEps", &setstdpeps_dfunction );
+
   // Add connection rules
   kernel().connection_manager.register_conn_builder< OneToOneBuilder >(
     "one_to_one" );

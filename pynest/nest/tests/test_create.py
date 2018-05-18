@@ -58,14 +58,14 @@ class CreateTestCase(unittest.TestCase):
 
         num_nodes = 10
         voltage = 12.0
-        n = nest.Create('iaf_neuron', num_nodes, {'V_m': voltage})
+        n = nest.Create('iaf_psc_alpha', num_nodes, {'V_m': voltage})
 
         self.assertEqual(nest.GetStatus(n, 'V_m'), (voltage, ) * num_nodes)
 
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
             self.assertRaises(TypeError, nest.Create,
-                              'iaf_neuron', 10, tuple())
+                              'iaf_psc_alpha', 10, tuple())
             self.assertTrue(issubclass(w[-1].category, UserWarning))
 
     def test_ModelDicts(self):
@@ -75,7 +75,7 @@ class CreateTestCase(unittest.TestCase):
 
         num_nodes = 10
         V_m = (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
-        n = nest.Create('iaf_neuron', num_nodes, [{'V_m': v} for v in V_m])
+        n = nest.Create('iaf_psc_alpha', num_nodes, [{'V_m': v} for v in V_m])
 
         self.assertEqual(nest.GetStatus(n, 'V_m'), V_m)
 
@@ -84,7 +84,7 @@ class CreateTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        nest.CopyModel('iaf_neuron', 'new_neuron', {'V_m': 10.0})
+        nest.CopyModel('iaf_psc_alpha', 'new_neuron', {'V_m': 10.0})
         vm = nest.GetDefaults('new_neuron')['V_m']
         self.assertEqual(vm, 10.0)
 
@@ -99,7 +99,7 @@ class CreateTestCase(unittest.TestCase):
 
         self.assertRaisesRegex(
             nest.NESTError, "NewModelNameExists",
-            nest.CopyModel, 'iaf_neuron', 'new_neuron')
+            nest.CopyModel, 'iaf_psc_alpha', 'new_neuron')
 
 
 def suite():

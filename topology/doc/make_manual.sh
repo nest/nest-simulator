@@ -1,7 +1,19 @@
 #!/bin/bash
 
-# Requires nest in Pythonpath
 # Requires Matplotlib 1.0.0
+python -c "import matplotlib" > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "Python module 'matplotlib' not found. Exiting."
+    exit 1
+fi
+
+# Requires nest in PYTHONPATH
+python -c "import nest" > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "Python module 'nest' not found. Exiting."
+    exit 1
+fi
+
 
 # Programs to use
 LATEX=pdflatex
@@ -14,8 +26,9 @@ fname=Topology_UserManual
 
 # Clean-up
 rm -f ${fname}.{aux,bbl,blg,idx,ilg,ins,lof,log,lot,pdf,synctex.gz,toc}
-rm -f user_manual_figures/*
+rm -rf user_manual_figures
 rm -f user_namual_scripts/*.log
+mkdir user_manual_figures
 
 # Run scripts / -u ensures unbuffered output 
 cd user_manual_scripts
@@ -30,5 +43,6 @@ ${MKIDX}  ${fname}
 ${LATEX}  ${fname}
 ${LATEX}  ${fname}
 
-# remove temporary files
+# remove temporary files and figures
 rm -f ${fname}.{aux,bbl,blg,idx,ilg,ind,ins,lof,log,lot,synctex.gz,toc}
+rm -rf user_manual_figures

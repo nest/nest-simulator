@@ -54,7 +54,7 @@ class EventsTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         nest.sr('20 setverbosity')
-        n = nest.Create('iaf_neuron')
+        n = nest.Create('iaf_psc_alpha')
         vm = nest.Create('voltmeter', 1, {'withtime': True, 'interval': 1.})
 
         nest.Connect(vm, n)
@@ -72,7 +72,7 @@ class EventsTestCase(unittest.TestCase):
 
         nest.sr('20 setverbosity')
 
-        n = nest.Create('iaf_neuron', 1, {'I_e': 1000.})
+        n = nest.Create('iaf_psc_alpha', 1, {'I_e': 1000.})
         sd = nest.Create('spike_detector', 1, {'withtime': True})
 
         nest.Connect(n, sd)

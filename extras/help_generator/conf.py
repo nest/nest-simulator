@@ -160,17 +160,17 @@ html_show_copyright = False
 
 # This way works for ReadTheDocs
 # With this local 'make html' is broken!
-# github_doc_root = ''
-# def setup(app):
-#     app.add_stylesheet('css/my_styles.css')
-#     app.add_config_value('recommonmark_config', {
-#          #'url_resolver': lambda url: github_doc_root + url,
-#          'auto_toc_tree_section': 'Contents',
-#          'enable_inline_math': True,
-#          'enable_auto_doc_ref': True,
-#          'enable_eval_rst': True
+#github_doc_root = ''
+#def setup(app):
+#    app.add_stylesheet('css/my_styles.css')
+#    app.add_config_value('recommonmark_config', {
+#         #'url_resolver': lambda url: github_doc_root + url,
+#         'auto_toc_tree_section': 'Contents',
+#         'enable_inline_math': True,
+#         'enable_auto_doc_ref': False,
+#         'enable_eval_rst': True
 #          }, True)
-#     app.add_transform(AutoStructify)
+#    app.add_transform(AutoStructify)
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -222,4 +222,10 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
+
 # -- Options for readthedocs ----------------------------------------------
+on_rtd = os.environ.get('READTHEDOCS') == 'True'
+if on_rtd:
+    html_theme = 'alabaster'
+else:
+    html_theme = 'nat'

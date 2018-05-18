@@ -1,0 +1,20 @@
+.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
+    color: #f63;
+}
+
+
+.wy-side-nav-search>a, .wy-side-nav-search .wy-dropdown>a {
+   content: url(https://nest-simulator-sg.readthedocs.io/en/doc-doc/_static/img/nest_logo.png);
+}
+
+.wy-side-nav-search {
+    background-color: #4e4a4a;#
+}
+
+
+
+video {
+    margin-bottom: 20px;
+    background-color: lightgrey;
+    border: 1px solid lightgrey;
+}

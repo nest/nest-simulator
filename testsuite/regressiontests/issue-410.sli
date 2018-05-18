@@ -56,8 +56,8 @@ ResetKernel
 /dc_generator 1 << /amplitude 1000.0 >> Create /stim2 Set
 
 
-/iaf_neuron 1 << /C_m 100.0 /tau_m 10.0 >> Create /neuron1 Set
-/iaf_neuron 1 << /C_m 100.0 /tau_m 10.0 /tau_minus 10.0>> Create /neuron2 Set
+/iaf_psc_alpha 1 << /C_m 100.0 /tau_m 10.0 >> Create /neuron1 Set
+/iaf_psc_alpha 1 << /C_m 100.0 /tau_m 10.0 /tau_minus 10.0>> Create /neuron2 Set
 
 0 GetStatus /network_size get /dopa_first Set
 /iaf_cond_alpha 100 << /V_reset -70.0 /C_m 80.0 /V_th -60.0>> Create /dopa_last Set

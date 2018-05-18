@@ -44,7 +44,7 @@ add_library( random ${random_sources} )
 target_link_libraries( random sli_lib nestutil )
 
 add_executable( randomtest randomtest.cpp )
-target_link_libraries( randomtest random sli_lib nestutil )
+target_link_libraries( randomtest random sli_lib nestutil ${GSL_LIBRARIES} )
 
 target_include_directories( random PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
@@ -63,3 +63,7 @@ install( TARGETS random
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
+
+FILTER_HEADERS("${random_sources}" install_headers )
+install( FILES ${install_headers}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

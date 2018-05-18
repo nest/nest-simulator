@@ -70,21 +70,21 @@ you can use the name of the model to indicate what role it plays in the
 simulation. Set up your customised model in two steps using `SetDefaults()`:
 
     edict = {"I_e": 200.0, "tau_m": 20.0}
-    nest.CopyModel("iaf_psc_alpha", "exc_iaf_neuron")
-    nest.SetDefaults("exc_iaf_neuron", edict)
+    nest.CopyModel("iaf_psc_alpha", "exc_iaf_psc_alpha")
+    nest.SetDefaults("exc_iaf_psc_alpha", edict)
 
 or in one step:
 
     idict = {"I_e": 300.0}
-    nest.CopyModel("iaf_psc_alpha", "inh_iaf_neuron", params=idict)
+    nest.CopyModel("iaf_psc_alpha", "inh_iaf_psc_alpha", params=idict)
 
 Either way, the newly defined models can now be used to generate neuron
 populations and will also be returned by the function `Models()`.
 
-    epop1 = nest.Create("exc_iaf_neuron", 100)
-    epop2 = nest.Create("exc_iaf_neuron", 100)
-    ipop1 = nest.Create("inh_iaf_neuron", 30)
-    ipop2 = nest.Create("inh_iaf_neuron", 30)
+    epop1 = nest.Create("exc_iaf_psc_alpha", 100)
+    epop2 = nest.Create("exc_iaf_psc_alpha", 100)
+    ipop1 = nest.Create("inh_iaf_psc_alpha", 30)
+    ipop2 = nest.Create("inh_iaf_psc_alpha", 30)
 
 It is also possible to create populations with an inhomogeneous set of
 parameters. You would typically create the complete set of parameters,
@@ -93,7 +93,7 @@ in one go. To do this supply a list of dictionaries of the same length
 as the number of neurons (or synapses) created:
 
     parameter_list = [{"I_e": 200.0, "tau_m": 20.0}, {"I_e": 150.0, "tau_m": 30.0}]
-    epop3 = nest.Create("exc_iaf_neuron", 2, parameter_list)
+    epop3 = nest.Create("exc_iaf_psc_alpha", 2, parameter_list)
 
 ## Setting parameters for populations of neurons
 
@@ -135,9 +135,9 @@ ten neurons each.
 
     import pylab
     import nest
-    pop1 = nest.Create("iaf_neuron", 10)
+    pop1 = nest.Create("iaf_psc_alpha", 10)
     nest.SetStatus(pop1, {"I_e": 376.0})
-    pop2 = nest.Create("iaf_neuron", 10)
+    pop2 = nest.Create("iaf_psc_alpha", 10)
     multimeter = nest.Create("multimeter", 10)
     nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
 

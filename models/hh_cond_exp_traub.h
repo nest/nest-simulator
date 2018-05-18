@@ -57,11 +57,11 @@ extern "C" int
 hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
 
 /* BeginDocumentation
-Name: hh_cond_exp_traub - Hodgin Huxley based model, Traub modified.
+Name: hh_cond_exp_traub - Hodgkin Huxley based model, Traub modified.
 
 Description:
 
- hh_cond_exp_traub is an implementation of a modified Hodkin-Huxley model
+ hh_cond_exp_traub is an implementation of a modified Hodgkin-Huxley model
 
  (1) Post-synaptic currents
  Incoming spike events induce a post-synaptic change of conductance modeled

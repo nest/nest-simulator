@@ -84,7 +84,7 @@ ResetKernel
   { /st Set 
     % create new nodes for each connection to avoid any issues with prohibited multiple connections
     ds_models 
-    { Create /iaf_neuron Create st Connect } forall  
+    { Create /iaf_psc_alpha Create st Connect } forall
   } forall
 } pass_or_die
 
@@ -95,7 +95,7 @@ plastic_syn_models
     ds_models
     {
       /d Set
-      { d Create /iaf_neuron Create st Connect } fail_or_die
+      { d Create /iaf_psc_alpha Create st Connect } fail_or_die
     } forall
 } forall 
 
@@ -109,7 +109,7 @@ ResetKernel
   static_non_hpc_models
   { /st Set 
     % create new nodes for each connection to avoid any issues with prohibited multiple connections
-    /multimeter Create /iaf_neuron Create st Connect
+    /multimeter Create /iaf_psc_alpha Create st Connect
   } forall
 } pass_or_die
 
@@ -117,7 +117,7 @@ ResetKernel
 models_to_fail
 {
     /st Set
-    /multimeter Create /iaf_neuron Create { st Connect } fail_or_die 
+    /multimeter Create /iaf_psc_alpha Create { st Connect } fail_or_die
 } forall 
   
 endusing

@@ -49,14 +49,14 @@ M_ERROR setverbosity
 {
     ResetKernel
     0 << /local_num_threads 4 /overwrite_files false >> SetStatus
-    /iaf_neuron 4 << /I_e 1500.0 >> Create ;
+    /iaf_psc_alpha 4 << /I_e 1500.0 >> Create ;
     /spike_detector << /to_file true >> Create ;
     [1 2 3 4] [5] Connect
     1000 Simulate
 	
     ResetKernel
     0  << /local_num_threads 4 /overwrite_files false >> SetStatus
-    /iaf_neuron 4 << /I_e 1500.0 >> Create ;
+    /iaf_psc_alpha 4 << /I_e 1500.0 >> Create ;
     /spike_detector << /to_file true >> Create ;
     [1 2 3 4] [5] Connect
     1000 Simulate

@@ -275,12 +275,15 @@ SLIStartup::SLIStartup( int argc, char** argv )
 
   // argv[0] is the name of the program that was given to the shell.
   // This name must be given to SLI, otherwise initialization fails.
-  // To catch accidental removal, e.g. in pyNEST, we explicitly assert
-  // that argv[0] is a non-empty string.
-  assert( std::strlen( argv[ 0 ] ) > 0 );
+  // If we import NEST directly from the Python interpreter, that is, not from
+  // a script but by using an interactive session in Python, argv[0] is an
+  // empty string, see documentation for argv in
+  // https://docs.python.org/3/library/sys.html
   for ( int i = 0; i < argc; ++i )
   {
     StringDatum* sd = new StringDatum( argv[ i ] );
+    ad.push_back( Token( sd ) );
+
     if ( *sd == "-d" || *sd == "--debug" )
     {
       debug_ = true;
@@ -333,8 +336,6 @@ SLIStartup::SLIStartup( int argc, char** argv )
       verbosity_ = SLIInterpreter::M_QUIET;
       continue;
     }
-
-    ad.push_back( Token( sd ) );
   }
   targs = ad;
 }

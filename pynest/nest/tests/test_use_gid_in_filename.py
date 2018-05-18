@@ -40,11 +40,11 @@ class UseGidInFilenameTestCase(unittest.TestCase):
         sd = nest.Create("spike_detector", 1, {"to_file": True,
                          "label": "sd", "use_gid_in_filename": True})
         nest.Connect(sg, sd)
-
         nest.Simulate(100)
 
-        self.assertTrue(os.path.exists(os.environ["NEST_DATA_PATH"] +
-                                       "/sd-2-0.gdf"))
+        expected = os.path.join(os.environ["NEST_DATA_PATH"],
+                                "sd-{}-0.gdf".format(sd[0]))
+        self.assertTrue(os.path.exists(expected))
 
     def test_NoGid(self):
         """Without GID"""
@@ -58,8 +58,9 @@ class UseGidInFilenameTestCase(unittest.TestCase):
 
         nest.Simulate(100)
 
-        self.assertTrue(os.path.exists(os.environ["NEST_DATA_PATH"] +
-                                       "/sd-0.gdf"))
+        expected = os.path.join(os.environ["NEST_DATA_PATH"],
+                                "sd-0.gdf")
+        self.assertTrue(os.path.exists(expected))
 
 
 def suite():

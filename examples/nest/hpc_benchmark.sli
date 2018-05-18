@@ -41,10 +41,10 @@
    -----------------
    
    This benchmark was originally developed for very large-scale simulations on
-   supercomputers with more than 1 million neurons in the network and 
-   11.250 incoming synapses per neuron. For such large networks, input to a
-   single neuron will be little correlated and network activity will remain
-   stable for long periods of time. 
+   supercomputers with more than 1 million neurons in the network and
+   11.250 incoming synapses per neuron. For such large networks, synaptic input
+   to a single neuron will be little correlated across inputs and network
+   activity will remain stable over long periods of time.
    
    The original network size corresponds to a scale parameter of 100 or more.
    In order to make it possible to test this benchmark script on desktop
@@ -92,38 +92,23 @@
   % Leaky integrate-and-fire neuron with alpha-shaped
   % postsynaptic currents
   (
-  a = tauMem / tauSyn;
-  b = 1.0 / tauSyn - 1.0 / tauMem;
-  % time of maximum
-  t_max = 1.0/b * (-LambertWm1(-exp(-1.0/a)/a)-1.0/a);
-  % maximum of PSP for current of unit amplitude
-  exp(1.0)/(tauSyn*CMem*b) * ((exp(-t_max/tauMem) - exp(-t_max/tauSyn)) / b - t_max*exp(-t_max/tauSyn))
+    % compute time to maximum of V_m after spike input to neuron at rest
+    a = tauMem / tauSyn;
+    b = 1.0 / tauSyn - 1.0 / tauMem;
+    t_rise = 1.0/b * (-LambertWm1(-exp(-1.0/a)/a)-1.0/a);
+  
+    % maximum of PSP for current of unit amplitude
+    exp(1.0)/(tauSyn*CMem*b) * ((exp(-t_rise/tauMem) - exp(-t_rise/tauSyn)) / b - t_rise*exp(-t_rise/tauSyn))
   ) ExecMath
   1 exch div
 }
 def
 
-%%% Rise time of synaptic currents
-
-% The synaptic rise time is chosen such that the rise time of the
-% evoked post-synaptic potential is 1.700759 ms.
-% For alpha-shaped postynaptic currents, the rise time of the post-synaptic
-% potential follows from the synaptic rise time as
-
-/PSP_rise_time
-{
-  /taumem set
-  /tausyn set
-  
-  (
-  a = taumem / tausyn;
-  b = 1.0 / tausyn - 1.0 / taumem;
-  ) execmath
-  
-} def
-
-% Inverting this equation numerically leads to tau_syn = 0.32582722403722841 ms,
-% as specified in model_params below.
+% For compatiblity with earlier benchmarks, we require a rise time of
+% t_rise = 1.700759 ms and we choose tau_syn to achieve this for given
+% tau_m. This requires numerical inversion of the expression for t_rise
+% in ConvertSynapseWeight. We computed this value once and hard-code 
+% it here.
 
 /tau_syn 0.32582722403722841 ms def
 
@@ -183,13 +168,6 @@ def
 % Here we resolve parameter dependencies, by making the independent
 % values visible
 brunel_params dup using
-
-% create one single random number generator    
-rngdict /knuthlfg get 238 CreateRNG /myrng Set
-
-% normal distribution to draw initial membrane potentials from
-myrng rdevdict /normal get CreateRDV /normal_dv Set
-
 
 %%% FUNCTION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -264,12 +242,6 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
 
   /E_stimulus /poisson_generator Create def
   E_stimulus
-  <<
-     /rate nu_ext CE mul 1000. mul
-  >> SetStatus
-
-  /I_stimulus /poisson_generator Create def
-  I_stimulus
   <<
      /rate nu_ext CE mul 1000. mul
   >> SetStatus
@@ -392,6 +364,8 @@ Aborting the simulation!) message
 
   memory_thisjob cvs ( # virt_mem_after_sim) join logger /log call
   SimCPUTime cvs ( # sim_time) join logger /log call
+
+  0 ShowStatus
 
   record_spikes true eq
   {

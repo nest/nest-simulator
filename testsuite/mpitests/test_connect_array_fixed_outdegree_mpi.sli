@@ -59,7 +59,7 @@ skip_if_not_threaded
   /net1 [1 N] Range def        % global ids of source subnet
   /net2 [gid1 gid2] Range def  % global ids of target subnet
 
-  /iaf_neuron N 2 mul Create ;  % creates source and target subnets
+  /iaf_psc_alpha N 2 mul Create ;  % creates source and target subnets
 
   /NC N K mul def     % number of connections
   /Dmax NC 1 add def  % maximum delay

@@ -23,8 +23,13 @@
 #ifndef RATE_NEURON_IPN_H
 #define RATE_NEURON_IPN_H
 
+// Generated includes:
 #include "config.h"
 
+// C++ includes:
+#include <string>
+
+// Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
@@ -36,7 +41,6 @@
 #include "recordables_map.h"
 #include "universal_data_logger.h"
 
-#include <string>
 
 namespace nest
 {
@@ -44,7 +48,17 @@ namespace nest
 /**
  * Base class for rate model with input noise.
  *
- * This class needs to be instantiated with a gain function.
+ * This template class needs to be instantiated with a class
+ * containing the following functions:
+ *  - input (nonlinearity that is applied to the input)
+ *  - mult_coupling_ex (factor of multiplicative coupling for excitatory input)
+ *  - mult_coupling_in (factor of multiplicative coupling for inhibitory input)
+ *
+ * The boolean parameter linear_summation determines whether the input function
+ * is applied to the summed up incoming connections (= True, default value) or
+ * to each input individually (= False). In case of multiplicative coupling the
+ * nonlinearity is applied separately to the summed excitatory and inhibitory
+ * inputs if linear_summation=True.
  *
  * References:
  *
@@ -56,7 +70,7 @@ namespace nest
  *
  * @see lin_rate, tanh_rate, threshold_lin_rate
  */
-template < class TGainfunction >
+template < class TNonlinearities >
 class rate_neuron_ipn : public Archiving_Node
 {
 
@@ -99,7 +113,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  TGainfunction gain_;
+  TNonlinearities nonlinearities_;
 
   /** This is the actual update function. The additional boolean parameter
    * determines if the function is called by update (false) or wfr_update (true)
@@ -110,8 +124,8 @@ private:
   bool wfr_update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< rate_neuron_ipn< TGainfunction > >;
-  friend class UniversalDataLogger< rate_neuron_ipn< TGainfunction > >;
+  friend class RecordablesMap< rate_neuron_ipn< TNonlinearities > >;
+  friend class UniversalDataLogger< rate_neuron_ipn< TNonlinearities > >;
 
   // ----------------------------------------------------------------
 
@@ -124,6 +138,9 @@ private:
     /** Time constant in ms. */
     double tau_;
 
+    /** Passive decay rate in ms. */
+    double lambda_;
+
     /** Gaussian white noise standard deviation. */
     double std_;
 
@@ -131,10 +148,19 @@ private:
     double mean_;
 
     /** Target of non-linearity.
-        True: Gain function applied to linearly summed input.
+        True (default): Gain function applied to linearly summed input.
         False: Gain function applied to each input before summation.
     **/
     bool linear_summation_;
+
+    /** Should the rate be rectified?.
+        True: If the rate is negative it is set to zero after each time step.
+        False (default): No rectification.
+    **/
+    bool rectify_output_;
+
+    /** use multiplicative coupling? Default is false */
+    bool mult_coupling_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -175,10 +201,16 @@ private:
     Buffers_( rate_neuron_ipn& );
     Buffers_( const Buffers_&, rate_neuron_ipn& );
 
-    RingBuffer delayed_rates_; //!< buffer for rate vector received by
-    // RateConnectionDelayed
-    std::vector< double > instant_rates_; //!< buffer for rate vector received
-    // by RateConnectionInstantaneous
+    RingBuffer delayed_rates_ex_; //!< buffer for rate vector received by
+    // RateConnectionDelayed from excitatory neurons
+    RingBuffer delayed_rates_in_; //!< buffer for rate vector received by
+    // RateConnectionDelayed from inhibitory neurons
+    std::vector< double >
+      instant_rates_ex_; //!< buffer for rate vector received
+    // by RateConnectionInstantaneous from excitatory neurons
+    std::vector< double >
+      instant_rates_in_; //!< buffer for rate vector received
+    // by RateConnectionInstantaneous from inhibitory neurons
     std::vector< double >
       last_y_values; //!< remembers y_values from last wfr_update
     std::vector< double > random_numbers; //!< remembers the random_numbers in
@@ -231,21 +263,21 @@ private:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< rate_neuron_ipn< TGainfunction > > recordablesMap_;
+  static RecordablesMap< rate_neuron_ipn< TNonlinearities > > recordablesMap_;
 };
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline void
-rate_neuron_ipn< TGainfunction >::update( Time const& origin,
+rate_neuron_ipn< TNonlinearities >::update( Time const& origin,
   const long from,
   const long to )
 {
   update_( origin, from, to, false );
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline bool
-rate_neuron_ipn< TGainfunction >::wfr_update( Time const& origin,
+rate_neuron_ipn< TNonlinearities >::wfr_update( Time const& origin,
   const long from,
   const long to )
 {
@@ -256,53 +288,59 @@ rate_neuron_ipn< TGainfunction >::wfr_update( Time const& origin,
   return not wfr_tol_exceeded;
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline port
-rate_neuron_ipn< TGainfunction >::handles_test_event(
+rate_neuron_ipn< TNonlinearities >::handles_test_event(
   InstantaneousRateConnectionEvent&,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline port
-rate_neuron_ipn< TGainfunction >::handles_test_event(
+rate_neuron_ipn< TNonlinearities >::handles_test_event(
   DelayedRateConnectionEvent&,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline port
-rate_neuron_ipn< TGainfunction >::handles_test_event( DataLoggingRequest& dlr,
+rate_neuron_ipn< TNonlinearities >::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline void
-rate_neuron_ipn< TGainfunction >::get_status( DictionaryDatum& d ) const
+rate_neuron_ipn< TNonlinearities >::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
   Archiving_Node::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
-  gain_.get( d );
+  nonlinearities_.get( d );
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline void
-rate_neuron_ipn< TGainfunction >::set_status( const DictionaryDatum& d )
+rate_neuron_ipn< TNonlinearities >::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
@@ -319,7 +357,7 @@ rate_neuron_ipn< TGainfunction >::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  gain_.set( d );
+  nonlinearities_.set( d );
 }
 
 } // namespace

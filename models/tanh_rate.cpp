@@ -26,13 +26,13 @@ namespace nest
 {
 
 void
-gainfunction_tanh_rate::get( DictionaryDatum& d ) const
+nonlinearities_tanh_rate::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::g, g_ );
 }
 
 void
-gainfunction_tanh_rate::set( const DictionaryDatum& d )
+nonlinearities_tanh_rate::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::g, g_ );
 }
@@ -58,6 +58,14 @@ RecordablesMap< nest::tanh_rate_opn >::create()
   insert_( names::rate, &nest::tanh_rate_opn::get_rate_ );
   insert_( names::noise, &nest::tanh_rate_opn::get_noise_ );
   insert_( names::noisy_rate, &nest::tanh_rate_opn::get_noisy_rate_ );
+}
+
+template <>
+void
+RecordablesMap< nest::rate_transformer_tanh >::create()
+{
+  // use standard names whereever you can for consistency!
+  insert_( names::rate, &nest::rate_transformer_tanh::get_rate_ );
 }
 
 } // namespace nest

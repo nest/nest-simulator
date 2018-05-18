@@ -34,7 +34,7 @@ class TestSPBuilder(unittest.TestCase):
         syn_model = 'static_synapse'
         syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'}
-        neurons = nest.Create('iaf_neuron', 2, {
+        neurons = nest.Create('iaf_psc_alpha', 2, {
             'synaptic_elements': {
                 'SE1': {'z': 0.0, 'growth_rate': 0.0},
                 'SE2': {'z': 0.0, 'growth_rate': 0.0}
@@ -50,7 +50,7 @@ class TestSPBuilder(unittest.TestCase):
         syn_model = 'static_synapse'
         syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'}
-        neurons = nest.Create('iaf_neuron', 2, {
+        neurons = nest.Create('iaf_psc_alpha', 2, {
             'synaptic_elements': {
                 'SE1': {'z': 0.0, 'growth_rate': 0.0},
                 'SE2': {'z': 0.0, 'growth_rate': 0.0}
@@ -66,7 +66,7 @@ class TestSPBuilder(unittest.TestCase):
         syn_model = 'static_synapse'
         syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'}
-        neurons = nest.Create('iaf_neuron', 2, {
+        neurons = nest.Create('iaf_psc_alpha', 2, {
             'synaptic_elements': {
                 'SE1': {'z': 0.0, 'growth_rate': 0.0},
                 'SE2': {'z': 0.0, 'growth_rate': 0.0}

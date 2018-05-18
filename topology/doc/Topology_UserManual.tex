@@ -79,7 +79,7 @@
 Håkon Enger\\[1ex]
 \normalsize Department of Mathematical Sciences and Technology\\\normalsize Norwegian University of Life Sciences\\
 \normalsize 1432 Ås, Norway}
-\date{NEST 2.12\\[8cm]
+\date{NEST 2.16\\[8cm]
 \centerline{\includegraphics{nest-initiative.pdf}}}
 
 
@@ -104,12 +104,12 @@ Håkon Enger\\[1ex]
   For NEST~2.2, Håkon Enger rewrote most of the Topology library code,
   thereby improving performance considerably.
 
-  This User Manual describes the NEST~2.12 version of the NEST Topology
-  Library. There have been no major changes to the Topology library since 
+  This User Manual describes the NEST~2.16 version of the NEST Topology
+  Library. There have been no major changes to the Topology library since
   NEST~2.2, although Topology functions check their arguments more carefully
   since NEST~2.6.
 
-  We plan further improvements to the Topology Module in the future, 
+  We plan further improvements to the Topology Module in the future,
   which may include changes to the API to remove some of the remaining
   inconsistencies and provide a cleaner user interface.
 
@@ -138,8 +138,8 @@ reference manual. Please consult the online documentation in PyNEST
 for details; where appropriate, that documentation also points to
 relevant SLI documentation.
 
-This manual describes the Topology Module included with NEST~2.12;
-the user interface and behavior of the module has not changed 
+This manual describes the Topology Module included with NEST~2.16;
+the user interface and behavior of the module has not changed
 significantly since NEST~2.2.
 
 In the next chapter of this manual, we introduce Topology layers,
@@ -150,7 +150,7 @@ Topology networks. Chapter~\ref{ch:extending} deals with the more advanced
 topic of extending the Topology module with custom kernel functions and
 masks provided by C++ classes in an extension module.
 
-You will find the Python scripts used in the examples in this manual 
+You will find the Python scripts used in the examples in this manual
  in the NEST
 source code directory under \lstinline!topology/doc/user_manual_scripts!.
 
@@ -189,7 +189,7 @@ certain circumstances.
 
 \subsection{A very simple layer}\label{sec:verysimple}
 
-We create a first, grid-based simple layer\index{grid-based layer} 
+We create a first, grid-based simple layer\index{grid-based layer}
 with the following commands:
 %
 \lstinputlisting[linerange=layer1-end]{user_manual_scripts/layers.py}
@@ -208,19 +208,19 @@ properties:
   \emph{elements}\index{element} of the layer. In this case, the layer
   contains \lstinline!iaf_psc_alpha! neurons.
 \item The \emph{center}\index{center} of the layer is at the origin of
-  the coordinate system, $(0,0)$. 
+  the coordinate system, $(0,0)$.
 \item The \emph{extent}\index{extent} or size of the layer is $1\times
   1$. This is the default size for layers. The extent is marked by the
   thin square in Fig.~\ref{fig:layer1}.
-\item The \emph{grid spacing}\index{grid spacing} of the layer is 
+\item The \emph{grid spacing}\index{grid spacing} of the layer is
 \begin{equation}\label{eq:dx_dy_extent}\begin{split}
 dx &= \frac{\text{x-extent}}{\text{number of columns}} \\
-dy &= \frac{\text{y-extent}}{\text{number of rows}} 
+dy &= \frac{\text{y-extent}}{\text{number of rows}}
 \end{split}\end{equation}
 In the layer shown, we have $dx=dy=0.2$, but the grid spacing may differ
 in x- and y-direction.
 \item Layer elements are spaced by the grid spacing and are arranged
-  symmetrically about the center. 
+  symmetrically about the center.
 \item The outermost layer elements are placed $dx/2$ and $dy/2$ from
   the borders of the extent.
 \item Element \emph{positions}\index{position} in the coordinate
@@ -233,13 +233,13 @@ in x- and y-direction.
   $(x,y)$-coordinates. Indices are shown in the top and right margin
   of Fig.~\ref{fig:layer1}. Note that row-indices follow matrix
   convention, i.e., run from top to bottom. Following pythonic
-  conventions, indices run from 0. 
+  conventions, indices run from 0.
 \end{itemize}
 
 
 \subsection{Setting the extent}\label{sec:setextent}
 
-Layers have a default extent of $1\times 1$. 
+Layers have a default extent of $1\times 1$.
 You can specify a different extent of a layer, i.e., its size in $x$- and
 $y$-direction by adding an \lstinline!'extent'! entry to the
 dictionary passed to \lstinline!CreateLayer!:
@@ -273,7 +273,7 @@ three layers have different positions in the global coordinate system.
 
 \subsection{Constructing a layer: an example}\label{sec:fixedlayerexample}
 
-To see how to construct a layer, consider the following example: 
+To see how to construct a layer, consider the following example:
 \begin{itemize}
 \item a layer with $n_r$ rows and $n_c$ columns;
 \item spacing between nodes is $d$ in $x$- and $y$-directions;
@@ -303,10 +303,11 @@ the circle the center of the layer.}
 \emph{Free layers}\index{free layer} do not restrict node positions to
 a grid, but allow free placement within the extent. To this end, the
 user needs to specify the positions of all nodes explicitly. The
-following code creates a layer of 50 \lstinline!iaf_psc_alpha! neurons uniformly
-distributed in a layer with extent $1\times 1$, i.e., spanning the
-square $[-0.5,0.5]\times[-0.5,0.5]$:
+following code creates a layer of 50 \lstinline!iaf_psc_alpha! neurons
+uniformly distributed in a layer with extent $1\times 1$, i.e.,
+spanning the square $[-0.5,0.5]\times[-0.5,0.5]$:
 %
+\newline
 \lstinputlisting[linerange=layer4-end]{user_manual_scripts/layers.py}
 \scriptfig{layer4}{0.5}{Layer with freely spaced elements.}%
 {A free layer with 50 elements uniformly distributed in an extent of
@@ -364,7 +365,7 @@ rightmost elements on a grid are considered nearest neighbors to the
 leftmost elements, and the topmost to the bottommost. The flat layer
 becomes the surface of a torus. Fig.~\ref{fig:player} illustrates this
 for a one-dimensional layer, which turns from a line to a ring upon
-introduction of periodic boundary conditions. 
+introduction of periodic boundary conditions.
 
 You specify periodic boundary conditions for a layer using the
 dictionary entry \lstinline!edge_wrap!\index{edge\_wrap}:
@@ -374,7 +375,7 @@ dictionary entry \lstinline!edge_wrap!\index{edge\_wrap}:
 {Top left: Layer with single row and five columns without periodic
   boundary conditions. Numbers above elements
   show element coordinates. Colors shifting from blue to magenta mark
-  increasing distance from the element at $(-2,0)$. 
+  increasing distance from the element at $(-2,0)$.
   Bottom left: Same layer, but with periodic boundary
   conditions.
   Note that the element at $(2,0)$ now is a nearest
@@ -392,7 +393,7 @@ but only
 \left.\sqrt{x_{\text{ext}}^2 + y_{\text{ext}}^2}\right/ 2
 \end{equation*}
 for a layer with periodic boundary conditions; $x_{\text{ext}}$ and
-$y_{\text{ext}}$ are the components of the extent size. 
+$y_{\text{ext}}$ are the components of the extent size.
 
 We will discuss the consequences of periodic boundary conditions more
 in Chapter~\ref{sec:connections}.
@@ -415,7 +416,7 @@ points may be of interest:
 \lstinputlisting[linerange=layer1s.log-end.log,breaklines=true,%
                  breakatwhitespace=true]{user_manual_scripts/layers.log}
 %
-The \lstinline!'topology'! entry is read-only. 
+The \lstinline!'topology'! entry is read-only.
 \item The NEST kernel sees the elements of the layer in the same way
   as the elements of any subnet. You will notice this when printing a
   network with a Topology layer:
@@ -463,7 +464,7 @@ following a model name with the number of nodes to be created:
 %
 In this case, each layer element consists of 10
 \lstinline!iaf_cond_alpha! neurons, one \lstinline!poisson_generator!,
-and two \lstinline!noise_generator!s. 
+and two \lstinline!noise_generator!s.
 
 Note the following points:
 \begin{itemize}
@@ -495,7 +496,7 @@ subpopulations. Each subpopulation consists of three pyramidal cells
 and one interneuron. All pyramidal cells are modeled as NEST
 \lstinline!iaf_psc_alpha! neurons with default parameter values, while
 interneurons are \lstinline!iaf_psc_alpha! neurons with threshold voltage
-$V_{\text{th}}=-52$mV. 
+$V_{\text{th}}=-52$mV.
 \end{quote}
 How should you implement such a network using the Topology module?
 The recommended approach is to create different models for the
@@ -554,7 +555,7 @@ The \emph{target} of a single connection
   boundary conditions are applied in the target layer.
 \item[Driver\index{driver}] When connecting two layers, the
   \emph{driver} layer is the one in which each node is considered in
-  turn. 
+  turn.
 \item[Pool\index{pool}] When connecting two layers, the
   \emph{pool} layer is the one from which nodes are chosen for each
   node in the driver layer. I.e., we have\\
@@ -573,7 +574,7 @@ The \emph{target} of a single connection
   at all considered as potential targets for each driver node. See
   Sec.~\ref{sec:conn_masks} for details.
 \item[Kernel\index{kernel}] The \emph{kernel} is a function returning
-  a (possibly distance- or displacement-dependent) 
+  a (possibly distance- or displacement-dependent)
   probability for creating a connection between a driver and a pool
   node. The default kernel is $1$, i.e., connections are created with
   certainty. See Sec.~\ref{sec:conn_kernels} for details.
@@ -749,20 +750,20 @@ not by lower left and upper right corner coordinates, but give their
 size in rows and columns, as in this example:
 %
 \lstinputlisting[linerange=conn3-end]{user_manual_scripts/connections.py}
-% 
+%
 The resulting connections are shown in Fig.~\ref{fig:conn3}. By
 default the top-left corner of a grid mask, i.e., the grid mask
 element with grid index $[0,0]$\footnote{See Sec.~\ref{sec:verysimple} for the
 distinction between layer coordinates and grid indices}, is aligned
-with the driver node. You can change this alignment by specifying an 
+with the driver node. You can change this alignment by specifying an
  \emph{anchor}\index{anchor} for the mask:
 %
 \lstinputlisting[linerange=conn3c-end]{user_manual_scripts/connections.py}
-% 
+%
 You can even place the anchor outside the mask:
 %
 \lstinputlisting[linerange=conn3x-end]{user_manual_scripts/connections.py}
-% 
+%
 The resulting connection patterns are shown in Fig.~\ref{fig:conn3}.
 %
 \scriptfig{conn3}{0.9}{Grid masks}%
@@ -779,7 +780,7 @@ Note the following:
 \item Grid-based masks are applied by considering grid indices. The
   position of nodes in physical coordinates is ignored.
 \item In consequence, grid-based masks should only be used between
-  layers with identical grid spacings. 
+  layers with identical grid spacings.
 \item The semantics of the \lstinline!'anchor'! property for
 grid-based masks differ
 significantly for general masks described in
@@ -802,7 +803,7 @@ Probabilistic connections can be generated in two different ways using
 Topology:
 \begin{description}
 \item[Free probabilistic connections\index{free probabilistic
-    connections}] are the default. 
+    connections}] are the default.
   In this case, \lstinline!ConnectLayers! considers each driver node $D$
   in turn. For each $D$, it evaluates the kernel for each
   pool node $P$ within the mask and creates a connection according to
@@ -822,7 +823,7 @@ in Chapter~\ref{ch:extending}.
 \begin{tabularx}{\linewidth}{l|p{0.2\linewidth}|X}
 Name & Parameters & Function \\\hline
 %
-\rowcolor{lstcolor} 
+\rowcolor{lstcolor}
 constant & & {constant $p\in[0,1]$} \\
 %
 \lstinline!linear! & \lstinline!a!, \lstinline!c! &
@@ -843,13 +844,18 @@ p(d) = c + p_{\text{center}}  e^{-\frac{(d-\mu)^2}{2\sigma^2}}
 \end{equation*}\\
 %
 \rowcolor{lstcolor}
-\lstinline!gaussian2D! & \lstinline!p_center!, \lstinline!sigma_x!, 
+\lstinline!gaussian2D! & \lstinline!p_center!, \lstinline!sigma_x!,
 \lstinline!sigma_y!, \lstinline!mean_x!, \lstinline!mean_y!,\lstinline!rho!
 \lstinline!c! &
 \begin{equation*}
 p(d) = c + p_{\text{center}}
 e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-\frac{(d_y-\mu_y)^2}{\sigma_y^2}
           +2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x\sigma_y}}{2(1-\rho^2)}}
+\end{equation*}\\
+%
+\lstinline!gamma! & \lstinline!kappa!, \lstinline!theta! &
+\begin{equation*}
+p(d) = \frac{d^{\kappa-1}e^{-\frac{d}{\theta}}}{\theta^\kappa\Gamma(\kappa)}
 \end{equation*}\\\hline\hline
 \lstinline!uniform! & \lstinline!min!, \lstinline!max! & $p\in
 [\text{min},\text{max})$ uniformly \\
@@ -888,20 +894,21 @@ Several examples follow. They are illustrated in Fig.~\ref{fig:conn4}.
 \item[Gaussian\index{Gaussian kernel}] This kernel is distance dependent. In the example,
   connection probability is 1 for $d=0$ and falls off with a
   ``standard deviation'' of $\sigma=1$:
-\lstinputlisting[linerange=conn4g-end]{user_manual_scripts/connections.py} 
+\newline
+\lstinputlisting[linerange=conn4g-end]{user_manual_scripts/connections.py}
 \item[Eccentric Gaussian\index{eccentric kernel}] In this example, both kernel and mask have
   been moved using anchors:
-\lstinputlisting[linerange=conn4gx-end]{user_manual_scripts/connections.py} 
+\lstinputlisting[linerange=conn4gx-end]{user_manual_scripts/connections.py}
 Note that the anchor for the kernel is specified inside the dictionary
 containing the parameters for the Gaussian.
 \item[Cut-off Gaussian\index{cut-off kernel}] In this example, all probabilities less than
   $0.5$ are set to zero:
-\lstinputlisting[linerange=conn4cut-end]{user_manual_scripts/connections.py} 
+\lstinputlisting[linerange=conn4cut-end]{user_manual_scripts/connections.py}
 \item[2D Gaussian\index{2D Gaussian kernel}] We conclude with an
   example using a two-dimensional Gaussian, i.e., a Gaussian with
   different widths in $x$- and $y-$ directions. This kernel depends on
   displacement, not only on distance:
-\lstinputlisting[linerange=conn42d-end]{user_manual_scripts/connections.py} 
+\lstinputlisting[linerange=conn42d-end]{user_manual_scripts/connections.py}
 \end{description}
 Note that for pool layers with periodic boundary conditions, Topology
 always uses the shortest possible displacement vector from driver
@@ -931,7 +938,7 @@ driver. Weights drop linearly from $1$. From the node at $(20,0)$ on,
 the cutoff sets weights to 0. There are no connections to nodes beyond
 $(25,0)$, since the mask extends only 25 units to the right of the
 driver. Delays increase in a stepwise linear fashion\index{delays, stepwise}, as NEST requires
-delays to be multiples of the simulation resolution. 
+delays to be multiples of the simulation resolution.
 \item[Linear example with periodic boundary conditions\index{periodic
     boundary cond.}]\rule{0mm}{0mm}\\
 \lstinputlisting[linerange=conn5linpbc-end]{user_manual_scripts/connections.py}
@@ -1009,7 +1016,7 @@ Connection generation now proceeds in a different way than before:
   connection with the probability prescribed by the kernel. This is
   repeated until the requested number of connections has been created.
 \item Thus, if all nodes in the mask shall be connected with equal
-  probability, you should not specify any kernel. 
+  probability, you should not specify any kernel.
 \item If you specify a non-uniform kernel (e.g., Gaussian, linear,
   exponential), the connections will be distributed within the mask
   with the spatial profile given by the kernel.
@@ -1018,7 +1025,7 @@ Connection generation now proceeds in a different way than before:
   in the mask, \lstinline!ConnectLayers! may get stuck in an infinite
   loop and NEST will hang\index{infinite loop}\index{hang}. Keep in
   mind that the number of nodes within the mask may vary considerably
-  for free layers with randomly placed nodes. 
+  for free layers with randomly placed nodes.
 \end{enumerate}
 
 The following code generates a network of 1000 randomly placed nodes
@@ -1104,16 +1111,16 @@ Sec.~\ref{sec:rec_dev}):
 \section{Layers and recording devices}\label{sec:rec_dev}
 
 Generally, one should not create a layer of recording devices, especially
-spike detectors, to record from a topology layer. Instead, create a single 
+spike detectors, to record from a topology layer. Instead, create a single
 spike detector, and connect all neurons in the layer to that spike detector
 using a normal connect command:
 \lstinputlisting[linerange=conn11-end]{user_manual_scripts/connections.py}
 
-Connections to a layer of recording devices as described in 
+Connections to a layer of recording devices as described in
 Sec.~\ref{sec:dev_subregions}, such as spike detectors, are
 only possible using the convergent connection type without a fixed number
 of connections. Note that voltmeter and multimeter are not suffering from
-this restriction, since they are connected as sources, not as targets. 
+this restriction, since they are connected as sources, not as targets.
 
 \chapter{Inspecting Layers}\label{sec:inspection}
 
@@ -1128,7 +1135,7 @@ connectivity.
 The following table presents some query functions provided by NEST
 (\lstinline!nest.!) and Topology (\lstinline!tp.!). For detailed
 information about these functions, please see the online Python and
-SLI documentation. 
+SLI documentation.
 
 \renewcommand{\arraystretch}{1.2}
 \begin{longtable}{lp{0.6\linewidth}}
@@ -1177,7 +1184,7 @@ SLI documentation.
 
 Topology provides three functions to visualize networks:
 \begin{longtable}{lp{0.6\linewidth}}
-\lstinline!PlotLayer()! 
+\lstinline!PlotLayer()!
 &
     Plot nodes in a layer.\\
 \lstinline!PlotTargets()!
@@ -1192,7 +1199,7 @@ Topology provides three functions to visualize networks:
 \end{longtable}
 
 \scriptfig{vislayer}{0.7}{Example of layer visualization.}%
-{$21\times21$ grid with divergent Gaussian projections onto itself. 
+{$21\times21$ grid with divergent Gaussian projections onto itself.
 Blue circles mark layer elements, red circles connection targets of
 the center neuron (marked by large light-red circle). The large red
 circle is the mask, the dashed green lines mark $\sigma$, $2\sigma$
@@ -1248,7 +1255,7 @@ cmake -Dwith-nest=${NEST_INSTALL_DIR}/bin/nest-config ../MyModule
 make
 make install
 \end{lstlisting}
-The previous command installed MyModule to the NEST installation directory, including help files generated from the source code. 
+The previous command installed MyModule to the NEST installation directory, including help files generated from the source code.
 \end{enumerate}
 
 \section{Adding kernel functions}
@@ -1491,7 +1498,7 @@ Topology Module from the 1.9-xxxx to the 2.0 version.
 \listoffigures % \addcontentsline{toc}{chapter}{List of Figures}
 \listoftables  %\addcontentsline{toc}{chapter}{List of Tables}
 
-\printindex  
+\printindex
 %\addcontentsline{toc}{chapter}{Index}
 
 \end{document}

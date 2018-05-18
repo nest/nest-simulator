@@ -28,6 +28,8 @@
 // C++ includes:
 #include <cassert>
 #include <cmath>
+#include <iomanip>
+#include <limits>
 #include <set>
 #include <vector>
 
@@ -77,6 +79,7 @@ nest::ConnectionManager::ConnectionManager()
   , initial_connector_capacity_( CONFIG_CONNECTOR_CUTOFF )
   , large_connector_limit_( CONFIG_CONNECTOR_CUTOFF * 2 )
   , large_connector_growth_factor_( 1.5 )
+  , stdp_eps_( 1.0e-6 )
 {
 }
 
@@ -179,6 +182,11 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
   for ( size_t i = 0; i < delay_checkers_.size(); ++i )
   {
     delay_checkers_[ i ].set_status( d );
+  }
+  //  Need to update the saved values if we have changed the delay bounds.
+  if ( d->known( names::min_delay ) or d->known( names::max_delay ) )
+  {
+    update_delay_extrema_();
   }
 }
 
@@ -1443,5 +1451,33 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
             *targets_it, tid, synapse_model, post_synaptic_element );
       }
     }
+  }
+}
+
+void
+nest::ConnectionManager::set_stdp_eps( const double stdp_eps )
+{
+  if ( not( stdp_eps < Time::get_resolution().get_ms() ) )
+  {
+    throw KernelException(
+      "The epsilon used for spike-time comparison in STDP must be less "
+      "than the simulation resolution." );
+  }
+  else if ( stdp_eps < 0 )
+  {
+    throw KernelException(
+      "The epsilon used for spike-time comparison in STDP must not be "
+      "negative." );
+  }
+  else
+  {
+    stdp_eps_ = stdp_eps;
+
+    std::ostringstream os;
+    os << "Epsilon for spike-time comparison in STDP was set to "
+       << std::setprecision( std::numeric_limits< long double >::digits10 )
+       << stdp_eps_ << ".";
+
+    LOG( M_INFO, "ConnectionManager::set_stdp_eps", os.str() );
   }
 }

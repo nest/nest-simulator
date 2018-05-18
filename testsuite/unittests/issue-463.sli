@@ -44,7 +44,7 @@ M_ERROR setverbosity
 0 << /total_num_virtual_procs 4 >> SetStatus
 
 % Create source and target neurons
-/iaf_neuron 20 Create
+/iaf_psc_alpha 20 Create
 /net1 [1 10] Range def
 /net2 [11 20] Range def
 

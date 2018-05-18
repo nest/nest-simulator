@@ -26,17 +26,19 @@ namespace nest
 {
 
 void
-gainfunction_threshold_lin_rate::get( DictionaryDatum& d ) const
+nonlinearities_threshold_lin_rate::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::g, g_ );
   def< double >( d, names::theta, theta_ );
+  def< double >( d, names::alpha, alpha_ );
 }
 
 void
-gainfunction_threshold_lin_rate::set( const DictionaryDatum& d )
+nonlinearities_threshold_lin_rate::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::g, g_ );
   updateValue< double >( d, names::theta, theta_ );
+  updateValue< double >( d, names::alpha, alpha_ );
 }
 
 /*
@@ -60,6 +62,14 @@ RecordablesMap< nest::threshold_lin_rate_opn >::create()
   insert_( names::rate, &nest::threshold_lin_rate_opn::get_rate_ );
   insert_( names::noise, &nest::threshold_lin_rate_opn::get_noise_ );
   insert_( names::noisy_rate, &nest::threshold_lin_rate_opn::get_noisy_rate_ );
+}
+
+template <>
+void
+RecordablesMap< nest::rate_transformer_threshold_lin >::create()
+{
+  // use standard names whereever you can for consistency!
+  insert_( names::rate, &nest::rate_transformer_threshold_lin::get_rate_ );
 }
 
 } // namespace nest

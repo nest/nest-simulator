@@ -157,19 +157,29 @@ nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::t_ref, t_ref_ );
 
   if ( V_reset_ >= theta_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
+  }
 
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time must not be negative." );
+  }
 
   if ( tau_ <= 0 )
+  {
     throw BadProperty( "time constant must be > 0." );
+  }
 
   if ( tau_m_ <= 0 )
+  {
     throw BadProperty( "Membrane time constant must be > 0." );
+  }
 
   if ( tau_syn_ < 0 )
+  {
     throw BadProperty( "Membrane time constant must not be negative." );
+  }
 }
 
 void
@@ -205,6 +215,7 @@ nest::siegert_neuron::siegert_neuron()
   , B_( *this )
 {
   recordablesMap_.create();
+  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
 nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
@@ -213,6 +224,7 @@ nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
+  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
 /* ----------------------------------------------------------------
@@ -432,7 +444,9 @@ nest::siegert_neuron::update_( Time const& origin,
 
     // modifiy new_rates for diffusion-event as proxy for next min_delay
     for ( long temp = from; temp < to; ++temp )
+    {
       new_rates[ temp ] = S_.r_;
+    }
   }
 
   // Send diffusion-event

@@ -186,6 +186,8 @@ html_show_copyright = False
 github_doc_root = ''
 
 
+intersphinx_mapping = {'https://docs.python.org/': None}
+
 def setup(app):
     # app.add_stylesheet('css/my_styles.css')
     app.add_stylesheet('css/custom.css')

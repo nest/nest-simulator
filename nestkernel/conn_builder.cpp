@@ -1797,9 +1797,9 @@ nest::SymmetricBernoulliBuilder::connect_()
         assert( indegree < sources_->size() );
 
         // check whether the target is on this thread
-        if ( kernel().node_manager.is_local_gid( *tgid ) )
+        if ( kernel().node_manager.is_local_gid( (*tgid).gid ) )
         {
-          target = kernel().node_manager.get_node( *tgid, tid );
+          target = kernel().node_manager.get_node_or_proxy( (*tgid).gid, tid );
           target_thread = target->get_thread();
         }
         else
@@ -1829,7 +1829,7 @@ nest::SymmetricBernoulliBuilder::connect_()
 
           if ( kernel().node_manager.is_local_gid( sgid ) )
           {
-            source = kernel().node_manager.get_node( sgid, tid );
+            source = kernel().node_manager.get_node_or_proxy( sgid, tid );
             source_thread = source->get_thread();
           }
           else
@@ -1849,7 +1849,7 @@ nest::SymmetricBernoulliBuilder::connect_()
           if ( source_thread == tid )
           {
             assert( source != NULL );
-            single_connect_( *tgid, *source, source_thread, rng );
+            single_connect_( (*tgid).gid, *source, source_thread, rng );
           }
 
           ++i;

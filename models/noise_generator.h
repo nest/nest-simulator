@@ -33,7 +33,7 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
@@ -112,7 +112,7 @@ Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
  * Gaussian white noise generator.
  * Provide Gaussian "white" noise input current
  */
-class noise_generator : public Node
+class noise_generator : public DeviceNode
 {
 
 public:
@@ -312,5 +312,7 @@ noise_generator::sends_signal() const
 {
   return ALL;
 }
-}
+
+} // namespace
+
 #endif // NOISE_GENERATOR_H

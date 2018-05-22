@@ -30,7 +30,7 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
@@ -85,7 +85,7 @@ namespace nest
    SeeAlso: poisson_generator, sinusoidal_gamma_generator
 */
 
-class sinusoidal_poisson_generator : public Node
+class sinusoidal_poisson_generator : public DeviceNode
 {
 
 public:

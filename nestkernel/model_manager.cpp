@@ -31,6 +31,7 @@
 #include "compose.hpp"
 
 // Includes from nestkernel:
+#include "connector_model_impl.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "model_manager_impl.h"
@@ -184,7 +185,7 @@ ModelManager::get_status( DictionaryDatum& )
 index
 ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
 {
-  if ( modeldict_->known( new_name ) || synapsedict_->known( new_name ) )
+  if ( modeldict_->known( new_name ) or synapsedict_->known( new_name ) )
   {
     throw NewModelNameExists( new_name );
   }
@@ -268,13 +269,13 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
 {
   size_t new_id = prototypes_[ 0 ].size();
 
-  if ( new_id == invalid_synindex ) // we wrapped around (=255), maximal id of
-                                    // synapse_model = 254
+  if ( new_id == invalid_synindex ) // we wrapped around (=63), maximal id of
+                                    // synapse_model = 62, see nest_types.h
   {
     LOG( M_ERROR,
       "ModelManager::copy_synapse_model_",
       "CopyModel cannot generate another synapse. Maximal synapse model count "
-      "of 255 exceeded." );
+      "of 63 exceeded." );
     throw KernelException( "Synapse model count exceeded" );
   }
   assert( new_id != invalid_synindex );
@@ -296,6 +297,8 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
   }
 
   synapsedict_->insert( new_name, new_id );
+
+  kernel().connection_manager.resize_connections();
   return new_id;
 }
 
@@ -348,34 +351,31 @@ ModelManager::set_synapse_defaults_( index model_id,
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised_(
     kernel().vp_manager.get_num_threads() );
-#ifdef _OPENMP
+
 // We have to run this in parallel to set the status on nodes that exist on each
 // thread, such as volume_transmitter.
 #pragma omp parallel
   {
-    index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-#endif // clang-format on
+    thread tid = kernel().vp_manager.get_thread_id();
+
     try
     {
-      prototypes_[ t ][ model_id ]->set_status( params );
+      prototypes_[ tid ][ model_id ]->set_status( params );
     }
     catch ( std::exception& err )
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( t ) =
+      exceptions_raised_.at( tid ) =
         lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
 
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    if ( exceptions_raised_.at( t ).valid() )
+    if ( exceptions_raised_.at( tid ).valid() )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( t ) ) );
+      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
     }
   }
 
@@ -553,25 +553,23 @@ ModelManager::memory_info() const
 void
 ModelManager::create_secondary_events_prototypes()
 {
-  if ( secondary_events_prototypes_.size()
-    < kernel().vp_manager.get_num_threads() )
-  {
-    delete_secondary_events_prototypes();
-    std::vector< SecondaryEvent* > prototype;
-    prototype.resize( secondary_connector_models_.size(), NULL );
-    secondary_events_prototypes_.resize(
-      kernel().vp_manager.get_num_threads(), prototype );
+  delete_secondary_events_prototypes();
+  secondary_events_prototypes_.resize(
+    kernel().vp_manager.get_num_threads(), NULL );
 
-    for ( size_t i = 0; i < secondary_connector_models_.size(); i++ )
+  for ( thread tid = 0;
+        tid < static_cast< thread >( secondary_events_prototypes_.size() );
+        ++tid )
+  {
+    secondary_events_prototypes_[ tid ] =
+      new std::map< synindex, SecondaryEvent* >;
+    for ( synindex syn_id = 0; syn_id < prototypes_[ tid ].size(); ++syn_id )
     {
-      if ( secondary_connector_models_[ i ] != NULL )
+      if ( not prototypes_[ tid ][ syn_id ]->is_primary() )
       {
-        prototype = secondary_connector_models_[ i ]->create_event(
-          kernel().vp_manager.get_num_threads() );
-        for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
-        {
-          secondary_events_prototypes_[ j ][ i ] = prototype[ j ];
-        }
+        ( *secondary_events_prototypes_[ tid ] )
+          .insert( std::pair< synindex, SecondaryEvent* >(
+            syn_id, prototypes_[ tid ][ syn_id ]->create_event( 1 )[ 0 ] ) );
       }
     }
   }
@@ -592,8 +590,8 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
 
   pristine_prototypes_.push_back( cf );
 
-  const synindex syn_id = prototypes_.at( 0 ).size();
-  pristine_prototypes_.at( syn_id )->set_syn_id( syn_id );
+  const synindex syn_id = prototypes_[ 0 ].size();
+  pristine_prototypes_[ syn_id ]->set_syn_id( syn_id );
 
   for ( thread t = 0;
         t < static_cast< thread >( kernel().vp_manager.get_num_threads() );

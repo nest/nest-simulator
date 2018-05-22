@@ -31,7 +31,7 @@
 #include "event.h"
 #include "exceptions.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "recording_device.h"
 
 /* BeginDocumentation
@@ -103,7 +103,7 @@ namespace nest
  *
  * @ingroup Devices
  */
-class spin_detector : public Node
+class spin_detector : public DeviceNode
 {
 
 public:

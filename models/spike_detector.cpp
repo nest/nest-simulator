@@ -41,14 +41,14 @@
 #include "integerdatum.h"
 
 nest::spike_detector::spike_detector()
-  : Node()
+  : DeviceNode()
   // record time and gid
   , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true )
 {
 }
 
 nest::spike_detector::spike_detector( const spike_detector& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( *this, n.device_ )
 {
 }

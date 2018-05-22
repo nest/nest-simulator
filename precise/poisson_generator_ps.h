@@ -33,7 +33,7 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "stimulating_device.h"
 
 /*BeginDocumentation
@@ -76,7 +76,7 @@ namespace nest
  *
  * @ingroup Devices
  */
-class poisson_generator_ps : public Node
+class poisson_generator_ps : public DeviceNode
 {
 
 public:

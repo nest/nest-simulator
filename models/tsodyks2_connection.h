@@ -140,13 +140,9 @@ public:
   /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
-   * \param t_lastspike Point in time of last spike sent.
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    double t_lastspike,
-    const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -167,7 +163,6 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -183,11 +178,12 @@ public:
 
 private:
   double weight_;
-  double U_;       //!< unit increment of a facilitating synapse
-  double u_;       //!< dynamic value of probability of release
-  double x_;       //!< current fraction of the synaptic weight
-  double tau_rec_; //!< [ms] time constant for recovery
-  double tau_fac_; //!< [ms] time constant for facilitation
+  double U_;           //!< unit increment of a facilitating synapse
+  double u_;           //!< dynamic value of probability of release
+  double x_;           //!< current fraction of the synaptic weight
+  double tau_rec_;     //!< [ms] time constant for recovery
+  double tau_fac_;     //!< [ms] time constant for facilitation
+  double t_lastspike_; //!< time point of last spike emitted
 };
 
 
@@ -195,18 +191,16 @@ private:
  * Send an event to the receiver of this connection.
  * \param e The event to send
  * \param p The port under which this connection is stored in the Connector.
- * \param t_lastspike Time point of last spike emitted
  */
 template < typename targetidentifierT >
 inline void
 Tsodyks2Connection< targetidentifierT >::send( Event& e,
   thread t,
-  double t_lastspike,
   const CommonSynapseProperties& )
 {
   Node* target = get_target( t );
-
-  double h = e.get_stamp().get_ms() - t_lastspike;
+  const double t_spike = e.get_stamp().get_ms();
+  const double h = t_spike - t_lastspike_;
   double x_decay = std::exp( -h / tau_rec_ );
   double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
@@ -221,6 +215,8 @@ Tsodyks2Connection< targetidentifierT >::send( Event& e,
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
+
+  t_lastspike_ = t_spike;
 }
 
 template < typename targetidentifierT >
@@ -232,6 +228,7 @@ Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection()
   , x_( 1 )
   , tau_rec_( 800.0 )
   , tau_fac_( 0.0 )
+  , t_lastspike_( 0.0 )
 {
 }
 
@@ -245,6 +242,7 @@ Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection(
   , x_( rhs.x_ )
   , tau_rec_( rhs.tau_rec_ )
   , tau_fac_( rhs.tau_fac_ )
+  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

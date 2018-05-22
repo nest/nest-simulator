@@ -41,7 +41,7 @@
 #include "integerdatum.h"
 
 nest::spin_detector::spin_detector()
-  : Node()
+  : DeviceNode()
   , device_( *this,
       RecordingDevice::SPIN_DETECTOR,
       "gdf",
@@ -54,7 +54,7 @@ nest::spin_detector::spin_detector()
 }
 
 nest::spin_detector::spin_detector( const spin_detector& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( *this, n.device_ )
   , last_in_gid_( 0 )
   , t_last_in_spike_( Time::neg_inf() ) // mark as not initialized

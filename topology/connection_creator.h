@@ -206,6 +206,8 @@ ConnectionCreator::connect_( index s,
   double d,
   index syn )
 {
+  const DictionaryDatum params = new Dictionary; // empty parameter dictionary
+                                                 // required by connect() calls
   // TODO481 Why do we need to check for locality her?
   // check whether the target is on this process
   if ( kernel().node_manager.is_local_node( target ) )
@@ -217,7 +219,7 @@ ConnectionCreator::connect_( index s,
     {
       // TODO481 implement in terms of nest-api
       kernel().connection_manager.connect(
-        s, target, target_thread, syn, d, w );
+        s, target, target_thread, syn, params, d, w );
     }
   }
 }

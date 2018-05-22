@@ -151,5 +151,17 @@ forall
     binary sd Connect
 } pass_or_die
 
-
-
+% Check if simulating with two connected binary neurons when keep_source_table
+% is set to false throws exception
+{
+  ResetKernel
+  
+  0 << /keep_source_table false >> SetStatus
+  
+  /ginzburg /ginzburg_neuron Create def
+  /mcculluch /mcculluch_pitts_neuron Create def
+  
+  ginzburg mcculluch Connect
+  
+  100. Simulate
+} fail_or_die

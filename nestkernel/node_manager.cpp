@@ -32,7 +32,6 @@
 // Includes from nestkernel:
 #include "event_delivery_manager.h"
 #include "genericmodel.h"
-#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "model.h"
 #include "model_manager_impl.h"
@@ -52,6 +51,8 @@ NodeManager::NodeManager()
   , wfr_is_used_( false )
   , wfr_network_size_( 0 ) // zero to force update
   , num_active_nodes_( 0 )
+  , num_local_devices_( 0 )
+  , have_nodes_changed_( true )
   , exceptions_raised_() // cannot call kernel(), not complete yet
 {
 }
@@ -69,6 +70,8 @@ NodeManager::initialize()
   wfr_network_size_ = 0;
   local_nodes_.resize( kernel().vp_manager.get_num_threads() );
   ensure_valid_thread_local_ids();
+
+  num_local_devices_ = 0;
 }
 
 void
@@ -114,6 +117,8 @@ NodeManager::get_status( index idx )
 GIDCollectionPTR
 NodeManager::add_node( index model_id, long n )
 {
+  have_nodes_changed_ = true;
+
   if ( model_id >= kernel().model_manager.get_num_node_models() )
   {
     throw UnknownModelID( model_id );
@@ -180,6 +185,15 @@ NodeManager::add_node( index model_id, long n )
       "lead to inconsistent results." );
   }
 
+  // resize the target table for delivery of events to devices to make
+  // sure the first dimension matches the number of local nodes and
+  // the second dimension matches number of synapse types
+  kernel()
+    .connection_manager.resize_target_table_devices_to_number_of_neurons();
+  kernel()
+    .connection_manager
+    .resize_target_table_devices_to_number_of_synapse_types();
+
   return GIDCollectionPTR(
     new GIDCollectionPrimitive( min_gid, max_gid, model_id ) );
 }
@@ -214,7 +228,7 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid )
       //   - gid local to this thread
       //   - gid >= min_gid
       const size_t vp = kernel().vp_manager.thread_to_vp( t );
-      const size_t min_gid_vp = kernel().vp_manager.suggest_vp( min_gid );
+      const size_t min_gid_vp = kernel().vp_manager.suggest_vp_for_gid( min_gid );
 
       size_t gid = 0;
       if ( min_gid_vp == vp )
@@ -269,11 +283,15 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid )
 
       for ( index gid = min_gid; gid <= max_gid; ++gid )
       {
+        // keep track of number of local devices
+        ++num_local_devices_;
+
         Node* node = model.allocate( t );
         node->set_gid_( gid );
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
         node->set_vp( kernel().vp_manager.thread_to_vp( t ) );
+        node->set_local_device_id( num_local_devices_ - 1 );
 
         local_nodes_[ t ].add_local_node( *node );
       }
@@ -301,11 +319,15 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid )
       {
         for ( index gid = min_gid; gid <= max_gid; ++gid )
         {
+          // keep track of number of local devices
+          ++num_local_devices_;
+
           Node* node = model.allocate( 0 );
           node->set_gid_( gid );
           node->set_model_id( model.get_model_id() );
           node->set_thread( 0 );
           node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
+          node->set_local_device_id( num_local_devices_ );
           local_nodes_[ 0 ].add_local_node( *node );
         }
       }
@@ -388,6 +410,19 @@ NodeManager::is_local_gid( index gid ) const
   return is_local;
 }
 
+index
+NodeManager::get_max_num_local_nodes() const
+{
+  return static_cast< index >( ceil( static_cast< double >( size() )
+    / kernel().vp_manager.get_num_virtual_processes() ) );
+}
+
+index
+NodeManager::get_num_local_devices() const
+{
+  return num_local_devices_;
+}
+
 Node*
 NodeManager::get_node_or_proxy( index gid, thread t )
 {
@@ -409,7 +444,7 @@ NodeManager::get_node_or_proxy( index gid )
 {
   assert( 0 < gid and gid <= size() );
 
-  thread vp = kernel().vp_manager.suggest_vp( gid );
+  thread vp = kernel().vp_manager.suggest_vp_for_gid( gid );
   if ( not kernel().vp_manager.is_local_vp( vp ) )
   {
     return kernel().model_manager.get_proxy_node( 0, gid );
@@ -429,7 +464,7 @@ Node*
 NodeManager::get_mpi_local_node_or_device_head( index gid )
 {
   thread t =
-    kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
+    kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp_for_gid( gid ) );
 
   Node* node = local_nodes_[ t ].get_node_by_gid( gid );
 
@@ -496,31 +531,31 @@ NodeManager::ensure_valid_thread_local_ids()
       wfr_nodes_vec_.clear();
       wfr_nodes_vec_.resize( kernel().vp_manager.get_num_threads() );
 
-      for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+      for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
       {
-        wfr_nodes_vec_[ t ].clear();
+        wfr_nodes_vec_[ tid ].clear();
 
         size_t num_thread_local_wfr_nodes = 0;
-        for ( size_t idx = 0; idx < local_nodes_[ t ].size(); ++idx )
+        for ( size_t idx = 0; idx < local_nodes_[ tid ].size(); ++idx )
         {
-          Node* node = local_nodes_[ t ].get_node_by_index( idx );
+          Node* node = local_nodes_[ tid ].get_node_by_index( idx );
           if ( node != 0 and node->node_uses_wfr_ )
           {
             ++num_thread_local_wfr_nodes;
           }
         }
-        wfr_nodes_vec_[ t ].reserve( num_thread_local_wfr_nodes );
+        wfr_nodes_vec_[ tid ].reserve( num_thread_local_wfr_nodes );
 
-        for ( size_t idx = 0; idx < local_nodes_[ t ].size(); ++idx )
+        for ( size_t idx = 0; idx < local_nodes_[ tid ].size(); ++idx )
         {
-          Node* node = local_nodes_[ t ].get_node_by_index( idx );
+          Node* node = local_nodes_[ tid ].get_node_by_index( idx );
 
           if ( node != 0 )
           {
             node->set_thread_lid( idx );
             if ( node->node_uses_wfr_ )
             {
-              wfr_nodes_vec_[ t ].push_back( node );
+              wfr_nodes_vec_[ tid ].push_back( node );
             }
           }
         }
@@ -534,9 +569,9 @@ NodeManager::ensure_valid_thread_local_ids()
       // step, because gather_events() has to be done in a
       // openmp single section
       wfr_is_used_ = false;
-      for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+      for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
       {
-        if ( wfr_nodes_vec_[ t ].size() > 0 )
+        if ( wfr_nodes_vec_[ tid ].size() > 0 )
         {
           wfr_is_used_ = true;
         }
@@ -654,11 +689,11 @@ NodeManager::prepare_nodes()
   } // end of parallel section / end of for threads
 
   // check if any exceptions have been raised
-  for ( index thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    if ( exceptions_raised.at( thr ).valid() )
+    if ( exceptions_raised.at( tid ).valid() )
     {
-      throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
+      throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
     }
   }
 
@@ -706,13 +741,13 @@ NodeManager::finalize_nodes()
 #ifdef _OPENMP
 #pragma omp parallel
   {
-    index t = kernel().vp_manager.get_thread_id();
+    thread tid = kernel().vp_manager.get_thread_id();
 #else // clang-format off
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( index tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
 #endif // clang-format on
     SparseNodeArray::const_iterator n;
-    for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
+    for ( n = local_nodes_[ tid ].begin(); n != local_nodes_[ tid ].end(); ++n )
     {
       n->get_node()->finalize();
     }

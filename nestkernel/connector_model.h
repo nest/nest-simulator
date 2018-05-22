@@ -45,101 +45,51 @@ class CommonSynapseProperties;
 class TimeConverter;
 class Node;
 
-/**
- * This function sets the two lowest bits of the pointer depending on the
- * existing connections.
- *
- * - If *p contains primary connections the lowest bit is set to 1
- * - If *p contains secondary connections the second lowest bit is set to 1
- *
- * This implementation relies on the assumption that the two lowest bits of the
- * pointer are 0. This can be assumed with some certainty (see github issue #186
- * for a discussion).
- * The assumption is secured by an assert in the allocate()-function.
- */
-inline ConnectorBase*
-pack_pointer( ConnectorBase* p, bool has_primary, bool has_secondary )
-{
-  return reinterpret_cast< ConnectorBase* >(
-    reinterpret_cast< unsigned long >( p ) | has_primary
-    | ( has_secondary << 1 ) );
-}
-
-/**
- * This function removes the setting of the two lowest bits done in the
- * pack_pointer()-function.
- * The returned pointer can again be used as a valid pointer.
- */
-inline ConnectorBase*
-validate_pointer( ConnectorBase* p )
-{
-  // erase 2 least significant bits to obtain the correct pointer
-  return reinterpret_cast< ConnectorBase* >(
-    ( reinterpret_cast< unsigned long >( p ) & ( -1l - 3l ) ) );
-}
-
-inline bool
-has_primary( ConnectorBase* p )
-{
-  // the lowest bit is set, if there is at least one primary connection
-  return static_cast< bool >( reinterpret_cast< unsigned long >( p ) & 1 );
-}
-
-inline bool
-has_secondary( ConnectorBase* p )
-{
-  // the second lowest bit is set, if there is at least one secondary connection
-  return static_cast< bool >( reinterpret_cast< unsigned long >( p ) & 2 );
-}
-
-
 class ConnectorModel
 {
 
 public:
   ConnectorModel( const std::string,
-    bool is_primary,
-    bool has_delay,
-    bool requires_symmetric );
+    const bool is_primary,
+    const bool has_delay,
+    const bool requires_symmetric,
+    const bool supports_wfr );
   ConnectorModel( const ConnectorModel&, const std::string );
   virtual ~ConnectorModel()
   {
   }
 
   /**
-   * numerics::nan is a special value, which describes double values that
-   * are not a number. If delay or weight is omitted in an add_connection call,
-   * numerics:nan indicates this and weight/delay are set only, if they are
+   * Adds a connection.
+   *
+   * @param src Source node
+   * @param tgt Target node
+   * @param hetconn Connector vector
+   * @param syn_id Synapse id
+   * @param d Parameter dictionary to configure the synapse
+   * @param delay Delay of the connection
+   * @param weight Weight of the connection
+   *
+   * Delay and weight have the default value NAN, a special value, which
+   * describes double values that are not a number. If delay or weight is
+   * omitted, NAN indicates this and weight/delay are set only if they are
    * valid.
    */
-  virtual ConnectorBase* add_connection( Node& src,
+  virtual void add_connection( Node& src,
     Node& tgt,
-    ConnectorBase* conn,
-    synindex syn_id,
-    double delay = numerics::nan,
-    double weight = numerics::nan ) = 0;
-
-  virtual ConnectorBase* add_connection( Node& src,
-    Node& tgt,
-    ConnectorBase* conn,
-    synindex syn_id,
-    DictionaryDatum& d,
-    double delay = numerics::nan,
-    double weight = numerics::nan ) = 0;
+    std::vector< ConnectorBase* >* hetconn,
+    const synindex syn_id,
+    const DictionaryDatum& d,
+    const double delay = NAN,
+    const double weight = NAN ) = 0;
 
   /**
-   * Delete a connection of a given type directed to a defined target Node
-   * @param tgt Target node
-   * @param target_thread Thread of the target
-   * @param conn Connector Base from where the connection will be deleted
-   * @param syn_id Synapse type
-   * @return A new Connector, equal to the original but with an erased
-   * connection to the defined target.
+   * Reserves the specified amount of connections at the specified index in the
+   * connection vector.
    */
-  virtual ConnectorBase* delete_connection( Node& tgt,
-    size_t target_thread,
-    ConnectorBase* conn,
-    synindex syn_id ) = 0;
+  virtual void reserve_connections( std::vector< ConnectorBase* >* hetconn,
+    const synindex syn_id,
+    const size_t count ) = 0;
 
   virtual ConnectorModel* clone( std::string ) const = 0;
 
@@ -185,15 +135,25 @@ public:
     return requires_symmetric_;
   }
 
+  bool
+  supports_wfr() const
+  {
+    return supports_wfr_;
+  }
+
 protected:
+  //! name of the ConnectorModel
   std::string name_;
-  //! Flag indicating, that the default delay must be checked
+  //! indicates whether the default delay must be checked
   bool default_delay_needs_check_;
-  //! indicates, whether this ConnectorModel belongs to a primary connection
+  //! indicates whether this ConnectorModel belongs to a primary connection
   bool is_primary_;
-  bool has_delay_; //!< indicates, that ConnectorModel has a delay
+  //! indicates whether ConnectorModel has a delay
+  bool has_delay_;
+  //! indicates that ConnectorModel requires symmetric connections
   bool requires_symmetric_;
-  //!< indicates, that ConnectorModel requires symmetric connections
+  //! indicates whether connection can be used during wfr update
+  bool supports_wfr_;
 
 }; // ConnectorModel
 
@@ -213,8 +173,13 @@ public:
   GenericConnectorModel( const std::string name,
     bool is_primary,
     bool has_delay,
-    bool requires_symmetric )
-    : ConnectorModel( name, is_primary, has_delay, requires_symmetric )
+    bool requires_symmetric,
+    bool supports_wfr )
+    : ConnectorModel( name,
+        is_primary,
+        has_delay,
+        requires_symmetric,
+        supports_wfr )
     , receptor_type_( 0 )
   {
   }
@@ -229,24 +194,13 @@ public:
   {
   }
 
-  ConnectorBase* add_connection( Node& src,
+  void add_connection( Node& src,
     Node& tgt,
-    ConnectorBase* conn,
-    synindex syn_id,
-    double weight,
-    double delay );
-  ConnectorBase* add_connection( Node& src,
-    Node& tgt,
-    ConnectorBase* conn,
-    synindex syn_id,
-    DictionaryDatum& d,
-    double weight,
-    double delay );
-
-  ConnectorBase* delete_connection( Node& tgt,
-    size_t target_thread,
-    ConnectorBase* conn,
-    synindex syn_id );
+    std::vector< ConnectorBase* >* hetconn,
+    const synindex syn_id,
+    const DictionaryDatum& d,
+    const double delay,
+    const double weight );
 
   ConnectorModel* clone( std::string ) const;
 
@@ -291,15 +245,19 @@ public:
     return prototype_events;
   }
 
+  void reserve_connections( std::vector< ConnectorBase* >* hetconn,
+    const synindex syn_id,
+    const size_t count );
+
 private:
   void used_default_delay();
 
-  ConnectorBase* add_connection( Node& src,
+  void add_connection_( Node& src,
     Node& tgt,
-    ConnectorBase* conn,
-    synindex syn_id,
+    std::vector< ConnectorBase* >* hetconn,
+    const synindex syn_id,
     ConnectionT& c,
-    rport receptor_type );
+    const rport receptor_type );
 
 }; // GenericConnectorModel
 
@@ -313,12 +271,14 @@ private:
 
 public:
   GenericSecondaryConnectorModel( const std::string name,
-    bool has_delay,
-    bool requires_symmetric )
+    const bool has_delay,
+    const bool requires_symmetric,
+    const bool supports_wfr )
     : GenericConnectorModel< ConnectionT >( name,
         /*is _primary=*/false,
         has_delay,
-        requires_symmetric )
+        requires_symmetric,
+        supports_wfr )
     , pev_( 0 )
   {
     pev_ = new typename ConnectionT::EventType();

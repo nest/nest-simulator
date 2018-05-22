@@ -146,6 +146,9 @@ public:
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d );
 
+  void set_local_device_id( const index ldid );
+  index get_local_device_id() const;
+
   const std::vector< spikecounter >& deliver_spikes();
 
 private:
@@ -179,6 +182,8 @@ private:
 
   Parameters_ P_;
   Buffers_ B_;
+
+  index local_device_id_;
 };
 
 inline port
@@ -218,6 +223,18 @@ inline const std::vector< nest::spikecounter >&
 volume_transmitter::deliver_spikes()
 {
   return B_.spikecounter_;
+}
+
+inline void
+volume_transmitter::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
+}
+
+inline index
+volume_transmitter::get_local_device_id() const
+{
+  return local_device_id_;
 }
 
 } // namespace

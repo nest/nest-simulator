@@ -28,6 +28,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "nest_time.h"
@@ -154,6 +155,9 @@ public:
   // TODO: rename / precisely how defined?
   delay get_to_step() const;
 
+  //! Sorts source table and connections and create new target table.
+  void update_connection_infrastructure( const thread tid );
+
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
   void update_();      //! actually perform simulation
@@ -189,6 +193,13 @@ private:
                             //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
+
+  Stopwatch sw_prepare;
+  Stopwatch sw_simulate;
+  Stopwatch sw_restructure;
+  Stopwatch sw_sort;
+  Stopwatch sw_total;
+  Stopwatch sw_update;
 };
 
 inline Time const&

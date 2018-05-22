@@ -101,6 +101,18 @@ function( NEST_PROCESS_WITH_DEFINES )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_DISABLE_TIMING )
+  if ( disable-timing )
+    add_definitions( "-DDISABLE_TIMING" )
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_DISABLE_COUNTS )
+  if ( disable-counts )
+    add_definitions( "-DDISABLE_COUNTS" )
+  endif ()
+endfunction()
+
 function( NEST_PROCESS_K_COMPUTER )
   # is set in the Fujitsu-Sparc64.cmake file
   if ( k-computer )
@@ -500,6 +512,28 @@ function( NEST_PROCESS_WITH_MUSIC )
       set( MUSIC_INCLUDE_DIRS "${MUSIC_INCLUDE_DIRS}" PARENT_SCOPE )
       set( MUSIC_EXECUTABLE "${MUSIC_EXECUTABLE}" PARENT_SCOPE )
       set( MUSIC_VERSION "${MUSIC_VERSION}" PARENT_SCOPE )
+    endif ()
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_WITH_BOOST )
+  # Find Boost
+  set( HAVE_BOOST OFF PARENT_SCOPE )
+  if ( with-boost )
+    if ( NOT ${with-boost} STREQUAL "ON" )
+      # a path is set
+      set( BOOST_ROOT "${with-boost}" )
+    endif ()
+
+    find_package( Boost COMPONENTS unit_test_framework )
+    if ( Boost_FOUND )
+      # export found variables to parent scope
+      set( HAVE_BOOST ON PARENT_SCOPE )
+      # Boost uses lower case in variable names
+      set( BOOST_FOUND "${Boost_FOUND}" PARENT_SCOPE )
+      set( BOOST_LIBRARIES "${Boost_LIBRARIES}" PARENT_SCOPE )
+      set( BOOST_INCLUDE_DIR "${Boost_INCLUDE_DIR}" PARENT_SCOPE )
+      set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
     endif ()
   endif ()
 endfunction()

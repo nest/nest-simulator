@@ -397,7 +397,7 @@ class RotatedRectangularMask(unittest.TestCase):
                [19, 48], [20, 45], [20, 49], [21, 42], [21, 46], [22, 43],
                [22, 47], [23, 44], [23, 48], [24, 45], [24, 49], [25, 50]]
 
-        connections = nest.GetConnections()
+        connections = list(sorted(nest.GetConnections()))
 
         for conn, conn_ref in zip(connections, ref):
             conn_list = [conn[0], conn[1]]

@@ -39,7 +39,7 @@
 #include "kernel_manager.h"
 
 inline nest::thread
-nest::MPIManager::get_process_id( nest::thread vp ) const
+nest::MPIManager::get_process_id_of_vp( const thread vp ) const
 {
   return vp % num_processes_;
 }
@@ -86,6 +86,21 @@ nest::MPIManager::communicate_Allgatherv( std::vector< T >& send_buffer,
     &displacements[ 0 ],
     MPI_Type< T >::type,
     comm );
+}
+
+inline nest::thread
+nest::MPIManager::get_process_id_of_gid( const index gid ) const
+{
+  return gid % kernel().vp_manager.get_num_virtual_processes() % num_processes_;
+}
+
+#else // HAVE_MPI
+
+
+inline nest::thread
+nest::MPIManager::get_process_id_of_gid( const index gid ) const
+{
+  return 0;
 }
 
 #endif /* HAVE_MPI */

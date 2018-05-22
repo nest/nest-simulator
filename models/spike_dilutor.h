@@ -27,7 +27,7 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "ring_buffer.h"
 #include "stimulating_device.h"
 
@@ -57,7 +57,7 @@ ported to Nest 2.6 by: Setareh, April 2015
 SeeAlso: mip_generator
 */
 
-class spike_dilutor : public Node
+class spike_dilutor : public DeviceNode
 {
 
 public:

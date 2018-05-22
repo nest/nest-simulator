@@ -35,7 +35,7 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
+#include "device_node.h"
 #include "stimulating_device.h"
 
 namespace nest
@@ -98,7 +98,7 @@ SeeAlso: Device
  *       Most important: If RNG is changed in prototype by SetDefaults,
  *       then this is
  */
-class mip_generator : public Node
+class mip_generator : public DeviceNode
 {
 
 public:

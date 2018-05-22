@@ -184,6 +184,7 @@ protected:
   bool autapses_;
   bool multapses_;
   bool make_symmetric_;
+  bool creates_symmetric_connections_;
 
   //! buffer for exceptions raised in threads
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
@@ -281,7 +282,7 @@ public:
   bool
   is_symmetric() const
   {
-    return sources_ == targets_ && all_parameters_scalar_();
+    return sources_ == targets_ and all_parameters_scalar_();
   }
 
   bool
@@ -360,6 +361,27 @@ protected:
 
 private:
   void inner_connect_( const int, librandom::RngPtr&, Node*, index );
+  double p_; //!< connection probability
+};
+
+class SymmetricBernoulliBuilder : public ConnBuilder
+{
+public:
+  SymmetricBernoulliBuilder( const GIDCollection&,
+    const GIDCollection&,
+    const DictionaryDatum&,
+    const DictionaryDatum& );
+
+  bool
+  supports_symmetric() const
+  {
+    return true;
+  }
+
+protected:
+  void connect_();
+
+private:
   double p_; //!< connection probability
 };
 

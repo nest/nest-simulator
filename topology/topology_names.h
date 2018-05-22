@@ -89,7 +89,6 @@ extern const Name sigma_x;
 extern const Name sigma_y;
 extern const Name spherical;
 extern const Name theta;
-extern const Name topology;
 extern const Name upper_right;
 
 } // namespace names

@@ -81,7 +81,6 @@ const Name sigma_x( "sigma_x" );
 const Name sigma_y( "sigma_y" );
 const Name spherical( "spherical" );
 const Name theta( "theta" );
-const Name topology( "topology" );
 const Name upper_right( "upper_right" );
 
 } // namespace names

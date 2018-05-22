@@ -367,8 +367,8 @@ private:
 class SymmetricBernoulliBuilder : public ConnBuilder
 {
 public:
-  SymmetricBernoulliBuilder( const GIDCollection&,
-    const GIDCollection&,
+  SymmetricBernoulliBuilder( GIDCollectionPTR,
+    GIDCollectionPTR,
     const DictionaryDatum&,
     const DictionaryDatum& );
 

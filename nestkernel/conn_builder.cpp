@@ -1710,8 +1710,8 @@ nest::BernoulliBuilder::inner_connect_( const int tid,
 
 
 nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder(
-  const GIDCollection& sources,
-  const GIDCollection& targets,
+  GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -1820,7 +1820,7 @@ nest::SymmetricBernoulliBuilder::connect_()
           // connectivity, multapses might exist if the target neuron
           // with gid sgid draws the source with gid tgid while
           // choosing sources itself
-          if ( sgid == *tgid
+          if ( sgid == ( *tgid ).gid
             or previous_sgids.find( sgid ) != previous_sgids.end() )
           {
             continue;
@@ -1849,7 +1849,7 @@ nest::SymmetricBernoulliBuilder::connect_()
           if ( source_thread == tid )
           {
             assert( source != NULL );
-            single_connect_( (*tgid).gid, *source, source_thread, rng );
+            single_connect_( ( *tgid ).gid, *source, source_thread, rng );
           }
 
           ++i;

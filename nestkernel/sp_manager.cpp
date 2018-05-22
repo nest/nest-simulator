@@ -260,14 +260,9 @@ SPManager::disconnect( const index sgid,
       target = kernel().node_manager.get_node_or_proxy(
         target->get_gid(), target_thread );
     }
-<<<<<<< HEAD
-    // thread target_thread = target->get_thread();
 
-    kernel().connection_manager.disconnect( *target, sgid, target_thread, syn );
-=======
     kernel().connection_manager.disconnect(
       target_thread, syn_id, sgid, target->get_gid() );
->>>>>>> refs/remotes/Jacob/5g
   }
   else // globally receiving devices iterate over all target threads
   {
@@ -730,8 +725,11 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
 
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    for ( node_it = kernel().node_manager.get_nodes_on_thread( tid ).begin();
-          node_it < kernel().node_manager.get_nodes_on_thread( tid ).end();
+    const SparseNodeArray& local_nodes =
+        kernel().node_manager.get_local_nodes( tid );
+    SparseNodeArray::const_iterator node_it;
+    for ( node_it = local_nodes.begin();
+          node_it < local_nodes.end();
           node_it++ )
     {
       gid = node_it->get_gid();

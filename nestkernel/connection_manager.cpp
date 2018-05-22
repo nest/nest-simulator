@@ -1243,8 +1243,8 @@ nest::ConnectionManager::get_connections(
       ConnectorBase* connections = ( *connections_[ tid ] )[ syn_id ];
       if ( connections != NULL )
       {
-        GIDCollection::const_iterator t_id;
-        for ( t_id = target->begin(); t_id < target->end(); ++t_id )
+        GIDCollection::const_iterator t_id = target->begin();
+        for ( ; t_id < target->end(); ++t_id )
         {
           const index target_gid = ( *t_id ).gid;
 
@@ -1263,8 +1263,8 @@ nest::ConnectionManager::get_connections(
         }
       }
 
-      GIDCollection::const_iterator t_id;
-      for ( t_id = target->begin(); t_id < target->end(); ++t_id )
+      GIDCollection::const_iterator t_id = target->begin();
+      for ( ; t_id < target->end(); ++t_id )
       {
         const index target_gid = ( *t_id ).gid;
         target_table_devices_.get_connections(
@@ -1312,8 +1312,8 @@ nest::ConnectionManager::get_connections(
             }
             else
             {
-              GIDCollection::const_iterator t_id;
-              for ( t_id = target->begin() ; t_id != target->end(); ++t_id )
+              GIDCollection::const_iterator t_id = target->begin();
+              for ( ; t_id != target->end(); ++t_id )
               {
                 size_t target_gid = ( *t_id ).gid;
                   connections->get_connection( source_gid,
@@ -1329,8 +1329,8 @@ nest::ConnectionManager::get_connections(
         }
       }
 
-      GIDCollection::const_iterator s_id;
-      for ( s_id = source->begin(); s_id != source->end(); ++s_id )
+      GIDCollection::const_iterator s_id = source->begin();
+      for ( ; s_id != source->end(); ++s_id )
       {
         const index source_gid = ( *s_id ).gid;
         if ( not target.valid() )
@@ -1340,8 +1340,8 @@ nest::ConnectionManager::get_connections(
         }
         else
         {
-          GIDCollection::const_iterator t_id;
-          for ( t_id = target->begin() ; t_id != target->end(); ++t_id )
+          GIDCollection::const_iterator t_id = target->begin();
+          for ( ; t_id != target->end(); ++t_id )
           {
             const index target_gid = ( *t_id ).gid;
             target_table_devices_.get_connections( source_gid,

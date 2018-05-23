@@ -32,7 +32,6 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 import sys
 import os
 
-
 import pip
 
 # pip.main(['install', 'Sphinx==1.5.6'])
@@ -41,8 +40,9 @@ pip.main(['install', 'sphinx-gallery'])
 import sphinx_gallery
 import subprocess
 
-# import shlex
-# import recommonmark
+import shlex
+import recommonmark
+
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
 from subprocess import check_output, CalledProcessError
@@ -100,9 +100,9 @@ extensions = [
 sphinx_gallery_conf = {
     'doc_module': ('sphinx_gallery', 'numpy'),
     # path to your examples scripts
-    'examples_dirs' : '../pynest/examples',
+    'examples_dirs': '../pynest/examples',
     # path where to save gallery generated examples
-    'gallery_dirs'  : 'auto_examples',
+    'gallery_dirs': 'auto_examples',
     'backreferences_dir': False
 }
 

@@ -84,7 +84,7 @@ ResetKernel
 
 /spike_detector << /to_file   false
                    /to_memory true
-		   /precision 15
+		               /precision 15
                 >> SetDefaults
 /sd_pre  /spike_detector Create def
 /sd_post /spike_detector Create def
@@ -94,10 +94,10 @@ ResetKernel
 
 /stdp_synapse << /alpha    alpha
                  /lambda   lambda
-		 /tau_plus tau_plus
-		 /mu_plus  mu_plus
-		 /mu_minus mu_minus
-		 /Wmax     w_max
+            		 /tau_plus tau_plus
+            		 /mu_plus  mu_plus
+            		 /mu_minus mu_minus
+            		 /Wmax     w_max
               >> SetDefaults
 
 pg_exc neuron w_exc delay Connect

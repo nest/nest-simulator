@@ -47,17 +47,17 @@ SeeAlso:
 
   % Create neurons and spike detector
   /iaf_psc_alpha 2 << /I_e 400. >> Create /neurons Set
-  /spike_detector Create
+  /spike_detector Create /sd Set
 
   % Create first connection with static_synapse, instantiating a
   % homogeneous connector
-  [2] cvgidcollection [1] cvgidcollection << /rule /all_to_all >>
+  neurons [2] Take neurons [1] Take << /rule /all_to_all >>
     << /model /static_synapse /weight 0. >> Connect
 
   % Create second connection with new synapse type, causing the
   % homogeneous connector to be turned into a heterogeneous connector
   /static_synapse /dev_syn CopyModel
-  [2] cvgidcollection [3] cvgidcollection << /rule /all_to_all >> << /model /dev_syn >> Connect
+  neurons [2] Take sd << /rule /all_to_all >> << /model /dev_syn >> Connect
 } def
 
 % Measure event count without deleting connection (ground truth)
@@ -65,19 +65,19 @@ BuildNetwork
 
 100 Simulate
 
-3 GetStatus /n_events get /n_events_target Set
+sd GetStatus 0 get /n_events get /n_events_target Set
 
 % Measure event count with deleting connection
 BuildNetwork
 
 % Delete the first connection causing the heterogeneous
 % connector to be turned into a homogeneous connector
-[2] cvgidcollection [1] cvgidcollection << /rule /all_to_all >>
+neurons [2] Take neurons [1] Take << /rule /all_to_all >>
   << /model /static_synapse >> Disconnect_g_g_D_D
 
 100 Simulate
 
 % Compare result to ground truth
 {
-  3 GetStatus /n_events get n_events_target eq
+  sd GetStatus 0 get /n_events get n_events_target eq
 } assert_or_die

@@ -207,11 +207,10 @@ nest::TargetTableDevices::get_connections_from_devices_(
         it != sending_devices_gids_[ tid ]->end();
         ++it )
   {
-    const Node* source = kernel().node_manager.get_node_or_proxy( *it, tid );
-    const index source_gid = source->get_gid();
-    if ( source_gid > 0
-      and ( requested_source_gid == source_gid or requested_source_gid == 0 ) )
+    const index source_gid = *it;
+    if ( source_gid > 0 and ( requested_source_gid == source_gid or requested_source_gid == 0 ))
     {
+      const Node* source = kernel().node_manager.get_node_or_proxy( source_gid, tid );
       const index ldid = source->get_local_device_id();
 
       if ( ( *target_from_devices_[ tid ] )[ ldid ].size() > 0 )

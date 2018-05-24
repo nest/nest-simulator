@@ -1328,28 +1328,30 @@ nest::ConnectionManager::get_connections(
           }
         }
       }
-
-      GIDCollection::const_iterator s_id = source->begin();
-      for ( ; s_id != source->end(); ++s_id )
+      else
       {
-        const index source_gid = ( *s_id ).gid;
-        if ( not target.valid() )
+        GIDCollection::const_iterator s_id = source->begin();
+        for ( ; s_id != source->end(); ++s_id )
         {
-          target_table_devices_.get_connections(
-            source_gid, 0, tid, syn_id, synapse_label, conns_in_thread );
-        }
-        else
-        {
-          GIDCollection::const_iterator t_id = target->begin();
-          for ( ; t_id != target->end(); ++t_id )
+          const index source_gid = ( *s_id ).gid;
+          if ( not target.valid() )
           {
-            const index target_gid = ( *t_id ).gid;
-            target_table_devices_.get_connections( source_gid,
-              target_gid,
-              tid,
-              syn_id,
-              synapse_label,
-              conns_in_thread );
+            target_table_devices_.get_connections(
+              source_gid, 0, tid, syn_id, synapse_label, conns_in_thread );
+          }
+          else
+          {
+            GIDCollection::const_iterator t_id = target->begin();
+            for ( ; t_id != target->end(); ++t_id )
+            {
+              const index target_gid = ( *t_id ).gid;
+              target_table_devices_.get_connections( source_gid,
+                target_gid,
+                tid,
+                syn_id,
+                synapse_label,
+                conns_in_thread );
+            }
           }
         }
       }

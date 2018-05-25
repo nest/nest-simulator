@@ -364,7 +364,6 @@ nest::ConnBuilder::connect()
     if ( make_symmetric_ and not creates_symmetric_connections_ )
     {
       // call reset on all parameters
-
       if ( weight_ )
       {
         weight_->reset();
@@ -1800,12 +1799,19 @@ nest::SymmetricBernoulliBuilder::connect_()
         if ( kernel().node_manager.is_local_gid( (*tgid).gid ) )
         {
           target = kernel().node_manager.get_node_or_proxy( (*tgid).gid, tid );
-          target_thread = target->get_thread();
+          target_thread = tid;
         }
         else
         {
           target = NULL;
           target_thread = invalid_thread_;
+        }
+
+        if( target->is_proxy() )
+        {
+          // skip array parameters handled in other virtual processes
+          skip_conn_parameter_( tid );
+          continue;
         }
 
         previous_sgids.clear();
@@ -1830,11 +1836,16 @@ nest::SymmetricBernoulliBuilder::connect_()
           if ( kernel().node_manager.is_local_gid( sgid ) )
           {
             source = kernel().node_manager.get_node_or_proxy( sgid, tid );
-            source_thread = source->get_thread();
+            source_thread = tid;
           }
           else
           {
             source = NULL;
+            source_thread = invalid_thread_;
+          }
+
+          if( source->is_proxy() )
+          {
             source_thread = invalid_thread_;
           }
 

@@ -118,11 +118,11 @@ nest::TargetTableDevices::resize_to_number_of_neurons()
   for ( thread tid = 0; tid < num_threads; ++tid )
   {
     target_to_devices_[ tid ]->resize(
-      kernel().node_manager.get_max_num_local_nodes() );
+      kernel().node_manager.get_max_num_local_nodes() + 1 );
     target_from_devices_[ tid ]->resize(
-      kernel().node_manager.get_num_local_devices() );
+      kernel().node_manager.get_num_local_devices() + 1 );
     sending_devices_gids_[ tid ]->resize(
-      kernel().node_manager.get_num_local_devices() );
+      kernel().node_manager.get_num_local_devices() + 1 );
   }
 }
 

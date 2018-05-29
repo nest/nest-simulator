@@ -1549,7 +1549,8 @@ nest::ConnectionManager::set_stdp_eps( const double stdp_eps )
   }
 }
 
-// TODO@5gNOW: pass recv_buffer as const reference -> Jakob
+// recv_buffer can not be a const reference as iterators used in
+// secondary events must not be const
 bool
 nest::ConnectionManager::deliver_secondary_events( const thread tid,
   const bool called_from_wfr_update,
@@ -1633,34 +1634,6 @@ nest::ConnectionManager::remove_disabled_connections( const thread tid )
   }
 }
 
-void
-nest::ConnectionManager::print_connections( const thread tid ) const
-{
-  const std::vector< ConnectorBase* >& connectors = *connections_[ tid ];
-
-  for ( synindex syn_id = 0; syn_id < connectors.size(); ++syn_id )
-  {
-    if ( connectors[ syn_id ] != NULL )
-    {
-      continue;
-    }
-    ( *connectors[ syn_id ] ).print_connections( tid );
-  }
-}
-
-void
-nest::ConnectionManager::print_targets( const thread tid ) const
-{
-  target_table_.print_targets( tid );
-}
-
-void
-nest::ConnectionManager::print_send_buffer_pos( const thread tid ) const
-{
-  target_table_.print_secondary_send_buffer_pos( tid );
-}
-
-void
 nest::ConnectionManager::resize_connections()
 {
   kernel().vp_manager.assert_single_threaded();

@@ -229,6 +229,25 @@ TargetTableDevices::set_synapse_status_from_device( const thread tid,
   ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->set_synapse_status(
     lcid, dict, cm );
 }
+
+inline void
+TargetTableDevices::send_from_device( const thread tid,
+  const index ldid,
+  Event& e,
+  const std::vector< ConnectorModel* >& cm )
+{
+  for ( std::vector< ConnectorBase* >::iterator it =
+          ( *target_from_devices_[ tid ] )[ ldid ].begin();
+        it != ( *target_from_devices_[ tid ] )[ ldid ].end();
+        ++it )
+  {
+    if ( *it != NULL )
+    {
+      ( *it )->send_to_all( tid, cm, e );
+    }
+  }
+}
+
 } // namespace nest
 
 #endif

@@ -65,7 +65,7 @@ Nodes consist of neuron models, devices and subnets. Each node can connect to an
 
     * **Subnets** are network nodes. The default subnetwork is called the :code:`root node`. Subnets can be arranged and connected to build hierarchal networks.
 
-    .. seealso:: :doc:`PyNEST Tutorial Part 4: Topologically structured networks <tutorials/part-4-topologically-structured-networks>` or the :download:`Topology Manual <Topology_UserManual.pdf>`  for more details.
+    .. seealso:: :doc:`PyNEST Tutorial Part 4: Topologically structured networks <tutorials/part-4-topologically-structured-networks>` or the :download:`Topology Manual <guides/Topology_UserManual.pdf>`  for more details.
 
 Once you have :ref:`created your node <FAnchor>`, you can view its current parameters and corresponding values::
 

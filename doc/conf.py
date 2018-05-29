@@ -40,8 +40,8 @@ pip.main(['install', 'sphinx-gallery'])
 import sphinx_gallery
 import subprocess
 
-import shlex
-import recommonmark
+#import shlex
+#import recommonmark
 
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
@@ -185,8 +185,8 @@ html_show_copyright = False
 # With this local 'make html' is broken!
 github_doc_root = ''
 
-
 intersphinx_mapping = {'https://docs.python.org/': None}
+
 
 def setup(app):
     # app.add_stylesheet('css/my_styles.css')

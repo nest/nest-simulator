@@ -39,7 +39,7 @@ cmake -DCMAKE_INSTALL_PREFIX:PATH=../nest-install \
     -Dwith-gsl:BOOL=OFF \
     -Dwith-libneurosim:BOOL=OFF \
     -Dwith-music:BOOL=OFF \
-    .
+    ..
 make
 make install
 

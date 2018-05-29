@@ -32,7 +32,8 @@ Basic terminology
 -----------------
 Models
 *********
- Models consist of :ref:`NAnchor` and :ref:`SAnchor`. In Python, you can type :code:`nest.Models()` to get the complete list of models in NEST.
+Models consist of :ref:`NAnchor` and :ref:`SAnchor`. In Python, you can type :code:`nest.Models()` to get the complete list of models in NEST.
+
 .. note::  The function takes two optional parameters; you can specify  node or synapse :code:`nest.Models("nodes")` or :code:`nest.Models("synapses")` and do further filtering of results with the option :code:`nest.Models("nodes", "some_filter")`.
 
 To see the default properties and values of any model::

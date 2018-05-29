@@ -165,6 +165,13 @@ private:
     double d,
     index syn );
 
+  void make_symmetric_connection_( const index& s,
+    const Node* target,
+    const thread& target_thread,
+    const index& syn,
+    const double& d,
+    const double& w );
+
   /**
    * Calculate parameter values for this position.
    *
@@ -180,6 +187,7 @@ private:
   bool allow_autapses_;
   bool allow_multapses_;
   bool allow_oversized_;
+  bool make_symmetric_;
   Selector source_filter_;
   Selector target_filter_;
   index number_of_connections_;
@@ -208,8 +216,26 @@ ConnectionCreator::connect_( index s,
       // TODO implement in terms of nest-api
       kernel().connection_manager.connect(
         s, target, target_thread, syn, d, w );
+      if ( make_symmetric_ )
+      {
+        make_symmetric_connection_( s, target, target_thread, syn, d, w );
+      }
     }
   }
+}
+
+inline void
+ConnectionCreator::make_symmetric_connection_( const index& s,
+  const Node* target,
+  const thread& target_thread,
+  const index& syn,
+  const double& d,
+  const double& w )
+{
+  const index s_thread = kernel().vp_manager.get_thread_id();
+  Node* const s_node = kernel().node_manager.get_node( s, s_thread );
+  kernel().connection_manager.connect(
+    target->get_gid(), s_node, s_thread, syn, d, w );
 }
 
 } // namespace nest

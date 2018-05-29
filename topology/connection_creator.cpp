@@ -28,6 +28,7 @@ namespace nest
 ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   : allow_autapses_( true )
   , allow_multapses_( true )
+  , make_symmetric_( false )
   , source_filter_()
   , target_filter_()
   , number_of_connections_( 0 )
@@ -57,6 +58,11 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     {
 
       allow_multapses_ = getValue< bool >( dit->second );
+    }
+    else if ( dit->first == names::make_symmetric )
+    {
+
+      make_symmetric_ = getValue< bool >( dit->second );
     }
     else if ( dit->first == names::allow_oversized_mask )
     {

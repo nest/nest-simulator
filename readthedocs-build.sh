@@ -82,6 +82,7 @@ NEST_VPATH=build
 NEST_RESULT=result
 NEST_RESULT=$(readlink -f $NEST_RESULT)
 
+rm -rf "$NEST_VPATH" "$NEST_RESULT"
 mkdir "$NEST_VPATH" "$NEST_RESULT"
 mkdir "$NEST_VPATH/reports"
 

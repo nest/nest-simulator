@@ -214,8 +214,10 @@ nest::ConnectionManager::get_synapse_status( const index source_gid,
   ( *dict )[ names::synapse_model ] = LiteralDatum(
     kernel().model_manager.get_synapse_prototype( syn_id ).get_name() );
 
-  const Node* source = kernel().node_manager.get_node_or_proxy( source_gid, tid );
-  const Node* target = kernel().node_manager.get_node_or_proxy( target_gid, tid );
+  const Node* source =
+    kernel().node_manager.get_node_or_proxy( source_gid, tid );
+  const Node* target =
+    kernel().node_manager.get_node_or_proxy( target_gid, tid );
 
   // synapses from neurons to neurons and from neurons to globally
   // receiving devices
@@ -257,8 +259,10 @@ nest::ConnectionManager::set_synapse_status( const index source_gid,
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
-  const Node* source = kernel().node_manager.get_node_or_proxy( source_gid, tid );
-  const Node* target = kernel().node_manager.get_node_or_proxy( target_gid, tid );
+  const Node* source =
+    kernel().node_manager.get_node_or_proxy( source_gid, tid );
+  const Node* target =
+    kernel().node_manager.get_node_or_proxy( target_gid, tid );
 
   try
   {
@@ -486,11 +490,11 @@ nest::ConnectionManager::connect( const index sgid,
   // connection_required, but 5g use different connection calls based on the
   // properties of source and target.
   // SubnetFree version:
-//  if ( connection_required( source, target, target_thread ) )
-//  {
-//    connect_(
-//        *source, *target, sgid, target_thread, syn, parmas, delay, weight );
-//  }
+  //  if ( connection_required( source, target, target_thread ) )
+  //  {
+  //    connect_(
+  //        *source, *target, sgid, target_thread, syn, parmas, delay, weight );
+  //  }
 
   // 5g version:
 
@@ -586,12 +590,12 @@ nest::ConnectionManager::connect( const index sgid,
   // connection_required, but 5g use different connection calls based on the
   // properties of source and target.
   // SubnetFree version:
-//  if ( connection_required( source, target, target_thread ) )
-//  {
-//    connect_( *source, *target, sgid, target_thread, syn_id, params );
-//    return true;
-//  }
-//  return false;
+  //  if ( connection_required( source, target, target_thread ) )
+  //  {
+  //    connect_( *source, *target, sgid, target_thread, syn_id, params );
+  //    return true;
+  //  }
+  //  return false;
   // 5g version:
 
   // normal nodes and devices with proxies -> normal nodes and devices with
@@ -1296,7 +1300,7 @@ nest::ConnectionManager::get_connections(
         for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
         {
           const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
-          if ( source->contains(source_gid) )
+          if ( source->contains( source_gid ) )
           {
             if ( not target.valid() )
             {
@@ -1316,13 +1320,13 @@ nest::ConnectionManager::get_connections(
               for ( ; t_id != target->end(); ++t_id )
               {
                 size_t target_gid = ( *t_id ).gid;
-                  connections->get_connection( source_gid,
-                    target_gid,
-                    tid,
-                    syn_id,
-                    lcid,
-                    synapse_label,
-                    conns_in_thread );
+                connections->get_connection( source_gid,
+                  target_gid,
+                  tid,
+                  syn_id,
+                  lcid,
+                  synapse_label,
+                  conns_in_thread );
               }
             }
           }

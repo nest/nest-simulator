@@ -228,7 +228,8 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid )
       //   - gid local to this thread
       //   - gid >= min_gid
       const size_t vp = kernel().vp_manager.thread_to_vp( t );
-      const size_t min_gid_vp = kernel().vp_manager.suggest_vp_for_gid( min_gid );
+      const size_t min_gid_vp =
+        kernel().vp_manager.suggest_vp_for_gid( min_gid );
 
       size_t gid = 0;
       if ( min_gid_vp == vp )
@@ -463,8 +464,8 @@ NodeManager::get_node_or_proxy( index gid )
 Node*
 NodeManager::get_mpi_local_node_or_device_head( index gid )
 {
-  thread t =
-    kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp_for_gid( gid ) );
+  thread t = kernel().vp_manager.vp_to_thread(
+    kernel().vp_manager.suggest_vp_for_gid( gid ) );
 
   Node* node = local_nodes_[ t ].get_node_by_gid( gid );
 

@@ -726,10 +726,9 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     const SparseNodeArray& local_nodes =
-        kernel().node_manager.get_local_nodes( tid );
+      kernel().node_manager.get_local_nodes( tid );
     SparseNodeArray::const_iterator node_it;
-    for ( node_it = local_nodes.begin();
-          node_it < local_nodes.end();
+    for ( node_it = local_nodes.begin(); node_it < local_nodes.end();
           node_it++ )
     {
       gid = node_it->get_gid();

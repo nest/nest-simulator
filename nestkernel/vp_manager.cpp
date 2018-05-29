@@ -116,10 +116,11 @@ nest::VPManager::set_status( const DictionaryDatum& d )
         "changed." );
     }
     if ( kernel().sp_manager.is_structural_plasticity_enabled()
-        and ( n_threads > 1 ) )
+      and ( n_threads > 1 ) )
     {
       throw KernelException(
-        "Multiple threads can not be used if structural plasticity is enabled" );
+        "Multiple threads can not be used if structural plasticity is "
+        "enabled" );
     }
 
     if ( n_threads > 1 and force_singlethreading_ )

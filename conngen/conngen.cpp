@@ -78,8 +78,10 @@ cg_connect( ConnectionGeneratorDatum& cg,
       // No need to check for locality of the target, as the mask
       // created by cg_set_masks() only contain local nodes.
       const DictionaryDatum params = new Dictionary();
-      kernel().connection_manager.connect(
-        ( *source_gids )[ source ], ( *target_gids )[ target ], params, synmodel_id );
+      kernel().connection_manager.connect( ( *source_gids )[ source ],
+        ( *target_gids )[ target ],
+        params,
+        synmodel_id );
     }
   }
   else if ( num_parameters == 2 )

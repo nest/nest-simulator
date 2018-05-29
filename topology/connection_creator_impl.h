@@ -806,8 +806,13 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
       }
 
       Node* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
-      kernel().connection_manager.connect(
-        source_id, target_ptr, target_ptr->get_thread(), synapse_model_, params, d, w );
+      kernel().connection_manager.connect( source_id,
+        target_ptr,
+        target_ptr->get_thread(),
+        synapse_model_,
+        params,
+        d,
+        w );
     }
   }
 }

@@ -1796,9 +1796,10 @@ nest::SymmetricBernoulliBuilder::connect_()
         assert( indegree < sources_->size() );
 
         // check whether the target is on this thread
-        if ( kernel().node_manager.is_local_gid( (*tgid).gid ) )
+        if ( kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
         {
-          target = kernel().node_manager.get_node_or_proxy( (*tgid).gid, tid );
+          target =
+            kernel().node_manager.get_node_or_proxy( ( *tgid ).gid, tid );
           target_thread = tid;
         }
         else
@@ -1807,7 +1808,7 @@ nest::SymmetricBernoulliBuilder::connect_()
           target_thread = invalid_thread_;
         }
 
-        if( target->is_proxy() )
+        if ( target->is_proxy() )
         {
           // skip array parameters handled in other virtual processes
           skip_conn_parameter_( tid );
@@ -1844,7 +1845,7 @@ nest::SymmetricBernoulliBuilder::connect_()
             source_thread = invalid_thread_;
           }
 
-          if( source->is_proxy() )
+          if ( source->is_proxy() )
           {
             source_thread = invalid_thread_;
           }

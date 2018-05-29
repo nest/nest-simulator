@@ -188,7 +188,7 @@ nest::TargetTableDevices::get_connections_to_device_for_lid_( const index lid,
       and ( *target_to_devices_[ tid ] )[ lid ][ syn_id ] != NULL )
     {
       ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_all_connections(
-        source_gid, requested_target_gid, tid, syn_id, synapse_label, conns );
+        source_gid, requested_target_gid, tid, synapse_label, conns );
     }
   }
 }
@@ -220,12 +220,8 @@ nest::TargetTableDevices::get_connections_from_devices_(
         if ( ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ] != NULL )
         {
           ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]
-            ->get_all_connections( source_gid,
-              requested_target_gid,
-              tid,
-              syn_id,
-              synapse_label,
-              conns );
+            ->get_all_connections(
+              source_gid, requested_target_gid, tid, synapse_label, conns );
         }
       }
     }

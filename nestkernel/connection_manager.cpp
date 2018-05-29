@@ -1210,7 +1210,7 @@ nest::ConnectionManager::get_connections(
         {
           const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
           connections->get_connection(
-            source_gid, 0, tid, syn_id, lcid, synapse_label, conns_in_thread );
+            source_gid, 0, tid, lcid, synapse_label, conns_in_thread );
         }
       }
 
@@ -1300,13 +1300,8 @@ nest::ConnectionManager::get_connections(
             {
               // passing target_gid = 0 ignores target_gid while getting
               // connections
-              connections->get_connection( source_gid,
-                0,
-                tid,
-                syn_id,
-                lcid,
-                synapse_label,
-                conns_in_thread );
+              connections->get_connection(
+                source_gid, 0, tid, lcid, synapse_label, conns_in_thread );
             }
             else
             {
@@ -1316,7 +1311,6 @@ nest::ConnectionManager::get_connections(
                 connections->get_connection( source_gid,
                   target_gid,
                   tid,
-                  syn_id,
                   lcid,
                   synapse_label,
                   conns_in_thread );
@@ -1624,7 +1618,7 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
           // send delivers event to all targets with the same source
           // and returns to how many targets this event was delivered
           lcid += ( *( *connections_[ tid ] )[ syn_id ] )
-                    .send( tid, syn_id, lcid, cm, prototype );
+                    .send( tid, lcid, cm, prototype );
         }
       }
     }

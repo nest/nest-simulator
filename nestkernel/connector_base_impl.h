@@ -34,7 +34,6 @@ namespace nest
 template < typename ConnectionT >
 void
 Connector< ConnectionT >::send_weight_event( const thread tid,
-  const synindex syn_id,
   const unsigned int lcid,
   Event& e,
   const CommonSynapseProperties& cp )
@@ -48,7 +47,7 @@ Connector< ConnectionT >::send_weight_event( const thread tid,
     wr_e.set_stamp( e.get_stamp() );
     wr_e.set_sender( e.get_sender() );
     wr_e.set_sender_gid(
-      kernel().connection_manager.get_source_gid( tid, syn_id, lcid ) );
+      kernel().connection_manager.get_source_gid( tid, syn_id_, lcid ) );
     wr_e.set_weight( e.get_weight() );
     wr_e.set_delay( e.get_delay() );
     // set weight_recorder as receiver

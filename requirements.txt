@@ -1,11 +1,7 @@
-setuptools
 matplotlib
-pillow
 sphinx==1.5
-recommonmark==0.4.0
 ipykernel
 nbsphinx
-sphinx_rtd_theme
 pytest
 sphinx-gallery
 path.py

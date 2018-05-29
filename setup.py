@@ -40,7 +40,7 @@ if os.environ.get('READTHEDOCS', None) == 'True':
     install_requires = ['seaborn']
 
     build_line1 = "sudo add-apt-repository ppa:nest-simulator/nest"
-    args1 = shlex.split(build_line)
+    args1 = shlex.split(build_line1)
     print(args)
     p = subprocess.Popen(args1)
 

@@ -33,7 +33,7 @@ rm -rf ./nest-install
 mkdir ./nest-build
 mkdir ./nest-install
 cd ./nest-build
-cmake -DCMAKE_INSTALL_PREFIX:PATH=./nest-install \
+cmake -DCMAKE_INSTALL_PREFIX:PATH=../nest-install \
     -Dwith-python:=3 \
     -Dwith-mpi:BOOL=OFF \
     -Dwith-gsl:BOOL=OFF \

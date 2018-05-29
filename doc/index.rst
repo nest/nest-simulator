@@ -1,49 +1,25 @@
-
 ***********************************************
 Welcome to the  NEST simulator documentation!
 ***********************************************
 
 
+* :doc:`Download <download>` and :doc:`Install <installation/index>` NEST
+
+* NEW TO NEST? Start here at our :doc:`Getting Started <getting-started>`_ pag
+* Discover the dozens of `models <models/index>`_ NEST simulator has to offer.
+* Need a different model? Check out how you can :doc:`create you own model <create_model>` here.
+* Have a question or issue with NEST see our `Getting Help <getting-help>`_ page.
 
 How the documentation is organized
 ####################################
 
 * :doc:`Tutorials <tutorials/index>` show you step by step how to get started with NEST. If you haven't used NEST before, this is a good place to start.
 
-* :doc:`Example Networks <examples/index>`  describe specific use-cases of neural networks developed for NEST. The examples range frome simple :doc:`one neuron models </examples/one_neuron>` to more complex networks such as :doc:`Random Balanced Network Example with the Multisynapse Neuron Model <examples/brunel_exp_multisynapse_nest>`.
+* :doc:`Example Networks <examples/index>`  demonstrate neural network models implemented in NEST.
 
 * :doc:`Topical Guides <guides/index>` provide deeper insight into several topics and concepts at an intermediate to high level. Here you can find guides to  :doc:`setting up your system with MUSIC <guides/using-nest-with-music>`, :doc:`Parallel Computing <guides/parallel-computing>`, details on :doc:`Gap Junction Simulations <guides/simulations-with-gap-junctions>` and :doc:`much more <guides/index>`.
 
 * :doc:`Reference Material <quickref>` contains the command index and APIs for a quick look up of terms.
-
-Getting Started
-################
-
-* :doc:`Why use NEST <overview>`
-
-* :doc:`Download <download>`
-
-* :doc:`Installation Instructions <installation>`
-
-* :doc:`The basics of NEST <basics>`
-
-* :doc:`Introduction to PyNEST <tutorials/introduction-to-pynest>`
-
-	* :doc:`Part 1: Neurons and simple neural networks <tutorials/part-1-neurons-and-simple-neural-networks>`
-	* :doc:`Part 2: Populations of neurons <tutorials/part-2-populations-of-neurons>`
-	* :doc:`Part 3: Connecting networks with synapses <tutorials/part-3-connecting-networks-with-synapses>`
-	* :doc:`Part 4: Topologically structured networks <tutorials/part-4-topologically-structured-networks>`
-
-Getting Help
-#############
-
-* Check out the :doc:`FAQs <faqs/index>` for common issues.
-
-* Our :doc:`video series <tutorials/videos/index>` provides instructon and examples for those who want a walk through of how to use NEST'S interface.
-
-* Have a question or issue?  Ask our `Mailing List <http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user>`_
-
-* Found a bug? You can `report bugs here <https://github.com/nest/nest-simulator/issues>`_ on our Github page.
 
 Contribute
 ###########

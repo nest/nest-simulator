@@ -1,8 +1,10 @@
 Examples
 ========
 
-Here you'll find example networks demonstrating different aspects of
-NEST. These should be grouped together in some logical way ...
+Here you'll find example networks demonstrating different implementations of
+of models in NEST.
+
+
 
 Basic Networks
 -------------------
@@ -13,15 +15,25 @@ to NEST
 -  :doc:`One Neuron Example <one_neuron>`
 -  :doc:`One Neuron with Noise <one_neuron_with_noise>`
 -  :doc:`Two Neuron Example <twoneurons>`
--  :doc:`Multi-compartment Neuron Example <mc_neuron>` - using the
-   three-compartment :doc:`iaf_cond_alpha_mc </quickref>` neuron
 -  :doc:`Recording with Multimeter and Writing Output to
    File <multimeter_file>`
 
-??
---
+Examples using Rate Models
+----------------------------
 
 -  :doc:`Network of linear rate neurons <lin_rate_ipn_network>` - simulate populations of lin_rate_ipn neurons
+
+Networks with Multicompartment Models
+------------------------------------
+
+-  :doc:`Multi-compartment Neuron Example <mc_neuron>` - using the
+   three-compartment :doc:`iaf_cond_alpha_mc </quickref>` neuron
+
+Topology Examples
+------------------
+to be added
+
+
 -  :doc:`Balanced Neuron Example <balancedneuron>` - find a firing rate
    for the inhibitory population that will make the neuron fire at the
    same rate as the excitatory population
@@ -100,7 +112,7 @@ Examples of Random Balanced Networks
    Model <brunel_exp_multisynapse_nest>`
 -  :doc:`Mean-field Theory for Random Balanced Network <brunel_siegert_nest>`
 
-Examples with Different Synapse Models
+Examples  using Tsodyks Synapse Models
 ----------------------------------------
 
 -  :doc:`Two Neuron Example Facilitating a Tsodyks

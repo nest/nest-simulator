@@ -28,12 +28,11 @@ cat > $HOME/.matplotlib/matplotlibrc <<EOF
     backend : svg
 EOF
 
-wget https://github.com/nest/nest-simulator/releases/download/v2.14.0/nest-2.14.0.tar.gz
-tar -xvzf nest-2.14.0.tar.gz
-mkdir $HOME/nest-build
-mkdir $HOME/nest-install
-cd $HOME/nest-build
-cmake -DCMAKE_INSTALL_PREFIX:PATH=$HOME/nest-install \
+
+mkdir ./nest-build
+mkdir ./nest-install
+cd ./nest-build
+cmake -DCMAKE_INSTALL_PREFIX:PATH=./nest-install \
     -Dwith-python:=3 \
     -Dwith-mpi:BOOL=OFF \
     -Dwith-gsl:BOOL=OFF \
@@ -47,4 +46,4 @@ ls -l
 
 cd ..
 
-. $HOME/nest-install/bin/nest_vars.sh
+. ./nest-install/bin/nest_vars.sh

@@ -131,8 +131,17 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   }
   if ( not delay_.valid() )
   {
-    delay_ =
-      TopologyModule::create_parameter( ( *syn_defaults )[ names::delay ] );
+    if ( synapse_model_
+      == static_cast< index >( kernel().model_manager.get_synapsedict()->lookup(
+           "gap_junction" ) ) )
+    {
+      delay_ = TopologyModule::create_parameter( numerics::nan );
+    }
+    else
+    {
+      delay_ =
+        TopologyModule::create_parameter( ( *syn_defaults )[ names::delay ] );
+    }
   }
 
   if ( connection_type == names::convergent )

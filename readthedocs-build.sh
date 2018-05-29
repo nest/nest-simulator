@@ -35,9 +35,9 @@ mkdir $HOME/nest-install
 cd $HOME/nest-build
 cmake -DCMAKE_INSTALL_PREFIX:PATH=$HOME/nest-install \
     -Dwith-python:=3 \
-    -Dwith-mpi:BOOL=ON \
-    -Dwith-gsl:BOOL=ON /usr/local/lib \
-    -Dwith-libneurosim:BOOL=ON /usr/local/lib \
+    -Dwith-mpi:BOOL=OFF \
+    -Dwith-gsl:BOOL=OFF \
+    -Dwith-libneurosim:BOOL=OFF \
     -Dwith-music:BOOL=OFF \
     ../nest-2.14.0
 make

@@ -15,9 +15,3 @@ jupyter
 cmake
 numpy
 scipy
-build-essential
-libltdl7-dev
-libreadline6-dev
-libncurses5-dev
-libgsl0-dev
-python-all-dev

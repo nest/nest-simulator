@@ -41,7 +41,7 @@ if os.environ.get('READTHEDOCS', None) == 'True':
 
     build_line1 = "sudo add-apt-repository ppa:nest-simulator/nest"
     args1 = shlex.split(build_line1)
-    print(args)
+    print(args1)
     p = subprocess.Popen(args1)
 
     build_line2 = "sudo apt-get update"

@@ -47,7 +47,7 @@ rm -rf "$NEST_VPATH" "$NEST_RESULT"
 mkdir "$NEST_VPATH" "$NEST_RESULT"
 mkdir "$NEST_VPATH/reports"
 
-
+cd "$NEST_VPATH"
 
 echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -67,6 +67,7 @@ cmake \
   $CONFIGURE_READLINE \
   $CONFIGURE_LIBNEUROSIM \
   ..
+
 echo "MSGBLD0240: CMake configure completed."
 
 echo

@@ -29,10 +29,9 @@ import os
 import shlex
 import subprocess
 
-
-
 # XXX : don't force requirements in setup.py as it tends to break
 #       people's setups
+
 install_requires = []
 
 if os.environ.get('READTHEDOCS', None) == 'True':

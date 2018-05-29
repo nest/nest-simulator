@@ -28,80 +28,23 @@ cat > $HOME/.matplotlib/matplotlibrc <<EOF
     backend : svg
 EOF
 
-# Set the NEST CMake-build configuration according to the build matrix in '.travis.yml'.
-
-CONFIGURE_THREADING="-Dwith-openmp=OFF"
-CONFIGURE_MPI="-Dwith-mpi=OFF"
-CONFIGURE_PYTHON="-Dwith-python=ON"
-CONFIGURE_MUSIC="-Dwith-music=OFF"
-CONFIGURE_GSL="-Dwith-gsl=OFF"
-CONFIGURE_LTDL="-Dwith-ltdl=OFF"
-CONFIGURE_READLINE="-Dwith-readline=OFF"
-CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
-
-NEST_VPATH=build
-NEST_RESULT=result
-NEST_RESULT=$(readlink -f $NEST_RESULT)
-
-rm -rf "$NEST_VPATH" "$NEST_RESULT"
-mkdir "$NEST_VPATH" "$NEST_RESULT"
-mkdir "$NEST_VPATH/reports"
-
-cd "$NEST_VPATH"
-
-echo
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "MSGBLD0230: Configuring CMake."
-cmake \
-  -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
-  -Dwith-optimize=ON \
-  -Dwith-warning=ON \
-  $CONFIGURE_THREADING \
-  $CONFIGURE_MPI \
-  $CONFIGURE_PYTHON \
-  $CONFIGURE_MUSIC \
-  $CONFIGURE_GSL \
-  $CONFIGURE_LTDL \
-  $CONFIGURE_READLINE \
-  $CONFIGURE_LIBNEUROSIM \
-  ..
-
-echo "MSGBLD0240: CMake configure completed."
-
-echo
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "+               B U I L D   N E S T                                           +"
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "MSGBLD0250: Running Make."
-make VERBOSE=1
-echo "MSGBLD0260: Make completed."
-
-echo
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "+               I N S T A L L   N E S T                                       +"
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "MSGBLD0270: Running make install."
+wget https://github.com/nest/nest-simulator/releases/download/v2.14.0/nest-2.14.0.tar.gz
+tar -xvzf nest-2.14.0.tar.gz
+mkdir $HOME/nest-build
+mkdir $HOME/nest-install
+cd $HOME/nest-build
+cmake -DCMAKE_INSTALL_PREFIX:PATH=$HOME/nest-install \
+    -Dwith-python:=3 \
+    -Dwith-mpi:BOOL=ON \
+    -Dwith-gsl:BOOL=ON /usr/local/lib \
+    -Dwith-libneurosim:BOOL=ON /usr/local/lib \
+    -Dwith-music:BOOL=OFF \
+    ../nest-2.14.0
+make
 make install
-echo "MSGBLD0280: Make install completed."
-
-echo
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "+               R U N   N E S T   T E S T S U I T E                           +"
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "MSGBLD0290: Running make installcheck."
-# export PYTHONPATH=$HOME/.cache/csa.install/lib/python2
-# .7/site-packages:$PYTHONPATH
-# export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
-# make installcheck
-# echo "MSGBLD0300: Make installcheck completed."
-
-
-echo "MSGBLD0340: Build completed."
 
 ls -l
 
 cd ..
 
-. result/bin/nest_vars.sh
+. $HOME/nest-install/bin/nest_vars.sh

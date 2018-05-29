@@ -39,26 +39,10 @@ if os.environ.get('READTHEDOCS', None) == 'True':
     # So that we can build documentation using seaborn
     install_requires = ['seaborn']
 
-    build_line1 = "add-apt-repository ppa:nest-simulator/nest"
-    args1 = shlex.split(build_line1)
-    print(args1)
-    p = subprocess.Popen(args1)
-
-    build_line2 = "apt-get update"
-    args2 = shlex.split(build_line2)
-    print(args2)
-    p = subprocess.Popen(args2)
-
-    build_line3 = "apt-get install nest"
-    args3 = shlex.split(build_line3)
-    print(args3)
-    p = subprocess.Popen(args3)
-
-
-    # build_line = "bash ./readthedocs-build.sh"
-    # args = shlex.split(build_line)
-    # print(args)
-    # p = subprocess.Popen(args)
+    build_line = "bash ./readthedocs-build.sh"
+    args = shlex.split(build_line)
+    print(args)
+    p = subprocess.Popen(args)
 
     # source_line = "source ./result/bin/nest_vars.sh"
     # args = shlex.split(source_line)

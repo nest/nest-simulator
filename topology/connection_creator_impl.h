@@ -260,7 +260,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
     }
   } // omp parallel
   // check if any exceptions have been raised
-  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
   {
     if ( exceptions_raised_.at( thr ).valid() )
     {
@@ -369,7 +369,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
     }
   } // omp parallel
   // check if any exceptions have been raised
-  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
   {
     if ( exceptions_raised_.at( thr ).valid() )
     {

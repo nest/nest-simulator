@@ -164,7 +164,7 @@ NodeManager::add_node( index model_id, long n )
   }
 
   // check if any exceptions have been raised
-  for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     if ( exceptions_raised_.at( t ).valid() )
     {
@@ -428,7 +428,7 @@ Node*
 NodeManager::get_node_or_proxy( index gid, thread t )
 {
   assert( 0 <= t
-    and ( t == -1 or ( unsigned ) t < kernel().vp_manager.get_num_threads() ) );
+    and ( t == -1 or t < kernel().vp_manager.get_num_threads() ) );
   assert( 0 < gid and gid <= size() );
 
   Node* node = local_nodes_[ t ].get_node_by_gid( gid );
@@ -806,7 +806,7 @@ NodeManager::print( std::ostream& out ) const
 void
 NodeManager::set_status( index gid, const DictionaryDatum& d )
 {
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     Node* node = local_nodes_[ t ].get_node_by_gid( gid );
     if ( node != 0 )

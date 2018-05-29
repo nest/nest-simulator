@@ -28,7 +28,8 @@ cat > $HOME/.matplotlib/matplotlibrc <<EOF
     backend : svg
 EOF
 
-
+rm -rf ./nest-build
+rm -rf ./nest-install
 mkdir ./nest-build
 mkdir ./nest-install
 cd ./nest-build
@@ -38,7 +39,7 @@ cmake -DCMAKE_INSTALL_PREFIX:PATH=./nest-install \
     -Dwith-gsl:BOOL=OFF \
     -Dwith-libneurosim:BOOL=OFF \
     -Dwith-music:BOOL=OFF \
-    ../nest-2.14.0
+    .
 make
 make install
 

@@ -688,9 +688,15 @@ class TestGIDCollection(unittest.TestCase):
 
         self.assertEqual(get_conn_all, get_conn)
 
-        compare_list = [3, 1, 0, 0, 0]
+        compare_list = [3, 1, 0, 0, 2]
         for i, conn in enumerate(compare_list):
-            self.assertEqual(get_conn_list[3][i], conn)
+            self.assertEqual(get_conn_list[1][i], conn)
+
+        connections = [[conn[0], conn[1], conn[2], conn[3], conn[4]] for conn
+                       in nest.GetConnections(n[0])]
+        ref = [[1, 1, 0, 0, 0], [1, 2, 0, 0, 3], [1, 3, 0, 0, 6]]
+        for conn, conn_ref in zip(connections, ref):
+            self.assertEqual(conn, conn_ref)
 
     def test_GetConnections_bad_source(self):
         """

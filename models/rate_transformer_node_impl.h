@@ -248,12 +248,14 @@ void
 nest::rate_transformer_node< TNonlinearities >::handle(
   InstantaneousRateConnectionEvent& e )
 {
+  const double weight = e.get_weight();
+
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
   while ( it != e.end() )
   {
-    B_.instant_rates_[ i ] += e.get_weight() * e.get_coeffvalue( it );
+    B_.instant_rates_[ i ] += weight * e.get_coeffvalue( it );
     ++i;
   }
 }
@@ -263,14 +265,17 @@ void
 nest::rate_transformer_node< TNonlinearities >::handle(
   DelayedRateConnectionEvent& e )
 {
+  const double weight = e.get_weight();
+  const long delay = e.get_delay();
+
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
   while ( it != e.end() )
   {
     B_.delayed_rates_.add_value(
-      e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-      e.get_weight() * e.get_coeffvalue( it ) );
+      delay + i,
+      weight * e.get_coeffvalue( it ) );
     ++i;
   }
 }

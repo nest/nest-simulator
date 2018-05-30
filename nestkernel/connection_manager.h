@@ -140,12 +140,7 @@ public:
     const DictionaryDatum& params,
     const synindex syn_id );
 
-  index find_connection_sorted( const thread tid,
-    const synindex syn_id,
-    const index sgid,
-    const index tgid );
-
-  index find_connection_unsorted( const thread tid,
+  index find_connection( const thread tid,
     const synindex syn_id,
     const index sgid,
     const index tgid );

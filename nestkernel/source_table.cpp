@@ -49,7 +49,6 @@ nest::SourceTable::initialize()
   saved_entry_point_.resize( num_threads );
   current_positions_.resize( num_threads );
   saved_positions_.resize( num_threads );
-  last_sorted_source_.resize( num_threads );
 
 #pragma omp parallel
   {
@@ -61,7 +60,6 @@ nest::SourceTable::initialize()
     saved_positions_[ tid ] = new SourceTablePosition();
     is_cleared_[ tid ] = false;
     saved_entry_point_[ tid ] = false;
-    last_sorted_source_[ tid ] = new std::vector< size_t >( 0 );
   } // of omp parallel
 }
 
@@ -100,15 +98,6 @@ nest::SourceTable::finalize()
     delete *it;
   }
   saved_positions_.clear();
-
-  for ( std::vector< std::vector< size_t >* >::iterator it =
-          last_sorted_source_.begin();
-        it != last_sorted_source_.end();
-        ++it )
-  {
-    delete *it;
-  }
-  last_sorted_source_.clear();
 }
 
 bool
@@ -253,7 +242,10 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
     return invalid_index;
   }
 
-  index lcid = max_size - 1;
+  // lcid needs to be signed, to allow lcid >= 0 check in while loop
+  // to fail; afterwards we can be certain that it is non-negative and
+  // we can static_cast it to index
+  long lcid = max_size - 1;
   while ( mysources[ lcid ].is_disabled() && lcid >= 0 )
   {
     --lcid;
@@ -262,11 +254,11 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
           // exits if lcid points at a not disabled element, hence we
           // need to increase it by one again
   mysources.erase( mysources.begin() + lcid, mysources.end() );
-  if ( lcid == max_size )
+  if ( static_cast< index >( lcid ) == max_size )
   {
     return invalid_index;
   }
-  return lcid;
+  return static_cast< index >( lcid );
 }
 
 void
@@ -380,25 +372,6 @@ nest::SourceTable::get_next_target_data( const thread tid,
     if ( current_position.is_at_end() )
     {
       return false; // reached the end of the sources table
-    }
-
-    // if structural plasticity has created connections that have not
-    // been sorted, stop reading after reaching first source that was
-    // sorted; assumes that presynaptic structure for sorted sources
-    // still exists and information about unsorted sources can be
-    // incrementally added
-    // TODO@5g: currently not used -> can be removed?
-    if ( current_position.lcid
-        < static_cast< long >(
-            ( *last_sorted_source_[ current_position.tid ] )[ current_position
-                                                                .syn_id ] )
-      and ( *last_sorted_source_[ current_position.tid ] )[ current_position
-                                                              .syn_id ]
-        < ( *( *sources_[ current_position.tid ] )[ current_position.syn_id ] )
-            .size() )
-    {
-      assert( false );
-      return false;
     }
 
     // the current position contains an entry, so we retrieve it

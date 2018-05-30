@@ -204,5 +204,83 @@ M_ERROR setverbosity
   and
 } assert_or_die
 
+% Check that we can use gap junction with target-driven connect in topology
+{
+  ResetKernel
+  /lr << /rows 2
+         /columns 3
+         /elements /hh_psc_alpha_gap      
+      >> CreateLayer def
+  
+  lr lr << /connection_type (convergent)
+           /synapse_model /gap_junction
+           /make_symmetric true
+           /weights 0.5
+        >> ConnectLayers
+} pass_or_die
+
+% Check that we can use gap junction with source-driven connect in topology
+{
+  ResetKernel
+  /lr << /rows 2
+         /columns 3
+         /elements /hh_psc_alpha_gap      
+      >> CreateLayer def
+  
+  lr lr << /connection_type (divergent)
+           /synapse_model /gap_junction 
+           /make_symmetric true
+           /weights 0.5
+        >> ConnectLayers
+} pass_or_die
+
+% Check that we can use gap junction with convergent connect in topology
+{
+  ResetKernel
+  /lr << /rows 2
+         /columns 3
+         /elements /hh_psc_alpha_gap      
+      >> CreateLayer def
+  
+  lr lr << /connection_type (convergent)
+           /synapse_model /gap_junction 
+           /make_symmetric true
+           /weights 0.5
+           /number_of_connections 3
+        >> ConnectLayers
+} pass_or_die
+
+
+% Check that we can use gap junction with divergent connect in topology
+{
+  ResetKernel
+  /lr << /rows 2
+         /columns 3
+         /elements /hh_psc_alpha_gap      
+      >> CreateLayer def
+  
+  lr lr << /connection_type (divergent)
+           /synapse_model /gap_junction 
+           /make_symmetric true
+           /weights 0.5
+           /number_of_connections 3
+        >> ConnectLayers
+} pass_or_die
+
+% Check that non-symmetric gap junctions cannot be created in topology
+{
+  ResetKernel
+  /lr << /rows 2
+         /columns 3
+         /elements /hh_psc_alpha_gap      
+      >> CreateLayer def
+  
+  lr lr << /connection_type (convergent)
+           /synapse_model /gap_junction 
+           /make_symmetric false
+           /weights 0.5
+        >> ConnectLayers
+} fail_or_die
+
 endusing
 

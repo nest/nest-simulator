@@ -41,6 +41,14 @@ template < int D >
 void
 ConnectionCreator::connect( Layer< D >& source, Layer< D >& target )
 {
+  if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ )
+    and not( make_symmetric_ ) )
+  {
+    throw BadProperty(
+      "Connections with this synapse model can only be created "
+      "with \"make_symmetric\" set to true." );
+  }
+
   switch ( type_ )
   {
   case Target_driven:

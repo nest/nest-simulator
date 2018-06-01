@@ -65,7 +65,7 @@ ConnectionManager::send( const thread tid,
   const std::vector< ConnectorModel* >& cm,
   Event& e )
 {
-  ( *connections_[ tid ] )[ syn_id ]->send( tid, syn_id, lcid, cm, e );
+  ( *connections_[ tid ] )[ syn_id ]->send( tid, lcid, cm, e );
 }
 
 inline void

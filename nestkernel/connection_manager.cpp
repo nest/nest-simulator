@@ -1643,6 +1643,7 @@ nest::ConnectionManager::remove_disabled_connections( const thread tid )
   }
 }
 
+void
 nest::ConnectionManager::resize_connections()
 {
   kernel().vp_manager.assert_single_threaded();

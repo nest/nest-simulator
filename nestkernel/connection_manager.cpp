@@ -1167,6 +1167,21 @@ nest::ConnectionManager::get_connections(
     return;
   }
 
+  // if connections have changed, (re-)build presynaptic infrastructure,
+  // as this may involve sorting connections by source gids
+  if ( have_connections_changed() )
+  {
+    if ( not kernel().simulation_manager.has_been_simulated() )
+    {
+      kernel().model_manager.create_secondary_events_prototypes();
+    }
+#pragma omp parallel
+    {
+      const thread tid = kernel().vp_manager.get_thread_id();
+      kernel().simulation_manager.update_connection_infrastructure( tid );
+    }
+  }
+
   if ( source == 0 and target == 0 )
   {
 #pragma omp parallel

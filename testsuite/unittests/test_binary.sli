@@ -46,8 +46,8 @@
     ResetKernel
 
     <<
-	/local_num_threads 1 
-	/resolution h
+    	/local_num_threads 1 
+    	/resolution h
     >> SetKernelStatus
 
     /model Set
@@ -88,8 +88,8 @@
     ResetKernel
 
     << 
-	/local_num_threads 1 
-	/resolution h
+    	/local_num_threads 1 
+    	/resolution h
     >> SetKernelStatus
 
 
@@ -156,7 +156,7 @@ forall
 {
   ResetKernel
   
-  0 << /keep_source_table false >> SetStatus
+  << /keep_source_table false >> SetKernelStatus
   
   /ginzburg /ginzburg_neuron Create def
   /mcculluch /mcculluch_pitts_neuron Create def

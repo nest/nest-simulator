@@ -294,7 +294,7 @@ def
 
 ResetKernel
 
-0 << /sort_connections_by_source false >> SetStatus
+<< /sort_connections_by_source false >> SetKernelStatus
 
 /sources src_layer CreateLayer def
 /targets tgt_layer CreateLayer def

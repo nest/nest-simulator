@@ -44,7 +44,7 @@ skip_if_not_threaded
 {
   dup /threads Set
   ResetKernel
-  0 << /local_num_threads threads >> SetStatus
+  << /local_num_threads threads >> SetKernelStatus
   
   % Create set of neurons
   /A /iaf_psc_alpha 1 Create def

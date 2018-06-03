@@ -192,7 +192,7 @@ def
 
 ResetKernel
 
-0 << /sort_connections_by_source false >> SetStatus
+<< /sort_connections_by_source false >> SetKernelStatus
 
 userdict /resolution known { << /resolution resolution >> SetKernelStatus } if
 

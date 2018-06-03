@@ -34,7 +34,7 @@
   combined with off-grid spike times.
 
   Example:
-  0 << /resolution 1.0 >> SetStatus
+  << /resolution 1.0 >> SetKernelStatus
 
   /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
   def

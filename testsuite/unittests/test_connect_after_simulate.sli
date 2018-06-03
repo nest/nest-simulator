@@ -64,7 +64,7 @@ M_ERROR setverbosity
 
   % switch from sort to no-sort or vice versa
   % and create more connections and check again
-  0 << /sort_connections_by_source sort_connections not >> SetStatus
+  << /sort_connections_by_source sort_connections not >> SetKernelStatus
   neurons neurons << /rule /fixed_indegree /indegree 2 >> << >> Connect
 
   /connections_before << >> GetConnections def

@@ -54,8 +54,8 @@ Description:
 The rate transformer node simply applies the nonlinearity specified in the
 input-function of the template class to all incoming inputs. The boolean
 parameter linear_summation determines whether the input function is applied to
-the summed up incoming connections (= True, default value) or to each input
-individually (= False).
+the summed up incoming connections (True, default value) or to each input
+individually (False).
 An important application is to provide the possibility to
 apply different nonlinearities to different incoming connections of the
 same rate neuron by connecting the sending rate neurons to the

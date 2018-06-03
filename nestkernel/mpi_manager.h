@@ -269,28 +269,30 @@ private:
   bool use_mpi_;                   //!< whether MPI is used
   size_t buffer_size_target_data_; //!< total size of MPI buffer for
   // communication of connections
+
   size_t buffer_size_spike_data_; //!< total size of MPI buffer for
   // communication of spikes
+
   size_t chunk_size_secondary_events_in_int_; //!< total size of MPI buffer for
   // communication of secondary events
+
   size_t max_buffer_size_target_data_; //!< maximal size of MPI buffer for
   // communication of connections
+
   size_t max_buffer_size_spike_data_; //!< maximal size of MPI buffer for
   // communication of spikes
+
   bool adaptive_target_buffers_; //!< whether MPI buffers for communication of
   // connections resize on the fly
+
   bool adaptive_spike_buffers_; //!< whether MPI buffers for communication of
   // spikes resize on the fly
+
   double growth_factor_buffer_spike_data_;
   double growth_factor_buffer_target_data_;
 
-  unsigned int send_recv_count_spike_data_per_rank_; // TODO@5g: assert these
-                                                     // are not zero -> Jakob
-  unsigned int send_recv_count_spike_data_in_int_per_rank_;
-  unsigned int send_recv_count_off_grid_spike_data_in_int_per_rank_;
-
+  unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_target_data_per_rank_;
-  unsigned int send_recv_count_target_data_in_int_per_rank_;
 
 #ifdef HAVE_MPI
   //! array containing communication partner for each step.
@@ -464,8 +466,6 @@ MPIManager::set_buffer_size_target_data( const size_t buffer_size )
   send_recv_count_target_data_per_rank_ = static_cast< size_t >(
     floor( static_cast< double >( get_buffer_size_target_data() )
       / static_cast< double >( get_num_processes() ) ) );
-  send_recv_count_target_data_in_int_per_rank_ = sizeof( TargetData )
-    / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
 
   assert( send_recv_count_target_data_per_rank_ * get_num_processes()
     <= get_buffer_size_target_data() );
@@ -486,11 +486,6 @@ MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
 
   send_recv_count_spike_data_per_rank_ =
     floor( get_buffer_size_spike_data() / get_num_processes() );
-  send_recv_count_spike_data_in_int_per_rank_ = sizeof( SpikeData )
-    / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
-  send_recv_count_off_grid_spike_data_in_int_per_rank_ =
-    sizeof( OffGridSpikeData ) / sizeof( unsigned int )
-    * send_recv_count_spike_data_per_rank_;
 
   assert( send_recv_count_spike_data_per_rank_ * get_num_processes()
     <= get_buffer_size_spike_data() );
@@ -720,8 +715,11 @@ void
 MPIManager::communicate_target_data_Alltoall( std::vector< D >& send_buffer,
   std::vector< D >& recv_buffer )
 {
+  const size_t send_recv_count_target_data_in_int_per_rank = sizeof( TargetData )
+    / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
+
   communicate_Alltoall(
-    send_buffer, recv_buffer, send_recv_count_target_data_in_int_per_rank_ );
+    send_buffer, recv_buffer, send_recv_count_target_data_in_int_per_rank );
 }
 
 template < class D >
@@ -729,8 +727,11 @@ void
 MPIManager::communicate_spike_data_Alltoall( std::vector< D >& send_buffer,
   std::vector< D >& recv_buffer )
 {
+  const size_t send_recv_count_spike_data_in_int_per_rank = sizeof( SpikeData )
+    / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
+
   communicate_Alltoall(
-    send_buffer, recv_buffer, send_recv_count_spike_data_in_int_per_rank_ );
+    send_buffer, recv_buffer, send_recv_count_spike_data_in_int_per_rank );
 }
 
 template < class D >
@@ -739,9 +740,13 @@ MPIManager::communicate_off_grid_spike_data_Alltoall(
   std::vector< D >& send_buffer,
   std::vector< D >& recv_buffer )
 {
+  const size_t send_recv_count_off_grid_spike_data_in_int_per_rank =
+    sizeof( OffGridSpikeData ) / sizeof( unsigned int )
+    * send_recv_count_spike_data_per_rank_;
+
   communicate_Alltoall( send_buffer,
     recv_buffer,
-    send_recv_count_off_grid_spike_data_in_int_per_rank_ );
+    send_recv_count_off_grid_spike_data_in_int_per_rank );
 }
 }
 

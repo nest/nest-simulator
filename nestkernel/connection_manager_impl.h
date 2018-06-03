@@ -65,7 +65,7 @@ ConnectionManager::send( const thread tid,
   const std::vector< ConnectorModel* >& cm,
   Event& e )
 {
-  ( *connections_[ tid ] )[ syn_id ]->send( tid, syn_id, lcid, cm, e );
+  ( *connections_[ tid ] )[ syn_id ]->send( tid, lcid, cm, e );
 }
 
 inline void
@@ -92,7 +92,6 @@ ConnectionManager::restructure_connection_tables( const thread tid )
   assert( not source_table_.is_cleared() );
   target_table_.clear( tid );
   source_table_.reset_processed_flags( tid );
-  source_table_.reset_last_sorted_source( tid );
 }
 
 inline void

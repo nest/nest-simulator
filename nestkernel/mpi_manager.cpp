@@ -54,7 +54,6 @@ MPI_Datatype MPI_Type< unsigned long >::type = MPI_UNSIGNED_LONG;
 
 #endif /* #ifdef HAVE_MPI */
 
-// TODO@5g: make sure all member variables are initialized
 nest::MPIManager::MPIManager()
   : num_processes_( 1 )
   , rank_( 0 )
@@ -69,10 +68,7 @@ nest::MPIManager::MPIManager()
   , growth_factor_buffer_spike_data_( 1.5 )
   , growth_factor_buffer_target_data_( 1.5 )
   , send_recv_count_spike_data_per_rank_( 0 )
-  , send_recv_count_spike_data_in_int_per_rank_( 0 )
-  , send_recv_count_off_grid_spike_data_in_int_per_rank_( 0 )
   , send_recv_count_target_data_per_rank_( 0 )
-  , send_recv_count_target_data_in_int_per_rank_( 0 )
 #ifdef HAVE_MPI
   , comm_step_( std::vector< int >() )
   , COMM_OVERFLOW_ERROR( std::numeric_limits< unsigned int >::max() )
@@ -209,7 +205,6 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
     dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
 }
 
-// TODO@5g: replace strings with names::
 void
 nest::MPIManager::get_status( DictionaryDatum& dict )
 {

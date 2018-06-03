@@ -739,7 +739,7 @@ nest::ConnectionManager::increase_connection_count( const thread tid,
 }
 
 nest::index
-nest::ConnectionManager::find_connection_sorted( const thread tid,
+nest::ConnectionManager::find_connection( const thread tid,
   const synindex syn_id,
   const index sgid,
   const index tgid )
@@ -764,28 +764,6 @@ nest::ConnectionManager::find_connection_sorted( const thread tid,
   return invalid_index;
 }
 
-nest::index
-nest::ConnectionManager::find_connection_unsorted( const thread tid,
-  const synindex syn_id,
-  const index sgid,
-  const index tgid )
-{
-  std::vector< index > matching_lcids;
-
-  source_table_.find_all_sources_unsorted( tid, sgid, syn_id, matching_lcids );
-  if ( matching_lcids.size() > 0 )
-  {
-    const index lcid = ( *( *connections_[ tid ] )[ syn_id ] )
-                         .find_matching_target( tid, matching_lcids, tgid );
-    if ( lcid != invalid_index )
-    {
-      return lcid;
-    }
-  }
-
-  return invalid_index;
-}
-
 void
 nest::ConnectionManager::disconnect( const thread tid,
   const synindex syn_id,
@@ -796,11 +774,7 @@ nest::ConnectionManager::disconnect( const thread tid,
 
   assert( syn_id != invalid_synindex );
 
-  index lcid = find_connection_sorted( tid, syn_id, sgid, tgid );
-  if ( lcid == invalid_index )
-  {
-    lcid = find_connection_unsorted( tid, syn_id, sgid, tgid );
-  }
+  const index lcid = find_connection( tid, syn_id, sgid, tgid );
 
   if ( lcid == invalid_index ) // this function should only be called
                                // with a valid connection
@@ -1202,6 +1176,21 @@ nest::ConnectionManager::get_connections(
     return;
   }
 
+  // if connections have changed, (re-)build presynaptic infrastructure,
+  // as this may involve sorting connections by source gids
+  if ( have_connections_changed() )
+  {
+    if ( not kernel().simulation_manager.has_been_simulated() )
+    {
+      kernel().model_manager.create_secondary_events_prototypes();
+    }
+#pragma omp parallel
+    {
+      const thread tid = kernel().vp_manager.get_thread_id();
+      kernel().simulation_manager.update_connection_infrastructure( tid );
+    }
+  }
+
   if ( not source.valid() and not target.valid() )
   {
 #pragma omp parallel
@@ -1219,7 +1208,7 @@ nest::ConnectionManager::get_connections(
         {
           const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
           connections->get_connection(
-            source_gid, 0, tid, syn_id, lcid, synapse_label, conns_in_thread );
+            source_gid, 0, tid, lcid, synapse_label, conns_in_thread );
         }
       }
 
@@ -1306,13 +1295,8 @@ nest::ConnectionManager::get_connections(
             {
               // passing target_gid = 0 ignores target_gid while getting
               // connections
-              connections->get_connection( source_gid,
-                0,
-                tid,
-                syn_id,
-                lcid,
-                synapse_label,
-                conns_in_thread );
+              connections->get_connection(
+                source_gid, 0, tid, lcid, synapse_label, conns_in_thread );
             }
             else
             {
@@ -1323,7 +1307,6 @@ nest::ConnectionManager::get_connections(
                 connections->get_connection( source_gid,
                   target_gid,
                   tid,
-                  syn_id,
                   lcid,
                   synapse_label,
                   conns_in_thread );
@@ -1425,7 +1408,6 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
   {
     for ( size_t i = 0; i < sources.size(); ++i )
     {
-      // find targets in sorted part of connections
       const index start_lcid =
         source_table_.find_first_source( tid, syn_id, sources[ i ] );
       if ( start_lcid != invalid_index )
@@ -1434,14 +1416,6 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
           .get_target_gids(
             tid, start_lcid, post_synaptic_element, targets[ i ] );
       }
-
-      // find targets in unsorted part of connections
-      std::vector< index > matching_lcids;
-      source_table_.find_all_sources_unsorted(
-        tid, sources[ i ], syn_id, matching_lcids );
-
-      // unsorted part should always be empty
-      assert( matching_lcids.size() == 0 );
     }
   }
 }
@@ -1463,7 +1437,6 @@ nest::ConnectionManager::sort_connections( const thread tid )
       }
     }
     remove_disabled_connections( tid );
-    source_table_.update_last_sorted_source( tid );
   }
 }
 
@@ -1682,7 +1655,8 @@ nest::ConnectionManager::set_stdp_eps( const double stdp_eps )
   }
 }
 
-// TODO@5gNOW: pass recv_buffer as const reference -> Jakob
+// recv_buffer can not be a const reference as iterators used in
+// secondary events must not be const
 bool
 nest::ConnectionManager::deliver_secondary_events( const thread tid,
   const bool called_from_wfr_update,
@@ -1720,7 +1694,7 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
           // send delivers event to all targets with the same source
           // and returns to how many targets this event was delivered
           lcid += ( *( *connections_[ tid ] )[ syn_id ] )
-                    .send( tid, syn_id, lcid, cm, prototype );
+                    .send( tid, lcid, cm, prototype );
         }
       }
     }
@@ -1766,48 +1740,6 @@ nest::ConnectionManager::remove_disabled_connections( const thread tid )
   }
 }
 
-void
-nest::ConnectionManager::print_connections( const thread tid ) const
-{
-  const std::vector< ConnectorBase* >& connectors = *connections_[ tid ];
-
-  for ( synindex syn_id = 0; syn_id < connectors.size(); ++syn_id )
-  {
-    if ( connectors[ syn_id ] != NULL )
-    {
-      continue;
-    }
-    ( *connectors[ syn_id ] ).print_connections( tid );
-  }
-}
-
-void
-nest::ConnectionManager::print_targets( const thread tid ) const
-{
-  target_table_.print_targets( tid );
-}
-
-void
-nest::ConnectionManager::print_send_buffer_pos( const thread tid ) const
-{
-  target_table_.print_secondary_send_buffer_pos( tid );
-}
-
-void
-nest::ConnectionManager::print_source_table( const thread tid ) const
-{
-  const std::vector< ConnectorBase* >& connectors = *connections_[ tid ];
-
-  for ( synindex syn_id = 0; syn_id < connectors.size(); ++syn_id )
-  {
-    if ( connectors[ syn_id ] != NULL )
-    {
-      source_table_.print_sources( tid, syn_id );
-    }
-  }
-}
-
-void
 nest::ConnectionManager::resize_connections()
 {
   kernel().vp_manager.assert_single_threaded();

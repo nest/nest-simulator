@@ -139,12 +139,7 @@ public:
     const DictionaryDatum& params,
     const synindex syn_id );
 
-  index find_connection_sorted( const thread tid,
-    const synindex syn_id,
-    const index sgid,
-    const index tgid );
-
-  index find_connection_unsorted( const thread tid,
+  index find_connection( const thread tid,
     const synindex syn_id,
     const index sgid,
     const index tgid );
@@ -153,13 +148,6 @@ public:
     const synindex syn_id,
     const index sgid,
     const index tgid );
-
-  void print_source_table( const thread tid ) const;
-
-  void print_connections( const thread tid ) const;
-
-  void print_targets( const thread tid ) const;
-  void print_send_buffer_pos( const thread tid ) const;
 
 
   /**

@@ -1745,14 +1745,19 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder(
 void
 nest::SymmetricBernoulliBuilder::connect_()
 {
-  // allocate pointer to thread specific random generator
+  // allocate pointer to global random generator; used to create a
+  // random generator for each thread, each using the same seed
+  // obtained from the global rng -> all threads across all processes
+  // generate identical random number streams; this is required to
+  // generate symmetric connections: if we would loop only over local
+  // targets, we might miss the symmetric counterpart to a connection
+  // where a local target is chosen as a source
   librandom::RngPtr grng = kernel().rng_manager.get_grng();
   const unsigned long s =
     grng->ulrand( std::numeric_limits< unsigned int >::max() );
 
 #pragma omp parallel
   {
-    // get thread id
     const thread tid = kernel().vp_manager.get_thread_id();
 
 // create a random generator for each thread, each using the same

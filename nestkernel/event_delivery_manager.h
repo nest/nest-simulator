@@ -64,7 +64,6 @@ public:
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
 
-  // TODO@5g: check documentation of send functions
   /**
    * Standard routine for sending events. This method decides if
    * the event has to be delivered locally or globally. It exists
@@ -285,13 +284,22 @@ private:
     std::vector< SpikeDataT >& send_buffer );
 
   /**
+   * Resets marker in MPI buffer that signals end of communication
+   * across MPI ranks.
+   */
+  template < typename SpikeDataT >
+  void reset_complete_marker_spike_data_( const AssignedRanks& assigned_ranks,
+    const SendBufferPosition& send_buffer_position,
+    std::vector< SpikeDataT >& send_buffer ) const;
+
+  /**
    * Sets marker in MPI buffer that signals end of communication
    * across MPI ranks.
    */
   template < typename SpikeDataT >
   void set_complete_marker_spike_data_( const AssignedRanks& assigned_ranks,
     const SendBufferPosition& send_buffer_position,
-    std::vector< SpikeDataT >& send_buffer );
+    std::vector< SpikeDataT >& send_buffer ) const;
 
   /**
    * Reads spikes from MPI buffers and delivers them to ringbuffer of
@@ -457,7 +465,7 @@ private:
   // communication of spikes was
   // changed
 
-  std::vector< unsigned int > completed_count_; // TODO@5g: rename? -> Jakob
+  std::vector< unsigned int > completed_count_;
 };
 
 inline void

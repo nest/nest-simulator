@@ -1160,13 +1160,6 @@ nest::ConnectionManager::get_connections(
       "cleared." );
   }
 
-  const size_t num_connections = get_num_connections( syn_id );
-
-  if ( num_connections == 0 )
-  {
-    return;
-  }
-
   // if connections have changed, (re-)build presynaptic infrastructure,
   // as this may involve sorting connections by source gids
   if ( have_connections_changed() )
@@ -1643,6 +1636,7 @@ nest::ConnectionManager::remove_disabled_connections( const thread tid )
   }
 }
 
+void
 nest::ConnectionManager::resize_connections()
 {
   kernel().vp_manager.assert_single_threaded();

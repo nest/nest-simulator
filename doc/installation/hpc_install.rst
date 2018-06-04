@@ -1,5 +1,5 @@
-HPC systems Installation
-====================================
+High Performance Computer Systems Installation
+================================================
 
 Minimal configuration
 -------------------------
@@ -7,7 +7,8 @@ Minimal configuration
 NEST can be compiled without any external packages; such a configuration may be useful for initial porting to a new supercomputer. However, this implies several restrictions: 
 
 - Some neuron and synapse models will not be available, as they depend on ODE solvers from the GNU Scientific Library.
-- The Python extension will not be available, and third, multi-threading and parallel computing facilities will be disabled.
+- The Python extension will not be available
+- Multi-threading and parallel computing facilities will be disabled.
 
 To configure NEST for compilation without external packages, use the following  command::
 
@@ -52,22 +53,22 @@ BlueGene/Q and PyNEST
 ~~~~~~~~~~~~~~~~~~~~~
 
 Building PyNEST on BlueGene/Q requires you to compile dynamically, i.e. 
-``-Dstatic-libraries=OFF``. Further, you have to cythonize the
+``-Dstatic-libraries=OFF``. Furthermore, you have to cythonize the
 ``pynest/pynestkernel.pyx/.pyx`` on a machine with Cython installed::
 
     cythonize pynestkernel.pyx
 
 Copy the generated file ``pynestkernel.cpp`` into ``</path/to/NEST/src>/pynest`` on
 BlueGene/Q and point ``-Dwith-python=<...>`` to a valid python version for cross
-compilation::
+compilation, either Python 2::
 
     -Dwith-python=/bgsys/tools/Python-2.7/bin/hostpython
 
-or (much better)::
+or (much better) Python 3::
 
     -Dwith-python=/bgsys/local/python3/3.4.2/bin/python3
 
-CMake <3.4 is buggy about finding the matching libraries (for many years).
+CMake <3.4 is buggy when it comes to finding the matching libraries (for many years).
 Thus, you also have to specify ``PYTHON_LIBRARY`` and ``PYTHON_INCLUDE_DIR``
 if they are not found OR the incorrect libraries are found, e.g.::
 
@@ -95,7 +96,7 @@ A complete ``cmake`` line for PyNEST could look like this::
       -Dwith-ltdl=OFF \
       <nest-src>
 
-Further, for running PyNEST, make sure all python dependencies are installed and
+Furthermore, for running PyNEST, make sure all python dependencies are installed and
 environment variables are set properly::
 
     module load python3/3.4.2
@@ -119,7 +120,7 @@ BlueGene/Q and GCC
 Compiling NEST with GCC (``-DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_GCC``)
 might require you to use a GSL library compiled using GCC, otherwise undefined
 symbols break your build. After the GSL is built with GCC and installed in
-<gsl-install-dir>, add ``-Dwith-gsl=<gsl-install-dir>`` to the ``cmake`` line.
+``gsl-install-dir``, add ``-Dwith-gsl=<gsl-install-dir>`` to the ``cmake`` line.
 
 BlueGene/Q and Non-Standard Allocators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -142,7 +143,7 @@ Compiling for Fujitsu Sparc64
 
 On the K Computer:
   The preinstalled ``cmake`` version is 2.6, which is too old for NEST. Please install
-  a newer version, e.g. like this::
+  a newer version, for example::
 
       wget https://cmake.org/files/v3.4/cmake-3.4.2.tar.gz
       tar -xzf cmake-3.4.2.tar.gz

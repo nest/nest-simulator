@@ -718,8 +718,7 @@ nest::hh_psc_alpha_gap::handle( GapJunctionEvent& e )
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
   while ( it != e.end() )
   {
-    B_.interpolation_coefficients[ i ] +=
-      weight * e.get_coeffvalue( it );
+    B_.interpolation_coefficients[ i ] += weight * e.get_coeffvalue( it );
     ++i;
   }
 }

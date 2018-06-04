@@ -273,9 +273,7 @@ nest::rate_transformer_node< TNonlinearities >::handle(
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
   while ( it != e.end() )
   {
-    B_.delayed_rates_.add_value(
-      delay + i,
-      weight * e.get_coeffvalue( it ) );
+    B_.delayed_rates_.add_value( delay + i, weight * e.get_coeffvalue( it ) );
     ++i;
   }
 }

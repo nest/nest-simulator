@@ -715,8 +715,9 @@ void
 MPIManager::communicate_target_data_Alltoall( std::vector< D >& send_buffer,
   std::vector< D >& recv_buffer )
 {
-  const size_t send_recv_count_target_data_in_int_per_rank = sizeof( TargetData )
-    / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
+  const size_t send_recv_count_target_data_in_int_per_rank =
+    sizeof( TargetData ) / sizeof( unsigned int )
+    * send_recv_count_target_data_per_rank_;
 
   communicate_Alltoall(
     send_buffer, recv_buffer, send_recv_count_target_data_in_int_per_rank );

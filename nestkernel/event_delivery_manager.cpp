@@ -525,7 +525,8 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
     spike_register,
   std::vector< SpikeDataT >& send_buffer )
 {
-  reset_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
+  reset_complete_marker_spike_data_(
+    assigned_ranks, send_buffer_position, send_buffer );
 
   // assume register is empty, will change to false if any entry can
   // not be fit into the MPI buffer
@@ -617,7 +618,8 @@ EventDeliveryManager::set_end_and_invalid_markers_(
 }
 
 template < typename SpikeDataT >
-void EventDeliveryManager::reset_complete_marker_spike_data_(
+void
+EventDeliveryManager::reset_complete_marker_spike_data_(
   const AssignedRanks& assigned_ranks,
   const SendBufferPosition& send_buffer_position,
   std::vector< SpikeDataT >& send_buffer ) const

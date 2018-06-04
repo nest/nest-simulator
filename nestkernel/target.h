@@ -38,7 +38,7 @@ namespace nest
  * neuron on a (remote) machine. Used in TargetTable for presynaptic
  * part of connection infrastructure.
  */
-class Target // TODO@5g: write tests for reading and writing fields -> Jakob
+class Target
 {
 private:
   unsigned long data_;
@@ -78,42 +78,42 @@ public:
   /**
    * Sets the local connection ID.
    */
-  void set_lcid( const size_t lcid );
+  void set_lcid( const index lcid );
 
   /**
    * Returns the local connection ID.
    */
-  size_t get_lcid() const;
+  index get_lcid() const;
 
   /**
    * Sets the rank.
    */
-  void set_rank( const unsigned int rank );
+  void set_rank( const thread rank );
 
   /**
    * Returns the rank.
    */
-  unsigned int get_rank() const;
+  thread get_rank() const;
 
   /**
    * Sets the target ID.
    */
-  void set_tid( const unsigned int tid );
+  void set_tid( const thread tid );
 
   /**
    * Returns the target ID.
    */
-  unsigned int get_tid() const;
+  thread get_tid() const;
 
   /**
    * Sets the synapse-type ID.
    */
-  void set_syn_id( const unsigned char syn_id );
+  void set_syn_id( const synindex syn_id );
 
   /**
    * Returns the synapse-type ID.
    */
-  unsigned char get_syn_id() const;
+  synindex get_syn_id() const;
 
   /**
    * Sets whether Target is processed.
@@ -163,7 +163,7 @@ inline Target::Target( const thread tid,
 }
 
 inline void
-Target::set_lcid( const size_t lcid )
+Target::set_lcid( const index lcid )
 {
   assert( lcid < max_lcid_ );
   // reset corresponding bits using complement of mask and write new
@@ -173,49 +173,49 @@ Target::set_lcid( const size_t lcid )
     | ( static_cast< unsigned long >( lcid ) << lcid_shift );
 }
 
-inline size_t
+inline index
 Target::get_lcid() const
 {
   return ( data_ & lcid_mask ) >> lcid_shift;
 }
 
 inline void
-Target::set_rank( const unsigned int rank )
+Target::set_rank( const thread rank )
 {
   assert( rank < max_rank_ );
   data_ = ( data_ & ( ~rank_mask ) )
     | ( static_cast< unsigned long >( rank ) << rank_shift );
 }
 
-inline unsigned int
+inline thread
 Target::get_rank() const
 {
   return ( data_ & rank_mask ) >> rank_shift;
 }
 
 inline void
-Target::set_tid( const unsigned int tid )
+Target::set_tid( const thread tid )
 {
   assert( tid < max_tid_ );
   data_ = ( data_ & ( ~tid_mask ) )
     | ( static_cast< unsigned long >( tid ) << tid_shift );
 }
 
-inline unsigned int
+inline thread
 Target::get_tid() const
 {
   return ( data_ & tid_mask ) >> tid_shift;
 }
 
 inline void
-Target::set_syn_id( const unsigned char syn_id )
+Target::set_syn_id( const synindex syn_id )
 {
   assert( syn_id < max_syn_id_ );
   data_ = ( data_ & ( ~syn_id_mask ) )
     | ( static_cast< unsigned long >( syn_id ) << syn_id_shift );
 }
 
-inline unsigned char
+inline synindex
 Target::get_syn_id() const
 {
   return ( data_ & syn_id_mask ) >> syn_id_shift;

@@ -253,10 +253,11 @@ always a two-element tuple of floats. In this example, we have grid
 spacings $dx=0.4$ and $dy=0.1$. Changing the extent does not affect
 grid indices.
 
-The components of \lstinline!'extent'! should be numbers that can be
-expressed exactly as binary fractions. This is automatically ensured 
-for integer values. Otherwise, under rare circumstances, subtle 
-rounding errors may occur and trigger an assertion, thus stopping NEST.
+The size of \lstinline!'extent'! in $x$- and $y$-directions should be 
+numbers that can be expressed exactly as binary fractions. This is 
+automatically ensured for integer values. Otherwise, under rare 
+circumstances, subtle rounding errors may occur and trigger an 
+assertion, thus stopping NEST.
 
 \subsection{Setting the center}\label{sec:setcenter}
 
@@ -276,9 +277,9 @@ three layers in Fig.~\ref{fig:layer3}, grid indices run from 0 to 4
 through columns and rows, respectively, even though elements in these
 three layers have different positions in the global coordinate system.
 
-Also the components of \lstinline!'center'! should be numbers that
-can be expressed exactly as binary fractions, see Sec.~\ref{sec:setextent}
-for more information.
+The \lstinline!'center'! coordinates should be numbers that
+can be expressed exactly as binary fractions. For more information, 
+see Sec.~\ref{sec:setextent}.
 
 \subsection{Constructing a layer: an example}\label{sec:fixedlayerexample}
 

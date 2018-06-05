@@ -62,7 +62,7 @@ class TestPairwiseBernoulli(TestParams):
                 ks, p = scipy.stats.kstest(pvalues, 'uniform')
                 self.assertTrue(p > self.stat_dict['alpha2'])
 
-    def testAutapses(self):
+    def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
         N = 10
         conn_params['multapses'] = False
@@ -75,7 +75,11 @@ class TestPairwiseBernoulli(TestParams):
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
         hf.mpi_assert(np.diag(M), np.ones(N), self)
-        hf.nest.ResetKernel()
+
+    def testAutapsesFalse(self):
+        conn_params = self.conn_dict.copy()
+        N = 10
+        conn_params['multapses'] = False
 
         # test that autapses were excluded
         conn_params['p'] = 1.

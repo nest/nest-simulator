@@ -36,8 +36,6 @@ class TestOneToOne(TestParams):
     N2 = N
     N_array = 1000
 
-    # def testErrorMessages(self):
-
     def testConnectivity(self):
         self.setUpNetwork(self.conn_dict)
         # make sure all connections do exist

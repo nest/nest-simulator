@@ -461,13 +461,13 @@ nest::rate_neuron_ipn< TNonlinearities >::handle(
     {
       if ( weight >= 0.0 )
       {
-        B_.delayed_rates_ex_.add_value( delay + i,
-          weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
+        B_.delayed_rates_ex_.add_value(
+          delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
       else
       {
-        B_.delayed_rates_in_.add_value( delay + i,
-          weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
+        B_.delayed_rates_in_.add_value(
+          delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
     }
     ++i;

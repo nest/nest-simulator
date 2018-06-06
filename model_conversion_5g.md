@@ -8,13 +8,14 @@ layout: index
 
 # Updating models from 2.14 or prior to 2.16
 
-With the introduction of the new connection infrastructure of the [5g kernel](https://www.frontiersin.org/articles/10.3389/fninf.2018.00002/full), 
+With the introduction of the new connection infrastructure of the 
+[5g kernel](https://www.frontiersin.org/articles/10.3389/fninf.2018.00002/full), 
 neuron, synapse and device models need to be slightly adapted from prior 
 versions to be compatible with the latest release (2.16). The following 
 describes all necessary changes. If you still encounter issues after 
-following these instructions, please contact the NEST User mailing list 
-(http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user), create 
-an [issue on GitHub](https://github.com/nest/nest-simulator/issues), or 
+following these instructions, please contact the
+[NEST User mailing list](http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user), 
+create an [issue on GitHub](https://github.com/nest/nest-simulator/issues), or 
 directly submit a pull request, updating these instructions.
 
 ## Converting rate-neuron models

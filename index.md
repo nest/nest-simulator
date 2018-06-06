@@ -79,7 +79,7 @@ neuron, synapse and device models need to be slightly adapted from prior
 versions to be compatible with the latest release (2.16). In the following we describe 
 all necessary changes:
 
-[Updating models from 2.14 or prior to 2.16](model_conversion_5g.md)
+* [Updating models from 2.14 or prior to 2.16](model_conversion_5g.md)
 
 ## Updating models for NEST 2.4 or prior to 2.6 or later
 

@@ -65,6 +65,7 @@ class TestOneToOne(TestParams):
             elif label == 'delay':
                 self.param_array = np.arange(1, self.N_array + 1) * 0.1
             syn_params[label] = self.param_array
+            hf.nest.ResetKernel()
             self.setUpNetwork(self.conn_dict, syn_params,
                               N1=self.N_array, N2=self.N_array)
             M_nest = hf.get_weighted_connectivity_matrix(

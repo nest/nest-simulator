@@ -63,6 +63,7 @@ class TestAllToAll(TestParams):
                     1, self.N1_array * self.N2_array + 1
                 ).reshape(self.N2_array, self.N1_array) * 0.1
             syn_params[label] = self.param_array
+            hf.nest.ResetKernel()
             self.setUpNetwork(self.conn_dict, syn_params,
                               N1=self.N1_array, N2=self.N2_array)
             M_nest = hf.get_weighted_connectivity_matrix(

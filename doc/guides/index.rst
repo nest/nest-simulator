@@ -2,19 +2,18 @@ Guides
 ==============
 
 Here you can find detailed look into a variety of topics in NEST.
-(Maybe these do not all belong together but should be grouped somehow ...)
 
 .. toctree::
     :maxdepth: 1
 
-    analog-recording-with-multimeter
-    connection-management
-    parallel-computing
-    random-numbers
-    scheduling-and-simulation-flow
-    simulations-with-gap-junctions
-    simulations-with-precise-spike-times
-    using-nest-with-music
+    analog_recording_with_multimeter
+    connection_management
+    parallel_computing
+    random_numbers
+    scheduling_and_simulation_flow
+    simulations_with_gap_junctions
+    simulations_with_precise_spike_times
+    using_nest_with_music
 
 .. toctree::
    :maxdepth: 1

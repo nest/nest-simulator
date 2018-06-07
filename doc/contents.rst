@@ -10,13 +10,13 @@ Table of Contents
    :caption: User Documentation
 
    download
-   installation
-   getting-started
+   installation/index
+   getting_started
    tutorials/index
-   guides/index
    examples/index
-   getting-help
-   reference_material/quickref
+   guides/index
+   getting_help
+   ref_material/index
 
 .. toctree::
    :maxdepth: 2
@@ -26,7 +26,6 @@ Table of Contents
    Publications <http://www.nest-simulator.org/publications/>
    Developer Space <https://nest.github.io/nest-simulator/>
    NEST-Initiative <http://www.nest-initiative.org/>
-   Contact Us <http://www.nest-simulator.org/community/>
 
 .. toctree::
    :maxdepth: 2

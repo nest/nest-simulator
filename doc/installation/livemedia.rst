@@ -1,4 +1,4 @@
-NEST LIVE MEDIA installation
+NEST LIVE MEDIA Installation
 =============================
 
 
@@ -27,8 +27,7 @@ NEST image setup
 
 * Download the `NEST live medium <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.12.0.ova>`_
 
-* Start Virtual Box and import the virtual machine image "lubuntu-16.04_nest-
-2.12.0.ova" (**File** > **Import Appliance**)
+* Start Virtual Box and import the virtual machine image "lubuntu-16.04_nest-2.12.0.ova" (**File** > **Import Appliance**)
 
 * Once imported, you can run the NEST image
 
@@ -47,9 +46,10 @@ Notes
 
 * To set the correct language layout for your keyboard (e.g., from "US" to "DE"), you can use the program "lxkeymap", which you start by typing "lxkeymap" in the terminal.
 
-Cyg`win
+Cygwin
 ~~~~~~~
 
-Cywin is a software layer which emulates Unix system calls. NEST should compile and install under Cygwin with the generic installation instructions, but we have not tested this for a long time and do not support NEST under Cygwin at present. Compilation under Cygwin is very slow, but the execution times are comparable to an equivalent Linux installation.
+Cygwin is a software layer which emulates Unix system calls. NEST should compile and install under Cygwin with the generic installation instructions, but we have not tested this for a long time and do not support NEST under Cygwin at present. 
+Compilation under Cygwin is very slow, but the execution times are comparable to an equivalent Linux installation.
 
 

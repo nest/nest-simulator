@@ -1,4 +1,4 @@
-Download & Releases
+Download NEST
 ===================
 
 NEST is available under the :doc:`GNU General Public License 2 or later <license>`. This means that you can
@@ -7,12 +7,8 @@ NEST is available under the :doc:`GNU General Public License 2 or later <license
 -  modify and improve NEST according to your needs,
 -  distribute NEST to others under the same license.
 
-.. sidebar:: See Also
-
-   :doc:`Installation Instructions <installation/index>`
-
-Download current version of NEST here:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Download the current version of NEST here:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `Current Release NEST 2.14.0 <https://github.com/nest/nest-simulator/archive/v2.14.0.tar.gz>`_
 
@@ -23,11 +19,11 @@ Get the latest developer version
 
 `Current developer version <https://github.com/nest/nest-simulator>`_
 
-Get the NEST Live Media for Virtual Machines
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Download the NEST Live Media for Virtual Machines
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Live media is available in the OVA format, and is suitable, for example, for importing into VirtualBox. 
-If you run Windows, this is the option for you or if you just want to run NEST without installing it on your computer.
+If you run **Windows**, this is the option for you or if you just want to run NEST *without installing* it on your computer.
 
 `NEST Live Media 2.14.0 <http://www.nest-simulator.org/downloads/gplreleases/nest-live.ova>`_ (OVA, 2.5G)
 
@@ -39,17 +35,16 @@ See the :doc:`install instructions for Live Media here <installation/livemedia>`
 Previous Releases
 ~~~~~~~~~~~~~~~~~~~
 We continuously aim to improve NEST and implement features and fix bugs with every new version;
-Thus, we strongly encourage our users to use the most recent version of NEST. However,
-if you do need an older version you can find `all NEST releases here  <https://github.com/nest/nest-simulator/releases/tag/v2.12.0>`_
-
-And here you can find `Older Versions of Live Media`_ 
+thus, we strongly encourage our users to use the most recent version of NEST. However,
+if you do need an older version you can find `all NEST releases here <https://github.com/nest/nest-simulator/releases/tag/v2.12.0>`_ 
+and you can find `Older Versions of Live Media`_ below. 
 
 Citing NEST
 -----------
 
-Please cite NEST if you use it in your work and :doc:`let us know <contact>` about your publications that used NEST, so we
-will add them to our `publication list <http://www.nest-simulator.org/publications/>`__; this will help make them
-visible to potential readers.
+Please cite NEST if you use it in your work. You can :doc:`let us know <community>` about your publications that used NEST, and we
+will add them to our `publication list <http://www.nest-simulator.org/publications/>`_; this will help make them
+visible to potential readers. `Download our logo here <https://github.com/nest/nest-simulator/tree/master/extras/logos>`_
 
 
 If you use NEST 2.14.0, please cite it as **Peyser, Alexander et al.

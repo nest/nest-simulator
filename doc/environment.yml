@@ -1,0 +1,65 @@
+name: doc
+channels:
+- defaults
+dependencies:
+- alabaster
+- asn1crypto
+- babel
+- ca-certificates
+- certifi
+- cffi
+- chardet
+- cmake
+- commonmark
+- cryptography
+- cython==0.23.4
+- docutils
+- future
+- gsl
+- idna
+- imagesize
+- ipykernel
+- jinja2
+- jupyter
+- libedit
+- libffi
+- libgcc-ng
+- libstdcxx-ng
+- markupsafe
+- matplotlib
+- ncurses=6.0
+- numpy
+- openssl
+- path.py
+- pip
+- pycparser
+- pygments
+- pyopenssl
+- pysocks
+- pytest
+- python
+- pytz
+- readline=7.0
+- requests
+- setuptools
+- scipy
+- six
+- snowballstemmer
+- sphinx==1.5
+- sphinxcontrib
+- sphinxcontrib-websupport
+- sphinx_rtd_theme
+- sqlite
+- statsmodels
+- tk
+- typing
+- urllib3
+- wheel
+- xz
+- zlib
+
+- pip:
+  - recommonmark==0.4.0
+  - sphinx-gallery
+  - nbsphinx
+  - Image

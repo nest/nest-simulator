@@ -679,6 +679,7 @@ class TestGIDCollection(unittest.TestCase):
         GetConnection works as expected
         """
 
+        nest.SetKernelStatus({'sort_connections_by_source': False})
         n = nest.Create('iaf_psc_alpha', 3)
         nest.Connect(n, n)
 

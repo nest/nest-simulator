@@ -301,6 +301,8 @@ class BasicsTestCase(unittest.TestCase):
                  'synapse_model': 'stdp_synapse',
                  'mask': {'grid': {'rows': 2, 'columns': 2}}}
         nest.ResetKernel()
+        nest.SetKernelStatus({'sort_connections_by_source': False})
+
         l = topo.CreateLayer(ldict)
 
         # connect l -> l
@@ -340,6 +342,9 @@ class BasicsTestCase(unittest.TestCase):
                  'extent': [1., 1.], 'edge_wrap': False}
         cdict = {'connection_type': 'divergent',
                  'synapse_model': 'stdp_synapse'}
+
+        nest.SetKernelStatus({'sort_connections_by_source': False})
+
         l = topo.CreateLayer(ldict)
         topo.ConnectLayers(l, l, cdict)
 
@@ -349,6 +354,8 @@ class BasicsTestCase(unittest.TestCase):
 
         # Test positions on a grid, we can calculate what they should be
         nest.ResetKernel()
+        nest.SetKernelStatus({'sort_connections_by_source': False})
+
         x_extent = 1.
         y_extent = 1.
         no_rows = 3
@@ -384,6 +391,8 @@ class BasicsTestCase(unittest.TestCase):
         # Test that we get correct positions when we send in a positions array
         # when creating the layer
         nest.ResetKernel()
+        nest.SetKernelStatus({'sort_connections_by_source': False})
+
 
         positions = [(numpy.random.uniform(-0.5, 0.5),
                       numpy.random.uniform(-0.5, 0.5)) for _ in range(50)]

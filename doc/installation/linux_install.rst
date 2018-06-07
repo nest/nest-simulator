@@ -6,9 +6,8 @@ Standard Installation
 
 The following are the basic steps to compile and install NEST from source code:
 
-* `Download NEST <download.md>`_ if you have not done so. 
 
-* We recommend the following additional packages to be installed for most cases (see also `Dependencies`_ section)
+* For most users, the following additional packages will likely be needed (see also the `Dependencies`_ section)
 
 .. code-block:: bash
 
@@ -16,7 +15,8 @@ The following are the basic steps to compile and install NEST from source code:
     libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy \ 
     python-matplotlib ipython openmpi-bin libopenmpi-dev python-nose
 
-* Unpack the tarball::
+* Unpack the tarball
+.. code-block:: bash
 
     tar -xzvf nest-simulator-x.y.z.tar.gz
 
@@ -40,9 +40,6 @@ You may need additional ``cmake`` options and you can find the configuration opt
 
     make
     make install
-
-* Run tests::
-
     make installcheck
 
 NEST should now be successfully installed on your system. You should now be able to ``import nest``  from a python or ipython shell.
@@ -53,8 +50,7 @@ NEST should now be successfully installed on your system. You should now be able
 
  to set the necessary environment variables. You may want to include this line in your ``.bashrc`` file, so that the environment variables are set automatically.
 
-.. seealso:: See the `Getting started <getting-started.md>`_ pages or the `Intro to PyNEST <tutorials/intropynest>`_ to
-    find out how to get going with NEST
+See the :doc:`Getting started <getting_started>` pages to find out how to get going with NEST or check out our :doc:`example networks <example/index>`.
 
 Dependencies
 -------------
@@ -63,7 +59,7 @@ To build NEST, you need a recent version of `CMake <https://cmake.org>`_ and `li
 
 .. note:: NEST requires at least version v2.8.12 of cmake, but we recommend v3.4 or later. You can type ``cmake --version`` on the commandline to check your current version.
 
-The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommended if you use NEST interactively **without Python**. Although most Linux distributions have GNU readline installed, you still need to install its development package if want to use GNU readline with NEST. GNU readline itself depends on [libncurses](http://www.gnu.org/software/ncurses/) (or libtermcap on older systems). Again, the development packages are needed to compile NEST.
+The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommended if you use NEST interactively **without Python**. Although most Linux distributions have GNU readline installed, you still need to install its development package if want to use GNU readline with NEST. GNU readline itself depends on `libncurses <http://www.gnu.org/software/ncurses/>`_ (or libtermcap on older systems). Again, the development packages are needed to compile NEST.
 
 The `GNU Scientific Library <http://www.gnu.org/software/gsl/>`_ is needed by several neuron models, in particular those with conductance based synapses. If you want these models, please install the GNU Scientific Library along with its development packages. 
 

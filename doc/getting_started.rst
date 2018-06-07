@@ -1,17 +1,15 @@
-Getting started
-===============
+Getting Started
+================
 
 If you are new to NEST, we highly recommend you read the following text to get 
 a better understanding of how NEST works. Then check out our :doc:`PyNEST tutorial <tutorials/index>`,
 which will explain how to build your first neural network simulation in NEST.
 
-:doc:`Download` and :doc:`Install <installation>` NEST. 
-
 
 .. sidebar:: See Also
  
     * :doc:`List of Models in NEST <models/index>`
-    * :doc:`Create your own model <create-model>`
+    * :doc:`Create your own model <models/create_model>`
     * :doc:`Examples of Network Models <examples/index>`
 
 NEST - a neural network simulator
@@ -39,7 +37,7 @@ experiment with the difference that it takes place inside the computer's memory
 rather than in the physical world.
 
 As the experimenter, you need a clear idea of *what* you want to learn from the experiment.
-In the context of a network `simulation <Simulation>`_, this means that you have to know
+In the context of a network `Simulation`_, this means that you have to know
 *which input* you want to give to your network and *which output* you expect.
 
 The neural system is defined by a potentially large number of neurons and their
@@ -81,11 +79,11 @@ Fundamentally, you can build a basic network with the following functions::
     # Create the device to stimulate or record simulation
     device = nest.Create("device_name")
 
-    # Modify properties the neuron and device
+    # Modify properties of the neuron and device
     nest.SetStatus(neuron, {"key" : value})
     nest.SetStatus(device, {"key" : value})
 
-    # Tell NEST how they are connected to each other, (synapse properties can be
+    # Tell NEST how they are connected to each other (synapse properties can be
     # added here) 
     nest.Connect(device, neuron, syn_spec={"key": [value1, value2]})
 
@@ -93,12 +91,7 @@ Fundamentally, you can build a basic network with the following functions::
     nest.Simulate(time_in_ms)
 
 NEST is extensible and new models for neurons, synapses, and devices can be
-added. If you would like to create your own model, check out the `NESTML Github
-page <https://github.com/nest/nestml>`_. NESTML uses a Python based modeling language to make
-it easier to create models in NEST. The project is still under development so
-not all types of models have been implemented. You can find details about model 
-creation using our C++ source code here.
-
+added. See how you can :doc:`create your own model <models/create_model>`.
 
 Connections
 ~~~~~~~~~~~~
@@ -123,7 +116,7 @@ able to deliver this information. Likewise, if you want to send specific input
 to the network, you need a device which delivers this input.
 
 Devices have a built-in timer which controls the period they are active. Outside
-this interval, a device will remain siltent. The timer can be configured using
+this interval, a device will remain silent. The timer can be configured using
 the command ``SetStatus``.
 
 Simulation
@@ -134,7 +127,7 @@ of size ``dt``, set using the property ``resolution`` of the root node. In each 
 slice, all nodes in the system are updated and pending events are delivered.
 
 The simulation is run by calling the command ``Simulate(t)``, where ``t`` is the
-simulation time in milliseconds. See below for list of physi`cal units in NEST.
+simulation time in milliseconds. See below for list of physical units in NEST.
 
 Physical units in NEST
 -----------------------

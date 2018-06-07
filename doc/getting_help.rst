@@ -10,22 +10,7 @@ Have a specific question or problem with NEST?
 
 * Check out the :doc:`FAQs <faqs/index>` for common issues.
 
-If your question is not on there, ask our `Mailing List <http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user>`_.
-
-The NEST User Mailing list is intended to be a forum for questions on
-the usage of NEST, the exchange of code and general discussions about
-NEST. The philosophy is that all users profit by sharing their
-experience. All NEST core developers are subscribed to this list and
-will participate in the discussions as far as time allows.
-
-| Subscription
-| http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user
-
-
-
-| Archive (only subscribed users)
-| http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user
-
+If your question is not on there, ask our :doc:`Mailing List <community>`.
 
 Getting help on the command line interface
 -------------------------------------------
@@ -35,31 +20,33 @@ Getting help on the command line interface
 
 * To access the High-level Python API reference material you can use the commands::
 
-     #list all functions and attributes
+     # list all functions and attributes
      dir(nest)
+
      # Get docstring for function in python
      help('nest.FunctionName')
-     #or in ipython 
+
+     # or in ipython 
      nest.FunctionName?
 
-* To access a specific C++ or SLI reference page for an object, command or parameter you can use the command 
+* To access a specific C++ or SLI reference page for an object, command or parameter you can use the command::
 
-    ``nest.help('name')``
+    nest.help('name')
 
 Model Information
 ~~~~~~~~~~~~~~~~~~~
 
-* To get a complete list of the models available in NEST type
+* To get a complete list of the models available in NEST type::
 
-     ``nest.Models()``
+    nest.Models()
 
-    * To get a list of only neuron models use 
+   * To get a list of only neuron models use::
 
-    ``nest.Models(mtype='nodes', sel=None)``
+    nest.Models(mtype='nodes', sel=None)
 
-    * To get a list of only synapse models use 
+   * To get a list of only synapse models use:: 
 
-    ``nest.Models(mtype='synapses', sel=None)``
+    nest.Models(mtype='synapses', sel=None)
 
 * To get details on model parameters and usage use::
 

@@ -10,14 +10,6 @@ NEST is installed with ``cmake`` (at least v2.8.12). In the simplest case, the c
 should build and install NEST to ``/install/path``, which should be an absolute
 path. 
 
-NO-DOC option
---------------
-
-On systems where help extraction is slow, the call to ``make install`` can be replaced
-by ``make install-nodoc`` to skip the generation of help pages and indices. Using this
-option can help developers to speed up development cycles, but is not recommended for
-production use as it renders the built-in help system useless.
-
 Choice of CMake Version
 ------------------------
 
@@ -110,6 +102,15 @@ Change compilation behavior::
     -Dwith-defines=<list;of;defines>          Additional defines, e.g. '-DXYZ=1'.
                                               Separate multiple defines by ';'. [default OFF]
 
+NO-DOC option
+--------------
+
+On systems where help extraction is slow, the call to ``make install`` can be replaced
+by ``make install-nodoc`` to skip the generation of help pages and indices. Using this
+option can help developers to speed up development cycles, but is not recommended for
+production use as it renders the built-in help system useless.
+
+
 Configuring NEST for Distributed Simulation with MPI
 --------------------------------------------------------
 
@@ -120,6 +121,7 @@ Configuring NEST for Distributed Simulation with MPI
   3. If that does not work, but you know the correct compiler wrapper for 
      your machine, try configure ``-DMPI_CXX_COMPILER=myC++_CompilerWrapper
      -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON``
+ 4. Sorry, you need to fix your MPI installation. 
  
 Tell NEST about your MPI setup
 ------------------------------
@@ -130,17 +132,17 @@ defining the function mpirun in your ``~/.nestrc`` file. This file
 already contains an example implementation that should work with
 `OpenMPI <http://www.openmpi.org>`__ library.
 
- 4. Sorry, you need to fix your MPI installation. 
 
 Disabling the Python Bindings (PyNEST)
 ----------------------------------------
 
-Please see also the file pynest/README.md in the documentation directory. If you
-are impatient, use::
+To disable Python bindings use::
 
     -Dwith-python=OFF
 
-as an argument to `cmake`.
+as an argument to ``cmake``.
+
+Please see also the file :doc:`../pynest/README.md` in the documentation directory for details.
 
 Python3 Binding (PyNEST)
 --------------------------
@@ -168,7 +170,7 @@ and its corresponding libraries correctly. To circumvent such a problem followin
         -DPYTHON_INCLUDE_DIR=/usr/include/python3.4 \
         -DPYTHON_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.4m \
         </path/to/NEST/src>
-        
+
 Compiling for Apple OSX/macOS
 =============================
 
@@ -177,7 +179,7 @@ with macOS. Therefore, you first need to install GCC 6.3 or later. The easiest
 way to install all required software is using Homebrew (from http://brew.sh)::
 
   brew install gcc cmake gsl open-mpi libtool
-  
+
 will install all required prequisites. You can then configure NEST with ::
 
   cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
@@ -213,10 +215,5 @@ Set up the integrated helpdesk
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The command ``helpdesk`` needs to know which browser to launch in order to display the help pages. The browser is set as an option of ``helpdesk``. Please see the file ``~/.nestrc`` for an example setting ``firefox`` as browser. Please note that the command ``helpdesk`` does not work if you have compiled NEST with MPI support, but you have to enter the address of the helpdesk (``file:///install/path/share/doc/nest/index.html``) manually into the browser. Please replace ``/install/path`` with the path under which NEST is installed.
-
-Tell NEST about your MPI setup
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you compiled NEST with support for distributed computing via MPI, you have to tell it how your ``mpirun``/``mpiexec`` command works by defining the function mpirun in your ``~/.nestrc`` file. This file already contains an example implementation that should work with `OpenMPI <http://www.openmpi.org/>`_.
 
 

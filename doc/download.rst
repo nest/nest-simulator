@@ -27,7 +27,7 @@ If you run **Windows**, this is the option for you or if you just want to run NE
 
 `NEST Live Media 2.14.0 <http://www.nest-simulator.org/downloads/gplreleases/nest-live.ova>`_ (OVA, 2.5G)
 
-`Checksum <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.14.0.ova.sha512sum>`_
+`Checksum 2.14.0 <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.14.0.ova.sha512sum>`_
 
 See the :doc:`install instructions for Live Media here <installation/livemedia>`
 
@@ -91,24 +91,24 @@ Older Versions of Live Media
 
 - Ubuntu 16.04 Live Media with NEST 2.12.0
 
-    - `Download <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.12.0.ova>`_
+    - `Download 2.12.0 <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.12.0.ova>`_
       (OVA, 3.2G)
 
-    - `Checksum <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.12.0.ova.sha512sum>`_ 
+    - `Checksum 2.12.0 <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.12.0.ova.sha512sum>`_ 
       (sha512sum)
 
 -  Ubuntu 16.04 Live Media with NEST 2.10.0
 
-   -  `Download <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.10.0.ova>`_
+   -  `Download 2.10.0 <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.10.0.ova>`_
       (OVA, ~3.7G)
 
-   -  `Checksum <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.10.0.ova.sha512sum>`_
+   -  `Checksum 2.10.0 <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.10.0.ova.sha512sum>`_
       (sha512sum)
 
 - Ubuntu 15.10 Live Media with NEST 2.8.0
 
-   -  `Download <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova>`_
+   -  `Download 2.8.0 <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova>`_
       (OVA, ~2.5G)
 
-   -  `Checksum <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova.sha512sum>`_
+   -  `Checksum 2.8.0 <http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova.sha512sum>`_
       (sha512sum)

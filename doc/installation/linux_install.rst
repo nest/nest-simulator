@@ -2,7 +2,7 @@ Ubuntu / Debian Installation
 ===============================
 
 Standard Installation
---------------------
+------------------------
 
 The following are the basic steps to compile and install NEST from source code:
 
@@ -16,6 +16,7 @@ The following are the basic steps to compile and install NEST from source code:
     python-matplotlib ipython openmpi-bin libopenmpi-dev python-nose
 
 * Unpack the tarball
+
 .. code-block:: bash
 
     tar -xzvf nest-simulator-x.y.z.tar.gz
@@ -50,7 +51,7 @@ NEST should now be successfully installed on your system. You should now be able
 
  to set the necessary environment variables. You may want to include this line in your ``.bashrc`` file, so that the environment variables are set automatically.
 
-See the :doc:`Getting started <getting_started>` pages to find out how to get going with NEST or check out our :doc:`example networks <example/index>`.
+See the :doc:`Getting started <../getting_started>` pages to find out how to get going with NEST or check out our :doc:`example networks <../examples/index>`.
 
 Dependencies
 -------------

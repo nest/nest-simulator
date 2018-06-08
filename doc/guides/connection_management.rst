@@ -68,12 +68,16 @@ and its parameters, such as in- or out-degrees, is required.
 one-to-one
 ----------
 
+.. image:: ../_static/img/One_to_one.png
+     :width: 200px
+     :align: center
+
 The ith node in ``pre`` is connected to the ith node in ``post``. The
 node lists pre and post have to be of the same length.
 
 Example:
 
-|One\_to\_one| one-to-one connections
+One-to-one connections
 
 ::
 
@@ -98,7 +102,9 @@ Example:
 all-to-all
 ----------
 
-|all-to-all connections| all-to-all connections
+.. image:: ../_static/img/All_to_all.png
+     :width: 200px
+     :align: center
 
 Each node in ``pre`` is connected to every node in ``post``. Since
 'all\_to\_all' is the default, 'rule' doesn't need to specified.
@@ -115,7 +121,9 @@ Example:
 fixed-indegree
 ~~~~~~~~~~~~~~
 
-|fixed-indegree connections| fixed-indegree connections
+.. image:: ../_static/img/Fixed_indegree.png
+     :width: 200px
+     :align: center
 
 The nodes in ``pre`` are randomly connected with the nodes in ``post``
 such that each node in ``post`` has a fixed ``indegree``.
@@ -133,7 +141,10 @@ Example:
 fixed-outdegree
 ^^^^^^^^^^^^^^^
 
-|Fixed\_outdegree| fixed-outdegree connections
+
+.. image:: ../_static/img/Fixed_outdegree.png
+     :width: 200px
+     :align: center
 
 The nodes in ``pre`` are randomly connected with the nodes in ``post``
 such that each node in ``pre`` has a fixed ``outdegree``.
@@ -361,7 +372,6 @@ support arrays or lists as input parameter other than ``pre`` and
 One-to-one connections
 ~~~~~~~~~~~~~~~~~~~~~~
 
-|image4| one-to-one connections
 
 ``Connect(pre, post, params=None, delay=None, model='static_synapse')``:
 Make one-to-one connections of type *model* between the nodes in *pre*
@@ -410,7 +420,11 @@ Example new connection routine:
 Convergent connections
 ~~~~~~~~~~~~~~~~~~~~~~
 
-|convergent connections| convergent connections
+
+.. image:: ../_static/img/Convergent_connect.png
+     :width: 200px
+     :align: center
+
 
 ``ConvergentConnect(pre, post, weight=None, delay=None, model='static_synapse')``:
 Connect all neurons in *pre* to each neuron in *post*. *pre* and *post*
@@ -458,7 +472,10 @@ Example new connection routine:
 Divergent connections
 ~~~~~~~~~~~~~~~~~~~~~
 
-|Divergent\_connect| divergent connections
+
+.. image:: ../_static/img/Divergent_connect.png
+     :width: 200px
+     :align: center
 
 ``DivergentConnect(pre, post, weight=None, delay=None, model='static_synapse')``:
 Connect each neuron in *pre* to all neurons in *post*. *pre* and *post*
@@ -526,7 +543,9 @@ using standard integrate-and-fire neurons as presynaptic nodes and a
 multi-compartment integrate-and-fire neuron (``iaf_cond_alpha_mc``) as
 post-synaptic node.
 
-|Receptor types| Receptor types
+.. image:: ../_static/img/Receptor_types.png
+     :width: 200px
+     :align: center
 
 ::
 
@@ -678,13 +697,4 @@ can then be given as arguments to the ``SetStatus()`` functions:
       'delay': 1.0,
       'source': 1,
       'receptor': 0}]
-
-.. |One\_to\_one| image:: ./img/One_to_one.png
-.. |all-to-all connections| image:: ./img/All_to_all.png
-.. |fixed-indegree connections| image:: ./img/Fixed_indegree.png
-.. |Fixed\_outdegree| image:: ./img/Fixed_outdegree.png
-.. |image4| image:: ./img/One_to_one.png
-.. |convergent connections| image:: ./img/Convergent_connect.png
-.. |Divergent\_connect| image:: ./img/Divergent_connect.png
-.. |Receptor types| image:: ./img/Receptor_types.png
 

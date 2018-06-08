@@ -3,7 +3,7 @@ Connect two NEST simulations using MUSIC
 
 Let’s look at an example of two NEST simulations connected through
 MUSIC. We’ll implement the simple network in figure [fig:neuronmusic3]
-from :doc:`the introduction to this tutorial <music_tutorial_useMe>`. 
+from :doc:`the introduction to this tutorial <music_tutorial_1>`. 
 
 We need a sending process, a receiving process and a MUSIC
 configuration file:

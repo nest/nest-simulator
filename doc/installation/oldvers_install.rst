@@ -3,11 +3,11 @@ Installation instructions for NEST 2.10 and earlier
 ====================================================
 
 .. note:: These instructions contain only information on points that differ from
- current versions of NEST. :doc:`See the installation page for details <installation.rst>`_
+ current versions of NEST. :doc:`See the installation page for details <installation>`.
 
 The following are the basic steps to compile and install NEST from source code:
 
-*  :doc:`Download NEST <download.rst>`
+*  :doc:`Download NEST <../download.rst>`
 
 * Unpack the tarball::
 
@@ -35,7 +35,7 @@ with appropriate configuration options
 Dependencies
 ~~~~~~~~~~~~~
 
-The `GNU readline library <http://www.gnu.org/software/readline/`_ is recommended
+The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommended
 if you use NEST interactively without Python. Although most Linux distributions
 have GNU readline installed, you still need to install its development package
 if want to use GNU readline with NEST. GNU readline itself depends on
@@ -104,7 +104,7 @@ Then configure NEST using::
 Configuration options
 ---------------------------
 
-If you need special features, like e.g. support for :doc:`distributed computing <guides/parallel-computing.rst>`,
+If you need special features, like e.g. support for :doc:`distributed computing <../guides/parallel_computing>`,
 you can add command line switches to the call to configure. ``./configure --help``
 will show you all available options. For more information on the installation of
 NEST, please see the file INSTALL that is included in the distribution archive

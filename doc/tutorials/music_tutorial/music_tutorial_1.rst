@@ -114,7 +114,7 @@ aggregate output of many neurons.
    :width: 200px
    :align: center
 
-    A: Two connected neurons :math:`N_a` and :math:`N_b`, with delay
+   A: Two connected neurons :math:`N_a` and :math:`N_b`, with delay
    :math:`d_n` and weight :math:`w_n`. B: We’ve added a MUSIC connection
    with an output proxy :math:`P_a` on one end, and an input proxy
    :math:`P_b` on the other. 

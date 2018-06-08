@@ -41,7 +41,7 @@ What is the difference between :math:`\texttt{Set}` on line 2 and
 :math:`\texttt{def}` on line 3? Just the order of the arguments: with
 :math:`\texttt{Set}` you first give the object, then the name you want
 to associate with it. With :math:`\texttt{put}` you give the name first,
-then the object [2]_. Both are used extensively so you need to be aware
+then the object.  Both are used extensively so you need to be aware
 of them.
 
 On line 6 we create a MUSIC output proxy with port name

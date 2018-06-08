@@ -4,6 +4,11 @@ Examples
 Here you'll find example networks demonstrating different implementations of
 of models in NEST.
 
+.. toctree::
+   :hidden:
+   :glob:
+
+   *
 
 
 Basic Networks
@@ -24,7 +29,7 @@ Examples using Rate Models
 -  :doc:`Network of linear rate neurons <lin_rate_ipn_network>` - simulate populations of lin_rate_ipn neurons
 
 Networks with Multicompartment Models
-------------------------------------
+----------------------------------------
 
 -  :doc:`Multi-compartment Neuron Example <mc_neuron>` - using the
    three-compartment :doc:`iaf_cond_alpha_mc </quickref>` neuron
@@ -84,7 +89,7 @@ Examples using the Integrate and Fire Model
 Examples of Connection Setups
 ------------------------------
 
-    See our detailed guide on :doc:`Connection Management </guides/connection-management>`
+    See our detailed guide on :doc:`Connection Management </guides/connection_management>`
 
 -  :doc:`Using CSA for Connection Setup <csa_example>` - set up simple
    netowrk using the Connection Set Algebra
@@ -94,7 +99,7 @@ Examples of Connection Setups
 Examples with Gap Junctions
 ----------------------------
 
-    See our detailed guide on :doc:`Simulations with Gap Junctions </guides/simulations-with-gap-junctions>`
+   See our detailed guide on :doc:`Simulations with Gap Junctions </guides/simulations_with_gap_junctions>`
 
 -  :doc:`Example of Inhibitory Network with Gap
    Junctions <gap_junctions_inhibitory_network>`

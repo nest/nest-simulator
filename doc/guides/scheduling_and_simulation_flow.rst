@@ -20,13 +20,13 @@ outside at time points that are multiples of the simulation resolution.
 In contrast to the update of nodes, an event-driven approach is used for
 the synapses, meaning that they are only updated when an event is
 transmitted through them (`Morrison et al.
-2005 <http://dx.doi.org/10.1162/0899766054026648>`__). To speed up the
+2005 <http://dx.doi.org/10.1162/0899766054026648>`_). To speed up the
 simulation and allow the efficient use of computer clusters, NEST uses a
-`hybrid parallelization strategy <parallel-computing.md>`__. The
+:doc:`hybrid parallelization strategy <parallel_computing>`. The
 following figure shows the basic loop that is run upon a call to
 ``Simulate``:
 
-.. figure:: ./img/simulation_loop-241x300.png
+.. figure:: ../_static/img/simulation_loop-241x300.png
    :alt: Simulation Loop
 
    Simulation Loop
@@ -45,9 +45,8 @@ the largest delay in the network. From this definition follows that no
 node can influence another node during at least a time of *dmin*, i.e.
 the elements are effectively decoupled for this interval.
 
-.. figure:: ./img/time_definitions-300x61.png
-   :alt: Definitions of the minimimum delay and the simulation
-   resolution.
+.. figure:: ../_static/img/time_definitions-300x61.png
+   :alt: Definitions of the minimimum delay and the simulation resolution
 
    Definitions of the minimimum delay and the simulation resolution.
 

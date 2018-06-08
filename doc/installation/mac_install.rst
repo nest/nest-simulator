@@ -66,7 +66,9 @@ Installation instructions here have been tested under OS X 10.11 *El Capitan* an
               -DCMAKE_C_COMPILER=gcc-6 \
               -DCMAKE_CXX_COMPILER=g++-6 \
               </path/to/NEST/src>
-  .. code::
+
+  .. code-block:: bash
+  
         make -j4         # -j4 builds in parallel using 4 processes
         make install
         make installcheck
@@ -91,7 +93,9 @@ The following should work if you install dependencies using MacPorts (only steps
               -DCMAKE_C_COMPILER=/opt/local/bin/gcc-mp-6 \
               -DCMAKE_CXX_COMPILER=/opt/local/bin/g++-mp-6 \
               </path/to/NEST/src>
-  .. code::
+
+  .. code-block:: bash
+
         make -j4         # -j4 builds in parallel using 4 processes
         make install
         make installcheck

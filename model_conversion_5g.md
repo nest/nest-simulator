@@ -10,7 +10,7 @@ layout: index
 
 With the introduction of the new connection infrastructure of the 
 [5g kernel](https://www.frontiersin.org/articles/10.3389/fninf.2018.00002/full), 
-neuron, synapse and device models need to be slightly adapted from prior 
+rate neuron, synapse and device models need to be slightly adapted from prior 
 versions to be compatible with the latest release (2.16). The following 
 describes all necessary changes. If you still encounter issues after 
 following these instructions, please contact the

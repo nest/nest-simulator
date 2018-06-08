@@ -72,16 +72,16 @@ can either be static or implement synaptic plasticity rules such as
 * [Synapses in NEST: An overview](synapses_overview)
 * [Developing synapse models](synapse_models)
 
-## Updating models from 2.14 or prior to 2.16
+## Updating Models for the 5g Kernel
 
 With the introduction of the new connection infrastructure of the [5g kernel](https://www.frontiersin.org/articles/10.3389/fninf.2018.00002/full), 
-neuron, synapse and device models need to be slightly adapted from prior 
+rate neuron, synapse and device models need to be slightly adapted from prior 
 versions to be compatible with the latest release (2.16). In the following we describe 
 all necessary changes:
 
 * [Updating models from 2.14 or prior to 2.16](model_conversion_5g.md)
 
-## Updating models for NEST 2.4 or prior to 2.6 or later
+## Updating Models for the 4g Kernel
 
 If you find models written for NEST version 2.4 and prior not
 working anymore in newer versions, it is most likely due to recent

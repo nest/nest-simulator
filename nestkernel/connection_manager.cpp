@@ -1089,6 +1089,21 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
     target_a = dynamic_cast< TokenArray const* >( target_t.datum() );
   }
 
+  // if connections have changed, (re-)build presynaptic infrastructure,
+  // as this may involve sorting connections by source gids
+  if ( have_connections_changed() )
+  {
+    if ( not kernel().simulation_manager.has_been_simulated() )
+    {
+      kernel().model_manager.create_secondary_events_prototypes();
+    }
+#pragma omp parallel
+    {
+      const thread tid = kernel().vp_manager.get_thread_id();
+      kernel().simulation_manager.update_connection_infrastructure( tid );
+    }
+  }
+
   size_t syn_id = 0;
 
   // First we check, whether a synapse model is given.
@@ -1165,21 +1180,6 @@ nest::ConnectionManager::get_connections(
   if ( num_connections == 0 )
   {
     return;
-  }
-
-  // if connections have changed, (re-)build presynaptic infrastructure,
-  // as this may involve sorting connections by source gids
-  if ( have_connections_changed() )
-  {
-    if ( not kernel().simulation_manager.has_been_simulated() )
-    {
-      kernel().model_manager.create_secondary_events_prototypes();
-    }
-#pragma omp parallel
-    {
-      const thread tid = kernel().vp_manager.get_thread_id();
-      kernel().simulation_manager.update_connection_infrastructure( tid );
-    }
   }
 
   if ( source == 0 and target == 0 )

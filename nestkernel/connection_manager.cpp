@@ -91,6 +91,7 @@ nest::ConnectionManager::initialize()
   const thread num_threads = kernel().vp_manager.get_num_threads();
   connections_.resize( num_threads, NULL );
   secondary_recv_buffer_pos_.resize( num_threads, NULL );
+  sort_connections_by_source_ = true;
 
 #pragma omp parallel
   {

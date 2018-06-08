@@ -756,7 +756,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   }
 #endif
   kernel().connection_manager.sort_connections(
-    tid ); // TODO@5g: move into restructure_
+    tid );
 #ifndef DISABLE_TIMING
   if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
   {

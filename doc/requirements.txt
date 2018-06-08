@@ -1,5 +1,0 @@
-sphinx>=1.4
-recommonmark==0.4.0
-ipykernel
-nbsphinx
-sphinx_rtd_theme

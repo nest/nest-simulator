@@ -6,10 +6,10 @@ Tutorials
    :maxdepth: 1
    :caption: Introduction to PyNEST
 
-   part-1-neurons-and-simple-neural-networks
-   part-2-populations-of-neurons
-   part-3-connecting-networks-with-synapses
-   part-4-topologically-structured-networks
+   pynest_tutorial/part_1_neurons_and_simple_neural_networks
+   pynest_tutorial/part_2_populations_of_neurons
+   pynest_tutorial/part_3_connecting_networks_with_synapses
+   pynest_tutorial/part_4_topologically_structured_networks
 
 .. toctree::
    :maxdepth: 1

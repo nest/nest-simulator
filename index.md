@@ -79,7 +79,7 @@ rate neuron, synapse and device models need to be slightly adapted from prior
 versions to be compatible with the latest release (2.16). In the following we describe 
 all necessary changes:
 
-* [Updating models from 2.14 or prior to 2.16](model_conversion_5g.md)
+* [Updating models from 2.14 or prior to 2.16](model_conversion_5g)
 
 ## Updating Models for the 4g Kernel
 

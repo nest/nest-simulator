@@ -89,6 +89,7 @@ nest::ConnectionManager::initialize()
   const thread num_threads = kernel().vp_manager.get_num_threads();
   connections_.resize( num_threads, NULL );
   secondary_recv_buffer_pos_.resize( num_threads, NULL );
+  sort_connections_by_source_ = true;
 
 #pragma omp parallel
   {
@@ -1098,6 +1099,21 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
     }
   }
 
+  // if connections have changed, (re-)build presynaptic infrastructure,
+  // as this may involve sorting connections by source gids
+  if ( have_connections_changed() )
+  {
+    if ( not kernel().simulation_manager.has_been_simulated() )
+    {
+      kernel().model_manager.create_secondary_events_prototypes();
+    }
+#pragma omp parallel
+    {
+      const thread tid = kernel().vp_manager.get_thread_id();
+      kernel().simulation_manager.update_connection_infrastructure( tid );
+    }
+  }
+
   size_t syn_id = 0;
 
   // First we check, whether a synapse model is given.
@@ -1174,21 +1190,6 @@ nest::ConnectionManager::get_connections(
   if ( num_connections == 0 )
   {
     return;
-  }
-
-  // if connections have changed, (re-)build presynaptic infrastructure,
-  // as this may involve sorting connections by source gids
-  if ( have_connections_changed() )
-  {
-    if ( not kernel().simulation_manager.has_been_simulated() )
-    {
-      kernel().model_manager.create_secondary_events_prototypes();
-    }
-#pragma omp parallel
-    {
-      const thread tid = kernel().vp_manager.get_thread_id();
-      kernel().simulation_manager.update_connection_infrastructure( tid );
-    }
   }
 
   if ( not source.valid() and not target.valid() )

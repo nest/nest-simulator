@@ -393,7 +393,6 @@ class BasicsTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus({'sort_connections_by_source': False})
 
-
         positions = [(numpy.random.uniform(-0.5, 0.5),
                       numpy.random.uniform(-0.5, 0.5)) for _ in range(50)]
         ldict = {'elements': 'iaf_psc_alpha', 'positions': positions,

@@ -64,21 +64,23 @@ class TestSymmetricPairwiseBernoulli(TestParams):
                 ks, p = scipy.stats.kstest(pvalues, 'uniform')
                 self.assertTrue(p > self.stat_dict['alpha2'])
 
-    def testAutapses(self):
+    def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
         conn_params['autapses'] = True
         N = 10
 
         # test that autapses are not permitted
-        hf.nest.ResetKernel()
         pop = hf.nest.Create('iaf_psc_alpha', N)
         with self.assertRaises(hf.nest.NESTError):
             hf.nest.Connect(pop, pop, conn_params)
 
+    def testAutapsesFalse(self):
+        conn_params = self.conn_dict.copy()
+        N = 10
+
         # test that autapses were excluded
         conn_params['p'] = 1. - 1. / N
         conn_params['autapses'] = False
-        hf.nest.ResetKernel()
         pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         M = hf.get_connectivity_matrix(pop, pop)

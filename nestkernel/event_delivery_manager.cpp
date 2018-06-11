@@ -58,7 +58,7 @@ EventDeliveryManager::EventDeliveryManager()
   , recv_buffer_target_data_()
   , buffer_size_target_data_has_changed_( false )
   , buffer_size_spike_data_has_changed_( false )
-  , completed_count_( std::vector< unsigned int >() )
+  , gather_completed_checker_( CompletedChecker() )
 {
 #ifndef DISABLE_COUNTS
   comm_steps_target_data = 0;
@@ -84,7 +84,7 @@ EventDeliveryManager::initialize()
   reset_timers_counters();
   spike_register_.resize( num_threads, NULL );
   off_grid_spike_register_.resize( num_threads, NULL );
-  completed_count_.resize( num_threads, 0 );
+  gather_completed_checker_.resize( num_threads, false );
 #ifndef DISABLE_COUNTS
   call_count_deliver_events.resize( num_threads, 0 );
 #endif
@@ -138,6 +138,8 @@ EventDeliveryManager::finalize()
     delete ( *it );
   };
   off_grid_spike_register_.clear();
+
+  gather_completed_checker_.clear();
 }
 
 void
@@ -309,12 +311,8 @@ EventDeliveryManager::reset_timers_counters()
 }
 
 void
-EventDeliveryManager::gather_secondary_events( const bool done )
+EventDeliveryManager::write_done_marker_secondary_events_( const bool done )
 {
-#ifndef DISABLE_COUNTS
-  ++comm_steps_secondary_events;
-#endif
-
   // write done marker at last position in every chunk
   const size_t chunk_size_in_int =
     kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
@@ -324,6 +322,16 @@ EventDeliveryManager::gather_secondary_events( const bool done )
     send_buffer_secondary_events_[ ( rank + 1 ) * chunk_size_in_int - 1 ] =
       done;
   }
+}
+
+void
+EventDeliveryManager::gather_secondary_events( const bool done )
+{
+#ifndef DISABLE_COUNTS
+  ++comm_steps_secondary_events;
+#endif
+
+  write_done_marker_secondary_events_( done );
 
 #ifndef DISABLE_TIMING
   kernel().mpi_manager.synchronize(); // to get an accurate time measurement
@@ -359,7 +367,6 @@ EventDeliveryManager::gather_spike_data( const thread tid )
   }
 }
 
-// TODO@5g: make pretty and use reasonable variable names -> Jakob
 template < typename SpikeDataT >
 void
 EventDeliveryManager::gather_spike_data_( const thread tid,
@@ -373,28 +380,22 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   }
 #endif
 
-  // counters to keep track of threads and ranks that have send out
-  // all spikes
-  static unsigned int
-    completed_count; // needs to be static to be visible across threads
-  const unsigned int half_completed_count = 2
-    * kernel()
-        .vp_manager.get_num_threads(); // count for on grid and off grid spikes
-  const unsigned int max_completed_count =
-    half_completed_count + kernel().vp_manager.get_num_threads();
-  unsigned int me_completed_tid = 0;
-  unsigned int others_completed_tid = 0;
+  // assume all threads have some work to do
+  gather_completed_checker_.set( tid,  false );
+  assert( gather_completed_checker_.all_false() );
 
   const AssignedRanks assigned_ranks =
     kernel().vp_manager.get_assigned_ranks( tid );
 
-  // can not use while(true) and break in an omp structured block
-  bool done = false;
-  while ( not done )
+  while ( not gather_completed_checker_.all_true() )
   {
+
+    // assume this is the last gather round and change to false
+    // otherwise
+    gather_completed_checker_.set( tid, true );
+
 #pragma omp single
     {
-      completed_count = 0;
       if ( kernel().mpi_manager.adaptive_spike_buffers()
         and buffer_size_spike_data_has_changed_ )
       {
@@ -415,20 +416,18 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
 
     // collocate spikes to send buffer
-    me_completed_tid = collocate_spike_data_buffers_(
+    const bool collocate_completed = collocate_spike_data_buffers_(
       tid, assigned_ranks, send_buffer_position, spike_register_, send_buffer );
+    gather_completed_checker_.logical_and( tid, collocate_completed );
 
     if ( off_grid_spiking_ )
     {
-      me_completed_tid += collocate_spike_data_buffers_( tid,
+      const bool collocate_completed_off_grid = collocate_spike_data_buffers_( tid,
         assigned_ranks,
         send_buffer_position,
         off_grid_spike_register_,
         send_buffer );
-    }
-    else
-    {
-      ++me_completed_tid;
+      gather_completed_checker_.logical_and( tid, collocate_completed_off_grid );
     }
 
 // set markers to signal end of valid spikes, and remove spikes
@@ -438,13 +437,9 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       assigned_ranks, send_buffer_position, send_buffer );
     clean_spike_register_( tid );
 
-#pragma omp atomic
-    completed_count += me_completed_tid;
-#pragma omp barrier
-
     // if we do not have any spikes left, set corresponding marker in
     // send buffer
-    if ( completed_count == half_completed_count )
+    if ( gather_completed_checker_.all_true() )
     {
       // needs to be called /after/ set_end_and_invalid_markers_
       set_complete_marker_spike_data_(
@@ -481,12 +476,11 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     } // of omp single; implicit barrier
 
     // deliver spikes from receive buffer to ring buffers
-    others_completed_tid = deliver_events_( tid, recv_buffer );
-#pragma omp atomic
-    completed_count += others_completed_tid;
+    const bool deliver_completed = deliver_events_( tid, recv_buffer );
+    gather_completed_checker_.logical_and( tid, deliver_completed );
 
-// exit gather loop if all local threads and remote processes are
-// done
+    // exit gather loop if all local threads and remote processes are
+    // done
 #pragma omp barrier
 
 #ifndef DISABLE_TIMING
@@ -496,12 +490,9 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     }
 #endif
 
-    if ( completed_count == max_completed_count )
-    {
-      done = true;
-    }
-    // otherwise, resize mpi buffers, if allowed
-    else if ( kernel().mpi_manager.adaptive_spike_buffers() )
+    // resize mpi buffers, if necessary and allowed
+    if ( not gather_completed_checker_.all_true()
+         and kernel().mpi_manager.adaptive_spike_buffers() )
     {
 #pragma omp single
       {
@@ -511,7 +502,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     }
 #pragma omp barrier
 
-  } // of while( true )
+  } // of while
 
   reset_spike_register_( tid );
 }
@@ -732,6 +723,10 @@ EventDeliveryManager::gather_target_data( const thread tid )
 {
   assert( not kernel().connection_manager.is_source_table_cleared() );
 
+  // assume all threads have some work to do
+  gather_completed_checker_.set( tid, false );
+  assert( gather_completed_checker_.all_false() );
+
 #ifndef DISABLE_COUNTS
   if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
   {
@@ -739,31 +734,19 @@ EventDeliveryManager::gather_target_data( const thread tid )
   }
 #endif
 
-  // when a thread does not have any more spike to collocate and when
-  // it detects a remote MPI rank is finished this count is increased
-  // by 1 in each case. only if all threads are done AND all threads
-  // detect all remote ranks are done, we are allowed to stop
-  // communication.
-  unsigned int completed_count; // TODO@5g: use same strategy in
-  // gather_spike data? could use same
-  // completed_count_ vector -> Susi
-  const unsigned int half_completed_count =
-    kernel().vp_manager.get_num_threads();
-  const unsigned int max_completed_count = 2 * half_completed_count;
-
-  bool me_completed_tid;
-  bool others_completed_tid;
   const AssignedRanks assigned_ranks =
     kernel().vp_manager.get_assigned_ranks( tid );
 
   kernel().connection_manager.prepare_target_table( tid );
   kernel().connection_manager.reset_source_table_entry_point( tid );
 
-  // can not use while(true) and break in an omp structured block
-  bool done = false;
-  while ( not done )
+  while ( not gather_completed_checker_.all_true() )
   {
-    completed_count_[ tid ] = 0;
+
+    // assume this is the last gather round and change to false
+    // otherwise
+    gather_completed_checker_.set( tid, true );
+
 #pragma omp single
     {
       if ( kernel().mpi_manager.adaptive_target_buffers()
@@ -784,15 +767,11 @@ EventDeliveryManager::gather_target_data( const thread tid )
     SendBufferPosition send_buffer_position( assigned_ranks,
       kernel().mpi_manager.get_send_recv_count_target_data_per_rank() );
 
-    me_completed_tid = collocate_target_data_buffers_(
+    const bool gather_completed = collocate_target_data_buffers_(
       tid, assigned_ranks, send_buffer_position );
-    completed_count_[ tid ] += static_cast< unsigned int >( me_completed_tid );
-#pragma omp barrier
+    gather_completed_checker_.logical_and( tid, gather_completed );
 
-    completed_count =
-      std::accumulate( completed_count_.begin(), completed_count_.end(), 0 );
-
-    if ( completed_count == half_completed_count )
+    if ( gather_completed_checker_.all_true() )
     {
       set_complete_marker_target_data_(
         tid, assigned_ranks, send_buffer_position );
@@ -820,9 +799,8 @@ EventDeliveryManager::gather_target_data( const thread tid )
 #endif
     } // of omp single
 
-    others_completed_tid = distribute_target_data_buffers_( tid );
-    completed_count_[ tid ] +=
-      static_cast< unsigned int >( others_completed_tid );
+    const bool distribute_completed = distribute_target_data_buffers_( tid );
+    gather_completed_checker_.logical_and( tid, distribute_completed );
 #pragma omp barrier
 
 #ifndef DISABLE_TIMING
@@ -832,14 +810,9 @@ EventDeliveryManager::gather_target_data( const thread tid )
     }
 #endif
 
-    completed_count =
-      std::accumulate( completed_count_.begin(), completed_count_.end(), 0 );
-
-    if ( completed_count == max_completed_count )
-    {
-      done = true;
-    }
-    else if ( kernel().mpi_manager.adaptive_target_buffers() )
+    // resize mpi buffers, if necessary and allowed
+    if ( not gather_completed_checker_.all_true()
+         and kernel().mpi_manager.adaptive_target_buffers() )
     {
 #pragma omp single
       {
@@ -848,7 +821,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
       }
     }
 #pragma omp barrier
-  } // of while(true)
+  } // of while
 
   kernel().connection_manager.clear_source_table( tid );
 }

@@ -67,4 +67,3 @@ dependencies:
   - nbsphinx
   - Image
   - seaborn
-  - sphinx_gallery

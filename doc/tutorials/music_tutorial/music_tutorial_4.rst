@@ -80,7 +80,7 @@ as the current time is smaller than the simulation time.
             f.write("{0}\t{1:8.4f}\n".format(ev[1], ev[0]))
 
 Here is the structure for the receiving process, modelled on the C++
-code. We use a Python :math:`\texttt{Queue}`\  [1]_ class to implement
+code. We use a Python :math:`\texttt{Queue}`\  class to implement
 our event queue.
 
 The input handler function has signature

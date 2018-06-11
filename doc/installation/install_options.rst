@@ -121,8 +121,8 @@ Configuring NEST for Distributed Simulation with MPI
   3. If that does not work, but you know the correct compiler wrapper for 
      your machine, try configure ``-DMPI_CXX_COMPILER=myC++_CompilerWrapper
      -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON``
- 4. Sorry, you need to fix your MPI installation. 
- 
+  4. Sorry, you need to fix your MPI installation.
+
 Tell NEST about your MPI setup
 ------------------------------
 
@@ -142,7 +142,7 @@ To disable Python bindings use::
 
 as an argument to ``cmake``.
 
-Please see also the file :doc:`../pynest/README.md` in the documentation directory for details.
+Please see also the file :doc:`../../pynest/README.md` in the documentation directory for details.
 
 Python3 Binding (PyNEST)
 --------------------------

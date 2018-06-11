@@ -105,7 +105,7 @@ examples set:
 
 Here is the result:
 
-.. figure:: ./img/MultimeterExample.png
+.. figure:: _static/img/MultimeterExample.png
    :alt: MultimeterExample
 
    MultimeterExample

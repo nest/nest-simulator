@@ -39,8 +39,10 @@ processes are distributed round-robin onto the MPI processes and counted
 continuously over all processes. The concept is visualized in the
 following figure:
 
-|Process\_vp\_thread| Basic scheme for counting threads (T), virtual
-processes (VP) and MPI processes (P) in NEST
+.. figure:: ../_static/img/Process_vp_thread.png
+
+ Basic scheme for counting threads (T), virtual
+ processes (VP) and MPI processes (P) in NEST
 
 The status dictionary of each node (i.e. neuron or device) contains
 three entries that are related to parallel computing:
@@ -72,9 +74,10 @@ The node distribution for a small network consisting of
 in a scenario with two processes with two threads each is shown in the
 following figure:
 
-|Node\_distribution| Illustration of node distribution.
-sg=spike\_generator, iaf=iaf\_psc\_alpha, sd=spike\_detector. Numbers to
-the left and right indicate global ids.
+.. figure:: ../_static/img/Node_distribution.png
+
+ sg=spike\_generator, iaf=iaf\_psc\_alpha, sd=spike\_detector. Numbers to
+ the left and right indicate global ids.
 
 For recording devices that are configured to record to a file (property
 *to\_file* set to *true*), the distribution also results in multiple
@@ -284,6 +287,4 @@ the three data directories shows that they all contain the same spikes,
 which means that the simulation results are indeed the same
 independently of the details of parallelization.
 
-.. |Process\_vp\_thread| image:: ../../img/Process_vp_thread.png
-.. |Node\_distribution| image:: ../../img/Node_distribution.png
 

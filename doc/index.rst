@@ -38,7 +38,7 @@ How the documentation is organized
 
 * :doc:`Example Networks <examples/index>`  demonstrate the use of dozens of neural network models implemented in NEST.
 
-* :doc:`Topical Guides <guides/index>` provide deeper insight into several topics and concepts from :doc:`Parallel Computing <guides/parallel-computing>` to handling :doc:`Gap Junction Simulations <guides/simulations-with-gap-junctions>` and :doc:`setting up topological network <topology/index>`.
+* :doc:`Topical Guides <guides/index>` provide deeper insight into several topics and concepts from :doc:`Parallel Computing <guides/parallel_computing>` to handling :doc:`Gap Junction Simulations <guides/simulations_with_gap_junctions>` and :doc:`setting up topological network <topology/index>`.
 
 * :doc:`Reference Material <ref_material/index>` provides a quick look up of model parameters, functions and terms.
 

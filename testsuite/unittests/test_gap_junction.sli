@@ -204,79 +204,93 @@ M_ERROR setverbosity
   and
 } assert_or_die
 
-% Check that we can use gap junction with target-driven connect in topology
+% Check that using gap-junction in topology gives the correct connections.
+{
+  /tgt_driven << /connection_type (convergent)
+                 /synapse_model /gap_junction
+                 /make_symmetric true
+                 /weights << /uniform << /min 0.3 /max 0.6 >> >>
+              >> def
+  /src_driven << /connection_type (divergent)
+                 /synapse_model /gap_junction
+                 /make_symmetric true
+                 /weights << /uniform << /min 0.3 /max 0.6 >> >>
+              >> def
+  /convergent << /connection_type (convergent)
+                 /synapse_model /gap_junction
+                 /make_symmetric true
+                 /weights << /uniform << /min 0.3 /max 0.6 >> >>
+                 /number_of_connections 3
+              >> def
+  /divergent << /connection_type (divergent)
+                /synapse_model /gap_junction
+                /make_symmetric true
+                /weights << /uniform << /min 0.3 /max 0.6 >> >>
+                /number_of_connections 3
+             >> def
+  
+  true
+  [ tgt_driven src_driven convergent divergent  ]
+  {
+    /connspec Set
+    ResetKernel
+    
+    /src_lr << /rows 2
+           /columns 3
+           /elements /hh_psc_alpha_gap
+        >> CreateLayer def
+    /tgt_lr << /rows 2
+           /columns 3
+           /elements /hh_psc_alpha_gap
+        >> CreateLayer def
+    
+    src_lr tgt_lr connspec ConnectLayers
+    
+    % Storing connection info to array.
+    /nodes src_lr GetLocalLeaves def
+    << /source nodes >> GetConnections
+    dup length exch 
+    {
+      dup /source get exch
+      dup /target get exch
+      dup /synapse_model get exch
+      /weight get
+      4 arraystore exch
+    } forall
+    arraystore
+    /source_array Set
+    
+    % With flipped source and target position,
+    % this array should contain the same elements as the source array.
+    /nodes tgt_lr GetLocalLeaves def
+    << /source nodes >> GetConnections
+    dup length exch 
+    {
+      dup /target get exch
+      dup /source get exch
+      /gap_junction exch
+      /weight get
+      4 arraystore exch
+    } forall
+    arraystore
+    /target_array Set
+    
+    source_array length target_array length eq
+    source_array { target_array exch MemberQ and } Fold
+    and
+  } Fold
+} assert_or_die
+
+% Check that non-symmetric gap-junctions cannot be created in topology
 {
   ResetKernel
   /lr << /rows 2
          /columns 3
-         /elements /hh_psc_alpha_gap      
+         /elements /hh_psc_alpha_gap
       >> CreateLayer def
   
   lr lr << /connection_type (convergent)
            /synapse_model /gap_junction
-           /make_symmetric true
-           /weights 0.5
-        >> ConnectLayers
-} pass_or_die
-
-% Check that we can use gap junction with source-driven connect in topology
-{
-  ResetKernel
-  /lr << /rows 2
-         /columns 3
-         /elements /hh_psc_alpha_gap      
-      >> CreateLayer def
-  
-  lr lr << /connection_type (divergent)
-           /synapse_model /gap_junction 
-           /make_symmetric true
-           /weights 0.5
-        >> ConnectLayers
-} pass_or_die
-
-% Check that we can use gap junction with convergent connect in topology
-{
-  ResetKernel
-  /lr << /rows 2
-         /columns 3
-         /elements /hh_psc_alpha_gap      
-      >> CreateLayer def
-  
-  lr lr << /connection_type (convergent)
-           /synapse_model /gap_junction 
-           /make_symmetric true
-           /weights 0.5
-           /number_of_connections 3
-        >> ConnectLayers
-} pass_or_die
-
-
-% Check that we can use gap junction with divergent connect in topology
-{
-  ResetKernel
-  /lr << /rows 2
-         /columns 3
-         /elements /hh_psc_alpha_gap      
-      >> CreateLayer def
-  
-  lr lr << /connection_type (divergent)
-           /synapse_model /gap_junction 
-           /make_symmetric true
-           /weights 0.5
-           /number_of_connections 3
-        >> ConnectLayers
-} pass_or_die
-
-% Check that non-symmetric gap junctions cannot be created in topology
-{
-  ResetKernel
-  /lr << /rows 2
-         /columns 3
-         /elements /hh_psc_alpha_gap      
-      >> CreateLayer def
-  
-  lr lr << /connection_type (convergent)
-           /synapse_model /gap_junction 
            /make_symmetric false
            /weights 0.5
         >> ConnectLayers

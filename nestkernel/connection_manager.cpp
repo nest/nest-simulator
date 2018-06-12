@@ -515,7 +515,8 @@ nest::ConnectionManager::connect( const index sgid,
     // or similar devices) have to be established by the thread of the
     // target if the source is on the local process even though the
     // source may be a proxy on target_thread.
-    if ( target->one_node_per_process() and not source->is_proxy() )
+    const bool source_is_local = kernel().node_manager.is_local_node( source );
+    if ( target->one_node_per_process() && source_is_local )
     {
       connect_to_device_(
         *source, *target, sgid, target_thread, syn_id, params, delay, weight );
@@ -542,7 +543,6 @@ nest::ConnectionManager::connect( const index sgid,
   else if ( not source->has_proxies() and not target->has_proxies() )
   {
     // create connection only on suggested thread of target
-    // const thread tid = kernel().vp_manager.get_thread_id();
     const thread suggested_thread = kernel().vp_manager.vp_to_thread(
       kernel().vp_manager.suggest_vp_for_gid( target->get_gid() ) );
     if ( suggested_thread == tid )
@@ -613,7 +613,8 @@ nest::ConnectionManager::connect( const index sgid,
     // or similar devices) have to be established by the thread of the
     // target if the source is on the local process even though the
     // source may be a proxy on target_thread.
-    if ( target->one_node_per_process() and not source->is_proxy() )
+    const bool source_is_local = kernel().node_manager.is_local_node( source );
+    if ( target->one_node_per_process() && source_is_local )
     {
       connect_to_device_(
         *source, *target, sgid, target_thread, syn_id, params );

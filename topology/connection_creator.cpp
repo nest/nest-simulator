@@ -61,7 +61,6 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
     else if ( dit->first == names::make_symmetric )
     {
-
       make_symmetric_ = getValue< bool >( dit->second );
     }
     else if ( dit->first == names::allow_oversized_mask )
@@ -137,9 +136,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   }
   if ( not delay_.valid() )
   {
-    if ( synapse_model_
-      == static_cast< index >( kernel().model_manager.get_synapsedict()->lookup(
-           "gap_junction" ) ) )
+    if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) )
     {
       delay_ = TopologyModule::create_parameter( numerics::nan );
     }

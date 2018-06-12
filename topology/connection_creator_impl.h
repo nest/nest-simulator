@@ -42,7 +42,7 @@ void
 ConnectionCreator::connect( Layer< D >& source, Layer< D >& target )
 {
   if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ )
-    and not( make_symmetric_ ) )
+    and not make_symmetric_ )
   {
     throw BadProperty(
       "Connections with this synapse model can only be created "

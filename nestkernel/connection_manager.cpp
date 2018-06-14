@@ -1162,6 +1162,26 @@ extend_connectome( std::deque< nest::ConnectionID >& out,
 }
 
 void
+nest::ConnectionManager::split_to_neuron_device_vectors_( const thread tid,
+  TokenArray const* gid_token_array,
+  std::vector< index >& neuron_gids,
+  std::vector< index >& device_gids ) const
+{
+  for ( size_t t_id = 0; t_id < gid_token_array->size(); ++t_id )
+  {
+    const index gid = gid_token_array->get( t_id );
+    if ( kernel().node_manager.get_node( gid, tid )->has_proxies() )
+    {
+      neuron_gids.push_back( gid );
+    }
+    else
+    {
+      device_gids.push_back( gid );
+    }
+  }
+}
+
+void
 nest::ConnectionManager::get_connections(
   std::deque< ConnectionID >& connectome,
   TokenArray const* source,
@@ -1225,33 +1245,47 @@ nest::ConnectionManager::get_connections(
 
       std::deque< ConnectionID > conns_in_thread;
 
+      // Split targets into neuron- and device-vectors.
+      std::vector< index > target_neuron_gids;
+      std::vector< index > target_device_gids;
+      split_to_neuron_device_vectors_(
+        tid, target, target_neuron_gids, target_device_gids );
+
       ConnectorBase* connections = ( *connections_[ tid ] )[ syn_id ];
       if ( connections != NULL )
       {
-        for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+        for ( std::vector< index >::const_iterator t_gid =
+                target_neuron_gids.begin();
+              t_gid != target_neuron_gids.end();
+              ++t_gid )
         {
-          const index target_gid = target->get( t_id );
 
           std::vector< index > source_lcids;
-          connections->get_source_lcids( tid, target_gid, source_lcids );
+          connections->get_source_lcids( tid, *t_gid, source_lcids );
 
           for ( size_t i = 0; i < source_lcids.size(); ++i )
           {
             conns_in_thread.push_back( ConnectionDatum( ConnectionID(
               source_table_.get_gid( tid, syn_id, source_lcids[ i ] ),
-              target_gid,
+              *t_gid,
               tid,
               syn_id,
               source_lcids[ i ] ) ) );
           }
+          // target_table_devices_ contains connections both to and from
+          // devices.
+          target_table_devices_.get_connections_from_devices_(
+            0, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
         }
       }
 
-      for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+      for (
+        std::vector< index >::const_iterator t_gid = target_device_gids.begin();
+        t_gid != target_device_gids.end();
+        ++t_gid )
       {
-        const index target_gid = target->get( t_id );
-        target_table_devices_.get_connections(
-          0, target_gid, tid, syn_id, synapse_label, conns_in_thread );
+        target_table_devices_.get_connections_to_devices_(
+          0, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
       }
 
       if ( conns_in_thread.size() > 0 )
@@ -1276,6 +1310,15 @@ nest::ConnectionManager::get_connections(
       source->toVector( sources );
       std::sort( sources.begin(), sources.end() );
 
+      // Split targets into neuron- and device-vectors.
+      std::vector< index > target_neuron_gids;
+      std::vector< index > target_device_gids;
+      if ( target != 0 )
+      {
+        split_to_neuron_device_vectors_(
+          tid, target, target_neuron_gids, target_device_gids );
+      }
+
       const ConnectorBase* connections = ( *connections_[ tid ] )[ syn_id ];
       if ( connections != NULL )
       {
@@ -1295,11 +1338,13 @@ nest::ConnectionManager::get_connections(
             }
             else
             {
-              for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+              for ( std::vector< index >::const_iterator t_gid =
+                      target_neuron_gids.begin();
+                    t_gid != target_neuron_gids.end();
+                    ++t_gid )
               {
-                const index target_gid = target->get( t_id );
                 connections->get_connection( source_gid,
-                  target_gid,
+                  *t_gid,
                   tid,
                   lcid,
                   synapse_label,
@@ -1320,15 +1365,23 @@ nest::ConnectionManager::get_connections(
         }
         else
         {
-          for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+          for ( std::vector< index >::const_iterator t_gid =
+                  target_neuron_gids.begin();
+                t_gid != target_neuron_gids.end();
+                ++t_gid )
           {
-            const index target_gid = target->get( t_id );
-            target_table_devices_.get_connections( source_gid,
-              target_gid,
-              tid,
-              syn_id,
-              synapse_label,
-              conns_in_thread );
+            // target_table_devices_ contains connections both to and from
+            // devices.
+            target_table_devices_.get_connections_from_devices_(
+              source_gid, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
+          }
+          for ( std::vector< index >::const_iterator t_gid =
+                  target_device_gids.begin();
+                t_gid != target_device_gids.end();
+                ++t_gid )
+          {
+            target_table_devices_.get_connections_to_devices_(
+              source_gid, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
           }
         }
       }

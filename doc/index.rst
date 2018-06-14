@@ -1,13 +1,21 @@
 ***********************************************
-Welcome to the  NEST simulator documentation!
+Welcome to the NEST simulator documentation!
 ***********************************************
 
-* :doc:`Download <download>` and :doc:`Install <installation/index>` NEST
 
-* NEW TO NEST? Start here at our :doc:`Getting Started <getting_started>` page
++------------------------------------+---------------------------------------+
+|                                    |                                       |
+|    :doc:`Download <download>`      |  :doc:`Install <installation/index>`  |
+|                                    |                                       |
++------------------------------------+---------------------------------------+
 
-Discover the dozens of models NEST simulator has to offer:
 
+**New to NEST?**
+    Start here at our :doc:`Getting Started <getting_started>` page
+
+
+**Have an idea of the type of model you need?**
+    Click on one of the images to access our model directory:
 
 .. raw:: html
 
@@ -27,25 +35,30 @@ Discover the dozens of models NEST simulator has to offer:
   </a>
   </embed>
 
-* Need a different model? Check out how you can :doc:`create you own model <models/create_model>` here.
 
-* Have a question or issue with NEST? See our :doc:`Getting Help <getting_help>` page.
+
+**Need a different model?**
+    Check out how you can :doc:`create you own model <models/create_model>` here.
+
+**Have a question or issue with NEST?**
+    See our :doc:`Getting Help <getting_help>` page.
 
 How the documentation is organized
 ####################################
 
-* :doc:`Tutorials <tutorials/index>` show you step by step instructions using NEST. If you haven't used NEST before, this is a good place to start.
+* :doc:`Tutorials <tutorials/index>` show you step by step instructions using NEST. If you haven't used NEST before, the PyNEST tutorial is a good place to start.
 
-* :doc:`Example Networks <examples/index>`  demonstrate the use of dozens of neural network models implemented in NEST.
+* :doc:`Example Networks <auto_examples/index>`  demonstrate the use of dozens of the neural network models implemented in NEST.
 
-* :doc:`Topical Guides <guides/index>` provide deeper insight into several topics and concepts from :doc:`Parallel Computing <guides/parallel_computing>` to handling :doc:`Gap Junction Simulations <guides/simulations_with_gap_junctions>` and :doc:`setting up topological network <topology/index>`.
+* :doc:`Topical Guides <guides/index>` provide deeper insight into several topics and concepts from :doc:`Parallel Computing <guides/parallel_computing>` to handling :doc:`Gap Junction Simulations <guides/simulations_with_gap_junctions>` and :doc:`setting up a topological network <topology/index>`.
 
-* :doc:`Reference Material <ref_material/index>` provides a quick look up of model parameters, functions and terms.
+* :doc:`Reference Material <ref_material/index>` provides a quick look up of definitions, functions and terms.
 
 Contribute
 ###########
 
-* Have you used NEST in an article or presentation? :doc:`Let us know <community>`  and we will add it to our list of `publications <http://www.nest-simulator.org/publications/>`_ Find out how to :doc:`cite NEST here <citing-nest>`.
+* Have you used NEST in an article or presentation? :doc:`Let us know <community>` and we will add it to our list of `publications <http://www.nest-simulator.org/publications/>`_.
+  Find out how to :doc:`cite NEST <citing-nest>` in your work.
 
 * If you have any comments or suggestions, please share them on our :doc:`Mailing List <community>`.
 

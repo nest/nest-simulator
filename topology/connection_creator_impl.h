@@ -41,6 +41,14 @@ template < int D >
 void
 ConnectionCreator::connect( Layer< D >& source, Layer< D >& target )
 {
+  if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ )
+    and not make_symmetric_ )
+  {
+    throw BadProperty(
+      "Connections with this synapse model can only be created "
+      "with \"make_symmetric\" set to true." );
+  }
+
   switch ( type_ )
   {
   case Target_driven:
@@ -367,6 +375,11 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
               d );
             kernel().connection_manager.connect(
               iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+            if ( make_symmetric_ )
+            {
+              make_symmetric_connection_(
+                iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+            }
           }
         }
       }
@@ -390,6 +403,11 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
             target.compute_displacement( iter->first, target_pos ), rng, w, d );
           kernel().connection_manager.connect(
             iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+          if ( make_symmetric_ )
+          {
+            make_symmetric_connection_(
+              iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+          }
         }
       }
     }
@@ -447,6 +465,11 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
               d );
             kernel().connection_manager.connect(
               iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+            if ( make_symmetric_ )
+            {
+              make_symmetric_connection_(
+                iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+            }
           }
         }
       }
@@ -470,6 +493,11 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
             target.compute_displacement( iter->first, target_pos ), rng, w, d );
           kernel().connection_manager.connect(
             iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+          if ( make_symmetric_ )
+          {
+            make_symmetric_connection_(
+              iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+          }
         }
       }
     }
@@ -610,6 +638,11 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             d );
           kernel().connection_manager.connect(
             source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          if ( make_symmetric_ )
+          {
+            make_symmetric_connection_(
+              source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          }
           is_selected[ random_id ] = true;
         }
       }
@@ -652,6 +685,11 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             d );
           kernel().connection_manager.connect(
             source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          if ( make_symmetric_ )
+          {
+            make_symmetric_connection_(
+              source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          }
           is_selected[ random_id ] = true;
         }
       }
@@ -744,6 +782,11 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             source.compute_displacement( target_pos, source_pos ), rng, w, d );
           kernel().connection_manager.connect(
             source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          if ( make_symmetric_ )
+          {
+            make_symmetric_connection_(
+              source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          }
           is_selected[ random_id ] = true;
         }
       }
@@ -779,6 +822,11 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             source.compute_displacement( target_pos, source_pos ), rng, w, d );
           kernel().connection_manager.connect(
             source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          if ( make_symmetric_ )
+          {
+            make_symmetric_connection_(
+              source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          }
           is_selected[ random_id ] = true;
         }
       }
@@ -921,6 +969,15 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
       Node* target_ptr = kernel().node_manager.get_node( target_id );
       kernel().connection_manager.connect(
         source_id, target_ptr, target_ptr->get_thread(), synapse_model_, d, w );
+      if ( make_symmetric_ )
+      {
+        make_symmetric_connection_( source_id,
+          target_ptr,
+          target_ptr->get_thread(),
+          synapse_model_,
+          d,
+          w );
+      }
     }
   }
 }

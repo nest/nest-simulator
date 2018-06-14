@@ -1162,6 +1162,26 @@ extend_connectome( std::deque< nest::ConnectionID >& out,
 }
 
 void
+nest::ConnectionManager::split_to_neuron_device_vectors_( const thread tid,
+  TokenArray const* gid_token_array,
+  std::vector< index >& neuron_gids,
+  std::vector< index >& device_gids ) const
+{
+  for ( size_t t_id = 0; t_id < gid_token_array->size(); ++t_id )
+  {
+    const index gid = gid_token_array->get( t_id );
+    if ( kernel().node_manager.get_node( gid, tid )->has_proxies() )
+    {
+      neuron_gids.push_back( gid );
+    }
+    else
+    {
+      device_gids.push_back( gid );
+    }
+  }
+}
+
+void
 nest::ConnectionManager::get_connections(
   std::deque< ConnectionID >& connectome,
   TokenArray const* source,
@@ -1228,18 +1248,8 @@ nest::ConnectionManager::get_connections(
       // Split targets into node- and device-vectors.
       std::vector< index > target_nodes;
       std::vector< index > target_devices;
-      for ( size_t t_id = 0; t_id < target->size(); ++t_id )
-      {
-        const index target_gid = target->get( t_id );
-        if ( kernel().node_manager.get_node( target_gid, tid )->has_proxies() )
-        {
-          target_nodes.push_back( target_gid );
-        }
-        else
-        {
-          target_devices.push_back( target_gid );
-        }
-      }
+      split_to_neuron_device_vectors_(
+        tid, target, target_neuron_gids, target_device_gids );
 
       ConnectorBase* connections = ( *connections_[ tid ] )[ syn_id ];
       if ( connections != NULL )
@@ -1300,20 +1310,8 @@ nest::ConnectionManager::get_connections(
       std::vector< index > target_devices;
       if ( target != 0 )
       {
-        for ( size_t t_id = 0; t_id < target->size(); ++t_id )
-        {
-          const index target_gid = target->get( t_id );
-          if ( kernel()
-                 .node_manager.get_node( target_gid, tid )
-                 ->has_proxies() )
-          {
-            target_nodes.push_back( target_gid );
-          }
-          else
-          {
-            target_devices.push_back( target_gid );
-          }
-        }
+      split_to_neuron_device_vectors_(
+        tid, target, target_neuron_gids, target_device_gids );
       }
 
       const ConnectorBase* connections = ( *connections_[ tid ] )[ syn_id ];

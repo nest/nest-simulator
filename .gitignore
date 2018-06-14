@@ -1,2 +1,4 @@
 _site
 Gemfile.lock
+doc/_build
+.idea

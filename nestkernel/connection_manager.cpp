@@ -1254,7 +1254,8 @@ nest::ConnectionManager::get_connections(
       ConnectorBase* connections = ( *connections_[ tid ] )[ syn_id ];
       if ( connections != NULL )
       {
-        for ( std::vector< index >::const_iterator t_gid = target_neuron_gids.begin();
+        for ( std::vector< index >::const_iterator t_gid =
+                target_neuron_gids.begin();
               t_gid != target_neuron_gids.end();
               ++t_gid )
         {
@@ -1278,9 +1279,10 @@ nest::ConnectionManager::get_connections(
         }
       }
 
-      for ( std::vector< index >::const_iterator t_gid = target_device_gids.begin();
-            t_gid != target_device_gids.end();
-            ++t_gid )
+      for (
+        std::vector< index >::const_iterator t_gid = target_device_gids.begin();
+        t_gid != target_device_gids.end();
+        ++t_gid )
       {
         target_table_devices_.get_connections_to_devices_(
           0, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
@@ -1313,8 +1315,8 @@ nest::ConnectionManager::get_connections(
       std::vector< index > target_device_gids;
       if ( target != 0 )
       {
-      split_to_neuron_device_vectors_(
-        tid, target, target_neuron_gids, target_device_gids );
+        split_to_neuron_device_vectors_(
+          tid, target, target_neuron_gids, target_device_gids );
       }
 
       const ConnectorBase* connections = ( *connections_[ tid ] )[ syn_id ];
@@ -1363,20 +1365,20 @@ nest::ConnectionManager::get_connections(
         }
         else
         {
-          for (
-            std::vector< index >::const_iterator t_gid = target_neuron_gids.begin();
-            t_gid != target_neuron_gids.end();
-            ++t_gid )
+          for ( std::vector< index >::const_iterator t_gid =
+                  target_neuron_gids.begin();
+                t_gid != target_neuron_gids.end();
+                ++t_gid )
           {
             // target_table_devices_ contains connections both to and from
             // devices.
             target_table_devices_.get_connections_from_devices_(
               source_gid, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
           }
-          for (
-            std::vector< index >::const_iterator t_gid = target_device_gids.begin();
-            t_gid != target_device_gids.end();
-            ++t_gid )
+          for ( std::vector< index >::const_iterator t_gid =
+                  target_device_gids.begin();
+                t_gid != target_device_gids.end();
+                ++t_gid )
           {
             target_table_devices_.get_connections_to_devices_(
               source_gid, *t_gid, tid, syn_id, synapse_label, conns_in_thread );

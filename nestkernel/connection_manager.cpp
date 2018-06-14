@@ -1225,33 +1225,53 @@ nest::ConnectionManager::get_connections(
 
       std::deque< ConnectionID > conns_in_thread;
 
+      // Split targets into node- and device-vectors.
+      std::vector< index > target_nodes;
+      std::vector< index > target_devices;
+      for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+      {
+        const index target_gid = target->get( t_id );
+        if ( kernel().node_manager.get_node( target_gid, tid )->has_proxies() )
+        {
+          target_nodes.push_back( target_gid );
+        }
+        else
+        {
+          target_devices.push_back( target_gid );
+        }
+      }
+
       ConnectorBase* connections = ( *connections_[ tid ] )[ syn_id ];
       if ( connections != NULL )
       {
-        for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+        for ( std::vector< index >::const_iterator t_gid = target_nodes.begin();
+              t_gid != target_nodes.end();
+              ++t_gid )
         {
-          const index target_gid = target->get( t_id );
 
           std::vector< index > source_lcids;
-          connections->get_source_lcids( tid, target_gid, source_lcids );
+          connections->get_source_lcids( tid, *t_gid, source_lcids );
 
           for ( size_t i = 0; i < source_lcids.size(); ++i )
           {
             conns_in_thread.push_back( ConnectionDatum( ConnectionID(
               source_table_.get_gid( tid, syn_id, source_lcids[ i ] ),
-              target_gid,
+              *t_gid,
               tid,
               syn_id,
               source_lcids[ i ] ) ) );
           }
+          target_table_devices_.get_connections_from_devices_(
+            0, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
         }
       }
 
-      for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+      for ( std::vector< index >::const_iterator t_gid = target_devices.begin();
+            t_gid != target_devices.end();
+            ++t_gid )
       {
-        const index target_gid = target->get( t_id );
-        target_table_devices_.get_connections(
-          0, target_gid, tid, syn_id, synapse_label, conns_in_thread );
+        target_table_devices_.get_connections_to_devices_(
+          0, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
       }
 
       if ( conns_in_thread.size() > 0 )
@@ -1276,6 +1296,26 @@ nest::ConnectionManager::get_connections(
       source->toVector( sources );
       std::sort( sources.begin(), sources.end() );
 
+      std::vector< index > target_nodes;
+      std::vector< index > target_devices;
+      if ( target != 0 )
+      {
+        for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+        {
+          const index target_gid = target->get( t_id );
+          if ( kernel()
+                 .node_manager.get_node( target_gid, tid )
+                 ->has_proxies() )
+          {
+            target_nodes.push_back( target_gid );
+          }
+          else
+          {
+            target_devices.push_back( target_gid );
+          }
+        }
+      }
+
       const ConnectorBase* connections = ( *connections_[ tid ] )[ syn_id ];
       if ( connections != NULL )
       {
@@ -1295,11 +1335,13 @@ nest::ConnectionManager::get_connections(
             }
             else
             {
-              for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+              for ( std::vector< index >::const_iterator t_gid =
+                      target_nodes.begin();
+                    t_gid != target_nodes.end();
+                    ++t_gid )
               {
-                const index target_gid = target->get( t_id );
                 connections->get_connection( source_gid,
-                  target_gid,
+                  *t_gid,
                   tid,
                   lcid,
                   synapse_label,
@@ -1320,15 +1362,21 @@ nest::ConnectionManager::get_connections(
         }
         else
         {
-          for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+          for (
+            std::vector< index >::const_iterator t_gid = target_nodes.begin();
+            t_gid != target_nodes.end();
+            ++t_gid )
           {
-            const index target_gid = target->get( t_id );
-            target_table_devices_.get_connections( source_gid,
-              target_gid,
-              tid,
-              syn_id,
-              synapse_label,
-              conns_in_thread );
+            target_table_devices_.get_connections_from_devices_(
+              source_gid, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
+          }
+          for (
+            std::vector< index >::const_iterator t_gid = target_devices.begin();
+            t_gid != target_devices.end();
+            ++t_gid )
+          {
+            target_table_devices_.get_connections_to_devices_(
+              source_gid, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
           }
         }
       }

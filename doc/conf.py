@@ -97,14 +97,14 @@ extensions = [
     'sphinx_gallery.gen_gallery',
 ]
 
-sphinx_gallery_conf = {
-    'doc_module': ('sphinx_gallery', 'numpy'),
+#sphinx_gallery_conf = {
+#    'doc_module': ('sphinx_gallery', 'numpy'),
     # path to your examples scripts
-    'examples_dirs': '../pynest/examples',
+#    'examples_dirs': '../pynest/examples',
     # path where to save gallery generated examples
-    'gallery_dirs': 'auto_examples',
-    'backreferences_dir': False
-}
+#    'gallery_dirs': 'auto_examples',
+#    'backreferences_dir': False
+#}
 
 mathjax_path = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX" \
               "-AMS-MML_HTMLorMML"

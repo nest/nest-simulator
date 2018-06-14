@@ -13,16 +13,16 @@ Discover the dozens of models NEST simulator has to offer:
 
  <embed>
 
- <a href="models/neurons/neuron.html">
+ <a href="models/neurons/index.html">
     <img src="_static/img/neuron.png" alt="Neuron Models" style="width:150px;height:150px;border:0;">
   </a>
-  <a href="models/synapses/synapses.html">
+  <a href="models/synapses/index.html">
     <img src="_static/img/synapse1.png" alt="Synapse Models" style="width:150px;height:150px;border:0;">
   </a>
-  <a href="models/devices/devices.html">
+  <a href="models/devices/index.html">
     <img src="_static/img/oscilloscope.png" alt="Devices" style="width:150px;height:150px;border:0;">
   </a>
-  <a href="models/topology/topology.html">
+  <a href="models/topology/index.html">
     <img src="_static/img/topology.png" alt="Topology" style="width:150px;height:150px;border:0;">
   </a>
   </embed>

@@ -36,35 +36,35 @@
 namespace nest
 {
 
-  BOOST_AUTO_TEST_SUITE( test_target_fields )
+BOOST_AUTO_TEST_SUITE( test_target_fields )
 
-  BOOST_AUTO_TEST_CASE( test_write_read )
+BOOST_AUTO_TEST_CASE( test_write_read )
+{
+  Target target;
+
+  for ( size_t trial = 0; trial < 50; ++trial )
   {
-    Target target;
+    const thread tid = std::rand() % 1024;
+    const thread rank = std::rand() % 1048576;
+    const synindex syn_id = std::rand() % 64;
+    const index lcid = std::rand() % 134217728;
+    const bool is_processed = static_cast< bool >( std::rand() % 2 );
 
-    for ( size_t trial = 0; trial < 50; ++trial )
-    {
-      const thread tid = std::rand() % 1024;
-      const thread rank = std::rand() % 1048576;
-      const synindex syn_id = std::rand() % 64;
-      const index lcid = std::rand() % 134217728;
-      const bool is_processed = static_cast< bool >( std::rand() % 2 );
+    target.set_tid( tid );
+    target.set_rank( rank );
+    target.set_syn_id( syn_id );
+    target.set_lcid( lcid );
+    target.set_is_processed( is_processed );
 
-      target.set_tid( tid );
-      target.set_rank( rank );
-      target.set_syn_id( syn_id );
-      target.set_lcid( lcid );
-      target.set_is_processed( is_processed );
-
-      BOOST_REQUIRE( target.get_tid() == tid );
-      BOOST_REQUIRE( target.get_rank() == rank );
-      BOOST_REQUIRE( target.get_syn_id() == syn_id );
-      BOOST_REQUIRE( target.get_lcid() == lcid );
-      BOOST_REQUIRE( target.is_processed() == is_processed );
-    }
+    BOOST_REQUIRE( target.get_tid() == tid );
+    BOOST_REQUIRE( target.get_rank() == rank );
+    BOOST_REQUIRE( target.get_syn_id() == syn_id );
+    BOOST_REQUIRE( target.get_lcid() == lcid );
+    BOOST_REQUIRE( target.is_processed() == is_processed );
   }
+}
 
-  BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END()
 
 } // namespace nest
 

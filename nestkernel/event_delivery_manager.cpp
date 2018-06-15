@@ -350,7 +350,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   std::vector< SpikeDataT >& recv_buffer )
 {
   // assume all threads have some work to do
-  gather_completed_checker_.set( tid,  false );
+  gather_completed_checker_.set( tid, false );
   assert( gather_completed_checker_.all_false() );
 
   const AssignedRanks assigned_ranks =
@@ -384,12 +384,14 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
     if ( off_grid_spiking_ )
     {
-      const bool collocate_completed_off_grid = collocate_spike_data_buffers_( tid,
-        assigned_ranks,
-        send_buffer_position,
-        off_grid_spike_register_,
-        send_buffer );
-      gather_completed_checker_.logical_and( tid, collocate_completed_off_grid );
+      const bool collocate_completed_off_grid =
+        collocate_spike_data_buffers_( tid,
+          assigned_ranks,
+          send_buffer_position,
+          off_grid_spike_register_,
+          send_buffer );
+      gather_completed_checker_.logical_and(
+        tid, collocate_completed_off_grid );
     }
 
 // set markers to signal end of valid spikes, and remove spikes
@@ -428,12 +430,12 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     const bool deliver_completed = deliver_events_( tid, recv_buffer );
     gather_completed_checker_.logical_and( tid, deliver_completed );
 
-    // exit gather loop if all local threads and remote processes are
-    // done
+// exit gather loop if all local threads and remote processes are
+// done
 #pragma omp barrier
     // resize mpi buffers, if necessary and allowed
     if ( not gather_completed_checker_.all_true()
-         and kernel().mpi_manager.adaptive_spike_buffers() )
+      and kernel().mpi_manager.adaptive_spike_buffers() )
     {
 #pragma omp single
       {
@@ -457,7 +459,8 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
     spike_register,
   std::vector< SpikeDataT >& send_buffer )
 {
-  reset_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
+  reset_complete_marker_spike_data_(
+    assigned_ranks, send_buffer_position, send_buffer );
 
   // assume register is empty, will change to false if any entry can
   // not be fit into the MPI buffer
@@ -549,7 +552,8 @@ EventDeliveryManager::set_end_and_invalid_markers_(
 }
 
 template < typename SpikeDataT >
-void EventDeliveryManager::reset_complete_marker_spike_data_(
+void
+EventDeliveryManager::reset_complete_marker_spike_data_(
   const AssignedRanks& assigned_ranks,
   const SendBufferPosition& send_buffer_position,
   std::vector< SpikeDataT >& send_buffer ) const
@@ -717,7 +721,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
 
     // resize mpi buffers, if necessary and allowed
     if ( not gather_completed_checker_.all_true()
-         and kernel().mpi_manager.adaptive_target_buffers() )
+      and kernel().mpi_manager.adaptive_target_buffers() )
     {
 #pragma omp single
       {

@@ -918,7 +918,7 @@ nest::SimulationManager::update_()
         }
 
       } // of if(wfr_is_used)
-        // end of preliminary update
+      // end of preliminary update
 
       const std::vector< Node* >& thread_local_nodes =
         kernel().node_manager.get_nodes_on_thread( tid );

@@ -300,9 +300,9 @@ VogelsSprekelerConnection< targetidentifierT >::set_status(
   updateValue< double >( d, names::Wmax, Wmax_ );
   updateValue< double >( d, names::Kplus, Kplus_ );
 
-  // check if weight_ and Wmax_ has the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )
-         == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  // if the weight_ is not 0, we check to ensure that weight_ and Wmax_ are of
+  // the same sign
+  if ( weight_ != 0 and ( std::signbit( weight_ ) != std::signbit( Wmax_ ) ) )
   {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }

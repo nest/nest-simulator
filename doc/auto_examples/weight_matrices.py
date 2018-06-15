@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# plot_weight_matrices.py
+# weight_matrices.py
 #
 # This file is part of NEST.
 #

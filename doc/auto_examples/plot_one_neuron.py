@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# one_neuron.py
+# plot_one_neuron.py
 #
 # This file is part of NEST.
 #

@@ -929,21 +929,6 @@ Example Networks
 
     <div class="sphx-glr-thumbcontainer" tooltip="This script simulates a finite network of generalized integrate-and-fire (GIF) neurons directly...">
 
-.. only:: html
-
-    .. figure:: /auto_examples/images/thumb/sphx_glr_git_pop_psc_exp_thumb.png
-
-        :ref:`sphx_glr_auto_examples_git_pop_psc_exp.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/git_pop_psc_exp
 .. raw:: html
 
     <div style='clear:both'></div>

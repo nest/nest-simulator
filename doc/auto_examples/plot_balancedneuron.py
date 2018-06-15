@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# balancedneuron.py
+# plot_balancedneuron.py
 #
 # This file is part of NEST.
 #

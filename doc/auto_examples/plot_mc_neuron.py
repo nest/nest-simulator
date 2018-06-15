@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# mc_neuron.py
+# plot_mc_neuron.py
 #
 # This file is part of NEST.
 #

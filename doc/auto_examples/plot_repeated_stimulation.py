@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# repeated_stimulation.py
+# plot_repeated_stimulation.py
 #
 # This file is part of NEST.
 #

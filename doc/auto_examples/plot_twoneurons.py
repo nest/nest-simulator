@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# twoneurons.py
+# plot_twoneurons.py
 #
 # This file is part of NEST.
 #

@@ -8,10 +8,10 @@
 }
 
 .wy-side-nav-search {
-	background: linear-gradient(45deg, #c1c1c1, #465052);
+	background: linear-gradient(45deg, #777, #333)
 }
 .wy-nav-side {
-	background: linear-gradient(90deg, #c1c1c1, #797f80)
+	background: linear-gradient(90deg, #777, #333)
 }
 
 .wy-menu-vertical a,

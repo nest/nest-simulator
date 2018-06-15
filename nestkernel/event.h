@@ -1211,7 +1211,8 @@ DataSecondaryEvent< DataType, Subclass >::get_coeffvalue(
 }
 
 template < typename Datatype, typename Subclass >
-std::vector< synindex > DataSecondaryEvent< Datatype, Subclass >::pristine_supported_syn_ids_;
+std::vector< synindex >
+  DataSecondaryEvent< Datatype, Subclass >::pristine_supported_syn_ids_;
 
 template < typename DataType, typename Subclass >
 std::vector< synindex >

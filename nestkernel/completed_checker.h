@@ -47,7 +47,6 @@ namespace nest
 class CompletedChecker
 {
 private:
-
   /**
    * Array holding status values for all threads. must be of type
    * bool; 'bitwise and' is used below instead of 'logical and'.
@@ -99,14 +98,13 @@ public:
    * Returns const reference toelement at position tid.
    */
   const bool& operator[]( const thread tid ) const;
-
 };
 
 inline void
 CompletedChecker::logical_and( const thread tid, const bool v )
 {
-  // use 'bitwise and', since 'logical and' is not supported by 'omp
-  // atomic update'; yields same result for bool
+// use 'bitwise and', since 'logical and' is not supported by 'omp
+// atomic update'; yields same result for bool
 #pragma omp atomic update
   a_[ tid ] &= v;
 }
@@ -118,8 +116,7 @@ CompletedChecker::set( const thread tid, const bool v )
   a_[ tid ] = v;
 }
 
-inline const bool&
-CompletedChecker::operator[]( const thread tid ) const
+inline const bool& CompletedChecker::operator[]( const thread tid ) const
 {
   return a_[ tid ];
 }

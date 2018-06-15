@@ -37,7 +37,7 @@ import pip
 # pip.main(['install', 'Sphinx==1.5.6'])
 # pip.main(['install', 'sphinx-gallery'])
 
-import sphinx_gallery
+#import sphinx_gallery
 import subprocess
 
 #import shlex
@@ -85,6 +85,18 @@ for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+# extensions = [
+#    'sphinx.ext.autodoc',
+#    'sphinx.ext.napoleon',
+#    'sphinx.ext.autosummary',
+#    'sphinx.ext.doctest',
+#    'sphinx.ext.intersphinx',
+#    'sphinx.ext.todo',
+#    'sphinx.ext.coverage',
+#    'sphinx.ext.mathjax',
+#    'sphinx_gallery.gen_gallery',
+# ]
+
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
@@ -94,19 +106,17 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'sphinx_gallery.gen_gallery',
 ]
-
-#sphinx_gallery_conf = {
+# sphinx_gallery_conf = {
 #    'doc_module': ('sphinx_gallery', 'numpy'),
-    # path to your examples scripts
+#    # path to your examples scripts
 #    'examples_dirs': '../pynest/examples',
-    # path where to save gallery generated examples
+#    # path where to save gallery generated examples
 #    'gallery_dirs': 'auto_examples',
 #    'backreferences_dir': False
-#}
+# }
 
-mathjax_path = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX" \
+mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX" \
               "-AMS-MML_HTMLorMML"
 
 # Add any paths that contain templates here, relative to this directory.
@@ -173,7 +183,7 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
+html_static_path = ['_static']
 
 # -- Options for HTMLHelp output ------------------------------------------
 

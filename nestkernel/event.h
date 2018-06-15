@@ -936,15 +936,16 @@ read_from_comm_buffer( T& d, std::vector< unsigned int >::iterator& pos )
 }
 
 /**
- * Template class for the storage and communication of a std::vector of type D.
- * The class provides the functionality to communicate homogeneous data
- * of type D. The second template type E is used to distinguish
- * derived classes of the same type D. This is required because of the
- * included static variables (as otherwise all derived classes of the same
- * data type would share the same static variables).
+ * Template class for the storage and communication of a std::vector of type
+ * DataType. The class provides the functionality to communicate homogeneous
+ * data of type DataType. The second template type Subclass (which should be
+ * chosen as the derived class itself) is used to distinguish derived classes
+ * with the same DataType. This is required because of the included static
+ * variables in the base class (as otherwise all derived classes with the same
+ * DataType would share the same static variables).
  *
  * Technically the DataSecondaryEvent only contains iterators pointing to
- * the memory location of the std::vector< D >.
+ * the memory location of the std::vector< DataType >.
  *
  * Conceptually, there is a one-to-one mapping between a SecondaryEvent
  * and a SecondaryConnectorModel. The synindex of this particular
@@ -957,7 +958,7 @@ read_from_comm_buffer( T& d, std::vector< unsigned int >::iterator& pos )
  * supports_syn_id()-function allows testing if a particular synid is mapped
  * with the SecondaryEvent in question.
  */
-template < typename D, typename E >
+template < typename DataType, typename Subclass >
 class DataSecondaryEvent : public SecondaryEvent
 {
 private:
@@ -966,8 +967,8 @@ private:
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
-  typename std::vector< D >::iterator coeffarray_as_d_begin_;
-  typename std::vector< D >::iterator coeffarray_as_d_end_;
+  typename std::vector< DataType >::iterator coeffarray_as_d_begin_;
+  typename std::vector< DataType >::iterator coeffarray_as_d_end_;
   std::vector< unsigned int >::iterator coeffarray_as_uints_begin_;
   std::vector< unsigned int >::iterator coeffarray_as_uints_end_;
 
@@ -1039,7 +1040,7 @@ public:
   }
 
   void
-  set_coeffarray( std::vector< D >& ca )
+  set_coeffarray( std::vector< DataType >& ca )
   {
     coeffarray_as_d_begin_ = ca.begin();
     coeffarray_as_d_end_ = ca.end();
@@ -1059,7 +1060,7 @@ public:
     // therefore we save an iterator to the beginning+end of the coeffarray
     coeffarray_as_uints_begin_ = pos;
 
-    pos += coeff_length_ * number_of_uints_covered< D >();
+    pos += coeff_length_ * number_of_uints_covered< DataType >();
 
     coeffarray_as_uints_end_ = pos;
 
@@ -1075,11 +1076,14 @@ public:
   std::vector< unsigned int >::iterator& operator>>(
     std::vector< unsigned int >::iterator& pos )
   {
-    for ( typename std::vector< D >::iterator i = coeffarray_as_d_begin_;
+    for ( typename std::vector< DataType >::iterator i = coeffarray_as_d_begin_;
+
           i != coeffarray_as_d_end_;
           i++ )
     {
-      write_to_comm_buffer( *i, pos );
+      // we need the static_cast here as the size of a stand-alone variable
+      // and a std::vector entry may differ (e.g. for std::vector< bool >)
+      write_to_comm_buffer( static_cast< DataType >( *i ), pos );
     }
     return pos;
   }
@@ -1087,7 +1091,11 @@ public:
   size_t
   size()
   {
-    return number_of_uints_covered< D >() * coeff_length_;
+    size_t s = number_of_uints_covered< synindex >();
+    s += number_of_uints_covered< index >();
+    s += number_of_uints_covered< DataType >() * coeff_length_;
+
+    return s;
   }
 
   const std::vector< unsigned int >::iterator&
@@ -1102,15 +1110,14 @@ public:
     return coeffarray_as_uints_end_;
   }
 
-  D get_coeffvalue( std::vector< unsigned int >::iterator& pos );
+  DataType get_coeffvalue( std::vector< unsigned int >::iterator& pos );
 };
 
 /**
  * Event for gap-junction information. The event transmits the interpolation
  * of the membrane potential to the connected neurons.
  */
-class GapJunctionEvent
-  : public DataSecondaryEvent< double, int /*only used to distinguish events*/ >
+class GapJunctionEvent : public DataSecondaryEvent< double, GapJunctionEvent >
 {
 
 public:
@@ -1127,8 +1134,7 @@ public:
  * the rate to the connected neurons.
  */
 class InstantaneousRateConnectionEvent
-  : public DataSecondaryEvent< double,
-      char /*only used to distinguish events*/ >
+  : public DataSecondaryEvent< double, InstantaneousRateConnectionEvent >
 {
 
 public:
@@ -1144,8 +1150,8 @@ public:
  * Event for rate model connections with delay. The event transmits
  * the rate to the connected neurons.
  */
-class DelayedRateConnectionEvent : public DataSecondaryEvent< double,
-                                     bool /*only used to distinguish events*/ >
+class DelayedRateConnectionEvent
+  : public DataSecondaryEvent< double, DelayedRateConnectionEvent >
 {
 
 public:
@@ -1161,8 +1167,8 @@ public:
  * Event for diffusion connections (rate model connections for the
  * siegert_neuron). The event transmits the rate to the connected neurons.
  */
-class DiffusionConnectionEvent : public DataSecondaryEvent< double,
-                                   float /*only used to distinguish events*/ >
+class DiffusionConnectionEvent
+  : public DataSecondaryEvent< double, DiffusionConnectionEvent >
 {
 private:
   // drift factor of the corresponding connection
@@ -1194,24 +1200,26 @@ public:
   weight get_diffusion_factor() const;
 };
 
-template < typename D, typename E >
-inline D
-DataSecondaryEvent< D, E >::get_coeffvalue(
+template < typename DataType, typename Subclass >
+inline DataType
+DataSecondaryEvent< DataType, Subclass >::get_coeffvalue(
   std::vector< unsigned int >::iterator& pos )
 {
-  D elem;
+  DataType elem;
   read_from_comm_buffer( elem, pos );
   return elem;
 }
 
-template < typename D, typename E >
-std::vector< synindex > DataSecondaryEvent< D, E >::pristine_supported_syn_ids_;
+template < typename Datatype, typename Subclass >
+std::vector< synindex > DataSecondaryEvent< Datatype, Subclass >::pristine_supported_syn_ids_;
 
-template < typename D, typename E >
-std::vector< synindex > DataSecondaryEvent< D, E >::supported_syn_ids_;
+template < typename DataType, typename Subclass >
+std::vector< synindex >
+  DataSecondaryEvent< DataType, Subclass >::supported_syn_ids_;
 
-template < typename D, typename E >
-size_t DataSecondaryEvent< D, E >::coeff_length_ = 0;
+
+template < typename DataType, typename Subclass >
+size_t DataSecondaryEvent< DataType, Subclass >::coeff_length_ = 0;
 
 inline GapJunctionEvent*
 GapJunctionEvent::clone() const

@@ -16,6 +16,8 @@ Known values for OPTION are:
   --cflags              print pre-processor and compiler flags
   --includes            print includes
   --compiler            print the compiler used to compile NEST
+  --python-executable   print full path to Python interpreter used
+  --python-version      print Python version string for interpreter
   --static-libraries    print "ON" if configured for static libraries, "OFF" otherwise
   --docdir              print the relative path (to prefix) to the installed documentation
   --datadir             print the relative path (to prefix) to the installed data
@@ -68,6 +70,12 @@ while test $# -gt 0; do
         ;;
     --compiler)
         echo "@CMAKE_CXX_COMPILER@"
+        ;;
+    --python-executable)
+        echo "@PYTHON_EXECUTABLE@"
+        ;;
+    --python-version)
+        echo "@PYTHON_VERSION@"
         ;;
 
     --static-libraries)

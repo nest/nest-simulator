@@ -107,6 +107,7 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
 ]
+
 # sphinx_gallery_conf = {
 #    'doc_module': ('sphinx_gallery', 'numpy'),
 #    # path to your examples scripts
@@ -115,6 +116,7 @@ extensions = [
 #    'gallery_dirs': 'auto_examples',
 #    'backreferences_dir': False
 # }
+
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX" \
               "-AMS-MML_HTMLorMML"

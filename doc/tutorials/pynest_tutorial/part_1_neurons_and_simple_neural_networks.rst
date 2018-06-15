@@ -50,12 +50,12 @@ PyNEST - an interface to the NEST simulator
 The NEural Simulation Tool (NEST: www.nest-initiative.org) [1]_
 is designed for the simulation of large heterogeneous networks of point
 neurons. It is open source software released under the GPL licence. The
-simulator comes with an interface to Python [2]_. :numref:`Python-Interface` 
-illustrates the interaction between the user’s simulation script 
+simulator comes with an interface to Python [2]_. :numref:`Python-Interface`
+illustrates the interaction between the user’s simulation script
 (``mysimulation.py``) and the NEST simulator. Eppler et al. [3]_
-contains a technically detailed description of the implementation of this 
-interface and parts of this text are based on this reference. The 
-simulation kernel is written in C++ to obtain the highest possible performance 
+contains a technically detailed description of the implementation of this
+interface and parts of this text are based on this reference. The
+simulation kernel is written in C++ to obtain the highest possible performance
 for the simulation.
 
 You can use PyNEST interactively from the Python prompt or from within
@@ -74,7 +74,7 @@ functionality into the Python interpreter.
     import nest
 
 It should be noted, however, that certain external packages must be
-imported *before* importing nest. These include `scikit-learn <http://scikit-learn.org/stable/index.html>`_ 
+imported *before* importing nest. These include `scikit-learn <http://scikit-learn.org/stable/index.html>`_
 and `SciPy <https://www.scipy.org/>`_.
 
 ::
@@ -121,8 +121,8 @@ or return a list of ids (see `command overview`_). Thus, it is
 easy to apply functions to large sets of nodes with a single function
 call.
 
-After having imported NEST and also the Pylab interface to Matplotlib [4]_, 
-which we will use to display the results, we can start reating nodes. 
+After having imported NEST and also the Pylab interface to Matplotlib [4]_,
+which we will use to display the results, we can start reating nodes.
 As a first example, we will create a neuron of type
 ``iaf_psc_alpha``. This neuron is an integrate-and-fire neuron with
 alpha-shaped postsynaptic currents. The function returns a list of the
@@ -561,7 +561,7 @@ paramters (such as ``"mu"`` and ``"sigma"``).
 Simulation control
 ~~~~~~~~~~~~~~~~~~
 
-- ``Simulate(t)`` 
+- ``Simulate(t)``
    Simulate the network for ``t`` milliseconds.
 
 References

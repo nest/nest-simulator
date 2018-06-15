@@ -1,9 +1,6 @@
 Getting Help
 =================
 
-.. sidebar:: See Also
-
-    :doc:`Tutorials for step by step instructions <tutorials/index>`
 
 Have a specific question or problem with NEST?
 ------------------------------------------------
@@ -15,7 +12,7 @@ If your question is not on there, ask our :doc:`Mailing List <community>`.
 Getting help on the command line interface
 -------------------------------------------
 
-* The ``helpdesk()`` command will launch the documentation pages on your browser. 
+* The ``helpdesk()`` command will launch the documentation pages on your browser.
   See `Set up the integrated helpdesk`_ to specify the browser of your choice.
 
 * To access the High-level Python API reference material you can use the commands::
@@ -26,7 +23,7 @@ Getting help on the command line interface
      # Get docstring for function in python
      help('nest.FunctionName')
 
-     # or in ipython 
+     # or in ipython
      nest.FunctionName?
 
 * To access a specific C++ or SLI reference page for an object, command or parameter you can use the command::
@@ -44,15 +41,13 @@ Model Information
 
     nest.Models(mtype='nodes', sel=None)
 
-   * To get a list of only synapse models use:: 
+   * To get a list of only synapse models use::
 
     nest.Models(mtype='synapses', sel=None)
 
 * To get details on model parameters and usage use::
 
     nest.help('model_name')
-
-
 
 
 Set up the integrated helpdesk

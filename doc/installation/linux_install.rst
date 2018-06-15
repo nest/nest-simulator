@@ -9,35 +9,43 @@ The following are the basic steps to compile and install NEST from source code:
 
 * For most users, the following additional packages will likely be needed (see also the `Dependencies`_ section)
 
-.. code-block:: bash
+.. code-block:: sh
 
     sudo apt-get install -y build-essential cmake libltdl7-dev libreadline6-dev \
-    libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy \ 
+    libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy \
     python-matplotlib ipython openmpi-bin libopenmpi-dev python-nose
 
 * Unpack the tarball
 
-.. code-block:: bash
+.. code-block:: sh
 
     tar -xzvf nest-simulator-x.y.z.tar.gz
 
-* Create a build directory::
+* Create a build directory:
+
+.. code-block:: sh
 
     mkdir nest-simulator-x.y.z-build
 
-* Change to the build directory::
+* Change to the build directory:
+
+.. code-block:: sh
 
     cd nest-simulator-x.y.z-build
 
-* Configure NEST::
+* Configure NEST:
 
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src> 
+.. code-block:: sh
+
+   cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
 
 .. note::  ``/install/path`` should be an absolute path
 
 You may need additional ``cmake`` options and you can find the configuration options :doc:`here <install_options>`
 
-* Compile and install NEST::
+* Compile and install NEST:
+
+.. code-block:: sh
 
     make
     make install
@@ -45,13 +53,14 @@ You may need additional ``cmake`` options and you can find the configuration opt
 
 NEST should now be successfully installed on your system. You should now be able to ``import nest``  from a python or ipython shell.
 
-.. note:: If your operating system does not find the ``nest`` executable or Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries. In this case, please run::
+.. note:: If your operating system does not find the ``nest`` executable or Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries. In this case, please run:
 
+  .. code-block:: sh
        source </path/to/nest_install_dir>/bin/nest_vars.sh
 
  to set the necessary environment variables. You may want to include this line in your ``.bashrc`` file, so that the environment variables are set automatically.
 
-See the :doc:`Getting started <../getting_started>` pages to find out how to get going with NEST or check out our :doc:`example networks <../examples/index>`.
+See the :doc:`Getting started <../getting_started>` pages to find out how to get going with NEST or check out our :doc:`example networks <../auto_examples/index>`.
 
 Dependencies
 -------------
@@ -62,7 +71,7 @@ To build NEST, you need a recent version of `CMake <https://cmake.org>`_ and `li
 
 The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommended if you use NEST interactively **without Python**. Although most Linux distributions have GNU readline installed, you still need to install its development package if want to use GNU readline with NEST. GNU readline itself depends on `libncurses <http://www.gnu.org/software/ncurses/>`_ (or libtermcap on older systems). Again, the development packages are needed to compile NEST.
 
-The `GNU Scientific Library <http://www.gnu.org/software/gsl/>`_ is needed by several neuron models, in particular those with conductance based synapses. If you want these models, please install the GNU Scientific Library along with its development packages. 
+The `GNU Scientific Library <http://www.gnu.org/software/gsl/>`_ is needed by several neuron models, in particular those with conductance based synapses. If you want these models, please install the GNU Scientific Library along with its development packages.
 
 If you want to use PyNEST, we recommend to install the following along with their development packages:
 
@@ -89,7 +98,9 @@ By default, everything will be installed to the subdirectories ``/install/path/{
 - PyNEST examples ``/install/path/share/doc/nest/examples/pynest``
 - Extras ``/install/path/share/nest/extras/``
 
-If you want to run the ``nest`` executable or use the ``nest`` Python module without providing explicit paths, you have to add the installation directory to your search paths. For example, if you are using bash::
+If you want to run the ``nest`` executable or use the ``nest`` Python module without providing explicit paths, you have to add the installation directory to your search paths. For example, if you are using bash:
+
+.. code-block:: sh
 
     export PATH=$PATH:/install/path/bin
     export PYTHONPATH=/install/path/lib/pythonX.Y/site-packages:$PYTHONPATH

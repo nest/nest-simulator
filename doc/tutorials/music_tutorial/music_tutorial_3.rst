@@ -16,7 +16,8 @@ longwinded so we only show the relevant parts here. The C++ interface is
 divided into a setup phase and a runtime phase. Let’s look at the setup
 phase first:
 
-::
+.. code-block:: cpp
+    :linenos:
 
     MPI::Intracomm comm;
 
@@ -25,7 +26,7 @@ phase first:
         MUSIC::Setup* setup = new MUSIC::Setup (argc, argv);
         comm = setup->communicator();
 
-        double simt;                // read simulation time from the 
+        double simt;                // read simulation time from the
         setup->config ("simtime", &simt);       // MUSIC configuration file
 
         MUSIC::EventOutputPort *outdata =       // set output port
@@ -37,14 +38,14 @@ phase first:
         int width = 0;              // Get number of channels
         if (outdata->hasWidth()) {          // from the MUSIC configuration
         width = outdata->width();
-        }     
+        }
         // divide output channels evenly among MPI processes
-        int nLocal = width / nProcs;    // Number of channels per process   
-        int rest = width % nProcs;      
+        int nLocal = width / nProcs;    // Number of channels per process
+        int rest = width % nProcs;
         int firstId = nLocal * rank;    // index of lowest ID
         if (rank < rest) {
-        firstId += rank;        
-        nLocal += 1;        
+        firstId += rank;
+        nLocal += 1;
         } else
         firstId += rest;
 
@@ -56,7 +57,7 @@ phase first:
 
 At lines 5-6 we initialize MUSIC and MPI. The communicator is common to
 all processes running under MUSIC, and you’d use it instead of
-``COMM\_WORLD`` for your MPI processing.
+``COMM_WORLD`` for your MPI processing.
 
 Lines 7 and 8 illustrate something we haven’t discussed so far. We can
 set and read free parameters in the MUSIC configuration file. We can for
@@ -94,9 +95,10 @@ transmitting it. It depends on the connection structure, the amount of
 data that is generated and other things. But if you want, you can set
 this explicitly:
 
-::
+.. code-block:: cpp
+    :linenos:
 
-        outdata->map(&outindex, MUSIC::Index::GLOBAL, maxBuffered)
+    outdata->map(&outindex, MUSIC::Index::GLOBAL, maxBuffered)
 
 With a ``maxBuffered`` value of 1, for instance, MUSIC will
 send emitted spike events every cycle. With a value of 2 it would send
@@ -104,25 +106,28 @@ data every other cycle. This parameter can be necessary if the receiving
 side is time-sensitive (perhaps the input controls some kind of physical
 hardware), and the data needs to arrive as soon as possible.
 
-::
+.. code-block:: cpp
+    :linenos:
 
-        [ ... continued from above ... ]
 
-        // Start runtime phase 
-        MUSIC::Runtime runtime = MUSIC::Runtime(setup, TICK);
-        double tickt =  runtime.time();
-        
-        while (tickt < simt) {
-        for (int idx = firstId; idx<(firstId+nLocal); idx++) {
-            // send poisson spikes to every channel.
-            send_poisson(outdata, RATE*(idx+1), tickt, idx);
-        }
-        runtime.tick();         // Give control to MUSIC
-        tickt = runtime.time();
-        }
-        runtime.finalize();         // clean up and end
+    [ ... continued from above ... ]
 
-::
+    // Start runtime phase
+    MUSIC::Runtime runtime = MUSIC::Runtime(setup, TICK);
+    double tickt =  runtime.time();
+
+    while (tickt < simt) {
+    for (int idx = firstId; idx<(firstId+nLocal); idx++) {
+        // send poisson spikes to every channel.
+        send_poisson(outdata, RATE*(idx+1), tickt, idx);
+    }
+    runtime.tick();         // Give control to MUSIC
+    tickt = runtime.time();
+    }
+    runtime.finalize();         // clean up and end
+
+.. code-block:: cpp
+    :linenos:
 
     }
 
@@ -168,7 +173,8 @@ Once we reach the end of the simulation we call
 ``runtime.finalize()``. Music will shut down the
 communications and clean up after itself before exiting.
 
-::
+.. code-block:: cpp
+    :linenos:
 
     MPI::Intracomm comm;
     FILE *fout;
@@ -199,7 +205,7 @@ communications and clean up after itself before exiting.
         setup->publishEventInput("p_in");
 
         InHandler inhandler;
-        
+
         [ ... get processes, rank and channel width as in send.cpp ... ]
 
         char *fname;
@@ -210,6 +216,7 @@ communications and clean up after itself before exiting.
 
         MUSIC::LinearIndex inindex(firstId, nLocal);
         indata->map(&inindex, &inhandler, IN_LATENCY);
+    }
 
 The setup phase for the reveiving application is mostly the same as the
 sending one. The main difference is that we receive events through a
@@ -239,7 +246,9 @@ separate ``SetAcceptableLatency`` function in the NEST
 example earlier, and it works the same way. Just remember that the MUSIC
 unit of time is seconds, not milliseconds.
 
-::
+.. code-block:: cpp
+    :linenos:
+
 
     int main(int argc, char **argv)
     {
@@ -248,7 +257,7 @@ unit of time is seconds, not milliseconds.
 
         while (tickt < simt) {
         runtime.tick();     // Give control to MUSIC
-        tickt = runtime.time(); 
+        tickt = runtime.time();
         while (!in_q.empty()) {
             struct eventtype ev = in_q.front();
             fprintf (fout, "%d\t%.4f\n", ev.id, ev.t);
@@ -268,14 +277,14 @@ receiving ports you would submit the sending data before the
 ``tick()`` call, and process the receiving data after it in
 the same loop.
 
-The ``in\_q`` input queue we defined earlier holds any new
+The ``in_q`` input queue we defined earlier holds any new
 input events. We take the first element on line 10, then process it — we
 write it out to a file — and finally pop it off the queue. When the
 queue is empty we’re done and go back around the main loop again.
 
 Lastly we call ``runtime.finalize()`` as before.
 
-Building the Code[cppbuild]
+Building the Code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We have to build our ``C++`` code. The example code is
@@ -284,7 +293,8 @@ MUSIC project. There’s only two build-related files we need to care
 about (all the rest are autogenerated), ``configure.ac``
 and ``Makefile.am``.
 
-::
+.. code-block:: cpp
+    :linenos:
 
     AC_INIT(simple, 1.0)
     AC_PREREQ([2.59])
@@ -307,15 +317,16 @@ the C++ compiler. Lines 8-9 tells it to test for the existence of the
 ``music`` library, and look for the
 ``music.hh`` include file.
 
-::
+.. code-block:: cpp
+    :linenos:
 
     bin_PROGRAMS = send recv
-    send_SOURCES = send.cpp 
-    recv_SOURCES = recv.cpp 
+    send_SOURCES = send.cpp
+    recv_SOURCES = recv.cpp
 
 ``Makefile.am`` has only three lines:
-``bin\_PROGRAMS`` lists the binaries we want to build.
-``send\_SOURCES`` and ``recv\_SOURCES`` lists
+``bin_PROGRAMS`` lists the binaries we want to build.
+``send_SOURCES`` and ``recv_SOURCES`` lists
 the source files each one needs.
 
 Your project should already be set up, but if you start from nothing,
@@ -323,13 +334,13 @@ you need to generate the rest of the build files. You’ll need the
 Autotools installed for that. The easiest way to generate all build
 files is to use ``autoreconf``:
 
-::
+.. code-block:: sh
 
       autoreconf --install --force
 
 Then you can build with the usual sequence of commands:
 
-::
+.. code-block:: sh
 
       ./configure
       make
@@ -340,7 +351,9 @@ Try the Code
 We can run these programs just like we did with the NEST example, using
 a Music configuration file:
 
-::
+.. code-block:: cpp
+    :linenos:
+
 
     simtime=1.0
     [from]
@@ -356,9 +369,9 @@ The structure is just the same as before. We have added a
 ``simtime`` parameter for the two applications to read, and
 the binaries are our two new programs. We run this the same way:
 
-::
+.. code-block:: sh
 
-      mpirun -np 4 music simple.music
+    mpirun -np 4 music simple.music
 
 You can change the simulation time by changing the
 ``simtime`` parameter at the top of the file. Also, these
@@ -376,7 +389,9 @@ config file, change the ``binary`` parameter in
 ``binary=./send.py``. You get two sets of output files.
 Concatenate them as before, and compare:
 
-::
+.. code-block:: cpp
+    :linenos:
+
 
     send.py            recv
 

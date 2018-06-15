@@ -3,7 +3,8 @@
     
     
 Structural Plasticity example
------------------------
+----------------------------
+
 This example shows a simple network of two populations where structural
 plasticity is used. The network has 1000 neurons, 80% excitatory and
 20% inhibitory. The simulation starts without any connectivity. A set of

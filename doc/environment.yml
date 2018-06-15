@@ -1,8 +1,6 @@
 name: doc
 channels:
 - defaults
-- conda-forge
-- bioconda
 dependencies:
 - alabaster
 - asn1crypto
@@ -30,7 +28,6 @@ dependencies:
 - markupsafe
 - matplotlib
 - ncurses=5.9
-- nest
 - numpy
 - openssl
 - path.py
@@ -61,10 +58,5 @@ dependencies:
 - wheel
 - xz
 - zlib
-
 - pip:
   - recommonmark==0.4.0
-  - nbsphinx
-  - Image
-  - seaborn
-  - sphinx_gallery

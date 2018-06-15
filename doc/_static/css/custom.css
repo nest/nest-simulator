@@ -8,13 +8,42 @@
 }
 
 .wy-side-nav-search {
-    background-color: #4e4a4a;#
+	background: linear-gradient(45deg, #777, #333)
+}
+.wy-nav-side {
+	background: linear-gradient(90deg, #777, #333)
 }
 
+.wy-menu-vertical a,
+.wy-menu-vertical a:visited {
+	color: #fff;
+}
 
+.wy-menu-vertical header, .wy-menu-vertical p.caption {
+	background-color: #c1c1c1;
+    color: #6f6f6f;
+    border-top: 1px solid #aaa;
+}
 
+.wy-menu-vertical li.current a {
+	color: #888;
+}
 video {
     margin-bottom: 20px;
     background-color: lightgrey;
     border: 1px solid lightgrey;
+}
+
+a:visited {
+    color: #f63;
+}
+a {
+     color: #f63;
+    text-decoration: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+a:hover {
+    color: #f63;
+    text-decoration: underline;
 }

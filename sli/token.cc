@@ -195,7 +195,7 @@ Token::matches_as_string( const Token& rhs ) const
     const std::string& right = getValue< std::string >( rhs );
     return left == right;
   }
-  catch ( TypeMismatch )
+  catch ( TypeMismatch& )
   {
     return false;
   }

@@ -215,10 +215,7 @@ STDPConnection< targetidentifierT >::send( Event& e,
   const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
-  //   if(t_lastspike_ >0) {std::cout << "last spike " << t_lastspike <<
-  //   std::endl ;}
   double t_spike = e.get_stamp().get_ms();
-  // t_lastspike_ = 0 initially
 
   // use accessor functions (inherited from Connection< >) to obtain delay and
   // target

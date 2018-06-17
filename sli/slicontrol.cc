@@ -33,6 +33,9 @@
 #include <time.h>
 #include <unistd.h>
 
+// C++ includes:
+#include <limits>
+
 // Generated includes:
 #include "config.h"
 

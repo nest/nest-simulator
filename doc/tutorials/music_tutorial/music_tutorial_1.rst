@@ -9,13 +9,15 @@ with custom applications that also use the MUSIC interface.
 
 Setup of System
 -----------------
-To use MUSIC with NEST, we first need to ensure MUSIC is installed on our system 
+To use MUSIC with NEST, we first need to ensure MUSIC is installed on our system
 and NEST is configured properly.
 
-Please see the installation instructions on `the MUSIC website <https://github.com/INCF/MUSIC>`_.
+Please install MUSIC using the instructions on `the MUSIC website <https://github.com/INCF/MUSIC>`_.
 
 In the install of NEST, you need to add the following configuration option to
-your cmake::
+your cmake.
+
+.. code-block:: sh
 
     cmake -Dwith-music=[ON </path/to/music>]
     make
@@ -24,7 +26,7 @@ your cmake::
 A Quick Introduction to NEST and MUSIC
 ---------------------------------------
 
-In this tutorial we will show you how to use the MUSIC library together
+In this tutorial, we will show you how to use the MUSIC library together
 with NEST. We will cover how to use the library from PyNEST and from the
 SLI language interface. In addition, we’ll introduce the use of MUSIC in
 a C++ application and how to connect such an application to a NEST
@@ -39,8 +41,6 @@ constructs.
 .. sidebar:: See Also
 
     :doc:`Part 1 - Connect 2 NEST simulations <music_tutorial_2>`
-
-    MUSIC examples
 
     `Publication`_
 
@@ -73,10 +73,12 @@ the connection. Synapse models will typically modify the weight or
 timing of the spike sent on to the neuron. All connections have a
 synapse, by default the ``static_synapse``.
 
+.. _neuronpic:
+
 .. figure:: neuron.png
    :width: 200px
-   :align: center 
-   
+   :align: center
+
    A: Two connected neurons :math:`N_a` and :math:`N_b`, with a
    synapse :math:`S` and a receptor :math:`R`. A spike with weight
    :math:`W_a` is generated at :math:`t_0`. B: The spike traverses the
@@ -85,13 +87,13 @@ synapse, by default the ``static_synapse``.
 
 Connections have a delay and a weight. All connections are implemented
 on the receiving side, and the interpretation of the parameters is
-ultimately up to the receiving node. In fig. [fig:neuron]A, neuron
+ultimately up to the receiving node. In :numref:`neuronnpic` A, neuron
 :math:`N_a` has sent a spike to :math:`N_b` at time :math:`t`, over a
 connection with weight :math:`w_a` and delay :math:`d`. The spike is
 sent through the synapse, then buffered on the receiving side until
-:math:`t+d` (fig. [fig:neuron]B). At that time it’s handed over to the
+:math:`t+d` (:numref:`neuronpic` B). At that time it’s handed over to the
 neuron model receptor that converts the spike event to a current and
-applies it to the neuron model (fig. [fig:neuron]C).
+applies it to the neuron model (:numref:`neuronpic` C).
 
 
 Adding MUSIC connections
@@ -110,6 +112,8 @@ Depending on the application a port may have one or many channels, and a
 single channel can carry the events from one single neuron model or the
 aggregate output of many neurons.
 
+.. _neuronmusic1:
+
 .. figure:: neuronmusic1.png
    :width: 200px
    :align: center
@@ -117,11 +121,11 @@ aggregate output of many neurons.
    A: Two connected neurons :math:`N_a` and :math:`N_b`, with delay
    :math:`d_n` and weight :math:`w_n`. B: We’ve added a MUSIC connection
    with an output proxy :math:`P_a` on one end, and an input proxy
-   :math:`P_b` on the other. 
+   :math:`P_b` on the other.
 
-In figure [fig:neuronmusic1]A we see a regular NEST connection between
+In :numref:`neuronmusic1` A we see a regular NEST connection between
 two neurons :math:`N_a` and :math:`N_b`. The connection carries a weight
-:math:`w_n` and a delay :math:`d_n`. In figure [fig:neuronmusic1]B we
+:math:`w_n` and a delay :math:`d_n`. In :numref:`neuronmusic1` B we
 have inserted a pair of MUSIC proxies into the connection, with an
 output proxy :math:`P_a` on one end, and input proxy :math:`P_b` on the
 other.
@@ -136,6 +140,8 @@ effectively zero. The total delay and weight of the connection from
 :math:`N_a` to :math:`N_b` is thus that set on the :math:`P_b` to
 :math:`N_b` connection.
 
+.. _neuronmusic3:
+
 .. figure:: neuronmusic3.png
    :width: 200px
    :align: center
@@ -146,7 +152,7 @@ effectively zero. The total delay and weight of the connection from
    recipient neuron models.
 
 When we have multiple channels, the structure looks something like in
-figure [fig:neuronmusic3]. Now we have two neurons :math:`N_{a1}` and
+:numref:`neuronmusic3`. Now we have two neurons :math:`N_{a1}` and
 :math:`N_{a2}` that we want to connect to :math:`N_{b1}` and
 :math:`N_{b2}` respectively. As we mentioned above, NEST devices can
 accept connections from multiple separate devices, so we only need one
@@ -161,8 +167,6 @@ proxy. These proxies each connect to the recipient neurons as above.
 Publication
 -------------
 
-For further details, please see the following publication:
-
 Djurfeldt M. et al. 2010. Run-time interoperability between neuronal
-network simulators based on the music framework. Neuroinformatics
+network simulators based on the music framework. Neuroinformatics.
 8(1):43–60. DOI: 10.1007/s12021-010-9064-z.

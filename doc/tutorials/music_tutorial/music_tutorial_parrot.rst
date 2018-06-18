@@ -1,7 +1,7 @@
 Those parrot neurons, or why you never connect devices to each other
 --------------------------------------------------------------------
 
-In :math:`\texttt{receivesimple.py}` above, we used parrot neurons as
+In ``receivesimple.py`` above, we used parrot neurons as
 target for the input proxies, then connected the spike detector to those
 neurons. Couldn’t we have connected the spike detector directly to the
 proxies?
@@ -24,18 +24,18 @@ But if you connect the input proxies directly to the spike detector,
 *all* channels have a local spike detector target on every computing
 node. We would get duplicate spike traces, one for each MPI process on
 the receiving side. To test this, replace line 21 in
-:math:`\texttt{receive.py}` with
+``receive.py`` with
 
-.. code:: python
+.. code-block:: python
 
     nest.Connect(music_in, sdetector)
 
 Run this simulation and you will notice that the
-:math:`\texttt{receive-N-0.spikes}` and
-:math:`\texttt{receive-N-1.spikes}` are now identical and about twice as
+``receive-N-0.spikes`` and
+:math:``receive-N-1.spikes`` are now identical and about twice as
 big as before. Collate the input files and compare again:
 
-::
+.. code-block::
 
     send.spikes                receive.spikes
 

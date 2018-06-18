@@ -15,7 +15,7 @@ effective to send several steps worth of events in one packet than to
 send one packet of data per time step. In order to do this, MUSIC needs
 to know how much time is available for such delays.
 
-The :math:`\texttt{SetAcceptableLatency}` command specifies this time
+The ``SetAcceptableLatency`` command specifies this time
 for each input port. A simulation model may add, delete or alter
 connections at any point during a simulation, and this may happen
 locally in a large, distributed network, so it is in practice not

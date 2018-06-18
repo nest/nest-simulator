@@ -117,6 +117,7 @@ extensions = [
 #    'backreferences_dir': False
 # }
 
+
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX" \
               "-AMS-MML_HTMLorMML"
 

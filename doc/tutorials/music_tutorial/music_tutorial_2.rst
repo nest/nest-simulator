@@ -3,12 +3,14 @@ Connect two NEST simulations using MUSIC
 
 Let’s look at an example of two NEST simulations connected through
 MUSIC. We’ll implement the simple network in figure [fig:neuronmusic3]
-from :doc:`the introduction to this tutorial <music_tutorial_1>`. 
+from :doc:`the introduction to this tutorial <music_tutorial_1>`.
 
 We need a sending process, a receiving process and a MUSIC
 configuration file:
 
-::
+
+.. code-block:: python
+    :linenos:
 
     #!/usr/bin/env python
 
@@ -17,7 +19,7 @@ configuration file:
 
     neurons = nest.Create('iaf_neuron', 2, [{'I_e': 400.0}, {'I_e': 405.0}])
 
-    music_out = nest.Create('music_event_out_proxy', 1, 
+    music_out = nest.Create('music_event_out_proxy', 1,
         params = {'port_name':'p_out'})
 
     for i, n in enumerate(neurons):
@@ -38,9 +40,9 @@ and one with 405mA, just so they will respond differently. If you use
 ipython to work interactively, you can check their current status
 dictionary with ``nest.GetStatus(neurons)``. The definitive
 documentation for NEST nodes is the header file, in this case
-``models/iaf\_neuron.h`` in the NEST source.
+``models/iaf_neuron.h`` in the NEST source.
 
-We create a single ``music\_event\_out\_proxy`` for our
+We create a single ``music_event_out_proxy`` for our
 output on line 8, and set the port name. We loop over all the neurons on
 lines 11-20 and connect them to the proxy one by one, each one with a
 different output channel. As we saw earlier, each MUSIC port can have
@@ -52,14 +54,15 @@ have done directly in the ``Create`` call) and connect the
 neurons to the spike detector so we can see what we’re sending. Then we
 simulate for one second.
 
-::
+.. code-block:: python
+    :linenos:
 
     #!/usr/bin/env python
 
     import nest
     nest.SetKernelStatus({"overwrite_files": True})
 
-    music_in = nest.Create("music_event_in_proxy", 2, 
+    music_in = nest.Create("music_event_in_proxy", 2,
         params = {'port_name': 'p_in'})
 
     for i, n in enumerate(music_in):
@@ -79,7 +82,7 @@ simulate for one second.
     nest.Simulate(1000.0)
 
 The receiving process follows the same logic, but is just a little more
-involved. We create two ``music\_event\_in\_proxy`` — one
+involved. We create two ``music_event_in_proxy`` — one
 per channel — on lines 6-7 and set the input port name. As we discussed
 above, a NEST node can accept many inputs but only emit one stream of
 data, so we need one input proxy per channel to be able to distinguish
@@ -99,7 +102,7 @@ one-to-one with the parrot neurons on line 20, then the parrot neurons to
 the spike detector on line 21. We will discuss the reasons for this in a moment.
 Finally we simulate for one second.
 
-::
+.. code-block:: sh
 
       binary=./send.py
       np=2
@@ -114,27 +117,29 @@ The MUSIC configuration file structure is straightforward. We define one
 process ``from`` and one ``to``. For each
 process we set the name of the binary we wish to run and the number of
 MPI processes it should use. On line 9 we finally define a connection
-from output port ``p\_out`` in process
-``from`` to input port ``p\_in`` in process
+from output port ``p_out`` in process
+``from`` to input port ``p_in`` in process
 ``to``, with two channels.
 
 If our programs had taken command line options we could have added them
 with the ``args`` command:
 
-::
+
+
+.. code-block:: sh
 
       binary=./send.py
       args= --option -o somefile
 
 Run the simulation on the command line like this:
 
-::
+.. code-block:: sh
 
       mpirun -np 4 music python.music
 
 You should get a screenful of information scrolling past, and then be
 left with four new data files, named something like ``send-N-0.spikes``,
-``send-N-1.spikes`, ``receive-M-0.spikes`` and ``receive-M-1.spikes``. The names
+``send-N-1.spikes``, ``receive-M-0.spikes`` and ``receive-M-1.spikes``. The names
 and suffixes are of course the same that we set in ``send.py`` and
 ``receive.py`` above. The first numeral is the node ID of the spike detector
 that recorded and saved the data, and the final numeral is the rank order of
@@ -142,7 +147,8 @@ each process that generated the file.
 
 Collate the data files:
 
-::
+
+.. code-block:: sh
 
       cat send-*spikes | sort -k 2 -n  >send.spikes
       cat receive-*spikes | sort -k 2 -n  >receive.spikes
@@ -151,7 +157,8 @@ We run the files together, and sort the output numerically
 (:math:`-n`) by the second column (:math:`-k`). Let’s
 look at the beginning of the two files side by side:
 
-::
+
+.. code-block:: sh
 
     send.spikes                receive.spikes
 
@@ -183,7 +190,9 @@ messages. In NEST there are devices to receive, but not send, such
 inputs. The NEST documentation has a few examples such as this one
 below:
 
-::
+
+.. code-block:: python
+    :linenos:
 
     #!/usr/bin/python
 

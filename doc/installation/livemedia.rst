@@ -4,9 +4,9 @@ NEST LIVE MEDIA Installation
 
 Download and install a virtual machine if you do not already have one installed.
 
-.. note:: 
+.. note::
 
-   Although, the following instructions are for `Virtual Box <https://www.virtualbox.org/wiki/Downloads>`_, you can use a different virtual machine, such as `VMWare <http://www.vmware.com>`_. 
+   Although, the following instructions are for `Virtual Box <https://www.virtualbox.org/wiki/Downloads>`_, you can use a different virtual machine, such as `VMWare <http://www.vmware.com>`_.
 
 For Linux users, it is possible to install Virtual Box from the package repositories.
 
@@ -45,11 +45,5 @@ Notes
 * To install Guest Additions, select **Devices** > **Insert Guest Additions CD image...**  (top left of the VirtualBox Window). Then, open a terminal (Ctrl+Alt+t), go to "/media/nest/VBOXADDITIONS.../" and run "sudo bash VboxLinuxAdditions.run".
 
 * To set the correct language layout for your keyboard (e.g., from "US" to "DE"), you can use the program "lxkeymap", which you start by typing "lxkeymap" in the terminal.
-
-Cygwin
-~~~~~~~
-
-Cygwin is a software layer which emulates Unix system calls. NEST should compile and install under Cygwin with the generic installation instructions, but we have not tested this for a long time and do not support NEST under Cygwin at present. 
-Compilation under Cygwin is very slow, but the execution times are comparable to an equivalent Linux installation.
 
 

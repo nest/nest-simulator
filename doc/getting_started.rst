@@ -1,13 +1,13 @@
 Getting Started
 ================
 
-If you are new to NEST, we highly recommend you read the following text to get 
+If you are new to NEST, we highly recommend you read the following text to get
 a better understanding of how NEST works. Then check out our :doc:`PyNEST tutorial <tutorials/index>`,
 which will explain how to build your first neural network simulation in NEST.
 
 
 .. sidebar:: See Also
- 
+
     * :doc:`List of Models in NEST <models/index>`
     * :doc:`Create your own model <models/create_model>`
     * :doc:`Examples of Network Models <examples/index>`
@@ -17,7 +17,7 @@ NEST - a neural network simulator
 
 NEST is a simulator for **spiking neural network models** that focuses on the
 **dynamics, size and structure** of neural systems rather than on the exact
-morphology of individual neurons. 
+morphology of individual neurons.
 
 NEST is ideal for networks of spiking neurons of any size, for example:
 
@@ -33,7 +33,7 @@ Simulating Neural Networks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A NEST simulation tries to follow the logic of an electrophysiological
-experiment with the difference that it takes place inside the computer's memory 
+experiment with the difference that it takes place inside the computer's memory
 rather than in the physical world.
 
 As the experimenter, you need a clear idea of *what* you want to learn from the experiment.
@@ -56,8 +56,8 @@ The network and its configuration are defined at the level
 of the simulation language interpreter (SLI).
 
 
-How do I use NEST
-------------------
+How do I use NEST?
+-------------------
 
 You can use NEST either with Python (PyNEST) or as a stand alone application (
 ``nest``).
@@ -84,14 +84,16 @@ Fundamentally, you can build a basic network with the following functions::
     nest.SetStatus(device, {"key" : value})
 
     # Tell NEST how they are connected to each other (synapse properties can be
-    # added here) 
+    # added here)
     nest.Connect(device, neuron, syn_spec={"key": [value1, value2]})
 
     # Simulate network providing a specific timeframe.
     nest.Simulate(time_in_ms)
 
 NEST is extensible and new models for neurons, synapses, and devices can be
-added. See how you can :doc:`create your own model <models/create_model>`.
+added. You can find out how to :doc:`create your own model <models/create_model>`
+using NESTML and c++.
+
 
 Connections
 ~~~~~~~~~~~~

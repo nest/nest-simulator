@@ -10,14 +10,14 @@ Start MUSIC using mpirun
     mpirun. We give the config file name and the corresponding app label
     as command line options:
 
-    ::
+    .. code-block:: sh
 
           mpirun -np 2 <binary> --music_config <config file> --app-label <label> : ...
 
     So to start a simulation with the sendsimple.py and recv programs,
     we can do:
 
-    ::
+    .. code-block:: sh
 
           mpirun -np 2 ./sendsimple.py --music-config simplepy.music --app-label from :/
              -np 2 ./recv --music-config simplepy.music --app-label to
@@ -38,8 +38,8 @@ Start MUSIC using mpirun
 Disable Messages
 -----------------
 
-    NEST can be quite chatty as it connects things, especially with large 
-    networks. If we don’t want all that output, we can tell it to display only 
+    NEST can be quite chatty as it connects things, especially with large
+    networks. If we don’t want all that output, we can tell it to display only
     error messages:
 
     .. code:: python
@@ -54,36 +54,36 @@ Disable Messages
 Comma as decimal point
 ------------------------
 
-    Sorting output spikes may fail if you, like the authors, come from a 
-    country that uses a comma as decimal separator and runs your computer in 
-    your native language. The problem is that sort respects the language 
-    settings and expects the decimal separator to be a comma. When it sees the 
-    decimal point in the input it assumes the numeral has ended and sorts only 
+    Sorting output spikes may fail if you, like the authors, come from a
+    country that uses a comma as decimal separator and runs your computer in
+    your native language. The problem is that sort respects the language
+    settings and expects the decimal separator to be a comma. When it sees the
+    decimal point in the input it assumes the numeral has ended and sorts only
     on the integer part.
 
     The way to fix this is to set ``LC\_ALL=C`` before
     running the sort command. In a script or in the terminal you can do:
 
-    ::
+    .. code-block:: sh
 
           export LC_ALL=C
           cat output-*|sort -k 2 -n >output.spikes
 
     Or, if you want to do this temporarily for only one command:
 
-    ::
+    .. code-block:: sh
 
           cat output-*|LC_ALL=C sort -k 2 -n >output.spikes
 
 Build Autotool-enable project
 ------------------------------
 
-    To build an Autotool-enabled C/C++ project, you don’t actually need to 
-    be in the main directory. You can create a subdirectory and build 
-    everything from there. For instance, with the simple C++ MUSIC project 
+    To build an Autotool-enabled C/C++ project, you don’t actually need to
+    be in the main directory. You can create a subdirectory and build
+    everything from there. For instance, with the simple C++ MUSIC project
     in section :doc:`C++ build <music_tutorial_3>`, we can do this:
 
-    ::
+    .. code-block:: sh
 
           mkdir build
           cd build

@@ -1,19 +1,20 @@
 The pymusic interface
 ---------------------
 
-MUSIC has recently aqcuired a plain Python interface to go along with
-the C++ API. If you just want to connect with a simulation rather than
-adding MUSIC capability to a simulator, this Python interface can be a
-lot more convenient than C++. You have Numpy, Scipy and other high-level
+MUSIC has recently aqcuired a `plain Python interface <https://github.com/INCF/MUSIC/tree/master/pymusic>`_
+to go along with the C++ API. If you just want to connect with a simulation
+rather than adding MUSIC capability to a simulator, this Python interface can
+be a lot more convenient than C++. You have Numpy, Scipy and other high-level
 libraries available, and you don’t need to compile anything.
 
 The interface is closely modelled on the C++ API; indeed, the steps to
 use it is almost exactly the same. You can mostly refer to the :doc:`C++
 description <music_tutorial_3>` for explanation. Below we will only highlight the
 differences to the C++ API. The full example code is in the
-:math:`\texttt{pymusic/}` directory.
+``pymusic`` directory in the MUSIC repository.
 
-::
+.. code-block:: python
+    :linenos:
 
     #!/usr/bin/python
     import music
@@ -41,9 +42,9 @@ Make sure python is used as interpreter for the code (and make sure this
 file is executable). Import music in the expected way.
 
 Unlike the C++ API, the index is not an object, but simply a label
-indicating global or local indexing. The :math:`\texttt{map()}` call
+indicating global or local indexing. The ``map()`` call
 thus need to get the first ID and the number of elements mapped to this
-rank directly. Also note that the :math:`\texttt{map()}` functions have
+rank directly. Also note that the ``map()`` functions have
 a somewhat unexpected parameter order, so it’s best to use named
 parameters just in case.
 
@@ -51,7 +52,8 @@ The runtime looks the same as the C++ counterpart as well. We get the
 current simulation time, and repeatedly send new sets of events as long
 as the current time is smaller than the simulation time.
 
-::
+.. code-block:: python
+    :linenos:
 
     import Queue
 
@@ -66,7 +68,7 @@ as the current time is smaller than the simulation time.
     indata.map(inhandler,
             music.Index.GLOBAL,
             base=firstId,
-            size=nlocal, 
+            size=nlocal,
             accLatency=IN_LATENCY)
 
     tickt = runtime.time()
@@ -80,23 +82,23 @@ as the current time is smaller than the simulation time.
             f.write("{0}\t{1:8.4f}\n".format(ev[1], ev[0]))
 
 Here is the structure for the receiving process, modelled on the C++
-code. We use a Python :math:`\texttt{Queue}`\  class to implement
+code. We use a Python ``Queue``  class to implement
 our event queue.
 
 The input handler function has signature
-:math:`\texttt{(float time, int indextype, int channel\_id)}`. The
-:math:`\texttt{time}` and :math:`\texttt{channel\_id}` are the event
-times and IDs as before. The :math:`\texttt{indextype}` is the type of
-the map index for this input and is :math:`\texttt{music.Index.LOCAL}`
-or :math:`\texttt{music.Index.GLOBAL}`.
+``(float time, int indextype, int channel_id)``. The
+``time`` and ``channel_id`` are the event
+times and IDs as before. The ``indextype`` is the type of
+the map index for this input and is ``music.Index.LOCAL``
+or ``music.Index.GLOBAL``.
 
-The :math:`\texttt{map()}` function keyword for accepatable latency is
-:math:`\texttt{accLatency}`, and the :math:`\texttt{maxBuffered}`
+The ``map()`` function keyword for accepatable latency is
+``accLatency``, and the ``maxBuffered``
 keyword we mentioned in the previous section is, unsurprisingly,
-:math:`\texttt{maxBuffered}`. The runtime is, again, the same as for
+``maxBuffered``. The runtime is, again, the same as for
 C++.
 
-As the :math:`\texttt{pymusic}` bindings are still quite new the
+As the ``pymusic`` bindings are still quite new the
 documentation is still lagging behind. This quick introduction should
 nevertheless bee enough for you to get going with the bindings. And
 should you need further help, the authors are only an email away.

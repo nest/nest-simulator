@@ -1,4 +1,4 @@
-.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
+t.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
     color: #f63;
 }
 
@@ -46,4 +46,7 @@ a {
 a:hover {
     color: #f63;
     text-decoration: underline;
+}
+code.descclassname {
+    display: none;
 }

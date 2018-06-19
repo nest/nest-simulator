@@ -51,6 +51,9 @@ from subprocess import check_output, CalledProcessError
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../topology'))
+sys.path.insert(0, os.path.abspath('../pynest/nest'))
+
 source_suffix = ['.rst', '.md']
 source_parsers = {
     '.md': CommonMarkParser

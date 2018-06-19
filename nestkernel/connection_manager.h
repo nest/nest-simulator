@@ -443,6 +443,15 @@ private:
     std::vector< index >& sources );
 
   /**
+   * Splits a TokenArray of GIDs to two vectors containing GIDs of neurons and
+   * GIDs of devices.
+   */
+  void split_to_neuron_device_vectors_( const thread tid,
+    GIDCollectionPTR gidcoll,
+    std::vector< index >& neuron_gids,
+    std::vector< index >& device_gids ) const;
+
+  /**
    * Update delay extrema to current values.
    *
    * Static since it only operates in static variables. This allows it to be

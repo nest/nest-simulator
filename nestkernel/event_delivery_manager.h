@@ -33,6 +33,7 @@
 #include "stopwatch.h"
 
 // Includes from nestkernel:
+#include "completed_checker.h"
 #include "mpi_manager.h" // OffGridSpike
 #include "event.h"
 #include "nest_time.h"
@@ -215,6 +216,8 @@ public:
    * infrastructure for secondary events.
    */
   void gather_secondary_target_data();
+
+  void write_done_marker_secondary_events_( const bool done );
 
   void gather_secondary_events( const bool done );
 
@@ -465,7 +468,7 @@ private:
   // communication of spikes was
   // changed
 
-  std::vector< unsigned int > completed_count_;
+  CompletedChecker gather_completed_checker_;
 };
 
 inline void

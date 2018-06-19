@@ -1172,6 +1172,27 @@ extend_connectome( std::deque< nest::ConnectionID >& out,
 }
 
 void
+nest::ConnectionManager::split_to_neuron_device_vectors_( const thread tid,
+  GIDCollectionPTR gidcoll,
+  std::vector< index >& neuron_gids,
+  std::vector< index >& device_gids ) const
+{
+  GIDCollection::const_iterator t_id = gidcoll->begin();
+  for ( ; t_id < gidcoll->end(); ++t_id )
+  {
+    const index gid = ( *t_id ).gid;
+    if ( kernel().node_manager.get_node_or_proxy( gid, tid )->has_proxies() )
+    {
+      neuron_gids.push_back( gid );
+    }
+    else
+    {
+      device_gids.push_back( gid );
+    }
+  }
+}
+
+void
 nest::ConnectionManager::get_connections(
   std::deque< ConnectionID >& connectome,
   GIDCollectionPTR source,
@@ -1235,13 +1256,21 @@ nest::ConnectionManager::get_connections(
 
       std::deque< ConnectionID > conns_in_thread;
 
+      // Split targets into neuron- and device-vectors.
+      std::vector< index > target_neuron_gids;
+      std::vector< index > target_device_gids;
+      split_to_neuron_device_vectors_(
+        tid, target, target_neuron_gids, target_device_gids );
+
       ConnectorBase* connections = ( *connections_[ tid ] )[ syn_id ];
       if ( connections != NULL )
       {
-        GIDCollection::const_iterator t_id = target->begin();
-        for ( ; t_id < target->end(); ++t_id )
+        for ( std::vector< index >::const_iterator t_gid =
+                target_neuron_gids.begin();
+              t_gid != target_neuron_gids.end();
+              ++t_gid )
         {
-          const index target_gid = ( *t_id ).gid;
+          const index target_gid = *t_gid;
 
           std::vector< index > source_lcids;
           connections->get_source_lcids( tid, target_gid, source_lcids );
@@ -1255,15 +1284,20 @@ nest::ConnectionManager::get_connections(
               syn_id,
               source_lcids[ i ] ) ) );
           }
+          // target_table_devices_ contains connections both to and from
+          // devices.
+          target_table_devices_.get_connections_from_devices_(
+            0, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
         }
       }
 
-      GIDCollection::const_iterator t_id = target->begin();
-      for ( ; t_id < target->end(); ++t_id )
+      for (
+        std::vector< index >::const_iterator t_gid = target_device_gids.begin();
+        t_gid != target_device_gids.end();
+        ++t_gid )
       {
-        const index target_gid = ( *t_id ).gid;
-        target_table_devices_.get_connections(
-          0, target_gid, tid, syn_id, synapse_label, conns_in_thread );
+        target_table_devices_.get_connections_to_devices_(
+          0, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
       }
 
       if ( conns_in_thread.size() > 0 )
@@ -1284,6 +1318,15 @@ nest::ConnectionManager::get_connections(
 
       std::deque< ConnectionID > conns_in_thread;
 
+      // Split targets into neuron- and device-vectors.
+      std::vector< index > target_neuron_gids;
+      std::vector< index > target_device_gids;
+      if ( target.valid() )
+      {
+        split_to_neuron_device_vectors_(
+          tid, target, target_neuron_gids, target_device_gids );
+      }
+
       const ConnectorBase* connections = ( *connections_[ tid ] )[ syn_id ];
       if ( connections != NULL )
       {
@@ -1302,12 +1345,13 @@ nest::ConnectionManager::get_connections(
             }
             else
             {
-              GIDCollection::const_iterator t_id = target->begin();
-              for ( ; t_id != target->end(); ++t_id )
+              for ( std::vector< index >::const_iterator t_gid =
+                      target_neuron_gids.begin();
+                    t_gid != target_neuron_gids.end();
+                    ++t_gid )
               {
-                size_t target_gid = ( *t_id ).gid;
                 connections->get_connection( source_gid,
-                  target_gid,
+                  *t_gid,
                   tid,
                   lcid,
                   synapse_label,
@@ -1329,16 +1373,23 @@ nest::ConnectionManager::get_connections(
         }
         else
         {
-          GIDCollection::const_iterator t_id = target->begin();
-          for ( ; t_id != target->end(); ++t_id )
+          for ( std::vector< index >::const_iterator t_gid =
+                  target_neuron_gids.begin();
+                t_gid != target_neuron_gids.end();
+                ++t_gid )
           {
-            const index target_gid = ( *t_id ).gid;
-            target_table_devices_.get_connections( source_gid,
-              target_gid,
-              tid,
-              syn_id,
-              synapse_label,
-              conns_in_thread );
+            // target_table_devices_ contains connections both to and from
+            // devices.
+            target_table_devices_.get_connections_from_devices_(
+              source_gid, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
+          }
+          for ( std::vector< index >::const_iterator t_gid =
+                  target_device_gids.begin();
+                t_gid != target_device_gids.end();
+                ++t_gid )
+          {
+            target_table_devices_.get_connections_to_devices_(
+              source_gid, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
           }
         }
       }

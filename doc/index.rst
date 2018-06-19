@@ -30,11 +30,18 @@ Welcome to the NEST simulator documentation!
   <a href="models/devices/index.html">
     <img src="_static/img/oscilloscope.png" alt="Devices" style="width:150px;height:150px;border:0;">
   </a>
-  <a href="models/topology/index.html">
-    <img src="_static/img/topology.png" alt="Topology" style="width:150px;height:150px;border:0;">
-  </a>
   </embed>
 
+**Create complex networks with spatial structure using the Topology Module**
+
+.. raw:: html
+
+  <embed>
+  <a href="topology/index.html">
+    <img src="_static/img/topology.png" alt="Topology" style="width:150px;height:150px;border:0;">
+  </a>
+
+  </embed>
 
 
 **Need a different model?**

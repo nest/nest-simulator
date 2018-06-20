@@ -4,3 +4,37 @@ The documentation of NEST. This includes design documents and user documentation
 
 [install]: http://nestwwwdev.inm.kfa-juelich.de/nest-simulator/installation-2/ "Installation documentation"
 [doxygen]: http://doxygen.org/ "doxygen Homepage"
+
+## Local install
+
+### Requirements
+
+To keep everything simple and easy to maintain, the installation with conda
+is described here.
+So all you need is conda. If you don't have it yet,
+[miniconda](https://conda.io/miniconda.html) is recommended.
+
+###Installation
+
+
+Cd to the docs/ folder (if you're not already there).
+
+    cd ./docs
+
+Create and activate the environment.
+
+    conda env create -f environment.yml
+    conda update -n base conda
+    source activate doc
+
+Now generate the html files. They are then located in ./docs/build/html.
+    
+    make html
+
+> 'make pdf', 'make latex' etc. are possible, too. For more information do a
+  'make help'.
+
+If you want to deactivate and/or delete the build environment:
+
+    source deactivate
+    conda remove --name documentation --all

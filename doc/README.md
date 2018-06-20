@@ -1,6 +1,10 @@
 # `doc` folder
 
-The documentation of NEST. This includes design documents and user documentation. The online help is generated during the [installation][install] of NEST and installed to the installation directory. We use [doxygen][doxygen] comments extensively throughout NEST. `make doc` will extract them from the source code and install the developer documentation into the doc directory.
+The documentation of NEST. This includes design documents and user 
+documentation. The online help is generated during the [installation][install] 
+of NEST and installed to the installation directory. We use [doxygen][doxygen] 
+comments extensively throughout NEST. `make doc` will extract them from the 
+source code and install the developer documentation into the doc directory.
 
 [install]: http://nestwwwdev.inm.kfa-juelich.de/nest-simulator/installation-2/ "Installation documentation"
 [doxygen]: http://doxygen.org/ "doxygen Homepage"
@@ -16,10 +20,12 @@ So all you need is conda. If you don't have it yet,
 
 ###Installation
 
+With the following steps a full development environment is installed - even 
+NEST 2.14.0.
 
-Cd to the docs/ folder (if you're not already there).
+Cd to the doc/ folder (if you're not already there).
 
-    cd ./docs
+    cd ./doc
 
 Create and activate the environment.
 

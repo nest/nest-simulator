@@ -37,11 +37,11 @@ import pip
 # pip.main(['install', 'Sphinx==1.5.6'])
 # pip.main(['install', 'sphinx-gallery'])
 
-#import sphinx_gallery
+import sphinx_gallery
 import subprocess
 
-#import shlex
-#import recommonmark
+# import shlex
+# import recommonmark
 
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
@@ -121,7 +121,9 @@ extensions = [
 # }
 
 
-mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX" \
+mathjax_path = \
+    "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax" \
+                ".js?config=TeX" \
               "-AMS-MML_HTMLorMML"
 
 # Add any paths that contain templates here, relative to this directory.

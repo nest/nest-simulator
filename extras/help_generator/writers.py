@@ -138,11 +138,13 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
         f_file_name = io.open(os.path.join(path, '{}.html'.format(name)),
                               mode='w', encoding='utf-8')
         f_file_name.write(cmdindexstring)
+        f_file_name.write(u'\n')
         f_file_name.close()
 
         f_file_name_hlp = io.open(os.path.join(path, '{}.hlp'.format(name)),
                                   mode='w', encoding='utf-8')
         f_file_name_hlp.write(u'\n'.join(hlplist))
+        f_file_name_hlp.write(u'\n')
         f_file_name_hlp.close()
 
 
@@ -236,12 +238,14 @@ def write_helpindex(helpdir):
     f_helpindex = io.open(os.path.join(helpdir, 'helpindex.html'), mode='w',
                           encoding='utf-8')
     f_helpindex.write(indexstring)
+    f_helpindex.write(u'\n')
     f_helpindex.close()
 
     # Todo: using string template for .hlp
     f_helphlpindex = io.open(os.path.join(helpdir, 'helpindex.hlp'), mode='w',
                              encoding='utf-8')
     f_helphlpindex.write(u'\n'.join(hlp_list))
+    f_helphlpindex.write(u'\n')
     f_helphlpindex.close()
 
 

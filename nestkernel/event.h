@@ -1057,7 +1057,9 @@ public:
           i != coeffarray_as_d_end_;
           i++ )
     {
-      write_to_comm_buffer( *i, pos );
+      // we need the static_cast here as the size of a stand-alone variable
+      // and a std::vector entry may differ (e.g. for std::vector< bool >)
+      write_to_comm_buffer( static_cast< DataType >( *i ), pos );
     }
     return pos;
   }

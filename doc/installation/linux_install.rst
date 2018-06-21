@@ -56,6 +56,7 @@ NEST should now be successfully installed on your system. You should now be able
 .. note:: If your operating system does not find the ``nest`` executable or Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries. In this case, please run:
 
   .. code-block:: sh
+
        source </path/to/nest_install_dir>/bin/nest_vars.sh
 
  to set the necessary environment variables. You may want to include this line in your ``.bashrc`` file, so that the environment variables are set automatically.

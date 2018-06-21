@@ -13,36 +13,36 @@ The easiest way to install NEST on a Mac is to install it via the Homebrew packa
 
 *  Then, in a terminal
 
-    *  Add the homebrew/science tap by running:
+    * Add the homebrew/science tap by running:
 
-      .. code-block:: sh
+       .. code-block:: sh
 
          brew tap brewsci/science
 
-    *  For information on what options NEST has and what will be installed, run:
+    * For information on what options NEST has and what will be installed, run:
 
-     .. code-block:: sh
+       .. code-block:: sh
 
-        brew info nest
+         brew info nest
 
-    *  To install nest, execute
+    * To install nest, execute
 
-     .. code-block:: sh
+       .. code-block:: sh
 
-        brew install nest
+         brew install nest
 
 Options have to be appended, so for example, to install NEST with PyNEST run:
 
-     .. code-block:: sh
+       .. code-block:: sh
 
-        brew install nest --with-python
+         brew install nest --with-python
 
 This will install the most recent release version of NEST. To build
 NEST from the most recent sources on Github, use:
 
-     .. code-block:: sh
+       .. code-block:: sh
 
-        brew install nest --HEAD
+         brew install nest --HEAD
 
 Manual installation
 --------------------

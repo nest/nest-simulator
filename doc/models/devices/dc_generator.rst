@@ -17,54 +17,54 @@ dc\_generator
 **Examples:**
 ::
 
-    The dc current can be altered in the following way:  
-      /dc_generator Create /dc_gen Set   % Creates a dc_generator, which is a node  
-      dc_gen GetStatus info  % View properties (amplitude is 0)  
-      dc_gen << /amplitude 1500. >> SetStatus  
-      dc_gen GetStatus info    % amplitude is now 1500.0  
-       
-      
+    The dc current can be altered in the following way:
+      /dc_generator Create /dc_gen Set   % Creates a dc_generator, which is a node
+      dc_gen GetStatus info  % View properties (amplitude is 0)
+      dc_gen << /amplitude 1500. >> SetStatus
+      dc_gen GetStatus info    % amplitude is now 1500.0
+
+
 
 **Description:**
 ::
 
-    The DC-Generator provides a constant DC Input  
-      to the connected node. The unit of the current is pA.  
-       
-      
+    The DC-Generator provides a constant DC Input
+      to the connected node. The unit of the current is pA.
+
+
 
 **Parameters:**
 ::
 
-     
-      The following parameters can be set in the status dictionary:  
-      amplitude  double    - Amplitude of current in pA  
-       
-      
+
+      The following parameters can be set in the status dictionary:
+      amplitude  double    - Amplitude of current in pA
+
+
 
 **Sends:**
 ::
 
-    CurrentEvent  
-       
-      
+    CurrentEvent
+
+
 
 **Remarks:**
 ::
 
-    The dc_generator is rather inefficient, since it needs to  
-      send the same current information on each time step. If you  
-      only need a constant bias current into a neuron, you should  
-      set it directly in the neuron, e.g., dc_generator.  
-       
-      
+    The dc_generator is rather inefficient, since it needs to
+      send the same current information on each time step. If you
+      only need a constant bias current into a neuron, you should
+      set it directly in the neuron, e.g., dc_generator.
+
+
 
 **Author:**
 ::
 
-    docu by Sirko Straube  
-       
-      
+    docu by Sirko Straube
+
+
 
 **SeeAlso:**
 

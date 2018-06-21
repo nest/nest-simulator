@@ -400,14 +400,15 @@ public:
     index lcid_offset = 0;
     while ( true )
     {
-      const bool is_disabled = C_[ lcid + lcid_offset ].is_disabled();
+    	  ConnectionT& conn = C_[ lcid + lcid_offset ];
+      const bool is_disabled = conn.is_disabled();
       const bool has_source_subsequent_targets =
-        C_[ lcid + lcid_offset ].has_source_subsequent_targets();
+        conn.has_source_subsequent_targets();
 
       e.set_port( lcid + lcid_offset );
       if ( not is_disabled )
       {
-        C_[ lcid + lcid_offset ].send( e, tid, cp );
+        conn.send( e, tid, cp );
         send_weight_event( tid, lcid + lcid_offset, e, cp );
       }
       if ( not has_source_subsequent_targets )

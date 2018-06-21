@@ -126,9 +126,6 @@ hardware), and the data needs to arrive as soon as possible.
     }
     runtime.finalize();         // clean up and end
 
-.. code-block:: cpp
-    :linenos:
-
     }
 
     double frand(double rate) {return -(1./rate)*log(random()/double(RAND_MAX));}

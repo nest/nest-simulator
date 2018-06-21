@@ -53,7 +53,7 @@ You may need additional ``cmake`` options and you can find the configuration opt
 
 NEST should now be successfully installed on your system. You should now be able to ``import nest``  from a python or ipython shell.
 
-.. note:: If your operating system does not find the ``nest`` executable or Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries. In this case, please run:
+.. note:: If your operating system does not find the ``nest`` executable or if Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries. In this case, please run:
 
   .. code-block:: sh
 

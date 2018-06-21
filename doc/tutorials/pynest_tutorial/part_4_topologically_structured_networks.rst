@@ -16,14 +16,12 @@ be able to:
 For more information on the usage of PyNEST, please see the other
 sections of this primer:
 
-- :doc:`Part 1: Neurons and simple neural
-   networks <part_1_neurons_and_simple_neural_networks>`
--  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
--  :doc:`Part 3: Connecting networks with
-   synapses <part_3_connecting_networks_with_synapses>`
+- :doc:`Part 1: Neurons and simple neural networks <part_1_neurons_and_simple_neural_networks>`
+- :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
+- :doc:`Part 3: Connecting networks with synapses <part_3_connecting_networks_with_synapses>`
 
-More advanced examples can be found at `Example
-Networks <http://www.nest-simulator.org/more-example-networks/>`__, or
+More advanced examples can be found at :doc:`Example
+Networks <../../auto_examples/index>`, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 

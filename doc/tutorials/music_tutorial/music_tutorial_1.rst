@@ -38,11 +38,9 @@ a minimal knowledge of Python, C++ and (especially) SLI, so the examples
 will favour clarity and simplicity over elegance and idiomatic
 constructs.
 
-.. sidebar:: See Also
+.. sidebar:: Jump to
 
     :doc:`Part 1 - Connect 2 NEST simulations <music_tutorial_2>`
-
-    `Publication`_
 
 
 
@@ -87,7 +85,7 @@ synapse, by default the ``static_synapse``.
 
 Connections have a delay and a weight. All connections are implemented
 on the receiving side, and the interpretation of the parameters is
-ultimately up to the receiving node. In :numref:`neuronnpic` A, neuron
+ultimately up to the receiving node. In :numref:`neuronpic` A, neuron
 :math:`N_a` has sent a spike to :math:`N_b` at time :math:`t`, over a
 connection with weight :math:`w_a` and delay :math:`d`. The spike is
 sent through the synapse, then buffered on the receiving side until
@@ -169,4 +167,4 @@ Publication
 
 Djurfeldt M. et al. 2010. Run-time interoperability between neuronal
 network simulators based on the music framework. Neuroinformatics.
-8(1):43–60. DOI: 10.1007/s12021-010-9064-z.
+8(1):43–60. `DOI: 10.1007/s12021-010-9064-z <https://link.springer.com/article/10.1007/s12021-010-9064-z>`_.

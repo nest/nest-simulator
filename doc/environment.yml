@@ -69,3 +69,4 @@ dependencies:
   - recommonmark==0.4.0
   - seaborn
   - sphinx_gallery
+  - sphinxcontrib-napoleon

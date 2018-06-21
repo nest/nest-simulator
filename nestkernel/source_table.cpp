@@ -53,7 +53,7 @@ nest::SourceTable::initialize()
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    sources_[ tid ] = new std::vector< std::vector< Source >* >(
+    sources_[ tid ] = new std::vector< std::deque< Source >* >(
       kernel().model_manager.get_num_synapse_prototypes(), NULL );
     resize_sources( tid );
     current_positions_[ tid ] = new SourceTablePosition();
@@ -74,7 +74,7 @@ nest::SourceTable::finalize()
       clear( tid );
     }
   }
-  for ( std::vector< std::vector< std::vector< Source >* >* >::iterator it =
+  for ( std::vector< std::vector< std::deque< Source >* >* >::iterator it =
           sources_.begin();
         it != sources_.end();
         ++it )
@@ -112,7 +112,7 @@ nest::SourceTable::is_cleared() const
   return all_cleared;
 }
 
-std::vector< std::vector< nest::Source >* >&
+std::vector< std::deque< nest::Source >* >&
 nest::SourceTable::get_thread_local_sources( const thread tid )
 {
   return *sources_[ tid ];
@@ -155,7 +155,7 @@ nest::SourceTable::clean( const thread tid )
       {
         continue;
       }
-      std::vector< Source >*& sources = ( *sources_[ tid ] )[ syn_id ];
+      std::deque< Source >*& sources = ( *sources_[ tid ] )[ syn_id ];
       if ( max_position.syn_id == syn_id )
       {
         // we need to add 2 to max_position.lcid since
@@ -169,7 +169,7 @@ nest::SourceTable::clean( const thread tid )
             sources->begin() + max_position.lcid + 2, sources->end() );
           if ( deleted_elements > min_deleted_elements_ )
           {
-            std::vector< Source >( sources->begin(), sources->end() )
+            std::deque< Source >( sources->begin(), sources->end() )
               .swap( *sources );
           }
         }
@@ -191,7 +191,7 @@ nest::SourceTable::clean( const thread tid )
       {
         continue;
       }
-      std::vector< Source >*& sources = ( *sources_[ tid ] )[ syn_id ];
+      std::deque< Source >*& sources = ( *sources_[ tid ] )[ syn_id ];
       sources->clear();
       delete sources;
       sources = NULL;
@@ -209,8 +209,6 @@ nest::SourceTable::reserve( const thread tid,
   const synindex syn_id,
   const size_t count )
 {
-  ( *sources_[ tid ] )[ syn_id ]->reserve(
-    ( *sources_[ tid ] )[ syn_id ]->size() + count );
 }
 
 nest::index
@@ -235,7 +233,7 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
     return invalid_index;
   }
 
-  std::vector< Source >& mysources = *( *sources_[ tid ] )[ syn_id ];
+  std::deque< Source >& mysources = *( *sources_[ tid ] )[ syn_id ];
   const index max_size = mysources.size();
   if ( max_size == 0 )
   {
@@ -287,7 +285,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources(
                .model_manager.get_synapse_prototype( syn_id, tid )
                .is_primary() )
     {
-      for ( std::vector< Source >::const_iterator source_cit =
+      for ( std::deque< Source >::const_iterator source_cit =
               ( *sources_[ tid ] )[ syn_id ]->begin();
             source_cit != ( *sources_[ tid ] )[ syn_id ]->end();
             ++source_cit )
@@ -349,7 +347,7 @@ nest::SourceTable::resize_sources( const thread tid )
   {
     if ( ( *sources_[ tid ] )[ syn_id ] == NULL )
     {
-      ( *sources_[ tid ] )[ syn_id ] = new std::vector< Source >( 0 );
+      ( *sources_[ tid ] )[ syn_id ] = new std::deque< Source >( 0 );
     }
   }
 }

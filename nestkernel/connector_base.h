@@ -27,6 +27,7 @@
 #include "config.h"
 
 // C++ includes:
+#include <deque>
 #include <cstdlib>
 #include <vector>
 
@@ -174,6 +175,7 @@ public:
    * Sort connections according to source gids.
    */
   virtual void sort_connections( std::vector< Source >& ) = 0;
+  virtual void sort_connections( std::deque< Source >& ) = 0;
 
   /**
    * Reserve memory for the specified amount of connections.
@@ -224,7 +226,7 @@ template < typename ConnectionT >
 class Connector : public ConnectorBase
 {
 private:
-  std::vector< ConnectionT > C_;
+  std::deque< ConnectionT > C_;
   const synindex syn_id_;
 
 public:
@@ -449,11 +451,17 @@ public:
   void
   reserve( const size_t count )
   {
-    C_.reserve( count );
+    // C_.reserve( count );
   }
 
   void
   sort_connections( std::vector< Source >& sources )
+  {
+    nest::sort( sources, C_ );
+  }
+
+  void
+  sort_connections( std::deque< Source >& sources )
   {
     nest::sort( sources, C_ );
   }

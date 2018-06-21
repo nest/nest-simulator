@@ -23,6 +23,7 @@
 #ifndef VECTOR_UTIL_H
 #define VECTOR_UTIL_H
 
+#include <deque>
 #include <vector>
 
 namespace vector_util
@@ -38,6 +39,12 @@ grow( std::vector< T >& v )
   {
     v.reserve( ( v.size() * 3 + 1 ) / 2 );
   }
+}
+
+template < typename T >
+inline void
+grow( std::deque< T >& v )
+{
 }
 
 } // namespace vector_util

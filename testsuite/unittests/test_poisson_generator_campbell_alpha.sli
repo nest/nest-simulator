@@ -74,7 +74,7 @@ ResetKernel
 
 /poisson /poisson_generator Create def   
 
-poisson neurons cvgidcollection << /rule /all_to_all >> << /model /static_synapse /weight JE >> Connect
+poisson neurons << /rule /all_to_all >> << /model /static_synapse /weight JE >> Connect
     
 simtime Simulate
 

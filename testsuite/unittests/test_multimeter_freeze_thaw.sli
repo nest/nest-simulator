@@ -184,13 +184,13 @@ def
                        /interval 0.7 /start 4.8 /stop 233.1 /time_in_steps true >> SetDefaults
         /mm /multimeter Create def  
         /ac /multimeter << /to_memory false /to_accumulator true >> Create def  
-        mm nrns cvgidcollection Connect
-        ac nrns cvgidcollection Connect
+        mm nrns Connect
+        ac nrns Connect
 
         /pg /poisson_generator << /rate 1000. >> Create def
 
-        pg nrns cvgidcollection << /rule /all_to_all >> << /model /static_synapse /weight 1.0 >> Connect
-        pg nrns cvgidcollection << /rule /all_to_all >> << /model /static_synapse /weight -1.0 >> Connect
+        pg nrns << /rule /all_to_all >> << /model /static_synapse /weight 1.0 >> Connect
+        pg nrns << /rule /all_to_all >> << /model /static_synapse /weight -1.0 >> Connect
 
         nrns { << /frozen true >> SetStatus } forall
         20. Simulate

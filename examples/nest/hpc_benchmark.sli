@@ -112,6 +112,8 @@ def
 % in ConvertSynapseWeight. We computed this value once and hard-code 
 % it here.
 
+/tau_syn 0.32582722403722841 ms def
+
 % -------------------------------------------------------------------------------------
 
 /brunel_params
@@ -276,8 +278,8 @@ brunel_params dup using
 
   % Connect Poisson generator to neuron
 
-  E_stimulus E_stimulus cvgidcollection E_neurons << /rule (all_to_all) >> << /model /syn_ex >> Connect
-  E_stimulus E_stimulus cvgidcollection I_neurons << /rule (all_to_all) >> << /model /syn_ex >> Connect
+  E_stimulus E_neurons << /rule (all_to_all) >> << /model /syn_ex >> Connect
+  E_stimulus I_neurons << /rule (all_to_all) >> << /model /syn_ex >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting excitatory -> excitatory population.) message
@@ -356,7 +358,7 @@ Aborting the simulation!) message
   memory_thisjob cvs ( # virt_mem_after_sim) join logger /log call
   SimCPUTime cvs ( # sim_time) join logger /log call
 
-  0 ShowStatus
+  GetKernelStatus info
 
   record_spikes true eq
   {

@@ -37,7 +37,7 @@ FAILURES=0
 
 # Find all examples in the installation directory that have a line
 # containing "autorun=true"
-EXAMPLES=$(grep -rl --include=\*\.sli 'autorun=true' examples/)
+EXAMPLES=$(grep -rl --include=\*\.sli 'autorun=true' nest/)
 
 if test -n "$SKIP_LIST"; then
     EXAMPLES=$(echo $EXAMPLES | tr ' ' '\n' | grep -vE $SKIP)

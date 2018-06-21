@@ -41,6 +41,30 @@ t.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
 .wy-menu-vertical li.current a {
 	color: #888;
 }
+
+.wy-nav-top {
+    display: none;
+    background: linear-gradient(90deg, #fff, #eee);;
+    color: #888;
+    padding: .4045em .809em;
+    position: relative;
+    line-height: 50px;
+    text-align: center;
+    font-size: 100%;
+    border-bottom: 1px solid #e1e4e5;
+}
+
+.wy-nav-top a {
+    color: #f63;
+    font-weight: bold;
+}
+
+@media screen and (max-width: 768px) {
+    .wy-nav-top {
+        display: block;
+    }
+}
+
 video {
     margin-bottom: 20px;
     background-color: lightgrey;

@@ -18,7 +18,7 @@ is described here.
 So all you need is conda. If you don't have it yet,
 [miniconda](https://conda.io/miniconda.html) is recommended.
 
-###Installation
+### Installation
 
 With the following steps a full development environment is installed - even 
 NEST 2.14.0.

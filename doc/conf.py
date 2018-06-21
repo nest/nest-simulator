@@ -37,7 +37,7 @@ import pip
 # pip.main(['install', 'Sphinx==1.5.6'])
 # pip.main(['install', 'sphinx-gallery'])
 
-import sphinx_gallery
+# import sphinx_gallery
 import subprocess
 
 # import shlex

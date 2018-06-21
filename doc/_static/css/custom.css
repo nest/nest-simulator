@@ -8,15 +8,28 @@ t.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
 }
 
 .wy-side-nav-search {
-	background: linear-gradient(45deg, #777, #333)
+	background: linear-gradient(45deg, #fff, #eee);
+	color: #888;
+    border-bottom: 1px solid #e1e4e5;
 }
+
+.wy-side-nav-search input[type=text] {
+    border-color: #f63;
+}
+
 .wy-nav-side {
-	background: linear-gradient(90deg, #777, #333)
+	background: linear-gradient(90deg, #fff, #eee);
+	color: #888;
+	border-right: 1px solid #e1e4e5;
 }
 
 .wy-menu-vertical a,
 .wy-menu-vertical a:visited {
-	color: #fff;
+	color: #444;
+}
+
+.wy-menu-vertical a:hover {
+    color: #aaa;
 }
 
 .wy-menu-vertical header, .wy-menu-vertical p.caption {
@@ -38,7 +51,7 @@ a:visited {
     color: #f63;
 }
 a {
-     color: #f63;
+    color: #f63;
     text-decoration: none;
     background-color: transparent;
     cursor: pointer;
@@ -49,4 +62,12 @@ a:hover {
 }
 code.descclassname {
     display: none;
+}
+
+.rst-content pre.literal-block, .rst-content div[class^='highlight'] pre, .rst-content .linenodiv pre {
+    line-height: 1.3em;
+}
+
+.highlight {
+    background: rgba(255, 165, 0, 0.1);
 }

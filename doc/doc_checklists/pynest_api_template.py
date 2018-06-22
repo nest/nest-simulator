@@ -1,6 +1,28 @@
+# -*- coding: utf-8 -*-
+#
+# pynest_api_template.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """Brief Description of Module
 
 """
+
 
 def function.name(x = default, y = None)
     """ Connect pre nodes to post nodes.
@@ -16,7 +38,6 @@ def function.name(x = default, y = None)
 
     Parameters
     ----------
-
     x : type
         Description of parameter `x`.
     y
@@ -24,7 +45,6 @@ def function.name(x = default, y = None)
 
     Returns
     --------
-
     err_code : int
         Non-zero value indicates error code, or zero on success.
 
@@ -33,7 +53,6 @@ def function.name(x = default, y = None)
 
     Raises
     -------
-
      kernel.NESTError
          If the matrix is not numerically invertible.
 
@@ -58,8 +77,8 @@ def function.name(x = default, y = None)
     References
     -----------
 
-    .. [1] Bonewald LF. 2011. The amazing osteocyte. Journal of Bone and Mineral
-           Research 26(2):229–238. DOI: 10.1002/jbmr.320.
+    .. [1] Bonewald LF. 2011. The amazing osteocyte. Journal of Bone and
+           Mineral Research 26(2):229–238. DOI: 10.1002/jbmr.320.
 
     See Also
     ---------
@@ -79,4 +98,3 @@ if model is not None and syn_spec is not None:
     raise kernel.NESTerror(
             "'model' is an alias for 'syn_spec' and cannot"
             " be used together with 'syn_spec'.")
-

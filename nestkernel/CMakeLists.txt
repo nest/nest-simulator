@@ -52,6 +52,7 @@ set( nestkernel_sources
     node.h node.cpp
     nodelist.h nodelist.cpp
     proxynode.h proxynode.cpp
+    random_manager.h random_manager.cpp
     recording_device.h recording_device.cpp
     pseudo_recording_device.h
     ring_buffer.h ring_buffer.cpp

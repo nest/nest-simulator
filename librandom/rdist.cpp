@@ -1,5 +1,5 @@
 /*
- *  exp_randomdev.cpp
+ *  rdist.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,31 +20,44 @@
  *
  */
 
-#include "exp_randomdev.h"
+#include "rdist.h"
 
-// Includes from sli:
-#include "dictutils.h"
-#include "sliexceptions.h"
-
-void
-librandom::ExpRandomDev::set_status( const DictionaryDatum& d )
+void nest::random::binomial::get_status( DictionaryDatum& ) const
 {
-  double new_lambda = lambda_;
-
-  updateValue< double >( d, names::lambda, new_lambda );
-
-  if ( new_lambda == 0. )
-  {
-    throw BadParameterValue( "Exponential RDV: lambda != 0 required." );
-  }
-
-  lambda_ = new_lambda;
+    //tbd
 }
 
-void
-librandom::ExpRandomDev::get_status( DictionaryDatum& d ) const
+void nest::random::binomial::set_status( const DictionaryDatum& )
 {
-  RandomDev::get_status( d );
-
-  def< double >( d, names::lambda, lambda_ );
+    //tbd
 }
+
+//
+//nest::random::exponential::exponential()
+//{
+//}
+//
+//nest::random::gamma::gamma()
+//{
+//}
+//
+//nest::random::lognormal::lognormal()
+//{
+//}
+//
+//nest::random::normal::normal()
+//{
+//}
+//
+//nest::random::poisson::poisson()
+//{
+//}
+//
+//nest::random::uniform::uniform()
+//{
+//}
+//
+//nest::random::uniform::uniform()
+//{
+//}
+//

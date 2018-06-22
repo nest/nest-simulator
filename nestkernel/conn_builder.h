@@ -38,9 +38,6 @@
 // Includes from libnestutil:
 #include "lockptr.h"
 
-// Includes from librandom:
-#include "gslrandomgen.h"
-
 // Includes from nestkernel:
 #include "conn_parameter.h"
 #include "gid_collection.h"

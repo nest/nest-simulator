@@ -27,7 +27,6 @@
 #include <cassert>
 
 // Includes from librandom:
-#include "librandom_exceptions.h"
 #include "randomgen.h"
 
 // Includes from sli:

@@ -10,7 +10,7 @@ which will explain how to build your first neural network simulation in NEST.
 
     * :doc:`List of Models in NEST <models/index>`
     * :doc:`Create your own model <models/create_model>`
-    * :doc:`Examples of Network Models <examples/index>`
+    * :doc:`Examples of Network Models <auto_examples/index>`
 
 NEST - a neural network simulator
 -----------------------------------
@@ -61,7 +61,7 @@ How do I use NEST?
 
 You can use NEST either with Python (PyNEST) or as a stand alone application (
 ``nest``).
-PyNEST provides a set of commands to the Python interpreter which give you
+PyNEST provides a :doc:`set of commands <ref_material/index>` to the Python interpreter which give you
 access to NEST's simulation kernel. With these commands, you describe and run
 your network simulation.
 

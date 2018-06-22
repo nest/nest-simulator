@@ -1,4 +1,4 @@
-High-level PyNEST APIs
+PyNEST Modules
 =============================
 
 Connections module

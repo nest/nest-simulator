@@ -1,4 +1,4 @@
-Reference Material Index Page
+Reference Material
 =============================
 
 .. toctree::

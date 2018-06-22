@@ -32,7 +32,7 @@ Welcome to the NEST simulator documentation!
   </a>
   </embed>
 
-**Create complex networks with spatial structure using the Topology Module**
+**Create complex networks using the Topology Module or the Microcircuit Model:**
 
 .. raw:: html
 
@@ -40,6 +40,10 @@ Welcome to the NEST simulator documentation!
   <a href="topology/index.html">
     <img src="_static/img/topology.png" alt="Topology" style="width:150px;height:150px;border:0;">
   </a>
+  <a href="microcircuit/index.html">
+    <img src="_static/img/microcircuit.png" alt="Microcircuit" style="width:150px;height:150px;border:0;">
+  </a>
+
 
   </embed>
 

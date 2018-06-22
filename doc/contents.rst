@@ -13,7 +13,7 @@ Table of Contents
    installation/index
    getting_started
    tutorials/index
-   examples/index
+   auto_examples/index
    guides/index
    getting_help
    ref_material/index
@@ -29,6 +29,5 @@ Table of Contents
 
 .. toctree::
    :maxdepth: 2
-   :caption: License
 
    license

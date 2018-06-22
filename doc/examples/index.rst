@@ -34,11 +34,6 @@ Networks with Multicompartment Models
 -  :doc:`Multi-compartment Neuron Example <mc_neuron>` - using the
    three-compartment :doc:`iaf_cond_alpha_mc </quickref>` neuron
 
-Topology Examples
-------------------
-to be added
-
-
 -  :doc:`Balanced Neuron Example <balancedneuron>` - find a firing rate
    for the inhibitory population that will make the neuron fire at the
    same rate as the excitatory population

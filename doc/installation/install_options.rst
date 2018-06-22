@@ -8,7 +8,7 @@ NEST is installed with ``cmake`` (at least v2.8.12). In the simplest case, the c
     make install
 
 should build and install NEST to ``/install/path``, which should be an absolute
-path. 
+path.
 
 Choice of CMake Version
 ------------------------
@@ -20,8 +20,8 @@ For more detailed information please see below: ``Python3 Binding (PyNEST)``
 Choice of compiler
 ------------------
 
-The default compiler for NEST is GNU gcc/g++, but NEST has also successfully 
-been compiled with other compilers, including Intel icc/icpc, Pathscale, 
+The default compiler for NEST is GNU gcc/g++, but NEST has also successfully
+been compiled with other compilers, including Intel icc/icpc, Pathscale,
 Portland and IBM compilers.
 
 To select a specific compiler, please add the following flags to your ``cmake``
@@ -60,7 +60,7 @@ Change parallelization scheme::
     -Dwith-mpi=[OFF|ON|</path/to/mpi>]  Request compilation with MPI. Optionally
                                         give directory with MPI installation.
                                         [default=OFF]
-    -Dwith-openmp=[OFF|ON|<OpenMP-Flag>]  Enable OpenMP multi-threading. 
+    -Dwith-openmp=[OFF|ON|<OpenMP-Flag>]  Enable OpenMP multi-threading.
                                           Optional: set OMP flag. [default=ON]
 
 Set default libraries::
@@ -118,7 +118,7 @@ Configuring NEST for Distributed Simulation with MPI
   2. If 1 does not work, or you want to use a non-standard MPI,
      try ``-Dwith-mpi=/path/to/my/mpi``.
      Directory mpi should contain include, lib, bin subdirectories for MPI.
-  3. If that does not work, but you know the correct compiler wrapper for 
+  3. If that does not work, but you know the correct compiler wrapper for
      your machine, try configure ``-DMPI_CXX_COMPILER=myC++_CompilerWrapper
      -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON``
   4. Sorry, you need to fix your MPI installation.
@@ -209,11 +209,5 @@ Compiler-specific options
 NEST has reasonable default compiler options for the most common compilers.
 
 When compiling with the Portland compiler, use the ``-Kieee`` flag to ensure that computations obey the IEEE754 standard for floating point numerics.
-
-
-Set up the integrated helpdesk
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The command ``helpdesk`` needs to know which browser to launch in order to display the help pages. The browser is set as an option of ``helpdesk``. Please see the file ``~/.nestrc`` for an example setting ``firefox`` as browser. Please note that the command ``helpdesk`` does not work if you have compiled NEST with MPI support, but you have to enter the address of the helpdesk (``file:///install/path/share/doc/nest/index.html``) manually into the browser. Please replace ``/install/path`` with the path under which NEST is installed.
 
 

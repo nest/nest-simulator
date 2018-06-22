@@ -1,16 +1,5 @@
-nest package
-============
-
-Subpackages
------------
-
-.. toctree::
-
-    nest.lib
-    nest.tests
-
-Submodules
-----------
+Plot and Visualize Modules
+==============================
 
 nest\.raster\_plot module
 -------------------------
@@ -32,15 +21,6 @@ nest\.voltage\_trace module
 ---------------------------
 
 .. automodule:: nest.voltage_trace
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: nest
     :members:
     :undoc-members:
     :show-inheritance:

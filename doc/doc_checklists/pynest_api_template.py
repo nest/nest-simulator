@@ -90,10 +90,10 @@ def function.name(x=default, y=None)
     KEYWORDS: Important terms, Comma Separated
     """
 
-# This code was included because of bug when running X
-# Temporary, I HOPE HOPE HOPE
+    # This code was included because of bug when running X
+    # Temporary, I HOPE HOPE HOPE
 
-if model is not None and syn_spec is not None:
-    raise kernel.NESTerror(
+    if model is not None and syn_spec is not None:
+        raise kernel.NESTerror(
             "'model' is an alias for 'syn_spec' and cannot"
             " be used together with 'syn_spec'.")

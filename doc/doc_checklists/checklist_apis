@@ -10,7 +10,7 @@ NumPy Format of APIs
     [] Headings underlined with dashes (Ensure the dashes extend beyond text)
     [] reST directives should be separated from other text by new line
     [] Summary line describes purpose of function and function name or variable 
-       names should be avoided, on line below """
+       names should be avoided, on same line as  """
     [] Variables, paths, functions and objects should be surrounded by double
        back ticks (e.g. ``var``) in paragraphs.
     [] The order of sections in the docstring: Summary line, extended summary (no

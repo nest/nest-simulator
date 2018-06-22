@@ -10,4 +10,10 @@ statsmodels
 jupyter
 cmake
 numpy
+numpydoc
 scipy
+example
+Image
+recommonmark==0.4.0
+seaborn
+sphinx_gallery

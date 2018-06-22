@@ -62,7 +62,7 @@ skip_if_not_threaded
   
   layer_a layer_b connspec ConnectLayers
   
-  /src layer_a 1 Take cvgidcollection def
+  /src layer_a 1 Take def
   /tgts layer_b def
   /conns << /source src >> GetConnections def
   /ctgts conns { cva 1 get } Map def

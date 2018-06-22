@@ -31,7 +31,7 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
-import mock
+
 
 import pip
 
@@ -47,6 +47,7 @@ import subprocess
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
 from subprocess import check_output, CalledProcessError
+from mock import Mock as MagicMock
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -81,6 +82,17 @@ for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
             # check_output(args)
 
 # -- General configuration ------------------------------------------------
+
+# import errors on libraries that depend on C modules
+# http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-compile-with-readthedocs-when-youre-using-numpy-and-scipy/
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+            return MagicMock()
+
+
+MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'pandas']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
@@ -122,18 +134,11 @@ extensions = [
 # }
 
 
+
 mathjax_path = \
     "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax" \
                 ".js?config=TeX" \
               "-AMS-MML_HTMLorMML"
-
-# import errors on libraries that depend on C modules
-# http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-compile-with-readthedocs-when-youre-using-numpy-and-scipy/
-
-
-MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot']
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
 
 
 # Add any paths that contain templates here, relative to this directory.

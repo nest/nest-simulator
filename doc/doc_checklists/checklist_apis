@@ -1,16 +1,16 @@
 Checklist PyNEST APIs
 ======================
 
-See https://numpydoc.readthedocs.io/en/latest/format.html for details on the 
+See https://numpydoc.readthedocs.io/en/latest/format.html for details on the
 NumPy Format of APIs
 
 - Docstring (NumPy Style)
 
   	[] Use triple double quotes """ to demarcate docstring from rest of file
     [] Headings underlined with dashes (Ensure the dashes extend beyond text)
-    [] Headings, reST directives should be separated from other text by new line
+    [] reST directives should be separated from other text by new line
     [] Summary line describes purpose of function and function name or variable 
-       names should be avoided, on same line as """
+       names should be avoided, on line below """
     [] Variables, paths, functions and objects should be surrounded by double
        back ticks (e.g. ``var``) in paragraphs.
     [] The order of sections in the docstring: Summary line, extended summary (no

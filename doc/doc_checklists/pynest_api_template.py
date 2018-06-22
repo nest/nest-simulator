@@ -24,8 +24,8 @@
 """
 
 
-def function.name(x = default, y = None)
-    """ Connect pre nodes to post nodes.
+def function.name(x=default, y=None)
+    """Connect pre nodes to post nodes
 
     Nodes in pre and post are connected using the specified connectivity
     (all-to-all by default) and synapse type (static_synapse by default).
@@ -88,7 +88,6 @@ def function.name(x = default, y = None)
 
 
     KEYWORDS: Important terms, Comma Separated
-
     """
 
 # This code was included because of bug when running X

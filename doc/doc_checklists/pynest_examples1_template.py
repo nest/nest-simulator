@@ -71,7 +71,7 @@ intrisic_current_subthreshold
 KEYWORDS: scipy, poisson spike train, integrate and fire
 """
 
-import nest # begin with imports
+import nest  # begin with imports
 
 ###############################################################################
 # The excitatory ``poisson_generator`` (``noise[0]``) and the voltmeter are
@@ -87,4 +87,4 @@ nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 ##############################################################################
 # Finally, we plot the target neuron's membrane potential as a function of time
 
-nest.voltage_trace.from_device(voltmeter) # end with output
+nest.voltage_trace.from_device(voltmeter)  # end with output

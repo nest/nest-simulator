@@ -156,8 +156,6 @@ nest_process_with_mpi()
 nest_process_with_libneurosim()
 nest_process_with_music()
 nest_process_with_boost()
-nest_process_disable_timing()
-nest_process_disable_counts()
 
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )

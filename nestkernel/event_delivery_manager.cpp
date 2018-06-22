@@ -60,14 +60,6 @@ EventDeliveryManager::EventDeliveryManager()
   , buffer_size_spike_data_has_changed_( false )
   , gather_completed_checker_( CompletedChecker() )
 {
-#ifndef DISABLE_COUNTS
-  comm_steps_target_data = 0;
-  comm_rounds_target_data = 0;
-  comm_steps_spike_data = 0;
-  comm_rounds_spike_data = 0;
-  comm_steps_secondary_events = 0;
-  call_count_deliver_events = std::vector< unsigned int >();
-#endif
 }
 
 EventDeliveryManager::~EventDeliveryManager()
@@ -85,9 +77,6 @@ EventDeliveryManager::initialize()
   spike_register_.resize( num_threads, NULL );
   off_grid_spike_register_.resize( num_threads, NULL );
   gather_completed_checker_.resize( num_threads, false );
-#ifndef DISABLE_COUNTS
-  call_count_deliver_events.resize( num_threads, 0 );
-#endif
 
 #pragma omp parallel
   {
@@ -327,22 +316,9 @@ EventDeliveryManager::write_done_marker_secondary_events_( const bool done )
 void
 EventDeliveryManager::gather_secondary_events( const bool done )
 {
-#ifndef DISABLE_COUNTS
-  ++comm_steps_secondary_events;
-#endif
-
   write_done_marker_secondary_events_( done );
-
-#ifndef DISABLE_TIMING
-  kernel().mpi_manager.synchronize(); // to get an accurate time measurement
-                                      // across ranks
-  sw_communicate_secondary_events.start();
-#endif
   kernel().mpi_manager.communicate_secondary_events_Alltoall(
     send_buffer_secondary_events_, recv_buffer_secondary_events_ );
-#ifndef DISABLE_TIMING
-  sw_communicate_secondary_events.stop();
-#endif
 }
 
 bool
@@ -373,13 +349,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   std::vector< SpikeDataT >& send_buffer,
   std::vector< SpikeDataT >& recv_buffer )
 {
-#ifndef DISABLE_COUNTS
-#pragma omp single
-  {
-    ++comm_steps_spike_data;
-  }
-#endif
-
   // assume all threads have some work to do
   gather_completed_checker_.set( tid, false );
   assert( gather_completed_checker_.all_false() );
@@ -403,13 +372,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         buffer_size_spike_data_has_changed_ = false;
       }
     } // of omp single; implicit barrier
-
-#ifndef DISABLE_TIMING
-    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
-    {
-      sw_collocate_spike_data.start();
-    }
-#endif
 
     // need to get new positions in case buffer size has changed
     SendBufferPosition send_buffer_position( assigned_ranks,
@@ -452,15 +414,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 // communicate spikes using a single thread
 #pragma omp single
     {
-#ifndef DISABLE_COUNTS
-      ++comm_rounds_spike_data;
-#endif
-#ifndef DISABLE_TIMING
-      sw_collocate_spike_data.stop();
-      kernel().mpi_manager.synchronize(); // to get an accurate time measurement
-                                          // across ranks
-      sw_communicate_spike_data.start();
-#endif
       if ( off_grid_spiking_ )
       {
         kernel().mpi_manager.communicate_off_grid_spike_data_Alltoall(
@@ -471,10 +424,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         kernel().mpi_manager.communicate_spike_data_Alltoall(
           send_buffer, recv_buffer );
       }
-#ifndef DISABLE_TIMING
-      sw_communicate_spike_data.stop();
-      sw_deliver_spike_data.start();
-#endif
     } // of omp single; implicit barrier
 
     // deliver spikes from receive buffer to ring buffers
@@ -484,14 +433,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 // exit gather loop if all local threads and remote processes are
 // done
 #pragma omp barrier
-
-#ifndef DISABLE_TIMING
-    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
-    {
-      sw_deliver_spike_data.stop();
-    }
-#endif
-
     // resize mpi buffers, if necessary and allowed
     if ( not gather_completed_checker_.all_true()
       and kernel().mpi_manager.adaptive_spike_buffers() )
@@ -647,9 +588,6 @@ bool
 EventDeliveryManager::deliver_events_( const thread tid,
   const std::vector< SpikeDataT >& recv_buffer )
 {
-#ifndef DISABLE_COUNTS
-  ++call_count_deliver_events[ tid ];
-#endif
   const unsigned int send_recv_count_spike_data_per_rank =
     kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
   const std::vector< ConnectorModel* >& cm =
@@ -731,13 +669,6 @@ EventDeliveryManager::gather_target_data( const thread tid )
   gather_completed_checker_.set( tid, false );
   assert( gather_completed_checker_.all_false() );
 
-#ifndef DISABLE_COUNTS
-  if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
-  {
-    ++comm_steps_target_data;
-  }
-#endif
-
   const AssignedRanks assigned_ranks =
     kernel().vp_manager.get_assigned_ranks( tid );
 
@@ -759,12 +690,6 @@ EventDeliveryManager::gather_target_data( const thread tid )
         resize_send_recv_buffers_target_data();
       }
     } // of omp single; implicit barrier
-#ifndef DISABLE_TIMING
-    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
-    {
-      sw_collocate_target_data.start();
-    }
-#endif
 
     kernel().connection_manager.restore_source_table_entry_point( tid );
 
@@ -786,33 +711,13 @@ EventDeliveryManager::gather_target_data( const thread tid )
     kernel().connection_manager.clean_source_table( tid );
 #pragma omp single
     {
-#ifndef DISABLE_COUNTS
-      ++comm_rounds_target_data;
-#endif
-#ifndef DISABLE_TIMING
-      sw_collocate_target_data.stop();
-      kernel().mpi_manager.synchronize(); // to get an accurate time measurement
-                                          // across ranks
-      sw_communicate_target_data.start();
-#endif
       kernel().mpi_manager.communicate_target_data_Alltoall(
         send_buffer_target_data_, recv_buffer_target_data_ );
-#ifndef DISABLE_TIMING
-      sw_communicate_target_data.stop();
-      sw_distribute_target_data.start();
-#endif
     } // of omp single
 
     const bool distribute_completed = distribute_target_data_buffers_( tid );
     gather_completed_checker_.logical_and( tid, distribute_completed );
 #pragma omp barrier
-
-#ifndef DISABLE_TIMING
-    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
-    {
-      sw_distribute_target_data.stop();
-    }
-#endif
 
     // resize mpi buffers, if necessary and allowed
     if ( not gather_completed_checker_.all_true()

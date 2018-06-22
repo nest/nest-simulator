@@ -27,8 +27,8 @@
 #include "config.h"
 
 // C++ includes:
-#include <deque>
 #include <cstdlib>
+#include <deque>
 #include <vector>
 
 // Includes from libnestutil:
@@ -398,24 +398,22 @@ public:
         ->get_common_properties();
 
     index lcid_offset = 0;
+    typename std::deque< ConnectionT >::iterator conn = C_.begin() + lcid + lcid_offset;
+
     while ( true )
     {
-      ConnectionT& conn = C_[ lcid + lcid_offset ];
-      const bool is_disabled = conn.is_disabled();
-      const bool has_source_subsequent_targets =
-        conn.has_source_subsequent_targets();
-
       e.set_port( lcid + lcid_offset );
-      if ( not is_disabled )
+      if ( not conn->is_disabled() )
       {
-        conn.send( e, tid, cp );
+        conn->send( e, tid, cp );
         send_weight_event( tid, lcid + lcid_offset, e, cp );
       }
-      if ( not has_source_subsequent_targets )
+      if ( not conn->has_source_subsequent_targets() )
       {
         break;
       }
       ++lcid_offset;
+      ++conn;
     }
 
     return 1 + lcid_offset; // event was delivered at least to one target

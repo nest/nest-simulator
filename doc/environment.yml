@@ -70,3 +70,4 @@ dependencies:
   - seaborn
   - sphinx_gallery
   - sphinxcontrib-napoleon
+  - mock

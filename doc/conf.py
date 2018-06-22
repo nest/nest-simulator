@@ -31,6 +31,7 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
+import mock
 
 import pip
 
@@ -125,6 +126,15 @@ mathjax_path = \
     "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax" \
                 ".js?config=TeX" \
               "-AMS-MML_HTMLorMML"
+
+# import errors on libraries that depend on C modules
+# http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-compile-with-readthedocs-when-youre-using-numpy-and-scipy/
+
+
+MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

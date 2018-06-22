@@ -15,39 +15,51 @@ Getting help on the command line interface
 * The ``helpdesk()`` command will launch the documentation pages on your browser.
   See `Set up the integrated helpdesk`_ to specify the browser of your choice.
 
-* To access the High-level Python API reference material you can use the commands::
+* To access the High-level Python API reference material you can use the commands:
 
-     # list all functions and attributes
-     dir(nest)
+    .. code-block:: python
 
-     # Get docstring for function in python
-     help('nest.FunctionName')
+       # list all functions and attributes
+       dir(nest)
 
-     # or in ipython
-     nest.FunctionName?
+       # Get docstring for function in python
+       help('nest.FunctionName')
 
-* To access a specific C++ or SLI reference page for an object, command or parameter you can use the command::
+       # or in ipython
+       nest.FunctionName?
 
-    nest.help('name')
+* To access a specific C++ or SLI reference page for an object, command or parameter you can use the command:
+
+    .. code-block:: python
+
+       nest.help('name')
 
 Model Information
 ~~~~~~~~~~~~~~~~~~~
 
-* To get a complete list of the models available in NEST type::
+* To get a complete list of the models available in NEST type:
 
-    nest.Models()
+    .. code-block:: python
 
-   * To get a list of only neuron models use::
+       nest.Models()
 
-    nest.Models(mtype='nodes', sel=None)
+   * To get a list of only neuron models use:
 
-   * To get a list of only synapse models use::
+    .. code-block:: python
 
-    nest.Models(mtype='synapses', sel=None)
+       nest.Models(mtype='nodes', sel=None)
 
-* To get details on model parameters and usage use::
+   * To get a list of only synapse models use:
 
-    nest.help('model_name')
+    .. code-block:: python
+
+       nest.Models(mtype='synapses', sel=None)
+
+* To get details on model parameters and usage use:
+
+    .. code-block:: python
+
+       nest.help('model_name')
 
 
 Set up the integrated helpdesk

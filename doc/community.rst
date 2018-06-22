@@ -30,11 +30,6 @@ space <http://nest.github.io/nest-simulator>`_ for information about
 the development workflow of NEST and for how to create a fork of our Git
 repository and make pull requests against it.
 
-.. sidebar:: See Also
-
-    :doc:`Getting Help page <getting_help>`
-    `Publications <http://www.nest-simulator.org/publications/>`_
-
 Reporting bugs
 --------------
 

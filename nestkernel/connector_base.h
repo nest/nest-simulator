@@ -400,7 +400,7 @@ public:
     index lcid_offset = 0;
     while ( true )
     {
-    	  ConnectionT& conn = C_[ lcid + lcid_offset ];
+      ConnectionT& conn = C_[ lcid + lcid_offset ];
       const bool is_disabled = conn.is_disabled();
       const bool has_source_subsequent_targets =
         conn.has_source_subsequent_targets();

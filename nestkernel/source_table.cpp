@@ -163,15 +163,8 @@ nest::SourceTable::clean( const thread tid )
         // do not want to delete.
         if ( max_position.lcid + 2 < static_cast< long >( sources->size() ) )
         {
-          const size_t deleted_elements =
-            sources->end() - ( sources->begin() + max_position.lcid + 2 );
           sources->erase(
             sources->begin() + max_position.lcid + 2, sources->end() );
-          if ( deleted_elements > min_deleted_elements_ )
-          {
-            std::deque< Source >( sources->begin(), sources->end() )
-              .swap( *sources );
-          }
         }
       }
       else
@@ -244,7 +237,7 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
   // to fail; afterwards we can be certain that it is non-negative and
   // we can static_cast it to index
   long lcid = max_size - 1;
-  while ( mysources[ lcid ].is_disabled() && lcid >= 0 )
+  while ( lcid >= 0 and mysources[ lcid ].is_disabled() )
   {
     --lcid;
   }

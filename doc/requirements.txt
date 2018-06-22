@@ -2,7 +2,6 @@ matplotlib
 sphinx==1.5
 ipykernel
 nbsphinx
-sphinxcontrib-napoleon
 pytest
 path.py
 cython==0.23.4

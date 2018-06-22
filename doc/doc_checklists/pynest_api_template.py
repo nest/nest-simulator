@@ -24,7 +24,7 @@
 """
 
 
-def function.name(x=default, y=None)
+def function.name(x=default, y=None):
     """Connect pre nodes to post nodes
 
     Nodes in pre and post are connected using the specified connectivity

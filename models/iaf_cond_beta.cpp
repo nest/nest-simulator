@@ -381,20 +381,9 @@ nest::iaf_cond_beta::get_normalisation_factor( double tau_rise,
   double tau_decay )
 {
   // Factor used to normalise the synaptic conductance such that
-  // an incoming event causes a post-synaptic conductance of 1.0. See:
-  // Roth and van Rossum, equations 6,5-6.6, in Computational Modeling
-  // Methods for Neuroscientists, by MIT Press.
-  // http://homepages.inf.ed.ac.uk/mvanross/reprints/roth_mvr_chap.pdf
-  // Note that t-t_0 = 0 and 
-  const double prefactor = ( 1 / tau_decay ) - ( 1 / tau_rise );
-  
-  const double t_peak =
-    ( tau_decay * tau_rise ) * std::log( tau_decay / tau_rise ) / ( tau_decay - tau_rise );
-  
-  const double normalisation_factor =
-    1 / ( std::exp( -t_peak / tau_decay ) - std::exp( -t_peak / tau_rise ) );
+  // 
 
-  return prefactor * normalisation_factor;
+  return tau_rise * tau_decay;
 }
 
 void

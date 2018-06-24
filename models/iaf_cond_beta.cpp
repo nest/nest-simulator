@@ -257,9 +257,9 @@ nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
-  if ( g_ext_ex <= 0 || g_ext_in <= 0 )
+  if ( g_ext_ex < 0 || g_ext_in < 0 )
   {
-    throw BadProperty( "All conductances must be positive." );
+    throw BadProperty( "All external conductances must be nonnegative." );
   }
 }
 
@@ -383,7 +383,7 @@ nest::iaf_cond_beta::get_normalisation_factor( double tau_rise,
   // Factor used to normalise the synaptic conductance such that
   // 
 
-  return tau_rise * tau_decay;
+  return 1.0 / ( tau_decay * tau_rise );
 }
 
 void

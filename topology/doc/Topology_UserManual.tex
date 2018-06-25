@@ -253,6 +253,12 @@ always a two-element tuple of floats. In this example, we have grid
 spacings $dx=0.4$ and $dy=0.1$. Changing the extent does not affect
 grid indices.
 
+The size of \lstinline!'extent'! in $x$- and $y$-directions should be 
+numbers that can be expressed exactly as binary fractions. This is 
+automatically ensured for integer values. Otherwise, under rare 
+circumstances, subtle rounding errors may occur and trigger an 
+assertion, thus stopping NEST.
+
 \subsection{Setting the center}\label{sec:setcenter}
 
 Layers are centered about the origin $(0,0)$ by default. This can be
@@ -270,6 +276,10 @@ Changing the center does not affect grid indices: For each of the
 three layers in Fig.~\ref{fig:layer3}, grid indices run from 0 to 4
 through columns and rows, respectively, even though elements in these
 three layers have different positions in the global coordinate system.
+
+The \lstinline!'center'! coordinates should be numbers that
+can be expressed exactly as binary fractions. For more information, 
+see Sec.~\ref{sec:setextent}.
 
 \subsection{Constructing a layer: an example}\label{sec:fixedlayerexample}
 

@@ -72,14 +72,14 @@ V_th = 15. * np.ones(M)      # baseline threshold (non-accumulating part)
 tau_sfa_exc = [100., 1000.]  # adaptation time constants of excitatory neurons
 tau_sfa_inh = [100., 1000.]  # adaptation time constants of inhibitory neurons
 J_sfa_exc = [1000., 1000.]   # size of feedback kernel theta
-                             # (= area under exponential) in mV*ms
+#                              (= area under exponential) in mV*ms
 J_sfa_inh = [1000., 1000.]   # in mV*ms
 tau_theta = np.array([tau_sfa_exc, tau_sfa_inh])
 J_theta = np.array([J_sfa_exc, J_sfa_inh])
 
 # connectivity
 J = 0.3  # excitatory synaptic weight in mV if number of input connections
-         # is C0 (see below)
+#          is C0 (see below)
 g = 5.   # inhibition-to-excitation ratio
 pconn = 0.2 * np.ones((M, M))
 delay = 1. * np.ones((M, M))
@@ -317,7 +317,7 @@ for i, nest_i in enumerate(nest_pops):
     nest.Connect(nest_i, nest_sd[i])
 
 Nrecord = [5, 0]  # for each population "i" the first Nrecord[i] neurons are
-                  # recorded
+#                   recorded
 nest_mm_Vm = []
 for i, nest_i in enumerate(nest_pops):
     nest_mm_Vm.append(nest.Create('multimeter'))

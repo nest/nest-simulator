@@ -326,7 +326,8 @@ def build_network(logger):
 
     if params['record_spikes']:
         if params['nvp'] != 1:
-            local_gids = [x.get('global_id') for x in get_local_nodes(E_neurons)]
+            local_gids = [x.get('global_id')
+                          for x in get_local_nodes(E_neurons)]
             local_neurons = nest.GIDCollection(local_gids)
         else:
             local_neurons = E_neurons

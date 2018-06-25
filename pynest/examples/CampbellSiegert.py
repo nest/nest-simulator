@@ -144,8 +144,8 @@ Having calculate mean and variance of the input, we can now employ
 Siegert's rate approximation.
 '''
 num_iterations = 100
-upper = (V_th * mV - mu) / ( sigma * np.sqrt(2) )
-lower = (E_L * mV - mu) / ( sigma * np.sqrt(2) )
+upper = (V_th * mV - mu) / (sigma * np.sqrt(2))
+lower = (E_L * mV - mu) / (sigma * np.sqrt(2))
 interval = (upper - lower) / num_iterations
 tmpsum = 0.0
 for cu in range(0, num_iterations + 1):
@@ -187,7 +187,8 @@ sd = nest.Create('spike_detector')
 We connect devices and neurons and start the simulation.
 '''
 for indx in range(len(pg)):
-    nest.Connect(pg[indx], n,syn_spec={'weight': float(J[indx]), 'delay': 0.1})
+    nest.Connect(pg[indx], n,
+                 syn_spec={'weight': float(J[indx]), 'delay': 0.1})
     nest.Connect(pg[indx], n_free, syn_spec={'weight': J[indx]})
 
 nest.Connect(vm, n_free)

@@ -36,16 +36,16 @@ RUN wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh &
 bash ./Miniconda3-latest-Linux-x86_64.sh -b -p /home/nest/miniconda  && \
 echo ". /home/nest/miniconda/bin:$PATH" >> /home/nest/.bashrc
 ENV PATH=/home/nest/miniconda/bin:${PATH}
-RUN conda update -y conda
-RUN conda install -y setuptools path.py cython statsmodels jupyter mpi4py \
+RUN conda update -y conda && \
+    conda install -y setuptools path.py cython statsmodels jupyter mpi4py \
                      pandas numpy
 
 # Install libneurosim (/usr/local/lib)
 WORKDIR /tmp
 RUN git clone https://github.com/INCF/libneurosim.git libneurosim
 WORKDIR /tmp/libneurosim
-RUN chmod +x autogen.sh
-RUN ./autogen.sh && \
+RUN chmod +x autogen.sh && \
+    ./autogen.sh && \
     chmod +x configure && \
     ./configure && make &&  make install
 

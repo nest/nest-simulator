@@ -169,7 +169,8 @@ nest::SourceTable::clean( const thread tid )
             sources->begin() + max_position.lcid + 2, sources->end() );
           if ( deleted_elements > min_deleted_elements_ )
           {
-            sources->shrink_to_fit();
+            std::vector< Source >( sources->begin(), sources->end() )
+              .swap( *sources );
           }
         }
       }

@@ -28,9 +28,9 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "device_node.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "device_node.h"
 #include "recording_device.h"
 #include "sibling_container.h"
 

@@ -168,7 +168,7 @@ public:
     {
       return lookup2( n );
     }
-    catch ( UndefinedName )
+    catch ( UndefinedName& )
     {
       return VoidToken;
     }

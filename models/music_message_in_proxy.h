@@ -39,8 +39,8 @@
 #include <music.hh>
 
 // Includes from nestkernel:
-#include "nest_types.h"
 #include "device_node.h"
+#include "nest_types.h"
 
 // Includes from sli:
 #include "arraydatum.h"

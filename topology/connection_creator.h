@@ -198,7 +198,7 @@ ConnectionCreator::connect_( index s,
   double d,
   index syn )
 {
-  const DictionaryDatum params = new Dictionary; // empty parameter dictionary
+  DictionaryDatum dummy_params = new Dictionary; // empty parameter dictionary
                                                  // required by connect() calls
 
   // check whether the target is on this process
@@ -210,7 +210,7 @@ ConnectionCreator::connect_( index s,
     {
       // TODO implement in terms of nest-api
       kernel().connection_manager.connect(
-        s, target, target_thread, syn, params, d, w );
+        s, target, target_thread, syn, dummy_params, d, w );
     }
   }
 }

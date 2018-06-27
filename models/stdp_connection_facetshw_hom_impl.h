@@ -302,8 +302,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom()
   , a_causal_( 0.0 )
   , a_acausal_( 0.0 )
   , a_thresh_th_( 21.835 )
-  , // exp(-10ms/20ms) * 36SSPs
-  a_thresh_tl_( 21.835 )
+  , a_thresh_tl_( 21.835 ) // exp(-10ms/20ms) * 36SSPs
   , init_flag_( false )
   , synapse_id_( 0 )
   , next_readout_time_( 0.0 )

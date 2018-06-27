@@ -125,7 +125,7 @@ Layer< D >::connect( AbstractLayer& target_layer, ConnectionCreator& connector )
     Layer< D >& tgt = dynamic_cast< Layer< D >& >( target_layer );
     connector.connect( *this, tgt );
   }
-  catch ( std::bad_cast e )
+  catch ( std::bad_cast& e )
   {
     throw BadProperty(
       "Target layer must have same number of dimensions as source layer." );

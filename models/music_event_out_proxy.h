@@ -35,10 +35,10 @@
 #include <music.hh>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
 #include "nest_types.h"
-#include "device_node.h"
 
 /* BeginDocumentation
 

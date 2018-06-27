@@ -564,7 +564,7 @@ SLIArrayModule::SortFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
     return;
   }
-  catch ( TypeMismatch )
+  catch ( TypeMismatch& )
   {
     // do nothing
   }
@@ -579,7 +579,7 @@ SLIArrayModule::SortFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
     return;
   }
-  catch ( TypeMismatch )
+  catch ( TypeMismatch& )
   {
     // do nothing
   }
@@ -600,7 +600,7 @@ SLIArrayModule::SortFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
     return;
   }
-  catch ( TypeMismatch )
+  catch ( TypeMismatch& )
   {
     // do nothing
   }

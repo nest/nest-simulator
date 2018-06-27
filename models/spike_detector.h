@@ -195,13 +195,6 @@ spike_detector::post_run_cleanup()
   device_.post_run_cleanup();
 }
 
-
-inline void
-spike_detector::finalize()
-{
-  device_.finalize();
-}
-
 inline SignalType
 spike_detector::receives_signal() const
 {

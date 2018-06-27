@@ -130,7 +130,7 @@ public:
    */
   virtual void get_target_gids( const thread tid,
     const index start_lcid,
-    const std::string post_synaptic_element,
+    const std::string& post_synaptic_element,
     std::vector< index >& target_gids ) const = 0;
 
   /**
@@ -340,7 +340,7 @@ public:
   void
   get_target_gids( const thread tid,
     const index start_lcid,
-    const std::string post_synaptic_element,
+    const std::string& post_synaptic_element,
     std::vector< index >& target_gids ) const
   {
     index lcid = start_lcid;
@@ -415,7 +415,7 @@ public:
       ++lcid_offset;
     }
 
-    return 1 + lcid_offset; // event was delivered at least to one target
+    return 1 + lcid_offset; // event was delivered to at least one target
   }
 
   // implemented in connector_base_impl.h

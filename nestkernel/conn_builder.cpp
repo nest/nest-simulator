@@ -1714,9 +1714,8 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder(
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
   , p_( ( *conn_spec )[ names::p ] )
 {
-  creates_symmetric_connections_ =
-    true; // this connector takes care of symmetric
-          // connections on its own
+  // this connector takes care of symmetric connections on its own
+  creates_symmetric_connections_ = true;
 
   if ( p_ < 0 or 1 <= p_ )
   {
@@ -1743,13 +1742,12 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder(
 void
 nest::SymmetricBernoulliBuilder::connect_()
 {
-  // allocate pointer to global random generator; used to create a
-  // random generator for each thread, each using the same seed
-  // obtained from the global rng -> all threads across all processes
-  // generate identical random number streams; this is required to
-  // generate symmetric connections: if we would loop only over local
-  // targets, we might miss the symmetric counterpart to a connection
-  // where a local target is chosen as a source
+  // Allocate a pointer to the global random generator. This is used to create a
+  // random generator for each thread, each using the same seed obtained from
+  // the global rng, making all threads across all processes generate identical
+  // random number streams. This is required to generate symmetric connections:
+  // if we would loop only over local targets, we might miss the symmetric
+  // counterpart to a connection where a local target is chosen as a source.
   librandom::RngPtr grng = kernel().rng_manager.get_grng();
   const unsigned long s =
     grng->ulrand( std::numeric_limits< unsigned int >::max() );
@@ -1758,9 +1756,9 @@ nest::SymmetricBernoulliBuilder::connect_()
   {
     const thread tid = kernel().vp_manager.get_thread_id();
 
-// create a random generator for each thread, each using the same
-// seed obtained from the global rng -> all threads across all
-// processes generate identical random number streams
+// Create a random generator for each thread, each using the same seed obtained
+// from the global rng. This ensures that all threads across all processes
+// generate identical random number streams.
 #ifdef HAVE_GSL
     librandom::RngPtr rng(
       new librandom::GslRandomGen( gsl_rng_knuthran2002, s ) );
@@ -1818,10 +1816,9 @@ nest::SymmetricBernoulliBuilder::connect_()
         {
           sgid = ( *sources_ )[ rng->ulrand( sources_->size() ) ];
 
-          // avoid autapses and multapses; due to symmetric
-          // connectivity, multapses might exist if the target neuron
-          // with gid sgid draws the source with gid tgid while
-          // choosing sources itself
+          // Avoid autapses and multapses. Due to symmetric connectivity,
+          // multapses might exist if the target neuron with gid sgid draws the
+          // source with gid tgid while choosing sources itself.
           if ( sgid == *tgid
             or previous_sgids.find( sgid ) != previous_sgids.end() )
           {

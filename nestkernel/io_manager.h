@@ -99,6 +99,9 @@ public:
    */
   void synchronize();
 
+  template < class RBT >
+  void register_recording_backend( Name );
+
   bool is_valid_recording_backend( Name );
 
   void clear_recording_backends( const RecordingDevice& );

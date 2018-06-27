@@ -70,7 +70,7 @@ set( nestkernel_sources
     growth_curve_factory.h
     kernel_manager.h kernel_manager.cpp
     vp_manager.h vp_manager_impl.h vp_manager.cpp
-    io_manager.h io_manager.cpp
+    io_manager.h io_manager_impl.h io_manager.cpp
     mpi_manager.h mpi_manager_impl.h mpi_manager.cpp
     simulation_manager.h simulation_manager.cpp
     connection_manager.h connection_manager_impl.h connection_manager.cpp
@@ -81,6 +81,7 @@ set( nestkernel_sources
     event_delivery_manager.cpp
     node_manager.h node_manager.cpp
     logging_manager.h logging_manager.cpp
+    recording_backend.h
     recording_backend_ascii.h recording_backend_ascii.cpp
     recording_backend_memory.h recording_backend_memory.cpp
     recording_backend_screen.h recording_backend_screen.cpp

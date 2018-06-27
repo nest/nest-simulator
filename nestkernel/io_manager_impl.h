@@ -29,8 +29,10 @@ namespace nest
 {
   template < class RBT >
   void
-  IOManager::register_recording_backend( Name )
+  IOManager::register_recording_backend( Name name )
   {
-    recording_backends_.insert(std::make_pair( Name, new RBT() ) );
+    recording_backends_.insert(std::make_pair( name, new RBT() ) );
   }
 }
+
+#endif /* #ifndef IO_MANAGER_IMPL_H */

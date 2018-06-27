@@ -43,6 +43,7 @@ set( MODULE_SOURCES
     pif_psc_alpha.cpp pif_psc_alpha.h
     drop_odd_spike_connection.h
     step_pattern_builder.h step_pattern_builder.cpp
+    recording_backend_beep.h recording_backend_beep.cpp
     )
 
 # 3) We require a header name like this:

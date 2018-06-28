@@ -208,9 +208,9 @@ nest.CopyModel("static_synapse", "inhibitory",
 # Connecting the previously defined poisson generator to the excitatory and
 # inhibitory neurons using the excitatory synapse. Since the poisson
 # generator is connected to all neurons in the population the default rule
-# (# 'all_to_all') of Connect() is used. The synaptic properties are pre-defined
-# in a dictionary and inserted via syn_spec. As synaptic model the
-# pre-defined synapses "excitatory" and "inhibitory" are choosen,
+# (# 'all_to_all') of Connect() is used. The synaptic properties are
+# pre-defined # in a dictionary and inserted via syn_spec. As synaptic model
+# the pre-defined synapses "excitatory" and "inhibitory" are choosen,
 # thus setting weight and delay. The recepter type is drawn from a
 # distribution for each connection, which is specified in the synapse
 # properties by assigning a dictionary to the keyword 'receptor_type',

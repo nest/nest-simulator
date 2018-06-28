@@ -66,10 +66,6 @@ References
        Neural Networks, 15(2), 155-161.
        http://dx.doi.org/10.1016/S0893-6080(01)00144-7
 
-References
-~~~~~~~~~~~~
-
-
 See Also
 ~~~~~~~~~~
 

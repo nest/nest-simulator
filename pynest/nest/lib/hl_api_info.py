@@ -31,7 +31,10 @@ import webbrowser
 
 @check_stack
 def sysinfo():
-    """Print information on the platform on which NEST was compiled."""
+    """Print information on the platform on which NEST was compiled.
+
+    KEYWORDS: info
+    """
 
     sr("sysinfo")
 
@@ -42,8 +45,10 @@ def version():
 
     Returns
     -------
-    str:
-        The version of NEST.
+    str
+        The version of NEST
+
+    KEYWORDS: info
     """
 
     sr("statusdict [[ /kernelname /version ]] get")
@@ -52,7 +57,10 @@ def version():
 
 @check_stack
 def authors():
-    """Print the authors of NEST."""
+    """Print the authors of NEST.
+
+    KEYWORDS: info
+    """
 
     sr("authors")
 
@@ -62,9 +70,12 @@ def helpdesk():
     """Open the NEST helpdesk in browser.
 
     Use the system default browser.
+
+    KEYWORDS: info
     """
+
     if sys.version_info < (2, 7, 8):
-        print("The NEST Helpdesk is only available with Python 2.7.8 or "
+        print("The NEST helpdesk is only available with Python 2.7.8 or "
               "later. \n")
         return
 
@@ -94,7 +105,7 @@ def helpdesk():
 def help(obj=None, pager=None, return_text=False):
     """Show the help page for the given object using the given pager.
 
-    The default pager is more.
+    The default pager is `more` (See `.nestrc`).
 
     Parameters
     ----------
@@ -104,6 +115,13 @@ def help(obj=None, pager=None, return_text=False):
         Pager to use
     return_text : bool, optional
         Option for returning the help text
+
+    Returns
+    -------
+    None or str
+        The help text of the object if `return_text` is ``True``.
+
+    KEYWORDS: info
     """
     hlpobj = obj
     if hlpobj is not None:
@@ -132,13 +150,15 @@ def help(obj=None, pager=None, return_text=False):
 def get_argv():
     """Return argv as seen by NEST.
 
-    This is similar to Python sys.argv but might have changed after
+    This is similar to Python :code:`sys.argv` but might have changed after
     MPI initialization.
 
     Returns
     -------
-    tuple:
-        Argv, as seen by NEST.
+    tuple
+        Argv, as seen by NEST
+
+    KEYWORDS: info
     """
 
     sr('statusdict')
@@ -148,7 +168,7 @@ def get_argv():
 
 @check_stack
 def message(level, sender, text):
-    """Print a message using NEST's message system.
+    """Print a message using message system of NEST.
 
     Parameters
     ----------
@@ -158,6 +178,8 @@ def message(level, sender, text):
         Message sender
     text : str
         Text to be sent in the message
+
+    KEYWORDS: info
     """
 
     sps(level)

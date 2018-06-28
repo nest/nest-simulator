@@ -50,7 +50,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
     synapse_model : str, optional
         Only connections with this synapse type are returned.
     synapse_label : int, optional
-        (non-negative) only connections with this synapse label are returned.
+        (Non-negative) only connections with this synapse label are returned.
 
     Returns
     -------
@@ -67,7 +67,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
     Only connections with targets on the MPI process executing
     the command are returned.
 
-    KEYWORDS:
+    KEYWORDS: connections
     """
 
     params = {}
@@ -99,7 +99,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     """Create connections between presynaptic and postsynaptic nodes.
 
     Nodes in `pre` and `post` are connected using the specified connectivity
-    (``all-to-all`` by default) and synapse type (``static_synapse`` by
+    (``'all-to-all'`` by default) and synapse type (``'static_synapse'`` by
     default). Details depend on the connectivity rule.
 
     Parameters
@@ -232,7 +232,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
            'mu': 5.0, 'sigma': 1.0}
       }
 
-      KEYWORDS:
+      KEYWORDS: connections
     """
 
     if model is not None:

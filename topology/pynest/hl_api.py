@@ -838,21 +838,17 @@ def ConnectLayers(pre, post, projections):
 
 
 def GetPosition(nodes):
-    """
-    Return the spatial locations of nodes.
-
+    """Return the spatial locations of nodes.
 
     Parameters
     ----------
-    nodes : tuple/list of int(s)
+    nodes : tuple/list of int
         List of GIDs
-
 
     Returns
     -------
-    out : tuple of tuple(s)
-        List of positions as 2- or 3-element lists
-
+    tuple of tuple
+        Tuple of positions as 2- or 3-element tuples
 
     See also
     --------
@@ -861,28 +857,29 @@ def GetPosition(nodes):
     DumpLayerConnections : Write connectivity information to file.
     DumpLayerNodes : Write layer node positions to file.
 
-
     Notes
     -----
-    * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
+    * The functions `GetPosition`, `Displacement` and `Distance` now
       only works for nodes local to the current MPI process, if used in a
       MPI-parallel simulation.
 
-
     **Example**
-        ::
 
-            import nest
-            import nest.topology as tp
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
+        import nest
+        import nest.topology as tp
 
-            # retrieve positions of all (local) nodes belonging to the layer
-            gids = nest.GetNodes(l, {'local_only': True})[0]
-            tp.GetPosition(gids)
+        # create a layer
+        l = tp.CreateLayer({'rows'      : 5,
+                            'columns'   : 5,
+                            'elements'  : 'iaf_psc_alpha'})
+
+        # retrieve positions of all (local) nodes belonging to the layer
+        gids = nest.GetNodes(l, {'local_only': True})[0]
+        tp.GetPosition(gids)
+
+    KEYWORDS: topology
     """
 
     if not nest.is_sequence_of_gids(nodes):
@@ -892,45 +889,40 @@ def GetPosition(nodes):
 
 
 def GetLayer(nodes):
-    """
-    Return the layer to which nodes belong.
-
+    """Return the layer to which nodes belong.
 
     Parameters
     ----------
-    nodes : tuple/list of int(s)
+    nodes : tuple/list of int
         List of neuron GIDs
-
 
     Returns
     -------
-    out : tuple of int(s)
+    tuple of int
         List of layer GIDs
-
 
     See also
     --------
     GetElement : Return the node(s) at the location(s) in the given layer(s).
     GetPosition : Return the spatial locations of nodes.
 
-
     Notes
     -----
-    -
-
-
     **Example**
-        ::
 
-            import nest.topology as tp
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
+        import nest.topology as tp
 
-            # get layer GID of nodes in layer
-            tp.GetLayer(nest.GetNodes(l)[0])
+        # create a layer
+        l = tp.CreateLayer({'rows'      : 5,
+                            'columns'   : 5,
+                            'elements'  : 'iaf_psc_alpha'})
+
+        # get layer GID of nodes in layer
+        tp.GetLayer(nest.GetNodes(l)[0])
+
+    KEYWORDS: topology
     """
 
     if not nest.is_sequence_of_gids(nodes):
@@ -940,8 +932,7 @@ def GetLayer(nodes):
 
 
 def GetElement(layers, locations):
-    """
-    Return the node(s) at the location(s) in the given layer(s).
+    """Return the node(s) at the location(s) in the given layer(s).
 
     This function works for fixed grid layers only.
 
@@ -957,22 +948,19 @@ def GetElement(layers, locations):
     * If layers and locations are lists, it returns a nested list of GIDs, one
       list for each layer and each location.
 
-
     Parameters
     ----------
-    layers : tuple/list of int(s)
+    layers : tuple/list of int
         List of layer GIDs
-    locations : [tuple/list of floats | tuple/list of tuples/lists of floats]
+    locations : tuple/list of floats or tuple/list of tuples/lists of floats
         2-element list with coordinates of a single grid location,
         or list of 2-element lists of coordinates for 2-dimensional layers,
-        i.e., on the format [column, row]
-
+        i.e., on the format :code:`[column, row]`.
 
     Returns
     -------
-    out : tuple of int(s)
+    out : tuple of int
         List of GIDs
-
 
     See also
     --------
@@ -981,24 +969,23 @@ def GetElement(layers, locations):
         given layer(s).
     GetPosition : Return the spatial locations of nodes.
 
-
     Notes
     -----
-    -
-
-
     **Example**
-        ::
 
-            import nest.topology as tp
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 4,
-                                'elements'  : 'iaf_psc_alpha'})
+        import nest.topology as tp
 
-            # get GID of element in last row and column
-            tp.GetElement(l, [3, 4])
+        # create a layer
+        l = tp.CreateLayer({'rows'      : 5,
+                            'columns'   : 4,
+                            'elements'  : 'iaf_psc_alpha'})
+
+        # get GID of element in last row and column
+        tp.GetElement(l, [3, 4])
+
+    KEYWORDS: topology
     """
 
     if not nest.is_sequence_of_gids(layers):
@@ -1054,8 +1041,7 @@ def GetElement(layers, locations):
 
 
 def FindNearestElement(layers, locations, find_all=False):
-    """
-    Return the node(s) closest to the location(s) in the given layer(s).
+    """Return the node(s) closest to the location(s) in the given layer(s).
 
     This function works for fixed grid layers only.
 
@@ -1071,26 +1057,23 @@ def FindNearestElement(layers, locations, find_all=False):
     * If layers and locations are lists, it returns a nested list of GIDs, one
       list for each layer and each location.
 
-
     Parameters
     ----------
-    layers : tuple/list of int(s)
+    layers : tuple/list of int
         List of layer GIDs
-    locations : tuple(s)/list(s) of tuple(s)/list(s)
+    locations : tuple/list of tuple/list
         2-element list with coordinates of a single position, or list of
         2-element list of positions
-    find_all : bool, default: False
+    find_all : bool, optional
         If there are several nodes with same minimal distance, return only the
-        first found, if `False`.
-        If `True`, instead of returning a single GID, return a list of GIDs
+        first found, if ``False``.
+        If ``True``, instead of returning a single GID, return a list of GIDs
         containing all nodes with minimal distance.
-
 
     Returns
     -------
-    out : tuple of int(s)
+    tuple of int
         List of node GIDs
-
 
     See also
     --------
@@ -1098,24 +1081,23 @@ def FindNearestElement(layers, locations, find_all=False):
     GetElement : Return the node(s) at the location(s) in the given layer(s).
     GetPosition : Return the spatial locations of nodes.
 
-
     Notes
     -----
-    -
-
-
     **Example**
-        ::
 
-            import nest.topology as tp
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
+        import nest.topology as tp
 
-            # get GID of element closest to some location
-            tp.FindNearestElement(l, [3.0, 4.0], True)
+        # create a layer
+        l = tp.CreateLayer({'rows'      : 5,
+                            'columns'   : 5,
+                            'elements'  : 'iaf_psc_alpha'})
+
+        # get GID of element closest to some location
+        tp.FindNearestElement(l, [3.0, 4.0], True)
+
+    KEYWORDS: topology
     """
 
     import numpy
@@ -1174,9 +1156,12 @@ def FindNearestElement(layers, locations, find_all=False):
 
 
 def _check_displacement_args(from_arg, to_arg, caller):
-    """
+    """Check displacement and distance arguments.
+
     Internal helper function to check arguments to Displacement
     and Distance and make them lists of equal length.
+
+    KEYWORDS: topology
     """
 
     import numpy
@@ -1210,9 +1195,7 @@ def _check_displacement_args(from_arg, to_arg, caller):
 
 
 def Displacement(from_arg, to_arg):
-    """
-    Get vector of lateral displacement from node(s) `from_arg`
-    to node(s) `to_arg`.
+    """Get vector of lateral displacement from node(s) to node(s).
 
     Displacement is always measured in the layer to which the `to_arg` node
     belongs. If a node in the `from_arg` list belongs to a different layer,
@@ -1228,20 +1211,17 @@ def Displacement(from_arg, to_arg):
       to be lists of the same length and the displacement for each pair is
       returned.
 
-
     Parameters
     ----------
-    from_arg : [tuple/list of int(s) | tuple/list of tuples/lists of floats]
+    from_arg : tuple/list of int(s) or tuple/list of tuples/lists of floats
         List of GIDs or position(s)
     to_arg : tuple/list of int(s)
         List of GIDs
-
 
     Returns
     -------
     out : tuple
         Displacement vectors between pairs of nodes in `from_arg` and `to_arg`
-
 
     See also
     --------
@@ -1249,29 +1229,30 @@ def Displacement(from_arg, to_arg):
     DumpLayerConnections : Write connectivity information to file.
     GetPosition : Return the spatial locations of nodes.
 
-
     Notes
     -----
-    * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
+    * The functions `GetPosition`, `Displacement` and `Distance` now
       only works for nodes local to the current MPI process, if used in a
       MPI-parallel simulation.
 
-
     **Example**
-        ::
 
-            import nest.topology as tp
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
+        import nest.topology as tp
 
-            # displacement between node 2 and 3
-            print(tp.Displacement([2], [3]))
+        # create a layer
+        l = tp.CreateLayer({'rows'      : 5,
+                            'columns'   : 5,
+                            'elements'  : 'iaf_psc_alpha'})
 
-            # displacment between the position (0.0., 0.0) and node 2
-            print(tp.Displacement([(0.0, 0.0)], [2]))
+        # displacement between node 2 and 3
+        print(tp.Displacement([2], [3]))
+
+        # displacment between the position (0.0., 0.0) and node 2
+        print(tp.Displacement([(0.0, 0.0)], [2]))
+
+    KEYWORDS: topology
     """
 
     from_arg, to_arg = _check_displacement_args(from_arg, to_arg,
@@ -1280,8 +1261,7 @@ def Displacement(from_arg, to_arg):
 
 
 def Distance(from_arg, to_arg):
-    """
-    Get lateral distances from node(s) from_arg to node(s) to_arg.
+    """Get lateral distances from node(s) from_arg to node(s) to_arg.
 
     The distance between two nodes is the length of its displacement.
 
@@ -1299,20 +1279,17 @@ def Distance(from_arg, to_arg):
       to be lists of the same length and the distance for each pair is
       returned.
 
-
     Parameters
     ----------
-    from_arg : [tuple/list of ints | tuple/list with tuples/lists of floats]
+    from_arg : tuple/list of ints or tuple/list with tuples/lists of floats
         List of GIDs or position(s)
     to_arg : tuple/list of ints
         List of GIDs
-
 
     Returns
     -------
     out : tuple
         Distances between from and to
-
 
     See also
     --------
@@ -1320,30 +1297,30 @@ def Distance(from_arg, to_arg):
     DumpLayerConnections : Write connectivity information to file.
     GetPosition : Return the spatial locations of nodes.
 
-
     Notes
     -----
-    * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
+    * The functions `GetPosition`, `Displacement` and `Distance` now
       only works for nodes local to the current MPI process, if used in a
       MPI-parallel simulation.
 
-
     **Example**
-        ::
 
-            import nest.topology as tp
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
+        import nest.topology as tp
 
-            # distance between node 2 and 3
-            print(tp.Distance([2], [3]))
+        # create a layer
+        l = tp.CreateLayer({'rows'      : 5,
+                            'columns'   : 5,
+                            'elements'  : 'iaf_psc_alpha'})
 
-            # distance between the position (0.0., 0.0) and node 2
-            print(tp.Distance([(0.0, 0.0)], [2]))
+        # distance between node 2 and 3
+        print(tp.Distance([2], [3]))
 
+        # distance between the position (0.0., 0.0) and node 2
+        print(tp.Distance([(0.0, 0.0)], [2]))
+
+    KEYWORDS: topology
     """
 
     from_arg, to_arg = _check_displacement_args(from_arg, to_arg, 'Distance')
@@ -1367,37 +1344,29 @@ def _rank_specific_filename(basename):
 
 
 def DumpLayerNodes(layers, outname):
-    """
-    Write GID and position data of layer(s) to file.
+    """Write GID and position data of layer(s) to file.
 
     Write GID and position data to layer(s) file. For each node in a layer,
     a line with the following information is written:
-        ::
 
-            GID x-position y-position [z-position]
+    .. code_block:: python
+
+        GID x-position y-position [z-position]
 
     If `layers` contains several GIDs, data for all layers will be written to a
     single file.
 
-
     Parameters
     ----------
-    layers : tuple/list of int(s)
+    layers : tuple/list of int
         List of GIDs of a Topology layer
     outname : str
         Name of file to write to (existing files are overwritten)
-
-
-    Returns
-    -------
-    out : None
-
 
     See also
     --------
     DumpLayerConnections : Write connectivity information to file.
     GetPosition : Return the spatial locations of nodes.
-
 
     Notes
     -----
@@ -1407,20 +1376,21 @@ def DumpLayerNodes(layers, outname):
       the file name suffix.
     * Each file stores data for nodes local to that file.
 
-
     **Example**
-        ::
 
-            import nest.topology as tp
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'     : 5,
-                                'columns'  : 5,
-                                'elements' : 'iaf_psc_alpha'})
+        import nest.topology as tp
 
-            # write layer node positions to file
-            tp.DumpLayerNodes(l, 'positions.txt')
+        # create a layer
+        l = tp.CreateLayer({'rows'     : 5,
+                            'columns'  : 5,
+                            'elements' : 'iaf_psc_alpha'})
 
+        # write layer node positions to file
+        tp.DumpLayerNodes(l, 'positions.txt')
+
+    KEYWORDS: topology
     """
     topology_func("""
                   (w) file exch { DumpLayerNodes } forall close
@@ -1429,37 +1399,30 @@ def DumpLayerNodes(layers, outname):
 
 
 def DumpLayerConnections(layers, synapse_model, outname):
-    """
-    Write connectivity information to file.
+    """Write connectivity information to file.
 
     This function writes connection information to file for all outgoing
     connections from the given layers with the given synapse model.
     Data for all layers in the list is combined.
 
     For each connection, one line is stored, in the following format:
-        ::
 
-            source_gid target_gid weight delay dx dy [dz]
+    .. code_block:: python
+
+        source_gid target_gid weight delay dx dy [dz]
 
     where (dx, dy [, dz]) is the displacement from source to target node.
     If targets do not have positions (eg spike detectors outside any layer),
     NaN is written for each displacement coordinate.
 
-
     Parameters
     ----------
-    layers : tuple/list of int(s)
+    layers : tuple/list of int
         List of GIDs of a Topology layer
     synapse_model : str
         NEST synapse model
     outname : str
         Name of file to write to (will be overwritten if it exists)
-
-
-    Returns
-    -------
-    out : None
-
 
     See also
     --------
@@ -1467,7 +1430,6 @@ def DumpLayerConnections(layers, synapse_model, outname):
     GetPosition : Return the spatial locations of nodes.
     nest.GetConnections : Return connection identifiers between
         sources and targets
-
 
     Notes
     -----
@@ -1477,21 +1439,23 @@ def DumpLayerConnections(layers, synapse_model, outname):
       the MPI Rank into the file name before the file name suffix.
     * Each file stores data for local nodes.
 
-
     **Example**
-        ::
 
-            import nest.topology as tp
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
-            tp.ConnectLayers(l,l, {'connection_type': 'divergent',
-                                   'synapse_model': 'static_synapse'})
+        import nest.topology as tp
 
-            # write connectivity information to file
-            tp.DumpLayerConnections(l, 'static_synapse', 'connections.txt')
+        # create a layer
+        l = tp.CreateLayer({'rows'      : 5,
+                            'columns'   : 5,
+                            'elements'  : 'iaf_psc_alpha'})
+        tp.ConnectLayers(l,l, {'connection_type': 'divergent',
+                               'synapse_model': 'static_synapse'})
+
+        # write connectivity information to file
+        tp.DumpLayerConnections(l, 'static_synapse', 'connections.txt')
+
+    KEYWORDS: topology
     """
 
     topology_func("""
@@ -1505,24 +1469,20 @@ def DumpLayerConnections(layers, synapse_model, outname):
 
 
 def FindCenterElement(layers):
-    """
-    Return GID(s) of node closest to center of layers.
-
+    """Return GID(s) of node closest to center of layers.
 
     Parameters
     ----------
-    layers : tuple/list of int(s)
+    layers : tuple/list of int
         List of layer GIDs
-
 
     Returns
     -------
-    out : tuple of int(s)
+    tuple of int
         A list containing for each layer the GID of the node closest to the
         center of the layer, as specified in the layer parameters. If several
         nodes are equally close to the center, an arbitrary one of them is
         returned.
-
 
     See also
     --------
@@ -1531,24 +1491,21 @@ def FindCenterElement(layers):
     GetElement : Return the node(s) at the location(s) in the given layer(s).
     GetPosition : Return the spatial locations of nodes.
 
-
-    Notes
-    -----
-    -
-
-
     **Example**
-        ::
 
-            import nest.topology as tp
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
+        import nest.topology as tp
 
-            # get GID of the element closest to the center of the layer
-            tp.FindCenterElement(l)
+        # create a layer
+        l = tp.CreateLayer({'rows'      : 5,
+                            'columns'   : 5,
+                            'elements'  : 'iaf_psc_alpha'})
+
+        # get GID of the element closest to the center of the layer
+        tp.FindCenterElement(l)
+
+    KEYWORDS: topology
     """
 
     if not nest.is_sequence_of_gids(layers):
@@ -1562,21 +1519,18 @@ def FindCenterElement(layers):
 
 
 def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
-    """
-    Obtain targets of a list of sources in given target layer.
-
+    """Obtain targets of a list of sources in given target layer.
 
     Parameters
     ----------
-    sources : tuple/list of int(s)
+    sources : tuple/list of int
         List of GID(s) of source neurons
-    tgt_layer : tuple/list of int(s)
+    tgt_layer : tuple/list of int
         Single-element list with GID of tgt_layer
-    tgt_model : [None | str], optional, default: None
+    tgt_model : None or str, optional
         Return only target positions for a given neuron model.
-    syn_model : [None | str], optional, default: None
+    syn_model : None or str, optional
         Return only target positions for a given synapse model.
-
 
     Returns
     -------
@@ -1587,8 +1541,7 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
         For each neuron in `sources`, this function finds all target elements
         in `tgt_layer`. If `tgt_model` is not given (default), all targets are
         returned, otherwise only targets of specific type, and similarly for
-        syn_model.
-
+        `syn_model`.
 
     See also
     --------
@@ -1597,35 +1550,36 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     nest.GetConnections : Return connection identifiers between
         sources and targets
 
-
     Notes
     -----
     * For distributed simulations, this function only returns targets on the
       local MPI process.
 
-
     **Example**
-        ::
 
-            import nest.topology as tp
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 11,
-                                'columns'   : 11,
-                                'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_psc_alpha'})
+        import nest.topology as tp
 
-            # connectivity specifications with a mask
-            conndict = {'connection_type': 'divergent',
-                        'mask': {'rectangular': {'lower_left' : [-2.0, -1.0],
-                                                 'upper_right': [2.0, 1.0]}}}
+        # create a layer
+        l = tp.CreateLayer({'rows'      : 11,
+                            'columns'   : 11,
+                            'extent'    : [11.0, 11.0],
+                            'elements'  : 'iaf_psc_alpha'})
 
-            # connect layer l with itself according to the given
-            # specifications
-            tp.ConnectLayers(l, l, conndict)
+        # connectivity specifications with a mask
+        conndict = {'connection_type': 'divergent',
+                    'mask': {'rectangular': {'lower_left' : [-2.0, -1.0],
+                                             'upper_right': [2.0, 1.0]}}}
 
-            # get the GIDs of the targets of the source neuron with GID 5
-            tp.GetTargetNodes([5], l)
+        # connect layer l with itself according to the given
+        # specifications
+        tp.ConnectLayers(l, l, conndict)
+
+        # get the GIDs of the targets of the source neuron with GID 5
+        tp.GetTargetNodes([5], l)
+
+    KEYWORDS: topology
     """
 
     if not nest.is_sequence_of_gids(sources):
@@ -1657,68 +1611,65 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
 
 
 def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
-    """
-    Obtain positions of targets of a list of sources in a given target layer.
-
+    """Obtain target positions of a list of sources in a given target layer.
 
     Parameters
     ----------
-    sources : tuple/list of int(s)
+    sources : tuple/list of int
         List of GID(s) of source neurons
-    tgt_layer : tuple/list of int(s)
-        Single-element list with GID of tgt_layer
-    tgt_model : [None | str], optional, default: None
+    tgt_layer : tuple/list of int
+        Single-element list with GID of `tgt_layer`
+    tgt_model : None or str, optional
         Return only target positions for a given neuron model.
-    syn_type : [None | str], optional, default: None
+    syn_type : None or str, optional
         Return only target positions for a given synapse model.
-
 
     Returns
     -------
-    out : tuple of tuple(s) of tuple(s) of floats
+    tuple of tuple(s) of tuple(s) of floats
         Positions of target neurons fulfilling the given criteria as a nested
         list, containing one list of positions per node in sources.
 
         For each neuron in `sources`, this function finds all target elements
         in `tgt_layer`. If `tgt_model` is not given (default), all targets are
         returned, otherwise only targets of specific type, and similarly for
-        syn_model.
-
+        `syn_model`.
 
     See also
     --------
     GetTargetNodes : Obtain targets of a list of sources in a given target
         layer.
 
-
     Notes
     -----
     * For distributed simulations, this function only returns targets on the
       local MPI process.
 
-
     **Example**
-        ::
 
-            import nest.topology as tp
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 11,
-                                'columns'   : 11,
-                                'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_psc_alpha'})
+        import nest.topology as tp
 
-            # connectivity specifications with a mask
-            conndict1 = {'connection_type': 'divergent',
-                         'mask': {'rectangular': {'lower_left'  : [-2.0, -1.0],
-                                                  'upper_right' : [2.0, 1.0]}}}
+        # create a layer
+        l = tp.CreateLayer({'rows'      : 11,
+                            'columns'   : 11,
+                            'extent'    : [11.0, 11.0],
+                            'elements'  : 'iaf_psc_alpha'})
 
-            # connect layer l with itself according to the given
-            # specifications
-            tp.ConnectLayers(l, l, conndict1)
+        # connectivity specifications with a mask
+        conndict1 = {'connection_type': 'divergent',
+                     'mask': {'rectangular': {'lower_left'  : [-2.0, -1.0],
+                                              'upper_right' : [2.0, 1.0]}}}
 
-            # get the positions of the targets of the source neuron with GID 5
-            tp.GetTargetPositions([5], l)
+        # connect layer l with itself according to the given
+        # specifications
+        tp.ConnectLayers(l, l, conndict1)
+
+        # get the positions of the targets of the source neuron with GID 5
+        tp.GetTargetPositions([5], l)
+
+    KEYWORDS: topology
     """
 
     return tuple(GetPosition(nodes) for nodes
@@ -1745,30 +1696,27 @@ def _draw_extent(ax, xctr, yctr, xext, yext):
 
 
 def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
-    """
-    Plot all nodes in a layer.
+    """Plot all nodes in a layer.
 
     This function plots only top-level nodes, not the content of composite
     nodes.
 
-
     Parameters
     ----------
-    layer : tuple/list of int(s)
-        GID of layer to plot, must be tuple/list of length 1
-    fig : [None | matplotlib.figure.Figure object], optional, default: None
+    layer : tuple/list of int
+        GID of layer to plot, The length of tuple/list must be 1.
+    fig : None or object, optional
         Matplotlib figure to plot to. If not given, a new figure is
         created.
-    nodecolor : [None | any matplotlib color], optional, default: 'b'
-        Color for nodes
-    nodesize : float, optional, default: 20
+    nodecolor : str, optional
+        Color for nodes. Any matplotlib color.
+    nodesize : float, optional
         Marker size for nodes
-
 
     Returns
     -------
-    out : `matplotlib.figure.Figure` object
-
+    object
+        Figure of the matplotlib
 
     See also
     --------
@@ -1776,27 +1724,28 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
     PlotTargets : Plot all targets of a given source.
     matplotlib.figure.Figure : matplotlib Figure class
 
-
     Notes
     -----
     * Do not use this function in distributed simulations.
 
-
     **Example**
-        ::
 
-            import nest.topology as tp
-            import matplotlib.pyplot as plt
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 11,
-                                'columns'   : 11,
-                                'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_psc_alpha'})
+        import nest.topology as tp
+        import matplotlib.pyplot as plt
 
-            # plot layer with all its nodes
-            tp.PlotLayer(l)
-            plt.show()
+        # create a layer
+        l = tp.CreateLayer({'rows'      : 11,
+                            'columns'   : 11,
+                            'extent'    : [11.0, 11.0],
+                            'elements'  : 'iaf_psc_alpha'})
+
+        # plot layer with all its nodes
+        tp.PlotLayer(l)
+        plt.show()
+
+    KEYWORDS: topology
     """
 
     import matplotlib.pyplot as plt
@@ -1855,44 +1804,41 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
                 mask=None, kernel=None,
                 src_color='red', src_size=50, tgt_color='blue', tgt_size=20,
                 mask_color='red', kernel_color='red'):
-    """
-    Plot all targets of source neuron `src_nrn` in a target layer `tgt_layer`.
-
+    """Plot all targets of a source neuron in a target layer.
 
     Parameters
     ----------
     src_nrn : int
         GID of source neuron (as single-element list)
-    tgt_layer : tuple/list of int(s)
-        GID of tgt_layer (as single-element list)
-    tgt_model : [None | str], optional, default: None
+    tgt_layer : tuple/list of int
+        GID of `tgt_layer` (as single-element list)
+    tgt_model : None or str, optional
         Show only targets of a given model.
-    syn_type : [None | str], optional, default: None
-        Show only targets connected to with a given synapse type
-    fig : [None | matplotlib.figure.Figure object], optional, default: None
+    syn_type : None or str, optional
+        Show only targets connected to with a given synapse type.
+    fig : None or object, optional
         Matplotlib figure to plot to. If not given, a new figure is created.
-    mask : [None | dict], optional, default: None
-        Draw topology mask with targets; see ``PlotKernel`` for details.
-    kernel : [None | dict], optional, default: None
-        Draw topology kernel with targets; see ``PlotKernel`` for details.
-    src_color : [None | any matplotlib color], optional, default: 'red'
-        Color used to mark source node position
-    src_size : float, optional, default: 50
-        Size of source marker (see scatter for details)
-    tgt_color : [None | any matplotlib color], optional, default: 'blue'
-        Color used to mark target node positions
-    tgt_size : float, optional, default: 20
+    mask : None or dict, optional
+        Draw topology mask with targets; see :code:`PlotKernel` for details.
+    kernel : None or dict, optional
+        Draw topology kernel with targets; see :code:`PlotKernel` for details.
+    src_color : str or object, optional
+        Color used to mark source node position. Any matplotlib color.
+    src_size : float, optional
+        Size of source marker (see scatter for details).
+    tgt_color : str or object, optional
+        Color used to mark target node positions. Any matplotlib color.
+    tgt_size : float, optional
         Size of target markers (see scatter for details)
-    mask_color : [None | any matplotlib color], optional, default: 'red'
-        Color used for line marking mask
-    kernel_color : [None | any matplotlib color], optional, default: 'red'
-        Color used for lines marking kernel
-
+    mask_color : str or object, optional
+        Color used for line marking mask. Any matplotlib color.
+    kernel_color : str or object, optional
+        Color used for lines marking kernel. Any matplotlib color.
 
     Returns
     -------
-    out : matplotlib.figure.Figure object
-
+    object
+        Figure of the matplotlib
 
     See also
     --------
@@ -1904,36 +1850,37 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
     PlotLayer : Plot all nodes in a layer.
     matplotlib.pyplot.scatter : matplotlib scatter plot.
 
-
     Notes
     -----
     * Do not use this function in distributed simulations.
 
-
     **Example**
-        ::
 
-            import nest.topology as tp
-            import matplotlib.pyplot as plt
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 11,
-                                'columns'   : 11,
-                                'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_psc_alpha'})
+        import nest.topology as tp
+        import matplotlib.pyplot as plt
 
-            # connectivity specifications with a mask
-            conndict = {'connection_type': 'divergent',
-                         'mask': {'rectangular': {'lower_left'  : [-2.0, -1.0],
-                                                  'upper_right' : [2.0, 1.0]}}}
+        # create a layer
+        l = tp.CreateLayer({'rows'      : 11,
+                            'columns'   : 11,
+                            'extent'    : [11.0, 11.0],
+                            'elements'  : 'iaf_psc_alpha'})
 
-            # connect layer l with itself according to the given
-            # specifications
-            tp.ConnectLayers(l, l, conndict)
+        # connectivity specifications with a mask
+        conndict = {'connection_type': 'divergent',
+                     'mask': {'rectangular': {'lower_left'  : [-2.0, -1.0],
+                                              'upper_right' : [2.0, 1.0]}}}
 
-            # plot the targets of the source neuron with GID 5
-            tp.PlotTargets([5], l)
-            plt.show()
+        # connect layer l with itself according to the given
+        # specifications
+        tp.ConnectLayers(l, l, conndict)
+
+        # plot the targets of the source neuron with GID 5
+        tp.PlotTargets([5], l)
+        plt.show()
+
+    KEYWORDS: topology
     """
 
     import matplotlib.pyplot as plt
@@ -2001,36 +1948,28 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
 
 def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                kernel_color='red'):
-    """
-    Add indication of mask and kernel to axes.
+    """Add indication of mask and kernel to axes.
 
     Adds solid red line for mask. For doughnut mask show inner and outer line.
     If kern is Gaussian, add blue dashed lines marking 1, 2, 3 sigma.
     This function ignores periodic boundary conditions.
-    Usually, this function is invoked by ``PlotTargets``.
-
+    Usually, this function is invoked by :code:`PlotTargets()`.
 
     Parameters
     ----------
-    ax : matplotlib.axes.AxesSubplot,
-        subplot reference returned by PlotTargets
+    ax : object
+        Subplot of reference returned by :code:`PlotTargets`.
     src_nrn : int
-        GID of source neuron  (as single element list), mask and kernel
-        plotted relative to it
+        GID of source neuron (as single element list), mask and kernel
+        plotted relative to it.
     mask : dict
         Mask used in creating connections.
-    kern : [None | dict], optional, default: None
-        Kernel used in creating connections
-    mask_color : [None | any matplotlib color], optional, default: 'red'
-        Color used for line marking mask
-    kernel_color : [None | any matplotlib color], optional, default: 'red'
-        Color used for lines marking kernel
-
-
-    Returns
-    -------
-    out : None
-
+    kern : None or dict, optional
+        Kernel used in creating connections.
+    mask_color : str or object, optional,
+        Color used for line marking mask. Any matplotlib color.
+    kernel_color : str or object, optional
+        Color used for lines marking kernel. Any matplotlib color.
 
     See also
     --------
@@ -2040,48 +1979,49 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
         parameters for distance dependency and randomization.
     PlotLayer : Plot all nodes in a layer.
 
-
     Notes
     -----
     * Do not use this function in distributed simulations.
 
-
     **Example**
-        ::
 
-            import nest.topology as tp
-            import matplotlib.pyplot as plt
+    .. code_block:: python
 
-            # create a layer
-            l = tp.CreateLayer({'rows'      : 11,
-                                'columns'   : 11,
-                                'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_psc_alpha'})
+        import nest.topology as tp
+        import matplotlib.pyplot as plt
 
-            # connectivity specifications
-            mask_dict = {'rectangular': {'lower_left'  : [-2.0, -1.0],
-                                         'upper_right' : [2.0, 1.0]}}
-            kernel_dict = {'gaussian': {'p_center' : 1.0,
-                                        'sigma'    : 1.0}}
-            conndict = {'connection_type': 'divergent',
-                        'mask'   : mask_dict,
-                        'kernel' : kernel_dict}
+        # create a layer
+        l = tp.CreateLayer({'rows'      : 11,
+                            'columns'   : 11,
+                            'extent'    : [11.0, 11.0],
+                            'elements'  : 'iaf_psc_alpha'})
 
-            # connect layer l with itself according to the given
-            # specifications
-            tp.ConnectLayers(l, l, conndict)
+        # connectivity specifications
+        mask_dict = {'rectangular': {'lower_left'  : [-2.0, -1.0],
+                                     'upper_right' : [2.0, 1.0]}}
+        kernel_dict = {'gaussian': {'p_center' : 1.0,
+                                    'sigma'    : 1.0}}
+        conndict = {'connection_type': 'divergent',
+                    'mask'   : mask_dict,
+                    'kernel' : kernel_dict}
 
-            # set up figure
-            fig, ax = plt.subplots()
+        # connect layer l with itself according to the given
+        # specifications
+        tp.ConnectLayers(l, l, conndict)
 
-            # plot layer nodes
-            tp.PlotLayer(l, fig)
+        # set up figure
+        fig, ax = plt.subplots()
 
-            # choose center element of the layer as source node
-            ctr_elem = tp.FindCenterElement(l)
+        # plot layer nodes
+        tp.PlotLayer(l, fig)
 
-            # plot mask and kernel of the center element
-            tp.PlotKernel(ax, ctr_elem, mask=mask_dict, kern=kernel_dict)
+        # choose center element of the layer as source node
+        ctr_elem = tp.FindCenterElement(l)
+
+        # plot mask and kernel of the center element
+        tp.PlotKernel(ax, ctr_elem, mask=mask_dict, kern=kernel_dict)
+
+    KEYWORDS: topology, plot
     """
 
     import matplotlib
@@ -2151,8 +2091,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
 
 
 def SelectNodesByMask(layer, anchor, mask_obj):
-    """
-    Obtain the GIDs inside a masked area of a topology layer.
+    """Obtain the GIDs inside a masked area of a topology layer.
 
     The function finds and returns all the GIDs inside a given mask of a single
     layer. It works on both 2-dimensional and 3-dimensional masks and layers.
@@ -2170,8 +2109,10 @@ def SelectNodesByMask(layer, anchor, mask_obj):
 
     Returns
     -------
-    out : list of int(s)
+    out : list of int
         GID(s) of nodes/elements inside the mask.
+
+    KEYWORDS: topology
     """
 
     if len(layer) != 1:

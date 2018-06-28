@@ -36,37 +36,38 @@ def GetConnections(source=None, target=None, synapse_model=None,
                    synapse_label=None):
     """Return an array of connection identifiers.
 
-    Any combination of source, target, synapse_model and
-    synapse_label parameters is permitted.
+    Any combination of `source`, `target`, `synapse_model` and
+    `synapse_label` parameters is permitted.
 
     Parameters
     ----------
     source : list, optional
         Source GIDs, only connections from these
-        pre-synaptic neurons are returned
+        presynaptic neurons are returned.
     target : list, optional
         Target GIDs, only connections to these
-        post-synaptic neurons are returned
+        postsynaptic neurons are returned.
     synapse_model : str, optional
-        Only connections with this synapse type are returned
+        Only connections with this synapse type are returned.
     synapse_label : int, optional
-        (non-negative) only connections with this synapse label are returned
+        (non-negative) only connections with this synapse label are returned.
 
     Returns
     -------
-    array:
+    array
         Connections as 5-tuples with entries
         (source-gid, target-gid, target-thread, synapse-id, port)
+
+    Raises
+    ------
+    TypeError
 
     Notes
     -----
     Only connections with targets on the MPI process executing
     the command are returned.
 
-
-    Raises
-    ------
-    TypeError
+    KEYWORDS:
     """
 
     params = {}
@@ -95,12 +96,11 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
 @check_stack
 def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
-    """
-    Connect pre nodes to post nodes.
+    """Create connections between presynaptic and postsynaptic nodes.
 
-    Nodes in pre and post are connected using the specified connectivity
-    (all-to-all by default) and synapse type (static_synapse by default).
-    Details depend on the connectivity rule.
+    Nodes in `pre` and `post` are connected using the specified connectivity
+    (``all-to-all`` by default) and synapse type (``static_synapse`` by
+    default). Details depend on the connectivity rule.
 
     Parameters
     ----------
@@ -113,7 +113,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     syn_spec : str or dict, optional
         Specifies synapse model, see below
     model : str or dict, optional
-        alias for syn_spec for backward compatibility
+        Alias for `syn_spec` for backward compatibility
 
     Raises
     ------
@@ -124,100 +124,104 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     Connect does not iterate over subnets, it only connects explicitly
     specified nodes.
 
-    Connectivity specification (conn_spec)
-    --------------------------------------
+    **Connectivity specification (`conn_spec`)**
 
     Connectivity is specified either as a string containing the name of a
-    connectivity rule (default: 'all_to_all') or as a dictionary specifying
-    the rule and any mandatory rule-specific parameters (e.g. 'indegree').
+    connectivity rule (default: ``'all_to_all'``) or as a dictionary specifying
+    the rule and any mandatory rule-specific parameters (e.g. ``'indegree'``).
 
     In addition, switches setting permission for establishing
-    self-connections ('autapses', default: True) and multiple connections
-    between a pair of nodes ('multapses', default: True) can be contained
-    in the dictionary. Another switch enables the creation of symmetric
-    connections ('symmetric', default: False) by also creating connections
-    in the opposite direction.
+    self-connections (``'autapses'``, default: ``True``) and multiple
+    connections between a pair of nodes (``'multapses'``, default: ``True``)
+    can be contained in the dictionary. Another switch enables the creation of
+    symmetric connections (``'symmetric'``, default: ``False``) by also
+    creating connections in the opposite direction.
 
-    Available rules and associated parameters
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    - 'all_to_all' (default)
-    - 'one_to_one'
-    - 'fixed_indegree', 'indegree'
-    - 'fixed_outdegree', 'outdegree'
-    - 'fixed_total_number', 'N'
-    - 'pairwise_bernoulli', 'p'
+    **Available rules and associated parameters**
 
-    Example conn-spec choices
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    - ``'all_to_all'`` (default)
+    - ``'one_to_one'``
+    - ``'fixed_indegree'``, ``indegree``
+    - ``'fixed_outdegree'``, ``outdegree``
+    - ``'fixed_total_number'``, ``N``
+    - ``'pairwise_bernoulli'``, ``p``
+
+    **Example conn-spec choices**
+
     - 'one_to_one'
     - {'rule': 'fixed_indegree', 'indegree': 2500, 'autapses': False}
     - {'rule': 'pairwise_bernoulli', 'p': 0.1}
 
-    Synapse specification (syn_spec)
-    --------------------------------------
+    **Synapse specification (`syn_spec`)**
 
     The synapse model and its properties can be given either as a string
-    identifying a specific synapse model (default: 'static_synapse') or
+    identifying a specific synapse model (default: ``'static_synapse'``) or
     as a dictionary specifying the synapse model and its parameters.
 
     Available keys in the synapse specification dictionary are:
-    - 'model'
-    - 'weight'
-    - 'delay'
-    - 'receptor_type'
+    - ``'model'``
+    - ``'weight'``
+    - ``'delay'``
+    - ``'receptor_type'``
     - any parameters specific to the selected synapse model.
 
     All parameters are optional and if not specified, the default values
-    of the synapse model will be used. The key 'model' identifies the
+    of the synapse model will be used. The key ``'model'`` identifies the
     synapse model, this can be one of NEST's built-in synapse models
-    or a user-defined model created via CopyModel().
+    or a user-defined model created via :code:`CopyModel()`.
 
-    If 'model' is not specified the default model 'static_synapse'
+    If ``'model'`` is not specified the default model ``'static_synapse'``
     will be used.
 
     All other parameters can be scalars, arrays or distributions.
     In the case of scalar parameters, all keys must be doubles
-    except for 'receptor_type' which must be initialised with an integer.
+    except for ``'receptor_type'`` which must be initialised with an integer.
 
-    Parameter arrays are available for the rules 'one_to_one',
-    'all_to_all', 'fixed_indegree' and 'fixed_outdegree':
-    - For 'one_to_one' the array has to be a one-dimensional
-      NumPy array with length len(pre).
-    - For 'all_to_all' the array has to be a two-dimensional NumPy array
-      with shape (len(post), len(pre)), therefore the rows describe the
-      target and the columns the source neurons.
-    - For 'fixed_indegree' the array has to be a two-dimensional NumPy array
-      with shape (len(post), indegree), where indegree is the number of
-      incoming connections per target neuron, therefore the rows describe the
-      target and the columns the connections converging to the target neuron,
-      regardless of the identity of the source neurons.
-    - For 'fixed_outdegree' the array has to be a two-dimensional NumPy array
-      with shape (len(pre), outdegree), where outdegree is the number of
-      outgoing connections per source neuron, therefore the rows describe the
-      source and the columns the connections starting from the source neuron
-      regardless of the identity of the target neuron.
+    Parameter arrays are available for the rules ``'one_to_one'``,
+    ``'all_to_all'``, ``'fixed_indegree'`` and ``'fixed_outdegree'``:
+    - For ``'one_to_one'`` the array has to be a one-dimensional
+      NumPy array with length :code:`len(pre)`.
+    - For ``'all_to_all'`` the array has to be a two-dimensional NumPy array
+      with shape (:code:`len(post)`, :code:`len(pre)`), therefore the rows
+      describe the target and the columns the source neurons.
+    - For ``'fixed_indegree'`` the array has to be a two-dimensional NumPy
+      array with shape (:code:`len(post)`, ``indegree``), where indegree is
+      the number of incoming connections per target neuron, therefore the rows
+      describe the target and the columns the connections converging to the
+      target neuron, regardless of the identity of the source neurons.
+    - For ``'fixed_outdegree'`` the array has to be a two-dimensional NumPy
+      array with shape (:code:`len(pre)`, ``outdegree``), where ``outdegree``
+      is the number of outgoing connections per source neuron, therefore the
+      rows describe the source and the columns the connections starting from
+      the source neuron regardless of the identity of the target neuron.
 
     Any distributed parameter must be initialised with a further dictionary
-    specifying the distribution type ('distribution', e.g. 'normal') and
-    any distribution-specific parameters (e.g. 'mu' and 'sigma').
+    specifying the distribution type (``'distribution'``, e.g. ``'normal'``)
+    and any distribution-specific parameters (e.g. ``'mu'`` and ``'sigma'``).
 
     To see all available distributions, run:
-    nest.slirun('rdevdict info')
 
-    To get information on a particular distribution, e.g. 'binomial', run:
-    nest.help('rdevdict::binomial')
+    .. code_block:: python
 
-    Most common available distributions and associated parameters
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    - 'normal' with 'mu', 'sigma'
-    - 'normal_clipped' with 'mu', 'sigma', 'low', 'high'
-    - 'lognormal' with 'mu', 'sigma'
-    - 'lognormal_clipped' with 'mu', 'sigma', 'low', 'high'
-    - 'uniform' with 'low', 'high'
-    - 'uniform_int' with 'low', 'high'
+        nest.slirun('rdevdict info')
 
-    Example syn-spec choices
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    To get information on a particular distribution, e.g. ``'binomial'``, run:
+
+    .. code_block:: python
+
+        nest.help('rdevdict::binomial')
+
+    **Most common available distributions and associated parameters**
+
+    - ``'normal'`` with ``'mu'``, ``'sigma'``
+    - ``'normal_clipped'`` with ``'mu'``, ``'sigma'``, ``'low'``, ``'high'``
+    - ``'lognormal'`` with 'mu', 'sigma'
+    - ``'lognormal_clipped'`` with ``'mu'``, ``'sigma'``, ``'low'``, ``'high'``
+    - ``'uniform'`` with ``'low'``, ``'high'``
+    - ``'uniform_int'`` with ``'low'``, ``'high'``
+
+    **Example `syn-spec` choices**
+
     - 'stdp_synapse'
     - {'weight': 2.4, 'receptor_type': 1}
     - {'model': 'stdp_synapse',
@@ -227,6 +231,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
            'distribution': 'normal_clipped', 'low': 0.5,
            'mu': 5.0, 'sigma': 1.0}
       }
+
+      KEYWORDS:
     """
 
     if model is not None:

@@ -453,7 +453,7 @@ def get_local_nodes(nodes):
 
 
 class Logger(object):
-    ###############################################################################
+    ###########################################################################
     # Logger context manager used to properly log memory and timing
     # information from network simulations.
 

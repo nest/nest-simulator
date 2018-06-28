@@ -37,18 +37,21 @@ NEST:
       matched with the pertaining GID.
 
     **Example**
-        ::
+
+        .. code-block:: python
 
             layers = CreateLayer(({...}, {...}, {...}))
 
     creates three layers and returns a tuple of three GIDs.
-        ::
+
+        .. code-block:: python
 
             ConnectLayers(layers[:2], layers[1:], {...})
 
     connects `layers[0]` to `layers[1]` and `layers[1]` to `layers[2]` \
 using the same dictionary to specify both connections.
-        ::
+
+        .. code-block:: python
 
             ConnectLayers(layers[:2], layers[1:], ({...}, {...}))
 
@@ -68,44 +71,40 @@ import nest.lib.hl_api_helper as hlh
 
 
 def topology_func(slifunc, *args):
-    """
-    Execute SLI function `slifunc` with arguments `args` in Topology namespace.
+    """Execute a SLI function in Topology namespace
 
+    The SLI function can be called without arguments, or with an arbitrary
+    number of arguments.
 
     Parameters
     ----------
     slifunc : str
         SLI namespace expression
-
-
-    Other parameters
-    ----------------
-    args : dict
+    *args :
         An arbitrary number of arguments
-
 
     Returns
     -------
     out :
-        Values from SLI function `slifunc`
+        Values returned from SLI function
 
-
-    See also
+    See Also
     --------
     nest.sli_func
+
+    KEYWORDS:
     """
 
     return nest.sli_func(slifunc, *args)
 
 
 class Mask(object):
-    """
-    Class for spatial masks.
+    """Class for spatial masks.
 
     Masks are used when creating connections in the Topology module. A mask
     describes which area of the pool layer shall be searched for nodes to
-    connect for any given node in the driver layer. Masks are created using
-    the ``CreateMask`` command.
+    connect for any given node in the driver layer. Masks are created
+    `CreateMask` command.
     """
 
     _datum = None
@@ -133,27 +132,25 @@ class Mask(object):
         return self._binop("sub", other)
 
     def Inside(self, point):
-        """
-        Test if a point is inside a mask.
-
+        """Return if a point is inside the mask.
 
         Parameters
         ----------
         point : tuple/list of float values
             Coordinate of point
 
-
         Returns
         -------
         out : bool
-            True if the point is inside the mask, False otherwise
+            ``True`` if the point is inside the mask, ``False`` otherwise
+
+        KEYWORDS:
         """
         return topology_func("Inside", point, self._datum)
 
 
 def CreateMask(masktype, specs, anchor=None):
-    """
-    Create a spatial mask for connections.
+    """Create a spatial mask for connections.
 
     Masks are used when creating connections in the Topology module. A mask
     describes the area of the pool layer that is searched for nodes to
@@ -161,46 +158,47 @@ def CreateMask(masktype, specs, anchor=None):
     are available. Examples are the grid region, the rectangular, circular or
     doughnut region.
 
-    The command ``CreateMask`` creates a Mask object which may be combined
-    with other ``Mask`` objects using Boolean operators. The mask is specified
+    The function `CreateMask` creates a `Mask` object which may be combined
+    with other `Mask` objects using Boolean operators. The mask is specified
     in a dictionary.
 
-    ``Mask`` objects can be passed to ``ConnectLayers`` in a
-    connection dictionary with the key `'mask'`.
+    `Mask` objects can be passed to `ConnectLayers` in a
+    connection dictionary with the key ``'mask'``.
 
 
     Parameters
     ----------
-    masktype : str, ['rectangular' | 'circular' | 'doughnut' | 'elliptical']
-        for 2D masks, \ ['box' | 'spherical' | 'ellipsoidal] for 3D masks,
-        ['grid'] only for grid-based layers in 2D
-        The mask name corresponds to the geometrical shape of the mask. There
-        are different types for 2- and 3-dimensional layers.
+    masktype : str
+        ``'rectangular'``, ``'circular'``, ``'doughnut'``, ``'elliptical'``
+        for 2D masks, ``'box'``, ``'spherical'``, ``'ellipsoidal'`` for 3D
+        masks, ``'grid'`` only for grid-based layers in 2D. The mask name
+        corresponds to the geometrical shape of the mask. There are different
+        types for 2- and 3-dimensional layers.
     specs : dict
         Dictionary specifying the parameters of the provided `masktype`,
-        see **Notes**.
-    anchor : [tuple/list of floats | dict with the keys `'column'` and \
-`'row'` (for grid masks only)], optional, default: None
+        see *Notes*.
+    anchor : tuple/list of floats or dict, optional
+        Can either be a tuple/list with floats as coordinates, or a ``dict``
+        with the keys ``'column'`` and ``'row'`` (for grid masks only).
         By providing anchor coordinates, the location of the mask relative to
-        the driver node can be changed. The list of coordinates has a length
-        of 2 or 3 dependent on the number of dimensions.
-
+        the driver node can be changed. The list of coordinates has a length of
+        2 or 3 dependent on the number of dimensions.
 
     Returns
     -------
-    out : ``Mask`` object
+    out : `Mask` object
 
 
-    See also
+    See Also
     --------
-    ConnectLayers: Connect two (lists of) layers pairwise according to
-        specified projections. ``Mask`` objects can be passed in a connection
-        dictionary with the key `'mask'`.
+    ConnectLayers : Connect two (lists of) layers pairwise according to
+        specified projections. `Mask` objects can be passed in a connection
+        dictionary with the key ``'mask'``.
 
 
     Notes
     -----
-    - All angles must be given in degrees.
+    * All angles must be given in degrees.
 
 
     **Mask types**
@@ -209,7 +207,8 @@ def CreateMask(masktype, specs, anchor=None):
     dictionaries:
 
     * 2D free and grid-based layers
-        ::
+
+        .. code-block:: python
 
             'rectangular' :
                 {'lower_left'   : [float, float],
@@ -231,7 +230,8 @@ def CreateMask(masktype, specs, anchor=None):
 
 
     * 3D free and grid-based layers
-        ::
+
+        .. code-block:: python
 
             'box' :
                 {'lower_left'  : [float, float, float],
@@ -252,16 +252,18 @@ def CreateMask(masktype, specs, anchor=None):
 
 
     * 2D grid-based layers only
-        ::
+
+        .. code-block:: python
 
             'grid' :
                 {'rows' : float,
                  'columns' : float}
 
         By default the top-left corner of a grid mask, i.e., the grid
-        mask element with grid index [0, 0], is aligned with the driver
+        mask element with grid index ``[0, 0]``, is aligned with the driver
         node. It can be changed by means of the 'anchor' parameter:
-            ::
+
+            .. code-block:: python
 
                 'anchor' :
                     {'row' : float,
@@ -269,7 +271,8 @@ def CreateMask(masktype, specs, anchor=None):
 
 
     **Example**
-        ::
+
+        .. code-block:: python
 
             import nest.topology as tp
 
@@ -288,6 +291,7 @@ def CreateMask(masktype, specs, anchor=None):
             # connect layer l with itself according to the specifications
             tp.ConnectLayers(l, l, conndict)
 
+    KEYWORDS:
     """
 
     if anchor is None:
@@ -298,14 +302,13 @@ def CreateMask(masktype, specs, anchor=None):
 
 
 class Parameter(object):
-    """
-    Class for parameters for distance dependency or randomization.
+    """Class for parameters for distance dependency or randomization.
 
     Parameters are spatial functions which are used when creating
     connections in the Topology module. A parameter may be used as a
     probability kernel when creating connections or as synaptic parameters
     (such as weight and delay). Parameters are created using the
-    ``CreateParameter`` command.
+    `CreateParameter` command.
     """
 
     _datum = None
@@ -340,8 +343,7 @@ class Parameter(object):
         return self._binop("div", other)
 
     def GetValue(self, point):
-        """
-        Compute value of parameter at a point.
+        """Compute value of parameter at a point.
 
 
         Parameters
@@ -356,7 +358,7 @@ class Parameter(object):
             The value of the parameter at the point
 
 
-        See also
+        See Also
         --------
         CreateParameter : create parameter for e.g., distance dependency
 
@@ -367,7 +369,8 @@ class Parameter(object):
 
 
         **Example**
-            ::
+
+        .. code-block:: python
 
                 import nest.topology as tp
 
@@ -382,8 +385,7 @@ class Parameter(object):
 
 
 def CreateParameter(parametertype, specs):
-    """
-    Create a parameter for distance dependency or randomization.
+    """Create a parameter for distance dependency or randomization.
 
     Parameters are (spatial) functions which are used when creating
     connections in the Topology module for distance dependency or
@@ -393,30 +395,32 @@ def CreateParameter(parametertype, specs):
 
     A parameter may be used as a probability kernel when creating connections
     or as synaptic parameters (such as weight and delay), i.e., for specifying
-    the parameters `'kernel'`, `'weights'` and `'delays'` in the
-    connection dictionary passed to ``ConnectLayers``.
+    the parameters ``'kernel'``, ``'weights'`` and ``'delays'`` in the
+    connection dictionary passed to `ConnectLayers`.
 
 
     Parameters
     ----------
-    parametertype : {'constant', 'linear', 'exponential', 'gaussian', \
-'gaussian2D', 'uniform', 'normal', 'lognormal'}
-        Function types with or without distance dependency
+    parametertype : str
+        Function types with or without distance dependency. Can be one of the
+        following: ``'constant'``, ``'linear'``, ``'exponential'``,
+        ``'gaussian'``, ``'gaussian2D'``, ``'uniform'``, ``'normal'``,
+        ``'lognormal'``
     specs : dict
         Dictionary specifying the parameters of the provided
-        `'parametertype'`, see **Notes**.
+        `'parametertype'`, see *Notes*.
 
 
     Returns
     -------
-    out : ``Parameter`` object
+    out : `Parameter` object
 
 
     See also
     --------
     ConnectLayers : Connect two (lists of) layers pairwise according to
         specified projections. Parameters can be used to specify the
-        parameters `'kernel'`, `'weights'` and `'delays'` in the
+        parameters ``'kernel'``, ``'weights'`` and ``'delays'`` in the
         connection dictionary.
     Parameters : Class for parameters for distance dependency or randomization.
 
@@ -432,13 +436,15 @@ def CreateParameter(parametertype, specs):
     acceptable keys for their corresponding specification dictionaries
 
     * Constant
-        ::
+
+        .. code-block:: python
 
             'constant' :
                 {'value' : float} # constant value
 
     * With dependence on the distance `d`
-        ::
+
+        .. code-block:: python
 
             # p(d) = c + a * d
             'linear' :
@@ -459,7 +465,8 @@ def CreateParameter(parametertype, specs):
                  'c'        : float} # constant offset, default: 0.0
 
     * Bivariate Gaussian parameter:
-        ::
+
+        .. code-block:: python
 
             # p(x,y) = c + p_center *
             #          exp( -( (x-mean_x)^2/sigma_x^2 + (y-mean_y)^2/sigma_y^2
@@ -475,7 +482,8 @@ def CreateParameter(parametertype, specs):
                  'c'        : float} # constant offset, default: 0.0
 
     * Without distance dependency, for randomization
-        ::
+
+        .. code-block:: python
 
             # random parameter with uniform distribution in [min,max)
             'uniform' :
@@ -501,7 +509,8 @@ def CreateParameter(parametertype, specs):
 
 
     **Example**
-        ::
+
+        .. code-block:: python
 
             import nest.topology as tp
 
@@ -520,13 +529,13 @@ def CreateParameter(parametertype, specs):
 
             tp.ConnectLayers(l, l, conndict)
 
+    KEYWORDS:
     """
     return Parameter(topology_func('CreateParameter', {parametertype: specs}))
 
 
 def CreateLayer(specs):
-    """
-    Create one ore more Topology layer(s) according to given specifications.
+    """Create one or more Topology layer(s) according to given specifications.
 
     The Topology module organizes neuronal networks in layers. A layer is a
     special type of subnet which contains information about the spatial
@@ -541,16 +550,16 @@ def CreateLayer(specs):
           regular grid
         * free layers in which elements can be placed arbitrarily
 
-    Obligatory dictionary entries define the class of layer
-    (grid-based layers: 'columns' and 'rows'; free layers: 'positions')
-    and the 'elements'.
+    Obligatory dictionary entries define the class of layer (grid-based layers:
+    ``'columns'`` and ``'rows'``; free layers: ``'positions'``) and the
+    ``'elements'``.
 
 
     Parameters
     ----------
-    specs : (tuple/list of) dict(s)
+    specs : tuple/list of dict(s)
         Dictionary or list of dictionaries with layer specifications, see
-        **Notes**.
+        *Other Parameters*.
 
     Returns
     -------
@@ -560,20 +569,19 @@ def CreateLayer(specs):
 
     See also
     --------
-    ConnectLayers: Connect two (lists of) layers which were created with
+    ConnectLayers : Connect two (lists of) layers which were created with
         ``CreateLayer`` pairwise according to specified projections.
 
 
-    Other parameters
+    Other Parameters
     ----------------
-    Available parameters for the layer-specifying dictionary `specs`
-    center : tuple/list of floats, optional, default: (0.0, 0.0)
+    center : tuple/list of floats, optional
         Layers are centered about the origin by default, but the center
-        coordinates can also be changed.
-        'center' has length 2 or 3 dependent on the number of dimensions.
+        coordinates can also be changed. Default: ``(0.0, 0.0)``.
+        ``'center'`` has length 2 or 3 dependent on the number of dimensions.
     columns : int, obligatory for grid-based layers
         Number of columns.
-        Needs `'rows'`; mutually exclusive with `'positions'`.
+        Needs ``'rows'``; mutually exclusive with ``'positions'``.
     edge_wrap : bool, default: False
         Periodic boundary conditions.
     elements : (tuple/list of) str or str followed by int
@@ -583,28 +591,26 @@ def CreateLayer(specs):
         number of nodes to be created must follow the model name.
         For composite elements, a collection of nodes can be passed as
         list or tuple.
-    extent : tuple of floats, optional, default in 2D: (1.0, 1.0)
+    extent : tuple of floats, optional
         Size of the layer. It has length 2 or 3 dependent on the number of
-        dimensions.
-    positions : tuple/list of coordinates (lists/tuples of floats),
-        obligatory for free layers
+        dimensions. Default in 2D: ``(1.0, 1.0)``.
+    positions : tuple/list of coordinates (lists/tuples of floats)
+        Obligatory for free layers.
         Explicit specification of the positions of all elements.
         The coordinates have a length 2 or 3 dependent on the number of
         dimensions.
         All element positions must be within the layer's extent.
-        Mutually exclusive with 'rows' and 'columns'.
-    rows : int, obligatory for grid-based layers
-        Number of rows.
-        Needs `'columns'`; mutually exclusive with `'positions'`.
-
+        Mutually exclusive with ``'rows'`` and ``'columns'``.
+    rows : int
+        Number of rows. Obligatory for grid-based layers.
+        Needs ``'columns'``; mutually exclusive with ``'positions'``.
 
     Notes
     -----
-    -
-
 
     **Example**
-        ::
+
+        .. code-block:: python
 
             import nest
             import nest.topology as tp
@@ -639,6 +645,7 @@ def CreateLayer(specs):
             # investigate the status dictionary of a layer
             nest.GetStatus(gl)[0]['topology']
 
+    KEYWORDS:
     """
 
     if isinstance(specs, dict):
@@ -658,11 +665,10 @@ def CreateLayer(specs):
 
 
 def ConnectLayers(pre, post, projections):
-    """
-    Pairwise connect of pre- and postsynaptic (lists of) layers.
+    """Pairwise connect of presynaptic and postsynaptic (lists of) layers.
 
     `pre` and `post` must be a tuple/list of GIDs of equal length. The GIDs
-    must refer to layers created with ``CreateLayers``. Layers in the `pre`
+    must refer to layers created with `CreateLayers`. Layers in the `pre`
     and `post` lists are connected pairwise.
 
     * If `projections` is a single dictionary, it applies to all pre-post
@@ -671,10 +677,10 @@ def ConnectLayers(pre, post, projections):
       length as `pre` and `post` and each dictionary is matched with the proper
       pre-post pair.
 
-    A minimal call of ``ConnectLayers`` expects a source layer `pre`, a
+    A minimal call of `ConnectLayers` expects a source layer `pre`, a
     target layer `post` and a connection dictionary `projections`
-    containing at least the entry `'connection_type'` (either
-    `'convergent'` or `'divergent'`).
+    containing at least the entry ``'connection_type'`` (either
+    ``'convergent'`` or ``'divergent'``).
 
     When connecting two layers, the driver layer is the one in which each node
     is considered in turn. The pool layer is the one from which nodes are
@@ -688,56 +694,51 @@ def ConnectLayers(pre, post, projections):
     post : tuple/list of int(s)
         List of GIDs of postsynaptic layers (targets)
     projections : (tuple/list of) dict(s)
-        Dictionary or list of dictionaries specifying projection properties
-
-
-    Returns
-    -------
-    out : None
-        ConnectLayers returns `None`
+        Dictionary or list of dictionaries specifying projection properties,
+        see *Other Parameters*
 
 
     See also
     --------
     CreateLayer : Create one or more Topology layer(s).
-    CreateMask : Create a ``Mask`` object. Documentation on available spatial
-        masks. Masks can be used to specify the key `'mask'` of the
+    CreateMask : Create a `Mask` object. Documentation on available spatial
+        masks. Masks can be used to specify the key ``'mask'`` of the
         connection dictionary.
-    CreateParameter : Create a ``Parameter`` object. Documentation on available
+    CreateParameter : Create a `Parameter` object. Documentation on available
         parameters for distance dependency and randomization. Parameters can
-        be used to specify the parameters `'kernel'`, `'weights'` and
-        `'delays'` of the connection dictionary.
+        be used to specify the parameters ``'kernel'``, ``'weights'`` and
+        ``'delays'`` of the connection dictionary.
     nest.GetConnections : Retrieve connections.
 
 
-    Other parameters
+    Other Parameters
     ----------------
-    Available keys for the layer-specifying dictionary `projections`
-    allow_autapses : bool, optional, default: True
+    allow_autapses : bool, optional
         An autapse is a synapse (connection) from a node onto itself.
-        It is used together with the `'number_of_connections'` option.
-    allow_multapses : bool, optional, default: True
+        It is used together with the ``'number_of_connections'`` option.
+        Default: ``True``.
+    allow_multapses : bool, optional
         Node A is connected to node B by a multapse if there are synapses
-        (connections) from A to B.
+        (connections) from A to B. Default: ``True``
         It is used together with the `'number_of_connections'` option.
     connection_type : str
-        The type of connections can be either `'convergent'` or
-        `'divergent'`. In case of convergent connections, the target
+        The type of connections can be either ``'convergent'`` or
+        ``'divergent'``. In case of convergent connections, the target
         layer is considered as driver layer and the source layer as pool
         layer - and vice versa for divergent connections.
-    delays : [float | dict | Parameter object], optional, default: 1.0
+    delays : float or dict or Parameter object, optional
         Delays can be constant, randomized or distance-dependent according
-        to a provided function.
+        to a provided function. Default: 1.0.
         Information on available functions can be found in the
-        documentation on the function ``CreateParameter``.
-    kernel : [float | dict | Parameter object], optional, default: 1.0
+        documentation on the function `CreateParameter`.
+    kernel : float or dict or Parameter object, optional
         A kernel is a function mapping the distance (or displacement)
         between a driver and a pool node to a connection probability. The
         default kernel is 1.0, i.e., connections are created with
         certainty.
         Information on available functions can be found in the
-        documentation on the function ``CreateParameter``.
-    mask : [dict | Mask object], optional
+        documentation on the function `CreateParameter`.
+    mask : dict or Mask object, optional
         The mask defines which pool nodes are considered as potential
         targets for each driver node. Parameters of the different
         available masks in 2 and 3 dimensions are also defined in
@@ -745,7 +746,7 @@ def ConnectLayers(pre, post, projections):
         If no mask is specified, all neurons from the pool layer are
         possible targets for each driver node.
         Information on available masks can be found in the documentation on
-        the function ``CreateMask``.
+        the function `CreateMask`.
     number_of_connections : int, optional
         Prescribed number of connections for each driver node. The actual
         connections being created are picked at random from all the
@@ -753,9 +754,9 @@ def ConnectLayers(pre, post, projections):
     synapse_model : str, optional
         The default synapse model in NEST is used if not specified
         otherwise.
-    weights : [float | dict | Parameter object], optional, default: 1.0
+    weights : float or dict or Parameter object, optional
         Weights can be constant, randomized or distance-dependent according
-        to a provided function.
+        to a provided function. Default: 1.0.
         Information on available functions can be found in the
         documentation on the function ``CreateParameter``.
 
@@ -777,7 +778,8 @@ def ConnectLayers(pre, post, projections):
 
 
     **Example**
-        ::
+
+        .. code-block:: python
 
             import nest.topology as tp
 
@@ -806,6 +808,8 @@ def ConnectLayers(pre, post, projections):
                          'mask': {'circular': {'radius': 2.0}},
                          'kernel': gauss_kernel,
                          'weights': {'uniform': {'min': 0.2, 'max': 0.8}}}
+
+    KEYWORDS:
     """
 
     if not nest.is_sequence_of_gids(pre):

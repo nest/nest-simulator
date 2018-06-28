@@ -168,28 +168,36 @@ def message(level, sender, text):
 
 @check_stack
 def SetStatus(nodes, params, val=None):
-    """Set the parameters of nodes or connections to params.
+    """Set parameters of nodes or connections.
 
-    If val is given, params has to be the name
-    of an attribute, which is set to val on the nodes/connections. val
+    Parameters of nodes or connections, given in `nodes`, is set as specified
+    by `params`. If `val` is given, `params` has to be a ``string`` with the
+    name of an attribute, which is set to `val` on the nodes/connections. `val`
     can be a single value or a list of the same size as nodes.
 
     Parameters
     ----------
     nodes : list or tuple
-        Either a list of global ids of nodes, or a tuple of connection
-        handles as returned by GetConnections()
+        Either a ``list`` of global ids of nodes, or a ``tuple`` of connection
+        handles as returned by `GetConnections`.
     params : str or dict or list
-        Dictionary of parameters or list of dictionaries of parameters of
-        same length as nodes. If val is given, this has to be the name of
-        a model property as a str.
+        Dictionary of parameters or ``list`` of dictionaries of parameters of
+        same length as `nodes`. If `val` is given, this has to be the name of
+        a model property as a ``str``.
     val : str, optional
         If given, params has to be the name of a model property.
 
     Raises
     ------
     TypeError
-        Description
+        If `nodes` is not a list of nodes or synapses, or if the number of
+        parameters don't match the number of nodes or synapses.
+
+    See Also
+    -------
+    GetStatus
+
+    KEYWORDS:
     """
 
     if not is_coercible_to_sli_array(nodes):
@@ -229,33 +237,41 @@ def SetStatus(nodes, params, val=None):
 def GetStatus(nodes, keys=None):
     """Return the parameter dictionaries of nodes or connections.
 
-    If keys is given, a list of values is returned instead. keys may also be a
-    list, in which case the returned list contains lists of values.
+    If `keys` is given, a ``list`` of values is returned instead. `keys` may
+    also be a ``list``, in which case the returned ``list`` contains lists of
+    values.
 
     Parameters
     ----------
     nodes : list or tuple
-        Either a list of global ids of nodes, or a tuple of connection
-        handles as returned by GetConnections()
+        Either a ``list`` of global ids of nodes, or a ``tuple`` of connection
+        handles as returned by `GetConnections`.
     keys : str or list, optional
-        String or a list of strings naming model properties. GetDefaults then
-        returns a single value or a list of values belonging to the keys
-        given.
+        ``string`` or a ``list`` of strings naming model properties.
+        `GetDefaults` then returns a single value or a ``list`` of values
+        belonging to the keys given.
 
     Returns
     -------
-    dict:
+    dict :
         All parameters
-    type:
-        If keys is a string, the corrsponding default parameter is returned
-    list:
-        If keys is a list of strings, a list of corrsponding default parameters
-        is returned
+    type :
+        If `keys` is a ``string``, the corrsponding default parameter is
+        returned.
+    list :
+        If keys is a ``list`` of strings, a ``list`` of corrsponding default
+        parameters is returned.
 
     Raises
     ------
     TypeError
-        Description
+        If `nodes` or `keys` are on the wrong form.
+
+    See Also
+    -------
+    SetStatus
+
+    KEYWORDS:
     """
 
     if not is_coercible_to_sli_array(nodes):

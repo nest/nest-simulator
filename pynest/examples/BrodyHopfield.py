@@ -47,13 +47,13 @@ See Also
 KEYWORDS:
 """
 
-################################################################################
+###############################################################################
 # First, we import all necessary modules for simulation, analysis and plotting.
 
 import nest
 import nest.raster_plot
 
-################################################################################
+###############################################################################
 # Second, the simulation parameters are assigned to variables.
 
 N = 1000           # number of neurons
@@ -73,7 +73,7 @@ neuronparams = {'tau_m': 20.,  # membrane time constant
                 'C_m': 200.,  # membrane capacitance
                 'V_m': 0.}      # initial membrane potential
 
-################################################################################
+###############################################################################
 # Third, the nodes are created using `Create`. We store the returned handles
 # in variables for later reference.
 
@@ -82,13 +82,13 @@ sd = nest.Create('spike_detector')
 noise = nest.Create('noise_generator')
 drive = nest.Create('ac_generator')
 
-################################################################################
+###############################################################################
 # Set the parameters specified above for the generators using `SetStatus`.
 
 nest.SetStatus(drive, driveparams)
 nest.SetStatus(noise, noiseparams)
 
-################################################################################
+###############################################################################
 # Set the parameters specified above for the neurons. Nurons getan internal
 # current. The first neuron additionally receives the current with amplitude
 # ``bias_begin``, the last neuron with amplitude ``bias_end``.
@@ -98,14 +98,14 @@ nest.SetStatus(neurons, [{'I_e':
                           (n * (bias_end - bias_begin) / N + bias_begin)}
                          for n in neurons])
 
-################################################################################
+###############################################################################
 # Set the parameters for the `spike_detector`: recorded data should include
 # the information about global IDs of spiking neurons and the time of
 # individual spikes.
 
 nest.SetStatus(sd, {"withgid": True, "withtime": True})
 
-################################################################################
+###############################################################################
 # Connect alternative current and noise generators as well as
 # `spike_detector`s. to neurons
 
@@ -113,12 +113,12 @@ nest.Connect(drive, neurons)
 nest.Connect(noise, neurons)
 nest.Connect(neurons, sd)
 
-################################################################################
+###############################################################################
 # Simulate the network for time T.
 
 nest.Simulate(T)
 
-################################################################################
+###############################################################################
 # Plot the raster plot of the neuronal spiking activity.
 
 nest.raster_plot.from_device(sd, hist=True)

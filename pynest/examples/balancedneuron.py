@@ -47,7 +47,7 @@ See Also
 KEYWORDS:
 """
 
-################################################################################
+###############################################################################
 # First, we import all necessary modules for simulation, analysis and
 # plotting. Scipy should be imported before nest.
 
@@ -56,7 +56,7 @@ from scipy.optimize import bisect
 import nest
 import nest.voltage_trace
 
-################################################################################
+###############################################################################
 # Additionally, we set the verbosity using `set_verbosity` to
 # suppress info messages.
 
@@ -64,7 +64,7 @@ import nest.voltage_trace
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
 
-################################################################################
+###############################################################################
 # Second, the simulation parameters are assigned to variables.
 
 
@@ -80,7 +80,7 @@ lower = 15.0     # lower bound of the search interval
 upper = 25.0     # upper bound of the search interval
 prec = 0.01      # how close need the excitatory rates be
 
-################################################################################
+###############################################################################
 # Third, the nodes are created using `Create`. We store the returned
 # handles in variables for later reference.
 
@@ -89,7 +89,7 @@ noise = nest.Create("poisson_generator", 2)
 voltmeter = nest.Create("voltmeter")
 spikedetector = nest.Create("spike_detector")
 
-################################################################################
+###############################################################################
 # Fourth, the excitatory `poisson_generator` (``noise[0]``) and the `voltmeter`
 # are configured using `SetStatus`, which expects a list of node handles and a
 # list of parameter dictionaries. The rate of the inhibitory Poisson generator
@@ -99,7 +99,7 @@ spikedetector = nest.Create("spike_detector")
 nest.SetStatus(noise, [{"rate": n_ex * r_ex}, {"rate": n_in * r_in}])
 nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
-################################################################################
+###############################################################################
 # Fifth, the `iaf_psc_alpha` is connected to the `spike_detector` and the
 # `voltmeter`, as are the two Poisson generators to the neuron. The command
 # `Connect` has different variants. Plain `Connect` just takes the handles of
@@ -118,7 +118,7 @@ nest.Connect(neuron, spikedetector)
 nest.Connect(voltmeter, neuron)
 nest.Connect(noise, neuron, syn_spec={'weight': [[epsc, ipsc]], 'delay': 1.0})
 
-################################################################################
+###############################################################################
 # To determine the optimal rate of the neurons in the inhibitory population,
 # the network is simulated several times for different values of the
 # inhibitory rate while measuring the rate of the target neuron. This is done
@@ -141,7 +141,7 @@ def output_rate(guess):
     return out
 
 
-################################################################################
+###############################################################################
 # The function takes the firing rate of the inhibitory neurons as an
 # argument. It scales the rate with the size of the inhibitory population and
 # configures the inhibitory Poisson generator (``noise[1]``) accordingly.
@@ -159,7 +159,7 @@ def output_rate(guess):
 in_rate = bisect(lambda x: output_rate(x) - r_ex, lower, upper, xtol=prec)
 print("Optimal rate for the inhibitory population: %.2f Hz" % in_rate)
 
-################################################################################
+###############################################################################
 # The function ``bisect`` takes four arguments: first a function whose
 # zero crossing is to be determined. Here, the firing rate of the target
 # neuron should equal the firing rate of the neurons of the excitatory
@@ -170,6 +170,7 @@ print("Optimal rate for the inhibitory population: %.2f Hz" % in_rate)
 # interval in which to search for the zero crossing. The fourth argument of
 # ``bisect`` is the desired relative precision of the zero crossing.
 #
-# Finally, we plot the target neuron's membrane potential as a function of time.
+# Finally, we plot the target neuron's membrane potential as a function of
+# time.
 
 nest.voltage_trace.from_device(voltmeter)

@@ -41,17 +41,15 @@ function evaluations is reached or the width of the search
 distribution becomes extremely small.  We use the following fitness
 function:
 
- f = - alpha(r - r*)^2 - beta(cv - cv*)^2 - gamma(corr - corr*)^2
+.. math::
+
+    f = - alpha(r - r*)^2 - beta(cv - cv*)^2 - gamma(corr - corr*)^2
 
 where alpha, beta and gamma are weighting factors, and stars indicate
 target values.
 
 The network contains an excitatory and an inhibitory population on
-the basis of the network used in
-
-Brunel N (2000). Dynamics of Sparsely Connected Networks of Excitatory
-and Inhibitory Spiking Neurons. Journal of Computational Neuroscience
-8, 183-208.
+the basis of the network used in [1]
 
 The optimization algorithm (evolution strategies) is described in
 
@@ -60,8 +58,16 @@ Machine Learning Research, 15(1), 949-980.
 
 Year: 2018
 
+References
+~~~~~~~~~~~~
+
+.. [1] Brunel N (2000). Dynamics of Sparsely Connected Networks of
+       Excitatory and Inhibitory Spiking Neurons. Journal of Computational
+       Neuroscience 8, 183-208.
+
 See Also
------------
+~~~~~~~~~~
+
 brunel_alpha_nest.py
 
 :Authors:
@@ -78,7 +84,7 @@ import nest
 
 from numpy import exp
 
-################################################################################
+###############################################################################
 # Analysis
 
 
@@ -161,7 +167,7 @@ def compute_statistics(parameters, espikes, ispikes):
             np.mean([ecorr, icorr]))
 
 
-################################################################################
+###############################################################################
 # Network simulation
 
 
@@ -284,7 +290,7 @@ def simulate(parameters):
             nest.GetStatus(ispikes, 'events')[0])
 
 
-################################################################################
+###############################################################################
 # Optimization
 
 
@@ -330,7 +336,7 @@ def optimize(func, mu, sigma, learning_rate_mu=None, learning_rate_sigma=None,
              mirrored_sampling=True, record_history=False,
              max_generations=2000, min_sigma=1e-8, verbosity=0):
 
-    ############################################################################
+    ###########################################################################
     # Optimizes an objective function via evolution strategies using the
     # natural gradient of multinormal search distributions in natural
     # coordinates.  Does not consider covariances between parameters (
@@ -492,7 +498,7 @@ def optimize_network(optimization_parameters, simulation_parameters):
         verbosity=optimization_parameters['verbosity']
     )
 
-################################################################################
+###############################################################################
 # Main
 
 

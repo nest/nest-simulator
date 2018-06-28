@@ -63,21 +63,21 @@ import numpy
 
 nest.ResetKernel()
 
-################################################################################
+###############################################################################
 # Assigning the simulation parameters to variables.
 
 
 dt = 0.1  # the resolution in ms
 simtime = 50.0  # Simulation time in ms
 
-################################################################################
+###############################################################################
 # Definition of the network parameters in the SLIFN
 
 g = 5.0  # ratio inhibitory weight/excitatory weight
 eta = 2.0  # external rate relative to threshold rate
 epsilon = 0.1  # connection probability
 
-################################################################################
+###############################################################################
 # Definition of the number of neurons and connections in the SLIFN, needed
 # for the connection strength in the siegert neuron network
 
@@ -88,7 +88,7 @@ CE = int(epsilon * NE)  # number of excitatory synapses per neuron
 CI = int(epsilon * NI)  # number of inhibitory synapses per neuron
 C_tot = int(CI + CE)  # total number of synapses per neuron
 
-################################################################################
+###############################################################################
 # Initialization of the parameters of the siegert neuron and the connection
 # strength. The parameter are equivalent to the LIF-neurons in the SLIFN.
 
@@ -113,14 +113,14 @@ diffusion_factor_ext = tauMem * 1e-3 * J_ex ** 2
 diffusion_factor_ex = tauMem * 1e-3 * CE * J_ex ** 2
 diffusion_factor_in = tauMem * 1e-3 * CI * J_in ** 2
 
-################################################################################
+###############################################################################
 # External drive, this is equivalent to the drive in the SLIFN
 
 nu_th = theta / (J * CE * tauMem)
 nu_ex = eta * nu_th
 p_rate = 1000.0 * nu_ex * CE
 
-################################################################################
+###############################################################################
 # Configuration of the simulation kernel by the previously defined time
 # resolution used in the simulation. Setting "print_time" to True prints the
 # already processed simulation time as well as its percentage of the total
@@ -131,12 +131,12 @@ nest.SetKernelStatus({"resolution": dt, "print_time": True,
 
 print("Building network")
 
-################################################################################
+###############################################################################
 # Configuration of the model `siegert_neuron` using SetDefaults().
 
 nest.SetDefaults("siegert_neuron", neuron_params)
 
-################################################################################
+###############################################################################
 # Creation of the nodes using `Create`. One rate neuron represents the
 # excitatory population of LIF-neurons in the SLIFN and one the inhibitory
 # population assuming homogeneity of the populations.
@@ -144,7 +144,7 @@ nest.SetDefaults("siegert_neuron", neuron_params)
 siegert_ex = nest.Create("siegert_neuron", 1)
 siegert_in = nest.Create("siegert_neuron", 1)
 
-################################################################################
+###############################################################################
 # The Poisson drive in the SLIFN is replaced by a driving rate neuron,
 # which does not receive input from other neurons. The activity of the rate
 # neuron is controlled by setting `mean` to the rate of the corresponding
@@ -152,19 +152,19 @@ siegert_in = nest.Create("siegert_neuron", 1)
 
 siegert_drive = nest.Create('siegert_neuron', 1, params={'mean': p_rate})
 
-################################################################################
+###############################################################################
 # To record from the rate neurons a multimeter is created and the parameter
 # `record_from` is set to `'rate'` as well as the recording interval to `dt`
 
 multimeter = nest.Create(
     'multimeter', params={'record_from': ['rate'], 'interval': dt})
 
-################################################################################
+###############################################################################
 # Connections between `siegert neurons` are realized with the synapse model
 # 'diffusion_connection'. These two parameters reflect the prefactors in
 # front of the rate variable in eq. 27-29 in [1].
 
-################################################################################
+###############################################################################
 # Connections originating from the driving neuron
 
 
@@ -176,7 +176,7 @@ nest.Connect(
     siegert_drive, siegert_ex + siegert_in, 'all_to_all', syn_dict)
 nest.Connect(multimeter, siegert_ex + siegert_in)
 
-################################################################################
+###############################################################################
 # Connections originating from the excitatory neuron
 
 
@@ -184,19 +184,19 @@ syn_dict = {'drift_factor': drift_factor_ex, 'diffusion_factor':
             diffusion_factor_ex, 'model': 'diffusion_connection'}
 nest.Connect(siegert_ex, siegert_ex + siegert_in, 'all_to_all', syn_dict)
 
-################################################################################
+###############################################################################
 # Connections originating from the inhibitory neuron
 
 syn_dict = {'drift_factor': drift_factor_in, 'diffusion_factor':
             diffusion_factor_in, 'model': 'diffusion_connection'}
 nest.Connect(siegert_in, siegert_ex + siegert_in, 'all_to_all', syn_dict)
 
-################################################################################
+###############################################################################
 # Simulate the network
 
 nest.Simulate(simtime)
 
-################################################################################
+###############################################################################
 # Analyze the activity data. The asymptotic rate of the siegert neuron
 # corresponds to the population- and time-averaged activity in the SLIFN.
 # For the symmetric network setup used here, the excitatory and inhibitory

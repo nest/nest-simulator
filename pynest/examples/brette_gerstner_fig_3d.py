@@ -44,7 +44,7 @@ import pylab
 
 nest.ResetKernel()
 
-################################################################################
+###############################################################################
 # First we make sure that the resolution of the simulation is 0.1 ms. This is
 #  important, since the slop of the action potential is very steep.
 
@@ -52,30 +52,30 @@ res = 0.1
 nest.SetKernelStatus({"resolution": res})
 neuron = nest.Create("aeif_cond_exp")
 
-################################################################################
+###############################################################################
 # Set the parameters of the neuron according to the paper.
 
 nest.SetStatus(neuron, {"V_peak": 20., "E_L": -60.0, "a": 80.0, "b": 80.5,
                         "tau_w": 720.0})
 
-################################################################################
+###############################################################################
 # Create and configure the stimulus which is a step current.
 
 dc = nest.Create("dc_generator")
 
 nest.SetStatus(dc, [{"amplitude": -800.0, "start": 0.0, "stop": 400.0}])
 
-################################################################################
+###############################################################################
 # We connect the DC generators.
 
 nest.Connect(dc, neuron, 'all_to_all')
 
-################################################################################
+###############################################################################
 # And add a voltmeter to record the membrane potentials.
 
 voltmeter = nest.Create("voltmeter")
 
-################################################################################
+###############################################################################
 # We set the voltmeter to record in small intervals of 0.1 ms and connect the
 #  voltmeter to the neuron.
 
@@ -83,7 +83,7 @@ nest.SetStatus(voltmeter, {"withgid": True, "withtime": True, 'interval': 0.1})
 
 nest.Connect(voltmeter, neuron)
 
-################################################################################
+###############################################################################
 # Finally, we simulate for 1000 ms and plot a voltage trace to produce the
 # figure.
 

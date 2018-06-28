@@ -42,7 +42,7 @@ See Also
 KEYWORDS:
 """
 
-################################################################################
+###############################################################################
 # First, we import all necessary modules for simulation and analysis. Scipy
 # should be imported before nest.
 
@@ -53,7 +53,7 @@ import numpy as np
 
 import nest
 
-################################################################################
+###############################################################################
 # We first set the parameters of neurons, noise and the simulation. First
 # settings are with a single Poisson source, second is with two Poisson
 # sources with half the rate of the single source. Both should lead to the
@@ -77,7 +77,7 @@ tau_syn_in = 2.0  # (ms) inhibitory synaptic time constant
 simtime = 20000  # (ms) duration of simulation
 n_neurons = 10   # number of simulated neurons
 
-################################################################################
+###############################################################################
 # For convenience we define some units.
 
 pF = 1e-12
@@ -91,7 +91,7 @@ J = []
 
 assert(len(weights) == len(rates))
 
-################################################################################
+###############################################################################
 # In the following we analytically compute the firing rate of the neuron
 # based on Campbell's theorem [1] and Siegerts approximation [2].
 #
@@ -143,7 +143,7 @@ for rate, weight in zip(rates, weights):
 mu += (E_L * mV)
 sigma = np.sqrt(sigma2)
 
-################################################################################
+###############################################################################
 # Having calculate mean and variance of the input, we can now employ
 # Siegert's rate approximation.
 
@@ -158,7 +158,7 @@ for cu in range(0, num_iterations + 1):
     tmpsum += interval * np.sqrt(np.pi) * f
 r = 1. / (t_ref * ms + tau_m * ms * tmpsum)
 
-################################################################################
+###############################################################################
 # We now simulate neurons receiving Poisson spike trains as input,
 # and compare the theoretical result to the empirical value.
 
@@ -168,7 +168,7 @@ neurondict = {'V_th': V_th, 'tau_m': tau_m, 'tau_syn_ex': tau_syn_ex,
               'tau_syn_in': tau_syn_in, 'C_m': C_m, 'E_L': E_L, 't_ref': t_ref,
               'V_m': E_L, 'V_reset': E_L}
 
-################################################################################
+###############################################################################
 # Neurons and devices are instantiated. We set a high threshold as we want
 # free membrane potential. In addition we choose a small resolution for
 # recording the membrane to collect good statistics.
@@ -181,7 +181,7 @@ pg = nest.Create('poisson_generator', len(rates),
 vm = nest.Create('voltmeter', 1, [{'interval': .1}])
 sd = nest.Create('spike_detector', 1)
 
-################################################################################
+###############################################################################
 # We connect devices and neurons and start the simulation.
 
 for i, currentpg in enumerate(pg):
@@ -195,7 +195,7 @@ nest.Connect(n, sd)
 
 nest.Simulate(simtime)
 
-################################################################################
+###############################################################################
 # Here we read out the recorded membrane potential. The first 500 steps are
 # omitted so initial transients do not perturb our results. We then print the
 #  results from theory and simulation.

@@ -31,15 +31,15 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "kernel_manager.h"
-#include "mpi_manager_impl.h"
-#include "vp_manager.h"
-#include "vp_manager_impl.h"
 #include "connection_manager.h"
 #include "connection_manager_impl.h"
 #include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+#include "mpi_manager_impl.h"
 #include "send_buffer_position.h"
 #include "source.h"
+#include "vp_manager.h"
+#include "vp_manager_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -50,10 +50,17 @@ EventDeliveryManager::EventDeliveryManager()
   : off_grid_spiking_( false )
   , moduli_()
   , slice_moduli_()
-  , comm_marker_( 0 )
+  , spike_register_()
+  , off_grid_spike_register_()
+  , send_buffer_secondary_events_()
+  , recv_buffer_secondary_events_()
   , time_collocate_( 0.0 )
   , time_communicate_( 0.0 )
   , local_spike_counter_( std::vector< unsigned long >() )
+  , send_buffer_spike_data_()
+  , recv_buffer_spike_data_()
+  , send_buffer_off_grid_spike_data_()
+  , recv_buffer_off_grid_spike_data_()
   , send_buffer_target_data_()
   , recv_buffer_target_data_()
   , buffer_size_target_data_has_changed_( false )
@@ -77,6 +84,8 @@ EventDeliveryManager::initialize()
   spike_register_.resize( num_threads, NULL );
   off_grid_spike_register_.resize( num_threads, NULL );
   gather_completed_checker_.resize( num_threads, false );
+  // ensures that ResetKernel resets off_grid_spiking_
+  off_grid_spiking_ = false;
 
 #pragma omp parallel
   {
@@ -129,6 +138,15 @@ EventDeliveryManager::finalize()
   off_grid_spike_register_.clear();
 
   gather_completed_checker_.clear();
+
+  send_buffer_secondary_events_.clear();
+  recv_buffer_secondary_events_.clear();
+  send_buffer_spike_data_.clear();
+  recv_buffer_spike_data_.clear();
+  send_buffer_off_grid_spike_data_.clear();
+  recv_buffer_off_grid_spike_data_.clear();
+  buffer_size_target_data_has_changed_ = false;
+  buffer_size_spike_data_has_changed_ = false;
 }
 
 void
@@ -530,14 +548,14 @@ EventDeliveryManager::set_end_and_invalid_markers_(
     // thread-local index of (global) rank
     if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
     {
-      // set end marker at last position that contains a valid
-      // entry. this could possibly be the last entry in this
-      // chunk. since we call set_complete_marker_spike_data_ /after/
+      // Set end marker at last position that contains a valid
+      // entry. This could possibly be the last entry in this
+      // chunk. Since we call set_complete_marker_spike_data_ /after/
       // this function, the end marker would be replaced by a complete
-      // marker. however, the effect of an end marker and a complete
-      // marker /at the last postition in a chunk/ leads effectively
-      // to the same behaviour: afer this entry, the first entry of
-      // the next chunk is read, i.e., the next element in the buffer
+      // marker. However, the effect of an end marker and a complete
+      // marker /at the last position in a chunk/ leads effectively
+      // to the same behavior: after this entry, the first entry of
+      // the next chunk is read, i.e., the next element in the buffer.
       assert( send_buffer_position.idx( rank ) - 1
         < send_buffer_position.end( rank ) );
       send_buffer[ send_buffer_position.idx( rank ) - 1 ].set_end_marker();
@@ -576,7 +594,7 @@ EventDeliveryManager::set_complete_marker_spike_data_(
         target_rank < assigned_ranks.end;
         ++target_rank )
   {
-    // use last entry for completion marker. for possible collision
+    // Use last entry for completion marker. For possible collision
     // with end marker, see comment in set_end_and_invalid_markers_
     const thread idx = send_buffer_position.end( target_rank ) - 1;
     send_buffer[ idx ].set_complete_marker();
@@ -677,7 +695,6 @@ EventDeliveryManager::gather_target_data( const thread tid )
 
   while ( not gather_completed_checker_.all_true() )
   {
-
     // assume this is the last gather round and change to false
     // otherwise
     gather_completed_checker_.set( tid, true );

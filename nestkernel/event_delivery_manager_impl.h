@@ -26,8 +26,8 @@
 #include "event_delivery_manager.h"
 
 // Includes from nestkernel:
-#include "kernel_manager.h"
 #include "connection_manager_impl.h"
+#include "kernel_manager.h"
 
 namespace nest
 {

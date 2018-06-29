@@ -42,7 +42,6 @@ documentation.
 References
 ~~~~~~~~~~~~
 
-
 See Also
 ~~~~~~~~~~
 
@@ -51,17 +50,16 @@ See Also
 KEYWORDS:
 """
 
-"""
-First, we import all necessary modules.
-"""
+###############################################################################
+# First, we import all necessary modules.
+
 
 import nest
 import nest.topology as topo
 
-"""
-Next, we check for the availability of the CSA Python module. If it
-does not import, we exit with an error message.
-"""
+###############################################################################
+# Next, we check for the availability of the CSA Python module. If it does
+# not import, we exit with an error message.
 
 try:
     import csa
@@ -74,14 +72,13 @@ except ImportError:
     import sys
     sys.exit()
 
-"""
-We define a factory that returns a CSA-style geometry function for
-the given layer. The function returned will return for each CSA-index
-the position in space of the given neuron as a 2- or 3-element list.
-
-This function stores a copy of the neuron positions internally,
-entailing memory overhead.
-"""
+###############################################################################
+# We define a factory that returns a CSA-style geometry function for
+# the given layer. The function returned will return for each CSA-index
+# the position in space of the given neuron as a 2- or 3-element list.
+#
+# This function stores a copy of the neuron positions internally, entailing
+# memory overhead.
 
 
 def geometryFunction(topologyLayer):
@@ -93,39 +90,35 @@ def geometryFunction(topologyLayer):
 
     return geometry_function
 
-"""
-We create two layers that have 20x20 neurons of type `iaf_psc_alpha`.
-"""
+###############################################################################
+# We create two layers that have 20x20 neurons of type `iaf_psc_alpha`.
 
 pop1 = topo.CreateLayer({'elements': 'iaf_psc_alpha',
                          'rows': 20, 'columns': 20})
 pop2 = topo.CreateLayer({'elements': 'iaf_psc_alpha',
                          'rows': 20, 'columns': 20})
 
-"""
-For each layer, we create a CSA-style geometry function and a CSA
-metric based on them.
-"""
+###############################################################################
+# For each layer, we create a CSA-style geometry function and a CSA metric
+# based on them.
 
 g1 = geometryFunction(pop1)
 g2 = geometryFunction(pop2)
 d = csa.euclidMetric2d(g1, g2)
 
-"""
-The connection set ``cs`` describes a Gaussian connectivity profile
-with sigma = 0.2 and cutoff at 0.5, and two values (10000.0 and 1.0)
-used as weight and delay, respectively.
-"""
+###############################################################################
+# The connection set ``cs`` describes a Gaussian connectivity profile with
+# sigma = 0.2 and cutoff at 0.5, and two values (10000.0 and 1.0) used as
+# weight and delay, respectively.
 
 cs = csa.cset(csa.random * (csa.gaussian(0.2, 0.5) * d), 10000.0, 1.0)
 
-"""
-We can now connect the populations using the `CGConnect` function.
-It takes the IDs of pre- and postsynaptic neurons (``pop1`` and
-``pop2``), the connection set (``cs``) and a dictionary that maps
-the parameters weight and delay to positions in the value set
-associated with the connection set.
-"""
+###############################################################################
+# We can now connect the populations using the `CGConnect` function. It
+# takes the IDs of pre- and postsynaptic neurons (``pop1`` and ``pop2``),
+# the connection set (``cs``) and a dictionary that map the parameters
+# weight and delay to positions in the value set associated with the
+# connection set.
 
 # This is a work-around until NEST 3.0 is released. It will issue a deprecation
 # warning.
@@ -134,9 +127,8 @@ pop2_gids = nest.GetLeaves(pop2)[0]
 
 nest.CGConnect(pop1_gids, pop2_gids, cs, {"weight": 0, "delay": 1})
 
-"""
-Finally, we use the `PlotTargets` function to show all targets in
-``pop2`` starting at the center neuron of ``pop1``.
-"""
+###############################################################################
+# Finally, we use the `PlotTargets` function to show all targets in ``pop2``
+# starting at the center neuron of ``pop1``.
 
 topo.PlotTargets(topo.FindCenterElement(pop1), pop2)

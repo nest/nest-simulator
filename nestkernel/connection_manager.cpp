@@ -1565,8 +1565,8 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions(
         const size_t lcid_end = get_num_connections_( tid, syn_id );
         ( *positions ).resize( lcid_end, 0 );
 
-        // compute and store the buffer position from which this connection
-        // should read secondary events
+        // Compute and store the buffer position from which this connection
+        // should read secondary events.
         for ( size_t lcid = 0; lcid < lcid_end; ++lcid )
         {
           const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
@@ -1627,9 +1627,9 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
   for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
   {
     if ( not called_from_wfr_update
-      or ( kernel()
-             .model_manager.get_synapse_prototypes( tid )[ syn_id ]
-             ->supports_wfr() ) )
+      or kernel()
+           .model_manager.get_synapse_prototypes( tid )[ syn_id ]
+           ->supports_wfr() )
     {
       if ( positions_tid[ syn_id ] != NULL )
       {

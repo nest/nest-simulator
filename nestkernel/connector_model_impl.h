@@ -238,8 +238,8 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
   if ( not p->empty() )
   {
-    // reference to connector model needed here to check delay (maybe this could
-    // be done one level above?)
+    // Reference to connector model needed here to check delay (maybe this could
+    // be done one level above?).
     connection.set_status( p, *this );
   }
 

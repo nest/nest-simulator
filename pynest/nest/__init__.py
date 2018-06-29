@@ -81,8 +81,11 @@ initialized = False
 
 
 def catching_sli_run(cmd):
-    """Send a command string to the NEST kernel to be executed, catch
-    SLI errors and re-raise them in Python.
+    """Execute a SLI command while catching any SLI errors and re-raise them
+
+    A string containing a SLI command is sent to the NEST kernel to be
+    executed. If an error is raised by SLI, it is caught and re-raised as a
+    Python error.
 
     Parameters
     ----------
@@ -92,6 +95,8 @@ def catching_sli_run(cmd):
     ------
     NESTError
         SLI errors are bubbled to the Python API as NESTErrors.
+
+    KEYWORDS:
     """
 
     if sys.version_info >= (3, ):
@@ -116,12 +121,15 @@ def catching_sli_run(cmd):
         errorstring = '%s in %s%s' % (errorname, commandname, message)
         raise _kernel.NESTError(encode(errorstring))
 
+
 sli_run = hl_api.sr = catching_sli_run
 
 
 def sli_func(s, *args, **kwargs):
-    """Convenience function for executing an SLI command s with
-    arguments args.
+    """Execute a SLI function
+
+    Convenience function for executing an SLI command `s` with
+    arguments `args`.
 
     This executes the SLI sequence:
     ``sli_push(args); sli_run(s); y=sli_pop()``
@@ -143,12 +151,33 @@ def sli_func(s, *args, **kwargs):
     The function may have multiple return values. The number of return values
     is determined by the SLI function that was called.
 
-    Examples
-    --------
-    r,q = sli_func('dup rollu add',2,3)
-    r   = sli_func('add',2,3)
-    r   = sli_func('add pop',2,3)
-    l   = sli_func('CreateLayer', {...}, namespace='topology')
+    Raises
+    ------
+    _kernel.NESTError
+        if a keyword argument other than ``namespace`` or ``litconv`` is given
+
+    Notes
+    -----
+
+    **Examples**
+
+    .. code-block:: python
+
+        r, q = sli_func('dup rollu add', 2, 3)
+
+    .. code-block:: python
+
+        r = sli_func('add', 2, 3)
+
+    .. code-block:: python
+
+        r = sli_func('add pop', 2, 3)
+
+    .. code-block:: python
+
+        l = sli_func('CreateLayer', {...}, namespace='topology')
+
+    KEYWORDS:
     """
 
     # check for namespace
@@ -173,11 +202,12 @@ def sli_func(s, *args, **kwargs):
     if len(r) != 0:
         return r
 
+
 hl_api.sli_func = sli_func
 
 
 def init(argv):
-    """Initializes NEST.
+    """Initializes NEST
 
     Parameters
     ----------
@@ -187,6 +217,9 @@ def init(argv):
     Raises
     ------
     _kernel.NESTError
+        if nest is already initialized or if NEST fails to initialize
+
+    KEYWORDS:
     """
 
     global initialized
@@ -247,6 +280,7 @@ def test():
     runner.run(tests.suite())
 
     hl_api.set_debug(debug)
+
 
 from .pynestkernel import *         # noqa
 from .lib.hl_api_helper import *    # noqa

@@ -61,8 +61,8 @@ class ConnectorBase
 {
 
 public:
-  // destructor needs to be declared virtual to avoid undefined
-  // behaviour, avoid possible memory leak and needs to be defined to
+  // Destructor needs to be declared virtual to avoid undefined
+  // behavior, avoid possible memory leak and needs to be defined to
   // avoid linker error, see, e.g., Meyers, S. (2005) p40ff
   virtual ~ConnectorBase(){};
 

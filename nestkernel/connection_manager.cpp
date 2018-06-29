@@ -26,12 +26,12 @@
 #include "config.h"
 
 // C++ includes:
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <iomanip>
 #include <limits>
 #include <set>
-#include <algorithm>
 #include <vector>
 
 // Includes from libnestutil:
@@ -265,6 +265,8 @@ nest::ConnectionManager::set_synapse_status( const index source_gid,
 
   try
   {
+    ConnectorModel& cm =
+      kernel().model_manager.get_synapse_prototype( syn_id, tid );
     // synapses from neurons to neurons and from neurons to globally
     // receiving devices
     if ( ( source->has_proxies() and target->has_proxies()
@@ -273,29 +275,19 @@ nest::ConnectionManager::set_synapse_status( const index source_gid,
            and not target->local_receiver()
            and ( *connections_[ tid ] )[ syn_id ] != NULL ) ) )
     {
-      ( *connections_[ tid ] )[ syn_id ]->set_synapse_status( lcid,
-        dict,
-        kernel().model_manager.get_synapse_prototype( syn_id, tid ) );
+      ( *connections_[ tid ] )[ syn_id ]->set_synapse_status( lcid, dict, cm );
     }
     else if ( source->has_proxies() and not target->has_proxies()
       and target->local_receiver() )
     {
-      target_table_devices_.set_synapse_status_to_device( tid,
-        source_gid,
-        syn_id,
-        kernel().model_manager.get_synapse_prototype( syn_id, tid ),
-        dict,
-        lcid );
+      target_table_devices_.set_synapse_status_to_device(
+        tid, source_gid, syn_id, cm, dict, lcid );
     }
     else if ( not source->has_proxies() )
     {
       const index ldid = source->get_local_device_id();
-      target_table_devices_.set_synapse_status_from_device( tid,
-        ldid,
-        syn_id,
-        kernel().model_manager.get_synapse_prototype( syn_id, tid ),
-        dict,
-        lcid );
+      target_table_devices_.set_synapse_status_from_device(
+        tid, ldid, syn_id, cm, dict, lcid );
     }
     else
     {
@@ -556,7 +548,7 @@ nest::ConnectionManager::connect( const index sgid,
   }
 }
 
-// gid gid dict
+// gid gid dict syn_id
 bool
 nest::ConnectionManager::connect( const index sgid,
   const index tgid,
@@ -1567,16 +1559,17 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions(
         const size_t lcid_end = get_num_connections_( tid, syn_id );
         ( *positions ).resize( lcid_end, 0 );
 
-        // compute and store buffer position, this connection should
+        // compute and store buffer position this connection should
         // read secondary events from
         for ( size_t lcid = 0; lcid < lcid_end; ++lcid )
         {
           const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
+          const index sg_s_id =
+            source_table_.pack_source_gid_and_syn_id( source_gid, syn_id );
           const thread source_rank =
             kernel().mpi_manager.get_process_id_of_gid( source_gid );
-          ( *positions )[ lcid ] =
-            buffer_pos_of_source_gid_syn_id_
-              [ source_table_.pack_source_gid_and_syn_id( source_gid, syn_id ) ]
+
+          ( *positions )[ lcid ] = buffer_pos_of_source_gid_syn_id_[ sg_s_id ]
             + chunk_size_secondary_events_in_int * source_rank;
         }
       }

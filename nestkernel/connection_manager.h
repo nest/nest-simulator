@@ -126,9 +126,9 @@ public:
     const double_t weight = numerics::nan );
 
   /**
-   * Connect two nodes. The source node is defined by its global ID.
-   * The target node is defined by the node. The connection is
-   * established on the thread/process that owns the target node.
+   * Connect two nodes. The source and target nodes are defined by their
+   * global ID. The connection is established on the thread/process that owns
+   * the target node.
    *
    * \param sgid GID of the sending Node.
    * \param target GID of the target Node.
@@ -272,7 +272,7 @@ public:
     Event& e );
 
   /**
-   * Send event e to all device targets of source s_gid
+   * Send event e to all device targets of source source_gid
    */
   void send_to_devices( const thread tid, const index source_gid, Event& e );
 
@@ -527,7 +527,7 @@ private:
 
   /**
    * connect_from_device_ is used to establish a connection between a sender and
-   * receiving node if the sender has proxies, and the receiver does not.
+   * receiving node if the sender does not have proxies.
    *
    * The parameters delay and weight have the default value NAN.
    * NAN is a special value in cmath, which describes double values that

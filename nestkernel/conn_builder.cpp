@@ -1714,9 +1714,8 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder(
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
   , p_( ( *conn_spec )[ names::p ] )
 {
-  creates_symmetric_connections_ =
-    true; // this connector takes care of symmetric
-          // connections on its own
+  // This connector takes care of symmetric connections on its own
+  creates_symmetric_connections_ = true;
 
   if ( p_ < 0 or 1 <= p_ )
   {
@@ -1743,7 +1742,7 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder(
 void
 nest::SymmetricBernoulliBuilder::connect_()
 {
-  // allocate pointer to global random generator; used to create a
+  // Allocate pointer to global random generator; used to create a
   // random generator for each thread, each using the same seed
   // obtained from the global rng -> all threads across all processes
   // generate identical random number streams; this is required to

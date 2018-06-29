@@ -164,7 +164,7 @@ def is_literal(obj):
     Returns
     -------
     bool
-        True if obj is a SLI literal.
+        True if the object is a SLI literal.
 
     KEYWORDS: helper, check
     """
@@ -173,7 +173,7 @@ def is_literal(obj):
 
 
 def is_string(obj):
-    """Check whether an object is a unicode string.
+    """Check whether an object is an unicode string.
 
     Parameters
     ----------
@@ -182,8 +182,8 @@ def is_string(obj):
 
     Returns
     -------
-    bool:
-        True if obj is a unicode string.
+    bool
+        True if the object is na unicode string.
 
     KEYWORDS: helper, check
     """
@@ -492,7 +492,7 @@ def get_help_filepath(hlpobj):
 
     Returns
     -------
-    string
+    str
         Filepath of the help object or None if no help available
 
     KEYWORDS: helper
@@ -520,7 +520,7 @@ def load_help(hlpobj):
 
     Returns
     -------
-    string
+    str
         The documentation of the object or None if no help available.
 
     KEYWORDS: helper

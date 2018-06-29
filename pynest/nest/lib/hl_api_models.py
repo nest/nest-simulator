@@ -156,7 +156,6 @@ def GetDefaults(model, keys=None):
 
     Notes
     -----
-
     **Example**
 
     .. code_block:: python

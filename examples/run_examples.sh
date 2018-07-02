@@ -47,7 +47,7 @@ case "$SKIP_LIST" in
 esac
 
 # Find all examples in the installation directory
-EXAMPLES=$(find ${SEARCH_DIR:-../pynest/examples} -type f -name \*.py -o -name \*.sli | sort -t. -k3)
+EXAMPLES=$(find ${SEARCH_DIR:-../examples} -type f -name \*.py -o -name \*.sli | sort -t. -k3)
 
 if test -n "$SKIP_LIST"; then
     EXAMPLES=$(echo $EXAMPLES | tr ' ' '\n' | grep -vE $SKIP)

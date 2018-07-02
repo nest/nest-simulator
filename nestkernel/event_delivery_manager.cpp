@@ -84,8 +84,10 @@ EventDeliveryManager::initialize()
   spike_register_.resize( num_threads, NULL );
   off_grid_spike_register_.resize( num_threads, NULL );
   gather_completed_checker_.resize( num_threads, false );
-  // ensures that ResetKernel resets off_grid_spiking_
+  // Ensures that ResetKernel resets off_grid_spiking_
   off_grid_spiking_ = false;
+  buffer_size_target_data_has_changed_ = false;
+  buffer_size_spike_data_has_changed_ = false;
 
 #pragma omp parallel
   {
@@ -145,8 +147,6 @@ EventDeliveryManager::finalize()
   recv_buffer_spike_data_.clear();
   send_buffer_off_grid_spike_data_.clear();
   recv_buffer_off_grid_spike_data_.clear();
-  buffer_size_target_data_has_changed_ = false;
-  buffer_size_spike_data_has_changed_ = false;
 }
 
 void

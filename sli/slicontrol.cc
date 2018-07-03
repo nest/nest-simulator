@@ -1697,22 +1697,21 @@ Sleep_dFunction::execute( SLIInterpreter* i ) const
   {
     throw BadParameterValue( "t >= 0 required." );
   }
-  else if ( t > std::numeric_limits< int >::max() )
+
+  if ( t > std::numeric_limits< int >::max() )
   {
     throw BadParameterValue( String::compose(
       "t < %1s required.", std::numeric_limits< int >::max() ) );
   }
-  else if ( t > 0 )
-  {
-    // split into second and microsecond part
-    // limited to 32-bit signed int, see #973.
-    const int t_sec = static_cast< int >( t );
-    const int t_musec = static_cast< int >( ( t - t_sec ) * 1e6 );
 
-    // on some systems, select may modify tv, therefore, it cannot be const
-    struct timeval tv = { t_sec, t_musec };
-    select( 0, 0, 0, 0, &tv );
-  }
+  // split into second and microsecond part
+  // limited to 32-bit signed int, see #973.
+  const int t_sec = static_cast< int >( t );
+  const int t_musec = static_cast< int >( ( t - t_sec ) * 1e6 );
+
+  // on some systems, select may modify tv, therefore, it cannot be const
+  struct timeval tv = { t_sec, t_musec };
+  select( 0, 0, 0, 0, &tv );
 
   i->OStack.pop();
   i->EStack.pop();

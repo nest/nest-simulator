@@ -1488,11 +1488,23 @@ nest::ConnectionManager::reserve_connections( const thread tid,
   const synindex syn_id,
   const size_t count )
 {
+  /*
+   * @TODO
+   * This method currently does nothing, since a large number of
+   * Connect() calls with precisely resized vectors can lead to
+   * unnecessarily many vector resize operations that significantly
+   * impair performance. Once we have containers that can grow
+   * intelligently using hints, this method should be reactivated.
+   */
+  return;
+
+  /*
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
     .reserve_connections( connections_[ tid ], syn_id, count );
 
   source_table_.reserve( tid, syn_id, count );
+  */
 }
 
 void

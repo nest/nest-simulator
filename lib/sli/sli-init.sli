@@ -632,9 +632,9 @@ SeeAlso: over, index
 
 /* BeginDocumentation
  Name: sleep - Pauses current process.
- Synopsis:  x sleep -> -
+ Synopsis:  t sleep -> -
  Description: 
-  Pauses the process for x seconds. n can be integer or double.
+  Pauses the process for t seconds. t can be integer or double.
   Resolution is given by pclockspersec.
  Examples:
   5 sleep %wait for 5 seconds
@@ -644,7 +644,7 @@ SeeAlso: over, index
 */
 
 /sleep trie
-  [/integertype] /sleep_i load addtotrie
+  [/integertype] { cvd sleep_d } bind addtotrie
   [/doubletype]  /sleep_d load addtotrie
 def
 

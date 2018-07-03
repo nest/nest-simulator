@@ -34,6 +34,7 @@
 #include <unistd.h>
 
 // C++ includes:
+#include <algorithm>
 #include <limits>
 
 // Generated includes:
@@ -1704,14 +1705,14 @@ Sleep_dFunction::execute( SLIInterpreter* i ) const
       "t < %1s required.", std::numeric_limits< int >::max() ) );
   }
 
-  // split into second and microsecond part
-  // limited to 32-bit signed int, see #973.
-  const int t_sec = static_cast< int >( t );
-  const int t_musec = static_cast< int >( ( t - t_sec ) * 1e6 );
+  /* Since sleep() only handles entire seconds and usleep() only
+   * times shorter than 1s, we need to split the sleep; see #973. */
+  const unsigned int t_sec = static_cast< unsigned int >( t );
+  const unsigned int t_musec =
+    std::min( 999999U, static_cast< unsigned int >( ( t - t_sec ) * 1e6 ) );
 
-  // on some systems, select may modify tv, therefore, it cannot be const
-  struct timeval tv = { t_sec, t_musec };
-  select( 0, 0, 0, 0, &tv );
+  sleep( t_sec );
+  usleep( t_musec );
 
   i->OStack.pop();
   i->EStack.pop();

@@ -36,37 +36,38 @@ def GetConnections(source=None, target=None, synapse_model=None,
                    synapse_label=None):
     """Return an array of connection identifiers.
 
-    Any combination of source, target, synapse_model and
-    synapse_label parameters is permitted.
+    Any combination of `source`, `target`, `synapse_model` and
+    `synapse_label` parameters is permitted.
 
     Parameters
     ----------
     source : list, optional
         Source GIDs, only connections from these
-        pre-synaptic neurons are returned
+        presynaptic neurons are returned.
     target : list, optional
         Target GIDs, only connections to these
-        post-synaptic neurons are returned
+        postsynaptic neurons are returned.
     synapse_model : str, optional
-        Only connections with this synapse type are returned
+        Only connections with this synapse type are returned.
     synapse_label : int, optional
-        (non-negative) only connections with this synapse label are returned
+        (Non-negative) only connections with this synapse label are returned.
 
     Returns
     -------
-    array:
+    array
         Connections as 5-tuples with entries
         (source-gid, target-gid, target-thread, synapse-id, port)
+
+    Raises
+    ------
+    TypeError
 
     Notes
     -----
     Only connections with targets on the MPI process executing
     the command are returned.
 
-
-    Raises
-    ------
-    TypeError
+    KEYWORDS: connections
     """
 
     params = {}
@@ -95,12 +96,11 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
 @check_stack
 def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
-    """
-    Connect pre nodes to post nodes.
+    """Create connections between presynaptic and postsynaptic nodes.
 
-    Nodes in pre and post are connected using the specified connectivity
-    (all-to-all by default) and synapse type (static_synapse by default).
-    Details depend on the connectivity rule.
+    Nodes in `pre` and `post` are connected using the specified connectivity
+    (``'all-to-all'`` by default) and synapse type (``'static_synapse'`` by
+    default). Details depend on the connectivity rule.
 
     Parameters
     ----------
@@ -113,7 +113,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     syn_spec : str or dict, optional
         Specifies synapse model, see below
     model : str or dict, optional
-        alias for syn_spec for backward compatibility
+        Alias for `syn_spec` for backward compatibility
 
     Raises
     ------
@@ -124,100 +124,104 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     Connect does not iterate over subnets, it only connects explicitly
     specified nodes.
 
-    Connectivity specification (conn_spec)
-    --------------------------------------
+    **Connectivity specification (`conn_spec`)**
 
     Connectivity is specified either as a string containing the name of a
-    connectivity rule (default: 'all_to_all') or as a dictionary specifying
-    the rule and any mandatory rule-specific parameters (e.g. 'indegree').
+    connectivity rule (default: ``'all_to_all'``) or as a dictionary specifying
+    the rule and any mandatory rule-specific parameters (e.g. ``'indegree'``).
 
     In addition, switches setting permission for establishing
-    self-connections ('autapses', default: True) and multiple connections
-    between a pair of nodes ('multapses', default: True) can be contained
-    in the dictionary. Another switch enables the creation of symmetric
-    connections ('symmetric', default: False) by also creating connections
-    in the opposite direction.
+    self-connections (``'autapses'``, default: ``True``) and multiple
+    connections between a pair of nodes (``'multapses'``, default: ``True``)
+    can be contained in the dictionary. Another switch enables the creation of
+    symmetric connections (``'symmetric'``, default: ``False``) by also
+    creating connections in the opposite direction.
 
-    Available rules and associated parameters
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    - 'all_to_all' (default)
-    - 'one_to_one'
-    - 'fixed_indegree', 'indegree'
-    - 'fixed_outdegree', 'outdegree'
-    - 'fixed_total_number', 'N'
-    - 'pairwise_bernoulli', 'p'
+    **Available rules and associated parameters**
 
-    Example conn-spec choices
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    - ``'all_to_all'`` (default)
+    - ``'one_to_one'``
+    - ``'fixed_indegree'``, ``indegree``
+    - ``'fixed_outdegree'``, ``outdegree``
+    - ``'fixed_total_number'``, ``N``
+    - ``'pairwise_bernoulli'``, ``p``
+
+    **Example conn-spec choices**
+
     - 'one_to_one'
     - {'rule': 'fixed_indegree', 'indegree': 2500, 'autapses': False}
     - {'rule': 'pairwise_bernoulli', 'p': 0.1}
 
-    Synapse specification (syn_spec)
-    --------------------------------------
+    **Synapse specification (`syn_spec`)**
 
     The synapse model and its properties can be given either as a string
-    identifying a specific synapse model (default: 'static_synapse') or
+    identifying a specific synapse model (default: ``'static_synapse'``) or
     as a dictionary specifying the synapse model and its parameters.
 
     Available keys in the synapse specification dictionary are:
-    - 'model'
-    - 'weight'
-    - 'delay'
-    - 'receptor_type'
+    - ``'model'``
+    - ``'weight'``
+    - ``'delay'``
+    - ``'receptor_type'``
     - any parameters specific to the selected synapse model.
 
     All parameters are optional and if not specified, the default values
-    of the synapse model will be used. The key 'model' identifies the
+    of the synapse model will be used. The key ``'model'`` identifies the
     synapse model, this can be one of NEST's built-in synapse models
-    or a user-defined model created via CopyModel().
+    or a user-defined model created via :code:`CopyModel()`.
 
-    If 'model' is not specified the default model 'static_synapse'
+    If ``'model'`` is not specified the default model ``'static_synapse'``
     will be used.
 
     All other parameters can be scalars, arrays or distributions.
     In the case of scalar parameters, all keys must be doubles
-    except for 'receptor_type' which must be initialised with an integer.
+    except for ``'receptor_type'`` which must be initialised with an integer.
 
-    Parameter arrays are available for the rules 'one_to_one',
-    'all_to_all', 'fixed_indegree' and 'fixed_outdegree':
-    - For 'one_to_one' the array has to be a one-dimensional
-      NumPy array with length len(pre).
-    - For 'all_to_all' the array has to be a two-dimensional NumPy array
-      with shape (len(post), len(pre)), therefore the rows describe the
-      target and the columns the source neurons.
-    - For 'fixed_indegree' the array has to be a two-dimensional NumPy array
-      with shape (len(post), indegree), where indegree is the number of
-      incoming connections per target neuron, therefore the rows describe the
-      target and the columns the connections converging to the target neuron,
-      regardless of the identity of the source neurons.
-    - For 'fixed_outdegree' the array has to be a two-dimensional NumPy array
-      with shape (len(pre), outdegree), where outdegree is the number of
-      outgoing connections per source neuron, therefore the rows describe the
-      source and the columns the connections starting from the source neuron
-      regardless of the identity of the target neuron.
+    Parameter arrays are available for the rules ``'one_to_one'``,
+    ``'all_to_all'``, ``'fixed_indegree'`` and ``'fixed_outdegree'``:
+    - For ``'one_to_one'`` the array has to be a one-dimensional
+      NumPy array with length :code:`len(pre)`.
+    - For ``'all_to_all'`` the array has to be a two-dimensional NumPy array
+      with shape (:code:`len(post)`, :code:`len(pre)`), therefore the rows
+      describe the target and the columns the source neurons.
+    - For ``'fixed_indegree'`` the array has to be a two-dimensional NumPy
+      array with shape (:code:`len(post)`, ``indegree``), where indegree is
+      the number of incoming connections per target neuron, therefore the rows
+      describe the target and the columns the connections converging to the
+      target neuron, regardless of the identity of the source neurons.
+    - For ``'fixed_outdegree'`` the array has to be a two-dimensional NumPy
+      array with shape (:code:`len(pre)`, ``outdegree``), where ``outdegree``
+      is the number of outgoing connections per source neuron, therefore the
+      rows describe the source and the columns the connections starting from
+      the source neuron regardless of the identity of the target neuron.
 
     Any distributed parameter must be initialised with a further dictionary
-    specifying the distribution type ('distribution', e.g. 'normal') and
-    any distribution-specific parameters (e.g. 'mu' and 'sigma').
+    specifying the distribution type (``'distribution'``, e.g. ``'normal'``)
+    and any distribution-specific parameters (e.g. ``'mu'`` and ``'sigma'``).
 
     To see all available distributions, run:
-    nest.slirun('rdevdict info')
 
-    To get information on a particular distribution, e.g. 'binomial', run:
-    nest.help('rdevdict::binomial')
+    .. code_block:: python
 
-    Most common available distributions and associated parameters
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    - 'normal' with 'mu', 'sigma'
-    - 'normal_clipped' with 'mu', 'sigma', 'low', 'high'
-    - 'lognormal' with 'mu', 'sigma'
-    - 'lognormal_clipped' with 'mu', 'sigma', 'low', 'high'
-    - 'uniform' with 'low', 'high'
-    - 'uniform_int' with 'low', 'high'
+        nest.slirun('rdevdict info')
 
-    Example syn-spec choices
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    To get information on a particular distribution, e.g. ``'binomial'``, run:
+
+    .. code_block:: python
+
+        nest.help('rdevdict::binomial')
+
+    **Most common available distributions and associated parameters**
+
+    - ``'normal'`` with ``'mu'``, ``'sigma'``
+    - ``'normal_clipped'`` with ``'mu'``, ``'sigma'``, ``'low'``, ``'high'``
+    - ``'lognormal'`` with 'mu', 'sigma'
+    - ``'lognormal_clipped'`` with ``'mu'``, ``'sigma'``, ``'low'``, ``'high'``
+    - ``'uniform'`` with ``'low'``, ``'high'``
+    - ``'uniform_int'`` with ``'low'``, ``'high'``
+
+    **Example `syn-spec` choices**
+
     - 'stdp_synapse'
     - {'weight': 2.4, 'receptor_type': 1}
     - {'model': 'stdp_synapse',
@@ -227,6 +231,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
            'distribution': 'normal_clipped', 'low': 0.5,
            'mu': 5.0, 'sigma': 1.0}
       }
+
+      KEYWORDS: connections
     """
 
     if model is not None:
@@ -352,7 +358,11 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 @deprecated('', 'DataConnect is deprecated and will be removed in NEST 3.0.\
 Use Connect() with one_to_one rule instead.')
 def DataConnect(pre, params=None, model="static_synapse"):
-    """Connect neurons from lists of connection data.
+    """Connect nodes from lists of connection data.
+
+    .. deprecated:: 2.14
+        `DataConnect` is deprecated and will be removed in NEST 3.0. Use
+        `Connect` with ``one_to_one`` rule instead.
 
     Parameters
     ----------
@@ -360,50 +370,61 @@ def DataConnect(pre, params=None, model="static_synapse"):
         Presynaptic nodes, given as lists of GIDs or lists
         of synapse status dictionaries. See below.
     params : list, optional
-        See below
+        parameters, see below
     model : str, optional
-        Synapse model to use, see below
+        synapse model to use, see below
 
     Raises
     ------
     TypeError
+        If `pre` is not a list of nodes or connection dictionaries, or if
+        `params` is not a list of dictionaries.
 
-    Usage Variants
-    --------------
+    See Also
+    -------
+    Connect
 
-    Variant 1
-    ~~~~~~~~~
+    Notes
+    -----
+    **Usage Variants**
 
-    Connect each neuron in pre to the targets given in params,
-    using synapse type model.
+    **Variant 1**
 
-    - pre: [gid_1, ... gid_n]
-    - params: [ {param_1}, ..., {param_n} ]
-    - model= 'synapse_model'
+    Connect each node in `pre` to the targets given in `params`,
+    using synapse type `model`.
 
-    The dictionaries param_1 to param_n must contain at least the
+    .. code_block:: python
+
+        pre = [gid_1, ..., gid_n]
+        params = [ {param_1}, ..., {param_n} ]
+        model = 'synapse_model'
+        DataConnect(pre, params, model)
+
+    The dictionaries ``param_1`` to ``param_n`` must contain at least the
     following keys:
-    - 'target'
-    - 'weight'
-    - 'delay'
-    Each key must resolve to a list or numpy.ndarray of values.
+    * ``'target'``
+    * ``'weight'``
+    * ``'delay'``
+    Each key must resolve to a ``list`` or ``numpy.ndarray`` of values.
 
     Depending on the synapse model, other parameters can be given
     in the same format. All arrays in params must have the same
-    length as 'target'.
+    length as ``'target'``.
 
-    Variant 2
-    ~~~~~~~~~
+    **Variant 2**
 
     Connect neurons according to a list of synapse status dictionaries,
-    as obtained from GetStatus.
+    as obtained from `GetStatus`.
 
-    pre = [ {synapse_state1}, ..., {synapse_state_n}]
-    params=None
-    model=None
+    .. code_block:: python
+
+        pre = [ {synapse_state1}, ..., {synapse_state_n}]
+        DataConnect(pre)
 
     During connection, status dictionary misses will not raise errors,
-    even if the kernel property 'dict_miss_is_error' is True.
+    even if the kernel property ``'dict_miss_is_error'`` is ``True``.
+
+    KEYWORDS:
     """
 
     if not is_coercible_to_sli_array(pre):
@@ -437,13 +458,13 @@ def DataConnect(pre, params=None, model="static_synapse"):
 
 @check_stack
 def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
-    """Connect neurons using the Connection Generator Interface.
+    """Connect nodes using the Connection Generator Interface.
 
-    Potential pre-synaptic neurons are taken from pre, potential
-    post-synaptic neurons are taken from post. The connection
-    generator cg specifies the exact connectivity to be set up. The
-    parameter_map can either be None or a dictionary that maps the
-    keys "weight" and "delay" to their integer indices in the value
+    Potential presynaptic nodes are taken from `pre`, potential
+    postsynaptic nodes are taken from `post`. The connection
+    generator, `cg`, specifies the exact connectivity to be set up. The
+    `parameter_map` can either be ``None` or a dictionary that maps the
+    keys ``'weight'`` and ``'delay'`` to their integer indices in the value
     set of the connection generator.
 
     This function is only available if NEST was compiled with
@@ -467,13 +488,20 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
         libneurosim connection generator to use
     parameter_map : dict, optional
         Maps names of values such as weight and delay to
-        value set positions
+        value set positions.
     model : str, optional
-        Synapse model to use
+        synapse model to use
 
     Raises
     ------
     kernel.NESTError
+        If libneurosim is not available.
+
+    See Also
+    -------
+    CGSelectImplementation
+
+    KEYWORDS:
     """
 
     sr("statusdict/have_libneurosim ::")
@@ -491,8 +519,7 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
 
 @check_stack
 def CGParse(xml_filename):
-    """Parse an XML file and return the corresponding connection
-    generator cg.
+    """Parse an XML file and return the corresponding connection generator.
 
     The library to provide the parsing can be selected
     by CGSelectImplementation().
@@ -500,11 +527,22 @@ def CGParse(xml_filename):
     Parameters
     ----------
     xml_filename : str
-        Filename of the xml file to parse.
+        Filename of the XML file to parse.
+
+    Returns
+    -------
+    ConnectionGenerator
 
     Raises
     ------
     kernel.NESTError
+        If libneurosim is not available.
+
+    See Also
+    -------
+    CGSelectImplementation
+
+    KEYWORDS:
     """
 
     sr("statusdict/have_libneurosim ::")
@@ -523,7 +561,7 @@ def CGSelectImplementation(tag, library):
     """Select a library to provide a parser for XML files and associate
     an XML tag with the library.
 
-    XML files can be read by CGParse().
+    XML files can be read by `CGParse`.
 
     Parameters
     ----------
@@ -535,6 +573,13 @@ def CGSelectImplementation(tag, library):
     Raises
     ------
     kernel.NESTError
+        If libneurosim is not available.
+
+    See Also
+    -------
+    CGParse
+
+    KEYWORDS:
     """
 
     sr("statusdict/have_libneurosim ::")
@@ -550,7 +595,7 @@ def CGSelectImplementation(tag, library):
 
 @check_stack
 def DisconnectOneToOne(source, target, syn_spec):
-    """Disconnect a currently existing synapse.
+    """Disconnect two nodes.
 
     Parameters
     ----------
@@ -560,6 +605,12 @@ def DisconnectOneToOne(source, target, syn_spec):
         GID of postsynaptic node
     syn_spec : str or dict
         See Connect() for definition
+
+    See Also
+    -------
+    Disconnect
+
+    KEYWORDS:
     """
 
     sps(source)
@@ -573,11 +624,11 @@ def DisconnectOneToOne(source, target, syn_spec):
 
 @check_stack
 def Disconnect(pre, post, conn_spec, syn_spec):
-    """Disconnect pre neurons from post neurons.
+    """Remove connections between presynaptic and postsynaptic nodes.
 
-    Neurons in pre and post are disconnected using the specified disconnection
-    rule (one-to-one by default) and synapse type (static_synapse by default).
-    Details depend on the disconnection rule.
+    Neurons in `pre` and `post` are disconnected using the specified
+    disconnection rule (``one_to_one`` by default) and synapse type
+    (``static_synapse`` by default). Details depend on the disconnection rule.
 
     Parameters
     ----------
@@ -586,47 +637,54 @@ def Disconnect(pre, post, conn_spec, syn_spec):
     post : list
         Postsynaptic nodes, given as list of GIDs
     conn_spec : str or dict
-        Disconnection rule, see below
+        Disconnection rule, see *Notes*
     syn_spec : str or dict
-        Synapse specifications, see below
+        Synapse specifications, see *Notes*
 
-    conn_spec
-    ---------
-    Apply the same rules as for connectivity specs in the Connect method
 
-    Possible choices of the conn_spec are
-    - 'one_to_one'
-    - 'all_to_all'
-
-    syn_spec
-    --------
-    The synapse model and its properties can be inserted either as a
-    string describing one synapse model (synapse models are listed in the
-    synapsedict) or as a dictionary as described below.
-
-    If no synapse model is specified the default model 'static_synapse'
-    will be used.
-
-    Available keys in the synapse dictionary are:
-    - 'model'
-    - 'weight'
-    - 'delay',
-    - 'receptor_type'
-    - parameters specific to the synapse model chosen
-
-    All parameters are optional and if not specified will use the default
-    values determined by the current synapse model.
-
-    'model' determines the synapse type, taken from pre-defined synapse
-    types in NEST or manually specified synapses created via CopyModel().
-
-    All other parameters are not currently implemented.
-    Note: model is alias for syn_spec for backward compatibility.
+    See Also
+    -------
+    DisconnectOneToOne, Connect
 
     Notes
     -----
     Disconnect does not iterate over subnets, it only connects explicitly
     specified nodes.
+
+    **conn_spec**
+
+    Apply the same rules as for connectivity specs in the Connect method
+
+    Possible choices of the conn_spec are
+    * ``'one_to_one'``
+    * ``'all_to_all'``
+
+    **syn_spec**
+
+    The synapse model and its properties can be inserted either as a
+    string describing one synapse model (synapse models are listed in the
+    synapsedict) or as a dictionary as described below.
+
+    If no synapse model is specified the default model ``static_synapse``
+    will be used.
+
+    Available keys in the synapse dictionary are:
+    * ``'model'``
+    * ``'weight'``
+    * ``'delay'``
+    * ``'receptor_type'``
+    * parameters specific to the synapse model chosen
+
+    All parameters are optional and if not specified will be set to the default
+    values determined by the current synapse model.
+
+    ``'model'`` determines the synapse type, taken from pre-defined synapse
+    types in NEST or manually specified synapses created via CopyModel().
+
+    All other parameters are not currently implemented.
+    Note: model is alias for syn_spec for backward compatibility.
+
+    KEYWORDS:
     """
 
     sps(pre)

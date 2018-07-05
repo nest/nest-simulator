@@ -19,50 +19,64 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""HPC Benchmark
+------------------
 
-'''
-   This script produces a balanced random network of scale*11250 neurons in
-   which the excitatory-excitatory neurons exhibit STDP with
-   multiplicative depression and power-law potentiation. A mutual
-   equilibrium is obtained between the activity dynamics (low rate in
-   asynchronous irregular regime) and the synaptic weight distribution
-   (unimodal). The number of incoming connections per neuron is fixed
-   and independent of network size (indegree=11250).
+This script produces a balanced random network of scale*11250 neurons in
+which the excitatory-excitatory neurons exhibit STDP with
+multiplicative depression and power-law potentiation. A mutual
+equilibrium is obtained between the activity dynamics (low rate in
+asynchronous irregular regime) and the synaptic weight distribution
+(unimodal). The number of incoming connections per neuron is fixed
+and independent of network size (indegree=11250).
 
-   This is the standard network investigated in:
-   Morrison et al (2007). Spike-timing-dependent plasticity in balanced random
-     networks. Neural Comput 19(6):1437-67
-   Helias et al (2012). Supercomputers ready for use as discovery machines for
-     neuroscience. Front. Neuroinform. 6:26
-   Kunkel et al (2014). Spiking network simulation code for petascale
-     computers. Front. Neuroinform. 8:78
+This is the standard network investigated in [1] [2] [3].
 
-   A note on scaling
-   -----------------
+A note on scaling
+~~~~~~~~~~~~~~~~~~
 
-   This benchmark was originally developed for very large-scale simulations on
-   supercomputers with more than 1 million neurons in the network and
-   11.250 incoming synapses per neuron. For such large networks, synaptic input
-   to a single neuron will be little correlated across inputs and network
-   activity will remain stable over long periods of time.
+This benchmark was originally developed for very large-scale simulations on
+supercomputers with more than 1 million neurons in the network and
+11.250 incoming synapses per neuron. For such large networks, synaptic input
+to a single neuron will be little correlated across inputs and network
+activity will remain stable over long periods of time.
 
-   The original network size corresponds to a scale parameter of 100 or more.
-   In order to make it possible to test this benchmark script on desktop
-   computers, the scale parameter is set to 1 below, while the number of
-   11.250 incoming synapses per neuron is retained. In this limit, correlations
-   in input to neurons are large and will lead to increasing synaptic weights.
-   Over time, network dynamics will therefore become unstable and all neurons
-   in the network will fire in synchrony, leading to extremely slow simulation
-   speeds.
+The original network size corresponds to a scale parameter of 100 or more.
+In order to make it possible to test this benchmark script on desktop
+computers, the scale parameter is set to 1 below, while the number of
+11.250 incoming synapses per neuron is retained. In this limit, correlations
+in input to neurons are large and will lead to increasing synaptic weights.
+Over time, network dynamics will therefore become unstable and all neurons
+in the network will fire in synchrony, leading to extremely slow simulation
+speeds.
 
-   Therefore, the presimulation time is reduced to 50 ms below and the
-   simulation time to 250 ms, while we usually use 100 ms presimulation and
-   1000 ms simulation time.
+Therefore, the presimulation time is reduced to 50 ms below and the
+simulation time to 250 ms, while we usually use 100 ms presimulation and
+1000 ms simulation time.
 
-   For meaningful use of this benchmark, you should use a scale > 10 and check
-   that the firing rate reported at the end of the benchmark is below 10 spikes
-   per second.
-'''
+For meaningful use of this benchmark, you should use a scale > 10 and check
+that the firing rate reported at the end of the benchmark is below 10 spikes
+per second.
+
+References
+~~~~~~~~~~~
+
+.. [1] Morrison et al (2007). Spike-timing-dependent plasticity in balanced
+       random networks. Neural Comput 19(6):1437-67
+
+.. [2] Helias et al (2012). Supercomputers ready for use as discovery machines
+       for neuroscience. Front. Neuroinform. 6:26
+
+.. [3] Kunkel et al (2014). Spiking network simulation code for petascale
+       computers. Front. Neuroinform. 8:78
+
+See Also
+~~~~~~~~~~
+
+:Authors:
+
+KEYWORDS:
+"""
 
 from __future__ import print_function  # for Python 2
 import numpy as np
@@ -77,11 +91,10 @@ M_INFO = 10
 M_ERROR = 30
 
 
-'''Parameter section
-
- Define all relevant parameters: changes should be made here
-
-'''
+###############################################################################
+# Parameter section
+#
+# Define all relevant parameters: changes should be made here'
 
 params = {
     'nvp': 1,               # total number of virtual processes
@@ -100,13 +113,11 @@ params = {
 
 
 def convert_synapse_weight(tau_m, tau_syn, C_m):
-    '''
-    Computes conversion factor for synapse weight from mV to pA
-
-    This function is specific to the leaky integrate-and-fire neuron
-    model with alpha-shaped postsynaptic currents.
-
-    '''
+    ###########################################################################
+    # Computes conversion factor for synapse weight from mV to pA
+    #
+    # This function is specific to the leaky integrate-and-fire neuron model
+    # with alpha-shaped postsynaptic currents.
 
     # compute time to maximum of V_m after spike input
     # to neuron at rest
@@ -119,15 +130,15 @@ def convert_synapse_weight(tau_m, tau_syn, C_m):
         b - t_rise * np.exp(-t_rise / tau_syn))
     return 1. / v_max
 
+
+###############################################################################
 # For compatiblity with earlier benchmarks, we require a rise time of
 # t_rise = 1.700759 ms and we choose tau_syn to achieve this for given
 # tau_m. This requires numerical inversion of the expression for t_rise
 # in convert_synapse_weight(). We computed this value once and hard-code
 # it here.
 
-
 tau_syn = 0.32582722403722841
-
 
 # -----------------------------------------------------------------------------
 
@@ -180,18 +191,16 @@ brunel_params = {
     'filestem': params['path_name']
 }
 
-'''FUNCTION SECTION
-
-'''
+###############################################################################
+# FUNCTION SECTION
 
 
 def build_network(logger):
-    '''Builds the network including setting of simulation and neuron
-    parameters, creation of neurons and connections
-
-    Requires an instance of Logger as argument
-
-    '''
+    ###########################################################################
+    # Builds the network including setting of simulation and neuron
+    # parameters, creation of neurons and connections
+    #
+    # Requires an instance of Logger as argument
 
     tic = time.time()  # start timer on construction
 
@@ -349,7 +358,8 @@ def build_network(logger):
 
 
 def run_simulation():
-    '''Performs a simulation, including network construction'''
+    ###########################################################################
+    # Performs a simulation, including network construction
 
     # open log file
     with Logger(params['log_file']) as logger:
@@ -388,13 +398,12 @@ def run_simulation():
 
 
 def compute_rate(sdet):
-    '''Compute local approximation of average firing rate
-
-    This approximation is based on the number of local nodes, number
-    of local spikes and total time. Since this also considers devices,
-    the actual firing rate is usually underestimated.
-
-    '''
+    ###########################################################################
+    # Compute local approximation of average firing rate
+    #
+    # This approximation is based on the number of local nodes, number
+    # of local spikes and total time. Since this also considers devices,
+    # the actual firing rate is usually underestimated.
 
     n_local_spikes = nest.GetStatus(sdet, 'n_events')[0]
     n_local_neurons = brunel_params['Nrec']
@@ -405,7 +414,8 @@ def compute_rate(sdet):
 
 
 def memory_thisjob():
-    '''Wrapper to obtain current memory usage'''
+    ###########################################################################
+    #  Wrapper to obtain current memory usage
     nest.sr('memory_thisjob')
     return nest.spp()
 
@@ -413,7 +423,8 @@ def memory_thisjob():
 
 
 def lambertwm1(x):
-    '''Wrapper for LambertWm1 function'''
+    ###########################################################################
+    # Wrapper for LambertWm1 function'''
     nest.sr('{} LambertWm1'.format(x))
     return nest.spp()
 
@@ -421,13 +432,12 @@ def lambertwm1(x):
 
 
 def get_local_nodes(nodes):
-    '''Generator for efficient looping over local nodes
-
-    Assumes nodes is a continous list of gids [1, 2, 3, ...], e.g., as
-    returned by Create. Only works for nodes with proxies, i.e.,
-    regular neurons.
-
-    '''
+    ###########################################################################
+    # Generator for efficient looping over local nodes
+    #
+    # Assumes nodes is a continous list of gids [1, 2, 3, ...], e.g., as
+    # returned by Create. Only works for nodes with proxies, i.e., regular
+    # neurons.
 
     nvp = nest.GetKernelStatus('total_num_virtual_procs')  # step size
 
@@ -443,10 +453,9 @@ def get_local_nodes(nodes):
 
 
 class Logger(object):
-    '''Logger context manager used to properly log memory and timing
-    information from network simulations.
-
-    '''
+    ###########################################################################
+    # Logger context manager used to properly log memory and timing
+    # information from network simulations.
 
     def __init__(self, file_name):
         # copy output to cout for ranks 0..max_rank_cout-1

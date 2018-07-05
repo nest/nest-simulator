@@ -29,7 +29,7 @@
 #include "drop_odd_spike_connection.h"
 #include "pif_psc_alpha.h"
 #include "step_pattern_builder.h"
-#include "recording_backend_beep.h"
+#include "recording_backend_soundclick.h"
 
 // Includes from nestkernel:
 #include "connection_manager_impl.h"
@@ -136,7 +136,7 @@ mynest::MyModule::init( SLIInterpreter* i )
     "step_pattern" );
 
   // Register recording backend.
-  nest::kernel().io_manager.register_recording_backend< nest::RecordingBackendBeep >(
-    "beep" );
+  nest::kernel().io_manager.register_recording_backend< nest::
+    RecordingBackendSoundClick >("soundclick" );
 
 } // MyModule::init()

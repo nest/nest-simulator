@@ -25,9 +25,9 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "device_node.h"
 #include "ring_buffer.h"
 #include "stimulating_device.h"
 

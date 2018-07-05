@@ -31,10 +31,9 @@
 #include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
-#include "nest_types.h"
-#include "nest_datums.h"
-#include "recording_device.h"
 #include "kernel_manager.h"
+#include "nest_types.h"
+#include "recording_device.h"
 
 /* BeginDocumentation
 

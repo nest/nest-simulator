@@ -257,14 +257,14 @@ nest::music_cont_out_proxy::calibrate()
     const index synmodel_id = static_cast< index >( synmodel );
     std::vector< MUSIC::GlobalIndex > music_index_map;
 
+    DictionaryDatum dummy_params = new Dictionary();
     for ( size_t i = 0; i < P_.targets_->size(); ++i )
     {
       const index tgid = ( *P_.targets_ )[ i ];
       if ( kernel().node_manager.is_local_gid( tgid ) )
       {
-        const DictionaryDatum params = new Dictionary();
         kernel().connection_manager.connect(
-          get_gid(), tgid, params, synmodel_id );
+          get_gid(), tgid, dummy_params, synmodel_id );
 
         for ( size_t j = 0; j < P_.record_from_.size(); ++j )
         {

@@ -184,3 +184,16 @@ nest::spike_detector::handle( SpikeEvent& e )
     }
   }
 }
+
+void
+nest::spike_detector::finalize()
+{
+  // The order of the major simulation steps is:
+  // update nodes -- gather spikes -- deliver spikes
+  // Therefore, spikes from the last deliver might still reside in the
+  // B_.spikes_ buffer and need to be recorded.
+  // --> final call to update()
+  const Time time;
+  update( time, -1, -1 );
+  device_.finalize();
+}

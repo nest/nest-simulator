@@ -199,7 +199,7 @@ TopologyModule::create_mask( const Token& t )
               dynamic_cast< GridMask< 2 >& >( *mask );
             grid_mask_2d.set_anchor( Position< 2, int >( column, row ) );
           }
-          catch ( std::bad_cast e )
+          catch ( std::bad_cast& e )
           {
             throw BadProperty( "Mask must be 2-dimensional grid mask." );
           }
@@ -211,7 +211,7 @@ TopologyModule::create_mask( const Token& t )
               dynamic_cast< GridMask< 3 >& >( *mask );
             grid_mask_3d.set_anchor( Position< 3, int >( column, row, layer ) );
           }
-          catch ( std::bad_cast e )
+          catch ( std::bad_cast& e )
           {
             throw BadProperty( "Mask must be 3-dimensional grid mask." );
           }

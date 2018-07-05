@@ -277,7 +277,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   GIDCollectionPTR target_gc )
 {
 
-  const DictionaryDatum params = new Dictionary; // empty parameter dictionary
+  DictionaryDatum dummy_params = new Dictionary; // empty parameter dictionary
                                                  // required by connect() calls
 
   // Source driven connect is actually implemented as target driven,
@@ -384,7 +384,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
   Layer< D >& target,
   GIDCollectionPTR target_gc )
 {
-  const DictionaryDatum params = new Dictionary; // empty parameter dictionary
+  DictionaryDatum dummy_params = new Dictionary; // empty parameter dictionary
                                                  // required by connect() calls
 
   // Convergent connections (fixed fan in)
@@ -502,7 +502,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
             w,
             d );
           kernel().connection_manager.connect(
-            source_id, tgt, target_thread, synapse_model_, params, d, w );
+            source_id, tgt, target_thread, synapse_model_, dummy_params, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -544,7 +544,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
             w,
             d );
           kernel().connection_manager.connect(
-            source_id, tgt, target_thread, synapse_model_, params, d, w );
+            source_id, tgt, target_thread, synapse_model_, dummy_params, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -629,7 +629,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
           get_parameters_(
             source.compute_displacement( target_pos, source_pos ), rng, w, d );
           kernel().connection_manager.connect(
-            source_id, tgt, target_thread, synapse_model_, params, d, w );
+            source_id, tgt, target_thread, synapse_model_, dummy_params, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -664,7 +664,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
           get_parameters_(
             source.compute_displacement( target_pos, source_pos ), rng, w, d );
           kernel().connection_manager.connect(
-            source_id, tgt, target_thread, synapse_model_, params, d, w );
+            source_id, tgt, target_thread, synapse_model_, dummy_params, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -679,7 +679,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
   Layer< D >& target,
   GIDCollectionPTR target_gc )
 {
-  const DictionaryDatum params = new Dictionary; // empty parameter dictionary
+  DictionaryDatum dummy_params = new Dictionary; // empty parameter dictionary
                                                  // required by connect() calls
 
   // protect against connecting to devices without proxies
@@ -810,7 +810,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
         target_ptr,
         target_ptr->get_thread(),
         synapse_model_,
-        params,
+        dummy_params,
         d,
         w );
     }

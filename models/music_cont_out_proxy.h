@@ -39,6 +39,7 @@
 #include <music.hh>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "gid_collection.h"
 #include "nest_types.h"
 #include "device_node.h"

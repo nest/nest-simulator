@@ -32,11 +32,14 @@ template < typename T >
 inline void
 grow( std::vector< T >& v )
 {
-  // use 1.5 growth strategy (see, e.g.,
-  // https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md)
+  const size_t max_block_size_MiB = 256;
+  const size_t max_block_size = static_cast< size_t >(
+    max_block_size_MiB * ( 2 << 20 ) / static_cast< double >( sizeof( T ) ) );
+
   if ( v.size() == v.capacity() )
   {
-    v.reserve( ( v.size() * 3 + 1 ) / 2 );
+    v.reserve( v.size() < max_block_size ? 2 * v.size()
+                                         : ( v.size() + max_block_size ) );
   }
 }
 

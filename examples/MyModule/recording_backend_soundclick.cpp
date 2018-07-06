@@ -38,11 +38,12 @@
 nest::RecordingBackendSoundClick::RecordingBackendSoundClick()
 {
   // Load the raw sound data into the SFML sound buffer.
-  sound_buffer_.loadFromMemory(sound_click_16bit_44_1khz_wav, 
-                               sizeof(sound_click_16bit_44_1khz_wav));
-  sound_.setBuffer(sound_buffer_);
-  LOG(M_INFO, "Recording Backend", 
-      ("recording backend >SoundClick< successfully initialized"));
+  sound_buffer_.loadFromMemory(
+    sound_click_16bit_44_1khz_wav, sizeof( sound_click_16bit_44_1khz_wav ) );
+  sound_.setBuffer( sound_buffer_ );
+  LOG( M_INFO,
+    "Recording Backend",
+    ( "recording backend >SoundClick< successfully initialized" ) );
 }
 
 // Destructor
@@ -62,12 +63,12 @@ nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device )
 }
 
 // Called by each multimeter during network calibration
-void
-nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device,
-  const std::vector< Name >& )        // value_names, i.e. recordables
+void nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device,
+  const std::vector< Name >& ) // value_names, i.e. recordables
 {
-  throw BadProperty("Only spike detectors can record to recording backend " \
-                    ">SoundClick<");
+  throw BadProperty(
+    "Only spike detectors can record to recording backend "
+    ">SoundClick<" );
 }
 
 // Called on simulation startup
@@ -106,13 +107,14 @@ nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
 
   // NOTE: This slows down the simulation to biological real time!
 
-  int time_spike_event_us = 
-    static_cast<int>( floor(event.get_stamp().get_ms() * 1000.0 ));
-  int time_elapsed_us = 
-    static_cast<int>( floor(stopwatch_.elapsed_timestamp() ));
+  int time_spike_event_us =
+    static_cast< int >( floor( event.get_stamp().get_ms() * 1000.0 ) );
+  int time_elapsed_us =
+    static_cast< int >( floor( stopwatch_.elapsed_timestamp() ) );
   int time_lag_us = time_spike_event_us - time_elapsed_us;
-  
-  if( time_lag_us > 0 ) {
+
+  if ( time_lag_us > 0 )
+  {
     usleep( time_lag_us );
   }
 
@@ -125,7 +127,7 @@ nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& values )
 {
-   // Must not happen !
-   // Only spike detectors are allowd to connect to the SoundClick backend.
-   throw;
+  // Must not happen !
+  // Only spike detectors are allowd to connect to the SoundClick backend.
+  throw;
 }

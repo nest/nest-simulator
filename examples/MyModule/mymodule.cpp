@@ -136,7 +136,8 @@ mynest::MyModule::init( SLIInterpreter* i )
     "step_pattern" );
 
   // Register recording backend.
-  nest::kernel().io_manager.register_recording_backend< nest::
-    RecordingBackendSoundClick >("soundclick" );
+  nest::kernel()
+    .io_manager.register_recording_backend< nest::RecordingBackendSoundClick >(
+      "soundclick" );
 
 } // MyModule::init()

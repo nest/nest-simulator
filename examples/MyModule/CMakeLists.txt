@@ -55,7 +55,11 @@ set( MODULE_VERSION_MAJOR 1 )
 set( MODULE_VERSION_MINOR 0 )
 set( MODULE_VERSION "${MODULE_VERSION_MAJOR}.${MODULE_VERSION_MINOR}" )
 
-# 5) Leave the rest as is. All files in `sli` will be installed to
+# 5) Specify additional link libraries if needed
+#    e.g., sfml-audio is required by the `SoundClick` backend example
+set( USER_LINK_LIBRARIES sfml-audio )
+
+# 6) Leave the rest as is. All files in `sli` will be installed to
 #    `share/nest/sli/`, so that NEST will find the during initialization.
 
 # Leave the call to "project(...)" for after the compiler is determined.
@@ -234,15 +238,25 @@ add_custom_target( dist
     COMMENT "Creating a source distribution from ${MODULE_NAME}..."
     )
 
+# check the user link libraries whether installed or not
+foreach( LINKLIB ${USER_LINK_LIBRARIES} )
+  find_library( LIB_${LINKLIB} ${LINKLIB} )
+  if( NOT LIB_${LINKLIB} )
+    message(FATAL_ERROR "ERROR: " ${LINKLIB} " library not found")
+  else()  
+    message( ${LINKLIB} " library found")
+  endif()
+endforeach()
 
 if ( BUILD_SHARED_LIBS )
   # When building shared libraries, also create a module for loading at runtime
   # with the `Install` command.
   add_library( ${MODULE_NAME}_module MODULE ${MODULE_SOURCES} )
+  target_link_libraries(${MODULE_NAME}_module ${USER_LINK_LIBRARIES})
   set_target_properties( ${MODULE_NAME}_module
       PROPERTIES
       COMPILE_FLAGS "${NEST_CXXFLAGS} -DLTX_MODULE"
-      LINK_FLAGS "${NEST_LIBS}"
+      LINK_FLAGS "${NEST_LIBS} -lsfml-audio"
       PREFIX ""
       OUTPUT_NAME ${MODULE_NAME} )
   install( TARGETS ${MODULE_NAME}_module
@@ -250,21 +264,7 @@ if ( BUILD_SHARED_LIBS )
       )
 endif ()
 
-# Build dynamic/static library for standard linking from NEST.
-add_library( ${MODULE_NAME}_lib ${MODULE_SOURCES} )
-if ( BUILD_SHARED_LIBS )
-  # Dynamic libraries are initiated by a `global` variable of the `SLIModule`,
-  # which is included, when the flag `LINKED_MODULE` is set.
-  target_compile_definitions( ${MODULE_NAME}_lib PRIVATE -DLINKED_MODULE )
-endif ()
-set_target_properties( ${MODULE_NAME}_lib
-    PROPERTIES
-    COMPILE_FLAGS "${NEST_CXXFLAGS}"
-    LINK_FLAGS "${NEST_LIBS}"
-    OUTPUT_NAME ${MODULE_NAME} )
-
 # Install library, header and sli init files.
-install( TARGETS ${MODULE_NAME}_lib DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 install( FILES ${MODULE_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${MODULE_NAME} )
 install( DIRECTORY sli DESTINATION ${CMAKE_INSTALL_DATADIR} )
 
@@ -307,6 +307,7 @@ message( "C++ compiler flags   : ${CMAKE_CXX_FLAGS}" )
 message( "NEST compiler flags  : ${NEST_CXXFLAGS}" )
 message( "NEST include dirs    : ${NEST_INCLUDES}" )
 message( "NEST libraries flags : ${NEST_LIBS}" )
+message( "User link libraries  : ${USER_LINK_LIBRARIES}" )
 message( "" )
 message( "-------------------------------------------------------" )
 message( "" )

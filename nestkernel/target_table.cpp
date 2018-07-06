@@ -38,18 +38,18 @@ nest::TargetTable::initialize()
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    targets_[ tid ] = std::vector< std::vector< Target > >(
-      0, std::vector< Target >( 0, Target() ) );
+    targets_[ tid ] = std::vector< std::vector< Target > >();
     secondary_send_buffer_pos_[ tid ] =
-      std::vector< std::vector< std::vector< size_t > > >( 0 );
+      std::vector< std::vector< std::vector< size_t > > >();
   } // of omp parallel
 }
 
 void
 nest::TargetTable::finalize()
 {
-  targets_.clear();
-  secondary_send_buffer_pos_.clear();
+  std::vector< std::vector< std::vector< Target > > >().swap( targets_ );
+  std::vector< std::vector< std::vector< std::vector< size_t > > > >().swap(
+    secondary_send_buffer_pos_ );
 }
 
 void
@@ -60,8 +60,7 @@ nest::TargetTable::prepare( const thread tid )
   const size_t num_local_nodes =
     kernel().node_manager.get_max_num_local_nodes() + 1;
 
-  targets_[ tid ].resize(
-    num_local_nodes, std::vector< Target >( 0, Target() ) );
+  targets_[ tid ].resize( num_local_nodes );
 
   secondary_send_buffer_pos_[ tid ].resize( num_local_nodes );
 

@@ -42,14 +42,6 @@ nest::TargetTableDevices::initialize()
   target_to_devices_.resize( num_threads );
   target_from_devices_.resize( num_threads );
   sending_devices_gids_.resize( num_threads );
-
-#pragma omp parallel
-  {
-    const thread tid = kernel().vp_manager.get_thread_id();
-    target_to_devices_[ tid ].clear();
-    target_from_devices_[ tid ].clear();
-    sending_devices_gids_[ tid ].clear();
-  } // of omp parallel
 }
 
 void

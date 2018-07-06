@@ -310,12 +310,9 @@ GenericConnectorModel< ConnectionT >::reserve_connections(
     thread_local_connectors[ syn_id ] = new Connector< ConnectionT >( syn_id );
   }
 
-  ConnectorBase* connector = thread_local_connectors[ syn_id ];
-  assert( connector != 0 );
+  ConnectorBase& connector = *thread_local_connectors[ syn_id ];
 
-  connector->reserve( connector->size() + count );
-
-  thread_local_connectors[ syn_id ] = connector;
+  connector.reserve( connector.size() + count );
 }
 
 } // namespace nest

@@ -98,7 +98,7 @@ nest::ConnectionManager::initialize()
     const thread tid = kernel().vp_manager.get_thread_id();
     connections_[ tid ] = std::vector< ConnectorBase* >(
       kernel().model_manager.get_num_synapse_prototypes() );
-    secondary_recv_buffer_pos_[ tid ].clear();
+    secondary_recv_buffer_pos_[ tid ] = std::vector< std::vector< size_t > >();
   } // of omp parallel
 
   source_table_.initialize();
@@ -124,6 +124,9 @@ nest::ConnectionManager::finalize()
   target_table_.finalize();
   target_table_devices_.finalize();
   delete_connections_();
+  std::vector< std::vector< ConnectorBase* > >().swap( connections_ );
+  std::vector< std::vector< std::vector< size_t > > >().swap(
+    secondary_recv_buffer_pos_ );
 }
 
 void

@@ -227,8 +227,13 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources(
   // set of unique sources & synapse types, required to determine
   // secondary events MPI buffer positions
   // initialized and deleted by thread 0 in this method
-  static std::set< std::pair< index, size_t > >
+  static std::set< std::pair< index, size_t > >*
     unique_secondary_source_gid_syn_id;
+#pragma omp single
+  {
+    unique_secondary_source_gid_syn_id =
+      new std::set< std::pair< index, size_t > >();
+  }
 
   // collect all unique pairs of source gid and synapse-type id
   // corresponding to continuous-data connections on this MPI rank;
@@ -247,8 +252,8 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources(
       {
 #pragma omp critical
         {
-          unique_secondary_source_gid_syn_id.insert(
-            std::make_pair( source_cit->get_gid(), syn_id ) );
+          ( *unique_secondary_source_gid_syn_id )
+            .insert( std::make_pair( source_cit->get_gid(), syn_id ) );
         }
       }
     }
@@ -263,8 +268,8 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources(
       kernel().mpi_manager.get_num_processes(), 0 );
 
     for ( std::set< std::pair< index, size_t > >::const_iterator cit =
-            unique_secondary_source_gid_syn_id.begin();
-          cit != unique_secondary_source_gid_syn_id.end();
+            ( *unique_secondary_source_gid_syn_id ).begin();
+          cit != ( *unique_secondary_source_gid_syn_id ).end();
           ++cit )
     {
       const thread source_rank =
@@ -289,7 +294,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources(
     kernel().mpi_manager.communicate_Allreduce_max_in_place( max_uint_count );
     kernel().mpi_manager.set_chunk_size_secondary_events_in_int(
       max_uint_count[ 0 ] + 1 );
-    unique_secondary_source_gid_syn_id.clear();
+    delete unique_secondary_source_gid_syn_id;
   } // of omp single
 }
 

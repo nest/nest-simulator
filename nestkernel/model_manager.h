@@ -507,7 +507,6 @@ ModelManager::delete_secondary_events_prototypes()
       ( *iit->second ).reset_supported_syn_ids();
       delete iit->second;
     }
-    it->clear();
   }
   secondary_events_prototypes_.clear();
 }
@@ -517,6 +516,7 @@ ModelManager::get_secondary_event_prototype( const synindex syn_id,
   const thread tid ) const
 {
   assert_valid_syn_id( syn_id );
+  // Using .at() because operator[] does not guarantee constness.
   return *( secondary_events_prototypes_[ tid ].at( syn_id ) );
 }
 

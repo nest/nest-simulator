@@ -92,19 +92,17 @@ EventDeliveryManager::initialize()
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    spike_register_[ tid ] =
-      std::vector< std::vector< std::vector< Target > > >(
-        num_threads,
-        std::vector< std::vector< Target > >(
-          kernel().connection_manager.get_min_delay(),
-          std::vector< Target >( 0 ) ) );
+    spike_register_[ tid ].resize(
+      num_threads,
+      std::vector< std::vector< Target > >(
+        kernel().connection_manager.get_min_delay(),
+        std::vector< Target >() ) );
 
-    off_grid_spike_register_[ tid ] =
-      std::vector< std::vector< std::vector< OffGridTarget > > >(
-        num_threads,
-        std::vector< std::vector< OffGridTarget > >(
-          kernel().connection_manager.get_min_delay(),
-          std::vector< OffGridTarget >( 0 ) ) );
+    off_grid_spike_register_[ tid ].resize(
+      num_threads,
+      std::vector< std::vector< OffGridTarget > >(
+        kernel().connection_manager.get_min_delay(),
+        std::vector< OffGridTarget >() ) );
   } // of omp parallel
 }
 
@@ -112,8 +110,10 @@ void
 EventDeliveryManager::finalize()
 {
   // clear the spike buffers
-  spike_register_.clear();
-  off_grid_spike_register_.clear();
+  std::vector< std::vector< std::vector< std::vector< Target > > > >().swap(
+    spike_register_ );
+  std::vector< std::vector< std::vector< std::vector< OffGridTarget > > > >()
+    .swap( off_grid_spike_register_ );
   gather_completed_checker_.clear();
 
   send_buffer_secondary_events_.clear();

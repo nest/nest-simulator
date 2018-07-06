@@ -68,7 +68,6 @@ public:
 
   virtual void initialize();
   virtual void finalize();
-  virtual void delete_secondary_recv_buffer_pos();
 
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
@@ -561,7 +560,7 @@ private:
    * connection information. Corresponds to a three dimensional
    * structure: threads|synapses|connections
    */
-  std::vector< std::vector< ConnectorBase* >* > connections_;
+  std::vector< std::vector< ConnectorBase* > > connections_;
 
   /**
    * A structure to hold the global ids of presynaptic neurons during
@@ -575,7 +574,7 @@ private:
    * Stores absolute position in receive buffer of secondary events.
    * structure: threads|synapses|position
    */
-  std::vector< std::vector< std::vector< size_t >* >* >
+  std::vector< std::vector< std::vector< size_t > > >
     secondary_recv_buffer_pos_;
 
   std::map< index, size_t > buffer_pos_of_source_gid_syn_id_;
@@ -783,14 +782,14 @@ ConnectionManager::get_secondary_recv_buffer_position( const thread tid,
   const synindex syn_id,
   const index lcid ) const
 {
-  return ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] )[ lcid ];
+  return secondary_recv_buffer_pos_[ tid ][ syn_id ][ lcid ];
 }
 
 inline size_t
 ConnectionManager::get_num_connections_( const thread tid,
   const synindex syn_id ) const
 {
-  return ( *connections_[ tid ] )[ syn_id ]->size();
+  return connections_[ tid ][ syn_id ]->size();
 }
 
 inline index

@@ -583,21 +583,19 @@ void
 ModelManager::create_secondary_events_prototypes()
 {
   delete_secondary_events_prototypes();
-  secondary_events_prototypes_.resize(
-    kernel().vp_manager.get_num_threads(), NULL );
+  secondary_events_prototypes_.resize( kernel().vp_manager.get_num_threads() );
 
   for ( thread tid = 0;
         tid < static_cast< thread >( secondary_events_prototypes_.size() );
         ++tid )
   {
-    secondary_events_prototypes_[ tid ] =
-      new std::map< synindex, SecondaryEvent* >;
+    secondary_events_prototypes_[ tid ].clear();
     for ( synindex syn_id = 0; syn_id < prototypes_[ tid ].size(); ++syn_id )
     {
       if ( not prototypes_[ tid ][ syn_id ]->is_primary() )
       {
-        ( *secondary_events_prototypes_[ tid ] )
-          .insert( std::pair< synindex, SecondaryEvent* >(
+        secondary_events_prototypes_[ tid ].insert(
+          std::pair< synindex, SecondaryEvent* >(
             syn_id, prototypes_[ tid ][ syn_id ]->create_event( 1 )[ 0 ] ) );
       }
     }

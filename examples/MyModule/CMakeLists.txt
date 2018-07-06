@@ -256,7 +256,7 @@ if ( BUILD_SHARED_LIBS )
   set_target_properties( ${MODULE_NAME}_module
       PROPERTIES
       COMPILE_FLAGS "${NEST_CXXFLAGS} -DLTX_MODULE"
-      LINK_FLAGS "${NEST_LIBS} -lsfml-audio"
+      LINK_FLAGS "${NEST_LIBS}"
       PREFIX ""
       OUTPUT_NAME ${MODULE_NAME} )
   install( TARGETS ${MODULE_NAME}_module

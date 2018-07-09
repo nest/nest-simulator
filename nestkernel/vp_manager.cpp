@@ -115,6 +115,13 @@ nest::VPManager::set_status( const DictionaryDatum& d )
         "Model defaults have been modified: Thread/process number cannot be "
         "changed." );
     }
+    if ( kernel().sp_manager.is_structural_plasticity_enabled()
+      and ( n_threads > 1 ) )
+    {
+      throw KernelException(
+        "Multiple threads can not be used if structural plasticity is "
+        "enabled" );
+    }
 
     if ( n_threads > 1 and force_singlethreading_ )
     {
@@ -124,10 +131,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
       n_threads = 1;
     }
 
-    // it is essential to call reset() here to adapt memory pools and more
-    // to the new number of threads and VPs.
-    set_num_threads( n_threads );
-    kernel().num_threads_changed_reset();
+    kernel().change_num_threads( n_threads );
   }
 
   long n_vps = get_num_virtual_processes();
@@ -193,10 +197,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
       n_threads = 1;
     }
 
-    // it is essential to call reset() here to adapt memory pools and more
-    // to the new number of threads and VPs
-    set_num_threads( n_threads );
-    kernel().num_threads_changed_reset();
+    kernel().change_num_threads( n_threads );
   }
 }
 

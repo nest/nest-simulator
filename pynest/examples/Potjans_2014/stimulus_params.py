@@ -19,14 +19,14 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
+"""
 microcircuit stimulus parameters
 --------------------------------
 
 Stimulus parameters for the microcircuit.
 
 Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
-'''
+"""
 
 import numpy as np
 from network_params import net_dict

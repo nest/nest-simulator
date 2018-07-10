@@ -40,8 +40,6 @@ import nest
 import pylab
 import numpy
 
-
-
 ###############################################################################
 # The function `build_network` takes the standard deviation of Gaussian
 # white noise and the time resolution as arguments.

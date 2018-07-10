@@ -57,6 +57,7 @@ import sys
 # rules, defined as growth curves. Here we specify the growth curves for
 # synaptic elements of excitatory and inhibitory neurons.
 
+
 class StructralPlasticityExample:
     def __init__(self):
 
@@ -75,7 +76,6 @@ class StructralPlasticityExample:
         # rate of background Poisson input
         self.bg_rate = 10000.0
         self.neuron_model = 'iaf_psc_exp'
-
 
         # Excitatory synaptic elements of excitatory neurons
         self.growth_curve_e_e = {
@@ -113,9 +113,7 @@ class StructralPlasticityExample:
             'eps': self.growth_curve_i_e['eps']  # Ca2+
         }
 
-
         # Now we specify the neuron model.
-
         self.model_params = {'tau_m': 10.0,  # membrane time constant (ms)
                              # excitatory synaptic time constant (ms)
                              'tau_syn_ex': 0.5,
@@ -139,7 +137,6 @@ class StructralPlasticityExample:
         # synapses. These values were calculated from a PSP amplitude of 1 for
         # excitatory synapses, -1 for inhibitory synapses and 0.11 for
         # external synapses.
-
 
         self.psc_e = 585.0
         self.psc_i = -585.0
@@ -209,7 +206,6 @@ class StructralPlasticityExample:
             'Axon_in': self.growth_curve_i_i,
         }
 
-
         # Then it is time to create a population with 80% of the total network
         # size excitatory neurons and another one with 20% of the total network
         # size of inhibitory neurons.
@@ -235,7 +231,6 @@ class StructralPlasticityExample:
         nest.Connect(noise, self.nodes_i, 'all_to_all',
                      {'weight': self.psc_ext, 'delay': 1.0})
 
-
     # In order to save the amount of average calcium concentration in each
     # population through time we create the function `record_ca`. Here we use
     # the `GetStatus` function to retrieve the value of Ca for every neuron in
@@ -247,7 +242,6 @@ class StructralPlasticityExample:
 
         ca_i = nest.GetStatus(self.nodes_i, 'Ca'),  # Calcium concentration
         self.mean_ca_i.append(numpy.mean(ca_i))
-
 
     # In order to save the state of the connectivity in the network through
     # time, we create the function `record_connectivity`. Here we use the
@@ -263,7 +257,6 @@ class StructralPlasticityExample:
                                             for neuron in syn_elems_e))
         self.total_connections_i.append(sum(neuron['Axon_in']['z_connected']
                                             for neuron in syn_elems_i))
-
     # We define a function to plot the recorded values at the end of the
     # simulation.
 
@@ -313,11 +306,11 @@ class StructralPlasticityExample:
         print("Simulation finished successfully")
 
 ###############################################################################
-# Finally we take all the functions that we have defined and create the sequence
-# for our example. We prepare the simulation, create the nodes for the network,
-# connect the external input and then simulate. Please note that as we are
-# simulating 200 biological seconds in this example, it will take a few minutes
-# to complete.
+# Finally we take all the functions that we have defined and create the
+# sequence for our example. We prepare the simulation, create the nodes for the
+# network, connect the external input and then simulate. Please note that as we
+# are simulating 200 biological seconds in this example, it will take a few
+# minutes to complete.
 
 if __name__ == '__main__':
     example = StructralPlasticityExample()

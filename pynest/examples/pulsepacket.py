@@ -46,15 +46,12 @@ KEYWORDS: spike volley, gaussian rate
 # First, we import all necessary modules for simulation, analysis and
 # plotting.
 
-
 import nest
 import numpy
 import pylab
 import array
 
-
 # Properties of pulse packet:
-
 
 a = 100            # number of spikes in one pulse packet
 sdev = 10.         # width of pulse packet (ms)
@@ -133,7 +130,6 @@ def find_loc_pspmax(tau_s, tau_m):
 # (``sig``) and mean value (``mu``). In this case the standard derivation is
 # the width of the pulse packet (see [1]_).
 
-
 sig = Sdev
 mu = 0.0
 x = numpy.arange(-4 * sig, 4 * sig, Convolution_resolution)
@@ -150,7 +146,6 @@ gauss = term1 * term2 * Convolution_resolution
 # function `make_psp()` (that creates the PSP) takes the time array as its
 # first argument.
 
-
 t_psp = numpy.arange(0, 10 * (Tau_m + Tau_s), Convolution_resolution)
 psp = make_psp(t_psp, Tau_s, Tau_m, Cm, Weight)
 
@@ -161,7 +156,6 @@ psp = make_psp(t_psp, Tau_s, Tau_m, Cm, Weight)
 # `find_loc_pspmax()` returns the exact time point (`t_pspmax`) when we
 # expect the maximum to occur. The function `make_psp()` calculates the
 # corresponding PSP value, which is our PSP amplitude (`psp_amp`).
-
 
 t_pspmax = find_loc_pspmax(Tau_s, Tau_m)
 psp_amp = make_psp(t_pspmax, Tau_s, Tau_m, Cm, Weight)
@@ -177,7 +171,6 @@ psp_norm = psp / psp_amp
 # simulation outcome. Therefore we need a time vector (`t_U`) with the correct
 # temporal resolution, which places the excursion of the potential at the
 # correct time.
-
 
 tmp = numpy.zeros(2 * len(psp_norm))
 tmp[len(psp_norm) - 1:-1] += psp_norm
@@ -197,7 +190,6 @@ t_U = (convolution_resolution * numpy.linspace(-l / 2., l / 2., l) +
 # We reset the Kernel, define the simulation resolution and set the
 # verbosity using `set_verbosity()` to suppress info messages.
 
-
 nest.ResetKernel()
 nest.SetStatus([0], [{'resolution': simulation_resolution}])
 nest.set_verbosity("M_WARNING")
@@ -209,7 +201,6 @@ nest.set_verbosity("M_WARNING")
 # have specific properties that are specified in device specific
 # dictionaries (here: `neuron_pars` for the neurons, `ppg_pars`
 # for the and pulse-packet-generators and `vm_pars` for the voltmeter).
-
 
 neuron_pars = {
     'V_th': Vth,
@@ -249,7 +240,6 @@ vm = nest.Create('voltmeter', 1, vm_pars)
 # generator (source) to one neuron (target).
 # In addition we also connect the `voltmeter` to the `neurons`.
 
-
 nest.SetDefaults('static_synapse', {'weight': weight})
 nest.Connect(ppgs, neurons, 'one_to_one')
 nest.Connect(vm, neurons)
@@ -268,7 +258,6 @@ nest.Simulate(simtime)
 # data point at position x in the voltage array (`V_m`), can be found at the
 # same position x in the sender (`senders`) and the time array (`times`).
 
-
 Vm = nest.GetStatus(vm, 'events')[0]['V_m']
 times = nest.GetStatus(vm, 'events')[0]['times']
 senders = nest.GetStatus(vm, 'events')[0]['senders']
@@ -279,10 +268,7 @@ senders = nest.GetStatus(vm, 'events')[0]['senders']
 # simulation. Since we simulate multiple neurons that received slightly
 # different pulse packets, we plot the individual and the averaged membrane
 # potentials.
-
-
-
-###############################################################################
+#
 # We plot the analytical solution U (the resting potential V0 shifts the
 # membrane potential up or downwards).
 
@@ -292,7 +278,6 @@ pylab.plot(t_U, U + V0, 'r', lw=2, zorder=3, label='analytical solution')
 ###############################################################################
 # Then we plot all individual membrane potentials.
 # The time axes is the range of the simulation time in steps of ms.
-
 
 Vm_single = [Vm[senders == ii] for ii in neurons]
 simtimes = numpy.arange(1, simtime)
@@ -306,7 +291,6 @@ for idn in range(n_neurons):
 
 ###############################################################################
 # Finally, we plot the averaged membrane potential.
-
 
 Vm_average = numpy.mean(Vm_single, axis=0)
 pylab.plot(simtimes, Vm_average, 'b', lw=4,

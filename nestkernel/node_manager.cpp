@@ -328,7 +328,7 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid )
           node->set_model_id( model.get_model_id() );
           node->set_thread( 0 );
           node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
-          node->set_local_device_id( num_local_devices_ );
+          node->set_local_device_id( num_local_devices_ - 1 );
           local_nodes_[ 0 ].add_local_node( *node );
         }
       }

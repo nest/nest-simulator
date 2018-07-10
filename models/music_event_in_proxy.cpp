@@ -178,7 +178,7 @@ nest::music_event_in_proxy::handle( SpikeEvent& e )
 {
   e.set_sender( *this );
 
-  for ( nest::thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     kernel().connection_manager.send_from_device( t, local_device_id_, e );
   }

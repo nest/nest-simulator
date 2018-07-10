@@ -53,6 +53,7 @@ import numpy
 # `record_from` is set. The multimeter is then connected to the two units
 # in order to 'observe' them.  The connect function takes the handles as input.
 
+
 def build_network(sigma, dt):
     nest.ResetKernel()
     nest.SetKernelStatus({'resolution': dt, 'use_wfr': False})

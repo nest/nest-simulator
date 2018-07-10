@@ -121,7 +121,7 @@ def make_psp(Time, Tau_s, Tau_m, Cm, Weight):
 # * Tau_s and Tau_m: the synaptic and membrane time constant (in sec)
 # It returns the location of the maximum (in sec)
 
- def find_loc_pspmax(tau_s, tau_m):
+def find_loc_pspmax(tau_s, tau_m):
     var = tau_m / tau_s
     lam = nest.sli_func('LambertWm1', -numpy.exp(-1 / var) / var)
     t_maxpsp = (-var * lam - 1) / var / (1 / tau_s - 1 / tau_m) * 1e-3

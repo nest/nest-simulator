@@ -55,8 +55,6 @@ import numpy
 # `record_from` is set. The multimeter is then connected to the two units
 # in order to 'observe' them.  The connect function takes the handles as input.
 
-
-
 def build_network(sigma, dt):
     nest.ResetKernel()
     nest.SetKernelStatus({'resolution': dt, 'use_wfr': False})
@@ -107,28 +105,22 @@ T = numpy.linspace(0, 200, 200 / dt - 1)
 # evidence is given by changing the state of each decision unit. Note that both
 # units receive evidence.
 
-
 for i in range(9):
 
     c = i % 3
     r = int(i / 3)
     D1, D2, mm = build_network(sigma[r], dt)
 
-
-
     nest.Simulate(100.0)
     nest.SetStatus(D1, {'mean': 1. + dE[c]})
     nest.SetStatus(D2, {'mean': 1. - dE[c]})
     nest.Simulate(100.0)
 
-
     data = nest.GetStatus(mm)
     senders = data[0]['events']['senders']
     voltages = data[0]['events']['rate']
 
-
     # The activity values ('voltages') are read out by the multimeter
-
 
     ax[i] = fig.add_subplot(fig_rows, fig_cols, i + 1)
     ax[i].plot(T, voltages[numpy.where(senders == D1)],

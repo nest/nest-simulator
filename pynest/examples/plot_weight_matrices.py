@@ -52,6 +52,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 # Since in this example, we have 2 populations (E/I), :math:`2^2` possible
 # synaptic connections exist (EE, EI, IE, II).
 
+
 def plot_weight_matrices(E_neurons, I_neurons):
 
     W_EE = np.zeros([len(E_neurons), len(E_neurons)])
@@ -142,5 +143,3 @@ def plot_weight_matrices(E_neurons, I_neurons):
 # colorbar.
 # We can set the title of each axis and adjust the axis subplot parameters.
 # Finally, the last three steps are repeated for each synapse type.
-
-

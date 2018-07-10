@@ -81,11 +81,11 @@ Vmax = neuron_params['V_th']  # maximum of initial potential distribution (mV)
 # Synapse parameters. Changing the weights `J` in the network can lead to
 # qualitatively different behaviors. If `J` is small (e.g.`` J = 0.1``), we
 # are likely to observe a non-chaotic network behavior (after perturbation
-# the network returns to its original activity). Increasing `J` (e.g ``J = 5.5``)
-# leads to rather chaotic activity. Given that in this example the transition
-# to chaos is probabilistic, we sometimes observe chaotic behavior for small
-# weights (e.g. ``J = 0.5``) and non-chaotic behavior for strong weights
-# (e.g. ``J = 5.4``).
+# the network returns to its original activity). Increasing `J`
+# (e.g ``J = 5.5``) leads to rather chaotic activity. Given that in this
+# example the transition to chaos is probabilistic, we sometimes observe
+# chaotic behavior for small weights (e.g. ``J = 0.5``) and non-chaotic
+# behavior for strong weights (e.g. ``J = 5.4``).
 
 
 J = 0.5                   # excitatory synaptic weight (mV)
@@ -188,14 +188,14 @@ spiketimes = []
 
 
 ###############################################################################
-# We need to reset the network, the random number generator, and the clock of 
-# the simulation Kernel. In addition, we ensure that there is no spike left in 
+# We need to reset the network, the random number generator, and the clock of
+# the simulation Kernel. In addition, we ensure that there is no spike left in
 # the spike detector.
 
 ###############################################################################
-# In the second trial, we add an extra input spike at time `t_stim` to the 
-# neuron that fires first after perturbation time `t_stim`. Thus, we make sure 
-# that the perturbation is transmitted to the network before it fades away in 
+# In the second trial, we add an extra input spike at time `t_stim` to the
+# neuron that fires first after perturbation time `t_stim`. Thus, we make sure
+# that the perturbation is transmitted to the network before it fades away in
 # the perturbed neuron. (Single IAF-neurons are not chaotic.)
 
 
@@ -205,14 +205,11 @@ for trial in [0, 1]:
     nest.SetStatus([0], {'time': 0.0})
     nest.SetStatus(spikedetector, {'n_events': 0})
 
-
-    # We assign random initial membrane potentials to all neurons 
+    # We assign random initial membrane potentials to all neurons
 
     numpy.random.seed(seed_numpy)
     Vms = Vmin + (Vmax - Vmin) * numpy.random.rand(N)
     nest.SetStatus(allnodes, "V_m", Vms)
-
-
 
     if trial == 1:
         id_stim = [senders[0][spiketimes[0] > t_stim][0]]
@@ -220,26 +217,20 @@ for trial in [0, 1]:
                      syn_spec={'weight': Jstim, 'delay': dt})
         nest.SetStatus(stimulus, {'spike_times': [t_stim]})
 
-
     # Now we simulate the network and add a fade out period to discard
     # remaining spikes.
-
 
     nest.Simulate(T)
     nest.Simulate(fade_out)
 
-
-    Storing the data.
-
+    # Storing the data.
 
     senders += [nest.GetStatus(spikedetector, 'events')[0]['senders']]
     spiketimes += [nest.GetStatus(spikedetector, 'events')[0]['times']]
 
-
 ###############################################################################
-# We plot the spiking activity of the network (first trial in red, second trial 
+# We plot the spiking activity of the network (first trial in red, second trial
 # in black).
-
 
 pylab.figure(1)
 pylab.clf()

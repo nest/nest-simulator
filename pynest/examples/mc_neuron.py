@@ -37,7 +37,7 @@ KEYWORDS: iaf_cond_alpha_mc
 """
 
 ##############################################################################
-# First, we import all necessary modules to simulate, analyze and plot this 
+# First, we import all necessary modules to simulate, analyze and plot this
 # example.
 
 
@@ -85,7 +85,7 @@ n = nest.Create('iaf_cond_alpha_mc')
 # specified for the multimeter include the list of quantities that should be
 # recorded and the time interval at which quantities are measured.
 
-mm = nest.Create('multimeter', params={'record_from': rqs,'interval': 0.1})
+mm = nest.Create('multimeter', params={'record_from': rqs, 'interval': 0.1})
 nest.Connect(mm, n)
 
 ###############################################################################

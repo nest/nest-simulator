@@ -176,8 +176,6 @@ plt.title('One spike train for all targets')
 # `n` generators for `t` ms. After `t/2`, the parameter dictionary of the
 # generators is changed from initial to after.
 
-
-
 def step(t, n, initial, after, seed=1, dt=0.05):
 
     nest.ResetKernel()
@@ -197,8 +195,6 @@ def step(t, n, initial, after, seed=1, dt=0.05):
 
 ###############################################################################
 # This function serves to plot a histogram of the emitted spikes.
-
-
 
 def plot_hist(spikes):
     plt.hist(spikes['times'],

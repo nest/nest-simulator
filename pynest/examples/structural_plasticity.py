@@ -42,7 +42,6 @@ References
 KEYWORDS:
 """
 
-
 ###############################################################################
 # First, we have import all necessary modules.
 
@@ -57,8 +56,6 @@ import sys
 # synaptic elements. The growth of these elements is guided by homeostatic
 # rules, defined as growth curves. Here we specify the growth curves for
 # synaptic elements of excitatory and inhibitory neurons.
-
-
 
 class StructralPlasticityExample:
     def __init__(self):
@@ -161,7 +158,6 @@ class StructralPlasticityExample:
             }
         )
 
-
         # Set Structural Plasticity synaptic update interval which is how often
         # the connectivity will be updated inside the network. It is important
         # to notice that synaptic elements and connections change on different
@@ -170,7 +166,6 @@ class StructralPlasticityExample:
         nest.SetStructuralPlasticityStatus({
             'structural_plasticity_update_interval': self.update_interval,
         })
-
 
         # Now we define Structural Plasticity synapses. In this example, we
         # create two synapse models, one for excitatory and one for inhibitory
@@ -244,8 +239,7 @@ class StructralPlasticityExample:
     # In order to save the amount of average calcium concentration in each
     # population through time we create the function `record_ca`. Here we use
     # the `GetStatus` function to retrieve the value of Ca for every neuron in
-   i # the network and then store the average.
-
+    # the network and then store the average.
 
     def record_ca(self):
         ca_e = nest.GetStatus(self.nodes_e, 'Ca'),  # Calcium concentration
@@ -262,7 +256,6 @@ class StructralPlasticityExample:
     # equal to the total amount of connected excitatory presynaptic elements.
     # The same applies for inhibitory connections.
 
-
     def record_connectivity(self):
         syn_elems_e = nest.GetStatus(self.nodes_e, 'synaptic_elements')
         syn_elems_i = nest.GetStatus(self.nodes_i, 'synaptic_elements')
@@ -271,10 +264,8 @@ class StructralPlasticityExample:
         self.total_connections_i.append(sum(neuron['Axon_in']['z_connected']
                                             for neuron in syn_elems_i))
 
-
     # We define a function to plot the recorded values at the end of the
     # simulation.
-
 
     def plot_data(self):
         fig, ax1 = pl.subplots()
@@ -300,13 +291,11 @@ class StructralPlasticityExample:
         ax2.legend(loc=4)
         pl.savefig('StructuralPlasticityExample.eps', format='eps')
 
-
     # It is time to specify how we want to perform the simulation. In this
     # function we first enable structural plasticity in the network and then we
     # simulate in steps. On each step we record the calcium concentration and i
     # the connectivity. At the end of the simulation, the plot of connections
     # and calcium concentration through time is generated.
-
 
     def simulate(self):
         if nest.NumProcesses() > 1:
@@ -322,7 +311,6 @@ class StructralPlasticityExample:
             if i % 20 == 0:
                 print("Progress: " + str(i / 2) + "%")
         print("Simulation finished successfully")
-
 
 ###############################################################################
 # Finally we take all the functions that we have defined and create the sequence

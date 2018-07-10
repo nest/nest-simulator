@@ -57,11 +57,12 @@ voltmeter = nest.Create("voltmeter")
 ###############################################################################
 # Third, the neuron and the voltmeter are configured using `SetStatus()`,
 # which expects a list of node handles and a list of parameter dictionaries.
-# In this example, we use `SetStatus()` to configure the constant current input 
-# to the neuron. We also want to record the global id of the observed nodes and 
+# In this example, we use `SetStatus()` to configure the constant current input
+# to the neuron. We also want to record the global id of the observed nodes and
 # set the `withgid` flag of the voltmeter to ``True``.
 # Alternatively, we can add the parameters of the model as arguments to
-# Create(), for example, :code:`nest.Create("iaf_psc_alpha", params=[{'I_e':376.0}])`
+# Create(), for example,
+# :code:`nest.Create("iaf_psc_alpha", params=[{'I_e':376.0}])`
 # or :code:`nest.Create("voltmeter", [{"withgid": True, "withtime": True}])`.
 
 nest.SetStatus(neuron, "I_e", 376.0)

@@ -107,7 +107,7 @@ s_in = nest.Create("spike_generator",
 # Next, We connect the spike generators to the neuron with `Connect`. Synapse
 # specifications can be provided in a dictionary. In this example of a
 # conductance-based neuron, the synaptic weight `weight` is given in nS.
-# Note that the values are  positive for excitatory stimulation and negative 
+# Note that the values are  positive for excitatory stimulation and negative
 # for inhibitor connections.
 
 nest.Connect(s_ex, n, syn_spec={"weight": 40.0})

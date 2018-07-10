@@ -66,7 +66,6 @@ template < class TNonlinearities >
 nest::rate_transformer_node< TNonlinearities >::Parameters_::Parameters_()
   : linear_summation_( true )
 {
-  recordablesMap_.create();
 }
 
 template < class TNonlinearities >

@@ -246,7 +246,7 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
   // to fail; afterwards we can be certain that it is non-negative and
   // we can static_cast it to index
   long lcid = max_size - 1;
-  while ( mysources[ lcid ].is_disabled() && lcid >= 0 )
+  while ( lcid >= 0 and mysources[ lcid ].is_disabled() )
   {
     --lcid;
   }

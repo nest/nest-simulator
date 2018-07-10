@@ -27,10 +27,10 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
 #include "nest_types.h"
-#include "device_node.h"
 #include "recording_device.h"
 
 /* BeginDocumentation
@@ -193,13 +193,6 @@ inline void
 spike_detector::post_run_cleanup()
 {
   device_.post_run_cleanup();
-}
-
-
-inline void
-spike_detector::finalize()
-{
-  device_.finalize();
 }
 
 inline SignalType

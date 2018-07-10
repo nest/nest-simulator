@@ -26,8 +26,8 @@
 #include "event_delivery_manager.h"
 
 // Includes from nestkernel:
-#include "kernel_manager.h"
 #include "connection_manager_impl.h"
+#include "kernel_manager.h"
 
 namespace nest
 {
@@ -59,11 +59,11 @@ EventDeliveryManager::send< SpikeEvent >( Node& source,
   const long lag )
 {
   const thread tid = source.get_thread();
-  ++local_spike_counter_[ tid ];
   const index source_gid = source.get_gid();
   e.set_sender_gid( source_gid );
   if ( source.has_proxies() )
   {
+    ++local_spike_counter_[ tid ];
     e.set_stamp(
       kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
     e.set_sender( source );

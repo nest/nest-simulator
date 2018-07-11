@@ -60,13 +60,13 @@ skip_if_not_threaded
   
   pgl nnl connspec ConnectLayers
   
-  /src pgl 1 Take cvgidcollection def
+  /src pgl [1] Take def
   /tgts nnl def
 
   /conns << /source src >> GetConnections def
-  /ctgts conns { cva 1 get } Map cvgidcollection def
+  /ctgts conns { cva 1 get } Map Sort def
     
-  tgts cva ctgts cva eq
+  tgts cva ctgts eq
 } 
 def
 
@@ -118,13 +118,13 @@ assert_or_die
     
   nnl sdl connspec ConnectLayers
   
-  /tgt sdl 1 Take cvgidcollection def
+  /tgt sdl [1] Take def
   /srcs nnl def
     
   /conns << /target tgt >> GetConnections def
   /csrcs conns { cva 0 get } Map Sort def
   
-  srcs cva csrcs cva eq
+  srcs cva csrcs eq
 } 
 def
 

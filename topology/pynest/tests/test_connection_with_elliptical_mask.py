@@ -96,10 +96,11 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         connections = nest.GetConnections()
         sources = connections.get('source')
         targets = connections.get('target')
+        connections = [[sources[i], targets[i]]
+                       for i in range(len(connections))]
 
-        for counter, conn_ref in enumerate(ref):
-            conn_list = [sources[counter], targets[counter]]
-            self.assertEqual(conn_list, conn_ref)
+        for conn, conn_ref in zip(sorted(connections), ref):
+            self.assertEqual(conn, conn_ref)
 
     def test_ConnectTiltedEllipticalMask(self):
         """Test connection with tilted elliptical mask.
@@ -157,10 +158,11 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         connections = nest.GetConnections()
         sources = connections.get('source')
         targets = connections.get('target')
+        connections = [[sources[i], targets[i]]
+                       for i in range(len(connections))]
 
-        for counter, conn_ref in enumerate(ref):
-            conn_list = [sources[counter], targets[counter]]
-            self.assertEqual(conn_list, conn_ref)
+        for conn, conn_ref in zip(sorted(connections), ref):
+            self.assertEqual(conn, conn_ref)
 
     def test_ConnectAnchoredEllipticalMask(self):
         """Test connection with anchored elliptical mask.
@@ -225,10 +227,11 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         connections = nest.GetConnections()
         sources = connections.get('source')
         targets = connections.get('target')
+        connections = [[sources[i], targets[i]]
+                       for i in range(len(connections))]
 
-        for counter, conn_ref in enumerate(ref):
-            conn_list = [sources[counter], targets[counter]]
-            self.assertEqual(conn_list, conn_ref)
+        for conn, conn_ref in zip(sorted(connections), ref):
+            self.assertEqual(conn, conn_ref)
 
     def test_ConnectEllipticalMaskWithPeriodicBoundary(self):
         """Test connection with simple elliptical mask.
@@ -301,15 +304,17 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         connections = nest.GetConnections()
         sources = connections.get('source')
         targets = connections.get('target')
+        connections = [[sources[i], targets[i]]
+                       for i in range(len(connections))]
 
-        for counter, conn_ref in enumerate(ref):
-            conn_list = [sources[counter], targets[counter]]
-            self.assertEqual(conn_list, conn_ref)
+        for conn, conn_ref in zip(sorted(connections), ref):
+            self.assertEqual(conn, conn_ref)
 
 
 def suite():
     suite = unittest.makeSuite(ConnectWithEllipticalMask, 'test')
     return suite
+
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)

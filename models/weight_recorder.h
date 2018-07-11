@@ -28,13 +28,12 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
-#include "nest_types.h"
-#include "nest_datums.h"
-#include "node.h"
-#include "recording_device.h"
 #include "kernel_manager.h"
+#include "nest_types.h"
+#include "recording_device.h"
 
 /* BeginDocumentation
 
@@ -75,7 +74,7 @@ namespace nest
  *
  * @ingroup Devices
  */
-class weight_recorder : public Node
+class weight_recorder : public DeviceNode
 {
 
 public:

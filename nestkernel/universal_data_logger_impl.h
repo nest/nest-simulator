@@ -364,7 +364,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::record_data(
   const HostNode& host,
   long step )
 {
-  if ( num_vars_ < 1 || step < next_rec_step_ )
+  if ( num_vars_ < 1 or step < next_rec_step_ )
   {
     return;
   }

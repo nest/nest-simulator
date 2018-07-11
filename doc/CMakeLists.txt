@@ -17,6 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+# NOTE: Remember to update the help-generation section in 
+#       MyModule/CMakeLists.txt
+
 
 if ( NOT CMAKE_CROSSCOMPILING )
 

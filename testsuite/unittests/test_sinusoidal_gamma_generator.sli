@@ -126,7 +126,7 @@ M_ERROR setverbosity
 
   /gen /sinusoidal_gamma_generator Create def
   
-  gen parrots cvgidcollection Connect
+  gen parrots Connect
   parrots sdets /one_to_one Connect
   sdets
 } def
@@ -230,7 +230,7 @@ M_ERROR setverbosity
   /gen /sinusoidal_gamma_generator Create def
   /mm /multimeter << /record_from [ /rate ] >> Create def
 
-  gen parrots cvgidcollection Connect
+  gen parrots Connect
   mm gen Connect  
 
   mm

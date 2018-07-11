@@ -193,7 +193,7 @@ nest::music_cont_out_proxy::State_::get( DictionaryDatum& d ) const
  * ---------------------------------------------------------------- */
 
 nest::music_cont_out_proxy::music_cont_out_proxy()
-  : Node()
+  : DeviceNode()
   , P_()
   , S_()
   , B_()
@@ -202,7 +202,7 @@ nest::music_cont_out_proxy::music_cont_out_proxy()
 
 nest::music_cont_out_proxy::music_cont_out_proxy(
   const music_cont_out_proxy& n )
-  : Node( n )
+  : DeviceNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_ )
@@ -257,16 +257,14 @@ nest::music_cont_out_proxy::calibrate()
     const index synmodel_id = static_cast< index >( synmodel );
     std::vector< MUSIC::GlobalIndex > music_index_map;
 
+    DictionaryDatum dummy_params = new Dictionary();
     for ( size_t i = 0; i < P_.targets_->size(); ++i )
     {
       const index tgid = ( *P_.targets_ )[ i ];
       if ( kernel().node_manager.is_local_gid( tgid ) )
       {
-        // todo481 find the real node instead of just any
-        Node* const target_node =
-          kernel().node_manager.get_node_or_proxy( tgid );
         kernel().connection_manager.connect(
-          get_gid(), target_node, target_node->get_thread(), synmodel_id );
+          get_gid(), tgid, dummy_params, synmodel_id );
 
         for ( size_t j = 0; j < P_.record_from_.size(); ++j )
         {

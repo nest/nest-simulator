@@ -353,7 +353,7 @@ function( NEST_PROCESS_WITH_PYTHON )
       set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )
       set( PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON ${PYTHON_EXECUTABLE} PARENT_SCOPE )
-      set( PYTHON_VERSION ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR} PARENT_SCOPE )
+      set( PYTHON_VERSION ${PYTHON_VERSION_STRING} PARENT_SCOPE )
 
       # Localize Python lib/header files and make sure that their version matches 
       # the Python interpreter version !
@@ -500,6 +500,28 @@ function( NEST_PROCESS_WITH_MUSIC )
       set( MUSIC_INCLUDE_DIRS "${MUSIC_INCLUDE_DIRS}" PARENT_SCOPE )
       set( MUSIC_EXECUTABLE "${MUSIC_EXECUTABLE}" PARENT_SCOPE )
       set( MUSIC_VERSION "${MUSIC_VERSION}" PARENT_SCOPE )
+    endif ()
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_WITH_BOOST )
+  # Find Boost
+  set( HAVE_BOOST OFF PARENT_SCOPE )
+  if ( with-boost )
+    if ( NOT ${with-boost} STREQUAL "ON" )
+      # a path is set
+      set( BOOST_ROOT "${with-boost}" )
+    endif ()
+
+    find_package( Boost COMPONENTS unit_test_framework )
+    if ( Boost_FOUND )
+      # export found variables to parent scope
+      set( HAVE_BOOST ON PARENT_SCOPE )
+      # Boost uses lower case in variable names
+      set( BOOST_FOUND "${Boost_FOUND}" PARENT_SCOPE )
+      set( BOOST_LIBRARIES "${Boost_LIBRARIES}" PARENT_SCOPE )
+      set( BOOST_INCLUDE_DIR "${Boost_INCLUDE_DIR}" PARENT_SCOPE )
+      set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
     endif ()
   endif ()
 endfunction()

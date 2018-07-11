@@ -100,6 +100,10 @@ def get_connectivity_matrix(pop1, pop2):
     connections = nest.GetConnections(pop1, pop2)
     sources = connections.get('source')
     targets = connections.get('target')
+    if isinstance(sources, int):
+        sources = [sources]
+    if isinstance(targets, int):
+        targets = [targets]
     index_dic = {}
     for count, node in enumerate(pop1):
         index_dic[node] = count
@@ -314,7 +318,7 @@ def chi_squared_check(degrees, expected, distribution=None):
         p-value from chi-squared test.
     '''
 
-    if distribution == 'pairwise_bernoulli':
+    if distribution in ('pairwise_bernoulli', 'symmetric_pairwise_bernoulli'):
         observed = {}
         for degree in degrees:
             if degree not in observed:

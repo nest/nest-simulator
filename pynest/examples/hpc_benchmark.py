@@ -220,17 +220,17 @@ def build_network(logger):
                      'Randomzing membrane potentials.')
 
         seed = nest.GetKernelStatus(
-            'rng_seeds')[-1] + 1 + nest.GetStatus([0], 'vp')[0]
+            'rng_seeds')[-1] + 1 + nest.GetStatus(E_neurons[0], 'vp')[0]
         rng = np.random.RandomState(seed=seed)
 
         for node in get_local_nodes(E_neurons):
-            nest.SetStatus([node],
+            nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
                                brunel_params['sigma_potential'])})
 
         for node in get_local_nodes(I_neurons):
-            nest.SetStatus([node],
+            nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
                                brunel_params['sigma_potential'])})
@@ -325,7 +325,12 @@ def build_network(logger):
                  {'model': 'syn_in'})
 
     if params['record_spikes']:
-        local_neurons = list(get_local_nodes(E_neurons))
+        if params['nvp'] != 1:
+            local_gids = [x.get('global_id')
+                          for x in get_local_nodes(E_neurons)]
+            local_neurons = nest.GIDCollection(local_gids)
+        else:
+            local_neurons = E_neurons
 
         if len(local_neurons) < brunel_params['Nrec']:
             nest.message(
@@ -433,7 +438,7 @@ def get_local_nodes(nodes):
 
     i = 0
     while i < len(nodes):
-        if nest.GetStatus([nodes[i]], 'local')[0]:
+        if nest.GetStatus(nodes[i], 'local')[0]:
             yield nodes[i]
             i += nvp
         else:

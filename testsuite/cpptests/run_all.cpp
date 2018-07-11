@@ -1,5 +1,5 @@
 /*
- *  connector_base.cpp
+ *  run_all.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,14 +20,10 @@
  *
  */
 
-#include "connector_base.h"
+#define BOOST_TEST_MODULE cpptests
+#define BOOST_TEST_DYN_LINK
+#include <boost/test/unit_test.hpp>
 
-namespace nest
-{
-
-ConnectorBase::ConnectorBase()
-  : t_lastspike_( 0. )
-{
-}
-
-} // namespace nest
+// Includes from cpptests
+#include "test_sort.h"
+#include "test_target_fields.h"

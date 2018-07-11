@@ -31,6 +31,9 @@
 // Includes from nestkernel:
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
+#include "kernel_manager.h"
+#include "connector_base.h"
+#include "target_table_devices_impl.h"
 
 namespace nest
 {
@@ -46,6 +49,61 @@ ConnectionManager::register_conn_builder( const std::string& name )
   connbuilder_factories_.push_back( cb );
   connruledict_->insert( name, id );
 }
+
+inline index
+ConnectionManager::get_target_gid( const thread tid,
+  const synindex syn_id,
+  const index lcid ) const
+{
+  return ( *connections_[ tid ] )[ syn_id ]->get_target_gid( tid, lcid );
 }
+
+inline void
+ConnectionManager::send( const thread tid,
+  const synindex syn_id,
+  const index lcid,
+  const std::vector< ConnectorModel* >& cm,
+  Event& e )
+{
+  ( *connections_[ tid ] )[ syn_id ]->send( tid, lcid, cm, e );
+}
+
+inline void
+ConnectionManager::send_to_devices( const thread tid,
+  const index source_gid,
+  Event& e )
+{
+  target_table_devices_.send_to_device(
+    tid, source_gid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+}
+
+inline void
+ConnectionManager::send_from_device( const thread tid,
+  const index ldid,
+  Event& e )
+{
+  target_table_devices_.send_from_device(
+    tid, ldid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+}
+
+inline void
+ConnectionManager::restructure_connection_tables( const thread tid )
+{
+  assert( not source_table_.is_cleared() );
+  target_table_.clear( tid );
+  source_table_.reset_processed_flags( tid );
+}
+
+inline void
+ConnectionManager::set_has_source_subsequent_targets( const thread tid,
+  const synindex syn_id,
+  const index lcid,
+  const bool subsequent_targets )
+{
+  ( *connections_[ tid ] )[ syn_id ]->set_has_source_subsequent_targets(
+    lcid, subsequent_targets );
+}
+
+} // namespace nest
 
 #endif /* CONNECTION_MANAGER_IMPL_H */

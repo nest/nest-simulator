@@ -63,6 +63,12 @@ RecordablesMap< rate_transformer_node< TNonlinearities > >
  * ---------------------------------------------------------------- */
 
 template < class TNonlinearities >
+nest::rate_transformer_node< TNonlinearities >::Parameters_::Parameters_()
+  : linear_summation_( true )
+{
+}
+
+template < class TNonlinearities >
 nest::rate_transformer_node< TNonlinearities >::State_::State_()
   : rate_( 0.0 )
 {
@@ -71,6 +77,22 @@ nest::rate_transformer_node< TNonlinearities >::State_::State_()
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
+
+template < class TNonlinearities >
+void
+nest::rate_transformer_node< TNonlinearities >::Parameters_::get(
+  DictionaryDatum& d ) const
+{
+  def< bool >( d, names::linear_summation, linear_summation_ );
+}
+
+template < class TNonlinearities >
+void
+nest::rate_transformer_node< TNonlinearities >::Parameters_::set(
+  const DictionaryDatum& d )
+{
+  updateValue< bool >( d, names::linear_summation, linear_summation_ );
+}
 
 template < class TNonlinearities >
 void
@@ -192,12 +214,30 @@ nest::rate_transformer_node< TNonlinearities >::update_( Time const& origin,
     // reinitialize output rate
     S_.rate_ = 0.0;
 
-    if ( called_from_wfr_update ) // use get_value_wfr_update to keep values in
-                                  // buffer
+    double delayed_rates = 0;
+    if ( called_from_wfr_update )
     {
-      S_.rate_ += nonlinearities_.input( B_.delayed_rates_.get_value_wfr_update(
-                                           lag ) + B_.instant_rates_[ lag ] );
+      // use get_value_wfr_update to keep values in buffer
+      delayed_rates = B_.delayed_rates_.get_value_wfr_update( lag );
+    }
+    else
+    {
+      // use get_value to clear values in buffer after reading
+      delayed_rates = B_.delayed_rates_.get_value( lag );
+    }
 
+    if ( P_.linear_summation_ )
+    {
+      S_.rate_ +=
+        nonlinearities_.input( delayed_rates + B_.instant_rates_[ lag ] );
+    }
+    else
+    {
+      S_.rate_ += delayed_rates + B_.instant_rates_[ lag ];
+    }
+
+    if ( called_from_wfr_update )
+    {
       // check if deviation from last iteration exceeds wfr_tol
       wfr_tol_exceeded = wfr_tol_exceeded
         or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
@@ -206,8 +246,6 @@ nest::rate_transformer_node< TNonlinearities >::update_( Time const& origin,
     }
     else
     {
-      S_.rate_ += nonlinearities_.input(
-        B_.delayed_rates_.get_value( lag ) + B_.instant_rates_[ lag ] );
       // rate logging
       B_.logger_.record_data( origin.get_steps() + lag );
     }
@@ -248,12 +286,22 @@ void
 nest::rate_transformer_node< TNonlinearities >::handle(
   InstantaneousRateConnectionEvent& e )
 {
+  const double weight = e.get_weight();
+
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
   while ( it != e.end() )
   {
-    B_.instant_rates_[ i ] += e.get_weight() * e.get_coeffvalue( it );
+    if ( P_.linear_summation_ )
+    {
+      B_.instant_rates_[ i ] += weight * e.get_coeffvalue( it );
+    }
+    else
+    {
+      B_.instant_rates_[ i ] +=
+        weight * nonlinearities_.input( e.get_coeffvalue( it ) );
+    }
     ++i;
   }
 }
@@ -263,14 +311,23 @@ void
 nest::rate_transformer_node< TNonlinearities >::handle(
   DelayedRateConnectionEvent& e )
 {
+  const double weight = e.get_weight();
+  const long delay = e.get_delay();
+
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
   while ( it != e.end() )
   {
-    B_.delayed_rates_.add_value(
-      e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-      e.get_weight() * e.get_coeffvalue( it ) );
+    if ( P_.linear_summation_ )
+    {
+      B_.delayed_rates_.add_value( delay + i, weight * e.get_coeffvalue( it ) );
+    }
+    else
+    {
+      B_.delayed_rates_.add_value(
+        delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
+    }
     ++i;
   }
 }

@@ -77,7 +77,6 @@ const Name rectangular( "rectangular" );
 const Name rho( "rho" );
 const Name row( "row" );
 const Name rows( "rows" );
-const Name sigma( "sigma" );
 const Name sigma_x( "sigma_x" );
 const Name sigma_y( "sigma_y" );
 const Name spherical( "spherical" );

@@ -112,6 +112,16 @@ public:
   index size() const;
 
   /**
+   * Returns the maximal number of nodes per virtual process.
+   */
+  index get_max_num_local_nodes() const;
+
+  /**
+   * Returns the number of devices per virtual process.
+   */
+  index get_num_local_devices() const;
+
+  /**
    * Print network information.
    */
   void print( std::ostream& ) const;
@@ -222,6 +232,9 @@ public:
    */
   const SparseNodeArray& get_local_nodes( thread ) const;
 
+  bool have_nodes_changed() const;
+  void set_have_nodes_changed( const bool changed );
+
 private:
   /**
    * Initialize the network data structures.
@@ -301,6 +314,11 @@ private:
   index wfr_network_size_;
   size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
 
+  index num_local_devices_; //!< stores number of local devices
+
+  bool have_nodes_changed_; //!< true if new nodes have been created
+                            //!< since startup or last call to simulate
+
   //! Store exceptions raised in thread-parallel sections for later handling
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
 };
@@ -333,6 +351,18 @@ inline const SparseNodeArray&
 NodeManager::get_local_nodes( thread t ) const
 {
   return local_nodes_[ t ];
+}
+
+inline bool
+NodeManager::have_nodes_changed() const
+{
+  return have_nodes_changed_;
+}
+
+inline void
+NodeManager::set_have_nodes_changed( const bool changed )
+{
+  have_nodes_changed_ = changed;
 }
 
 } // namespace

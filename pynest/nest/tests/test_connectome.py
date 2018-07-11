@@ -117,10 +117,10 @@ class TestConnectome(unittest.TestCase):
 
         target_ref = [1, 2, 1, 2]
         dpw_ref = {'delay': [1., 1., 1., 1.],
-                   'port': [0, 1, 0, 1],
+                   'port': [0, 1, 2, 3],
                    'weight': [1., 1., 1., 1.]}
         all_ref = {'delay': [1.0, 1.0, 1.0, 1.0],
-                   'port': [0, 1, 0, 1],
+                   'port': [0, 1, 2, 3],
                    'receptor': [0, 0, 0, 0],
                    'sizeof': [32, 32, 32, 32],
                    'source': [1, 1, 2, 2],
@@ -174,6 +174,7 @@ class TestConnectome(unittest.TestCase):
         """
         Test GetConnections on sliced GIDCollection
         """
+
         nrns = nest.Create('iaf_psc_alpha', 10)
         nest.Connect(nrns, nrns)
 
@@ -185,7 +186,7 @@ class TestConnectome(unittest.TestCase):
         targets = get_conns.get('target')
 
         self.assertEqual(sources, [4, 4, 4, 5, 5, 5, 6, 6, 6])
-        self.assertEqual(targets, [3, 5, 7, 3, 5, 7, 3, 5, 7])
+        self.assertEqual(targets.sort(), [3, 5, 7, 3, 5, 7, 3, 5, 7].sort())
 
         nest.ResetKernel()
 
@@ -249,11 +250,12 @@ class TestConnectome(unittest.TestCase):
         self.assertEqual(sources_2, [6, 7])
         self.assertEqual(sources_3,
                          [8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10])
-        self.assertEqual(targets_1,
-                         [3, 4, 5, 6, 3, 4, 5, 6, 3, 4, 5, 6, 3, 4, 5, 6])
+        self.assertEqual(targets_1.sort(),
+                         [3, 4, 5, 6, 3, 4, 5, 6,
+                          3, 4, 5, 6, 3, 4, 5, 6].sort())
         self.assertEqual(targets_2, [9, 10])
-        self.assertEqual(targets_3,
-                         [1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5])
+        self.assertEqual(targets_3.sort(),
+                         [1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5].sort())
 
         weight = get_conn_3.get('weight')
         self.assertEqual(weight,
@@ -302,7 +304,7 @@ class TestConnectome(unittest.TestCase):
 
         conns_val = conns.get(pandas_output=True)
         pnds_ref = pandas.DataFrame({'delay': [1., 1., 1., 1.],
-                                     'port': [0, 1, 0, 1],
+                                     'port': [0, 1, 2, 3],
                                      'receptor': [0, 0, 0, 0],
                                      'sizeof': [32, 32, 32, 32],
                                      'source': [1, 1, 2, 2],
@@ -325,7 +327,7 @@ class TestConnectome(unittest.TestCase):
                              index=conns.get('source'))))
         self.assertTrue(conns_sizeof_port.equals(
             pandas.DataFrame({'sizeof': [32, 32, 32, 32],
-                              'port': [0, 1, 0, 1]},
+                              'port': [0, 1, 2, 3]},
                              index=conns.get('source'))))
 
     def test_empty(self):

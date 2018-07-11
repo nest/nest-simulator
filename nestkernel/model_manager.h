@@ -170,7 +170,7 @@ public:
    */
   template < typename ConnectionT >
   void register_connection_model( const std::string& name,
-    bool requires_symmetric = false );
+    const bool requires_symmetric = false );
 
   /**
    * Register a synape model with a custom Connector model and without any
@@ -179,12 +179,13 @@ public:
    */
   template < typename ConnectionT, template < typename > class ConnectorModelT >
   void register_connection_model( const std::string& name,
-    bool requires_symmetric = false );
+    const bool requires_symmetric = false );
 
   template < typename ConnectionT >
   void register_secondary_connection_model( const std::string& name,
-    bool has_delay = true,
-    bool requires_symmetric = false );
+    const bool has_delay = true,
+    const bool requires_symmetric = false,
+    const bool supports_wfr = true );
 
   /**
    * @return The model id of a given model name
@@ -258,8 +259,8 @@ public:
 
   void delete_secondary_events_prototypes();
 
-  SecondaryEvent& get_secondary_event_prototype( synindex syn_id,
-    thread t = 0 );
+  SecondaryEvent& get_secondary_event_prototype( const synindex syn_id,
+    const thread tid ) const;
 
 private:
   /**  */
@@ -341,7 +342,8 @@ private:
   std::vector< Event* > event_prototypes_;
 
   std::vector< ConnectorModel* > secondary_connector_models_;
-  std::vector< std::vector< SecondaryEvent* > > secondary_events_prototypes_;
+  std::vector< std::map< synindex, SecondaryEvent* >* >
+    secondary_events_prototypes_;
 
   /* BeginDocumentation
    Name: modeldict - dictionary containing all devices and models of NEST
@@ -382,7 +384,7 @@ private:
 inline Model*
 ModelManager::get_model( index m ) const
 {
-  if ( m >= models_.size() || models_[ m ] == 0 )
+  if ( m >= models_.size() or models_[ m ] == 0 )
   {
     throw UnknownModelID( m );
   }
@@ -442,13 +444,14 @@ ModelManager::get_num_node_models() const
 inline size_t
 ModelManager::get_num_synapse_prototypes() const
 {
+  assert( prototypes_[ 0 ].size() <= invalid_synindex );
   return prototypes_[ 0 ].size();
 }
 
 inline void
 ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
 {
-  if ( syn_id >= prototypes_[ t ].size() || prototypes_[ t ][ syn_id ] == 0 )
+  if ( syn_id >= prototypes_[ t ].size() or prototypes_[ t ][ syn_id ] == 0 )
   {
     throw UnknownSynapseType( syn_id );
   }
@@ -463,29 +466,30 @@ ModelManager::has_user_prototypes() const
 inline void
 ModelManager::delete_secondary_events_prototypes()
 {
-  for ( size_t i = 0; i < secondary_connector_models_.size(); i++ )
+  for ( std::vector< std::map< synindex, SecondaryEvent* >* >::iterator it =
+          secondary_events_prototypes_.begin();
+        it != secondary_events_prototypes_.end();
+        ++it )
   {
-    if ( secondary_connector_models_[ i ] != NULL )
+    for (
+      std::map< synindex, SecondaryEvent* >::iterator iit = ( *it )->begin();
+      iit != ( *it )->end();
+      ++iit )
     {
-      for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
-      {
-        delete secondary_events_prototypes_[ j ][ i ];
-      }
+      ( *iit->second ).reset_supported_syn_ids();
+      delete iit->second;
     }
-  }
-
-  for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
-  {
-    secondary_events_prototypes_[ j ].clear();
+    ( *it )->clear();
   }
   secondary_events_prototypes_.clear();
 }
 
 inline SecondaryEvent&
-ModelManager::get_secondary_event_prototype( synindex syn_id, thread t )
+ModelManager::get_secondary_event_prototype( const synindex syn_id,
+  const thread tid ) const
 {
   assert_valid_syn_id( syn_id );
-  return *secondary_events_prototypes_[ t ][ syn_id ];
+  return *( *secondary_events_prototypes_[ tid ] )[ syn_id ];
 }
 
 } // namespace nest

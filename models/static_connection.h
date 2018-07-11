@@ -147,7 +147,6 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -155,11 +154,11 @@ public:
   }
 
   void
-  send( Event& e, thread t, double, const CommonSynapseProperties& )
+  send( Event& e, const thread tid, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_delay( get_delay_steps() );
-    e.set_receiver( *get_target( t ) );
+    e.set_receiver( *get_target( tid ) );
     e.set_rport( get_rport() );
     e();
   }

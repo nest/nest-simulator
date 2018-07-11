@@ -32,9 +32,9 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
 #include "stimulating_device.h"
 
 /*BeginDocumentation
@@ -88,7 +88,7 @@ namespace nest
  *
  * @ingroup Devices
  */
-class ppd_sup_generator : public Node
+class ppd_sup_generator : public DeviceNode
 {
 
 public:
@@ -124,7 +124,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
 
 private:
   void init_state_( const Node& );

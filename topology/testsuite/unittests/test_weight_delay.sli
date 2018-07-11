@@ -190,6 +190,8 @@ def
 
 ResetKernel
 
+<< /sort_connections_by_source false >> SetKernelStatus
+
 userdict /resolution known { << /resolution resolution >> SetKernelStatus } if
 
 /sources src_layer CreateLayer def

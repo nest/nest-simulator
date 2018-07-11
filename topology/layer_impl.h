@@ -344,9 +344,10 @@ Layer< D >::dump_connections( std::ostream& out,
         getValue< ConnectionDatum >( connectome.get( i ) );
       DictionaryDatum result_dict =
         kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
+          con_id.get_target_gid(),
+          con_id.get_target_thread(),
           con_id.get_synapse_model_id(),
-          con_id.get_port(),
-          con_id.get_target_thread() );
+          con_id.get_port() );
 
       long target_gid = getValue< long >( result_dict, names::target );
       double weight = getValue< double >( result_dict, names::weight );

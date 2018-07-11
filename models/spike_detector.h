@@ -23,15 +23,14 @@
 #ifndef SPIKE_DETECTOR_H
 #define SPIKE_DETECTOR_H
 
-
 // C++ includes:
 #include <vector>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
 #include "nest_types.h"
-#include "node.h"
 #include "recording_device.h"
 
 /* BeginDocumentation
@@ -96,7 +95,7 @@ namespace nest
  *
  * @ingroup Devices
  */
-class spike_detector : public Node
+class spike_detector : public DeviceNode
 {
 
 public:
@@ -200,13 +199,6 @@ inline void
 spike_detector::post_run_cleanup()
 {
   device_.post_run_cleanup();
-}
-
-
-inline void
-spike_detector::finalize()
-{
-  device_.finalize();
 }
 
 inline SignalType

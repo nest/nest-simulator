@@ -199,11 +199,11 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status(
-        con_id.get_source_gid(),       // source_gid
-        con_id.get_synapse_model_id(), // synapse_id
-        con_id.get_port(),             // port
-        con_id.get_target_thread(),    // target thread
+      kernel().connection_manager.set_synapse_status( con_id.get_source_gid(),
+        con_id.get_target_gid(),
+        con_id.get_target_thread(),
+        con_id.get_synapse_model_id(),
+        con_id.get_port(),
         dict );
 
       ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
@@ -217,11 +217,11 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ con ] );
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status(
-        con_id.get_source_gid(),       // source_gid
-        con_id.get_synapse_model_id(), // synapse_id
-        con_id.get_port(),             // port
-        con_id.get_target_thread(),    // target thread
+      kernel().connection_manager.set_synapse_status( con_id.get_source_gid(),
+        con_id.get_target_gid(),
+        con_id.get_target_thread(),
+        con_id.get_synapse_model_id(),
+        con_id.get_port(),
         dict );
 
       ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
@@ -349,13 +349,12 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
 
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
-  long gid = conn.get_source_gid();
-
   DictionaryDatum result_dict =
-    kernel().connection_manager.get_synapse_status( gid,
+    kernel().connection_manager.get_synapse_status( conn.get_source_gid(),
+      conn.get_target_gid(),
+      conn.get_target_thread(),
       conn.get_synapse_model_id(),
-      conn.get_port(),
-      conn.get_target_thread() );
+      conn.get_port() );
 
   i->OStack.pop();
   i->OStack.push( result_dict );
@@ -376,9 +375,10 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
     DictionaryDatum result_dict =
       kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
+        con_id.get_target_gid(),
+        con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
-        con_id.get_port(),
-        con_id.get_target_thread() );
+        con_id.get_port() );
     result.push_back( result_dict );
   }
 
@@ -1816,6 +1816,9 @@ NestModule::init( SLIInterpreter* i )
     "fixed_outdegree" );
   kernel().connection_manager.register_conn_builder< BernoulliBuilder >(
     "pairwise_bernoulli" );
+  kernel()
+    .connection_manager.register_conn_builder< SymmetricBernoulliBuilder >(
+      "symmetric_pairwise_bernoulli" );
   kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >(
     "fixed_total_number" );
 

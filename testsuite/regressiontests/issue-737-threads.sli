@@ -45,7 +45,7 @@ skip_if_not_threaded
 {
   ResetKernel
   
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   
   /n /iaf_psc_alpha Create def
   /vt /volume_transmitter Create def
@@ -58,7 +58,7 @@ skip_if_not_threaded
 {
   ResetKernel
   
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   
   /gid /iaf_psc_alpha Create def
   /vt /volume_transmitter Create def
@@ -71,7 +71,7 @@ skip_if_not_threaded
 {
   ResetKernel
   
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   
   /n /iaf_psc_alpha Create def
   /vt /volume_transmitter Create def
@@ -84,7 +84,7 @@ skip_if_not_threaded
 {
   ResetKernel
   
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   
   /gid /iaf_psc_alpha Create def
   /vt /volume_transmitter Create def

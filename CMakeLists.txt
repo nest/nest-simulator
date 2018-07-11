@@ -49,6 +49,7 @@ set( external-modules OFF CACHE STRING "External NEST modules to be linked in, s
 # connect NEST with external projects
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
+set( with-boost OFF CACHE STRING "Request compilation with Boost, required for C++ testsuite. Optionally give directory with Boost installation. [default=OFF]" )
 
 # set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
@@ -75,6 +76,9 @@ set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1'. Separate
 # should be set via toolchain files
 set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
 option( k-computer "Enable K computer." OFF )
+
+set( disable-timing OFF CACHE BOOL "Disable measurements via Stopwatches. [default OFF]" )
+set( disable-counts ON CACHE BOOL "Disable measurements of call counts. [default ON]" )
 
 ################################################################################
 ##################      Project Directory variables           ##################
@@ -151,6 +155,7 @@ nest_process_with_openmp()
 nest_process_with_mpi()
 nest_process_with_libneurosim()
 nest_process_with_music()
+nest_process_with_boost()
 
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )

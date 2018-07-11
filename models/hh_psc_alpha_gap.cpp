@@ -709,16 +709,16 @@ nest::hh_psc_alpha_gap::handle( DataLoggingRequest& e )
 void
 nest::hh_psc_alpha_gap::handle( GapJunctionEvent& e )
 {
+  const double weight = e.get_weight();
 
-  B_.sumj_g_ij_ += e.get_weight();
+  B_.sumj_g_ij_ += weight;
 
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
   while ( it != e.end() )
   {
-    B_.interpolation_coefficients[ i ] +=
-      e.get_weight() * e.get_coeffvalue( it );
+    B_.interpolation_coefficients[ i ] += weight * e.get_coeffvalue( it );
     ++i;
   }
 }

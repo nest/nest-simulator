@@ -91,7 +91,6 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double,
     const CommonPropertiesType& )
   {
     EventType ge;
@@ -107,10 +106,9 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    * \param p The port under which this connection is stored in the Connector.
-   * \param t_lastspike Time point of last spike emitted
    */
   void
-  send( Event& e, thread t, double, const CommonSynapseProperties& )
+  send( Event& e, thread t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_delay( get_delay_steps() );

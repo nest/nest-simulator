@@ -24,24 +24,32 @@
 #define SYN_ID_DELAY_H
 
 // Includes from nestkernel:
+#include "nest_time.h"
+#include "nest_types.h"
 
 namespace nest
 {
 
 struct SynIdDelay
 {
-  unsigned syn_id : 8;
-  unsigned delay : 24;
+  unsigned int delay : 22;
+  unsigned int syn_id : 8;
+  bool subsequent_targets : 1;
+  bool disabled : 1;
 
-  SynIdDelay( double d )
+  explicit SynIdDelay( double d )
     : syn_id( invalid_synindex )
+    , subsequent_targets( false )
+    , disabled( false )
   {
     set_delay_ms( d );
   }
 
   SynIdDelay( const SynIdDelay& s )
-    : syn_id( s.syn_id )
-    , delay( s.delay )
+    : delay( s.delay )
+    , syn_id( s.syn_id )
+    , subsequent_targets( s.subsequent_targets )
+    , disabled( s.disabled )
   {
   }
 
@@ -61,6 +69,40 @@ struct SynIdDelay
   set_delay_ms( const double d )
   {
     delay = Time::delay_ms_to_steps( d );
+  }
+
+  void
+  set_has_source_subsequent_targets( const bool subsequent_targets )
+  {
+    this->subsequent_targets = subsequent_targets;
+  }
+
+  bool
+  has_source_subsequent_targets() const
+  {
+    return this->subsequent_targets;
+  }
+
+  /**
+   * Disables the synapse.
+   *
+   * @see is_disabled
+   */
+  void
+  disable()
+  {
+    disabled = true;
+  }
+
+  /**
+   * Returns a flag denoting if the synapse is disabled.
+   *
+   * @see disable
+   */
+  bool
+  is_disabled() const
+  {
+    return disabled;
   }
 };
 }

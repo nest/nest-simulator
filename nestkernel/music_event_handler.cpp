@@ -167,7 +167,7 @@ MusicEventHandler::update( Time const& origin, const long from, const long to )
         Time T = Time::ms( eventqueue_[ channel ].top() );
 
         if ( T > origin + Time::step( from ) - Time::ms( acceptable_latency_ )
-          && T <= origin + Time::step( from + to ) )
+          and T <= origin + Time::step( from + to ) )
         {
           nest::SpikeEvent se;
           se.set_offset(

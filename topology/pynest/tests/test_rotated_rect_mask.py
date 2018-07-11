@@ -401,10 +401,11 @@ class RotatedRectangularMask(unittest.TestCase):
 
         sources = connections.get('source')
         targets = connections.get('target')
+        connections = [[sources[i], targets[i]]
+                       for i in range(len(connections))]
 
-        for counter, conn_ref in enumerate(ref):
-            conn_list = [sources[counter], targets[counter]]
-            self.assertEqual(conn_list, conn_ref)
+        for conn, conn_ref in zip(sorted(connections), ref):
+            self.assertEqual(conn, conn_ref)
 
 
 def suite():

@@ -349,7 +349,7 @@ GIDCollectionPrimitive::local_begin( GIDCollectionPTR cp ) const
   size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   size_t current_vp =
     kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
-  size_t vp_first_node = kernel().vp_manager.suggest_vp( first_ );
+  size_t vp_first_node = kernel().vp_manager.suggest_vp_for_gid( first_ );
   size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
 
   if ( offset >= size() ) // Too few GIDs to be shared among all vps.
@@ -367,8 +367,8 @@ GIDCollectionPrimitive::MPI_local_begin( GIDCollectionPTR cp ) const
 {
   size_t num_processes = kernel().mpi_manager.get_num_processes();
   size_t rank = kernel().mpi_manager.get_rank();
-  size_t rank_first_node = kernel().mpi_manager.get_process_id(
-    kernel().vp_manager.suggest_vp( first_ ) );
+  size_t rank_first_node = kernel().mpi_manager.get_process_id_of_vp(
+    kernel().vp_manager.suggest_vp_for_gid( first_ ) );
   size_t offset = ( rank - rank_first_node + num_processes ) % num_processes;
   if ( offset > size() ) // Too few GIDs to be shared among all MPI processes.
   {
@@ -693,7 +693,8 @@ GIDCollectionComposite::local_begin( GIDCollectionPTR cp ) const
   size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   size_t current_vp =
     kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
-  size_t vp_first_node = kernel().vp_manager.suggest_vp( operator[]( 0 ) );
+  size_t vp_first_node =
+    kernel().vp_manager.suggest_vp_for_gid( operator[]( 0 ) );
   size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
 
   size_t current_part = start_part_;
@@ -717,8 +718,8 @@ GIDCollectionComposite::MPI_local_begin( GIDCollectionPTR cp ) const
 {
   size_t num_processes = kernel().mpi_manager.get_num_processes();
   size_t rank = kernel().mpi_manager.get_rank();
-  size_t rank_first_node = kernel().mpi_manager.get_process_id(
-    kernel().vp_manager.suggest_vp( operator[]( 0 ) ) );
+  size_t rank_first_node = kernel().mpi_manager.get_process_id_of_vp(
+    kernel().vp_manager.suggest_vp_for_gid( operator[]( 0 ) ) );
   size_t offset = ( rank - rank_first_node + num_processes ) % num_processes;
 
   size_t current_part = start_part_;

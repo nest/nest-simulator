@@ -71,7 +71,7 @@ class Archiving_Node;
  * A new type of Node must be derived from this base class and
  * implement its interface.
  * In order to keep the inheritance hierarchy flat, it is encouraged
- * to direcly subclass from base class Node.
+ * to directly subclass from base class Node.
  *
  * @see class Event
  * @ingroup user_interface
@@ -786,6 +786,20 @@ public:
   {
     buffers_initialized_ = initialized;
   }
+
+  /**
+   * Sets the local device id.
+   * Throws an error if used on a non-device node.
+   * @see get_local_device_id
+   */
+  virtual void set_local_device_id( const index lsdid );
+
+  /**
+   * Gets the local device id.
+   * Throws an error if used on a non-device node.
+   * @see set_local_device_id
+   */
+  virtual index get_local_device_id() const;
 
 private:
   void set_gid_( index ); //!< Set global node id

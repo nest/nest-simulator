@@ -46,7 +46,7 @@
 
     /neurons /iaf_psc_delta 1000 Create def
 
-    pg neurons cvgidcollection Connect
+    pg neurons Connect
 
     1000. Simulate
   end

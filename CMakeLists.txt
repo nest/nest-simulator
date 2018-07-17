@@ -103,6 +103,7 @@ endif ()
 ################################################################################
 
 # needed for target doc and fulldoc
+find_program( NOSETESTS NAMES nosetests )
 find_package( Doxygen )
 find_program( SED NAMES sed gsed )
 

@@ -724,26 +724,13 @@ if test "x${TEST_PYNEST}" = xtrue ; then
     #    of support for nosetests. We use the TEST_OUTDIR as Python-free
     #    dummy directory to search for tests.
 
-    if command -v nosetests >/dev/null 2>&1 && nosetests --with-xunit --xunit-file=/dev/null --where=${TEST_OUTDIR} >/dev/null 2>&1; then
+    if command -v @NOSETESTS@ >/dev/null 2>&1 && @NOSETESTS@ --with-xunit --xunit-file=/dev/null --where=${TEST_OUTDIR} >/dev/null 2>&1; then
 
         echo
         echo "  Using nosetests."
         echo
 
-        # if possible, pick the python version that was specified during the installation
-
-        WITH_PYTHON=`cat CMakeCache.txt | grep with-python | cut -d "=" -f2`
-        if [ "${WITH_PYTHON}" = "2" ]; then
-            python_binary=`which python2`
-        elif [ "${WITH_PYTHON}" = "3" ]; then
-            python_binary=`which python3`
-        else
-            python_binary=`which python`
-        fi
-
-        nosetests_binary=`which nosetests`
-
-        $python_binary $nosetests_binary -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/topology/tests 2>&1 \
+        @PYTHON@ @NOSETESTS@ -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/topology/tests 2>&1 \
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
 
         PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"

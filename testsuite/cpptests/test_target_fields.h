@@ -38,6 +38,10 @@ namespace nest
 
 BOOST_AUTO_TEST_SUITE( test_target_fields )
 
+/**
+ * Tests whether values stored in Target objects via bitmasks are read
+ * correctly.
+ */
 BOOST_AUTO_TEST_CASE( test_write_read )
 {
   Target target;

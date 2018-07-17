@@ -51,6 +51,10 @@ is_sorted( std::vector< size_t >::const_iterator begin,
 
 BOOST_AUTO_TEST_SUITE( test_sort )
 
+/**
+ * Tests whether two arrays with randomly generated numbers are sorted
+ * correctly by a single call to sort.
+ */
 BOOST_AUTO_TEST_CASE( test_random )
 {
   const size_t N = 20000;
@@ -70,6 +74,10 @@ BOOST_AUTO_TEST_CASE( test_random )
   BOOST_REQUIRE( is_sorted( vec1.begin(), vec1.end() ) );
 }
 
+/**
+ * Tests whether two arrays with linearly increasing numbers are sorted
+ * correctly by a single call to sort.
+*/
 BOOST_AUTO_TEST_CASE( test_linear )
 {
   const size_t N = 20000;

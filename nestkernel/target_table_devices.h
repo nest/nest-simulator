@@ -54,16 +54,16 @@ class TargetTableDevices
 {
 private:
   //! 3d structure storing connections from neurons to devices
-  std::vector< std::vector< std::vector< ConnectorBase* > >* >
+  std::vector< std::vector< std::vector< ConnectorBase* > > >
     target_to_devices_;
 
   //! 3d structure storing connections from devices to neurons
-  std::vector< std::vector< std::vector< ConnectorBase* > >* >
+  std::vector< std::vector< std::vector< ConnectorBase* > > >
     target_from_devices_;
 
   //! 3d structure storing gids of sending devices (necessary for
   //! get_connections)
-  std::vector< std::vector< index >* > sending_devices_gids_;
+  std::vector< std::vector< index > > sending_devices_gids_;
 
 public:
   TargetTableDevices();
@@ -214,7 +214,7 @@ TargetTableDevices::get_synapse_status_from_device( const thread tid,
   DictionaryDatum& dict,
   const index lcid ) const
 {
-  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->get_synapse_status(
+  target_from_devices_[ tid ][ ldid ][ syn_id ]->get_synapse_status(
     tid, lcid, dict );
 }
 
@@ -226,7 +226,7 @@ TargetTableDevices::set_synapse_status_from_device( const thread tid,
   const DictionaryDatum& dict,
   const index lcid )
 {
-  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->set_synapse_status(
+  target_from_devices_[ tid ][ ldid ][ syn_id ]->set_synapse_status(
     lcid, dict, cm );
 }
 
@@ -237,8 +237,8 @@ TargetTableDevices::send_from_device( const thread tid,
   const std::vector< ConnectorModel* >& cm )
 {
   for ( std::vector< ConnectorBase* >::iterator it =
-          ( *target_from_devices_[ tid ] )[ ldid ].begin();
-        it != ( *target_from_devices_[ tid ] )[ ldid ].end();
+          target_from_devices_[ tid ][ ldid ].begin();
+        it != target_from_devices_[ tid ][ ldid ].end();
         ++it )
   {
     if ( *it != NULL )

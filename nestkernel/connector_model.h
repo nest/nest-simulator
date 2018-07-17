@@ -77,7 +77,7 @@ public:
    */
   virtual void add_connection( Node& src,
     Node& tgt,
-    std::vector< ConnectorBase* >* hetconn,
+    std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
     const DictionaryDatum& d,
     const double delay = NAN,
@@ -87,7 +87,7 @@ public:
    * Reserves the specified amount of connections at the specified index in the
    * connection vector.
    */
-  virtual void reserve_connections( std::vector< ConnectorBase* >* hetconn,
+  virtual void reserve_connections( std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
     const size_t count ) = 0;
 
@@ -196,7 +196,7 @@ public:
 
   void add_connection( Node& src,
     Node& tgt,
-    std::vector< ConnectorBase* >* hetconn,
+    std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
     const DictionaryDatum& d,
     const double delay,
@@ -245,7 +245,7 @@ public:
     return prototype_events;
   }
 
-  void reserve_connections( std::vector< ConnectorBase* >* hetconn,
+  void reserve_connections( std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
     const size_t count );
 
@@ -254,7 +254,7 @@ private:
 
   void add_connection_( Node& src,
     Node& tgt,
-    std::vector< ConnectorBase* >* hetconn,
+    std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
     ConnectionT& c,
     const rport receptor_type );

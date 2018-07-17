@@ -183,7 +183,7 @@ template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   Node& tgt,
-  std::vector< ConnectorBase* >* thread_local_connectors,
+  std::vector< ConnectorBase* >& thread_local_connectors,
   const synindex syn_id,
   const DictionaryDatum& p,
   const double delay,
@@ -266,22 +266,21 @@ template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
   Node& tgt,
-  std::vector< ConnectorBase* >* thread_local_connectors,
+  std::vector< ConnectorBase* >& thread_local_connectors,
   const synindex syn_id,
   ConnectionT& connection,
   const rport receptor_type )
 {
   assert( syn_id != invalid_synindex );
 
-  if ( ( *thread_local_connectors )[ syn_id ] == NULL )
+  if ( thread_local_connectors[ syn_id ] == NULL )
   {
-    // No homogeneous Connector with this syn_id exists, we need to create a
-    // new homogeneous Connector.
-    ( *thread_local_connectors )[ syn_id ] =
-      new Connector< ConnectionT >( syn_id );
+    // No homogeneous Connector with this syn_id exists, we need to create a new
+    // homogeneous Connector.
+    thread_local_connectors[ syn_id ] = new Connector< ConnectionT >( syn_id );
   }
 
-  ConnectorBase* connector = ( *thread_local_connectors )[ syn_id ];
+  ConnectorBase* connector = thread_local_connectors[ syn_id ];
   // The following line will throw an exception, if it does not work.
   connection.check_connection(
     src, tgt, receptor_type, get_common_properties() );
@@ -292,32 +291,28 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
     static_cast< Connector< ConnectionT >* >( connector );
   connector = &vc->push_back( connection );
 
-  ( *thread_local_connectors )[ syn_id ] = connector;
+  thread_local_connectors[ syn_id ] = connector;
 }
 
 template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::reserve_connections(
-  std::vector< ConnectorBase* >* thread_local_connectors,
+  std::vector< ConnectorBase* >& thread_local_connectors,
   const synindex syn_id,
   const size_t count )
 {
   assert( syn_id != invalid_synindex );
 
-  if ( ( *thread_local_connectors )[ syn_id ] == NULL )
+  if ( thread_local_connectors[ syn_id ] == NULL )
   {
-    // No homogeneous Connector with this syn_id exists, we need to create a
-    // new homogeneous Connector.
-    ( *thread_local_connectors )[ syn_id ] =
-      new Connector< ConnectionT >( syn_id );
+    // No homogeneous Connector with this syn_id exists, we need to create a new
+    // homogeneous Connector.
+    thread_local_connectors[ syn_id ] = new Connector< ConnectionT >( syn_id );
   }
 
-  ConnectorBase* connector = ( *thread_local_connectors )[ syn_id ];
-  assert( connector != 0 );
+  ConnectorBase& connector = *thread_local_connectors[ syn_id ];
 
-  connector->reserve( connector->size() + count );
-
-  ( *thread_local_connectors )[ syn_id ] = connector;
+  connector.reserve( connector.size() + count );
 }
 
 } // namespace nest

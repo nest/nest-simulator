@@ -41,72 +41,53 @@ nest::TargetTableDevices::initialize()
   target_to_devices_.resize( num_threads );
   target_from_devices_.resize( num_threads );
   sending_devices_gids_.resize( num_threads );
-
-#pragma omp parallel
-  {
-    const thread tid = kernel().vp_manager.get_thread_id();
-    target_to_devices_[ tid ] =
-      new std::vector< std::vector< ConnectorBase* > >( 0 );
-    target_from_devices_[ tid ] =
-      new std::vector< std::vector< ConnectorBase* > >( 0 );
-    sending_devices_gids_[ tid ] = new std::vector< index >( 0 );
-  } // of omp parallel
 }
 
 void
 nest::TargetTableDevices::finalize()
 {
   for (
-    std::vector< std::vector< std::vector< ConnectorBase* > >* >::iterator it =
+    std::vector< std::vector< std::vector< ConnectorBase* > > >::iterator it =
       target_to_devices_.begin();
     it != target_to_devices_.end();
     ++it )
   {
-    for ( std::vector< std::vector< ConnectorBase* > >::iterator iit =
-            ( *it )->begin();
-          iit != ( *it )->end();
-          ++iit )
+    for (
+      std::vector< std::vector< ConnectorBase* > >::iterator iit = it->begin();
+      iit != it->end();
+      ++iit )
     {
-      for ( std::vector< ConnectorBase* >::iterator iiit = ( *iit ).begin();
-            iiit != ( *iit ).end();
+      for ( std::vector< ConnectorBase* >::iterator iiit = iit->begin();
+            iiit != iit->end();
             ++iiit )
       {
         delete *iiit;
       }
-      ( *iit ).clear();
+      iit->clear();
     }
-    delete *it;
   }
   target_to_devices_.clear();
   for (
-    std::vector< std::vector< std::vector< ConnectorBase* > >* >::iterator it =
+    std::vector< std::vector< std::vector< ConnectorBase* > > >::iterator it =
       target_from_devices_.begin();
     it != target_from_devices_.end();
     ++it )
   {
-    for ( std::vector< std::vector< ConnectorBase* > >::iterator iit =
-            ( *it )->begin();
-          iit != ( *it )->end();
-          ++iit )
+    for (
+      std::vector< std::vector< ConnectorBase* > >::iterator iit = it->begin();
+      iit != it->end();
+      ++iit )
     {
-      for ( std::vector< ConnectorBase* >::iterator iiit = ( *iit ).begin();
-            iiit != ( *iit ).end();
+      for ( std::vector< ConnectorBase* >::iterator iiit = iit->begin();
+            iiit != iit->end();
             ++iiit )
       {
         delete *iiit;
       }
-      ( *iit ).clear();
+      iit->clear();
     }
-    delete *it;
   }
   target_from_devices_.clear();
-  for ( std::vector< std::vector< index >* >::iterator it =
-          sending_devices_gids_.begin();
-        it != sending_devices_gids_.end();
-        ++it )
-  {
-    delete *it;
-  }
   sending_devices_gids_.clear();
 }
 
@@ -116,11 +97,11 @@ nest::TargetTableDevices::resize_to_number_of_neurons()
   const thread num_threads = kernel().vp_manager.get_num_threads();
   for ( thread tid = 0; tid < num_threads; ++tid )
   {
-    target_to_devices_[ tid ]->resize(
+    target_to_devices_[ tid ].resize(
       kernel().node_manager.get_max_num_local_nodes() );
-    target_from_devices_[ tid ]->resize(
+    target_from_devices_[ tid ].resize(
       kernel().node_manager.get_num_local_devices() );
-    sending_devices_gids_[ tid ]->resize(
+    sending_devices_gids_[ tid ].resize(
       kernel().node_manager.get_num_local_devices() );
   }
 }
@@ -131,16 +112,16 @@ nest::TargetTableDevices::resize_to_number_of_synapse_types()
   const thread num_threads = kernel().vp_manager.get_num_threads();
   for ( thread tid = 0; tid < num_threads; ++tid )
   {
-    for ( index lid = 0; lid < target_to_devices_[ tid ]->size(); ++lid )
+    for ( index lid = 0; lid < target_to_devices_[ tid ].size(); ++lid )
     {
       // make sure this device has support for all synapse types
-      ( *target_to_devices_[ tid ] )[ lid ].resize(
+      target_to_devices_[ tid ][ lid ].resize(
         kernel().model_manager.get_num_synapse_prototypes(), NULL );
     }
-    for ( index ldid = 0; ldid < target_from_devices_[ tid ]->size(); ++ldid )
+    for ( index ldid = 0; ldid < target_from_devices_[ tid ].size(); ++ldid )
     {
       // make sure this device has support for all synapse types
-      ( *target_from_devices_[ tid ] )[ ldid ].resize(
+      target_from_devices_[ tid ][ ldid ].resize(
         kernel().model_manager.get_num_synapse_prototypes(), NULL );
     }
   }
@@ -163,7 +144,7 @@ nest::TargetTableDevices::get_connections_to_devices_(
   }
   else
   {
-    for ( index lid = 0; lid < target_to_devices_[ tid ]->size(); ++lid )
+    for ( index lid = 0; lid < target_to_devices_[ tid ].size(); ++lid )
     {
       get_connections_to_device_for_lid_(
         lid, requested_target_gid, tid, syn_id, synapse_label, conns );
@@ -179,14 +160,13 @@ nest::TargetTableDevices::get_connections_to_device_for_lid_( const index lid,
   const long synapse_label,
   std::deque< ConnectionID >& conns ) const
 {
-  if ( ( *target_to_devices_[ tid ] )[ lid ].size() > 0 )
+  if ( target_to_devices_[ tid ][ lid ].size() > 0 )
   {
     const index source_gid = kernel().vp_manager.lid_to_gid( lid );
     // not the root subnet and valid connector
-    if ( source_gid > 0
-      and ( *target_to_devices_[ tid ] )[ lid ][ syn_id ] != NULL )
+    if ( source_gid > 0 and target_to_devices_[ tid ][ lid ][ syn_id ] != NULL )
     {
-      ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_all_connections(
+      target_to_devices_[ tid ][ lid ][ syn_id ]->get_all_connections(
         source_gid, requested_target_gid, tid, synapse_label, conns );
     }
   }
@@ -202,8 +182,8 @@ nest::TargetTableDevices::get_connections_from_devices_(
   std::deque< ConnectionID >& conns ) const
 {
   for ( std::vector< index >::const_iterator it =
-          sending_devices_gids_[ tid ]->begin();
-        it != sending_devices_gids_[ tid ]->end();
+          sending_devices_gids_[ tid ].begin();
+        it != sending_devices_gids_[ tid ].end();
         ++it )
   {
     const Node* source = kernel().node_manager.get_node( *it, tid );
@@ -213,14 +193,13 @@ nest::TargetTableDevices::get_connections_from_devices_(
     {
       const index ldid = source->get_local_device_id();
 
-      if ( ( *target_from_devices_[ tid ] )[ ldid ].size() > 0 )
+      if ( target_from_devices_[ tid ][ ldid ].size() > 0 )
       {
         // not the root subnet and valid connector
-        if ( ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ] != NULL )
+        if ( target_from_devices_[ tid ][ ldid ][ syn_id ] != NULL )
         {
-          ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]
-            ->get_all_connections(
-              source_gid, requested_target_gid, tid, synapse_label, conns );
+          target_from_devices_[ tid ][ ldid ][ syn_id ]->get_all_connections(
+            source_gid, requested_target_gid, tid, synapse_label, conns );
         }
       }
     }

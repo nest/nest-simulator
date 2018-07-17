@@ -139,6 +139,11 @@ public:
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d );
 
+  /**
+   * Since volume transmitters are duplicated on each thread, and are
+   * hence treated just as devices during node creation, we need to
+   * define the corresponding setter and getter for local_device_id.
+   **/
   void set_local_device_id( const index ldid );
   index get_local_device_id() const;
 

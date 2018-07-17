@@ -20,10 +20,9 @@
  *
  */
 
-#include "target_table.h"
-
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "target_table.h"
 
 // Includes from libnestutil
 #include "vector_util.h"

@@ -105,7 +105,7 @@ public:
    *
    * The parameters delay and weight have the default value numerics::nan.
    * numerics::nan is a special value, which describes double values that
-   * are not a number. If delay or weight is omitted in an connect call,
+   * are not a number. If delay or weight is omitted in a connect call,
    * numerics::nan indicates this and weight/delay are set only, if they are
    * valid.
    *
@@ -361,8 +361,9 @@ public:
    */
   bool have_connections_changed() const;
 
-  /** Sets flag indicating whether connection information needs to be
-   *  communicated.
+  /** 
+   * Sets flag indicating whether connection information needs to be
+   * communicated.
    */
   void set_have_connections_changed( const bool changed );
 

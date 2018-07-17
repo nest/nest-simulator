@@ -548,7 +548,7 @@ inline delay
 EventDeliveryManager::get_modulo( delay d )
 {
   // Note, here d may be 0, since bin 0 represents the "current" time
-  // when all evens due are read out.
+  // when all events due are read out.
   assert(
     static_cast< std::vector< delay >::size_type >( d ) < moduli_.size() );
 
@@ -558,8 +558,8 @@ EventDeliveryManager::get_modulo( delay d )
 inline delay
 EventDeliveryManager::get_slice_modulo( delay d )
 {
-  /// Note, here d may be 0, since bin 0 represents the "current" time
-  // when all evens due are read out.
+  // Note, here d may be 0, since bin 0 represents the "current" time
+  // when all events due are read out.
   assert( static_cast< std::vector< delay >::size_type >( d )
     < slice_moduli_.size() );
 

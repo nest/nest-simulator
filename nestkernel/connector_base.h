@@ -189,7 +189,8 @@ public:
 
   /**
    * Return lcid of the first connection after start_lcid (inclusive)
-   * where the gid of the target matches target_gid.
+   * where the gid of the target matches target_gid. If there are no matches,
+   * the function returns invalid_index.
    */
   virtual index find_first_target( const thread tid,
     const index start_lcid,
@@ -198,7 +199,8 @@ public:
   /**
    * Return lcid of first connection where the gid of the target
    * matches target_gid; consider only the connections with lcids
-   * given in matching_lcids.
+   * given in matching_lcids. If there is no match, the function returns
+   * invalid_index.
    */
   virtual index find_matching_target( const thread tid,
     const std::vector< index >& matching_lcids,
@@ -259,7 +261,7 @@ public:
 
     C_[ lcid ].get_status( dict );
 
-    // set target gid here, where tid is available
+    // get target gid here, where tid is available
     // necessary for hpc synapses using TargetIdentifierIndex
     def< long >( dict, names::target, C_[ lcid ].get_target( tid )->get_gid() );
   }
@@ -390,7 +392,6 @@ public:
     const std::vector< ConnectorModel* >& cm,
     Event& e )
   {
-
     typename ConnectionT::CommonPropertiesType const& cp =
       static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
         ->get_common_properties();
@@ -418,7 +419,7 @@ public:
     return 1 + lcid_offset; // event was delivered to at least one target
   }
 
-  // implemented in connector_base_impl.h
+  // Implemented in connector_base_impl.h
   void send_weight_event( const thread tid,
     const unsigned int lcid,
     Event& e,

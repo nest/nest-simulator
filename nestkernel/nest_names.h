@@ -84,9 +84,9 @@ extern const Name b;
 extern const Name beta;
 extern const Name beta_Ca;
 extern const Name binary;
+extern const Name buffer_size_secondary_events;
 extern const Name buffer_size_spike_data;
 extern const Name buffer_size_target_data;
-extern const Name buffer_size_secondary_events;
 
 extern const Name c;
 extern const Name c_1;
@@ -283,8 +283,8 @@ extern const Name ms_per_tic;
 extern const Name mu;
 extern const Name mu_minus;
 extern const Name mu_plus;
-extern const Name multapses;
 extern const Name mult_coupling;
+extern const Name multapses;
 extern const Name music_channel;
 
 extern const Name n;

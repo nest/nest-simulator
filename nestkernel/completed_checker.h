@@ -54,7 +54,7 @@ private:
   bool* a_;
 
   /**
-   * Size of a. should always be identical to number of threads.
+   * Size of a_, should always be identical to number of threads.
    */
   size_t size_;
 
@@ -95,7 +95,7 @@ public:
   void set( const thread tid, const bool v );
 
   /**
-   * Returns const reference toelement at position tid.
+   * Returns const reference to element at position tid.
    */
   const bool& operator[]( const thread tid ) const;
 };
@@ -103,8 +103,8 @@ public:
 inline void
 CompletedChecker::logical_and( const thread tid, const bool v )
 {
-// use 'bitwise and', since 'logical and' is not supported by 'omp
-// atomic update'; yields same result for bool
+// Use 'bitwise and', since 'logical and' is not supported by 'omp
+// atomic update'; yields same result for bool.
 #pragma omp atomic update
   a_[ tid ] &= v;
 }

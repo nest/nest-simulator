@@ -145,9 +145,9 @@ EventDeliveryManager::send_secondary( const Node& source, SecondaryEvent& e )
   const thread tid = kernel().vp_manager.get_thread_id();
   const index lid = kernel().vp_manager.gid_to_lid( source.get_gid() );
 
-  // we need to consider every synapse type this event supports to
+  // We need to consider every synapse type this event supports to
   // make sure also labeled and connection created by CopyModel are
-  // considered
+  // considered.
   const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
   for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin();
         cit != supported_syn_ids.end();

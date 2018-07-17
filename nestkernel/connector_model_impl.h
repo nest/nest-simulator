@@ -275,14 +275,14 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
 
   if ( ( *thread_local_connectors )[ syn_id ] == NULL )
   {
-    // no homogeneous Connector with this syn_id exists, we need to create a new
-    // homogeneous Connector
+    // No homogeneous Connector with this syn_id exists, we need to create a
+    // new homogeneous Connector.
     ( *thread_local_connectors )[ syn_id ] =
       new Connector< ConnectionT >( syn_id );
   }
 
   ConnectorBase* connector = ( *thread_local_connectors )[ syn_id ];
-  // the following line will throw an exception, if it does not work
+  // The following line will throw an exception, if it does not work.
   connection.check_connection(
     src, tgt, receptor_type, get_common_properties() );
 
@@ -306,8 +306,8 @@ GenericConnectorModel< ConnectionT >::reserve_connections(
 
   if ( ( *thread_local_connectors )[ syn_id ] == NULL )
   {
-    // no homogeneous Connector with this syn_id exists, we need to create a new
-    // homogeneous Connector
+    // No homogeneous Connector with this syn_id exists, we need to create a
+    // new homogeneous Connector.
     ( *thread_local_connectors )[ syn_id ] =
       new Connector< ConnectionT >( syn_id );
   }

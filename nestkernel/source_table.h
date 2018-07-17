@@ -32,8 +32,8 @@
 #include <vector>
 
 // Includes from nestkernel:
-#include "nest_types.h"
 #include "mpi_manager.h"
+#include "nest_types.h"
 #include "source.h"
 #include "source_table_position.h"
 
@@ -175,7 +175,7 @@ public:
     const thread tid );
 
   /**
-   * Determines maximal saved_positions_ after which it is save to
+   * Determines maximal saved_positions_ after which it is safe to
    * delete sources during clean().
    */
   SourceTablePosition find_maximal_position() const;
@@ -207,7 +207,7 @@ public:
 
   /**
    * Finds the first entry in sources_ at the given thread id and
-   * synapse type, that is equal to sgid.
+   * synapse type that is equal to sgid.
    */
   index find_first_source( const thread tid,
     const synindex syn_id,
@@ -290,10 +290,10 @@ SourceTable::clear( const thread tid )
 inline void
 SourceTable::reject_last_target_data( const thread tid )
 {
-  // the last target data returned by get_next_target_data() could not
-  // be inserted into MPI buffer due to overflow. we hence need to
+  // The last target data returned by get_next_target_data() could not
+  // be inserted into MPI buffer due to overflow. We hence need to
   // correct the processed flag of the last entry (see
-  // source_table_impl.h)
+  // source_table.cpp)
   assert( ( *current_positions_[ tid ] ).lcid + 1
     < static_cast< long >(
             ( *sources_[ ( *current_positions_[ tid ] )
@@ -347,10 +347,10 @@ SourceTable::restore_entry_point( const thread tid )
 inline void
 SourceTable::reset_entry_point( const thread tid )
 {
-  // since we read the source table backwards, we need to set saved
-  // values to the biggest possible value. these will be used to
+  // Since we read the source table backwards, we need to set saved
+  // values to the biggest possible value. These will be used to
   // initialize current_positions_ correctly upon calling
-  // restore_entry_point. however, this can only be done if other
+  // restore_entry_point. However, this can only be done if other
   // values have valid values.
   ( *saved_positions_[ tid ] ).tid = sources_.size() - 1;
   if ( ( *saved_positions_[ tid ] ).tid > -1 )

@@ -135,16 +135,16 @@ nest::SourceTable::find_maximal_position() const
 void
 nest::SourceTable::clean( const thread tid )
 {
-  // find maximal position in source table among threads to make sure
-  // unprocessed entries are not removed. given this maximal position,
+  // Find maximal position in source table among threads to make sure
+  // unprocessed entries are not removed. Given this maximal position,
   // we can safely delete all larger entries since they will not be
   // touched any more.
   const SourceTablePosition max_position = find_maximal_position();
 
-  // if this thread corresponds to max_position's thread, we can only
+  // If this thread corresponds to max_position's thread, we can only
   // delete part of the sources table, with indices larger than those
   // in max_position; if this thread is larger than max_positions's
-  // thread, we can delete all sources; otherwise we do nothing
+  // thread, we can delete all sources; otherwise we do nothing.
   if ( max_position.tid == tid )
   {
     for ( synindex syn_id = max_position.syn_id;
@@ -367,7 +367,6 @@ nest::SourceTable::get_next_target_data( const thread tid,
   // TargetData object or we have reached the end of the sources table
   while ( true )
   {
-
     current_position.wrap_position( sources_ );
     if ( current_position.is_at_end() )
     {
@@ -382,8 +381,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
     if ( const_current_source.is_processed()
       or const_current_source.is_disabled() )
     {
-      // looks like we've processed this already, let's
-      // continue
+      // looks like we've processed this already, let's continue
       --current_position.lcid;
       continue;
     }
@@ -407,7 +405,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
     // we have found a valid entry, so mark it as processed
     current_source.set_processed( true );
 
-    // we need to set the marker whether the entry following this
+    // we need to set a marker stating whether the entry following this
     // entry, if existent, has the same source; start by assuming it
     // has a different source, only change if necessary
     kernel().connection_manager.set_has_source_subsequent_targets(

@@ -53,7 +53,7 @@ private:
   // define shifts to arrive at correct bits; note: the size of these
   // variables is most likely not enough for exascale computers, or
   // very small number of threads; if any issues are encountered with
-  // these values, we can introduce compilerflags that rearrange these
+  // these values, we can introduce compiler flags that rearrange these
   // sizes according to the target platform/application
   static const size_t lcid_shift = 0;
   static const size_t rank_shift = 27;
@@ -166,8 +166,8 @@ inline void
 Target::set_lcid( const index lcid )
 {
   assert( lcid < max_lcid_ );
-  // reset corresponding bits using complement of mask and write new
-  // bits by shifting input appropiately. need to cast to long first,
+  // Reset corresponding bits using complement of mask and write new
+  // bits by shifting input appropriately. Need to cast to long first,
   // to avoid overflow of input by left shifts.
   data_ = ( data_ & ( ~lcid_mask ) )
     | ( static_cast< unsigned long >( lcid ) << lcid_shift );

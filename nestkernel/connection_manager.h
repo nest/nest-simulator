@@ -361,7 +361,7 @@ public:
    */
   bool have_connections_changed() const;
 
-  /** 
+  /**
    * Sets flag indicating whether connection information needs to be
    * communicated.
    */

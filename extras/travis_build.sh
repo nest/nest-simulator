@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# build.sh
+# travis_build.sh
 #
 # This file is part of NEST.
 #

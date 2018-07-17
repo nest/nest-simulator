@@ -21,11 +21,11 @@
 
 """
 This Python script is part of the NEST Travis CI build and test environment.
-It parses the Travis CI build log file 'build.sh.log' (The name is hard-wired
-in '.travis.yml'.) and creates the 'NEST Travis CI Build Summary'.
+It parses the Travis CI build log file 'travis_build.sh.log' (The name is
+hard-wired in '.travis.yml'.) and creates the 'NEST Travis CI Build Summary'.
 
 NOTE: Please note that the parsing process is coupled to shell script
-      'build.sh' and relies on the message numbers "MSGBLDnnnn'.
+      'travis_build.sh' and relies on the message numbers "MSGBLDnnnn'.
       It does not rely on the messages texts itself except for file names.
 """
 
@@ -594,8 +594,8 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
        summary_format is not None:
 
         # Keys, i.e. file names, are identical in these dictionaries.
-        # If this assertion raises an exception, please check build.sh which
-        # runs the Travis CI build.
+        # If this assertion raises an exception, please check travis_build.sh
+        # which runs the Travis CI build.
         assert (summary_format.keys() == summary_cppcheck.keys())
         assert (summary_format.keys() == summary_vera.keys())
 

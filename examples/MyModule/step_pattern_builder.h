@@ -29,6 +29,44 @@
 namespace mynest
 {
 
+/* BeginDocumentation
+   Name: step_pattern - Rule connecting sources and targets with a step pattern
+
+   Synopsis:
+   source targets << /rule /step_pattern
+                     /source_step M
+                     /target_step N >> << syn spec >> Connect
+
+   Parameters:
+   source_step   - Make connection from every source_step'th neuron
+   target_step   - Make connection to every target_step'th neuron
+
+   Description:
+   This connection rule subsamples the source and target arrays given with
+   step sizes source_step and target_step, beginning with the first element
+   in each array, and connects the selected nodes. If source_step and
+   target_step both are equal 1, step_pattern is equivalent to all_to_all.
+
+   Example:
+
+   /n /iaf_psc_alpha 10 Create 1 exch cvgidcollection def
+   n n << /rule /step_pattern /source_step 4 /target_step 3 >> Connect
+   << >> GetConnections ==
+
+     [<1,1,0,0,0> <1,4,0,0,1> <1,7,0,0,2> <1,10,0,0,3>
+      <5,1,0,0,0> <5,4,0,0,1> <5,7,0,0,2> <5,10,0,0,3>
+      <9,1,0,0,0> <9,4,0,0,1> <9,7,0,0,2> <9,10,0,0,3>]
+
+   Remark:
+   This rule is only provided as an example for how to write your own
+   connection rule function.
+
+   Author:
+   Hans Ekkehard Plesser
+
+   SeeAlso: Connect
+*/
+
 class StepPatternBuilder : public nest::ConnBuilder
 {
 public:

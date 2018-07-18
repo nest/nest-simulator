@@ -31,7 +31,10 @@ namespace nest
   void
   IOManager::register_recording_backend( Name name )
   {
-    recording_backends_.insert(std::make_pair( name, new RBT() ) );
+    RBT* recording_backend = new RBT();
+    recording_backend->initialize();
+
+    recording_backends_.insert(std::make_pair( name, recording_backend ) );
   }
 }
 

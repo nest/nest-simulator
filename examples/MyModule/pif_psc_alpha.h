@@ -43,9 +43,10 @@ Name: pif_psc_alpha - Perfect integrate-and-fire neuron model with alpha PSC
 
 Description:
 pif_psc_alpha implements a non-leaky integrate-and-fire neuron with
-with alpha-function shaped synaptic currents. The threshold crossing is
-followed by an absolute refractory period during which the membrane potential
-is clamped to the resting potential, while synaptic currents evolve normally.
+alpha-function shaped synaptic currents. The threshold crossing is
+followed by an absolute refractory period during which the membrane
+potential is clamped to the resting potential, while synaptic currents
+evolve normally.
 
 The dynamics of the neuron are defined by
 

@@ -351,7 +351,7 @@ configure_file(
 ##################            Install Extra Files             ##################
 ################################################################################
 
-install( FILES LICENSE README.md NEWS
+install( FILES LICENSE README.md
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 

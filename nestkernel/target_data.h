@@ -28,8 +28,8 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
-#include "target.h"
 #include "static_assert.h"
+#include "target.h"
 
 namespace nest
 {

@@ -1077,7 +1077,6 @@ public:
     std::vector< unsigned int >::iterator& pos )
   {
     for ( typename std::vector< DataType >::iterator i = coeffarray_as_d_begin_;
-
           i != coeffarray_as_d_end_;
           i++ )
     {
@@ -1217,7 +1216,6 @@ std::vector< synindex >
 template < typename DataType, typename Subclass >
 std::vector< synindex >
   DataSecondaryEvent< DataType, Subclass >::supported_syn_ids_;
-
 
 template < typename DataType, typename Subclass >
 size_t DataSecondaryEvent< DataType, Subclass >::coeff_length_ = 0;

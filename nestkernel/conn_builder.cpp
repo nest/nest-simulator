@@ -1632,21 +1632,22 @@ nest::BernoulliBuilder::connect_()
     // get thread id
     const thread tid = kernel().vp_manager.get_thread_id();
 
+    // compute expected number of connections from binomial
+    // distribution; estimate an upper bound by assuming Gaussianity
+    const size_t max_num_connections =
+      std::ceil( float( targets_->size() ) * float( sources_->size() )
+        / kernel().vp_manager.get_num_virtual_processes() );
+
+    const size_t expected_num_connections = max_num_connections * p_;
+    const size_t std_num_connections =
+      std::sqrt( max_num_connections * p_ * ( 1 - p_ ) );
+
+    kernel().connection_manager.reserve_connections( tid,
+      get_synapse_model(),
+      expected_num_connections + 3 * std_num_connections );
+
     try
     {
-      // compute expected number of connections from binomial
-      // distribution; estimate an upper bound by assuming Gaussianity
-      const size_t max_num_connections =
-        std::ceil( targets_->size() * sources_->size()
-          / static_cast< double >(
-                     kernel().vp_manager.get_num_virtual_processes() ) );
-      const size_t expected_num_connections = max_num_connections * p_;
-      const size_t std_num_connections =
-        std::sqrt( max_num_connections * p_ * ( 1 - p_ ) );
-      kernel().connection_manager.reserve_connections( tid,
-        get_synapse_model(),
-        expected_num_connections + 3 * std_num_connections );
-
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
@@ -1742,7 +1743,7 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder(
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
   , p_( ( *conn_spec )[ names::p ] )
 {
-  // this connector takes care of symmetric connections on its own
+  // This connector takes care of symmetric connections on its own
   creates_symmetric_connections_ = true;
 
   if ( p_ < 0 or 1 <= p_ )

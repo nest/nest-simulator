@@ -24,9 +24,9 @@
 #define TARGET_TABLE_DEVICES_H
 
 // C++ includes:
-#include <vector>
-#include <map>
 #include <cassert>
+#include <map>
+#include <vector>
 
 // Includes from nestkernel:
 #include "connection_id.h"

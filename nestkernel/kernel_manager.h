@@ -164,13 +164,13 @@ public:
   void reset();
 
   /**
-   * Reset kernel after num threads have changed.
+   * Change number of threads.
    *
    * No need to reset all managers, only those affected by num thread changes.
    *
    * @see initialize(), finalize()
    */
-  void num_threads_changed_reset();
+  void change_num_threads( size_t num_threads );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& );

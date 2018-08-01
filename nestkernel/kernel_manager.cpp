@@ -140,13 +140,15 @@ nest::KernelManager::reset()
 }
 
 void
-nest::KernelManager::num_threads_changed_reset()
+nest::KernelManager::change_num_threads( size_t num_threads )
 {
   node_manager.finalize();
   connection_manager.finalize();
   model_manager.finalize();
   modelrange_manager.finalize();
   rng_manager.finalize();
+
+  vp_manager.set_num_threads( num_threads );
 
   rng_manager.initialize();
   // independent of threads, but node_manager needs it reset

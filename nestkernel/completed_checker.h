@@ -97,7 +97,7 @@ public:
   /**
    * Returns const reference to element at position tid.
    */
-  const bool& operator[]( const thread tid ) const;
+  bool operator[]( const thread tid ) const;
 };
 
 inline void
@@ -116,7 +116,7 @@ CompletedChecker::set( const thread tid, const bool v )
   a_[ tid ] = v;
 }
 
-inline const bool& CompletedChecker::operator[]( const thread tid ) const
+inline bool CompletedChecker::operator[]( const thread tid ) const
 {
   return a_[ tid ];
 }

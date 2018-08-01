@@ -56,7 +56,7 @@ EventDeliveryManager::EventDeliveryManager()
   , recv_buffer_secondary_events_()
   , time_collocate_( 0.0 )
   , time_communicate_( 0.0 )
-  , local_spike_counter_( std::vector< unsigned long >() )
+  , local_spike_counter_()
   , send_buffer_spike_data_()
   , recv_buffer_spike_data_()
   , send_buffer_off_grid_spike_data_()
@@ -65,7 +65,7 @@ EventDeliveryManager::EventDeliveryManager()
   , recv_buffer_target_data_()
   , buffer_size_target_data_has_changed_( false )
   , buffer_size_spike_data_has_changed_( false )
-  , gather_completed_checker_( CompletedChecker() )
+  , gather_completed_checker_()
 {
 }
 
@@ -889,7 +889,7 @@ EventDeliveryManager::resize_spike_register_( const thread tid )
         ++it )
   {
     it->resize(
-      kernel().connection_manager.get_min_delay(), std::vector< Target >( 0 ) );
+      kernel().connection_manager.get_min_delay(), std::vector< Target >() );
   }
 
   for (
@@ -899,7 +899,7 @@ EventDeliveryManager::resize_spike_register_( const thread tid )
     ++it )
   {
     it->resize( kernel().connection_manager.get_min_delay(),
-      std::vector< OffGridTarget >( 0 ) );
+      std::vector< OffGridTarget >() );
   }
 }
 

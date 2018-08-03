@@ -33,9 +33,15 @@
 #include <time.h>
 #include <unistd.h>
 
+// C++ includes:
+#include <algorithm>
+#include <limits>
+
 // Generated includes:
 #include "config.h"
-#include "config.h"
+
+// Includes from libnestutil
+#include "compose.hpp"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -1680,53 +1686,33 @@ TimeFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( tmp );
 }
 
-/*BeginDocumentation
-Name: sleep_i - suspends proces for n seconds
-Synopsis:  n sleep_i -> -
-Description:
-Calls the POSIX select() function.
-SeeAlso: clock, usertime, tic, toc
-*/
-
-void
-Sleep_iFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-
-  const long sec = static_cast< long >( i->OStack.pick( 0 ) );
-  const long usec = 0;
-  struct timeval tv = { sec, usec };
-  if ( sec > 0 )
-  {
-    select( 0, 0, 0, 0, &tv );
-  }
-
-  i->OStack.pop();
-  i->EStack.pop();
-}
-
-/*BeginDocumentation
-Name: sleep_i - suspends proces for x seconds
-Synopsis:  x sleep_d -> -
-Description:
-Calls the POSIX select() function.
-SeeAlso: clock, usertime, tic, toc
-*/
 
 void
 Sleep_dFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  const long sec = 0;
-  const long usec = static_cast< long >(
-    static_cast< double >( i->OStack.pick( 0 ) ) * 1000000. );
+  const double t = static_cast< double >( i->OStack.pick( 0 ) );
 
-  struct timeval tv = { sec, usec };
-  if ( usec > 0 )
+  if ( t < 0 )
   {
-    select( 0, 0, 0, 0, &tv );
+    throw BadParameterValue( "t >= 0 required." );
   }
+
+  if ( t > std::numeric_limits< int >::max() )
+  {
+    throw BadParameterValue( String::compose(
+      "t < %1s required.", std::numeric_limits< int >::max() ) );
+  }
+
+  /* Since sleep() only handles entire seconds and usleep() only
+   * times shorter than 1s, we need to split the sleep; see #973. */
+  const unsigned int t_sec = static_cast< unsigned int >( t );
+  const unsigned int t_musec =
+    std::min( 999999U, static_cast< unsigned int >( ( t - t_sec ) * 1e6 ) );
+
+  sleep( t_sec );
+  usleep( t_musec );
 
   i->OStack.pop();
   i->EStack.pop();
@@ -2132,7 +2118,6 @@ const PclockspersecFunction pclockspersecfunction;
 const PgetrusageFunction pgetrusagefunction;
 const TimeFunction timefunction;
 const Sleep_dFunction sleep_dfunction;
-const Sleep_iFunction sleep_ifunction;
 
 const Token_sFunction token_sfunction;
 const Token_isFunction token_isfunction;
@@ -2225,7 +2210,6 @@ init_slicontrol( SLIInterpreter* i )
   i->createcommand( "pgetrusage", &pgetrusagefunction );
   i->createcommand( "time", &timefunction );
   i->createcommand( "sleep_d", &sleep_dfunction );
-  i->createcommand( "sleep_i", &sleep_ifunction );
 
   i->createcommand( "token_s", &token_sfunction );
   i->createcommand( "token_is", &token_isfunction );

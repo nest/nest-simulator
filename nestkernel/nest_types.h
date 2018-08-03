@@ -81,7 +81,7 @@ namespace nest
 
 #ifdef HAVE_LONG_LONG
 typedef long long tic_t;
-#ifdef IS_K
+#ifdef LLONG_MAX
 const tic_t tic_t_max = LLONG_MAX;
 const tic_t tic_t_min = LLONG_MIN;
 #else

@@ -106,6 +106,11 @@ endif ()
 ##################           Find utility programs            ##################
 ################################################################################
 
+# needed for pynest test suite
+if ( ${with-python} STREQUAL "ON" OR  ${with-python} STREQUAL "2" OR  ${with-python} STREQUAL "3" )
+  find_program( NOSETESTS NAMES nosetests )
+endif ()
+
 # needed for target doc and fulldoc
 find_package( Doxygen )
 find_program( SED NAMES sed gsed )
@@ -124,6 +129,7 @@ include( CPackVariables )
 include( CheckExtraCompilerFeatures )
 include( ConfigureSummary )
 include( GetTriple )
+include( DefaultCompilerFlags )
 
 # get triples arch-vendor-os
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
@@ -132,6 +138,9 @@ get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_T
 # set cpack variables and
 # generate CPackConfig.cmake CPackSourceConfig.cmake files
 nest_set_cpack_variables()
+
+# set default compiler flags
+nest_set_default_compiler_flags()
 
 # Process the command line arguments
 nest_process_with_optimize()
@@ -356,7 +365,7 @@ configure_file(
 ##################            Install Extra Files             ##################
 ################################################################################
 
-install( FILES LICENSE README.md NEWS
+install( FILES LICENSE README.md
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 

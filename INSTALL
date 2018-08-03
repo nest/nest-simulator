@@ -362,3 +362,4 @@ On the K Computer:
   `-x1`, and the compilation succeeds (the impact on performance was not analyzed):
 
         -Dwith-optimize="-Kfast -x1"
+  For NEST 3 or later, C++11 Standard library is required at build time, use `-Xg -std=c++11`.

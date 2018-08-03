@@ -33,9 +33,9 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
 #include "stimulating_device.h"
 
 namespace nest
@@ -100,7 +100,7 @@ Remarks:
 SeeAlso: poisson_generator_ps, Device, parrot_neuron
 */
 
-class poisson_generator : public Node
+class poisson_generator : public DeviceNode
 {
 
 public:

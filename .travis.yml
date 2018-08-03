@@ -90,6 +90,7 @@ addons:
      - libboost-wave-dev
      - libboost-python-dev
      - libboost-program-options-dev
+     - libboost-test-dev
 cache:
    directory:
      - $HOME/.cache

@@ -12,6 +12,7 @@ pynest/pynestkernel.cpp
 *.pyc
 Makefile
 build/
+install/
 
 /juqueen/
 /extras/nest-config

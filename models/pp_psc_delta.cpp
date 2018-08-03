@@ -166,7 +166,7 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
     updateValue< std::vector< double > >( d, names::tau_sfa, tau_sfa_ );
     updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
   }
-  catch ( TypeMismatch e )
+  catch ( TypeMismatch& e )
   {
     multi_param_ = 0;
     double tau_sfa_temp_;

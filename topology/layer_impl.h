@@ -125,7 +125,7 @@ Layer< D >::connect( AbstractLayer& target_layer, ConnectionCreator& connector )
     Layer< D >& tgt = dynamic_cast< Layer< D >& >( target_layer );
     connector.connect( *this, tgt );
   }
-  catch ( std::bad_cast e )
+  catch ( std::bad_cast& e )
   {
     throw BadProperty(
       "Target layer must have same number of dimensions as source layer." );
@@ -359,9 +359,10 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
         getValue< ConnectionDatum >( connectome.get( i ) );
       DictionaryDatum result_dict =
         kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
+          con_id.get_target_gid(),
+          con_id.get_target_thread(),
           con_id.get_synapse_model_id(),
-          con_id.get_port(),
-          con_id.get_target_thread() );
+          con_id.get_port() );
 
       long target_gid = getValue< long >( result_dict, names::target );
       double weight = getValue< double >( result_dict, names::weight );

@@ -58,9 +58,9 @@ SeeAlso: Device, StimulatingDevice
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
 #include "ring_buffer.h"
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
@@ -72,7 +72,7 @@ namespace nest
  *
  * @ingroup Devices
  */
-class dc_generator : public Node
+class dc_generator : public DeviceNode
 {
 
 public:
@@ -222,7 +222,6 @@ dc_generator::set_status( const DictionaryDatum& d )
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
 }
-
 
 } // namespace
 

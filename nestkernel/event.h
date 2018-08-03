@@ -151,7 +151,6 @@ public:
    * If this resolution is not fine enough, the creation time
    * can be corrected by using the time attribute.
    */
-
   Time const& get_stamp() const;
 
   /**
@@ -360,7 +359,6 @@ public:
 
   void set_multiplicity( int );
   int get_multiplicity() const;
-
 
 protected:
   int multiplicity_;
@@ -852,6 +850,10 @@ public:
     std::vector< unsigned int >::iterator& pos ) = 0;
   virtual std::vector< unsigned int >::iterator& operator>>(
     std::vector< unsigned int >::iterator& pos ) = 0;
+
+  virtual const std::vector< synindex >& get_supported_syn_ids() const = 0;
+
+  virtual void reset_supported_syn_ids() = 0;
 };
 
 /**
@@ -961,6 +963,7 @@ class DataSecondaryEvent : public SecondaryEvent
 {
 private:
   // we chose std::vector over std::set because we expect this to be short
+  static std::vector< synindex > pristine_supported_syn_ids_;
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
@@ -980,6 +983,7 @@ public:
   set_syn_id( const synindex synid )
   {
     VPManager::assert_single_threaded();
+    pristine_supported_syn_ids_.push_back( synid );
     supported_syn_ids_.push_back( synid );
   }
 
@@ -995,6 +999,29 @@ public:
     assert( not supports_syn_id( synid ) );
     VPManager::assert_single_threaded();
     supported_syn_ids_.push_back( synid );
+  }
+
+  const std::vector< synindex >&
+  get_supported_syn_ids() const
+  {
+    return supported_syn_ids_;
+  }
+
+  /**
+   * Resets the vector of supported syn ids to those originally
+   * registered via ModelsModule or user defined Modules, i.e.,
+   * removes all syn ids created by CopyModel. This is important to
+   * maintain consistency across ResetKernel, which removes all copied
+   * models.
+   */
+  void
+  reset_supported_syn_ids()
+  {
+    supported_syn_ids_.clear();
+    for ( size_t i = 0; i < pristine_supported_syn_ids_.size(); ++i )
+    {
+      supported_syn_ids_.push_back( pristine_supported_syn_ids_[ i ] );
+    }
   }
 
   static void
@@ -1028,8 +1055,6 @@ public:
     std::vector< unsigned int >::iterator& pos )
   {
     // The synid can be skipped here as it is stored in a static vector
-    pos += number_of_uints_covered< synindex >();
-    read_from_comm_buffer( sender_gid_, pos );
 
     // generating a copy of the coeffarray is too time consuming
     // therefore we save an iterator to the beginning+end of the coeffarray
@@ -1051,8 +1076,6 @@ public:
   std::vector< unsigned int >::iterator& operator>>(
     std::vector< unsigned int >::iterator& pos )
   {
-    write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
-    write_to_comm_buffer( sender_gid_, pos );
     for ( typename std::vector< DataType >::iterator i = coeffarray_as_d_begin_;
           i != coeffarray_as_d_end_;
           i++ )
@@ -1186,6 +1209,10 @@ DataSecondaryEvent< DataType, Subclass >::get_coeffvalue(
   return elem;
 }
 
+template < typename Datatype, typename Subclass >
+std::vector< synindex >
+  DataSecondaryEvent< Datatype, Subclass >::pristine_supported_syn_ids_;
+
 template < typename DataType, typename Subclass >
 std::vector< synindex >
   DataSecondaryEvent< DataType, Subclass >::supported_syn_ids_;
@@ -1235,7 +1262,7 @@ DiffusionConnectionEvent::get_diffusion_factor() const
 inline bool
 Event::is_valid() const
 {
-  return ( ( sender_ != NULL ) && ( receiver_ != NULL ) && ( d_ > 0 ) );
+  return ( ( sender_ != NULL ) and ( receiver_ != NULL ) and ( d_ > 0 ) );
 }
 
 inline void

@@ -89,6 +89,7 @@ extern "C" {
 // to non-virtual thunk" MH 12-02-22, redid fix by JME 12-01-27.
 long bg_get_heap_mem();
 long bg_get_stack_mem();
+long bg_get_mmap_mem();
 }
 #endif
 
@@ -861,6 +862,8 @@ Processes::MemoryThisjobBgFunction::execute( SLIInterpreter* i ) const
   ( *dict )[ "heap" ] = heap_memory;
   unsigned long stack_memory = bg_get_stack_mem();
   ( *dict )[ "stack" ] = stack_memory;
+  unsigned long mmap_memory = bg_get_mmap_mem();
+  ( *dict )[ "mmap" ] = mmap_memory;
 
   i->OStack.push( dict );
   i->EStack.pop();

@@ -28,9 +28,9 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "device_node.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "node.h"
 #include "recording_device.h"
 #include "sibling_container.h"
 
@@ -155,7 +155,7 @@ namespace nest
  * @ingroup Devices
  * @see UniversalDataLogger
  */
-class Multimeter : public Node
+class Multimeter : public DeviceNode
 {
 
 public:

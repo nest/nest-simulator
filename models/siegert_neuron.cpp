@@ -464,14 +464,17 @@ nest::siegert_neuron::update_( Time const& origin,
 void
 nest::siegert_neuron::handle( DiffusionConnectionEvent& e )
 {
+  const double drift = e.get_drift_factor();
+  const double diffusion = e.get_diffusion_factor();
+
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
   while ( it != e.end() )
   {
-    double value = e.get_coeffvalue( it );
-    B_.drift_input_[ i ] += e.get_drift_factor() * value;
-    B_.diffusion_input_[ i ] += e.get_diffusion_factor() * value;
+    const double value = e.get_coeffvalue( it );
+    B_.drift_input_[ i ] += drift * value;
+    B_.diffusion_input_[ i ] += diffusion * value;
     ++i;
   }
 }

@@ -125,14 +125,11 @@ public:
    * @param s  Source node for connection
    * @param t  Target node for connection
    * @param receptor_type  Receptor type for connection
-   * @param lastspike Time of most recent spike of presynaptic (sender) neuron,
-   *                  not used here
    */
   void
   check_connection( nest::Node& s,
     nest::Node& t,
     nest::rport receptor_type,
-    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -143,13 +140,9 @@ public:
    * Send an event to the receiver of this connection.
    * @param e The event to send
    * @param t Thread
-   * @param t_lastspike Point in time of last spike sent.
    * @param cp Common properties to all synapses.
    */
-  void send( nest::Event& e,
-    nest::thread t,
-    double t_lastspike,
-    const CommonPropertiesType& cp );
+  void send( nest::Event& e, nest::thread t, const CommonPropertiesType& cp );
 
   // The following methods contain mostly fixed code to forward the
   // corresponding tasks to corresponding methods in the base class and the w_
@@ -179,7 +172,6 @@ template < typename targetidentifierT >
 inline void
 DropOddSpikeConnection< targetidentifierT >::send( nest::Event& e,
   nest::thread t,
-  double last,
   const CommonPropertiesType& props )
 {
   if ( e.get_stamp().get_steps() % 2 ) // stamp is odd, drop it

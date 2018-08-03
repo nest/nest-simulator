@@ -90,7 +90,7 @@ aeif_cond_alpha_multisynapse::insert_conductance_recordables( size_t first )
 DataAccessFunctor< aeif_cond_alpha_multisynapse >
 aeif_cond_alpha_multisynapse::get_data_access_functor( size_t elem )
 {
-  return DataAccessFunctor< aeif_cond_alpha_multisynapse >( this, elem );
+  return DataAccessFunctor< aeif_cond_alpha_multisynapse >( *this, elem );
 }
 
 /* ----------------------------------------------------------------

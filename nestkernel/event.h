@@ -410,11 +410,11 @@ public:
   void set_receiver_gid( index );
 
 protected:
-  index receiver_gid_; //!< GID of receiver or -1.
+  index receiver_gid_; //!< GID of receiver or 0.
 };
 
 inline WeightRecorderEvent::WeightRecorderEvent()
-  : receiver_gid_( -1 )
+  : receiver_gid_( 0 )
 {
 }
 

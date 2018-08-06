@@ -135,34 +135,20 @@ RecordablesMap< HostNode >::create()
 template < typename HostNode >
 class DataAccessFunctor
 {
+  // Pointer instead of reference required to avoid problems with
+  // copying element in std::map when using libc++ under C++11.
   HostNode* parent_;
   size_t elem_;
 
 public:
   DataAccessFunctor( HostNode& n, size_t elem )
-    : elem_( elem )
-  {
-    parent_ = &n;
-  };
-
-  DataAccessFunctor( HostNode* n, size_t elem )
-    : elem_( elem )
-  {
-    parent_ = n;
-  };
+    : parent_( &n )
+    , elem_( elem ){};
 
   double operator()() const
   {
     return parent_->get_state_element( elem_ );
   };
-
-  DataAccessFunctor< HostNode >& operator=(
-    const DataAccessFunctor< HostNode >& other )
-  {
-    this->elem_ = other.elem_;
-    this->parent_ = other.parent_;
-    return *this;
-  }
 };
 
 
@@ -181,9 +167,9 @@ public:
  */
 template < typename HostNode >
 class DynamicRecordablesMap
-  : public std::map< Name, const DataAccessFunctor< HostNode > >
+  : public std::map< Name, DataAccessFunctor< HostNode > >
 {
-  typedef std::map< Name, const DataAccessFunctor< HostNode > > Base_;
+  typedef std::map< Name, DataAccessFunctor< HostNode > > Base_;
 
 public:
   virtual ~DynamicRecordablesMap()

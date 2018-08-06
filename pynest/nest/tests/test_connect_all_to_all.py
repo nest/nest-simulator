@@ -39,8 +39,6 @@ class TestAllToAll(TestParams):
     N1_array = 500
     N2_array = 10
 
-    # def testErrorMessages(self):
-
     def testConnectivity(self):
         self.setUpNetwork(self.conn_dict)
         # make sure all connections do exist
@@ -65,6 +63,7 @@ class TestAllToAll(TestParams):
                     1, self.N1_array * self.N2_array + 1
                 ).reshape(self.N2_array, self.N1_array) * 0.1
             syn_params[label] = self.param_array
+            hf.nest.ResetKernel()
             self.setUpNetwork(self.conn_dict, syn_params,
                               N1=self.N1_array, N2=self.N2_array)
             M_nest = hf.get_weighted_connectivity_matrix(
@@ -121,7 +120,7 @@ class TestAllToAll(TestParams):
     def testRPortDistribution(self):
         n_rport = 10
         nr_neurons = 20
-        hf.nest.ResetKernel()
+        hf.nest.ResetKernel()  # To reset local_num_threads
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.1 + i for i in range(n_rport)]}
         self.pop1 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)

@@ -114,10 +114,7 @@ public:
    * \param t_lastspike Point in time of last spike sent.
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    double t_lastspike,
-    const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -137,14 +134,13 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double t_lastspike,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_lastspike - get_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_delay() );
   }
 
   void
@@ -175,6 +171,8 @@ private:
   double eta_;
   double Wmax_;
   double Kplus_;
+
+  double t_lastspike_;
 };
 
 
@@ -189,7 +187,6 @@ template < typename targetidentifierT >
 inline void
 VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double t_lastspike,
   const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
@@ -204,8 +201,10 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history(
-    t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  target->get_history( t_lastspike_ - dendritic_delay,
+    t_spike - dendritic_delay,
+    &start,
+    &finish );
 
   // presynaptic neuron j, post synaptic neuron i
   // Facilitation for each post synaptic spike
@@ -213,7 +212,7 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
   double minus_dt;
   while ( start != finish )
   {
-    minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
+    minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
     ++start;
     // get_history() should make sure that
     // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
@@ -239,7 +238,9 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
   e();
 
   // exponential part for the decay, addition of one for each spike
-  Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) / tau_ ) + 1.0;
+  Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / tau_ ) + 1.0;
+
+  t_lastspike_ = t_spike;
 }
 
 
@@ -252,6 +253,7 @@ VogelsSprekelerConnection< targetidentifierT >::VogelsSprekelerConnection()
   , eta_( 0.001 )
   , Wmax_( 1.0 )
   , Kplus_( 0.0 )
+  , t_lastspike_( 0.0 )
 {
 }
 
@@ -265,6 +267,7 @@ VogelsSprekelerConnection< targetidentifierT >::VogelsSprekelerConnection(
   , eta_( rhs.eta_ )
   , Wmax_( rhs.Wmax_ )
   , Kplus_( rhs.Kplus_ )
+  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

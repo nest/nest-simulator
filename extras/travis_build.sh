@@ -184,7 +184,7 @@ PERFORM_PEP8=true
 
 # The following command line parameters indicate whether static code analysis error messages
 # will cause the Travis CI build to fail or are ignored.
-IGNORE_MSG_VERA=true
+IGNORE_MSG_VERA=false
 IGNORE_MSG_CPPCHECK=true
 IGNORE_MSG_CLANG_FORMAT=false
 IGNORE_MSG_PEP8=false
@@ -213,6 +213,7 @@ cmake \
   -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
   -Dwith-optimize=ON \
   -Dwith-warning=ON \
+  -Dwith-boost=ON \
   $CONFIGURE_THREADING \
   $CONFIGURE_MPI \
   $CONFIGURE_PYTHON \

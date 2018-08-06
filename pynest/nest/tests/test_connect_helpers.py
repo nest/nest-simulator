@@ -316,7 +316,7 @@ def chi_squared_check(degrees, expected, distribution=None):
         p-value from chi-squared test.
     '''
 
-    if distribution == 'pairwise_bernoulli':
+    if distribution in ('pairwise_bernoulli', 'symmetric_pairwise_bernoulli'):
         observed = {}
         for degree in degrees:
             if degree not in observed:

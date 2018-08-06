@@ -87,7 +87,7 @@ iaf_psc_exp_multisynapse::insert_current_recordables( size_t first )
 DataAccessFunctor< iaf_psc_exp_multisynapse >
 iaf_psc_exp_multisynapse::get_data_access_functor( size_t elem )
 {
-  return DataAccessFunctor< iaf_psc_exp_multisynapse >( this, elem );
+  return DataAccessFunctor< iaf_psc_exp_multisynapse >( *this, elem );
 }
 
 /* ----------------------------------------------------------------

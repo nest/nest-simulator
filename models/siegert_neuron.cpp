@@ -340,11 +340,11 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   double V_r_shift =
     P_.V_reset_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
 
-  if ( abs( mu - 0. ) < 1e-12 )
+  if ( std::abs( mu - 0. ) < 1e-12 )
   {
     return 0.;
   }
-  if ( mu <= theta_shift - 0.05 * abs( theta_shift ) )
+  if ( mu <= theta_shift - 0.05 * std::abs( theta_shift ) )
   {
     return siegert1( theta_shift, V_r_shift, mu, sigma );
   }

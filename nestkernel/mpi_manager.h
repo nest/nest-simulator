@@ -597,12 +597,14 @@ MPIManager::increase_buffer_size_target_data()
     if ( buffer_size_target_data_ * growth_factor_buffer_target_data_
       < max_buffer_size_target_data_ )
     {
-      buffer_size_target_data_ = static_cast< size_t >(
-        floor( buffer_size_target_data_ * growth_factor_buffer_target_data_ ) );
+      // this adjusts also send_recv_count_target_data_per_rank_
+      set_buffer_size_target_data( static_cast< size_t >( floor(
+        buffer_size_target_data_ * growth_factor_buffer_target_data_ ) ) );
     }
     else
     {
-      buffer_size_target_data_ = max_buffer_size_target_data_;
+      // this adjusts also send_recv_count_target_data_per_rank_
+      set_buffer_size_target_data( max_buffer_size_target_data_ );
     }
     return true;
   }

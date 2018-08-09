@@ -564,7 +564,6 @@ inline void
 MPIManager::set_chunk_size_secondary_events_in_int(
   const size_t chunk_size_in_int )
 {
-  assert( chunk_size_in_int >= 0 );
   chunk_size_secondary_events_in_int_ = chunk_size_in_int;
 }
 

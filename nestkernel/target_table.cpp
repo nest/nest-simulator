@@ -20,10 +20,9 @@
  *
  */
 
-#include "target_table.h"
-
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "target_table.h"
 
 // Includes from libnestutil
 #include "vector_util.h"
@@ -32,41 +31,24 @@ void
 nest::TargetTable::initialize()
 {
   const thread num_threads = kernel().vp_manager.get_num_threads();
-  targets_.resize( num_threads, NULL );
-  secondary_send_buffer_pos_.resize( num_threads, NULL );
+  targets_.resize( num_threads );
+  secondary_send_buffer_pos_.resize( num_threads );
 
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    targets_[ tid ] = new std::vector< std::vector< Target > >(
-      0, std::vector< Target >( 0, Target() ) );
+    targets_[ tid ] = std::vector< std::vector< Target > >();
     secondary_send_buffer_pos_[ tid ] =
-      new std::vector< std::vector< std::vector< size_t > > >( 0 );
+      std::vector< std::vector< std::vector< size_t > > >();
   } // of omp parallel
 }
 
 void
 nest::TargetTable::finalize()
 {
-  for ( std::vector< std::vector< std::vector< Target > >* >::iterator it =
-          targets_.begin();
-        it != targets_.end();
-        ++it )
-  {
-    ( *it )->clear();
-    delete *it;
-  }
-  targets_.clear();
-
-  for ( std::vector< std::vector< std::vector< std::vector< size_t > > >* >::
-          iterator it = secondary_send_buffer_pos_.begin();
-        it != secondary_send_buffer_pos_.end();
-        ++it )
-  {
-    ( *it )->clear();
-    delete *it;
-  }
-  secondary_send_buffer_pos_.clear();
+  std::vector< std::vector< std::vector< Target > > >().swap( targets_ );
+  std::vector< std::vector< std::vector< std::vector< size_t > > > >().swap(
+    secondary_send_buffer_pos_ );
 }
 
 void
@@ -77,15 +59,14 @@ nest::TargetTable::prepare( const thread tid )
   const size_t num_local_nodes =
     kernel().node_manager.get_max_num_local_nodes() + 1;
 
-  targets_[ tid ]->resize(
-    num_local_nodes, std::vector< Target >( 0, Target() ) );
+  targets_[ tid ].resize( num_local_nodes );
 
-  ( *secondary_send_buffer_pos_[ tid ] ).resize( num_local_nodes );
+  secondary_send_buffer_pos_[ tid ].resize( num_local_nodes );
 
   for ( size_t lid = 0; lid < num_local_nodes; ++lid )
   {
     // resize to maximal possible synapse-type index
-    ( *secondary_send_buffer_pos_[ tid ] )[ lid ].resize(
+    secondary_send_buffer_pos_[ tid ][ lid ].resize(
       kernel().model_manager.get_num_synapse_prototypes() );
   }
 }
@@ -94,12 +75,12 @@ void
 nest::TargetTable::compress_secondary_send_buffer_pos( const thread tid )
 {
   for ( std::vector< std::vector< std::vector< size_t > > >::iterator it =
-          ( *secondary_send_buffer_pos_[ tid ] ).begin();
-        it != ( *secondary_send_buffer_pos_[ tid ] ).end();
+          secondary_send_buffer_pos_[ tid ].begin();
+        it != secondary_send_buffer_pos_[ tid ].end();
         ++it )
   {
-    for ( std::vector< std::vector< size_t > >::iterator iit = ( *it ).begin();
-          iit != ( *it ).end();
+    for ( std::vector< std::vector< size_t > >::iterator iit = it->begin();
+          iit != it->end();
           ++iit )
     {
       std::sort( iit->begin(), iit->end() );
@@ -117,13 +98,13 @@ nest::TargetTable::add_target( const thread tid,
 {
   const index lid = target_data.get_source_lid();
 
-  vector_util::grow( ( *targets_[ tid ] )[ lid ] );
+  vector_util::grow( targets_[ tid ][ lid ] );
 
   if ( target_data.is_primary() )
   {
     const TargetDataFields& target_fields = target_data.target_data;
 
-    ( *targets_[ tid ] )[ lid ].push_back( Target( target_fields.get_tid(),
+    targets_[ tid ][ lid ].push_back( Target( target_fields.get_tid(),
       target_rank,
       target_fields.get_syn_id(),
       target_fields.get_lcid() ) );
@@ -135,8 +116,8 @@ nest::TargetTable::add_target( const thread tid,
     const size_t send_buffer_pos = secondary_fields.get_send_buffer_pos();
     const synindex syn_id = secondary_fields.get_syn_id();
 
-    assert( syn_id < ( *secondary_send_buffer_pos_[ tid ] )[ lid ].size() );
-    ( *secondary_send_buffer_pos_[ tid ] )[ lid ][ syn_id ].push_back(
+    assert( syn_id < secondary_send_buffer_pos_[ tid ][ lid ].size() );
+    secondary_send_buffer_pos_[ tid ][ lid ][ syn_id ].push_back(
       send_buffer_pos );
   }
 }

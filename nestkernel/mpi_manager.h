@@ -156,8 +156,6 @@ public:
 
   std::string get_processor_name();
 
-  // int get_send_buffer_size();
-  // int get_recv_buffer_size();
   bool is_mpi_used();
 
   /**
@@ -228,7 +226,6 @@ public:
   double time_communicate_alltoall( int num_bytes, int samples = 1000 );
   double time_communicate_alltoallv( int num_bytes, int samples = 1000 );
 
-  // void set_buffer_sizes( int send_buffer_size, int recv_buffer_size );
   void set_buffer_size_target_data( size_t buffer_size );
   void set_buffer_size_spike_data( size_t buffer_size );
 

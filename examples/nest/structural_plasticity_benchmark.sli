@@ -138,7 +138,7 @@
 
 	    % convert rank to string, prepend 0 if necessary to make
             % numbers equally wide for all ranks
-            Rank cvs 
+            Rank cvs
             dup length max_rank_log cvs length exch sub
             {
 	      48 prepend   % 48 is ASCII code for 0

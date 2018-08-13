@@ -53,11 +53,8 @@ nest::SourceTable::initialize()
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    sources_[ tid ] = new std::vector< std::vector< Source >* >(
-      kernel().model_manager.get_num_synapse_prototypes(), NULL );
+    sources_[ tid ].resize( 0 );
     resize_sources( tid );
-    current_positions_[ tid ] = new SourceTablePosition();
-    saved_positions_[ tid ] = new SourceTablePosition();
     is_cleared_[ tid ] = false;
     saved_entry_point_[ tid ] = false;
   } // of omp parallel
@@ -74,29 +71,8 @@ nest::SourceTable::finalize()
       clear( tid );
     }
   }
-  for ( std::vector< std::vector< std::vector< Source >* >* >::iterator it =
-          sources_.begin();
-        it != sources_.end();
-        ++it )
-  {
-    delete *it;
-  }
   sources_.clear();
-  for ( std::vector< SourceTablePosition* >::iterator it =
-          current_positions_.begin();
-        it != current_positions_.end();
-        ++it )
-  {
-    delete *it;
-  }
   current_positions_.clear();
-  for (
-    std::vector< SourceTablePosition* >::iterator it = saved_positions_.begin();
-    it != saved_positions_.end();
-    ++it )
-  {
-    delete *it;
-  }
   saved_positions_.clear();
 }
 
@@ -112,10 +88,10 @@ nest::SourceTable::is_cleared() const
   return all_cleared;
 }
 
-std::vector< std::vector< nest::Source >* >&
+std::vector< std::vector< nest::Source > >&
 nest::SourceTable::get_thread_local_sources( const thread tid )
 {
-  return *sources_[ tid ];
+  return sources_[ tid ];
 }
 
 nest::SourceTablePosition
@@ -124,9 +100,9 @@ nest::SourceTable::find_maximal_position() const
   SourceTablePosition max_position( -1, -1, -1 );
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    if ( max_position < ( *saved_positions_[ tid ] ) )
+    if ( max_position < saved_positions_[ tid ] )
     {
-      max_position = ( *saved_positions_[ tid ] );
+      max_position = saved_positions_[ tid ];
     }
   }
   return max_position;
@@ -135,67 +111,50 @@ nest::SourceTable::find_maximal_position() const
 void
 nest::SourceTable::clean( const thread tid )
 {
-  // find maximal position in source table among threads to make sure
-  // unprocessed entries are not removed. given this maximal position,
+  // Find maximal position in source table among threads to make sure
+  // unprocessed entries are not removed. Given this maximal position,
   // we can safely delete all larger entries since they will not be
   // touched any more.
   const SourceTablePosition max_position = find_maximal_position();
 
-  // if this thread corresponds to max_position's thread, we can only
+  // If this thread corresponds to max_position's thread, we can only
   // delete part of the sources table, with indices larger than those
   // in max_position; if this thread is larger than max_positions's
-  // thread, we can delete all sources; otherwise we do nothing
+  // thread, we can delete all sources; otherwise we do nothing.
   if ( max_position.tid == tid )
   {
     for ( synindex syn_id = max_position.syn_id;
-          syn_id < ( *sources_[ tid ] ).size();
+          syn_id < sources_[ tid ].size();
           ++syn_id )
     {
-      if ( ( *sources_[ tid ] )[ syn_id ] == NULL )
-      {
-        continue;
-      }
-      std::vector< Source >*& sources = ( *sources_[ tid ] )[ syn_id ];
+      std::vector< Source >& sources = sources_[ tid ][ syn_id ];
       if ( max_position.syn_id == syn_id )
       {
         // we need to add 2 to max_position.lcid since
         // max_position.lcid + 1 can contain a valid entry which we
         // do not want to delete.
-        if ( max_position.lcid + 2 < static_cast< long >( sources->size() ) )
+        if ( max_position.lcid + 2 < static_cast< long >( sources.size() ) )
         {
           const size_t deleted_elements =
-            sources->end() - ( sources->begin() + max_position.lcid + 2 );
-          sources->erase(
-            sources->begin() + max_position.lcid + 2, sources->end() );
+            sources.end() - ( sources.begin() + max_position.lcid + 2 );
+          sources.erase(
+            sources.begin() + max_position.lcid + 2, sources.end() );
           if ( deleted_elements > min_deleted_elements_ )
           {
-            std::vector< Source >( sources->begin(), sources->end() )
-              .swap( *sources );
+            std::vector< Source >( sources ).swap( sources );
           }
         }
       }
       else
       {
         assert( max_position.syn_id < syn_id );
-        sources->clear();
-        delete sources;
-        sources = NULL;
+        sources.clear();
       }
     }
   }
   else if ( max_position.tid < tid )
   {
-    for ( synindex syn_id = 0; syn_id < ( *sources_[ tid ] ).size(); ++syn_id )
-    {
-      if ( ( *sources_[ tid ] )[ syn_id ] == NULL )
-      {
-        continue;
-      }
-      std::vector< Source >*& sources = ( *sources_[ tid ] )[ syn_id ];
-      sources->clear();
-      delete sources;
-      sources = NULL;
-    }
+    sources_[ tid ].clear();
   }
   else
   {
@@ -209,8 +168,7 @@ nest::SourceTable::reserve( const thread tid,
   const synindex syn_id,
   const size_t count )
 {
-  ( *sources_[ tid ] )[ syn_id ]->reserve(
-    ( *sources_[ tid ] )[ syn_id ]->size() + count );
+  vector_util::grow( sources_[ tid ][ syn_id ] );
 }
 
 nest::index
@@ -223,19 +181,19 @@ nest::SourceTable::get_gid( const thread tid,
     throw KernelException(
       "Cannot use SourceTable::get_gid when get_keep_source_table is false" );
   }
-  return ( *( *sources_[ tid ] )[ syn_id ] )[ lcid ].get_gid();
+  return sources_[ tid ][ syn_id ][ lcid ].get_gid();
 }
 
 nest::index
 nest::SourceTable::remove_disabled_sources( const thread tid,
   const synindex syn_id )
 {
-  if ( ( *sources_[ tid ] )[ syn_id ] == NULL )
+  if ( sources_[ tid ].size() <= syn_id )
   {
     return invalid_index;
   }
 
-  std::vector< Source >& mysources = *( *sources_[ tid ] )[ syn_id ];
+  std::vector< Source >& mysources = sources_[ tid ][ syn_id ];
   const index max_size = mysources.size();
   if ( max_size == 0 )
   {
@@ -281,15 +239,15 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources(
   // corresponding to continuous-data connections on this MPI rank;
   // using a set makes sure secondary events are not duplicated for
   // targets on the same process, but different threads
-  for ( size_t syn_id = 0; syn_id < sources_[ tid ]->size(); ++syn_id )
+  for ( size_t syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id )
   {
     if ( not kernel()
                .model_manager.get_synapse_prototype( syn_id, tid )
                .is_primary() )
     {
       for ( std::vector< Source >::const_iterator source_cit =
-              ( *sources_[ tid ] )[ syn_id ]->begin();
-            source_cit != ( *sources_[ tid ] )[ syn_id ]->end();
+              sources_[ tid ][ syn_id ].begin();
+            source_cit != sources_[ tid ][ syn_id ].end();
             ++source_cit )
       {
 #pragma omp critical
@@ -343,15 +301,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources(
 void
 nest::SourceTable::resize_sources( const thread tid )
 {
-  sources_[ tid ]->resize(
-    kernel().model_manager.get_num_synapse_prototypes(), NULL );
-  for ( size_t syn_id = 0; syn_id < sources_[ tid ]->size(); ++syn_id )
-  {
-    if ( ( *sources_[ tid ] )[ syn_id ] == NULL )
-    {
-      ( *sources_[ tid ] )[ syn_id ] = new std::vector< Source >( 0 );
-    }
-  }
+  sources_[ tid ].resize( kernel().model_manager.get_num_synapse_prototypes() );
 }
 
 bool
@@ -361,13 +311,12 @@ nest::SourceTable::get_next_target_data( const thread tid,
   thread& source_rank,
   TargetData& next_target_data )
 {
-  SourceTablePosition& current_position = *current_positions_[ tid ];
+  SourceTablePosition& current_position = current_positions_[ tid ];
 
   // we stay in this loop either until we can return a valid
   // TargetData object or we have reached the end of the sources table
   while ( true )
   {
-
     current_position.wrap_position( sources_ );
     if ( current_position.is_at_end() )
     {
@@ -376,14 +325,13 @@ nest::SourceTable::get_next_target_data( const thread tid,
 
     // the current position contains an entry, so we retrieve it
     const Source& const_current_source =
-      ( *( *sources_[ current_position.tid ] )[ current_position.syn_id ] )
-        [ current_position.lcid ];
+      sources_[ current_position.tid ][ current_position
+                                          .syn_id ][ current_position.lcid ];
 
     if ( const_current_source.is_processed()
       or const_current_source.is_disabled() )
     {
-      // looks like we've processed this already, let's
-      // continue
+      // looks like we've processed this already, let's continue
       --current_position.lcid;
       continue;
     }
@@ -401,13 +349,13 @@ nest::SourceTable::get_next_target_data( const thread tid,
     }
 
     Source& current_source =
-      ( *( *sources_[ current_position.tid ] )[ current_position.syn_id ] )
-        [ current_position.lcid ];
+      sources_[ current_position.tid ][ current_position
+                                          .syn_id ][ current_position.lcid ];
 
     // we have found a valid entry, so mark it as processed
     current_source.set_processed( true );
 
-    // we need to set the marker whether the entry following this
+    // we need to set a marker stating whether the entry following this
     // entry, if existent, has the same source; start by assuming it
     // has a different source, only change if necessary
     kernel().connection_manager.set_has_source_subsequent_targets(
@@ -417,11 +365,11 @@ nest::SourceTable::get_next_target_data( const thread tid,
       false );
     if ( ( current_position.lcid + 1
              < static_cast< long >(
-                 ( *sources_[ current_position.tid ] )[ current_position
-                                                          .syn_id ]->size() )
-           and ( *( *sources_[ current_position.tid ] )
-                   [ current_position.syn_id ] )[ current_position.lcid + 1 ]
-                 .get_gid() == current_source.get_gid() ) )
+                 sources_[ current_position.tid ][ current_position.syn_id ]
+                   .size() )
+           and sources_[ current_position.tid ][ current_position.syn_id ]
+                       [ current_position.lcid + 1 ].get_gid()
+             == current_source.get_gid() ) )
     {
       kernel().connection_manager.set_has_source_subsequent_targets(
         current_position.tid,
@@ -434,13 +382,11 @@ nest::SourceTable::get_next_target_data( const thread tid,
     // entry preceding this entry has the same source, but only if
     // the preceding entry was not processed yet
     if ( ( current_position.lcid - 1 >= 0 )
-      and ( ( *(
-                *sources_[ current_position.tid ] )[ current_position.syn_id ] )
-              [ current_position.lcid - 1 ].get_gid()
+      and ( sources_[ current_position.tid ][ current_position.syn_id ]
+                    [ current_position.lcid - 1 ].get_gid()
             == current_source.get_gid() )
-      and ( not( *( *sources_[ current_position.tid ] )
-                   [ current_position.syn_id ] )[ current_position.lcid - 1 ]
-                 .is_processed() ) )
+      and ( not sources_[ current_position.tid ][ current_position.syn_id ]
+                        [ current_position.lcid - 1 ].is_processed() ) )
     {
       --current_position.lcid;
       continue;

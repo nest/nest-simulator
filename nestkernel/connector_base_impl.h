@@ -50,11 +50,11 @@ Connector< ConnectionT >::send_weight_event( const thread tid,
       kernel().connection_manager.get_source_gid( tid, syn_id_, lcid ) );
     wr_e.set_weight( e.get_weight() );
     wr_e.set_delay( e.get_delay() );
-    // set weight_recorder as receiver
+    // Set weight_recorder as receiver
     index wr_gid = cp.get_weight_recorder();
     Node* wr_node = kernel().node_manager.get_node_or_proxy( wr_gid, tid );
     wr_e.set_receiver( *wr_node );
-    // but the gid of the postsynaptic node as receiver gid
+    // Put the gid of the postsynaptic node as receiver gid
     wr_e.set_receiver_gid( e.get_receiver().get_gid() );
     wr_e();
   }

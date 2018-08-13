@@ -48,13 +48,13 @@ class CompletedChecker
 {
 private:
   /**
-   * Array holding status values for all threads. must be of type
+   * Array holding status values for all threads. Must be of type
    * bool; 'bitwise and' is used below instead of 'logical and'.
    */
   bool* a_;
 
   /**
-   * Size of a. should always be identical to number of threads.
+   * Size of a_, should always be identical to number of threads.
    */
   size_t size_;
 
@@ -80,7 +80,7 @@ public:
 
   /**
    * Updates element for thread tid by computing its 'logical and'
-   * with given value.
+   * with given value v.
    */
   void logical_and( const thread tid, const bool v );
 
@@ -90,21 +90,21 @@ public:
   void resize( const size_t new_size, const bool v );
 
   /**
-   * Sets element for thread tid to given value.
+   * Sets element for thread tid to given value v.
    */
   void set( const thread tid, const bool v );
 
   /**
-   * Returns const reference toelement at position tid.
+   * Returns const reference to element at position tid.
    */
-  const bool& operator[]( const thread tid ) const;
+  bool operator[]( const thread tid ) const;
 };
 
 inline void
 CompletedChecker::logical_and( const thread tid, const bool v )
 {
-// use 'bitwise and', since 'logical and' is not supported by 'omp
-// atomic update'; yields same result for bool
+// Use 'bitwise and', since 'logical and' is not supported by 'omp
+// atomic update'; yields same result for bool.
 #pragma omp atomic update
   a_[ tid ] &= v;
 }
@@ -116,7 +116,7 @@ CompletedChecker::set( const thread tid, const bool v )
   a_[ tid ] = v;
 }
 
-inline const bool& CompletedChecker::operator[]( const thread tid ) const
+inline bool CompletedChecker::operator[]( const thread tid ) const
 {
   return a_[ tid ];
 }

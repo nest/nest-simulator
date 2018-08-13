@@ -29,12 +29,14 @@ void
 nonlinearities_tanh_rate::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::g, g_ );
+  def< double >( d, names::theta, theta_ );
 }
 
 void
 nonlinearities_tanh_rate::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::g, g_ );
+  updateValue< double >( d, names::theta, theta_ );
 }
 
 /*

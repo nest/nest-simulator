@@ -24,8 +24,6 @@
 #define TARGET_TABLE_H
 
 // C++ includes:
-#include <vector>
-#include <map>
 #include <cassert>
 #include <iostream>
 #include <map>
@@ -54,7 +52,7 @@ private:
    *   - second dim: local neurons
    *   - third dim: targets
    */
-  std::vector< std::vector< std::vector< Target > >* > targets_;
+  std::vector< std::vector< std::vector< Target > > > targets_;
 
   /**
    * Stores MPI send buffer positions for secondary targets of local
@@ -65,7 +63,7 @@ private:
    *   - third dim: synapse types
    *   - forth dim: MPI send buffer positions
    */
-  std::vector< std::vector< std::vector< std::vector< size_t > > >* >
+  std::vector< std::vector< std::vector< std::vector< size_t > > > >
     secondary_send_buffer_pos_;
 
 public:
@@ -122,7 +120,7 @@ public:
 inline const std::vector< Target >&
 TargetTable::get_targets( const thread tid, const index lid ) const
 {
-  return ( *targets_[ tid ] )[ lid ];
+  return targets_[ tid ][ lid ];
 }
 
 inline const std::vector< size_t >&
@@ -130,15 +128,15 @@ TargetTable::get_secondary_send_buffer_positions( const thread tid,
   const index lid,
   const synindex syn_id ) const
 {
-  assert( syn_id < ( *secondary_send_buffer_pos_[ tid ] )[ lid ].size() );
-  return ( *secondary_send_buffer_pos_[ tid ] )[ lid ][ syn_id ];
+  assert( syn_id < secondary_send_buffer_pos_[ tid ][ lid ].size() );
+  return secondary_send_buffer_pos_[ tid ][ lid ][ syn_id ];
 }
 
 inline void
 TargetTable::clear( const thread tid )
 {
-  ( *targets_[ tid ] ).clear();
-  ( *secondary_send_buffer_pos_[ tid ] ).clear();
+  targets_[ tid ].clear();
+  secondary_send_buffer_pos_[ tid ].clear();
 }
 
 } // namespace nest

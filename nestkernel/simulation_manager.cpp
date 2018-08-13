@@ -30,7 +30,6 @@
 
 // Includes from libnestutil:
 #include "compose.hpp"
-#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "connection_manager_impl.h"

@@ -24,12 +24,12 @@
 #define TARGET_TABLE_DEVICES_IMPL_H
 
 // Includes from nestkernel:
-#include "target_table_devices.h"
+#include "connector_base.h"
 #include "kernel_manager.h"
-#include "vp_manager_impl.h"
 #include "model_manager.h"
 #include "node.h"
-#include "connector_base.h"
+#include "target_table_devices.h"
+#include "vp_manager_impl.h"
 
 inline void
 nest::TargetTableDevices::add_connection_to_device( Node& source,

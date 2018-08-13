@@ -56,7 +56,7 @@ EventDeliveryManager::EventDeliveryManager()
   , recv_buffer_secondary_events_()
   , time_collocate_( 0.0 )
   , time_communicate_( 0.0 )
-  , local_spike_counter_( std::vector< unsigned long >() )
+  , local_spike_counter_()
   , send_buffer_spike_data_()
   , recv_buffer_spike_data_()
   , send_buffer_off_grid_spike_data_()
@@ -65,7 +65,7 @@ EventDeliveryManager::EventDeliveryManager()
   , recv_buffer_target_data_()
   , buffer_size_target_data_has_changed_( false )
   , buffer_size_spike_data_has_changed_( false )
-  , gather_completed_checker_( CompletedChecker() )
+  , gather_completed_checker_()
 {
 }
 
@@ -265,7 +265,8 @@ EventDeliveryManager::update_moduli()
   assert( moduli_.size() == ( index )( min_delay + max_delay ) );
   std::rotate( moduli_.begin(), moduli_.begin() + min_delay, moduli_.end() );
 
-  /* For the slice-based ring buffer, we cannot rotate the table, but
+  /*
+   For the slice-based ring buffer, we cannot rotate the table, but
    have to re-compute it, since max_delay_ may not be a multiple of
    min_delay_.  Reference time is the time at the beginning of the slice.
    */
@@ -342,7 +343,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   std::vector< SpikeDataT >& send_buffer,
   std::vector< SpikeDataT >& recv_buffer )
 {
-  // assume all threads have some work to do
+  // Assume all threads have some work to do
   gather_completed_checker_.set( tid, false );
   assert( gather_completed_checker_.all_false() );
 
@@ -351,8 +352,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
   while ( not gather_completed_checker_.all_true() )
   {
-
-    // assume this is the last gather round and change to false
+    // Assume this is the last gather round and change to false
     // otherwise
     gather_completed_checker_.set( tid, true );
 
@@ -366,11 +366,11 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       }
     } // of omp single; implicit barrier
 
-    // need to get new positions in case buffer size has changed
+    // Need to get new positions in case buffer size has changed
     SendBufferPosition send_buffer_position( assigned_ranks,
       kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
 
-    // collocate spikes to send buffer
+    // Collocate spikes to send buffer
     const bool collocate_completed = collocate_spike_data_buffers_(
       tid, assigned_ranks, send_buffer_position, spike_register_, send_buffer );
     gather_completed_checker_.logical_and( tid, collocate_completed );
@@ -387,24 +387,24 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         tid, collocate_completed_off_grid );
     }
 
-// set markers to signal end of valid spikes, and remove spikes
-// from register that have been collected in send buffer
 #pragma omp barrier
+    // Set markers to signal end of valid spikes, and remove spikes
+    // from register that have been collected in send buffer.
     set_end_and_invalid_markers_(
       assigned_ranks, send_buffer_position, send_buffer );
     clean_spike_register_( tid );
 
-    // if we do not have any spikes left, set corresponding marker in
-    // send buffer
+    // If we do not have any spikes left, set corresponding marker in
+    // send buffer.
     if ( gather_completed_checker_.all_true() )
     {
-      // needs to be called /after/ set_end_and_invalid_markers_
+      // Needs to be called /after/ set_end_and_invalid_markers_.
       set_complete_marker_spike_data_(
         assigned_ranks, send_buffer_position, send_buffer );
 #pragma omp barrier
     }
 
-// communicate spikes using a single thread
+// Communicate spikes using a single thread.
 #pragma omp single
     {
       if ( off_grid_spiking_ )
@@ -419,14 +419,14 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       }
     } // of omp single; implicit barrier
 
-    // deliver spikes from receive buffer to ring buffers
+    // Deliver spikes from receive buffer to ring buffers.
     const bool deliver_completed = deliver_events_( tid, recv_buffer );
     gather_completed_checker_.logical_and( tid, deliver_completed );
 
-// exit gather loop if all local threads and remote processes are
-// done
+// Exit gather loop if all local threads and remote processes are
+// done.
 #pragma omp barrier
-    // resize mpi buffers, if necessary and allowed
+    // Resize mpi buffers, if necessary and allowed.
     if ( not gather_completed_checker_.all_true()
       and kernel().mpi_manager.adaptive_spike_buffers() )
     {
@@ -455,23 +455,23 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   reset_complete_marker_spike_data_(
     assigned_ranks, send_buffer_position, send_buffer );
 
-  // assume register is empty, will change to false if any entry can
-  // not be fit into the MPI buffer
+  // Assume register is empty, will change to false if any entry can
+  // not be fit into the MPI buffer.
   bool is_spike_register_empty = true;
 
-  // first dimension: loop over writing thread
+  // First dimension: loop over writing thread
   for ( typename std::vector< std::
             vector< std::vector< std::vector< TargetT > > > >::iterator it =
           spike_register.begin();
         it != spike_register.end();
         ++it )
   {
-    // second dimension: fixed reading thread
+    // Second dimension: fixed reading thread
 
-    // third dimension: loop over lags
+    // Third dimension: loop over lags
     for ( unsigned int lag = 0; lag < ( *it )[ tid ].size(); ++lag )
     {
-      // fourth dimension: loop over entries
+      // Fourth dimension: loop over entries
       for ( typename std::vector< TargetT >::iterator iiit =
               ( *it )[ tid ][ lag ].begin();
             iiit < ( *it )[ tid ][ lag ].end();
@@ -570,7 +570,7 @@ EventDeliveryManager::set_complete_marker_spike_data_(
         ++target_rank )
   {
     // Use last entry for completion marker. For possible collision
-    // with end marker, see comment in set_end_and_invalid_markers_
+    // with end marker, see comment in set_end_and_invalid_markers_.
     const thread idx = send_buffer_position.end( target_rank ) - 1;
     send_buffer[ idx ].set_complete_marker();
   }
@@ -844,7 +844,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
   for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes();
         ++rank )
   {
-    // check last entry for completed marker
+    // Check last entry for completed marker
     if ( not recv_buffer_target_data_[ ( rank + 1 )
                  * send_recv_count_target_data_per_rank
                - 1 ].is_complete_marker() )
@@ -852,7 +852,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
       are_others_completed = false;
     }
 
-    // were targets sent by this rank?
+    // Were targets sent by this rank?
     if ( recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank ]
            .is_invalid_marker() )
     {
@@ -869,7 +869,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
         kernel().connection_manager.add_target( tid, rank, target_data );
       }
 
-      // is this the last target from this rank?
+      // Is this the last target from this rank?
       if ( target_data.is_end_marker() )
       {
         break;
@@ -889,7 +889,7 @@ EventDeliveryManager::resize_spike_register_( const thread tid )
         ++it )
   {
     it->resize(
-      kernel().connection_manager.get_min_delay(), std::vector< Target >( 0 ) );
+      kernel().connection_manager.get_min_delay(), std::vector< Target >() );
   }
 
   for (
@@ -899,7 +899,7 @@ EventDeliveryManager::resize_spike_register_( const thread tid )
     ++it )
   {
     it->resize( kernel().connection_manager.get_min_delay(),
-      std::vector< OffGridTarget >( 0 ) );
+      std::vector< OffGridTarget >() );
   }
 }
 

@@ -525,15 +525,6 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Sleep_iFunction : public SLIFunction
-{
-public:
-  Sleep_iFunction()
-  {
-  }
-  void execute( SLIInterpreter* ) const;
-};
-
 class Sleep_dFunction : public SLIFunction
 {
 public:

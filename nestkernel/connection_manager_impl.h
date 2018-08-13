@@ -31,8 +31,8 @@
 // Includes from nestkernel:
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
-#include "kernel_manager.h"
 #include "connector_base.h"
+#include "kernel_manager.h"
 #include "target_table_devices_impl.h"
 
 namespace nest

@@ -20,11 +20,10 @@
  *
  */
 
-#include "target_table_devices_impl.h"
-
 // Includes from nestkernel:
-#include "kernel_manager.h"
 #include "connector_base.h"
+#include "kernel_manager.h"
+#include "target_table_devices_impl.h"
 #include "vp_manager_impl.h"
 
 nest::TargetTableDevices::TargetTableDevices()
@@ -47,16 +46,13 @@ nest::TargetTableDevices::initialize()
 void
 nest::TargetTableDevices::finalize()
 {
-  for (
-    std::vector< std::vector< std::vector< ConnectorBase* > > >::iterator it =
-      target_to_devices_.begin();
-    it != target_to_devices_.end();
-    ++it )
+#pragma omp parallel
   {
-    for (
-      std::vector< std::vector< ConnectorBase* > >::iterator iit = it->begin();
-      iit != it->end();
-      ++iit )
+    const thread tid = kernel().vp_manager.get_thread_id();
+    for ( std::vector< std::vector< ConnectorBase* > >::iterator iit =
+            target_to_devices_[ tid ].begin();
+          iit != target_to_devices_[ tid ].end();
+          ++iit )
     {
       for ( std::vector< ConnectorBase* >::iterator iiit = iit->begin();
             iiit != iit->end();
@@ -64,20 +60,12 @@ nest::TargetTableDevices::finalize()
       {
         delete *iiit;
       }
-      iit->clear();
     }
-  }
-  target_to_devices_.clear();
-  for (
-    std::vector< std::vector< std::vector< ConnectorBase* > > >::iterator it =
-      target_from_devices_.begin();
-    it != target_from_devices_.end();
-    ++it )
-  {
-    for (
-      std::vector< std::vector< ConnectorBase* > >::iterator iit = it->begin();
-      iit != it->end();
-      ++iit )
+
+    for ( std::vector< std::vector< ConnectorBase* > >::iterator iit =
+            target_from_devices_[ tid ].begin();
+          iit != target_from_devices_[ tid ].end();
+          ++iit )
     {
       for ( std::vector< ConnectorBase* >::iterator iiit = iit->begin();
             iiit != iit->end();
@@ -85,34 +73,37 @@ nest::TargetTableDevices::finalize()
       {
         delete *iiit;
       }
-      iit->clear();
     }
-  }
-  target_from_devices_.clear();
-  sending_devices_gids_.clear();
+  } // end omp parallel
+
+  std::vector< std::vector< std::vector< ConnectorBase* > > >().swap(
+    target_to_devices_ );
+  std::vector< std::vector< std::vector< ConnectorBase* > > >().swap(
+    target_from_devices_ );
+  std::vector< std::vector< index > >().swap( sending_devices_gids_ );
 }
 
 void
 nest::TargetTableDevices::resize_to_number_of_neurons()
 {
-  const thread num_threads = kernel().vp_manager.get_num_threads();
-  for ( thread tid = 0; tid < num_threads; ++tid )
+#pragma omp parallel
   {
+    const thread tid = kernel().vp_manager.get_thread_id();
     target_to_devices_[ tid ].resize(
       kernel().node_manager.get_max_num_local_nodes() + 1 );
     target_from_devices_[ tid ].resize(
       kernel().node_manager.get_num_local_devices() + 1 );
     sending_devices_gids_[ tid ].resize(
       kernel().node_manager.get_num_local_devices() + 1 );
-  }
+  } // end omp parallel
 }
 
 void
 nest::TargetTableDevices::resize_to_number_of_synapse_types()
 {
-  const thread num_threads = kernel().vp_manager.get_num_threads();
-  for ( thread tid = 0; tid < num_threads; ++tid )
+#pragma omp parallel
   {
+    const thread tid = kernel().vp_manager.get_thread_id();
     for ( index lid = 0; lid < target_to_devices_[ tid ].size(); ++lid )
     {
       // make sure this device has support for all synapse types
@@ -125,7 +116,7 @@ nest::TargetTableDevices::resize_to_number_of_synapse_types()
       target_from_devices_[ tid ][ ldid ].resize(
         kernel().model_manager.get_num_synapse_prototypes(), NULL );
     }
-  }
+  } // end omp parallel
 }
 
 void

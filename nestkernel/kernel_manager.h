@@ -169,7 +169,7 @@ public:
   void reset();
 
   /**
-   * Prepare kernel for new number of threads.
+   * Change number of threads.
    *
    * The kernel first needs to be finalized with the old number of threads
    * and then initialized with the new number of threads.

@@ -411,6 +411,8 @@ function( NEST_PROCESS_WITH_OPENMP )
       # set flags
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
+    else()
+      message( FATAL_ERROR "CMake can not find OpenMP." ) 
     endif ()
   endif ()
 endfunction()

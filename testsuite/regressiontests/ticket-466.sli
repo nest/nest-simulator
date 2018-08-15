@@ -38,7 +38,7 @@ FirstVersion: 2010-10-05
 
 modeldict /mirollo_strogatz_ps known not
 {
-  statusdict/exitcodes/success :: quit_i
+  /skipped exit_test_gracefully
 } if
 
 M_ERROR setverbosity

@@ -28,6 +28,5 @@ mkdir -p $sli_libdir
 
 # create rcsinfo.sli
 echo "statusdict /rcsinfo ($version) put" > $sli_libdir/rcsinfo.sli
-echo $version
 
 exit 0

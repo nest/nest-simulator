@@ -206,9 +206,26 @@ def SetStatus(nodes, params, val=None):
     # for instance, raising an exception) when applied to an empty list,
     # which is an artifact of the API operating on lists, rather than
     # relying on language idioms, such as comprehensions
-    #
     if len(nodes) == 0:
         return
+
+    if isinstance(params, dict) and isinstance(nodes, nest.GIDCollection):        
+        contains_list = [is_iterable(v) and not
+                         is_iterable(nest.GetStatus(nodes[0], k)[0])
+                         for k, v in params.items()]
+        contains_list = max(contains_list)
+
+        if contains_list:
+            temp_param = [{} for _ in range(len(nodes))]
+
+            for k, v in params.items():
+                if not is_iterable(v):
+                    for d in temp_param:
+                        d[k] = v
+                else:
+                    for i, d in enumerate(temp_param):
+                        d[k] = v[i]
+            params = temp_param
 
     if val is not None and is_literal(params):
         if is_iterable(val) and not isinstance(val, (uni_str, dict)):

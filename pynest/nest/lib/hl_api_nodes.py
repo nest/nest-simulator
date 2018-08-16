@@ -50,7 +50,12 @@ def Create(model, n=1, params=None):
 
     model_deprecation_warning(model)
 
+    params_contains_list = True
     if isinstance(params, dict):
+        params_contains_list = [is_iterable(v) for k, v in params.items()]
+        params_contains_list = max(params_contains_list)
+
+    if not params_contains_list:
         cmd = "/%s 3 1 roll exch Create" % model
         sps(params)
     else:
@@ -60,8 +65,8 @@ def Create(model, n=1, params=None):
     sr(cmd)
 
     gids = spp()
-
-    if params is not None and not isinstance(params, dict):
+    
+    if params is not None and params_contains_list:
         try:
             SetStatus(gids, params)
         except:

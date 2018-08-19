@@ -30,6 +30,7 @@
 #include "pif_psc_alpha.h"
 #include "step_pattern_builder.h"
 #include "recording_backend_soundclick.h"
+#include "recording_backend_socket.h"
 
 // Includes from nestkernel:
 #include "connection_manager_impl.h"
@@ -135,9 +136,11 @@ mynest::MyModule::init( SLIInterpreter* i )
   nest::kernel().connection_manager.register_conn_builder< StepPatternBuilder >(
     "step_pattern" );
 
-  // Register recording backend.
+  // Register recording backends.
   nest::kernel()
     .io_manager.register_recording_backend< nest::RecordingBackendSoundClick >(
       "soundclick" );
 
+  nest::kernel().io_manager.register_recording_backend< nest::RecordingBackendSocket >(
+    "socket" );
 } // MyModule::init()

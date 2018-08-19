@@ -44,6 +44,7 @@ set( MODULE_SOURCES
     drop_odd_spike_connection.h
     step_pattern_builder.h step_pattern_builder.cpp
     recording_backend_soundclick.h recording_backend_soundclick.cpp
+    recording_backend_socket.h recording_backend_socket.cpp
     )
 
 # 3) We require a header name like this:

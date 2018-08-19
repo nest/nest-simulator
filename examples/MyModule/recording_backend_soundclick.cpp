@@ -20,15 +20,8 @@
  *
  */
 
-// Includes from libnestutil
-#include "compose.hpp"
-
 // Includes from nestkernel
 #include "recording_device.h"
-#include "vp_manager_impl.h"
-
-// Includes from sli
-#include "dictutils.h"
 
 // Own includes
 #include "recording_backend_soundclick.h"
@@ -41,9 +34,6 @@ nest::RecordingBackendSoundClick::RecordingBackendSoundClick()
   sound_buffer_.loadFromMemory(
     sound_click_16bit_44_1khz_wav, sizeof( sound_click_16bit_44_1khz_wav ) );
   sound_.setBuffer( sound_buffer_ );
-  LOG( M_INFO,
-    "Recording Backend",
-    ( "recording backend >SoundClick< successfully initialized" ) );
 }
 
 // Destructor
@@ -75,7 +65,9 @@ void nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device,
 void
 nest::RecordingBackendSoundClick::initialize()
 {
-  // nothing to do
+  LOG( M_INFO,
+    "Recording Backend",
+    ( "recording backend >SoundClick< successfully initialized" ) );
 }
 
 // Called at the end of a call to Simulate
@@ -128,6 +120,6 @@ nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
   const std::vector< double >& values )
 {
   // Must not happen !
-  // Only spike detectors are allowd to connect to the SoundClick backend.
+  // Only spike detectors are allowed to connect to the SoundClick backend.
   throw;
 }

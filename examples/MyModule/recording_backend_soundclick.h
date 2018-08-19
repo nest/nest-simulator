@@ -25,6 +25,7 @@
 
 // recording backend interface
 #include "recording_backend.h"
+#include "stopwatch.h" 
 
 // Simple and Fast Multimedia Library (SFML)
 #include <SFML/Audio.hpp>

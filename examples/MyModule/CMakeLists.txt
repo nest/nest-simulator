@@ -56,7 +56,7 @@ set( MODULE_VERSION_MINOR 0 )
 set( MODULE_VERSION "${MODULE_VERSION_MAJOR}.${MODULE_VERSION_MINOR}" )
 
 # 5) Specify additional link libraries if needed
-#    e.g., sfml-audio is required by the `SoundClick` backend example
+#    e.g., sfml-audio is required by the `SoundClick` recording backend example
 set( USER_LINK_LIBRARIES sfml-audio )
 
 # 6) Leave the rest as is. All files in `sli` will be installed to

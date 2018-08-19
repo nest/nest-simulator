@@ -264,7 +264,21 @@ if ( BUILD_SHARED_LIBS )
       )
 endif ()
 
+# Build dynamic/static library for standard linking from NEST.
+add_library( ${MODULE_NAME}_lib ${MODULE_SOURCES} )
+if ( BUILD_SHARED_LIBS )
+  # Dynamic libraries are initiated by a `global` variable of the `SLIModule`,
+  # which is included, when the flag `LINKED_MODULE` is set.
+  target_compile_definitions( ${MODULE_NAME}_lib PRIVATE -DLINKED_MODULE )
+endif ()
+set_target_properties( ${MODULE_NAME}_lib
+    PROPERTIES
+    COMPILE_FLAGS "${NEST_CXXFLAGS}"
+    LINK_FLAGS "${NEST_LIBS}"
+    OUTPUT_NAME ${MODULE_NAME} )
+
 # Install library, header and sli init files.
+install( TARGETS ${MODULE_NAME}_lib DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 install( FILES ${MODULE_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${MODULE_NAME} )
 install( DIRECTORY sli DESTINATION ${CMAKE_INSTALL_DATADIR} )
 

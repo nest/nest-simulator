@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/nest/nest-simulator.svg?branch=master)](https://travis-ci.org/nest/nest-simulator)
 [![License](http://img.shields.io/:license-GPLv2+-green.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
-[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.882971.svg)](http://dx.doi.org/10.5281/zenodo.882971)
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.1400175.svg)](https://doi.org/10.5281/zenodo.1400175)
 [![Latest Version](https://img.shields.io/badge/latest%20version-2.14.0-brightgreen.svg)](https://github.com/nest/nest-simulator/releases/tag/v2.14.0)
 
 NEST is a simulator for spiking neural network models that focuses on the

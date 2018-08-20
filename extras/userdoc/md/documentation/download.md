@@ -20,21 +20,25 @@ For details about how to contribute to the development of NEST, see the [develop
 
 Please cite NEST if you use it in your work.
 
+If you use NEST 2.16.0, please cite it as **Linssen, Charl et al. (2018).
+NEST 2.16.0. Zenodo. 10.5281/zenodo.1400175**. The full citation is available
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.1400175).
+
 If you use NEST 2.14.0, please cite it as **Peyser, Alexander et al. (2017).
 NEST 2.14.0. Zenodo. 10.5281/zenodo.882971**. The full citation is available
-in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.882971).
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.882971).
 
 If you use NEST 2.12.0, please cite it as **Kunkel, Susanne et al. (2017).
 NEST 2.12.0. Zenodo. 10.5281/zenodo.259534**. The full citation is available
-in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.259534).
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.259534).
 
 If you use NEST v2.10.0, please cite it as **Bos, Hannah et al. (2015).
 NEST 2.10.0. Zenodo. 10.5281/zenodo.44222**. The full citation is available
-in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.44222).
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.44222).
 
 If you use NEST v2.8.0, please cite it as **Eppler, Jochen Martin et al. (2015).
 NEST 2.8.0. Zenodo. 10.5281/zenodo.32969**. The full citation is available
-in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.32969).
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.32969).
 
 For all versions below NEST v2.8.0 and for citing NEST without referring to a
 specific version, please use: [Gewaltig M-O & Diesmann M (2007) NEST (Neural

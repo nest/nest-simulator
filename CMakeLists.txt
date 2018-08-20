@@ -144,7 +144,11 @@ nest_process_tics_per_ms()
 nest_process_tics_per_step()
 nest_process_with_ps_array()
 nest_process_with_libltdl()
-nest_process_with_readline()
+
+if ( with-readline )
+  nest_process_with_readline()
+endif ()
+
 nest_process_with_gsl()
 nest_process_with_python()
 nest_process_with_openmp()

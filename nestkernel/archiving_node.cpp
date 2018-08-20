@@ -163,22 +163,22 @@ nest::Archiving_Node::get_history( double t1,
   }
   else
   {
-    std::deque< histentry >::iterator runner = history_.begin();
-    while ( ( runner != history_.end() )
-      and ( t1 - runner->t_ > -1.0
+    std::deque< histentry >::reverse_iterator runner = history_.rbegin();
+    while ( ( runner != history_.rend() ) 
+      and ( t2 - runner->t_ < - 1.0
                 * kernel().connection_manager.get_stdp_eps() ) )
     {
       ++runner;
     }
-    *start = runner;
-    while ( ( runner != history_.end() )
-      and ( t2 - runner->t_ > -1.0
+    *finish = runner.base();
+    while ( ( runner != history_.rend() ) 
+      and ( t1 - runner->t_ < - 1.0
                 * kernel().connection_manager.get_stdp_eps() ) )
     {
       ( runner->access_counter_ )++;
       ++runner;
     }
-    *finish = runner;
+    *start = runner.base();
   }
 }
 

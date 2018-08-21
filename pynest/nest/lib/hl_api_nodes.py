@@ -52,6 +52,11 @@ def Create(model, n=1, params=None):
 
     params_contains_list = True
     if isinstance(params, dict):
+        # Convert Parameter to list
+        for key in params.iterkeys():
+            if isinstance(params[key], nest.Parameter):
+                params[key] = [params[key].GetValue([0., 0.])
+                               for _ in range(n)]
         params_contains_list = [is_iterable(v) for k, v in params.items()]
         params_contains_list = max(params_contains_list)
 

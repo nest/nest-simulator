@@ -65,7 +65,7 @@ def Create(model, n=1, params=None):
     sr(cmd)
 
     gids = spp()
-    
+
     if params is not None and params_contains_list:
         try:
             SetStatus(gids, params)

@@ -338,7 +338,6 @@ class TestGIDCollection(unittest.TestCase):
 
         count = 0
         for gid, mid in n.items():
-            # print gid, mid, modelID[count]
             self.assertEqual(mid, modelID[count])
             count += 1
 
@@ -727,14 +726,15 @@ class TestGIDCollection(unittest.TestCase):
 
         gss = nest.GetStatus(wr, "senders")[0]
         gst = nest.GetStatus(wr, "targets")[0]
-        self.assertEqual([x for x in nest.GIDCollection(gss)], [3, 4])
-        self.assertEqual([x for x in nest.GIDCollection(gst)], [10, 11])
+
+        self.assertEqual([x for x in gss], [3, 4])
+        self.assertEqual([x for x in gst], [10, 11])
 
         nest.SetStatus(wr, {"senders": [2, 6], "targets": [8, 9]})
         gss = nest.GetStatus(wr, "senders")[0]
         gst = nest.GetStatus(wr, "targets")[0]
-        self.assertEqual([x for x in nest.GIDCollection(gss)], [2, 6])
-        self.assertEqual([x for x in nest.GIDCollection(gst)], [8, 9])
+        self.assertEqual([x for x in gss], [2, 6])
+        self.assertEqual([x for x in gst], [8, 9])
 
 
 def suite():

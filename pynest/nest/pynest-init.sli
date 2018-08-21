@@ -77,26 +77,23 @@ def
 
 /pywelcome
 {
-  cout endl
+  () =
+  (              -- N E S T --) =
+  (  Copyright (C) 2004 The NEST Initiative) = () =
+  ( Version: ) =only statusdict/rcsinfo :: =
+  ( Built: ) =only statusdict/built :: =
+  () =
 
-  statusdict begin
-    (              -- N E S T --) <- endl
-    endl
-    (  Copyright (C) 2004 The NEST Initiative) <- endl
-    (  Version ) <- 
-    prgmajor <- (.) <- prgminor <- (.) <- prgpatch <-
-    ( ) <- built <- endl endl ;
-  end
+  ( This program is provided AS IS and comes with) =
+  ( NO WARRANTY. See the file LICENSE for details.) =
+  () =
 
-  warranty
+  ( Problems or suggestions?) =
+  (   Visit http://www.nest-simulator.org) =
+  () =
 
-  cout
-  (Problems or suggestions?) <- endl
-  (  Visit http://www.nest-simulator.org) <- endl
-
-  endl
-  (Type 'nest.help()' to find out more about NEST.) <- endl ;
-
+  ( Type 'nest.help()' to find out more about NEST.) =
+  () =
   :warnings
 } def
 
@@ -121,3 +118,13 @@ def
   } if
   not % invert the return value of stopped
 } bind def
+
+
+% Check for rcsinfo SLI file and run it. If it does not
+% exist, put an empty string into statusdict/rcsinfo.
+mark
+  { (rcsinfo) (r) file } stopped not
+    { (rcsinfo) run }
+    { statusdict /rcsinfo () put }
+  ifelse
+] ;

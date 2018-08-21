@@ -167,9 +167,9 @@ public:
  */
 template < typename HostNode >
 class DynamicRecordablesMap
-  : public std::map< Name, DataAccessFunctor< HostNode > >
+  : public std::map< Name, const DataAccessFunctor< HostNode > >
 {
-  typedef std::map< Name, DataAccessFunctor< HostNode > > Base_;
+  typedef std::map< Name, const DataAccessFunctor< HostNode > > Base_;
 
 public:
   virtual ~DynamicRecordablesMap()

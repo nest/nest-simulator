@@ -601,6 +601,10 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
 
   synapsedict_->insert( cf->get_name(), syn_id );
 
+  // Need to resize Connector vectors in case connection model is added after
+  // ConnectionManager is initialised.
+  kernel().connection_manager.resize_connections();
+
   return syn_id;
 }
 

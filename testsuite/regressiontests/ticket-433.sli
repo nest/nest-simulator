@@ -41,6 +41,9 @@ Author: Hans Ekkehard Plesser, 2010-06-28
 
 skip_if_without_gsl
 
+% This test should only run if we have GSL
+skip_if_without_gsl
+
 M_INFO setverbosity
 
 % the following the functions expect that the following variables

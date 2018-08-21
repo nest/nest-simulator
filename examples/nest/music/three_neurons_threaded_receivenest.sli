@@ -20,7 +20,7 @@
  *
  */
 
-statusdict/have_music :: not {statusdict/exitcodes/success :: quit_i} if
+skip_if_without_music
 
 M_INFO setverbosity
 

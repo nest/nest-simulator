@@ -203,7 +203,7 @@ def plot_hist(spikes):
 t = 1000
 n = 1000
 dt = 1.0
-steps = t / dt
+steps = int(t / dt)
 offset = t / 1000. * 2 * np.pi
 
 '''

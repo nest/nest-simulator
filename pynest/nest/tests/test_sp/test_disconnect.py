@@ -66,7 +66,6 @@ class TestDisconnectSingle(unittest.TestCase):
         for syn_model in nest.Models('synapses'):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
-                print(syn_model)
                 nest.SetKernelStatus(
                     {
                         'resolution': 0.1,
@@ -78,31 +77,32 @@ class TestDisconnectSingle(unittest.TestCase):
 
                 nest.Connect(neurons[0], neurons[2], "one_to_one", syn_dict)
                 nest.Connect(neurons[1], neurons[3], "one_to_one", syn_dict)
+
                 # Delete existent connection
                 conns = nest.GetConnections(
                     neurons[0], neurons[2], syn_model)
                 if mpi_test:
-                    conns = self.comm.allgather(conns)
-                    conns = filter(None, conns)
+                    print("rim with mpi")
+                    conns = self.comm.allgather(conns.get('source'))
+                    conns = list(filter(None, conns))
+                assert len(conns) == 1
 
-                assert len(list(conns)) == 1
                 nest.Disconnect(neurons[0], neurons[2], syn_spec=syn_dict)
 
                 conns = nest.GetConnections(
                     neurons[0], neurons[2], syn_model)
                 if mpi_test:
-                    conns = self.comm.allgather(conns)
-                    conns = filter(None, conns)
-
-                assert len(list(conns)) == 0
+                    conns = self.comm.allgather(conns.get('source'))
+                    conns = list(filter(None, conns))
+                assert len(conns) == 0
 
                 # Assert that one can not delete a non existent connection
                 conns1 = nest.GetConnections(
                     neurons[:1], neurons[1:2], syn_model)
                 if mpi_test:
-                    conns1 = self.comm.allgather(conns1)
-                    conns1 = filter(None, conns1)
-                assert len(list(conns1)) == 0
+                    conns1 = self.comm.allgather(conns1.get('source'))
+                    conns1 = list(filter(None, conns1))
+                assert len(conns1) == 0
 
                 try:
                     nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_dict)

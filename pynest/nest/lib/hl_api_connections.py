@@ -25,7 +25,7 @@ Functions for connection handling
 
 from .hl_api_helper import *
 from .hl_api_nodes import Create
-from .hl_api_types import GIDCollection
+from .hl_api_types import GIDCollection, Connectome
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 import numpy
@@ -100,7 +100,12 @@ def GetConnections(source=None, target=None, synapse_model=None,
     sps(params)
     sr("GetConnections")
 
-    return spp()
+    conns = spp()
+
+    if isinstance(conns, tuple):
+        conns = Connectome(None)
+
+    return conns
 
 
 @check_stack

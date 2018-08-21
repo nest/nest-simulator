@@ -321,7 +321,6 @@ class GIDCollection(object):
                                                    else [None]})
                             else:
                                 p_dict.update({key: item})
-
                         result = pandas.DataFrame(p_dict,
                                                   index=index)
                     except nest.NESTError:  # It is (probably) a layer
@@ -457,6 +456,241 @@ class GIDCollection(object):
                 "len(nodes)")
 
         nest.sli_func('SetStatus', self._datum, params)
+
+
+class Connectome(object):
+    """
+    Class for Connections.
+
+    Connectome represents the connections of a network. The class supports
+    get(), set(), len() and equality.
+
+    A Connectome is created by the ``GetConnections`` function.
+    """
+
+    _datum = None
+
+    def __init__(self, data):
+
+        if isinstance(data, list):
+            for datum in data:
+                if (not isinstance(datum, nest.SLIDatum) or
+                        datum.dtype != "connectiontype"):
+                    raise TypeError("Expected Connection Datum.")
+            self._datum = data
+        elif data is None:
+            # So we can have empty Connectome and not a tuple if there are no
+            # connections.
+            self._datum = data
+        else:
+            if (not isinstance(data, nest.SLIDatum) or
+                    data.dtype != "connectiontype"):
+                raise TypeError("Expected Connection Datum.")
+            # self._datum is a list of Connection datums.
+            self._datum = [data]
+
+    def __len__(self):
+        if self._datum is None:
+            return 0
+        return len(self._datum)
+
+    def __eq__(self, other):
+        if not isinstance(other, Connectome):
+            return NotImplemented
+
+        if self.__len__() != other.__len__():
+            return False
+        self_get = self.get(['source', 'target', 'target_thread',
+                             'synapse_id', 'port'])
+        other_get = other.get(['source', 'target', 'target_thread',
+                               'synapse_id', 'port'])
+        if self_get != other_get:
+            return False
+        return True
+
+    def __neq__(self, other):
+        if not isinstance(other, Connectome):
+            return NotImplemented
+        return not self == other
+
+    def __str__(self):
+        """
+        Printing a Connectome returns something of the form:
+            *--------*-------------*
+            | source | 1, 1, 2, 2, |
+            *--------*-------------*
+            | target | 1, 2, 1, 2, |
+            *--------*-------------*
+        """
+        src = self.get('source')
+        trgt = self.get('target')
+
+        if isinstance(src, int):
+            src = [src]
+        if isinstance(trgt, int):
+            trgt = [trgt]
+
+        source = '| source | ' + ''.join(str(e)+', ' for e in src) + '|'
+        target = '| target | ' + ''.join(str(e)+', ' for e in trgt) + '|'
+
+        # 35 is arbitrarily chosen.
+        if len(src) < 35:
+            borderline = '*--------*' + '-'*(len(source) - 12) + '-*'
+        else:
+            borderline = '*--------*' + '-'*3*35 + '-*'
+
+        result = (borderline + '\n' + source + '\n' + borderline + '\n' +
+                  target + '\n' + borderline)
+        return result
+
+    def get(self, keys=None, pandas_output=False):
+        """
+        Return the parameter dictionary of connections.
+
+        If keys is a string, a list of values is returned, unless we have a
+        single ConnectionDatum, in which case the single value is returned.
+        keys may also be a list, in which case a dictionary with a list of
+        values is returned.
+
+        Parameters
+        ----------
+        keys : str or list, optional
+            String or a list of strings naming model properties. get
+            then returns a single value or a dictionary with lists of values
+            belonging to the keys given.
+
+        Returns
+        -------
+        dict:
+            All parameters
+        type:
+            If keys is a string, the corrsponding default parameter is returned
+        list:
+            If keys is a list of strings, a dictionary with a list of
+            corresponding parameters is returned
+
+        Raises
+        ------
+        TypeError
+            Description
+        """
+        if pandas_output and not HAVE_PANDAS:
+            raise ImportError('Pandas could not be imported')
+
+        # Return empty tuple if we have no connections or if we have done a
+        # nest.ResetKernel()
+        num_conn = nest.GetKernelStatus('num_connections')
+        if self.__len__() == 0 or num_conn == 0:
+            return ()
+
+        if keys is None:
+            cmd = 'GetStatus'
+        elif nest.is_literal(keys):
+            cmd = 'GetStatus {{ /{0} get }} Map'.format(keys)
+        elif nest.is_iterable(keys):
+            keys_str = " ".join("/{0}".format(x) for x in keys)
+            cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)
+        else:
+            raise TypeError("keys should be either a string or an iterable")
+
+        nest.sps(self._datum)
+        nest.sr(cmd)
+        result = nest.spp()
+
+        # Need to restructure the data.
+        if nest.is_literal(keys):
+            final_result = result[0] if self.__len__() == 1 else list(result)
+        elif nest.is_iterable(keys):
+            final_result = {}
+            if self.__len__() != 1:
+                # We want a dictionary of lists if len != 1
+                for key in keys:
+                    final_result[key] = []
+                for val in result:
+                    # val is ordered the same way as keys.
+                    for count, key in enumerate(keys):
+                        final_result[key].append(val[count])
+            else:
+                # Result is a tuple with a single value, a tuple with values
+                # in the same order as parameters in keys
+                for count, key in enumerate(keys):
+                    final_result[key] = result[0][count]
+        elif keys is None:
+            final_result = {}
+            if self.__len__() != 1:
+                # We want a dictionary of lists if len != 1
+                # First set the keys:
+                for key in result[0]:
+                    final_result[key] = []
+                # Then set the values
+                for val in result:
+                    # Get a dictionary
+                    for key, value in val.items():
+                        final_result[key].append(value)
+            else:
+                for key, value in result[0].items():
+                    final_result[key] = value
+
+        if pandas_output:
+            index = (self.get('source') if self.__len__() > 1 else
+                     (self.get('source'),))
+            if nest.is_literal(keys):
+                final_result = {keys: final_result}
+            final_result = pandas.DataFrame(final_result, index=index)
+
+        return final_result
+
+    def set(self, params, val=None):
+        """
+        NB! This is the same implementation as SetStatus
+
+        Set the parameters of nodes or connections to params.
+
+        If val is given, params has to be the name of an attribute, which is
+        set to val on the nodes. val can be a single value or a list of the
+        same size as the Connections.
+
+        Parameters
+        ----------
+        params : str or dict or list
+            Dictionary of parameters or list of dictionaries of parameters of
+            same length as the Connections. If val is given, this has to be
+            the name of a model property as a str.
+        val : str, optional
+            If given, params has to be the name of a model property.
+
+        Raises
+        ------
+        TypeError
+            Description
+        """
+
+        # This was added to ensure that the function is a nop (instead of,
+        # for instance, raising an exception) when applied to an empty
+        # Connectome, or after having done a nest.ResetKernel().
+        if self.__len__() == 0 or nest.GetKernelStatus()['network_size'] == 0:
+            return
+
+        if val is not None and nest.is_literal(params):
+            if (nest.is_iterable(val) and not
+                    isinstance(val, (nest.uni_str, dict))):
+                params = [{params: x} for x in val]
+            else:
+                params = {params: val}
+
+        if ((isinstance(params, list) and self.__len__() != len(params)) or
+                (isinstance(params, tuple) and self.__len__() != len(params))):
+            raise TypeError(
+                "status dict must be a dict, or a list of dicts of length "
+                "len(nodes)")
+
+        params = nest.broadcast(params, self.__len__(), (dict,), "params")
+
+        nest.sps(self._datum)
+        nest.sps(params)
+
+        nest.sr('2 arraystore')
+        nest.sr('Transpose { arrayload pop SetStatus } forall')
 
 
 class Mask(object):

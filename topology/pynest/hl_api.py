@@ -48,7 +48,6 @@ NEST:
 
     connects `layer` to `layer` using a dictionary to specify the connections.
 
-
 Functions in the Topology module:
   - CreateMask(masktype, specs, anchor=None)
   - CreateParameter(parametertype, specs)
@@ -857,7 +856,7 @@ def Distance(from_arg, to_arg):
     if (len(from_arg) > 1 and len(to_arg) > 1 and not
             len(from_arg) == len(to_arg)):
         raise nest.NESTError(
-            "to_arg and from_arg must have samesize unless one have size 1.")
+            "to_arg and from_arg must have same size unless one have size 1.")
 
     return nest.sli_func('Distance', from_arg, to_arg)
 
@@ -1244,12 +1243,14 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
         raise nest.NESTError("tgt_layer must be a GIDCollection")
 
     conns = nest.GetConnections(sources, tgt_layer, synapse_model=syn_model)
+    srcs = conns.get('source')
+    tgts = conns.get('target')
 
     # conns is a flat list of connections.
     # Re-organize into one list per source, containing only target GIDs.
     src_tgt_map = dict((sgid, []) for sgid in sources)
-    for conn in conns:
-        src_tgt_map[conn[0]].append(conn[1])
+    for i in range(len(conns)):
+        src_tgt_map[srcs[i]].append(tgts[i])
 
     # convert dict to nested list in same order as sources
     return tuple(src_tgt_map[sgid] for sgid in sources)
@@ -1325,13 +1326,19 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     connections = nest.GetConnections(sources, tgt_layer,
                                       synapse_model=syn_model)
+    srcs = connections.get('source')
+    tgts = connections.get('target')
+    if isinstance(srcs, int):
+        srcs = [srcs]
+    if isinstance(tgts, int):
+        tgts = [tgts]
 
     # Make dictionary where the keys are the source gids, which is mapped to a
     # list with the positions of the targets connected to the source.
     src_tgt_pos_map = dict((sgid, []) for sgid in sources)
-    for conn in connections:
-        tgt_indx = conn[1] - first_tgt_gid
-        src_tgt_pos_map[conn[0]].append(pos_all_tgts[tgt_indx])
+    for i in range(len(connections)):
+        tgt_indx = tgts[i] - first_tgt_gid
+        src_tgt_pos_map[srcs[i]].append(pos_all_tgts[tgt_indx])
 
     # Turn dict into list in same order as sources
     return [src_tgt_pos_map[sgid] for sgid in sources]

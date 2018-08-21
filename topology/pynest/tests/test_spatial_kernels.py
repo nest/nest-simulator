@@ -250,7 +250,7 @@ class SpatialTester(object):
 
         # Target nodes
         connections = nest.GetConnections(source=self._driver)
-        target_nodes = [conn[1] for conn in connections]
+        target_nodes = connections.get('target')
 
         target_dist = []
 

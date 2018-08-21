@@ -65,14 +65,14 @@ class PpPscDeltaSTDPTestCase(unittest.TestCase):
         w1 = []
         w2 = []
         t.append(0.)
-        w1.append(nest.GetStatus(conn1, keys=['weight'])[0][0])
-        w2.append(nest.GetStatus(conn2, keys=['weight'])[0][0])
+        w1.append(conn1.get('weight'))
+        w2.append(conn2.get('weight'))
 
         for i in range(nsteps):
             nest.Simulate(Dt)
             t.append(i * Dt)
-            w1.append(nest.GetStatus(conn1, keys=['weight'])[0][0])
-            w2.append(nest.GetStatus(conn2, keys=['weight'])[0][0])
+            w1.append(conn1.get('weight'))
+            w2.append(conn1.get('weight'))
 
         archiver_length1 = nest.GetStatus(nrn_post1,
                                           keys=['archiver_length'])[0]

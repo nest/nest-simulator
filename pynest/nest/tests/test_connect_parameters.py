@@ -92,9 +92,8 @@ class TestParams(unittest.TestCase):
         d0 = 0.275
         syn_params = {'delay': d0}
         self.setUpNetwork(self.conn_dict, syn_params)
-        connections = hf.nest.GetStatus(
-            hf.nest.GetConnections(self.pop1, self.pop2))
-        nest_delays = [connection['delay'] for connection in connections]
+        connections = hf.nest.GetConnections(self.pop1, self.pop2)
+        nest_delays = connections.get('delay')
         # all delays need to be equal
         self.assertTrue(hf.all_equal(nest_delays))
         # delay (rounded) needs to equal the delay that was put in
@@ -108,8 +107,8 @@ class TestParams(unittest.TestCase):
         self.pop2 = hf.nest.Create(neuron_model, self.N2, neuron_dict)
         syn_params = {'model': 'static_synapse', 'receptor_type': rtype}
         hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
-        conns = hf.nest.GetStatus(hf.nest.GetConnections(self.pop1, self.pop2))
-        ports = [conn['receptor'] for conn in conns]
+        conns = hf.nest.GetConnections(self.pop1, self.pop2)
+        ports = conns.get('receptor')
         self.assertTrue(hf.all_equal(ports))
         self.assertTrue(ports[0] == rtype)
 
@@ -117,19 +116,20 @@ class TestParams(unittest.TestCase):
         hf.nest.CopyModel("static_synapse", 'test_syn', {'receptor_type': 0})
         syn_params = {'model': 'test_syn'}
         self.setUpNetwork(self.conn_dict, syn_params)
-        conns = hf.nest.GetStatus(hf.nest.GetConnections(self.pop1, self.pop2))
-        syns = [str(conn['synapse_model']) for conn in conns]
+        conns = hf.nest.GetConnections(self.pop1, self.pop2)
+        syns = conns.get('synapse_model')
         self.assertTrue(hf.all_equal(syns))
         self.assertTrue(syns[0] == syn_params['model'])
 
     # tested on each mpi process separatly
     def testDefaultParams(self):
         self.setUpNetwork(self.conn_dict)
-        conns = hf.nest.GetStatus(hf.nest.GetConnections(self.pop1, self.pop2))
-        self.assertTrue(all(x['weight'] == self.w0 for x in conns))
-        self.assertTrue(all(x['delay'] == self.d0 for x in conns))
-        self.assertTrue(all(x['receptor'] == self.r0 for x in conns))
-        self.assertTrue(all(x['synapse_model'] == self.syn0 for x in conns))
+        conns = hf.nest.GetConnections(self.pop1, self.pop2)
+        self.assertTrue(all(x == self.w0 for x in conns.get('weight')))
+        self.assertTrue(all(x == self.d0 for x in conns.get('delay')))
+        self.assertTrue(all(x == self.r0 for x in conns.get('receptor')))
+        self.assertTrue(all(x == self.syn0 for
+                            x in conns.get('synapse_model')))
 
     def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
@@ -238,9 +238,8 @@ class TestParams(unittest.TestCase):
             self.pop2 = hf.nest.Create('iaf_psc_exp_multisynapse', self.N2, {
                                        'tau_syn': [0.2, 0.5]})
             hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
-            conns = hf.nest.GetStatus(
-                hf.nest.GetConnections(self.pop1, self.pop2))
-            conn_params = [conn['receptor'] for conn in conns]
+            conns = hf.nest.GetConnections(self.pop1, self.pop2)
+            conn_params = conns.get('receptor')
             self.assertTrue(hf.all_equal(conn_params))
             self.assertTrue(conn_params[0] == syn_params['receptor_type'])
             self.setUp()

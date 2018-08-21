@@ -73,7 +73,8 @@ ctr_index = 30 * 15 + 15
 ctr_id = a_pyr[ctr_index:ctr_index + 1]
 
 # get all projection targets of center neuron
-tgts = [ci[1] for ci in nest.GetConnections(ctr_id)]
+conn = nest.GetConnections(ctr_id)
+tgts = conn.get('target')
 
 tpyr = topo.GetTargetPositions(ctr_id, b_pyr)[0]
 tin = topo.GetTargetPositions(ctr_id, b_in)[0]

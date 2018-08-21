@@ -195,6 +195,9 @@ nest::ConnectionManager::get_synapse_status( const index source_gid,
   ( *dict )[ names::source ] = source_gid;
   ( *dict )[ names::synapse_model ] = LiteralDatum(
     kernel().model_manager.get_synapse_prototype( syn_id ).get_name() );
+  ( *dict )[ names::target_thread ] = tid;
+  ( *dict )[ names::synapse_id ] = syn_id;
+  ( *dict )[ names::port ] = lcid;
 
   const Node* source =
     kernel().node_manager.get_node_or_proxy( source_gid, tid );

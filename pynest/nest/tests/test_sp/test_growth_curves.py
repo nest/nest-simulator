@@ -424,7 +424,7 @@ class TestGrowthCurve(unittest.TestCase):
         eps = 0.10
         psi = 0.10
         # TODO481 Temporary fix, gets easier if we make the PyNEST function
-        # local_only, this is already available on SLI
+        # local_only, this is already available in SLI
         local_nodes = [gid for gid in self.pop
                        if nest.GetStatus([gid], 'local')]
 

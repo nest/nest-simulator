@@ -74,7 +74,6 @@ engine = _kernel.NESTEngine()
 
 sli_push = hl_api.sps = engine.push
 sli_pop = hl_api.spp = engine.pop
-hl_api.pcd = engine.push_connection_datums
 hl_api.kernel = _kernel
 
 initialized = False

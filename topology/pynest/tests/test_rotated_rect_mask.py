@@ -397,11 +397,15 @@ class RotatedRectangularMask(unittest.TestCase):
                [19, 48], [20, 45], [20, 49], [21, 42], [21, 46], [22, 43],
                [22, 47], [23, 44], [23, 48], [24, 45], [24, 49], [25, 50]]
 
-        connections = list(sorted(nest.GetConnections()))
+        connections = nest.GetConnections()
 
-        for conn, conn_ref in zip(connections, ref):
-            conn_list = [conn[0], conn[1]]
-            self.assertEqual(conn_list, conn_ref)
+        sources = connections.get('source')
+        targets = connections.get('target')
+        connections = [[sources[i], targets[i]]
+                       for i in range(len(connections))]
+
+        for conn, conn_ref in zip(sorted(connections), ref):
+            self.assertEqual(conn, conn_ref)
 
 
 def suite():

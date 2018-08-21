@@ -72,7 +72,7 @@ class RandomParameterTestCase(unittest.TestCase):
 
         # Get connection weights and sort
         connectome = nest.GetConnections()
-        weights = numpy.array(nest.GetStatus(connectome, 'weight'))
+        weights = numpy.array(connectome.get('weight'))
         weights.sort()
         n = len(weights)
 

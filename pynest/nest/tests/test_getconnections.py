@@ -53,6 +53,17 @@ class GetConnectionsTestCase(unittest.TestCase):
         c4 = nest.GetConnections()
         self.assertEqual(c1, c4)
 
+        weights = (11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
+        d1 = tuple({"weight": w} for w in weights)
+
+        c5 = nest.GetConnections(a, a)
+        c5.set(d1)
+        s2 = c5.get('weight')
+        self.assertEqual(s2, list(weights))
+
+        c6 = nest.GetConnections()
+        self.assertEqual(c1, c6)
+
 
 def suite():
 

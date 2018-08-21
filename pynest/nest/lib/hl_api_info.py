@@ -193,13 +193,14 @@ def SetStatus(nodes, params, val=None):
         Description
     """
 
-    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
+    if not (isinstance(nodes, nest.GIDCollection) or
+            isinstance(nodes, nest.Connectome)):
         try:
             nodes = nest.GIDCollection(nodes)
         except nest.NESTError:
             raise TypeError("The first input (nodes) must be GIDCollection, "
-                            "convertible to GIDCollection or a tuple of "
-                            "connection handles ")
+                            "convertible to GIDCollection or a Connectome "
+                            "with connection handles ")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty list,
@@ -221,10 +222,10 @@ def SetStatus(nodes, params, val=None):
             "status dict must be a dict, or a list of dicts of length "
             "len(nodes)")
 
-    if is_sequence_of_connections(nodes):
+    if isinstance(nodes, nest.Connectome):
         params = broadcast(params, len(nodes), (dict,), "params")
 
-        pcd(nodes)
+        sps(nodes)
         sps(params)
 
         sr('2 arraystore')
@@ -274,13 +275,14 @@ def GetStatus(nodes, keys=None):
         Description
     """
 
-    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
+    if not (isinstance(nodes, nest.GIDCollection) or
+            isinstance(nodes, nest.Connectome)):
         try:
             nodes = nest.GIDCollection(nodes)
         except nest.NESTError:
             raise TypeError("The first input (nodes) must be GIDCollection, "
-                            "convertible to GIDCollection or a tuple of "
-                            "connection handles ")
+                            "convertible to GIDCollection or a Connectome "
+                            "with connection handles ")
 
     if len(nodes) == 0:
         return nodes
@@ -295,10 +297,7 @@ def GetStatus(nodes, keys=None):
     else:
         raise TypeError("keys should be either a string or an iterable")
 
-    if is_sequence_of_connections(nodes):
-        pcd(nodes)
-    else:
-        sps(nodes)
+    sps(nodes)
 
     sr(cmd)
 

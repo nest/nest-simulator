@@ -368,7 +368,7 @@ def wd_fig(fig, loc, ldict, cdict, what, rpos=None,
         rn = tp.FindNearestElement(l, rpos)
 
     conns = nest.GetConnections(rn)
-    cstat = nest.GetStatus(conns)
+    cstat = conns.get()
     vals = np.array([sd[what] for sd in cstat])
     tgts = [sd['target'] for sd in cstat]
     locs = np.array(tp.GetPosition(tgts))
@@ -465,7 +465,7 @@ def pn_fig(fig, loc, ldict, cdict,
 
     rn = nest.GetLeaves(l)[0]
     conns = nest.GetConnections(rn)
-    cstat = nest.GetStatus(conns)
+    cstat = conns.get()
     srcs = [sd['source'] for sd in cstat]
     tgts = [sd['target'] for sd in cstat]
     dist = np.array(tp.Distance(srcs, tgts))

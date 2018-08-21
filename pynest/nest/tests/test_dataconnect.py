@@ -37,8 +37,8 @@ class DataConnectTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         a = nest.Create("iaf_psc_alpha", 10)
-        sources = [1]
-        target = [1.0 * x for x in range(2, 10)]
+        sources = [x for x in a[:1]]
+        target = [1.0 * x for x in a[1:]]
         weight = [2.0 * x for x in target]
         delay = [1.0 * x for x in target]
         connections = [{'target': target, 'weight': weight,
@@ -57,10 +57,7 @@ class DataConnectTestCase(unittest.TestCase):
         nest.DataConnect(stat1)
         conn2 = nest.GetConnections()
 
-        c1 = [list(x) for x in conn1]
-        c2 = [list(x) for x in conn2]
-
-        self.assertEqual(c1, c2)
+        self.assertEqual(conn1, conn2)
 
 
 def suite():

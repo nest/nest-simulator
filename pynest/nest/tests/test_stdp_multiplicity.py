@@ -176,17 +176,17 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             # get STDP synapse and weight before protocol
             syn = nest.GetConnections(source=pre_parrot,
                                       synapse_model="stdp_synapse")
-            w_pre = nest.GetStatus(syn)[0]['weight']
+            w_pre = syn.get('weight')
             syn_ps = nest.GetConnections(source=pre_parrot_ps,
                                          synapse_model="stdp_synapse")
-            w_pre_ps = nest.GetStatus(syn)[0]['weight']
+            w_pre_ps = syn_ps.get('weight')
 
             sim_time = max(pre_times + post_times) + 5 * delay
             nest.Simulate(sim_time)
 
             # get weight post protocol
-            w_post = nest.GetStatus(syn)[0]['weight']
-            w_post_ps = nest.GetStatus(syn_ps)[0]['weight']
+            w_post = syn.get('weight')
+            w_post_ps = syn_ps.get('weight')
 
             assert w_post != w_pre, "Plain parrot weight did not change."
             assert w_post_ps != w_pre_ps, "Precise parrot \

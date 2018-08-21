@@ -678,23 +678,38 @@ class TestGIDCollection(unittest.TestCase):
         GetConnection works as expected
         """
 
-        nest.SetKernelStatus({'sort_connections_by_source': False})
         n = nest.Create('iaf_psc_alpha', 3)
         nest.Connect(n, n)
 
         get_conn = nest.GetConnections()
         get_conn_all = nest.GetConnections(n, n)
-        get_conn_list = nest.GetConnections([3, 1])
+        get_conn_list = nest.GetConnections([3, 1]).get()
 
         self.assertEqual(get_conn_all, get_conn)
 
-        compare_list = [3, 1, 0, 0, 2]
-        for i, conn in enumerate(compare_list):
-            self.assertEqual(get_conn_list[1][i], conn)
+        compare_source = [1, 1, 1, 3, 3, 3]
+        compare_target = [1, 2, 3, 1, 2, 3]
+        self.assertEqual(get_conn_list.get('source'), compare_source)
+        self.assertEqual(get_conn_list.get('target'), compare_target)
 
-        connections = [[conn[0], conn[1], conn[2], conn[3], conn[4]] for conn
-                       in nest.GetConnections(n[0])]
-        ref = [[1, 1, 0, 0, 0], [1, 2, 0, 0, 3], [1, 3, 0, 0, 6]]
+        compare_list = [3, 1, 0, 0, 6]
+        conn = [get_conn_list['source'][3],
+                get_conn_list['target'][3],
+                get_conn_list['target_thread'][3],
+                get_conn_list['synapse_id'][3],
+                get_conn_list['port'][3]]
+        self.assertEqual(conn, compare_list)
+
+        conns = nest.GetConnections(n[0]).get()
+
+        connections = [[conns['source'][i],
+                        conns['target'][i],
+                        conns['target_thread'][i],
+                        conns['synapse_id'][i],
+                        conns['port'][i]]
+                       for i in range(len(nest.GetConnections(n[0])))]
+
+        ref = [[1, 1, 0, 0, 0], [1, 2, 0, 0, 1], [1, 3, 0, 0, 2]]
         for conn, conn_ref in zip(connections, ref):
             self.assertEqual(conn, conn_ref)
 

@@ -98,14 +98,20 @@ def get_connectivity_matrix(pop1, pop2):
 
     M = np.zeros((len(pop2), len(pop1)))
     connections = nest.GetConnections(pop1, pop2)
+    sources = connections.get('source')
+    targets = connections.get('target')
+    if isinstance(sources, int):
+        sources = [sources]
+    if isinstance(targets, int):
+        targets = [targets]
     index_dic = {}
     for count, node in enumerate(pop1):
         index_dic[node] = count
     for count, node in enumerate(pop2):
         index_dic[node] = count
-    for conn in connections:
-        source_id = conn[0]
-        target_id = conn[1]
+    for counter, source in enumerate(sources):
+        source_id = source
+        target_id = targets[counter]
         M[index_dic[target_id]][index_dic[source_id]] += 1
     return M
 
@@ -119,16 +125,17 @@ def get_weighted_connectivity_matrix(pop1, pop2, label):
 
     M = np.zeros((len(pop2), len(pop1)))
     connections = nest.GetConnections(pop1, pop2)
+    sources = connections.get('source')
+    targets = connections.get('target')
+    weights = connections.get(label)
     index_dic = {}
     for count, node in enumerate(pop1):
         index_dic[node] = count
     for count, node in enumerate(pop2):
         index_dic[node] = count
-    for conn in connections:
-        source_id = conn[0]
-        target_id = conn[1]
-        weight = nest.GetStatus(nest.GetConnections(
-            [source_id], [target_id]))[0][label]
+    for counter, weight in enumerate(weights):
+        source_id = sources[counter]
+        target_id = targets[counter]
         M[index_dic[target_id]][index_dic[source_id]] += weight
     return M
 
@@ -138,9 +145,8 @@ def check_synapse(params, values, syn_params, TestCase):
         syn_params[param] = values[i]
     TestCase.setUpNetwork(TestCase.conn_dict, syn_params)
     for i, param in enumerate(params):
-        conns = nest.GetStatus(nest.GetConnections(
-            TestCase.pop1, TestCase.pop2))
-        conn_params = [conn[param] for conn in conns]
+        conns = nest.GetConnections(TestCase.pop1, TestCase.pop2)
+        conn_params = conns.get(param)
         TestCase.assertTrue(all_equal(conn_params))
         TestCase.assertTrue(conn_params[0] == values[i])
 

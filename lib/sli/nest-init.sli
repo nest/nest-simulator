@@ -1453,6 +1453,12 @@ Description:
 } bind def
 
 
+/skip_if_without_music
+{
+  statusdict/have_music :: not {statusdict/exitcodes/success :: quit_i} if
+} def
+
+
 % Install modules in environment variable NEST_MODULES. Modules have
 % to be separated by colon.
 (NEST_MODULES) getenv { (:) breakup { Install } forall } if

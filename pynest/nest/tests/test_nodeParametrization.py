@@ -24,6 +24,7 @@ Node Parametrization tests
 """
 
 import nest
+import nest.random
 import numpy as np
 import unittest
 
@@ -67,6 +68,36 @@ class TestNodeParametrization(unittest.TestCase):
         nodes = nest.Create('iaf_psc_alpha', 3, {'V_m': np.array(Vm_ref)})
 
         self.assertEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
+
+    def test_create_uniform(self):
+        min_val = -75.
+        max_val = -55.
+        nodes = nest.Create('iaf_psc_alpha', 3,
+                            {'V_m': nest.random.uniform(
+                                min=min_val, max=max_val)})
+        for vm in nodes.get('V_m'):
+            self.assertGreaterEqual(vm, min_val)
+            self.assertLessEqual(vm, max_val)
+
+    def test_create_normal(self):
+        nodes = nest.Create('iaf_psc_alpha', 3,
+                            {'V_m': nest.random.normal(
+                                loc=10.0, scale=5.0, min=0.5)})
+        for vm in nodes.get('V_m'):
+            self.assertGreaterEqual(vm, 0.5)
+
+    def test_create_exponential(self):
+        nodes = nest.Create('iaf_psc_alpha', 3,
+                            {'V_m': nest.random.exponential(scale=1.0)})
+        for vm in nodes.get('V_m'):
+            self.assertGreaterEqual(vm, 0.)
+
+    def test_create_lognormal(self):
+        nodes = nest.Create('iaf_psc_alpha', 3,
+                            {'V_m': nest.random.lognormal(
+                                mean=10., sigma=20.)})
+        for vm in nodes.get('V_m'):
+            self.assertGreaterEqual(vm, 0.)
 
     def test_SetStatus_with_dict(self):
         nodes = nest.Create('iaf_psc_alpha', 3)

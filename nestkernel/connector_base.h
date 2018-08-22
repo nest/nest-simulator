@@ -271,7 +271,7 @@ public:
     const DictionaryDatum& dict,
     ConnectorModel& cm )
   {
-    assert( lcid >= 0 and lcid < C_.size() );
+    assert( lcid < C_.size() );
 
     C_[ lcid ].set_status(
       dict, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );

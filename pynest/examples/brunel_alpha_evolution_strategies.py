@@ -64,6 +64,7 @@ See Also: brunel_alpha_nest.py
 
 '''
 
+from __future__ import print_function
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 import numpy as np
@@ -404,7 +405,7 @@ def optimize(func, mu, sigma, learning_rate_mu=None, learning_rate_sigma=None,
     while True:
 
         # create new population using the search distribution
-        s = np.random.normal(0, 1, size=(population_size, *np.shape(mu)))
+        s = np.random.normal(0, 1, size=(population_size,) + np.shape(mu))
         z = mu + sigma * s
 
         # add mirrored perturbations if enabled

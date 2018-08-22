@@ -440,8 +440,6 @@ iaf_psc_exp_multisynapse::set_status( const DictionaryDatum& d )
    * Here is where we must update the recordablesMap_ if new receptors
    * are added!
    */
-  DynamicRecordablesMap< iaf_psc_exp_multisynapse > rtmp =
-    recordablesMap_; // temporary copy in case of errors
   if ( ptmp.tau_syn_.size()
     > P_.tau_syn_.size() ) // Number of receptors increased
   {
@@ -451,7 +449,8 @@ iaf_psc_exp_multisynapse::set_status( const DictionaryDatum& d )
       size_t elem = iaf_psc_exp_multisynapse::State_::I_SYN
         + i_syn
           * iaf_psc_exp_multisynapse::State_::NUM_STATE_ELEMENTS_PER_RECEPTOR;
-      rtmp.insert( get_i_syn_name( i_syn ), get_data_access_functor( elem ) );
+      recordablesMap_.insert(
+        get_i_syn_name( i_syn ), get_data_access_functor( elem ) );
     }
   }
   else if ( ptmp.tau_syn_.size() < P_.tau_syn_.size() )
@@ -459,14 +458,13 @@ iaf_psc_exp_multisynapse::set_status( const DictionaryDatum& d )
     for ( size_t i_syn = ptmp.tau_syn_.size(); i_syn < P_.tau_syn_.size();
           ++i_syn )
     {
-      rtmp.erase( get_i_syn_name( i_syn ) );
+      recordablesMap_.erase( get_i_syn_name( i_syn ) );
     }
   }
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
-  recordablesMap_ = rtmp;
 }
 
 } // namespace

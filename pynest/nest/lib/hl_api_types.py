@@ -24,6 +24,7 @@ Classes defining the different PyNEST types
 """
 
 import nest
+from nest.topology import CreateParameter
 
 try:
     import pandas
@@ -769,18 +770,33 @@ class Parameter(object):
 
     # Generic binary operation
     def _binop(self, op, other):
+        if isinstance(other, (int, float)):
+            other = CreateParameter('constant', {'value': float(other)})
         if not isinstance(other, Parameter):
             return NotImplemented
+
         return nest.sli_func(op, self._datum, other._datum)
 
     def __add__(self, other):
         return self._binop("add", other)
 
+    def __radd__(self, other):
+        return self + other
+
     def __sub__(self, other):
         return self._binop("sub", other)
 
+    def __rsub__(self, other):
+        return self * (-1) + other
+
+    def __neg__(self):
+        return self * (-1)
+
     def __mul__(self, other):
         return self._binop("mul", other)
+
+    def __rmul__(self, other):
+        return self * other
 
     def __div__(self, other):
         return self._binop("div", other)

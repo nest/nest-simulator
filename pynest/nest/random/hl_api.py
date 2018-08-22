@@ -27,6 +27,30 @@ class Exponential(tp.nest.Parameter):
     def __init__(self, scale=1.0):
         self.scale = scale
 
+    def __add__(self, other):
+        return np.random.exponential(self.scale) + other
+
+    def __radd__(self, other):
+        return self + other
+
+    def __sub__(self, other):
+        return np.random.exponential(self.scale) - other
+
+    def __rsub__(self, other):
+        return self * (-1) + other
+
+    def __neg__(self):
+        return self * (-1)
+
+    def __mul__(self, other):
+        return np.random.exponential(self.scale) * other
+
+    def __rmul__(self, other):
+        return self * other
+
+    def __div__(self, other):
+        return np.random.exponential(self.scale) / other
+
     def GetValue(self, point):
         return np.random.exponential(self.scale)
 

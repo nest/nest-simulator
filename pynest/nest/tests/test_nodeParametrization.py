@@ -99,6 +99,21 @@ class TestNodeParametrization(unittest.TestCase):
         for vm in nodes.get('V_m'):
             self.assertGreaterEqual(vm, 0.)
 
+    def test_create_adding(self):
+        nodes = nest.Create('iaf_psc_alpha', 3,
+                            {'V_m': -80.0 +
+                             nest.random.exponential(scale=0.1)})
+
+        for vm in nodes.get('V_m'):
+            self.assertGreaterEqual(vm, -80.0)
+
+        nodes = nest.Create('iaf_psc_alpha', 3,
+                            {'V_m': 30.0 + nest.random.uniform(-75., -55.)})
+
+        for vm in nodes.get('V_m'):
+            self.assertGreaterEqual(vm, -45.)
+            self.assertLessEqual(vm, -25.)
+
     def test_SetStatus_with_dict(self):
         nodes = nest.Create('iaf_psc_alpha', 3)
         Vm_ref = (-60., -60., -60.)

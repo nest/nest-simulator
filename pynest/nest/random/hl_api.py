@@ -46,6 +46,10 @@ class ParameterWrapper(tp.nest.Parameter):
         self._parameter /= other
         return self
 
+    def __truediv__(self, other):
+        self._parameter /= other
+        return self
+
 
 class Exponential(ParameterWrapper):
     def __init__(self, scale=1.0):

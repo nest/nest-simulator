@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# hl_api.py
+# hl_api_random.py
 #
 # This file is part of NEST.
 #

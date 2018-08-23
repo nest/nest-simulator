@@ -53,12 +53,6 @@ is_threaded not { /skipped_no_openmp exit_test_gracefully } if
   statusdict/exitcodes :: exch get quit_i
 } bind def
 
-/skip_if_no_mpi { statusdict/is_mpi :: not { /skipped_no_mpi exit_test_gracefully } if } def
-/skip_if_have_mpi { statusdict/is_mpi :: { /skipped_have_mpi exit_test_gracefully } if } def
-/skip_if_not_threaded { is_threaded not { /skipped_no_threading exit_test_gracefully } if } def
-/skip_if_without_gsl { statusdict/have_gsl :: not { /skipped_no_gsl exit_test_gracefully } if } def
-/skip_if_without_music { statusdict/have_music :: not { /skipped_no_music exit_test_gracefully } if } def
-
 
 /* BeginDocumentation
 Name: unittest::assert_or_die - Check condition and quit with exit code 1 if it fails

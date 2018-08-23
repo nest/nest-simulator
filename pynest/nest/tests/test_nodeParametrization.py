@@ -187,7 +187,8 @@ class TestNodeParametrization(unittest.TestCase):
         sg = nest.Create('spike_generator')
         nest.SetStatus(sg, {'spike_times': [1., 2., 3.]})
 
-        self.assertEqual(list(nest.GetStatus(sg, 'spike_times')[0]), [1., 2., 3.])
+        self.assertEqual(list(nest.GetStatus(sg, 'spike_times')[0]),
+                         [1., 2., 3.])
 
     def test_SetStatus_with_dict_with_numpy(self):
         nodes = nest.Create('iaf_psc_alpha', 3)

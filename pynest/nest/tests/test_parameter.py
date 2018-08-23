@@ -39,8 +39,8 @@ class TestParameter(unittest.TestCase):
         val = 33.
         e = nest.random.uniform(low, high) + val
 
-        self.assertGreater(e.GetValue([0., 0.]), low + val)
-        self.assertLess(e.GetValue([0., 0.]), high + val)
+        self.assertGreater(e.get_value(), low + val)
+        self.assertLess(e.get_value(), high + val)
 
     def test_radd(self):
         low = 55.
@@ -48,8 +48,8 @@ class TestParameter(unittest.TestCase):
         val = 33.
         e = val + nest.random.uniform(low, high)
 
-        self.assertGreater(e.GetValue([0., 0.]), low + val)
-        self.assertLess(e.GetValue([0., 0.]), high + val)
+        self.assertGreater(e.get_value(), low + val)
+        self.assertLess(e.get_value(), high + val)
 
     def test_sub(self):
         low = 55.
@@ -57,8 +57,8 @@ class TestParameter(unittest.TestCase):
         val = 33.
         e = nest.random.uniform(low, high) - val
 
-        self.assertGreater(e.GetValue([0., 0.]), low - val)
-        self.assertLess(e.GetValue([0., 0.]), high - val)
+        self.assertGreater(e.get_value(), low - val)
+        self.assertLess(e.get_value(), high - val)
 
     def test_rsub(self):
         low = 55.
@@ -66,16 +66,16 @@ class TestParameter(unittest.TestCase):
         val = 33.
         e = val - nest.random.uniform(low, high)
 
-        self.assertGreater(e.GetValue([0., 0.]), val - high)
-        self.assertLess(e.GetValue([0., 0.]), val - low)
+        self.assertGreater(e.get_value(), val - high)
+        self.assertLess(e.get_value(), val - low)
 
     def test_neg(self):
         low = 55.
         high = 75.
         e = -nest.random.uniform(low, high)
 
-        self.assertGreater(e.GetValue([0., 0.]), -high)
-        self.assertLess(e.GetValue([0., 0.]), -low)
+        self.assertGreater(e.get_value(), -high)
+        self.assertLess(e.get_value(), -low)
 
     def test_rsub_all_neg(self):
         low = -55.
@@ -83,8 +83,8 @@ class TestParameter(unittest.TestCase):
         val = -33.
         e = val - nest.random.uniform(high, low)
 
-        self.assertGreater(e.GetValue([0., 0.]), val - low)
-        self.assertLess(e.GetValue([0., 0.]), val - high)
+        self.assertGreater(e.get_value(), val - low)
+        self.assertLess(e.get_value(), val - high)
 
     def test_mul(self):
         low = 55.
@@ -92,8 +92,8 @@ class TestParameter(unittest.TestCase):
         val = 3.
         e = nest.random.uniform(low, high) * val
 
-        self.assertGreater(e.GetValue([0., 0.]), low * val)
-        self.assertLess(e.GetValue([0., 0.]), high * val)
+        self.assertGreater(e.get_value(), low * val)
+        self.assertLess(e.get_value(), high * val)
 
     def test_rmul(self):
         low = 55.
@@ -101,8 +101,8 @@ class TestParameter(unittest.TestCase):
         val = 3.
         e = val * nest.random.uniform(low, high)
 
-        self.assertGreater(e.GetValue([0., 0.]), val * low)
-        self.assertLess(e.GetValue([0., 0.]), val * high)
+        self.assertGreater(e.get_value(), val * low)
+        self.assertLess(e.get_value(), val * high)
 
     def test_div(self):
         low = 55.
@@ -110,8 +110,8 @@ class TestParameter(unittest.TestCase):
         val = 3.
         e = nest.random.uniform(low, high) / val
 
-        self.assertGreater(e.GetValue([0., 0.]), low / val)
-        self.assertLess(e.GetValue([0., 0.]), high / val)
+        self.assertGreater(e.get_value(), low / val)
+        self.assertLess(e.get_value(), high / val)
 
 
 def suite():

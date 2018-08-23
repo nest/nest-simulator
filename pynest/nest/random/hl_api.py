@@ -34,25 +34,13 @@ class ParameterWrapper(tp.nest.Parameter):
         self._parameter += other
         return self
 
-    def __radd__(self, other):
-        return self + other
-
     def __sub__(self, other):
         self._parameter -= other
         return self
 
-    def __rsub__(self, other):
-        return self * (-1) + other
-
-    def __neg__(self):
-        return self * (-1)
-
     def __mul__(self, other):
         self._parameter *= other
         return self
-
-    def __rmul__(self, other):
-        return self * other
 
     def __div__(self, other):
         self._parameter /= other
@@ -66,23 +54,11 @@ class Exponential(ParameterWrapper):
     def __add__(self, other):
         return np.random.exponential(self._scale) + other
 
-    def __radd__(self, other):
-        return self + other
-
     def __sub__(self, other):
         return np.random.exponential(self._scale) - other
 
-    def __rsub__(self, other):
-        return self * (-1) + other
-
-    def __neg__(self):
-        return self * (-1)
-
     def __mul__(self, other):
         return np.random.exponential(self._scale) * other
-
-    def __rmul__(self, other):
-        return self * other
 
     def __div__(self, other):
         return np.random.exponential(self._scale) / other

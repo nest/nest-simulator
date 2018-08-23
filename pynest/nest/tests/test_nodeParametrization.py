@@ -183,15 +183,11 @@ class TestNodeParametrization(unittest.TestCase):
 
         self.assertEqual(nest.GetStatus(nodes, 'withport'), withport_ref)
 
-    def test_SetStatus_on_multimeter(self):
-        mm = nest.Create('multimeter')
-
-        nest.SetStatus(mm, {'record_from': ['V_m', 'w']})
-
     def test_SetStatus_on_spike_generetor(self):
-        mm = nest.Create('spike_generator')
+        sg = nest.Create('spike_generator')
+        nest.SetStatus(sg, {'spike_times': [1., 2., 3.]})
 
-        nest.SetStatus(mm, {'spike_times': [1., 2., 3.]})
+        self.assertEqual(list(nest.GetStatus(sg, 'spike_times')[0]), [1., 2., 3.])
 
     def test_SetStatus_with_dict_with_numpy(self):
         nodes = nest.Create('iaf_psc_alpha', 3)
@@ -200,6 +196,48 @@ class TestNodeParametrization(unittest.TestCase):
         nest.SetStatus(nodes, {'V_m': Vm_ref})
 
         self.assertEqual(list(nest.GetStatus(nodes, 'V_m')), list(Vm_ref))
+
+    def test_set_with_dict_with_single_list(self):
+        nodes = nest.Create('iaf_psc_alpha', 3)
+        Vm_ref = [-30., -40., -50.]
+        nodes.set({'V_m': Vm_ref})
+
+        self.assertEqual(list(nodes.get('V_m')), Vm_ref)
+
+    def test_set_with_dict_with_lists(self):
+        nodes = nest.Create('iaf_psc_alpha', 3)
+        Vm_ref = [-11., -12., -13.]
+        Cm_ref = 177.
+        tau_minus_ref = [22., 24., 26.]
+        nodes.set({'V_m': Vm_ref,
+                   'C_m': Cm_ref,
+                   'tau_minus': tau_minus_ref})
+
+        self.assertEqual(list(nodes.get('V_m')), Vm_ref)
+        self.assertEqual(nodes.get('C_m'), (Cm_ref, Cm_ref, Cm_ref))
+        self.assertEqual(list(nodes.get('tau_minus')), tau_minus_ref)
+
+    def test_set_with_dict_with_single_element_lists(self):
+        node = nest.Create('iaf_psc_alpha')
+        Vm_ref = -13.
+        Cm_ref = 222.
+        node.set({'V_m': [Vm_ref], 'C_m': [Cm_ref]})
+
+        self.assertEqual(node.get('V_m'), Vm_ref)
+        self.assertEqual(node.get('C_m'), Cm_ref)
+
+    def test_set_with_dict_with_list_with_strings(self):
+        nodes = nest.Create('spike_detector', 3)
+        withport_ref = (True, False, True)
+        nodes.set({'withport': [True, False, True]})
+
+        self.assertEqual(nodes.get('withport'), withport_ref)
+
+    def test_set_on_spike_generetor(self):
+        sg = nest.Create('spike_generator')
+        sg.set({'spike_times': [1., 2., 3.]})
+
+        self.assertEqual(list(sg.get('spike_times')), [1., 2., 3.])
 
 
 def suite():

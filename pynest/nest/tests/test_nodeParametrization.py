@@ -198,6 +198,22 @@ class TestNodeParametrization(unittest.TestCase):
 
         self.assertEqual(list(nest.GetStatus(nodes, 'V_m')), list(Vm_ref))
 
+    def test_set_with_random(self):
+        nodes = nest.Create('iaf_psc_alpha', 3)
+        nest.SetStatus(nodes, {'V_m': nest.random.uniform(-75., -55.)})
+
+        for vm in nodes.get('V_m'):
+            self.assertGreater(vm, -75.)
+            self.assertLess(vm, -55.)
+
+    def test_set_with_random_as_val(self):
+        nodes = nest.Create('iaf_psc_alpha', 3)
+        nest.SetStatus(nodes, 'V_m', nest.random.uniform(-75., -55.))
+
+        for vm in nodes.get('V_m'):
+            self.assertGreater(vm, -75.)
+            self.assertLess(vm, -55.)
+
     def test_set_with_dict_with_single_list(self):
         nodes = nest.Create('iaf_psc_alpha', 3)
         Vm_ref = [-30., -40., -50.]
@@ -239,6 +255,22 @@ class TestNodeParametrization(unittest.TestCase):
         sg.set({'spike_times': [1., 2., 3.]})
 
         self.assertEqual(list(sg.get('spike_times')), [1., 2., 3.])
+
+    def test_set_with_random(self):
+        nodes = nest.Create('iaf_psc_alpha', 3)
+        nodes.set({'V_m': nest.random.uniform(-75., -55.)})
+
+        for vm in nodes.get('V_m'):
+            self.assertGreater(vm, -75.)
+            self.assertLess(vm, -55.)
+
+    def test_set_with_random_as_val(self):
+        nodes = nest.Create('iaf_psc_alpha', 3)
+        nodes.set('V_m', nest.random.uniform(-75., -55.))
+
+        for vm in nodes.get('V_m'):
+            self.assertGreater(vm, -75.)
+            self.assertLess(vm, -55.)
 
 
 def suite():

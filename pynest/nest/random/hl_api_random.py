@@ -19,13 +19,14 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest.topology as tp
+from nest.topology import CreateParameter
+from nest import Parameter
 import numpy as np
 
 
-class ParameterWrapper(tp.nest.Parameter):
+class ParameterWrapper(Parameter):
     def __init__(self, parametertype, specs):
-        self._parameter = tp.CreateParameter(parametertype, specs)
+        self._parameter = CreateParameter(parametertype, specs)
 
     def get_value(self):
         return self._parameter.GetValue([0.0, 0.0])

@@ -166,7 +166,7 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
     updateValue< std::vector< double > >( d, names::tau_sfa, tau_sfa_ );
     updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
   }
-  catch ( TypeMismatch e )
+  catch ( TypeMismatch& e )
   {
     multi_param_ = 0;
     double tau_sfa_temp_;
@@ -337,9 +337,6 @@ nest::pp_psc_delta::calibrate()
   //        time steps again by a strategy defined by class nest::Time.
   //     2. The refractory time in units of steps is read out by get_steps(), a
   //        member function of class nest::Time.
-  //
-  // The definition of the refractory period of the pp_psc_delta is consistent
-  // with the one of iaf_neuron_ps.
   //
   // Choosing a TauR that is not an integer multiple of the computation time
   // step h will lead to accurate (up to the resolution h) and self-consistent

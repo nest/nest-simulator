@@ -26,8 +26,6 @@ import scipy.stats
 from . import test_connect_helpers as hf
 from .test_connect_parameters import TestParams
 
-from time import time
-
 
 class TestFixedInDegree(TestParams):
 
@@ -56,7 +54,7 @@ class TestFixedInDegree(TestParams):
         conn_params['indegree'] = self.N1 + 1
         try:
             self.setUpNetwork(conn_params)
-        except:
+        except hf.nest.NESTError:
             got_error = True
         self.assertTrue(got_error)
 
@@ -96,7 +94,7 @@ class TestFixedInDegree(TestParams):
             ks, p = scipy.stats.kstest(pvalues, 'uniform')
             self.assertTrue(p > self.stat_dict['alpha2'])
 
-    def testAutapses(self):
+    def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
         N = 10
         conn_params['multapses'] = False
@@ -104,23 +102,27 @@ class TestFixedInDegree(TestParams):
         # test that autapses exist
         conn_params['indegree'] = N
         conn_params['autapses'] = True
-        pop = hf.nest.Create('iaf_neuron', N)
+        pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
         hf.mpi_assert(np.diag(M), np.ones(N), self)
-        hf.nest.ResetKernel()
+
+    def testAutapsesFalse(self):
+        conn_params = self.conn_dict.copy()
+        N = 10
+        conn_params['multapses'] = False
 
         # test that autapses were excluded
         conn_params['indegree'] = N - 1
         conn_params['autapses'] = False
-        pop = hf.nest.Create('iaf_neuron', N)
+        pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
         hf.mpi_assert(np.diag(M), np.zeros(N), self)
 
-    def testMultapses(self):
+    def testMultapsesTrue(self):
         conn_params = self.conn_dict.copy()
         N = 3
         conn_params['autapses'] = True
@@ -128,16 +130,20 @@ class TestFixedInDegree(TestParams):
         # test that multapses were drawn
         conn_params['indegree'] = N + 1
         conn_params['multapses'] = True
-        pop = hf.nest.Create('iaf_neuron', N)
+        pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         nr_conns = len(hf.nest.GetConnections(pop, pop))
         hf.mpi_assert(nr_conns, conn_params['indegree'] * N, self)
-        hf.nest.ResetKernel()
+
+    def testMultapsesFalse(self):
+        conn_params = self.conn_dict.copy()
+        N = 3
+        conn_params['autapses'] = True
 
         # test that no multapses exist
         conn_params['indegree'] = N
         conn_params['multapses'] = False
-        pop = hf.nest.Create('iaf_neuron', N)
+        pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         M = hf.get_connectivity_matrix(pop, pop)
         M = hf.gather_data(M)
@@ -153,6 +159,7 @@ def suite():
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
+
 
 if __name__ == '__main__':
     run()

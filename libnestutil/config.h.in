@@ -42,9 +42,9 @@
 #define NEST_HOSTCPU "@NEST_TARGET_ARCH@"
 #define NEST_HOSTVENDOR "@NEST_TARGET_VENDOR@"
 
-#define NEST_PREFIX  "@CMAKE_NEST_PREFIX@"
-#define NEST_DATADIR "@CMAKE_INSTALL_DATADIR@"
-#define NEST_DOCDIR  "@CMAKE_INSTALL_DOCDIR@"
+#define NEST_INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@"
+#define NEST_INSTALL_DATADIR "@CMAKE_INSTALL_DATADIR@"
+#define NEST_INSTALL_DOCDIR "@CMAKE_INSTALL_DOCDIR@"
 
 #define NEST_EXITCODE_ABORT @NEST_EXITCODE_ABORT@
 #define NEST_EXITCODE_SEGFAULT @NEST_EXITCODE_SEGFAULT@
@@ -58,6 +58,9 @@
 /* tics per step in simulation */
 #define CONFIG_TICS_PER_STEP @tics_per_step@
 
+/* when to truncate the recursive instantiation of the connector */
+#define CONFIG_CONNECTOR_CUTOFF @connector_cutoff@
+
 /* define if the compiler does not include *.h headers ISO conformant */
 #cmakedefine HAVE_ALPHA_CXX_STD_BUG 1
 
@@ -69,11 +72,6 @@
 
 /* Is the GNU Science Library available (ver. >= 1.0)? */
 #cmakedefine HAVE_GSL 1
-
-/* Define to 1 if you have the <inttypes.h> header file.
- * Used in sparseconfig.h.
- */
-#cmakedefine HAVE_INTTYPES_H 1
 
 /* "Define if isnan() is available" */
 #cmakedefine HAVE_ISNAN 1
@@ -90,9 +88,7 @@
 /* libneurosim support enabled? */
 #cmakedefine HAVE_LIBNEUROSIM 1
 
-/* define if we have usable long long type.
- * Used in sparseconfig.h.
- */
+/* Define to 1 if you have usable long long type. */
 #cmakedefine HAVE_LONG_LONG 1
 
 /* Define to 1 if you have the <mach/mach.h> header file. */
@@ -137,31 +133,11 @@
 /* define if the compiler fails on static template member declaration */
 #cmakedefine HAVE_STATIC_TEMPLATE_DECLARATION_FAIL 1
 
-/* Define to 1 if you have the <stdint.h> header file.
- * Used in sparseconfig.h.
- */
-#cmakedefine HAVE_STDINT_H 1
-
 /* define for STL vector capacity base unity */
 #cmakedefine HAVE_STL_VECTOR_CAPACITY_BASE_UNITY 1
 
 /* define for STL vector capacity doubling strategy */
 #cmakedefine HAVE_STL_VECTOR_CAPACITY_DOUBLING 1
-
-/* Define to 1 if you have the <sys/types.h> header file.
- * Used in sparseconfig.h.
- */
-#cmakedefine HAVE_SYS_TYPES_H 1
-
-/* Define if the system has the type `uint16_t'.
- * Used in sparseconfig.h.
- */
-#cmakedefine HAVE_UINT16_T 1
-
-/* Define if the system has the type `u_int16_t'.
- * Used in sparseconfig.h.
- */
-#cmakedefine HAVE_U_INT16_T 1
 
 /* Tics per millisecond specified? */
 #cmakedefine HAVE_TICS_PER_MS 1

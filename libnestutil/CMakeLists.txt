@@ -22,16 +22,12 @@ set( nestutil_sources
     numerics.h numerics.cpp
     propagator_stability.h propagator_stability.cpp
     lockptr.h
-    sparseconfig.h
-    template_util.h
-    type_traits.h
-    libc_allocator_with_realloc.h
-    hashtable-common.h
-    sparsetable.h
     compose.hpp
     string_utils.h
+    sort.h
     logging.h
     logging_event.h logging_event.cpp
+    vector_util.h
     )
 
 add_library( nestutil ${nestutil_sources} )
@@ -47,3 +43,7 @@ install( TARGETS nestutil
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
+
+FILTER_HEADERS("${nestutil_sources}" install_headers )
+install( FILES ${install_headers} ${PROJECT_BINARY_DIR}/libnestutil/config.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

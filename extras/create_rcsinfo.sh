@@ -6,7 +6,7 @@
 
 # default value, if git is not installed or if the source directory is
 # not under version control
-version="v2.12.0"
+version="v2.16.0"
 
 # check if we can run the git command
 if command -v git >/dev/null 2>&1; then
@@ -28,6 +28,5 @@ mkdir -p $sli_libdir
 
 # create rcsinfo.sli
 echo "statusdict /rcsinfo ($version) put" > $sli_libdir/rcsinfo.sli
-echo $version
 
 exit 0

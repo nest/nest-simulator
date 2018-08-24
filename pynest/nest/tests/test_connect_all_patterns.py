@@ -19,31 +19,47 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy as np
+import os
+import subprocess as sp
 import unittest
 import nest
 
-from . import test_connect_helpers as hf
+HAVE_MPI = nest.sli_func("statusdict/have_mpi ::")
 
-from .test_connect_parameters import TestParams
-from .test_connect_one_to_one import TestOneToOne
-from .test_connect_all_to_all import TestAllToAll
-from .test_connect_fixed_indegree import TestFixedInDegree
-from .test_connect_fixed_outdegree import TestFixedOutDegree
-from .test_connect_fixed_total_number import TestFixedTotalNumber
-from .test_connect_pairwise_bernoulli import TestPairwiseBernoulli
 
-nest.set_verbosity("M_WARNING")
+class TestConnectAllPatterns(unittest.TestCase):
+
+    @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
+    def testWithMPI(self):
+        # Check that we can import mpi4py
+        try:
+            from mpi4py import MPI
+        except ImportError:
+            raise unittest.SkipTest("mpi4py required")
+        directory = os.path.dirname(os.path.realpath(__file__))
+        scripts = ["test_connect_all_to_all.py",
+                   "test_connect_one_to_one.py",
+                   "test_connect_fixed_indegree.py",
+                   "test_connect_fixed_outdegree.py",
+                   "test_connect_fixed_total_number.py",
+                   "test_connect_pairwise_bernoulli.py"
+                   ]
+        failing_tests = []
+        for script in scripts:
+            test_script = os.path.join(directory, script)
+            command = nest.sli_func("mpirun", 2, "nosetests",
+                                    test_script)
+            command = command.split()
+            process = sp.Popen(command, stdout=sp.PIPE, stderr=sp.PIPE)
+            stdout, stderr = process.communicate()
+            retcode = process.returncode
+            if retcode != 0:
+                failing_tests.append(script)
+        self.assertTrue(not failing_tests, 'The following tests failed when ' +
+                        'executing with "mpirun -np 2 nosetests [script]": ' +
+                        ", ".join(failing_tests))
+
 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestAllToAll)
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestOneToOne))
-    suite.addTest(
-        unittest.TestLoader().loadTestsFromTestCase(TestFixedInDegree))
-    suite.addTest(
-        unittest.TestLoader().loadTestsFromTestCase(TestFixedOutDegree))
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(
-        TestFixedTotalNumber))
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(
-        TestPairwiseBernoulli))
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestConnectAllPatterns)
     unittest.TextTestRunner(verbosity=2).run(suite)

@@ -151,7 +151,6 @@ public:
    * If this resolution is not fine enough, the creation time
    * can be corrected by using the time attribute.
    */
-
   Time const& get_stamp() const;
 
   /**
@@ -361,7 +360,6 @@ public:
   void set_multiplicity( int );
   int get_multiplicity() const;
 
-
 protected:
   int multiplicity_;
 };
@@ -412,11 +410,11 @@ public:
   void set_receiver_gid( index );
 
 protected:
-  index receiver_gid_; //!< GID of receiver or -1.
+  index receiver_gid_; //!< GID of receiver or 0.
 };
 
 inline WeightRecorderEvent::WeightRecorderEvent()
-  : receiver_gid_( -1 )
+  : receiver_gid_( 0 )
 {
 }
 
@@ -575,6 +573,8 @@ public:
   /** Create empty request for use during simulation. */
   DataLoggingRequest();
 
+  DataLoggingRequest( const Time&, const std::vector< Name >& );
+
   /** Create event for given time interval, offset for interval start,
    *  and vector of recordables. */
   DataLoggingRequest( const Time&, const Time&, const std::vector< Name >& );
@@ -611,6 +611,14 @@ inline DataLoggingRequest::DataLoggingRequest()
   , recording_interval_( Time::neg_inf() )
   , recording_offset_( Time::ms( 0. ) )
   , record_from_( 0 )
+{
+}
+
+inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int,
+  const std::vector< Name >& recs )
+  : Event()
+  , recording_interval_( rec_int )
+  , record_from_( &recs )
 {
 }
 
@@ -842,12 +850,16 @@ public:
     std::vector< unsigned int >::iterator& pos ) = 0;
   virtual std::vector< unsigned int >::iterator& operator>>(
     std::vector< unsigned int >::iterator& pos ) = 0;
+
+  virtual const std::vector< synindex >& get_supported_syn_ids() const = 0;
+
+  virtual void reset_supported_syn_ids() = 0;
 };
 
 /**
  * This template function returns the number of uints covered by a variable of
- * type T. This function is used to determine the storage demands for a variable
- * of type T in the NEST communication buffer, which is of type
+ * type T. This function is used to determine the storage demands for a
+ * variable of type T in the NEST communication buffer, which is of type
  * std::vector<unsigned int>.
  */
 template < typename T >
@@ -868,11 +880,9 @@ number_of_uints_covered( void )
  * Please note that this function does not increase the size of the vector,
  * it just writes the data to the position given by the iterator.
  * The function is used to write data from SecondaryEvents to the NEST
- * communcation buffer.
- * The pos iterator is advanced during execution.
+ * communication buffer. The pos iterator is advanced during execution.
  * For a discussion on the functionality of this function see github issue #181
- * and pull request
- * #184.
+ * and pull request #184.
  */
 template < typename T >
 void
@@ -899,11 +909,9 @@ write_to_comm_buffer( T d, std::vector< unsigned int >::iterator& pos )
 /**
  * This template function reads data of type T from a given position of a
  * std::vector< unsigned int >. The function is used to read SecondaryEvents
- * data from
- * the NEST communcation buffer.
- * The pos iterator is advanced during execution.
- * For a discussion on the functionality of this function see github issue #181
- * and pull request #184.
+ * data from the NEST communication buffer. The pos iterator is advanced
+ * during execution. For a discussion on the functionality of this function see
+ * github issue #181 and pull request #184.
  */
 template < typename T >
 void
@@ -928,11 +936,16 @@ read_from_comm_buffer( T& d, std::vector< unsigned int >::iterator& pos )
 }
 
 /**
- * Event for gap-junction information.
- * The event transmits the interpolation of the membrane potential
- * to the connected neurons.
- * Technically the GapJunctionEvent only contains iterators pointing to
- * the memory location of the interpolation array.
+ * Template class for the storage and communication of a std::vector of type
+ * DataType. The class provides the functionality to communicate homogeneous
+ * data of type DataType. The second template type Subclass (which should be
+ * chosen as the derived class itself) is used to distinguish derived classes
+ * with the same DataType. This is required because of the included static
+ * variables in the base class (as otherwise all derived classes with the same
+ * DataType would share the same static variables).
+ *
+ * Technically the DataSecondaryEvent only contains iterators pointing to
+ * the memory location of the std::vector< DataType >.
  *
  * Conceptually, there is a one-to-one mapping between a SecondaryEvent
  * and a SecondaryConnectorModel. The synindex of this particular
@@ -945,18 +958,166 @@ read_from_comm_buffer( T& d, std::vector< unsigned int >::iterator& pos )
  * supports_syn_id()-function allows testing if a particular synid is mapped
  * with the SecondaryEvent in question.
  */
-class GapJunctionEvent : public SecondaryEvent
+template < typename DataType, typename Subclass >
+class DataSecondaryEvent : public SecondaryEvent
 {
 private:
-  // we chose std::vector over std::set because we expect this always to be
-  // short
+  // we chose std::vector over std::set because we expect this to be short
+  static std::vector< synindex > pristine_supported_syn_ids_;
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
-  std::vector< double >::iterator coeffarray_as_doubles_begin_;
-  std::vector< double >::iterator coeffarray_as_doubles_end_;
+  typename std::vector< DataType >::iterator coeffarray_as_d_begin_;
+  typename std::vector< DataType >::iterator coeffarray_as_d_end_;
   std::vector< unsigned int >::iterator coeffarray_as_uints_begin_;
   std::vector< unsigned int >::iterator coeffarray_as_uints_end_;
+
+public:
+  /**
+   * This function is needed to set the synid on model registration.
+   * At this point no object of this type is available and the
+   * add_syn_id-function cannot be used as it is virtual in the base class
+   * and therefore cannot be declared as static.
+   */
+  static void
+  set_syn_id( const synindex synid )
+  {
+    VPManager::assert_single_threaded();
+    pristine_supported_syn_ids_.push_back( synid );
+    supported_syn_ids_.push_back( synid );
+  }
+
+  /**
+   * This function is needed to add additional synids when the
+   * corresponded connector model is copied.
+   * This function needs to be a virtual function of the base class as
+   * it is called from a pointer on SecondaryEvent.
+   */
+  void
+  add_syn_id( const synindex synid )
+  {
+    assert( not supports_syn_id( synid ) );
+    VPManager::assert_single_threaded();
+    supported_syn_ids_.push_back( synid );
+  }
+
+  const std::vector< synindex >&
+  get_supported_syn_ids() const
+  {
+    return supported_syn_ids_;
+  }
+
+  /**
+   * Resets the vector of supported syn ids to those originally
+   * registered via ModelsModule or user defined Modules, i.e.,
+   * removes all syn ids created by CopyModel. This is important to
+   * maintain consistency across ResetKernel, which removes all copied
+   * models.
+   */
+  void
+  reset_supported_syn_ids()
+  {
+    supported_syn_ids_.clear();
+    for ( size_t i = 0; i < pristine_supported_syn_ids_.size(); ++i )
+    {
+      supported_syn_ids_.push_back( pristine_supported_syn_ids_[ i ] );
+    }
+  }
+
+  static void
+  set_coeff_length( const size_t coeff_length )
+  {
+    VPManager::assert_single_threaded();
+    coeff_length_ = coeff_length;
+  }
+
+  bool
+  supports_syn_id( const synindex synid ) const
+  {
+    return (
+      std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
+      != supported_syn_ids_.end() );
+  }
+
+  void
+  set_coeffarray( std::vector< DataType >& ca )
+  {
+    coeffarray_as_d_begin_ = ca.begin();
+    coeffarray_as_d_end_ = ca.end();
+    assert( coeff_length_ == ca.size() );
+  }
+
+  /**
+   * The following operator is used to read the information of the
+   * DataSecondaryEvent from the buffer in EventDeliveryManager::deliver_events
+   */
+  std::vector< unsigned int >::iterator& operator<<(
+    std::vector< unsigned int >::iterator& pos )
+  {
+    // The synid can be skipped here as it is stored in a static vector
+
+    // generating a copy of the coeffarray is too time consuming
+    // therefore we save an iterator to the beginning+end of the coeffarray
+    coeffarray_as_uints_begin_ = pos;
+
+    pos += coeff_length_ * number_of_uints_covered< DataType >();
+
+    coeffarray_as_uints_end_ = pos;
+
+    return pos;
+  }
+
+  /**
+   * The following operator is used to write the information of the
+   * DataSecondaryEvent into the secondary_events_buffer_.
+   * All DataSecondaryEvents are identified by the synid of the
+   * first element in supported_syn_ids_.
+   */
+  std::vector< unsigned int >::iterator& operator>>(
+    std::vector< unsigned int >::iterator& pos )
+  {
+    for ( typename std::vector< DataType >::iterator i = coeffarray_as_d_begin_;
+          i != coeffarray_as_d_end_;
+          i++ )
+    {
+      // we need the static_cast here as the size of a stand-alone variable
+      // and a std::vector entry may differ (e.g. for std::vector< bool >)
+      write_to_comm_buffer( static_cast< DataType >( *i ), pos );
+    }
+    return pos;
+  }
+
+  size_t
+  size()
+  {
+    size_t s = number_of_uints_covered< synindex >();
+    s += number_of_uints_covered< index >();
+    s += number_of_uints_covered< DataType >() * coeff_length_;
+
+    return s;
+  }
+
+  const std::vector< unsigned int >::iterator&
+  begin()
+  {
+    return coeffarray_as_uints_begin_;
+  }
+
+  const std::vector< unsigned int >::iterator&
+  end()
+  {
+    return coeffarray_as_uints_end_;
+  }
+
+  DataType get_coeffvalue( std::vector< unsigned int >::iterator& pos );
+};
+
+/**
+ * Event for gap-junction information. The event transmits the interpolation
+ * of the membrane potential to the connected neurons.
+ */
+class GapJunctionEvent : public DataSecondaryEvent< double, GapJunctionEvent >
+{
 
 public:
   GapJunctionEvent()
@@ -965,139 +1126,15 @@ public:
 
   void operator()();
   GapJunctionEvent* clone() const;
-
-  /**
-   * This function is needed to set the synid on model registration.
-   * At this point no object of this type is available and the
-   * add_syn_id-function cannot be used as it is virtual in the base class
-   * and therefore cannot be declared as static.
-   */
-  static void
-  set_syn_id( const synindex synid )
-  {
-    VPManager::assert_single_threaded();
-    supported_syn_ids_.push_back( synid );
-  }
-
-  /**
-   * This function is needed to add additional synids when the
-   * corresponded connector model is copied.
-   * This function needs to be a virtual function of the base class as
-   * it is called from a pointer on SecondaryEvent.
-   */
-  void
-  add_syn_id( const synindex synid )
-  {
-    assert( not supports_syn_id( synid ) );
-    VPManager::assert_single_threaded();
-    supported_syn_ids_.push_back( synid );
-  }
-
-  static void
-  set_coeff_length( const size_t coeff_length )
-  {
-    VPManager::assert_single_threaded();
-    coeff_length_ = coeff_length;
-  }
-
-  bool
-  supports_syn_id( const synindex synid ) const
-  {
-    return (
-      std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
-      != supported_syn_ids_.end() );
-  }
-
-  void
-  set_coeffarray( std::vector< double >& ca )
-  {
-    coeffarray_as_doubles_begin_ = ca.begin();
-    coeffarray_as_doubles_end_ = ca.end();
-    assert( coeff_length_ == ca.size() );
-  }
-
-  /**
-   * The following operator is used to read the information
-   * of the GapJunctionEvent from the buffer in Scheduler::deliver_events_
-   */
-  std::vector< unsigned int >::iterator& operator<<(
-    std::vector< unsigned int >::iterator& pos )
-  {
-    // The synid can be skipped here as it is stored in a static vector
-    pos += number_of_uints_covered< synindex >();
-    read_from_comm_buffer( sender_gid_, pos );
-
-    // generating a copy of the coeffarray is too time consuming
-    // therefore we save an iterator to the beginning+end of the coeffarray
-    coeffarray_as_uints_begin_ = pos;
-
-    pos += coeff_length_ * number_of_uints_covered< double >();
-
-    coeffarray_as_uints_end_ = pos;
-
-    return pos;
-  }
-
-  /**
-   * The following operator is used to write the information
-   * of the GapJunctionEvent into the secondary_events_buffer_
-   * All GapJunctionEvents are identified by the synid of the
-   * first element in supported_syn_ids_
-   */
-  std::vector< unsigned int >::iterator& operator>>(
-    std::vector< unsigned int >::iterator& pos )
-  {
-    write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
-    write_to_comm_buffer( sender_gid_, pos );
-    for ( std::vector< double >::iterator i = coeffarray_as_doubles_begin_;
-          i != coeffarray_as_doubles_end_;
-          i++ )
-    {
-      write_to_comm_buffer( *i, pos );
-    }
-    return pos;
-  }
-
-  size_t
-  size()
-  {
-    size_t s = number_of_uints_covered< synindex >();
-    s += number_of_uints_covered< index >();
-    s += number_of_uints_covered< double >() * coeff_length_;
-
-    return s;
-  }
-
-  const std::vector< unsigned int >::iterator&
-  begin()
-  {
-    return coeffarray_as_uints_begin_;
-  }
-
-  const std::vector< unsigned int >::iterator&
-  end()
-  {
-    return coeffarray_as_uints_end_;
-  }
-
-  double get_coeffvalue( std::vector< unsigned int >::iterator& pos );
 };
 
 /**
- * Event for rate model connections without delay.
+ * Event for rate model connections without delay. The event transmits
+ * the rate to the connected neurons.
  */
-class InstantaneousRateConnectionEvent : public SecondaryEvent
+class InstantaneousRateConnectionEvent
+  : public DataSecondaryEvent< double, InstantaneousRateConnectionEvent >
 {
-private:
-  // we chose std::vector over std::set because we expect this always to be
-  // short
-  static std::vector< synindex > supported_syn_ids_;
-  static size_t coeff_length_; // length of coeffarray
-
-  std::vector< double >::iterator coeffarray_as_doubles_begin_;
-  std::vector< double >::iterator coeffarray_as_doubles_end_;
-  std::vector< unsigned int >::iterator coeffarray_as_uints_begin_;
-  std::vector< unsigned int >::iterator coeffarray_as_uints_end_;
 
 public:
   InstantaneousRateConnectionEvent()
@@ -1106,141 +1143,33 @@ public:
 
   void operator()();
   InstantaneousRateConnectionEvent* clone() const;
-
-  /**
-   * This function is needed to set the synid on model registration.
-   * At this point no object of this type is available and the
-   * add_syn_id-function cannot be used as it is virtual in the base class
-   * and therefore cannot be declared as static.
-   */
-  static void
-  set_syn_id( const synindex synid )
-  {
-    VPManager::assert_single_threaded();
-    supported_syn_ids_.push_back( synid );
-  }
-
-  /**
-   * This function is needed to add additional synids when the
-   * corresponded connector model is copied.
-   * This function needs to be a virtual function of the base class as
-   * it is called from a pointer on SecondaryEvent.
-   */
-  void
-  add_syn_id( const synindex synid )
-  {
-    assert( not supports_syn_id( synid ) );
-    VPManager::assert_single_threaded();
-    supported_syn_ids_.push_back( synid );
-  }
-
-  static void
-  set_coeff_length( const size_t coeff_length )
-  {
-    VPManager::assert_single_threaded();
-    coeff_length_ = coeff_length;
-  }
-
-  bool
-  supports_syn_id( const synindex synid ) const
-  {
-    return (
-      std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
-      != supported_syn_ids_.end() );
-  }
-
-  void
-  set_coeffarray( std::vector< double >& ca )
-  {
-    coeffarray_as_doubles_begin_ = ca.begin();
-    coeffarray_as_doubles_end_ = ca.end();
-    assert( coeff_length_ == ca.size() );
-  }
-
-  /**
-   * The following operator is used to read the information
-   * of the InstantaneousRateConnectionEvent from the buffer in
-   * Scheduler::deliver_events_
-   */
-  std::vector< unsigned int >::iterator& operator<<(
-    std::vector< unsigned int >::iterator& pos )
-  {
-    // The synid can be skipped here as it is stored in a static vector
-    pos += number_of_uints_covered< synindex >();
-    read_from_comm_buffer( sender_gid_, pos );
-
-    // generating a copy of the coeffarray is too time consuming
-    // therefore we save an iterator to the beginning+end of the coeffarray
-    coeffarray_as_uints_begin_ = pos;
-
-    pos += coeff_length_ * number_of_uints_covered< double >();
-
-    coeffarray_as_uints_end_ = pos;
-
-    return pos;
-  }
-
-  /**
-   * The following operator is used to write the information
-   * of the InstantaneousRateConnectionEvent into the secondary_events_buffer_
-   * All InstantaneousRateConnectionEvents are identified by the synid of the
-   * first element in supported_syn_ids_
-   */
-  std::vector< unsigned int >::iterator& operator>>(
-    std::vector< unsigned int >::iterator& pos )
-  {
-    write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
-    write_to_comm_buffer( sender_gid_, pos );
-    for ( std::vector< double >::iterator i = coeffarray_as_doubles_begin_;
-          i != coeffarray_as_doubles_end_;
-          i++ )
-    {
-      write_to_comm_buffer( *i, pos );
-    }
-    return pos;
-  }
-
-  size_t
-  size()
-  {
-    size_t s = number_of_uints_covered< synindex >();
-    s += number_of_uints_covered< index >();
-    s += number_of_uints_covered< double >() * coeff_length_;
-
-    return s;
-  }
-
-  const std::vector< unsigned int >::iterator&
-  begin()
-  {
-    return coeffarray_as_uints_begin_;
-  }
-
-  const std::vector< unsigned int >::iterator&
-  end()
-  {
-    return coeffarray_as_uints_end_;
-  }
-
-  double get_coeffvalue( std::vector< unsigned int >::iterator& pos );
 };
 
 /**
- * Event for diffusion connections.
+ * Event for rate model connections with delay. The event transmits
+ * the rate to the connected neurons.
  */
-class DiffusionConnectionEvent : public SecondaryEvent
+class DelayedRateConnectionEvent
+  : public DataSecondaryEvent< double, DelayedRateConnectionEvent >
+{
+
+public:
+  DelayedRateConnectionEvent()
+  {
+  }
+
+  void operator()();
+  DelayedRateConnectionEvent* clone() const;
+};
+
+/**
+ * Event for diffusion connections (rate model connections for the
+ * siegert_neuron). The event transmits the rate to the connected neurons.
+ */
+class DiffusionConnectionEvent
+  : public DataSecondaryEvent< double, DiffusionConnectionEvent >
 {
 private:
-  // we chose std::vector over std::set because we expect this always to be
-  // short
-  static std::vector< synindex > supported_syn_ids_;
-  static size_t coeff_length_; // length of coeffarray
-
-  std::vector< double >::iterator coeffarray_as_doubles_begin_;
-  std::vector< double >::iterator coeffarray_as_doubles_end_;
-  std::vector< unsigned int >::iterator coeffarray_as_uints_begin_;
-  std::vector< unsigned int >::iterator coeffarray_as_uints_end_;
-
   // drift factor of the corresponding connection
   weight drift_factor_;
   // diffusion factor of the corresponding connection
@@ -1254,121 +1183,6 @@ public:
   void operator()();
   DiffusionConnectionEvent* clone() const;
 
-  /**
-   * This function is needed to set the synid on model registration.
-   * At this point no object of this type is available and the
-   * add_syn_id-function cannot be used as it is virtual in the base class
-   * and therefore cannot be declared as static.
-   */
-  static void
-  set_syn_id( const synindex synid )
-  {
-    VPManager::assert_single_threaded();
-    supported_syn_ids_.push_back( synid );
-  }
-
-  /**
-   * This function is needed to add additional synids when the
-   * corresponded connector model is copied.
-   * This function needs to be a virtual function of the base class as
-   * it is called from a pointer on SecondaryEvent.
-   */
-  void
-  add_syn_id( const synindex synid )
-  {
-    assert( not supports_syn_id( synid ) );
-    VPManager::assert_single_threaded();
-    supported_syn_ids_.push_back( synid );
-  }
-
-  static void
-  set_coeff_length( const size_t coeff_length )
-  {
-    VPManager::assert_single_threaded();
-    coeff_length_ = coeff_length;
-  }
-
-  bool
-  supports_syn_id( const synindex synid ) const
-  {
-    return (
-      std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
-      != supported_syn_ids_.end() );
-  }
-
-  void
-  set_coeffarray( std::vector< double >& ca )
-  {
-    coeffarray_as_doubles_begin_ = ca.begin();
-    coeffarray_as_doubles_end_ = ca.end();
-    assert( coeff_length_ == ca.size() );
-  }
-
-  /**
-   * The following operator is used to read the information
-   * of the DiffusionConnectionEvent from the buffer in
-   * Scheduler::deliver_events_
-   */
-  std::vector< unsigned int >::iterator& operator<<(
-    std::vector< unsigned int >::iterator& pos )
-  {
-    // The synid can be skipped here as it is stored in a static vector
-    pos += number_of_uints_covered< synindex >();
-    read_from_comm_buffer( sender_gid_, pos );
-
-    // generating a copy of the coeffarray is too time consuming
-    // therefore we save an iterator to the beginning+end of the coeffarray
-    coeffarray_as_uints_begin_ = pos;
-
-    pos += coeff_length_ * number_of_uints_covered< double >();
-
-    coeffarray_as_uints_end_ = pos;
-
-    return pos;
-  }
-
-  /**
-   * The following operator is used to write the information
-   * of the DiffusionConnectionEvent into the secondary_events_buffer_
-   * All DiffusionConnectionEvents are identified by the synid of the
-   * first element in supported_syn_ids_
-   */
-  std::vector< unsigned int >::iterator& operator>>(
-    std::vector< unsigned int >::iterator& pos )
-  {
-    write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
-    write_to_comm_buffer( sender_gid_, pos );
-    for ( std::vector< double >::iterator i = coeffarray_as_doubles_begin_;
-          i != coeffarray_as_doubles_end_;
-          i++ )
-    {
-      write_to_comm_buffer( *i, pos );
-    }
-    return pos;
-  }
-
-  size_t
-  size()
-  {
-    size_t s = number_of_uints_covered< synindex >();
-    s += number_of_uints_covered< index >();
-    s += number_of_uints_covered< double >() * coeff_length_;
-
-    return s;
-  }
-
-  const std::vector< unsigned int >::iterator&
-  begin()
-  {
-    return coeffarray_as_uints_begin_;
-  }
-
-  const std::vector< unsigned int >::iterator&
-  end()
-  {
-    return coeffarray_as_uints_end_;
-  }
-
   void
   set_diffusion_factor( weight t )
   {
@@ -1381,176 +1195,35 @@ public:
     drift_factor_ = t;
   };
 
-  double get_coeffvalue( std::vector< unsigned int >::iterator& pos );
-
   weight get_drift_factor() const;
   weight get_diffusion_factor() const;
 };
 
-
-/**
- * Event for rate model connections with delay.
- */
-class DelayedRateConnectionEvent : public SecondaryEvent
+template < typename DataType, typename Subclass >
+inline DataType
+DataSecondaryEvent< DataType, Subclass >::get_coeffvalue(
+  std::vector< unsigned int >::iterator& pos )
 {
-private:
-  // we chose std::vector over std::set because we expect this always to be
-  // short
-  static std::vector< synindex > supported_syn_ids_;
-  static size_t coeff_length_; // length of coeffarray
-
-  std::vector< double >::iterator coeffarray_as_doubles_begin_;
-  std::vector< double >::iterator coeffarray_as_doubles_end_;
-  std::vector< unsigned int >::iterator coeffarray_as_uints_begin_;
-  std::vector< unsigned int >::iterator coeffarray_as_uints_end_;
-
-public:
-  DelayedRateConnectionEvent()
-  {
-  }
-
-  void operator()();
-  DelayedRateConnectionEvent* clone() const;
-
-  /**
-   * This function is needed to set the synid on model registration.
-   * At this point no object of this type is available and the
-   * add_syn_id-function cannot be used as it is virtual in the base class
-   * and therefore cannot be declared as static.
-   */
-  static void
-  set_syn_id( const synindex synid )
-  {
-    VPManager::assert_single_threaded();
-    supported_syn_ids_.push_back( synid );
-  }
-
-  /**
-   * This function is needed to add additional synids when the
-   * corresponded connector model is copied.
-   * This function needs to be a virtual function of the base class as
-   * it is called from a pointer on SecondaryEvent.
-   */
-  void
-  add_syn_id( const synindex synid )
-  {
-    assert( not supports_syn_id( synid ) );
-    VPManager::assert_single_threaded();
-    supported_syn_ids_.push_back( synid );
-  }
-
-  static void
-  set_coeff_length( const size_t coeff_length )
-  {
-    VPManager::assert_single_threaded();
-    coeff_length_ = coeff_length;
-  }
-
-  bool
-  supports_syn_id( const synindex synid ) const
-  {
-    return (
-      std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
-      != supported_syn_ids_.end() );
-  }
-
-  void
-  set_coeffarray( std::vector< double >& ca )
-  {
-    coeffarray_as_doubles_begin_ = ca.begin();
-    coeffarray_as_doubles_end_ = ca.end();
-    assert( coeff_length_ == ca.size() );
-  }
-
-  /**
-   * The following operator is used to read the information
-   * of the DelayedRateConnectionEvent from the buffer in
-   * Scheduler::deliver_events_
-   */
-  std::vector< unsigned int >::iterator& operator<<(
-    std::vector< unsigned int >::iterator& pos )
-  {
-    // The synid can be skipped here as it is stored in a static vector
-    pos += number_of_uints_covered< synindex >();
-    read_from_comm_buffer( sender_gid_, pos );
-
-    // generating a copy of the coeffarray is too time consuming
-    // therefore we save an iterator to the beginning+end of the coeffarray
-    coeffarray_as_uints_begin_ = pos;
-
-    pos += coeff_length_ * number_of_uints_covered< double >();
-
-    coeffarray_as_uints_end_ = pos;
-
-    return pos;
-  }
-
-  /**
-   * The following operator is used to write the information
-   * of the DelayedRateConnectionEvent into the secondary_events_buffer_
-   * All DelayedRateConnectionEvents are identified by the synid of the
-   * first element in supported_syn_ids_
-   */
-  std::vector< unsigned int >::iterator& operator>>(
-    std::vector< unsigned int >::iterator& pos )
-  {
-    write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
-    write_to_comm_buffer( sender_gid_, pos );
-    for ( std::vector< double >::iterator i = coeffarray_as_doubles_begin_;
-          i != coeffarray_as_doubles_end_;
-          i++ )
-    {
-      write_to_comm_buffer( *i, pos );
-    }
-    return pos;
-  }
-
-  size_t
-  size()
-  {
-    size_t s = number_of_uints_covered< synindex >();
-    s += number_of_uints_covered< index >();
-    s += number_of_uints_covered< double >() * coeff_length_;
-
-    return s;
-  }
-
-  const std::vector< unsigned int >::iterator&
-  begin()
-  {
-    return coeffarray_as_uints_begin_;
-  }
-
-  const std::vector< unsigned int >::iterator&
-  end()
-  {
-    return coeffarray_as_uints_end_;
-  }
-
-  double get_coeffvalue( std::vector< unsigned int >::iterator& pos );
-};
-
-inline double
-GapJunctionEvent::get_coeffvalue( std::vector< unsigned int >::iterator& pos )
-{
-  double elem = 0.0;
+  DataType elem;
   read_from_comm_buffer( elem, pos );
   return elem;
 }
+
+template < typename Datatype, typename Subclass >
+std::vector< synindex >
+  DataSecondaryEvent< Datatype, Subclass >::pristine_supported_syn_ids_;
+
+template < typename DataType, typename Subclass >
+std::vector< synindex >
+  DataSecondaryEvent< DataType, Subclass >::supported_syn_ids_;
+
+template < typename DataType, typename Subclass >
+size_t DataSecondaryEvent< DataType, Subclass >::coeff_length_ = 0;
 
 inline GapJunctionEvent*
 GapJunctionEvent::clone() const
 {
   return new GapJunctionEvent( *this );
-}
-
-inline double
-InstantaneousRateConnectionEvent::get_coeffvalue(
-  std::vector< unsigned int >::iterator& pos )
-{
-  double elem = 0.0;
-  read_from_comm_buffer( elem, pos );
-  return elem;
 }
 
 inline InstantaneousRateConnectionEvent*
@@ -1559,34 +1232,16 @@ InstantaneousRateConnectionEvent::clone() const
   return new InstantaneousRateConnectionEvent( *this );
 }
 
-inline double
-DiffusionConnectionEvent::get_coeffvalue(
-  std::vector< unsigned int >::iterator& pos )
+inline DelayedRateConnectionEvent*
+DelayedRateConnectionEvent::clone() const
 {
-  double elem = 0.0;
-  read_from_comm_buffer( elem, pos );
-  return elem;
+  return new DelayedRateConnectionEvent( *this );
 }
 
 inline DiffusionConnectionEvent*
 DiffusionConnectionEvent::clone() const
 {
   return new DiffusionConnectionEvent( *this );
-}
-
-inline double
-DelayedRateConnectionEvent::get_coeffvalue(
-  std::vector< unsigned int >::iterator& pos )
-{
-  double elem = 0.0;
-  read_from_comm_buffer( elem, pos );
-  return elem;
-}
-
-inline DelayedRateConnectionEvent*
-DelayedRateConnectionEvent::clone() const
-{
-  return new DelayedRateConnectionEvent( *this );
 }
 
 inline weight
@@ -1607,7 +1262,7 @@ DiffusionConnectionEvent::get_diffusion_factor() const
 inline bool
 Event::is_valid() const
 {
-  return ( ( sender_ != NULL ) && ( receiver_ != NULL ) && ( d_ > 0 ) );
+  return ( ( sender_ != NULL ) and ( receiver_ != NULL ) and ( d_ > 0 ) );
 }
 
 inline void

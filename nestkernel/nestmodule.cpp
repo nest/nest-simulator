@@ -247,11 +247,11 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status(
-        con_id.get_source_gid(),       // source_gid
-        con_id.get_synapse_model_id(), // synapse_id
-        con_id.get_port(),             // port
-        con_id.get_target_thread(),    // target thread
+      kernel().connection_manager.set_synapse_status( con_id.get_source_gid(),
+        con_id.get_target_gid(),
+        con_id.get_target_thread(),
+        con_id.get_synapse_model_id(),
+        con_id.get_port(),
         dict );
 
       ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
@@ -265,11 +265,11 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ con ] );
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status(
-        con_id.get_source_gid(),       // source_gid
-        con_id.get_synapse_model_id(), // synapse_id
-        con_id.get_port(),             // port
-        con_id.get_target_thread(),    // target thread
+      kernel().connection_manager.set_synapse_status( con_id.get_source_gid(),
+        con_id.get_target_gid(),
+        con_id.get_target_thread(),
+        con_id.get_synapse_model_id(),
+        con_id.get_port(),
         dict );
 
       ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
@@ -358,10 +358,11 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
   kernel().node_manager.get_node( gid ); // Just to check if the node exists
 
   DictionaryDatum result_dict =
-    kernel().connection_manager.get_synapse_status( gid,
+    kernel().connection_manager.get_synapse_status( conn.get_source_gid(),
+      conn.get_target_gid(),
+      conn.get_target_thread(),
       conn.get_synapse_model_id(),
-      conn.get_port(),
-      conn.get_target_thread() );
+      conn.get_port() );
 
   i->OStack.pop();
   i->OStack.push( result_dict );
@@ -382,9 +383,10 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
     DictionaryDatum result_dict =
       kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
+        con_id.get_target_gid(),
+        con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
-        con_id.get_port(),
-        con_id.get_target_thread() );
+        con_id.get_port() );
     result.push_back( result_dict );
   }
 
@@ -726,7 +728,7 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
    at T=0. The dynamic state comprises typically the membrane potential,
    synaptic currents, buffers holding input that has been delivered, but not
    yet become effective, and all events pending delivery. Technically, this
-   is achieve by calling init_state() on all nodes and forcing a call to
+   is achieved by calling init_state() on all nodes and forcing a call to
    init_buffers() upon the next call to Simulate. Node parameters, such as
    time constants and threshold potentials, are not affected.
 
@@ -974,7 +976,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    - Each Node is shown on a separate line, showing its model name followed
    by its in global id in brackets.
 
-   +-[0] Subnet Dim=[1]
+   +-[0] subnet Dim=[1]
    |
    +- iaf_psc_alpha [1]
 
@@ -983,7 +985,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    sequence, then the number of consecutive nodes, then the global id of
    the last node in the sequence.
 
-   +-[0] Subnet Dim=[1]
+   +-[0] subnet Dim=[1]
    |
    +- iaf_psc_alpha [1]..(2)..[2]
 
@@ -1005,90 +1007,89 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    SLI [3] 0 2 PrintNetwork
    +-[0] root dim=[12]
       |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
    SLI [3] 0 3 PrintNetwork
    +-[0] root dim=[12]
       |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
-          |
-          +-[1] subnet dim=[5 6]
-          +-[2] subnet dim=[5 6]
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
+         |
+         +-[1] subnet dim=[5 6]
+         +-[2] subnet dim=[5 6]
    SLI [3] 0 4 PrintNetwork
    +-[0] root dim=[12]
       |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
-          |
-          +-[1] subnet dim=[5 6]
-          |  |
-          |  +-[1] subnet dim=[6]
-          |  +-[2] subnet dim=[6]
-          |  +-[3] subnet dim=[6]
-          |  +-[4] subnet dim=[6]
-          |  +-[5] subnet dim=[6]
-          +-[2] subnet dim=[5 6]
-             |
-             +-[1] subnet dim=[6]
-             +-[2] subnet dim=[6]
-             +-[3] subnet dim=[6]
-             +-[4] subnet dim=[6]
-             +-[5] subnet dim=[6]
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
+         |
+         +-[1] subnet dim=[5 6]
+         |  |
+         |  +-[1] subnet dim=[6]
+         |  +-[2] subnet dim=[6]
+         |  +-[3] subnet dim=[6]
+         |  +-[4] subnet dim=[6]
+         |  +-[5] subnet dim=[6]
+         +-[2] subnet dim=[5 6]
+            |
+            +-[1] subnet dim=[6]
+            +-[2] subnet dim=[6]
+            +-[3] subnet dim=[6]
+            +-[4] subnet dim=[6]
+            +-[5] subnet dim=[6]
    SLI [3] 0 5 PrintNetwork
    +-[0] root dim=[12]
       |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
-          |
-          +-[1] subnet dim=[5 6]
-          |  |
-          |  +-[1] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[2] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[3] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[4] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[5] subnet dim=[6]
-          |     |
-          |     +- [1]...[6] dc_generator
-          |
-          +-[2] subnet dim=[5 6]
-             |
-             +-[1] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[2] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[3] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[4] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[5] subnet dim=[6]
-                |
-                +- [1]...[6] dc_generator
-
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
+         |
+         +-[1] subnet dim=[5 6]
+         |  |
+         |  +-[1] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |
+         |  +-[2] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |
+         |  +-[3] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |
+         |  +-[4] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |
+         |  +-[5] subnet dim=[6]
+         |     |
+         |     +-[1]...[6] dc_generator
+         |
+         +-[2] subnet dim=[5 6]
+            |
+            +-[1] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |
+            +-[2] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |
+            +-[3] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |
+            +-[4] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |
+            +-[5] subnet dim=[6]
+               |
+               +-[1]...[6] dc_generator
 
    Availability: NEST
    Author: Marc-Oliver Gewaltig, Jochen Martin Eppler
@@ -1199,34 +1200,6 @@ NestModule::SetFakeNumProcesses_iFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 1 );
   i->EStack.pop();
 }
-
-/* BeginDocumentation
-   Name: SetNumRecProcesses - Set the number of MPI processes dedicated to
-   recording spikes.
-   Synopsis: n_procs SetNumRecProcesses -> -
-   Description:
-   Sets the number of recording MPI processes to n_procs. Usually,
-   spike detectors are distributed over all processes and record
-   from local neurons only. If a number of processes is dedicated to
-   spike detection, each spike detector is hosted on one of these
-   processes and records globally from all simulating processes.
-   Availability: NEST 2.4
-   Authors: Susanne Kunkel, Maximilian Schmidt
-   FirstVersion: April 2014
-   SeeAlso: NumProcesses
-*/
-void
-NestModule::SetNumRecProcesses_iFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-  long n_rec_procs = getValue< long >( i->OStack.pick( 0 ) );
-
-  set_num_rec_processes( n_rec_procs );
-
-  i->OStack.pop( 1 );
-  i->EStack.pop();
-}
-
 
 /* BeginDocumentation
    Name: SyncProcesses - Synchronize all MPI processes.
@@ -1700,6 +1673,26 @@ NestModule::DisableStructuralPlasticity_Function::execute(
   i->EStack.pop();
 }
 
+/**
+ * Set epsilon that is used for comparing spike times in STDP.
+ * Spike times in STDP synapses are currently represented as double
+ * values. The epsilon defines the maximum distance between spike
+ * times that is still considered 0.
+ *
+ * Note: See issue #894
+ */
+void
+NestModule::SetStdpEps_dFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  const double stdp_eps = getValue< double >( i->OStack.top() );
+
+  kernel().connection_manager.set_stdp_eps( stdp_eps );
+
+  i->OStack.pop();
+  i->EStack.pop();
+}
+
 void
 NestModule::init( SLIInterpreter* i )
 {
@@ -1757,7 +1750,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Rank", &rankfunction );
   i->createcommand( "NumProcesses", &numprocessesfunction );
   i->createcommand( "SetFakeNumProcesses", &setfakenumprocesses_ifunction );
-  i->createcommand( "SetNumRecProcesses", &setnumrecprocesses_ifunction );
   i->createcommand( "SyncProcesses", &syncprocessesfunction );
   i->createcommand(
     "TimeCommunication_i_i_b", &timecommunication_i_i_bfunction );
@@ -1795,6 +1787,9 @@ NestModule::init( SLIInterpreter* i )
     "GetStructuralPlasticityStatus", &getstructuralplasticitystatus_function );
   i->createcommand( "Disconnect", &disconnect_i_i_lfunction );
   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
+
+  i->createcommand( "SetStdpEps", &setstdpeps_dfunction );
+
   // Add connection rules
   kernel().connection_manager.register_conn_builder< OneToOneBuilder >(
     "one_to_one" );
@@ -1806,6 +1801,9 @@ NestModule::init( SLIInterpreter* i )
     "fixed_outdegree" );
   kernel().connection_manager.register_conn_builder< BernoulliBuilder >(
     "pairwise_bernoulli" );
+  kernel()
+    .connection_manager.register_conn_builder< SymmetricBernoulliBuilder >(
+      "symmetric_pairwise_bernoulli" );
   kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >(
     "fixed_total_number" );
 

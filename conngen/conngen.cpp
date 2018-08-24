@@ -22,9 +22,6 @@
 
 #include "conngen.h"
 
-// Includes from conngen:
-#include "cg_connect.h"
-
 // Includes from libnestutil:
 #include "logging.h"
 
@@ -37,94 +34,26 @@
 // Includes from sli:
 #include "token.h"
 
-void
-nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
-  const index source_id,
-  const index target_id,
-  const DictionaryDatum& params_map,
-  const Name& synmodel_name )
+namespace nest
 {
-  Subnet* sources =
-    dynamic_cast< Subnet* >( kernel().node_manager.get_node( source_id ) );
-  if ( sources == NULL )
-  {
-    LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a subnet." );
-    throw SubnetExpected();
-  }
-  if ( not sources->is_homogeneous() )
-  {
-    LOG( M_ERROR,
-      "CGConnect_cg_i_i_D_l",
-      "sources must be a homogeneous subnet." );
-    throw BadProperty();
-  }
-  if ( dynamic_cast< Subnet* >( *sources->local_begin() ) )
-  {
-    LOG( M_ERROR,
-      "CGConnect_cg_i_i_D_l",
-      "Only 1-dim subnets are supported as sources." );
-    throw BadProperty();
-  }
 
-  Subnet* targets =
-    dynamic_cast< Subnet* >( kernel().node_manager.get_node( target_id ) );
-  if ( targets == NULL )
-  {
-    LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a subnet." );
-    throw SubnetExpected();
-  }
-  if ( not targets->is_homogeneous() )
-  {
-    LOG( M_ERROR,
-      "CGConnect_cg_i_i_D_l",
-      "targets must be a homogeneous subnet." );
-    throw BadProperty();
-  }
-  if ( dynamic_cast< Subnet* >( *targets->local_begin() ) )
-  {
-    LOG( M_ERROR,
-      "CGConnect_cg_i_i_D_l",
-      "Only 1-dim subnets are supported as targets." );
-    throw BadProperty();
-  }
-
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-  {
-    throw UnknownSynapseType( synmodel_name.toString() );
-  }
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  const modelrange source_range =
-    kernel().modelrange_manager.get_contiguous_gid_range(
-      ( *sources->local_begin() )->get_gid() );
-  index source_offset = source_range.get_first_gid();
-  RangeSet source_ranges;
-  source_ranges.push_back(
-    Range( source_range.get_first_gid(), source_range.get_last_gid() ) );
-
-  const modelrange target_range =
-    kernel().modelrange_manager.get_contiguous_gid_range(
-      ( *targets->local_begin() )->get_gid() );
-  index target_offset = target_range.get_first_gid();
-  RangeSet target_ranges;
-  target_ranges.push_back(
-    Range( target_range.get_first_gid(), target_range.get_last_gid() ) );
-
-  cg_connect( cg,
-    source_ranges,
-    source_offset,
-    target_ranges,
-    target_offset,
-    params_map,
-    synmodel_id );
-}
-
+/**
+ * Low-level function of the ConnectionGenerator interface for
+ * connecting populations of neurons using a connection generator with
+ * a value set and custom synapse type.
+ *
+ * \param cg The ConnectionGenerator describing the connectivity
+ * \param source_gids A GIDCollection specifying the source population
+ * \param target_gids A GIDCollection specifying the target population
+ * \param params_map A Dictionary mapping the labels "weight" and
+ *        "delay" to their indices in the value set
+ * \param synmodel_name The name of the synapse model to use for the
+ *        connections
+ */
 void
-nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
-  IntVectorDatum& sources,
-  IntVectorDatum& targets,
+cg_connect( ConnectionGeneratorDatum& cg,
+  const GIDCollection& source_gids,
+  const GIDCollection& target_gids,
   const DictionaryDatum& params_map,
   const Name& synmodel_name )
 {
@@ -135,87 +64,310 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
     throw UnknownSynapseType( synmodel_name.toString() );
   }
   const index synmodel_id = static_cast< index >( synmodel );
+  DictionaryDatum dummy_params = new Dictionary();
 
-  RangeSet source_ranges;
-  cg_get_ranges( source_ranges, ( *sources ) );
+  cg_set_masks( cg, source_gids, target_gids );
+  cg->start();
 
-  RangeSet target_ranges;
-  cg_get_ranges( target_ranges, ( *targets ) );
-
-  cg_connect( cg,
-    source_ranges,
-    ( *sources ),
-    target_ranges,
-    ( *targets ),
-    params_map,
-    synmodel_id );
-}
-
-nest::ConnectionGeneratorDatum
-nest::cg_parse( const StringDatum& xml )
-{
-  return ConnectionGenerator::fromXML( xml );
-}
-
-nest::ConnectionGeneratorDatum
-nest::cg_parse_file( const StringDatum& xml )
-{
-  return ConnectionGenerator::fromXMLFile( xml );
-}
-
-void
-nest::cg_select_implementation( const StringDatum& library,
-  const StringDatum& tag )
-{
-  ConnectionGenerator::selectCGImplementation( tag, library );
-}
-
-void
-nest::cg_set_masks( nest::ConnectionGeneratorDatum& cg,
-  IntVectorDatum& sources,
-  IntVectorDatum& targets )
-{
-  RangeSet source_ranges;
-  cg_get_ranges( source_ranges, ( *sources ) );
-
-  RangeSet target_ranges;
-  cg_get_ranges( target_ranges, ( *targets ) );
-
-  cg_set_masks( cg, source_ranges, target_ranges );
-}
-
-void
-nest::cg_start( nest::ConnectionGeneratorDatum& cgd )
-{
-  cgd->start();
-}
-
-bool
-nest::cg_next( nest::ConnectionGeneratorDatum& cgd,
-  int& src,
-  int& tgt,
-  std::vector< double >& values )
-{
-  ConnectionGenerator* generator = cgd.get();
-
-  int arity = generator->arity();
-  double* tmp_values = new double[ arity ];
-
-  values.resize( arity );
-
-  if ( generator->next( src, tgt, tmp_values ) )
+  int source;
+  int target;
+  const int num_parameters = cg->arity();
+  if ( num_parameters == 0 )
   {
-    for ( int m = 0; m < arity; ++m )
+    // connect source to target
+    while ( cg->next( source, target, NULL ) )
     {
-      values[ m ] = tmp_values[ m ];
+      // No need to check for locality of the target node, as the mask
+      // created by cg_set_masks() only contain local nodes.
+      kernel().connection_manager.connect( source_gids[ source ],
+        target_gids[ target ],
+        dummy_params,
+        synmodel_id );
     }
-    delete[] tmp_values;
-    cgd.unlock();
-    return true;
+  }
+  else if ( num_parameters == 2 )
+  {
+    if ( not params_map->known( names::weight )
+      or not params_map->known( names::delay ) )
+    {
+      throw BadProperty(
+        "The parameter map has to contain the indices of weight and delay." );
+    }
+
+    const size_t w_idx = ( *params_map )[ names::weight ];
+    const size_t d_idx = ( *params_map )[ names::delay ];
+
+    const bool w_idx_is_0_or_1 = ( w_idx == 0 ) or ( w_idx == 1 );
+    const bool d_idx_is_0_or_1 = ( d_idx == 0 ) or ( d_idx == 1 );
+    const bool indices_differ = ( w_idx != d_idx );
+    if ( not( w_idx_is_0_or_1 and d_idx_is_0_or_1 and indices_differ ) )
+    {
+      throw BadProperty(
+        "w_idx and d_idx have to differ and be either 0 or 1." );
+    }
+
+    std::vector< double > params( 2 );
+
+    // connect source to target with weight and delay
+    while ( cg->next( source, target, &params[ 0 ] ) )
+    {
+      // No need to check for locality of the target node, as the mask
+      // created by cg_set_masks() only contain local nodes.
+      Node* const target_node =
+        kernel().node_manager.get_node( target_gids[ target ] );
+      const thread target_thread = target_node->get_thread();
+      kernel().connection_manager.connect( source_gids[ source ],
+        target_node,
+        target_thread,
+        synmodel_id,
+        dummy_params,
+        params[ d_idx ],
+        params[ w_idx ] );
+    }
   }
   else
   {
-    cgd.unlock();
-    return false;
+    LOG( M_ERROR,
+      "CGConnect",
+      "Either two or no parameters in the ConnectionSet expected." );
+    throw DimensionMismatch();
   }
 }
+
+/**
+ * Set the masks on the ConnectionGenerator cg. This function also
+ * creates the masks from the given RangeSets sources and targets.
+ *
+ * \param cg The ConnectionGenerator to set the masks on
+ * \param sources The source ranges to create the source masks from
+ * \param targets The target ranges to create the target masks from
+ */
+void
+cg_set_masks( ConnectionGeneratorDatum& cg,
+  const GIDCollection& sources,
+  const GIDCollection& targets )
+{
+  const size_t np = kernel().mpi_manager.get_num_processes();
+  std::vector< ConnectionGenerator::Mask > masks(
+    np, ConnectionGenerator::Mask( 1, np ) );
+
+  RangeSet source_ranges;
+  cg_get_ranges( source_ranges, sources );
+
+  RangeSet target_ranges;
+  cg_get_ranges( target_ranges, targets );
+
+  cg_create_masks( masks, source_ranges, target_ranges );
+  cg->setMask( masks, kernel().mpi_manager.get_rank() );
+}
+
+/**
+ * Create the masks for sources and targets based on the contiguous
+ * ranges given in sources and targets. We need to do some index
+ * translation here, as the CG expects indices from 0..n for both
+ * source and target populations, while the RangeSets sources and
+ * targets contain NEST global indices (gids).
+ *
+ * The masks for the sources must contain all nodes (local+remote).
+ * The skip of the mask was set to 1 in cg_set_masks(). The same
+ * source mask is stored n_proc times on each process.
+ *
+ * The masks for the targets must only contain local nodes. This is
+ * achieved by first setting skip to num_processes upon creation of
+ * the mask in cg_set_masks(), and second by the fact that for each
+ * contiguous range of nodes in a mask, each of them contains the
+ * index-translated id of the first local neuron as the first
+ * entry. If this renders the range empty (i.e. because the first
+ * local id is beyond the last element of the range), the range is
+ * not added to the mask.
+ *
+ * \param masks The std::vector of Masks to populate
+ * \param sources The source ranges to create the source masks from
+ * \param targets The target ranges to create the target masks from
+ *
+ * \note Each process computes the full set of source and target
+ * masks, i.e. one mask per rank will be created on each rank.
+ *
+ * \note Setting the masks for all processes on each process might
+ * become a memory bottleneck when going to very large numbers of
+ * processes. Especially so for the source masks, which are all the
+ * same. This could be solved by making the ConnectionGenerator
+ * interface MPI aware and communicating the masks during connection
+ * setup.
+*/
+void
+cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks,
+  RangeSet& sources,
+  RangeSet& targets )
+{
+  // The index of the left border of the currently looked at range
+  // (counting from 0). This is used for index translation.
+  size_t cg_idx_left = 0;
+
+  // For sources, we only need to translate from NEST to CG indices.
+  for ( RangeSet::iterator source = sources.begin(); source != sources.end();
+        ++source )
+  {
+    const size_t num_elements = source->last - source->first + 1;
+    const size_t right = cg_idx_left + num_elements - 1;
+    for ( size_t proc = 0; proc
+            < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
+          ++proc )
+    {
+      masks[ proc ].sources.insert( cg_idx_left, right );
+    }
+    cg_idx_left += num_elements;
+  }
+
+  // Reset the index of the left border of the range for index
+  // translation for the targets.
+  cg_idx_left = 0;
+
+  for ( RangeSet::iterator target = targets.begin(); target != targets.end();
+        ++target )
+  {
+    size_t num_elements = target->last - target->first + 1;
+    for ( size_t proc = 0; proc
+            < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
+          ++proc )
+    {
+      // Make sure that the range is only added on as many ranks as
+      // there are elements in the range, or exactly on every rank,
+      // if there are more elements in the range.
+      if ( proc < num_elements )
+      {
+        // For the different ranks, left will take on the CG indices
+        // of all first local nodes that are contained in the range.
+        // The rank, where this mask is to be used is determined
+        // below when inserting the mask.
+        const size_t left = cg_idx_left + proc;
+
+        // right is set to the CG index of the right border of the
+        // range. This is the same for all ranks.
+        const size_t right = cg_idx_left + num_elements - 1;
+
+        // We index the masks according to the modulo distribution
+        // of neurons in NEST. This ensures that the mask is set for
+        // the rank where left acutally is the first neuron fromt
+        // the currently looked at range.
+        masks[ ( proc + target->first )
+          % kernel().mpi_manager.get_num_processes() ].targets.insert( left,
+          right );
+      }
+    }
+
+    // Update the CG index of the left border of the next range to
+    // be one behind the current range.
+    cg_idx_left += num_elements;
+  }
+}
+
+/**
+ * Calculate the right border of the contiguous range of gids
+ * starting at left. The element is found using a binary search with
+ * stepsize step.
+ *
+ * \param left The leftmost element of the range
+ * \param step The step size for the binary search
+ * \param gids The std::vector<long> of gids to search in
+ * \returns the right border of the range
+ */
+index
+cg_get_right_border( index left, size_t step, const GIDCollection& gids )
+{
+  // Check if left is already the index of the last element in
+  // gids. If yes, return left as the right border
+  if ( left == gids.size() - 1 )
+  {
+    return left;
+  }
+
+  // leftmost_r is the leftmost right border during the search
+  long leftmost_r = -1;
+
+  // Initialize the search index i to the last valid index into gids
+  // and last_i to i.
+  long i = gids.size() - 1, last_i = i;
+
+  while ( true )
+  {
+    // If i points to the end of gids and the distance between i and
+    // left is the same as between the values gids[i] and gids[left]
+    // (i.e. gid[i+1] == gid[i]+1 for all i), or if i is pointing at
+    // the position of the leftmost right border we found until now
+    // (i.e. we're back at an already visited index), we found the
+    // right border of the contiguous range (last_i) and return it.
+    if ( ( i == static_cast< long >( gids.size() ) - 1
+           and gids[ i ] - gids[ left ] == i - static_cast< index >( left ) )
+      or i == leftmost_r )
+    {
+      return last_i;
+    }
+
+    // Store the current value of i in last_i. This is the current
+    // candidate for the right border of the range.
+    last_i = i;
+
+    // If the range between gids[left] and gids[i] is contiguous,
+    // set i to the right by step steps, else update the variable
+    // for leftmost_r to the current i (i.e. the known leftmost
+    // position) and set i to the left by step steps.
+    if ( gids[ i ] - gids[ left ] == i - static_cast< index >( left ) )
+    {
+      i += step;
+    }
+    else
+    {
+      leftmost_r = i;
+      i -= step;
+    }
+
+    // Reduce the search interval by half its size if it is > 1.
+    // This adaptation is the basis of the binary search.
+    if ( step != 1 )
+    {
+      step /= 2;
+    }
+  }
+
+  // The border should always be found and returned during the while
+  // loop above. This should never be reached.
+  assert( false and "no right border found during search" );
+  return 0;
+}
+
+/**
+ * Determine all contiguous ranges found in a given vector of gids
+ * and add the ranges to the given RangeSet.
+ *
+ * \param ranges A reference to the RangeSet to add to
+ * \param gids A reference to a std::vector<long> of gids
+ *
+ * \note We do not store the indices into the given range, but
+ * instead we store the actual gids. This allows us to use CG
+ * generated indices as indices into the ranges spanned by the
+ * RangeSet. Index translation is done in cg_create_masks().
+ */
+void
+cg_get_ranges( RangeSet& ranges, const GIDCollection& gids )
+{
+  index right, left = 0;
+  while ( true )
+  {
+    // Determine the right border of the contiguous range starting
+    // at left. The initial step is set to half the length of the
+    // interval between left and the end of gids.
+    right = cg_get_right_border( left, ( gids.size() - left ) / 2, gids );
+    ranges.push_back( Range( gids[ left ], gids[ right ] ) );
+    if ( right == gids.size() - 1 ) // We're at the end of gids and stop
+    {
+      break;
+    }
+    else
+    {
+      left = right + 1; // The new left border is one behind the old right
+    }
+  }
+}
+
+} // namespace nest

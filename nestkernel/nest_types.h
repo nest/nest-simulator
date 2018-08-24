@@ -81,7 +81,7 @@ namespace nest
 
 #ifdef HAVE_LONG_LONG
 typedef long long tic_t;
-#ifdef IS_K
+#ifdef LLONG_MAX
 const tic_t tic_t_max = LLONG_MAX;
 const tic_t tic_t_min = LLONG_MIN;
 #else
@@ -107,7 +107,9 @@ const index invalid_index = SIZE_MAX;
  *  Unsigned char type for enumerations of synapse types.
  */
 typedef unsigned char synindex;
-const synindex invalid_synindex = UCHAR_MAX;
+// const synindex invalid_synindex = UCHAR_MAX;
+const synindex invalid_synindex =
+  63; // number of synapse types limited by size of syn_id in target.h
 
 /**
  * Unsigned short type for compact target representation.

@@ -217,9 +217,9 @@ SLIStartup::checkenvpath( std::string const& envvar,
 SLIStartup::SLIStartup( int argc, char** argv )
   : startupfilename( "sli-init.sli" )
   , slilibpath( "/sli" )
-  , slihomepath( NEST_PREFIX "/" NEST_DATADIR )
-  , slidocdir( NEST_PREFIX "/" NEST_DOCDIR )
-  , sliprefix( NEST_PREFIX )
+  , slihomepath( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DATADIR )
+  , slidocdir( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DOCDIR )
+  , sliprefix( NEST_INSTALL_PREFIX )
   , verbosity_( SLIInterpreter::M_INFO ) // default verbosity level
   , debug_( false )
   , argv_name( "argv" )
@@ -275,12 +275,15 @@ SLIStartup::SLIStartup( int argc, char** argv )
 
   // argv[0] is the name of the program that was given to the shell.
   // This name must be given to SLI, otherwise initialization fails.
-  // To catch accidental removal, e.g. in pyNEST, we explicitly assert
-  // that argv[0] is a non-empty string.
-  assert( std::strlen( argv[ 0 ] ) > 0 );
+  // If we import NEST directly from the Python interpreter, that is, not from
+  // a script but by using an interactive session in Python, argv[0] is an
+  // empty string, see documentation for argv in
+  // https://docs.python.org/3/library/sys.html
   for ( int i = 0; i < argc; ++i )
   {
     StringDatum* sd = new StringDatum( argv[ i ] );
+    ad.push_back( Token( sd ) );
+
     if ( *sd == "-d" || *sd == "--debug" )
     {
       debug_ = true;
@@ -333,8 +336,6 @@ SLIStartup::SLIStartup( int argc, char** argv )
       verbosity_ = SLIInterpreter::M_QUIET;
       continue;
     }
-
-    ad.push_back( Token( sd ) );
   }
   targs = ad;
 }

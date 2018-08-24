@@ -174,7 +174,6 @@ Create a nested multi-dimensional network structure in the current subnet.
 
 ### Neuron Models
 
-[iaf\_neuron](../helpindex/cmds/iaf_neuron),
 [iaf\_psc\_alpha](../helpindex/cmds/iaf_psc_alpha.md)
 Leaky integrate-and-fire neuron model.
 [iaf\_psc\_delta](../helpindex/cmds/iaf_psc_delta.md)
@@ -192,7 +191,7 @@ Leaky integrate-and-fire neuron model with exponential PSCs.
 [hh\_psc\_alpha](../helpindex/cmds/hh_psc_alpha.md)
 Hodgkin Huxley neuron model.
 [hh\_cond\_exp\_traub](../helpindex/cmds/hh_cond_exp_traub.md)
-Hodgin Huxley based model, Traub modified.
+Hodgkin Huxley based model, Traub modified.
 
 ### Device Models
 

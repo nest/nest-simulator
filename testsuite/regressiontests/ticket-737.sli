@@ -46,25 +46,25 @@ M_ERROR setverbosity
 /stimulators modeldict keys { GetDefaults /element_type get /stimulator eq } Select def
 
 % first test: multiple connections with same type
-ResetKernel
 {
   stimulators
   {
+    ResetKernel
     Create /stim Set
-    /iaf_neuron Create /n Set
+    /iaf_psc_alpha Create /n Set
     stim n /static_synapse Connect
     stim n /static_synapse Connect
   } forall
 } pass_or_die
 
 % second test: multiple connections of user-defined type
-ResetKernel
 {
   stimulators
   {
+    ResetKernel
     /stimname Set
     stimname Create /stim Set
-    /iaf_neuron Create /n Set
+    /iaf_psc_alpha Create /n Set
     /synmodel stimname cvs (_syn) join cvlit def
     /static_synapse synmodel CopyModel
     stim n synmodel Connect
@@ -72,15 +72,14 @@ ResetKernel
   } forall
 } pass_or_die
 
-
 % third test: no multiple connections with different types
 %   test must fail if a single case fails
-ResetKernel
 stimulators
 {
+  ResetKernel
   /stimname Set
   stimname Create /stim Set
-  /iaf_neuron Create /n Set
+  /iaf_psc_alpha Create /n Set
   /synmodel stimname cvs (_syn) join cvlit def
   /static_synapse synmodel CopyModel
   stim n /static_synapse Connect

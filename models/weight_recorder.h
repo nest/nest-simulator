@@ -28,10 +28,10 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
 #include "nest_types.h"
-#include "node.h"
 #include "recording_device.h"
 #include "kernel_manager.h"
 
@@ -74,29 +74,23 @@ namespace nest
  *
  * @ingroup Devices
  */
-class weight_recorder : public Node
+class weight_recorder : public DeviceNode
 {
 
 public:
   weight_recorder();
   weight_recorder( const weight_recorder& );
 
-  void set_has_proxies( const bool hp );
   bool
   has_proxies() const
   {
-    return has_proxies_;
-  }
-  bool
-  potential_global_receiver() const
-  {
     return false;
   }
-  void set_local_receiver( const bool lr );
+
   bool
   local_receiver() const
   {
-    return local_receiver_;
+    return true;
   }
 
   /**
@@ -134,8 +128,6 @@ private:
   Buffers_ B_;
 
   bool user_set_precise_times_;
-  bool has_proxies_;
-  bool local_receiver_;
 
   struct Parameters_
   {
@@ -150,18 +142,6 @@ private:
 
   Parameters_ P_;
 };
-
-inline void
-weight_recorder::set_has_proxies( const bool hp )
-{
-  has_proxies_ = hp;
-}
-
-inline void
-weight_recorder::set_local_receiver( const bool lr )
-{
-  local_receiver_ = lr;
-}
 
 inline port
 weight_recorder::handles_test_event( WeightRecorderEvent&, rport receptor_type )

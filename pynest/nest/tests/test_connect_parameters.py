@@ -58,22 +58,21 @@ class TestParams(unittest.TestCase):
     def setUp(self):
         hf.nest.ResetKernel()
         hf.nest.SetKernelStatus({'local_num_threads': self.nr_threads})
-        # pass
 
     def setUpNetwork(self, conn_dict=None, syn_dict=None, N1=None, N2=None):
         if N1 is None:
             N1 = self.N1
         if N2 is None:
             N2 = self.N2
-        self.pop1 = hf.nest.Create('iaf_neuron', N1)
-        self.pop2 = hf.nest.Create('iaf_neuron', N2)
+        self.pop1 = hf.nest.Create('iaf_psc_alpha', N1)
+        self.pop2 = hf.nest.Create('iaf_psc_alpha', N2)
         hf.nest.set_verbosity('M_FATAL')
         hf.nest.Connect(self.pop1, self.pop2, conn_dict, syn_dict)
 
     def setUpNetworkOnePop(self, conn_dict=None, syn_dict=None, N=None):
         if N is None:
             N = self.N1
-        self.pop = hf.nest.Create('iaf_neuron', N)
+        self.pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.set_verbosity('M_FATAL')
         hf.nest.Connect(self.pop, self.pop, conn_dict, syn_dict)
 
@@ -132,21 +131,23 @@ class TestParams(unittest.TestCase):
         self.assertTrue(all(x['receptor'] == self.r0 for x in conns))
         self.assertTrue(all(x['synapse_model'] == self.syn0 for x in conns))
 
-    def testAutapses(self):
+    def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
 
         # test that autapses exist
         conn_params['autapses'] = True
-        self.pop1 = hf.nest.Create('iaf_neuron', self.N1)
+        self.pop1 = hf.nest.Create('iaf_psc_alpha', self.N1)
         hf.nest.Connect(self.pop1, self.pop1, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(self.pop1, self.pop1)
         hf.mpi_assert(np.diag(M), np.ones(self.N1), self)
-        hf.nest.ResetKernel()
+
+    def testAutapsesFalse(self):
+        conn_params = self.conn_dict.copy()
 
         # test that autapses were excluded
         conn_params['autapses'] = False
-        self.pop1 = hf.nest.Create('iaf_neuron', self.N1)
+        self.pop1 = hf.nest.Create('iaf_psc_alpha', self.N1)
         hf.nest.Connect(self.pop1, self.pop1, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(self.pop1, self.pop1)
@@ -240,8 +241,7 @@ class TestParams(unittest.TestCase):
             conn_params = [conn['receptor'] for conn in conns]
             self.assertTrue(hf.all_equal(conn_params))
             self.assertTrue(conn_params[0] == syn_params['receptor_type'])
-            hf.nest.ResetKernel()
-            self.setUp
+            self.setUp()
 
     def testWeightAllSynapses(self):
         # test all synapses apart from static_synapse_hom_w where weight is not
@@ -255,7 +255,7 @@ class TestParams(unittest.TestCase):
                 ]
         syn_params = {'weight': 0.372}
 
-        for i, syn in enumerate(syns):
+        for syn in syns:
             if syn == 'stdp_dopamine_synapse':
                 vol = hf.nest.Create('volume_transmitter')
                 hf.nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})
@@ -275,7 +275,7 @@ class TestParams(unittest.TestCase):
                 ]
         syn_params = {'delay': 0.4}
 
-        for i, syn in enumerate(syns):
+        for syn in syns:
             if syn == 'stdp_dopamine_synapse':
                 vol = hf.nest.Create('volume_transmitter')
                 hf.nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})

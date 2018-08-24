@@ -36,8 +36,6 @@ class TestOneToOne(TestParams):
     N2 = N
     N_array = 1000
 
-    # def testErrorMessages(self):
-
     def testConnectivity(self):
         self.setUpNetwork(self.conn_dict)
         # make sure all connections do exist
@@ -55,9 +53,9 @@ class TestOneToOne(TestParams):
         M1 = hf.get_connectivity_matrix(self.pop1, self.pop2)
         M2 = hf.get_connectivity_matrix(self.pop2, self.pop1)
         # test that connections were created in both directions
-        hf.mpi_assert(M1, np.transpose(M2), self)
+        hf.mpi_assert(M1, np.transpose(hf.gather_data(M2)), self)
         # test that no other connections were created
-        hf.mpi_assert(M1-np.identity(self.N), np.zeros_like(M1), self)
+        hf.mpi_assert(M1, np.zeros_like(M1) + np.identity(self.N), self)
 
     def testInputArray(self):
         syn_params = {}
@@ -67,6 +65,7 @@ class TestOneToOne(TestParams):
             elif label == 'delay':
                 self.param_array = np.arange(1, self.N_array + 1) * 0.1
             syn_params[label] = self.param_array
+            hf.nest.ResetKernel()
             self.setUpNetwork(self.conn_dict, syn_params,
                               N1=self.N_array, N2=self.N_array)
             M_nest = hf.get_weighted_connectivity_matrix(

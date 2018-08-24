@@ -46,13 +46,13 @@ namespace nest
    In particular, this model allows setting an absolute and relative
    refractory time separately, as required by [1].
 
-   The threshold crossing is followed by an absolute refractory period (tau_abs)
-   during which the membrane potential is clamped to the resting potential.
-   During the total refractory period, the membrane potential evolves,
-   but the neuron will not emit a spike, even if the membrane potential
-   reaches threshold. The total refractory time must be larger or equal to
-   the absolute refractory time. If equal, the refractoriness of the model
-   if equivalent to the other models of NEST.
+   The threshold crossing is followed by an absolute refractory period
+   (t_ref_abs) during which the membrane potential is clamped to the resting
+   potential. During the total refractory period (t_ref_tot), the membrane
+   potential evolves, but the neuron will not emit a spike, even if the
+   membrane potential reaches threshold. The total refractory time must be
+   larger or equal to the absolute refractory time. If equal, the
+   refractoriness of the model if equivalent to the other models of NEST.
 
    The linear subthreshold dynamics is integrated by the Exact
    Integration scheme [2]. The neuron dynamics is solved on the time
@@ -104,7 +104,7 @@ namespace nest
    If tau_m is very close to tau_syn_ex or tau_syn_in, the model
    will numerically behave as if tau_m is equal to tau_syn_ex or
    tau_syn_in, respectively, to avoid numerical instabilities.
-   For details, please see IAF_Neruons_Singularity.ipynb in
+   For details, please see IAF_neurons_singularity.ipynb in
    the NEST source code (docs/model_details).
 
    References:

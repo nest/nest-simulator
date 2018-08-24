@@ -176,13 +176,10 @@ cdef class NESTEngine(object):
             raise NESTError("argv can't be empty")
 
         # Create c-style argv arguments from sys.argv
-        cdef char* arg0 = "pynest\0"
         cdef char** argv_chars = <char**> malloc((argc+1) * sizeof(char*))
-        cdef char** argv_chars_off = argv_chars + 1 # map arguments in loop below
         if argv_chars is NULL:
             raise NESTError("couldn't allocate argv_char")
         try:
-            argv_chars[0] = arg0 # Why? Crazy SLI requirement
             # argv must be null terminated. openmpi depends on this
             argv_chars[argc] = NULL
 
@@ -190,9 +187,9 @@ cdef class NESTEngine(object):
             # argv_bytes = [byte...] which internally holds a reference
             # to the c string in argv_char = [c-string... NULL]
             # the `byte` is the utf-8 encoding of sys.argv[...]
-            argv_bytes = [argvi.encode() for argvi in argv[1:]]
+            argv_bytes = [argvi.encode() for argvi in argv]
             for i, argvi in enumerate(argv_bytes):
-                argv_chars_off[i] = argvi # c-string ref extracted
+                argv_chars[i] = argvi # c-string ref extracted
 
             self.pEngine = new SLIInterpreter()
             modulepath_bytes = modulepath.encode()

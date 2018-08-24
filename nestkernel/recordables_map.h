@@ -123,10 +123,117 @@ private:
   // ArrayDatum recordables_;
 };
 
-
 template < typename HostNode >
 void
 RecordablesMap< HostNode >::create()
+{
+  assert( false );
+}
+
+
+//! Class that reads out state vector elements, used by UniversalDataLogger
+template < typename HostNode >
+class DataAccessFunctor
+{
+  // Pointer instead of reference required to avoid problems with
+  // copying element in std::map when using libc++ under C++11.
+  HostNode* parent_;
+  size_t elem_;
+
+public:
+  DataAccessFunctor( HostNode& n, size_t elem )
+    : parent_( &n )
+    , elem_( elem ){};
+
+  double operator()() const
+  {
+    return parent_->get_state_element( elem_ );
+  };
+};
+
+
+/**
+ * Map names of recordables to DataAccessFunctors.
+ *
+ * This map identifies the DataAccessFunctors for recordable state
+ * variables in multisynapse model neurons.
+ * As the number of synapse receptors can be modified at runtime,
+ * each neuron shall have its own instance of DynamicRecordablesMap.
+ * Furthermore, the neurons are able to insert and erase elements from
+ * the map at runtime.
+ *
+ * @see multimeter, UniversalDataLogger
+ * @ingroup Devices
+ */
+template < typename HostNode >
+class DynamicRecordablesMap
+  : public std::map< Name, const DataAccessFunctor< HostNode > >
+{
+  typedef std::map< Name, const DataAccessFunctor< HostNode > > Base_;
+
+public:
+  virtual ~DynamicRecordablesMap()
+  {
+  }
+
+  //! Datatype for access callable
+  typedef DataAccessFunctor< HostNode > DataAccessFct;
+
+  /**
+   * Create the map.
+   * This function must be specialized for each class instance owning a
+   * Recordables map and must fill the map. This should happen
+   * as part of the original constructor for the Node.
+   */
+  void create( HostNode& n );
+
+  /**
+   * Obtain SLI list of all recordables, for use by get_status().
+   * @todo This fct should return the recordables_ entry, but since
+   *       filling recordables_ leads to seg fault on exit, we just
+   *       build the list every time, even though that beats the
+   *       goal of being more efficient ...
+   */
+  ArrayDatum
+  get_list() const
+  {
+    ArrayDatum recordables;
+    for ( typename Base_::const_iterator it = this->begin(); it != this->end();
+          ++it )
+    {
+      recordables.push_back( new LiteralDatum( it->first ) );
+    }
+    return recordables;
+  }
+
+  //! Insertion functions to be used in create(), adds entry to map and list
+  void
+  insert( const Name& n, const DataAccessFct& f )
+  {
+    Base_::insert( std::make_pair( n, f ) );
+  }
+
+  //! Erase functions to be used when setting state, removes entry from map and
+  //! list
+  void
+  erase( const Name& n )
+  {
+    // .toString() required as work-around for #339, remove when #348 is solved.
+    typename DynamicRecordablesMap< HostNode >::iterator it =
+      this->find( n.toString() );
+    // If the Name is not in the map, throw an error
+    if ( it == this->end() )
+    {
+      throw KeyError( n, "DynamicRecordablesMap", "erase" );
+    }
+
+    Base_::erase( it );
+  }
+};
+
+template < typename HostNode >
+void
+DynamicRecordablesMap< HostNode >::create( HostNode& n )
 {
   assert( false );
 }

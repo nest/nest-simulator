@@ -358,10 +358,9 @@ private:
    */
   struct Variables_
   {
-    double exp_t_;     //!< @$ e^{-t/\tau_m} @$
-    double expm1_t_;   //!< @$ e^{-t/\tau_m} - 1 @$
-    double v_inf_;     //!< @$ \frac{I_e\tau_m}{c_m} @$
-    double I_contrib_; //!< @$ \frac{I_e\tau_m}{c_m} (1-e^{-t/\tau_m})@$
+    double exp_t_;   //!< @$ e^{-t/\tau_m} @$
+    double expm1_t_; //!< @$ e^{-t/\tau_m} - 1 @$
+    double R_;       //!< @$ \frac{\tau_m}{c_m} @$
 
     double h_ms_; //!< duration of time step [ms]
 

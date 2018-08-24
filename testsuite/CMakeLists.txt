@@ -21,7 +21,6 @@ set( TESTSUBDIRS
     selftests
     unittests
     regressiontests
-    manualtests
     mpitests
     mpi_selftests
     musictests )
@@ -34,6 +33,7 @@ add_subdirectory( mpi_selftests/fail )
 add_subdirectory( mpi_selftests/pass )
 add_subdirectory( mpitests )
 add_subdirectory( musictests )
+add_subdirectory( cpptests )
 
 install( DIRECTORY ${TESTSUBDIRS}
     DESTINATION ${CMAKE_INSTALL_DOCDIR}

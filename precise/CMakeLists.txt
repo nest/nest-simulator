@@ -23,6 +23,7 @@ set( precise_sources
     iaf_psc_alpha_canon.cpp iaf_psc_alpha_canon.h
     iaf_psc_alpha_presc.cpp iaf_psc_alpha_presc.h
     iaf_psc_exp_ps.cpp iaf_psc_exp_ps.h
+    iaf_psc_exp_ps_lossless.cpp iaf_psc_exp_ps_lossless.h
     poisson_generator_ps.cpp poisson_generator_ps.h
     parrot_neuron_ps.cpp parrot_neuron_ps.h
     precisemodule.cpp precisemodule.h
@@ -46,3 +47,7 @@ install( TARGETS precise
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
+
+FILTER_HEADERS("${precise_sources}" install_headers )
+install( FILES ${install_headers}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

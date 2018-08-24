@@ -104,7 +104,7 @@ nest::music_event_out_proxy::State_::set( const DictionaryDatum&,
  * ---------------------------------------------------------------- */
 
 nest::music_event_out_proxy::music_event_out_proxy()
-  : Node()
+  : DeviceNode()
   , P_()
   , S_()
 {
@@ -112,7 +112,7 @@ nest::music_event_out_proxy::music_event_out_proxy()
 
 nest::music_event_out_proxy::music_event_out_proxy(
   const music_event_out_proxy& n )
-  : Node( n )
+  : DeviceNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
 {

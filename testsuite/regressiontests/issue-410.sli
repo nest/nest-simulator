@@ -33,13 +33,12 @@
    Author: Till Schumann
  */
 
-% The following test needs the model iaf_cond_alpha, so
-% this test should only run if we have GSL
-statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
-
-
 (unittest) run
 /unittest using
+
+% The following test needs the model iaf_cond_alpha, so
+% this test should only run if we have GSL
+skip_if_without_gsl
 
 M_ERROR setverbosity
 
@@ -56,8 +55,8 @@ ResetKernel
 /dc_generator 1 << /amplitude 1000.0 >> Create /stim2 Set
 
 
-/iaf_neuron 1 << /C_m 100.0 /tau_m 10.0 >> Create /neuron1 Set
-/iaf_neuron 1 << /C_m 100.0 /tau_m 10.0 /tau_minus 10.0>> Create /neuron2 Set
+/iaf_psc_alpha 1 << /C_m 100.0 /tau_m 10.0 >> Create /neuron1 Set
+/iaf_psc_alpha 1 << /C_m 100.0 /tau_m 10.0 /tau_minus 10.0>> Create /neuron2 Set
 
 0 GetStatus /network_size get /dopa_first Set
 /iaf_cond_alpha 100 << /V_reset -70.0 /C_m 80.0 /V_th -60.0>> Create /dopa_last Set

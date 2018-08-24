@@ -176,7 +176,7 @@ TopologyModule::create_mask( const Token& t )
         delete mask;
         mask = amask;
       }
-      catch ( TypeMismatch e )
+      catch ( TypeMismatch& e )
       {
 
         DictionaryDatum ad = getValue< DictionaryDatum >( anchor_token );
@@ -199,7 +199,7 @@ TopologyModule::create_mask( const Token& t )
               dynamic_cast< GridMask< 2 >& >( *mask );
             grid_mask_2d.set_anchor( Position< 2, int >( column, row ) );
           }
-          catch ( std::bad_cast e )
+          catch ( std::bad_cast& e )
           {
             throw BadProperty( "Mask must be 2-dimensional grid mask." );
           }
@@ -211,7 +211,7 @@ TopologyModule::create_mask( const Token& t )
               dynamic_cast< GridMask< 3 >& >( *mask );
             grid_mask_3d.set_anchor( Position< 3, int >( column, row, layer ) );
           }
-          catch ( std::bad_cast e )
+          catch ( std::bad_cast& e )
           {
             throw BadProperty( "Mask must be 3-dimensional grid mask." );
           }
@@ -403,6 +403,7 @@ TopologyModule::init( SLIInterpreter* i )
   register_parameter< ExponentialParameter >( "exponential" );
   register_parameter< GaussianParameter >( "gaussian" );
   register_parameter< Gaussian2DParameter >( "gaussian2D" );
+  register_parameter< GammaParameter >( "gamma" );
   register_parameter< UniformParameter >( "uniform" );
   register_parameter< NormalParameter >( "normal" );
   register_parameter< LognormalParameter >( "lognormal" );

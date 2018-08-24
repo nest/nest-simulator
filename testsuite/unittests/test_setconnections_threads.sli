@@ -37,8 +37,8 @@ ResetKernel
 
 0 << /local_num_threads num_threads >> SetStatus
 
-/iaf_neuron Create /source Set
-/iaf_neuron Create /target Set
+/iaf_psc_alpha Create /source Set
+/iaf_psc_alpha Create /target Set
 
 source target /stdp_synapse Connect
 

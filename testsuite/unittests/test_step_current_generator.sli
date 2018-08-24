@@ -89,7 +89,7 @@ ResetKernel
   ResetKernel
   0 << /resolution 0.1 >> SetStatus
   /scg /step_current_generator Create def
-  /nrn /iaf_neuron Create def
+  /nrn /iaf_psc_alpha Create def
   /vm  /voltmeter Create def
 
   % no spiking, all parameters 1, 0 leak potential

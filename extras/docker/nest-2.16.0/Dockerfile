@@ -15,8 +15,8 @@ RUN adduser --disabled-login --gecos 'NEST' --home /home/nest nest && \
 
 USER nest
 
-RUN wget https://github.com/nest/nest-simulator/archive/v2.14.0.tar.gz && \
-    tar -xvzf v2.14.0.tar.gz && \
+RUN wget https://github.com/nest/nest-simulator/archive/v2.16.0.tar.gz && \
+    tar -xvzf v2.16.0.tar.gz && \
     mkdir /home/nest/nest-build && \
     mkdir /home/nest/nest-install && \
     cd  /home/nest/nest-build && \
@@ -26,7 +26,7 @@ RUN wget https://github.com/nest/nest-simulator/archive/v2.14.0.tar.gz && \
         -Dwith-gsl:BOOL=$WITH_GSL /usr/local/lib \
         -Dwith-libneurosim:BOOL=$WITH_LIBNEUROSIM /usr/local/lib \
         -Dwith-music=$WITH_MUSIC /usr/lib \
-        /home/nest/nest-simulator-2.14.0 && \
+        /home/nest/nest-simulator-2.16.0 && \
      make && make install
 
 # RUN su nest -c 'make installcheck'

@@ -1,5 +1,19 @@
 # Docker image for the NEST simulator
 
+
+Currently the following docker images are provided
+
+-   nest/docker-nest-2.12.0 (~1.2GB)
+-   nest/docker-nest-2.14.0 (~1.2GB)
+-   nest/docker-nest-2.16.0 (~1.2GB)
+    
+All are complete NEST installations from scratch: 
+'WITH_MPI=On', 'WITH_GSL=On', 'WITH_MUSIC=On' and 'WITH_LIBNEUROSIM=On'
+
+NOTE: For building an extra docker image ('nest/docker-master' ~1.1MB) is 
+created. It can be deleted later.
+
+
 ## Usage
 
     nest_docker.sh [--help] <command> [<args>] [<version>]
@@ -7,7 +21,8 @@
     --help      print this usage information.
     <command>   can be either 'provision', 'run' or 'clean'.
     [<args>]    can be either 'notebook', 'interactice' or 'virtual'.
-    [<version>] version number of NEST (e.g. 2.12.0 or 2.14.0).
+    [<version>] version number of NEST 
+                (e.g. '2.12.0', '2.14.0', '2.16.0' or 'all').
     
     Example:    sh nest-docker.sh provision 2.14.0
                 sh nest-docker.sh run notebook 2.14.0
@@ -19,7 +34,7 @@ The master dockerfile [./master/Dockerfile]() builds an image with a basic
 shell environment, Python 3, OpenMPI, matplotlib, Scipy, MUSIC, 
 libneurosim and Jupyter Notebook.
 
-The NEST dockerfiles use the master image and integrates [NEST](https://github.com/nest/nest-simulator). 
+The NEST dockerfiles then integrates [NEST](https://github.com/nest/nest-simulator). 
 
 You need a working docker environment. (https://docs.docker.com/)
 
@@ -31,18 +46,18 @@ You need a working docker environment. (https://docs.docker.com/)
 
 ## 1 - 2 (- 3)
 
-In the following, VESRION is the version number of NEST you want to use 
-(right now 2.12.0 or 2.14.0).
+In the following, VERSION is the version number of NEST you want to use 
+('2.12.0', '2.14.0', '2.16.0' or 'all').
 
 Two little steps to get started
 
 ### 1 - Provisioning
     
     sh nest-docker.sh provision VERSION
-
+    
+VESRION is '2.12.0', '2.14.0', '2.16.0' or 'all.   
 (You can adapt some configuration options in nest-docker.sh. For other/more 
-configuration options please change the 'Dockerfile'. See:
-<https://github.com/nest/nest-simulator/blob/v2.12.0/README.md>) 
+configuration options please change the 'Dockerfile'.
     
 ### 2 - Run
  
@@ -50,7 +65,7 @@ configuration options please change the 'Dockerfile'. See:
 
         sh nest-docker.sh run notebook VERSION  
         
-    VESRION is 2.12.0, 2.14.0 or all.               
+    VESRION is '2.12.0', '2.14.0', '2.16.0' or 'all.               
     Open the displayed URL in your browser and have fun with Jupyter 
     Notebook and NEST.
     
@@ -58,6 +73,7 @@ configuration options please change the 'Dockerfile'. See:
 
         sh nest-docker.sh run interactive VERSION
 
+    VESRION is '2.12.0', '2.14.0', '2.16.0' or 'all.   
     After the prompt 'Your python script:' enter the filename of the script 
     you want to start. Only the filename without any path. The file has to 
     be in the path where you start the script. 
@@ -66,6 +82,7 @@ configuration options please change the 'Dockerfile'. See:
     
         sh nest-docker.sh run virtual VERSION
         
+    VESRION is '2.12.0', '2.14.0', '2.16.0' or 'all.   
     You are logged in as user 'nest'. Enter 'python' and in the 
     python-shell 'import nest'. A 'nest.help()' should display the main 
     help page.

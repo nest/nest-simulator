@@ -38,7 +38,7 @@ if [ "$1" = 'interactive' ]; then
 	echo Starting: $name
 
 	# Start
-	exec /home/nest/miniconda/envs/py3/bin/python /home/nest/data/$name
+	exec python3 /home/nest/data/$name
 fi
 
 exec "$@"

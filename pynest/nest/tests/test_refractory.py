@@ -189,11 +189,12 @@ class TestRefractoryCase(unittest.TestCase):
     """
 
     def reset(self):
+        nest.ResetKernel()
+
         msd = 123456
         N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
         pyrngs = [np.random.RandomState(s) for s in range(msd, msd + N_vp)]
 
-        nest.ResetKernel()
         nest.SetKernelStatus({
             'resolution': resolution, 'grng_seed': msd + N_vp,
             'rng_seeds': range(msd + N_vp + 1, msd + 2 * N_vp + 1)})

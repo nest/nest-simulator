@@ -43,21 +43,39 @@ trigger immediate spiking
 Untested models
 ---------------
 * ``aeif_cond_alpha_RK5``
+* ``erfc_neuron``
+* ``gauss_rate_ipn``
+* ``gif_pop_psc_exp``
 * ``ginzburg_neuron``
 * ``hh_cond_exp_traub``
 * ``hh_psc_alpha``
 * ``hh_psc_alpha_gap``
-* ``ht_neuron``
 * ``iaf_chs_2007``
 * ``iaf_chxk_2008``
+* ``iaf_psc_exp_ps_lossless``
 * ``iaf_tum_2000``
 * ``izhikevich``
+* ``lin_rate_ipn``
+* ``lin_rate_opn``
 * ``mcculloch_pitts_neuron``
 * ``parrot_neuron``
 * ``parrot_neuron_ps``
 * ``pp_pop_psc_delta``
 * ``pp_psc_delta``
+* ``rate_transformer_gauss``
+* ``rate_transformer_lin``
+* ``rate_transformer_sigmoid``
+* ``rate_transformer_sigmoid_gg_1998``
+* ``rate_transformer_tanh``
+* ``rate_transformer_threshold_lin``
 * ``sli_neuron``
+* ``siegert_neuron``
+* ``sigmoid_rate_gg_1998_ipn``
+* ``sigmoid_rate_ipn``
+* ``tanh_rate_ipn``
+* ``tanh_rate_opn``
+* ``threshold_lin_rate_ipn``
+* ``threshold_lin_rate_opn``
 """
 
 
@@ -92,8 +110,8 @@ neurons_V_clamped = [
 # (t_ref = interspike)
 neurons_interspike = [
     "amat2_psc_exp",
-    "mat2_psc_exp",
     "ht_neuron",
+    "mat2_psc_exp",
 ]
 
 neurons_interspike_ps = [
@@ -108,20 +126,37 @@ ignore_model = [
     "aeif_cond_alpha_RK5",  # this one is faulty and will be removed
     "erfc_neuron",
     "gauss_rate_ipn",
+    "gif_pop_psc_exp",
     "ginzburg_neuron",
     "hh_cond_exp_traub",
     "hh_psc_alpha",
     "hh_psc_alpha_gap",
     "iaf_chs_2007",
     "iaf_chxk_2008",
+    "iaf_psc_exp_ps_lossless",
     "iaf_tum_2000",
     "izhikevich",
+    "lin_rate_ipn",
+    "lin_rate_opn",
     "mcculloch_pitts_neuron",
     "parrot_neuron",
     "parrot_neuron_ps",
     "pp_pop_psc_delta",
     "pp_psc_delta",
+    "rate_transformer_gauss",
+    "rate_transformer_lin",
+    "rate_transformer_sigmoid",
+    "rate_transformer_sigmoid_gg_1998",
+    "rate_transformer_tanh",
+    "rate_transformer_threshold_lin",
     "sli_neuron",
+    "siegert_neuron",
+    "sigmoid_rate_gg_1998_ipn",
+    "sigmoid_rate_ipn",
+    "tanh_rate_ipn",
+    "tanh_rate_opn",
+    "threshold_lin_rate_ipn",
+    "threshold_lin_rate_opn",
 ]
 
 tested_models = [m for m in nest.Models("nodes") if (nest.GetDefaults(
@@ -153,7 +188,7 @@ class TestRefractoryCase(unittest.TestCase):
     Check the correct implementation of refractory time in all neuronal models.
     """
 
-    def setUp(self):
+    def reset(self):
         msd = 123456
         N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
         pyrngs = [np.random.RandomState(s) for s in range(msd, msd + N_vp)]
@@ -209,6 +244,7 @@ class TestRefractoryCase(unittest.TestCase):
         Check that refractory time implementation is correct.
         '''
         for model in tested_models:
+            self.reset()
             # randomly set a refractory period
             t_ref = resolution * np.random.randint(min_steps, max_steps)
             # create the neuron and devices
@@ -220,7 +256,8 @@ class TestRefractoryCase(unittest.TestCase):
             sd = nest.Create("spike_detector", params={'precise_times': True})
             cg = nest.Create("dc_generator", params={"amplitude": 900.})
             # for models that do not clamp V_m, use very large current to
-            # trigger almost immediate spiking => t_ref almost equals interspike
+            # trigger almost immediate spiking => t_ref almost equals
+            # interspike
             if model in neurons_interspike_ps:
                 nest.SetStatus(cg, "amplitude", 10000000.)
             elif model in neurons_interspike:
@@ -229,20 +266,23 @@ class TestRefractoryCase(unittest.TestCase):
             nest.Connect(vm, neuron)
             nest.Connect(cg, neuron, syn_spec=add_connect_param.get(model, {}))
             nest.Connect(neuron, sd)
-    
+
             nest.Simulate(simtime)
-    
+
             # get and compare t_ref
             t_ref_sim = self.compute_reftime(model, sd, vm, neuron)
-            
+
             # approximate result for precise spikes (interpolation error)
             if model in neurons_interspike_ps:
                 self.assertAlmostEqual(t_ref, t_ref_sim, places=3,
                                        msg='''Error in model {}:
-                                       {} != {}'''.format(model, t_ref, t_ref_sim))
+                                       {} != {}'''.format(
+                                           model, t_ref, t_ref_sim))
             else:
-                self.assertAlmostEqual(t_ref, t_ref_sim, msg='''Error in model {}:
-                                       {} != {}'''.format(model, t_ref, t_ref_sim))
+                self.assertAlmostEqual(t_ref, t_ref_sim,
+                                       msg='''Error in model {}:
+                                       {} != {}'''.format(
+                                           model, t_ref, t_ref_sim))
 
 
 # --------------------------------------------------------------------------- #

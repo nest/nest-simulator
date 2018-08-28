@@ -58,6 +58,11 @@ Untested models
 * ``lin_rate_ipn``
 * ``lin_rate_opn``
 * ``mcculloch_pitts_neuron``
+* ``music_cont_in_proxy``
+* ``music_cont_out_proxy``
+* ``music_event_in_proxy``
+* ``music_event_out_proxy``
+* ``music_message_in_proxy``
 * ``parrot_neuron``
 * ``parrot_neuron_ps``
 * ``pp_pop_psc_delta``
@@ -139,6 +144,11 @@ ignore_model = [
     "lin_rate_ipn",
     "lin_rate_opn",
     "mcculloch_pitts_neuron",
+    "music_cont_in_proxy",
+    "music_cont_out_proxy",
+    "music_event_in_proxy",
+    "music_event_out_proxy",
+    "music_message_in_proxy",
     "parrot_neuron",
     "parrot_neuron_ps",
     "pp_pop_psc_delta",

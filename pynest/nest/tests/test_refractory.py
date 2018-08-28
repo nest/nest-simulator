@@ -57,6 +57,7 @@ Untested models
 * ``izhikevich``
 * ``lin_rate_ipn``
 * ``lin_rate_opn``
+* ``mat2_psc_exp``
 * ``mcculloch_pitts_neuron``
 * ``music_cont_in_proxy``
 * ``music_cont_out_proxy``
@@ -116,7 +117,6 @@ neurons_V_clamped = [
 neurons_interspike = [
     "amat2_psc_exp",
     "ht_neuron",
-    "mat2_psc_exp",
 ]
 
 neurons_interspike_ps = [
@@ -143,6 +143,7 @@ ignore_model = [
     "izhikevich",
     "lin_rate_ipn",
     "lin_rate_opn",
+    "mat2_psc_exp",
     "mcculloch_pitts_neuron",
     "music_cont_in_proxy",
     "music_cont_out_proxy",

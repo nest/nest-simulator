@@ -43,6 +43,7 @@ trigger immediate spiking
 Untested models
 ---------------
 * ``aeif_cond_alpha_RK5``
+* ``amat2_psc_exp``
 * ``erfc_neuron``
 * ``gauss_rate_ipn``
 * ``gif_pop_psc_exp``
@@ -115,7 +116,6 @@ neurons_V_clamped = [
 # neurons that must be tested through a high current to spike immediately
 # (t_ref = interspike)
 neurons_interspike = [
-    "amat2_psc_exp",
     "ht_neuron",
 ]
 
@@ -129,6 +129,7 @@ neurons_interspike_ps = [
 # models that cannot be tested
 ignore_model = [
     "aeif_cond_alpha_RK5",  # this one is faulty and will be removed
+    "amat2_psc_exp",
     "erfc_neuron",
     "gauss_rate_ipn",
     "gif_pop_psc_exp",

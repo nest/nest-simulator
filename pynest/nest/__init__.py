@@ -247,8 +247,9 @@ def test():
 
     hl_api.set_debug(debug)
 
-from .pynestkernel import *         # noqa
-from .lib.hl_api_helper import *    # noqa
+from .pynestkernel import *          # noqa
+from .lib.hl_api_helper import *     # noqa
+from .random.hl_api_random import *  # noqa
 
 # We search through the subdirectory "lib" of the "nest" module
 # directory and import the content of all Python files therein into

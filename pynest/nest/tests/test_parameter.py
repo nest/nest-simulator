@@ -24,7 +24,6 @@ Simple Parameter tests
 """
 
 import nest
-import nest.random
 import unittest
 
 

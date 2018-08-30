@@ -24,7 +24,6 @@ Node Parametrization tests
 """
 
 import nest
-import nest.random
 import numpy as np
 import unittest
 

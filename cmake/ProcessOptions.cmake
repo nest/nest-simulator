@@ -49,6 +49,8 @@ function( NEST_PROCESS_WITH_WARNING )
     if ( with-warning STREQUAL "ON" )
       if ( NOT k-computer STREQUAL "ON" )
         set( with-warning "-Wall" )
+      else()
+        set( with-warning "" )
       endif()
     endif ()
     foreach ( flag ${with-warning} )
@@ -109,7 +111,8 @@ function( NEST_PROCESS_K_COMPUTER )
     set( IS_K ON PARENT_SCOPE )
     # need alternative tokens command to compile NEST
     set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --alternative_tokens" PARENT_SCOPE )
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --alternative_tokens" PARENT_SCOPE )
+    # FCC accepts GNU flags when -Xg is supplied
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xg --alternative_tokens" PARENT_SCOPE )
   endif ()
 endfunction()
 

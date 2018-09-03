@@ -59,20 +59,6 @@
 #
 # JURON base platform file.
 #
-# NOTE: Do not set your platform to "BlueGeneQ-base".  This file is
-# included by the real platform files.  Use one of these two platforms
-# instead:
-#
-#     BlueGeneQ-dynamic  For dynamically linked executables
-#     BlueGeneQ-static   For statically linked executables
-#
-# The platform you choose doesn't affect whether or not you can build
-# shared or static libraries -- it ONLY changs whether exeuatbles are linked
-# statically or dynamically.
-#
-# This platform file tries its best to adhere to the behavior of the MPI
-# compiler wrappers included with the latest BG/P drivers.
-#
 
 # Based on the JURON-base platform file
 #set( CMAKE_SYSTEM_NAME Linux CACHE STRING "Compiling for JURON" FORCE )
@@ -85,27 +71,8 @@ set( enable-juron "JURON" CACHE STRING "Configure for JURON." FORCE )
 #set( with-readline OFF CACHE BOOL "Find a readline library [default=ON]. To set a specific readline, set install path." FORCE )
 # we obviously want to do mpi on JURON
 set( with-mpi OFF CACHE BOOL "Request compilation with MPI; optionally give directory with MPI installation." FORCE )
-# OpenMP offloading
+# Enable OpenMP offloading
 set( with-offload ON CACHE BOOL "OpenMP-based device offloading to NVIDIA targets." FORCE )
-
-#
-# This adds directories that find commands should specifically ignore
-# for cross compiles.  Most of these directories are the includeand
-# lib directories for the frontend on BG/P systems.  Not ignoring
-# these can cause things like FindX11 to find a frontend PPC version
-# mistakenly.  We use this on BG instead of re-rooting because backend
-# libraries are typically strewn about the filesystem, and we can't
-# re-root ALL backend libraries to a single place.
-#
-set( CMAKE_SYSTEM_IGNORE_PATH
-    /lib /lib64 /include
-    /usr/lib/include/ /usr/lib64 /usr/include
-    /usr/local/lib /usr/local/lib64 /usr/local/include
-    /usr/X11/lib /usr/X11/lib64 /usr/X11/include
-    /usr/lib/X11 /usr/lib64/X11 /usr/include/X11
-    /usr/X11R6/lib /usr/X11R6/lib64 /usr/X11R6/include
-    /usr/X11R7/lib /usr/X11R7/lib64 /usr/X11R7/include
-    )
 
 #
 # Indicate that this is a unix-like system
@@ -138,14 +105,6 @@ set( CMAKE_CXX_COMPILER_LINKS_STATICALLY OFF )
 
 set( CMAKE_FIND_LIBRARY_PREFIXES "lib" )
 
-#
-# For BGQ builds, we're cross compiling, but we don't want to re-root things
-# (e.g. with CMAKE_FIND_ROOT_PATH) because users may have libraries anywhere on
-# the shared filesystems, and this may lie outside the root.  Instead, we set the
-# system directories so that the various system BG CNK library locations are
-# searched first.  This is not the clearest thing in the world, given IBM's driver
-# layout, but this should cover all the standard ones.
-#
 macro( __juron_common_setup compiler_id lang )
 
   # Need to use the version of the comm lib compiled with the right compiler.
@@ -153,24 +112,6 @@ macro( __juron_common_setup compiler_id lang )
   if ( ${compiler_id} STREQUAL XL )
     set( __JURON_commlib_dir xl )
   endif ()
-
-  set( CMAKE_SYSTEM_LIBRARY_PATH
-      /bgsys/drivers/ppcfloor/comm/lib                            # default comm layer (used by mpi compiler wrappers)
-      /bgsys/drivers/ppcfloor/comm/sys/lib/
-      /bgsys/drivers/ppcfloor/comm/${__JURON_commlib_dir}/lib # PAMI, other lower-level comm libraries
-      /bgsys/drivers/ppcfloor/gnu-linux/lib                       # CNK python installation directory
-      /bgsys/drivers/ppcfloor/gnu-linux/powerpc64-bgq-linux/lib   # CNK Linux image -- standard runtime libs, pthread, etc.
-      )
-
-  # Add all the system include paths.
-  set( CMAKE_SYSTEM_INCLUDE_PATH
-      /bgsys/drivers/ppcfloor/comm/include
-      /bgsys/drivers/ppcfloor/comm/sys/include
-      /bgsys/drivers/ppcfloor/
-      /bgsys/drivers/ppcfloor/spi/include
-      /bgsys/drivers/ppcfloor/spi/include/kernel/cnk
-      /bgsys/drivers/ppcfloor/comm/${__JURON_commlib_dir}/include
-      )
 
   # Ensure that the system directories are included with the regular compilers, as users will expect this
   # to do the same thing as the MPI compilers, which add these flags.
@@ -233,7 +174,7 @@ macro( __juron_setup_dynamic compiler_id lang )
     set( JURON_${lang}_DYNAMIC_EXE_FLAGS "-dynamic" )
   endif ()
 
-  # For dynamic executables, need to provide special BG/Q arguments.
+  # For dynamic executables, need to provide special JURON arguments.
   set( JURON_${lang}_DEFAULT_EXE_FLAGS
       "<FLAGS> <CMAKE_${lang}_LINK_FLAGS> <LINK_FLAGS> <OBJECTS>  -o <TARGET> <LINK_LIBRARIES>" )
   set( CMAKE_${lang}_LINK_EXECUTABLE

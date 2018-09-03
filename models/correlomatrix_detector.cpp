@@ -310,7 +310,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
     const Spike_ sp_i( spike_i, e.get_multiplicity() * e.get_weight(), sender );
     SpikelistType::iterator insert_pos = std::find_if( S_.incoming_.begin(),
       S_.incoming_.end(),
-      std::bind2nd( std::greater< Spike_ >(), sp_i ) );
+      std::bind( std::greater< Spike_ >(), std::placeholders::_1, sp_i ) );
 
     // insert before the position we have found
     // if no element greater found, insert_pos == end(), so append at the end of

@@ -204,7 +204,7 @@ public:
   }
 
   lockPTR( const lockPTR< D >& spd )
-      : obj( spd.obj )
+    : obj( spd.obj )
   {
     assert( obj != NULL );
     obj->addReference();

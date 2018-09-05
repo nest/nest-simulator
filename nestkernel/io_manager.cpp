@@ -52,6 +52,22 @@
 nest::IOManager::IOManager()
   : overwrite_files_( false )
 {
+  recording_backends_.insert(std::make_pair( "ascii", new RecordingBackendASCII() ) );
+  recording_backends_.insert(std::make_pair( "memory", new RecordingBackendMemory() ) );
+  recording_backends_.insert(std::make_pair( "screen", new RecordingBackendScreen() ) );
+#ifdef HAVE_SIONLIB
+  recording_backends_.insert(std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
+#endif
+}
+
+nest::IOManager::~IOManager()
+{
+  std::map< Name, RecordingBackend* >::const_iterator it;
+  for ( auto it = recording_backends_.begin(); it != recording_backends_.end();
+        ++it )
+  {
+    delete it->second;
+  }
 }
 
 void
@@ -122,14 +138,11 @@ nest::IOManager::initialize()
     set_data_path_prefix_( dict );
   }
   
-  recording_backends_.insert(std::make_pair( "ascii", new RecordingBackendASCII() ) );
-  recording_backends_.insert(std::make_pair( "memory", new RecordingBackendMemory() ) );
-  recording_backends_.insert(std::make_pair( "screen", new RecordingBackendScreen() ) );
-#ifdef HAVE_SIONLIB
-  recording_backends_.insert(std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
-#endif
-
-  num_threads_changed_reset();
+  std::map< Name, RecordingBackend* >::const_iterator it;
+  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
+  {
+    it->second->initialize();
+  }
 }
 
 void
@@ -140,12 +153,10 @@ nest::IOManager::finalize()
   overwrite_files_ = false;
 
   std::map< Name, RecordingBackend* >::const_iterator it;
-  for ( it = recording_backends_.begin(); it != recording_backends_.end();
-        ++it )
+  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
   {
-    delete it->second;
+    it->second->finalize();
   }
-  recording_backends_.clear();
 }
 
 /*
@@ -188,16 +199,6 @@ nest::IOManager::get_status( DictionaryDatum& d )
     ( *recording_backends )[ it->first ] = recording_backend_status;
   }
   ( *d )[ names::recording_backends ] = recording_backends;
-}
-
-void
-nest::IOManager::num_threads_changed_reset()
-{
-  std::map< Name, RecordingBackend* >::const_iterator it;
-  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
-  {
-    it->second->initialize();
-  }
 }
 
 void

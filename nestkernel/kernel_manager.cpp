@@ -145,7 +145,9 @@ nest::KernelManager::num_threads_changed_reset()
   connection_manager.finalize();
   modelrange_manager.finalize();
   rng_manager.finalize();
+  io_manager.finalize();
 
+  io_manager.initialize();
   rng_manager.initialize();
   // independent of threads, but node_manager needs it reset
   modelrange_manager.initialize();
@@ -153,8 +155,6 @@ nest::KernelManager::num_threads_changed_reset()
   model_manager.initialize();
   music_manager.initialize();
   node_manager.initialize();
-
-  io_manager.num_threads_changed_reset();
 }
 
 void

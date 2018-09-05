@@ -259,16 +259,14 @@ nest::RecordingBackendASCII::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingBackendASCII::Parameters_::get( const RecordingBackendASCII&,
-  DictionaryDatum& d ) const
+nest::RecordingBackendASCII::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::precision ] = precision_;
   ( *d )[ names::file_extension ] = file_ext_;
 }
 
 void
-nest::RecordingBackendASCII::Parameters_::set( const RecordingBackendASCII&,
-  const DictionaryDatum& d )
+nest::RecordingBackendASCII::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< long >( d, names::precision, precision_ );
   updateValue< std::string >( d, names::file_extension, file_ext_ );
@@ -278,7 +276,7 @@ void
 nest::RecordingBackendASCII::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( *this, d );  // throws if BadProperty
+  ptmp.set( d );  // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

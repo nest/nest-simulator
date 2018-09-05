@@ -399,8 +399,6 @@ public:
         ->get_common_properties();
 
     index lcid_offset = 0;
-    typename std::deque< ConnectionT >::iterator conn =
-      C_.begin() + lcid + lcid_offset;
 
     while ( true )
     {

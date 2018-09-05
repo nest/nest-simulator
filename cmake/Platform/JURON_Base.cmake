@@ -69,10 +69,6 @@
 set( enable-juron "JURON" CACHE STRING "Configure for JURON." FORCE )
 # no readline support on JURON
 #set( with-readline OFF CACHE BOOL "Find a readline library [default=ON]. To set a specific readline, set install path." FORCE )
-# we obviously want to do mpi on JURON
-set( with-mpi OFF CACHE BOOL "Request compilation with MPI; optionally give directory with MPI installation." FORCE )
-# Enable OpenMP offloading
-set( with-offload ON CACHE BOOL "OpenMP-based device offloading to NVIDIA targets." FORCE )
 
 #
 # Indicate that this is a unix-like system

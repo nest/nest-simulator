@@ -110,10 +110,10 @@ nest::RecordingBackendASCII::initialize()
 void
 nest::RecordingBackendASCII::post_run_cleanup()
 {
-  for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  file_map::iterator inner;
+  for ( inner = files_.begin(); inner != files_.end(); ++inner )
   {
-    file_map::value_type& inner = files_[ t ];
-    for ( file_map::value_type::iterator f = inner.begin(); f != inner.end();
+    for ( file_map::value_type::iterator f = inner->begin(); f != inner->end();
           ++f )
     {
       f->second.second->flush();
@@ -124,11 +124,11 @@ nest::RecordingBackendASCII::post_run_cleanup()
 void
 nest::RecordingBackendASCII::finalize()
 {
-  for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  file_map::iterator inner;
+  for ( inner = files_.begin(); inner != files_.end(); ++inner )
   {
-    file_map::value_type& inner = files_[ t ];
     file_map::value_type::iterator f;
-    for ( f = inner.begin(); f != inner.end(); ++f )
+    for ( f = inner->begin(); f != inner->end(); ++f )
     {
       if ( f->second.second != NULL )
       {

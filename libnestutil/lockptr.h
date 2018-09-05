@@ -30,6 +30,7 @@
 // C++ includes:
 #include <cassert>
 #include <cstddef>
+#include <memory>
 
 /**
 \class lockPTR
@@ -144,16 +145,6 @@ class lockPTR
 
 #pragma omp atomic update // To avoid race conditions.
       --number_of_references;
-
-      if ( number_of_references == 0 )
-      {
-// Only one thread deletes this. Using nowait to avoid deadlock if the
-// delete is recursive.
-#pragma omp single nowait
-        {
-          delete this;
-        }
-      }
     }
 
     size_t
@@ -191,7 +182,7 @@ class lockPTR
     }
   };
 
-  PointerObject* obj;
+  std::shared_ptr< PointerObject > obj;
 
 public:
   // lockPTR() ; // generated automatically.
@@ -202,13 +193,13 @@ public:
 
   explicit lockPTR( D* p = NULL )
   {
-    obj = new PointerObject( p );
+    obj.reset( new PointerObject( p ) );
     assert( obj != NULL );
   }
 
   explicit lockPTR( D& p_o )
   {
-    obj = new PointerObject( p_o );
+    obj.reset( new PointerObject( p_o ) );
     assert( obj != NULL );
   }
 

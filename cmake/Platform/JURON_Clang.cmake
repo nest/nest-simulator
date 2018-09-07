@@ -1,4 +1,4 @@
-# JUEON_Clang.cmake
+# JURON_Clang.cmake
 #
 # This file is part of NEST.
 #

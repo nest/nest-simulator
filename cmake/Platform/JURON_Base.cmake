@@ -60,12 +60,7 @@
 # JURON base platform file.
 #
 
-# Based on the JURON-base platform file
-#set( CMAKE_SYSTEM_NAME Linux CACHE STRING "Compiling for JURON" FORCE )
-#set( CMAKE_SYSTEM_PROCESSOR ppc64 )
-#set( TRIPLET_VENDOR ibm )
-
-# Set enable-bluegene for main CMakeList.txt
+# Set enable-juron for main CMakeList.txt
 set( enable-juron "JURON" CACHE STRING "Configure for JURON." FORCE )
 # no readline support on JURON
 #set( with-readline OFF CACHE BOOL "Find a readline library [default=ON]. To set a specific readline, set install path." FORCE )

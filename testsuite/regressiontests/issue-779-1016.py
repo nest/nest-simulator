@@ -40,8 +40,7 @@ nestscript = mktemp(".sli")
 nestcmd = [join(nest.sli_func("statusdict/prefix ::"), "bin", "nest"),
            "-d",
            "--verbosity=ALL",
-           nestscript,
-]
+           nestscript]
 
 with open(nestscript, "w") as f:
     f.write("statusdict/argv :: ==")

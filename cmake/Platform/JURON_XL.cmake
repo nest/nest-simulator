@@ -1,4 +1,4 @@
-# JURON_XLC.cmake
+# JURON_XL.cmake
 #
 # This file is part of NEST.
 #

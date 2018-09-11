@@ -67,7 +67,7 @@ for i in $EXAMPLES ; do
     if [ $ext = sli ] ; then
         runner=nest
     elif [ $ext = py ] ; then
-        runner=python
+        runner=$(nest-config --python-executable)
     fi
 
     echo ">>> RUNNING: $workdir/$example"

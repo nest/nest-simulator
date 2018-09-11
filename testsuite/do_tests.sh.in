@@ -442,7 +442,8 @@ CODES_SKIPPED=\
 ' 202 Skipped (build with-mpi=OFF required),'\
 ' 203 Skipped (Threading required),'\
 ' 204 Skipped (GSL required),'\
-' 205 Skipped (MUSIC required),'
+' 205 Skipped (MUSIC required),'\
+' 206 Skipped (PyNEST required),'
 
 echo
 echo 'Phase 1: Testing if SLI can execute scripts and report errors'

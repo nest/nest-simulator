@@ -31,10 +31,14 @@ from os.path import join
 from tempfile import mktemp
 from sys import exit
 
-import nest
-
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 126
+EXIT_SKIPPED = 206
+
+try:
+    import nest
+except:
+    exit(EXIT_SKIPPED)
 
 nestscript = mktemp(".sli")
 nestcmd = [join(nest.sli_func("statusdict/prefix ::"), "bin", "nest"),

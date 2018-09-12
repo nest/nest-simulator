@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# ticket-659-copyright.py
+# check_copyright_headers.py
 #
 # This file is part of NEST.
 #

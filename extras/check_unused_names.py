@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_unused_names.py
+# check_unused_names.py
 #
 # This file is part of NEST.
 #

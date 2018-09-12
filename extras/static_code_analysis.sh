@@ -109,6 +109,11 @@ if $RUNS_ON_TRAVIS; then
   fi
 fi
 
+export NEST_SOURCE=$PWD
+python extras/check_copyright_headers.py
+python extras/check_unused_names.py
+
+
 # Perfom static code analysis.
 c_files_with_errors=""
 python_files_with_errors=""

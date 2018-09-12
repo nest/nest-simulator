@@ -32,7 +32,7 @@
 // Includes from precise:
 #include "slice_ring_buffer.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: parrot_neuron_ps - Neuron that repeats incoming spikes handling
 precise spike times.
 

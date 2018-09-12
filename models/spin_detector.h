@@ -34,7 +34,7 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: spin_detector - Device for detecting binary states in neurons.
 

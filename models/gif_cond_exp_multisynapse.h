@@ -41,7 +41,7 @@
 
 #include "nest.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: gif_cond_exp_multisynapse - Conductance-based generalized
   integrate-and-fire neuron model with multiple synaptic time constants
   according to Mensi et al. (2012) and Pozzorini et al. (2015).
@@ -172,6 +172,7 @@
   Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
   Author: March 2016, Setareh
+
   SeeAlso: pp_psc_delta, gif_cond_exp, iaf_psc_exp_multisynapse,
   gif_psc_exp_multisynapse
 */

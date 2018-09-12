@@ -78,7 +78,8 @@ protected:
   const Name name_;
 };
 
-/* BeginDocumentation
+/** @BeginDocumentation
+
   Name: growth_curve_linear - Linear version of a growth curve
 
   Description:
@@ -118,7 +119,9 @@ protected:
    focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
 
   FirstVersion: July 2013
+
   Author: Mikael Naveau
+
   SeeAlso: SynapticElement, SPManager, SPBuilder, GrowthCurveLinear,
            GrowthCurveGaussian
 */
@@ -145,7 +148,7 @@ private:
   double eps_;
 };
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: growth_curve_gaussian - Gaussian version of a growth curve
 
   Description:
@@ -203,7 +206,9 @@ private:
    focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
 
   FirstVersion: July 2013
+
   Author: Mikael Naveau
+
   SeeAlso: SynapticElement, SPManager, SPBuilder, GrowthCurveLinear,
            GrowthCurveGaussian
 */
@@ -236,7 +241,7 @@ private:
   double eps_;
 };
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: growth_curve_sigmoid - Sigmoid version of a growth curve
 
   Description:
@@ -280,7 +285,9 @@ private:
    networks." Frontiers in Synaptic Neuroscience 6 (2014): 7.
 
   FirstVersion: September 2016
+
   Author: Ankur Sinha
+
   SeeAlso: SynapticElement, SPManager, SPBuilder, GrowthCurveLinear,
            GrowthCurveSigmoid
 */

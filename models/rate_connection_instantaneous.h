@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: rate_connection_instantaneous - Synapse type for instantaneous rate
 connections.
 
@@ -44,6 +44,7 @@ References:
  Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
+
 SeeAlso: rate_connection_delayed, rate_neuron_ipn, rate_neuron_opn
 */
 

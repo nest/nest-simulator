@@ -36,7 +36,7 @@
 namespace nest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: sigmoid_rate - rate model with sigmoidal gain function
 
 Description:
@@ -91,6 +91,7 @@ Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
 Author: Mario Senden, Jan Hahne, Jannis Schuecker
+
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 

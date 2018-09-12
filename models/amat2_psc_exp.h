@@ -35,7 +35,7 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model
                          with exponential PSCs and adaptive threshold.
 
@@ -136,6 +136,7 @@ namespace nest
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
    FirstVersion: April 2013
+
    Author: Thomas Heiberg & Hans E. Plesser (modified mat2_psc_exp model of
    Thomas Pfeil)
 */

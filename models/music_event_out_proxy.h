@@ -40,7 +40,7 @@
 #include "exceptions.h"
 #include "nest_types.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: music_event_out_proxy - Device to forward spikes to remote applications
                               using MUSIC.
@@ -72,7 +72,9 @@ Examples:
 n meop << /music_channel 2 >> Connect
 
 Author: Moritz Helias, Jochen Martin Eppler
+
 FirstVersion: March 2009
+
 Availability: Only when compiled with MUSIC
 
 SeeAlso: music_event_in_proxy, music_cont_in_proxy, music_message_in_proxy

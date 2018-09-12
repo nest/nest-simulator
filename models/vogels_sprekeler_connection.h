@@ -23,7 +23,7 @@
 #ifndef VOGELS_SPREKELER_CONNECTION_H
 #define VOGELS_SPREKELER_CONNECTION_H
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: vogels_sprekeler_synapse - Synapse type for symmetric spike-timing
   dependent
    plasticity with constant depression.
@@ -52,7 +52,9 @@
       DOI: 10.1126/science.1211095
 
   FirstVersion: January 2016
+
   Author: Ankur Sinha
+
   SeeAlso: synapsedict
 */
 

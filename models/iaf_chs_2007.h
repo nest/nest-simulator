@@ -37,7 +37,7 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: iaf_chs_2007 - Spike-response model used in Carandini et al 2007.
 
    Description:
@@ -87,6 +87,7 @@ namespace nest
    Receives: SpikeEvent, DataLoggingRequest
 
    FirstVersion: May 2012
+
    Author: Thomas Heiberg, Birgit Kriener
 */
 

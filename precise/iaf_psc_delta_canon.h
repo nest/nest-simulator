@@ -39,7 +39,7 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: iaf_psc_delta_canon - Leaky integrate-and-fire neuron model.
 
    Description:
@@ -150,6 +150,7 @@ namespace nest
 
    Author:  May 2006, Plesser; based on work by Diesmann, Gewaltig, Morrison,
    Straube, Eppler
+
    SeeAlso: iaf_psc_delta, iaf_psc_exp_ps
 */
 

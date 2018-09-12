@@ -34,7 +34,7 @@
 #include "node.h"
 #include "pseudo_recording_device.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
    Name: correlation_detector - Device for evaluating cross correlation between
                                 two spike sources
@@ -116,8 +116,11 @@
 
    Author: Moritz Helias
            Jakob Jordan (implemented Kahan summation algorithm) 2013/02/18
+
    FirstVersion: 2007/5/21
+
    SeeAlso: spike_detector, Device, PseudoRecordingDevice
+
    Availability: NEST
 */
 

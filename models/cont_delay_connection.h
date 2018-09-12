@@ -23,7 +23,7 @@
 #ifndef CONT_DELAY_CONNECTION_H
 #define CONT_DELAY_CONNECTION_H
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: cont_delay_synapse - Synapse type for continuous delays
 
   Description:
@@ -73,8 +73,11 @@
              DoubleDataEvent
 
   References: none
+
   FirstVersion: June 2007
+
   Author: Abigail Morrison
+
   SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_canon
 */
 

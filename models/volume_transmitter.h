@@ -34,7 +34,7 @@
 #include "namedatum.h"
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: volume_transmitter - Node used in combination with neuromodulated synaptic
 plasticity. It collects all spikes emitted by the population of neurons
@@ -82,7 +82,9 @@ References:
     Front. Comput. Neurosci. 4:141. doi:10.3389/fncom.2010.00141
 
 Author: Wiebke Potjans, Abigail Morrison
+
 Remarks: major changes to update function after code revision in Apr 2013 (SK)
+
 Receives: SpikeEvent
 
 SeeAlso: stdp_dopamine_synapse

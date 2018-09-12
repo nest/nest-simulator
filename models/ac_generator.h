@@ -33,8 +33,13 @@
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
+
+namespace nest
+{
+
+/** @BeginDocumentation
    Name: ac_generator - provides AC input current
+
    Description:
 
    This device produce an ac-current which are sent by a CurrentEvent. The
@@ -68,9 +73,6 @@
 
    SeeAlso: Device, StimulatingDevice, dc_generator, step_current_generator
 */
-
-namespace nest
-{
 class ac_generator : public DeviceNode
 {
 

@@ -29,7 +29,7 @@
 // Includes from nestkernel:
 #include "connection.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: quantal_stp_synapse - Probabilistic synapse model with short term
   plasticity.
 
@@ -75,7 +75,9 @@
   Transmits: SpikeEvent
 
   FirstVersion: December 2013
+
   Author: Marc-Oliver Gewaltig, based on tsodyks2_synapse
+
   SeeAlso: tsodyks2_synapse, synapsedict, stdp_synapse, static_synapse
 */
 

@@ -45,7 +45,7 @@
 namespace nest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: rate_transformer_node - Rate neuron that sums up incoming rates
                 and applies a nonlinearity specified via the template.
 
@@ -79,6 +79,7 @@ Only the parameter linear_summation and the parameters from the
 class Nonlinearities can be set in the status dictionary.
 
 Author: Mario Senden, Jan Hahne, Jannis Schuecker
+
 FirstVersion: November 2017
 */
 template < class TNonlinearities >

@@ -24,7 +24,7 @@
 #define TSODYKS_CONNECTION_H
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: tsodyks_synapse - Synapse type with short term plasticity.
 
   Description:
@@ -89,7 +89,9 @@
   Transmits: SpikeEvent
 
   FirstVersion: March 2006
+
   Author: Moritz Helias
+
   SeeAlso: synapsedict, stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
 */
 

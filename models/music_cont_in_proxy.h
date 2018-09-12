@@ -44,7 +44,7 @@
 // Includes from sli:
 #include "arraydatum.h"
 
-/*BeginDocumentation
+/** @BeginDocumentation
 
 Name: music_cont_in_proxy - A device which receives continuous data from MUSIC.
 
@@ -75,7 +75,9 @@ Examples:
 mcip GetStatus /data get /gaze_directions Set
 
 Author: Jochen Martin Eppler
+
 FirstVersion: July 2010
+
 Availability: Only when compiled with MUSIC
 
 SeeAlso: music_event_out_proxy, music_event_in_proxy, music_message_in_proxy

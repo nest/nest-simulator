@@ -37,7 +37,7 @@
 #include "nest_types.h"
 #include "stimulating_device.h"
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: gamma_sup_generator - simulate the superimposed spike train of a
                             population of gamma process.
 Description:

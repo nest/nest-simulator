@@ -36,7 +36,7 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson
                                         spike trains.
 
@@ -81,7 +81,9 @@ namespace nest
    Sends: SpikeEvent
 
    FirstVersion: July 2006, Oct 2009, May 2013
+
    Author: Hans Ekkehard Plesser
+
    SeeAlso: poisson_generator, sinusoidal_gamma_generator
 */
 

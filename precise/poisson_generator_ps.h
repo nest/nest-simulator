@@ -36,7 +36,7 @@
 #include "nest_types.h"
 #include "stimulating_device.h"
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: poisson_generator_ps - simulate neuron firing with Poisson processes
 (with arbitrary dead time) statistics and exact timing
 Description:

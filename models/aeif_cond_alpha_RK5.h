@@ -31,7 +31,10 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
 Name: aeif_cond_alpha_RK5 - Conductance based exponential integrate-and-fire
                             neuron model according to Brette and Gerstner (2005)
 
@@ -107,10 +110,6 @@ References: Brette R and Gerstner W (2005) Adaptive Exponential
 
 SeeAlso: iaf_cond_alpha, aeif_cond_exp, aeif_cond_alpha
 */
-
-namespace nest
-{
-
 class aeif_cond_alpha_RK5 : public Archiving_Node
 {
 

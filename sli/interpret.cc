@@ -401,7 +401,7 @@ SLIInterpreter::SLIInterpreter( void )
   , iforallindexedstring_name( "::forallindexed_s" )
   , iforallstring_name( "::forall_s" )
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
    Name: Pi - Value of the constant Pi= 3.1415...
    Synopsis:  Pi -> double
    Description: Pi yields an approximation with a precision of 12 digits.
@@ -413,7 +413,7 @@ SLIInterpreter::SLIInterpreter( void )
 
   , pi_name( "Pi" )
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
    Name: E - Value of the Euler constant E=2.718...
    Synopsis:  E -> double
    Description: E is the result of the builtin function std::exp(1).
@@ -436,7 +436,7 @@ SLIInterpreter::SLIInterpreter( void )
   , systemdict_name( "systemdict" )
   , userdict_name( "userdict" )
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
    Name: errordict - pushes error dictionary on operand stack
    Synopsis: errordict -> dict
    Description:

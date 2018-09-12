@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: static_synapse_hom_w - Synapse type for static connections with
    homogeneous weight.
 
@@ -43,8 +43,11 @@
 
    References:
      No References
+
    FirstVersion: April 2008
+
    Author: Susanne Kunkel, Moritz Helias
+
    SeeAlso: synapsedict, static_synapse
 */
 

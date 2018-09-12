@@ -35,7 +35,7 @@
 #include "recording_device.h"
 #include "kernel_manager.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: weight_recorder - Device for detecting single spikes.
 

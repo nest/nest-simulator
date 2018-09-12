@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-673 - Precise models are inconsistent with
 respect to whether 1 time step is an acceptable refractory time

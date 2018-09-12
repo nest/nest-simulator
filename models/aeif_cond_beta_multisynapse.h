@@ -42,7 +42,22 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
+namespace nest
+{
+/**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int
+aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
+
+/** @BeginDocumentation
  Name: aeif_cond_beta_multisynapse - Conductance based adaptive exponential
                                       integrate-and-fire neuron model according
                                       to Brette and Gerstner (2005) with
@@ -153,29 +168,9 @@ Integration parameters
 
  Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
- author: Bruno Golosio 07/10/2016
+ Author: Bruno Golosio 07/10/2016
+
  SeeAlso: aeif_cond_alpha_multisynapse
- */
-
-namespace nest
-{
-/**
- * Function computing right-hand side of ODE for GSL solver.
- * @note Must be declared here so we can befriend it in class.
- * @note Must have C-linkage for passing to GSL. Internally, it is
- *       a first-class C++ function, but cannot be a member function
- *       because of the C-linkage.
- * @note No point in declaring it inline, since it is called
- *       through a function pointer.
- * @param void* Pointer to model neuron instance.
- */
-extern "C" int
-aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
-
-/**
- * Conductance based exponential integrate-and-fire neuron model according to
- * Brette and Gerstner
- * (2005) with multiple ports.
  */
 class aeif_cond_beta_multisynapse : public Archiving_Node
 {

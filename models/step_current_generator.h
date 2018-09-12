@@ -21,7 +21,7 @@
  */
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: step_current_generator - provides a piecewise constant DC input current
 
   Description:

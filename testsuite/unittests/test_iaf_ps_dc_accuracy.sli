@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_iaf_ps_dc_accuracy - test of accuracy of neuron models subject to DC current
 
 Synopsis: (test_iaf_ps_dc_accuracy) run -> comparison with analytical solution

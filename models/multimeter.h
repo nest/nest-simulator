@@ -38,8 +38,9 @@
 #include "dictutils.h"
 #include "name.h"
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: multimeter - Device to record analog data from neurons.
+
 Synopsis: multimeter Create
 
 Description:
@@ -119,7 +120,6 @@ Sends: DataLoggingRequest
 FirstVersion: 2009-04-01
 
 Author: Hans Ekkehard Plesser, Barna Zajzon (added offset support March 2017)
-
 
 SeeAlso: Device, RecordingDevice
 */

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: diffusion_connection - Synapse type for instantaneous rate connections
 between neurons of type siegert_neuron.
 
@@ -59,6 +59,7 @@ References:
  Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
+
 SeeAlso: siegert_neuron, rate_connection_instantaneous
 */
 

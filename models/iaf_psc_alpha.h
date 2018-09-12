@@ -32,7 +32,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: iaf_psc_alpha - Leaky integrate-and-fire neuron model.
 
 Description:
@@ -119,8 +119,11 @@ References:
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+
 FirstVersion: September 1999
+
 Author:  Diesmann, Gewaltig
+
 SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 */
 

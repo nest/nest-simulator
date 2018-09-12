@@ -45,7 +45,7 @@
 // Includes from sli:
 #include "arraydatum.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: music_cont_out_proxy - A device which sends continuous data from NEST to
 MUSIC.
@@ -83,7 +83,9 @@ Parameters:
                           model from which one wants to record
 
 Author: Martin Asghar Schulze, Forschungszentrum fur Informatik Karlsruhe (FZI)
+
 FirstVersion: March 2016
+
 Availability: Only when compiled with MPI and MUSIC
 
 SeeAlso: music_cont_in_proxy, music_event_out_proxy, music_event_in_proxy,

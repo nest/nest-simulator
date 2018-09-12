@@ -23,7 +23,7 @@
 #ifndef STDP_DOPA_CONNECTION_H
 #define STDP_DOPA_CONNECTION_H
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
    Name: stdp_dopamine_synapse - Synapse type for dopamine-modulated
                                  spike-timing dependent plasticity.
@@ -82,6 +82,7 @@
    Transmits: SpikeEvent
 
    Author: Susanne Kunkel
+
    Remarks:
    - based on an earlier version by Wiebke Potjans
    - major changes to code after code revision in Apr 2013

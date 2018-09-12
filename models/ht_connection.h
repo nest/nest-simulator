@@ -26,7 +26,7 @@
 // Includes from nestkernel:
 #include "connection.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: ht_synapse - Synapse with depression after Hill & Tononi (2005).
 
   Description:
@@ -54,7 +54,9 @@
   Sends: SpikeEvent
 
   FirstVersion: March 2009
+
   Author: Hans Ekkehard Plesser, based on markram_synapse
+
   SeeAlso: ht_neuron, tsodyks_synapse, stdp_synapse, static_synapse
 */
 

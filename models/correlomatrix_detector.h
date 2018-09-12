@@ -34,7 +34,7 @@
 #include "node.h"
 #include "pseudo_recording_device.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
    Name: correlomatrix_detector - Device for measuring the covariance matrix
    from several inputs
@@ -120,8 +120,11 @@
 
    Author: Dmytro Grytskyy
            Jakob Jordan
+
    FirstVersion: 2013/02/27
+
    SeeAlso: correlation_detector, spike_detector, Device, PseudoRecordingDevice
+
    Availability: NEST
 */
 

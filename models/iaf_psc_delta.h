@@ -33,7 +33,7 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: iaf_psc_delta - Leaky integrate-and-fire neuron model.
 
    Description:
@@ -117,6 +117,7 @@ namespace nest
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
    Author:  September 1999, Diesmann, Gewaltig
+
    SeeAlso: iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_canon
 */
 

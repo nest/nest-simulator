@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multimeter_freeze_thaw - test if multimeter handles frozen nodes properly
 
 Synopsis: (test_multimeter_freeze_thaw.sli) run -> dies if assertion fails

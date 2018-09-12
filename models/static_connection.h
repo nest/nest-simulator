@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: static_synapse - Synapse type for static connections.
 
   Description:

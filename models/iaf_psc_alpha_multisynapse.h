@@ -35,7 +35,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: iaf_psc_alpha_multisynapse - Leaky integrate-and-fire neuron model with
                                    multiple ports.
 
@@ -54,6 +54,7 @@ Sends: SpikeEvent
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Author:  Schrader, adapted from iaf_psc_alpha
+
 SeeAlso: iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp,
 iaf_psc_exp_multisynapse
 */

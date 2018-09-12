@@ -40,8 +40,9 @@
 namespace nest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: noise_generator - Device to generate Gaussian white noise current.
+
 Description:
 This device can be used to inject a Gaussian "white" noise current into a node.
 The current is not really white, but a piecewise constant current with Gaussian

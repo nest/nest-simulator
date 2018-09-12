@@ -23,7 +23,7 @@
 #ifndef STDP_PL_CONNECTION_HOM_H
 #define STDP_PL_CONNECTION_HOM_H
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: stdp_pl_synapse_hom - Synapse type for spike-timing dependent
    plasticity with power law implementation using homogeneous parameters, i.e.
    all synapses have the same parameters.
@@ -52,7 +52,9 @@
   Transmits: SpikeEvent
 
   FirstVersion: May 2007
+
   Author: Abigail Morrison
+
   SeeAlso: synapsedict, stdp_synapse, tsodyks_synapse, static_synapse
 */
 

@@ -37,10 +37,11 @@
 #include "nest_types.h"
 #include "stimulating_device.h"
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: ppd_sup_generator - simulate the superimposed spike train of a population
 of Poisson processes
 with dead time.
+
 Description:
 
   The ppd_sup_generator generator simulates the pooled spike train of a

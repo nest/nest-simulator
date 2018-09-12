@@ -23,7 +23,7 @@
 #ifndef STDP_CONNECTION_H
 #define STDP_CONNECTION_H
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: stdp_synapse - Synapse type for spike-timing dependent
    plasticity.
 
@@ -67,8 +67,11 @@
        plasticity, Journal of Neuroscience, 20:23,8812--8821
 
   FirstVersion: March 2006
+
   Author: Moritz Helias, Abigail Morrison
+
   Adapted by: Philipp Weidel
+
   SeeAlso: synapsedict, tsodyks_synapse, static_synapse
 */
 

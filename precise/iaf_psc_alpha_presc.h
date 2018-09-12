@@ -37,7 +37,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: iaf_psc_alpha_presc - Leaky integrate-and-fire neuron
   with alpha-shape postsynaptic currents; prescient implementation.
 

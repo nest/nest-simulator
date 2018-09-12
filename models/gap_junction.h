@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: gap_junction - Synapse type for gap-junction connections.
 
 Description:
@@ -58,6 +58,7 @@ References:
  doi: 10.1523/JNEUROSCI.2715-06.2007
 
 Author: Jan Hahne, Moritz Helias, Susanne Kunkel
+
 SeeAlso: synapsedict, hh_psc_alpha_gap
 */
 

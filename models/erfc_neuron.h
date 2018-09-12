@@ -28,7 +28,7 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: erfc_neuron - Binary stochastic neuron with complementary error
    function as activation function.
 
@@ -93,9 +93,13 @@ namespace nest
    (Eds.), Springer 2008.
 
    Sends: SpikeEvent
+
    Receives: SpikeEvent, PotentialRequest
+
    FirstVersion: May 2016
+
    Authors: Jakob Jordan, Tobias Kuehn
+
    SeeAlso: mcculloch_pitts_neuron, ginzburg_neuron
 */
 

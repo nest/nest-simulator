@@ -44,7 +44,7 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: sinusoidal_gamma_generator - Generates sinusoidally modulated gamma
                                       spike trains.
 
@@ -88,7 +88,9 @@ namespace nest
    Sends: SpikeEvent
 
    References: Barbieri et al, J Neurosci Methods 105:25-37 (2001)
+
    FirstVersion: October 2007, May 2013
+
    Author: Hans E Plesser, Thomas Heiberg
 
    SeeAlso: sinusoidal_poisson_generator, gamma_sup_generator

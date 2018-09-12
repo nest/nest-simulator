@@ -36,7 +36,7 @@
 namespace nest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: gauss_rate - rate model with Gaussian gain function
 
 Description:
@@ -91,6 +91,7 @@ Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
 Author: Mario Senden, Jan Hahne, Jannis Schuecker
+
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 

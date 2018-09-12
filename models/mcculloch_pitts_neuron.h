@@ -28,7 +28,7 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside
                                   activation function.
 
@@ -86,9 +86,13 @@ namespace nest
    Changsong Zhou, Marco Thiel, Juergen Kurths (Eds.), Springer 2008.
 
    Sends: SpikeEvent
+
    Receives: SpikeEvent, PotentialRequest
+
    FirstVersion: February 2013
+
    Author: Moritz Helias
+
    SeeAlso: pp_psc_delta
 */
 

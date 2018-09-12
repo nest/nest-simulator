@@ -33,7 +33,7 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: spike_detector - Device for detecting single spikes.
 

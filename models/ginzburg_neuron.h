@@ -28,7 +28,7 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ginzburg_neuron - Binary stochastic neuron with sigmoidal activation
                            function.
 
@@ -99,9 +99,13 @@ namespace nest
    Changsong Zhou, Marco Thiel, Juergen Kurths (Eds.), Springer 2008.
 
    Sends: SpikeEvent
+
    Receives: SpikeEvent, PotentialRequest
+
    FirstVersion: February 2010
+
    Author: Moritz Helias
+
    SeeAlso: pp_psc_delta
 */
 

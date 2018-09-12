@@ -46,7 +46,7 @@
 #include "arraydatum.h"
 #include "dictutils.h"
 
-/*BeginDocumentation
+/** @BeginDocumentation
 
 Name: music_message_in_proxy - A device which receives message strings from
                               MUSIC.
@@ -85,7 +85,9 @@ mmip GetStatus /data get /messages get 0 get /command Set
 command cvx exec
 
 Author: Jochen Martin Eppler
+
 FirstVersion: July 2010
+
 Availability: Only when compiled with MUSIC
 
 SeeAlso: music_event_out_proxy, music_event_in_proxy, music_cont_in_proxy

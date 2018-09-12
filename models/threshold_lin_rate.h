@@ -37,7 +37,7 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: threshold_lin_rate - rate model with threshold-linear gain function
 
 Description:

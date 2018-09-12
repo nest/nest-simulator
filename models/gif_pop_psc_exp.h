@@ -38,7 +38,7 @@ namespace nest
 
 class Network;
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: gif_pop_psc_exp - Population of generalized integrate-and-fire neurons
    with exponential postsynaptic currents and adaptation
 
@@ -128,6 +128,7 @@ class Network;
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
    Authors: Nov 2016, Moritz Deger, Tilo Schwalger, Hesam Setareh
+
    SeeAlso: gif_psc_exp, pp_pop_psc_delta, spike_dilutor
 */
 

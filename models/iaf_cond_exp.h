@@ -42,7 +42,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: iaf_cond_exp - Simple conductance based leaky integrate-and-fire neuron
                      model.
 

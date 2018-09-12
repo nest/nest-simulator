@@ -34,7 +34,7 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential
                         PSCs.
 
@@ -123,6 +123,7 @@ namespace nest
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
    FirstVersion: March 2006
+
    Author: Moritz Helias
 */
 

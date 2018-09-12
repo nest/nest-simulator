@@ -23,7 +23,7 @@
 #ifndef STDP_CONNECTION_HOM_H
 #define STDP_CONNECTION_HOM_H
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: stdp_synapse_hom - Synapse type for spike-timing dependent
    plasticity using homogeneous parameters.
 
@@ -74,7 +74,9 @@
        plasticity, Journal of Neuroscience, 20:23,8812--8821
 
   FirstVersion: March 2006
+
   Author: Moritz Helias, Abigail Morrison
+
   SeeAlso: synapsedict, tsodyks_synapse, static_synapse
 */
 

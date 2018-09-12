@@ -57,7 +57,7 @@ namespace nest
  */
 extern "C" int hh_psc_alpha_dynamics( double, const double*, double*, void* );
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: hh_psc_alpha - Hodgkin-Huxley neuron model.
 
 Description:
@@ -120,6 +120,7 @@ Sends: SpikeEvent
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Authors: Schrader
+
 SeeAlso: hh_cond_exp_traub
 */
 

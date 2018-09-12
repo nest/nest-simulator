@@ -47,7 +47,7 @@
 // Includes from sli:
 #include "stringdatum.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ht_neuron - Neuron model after Hill & Tononi (2005).
 
    Description:

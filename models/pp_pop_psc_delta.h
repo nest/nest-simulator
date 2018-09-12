@@ -39,7 +39,7 @@ namespace nest
 {
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: pp_pop_psc_delta - Population of point process neurons with leaky
                             integration of delta-shaped PSCs.
 
@@ -146,6 +146,7 @@ namespace nest
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
    Author: May 2014, Setareh, Deger
+
    SeeAlso: gif_pop_psc_exp, pp_psc_delta, ppd_sup_generator,
    gamma_sup_generator
 */

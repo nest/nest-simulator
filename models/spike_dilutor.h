@@ -34,7 +34,7 @@
 namespace nest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: spike_dilutor - repeats incoming spikes with a certain probability.
 
 Description:

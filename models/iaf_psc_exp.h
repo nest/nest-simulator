@@ -34,7 +34,7 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential
                        PSCs.
 
@@ -125,6 +125,7 @@ Remarks:
    SeeAlso: iaf_psc_exp_ps
 
    FirstVersion: March 2006
+
    Author: Moritz Helias
 */
 

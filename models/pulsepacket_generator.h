@@ -46,8 +46,9 @@ namespace nest
 */
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: pulsepacket_generator - Generate sequence of Gaussian pulse packets.
+
 Description:
   The pulsepacket_generator produces a spike train contains Gaussian pulse
   packets centered about given  times.  A Gaussian pulse packet is

@@ -46,8 +46,9 @@ namespace nest
 */
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: mip_generator - create spike trains as described by the MIP model.
+
 Description:
   The mip_generator generates correlated spike trains using an Multiple
   Interaction Process (MIP) as described in [1]. Underlying principle is a
@@ -89,6 +90,7 @@ References:
       Neural Computation 15, 67-101 (2003)
 
 Author: May 2006, Helias
+
 SeeAlso: Device
 */
 

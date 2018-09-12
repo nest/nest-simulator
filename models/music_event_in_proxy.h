@@ -37,7 +37,7 @@
 #include "event.h"
 #include "nest_types.h"
 
-/*BeginDocumentation
+/** @BeginDocumentation
 
 Name: music_event_in_proxy - A device which receives spikes from MUSIC.
 
@@ -74,7 +74,9 @@ meip << /music_channel 2 >> SetStatus
 meip n Connect
 
 Author: Moritz Helias, Jochen Martin Eppler
+
 FirstVersion: October 2008
+
 Availability: Only when compiled with MUSIC
 
 SeeAlso: SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy,

@@ -59,7 +59,7 @@ namespace nest
 extern "C" int
 hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: hh_psc_alpha_gap - Hodgkin-Huxley neuron model with gap-junction support.
 
 Description:
@@ -132,6 +132,7 @@ Sends: SpikeEvent, GapJunctionEvent
 Receives: SpikeEvent, GapJunctionEvent, CurrentEvent, DataLoggingRequest
 
 Author: Jan Hahne, Moritz Helias, Susanne Kunkel
+
 SeeAlso: hh_psc_alpha, hh_cond_exp_traub, gap_junction
 */
 class hh_psc_alpha_gap : public Archiving_Node

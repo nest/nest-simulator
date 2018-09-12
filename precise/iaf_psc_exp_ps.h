@@ -41,7 +41,7 @@
 // Includes from precise:
 #include "slice_ring_buffer.h"
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: iaf_psc_exp_ps - Leaky integrate-and-fire neuron
 with exponential postsynaptic currents; canoncial implementation;
 bisectioning method for approximation of threshold crossing.

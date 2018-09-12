@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
     Name: testsuite::test_gap_junctions_mpi - Test gap junction functionality in parallel
 
     Synopsis: (test_gap_junctions_mpi) run -> - 

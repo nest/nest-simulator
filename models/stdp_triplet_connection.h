@@ -23,7 +23,7 @@
 #ifndef STDP_TRIPLET_CONNECTION_H
 #define STDP_TRIPLET_CONNECTION_H
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: stdp_triplet_synapse - Synapse type with spike-timing dependent
                                plasticity (triplets).
 
@@ -75,8 +75,10 @@
       maximum of 1).
 
   FirstVersion: Nov 2007
+
   Author: Abigail Morrison, Eilif Muller, Alexander Seeholzer, Teo Stocco
   Adapted by: Philipp Weidel
+
   SeeAlso: stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse
 */
 

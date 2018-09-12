@@ -45,7 +45,7 @@
 namespace nest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: siegert_neuron
 
 Description:
@@ -108,6 +108,7 @@ Sends: DiffusionConnectionEvent
 Receives: DiffusionConnectionEvent, DataLoggingRequest
 
 Author: Jannis Schuecker, David Dahmen, Jan Hahne
+
 SeeAlso: diffusion_connection
 */
 class siegert_neuron : public Archiving_Node

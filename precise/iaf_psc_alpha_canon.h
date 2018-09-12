@@ -40,7 +40,7 @@
 // Includes from precise:
 #include "slice_ring_buffer.h"
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: iaf_psc_alpha_canon - Leaky integrate-and-fire neuron
 with alpha-shape postsynaptic currents; canoncial implementation.
 

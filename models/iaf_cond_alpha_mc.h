@@ -49,7 +49,7 @@
 #include "dictdatum.h"
 #include "name.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky
                           integrate-and-fire neuron model.
 

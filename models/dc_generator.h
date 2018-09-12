@@ -21,7 +21,7 @@
  */
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: dc_generator - provides DC input current
 
 Description: The DC-Generator provides a constant DC Input

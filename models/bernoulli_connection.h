@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: bernoulli_synapse - Static synapse with stochastic transmission.
 
   Description:
@@ -37,6 +37,7 @@
     p_transmit double - Transmission probability, must be between 0 and 1
 
   FirstVersion: June 2017
+
   Author: Susanne Kunkel, Maximilian Schmidt, Milena Menezes Carvalho
 
   Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,

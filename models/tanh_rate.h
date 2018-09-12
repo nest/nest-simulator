@@ -34,7 +34,7 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: tanh_rate - rate model with hyperbolic tangent non-linearity
 
 Description:
@@ -88,6 +88,7 @@ Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
+
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 

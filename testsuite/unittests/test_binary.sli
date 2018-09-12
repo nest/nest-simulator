@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
     Name: testsuite::test_binary - sli script for overall test of binary neuron models
 
     Synopsis: (test_binary) run -> test basic communication patterns employed by binary neurons 

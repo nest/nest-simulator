@@ -24,7 +24,7 @@
 #define TSODYKS_CONNECTION_HOM_H
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: tsodyks_synapse_hom - Synapse type with short term plasticity using
                               homogeneous parameters, i.e. all synapses have
                               the same parameters.
@@ -95,10 +95,11 @@
   Transmits: SpikeEvent
 
   FirstVersion: March 2006
+
   Author: Susanne Kunkel, Moritz Helias
+
   SeeAlso: synapsedict, tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w,
-  iaf_psc_exp,
-  iaf_tum_2000
+  iaf_psc_exp, iaf_tum_2000
 */
 
 

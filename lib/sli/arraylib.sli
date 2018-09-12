@@ -32,7 +32,7 @@
 
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: arraylib::Sum - Return sum of the elements in array.
 
 Synopsis: [array] Sum -> number
@@ -67,7 +67,7 @@ SeeAlso: arraylib::Product, arraylib::Mean, arraylib::SDev, arraylib::Var
 } bind def
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: arraylib::Product - Return product of the elements in array.
 
 Synopsis: [array] Product -> number
@@ -103,7 +103,7 @@ SeeAlso: arraylib::Sum, arraylib::Mean, arraylib::SDev, arraylib::Var
 
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: arraylib::Mean - Return mean of the elements in array.
 
 Synopsis: [array] Mean -> number
@@ -141,7 +141,7 @@ SeeAlso: arraylib::Product, arraylib::Sum, arraylib::SDev, arraylib::Var
 
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: arraylib::Var - Return variance of the elements in array.
 
 Synopsis: [array] Var -> number
@@ -183,7 +183,7 @@ SeeAlso: arraylib::Product, arraylib::Sum, arraylib::Mean, arraylib::SDev
 
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: arraylib::SDev - Return standard deviation of the elements in array.
 
 Synopsis: [array] SDev -> number
@@ -220,7 +220,7 @@ SeeAlso: arraylib::Product, arraylib::Sum, arraylib::Mean, arraylib::Var
 
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: arraylib::Reform - Reform the dimensions of a hyperrectengular array
 
@@ -290,7 +290,7 @@ SeeAlso: Dimensions, TensorRank, Flatten
 
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: arraylib::getdeep - get an element from a nested container (array, dict, ...).
 
 Synopsis:
@@ -361,7 +361,7 @@ SeeAlso: put, get, Dimensions
 
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: arraylib::EdgeTruncate - Truncate 2-d array indices at array edges
 
@@ -452,7 +452,7 @@ SeeAlso: arraylib::EdgeWrap, arraylib::EdgeClip, area2
 
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: arraylib::EdgeClip - Clip 2-d array indices at array edges
 
@@ -538,7 +538,7 @@ SeeAlso: arraylib::EdgeWrap, arraylib::EdgeTruncate, area2
 
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: arraylib::EdgeWrap - Wrap 2-d array indices around edges (toriodal)
 
@@ -623,7 +623,7 @@ SeeAlso: arraylib::IndexWrap, arraylib::EdgeTruncate, arraylib::EdgeClip, area2
 
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: arraylib::IndexWrap - project a cyclic index value onto interval [0,N).
 
@@ -710,7 +710,7 @@ SeeAlso: arraylib::EdgeWrap, mod, CyclicValue
 } bind def  
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: arraylib::GaborPatch - Return a two-dimensional array with Gabor function.
 Synopsis:
 nrows ncols GaborPatch -> [[] .. []]
@@ -785,7 +785,7 @@ SeeAlso: gabor_
   /gamma 1.0
 >> Options
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: arraylib::GaussPatch - Return a two-dimensional array with Gauss function.
 Synopsis:
 nrows ncols GaussPatch -> [[] .. []]

@@ -56,7 +56,7 @@ namespace nest
 extern "C" int
 hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: hh_cond_exp_traub - Hodgkin-Huxley model for Brette et al (2007) review
 
 Description:

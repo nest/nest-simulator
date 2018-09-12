@@ -37,7 +37,7 @@
 
 namespace nest
 {
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: spike_generator - A device which generates spikes from an array with
                           spike-times.
 

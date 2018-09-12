@@ -33,7 +33,8 @@
 
 namespace nest
 {
-/* BeginDocumentation
+/** @BeginDocumentation
+
 Name: lin_rate - Linear rate model
 
 Description:
@@ -89,6 +90,7 @@ Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
+
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 

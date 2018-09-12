@@ -29,28 +29,22 @@ This is a regression test for GitHub issues 779 and 1016.
 from subprocess import check_output, STDOUT
 from os.path import join
 from tempfile import mktemp
-from sys import exit
+from sys import exit, version_info
 
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 126
 EXIT_SKIPPED = 206
 
-try:
-    import nest
-except:
-    exit(EXIT_SKIPPED)
+decode = lambda x: x if version_info < (3,) else x.decode("utf8")
 
 nestscript = mktemp(".sli")
-nestcmd = [join(nest.sli_func("statusdict/prefix ::"), "bin", "nest"),
-           "-d",
-           "--verbosity=ALL",
-           nestscript]
+nestcmd = ["nest", "-d", "--verbosity=ALL", nestscript]
 
 with open(nestscript, "w") as f:
     f.write("statusdict/argv :: ==")
 
 raw_output = check_output(nestcmd, stderr=STDOUT)
-output = [x for x in raw_output.split("\n") if x != ""]
+output = [x for x in decode(raw_output).split("\n") if x != ""]
 
 expected = "[(" + ") (".join(nestcmd) + ")]"
 

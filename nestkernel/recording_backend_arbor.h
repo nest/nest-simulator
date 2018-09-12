@@ -35,10 +35,10 @@ class RecordingBackendArbor : public RecordingBackend
 {
 public:
   RecordingBackendArbor();
-
   ~RecordingBackendArbor() throw();
 
   void enroll( const RecordingDevice& device );
+  // should never be called (below)
   void enroll( const RecordingDevice& device,
     const std::vector< Name >& value_names );
 
@@ -57,59 +57,32 @@ public:
   void calibrate();
 
 private:
-  void open_files_();
-  void close_files_();
-  const std::string build_filename_() const;
-
-  bool files_opened_;
+  struct ArborSpike {
+    index gid;
+    float time;
+  };
+  typedef std::vector< ArborSpike > ArborSpikes;
 
   class ArborBuffer
   {
   private:
-
+    ArborSpikes spikes_;
+    
   public:
-    ArborBuffer();
-    ~ArborBuffer();
+    void write(index gid, float time);
+    void clear();
 
-    void write(/*something*/);
-  };
-
-  struct DeviceInfo
-  {
-    DeviceInfo()
-      : n_rec( 0 )
-    {
+    ArborSpikes& get_spikes() {
+      return spikes_;
     }
-
-    index gid;
-    unsigned int type;
-    std::string name;
-    std::string label;
-    unsigned long int n_rec;
-    std::vector< std::string > value_names;
   };
+  
+  std::vector< ArborBuffer > buffers_;
+  // single threaded call:
+  void transmit_(ArborSpikes&);
 
-  struct DeviceEntry
-  {
-    DeviceEntry( const RecordingDevice& device )
-      : device( device )
-      , info()
-    {
-    }
-
-    const RecordingDevice& device;
-    DeviceInfo info;
-  };
-
-  typedef std::vector< std::map< index, DeviceEntry > > device_map;
+  typedef std::vector< std::map< index, const RecordingDevice* > > device_map;
   device_map devices_;
-
-  MPI_Comm local_comm_;    // single copy of local MPI communicator
-                           // for all threads using the sionlib
-                           // recording backend in parallel (for broadcasting
-                           // the results of MPIX..(..) in open_files_(..))
-
-  double t_start_; // simulation start time for storing
 
   struct Parameters_
   {

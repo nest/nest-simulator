@@ -42,41 +42,24 @@ nest::RecordingBackendArbor::~RecordingBackendArbor() throw()
 }
 
 void
-nest::RecordingBackendArbor::enroll( const RecordingDevice& device )
-{
-  std::vector< Name > value_names;
-  nest::RecordingBackendArbor::enroll( device, value_names );
-}
-
-void
 nest::RecordingBackendArbor::enroll( const RecordingDevice& device,
   const std::vector< Name >& value_names )
 {
-  const thread t = device.get_thread();
-  const thread gid = device.get_gid();
+  throw UnsupportedEvent();
+}
+void
+nest::RecordingBackendArbor::enroll( const RecordingDevice& device )
+{
+  const auto t = device.get_thread();
+  const auto gid = device.get_gid();
 
-  device_map::value_type::iterator device_it = devices_[ t ].find( gid );
+  auto device_it = devices_[ t ].find( gid );
   if ( device_it  != devices_[ t ].end() )
   {
     devices_[ t ].erase( device_it );
   }
   
-  DeviceEntry entry( device );
-  DeviceInfo& info = entry.info;
-
-  info.gid = gid;
-  info.type = static_cast< unsigned int >( device.get_type() );
-  info.name = device.get_name();
-  info.label = device.get_label();
-
-  info.value_names.reserve( value_names.size() );
-  std::vector< Name >::const_iterator it;
-  for ( it = value_names.begin(); it != value_names.end(); ++it )
-  {
-    info.value_names.push_back( it->toString() );
-  }
-
-  devices_[ t ].insert( std::make_pair( gid, entry ) );
+  devices_[ t ].insert( std::make_pair( gid, &device ) );
 }
 
 void
@@ -84,7 +67,7 @@ nest::RecordingBackendArbor::initialize()
 {
   device_map devices( kernel().vp_manager.get_num_threads() );
   devices_.swap( devices );
-}    
+}
 
 void
 nest::RecordingBackendArbor::finalize()
@@ -94,17 +77,62 @@ nest::RecordingBackendArbor::finalize()
 void
 nest::RecordingBackendArbor::synchronize()
 {
-  // Why?
-  // if ( not files_opened_ or not P_.sion_collective_ )
-  // {
-  //   return;
-  // }
+  if (devices_.size() == 0)
+  {
+    return;
+  }
 
-  const thread t = kernel().vp_manager.get_thread_id();
-  const thread task = kernel().vp_manager.thread_to_vp( t );
+#pragma omp single
+  {
+    ArborSpikes sbuf;
+    for (auto buf: buffers_) {
+      auto& spikes = buf.get_spikes();
+      sbuf.insert(sbuf.end(), spikes.begin(), spikes.end());
+      buf.clear();
+    }
+    transmit_(sbuf);
+  }  
+}
 
-  //ArborBuffer& buffer = file.buffer;
-  // write buffer
+#include <numeric>
+
+void
+nest::RecordingBackendArbor::transmit_(ArborSpikes& sbuf)
+{
+  // ArborSpikes should pack without padding
+  static_assert((sizeof(ArborSpike) % alignof(ArborSpike)) == 0);
+
+  int sbuf_length = sbuf.size()*sizeof(sbuf[0]);
+  
+  int global_size;
+  int global_rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &global_rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &global_size);
+
+  std::vector< int > rbuf_lengths(global_size);
+  // send and receive: receive length is the length of every send (??)
+  MPI_Allgather(&sbuf_length,     1, MPI_INT,
+		&rbuf_lengths[0], 1, MPI_INT,
+		MPI_COMM_WORLD);
+
+  auto total_chars = std::accumulate(rbuf_lengths.begin(),
+				     rbuf_lengths.end(),
+				     0);
+  ArborSpikes rbuf(total_chars/sizeof(ArborSpike));
+  
+  std::vector< int > rbuf_offset;
+  rbuf_offset.reserve(global_size);
+  for (int i = 0, c_offset = 0; i < global_size; i++) {
+    const auto c_size = rbuf_lengths[i];
+    rbuf_offset.push_back(c_offset);
+    c_offset += c_size;
+  }
+
+  // spikes
+  MPI_Allgatherv(
+    &sbuf[0], sbuf_length, MPI_CHAR,
+    &rbuf[0], &rbuf_lengths[0], &rbuf_offset[0], MPI_CHAR,
+    MPI_COMM_WORLD);
 }
 
 void
@@ -119,51 +147,14 @@ nest::RecordingBackendArbor::write( const RecordingDevice& device,
     return;
   }
 
-  //ArborBuffer& buffer = file.buffer;
+  ArborBuffer& buffer = buffers_[ t ];
+ 
+  const auto sender_gid = event.get_sender_gid();
+  const auto step_time = event.get_stamp().get_ms();
+  const auto offset = event.get_offset();
+  const auto time = static_cast<float>(step_time-offset);
 
-  devices_[ t ].find( device_gid )->second.info.n_rec++;
-  // const sion_uint32 n_values = 0;
-
-  // // 2 * GID (device, source) + time in steps + offset (double) + number of
-  // // values
-  // const unsigned int required_space = 2 * sizeof( sion_uint64 )
-  //   + sizeof( sion_int64 ) + sizeof( double ) + sizeof( sion_uint32 );
-
-  // const sion_uint64 sender_gid = static_cast< sion_uint64 >( event.get_sender_gid() );
-  // const sion_int64 step = static_cast< sion_int64 >( event.get_stamp().get_steps() );
-  const double offset = event.get_offset();
-  
-  // if ( P_.sion_collective_ )
-  // {
-  //   buffer.ensure_space( required_space );
-  //   buffer << device_gid << sender_gid << step << offset << n_values;
-  //   return;
-  // }
-
-  // if ( buffer.get_capacity() > required_space )
-  // {
-  //   if ( buffer.get_free() < required_space )
-  //   {
-  //     sion_fwrite( buffer.read(), buffer.get_size(), 1, file.sid );
-  //     buffer.clear();
-  //   }
-
-  //   buffer << device_gid << sender_gid << step << offset << n_values;
-  // }
-  // else
-  // {
-  //   if ( buffer.get_size() > 0 )
-  //   {
-  //     sion_fwrite( buffer.read(), buffer.get_size(), 1, file.sid );
-  //     buffer.clear();
-  //   }
-
-  //   sion_fwrite( &device_gid, sizeof( sion_uint64 ), 1, file.sid );
-  //   sion_fwrite( &sender_gid, sizeof( sion_uint64 ), 1, file.sid );
-  //   sion_fwrite( &step, sizeof( sion_int64 ), 1, file.sid );
-  //   sion_fwrite( &offset, sizeof( double ), 1, file.sid );
-  //   sion_fwrite( &n_values, sizeof( sion_uint32 ), 1, file.sid );
-  // }
+  buffer.write(sender_gid, time);  
 }
 
 void
@@ -171,94 +162,24 @@ nest::RecordingBackendArbor::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& values )
 {
-  const thread t = device.get_thread();
-  const auto device_gid = device.get_gid();
-
-  if ( devices_[ t ].find( device_gid ) == devices_[ t ].end() )
-  {
-    return;
-  }
-    
-  //ArborBuffer& buffer = file.buffer;
-
-  devices_[ t ].find( device_gid )->second.info.n_rec++;
-  // const sion_uint32 n_values = static_cast< sion_uint32 >( values.size() );
-
-  // // 2 * GID (device, source) + time in steps + offset (double) + number of
-  // // values + one double per value
-  // const unsigned int required_space = 2 * sizeof( sion_uint64 )
-  //     + sizeof( sion_int64 ) + sizeof( double ) + sizeof( sion_uint32 )
-  //     + n_values * sizeof( double );
-
-  // const sion_uint64 sender_gid = static_cast< sion_uint64 >( event.get_sender_gid() );
-  // const sion_int64 step = static_cast< sion_int64 >( event.get_stamp().get_steps() );
-  const double offset = event.get_offset();
-  
-  // if ( P_.sion_collective_ )
-  // {
-  //   buffer.ensure_space( required_space );
-  //   buffer << device_gid << sender_gid << step << offset << n_values;
-  //   std::vector< double >::const_iterator val;
-  //   for (val = values.begin(); val != values.end(); ++val )
-  //   {
-  //     buffer << *val;
-  //   }
-  //   return;
-  // }
-
-  // if ( buffer.get_capacity() > required_space )
-  // {
-  //   if ( buffer.get_free() < required_space )
-  //   {
-  //     sion_fwrite( buffer.read(), buffer.get_size(), 1, file.sid );
-  //     buffer.clear();
-  //   }
-
-  //   buffer << device_gid << sender_gid << step << offset << n_values;
-  //   std::vector< double >::const_iterator val;
-  //   for ( val = values.begin(); val != values.end(); ++val )
-  //   {
-  //     buffer << *val;
-  //   }
-  // }
-  // else
-  // {
-  //   if ( buffer.get_size() > 0 )
-  //   {
-  //     sion_fwrite( buffer.read(), buffer.get_size(), 1, file.sid );
-  //     buffer.clear();
-  //   }
-
-  //   sion_fwrite( &device_gid, sizeof( sion_uint64 ), 1, file.sid );
-  //   sion_fwrite( &sender_gid, sizeof( sion_uint64 ), 1, file.sid );
-  //   sion_fwrite( &step, sizeof( sion_int64 ), 1, file.sid );
-  //   sion_fwrite( &offset, sizeof( double ), 1, file.sid );
-  //   sion_fwrite( &n_values, sizeof( sion_uint32 ), 1, file.sid );
-
-  //   std::vector< double >::const_iterator val;
-  //   for ( val = values.begin(); val != values.end(); ++val )
-  //   {
-  //     double value = *val;
-  //     sion_fwrite( &value, sizeof( double ), 1, file.sid );
-  //   }
-  // }
+  throw UnsupportedEvent();
 }
 
 /* ----------------------------------------------------------------
  * Buffer
  * ---------------------------------------------------------------- */
 
-nest::RecordingBackendArbor::ArborBuffer::ArborBuffer()
-{
-}
 
-nest::RecordingBackendArbor::ArborBuffer::~ArborBuffer()
+void
+nest::RecordingBackendArbor::ArborBuffer::write(index gid, float time)
 {
+  spikes_.push_back({gid, time});
 }
 
 void
-nest::RecordingBackendArbor::ArborBuffer::write( /*something*/ )
+nest::RecordingBackendArbor::ArborBuffer::clear()
 {
+  spikes_.clear();
 }
 
 /* ----------------------------------------------------------------

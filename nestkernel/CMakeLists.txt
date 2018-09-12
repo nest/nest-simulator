@@ -85,6 +85,7 @@ set( nestkernel_sources
     recording_backend_ascii.h recording_backend_ascii.cpp
     recording_backend_memory.h recording_backend_memory.cpp
     recording_backend_screen.h recording_backend_screen.cpp
+    recording_backend_arbor.h recording_backend_arbor.cpp
     manager_interface.h
     )
 

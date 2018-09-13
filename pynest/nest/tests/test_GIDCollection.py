@@ -501,12 +501,12 @@ class TestGIDCollection(unittest.TestCase):
         empty_array_float = np.array([], dtype=np.float64)
 
         # Single node, literal parameter
-        pt.assert_frame_equal(single_sd.get('start', pandas_output=True),
+        pt.assert_frame_equal(single_sd.get('start', output='pandas'),
                               pandas.DataFrame({'start': [0.0]},
                                                index=tuple(single_sd)))
 
         # Multiple nodes, literal parameter
-        pt.assert_frame_equal(multi_sd.get('start', pandas_output=True),
+        pt.assert_frame_equal(multi_sd.get('start', output='pandas'),
                               pandas.DataFrame(
                                   {'start': [0.0 for i in range(
                                       len(multi_sd))]},
@@ -514,7 +514,7 @@ class TestGIDCollection(unittest.TestCase):
 
         # Single node, array parameter
         pt.assert_frame_equal(single_sd.get(['start', 'n_events'],
-                                            pandas_output=True),
+                                            output='pandas'),
                               pandas.DataFrame({'start': [0.0],
                                                 'n_events': [0]},
                                                index=tuple(single_sd)))
@@ -523,13 +523,13 @@ class TestGIDCollection(unittest.TestCase):
         ref_dict = {'start': [0.0 for i in range(len(multi_sd))],
                     'n_events': [0]}
         pt.assert_frame_equal(multi_sd.get(['start', 'n_events'],
-                                           pandas_output=True),
+                                           output='pandas'),
                               pandas.DataFrame(ref_dict,
                                                index=tuple(multi_sd)))
 
         # Single node, hierarchical with literal parameter
         pt.assert_frame_equal(single_sd.get('events', 'times',
-                                            pandas_output=True),
+                                            output='pandas'),
                               pandas.DataFrame({'times': [[]]},
                                                index=tuple(single_sd)))
 
@@ -537,13 +537,13 @@ class TestGIDCollection(unittest.TestCase):
         ref_dict = {'times': [empty_array_float
                               for i in range(len(multi_sd))]}
         pt.assert_frame_equal(multi_sd.get('events', 'times',
-                                           pandas_output=True),
+                                           output='pandas'),
                               pandas.DataFrame(ref_dict,
                                                index=tuple(multi_sd)))
 
         # Single node, hierarchical with array parameter
         pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
-                                            pandas_output=True),
+                                            output='pandas'),
                               pandas.DataFrame({'times': [[]],
                                                 'senders': [[]]},
                                                index=tuple(single_sd)))
@@ -552,17 +552,17 @@ class TestGIDCollection(unittest.TestCase):
         ref_dict = {'times': [[] for i in range(len(multi_sd))],
                     'senders': [[] for i in range(len(multi_sd))]}
         pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
-                                           pandas_output=True),
+                                           output='pandas'),
                               pandas.DataFrame(ref_dict,
                                                index=tuple(multi_sd)))
 
         # Single node, no parameter (gets all values)
-        values = single_sd.get(pandas_output=True)
+        values = single_sd.get(output='pandas')
         self.assertEqual(values.shape, (1, 38))
         self.assertEqual(values['start'][tuple(single_sd)[0]], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
-        values = multi_sd.get(pandas_output=True)
+        values = multi_sd.get(output='pandas')
         self.assertEqual(values.shape, (len(multi_sd), 38))
         pt.assert_series_equal(values['start'],
                                pandas.Series({key: 0.0
@@ -581,7 +581,7 @@ class TestGIDCollection(unittest.TestCase):
         ref_dict = {'times': [[31.8, 36.1, 38.5]],
                     'senders': [[17, 12, 20]]}
         pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
-                                            pandas_output=True),
+                                            output='pandas'),
                               pandas.DataFrame(ref_dict,
                                                index=tuple(single_sd)))
 
@@ -589,7 +589,7 @@ class TestGIDCollection(unittest.TestCase):
                               []],
                     'senders': [[12], [], [], [], [], [17], [], [], [20], []]}
         pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
-                                           pandas_output=True),
+                                           output='pandas'),
                               pandas.DataFrame(ref_dict,
                                                index=tuple(multi_sd)))
 

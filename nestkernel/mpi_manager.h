@@ -205,11 +205,7 @@ private:
   unsigned int COMM_OVERFLOW_ERROR;
 
 //! Variable to hold the MPI communicator to use (the datatype matters).
-#ifdef HAVE_MUSIC
-  MPI::Intracomm comm;
-#else  /* #ifdef HAVE_MUSIC */
   MPI_Comm comm;
-#endif /* #ifdef HAVE_MUSIC */
   MPI_Datatype MPI_OFFGRID_SPIKE;
 
   void communicate_Allgather( std::vector< unsigned int >& send_buffer,

@@ -71,10 +71,12 @@ nest::MPIManager::MPIManager()
 }
 
 #ifdef HAVE_MPI
-static MPI_Comm global_comm = MPI_COMM_WORLD;
-void nest::MPIManager::set_communicator(MPI_Comm global_comm_)
+void nest::MPIManager::set_communicator(MPI_Comm global_comm)
 {
-  global_comm = global_comm_;
+  comm = global_comm;
+  MPI_Comm_size( comm, &num_processes_ );
+  MPI_Comm_rank( comm, &rank_ );
+  recv_buffer_size_ = send_buffer_size_ * get_num_processes();
 }
 #endif
 
@@ -90,18 +92,13 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 #ifdef HAVE_MUSIC
     kernel().music_manager.init_music( argc, argv );
     // get a communicator from MUSIC
-    comm = kernel().music_manager.communicator();
+    set_communicator((MPI_Comm) kernel().music_manager.communicator());
 #else  /* #ifdef HAVE_MUSIC */
     int provided_thread_level;
     MPI_Init_thread( argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
-    comm = global_comm;
+    set_communicator(MPI_COMM_WORLD);
 #endif /* #ifdef HAVE_MUSIC */
   }
-
-  MPI_Comm_size( comm, &num_processes_ );
-  MPI_Comm_rank( comm, &rank_ );
-
-  recv_buffer_size_ = send_buffer_size_ * get_num_processes();
 
   // create off-grid-spike type for MPI communication
   // creating derived datatype

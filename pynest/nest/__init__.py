@@ -187,11 +187,7 @@ def set_communicator(comm):
     _kernel.NESTError
     """
     
-    if initialized:
-        raise _kernel.NESTError("set_communicator: "
-                                "NEST already initialized.")
-    
-    if "mpi4py" is not in sys.modules:
+    if "mpi4py" not in sys.modules:
         raise _kernel.NESTError("set_communicator: "
                                 "mpi4py not loaded.")
     

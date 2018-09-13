@@ -70,6 +70,14 @@ nest::MPIManager::MPIManager()
 {
 }
 
+#ifdef HAVE_MPI
+static MPI_Comm global_comm = MPI_COMM_WORLD;
+void nest::MPIManager::set_communicator(MPI_Comm global_comm_)
+{
+  global_comm = global_comm_;
+}
+#endif
+
 void
 nest::MPIManager::init_mpi( int* argc, char** argv[] )
 {
@@ -86,7 +94,7 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 #else  /* #ifdef HAVE_MUSIC */
     int provided_thread_level;
     MPI_Init_thread( argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
-    comm = MPI_COMM_WORLD;
+    comm = global_comm;
 #endif /* #ifdef HAVE_MUSIC */
   }
 

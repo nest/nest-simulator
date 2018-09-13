@@ -167,6 +167,14 @@ cdef class NESTEngine(object):
 
         self.pEngine = NULL
 
+    def set_communicator(self, comm):
+        # extract mpi_comm from mpi4py
+        if nest_has_mpi():
+            c_set_communicator(comm)
+        else:
+            raise NESTError("set_communicator: "
+                            "NEST not compiled with MPI")
+
     def init(self, argv, modulepath):
         if self.pEngine is not NULL:
             raise NESTError("engine already initialized")

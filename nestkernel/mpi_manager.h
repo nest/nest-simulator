@@ -70,6 +70,9 @@ public:
   virtual void get_status( DictionaryDatum& );
 
   void init_mpi( int* argc, char** argv[] );
+#ifdef HAVE_MPI
+  void set_communicator(MPI_Comm);
+#endif
 
   /**
    * Return the number of processes used during simulation.

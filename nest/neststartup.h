@@ -65,4 +65,15 @@ void nestshutdown( int exitcode );
 
 SLIInterpreter& get_engine();
 
+#ifdef _IS_PYNEST
+#include <Python.h>
+// Call only with GIL
+void set_communicator(PyObject*);
+#ifdef HAVE_MPI
+inline bool nest_has_mpi() {return true;}
+#else
+inline bool nest_has_mpi() {return false;}
+#endif
+#endif
+
 #endif // #ifndef NEST_STARTUP_H

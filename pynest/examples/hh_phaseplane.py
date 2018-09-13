@@ -66,7 +66,7 @@ for V in range(-100, 42, 2):
     n_n = []
     for n in range(10, 81):
         # Set V_m and n
-        nest.SetStatus(neuron, {'V_m': V*1.0, 'Inact_n': n/100.0,
+        nest.SetStatus(neuron, {'V_m': V * 1.0, 'Inact_n': n / 100.0,
                                 'Act_m': m_eq, 'Act_h': h_eq})
         # Find state
         V_m = nest.GetStatus(neuron)[0]['V_m']
@@ -76,8 +76,8 @@ for V in range(-100, 42, 2):
         nest.Simulate(dt)
 
         # Find difference between new state and old state
-        V_m_new = nest.GetStatus(neuron)[0]['V_m'] - V*1.0
-        Inact_n_new = nest.GetStatus(neuron)[0]['Inact_n'] - n/100.0
+        V_m_new = nest.GetStatus(neuron)[0]['V_m'] - V * 1.0
+        Inact_n_new = nest.GetStatus(neuron)[0]['Inact_n'] - n / 100.0
 
         # Store in vector for later analysis
         n_V.append(abs(V_m_new))
@@ -125,10 +125,10 @@ for i in range(1, 1001):
 print('')
 print('Plot analysis')
 
-V_matrix = [list(x) for x in zip(*V_new_vec)]
-n_matrix = [list(x) for x in zip(*n_new_vec)]
-n_vec = [x/100. for x in range(10, 81)]
-V_vec = [x*1. for x in range(-100, 42, 2)]
+V_matrix = [list(v) for v in zip(*V_new_vec)]
+n_matrix = [list(v) for v in zip(*n_new_vec)]
+n_vec = [v / 100. for v in range(10, 81)]
+V_vec = [v * 1. for v in range(-100, 42, 2)]
 
 nullcline_V = []
 nullcline_n = []
@@ -146,8 +146,8 @@ for i in range(0, len(V_vec)):
 print('Plotting vector field')
 factor = 0.1
 for i in range(0, count, 3):
-    plt.plot([x[i][0], x[i][0] + factor*x[i][2]],
-             [x[i][1], x[i][1] + factor*x[i][3]], color=[0.6, 0.6, 0.6])
+    plt.plot([x[i][0], x[i][0] + factor * x[i][2]],
+             [x[i][1], x[i][1] + factor * x[i][3]], color=[0.6, 0.6, 0.6])
 
 plt.plot(nullcline_V[:][0], nullcline_V[:][1], linewidth=2.0)
 plt.plot(nullcline_n[:][0], nullcline_n[:][1], linewidth=2.0)

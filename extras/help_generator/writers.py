@@ -27,6 +27,7 @@ Collect all the data and write help files.
 """
 
 import glob
+import io
 import os
 import re
 import textwrap
@@ -41,15 +42,15 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
     Write html for integration in NEST Help-System
     """
     # Loading Template for commands
-    ftemplate = open('templates/cmd.tpl.html', 'r')
+    ftemplate = io.open('templates/cmd.tpl.html', encoding='utf-8')
     templ = ftemplate.read()
     ftemplate.close()
     # Loading Template for CSS
-    cssf = open('templates/nest.tpl.css', 'r')
+    cssf = io.open('templates/nest.tpl.css', encoding='utf-8')
     csstempl = cssf.read()
     cssf.close()
     # Loading Template for footer
-    footerf = open('templates/footer.tpl.html', 'r')
+    footerf = io.open('templates/footer.tpl.html', encoding='utf-8')
     footertempl = footerf.read()
     footerf.close()
 
@@ -124,7 +125,7 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
             htmllist.append('<b>Source:</b><pre>%s</pre>' % value)
             hlplist.append('Source:\n\n%s' % value)
     htmllist.append('</div>')
-    htmlstring = ('\n'.join(htmllist))
+    htmlstring = (u'\n'.join(htmllist))
     cmdindexstring = s.substitute(indexbody=htmlstring, css=csstempl,
                                   title=name, footer=footertempl)
 
@@ -134,13 +135,16 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
         else:
             path = os.path.join(helpdir, 'cc')
 
-        f_file_name = open('{}/{}.html'.format(path, name), 'w')
-        "{}/{}.html".format(path, name)
+        f_file_name = io.open(os.path.join(path, '{}.html'.format(name)),
+                              mode='w', encoding='utf-8')
         f_file_name.write(cmdindexstring)
+        f_file_name.write(u'\n')
         f_file_name.close()
 
-        f_file_name_hlp = open('{}/{}.hlp'.format(path, name), 'w')
-        f_file_name_hlp.write('\n'.join(hlplist))
+        f_file_name_hlp = io.open(os.path.join(path, '{}.hlp'.format(name)),
+                                  mode='w', encoding='utf-8')
+        f_file_name_hlp.write(u'\n'.join(hlplist))
+        f_file_name_hlp.write(u'\n')
         f_file_name_hlp.close()
 
 
@@ -150,20 +154,28 @@ def write_helpindex(helpdir):
     ---------------------------------------
 
     """
+
+    # We only have to generate a helpindex if the help directory exists
+    if not os.path.exists(helpdir):
+        return
+
     filelist = glob.glob(os.path.join(helpdir, '*', '*.hlp'))
     html_list = []
     hlp_list = []
 
     # Loading Template for helpindex.html
-    ftemplate = open(os.path.join('templates', 'helpindex.tpl.html'), 'r')
+    ftemplate = io.open(os.path.join('templates', 'helpindex.tpl.html'),
+                        encoding='utf-8')
     templ = ftemplate.read()
     ftemplate.close()
     # Loading Template for CSS
-    cssf = open(os.path.join('templates', 'nest.tpl.css'), 'r')
+    cssf = io.open(os.path.join('templates', 'nest.tpl.css'),
+                   encoding='utf-8')
     csstempl = cssf.read()
     cssf.close()
     # Loading Template for footer
-    footerf = open(os.path.join('templates', 'footer.tpl.html'), 'r')
+    footerf = io.open(os.path.join('templates', 'footer.tpl.html'),
+                      encoding='utf-8')
     footertempl = footerf.read()
     footerf.close()
 
@@ -186,7 +198,7 @@ def write_helpindex(helpdir):
                          % doubles[0])
         for item in sorted(filelist,
                            key=lambda name: name.lower().rsplit('/', 1)[1]):
-            fitem = open(item, 'r')
+            fitem = io.open(item, encoding='utf-8')
             itemtext = fitem.read()
             fitem.close()
             # only the basename of the file
@@ -219,17 +231,21 @@ def write_helpindex(helpdir):
         html_list.append('</table></center>')
 
     # html_list.append(footer)
-    htmlstring = ('\n'.join(html_list))
+    htmlstring = (u'\n'.join(html_list))
     indexstring = s.substitute(indexbody=htmlstring, css=csstempl,
                                footer=footertempl)
 
-    f_helpindex = open(os.path.join(helpdir, 'helpindex.html'), 'w')
+    f_helpindex = io.open(os.path.join(helpdir, 'helpindex.html'), mode='w',
+                          encoding='utf-8')
     f_helpindex.write(indexstring)
+    f_helpindex.write(u'\n')
     f_helpindex.close()
 
     # Todo: using string template for .hlp
-    f_helphlpindex = open(os.path.join(helpdir, 'helpindex.hlp'), 'w')
-    f_helphlpindex.write('\n'.join(hlp_list))
+    f_helphlpindex = io.open(os.path.join(helpdir, 'helpindex.hlp'), mode='w',
+                             encoding='utf-8')
+    f_helphlpindex.write(u'\n'.join(hlp_list))
+    f_helphlpindex.write(u'\n')
     f_helphlpindex.close()
 
 

@@ -74,14 +74,14 @@ nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d )
  * ---------------------------------------------------------------- */
 
 nest::spike_dilutor::spike_dilutor()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
 {
 }
 
 nest::spike_dilutor::spike_dilutor( const spike_dilutor& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
 {

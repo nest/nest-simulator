@@ -58,11 +58,11 @@ namespace nest
 extern "C" int hh_psc_alpha_dynamics( double, const double*, double*, void* );
 
 /* BeginDocumentation
-Name: hh_psc_alpha - Hodgkin Huxley neuron model.
+Name: hh_psc_alpha - Hodgkin-Huxley neuron model.
 
 Description:
 
- hh_psc_alpha is an implementation of a spiking neuron using the Hodkin-Huxley
+ hh_psc_alpha is an implementation of a spiking neuron using the Hodgkin-Huxley
  formalism.
 
  (1) Post-synaptic currents

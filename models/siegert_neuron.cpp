@@ -157,19 +157,29 @@ nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::t_ref, t_ref_ );
 
   if ( V_reset_ >= theta_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
+  }
 
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time must not be negative." );
+  }
 
   if ( tau_ <= 0 )
+  {
     throw BadProperty( "time constant must be > 0." );
+  }
 
   if ( tau_m_ <= 0 )
+  {
     throw BadProperty( "Membrane time constant must be > 0." );
+  }
 
   if ( tau_syn_ < 0 )
+  {
     throw BadProperty( "Membrane time constant must not be negative." );
+  }
 }
 
 void
@@ -330,11 +340,11 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   double V_r_shift =
     P_.V_reset_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
 
-  if ( abs( mu - 0. ) < 1e-12 )
+  if ( std::abs( mu - 0. ) < 1e-12 )
   {
     return 0.;
   }
-  if ( mu <= theta_shift - 0.05 * abs( theta_shift ) )
+  if ( mu <= theta_shift - 0.05 * std::abs( theta_shift ) )
   {
     return siegert1( theta_shift, V_r_shift, mu, sigma );
   }
@@ -434,7 +444,9 @@ nest::siegert_neuron::update_( Time const& origin,
 
     // modifiy new_rates for diffusion-event as proxy for next min_delay
     for ( long temp = from; temp < to; ++temp )
+    {
       new_rates[ temp ] = S_.r_;
+    }
   }
 
   // Send diffusion-event
@@ -452,14 +464,17 @@ nest::siegert_neuron::update_( Time const& origin,
 void
 nest::siegert_neuron::handle( DiffusionConnectionEvent& e )
 {
+  const double drift = e.get_drift_factor();
+  const double diffusion = e.get_diffusion_factor();
+
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
   while ( it != e.end() )
   {
-    double value = e.get_coeffvalue( it );
-    B_.drift_input_[ i ] += e.get_drift_factor() * value;
-    B_.diffusion_input_[ i ] += e.get_diffusion_factor() * value;
+    const double value = e.get_coeffvalue( it );
+    B_.drift_input_[ i ] += drift * value;
+    B_.diffusion_input_[ i ] += diffusion * value;
     ++i;
   }
 }

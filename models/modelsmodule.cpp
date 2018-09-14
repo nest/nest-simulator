@@ -52,6 +52,8 @@
 #include "aeif_psc_exp.h"
 #include "aeif_psc_delta.h"
 #include "amat2_psc_exp.h"
+#include "erfc_neuron.h"
+#include "gauss_rate.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
 #include "hh_psc_alpha.h"
@@ -79,10 +81,13 @@
 #include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
 #include "siegert_neuron.h"
+#include "sigmoid_rate.h"
+#include "sigmoid_rate_gg_1998.h"
 #include "gif_psc_exp.h"
 #include "gif_psc_exp_multisynapse.h"
 #include "gif_cond_exp.h"
 #include "gif_cond_exp_multisynapse.h"
+#include "gif_pop_psc_exp.h"
 
 // Stimulation devices
 #include "ac_generator.h"
@@ -91,6 +96,7 @@
 #include "mip_generator.h"
 #include "noise_generator.h"
 #include "poisson_generator.h"
+#include "inhomogeneous_poisson_generator.h"
 #include "ppd_sup_generator.h"
 #include "pulsepacket_generator.h"
 #include "sinusoidal_gamma_generator.h"
@@ -188,16 +194,41 @@ ModelsModule::commandstring( void ) const
 void
 ModelsModule::init( SLIInterpreter* )
 {
-  kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
+  // rate models with input noise
+  kernel().model_manager.register_node_model< gauss_rate_ipn >(
+    "gauss_rate_ipn" );
   kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
-  kernel().model_manager.register_node_model< tanh_rate_opn >(
-    "tanh_rate_opn" );
+  kernel().model_manager.register_node_model< sigmoid_rate_ipn >(
+    "sigmoid_rate_ipn" );
+  kernel().model_manager.register_node_model< sigmoid_rate_gg_1998_ipn >(
+    "sigmoid_rate_gg_1998_ipn" );
   kernel().model_manager.register_node_model< tanh_rate_ipn >(
     "tanh_rate_ipn" );
-  kernel().model_manager.register_node_model< threshold_lin_rate_opn >(
-    "threshold_lin_rate_opn" );
   kernel().model_manager.register_node_model< threshold_lin_rate_ipn >(
     "threshold_lin_rate_ipn" );
+
+  // rate models with output noise
+  kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
+  kernel().model_manager.register_node_model< tanh_rate_opn >(
+    "tanh_rate_opn" );
+  kernel().model_manager.register_node_model< threshold_lin_rate_opn >(
+    "threshold_lin_rate_opn" );
+
+  // rate transformer nodes
+  kernel().model_manager.register_node_model< rate_transformer_gauss >(
+    "rate_transformer_gauss" );
+  kernel().model_manager.register_node_model< rate_transformer_lin >(
+    "rate_transformer_lin" );
+  kernel().model_manager.register_node_model< rate_transformer_sigmoid >(
+    "rate_transformer_sigmoid" );
+  kernel()
+    .model_manager.register_node_model< rate_transformer_sigmoid_gg_1998 >(
+      "rate_transformer_sigmoid_gg_1998" );
+  kernel().model_manager.register_node_model< rate_transformer_tanh >(
+    "rate_transformer_tanh" );
+  kernel().model_manager.register_node_model< rate_transformer_threshold_lin >(
+    "rate_transformer_threshold_lin" );
+
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >(
     "iaf_psc_alpha" );
@@ -225,6 +256,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
   kernel().model_manager.register_node_model< spike_generator >(
     "spike_generator" );
+  kernel().model_manager.register_node_model< inhomogeneous_poisson_generator >(
+    "inhomogeneous_poisson_generator" );
   kernel().model_manager.register_node_model< poisson_generator >(
     "poisson_generator" );
   kernel().model_manager.register_node_model< pulsepacket_generator >(
@@ -241,6 +274,7 @@ ModelsModule::init( SLIInterpreter* )
     "ppd_sup_generator" );
   kernel().model_manager.register_node_model< gamma_sup_generator >(
     "gamma_sup_generator" );
+  kernel().model_manager.register_node_model< erfc_neuron >( "erfc_neuron" );
   kernel().model_manager.register_node_model< ginzburg_neuron >(
     "ginzburg_neuron" );
   kernel().model_manager.register_node_model< mcculloch_pitts_neuron >(
@@ -360,6 +394,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< gif_cond_exp >( "gif_cond_exp" );
   kernel().model_manager.register_node_model< gif_cond_exp_multisynapse >(
     "gif_cond_exp_multisynapse" );
+  kernel().model_manager.register_node_model< gif_pop_psc_exp >(
+    "gif_pop_psc_exp" );
 
   kernel().model_manager.register_node_model< aeif_cond_alpha >(
     "aeif_cond_alpha" );
@@ -444,19 +480,31 @@ ModelsModule::init( SLIInterpreter* )
   kernel()
     .model_manager
     .register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
-      "gap_junction", /*has_delay=*/false, /*requires_symmetric=*/true );
+      "gap_junction",
+      /*has_delay=*/false,
+      /*requires_symmetric=*/true,
+      /*supports_wfr=*/true );
   kernel()
     .model_manager
     .register_secondary_connection_model< RateConnectionInstantaneous< TargetIdentifierPtrRport > >(
-      "rate_connection_instantaneous", /*has_delay=*/false );
+      "rate_connection_instantaneous",
+      /*has_delay=*/false,
+      /*requires_symmetric=*/false,
+      /*supports_wfr=*/true );
   kernel()
     .model_manager
     .register_secondary_connection_model< RateConnectionDelayed< TargetIdentifierPtrRport > >(
-      "rate_connection_delayed" );
+      "rate_connection_delayed",
+      /*has_delay=*/true,
+      /*requires_symmetric=*/false,
+      /*supports_wfr=*/false );
   kernel()
     .model_manager
     .register_secondary_connection_model< DiffusionConnection< TargetIdentifierPtrRport > >(
-      "diffusion_connection", /*has_delay=*/false );
+      "diffusion_connection",
+      /*has_delay=*/false,
+      /*requires_symmetric=*/false,
+      /*supports_wfr=*/true );
 
 
   /* BeginDocumentation

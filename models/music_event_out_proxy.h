@@ -35,10 +35,10 @@
 #include <music.hh>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
 #include "nest_types.h"
-#include "node.h"
 
 /* BeginDocumentation
 
@@ -80,7 +80,7 @@ SeeAlso: music_event_in_proxy, music_cont_in_proxy, music_message_in_proxy
 
 namespace nest
 {
-class music_event_out_proxy : public Node
+class music_event_out_proxy : public DeviceNode
 {
 
 public:

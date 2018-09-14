@@ -60,12 +60,12 @@ extern "C" int
 hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
 
 /* BeginDocumentation
-Name: hh_psc_alpha_gap - Hodgkin Huxley neuron model with gap-junction support.
+Name: hh_psc_alpha_gap - Hodgkin-Huxley neuron model with gap-junction support.
 
 Description:
 
  hh_psc_alpha_gap is an implementation of a spiking neuron using the
- Hodkin-Huxley formalism. In contrast to hh_psc_alpha the implementation
+ Hodgkin-Huxley formalism. In contrast to hh_psc_alpha the implementation
  additionally supports gap junctions.
 
 

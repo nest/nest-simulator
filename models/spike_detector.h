@@ -23,15 +23,14 @@
 #ifndef SPIKE_DETECTOR_H
 #define SPIKE_DETECTOR_H
 
-
 // C++ includes:
 #include <vector>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
 #include "nest_types.h"
-#include "node.h"
 #include "recording_device.h"
 
 /* BeginDocumentation
@@ -96,29 +95,23 @@ namespace nest
  *
  * @ingroup Devices
  */
-class spike_detector : public Node
+class spike_detector : public DeviceNode
 {
 
 public:
   spike_detector();
   spike_detector( const spike_detector& );
 
-  void set_has_proxies( const bool hp );
   bool
   has_proxies() const
   {
-    return has_proxies_;
+    return false;
   }
-  bool
-  potential_global_receiver() const
-  {
-    return true;
-  }
-  void set_local_receiver( const bool lr );
+
   bool
   local_receiver() const
   {
-    return local_receiver_;
+    return true;
   }
 
   /**
@@ -184,22 +177,7 @@ private:
 
   RecordingDevice device_;
   Buffers_ B_;
-
-  bool has_proxies_;
-  bool local_receiver_;
 };
-
-inline void
-spike_detector::set_has_proxies( const bool hp )
-{
-  has_proxies_ = hp;
-}
-
-inline void
-spike_detector::set_local_receiver( const bool lr )
-{
-  local_receiver_ = lr;
-}
 
 inline port
 spike_detector::handles_test_event( SpikeEvent&, rport receptor_type )
@@ -215,13 +193,6 @@ inline void
 spike_detector::post_run_cleanup()
 {
   device_.post_run_cleanup();
-}
-
-
-inline void
-spike_detector::finalize()
-{
-  device_.finalize();
 }
 
 inline SignalType

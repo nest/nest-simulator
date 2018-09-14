@@ -138,13 +138,9 @@ public:
   /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
-   * \param t_lastspike Point in time of last spike sent.
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    double t_lastspike,
-    const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -171,20 +167,18 @@ public:
    * \param s The source node
    * \param r The target node
    * \param receptor_type The ID of the requested receptor type
-   * \param t_lastspike last spike emitted by presynaptic neuron
    */
   void
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double t_lastspike,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_lastspike - get_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_delay() );
   }
 
   void
@@ -220,20 +214,19 @@ private:
   double Kplus_;
   double Kplus_triplet_;
   double Wmax_;
+  double t_lastspike_;
 };
 
 /**
  * Send an event to the receiver of this connection.
  * \param e The event to send
  * \param t The thread on which this connection is stored.
- * \param t_lastspike Time point of last spike emitted
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
 inline void
 STDPTripletConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double t_lastspike,
   const CommonSynapseProperties& )
 {
 
@@ -244,32 +237,32 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history(
-    t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  target->get_history( t_lastspike_ - dendritic_delay,
+    t_spike - dendritic_delay,
+    &start,
+    &finish );
 
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   while ( start != finish )
   {
     // post-synaptic spike is delayed by dendritic_delay so that
     // it is effectively late by that much at the synapse.
-    double minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
+    double minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
 
     // subtract 1.0 yields the triplet_Kminus value just prior to
     // the post synaptic spike, implementing the t-epsilon in
     // Pfister et al, 2006
     double ky = start->triplet_Kminus_ - 1.0;
     ++start;
-    if ( minus_dt == 0 )
-    {
-      continue;
-    }
-
+    // get_history() should make sure that
+    // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
+    assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
     weight_ =
       facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ), ky );
   }
 
   // depression due to new pre-synaptic spike
-  Kplus_triplet_ *= std::exp( ( t_lastspike - t_spike ) / tau_plus_triplet_ );
+  Kplus_triplet_ *= std::exp( ( t_lastspike_ - t_spike ) / tau_plus_triplet_ );
 
   // dendritic delay means we must look back in time by that amount
   // for determining the K value, because the K value must propagate
@@ -278,13 +271,15 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
     weight_, target->get_K_value( t_spike - dendritic_delay ), Kplus_triplet_ );
 
   Kplus_triplet_ += 1.0;
-  Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) / tau_plus_ ) + 1.0;
+  Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / tau_plus_ ) + 1.0;
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
+
+  t_lastspike_ = t_spike;
 }
 
 // Defaults come from reference [1] data fitting and table 3.
@@ -301,6 +296,7 @@ STDPTripletConnection< targetidentifierT >::STDPTripletConnection()
   , Kplus_( 0.0 )
   , Kplus_triplet_( 0.0 )
   , Wmax_( 100.0 )
+  , t_lastspike_( 0.0 )
 {
 }
 
@@ -318,6 +314,7 @@ STDPTripletConnection< targetidentifierT >::STDPTripletConnection(
   , Kplus_( rhs.Kplus_ )
   , Kplus_triplet_( rhs.Kplus_triplet_ )
   , Wmax_( rhs.Wmax_ )
+  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

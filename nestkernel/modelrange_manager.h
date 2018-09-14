@@ -99,7 +99,7 @@ private:
 inline bool
 nest::ModelRangeManager::is_in_range( index gid ) const
 {
-  return ( ( gid <= last_gid_ ) && ( gid >= first_gid_ ) );
+  return ( ( gid <= last_gid_ ) and ( gid >= first_gid_ ) );
 }
 
 

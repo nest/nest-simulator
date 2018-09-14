@@ -68,7 +68,7 @@ class TestGetStructuralPlasticityStatus(unittest.TestCase):
                         {'synaptic_elements': synaptic_elements}
                         )
     all = nest.GetStructuralPlasticityStatus()
-    print (all)
+    print(all)
     assert ('structural_plasticity_synapses' in all)
     assert ('syn1' in all['structural_plasticity_synapses'])
     assert ('structural_plasticity_update_interval' in all)
@@ -77,7 +77,7 @@ class TestGetStructuralPlasticityStatus(unittest.TestCase):
     sp_synapses = nest.GetStructuralPlasticityStatus(
         'structural_plasticity_synapses'
     )
-    print (sp_synapses)
+    print(sp_synapses)
     syn = sp_synapses['syn1']
     assert ('pre_synaptic_element' in syn)
     assert ('post_synaptic_element' in syn)
@@ -87,7 +87,7 @@ class TestGetStructuralPlasticityStatus(unittest.TestCase):
     sp_interval = nest.GetStructuralPlasticityStatus(
         'structural_plasticity_update_interval'
     )
-    print (sp_interval)
+    print(sp_interval)
     assert (sp_interval == 1000)
 
 

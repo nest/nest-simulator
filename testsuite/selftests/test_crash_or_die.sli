@@ -42,7 +42,7 @@ statusdict/ndebug :: { /skipped exit_test_gracefully } if
 % For now we just ignore this test, this will later be replaced 
 % by a restart of NEST with a serial binary.
 % The commented code below is the real one.
-statusdict/is_mpi :: {3 quit_i} if
+skip_if_have_mpi
 
 
 /*

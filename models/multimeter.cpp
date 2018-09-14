@@ -28,7 +28,7 @@
 namespace nest
 {
 Multimeter::Multimeter()
-  : Node()
+  : DeviceNode()
   , device_( *this, RecordingDevice::MULTIMETER, "dat", true, true )
   , P_()
   , S_()
@@ -38,7 +38,7 @@ Multimeter::Multimeter()
 }
 
 Multimeter::Multimeter( const Multimeter& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( *this, n.device_ )
   , P_( n.P_ )
   , S_()

@@ -38,11 +38,11 @@ connections is 20000 and the number of stdp connections is 10000.
 Author: Susanne Kunkel, 2013-03-25
 */
 
-% don't run this test if we didn't compile with OpenMP 
-statusdict/threading :: (openmp) eq not {statusdict/exitcodes/success :: quit_i} if
-
 (unittest) run
 /unittest using
+
+% don't run this test if we didn't compile with OpenMP
+skip_if_not_threaded
 
 M_ERROR setverbosity
 

@@ -28,12 +28,15 @@ The helpindex is built during installation in a separate step.
 """
 
 import os
+import io
 import re
 import sys
 import textwrap
 
 from writers import coll_data
 from helpers import check_ifdef, create_helpdirs, cut_it
+from helpers import delete_helpdir
+from helpers import help_generation_required
 
 if len(sys.argv) != 3:
     print("Usage: python generate_help.py <source_dir> <build_dir>")
@@ -42,6 +45,11 @@ if len(sys.argv) != 3:
 source_dir, build_dir = sys.argv[1:]
 
 helpdir = os.path.join(build_dir, "doc", "help")
+delete_helpdir(helpdir)
+
+if not help_generation_required():
+    sys.exit(0)
+
 create_helpdirs(helpdir)
 
 allfiles = []
@@ -73,7 +81,7 @@ dcs = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
 # searching for a sli_command_list
 for file in allfiles:
     if file.endswith('.sli'):
-        f = open(file, 'r')
+        f = io.open(file, encoding='utf-8')
         filetext = f.read()
         f.close()
         items = re.findall(dcs, filetext, re.DOTALL)
@@ -93,7 +101,7 @@ dcs = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
 for fname in allfiles:
     # .py is for future use
     if not fname.endswith('.py'):
-        f = open(fname, 'r')
+        f = io.open(fname, encoding='utf-8')
         filetext = f.read()
         f.close()
         # Multiline matching to find codeblock

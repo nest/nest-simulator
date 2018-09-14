@@ -36,7 +36,7 @@ public:
   bool
   is_in_range( index gid ) const
   {
-    return ( ( gid >= first_gid_ ) && ( gid <= last_gid_ ) );
+    return ( ( gid >= first_gid_ ) and ( gid <= last_gid_ ) );
   }
   index
   get_model_id() const

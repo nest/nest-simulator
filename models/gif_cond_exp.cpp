@@ -614,8 +614,8 @@ nest::gif_cond_exp::handle( SpikeEvent& e )
   {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() * e.get_multiplicity() );
-  }
+      -e.get_weight() * e.get_multiplicity() );
+  } // keep conductance positive
 }
 
 void

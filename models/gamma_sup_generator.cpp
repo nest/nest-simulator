@@ -178,14 +178,14 @@ nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d )
  * ---------------------------------------------------------------- */
 
 nest::gamma_sup_generator::gamma_sup_generator()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
 {
 }
 
 nest::gamma_sup_generator::gamma_sup_generator( const gamma_sup_generator& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
 {

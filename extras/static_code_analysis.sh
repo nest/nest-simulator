@@ -21,7 +21,7 @@
 
 
 # This shell script is part of the NEST Travis CI build and test environment.
-# It performs the static code analysis and is invoked by 'build.sh'.
+# It performs the static code analysis and is invoked by 'travis_build.sh'.
 # The script is also executed when running 'check_code_style.sh' for
 # a local static code analysis.
 #
@@ -58,7 +58,7 @@ PEP8_IGNORES_TOPO_MANUAL="${PEP8_IGNORES_EXAMPLES},E265"
 typeset -i MAX_CPPCHECK_MSG_COUNT=10
 
 # Drop files that should not be checked (space-separated list).
-FILES_TO_IGNORE="libnestutil/compose.hpp libnestutil/hashtable-common.h libnestutil/libc_allocator_with_realloc.h libnestutil/sparseconfig.h libnestutil/sparsetable.h libnestutil/template_util.h libnestutil/type_traits.h librandom/knuthlfg.h librandom/knuthlfg.cpp"
+FILES_TO_IGNORE="libnestutil/compose.hpp librandom/knuthlfg.h librandom/knuthlfg.cpp"
 
 # Print a message.
 # The format of the message depends on whether the script is executed on Travis CI or runs local.

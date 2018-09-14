@@ -172,6 +172,9 @@ public:
    */
   void num_threads_changed_reset();
 
+  void prepare();
+  void cleanup(); 
+
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& );
 

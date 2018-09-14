@@ -56,6 +56,17 @@ public:
   initialize() = 0;
 
   virtual void
+  prepare()
+  {
+  }
+
+  virtual void
+  cleanup()
+  {
+    finalize();
+  }
+
+  virtual void
   post_run_cleanup()
   {
   }

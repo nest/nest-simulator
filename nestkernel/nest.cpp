@@ -287,13 +287,13 @@ run( const double& time )
 void
 prepare()
 {
-  kernel().simulation_manager.prepare();
+  kernel().prepare();
 }
 
 void
 cleanup()
 {
-  kernel().simulation_manager.cleanup();
+  kernel().cleanup();
 }
 
 void

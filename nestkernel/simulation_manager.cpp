@@ -559,8 +559,6 @@ nest::SimulationManager::cleanup()
         "in sync at end of simulation." );
     }
   }
-
-  kernel().io_manager.cleanup();
 }
 
 void

@@ -206,8 +206,7 @@ nest::IOManager::get_status( DictionaryDatum& d )
 void
 nest::IOManager::post_run_cleanup()
 {
-  std::map< Name, RecordingBackend* >::const_iterator it;
-  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
+  for ( auto it = recording_backends_.rbegin(); it != recording_backends_.rend(); ++it )
   {
     it->second->post_run_cleanup();
   }
@@ -216,10 +215,19 @@ nest::IOManager::post_run_cleanup()
 void
 nest::IOManager::cleanup()
 {
+  for ( auto it = recording_backends_.rbegin(); it != recording_backends_.rend(); ++it )
+  {
+    it->second->cleanup();
+  }
+}
+
+void
+nest::IOManager::prepare()
+{
   std::map< Name, RecordingBackend* >::const_iterator it;
   for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
   {
-    it->second->finalize();
+    it->second->prepare();
   }
 }
 

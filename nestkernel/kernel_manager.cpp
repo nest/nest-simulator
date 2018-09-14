@@ -107,6 +107,80 @@ nest::KernelManager::initialize()
 }
 
 void
+nest::KernelManager::prepare()
+{
+  logging_manager.prepare(); // must come first so others can log
+  io_manager.prepare();      // independent of others
+
+  mpi_manager.prepare(); // set up inter-process communication
+  vp_manager.prepare();  // set up threads
+
+  // invariant: process infrastructure (MPI, threads) in place
+
+  rng_manager.prepare(); // depends on number of VPs
+
+  // invariant: supporting managers set up
+
+  // "Core kernel managers" follow
+  simulation_manager.prepare(); // independent of others
+  modelrange_manager.prepare(); // independent of others
+  connection_manager.prepare(); // depends only on num of threads
+  sp_manager.prepare();
+
+  // prerequisites:
+  //   - min_delay/max_delay available (connection_manager)
+  //   - clock prepared (simulation_manager)
+  event_delivery_manager.prepare();
+
+  model_manager.prepare(); // depends on number of threads
+
+  music_manager.prepare();
+
+  // prerequisites:
+  //   - modelrange_manager prepared
+  //   - model_manager for pristine models
+  //   - vp_manager for number of threads
+  node_manager.prepare(); // must come last
+}
+
+void
+nest::KernelManager::cleanup()
+{
+  node_manager.cleanup(); // must come last
+  //   - vp_manager for number of threads
+  //   - model_manager for pristine models
+  //   - modelrange_manager cleanupd
+  // prerequisites:
+
+  music_manager.cleanup();
+
+  model_manager.cleanup(); // depends on number of threads
+
+  event_delivery_manager.cleanup();
+  //   - clock cleanupd (simulation_manager)
+  //   - min_delay/max_delay available (connection_manager)
+  // prerequisites:
+
+  sp_manager.cleanup();
+  connection_manager.cleanup(); // depends only on num of threads
+  modelrange_manager.cleanup(); // independent of others
+  simulation_manager.cleanup(); // independent of others
+  // "Core kernel managers" follow
+
+  // invariant: supporting managers set up
+
+  rng_manager.cleanup(); // depends on number of VPs
+
+  // invariant: process infrastructure (MPI, threads) in place
+
+  vp_manager.cleanup();  // set up threads
+  mpi_manager.cleanup(); // set up inter-process communication
+
+  io_manager.cleanup();      // independent of others
+  logging_manager.cleanup(); // must come first so others can log
+}
+
+void
 nest::KernelManager::finalize()
 {
   initialized_ = false;

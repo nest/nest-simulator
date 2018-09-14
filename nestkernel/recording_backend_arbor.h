@@ -75,6 +75,13 @@ private:
     ArborSpikes& get_spikes() {
       return spikes_;
     }
+
+    ArborBuffer() = default;
+    ArborBuffer(const ArborBuffer&) = delete;
+    ArborBuffer& operator = (const ArborBuffer&) = delete;
+
+    ArborBuffer(ArborBuffer&&) = default;
+    ArborBuffer& operator = (ArborBuffer&&) = default;
   };
   
   std::vector< ArborBuffer > buffers_;

@@ -65,8 +65,10 @@ nest::RecordingBackendArbor::enroll( const RecordingDevice& device )
 void
 nest::RecordingBackendArbor::initialize()
 {
-  device_map devices( kernel().vp_manager.get_num_threads() );
+  auto nthreads = kernel().vp_manager.get_num_threads();
+  device_map devices( nthreads );
   devices_.swap( devices );
+  buffers_.resize( nthreads );
 }
 
 void
@@ -77,6 +79,7 @@ nest::RecordingBackendArbor::finalize()
 void
 nest::RecordingBackendArbor::synchronize()
 {
+  //std::cerr << "devices_.size(): " << devices_.size() << std::endl;
   if (devices_.size() == 0)
   {
     return;
@@ -84,8 +87,10 @@ nest::RecordingBackendArbor::synchronize()
 
 #pragma omp single
   {
+    //std::cerr << "transmit" << std::endl;
     ArborSpikes sbuf;
-    for (auto buf: buffers_) {
+    //std::cerr << "old spikes: " << sbuf.size() << std::endl;
+    for (auto& buf: buffers_) {
       auto& spikes = buf.get_spikes();
       sbuf.insert(sbuf.end(), spikes.begin(), spikes.end());
       buf.clear();
@@ -102,6 +107,7 @@ nest::RecordingBackendArbor::transmit_(ArborSpikes& sbuf)
   // ArborSpikes should pack without padding
   static_assert((sizeof(ArborSpike) % alignof(ArborSpike)) == 0);
 
+  //std::cerr << "spikes: " << sbuf.size() << std::endl;
   int sbuf_length = sbuf.size()*sizeof(sbuf[0]);
   
   int global_size;
@@ -180,6 +186,7 @@ void
 nest::RecordingBackendArbor::ArborBuffer::clear()
 {
   spikes_.clear();
+  //std::cerr << "Left over: " << spikes_.size() << std::endl;
 }
 
 /* ----------------------------------------------------------------

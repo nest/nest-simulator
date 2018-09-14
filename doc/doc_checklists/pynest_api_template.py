@@ -41,7 +41,7 @@ def function.name(x=default, y=None):
     x : type
         Description of parameter `x`.
     y
-         Description of parameter `y` (with type not specified)
+        Description of parameter `y` (with type not specified)
 
     Returns
     --------
@@ -74,18 +74,18 @@ def function.name(x=default, y=None):
     * use the asterisk for bullet items
     * second item
 
-    References
-    -----------
-
-    .. [1] Bonewald LF. 2011. The amazing osteocyte. Journal of Bone and
-           Mineral Research 26(2):229–238. DOI: 10.1002/jbmr.320.
-
     See Also
     ---------
 
     func_a : Function a with its description.
     func_b, func_c
 
+
+    References
+    -----------
+
+    .. [1] Bonewald LF. 2011. The amazing osteocyte. Journal of Bone and
+           Mineral Research 26(2):229–238. DOI: 10.1002/jbmr.320.
 
     KEYWORDS: Important terms, Comma Separated
     """

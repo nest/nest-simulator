@@ -165,14 +165,14 @@ nest::Archiving_Node::get_history( double t1,
   {
     std::deque< histentry >::reverse_iterator runner = history_.rbegin();
     while ( ( runner != history_.rend() )
-      and ( t2 - runner->t_ < - 1.0
+      and ( t2 - runner->t_ < -1.0
                 * kernel().connection_manager.get_stdp_eps() ) )
     {
       ++runner;
     }
     *finish = runner.base();
     while ( ( runner != history_.rend() )
-      and ( t1 - runner->t_ < - 1.0
+      and ( t1 - runner->t_ < -1.0
                 * kernel().connection_manager.get_stdp_eps() ) )
     {
       ( runner->access_counter_ )++;

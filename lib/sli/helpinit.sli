@@ -128,12 +128,9 @@ Description:
   4. /page << /command (xless)             % Use xless as a pager
               /wait    false >> SetOptions % xless opens it's own window.
   
-  5. /page << /command (xemacs)            % If you like to show helpfiles using xemacs.
-              /wait    false >> SetOptions % xemacs opens it's own window.
+  5. /page << /command false >> SetOptions % use built-in pager.
   
-  6. /page << /command false >> SetOptions % use built-in pager.
-  
-  7. /page ResetOptions % Return to the default configuration ($PAGER or built-in pager).
+  6. /page ResetOptions % Return to the default configuration ($PAGER or built-in pager).
 
 Options:
   /command - UNIX command to display a file (default: see below)

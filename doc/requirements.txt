@@ -1,5 +1,12 @@
 matplotlib
+recommonmark==0.4.0
 sphinx==1.5
+sphinx_autobuild
+PyYAML==3.12
+docutils<0.13.1
+csvkit==1.0.2
+yamllint
+pathlib
 ipykernel
 nbsphinx
 pytest
@@ -13,7 +20,6 @@ numpydoc
 scipy
 example
 Image
-recommonmark==0.4.0
 seaborn
 sphinx_gallery
 mock

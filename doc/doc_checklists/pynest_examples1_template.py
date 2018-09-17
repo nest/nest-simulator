@@ -31,9 +31,13 @@ population of neurons firing Poisson spike trains. The aim is to find a firing
 rate for the inhibitory population that will make the neuron fire at the same
 rate as the excitatory population.
 
-Optimization is performed using the ``bisection`` method from Scipy,
+Optimization is performed using the `bisection` method from Scipy,
 simulating the network repeatedly.
 
+See Also
+---------
+intrinisic_current_spiking
+intrisic_current_subthreshold
 
 Notes
 ------
@@ -60,22 +64,17 @@ References
        Patterns, Processes and Evolutionary Trends. New York: Van Nostrand
        Reinhold, 471–530.
 
-See Also
----------
-intrinisic_current_spiking
-intrisic_current_subthreshold
-
 :Authors:
-    Adams, D
+    D Adams, N Gaiman
 
-KEYWORDS: scipy, poisson spike train, integrate and fire
+KEYWORDS: scipy, poisson spike train, precise
 """
 
 import nest  # begin with imports
 
 ###############################################################################
-# The excitatory ``poisson_generator`` (``noise[0]``) and the voltmeter are
-# configured using ``SetStatus``, which expects a list of node handles and
+# The excitatory `poisson_generator` (`noise[0]`) and the voltmeter are
+# configured using `SetStatus`, which expects a list of node handles and
 # a list of parameter dictionaries.
 # The rate of the inhibitory Poisson generator is set later.
 # Note that we do not need to set parameters for the neuron and the

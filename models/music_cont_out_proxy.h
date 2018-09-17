@@ -39,8 +39,8 @@
 #include <music.hh>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "nest_types.h"
-#include "node.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -93,7 +93,7 @@ music_message_in_proxy
 namespace nest
 {
 
-class music_cont_out_proxy : public Node
+class music_cont_out_proxy : public DeviceNode
 {
 
 public:

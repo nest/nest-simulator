@@ -216,7 +216,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   // modules. We can only perform it after we have loaded the module.
   if ( std::find_if( DynamicLoaderModule::getLinkedModules().begin(),
          DynamicLoaderModule::getLinkedModules().end(),
-         std::bind2nd( std::ptr_fun( has_name ), pModule->name() ) )
+         std::bind( has_name, std::placeholders::_1, pModule->name() ) )
     != DynamicLoaderModule::getLinkedModules().end() )
   {
     lt_dlclose( hModule ); // close module again

@@ -477,19 +477,31 @@ ModelsModule::init( SLIInterpreter* )
   kernel()
     .model_manager
     .register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
-      "gap_junction", /*has_delay=*/false, /*requires_symmetric=*/true );
+      "gap_junction",
+      /*has_delay=*/false,
+      /*requires_symmetric=*/true,
+      /*supports_wfr=*/true );
   kernel()
     .model_manager
     .register_secondary_connection_model< RateConnectionInstantaneous< TargetIdentifierPtrRport > >(
-      "rate_connection_instantaneous", /*has_delay=*/false );
+      "rate_connection_instantaneous",
+      /*has_delay=*/false,
+      /*requires_symmetric=*/false,
+      /*supports_wfr=*/true );
   kernel()
     .model_manager
     .register_secondary_connection_model< RateConnectionDelayed< TargetIdentifierPtrRport > >(
-      "rate_connection_delayed" );
+      "rate_connection_delayed",
+      /*has_delay=*/true,
+      /*requires_symmetric=*/false,
+      /*supports_wfr=*/false );
   kernel()
     .model_manager
     .register_secondary_connection_model< DiffusionConnection< TargetIdentifierPtrRport > >(
-      "diffusion_connection", /*has_delay=*/false );
+      "diffusion_connection",
+      /*has_delay=*/false,
+      /*requires_symmetric=*/false,
+      /*supports_wfr=*/true );
 
 
   /* BeginDocumentation

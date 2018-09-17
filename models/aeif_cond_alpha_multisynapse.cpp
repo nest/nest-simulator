@@ -90,7 +90,7 @@ aeif_cond_alpha_multisynapse::insert_conductance_recordables( size_t first )
 DataAccessFunctor< aeif_cond_alpha_multisynapse >
 aeif_cond_alpha_multisynapse::get_data_access_functor( size_t elem )
 {
-  return DataAccessFunctor< aeif_cond_alpha_multisynapse >( this, elem );
+  return DataAccessFunctor< aeif_cond_alpha_multisynapse >( *this, elem );
 }
 
 /* ----------------------------------------------------------------
@@ -693,8 +693,6 @@ aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
    * Here is where we must update the recordablesMap_ if new receptors
    * are added!
    */
-  DynamicRecordablesMap< aeif_cond_alpha_multisynapse > rtmp =
-    recordablesMap_;                         // temporary copy in case of errors
   if ( ptmp.E_rev.size() > P_.E_rev.size() ) // Number of receptors increased
   {
     for ( size_t receptor = P_.E_rev.size(); receptor < ptmp.E_rev.size();
@@ -703,7 +701,7 @@ aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
       size_t elem = aeif_cond_alpha_multisynapse::State_::G
         + receptor * aeif_cond_alpha_multisynapse::State_::
                        NUM_STATE_ELEMENTS_PER_RECEPTOR;
-      rtmp.insert(
+      recordablesMap_.insert(
         get_g_receptor_name( receptor ), get_data_access_functor( elem ) );
     }
   }
@@ -712,14 +710,13 @@ aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
     for ( size_t receptor = ptmp.E_rev.size(); receptor < P_.E_rev.size();
           ++receptor )
     {
-      rtmp.erase( get_g_receptor_name( receptor ) );
+      recordablesMap_.erase( get_g_receptor_name( receptor ) );
     }
   }
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
-  recordablesMap_ = rtmp;
 }
 
 } // namespace nest

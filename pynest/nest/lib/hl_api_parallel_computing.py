@@ -30,26 +30,20 @@ from .hl_api_helper import *
 def Rank():
     """Return the MPI rank of the local process.
 
-    .. warning::
-
-        DO NOT USE `Rank` TO EXECUTE ANY FUNCTION IMPORTED FROM THE `nest`
-        MODULE ON A SUBSET OF RANKS IN AN MPI-PARALLEL SIMULATION.
-
-        This will lead to unpredictable behavior. Symptoms may be an
-        error message about non-synchronous global random number generators
-        or deadlocks during simulation. In the worst case, the simulation
-        may complete but generate nonsensical results.
-
     Returns
     -------
-    int :
+    int:
         MPI rank of the local process
 
-    See Also
-    --------
-    NumProcesses
+    Note
+    ----
+    DO NOT USE Rank() TO EXECUTE ANY FUNCTION IMPORTED FROM THE nest
+    MODULE ON A SUBSET OF RANKS IN AN MPI-PARALLEL SIMULATION.
 
-    KEYWORDS:
+    This will lead to unpredictable behavior. Symptoms may be an
+    error message about non-synchronous global random number generators
+    or deadlocks during simulation. In the worst case, the simulation
+    may complete but generate nonsensical results.
     """
 
     sr("Rank")
@@ -62,14 +56,8 @@ def NumProcesses():
 
     Returns
     -------
-    int :
+    int:
         Number of overall MPI processes
-
-    See Also
-    --------
-    Rank
-
-    KEYWORDS:
     """
 
     sr("NumProcesses")
@@ -77,38 +65,8 @@ def NumProcesses():
 
 
 @check_stack
-def SetNumRecProcesses(nrp):
-    """Set the number of recording MPI processes.
-
-    Usually, spike detectors are distributed over all processes and record
-    from local neurons only. If a number of processes is dedicated to spike
-    detection, each spike detector is hosted on one of these processes and
-    records globally from all simulating processes.
-
-    The number of recording MPI processes has to be lower than the total number
-    of MPI processes.
-
-    Parameters
-    ----------
-    nrp : int
-        Number of recording MPI processes
-
-    Raises
-    ------
-    NESTError
-        if `nrp` is not smaller than total number of processes
-
-    KEYWORDS:
-    """
-
-    sr("%d SetNumRecProcesses" % nrp)
-
-
-@check_stack
 def SetAcceptableLatency(port_name, latency):
     """Set the acceptable latency (in ms) for a MUSIC port.
-
-    Note that you need to have compiled NEST with MUSIC for this to work.
 
     Parameters
     ----------
@@ -116,12 +74,6 @@ def SetAcceptableLatency(port_name, latency):
         MUSIC port to set latency for
     latency : float
         Latency in ms
-
-    See Also
-    --------
-    SetMaxBuffered
-
-    KEYWORDS:
     """
 
     sps(kernel.SLILiteral(port_name))
@@ -133,20 +85,12 @@ def SetAcceptableLatency(port_name, latency):
 def SetMaxBuffered(port_name, size):
     """Set the maximum buffer size for a MUSIC port.
 
-    Note that you need to have compiled NEST with MUSIC for this to work.
-
     Parameters
     ----------
     port_name : str
         MUSIC port to set buffer size for
     size : int
         Buffer size
-
-    See Also
-    --------
-    SetAcceptableLatency
-
-    KEYWORDS:
     """
 
     sps(kernel.SLILiteral(port_name))

@@ -96,7 +96,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
     throw BadProperty( "Both min_delay and max_delay have to be specified" );
   }
 
-  if ( min_delay_updated && max_delay_updated )
+  if ( min_delay_updated and max_delay_updated )
   {
     if ( kernel().connection_manager.get_num_connections() > 0 )
     {
@@ -142,7 +142,7 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
       new_delay < kernel().connection_manager.get_min_delay();
     const bool bad_max_delay =
       new_delay > kernel().connection_manager.get_max_delay();
-    if ( bad_min_delay || bad_max_delay )
+    if ( bad_min_delay or bad_max_delay )
     {
       throw BadDelay( new_delay_ms,
         "Minimum and maximum delay cannot be changed "

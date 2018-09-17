@@ -134,7 +134,6 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -142,7 +141,7 @@ public:
   }
 
   void
-  send( Event& e, thread t, double, const CommonSynapseProperties& )
+  send( Event& e, thread t, const CommonSynapseProperties& )
   {
     SpikeEvent e_spike = static_cast< SpikeEvent& >( e );
 

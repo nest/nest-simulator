@@ -64,7 +64,7 @@ nest.SetStatus(sd, {'to_memory': False})
 nest.Connect(neuron, sd, syn_spec={'weight': 1.0, 'delay': h})
 
 # Simulation loop
-n_data = dcto / float(dcstep)
+n_data = int(dcto / float(dcstep))
 amplitudes = np.zeros(n_data)
 event_freqs = np.zeros(n_data)
 for i, amp in enumerate(range(dcfrom, dcto, dcstep)):

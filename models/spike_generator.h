@@ -29,10 +29,10 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "device_node.h"
 #include "event.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "node.h"
 #include "stimulating_device.h"
 
 namespace nest
@@ -182,7 +182,7 @@ namespace nest
  *
  * @ingroup Devices
  */
-class spike_generator : public Node
+class spike_generator : public DeviceNode
 {
 
 public:
@@ -214,7 +214,6 @@ public:
   {
     return ALL;
   }
-
 
 private:
   void init_state_( const Node& );

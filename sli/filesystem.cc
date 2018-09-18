@@ -312,7 +312,7 @@ std::mutex mtx;
 void
 FilesystemModule::TmpNamFunction::execute( SLIInterpreter* i ) const
 {
-  std::lock_guard<std::mutex> lock(mtx);
+  std::lock_guard< std::mutex > lock( mtx );
   static unsigned int seed = std::time( 0 );
   char* env = getenv( "TMPDIR" );
   std::string tmpdir( "/tmp" );

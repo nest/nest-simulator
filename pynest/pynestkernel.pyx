@@ -39,7 +39,6 @@ from cpython.ref cimport PyObject
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
 
-
 cdef string SLI_TYPE_BOOL = b"booltype"
 cdef string SLI_TYPE_INTEGER = b"integertype"
 cdef string SLI_TYPE_DOUBLE = b"doubletype"

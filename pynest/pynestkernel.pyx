@@ -77,19 +77,19 @@ except ImportError:
     pass
 
 class NESTMappedException(type):
-    """metaclass for excaption namespace that dynamically creates exception classes
+    """metaclass for exception namespace that dynamically creates exception classes
 
     If a class of this (meta)-type has an unknown attribute requested, __getattr__ defined below
     gets called, creating a class with that name (the error name) and with an __init__ taking
-    commandname and errormessage (as created in SLI) which is a closer on the errorname as well,
+    commandname and errormessage (as created in SLI) which is a closure on the errorname as well,
     with a parent of type NESTErrors.SLIException
     """
     def __getattr__(clz, errorname):
         """Creates a class of type "errorname" which is a child of NESTErrors.SLIException
+
+        This __getattr__ function also stores the class permanently as an attribute of NESTErrors for re-use
         """
         
-        # Constructed closure for __init__ for new class named 'errorname' which is a child of 'NESTErrors.SLIException'
-        # passing errorname as the errorname
         def __init__(self, commandname, errormessage, *args, **kwargs):
             """Initialization function
 
@@ -98,7 +98,7 @@ class NESTMappedException(type):
             commandname: sli command name
             errormessage: sli error message
 
-            self will be a descendant of NESTErrors.SLIException, passing this classes name as the errorname
+            self will be a descendant of NESTErrors.SLIException, passing this class's name as the errorname
             """
             
             NESTErrors.SLIException.__init__(self, errorname, commandname, errormessage, *args, **kwargs)
@@ -118,11 +118,12 @@ class NESTErrors(metaclass=NESTMappedException):
     """
     
     class NESTError(Exception):
-        """base exception class for all NEST exceptions
+        """Base exception class for all NEST exceptions
         
         Parameters:
         -----------
         message: full errormessage to report
+        *args, **kwargs: passed through to Exception base class
         """
         def __init__(self, message, *args, **kwargs):
             Exception.__init__(self, message, *args, **kwargs)
@@ -141,20 +142,22 @@ class NESTErrors(metaclass=NESTMappedException):
             errorname: error name from SLI
             commandname: command name from SLI
             errormessage: message from SLI
+            *args, **kwargs: passed through to NESTErrors.NESTError base class
             """
             message = "{} in {}{}".format(errorname, commandname, errormessage)
             NESTErrors.NESTError.__init__(self, message, errorname, commandname, errormessage, *args, **kwargs)
             
             self.errorname   = errorname
             self.commandname = commandname
-            self.errormessage  = errormessage
-            
+            self.errormessage  = errormessage            
 
-    # errors produced in python/cython code
     class PyNESTError(NESTError):
         """Exceptions produced from python/cython code
         """
         pass
+
+# So we don't break any code that currently catches a nest.NESTError
+NESTError = NESTErrors.NESTError
 
 cdef class SLIDatum(object):
 

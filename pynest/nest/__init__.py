@@ -113,7 +113,7 @@ def catching_sli_run(cmd):
         message = sli_pop()
         commandname = sli_pop()
         engine.run('clear')
-        
+
         exceptionCls = getattr(_kernel.NESTErrors, errorname)
         raise exceptionCls(commandname, message)
 

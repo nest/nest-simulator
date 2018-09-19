@@ -38,6 +38,8 @@ from cpython cimport array
 from cpython.ref cimport PyObject
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
+from six import with_metaclass
+
 
 cdef string SLI_TYPE_BOOL = b"booltype"
 cdef string SLI_TYPE_INTEGER = b"integertype"
@@ -75,10 +77,44 @@ try:
 except ImportError:
     pass
 
+class NESTMappedException:
+    def __getattr__(clz, errorname):
+        # Constructed closure for __init__ for new class named 'errorname' which is a child of 'NESTErrors.SLIException'
+        # passing errorname as the errorname
+        def __init__(self, commandname, errormessage, *args, **kwargs):
+            NESTErrors.SLIException.__init__(errorname, commandname, errormessage, *args, **kwargs)
 
-class NESTError(Exception):
-    pass
+        # Dynamic class construction
+        clz = type("NESTErrors." + errorname, (NESTErrors.SLIException,), {'__init__': __init__})
+        # Cache for reuse: __getattr__ should now not get called if requested again
+        setattr(NESTErrors, errorname, clz)
 
+        # And now we return the exception
+        return clz
+
+# Namespace for errors.
+# __getattr__ is applied here to dynamically fill with SLIException's
+class NESTErrors(with_metaclass(NESTMappedException)):
+    # base error class for all NEST exceptions
+    class NESTError(Exception):
+        def __init__(self, message, *args, **kwargs):
+            Exception.__init__(self, message, *args, **kwargs)
+            self.message = message
+
+    # base error class for all exceptions coming from sli
+    class SLIException(NESTError):
+        def __init__(self, errorname, commandname, errormessage, *args, **kwargs):
+            message = "{} in {}{}".format(errorname, commandname, errormessage)
+            NESTErrors.NESTError.__init__(self, message, errorname, commandname, errormessage, *args, **kwargs)
+            
+            self.errorname   = errorname
+            self.commandname = commandname
+            self.errormessage  = errormessage
+            
+
+    # errors produced in python/cython code
+    class PyNESTError(NESTError):
+        pass
 
 cdef class SLIDatum(object):
 
@@ -169,16 +205,16 @@ cdef class NESTEngine(object):
 
     def init(self, argv, modulepath):
         if self.pEngine is not NULL:
-            raise NESTError("engine already initialized")
+            raise NESTErrors.PyNESTError("engine already initialized")
 
         cdef int argc = <int> len(argv)
         if argc <= 0:
-            raise NESTError("argv can't be empty")
+            raise NESTErrors.PyNESTError("argv can't be empty")
 
         # Create c-style argv arguments from sys.argv
         cdef char** argv_chars = <char**> malloc((argc+1) * sizeof(char*))
         if argv_chars is NULL:
-            raise NESTError("couldn't allocate argv_char")
+            raise NESTErrors.PyNESTError("couldn't allocate argv_char")
         try:
             # argv must be null terminated. openmpi depends on this
             argv_chars[argc] = NULL
@@ -211,7 +247,7 @@ cdef class NESTEngine(object):
     def run(self, cmd):
 
         if self.pEngine is NULL:
-            raise NESTError("engine uninitialized")
+            raise NESTErrors.PyNESTError("engine uninitialized")
         cdef string cmd_bytes
         cmd_bytes = cmd.encode('utf-8')
         self.pEngine.execute(cmd_bytes)
@@ -219,16 +255,16 @@ cdef class NESTEngine(object):
     def push(self, obj):
 
         if self.pEngine is NULL:
-            raise NESTError("engine uninitialized")
+            raise NESTErrors.PyNESTError("engine uninitialized")
         self.pEngine.OStack.push(python_object_to_datum(obj))
 
     def pop(self):
 
         if self.pEngine is NULL:
-            raise NESTError("engine uninitialized")
+            raise NESTErrors.PyNESTError("engine uninitialized")
 
         if self.pEngine.OStack.empty():
-            raise NESTError("interpreter stack is empty")
+            raise NESTErrors.PyNESTError("interpreter stack is empty")
 
         cdef Datum* dat = (addr_tok(self.pEngine.OStack.top())).datum()
 
@@ -308,11 +344,11 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
         elif (<SLIDatum> obj).dtype == SLI_TYPE_PARAMETER.decode():
             ret = <Datum*> new ParameterDatum(deref(<ParameterDatum*> (<SLIDatum> obj).thisptr))
         else:
-            raise NESTError("unknown SLI datum type: {0}".format((<SLIDatum> obj).dtype))
+            raise NESTErrors.PyNESTError("unknown SLI datum type: {0}".format((<SLIDatum> obj).dtype))
     elif isConnectionGenerator(<PyObject*> obj):
         ret = unpackConnectionGeneratorDatum(<PyObject*> obj)
         if ret is NULL:
-            raise NESTError("failed to unpack passed connection generator object")
+            raise NESTErrors.PyNESTError("failed to unpack passed connection generator object")
     else:
 
         try:
@@ -343,15 +379,15 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
             elif numpy.issubdtype(obj.dtype, numpy.floating):
                 ret = python_buffer_to_datum[object, double](obj)
             else:
-                raise NESTError("only vectors of integers or floats are supported")
+                raise NESTErrors.PyNESTError("only vectors of integers or floats are supported")
 
         if ret is not NULL:
             return ret
         else:
-            raise NESTError("unknown Python type: {0}".format(type(obj)))
+            raise NESTErrors.PyNESTError("unknown Python type: {0}".format(type(obj)))
 
     if ret is NULL:
-        raise NESTError("conversion resulted in a null pointer")
+        raise NESTErrors.PyNESTError("conversion resulted in a null pointer")
 
     return ret
 
@@ -368,7 +404,7 @@ cdef inline Datum* python_buffer_to_datum(numeric_buffer_t buff, vector_value_t 
     elif vector_value_t is double:
         dat = <Datum*> new DoubleVectorDatum(vector_ptr)
     else:
-        raise NESTError("unsupported specialization: {0}".format(vector_value_t))
+        raise NESTErrors.PyNESTError("unsupported specialization: {0}".format(vector_value_t))
 
     n = len(buff)
 
@@ -383,7 +419,7 @@ cdef inline Datum* python_buffer_to_datum(numeric_buffer_t buff, vector_value_t 
 cdef inline object sli_datum_to_object(Datum* dat):
 
     if dat is NULL:
-        raise NESTError("datum is a null pointer")
+        raise NESTErrors.PyNESTError("datum is a null pointer")
 
     cdef string obj_str
     cdef object ret = None
@@ -418,10 +454,10 @@ cdef inline object sli_datum_to_object(Datum* dat):
         ret = SLIDatum()
         (<SLIDatum> ret)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
     else:
-        raise NESTError("unknown SLI type: {0}".format(datum_type.decode()))
+        raise NESTErrors.PyNESTError("unknown SLI type: {0}".format(datum_type.decode()))
 
     if ret is None:
-        raise NESTError("conversion resulted in a None object")
+        raise NESTErrors.PyNESTError("conversion resulted in a None object")
 
     return ret
 
@@ -488,7 +524,7 @@ cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ =
         if HAVE_NUMPY:
             ret_dtype = numpy.float_
     else:
-        raise NESTError("unsupported specialization")
+        raise NESTErrors.PyNESTError("unsupported specialization")
 
     memcpy(array_data, &vector_ptr.front(), vector_ptr.size() * sizeof(vector_value_t))
 

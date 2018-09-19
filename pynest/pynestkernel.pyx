@@ -38,7 +38,6 @@ from cpython cimport array
 from cpython.ref cimport PyObject
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
-from six import with_metaclass
 
 
 cdef string SLI_TYPE_BOOL = b"booltype"
@@ -77,12 +76,32 @@ try:
 except ImportError:
     pass
 
-class NESTMappedException:
+class NESTMappedException(type):
+    """metaclass for excaption namespace that dynamically creates exception classes
+
+    If a class of this (meta)-type has an unknown attribute requested, __getattr__ defined below
+    gets called, creating a class with that name (the error name) and with an __init__ taking
+    commandname and errormessage (as created in SLI) which is a closer on the errorname as well,
+    with a parent of type NESTErrors.SLIException
+    """
     def __getattr__(clz, errorname):
+        """Creates a class of type "errorname" which is a child of NESTErrors.SLIException
+        """
+        
         # Constructed closure for __init__ for new class named 'errorname' which is a child of 'NESTErrors.SLIException'
         # passing errorname as the errorname
         def __init__(self, commandname, errormessage, *args, **kwargs):
-            NESTErrors.SLIException.__init__(errorname, commandname, errormessage, *args, **kwargs)
+            """Initialization function
+
+            Parameters:
+            -----------
+            commandname: sli command name
+            errormessage: sli error message
+
+            self will be a descendant of NESTErrors.SLIException, passing this classes name as the errorname
+            """
+            
+            NESTErrors.SLIException.__init__(self, errorname, commandname, errormessage, *args, **kwargs)
 
         # Dynamic class construction
         clz = type("NESTErrors." + errorname, (NESTErrors.SLIException,), {'__init__': __init__})
@@ -92,18 +111,37 @@ class NESTMappedException:
         # And now we return the exception
         return clz
 
-# Namespace for errors.
-# __getattr__ is applied here to dynamically fill with SLIException's
-class NESTErrors(with_metaclass(NESTMappedException)):
-    # base error class for all NEST exceptions
+class NESTErrors(metaclass=NESTMappedException):
+    """Namespace for nest exceptions, including dynamically created classes from SLI
+
+    Dynamic exception creation is through __getattr__ defined in metaclass NESTMappedException
+    """
+    
     class NESTError(Exception):
+        """base exception class for all NEST exceptions
+        
+        Parameters:
+        -----------
+        message: full errormessage to report
+        """
         def __init__(self, message, *args, **kwargs):
             Exception.__init__(self, message, *args, **kwargs)
             self.message = message
 
-    # base error class for all exceptions coming from sli
     class SLIException(NESTError):
+        """Base class for all exceptions coming from sli
+        """
+        
         def __init__(self, errorname, commandname, errormessage, *args, **kwargs):
+            """Initialize function
+
+            Parameters:
+            -----------
+            message: the full message passed to construct the base NESTError
+            errorname: error name from SLI
+            commandname: command name from SLI
+            errormessage: message from SLI
+            """
             message = "{} in {}{}".format(errorname, commandname, errormessage)
             NESTErrors.NESTError.__init__(self, message, errorname, commandname, errormessage, *args, **kwargs)
             
@@ -114,6 +152,8 @@ class NESTErrors(with_metaclass(NESTMappedException)):
 
     # errors produced in python/cython code
     class PyNESTError(NESTError):
+        """Exceptions produced from python/cython code
+        """
         pass
 
 cdef class SLIDatum(object):

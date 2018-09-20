@@ -103,12 +103,12 @@ class NESTMappedException(type):
             NESTErrors.SLIException.__init__(self, errorname, commandname, errormessage, *args, **kwargs)
 
         # Dynamic class construction
-        clz = type("NESTErrors." + errorname, (NESTErrors.SLIException,), {'__init__': __init__})
+        newclass = type("NESTErrors." + errorname, (NESTErrors.SLIException,), {'__init__': __init__})
         # Cache for reuse: __getattr__ should now not get called if requested again
-        setattr(NESTErrors, errorname, clz)
+        setattr(NESTErrors, errorname, newclass)
 
         # And now we return the exception
-        return clz
+        return newclass
 
 class NESTErrors(metaclass=NESTMappedException):
     """Namespace for nest exceptions, including dynamically created classes from SLI

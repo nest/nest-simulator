@@ -83,13 +83,73 @@ class NESTMappedException(type):
     commandname and errormessage (as created in SLI) which is a closure on the errorname as well,
     with a parent of type NESTErrors.SLIException
     """
-    def __getattr__(clz, errorname):
+
+    parents = {
+        'TypeMismatch': 'InterpreterError',
+        'SystemSignal': 'InterpreterError',
+        'RangeCheck': 'InterpreterError',
+        'ArgumentType': 'InterpreterError',
+        'BadParameterValue': 'SLIException',
+        'DictError': 'InterpreterError',
+        'UndefinedName': 'DictError',
+        'EntryTypeMismatch': 'DictError',
+        'StackUnderflow': 'InterpreterError',
+        'IOError': 'SLIException',
+        'UnaccessedDictionaryEntry': 'DictError',
+        'UnknownModelName': 'KernelException',
+        'NewModelNameExists': 'KernelException',
+        'UnknownModelID': 'KernelException',
+        'ModelInUse': 'KernelException',
+        'UnknownSynapseType': 'KernelException',
+        'UnknownNode': 'KernelException',
+        'NoThreadSiblingsAvailable': 'KernelException',
+        'LocalNodeExpected': 'KernelException',
+        'NodeWithProxiesExpected': 'KernelException',
+        'UnknownReceptorType': 'KernelException',
+        'IncompatibleReceptorType': 'KernelException',
+        'UnknownPort': 'KernelException',
+        'IllegalConnection': 'KernelException',
+        'InexistentConnection': 'KernelException',
+        'UnknownThread': 'KernelException',
+        'BadDelay': 'KernelException',
+        'UnexpectedEvent': 'KernelException',
+        'UnsupportedEvent': 'KernelException',
+        'BadProperty': 'KernelException',
+        'BadParameter': 'KernelException',
+        'DimensionMismatch': 'KernelException',
+        'DistributionError': 'KernelException',
+        'SubnetExpected': 'KernelException',
+        'SimulationError': 'KernelException',
+        'InvalidDefaultResolution': 'KernelException',
+        'InvalidTimeInModel': 'KernelException',
+        'StepMultipleRequired': 'KernelException',
+        'TimeMultipleRequired': 'KernelException',
+        'GSLSolverFailure': 'KernelException',
+        'NumericalInstability': 'KernelException',
+        'KeyError': 'KernelException',
+        'MUSICPortUnconnected': 'KernelException',
+        'MUSICPortHasNoWidth': 'KernelException',
+        'MUSICPortAlreadyPublished': 'KernelException',
+        'MUSICSimulationHasRun': 'KernelException',
+        'MUSICChannelUnknown': 'KernelException',
+        'MUSICPortUnknown': 'KernelException',
+        'MUSICChannelAlreadyMapped': 'KernelException'
+    }
+               
+    def __getattr__(self, errorname):
         """Creates a class of type "errorname" which is a child of NESTErrors.SLIException
 
         This __getattr__ function also stores the class permanently as an attribute of NESTErrors for re-use
         """
-        
-        def __init__(self, commandname, errormessage, *args, **kwargs):
+
+        # Dynamic class construction, first check if we know it's parent
+        if errorname in self.parents:
+            parent = getattr(NESTErrors, self.parents[errorname])
+        else: # otherwise, SLIException is the default
+            parent = NESTErrors.SLIException
+
+        # construct our new init with closure on errorname and parent
+        def __init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs):
             """Initialization function
 
             Parameters:
@@ -97,13 +157,15 @@ class NESTMappedException(type):
             commandname: sli command name
             errormessage: sli error message
 
-            self will be a descendant of NESTErrors.SLIException, passing this class's name as the errorname
+            self will be a descendant of NESTErrors.SLIException (or a parent set in NESTMappedException.parents[errorname],
+            passing this class's name as the errorname
             """
-            
-            NESTErrors.SLIException.__init__(self, errorname, commandname, errormessage, *args, **kwargs)
 
-        # Dynamic class construction
-        newclass = type("NESTErrors." + errorname, (NESTErrors.SLIException,), {'__init__': __init__})
+            # now call init on the parent class
+            parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
+
+        # and now dynamically construct the new class
+        newclass = type("NESTErrors." + errorname, (parent,), {'__init__': __init__})
         # Cache for reuse: __getattr__ should now not get called if requested again
         setattr(NESTErrors, errorname, newclass)
 
@@ -132,7 +194,7 @@ class NESTErrors(metaclass=NESTMappedException):
         """Base class for all exceptions coming from sli
         """
         
-        def __init__(self, errorname, commandname, errormessage, *args, **kwargs):
+        def __init__(self, commandname, errormessage, *args, errorname='SLIException', **kwargs):
             """Initialize function
 
             Parameters:

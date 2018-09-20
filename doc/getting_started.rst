@@ -1,8 +1,26 @@
 Getting Started
 ================
 
-If you are new to NEST, we highly recommend you read the following text to get
-a better understanding of how NEST works. Then check out our :doc:`PyNEST tutorial <tutorials/index>`,
+A quick overview of simulating neural networks
+------------------------------------------------
+
+A NEST simulation tries to follow the logic of an electrophysiological
+experiment - the difference being it takes place inside the computer
+rather than in the physical world.
+
+In NEST, the neural system is a collection of **nodes** and their `Connections`_.
+Nodes correspond to ``neurons`` and ``devices`` and connections by ``synapses``.
+Different neuron and synapse models can coexist in the same network.
+
+To measure or observe the network activity, you can define
+so-called `Devices`_ that represent the various instruments (for measuring and
+stimulating) found in an experiment. These devices write their data either to
+memory or to file.
+
+The network and its configuration are defined at the level
+of the simulation language interpreter (SLI) as well as the PyNEST level.
+
+Check out our :doc:`PyNEST tutorial <tutorials/index>`,
 which will explain how to build your first neural network simulation in NEST.
 
 
@@ -12,58 +30,21 @@ which will explain how to build your first neural network simulation in NEST.
     * :doc:`Create your own model <models/create_model>`
     * :doc:`Examples of Network Models <auto_examples/index>`
 
-NEST - a neural network simulator
------------------------------------
-
-NEST is a simulator for **spiking neural network models** that focuses on the
-**dynamics, size and structure** of neural systems rather than on the exact
-morphology of individual neurons.
-
-NEST is ideal for networks of spiking neurons of any size, for example:
-
-1.  Models of information processing e.g. in the visual or auditory cortex of
-    mammals,
-
-2.  Models of network activity dynamics, e.g. laminar cortical networks or
-    balanced random networks,
-
-3.  Models of learning and plasticity.
-
-Simulating Neural Networks
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-A NEST simulation tries to follow the logic of an electrophysiological
-experiment with the difference that it takes place inside the computer's memory
-rather than in the physical world.
-
-As the experimenter, you need a clear idea of *what* you want to learn from the experiment.
-In the context of a network `Simulation`_, this means that you have to know
-*which input* you want to give to your network and *which output* you expect.
-
-The neural system is defined by a potentially large number of neurons and their
-`Connections`_. In a NEST network, different neuron and synapse models can coexist.
-
-To manipulate or observe the network dynamics, you can define
-so-called `Devices`_ that represent the various instruments (for measuring and
-stimulation) found in an experiment. These devices write their data either to
-memory or to file.
-
-In NEST, the neural system is a collection of **nodes** and their interactions.
-Nodes correspond to ``neurons``, ``synapses``, and ``devices``, and are
-implemented in C++.
-
-The network and its configuration are defined at the level
-of the simulation language interpreter (SLI).
-
 
 How do I use NEST?
 -------------------
+As the experimenter, you need a clear idea of *what* you want to learn from the experiment.
+In the context of a network `Simulation`_, this means that you have to know
+*which input* you want to give to your network and *which output* you're interested in.
 
 You can use NEST either with Python (PyNEST) or as a stand alone application (
 ``nest``).
 PyNEST provides a :doc:`set of commands <ref_material/index>` to the Python interpreter which give you
 access to NEST's simulation kernel. With these commands, you describe and run
 your network simulation.
+
+A basic network setup in PyNEST
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can use PyNEST interactively from the Python prompt or from within ipython.
 This is very helpful when you are exploring PyNEST, trying to learn a new
@@ -73,10 +54,10 @@ in turn be run from the command line or from the Python or ipython prompt.
 
 Fundamentally, you can build a basic network with the following functions::
 
-    # Create the models we want to simulate
+    # Create the models you want to simulate
     neuron = nest.Create("model_name")
 
-    # Create the device to stimulate or record simulation
+    # Create the device to stimulate or measure the simulation
     device = nest.Create("device_name")
 
     # Modify properties of the neuron and device

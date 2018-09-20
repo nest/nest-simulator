@@ -9,6 +9,17 @@ Welcome to the NEST simulator documentation!
 |                                    |                                       |
 +------------------------------------+---------------------------------------+
 
+NEST is a simulator for **spiking neural network models**, ideal for networks of any size, for example:
+
+1.  Models of information processing e.g. in the visual or auditory cortex of
+    mammals,
+
+2.  Models of network activity dynamics, e.g. laminar cortical networks or
+    balanced random networks,
+
+3.  Models of learning and plasticity.
+
+
 
 **New to NEST?**
     Start here at our :doc:`Getting Started <getting_started>` page

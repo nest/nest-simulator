@@ -12,9 +12,9 @@ If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`
 Download the current version of NEST here:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`Current Release NEST 2.14.0 <https://github.com/nest/nest-simulator/archive/v2.14.0.tar.gz>`_
+`Current Release NEST 2.16.0 <https://github.com/nest/nest-simulator/archive/v2.16.0.tar.gz>`_
 ````````````````````````````````````````````````````````````````````````````````````````````````````
-`Release Notes <https://github.com/nest/nest-simulator/releases/tag/v2.14.0>`_
+`Release Notes <https://github.com/nest/nest-simulator/releases/tag/v2.16.0>`_
 
 
 `Latest developer version <https://github.com/nest/nest-simulator>`_
@@ -36,11 +36,9 @@ Previous Releases
 ~~~~~~~~~~~~~~~~~~~
 We continuously aim to improve NEST and implement features and fix bugs with every new version;
 thus, we strongly encourage our users to use the **most recent version of NEST**. However,
-if you do need an older version you can find `all NEST releases here <https://github.com/nest/nest-simulator/releases/tag/v2.12.0>`_
-and you can find `Older Versions of Live Media`_ below.
+if you do need an older version you can find `all NEST releases here <https://github.com/nest/nest-simulator/releases/>`_.
 
-Older Versions of Live Media
-------------------------------
+**Older Versions of Live Media**
 
 - Ubuntu 16.04 Live Media with NEST 2.12.0
 

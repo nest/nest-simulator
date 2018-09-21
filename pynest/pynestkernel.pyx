@@ -81,7 +81,7 @@ class NESTMappedException(type):
     If a class of this (meta)-type has an unknown attribute requested, __getattr__ defined below
     gets called, creating a class with that name (the error name) and with an __init__ taking
     commandname and errormessage (as created in SLI) which is a closure on the errorname as well,
-    with a parent of type NESTErrors.SLIException
+    with a parent of type NESTErrors.SLIException or parents[errorname] if defined
     """
 
     parents = {

@@ -78,16 +78,17 @@ except ImportError:
 class NESTMappedException(type):
     """metaclass for exception namespace that dynamically creates exception classes
 
-    If a class of this (meta)-type has an unknown attribute requested, __getattr__ defined below
+    If a class (self) of this (meta)-type has an unknown attribute requested, __getattr__ defined below
     gets called, creating a class with that name (the error name) and with an __init__ taking
-    commandname and errormessage (as created in SLI) which is a closure on the errorname as well,
-    with a parent of default type (NESTErrors.SLIException) or NESTErrors.parents[errorname] if defined
+    commandname and errormessage (as created in the source) which is a closure on the parent and errorname as well,
+    with a parent of default type (self.default_parent) or self.parents[errorname] if defined
     """
 
     def __getattr__(self, errorname):
-        """Creates a class of type "errorname" which is a child of NESTErrors.SLIException
+        """Creates a class of type "errorname" which is a child of self.default_parent or self.parents[errorname] if one is defined
 
-        This __getattr__ function also stores the class permanently as an attribute of NESTErrors for re-use
+        This __getattr__ function also stores the class permanently as an attribute of self for re-use
+        where self is actually the class that triggered the getattr (the class that NESTMappedException is a metaclass of)
         """
 
         # Dynamic class construction, first check if we know it's parent
@@ -99,13 +100,19 @@ class NESTMappedException(type):
         # and now dynamically construct the new class
         # not NESTMappedException, since that would mean the metaclass would let the new class inherit
         # this __getattr__, allowing unintended dynamic construction of attributes
-        newclass = type(self.__name__ + '.' + errorname, (parent,), {'__init__': self.init(parent, errorname)})
-        newclass.__doc__ = \
-            """Dynamically created exception {} from {}
-
-            Created for the namespace: {}
-            Parent exception: {}
-            """.format(errorname, self.source, self.__name__, parent.__name__)
+        newclass = type(
+            self.__name__ + '.' + errorname,
+            (parent,),
+            {
+                '__init__': self.init(parent, errorname),
+                '__doc__': \
+                """Dynamically created exception {} from {}
+                
+                Created for the namespace: {}
+                Parent exception: {}
+                """.format(errorname, self.source, self.__name__, parent.__name__)
+            }
+        )
         
         # Cache for reuse: __getattr__ should now not get called if requested again
         setattr(self, errorname, newclass)
@@ -116,7 +123,7 @@ class NESTMappedException(type):
 class NESTErrors(metaclass=NESTMappedException):
     """Namespace for nest exceptions, including dynamically created classes from SLI
 
-    Dynamic exception creation is through __getattr__ defined in metaclass NESTMappedException
+    Dynamic exception creation is through __getattr__ defined in the metaclass NESTMappedException
     """    
                
     class NESTError(Exception):
@@ -140,7 +147,6 @@ class NESTErrors(metaclass=NESTMappedException):
 
             Parameters:
             -----------
-            message: the full message passed to construct the base NESTError
             errorname: error name from SLI
             commandname: command name from SLI
             errormessage: message from SLI
@@ -178,7 +184,7 @@ class NESTErrors(metaclass=NESTMappedException):
             # now call init on the parent class: all of this is only needed to properly set errorname
             parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
 
-        __init__.__doc__ = \
+        docstring = \
             """Initialization function
 
             Parameters:
@@ -186,10 +192,14 @@ class NESTErrors(metaclass=NESTMappedException):
             commandname: sli command name
             errormessage: sli error message
             errorname: set by default ("{}") or passed in by child (shouldn't be explicitly set when creating an instance)
+            *args, **kwargs: passed through to base class
 
             self will be a descendant of {}
             """.format(errorname, parent.__name__)
 
+        try: __init__.__doc__ = docstring
+        except AttributeError: __init__.__func__.__doc__ = docstring
+        
         return __init__
 
     source = "SLI"

@@ -128,13 +128,17 @@ class NESTErrors(metaclass=NESTMappedException):
                
     class NESTError(Exception):
         """Base exception class for all NEST exceptions
-        
-        Parameters:
-        -----------
-        message: full errormessage to report
-        *args, **kwargs: passed through to Exception base class
         """
+
         def __init__(self, message, *args, **kwargs):
+            """Initializer for NESTError base class
+
+            Parameters:
+            -----------
+            message: full error message to report
+            *args, **kwargs: passed through to Exception base class
+            """
+
             Exception.__init__(self, message, *args, **kwargs)
             self.message = message
 
@@ -175,13 +179,13 @@ class NESTErrors(metaclass=NESTMappedException):
 
         Parameters:
         ----------
-        parent of the class needed to properly walk up the MRO (not possible with super() or super(type,...)
-            because of they dynamic creation of the function
-        errorname is the class name for information purposes internally
+        parent: the ancestor of the class needed to properly walk up the MRO (not possible with super() or super(type,...)
+            because of they dynamic creation of the function (used as a closure on the constructed __init__)
+        errorname: the class name for information purposes internally (used as a closure on the constructed __init__)
         """
         
         def __init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs):
-            # now call init on the parent class: all of this is only needed to properly set errorname
+            # recursively init the parent class: all of this is only needed to properly set errorname
             parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
 
         docstring = \
@@ -202,6 +206,13 @@ class NESTErrors(metaclass=NESTMappedException):
         
         return __init__
 
+    # source: the dynamically created exceptions come from SLI
+    # default_parent: the dynamically created exceptions are descended from SLIExcepton
+    # parents: unless they happen to be mapped in this list to another exception descended from SLIException
+    #          these should be updated when new exceptions in sli are created that aren't directly descended
+    #          from SLIException (but nothing bad will happen, it's just that otherwise they'll be directly
+    #          descended from SLIException instead of an intermediate exception; they'll still be constructed
+    #          and useable)
     source = "SLI"
     default_parent = SLIException
     parents = {

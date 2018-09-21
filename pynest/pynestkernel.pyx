@@ -167,8 +167,10 @@ class NESTMappedException(type):
             # now call init on the parent class: all of this is only needed to properly set errorname
             parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
 
-        # and now dynamically construct the new class (NESTMappedException is a child of 'type')
-        newclass = NESTMappedException("NESTErrors." + errorname, (parent,), {'__init__': __init__})
+        # and now dynamically construct the new class
+        # not NESTMappedException, since that would mean the metaclass would let the class inherit
+        # this __getattr__
+        newclass = type("NESTErrors." + errorname, (parent,), {'__init__': __init__})
         # Cache for reuse: __getattr__ should now not get called if requested again
         setattr(NESTErrors, errorname, newclass)
 

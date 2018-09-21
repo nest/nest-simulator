@@ -100,6 +100,12 @@ class NESTMappedException(type):
         # not NESTMappedException, since that would mean the metaclass would let the new class inherit
         # this __getattr__, allowing unintended dynamic construction of attributes
         newclass = type(self.__name__ + '.' + errorname, (parent,), {'__init__': self.init(parent, errorname)})
+        newclass.__doc__ = \
+            """Dynamically created exception {} from {}
+
+            Created for the namespace: {}
+            Parent exception: {}
+            """.format(errorname, self.source, self.__name__, parent.__name__)
         
         # Cache for reuse: __getattr__ should now not get called if requested again
         setattr(self, errorname, newclass)
@@ -152,31 +158,41 @@ class NESTErrors(metaclass=NESTMappedException):
         """
         pass
 
-    @classmethod
-    def init(clz, parent, errorname):
-        # construct our new init with closure on errorname (as a default value) and parent
-        # the default value allows the __init__ to be chained and set by the leaf child
-        # this also moves the paramerization of __init__ away from the class construction logic
-        # and next to the SLIException init
+    @staticmethod
+    def init(parent, errorname):
+        """ Static class method to construct init's for SLIException children
+
+        Construct our new init with closure on errorname (as a default value) and parent
+        The default value allows the __init__ to be chained and set by the leaf child
+        This also moves the paramerization of __init__ away from the class construction logic
+        and next to the SLIException init
+
+        Parameters:
+        ----------
+        parent of the class needed to properly walk up the MRO (not possible with super() or super(type,...)
+            because of they dynamic creation of the function
+        errorname is the class name for information purposes internally
+        """
+        
         def __init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs):
+            # now call init on the parent class: all of this is only needed to properly set errorname
+            parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
+
+        __init__.__doc__ = \
             """Initialization function
 
             Parameters:
             -----------
             commandname: sli command name
             errormessage: sli error message
-            errorname: set by default for the leaf exception, then passed back to override
-                       parent values (shouldn't be explicitly set)
+            errorname: set by default ("{}") or passed in by child (shouldn't be explicitly set when creating an instance)
 
-            self will be a descendant of NESTErrors.SLIException (or a parent set in NESTMappedException.parents[errorname]),
-            passing this class's name as the errorname
-            """
-
-            # now call init on the parent class: all of this is only needed to properly set errorname
-            parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
+            self will be a descendant of {}
+            """.format(errorname, parent.__name__)
 
         return __init__
-        
+
+    source = "SLI"
     default_parent = SLIException
     parents = {
         'TypeMismatch': 'InterpreterError',

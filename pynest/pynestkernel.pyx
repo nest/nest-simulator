@@ -96,29 +96,10 @@ class NESTMappedException(type):
         else: # otherwise, get the default (SLIException)
             parent = self.default_parent
 
-        # construct our new init with closure on errorname (as a default value) and parent
-        # the default value allows the __init__ to be chained and set by the leaf child
-        def __init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs):
-            """Initialization function
-
-            Parameters:
-            -----------
-            commandname: sli command name
-            errormessage: sli error message
-            errorname: set by default for the leaf exception, then passed back to override
-                       parent values (shouldn't be explicitly set)
-
-            self will be a descendant of NESTErrors.SLIException (or a parent set in NESTMappedException.parents[errorname]),
-            passing this class's name as the errorname
-            """
-
-            # now call init on the parent class: all of this is only needed to properly set errorname
-            parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
-
         # and now dynamically construct the new class
         # not NESTMappedException, since that would mean the metaclass would let the new class inherit
         # this __getattr__, allowing unintended dynamic construction of attributes
-        newclass = type(self.__name__ + '.' + errorname, (parent,), {'__init__': __init__})
+        newclass = type(self.__name__ + '.' + errorname, (parent,), {'__init__': self.init(parent, errorname)})
         
         # Cache for reuse: __getattr__ should now not get called if requested again
         setattr(self, errorname, newclass)
@@ -171,6 +152,31 @@ class NESTErrors(metaclass=NESTMappedException):
         """
         pass
 
+    @classmethod
+    def init(clz, parent, errorname):
+        # construct our new init with closure on errorname (as a default value) and parent
+        # the default value allows the __init__ to be chained and set by the leaf child
+        # this also moves the paramerization of __init__ away from the class construction logic
+        # and next to the SLIException init
+        def __init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs):
+            """Initialization function
+
+            Parameters:
+            -----------
+            commandname: sli command name
+            errormessage: sli error message
+            errorname: set by default for the leaf exception, then passed back to override
+                       parent values (shouldn't be explicitly set)
+
+            self will be a descendant of NESTErrors.SLIException (or a parent set in NESTMappedException.parents[errorname]),
+            passing this class's name as the errorname
+            """
+
+            # now call init on the parent class: all of this is only needed to properly set errorname
+            parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
+
+        return __init__
+        
     default_parent = SLIException
     parents = {
         'TypeMismatch': 'InterpreterError',

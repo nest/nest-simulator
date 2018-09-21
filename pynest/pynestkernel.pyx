@@ -81,9 +81,97 @@ class NESTMappedException(type):
     If a class of this (meta)-type has an unknown attribute requested, __getattr__ defined below
     gets called, creating a class with that name (the error name) and with an __init__ taking
     commandname and errormessage (as created in SLI) which is a closure on the errorname as well,
-    with a parent of type NESTErrors.SLIException or parents[errorname] if defined
+    with a parent of default type (NESTErrors.SLIException) or NESTErrors.parents[errorname] if defined
     """
 
+    def __getattr__(self, errorname):
+        """Creates a class of type "errorname" which is a child of NESTErrors.SLIException
+
+        This __getattr__ function also stores the class permanently as an attribute of NESTErrors for re-use
+        """
+
+        # Dynamic class construction, first check if we know it's parent
+        if errorname in self.parents:
+            parent = getattr(self, self.parents[errorname])
+        else: # otherwise, get the default (SLIException)
+            parent = self.default_parent
+
+        # construct our new init with closure on errorname (as a default value) and parent
+        # the default value allows the __init__ to be chained and set by the leaf child
+        def __init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs):
+            """Initialization function
+
+            Parameters:
+            -----------
+            commandname: sli command name
+            errormessage: sli error message
+            errorname: set by default for the leaf exception, then passed back to override
+                       parent values (shouldn't be explicitly set)
+
+            self will be a descendant of NESTErrors.SLIException (or a parent set in NESTMappedException.parents[errorname]),
+            passing this class's name as the errorname
+            """
+
+            # now call init on the parent class: all of this is only needed to properly set errorname
+            parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
+
+        # and now dynamically construct the new class
+        # not NESTMappedException, since that would mean the metaclass would let the new class inherit
+        # this __getattr__, allowing unintended dynamic construction of attributes
+        newclass = type(self.__name__ + '.' + errorname, (parent,), {'__init__': __init__})
+        
+        # Cache for reuse: __getattr__ should now not get called if requested again
+        setattr(self, errorname, newclass)
+
+        # And now we return the exception
+        return newclass
+
+class NESTErrors(metaclass=NESTMappedException):
+    """Namespace for nest exceptions, including dynamically created classes from SLI
+
+    Dynamic exception creation is through __getattr__ defined in metaclass NESTMappedException
+    """    
+               
+    class NESTError(Exception):
+        """Base exception class for all NEST exceptions
+        
+        Parameters:
+        -----------
+        message: full errormessage to report
+        *args, **kwargs: passed through to Exception base class
+        """
+        def __init__(self, message, *args, **kwargs):
+            Exception.__init__(self, message, *args, **kwargs)
+            self.message = message
+
+    class SLIException(NESTError):
+        """Base class for all exceptions coming from sli
+        """
+        
+        def __init__(self, commandname, errormessage, *args, errorname='SLIException', **kwargs):
+            """Initialize function
+
+            Parameters:
+            -----------
+            message: the full message passed to construct the base NESTError
+            errorname: error name from SLI
+            commandname: command name from SLI
+            errormessage: message from SLI
+            *args, **kwargs: passed through to NESTErrors.NESTError base class
+            """
+            message = "{} in {}{}".format(errorname, commandname, errormessage)
+            NESTErrors.NESTError.__init__(self, message, errorname, commandname, errormessage, *args, **kwargs)
+            
+            self.errorname   = errorname
+            self.commandname = commandname
+            self.errormessage  = errormessage            
+
+    class PyNESTError(NESTError):
+        """Exceptions produced from python/cython code
+        """
+        pass
+
+    default_parent = SLIException
     parents = {
         'TypeMismatch': 'InterpreterError',
         'SystemSignal': 'InterpreterError',
@@ -135,92 +223,7 @@ class NESTMappedException(type):
         'MUSICPortUnknown': 'KernelException',
         'MUSICChannelAlreadyMapped': 'KernelException'
     }
-               
-    def __getattr__(self, errorname):
-        """Creates a class of type "errorname" which is a child of NESTErrors.SLIException
 
-        This __getattr__ function also stores the class permanently as an attribute of NESTErrors for re-use
-        """
-
-        # Dynamic class construction, first check if we know it's parent
-        if errorname in self.parents:
-            parent = getattr(NESTErrors, self.parents[errorname])
-        else: # otherwise, SLIException is the default
-            parent = NESTErrors.SLIException
-
-        # construct our new init with closure on errorname (as a default value) and parent
-        # the default value allows the __init__ to be chained and set by the leaf child
-        def __init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs):
-            """Initialization function
-
-            Parameters:
-            -----------
-            commandname: sli command name
-            errormessage: sli error message
-            errorname: set by default for the leaf exception, then passed back to override
-                       parent values (shouldn't be explicitly set)
-
-            self will be a descendant of NESTErrors.SLIException (or a parent set in NESTMappedException.parents[errorname]),
-            passing this class's name as the errorname
-            """
-
-            # now call init on the parent class: all of this is only needed to properly set errorname
-            parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
-
-        # and now dynamically construct the new class
-        # not NESTMappedException, since that would mean the metaclass would let the class inherit
-        # this __getattr__
-        newclass = type("NESTErrors." + errorname, (parent,), {'__init__': __init__})
-        # Cache for reuse: __getattr__ should now not get called if requested again
-        setattr(NESTErrors, errorname, newclass)
-
-        # And now we return the exception
-        return newclass
-
-class NESTErrors(metaclass=NESTMappedException):
-    """Namespace for nest exceptions, including dynamically created classes from SLI
-
-    Dynamic exception creation is through __getattr__ defined in metaclass NESTMappedException
-    """
-    
-    class NESTError(Exception):
-        """Base exception class for all NEST exceptions
-        
-        Parameters:
-        -----------
-        message: full errormessage to report
-        *args, **kwargs: passed through to Exception base class
-        """
-        def __init__(self, message, *args, **kwargs):
-            Exception.__init__(self, message, *args, **kwargs)
-            self.message = message
-
-    class SLIException(NESTError):
-        """Base class for all exceptions coming from sli
-        """
-        
-        def __init__(self, commandname, errormessage, *args, errorname='SLIException', **kwargs):
-            """Initialize function
-
-            Parameters:
-            -----------
-            message: the full message passed to construct the base NESTError
-            errorname: error name from SLI
-            commandname: command name from SLI
-            errormessage: message from SLI
-            *args, **kwargs: passed through to NESTErrors.NESTError base class
-            """
-            message = "{} in {}{}".format(errorname, commandname, errormessage)
-            NESTErrors.NESTError.__init__(self, message, errorname, commandname, errormessage, *args, **kwargs)
-            
-            self.errorname   = errorname
-            self.commandname = commandname
-            self.errormessage  = errormessage            
-
-    class PyNESTError(NESTError):
-        """Exceptions produced from python/cython code
-        """
-        pass
 
 # So we don't break any code that currently catches a nest.NESTError
 NESTError = NESTErrors.NESTError

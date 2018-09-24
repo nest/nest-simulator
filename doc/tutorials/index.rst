@@ -22,3 +22,8 @@ Tutorials
    music_tutorial/music_tutorial_tips
 
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Videos
+
+   videos/index

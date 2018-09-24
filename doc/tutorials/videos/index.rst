@@ -4,4 +4,4 @@ Video Tutorial Series
 .. toctree::
    :maxdepth: 1
 
-   testvideo
+   one_neuron.md

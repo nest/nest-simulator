@@ -462,8 +462,9 @@ def CreateLayer(specs):
                                  'elements'  : 'iaf_psc_alpha'})
 
             # investigate the status dictionary of a layer
-            nest.GetStatus(gl)[0]['topology']
-
+            nest.GetStatus(gl)[0]
+            # or
+            gl.get()
     """
 
     if not isinstance(specs, dict):
@@ -842,7 +843,7 @@ def Distance(from_arg, to_arg):
             print(Distance(l[1], l[2]))
 
             # distance between the position (0.0., 0.0) and node 2
-            print(l.Distance([(0.0, 0.0)], l[1:2]))
+            print(Distance([(0.0, 0.0)], l[1:2]))
 
     """
     if not isinstance(to_arg, nest.GIDCollection):

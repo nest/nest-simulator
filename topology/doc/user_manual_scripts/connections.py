@@ -231,6 +231,7 @@ plt.savefig('../user_manual_figures/conn2_c.png', bbox_inches='tight')
 
 # 3d masks
 
+
 def conn_figure_3d(fig, layer, connd, targets=None, showmask=True,
                    showkern=False,
                    xticks=range(-5, 6), yticks=range(-5, 6),

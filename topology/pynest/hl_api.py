@@ -2115,7 +2115,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
         ll = mask['rectangular']['lower_left']
         ur = mask['rectangular']['upper_right']
         pos = srcpos + ll + offs
-        
+
         if 'azimuth_angle' in mask['rectangular']:
             angle = mask['rectangular']['azimuth_angle']
             angle_rad = angle * pi / 180

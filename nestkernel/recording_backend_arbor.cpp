@@ -35,9 +35,10 @@
 #include "mpiutil.hpp"
 #include "exceptions.h"
 
+// this is here to hide the arbor internal header info from nest
 struct nest::ArborInternal {
-  comm_info info;
-  std::vector< std::vector< arb::spike > > spike_buffers;
+  arb::copy::comm_info info;
+  std::vector< std::vector< arb::copy::spike > > spike_buffers;
 
   ArborInternal() = default;
   ArborInternal(const ArborInternal&) = delete;
@@ -47,14 +48,24 @@ struct nest::ArborInternal {
   ArborInternal& operator = (ArborInternal&&) = default;
 };
 
+// because we're only using C++11, but we don't want to pollute std::
+// https://herbsutter.com/2013/05/29/gotw-89-solution-smart-pointers/
+// https://isocpp.org/files/papers/N3656.txt
+namespace nest {
+template<typename T, typename ...Args>
+std::unique_ptr<T> make_unique( Args&& ...args )
+{
+    return std::unique_ptr<T>( new T( std::forward<Args>(args)... ) );
+}
+}
+
 nest::RecordingBackendArbor::RecordingBackendArbor()
   : prepared_(false)
   , cleanedup_(false)
   , steps_left_(0)
   , arbor_steps_(0)
   , num_arbor_cells_(0)
-  , arbor_(new ArborInternal)
-
+  , arbor_(nest::make_unique<ArborInternal>())
 {
 }
 
@@ -112,7 +123,7 @@ nest::RecordingBackendArbor::prepare()
     prepared_ = true;
     
     //  INITIALISE MPI
-    arbor_->info = get_comm_info(false);
+    arbor_->info = arb::copy::get_comm_info(false);
 
     //  MODEL SETUP
     DictionaryDatum dict_out;
@@ -122,18 +133,18 @@ nest::RecordingBackendArbor::prepare()
     
     // HAND SHAKE ARBOR-NEST
     // hand shake #1: communicate cell populations
-    num_arbor_cells_ = broadcast(0, MPI_COMM_WORLD, arbor_->info.arbor_root);
-    broadcast(num_nest_cells, MPI_COMM_WORLD, arbor_->info.nest_root);
+    num_arbor_cells_ = arb::copy::broadcast(0, MPI_COMM_WORLD, arbor_->info.arbor_root);
+    arb::copy::broadcast(num_nest_cells, MPI_COMM_WORLD, arbor_->info.nest_root);
 
     // hand shake #2: min delay
-    const float arb_comm_time = broadcast(0.f, MPI_COMM_WORLD, arbor_->info.arbor_root);
+    const float arb_comm_time = arb::copy::broadcast(0.f, MPI_COMM_WORLD, arbor_->info.arbor_root);
     const float nest_comm_time = nest_min_delay;
-    broadcast(nest_comm_time, MPI_COMM_WORLD, arbor_->info.nest_root);
+    arb::copy::broadcast(nest_comm_time, MPI_COMM_WORLD, arbor_->info.nest_root);
     const float min_delay = std::min(nest_comm_time, arb_comm_time);
 
     // hand shake #3: steps
     steps_left_ = arbor_steps_
-        = broadcast(0u, MPI_COMM_WORLD, arbor_->info.arbor_root);
+        = arb::copy::broadcast(0u, MPI_COMM_WORLD, arbor_->info.arbor_root);
 
     DictionaryDatum dict_in;
     (*dict_in)["min_delay"] = min_delay;
@@ -168,7 +179,7 @@ nest::RecordingBackendArbor::synchronize()
   {
     auto& buffers = arbor_->spike_buffers;
 
-    std::vector<arb::spike> local_spikes;
+    std::vector<arb::copy::spike> local_spikes;
     std::size_t size = 0;
     for (const auto& spikes: buffers)
     {
@@ -182,7 +193,7 @@ nest::RecordingBackendArbor::synchronize()
       spikes.clear();
     }
     
-    gather_spikes(local_spikes, arbor_->info.comm);
+    arb::copy::gather_spikes(local_spikes, arbor_->info.comm);
   }
 }
 

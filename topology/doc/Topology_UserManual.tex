@@ -689,8 +689,8 @@ Chapter~\ref{ch:extending}.
 
 \subsection{Masks for 2D layers}\label{sec:free_masks}
 
-Topology currently provides three types of masks usable for 2-dimensional
-free and grid-based layers. They are illustrated in Fig.~\ref{fig:conn2}.
+Topology currently provides four types of masks usable for 2-dimensional
+free and grid-based layers. They are illustrated in Fig.~\ref{fig:conn2_a}.
 The masks are
 \begin{description}
 \item[Rectangular\index{rectangular}] All nodes within a rectangular
@@ -706,32 +706,52 @@ The masks are
   not connected. The area is specified by the radii of the inner and
   outer circles.
 \lstinputlisting[linerange=conn2d-end]{user_manual_scripts/connections.py}
+\item[Elliptical\index{elliptical}] All nodes within an ellipsis are connected.
+  The area is specified by its major and minor axis.
+\lstinputlisting[linerange=conn2e-end]{user_manual_scripts/connections.py}
 \end{description}
-By default, the masks are centered about the position of the driver
+
+\scriptfig{conn2_a}{0.9}{Masks for 2D layers}%
+{Masks for 2D layers. For all mask types, the driver node is
+  marked by a wide light-red circle, the selected pool nodes by red
+  dots and the masks by red lines. From left to right, top to bottom:
+  rectangular, circular, doughnut and elliptical masks centered about the driver
+  node.}
+
+\noindent By default, the masks are centered about the position of the driver
 node, mapped into the pool layer. You can change the location of the
 mask relative to the driver node by specifying an
 \lstinline!'anchor'!\index{anchor} entry in the mask dictionary. The
 anchor is a 2D vector specifying the location of the mask center
 relative to the driver node, as in the following examples (cf.\
-Fig.~\ref{fig:conn2}, bottom row):
+Fig.~\ref{fig:conn2_b}):
 \lstinputlisting[linerange=conn2ro-end]{user_manual_scripts/connections.py}
 \lstinputlisting[linerange=conn2co-end]{user_manual_scripts/connections.py}
 \lstinputlisting[linerange=conn2do-end]{user_manual_scripts/connections.py}
+\lstinputlisting[linerange=conn2eo-end]{user_manual_scripts/connections.py}
 
-\scriptfig{conn2}{0.9}{Masks for 2D layers}%
-{Masks for 2D layers. For all mask types, the driver node is
-  marked by a wide light-red circle, the selected pool nodes by red
-  dots and the masks by red lines. Top row from left to right:
-  rectangular, circular and doughnut masks centered about the driver
-  node.
-Bottom row from left to right: the same masks as in the top row, but
-centered about $(-1.5,-1.5)$, $(-2,0)$ and $(1.5,1.5)$, respectively,
-using the \lstinline!'anchor'! parameter.}
+\scriptfig{conn2_b}{0.9}{Masks for 2D layers}%
+{The same masks as in Fig.~\ref{fig:conn2_a}, but
+ centered about $(-1.5,-1.5)$, $(-2,0)$, $(1.5,1.5)$ and $(2, -1)$,
+ respectively, using the \lstinline!'anchor'! parameter.}
 
+\noindent It is possible to rotate the $\textbf{rectangular}$ and
+$\textbf{elliptical}$ masks, see Fig~\ref{fig:conn2_c}. To do so, add an
+\lstinline!'azimuth_angle'!\index{azimuth\_angle} entry in the
+specific mask dictionary. The azimuth\_angle is measured in degrees and is the
+angle from the x-axis to the center of the mask after rotation. 
+\lstinputlisting[linerange=conn2rr-end]{user_manual_scripts/connections.py}
+\newpage
+\lstinputlisting[linerange=conn2er-end]{user_manual_scripts/connections.py}
+
+\scriptfig{conn2_c}{0.9}{Masks for 2D layers}%
+{Rotated rectangle and elliptical mask from Fig.~\ref{fig:conn2_a} and
+ Fig.~\ref{fig:conn2_b}, where the rectangle mask is rotated $120^\circ$ and
+ the elliptical mask is rotated $45^\circ$.}
 
 \subsection{Masks for 3D layers}\label{sec:3d_masks}
 
-Similarly, there are two mask types that can be used for 3D layers\index{3D layers},
+Similarly, there are three mask types that can be used for 3D layers\index{3D layers},
 \begin{description}
 \item[Box\index{box}] All nodes within a cuboid volume are connected. The
   area is specified by its lower left and upper right corners, measured in
@@ -740,10 +760,18 @@ Similarly, there are two mask types that can be used for 3D layers\index{3D laye
 \item[Spherical\index{spherical}] All nodes within a sphere are
   connected.  The area is specified by its radius.
 \lstinputlisting[linerange=conn_3d_b-end]{user_manual_scripts/connections.py}
+\item[Ellipsoidal\index{ellipsoidal}] All nodes within an ellipsoid are
+  connected. The area is specified by its major, minor, and polar axis.
+\lstinputlisting[linerange=conn_3d_c-end]{user_manual_scripts/connections.py}
 \end{description}
 As in the 2D case, you can change the location of the mask relative to the
-driver node by specifying a 3D vector in the
-\lstinline!'anchor'!\index{anchor} entry in the mask dictionary.
+driver node by specifying a 3D vector in the \lstinline!'anchor'!\index{anchor}
+entry in the mask dictionary. If you want to rotate the box or ellipsoidal
+masks, you can add an \lstinline!'azimuth_angle'!\index{azimuth\_angle} entry
+in the specific mask dictionary for rotation from the x-axis towards the y-axis,
+or an \lstinline!'polar_angle'!\index{polar\_angle} entry, specifying the
+rotation angle in degrees from the z-axis. You can specify both at once of
+course. NEST currently do not support rotation in all three directions.
 
 \scriptfig{conn_3d}{0.9}{Masks for 3D layers}%
 {Masks for 3D layers. For all mask types, the driver node is

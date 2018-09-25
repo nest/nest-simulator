@@ -2087,6 +2087,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     import matplotlib
     import matplotlib.pyplot as plt
     import numpy as np
+    from math import cos, sin, pi
 
     # minimal checks for ax having been created by PlotKernel
     if ax and not isinstance(ax, matplotlib.axes.Axes):
@@ -2113,8 +2114,18 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     elif 'rectangular' in mask:
         ll = mask['rectangular']['lower_left']
         ur = mask['rectangular']['upper_right']
+        pos = srcpos + ll + offs
+        
+        if 'azimuth_angle' in mask['rectangular']:
+            angle = mask['rectangular']['azimuth_angle']
+            angle_rad = angle * pi / 180
+            pos = [pos[0] * cos(angle_rad) - pos[1] * sin(angle_rad),
+                   pos[0] * sin(angle_rad) + pos[1] * cos(angle_rad)]
+        else:
+            angle = 0.0
+
         ax.add_patch(
-            plt.Rectangle(srcpos + ll + offs, ur[0] - ll[0], ur[1] - ll[1],
+            plt.Rectangle(pos, ur[0] - ll[0], ur[1] - ll[1], angle=angle,
                           zorder=-1000, fc='none', ec=mask_color, lw=3))
     elif 'elliptical' in mask:
         width = mask['elliptical']['major_axis']

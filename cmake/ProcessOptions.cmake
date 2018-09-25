@@ -540,3 +540,12 @@ function( NEST_DEFAULT_MODULES )
     endforeach ()
     set( SLI_MODULE_INCLUDE_DIRS ${SLI_MODULE_INCLUDE_DIRS} PARENT_SCOPE )
 endfunction()
+
+function( NEST_PROCESS_WITH_MPI4PY )
+  include( FindPythonModule )
+  find_python_module(mpi4py)
+  
+  if ( HAVE_MPI4PY )
+    include_directories( "${PY_MPI4PY}/include" )
+  endif ()
+endfunction ()

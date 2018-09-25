@@ -24,7 +24,7 @@
 #define RECORDING_BACKEND_ARBOR_H
 
 // C includes:
-#include <mpi.h>
+#include <memory>
 
 #include "recording_backend.h"
 
@@ -45,6 +45,9 @@ public:
   void finalize();
   void synchronize();
 
+  void prepare();
+  void cleanup();
+
   void write( const RecordingDevice& device, const Event& event );
   void write( const RecordingDevice& device,
     const Event& event,
@@ -57,36 +60,14 @@ public:
   void calibrate();
 
 private:
-  struct ArborSpike {
-    index gid;
-    float time;
-  };
-  typedef std::vector< ArborSpike > ArborSpikes;
+  bool prepared_;
+  bool cleanedup_;
 
-  class ArborBuffer
-  {
-  private:
-    ArborSpikes spikes_;
-    
-  public:
-    void write(index gid, float time);
-    void clear();
+  int steps_left_;
+  unsigned arbor_steps_;
+  unsigned num_arbor_cells_;
 
-    ArborSpikes& get_spikes() {
-      return spikes_;
-    }
-
-    ArborBuffer() = default;
-    ArborBuffer(const ArborBuffer&) = delete;
-    ArborBuffer& operator = (const ArborBuffer&) = delete;
-
-    ArborBuffer(ArborBuffer&&) = default;
-    ArborBuffer& operator = (ArborBuffer&&) = default;
-  };
-  
-  std::vector< ArborBuffer > buffers_;
-  // single threaded call:
-  void transmit_(ArborSpikes&);
+  std::unique_ptr< struct ArborInternal > arbor_;
 
   typedef std::vector< std::map< index, const RecordingDevice* > > device_map;
   device_map devices_;

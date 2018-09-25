@@ -197,6 +197,6 @@
 #cmakedefine HAVE_SIONLIB 1
 
 /* Is mpi4py available? */
-#cmakedefine HAVE_MPI4PY
+#cmakedefine HAVE_MPI4PY 1
 
 #endif // #ifndef CONFIG_H

@@ -522,25 +522,30 @@ class Connectome(object):
             | target | 1, 2, 1, 2, |
             *--------*-------------*
         """
-        src = self.get('source')
+        srcs = self.get('source')
         trgt = self.get('target')
 
-        if isinstance(src, int):
-            src = [src]
+        if isinstance(srcs, int):
+            srcs = [srcs]
         if isinstance(trgt, int):
             trgt = [trgt]
 
-        source = '| source | ' + ''.join(str(e)+', ' for e in src) + '|'
-        target = '| target | ' + ''.join(str(e)+', ' for e in trgt) + '|'
-
         # 35 is arbitrarily chosen.
-        if len(src) < 35:
-            borderline = '*--------*' + '-'*(len(source) - 12) + '-*'
+        if len(srcs) < 35:
+            source = '| source | ' + ''.join(str(e)+', ' for e in srcs) + '|'
+            target = '| target | ' + ''.join(str(e)+', ' for e in trgt) + '|'
         else:
-            borderline = '*--------*' + '-'*3*35 + '-*'
+            source = ('| source | ' + ''.join(str(e)+', ' for e in srcs[:15]) +
+                      '... ' + ''.join(str(e)+', ' for e in srcs[-15:]) + '|')
+            target = ('| target | ' + ''.join(str(e)+', ' for e in trgt[:15]) +
+                      '... ' + ''.join(str(e)+', ' for e in trgt[-15:]) + '|')
 
-        result = (borderline + '\n' + source + '\n' + borderline + '\n' +
-                  target + '\n' + borderline)
+        borderline_s = '*--------*' + '-'*(len(source) - 12) + '-*'
+        borderline_t = '*--------*' + '-'*(len(target) - 12) + '-*'
+        borderline_m = max(borderline_s, borderline_t)
+
+        result = (borderline_s + '\n' + source + '\n' + borderline_m + '\n' +
+                  target + '\n' + borderline_t)
         return result
 
     def get(self, keys=None, pandas_output=False):

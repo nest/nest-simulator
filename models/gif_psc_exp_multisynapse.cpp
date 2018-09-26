@@ -452,7 +452,7 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin,
 void
 gif_psc_exp_multisynapse::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
   assert( ( e.get_rport() > 0 )
     && ( ( size_t ) e.get_rport() <= P_.n_receptors_() ) );
 
@@ -464,7 +464,7 @@ gif_psc_exp_multisynapse::handle( SpikeEvent& e )
 void
 nest::gif_psc_exp_multisynapse::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

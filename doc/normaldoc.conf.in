@@ -743,7 +743,8 @@ WARN_LOGFILE           = doxygen.log
 # spaces.
 # Note: If this tag is empty the current directory is searched.
 
-INPUT		=	@PROJECT_SOURCE_DIR@/conngen \
+INPUT		=	@PROJECT_SOURCE_DIR@/README.md \
+			@PROJECT_SOURCE_DIR@/conngen \
 			@PROJECT_SOURCE_DIR@/doc \
 			@PROJECT_SOURCE_DIR@/examples \
 			@PROJECT_SOURCE_DIR@/extras \
@@ -896,7 +897,7 @@ FILTER_SOURCE_PATTERNS =
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE =
+USE_MDFILE_AS_MAINPAGE = README.md
 
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing

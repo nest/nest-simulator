@@ -21,8 +21,27 @@
  */
 
 
+#ifndef DC_GENERATOR_H
+#define DC_GENERATOR_H
+
+// C++ includes:
+#include <vector>
+
+// Includes from nestkernel:
+#include "connection.h"
+#include "device_node.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
+#include "stimulating_device.h"
+#include "universal_data_logger.h"
+
+namespace nest
+{
 /** @BeginDocumentation
 Name: dc_generator - provides DC input current
+
+@ingroup Devices
 
 Description: The DC-Generator provides a constant DC Input
 to the connected node. The unit of the current is pA.
@@ -47,31 +66,7 @@ Sends: CurrentEvent
 Author: docu by Sirko Straube
 
 SeeAlso: Device, StimulatingDevice
-
 */
-
-#ifndef DC_GENERATOR_H
-#define DC_GENERATOR_H
-
-// C++ includes:
-#include <vector>
-
-// Includes from nestkernel:
-#include "connection.h"
-#include "device_node.h"
-#include "event.h"
-#include "nest_types.h"
-#include "ring_buffer.h"
-#include "stimulating_device.h"
-#include "universal_data_logger.h"
-
-namespace nest
-{
-/**
- * DC current generator.
- *
- * @ingroup Devices
- */
 class dc_generator : public DeviceNode
 {
 

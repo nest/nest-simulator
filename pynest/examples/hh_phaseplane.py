@@ -40,13 +40,18 @@ from matplotlib import pyplot as plt
 amplitude = 100.  # Set externally applied current amplitude in pA
 dt = 0.1  # simulation step length [ms]
 
-v_min = -100  # Min membrane potential
-v_max = 42  # Max membrane potential
+v_min = -100.  # Min membrane potential
+v_max = 42.  # Max membrane potential
 n_min = 0.1  # Min inactivation variable
 n_max = 0.81  # Max inactivation variable
+delta_v = 2.  # Membrane potential step length
+delta_n = 0.01  # Inactivation variable step length
 
-num_v_steps = (v_max - v_min - 1) // 2 + 1
-num_n_steps = int(100 * ((n_max - n_min - 1) + 1))
+V_vec = np.arange(v_min, v_max, delta_v)
+n_vec = np.arange(n_min, n_max, delta_n)
+
+num_v_steps = len(V_vec)
+num_n_steps = len(n_vec)
 
 nest.ResetKernel()
 nest.set_verbosity('M_ERROR')
@@ -72,10 +77,10 @@ n_matrix = np.zeros([num_n_steps, num_v_steps])
 pp_data = np.zeros([num_n_steps * num_v_steps, 4])
 
 count = 0
-for i, V in enumerate(range(v_min, v_max, 2)):
-    for j, n in enumerate(np.arange(n_min, n_max, 0.01)):
+for i, V in enumerate(V_vec):
+    for j, n in enumerate(n_vec):
         # Set V_m and n
-        nest.SetStatus(neuron, {'V_m': V * 1.0, 'Inact_n': n,
+        nest.SetStatus(neuron, {'V_m': V, 'Inact_n': n,
                                 'Act_m': m_eq, 'Act_h': h_eq})
         # Find state
         V_m = nest.GetStatus(neuron)[0]['V_m']
@@ -85,7 +90,7 @@ for i, V in enumerate(range(v_min, v_max, 2)):
         nest.Simulate(dt)
 
         # Find difference between new state and old state
-        V_m_new = nest.GetStatus(neuron)[0]['V_m'] - V * 1.0
+        V_m_new = nest.GetStatus(neuron)[0]['V_m'] - V
         Inact_n_new = nest.GetStatus(neuron)[0]['Inact_n'] - n
 
         # Store in vector for later analysis
@@ -130,9 +135,6 @@ for i in range(1, 1001):
 # Make analysis
 print('')
 print('Plot analysis')
-
-n_vec = np.arange(n_min, n_max, 0.01)
-V_vec = np.arange(v_min, v_max, 2)
 
 nullcline_V = []
 nullcline_n = []

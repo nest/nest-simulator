@@ -49,51 +49,101 @@ is_sorted( std::vector< size_t >::const_iterator begin,
   return true;
 }
 
+const bool is_sorted( Seque< size_t >::const_iterator begin,
+    Seque< size_t >::const_iterator end )
+{
+  for ( Seque< size_t >::const_iterator it = begin; it < --end; )
+  {
+    if ( *it > *( ++it ) )
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
 BOOST_AUTO_TEST_SUITE( test_sort )
 
 /**
  * Tests whether two arrays with randomly generated numbers are sorted
  * correctly by a single call to sort.
  */
-BOOST_AUTO_TEST_CASE( test_random )
+BOOST_AUTO_TEST_CASE( test_random_vec_seq )
 {
   const size_t N = 20000;
   std::vector< size_t > vec0( N );
-  std::vector< size_t > vec1( N );
+  Seque< size_t > seq1( N );
 
   for ( size_t i = 0; i < N; ++i )
   {
     const size_t k = std::rand() % N;
     vec0[ i ] = k;
-    vec1[ i ] = k;
+    seq1[ i ] = k;
   }
 
-  nest::sort( vec0, vec1 );
+  nest::sort( vec0, seq1 );
 
   BOOST_REQUIRE( is_sorted( vec0.begin(), vec0.end() ) );
-  BOOST_REQUIRE( is_sorted( vec1.begin(), vec1.end() ) );
+  BOOST_REQUIRE( is_sorted( seq1.begin(), seq1.end() ) );
+}
+
+BOOST_AUTO_TEST_CASE( test_random_seq_seq )
+{
+  const size_t N = 20000;
+  Seque< size_t > seq0( N );
+  Seque< size_t > seq1( N );
+
+  for ( size_t i = 0; i < N; ++i )
+  {
+    const size_t k = std::rand() % N;
+    seq0[ i ] = k;
+    seq1[ i ] = k;
+  }
+
+  nest::sort( seq0, seq1 );
+
+  BOOST_REQUIRE( is_sorted( seq0.begin(), seq0.end() ) );
+  BOOST_REQUIRE( is_sorted( seq1.begin(), seq1.end() ) );
 }
 
 /**
  * Tests whether two arrays with linearly increasing numbers are sorted
  * correctly by a single call to sort.
 */
-BOOST_AUTO_TEST_CASE( test_linear )
+BOOST_AUTO_TEST_CASE( test_linear_vec_seq )
 {
   const size_t N = 20000;
   std::vector< size_t > vec0( N );
-  std::vector< size_t > vec1( N );
+  Seque< size_t > seq1( N );
 
   for ( size_t i = 0; i < N; ++i )
   {
     vec0[ i ] = N - i - 1;
-    vec1[ i ] = N - i - 1;
+    seq1[ i ] = N - i - 1;
   }
 
-  nest::sort( vec0, vec1 );
+  nest::sort( vec0, seq1 );
 
   BOOST_REQUIRE( is_sorted( vec0.begin(), vec0.end() ) );
-  BOOST_REQUIRE( is_sorted( vec1.begin(), vec1.end() ) );
+  BOOST_REQUIRE( is_sorted( seq1.begin(), seq1.end() ) );
+}
+
+BOOST_AUTO_TEST_CASE( test_linear_seq_seq )
+{
+  const size_t N = 20000;
+  Seque< size_t > seq0( N );
+  Seque< size_t > seq1( N );
+
+  for ( size_t i = 0; i < N; ++i )
+  {
+    seq0[ i ] = N - i - 1;
+    seq1[ i ] = N - i - 1;
+  }
+
+  nest::sort( seq0, seq1 );
+
+  BOOST_REQUIRE( is_sorted( seq0.begin(), seq0.end() ) );
+  BOOST_REQUIRE( is_sorted( seq1.begin(), seq1.end() ) );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

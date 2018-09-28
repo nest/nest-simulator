@@ -28,6 +28,8 @@
 #include <iostream>
 #include <vector>
 
+#include "seque.h"
+
 namespace nest
 {
 
@@ -46,6 +48,8 @@ struct SourceTablePosition
   template < typename T >
   void wrap_position(
     const std::vector< std::vector< std::vector< T > > >& sources );
+  template < typename T >
+  void wrap_position( const std::vector< std::vector< Seque< T > > >& sources );
 
   bool is_at_end() const;
 };
@@ -78,6 +82,39 @@ template < typename T >
 inline void
 SourceTablePosition::wrap_position(
   const std::vector< std::vector< std::vector< T > > >& sources )
+{
+  // check for validity of indices and update if necessary
+  while ( lcid < 0 )
+  {
+    --syn_id;
+    if ( syn_id >= 0 )
+    {
+      lcid = sources[ tid ][ syn_id ].size() - 1;
+      continue;
+    }
+
+    --tid;
+    if ( tid >= 0 )
+    {
+      syn_id = sources[ tid ].size() - 1;
+      if ( syn_id >= 0 )
+      {
+        lcid = sources[ tid ][ syn_id ].size() - 1;
+      }
+      continue;
+    }
+
+    assert( tid < 0 );
+    assert( syn_id < 0 );
+    assert( lcid < 0 );
+    return;
+  }
+}
+
+template < typename T >
+inline void
+SourceTablePosition::wrap_position(
+  const std::vector< std::vector< Seque< T > > >& sources )
 {
   // check for validity of indices and update if necessary
   while ( lcid < 0 )

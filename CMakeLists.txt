@@ -1,7 +1,7 @@
 # CMakeLists.txt
 #
 # This file is part of NEST.
-#
+
 # Copyright (C) 2004 The NEST Initiative
 #
 # NEST is free software: you can redistribute it and/or modify
@@ -201,7 +201,7 @@ if ( HAVE_PYTHON )
       NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
       PYTHON="${PYTHON}"
       NEST_PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}"
-      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
+      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     COMMENT "Execute NEST's testsuite...."
   )
@@ -209,7 +209,7 @@ else ()
   add_custom_target( installcheck
     COMMAND ${CMAKE_COMMAND} -E env
       NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
-      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
+      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     COMMENT "Execute NEST's testsuite...."
   )

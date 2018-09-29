@@ -82,7 +82,7 @@ if ( HAVE_PYTHON )
     WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
       )
   install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
-  install( FILES ${PROJECT_BINARY_DIR}/pynest/do_tests.py
+  install( PROGRAMS do_tests.py
       DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
       )
 

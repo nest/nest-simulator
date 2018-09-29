@@ -36,9 +36,7 @@ add_subdirectory( musictests )
 add_subdirectory( cpptests )
 
 install( DIRECTORY ${TESTSUBDIRS}
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )
+    DESTINATION ${CMAKE_INSTALL_DOCDIR} )
 
-install( PROGRAMS ${PROJECT_BINARY_DIR}/testsuite/do_tests.sh
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
-    )
+install( PROGRAMS do_tests.sh
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras )

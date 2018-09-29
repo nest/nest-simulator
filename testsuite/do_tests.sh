@@ -1,8 +1,29 @@
 #!/bin/sh
 #
-# This script runs all test scripts that use the unittest library
+# This script runs the NEST test suite.
 #
-# unittest provides functions that quit NEST with a non-zero exit
+# The test suite consists of SLI and Python scripts that use the
+# language's native `unittest` library to assert certain invariants
+# and thus ensure a correctly working installation of NEST.
+#
+# This script itself is independent of the concrete installation it
+# came from and rather expects the test configuration in the form of
+# the following mandatory commandline options:
+#
+#   --binary-dir The root directory of the NEST installation to test.
+#
+#   --report-dir The path to which to store test results and log
+#                files.
+#
+# In addition, the script accepts the following optional arguments:
+#
+#   --with-music=<exe> Run MUSIC tests using the given `music`
+#                      executable
+#
+#   --with-python=<exe> Run Python-based tests and tests for PyNEST using
+#                       the given Python executable
+#
+# SLI's version provides functions that quit NEST with a non-zero exit
 # code upon errors. This is checked here and used to print a nice
 # summary after all tests have been run.
 #
@@ -18,53 +39,56 @@
 # They return a specific exit code
 #
 
+
+
 #
-# usage [exit_code bad_option]
+# usage <exit_code> <argument>
+#
+# usage 1 <option>
+#   Use this variant in case of an unknown option <opt>
+# usage 2 <option>
+#   Use this variant in case of a missing required option <opt>
+# usage 3 <message>
+#   Use this variant to print a custom error message <message>
 #
 usage ()
 {
-    if test $1 -ne 0 ; then
-        echo "Unknown option: $2"
+    if test $1 = 1 ; then
+        echo "Error: Unknown option \'$2\'"
+    fi
+
+    if test $1 = 2 ; then
+        echo "Error: Missing required option \'$2\'"
+    fi
+
+    if test $1 = 3 ; then
+        echo $2
     fi
 
     cat <<EOF
-Usage: do_tests.sh [options ...]"
+Usage: do_tests.sh [parameters] [options]"
 
 Options:
 
+
+    --test-dir=path     Toplovel directory of the testsuite
+    --report-dir=path   Output directory (default: ./reports)
+
+Optional arguments:
+
+    --python=<exe>      The Python executable to use
+    			If omitted, tests that require Python are skipped
+    --nosetests=<exe>   The nodetests executable to use
+    			Only useful in combination with --python=<exe>
+    			If omitted, PyNEST tests use the custom test harness
+    --music=<exe>       The MUSIC executable to use
+    			If omitted, tests that require MUSIC are skipped
     --help              Print program options and exit
-    --test-pynest       Test the PyNEST installation and APIs
-    --output-dir=/path  Output directory (default: ./reports)
-    --source-dir=/path  Toplevel NEST source code directory. Only used for
-                        checking the copyright headers of the sources. Set to
-                        'SKIP', if you want it to be skipped.
 EOF
 
     exit $1
 }
 
-TEST_PYNEST=false
-
-while test $# -gt 0 ; do
-    case "$1" in
-        --help)
-            usage 0
-            ;;
-        --test-pynest)
-            TEST_PYNEST=true
-            ;;
-        --output-dir=*)
-            TEST_OUTDIR="$( echo "$1" | sed 's/^--output-dir=//' )"
-            ;;
-        --source-dir=*)
-            export NEST_SOURCE="$( echo "$1" | sed 's/^--source-dir=//' )"
-            ;;
-        *)
-            usage 1 "$1"
-            ;;
-    esac
-    shift
-done
 
 #
 # bail_out message
@@ -86,8 +110,7 @@ ask_results ()
     echo "***"
     echo "*** To help us diagnose the problem, please attach the archived content"
     echo "*** of these directories to the issue:"
-    echo "***     - '${TEST_OUTDIR}'"
-    echo "***     - '${TEST_TMPDIR}'"
+    echo "***     - '${REPORTDIR}'"
     echo "***"
     echo
 }
@@ -136,7 +159,7 @@ junit_open ()
         bail_out 'junit_open: file_name not given!'
     fi
 
-    JUNIT_FILE="${TEST_OUTDIR}/TEST-$1.xml"
+    JUNIT_FILE="${REPORTDIR}/TEST-$1.xml"
     JUNIT_TESTS=0
     JUNIT_FAILURES=0
 
@@ -248,10 +271,6 @@ junit_close ()
 #   contain an entry != "" for the returned exit code, the pass is counted as
 #   failed, too, and unexpected exit code is logged).
 #
-# First Version by Ruediger Kupper, 07 Jul 2008
-# Modified by Jochen Eppler and Markus Diesmann
-# Modified by Yury V. Zaytsev
-#
 run_test ()
 {
     TEST_TOTAL=$(( ${TEST_TOTAL} + 1 ))
@@ -279,7 +298,7 @@ run_test ()
 
     echo "${param_script}" | grep -q '\.sli'
     if test $? -eq 0 ; then
-      command="'${NEST_BINARY}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
+      command="'${NEST}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
     else
       command="'${PYTHON}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
     fi
@@ -353,11 +372,69 @@ run_test ()
     rm -f "${TEST_OUTFILE}" "${TEST_RETFILE}"
 }
 
-# Set environment variables.
-# The NEST_ variants of the global variables were set by
-# cmake during configuration.
-export PYTHONPATH=$NEST_PYTHONPATH:$PYTHONPATH
-export PATH=$NEST_PATH:$PATH
+
+
+while test $# -gt 0 ; do
+    case "$1" in
+        --help)
+            usage 0
+            ;;
+        --prefix=*)
+            PREFIX="$( echo "$1" | sed 's/^--prefix=//' )"
+	    if test ! ${PREFIX}; then usage 2 "--prefix"; fi
+            ;;
+        --report-dir=*)
+            REPORTDIR="$( echo "$1" | sed 's/^--report-dir=//' )"
+	    if test ! ${REPORTDIR}; then usage 2 "--report-dir"; fi
+            ;;
+        --with-python=*)
+            PYTHON="$( echo "$1" | sed 's/^--with-python=//' )"
+            ;;
+        --python-path=*)
+            PYTHONPATH_="$( echo "$1" | sed 's/^--python-path=//' )"
+            ;;
+        --with-music=*)
+            MUSIC="$( echo "$1" | sed 's/^--with-music=//' )"
+            ;;
+        *)
+            usage 1 "$1"
+            ;;
+    esac
+    shift
+done
+
+NEST=nest_serial
+export PATH=${PREFIX}/bin:$PATH
+
+unset NEST_INSTALL_DIR
+unset NEST_DATA_DIR
+unset NEST_DOCL_DIR
+
+if test ${PYTHON}; then
+    if test ! ${PYTHONPATH_}; then
+	usage 3 "Error: \'--with-python\' also requires \'--python-path\'" 
+    fi
+
+    NOSETESTS=`command -v nosetests 2>&1`
+    PYTHON_HARNESS="${PREFIX}/share/nest/extras/do_tests.py"
+    
+    export PYTHONPATH=$PYTHONPATH_:$PYTHONPATH
+fi
+
+TEST_BASEDIR=${PREFIX}/share/doc/nest
+
+
+
+echo "================================================================================"
+echo NEST .......... $NEST
+echo PATH .......... $PATH
+echo PYTHON ........ $PYTHON
+echo PYTHONPATH .... $PYTHONPATH
+echo TEST_BASEDIR .. $TEST_BASEDIR
+echo PREFIX ........ $PREFIX
+echo REPORTDIR ..... $REPORTDIR
+echo "================================================================================"
+
 
 # Gather some information about the host
 INFO_ARCH="$(uname -m)"
@@ -367,24 +444,17 @@ INFO_OS="$(uname -s)"
 INFO_USER="$(whoami)"
 INFO_VER="$(uname -r)"
 
-TEST_BASEDIR=${NEST_DOC_DIR:-"@CMAKE_INSTALL_FULL_DOCDIR@"}
-TEST_OUTDIR=${TEST_OUTDIR:-"$( pwd )/reports"}
-TEST_LOGFILE="${TEST_OUTDIR}/installcheck.log"
-TEST_OUTFILE="${TEST_OUTDIR}/output.log"
-TEST_RETFILE="${TEST_OUTDIR}/output.ret"
-TEST_RUNFILE="${TEST_OUTDIR}/runtest.sh"
+TEST_LOGFILE="${REPORTDIR}/installcheck.log"
+TEST_OUTFILE="${REPORTDIR}/output.log"
+TEST_RETFILE="${REPORTDIR}/output.ret"
+TEST_RUNFILE="${REPORTDIR}/runtest.sh"
 
-if test -d "${TEST_OUTDIR}" ; then
-    rm -rf "${TEST_OUTDIR}"
+if test -d "${REPORTDIR}" ; then
+    rm -rf "${REPORTDIR}"
 fi
 
-mkdir "${TEST_OUTDIR}"
-
-PYTHON="${PYTHON:-python}"
-PYTHON_HARNESS="${NEST_DATA_DIR:-@CMAKE_INSTALL_FULL_DATADIR@}/extras/do_tests.py"
-
-TMPDIR=${TMPDIR:-${TEST_OUTDIR}}
-TEST_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/nest.XXXXX")"
+mkdir "${REPORTDIR}"
+TEST_TMPDIR="$(mktemp -d ${REPORTDIR}/tmp.XXX)"
 NEST_DATA_PATH="${TEST_TMPDIR}"
 export NEST_DATA_PATH
 
@@ -416,7 +486,6 @@ fi
 
 # Remember: single line exports are unportable!
 
-NEST_BINARY=nest_serial
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
 if test "x${INFO_OS}" = xDarwin ; then
@@ -432,8 +501,9 @@ TEST_FAILED=0
 TIME_TOTAL=0
 TIME_ELAPSED=0
 
-echo >  "${TEST_LOGFILE}" "NEST v. @NEST_VERSION_VERSION@ testsuite log"
-echo >> "${TEST_LOGFILE}" "======================"
+HEADLINE="`nest -v` testsuite log"
+echo >  "${TEST_LOGFILE}" $HEADLINE
+echo >> "${TEST_LOGFILE}" `printf '%0.s=' $(seq 1 ${#HEADLINE})`
 echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
 
 CODES_SKIPPED=\
@@ -551,8 +621,8 @@ CODES_FAILURE=\
 ' 139 Failed: segmentation fault,'
 
 echo
-echo "Phase 3: Running NEST unit tests"
-echo "--------------------------------"
+echo "Phase 3: Integration  tests"
+echo "---------------------------"
 
 junit_open 'core.phase_3'
 
@@ -567,8 +637,8 @@ done
 junit_close
 
 echo
-echo "Phase 4: Running regression tests"
-echo "---------------------------------"
+echo "Phase 4: Regression tests"
+echo "-------------------------"
 
 junit_open 'core.phase_4'
 
@@ -581,12 +651,12 @@ done
 junit_close
 
 echo
-echo "Phase 5: Running MPI tests"
-echo "--------------------------"
+echo "Phase 5: MPI tests"
+echo "------------------"
 if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
     junit_open 'core.phase_5'
 
-    NEST_BINARY=nest_indirect
+    NEST=${PREFIX}/bin/nest_indirect
     for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/pass" | grep '.*\.sli$') ; do
         run_test "mpi_selftests/pass/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
@@ -614,10 +684,11 @@ else
   echo "  for distributed computing. See the file README.md for details."
 fi
 
+
 echo
-echo "Phase 6: Running MUSIC tests"
-echo "----------------------------"
-if test "x$(sli -c 'statusdict/have_music :: =')" = xtrue ; then
+echo "Phase 6: MUSIC tests"
+echo "--------------------"
+if test ${MUSIC}; then
     junit_open 'core.phase_6'
 
     BASEDIR=$PWD
@@ -638,7 +709,7 @@ if test "x$(sli -c 'statusdict/have_music :: =')" = xtrue ; then
 
         # Calculate the total number of processes in the .music file.
         np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
-        command=$(sli -c "${np} (@MUSIC_EXECUTABLE@) (${test_name}) mpirun =")
+        command=$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =")
 
         proc_txt="processes"
         if test $np -eq 1; then proc_txt="process"; fi
@@ -709,11 +780,11 @@ else
 fi
 
 
-if test "x${TEST_PYNEST}" = xtrue ; then
+if test ${PYTHON}; then
 
     echo
-    echo "Phase 7: Running PyNEST tests."
-    echo "------------------------------"
+    echo "Phase 7: PyNEST tests."
+    echo "----------------------"
     
     # If possible, we run using nosetests. To find out if nosetests work, 
     # we proceed in two steps:
@@ -721,17 +792,22 @@ if test "x${TEST_PYNEST}" = xtrue ; then
     # 2. Check that nosetests supports --with-xunit by running nosetests.
     #    We need to run nosetests on a directory without any Python test
     #    files, because if they failed that would be interpreted as lack
-    #    of support for nosetests. We use the TEST_OUTDIR as Python-free
+    #    of support for nosetests. We use the REPORTDIR as Python-free
     #    dummy directory to search for tests.
 
-    if command -v @NOSETESTS@ >/dev/null 2>&1 && @PYTHON@ @NOSETESTS@ --with-xunit --xunit-file=/dev/null --where=${TEST_OUTDIR} >/dev/null 2>&1; then
+    if ${NOSETESTS} --with-xunit --xunit-file=/dev/null --where=${REPORTDIR} >/dev/null 2>&1; then
 
         echo
         echo "  Using nosetests."
         echo
 
-        @PYTHON@ @NOSETESTS@ -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/topology/tests 2>&1 \
-            | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
+        XUNIT_FILE=${REPORTDIR}/pynest_tests.xml
+        TESTS="${PYTHONPATH_}/nest/tests ${PYTHONPATH_}/nest/topology/tests"
+
+        ${NOSETESTS} -v --with-xunit --xunit-file=${XUNIT_FILE} ${TESTS} 2>&1 \
+            | tee -a "${TEST_LOGFILE}" \
+            | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" \
+            | sed 's/^/  /'
 
         PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
         PYNEST_TEST_SKIPPED="$(  tail -n 1 ${TEST_LOGFILE} | sed -$EXTENDED_REGEX_PARAM 's/.*SKIP=([0-9]+).*/\1/')"
@@ -793,15 +869,16 @@ if test "x${TEST_PYNEST}" = xtrue ; then
     TEST_FAILED=$(( $TEST_FAILED + $PYNEST_TEST_FAILED ))
 else
     echo
-    echo "Phase 7: Running PyNEST tests"
-    echo "-----------------------------"
+    echo "Phase 7: PyNEST tests"
+    echo "---------------------"
     echo "  Not running PyNEST tests because NEST was compiled without support"
     echo "  for Python. See the file README.md for details."
 fi
 
+
 echo
-echo "Phase 8: Running C++ tests (experimental)"
-echo "-----------------------------------------"
+echo "Phase 8: C++ tests (experimental)"
+echo "---------------------------------"
 
 if command -v ${NEST_PATH}/run_all_cpptests > /dev/null 2>&1; then
   CPP_TEST_OUTPUT="$(${NEST_PATH}/run_all_cpptests 2>&1)"
@@ -834,6 +911,7 @@ if command -v ${NEST_PATH}/run_all_cpptests > /dev/null 2>&1; then
 else
   echo "  Not running C++ tests because NEST was compiled without Boost."
 fi
+
 
 echo
 echo "NEST Testsuite Summary"

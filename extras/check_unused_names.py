@@ -19,10 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import os
 import sys
 import re
 from subprocess import check_output
+
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 
 # Use encoding-aware Py3 open also in Py2
@@ -37,8 +43,8 @@ EXIT_NO_SOURCE = 126
 try:
     source_dir = os.environ['NEST_SOURCE']
 except KeyError:
-    print("Please make NEST_SOURCE environment variable to point to " +
-          "the source tree you want to check!")
+    eprint("Please make NEST_SOURCE environment variable to point to " +
+           "the source tree you want to check!")
     sys.exit(EXIT_NO_SOURCE)
 
 # Base names of files that contain const Name definitions
@@ -71,8 +77,9 @@ for names_file in names_files:
 
     for h, s in zip(names_header, names_source):
         if h != s:
-            msg = "Inconsistent Name definition/declaration: "
-            print(msg + "{} != {}".format(h, s))
+            eprint("[NAME] {}: inconsistent declaration: {} != {}".format(
+                names_file, h, s))
+            print("... {}\\n".format(names_file))
             sys.exit(EXIT_NAME_H_CPP_MISMATCH)
         else:
             names_defined.add(h)
@@ -96,7 +103,9 @@ for line in names_used_raw.split("\n"):
 
 names_unused = names_defined - names_used
 if len(names_unused) != 0:
-    print("Unused Name definition(s): " + ", ".join(names_unused))
+    msg = "unused Name definition(s): " + ", ".join(names_unused)
+    eprint("[NAME] " + msg)
+    print("... {}\\n".format(msg))
     sys.exit(EXIT_UNUSED_NAME)
 
 

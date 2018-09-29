@@ -109,9 +109,12 @@ if $RUNS_ON_TRAVIS; then
   fi
 fi
 
+
 export NEST_SOURCE=$PWD
-python extras/check_copyright_headers.py
-python extras/check_unused_names.py
+print_msg "MSGBLD0100: " "Running check for copyright headers"
+copyright_check_errors=`python extras/check_copyright_headers.py`
+print_msg "MSGBLD0100: " "Running sanity check for Name definition and usage"
+unused_names_errors=`python extras/check_unused_names.py`
 
 
 # Perfom static code analysis.
@@ -255,7 +258,12 @@ for f in $FILE_NAMES; do
   esac
 done
 
-if [ "x$c_files_with_errors" != "x" ] || [ "x$python_files_with_errors" != "x" ]; then
+nlines_copyright_check=`echo -e $copyright_check_errors | sed -e 's/^ *//' | wc -l`
+if [ $nlines_copyright_check \> 1 ] || \
+   [ "x$unused_names_errors" != "x" ] || \
+   [ "x$c_files_with_errors" != "x" ] || \
+   [ "x$python_files_with_errors" != "x" ]; then
+
   print_msg "" ""
   print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
   print_msg "MSGBLD0220: " "+                 STATIC CODE ANALYSIS DETECTED PROBLEMS !                    +"
@@ -272,6 +280,19 @@ if [ "x$c_files_with_errors" != "x" ] || [ "x$python_files_with_errors" != "x" ]
     fi
   fi
 
+  nlines_copyright_check=`echo -e $copyright_check_errors | sed -e 's/^ *//' | wc -l`
+  if [ $nlines_copyright_check \> 1 ]; then
+      print_msg "MSGBLD0220: " "Files with erroneous copyright headers:"
+      echo -e $copyright_check_errors | sed -e 's/^ *//'
+      print_msg "" ""
+  fi
+
+  if [ "x$unused_names_errors" != "x" ]; then
+      print_msg "MSGBLD0220: " "Files with unused/ill-defined Name objects:"
+      echo -e $unused_names_errors | sed -e 's/^ *//'
+      print_msg "" ""     
+  fi
+
   if [ "x$python_files_with_errors" != "x" ]; then
     print_msg "MSGBLD0220: " "Python files with formatting errors:"
     for f in $python_files_with_errors; do
@@ -284,7 +305,8 @@ if [ "x$c_files_with_errors" != "x" ] || [ "x$python_files_with_errors" != "x" ]
   fi
   
   if ! $RUNS_ON_TRAVIS; then
-    print_msg "" "For other problems, please correct your code according to the [VERA], [CPPC], [DIFF], and [PEP8] messages above."
+      print_msg "" "For detailed problem descriptions, consult the tagged messages above."
+      print_msg "" "Tags may be [VERA], [CPPC], [DIFF], [COPY] and [PEP8]."
   fi
 else
   print_msg "" ""

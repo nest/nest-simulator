@@ -19,9 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import os
 import sys
 import re
+
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
 
 # Use encoding-aware Py3 open also in Py2
 if sys.version_info[0] < 3:
@@ -119,7 +126,8 @@ for dirpath, _, fnames in os.walk(source_dir):
                 try:
                     line_src = source_file.readline()
                 except UnicodeDecodeError as err:
-                    print("Unable to decode bytes in '{0}': {1}".format(tested_file, err))  # noqa
+                    print("Unable to decode bytes in '{0}': {1}".format(
+                        tested_file, err))
                     total_errors += 1
                     break
                 if (extension == 'py' and
@@ -127,14 +135,15 @@ for dirpath, _, fnames in os.walk(source_dir):
                     line_src = source_file.readline()
                 line_exp = template_line.replace('{{file_name}}', fname)
                 if line_src != line_exp:
-                    print("Incorrect copyright header in '{0}':".format(tested_file))           # noqa
-                    print("    expected -> '{0}', actual -> '{1}'\n".format(line_exp.strip(),   # noqa
-                                                                            line_src.strip()))  # noqa
+                    fname = os.path.relpath(tested_file)
+                    eprint("[COPY] {0}: expected '{1}', found '{2}'.".format(
+                        fname, line_exp.rstrip('\n'), line_src.rstrip('\n')))
+                    print("... {}\\n".format(fname))
                     total_errors += 1
                     break
 
-print("Files with errors '{0}' out of '{1}'!".format(total_errors,
-                                                     total_files))
+print("{0} out of {1} files have an erroneous copyright header.".format(
+    total_errors, total_files))
 
 if total_errors > 0:
     sys.exit(EXIT_BAD_HEADER)

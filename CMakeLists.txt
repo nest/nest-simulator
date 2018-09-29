@@ -53,7 +53,7 @@ set( with-boost OFF CACHE STRING "Request compilation with Boost, required for C
 
 # set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
-set( with-openmp ON CACHE STRING "Enable OpenMP multithreading. Optional: set OMP flag. [default=ON]" )
+set( with-openmp ON CACHE BOOL "Enable OpenMP multithreading. Optional: set OMP flag. [default=ON]" )
 
 # define default libraries
 set( with-gsl ON CACHE STRING "Find a gsl library. To set a specific gsl installation, set install path. [default=ON]" )
@@ -339,11 +339,6 @@ configure_file(
 configure_file(
     "${PROJECT_SOURCE_DIR}/testsuite/do_tests.sh.in"
     "${PROJECT_BINARY_DIR}/testsuite/do_tests.sh" @ONLY
-)
-
-configure_file(
-    "${PROJECT_SOURCE_DIR}/extras/EditorSupport/emacs/sli.el.in"
-    "${PROJECT_BINARY_DIR}/extras/EditorSupport/emacs/sli.el" @ONLY
 )
 
 configure_file(

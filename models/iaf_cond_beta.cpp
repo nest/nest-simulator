@@ -381,7 +381,7 @@ nest::iaf_cond_beta::get_normalisation_factor( double tau_rise,
   double tau_decay )
 {
   // Factor used to normalise the synaptic conductance such that
-  // 
+  //
 
   return 1.0 / ( tau_decay * tau_rise );
 }
@@ -392,11 +392,11 @@ nest::iaf_cond_beta::calibrate()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  V_.PSConInit_E = 
-    nest::iaf_cond_beta::get_normalisation_factor( P_.tau_Erise, 
+  V_.PSConInit_E =
+    nest::iaf_cond_beta::get_normalisation_factor( P_.tau_Erise,
       P_.tau_Edecay);
-  V_.PSConInit_I = 
-    nest::iaf_cond_beta::get_normalisation_factor( P_.tau_Irise, 
+  V_.PSConInit_I =
+    nest::iaf_cond_beta::get_normalisation_factor( P_.tau_Irise,
       P_.tau_Idecay);
   V_.RefractoryCounts = Time( Time::ms( P_.t_ref ) ).get_steps();
 

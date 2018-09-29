@@ -91,9 +91,16 @@ single pyramidal cells.  Proc. Natl. Acad. Sci. USA, 88(24),
 Kuhn, Aertsen, Rotter (2004) Neuronal Integration of Synaptic Input in
 the Fluctuation- Driven Regime. Jneurosci 24(10) 2345-2356
 
+Rotter & Diesmann, Biol Cybern 81:381 (1999)
+
+Roth and van Rossum,
+Ch 6, in De Schutter, Computational Modeling Methods for Neuroscientists,
+MIT Press, 2010.
+
+
 Author: Schrader, Plesser
 
-SeeAlso: iaf_cond_exp, iaf_cond_beta_mc
+SeeAlso: iaf_cond_exp, iaf_cond_alpha
 */
 
 namespace nest

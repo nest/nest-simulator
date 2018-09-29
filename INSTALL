@@ -111,6 +111,8 @@ Change compilation behavior:
                                               paths by ';'. [default OFF]
     -Dwith-defines=<list;of;defines>          Additional defines, e.g. '-DXYZ=1'.
                                               Separate multiple defines by ';'. [default OFF]
+    -Dwith-boost=[OFF|ON]                     Build C++-testsuite using the Boost unittest
+                                              framework. Highly experimental!!!
 
 Configuring NEST for Distributed Simulation with MPI
 ====================================================
@@ -338,7 +340,7 @@ On the K Computer:
       cmake -DCMAKE_TOOLCHAIN_FILE=Platform/Fujitsu-Sparc64 \
             -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
             -Dwith-gsl=/path/to/gsl-2.1.install/ \
-            -Dwith-optimize="-Kfast" \
+            -Dwith-optimize="-Kfast -x1" \
             -Dwith-defines="-DUSE_PMA" \
             -Dwith-python=OFF \
             -Dwith-warning=OFF \
@@ -360,3 +362,4 @@ On the K Computer:
   `-x1`, and the compilation succeeds (the impact on performance was not analyzed):
 
         -Dwith-optimize="-Kfast -x1"
+  For NEST 3 or later, C++11 Standard library is required at build time, use `-Xg -std=c++11`.

@@ -48,7 +48,6 @@ namespace nest
  */
 namespace names
 {
-
 extern const Name a;
 extern const Name a_acausal;
 extern const Name a_causal;
@@ -61,6 +60,8 @@ extern const Name accumulator;
 extern const Name Act_h;
 extern const Name Act_m;
 extern const Name activity;
+extern const Name adaptive_spike_buffers;
+extern const Name adaptive_target_buffers;
 extern const Name ahp_bug;
 extern const Name allow_offgrid_spikes;
 extern const Name allow_offgrid_times;
@@ -83,6 +84,9 @@ extern const Name b;
 extern const Name beta;
 extern const Name beta_Ca;
 extern const Name binary;
+extern const Name buffer_size_secondary_events;
+extern const Name buffer_size_spike_data;
+extern const Name buffer_size_target_data;
 
 extern const Name c;
 extern const Name c_1;
@@ -210,6 +214,8 @@ extern const Name global_id;
 extern const Name grng;
 extern const Name grng_seed;
 extern const Name growth_curve;
+extern const Name growth_factor_buffer_spike_data;
+extern const Name growth_factor_buffer_target_data;
 extern const Name growth_rate;
 extern const Name gsl_error_tol;
 
@@ -238,21 +244,19 @@ extern const Name indegree;
 extern const Name index_map;
 extern const Name individual_spike_trains;
 extern const Name init_flag;
-extern const Name initial_connector_capacity;
 extern const Name instant_unblock_NMDA;
 extern const Name instantiations;
 extern const Name Interpol_Order;
 extern const Name interval;
 extern const Name is_refractory;
 
+extern const Name keep_source_table;
 extern const Name Kplus;
 extern const Name Kplus_triplet;
 
 extern const Name label;
 extern const Name lambda;
 extern const Name lambda_0;
-extern const Name large_connector_growth_factor;
-extern const Name large_connector_limit;
 extern const Name len_kernel;
 extern const Name linear;
 extern const Name linear_summation;
@@ -265,6 +269,8 @@ extern const Name lookuptable_1;
 extern const Name lookuptable_2;
 
 extern const Name make_symmetric;
+extern const Name max_buffer_size_spike_data;
+extern const Name max_buffer_size_target_data;
 extern const Name max_delay;
 extern const Name MAXERR;
 extern const Name mean;
@@ -343,7 +349,6 @@ extern const Name rate;
 extern const Name rate_times;
 extern const Name rate_values;
 extern const Name readout_cycle_duration;
-extern const Name receive_buffer_size;
 extern const Name receptor_type;
 extern const Name receptor_types;
 extern const Name receptors;
@@ -369,7 +374,6 @@ extern const Name S_act_NMDA;
 extern const Name scientific;
 extern const Name screen;
 extern const Name sdev;
-extern const Name send_buffer_size;
 extern const Name senders;
 extern const Name shift_now_spikes;
 extern const Name sigma;
@@ -378,6 +382,7 @@ extern const Name size_of;
 extern const Name soma_curr;
 extern const Name soma_exc;
 extern const Name soma_inh;
+extern const Name sort_connections_by_source;
 extern const Name source;
 extern const Name spike;
 extern const Name spike_multiplicities;

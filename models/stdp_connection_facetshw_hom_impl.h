@@ -50,7 +50,6 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::
   , synapses_per_driver_( 50 )   // hardware efficiency of 50/256=20%,
                                  // which is comparable to Fieres et al. (2008)
   , driver_readout_time_( 15.0 ) // in ms; measured on hardware
-
 {
   lookuptable_0_.resize( 16 );
   lookuptable_1_.resize( 16 );
@@ -303,14 +302,12 @@ STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom()
   , a_causal_( 0.0 )
   , a_acausal_( 0.0 )
   , a_thresh_th_( 21.835 )
-  , // exp(-10ms/20ms) * 36SSPs
-  a_thresh_tl_( 21.835 )
-  ,
-
-  init_flag_( false )
+  , a_thresh_tl_( 21.835 ) // exp(-10ms/20ms) * 36SSPs
+  , init_flag_( false )
   , synapse_id_( 0 )
   , next_readout_time_( 0.0 )
   , discrete_weight_( 0 )
+  , t_lastspike_( 0.0 )
 {
 }
 
@@ -327,6 +324,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom(
   , synapse_id_( rhs.synapse_id_ )
   , next_readout_time_( rhs.next_readout_time_ )
   , discrete_weight_( rhs.discrete_weight_ )
+  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

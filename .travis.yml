@@ -90,6 +90,7 @@ addons:
      - libboost-wave-dev
      - libboost-python-dev
      - libboost-program-options-dev
+     - libboost-test-dev
 cache:
    directory:
      - $HOME/.cache
@@ -129,11 +130,11 @@ install:
 before_script:
    # Change directory back to the NEST source code directory.
    - cd $SOURCEDIR
-   - chmod +x build.sh
+   - chmod +x extras/travis_build.sh
 script:
    - set -o pipefail
-   - ./build.sh 2>&1 | tee build.sh.log
-   - python extras/parse_travis_log.py build.sh.log
+   - ./extras/travis_build.sh 2>&1 | tee travis_build.sh.log
+   - python extras/parse_travis_log.py travis_build.sh.log
 
 before_deploy:
    - cd $TRAVIS_BUILD_DIR/build

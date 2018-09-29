@@ -193,13 +193,9 @@ public:
   /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
-   * \param t_lastspike Point in time of last spike sent.
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    double t_lastspike,
-    const TsodyksHomCommonProperties& cp );
+  void send( Event& e, thread t, const TsodyksHomCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -218,7 +214,6 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -235,9 +230,10 @@ public:
   }
 
 private:
-  double x_; //!< amount of resources in recovered state
-  double y_; //!< amount of resources in active state
-  double u_; //!< actual probability of release
+  double x_;           //!< amount of resources in recovered state
+  double y_;           //!< amount of resources in active state
+  double u_;           //!< actual probability of release
+  double t_lastspike_; //!< time point of last spike emitted
 };
 
 
@@ -245,16 +241,15 @@ private:
  * Send an event to the receiver of this connection.
  * \param e The event to send
  * \param p The port under which this connection is stored in the Connector.
- * \param t_lastspike Time point of last spike emitted
  */
 template < typename targetidentifierT >
 inline void
 TsodyksConnectionHom< targetidentifierT >::send( Event& e,
   thread t,
-  double t_lastspike,
   const TsodyksHomCommonProperties& cp )
 {
-  double h = e.get_stamp().get_ms() - t_lastspike;
+  const double t_spike = e.get_stamp().get_ms();
+  const double h = t_spike - t_lastspike_;
 
   // t_lastspike_ = 0 initially
   // this has no influence on the dynamics, IF y = z = 0 initially
@@ -272,7 +267,7 @@ TsodyksConnectionHom< targetidentifierT >::send( Event& e,
 
   double z = 1.0 - x_ - y_;
 
-  // propagation t_lastspike -> t_spike
+  // propagation t_lastspike_ -> t_spike
   // don't change the order !
 
   u_ *= Puu;
@@ -295,6 +290,8 @@ TsodyksConnectionHom< targetidentifierT >::send( Event& e,
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
+
+  t_lastspike_ = t_spike;
 }
 
 template < typename targetidentifierT >
@@ -303,6 +300,7 @@ TsodyksConnectionHom< targetidentifierT >::TsodyksConnectionHom()
   , x_( 1.0 )
   , y_( 0.0 )
   , u_( 0.0 )
+  , t_lastspike_( 0.0 )
 {
 }
 
@@ -313,6 +311,7 @@ TsodyksConnectionHom< targetidentifierT >::TsodyksConnectionHom(
   , x_( rhs.x_ )
   , y_( rhs.y_ )
   , u_( rhs.u_ )
+  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

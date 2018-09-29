@@ -166,7 +166,7 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
 
   ( *d )[ names::use_gid_in_filename ] = use_gid_in_filename_;
 
-  if ( to_file_ && not filename_.empty() )
+  if ( to_file_ and not filename_.empty() )
   {
     initialize_property_array( d, names::filenames );
     append_property( d, names::filenames, filename_ );
@@ -233,18 +233,18 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
 
   // In Pynest we cannot use /record_to, because we have no way to pass
   // values as LiteralDatum. Thus, we must keep the boolean flags.
-  // We must have || rec_change at the end, otherwise short-circuiting may
+  // We must have or rec_change at the end, otherwise short-circuiting may
   // mean that some flags are not read.
   bool rec_change = false;
   rec_change =
-    updateValue< bool >( d, names::to_screen, to_screen_ ) || rec_change;
+    updateValue< bool >( d, names::to_screen, to_screen_ ) or rec_change;
   rec_change =
-    updateValue< bool >( d, names::to_memory, to_memory_ ) || rec_change;
-  rec_change = updateValue< bool >( d, names::to_file, to_file_ ) || rec_change;
+    updateValue< bool >( d, names::to_memory, to_memory_ ) or rec_change;
+  rec_change = updateValue< bool >( d, names::to_file, to_file_ ) or rec_change;
   if ( rd.mode_ == RecordingDevice::MULTIMETER )
   {
     rec_change = updateValue< bool >(
-                   d, names::to_accumulator, to_accumulator_ ) || rec_change;
+                   d, names::to_accumulator, to_accumulator_ ) or rec_change;
   }
 
   const bool have_record_to = d->known( names::record_to );
@@ -258,23 +258,23 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
     for ( Token* t = ad.begin(); t != ad.end(); ++t )
     {
       if ( *t == LiteralDatum( names::file )
-        || *t == Token( names::file.toString() ) )
+        or *t == Token( names::file.toString() ) )
       {
         to_file_ = true;
       }
       else if ( *t == LiteralDatum( names::memory )
-        || *t == Token( names::memory.toString() ) )
+        or *t == Token( names::memory.toString() ) )
       {
         to_memory_ = true;
       }
       else if ( *t == LiteralDatum( names::screen )
-        || *t == Token( names::screen.toString() ) )
+        or *t == Token( names::screen.toString() ) )
       {
         to_screen_ = true;
       }
       else if ( rd.mode_ == RecordingDevice::MULTIMETER
-        && ( *t == LiteralDatum( names::accumulator )
-                  || *t == Token( names::accumulator.toString() ) ) )
+        and ( *t == LiteralDatum( names::accumulator )
+                  or *t == Token( names::accumulator.toString() ) ) )
       {
         to_accumulator_ = true;
       }
@@ -296,7 +296,7 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
     }
   }
 
-  if ( ( rec_change || have_record_to ) && to_file_ && to_memory_ )
+  if ( ( rec_change or have_record_to ) and to_file_ and to_memory_ )
   {
     LOG( M_INFO,
       "RecordingDevice::set_status",
@@ -304,7 +304,7 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   }
 
   if ( to_accumulator_
-    && ( to_file_ || to_screen_ || to_memory_ || withgid_ || withweight_ ) )
+    and ( to_file_ or to_screen_ or to_memory_ or withgid_ or withweight_ ) )
   {
     to_file_ = to_screen_ = to_memory_ = withgid_ = withweight_ = false;
     LOG( M_WARNING,
@@ -546,7 +546,7 @@ nest::RecordingDevice::init_buffers()
   // we only close files here, opening is left to calibrate()
   // we must not touch B_.fbuffer_ here, as it will be used
   // as long as B_.fs_ exists.
-  if ( P_.close_on_reset_ && B_.fs_.is_open() )
+  if ( P_.close_on_reset_ and B_.fs_.is_open() )
   {
     B_.fs_.close();
     P_.filename_.clear(); // filename_ only visible while file open
@@ -767,7 +767,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  if ( not P_.to_file_ && B_.fs_.is_open() )
+  if ( not P_.to_file_ and B_.fs_.is_open() )
   {
     B_.fs_.close();
     P_.filename_.clear();
@@ -840,7 +840,7 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
 
   // storing data when recording to accumulator relies on the fact
   // that multimeter will call us only once per accumulation step
-  if ( P_.to_memory_ || P_.to_accumulator_ )
+  if ( P_.to_memory_ or P_.to_accumulator_ )
   {
     store_data_( sender, stamp, offset, weight, target, port, rport );
   }

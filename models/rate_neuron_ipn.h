@@ -55,8 +55,8 @@ namespace nest
  *  - mult_coupling_in (factor of multiplicative coupling for inhibitory input)
  *
  * The boolean parameter linear_summation determines whether the input function
- * is applied to the summed up incoming connections (= True, default value) or
- * to each input individually (= False). In case of multiplicative coupling the
+ * is applied to the summed up incoming connections (True, default value) or
+ * to each input individually (False). In case of multiplicative coupling the
  * nonlinearity is applied separately to the summed excitatory and inhibitory
  * inputs if linear_summation=True.
  *

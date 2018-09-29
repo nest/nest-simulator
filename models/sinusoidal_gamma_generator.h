@@ -36,9 +36,9 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
@@ -128,7 +128,7 @@ namespace nest
  *       the same synapse type, see #737. Once #681 is fixed, we need to add a
          check that his assumption holds.
  */
-class sinusoidal_gamma_generator : public Node
+class sinusoidal_gamma_generator : public DeviceNode
 {
 
 public:

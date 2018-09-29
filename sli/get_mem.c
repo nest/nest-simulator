@@ -52,6 +52,14 @@ bg_get_stack_mem()
   return ( unsigned long ) memory;
 }
 
+unsigned long
+bg_get_mmap_mem()
+{
+  bgmemsize_t memory = 0;
+  Kernel_GetMemorySize( KERNEL_MEMSIZE_MMAP, &memory );
+  return ( unsigned long ) memory;
+}
+
 #else
 
 /* ISO C forbids an empty translation unit, so we define dummies. */
@@ -64,6 +72,13 @@ bg_get_heap_mem()
 
 unsigned long
 bg_get_stack_mem()
+{
+  assert( 0 || "Only implemented on BlueGene." );
+  return 0;
+}
+
+unsigned long
+bg_get_mmap_mem()
 {
   assert( 0 || "Only implemented on BlueGene." );
   return 0;

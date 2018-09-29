@@ -85,8 +85,8 @@ Archiving_Node::register_stdp_connection( double t_first_read )
 
   for ( std::deque< histentry >::iterator runner = history_.begin();
         runner != history_.end()
-          && ( t_first_read - runner->t_ > -1.0
-                 * kernel().connection_manager.get_stdp_eps() );
+          and ( t_first_read - runner->t_ > -1.0
+                  * kernel().connection_manager.get_stdp_eps() );
         ++runner )
   {
     ( runner->access_counter_ )++;
@@ -161,25 +161,20 @@ nest::Archiving_Node::get_history( double t1,
     *start = *finish;
     return;
   }
-  else
+  std::deque< histentry >::reverse_iterator runner = history_.rbegin();
+  const double t2_lim = t2 + kernel().connection_manager.get_stdp_eps();
+  const double t1_lim = t1 + kernel().connection_manager.get_stdp_eps();
+  while ( runner != history_.rend() and runner->t_ >= t2_lim )
   {
-    std::deque< histentry >::iterator runner = history_.begin();
-    while ( ( runner != history_.end() )
-      && ( t1 - runner->t_ > -1.0
-                * kernel().connection_manager.get_stdp_eps() ) )
-    {
-      ++runner;
-    }
-    *start = runner;
-    while ( ( runner != history_.end() )
-      && ( t2 - runner->t_ > -1.0
-                * kernel().connection_manager.get_stdp_eps() ) )
-    {
-      ( runner->access_counter_ )++;
-      ++runner;
-    }
-    *finish = runner;
+    ++runner;
   }
+  *finish = runner.base();
+  while ( runner != history_.rend() and runner->t_ >= t1_lim )
+  {
+    runner->access_counter_++;
+    ++runner;
+  }
+  *start = runner.base();
 }
 
 void
@@ -262,7 +257,7 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_Ca, new_tau_Ca );
   updateValue< double >( d, names::beta_Ca, new_beta_Ca );
 
-  if ( new_tau_minus <= 0.0 || new_tau_minus_triplet <= 0.0 )
+  if ( new_tau_minus <= 0.0 or new_tau_minus_triplet <= 0.0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }

@@ -67,8 +67,6 @@
  total_num_virtual_procs       integertype - The total number of virtual processes
  local_num_threads             integertype - The local number of threads
  num_processes                 integertype - The number of MPI processes (read only)
- num_rec_processes             integertype - The number of MPI processes reserved for recording spikes
- num_sim_processes             integertype - The number of MPI processes reserved for simulating neurons
  off_grid_spiking              booltype    - Whether to transmit precise spike times in MPI
                                              communication (read only)
 
@@ -166,13 +164,13 @@ public:
   void reset();
 
   /**
-   * Reset kernel after num threads have changed.
+   * Change number of threads.
    *
    * No need to reset all managers, only those affected by num thread changes.
    *
    * @see initialize(), finalize()
    */
-  void num_threads_changed_reset();
+  void change_num_threads( size_t num_threads );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& );

@@ -179,7 +179,7 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
  * ---------------------------------------------------------------- */
 
 nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
   , S_()
@@ -190,7 +190,7 @@ nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator()
 
 nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator(
   const sinusoidal_poisson_generator& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
   , S_( n.S_ )

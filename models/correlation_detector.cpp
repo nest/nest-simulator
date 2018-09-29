@@ -344,7 +344,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
     SpikelistType::iterator insert_pos =
       std::find_if( S_.incoming_[ sender ].begin(),
         S_.incoming_[ sender ].end(),
-        std::bind2nd( std::greater< Spike_ >(), sp_i ) );
+        std::bind( std::greater< Spike_ >(), std::placeholders::_1, sp_i ) );
 
     // insert before the position we have found
     // if no element greater found, insert_pos == end(), so append at the end of

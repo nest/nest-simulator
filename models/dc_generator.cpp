@@ -110,7 +110,7 @@ nest::dc_generator::Parameters_::set( const DictionaryDatum& d )
  * ---------------------------------------------------------------- */
 
 nest::dc_generator::dc_generator()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
   , S_()
@@ -120,7 +120,7 @@ nest::dc_generator::dc_generator()
 }
 
 nest::dc_generator::dc_generator( const dc_generator& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
   , S_( n.S_ )

@@ -36,11 +36,14 @@
 /unittest namespace
 
 /* BeginDocumentation
-Name: unittest::exit_test_gracefully - End test script and report success
-Synopsis: exit_test_gracefully -> -
+Name: unittest::exit_test_gracefully - End test script and report it as skipped
+Synopsis: literal exit_test_gracefully -> -
 Description:
-This function will terminate NEST/SLI with a return code signaling success.
-It should be used to leave test scripts that have special prerequisites.
+This function will terminate NEST/SLI with a return code signaling that a
+test was skipped. It should be used to leave test scripts that have special
+prerequisites.
+Parameters:
+literal - Reason for exit
 Example:
 /unittest using
 is_threaded not { /skipped_no_openmp exit_test_gracefully } if
@@ -49,12 +52,6 @@ is_threaded not { /skipped_no_openmp exit_test_gracefully } if
 {
   statusdict/exitcodes :: exch get quit_i
 } bind def
-
-/skip_if_no_mpi { statusdict/is_mpi :: not { /skipped_no_mpi exit_test_gracefully } if } def
-/skip_if_have_mpi { statusdict/is_mpi :: { /skipped_have_mpi exit_test_gracefully } if } def
-/skip_if_not_threaded { is_threaded not { /skipped_no_threading exit_test_gracefully } if } def
-/skip_if_without_gsl { statusdict/have_gsl :: not { /skipped_no_gsl exit_test_gracefully } if } def
-/skip_if_without_music { statusdict/have_music :: not { /skipped_no_music exit_test_gracefully } if } def
 
 
 /* BeginDocumentation

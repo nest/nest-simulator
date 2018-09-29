@@ -37,9 +37,9 @@ EXIT_FAILURE = 126
 
 def decode(arg):
     if version_info < (3,):
-        return x
+        return arg
     else:
-        return x.decode("utf8")
+        return arg.decode("utf8")
 
 
 nestscript = mktemp(".sli")

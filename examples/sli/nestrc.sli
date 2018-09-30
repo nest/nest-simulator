@@ -41,10 +41,6 @@
 % /page << /command (xless)
 %          /wait    false >> SetOptions
 %
-% If you like to show helpfiles using xemacs:
-% /page << /command (xemacs)
-%          /wait    false >> SetOptions
-%
 % Use built-in "poor man's pager" (this is the default):
 % /page << /command false >> SetOptions
 

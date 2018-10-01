@@ -106,7 +106,7 @@ struct comm_info {
     MPI_Comm comm; //
 };
 
-comm_info get_comm_info(bool is_arbor) {
+comm_info get_comm_info(bool is_arbor, MPI_Comm comm) {
     static_assert((sizeof(spike) % alignof(spike)) == 0);
     
     comm_info info;
@@ -117,9 +117,11 @@ comm_info get_comm_info(bool is_arbor) {
     info.global_size = mpi_size(MPI_COMM_WORLD);
 
     // split MPI_COMM_WORLD: all arbor go into split 1
-    int color = is_arbor? 1: 0;
-    MPI_Comm_split(MPI_COMM_WORLD, color, info.global_rank, &info.comm);
+    //int color = is_arbor? 1: 0;
+    //MPI_Comm_split(MPI_COMM_WORLD, color, info.global_rank, &info.comm);
+    //std::cerr << "Splitted network" << std::endl;
 
+    info.comm = comm;
     int local_size  = mpi_size(info.comm);
     info.local_rank = mpi_rank(info.comm);
 

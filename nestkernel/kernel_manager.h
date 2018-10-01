@@ -182,7 +182,6 @@ public:
   bool is_initialized() const;
 
   LoggingManager logging_manager;
-  IOManager io_manager;
   MPIManager mpi_manager;
   VPManager vp_manager;
   RNGManager rng_manager;
@@ -194,8 +193,10 @@ public:
   ModelManager model_manager;
   MUSICManager music_manager;
   NodeManager node_manager;
+  IOManager io_manager;
 
 private:
+  std::vector< ManagerInterface* > managers;
   bool initialized_; //!< true if all sub-managers initialized
 };
 

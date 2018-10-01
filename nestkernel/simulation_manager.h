@@ -82,12 +82,6 @@ public:
   void cleanup();
 
   /**
-   * Simulate for the given time .
-   * calls prepare(); run(Time&); cleanup();
-   */
-  void simulate( Time const& );
-
-  /**
    * Returns true if waveform relaxation is used.
    */
   bool use_wfr() const;

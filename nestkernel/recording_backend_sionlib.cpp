@@ -164,7 +164,7 @@ nest::RecordingBackendSIONlib::open_files_()
     file.sid = sion_paropen_ompi( filename.c_str(),
       P_.sion_collective_ ? "bw,cmerge,collsize=-1" : "bw",
       &n_files,
-      MPI_COMM_WORLD,
+      kernel().mpi_manager.get_communicator(),
       &local_comm,
       &sion_chunksize,
       &fs_block_size,
@@ -249,7 +249,7 @@ nest::RecordingBackendSIONlib::close_files_()
           MPI_UNSIGNED_LONG,
           MPI_SUM,
           0,
-          MPI_COMM_WORLD );
+          kernel().mpi_manager.get_communicator() );
         assert( sizeof( unsigned long ) <= sizeof( sion_uint64 ) );
         it->second.info.n_rec = static_cast< sion_uint64 >( n_rec_total );
       }

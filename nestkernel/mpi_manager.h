@@ -72,6 +72,7 @@ public:
   void init_mpi( int* argc, char** argv[] );
 #ifdef HAVE_MPI
   void set_communicator(MPI_Comm);
+  MPI_Comm get_communicator() { return comm; };
 #endif
 
   /**

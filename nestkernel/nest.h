@@ -80,7 +80,7 @@ void connect( const GIDCollection& sources,
 
 ArrayDatum get_connections( const DictionaryDatum& dict );
 
-void simulate( const double& t );
+void simulate( double t );
 void resume_simulation();
 /**
  * @fn run(const double& time)

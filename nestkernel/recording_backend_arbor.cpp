@@ -123,13 +123,13 @@ nest::RecordingBackendArbor::prepare()
     prepared_ = true;
     
     //  INITIALISE MPI
-    arbor_->info = arb::copy::get_comm_info(false);
+    arbor_->info = arb::copy::get_comm_info(false, kernel().mpi_manager.get_communicator());
 
     //  MODEL SETUP
-    DictionaryDatum dict_out;
+    DictionaryDatum dict_out(new Dictionary);
     kernel().get_status(dict_out);
     const float nest_min_delay = (*dict_out)["min_delay"];
-    const int num_nest_cells = (*dict_out)["network_size"];
+    const int num_nest_cells = (long) (*dict_out)["network_size"];
     
     // HAND SHAKE ARBOR-NEST
     // hand shake #1: communicate cell populations
@@ -146,8 +146,9 @@ nest::RecordingBackendArbor::prepare()
     steps_left_ = arbor_steps_
         = arb::copy::broadcast(0u, MPI_COMM_WORLD, arbor_->info.arbor_root);
 
-    DictionaryDatum dict_in;
+    DictionaryDatum dict_in(new Dictionary);
     (*dict_in)["min_delay"] = min_delay;
+    (*dict_in)["max_delay"] = (*dict_out)["max_delay"];
     kernel().set_status(dict_in);
 }
 

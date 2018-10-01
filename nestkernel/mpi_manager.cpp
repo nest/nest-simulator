@@ -191,7 +191,7 @@ nest::MPIManager::mpi_finalize( int exitcode )
 void
 nest::MPIManager::mpi_abort( int exitcode )
 {
-  MPI_Abort( MPI_COMM_WORLD, exitcode );
+  MPI_Abort( comm, exitcode );
 }
 
 
@@ -762,7 +762,7 @@ nest::MPIManager::time_communicate( int num_bytes, int samples )
       &test_recv_buffer[ 0 ],
       packet_length,
       MPI_UNSIGNED,
-      MPI_COMM_WORLD );
+      comm );
   }
   // finish time measurement here
   foo.stop();
@@ -834,7 +834,7 @@ nest::MPIManager::time_communicate_offgrid( int num_bytes, int samples )
       &test_recv_buffer[ 0 ],
       packet_length,
       MPI_OFFGRID_SPIKE,
-      MPI_COMM_WORLD );
+      comm );
   }
   // finish time measurement here
   foo.stop();
@@ -870,7 +870,7 @@ nest::MPIManager::time_communicate_alltoall( int num_bytes, int samples )
       &test_recv_buffer[ 0 ],
       packet_length,
       MPI_UNSIGNED,
-      MPI_COMM_WORLD );
+      comm );
   }
   // finish time measurement here
   foo.stop();
@@ -916,7 +916,7 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
       &n_nodes[ 0 ],
       &displacements[ 0 ],
       MPI_UNSIGNED,
-      MPI_COMM_WORLD );
+      comm );
   }
   // finish time measurement here
   foo.stop();

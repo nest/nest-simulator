@@ -2087,7 +2087,6 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     import matplotlib
     import matplotlib.pyplot as plt
     import numpy as np
-    from math import cos, sin, pi
 
     # minimal checks for ax having been created by PlotKernel
     if ax and not isinstance(ax, matplotlib.axes.Axes):
@@ -2118,9 +2117,11 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
 
         if 'azimuth_angle' in mask['rectangular']:
             angle = mask['rectangular']['azimuth_angle']
-            angle_rad = angle * pi / 180
-            pos = [pos[0] * cos(angle_rad) - pos[1] * sin(angle_rad),
-                   pos[0] * sin(angle_rad) + pos[1] * cos(angle_rad)]
+            angle_rad = angle * np.pi / 180
+            cs = np.cos([angle_rad])[0]
+            sn = np.sin([angle_rad])[0]
+            pos = [pos[0] * cs - pos[1] * sn,
+                   pos[0] * sn + pos[1] * cs]
         else:
             angle = 0.0
 

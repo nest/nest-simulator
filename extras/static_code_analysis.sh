@@ -306,7 +306,7 @@ if [ $nlines_copyright_check \> 1 ] || \
   
   if ! $RUNS_ON_TRAVIS; then
       print_msg "" "For detailed problem descriptions, consult the tagged messages above."
-      print_msg "" "Tags may be [VERA], [CPPC], [DIFF], [COPY] and [PEP8]."
+      print_msg "" "Tags may be [VERA], [CPPC], [DIFF], [COPY], [NAME] and [PEP8]."
   fi
 else
   print_msg "" ""

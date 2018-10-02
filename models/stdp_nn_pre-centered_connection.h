@@ -143,13 +143,9 @@ public:
   /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
-   * \param t_lastspike Point in time of last spike sent.
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    double t_lastspike,
-    const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -169,14 +165,13 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double t_lastspike,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_lastspike - get_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_delay() );
   }
 
   void
@@ -211,6 +206,8 @@ private:
   double mu_minus_;
   double Wmax_;
   double Kplus_;
+
+  double t_lastspike_;
 };
 
 
@@ -218,19 +215,15 @@ private:
  * Send an event to the receiver of this connection.
  * \param e The event to send
  * \param t The thread on which this connection is stored.
- * \param t_lastspike Time point of last spike emitted
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
 inline void
 STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double t_lastspike,
   const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
-  //   if(t_lastspike >0) {std::cout << "last spike " << t_lastspike <<
-  //   std::endl ;}
   double t_spike = e.get_stamp().get_ms();
   // t_lastspike_ = 0 initially
 
@@ -246,36 +239,38 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
 
-  // For a new synapse, t_lastspike contains the point in time of the last
+  // For a new synapse, t_lastspike_ contains the point in time of the last
   // spike. So we initially read the
-  // history(t_lastspike - dendritic_delay, ..., T_spike-dendritic_delay]
+  // history(t_lastspike_ - dendritic_delay, ..., T_spike-dendritic_delay]
   // which increases the access counter for these entries.
   // At registration, all entries' access counters of
   // history[0, ..., t_last_spike - dendritic_delay] have been
   // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for
   // details.
-  target->get_history(
-    t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  target->get_history( t_lastspike_ - dendritic_delay,
+    t_spike - dendritic_delay,
+    &start,
+    &finish );
   // If there were no post-synaptic spikes between the current pre-synaptic one
-  // t_spike and the previous pre-synaptic one t_lastspike, there are no pairs
+  // t_spike and the previous pre-synaptic one t_lastspike_, there are no pairs
   // to account.
   if ( start != finish )
   {
     // facilitation due to the first post-synaptic spike start->t_
-    // since the previous pre-synaptic spike t_lastspike
+    // since the previous pre-synaptic spike t_lastspike_
 
     double minus_dt;
-    minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
+    minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
 
     // get_history() should make sure that
-    // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
+    // start->t_ > t_lastspike_ - dendritic_delay, i.e. minus_dt < 0
     assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
 
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ) );
 
     // According to the presynaptic-centered nearest-neighbour scheme,
     // a postsynaptic spike
-    // (we now know there was at least one between t_lastspike and t_spike)
+    // (we now know there was at least one between t_lastspike_ and t_spike)
     // erases the state of the synapse,
     // and all the preceding presynaptic spikes are forgotten.
     Kplus_ = 0;
@@ -291,7 +286,7 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
     );
   weight_ = depress_( weight_, nearest_neighbor_Kminus );
 
-  Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) / tau_plus_ ) + 1.0;
+  Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / tau_plus_ ) + 1.0;
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
@@ -300,6 +295,8 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e,
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
+
+  t_lastspike_ = t_spike;
 }
 
 
@@ -314,6 +311,7 @@ STDPNNPreCenteredConnection< targetidentifierT >::STDPNNPreCenteredConnection()
   , mu_minus_( 1.0 )
   , Wmax_( 100.0 )
   , Kplus_( 0.0 )
+  , t_lastspike_( 0.0 )
 {
 }
 
@@ -328,6 +326,7 @@ STDPNNPreCenteredConnection< targetidentifierT >::STDPNNPreCenteredConnection(
   , mu_plus_( rhs.mu_plus_ )
   , mu_minus_( rhs.mu_minus_ )
   , Wmax_( rhs.Wmax_ )
+  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

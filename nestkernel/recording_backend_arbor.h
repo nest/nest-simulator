@@ -27,17 +27,7 @@
 #include <memory>
 
 #include "recording_backend.h"
-
-// forward declaration
-namespace arb::copy
-{
-template <typename I>
-struct basic_spike;
-
-struct cell_member_type;
-
-using spike = basic_spike<cell_member_type>;
-}
+#include "mpiutil.hpp"
 
 namespace nest
 {
@@ -71,7 +61,7 @@ public:
   void calibrate();
 
 private:
-  void exchange_(std::vector<arb::copy::spike>&);
+  void exchange_(std::vector<arb::shadow::spike>&);
 
   bool prepared_;
   bool cleanedup_;

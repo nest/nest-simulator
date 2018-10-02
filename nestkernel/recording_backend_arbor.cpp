@@ -114,17 +114,13 @@ nest::RecordingBackendArbor::finalize()
     }
 }
 
-struct nest::RecordingBackendArbor::spike_exchange {
-    std::vector<arb::copy::spike>& local;
-};
-
 void
-nest::RecordingBackendArbor::exchange_(spike_exchange&& spikes)
+nest::RecordingBackendArbor::exchange_(std::vector<arb::copy::spike>& local_spikes)
 {
     static int step = 0;
     std::cerr << "NEST n: " << step++ << std::endl;
     std::cerr << "NEST: Output spikes" << std::endl;
-    arb::copy::gather_spikes(spikes.local, MPI_COMM_WORLD);
+    arb::copy::gather_spikes(local_spikes, MPI_COMM_WORLD);
     std::cerr << "NEST: Output spikes done: " << steps_left_ << std::endl;
     steps_left_--;
 }
@@ -168,7 +164,7 @@ nest::RecordingBackendArbor::prepare()
     kernel().set_status(dict_in);
 
     std::vector<arb::copy::spike> empty_spikes;
-    exchange_({empty_spikes});
+    exchange_(empty_spikes);
 }
 
 void
@@ -213,7 +209,7 @@ nest::RecordingBackendArbor::synchronize()
       spikes.clear();
     }
 
-    exchange_({local_spikes});
+    exchange_(local_spikes);
   }
 }
 

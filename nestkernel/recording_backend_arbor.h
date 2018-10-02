@@ -28,6 +28,17 @@
 
 #include "recording_backend.h"
 
+// forward declaration
+namespace arb::copy
+{
+template <typename I>
+struct basic_spike;
+
+struct cell_member_type;
+
+using spike = basic_spike<cell_member_type>;
+}
+
 namespace nest
 {
 
@@ -60,9 +71,8 @@ public:
   void calibrate();
 
 private:
-  struct spike_exchange;
-  void exchange_(spike_exchange&&);
-    
+  void exchange_(std::vector<arb::copy::spike>&);
+
   bool prepared_;
   bool cleanedup_;
 

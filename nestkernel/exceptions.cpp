@@ -414,7 +414,7 @@ nest::UnmatchedSteps::message() const
 {
     std::ostringstream msg;
     msg << "Steps for backend device don't match NEST steps: "
-        << "steps expected: " << total_steps_
+        << "steps expected: " << total_steps_ << " "
         << "steps executed: " << current_step_ << ".";
     return msg.str();
 }

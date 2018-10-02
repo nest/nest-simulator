@@ -48,7 +48,7 @@ std::vector<spike> gather_spikes(const std::vector<spike>& values, MPI_Comm comm
 
     std::vector<int> counts(size);
     int n_local = values.size()*sizeof(spike);
-    MPI_Allgather(&n_local, 1, MPI_INT, counts.data(), 1, MPI_INT, MPI_COMM_WORLD);
+    MPI_Allgather(&n_local, 1, MPI_INT, counts.data(), 1, MPI_INT, comm);
     std::vector<int> displ(size+1);
     for (int i=0; i<size; ++i) {
         displ[i+1] = displ[i] + counts[i];

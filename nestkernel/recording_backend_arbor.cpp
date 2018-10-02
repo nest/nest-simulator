@@ -193,8 +193,13 @@ nest::RecordingBackendArbor::synchronize()
       local_spikes.insert(local_spikes.end(), spikes.begin(), spikes.end());
       spikes.clear();
     }
-    
-    arb::copy::gather_spikes(local_spikes, arbor_->info.comm);
+
+    static int step = 0;
+    std::cerr << "NEST n: " << step++ << std::endl;
+    std::cerr << "NEST: Output spikes" << std::endl;
+    arb::copy::gather_spikes(local_spikes, MPI_COMM_WORLD);
+    std::cerr << "NEST: Output spikes done: " << steps_left_ << std::endl;
+    steps_left_--;
   }
 }
 

@@ -114,6 +114,21 @@ nest::RecordingBackendArbor::finalize()
     }
 }
 
+struct nest::RecordingBackendArbor::spike_exchange {
+    std::vector<arb::copy::spike>& local;
+};
+
+void
+nest::RecordingBackendArbor::exchange_(spike_exchange&& spikes)
+{
+    static int step = 0;
+    std::cerr << "NEST n: " << step++ << std::endl;
+    std::cerr << "NEST: Output spikes" << std::endl;
+    arb::copy::gather_spikes(spikes.local, MPI_COMM_WORLD);
+    std::cerr << "NEST: Output spikes done: " << steps_left_ << std::endl;
+    steps_left_--;
+}
+
 void
 nest::RecordingBackendArbor::prepare()
 {
@@ -144,12 +159,16 @@ nest::RecordingBackendArbor::prepare()
 
     // hand shake #3: steps
     steps_left_ = arbor_steps_
-        = arb::copy::broadcast(0u, MPI_COMM_WORLD, arbor_->info.arbor_root);
+        = arb::copy::broadcast(0u, MPI_COMM_WORLD, arbor_->info.arbor_root)
+        + 1; // arbor has a pre-exchange
 
     DictionaryDatum dict_in(new Dictionary);
     (*dict_in)["min_delay"] = min_delay;
     (*dict_in)["max_delay"] = (*dict_out)["max_delay"];
     kernel().set_status(dict_in);
+
+    std::vector<arb::copy::spike> empty_spikes;
+    exchange_({empty_spikes});
 }
 
 void
@@ -194,12 +213,7 @@ nest::RecordingBackendArbor::synchronize()
       spikes.clear();
     }
 
-    static int step = 0;
-    std::cerr << "NEST n: " << step++ << std::endl;
-    std::cerr << "NEST: Output spikes" << std::endl;
-    arb::copy::gather_spikes(local_spikes, MPI_COMM_WORLD);
-    std::cerr << "NEST: Output spikes done: " << steps_left_ << std::endl;
-    steps_left_--;
+    exchange_({local_spikes});
   }
 }
 

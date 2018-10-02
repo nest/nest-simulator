@@ -60,6 +60,9 @@ public:
   void calibrate();
 
 private:
+  struct spike_exchange;
+  void exchange_(spike_exchange&&);
+    
   bool prepared_;
   bool cleanedup_;
 

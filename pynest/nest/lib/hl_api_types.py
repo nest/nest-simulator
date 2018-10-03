@@ -281,10 +281,17 @@ class GIDCollection(object):
             if nest.is_literal(param):
                 cmd = '/{} get'.format(param)
                 nest.sps(self._datum)
-                nest.sr(cmd)
-                result = nest.spp()
+                try:
+                    nest.sr(cmd)
+                    result = nest.spp()
+                except nest.NESTError:
+                    # If the GIDCollection is a composite.
+                    result = self.get()[param]
+
                 if pandas_output:
                     try:
+                        # This try will probably soon be removed, once we
+                        # deside what to do with get and GC's with metadata.
                         index = self.get('global_id')
                         if type(index) is int:
                             index = [index]
@@ -299,7 +306,7 @@ class GIDCollection(object):
                         else:
                             result = pandas.DataFrame({param: result},
                                                       index=index)
-                    except nest.NESTError:  # It is (probably) a layer
+                    except KeyError:  # It is (probably) a layer
                         result = pandas.DataFrame({param: (result,)},
                                                   columns=['layer'])
             # Array param case
@@ -323,7 +330,7 @@ class GIDCollection(object):
                                 p_dict.update({key: item})
                         result = pandas.DataFrame(p_dict,
                                                   index=index)
-                    except nest.NESTError:  # It is (probably) a layer
+                    except KeyError:  # It is (probably) a layer
                         result = pandas.DataFrame(result,
                                                   columns=['layer'])
 

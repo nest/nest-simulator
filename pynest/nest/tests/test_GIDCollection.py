@@ -593,6 +593,54 @@ class TestGIDCollection(unittest.TestCase):
                               pandas.DataFrame(ref_dict,
                                                index=tuple(multi_sd)))
 
+    def test_get_composite(self):
+        """
+        Test that get function works on composite GIDCollections
+        """
+
+        n1 = nest.Create('iaf_psc_alpha', 2)
+        n2 = nest.Create('iaf_psc_delta', 2)
+        n3 = nest.Create('iaf_psc_exp')
+        n4 = nest.Create('iaf_psc_alpha', 3)
+
+        n1.set('V_m', [-77., -88.])
+        n3.set({'V_m': -55.})
+
+        n1.set('C_m', [251., 252.])
+        n2.set('C_m', [253., 254.])
+        n3.set({'C_m': 255.})
+        n4.set('C_m', [256., 257., 258.])
+
+        n5 = n1 + n2 + n3 + n4
+
+        status_dict = n5.get()
+
+        # Checks that we get values in correct order
+        vm_ref = (-77., -88., -70., -70., -55, -70., -70., -70.)
+        self.assertEqual(status_dict['V_m'], vm_ref)
+
+        # Checks that we get None where not applicable
+        # tau_syn_ex is part of iaf_psc_alpha
+        tau_ref = (2., 2., nest.SLILiteral('None'), nest.SLILiteral('None'),
+                   2., 2., 2., 2.)
+        self.assertEqual(status_dict['tau_syn_ex'], tau_ref)
+        nest.SLILiteral('None')
+        # refractory_input is part of iaf_psc_delta
+        refrac_ref = (nest.SLILiteral('None'), nest.SLILiteral('None'), False,
+                      False, nest.SLILiteral('None'), nest.SLILiteral('None'),
+                      nest.SLILiteral('None'), nest.SLILiteral('None'))
+
+        self.assertEqual(status_dict['refractory_input'], refrac_ref)
+
+        # Check that calling get with string works on composite gc's, both on
+        # parameters all the models have, and on individual parameters.
+        Cm_ref = [x*1. for x in range(251, 259)]
+        Cm = n5.get('C_m')
+        self.assertEqual(list(Cm), Cm_ref)
+
+        refrac = n5.get('refractory_input')
+        self.assertEqual(refrac, refrac_ref)
+
     def test_set(self):
         """
         Test that set function works as expected.

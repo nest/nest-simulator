@@ -145,17 +145,31 @@ public:
    * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
-
   void get_K_values( double t,
     double& Kminus,
     double& nearest_neighbor_Kminus,
     double& triplet_Kminus );
 
   /**
+   * \fn void get_K_values( double t,
+   *   double& Kminus,
+   *   double& triplet_Kminus )
+   * The legacy version of the function, kept for compatibility
+   * after changing the function signature in PR #865.
+   * @throws UnexpectedEvent
+   */
+  void
+  get_K_values( double t, double& Kminus, double& triplet_Kminus )
+  {
+    double nearest_neighbor_Kminus_to_discard;
+    get_K_values(
+      t, Kminus, nearest_neighbor_Kminus_to_discard, triplet_Kminus );
+  }
+
+  /**
    * \fn double get_triplet_K_value(std::deque<histentry>::iterator &iter)
    * return the triplet Kminus value for the associated iterator.
    */
-
   double get_triplet_K_value( const std::deque< histentry >::iterator& iter );
 
   /**

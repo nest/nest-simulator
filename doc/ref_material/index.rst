@@ -1,9 +1,6 @@
 Reference Material
 =============================
 
-.. toctree::
-   :caption: High-level PyNEST APIs
+* Here you can find `the PyNEST APIs <http://www.nest-simulator.org/pynest-api/nest.lib.html#nest-lib-package>`_
 
-   pynest
-   nest
-   nest.lib
+* The `Command Index <http://www.nest-simulator.org/helpindex/>`_ contains a list of all SLI and C++ related reference material.

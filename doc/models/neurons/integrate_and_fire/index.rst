@@ -32,19 +32,19 @@ Integrate and Fire Neurons
 Examples using Integrate and Fire Neurons
 -------------------------------------------
 
-* :doc:`brunel_alpha_nest <../../../auto_examples/brunel_alpha_nest>`
-* :doc:`brunel_alpha_numpy <../../../auto_examples/brunel_alpha_numpy>`
-* :doc:`brunel_exp_multisynapse <../../../auto_examples/brunel_exp_multisynapse_nest>`
-* :doc:`Brody Hopfield <../../../auto_examples/BrodyHopfield>`
-* :doc:`Sensitivity to pertubation <../../../auto_examples/sensitivity_to_perturbation>`
-* :doc:`Testing IAF <../../../auto_examples/testiaf>`
-* :doc:`Pulse packet <../../../auto_examples/pulsepacket>`
-* :doc:`Precise Spiking <../../../auto_examples/precise_spiking>`
-* :doc:`Two Neurons <../../../auto_examples/plot_twoneurons>`
-* :doc:`One Neuron <../../../auto_examples/plot_one_neuron>`
-* :doc:`Balanced Neuron <../../../auto_examples/balancedneuron>`
-* :doc:`Campbell Siegert <../../../auto_examples/CampbellSiegert>`
-* :doc:`One Neuron with Noise <../../../auto_examples/one_neuron_with_noise>`
-* :doc:`Multi-compartment Neuron <../../../auto_examples/plot_mc_neuron>`
-* :doc:`brunel_delata_nest <../../../auto_examples/brunel_delta_nest>`
-* :doc:`Vinit <../../../auto_examples/vinit_example>`
+* `brunel_alpha_nest <http://www.nest-simulator.org/py_sample/brunel_alpha_nest>`_
+* `brunel_alpha_numpy <http://www.nest-simulator.org/py_sample/brunel_alpha_numpy>`_
+* `brunel_exp_multisynapse <http://www.nest-simulator.org/py_sample/brunel_exp_multisynapse_nest>`_
+* `Brody Hopfield <http://www.nest-simulator.org/py_sample/BrodyHopfield>`_
+* `Sensitivity to pertubation <http://www.nest-simulator.org/py_sample/sensitivity_to_perturbation>`_
+* `Testing IAF <http://www.nest-simulator.org/py_sample/testiaf>`_
+* `Pulse packet <http://www.nest-simulator.org/py_sample/pulsepacket>`_
+* `Precise Spiking <http://www.nest-simulator.org/py_sample/precise_spiking>`_
+* `Two Neurons <http://www.nest-simulator.org/py_sample/plot_twoneurons>`_
+* `One Neuron <http://www.nest-simulator.org/py_sample/plot_one_neuron>`_
+* `Balanced Neuron <http://www.nest-simulator.org/py_sample/balancedneuron>`_
+* `Campbell Siegert <http://www.nest-simulator.org/py_sample/CampbellSiegert>`_
+* `One Neuron with Noise <http://www.nest-simulator.org/py_sample/one_neuron_with_noise>`_
+* `Multi-compartment Neuron <http://www.nest-simulator.org/py_sample/plot_mc_neuron>`_
+* `brunel_delata_nest <http://www.nest-simulator.org/py_sample/brunel_delta_nest>`_
+* `Vinit <http://www.nest-simulator.org/py_sample/vinit_example>`_

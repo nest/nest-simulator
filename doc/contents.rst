@@ -13,7 +13,7 @@ Table of Contents
    installation/index
    getting_started
    tutorials/index
-   auto_examples/index
+   examples/index
    guides/index
    getting_help
    ref_material/index

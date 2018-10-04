@@ -28,7 +28,7 @@ which will explain how to build your first neural network simulation in NEST.
 
     * :doc:`List of Models in NEST <models/index>`
     * :doc:`Create your own model <models/create_model>`
-    * :doc:`Examples of Network Models <auto_examples/index>`
+    * :doc:`Examples of Network Models <examples/index>`
 
 
 How do I use NEST?

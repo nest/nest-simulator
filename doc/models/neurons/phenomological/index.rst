@@ -21,7 +21,7 @@ Phenomological Neurons
 
 .. sidebar:: See Also
 
-    Guide: :doc:`aeif_model_implementation`
+    Guide: `aeif_model_implementation`
 
 
 .. toctree::
@@ -39,7 +39,7 @@ Phenomological Neurons
 Examples using Phenomological Neurons
 ---------------------------------------
 
-* :doc:`IF Curve <../../../auto_examples/if_curve>`
-* :doc:`Brette Gerstner Fig 2c <../../../auto_examples/brette_gerstner_fig_2c>`
-* :doc:`Brette Gerstner Fig 3d <../../../auto_examples/brette_gerstner_fig_3d>`
+* `IF Curve <http://www.nest-simulator.org/py_sample/if_curve>`_
+* `Brette Gerstner Fig 2c <http://www.nest-simulator.org/py_sample/brette_gerstner_fig_2c>`_
+* `Brette Gerstner Fig 3d <http://www.nest-simulator.org/py_sample/brette_gerstner_fig_3d>`_
 

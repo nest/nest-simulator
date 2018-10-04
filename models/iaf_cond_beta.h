@@ -162,7 +162,7 @@ public:
 private:
   void init_state_( const Node& proto );
   void init_buffers_();
-  double get_normalisation_factor(double, double);
+  double get_normalisation_factor( double, double );
   void calibrate();
   void update( Time const&, const long, const long );
 
@@ -183,21 +183,23 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    double V_th;       //!< Threshold Potential in mV
-    double V_reset;    //!< Reset Potential in mV
-    double t_ref;      //!< Refractory period in ms
-    double g_L;        //!< Leak Conductance in nS
-    double C_m;        //!< Membrane Capacitance in pF
-    double E_ex;       //!< Excitatory reversal Potential in mV
-    double E_in;       //!< Inhibitory reversal Potential in mV
-    double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double tau_Erise;  //!< Synaptic Rise Time Constant Excitatory Synapse in ms
-    double tau_Edecay; //!< Synaptic Decay Time Constant for Excitatory Synapse in ms
-    double tau_Irise;  //!< Synaptic Rise Time Constant Inhibitory Synapse in ms
-    double tau_Idecay; //!< Synaptic Decay Time Constant for Inhibitory Synapse in ms
-    double I_e;        //!< Constant Current in pA
-    double g_ext_ex;       //!< Constant External Excitatory Conductance in uS
-    double g_ext_in;       //!< Constant External Inhibitory Conductance in uS
+    double V_th;      //!< Threshold Potential in mV
+    double V_reset;   //!< Reset Potential in mV
+    double t_ref;     //!< Refractory period in ms
+    double g_L;       //!< Leak Conductance in nS
+    double C_m;       //!< Membrane Capacitance in pF
+    double E_ex;      //!< Excitatory reversal Potential in mV
+    double E_in;      //!< Inhibitory reversal Potential in mV
+    double E_L;       //!< Leak reversal Potential (aka resting potential) in mV
+    double tau_Erise; //!< Synaptic Rise Time Constant Excitatory Synapse in ms
+    double
+      tau_Edecay; //!< Synaptic Decay Time Constant for Excitatory Synapse in ms
+    double tau_Irise; //!< Synaptic Rise Time Constant Inhibitory Synapse in ms
+    double
+      tau_Idecay; //!< Synaptic Decay Time Constant for Inhibitory Synapse in ms
+    double I_e;   //!< Constant Current in pA
+    double g_ext_ex; //!< Constant External Excitatory Conductance in uS
+    double g_ext_in; //!< Constant External Inhibitory Conductance in uS
 
     Parameters_(); //!< Set default parameter values
 
@@ -262,8 +264,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_beta& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_cond_beta& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_beta& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_cond_beta& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_cond_beta > logger_;

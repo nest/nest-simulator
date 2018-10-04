@@ -65,10 +65,10 @@ RecordablesMap< iaf_cond_beta >::create()
   // use standard names whereever you can for consistency!
   insert_(
     names::V_m, &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::V_M > );
-  insert_( names::g_ex,
-    &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::G_EXC > );
-  insert_( names::g_in,
-    &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::G_INH > );
+  insert_(
+    names::g_ex, &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::G_EXC > );
+  insert_(
+    names::g_in, &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::G_INH > );
 
   insert_( names::t_ref_remaining, &iaf_cond_beta::get_r_ );
 }
@@ -97,8 +97,10 @@ nest::iaf_cond_beta_dynamics( double,
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
-  const double I_syn_exc = ( y[ S::G_EXC ] + node.P_.g_ext_ex ) * ( y[ S::V_M ] - node.P_.E_ex );
-  const double I_syn_inh = ( y[ S::G_INH ] + node.P_.g_ext_in ) * ( y[ S::V_M ] - node.P_.E_in );
+  const double I_syn_exc =
+    ( y[ S::G_EXC ] + node.P_.g_ext_ex ) * ( y[ S::V_M ] - node.P_.E_ex );
+  const double I_syn_inh =
+    ( y[ S::G_INH ] + node.P_.g_ext_in ) * ( y[ S::V_M ] - node.P_.E_in );
   const double I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
 
   // dV_m/dt
@@ -121,21 +123,21 @@ nest::iaf_cond_beta_dynamics( double,
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_beta::Parameters_::Parameters_()
-  : V_th( -55.0 )    // mV
-  , V_reset( -60.0 ) // mV
-  , t_ref( 2.0 )     // ms
-  , g_L( 16.6667 )   // nS
-  , C_m( 250.0 )     // pF
-  , E_ex( 0.0 )      // mV
-  , E_in( -85.0 )    // mV
-  , E_L( -70.0 )     // mV
+  : V_th( -55.0 )     // mV
+  , V_reset( -60.0 )  // mV
+  , t_ref( 2.0 )      // ms
+  , g_L( 16.6667 )    // nS
+  , C_m( 250.0 )      // pF
+  , E_ex( 0.0 )       // mV
+  , E_in( -85.0 )     // mV
+  , E_L( -70.0 )      // mV
   , tau_Erise( 0.2 )  // ms
-  , tau_Edecay( 0.2 )  // ms
+  , tau_Edecay( 0.2 ) // ms
   , tau_Irise( 2.0 )  // ms
-  , tau_Idecay( 2.0 )  // ms
-  , I_e( 0.0 )       // pA
-  , g_ext_ex( 0.0 )       // uS
-  , g_ext_in( 0.0 )       // uS
+  , tau_Idecay( 2.0 ) // ms
+  , I_e( 0.0 )        // pA
+  , g_ext_ex( 0.0 )   // uS
+  , g_ext_in( 0.0 )   // uS
 {
 }
 
@@ -158,8 +160,8 @@ nest::iaf_cond_beta::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_cond_beta::State_& nest::iaf_cond_beta::State_::operator=(
-  const State_& s )
+nest::iaf_cond_beta::State_&
+nest::iaf_cond_beta::State_::operator=( const State_& s )
 {
   if ( this == &s ) // avoid assignment to self
   {
@@ -270,8 +272,7 @@ nest::iaf_cond_beta::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_beta::State_::set( const DictionaryDatum& d,
-  const Parameters_& )
+nest::iaf_cond_beta::State_::set( const DictionaryDatum& d, const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y[ V_M ] );
 }
@@ -392,12 +393,10 @@ nest::iaf_cond_beta::calibrate()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  V_.PSConInit_E =
-    nest::iaf_cond_beta::get_normalisation_factor( P_.tau_Erise,
-      P_.tau_Edecay);
-  V_.PSConInit_I =
-    nest::iaf_cond_beta::get_normalisation_factor( P_.tau_Irise,
-      P_.tau_Idecay);
+  V_.PSConInit_E = nest::iaf_cond_beta::get_normalisation_factor(
+    P_.tau_Erise, P_.tau_Edecay );
+  V_.PSConInit_I = nest::iaf_cond_beta::get_normalisation_factor(
+    P_.tau_Irise, P_.tau_Idecay );
   V_.RefractoryCounts = Time( Time::ms( P_.t_ref ) ).get_steps();
 
   // since t_ref >= 0, this can only fail in error

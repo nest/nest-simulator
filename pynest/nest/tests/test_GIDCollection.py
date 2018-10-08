@@ -604,38 +604,41 @@ class TestGIDCollection(unittest.TestCase):
         pt.assert_frame_equal(single_sd.get('start', output='json'), 0.0)
 
         # Multiple nodes, literal parameter
-        pt.assert_frame_equal(multi_sd.get('start', output='json'),
-                                        len(multi_sd) * [0.0])
+        pt.assert_frame_equal(
+            multi_sd.get('start', output='json'), len(multi_sd) * [0.0])
 
         # Single node, array parameter
         ref_dict = {'start': 0.0, 'n_events': 0}
-        pt.assert_frame_equal(single_sd.get(['start', 'n_events'],
-                                        output='json'), ref_dict)
+        pt.assert_frame_equal(
+            single_sd.get(['start', 'n_events'], output='json'), ref_dict)
 
         # Multiple nodes, array parameter
         ref_dict = {'start': len(multi_sd) * [0.0],
                     'n_events': len(multi_sd) * [0]}
-        pt.assert_frame_equal(multi_sd.get(['start', 'n_events'],
-                                        output='json'), ref_dict)
+        pt.assert_frame_equal(
+            multi_sd.get(['start', 'n_events'], output='json'), ref_dict)
 
         # Single node, hierarchical with literal parameter
-        pt.assert_frame_equal(single_sd.get('events', 'times',
-                                        output='json'), [])
+        pt.assert_frame_equal(
+            single_sd.get('events', 'times', output='json'), [])
 
         # Multiple nodes, hierarchical with literal parameter
-        pt.assert_frame_equal(multi_sd.get('events', 'times',
-                                        output='json'), len(multi_sd) * [[]])
+        ref_list = len(multi_sd) * [[]]
+        pt.assert_frame_equal(
+            multi_sd.get('events', 'times', output='json'), ref_list)
 
         # Single node, hierarchical with array parameter
         ref_dict = {'senders': [], 'times': []}
-        pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
-                                        output='json'), ref_dict)
+        pt.assert_frame_equal(
+            single_sd.get('events', ['senders', 'times'], output='json'),
+            ref_dict)
 
         # Multiple nodes, hierarchical with array parameter
         ref_dict = {'times': len(multi_sd) * [[]],
                     'senders': len(multi_sd) * [[]]}
-        pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
-                                        output='json'), ref_dict)
+        pt.assert_frame_equal(
+            multi_sd.get('events', ['senders', 'times'], output='json'),
+            ref_dict)
 
         # Single node, no parameter (gets all values)
         values = single_sd.get(output='json')
@@ -657,14 +660,16 @@ class TestGIDCollection(unittest.TestCase):
 
         ref_dict = {'times': [[31.8, 36.1, 38.5]],
                     'senders': [[17, 12, 20]]}
-        pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
-                                        output='json'), ref_dict)
+        pt.assert_frame_equal(
+            single_sd.get('events', ['senders', 'times'], output='json'),
+            ref_dict)
 
         ref_dict = {'times': [[36.1], [], [], [], [], [31.8], [], [], [38.5],
                               []],
                     'senders': [[12], [], [], [], [], [17], [], [], [20], []]}
-        pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
-                                        output='json'), ref_dict)
+        pt.assert_frame_equal(
+            multi_sd.get('events', ['senders', 'times'], output='json'),
+            ref_dict)
 
     def test_set(self):
         """

@@ -272,10 +272,6 @@ Seque< value_type_ >::erase( const_iterator first, const_iterator last )
   else
   {
     auto repl_it = first; // Iterator for elements to be replaced.
-    // Saving the iterator which is to be returned. This iterator is  located
-    // where the first element after
-    // the last deleted element will be after filling the erased elements.
-    const const_iterator returnable_iterator = first;
     for ( auto element = last; element != end(); ++element )
     {
       *repl_it = std::move( *element );
@@ -303,10 +299,11 @@ Seque< value_type_ >::erase( const_iterator first, const_iterator last )
     blockmap_.erase(
       blockmap_.begin() + repl_it.block_index_ + 1, blockmap_.end() );
     // Construct new finish_ iterator
-    size_t pos = repl_it.block_index_ * max_block_size + element_index;
-    finish_ = begin() + pos;
-    assert( finish_ == repl_it );
-    return returnable_iterator;
+    finish_ = repl_it;
+    // The iterator which is to be returned is located where the first element
+    // after the last deleted element will be after filling the erased elements,
+    // which is the position of the first deleted element.
+    return first;
   }
 }
 

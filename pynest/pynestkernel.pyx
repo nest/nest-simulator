@@ -78,20 +78,21 @@ except ImportError:
 class NESTMappedException(type):
     """metaclass for exception namespace that dynamically creates exception classes
 
-    If a class (self) of this (meta)-type has an unknown attribute requested, __getattr__ defined below
-    gets called, creating a class with that name (the error name) and with an __init__ taking
-    commandname and errormessage (as created in the source) which is a closure on the parent and errorname as well,
-    with a parent of default type (self.default_parent) or self.parents[errorname] if defined
-    """
+    If a class (self) of this (meta)-type has an unknown attribute requested, __getattr__ defined
+    below gets called, creating a class with that name (the error name) and with an __init__ taking
+    commandname and errormessage (as created in the source) which is a closure on the parent and
+    errorname as well, with a parent of default type (self.default_parent) or
+    self.parents[errorname] if defined """
 
     def __getattr__(self, errorname):
-        """Creates a class of type "errorname" which is a child of self.default_parent or self.parents[errorname] if one is defined
+        """Creates a class of type "errorname" which is a child of self.default_parent or
+        self.parents[errorname] if one is defined
 
-        This __getattr__ function also stores the class permanently as an attribute of self for re-use
-        where self is actually the class that triggered the getattr (the class that NESTMappedException is a metaclass of)
-        """
+        This __getattr__ function also stores the class permanently as an attribute of self for
+        re-use where self is actually the class that triggered the getattr (the class that
+        NESTMappedException is a metaclass of) """
 
-        # Dynamic class construction, first check if we know it's parent
+        # Dynamic class construction, first check if we know its parent
         if errorname in self.parents:
             parent = getattr(self, self.parents[errorname])
         else: # otherwise, get the default (SLIException)
@@ -121,10 +122,10 @@ class NESTMappedException(type):
         return newclass
 
 class NESTErrors(metaclass=NESTMappedException):
-    """Namespace for nest exceptions, including dynamically created classes from SLI
+    """Namespace for NEST exceptions, including dynamically created classes from SLI
 
     Dynamic exception creation is through __getattr__ defined in the metaclass NESTMappedException
-    """    
+    """
                
     class NESTError(Exception):
         """Base exception class for all NEST exceptions
@@ -164,7 +165,7 @@ class NESTErrors(metaclass=NESTMappedException):
             self.errormessage  = errormessage            
 
     class PyNESTError(NESTError):
-        """Exceptions produced from python/cython code
+        """Exceptions produced from Python/Cython code
         """
         pass
 
@@ -172,16 +173,18 @@ class NESTErrors(metaclass=NESTMappedException):
     def init(parent, errorname):
         """ Static class method to construct init's for SLIException children
 
-        Construct our new init with closure on errorname (as a default value) and parent
-        The default value allows the __init__ to be chained and set by the leaf child
-        This also moves the paramerization of __init__ away from the class construction logic
-        and next to the SLIException init
+        Construct our new init with closure on errorname (as a default value) and parent.
+        The default value allows the __init__ to be chained and set by the leaf child.
+        This also moves the paramerization of __init__ away from the class construction logic 
+        and next to the SLIException init.
 
         Parameters:
         ----------
         parent: the ancestor of the class needed to properly walk up the MRO (not possible with super() or super(type,...)
-            because of they dynamic creation of the function (used as a closure on the constructed __init__)
-        errorname: the class name for information purposes internally (used as a closure on the constructed __init__)
+            because of the dynamic creation of the function
+             (used as a closure on the constructed __init__)
+        errorname: the class name for information purposes 
+          internally (used as a closure on the constructed __init__)
         """
         
         def __init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs):

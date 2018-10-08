@@ -57,7 +57,6 @@ public:
   {
   }
 
-  // TODO481 SetStatus, GetStatus, SetStatus must have flag
   void set_status( const DictionaryDatum&, bool ){};
 
   void
@@ -71,6 +70,12 @@ public:
   get_layer() const
   {
     return layer_;
+  }
+
+  std::string
+  get_type() const
+  {
+    return "spatial";
   }
 
   void

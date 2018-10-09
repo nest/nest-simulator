@@ -19,6 +19,27 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+
+"""Script to check if all files have a proper copyright header.
+
+This script checks the copyright headers of all C/C++/SLI/Python files
+in the source code against the corresponding templates defined in
+"doc/copyright_header.*". It uses the variable NEST_SOURCES to
+determine the source directory to check.
+
+This script is supposed to be run from static_code_analysis.sh either
+during the run of the CI or invocation of check_code_style.sh.
+
+In order to ease error reporting in this context, this script uses two
+distinct output channels: messages meant for immediate display are
+printed to stderr using the helper function eprint(). Messages meant
+for the summary at the end of static_code_analysis.sh are printed to
+stdout instead so they can be more easily captured and only printed if
+errors occured.
+
+"""
+
+
 from __future__ import print_function
 
 import os
@@ -27,6 +48,7 @@ import re
 
 
 def eprint(*args, **kwargs):
+    """Convenience function to print to stderr instead of stdout"""
     print(*args, file=sys.stderr, **kwargs)
 
 

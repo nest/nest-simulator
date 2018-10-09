@@ -44,14 +44,13 @@ class seque_iterator
   friend class Seque< value_type_ >;
 
   // Making all templated iterators friends to allow converting
-  // iterator -> const_iterator.
-  // TODO: Explicit conversion?
+  // iterator to const_iterator.
   template < typename, typename, typename >
   friend class seque_iterator;
 
 private:
   template < typename cv_value_type_ >
-  using _iter = seque_iterator< value_type_, cv_value_type_&, cv_value_type_* >;
+  using iter_ = seque_iterator< value_type_, cv_value_type_&, cv_value_type_* >;
 
   const Seque< value_type_ >* seque_;
   size_t block_index_;
@@ -59,31 +58,37 @@ private:
   typename std::vector< value_type_ >::const_iterator current_block_end_;
 
 public:
-  using iterator = _iter< value_type_ >;
-  using const_iterator = _iter< const value_type_ >;
+  using iterator = iter_< value_type_ >;
+  using const_iterator = iter_< const value_type_ >;
 
   using iterator_category = std::random_access_iterator_tag;
   using value_type = value_type_;
-  using pointer = value_type*;
-  using reference = value_type&;
+  using pointer = ptr_;
+  using reference = ref_;
   using difference_type = size_t;
 
   explicit seque_iterator( const Seque< value_type_ >& );
   seque_iterator( const iterator& );
-  seque_iterator( const const_iterator& );
+  seque_iterator( const Seque< value_type_ >*,
+    const size_t,
+    const typename std::vector< value_type_ >::const_iterator,
+    const typename std::vector< value_type_ >::const_iterator );
 
-  seque_iterator& operator=( const seque_iterator& );
   seque_iterator& operator++();
   seque_iterator& operator--();
   seque_iterator& operator+=( size_t );
   seque_iterator operator+( size_t );
   reference operator*() const;
   pointer operator->() const;
-  difference_type operator-( const seque_iterator& ) const;
+  difference_type operator-( const iterator& ) const;
+  difference_type operator-( const const_iterator& ) const;
 
   bool operator==( const seque_iterator& ) const;
   bool operator!=( const seque_iterator& ) const;
   bool operator<( const seque_iterator& ) const;
+
+private:
+  iterator const_cast_() const;
 };
 
 template < typename value_type_ >
@@ -262,7 +267,7 @@ Seque< value_type_ >::erase( const_iterator first, const_iterator last )
   // last and every subsequent element has to be moved to fill the erased space.
   if ( first == last )
   {
-    return iterator( first );
+    return iterator( first.const_cast_() );
   }
   else if ( first == begin() && last == end() )
   {
@@ -271,7 +276,7 @@ Seque< value_type_ >::erase( const_iterator first, const_iterator last )
   }
   else
   {
-    auto repl_it = first; // Iterator for elements to be replaced.
+    auto repl_it = first.const_cast_(); // Iterator for elements to be replaced.
     for ( auto element = last; element != end(); ++element )
     {
       *repl_it = std::move( *element );
@@ -303,7 +308,7 @@ Seque< value_type_ >::erase( const_iterator first, const_iterator last )
     // The iterator which is to be returned is located where the first element
     // after the last deleted element will be after filling the erased elements,
     // which is the position of the first deleted element.
-    return first;
+    return first.const_cast_();
   }
 }
 
@@ -369,25 +374,15 @@ inline seque_iterator< value_type_, ref_, ptr_ >::seque_iterator(
 
 template < typename value_type_, typename ref_, typename ptr_ >
 inline seque_iterator< value_type_, ref_, ptr_ >::seque_iterator(
-  const const_iterator& other )
-  : seque_( other.seque_ )
-  , block_index_( other.block_index_ )
-  , block_it_( other.block_it_ )
-  , current_block_end_( other.current_block_end_ )
+  const Seque< value_type_ >* seque,
+  const size_t block_index,
+  const typename std::vector< value_type_ >::const_iterator block_it,
+  const typename std::vector< value_type_ >::const_iterator current_block_end )
+  : seque_( seque )
+  , block_index_( block_index )
+  , block_it_( block_it )
+  , current_block_end_( current_block_end )
 {
-}
-
-template < typename value_type_, typename ref_, typename ptr_ >
-inline seque_iterator< value_type_, ref_, ptr_ >&
-  seque_iterator< value_type_, ref_, ptr_ >::
-  operator=( const seque_iterator< value_type_, ref_, ptr_ >& other )
-{
-  assert( seque_ == other.seque_ );
-  seque_ = other.seque_;
-  block_index_ = other.block_index_;
-  block_it_ = other.block_it_;
-  current_block_end_ = other.current_block_end_;
-  return *this;
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
@@ -468,9 +463,21 @@ inline typename seque_iterator< value_type_, ref_, ptr_ >::pointer
 template < typename value_type_, typename ref_, typename ptr_ >
 inline typename seque_iterator< value_type_, ref_, ptr_ >::difference_type
   seque_iterator< value_type_, ref_, ptr_ >::
-  operator-( const seque_iterator< value_type_, ref_, ptr_ >& other ) const
+  operator-( const iterator& other ) const
 {
-  // TODO: Might not return what it should.. (but see source_table.h::L413)
+  auto this_element_index =
+    block_it_ - seque_->blockmap_[ block_index_ ].begin();
+  auto other_element_index =
+    other.block_it_ - other.seque_->blockmap_[ other.block_index_ ].begin();
+  return ( block_index_ - other.block_index_ ) * max_block_size
+    + ( this_element_index - other_element_index );
+}
+
+template < typename value_type_, typename ref_, typename ptr_ >
+inline typename seque_iterator< value_type_, ref_, ptr_ >::difference_type
+  seque_iterator< value_type_, ref_, ptr_ >::
+  operator-( const const_iterator& other ) const
+{
   auto this_element_index =
     block_it_ - seque_->blockmap_[ block_index_ ].begin();
   auto other_element_index =
@@ -499,6 +506,13 @@ inline bool seque_iterator< value_type_, ref_, ptr_ >::operator<(
 {
   return ( block_index_ < rhs.block_index_
     or ( block_index_ == rhs.block_index_ and block_it_ < rhs.block_it_ ) );
+}
+
+template < typename value_type_, typename ref_, typename ptr_ >
+inline typename seque_iterator< value_type_, ref_, ptr_ >::iterator
+seque_iterator< value_type_, ref_, ptr_ >::const_cast_() const
+{
+  return iterator( seque_, block_index_, block_it_, current_block_end_ );
 }
 
 #endif /* SEQUE_H_ */

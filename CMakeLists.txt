@@ -1,7 +1,7 @@
 # CMakeLists.txt
 #
 # This file is part of NEST.
-
+#
 # Copyright (C) 2004 The NEST Initiative
 #
 # NEST is free software: you can redistribute it and/or modify

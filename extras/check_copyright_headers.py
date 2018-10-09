@@ -86,11 +86,6 @@ templates = {
 
 template_contents = {}
 
-# skip, if NEST_SOURCE="SKIP"
-if source_dir == "SKIP":
-    print("Skipping, as no sources are available.")
-    sys.exit(EXIT_SUCCESS)
-
 for extensions, template_ext in templates.items():
     template_name = "{0}/doc/copyright_header.{1}".format(source_dir,
                                                           template_ext)

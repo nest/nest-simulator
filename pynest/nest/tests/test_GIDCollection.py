@@ -634,7 +634,7 @@ class TestGIDCollection(unittest.TestCase):
 
         # Check that calling get with string works on composite gc's, both on
         # parameters all the models have, and on individual parameters.
-        Cm_ref = [x*1. for x in range(251, 259)]
+        Cm_ref = [x * 1. for x in range(251, 259)]
         Cm = n5.get('C_m')
         self.assertEqual(list(Cm), Cm_ref)
 

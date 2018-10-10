@@ -291,7 +291,7 @@ class GIDCollection(object):
                 if pandas_output:
                     try:
                         # This try will probably soon be removed, once we
-                        # deside what to do with get and GC's with metadata.
+                        # decide what to do with get and GC's with metadata.
                         index = self.get('global_id')
                         if type(index) is int:
                             index = [index]

@@ -169,7 +169,7 @@ def
     /value Set
 
     GetStatus dup size 1 neq
-    { % if not a layer 
+    { % if not a layer
       { value get } Map
     }
     { % if a layer

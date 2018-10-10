@@ -280,7 +280,6 @@ if [ $nlines_copyright_check \> 1 ] || \
     fi
   fi
 
-  nlines_copyright_check=`echo -e $copyright_check_errors | sed -e 's/^ *//' | wc -l`
   if [ $nlines_copyright_check \> 1 ]; then
       print_msg "MSGBLD0220: " "Files with erroneous copyright headers:"
       echo -e $copyright_check_errors | sed -e 's/^ *//'

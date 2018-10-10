@@ -34,10 +34,18 @@ class Seque;
 template < typename value_type_, typename ref_, typename ptr_ >
 class seque_iterator;
 
-constexpr int block_size_shift = 10; // block size = 2^block_size_shift
+constexpr int block_size_shift = 10; //!< max_block_size = 2^block_size_shift
 constexpr int max_block_size = 1L << block_size_shift;
 constexpr int max_block_size_sub_1 = max_block_size - 1;
 
+/**
+ * @brief A Seque::iterator.
+ * @tparam value_type_ Type of element.
+ * @tparam ref_ Type of reference to the element.
+ * @tparam ptr_ Type of pointer to the element.
+ *
+ * Seque holds one of this internally, marking the end of the valid range.
+ */
 template < typename value_type_, typename ref_, typename ptr_ >
 class seque_iterator
 {
@@ -52,9 +60,11 @@ private:
   template < typename cv_value_type_ >
   using iter_ = seque_iterator< value_type_, cv_value_type_&, cv_value_type_* >;
 
-  const Seque< value_type_ >* seque_;
-  size_t block_index_;
+  const Seque< value_type_ >* seque_; //!< Seque to which this iterator points
+  size_t block_index_; //!< Index of the current block in the blockmap
+  //! Iterator pointing to the current element in the current block.
   typename std::vector< value_type_ >::const_iterator block_it_;
+  //! Iterator pointing to the end of the current block.
   typename std::vector< value_type_ >::const_iterator current_block_end_;
 
 public:
@@ -67,8 +77,25 @@ public:
   using reference = ref_;
   using difference_type = size_t;
 
+  /**
+   * @brief Creates an iterator pointing to the first element in a Seque.
+   * @param seque Seque to which the iterator will point to.
+   */
   explicit seque_iterator( const Seque< value_type_ >& );
+
+  /**
+   * @brief Iterator copy constructor.
+   * @param other Iterator to be copied.
+   */
   seque_iterator( const iterator& );
+
+  /**
+   * @brief Creates an iterator with specified parameters.
+   * @param seque Seque to point to.
+   * @param block_index Index of current block.
+   * @param block_it Iterator pointing to current element in the current block.
+   * @param current_block_end Iterator pointing to the end of the current block.
+   */
   seque_iterator( const Seque< value_type_ >*,
     const size_t,
     const typename std::vector< value_type_ >::const_iterator,
@@ -88,9 +115,22 @@ public:
   bool operator<( const seque_iterator& ) const;
 
 private:
+  /**
+   * @brief Converts the iterator to a non-const iterator.
+   */
   iterator const_cast_() const;
 };
 
+/**
+ * @brief Container with a vector-of-vectors structure.
+ * @tparam value_type_ Type of element.
+ *
+ * Elements are stored in blocks held in a blockmap. Each block is of fixed
+ * size, with elements default-initialised on creation of the block. A new block
+ * is automatically created when a block is filled. The size of each block is a
+ * power of two, which allows use of bitwise operators to efficiently map an
+ * index to the right block and the right position in that block.
+ */
 template < typename value_type_ >
 class Seque
 {
@@ -102,29 +142,110 @@ public:
   using const_iterator =
     seque_iterator< value_type_, const value_type_&, const value_type_* >;
 
+  /**
+   * @brief Creates an empty Seque.
+   */
   Seque();
+
+  /**
+   * @brief Creates a Seque containing a number of elements.
+   * @param n Number of elements.
+   */
   explicit Seque( size_t );
+
+  /**
+   * @brief Seque copy constructor.
+   * @param other Seque to copy.
+   */
   Seque( const Seque< value_type_ >& );
   virtual ~Seque();
 
+  /**
+   * @brief Subscript access to the data contained in the Seque.
+   * @param pos The index of the element for which data should be accessed.
+   * @return  Read/write reference to data.
+   *
+   * Note that data access with this operator is unchecked.
+   */
   value_type_& operator[]( const size_t pos );
+
+  /**
+   * @brief Subscript access to the data contained in the Seque.
+   * @param pos The index of the element for which data should be accessed.
+   * @return  Read-only (constant) reference to data.
+   *
+   * Note that data access with this operator is unchecked.
+   */
   const value_type_& operator[]( const size_t pos ) const;
 
+  /**
+   * Returns a read/write iterator that points to the first element in the
+   * Seque. Iteration is done in ordinary element order.
+   */
   iterator begin();
+
+  /**
+   * Returns a read-only (constant) iterator that points to the first element
+   * in the Seque. Iteration is done in ordinary element order.
+   */
   const_iterator begin() const;
+
+  /**
+   * Returns a read/write iterator that points one past the last element in the
+   * Seque. Iteration is done in ordinary element order.
+   */
   iterator end();
+
+  /**
+   * Returns a read-only (constant) iterator that points one past the last
+   * element in the Seque. Iteration is done in ordinary element order.
+   */
   const_iterator end() const;
 
+  /**
+   * @brief Add data to the end of the Seque.
+   * @param value Data to be added.
+   *
+   * Assigns given data to the element at the end of the Seque.
+   */
   void push_back( const value_type_& value );
+
+  /**
+   * Erases all the elements.
+   */
   void clear();
+
+  /**
+   * Returns the number of elements in the Seque.
+   */
   size_t size() const;
+
+  /**
+   * @brief Remove a range of elements.
+   * @param first Iterator pointing to the first element to be erased.
+   * @param last Iterator pointing one past the last element to be erased.
+   * @return An iterator pointing to the element pointed to by @a last prior
+   *         to erasing (or end()).
+   *
+   * This function will erase the elements in the range [first, last)
+   * and shorten the Seque accordingly.
+   */
   iterator erase( const_iterator, const_iterator );
+
+  /**
+   * @brief Writes the contents of the Seque, separated into blocks, to cerr.
+   */
   void print_blocks() const;
+
+  /**
+   * @brief Returns the block-size.
+   */
   int get_max_block_size() const;
 
 private:
+  //! Vector holding blocks containing data.
   std::vector< std::vector< value_type_ > > blockmap_;
-  iterator finish_;
+  iterator finish_; //!< Iterator pointing to one past the last element.
 };
 
 /////////////////////////////////////////////////////////////

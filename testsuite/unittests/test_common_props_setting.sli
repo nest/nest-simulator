@@ -44,16 +44,20 @@ Author: Hans E Plesser
   { synapsedict exch known } Select
 def
 
-% prepare stdp_dopamine_synapse, which needs a
-% volume transmitter assigned to it before connecting
-/vol /volume_transmitter Create def
-/stdp_dopamine_synapse << /vt vol >> SetDefaults
-
 % first test: do everything correctly
 {
   true
   synmodels
   {
+    % Reset the kernel to work around exceeding the maximum possible
+    % number of synapse models (see Issue #1043).
+    ResetKernel
+
+    % prepare stdp_dopamine_synapse, which needs a
+    % volume transmitter assigned to it before connecting
+    /vol /volume_transmitter Create def
+    /stdp_dopamine_synapse << /vt vol >> SetDefaults
+
     /synmod Set 
     synmod << /tau_plus 5.0 /weight 2.0 >> SetDefaults 
     synmod GetDefaults [[/tau_plus /weight]] get [5.0 2.0] eq
@@ -68,16 +72,19 @@ def
   } Fold
 } assert_or_die
 
-ResetKernel
-
-% prepare stdp_dopamine_synapse, which needs a
-% volume transmitter assigned to it before connecting
-/vol /volume_transmitter Create def
-/stdp_dopamine_synapse << /vt vol >> SetDefaults
 
 % second test: set common prop on synapse
 synmodels
 {
+  % Reset the kernel to work around exceeding the maximum possible
+  % number of synapse models (see Issue #1043).
+  ResetKernel
+
+  % prepare stdp_dopamine_synapse, which needs a
+  % volume transmitter assigned to it before connecting
+  /vol /volume_transmitter Create def
+  /stdp_dopamine_synapse << /vt vol >> SetDefaults
+
   /synmod Set
   synmod GetDefaults /tau_plus get /tpref Set
   

@@ -59,7 +59,6 @@ typedef lockPTR< GIDCollectionMetadata > GIDCollectionMetadataPTR;
 class GIDCollectionMetadata
 {
 public:
-  // TODO481 SetStatus, GetStatus, Setstatus must have flag
   GIDCollectionMetadata()
   {
   }

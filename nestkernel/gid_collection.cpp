@@ -294,7 +294,8 @@ GIDCollectionPrimitive::to_array() const
 
 GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
 {
-  if ( get_metadata().valid() and not( get_metadata() == rhs->get_metadata() ) )
+  if ( ( get_metadata().valid() or rhs->get_metadata().valid() )
+    and not( get_metadata() == rhs->get_metadata() ) )
   {
     throw BadProperty( "Can only join GIDCollections with same metadata." );
   }

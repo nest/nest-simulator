@@ -380,61 +380,41 @@ class GIDCollection(object):
             if nest.is_literal(params[-1]):
                 if len(self) == 1:
                     result = value_list[0][params[-1]]
-                    if pandas_output:
-                        index = self.get('global_id')
-                        result = pandas.DataFrame({params[-1]: [result]
-                                                   if len(result) != 0
-                                                   else [[]]},
-                                                  index=[index])
                 else:
-                    if pandas_output:
-                        index = self.get('global_id')
-                        result_list = [d[params[-1]] for d in value_list]
-                        result = pandas.DataFrame({params[-1]: result_list
-                                                   if len(result_list) != 0
-                                                   else [[]]},
-                                                  index=index)
-                    else:
-                        result = tuple([d[params[-1]] for d in value_list])
+                    result = tuple([d[params[-1]] for d in value_list])
+
+                if pandas_output:
+                    index = self.get('global_id')
+                    result = {params[-1]: list(result) if len(result) != 0
+                              else [[]]}
+                    if len(self) == 1:
+                        index = [index]
+                    result = pandas.DataFrame(result, index=index)
 
             # Value parameter, array case
             elif nest.is_iterable(params[-1]):
                 for value in params[-1]:
-                    # TODO481 : Assuming they are all of equal type, we check
-                    # only the values of the first node. This must be changed
-                    # if we decide something else.
+                    # We assume all are of equal type, so we check only the
+                    # values of the first node.
                     if value not in value_list[0].keys():
-                        raise KeyError("The value '{}' does not exist at" +
+                        raise KeyError("The value '{}' does not exist at " +
                                        "the given path".format(value))
-                if len(self) == 1:  # If GIDCollection contains a single node
-                    if pandas_output:
-                        index = [self.get('global_id')]
-                        result = {key: [item]
-                                  if len(item) != 0 else [[]]
-                                  for key, item in value_list[0].items()
-                                  if key in params[-1]}
-                        result = pandas.DataFrame(result,
-                                                  index=index)
-                    else:
-                        result = {'{}'.format(key): value
-                                  for key, value in value_list[0].items()
-                                  if key in params[-1]}
-                else:  # If GIDCollection contains multiple nodes
-                    if pandas_output:
-                        index = self.get('global_id')
-                        result = pandas.DataFrame(
-                            [{key: item
-                              if len(item) != 0 else []
-                              for key, item in d.items()
-                              if key in params[-1]}
-                             for d in value_list],
-                            index=index)
-                    else:
-                        result = tuple([{'{}'.format(key): value
-                                         for key, value in d.items()
-                                         if key in params[-1]}
-                                        for d in value_list])
 
+                if len(self) == 1:
+                    result = ({key: result_dict[key]
+                               for result_dict in value_list
+                               for key in params[-1]})
+                else:
+                    result = ({key: [result_dict[key]
+                                     for result_dict in value_list]
+                               for key in params[-1]})
+
+                if pandas_output:
+                    index = self.get('global_id')
+                    if len(self) == 1:
+                        index = [index]
+                        result = {key: [val] for key, val in result.items()}
+                    result = pandas.DataFrame(result, index=index)
             else:
                 raise TypeError("Final argument should be either a string " +
                                 "or an iterable")
@@ -549,25 +529,30 @@ class Connectome(object):
             | target | 1, 2, 1, 2, |
             *--------*-------------*
         """
-        src = self.get('source')
+        srcs = self.get('source')
         trgt = self.get('target')
 
-        if isinstance(src, int):
-            src = [src]
+        if isinstance(srcs, int):
+            srcs = [srcs]
         if isinstance(trgt, int):
             trgt = [trgt]
 
-        source = '| source | ' + ''.join(str(e)+', ' for e in src) + '|'
-        target = '| target | ' + ''.join(str(e)+', ' for e in trgt) + '|'
-
         # 35 is arbitrarily chosen.
-        if len(src) < 35:
-            borderline = '*--------*' + '-'*(len(source) - 12) + '-*'
+        if len(srcs) < 35:
+            source = '| source | ' + ''.join(str(e)+', ' for e in srcs) + '|'
+            target = '| target | ' + ''.join(str(e)+', ' for e in trgt) + '|'
         else:
-            borderline = '*--------*' + '-'*3*35 + '-*'
+            source = ('| source | ' + ''.join(str(e)+', ' for e in srcs[:15]) +
+                      '... ' + ''.join(str(e)+', ' for e in srcs[-15:]) + '|')
+            target = ('| target | ' + ''.join(str(e)+', ' for e in trgt[:15]) +
+                      '... ' + ''.join(str(e)+', ' for e in trgt[-15:]) + '|')
 
-        result = (borderline + '\n' + source + '\n' + borderline + '\n' +
-                  target + '\n' + borderline)
+        borderline_s = '*--------*' + '-'*(len(source) - 12) + '-*'
+        borderline_t = '*--------*' + '-'*(len(target) - 12) + '-*'
+        borderline_m = max(borderline_s, borderline_t)
+
+        result = (borderline_s + '\n' + source + '\n' + borderline_m + '\n' +
+                  target + '\n' + borderline_t)
         return result
 
     def get(self, keys=None, output=''):

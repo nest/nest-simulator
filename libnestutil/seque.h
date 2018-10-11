@@ -353,10 +353,10 @@ Seque< value_type_ >::clear()
   for ( auto it = blockmap_.begin(); it != blockmap_.end(); ++it )
   {
     it->clear();
-    // Reset to default-initialized elements
-    auto new_empty = std::vector< value_type_ >( max_block_size );
-    std::swap( *it, new_empty );
   }
+  blockmap_.clear();
+  // Initialise the first block
+  blockmap_.emplace_back( max_block_size );
   finish_ = begin();
 }
 

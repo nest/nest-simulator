@@ -248,16 +248,15 @@ def test():
 
     hl_api.set_debug(debug)
 
-from .pynestkernel import *         # noqa
-from .lib.hl_api_helper import *    # noqa
-
-# We search through the subdirectory "lib" of the "nest" module
-# directory and import the content of all Python files therein into
-# the global namespace. This makes the API functions of PyNEST itself
-# and those of extra modules available to the user.
-for name in os.listdir(os.path.join(os.path.dirname(__file__), "lib")):
-    if name.endswith(".py") and not name.startswith('__'):
-        exec("from .lib.{0} import *".format(name[:-3]))
+from .pynestkernel import *		# noqa
+from .lib.hl_api_connections import *		# noqa
+from .lib.hl_api_helper import *		# noqa
+from .lib.hl_api_info import *		# noqa
+from .lib.hl_api_models import *		# noqa
+from .lib.hl_api_nodes import *		# noqa
+from .lib.hl_api_subnets import *		# noqa
+from .lib.hl_api_parallel_computing import *		# noqa
+from .lib.hl_api_simulation import *		# noqa
 
 if 'DELAY_PYNEST_INIT' not in os.environ:
     init(sys.argv)

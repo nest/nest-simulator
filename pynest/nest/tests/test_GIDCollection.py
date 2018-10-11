@@ -472,13 +472,14 @@ class TestGIDCollection(unittest.TestCase):
 
         # Multiple nodes, hierarchical with array parameter
         values = multi_sd.get('events', ['senders', 'times'])
-        self.assertEqual(len(values), len(multi_sd))
-        for v in values:
-            self.assertEqual(len(v), 2)
-            self.assertTrue('senders' in v)
-            self.assertTrue('times' in v)
-            np.testing.assert_array_equal(v['senders'], empty_array_int)
-            np.testing.assert_array_equal(v['times'], empty_array_float)
+        self.assertEqual(len(values), 2)
+        self.assertTrue('senders' in values)
+        self.assertTrue('times' in values)
+        self.assertEqual(len(values['senders']), len(multi_sd))
+        for v in values['senders']:
+            np.testing.assert_array_equal(v, empty_array_int)
+        for v in values['times']:
+            np.testing.assert_array_equal(v, empty_array_float)
 
         # Single node, no parameter (gets all values)
         values = single_sd.get()

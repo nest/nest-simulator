@@ -269,7 +269,7 @@ inline Seque< value_type_ >::Seque( size_t n )
   size_t num_blocks_needed = std::ceil( ( float ) n / max_block_size );
   for ( size_t i = 0; i < num_blocks_needed - 1; ++i )
   {
-    blockmap_.push_back( std::vector< value_type_ >( max_block_size ) );
+    blockmap_.emplace_back( max_block_size );
   }
   finish_ += n;
 }
@@ -404,23 +404,23 @@ Seque< value_type_ >::erase( const_iterator first, const_iterator last )
       ++repl_it;
     }
     // The block that repl_it ends up in is the new final block.
-    auto& new_finish_block = blockmap_[ repl_it.block_index_ ];
+    auto& new_final_block = blockmap_[ repl_it.block_index_ ];
     // Here, the arithmetic says that we first subtract
-    // new_finish_block.begin(), then add it again (which seems unnecessary).
+    // new_final_block.begin(), then add it again (which seems unnecessary).
     // But what we really do is extracting the element index of repl_it, then
-    // fast-forwarding new_finish_block.begin() to that index.
-    auto element_index = repl_it.block_it_ - new_finish_block.begin();
+    // fast-forwarding new_final_block.begin() to that index.
+    auto element_index = repl_it.block_it_ - new_final_block.begin();
     // Erase everything after the replaced elements in the current block.
-    new_finish_block.erase(
-      new_finish_block.begin() + element_index, new_finish_block.end() );
-    // Refill the erased elements in the current block with default-initialized
+    new_final_block.erase(
+      new_final_block.begin() + element_index, new_final_block.end() );
+    // Refill the erased elements in the final block with default-initialised
     // elements.
-    int num_default_init = max_block_size - new_finish_block.size();
+    int num_default_init = max_block_size - new_final_block.size();
     for ( int i = 0; i < num_default_init; ++i )
     {
-      new_finish_block.emplace_back( value_type_{} );
+      new_final_block.emplace_back();
     }
-    assert( new_finish_block.size() == max_block_size );
+    assert( new_final_block.size() == max_block_size );
     // Erase all subsequent blocks.
     blockmap_.erase(
       blockmap_.begin() + repl_it.block_index_ + 1, blockmap_.end() );

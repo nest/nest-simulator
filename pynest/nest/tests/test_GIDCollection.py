@@ -658,8 +658,8 @@ class TestGIDCollection(unittest.TestCase):
         nest.Connect(nodes, multi_sd, 'one_to_one')
         nest.Simulate(40.)
 
-        ref_dict = {'times': [[31.8, 36.1, 38.5]],
-                    'senders': [[17, 12, 20]]}
+        ref_dict = {'times': [31.8, 36.1, 38.5],
+                    'senders': [17, 12, 20]}
         self.assertEqual(
             single_sd.get('events', ['senders', 'times'], output='json'),
             ref_dict)

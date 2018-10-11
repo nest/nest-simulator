@@ -49,8 +49,9 @@ is_sorted( std::vector< size_t >::const_iterator begin,
   return true;
 }
 
-const bool is_sorted( Seque< size_t >::const_iterator begin,
-    Seque< size_t >::const_iterator end )
+const bool
+is_sorted( Seque< size_t >::const_iterator begin,
+  Seque< size_t >::const_iterator end )
 {
   for ( Seque< size_t >::const_iterator it = begin; it < --end; )
   {

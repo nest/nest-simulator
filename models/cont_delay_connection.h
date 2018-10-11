@@ -23,6 +23,15 @@
 #ifndef CONT_DELAY_CONNECTION_H
 #define CONT_DELAY_CONNECTION_H
 
+// C++ includes:
+#include <cmath>
+
+// Includes from nestkernel:
+#include "connection.h"
+
+namespace nest
+{
+
 /** @BeginDocumentation
   Name: cont_delay_synapse - Synapse type for continuous delays
 
@@ -80,16 +89,6 @@
 
   SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_canon
 */
-
-// C++ includes:
-#include <cmath>
-
-// Includes from nestkernel:
-#include "connection.h"
-
-namespace nest
-{
-
 template < typename targetidentifierT >
 class ContDelayConnection : public Connection< targetidentifierT >
 {

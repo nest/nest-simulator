@@ -140,11 +140,6 @@ namespace nest
    Author: Thomas Heiberg & Hans E. Plesser (modified mat2_psc_exp model of
    Thomas Pfeil)
 */
-
-/**
- * Non-resetting leaky integrate-and-fire neuron model with
-   exponential PSCs and adaptive threshold.
- */
 class amat2_psc_exp : public Archiving_Node
 {
 

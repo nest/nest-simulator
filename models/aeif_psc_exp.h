@@ -42,6 +42,21 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
+
+namespace nest
+{
+/**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int aeif_psc_exp_dynamics( double, const double*, double*, void* );
+
 /** @BeginDocumentation
 Name: aeif_psc_exp - Current-based exponential integrate-and-fire neuron
                       model according to Brette and Gerstner (2005).
@@ -115,21 +130,6 @@ References: Brette R and Gerstner W (2005) Adaptive Exponential
 
 SeeAlso: iaf_psc_exp, aeif_cond_exp
 */
-
-namespace nest
-{
-/**
- * Function computing right-hand side of ODE for GSL solver.
- * @note Must be declared here so we can befriend it in class.
- * @note Must have C-linkage for passing to GSL. Internally, it is
- *       a first-class C++ function, but cannot be a member function
- *       because of the C-linkage.
- * @note No point in declaring it inline, since it is called
- *       through a function pointer.
- * @param void* Pointer to model neuron instance.
- */
-extern "C" int aeif_psc_exp_dynamics( double, const double*, double*, void* );
-
 class aeif_psc_exp : public Archiving_Node
 {
 

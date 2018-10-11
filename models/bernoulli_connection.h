@@ -20,6 +20,17 @@
  *
  */
 
+
+#ifndef BERNOULLI_CONNECTION_H
+#define BERNOULLI_CONNECTION_H
+
+// Includes from nestkernel:
+#include "connection.h"
+#include "kernel_manager.h"
+
+namespace nest
+{
+
 /** @BeginDocumentation
   Name: bernoulli_synapse - Static synapse with stochastic transmission.
 
@@ -61,24 +72,6 @@
   Sharp Waves, Journal of Neuroscience 28 October 2015, 35 (43) 14585-14601,
   DOI: 10.1523/JNEUROSCI.4944-14.2015
 */
-
-#ifndef BERNOULLI_CONNECTION_H
-#define BERNOULLI_CONNECTION_H
-
-// Includes from nestkernel:
-#include "connection.h"
-#include "kernel_manager.h"
-
-namespace nest
-{
-
-/**
- * Class representing a Bernoulli connection. A Bernoulli connection has the
- * properties weight, transmission probability, delay and receiver port.
- * A suitable Connector containing these connections can be obtained from
- * the template GenericConnector.
- */
-
 template < typename targetidentifierT >
 class BernoulliConnection : public Connection< targetidentifierT >
 {

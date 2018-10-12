@@ -458,9 +458,8 @@ NestModule::GetConnections_DFunction::execute( SLIInterpreter* i ) const
    n(int) Simulate -> -
 
    Description: Simulate the network for n milliseconds.
-   Use resume to continue the simulation after an interrupt.
 
-   SeeAlso: resume, ResumeSimulation, unit_conversion
+   SeeAlso: Run, Prepare, Cleanup, unit_conversion
 */
 void
 NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
@@ -491,7 +490,7 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
    Any changes made between Prepare and Cleanup may cause
    undefined behavior and incorrect results.
 
-   SeeAlso: Simulate, resume, unit_conversion, Prepare, Cleanup
+   SeeAlso: Simulate, unit_conversion, Prepare, Cleanup
 */
 void
 NestModule::RunFunction::execute( SLIInterpreter* i ) const

@@ -24,12 +24,30 @@ Classes defining the different PyNEST types
 """
 
 import nest
+import numpy
 
 try:
     import pandas
     HAVE_PANDAS = True
 except ImportError:
     HAVE_PANDAS = False
+
+
+def _serialize(data):
+    """
+    Serialize the output data of Collections or Connectomes for JSON.
+    """
+
+    if type(data) in [list, tuple, numpy.ndarray]:
+        return [_serialize(d) for d in data]
+
+    elif isinstance(data, dict):
+        return dict([(key, _serialize(value)) for key, value in data.items()])
+
+    elif isinstance(data, nest.SLILiteral):
+        return data.name
+
+    return data
 
 
 class GIDCollectionIterator(object):
@@ -187,9 +205,9 @@ class GIDCollection(object):
             - A list of strings.
             - One or more strings, followed by a string or list of strings.
               This is for hierarchical addressing.
-        pandas_output : bool, optional
-            Whether the returned data should be in a Pandas DataFrame or not.
-            Default is not.
+         output : str, ['pandas','json'], optional
+             Whether the returned data should be in a Pandas DataFrame or in a
+             JSON serializable format.  Default is ''.
 
         Returns
         -------
@@ -204,7 +222,7 @@ class GIDCollection(object):
             are specified, a dictionary containing aggregated parameter-values
             for all nodes is returned.
         DataFrame
-            If the pandas_output parameter is True.
+            Pandas Data frame if output should be in pandas format.
 
         Raises
         ------
@@ -248,13 +266,14 @@ class GIDCollection(object):
         #      Checks of input      #
         #############################
         if not kwargs:
-            pandas_output = False
-        elif 'pandas_output' in kwargs:
-            if not HAVE_PANDAS:
+            output = ''
+        elif 'output' in kwargs:
+            output = kwargs['output']
+            if output == 'pandas' and not HAVE_PANDAS:
                 raise ImportError('Pandas could not be imported')
-            pandas_output = kwargs['pandas_output']
         else:
             raise TypeError('Got unexpected keyword argument')
+        pandas_output = output == 'pandas'
 
         #############################
         #  No specified params case #
@@ -272,6 +291,7 @@ class GIDCollection(object):
                     result = {key: (item,) for key, item in result.items()}
                     result = pandas.DataFrame(result,
                                               index=['layer']).transpose()
+
         #############################
         #     Normal addressing     #
         #############################
@@ -309,6 +329,7 @@ class GIDCollection(object):
                     except KeyError:  # It is (probably) a layer
                         result = pandas.DataFrame({param: (result,)},
                                                   columns=['layer'])
+
             # Array param case
             elif nest.is_iterable(param):
                 result = {param_name: self.get(param_name)
@@ -361,67 +382,53 @@ class GIDCollection(object):
                                     "iterable")
                 else:
                     raise TypeError("Argument must be a string")
+
             # Value parameter, literal case
             if nest.is_literal(params[-1]):
                 if len(self) == 1:
                     result = value_list[0][params[-1]]
-                    if pandas_output:
-                        index = self.get('global_id')
-                        result = pandas.DataFrame({params[-1]: [result]
-                                                   if len(result) != 0
-                                                   else [[]]},
-                                                  index=[index])
                 else:
-                    if pandas_output:
-                        index = self.get('global_id')
-                        result_list = [d[params[-1]] for d in value_list]
-                        result = pandas.DataFrame({params[-1]: result_list
-                                                   if len(result_list) != 0
-                                                   else [[]]},
-                                                  index=index)
-                    else:
-                        result = tuple([d[params[-1]] for d in value_list])
+                    result = tuple([d[params[-1]] for d in value_list])
+
+                if pandas_output:
+                    index = self.get('global_id')
+                    result = {params[-1]: list(result) if len(result) != 0
+                              else [[]]}
+                    if len(self) == 1:
+                        index = [index]
+                    result = pandas.DataFrame(result, index=index)
 
             # Value parameter, array case
             elif nest.is_iterable(params[-1]):
                 for value in params[-1]:
-                    # TODO481 : Assuming they are all of equal type, we check
-                    # only the values of the first node. This must be changed
-                    # if we decide something else.
+                    # We assume all are of equal type, so we check only the
+                    # values of the first node.
                     if value not in value_list[0].keys():
-                        raise KeyError("The value '{}' does not exist at" +
+                        raise KeyError("The value '{}' does not exist at " +
                                        "the given path".format(value))
-                if len(self) == 1:  # If GIDCollection contains a single node
-                    if pandas_output:
-                        index = [self.get('global_id')]
-                        result = {key: [item]
-                                  if len(item) != 0 else [[]]
-                                  for key, item in value_list[0].items()
-                                  if key in params[-1]}
-                        result = pandas.DataFrame(result,
-                                                  index=index)
-                    else:
-                        result = {'{}'.format(key): value
-                                  for key, value in value_list[0].items()
-                                  if key in params[-1]}
-                else:  # If GIDCollection contains multiple nodes
-                    if pandas_output:
-                        index = self.get('global_id')
-                        result = pandas.DataFrame(
-                            [{key: item
-                              if len(item) != 0 else []
-                              for key, item in d.items()
-                              if key in params[-1]}
-                             for d in value_list],
-                            index=index)
-                    else:
-                        result = tuple([{'{}'.format(key): value
-                                         for key, value in d.items()
-                                         if key in params[-1]}
-                                        for d in value_list])
+
+                if len(self) == 1:
+                    result = ({key: result_dict[key]
+                               for result_dict in value_list
+                               for key in params[-1]})
+                else:
+                    result = ({key: [result_dict[key]
+                                     for result_dict in value_list]
+                               for key in params[-1]})
+
+                if pandas_output:
+                    index = self.get('global_id')
+                    if len(self) == 1:
+                        index = [index]
+                        result = {key: [val] for key, val in result.items()}
+                    result = pandas.DataFrame(result, index=index)
             else:
                 raise TypeError("Final argument should be either a string " +
                                 "or an iterable")
+
+        if output == 'json':
+            result = _serialize(result)
+
         return result
 
     def set(self, params, val=None):
@@ -555,7 +562,7 @@ class Connectome(object):
                   target + '\n' + borderline_t)
         return result
 
-    def get(self, keys=None, pandas_output=False):
+    def get(self, keys=None, output=''):
         """
         Return the parameter dictionary of connections.
 
@@ -570,6 +577,9 @@ class Connectome(object):
             String or a list of strings naming model properties. get
             then returns a single value or a dictionary with lists of values
             belonging to the keys given.
+        output : str, ['pandas','json'], optional
+            Whether the returned data should be in a Pandas DataFrame or in a
+            JSON serializable format.  Default is ''.
 
         Returns
         -------
@@ -586,6 +596,7 @@ class Connectome(object):
         TypeError
             Description
         """
+        pandas_output = output == 'pandas'
         if pandas_output and not HAVE_PANDAS:
             raise ImportError('Pandas could not be imported')
 
@@ -649,6 +660,8 @@ class Connectome(object):
             if nest.is_literal(keys):
                 final_result = {keys: final_result}
             final_result = pandas.DataFrame(final_result, index=index)
+        elif output == 'json':
+            final_result = _serialize(final_result)
 
         return final_result
 

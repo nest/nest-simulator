@@ -48,11 +48,11 @@ class TestLayerGIDCollection(unittest.TestCase):
     def test_addTwoLayers(self):
         "Test that concatenation of two layers is illegal"
         layer1 = topo.CreateLayer({'rows': 5,
-                                  'columns': 5,
-                                  'elements': 'iaf_psc_alpha'})
+                                   'columns': 5,
+                                   'elements': 'iaf_psc_alpha'})
         layer2 = topo.CreateLayer({'rows': 5,
-                                  'columns': 5,
-                                  'elements': 'iaf_psc_alpha'})
+                                   'columns': 5,
+                                   'elements': 'iaf_psc_alpha'})
 
         with self.assertRaises(nest.NESTError):
             c = layer1 + layer2

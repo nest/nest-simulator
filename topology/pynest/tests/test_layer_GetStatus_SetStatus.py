@@ -174,18 +174,18 @@ class GetSetTestCase(unittest.TestCase):
         layer = topo.CreateLayer(ldict)
 
         # Literal argument
-        value = layer.get('center', pandas_output=True)
+        value = layer.get('center', output='pandas')
         pt.assert_frame_equal(value, pandas.DataFrame({'center': [(0.0, 0.0)]},
                                                       columns=['layer']))
 
         # Array argument
-        value = layer.get(['center', 'extent'], pandas_output=True)
+        value = layer.get(['center', 'extent'], output='pandas')
         pt.assert_frame_equal(value, pandas.DataFrame({'center': [(0.0, 0.0)],
                                                        'extent': [(1.0, 1.0)]},
                                                       columns=['layer']))
 
         # Get all values
-        all_values = layer.get(pandas_output=True)
+        all_values = layer.get(output='pandas')
         self.assertEqual(all_values.shape, (7, 1))
         self.assertEqual(all_values['layer']['center'], (0.0, 0.0))
         self.assertEqual(all_values['layer']['columns'], 3)

@@ -274,7 +274,7 @@ class TestConnectome(unittest.TestCase):
         nest.Connect(nrn, nrn)
         conns = nest.GetConnections()
 
-        conns_val = conns.get(pandas_output=True)
+        conns_val = conns.get(output='pandas')
         pnds_ref = pandas.DataFrame({'delay': 1.,
                                      'port': 0,
                                      'receptor': 0,
@@ -288,8 +288,8 @@ class TestConnectome(unittest.TestCase):
                                     index=(conns.get('source'),))
         self.assertTrue(conns_val.equals(pnds_ref))
 
-        conns_delay = conns.get('delay', pandas_output=True)
-        conns_sizeof = conns.get(['sizeof'], pandas_output=True)
+        conns_delay = conns.get('delay', output='pandas')
+        conns_sizeof = conns.get(['sizeof'], output='pandas')
 
         self.assertTrue(conns_delay.equals(
             pandas.DataFrame({'delay': 1.}, index=(conns.get('source'),))))
@@ -302,7 +302,7 @@ class TestConnectome(unittest.TestCase):
         nest.Connect(nrns, nrns)
         conns = nest.GetConnections()
 
-        conns_val = conns.get(pandas_output=True)
+        conns_val = conns.get(output='pandas')
         pnds_ref = pandas.DataFrame({'delay': [1., 1., 1., 1.],
                                      'port': [0, 1, 2, 3],
                                      'receptor': [0, 0, 0, 0],
@@ -319,8 +319,8 @@ class TestConnectome(unittest.TestCase):
                                     index=conns.get('source'))
         self.assertTrue(conns_val.equals(pnds_ref))
 
-        conns_target = conns.get('target', pandas_output=True)
-        conns_sizeof_port = conns.get(['sizeof', 'port'], pandas_output=True)
+        conns_target = conns.get('target', output='pandas')
+        conns_sizeof_port = conns.get(['sizeof', 'port'], output='pandas')
 
         self.assertTrue(conns_target.equals(
             pandas.DataFrame({'target': [1, 2, 1, 2]},

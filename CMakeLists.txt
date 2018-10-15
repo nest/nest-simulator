@@ -80,6 +80,8 @@ option( k-computer "Enable K computer." OFF )
 set( disable-timing OFF CACHE BOOL "Disable measurements via Stopwatches. [default OFF]" )
 set( disable-counts ON CACHE BOOL "Disable measurements of call counts. [default ON]" )
 
+set( with-hpc-synapses OFF CACHE BOOL "Enable memory-efficient synapse objects for large-scale simulations [default OFF]" )
+
 ################################################################################
 ##################      Project Directory variables           ##################
 ################################################################################
@@ -165,6 +167,7 @@ nest_process_with_mpi()
 nest_process_with_libneurosim()
 nest_process_with_music()
 nest_process_with_boost()
+nest_process_with_hpc_synapses()
 
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )

@@ -450,10 +450,13 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< StaticConnection< TargetIdentifierPtrRport > >(
       "static_synapse" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< StaticConnection< TargetIdentifierIndex > >(
       "static_synapse_hpc" );
+#endif
 
 
   /* BeginDocumentation
@@ -465,10 +468,14 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< StaticConnectionHomW< TargetIdentifierPtrRport > >(
       "static_synapse_hom_w" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
       "static_synapse_hom_w_hpc" );
+#endif
+
 
   /* BeginDocumentation
      Name: gap_junction - Connection model for gap junctions.
@@ -513,10 +520,13 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< STDPConnection< TargetIdentifierPtrRport > >(
       "stdp_synapse" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< STDPConnection< TargetIdentifierIndex > >(
       "stdp_synapse_hpc" );
+#endif
 
 
   /* BeginDocumentation
@@ -528,10 +538,13 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< STDPPLConnectionHom< TargetIdentifierPtrRport > >(
       "stdp_pl_synapse_hom" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< STDPPLConnectionHom< TargetIdentifierIndex > >(
       "stdp_pl_synapse_hom_hpc" );
+#endif
 
 
   /* BeginDocumentation
@@ -543,10 +556,13 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< STDPTripletConnection< TargetIdentifierPtrRport > >(
       "stdp_triplet_synapse" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< STDPTripletConnection< TargetIdentifierIndex > >(
       "stdp_triplet_synapse_hpc" );
+#endif
 
 
   /* BeginDocumentation
@@ -558,10 +574,13 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< Quantal_StpConnection< TargetIdentifierPtrRport > >(
       "quantal_stp_synapse" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< Quantal_StpConnection< TargetIdentifierIndex > >(
       "quantal_stp_synapse_hpc" );
+#endif
 
 
   /* BeginDocumentation
@@ -573,10 +592,13 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< STDPConnectionHom< TargetIdentifierPtrRport > >(
       "stdp_synapse_hom" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< STDPConnectionHom< TargetIdentifierIndex > >(
       "stdp_synapse_hom_hpc" );
+#endif
 
 
   /* BeginDocumentation
@@ -588,10 +610,13 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< STDPFACETSHWConnectionHom< TargetIdentifierPtrRport > >(
       "stdp_facetshw_synapse_hom" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< STDPFACETSHWConnectionHom< TargetIdentifierIndex > >(
       "stdp_facetshw_synapse_hom_hpc" );
+#endif
 
 
   /* BeginDocumentation
@@ -603,10 +628,13 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< ContDelayConnection< TargetIdentifierPtrRport > >(
       "cont_delay_synapse" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< ContDelayConnection< TargetIdentifierIndex > >(
       "cont_delay_synapse_hpc" );
+#endif
 
 
   /* BeginDocumentation
@@ -618,10 +646,13 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< TsodyksConnection< TargetIdentifierPtrRport > >(
       "tsodyks_synapse" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< TsodyksConnection< TargetIdentifierIndex > >(
       "tsodyks_synapse_hpc" );
+#endif
 
 
   /* BeginDocumentation
@@ -633,10 +664,13 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< TsodyksConnectionHom< TargetIdentifierPtrRport > >(
       "tsodyks_synapse_hom" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< TsodyksConnectionHom< TargetIdentifierIndex > >(
       "tsodyks_synapse_hom_hpc" );
+#endif
 
 
   /* BeginDocumentation
@@ -648,10 +682,13 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< Tsodyks2Connection< TargetIdentifierPtrRport > >(
       "tsodyks2_synapse" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< Tsodyks2Connection< TargetIdentifierIndex > >(
       "tsodyks2_synapse_hpc" );
+#endif
 
 
   /* BeginDocumentation
@@ -662,10 +699,13 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< HTConnection< TargetIdentifierPtrRport > >(
       "ht_synapse" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< HTConnection< TargetIdentifierIndex > >(
       "ht_synapse_hpc" );
+#endif
 
 
   /* BeginDocumentation
@@ -677,10 +717,14 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< STDPDopaConnection< TargetIdentifierPtrRport > >(
       "stdp_dopamine_synapse" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
       "stdp_dopamine_synapse_hpc" );
+#endif
+
 
   /* BeginDocumentation
      Name: vogels_sprekeler_synapse_hpc - Variant of vogels_sprekeler_synapse
@@ -692,10 +736,14 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< VogelsSprekelerConnection< TargetIdentifierPtrRport > >(
       "vogels_sprekeler_synapse" );
+
+#ifdef WITH_HPC_SYNAPSES
   kernel()
     .model_manager
     .register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
       "vogels_sprekeler_synapse_hpc" );
+#endif
+
 
   /* BeginDocumentation
      Name: bernoulli_synapse - Static synapse with stochastic transmission

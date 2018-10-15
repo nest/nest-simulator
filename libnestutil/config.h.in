@@ -166,4 +166,7 @@
 /* Use PS array construction semantics */
 #cmakedefine PS_ARRAYS 1
 
+/* Register memory-efficient synapse models for large-scale simulations */
+#cmakedefine WITH_HPC_SYNAPSES 1
+
 #endif // #ifndef CONFIG_H

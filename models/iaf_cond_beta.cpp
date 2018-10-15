@@ -160,8 +160,8 @@ nest::iaf_cond_beta::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_cond_beta::State_&
-nest::iaf_cond_beta::State_::operator=( const State_& s )
+nest::iaf_cond_beta::State_&nest::iaf_cond_beta::State_::operator=(
+  const State_& s )
 {
   if ( this == &s ) // avoid assignment to self
   {

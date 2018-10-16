@@ -38,6 +38,8 @@ FirstVersion: 2014-11-21
 
 skip_if_not_threaded
 
+skip_if_without_hpc_synapses
+
 M_ERROR setverbosity
 
 {

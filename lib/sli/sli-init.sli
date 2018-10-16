@@ -2364,4 +2364,4 @@ SeeAlso: exit_test_gracefully
 /skip_if_not_threaded { is_threaded not { /skipped_no_threading exit_test_gracefully } if } def
 /skip_if_without_gsl { statusdict/have_gsl :: not { /skipped_no_gsl exit_test_gracefully } if } def
 /skip_if_without_music { statusdict/have_music :: not { /skipped_no_music exit_test_gracefully } if } def
-
+/skip_if_without_hpc_synapses { synapsedict /static_synapse_hpc known not { /skipped exit_test_gracefully } if } def

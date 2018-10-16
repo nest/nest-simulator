@@ -36,6 +36,8 @@ Author: Susanne Kunkel, Maximilian Schmidt, 2012-02-19
 (unittest) run
 /unittest using
 
+skip_if_without_hpc_synapses
+
 M_ERROR setverbosity
 
 0

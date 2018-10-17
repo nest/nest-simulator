@@ -141,11 +141,11 @@ private:
     /** Passive decay rate in ms. */
     double lambda_;
 
-    /** Gaussian white noise standard deviation. */
-    double std_;
+    /** Noise parameter. */
+    double sigma_;
 
-    /** Gaussian white noise mean.*/
-    double mean_;
+    /** Mean input.*/
+    double mu_;
 
     /** Target of non-linearity.
         True (default): Gain function applied to linearly summed input.

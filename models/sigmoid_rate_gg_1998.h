@@ -57,8 +57,8 @@ Parameters:
 
  rate                double - Rate (unitless)
  tau                 double - Time constant of rate dynamics in ms.
- mean                double - Mean of Gaussian white noise.
- std                 double - Standard deviation of Gaussian white noise.
+ mu                  double - Mean input.
+ sigma               double - Noise parameter.
  g                   double - Gain parameter.
  linear_summation    bool   - Specifies type of non-linearity (see above).
  rectify_output      bool   - Switch to restrict rate to values >= 0.

@@ -66,7 +66,7 @@ def build_network(sigma, dt):
 
 
 '''
-The function build_network takes the noise parameter sigma 
+The function build_network takes the noise parameter sigma
 and the time resolution as arguments.
 First the Kernel is reset and the use_wfr (waveform-relaxation) is set to
 false while the resolution is set to the specified value dt.

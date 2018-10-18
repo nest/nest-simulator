@@ -115,16 +115,20 @@ nest::rate_neuron_opn< TNonlinearities >::Parameters_::set(
 
   // Check for old names
   if ( updateValue< double >( d, names::mean, mu_ ) )
+  {
     LOG( M_WARNING,
       "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
       "The parameter mean has been renamed to mu. Please use the new "
       "name from now on." );
+  }
 
   if ( updateValue< double >( d, names::std, sigma_ ) )
+  {
     LOG( M_WARNING,
       "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
       "The parameter std has been renamed to sigma. Please use the new "
       "name from now on." );
+  }
 
   // Check for invalid parameters
   if ( tau_ <= 0 )

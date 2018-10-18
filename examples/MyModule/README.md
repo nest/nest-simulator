@@ -23,6 +23,8 @@ or less silly) custom example components:
 * A **recording backend** called `RecordingBackendSocket`, which
   streams out the data from spike detectors to an external (or local)
   server via UDP.
+* A **recording backend** called `soundclick`, which creates the illusion
+  of a realistic sound from an electrophysiological recording.
 
 In addition to these C++ components, the `sli` directory contains
 custom SLI code for the extension like custom SLI functions, example

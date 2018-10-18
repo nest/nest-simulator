@@ -25,10 +25,12 @@
 
 // recording backend interface
 #include "recording_backend.h"
-#include "stopwatch.h" 
+#include "stopwatch.h"
 
 // Simple and Fast Multimedia Library (SFML)
+#if defined( HAVE_SFML_AUDIO )
 #include <SFML/Audio.hpp>
+#endif
 
 namespace nest
 {
@@ -81,9 +83,10 @@ private:
   // NEST Stopwatch object
   Stopwatch stopwatch_;
 
-  // SFML
+#if defined( HAVE_SFML_AUDIO )
   sf::SoundBuffer sound_buffer_;
   sf::Sound sound_;
+#endif
 };
 
 // clang-format off

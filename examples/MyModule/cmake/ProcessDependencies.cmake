@@ -1,0 +1,7 @@
+function( CHECK_HAVE_SFML_AUDIO )
+  set( HAVE_SFML_AUDIO OFF PARENT_SCOPE )
+  find_package( SFMLAUDIO )
+  if ( SFMLAUDIO_FOUND )
+    set( HAVE_SFML_AUDIO ON PARENT_SCOPE )
+  endif ()
+endfunction()

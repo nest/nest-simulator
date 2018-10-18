@@ -18,6 +18,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required( VERSION 2.8.12 )
+list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
+include( ProcessDependencies )
 
 # This CMakeLists.txt is configured to build your external module for NEST. For
 # illustrative reasons this module is called 'my' (change SHORT_NAME to your
@@ -39,13 +41,12 @@ set( MODULE_NAME ${SHORT_NAME}module )
 
 # 2) Add all your sources here
 set( MODULE_SOURCES
-    mymodule.h mymodule.cpp
-    pif_psc_alpha.cpp pif_psc_alpha.h
-    drop_odd_spike_connection.h
-    step_pattern_builder.h step_pattern_builder.cpp
-    recording_backend_soundclick.h recording_backend_soundclick.cpp
-    recording_backend_socket.h recording_backend_socket.cpp
-    )
+     mymodule.h mymodule.cpp
+     pif_psc_alpha.cpp pif_psc_alpha.h
+     drop_odd_spike_connection.h
+     step_pattern_builder.h step_pattern_builder.cpp
+     recording_backend_soundclick.h recording_backend_soundclick.cpp
+   )
 
 # 3) We require a header name like this:
 set( MODULE_HEADER ${MODULE_NAME}.h )
@@ -56,9 +57,14 @@ set( MODULE_VERSION_MAJOR 1 )
 set( MODULE_VERSION_MINOR 0 )
 set( MODULE_VERSION "${MODULE_VERSION_MAJOR}.${MODULE_VERSION_MINOR}" )
 
-# 5) Specify additional link libraries if needed
-#    e.g., sfml-audio is required by the `SoundClick` recording backend example
-set( USER_LINK_LIBRARIES sfml-audio )
+# 5) Specify additional link libraries if needed, e.g., sfml-audio is required
+#    by the `SoundClick` backend example. The verification of its installation
+#    is encapsulated in ./cmake/ProcessDependencies.cmake.
+check_have_sfml_audio()
+if ( HAVE_SFML_AUDIO )
+  set( USER_LINK_LIBRARIES sfml-audio )
+  add_definitions( -DHAVE_SFML_AUDIO )
+endif ()
 
 # 6) Leave the rest as is. All files in `sli` will be installed to
 #    `share/nest/sli/`, so that NEST will find the during initialization.
@@ -245,7 +251,7 @@ foreach( LINKLIB ${USER_LINK_LIBRARIES} )
   if( NOT LIB_${LINKLIB} )
     message(FATAL_ERROR "ERROR: " ${LINKLIB} " library not found")
   else()  
-    message( ${LINKLIB} " library found")
+    message( "-- " ${LINKLIB} " library found")
   endif()
 endforeach()
 

@@ -30,10 +30,12 @@
 // Constructor
 nest::RecordingBackendSoundClick::RecordingBackendSoundClick()
 {
+#if defined( HAVE_SFML_AUDIO )
   // Load the raw sound data into the SFML sound buffer.
   sound_buffer_.loadFromMemory(
     sound_click_16bit_44_1khz_wav, sizeof( sound_click_16bit_44_1khz_wav ) );
   sound_.setBuffer( sound_buffer_ );
+#endif
 }
 
 // Destructor
@@ -65,9 +67,17 @@ void nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device,
 void
 nest::RecordingBackendSoundClick::initialize()
 {
+#if defined( HAVE_SFML_AUDIO )
   LOG( M_INFO,
     "Recording Backend",
-    ( "recording backend >SoundClick< successfully initialized" ) );
+    ( "Recording backend >SoundClick< successfully initialized." ) );
+#else
+  LOG( M_ERROR,
+    "Recording Backend",
+    ( "Recording backend >SoundClick< initialization failed. "
+      "The sfml-audio library is missing. "
+      "Please install sfml-dev and rebuild the module." ) );
+#endif
 }
 
 // Called at the end of a call to Simulate
@@ -110,7 +120,9 @@ nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
     usleep( time_lag_us );
   }
 
+#if defined( HAVE_SFML_AUDIO )
   sound_.play();
+#endif
 }
 
 // Called by each multimeter on every event

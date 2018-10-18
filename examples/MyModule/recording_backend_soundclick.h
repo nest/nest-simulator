@@ -28,7 +28,7 @@
 #include "stopwatch.h"
 
 // Simple and Fast Multimedia Library (SFML)
-#if defined( HAVE_SFML_AUDIO )
+#ifdef HAVE_SFML_AUDIO
 #include <SFML/Audio.hpp>
 #endif
 
@@ -83,7 +83,7 @@ private:
   // NEST Stopwatch object
   Stopwatch stopwatch_;
 
-#if defined( HAVE_SFML_AUDIO )
+#ifdef HAVE_SFML_AUDIO
   sf::SoundBuffer sound_buffer_;
   sf::Sound sound_;
 #endif

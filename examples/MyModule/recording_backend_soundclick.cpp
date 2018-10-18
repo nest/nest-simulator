@@ -30,7 +30,7 @@
 // Constructor
 nest::RecordingBackendSoundClick::RecordingBackendSoundClick()
 {
-#if defined( HAVE_SFML_AUDIO )
+#ifdef HAVE_SFML_AUDIO
   // Load the raw sound data into the SFML sound buffer.
   sound_buffer_.loadFromMemory(
     sound_click_16bit_44_1khz_wav, sizeof( sound_click_16bit_44_1khz_wav ) );
@@ -67,7 +67,7 @@ void nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device,
 void
 nest::RecordingBackendSoundClick::initialize()
 {
-#if defined( HAVE_SFML_AUDIO )
+#ifdef HAVE_SFML_AUDIO
   LOG( M_INFO,
     "Recording Backend",
     ( "Recording backend >SoundClick< successfully initialized." ) );
@@ -120,7 +120,7 @@ nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
     usleep( time_lag_us );
   }
 
-#if defined( HAVE_SFML_AUDIO )
+#ifdef HAVE_SFML_AUDIO
   sound_.play();
 #endif
 }

@@ -28,9 +28,10 @@
 #   find_package( SFMLAUDIO )
 
 set ( SFMLAUDIO_FOUND False )
-find_path ( SFML_INCLUDE_DIR SFML/AudioXXX.hpp PATH_SUFFIXES )
+find_path ( SFML_INCLUDE_DIR SFML/Audio.hpp PATH_SUFFIXES )
 
 if ( SFML_INCLUDE_DIR )
   set ( SFMLAUDIO_FOUND True )
   message( "-- sfml-audio (Audio.hpp) found in ${SFML_INCLUDE_DIR}")
 endif ()
+

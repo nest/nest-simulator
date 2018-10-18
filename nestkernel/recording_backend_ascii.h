@@ -109,8 +109,8 @@ private:
 
     Parameters_();
 
-    void get( const RecordingBackendASCII&, DictionaryDatum& ) const;
-    void set( const RecordingBackendASCII&, const DictionaryDatum& );
+    void get( DictionaryDatum& ) const;
+    void set( const DictionaryDatum& );
   };
 
   Parameters_ P_;
@@ -130,7 +130,7 @@ private:
 inline void
 RecordingBackendASCII::get_status( DictionaryDatum& d ) const
 {
-  P_.get( *this, d );
+  P_.get( d );
 }
 
 } // namespace

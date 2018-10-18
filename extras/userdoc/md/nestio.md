@@ -1,11 +1,15 @@
 
 # NESTıo
 
-* Each device can use exactly one recording backend.
-* The backend is selected by setting the property `backend` to the name of the backend (as **string** or **literal**).
-* All recorder properties are stored in the recording backend.
-* The `RecordingBackend` base class provides a `std::map<index, DictionaryDatum>` for this.
+* Each recording device can use several recording backends. The
+  recording backends for a device are set by supplying a list of
+  recording backend names as property \record_to.
+* The `RecordingBackend` base class provides a `std::map<index,
+  DictionaryDatum>` for storing the properties of the device in the
+  recording backend.
 
+How to set/retrieve general per-recording-backend properties and
+per-device recording-backend settings
 
 
 
@@ -24,6 +28,15 @@ RB::write_int(data)
 time  sender
 ```
 
+# per recording device:
+
+## ASCII
+
+## Memory
+
+## SionLib
+
+
 ### `multimeter`
 
 ```
@@ -37,7 +50,7 @@ time  sender  target  port  rport  weight
 ```
 
 
-### No conversion for `PseudoRecordingDevices`
+### No conversion for `PseudoRecordingDevices` required
 
 
 ## ASCII backend
@@ -49,13 +62,27 @@ time  sender  target  port  rport  weight
 
 time  sender  val1  val2 ...
 
+### per recording backend properties:
+
+- file_extension
+- precision
+
+
 ## Screen backend
 
 - Write a descriptive header
 - Write time in double,
 - Allow to set the precision of time and values (default to 3 digits)
 
+## per recording device properties:
 
+- precision
+
+## Sionlib backend
+
+## per recording device properties:
+
+- 
 
 
 ## Format 

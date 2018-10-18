@@ -20,9 +20,6 @@
  *
  */
 
-// Includes from C++
-#include <sstream>
-
 // Includes from libnestutil:
 #include "compose.hpp"
 
@@ -47,12 +44,18 @@ nest::RecordingBackendSocket::~RecordingBackendSocket() throw()
 void
 nest::RecordingBackendSocket::enroll( const RecordingDevice& device )
 {
+  B_.addr_.sin_family = AF_INET;
+  inet_aton( P_.ip_.c_str(), &B_.addr_.sin_addr );
+  B_.addr_.sin_port = htons( P_.port_ );
+
+  B_.socket_ = socket(PF_INET, SOCK_DGRAM, 0);
 }
 
 void
 nest::RecordingBackendSocket::enroll( const RecordingDevice& device,
   const std::vector< Name >& /* value_names */ )
 {
+  throw KernelException("RecordingBackendSocket does not support multimeters");
 }
 
 void
@@ -81,21 +84,15 @@ nest::RecordingBackendSocket::write( const RecordingDevice& device,
 {
 #pragma omp critical
   {
-      addr_.sin_family = AF_INET;
-      inet_aton("127.0.0.1", &addr_.sin_addr);
-      addr_.sin_port = htons(50000);
+    index sd_gid = device.get_gid();
+    index node_gid = event.get_sender_gid();
+    std::string msg = String::compose(
+	"spike_detector %1 got a spike by node %2", sd_gid, node_gid );
 
-      
-    int s = socket(PF_INET, SOCK_DGRAM, 0);
-    std::ostringstream msg;
-    msg << "spike_detector " << device.get_gid()
-	<< " got a spike by node " << event.get_sender_gid()
-	<< std::endl;
-    
-    int x = sendto(s, msg.str().c_str(), msg.str().size(), 0, (struct sockaddr *)&addr_, sizeof(addr_));
-
-    
-    std::cout << msg.str() << x <<  std::endl;
+    // We explicitly ignore errors here by not evaluating the return
+    // code of the sendto() function.
+    sendto(B_.socket_, msg.c_str(), msg.size(), 0,
+	   ( struct sockaddr * )& B_.addr_, sizeof( B_.addr_ ) );
   }
 }
 
@@ -106,7 +103,32 @@ nest::RecordingBackendSocket::write( const RecordingDevice& device,
 {
 }
 
+nest::RecordingBackendSocket::Parameters_::Parameters_()
+    : ip_( "127.0.0.1" )
+    , port_( 50000 )
+{
+}
+
+void
+nest::RecordingBackendSocket::Parameters_::get( DictionaryDatum& d ) const
+{
+  ( *d )[ "ip" ] = ip_;
+  ( *d )[ "port" ] = port_;
+}
+
+void
+nest::RecordingBackendSocket::Parameters_::set( const DictionaryDatum& d )
+{
+  updateValue< std::string >( d, "ip", ip_ );
+  updateValue< long >( d, "port", port_ );
+}
+
 void
 nest::RecordingBackendSocket::set_status( const DictionaryDatum& d )
 {
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( d );  // throws if BadProperty
+
+  // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
 }

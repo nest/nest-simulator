@@ -37,23 +37,23 @@ namespace nest
 /**
  * Socket specialization of the RecordingBackend interface.
  *
- * Recorded data is sent via UDP to server. A minimal server in Python
- * looks like this:
+ * Recorded data is sent via UDP to a server. A minimal receiving
+ * server in Python looks like this:
  *
  * import socket
  * s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
- * s.bind(("localhost", 50000))
+ * s.bind(('', 50000)) # '' means all available interfaces
  * while True:
- *     print s.recvfrom(1024)
+ *     print s.recv(1024)
  *
- * RecordingBackendSocket maintains a data structure mapping a socket
- * connection to a specific IP address and port to every recording
- * device instance on every thread. Socket connections are opened and
- * inserted into the map during the enroll() call (issued by the
- * recorder's calibrate() function) and closed in finalize(), which is
- * called on all registered recording backends by
- * IOManager::cleanup().
+ * RecordingBackendSocket only works for spike data. It uses a single
+ * socket connection to send the data of all recording devices. In
+ * order to not open the socket if no device is connected, the socket
+ * is opened upon the first call to enroll() (issued by the recorder's
+ * calibrate() function) and closed in finalize(), which is called on
+ * all registered recording backends by IOManager::cleanup().
  */
+
 class RecordingBackendSocket : public RecordingBackend
 {
 public:
@@ -62,13 +62,17 @@ public:
    ~RecordingBackendSocket() throw();
 
   /**
-   * Functions called by all instantiated recording devices to register
-   * themselves with their
-   * metadata. Here, files are opened.
+   * Function called by spike detectors using this recording
+   * backend. This function opens the socket.
    */
   void enroll( const RecordingDevice& device );
+
+  /**
+   * Function called by all multimeters. This function will throw an
+   * exception, as multi-value data ist not supported by this backend.
+   */
   void enroll( const RecordingDevice& device,
-    const std::vector< Name >& value_names );
+	       const std::vector< Name >& value_names );
 
   /**
    * Flush files after a single call to Run
@@ -104,14 +108,31 @@ public:
 
 private:
 
-  struct sockaddr_in addr_;
+  struct Parameters_
+  {
+    std::string ip_;      //!< The IP address the socket binds to
+    long port_;           //!< The port the socket binds to
+
+    Parameters_();
+
+    void get( DictionaryDatum& ) const;
+    void set( const DictionaryDatum& );
+  };
+
+  struct Buffers_
+  {
+    struct sockaddr_in addr_;
+    int socket_;
+  };
+
+  Parameters_ P_;
+  Buffers_ B_;
 };
 
 inline void
 RecordingBackendSocket::get_status( DictionaryDatum& d ) const
 {
-//  ( *d )[ "IP" ] = addr_.sin_addr;
-//  ( *d )[ "Port" ] = addr_.sin_port;
+  P_.get( d );
 }
 
 } // namespace

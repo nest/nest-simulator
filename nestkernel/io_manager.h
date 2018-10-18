@@ -49,6 +49,7 @@ public:
   virtual void get_status( DictionaryDatum& );       // get parameters
 
   IOManager(); // Construct only by meta-manager
+  ~IOManager();
 
   /**
    * The prefix for files written by devices.
@@ -73,12 +74,6 @@ public:
    * Default: false.
    */
   bool overwrite_files() const;
-
-  /**
-   * Re-initialize all registered recording backends by calling their
-   * initialize() functions
-   */
-  void num_threads_changed_reset();
 
   /**
    * Clean up in all registered recording backends after a single call to run by

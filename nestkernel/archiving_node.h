@@ -1,124 +1,125 @@
-/*
- *  archiving_node.h
- *
- *  This file is part of NEST.
- *
- *  Copyright (C) 2004 The NEST Initiative
- *
- *  NEST is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  NEST is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+	/*
+	 *  archiving_node.h
+	 *
+	 *  This file is part of NEST.
+	 *
+	 *  Copyright (C) 2004 The NEST Initiative
+	 *
+	 *  NEST is free software: you can redistribute it and/or modify
+	 *  it under the terms of the GNU General Public License as published by
+	 *  the Free Software Foundation, either version 2 of the License, or
+	 *  (at your option) any later version.
+	 *
+	 *  NEST is distributed in the hope that it will be useful,
+	 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 *  GNU General Public License for more details.
+	 *
+	 *  You should have received a copy of the GNU General Public License
+	 *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+	 *
+	 */
 
-/**
- * \file archiving_node.h
- * Definition of Archiving_Node which is capable of
- * recording and managing a spike history.
- * \author Moritz Helias, Abigail Morrison
- * \date april 2006
- */
+	/**
+	 * \file archiving_node.h
+	 * Definition of Archiving_Node which is capable of
+	 * recording and managing a spike history.
+	 * \author Moritz Helias, Abigail Morrison
+	 * \date april 2006
+	 */
 
-#ifndef ARCHIVING_NODE_H
-#define ARCHIVING_NODE_H
+	#ifndef ARCHIVING_NODE_H
+	#define ARCHIVING_NODE_H
 
-// C++ includes:
-#include <deque>
+	// C++ includes:
+	#include <deque>
 
-// Includes from nestkernel:
-#include "histentry.h"
-#include "nest_time.h"
-#include "nest_types.h"
-#include "node.h"
-#include "synaptic_element.h"
+	// Includes from nestkernel:
+	#include "histentry.h"
+	#include "nest_time.h"
+	#include "nest_types.h"
+	#include "node.h"
+	#include "synaptic_element.h"
 
-// Includes from sli:
-#include "dictdatum.h"
+	// Includes from sli:
+	#include "dictdatum.h"
 
-#define DEBUG_ARCHIVER 1
+	#define DEBUG_ARCHIVER 1
 
-namespace nest
-{
+	namespace nest
+	{
 
-/**
- * \class Archiving_Node
- * a node which archives spike history for the purposes of
- * timing dependent plasticity
- */
-class Archiving_Node : public Node
-{
-  using Node::get_synaptic_elements;
+	/**
+	 * \class Archiving_Node
+	 * a node which archives spike history for the purposes of
+	 * timing dependent plasticity
+	 */
+	class Archiving_Node : public Node
+	{
+	  using Node::get_synaptic_elements;
 
-public:
-  /**
-   * \fn Archiving_Node()
-   * Constructor.
-   */
-  Archiving_Node();
+	public:
+	  /**
+	   * \fn Archiving_Node()
+	   * Constructor.
+	   */
+	  Archiving_Node();
 
-  /**
-   * \fn Archiving_Node()
-   * Copy Constructor.
-   */
-  Archiving_Node( const Archiving_Node& );
-  /**
+	  /**
+	   * \fn Archiving_Node()
+	   * Copy Constructor.
+	   */
+	  Archiving_Node( const Archiving_Node& );
+	  /**
 
-   * \fn double get_Ca_minus()
-   * return the current value of Ca_minus
-   */
-  double get_Ca_minus() const;
+	   * \fn double get_Ca_minus()
+	   * return the current value of Ca_minus
+	   */
+	  double get_Ca_minus() const;
 
-  /**
-   * \fn double get_synaptic_elements(Name n)
-   * get the number of synaptic element for the current Node
-   * the number of synaptic elements is a double value but the number of
-   * actual vacant and connected elements is an integer truncated from this
-   * value
-   */
-  double get_synaptic_elements( Name n ) const;
+	  /**
+	   * \fn double get_synaptic_elements(Name n)
+	   * get the number of synaptic element for the current Node
+	   * the number of synaptic elements is a double value but the number of
+	   * actual vacant and connected elements is an integer truncated from this
+	   * value
+	   */
+	  double get_synaptic_elements( Name n ) const;
 
-  /**
-   * \fn int get_synaptic_elements_vacant(Name n)
-   * get the number of synaptic elements of type n which are available
-   * for new synapse creation
-   */
-  int get_synaptic_elements_vacant( Name n ) const;
+	  /**
+	   * \fn int get_synaptic_elements_vacant(Name n)
+	   * Get the number of synaptic elements of type n which are available
+	   * for new synapse creation. It returns a negative number if
+           * synaptic elements must be deleted in the next update.
+	   */
+	  int get_synaptic_elements_vacant( Name n ) const;
 
-  /**
-   * \fn int get_synaptic_elements_connected(Name n)
-   * get the number of synaptic element of type n which are currently
-   * connected
-   */
-  int get_synaptic_elements_connected( Name n ) const;
+	  /**
+	   * \fn int get_synaptic_elements_connected(Name n)
+	   * get the number of synaptic element of type n which are currently
+	   * connected
+	   */
+	  int get_synaptic_elements_connected( Name n ) const;
 
-  /**
-   * \fn std::map<Name, double> get_synaptic_elements()
-   * get the number of all synaptic elements for the current Node
-   */
-  std::map< Name, double > get_synaptic_elements() const;
+	  /**
+	   * \fn std::map<Name, double> get_synaptic_elements()
+	   * get the number of all synaptic elements for the current Node
+	   */
+	  std::map< Name, double > get_synaptic_elements() const;
 
-  /**
-   * \fn void update_synaptic_elements()
-   * Change the number of synaptic elements in the node depending on the
-   * dynamics described by the corresponding growth curve
-   */
-  void update_synaptic_elements( double t );
+	  /**
+	   * \fn void update_synaptic_elements()
+	   * Change the number of synaptic elements in the node depending on the
+	   * dynamics described by the corresponding growth curve
+	   */
+	  void update_synaptic_elements( double t );
 
-  /**
-   * \fn void decay_synaptic_elements_vacant()
-   * Delete a certain portion of the vacant synaptic elements which are not
-   * in use
-   */
-  void decay_synaptic_elements_vacant();
+	  /**
+	   * \fn void decay_synaptic_elements_vacant()
+	   * Delete a certain portion of the vacant synaptic elements which are not
+	   * in use
+	   */
+	  void decay_synaptic_elements_vacant();
 
   /**
    * \fn void connect_synaptic_element()

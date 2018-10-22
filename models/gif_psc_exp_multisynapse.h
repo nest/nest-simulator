@@ -32,6 +32,9 @@
 
 #include "nest.h"
 
+namespace nest
+{
+
 /** @BeginDocumentation
   Name: gif_psc_exp_multisynapse - Current-based generalized
   integrate-and-fire neuron model with multiple synaptic time
@@ -141,10 +144,6 @@
 
   SeeAlso: pp_psc_delta, gif_psc_exp, gif_cond_exp, gif_cond_exp_multisynapse
 */
-
-namespace nest
-{
-
 class gif_psc_exp_multisynapse : public Archiving_Node
 {
 

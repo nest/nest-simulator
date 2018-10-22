@@ -94,7 +94,6 @@ Author: Mario Senden, Jan Hahne, Jannis Schuecker
 
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
-
 class nonlinearities_gauss_rate
 {
 private:

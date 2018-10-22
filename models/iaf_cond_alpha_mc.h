@@ -49,6 +49,19 @@
 #include "dictdatum.h"
 #include "name.h"
 
+namespace nest
+{
+/**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ */
+extern "C" int
+iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
+
+
 /** @BeginDocumentation
 Name: iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky
                           integrate-and-fire neuron model.
@@ -116,10 +129,13 @@ V_reset      double - Reset potential of the membrane in mV.
 Example:
 See examples/nest/mc_neuron.py.
 
-Remark:
-This is a prototype for illustration which has undergone only limited testing.
-Details of the implementation and user-interface will likely change.
-USE AT YOUR OWN PERIL!
+Remarks:
+  This is a prototype for illustration which has undergone only limited 
+  testing. Details of the implementation and user-interface will likely
+  change. USE AT YOUR OWN PERIL!
+
+  @note All parameters that occur for both compartments
+   and dendrite are stored as C arrays, with index 0 being soma.
 
 Sends: SpikeEvent
 
@@ -139,24 +155,8 @@ single pyramidal cells.  Proc. Natl. Acad. Sci. USA, 88(24),
 Author: Plesser
 
 SeeAlso: iaf_cond_alpha
+
 */
-
-namespace nest
-{
-/**
- * Function computing right-hand side of ODE for GSL solver.
- * @note Must be declared here so we can befriend it in class.
- * @note Must have C-linkage for passing to GSL.
- * @note No point in declaring it inline, since it is called
- *       through a function pointer.
- */
-extern "C" int
-iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
-
-/**
- * @note All parameters that occur for both compartments
- *       and dendrite are stored as C arrays, with index 0 being soma.
- */
 class iaf_cond_alpha_mc : public Archiving_Node
 {
 

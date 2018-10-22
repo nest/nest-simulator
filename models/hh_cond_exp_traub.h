@@ -130,7 +130,6 @@ Author: Schrader
 
 SeeAlso: hh_psc_alpha
 */
-
 class hh_cond_exp_traub : public Archiving_Node
 {
 

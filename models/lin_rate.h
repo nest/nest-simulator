@@ -33,6 +33,7 @@
 
 namespace nest
 {
+
 /** @BeginDocumentation
 
 Name: lin_rate - Linear rate model

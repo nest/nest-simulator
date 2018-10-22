@@ -26,6 +26,9 @@
 // Includes from nestkernel:
 #include "connection.h"
 
+namespace nest
+{
+
 /** @BeginDocumentation
   Name: ht_synapse - Synapse with depression after Hill & Tononi (2005).
 
@@ -59,16 +62,6 @@
 
   SeeAlso: ht_neuron, tsodyks_synapse, stdp_synapse, static_synapse
 */
-
-/**
- * Class representing a synapse with Hill short term plasticity.  A
- * suitable Connector containing these connections can be obtained from
- * the template GenericConnector.
- */
-
-namespace nest
-{
-
 template < typename targetidentifierT >
 class HTConnection : public Connection< targetidentifierT >
 {

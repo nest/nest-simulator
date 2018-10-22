@@ -47,6 +47,20 @@
 // Includes from sli:
 #include "stringdatum.h"
 
+namespace nest
+{
+/**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int ht_neuron_dynamics( double, const double*, double*, void* );
+
 /** @BeginDocumentation
    Name: ht_neuron - Neuron model after Hill & Tononi (2005).
 
@@ -117,21 +131,6 @@
 
    SeeAlso: ht_synapse
 */
-
-namespace nest
-{
-/**
- * Function computing right-hand side of ODE for GSL solver.
- * @note Must be declared here so we can befriend it in class.
- * @note Must have C-linkage for passing to GSL. Internally, it is
- *       a first-class C++ function, but cannot be a member function
- *       because of the C-linkage.
- * @note No point in declaring it inline, since it is called
- *       through a function pointer.
- * @param void* Pointer to model neuron instance.
- */
-extern "C" int ht_neuron_dynamics( double, const double*, double*, void* );
-
 class ht_neuron : public Archiving_Node
 {
 public:

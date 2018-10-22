@@ -37,6 +37,9 @@
 #include "nest_types.h"
 #include "stimulating_device.h"
 
+namespace nest
+{
+
 /** @BeginDocumentation
 Name: gamma_sup_generator - simulate the superimposed spike train of a
                             population of gamma process.
@@ -67,19 +70,6 @@ Author:
 SeeAlso: ppd_sup_generator, poisson_generator_ps, spike_generator, Device,
 StimulatingDevice
 */
-
-namespace nest
-{
-
-/**
- * Generator of the spike output of a population of gamma processes with
- * integer shape parameter.
- *
- * This gamma process superposition generator sends different spike
- * trains to all its targets.
- *
- * @ingroup Devices
- */
 class gamma_sup_generator : public DeviceNode
 {
 

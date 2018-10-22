@@ -38,6 +38,8 @@
 #include "dictutils.h"
 #include "name.h"
 
+namespace nest
+{
 /** @BeginDocumentation
 Name: multimeter - Device to record analog data from neurons.
 
@@ -124,8 +126,7 @@ Author: Hans Ekkehard Plesser, Barna Zajzon (added offset support March 2017)
 SeeAlso: Device, RecordingDevice
 */
 
-namespace nest
-{
+
 /**
  * General analog data recorder.
  *

@@ -20,7 +20,13 @@
  *
  */
 
+#ifndef DIFFUSION_CONNECTION_H
+#define DIFFUSION_CONNECTION_H
 
+#include "connection.h"
+
+namespace nest
+{
 /** @BeginDocumentation
 Name: diffusion_connection - Synapse type for instantaneous rate connections
 between neurons of type siegert_neuron.
@@ -62,19 +68,6 @@ Author: David Dahmen, Jan Hahne, Jannis Schuecker
 
 SeeAlso: siegert_neuron, rate_connection_instantaneous
 */
-
-
-#ifndef DIFFUSION_CONNECTION_H
-#define DIFFUSION_CONNECTION_H
-
-#include "connection.h"
-
-namespace nest
-{
-/**
- * Class representing a diffusion connection. A diffusion connection
- * has the properties drift_factor, diffusion_factor and receiver port.
- */
 template < typename targetidentifierT >
 class DiffusionConnection : public Connection< targetidentifierT >
 {

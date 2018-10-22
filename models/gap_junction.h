@@ -20,7 +20,13 @@
  *
  */
 
+#ifndef GAP_JUNCTION_H
+#define GAP_JUNCTION_H
 
+#include "connection.h"
+
+namespace nest
+{
 /** @BeginDocumentation
 Name: gap_junction - Synapse type for gap-junction connections.
 
@@ -61,19 +67,6 @@ Author: Jan Hahne, Moritz Helias, Susanne Kunkel
 
 SeeAlso: synapsedict, hh_psc_alpha_gap
 */
-
-
-#ifndef GAP_JUNCTION_H
-#define GAP_JUNCTION_H
-
-#include "connection.h"
-
-namespace nest
-{
-/**
- * Class representing a gap-junction connection. A gap-junction connection
- * has the properties weight, delay and receiver port.
- */
 template < typename targetidentifierT >
 class GapJunction : public Connection< targetidentifierT >
 {

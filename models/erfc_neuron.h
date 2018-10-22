@@ -102,7 +102,6 @@ namespace nest
 
    SeeAlso: mcculloch_pitts_neuron, ginzburg_neuron
 */
-
 class gainfunction_erfc
 {
 private:

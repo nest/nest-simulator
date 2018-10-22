@@ -22,11 +22,6 @@
 
 #ifndef MIP_GENERATOR_H
 #define MIP_GENERATOR_H
-/****************************************/
-/* class mip_generator                  */
-/*       Vers. 1.0       moritz         */
-/*                                      */
-/****************************************/
 
 // Includes from librandom:
 #include "poisson_randomdev.h"
@@ -81,6 +76,10 @@ Remarks:
               seeds used for the global or thread-specific RNGs set in
               the kernel.
 
+   @todo Better handling of private random number generator, see #143.
+         Most important: If RNG is changed in prototype by SetDefaults,
+         then this is
+
 Sends: SpikeEvent
 
 References:
@@ -92,14 +91,8 @@ References:
 Author: May 2006, Helias
 
 SeeAlso: Device
-*/
 
-/**
- * Class for MIP generator.
- * @todo Better handling of private random number generator, see #143.
- *       Most important: If RNG is changed in prototype by SetDefaults,
- *       then this is
- */
+*/
 class mip_generator : public DeviceNode
 {
 

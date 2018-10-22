@@ -37,6 +37,7 @@
 
 namespace nest
 {
+
 /** @BeginDocumentation
 Name: iaf_psc_exp_multisynapse - Leaky integrate-and-fire neuron model with
                                  multiple ports.

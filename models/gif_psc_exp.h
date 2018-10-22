@@ -32,6 +32,9 @@
 
 #include "nest.h"
 
+namespace nest
+{
+
 /** @BeginDocumentation
   Name: gif_psc_exp - Current-based generalized integrate-and-fire neuron
   model according to Mensi et al. (2012) and Pozzorini et al. (2015).
@@ -137,10 +140,6 @@
   gif_cond_exp_multisynapse, gif_pop_psc_exp
 
 */
-
-namespace nest
-{
-
 class gif_psc_exp : public Archiving_Node
 {
 

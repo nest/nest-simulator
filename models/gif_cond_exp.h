@@ -42,6 +42,12 @@
 
 #include "nest.h"
 
+
+namespace nest
+{
+
+extern "C" int gif_cond_exp_dynamics( double, const double*, double*, void* );
+
 /** @BeginDocumentation
   Name: gif_cond_exp - Conductance-based generalized integrate-and-fire neuron
   model according to Mensi et al. (2012) and Pozzorini et al. (2015).
@@ -154,12 +160,6 @@
   gif_psc_exp_multisynapse
 
 */
-
-namespace nest
-{
-
-extern "C" int gif_cond_exp_dynamics( double, const double*, double*, void* );
-
 class gif_cond_exp : public Archiving_Node
 {
 

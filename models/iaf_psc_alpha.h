@@ -32,6 +32,8 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
+namespace nest
+{
 /** @BeginDocumentation
 Name: iaf_psc_alpha - Leaky integrate-and-fire neuron model.
 
@@ -126,12 +128,6 @@ Author:  Diesmann, Gewaltig
 
 SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 */
-
-namespace nest
-{
-/**
- * Leaky integrate-and-fire neuron with alpha-shaped PSCs.
- */
 class iaf_psc_alpha : public Archiving_Node
 {
 

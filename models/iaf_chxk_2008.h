@@ -42,6 +42,20 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
+namespace nest
+{
+/**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
+
 /** @BeginDocumentation
 Name: iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model
                       used in Casti et al 2008.
@@ -85,24 +99,6 @@ Author: Heiberg
 
 SeeAlso: iaf_cond_alpha
 */
-
-namespace nest
-{
-/**
- * Function computing right-hand side of ODE for GSL solver.
- * @note Must be declared here so we can befriend it in class.
- * @note Must have C-linkage for passing to GSL. Internally, it is
- *       a first-class C++ function, but cannot be a member function
- *       because of the C-linkage.
- * @note No point in declaring it inline, since it is called
- *       through a function pointer.
- * @param void* Pointer to model neuron instance.
- */
-extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
-
-/**
- * Integrate-and-fire neuron model with two conductance-based synapses.
- */
 class iaf_chxk_2008 : public Archiving_Node
 {
 

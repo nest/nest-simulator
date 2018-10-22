@@ -28,6 +28,7 @@
 
 namespace nest
 {
+
 /** @BeginDocumentation
    Name: ginzburg_neuron - Binary stochastic neuron with sigmoidal activation
                            function.
@@ -108,7 +109,6 @@ namespace nest
 
    SeeAlso: pp_psc_delta
 */
-
 class gainfunction_ginzburg
 {
 private:

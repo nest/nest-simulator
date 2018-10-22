@@ -37,6 +37,7 @@
 
 namespace nest
 {
+
 /** @BeginDocumentation
    Name: iaf_chs_2007 - Spike-response model used in Carandini et al 2007.
 
@@ -90,10 +91,6 @@ namespace nest
 
    Author: Thomas Heiberg, Birgit Kriener
 */
-
-/**
- * Neuron model used in Carandini et al 2007.
- */
 class iaf_chs_2007 : public Archiving_Node
 {
 

@@ -157,13 +157,6 @@ making them visible to potential readers.
 
 ## Editor support
 
-Emacs users may use the SLI mode, which provides syntax highlighting
-for SLI. To install it, add the following lines to your `.emacs` file:
-```
-  (load-library "${prefix}/share/nest/extras/EditorSupport/emacs/postscript-sli")
-  (load-library "${prefix}/share/nest/extras/EditorSupport/emacs/sli")
-```
-
 A simple syntax file for VIM users has been provided. Copy it to your vim
 configuration folder to make it available to VIM:
 ```

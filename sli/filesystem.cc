@@ -34,7 +34,7 @@
 #include <cassert>
 #include <ctime>
 #include <fstream>
-
+#include <mutex>
 // Includes from libnestutil:
 #include "compose.hpp"
 
@@ -308,10 +308,11 @@ FilesystemModule::RemoveDirectoryFunction::execute( SLIInterpreter* i ) const
    References: Donald Lewin, "The POSIX Programmer's Guide"
 
 */
-
+std::mutex mtx;
 void
 FilesystemModule::TmpNamFunction::execute( SLIInterpreter* i ) const
 {
+  std::lock_guard< std::mutex > lock( mtx );
   static unsigned int seed = std::time( 0 );
   char* env = getenv( "TMPDIR" );
   std::string tmpdir( "/tmp" );

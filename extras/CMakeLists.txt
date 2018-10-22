@@ -32,10 +32,6 @@ install( DIRECTORY help_generator
     DESTINATION ${CMAKE_INSTALL_DATADIR}
     )
 
-install( FILES EditorSupport/emacs/postscript-sli.el EditorSupport/emacs/psvn.el ${CMAKE_CURRENT_BINARY_DIR}/EditorSupport/emacs/sli.el
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras/EditorSupport/emacs
-    )
-
 install( FILES EditorSupport/vim/syntax/sli.vim
     DESTINATION ${CMAKE_INSTALL_DATADIR}/extras/EditorSupport/vim/syntax
     )

@@ -2026,6 +2026,12 @@ moduleinitializers
 	  exit
 	} if
 
+	% options --debug and --verbosity were alreay handled in the
+	% constructor of SLIStartup, here we just skip over them to
+	% prevent their addition to the files-to-be-executed list
+	dup (--debug) eq over (-d) eq or { pop exit } if
+	size 12 geq { dup 0 12 getinterval (--verbosity=) eq { pop exit } if } if
+
 	% the argument is not an option, so we take it as a file to execute:
 	statusdict begin
 	  /interactive false def

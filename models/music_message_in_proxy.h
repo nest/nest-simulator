@@ -46,8 +46,9 @@
 #include "arraydatum.h"
 #include "dictutils.h"
 
+namespace nest
+{
 /** @BeginDocumentation
-
 Name: music_message_in_proxy - A device which receives message strings from
                               MUSIC.
 
@@ -92,9 +93,6 @@ Availability: Only when compiled with MUSIC
 
 SeeAlso: music_event_out_proxy, music_event_in_proxy, music_cont_in_proxy
 */
-
-namespace nest
-{
 class MsgHandler : public MUSIC::MessageHandler
 {
   ArrayDatum messages;                 //!< The buffer for incoming message

@@ -37,6 +37,9 @@
 #include "event.h"
 #include "nest_types.h"
 
+namespace nest
+{
+
 /** @BeginDocumentation
 
 Name: music_event_in_proxy - A device which receives spikes from MUSIC.
@@ -82,14 +85,6 @@ Availability: Only when compiled with MUSIC
 SeeAlso: SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy,
 music_message_in_proxy
 */
-
-namespace nest
-{
-/**
- * Emit spikes at times received from another application via a
- * MUSIC port. The timestamps of the events also contain offsets,
- * which makes it also useful for precise spikes.
- */
 class music_event_in_proxy : public DeviceNode
 {
 

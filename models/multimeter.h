@@ -40,6 +40,7 @@
 
 namespace nest
 {
+
 /** @BeginDocumentation
 Name: multimeter - Device to record analog data from neurons.
 
@@ -86,6 +87,12 @@ Remarks:
    you record from are frozen and others are not, data will only be collected
    from the unfrozen nodes. Most likely, this will lead to confusing results,
    so you should not use multimeter with frozen nodes.
+ 
+ @note If you want to pick up values at every time stamp,
+   you must set the interval to the simulation resolution.
+ @ingroup Devices
+ @see UniversalDataLogger
+
 
 Parameters:
      The following parameters can be set in the status dictionary:
@@ -125,37 +132,6 @@ Author: Hans Ekkehard Plesser, Barna Zajzon (added offset support March 2017)
 
 SeeAlso: Device, RecordingDevice
 */
-
-
-/**
- * General analog data recorder.
- *
- * This class is based on RecordingDevice and adds common
- * functionality for devices sampling analog values at
- * given time intervals. The user specifies which data
- * are to be sampled at what interval.
- *
- * Sampling works in the way the the sampled node must store
- * the relevant data for the most recent completed time slice
- * and that the sampling device then sends a Request for data
- * with a given time stamp.
- *
- * Data is recorded at time steps T for which
- *   start < T - origin <= stop
- * and
- *   ( T - offset ) mod interval == 0.
- *
- * The recording interval defaults to 1ms; this entails that
- * the simulation resolution cannot be set to larger values than
- * 1ms unless the analog recording device interval is set to at
- * least that resolution.
- *
- * @note If you want to pick up values at every time stamp,
- *       you must set the interval to the simulation resolution.
- * *
- * @ingroup Devices
- * @see UniversalDataLogger
- */
 class Multimeter : public DeviceNode
 {
 

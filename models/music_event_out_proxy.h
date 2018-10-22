@@ -40,8 +40,10 @@
 #include "exceptions.h"
 #include "nest_types.h"
 
-/** @BeginDocumentation
+namespace nest
+{
 
+/** @BeginDocumentation
 Name: music_event_out_proxy - Device to forward spikes to remote applications
                               using MUSIC.
 
@@ -79,9 +81,6 @@ Availability: Only when compiled with MUSIC
 
 SeeAlso: music_event_in_proxy, music_cont_in_proxy, music_message_in_proxy
 */
-
-namespace nest
-{
 class music_event_out_proxy : public DeviceNode
 {
 

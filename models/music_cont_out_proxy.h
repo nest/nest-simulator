@@ -45,6 +45,9 @@
 // Includes from sli:
 #include "arraydatum.h"
 
+namespace nest
+{
+
 /** @BeginDocumentation
 
 Name: music_cont_out_proxy - A device which sends continuous data from NEST to
@@ -91,10 +94,6 @@ Availability: Only when compiled with MPI and MUSIC
 SeeAlso: music_cont_in_proxy, music_event_out_proxy, music_event_in_proxy,
 music_message_in_proxy
 */
-
-namespace nest
-{
-
 class music_cont_out_proxy : public DeviceNode
 {
 

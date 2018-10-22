@@ -111,6 +111,14 @@ class TestDisconnectSingle(unittest.TestCase):
                 except nest.NESTError:
                     print("Synapse deletion ok: " + syn_model)
 
+    def test_simple(self):
+        nodes = nest.Create('iaf_psc_alpha', 5)
+        nest.Connect(nodes, nodes, 'one_to_one')
+
+        nest.DisconnectOneToOne(nodes[0], nodes[0], 'static_synapse')
+
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 4)
+
 
 def suite():
     test_suite = unittest.makeSuite(TestDisconnectSingle, 'test')

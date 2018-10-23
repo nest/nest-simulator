@@ -171,7 +171,7 @@ get_connection_status( const ConnectionDatum& conn )
 }
 
 GIDCollectionPTR
-create( const Name& model_name, const index n_nodes )
+create( const std::string model_name, const index n_nodes )
 {
   if ( n_nodes == 0 )
   {

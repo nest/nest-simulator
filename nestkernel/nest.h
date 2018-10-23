@@ -70,7 +70,7 @@ void set_connection_status( const ConnectionDatum& conn,
   const DictionaryDatum& dict );
 DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
-GIDCollectionPTR create( const Name& model_name, const index n );
+GIDCollectionPTR create( const std::string model_name, const index n );
 
 void connect( GIDCollectionPTR sources,
   GIDCollectionPTR targets,

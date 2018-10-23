@@ -1744,6 +1744,18 @@ def _draw_extent(ax, xctr, yctr, xext, yext):
            xticks=tuple(), yticks=tuple())
 
 
+def _get_newpos(pos, ext):
+    """Get shifted positions corresponding to boundary conditions."""
+    return [[pos[0] + ext[0], pos[1]],
+            [pos[0] - ext[0], pos[1]],
+            [pos[0], pos[1] + ext[1]],
+            [pos[0], pos[1] - ext[1]],
+            [pos[0] + ext[0], pos[1] - ext[1]],
+            [pos[0] - ext[0], pos[1] + ext[1]],
+            [pos[0] + ext[0], pos[1] + ext[1]],
+            [pos[0] - ext[0], pos[1] - ext[1]]]
+
+
 def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
     """
     Plot all nodes in a layer.
@@ -2006,7 +2018,6 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
 
     Adds solid red line for mask. For doughnut mask show inner and outer line.
     If kern is Gaussian, add blue dashed lines marking 1, 2, 3 sigma.
-    This function ignores periodic boundary conditions.
     Usually, this function is invoked by ``PlotTargets``.
 
 
@@ -2099,10 +2110,22 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     else:
         offs = np.array([0., 0.])
 
+    layer = GetLayer(src_nrn)
+    periodic = nest.GetStatus(layer)[0]['topology']['edge_wrap']
+    ext = nest.GetStatus(layer)[0]['topology']['extent']
+
     if 'circular' in mask:
         r = mask['circular']['radius']
+
         ax.add_patch(plt.Circle(srcpos + offs, radius=r, zorder=-1000,
                                 fc='none', ec=mask_color, lw=3))
+
+        if periodic:
+            new_pos = _get_newpos(srcpos + offs, ext)
+
+            for pos in new_pos:
+                ax.add_patch(plt.Circle(pos, radius=r, zorder=-1000,
+                                        fc='none', ec=mask_color, lw=3))
     elif 'doughnut' in mask:
         r_in = mask['doughnut']['inner_radius']
         r_out = mask['doughnut']['outer_radius']
@@ -2110,12 +2133,30 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                                 fc='none', ec=mask_color, lw=3))
         ax.add_patch(plt.Circle(srcpos + offs, radius=r_out, zorder=-1000,
                                 fc='none', ec=mask_color, lw=3))
+
+        if periodic:
+            new_pos = _get_newpos(srcpos + offs, ext)
+
+            for pos in new_pos:
+                ax.add_patch(plt.Circle(pos, radius=r_in, zorder=-1000,
+                                        fc='none', ec=mask_color, lw=3))
+                ax.add_patch(plt.Circle(pos, radius=r_out, zorder=-1000,
+                                        fc='none', ec=mask_color, lw=3))
     elif 'rectangular' in mask:
         ll = mask['rectangular']['lower_left']
         ur = mask['rectangular']['upper_right']
         ax.add_patch(
             plt.Rectangle(srcpos + ll + offs, ur[0] - ll[0], ur[1] - ll[1],
                           zorder=-1000, fc='none', ec=mask_color, lw=3))
+
+        if periodic:
+            new_pos = _get_newpos(srcpos + ll + offs, ext)
+
+            for pos in new_pos:
+                ax.add_patch(
+                    plt.Rectangle(pos, ur[0] - ll[0], ur[1] - ll[1],
+                                  zorder=-1000, fc='none', ec=mask_color,
+                                  lw=3))
     elif 'elliptical' in mask:
         width = mask['elliptical']['major_axis']
         height = mask['elliptical']['minor_axis']
@@ -2131,6 +2172,15 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
             matplotlib.patches.Ellipse(srcpos + offs + anchor, width, height,
                                        angle=angle, zorder=-1000, fc='none',
                                        ec=mask_color, lw=3))
+
+        if periodic:
+            new_pos = _get_newpos(srcpos + offs + anchor, ext)
+
+            for pos in new_pos:
+                ax.add_patch(
+                    matplotlib.patches.Ellipse(pos, width, height, angle=angle,
+                                               zorder=-1000, fc='none',
+                                               ec=mask_color, lw=3))
     else:
         raise ValueError(
             'Mask type cannot be plotted with this version of PyTopology.')
@@ -2143,6 +2193,16 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                                         zorder=-1000,
                                         fc='none', ec=kernel_color, lw=3,
                                         ls='dashed'))
+
+            if periodic:
+                new_pos = _get_newpos(srcpos + offs, ext)
+
+                for pos in new_pos:
+                    for r in range(3):
+                        ax.add_patch(plt.Circle(pos, radius=(r + 1) * sigma,
+                                                zorder=-1000, fc='none',
+                                                ec=kernel_color, lw=3,
+                                                ls='dashed'))
         else:
             raise ValueError('Kernel type cannot be plotted with this ' +
                              'version of PyTopology')

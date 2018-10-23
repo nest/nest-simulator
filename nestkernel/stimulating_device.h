@@ -32,6 +32,7 @@
 class SpikeEvent;
 class CurrentEvent;
 class DoubleDataEvent;
+class DelayedRateConnectionEvent;
 
 /* BeginDocumentation
    Name: StimulatingDevice - General properties of stimulating devices.
@@ -177,6 +178,16 @@ StimulatingDevice< nest::CurrentEvent >::is_active( const Time& T ) const
    */
   const long step = T.get_steps() + 1;
   return get_t_min_() <= step and step < get_t_max_();
+}
+
+template <>
+inline bool
+StimulatingDevice< nest::DelayedRateConnectionEvent >::is_active(
+  const Time& T ) const
+{
+  // same as for the CurrentEvent
+  const long step = T.get_steps() + 1;
+  return get_t_min_() <= step && step < get_t_max_();
 }
 
 template <>

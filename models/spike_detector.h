@@ -33,11 +33,14 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
-/** @BeginDocumentation
+namespace nest
+{
 
+/** @BeginDocumentation
 Name: spike_detector - Device for detecting single spikes.
 
 Description:
+
 The spike_detector device is a recording device. It is used to record
 spikes from a single neuron, or from multiple neurons at once. Data
 is recorded in memory or to file as for all RecordingDevices.
@@ -68,9 +71,6 @@ Receives: SpikeEvent
 SeeAlso: spike_detector, Device, RecordingDevice
 */
 
-
-namespace nest
-{
 /**
  * Spike detector class.
  *

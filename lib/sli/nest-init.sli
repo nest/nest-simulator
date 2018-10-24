@@ -128,7 +128,7 @@ def
     << >> begin
     /value Set
 
-    GetStatus dup size 1 neq
+    GetStatus size 1 neq
     { % if not a layer
       { value get } Map
     }

@@ -465,15 +465,16 @@ class GIDCollection(object):
             if 'local' in g and g['local']:
                 for k, v in params.items():
                     if isinstance(v, Parameter):
-                        params[k] = [v.get_value() for _ in range(self.__len__())]
-    
-                contains_list = [is_iterable(v) and not is_iterable(self[0].get(k))
+                        params[k] = [v.get_value() for _ in range(len(self))]
+
+                contains_list = [is_iterable(v) and not
+                                 is_iterable(self[0].get(k))
                                  for k, v in params.items()]
                 contains_list = max(contains_list)
-    
+
                 if contains_list:
                     temp_param = [{} for _ in range(self.__len__())]
-    
+
                     for k, v in params.items():
                         if not is_iterable(v):
                             for d in temp_param:

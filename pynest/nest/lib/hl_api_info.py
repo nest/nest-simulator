@@ -215,15 +215,15 @@ def SetStatus(nodes, params, val=None):
             for k, v in params.items():
                 if isinstance(v, nest.Parameter):
                     params[k] = [v.get_value() for _ in range(len(nodes))]
-        
+
             contains_list = [is_iterable(v) and not
                              is_iterable(nest.GetStatus(nodes[0], k)[0])
                              for k, v in params.items()]
             contains_list = max(contains_list)
-        
+
             if contains_list:
                 temp_param = [{} for _ in range(len(nodes))]
-        
+
                 for k, v in params.items():
                     if not is_iterable(v):
                         for d in temp_param:

@@ -23,10 +23,6 @@
 High-level API of PyNEST Module
 """
 
-"""
-Initializer of PyNEST.
-"""
-
 import sys
 import os
 

@@ -280,8 +280,7 @@ nest::siegert_neuron::siegert1( double theta_shift,
   }
 
   gsl_integration_qags(
-    &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error
-  );
+    &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
 
   // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
   return 1e3 * 1. / ( P_.t_ref_ + exp( y_th * y_th ) * result * P_.tau_m_ );
@@ -319,8 +318,7 @@ nest::siegert_neuron::siegert2( double theta_shift,
   }
 
   gsl_integration_qags(
-    &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error
-  );
+    &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
 
   // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
   return 1e3 * 1. / ( P_.t_ref_ + result * P_.tau_m_ );
@@ -344,7 +342,7 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   // Catch cases where neurons get no input.
   // Use (Brunel, 2000) eq. (22) to estimate
   // firing rate to be ~ 1e-16
-  if ( (theta_shift - mu) > 6. * sigma )
+  if ( ( theta_shift - mu ) > 6. * sigma )
   {
     return 0.;
   }

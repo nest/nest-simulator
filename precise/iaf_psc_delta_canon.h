@@ -39,121 +39,124 @@
 
 namespace nest
 {
+
 /** @BeginDocumentation
-   Name: iaf_psc_delta_canon - Leaky integrate-and-fire neuron model.
+Name: iaf_psc_delta_canon - Leaky integrate-and-fire neuron model.
 
-   Description:
-   iaf_psc_delta_canon is an implementation of a leaky integrate-and-fire model
-   where the potential jumps on each spike arrival.
+Description:
 
-   The threshold crossing is followed by an absolute refractory period
-   during which the membrane potential is clamped to the resting
-   potential.
+iaf_psc_delta_canon is an implementation of a leaky integrate-and-fire model
+where the potential jumps on each spike arrival.
 
-   Spikes arriving while the neuron is refractory, are discarded by
-   default. If the property "refractory_input" is set to true, such
-   spikes are added to the membrane potential at the end of the
-   refractory period, dampened according to the interval between
-   arrival and end of refractoriness.
+The threshold crossing is followed by an absolute refractory period
+during which the membrane potential is clamped to the resting
+potential.
 
-   The linear subthresold dynamics is integrated by the Exact
-   Integration scheme [1]. The neuron dynamics are solved exactly in
-   time. Incoming and outgoing spike times are handled precisely [3].
+Spikes arriving while the neuron is refractory, are discarded by
+default. If the property "refractory_input" is set to true, such
+spikes are added to the membrane potential at the end of the
+refractory period, dampened according to the interval between
+arrival and end of refractoriness.
 
-   An additional state variable and the corresponding differential
-   equation represents a piecewise constant external current.
+The linear subthresold dynamics is integrated by the Exact
+Integration scheme [1]. The neuron dynamics are solved exactly in
+time. Incoming and outgoing spike times are handled precisely [3].
 
-   Spikes can occur either on receipt of an excitatory input spike, or
-   be caused by a depolarizing input current.  Spikes evoked by
-   incoming spikes, will occur precisely at the time of spike arrival,
-   since incoming spikes are modeled as instantaneous potential
-   jumps. Times of spikes caused by current input are determined
-   exactly by solving the membrane potential equation. Note that, in
-   contrast to the neuron models discussed in [3,4], this model has so
-   simple dynamics that no interpolation or iterative spike location
-   technique is required at all.
+An additional state variable and the corresponding differential
+equation represents a piecewise constant external current.
 
-   The general framework for the consistent formulation of systems with
-   neuron like dynamics interacting by point events is described in
-   [1].  A flow chart can be found in [2].
+Spikes can occur either on receipt of an excitatory input spike, or
+be caused by a depolarizing input current.  Spikes evoked by
+incoming spikes, will occur precisely at the time of spike arrival,
+since incoming spikes are modeled as instantaneous potential
+jumps. Times of spikes caused by current input are determined
+exactly by solving the membrane potential equation. Note that, in
+contrast to the neuron models discussed in [3,4], this model has so
+simple dynamics that no interpolation or iterative spike location
+technique is required at all.
 
-   Critical tests for the formulation of the neuron model are the
-   comparisons of simulation results for different computation step
-   sizes. sli/testsuite/nest contains a number of such tests.
+The general framework for the consistent formulation of systems with
+neuron like dynamics interacting by point events is described in
+[1].  A flow chart can be found in [2].
 
-   The iaf_psc_delta_canon is the standard model used to check the consistency
-   of the nest simulation kernel because it is at the same time complex
-   enough to exhibit non-trivial dynamics and simple enough compute
-   relevant measures analytically.
+Critical tests for the formulation of the neuron model are the
+comparisons of simulation results for different computation step
+sizes. sli/testsuite/nest contains a number of such tests.
 
-   Remarks:
+The iaf_psc_delta_canon is the standard model used to check the consistency
+of the nest simulation kernel because it is at the same time complex
+enough to exhibit non-trivial dynamics and simple enough compute
+relevant measures analytically.
 
-   The iaf_psc_delta_canon neuron accepts CurrentEvent connections.
-   However, the present method for transmitting CurrentEvents in
-   NEST (sending the current to be applied) is not compatible with off-grid
-   currents, if more than one CurrentEvent-connection exists. Once CurrentEvents
-   are changed to transmit change-of-current-strength, this problem will
-   disappear and the canonical neuron will also be able to handle CurrentEvents.
+Remarks:
 
-   The present implementation uses individual variables for the
-   components of the state vector and the non-zero matrix elements of
-   the propagator.  Because the propagator is a lower triangular matrix
-   no full matrix multiplication needs to be carried out and the
-   computation can be done "in place" i.e. no temporary state vector
-   object is required.
+The iaf_psc_delta_canon neuron accepts CurrentEvent connections.
+However, the present method for transmitting CurrentEvents in
+NEST (sending the current to be applied) is not compatible with off-grid
+currents, if more than one CurrentEvent-connection exists. Once CurrentEvents
+are changed to transmit change-of-current-strength, this problem will
+disappear and the canonical neuron will also be able to handle CurrentEvents.
 
-   The template support of recent C++ compilers enables a more succinct
-   formulation without loss of runtime performance already at minimal
-   optimization levels. A future version of iaf_psc_delta_canon will probably
-   address the problem of efficient usage of appropriate vector and
-   matrix objects.
+The present implementation uses individual variables for the
+components of the state vector and the non-zero matrix elements of
+the propagator.  Because the propagator is a lower triangular matrix
+no full matrix multiplication needs to be carried out and the
+computation can be done "in place" i.e. no temporary state vector
+object is required.
 
-   Please note that this node is capable of sending precise spike times
-   to target nodes (on-grid spike time plus offset). If this node is
-   connected to a spike_detector, the property "precise_times" of the
-   spike_detector has to be set to true in order to record the offsets
-   in addition to the on-grid spike times.
+The template support of recent C++ compilers enables a more succinct
+formulation without loss of runtime performance already at minimal
+optimization levels. A future version of iaf_psc_delta_canon will probably
+address the problem of efficient usage of appropriate vector and
+matrix objects.
 
-   Parameters:
-   The following parameters can be set in the status dictionary.
+Please note that this node is capable of sending precise spike times
+to target nodes (on-grid spike time plus offset). If this node is
+connected to a spike_detector, the property "precise_times" of the
+spike_detector has to be set to true in order to record the offsets
+in addition to the on-grid spike times.
 
-   V_m        double - Membrane potential in mV
-   E_L        double - Resting membrane potential in mV.
-   C_m        double - Capacitance of the membrane in pF
-   tau_m      double - Membrane time constant in ms.
-   t_ref      double - Duration of refractory period in ms.
-   V_th       double - Spike threshold in mV.
-   V_reset    double - Reset potential of the membrane in mV.
-   I_e        double - Constant input current in pA.
-   V_min      double - Absolute lower value for the membrane potential in mV.
+Parameters:
 
-   refractory_input bool - If true, do not discard input during
-   refractory period. Default: false.
+The following parameters can be set in the status dictionary.
 
-   References:
-   [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-   systems with applications to neuronal modeling. Biologial Cybernetics
-   81:381-402.
-   [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-   analysis of synchronous spiking in cortical neural networks.
-   Neurocomputing 38-40:565-571.
-   [3] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact
-   Subthreshold Integration with Continuous Spike Times in Discrete Time Neural
-   Network Simulations. To appear in Neural Computation.
-   [4] Hanuschkin A, Kunkel S, Helias M, Morrison A & Diesmann M (2010)
-   A general and efficient method for incorporating exact spike times in
-   globally time-driven simulations Front Neuroinformatics, 4:113
+V_m        double - Membrane potential in mV
+E_L        double - Resting membrane potential in mV.
+C_m        double - Capacitance of the membrane in pF
+tau_m      double - Membrane time constant in ms.
+t_ref      double - Duration of refractory period in ms.
+V_th       double - Spike threshold in mV.
+V_reset    double - Reset potential of the membrane in mV.
+I_e        double - Constant input current in pA.
+V_min      double - Absolute lower value for the membrane potential in mV.
 
-   Sends: SpikeEvent
+refractory_input bool - If true, do not discard input during
+refractory period. Default: false.
 
-   Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+References:
 
-   Author:  May 2006, Plesser; based on work by Diesmann, Gewaltig, Morrison,
-   Straube, Eppler
+[1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+systems with applications to neuronal modeling. Biologial Cybernetics
+81:381-402.
+[2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
+analysis of synchronous spiking in cortical neural networks.
+Neurocomputing 38-40:565-571.
+[3] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact
+Subthreshold Integration with Continuous Spike Times in Discrete Time Neural
+Network Simulations. To appear in Neural Computation.
+[4] Hanuschkin A, Kunkel S, Helias M, Morrison A & Diesmann M (2010)
+A general and efficient method for incorporating exact spike times in
+globally time-driven simulations Front Neuroinformatics, 4:113
 
-   SeeAlso: iaf_psc_delta, iaf_psc_exp_ps
+Sends: SpikeEvent
+
+Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+
+Author:  May 2006, Plesser; based on work by Diesmann, Gewaltig, Morrison,
+Straube, Eppler
+
+SeeAlso: iaf_psc_delta, iaf_psc_exp_ps
 */
-
 class iaf_psc_delta_canon : public Archiving_Node
 {
 

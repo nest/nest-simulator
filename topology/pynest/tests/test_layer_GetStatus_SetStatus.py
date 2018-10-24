@@ -136,7 +136,7 @@ class GetSetTestCase(unittest.TestCase):
                          (-70., -70., -70., -70., -70.,
                           -70., -70., -70., -70.))
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(KeyError):
             layer.get('V_m')
 
         # Test get all values

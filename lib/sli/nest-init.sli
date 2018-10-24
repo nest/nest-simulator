@@ -92,26 +92,67 @@ def
 % concatenates into a single dictionary.
 /get [/gidcollectiontype]
 {
-  << >> begin
   GetStatus
-  /d << >> def
+  /status_dict << >> def
+
   size 1 neq
-  { % if not a layer or single GIDCollection
-    dup First {d rollu 1 arraystore put_d} forall
+  { % If not a layer or single GIDCollection. We have a list of dictionaries.
+  
+    % The first thing we do is set the keys in the dictionary based on the
+    % first GID in the GIDCollection, and set the corresponding value in an
+    % array.
+    dup First {status_dict rollu 1 arraystore put_d} forall
+    
+    status_dict keys /ks Set
+    
+    % Then, we put the values for the rest of the GIDCollection in the right
+    % place in the dictionary.
+    /counter 1 def
     Rest
     {
+      dup
       {
-        exch dup d dup rolld get
-        4 -1 roll 1 arraystore join
-        rollu exch rolld put_d
+        /v Set
+        /k Set
+        % Check if we have a composite GIDCollection by checking if k is part
+        % of dict keys.
+        ks k MemberQ
+        {
+          % If primitive, add value to dictionary array
+          status_dict k get [v] join /val_array Set
+        }
+        {
+          % If composite, set values for previous GIDs to None, and add value.
+          [counter] /None LayoutArray [v] join /val_array Set
+          ks [k] join /ks Set
+        } ifelse
+        
+        % Add value array to status dictionary.
+        status_dict k val_array put_d
       } forall
+      
+      % If we have a composite gc and there have been values for previous GIDs
+      % that is not part of this particular dictionary, we must set a None
+      % value for this value.
+      keys /dict_keys Set
+      ks
+      {
+        /k Set
+        dict_keys k MemberQ not
+        {
+          status_dict k get [/None] join /val_array Set
+          status_dict k val_array put_d
+        } if
+      } forall
+      
+      counter 1 add /counter Set
     } forall
-    d
+    
+    status_dict
   }
   {
     0 get
   } ifelse
-  end
 } def
 
 % Get parameter value of all GIDs in GIDCollection
@@ -125,7 +166,6 @@ def
   }
   { % if size > 1
     exch
-    << >> begin
     /value Set
 
     GetStatus size 1 neq
@@ -135,7 +175,6 @@ def
     { % if a layer
       0 get value get
     } ifelse
-    end
   } ifelse
 } def
 

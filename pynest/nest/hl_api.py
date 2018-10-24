@@ -213,7 +213,8 @@ def init(argv):
         nest_argv.remove("--sli-debug")
         nest_argv.append("--debug")
 
-    initialized = engine.init(nest_argv, __path__[0])
+    path = os.path.dirname(__file__)
+    initialized = engine.init(nest_argv, path)
 
     if initialized:
         if not quiet:

@@ -260,6 +260,7 @@ before_script:
    - chmod +x extras/travis_build.sh
 script:
    - set -o pipefail
+   - export CXXFLAGS=${CI_CXX_FLAGS}
    - ./extras/travis_build.sh 2>&1 | tee travis_build.sh.log
    - python extras/parse_travis_log.py travis_build.sh.log
 

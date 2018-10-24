@@ -66,13 +66,17 @@ matrix:
 
     include:
     - language: cpp
-      compiler: gcc      
+      compiler: gcc-8
+      env:
+        - C_COMPILER=gcc-8
+        - CXX_COMPILER=g++-8       
       addons:
         apt:
           sources:
             - r-packages-trusty
             - ubuntu-toolchain-r-test
           packages:
+            - g++-8
             - build-essential
             - cmake
             - libltdl-dev
@@ -121,14 +125,18 @@ matrix:
        # the build summary.
         - pip install cython scipy matplotlib terminaltables mpi4py
     - language: cpp
-      compiler: clang
+      compiler: clang-7.0
+      env:
+        - C_COMPILER=clang-7
+        - CXX_COMPILER=clang++-7
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
             - r-packages-trusty
-            - llvm-toolchain-trusty-3.7
+            - llvm-toolchain-trusty-7
           packages:
+            - clang-7
             - build-essential
             - cmake
             - libltdl-dev
@@ -184,7 +192,6 @@ addons:
     sources:
      - r-packages-trusty
      - ubuntu-toolchain-r-test
-     - llvm-toolchain-trusty-3.7
     packages:
      - build-essential
      - cmake

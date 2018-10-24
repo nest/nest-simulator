@@ -460,26 +460,28 @@ class GIDCollection(object):
             Description
         """
 
-        if isinstance(params, dict) and self[0].get('local'):
-            for k, v in params.items():
-                if isinstance(v, Parameter):
-                    params[k] = [v.get_value() for _ in range(self.__len__())]
-
-            contains_list = [is_iterable(v) and not is_iterable(self[0].get(k))
-                             for k, v in params.items()]
-            contains_list = max(contains_list)
-
-            if contains_list:
-                temp_param = [{} for _ in range(self.__len__())]
-
+        if isinstance(params, dict):
+            g = self[0].get()  # Workaround until get works with metadata
+            if 'local' in g and g['local']:
                 for k, v in params.items():
-                    if not is_iterable(v):
-                        for d in temp_param:
-                            d[k] = v
-                    else:
-                        for i, d in enumerate(temp_param):
-                            d[k] = v[i]
-                params = temp_param
+                    if isinstance(v, Parameter):
+                        params[k] = [v.get_value() for _ in range(self.__len__())]
+    
+                contains_list = [is_iterable(v) and not is_iterable(self[0].get(k))
+                                 for k, v in params.items()]
+                contains_list = max(contains_list)
+    
+                if contains_list:
+                    temp_param = [{} for _ in range(self.__len__())]
+    
+                    for k, v in params.items():
+                        if not is_iterable(v):
+                            for d in temp_param:
+                                d[k] = v
+                        else:
+                            for i, d in enumerate(temp_param):
+                                d[k] = v[i]
+                    params = temp_param
 
         if val is not None and nest.is_literal(params):
             if (is_iterable(val) and not

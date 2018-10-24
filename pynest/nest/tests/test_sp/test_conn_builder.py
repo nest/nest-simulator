@@ -80,7 +80,7 @@ class TestSPBuilder(unittest.TestCase):
         ]:
             try:
                 nest.Connect(neurons, neurons, conn_dict, syn_dict)
-            except nest.NESTError as e:
+            except nest.hl_api.NESTError as e:
                 self.assertRegexpMatches(
                     str(e), 'This connection rule is not implemented ' +
                     'for structural plasticity'

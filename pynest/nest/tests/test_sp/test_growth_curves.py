@@ -26,7 +26,7 @@ from numpy import testing
 import unittest
 import nest
 import time
-HAVE_OPENMP = nest.sli_func("is_threaded")
+HAVE_OPENMP = nest.hl_api.sli_func("is_threaded")
 
 
 class SynapticElementIntegrator(object):

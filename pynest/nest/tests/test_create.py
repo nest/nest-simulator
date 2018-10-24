@@ -28,7 +28,7 @@ import warnings
 import nest
 
 
-@nest.check_stack
+@nest.hl_api.check_stack
 class CreateTestCase(unittest.TestCase):
     """Creation tests"""
 
@@ -98,7 +98,7 @@ class CreateTestCase(unittest.TestCase):
         self.assertEqual(w, 10.0)
 
         self.assertRaisesRegex(
-            nest.NESTError, "NewModelNameExists",
+            nest.hl_api.NESTError, "NewModelNameExists",
             nest.CopyModel, 'iaf_psc_alpha', 'new_neuron')
 
 

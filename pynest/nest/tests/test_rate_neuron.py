@@ -30,7 +30,7 @@ import unittest
 import numpy as np
 
 
-@nest.check_stack
+@nest.hl_api.check_stack
 class RateNeuronTestCase(unittest.TestCase):
 
     """Check rate_neuron"""

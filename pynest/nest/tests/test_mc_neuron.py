@@ -23,7 +23,7 @@ import unittest
 import nest
 import numpy as np
 
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.hl_api.sli_func("statusdict/have_gsl ::")
 
 
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')

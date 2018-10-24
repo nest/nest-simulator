@@ -406,16 +406,16 @@ def compute_rate(sdet):
 
 def memory_thisjob():
     '''Wrapper to obtain current memory usage'''
-    nest.sr('memory_thisjob')
-    return nest.spp()
+    nest.hl_api.sr('memory_thisjob')
+    return nest.hl_api.spp()
 
 #  ----------------------------------------------------------------------------
 
 
 def lambertwm1(x):
     '''Wrapper for LambertWm1 function'''
-    nest.sr('{} LambertWm1'.format(x))
-    return nest.spp()
+    nest.hl_api.sr('{} LambertWm1'.format(x))
+    return nest.hl_api.spp()
 
 #  ----------------------------------------------------------------------------
 

@@ -27,15 +27,14 @@ import unittest
 import nest
 
 
-@nest.check_stack
+@nest.hl_api.check_stack
 class ThreadTestCase(unittest.TestCase):
     """Tests for multi-threading"""
 
     def nest_multithreaded(self):
         """Return True, if we have a thread-enabled NEST, False otherwise"""
 
-        nest.sr("statusdict/threading :: (no) eq not")
-        return nest.spp()
+        return nest.hl_api.sli_func("statusdict/threading :: (no) eq not")
 
     def test_Threads(self):
         """Multiple threads"""

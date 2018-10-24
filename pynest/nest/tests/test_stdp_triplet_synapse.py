@@ -27,7 +27,7 @@ from math import exp
 import numpy as np
 
 
-@nest.check_stack
+@nest.hl_api.check_stack
 class STDPTripletConnectionTestCase(unittest.TestCase):
     """Check stdp_triplet_connection model properties."""
 
@@ -121,7 +121,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
         def badPropertyWith(content, parameters):
             self.assertRaisesRegexp(
-                nest.NESTError, "BadProperty(.+)" + content,
+                nest.hl_api.NESTError, "BadProperty(.+)" + content,
                 setupProperty, parameters
             )
 
@@ -294,7 +294,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
             "weight"), "weight should have been limited")
 
 
-@nest.check_stack
+@nest.hl_api.check_stack
 class STDPTripletInhTestCase(STDPTripletConnectionTestCase):
 
     def setUp(self):

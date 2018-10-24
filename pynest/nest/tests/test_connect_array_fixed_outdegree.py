@@ -29,7 +29,7 @@ import nest
 import numpy
 
 
-@nest.check_stack
+@nest.hl_api.check_stack
 class ConnectArrayFixedOutdegreeTestCase(unittest.TestCase):
     """Tests of connections with fixed outdegree and parameter arrays"""
 

@@ -23,7 +23,7 @@
 import nest
 import sys
 import traceback
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.hl_api.sli_func("statusdict/have_gsl ::")
 
 
 class TestIssue578():

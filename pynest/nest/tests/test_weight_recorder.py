@@ -26,10 +26,10 @@ Test of events
 import unittest
 import nest
 import numpy as np
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 
+HAVE_GSL = nest.hl_api.sli_func("statusdict/have_gsl ::")
 
-@nest.check_stack
+@nest.hl_api.check_stack
 class WeightRecorderTestCase(unittest.TestCase):
     """Tests for the Weight Recorder"""
 

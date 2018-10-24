@@ -27,7 +27,7 @@ import unittest
 import nest
 
 
-@nest.check_stack
+@nest.hl_api.check_stack
 class NetworkTestCase(unittest.TestCase):
     """Network tests"""
 
@@ -36,11 +36,11 @@ class NetworkTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        nest.BeginSubnet()
-        sn = nest.EndSubnet()
+        nest.hl_api.BeginSubnet()
+        sn = nest.hl_api.EndSubnet()
 
-        nest.BeginSubnet(label='testlabel')
-        sn = nest.EndSubnet()
+        nest.hl_api.BeginSubnet(label='testlabel')
+        sn = nest.hl_api.EndSubnet()
 
         self.assertEqual(nest.GetStatus(sn, 'label')[0], 'testlabel')
 
@@ -48,17 +48,17 @@ class NetworkTestCase(unittest.TestCase):
         """Current Subnet"""
 
         nest.ResetKernel()
-        self.assertEqual(nest.CurrentSubnet(), (0, ))
+        self.assertEqual(nest.hl_api.CurrentSubnet(), (0, ))
 
-        nest.BeginSubnet()
-        self.assertEqual(nest.CurrentSubnet(), (1, ))
+        nest.hl_api.BeginSubnet()
+        self.assertEqual(nest.hl_api.CurrentSubnet(), (1, ))
 
     def test_GetLeaves(self):
         """GetLeaves"""
 
         nest.ResetKernel()
         model = 'iaf_psc_alpha'
-        l = nest.LayoutNetwork(model, (2, 3))
+        l = nest.hl_api.LayoutNetwork(model, (2, 3))
         allLeaves = (3, 4, 5, 7, 8, 9)
 
         # test all
@@ -87,7 +87,7 @@ class NetworkTestCase(unittest.TestCase):
 
         nest.ResetKernel()
         model = 'iaf_psc_alpha'
-        l = nest.LayoutNetwork(model, (2, 3))
+        l = nest.hl_api.LayoutNetwork(model, (2, 3))
         allNodes = tuple(range(2, 10))
         allSubnets = (2, 6)
         allLeaves = tuple(n for n in allNodes if n not in allSubnets)
@@ -120,47 +120,47 @@ class NetworkTestCase(unittest.TestCase):
 
         nest.ResetKernel()
         model = 'iaf_psc_alpha'
-        l = nest.LayoutNetwork(model, (2, 3))
+        l = nest.hl_api.LayoutNetwork(model, (2, 3))
         topKids = (2, 6)
         kids2 = (3, 4, 5)
         kids6 = (7, 8, 9)
 
         # test top level
-        self.assertEqual(nest.GetChildren(l), (topKids, ))
+        self.assertEqual(nest.hl_api.GetChildren(l), (topKids, ))
 
         # test underlying level
-        self.assertEqual(nest.GetChildren((2, 6)), (kids2, kids6))
+        self.assertEqual(nest.hl_api.GetChildren((2, 6)), (kids2, kids6))
 
         # test with empty dict
-        self.assertEqual(nest.GetChildren(l, properties={}), (topKids, ))
+        self.assertEqual(nest.hl_api.GetChildren(l, properties={}), (topKids, ))
 
         # local id of middle nodes
-        self.assertEqual(nest.GetChildren(
+        self.assertEqual(nest.hl_api.GetChildren(
             (2, 6), properties={'local_id': 2}), ((4, ), (8, )))
 
         # selection by model type
-        self.assertEqual(nest.GetChildren(
+        self.assertEqual(nest.hl_api.GetChildren(
             l, properties={'model': 'subnet'}), (topKids, ))
-        self.assertEqual(nest.GetChildren(
+        self.assertEqual(nest.hl_api.GetChildren(
             (2, ), properties={'model': 'subnet'}), (tuple(), ))
-        self.assertEqual(nest.GetChildren(
+        self.assertEqual(nest.hl_api.GetChildren(
             (2, ), properties={'model': model}), (kids2, ))
 
     def test_GetNetwork(self):
         """GetNetwork"""
 
         nest.ResetKernel()
-        nest.BeginSubnet(label='subnet1')
-        nest.BeginSubnet(label='subnet2')
+        nest.hl_api.BeginSubnet(label='subnet1')
+        nest.hl_api.BeginSubnet(label='subnet2')
 
         n = nest.Create('iaf_psc_alpha', 100)
-        sn2 = nest.EndSubnet()
-        sn1 = nest.EndSubnet()
+        sn2 = nest.hl_api.EndSubnet()
+        sn1 = nest.hl_api.EndSubnet()
 
-        self.assertEqual(nest.CurrentSubnet(), (0, ))
-        self.assertEqual(nest.GetNetwork(sn1, 1)[1], sn2[0])
-        self.assertEqual(len(nest.GetNetwork(sn1, 2)[1]), len(
-            nest.GetNetwork(sn2, 1)))
+        self.assertEqual(nest.hl_api.CurrentSubnet(), (0, ))
+        self.assertEqual(nest.hl_api.GetNetwork(sn1, 1)[1], sn2[0])
+        self.assertEqual(len(nest.hl_api.GetNetwork(sn1, 2)[1]), len(
+            nest.hl_api.GetNetwork(sn2, 1)))
 
 
 def suite():

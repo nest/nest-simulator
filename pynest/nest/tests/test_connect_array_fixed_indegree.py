@@ -29,7 +29,7 @@ import nest
 import numpy
 
 
-@nest.check_stack
+@nest.hl_api.check_stack
 class ConnectArrayFixedIndegreeTestCase(unittest.TestCase):
     """Tests of connections with fixed indegree and parameter arrays"""
 

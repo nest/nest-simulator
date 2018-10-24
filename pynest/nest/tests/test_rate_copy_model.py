@@ -24,7 +24,7 @@ import unittest
 import numpy as np
 
 
-@nest.check_stack
+@nest.hl_api.check_stack
 class RateCopyModelTestCase(unittest.TestCase):
 
     '''

@@ -64,9 +64,9 @@ weights.
 
 
 def LambertWm1(x):
-    nest.sli_push(x)
-    nest.sli_run('LambertWm1')
-    y = nest.sli_pop()
+    nest.hl_api.sli_push(x)
+    nest.hl_api.sli_run('LambertWm1')
+    y = nest.hl_api.sli_pop()
     return y
 
 

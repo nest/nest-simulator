@@ -25,10 +25,10 @@ import nest
 import unittest
 import numpy as np
 
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.hl_api.sli_func("statusdict/have_gsl ::")
 
 
-@nest.check_stack
+@nest.hl_api.check_stack
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class SiegertNeuronTestCase(unittest.TestCase):
     """

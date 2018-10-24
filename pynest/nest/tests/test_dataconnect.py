@@ -27,7 +27,7 @@ import unittest
 import nest
 
 
-@nest.check_stack
+@nest.hl_api.check_stack
 class DataConnectTestCase(unittest.TestCase):
     """Find connections and test if values can be set."""
 
@@ -43,7 +43,7 @@ class DataConnectTestCase(unittest.TestCase):
         delay = [1.0 * x for x in target]
         connections = [{'target': target, 'weight': weight,
                         'delay': delay} for t in target]
-        nest.DataConnect(sources, connections)
+        nest.hl_api.DataConnect(sources, connections)
         conn1 = nest.GetConnections(sources)
         stat1 = nest.GetStatus(conn1)
         target1 = [d['target'] for d in stat1]
@@ -54,7 +54,7 @@ class DataConnectTestCase(unittest.TestCase):
         # the nestwork from the status data.
         nest.ResetKernel()
         a = nest.Create("iaf_psc_alpha", 10)
-        nest.DataConnect(stat1)
+        nest.hl_api.DataConnect(stat1)
         conn2 = nest.GetConnections()
 
         c1 = [list(x) for x in conn1]

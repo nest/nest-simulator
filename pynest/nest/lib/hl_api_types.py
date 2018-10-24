@@ -24,6 +24,10 @@ Classes defining the different PyNEST types
 """
 
 import nest
+
+from nest.topology import CreateParameter
+from .hl_api_helper import is_iterable
+
 import numpy
 
 try:
@@ -331,7 +335,7 @@ class GIDCollection(object):
                                                   columns=['layer'])
 
             # Array param case
-            elif nest.is_iterable(param):
+            elif is_iterable(param):
                 result = {param_name: self.get(param_name)
                           for param_name in param}
                 if pandas_output:
@@ -377,7 +381,7 @@ class GIDCollection(object):
                         # status dictionary is too low.
                         value_list = [nest.sli_func('/{} get'.format(param), d)
                                       for d in value_list]
-                elif nest.is_iterable(param):
+                elif is_iterable(param):
                     raise TypeError("Only the last argument can be an " +
                                     "iterable")
                 else:
@@ -399,7 +403,7 @@ class GIDCollection(object):
                     result = pandas.DataFrame(result, index=index)
 
             # Value parameter, array case
-            elif nest.is_iterable(params[-1]):
+            elif is_iterable(params[-1]):
                 for value in params[-1]:
                     # We assume all are of equal type, so we check only the
                     # values of the first node.
@@ -456,10 +460,34 @@ class GIDCollection(object):
             Description
         """
 
+        if isinstance(params, dict) and self[0].get('local'):
+            for k, v in params.items():
+                if isinstance(v, Parameter):
+                    params[k] = [v.get_value() for _ in range(self.__len__())]
+
+            contains_list = [is_iterable(v) and not is_iterable(self[0].get(k))
+                             for k, v in params.items()]
+            contains_list = max(contains_list)
+
+            if contains_list:
+                temp_param = [{} for _ in range(self.__len__())]
+
+                for k, v in params.items():
+                    if not is_iterable(v):
+                        for d in temp_param:
+                            d[k] = v
+                    else:
+                        for i, d in enumerate(temp_param):
+                            d[k] = v[i]
+                params = temp_param
+
         if val is not None and nest.is_literal(params):
-            if (nest.is_iterable(val) and not
+            if (is_iterable(val) and not
                     isinstance(val, (nest.uni_str, dict))):
                 params = [{params: x} for x in val]
+            elif isinstance(val, Parameter):
+                params = [{params: val.get_value()}
+                          for _ in range(self.__len__())]
             else:
                 params = {params: val}
 
@@ -610,7 +638,7 @@ class Connectome(object):
             cmd = 'GetStatus'
         elif nest.is_literal(keys):
             cmd = 'GetStatus {{ /{0} get }} Map'.format(keys)
-        elif nest.is_iterable(keys):
+        elif is_iterable(keys):
             keys_str = " ".join("/{0}".format(x) for x in keys)
             cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)
         else:
@@ -623,7 +651,7 @@ class Connectome(object):
         # Need to restructure the data.
         if nest.is_literal(keys):
             final_result = result[0] if self.__len__() == 1 else list(result)
-        elif nest.is_iterable(keys):
+        elif is_iterable(keys):
             final_result = {}
             if self.__len__() != 1:
                 # We want a dictionary of lists if len != 1
@@ -697,8 +725,7 @@ class Connectome(object):
             return
 
         if val is not None and nest.is_literal(params):
-            if (nest.is_iterable(val) and not
-                    isinstance(val, (nest.uni_str, dict))):
+            if is_iterable(val) and not isinstance(val, (nest.uni_str, dict)):
                 params = [{params: x} for x in val]
             else:
                 params = {params: val}
@@ -794,18 +821,33 @@ class Parameter(object):
 
     # Generic binary operation
     def _binop(self, op, other):
+        if isinstance(other, (int, float)):
+            other = CreateParameter('constant', {'value': float(other)})
         if not isinstance(other, Parameter):
             return NotImplemented
+
         return nest.sli_func(op, self._datum, other._datum)
 
     def __add__(self, other):
         return self._binop("add", other)
 
+    def __radd__(self, other):
+        return self + other
+
     def __sub__(self, other):
         return self._binop("sub", other)
 
+    def __rsub__(self, other):
+        return self * (-1) + other
+
+    def __neg__(self):
+        return self * (-1)
+
     def __mul__(self, other):
         return self._binop("mul", other)
+
+    def __rmul__(self, other):
+        return self * other
 
     def __div__(self, other):
         return self._binop("div", other)

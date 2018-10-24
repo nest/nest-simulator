@@ -116,21 +116,21 @@ class BasicsTestCase(unittest.TestCase):
         # multiple gid, single coord gives l-elem gid list
         n2 = topo.GetElement(l, checkpos[0])
         self.assertEqual(len(n2), len(l))
-        self.assertTrue(all(nest.is_sequence_of_gids(n) for n in n2))
+        self.assertTrue(all(nest.hl_api.is_sequence_of_gids(n) for n in n2))
 
         # single gid, multiple coord gives len(checkpos)-elem gid list
         n3 = topo.GetElement(l[:1], checkpos)
         self.assertEqual(len(n3), len(checkpos))
-        self.assertTrue(all(nest.is_sequence_of_gids(n) for n in n3))
+        self.assertTrue(all(nest.hl_api.is_sequence_of_gids(n) for n in n3))
         self.assertTrue(all(len(n) == 1 for n in n3))
 
         # multiple gid, multiple coord gives l*len(cp)-elem gid list
         n4 = topo.GetElement(l, checkpos)
         self.assertEqual(len(n4), len(l))
 
-        self.assertTrue(all(nest.is_iterable(n) for n in n4))
+        self.assertTrue(all(nest.hl_api.is_iterable(n) for n in n4))
         self.assertTrue(all(len(n) == len(checkpos) for n in n4))
-        self.assertTrue(all(nest.is_sequence_of_gids(m)
+        self.assertTrue(all(nest.hl_api.is_sequence_of_gids(m)
                             for n in n4 for m in n))
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')

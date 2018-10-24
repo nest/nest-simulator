@@ -57,7 +57,7 @@ namespace nest
   of the simulation resolution. Three options control how spike times that
   do not coincide with a step are handled (see examples below):
 
-  Multiple occurences of the same time indicate that more than one
+  Multiple occurrences of the same time indicate that more than one
   event is to be generated at this particular time.
 
   Additionally, spike_weights can be set. This also is an array,
@@ -74,7 +74,7 @@ namespace nest
      receiving the spike train can handle precise timing information. In this
      case, the other two options are ignored.
 
-  /allow_offgrid_spikes   default: false
+  /allow_offgrid_times and /allow_offgrid_spikes   default: false
      If false, spike times will be rounded to the nearest step if they are
      less than tic/2 from the step, otherwise NEST reports an error.
      If true, spike times are rounded to the nearest step if within tic/2
@@ -93,7 +93,7 @@ namespace nest
   return different /spike_times values at different resolutions.
 
   Example:
-  spikegenerator << /spike_times [1.0 2.0 3.0] >> SetStatus
+  spike_generator << /spike_times [1.0 2.0 3.0] >> SetStatus
 
   Instructs the spike generator to generate events at 1.0, 2.0, and
   3.0 milliseconds, relative to the device-timer origin.
@@ -110,7 +110,7 @@ namespace nest
   ---> error, spike time 1.05 not within tic/2 of step
 
   /spike_generator << /spike_times [1.0 1.05 3.0001]
-                      /allow_offgrid_spikes true >> Create
+                      /allow_offgrid_times true >> Create
   ---> spikes at steps 10, 11 (mid-step time rounded up),
        30 (time within tic/2 of step moved to step)
 
@@ -137,7 +137,7 @@ namespace nest
 
 
   Example:
-  spikegenerator
+  spike_generator
     << /spike_times [1.0 2.0] /spike_weights [5.0 -8.0] >>
   SetStatus
 
@@ -145,7 +145,7 @@ namespace nest
   at 1.0 ms, and an event with weight -8.0 at 2.0 ms, relative to
   the device-timer origin.
 
-  spikegenerator << /spike_weights [] >> SetStatus
+  spike_generator << /spike_weights [] >> SetStatus
 
   Instructs the spike generator to generate events at 1.0, 2.0, and
   3.0 milliseconds, and use the weight of the connection.
@@ -165,6 +165,7 @@ namespace nest
                                         as spike_times; mostly for debugging
 
        precise_times        bool - see above
+       allow_offgrid_times  bool - see above
        allow_offgrid_spikes bool - see above
        shift_now_spikes     bool - see above
 
@@ -249,10 +250,14 @@ private:
     bool precise_times_;
 
     //! Allow and round up spikes not on steps; irrelevant if precise_times_
+    bool allow_offgrid_times_;
+    //! Same as allow_offgrid_times_, here for backward compatibility
     bool allow_offgrid_spikes_;
 
     //! Shift spike times at present to next step
     bool shift_now_spikes_;
+
+    bool deprecation_warning_issued_;
 
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
@@ -260,7 +265,7 @@ private:
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      * @note State is passed so that the position can be reset if the
      *       spike_times_ or spike_weights_ vector has been filled with
      *       new data, or if the origin was reset.

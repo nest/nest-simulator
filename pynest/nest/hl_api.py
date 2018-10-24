@@ -262,44 +262,43 @@ for name in os.listdir(os.path.join(os.path.dirname(__file__), "lib")):
 if 'DELAY_PYNEST_INIT' not in os.environ:
     init(sys.argv)
 
-
 # With '__all__' we provide an explicit index of the package. Without any
 # imported submodules and any redundant functions we could achieve shorter
 # time of importing 'nest'.
 __all__ = [
-    # 'BeginSubnet', #deprecated?
+    # 'BeginSubnet',  # deprecated?
     'CGConnect',
     'CGParse',
     'CGSelectImplementation',
-    # 'CONN_LEN', #redundant? part of kernel
-    # 'ChangeSubnet', #deprecated?
+    # 'CONN_LEN',  # redundant? part of kernel
+    # 'ChangeSubnet',  # deprecated?
     'Cleanup',
     'Connect',
     'ConnectionRules',
     'CopyModel',
     'Create',
-    # 'CurrentSubnet', #deprecated?
-    # 'DataConnect', #deprecated?
+    # 'CurrentSubnet',  # deprecated?
+    # 'DataConnect',  # deprecated?
     'DisableStructuralPlasticity',
     'Disconnect',
     'DisconnectOneToOne',
     'EnableStructuralPlasticity',
-    # 'EndSubnet', #deprecated?
-    # 'GetChildren', #deprecated?
+    # 'EndSubnet',  # deprecated?
+    # 'GetChildren',  # deprecated?
     'GetConnections',
     'GetDefaults',
     'GetKernelStatus',
-    'GetLeaves', #deprecated?
-    # 'GetLID', #deprecated?
-    # 'GetNetwork', #deprecated?
-    'GetNodes', #deprecated?
+    'GetLeaves',  # deprecated?
+    # 'GetLID',  # deprecated?
+    # 'GetNetwork',  # deprecated?
+    'GetNodes',  # deprecated?
     'GetStatus',
     'GetStructuralPlasticityStatus',
     'Install',
-    # 'LayoutNetwork', #deprecated?
+    # 'LayoutNetwork',  # deprecated?
     'Models',
-    # 'NESTEngine', #redundant? part of kernel
-    # 'NESTError', #redundant? part of kernel
+    # 'NESTEngine',  # redundant? part of kernel
+    # 'NESTError',  # redundant? part of kernel
     'NumProcesses',
     'Prepare',
     'Rank',
@@ -308,8 +307,8 @@ __all__ = [
     'ResumeSimulation',
     'Run',
     'RunManager',
-    # 'SLIDatum', #redundant? part of kernel
-    # 'SLILiteral', #redundant? part of kernel
+    # 'SLIDatum',  # redundant? part of kernel
+    # 'SLILiteral',  # redundant? part of kernel
     'SetAcceptableLatency',
     'SetDefaults',
     'SetKernelStatus',
@@ -317,51 +316,51 @@ __all__ = [
     'SetStatus',
     'SetStructuralPlasticityStatus',
     'Simulate',
-    # 'SuppressedDeprecationWarning', #redundant?
+    # 'SuppressedDeprecationWarning',  # redundant?
     # 'Template',
     'authors',
-    # 'broadcast', #redundant?
-    # 'catching_sli_run', #redundant?
-    # 'check_stack', #redundant?
-    # 'deprecated', #redundant?
-    # 'engine', #redundant?
-    # 'functools', #redundant?
-    # 'get_argv', #redundant?
-    # 'get_debug', #redundant?
-    # 'get_help_filepath', #redundant?
-    # 'get_unistring_type', #redundant?
-    # 'get_verbosity',
-    # 'get_wrapped_text', #redundant?
+    # 'broadcast',  # redundant?
+    # 'catching_sli_run',  # redundant?
+    # 'check_stack',  # redundant?
+    # 'deprecated',  # redundant?
+    # 'engine',  # redundant?
+    # 'functools',  # redundant?
+    # 'get_argv',  # redundant?
+    # 'get_debug',  # redundant?
+    # 'get_help_filepath',  # redundant?
+    # 'get_unistring_type',  # redundant?
+    'get_verbosity',
+    # 'get_wrapped_text',  # redundant?
     'help',
     'helpdesk',
-    # 'init', #redundant?
-    # 'initialized', #redundant?
-    # 'is_coercible_to_sli_array', #redundant?
-    # 'is_iterable', #redundant?
-    # 'is_literal', #redundant?
-    # 'is_sequence_of_connections', #redundant?
-    # 'is_sequence_of_gids', #redundant?
-    # 'is_string', #redundant?
-    # 'kernel', #security?
-    # 'load_help', #redundant?
-    # 'message', #redundant?
-    # 'model_deprecation_warning', #redundant?
-    # 'name', #redundant?
-    # 'pcd', #redundant?
-    # 'set_debug', #redundant?
+    # 'init',  # redundant?
+    # 'initialized',  # redundant?
+    # 'is_coercible_to_sli_array',  # redundant?
+    # 'is_iterable',  # redundant?
+    # 'is_literal',  # redundant?
+    # 'is_sequence_of_connections',  # redundant?
+    # 'is_sequence_of_gids',  # redundant?
+    # 'is_string',  # redundant?
+    # 'kernel',  # security?
+    # 'load_help',  # redundant?
+    # 'message',  # redundant?
+    # 'model_deprecation_warning',  # redundant?
+    # 'name',  # redundant?
+    # 'pcd',  # redundant?
+    # 'set_debug',  # redundant?
     'set_verbosity',
-    # 'show_deprecation_warning', #redundant?
-    # 'show_help_with_pager',
-    # 'sli_func', #security?
-    # 'sli_pop', #security?
-    # 'sli_push', #security?
-    # 'sli_run', #security?
-    # 'spp', #security?
-    # 'sps', #security?
-    # 'sr', #security?
-    # 'stack_checker', #redundant?
-    # 'sysinfo', #security?
+    # 'show_deprecation_warning',  # redundant?
+    # 'show_help_with_pager',  # redundant?
+    # 'sli_func',  # security?
+    # 'sli_pop',  # security?
+    # 'sli_push',  # security?
+    # 'sli_run',  # security?
+    # 'spp',  # security?
+    # 'sps',  # security?
+    # 'sr',  # security?
+    # 'stack_checker',  # redundant?
+    # 'sysinfo',  # security?
     'test',
-    # 'uni_str', #redundant?
+    # 'uni_str',  # redundant?
     'version',
 ]

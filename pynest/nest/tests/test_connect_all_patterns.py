@@ -48,7 +48,7 @@ class TestConnectAllPatterns(unittest.TestCase):
         for script in scripts:
             test_script = os.path.join(directory, script)
             command = nest.hl_api.sli_func("mpirun", 2, "nosetests",
-                                    test_script)
+                test_script)
             command = command.split()
             process = sp.Popen(command, stdout=sp.PIPE, stderr=sp.PIPE)
             stdout, stderr = process.communicate()

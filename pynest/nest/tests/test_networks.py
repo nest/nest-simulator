@@ -132,7 +132,8 @@ class NetworkTestCase(unittest.TestCase):
         self.assertEqual(nest.hl_api.GetChildren((2, 6)), (kids2, kids6))
 
         # test with empty dict
-        self.assertEqual(nest.hl_api.GetChildren(l, properties={}), (topKids, ))
+        self.assertEqual(nest.hl_api.GetChildren(
+            l, properties={}), (topKids, ))
 
         # local id of middle nodes
         self.assertEqual(nest.hl_api.GetChildren(

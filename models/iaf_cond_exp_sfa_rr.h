@@ -62,6 +62,7 @@ Name: iaf_cond_exp_sfa_rr - Simple conductance based leaky integrate-and-fire
                             neuron model.
 
 Description:
+
 iaf_cond_exp_sfa_rr is an iaf_cond_exp_sfa_rr i.e. an implementation of a
 spiking neuron using IAF dynamics with conductance-based synapses,
 with additional spike-frequency adaptation and relative refractory
@@ -78,6 +79,7 @@ these conductances decay exponentially with time constants tau_sfa
 and tau_rr, respectively.
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
 V_m        double - Membrane potential in mV

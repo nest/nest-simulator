@@ -61,6 +61,7 @@ Name: iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron
                        model.
 
 Description:
+
 iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a post-synaptic change
 of conductance modelled by an alpha function. The alpha function
@@ -68,6 +69,7 @@ is normalised such that an event of weight 1.0 results in a peak current of 1 nS
 at t = tau_syn.
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
 V_m        double - Membrane potential in mV

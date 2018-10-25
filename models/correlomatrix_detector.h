@@ -41,7 +41,9 @@ namespace nest
 Name: correlomatrix_detector - Device for measuring the covariance matrix
 from several inputs
 
-Description: The correlomatrix_detector is a recording device. It is used to
+Description: 
+
+The correlomatrix_detector is a recording device. It is used to
 record spikes from several pools of spike inputs and calculates the
 covariance matrix of inter-spike intervals (raw auto and cross correlation)
 binned to bins of duration delta_tau. The histogram is only recorded for
@@ -69,6 +71,7 @@ via SetStatus under the key N_channels. All incoming connections to a
 specified receptor will be pooled.
 
 Parameters:
+
 Tstart     double    - Time when to start counting events. This time should
                       be set to at least start + tau_max in order to avoid
                       edge effects of the correlation counts.
@@ -98,23 +101,24 @@ count_covariance  matrix of long vectors, read-only   - raw, auto/cross
 n_events          integer vector                      - number of events
                                                        from all sources.
 
-Remarks: This recorder does not record to file, screen or memory in the usual
-        sense.
+Remarks:
+This recorder does not record to file, screen or memory in the usual
+sense.
 
-        @note Correlomatrix detectors IGNORE any connection delays.
+@note Correlomatrix detectors IGNORE any connection delays.
 
-        @note Correlomatrix detector breaks with the persistence scheme as
-         follows: the internal buffers for storing spikes are part
-         of State_, but are initialized by init_buffers_().
+@note Correlomatrix detector breaks with the persistence scheme as
+ follows: the internal buffers for storing spikes are part
+ of State_, but are initialized by init_buffers_().
 
-         @todo The correlation detector could be made more efficient as follows
-         (HEP 2008-07-01):
-         - incoming_ is vector of two deques
-         - let handle() push_back() entries in incoming_ and do nothing else
-         - keep index to last "old spike" in each incoming_; cannot
-           be iterator since that may change
-         - update() deletes all entries before now-tau_max, sorts the new
-           entries, then registers new entries in histogram
+ @todo The correlation detector could be made more efficient as follows
+ (HEP 2008-07-01):
+ - incoming_ is vector of two deques
+ - let handle() push_back() entries in incoming_ and do nothing else
+ - keep index to last "old spike" in each incoming_; cannot
+   be iterator since that may change
+ - update() deletes all entries before now-tau_max, sorts the new
+   entries, then registers new entries in histogram
 
 Example:
    /s1 /spike_generator Create def

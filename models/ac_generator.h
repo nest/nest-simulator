@@ -38,40 +38,41 @@ namespace nest
 {
 
 /** @BeginDocumentation
-   Name: ac_generator - provides AC input current
+Name: ac_generator - provides AC input current
 
-   Description:
+Description:
 
-   This device produce an ac-current which are sent by a CurrentEvent. The
-   current is given by
+This device produce an ac-current which are sent by a CurrentEvent. The
+current is given by
 
-           I(t) = offset + amplitude * sin ( om * t + phi )
+        I(t) = offset + amplitude * sin ( om * t + phi )
 
-   where
+where
 
-       om  = 2 * pi * frequency
-       phi = phase / 180 * pi
+    om  = 2 * pi * frequency
+    phi = phase / 180 * pi
 
-   The parameters are
+Parameters:
 
-   amplitude   double -  Amplitude of sine current in pA
-   offset      double -  Constant amplitude offset in pA
-   frequency   double -  Frequency in Hz
-   phase       double -  Phase of sine current (0-360 deg)
+amplitude   double -  Amplitude of sine current in pA
+offset      double -  Constant amplitude offset in pA
+frequency   double -  Frequency in Hz
+phase       double -  Phase of sine current (0-360 deg)
 
-   Setting start and stop (see StimulatingDevice) only windows the current
-   as defined above. It does not shift the time axis.
+Setting start and stop (see StimulatingDevice) only windows the current
+as defined above. It does not shift the time axis.
 
-   References:
-   [1] S. Rotter and M. Diesmann, Exact digital simulation of time-
-   invariant linear systems with applications to neuronal modeling,
-   Biol. Cybern. 81, 381-402 (1999)
+References:
 
-   Sends: CurrentEvent
+[1] S. Rotter and M. Diesmann (1999). Exact digital simulation of time-
+invariant linear systems with applications to neuronal modeling,
+Biol. Cybern. 81, 381-402.
 
-   Author: Johan Hake, Spring 2003
+Sends: CurrentEvent
 
-   SeeAlso: Device, StimulatingDevice, dc_generator, step_current_generator
+Author: Johan Hake, Spring 2003
+
+SeeAlso: Device, StimulatingDevice, dc_generator, step_current_generator
 */
 class ac_generator : public DeviceNode
 {

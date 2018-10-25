@@ -62,6 +62,7 @@ Name: aeif_psc_alpha -  Current-based exponential integrate-and-fire neuron
                          model according to Brette and Gerstner (2005).
 
 Description:
+
 aeif_psc_alpha is the adaptive exponential integrate and fire neuron according
 to Brette and Gerstner (2005).
 Synaptic currents are modelled as alpha-functions.
@@ -77,6 +78,7 @@ and
 tau_w * dw/dt= a(V-E_L) -W
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
 Dynamic state variables:

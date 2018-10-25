@@ -33,61 +33,64 @@ namespace nest
 {
 
 /** @BeginDocumentation
-  Name: cont_delay_synapse - Synapse type for continuous delays
+Name: cont_delay_synapse - Synapse type for continuous delays
 
-  Description:
-  cont_delay_synapse relaxes the condition that NEST only implements delays
-  which are an integer multiple of the time step h. A continuous delay is
-  decomposed into an integer part (delay_) and a double (delay_offset_) so
-  that the actual delay is given by  delay_*h - delay_offset_. This can be
-  combined with off-grid spike times.
+Description:
 
-  Example:
-  0 << /resolution 1.0 >> SetStatus
+cont_delay_synapse relaxes the condition that NEST only implements delays
+which are an integer multiple of the time step h. A continuous delay is
+decomposed into an integer part (delay_) and a double (delay_offset_) so
+that the actual delay is given by  delay_*h - delay_offset_. This can be
+combined with off-grid spike times.
 
-  /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
-  def
-  /n  /iaf_psc_delta_canon Create def
-  /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create
-  def
+Example:
 
-  /cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
-  sg n /cont_delay_synapse Connect
-  n sd Connect
+0 << /resolution 1.0 >> SetStatus
 
-  10 Simulate
+/sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
+def
+/n  /iaf_psc_delta_canon Create def
+/sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create
+def
 
-  sd GetStatus /events/times :: ==   %  --> <. 3.7 7.2 .>
+/cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
+sg n /cont_delay_synapse Connect
+n sd Connect
 
-  Remarks:
-  All delays set by the normal NEST Connect function will be rounded, even when
-  using cont_delay_connection. To set non-grid delays, you must either
+10 Simulate
 
-  1) set the delay as synapse default, as in the example above
-  2) set the delay for each synapse after the connections have been created,
-     e.g.,
+sd GetStatus /events/times :: ==   %  --> <. 3.7 7.2 .>
 
-       sg n 100. 1.0 /cont_delay_synapse Connect
-       << /source [ sg ] /synapse_model /cont_delay_synapse >> GetConnections
-          { << /delay 1.7 >> SetStatus }
-       forall
+Remarks:
 
-  Alternative 1) is much more efficient, but all synapses then will have the
-                 same delay.
-  Alternative 2) is slower, but allows individual delay values.
+All delays set by the normal NEST Connect function will be rounded, even when
+using cont_delay_connection. To set non-grid delays, you must either
 
-  Continuous delays cannot be shorter than the simulation resolution.
+1) set the delay as synapse default, as in the example above
+2) set the delay for each synapse after the connections have been created,
+   e.g.,
 
-  Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
-             DoubleDataEvent
+     sg n 100. 1.0 /cont_delay_synapse Connect
+     << /source [ sg ] /synapse_model /cont_delay_synapse >> GetConnections
+        { << /delay 1.7 >> SetStatus }
+     forall
 
-  References: none
+Alternative 1) is much more efficient, but all synapses then will have the
+               same delay.
+Alternative 2) is slower, but allows individual delay values.
 
-  FirstVersion: June 2007
+Continuous delays cannot be shorter than the simulation resolution.
 
-  Author: Abigail Morrison
+Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
+           DoubleDataEvent
 
-  SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_canon
+References: none
+
+FirstVersion: June 2007
+
+Author: Abigail Morrison
+
+SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_canon
 */
 template < typename targetidentifierT >
 class ContDelayConnection : public Connection< targetidentifierT >

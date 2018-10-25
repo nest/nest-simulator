@@ -61,6 +61,7 @@ Name: iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model
                       used in Casti et al 2008.
 
 Description:
+
 iaf_chxk_2008 is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses [1]. It is modeled after iaf_cond_alpha with the
 addition of after hyper-polarization current instead of a membrane potential
@@ -69,6 +70,7 @@ modeled by an alpha function. The alpha function is normalized such that an
 event of weight 1.0 results in a peak current of 1 nS at t = tau_syn.
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
 V_m        double - Membrane potential in mV
@@ -88,6 +90,7 @@ ahp_bug    bool   - Defaults to false. If true, behaves like original
                     model implementation.
 
 References:
+
 [1] Casti A, Hayot F, Xiao Y, and Kaplan E (2008) A simple model of retina-LGN
 transmission. J Comput Neurosci 24:235-252.
 

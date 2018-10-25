@@ -84,6 +84,7 @@ spikes. This is implemented such that V_m will be incremented/decremented by
 the value of J after a spike.
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
 Dynamic state variables:

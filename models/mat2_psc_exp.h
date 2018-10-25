@@ -41,6 +41,7 @@ Name: mat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model with
 exponential PSCs and adaptive threshold.
 
 Description:
+
 mat2_psc_exp is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
 currents have an infinitely short rise time.
@@ -66,6 +67,7 @@ neuron like dynamics interacting by point events is described in
 [1]. A flow chart can be found in [2].
 
 Remarks:
+
 The present implementation uses individual variables for the
 components of the state vector and the non-zero matrix elements of
 the propagator. Because the propagator is a lower triangular matrix
@@ -74,6 +76,7 @@ computation can be done "in place" i.e. no temporary state vector
 object is required.
 
 Parameters:
+
 The following parameters can be set in the status dictionary:
 
 C_m          double - Capacity of the membrane in pF
@@ -99,11 +102,13 @@ V_m          Non-resetting membrane potential
 V_th         Two-timescale adaptive threshold
 
 Remarks:
+
 tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
 degenerate case of the ODE describing the model [1]. For very similar values,
 numerics will be unstable.
 
 References:
+
 [1] Rotter S & Diesmann M (1999) Exact simulation of
    time-invariant linear systems with applications to neuronal
    modeling. Biologial Cybernetics 81:381-402.

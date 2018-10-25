@@ -66,8 +66,11 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
 
     for key, value in doc_dic.items():
         if key == "FullName":
-            fullname = value.strip("\s\n")
-            fullname = re.sub("(\n)", " <br/> ", fullname)
+            fullname = value.strip("###### ######")
+            fullname = re.sub("(######)", " <br/> ", fullname)
+            fullname = re.sub("(\~\~\~)", '\t\t', fullname)
+            fullname = re.sub("(\~\~)", '\t', fullname)
+            fullname = re.sub("(\~)", ' ', fullname)
 
             htmllist.append('''<div class="doc_header">Name:</div>
 <div class="doc_paragraph">%s - %s</div>''' %
@@ -82,10 +85,9 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
             if key == word:
                 if (key != "Name" and key != "FullName" and
                         key != "SeeAlso" and key != "File"):
-                    value = re.sub("^(\s*(\n))*\s*", "", value)	# strip whitespace and paragraph breaks at start of entry
-                    value = re.sub("((\n)\s*)*$", "", value)	# strip whitespace and paragraph breaks at end of entry
-                    value = re.sub("(\n)", " <br/> ", value)
-                    value = re.sub("(^|\n) ", "&nbsp;", value)
+                    value = re.sub("^(\s*(######))*\s*", "", value)	# strip whitespace and paragraph breaks at start of entry
+                    value = re.sub("((######)\s*)*$", "", value)	# strip whitespace and paragraph breaks at end of entry
+                    value = re.sub("(######)", " <br/> ", value)
                     if name == "aeif_cond_alpha_RK5":
                         import pdb;pdb.set_trace()
                     htmllist.append('<div class="doc_header">%s: </div>' % key)
@@ -105,7 +107,7 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
             hlplist.append('%s:\n' % key)
             htmllist.append('<ul>')
             for i in value:
-                see = i.strip("\n ~~")
+                see = i.strip("###### ~~")
                 if see:
                     if see in sli_command_list:
                         htmllist.append('    <li><a href="../sli/' + see +
@@ -120,7 +122,7 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
 
     for key, value in doc_dic.items():
         if key == "File":
-            value = value.strip("\n \n $$")
+            value = value.strip("###### ###### $$")
             htmllist.append('''<div class="doc_header">Source:</div>
 <div class="doc_paragraph">%s</div>''' % value)
             hlplist.append('Source:\n\n%s' % value)
@@ -264,11 +266,9 @@ def coll_data(keywords, documentation, num, helpdir, fname, sli_command_list):
         if k in documentation:
             if k == "Name:":
                 iname = documentation[k].split()[0].rstrip("-")
-                ifullname = documentation[k].strip(" \n").strip()
+                ifullname = documentation[k].strip(" ######").strip()
                 ifullname = ifullname.lstrip(iname).strip()
                 ifullname = ifullname.lstrip("- ")
-                if iname == "aeif_cond_alpha_RK5":
-                    import pdb;pdb.set_trace()
                 if iname:
                     iname = iname.strip('~~')
                     doc_dic.update({"Name": iname})
@@ -289,6 +289,6 @@ def coll_data(keywords, documentation, num, helpdir, fname, sli_command_list):
                     text = text + i.strip() + " \n" + ""
                 if text:
                     doc_dic.update({name: text})
-    #if iname == "aeif_cond_alpha_RK5":
+    #if iname == "multimeter":
     #    import pdb;pdb.set_trace()
     write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords)

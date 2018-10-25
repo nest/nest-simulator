@@ -77,7 +77,7 @@ keywords_ignore = ["@ingroup"]
 keywords = ["Name:", "Synopsis:", "Examples:", "Description:", "Parameters:",
             "Options:", "Requires:", "Require:", "Receives:", "Transmits:",
             "Sends:", "Variants:", "Bugs:", "Diagnostics:", "Remarks:",
-            "Availability:", "References:", "SeeAlso:", "Author:",
+            "Availability:", "References:", "SeeAlso:", "Author:", "Authors:",
             "FirstVersion:", "Source:"]
 
 # Now begin to collect the data for the help files and start generating.
@@ -134,20 +134,29 @@ for fname in allfiles:
                 line = re.sub('^(\s)*- ', ' &bull; ', line)
                 line = re.sub('^(\s)*@note', ' &bull; ', line)
                 alllines.append(line)
-            item = s.join(alllines)
+            item = '\n'.join(alllines)
             num += 1
             documentation = {}
+            split_items = re.split("(^|\n)(" + "|".join(keywords) + ")", item)
             keyword_curr = ""
-            if "Name: aeif_cond_alpha_RK5" in item:
-                import pdb;pdb.set_trace()
-            split_items = item.split()
             for i, token in enumerate(split_items):
-                if token in keywords and (i == 0 or split_items[i - 1] == "######"):
+                if token in keywords:# and (i == 0 or split_items[i - 1] == ""):
                     keyword_curr = token
                     documentation[keyword_curr] = ""
                 else:
                     if keyword_curr in documentation:
                         documentation[keyword_curr] += " " + token
+            """keyword_curr = ""
+            split_items = item.split("\n")
+            for i, token in enumerate(split_items):
+                if token in keywords:# and (i == 0 or split_items[i - 1] == ""):
+                    keyword_curr = token
+                    documentation[keyword_curr] = ""
+                else:
+                    if keyword_curr in documentation:
+                        documentation[keyword_curr] += " " + token"""
 
+            if "Name: aeif_cond_alpha_RK5" in item:
+                import pdb;pdb.set_trace()
             all_data = coll_data(keywords, documentation, num, helpdir, fname,
                                  sli_command_list)

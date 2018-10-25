@@ -58,11 +58,12 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
 
     htmllist = []
     hlplist = []
-    name = ''
 
+    name = ''
     for key, value in doc_dic.items():
         if key == "Name":
             name = value.strip()
+
     for key, value in doc_dic.items():
         if key == "FullName":
             fullname = value.strip("###### ######")
@@ -71,7 +72,8 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
             fullname = re.sub("(\~\~)", '\t', fullname)
             fullname = re.sub("(\~)", ' ', fullname)
 
-            htmllist.append('<b>Name:</b><pre>%s - %s</pre>' %
+            htmllist.append('''<div class="doc_header">Name:</div>
+<div class="doc_paragraph">%s - %s</div>''' %
                             (name, fullname))
             hlpfullname = re.sub(' <br\/> ', '\n', fullname).strip()
             hlplist.append('Name: %s - %s\n' % (name, hlpfullname))
@@ -83,14 +85,18 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
             if key == word:
                 if (key != "Name" and key != "FullName" and
                         key != "SeeAlso" and key != "File"):
+                    value = re.sub("^(\s*(######))*\s*", "", value)	# strip whitespace and paragraph breaks at start of entry
                     value = re.sub("(######)", " <br/> ", value)
                     # value = re.sub("(\~\~)", '  ', value)
                     value = re.sub("(\~\~\~)", '\t', value)
                     value = re.sub("(\~\~)", '  ', value)
                     value = re.sub("(\~)", ' ', value)
-                    value = re.sub(' - ', '\t- ', value)
-                    htmllist.append('<b>%s: </b>' % key)
-                    htmllist.append('<pre>%s</pre>' % value)
+                    #value = re.sub('^(\s)*- ', ' &bull; ', value)
+                    #value = re.sub('^(\s)*@note', ' &bull; ', value)
+                    #if name == "multimeter":
+                    #    import pdb;pdb.set_trace()
+                    htmllist.append('<div class="doc_header">%s: </div>' % key)
+                    htmllist.append('<div class="doc_paragraph">%s</div>' % value)
                     hlpvalue = re.sub(' <br/> ', '\n', value).rstrip()
                     hlpvalue = re.sub('\n ', '\n', hlpvalue).rstrip()
                     hlpvalue = hlpvalue.lstrip('\n')
@@ -102,7 +108,7 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
 
     for key, value in doc_dic.items():
         if key == "SeeAlso":
-            htmllist.append('<b>%s: </b>' % key)
+            htmllist.append('<div class="doc_header">%s: </div>' % key)
             hlplist.append('%s:\n' % key)
             htmllist.append('<ul>')
             for i in value:
@@ -122,9 +128,10 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
     for key, value in doc_dic.items():
         if key == "File":
             value = value.strip("###### ###### $$")
-            htmllist.append('<b>Source:</b><pre>%s</pre>' % value)
+            htmllist.append('''<div class="doc_header">Source:</div>
+<div class="doc_paragraph">%s</div>''' % value)
             hlplist.append('Source:\n\n%s' % value)
-    htmllist.append('</div>')
+
     htmlstring = (u'\n'.join(htmllist))
     cmdindexstring = s.substitute(indexbody=htmlstring, css=csstempl,
                                   title=name, footer=footertempl)
@@ -157,6 +164,7 @@ def write_helpindex(helpdir):
 
     # We only have to generate a helpindex if the help directory exists
     if not os.path.exists(helpdir):
+        print("Error: Help directory not found: " + helpdir)
         return
 
     filelist = glob.glob(os.path.join(helpdir, '*', '*.hlp'))
@@ -258,6 +266,7 @@ def coll_data(keywords, documentation, num, helpdir, fname, sli_command_list):
     see = ""
     relfile = fname.strip()
     doc_dic = {"Id": str(num), "File": relfile}
+    iname = None
     for k in keywords:
         if k in documentation:
             if k == "Name:":
@@ -285,4 +294,6 @@ def coll_data(keywords, documentation, num, helpdir, fname, sli_command_list):
                     text = text + i.strip() + " \n" + ""
                 if text:
                     doc_dic.update({name: text})
+    #if iname == "multimeter":
+    #    import pdb;pdb.set_trace()
     write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords)

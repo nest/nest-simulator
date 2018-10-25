@@ -317,10 +317,10 @@ class TestGIDCollection(unittest.TestCase):
         n = nest.Create('iaf_psc_alpha')
 
         nest.sli_run("modeldict")
-        dict = nest.sli_pop()
+        model_dict = nest.sli_pop()
 
-        models = dict.keys()
-        modelID = list(dict.values())
+        models = model_dict.keys()
+        modelID = list(model_dict.values())
 
         for model in models:
             n += nest.Create(model)

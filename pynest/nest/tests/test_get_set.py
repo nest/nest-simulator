@@ -54,8 +54,6 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         nodes = nest.Create('iaf_psc_alpha', 10)
 
-        self.assertTrue(True)
-
         C_m = nodes.get('C_m')
         gids = nodes.get('global_id')
         E_L = nodes.get('E_L')
@@ -68,6 +66,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         self.assertEqual(C_m, (250.0, 250.0, 250.0, 250.0, 250.0,
                                250.0, 250.0, 250.0, 250.0, 250.0))
+        self.assertEqual(gids, tuple(range(1, 11)))
         self.assertEqual(E_L, (-70.0, -70.0, -70.0, -70.0, -70.0,
                                -70.0, -70.0, -70.0, -70.0, -70.0))
         self.assertEqual(V_m, (-70.0, -70.0, -70.0, -70.0, -70.0,

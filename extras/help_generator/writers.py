@@ -86,8 +86,6 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
                     value = re.sub("((\n)\s*)*$", "", value)	# strip whitespace and paragraph breaks at end of entry
                     value = re.sub("(\n)", " <br/> ", value)
                     value = re.sub("(^|\n) ", "&nbsp;", value)
-                    if name == "aeif_cond_alpha_RK5":
-                        import pdb;pdb.set_trace()
                     htmllist.append('<div class="doc_header">%s: </div>' % key)
                     htmllist.append('<div class="doc_paragraph">%s</div>' % value)
                     hlpvalue = re.sub(' <br/> ', '\n', value).rstrip()
@@ -267,8 +265,6 @@ def coll_data(keywords, documentation, num, helpdir, fname, sli_command_list):
                 ifullname = documentation[k].strip(" \n").strip()
                 ifullname = ifullname.lstrip(iname).strip()
                 ifullname = ifullname.lstrip("- ")
-                if iname == "aeif_cond_alpha_RK5":
-                    import pdb;pdb.set_trace()
                 if iname:
                     iname = iname.strip('~~')
                     doc_dic.update({"Name": iname})
@@ -289,6 +285,4 @@ def coll_data(keywords, documentation, num, helpdir, fname, sli_command_list):
                     text = text + i.strip() + " \n" + ""
                 if text:
                     doc_dic.update({name: text})
-    #if iname == "aeif_cond_alpha_RK5":
-    #    import pdb;pdb.set_trace()
     write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords)

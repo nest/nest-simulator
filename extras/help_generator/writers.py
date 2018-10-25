@@ -86,13 +86,8 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
                 if (key != "Name" and key != "FullName" and
                         key != "SeeAlso" and key != "File"):
                     value = re.sub("^(\s*(######))*\s*", "", value)	# strip whitespace and paragraph breaks at start of entry
+                    value = re.sub("((######)\s*)*$", "", value)	# strip whitespace and paragraph breaks at end of entry
                     value = re.sub("(######)", " <br/> ", value)
-                    # value = re.sub("(\~\~)", '  ', value)
-                    value = re.sub("(\~\~\~)", '\t', value)
-                    value = re.sub("(\~\~)", '  ', value)
-                    value = re.sub("(\~)", ' ', value)
-                    #value = re.sub('^(\s)*- ', ' &bull; ', value)
-                    #value = re.sub('^(\s)*@note', ' &bull; ', value)
                     #if name == "multimeter":
                     #    import pdb;pdb.set_trace()
                     htmllist.append('<div class="doc_header">%s: </div>' % key)

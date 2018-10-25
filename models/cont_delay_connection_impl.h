@@ -33,7 +33,6 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-
 namespace nest
 {
 

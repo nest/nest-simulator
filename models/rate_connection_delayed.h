@@ -21,21 +21,30 @@
  */
 
 
+#ifndef RATE_CONNECTION_DELAYED_H
+#define RATE_CONNECTION_DELAYED_H
+
+#include "connection.h"
+
+namespace nest
+{
+
 /** @BeginDocumentation
 Name: rate_connection_delayed - Synapse type for rate connections with delay.
 
 Description:
- rate_connection_delayed is a connector to create connections with delay
- between rate model neurons.
 
- To create instantaneous rate connections please use
- the synapse type rate_connection_instantaneous.
+rate_connection_delayed is a connector to create connections with delay
+between rate model neurons.
+
+To create instantaneous rate connections please use
+the synapse type rate_connection_instantaneous.
 
 Transmits: DelayedRateConnectionEvent
 
 References:
 
- Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
+Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
  Bolten, M., Helias, M. and Diesmann, M. (2017).
  Integration of Continuous-Time Dynamics in a
  Spiking Neural Network Simulator.
@@ -46,14 +55,6 @@ Author: David Dahmen, Jan Hahne, Jannis Schuecker
 SeeAlso: rate_connection_instantaneous, rate_neuron_ipn, rate_neuron_opn
 */
 
-
-#ifndef RATE_CONNECTION_DELAYED_H
-#define RATE_CONNECTION_DELAYED_H
-
-#include "connection.h"
-
-namespace nest
-{
 /**
  * Class representing a delayed rate connection. A rate_connection_delayed
  * has the properties weight, delay and receiver port.

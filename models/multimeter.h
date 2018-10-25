@@ -47,6 +47,7 @@ Name: multimeter - Device to record analog data from neurons.
 Synopsis: multimeter Create
 
 Description:
+
 A multimeter records a user-defined set of state variables from connected nodes
 to memory, file or stdout.
 
@@ -79,29 +80,32 @@ mode before simulating. Accumulator data is never written to file. You must
 extract it from the device using GetStatus.
 
 Remarks:
- - The set of variables to record and the recording interval must be set
-   BEFORE the multimeter is connected to any node, and cannot be changed
-   afterwards.
- - A multimeter cannot be frozen.
- - If you record with multimeter in accumulator mode and some of the nodes
-   you record from are frozen and others are not, data will only be collected
-   from the unfrozen nodes. Most likely, this will lead to confusing results,
-   so you should not use multimeter with frozen nodes.
- 
- @note If you want to pick up values at every time stamp,
-   you must set the interval to the simulation resolution.
- @ingroup Devices
- @see UniversalDataLogger
+
+- The set of variables to record and the recording interval must be set
+  BEFORE the multimeter is connected to any node, and cannot be changed
+  afterwards.
+- A multimeter cannot be frozen.
+- If you record with multimeter in accumulator mode and some of the nodes
+  you record from are frozen and others are not, data will only be collected
+  from the unfrozen nodes. Most likely, this will lead to confusing results,
+  so you should not use multimeter with frozen nodes.
+
+@note If you want to pick up values at every time stamp,
+  you must set the interval to the simulation resolution.
+@ingroup Devices
+@see UniversalDataLogger
 
 
 Parameters:
-     The following parameters can be set in the status dictionary:
-     interval     double - Recording interval in ms
-     record_from  array  - Array containing the names of variables to record
-                           from, obtained from the /recordables entry of the
-                           model from which one wants to record
+
+The following parameters can be set in the status dictionary:
+interval     double - Recording interval in ms
+record_from  array  - Array containing the names of variables to record
+                      from, obtained from the /recordables entry of the
+                      model from which one wants to record
 
 Examples:
+
 SLI ] /iaf_cond_alpha Create /n Set
 SLI ] n /recordables get ==
 [/V_m /g_ex /g_in /t_ref_remaining]

@@ -58,43 +58,44 @@ extern "C" int
 aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
- Name: aeif_cond_alpha_multisynapse - Conductance based adaptive exponential
-                                      integrate-and-fire neuron model according
-                                      to Brette and Gerstner (2005) with
-                                      multiple synaptic rise time and decay
-                                      time constants, and synaptic conductance
-                                      modeled by an alpha function.
+Name: aeif_cond_alpha_multisynapse - Conductance based adaptive exponential
+                                     integrate-and-fire neuron model according
+                                     to Brette and Gerstner (2005) with
+                                     multiple synaptic rise time and decay
+                                     time constants, and synaptic conductance
+                                     modeled by an alpha function.
 
- Description:
+Description:
 
- aeif_cond_alpha_multisynapse is a conductance-based adaptive exponential
- integrate-and-fire neuron model. It allows an arbitrary number of synaptic
- time constants. Synaptic conductance is modeled by an alpha function, as
- described by A. Roth and M.C.W. van Rossum in Computational Modeling Methods
- for Neuroscientists, MIT Press 2013, Chapter 6.
+aeif_cond_alpha_multisynapse is a conductance-based adaptive exponential
+integrate-and-fire neuron model. It allows an arbitrary number of synaptic
+time constants. Synaptic conductance is modeled by an alpha function, as
+described by A. Roth and M.C.W. van Rossum in Computational Modeling Methods
+for Neuroscientists, MIT Press 2013, Chapter 6.
 
- The time constants are supplied by an array, "tau_syn", and the pertaining
- synaptic reversal potentials are supplied by the array "E_rev". Port numbers
- are automatically assigned in the range from 1 to n_receptors.
- During connection, the ports are selected with the property "receptor_type".
+The time constants are supplied by an array, "tau_syn", and the pertaining
+synaptic reversal potentials are supplied by the array "E_rev". Port numbers
+are automatically assigned in the range from 1 to n_receptors.
+During connection, the ports are selected with the property "receptor_type".
 
- The membrane potential is given by the following differential equation:
+The membrane potential is given by the following differential equation:
 
- C dV/dt = -g_L(V-E_L) + g_L*Delta_T*exp((V-V_T)/Delta_T) + I_syn_tot(V, t)
-           - w + I_e
+C dV/dt = -g_L(V-E_L) + g_L*Delta_T*exp((V-V_T)/Delta_T) + I_syn_tot(V, t)
+          - w + I_e
 
- where
+where
 
- I_syn_tot(V,t) = \sum_i g_i(t) (V - E_{rev,i}) ,
+I_syn_tot(V,t) = \sum_i g_i(t) (V - E_{rev,i}) ,
 
- the synapse i is excitatory or inhibitory depending on the value of E_{rev,i}
- and the differential equation for the spike-adaptation current w is:
+the synapse i is excitatory or inhibitory depending on the value of E_{rev,i}
+and the differential equation for the spike-adaptation current w is:
 
- tau_w * dw/dt = a(V - E_L) - w
+tau_w * dw/dt = a(V - E_L) - w
 
- When the neuron fires a spike, the adaptation current w <- w + b.
+When the neuron fires a spike, the adaptation current w <- w + b.
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
 Dynamic state variables:
@@ -126,48 +127,48 @@ Integration parameters
                           GSL integrator. Reduce it if NEST complains about
                           numerical instabilities.
 
- Examples:
+Examples:
 
- import nest
- import numpy as np
+import nest
+import numpy as np
 
- neuron = nest.Create('aeif_cond_alpha_multisynapse')
- nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
- nest.SetStatus(neuron, {'E_rev':[0.0, 0.0, 0.0, -85.0],
-                         'tau_syn':[1.0, 5.0, 10.0, 8.0]})
+neuron = nest.Create('aeif_cond_alpha_multisynapse')
+nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
+nest.SetStatus(neuron, {'E_rev':[0.0, 0.0, 0.0, -85.0],
+                        'tau_syn':[1.0, 5.0, 10.0, 8.0]})
 
- spike = nest.Create('spike_generator', params = {'spike_times':
-                                                 np.array([10.0])})
+spike = nest.Create('spike_generator', params = {'spike_times':
+                                                np.array([10.0])})
 
- voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
+voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
 
- delays=[1.0, 300.0, 500.0, 700.0]
- w=[1.0, 1.0, 1.0, 1.0]
- for syn in range(4):
-     nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
-                                           'receptor_type': 1 + syn,
-                                           'weight': w[syn],
-                                           'delay': delays[syn]})
+delays=[1.0, 300.0, 500.0, 700.0]
+w=[1.0, 1.0, 1.0, 1.0]
+for syn in range(4):
+    nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+                                          'receptor_type': 1 + syn,
+                                          'weight': w[syn],
+                                          'delay': delays[syn]})
 
- nest.Connect(voltmeter, neuron)
+nest.Connect(voltmeter, neuron)
 
- nest.Simulate(1000.0)
- dmm = nest.GetStatus(voltmeter)[0]
- Vms = dmm["events"]["V_m"]
- ts = dmm["events"]["times"]
- import pylab
- pylab.figure(2)
- pylab.plot(ts, Vms)
- pylab.show()
+nest.Simulate(1000.0)
+dmm = nest.GetStatus(voltmeter)[0]
+Vms = dmm["events"]["V_m"]
+ts = dmm["events"]["times"]
+import pylab
+pylab.figure(2)
+pylab.plot(ts, Vms)
+pylab.show()
 
- Sends: SpikeEvent
+Sends: SpikeEvent
 
- Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
- Author: Hans Ekkehard Plesser, based on aeif_cond_beta_multisynapse
+Author: Hans Ekkehard Plesser, based on aeif_cond_beta_multisynapse
 
- SeeAlso: aeif_cond_alpha_multisynapse
- */
+SeeAlso: aeif_cond_alpha_multisynapse
+*/
 class aeif_cond_alpha_multisynapse : public Archiving_Node
 {
 

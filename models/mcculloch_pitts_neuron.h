@@ -34,6 +34,7 @@ Name: mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside
                               activation function.
 
 Description:
+
 The mcculloch_pitts_neuron is an implementation of a binary
 neuron that is irregularly updated as Poisson time points [1]. At
 each update point the total synaptic input h into the neuron is
@@ -57,6 +58,7 @@ obtain delayed coupling with delay d, the user has to specify the
 delay d+h upon connection, where h is the simulation time step.
 
 Remarks:
+
 This neuron has a special use for spike events to convey the
 binary state of the neuron to the target. The neuron model
 only sends a spike if a transition of its state occurs. If the
@@ -72,11 +74,13 @@ The neuron accepts several sources of currents, e.g. from a
 noise_generator.
 
 Parameters:
+
 tau_m      double - Membrane time constant (mean inter-update-interval)
                    in ms.
 theta      double - threshold for sigmoidal activation function mV
 
 References:
+
 [1] W. McCulloch und W. Pitts (1943). A logical calculus of the ideas
 immanent in nervous activity. Bulletin of Mathematical Biophysics, 5:115-133.
 [2] Hertz Krogh, Palmer. Introduction to the theory of neural computation.

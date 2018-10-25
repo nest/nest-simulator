@@ -40,6 +40,7 @@ Name: iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential
                    PSCs.
 
 Description:
+
 iaf_psc_expp is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs) according to [1].
 Thus, postsynaptic currents have an infinitely short rise time.
@@ -61,6 +62,7 @@ neuron like dynamics interacting by point events is described in
 [2]. A flow chart can be found in [3].
 
 Remarks:
+
 The present implementation uses individual variables for the
 components of the state vector and the non-zero matrix elements of
 the propagator.  Because the propagator is a lower triangular matrix
@@ -75,6 +77,7 @@ address the problem of efficient usage of appropriate vector and
 matrix objects.
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
 E_L          double - Resting membrane potential in mV.
@@ -106,6 +109,7 @@ kernel with the time constant of the excitatory synapse,
 tau_syn_ex. For an example application, see [4].
 
 References:
+
 [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation
 in Recurrent Networks with Frequency-Dependent Synapses, The Journal of
 Neuroscience, 2000, Vol. 20 RC50 p. 1-5

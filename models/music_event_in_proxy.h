@@ -41,10 +41,10 @@ namespace nest
 {
 
 /** @BeginDocumentation
-
 Name: music_event_in_proxy - A device which receives spikes from MUSIC.
 
 Description:
+
 A music_event_in_proxy can be used to pass spikes to nodes within NEST
 which are received from another application.
 
@@ -57,6 +57,7 @@ on the same port, but each channel can only listened to by a
 single proxy.
 
 Parameters:
+
 The following properties are available in the status dictionary:
 
 port_name      - The name of the MUSIC input port to listen to (default:
@@ -70,6 +71,7 @@ The acceptable latency of the MUSIC input port can be set using the
 command SetAcceptableLatency.
 
 Examples:
+
 /music_event_in_proxy Create /meip Set
 meip << /music_channel 2 >> SetStatus
 /iaf_psc_alpha Create /n Set

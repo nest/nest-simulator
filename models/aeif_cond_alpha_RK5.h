@@ -39,6 +39,7 @@ Name: aeif_cond_alpha_RK5 - Conductance based exponential integrate-and-fire
                             neuron model according to Brette and Gerstner (2005)
 
 Description:
+
 aeif_cond_alpha_RK5 is the adaptive exponential integrate and fire neuron
 according to Brette and Gerstner (2005).
 Synaptic conductances are modelled as alpha-functions.
@@ -56,6 +57,7 @@ and
 tau_w * dw/dt= a(V-E_L) -w
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
 Dynamic state variables:

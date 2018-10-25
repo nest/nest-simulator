@@ -53,6 +53,7 @@ Name: music_message_in_proxy - A device which receives message strings from
                               MUSIC.
 
 Description:
+
 A music_message_in_proxy can be used to receive message strings from
 remote MUSIC applications in NEST.
 
@@ -62,6 +63,7 @@ which MUSIC can connect a message source. The music_message_in_proxy
 can queried using GetStatus to retrieve the messages.
 
 Parameters:
+
 The following properties are available in the status dictionary:
 
 port_name      - The name of the MUSIC input port to listen to (default:
@@ -79,6 +81,7 @@ The parameter port_name can be set using SetStatus. The field n_messages
 can be set to 0 to clear the data arrays.
 
 Examples:
+
 /music_message_in_proxy Create /mmip Set
 10 Simulate
 mmip GetStatus /data get /messages get 0 get /command Set

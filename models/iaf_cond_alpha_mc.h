@@ -67,6 +67,7 @@ Name: iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky
                           integrate-and-fire neuron model.
 
 Description:
+
 THIS MODEL IS A PROTOTYPE FOR ILLUSTRATION PURPOSES. IT IS NOT YET
 FULLY TESTED. USE AT YOUR OWN PERIL!
 
@@ -104,6 +105,7 @@ synaptic weights must be positive numbers!
 
 
 Parameters:
+
 The following parameters can be set in the status dictionary. Parameters
 for each compartment are collected in a sub-dictionary; these sub-dictionaries
 are called "soma", "proximal", and "distal", respectively. In the list below,
@@ -130,12 +132,13 @@ Example:
 See examples/nest/mc_neuron.py.
 
 Remarks:
-  This is a prototype for illustration which has undergone only limited 
-  testing. Details of the implementation and user-interface will likely
-  change. USE AT YOUR OWN PERIL!
 
-  @note All parameters that occur for both compartments
-   and dendrite are stored as C arrays, with index 0 being soma.
+This is a prototype for illustration which has undergone only limited 
+testing. Details of the implementation and user-interface will likely
+change. USE AT YOUR OWN PERIL!
+
+@note All parameters that occur for both compartments
+and dendrite are stored as C arrays, with index 0 being soma.
 
 Sends: SpikeEvent
 
@@ -143,11 +146,11 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 References:
 
-Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
+[1] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
 model for the large, fluctuating synaptic conductance state typical of
 neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
 
-Bernander, O ., Douglas, R. J., Martin, K. A. C., & Koch, C. (1991).
+[2] Bernander, O ., Douglas, R. J., Martin, K. A. C., & Koch, C. (1991).
 Synaptic background activity influences spatiotemporal integration in
 single pyramidal cells.  Proc. Natl. Acad. Sci. USA, 88(24),
 11569-11573.

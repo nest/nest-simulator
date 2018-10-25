@@ -41,7 +41,6 @@
 #include "recordables_map.h"
 #include "universal_data_logger.h"
 
-
 namespace nest
 {
 
@@ -75,6 +74,7 @@ Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
 Parameters:
+
 Only the parameter linear_summation and the parameters from the
 class Nonlinearities can be set in the status dictionary.
 

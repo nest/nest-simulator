@@ -83,6 +83,7 @@ V_th+10 mV to avoid numerical instabilites that may result from
 setting V_peak too high.
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
 Dynamic state variables:

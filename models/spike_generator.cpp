@@ -185,14 +185,15 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
 {
   const bool allow_offgrid_spikes_changed = updateValue< bool >(
     d, names::allow_offgrid_spikes, allow_offgrid_spikes_ );
-  const bool allow_offgrid_times_changed = updateValue< bool >(
-    d, names::allow_offgrid_times, allow_offgrid_times_ );
+  const bool allow_offgrid_times_changed =
+    updateValue< bool >( d, names::allow_offgrid_times, allow_offgrid_times_ );
 
   if ( allow_offgrid_spikes_changed and allow_offgrid_times_changed
-      and not allow_offgrid_spikes_ == allow_offgrid_times_ )
+    and not allow_offgrid_spikes_ == allow_offgrid_times_ )
   {
-    throw BadProperty("allow_offgrid_spikes must equal "
-      "allow_offgrid_times if both are changed.");
+    throw BadProperty(
+      "allow_offgrid_spikes must equal "
+      "allow_offgrid_times if both are changed." );
   }
   if ( allow_offgrid_spikes_changed )
   {
@@ -202,9 +203,9 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   if ( not deprecation_warning_issued_ and allow_offgrid_spikes_changed )
   {
     LOG( M_DEPRECATED,
-         "set",
-         "allow_offgrid_spikes is deprecated in NEST 3.0. "
-         "Use allow_offgrid_times instead." );
+      "set",
+      "allow_offgrid_spikes is deprecated in NEST 3.0. "
+      "Use allow_offgrid_times instead." );
     deprecation_warning_issued_ = true;
   }
 

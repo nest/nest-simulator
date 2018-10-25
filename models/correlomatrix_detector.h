@@ -41,7 +41,7 @@ namespace nest
 Name: correlomatrix_detector - Device for measuring the covariance matrix
 from several inputs
 
-Description: 
+Description:
 
 The correlomatrix_detector is a recording device. It is used to
 record spikes from several pools of spike inputs and calculates the

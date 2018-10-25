@@ -124,7 +124,7 @@ for fname in allfiles:
             for line in item.splitlines():
                 name_line = re.findall(r"([\s*]?Name[\s*]?\:)(.*)", line)
                 if name_line:
-                    # Clean the Name: line!
+                    # Clean the Name: line
                     name_line_0 = name_line[0][0].strip()
                     name_line_1 = name_line[0][1].strip()
                     line = name_line_0 + ' ' + name_line_1
@@ -133,16 +133,16 @@ for fname in allfiles:
                 line = html.escape(line)
                 line = re.sub('^(\s)*- ', ' &bull; ', line)
                 line = re.sub('^(\s)*@note', ' &bull; ', line)
-                line = re.sub(r"(\s){5,}", '~~~ ', line)
-                line = re.sub(r"(\s){3,4}", '~~ ', line)
-                line = re.sub(r"(\s){2}", '~ ', line)
                 alllines.append(line)
             item = s.join(alllines)
             num += 1
             documentation = {}
             keyword_curr = ""
-            for token in item.split():
-                if token in keywords:
+            if "Name: aeif_cond_alpha_RK5" in item:
+                import pdb;pdb.set_trace()
+            split_items = item.split()
+            for i, token in enumerate(split_items):
+                if token in keywords and (i == 0 or split_items[i - 1] == "######"):
                     keyword_curr = token
                     documentation[keyword_curr] = ""
                 else:

@@ -41,31 +41,31 @@ namespace nest
 class Target
 {
 private:
-  unsigned long data_;
+  uint64_t data_;
 
   // define masks to select correct bits in data_
-  static const unsigned long lcid_mask = 0x0000000007FFFFFF;
-  static const unsigned long rank_mask = 0x00007FFFF8000000;
-  static const unsigned long tid_mask = 0x01FF800000000000;
-  static const unsigned long syn_id_mask = 0x7E00000000000000;
-  static const unsigned long processed_mask = 0x8000000000000000;
+  static constexpr uint64_t lcid_mask = 0x0000000007FFFFFF;
+  static constexpr uint64_t rank_mask = 0x00007FFFF8000000;
+  static constexpr uint64_t tid_mask = 0x01FF800000000000;
+  static constexpr uint64_t syn_id_mask = 0x7E00000000000000;
+  static constexpr uint64_t processed_mask = 0x8000000000000000;
 
   // define shifts to arrive at correct bits; note: the size of these
   // variables is most likely not enough for exascale computers, or
   // very small number of threads; if any issues are encountered with
   // these values, we can introduce compiler flags that rearrange these
   // sizes according to the target platform/application
-  static const size_t lcid_shift = 0;
-  static const size_t rank_shift = 27;
-  static const size_t tid_shift = 47;
-  static const size_t syn_id_shift = 57;
-  static const size_t processed_shift = 63;
+  static constexpr uint8_t lcid_shift = 0;
+  static constexpr uint8_t rank_shift = 27;
+  static constexpr uint8_t tid_shift = 47;
+  static constexpr uint8_t syn_id_shift = 57;
+  static constexpr uint8_t processed_shift = 63;
 
   // maximal sizes are determined by bitshifts
-  static const int max_lcid_ = 134217728; // 2 ** 27
-  static const int max_rank_ = 1048576;   // 2 ** 20
-  static const int max_tid_ = 1024;       // 2 ** 10
-  static const int max_syn_id_ = 64;      // 2 ** 6
+  static constexpr int max_lcid_ = 134217728; // 2 ** 27
+  static constexpr int max_rank_ = 1048576;   // 2 ** 20
+  static constexpr int max_tid_ = 1024;       // 2 ** 10
+  static constexpr int max_syn_id_ = 64;      // 2 ** 6
 
 public:
   Target();

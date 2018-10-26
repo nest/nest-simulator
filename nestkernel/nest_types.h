@@ -28,6 +28,15 @@
 #include <climits>
 #include <cstddef>
 #include <limits>
+#ifdef HAVE_32BIT_ARCH
+  #ifdef HAVE_UINT64_T   // 32-bit platforms usually provide the ...
+    #include <stdint.h>  // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
+  #else
+    #error "Compile for 32bit but platform does not provide a 64bit unsigned integer data type"
+  #endif
+#else
+  #include <cstdint>     // `uint64_t` on 64-bit platforms
+#endif
 
 // Generated includes:
 #include "config.h"
@@ -75,10 +84,10 @@ namespace nest
  * different architectures (e.g. 32 or 64 bit).
  */
 
+
 /**
  * Type for Time tics.
  */
-
 #ifdef HAVE_LONG_LONG
 typedef long long tic_t;
 #ifdef LLONG_MAX
@@ -97,7 +106,7 @@ const tic_t tic_t_min = LONG_MIN;
 /**
  *  Unsigned long type for enumerations.
  */
-typedef size_t index;
+typedef uint64_t index;   // ***GTR  size_t (long unsigned int) before, does not guarantee 64bit
 #ifndef SIZE_MAX
 #define SIZE_MAX ( static_cast< std::size_t >( -1 ) )
 #endif
@@ -197,6 +206,7 @@ enum SignalType
   BINARY = 2,
   ALL = SPIKE | BINARY
 };
+
 }
 
 #endif // NEST_TYPES_H

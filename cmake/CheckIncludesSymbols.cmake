@@ -39,7 +39,7 @@ if ( LONG_LONG_SIZE GREATER 0 )
   set( HAVE_LONG_LONG ON )
 endif ()
 
-set( CMAKE_EXTRA_INCLUDE_FILES "types.h" )
+set( CMAKE_EXTRA_INCLUDE_FILES "sys/types.h" )
 check_type_size( u_int16_t U_INT16_T_SIZE )
 set( CMAKE_EXTRA_INCLUDE_FILES OFF )
 if ( U_INT16_T_SIZE GREATER 0 )
@@ -52,6 +52,24 @@ set( CMAKE_EXTRA_INCLUDE_FILES OFF )
 if ( UINT16_T_SIZE GREATER 0 )
   set( HAVE_UINT16_T ON )
 endif ()
+
+set( CMAKE_EXTRA_INCLUDE_FILES "sys/types.h" )
+check_type_size( u_int64_t U_INT64_T_SIZE )
+set( CMAKE_EXTRA_INCLUDE_FILES OFF )
+if ( U_INT64_T_SIZE GREATER 0 )
+    set( HAVE_U_INT64_T ON )
+endif ()
+
+set( CMAKE_EXTRA_INCLUDE_FILES "stdint.h" )
+check_type_size( uint64_t UINT64_T_SIZE )
+set( CMAKE_EXTRA_INCLUDE_FILES OFF )
+if ( UINT64_T_SIZE GREATER 0 )
+    set( HAVE_UINT64_T ON )
+endif ()
+
+if( CMAKE_SIZEOF_VOID_P EQUAL 4 )
+    set( HAVE_32BIT_ARCH ON )
+endif()
 
 # Check symbols / defines exist
 include( CheckSymbolExists )

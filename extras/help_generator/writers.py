@@ -82,12 +82,15 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
             if key == word:
                 if (key != "Name" and key != "FullName" and
                         key != "SeeAlso" and key != "File"):
-                    value = re.sub("^(\s*(\n))*\s*", "", value)	# strip whitespace and paragraph breaks at start of entry
-                    value = re.sub("((\n)\s*)*$", "", value)	# strip whitespace and paragraph breaks at end of entry
+                    # strip whitespace and paragraph breaks at start of entry
+                    value = re.sub("^(\s*(\n))*\s*", "", value)
+                    # strip whitespace and paragraph breaks at end of entry
+                    value = re.sub("((\n)\s*)*$", "", value)
                     value = re.sub("(\n)", " <br/> ", value)
                     value = re.sub("(^|\n) ", "&nbsp;", value)
                     htmllist.append('<div class="doc_header">%s: </div>' % key)
-                    htmllist.append('<div class="doc_paragraph">%s</div>' % value)
+                    htmllist.append('<div class="doc_paragraph">%s</div>'
+                                    % value)
                     hlpvalue = re.sub(' <br/> ', '\n', value).rstrip()
                     hlpvalue = re.sub('\n ', '\n', hlpvalue).rstrip()
                     hlpvalue = hlpvalue.lstrip('\n')

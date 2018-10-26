@@ -27,6 +27,18 @@ div#TOC > ul > li > a { /* first level toc links */
 	text-decoration: underline;
 }
 
+div.figure {
+	text-align: center;
+}
+p.caption {
+	font-size: 0.9em;
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	color: #808080;
+	font-style: italic;
+	text-align: left;
+}
 math {
 	font-size: 1.15em;
 }

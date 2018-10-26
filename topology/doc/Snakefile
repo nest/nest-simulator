@@ -1,0 +1,45 @@
+
+rule done:
+    input:
+        'Topology_UserManual.html',
+        'Topology_UserManual.pdf',
+
+SRCFMT = "markdown+yaml_metadata_block+implicit_figures"
+
+rule tex2md:
+    '''
+    This rule is not needed anymore once the Markdown document becomes the authoritaive source
+    '''
+    input:
+        'Topology_UserManual.tex',
+    output:
+        'Topology_UserManual.md',
+    shell:
+        '''
+        pandoc -f latex -t markdown {input} -o {output}
+        '''
+
+rule md2html:
+    input:
+        file = 'Topology_UserManual.md',
+        css = 'Topology_UserManual.css',
+        meta = 'metadata.yaml',
+    output:
+        'Topology_UserManual.html'
+    shell:
+        '''
+        pandoc -f {SRCFMT} -t html --filter pandoc-citeproc --standalone --smart --toc --mathml --css {input.css} {input.file} {input.meta} -o {output}
+        '''
+
+rule md2pdf:
+    input:
+        file = 'Topology_UserManual.md',
+        css = 'Topology_UserManual.css',
+        meta = 'metadata.yaml',
+    output:
+        'Topology_UserManual.pdf'
+    shell:
+        '''
+        pandoc -f {SRCFMT} -t latex --toc --smart {input.file} {input.meta} -o {output}
+        '''
+

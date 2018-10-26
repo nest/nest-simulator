@@ -4,19 +4,28 @@ rule done:
         'Topology_UserManual.html',
         'Topology_UserManual.pdf',
 
-SRCFMT = "markdown+yaml_metadata_block+implicit_figures"
+SRCFMT = "markdown+yaml_metadata_block+implicit_figures+implicit_header_references+simple_tables"
 
 rule tex2md:
     '''
-    This rule is not needed anymore once the Markdown document becomes the authoritaive source
+    Convert the LaTeX document to a Markdown source file.
+
+    This rule is not needed anymore once the Markdown document becomes the
+    authoritaive source.
+
+    Some Information can not be extracted automatically or produces buggy
+    output. For this a patch file is applied. See `patch` rule!!!
     '''
     input:
         'Topology_UserManual.tex',
+        patch = 'Topology_UserManual.md.patch',
     output:
-        'Topology_UserManual.md',
+        patched = 'Topology_UserManual.md',
+        original = protected('Topology_UserManual-original.md'),
     shell:
         '''
-        pandoc -f latex -t markdown {input} -o {output}
+        pandoc -f latex -t markdown --listings {input} | tee {output.patched} >{output.original}
+        patch -p0 <{input.patch}
         '''
 
 rule md2html:
@@ -28,7 +37,7 @@ rule md2html:
         'Topology_UserManual.html'
     shell:
         '''
-        pandoc -f {SRCFMT} -t html --filter pandoc-citeproc --standalone --smart --toc --mathml --css {input.css} {input.file} {input.meta} -o {output}
+        pandoc -f {SRCFMT} -t html --listings --filter pandoc-citeproc --standalone --smart --toc --mathml --css {input.css} {input.file} {input.meta} -o {output}
         '''
 
 rule md2pdf:
@@ -40,6 +49,25 @@ rule md2pdf:
         'Topology_UserManual.pdf'
     shell:
         '''
-        pandoc -f {SRCFMT} -t latex --toc --smart {input.file} {input.meta} -o {output}
+        pandoc -f {SRCFMT} -t latex --listings --toc --smart {input.file} {input.meta} -o {output}
         '''
 
+
+rule patch:
+    '''
+    Run this rule whenever you do manual changes to the intermediate Markdown
+    file!
+
+    When the Markdown file manually edited the changes will be lost upon next
+    convert from LaTeX sources. This rule saves the changes in a patch that is
+    automatically applied next time the tex2md rule is run.
+    '''
+    input:
+        old=ancient('Topology_UserManual-original.md'),
+        new=ancient('Topology_UserManual.md'),
+    output:
+        'Topology_UserManual.md.patch'
+    shell:
+        '''
+        diff -u {input.old} {input.new} --label {input.new} --label {input.new}  >{output} || true
+        '''

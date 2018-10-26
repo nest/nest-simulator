@@ -6,6 +6,19 @@ body {
 	margin-top: 80px;
 }
 
+th {
+   padding-left: 5px;
+   padding-right: 5px;
+   background: #e0e0e0;
+}
+td {
+   padding-left: 5px;
+   padding-right: 5px;
+}
+table {
+   border: 1px solid #e0e0e0;
+   margin: 20px;
+}
 div#TOC a {
 	color: #006491; /* MidnightBlue */
 }

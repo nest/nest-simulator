@@ -1,0 +1,20 @@
+--- Topology_UserManual.md
++++ Topology_UserManual.md
+@@ -1,7 +1,7 @@
+ Introduction {#sec:intro}
+ ============
+ 
+-The Topology Module provides the NEST simulator[^1] [@Gewa:2007(1430)]
++The Topology Module provides the NEST simulator[^1] [@Gewa:2007]
+ with a convenient interface for creating layers of neurons placed in
+ space and connecting neurons in such layers with probabilities and
+ properties depending on the relative placement of neurons. This permits
+@@ -400,7 +400,7 @@
+ Pool
+ 
+ :   When connecting two layers, the *pool* layer is the one from which
+-    nodes are chosen for each node in the driver layer. I.e., we have\
++    nodes are chosen for each node in the driver layer. I.e., we have
+ 
+       Connection type   Driver         Pool
+       ----------------- -------------- --------------

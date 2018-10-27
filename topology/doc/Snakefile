@@ -3,6 +3,7 @@ rule done:
     input:
         'Topology_UserManual.html',
         'Topology_UserManual.pdf',
+        'README.md',
 
 SRCFMT = "markdown+yaml_metadata_block+implicit_figures+implicit_header_references+simple_tables"
 
@@ -52,6 +53,16 @@ rule md2pdf:
         pandoc -f {SRCFMT} -t latex --listings --toc --smart {input.file} {input.meta} -o {output}
         '''
 
+rule md2github:
+    input:
+        file = 'Topology_UserManual.md',
+        meta = 'metadata.yaml',
+    output:
+        'README.md',
+    shell:
+        '''
+        pandoc -f {SRCFMT} -t markdown_github --listings --toc --smart {input.file} {input.meta} -o {output}
+        '''
 
 rule patch:
     '''

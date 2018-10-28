@@ -1,5 +1,5 @@
---- Topology_UserManual.md
-+++ Topology_UserManual.md
+--- Topology_UserManual-patched.md
++++ Topology_UserManual-patched.md
 @@ -1,7 +1,7 @@
  Introduction {#sec:intro}
  ============
@@ -15,7 +15,7 @@
  We create a first, grid-based simple layer with the following commands:
 -[Simple grid-based layer centered about the origin. Blue circles mark
 +
-+    MISSING SCRIPT CODE HERE!
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer1-end
 +
 +![Simple grid-based layer centered about the origin. Blue circles mark
  layer elements, the thin square the extent of the layer. Row and column
@@ -38,7 +38,7 @@
 -$dx=0.4$ and $dy=0.1$. Changing the extent does not affect grid indices.
 +`'extent'` entry to the dictionary passed to `CreateLayer`: 
 +
-+    MISSING SCRIPT CODE HERE!
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer2-end
 +
 +![Same layer as in Fig. \[fig:layer1\], but with different extent.](user_manual_figures/layer2.png)
 +
@@ -57,7 +57,7 @@
 -(red).]{} The center is given as a two-element tuple of floats. Changing
 +$(-1,1)$, and $(1.5,0.5)$, respectively:
 +
-+    MISSING SCRIPT CODE HERE!
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer3-end
 +
 +![Three layers centered, respectively, about $(0,0)$ (blue), $(-1,-1)$ (green),
 +and $(1.5,0.5)$ (red).](user_manual_figures/layer3.png)
@@ -77,7 +77,7 @@
 -layer.]{}
 +following code and shown in Fig. \[fig:layer3a\]: 
 +
-+    MISSING SCRIPT CODE HERE!
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer3a-end
 +
 +![Layer with $n_c=5$ rows and $n_r=3$ columns, spacing $d=0.1$ and the left
 +edge of the extent at $x=0$, centered about the $y$-axis. The cross marks the
@@ -95,7 +95,7 @@
 -$1\times 1$.]{} Note the following points:
 +$1\times 1$, i.e., spanning the square $[-0.5,0.5]\times[-0.5,0.5]$:
 +
-+    MISSING SCRIPT CODE HERE!
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer4-end
 +
 +![A free layer with 50 elements uniformly distributed in an extent of size
 +$1\times 1$.](user_manual_figures/layer4.png)
@@ -112,7 +112,7 @@
 -distributed in an extent of size $1\times 1\times 1$.]{}
 +for the positions:
 +
-+    MISSING SCRIPT CODE HERE!
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer4_3d-end
 +
 +![A free 3D layer with 200 elements uniformly distributed in an extent of size
 +$1\times 1\times 1$.](user_manual_figures/layer4_3d.png)
@@ -126,7 +126,7 @@
 -dictionary entry `edge_wrap`: [Top left: Layer with single row and five
 +dictionary entry `edge_wrap`: 
 +
-+    MISSING SCRIPT CODE HERE!
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines player-end
 +
 +![Top left: Layer with single row and five
  columns without periodic boundary conditions. Numbers above elements
@@ -140,7 +140,7 @@
  
  Note that the longest possible distance between two elements in a layer
  without periodic boundary conditions is
-@@ -257,12 +286,21 @@
+@@ -257,12 +286,23 @@
      free layers the model type `topology_layer_free`.
  
  -   The status dictionary of a layer has a `'topology'` entry describing
@@ -148,7 +148,9 @@
 -    `'topology'` entry is read-only.
 +    the layer properties (`l` is the layer created above):
 +
-+        MISSING SCRIPT CODE HERE!
++        MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer1s-end
++
++        MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.log lines layer1s.log-end.log
 +
 +    The `'topology'` entry is read-only.
  
@@ -157,22 +159,24 @@
 -    network with a Topology layer: The $5\times 5$ layer created above
 +    network with a Topology layer: 
 +
-+        MISSING SCRIPT CODE HERE!
++        MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer1p-end
 +
-+        MISSING SCRIPT CODE HERE!
++        MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.log lines layer1p.log-end.log
 +
 +    The $5\times 5$ layer created above
      appears here as a `topology_layer_grid` subnet of 25 `iaf_psc_alpha`
      neurons. Only Topology connection and visualization functions heed
      the spatial structure of the layer.
-@@ -280,15 +318,25 @@
+@@ -280,15 +320,27 @@
  dictionary passed to `CreateLayer` is a Python list or tuple. The
  following code creates a $1\times 2$ layer (to keep the output from
  `PrintNetwork()` compact) in which each element consists of one
 -`'iaf_cond_alpha'` and one `'poisson_generator'` node The network
 +`'iaf_cond_alpha'` and one `'poisson_generator'` node
 +
-+    MISSING SCRIPT CODE HERE!
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer6-end
++
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.log lines layer6-end
 +
 + The network
  consist of one `topology_layer_grid` with four elements: two
@@ -186,28 +190,28 @@
 -following a model name with the number of nodes to be created: In this
 +following a model name with the number of nodes to be created:
 +
-+    MISSING SCRIPT CODE HERE!
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer7-end
 +
-+    MISSING SCRIPT CODE HERE!
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.log lines layer7-end
 +
 +In this
  case, each layer element consists of 10 `iaf_cond_alpha` neurons, one
  `poisson_generator`, and two `noise_generator`s.
  
-@@ -327,7 +375,11 @@
+@@ -327,7 +379,11 @@
  
  How should you implement such a network using the Topology module? The
  recommended approach is to create different models for the neurons in
 -each layer and then define the microcolumn as one composite element: We
 +each layer and then define the microcolumn as one composite element:
 +
-+    MISSING SCRIPT CODE HERE!
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer10-end
 +
 +We
  will discuss in Chapter \[sec:conn\_basics\] how to connect selectively
  to different neuron models.
  
-@@ -400,7 +452,7 @@
+@@ -400,7 +456,7 @@
  Pool
  
  :   When connecting two layers, the *pool* layer is the one from which
@@ -216,20 +220,20 @@
  
        Connection type   Driver         Pool
        ----------------- -------------- --------------
-@@ -470,7 +522,11 @@
+@@ -470,7 +526,11 @@
  targets. If no mask is given, all neurons in the respective layer are
  considered sources or targets.
  
 -Here is a simple example, cf. \[fig:conn1\]: [Left: Minimal connection
 +Here is a simple example, cf. \[fig:conn1\]:
 +
-+    MISSING SCRIPT CODE HERE!
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn1-end
 +
 +![Left: Minimal connection
  example from a layer onto itself using a rectangular mask shown as red
  line for the node at $(0,0)$ (marked light red). The targets of this
  node are marked with red dots. The targets for the node at $(4,5)$ are
-@@ -481,7 +537,9 @@
+@@ -481,7 +541,9 @@
  boundary conditions were used. The node at $(4,5)$ now has 15 targets,
  too, but they are spread across the corners of the layer. If we wrapped
  the layer to a torus, they would form a $5\times 3$ rectangle centered
@@ -240,18 +244,18 @@
  target layer. Connection type is divergent, i.e., for each node in the
  layer we choose targets according to the rectangular mask centered about
  each source node. Since no connection kernel is specified, we connect to
-@@ -540,17 +598,23 @@
+@@ -540,17 +602,23 @@
      specified by its lower left and upper right corners, measured in the
      same unit as element coordinates. Example:
  
-+        MISSING SCRIPT CODE HERE!
++        MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2r-end
 +
  Circular
  
  :   All nodes within a circle are connected. The area is specified by
      its radius.
  
-+        MISSING SCRIPT CODE HERE!
++        MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2c-end
 +
  Doughnut
  
@@ -259,17 +263,21 @@
      nodes *on* the inner circle are not connected. The area is specified
      by the radii of the inner and outer circles.
  
-+        MISSING SCRIPT CODE HERE!
++        MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2d-end
 +
  By default, the masks are centered about the position of the driver
  node, mapped into the pool layer. You can change the location of the
  mask relative to the driver node by specifying an `'anchor'` entry in
-@@ -558,13 +622,15 @@
+@@ -558,13 +626,19 @@
  of the mask center relative to the driver node, as in the following
  examples (cf.Fig. \[fig:conn2\], bottom row):
  
 -[Masks for 2D layers. For all mask types, the driver node is marked by a
-+    MISSING SCRIPT CODE HERE!
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2ro-end
++
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2co-end
++
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2do-end
 +
 +![Masks for 2D layers. For all mask types, the driver node is marked by a
  wide light-red circle, the selected pool nodes by red dots and the masks
@@ -282,18 +290,18 @@
  
  ### Masks for 3D layers {#sec:3d_masks}
  
-@@ -576,35 +642,54 @@
+@@ -576,35 +650,54 @@
      specified by its lower left and upper right corners, measured in the
      same unit as element coordinates. Example:
  
-+        MISSING SCRIPT CODE HERE!
++        MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn_3d_a-end
 +
  Spherical
  
  :   All nodes within a sphere are connected. The area is specified by
      its radius.
  
-+        MISSING SCRIPT CODE HERE!
++        MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn_3d_b-end
 +
  As in the 2D case, you can change the location of the mask relative to
  the driver node by specifying a 3D vector in the `'anchor'` entry in the
@@ -314,7 +322,7 @@
 -this example: The resulting connections are shown in Fig. \[fig:conn3\].
 +this example:
 +
-+    MISSING SCRIPT BLOCK HERE!
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn3-end
 +
 +The resulting connections are shown in Fig. \[fig:conn3\].
  By default the top-left corner of a grid mask, i.e., the grid mask
@@ -323,11 +331,11 @@
 -You can even place the anchor outside the mask: The resulting connection
 -patterns are shown in Fig. \[fig:conn3\]. [Grid masks for connections
 +
-+    MISSING SCRIPT BLOCK HERE!
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn3c-end
 +
 +You can even place the anchor outside the mask:
 +
-+    MISSING SCRIPT BLOCK HERE!
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn3x-end
 +
 +The resulting connection
 +patterns are shown in Fig. \[fig:conn3\]. 
@@ -343,7 +351,7 @@
  masks are generated more efficiently than connections specified using
  other mask types.
  
-@@ -653,30 +738,42 @@
+@@ -653,30 +746,42 @@
  kernel functions may be created in a NEST extension module. This is
  covered in Chapter \[ch:extending\].
  
@@ -386,13 +394,13 @@
 +                  `c`
 +
 +   `gamma`        `kappa`, `theta`  $$p(d) = \frac{d^{\kappa-1}e^{-\frac{d}{\theta}}}{\theta^\kappa\Gamma(\kappa)}$$\
-+
+ 
+-[Illustration of various kernel functions. Top left: constant kernel,
 +   `uniform`      `min`, `max`      $p\in [\text{min},\text{max})$ uniformly
 +
 +   `normal`       `mean`, `sigma`,  $p \in [\text{min},\text{max})$ normal with given mean and $\sigma$
 +                  `min`, `max`
- 
--[Illustration of various kernel functions. Top left: constant kernel,
++
 +   `lognormal`     `mu`, `sigma`,   $p \in [\text{min},\text{max})$ lognormal with given $\mu$ and $\sigma$
 +                   `min`, `max`
 +   ------------------------------------------------------------------------------
@@ -406,11 +414,11 @@
  
  Several examples follow. They are illustrated in Fig. \[fig:conn4\].
  
-@@ -684,28 +781,38 @@
+@@ -684,28 +789,38 @@
  
  :   The simplest kernel is a fixed connection probability:
  
-+        MISSING SCRIPT BLOCK HERE!
++        MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn4cp-end
 +
  Gaussian
  
@@ -418,7 +426,7 @@
      probability is 1 for $d=0$ and falls off with a “standard deviation”
      of $\sigma=1$:
  
-+        MISSING SCRIPT BLOCK HERE!
++        MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn4g-end
 +
  Eccentric Gaussian
  
@@ -426,13 +434,13 @@
      Note that the anchor for the kernel is specified inside the
      dictionary containing the parameters for the Gaussian.
  
-+        MISSING SCRIPT BLOCK HERE!
++        MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn4gx-end
 +
  Cut-off Gaussian
  
  :   In this example, all probabilities less than $0.5$ are set to zero:
  
-+        MISSING SCRIPT BLOCK HERE!
++        MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn4cut-end
 +
  2D Gaussian
  
@@ -440,12 +448,12 @@
      a Gaussian with different widths in $x$- and $y-$ directions. This
      kernel depends on displacement, not only on distance:
  
-+        MISSING SCRIPT BLOCK HERE!
++        MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn42d-end
 +
  Note that for pool layers with periodic boundary conditions, Topology
  always uses the shortest possible displacement vector from driver to
  pool neuron as argument to the kernel function.
-@@ -726,12 +833,7 @@
+@@ -726,12 +841,7 @@
  
  Linear example
  
@@ -459,15 +467,15 @@
      weights and delays are shown for the leftmost neuron as driver.
      Weights drop linearly from $1$. From the node at $(20,0)$ on, the
      cutoff sets weights to 0. There are no connections to nodes beyond
-@@ -739,44 +841,39 @@
+@@ -739,44 +849,41 @@
      driver. Delays increase in a stepwise linear fashion, as NEST
      requires delays to be multiples of the simulation resolution.
  
 -Linear example with periodic boundary conditions
--
--:   
-+         MISSING SCRIPT BLOCK HERE!
++         MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5lin-end
  
+-:   
+-
 -    ------------------------------------------------------------------------
 +Linear example with periodic boundary conditions
  
@@ -482,7 +490,7 @@
 -Various functions
 -
 -:   
-+         MISSING SCRIPT BLOCK HERE!
++         MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5linpbc-end
  
 -    ------------------------------------------------------------------------
 +Various functions
@@ -494,9 +502,10 @@
      at $(25,0)$.
  
 -Randomized weights and delays
--
++         MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5exp-end
+ 
 -:   
-+         MISSING SCRIPT BLOCK HERE!
++         MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5gauss-end
  
 -    ------------------------------------------------------------------------
 +Randomized weights and delays
@@ -511,7 +520,7 @@
  
 -[Distance-dependent and randomized weights and delays. See text for
 -details.]{}
-+         MISSING SCRIPT BLOCK HERE!
++         MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5uniform-end
 +
 +
 +![Distance-dependent and randomized weights and delays. See text for
@@ -520,14 +529,14 @@
  
  Periodic boundary conditions {#sec:conn_pbc}
  ----------------------------
-@@ -855,11 +952,16 @@
+@@ -855,11 +962,16 @@
  $$p_{\text{conn}}(d) = \frac{12}{\pi} \times 2\pi r \times (1-2r)
   = 24 r (1-2r) \qquad \text{for} \quad 0\le r < \frac{1}{2}\;.
  \label{eq:ptheo}$$ The resulting distribution of distances between
 -connected nodes is shown in Fig. \[fig:conn6\]. [Distribution of
 +connected nodes is shown in Fig. \[fig:conn6\].
 +
-+    MISSING SCRIPT BLOCK HERE!
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn6-end
 +
 +![Distribution of
  distances between source and target for a network of 1000 randomly
@@ -539,11 +548,11 @@
  
  Functions determining weight and delay as function of
  distance/displacement work in just the same way as before when the
-@@ -890,13 +992,19 @@
+@@ -890,13 +1002,19 @@
  probability and interneurons to pyramidal cells with a rectangular mask
  unit probability.
  
-+    MISSING SCRIPT BLOCK HERE!
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn7-end
 +
  Synapse models and properties {#sec:conn_synapse}
  -----------------------------
@@ -554,41 +563,41 @@
 -as in this example: You have to use synapse models if you want to set,
 +as in this example:
 +
-+    MISSING SCRIPT BLOCK HERE!
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn8-end
 +
 + You have to use synapse models if you want to set,
  e.g., the receptor type of connections or parameters for plastic synapse
  models. These can not be set in distance-dependent ways at present.
  
-@@ -909,10 +1017,17 @@
+@@ -909,10 +1027,17 @@
  For connecting the device layer to a neuron layer, an appropriate mask
  needs to be specified and optionally also an anchor for shifting the
  center of the mask. As demonstrated in the following example,
 -stimulation devices require the divergent connection type while
 +stimulation devices require the divergent connection type
 +
-+    MISSING SCRIPT BLOCK HERE!
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn9-end
 +
 +while
  recording devices require the convergent connection type (see also
  Sec. \[sec:rec\_dev\]):
  
-+    MISSING SCRIPT BLOCK HERE!
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn10-end
 +
 +
  Layers and recording devices {#sec:rec_dev}
  ----------------------------
  
-@@ -921,6 +1036,8 @@
+@@ -921,6 +1046,8 @@
  create a single spike detector, and connect all neurons in the layer to
  that spike detector using a normal connect command:
  
-+    MISSING SCRIPT BLOCK HERE!
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn11-end
 +
  Connections to a layer of recording devices as described in
  Sec. \[sec:dev\_subregions\], such as spike detectors, are only possible
  using the convergent connection type without a fixed number of
-@@ -943,46 +1060,72 @@
+@@ -943,46 +1070,72 @@
  (`nest.`) and Topology (`tp.`). For detailed information about these
  functions, please see the online Python and SLI documentation.
  
@@ -659,7 +668,7 @@
  resulting graphics is shown in Fig. \[fig:vislayer\]. All elements and
  the targets of the center neuron are shown, as well as mask and kernel.
  
-+    MISSING SCRIPT BLOCK HERE!
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/layers.py lines vislayer-end
 +
 +![$21\times21$ grid with divergent Gaussian projections onto itself. Blue
 +circles mark layer elements, red circles connection targets of the

@@ -41,7 +41,11 @@ Grid-based Layers
 
 We create a first, grid-based simple layer with the following commands:
 
-    MISSING SCRIPT CODE HERE!
+    import nest.topology as tp
+
+    l = tp.CreateLayer({'rows': 5,
+                        'columns': 5,
+                        'elements': 'iaf_psc_alpha'})
 
 ![Simple grid-based layer centered about the origin. Blue circles mark layer elements, the thin square the extent of the layer. Row and column indices are shown in the right and top margins, respectively.](user_manual_figures/layer1.png)
 
@@ -74,7 +78,10 @@ The layer is shown in Fig. \[fig:layer1\]. Note the following properties:
 
 Layers have a default extent of 1 × 1. You can specify a different extent of a layer, i.e., its size in *x*- and *y*-direction by adding an `'extent'` entry to the dictionary passed to `CreateLayer`:
 
-    MISSING SCRIPT CODE HERE!
+    l = tp.CreateLayer({'rows': 5,
+                        'columns': 5,
+                        'extent': [2.0, 0.5],
+                        'elements': 'iaf_psc_alpha'})
 
 ![Same layer as in Fig. \[fig:layer1\], but with different extent.](user_manual_figures/layer2.png)
 
@@ -86,7 +93,17 @@ The size of `'extent'` in *x*- and *y*-directions should be numbers that can be 
 
 Layers are centered about the origin (0, 0) by default. This can be changed through the `'center'` entry in the dictionary specifying the layer. The following code creates layers centered about (0, 0), ( − 1, 1), and (1.5, 0.5), respectively:
 
-    MISSING SCRIPT CODE HERE!
+    l1 = tp.CreateLayer({'rows': 5,
+                         'columns': 5,
+                         'elements': 'iaf_psc_alpha'})
+    l2 = tp.CreateLayer({'rows': 5,
+                         'columns': 5,
+                         'elements': 'iaf_psc_alpha',
+                         'center': [-1., 1.]})
+    l3 = tp.CreateLayer({'rows': 5,
+                         'columns': 5,
+                         'elements': 'iaf_psc_alpha',
+                         'center': [1.5, 0.5]})
 
 ![Three layers centered, respectively, about (0, 0) (blue), ( − 1, −1) (green), and (1.5, 0.5) (red).](user_manual_figures/layer3.png)
 
@@ -108,7 +125,13 @@ To see how to construct a layer, consider the following example:
 
 From Eq. \[eq:dx\_dy\_extent\], we see that the extent of the layer must be (*n*<sub>*c*</sub>*d*, *n*<sub>*r*</sub>*d*). We now need to find the coordinates (*c*<sub>*x*</sub>, *c*<sub>*y*</sub>) of the center of the layer. To place the left edge of the extent at *x* = 0, we must place the center of the layer at *c*<sub>*x*</sub> = *n*<sub>*c*</sub>*d*/2 along the *x*-axis, i.e., half the extent width to the right of *x* = 0. Since the layer is to be centered about *y* = 0, we have *c*<sub>*y*</sub> = 0. Thus, the center coordinates are (*n*<sub>*c*</sub>*d*/2, 0). The layer is created with the following code and shown in Fig. \[fig:layer3a\]:
 
-    MISSING SCRIPT CODE HERE!
+    nc, nr = 5, 3
+    d = 0.1
+    l = tp.CreateLayer({'columns': nc,
+                        'rows': nr,
+                        'elements': 'iaf_psc_alpha',
+                        'extent': [nc * d, nr * d],
+                        'center': [nc * d / 2., 0.]})
 
 ![Layer with *n*<sub>*c*</sub> = 5 rows and *n*<sub>*r*</sub> = 3 columns, spacing *d* = 0.1 and the left edge of the extent at *x* = 0, centered about the *y*-axis. The cross marks the point on the extent placed at the origin (0, 0), the circle the center of the layer.](user_manual_figures/layer3a.png)
 
@@ -117,7 +140,12 @@ Free layers
 
 *Free layers* do not restrict node positions to a grid, but allow free placement within the extent. To this end, the user needs to specify the positions of all nodes explicitly. The following code creates a layer of 50 `iaf_psc_alpha` neurons uniformly distributed in a layer with extent 1 × 1, i.e., spanning the square \[ − 0.5, 0.5\]×\[−0.5, 0.5\]:
 
-    MISSING SCRIPT CODE HERE!
+    import numpy as np
+
+    pos = [[np.random.uniform(-0.5, 0.5), np.random.uniform(-0.5, 0.5)]
+           for j in range(50)]
+    l = tp.CreateLayer({'positions': pos,
+                        'elements': 'iaf_psc_alpha'})
 
 ![A free layer with 50 elements uniformly distributed in an extent of size 1 × 1.](user_manual_figures/layer4.png)
 
@@ -136,7 +164,12 @@ Note the following points:
 
 Although the term “layer” suggests a 2-dimensional structure, the layers in NEST may in fact be 3-dimensional. The example from the previous section may be easily extended with another component in the coordinates for the positions:
 
-    MISSING SCRIPT CODE HERE!
+    import numpy as np
+
+    pos = [[np.random.uniform(-0.5, 0.5), np.random.uniform(-0.5, 0.5),
+            np.random.uniform(-0.5, 0.5)] for j in range(200)]
+    l = tp.CreateLayer({'positions': pos,
+                        'elements': 'iaf_psc_alpha'})
 
 ![A free 3D layer with 200 elements uniformly distributed in an extent of size 1 × 1 × 1.](user_manual_figures/layer4_3d.png)
 
@@ -149,7 +182,9 @@ One common approach to reducing the effect of boundaries on simulations is to in
 
 You specify periodic boundary conditions for a layer using the dictionary entry `edge_wrap`:
 
-    MISSING SCRIPT CODE HERE!
+    lp = tp.CreateLayer({'rows': 1, 'columns': 5, 'extent': [5., 1.],
+                         'elements': 'iaf_psc_alpha',
+                         'edge_wrap': True})
 
 ![Top left: Layer with single row and five columns without periodic boundary conditions. Numbers above elements show element coordinates. Colors shifting from blue to magenta mark increasing distance from the element at ( − 2, 0). Bottom left: Same layer, but with periodic boundary conditions. Note that the element at (2, 0) now is a nearest neighbor to the element at ( − 2, 0). Right: Layer with periodic boundary condition arranged on a circle to illustrate neighborhood relationships.](user_manual_figures/player.png)
 
@@ -169,15 +204,21 @@ From the perspective of NEST, a Topology layer is a special type of *subnet*. Fr
 
 -   The status dictionary of a layer has a `'topology'` entry describing the layer properties (`l` is the layer created above):
 
-        MISSING SCRIPT CODE HERE!
+        print(nest.GetStatus(l)[0]['topology'])
+
+        {'center': (0.0, 0.0), 'columns': 5, 'depth': 1, 'edge_wrap': False, 'extent': (1.0, 1.0), 'rows': 5}
 
     The `'topology'` entry is read-only.
 
 -   The NEST kernel sees the elements of the layer in the same way as the elements of any subnet. You will notice this when printing a network with a Topology layer:
 
-        MISSING SCRIPT CODE HERE!
+        nest.PrintNetwork(depth=3)
 
-        MISSING SCRIPT CODE HERE!
+        +-[0] root dim=[1 25]
+           |
+           +-[1] topology_layer_grid dim=[25]
+              |
+              +-[1]...[25] iaf_psc_alpha
 
     The 5 × 5 layer created above appears here as a `topology_layer_grid` subnet of 25 `iaf_psc_alpha` neurons. Only Topology connection and visualization functions heed the spatial structure of the layer.
 
@@ -188,15 +229,35 @@ So far, we have considered layers in which each element was a single model neuro
 
 Construction of layers with composite elements proceeds exactly as for layers with simple elements, except that the `'elements'` entry of the dictionary passed to `CreateLayer` is a Python list or tuple. The following code creates a 1 × 2 layer (to keep the output from `PrintNetwork()` compact) in which each element consists of one `'iaf_cond_alpha'` and one `'poisson_generator'` node
 
-    MISSING SCRIPT CODE HERE!
+    l = tp.CreateLayer({'rows': 1, 'columns': 2,
+                        'elements': ['iaf_cond_alpha',
+                                     'poisson_generator']})
+
+    +-[0] root dim=[1 4]
+       |
+       +-[1] topology_layer_grid dim=[4]
+          |
+          +-[1]...[2] iaf_cond_alpha
+          +-[3]...[4] poisson_generator
+          
 
 The network consist of one `topology_layer_grid` with four elements: two `iaf_cond_alpha` and two `poisson_generator` nodes. The identical nodes are grouped, so that the subnet contains first one full layer of `iaf_cond_alpha` nodes followed by one full layer of `poisson_generator` nodes.
 
 You can create network elements with several nodes of each type by following a model name with the number of nodes to be created:
 
-    MISSING SCRIPT CODE HERE!
+    l = tp.CreateLayer({'rows': 1, 'columns': 2,
+                        'elements': ['iaf_cond_alpha', 10,
+                                     'poisson_generator',
+                                     'noise_generator', 2]})
 
-    MISSING SCRIPT CODE HERE!
+    +-[0] root dim=[1 26]
+       |
+       +-[1] topology_layer_grid dim=[26]
+          |
+          +-[1]...[20] iaf_cond_alpha
+          +-[21]...[22] poisson_generator
+          +-[23]...[26] noise_generator
+          
 
 In this case, each layer element consists of 10 `iaf_cond_alpha` neurons, one `poisson_generator`, and two `noise_generator`s.
 
@@ -220,7 +281,13 @@ A paper on a neural network model might describe the network as follows[2]:
 
 How should you implement such a network using the Topology module? The recommended approach is to create different models for the neurons in each layer and then define the microcolumn as one composite element:
 
-    MISSING SCRIPT CODE HERE!
+    for lyr in ['L23', 'L4', 'L56']:
+        nest.CopyModel('iaf_psc_alpha', lyr + 'pyr')
+        nest.CopyModel('iaf_psc_alpha', lyr + 'in', {'V_th': -52.})
+    l = tp.CreateLayer({'rows': 20, 'columns': 20, 'extent': [0.5, 0.5],
+                        'elements': ['L23pyr', 3, 'L23in',
+                                     'L4pyr', 3, 'L4in',
+                                     'L56pyr', 3, 'L56in']})
 
 We will discuss in Chapter \[sec:conn\_basics\] how to connect selectively to different neuron models.
 
@@ -308,7 +375,12 @@ Only neurons within the mask are considered as potential sources or targets. If 
 
 Here is a simple example, cf. \[fig:conn1\]:
 
-    MISSING SCRIPT CODE HERE!
+    l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
+                        'elements': 'iaf_psc_alpha'})
+    conndict = {'connection_type': 'divergent',
+                'mask': {'rectangular': {'lower_left': [-2., -1.],
+                                         'upper_right': [2., 1.]}}}
+    tp.ConnectLayers(l, l, conndict)
 
 ![Left: Minimal connection example from a layer onto itself using a rectangular mask shown as red line for the node at (0, 0) (marked light red). The targets of this node are marked with red dots. The targets for the node at (4, 5) are marked with yellow dots. This node has fewer targets since it is at the corner and many potential targets are beyond the layer. Right: The effect of periodic boundary conditions is seen here. Source and target layer and connection dictionary were identical, except that periodic boundary conditions were used. The node at (4, 5) now has 15 targets, too, but they are spread across the corners of the layer. If we wrapped the layer to a torus, they would form a 5 × 3 rectangle centered on the node at (4, 5).](user_manual_figures/conn1.png)
 
@@ -341,21 +413,38 @@ Topology currently provides three types of masks usable for 2-dimensional free a
 Rectangular  
 All nodes within a rectangular area are connected. The area is specified by its lower left and upper right corners, measured in the same unit as element coordinates. Example:
 
-    MISSING SCRIPT CODE HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'rectangular': {'lower_left': [-2., -1.],
+                                         'upper_right': [2., 1.]}}}
 
 Circular  
 All nodes within a circle are connected. The area is specified by its radius.
 
-    MISSING SCRIPT CODE HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'circular': {'radius': 2.0}}}
 
 Doughnut  
 All nodes between an inner and outer circle are connected. Note that nodes *on* the inner circle are not connected. The area is specified by the radii of the inner and outer circles.
 
-    MISSING SCRIPT CODE HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'doughnut': {'inner_radius': 1.5,
+                                      'outer_radius': 3.}}}
 
 By default, the masks are centered about the position of the driver node, mapped into the pool layer. You can change the location of the mask relative to the driver node by specifying an `'anchor'` entry in the mask dictionary. The anchor is a 2D vector specifying the location of the mask center relative to the driver node, as in the following examples (cf.Fig. \[fig:conn2\], bottom row):
 
-    MISSING SCRIPT CODE HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'rectangular': {'lower_left': [-2., -1.],
+                                         'upper_right': [2., 1.]},
+                         'anchor': [-1.5, -1.5]}}
+
+    conndict = {'connection_type': 'divergent',
+                'mask': {'circular': {'radius': 2.0},
+                         'anchor': [-2.0, 0.0]}}
+
+    conndict = {'connection_type': 'divergent',
+                'mask': {'doughnut': {'inner_radius': 1.5,
+                                      'outer_radius': 3.},
+                         'anchor': [1.5, 1.5]}}
 
 ![Masks for 2D layers. For all mask types, the driver node is marked by a wide light-red circle, the selected pool nodes by red dots and the masks by red lines. Top row from left to right: rectangular, circular and doughnut masks centered about the driver node. Bottom row from left to right: the same masks as in the top row, but centered about ( − 1.5, −1.5), ( − 2, 0) and (1.5, 1.5), respectively, using the `'anchor'` parameter.](user_manual_figures/conn2.png)
 
@@ -366,12 +455,15 @@ Similarly, there are two mask types that can be used for 3D layers,
 Box  
 All nodes within a cuboid volume are connected. The area is specified by its lower left and upper right corners, measured in the same unit as element coordinates. Example:
 
-    MISSING SCRIPT CODE HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'box': {'lower_left': [-2., -1., -1.],
+                                 'upper_right': [2., 1., 1.]}}}
 
 Spherical  
 All nodes within a sphere are connected. The area is specified by its radius.
 
-    MISSING SCRIPT CODE HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'spherical': {'radius': 2.5}}}
 
 As in the 2D case, you can change the location of the mask relative to the driver node by specifying a 3D vector in the `'anchor'` entry in the mask dictionary.
 
@@ -381,15 +473,20 @@ As in the 2D case, you can change the location of the mask relative to the drive
 
 Grid-based layers can be connected using rectangular *grid masks*. For these, you specify the size of the mask not by lower left and upper right corner coordinates, but give their size in rows and columns, as in this example:
 
-    MISSING SCRIPT BLOCK HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'grid': {'rows': 3, 'columns': 5}}}
 
 The resulting connections are shown in Fig. \[fig:conn3\]. By default the top-left corner of a grid mask, i.e., the grid mask element with grid index \[0, 0\][4], is aligned with the driver node. You can change this alignment by specifying an *anchor* for the mask:
 
-    MISSING SCRIPT BLOCK HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'grid': {'rows': 3, 'columns': 5},
+                         'anchor': {'row': 1, 'column': 2}}}
 
 You can even place the anchor outside the mask:
 
-    MISSING SCRIPT BLOCK HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'grid': {'rows': 3, 'columns': 5},
+                         'anchor': {'row': -1, 'column': 2}}}
 
 The resulting connection patterns are shown in Fig. \[fig:conn3\].
 
@@ -493,27 +590,45 @@ Several examples follow. They are illustrated in Fig. \[fig:conn4\].
 Constant  
 The simplest kernel is a fixed connection probability:
 
-    MISSING SCRIPT BLOCK HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'circular': {'radius': 4.}},
+                'kernel': 0.5}
 
 Gaussian  
 This kernel is distance dependent. In the example, connection probability is 1 for *d* = 0 and falls off with a “standard deviation” of *σ* = 1:
 
-    MISSING SCRIPT BLOCK HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'circular': {'radius': 4.}},
+                'kernel': {'gaussian': {'p_center': 1.0,
+                                        'sigma': 1.}}}
 
 Eccentric Gaussian  
 In this example, both kernel and mask have been moved using anchors: Note that the anchor for the kernel is specified inside the dictionary containing the parameters for the Gaussian.
 
-    MISSING SCRIPT BLOCK HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'circular': {'radius': 4.},
+                         'anchor': [1.5, 1.5]},
+                'kernel': {'gaussian': {'p_center': 1.0,
+                                        'sigma': 1.,
+                                        'anchor': [1.5, 1.5]}}}
 
 Cut-off Gaussian  
 In this example, all probabilities less than 0.5 are set to zero:
 
-    MISSING SCRIPT BLOCK HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'circular': {'radius': 4.}},
+                'kernel': {'gaussian': {'p_center': 1.0,
+                                        'sigma': 1.,
+                                        'cutoff': 0.5}}}
 
 2D Gaussian  
 We conclude with an example using a two-dimensional Gaussian, i.e., a Gaussian with different widths in *x*- and *y*− directions. This kernel depends on displacement, not only on distance:
 
-    MISSING SCRIPT BLOCK HERE!
+    conndict = {'connection_type': 'divergent',
+                'mask': {'circular': {'radius': 4.}},
+                'kernel': {'gaussian2D': {'p_center': 1.0,
+                                          'sigma_x': 1.,
+                                          'sigma_y': 3.}}}
 
 Note that for pool layers with periodic boundary conditions, Topology always uses the shortest possible displacement vector from driver to pool neuron as argument to the kernel function.
 
@@ -527,22 +642,48 @@ Figure \[fig:conn5\] illustrates weights and delays generated using these funct
 Linear example  
 Results are shown in the top panel of Fig. \[fig:conn5\]. Connection weights and delays are shown for the leftmost neuron as driver. Weights drop linearly from 1. From the node at (20, 0) on, the cutoff sets weights to 0. There are no connections to nodes beyond (25, 0), since the mask extends only 25 units to the right of the driver. Delays increase in a stepwise linear fashion, as NEST requires delays to be multiples of the simulation resolution.
 
-     MISSING SCRIPT BLOCK HERE!
+     ldict = {'rows': 1, 'columns': 51,
+              'extent': [51., 1.], 'center': [25., 0.],
+              'elements': 'iaf_psc_alpha'}
+     cdict = {'connection_type': 'divergent',
+              'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
+                                       'upper_right': [25.5, 0.5]}},
+              'weights': {'linear': {'c': 1.0,
+                                     'a': -0.05,
+                                     'cutoff': 0.0}},
+              'delays': {'linear': {'c': 0.1, 'a': 0.02}}}
 
 Linear example with periodic boundary conditions  
 Results are shown in the middle panel of Fig. \[fig:conn5\]. This example is identical to the previous, except that the (pool) layer has periodic boundary conditions. Therefore, the left half of the mask about the node at (0, 0) wraps back to the right half of the layer and that node connects to all nodes in the layer.
 
-     MISSING SCRIPT BLOCK HERE!
+     cdict = {'connection_type': 'divergent',
+              'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
+                                       'upper_right': [25.5, 0.5]}},
+              'weights': {'linear': {'c': 1.0,
+                                     'a': -0.05,
+                                     'cutoff': 0.0}},
+              'delays': {'linear': {'c': 0.1, 'a': 0.02}}}
 
 Various functions  
 Results are shown in the bottom panel of Fig. \[fig:conn5\]. It shows linear, exponential and Gaussian weight functions for the node at (25, 0).
 
-     MISSING SCRIPT BLOCK HERE!
+     cdict = {'connection_type': 'divergent',
+              'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
+                                       'upper_right': [25.5, 0.5]}},
+              'weights': {'exponential': {'a': 1., 'tau': 5.}}}
+
+     cdict = {'connection_type': 'divergent',
+              'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
+                                       'upper_right': [25.5, 0.5]}},
+              'weights': {'gaussian': {'p_center': 1., 'sigma': 5.}}}
 
 Randomized weights and delays  
 By using the `'uniform'` function for weights or delays, one can obtain randomized values for weights and delays, as shown by the red circles in the bottom panel of Fig. \[fig:conn5\]. Weights and delays can currently only be randomized with uniform distribution.
 
-     MISSING SCRIPT BLOCK HERE!
+     cdict = {'connection_type': 'divergent',
+              'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
+                                       'upper_right': [25.5, 0.5]}},
+              'weights': {'uniform': {'min': 0.2, 'max': 0.8}}}
 
 ![Distance-dependent and randomized weights and delays. See text for details.](user_manual_figures/conn5.png)
 
@@ -582,7 +723,15 @@ $$p\_{\\text{conn}}(d) = \\frac{12}{\\pi} \\times 2\\pi r \\times (1-2r)
 \\label{eq:ptheo}$$
  The resulting distribution of distances between connected nodes is shown in Fig. \[fig:conn6\].
 
-    MISSING SCRIPT BLOCK HERE!
+    pos = [[np.random.uniform(-1., 1.), np.random.uniform(-1., 1.)]
+           for j in range(1000)]
+    ldict = {'positions': pos, 'extent': [2., 2.],
+             'elements': 'iaf_psc_alpha', 'edge_wrap': True}
+    cdict = {'connection_type': 'divergent',
+             'mask': {'circular': {'radius': 1.0}},
+             'kernel': {'linear': {'c': 1., 'a': -2., 'cutoff': 0.0}},
+             'number_of_connections': 50,
+             'allow_multapses': True, 'allow_autapses': False}
 
 ![Distribution of distances between source and target for a network of 1000 randomly placed nodes, a fixed fan out of 50 connections and a connection probability decaying linearly from 1 to 0 at *d* = 0.5. The red line is the expected distribution from Eq. \[eq:ptheo\].](user_manual_figures/conn6.png)
 
@@ -601,14 +750,50 @@ Connections between layers with composite elements are based on the following pr
 
 This is exemplified by the following code, which connects pyramidal cells (`pyr`) to interneurons (`in`) with a circular mask and uniform probability and interneurons to pyramidal cells with a rectangular mask unit probability.
 
-    MISSING SCRIPT BLOCK HERE!
+    nest.ResetKernel()
+    nest.CopyModel('iaf_psc_alpha', 'pyr')
+    nest.CopyModel('iaf_psc_alpha', 'in')
+    ldict = {'rows': 10, 'columns': 10, 'elements': ['pyr', 'in']}
+    cdict_p2i = {'connection_type': 'divergent',
+                 'mask': {'circular': {'radius': 0.5}},
+                 'kernel': 0.8,
+                 'sources': {'model': 'pyr'},
+                 'targets': {'model': 'in'}}
+    cdict_i2p = {'connection_type': 'divergent',
+                 'mask': {'rectangular': {'lower_left': [-0.2, -0.2],
+                                          'upper_right': [0.2, 0.2]}},
+                 'sources': {'model': 'in'},
+                 'targets': {'model': 'pyr'}}
+    l = tp.CreateLayer(ldict)
+    tp.ConnectLayers(l, l, cdict_p2i)
+    tp.ConnectLayers(l, l, cdict_i2p)
 
 Synapse models and properties
 -----------------------------
 
 By default, `ConnectLayers` creates connections using the default synapse model in NEST, `static_synapse`. You can specify a different model by adding a `'synapse_model'` entry to the connection dictionary, as in this example:
 
-    MISSING SCRIPT BLOCK HERE!
+    nest.ResetKernel()
+    nest.CopyModel('iaf_psc_alpha', 'pyr')
+    nest.CopyModel('iaf_psc_alpha', 'in')
+    nest.CopyModel('static_synapse', 'exc', {'weight': 2.0})
+    nest.CopyModel('static_synapse', 'inh', {'weight': -8.0})
+    ldict = {'rows': 10, 'columns': 10, 'elements': ['pyr', 'in']}
+    cdict_p2i = {'connection_type': 'divergent',
+                 'mask': {'circular': {'radius': 0.5}},
+                 'kernel': 0.8,
+                 'sources': {'model': 'pyr'},
+                 'targets': {'model': 'in'},
+                 'synapse_model': 'exc'}
+    cdict_i2p = {'connection_type': 'divergent',
+                 'mask': {'rectangular': {'lower_left': [-0.2, -0.2],
+                                          'upper_right': [0.2, 0.2]}},
+                 'sources': {'model': 'in'},
+                 'targets': {'model': 'pyr'},
+                 'synapse_model': 'inh'}
+    l = tp.CreateLayer(ldict)
+    tp.ConnectLayers(l, l, cdict_p2i)
+    tp.ConnectLayers(l, l, cdict_i2p)
 
 You have to use synapse models if you want to set, e.g., the receptor type of connections or parameters for plastic synapse models. These can not be set in distance-dependent ways at present.
 
@@ -617,18 +802,40 @@ Connecting devices to subregions of layers
 
 It is possible to connect stimulation and recording devices only to specific subregions of layers. A simple way to achieve this is to create a layer which contains only the device placed typically in its center. For connecting the device layer to a neuron layer, an appropriate mask needs to be specified and optionally also an anchor for shifting the center of the mask. As demonstrated in the following example, stimulation devices require the divergent connection type
 
-    MISSING SCRIPT BLOCK HERE!
+    nrn_layer = tp.CreateLayer({'rows': 20,
+                                'columns': 20,
+                                'elements': 'iaf_psc_alpha'})
+
+    stim = tp.CreateLayer({'rows': 1,
+                           'columns': 1,
+                           'elements': 'poisson_generator'})
+
+    cdict_stim = {'connection_type': 'divergent',
+                  'mask': {'circular': {'radius': 0.1},
+                           'anchor': [0.2, 0.2]}}
+
+    tp.ConnectLayers(stim, nrn_layer, cdict_stim)
 
 while recording devices require the convergent connection type (see also Sec. \[sec:rec\_dev\]):
 
-    MISSING SCRIPT BLOCK HERE!
+    rec = tp.CreateLayer({'rows': 1,
+                          'columns': 1,
+                          'elements': 'spike_detector'})
+
+    cdict_rec = {'connection_type': 'convergent',
+                 'mask': {'circular': {'radius': 0.1},
+                          'anchor': [-0.2, 0.2]}}
+
+    tp.ConnectLayers(nrn_layer, rec, cdict_rec)
 
 Layers and recording devices
 ----------------------------
 
 Generally, one should not create a layer of recording devices, especially spike detectors, to record from a topology layer. Instead, create a single spike detector, and connect all neurons in the layer to that spike detector using a normal connect command:
 
-    MISSING SCRIPT BLOCK HERE!
+    rec = nest.Create('spike_detector')
+    nrns = nest.GetLeaves(nrn_layer, local_only=True)[0]
+    nest.Connect(nrns, rec)
 
 Connections to a layer of recording devices as described in Sec. \[sec:dev\_subregions\], such as spike detectors, are only possible using the convergent connection type without a fixed number of connections. Note that voltmeter and multimeter are not suffering from this restriction, since they are connected as sources, not as targets.
 
@@ -751,7 +958,18 @@ Topology provides three functions to visualize networks:
 
 The following code shows a practical example: A 21 × 21 network which connects to itself with divergent Gaussian connections. The resulting graphics is shown in Fig. \[fig:vislayer\]. All elements and the targets of the center neuron are shown, as well as mask and kernel.
 
-    MISSING SCRIPT BLOCK HERE!
+    l = tp.CreateLayer({'rows': 21, 'columns': 21,
+                        'elements': 'iaf_psc_alpha'})
+    conndict = {'connection_type': 'divergent',
+                'mask': {'circular': {'radius': 0.4}},
+                'kernel': {'gaussian': {'p_center': 1.0, 'sigma': 0.15}}}
+    tp.ConnectLayers(l, l, conndict)
+    fig = tp.PlotLayer(l, nodesize=80)
+    ctr = tp.FindCenterElement(l)
+    tp.PlotTargets(ctr, l, fig=fig,
+                   mask=conndict['mask'], kernel=conndict['kernel'],
+                   src_size=250, tgt_color='red', tgt_size=20,
+                   kernel_color='green')
 
 ![21 × 21 grid with divergent Gaussian projections onto itself. Blue circles mark layer elements, red circles connection targets of the center neuron (marked by large light-red circle). The large red circle is the mask, the dashed green lines mark *σ*, 2*σ* and 3*σ* of the Gaussian kernel.](user_manual_figures/vislayer.png)
 

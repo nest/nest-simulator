@@ -18,15 +18,29 @@ rule tex2md:
     output. For this a patch file is applied. See `patch` rule!!!
     '''
     input:
-        'Topology_UserManual.tex',
+        tex = 'Topology_UserManual.tex',
         patch = 'Topology_UserManual.md.patch',
     output:
-        patched = 'Topology_UserManual.md',
+        patched = 'Topology_UserManual-patched.md',
         original = protected('Topology_UserManual-original.md'),
     shell:
         '''
-        pandoc -f latex -t markdown --listings {input} | tee {output.patched} >{output.original}
-        patch -p0 <{input.patch}
+        pandoc -f latex -t markdown --listings '{input.tex}' | tee '{output.patched}' >'{output.original}'
+        patch -p0 <'{input.patch}'
+        '''
+
+rule expand_listings:
+    '''
+    This rule fills all the missing code snippets that pandoc can not
+    automatically inject from the latex lstlistings commands.
+    '''
+    input:
+        'Topology_UserManual-patched.md',
+    output:
+        'Topology_UserManual.md',
+    shell:
+        '''
+        ./insert.py '{input}' >'{output}'
         '''
 
 rule md2html:
@@ -38,7 +52,7 @@ rule md2html:
         'Topology_UserManual.html'
     shell:
         '''
-        pandoc -f {SRCFMT} -t html --listings --filter pandoc-citeproc --standalone --smart --toc --mathml --css {input.css} {input.file} {input.meta} -o {output}
+        pandoc -f {SRCFMT} -t html --listings --filter pandoc-citeproc --standalone --smart --toc --mathml --css '{input.css}' '{input.file}' '{input.meta}' -o '{output}'
         '''
 
 rule md2pdf:
@@ -50,7 +64,7 @@ rule md2pdf:
         'Topology_UserManual.pdf'
     shell:
         '''
-        pandoc -f {SRCFMT} -t latex --listings --toc --smart {input.file} {input.meta} -o {output}
+        pandoc -f {SRCFMT} -t latex --listings --toc --smart '{input.file}' '{input.meta}' -o '{output}'
         '''
 
 rule md2github:
@@ -61,7 +75,7 @@ rule md2github:
         'README.md',
     shell:
         '''
-        pandoc -f {SRCFMT} -t markdown_github --listings --toc --smart {input.file} {input.meta} -o {output}
+        pandoc -f {SRCFMT} -t markdown_github --listings --toc --smart '{input.file}' '{input.meta}' -o '{output}'
         '''
 
 rule patch:
@@ -75,10 +89,10 @@ rule patch:
     '''
     input:
         old=ancient('Topology_UserManual-original.md'),
-        new=ancient('Topology_UserManual.md'),
+        new=ancient('Topology_UserManual-patched.md'),
     output:
         'Topology_UserManual.md.patch'
     shell:
         '''
-        diff -u {input.old} {input.new} --label {input.new} --label {input.new}  >{output} || true
+        diff -u '{input.old}' '{input.new}' --label '{input.new}' --label '{input.new}'  >'{output}' || true
         '''

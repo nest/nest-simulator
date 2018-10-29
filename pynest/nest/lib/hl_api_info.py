@@ -209,29 +209,28 @@ def SetStatus(nodes, params, val=None):
     if len(nodes) == 0:
         return
 
-    if isinstance(params, dict) and isinstance(nodes, nest.GIDCollection):
-        g = nodes[0].get()  # Workaround until get works with metadata
-        if 'local' in g and g['local']:
+    if (isinstance(params, dict) and isinstance(nodes, nest.GIDCollection) and
+            nodes.get('local')):
+        for k, v in params.items():
+            if isinstance(v, nest.Parameter):
+                params[k] = [v.get_value() for _ in range(len(nodes))]
+
+        contains_list = [is_iterable(v) and not
+                         is_iterable(nest.GetStatus(nodes[0], k)[0])
+                         for k, v in params.items()]
+        contains_list = max(contains_list)
+
+        if contains_list:
+            temp_param = [{} for _ in range(len(nodes))]
+
             for k, v in params.items():
-                if isinstance(v, nest.Parameter):
-                    params[k] = [v.get_value() for _ in range(len(nodes))]
-
-            contains_list = [is_iterable(v) and not
-                             is_iterable(nest.GetStatus(nodes[0], k)[0])
-                             for k, v in params.items()]
-            contains_list = max(contains_list)
-
-            if contains_list:
-                temp_param = [{} for _ in range(len(nodes))]
-
-                for k, v in params.items():
-                    if not is_iterable(v):
-                        for d in temp_param:
-                            d[k] = v
-                    else:
-                        for i, d in enumerate(temp_param):
-                            d[k] = v[i]
-                params = temp_param
+                if not is_iterable(v):
+                    for d in temp_param:
+                        d[k] = v
+                else:
+                    for i, d in enumerate(temp_param):
+                        d[k] = v[i]
+            params = temp_param
 
     if val is not None and is_literal(params):
         if is_iterable(val) and not isinstance(val, (uni_str, dict)):
@@ -271,7 +270,7 @@ def GetStatus(nodes, keys=None):
         Either a GIDCollection representing nodes, or a tuple of connection
         handles as returned by GetConnections()
     keys : str or list, optional
-        String or a list of strings naming model properties. GetDefaults then
+        String or a list of strings naming model properties. GetStatus then
         returns a single value or a list of values belonging to the keys
         given.
 

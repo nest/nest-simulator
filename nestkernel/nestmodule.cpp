@@ -293,37 +293,15 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
   size_t gc_size = gc->size();
   ArrayDatum result;
 
-  GIDCollectionMetadataPTR meta = gc->get_metadata();
-  if ( meta.valid() )
+  result.reserve( gc_size );
+
+  for ( GIDCollection::const_iterator it = gc->begin(); it < gc->end(); ++it )
   {
-    DictionaryDatum dict = DictionaryDatum( new Dictionary );
-    meta->get_status( dict );
-
-    ( *dict )[ names::network_size ] = gc_size;
-
-    GIDCollectionPrimitive* gcp =
-      dynamic_cast< GIDCollectionPrimitive* >( &( *gc ) );
-    assert( gcp != 0 && "object must be a GIDCollectionPrimitive" );
-
-    GIDCollectionDatum new_gc =
-      GIDCollectionDatum( new GIDCollectionPrimitive( *gcp ) );
-    new_gc->set_metadata( GIDCollectionMetadataPTR( 0 ) );
-    ( *dict )[ names::nodes ] = new_gc;
-
-    result.reserve( 1 );
+    index node_id = ( *it ).gid;
+    DictionaryDatum dict = get_node_status( node_id );
     result.push_back( dict );
   }
-  else
-  {
-    result.reserve( gc_size );
 
-    for ( GIDCollection::const_iterator it = gc->begin(); it < gc->end(); ++it )
-    {
-      index node_id = ( *it ).gid;
-      DictionaryDatum dict = get_node_status( node_id );
-      result.push_back( dict );
-    }
-  }
   i->OStack.pop();
   i->OStack.push( result );
   i->EStack.pop();

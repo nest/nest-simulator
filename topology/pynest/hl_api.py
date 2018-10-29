@@ -938,23 +938,22 @@ def FindNearestElement(layer, locations, find_all=False):
         locations = (locations, )
 
     result = []
-    nodes = layer.get('nodes')
 
     for loc in locations:
         d = Distance(numpy.array(loc), layer)
 
         if not find_all:
             dx = numpy.argmin(d)  # finds location of one minimum
-            result.append(nodes[dx].get('global_id'))
+            result.append(layer[dx].get('global_id'))
         else:
             mingids = list(layer[:1])
             minval = d[0]
             for idx in range(1, len(layer)):
                 if d[idx] < minval:
-                    mingids = [nodes[idx].get('global_id')]
+                    mingids = [layer[idx].get('global_id')]
                     minval = d[idx]
                 elif numpy.abs(d[idx] - minval) <= 1e-14 * minval:
-                    mingids.append(nodes[idx].get('global_id'))
+                    mingids.append(layer[idx].get('global_id'))
             result.append(tuple(mingids))
 
     return tuple(result)
@@ -1325,7 +1324,7 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     # Find positions to all nodes in target layer
     pos_all_tgts = GetPosition(tgt_layer)
-    first_tgt_gid = tgt_layer[0].get('nodes').get('global_id')
+    first_tgt_gid = tgt_layer[0].get('global_id')
 
     connections = nest.GetConnections(sources, tgt_layer,
                                       synapse_model=syn_model)

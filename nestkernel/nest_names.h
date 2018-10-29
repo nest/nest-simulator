@@ -299,7 +299,6 @@ extern const Name next_readout_time;
 extern const Name NMDA;
 extern const Name no_synapses;
 extern const Name node_uses_wfr;
-extern const Name nodes;
 extern const Name noise;
 extern const Name noisy_rate;
 extern const Name num_connections;

@@ -263,9 +263,6 @@ SourceTable::add_source( const thread tid,
   const bool is_primary )
 {
   const Source src( gid, is_primary );
-
-  vector_util::grow( sources_[ tid ][ syn_id ] );
-
   sources_[ tid ][ syn_id ].push_back( src );
 }
 

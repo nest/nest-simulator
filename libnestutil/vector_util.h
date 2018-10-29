@@ -26,8 +26,6 @@
 #include <vector>
 #include <cstddef>
 
-#include "seque.h"
-
 namespace vector_util
 {
 
@@ -48,12 +46,6 @@ grow( std::vector< T >& v )
     v.reserve( v.size() < max_block_size ? 2 * v.size()
                                          : ( v.size() + max_block_size ) );
   }
-}
-
-template < typename T >
-inline void
-grow( Seque< T >& v )
-{
 }
 
 } // namespace vector_util

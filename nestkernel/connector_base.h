@@ -34,7 +34,6 @@
 #include "compose.hpp"
 #include "sort.h"
 #include "vector_util.h"
-#include "seque.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
@@ -283,8 +282,6 @@ public:
   Connector< ConnectionT >&
   push_back( const ConnectionT& c )
   {
-    vector_util::grow( C_ );
-
     C_.push_back( c );
     return *this;
   }

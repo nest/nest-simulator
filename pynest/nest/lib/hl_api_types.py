@@ -54,6 +54,123 @@ def _serialize(data):
     return data
 
 
+def _restructure_data(result, keys):
+    """
+    Restructure output data for Connectome in get.
+
+    Parameters
+    ----------
+    result: list
+        list of status dictionaries or list (of lists) of parameter values.
+    keys: string or list of strings
+        name(s) of properties
+
+    Returns
+    -------
+    int, list or dict
+    """
+    if nest.is_literal(keys):
+        final_result = result[0] if len(result) == 1 else list(result)
+
+    elif nest.is_iterable(keys):
+        final_result = ({key: [val[i] for val in result]
+                         for i, key in enumerate(keys)} if len(result) != 1
+                        else {key: val[i] for val in result
+                              for i, key in enumerate(keys)})
+
+    elif keys is None:
+        final_result = ({key: [result_dict[key] for result_dict in result]
+                         for key in result[0]} if len(result) != 1
+                        else {key: result_dict[key] for result_dict in result
+                              for key in result[0]})
+    return final_result
+
+
+def _get_params_is_strings(gc, param):
+    """
+    Get parameters from nodes.
+
+    Used by GIDCollection.get()
+
+    Parameters
+    ----------
+    gc: GIDCollection
+        nodes to get values from
+    param: string or list of strings
+        string or list of string naming model properties.
+
+    Returns
+    -------
+    int, list:
+        param is a string so the value(s) is returned
+    dict:
+        param is a list of string so a dictionary is returned
+    """
+    # Single literal case
+    if nest.is_literal(param):
+        cmd = '/{} get'.format(param)
+        nest.sps(gc._datum)
+        try:
+            nest.sr(cmd)
+            result = nest.spp()
+        except nest.NESTError:
+            result = gc.get()[param]  # If the GIDCollection is a composite.
+
+    # Array param case
+    elif is_iterable(param):
+        result = {param_name: gc.get(param_name) for param_name in param}
+
+    else:
+        raise TypeError("Params should be either a string or an iterable")
+
+    return result
+
+
+def _get_hierarchical_addressing(gc, params):
+    """
+    Get parameters from nodes, hierarchical case.
+
+    Used by GIDCollection.get()
+
+    Parameters
+    ----------
+    gc: GIDCollection
+        nodes to get values from
+    params: tuple
+        first value in the tuple should be a string, second can be a string
+        or a list of string.
+        The first value corresponds to the path into the hierarchical structure
+        while the second value corresponds to the name(s) of the desired
+        properties.
+
+    Returns
+    -------
+    int, list:
+        params[-1] is a string so the value(s) is returned
+    dict:
+        params[-1] is a list of string so a dictionary is returned
+    """
+
+    # Right now, NEST only allows get(arg0, arg1) for hierarchical
+    # addressing, where arg0 must be a string and arg1 can be string
+    # or list of strings.
+    if nest.is_literal(params[0]):
+        value_list = gc.get(params[0])
+        if type(value_list) != tuple:
+            value_list = (value_list,)
+    else:
+        raise TypeError('First argument must be a string, specifying' +
+                        ' path into hierarchical dictionary')
+
+    result = _restructure_data(value_list, None)
+
+    if nest.is_literal(params[-1]):
+        result = result[params[-1]]
+    else:
+        result = {key: result[key] for key in params[-1]}
+    return result
+
+
 class GIDCollectionIterator(object):
     """
     Iterator class for GIDCollection.
@@ -207,13 +324,12 @@ class GIDCollection(object):
 
     def get(self, *params, **kwargs):
         """
-        Get parameters from nodes or layer.
+        Get parameters from nodes.
 
         Parameters
         ----------
         params : str or list, optional
-            Parameters to get from the nodes or from the layer status. It must
-            be one of the following:
+            Parameters to get from the nodes. It must be one of the following:
             - A single string.
             - A list of strings.
             - One or more strings, followed by a string or list of strings.
@@ -273,11 +389,9 @@ class GIDCollection(object):
         {'senders': array([], dtype=int64),
          'times': array([], dtype=float64)}
         """
-        # TODO: Needs to be cleaned up.
-
-        #############################
+        # ------------------------- #
         #      Checks of input      #
-        #############################
+        # ------------------------- #
         if not kwargs:
             output = ''
         elif 'output' in kwargs:
@@ -288,158 +402,29 @@ class GIDCollection(object):
             raise TypeError('Got unexpected keyword argument')
         pandas_output = output == 'pandas'
 
-        #############################
-        #  No specified params case #
-        #############################
         if len(params) == 0:
+            # get() is called without arguments
             result = nest.sli_func('get', self._datum)
-            if pandas_output:
-                if 'global_id' in result:
-                    index = result['global_id']
-                    if isinstance(index, int):
-                        index = (index,)
-                        result = {key: (item,) for key, item in result.items()}
-                    result = pandas.DataFrame(result, index=index)
-                else:  # The GIDCollection is a layer
-                    result = {key: (item,) for key, item in result.items()}
-                    result = pandas.DataFrame(result,
-                                              index=['layer']).transpose()
-
-        #############################
-        #     Normal addressing     #
-        #############################
         elif len(params) == 1:
-            param = params[0]
-            # Single literal case
-            if nest.is_literal(param):
-                cmd = '/{} get'.format(param)
-                nest.sps(self._datum)
-                try:
-                    nest.sr(cmd)
-                    result = nest.spp()
-                except nest.NESTError:
-                    # If the GIDCollection is a composite.
-                    result = self.get()[param]
-
-                if pandas_output:
-                    try:
-                        # This try will probably soon be removed, once we
-                        # decide what to do with get and GC's with metadata.
-                        index = self.get('global_id')
-                        if type(index) is int:
-                            index = [index]
-                        if type(result) is dict:
-                            # Problematic if result[key] isn't array-like
-                            result = pandas.DataFrame(
-                                {(param, key): result[key]
-                                 if len(result[key]) != 0
-                                 else [None]
-                                 for key in result.keys()},
-                                index=index)
-                        else:
-                            result = pandas.DataFrame({param: result},
-                                                      index=index)
-                    except KeyError:  # It is (probably) a layer
-                        result = pandas.DataFrame({param: (result,)},
-                                                  columns=['layer'])
-
-            # Array param case
-            elif is_iterable(param):
-                result = {param_name: self.get(param_name)
-                          for param_name in param}
-                if pandas_output:
-                    try:
-                        index = self.get('global_id')
-                        if type(index) is int:
-                            index = [index]
-                        p_dict = {}
-                        for key, item in result.items():
-                            if type(item) is dict:
-                                for subkey, subitem in item.items():
-                                    # Problematic if subitem isn't array-like
-                                    p_dict.update({(key, subkey): subitem
-                                                   if len(subitem) != 0
-                                                   else [None]})
-                            else:
-                                p_dict.update({key: item})
-                        result = pandas.DataFrame(p_dict,
-                                                  index=index)
-                    except KeyError:  # It is (probably) a layer
-                        result = pandas.DataFrame(result,
-                                                  columns=['layer'])
-
-            else:
-                raise TypeError("Params should be either a string or an " +
-                                "iterable")
-
-        ##############################
-        #   Hierarchical addressing  #
-        ##############################
+            # params is a tuple with a string or list of strings
+            result = _get_params_is_strings(self, params[0])
         else:
-            first = True
-            # Path parameters
-            for param in params[:-1]:
-                if nest.is_literal(param):
-                    if first:
-                        value_list = self.get(param)
-                        if type(value_list) != tuple:
-                            value_list = (value_list,)
-                        first = False
-                    else:
-                        # TODO481 : This is never run as the max depth in the
-                        # status dictionary is too low.
-                        value_list = [nest.sli_func('/{} get'.format(param), d)
-                                      for d in value_list]
-                elif is_iterable(param):
-                    raise TypeError("Only the last argument can be an " +
-                                    "iterable")
-                else:
-                    raise TypeError("Argument must be a string")
+            # Hierarchical addressing
+            result = _get_hierarchical_addressing(self, params)
 
-            # Value parameter, literal case
-            if nest.is_literal(params[-1]):
-                if len(self) == 1:
-                    result = value_list[0][params[-1]]
-                else:
-                    result = tuple([d[params[-1]] for d in value_list])
-
-                if pandas_output:
-                    index = self.get('global_id')
-                    result = {params[-1]: list(result) if len(result) != 0
-                              else [[]]}
-                    if len(self) == 1:
-                        index = [index]
-                    result = pandas.DataFrame(result, index=index)
-
-            # Value parameter, array case
-            elif is_iterable(params[-1]):
-                for value in params[-1]:
-                    # We assume all are of equal type, so we check only the
-                    # values of the first node.
-                    if value not in value_list[0].keys():
-                        raise KeyError("The value '{}' does not exist at " +
-                                       "the given path".format(value))
-
-                if len(self) == 1:
-                    result = ({key: result_dict[key]
-                               for result_dict in value_list
-                               for key in params[-1]})
-                else:
-                    result = ({key: [result_dict[key]
-                                     for result_dict in value_list]
-                               for key in params[-1]})
-
-                if pandas_output:
-                    index = self.get('global_id')
-                    if len(self) == 1:
-                        index = [index]
-                        result = {key: [val] for key, val in result.items()}
-                    result = pandas.DataFrame(result, index=index)
-            else:
-                raise TypeError("Final argument should be either a string " +
-                                "or an iterable")
-
-        if output == 'json':
+        if pandas_output:
+            index = self.get('global_id')
+            if len(params) == 1 and nest.is_literal(params[0]):
+                # params is a string
+                result = {params[0]: result}
+            elif len(params) > 1 and nest.is_literal(params[1]):
+                # hierarchical, single string
+                result = {params[1]: result}
+            if len(self) == 1:
+                index = [index]
+                result = {key: [val] for key, val in result.items()}
+            result = pandas.DataFrame(result, index=index)
+        elif output == 'json':
             result = _serialize(result)
 
         return result
@@ -469,29 +454,26 @@ class GIDCollection(object):
             Description
         """
 
-        if isinstance(params, dict):
-            g = self[0].get()  # Workaround until get works with metadata
-            if 'local' in g and g['local']:
+        if isinstance(params, dict) and self[0].get('local'):
+            for k, v in params.items():
+                if isinstance(v, Parameter):
+                    params[k] = [v.get_value() for _ in range(len(self))]
+
+            contains_list = [is_iterable(v) and not is_iterable(self[0].get(k))
+                             for k, v in params.items()]
+            contains_list = max(contains_list)
+
+            if contains_list:
+                temp_param = [{} for _ in range(self.__len__())]
+
                 for k, v in params.items():
-                    if isinstance(v, Parameter):
-                        params[k] = [v.get_value() for _ in range(len(self))]
-
-                contains_list = [is_iterable(v) and not
-                                 is_iterable(self[0].get(k))
-                                 for k, v in params.items()]
-                contains_list = max(contains_list)
-
-                if contains_list:
-                    temp_param = [{} for _ in range(self.__len__())]
-
-                    for k, v in params.items():
-                        if not is_iterable(v):
-                            for d in temp_param:
-                                d[k] = v
-                        else:
-                            for i, d in enumerate(temp_param):
-                                d[k] = v[i]
-                    params = temp_param
+                    if not is_iterable(v):
+                        for d in temp_param:
+                            d[k] = v
+                    else:
+                        for i, d in enumerate(temp_param):
+                            d[k] = v[i]
+                params = temp_param
 
         if val is not None and nest.is_literal(params):
             if (is_iterable(val) and not
@@ -661,38 +643,7 @@ class Connectome(object):
         result = nest.spp()
 
         # Need to restructure the data.
-        if nest.is_literal(keys):
-            final_result = result[0] if self.__len__() == 1 else list(result)
-        elif is_iterable(keys):
-            final_result = {}
-            if self.__len__() != 1:
-                # We want a dictionary of lists if len != 1
-                for key in keys:
-                    final_result[key] = []
-                for val in result:
-                    # val is ordered the same way as keys.
-                    for count, key in enumerate(keys):
-                        final_result[key].append(val[count])
-            else:
-                # Result is a tuple with a single value, a tuple with values
-                # in the same order as parameters in keys
-                for count, key in enumerate(keys):
-                    final_result[key] = result[0][count]
-        elif keys is None:
-            final_result = {}
-            if self.__len__() != 1:
-                # We want a dictionary of lists if len != 1
-                # First set the keys:
-                for key in result[0]:
-                    final_result[key] = []
-                # Then set the values
-                for val in result:
-                    # Get a dictionary
-                    for key, value in val.items():
-                        final_result[key].append(value)
-            else:
-                for key, value in result[0].items():
-                    final_result[key] = value
+        final_result = _restructure_data(result, keys)
 
         if pandas_output:
             index = (self.get('source') if self.__len__() > 1 else

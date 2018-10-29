@@ -155,6 +155,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } getstatus_afunction;
 
+  class GetMetadata_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getmetadata_gfunction;
+
   class GetKernelStatus_Function : public SLIFunction
   {
   public:

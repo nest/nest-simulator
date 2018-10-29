@@ -388,6 +388,35 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
 }
 
 void
+NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  GIDCollectionDatum gc = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  if ( not gc->valid() )
+  {
+    throw KernelException( "InvalidGIDCollection" );
+  }
+
+  GIDCollectionMetadataPTR meta = gc->get_metadata();
+  if ( not meta.valid() )
+  {
+    throw KernelException( "InvalidGIDCollection" );
+  }
+
+  size_t gc_size = gc->size();
+
+  DictionaryDatum dict = DictionaryDatum( new Dictionary );
+  meta->get_status( dict );
+
+  ( *dict )[ names::network_size ] = gc_size;
+
+  i->OStack.pop();
+  i->OStack.push( dict );
+  i->EStack.pop();
+}
+
+void
 NestModule::GetKernelStatus_Function::execute( SLIInterpreter* i ) const
 {
   DictionaryDatum dict = get_kernel_status();
@@ -1720,8 +1749,8 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "GetStatus_i", &getstatus_ifunction );
   i->createcommand( "GetStatus_C", &getstatus_Cfunction );
   i->createcommand( "GetStatus_a", &getstatus_afunction );
+  i->createcommand( "GetMetadata_g", &getmetadata_gfunction );
   i->createcommand( "GetKernelStatus", &getkernelstatus_function );
-
 
   i->createcommand( "GetConnections_D", &getconnections_Dfunction );
   i->createcommand( "cva_C", &cva_cfunction );

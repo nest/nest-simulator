@@ -144,6 +144,9 @@ class GIDCollection(object):
             gc = nest.sli_func('cvgidcollection', data)
             self._datum = gc._datum
 
+        # Spatial values for layers.
+        self.spatial = None
+
     def __iter__(self):
         return GIDCollectionIterator(self)
 
@@ -195,6 +198,12 @@ class GIDCollection(object):
 
     def __str__(self):
         return nest.sli_func('pcvs', self._datum)
+
+    def set_spatial(self):
+        """
+        set spatial data to self.spatial
+        """
+        self.spatial = nest.sli_func('GetMetadata', self._datum)
 
     def get(self, *params, **kwargs):
         """

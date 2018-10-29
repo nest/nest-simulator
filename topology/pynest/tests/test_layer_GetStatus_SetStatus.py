@@ -105,21 +105,19 @@ class GetSetTestCase(unittest.TestCase):
                          (-50., -50., -50., -50., -50.,
                           -50., -50., -50., -50.))
 
-    def test_LayerGet(self):
-        """Test get function on layer GIDCollection."""
+    def test_LayerSpatial(self):
+        """Test spatial parameter on layer GIDCollection."""
 
         ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         layer = topo.CreateLayer(ldict)
 
-        center = layer.get('center')
-        columns = layer.get('columns')
-        edge_wrap = layer.get('edge_wrap')
-        extent = layer.get('extent')
-        network_size = layer.get('network_size')
-        nodes = layer.get('nodes')
-        rows = layer.get('rows')
-        columns_rows = layer.get(['columns', 'rows'])
+        center = layer.spatial['center']
+        columns = layer.spatial['columns']
+        edge_wrap = layer.spatial['edge_wrap']
+        extent = layer.spatial['extent']
+        network_size = layer.spatial['network_size']
+        rows = layer.spatial['rows']
 
         self.assertEqual(center, (0.0, 0.0))
         self.assertEqual(columns, 3)
@@ -149,20 +147,19 @@ class GetSetTestCase(unittest.TestCase):
         self.assertEqual(all_values['network_size'], 9)
         self.assertEqual(all_values['rows'], 3)
 
-        # Test get on single element layer
-        nest.ResetKernel()
+    def test_SingleElementLayerSpatial(self):
+        """Test spatial parameter on single element layer."""
+
         ldict = {'elements': 'iaf_psc_alpha', 'rows': 1, 'columns': 1}
         layer = topo.CreateLayer(ldict)
 
         self.assertEqual(len(layer), 1)
-        center = layer.get('center')
-        columns = layer.get('columns')
-        columns_rows = layer.get(['columns', 'rows'])
-        all_values = layer.get()
+        center = layer.spatial['center']
+        columns = layer.spatial['columns']
+        all_values = layer.spatial
 
         self.assertEqual(center, (0., 0.))
         self.assertEqual(columns, 1)
-        self.assertEqual(columns_rows, {'columns': 1, 'rows': 1})
         self.assertEqual(all_values['center'], (0.0, 0.0))
 
     @unittest.skipIf(not HAVE_PANDAS, 'Pandas package is not available')

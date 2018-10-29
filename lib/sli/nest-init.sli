@@ -186,6 +186,11 @@ def
   0 get_g_i GetStatus exch get_d_a
 } def
 
+% Get metadata values of GIDCollection
+/GetMetadata [/gidcollectiontype]
+  /GetMetadata_g load
+def
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Slicing of GIDCollections with Take

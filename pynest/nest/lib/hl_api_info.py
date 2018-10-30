@@ -210,7 +210,7 @@ def SetStatus(nodes, params, val=None):
         return
 
     if (isinstance(params, dict) and isinstance(nodes, nest.GIDCollection) and
-            nodes.get('local')):
+            nodes[0].get('local')):
         for k, v in params.items():
             if isinstance(v, nest.Parameter):
                 params[k] = [v.get_value() for _ in range(len(nodes))]

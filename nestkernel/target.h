@@ -197,8 +197,8 @@ inline void
 Target::set_tid( const thread tid )
 {
   assert( tid < MAX_TID );
-  data_ = ( data_ & ( ~MASK_TID ) )
-    | ( static_cast< uint64_t >( tid ) << SHIFT_TID );
+  data_ =
+    ( data_ & ( ~MASK_TID ) ) | ( static_cast< uint64_t >( tid ) << SHIFT_TID );
 }
 
 inline thread

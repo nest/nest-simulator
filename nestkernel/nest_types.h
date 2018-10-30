@@ -33,13 +33,13 @@
 #include "config.h"
 
 #ifdef HAVE_32BIT_ARCH
-#ifdef HAVE_UINT64_T   // 32-bit platforms usually provide the ...
-    #include <stdint.h>  // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
-  #else
-    #error "32-bit platform does not provide a 64-bit unsigned integer data type"
-  #endif
+#ifdef HAVE_UINT64_T // 32-bit platforms usually provide the ...
+#include <stdint.h> // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
 #else
-  #include <cstdint>     // `uint64_t` on 64-bit platforms
+#error "32-bit platform does not provide a 64-bit unsigned integer data type"
+#endif
+#else
+#include <cstdint> // `uint64_t` on 64-bit platforms
 #endif
 
 /**
@@ -207,7 +207,6 @@ enum SignalType
   BINARY = 2,
   ALL = SPIKE | BINARY
 };
-
 }
 
 #endif // NEST_TYPES_H

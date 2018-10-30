@@ -253,10 +253,6 @@ Build connections from explicit specifications.
 Creates topological node layer.
 [topology::ConnectLayers](../helpindex/cmds/topology::ConnectLayers.md)
 Connect two layers.
-[topology::GetElement](../helpindex/cmds/topology::GetElement.md)
-Return node GID at specified layer position.
-[topology::GetPosition](../helpindex/cmds/topology::GetPosition.md)
-Retrieve position of input node.
 [topology::GetRelativeDistance](../helpindex/cmds/topology::GetRelativeDistance.md)
 Retrieve a vector of distance between two nodes.
 [topology::LayerGidPositionMap](../helpindex/cmds/topology::LayerGidPositionMap.md)

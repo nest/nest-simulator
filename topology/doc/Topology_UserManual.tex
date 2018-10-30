@@ -65,7 +65,7 @@
      SetKernelStatus,PrintNetwork,SetDefaults,
    voltage_trace,raster_plot,ResetKernel,GetConnections,
    CreateLayer,ConnectLayers,GetPosition,GetLayer,
-   GetElement,FindNearestElement,Displacement,Distance,
+   FindNearestElement,Displacement,Distance,
    DumpLayerNodes,DumpLayerConnections,FindCenterElement,
    GetTargetNodes,GetTargetPositions,PlotTargets,PlotKernel,PlotLayer,Install},
   rangeprefix=\#\{\ ,
@@ -483,9 +483,6 @@ Note the following points:
   namely the position of the layer element.
 \item When inspecting a layer as a subnet, the different nodes will appear
   in groups of identical nodes.
-\item For grid-based layers, the function \lstinline!GetElement! returns a
-  list of nodes at a given grid position. See Chapter~\ref{sec:inspection}
-  for more on inspecting layers.
 \item In a previous version of the topology module it was possible to
   create layers with nested, composite elements, but such nested networks
   gobble up a lot of memory for subnet constructs and provide no practical
@@ -1166,8 +1163,6 @@ SLI documentation.
   Return the spatial locations of nodes.\\
   \lstinline!tp.GetLayer()!  &
   Return the layer to which nodes belong.\\
-  \lstinline!tp.GetElement()!  &
-  Return the node(s) at the location(s) in the given grid-based layer(s).\\
   \lstinline!tp.GetTargetNodes()!  &
   Obtain targets of a list of sources in a given target layer.\\
   \lstinline!tp.GetTargetPositions()!  &

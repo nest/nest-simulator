@@ -28,18 +28,19 @@
 #include <climits>
 #include <cstddef>
 #include <limits>
+
+// Generated includes:
+#include "config.h"
+
 #ifdef HAVE_32BIT_ARCH
-  #ifdef HAVE_UINT64_T   // 32-bit platforms usually provide the ...
+#ifdef HAVE_UINT64_T   // 32-bit platforms usually provide the ...
     #include <stdint.h>  // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
   #else
-    #error "Compile for 32bit but platform does not provide a 64bit unsigned integer data type"
+    #error "32-bit platform does not provide a 64-bit unsigned integer data type"
   #endif
 #else
   #include <cstdint>     // `uint64_t` on 64-bit platforms
 #endif
-
-// Generated includes:
-#include "config.h"
 
 /**
  * @mainpage NEST: Neural Simulation Tool
@@ -106,7 +107,7 @@ const tic_t tic_t_min = LONG_MIN;
 /**
  *  Unsigned long type for enumerations.
  */
-typedef uint64_t index;   // ***GTR  size_t (long unsigned int) before, does not guarantee 64bit
+typedef size_t index;
 #ifndef SIZE_MAX
 #define SIZE_MAX ( static_cast< std::size_t >( -1 ) )
 #endif

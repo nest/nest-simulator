@@ -44,28 +44,28 @@ private:
   uint64_t data_;
 
   // define masks to select correct bits in data_
-  static constexpr uint64_t lcid_mask = 0x0000000007FFFFFF;
-  static constexpr uint64_t rank_mask = 0x00007FFFF8000000;
-  static constexpr uint64_t tid_mask = 0x01FF800000000000;
-  static constexpr uint64_t syn_id_mask = 0x7E00000000000000;
-  static constexpr uint64_t processed_mask = 0x8000000000000000;
+  static constexpr uint64_t MASK_LCID = 0x0000000007FFFFFF;
+  static constexpr uint64_t MASK_RANK = 0x00007FFFF8000000;
+  static constexpr uint64_t MASK_TID = 0x01FF800000000000;
+  static constexpr uint64_t MASK_SYN_ID = 0x7E00000000000000;
+  static constexpr uint64_t MASK_PROCESSED = 0x8000000000000000;
 
   // define shifts to arrive at correct bits; note: the size of these
   // variables is most likely not enough for exascale computers, or
   // very small number of threads; if any issues are encountered with
   // these values, we can introduce compiler flags that rearrange these
   // sizes according to the target platform/application
-  static constexpr uint8_t lcid_shift = 0;
-  static constexpr uint8_t rank_shift = 27;
-  static constexpr uint8_t tid_shift = 47;
-  static constexpr uint8_t syn_id_shift = 57;
-  static constexpr uint8_t processed_shift = 63;
+  static constexpr uint8_t SHIFT_LCID = 0;
+  static constexpr uint8_t SHIFT_RANK = 27;
+  static constexpr uint8_t SHIFT_TID = 47;
+  static constexpr uint8_t SHIFT_SYN_ID = 57;
+  static constexpr uint8_t SHIFT_PROCESSED = 63;
 
   // maximal sizes are determined by bitshifts
-  static constexpr int max_lcid_ = 134217728; // 2 ** 27
-  static constexpr int max_rank_ = 1048576;   // 2 ** 20
-  static constexpr int max_tid_ = 1024;       // 2 ** 10
-  static constexpr int max_syn_id_ = 64;      // 2 ** 6
+  static constexpr int MAX_LCID = 134217728; // 2 ** 27
+  static constexpr int MAX_RANK = 1048576;   // 2 ** 20
+  static constexpr int MAX_TID = 1024;       // 2 ** 10
+  static constexpr int MAX_SYN_ID = 64;      // 2 ** 6
 
 public:
   Target();
@@ -151,10 +151,10 @@ inline Target::Target( const thread tid,
   const index lcid )
   : data_( 0 )
 {
-  assert( tid < max_tid_ );
-  assert( rank < max_rank_ );
-  assert( syn_id < max_syn_id_ );
-  assert( lcid < max_lcid_ );
+  assert( tid < MAX_TID );
+  assert( rank < MAX_RANK );
+  assert( syn_id < MAX_SYN_ID );
+  assert( lcid < MAX_LCID );
   set_lcid( lcid );
   set_rank( rank );
   set_tid( tid );
@@ -165,73 +165,73 @@ inline Target::Target( const thread tid,
 inline void
 Target::set_lcid( const index lcid )
 {
-  assert( lcid < max_lcid_ );
+  assert( lcid < MAX_LCID );
   // Reset corresponding bits using complement of mask and write new
   // bits by shifting input appropriately. Need to cast to long first,
   // to avoid overflow of input by left shifts.
-  data_ = ( data_ & ( ~lcid_mask ) )
-    | ( static_cast< unsigned long >( lcid ) << lcid_shift );
+  data_ = ( data_ & ( ~MASK_LCID ) )
+    | ( static_cast< uint64_t >( lcid ) << SHIFT_LCID );
 }
 
 inline index
 Target::get_lcid() const
 {
-  return ( data_ & lcid_mask ) >> lcid_shift;
+  return ( data_ & MASK_LCID ) >> SHIFT_LCID;
 }
 
 inline void
 Target::set_rank( const thread rank )
 {
-  assert( rank < max_rank_ );
-  data_ = ( data_ & ( ~rank_mask ) )
-    | ( static_cast< unsigned long >( rank ) << rank_shift );
+  assert( rank < MAX_RANK );
+  data_ = ( data_ & ( ~MASK_RANK ) )
+    | ( static_cast< uint64_t >( rank ) << SHIFT_RANK );
 }
 
 inline thread
 Target::get_rank() const
 {
-  return ( data_ & rank_mask ) >> rank_shift;
+  return ( data_ & MASK_RANK ) >> SHIFT_RANK;
 }
 
 inline void
 Target::set_tid( const thread tid )
 {
-  assert( tid < max_tid_ );
-  data_ = ( data_ & ( ~tid_mask ) )
-    | ( static_cast< unsigned long >( tid ) << tid_shift );
+  assert( tid < MAX_TID );
+  data_ = ( data_ & ( ~MASK_TID ) )
+    | ( static_cast< uint64_t >( tid ) << SHIFT_TID );
 }
 
 inline thread
 Target::get_tid() const
 {
-  return ( data_ & tid_mask ) >> tid_shift;
+  return ( data_ & MASK_TID ) >> SHIFT_TID;
 }
 
 inline void
 Target::set_syn_id( const synindex syn_id )
 {
-  assert( syn_id < max_syn_id_ );
-  data_ = ( data_ & ( ~syn_id_mask ) )
-    | ( static_cast< unsigned long >( syn_id ) << syn_id_shift );
+  assert( syn_id < MAX_SYN_ID );
+  data_ = ( data_ & ( ~MASK_SYN_ID ) )
+    | ( static_cast< uint64_t >( syn_id ) << SHIFT_SYN_ID );
 }
 
 inline synindex
 Target::get_syn_id() const
 {
-  return ( data_ & syn_id_mask ) >> syn_id_shift;
+  return ( data_ & MASK_SYN_ID ) >> SHIFT_SYN_ID;
 }
 
 inline void
 Target::set_is_processed( const bool processed )
 {
-  data_ = ( data_ & ( ~processed_mask ) )
-    | ( static_cast< unsigned long >( processed ) << processed_shift );
+  data_ = ( data_ & ( ~MASK_PROCESSED ) )
+    | ( static_cast< uint64_t >( processed ) << SHIFT_PROCESSED );
 }
 
 inline bool
 Target::is_processed() const
 {
-  return ( data_ & processed_mask ) >> processed_shift;
+  return ( data_ & MASK_PROCESSED ) >> SHIFT_PROCESSED;
 }
 
 inline double

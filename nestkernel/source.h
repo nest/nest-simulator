@@ -40,25 +40,25 @@ namespace nest
 class Source
 {
 private:
-  unsigned long gid_ : 62; //!< gid of source
+  uint64_t gid_ : 62;       //!< gid of source
   bool processed_ : 1;     //!< whether this target has already been moved
                            //!to the MPI buffer
   bool primary_ : 1;
-  static const size_t disabled_marker_ = 4611686018427387904 - 1; // 2 ** 62 - 1
+  static constexpr uint64_t disabled_marker_ = 0x3FFFFFFFFFFFFFFF;  // 2 ** 62 - 1 = 4611686018427387904 - 1
 
 public:
   Source();
-  explicit Source( const index gid, const bool primary );
+  explicit Source( const uint64_t gid, const bool primary );
 
   /**
    * Sets gid_ to the specified value.
    */
-  void set_gid( const index gid );
+  void set_gid( const uint64_t gid );
 
   /**
    * Returns this Source's GID.
    */
-  index get_gid() const;
+  uint64_t get_gid() const;
 
   void set_processed( const bool processed );
   bool is_processed() const;
@@ -95,7 +95,7 @@ inline Source::Source()
 {
 }
 
-inline Source::Source( const index gid, const bool is_primary )
+inline Source::Source( const uint64_t gid, const bool is_primary )
   : gid_( gid )
   , processed_( false )
   , primary_( is_primary )
@@ -104,13 +104,13 @@ inline Source::Source( const index gid, const bool is_primary )
 }
 
 inline void
-Source::set_gid( const index gid )
+Source::set_gid( const uint64_t gid )
 {
   assert( gid < disabled_marker_ );
   gid_ = gid;
 }
 
-inline index
+inline uint64_t
 Source::get_gid() const
 {
   return gid_;

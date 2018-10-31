@@ -549,8 +549,8 @@ def CGSelectImplementation(tag, library):
 
 
 @check_stack
-@deprecated('', 'DisconnectOneToOne is deprecated and will be removed with \
-NEST-3., use Disconnect instead.')
+@deprecated('', 'DisconnectOneToOne is deprecated and will be removed in \
+NEST-3.0. Use Disconnect instead.')
 def DisconnectOneToOne(source, target, syn_spec):
     """Disconnect a currently existing synapse.
 

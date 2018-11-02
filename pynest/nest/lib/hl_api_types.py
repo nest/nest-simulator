@@ -455,24 +455,25 @@ class GIDCollection(object):
         """
 
         if isinstance(params, dict) and self[0].get('local'):
-            for k, v in params.items():
-                if isinstance(v, Parameter):
-                    params[k] = [v.get_value() for _ in range(len(self))]
+            for key, vals in params.items():
+                if isinstance(vals, Parameter):
+                    params[key] = [vals.get_value() for _ in range(len(self))]
 
-            contains_list = [is_iterable(v) and not is_iterable(self[0].get(k))
-                             for k, v in params.items()]
+            contains_list = [is_iterable(vals) and not
+                             is_iterable(self[0].get(key))
+                             for key, vals in params.items()]
             contains_list = max(contains_list)
 
             if contains_list:
                 temp_param = [{} for _ in range(self.__len__())]
 
-                for k, v in params.items():
-                    if not is_iterable(v):
+                for key, vals in params.items():
+                    if not is_iterable(vals):
                         for d in temp_param:
-                            d[k] = v
+                            d[key] = vals
                     else:
                         for i, d in enumerate(temp_param):
-                            d[k] = v[i]
+                            d[key] = vals[i]
                 params = temp_param
 
         if val is not None and nest.is_literal(params):

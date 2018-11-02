@@ -211,25 +211,25 @@ def SetStatus(nodes, params, val=None):
 
     if (isinstance(params, dict) and isinstance(nodes, nest.GIDCollection) and
             nodes[0].get('local')):
-        for k, v in params.items():
-            if isinstance(v, nest.Parameter):
-                params[k] = [v.get_value() for _ in range(len(nodes))]
+        for key, vals in params.items():
+            if isinstance(vals, nest.Parameter):
+                params[key] = [vals.get_value() for _ in range(len(nodes))]
 
-        contains_list = [is_iterable(v) and not
-                         is_iterable(nest.GetStatus(nodes[0], k)[0])
-                         for k, v in params.items()]
+        contains_list = [is_iterable(vals) and not
+                         is_iterable(nest.GetStatus(nodes[0], key)[0])
+                         for key, vals in params.items()]
         contains_list = max(contains_list)
 
         if contains_list:
             temp_param = [{} for _ in range(len(nodes))]
 
-            for k, v in params.items():
-                if not is_iterable(v):
-                    for d in temp_param:
-                        d[k] = v
+            for key, vals in params.items():
+                if not is_iterable(vals):
+                    for tmp_dict in temp_param:
+                        tmp_dict[key] = vals
                 else:
-                    for i, d in enumerate(temp_param):
-                        d[k] = v[i]
+                    for i, tmp_dict in enumerate(temp_param):
+                        tmp_dict[key] = vals[i]
             params = temp_param
 
     if val is not None and is_literal(params):

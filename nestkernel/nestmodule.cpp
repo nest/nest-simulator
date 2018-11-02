@@ -382,12 +382,10 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
     throw KernelException( "InvalidGIDCollection" );
   }
 
-  size_t gc_size = gc->size();
-
   DictionaryDatum dict = DictionaryDatum( new Dictionary );
   meta->get_status( dict );
 
-  ( *dict )[ names::network_size ] = gc_size;
+  ( *dict )[ names::network_size ] = gc->size();
 
   i->OStack.pop();
   i->OStack.push( dict );

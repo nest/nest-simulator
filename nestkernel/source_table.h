@@ -270,10 +270,10 @@ SourceTable::add_source( const thread tid,
 inline void
 SourceTable::clear( const thread tid )
 {
-  for ( std::vector< BlockVector< Source > >::iterator it =
-          sources_[ tid ].begin();
-        it != sources_[ tid ].end();
-        ++it )
+  for (
+    std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin();
+    it != sources_[ tid ].end();
+    ++it )
   {
     it->clear();
   }
@@ -289,13 +289,12 @@ SourceTable::reject_last_target_data( const thread tid )
   // correct the processed flag of the last entry (see
   // source_table.cpp)
   assert( current_positions_[ tid ].lcid + 1
-    < static_cast< long >( sources_[ current_positions_[ tid ].tid ]
-                                   [ current_positions_[ tid ].syn_id ]
-                                     .size() ) );
+    < static_cast< long >(
+            sources_[ current_positions_[ tid ].tid ][ current_positions_[ tid ]
+                                                         .syn_id ].size() ) );
 
   sources_[ current_positions_[ tid ].tid ][ current_positions_[ tid ].syn_id ]
-          [ current_positions_[ tid ].lcid + 1 ]
-            .set_processed( false );
+          [ current_positions_[ tid ].lcid + 1 ].set_processed( false );
 }
 
 inline void
@@ -313,12 +312,11 @@ SourceTable::save_entry_point( const thread tid )
       // either store current_position.lcid + 1, since this can
       // contain non-processed entry (see reject_last_target_data()) or
       // store maximal value for lcid.
-      saved_positions_[ tid ].lcid =
-        std::min( current_positions_[ tid ].lcid + 1,
-          static_cast< long >( sources_[ current_positions_[ tid ].tid ]
-                                       [ current_positions_[ tid ].syn_id ]
-                                         .size()
-            - 1 ) );
+      saved_positions_[ tid ].lcid = std::min(
+        current_positions_[ tid ].lcid + 1,
+        static_cast< long >(
+          sources_[ current_positions_[ tid ].tid ][ current_positions_[ tid ]
+                                                       .syn_id ].size() - 1 ) );
     }
     else
     {
@@ -358,8 +356,7 @@ SourceTable::reset_entry_point( const thread tid )
   {
     saved_positions_[ tid ].lcid =
       sources_[ saved_positions_[ tid ].tid ][ saved_positions_[ tid ].syn_id ]
-        .size()
-      - 1;
+        .size() - 1;
   }
   else
   {
@@ -370,10 +367,10 @@ SourceTable::reset_entry_point( const thread tid )
 inline void
 SourceTable::reset_processed_flags( const thread tid )
 {
-  for ( std::vector< BlockVector< Source > >::iterator it =
-          sources_[ tid ].begin();
-        it != sources_[ tid ].end();
-        ++it )
+  for (
+    std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin();
+    it != sources_[ tid ].end();
+    ++it )
   {
     for ( BlockVector< Source >::iterator iit = it->begin(); iit != it->end();
           ++iit )

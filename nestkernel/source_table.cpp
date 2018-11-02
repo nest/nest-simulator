@@ -318,8 +318,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
 
     // the current position contains an entry, so we retrieve it
     const Source& const_current_source =
-      sources_[ current_position.tid ][ current_position.syn_id ]
-              [ current_position.lcid ];
+      sources_[ current_position.tid ][ current_position
+                                          .syn_id ][ current_position.lcid ];
 
     if ( const_current_source.is_processed()
       or const_current_source.is_disabled() )
@@ -342,8 +342,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
     }
 
     Source& current_source =
-      sources_[ current_position.tid ][ current_position.syn_id ]
-              [ current_position.lcid ];
+      sources_[ current_position.tid ][ current_position
+                                          .syn_id ][ current_position.lcid ];
 
     // we have found a valid entry, so mark it as processed
     current_source.set_processed( true );
@@ -361,8 +361,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
                  sources_[ current_position.tid ][ current_position.syn_id ]
                    .size() )
            and sources_[ current_position.tid ][ current_position.syn_id ]
-                       [ current_position.lcid + 1 ]
-                         .get_gid()
+                       [ current_position.lcid + 1 ].get_gid()
              == current_source.get_gid() ) )
     {
       kernel().connection_manager.set_has_source_subsequent_targets(
@@ -377,12 +376,10 @@ nest::SourceTable::get_next_target_data( const thread tid,
     // the preceding entry was not processed yet
     if ( ( current_position.lcid - 1 >= 0 )
       and ( sources_[ current_position.tid ][ current_position.syn_id ]
-                    [ current_position.lcid - 1 ]
-                      .get_gid()
+                    [ current_position.lcid - 1 ].get_gid()
             == current_source.get_gid() )
       and ( not sources_[ current_position.tid ][ current_position.syn_id ]
-                        [ current_position.lcid - 1 ]
-                          .is_processed() ) )
+                        [ current_position.lcid - 1 ].is_processed() ) )
     {
       --current_position.lcid;
       continue;

@@ -348,8 +348,7 @@ public:
     while ( true )
     {
       if ( C_[ lcid ].get_target( tid )->get_synaptic_elements(
-             post_synaptic_element )
-          != 0.0
+             post_synaptic_element ) != 0.0
         and not C_[ lcid ].is_disabled() )
       {
         target_gids.push_back( C_[ lcid ].get_target( tid )->get_gid() );
@@ -437,8 +436,7 @@ public:
     {
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
              ->get_common_properties()
-             .get_vt_gid()
-        == vt_gid )
+             .get_vt_gid() == vt_gid )
       {
         C_[ i ].trigger_update_weight( tid,
           dopa_spikes,

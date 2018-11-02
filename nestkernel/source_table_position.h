@@ -158,21 +158,21 @@ SourceTablePosition::is_at_end() const
   }
 }
 
-inline bool
-operator==( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
+inline bool operator==( const SourceTablePosition& lhs,
+  const SourceTablePosition& rhs )
 {
   return ( ( lhs.tid == rhs.tid ) and ( lhs.syn_id == rhs.syn_id )
     and ( lhs.lcid == rhs.lcid ) );
 }
 
-inline bool
-operator!=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
+inline bool operator!=( const SourceTablePosition& lhs,
+  const SourceTablePosition& rhs )
 {
   return not operator==( lhs, rhs );
 }
 
-inline bool
-operator<( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
+inline bool operator<( const SourceTablePosition& lhs,
+  const SourceTablePosition& rhs )
 {
   if ( lhs.tid == rhs.tid )
   {
@@ -191,20 +191,20 @@ operator<( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
   }
 }
 
-inline bool
-operator>( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
+inline bool operator>( const SourceTablePosition& lhs,
+  const SourceTablePosition& rhs )
 {
   return operator<( rhs, lhs );
 }
 
-inline bool
-operator<=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
+inline bool operator<=( const SourceTablePosition& lhs,
+  const SourceTablePosition& rhs )
 {
   return not operator>( lhs, rhs );
 }
 
-inline bool
-operator>=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
+inline bool operator>=( const SourceTablePosition& lhs,
+  const SourceTablePosition& rhs )
 {
   return not operator<( lhs, rhs );
 }

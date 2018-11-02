@@ -60,7 +60,8 @@ private:
   template < typename cv_value_type_ >
   using iter_ = bv_iterator< value_type_, cv_value_type_&, cv_value_type_* >;
 
-  const BlockVector< value_type_ >* block_vector_; //!< BlockVector to which this iterator points
+  const BlockVector< value_type_ >*
+    block_vector_;     //!< BlockVector to which this iterator points
   size_t block_index_; //!< Index of the current block in the blockmap
   //! Iterator pointing to the current element in the current block.
   typename std::vector< value_type_ >::const_iterator block_it_;
@@ -233,7 +234,8 @@ public:
   iterator erase( const_iterator, const_iterator );
 
   /**
-   * @brief Writes the contents of the BlockVector, separated into blocks, to cerr.
+   * @brief Writes the contents of the BlockVector, separated into blocks, to
+   * cerr.
    */
   void print_blocks() const;
 
@@ -275,7 +277,8 @@ inline BlockVector< value_type_ >::BlockVector( size_t n )
 }
 
 template < typename value_type_ >
-inline BlockVector< value_type_ >::BlockVector( const BlockVector< value_type_ >& other )
+inline BlockVector< value_type_ >::BlockVector(
+  const BlockVector< value_type_ >& other )
   : blockmap_( other.blockmap_ )
   , finish_( begin() + ( other.finish_ - other.begin() ) )
 {
@@ -588,8 +591,8 @@ inline typename bv_iterator< value_type_, ref_, ptr_ >::difference_type
 {
   auto this_element_index =
     block_it_ - block_vector_->blockmap_[ block_index_ ].begin();
-  auto other_element_index =
-    other.block_it_ - other.block_vector_->blockmap_[ other.block_index_ ].begin();
+  auto other_element_index = other.block_it_
+    - other.block_vector_->blockmap_[ other.block_index_ ].begin();
   return ( block_index_ - other.block_index_ ) * max_block_size
     + ( this_element_index - other_element_index );
 }
@@ -601,8 +604,8 @@ inline typename bv_iterator< value_type_, ref_, ptr_ >::difference_type
 {
   auto this_element_index =
     block_it_ - block_vector_->blockmap_[ block_index_ ].begin();
-  auto other_element_index =
-    other.block_it_ - other.block_vector_->blockmap_[ other.block_index_ ].begin();
+  auto other_element_index = other.block_it_
+    - other.block_vector_->blockmap_[ other.block_index_ ].begin();
   return ( block_index_ - other.block_index_ ) * max_block_size
     + ( this_element_index - other_element_index );
 }

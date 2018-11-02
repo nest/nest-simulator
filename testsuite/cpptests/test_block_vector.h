@@ -1,5 +1,5 @@
 /*
- *  test_seque.h
+ *  test_block_vector.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TEST_SEQUE_H
-#define TEST_SEQUE_H
+#ifndef TEST_BLOCK_VECTOR_H
+#define TEST_BLOCK_VECTOR_H
 
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
@@ -30,52 +30,52 @@
 #include <vector>
 
 // Includes from libnestutil:
-#include "seque.h"
+#include "block_vector.h"
 
 BOOST_AUTO_TEST_SUITE( test_seque )
 
 BOOST_AUTO_TEST_CASE( test_size )
 {
   // TODO: check both branches of if test in size()
-  Seque< int > seque;
-  int N = seque.get_max_block_size() + 10;
+  BlockVector< int > block_vector;
+  int N = block_vector.get_max_block_size() + 10;
   for ( int i = 0; i < N; ++i )
   {
-    seque.push_back( i );
+    block_vector.push_back( i );
   }
 
-  BOOST_REQUIRE( seque.size() == ( size_t ) N );
+  BOOST_REQUIRE( block_vector.size() == ( size_t ) N );
 }
 
 BOOST_AUTO_TEST_CASE( test_random_access )
 {
-  Seque< int > seque;
-  int N = seque.get_max_block_size() + 10;
+  BlockVector< int > block_vector;
+  int N = block_vector.get_max_block_size() + 10;
   for ( int i = 0; i < N; ++i )
   {
-    seque.push_back( i );
+    block_vector.push_back( i );
   }
 
-  BOOST_REQUIRE( seque[ 10 ] == 10 );
-  BOOST_REQUIRE( seque[ 100 ] == 100 );
-  BOOST_REQUIRE( seque[ N - 1 ] == N - 1 );
+  BOOST_REQUIRE( block_vector[ 10 ] == 10 );
+  BOOST_REQUIRE( block_vector[ 100 ] == 100 );
+  BOOST_REQUIRE( block_vector[ N - 1 ] == N - 1 );
 }
 
 BOOST_AUTO_TEST_CASE( test_clear )
 {
-  Seque< int > seque;
-  int N = seque.get_max_block_size() + 10;
+  BlockVector< int > block_vector;
+  int N = block_vector.get_max_block_size() + 10;
   for ( int i = 0; i < N; ++i )
   {
-    seque.push_back( i );
+    block_vector.push_back( i );
   }
 
-  seque.clear();
+  block_vector.clear();
 
-  BOOST_REQUIRE( seque.size() == 0 );
+  BOOST_REQUIRE( block_vector.size() == 0 );
 
   int n_elements = 0;
-  for ( int& it : seque )
+  for ( int& it : block_vector )
   {
     BOOST_TEST_MESSAGE( it );
     ++n_elements;
@@ -86,13 +86,13 @@ BOOST_AUTO_TEST_CASE( test_clear )
 BOOST_AUTO_TEST_CASE( test_erase )
 {
   int N = 10;
-  Seque< int > seque;
+  BlockVector< int > block_vector;
   for ( int i = 0; i < N; ++i )
   {
-    seque.push_back( i );
+    block_vector.push_back( i );
   }
 
-  auto seque_mid = seque;
+  auto seque_mid = block_vector;
   seque_mid.erase( seque_mid.begin() + 2, seque_mid.begin() + 8 );
   BOOST_REQUIRE( seque_mid.size() == 4 );
   BOOST_REQUIRE( seque_mid[ 0 ] == 0 );
@@ -100,14 +100,14 @@ BOOST_AUTO_TEST_CASE( test_erase )
   BOOST_REQUIRE( seque_mid[ 2 ] == 8 );
   BOOST_REQUIRE( seque_mid[ 3 ] == 9 );
 
-  auto seque_front = seque;
+  auto seque_front = block_vector;
   seque_front.erase( seque_front.begin(), seque_front.begin() + 7 );
   BOOST_REQUIRE( seque_front.size() == 3 );
   BOOST_REQUIRE( seque_front[ 0 ] == 7 );
   BOOST_REQUIRE( seque_front[ 1 ] == 8 );
   BOOST_REQUIRE( seque_front[ 2 ] == 9 );
 
-  auto seque_back = seque;
+  auto seque_back = block_vector;
   seque_back.erase( seque_back.begin() + 3, seque_back.end() );
   BOOST_REQUIRE( seque_back.size() == 3 );
   BOOST_REQUIRE( seque_back[ 0 ] == 0 );
@@ -117,43 +117,43 @@ BOOST_AUTO_TEST_CASE( test_erase )
 
 BOOST_AUTO_TEST_CASE( test_begin )
 {
-  Seque< int > seque;
-  int N = seque.get_max_block_size() + 10;
+  BlockVector< int > block_vector;
+  int N = block_vector.get_max_block_size() + 10;
   for ( int i = 0; i < N; ++i )
   {
-    seque.push_back( i );
+    block_vector.push_back( i );
   }
 
-  Seque< int >::const_iterator begin = seque.begin();
+  BlockVector< int >::const_iterator begin = block_vector.begin();
   BOOST_REQUIRE( *begin == 0 );
 }
 
 BOOST_AUTO_TEST_CASE( test_end )
 {
-  Seque< int > seque;
-  int N = seque.get_max_block_size() + 10;
+  BlockVector< int > block_vector;
+  int N = block_vector.get_max_block_size() + 10;
   for ( int i = 0; i < N; ++i )
   {
-    seque.push_back( i );
+    block_vector.push_back( i );
   }
 
-  Seque< int >::const_iterator end = seque.end();
+  BlockVector< int >::const_iterator end = block_vector.end();
 
   BOOST_REQUIRE( *( --end ) == N - 1 );
 }
 
 BOOST_AUTO_TEST_CASE( test_iterating )
 {
-  Seque< int > seque;
-  int N = seque.get_max_block_size() + 10;
+  BlockVector< int > block_vector;
+  int N = block_vector.get_max_block_size() + 10;
   for ( int i = 0; i < N; ++i )
   {
-    seque.push_back( i );
+    block_vector.push_back( i );
   }
 
   // Iterating forwards
   int j = 0;
-  for ( int& it : seque )
+  for ( int& it : block_vector )
   {
     BOOST_REQUIRE( it == j );
     ++j;
@@ -161,7 +161,8 @@ BOOST_AUTO_TEST_CASE( test_iterating )
 
   // Iterator decrement operator
   int k = N - 1;
-  for ( Seque< int >::const_iterator it = --seque.end(); it != seque.begin();
+  for ( BlockVector< int >::const_iterator it = --block_vector.end();
+        it != block_vector.begin();
         --it )
   {
     BOOST_REQUIRE( *it == k );
@@ -171,23 +172,23 @@ BOOST_AUTO_TEST_CASE( test_iterating )
 
 BOOST_AUTO_TEST_CASE( test_iterator_arithmetic )
 {
-  Seque< int > seque;
-  int N = seque.get_max_block_size() + 10;
+  BlockVector< int > block_vector;
+  int N = block_vector.get_max_block_size() + 10;
   for ( int i = 0; i < N; ++i )
   {
-    seque.push_back( i );
+    block_vector.push_back( i );
   }
-  BOOST_REQUIRE( *( seque.begin() + 1 ) == seque[ 1 ] );
-  BOOST_REQUIRE( *( seque.begin() + ( N - 1 ) ) == seque[ N - 1 ] );
+  BOOST_REQUIRE( *( block_vector.begin() + 1 ) == block_vector[ 1 ] );
+  BOOST_REQUIRE( *( block_vector.begin() + ( N - 1 ) ) == block_vector[ N - 1 ] );
 
-  auto it = seque.begin();
+  auto it = block_vector.begin();
   it += N - 5;
-  BOOST_REQUIRE( *it == seque[ N - 5 ] );
+  BOOST_REQUIRE( *it == block_vector[ N - 5 ] );
 
-  auto it_2 = seque.begin();
+  auto it_2 = block_vector.begin();
   it_2 += 3;
 
-  auto it_3 = seque.begin();
+  auto it_3 = block_vector.begin();
   ++it_3;
 
   decltype( it )::difference_type expected_diff = N - 5 - 3;
@@ -199,12 +200,12 @@ BOOST_AUTO_TEST_CASE( test_iterator_arithmetic )
 BOOST_AUTO_TEST_CASE( test_iterator_dereference )
 {
   // Using operator*
-  Seque< int > seque;
-  seque.push_back( 42 );
-  BOOST_REQUIRE( *( seque.begin() ) == seque[ 0 ] );
+  BlockVector< int > block_vector;
+  block_vector.push_back( 42 );
+  BOOST_REQUIRE( *( block_vector.begin() ) == block_vector[ 0 ] );
 
   // Using operator->
-  Seque< std::vector< int > > nested_seque;
+  BlockVector< std::vector< int > > nested_seque;
   std::vector< int > tmp = { 42 };
   nested_seque.push_back( tmp );
   BOOST_REQUIRE( nested_seque.begin()->size() == 1 );
@@ -212,15 +213,15 @@ BOOST_AUTO_TEST_CASE( test_iterator_dereference )
 
 BOOST_AUTO_TEST_CASE( test_iterator_assign )
 {
-  Seque< int > seque;
-  int N = seque.get_max_block_size() + 10;
+  BlockVector< int > block_vector;
+  int N = block_vector.get_max_block_size() + 10;
   int shift = N - 5;
   for ( int i = 0; i < N; ++i )
   {
-    seque.push_back( i );
+    block_vector.push_back( i );
   }
 
-  auto it = seque.begin();
+  auto it = block_vector.begin();
   ++it;
   int current_value = *it;
   auto it_copy = it;
@@ -237,16 +238,16 @@ BOOST_AUTO_TEST_CASE( test_iterator_assign )
 
 BOOST_AUTO_TEST_CASE( test_iterator_compare )
 {
-  Seque< int > seque;
-  int N = seque.get_max_block_size() + 10;
+  BlockVector< int > block_vector;
+  int N = block_vector.get_max_block_size() + 10;
   for ( int i = 0; i < N; ++i )
   {
-    seque.push_back( i );
+    block_vector.push_back( i );
   }
-  BOOST_REQUIRE( seque.begin() < seque.end() );
+  BOOST_REQUIRE( block_vector.begin() < block_vector.end() );
 
-  auto it_a = seque.begin();
-  auto it_b = seque.begin();
+  auto it_a = block_vector.begin();
+  auto it_b = block_vector.begin();
   BOOST_REQUIRE( it_a == it_b );
 
   ++it_b;

@@ -1,5 +1,5 @@
 /*
- *  seque.h
+ *  block_vector.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SEQUE_H_
-#define SEQUE_H_
+#ifndef BLOCK_VECTOR_H_
+#define BLOCK_VECTOR_H_
 
 #include <cmath>
 #include <vector>
@@ -30,37 +30,37 @@
 #include <cassert>
 
 template < typename value_type_ >
-class Seque;
+class BlockVector;
 template < typename value_type_, typename ref_, typename ptr_ >
-class seque_iterator;
+class bv_iterator;
 
 constexpr int block_size_shift = 10; //!< max_block_size = 2^block_size_shift
 constexpr int max_block_size = 1L << block_size_shift;
 constexpr int max_block_size_sub_1 = max_block_size - 1;
 
 /**
- * @brief A Seque::iterator.
+ * @brief A BlockVector::iterator.
  * @tparam value_type_ Type of element.
  * @tparam ref_ Type of reference to the element.
  * @tparam ptr_ Type of pointer to the element.
  *
- * Seque holds one of this internally, marking the end of the valid range.
+ * BlockVector holds one of this internally, marking the end of the valid range.
  */
 template < typename value_type_, typename ref_, typename ptr_ >
-class seque_iterator
+class bv_iterator
 {
-  friend class Seque< value_type_ >;
+  friend class BlockVector< value_type_ >;
 
   // Making all templated iterators friends to allow converting
   // iterator to const_iterator.
   template < typename, typename, typename >
-  friend class seque_iterator;
+  friend class bv_iterator;
 
 private:
   template < typename cv_value_type_ >
-  using iter_ = seque_iterator< value_type_, cv_value_type_&, cv_value_type_* >;
+  using iter_ = bv_iterator< value_type_, cv_value_type_&, cv_value_type_* >;
 
-  const Seque< value_type_ >* seque_; //!< Seque to which this iterator points
+  const BlockVector< value_type_ >* block_vector_; //!< BlockVector to which this iterator points
   size_t block_index_; //!< Index of the current block in the blockmap
   //! Iterator pointing to the current element in the current block.
   typename std::vector< value_type_ >::const_iterator block_it_;
@@ -78,41 +78,41 @@ public:
   using difference_type = size_t;
 
   /**
-   * @brief Creates an iterator pointing to the first element in a Seque.
-   * @param seque Seque to which the iterator will point to.
+   * @brief Creates an iterator pointing to the first element in a BlockVector.
+   * @param block_vector BlockVector to which the iterator will point to.
    */
-  explicit seque_iterator( const Seque< value_type_ >& );
+  explicit bv_iterator( const BlockVector< value_type_ >& );
 
   /**
    * @brief Iterator copy constructor.
    * @param other Iterator to be copied.
    */
-  seque_iterator( const iterator& );
+  bv_iterator( const iterator& );
 
   /**
    * @brief Creates an iterator with specified parameters.
-   * @param seque Seque to point to.
+   * @param block_vector BlockVector to point to.
    * @param block_index Index of current block.
    * @param block_it Iterator pointing to current element in the current block.
    * @param current_block_end Iterator pointing to the end of the current block.
    */
-  seque_iterator( const Seque< value_type_ >*,
+  bv_iterator( const BlockVector< value_type_ >*,
     const size_t,
     const typename std::vector< value_type_ >::const_iterator,
     const typename std::vector< value_type_ >::const_iterator );
 
-  seque_iterator& operator++();
-  seque_iterator& operator--();
-  seque_iterator& operator+=( size_t );
-  seque_iterator operator+( size_t );
+  bv_iterator& operator++();
+  bv_iterator& operator--();
+  bv_iterator& operator+=( size_t );
+  bv_iterator operator+( size_t );
   reference operator*() const;
   pointer operator->() const;
   difference_type operator-( const iterator& ) const;
   difference_type operator-( const const_iterator& ) const;
 
-  bool operator==( const seque_iterator& ) const;
-  bool operator!=( const seque_iterator& ) const;
-  bool operator<( const seque_iterator& ) const;
+  bool operator==( const bv_iterator& ) const;
+  bool operator!=( const bv_iterator& ) const;
+  bool operator<( const bv_iterator& ) const;
 
 private:
   /**
@@ -132,36 +132,36 @@ private:
  * index to the right block and the right position in that block.
  */
 template < typename value_type_ >
-class Seque
+class BlockVector
 {
   template < typename cv_value_type_, typename ref_, typename ptr_ >
-  friend class seque_iterator;
+  friend class bv_iterator;
 
 public:
-  using iterator = seque_iterator< value_type_, value_type_&, value_type_* >;
+  using iterator = bv_iterator< value_type_, value_type_&, value_type_* >;
   using const_iterator =
-    seque_iterator< value_type_, const value_type_&, const value_type_* >;
+    bv_iterator< value_type_, const value_type_&, const value_type_* >;
 
   /**
-   * @brief Creates an empty Seque.
+   * @brief Creates an empty BlockVector.
    */
-  Seque();
+  BlockVector();
 
   /**
-   * @brief Creates a Seque containing a number of elements.
+   * @brief Creates a BlockVector containing a number of elements.
    * @param n Number of elements.
    */
-  explicit Seque( size_t );
+  explicit BlockVector( size_t );
 
   /**
-   * @brief Seque copy constructor.
-   * @param other Seque to copy.
+   * @brief BlockVector copy constructor.
+   * @param other BlockVector to copy.
    */
-  Seque( const Seque< value_type_ >& );
-  virtual ~Seque();
+  BlockVector( const BlockVector< value_type_ >& );
+  virtual ~BlockVector();
 
   /**
-   * @brief Subscript access to the data contained in the Seque.
+   * @brief Subscript access to the data contained in the BlockVector.
    * @param pos The index of the element for which data should be accessed.
    * @return  Read/write reference to data.
    *
@@ -170,7 +170,7 @@ public:
   value_type_& operator[]( const size_t pos );
 
   /**
-   * @brief Subscript access to the data contained in the Seque.
+   * @brief Subscript access to the data contained in the BlockVector.
    * @param pos The index of the element for which data should be accessed.
    * @return  Read-only (constant) reference to data.
    *
@@ -180,33 +180,33 @@ public:
 
   /**
    * Returns a read/write iterator that points to the first element in the
-   * Seque. Iteration is done in ordinary element order.
+   * BlockVector. Iteration is done in ordinary element order.
    */
   iterator begin();
 
   /**
    * Returns a read-only (constant) iterator that points to the first element
-   * in the Seque. Iteration is done in ordinary element order.
+   * in the BlockVector. Iteration is done in ordinary element order.
    */
   const_iterator begin() const;
 
   /**
    * Returns a read/write iterator that points one past the last element in the
-   * Seque. Iteration is done in ordinary element order.
+   * BlockVector. Iteration is done in ordinary element order.
    */
   iterator end();
 
   /**
    * Returns a read-only (constant) iterator that points one past the last
-   * element in the Seque. Iteration is done in ordinary element order.
+   * element in the BlockVector. Iteration is done in ordinary element order.
    */
   const_iterator end() const;
 
   /**
-   * @brief Add data to the end of the Seque.
+   * @brief Add data to the end of the BlockVector.
    * @param value Data to be added.
    *
-   * Assigns given data to the element at the end of the Seque.
+   * Assigns given data to the element at the end of the BlockVector.
    */
   void push_back( const value_type_& value );
 
@@ -216,7 +216,7 @@ public:
   void clear();
 
   /**
-   * Returns the number of elements in the Seque.
+   * Returns the number of elements in the BlockVector.
    */
   size_t size() const;
 
@@ -228,12 +228,12 @@ public:
    *         to erasing (or end()).
    *
    * This function will erase the elements in the range [first, last)
-   * and shorten the Seque accordingly.
+   * and shorten the BlockVector accordingly.
    */
   iterator erase( const_iterator, const_iterator );
 
   /**
-   * @brief Writes the contents of the Seque, separated into blocks, to cerr.
+   * @brief Writes the contents of the BlockVector, separated into blocks, to cerr.
    */
   void print_blocks() const;
 
@@ -249,11 +249,11 @@ private:
 };
 
 /////////////////////////////////////////////////////////////
-//               Seque method implementation               //
+//               BlockVector method implementation         //
 /////////////////////////////////////////////////////////////
 
 template < typename value_type_ >
-inline Seque< value_type_ >::Seque()
+inline BlockVector< value_type_ >::BlockVector()
   : blockmap_( std::vector< std::vector< value_type_ > >( 1,
       std::vector< value_type_ >( max_block_size ) ) )
   , finish_( begin() )
@@ -261,7 +261,7 @@ inline Seque< value_type_ >::Seque()
 }
 
 template < typename value_type_ >
-inline Seque< value_type_ >::Seque( size_t n )
+inline BlockVector< value_type_ >::BlockVector( size_t n )
   : blockmap_( std::vector< std::vector< value_type_ > >( 1,
       std::vector< value_type_ >( max_block_size ) ) )
   , finish_( begin() )
@@ -275,17 +275,17 @@ inline Seque< value_type_ >::Seque( size_t n )
 }
 
 template < typename value_type_ >
-inline Seque< value_type_ >::Seque( const Seque< value_type_ >& other )
+inline BlockVector< value_type_ >::BlockVector( const BlockVector< value_type_ >& other )
   : blockmap_( other.blockmap_ )
   , finish_( begin() + ( other.finish_ - other.begin() ) )
 {
 }
 
 template < typename value_type_ >
-inline Seque< value_type_ >::~Seque() = default;
+inline BlockVector< value_type_ >::~BlockVector() = default;
 
 template < typename value_type_ >
-inline value_type_& Seque< value_type_ >::operator[]( const size_t pos )
+inline value_type_& BlockVector< value_type_ >::operator[]( const size_t pos )
 {
   // Using bitwise operations to efficiently map the index to the
   // right block and element.
@@ -295,7 +295,7 @@ inline value_type_& Seque< value_type_ >::operator[]( const size_t pos )
 }
 
 template < typename value_type_ >
-inline const value_type_& Seque< value_type_ >::operator[](
+inline const value_type_& BlockVector< value_type_ >::operator[](
   const size_t pos ) const
 {
   // Using bitwise operations to efficiently map the index to the
@@ -306,36 +306,36 @@ inline const value_type_& Seque< value_type_ >::operator[](
 }
 
 template < typename value_type_ >
-inline typename Seque< value_type_ >::iterator
-Seque< value_type_ >::begin()
+inline typename BlockVector< value_type_ >::iterator
+BlockVector< value_type_ >::begin()
 {
   return iterator( *this );
 }
 
 template < typename value_type_ >
-inline typename Seque< value_type_ >::const_iterator
-Seque< value_type_ >::begin() const
+inline typename BlockVector< value_type_ >::const_iterator
+BlockVector< value_type_ >::begin() const
 {
   return const_iterator( *this );
 }
 
 template < typename value_type_ >
-inline typename Seque< value_type_ >::iterator
-Seque< value_type_ >::end()
+inline typename BlockVector< value_type_ >::iterator
+BlockVector< value_type_ >::end()
 {
   return finish_;
 }
 
 template < typename value_type_ >
-inline typename Seque< value_type_ >::const_iterator
-Seque< value_type_ >::end() const
+inline typename BlockVector< value_type_ >::const_iterator
+BlockVector< value_type_ >::end() const
 {
   return finish_;
 }
 
 template < typename value_type_ >
 inline void
-Seque< value_type_ >::push_back( const value_type_& value )
+BlockVector< value_type_ >::push_back( const value_type_& value )
 {
   // If this is the last element in the current block, add another block
   if ( finish_.block_it_ == finish_.current_block_end_ - 1 )
@@ -348,7 +348,7 @@ Seque< value_type_ >::push_back( const value_type_& value )
 
 template < typename value_type_ >
 inline void
-Seque< value_type_ >::clear()
+BlockVector< value_type_ >::clear()
 {
   for ( auto it = blockmap_.begin(); it != blockmap_.end(); ++it )
   {
@@ -362,7 +362,7 @@ Seque< value_type_ >::clear()
 
 template < typename value_type_ >
 inline size_t
-Seque< value_type_ >::size() const
+BlockVector< value_type_ >::size() const
 {
   size_t element_index;
   if ( finish_.block_index_ >= blockmap_.size() )
@@ -378,11 +378,11 @@ Seque< value_type_ >::size() const
 }
 
 template < typename value_type_ >
-inline typename Seque< value_type_ >::iterator
-Seque< value_type_ >::erase( const_iterator first, const_iterator last )
+inline typename BlockVector< value_type_ >::iterator
+BlockVector< value_type_ >::erase( const_iterator first, const_iterator last )
 {
-  assert( first.seque_ == this );
-  assert( last.seque_ == this );
+  assert( first.block_vector_ == this );
+  assert( last.block_vector_ == this );
   assert( last < finish_ or last == finish_ );
   // TODO: Except for some special cases, this method may kill performance as
   // last and every subsequent element has to be moved to fill the erased space.
@@ -435,10 +435,10 @@ Seque< value_type_ >::erase( const_iterator first, const_iterator last )
 
 template < typename value_type_ >
 inline void
-Seque< value_type_ >::print_blocks() const
+BlockVector< value_type_ >::print_blocks() const
 {
   std::cerr << "this: \t\t" << this << "\n";
-  std::cerr << "finish seque: \t" << finish_.seque_ << "\n";
+  std::cerr << "finish block_vector: \t" << finish_.block_vector_ << "\n";
   std::cerr << "Blockmap size: " << blockmap_.size() << "\n";
   std::cerr << "Finish block: " << finish_.block_index_ << "\n";
   std::cerr << "==============================================\n";
@@ -464,29 +464,29 @@ Seque< value_type_ >::print_blocks() const
 
 template < typename value_type_ >
 inline int
-Seque< value_type_ >::get_max_block_size() const
+BlockVector< value_type_ >::get_max_block_size() const
 {
   return max_block_size;
 }
 
 /////////////////////////////////////////////////////////////
-//        Seque iterator method implementation             //
+//        BlockVector iterator method implementation       //
 /////////////////////////////////////////////////////////////
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline seque_iterator< value_type_, ref_, ptr_ >::seque_iterator(
-  const Seque< value_type_ >& seque )
-  : seque_( &seque )
+inline bv_iterator< value_type_, ref_, ptr_ >::bv_iterator(
+  const BlockVector< value_type_ >& block_vector )
+  : block_vector_( &block_vector )
   , block_index_( 0 )
-  , block_it_( seque_->blockmap_[ block_index_ ].begin() )
-  , current_block_end_( seque_->blockmap_[ block_index_ ].end() )
+  , block_it_( block_vector_->blockmap_[ block_index_ ].begin() )
+  , current_block_end_( block_vector_->blockmap_[ block_index_ ].end() )
 {
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline seque_iterator< value_type_, ref_, ptr_ >::seque_iterator(
+inline bv_iterator< value_type_, ref_, ptr_ >::bv_iterator(
   const iterator& other )
-  : seque_( other.seque_ )
+  : block_vector_( other.block_vector_ )
   , block_index_( other.block_index_ )
   , block_it_( other.block_it_ )
   , current_block_end_( other.current_block_end_ )
@@ -494,12 +494,12 @@ inline seque_iterator< value_type_, ref_, ptr_ >::seque_iterator(
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline seque_iterator< value_type_, ref_, ptr_ >::seque_iterator(
-  const Seque< value_type_ >* seque,
+inline bv_iterator< value_type_, ref_, ptr_ >::bv_iterator(
+  const BlockVector< value_type_ >* block_vector,
   const size_t block_index,
   const typename std::vector< value_type_ >::const_iterator block_it,
   const typename std::vector< value_type_ >::const_iterator current_block_end )
-  : seque_( seque )
+  : block_vector_( block_vector )
   , block_index_( block_index )
   , block_it_( block_it )
   , current_block_end_( current_block_end )
@@ -507,43 +507,43 @@ inline seque_iterator< value_type_, ref_, ptr_ >::seque_iterator(
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline seque_iterator< value_type_, ref_, ptr_ >&
-  seque_iterator< value_type_, ref_, ptr_ >::
+inline bv_iterator< value_type_, ref_, ptr_ >&
+  bv_iterator< value_type_, ref_, ptr_ >::
   operator++()
 {
   ++block_it_;
   if ( block_it_ == current_block_end_ )
   {
     ++block_index_;
-    block_it_ = seque_->blockmap_[ block_index_ ].begin();
-    current_block_end_ = seque_->blockmap_[ block_index_ ].end();
+    block_it_ = block_vector_->blockmap_[ block_index_ ].begin();
+    current_block_end_ = block_vector_->blockmap_[ block_index_ ].end();
   }
   return *this;
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline seque_iterator< value_type_, ref_, ptr_ >&
-  seque_iterator< value_type_, ref_, ptr_ >::
+inline bv_iterator< value_type_, ref_, ptr_ >&
+  bv_iterator< value_type_, ref_, ptr_ >::
   operator--()
 {
   // If we are still within the block, we can just decrement the block iterator.
   // If not, we need to switch to the previous block.
-  if ( block_it_ != seque_->blockmap_[ block_index_ ].begin() )
+  if ( block_it_ != block_vector_->blockmap_[ block_index_ ].begin() )
   {
     --block_it_;
   }
   else
   {
     --block_index_;
-    current_block_end_ = seque_->blockmap_[ block_index_ ].end();
+    current_block_end_ = block_vector_->blockmap_[ block_index_ ].end();
     block_it_ = current_block_end_ - 1;
   }
   return *this;
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline seque_iterator< value_type_, ref_, ptr_ >&
-  seque_iterator< value_type_, ref_, ptr_ >::
+inline bv_iterator< value_type_, ref_, ptr_ >&
+  bv_iterator< value_type_, ref_, ptr_ >::
   operator+=( size_t val )
 {
   for ( size_t i = 0; i < val; ++i )
@@ -554,16 +554,16 @@ inline seque_iterator< value_type_, ref_, ptr_ >&
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline seque_iterator< value_type_, ref_, ptr_ >
-  seque_iterator< value_type_, ref_, ptr_ >::operator+( size_t val )
+inline bv_iterator< value_type_, ref_, ptr_ >
+  bv_iterator< value_type_, ref_, ptr_ >::operator+( size_t val )
 {
-  seque_iterator tmp = *this;
+  bv_iterator tmp = *this;
   return tmp += val;
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline typename seque_iterator< value_type_, ref_, ptr_ >::reference
-  seque_iterator< value_type_, ref_, ptr_ >::
+inline typename bv_iterator< value_type_, ref_, ptr_ >::reference
+  bv_iterator< value_type_, ref_, ptr_ >::
   operator*() const
 {
   // TODO: Using const_cast  to remove the constness isn't the most elegant
@@ -572,8 +572,8 @@ inline typename seque_iterator< value_type_, ref_, ptr_ >::reference
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline typename seque_iterator< value_type_, ref_, ptr_ >::pointer
-  seque_iterator< value_type_, ref_, ptr_ >::
+inline typename bv_iterator< value_type_, ref_, ptr_ >::pointer
+  bv_iterator< value_type_, ref_, ptr_ >::
   operator->() const
 {
   // TODO: Again, using const_cast  to remove the constness isn't the most
@@ -582,58 +582,58 @@ inline typename seque_iterator< value_type_, ref_, ptr_ >::pointer
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline typename seque_iterator< value_type_, ref_, ptr_ >::difference_type
-  seque_iterator< value_type_, ref_, ptr_ >::
+inline typename bv_iterator< value_type_, ref_, ptr_ >::difference_type
+  bv_iterator< value_type_, ref_, ptr_ >::
   operator-( const iterator& other ) const
 {
   auto this_element_index =
-    block_it_ - seque_->blockmap_[ block_index_ ].begin();
+    block_it_ - block_vector_->blockmap_[ block_index_ ].begin();
   auto other_element_index =
-    other.block_it_ - other.seque_->blockmap_[ other.block_index_ ].begin();
+    other.block_it_ - other.block_vector_->blockmap_[ other.block_index_ ].begin();
   return ( block_index_ - other.block_index_ ) * max_block_size
     + ( this_element_index - other_element_index );
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline typename seque_iterator< value_type_, ref_, ptr_ >::difference_type
-  seque_iterator< value_type_, ref_, ptr_ >::
+inline typename bv_iterator< value_type_, ref_, ptr_ >::difference_type
+  bv_iterator< value_type_, ref_, ptr_ >::
   operator-( const const_iterator& other ) const
 {
   auto this_element_index =
-    block_it_ - seque_->blockmap_[ block_index_ ].begin();
+    block_it_ - block_vector_->blockmap_[ block_index_ ].begin();
   auto other_element_index =
-    other.block_it_ - other.seque_->blockmap_[ other.block_index_ ].begin();
+    other.block_it_ - other.block_vector_->blockmap_[ other.block_index_ ].begin();
   return ( block_index_ - other.block_index_ ) * max_block_size
     + ( this_element_index - other_element_index );
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline bool seque_iterator< value_type_, ref_, ptr_ >::operator==(
-  const seque_iterator< value_type_, ref_, ptr_ >& rhs ) const
+inline bool bv_iterator< value_type_, ref_, ptr_ >::operator==(
+  const bv_iterator< value_type_, ref_, ptr_ >& rhs ) const
 {
   return ( block_index_ == rhs.block_index_ and block_it_ == rhs.block_it_ );
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline bool seque_iterator< value_type_, ref_, ptr_ >::operator!=(
-  const seque_iterator< value_type_, ref_, ptr_ >& rhs ) const
+inline bool bv_iterator< value_type_, ref_, ptr_ >::operator!=(
+  const bv_iterator< value_type_, ref_, ptr_ >& rhs ) const
 {
   return ( block_index_ != rhs.block_index_ or block_it_ != rhs.block_it_ );
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline bool seque_iterator< value_type_, ref_, ptr_ >::operator<(
-  const seque_iterator& rhs ) const
+inline bool bv_iterator< value_type_, ref_, ptr_ >::operator<(
+  const bv_iterator& rhs ) const
 {
   return ( block_index_ < rhs.block_index_
     or ( block_index_ == rhs.block_index_ and block_it_ < rhs.block_it_ ) );
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline typename seque_iterator< value_type_, ref_, ptr_ >::iterator
-seque_iterator< value_type_, ref_, ptr_ >::const_cast_() const
+inline typename bv_iterator< value_type_, ref_, ptr_ >::iterator
+bv_iterator< value_type_, ref_, ptr_ >::const_cast_() const
 {
-  return iterator( seque_, block_index_, block_it_, current_block_end_ );
+  return iterator( block_vector_, block_index_, block_it_, current_block_end_ );
 }
 
-#endif /* SEQUE_H_ */
+#endif /* BLOCK_VECTOR_H_ */

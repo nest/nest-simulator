@@ -23,10 +23,10 @@
 #ifndef SORT_H
 #define SORT_H
 
-#include <vector>
 #include <cstddef>
+#include <vector>
 
-#include "seque.h"
+#include "block_vector.h"
 
 #define INSERTION_SORT_CUTOFF 10 // use insertion sort for smaller arrays
 
@@ -50,7 +50,7 @@ median3_( const std::vector< T >& vec,
 
 template < typename T >
 inline size_t
-median3_( const Seque< T >& vec,
+median3_( const BlockVector< T >& vec,
   const size_t i,
   const size_t j,
   const size_t k )
@@ -70,7 +70,7 @@ median3_( const Seque< T >& vec,
 template < typename T1, typename T2 >
 void
 insertion_sort( std::vector< T1 >& vec_sort,
-  Seque< T2 >& vec_perm,
+  BlockVector< T2 >& vec_perm,
   const size_t lo,
   const size_t hi )
 {
@@ -87,8 +87,8 @@ insertion_sort( std::vector< T1 >& vec_sort,
 
 template < typename T1, typename T2 >
 void
-insertion_sort( Seque< T1 >& vec_sort,
-  Seque< T2 >& vec_perm,
+insertion_sort( BlockVector< T1 >& vec_sort,
+  BlockVector< T2 >& vec_perm,
   const size_t lo,
   const size_t hi )
 {
@@ -115,7 +115,7 @@ insertion_sort( Seque< T1 >& vec_sort,
 template < typename T1, typename T2 >
 void
 quicksort3way( std::vector< T1 >& vec_sort,
-  Seque< T2 >& vec_perm,
+  BlockVector< T2 >& vec_perm,
   const size_t lo,
   const size_t hi )
 {
@@ -196,8 +196,8 @@ quicksort3way( std::vector< T1 >& vec_sort,
 
 template < typename T1, typename T2 >
 void
-quicksort3way( Seque< T1 >& vec_sort,
-  Seque< T2 >& vec_perm,
+quicksort3way( BlockVector< T1 >& vec_sort,
+  BlockVector< T2 >& vec_perm,
   const size_t lo,
   const size_t hi )
 {
@@ -282,14 +282,14 @@ quicksort3way( Seque< T1 >& vec_sort,
  */
 template < typename T1, typename T2 >
 void
-sort( std::vector< T1 >& vec_sort, Seque< T2 >& vec_perm )
+sort( std::vector< T1 >& vec_sort, BlockVector< T2 >& vec_perm )
 {
   quicksort3way( vec_sort, vec_perm, 0, vec_sort.size() - 1 );
 }
 
 template < typename T1, typename T2 >
 void
-sort( Seque< T1 >& vec_sort, Seque< T2 >& vec_perm )
+sort( BlockVector< T1 >& vec_sort, BlockVector< T2 >& vec_perm )
 {
   quicksort3way( vec_sort, vec_perm, 0, vec_sort.size() - 1 );
 }

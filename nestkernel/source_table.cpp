@@ -24,8 +24,8 @@
 #include <iostream>
 
 // Includes from nestkernel:
-#include "connection_manager_impl.h"
 #include "connection_manager.h"
+#include "connection_manager_impl.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "source_table.h"
@@ -88,7 +88,7 @@ nest::SourceTable::is_cleared() const
   return all_cleared;
 }
 
-std::vector< Seque< nest::Source > >&
+std::vector< BlockVector< nest::Source > >&
 nest::SourceTable::get_thread_local_sources( const thread tid )
 {
   return sources_[ tid ];
@@ -127,7 +127,7 @@ nest::SourceTable::clean( const thread tid )
           syn_id < sources_[ tid ].size();
           ++syn_id )
     {
-      Seque< Source >& sources = sources_[ tid ][ syn_id ];
+      BlockVector< Source >& sources = sources_[ tid ][ syn_id ];
       if ( max_position.syn_id == syn_id )
       {
         // we need to add 2 to max_position.lcid since
@@ -186,7 +186,7 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
     return invalid_index;
   }
 
-  Seque< Source >& mysources = sources_[ tid ][ syn_id ];
+  BlockVector< Source >& mysources = sources_[ tid ][ syn_id ];
   const index max_size = mysources.size();
   if ( max_size == 0 )
   {
@@ -238,7 +238,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources(
                .model_manager.get_synapse_prototype( syn_id, tid )
                .is_primary() )
     {
-      for ( Seque< Source >::const_iterator source_cit =
+      for ( BlockVector< Source >::const_iterator source_cit =
               sources_[ tid ][ syn_id ].begin();
             source_cit != sources_[ tid ][ syn_id ].end();
             ++source_cit )
@@ -318,8 +318,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
 
     // the current position contains an entry, so we retrieve it
     const Source& const_current_source =
-      sources_[ current_position.tid ][ current_position
-                                          .syn_id ][ current_position.lcid ];
+      sources_[ current_position.tid ][ current_position.syn_id ]
+              [ current_position.lcid ];
 
     if ( const_current_source.is_processed()
       or const_current_source.is_disabled() )
@@ -342,8 +342,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
     }
 
     Source& current_source =
-      sources_[ current_position.tid ][ current_position
-                                          .syn_id ][ current_position.lcid ];
+      sources_[ current_position.tid ][ current_position.syn_id ]
+              [ current_position.lcid ];
 
     // we have found a valid entry, so mark it as processed
     current_source.set_processed( true );
@@ -361,7 +361,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
                  sources_[ current_position.tid ][ current_position.syn_id ]
                    .size() )
            and sources_[ current_position.tid ][ current_position.syn_id ]
-                       [ current_position.lcid + 1 ].get_gid()
+                       [ current_position.lcid + 1 ]
+                         .get_gid()
              == current_source.get_gid() ) )
     {
       kernel().connection_manager.set_has_source_subsequent_targets(
@@ -376,10 +377,12 @@ nest::SourceTable::get_next_target_data( const thread tid,
     // the preceding entry was not processed yet
     if ( ( current_position.lcid - 1 >= 0 )
       and ( sources_[ current_position.tid ][ current_position.syn_id ]
-                    [ current_position.lcid - 1 ].get_gid()
+                    [ current_position.lcid - 1 ]
+                      .get_gid()
             == current_source.get_gid() )
       and ( not sources_[ current_position.tid ][ current_position.syn_id ]
-                        [ current_position.lcid - 1 ].is_processed() ) )
+                        [ current_position.lcid - 1 ]
+                          .is_processed() ) )
     {
       --current_position.lcid;
       continue;

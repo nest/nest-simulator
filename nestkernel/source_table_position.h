@@ -28,7 +28,7 @@
 #include <iostream>
 #include <vector>
 
-#include "seque.h"
+#include "block_vector.h"
 
 namespace nest
 {
@@ -49,7 +49,8 @@ struct SourceTablePosition
   void wrap_position(
     const std::vector< std::vector< std::vector< T > > >& sources );
   template < typename T >
-  void wrap_position( const std::vector< std::vector< Seque< T > > >& sources );
+  void wrap_position(
+    const std::vector< std::vector< BlockVector< T > > >& sources );
 
   bool is_at_end() const;
 };
@@ -114,7 +115,7 @@ SourceTablePosition::wrap_position(
 template < typename T >
 inline void
 SourceTablePosition::wrap_position(
-  const std::vector< std::vector< Seque< T > > >& sources )
+  const std::vector< std::vector< BlockVector< T > > >& sources )
 {
   // check for validity of indices and update if necessary
   while ( lcid < 0 )
@@ -157,21 +158,21 @@ SourceTablePosition::is_at_end() const
   }
 }
 
-inline bool operator==( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool
+operator==( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   return ( ( lhs.tid == rhs.tid ) and ( lhs.syn_id == rhs.syn_id )
     and ( lhs.lcid == rhs.lcid ) );
 }
 
-inline bool operator!=( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool
+operator!=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   return not operator==( lhs, rhs );
 }
 
-inline bool operator<( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool
+operator<( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   if ( lhs.tid == rhs.tid )
   {
@@ -190,20 +191,20 @@ inline bool operator<( const SourceTablePosition& lhs,
   }
 }
 
-inline bool operator>( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool
+operator>( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   return operator<( rhs, lhs );
 }
 
-inline bool operator<=( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool
+operator<=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   return not operator>( lhs, rhs );
 }
 
-inline bool operator>=( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool
+operator>=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   return not operator<( lhs, rhs );
 }

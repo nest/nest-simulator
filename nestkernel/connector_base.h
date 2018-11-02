@@ -174,7 +174,7 @@ public:
    * Sort connections according to source gids.
    */
   virtual void sort_connections( std::vector< Source >& ) = 0;
-  virtual void sort_connections( Seque< Source >& ) = 0;
+  virtual void sort_connections( BlockVector< Source >& ) = 0;
 
   /**
    * Reserve memory for the specified amount of connections.
@@ -227,7 +227,7 @@ template < typename ConnectionT >
 class Connector : public ConnectorBase
 {
 private:
-  Seque< ConnectionT > C_;
+  BlockVector< ConnectionT > C_;
   const synindex syn_id_;
 
 public:
@@ -348,7 +348,8 @@ public:
     while ( true )
     {
       if ( C_[ lcid ].get_target( tid )->get_synaptic_elements(
-             post_synaptic_element ) != 0.0
+             post_synaptic_element )
+          != 0.0
         and not C_[ lcid ].is_disabled() )
       {
         target_gids.push_back( C_[ lcid ].get_target( tid )->get_gid() );
@@ -436,7 +437,8 @@ public:
     {
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
              ->get_common_properties()
-             .get_vt_gid() == vt_gid )
+             .get_vt_gid()
+        == vt_gid )
       {
         C_[ i ].trigger_update_weight( tid,
           dopa_spikes,
@@ -460,7 +462,7 @@ public:
   }
 
   void
-  sort_connections( Seque< Source >& sources )
+  sort_connections( BlockVector< Source >& sources )
   {
     nest::sort( sources, C_ );
   }

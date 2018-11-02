@@ -390,7 +390,7 @@ Seque< value_type_ >::erase( const_iterator first, const_iterator last )
   {
     return iterator( first.const_cast_() );
   }
-  else if ( first == begin() && last == end() )
+  else if ( first == begin() and last == end() )
   {
     clear();
     return end();

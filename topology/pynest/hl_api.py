@@ -473,7 +473,9 @@ def CreateLayer(specs):
     elements = specs['elements']
     hlh.model_deprecation_warning(elements)
 
-    return nest.sli_func('CreateLayer', specs)
+    layer = nest.sli_func('CreateLayer', specs)
+    layer.set_spatial()
+    return layer
 
 
 def ConnectLayers(pre, post, projections):
@@ -936,23 +938,22 @@ def FindNearestElement(layer, locations, find_all=False):
         locations = (locations, )
 
     result = []
-    nodes = layer.get('nodes')
 
     for loc in locations:
         d = Distance(numpy.array(loc), layer)
 
         if not find_all:
             dx = numpy.argmin(d)  # finds location of one minimum
-            result.append(nodes[dx].get('global_id'))
+            result.append(layer[dx].get('global_id'))
         else:
             mingids = list(layer[:1])
             minval = d[0]
             for idx in range(1, len(layer)):
                 if d[idx] < minval:
-                    mingids = [nodes[idx].get('global_id')]
+                    mingids = [layer[idx].get('global_id')]
                     minval = d[idx]
                 elif numpy.abs(d[idx] - minval) <= 1e-14 * minval:
-                    mingids.append(nodes[idx].get('global_id'))
+                    mingids.append(layer[idx].get('global_id'))
             result.append(tuple(mingids))
 
     return tuple(result)
@@ -1171,7 +1172,7 @@ def FindCenterElement(layer):
     if not isinstance(layer, nest.GIDCollection):
         raise nest.NESTError("layer must be a GIDCollection")
 
-    return FindNearestElement(layer, nest.GetStatus(layer[:1])[0]['center'])[0]
+    return FindNearestElement(layer, layer.spatial['center'])[0]
 
 
 def GetTargetNodes(sources, tgt_layer, syn_model=None):
@@ -1323,7 +1324,7 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     # Find positions to all nodes in target layer
     pos_all_tgts = GetPosition(tgt_layer)
-    first_tgt_gid = tgt_layer[0].get('nodes').get('global_id')
+    first_tgt_gid = tgt_layer[0].get('global_id')
 
     connections = nest.GetConnections(sources, tgt_layer,
                                       synapse_model=syn_model)
@@ -1425,14 +1426,14 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         raise ValueError("layer must be a GIDCollection.")
 
     # get layer extent
-    ext = nest.GetStatus(layer)[0]['extent']
+    ext = layer.spatial['extent']
 
     if len(ext) == 2:
         # 2D layer
 
         # get layer extent and center, x and y
         xext, yext = ext
-        xctr, yctr = nest.GetStatus(layer)[0]['center']
+        xctr, yctr = layer.spatial['center']
 
         # extract position information, transpose to list of x and y pos
         xpos, ypos = zip(*GetPosition(layer))
@@ -1562,15 +1563,15 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     # get position of source
     srcpos = GetPosition(src_nrn)
 
-    # get layer extent and center, x and y
-    ext = nest.GetStatus(tgt_layer)[0]['extent']
+    # get layer extent
+    ext = tgt_layer.spatial['extent']
 
     if len(ext) == 2:
         # 2D layer
 
         # get layer extent and center, x and y
         xext, yext = ext
-        xctr, yctr = nest.GetStatus(tgt_layer)[0]['center']
+        xctr, yctr = tgt_layer.spatial['center']
 
         if fig is None:
             fig = plt.figure()

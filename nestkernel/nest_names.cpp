@@ -279,7 +279,6 @@ const Name next_readout_time( "next_readout_time" );
 const Name NMDA( "NMDA" );
 const Name no_synapses( "no_synapses" );
 const Name node_uses_wfr( "node_uses_wfr" );
-const Name nodes( "nodes" );
 const Name noise( "noise" );
 const Name noisy_rate( "noisy_rate" );
 const Name num_connections( "num_connections" );

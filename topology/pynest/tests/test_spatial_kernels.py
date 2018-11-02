@@ -229,7 +229,7 @@ class SpatialTester(object):
             self._ls = topo.CreateLayer(ldict_s)
             self._lt = topo.CreateLayer(ldict_t)
             cntr = topo.FindCenterElement(self._ls)
-            indx = cntr - self._ls[0].get('nodes').get('global_id')
+            indx = cntr - self._ls[0].get('global_id')
             self._driver = self._ls[indx]
 
     def _connect(self):

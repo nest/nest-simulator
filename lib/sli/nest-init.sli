@@ -96,7 +96,7 @@ def
   /status_dict << >> def
 
   size 1 neq
-  { % If not a layer or single GIDCollection. We have a list of dictionaries.
+  { % If not a single value GIDCollection. We have a list of dictionaries.
   
     % The first thing we do is set the keys in the dictionary based on the
     % first GID in the GIDCollection, and set the corresponding value in an
@@ -158,23 +158,15 @@ def
 % Get parameter value of all GIDs in GIDCollection
 /get [/gidcollectiontype /literaltype]
 {
-  exch dup size 1 eq
+  /value Set
+  /gidcoll Set
+
+  gidcoll size 1 eq
   { % if size == 1
-    /GIDColl Set
-    /value Set
-    GIDColl GetStatus 0 get value get
+    gidcoll GetStatus 0 get value get
   }
   { % if size > 1
-    exch
-    /value Set
-
-    GetStatus size 1 neq
-    { % if not a layer
-      { value get } Map
-    }
-    { % if a layer
-      0 get value get
-    } ifelse
+    gidcoll GetStatus { value get } Map
   } ifelse
 } def
 
@@ -185,6 +177,11 @@ def
   dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
   0 get_g_i GetStatus exch get_d_a
 } def
+
+% Get metadata values of GIDCollection
+/GetMetadata [/gidcollectiontype]
+  /GetMetadata_g load
+def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

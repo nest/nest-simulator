@@ -238,12 +238,12 @@ ContDelayConnection< targetidentifierT >::send( Event& e,
   // seems save.
   if ( total_offset < Time::get_resolution().get_ms() )
   {
-    e.set_delay( get_delay_steps() );
+    e.set_delay_steps( get_delay_steps() );
     e.set_offset( total_offset );
   }
   else
   {
-    e.set_delay( get_delay_steps() - 1 );
+    e.set_delay_steps( get_delay_steps() - 1 );
     e.set_offset( total_offset - Time::get_resolution().get_ms() );
   }
   e();

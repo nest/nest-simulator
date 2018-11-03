@@ -225,7 +225,7 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
   {
     e.set_receiver( *get_target( t ) );
     e.set_weight( n_release * weight_ );
-    e.set_delay( get_delay_steps() );
+    e.set_delay_steps( get_delay_steps() );
     e.set_rport( get_rport() );
     e();
     a_ -= n_release;

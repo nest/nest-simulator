@@ -475,7 +475,7 @@ nest::pp_pop_psc_delta::update( Time const& origin,
 void
 nest::pp_pop_psc_delta::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   // EX: We must compute the arrival time of the incoming spike
   //     explicitly, since it depends on delay and offset within
@@ -489,7 +489,7 @@ nest::pp_pop_psc_delta::handle( SpikeEvent& e )
 void
 nest::pp_pop_psc_delta::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

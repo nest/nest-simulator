@@ -379,7 +379,7 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   GIDCollectionMetadataPTR meta = gc->get_metadata();
   if ( not meta.valid() )
   {
-    throw KernelException( "InvalidGIDCollection" );
+    throw KernelException( "The GIDCollection has invalid metadata." );
   }
 
   DictionaryDatum dict = DictionaryDatum( new Dictionary );

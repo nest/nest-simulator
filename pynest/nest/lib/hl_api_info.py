@@ -218,18 +218,17 @@ def SetStatus(nodes, params, val=None):
         contains_list = [is_iterable(vals) and not
                          is_iterable(nest.GetStatus(nodes[0], key)[0])
                          for key, vals in params.items()]
-        contains_list = max(contains_list)
 
-        if contains_list:
+        if any(contains_list):
             temp_param = [{} for _ in range(len(nodes))]
 
             for key, vals in params.items():
                 if not is_iterable(vals):
-                    for tmp_dict in temp_param:
-                        tmp_dict[key] = vals
+                    for temp_dict in temp_param:
+                        temp_dict[key] = vals
                 else:
-                    for i, tmp_dict in enumerate(temp_param):
-                        tmp_dict[key] = vals[i]
+                    for i, temp_dict in enumerate(temp_param):
+                        temp_dict[key] = vals[i]
             params = temp_param
 
     if val is not None and is_literal(params):

@@ -100,7 +100,8 @@ for fname in allfiles:
                     sliname = cut_it(' - ', name_line_1)[0]
                     sli_command_list.append(sliname)
 
-dcs = r'\/\*[(\*|\s)?]*[\n?]*@BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
+dcs = r'\/\*[(\*|\s)?]*[\n?]*@BeginDocumentation' \
+      r'[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
 
 for fname in allfiles:
     # .py is for future use
@@ -114,7 +115,8 @@ for fname in allfiles:
         for item in items:
             # remove paragraph if this keyword is to be ignored
             for kw in keywords_ignore:
-                item = re.sub(r"(" + kw + ".+?\n\n|" + kw + ".+?$)", "", item, flags=re.DOTALL)
+                item = re.sub(r"(" + kw + ".+?\n\n|" + kw + ".+?$)", "", item,
+                              flags=re.DOTALL)
             # Check the ifdef in code
             require = check_ifdef(item, filetext, dcs)
             if require:
@@ -140,7 +142,7 @@ for fname in allfiles:
             split_items = re.split("(^|\n)(" + "|".join(keywords) + ")", item)
             keyword_curr = ""
             for i, token in enumerate(split_items):
-                if token in keywords:# and (i == 0 or split_items[i - 1] == ""):
+                if token in keywords:
                     keyword_curr = token
                     documentation[keyword_curr] = ""
                 else:

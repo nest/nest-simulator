@@ -20,16 +20,6 @@
  *
  */
 
-
-
-/**
- * The parrot neuron emits one spike for every incoming spike,
- * but may use multiplicity to indicate number of spikes in a single
- * time step.
- * Instead of the accumulated weigths of the incoming spikes, the
- * number of the spikes is stored within a ring buffer.
- */
-
 #ifndef PARROT_NEURON_H
 #define PARROT_NEURON_H
 
@@ -61,6 +51,9 @@ Remarks:
 - Weights on connection to the parrot_neuron are ignored.
 - Weights on connections from the parrot_neuron are handled as usual.
 - Delays are honored on incoming and outgoing connections.
+- Multiplicity may be used to indicate number of spikes in a single
+  time step. Instead of the accumulated weigths of the incoming spikes, the
+  number of the spikes is stored within a ring buffer.
 
 Only spikes arriving on connections to port 0 will be repeated.
 Connections onto port 1 will be accepted, but spikes incoming

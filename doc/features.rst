@@ -99,7 +99,7 @@ Interoperability
 -  Interface to the Multi Simulator Coordinator
    `MUSIC <using-nest-with-music.md>`__
 -  Backend for the simulator-independent modeling tool
-   `PyNN <http://neuralensemble.org/trac/PyNN/>`__
+   `PyNN <http://neuralensemble.org/PyNN/>`__
 
 Accuracy
 --------

@@ -79,7 +79,7 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
   i->createcommand( ":cgnext", &cgnext_cgfunction );
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: CGConnect - Establish connections contained in a ConnectionGenerator
 
    Synopsis:

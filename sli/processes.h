@@ -962,8 +962,7 @@ SeeAlso: available, ignore
 */
 
 
-/**
-@BeginDocumentation
+/** @BeginDocumentation
 Name: ctermid - Return the path to the controlling terminal of the process.
 
 Synopsis: ctermid -> (pathname)

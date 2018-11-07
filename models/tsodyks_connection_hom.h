@@ -285,7 +285,7 @@ TsodyksConnectionHom< targetidentifierT >::send( Event& e,
 
   e.set_receiver( *get_target( t ) );
   e.set_weight( delta_y_tsp * cp.get_weight() );
-  e.set_delay( get_delay_steps() );
+  e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
 

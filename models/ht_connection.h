@@ -178,7 +178,7 @@ HTConnection< targetidentifierT >::send( Event& e,
   // send the spike to the target
   e.set_receiver( *get_target( t ) );
   e.set_weight( weight_ * p_ );
-  e.set_delay( get_delay_steps() );
+  e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
 

@@ -33,11 +33,25 @@
 '''
 
 import nest
+import numpy as np
 from matplotlib import pyplot as plt
 
 
 amplitude = 100.  # Set externally applied current amplitude in pA
 dt = 0.1  # simulation step length [ms]
+
+v_min = -100.  # Min membrane potential
+v_max = 42.  # Max membrane potential
+n_min = 0.1  # Min inactivation variable
+n_max = 0.81  # Max inactivation variable
+delta_v = 2.  # Membrane potential step length
+delta_n = 0.01  # Inactivation variable step length
+
+V_vec = np.arange(v_min, v_max, delta_v)
+n_vec = np.arange(n_min, n_max, delta_n)
+
+num_v_steps = len(V_vec)
+num_n_steps = len(n_vec)
 
 nest.ResetKernel()
 nest.set_verbosity('M_ERROR')
@@ -56,17 +70,17 @@ nest.SetStatus(neuron, {'I_e': amplitude})  # Apply external current
 # Scan state space
 print('Scanning phase space')
 
-V_new_vec = []
-n_new_vec = []
-# x will contain the phase-plane data as a vector field
-x = []
+V_matrix = np.zeros([num_n_steps, num_v_steps])
+n_matrix = np.zeros([num_n_steps, num_v_steps])
+
+# pp_data will contain the phase-plane data as a vector field
+pp_data = np.zeros([num_n_steps * num_v_steps, 4])
+
 count = 0
-for V in range(-100, 42, 2):
-    n_V = []
-    n_n = []
-    for n in range(10, 81):
+for i, V in enumerate(V_vec):
+    for j, n in enumerate(n_vec):
         # Set V_m and n
-        nest.SetStatus(neuron, {'V_m': V*1.0, 'Inact_n': n/100.0,
+        nest.SetStatus(neuron, {'V_m': V, 'Inact_n': n,
                                 'Act_m': m_eq, 'Act_h': h_eq})
         # Find state
         V_m = nest.GetStatus(neuron)[0]['V_m']
@@ -76,13 +90,13 @@ for V in range(-100, 42, 2):
         nest.Simulate(dt)
 
         # Find difference between new state and old state
-        V_m_new = nest.GetStatus(neuron)[0]['V_m'] - V*1.0
-        Inact_n_new = nest.GetStatus(neuron)[0]['Inact_n'] - n/100.0
+        V_m_new = nest.GetStatus(neuron)[0]['V_m'] - V
+        Inact_n_new = nest.GetStatus(neuron)[0]['Inact_n'] - n
 
         # Store in vector for later analysis
-        n_V.append(abs(V_m_new))
-        n_n.append(abs(Inact_n_new))
-        x.append([V_m, Inact_n, V_m_new, Inact_n_new])
+        V_matrix[j, i] = abs(V_m_new)
+        n_matrix[j, i] = abs(Inact_n_new)
+        pp_data[count] = np.array([V_m, Inact_n, V_m_new, Inact_n_new])
 
         if count % 10 == 0:
             # Write updated state next to old state
@@ -93,9 +107,6 @@ for V in range(-100, 42, 2):
             print('new Inact_n:', Inact_n_new)
 
         count += 1
-    # Store in vector for later analysis
-    V_new_vec.append(n_V)
-    n_new_vec.append(n_n)
 
 # Set state for AP generation
 nest.SetStatus(neuron, {'V_m': -34., 'Inact_n': 0.2,
@@ -105,7 +116,7 @@ print('')
 print('AP-trajectory')
 # ap will contain the trace of a single action potential as one possible
 # numerical solution in the vector field
-ap = []
+ap = np.zeros([1000, 2])
 for i in range(1, 1001):
     # Find state
     V_m = nest.GetStatus(neuron)[0]['V_m']
@@ -115,7 +126,7 @@ for i in range(1, 1001):
         # Write new state next to old state
         print('Vm: \t', V_m)
         print('Inact_n:', Inact_n)
-    ap.append([V_m, Inact_n])
+    ap[i - 1] = np.array([V_m, Inact_n])
 
     # Simulate again
     nest.SetStatus(neuron, {'Act_m': m_eq, 'Act_h': h_eq})
@@ -125,29 +136,25 @@ for i in range(1, 1001):
 print('')
 print('Plot analysis')
 
-V_matrix = [list(x) for x in zip(*V_new_vec)]
-n_matrix = [list(x) for x in zip(*n_new_vec)]
-n_vec = [x/100. for x in range(10, 81)]
-V_vec = [x*1. for x in range(-100, 42, 2)]
-
 nullcline_V = []
 nullcline_n = []
 
 print('Searching nullclines')
 for i in range(0, len(V_vec)):
-    index = V_matrix[:][i].index(min(V_matrix[:][i]))
+    index = np.nanargmin(V_matrix[:][i])
     if index != 0 and index != len(n_vec):
         nullcline_V.append([V_vec[i], n_vec[index]])
 
-    index = n_matrix[:][i].index(min(n_matrix[:][i]))
+    index = np.nanargmin(n_matrix[:][i])
     if index != 0 and index != len(n_vec):
         nullcline_n.append([V_vec[i], n_vec[index]])
 
 print('Plotting vector field')
 factor = 0.1
-for i in range(0, count, 3):
-    plt.plot([x[i][0], x[i][0] + factor*x[i][2]],
-             [x[i][1], x[i][1] + factor*x[i][3]], color=[0.6, 0.6, 0.6])
+for i in range(0, np.shape(pp_data)[0], 3):
+    plt.plot([pp_data[i][0], pp_data[i][0] + factor * pp_data[i][2]],
+             [pp_data[i][1], pp_data[i][1] + factor * pp_data[i][3]],
+             color=[0.6, 0.6, 0.6])
 
 plt.plot(nullcline_V[:][0], nullcline_V[:][1], linewidth=2.0)
 plt.plot(nullcline_n[:][0], nullcline_n[:][1], linewidth=2.0)

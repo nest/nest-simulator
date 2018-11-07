@@ -60,14 +60,14 @@
   escapechar=!,
   backgroundcolor=\color{lstcolor},
   morekeywords={Create,SetStatus,GetStatus,Connect,
-     GetNodes,GetLeaves,
-     Simulate,CopyModel,
-     SetKernelStatus,PrintNetwork,SetDefaults,
-   voltage_trace,raster_plot,ResetKernel,GetConnections,
-   CreateLayer,ConnectLayers,GetPosition,GetLayer,
-   GetElement,FindNearestElement,Displacement,Distance,
-   DumpLayerNodes,DumpLayerConnections,FindCenterElement,
-   GetTargetNodes,GetTargetPositions,PlotTargets,PlotKernel,PlotLayer,Install},
+    GetNodes,GetLeaves,Simulate,CopyModel,
+    SetKernelStatus,PrintNetwork,SetDefaults,
+    voltage_trace,raster_plot,ResetKernel,GetConnections,
+    CreateLayer,ConnectLayers,GetPosition,GetLayer,
+    GetElement,FindNearestElement,Displacement,Distance,
+    DumpLayerNodes,DumpLayerConnections,FindCenterElement,
+    GetTargetNodes,GetTargetPositions, SelectNodesByMask,
+    PlotTargets,PlotKernel,PlotLayer,Install},
   rangeprefix=\#\{\ ,
   rangesuffix=\ \#\},
   includerangemarker=false}
@@ -689,8 +689,8 @@ Chapter~\ref{ch:extending}.
 
 \subsection{Masks for 2D layers}\label{sec:free_masks}
 
-Topology currently provides three types of masks usable for 2-dimensional
-free and grid-based layers. They are illustrated in Fig.~\ref{fig:conn2}.
+Topology currently provides four types of masks usable for 2-dimensional
+free and grid-based layers. They are illustrated in Fig.~\ref{fig:conn2_a}.
 The masks are
 \begin{description}
 \item[Rectangular\index{rectangular}] All nodes within a rectangular
@@ -706,32 +706,53 @@ The masks are
   not connected. The area is specified by the radii of the inner and
   outer circles.
 \lstinputlisting[linerange=conn2d-end]{user_manual_scripts/connections.py}
+\item[Elliptical\index{elliptical}] All nodes within an ellipsis are connected.
+  The area is specified by its major and minor axis. Note that this mask was
+  added to NEST with NEST~2.14.
+\lstinputlisting[linerange=conn2e-end]{user_manual_scripts/connections.py}
 \end{description}
-By default, the masks are centered about the position of the driver
+
+\scriptfig{conn2_a}{0.9}{Masks for 2D layers}%
+{Masks for 2D layers. For all mask types, the driver node is
+  marked by a wide light-red circle, the selected pool nodes by red
+  dots and the masks by red lines. From left to right, top to bottom:
+  rectangular, circular, doughnut and elliptical masks centered about the driver
+  node.}
+
+\noindent By default, the masks are centered about the position of the driver
 node, mapped into the pool layer. You can change the location of the
 mask relative to the driver node by specifying an
 \lstinline!'anchor'!\index{anchor} entry in the mask dictionary. The
 anchor is a 2D vector specifying the location of the mask center
 relative to the driver node, as in the following examples (cf.\
-Fig.~\ref{fig:conn2}, bottom row):
+Fig.~\ref{fig:conn2_b}):
 \lstinputlisting[linerange=conn2ro-end]{user_manual_scripts/connections.py}
 \lstinputlisting[linerange=conn2co-end]{user_manual_scripts/connections.py}
 \lstinputlisting[linerange=conn2do-end]{user_manual_scripts/connections.py}
+\lstinputlisting[linerange=conn2eo-end]{user_manual_scripts/connections.py}
 
-\scriptfig{conn2}{0.9}{Masks for 2D layers}%
-{Masks for 2D layers. For all mask types, the driver node is
-  marked by a wide light-red circle, the selected pool nodes by red
-  dots and the masks by red lines. Top row from left to right:
-  rectangular, circular and doughnut masks centered about the driver
-  node.
-Bottom row from left to right: the same masks as in the top row, but
-centered about $(-1.5,-1.5)$, $(-2,0)$ and $(1.5,1.5)$, respectively,
-using the \lstinline!'anchor'! parameter.}
+\scriptfig{conn2_b}{0.9}{Masks for 2D layers}%
+{The same masks as in Fig.~\ref{fig:conn2_a}, but
+ centered about $(-1.5,-1.5)$, $(-2,0)$, $(1.5,1.5)$ and $(2, -1)$,
+ respectively, using the \lstinline!'anchor'! parameter.}
 
+\noindent It is, as of NEST~2.16, possible to rotate the $\textbf{rectangular}$
+and $\textbf{elliptical}$ masks, see Fig~\ref{fig:conn2_c}. To do so, add an
+\lstinline!'azimuth_angle'!\index{azimuth\_angle} entry in the
+specific mask dictionary. The \lstinline!azimuth_angle! is measured in degrees
+and is the rotational angle from the x-axis to the y-axis. 
+\lstinputlisting[linerange=conn2rr-end]{user_manual_scripts/connections.py}
+\newpage
+\lstinputlisting[linerange=conn2er-end]{user_manual_scripts/connections.py}
+
+\scriptfig{conn2_c}{0.9}{Masks for 2D layers}%
+{Rotated rectangle and elliptical mask from Fig.~\ref{fig:conn2_a} and
+ Fig.~\ref{fig:conn2_b}, where the rectangle mask is rotated $120^\circ$ and
+ the elliptical mask is rotated $45^\circ$.}
 
 \subsection{Masks for 3D layers}\label{sec:3d_masks}
 
-Similarly, there are two mask types that can be used for 3D layers\index{3D layers},
+Similarly, there are three mask types that can be used for 3D layers\index{3D layers},
 \begin{description}
 \item[Box\index{box}] All nodes within a cuboid volume are connected. The
   area is specified by its lower left and upper right corners, measured in
@@ -740,10 +761,23 @@ Similarly, there are two mask types that can be used for 3D layers\index{3D laye
 \item[Spherical\index{spherical}] All nodes within a sphere are
   connected.  The area is specified by its radius.
 \lstinputlisting[linerange=conn_3d_b-end]{user_manual_scripts/connections.py}
+\item[Ellipsoidal\index{ellipsoidal}] All nodes within an ellipsoid are
+  connected. The area is specified by its major, minor, and polar axis. This
+  mask has been part of NEST since NEST~2.14.
+\lstinputlisting[linerange=conn_3d_c-end]{user_manual_scripts/connections.py}
 \end{description}
 As in the 2D case, you can change the location of the mask relative to the
-driver node by specifying a 3D vector in the
-\lstinline!'anchor'!\index{anchor} entry in the mask dictionary.
+driver node by specifying a 3D vector in the \lstinline!'anchor'!\index{anchor}
+entry in the mask dictionary. If you want to rotate the box or ellipsoidal
+masks, you can add an \lstinline!'azimuth_angle'!\index{azimuth\_angle} entry
+in the specific mask dictionary for rotation from the x-axis towards the y-axis
+about the z-axis, or an \lstinline!'polar_angle'!\index{polar\_angle} entry,
+specifying the rotation angle in degrees from the z-axis about the (possibly
+rotated) x axis, from the (possibly rotated) y-axis. You can specify both at
+once of course. If both are specified, we first rotate about the z-axis and
+then about the new x-axis. NEST currently do not support rotation in all three
+directions, the rotation from the y-axis about the (possibly rotated) z-axis,
+from the (possibly rotated) x-axis is missing.
 
 \scriptfig{conn_3d}{0.9}{Masks for 3D layers}%
 {Masks for 3D layers. For all mask types, the driver node is
@@ -1187,7 +1221,9 @@ SLI documentation.
   Write layer element positions to file.\\
   \lstinline!tp.DumpLayerConnections()!  & Write connectivity
   information to file. This function may be very useful to check that
-  Topology created the correct connection structure.
+  Topology created the correct connection structure.\\
+  \lstinline!tp.SelectNodesByMask()! & Obtain GIDs of nodes/elements inside a
+  masked area of a layer. Part of NEST since NEST~2.14.
 \end{longtable}
 
 \section{Visualization functions}\label{sec:visualize}
@@ -1254,7 +1290,7 @@ cd mmb
 \begin{lstlisting}[language=bash]
 cmake -Dwith-nest=${NEST_INSTALL_DIR}/bin/nest-config ../MyModule
 \end{lstlisting}
-\item MyModule will then be installed to \lstinline!${NEST_INSTALL_DIR}!. This
+\item MyModule will then be installed to \lstinline!\${NEST_INSTALL_DIR}!. This
   ensures that NEST will be able to find initializing SLI files for the
   module.  You should not use the \lstinline!--prefix! to select a different
   installation destination. If you do, you must make sure to use addpath in
@@ -1359,7 +1395,10 @@ The process of adding a mask\index{mask} is similar to that of adding a kernel
 function. A subclass of \lstinline!nest::Mask<D>! must be defined, where
 \lstinline!D! is the dimension (2 or 3). In this case we will define a
 2-dimensional elliptic mask by creating a class called
-\lstinline!EllipticMask!. First, we must include another header file:
+\lstinline!EllipticMask!. Note that elliptical masks are already part of NEST
+see Sec.~\ref{sec:conn_masks}. That elliptical mask is defined in a different
+way than what we will do here though, so this can still be used as an
+introductory example. First, we must include another header file:
 \begin{lstlisting}[language=C++]
 #include "mask.h"
 \end{lstlisting}
@@ -1438,7 +1477,39 @@ tp.ConnectLayers(l,l,{'connection_type': 'convergent',
 \end{lstlisting}
 
 
-\chapter{Changes from Topology 2.0 to 2.2}\label{sec:changes}
+\chapter{Changes between versions}\label{sec:changes}
+In this chapter we give summaries of the most important changes in the
+Topology Module between different NEST versions, starting with the most recent
+ones.
+
+
+\section{Changes from Topology 2.14 to 2.16}
+
+The one important change in the Topology module from NEST version 2.14 to 2.16 
+was the inclusion of rotated masks:
+\begin{itemize}
+  \item Rotation of \lstinline!rectangular/box! and
+    \lstinline!elliptical/ellipsoidal! masks is now possible. NEST offers
+    rotation in two directions, from the x-axis towards the y-axis, and from
+    the z-axis away from the y-axis. To specify the former use the variable
+    \lstinline!azimuth_angle! and for the latter, use \lstinline!polar_angle!.
+\end{itemize}
+
+
+\section{Changes from Topology 2.12 to 2.14}
+
+This is a short summary of the most important changes in the Topology
+Module from NEST version 2.12 to 2.14.
+\begin{itemize}
+  \item Elliptical and ellipsoidal masks have been added to NEST with NEST~2.14.
+    To specify the mask, the \lstinline!major_axis!, \lstinline!minor_axis!
+    and (for ellipsoidal masks) \lstinline!polar_axis! must be specified.
+  \item It is now possible to obtain the GIDs inside a masked area
+    with the function SelectNodesByMask.
+\end{itemize}
+
+
+\section{Changes from Topology 2.0 to 2.2}
 
 This is a short summary of the most important changes in the Topology
 Module from NEST version 2.0 to 2.2.
@@ -1457,7 +1528,7 @@ Module from NEST version 2.0 to 2.2.
   for examples.
 \end{itemize}
 
-\chapter{Changes from Topology 1.9 to 2.0}\label{sec:changes2}
+\section{Changes from Topology 1.9 to 2.0}
 
 This is a short summary of the most important changes in the NEST
 Topology Module from the 1.9-xxxx to the 2.0 version.

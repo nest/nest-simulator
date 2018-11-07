@@ -317,7 +317,7 @@ STDPConnectionHom< targetidentifierT >::send( Event& e,
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
-  e.set_delay( get_delay_steps() );
+  e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
 

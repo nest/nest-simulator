@@ -467,7 +467,7 @@ nest::amat2_psc_exp::update( Time const& origin,
 void
 nest::amat2_psc_exp::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   if ( e.get_weight() >= 0.0 )
   {
@@ -486,7 +486,7 @@ nest::amat2_psc_exp::handle( SpikeEvent& e )
 void
 nest::amat2_psc_exp::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

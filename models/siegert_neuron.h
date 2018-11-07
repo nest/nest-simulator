@@ -118,6 +118,8 @@ public:
   siegert_neuron();
   siegert_neuron( const siegert_neuron& );
 
+  ~siegert_neuron();
+
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -258,6 +260,8 @@ private:
   State_ S_;
   Variables_ V_;
   Buffers_ B_;
+
+  gsl_integration_workspace* gsl_w_;
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< siegert_neuron > recordablesMap_;

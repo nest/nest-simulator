@@ -168,6 +168,8 @@ public:
   /**
   * \fn double get_z_value(Archiving_Node const *a, double t) const
   * Get the number of synaptic_element at the time t (in ms)
+  * Returns a negative number when synaptic elements must be deleted
+  * during the next update
   * @param a node of this synaptic_element
   * @param t Current time (in ms)
   */

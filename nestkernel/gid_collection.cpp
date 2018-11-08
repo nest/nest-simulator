@@ -433,15 +433,11 @@ GIDCollectionPrimitive::print_primitive( std::ostream& out ) const
 
   if ( size() == 1 )
   {
-    out << ", (" << first_ << ")";
+    out << ", first=" << first_;
   }
-  else if ( size() == 2 )
+  else
   {
-    out << ", (" << first_ << ", " << last_ << ")";
-  }
-  else if ( size() > 2 )
-  {
-    out << ", (" << first_ << ".." << last_ << ")";
+    out << ", first=" << first_ << ", last=" << last_;
   }
 }
 
@@ -824,7 +820,7 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
 
     std::vector< std::string > string_vector;
 
-    out << gc << "metadata=" << metadata << ", size=" << size() << ":";
+    out << gc << "metadata=" << metadata;
     for ( const_iterator it = begin(); it < end(); ++it )
     {
       it.get_current_part_offset( current_part, current_offset );
@@ -840,21 +836,16 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
             << ", size=" << primitive_size << ", ";
           if ( primitive_size == 1 )
           {
-            string_buffer << "(" << gt.gid << ");";
-          }
-          else if ( primitive_size == 2 )
-          {
-            string_buffer << "(" << gt.gid << ", ";
-            string_buffer << primitive_last << ");";
+            string_buffer << "first=" << gt.gid << ", last=" << gt.gid << ";";
           }
           else
           {
-            string_buffer << "(" << gt.gid << "..";
+            string_buffer << "first=" << gt.gid << ", last=";
+            string_buffer << primitive_last;
             if ( step_ > 1 )
             {
-              string_buffer << "{" << step_ << "}..";
+              string_buffer << ", step=" << step_ << ";";
             }
-            string_buffer << primitive_last << ");";
           }
           string_vector.push_back( string_buffer.str() );
         }
@@ -884,33 +875,28 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
       }
     }
 
+    // Need to also print the last primitive
     out << "\n" + space << "model="
         << kernel().model_manager.get_model( gt.model_id )->get_name()
         << ", size=" << primitive_size << ", ";
     if ( primitive_size == 1 )
     {
-      out << "(" << gt.gid << ")";
-    }
-    else if ( primitive_size == 2 )
-    {
-      out << "(" << gt.gid << ", ";
-      out << primitive_last << ")";
+      out << "first=" << gt.gid << ", last=" << gt.gid;
     }
     else
     {
-      out << "(" << gt.gid << "..";
+      out << "first=" << gt.gid << ", last=";
+      out << primitive_last;
       if ( step_ > 1 )
       {
-        out << "{" << step_ << "}..";
+        out << ", step=" << step_;
       }
-      out << primitive_last << ")";
     }
-    out << ")";
   }
   else
   {
     // None-sliced Composite GIDCollection
-    out << gc << "metadata=" << metadata << ", size=" << size() << ":";
+    out << gc << "metadata=" << metadata;
     for (
       std::vector< GIDCollectionPrimitive >::const_iterator it = parts_.begin();
       it != parts_.end();
@@ -932,8 +918,8 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
         out << "\n" + space + "..";
       }
     }
-    out << ")";
   }
+  out << ")";
 }
 
 } // namespace nest

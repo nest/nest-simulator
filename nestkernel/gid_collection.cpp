@@ -417,7 +417,7 @@ GIDCollectionPrimitive::print_me( std::ostream& out ) const
   std::string metadata = metadata_.valid() ? metadata_->get_type() : "None";
 
   out << "GIDCollection("
-      << "metadata=" << metadata << " ";
+      << "metadata=" << metadata << ", ";
   print_primitive( out );
   out << ")";
 }
@@ -820,7 +820,7 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
 
     std::vector< std::string > string_vector;
 
-    out << gc << "metadata=" << metadata;
+    out << gc << "metadata=" << metadata << ",";
     for ( const_iterator it = begin(); it < end(); ++it )
     {
       it.get_current_part_offset( current_part, current_offset );
@@ -896,7 +896,7 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
   else
   {
     // None-sliced Composite GIDCollection
-    out << gc << "metadata=" << metadata;
+    out << gc << "metadata=" << metadata << ",";
     for (
       std::vector< GIDCollectionPrimitive >::const_iterator it = parts_.begin();
       it != parts_.end();

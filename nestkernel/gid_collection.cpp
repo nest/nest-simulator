@@ -453,23 +453,16 @@ GIDCollectionComposite::GIDCollectionComposite(
   size_t start,
   size_t stop,
   size_t step )
-  : size_( 0 )
-  , step_( 1 )
+  : size_( floor( ( stop - start ) / ( float ) step )
+      + ( ( stop - start ) % step > 0 ) )
+  , step_( step )
   , start_part_( 0 )
-  , start_offset_( 0 )
+  , start_offset_( start )
   , stop_part_( 0 )
-  , stop_offset_( 0 )
+  , stop_offset_( stop )
 {
-  parts_.reserve(
-    primitive.size() / ( float ) step + ( primitive.size() % step > 0 ) );
-  for ( const_iterator it = primitive.begin() + start;
-        it < primitive.begin() + stop;
-        it += step )
-  {
-    parts_.push_back(
-      GIDCollectionPrimitive( ( *it ).gid, ( *it ).gid, ( *it ).model_id ) );
-    ++size_;
-  }
+  parts_.reserve( 1 );
+  parts_.push_back( primitive );
 }
 
 GIDCollectionComposite::GIDCollectionComposite(

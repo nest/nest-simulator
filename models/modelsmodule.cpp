@@ -366,9 +366,10 @@ ModelsModule::init( SLIInterpreter* )
     "music_message_in_proxy" );
 #endif
 
-  // register all connection models: once for the normal indexing type and once for the more efficient "HPC" indexing type
-  register_connection_models<TargetIdentifierPtrRport>();
-  register_connection_models<TargetIdentifierIndex>("_hpc");
+  // register all connection models: once for the normal indexing type and
+  // once for the more efficient "HPC" indexing type
+  register_connection_models< TargetIdentifierPtrRport >();
+  register_connection_models< TargetIdentifierIndex >( "_hpc" );
 
   // register secondary connection models
   kernel()
@@ -403,19 +404,17 @@ ModelsModule::init( SLIInterpreter* )
 
 template < typename ConnectionT >
 void
-ModelsModule::register_connection_models(std::string name_postfix)
+ModelsModule::register_connection_models( std::string name_postfix )
 {
   kernel()
-    .model_manager
-    .register_connection_model< StaticConnection< ConnectionT > >(
+    .model_manager.register_connection_model< StaticConnection< ConnectionT > >(
       "static_synapse" + name_postfix );
   kernel()
     .model_manager
     .register_connection_model< StaticConnectionHomW< ConnectionT > >(
       "static_synapse_hom_w" + name_postfix );
   kernel()
-    .model_manager
-    .register_connection_model< STDPConnection< ConnectionT > >(
+    .model_manager.register_connection_model< STDPConnection< ConnectionT > >(
       "stdp_synapse" + name_postfix );
   kernel()
     .model_manager
@@ -454,8 +453,7 @@ ModelsModule::register_connection_models(std::string name_postfix)
     .register_connection_model< Tsodyks2Connection< ConnectionT > >(
       "tsodyks2_synapse" + name_postfix );
   kernel()
-    .model_manager
-    .register_connection_model< HTConnection< ConnectionT > >(
+    .model_manager.register_connection_model< HTConnection< ConnectionT > >(
       "ht_synapse" + name_postfix );
   kernel()
     .model_manager

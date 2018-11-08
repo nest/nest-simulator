@@ -36,35 +36,42 @@
 namespace nest
 {
 
-BOOST_AUTO_TEST_SUITE( test_target_fields )
+BOOST_AUTO_TEST_SUITE( test_target_data_type_object )
 
 /**
- * Tests whether values stored in Target objects via bitmasks are read
+ * Tests whether values stored in a Target data type object are returned
  * correctly.
  */
 BOOST_AUTO_TEST_CASE( test_write_read )
 {
-  Target target;
+  Target target_id;
 
-  for ( size_t trial = 0; trial < 50; ++trial )
+  BOOST_REQUIRE( sizeof(target_id) == 8U );
+
+  srand(time(0));
+  for ( int trial = 0; trial < 50; ++trial )
   {
-    const thread tid = std::rand() % 1024;
-    const thread rank = std::rand() % 1048576;
-    const synindex syn_id = std::rand() % 64;
-    const index lcid = std::rand() % 134217728;
-    const bool is_processed = static_cast< bool >( std::rand() % 2 );
+    const thread tid = std::rand() % (Target::MAX_TID - 1);
+    const thread rank = std::rand() % (Target::MAX_RANK - 1);
+    const synindex syn_id = std::rand() % (Target::MAX_SYN_ID - 1);
+    const index lcid = std::rand() % (Target::MAX_LCID - 1);
 
-    target.set_tid( tid );
-    target.set_rank( rank );
-    target.set_syn_id( syn_id );
-    target.set_lcid( lcid );
-    target.set_is_processed( is_processed );
+    enum_status_target_id status_target_id = TARGET_ID_UNPROCESSED;
+    if( static_cast< bool >( std::rand() % 2 ) ) {
+      status_target_id = TARGET_ID_PROCESSED;
+    }
 
-    BOOST_REQUIRE( target.get_tid() == tid );
-    BOOST_REQUIRE( target.get_rank() == rank );
-    BOOST_REQUIRE( target.get_syn_id() == syn_id );
-    BOOST_REQUIRE( target.get_lcid() == lcid );
-    BOOST_REQUIRE( target.is_processed() == is_processed );
+    target_id.set_tid( tid );
+    target_id.set_rank( rank );
+    target_id.set_syn_id( syn_id );
+    target_id.set_lcid( lcid );
+    target_id.set_status( status_target_id );
+
+    BOOST_REQUIRE( target_id.get_tid() == tid );
+    BOOST_REQUIRE( target_id.get_rank() == rank );
+    BOOST_REQUIRE( target_id.get_syn_id() == syn_id );
+    BOOST_REQUIRE( target_id.get_lcid() == lcid );
+    BOOST_REQUIRE( target_id.get_status() == status_target_id );
   }
 }
 

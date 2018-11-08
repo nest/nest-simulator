@@ -68,7 +68,7 @@ generate_max_value( uint8_t num_bits )
   return ( static_cast< int >( 1 ) << num_bits );
 }
 
-enum status_target_id
+enum enum_status_target_id
 {
   TARGET_ID_PROCESSED,
   TARGET_ID_UNPROCESSED
@@ -80,19 +80,19 @@ private:
   uint64_t remote_target_id_;
 
   // define the structure of the remote target neuron identifier
-  static constexpr uint8_t NUM_BITS_LCID = 27;
-  static constexpr uint8_t NUM_BITS_RANK = 20;
-  static constexpr uint8_t NUM_BITS_TID = 10;
-  static constexpr uint8_t NUM_BITS_SYN_ID = 6;
-  static constexpr uint8_t NUM_BITS_PROCESSED_FLAG = 1;
+  static constexpr uint8_t NUM_BITS_LCID = 27U;
+  static constexpr uint8_t NUM_BITS_RANK = 20U;
+  static constexpr uint8_t NUM_BITS_TID = 10U;
+  static constexpr uint8_t NUM_BITS_SYN_ID = 6U;
+  static constexpr uint8_t NUM_BITS_PROCESSED_FLAG = 1U;
 
-  static constexpr uint8_t BITPOS_LCID = 0;
+  static constexpr uint8_t BITPOS_LCID = 0U;
   static constexpr uint8_t BITPOS_RANK = NUM_BITS_LCID;
   static constexpr uint8_t BITPOS_TID = BITPOS_RANK + NUM_BITS_RANK;
   static constexpr uint8_t BITPOS_SYN_ID = BITPOS_TID + NUM_BITS_TID;
   static constexpr uint8_t BITPOS_PROCESSED_FLAG =
     BITPOS_SYN_ID + NUM_BITS_SYN_ID;
-  typedef StaticAssert< BITPOS_PROCESSED_FLAG == 63 >::success
+  typedef StaticAssert< BITPOS_PROCESSED_FLAG == 63U >::success
     position_of_processed_flag;
 
   // generate bit-masks used in bit-operations
@@ -107,11 +107,6 @@ private:
   static constexpr uint64_t MASK_PROCESSED_FLAG =
     generate_bit_mask( NUM_BITS_PROCESSED_FLAG, BITPOS_PROCESSED_FLAG );
 
-  static constexpr int MAX_LCID = generate_max_value( NUM_BITS_LCID );
-  static constexpr int MAX_RANK = generate_max_value( NUM_BITS_RANK );
-  static constexpr int MAX_TID = generate_max_value( NUM_BITS_TID );
-  static constexpr int MAX_SYN_ID = generate_max_value( NUM_BITS_SYN_ID );
-
 public:
   Target();
   Target( const Target& target );
@@ -119,6 +114,11 @@ public:
     const thread rank,
     const synindex syn_id,
     const index lcid );
+
+  static constexpr int MAX_LCID = generate_max_value( NUM_BITS_LCID );
+  static constexpr int MAX_RANK = generate_max_value( NUM_BITS_RANK );
+  static constexpr int MAX_TID = generate_max_value( NUM_BITS_TID );
+  static constexpr int MAX_SYN_ID = generate_max_value( NUM_BITS_SYN_ID );
 
   /**
    * Set local connection id.
@@ -163,12 +163,12 @@ public:
   /**
    * Set the status of the target identifier: processed or unprocessed.
    */
-  void set_status( status_target_id status );
+  void set_status( enum_status_target_id status );
 
   /**
    * Get the status of the target identifier: processed or unprocessed.
    */
-  status_target_id get_status() const;
+  enum_status_target_id get_status() const;
 
   /**
    * Return the status od the target identifier: processed or unprocessed.
@@ -267,7 +267,7 @@ Target::get_syn_id() const
 }
 
 inline void
-Target::set_status( status_target_id set_status_to )
+Target::set_status( enum_status_target_id set_status_to )
 {
   switch ( set_status_to )
   {
@@ -284,7 +284,7 @@ Target::set_status( status_target_id set_status_to )
   }
 }
 
-inline status_target_id
+inline enum_status_target_id
 Target::get_status() const
 {
   if ( ( remote_target_id_ & MASK_PROCESSED_FLAG )

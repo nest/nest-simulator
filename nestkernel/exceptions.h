@@ -947,24 +947,24 @@ class InternalError : public KernelException
 {
   std::string msg_;
 
-  public:
-    //! @param detailed error message
-    InternalError()
-            : KernelException( "InternalError" )
-            , msg_()
-    {
-    }
-    InternalError( std::string msg )
-            : KernelException( "InternalError" )
-            , msg_( msg )
-    {
-    }
+public:
+  //! @param detailed error message
+  InternalError()
+    : KernelException( "InternalError" )
+    , msg_()
+  {
+  }
+  InternalError( std::string msg )
+    : KernelException( "InternalError" )
+    , msg_( msg )
+  {
+  }
 
-    ~InternalError() throw()
-    {
-    }
+  ~InternalError() throw()
+  {
+  }
 
-    std::string message() const;
+  std::string message() const;
 };
 
 

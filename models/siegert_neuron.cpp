@@ -216,6 +216,7 @@ nest::siegert_neuron::siegert_neuron()
 {
   recordablesMap_.create();
   Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  gsl_w_ = gsl_integration_workspace_alloc( 1000 );
 }
 
 nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
@@ -225,6 +226,12 @@ nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
   , B_( n.B_, *this )
 {
   Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  gsl_w_ = gsl_integration_workspace_alloc( 1000 );
+}
+
+nest::siegert_neuron::~siegert_neuron()
+{
+  gsl_integration_workspace_free( gsl_w_ );
 }
 
 /* ----------------------------------------------------------------
@@ -241,8 +248,6 @@ nest::siegert_neuron::siegert1( double theta_shift,
   y_th = ( theta_shift - mu ) / sigma;
   double y_r;
   y_r = ( V_reset_shift - mu ) / sigma;
-
-  gsl_integration_workspace* w = gsl_integration_workspace_alloc( 1000 );
 
   double result, error;
 
@@ -275,9 +280,7 @@ nest::siegert_neuron::siegert1( double theta_shift,
   }
 
   gsl_integration_qags(
-    &F, lower_bound, upper_bound, 0.1, 0.1, 1000, w, &result, &error );
-
-  gsl_integration_workspace_free( w );
+    &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
 
   // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
   return 1e3 * 1. / ( P_.t_ref_ + exp( y_th * y_th ) * result * P_.tau_m_ );
@@ -293,8 +296,6 @@ nest::siegert_neuron::siegert2( double theta_shift,
   y_th = ( theta_shift - mu ) / sigma;
   double y_r;
   y_r = ( V_reset_shift - mu ) / sigma;
-
-  gsl_integration_workspace* w = gsl_integration_workspace_alloc( 1000 );
 
   double result, error;
 
@@ -317,9 +318,7 @@ nest::siegert_neuron::siegert2( double theta_shift,
   }
 
   gsl_integration_qags(
-    &F, lower_bound, upper_bound, 0.1, 0.1, 1000, w, &result, &error );
-
-  gsl_integration_workspace_free( w );
+    &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
 
   // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
   return 1e3 * 1. / ( P_.t_ref_ + result * P_.tau_m_ );
@@ -340,7 +339,10 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   double V_r_shift =
     P_.V_reset_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
 
-  if ( std::abs( mu - 0. ) < 1e-12 )
+  // Catch cases where neurons get no input.
+  // Use (Brunel, 2000) eq. (22) to estimate
+  // firing rate to be ~ 1e-16
+  if ( ( theta_shift - mu ) > 6. * sigma )
   {
     return 0.;
   }

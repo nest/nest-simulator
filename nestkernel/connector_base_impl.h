@@ -49,7 +49,7 @@ Connector< ConnectionT >::send_weight_event( const thread tid,
     wr_e.set_sender_gid(
       kernel().connection_manager.get_source_gid( tid, syn_id_, lcid ) );
     wr_e.set_weight( e.get_weight() );
-    wr_e.set_delay( e.get_delay() );
+    wr_e.set_delay_steps( e.get_delay_steps() );
     // Set weight_recorder as receiver
     wr_e.set_receiver( *cp.get_weight_recorder()->get_thread_sibling( tid ) );
     // Put the gid of the postsynaptic node as receiver gid

@@ -367,7 +367,7 @@ nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
 void
 nest::iaf_tum_2000::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   if ( e.get_weight() >= 0.0 )
   {
@@ -386,7 +386,7 @@ nest::iaf_tum_2000::handle( SpikeEvent& e )
 void
 nest::iaf_tum_2000::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

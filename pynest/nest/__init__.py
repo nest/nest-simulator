@@ -113,8 +113,9 @@ def catching_sli_run(cmd):
         message = sli_pop()
         commandname = sli_pop()
         engine.run('clear')
-        errorstring = '%s in %s%s' % (errorname, commandname, message)
-        raise _kernel.NESTError(encode(errorstring))
+
+        exceptionCls = getattr(_kernel.NESTErrors, errorname)
+        raise exceptionCls(commandname, message)
 
 sli_run = hl_api.sr = catching_sli_run
 
@@ -159,7 +160,7 @@ def sli_func(s, *args, **kwargs):
         if kwargs['litconv']:
             slifun = 'sli_func_litconv'
     elif len(kwargs) > 0:
-        _kernel.NESTError(
+        raise _kernel.NESTErrors.PyNESTError(
             "'namespace' and 'litconv' are the only valid keyword arguments.")
 
     sli_push(args)       # push array of arguments on SLI stack
@@ -186,14 +187,13 @@ def init(argv):
 
     Raises
     ------
-    _kernel.NESTError
+    _kernel.NESTError.PyNESTError
     """
 
     global initialized
 
     if initialized:
-        raise _kernel.NESTError("NEST already initialized.")
-        return
+        raise _kernel.NESTErrors.PyNESTError("NEST already initialized.")
 
     quiet = False
 
@@ -232,7 +232,7 @@ def init(argv):
                 pass
 
     else:
-        _kernel.NESTError("Initiatization of NEST failed.")
+        raise _kernel.NESTErrors.PyNESTError("Initiatization of NEST failed.")
 
 
 def test():

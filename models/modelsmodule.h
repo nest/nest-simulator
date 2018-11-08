@@ -28,6 +28,8 @@
 
 // Includes from sli:
 #include "slimodule.h"
+#include "connector_model.h"
+#include "genericmodel.h"
 
 namespace nest
 {
@@ -49,6 +51,9 @@ public:
 
   const std::string name( void ) const;
   const std::string commandstring( void ) const;
+protected:
+  template < typename ConnectionT >
+  void register_connection_models (std::string name_postfix="");
 };
 
 

@@ -411,63 +411,63 @@ ModelsModule::register_connection_models(std::string name_postfix)
       "static_synapse" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< StaticConnectionHomW< TargetIdentifierPtrRport > >(
+    .register_connection_model< StaticConnectionHomW< ConnectionT > >(
       "static_synapse_hom_w" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< STDPConnection< TargetIdentifierPtrRport > >(
+    .register_connection_model< STDPConnection< ConnectionT > >(
       "stdp_synapse" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< STDPPLConnectionHom< TargetIdentifierPtrRport > >(
+    .register_connection_model< STDPPLConnectionHom< ConnectionT > >(
       "stdp_pl_synapse_hom" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< STDPTripletConnection< TargetIdentifierPtrRport > >(
+    .register_connection_model< STDPTripletConnection< ConnectionT > >(
       "stdp_triplet_synapse" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< Quantal_StpConnection< TargetIdentifierPtrRport > >(
+    .register_connection_model< Quantal_StpConnection< ConnectionT > >(
       "quantal_stp_synapse" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< STDPConnectionHom< TargetIdentifierPtrRport > >(
+    .register_connection_model< STDPConnectionHom< ConnectionT > >(
       "stdp_synapse_hom" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< STDPFACETSHWConnectionHom< TargetIdentifierPtrRport > >(
+    .register_connection_model< STDPFACETSHWConnectionHom< ConnectionT > >(
       "stdp_facetshw_synapse_hom" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< ContDelayConnection< TargetIdentifierPtrRport > >(
+    .register_connection_model< ContDelayConnection< ConnectionT > >(
       "cont_delay_synapse" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< TsodyksConnection< TargetIdentifierPtrRport > >(
+    .register_connection_model< TsodyksConnection< ConnectionT > >(
       "tsodyks_synapse" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< TsodyksConnectionHom< TargetIdentifierPtrRport > >(
+    .register_connection_model< TsodyksConnectionHom< ConnectionT > >(
       "tsodyks_synapse_hom" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< Tsodyks2Connection< TargetIdentifierPtrRport > >(
+    .register_connection_model< Tsodyks2Connection< ConnectionT > >(
       "tsodyks2_synapse" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< HTConnection< TargetIdentifierPtrRport > >(
+    .register_connection_model< HTConnection< ConnectionT > >(
       "ht_synapse" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< STDPDopaConnection< TargetIdentifierPtrRport > >(
+    .register_connection_model< STDPDopaConnection< ConnectionT > >(
       "stdp_dopamine_synapse" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< VogelsSprekelerConnection< TargetIdentifierPtrRport > >(
+    .register_connection_model< VogelsSprekelerConnection< ConnectionT > >(
       "vogels_sprekeler_synapse" + name_postfix );
   kernel()
     .model_manager
-    .register_connection_model< BernoulliConnection< TargetIdentifierPtrRport > >(
+    .register_connection_model< BernoulliConnection< ConnectionT > >(
       "bernoulli_synapse" + name_postfix );
 }
 

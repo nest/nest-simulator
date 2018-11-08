@@ -68,7 +68,11 @@ if ( UINT64_T_SIZE GREATER 0 )
 endif ()
 
 if( CMAKE_SIZEOF_VOID_P EQUAL 4 )
-    set( HAVE_32BIT_ARCH ON )
+    set( CMAKE_EXTRA_INCLUDE_FILES "stdint.h" )
+    check_type_size( "long" LONG_SIZE )
+    if( NOT LONG_SIZE EQUAL 8 )
+        set( HAVE_32BIT_ARCH ON )
+    endif()
 endif()
 
 # Check symbols / defines exist

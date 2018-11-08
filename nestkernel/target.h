@@ -29,43 +29,88 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 #include "static_assert.h"
+#include "exceptions.h"
 
 namespace nest
 {
-
+// clang-format off
 /**
- * Contains all information required to uniquely identify a target
- * neuron on a (remote) machine. Used in TargetTable for presynaptic
- * part of connection infrastructure.
+ * This class implements a 64-bit target neuron identifier type.
+ * It uniquely identifies a target neuron on a (remote) machine.
+ * Used in TargetTable for the presynaptic part of the connection infrastructure.
+ *
+ * The bitwise layout of the neuron identifier:
+ *
+ *  +-------- processed flag
+ *  |   +---- synapse-type id (syn_id)
+ *  |   |
+ *  ||-----||-----tid-----||---------rank------------||----local connection id (lcid)----|
+ *  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000
+ *  |       |  |       |  |       |  |       |  |       |  |       |  |       |  |       |
+ *  63      56 55      48 47      40 39      32 31      24 23      16 15      8  7       0
  */
+// clang-format on
+
+// constexpr-functions for convenient compile-time generation of the bit-masks
+// and bit-constants. An ill-defined length or size will cause a compile-time
+// error,
+// e.g., num_bits to be shifted exceeds the sizeof(<datatype>) * 8.
+constexpr uint64_t
+generate_bit_mask( uint8_t num_bits, uint8_t bit_position )
+{
+  return (
+    ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 ) << bit_position );
+}
+
+constexpr int
+generate_max_value( uint8_t num_bits )
+{
+  return ( static_cast< int >( 1 ) << num_bits );
+}
+
+enum status_target_id
+{
+  TARGET_ID_PROCESSED,
+  TARGET_ID_UNPROCESSED
+};
+
 class Target
 {
 private:
-  uint64_t data_;
+  uint64_t remote_target_id_;
 
-  // define masks to select correct bits in data_
-  static constexpr uint64_t MASK_LCID = 0x0000000007FFFFFF;
-  static constexpr uint64_t MASK_RANK = 0x00007FFFF8000000;
-  static constexpr uint64_t MASK_TID = 0x01FF800000000000;
-  static constexpr uint64_t MASK_SYN_ID = 0x7E00000000000000;
-  static constexpr uint64_t MASK_PROCESSED = 0x8000000000000000;
+  // define the structure of the remote target neuron identifier
+  static constexpr uint8_t NUM_BITS_LCID = 27;
+  static constexpr uint8_t NUM_BITS_RANK = 20;
+  static constexpr uint8_t NUM_BITS_TID = 10;
+  static constexpr uint8_t NUM_BITS_SYN_ID = 6;
+  static constexpr uint8_t NUM_BITS_PROCESSED_FLAG = 1;
 
-  // define shifts to arrive at correct bits; note: the size of these
-  // variables is most likely not enough for exascale computers, or
-  // very small number of threads; if any issues are encountered with
-  // these values, we can introduce compiler flags that rearrange these
-  // sizes according to the target platform/application
-  static constexpr uint8_t SHIFT_LCID = 0;
-  static constexpr uint8_t SHIFT_RANK = 27;
-  static constexpr uint8_t SHIFT_TID = 47;
-  static constexpr uint8_t SHIFT_SYN_ID = 57;
-  static constexpr uint8_t SHIFT_PROCESSED = 63;
+  static constexpr uint8_t BITPOS_LCID = 0;
+  static constexpr uint8_t BITPOS_RANK = NUM_BITS_LCID;
+  static constexpr uint8_t BITPOS_TID = BITPOS_RANK + NUM_BITS_RANK;
+  static constexpr uint8_t BITPOS_SYN_ID = BITPOS_TID + NUM_BITS_TID;
+  static constexpr uint8_t BITPOS_PROCESSED_FLAG =
+    BITPOS_SYN_ID + NUM_BITS_SYN_ID;
+  typedef StaticAssert< BITPOS_PROCESSED_FLAG == 63 >::success
+    position_of_processed_flag;
 
-  // maximal sizes are determined by bitshifts
-  static constexpr int MAX_LCID = 134217728; // 2 ** 27
-  static constexpr int MAX_RANK = 1048576;   // 2 ** 20
-  static constexpr int MAX_TID = 1024;       // 2 ** 10
-  static constexpr int MAX_SYN_ID = 64;      // 2 ** 6
+  // generate bit-masks used in bit-operations
+  static constexpr uint64_t MASK_LCID =
+    generate_bit_mask( NUM_BITS_LCID, BITPOS_LCID );
+  static constexpr uint64_t MASK_RANK =
+    generate_bit_mask( NUM_BITS_RANK, BITPOS_RANK );
+  static constexpr uint64_t MASK_TID =
+    generate_bit_mask( NUM_BITS_TID, BITPOS_TID );
+  static constexpr uint64_t MASK_SYN_ID =
+    generate_bit_mask( NUM_BITS_SYN_ID, BITPOS_SYN_ID );
+  static constexpr uint64_t MASK_PROCESSED_FLAG =
+    generate_bit_mask( NUM_BITS_PROCESSED_FLAG, BITPOS_PROCESSED_FLAG );
+
+  static constexpr int MAX_LCID = generate_max_value( NUM_BITS_LCID );
+  static constexpr int MAX_RANK = generate_max_value( NUM_BITS_RANK );
+  static constexpr int MAX_TID = generate_max_value( NUM_BITS_TID );
+  static constexpr int MAX_SYN_ID = generate_max_value( NUM_BITS_SYN_ID );
 
 public:
   Target();
@@ -76,162 +121,191 @@ public:
     const index lcid );
 
   /**
-   * Sets the local connection ID.
+   * Set local connection id.
    */
   void set_lcid( const index lcid );
 
   /**
-   * Returns the local connection ID.
+   * Return local connection id.
    */
   index get_lcid() const;
 
   /**
-   * Sets the rank.
+   * Set rank.
    */
   void set_rank( const thread rank );
 
   /**
-   * Returns the rank.
+   * Return rank.
    */
   thread get_rank() const;
 
   /**
-   * Sets the target ID.
+   * Set thread id.
    */
   void set_tid( const thread tid );
 
   /**
-   * Returns the target ID.
+   * Return thread id.
    */
   thread get_tid() const;
 
   /**
-   * Sets the synapse-type ID.
+   * Set the synapse-type id.
    */
   void set_syn_id( const synindex syn_id );
 
   /**
-   * Returns the synapse-type ID.
+   * Return synapse-type id.
    */
   synindex get_syn_id() const;
 
   /**
-   * Sets whether Target is processed.
+   * Set the status of the target identifier: processed or unprocessed.
    */
-  void set_is_processed( const bool processed );
+  void set_status( status_target_id status );
 
   /**
-   * Returns whether Target is processed.
+   * Get the status of the target identifier: processed or unprocessed.
+   */
+  status_target_id get_status() const;
+
+  /**
+   * Return the status od the target identifier: processed or unprocessed.
    */
   bool is_processed() const;
 
   /**
-   * Returns offset.
+   * Return offset.
    */
   double get_offset() const;
 };
 
-//!< check legal size
-typedef StaticAssert< sizeof( Target ) == 8 >::success success_target_size;
-
 inline Target::Target()
-  : data_( 0 )
+  : remote_target_id_( 0 )
 {
 }
 
 inline Target::Target( const Target& target )
-  : data_( target.data_ )
+  : remote_target_id_( target.remote_target_id_ )
 {
-  set_is_processed( false ); // always initialize as non-processed
+  set_status( TARGET_ID_UNPROCESSED ); // initialize
 }
 
 inline Target::Target( const thread tid,
   const thread rank,
   const synindex syn_id,
   const index lcid )
-  : data_( 0 )
+  : remote_target_id_( 0 )
 {
   assert( tid < MAX_TID );
   assert( rank < MAX_RANK );
   assert( syn_id < MAX_SYN_ID );
   assert( lcid < MAX_LCID );
+
   set_lcid( lcid );
   set_rank( rank );
   set_tid( tid );
   set_syn_id( syn_id );
-  set_is_processed( false ); // always initialize as non-processed
+  set_status( TARGET_ID_UNPROCESSED ); // initialize
 }
 
 inline void
 Target::set_lcid( const index lcid )
 {
   assert( lcid < MAX_LCID );
-  // Reset corresponding bits using complement of mask and write new
-  // bits by shifting input appropriately. Need to cast to long first,
-  // to avoid overflow of input by left shifts.
-  data_ = ( data_ & ( ~MASK_LCID ) )
-    | ( static_cast< uint64_t >( lcid ) << SHIFT_LCID );
+  remote_target_id_ = ( remote_target_id_ & ( ~MASK_LCID ) )
+    | ( static_cast< uint64_t >( lcid ) << BITPOS_LCID );
 }
 
 inline index
 Target::get_lcid() const
 {
-  return ( data_ & MASK_LCID ) >> SHIFT_LCID;
+  return ( ( remote_target_id_ & MASK_LCID ) >> BITPOS_LCID );
 }
 
 inline void
 Target::set_rank( const thread rank )
 {
   assert( rank < MAX_RANK );
-  data_ = ( data_ & ( ~MASK_RANK ) )
-    | ( static_cast< uint64_t >( rank ) << SHIFT_RANK );
+  remote_target_id_ = ( remote_target_id_ & ( ~MASK_RANK ) )
+    | ( static_cast< uint64_t >( rank ) << BITPOS_RANK );
 }
 
 inline thread
 Target::get_rank() const
 {
-  return ( data_ & MASK_RANK ) >> SHIFT_RANK;
+  return ( ( remote_target_id_ & MASK_RANK ) >> BITPOS_RANK );
 }
 
 inline void
 Target::set_tid( const thread tid )
 {
   assert( tid < MAX_TID );
-  data_ =
-    ( data_ & ( ~MASK_TID ) ) | ( static_cast< uint64_t >( tid ) << SHIFT_TID );
+  remote_target_id_ = ( remote_target_id_ & ( ~MASK_TID ) )
+    | ( static_cast< uint64_t >( tid ) << BITPOS_TID );
 }
 
 inline thread
 Target::get_tid() const
 {
-  return ( data_ & MASK_TID ) >> SHIFT_TID;
+  return ( ( remote_target_id_ & MASK_TID ) >> BITPOS_TID );
 }
 
 inline void
 Target::set_syn_id( const synindex syn_id )
 {
   assert( syn_id < MAX_SYN_ID );
-  data_ = ( data_ & ( ~MASK_SYN_ID ) )
-    | ( static_cast< uint64_t >( syn_id ) << SHIFT_SYN_ID );
+  remote_target_id_ = ( remote_target_id_ & ( ~MASK_SYN_ID ) )
+    | ( static_cast< uint64_t >( syn_id ) << BITPOS_SYN_ID );
 }
 
 inline synindex
 Target::get_syn_id() const
 {
-  return ( data_ & MASK_SYN_ID ) >> SHIFT_SYN_ID;
+  return ( ( remote_target_id_ & MASK_SYN_ID ) >> BITPOS_SYN_ID );
 }
 
 inline void
-Target::set_is_processed( const bool processed )
+Target::set_status( status_target_id set_status_to )
 {
-  data_ = ( data_ & ( ~MASK_PROCESSED ) )
-    | ( static_cast< uint64_t >( processed ) << SHIFT_PROCESSED );
+  switch ( set_status_to )
+  {
+  case TARGET_ID_PROCESSED:
+    remote_target_id_ =
+      remote_target_id_ | MASK_PROCESSED_FLAG; // set single bit
+    break;
+  case TARGET_ID_UNPROCESSED:
+    remote_target_id_ =
+      remote_target_id_ & ~MASK_PROCESSED_FLAG; // clear single bit
+    break;
+  default:
+    throw InternalError( "Invalid remote target id status." );
+  }
+}
+
+inline status_target_id
+Target::get_status() const
+{
+  if ( ( remote_target_id_ & MASK_PROCESSED_FLAG )
+    >> BITPOS_PROCESSED_FLAG ) // test single bit
+  {
+    return ( TARGET_ID_PROCESSED );
+  }
+  return ( TARGET_ID_UNPROCESSED );
 }
 
 inline bool
 Target::is_processed() const
 {
-  return ( data_ & MASK_PROCESSED ) >> SHIFT_PROCESSED;
+  if ( Target::get_status() == TARGET_ID_PROCESSED )
+  {
+    return ( true );
+  }
+  else
+  {
+    return ( false );
+  }
 }
 
 inline double

@@ -85,7 +85,6 @@ namespace nest
  * different architectures (e.g. 32 or 64 bit).
  */
 
-
 /**
  * Type for Time tics.
  */

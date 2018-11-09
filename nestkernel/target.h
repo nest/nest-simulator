@@ -35,9 +35,9 @@ namespace nest
 {
 // clang-format off
 /**
- * This class implements a 64-bit target neuron identifier type.
- * It uniquely identifies a target neuron on a (remote) machine.
- * Used in TargetTable for the presynaptic part of the connection infrastructure.
+ * This class implements a 64-bit target neuron identifier type. It uniquely identifies
+ * a target neuron on a (remote) machine. Used in TargetTable for the presynaptic part
+ * of the connection infrastructure.
  *
  * The bitwise layout of the neuron identifier:
  *
@@ -53,8 +53,7 @@ namespace nest
 
 // constexpr-functions for convenient compile-time generation of the bit-masks
 // and bit-constants. An ill-defined length or size will cause a compile-time
-// error,
-// e.g., num_bits to be shifted exceeds the sizeof(<datatype>) * 8.
+// error, e.g., num_bits to be shifted exceeds the sizeof(<datatype>) * 8.
 constexpr uint64_t
 generate_bit_mask( uint8_t num_bits, uint8_t bit_position )
 {
@@ -65,7 +64,7 @@ generate_bit_mask( uint8_t num_bits, uint8_t bit_position )
 constexpr int
 generate_max_value( uint8_t num_bits )
 {
-  return ( static_cast< int >( 1 ) << num_bits );
+  return ( ( static_cast< int >( 1 ) << num_bits ) - 1 );
 }
 
 enum enum_status_target_id
@@ -198,10 +197,10 @@ inline Target::Target( const thread tid,
   const index lcid )
   : remote_target_id_( 0 )
 {
-  assert( tid < MAX_TID );
-  assert( rank < MAX_RANK );
-  assert( syn_id < MAX_SYN_ID );
-  assert( lcid < MAX_LCID );
+  assert( tid <= MAX_TID );
+  assert( rank <= MAX_RANK );
+  assert( syn_id <= MAX_SYN_ID );
+  assert( lcid <= MAX_LCID );
 
   set_lcid( lcid );
   set_rank( rank );
@@ -213,7 +212,7 @@ inline Target::Target( const thread tid,
 inline void
 Target::set_lcid( const index lcid )
 {
-  assert( lcid < MAX_LCID );
+  assert( lcid <= MAX_LCID );
   remote_target_id_ = ( remote_target_id_ & ( ~MASK_LCID ) )
     | ( static_cast< uint64_t >( lcid ) << BITPOS_LCID );
 }
@@ -227,7 +226,7 @@ Target::get_lcid() const
 inline void
 Target::set_rank( const thread rank )
 {
-  assert( rank < MAX_RANK );
+  assert( rank <= MAX_RANK );
   remote_target_id_ = ( remote_target_id_ & ( ~MASK_RANK ) )
     | ( static_cast< uint64_t >( rank ) << BITPOS_RANK );
 }
@@ -241,7 +240,7 @@ Target::get_rank() const
 inline void
 Target::set_tid( const thread tid )
 {
-  assert( tid < MAX_TID );
+  assert( tid <= MAX_TID );
   remote_target_id_ = ( remote_target_id_ & ( ~MASK_TID ) )
     | ( static_cast< uint64_t >( tid ) << BITPOS_TID );
 }
@@ -255,7 +254,7 @@ Target::get_tid() const
 inline void
 Target::set_syn_id( const synindex syn_id )
 {
-  assert( syn_id < MAX_SYN_ID );
+  assert( syn_id <= MAX_SYN_ID );
   remote_target_id_ = ( remote_target_id_ & ( ~MASK_SYN_ID ) )
     | ( static_cast< uint64_t >( syn_id ) << BITPOS_SYN_ID );
 }

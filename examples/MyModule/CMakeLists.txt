@@ -39,14 +39,24 @@ set( SHORT_NAME my )
 #    the complete module name is here:
 set( MODULE_NAME ${SHORT_NAME}module )
 
-# 2) Add all your sources here
+# 2) Add all your sources here and specify dependencies, e.g., link libraries
 set( MODULE_SOURCES
      mymodule.h mymodule.cpp
      pif_psc_alpha.cpp pif_psc_alpha.h
      drop_odd_spike_connection.h
      step_pattern_builder.h step_pattern_builder.cpp
-     recording_backend_soundclick.h recording_backend_soundclick.cpp
    )
+
+check_have_sfml_audio()
+if ( HAVE_SFML_AUDIO )
+  list( APPEND MODULE_SOURCES   
+        recording_backend_soundclick.h recording_backend_soundclick.cpp
+      )
+  set( USER_LINK_LIBRARIES sfml-audio )
+  add_definitions( -DHAVE_SFML_AUDIO )
+else ()
+  message( "-- Skip build of recording backend >SoundClick<. sfml-audio is not installed." )
+endif ()
 
 # 3) We require a header name like this:
 set( MODULE_HEADER ${MODULE_NAME}.h )
@@ -57,16 +67,7 @@ set( MODULE_VERSION_MAJOR 1 )
 set( MODULE_VERSION_MINOR 0 )
 set( MODULE_VERSION "${MODULE_VERSION_MAJOR}.${MODULE_VERSION_MINOR}" )
 
-# 5) Specify additional link libraries if needed, e.g., sfml-audio is required
-#    by the `SoundClick` recording backend example. The verification of its
-#    installation is encapsulated in ./cmake/ProcessDependencies.cmake.
-check_have_sfml_audio()
-if ( HAVE_SFML_AUDIO )
-  set( USER_LINK_LIBRARIES sfml-audio )
-  add_definitions( -DHAVE_SFML_AUDIO )
-endif ()
-
-# 6) Leave the rest as is. All files in `sli` will be installed to
+# 5) Leave the rest as is. All files in `sli` will be installed to
 #    `share/nest/sli/`, so that NEST will find the during initialization.
 
 # Leave the call to "project(...)" for after the compiler is determined.

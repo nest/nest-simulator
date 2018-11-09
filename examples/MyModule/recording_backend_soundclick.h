@@ -28,9 +28,7 @@
 #include "stopwatch.h"
 
 // Simple and Fast Multimedia Library (SFML)
-#ifdef HAVE_SFML_AUDIO
 #include <SFML/Audio.hpp>
-#endif
 
 namespace nest
 {
@@ -82,11 +80,8 @@ public:
 private:
   // NEST Stopwatch object
   Stopwatch stopwatch_;
-
-#ifdef HAVE_SFML_AUDIO
   sf::SoundBuffer sound_buffer_;
   sf::Sound sound_;
-#endif
 };
 
 // clang-format off

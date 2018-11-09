@@ -136,10 +136,12 @@ mynest::MyModule::init( SLIInterpreter* i )
   nest::kernel().connection_manager.register_conn_builder< StepPatternBuilder >(
     "step_pattern" );
 
+#ifdef HAVE_SFML_AUDIO
   // Register recording backends.
   nest::kernel()
     .io_manager.register_recording_backend< nest::RecordingBackendSoundClick >(
       "soundclick" );
+#endif
 
   nest::kernel().io_manager.register_recording_backend< nest::RecordingBackendSocket >(
     "socket" );

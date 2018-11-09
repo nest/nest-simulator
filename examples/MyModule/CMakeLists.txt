@@ -59,7 +59,7 @@ set( MODULE_VERSION "${MODULE_VERSION_MAJOR}.${MODULE_VERSION_MINOR}" )
 
 # 5) Specify additional link libraries if needed, e.g., sfml-audio is required
 #    by the `SoundClick` recording backend example. The verification of its
-#    is encapsulated in ./cmake/ProcessDependencies.cmake.
+#    installation is encapsulated in ./cmake/ProcessDependencies.cmake.
 check_have_sfml_audio()
 if ( HAVE_SFML_AUDIO )
   set( USER_LINK_LIBRARIES sfml-audio )

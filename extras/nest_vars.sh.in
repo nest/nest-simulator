@@ -3,17 +3,11 @@
 # NEST is installed here. When you relocate NEST, change this variable.
 NEST_INSTALL_DIR=@CMAKE_INSTALL_PREFIX@
 
-# NEST finds standard *.sli files $NEST_DATA_DIR/sli
-NEST_DATA_DIR=$NEST_INSTALL_DIR/@CMAKE_INSTALL_DATADIR@
-
-# NEST finds help files $NEST_DOC_DIR/help
-NEST_DOC_DIR=$NEST_INSTALL_DIR/@CMAKE_INSTALL_DOCDIR@
-
 # The path where NEST looks for user modules.
 export NEST_MODULE_PATH=$NEST_INSTALL_DIR/@CMAKE_INSTALL_LIBDIR@/nest
 
 # The path where the PyNEST bindings are installed.
-export NEST_PYTHON_PREFIX=$NEST_INSTALL_DIR/@PYEXECDIR@
+NEST_PYTHON_PREFIX=$NEST_INSTALL_DIR/@PYEXECDIR@
 export PYTHONPATH=$NEST_PYTHON_PREFIX:$PYTHONPATH
 
 # Make nest / sli /... executables visible.

@@ -71,13 +71,10 @@ cdef extern from "topology_parameter.h" namespace "nest":
     cppclass ParameterDatum:
         ParameterDatum(const ParameterDatum&)
 
-cdef extern from "gid_collection.h":
-    cppclass GIDCollectionDatum:
-        GIDCollectionDatum(const GIDCollectionDatum&)
-        
-    cppclass GIDCollectionIteratorDatum:
-        GIDCollectionIteratorDatum(const GIDCollectionIteratorDatum&)
-
+cdef extern from "gid_collection.h" namespace "nest":
+    cppclass GIDCollectionPTR:
+        GIDCollectionPTR()
+	
 cdef extern from "connection_id.h" namespace "nest":
     cppclass ConnectionID:
         ConnectionID(long, long, long, long) except +
@@ -92,6 +89,15 @@ cdef extern from "nest_datums.h":
         long get_target_thread()
         long get_synapse_model_id()
         long get_port()
+
+    cppclass GIDCollectionDatum:
+        GIDCollectionDatum()
+        GIDCollectionDatum(const GIDCollectionDatum&)
+        GIDCollectionDatum(const GIDCollectionPTR&)
+
+    cppclass GIDCollectionIteratorDatum:
+        GIDCollectionIteratorDatum(const GIDCollectionIteratorDatum&)
+
 
 cdef extern from "arraydatum.h":
     cppclass ArrayDatum:
@@ -135,15 +141,27 @@ cdef extern from "tokenstack.h":
         # Supposed to be used only through the addr_tok macro
         Token* top()
 
-cdef extern from "interpret.h":
-    cppclass SLIInterpreter:
-        SLIInterpreter() except +
-        int execute(const string&) except +
-        TokenStack OStack
+cdef extern from "mpi_manager.h" namespace "nest":
+    cppclass MPIManager:
+        void mpi_finalize( int exitcode ) except +
 
-cdef extern from "neststartup.h":
-    int neststartup(int*, char***, SLIInterpreter&, string) except +
-    void nestshutdown(int) except +
+cdef extern from "kernel_manager.h" namespace "nest":
+    KernelManager& kernel()
+    cppclass KernelManager:
+        KernelManager()
+        void destroy_kernel_manager()
+        MPIManager mpi_manager
+
+cdef extern from "nest.h" namespace "nest":
+    void init_nest( int* argc, char** argv[] )
+    GIDCollectionPTR create( const string model_name, const long n )
+
+cdef extern from "pynestkernel_aux.h":
+    CYTHON_isConnectionGenerator( x )
+    CYTHON_unpackConnectionGeneratorDatum( PyObject* obj )
+    CYTHON_DEREF( x )
+    CYTHON_ADDR( x )
+
 
 
 cdef extern from *:

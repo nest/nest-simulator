@@ -172,107 +172,6 @@ def is_string(obj):
     """
     return isinstance(obj, uni_str)
 
-__debug = False
-
-
-def get_debug():
-    """Return the current value of the debug flag of the high-level API.
-
-    Returns
-    -------
-    bool:
-        current value of the debug flag
-    """
-
-    global __debug
-    return __debug
-
-
-def set_debug(dbg=True):
-    """Set the debug flag of the high-level API.
-
-    Parameters
-    ----------
-    dbg : bool, optional
-        Value to set the debug flag to
-    """
-
-    global __debug
-    __debug = dbg
-
-
-def stack_checker(f):
-    """Decorator to add stack checks to functions using PyNEST's
-    low-level API.
-
-    This decorator works only on functions. See
-    check_stack() for the generic version for functions and
-    classes.
-
-    Parameters
-    ----------
-    f : function
-        Function to decorate
-
-    Returns
-    -------
-    function:
-        Decorated function
-
-    Raises
-    ------
-    kernel.NESTError
-    """
-
-    @functools.wraps(f)
-    def stack_checker_func(*args, **kwargs):
-        if not get_debug():
-            return f(*args, **kwargs)
-        else:
-            sr('count')
-            stackload_before = spp()
-            result = f(*args, **kwargs)
-            sr('count')
-            num_leftover_elements = spp() - stackload_before
-            if num_leftover_elements != 0:
-                eargs = (f.__name__, num_leftover_elements)
-                etext = "Function '%s' left %i elements on the stack."
-                raise kernel.NESTError(etext % eargs)
-            return result
-
-    return stack_checker_func
-
-
-def check_stack(thing):
-    """Convenience wrapper for applying the stack_checker decorator to
-    all class methods of the given class, or to a given function.
-
-    If the object cannot be decorated, it is returned unchanged.
-
-    Parameters
-    ----------
-    thing : function or class
-        Description
-
-    Returns
-    -------
-    function or class
-        Decorated function or class
-
-    Raises
-    ------
-    ValueError
-    """
-
-    if inspect.isfunction(thing):
-        return stack_checker(thing)
-    elif inspect.isclass(thing):
-        for name, mtd in inspect.getmembers(thing, predicate=inspect.ismethod):
-            if name.startswith("test_"):
-                setattr(thing, name, stack_checker(mtd))
-        return thing
-    else:
-        raise ValueError("unable to decorate {0}".format(thing))
 
 
 def is_iterable(seq):
@@ -573,7 +472,6 @@ def show_help_with_pager(hlpobj, pager=None):
               'in your home directory.'.format(pager))
 
 
-@check_stack
 def get_verbosity():
     """Return verbosity level of NEST's messages.
 
@@ -589,7 +487,6 @@ def get_verbosity():
     return spp()
 
 
-@check_stack
 def set_verbosity(level):
     """Change verbosity level for NEST's messages.
 

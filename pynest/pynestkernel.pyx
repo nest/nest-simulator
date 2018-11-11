@@ -156,23 +156,12 @@ cdef class SLILiteral(object):
 
 cdef class NESTEngine(object):
 
-    cdef SLIInterpreter* pEngine
-
-    def __cinit__(self):
-
-        self.pEngine = NULL
-
     def __dealloc__(self):
 
-        nestshutdown( 0 )
+        kernel().mpi_manager.mpi_finalize( 0 );
+        kernel().destroy_kernel_manager();
 
-        del self.pEngine
-
-        self.pEngine = NULL
-
-    def init(self, argv, modulepath):
-        if self.pEngine is not NULL:
-            raise NESTError("engine already initialized")
+    def init(self, argv):
 
         cdef int argc = <int> len(argv)
         if argc <= 0:
@@ -194,14 +183,14 @@ cdef class NESTEngine(object):
             for i, argvi in enumerate(argv_bytes):
                 argv_chars[i] = argvi # c-string ref extracted
 
-            self.pEngine = new SLIInterpreter()
-            modulepath_bytes = modulepath.encode()
+            init_nest(&argc, &argv_chars)
 
-            neststartup(&argc,
-                        &argv_chars,
-                        deref(self.pEngine),
-                        modulepath_bytes)
-            
+            # PyNEST-NG
+            # nest::kernel().model_manager.get_modeldict()
+            # nest::kernel().model_manager.get_synapsedict()
+            # nest::kernel().connection_manager.get_connruledict()
+            # nest::kernel().sp_manager.get_growthcurvedict()
+
             # If using MPI, argv might now have changed, so rebuild it
             del argv[:]
             # Convert back from utf8 char* to utf8 str in both python2 & 3
@@ -210,36 +199,6 @@ cdef class NESTEngine(object):
             free(argv_chars)
 
         return True
-
-    def run(self, cmd):
-
-        if self.pEngine is NULL:
-            raise NESTError("engine uninitialized")
-        cdef string cmd_bytes
-        cmd_bytes = cmd.encode('utf-8')
-        self.pEngine.execute(cmd_bytes)
-
-    def push(self, obj):
-
-        if self.pEngine is NULL:
-            raise NESTError("engine uninitialized")
-        self.pEngine.OStack.push(python_object_to_datum(obj))
-
-    def pop(self):
-
-        if self.pEngine is NULL:
-            raise NESTError("engine uninitialized")
-
-        if self.pEngine.OStack.empty():
-            raise NESTError("interpreter stack is empty")
-
-        cdef Datum* dat = (addr_tok(self.pEngine.OStack.top())).datum()
-
-        ret = sli_datum_to_object(dat)
-
-        self.pEngine.OStack.pop()
-
-        return ret
 
 
 cdef inline Datum* python_object_to_datum(obj) except NULL:
@@ -502,3 +461,78 @@ cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ =
             return numpy.array([], dtype=ret_dtype)
     else:
         return arr
+
+
+
+
+
+################################################################################
+####                                                                        ####
+####                              PyNEST HL API                             ####
+####                                                                        ####
+################################################################################
+
+from nest.lib.hl_api_helper import model_deprecation_warning, warnings
+
+def Create(string model, long n=1, params=None):
+    """Create n instances of type model.
+
+    Parameters
+    ----------
+    model : str
+        Name of the model to create
+    n : int, optional
+        Number of instances to create
+    params : TYPE, optional
+        Parameters for the new nodes. A single dictionary or a list of
+        dictionaries with size n. If omitted, the model's defaults are used.
+
+    Returns
+    -------
+    GIDCollection:
+        Object representing global IDs of created nodes
+    """
+
+    model_deprecation_warning(model)
+
+    cdef GIDCollectionPTR gids = create(model, n)
+    cdef GIDCollectionDatum* gids_ = new GIDCollectionDatum(gids)
+
+    datum = SLIDatum()
+    (<SLIDatum> datum)._set_datum(<Datum*> new GIDCollectionDatum(gids), SLI_TYPE_GIDCOLLECTION.decode())
+
+    return datum
+#
+#    if isinstance(params, dict):
+#        // same parameters for all nodes
+#    else:
+#        for i, node in enumerate(gids):
+#            SetStatus(node, params[i])
+#
+    
+    ### gids.set(params)
+###    
+###    if isinstance(params, dict):
+###        cmd = "/%s 3 1 roll exch Create" % model
+#######        sps(params)
+###    else:
+###        cmd = "/%s exch Create" % model
+###
+#######    sps(n)
+#######    sr(cmd)
+###
+#######    gids = spp()
+###
+###    if params is not None and not isinstance(params, dict):
+###        try:
+#######            SetStatus(gids, params)
+###            pass
+###        except:
+###            warnings.warn(
+###                "SetStatus() call failed, but nodes have already been " +
+###                "created! The GIDs of the new nodes are: {0}.".format(gids))
+###            raise
+#    datum = SLIDatum()
+#    (<SLIDatum> datum)._set_datum(<Datum*> new GIDCollectionDatum(deref(<GIDCollectionPTR> gids)), SLI_TYPE_GIDCOLLECTION.decode())
+#   
+#    return datum

@@ -23,8 +23,20 @@
 
 """ Runs a battery of unit tests on PyNEST """
 
-import sys, os
+import sys
+import os
+
 os.environ['DELAY_PYNEST_INIT'] = '1'
+
+import nest
+nest.init(["--verbosity=WARNING", "--quiet"])
+
+import nest.topology
+import nest.tests
+import nest.topology.tests
+
+import unittest
+
 
 def myprint(msg):
     sys.stderr.write(msg)
@@ -32,29 +44,20 @@ def myprint(msg):
     sys.stdout.write(msg)
     sys.stdout.flush()
 
+
 def _setup(arg):
-    if hasattr(arg,'_testMethodName'):
+    if hasattr(arg, '_testMethodName'):
         MethodName = str(arg._testMethodName)
-    elif hasattr(arg,'__testMethodName'):
+    elif hasattr(arg, '__testMethodName'):
         MethodName = str(arg.__testMethodName)
     else:
         try:
             MethodName = str(arg).split('(')[0].split(' ')[0]
-        except:
+        except IndexError:
             MethodName = str(arg)
-    
+
     sys.stderr.write("  Running test " + MethodName + "...\n")
 
-
-import nest
-nest.init(["--verbosity=WARNING", "--quiet"])
-
-import nest.topology
-
-import nest.tests
-import nest.topology.tests
-
-import unittest
 
 # The function setUp() is called before each test run,
 # it is used here to print the status.
@@ -66,7 +69,10 @@ result = runner.run(nest.tests.suite())
 result_topo = runner.run(nest.topology.tests.suite())
 
 total = result.testsRun + result_topo.testsRun
-failed = len(result.failures) + len(result.errors) + len(result_topo.failures) + len(result_topo.errors)
+failed = len(result.failures) + \
+         len(result.errors) + \
+         len(result_topo.failures) + \
+         len(result_topo.errors)
 skipped = len(result.skipped) + len(result_topo.skipped)
 passed = total - failed - skipped
 

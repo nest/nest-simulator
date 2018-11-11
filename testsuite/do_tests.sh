@@ -6,39 +6,8 @@
 # language's native `unittest` library to assert certain invariants
 # and thus ensure a correctly working installation of NEST.
 #
-# This script itself is independent of the concrete installation it
-# came from and rather expects the test configuration in the form of
-# the following mandatory commandline options:
+# For commandline options, see the the function usage() below.
 #
-#   --binary-dir The root directory of the NEST installation to test.
-#
-#   --report-dir The path to which to store test results and log
-#                files.
-#
-# In addition, the script accepts the following optional arguments:
-#
-#   --with-music=<exe> Run MUSIC tests using the given `music`
-#                      executable
-#
-#   --with-python=<exe> Run Python-based tests and tests for PyNEST using
-#                       the given Python executable
-#
-# SLI's version provides functions that quit NEST with a non-zero exit
-# code upon errors. This is checked here and used to print a nice
-# summary after all tests have been run.
-#
-# For testing this script, these files may be handy:
-#
-#   exitcode0.sli
-#   exitcode1.sli
-#   exitcode2.sli
-#   exitcode3.sli
-#   exitcode99.sli
-#   exitcode126.sli
-#
-# They return a specific exit code
-#
-
 
 
 #
@@ -66,24 +35,17 @@ usage ()
     fi
 
     cat <<EOF
-Usage: do_tests.sh [parameters] [options]"
+Usage: do_tests.sh --prefix=<path> --report-dir=<path> [options]"
+
+    --prefix=<path>        The base installation path of NEST
+    --report-dir=<path>    The directory to store the output in
 
 Options:
 
-
-    --test-dir=path     Toplovel directory of the testsuite
-    --report-dir=path   Output directory (default: ./reports)
-
-Optional arguments:
-
-    --python=<exe>      The Python executable to use
-    			If omitted, tests that require Python are skipped
-    --nosetests=<exe>   The nodetests executable to use
-    			Only useful in combination with --python=<exe>
-    			If omitted, PyNEST tests use the custom test harness
-    --music=<exe>       The MUSIC executable to use
-    			If omitted, tests that require MUSIC are skipped
-    --help              Print program options and exit
+    --with-python=<exe>    The Python executable to use
+    --python-path=<path>   The PYTHONPATH for the NEST installation
+    --with-music=<exe>     The MUSIC executable to use
+    --help                 Print program options and exit
 EOF
 
     exit $1
@@ -423,19 +385,6 @@ fi
 
 TEST_BASEDIR=${PREFIX}/share/doc/nest
 
-
-
-echo "================================================================================"
-echo NEST .......... $NEST
-echo PATH .......... $PATH
-echo PYTHON ........ $PYTHON
-echo PYTHONPATH .... $PYTHONPATH
-echo TEST_BASEDIR .. $TEST_BASEDIR
-echo PREFIX ........ $PREFIX
-echo REPORTDIR ..... $REPORTDIR
-echo "================================================================================"
-
-
 # Gather some information about the host
 INFO_ARCH="$(uname -m)"
 INFO_HOME="$(/bin/sh -c 'echo ~')"
@@ -443,6 +392,20 @@ INFO_HOST="$(hostname -f)"
 INFO_OS="$(uname -s)"
 INFO_USER="$(whoami)"
 INFO_VER="$(uname -r)"
+
+echo "================================================================================"
+echo "  NEST testsuite"
+echo "  Date: $(date -u)"
+echo "  Sysinfo: $(uname -s -r -m -o)"
+echo "================================================================================"
+echo "  NEST executable .... $NEST"
+echo "  PATH ............... $PATH"
+echo "  Python executable .. $PYTHON"
+echo "  PYTHONPATH ......... $PYTHONPATH"
+echo "  TEST_BASEDIR ....... $TEST_BASEDIR"
+echo "  PREFIX ............. $PREFIX"
+echo "  REPORTDIR .......... $REPORTDIR"
+echo "================================================================================"
 
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"

@@ -239,26 +239,11 @@ get_connections( const DictionaryDatum& dict )
 }
 
 void
-simulate( const double& time )
+simulate( double t )
 {
-  const Time t_sim = Time::ms( time );
-
-  if ( time < 0 )
-  {
-    throw BadParameter( "The simulation time cannot be negative." );
-  }
-  if ( not t_sim.is_finite() )
-  {
-    throw BadParameter( "The simulation time must be finite." );
-  }
-  if ( not t_sim.is_grid_time() )
-  {
-    throw BadParameter(
-      "The simulation time must be a multiple "
-      "of the simulation resolution." );
-  }
-
-  kernel().simulation_manager.simulate( t_sim );
+  prepare();
+  run( t );
+  cleanup();
 }
 
 void
@@ -287,13 +272,13 @@ run( const double& time )
 void
 prepare()
 {
-  kernel().simulation_manager.prepare();
+  kernel().prepare();
 }
 
 void
 cleanup()
 {
-  kernel().simulation_manager.cleanup();
+  kernel().cleanup();
 }
 
 void

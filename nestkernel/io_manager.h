@@ -86,6 +86,7 @@ public:
    * SimulationManager::simulate() or SimulationManager::cleanup() by
    * calling the backends' finalize() functions
    */
+  void prepare();
   void cleanup();
 
   /**

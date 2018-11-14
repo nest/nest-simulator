@@ -42,6 +42,7 @@
 #include "recording_backend_ascii.h"
 #include "recording_backend_memory.h"
 #include "recording_backend_screen.h"
+#include "recording_backend_arbor.h"
 #ifdef HAVE_SIONLIB
 #include "recording_backend_sionlib.h"
 #endif
@@ -55,6 +56,7 @@ nest::IOManager::IOManager()
   recording_backends_.insert(std::make_pair( "ascii", new RecordingBackendASCII() ) );
   recording_backends_.insert(std::make_pair( "memory", new RecordingBackendMemory() ) );
   recording_backends_.insert(std::make_pair( "screen", new RecordingBackendScreen() ) );
+  recording_backends_.insert(std::make_pair( "arbor", new RecordingBackendArbor() ) );
 #ifdef HAVE_SIONLIB
   recording_backends_.insert(std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
 #endif
@@ -204,8 +206,7 @@ nest::IOManager::get_status( DictionaryDatum& d )
 void
 nest::IOManager::post_run_cleanup()
 {
-  std::map< Name, RecordingBackend* >::const_iterator it;
-  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
+  for ( auto it = recording_backends_.rbegin(); it != recording_backends_.rend(); ++it )
   {
     it->second->post_run_cleanup();
   }
@@ -214,10 +215,19 @@ nest::IOManager::post_run_cleanup()
 void
 nest::IOManager::cleanup()
 {
+  for ( auto it = recording_backends_.rbegin(); it != recording_backends_.rend(); ++it )
+  {
+    it->second->cleanup();
+  }
+}
+
+void
+nest::IOManager::prepare()
+{
   std::map< Name, RecordingBackend* >::const_iterator it;
   for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
   {
-    it->second->finalize();
+    it->second->prepare();
   }
 }
 

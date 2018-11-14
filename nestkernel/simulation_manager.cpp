@@ -433,14 +433,6 @@ nest::SimulationManager::prepare()
 }
 
 void
-nest::SimulationManager::simulate( Time const& t )
-{
-  prepare();
-  run( t );
-  cleanup();
-}
-
-void
 nest::SimulationManager::assert_valid_simtime( Time const& t )
 {
   if ( t == Time::ms( 0.0 ) )
@@ -559,8 +551,6 @@ nest::SimulationManager::cleanup()
         "in sync at end of simulation." );
     }
   }
-
-  kernel().io_manager.cleanup();
 }
 
 void

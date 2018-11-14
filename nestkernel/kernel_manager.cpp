@@ -47,7 +47,6 @@ nest::KernelManager::destroy_kernel_manager()
 
 nest::KernelManager::KernelManager()
   : logging_manager()
-  , io_manager()
   , mpi_manager()
   , vp_manager()
   , rng_manager()
@@ -59,6 +58,22 @@ nest::KernelManager::KernelManager()
   , model_manager()
   , music_manager()
   , node_manager()
+  , io_manager()
+  , managers({
+      &logging_manager,
+      &mpi_manager,
+      &vp_manager,
+      &rng_manager,
+      &simulation_manager,
+      &modelrange_manager,
+      &connection_manager,
+      &sp_manager,
+      &event_delivery_manager,
+      &model_manager,
+      &music_manager,
+      &node_manager,
+      &io_manager
+    })
   , initialized_( false )
 {
 }
@@ -67,43 +82,70 @@ nest::KernelManager::~KernelManager()
 {
 }
 
+  // logging_manager.initialize(); // must come first so others can log
+  // io_manager.initialize();      // independent of others
+
+  // mpi_manager.initialize(); // set up inter-process communication
+  // vp_manager.initialize();  // set up threads
+
+  // // invariant: process infrastructure (MPI, threads) in place
+
+  // rng_manager.initialize(); // depends on number of VPs
+
+  // // invariant: supporting managers set up
+
+  // // "Core kernel managers" follow
+  // simulation_manager.initialize(); // independent of others
+  // modelrange_manager.initialize(); // independent of others
+  // connection_manager.initialize(); // depends only on num of threads
+  // sp_manager.initialize();
+
+  // // prerequisites:
+  // //   - min_delay/max_delay available (connection_manager)
+  // //   - clock initialized (simulation_manager)
+  // event_delivery_manager.initialize();
+
+  // model_manager.initialize(); // depends on number of threads
+
+  // music_manager.initialize();
+
+  // // prerequisites:
+  // //   - modelrange_manager initialized
+  // //   - model_manager for pristine models
+  // //   - vp_manager for number of threads
+  // node_manager.initialize(); // must come last
+
 void
 nest::KernelManager::initialize()
 {
-  logging_manager.initialize(); // must come first so others can log
-  io_manager.initialize();      // independent of others
-
-  mpi_manager.initialize(); // set up inter-process communication
-  vp_manager.initialize();  // set up threads
-
-  // invariant: process infrastructure (MPI, threads) in place
-
-  rng_manager.initialize(); // depends on number of VPs
-
-  // invariant: supporting managers set up
-
-  // "Core kernel managers" follow
-  simulation_manager.initialize(); // independent of others
-  modelrange_manager.initialize(); // independent of others
-  connection_manager.initialize(); // depends only on num of threads
-  sp_manager.initialize();
-
-  // prerequisites:
-  //   - min_delay/max_delay available (connection_manager)
-  //   - clock initialized (simulation_manager)
-  event_delivery_manager.initialize();
-
-  model_manager.initialize(); // depends on number of threads
-
-  music_manager.initialize();
-
-  // prerequisites:
-  //   - modelrange_manager initialized
-  //   - model_manager for pristine models
-  //   - vp_manager for number of threads
-  node_manager.initialize(); // must come last
+  for (auto& m: managers)
+  {
+    m->initialize();
+  }
 
   initialized_ = true;
+}
+
+void
+nest::KernelManager::prepare()
+{
+  for (auto& m: managers)
+  {
+    m->prepare();
+  }
+
+  std::cerr << "Starting kernelmanager prepare" << std::endl;
+}
+
+void
+nest::KernelManager::cleanup()
+{
+  for (auto&& m_it = managers.rbegin();
+       m_it != managers.rend();
+       ++m_it)
+  {
+    (*m_it)->cleanup();
+  }
 }
 
 void
@@ -111,23 +153,12 @@ nest::KernelManager::finalize()
 {
   initialized_ = false;
 
-  // reverse order of calls as in initialize()
-  node_manager.finalize();
-  music_manager.finalize();
-  model_manager.finalize();
-  event_delivery_manager.finalize();
-  sp_manager.finalize();
-  connection_manager.finalize();
-  modelrange_manager.finalize();
-  simulation_manager.finalize();
-
-  rng_manager.finalize();
-
-  vp_manager.finalize();
-  mpi_manager.finalize();
-
-  io_manager.finalize();
-  logging_manager.finalize();
+  for (auto&& m_it = managers.rbegin();
+       m_it != managers.rend();
+       ++m_it)
+  {
+    (*m_it)->finalize();
+  }
 }
 
 void
@@ -140,14 +171,13 @@ nest::KernelManager::reset()
 void
 nest::KernelManager::num_threads_changed_reset()
 {
+  io_manager.finalize();
   node_manager.finalize();
   model_manager.finalize();
   connection_manager.finalize();
   modelrange_manager.finalize();
   rng_manager.finalize();
-  io_manager.finalize();
 
-  io_manager.initialize();
   rng_manager.initialize();
   // independent of threads, but node_manager needs it reset
   modelrange_manager.initialize();
@@ -155,6 +185,7 @@ nest::KernelManager::num_threads_changed_reset()
   model_manager.initialize();
   music_manager.initialize();
   node_manager.initialize();
+  io_manager.initialize();
 }
 
 void

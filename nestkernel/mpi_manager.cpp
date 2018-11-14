@@ -70,6 +70,16 @@ nest::MPIManager::MPIManager()
 {
 }
 
+#ifdef HAVE_MPI
+void nest::MPIManager::set_communicator(MPI_Comm global_comm)
+{
+  comm = global_comm;
+  MPI_Comm_size( comm, &num_processes_ );
+  MPI_Comm_rank( comm, &rank_ );
+  recv_buffer_size_ = send_buffer_size_ * get_num_processes();
+}
+#endif
+
 void
 nest::MPIManager::init_mpi( int* argc, char** argv[] )
 {
@@ -82,18 +92,13 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 #ifdef HAVE_MUSIC
     kernel().music_manager.init_music( argc, argv );
     // get a communicator from MUSIC
-    comm = kernel().music_manager.communicator();
+    set_communicator((MPI_Comm) kernel().music_manager.communicator());
 #else  /* #ifdef HAVE_MUSIC */
     int provided_thread_level;
     MPI_Init_thread( argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
-    comm = MPI_COMM_WORLD;
+    set_communicator(MPI_COMM_WORLD);
 #endif /* #ifdef HAVE_MUSIC */
   }
-
-  MPI_Comm_size( comm, &num_processes_ );
-  MPI_Comm_rank( comm, &rank_ );
-
-  recv_buffer_size_ = send_buffer_size_ * get_num_processes();
 
   // create off-grid-spike type for MPI communication
   // creating derived datatype
@@ -186,7 +191,7 @@ nest::MPIManager::mpi_finalize( int exitcode )
 void
 nest::MPIManager::mpi_abort( int exitcode )
 {
-  MPI_Abort( MPI_COMM_WORLD, exitcode );
+  MPI_Abort( comm, exitcode );
 }
 
 
@@ -757,7 +762,7 @@ nest::MPIManager::time_communicate( int num_bytes, int samples )
       &test_recv_buffer[ 0 ],
       packet_length,
       MPI_UNSIGNED,
-      MPI_COMM_WORLD );
+      comm );
   }
   // finish time measurement here
   foo.stop();
@@ -829,7 +834,7 @@ nest::MPIManager::time_communicate_offgrid( int num_bytes, int samples )
       &test_recv_buffer[ 0 ],
       packet_length,
       MPI_OFFGRID_SPIKE,
-      MPI_COMM_WORLD );
+      comm );
   }
   // finish time measurement here
   foo.stop();
@@ -865,7 +870,7 @@ nest::MPIManager::time_communicate_alltoall( int num_bytes, int samples )
       &test_recv_buffer[ 0 ],
       packet_length,
       MPI_UNSIGNED,
-      MPI_COMM_WORLD );
+      comm );
   }
   // finish time measurement here
   foo.stop();
@@ -911,7 +916,7 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
       &n_nodes[ 0 ],
       &displacements[ 0 ],
       MPI_UNSIGNED,
-      MPI_COMM_WORLD );
+      comm );
   }
   // finish time measurement here
   foo.stop();

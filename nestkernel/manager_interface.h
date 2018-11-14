@@ -42,9 +42,9 @@ namespace nest
  */
 class ManagerInterface
 {
-private:
-  ManagerInterface( ManagerInterface const& ); // do not implement
-  void operator=( ManagerInterface const& );   // do not implement
+public:
+  ManagerInterface( ManagerInterface const& ) = delete; // do not implement
+  void operator=( ManagerInterface const& ) = delete;   // do not implement
 
 public:
   ManagerInterface()
@@ -89,6 +89,9 @@ public:
 
   virtual void set_status( const DictionaryDatum& ) = 0;
   virtual void get_status( DictionaryDatum& ) = 0;
+
+  virtual void prepare() {};
+  virtual void cleanup() {};
 };
 }
 

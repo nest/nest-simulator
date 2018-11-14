@@ -175,6 +175,23 @@ def sli_func(s, *args, **kwargs):
 
 hl_api.sli_func = sli_func
 
+def set_communicator(comm):
+    """Set global communicator for NEST.
+
+    Paramters
+    ---------
+    comm: MPI.Comm from mpi4py
+    
+    Raises
+    ------
+    _kernel.NESTError
+    """
+    
+    if "mpi4py" not in sys.modules:
+        raise _kernel.NESTError("set_communicator: "
+                                "mpi4py not loaded.")
+    
+    engine.set_communicator(comm)
 
 def init(argv):
     """Initializes NEST.
@@ -220,6 +237,7 @@ def init(argv):
 
     else:
         _kernel.NESTError("Initiatization of NEST failed.")
+
 
 
 def test():

@@ -42,7 +42,7 @@ Name: ac_generator - provides AC input current
 
 Description:
 
-This device produce an ac-current which are sent by a CurrentEvent. The
+This device produces an ac-current sent by a CurrentEvent. The
 current is given by
 
         I(t) = offset + amplitude * sin ( om * t + phi )

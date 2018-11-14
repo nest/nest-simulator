@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
     Name: testsuite::test_delay_check - sli script to test delay checking
 
     Synopsis: (test_delay_check) run

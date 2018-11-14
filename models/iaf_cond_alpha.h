@@ -42,11 +42,26 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
+namespace nest
+{
+/**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int iaf_cond_alpha_dynamics( double, const double*, double*, void* );
+
+/** @BeginDocumentation
 Name: iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron
                        model.
 
 Description:
+
 iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a post-synaptic change
 of conductance modelled by an alpha function. The alpha function
@@ -54,6 +69,7 @@ is normalised such that an event of weight 1.0 results in a peak current of 1 nS
 at t = tau_syn.
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
 V_m        double - Membrane potential in mV
@@ -73,6 +89,15 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
+Remarks:
+
+ @note Per 2009-04-17, this class has been revised to our newest
+        insights into class design. Please use THIS CLASS as a reference
+        when designing your own models with nonlinear dynamics.
+        One weakness of this class is that it distinguishes between
+        inputs to the two synapses by the sign of the synaptic weight.
+        It would be better to use receptor_types, cf iaf_cond_alpha_mc.
+
 References:
 
 Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
@@ -90,32 +115,8 @@ the Fluctuation- Driven Regime. Jneurosci 24(10) 2345-2356
 Author: Schrader, Plesser
 
 SeeAlso: iaf_cond_exp, iaf_cond_alpha_mc
+
 */
-
-namespace nest
-{
-/**
- * Function computing right-hand side of ODE for GSL solver.
- * @note Must be declared here so we can befriend it in class.
- * @note Must have C-linkage for passing to GSL. Internally, it is
- *       a first-class C++ function, but cannot be a member function
- *       because of the C-linkage.
- * @note No point in declaring it inline, since it is called
- *       through a function pointer.
- * @param void* Pointer to model neuron instance.
- */
-extern "C" int iaf_cond_alpha_dynamics( double, const double*, double*, void* );
-
-/**
- * Integrate-and-fire neuron model with two conductance-based synapses.
- *
- * @note Per 2009-04-17, this class has been revised to our newest
- *       insights into class design. Please use THIS CLASS as a reference
- *       when designing your own models with nonlinear dynamics.
- *       One weakness of this class is that it distinguishes between
- *       inputs to the two synapses by the sign of the synaptic weight.
- *       It would be better to use receptor_types, cf iaf_cond_alpha_mc.
- */
 class iaf_cond_alpha : public Archiving_Node
 {
 

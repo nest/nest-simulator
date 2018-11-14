@@ -20,7 +20,7 @@
  *
  */
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: call - Execute object from a dictionary.
 Synopsis: dict /f call -> -
 Description: In SLI, an object-oriented programming style can be
@@ -59,7 +59,7 @@ SeeAlso: namespace, using
  [/dictionarytype /literaltype] /call_ load addtotrie
 def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name:cvo - Label a dictionary for usage as an object in oo-programming
 Synopsis:dict cvo -> dict
 Parameters:The operator modfies its argument
@@ -89,7 +89,7 @@ SeeAlso: cvdict, call, SetStatus, GetStatus
 */
 /cvo [/dictionarytype] {dup /__is_object true put} def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name:cvdict - Convert argument to a dictionary
 Synopsis:  dict  cvdict -> dict
            array cvdict -> dict
@@ -121,7 +121,7 @@ def
 def
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name:SetStatus_dict - Modify a dictionary used as an object in oo-programming
 Synopsis:dict dict SetStatus -> -
 Parameters:The operator modfies the first argument
@@ -167,7 +167,7 @@ SeeAlso: GetStatus_dict, cvo, cvd, call
 /SetStatus [/dictionarytype /dictionarytype] /SetStatus_dict load def
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name:GetStatus_dict - Return status of a dictionary used as an object in oo-programming
 Synopsis:dict GetStatus -> dict
 Parameters:The argument is a dictionary used as an object in oo-programming

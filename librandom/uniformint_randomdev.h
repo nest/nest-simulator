@@ -53,8 +53,9 @@
 namespace librandom
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rdevdict::uniform_int - uniform integer random deviate generator
+
 Description: Generates uniformly distributed integers between two given limits
 
   p(n) = 1 / (high - low + 1),   n = low, low+1, ..., high
@@ -64,6 +65,7 @@ Parameters:
   high - largest allowed random number
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
+
 Author: Hans Ekkehard Plesser
 */
 

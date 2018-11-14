@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-481 - Ensure that poisson_generator_ps delivers spikes to more than one node
 

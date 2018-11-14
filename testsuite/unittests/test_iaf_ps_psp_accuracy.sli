@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_iaf_ps_psp_accuracy - test of precise integrate-and-fire neurons' accuracy of PSP
 
 Synopsis: (test_iaf_ps_psp_accuracy) run -> compare one voltage with analytics

@@ -37,7 +37,7 @@
 namespace mynest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: pif_psc_alpha - Perfect integrate-and-fire neuron model with alpha PSC
                       synapse.
 

@@ -41,7 +41,6 @@
 #include "recordables_map.h"
 #include "universal_data_logger.h"
 
-
 namespace nest
 {
 

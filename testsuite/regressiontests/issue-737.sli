@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::issue-737
 
 Synopsis: (issue-737) run -> NEST exits if test fails

@@ -27,7 +27,7 @@
 #include "connection.h"
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: drop_odd_spike - Synapse dropping spikes with odd time stamps.
 
   Description:

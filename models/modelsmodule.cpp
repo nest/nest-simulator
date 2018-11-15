@@ -300,7 +300,7 @@ ModelsModule::init( SLIInterpreter* )
     "volume_transmitter" );
 
   // Create voltmeter as a multimeter pre-configured to record V_m.
-  /*BeginDocumentation
+  /** @BeginDocumentation
   Name: voltmeter - Device to record membrane potential from neurons.
   Synopsis: voltmeter Create
 
@@ -437,7 +437,7 @@ ModelsModule::init( SLIInterpreter* )
 
   // register synapses
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: static_synapse_hpc - Variant of static_synapse with low memory
      consumption.
 
@@ -459,7 +459,7 @@ ModelsModule::init( SLIInterpreter* )
       "static_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: static_synapse_hom_w_hpc - Variant of static_synapse_hom_w with low
      memory consumption.
      SeeAlso: synapsedict, static_synapse_hom_w, static_synapse_hpc
@@ -473,7 +473,7 @@ ModelsModule::init( SLIInterpreter* )
     .register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
       "static_synapse_hom_w_hpc" );
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: gap_junction - Connection model for gap junctions.
      SeeAlso: synapsedict
   */
@@ -507,7 +507,7 @@ ModelsModule::init( SLIInterpreter* )
       /*supports_wfr=*/true );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: stdp_synapse_hpc - Variant of stdp_synapse with low memory
      consumption.
      SeeAlso: synapsedict, stdp_synapse, static_synapse_hpc
@@ -522,7 +522,7 @@ ModelsModule::init( SLIInterpreter* )
       "stdp_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: stdp_pl_synapse_hom_hpc - Variant of stdp_pl_synapse_hom with low
      memory consumption.
      SeeAlso: synapsedict, stdp_pl_synapse_hom, static_synapse_hpc
@@ -537,7 +537,7 @@ ModelsModule::init( SLIInterpreter* )
       "stdp_pl_synapse_hom_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: stdp_triplet_synapse_hpc - Variant of stdp_triplet_synapse with low
      memory consumption.
      SeeAlso: synapsedict, stdp_synapse, static_synapse_hpc
@@ -552,7 +552,7 @@ ModelsModule::init( SLIInterpreter* )
       "stdp_triplet_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: quantal_stp_synapse_hpc - Variant of quantal_stp_synapse with low
      memory consumption.
      SeeAlso: synapsedict, quantal_stp_synapse, static_synapse_hpc
@@ -567,7 +567,7 @@ ModelsModule::init( SLIInterpreter* )
       "quantal_stp_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: stdp_synapse_hom_hpc - Variant of quantal_stp_synapse with low memory
      consumption.
      SeeAlso: synapsedict, stdp_synapse_hom, static_synapse_hpc
@@ -582,7 +582,7 @@ ModelsModule::init( SLIInterpreter* )
       "stdp_synapse_hom_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: stdp_facetshw_synapse_hom_hpc - Variant of stdp_facetshw_synapse_hom
      with low memory consumption.
      SeeAlso: synapsedict, stdp_facetshw_synapse_hom, static_synapse_hpc
@@ -597,7 +597,7 @@ ModelsModule::init( SLIInterpreter* )
       "stdp_facetshw_synapse_hom_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: cont_delay_synapse_hpc - Variant of cont_delay_synapse with low
      memory consumption.
      SeeAlso: synapsedict, cont_delay_synapse, static_synapse_hpc
@@ -612,7 +612,7 @@ ModelsModule::init( SLIInterpreter* )
       "cont_delay_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: tsodyks_synapse_hpc - Variant of tsodyks_synapse with low memory
      consumption.
      SeeAlso: synapsedict, tsodyks_synapse, static_synapse_hpc
@@ -627,7 +627,7 @@ ModelsModule::init( SLIInterpreter* )
       "tsodyks_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: tsodyks_synapse_hom_hpc - Variant of tsodyks_synapse_hom with low
      memory consumption.
      SeeAlso: synapsedict, tsodyks_synapse_hom, static_synapse_hpc
@@ -642,7 +642,7 @@ ModelsModule::init( SLIInterpreter* )
       "tsodyks_synapse_hom_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: tsodyks2_synapse_hpc - Variant of tsodyks2_synapse with low memory
      consumption.
      SeeAlso: synapsedict, tsodyks2_synapse, static_synapse_hpc
@@ -657,7 +657,7 @@ ModelsModule::init( SLIInterpreter* )
       "tsodyks2_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: ht_synapse_hpc - Variant of ht_synapse with low memory consumption.
      SeeAlso: synapsedict, ht_synapse, static_synapse_hpc
   */
@@ -671,7 +671,7 @@ ModelsModule::init( SLIInterpreter* )
       "ht_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: stdp_dopamine_synapse_hpc - Variant of stdp_dopamine_synapse with low
      memory consumption.
      SeeAlso: synapsedict, stdp_dopamine_synapse, static_synapse_hpc
@@ -685,7 +685,7 @@ ModelsModule::init( SLIInterpreter* )
     .register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
       "stdp_dopamine_synapse_hpc" );
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: vogels_sprekeler_synapse_hpc - Variant of vogels_sprekeler_synapse
      with low memory
      consumption.
@@ -700,7 +700,7 @@ ModelsModule::init( SLIInterpreter* )
     .register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
       "vogels_sprekeler_synapse_hpc" );
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: bernoulli_synapse - Static synapse with stochastic transmission
      SeeAlso: synapsedict, static_synapse, static_synapse_hom_w
   */

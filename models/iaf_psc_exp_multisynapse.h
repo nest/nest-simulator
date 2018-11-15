@@ -37,25 +37,27 @@
 
 namespace nest
 {
-/* BeginDocumentation
+
+/** @BeginDocumentation
 Name: iaf_psc_exp_multisynapse - Leaky integrate-and-fire neuron model with
                                  multiple ports.
 
 Description:
 
- iaf_psc_exp_multisynapse is a direct extension of iaf_psc_exp.
- On the postsynapic side, there can be arbitrarily many synaptic
- time constants (iaf_psc_exp has exactly two: tau_syn_ex and tau_syn_in).
+iaf_psc_exp_multisynapse is a direct extension of iaf_psc_exp.
+On the postsynapic side, there can be arbitrarily many synaptic
+time constants (iaf_psc_exp has exactly two: tau_syn_ex and tau_syn_in).
 
- This can be reached by specifying separate receptor ports, each for
- a different time constant. The port number has to match the respective
- "receptor_type" in the connectors.
+This can be reached by specifying separate receptor ports, each for
+a different time constant. The port number has to match the respective
+"receptor_type" in the connectors.
 
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Author:  Plesser, adapted from iaf_psc_alpha_multisynapse
+
 SeeAlso: iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp,
 iaf_psc_alpha_multisynapse
 */

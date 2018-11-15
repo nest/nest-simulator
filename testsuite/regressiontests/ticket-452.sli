@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-452 - Ensure that precise simulations give identical results whether stepped or run continuously
 

@@ -34,8 +34,10 @@ class CurrentEvent;
 class DoubleDataEvent;
 class DelayedRateConnectionEvent;
 
-/* BeginDocumentation
+/** @BeginDocumentation
+
    Name: StimulatingDevice - General properties of stimulating devices.
+
    Description:
 
    Stimulating devices inject signals into a network, either as analog signals

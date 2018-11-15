@@ -514,7 +514,7 @@ template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   // The following logic implements the encoding:
   // A single spike signals a transition to 0 state, two spikes in same time
@@ -575,7 +575,7 @@ template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

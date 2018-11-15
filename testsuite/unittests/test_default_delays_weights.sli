@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: testsuite::test_default_delays_weights - test default delay and weight handling
 
   Synopsis: (test_default_delays_weights) run

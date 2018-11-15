@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_DoubleVector_IntVector.sli - test vector operations
 
 Synopsis: (test_DoubleVector_IntVector) run -> 

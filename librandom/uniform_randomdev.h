@@ -53,7 +53,7 @@
 namespace librandom
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rdevdict::uniform - uniform random deviate generator
 Description: Generates uniformly distributed numbers in the interval
              [low, high).
@@ -63,6 +63,7 @@ Parameters:
   high - upper interval boudnary, excluded
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
+
 Author: Hans Ekkehard Plesser
 */
 

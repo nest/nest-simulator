@@ -34,7 +34,13 @@ from sys import exit, version_info
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 126
 
-decode = lambda x: x if version_info < (3,) else x.decode("utf8")
+
+def decode(arg):
+    if version_info < (3,):
+        return arg
+    else:
+        return arg.decode("utf8")
+
 
 nestscript = mktemp(".sli")
 nestcmd = ["nest", "-d", "--verbosity=ALL", nestscript]

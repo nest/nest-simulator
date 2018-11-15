@@ -21,33 +21,6 @@
  */
 
 
-/* BeginDocumentation
-Name: rate_connection_instantaneous - Synapse type for instantaneous rate
-connections.
-
-Description:
- rate_connection_instantaneous is a connector to create
- instantaneous connections between rate model neurons.
-
- The value of the parameter delay is ignored for connections of
- this type. To create rate connections with delay please use
- the synapse type rate_connection_delayed.
-
-Transmits: InstantaneousRateConnectionEvent
-
-References:
-
- Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
- Bolten, M., Helias, M. and Diesmann, M. (2017).
- Integration of Continuous-Time Dynamics in a
- Spiking Neural Network Simulator.
- Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
-
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
-SeeAlso: rate_connection_delayed, rate_neuron_ipn, rate_neuron_opn
-*/
-
-
 #ifndef RATE_CONNECTION_INSTANTANEOUS_H
 #define RATE_CONNECTION_INSTANTANEOUS_H
 
@@ -55,6 +28,35 @@ SeeAlso: rate_connection_delayed, rate_neuron_ipn, rate_neuron_opn
 
 namespace nest
 {
+
+/** @BeginDocumentation
+Name: rate_connection_instantaneous - Synapse type for instantaneous rate
+connections.
+
+Description:
+
+rate_connection_instantaneous is a connector to create
+instantaneous connections between rate model neurons.
+
+The value of the parameter delay is ignored for connections of
+this type. To create rate connections with delay please use
+the synapse type rate_connection_delayed.
+
+Transmits: InstantaneousRateConnectionEvent
+
+References:
+
+Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
+ Bolten, M., Helias, M. and Diesmann, M. (2017).
+ Integration of Continuous-Time Dynamics in a
+ Spiking Neural Network Simulator.
+ Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
+
+Author: David Dahmen, Jan Hahne, Jannis Schuecker
+
+SeeAlso: rate_connection_delayed, rate_neuron_ipn, rate_neuron_opn
+*/
+
 /**
  * Class representing a rate connection. A rate connection
  * has the properties weight and receiver port.

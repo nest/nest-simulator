@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-881 - ConnectLayers creates too few connections under some conditions when running on multiple threads
 

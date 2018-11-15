@@ -285,7 +285,7 @@ nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
 void
 nest::iaf_chs_2007::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   if ( e.get_weight() >= 0.0 )
   {

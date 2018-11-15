@@ -41,7 +41,7 @@
 namespace librandom
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rdevdict::*_clipped - clipped random deviate generators.
 
 Description: Generate random numbers from an underlying distribution,
@@ -80,6 +80,7 @@ drawn. These versions are mainly provided to allow reproduction of
 publications that used this strategy.
 
 SeeAlso: CreateRDV, rdevdict
+
 Author: Hans Ekkehard Plesser
 */
 

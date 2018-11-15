@@ -42,11 +42,26 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
+namespace nest
+{
+/**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
+
+/** @BeginDocumentation
 Name: iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model
                       used in Casti et al 2008.
 
 Description:
+
 iaf_chxk_2008 is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses [1]. It is modeled after iaf_cond_alpha with the
 addition of after hyper-polarization current instead of a membrane potential
@@ -55,6 +70,7 @@ modeled by an alpha function. The alpha function is normalized such that an
 event of weight 1.0 results in a peak current of 1 nS at t = tau_syn.
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
 V_m        double - Membrane potential in mV
@@ -74,6 +90,7 @@ ahp_bug    bool   - Defaults to false. If true, behaves like original
                     model implementation.
 
 References:
+
 [1] Casti A, Hayot F, Xiao Y, and Kaplan E (2008) A simple model of retina-LGN
 transmission. J Comput Neurosci 24:235-252.
 
@@ -85,24 +102,6 @@ Author: Heiberg
 
 SeeAlso: iaf_cond_alpha
 */
-
-namespace nest
-{
-/**
- * Function computing right-hand side of ODE for GSL solver.
- * @note Must be declared here so we can befriend it in class.
- * @note Must have C-linkage for passing to GSL. Internally, it is
- *       a first-class C++ function, but cannot be a member function
- *       because of the C-linkage.
- * @note No point in declaring it inline, since it is called
- *       through a function pointer.
- * @param void* Pointer to model neuron instance.
- */
-extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
-
-/**
- * Integrate-and-fire neuron model with two conductance-based synapses.
- */
 class iaf_chxk_2008 : public Archiving_Node
 {
 

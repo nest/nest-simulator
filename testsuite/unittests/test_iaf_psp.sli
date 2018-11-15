@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_iaf_psp - sli script for test of iaf_psc_alpha spike input
 
 Synopsis: (test_iaf_psp) run -> compare response with reference data

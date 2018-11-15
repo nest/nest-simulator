@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_corr_matrix_det - minimal test of correlomatrix detector
 
 Synopsis: (test_corr_matrix_det) run -> dies if assertion fails

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multiple_random_source_stepping - test NEST's behavior when using multiple random sources and different stepping schemes
 
 Synopsis: (test_multiple_random_source_stepping.sli) run -> dies if assertion fails

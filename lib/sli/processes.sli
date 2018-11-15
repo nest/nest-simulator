@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: is_mpi - flag in statusdict indicating whether interpreter was compiled with MPI 
 
 Synopsis: statusdict/is_mpi :: -> boolean
@@ -114,7 +114,7 @@ def
 %---------------------------------------------------------------------------
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: spoon - execute a parallel SLI-process 
   
@@ -210,7 +210,7 @@ trie
 def
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: sysexec - Transfer control to a UNIX-command
 
@@ -285,7 +285,7 @@ def
 /sysexec [/stringtype] /sysexec_s load def
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: wait - Wait for any child process to terminate
 
@@ -331,7 +331,7 @@ def
 def
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: system - execute a UNIX command in a parallel process.
 
@@ -498,7 +498,7 @@ def
 /system [/stringtype /integertype /proceduretype] /system_as_i_p load def
 
 %-----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: dup2 - Duplicate a filestream's file descriptor onto another's
 
@@ -609,7 +609,7 @@ def
 
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: spawn - Spawn a UNIX process and redirect stdin and stdout.
 
@@ -821,7 +821,7 @@ def
 /spawn [/stringtype /integertype] /spawn_as_i load def  
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: shpawn - Spawn a UNIX process using a shell and redirect stdin and stdout.
 
@@ -1028,7 +1028,7 @@ def
 %END: define trie structure for shpawn.
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: isatty - Determine if a stream is connected to a terminal.
 
@@ -1047,7 +1047,7 @@ SeeAlso: ctermid
 /isatty [/ostreamtype] /isatty_os load def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: taskset - Binds a process to a processor.
 Synopsis:
  proc pid taskset -> -
@@ -1079,7 +1079,7 @@ SeeAlso: taskset_thisjob, Rank, NumProcesses
 } def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: taskset_thisjob - Binds the current process to a processor.
 Synopsis:
  proc taskset_thisjob -> -
@@ -1132,7 +1132,7 @@ SeeAlso: taskset, Rank, NumProcesses
 } def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: memory_thisjob - report virtual memory size for current NEST process
 Synopsis:
  memory_thisjob -> vmsize
@@ -1220,7 +1220,7 @@ statusdict/exitcodes :: /restart_serial 4 put
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: nest_serial  - Returns a non-distributed call of nest as a string
 
 Synopsis:  (sli-filename) nest_serial -> (string with shell command)
@@ -1279,7 +1279,7 @@ SeeAlso: nest_indirect
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: nest_indirect  - Returns a nest call as a string able to spawn distributed simulations
 
 Synopsis:  (sli-filename) nest_indirect -> (string with shell command)

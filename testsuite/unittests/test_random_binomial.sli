@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_random_binomial - test of binomial random deviates 
 
 Synopsis: (test_random_binomial) run -> compare binomial random numbers with desired distribution.

@@ -36,8 +36,9 @@
 namespace librandom
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rdevdict::exponential - exponential random deviate generator
+
 Description: Generates exponentially distributed random numbers.
 Negative values of lambda are allowed and generate a distribution
 of negative numbers.
@@ -54,6 +55,7 @@ Parameters:
  lambda - rate parameter (default: 1.0)
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
+
 Author: Hans Ekkehard Plesser
 */
 

@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_spike_det_reset - test if resetting works on spike_detector
 
 Synopsis: (test_spike_det_reset) run -> dies if assertion fails

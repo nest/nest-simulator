@@ -370,8 +370,7 @@ public:
 // Description of new SLI-commands:
 
 //-----------------------------------------------------------------------------
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: fork - create a child process of SLI
 
 Synopsis: fork -> PID
@@ -442,8 +441,7 @@ SeeAlso: sysexec, fork, spoon
 */
 
 //-----------------------------------------------------------------------------
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: waitPID - wait or check for a child process to terminate
 
 Synopsis: PIDin NoHangFlag waitPID -> Status NormalExitFlag PIDout
@@ -523,8 +521,7 @@ SeeAlso: wait, spoon, signaldict, getPGRP
 */
 
 //-----------------------------------------------------------------------------
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: kill - send a signal to another process
 
 Synopsis: PID  SIGNAL kill -> -
@@ -600,8 +597,7 @@ getPGRP
 */
 
 //-----------------------------------------------------------------------------
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: signaldict - Dictionary containing the machine-dependent signal codes.
 
 Synopsis: signaldict -> signaldict
@@ -637,8 +633,7 @@ SeeAlso: kill, wait, waitPID, system, sysexec, spoon, fork
 */
 
 //-----------------------------------------------------------------------------
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: pipe - Open up a pipe
 
 Synopsis: pipe -> read_end write_end
@@ -706,8 +701,7 @@ SeeAlso: dup2, available, spawn
 */
 
 //-----------------------------------------------------------------------------
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: available - check if data is available from an istream
 
 Synopsis: istream available -> istream {true|false}
@@ -786,8 +780,7 @@ SeeAlso: pipe, mkfifo, spawn, eof, in_avail
 */
 
 //-----------------------------------------------------------------------------
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: getPID - Get ID of the current process
 
 Synopsis: getPID -> -
@@ -811,8 +804,7 @@ SeeAlso: getPPID, getPGRP, fork, spoon, waitPID, kill, system, spawn, shpawn
 */
 
 //-----------------------------------------------------------------------------
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: getPPID - Get parent ID of the current process
 
 Synopsis: getPPID -> -
@@ -834,8 +826,7 @@ SeeAlso: getPID, getPGRP, fork, spoon, waitPID, kill, system, spawn, shpawn
 */
 
 //-----------------------------------------------------------------------------
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: getPGRP - Get process group ID of the current process
 
 Synopsis: getPGRP -> -
@@ -859,8 +850,7 @@ SeeAlso: fork, getPID, kill
 */
 
 //-----------------------------------------------------------------------------
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: mkfifo - Create a FIFO special file (named pipe)
 
 Synopsis: path mkfifo -> -
@@ -913,8 +903,7 @@ SeeAlso: pipe, mkfifo, ifstream, available, ignore, dup2
 */
 
 //-----------------------------------------------------------------------------
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: setNONBLOCK - Switch between blocking and non-blocking I/O.
 
 Synopsis: ifstream {true|false} setNONBLOCK -> ifstream
@@ -973,9 +962,7 @@ SeeAlso: available, ignore
 */
 
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
 Name: ctermid - Return the path to the controlling terminal of the process.
 
 Synopsis: ctermid -> (pathname)

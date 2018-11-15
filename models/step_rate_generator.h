@@ -21,49 +21,6 @@
  */
 
 
-/*BeginDocumentation
-  Name: step_rate_generator - provides a piecewise constant input rate
-
-  Description:
-  The rate_generator provides a piecewise constant rate input to the
-  connected rate unit(s). Please note that this input is handled in the same
-  way as input from any other rate unit, i.e. it is processed by the input
-  function of the receiving rate unit. The amplitude of the rate is changed
-  at the specified times. The unit of the rate is Hz.
-
- Parameters:
-     The following parameters can be set in the status dictionary:
-     amplitude_times   list of doubles - Times at which rate changes in ms
-     amplitude_values  list of doubles - Amplitudes of step rate rate in
-                                         Hz
-     allow_offgrid_times  bool - Default false
-       If false, times will be rounded to the nearest step if they are
-       less than tic/2 from the step, otherwise NEST reports an error.
-       If true,  times are rounded to the nearest step if within tic/2
-       from the step, otherwise they are rounded up to the *end* of the
-       step.
-
-  Note:
-    Times of amplitude changes must be strictly increasing after conversion
-    to simulation time steps. The option allow_offgrid_times may be
-    useful, e.g., if you are using randomized times for rate changes
-    which typically would not fall onto simulation time steps.
-
-  Examples:
-    The rate can be altered in the following way:
-    /step_rate_generator Create /sc Set
-    sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
-
-    The amplitude of the rate will be 0.0 Hz in the time interval [0, 0.2),
-    2.0 Hz in the interval [0.2, 0.5) and 4.0 Hz from then on.
-
-  Sends: DelayedRateConnectionEvent
-
-  Author: Sandra Nestler, David Dahmen
-
-  SeeAlso: step_current_generator, Device, StimulatingDevice
-*/
-
 #ifndef STEP_RATE_GENERATOR_H
 #define STEP_RATE_GENERATOR_H
 
@@ -81,6 +38,53 @@
 
 namespace nest
 {
+
+/** @BeginDocumentation
+Name: step_rate_generator - provides a piecewise constant input rate
+
+Description:
+
+The rate_generator provides a piecewise constant rate input to the
+connected rate unit(s). Please note that this input is handled in the same
+way as input from any other rate unit, i.e. it is processed by the input
+function of the receiving rate unit. The amplitude of the rate is changed
+at the specified times. The unit of the rate is Hz.
+
+Parameters:
+
+The following parameters can be set in the status dictionary:
+amplitude_times   list of doubles - Times at which current changes in ms
+amplitude_values  list of doubles - Amplitudes of step current current in
+                                    pA
+allow_offgrid_times  bool - Default false
+  If false, times will be rounded to the nearest step if they are
+  less than tic/2 from the step, otherwise NEST reports an error.
+  If true,  times are rounded to the nearest step if within tic/2
+  from the step, otherwise they are rounded up to the *end* of the
+  step.
+
+Note:
+
+Times of amplitude changes must be strictly increasing after conversion
+to simulation time steps. The option allow_offgrid_times may be
+useful, e.g., if you are using randomized times for rate changes
+which typically would not fall onto simulation time steps.
+
+Examples:
+
+The rate can be altered in the following way:
+/step_rate_generator Create /sc Set
+sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
+
+The amplitude of the rate will be 0.0 Hz in the time interval [0, 0.2),
+2.0 Hz in the interval [0.2, 0.5) and 4.0 Hz from then on.
+
+Sends: DelayedRateConnectionEvent
+
+Author: Sandra Nestler, David Dahmen
+
+SeeAlso: step_current_generator, Device, StimulatingDevice
+*/
 class step_rate_generator : public DeviceNode
 {
 

@@ -534,17 +534,23 @@ SLIArrayModule::FlattenFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: Sort - Sorts a homogeneous array of doubles, ints, or strings.
+
 Synopsis:
  array Sort -> array
+
 Parameters:
  array of doubles, ints, or strings
+
 Description:
  The present implementation is restricted to doubles, ints, and strings.
+
 Examples:
  [8. 4. 3. 6. 9. 5.] Sort --> [3. 4. 5. 6. 8. 9.]
+
 Author: Diesmann, Eppler
+
 SeeAlso: Max, Min
 */
 void
@@ -612,9 +618,7 @@ SLIArrayModule::SortFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: Transpose - Transposes the first two levels of its argument
 
    Synopsis:
@@ -635,9 +639,13 @@ BeginDocumentation
        /NonRectangularShapeError error
      and message
       "The first two levels of the one-dimensional list cannot be transposed."
+
    Author: Markus Diesmann, July 9, 2000
+
    FirstVersion: June, 2000
+
    References:   [1] The Mathematica Book V4.0 "Transpose"
+
    SeeAlso: Flatten, Partition
 
 */
@@ -774,9 +782,7 @@ SLIArrayModule::PartitionFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: arrayload - pushes array elements followed by number of elements
 
    Synopsis:
@@ -795,7 +801,9 @@ BeginDocumentation
         [ 5 4 2 ] arrayload  --> 5 4 2   3
 
    Author: Marc-Oliver Gewaltig, Markus Diesmann
+
    Remarks: There are two obsolete versions existing called aload and astore.
+
    SeeAlso: arraystore
 */
 void
@@ -831,9 +839,7 @@ SLIArrayModule::ArrayloadFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( arraysize );
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: arraystore - pops the first n elements of the stack into an array
 
    Synopsis:
@@ -853,9 +859,10 @@ BeginDocumentation
    Examples:
       5 4 2   3  arraystore  -->   [ 5 4 2 ]
 
-   Bugs:
    Author: Marc-Oliver Gewaltig, Markus Diesmann
+
    Remarks: There are two obsolete versions existing called aload and astore.
+
    SeeAlso: arrayload
 */
 void
@@ -1375,9 +1382,7 @@ SLIArrayModule::IMap_dvFunction::execute( SLIInterpreter* i ) const
 /*  call: array proc Map -> array */
 /*  pick   1    0               */
 /********************************/
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: Map - Apply a procedure to each element of a list or string
 
    Synopsis:
@@ -1416,15 +1421,13 @@ BeginDocumentation
 
    (abc) {1 add} Map                 --> (bcd)
 
-   Diagnostics:
-
-   Bugs:
-
    Author:
     Marc-Oliver Gewaltig
 
    Remarks: Map is not part of PostScript
+
    References: The Mathematica Book
+
    SeeAlso: MapAt, MapIndexed, Table, forall, forallindexed, NestList
 
 */
@@ -1796,21 +1799,25 @@ SLIArrayModule::IMapThreadFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: MapThread - apply a procedure to corresponding elements of n arrays
+
 Synopsis: [[a11 ... a1n]...[am1 ... amn]] {f} MapThread ->
                                   [f(a11, a21,... am1)...f(a1n, a2n,...,amn)]
+
 Description: MapThread is like a multidimensional Map. It applies the function
              of to corresponding elements of m argument arrays.
 
 Parameters: the first parameter is a list of m arrays of equal size n.
             The second parameter is a procedure which takes m arguments and
             returns a single value.
+
 Examples:    [[1 2][3 4]] {add} MapThread -> [4 6]
             [[1 2 3 4] [1 1 1 1]] {add} MapThread -> [2 3 4 5]
 
 References: This function implements the simple version of Mathematica's
 MapThread
+
 SeeAlso: Map, MapIndexed, NestList, FoldList, ScanThread
 */
 
@@ -1983,8 +1990,7 @@ SLIArrayModule::Put_a_a_tFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 2 );
 }
 
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: area - Return array of indices defining a 2d subarea of a 2d array.
 
 Synopsis:
@@ -2245,8 +2251,7 @@ SLIArrayModule::AreaFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: area2 - Return array of indices defining a 2d subarea of a 2d array.
 
 Synopsis:
@@ -2530,8 +2535,9 @@ SLIArrayModule::Area2Function::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: cv1d - convert 2-dimensional coordinates to 1-dim index
+
 Synopsis: y   x   w  cv1d -> i
 
 Description: This function converts a 2-dimensional matrix address to
@@ -2603,8 +2609,9 @@ SLIArrayModule::Cv1dFunction::execute( SLIInterpreter* i ) const
   // on the stack. Low overhead.
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: cv2d - convert 1-dimensional index to 2-dim coordinate
+
 Synopsis: i  w  cv2d -> y   x
 int int        int int
 
@@ -2670,11 +2677,15 @@ SLIArrayModule::Cv2dFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: GetMax - get maximal element
+
 Synopsis: array GetMax -> int
+
 Description: returns the maximum value in an array of ints.
+
 SeeAlso: GetMin
+
 Remarks: works only for integer arrays.
 */
 void
@@ -2734,11 +2745,15 @@ SLIArrayModule::GetMaxFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: GetMin - get minimal element
+
 Synopsis: array GetMin -> int
+
 Description: returns the minimum value in an array of ints.
+
 Remarks: works only for integer arrays.
+
 SeeAlso: GetMax
 */
 void
@@ -2799,17 +2814,22 @@ SLIArrayModule::GetMinFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: gabor_ - Return 2D array with Gabor patch.
+
 Synopsis:
 nr nc xmin xmax ymin ymax lambda orient phase sigma el
+
 Description:
 Returns an nr by nc matrix with a Gabor patch, computed over the
 argument range of [xmin,xmax] by [ymin,ymax].
 This function is the low level variant of the more user-friendly
 GaborPatch.
+
 SeeAlso: arraylib::GaborPatch
+
 Author: Marc-Oliver Gewaltig
+
 References: Petkov N and Kruizinga P: Biol. Cybern. 76, 83-96 (1997)
 */
 void
@@ -2911,16 +2931,20 @@ SLIArrayModule::GaborFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: gauss2d_ - Return 2D array with Gauss patch.
+
 Synopsis:
 nr nc xmin xmax ymin ymax phi sigma gamma
+
 Description:
 Returns an nr by nc matrix with a Gauss patch, computed over the
 argument range of [xmin,xmax] by [ymin,ymax].
 This function is the low level variant of the more user-friendly
 GaussPatch.
+
 SeeAlso: arraylib::GaussPatch
+
 Author: Marc-Oliver Gewaltig
 */
 void
@@ -4319,19 +4343,24 @@ SLIArrayModule::Iforall_dvFunction::backtrace( SLIInterpreter* i, int p ) const
             << "." << std::endl;
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: eq_dv - tests for content equality between vectors of doubles
+
    Synopsis:
      array array -> bool
+
    Parameters:
      two array of doubles
+
    Description:
      Deep equality test since regular eq is an identity test for vectors.
      Intent is to be used in mathematica.sli to override eq for
      doublevectortype.
+
    Example:
      <. 1 .> <. 1 .> eq_ --> false
      <. 1 .> <. 1 .> eq_dv --> true
+
    Author: Peyser
  */
 template < class T, class D >
@@ -4375,18 +4404,23 @@ SLIArrayModule::Eq_dvFunction::execute( SLIInterpreter* i ) const
   eq_execute< DoubleVectorDatum, double >( i );
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: eq_iv - tests for content equality between vectors of integers
+
    Synopsis:
      array array -> bool
+
    Parameters:
      two arrays of integers
+
    Description:
      Deep equality test since regular eq is an identity test for vectors
      Intent is to be used in mathematica.sli to override eq for intvectortype.
+
    Example:
      <# 1 #> <# 1 #> eq_ --> false
      <# 1 #> <# 1 #> eq_iv --> true
+
    Author: Peyser
  */
 void

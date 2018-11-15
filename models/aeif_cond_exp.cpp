@@ -553,7 +553,7 @@ nest::aeif_cond_exp::update( const Time& origin,
 void
 nest::aeif_cond_exp::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   if ( e.get_weight() > 0.0 )
   {
@@ -572,7 +572,7 @@ nest::aeif_cond_exp::handle( SpikeEvent& e )
 void
 nest::aeif_cond_exp::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

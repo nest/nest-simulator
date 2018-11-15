@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_mini_brunel_ps - Test parallel simulation of small Brunel-style network
 
 Synopsis: nest_indirect test_mini_brunel_ps.sli -> -

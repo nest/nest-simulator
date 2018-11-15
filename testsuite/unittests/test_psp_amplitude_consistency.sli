@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_psp_amplitude_consistency - test the consistency of PSP amplitudes across models.
 
 Synopsis: (test_psp_amplitude_consistency) run -> 

@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::fail_distributed_rank_invariant_collect_assert_or_die - self test of distributed_rank_invariant_collect_assert_or_die
 
 Synopsis: nest_indirect distributed_rank_invariant_collect_assert_or_die.sli -> -

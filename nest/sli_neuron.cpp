@@ -228,7 +228,7 @@ nest::sli_neuron::execute_sli_protected( DictionaryDatum state, Name cmd )
 void
 nest::sli_neuron::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   if ( e.get_weight() > 0.0 )
   {
@@ -247,7 +247,7 @@ nest::sli_neuron::handle( SpikeEvent& e )
 void
 nest::sli_neuron::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double I = e.get_current();
   const double w = e.get_weight();

@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::issue-281 - Check that ConnectLayers works MPI-parallel for fixed fan-out
 

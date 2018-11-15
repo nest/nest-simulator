@@ -20,34 +20,6 @@
  *
  */
 
-
-/* BeginDocumentation
-   Name: static_synapse_hom_w - Synapse type for static connections with
-   homogeneous weight.
-
-   Description:
-     static_synapse_hom_w does not support any kind of plasticity. It simply
-     stores the parameters delay, target, and receiver port for each connection
-     and uses a common weight for all connections.
-
-   Remarks:
-     The common weight for all connections of this model must be set by
-     SetDefaults on the model. If you create copies of this model using
-     CopyModel, each derived model can have a different weight.
-
-   Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
-   DataLoggingRequest, DoubleDataEvent
-
-   Parameters:
-     No Parameters
-
-   References:
-     No References
-   FirstVersion: April 2008
-   Author: Susanne Kunkel, Moritz Helias
-   SeeAlso: synapsedict, static_synapse
-*/
-
 #ifndef STATICCONNECTION_HOM_W_H
 #define STATICCONNECTION_HOM_W_H
 
@@ -58,11 +30,39 @@
 namespace nest
 {
 
-/**
- * Class representing a static connection. A static connection has the
- * properties weight, delay and receiver port. A suitable Connector containing
- * these connections can be obtained from the template GenericConnector.
- */
+/** @BeginDocumentation
+Name: static_synapse_hom_w - Synapse type for static connections with
+homogeneous weight.
+
+Description:
+
+static_synapse_hom_w does not support any kind of plasticity. It simply
+stores the parameters delay, target, and receiver port for each connection
+and uses a common weight for all connections.
+
+Remarks:
+
+The common weight for all connections of this model must be set by
+SetDefaults on the model. If you create copies of this model using
+CopyModel, each derived model can have a different weight.
+
+Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
+DataLoggingRequest, DoubleDataEvent
+
+Parameters:
+
+No Parameters
+
+References:
+
+No References
+
+FirstVersion: April 2008
+
+Author: Susanne Kunkel, Moritz Helias
+
+SeeAlso: synapsedict, static_synapse
+*/
 template < typename targetidentifierT >
 class StaticConnectionHomW : public Connection< targetidentifierT >
 {
@@ -165,7 +165,7 @@ public:
   send( Event& e, const thread tid, const CommonPropertiesHomW& cp )
   {
     e.set_weight( cp.get_weight() );
-    e.set_delay( get_delay_steps() );
+    e.set_delay_steps( get_delay_steps() );
     e.set_receiver( *get_target( tid ) );
     e.set_rport( get_rport() );
     e();

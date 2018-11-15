@@ -598,12 +598,14 @@ private:
   std::vector< std::vector< size_t > > num_connections_;
 
   /**
-   * BeginDocumentation
+   * @BeginDocumentation
    * Name: connruledict - dictionary containing all connectivity rules
+   *
    * Description:
    * This dictionary provides the connection rules that can be used
    * in Connect.
    * 'connruledict info' shows the contents of the dictionary.
+   *
    * SeeAlso: Connect
    */
   DictionaryDatum connruledict_; //!< Dictionary for connection rules.

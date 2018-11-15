@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::issue-351 Ensure Connect raises exception if connecting to device with unusable rule
 

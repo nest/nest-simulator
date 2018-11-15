@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: regcomp - Create a regular expression 
 Synopsis: string integer regcomp -> regex
           string         regcomp -> regex
@@ -76,7 +76,7 @@ SeeAlso: regexec, :regerror
 /regcomp [/stringtype] {regexdict /REG_EXTENDED get regcomp} def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: :regerror - return message of what went wrong with "regcomp_"
 Synopsis: regex integer -> string
 Description: :regerror will decode the integer error code and return the related 
@@ -108,7 +108,7 @@ SeeAlso: regexec, regcomp
   [/regextype /integertype] /regerror_ load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: regexdict - dictionary with flags and codes for regular expressions
 Synopsis: -
@@ -117,7 +117,7 @@ Description: This dictionary provides flags and codes signaling
 SeeAlso: regexec
 */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: regexec - compare string and regular expression 
 Synopsis: regex string integer integer -> array integer
           regex string 0       integer -> integer
@@ -169,7 +169,7 @@ SeeAlso: regexec, regcomp
  [/regextype /stringtype /integertype /integertype] /regexec_ load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: regex_find_sf - Check if a regex is included in a stream 
 Synopsis: string istream -> boolean
 Description: Takes the first argument. Converts to regex
@@ -199,7 +199,7 @@ SeeAlso: regexec, regcomp, regex_replace
    exch regex_find_rf
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: regex_find_rf - Check if a regex is included in a stream 
 Synopsis: regex istream -> boolean
 Description: Takes the first argument. Calls regexec to find out
@@ -235,7 +235,7 @@ SeeAlso: regexec, regcomp, regex_replace
   end
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: regex_find_s - Check if a regex is included in a string
 Synopsis: string string  -> boolean
 Description: Takes the first argument. Converts to regex and calls
@@ -267,7 +267,7 @@ SeeAlso: regexec, regcomp, regex_replace
   exch regex_find_r
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: regex_find_r - Check if a regex is included in a string
 Synopsis: regex  string  -> boolean
 Description: Takes the first argument and calls regexec to find out if
@@ -295,7 +295,7 @@ SeeAlso: regexec, regcomp, regex_replace
   0 eq {true}{false}ifelse
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: regex_find - Check if a regex is included in a string or stream 
 Synopsis: string istream -> boolean
           string string  -> boolean
@@ -387,7 +387,7 @@ def
   end 
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: regex_replace - replace all occurences of a regex
 Synopsis: string string istreamtype ostreamtype -> -
           regex  string istreamtype ostreamtype -> -
@@ -429,7 +429,7 @@ def
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: grep - extract lines matching a regular expression pattern
 
 Synopsis: 

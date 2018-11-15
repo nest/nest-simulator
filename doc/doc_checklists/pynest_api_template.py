@@ -31,7 +31,7 @@
 
 
 def get.Connections(source=None, target=None, synape_model=None,
-        synapese label=None):
+                    synapse_label=None):
     """Return an array of connection identifiers
 
     Any combination of source, target, synapse_model and

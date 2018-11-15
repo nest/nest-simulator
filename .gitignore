@@ -11,6 +11,9 @@ pynest/pynestkernel.cpp
 *.log
 *.pyc
 
+Makefile
+!/doc/Makefile
+
 build/
 install/
 
@@ -57,11 +60,5 @@ doc/fulldoc.conf
 doc/normaldoc.conf
 lib/sli/rcsinfo.sli
 extras/nest_vars.sh
-
-/extras/help_generator/more-example-networks/
-/extras/help_generator/py-original/
-/extras/help_generator/py-sample-notebooks/
-/extras/help_generator/py_sample/
-/extras/help_generator/slider.txt
 
 pynest/examples/README

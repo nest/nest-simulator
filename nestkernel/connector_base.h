@@ -173,13 +173,7 @@ public:
   /**
    * Sort connections according to source gids.
    */
-  virtual void sort_connections( std::vector< Source >& ) = 0;
   virtual void sort_connections( BlockVector< Source >& ) = 0;
-
-  /**
-   * Reserve memory for the specified amount of connections.
-   */
-  virtual void reserve( const size_t ) = 0;
 
   /**
    * Set a flag in the connection indicating whether the following
@@ -445,18 +439,6 @@ public:
             ->get_common_properties() );
       }
     }
-  }
-
-  void
-  reserve( const size_t count )
-  {
-    //    C_.reserve( count );
-  }
-
-  void
-  sort_connections( std::vector< Source >& sources )
-  {
-    nest::sort( sources, C_ );
   }
 
   void

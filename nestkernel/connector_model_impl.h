@@ -312,8 +312,6 @@ GenericConnectorModel< ConnectionT >::reserve_connections(
   }
 
   ConnectorBase& connector = *thread_local_connectors[ syn_id ];
-
-  connector.reserve( connector.size() + count );
 }
 
 } // namespace nest

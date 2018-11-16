@@ -387,8 +387,6 @@ BlockVector< value_type_ >::erase( const_iterator first, const_iterator last )
   assert( first.block_vector_ == this );
   assert( last.block_vector_ == this );
   assert( last < finish_ or last == finish_ );
-  // TODO: Except for some special cases, this method may kill performance as
-  // last and every subsequent element has to be moved to fill the erased space.
   if ( first == last )
   {
     return iterator( first.const_cast_() );

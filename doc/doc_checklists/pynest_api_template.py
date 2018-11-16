@@ -19,17 +19,27 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Brief Description of Module
+"""This template demonstrates how a docstring should look.
+
+   It is based on the NumPy style docstring and uses reStructured text mark
+   up. Extra annotations are marked with brackets like this
+   [[ remove content ]].  Copy this docstring and replace the text to fit
+   your function, but do not change the headings and keep the order. The
+   bracketed sections should be removed completely from the final version.
 
 """
 
 
-def function.name(x=default, y=None):
-    """Connect pre nodes to post nodes
+def get.Connections(source=None, target=None, synape_model=None,
+                    synapse_label=None):
+    """Return an array of connection identifiers
 
-    Nodes in pre and post are connected using the specified connectivity
-    (all-to-all by default) and synapse type (static_synapse by default).
-    Details depend on the connectivity rule (see Notes).
+    Any combination of source, target, synapse_model and
+    synapse_label parameters is permitted.
+
+    [[ Deprecation warnings should appear directly after a brief description
+      It should state  what version the object was deprecated, when it will be
+      removed and what recommend way obtains the same functionality]]
 
     .. deprecated:: 1.6.0
 
@@ -38,30 +48,37 @@ def function.name(x=default, y=None):
 
     Parameters
     ----------
-    x : type
-        Description of parameter `x`.
-    y
-        Description of parameter `y` (with type not specified)
+    source : list, optional
+        Source GIDs, only connections from these
+        pre-synaptic neurons are returned
+    target : list, optional
+        Target GIDs, only connections to these
+        post-synaptic neurons are returned
+    synapse_model : str, optional
+        Only connections with this synapse type are returned
+    synapse_label : int, optional
+        (non-negative) only connections with this synapse label are returned
+
 
     Returns
-    --------
-    err_code : int
-        Non-zero value indicates error code, or zero on success.
-
-    int
-         Description of anonymous integer return value.
+    -------
+    array:
+        Connections as 5-tuples with entries
+        (source-gid, target-gid, target-thread, synapse-id, port)
 
     Raises
     -------
-     kernel.NESTError
-         If the matrix is not numerically invertible.
+    TypeError
 
     Notes
     -------
 
-    Details on the connectivity. This section may include
-    mathematical equations:
-    The discrete-time Fourier time-convolution  [1]_ property states that
+    Details on the connectivity. [[ Here details regarding the code or further
+    explanations can be included. This section may include mathematical
+    equations, written in LaTeX format. You can include references to relevant
+    papers using the reStructured format ]]
+
+    The discrete-time Fourier time-convolution [1]_ property states that
 
     .. math::
 
@@ -71,8 +88,6 @@ def function.name(x=default, y=None):
     The value of :math:`\omega` is larger than 5.
 
 
-    * use the asterisk for bullet items
-    * second item
 
     See Also
     ---------
@@ -83,14 +98,23 @@ def function.name(x=default, y=None):
 
     References
     -----------
+    [[ Note the format of the reference. No bold nor italics is used. Last name
+       of author(s) followed by year, title in sentence case and full name of
+       journal followed by volume and page range. Include the doi if
+       applicable.]]
 
     .. [1] Bonewald LF. 2011. The amazing osteocyte. Journal of Bone and
            Mineral Research 26(2):229–238. DOI: 10.1002/jbmr.320.
 
+    [[Keywords that idenfity important aspects of the function but not the
+     function name itself can be included in a comma separated list. These
+     terms will help us increase discoverability of related documents ]]
+
     KEYWORDS: Important terms, Comma Separated
     """
 
-    # This code was included because of bug when running X
+    # [[ in line comments should be used to explain why this code is here]]
+    # This code was included because of bug Y when running X
     # Temporary, I HOPE HOPE HOPE
 
     if model is not None and syn_spec is not None:

@@ -69,45 +69,45 @@ BOOST_AUTO_TEST_SUITE( test_sort )
  * Tests whether two arrays with randomly generated numbers are sorted
  * correctly by a single call to sort.
  */
-BOOST_AUTO_TEST_CASE( test_random_seq_seq )
+BOOST_AUTO_TEST_CASE( test_random )
 {
   const size_t N = 20000;
-  BlockVector< size_t > seq0( N );
-  BlockVector< size_t > seq1( N );
+  BlockVector< size_t > bv0( N );
+  BlockVector< size_t > bv1( N );
 
   for ( size_t i = 0; i < N; ++i )
   {
     const size_t k = std::rand() % N;
-    seq0[ i ] = k;
-    seq1[ i ] = k;
+    bv0[ i ] = k;
+    bv1[ i ] = k;
   }
 
-  nest::sort( seq0, seq1 );
+  nest::sort( bv0, bv1 );
 
-  BOOST_REQUIRE( is_sorted( seq0.begin(), seq0.end() ) );
-  BOOST_REQUIRE( is_sorted( seq1.begin(), seq1.end() ) );
+  BOOST_REQUIRE( is_sorted( bv0.begin(), bv0.end() ) );
+  BOOST_REQUIRE( is_sorted( bv1.begin(), bv1.end() ) );
 }
 
 /**
  * Tests whether two arrays with linearly increasing numbers are sorted
  * correctly by a single call to sort.
  */
-BOOST_AUTO_TEST_CASE( test_linear_seq_seq )
+BOOST_AUTO_TEST_CASE( test_linear )
 {
   const size_t N = 20000;
-  BlockVector< size_t > seq0( N );
-  BlockVector< size_t > seq1( N );
+  BlockVector< size_t > bv0( N );
+  BlockVector< size_t > bv1( N );
 
   for ( size_t i = 0; i < N; ++i )
   {
-    seq0[ i ] = N - i - 1;
-    seq1[ i ] = N - i - 1;
+    bv0[ i ] = N - i - 1;
+    bv1[ i ] = N - i - 1;
   }
 
-  nest::sort( seq0, seq1 );
+  nest::sort( bv0, bv1 );
 
-  BOOST_REQUIRE( is_sorted( seq0.begin(), seq0.end() ) );
-  BOOST_REQUIRE( is_sorted( seq1.begin(), seq1.end() ) );
+  BOOST_REQUIRE( is_sorted( bv0.begin(), bv0.end() ) );
+  BOOST_REQUIRE( is_sorted( bv1.begin(), bv1.end() ) );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

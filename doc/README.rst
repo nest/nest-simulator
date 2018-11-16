@@ -1,4 +1,4 @@
-The Doc folder
+The doc folder
 ===============
 
 The documentation for NEST is contained in this folder. We are currently working

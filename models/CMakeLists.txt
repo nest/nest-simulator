@@ -45,6 +45,21 @@ set( models_sources
     gif_cond_exp.h gif_cond_exp.cpp
     gif_cond_exp_multisynapse.h gif_cond_exp_multisynapse.cpp
     gif_pop_psc_exp.h gif_pop_psc_exp.cpp
+    glif_lif.h glif_lif.cpp
+    glif_lif_r.h glif_lif_r.cpp
+    glif_lif_asc.h glif_lif_asc.cpp
+    glif_lif_r_asc.h glif_lif_r_asc.cpp
+    glif_lif_r_asc_a.h glif_lif_r_asc_a.cpp
+    glif_lif_psc.h glif_lif_psc.cpp
+    glif_lif_r_psc.h glif_lif_r_psc.cpp
+    glif_lif_asc_psc.h glif_lif_asc_psc.cpp
+    glif_lif_r_asc_psc.h glif_lif_r_asc_psc.cpp
+    glif_lif_r_asc_a_psc.h glif_lif_r_asc_a_psc.cpp
+    glif_lif_cond.h glif_lif_cond.cpp
+    glif_lif_r_cond.h glif_lif_r_cond.cpp
+    glif_lif_asc_cond.h glif_lif_asc_cond.cpp
+    glif_lif_r_asc_cond.h glif_lif_r_asc_cond.cpp
+    glif_lif_r_asc_a_cond.h glif_lif_r_asc_a_cond.cpp
     ginzburg_neuron.h ginzburg_neuron.cpp
     hh_cond_exp_traub.h hh_cond_exp_traub.cpp
     hh_psc_alpha.h hh_psc_alpha.cpp

@@ -454,7 +454,7 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
     #return status_tests, total_number_of_tests, number_of_tests_failed
 
     if in_installcheck_section:
-        return return status_tests, total_number_of_tests, number_of_tests_failed
+        return status_tests, total_number_of_tests, number_of_tests_failed
     else:
         return None, None, None
 

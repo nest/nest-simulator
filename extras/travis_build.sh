@@ -253,8 +253,12 @@ elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
     export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
     export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
 fi
-make installcheck
-echo "MSGBLD0300: Make installcheck completed."
+if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
+    echo "MSGBLD0300: Not running make installcheck."
+else
+    make installcheck
+    echo "MSGBLD0300: Make installcheck completed."
+fi
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "MSGBLD0310: This build was triggered by a pull request."

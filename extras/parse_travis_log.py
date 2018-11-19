@@ -451,8 +451,12 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
                     # section. Stop reading the log file.
                     break
 
-    return status_tests, total_number_of_tests, number_of_tests_failed
+    #return status_tests, total_number_of_tests, number_of_tests_failed
 
+    if in_installcheck_section:
+        return return status_tests, total_number_of_tests, number_of_tests_failed
+    else:
+        return None, None, None
 
 def convert_bool_value_to_status_string(value):
     """Convert a boolean value, e.g. the value returned by

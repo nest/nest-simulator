@@ -375,15 +375,6 @@ public:
    */
   void restructure_connection_tables( const thread tid );
 
-  /**
-   * Reserves memory in connections and source table. Should be called
-   * directly from the respective Connect functions when the number of
-   * synapses could be estimated.
-   */
-  void reserve_connections( const thread tid,
-    const synindex syn_id,
-    const size_t count );
-
   void set_has_source_subsequent_targets( const thread tid,
     const synindex syn_id,
     const index lcid,

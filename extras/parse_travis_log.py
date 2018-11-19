@@ -456,7 +456,7 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
     if in_installcheck_section:
         return status_tests, total_number_of_tests, number_of_tests_failed
     else:
-        return None, None, None
+        return False, None, None
 
 
 def convert_bool_value_to_status_string(value):

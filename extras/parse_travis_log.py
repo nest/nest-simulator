@@ -458,6 +458,7 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
     else:
         return None, None, None
 
+
 def convert_bool_value_to_status_string(value):
     """Convert a boolean value, e.g. the value returned by
     is_message_pair_in_logfile(), into a meaningful string representation.

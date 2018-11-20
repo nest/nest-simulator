@@ -23,7 +23,6 @@
 Readthedocs configuration file
 ------------------------------
 
-Do not work with local sphinx.
 Use:
 sphinx-build -c ../extras/help_generator -b html . _build/html
 

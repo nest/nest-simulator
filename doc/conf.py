@@ -154,7 +154,7 @@ master_doc = 'contents'
 
 # General information about the project.
 project = u'NEST simulator user documentation'
-copyright = u'2017, nest-simulator'
+copyright = u'2004, nest-simulator'
 author = u'nest-simulator'
 
 

@@ -30,7 +30,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   , allow_multapses_( true )
   , source_filter_()
   , target_filter_()
-  , number_of_connections_( 0 )
+  , number_of_connections_()
   , mask_()
   , kernel_()
   , synapse_model_( kernel().model_manager.get_synapsedict()->lookup(
@@ -39,6 +39,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   , delay_()
 {
   Name connection_type;
+  long number_of_connections ( -1 ); // overwritten by dict entry
 
   for ( Dictionary::iterator dit = dict->begin(); dit != dict->end(); ++dit )
   {
@@ -66,7 +67,15 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     else if ( dit->first == names::number_of_connections )
     {
 
-      number_of_connections_ = getValue< long >( dit->second );
+      number_of_connections = getValue< long >( dit->second );
+
+      if ( number_of_connections < 0 )
+      {
+
+        throw BadProperty("Number of connections cannot be less than zero." );
+      }
+
+      number_of_connections_ = number_of_connections;
     }
     else if ( dit->first == names::mask )
     {
@@ -138,7 +147,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   if ( connection_type == names::convergent )
   {
 
-    if ( number_of_connections_ )
+    if ( number_of_connections >= 0 )
     {
       type_ = Convergent;
     }
@@ -150,7 +159,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   else if ( connection_type == names::divergent )
   {
 
-    if ( number_of_connections_ )
+    if ( number_of_connections >= 0 )
     {
       type_ = Divergent;
     }

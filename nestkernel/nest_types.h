@@ -43,32 +43,6 @@
 #endif
 
 /**
- * @mainpage NEST: Neural Simulation Tool
- *
- * The main resource on information about NEST is the homepage of the
- * NEST simulator at http://www.nest-simulator.org
- * <p>
- *
- * @see Diesmann, Markus and Gewaltig, Marc-Oliver (2002) NEST: An
- * Environment for Neural Systems Simulations Goettingen : Ges. fuer
- * Wiss. Datenverarbeitung, Forschung und wisschenschaftliches
- * Rechnen, Beitraege zum Heinz-Billing-Preis 2001. 58 : 43--70
- *
- * @see Morrison, Abigail and Mehring, Carsten and Geisel, Theo and
- * Aertsen, Ad and Diesmann, Markus (2005) Advancing the boundaries of
- * high connectivity network simulation with distributed computing
- * Neural Computation. 17 (8) : 1776--1801
- *
- * @see Eppler, Jochen, Diploma Thesis, University of Freiburg (2006),
- * http://mindzoo.de/files/DiplomaThesis-Eppler.pdf
- *
- * @see Eppler, Jochen and Helias, Moritz and Muller, Eilif and
- * Diesmann, Markus and Gewaltig, Marc-Oliver (2008) PyNEST: A
- * convenient interface to the NEST simulator.  Front. Neuroinform. 2
- * : 12. doi:10.3389/neuro.11.012.2008
- */
-
-/**
  * Namespace for the NEST simulation kernel.
  */
 

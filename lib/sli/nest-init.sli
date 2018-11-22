@@ -101,7 +101,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: cvgidcollection - Create a container of global ids.
 
    Synopsis:
@@ -218,7 +218,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ShowDefaults - Show the default parameters of a model.
 
    Synopsis:
@@ -244,7 +244,7 @@ def
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: Connect - Establish a connection between two nodes or lists of nodes.
 
    Synopsis:
@@ -529,7 +529,7 @@ def
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetConnections - Retrieve connections between nodes
 
    Synopsis:
@@ -602,7 +602,7 @@ def
 } def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetSynapseStatus - Return synapse status information
 
    Synopsis:
@@ -623,7 +623,7 @@ def
 */
 /GetSynapseStatus [/arraytype] /GetStatus_a load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: SetSynapseStatus - Return synapse status information
 
    Synopsis:
@@ -648,7 +648,7 @@ def
 */   
 /SetSynapseStatus [/arraytype /arraytype] /SetStatus_aa load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
      Name: DataConnect - Connect many neurons from data.
 
      Synopsis: 
@@ -708,7 +708,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: LayoutNetwork - Create a multidimensional network.
 
    Synopsis:
@@ -837,7 +837,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: elementstates - dictionary with symbolic element state tag
 
    Description:
@@ -884,7 +884,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: unit_conversion - Conversion factors for SI units.
 
    Description:
@@ -922,48 +922,48 @@ def
 
 %% Some auxiliary definitions, just for readibility
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ms - Specification in ms (for readability)
    SeeAlso: unit_conversion, ms2hms
 */
 /ms /cvd load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: s - Specification in s (for readability)
    SeeAlso: unit_conversion, ms2hms
 */
 /s {1000.0 mul} bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: pA - Specification in pA (for readability)
    SeeAlso: unit_conversion
 */
 /pA /cvd load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: nS - Specification in nS (for readability)
    SeeAlso: unit_conversion
 */
 /nS /cvd load def
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: pF - Specification in pF (for readability)
    SeeAlso: unit_conversion
 */
 /pF /cvd load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: mV - Specification in mV (for readability)
    SeeAlso: unit_conversion
 */
 /mV /cvd load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: Hz - Specification in Hz (for readability)
    SeeAlso: unit_conversion
 */
 /Hz /cvd load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: spikes - Specification in spikes (for readability)
    SeeAlso: unit_conversion
 */
@@ -974,7 +974,7 @@ def
 /int    /cvi load def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: SubsetQ - Test if one dictionary is a subset of another
 
    Synopsis:
@@ -1019,7 +1019,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetGlobalNodesInfo - Return GIDs, VPs and Parent GIDs of all nodes of 
          a subnet that fulfill the conditions given in the dictionary, or of
          all nodes if no dictionary given.
@@ -1050,7 +1050,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetGlobalNodes - Return IDs of all nodes of a subnet that fulfill the
          conditions given in the dictionary, or all nodes if no dictionary given.
    Synopsis:
@@ -1079,7 +1079,7 @@ def
 [/integertype] { << >> false true GetNodes_i_D_b_b } bind addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetLocalNodes - Return IDs of all local nodes of a subnet that fulfill the
          conditions given in the dictionary, or all nodes if no dictionary given.
    Synopsis:
@@ -1104,7 +1104,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetGlobalChildren - Return IDs of all immediate child nodes of a subnet
          that fulfill the conditions given in the dictionary, or all nodes if no 
 	 dictionary given.
@@ -1132,7 +1132,7 @@ def
 [/integertype] { << >> false GetChildren_i_D_b} bind addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetLocalChildren - Return IDs of all immediate local child nodes of a subnet 
    	 that fulfill the conditions given in the dictionary, or all children if no 
 	 dictionary given.
@@ -1160,7 +1160,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetGlobalLeaves - Return IDs of all leaves of a subnet that fulfill the 
    	 conditions given in the dictionary, or all leaves if no dictionary given.
    Synopsis:
@@ -1192,7 +1192,7 @@ def
 [/integertype] { << >> false GetLeaves_i_D_b } bind addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetLocalLeaves - Return IDs of all local leaves of a subnet that fulfill the 
    	 conditions given in the dictionary, or all leaves if no dictionary given.
    Synopsis:
@@ -1220,7 +1220,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ShowStatus - Show the status dictionary of a network node.
 
    Synopsis:
@@ -1241,7 +1241,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: GetNetwork - Return a nested list with the IDs of nodes in a multi-dimensional subnet.
 Synpsis: ID n GetNetwork -> [ ]
 Description:
@@ -1294,7 +1294,7 @@ Options
 [/integertype /integertype] /GetNetwork_i_i load addtotrie
 def
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: TimeCommunication - returns average time taken for MPI_Allgather over n calls with m bytes
      Synopsis:
      n m [bool] TimeCommunication -> time
@@ -1315,7 +1315,7 @@ def
 [/integertype /integertype] /TimeCommunicationv_i_i load addtotrie
 def
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: TimeCommunicationOffgrid - returns average time taken for MPI_Allgather over n calls with m bytes when communication offgrid spikes
      Synopsis:
      n m [bool] TimeCommunication -> time
@@ -1330,7 +1330,7 @@ def
 [/integertype /integertype] { true TimeCommunication_i_i_b } bind addtotrie
 
 def
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: TimeCommunicationAlltoall - returns average time taken for MPI_Alltoall over n calls with m bytes
      Synopsis:
      n m TimeCommunicationAlltoall -> time
@@ -1345,7 +1345,7 @@ def
 [/integertype /integertype] /TimeCommunicationAlltoall_i_i load addtotrie
 def
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: TimeCommunicationAlltoallv - returns average time taken for MPI_Alltoallv over n calls with m bytes
      Synopsis:
      n m TimeCommunicationAlltoallv -> time
@@ -1366,7 +1366,7 @@ statusdict /platform get dup (bg/p) eq exch (bg/q) eq or
  /memory_thisjob { :memory_thisjob_bg } def
 } if
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name - RestoreNodes - Restore nodes from an array of status dictionaries.
 Description:
 RestoreNodes takes an array of status dictionaries and creates nodes with these properties.
@@ -1378,7 +1378,7 @@ Thus, RestoreNodes can be used to copy a range of neurons to different locations
 
 /RestoreNodes [/arraytype] /RestoreNodes_a load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: SaveModels - Retrieve the state of all models.
 Description: 
 */
@@ -1405,7 +1405,7 @@ Description:
  end
 } def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: RestoreModels - Restore saved models from an array of status dictionaries.
 Description:
 */

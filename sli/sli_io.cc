@@ -97,7 +97,7 @@ MathLinkPutStringFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: xifstream - Create an executable input-stream.
   Synopsis: (filename) xifstream -> file true
   -> false
@@ -145,7 +145,7 @@ XIfstreamFunction::execute( SLIInterpreter* i ) const
 void
 IfstreamFunction::execute( SLIInterpreter* i ) const
 {
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: ifstream - Open file for reading.
      Synopsis: string ifstream -> ifstreamhandle true
      -> false
@@ -188,7 +188,7 @@ IfstreamFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ofstream - Open a file stream for writing.
    Synopsis: string ofstream -> ofstreamhandle true
    -> false
@@ -243,7 +243,7 @@ OfstreamFunction::execute( SLIInterpreter* i ) const
 // In the sli we do not implement the ios_base flags
 // and rather use the c-mode notation
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ofsopen - Open an existing file for appending or writing.
    Synopsis: (name) (mode) ofsopen -> ofstreamhandle true
    -> false
@@ -366,7 +366,7 @@ IsstreamFunction::execute( SLIInterpreter* i ) const
 }
 
 // old style output string stream
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: osstream - Create a string-stream object.
   Synopsis:
   osstream -> osstream-handle true
@@ -462,7 +462,7 @@ StrSStreamFunction::execute( SLIInterpreter* i ) const
 #else
 
 // old style output string stream
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: ostrstream - Create a string-stream object.
   Synopsis:
   ostrstream -> ostreamhandle true
@@ -497,7 +497,7 @@ OstrstreamFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: str - Retrieve a string from a string-stream.
   Synopsis: osstream str -> string
   Description: Retrieves the string data from a string-stream object
@@ -557,7 +557,7 @@ StrFunction::execute( SLIInterpreter* i ) const
 #endif
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: print - Print object to a stream
 
   Synopsis: ostream any <- -> ostream
@@ -607,7 +607,7 @@ PrintFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: pprint - pretty print: Print object to a stream
 
   Synopsis: ostream any <- -> ostream
@@ -657,7 +657,7 @@ PrettyprintFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: flush - Force the buffer of a stream to be flushed.
   Synopsis: ostream flush -> ostream
 */
@@ -689,7 +689,7 @@ FlushFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: endl - line break
 
   Examples: Watch the difference:
@@ -925,7 +925,7 @@ SetwFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: setprecision - set precision for decimal place of a stream
 
    Synopsis: ostream int setprecision -> ostream
@@ -1366,7 +1366,7 @@ IOSInternalFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: getc - Read single character from input stream.
    Synopsis: istream getc -> istream integer
    Description: getc reads a single character from the
@@ -1419,7 +1419,7 @@ GetcFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: gets - Read white space terminated string from stream
    Synopsis: istream gets -> istream string
    Description: gets reads a single string from the istream.
@@ -1476,7 +1476,7 @@ GetsFunction::execute( SLIInterpreter* i ) const
 void
 GetlineFunction::execute( SLIInterpreter* i ) const
 {
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: getline - Read a newline terminated string from an input stream.
      Synopsis: istreamhandle getline -> istreamhandle string true
      -> istreamhandle false
@@ -1543,7 +1543,7 @@ GetlineFunction::execute( SLIInterpreter* i ) const
 void
 IGoodFunction::execute( SLIInterpreter* i ) const
 {
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: igood - check the "good"-flag of a stream.
      Synopsis: istreamhandle igood -> istreamhandle true
      -> istreamhandle false
@@ -1587,7 +1587,7 @@ IGoodFunction::execute( SLIInterpreter* i ) const
 void
 IClearFunction::execute( SLIInterpreter* i ) const
 {
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: iclear - Clear the state-flags of input stream.
      Synopsis: istream iclear -> istream
 
@@ -1623,7 +1623,7 @@ IClearFunction::execute( SLIInterpreter* i ) const
 void
 OClearFunction::execute( SLIInterpreter* i ) const
 {
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: oclear - Clear the state-flags of an output stream.
      Synopsis: ostream oclear -> ostream
 
@@ -1658,7 +1658,7 @@ OClearFunction::execute( SLIInterpreter* i ) const
 void
 IFailFunction::execute( SLIInterpreter* i ) const
 {
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: ifail - Check the "fail"-flag of an input stream.
      Synopsis: istreamhandle ifail -> istreamhandle true
      -> istreamhandle false
@@ -1704,7 +1704,7 @@ IFailFunction::execute( SLIInterpreter* i ) const
 void
 OGoodFunction::execute( SLIInterpreter* i ) const
 {
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: ogood - Check the "good"-flag of an output stream.
      Synopsis: ostreamhandle ogood -> ostreamhandle true
      -> ostreamhandle false
@@ -1747,7 +1747,7 @@ OGoodFunction::execute( SLIInterpreter* i ) const
 void
 IEofFunction::execute( SLIInterpreter* i ) const
 {
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: ieof - Check the "eof"-flag of an input stream.
      Synopsis: istreamhandle ieof -> istreamhandle true
      -> istreamhandle false
@@ -1791,7 +1791,7 @@ IEofFunction::execute( SLIInterpreter* i ) const
 void
 OEofFunction::execute( SLIInterpreter* i ) const
 {
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: oeof - Check the "eof"-flag of an output stream.
      Synopsis: ostreamhandle oeof -> ostreamhandle true
      -> ostreamhandle false
@@ -1852,7 +1852,7 @@ Cvx_fFunction::execute( SLIInterpreter* i ) const
 void
 In_AvailFunction::execute( SLIInterpreter* i ) const
 {
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: in_avail - Return the number of available in an input stream's
      buffer.
      Synopsis: istreamhandle in_avail -> istreamhandle available_characters
@@ -1885,7 +1885,7 @@ In_AvailFunction::execute( SLIInterpreter* i ) const
 void
 ReadDoubleFunction::execute( SLIInterpreter* i ) const
 {
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: ReadDouble - Read a double number from an input stream.
      Synopsis: istream ReadDouble -> istream double true
      -> istream false
@@ -1937,7 +1937,7 @@ ReadDoubleFunction::execute( SLIInterpreter* i ) const
 void
 ReadIntFunction::execute( SLIInterpreter* i ) const
 {
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: ReadInt - Read an integer number from an input stream.
      Synopsis: istream ReadInt -> istream int true
      -> istream false
@@ -1987,7 +1987,7 @@ ReadIntFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ReadWord - read white space terminated string from stream
    Synopsis: istream ReadWord -> istream string true
    -> istream false
@@ -2117,7 +2117,7 @@ init_sli_io( SLIInterpreter* i )
   Token t_cout( new OstreamDatum( std::cout ) );
   Token t_cerr( new OstreamDatum( std::cerr ) );
 
-  /*BeginDocumentation
+  /** @BeginDocumentation
     Name: cin - Standard input stream
     Synopsis: cin -> istream
     Description: cin corresponds to the C++ object with the
@@ -2126,7 +2126,7 @@ init_sli_io( SLIInterpreter* i )
   */
 
   i->def_move( "cin", t_cin );
-  /*BeginDocumentation
+  /** @BeginDocumentation
     Name: cout - Standard output stream
     Synopsis: cout -> ostream
     Description: cout corresponds to the C++ object with the
@@ -2134,7 +2134,7 @@ init_sli_io( SLIInterpreter* i )
     SeeAlso: cin, cerr
   */
   i->def_move( "cout", t_cout );
-  /*BeginDocumentation
+  /** @BeginDocumentation
     Name: cerr - Standard error output stream
     Synopsis: cerr -> ostream
     Description: cerr corresponds to the C++ object with the

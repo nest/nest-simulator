@@ -34,7 +34,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: subnet - Root node for subnetworks.
 

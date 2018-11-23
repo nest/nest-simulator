@@ -297,14 +297,7 @@ Target::get_status() const
 inline bool
 Target::is_processed() const
 {
-  if ( Target::get_status() == TARGET_ID_PROCESSED )
-  {
-    return ( true );
-  }
-  else
-  {
-    return ( false );
-  }
+  return ( Target::get_status() == TARGET_ID_PROCESSED );
 }
 
 inline double

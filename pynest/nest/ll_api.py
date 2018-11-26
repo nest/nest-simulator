@@ -173,6 +173,7 @@ def sli_func(s, *args, **kwargs):
 
 initialized = False
 
+
 def init():
     """Initializes NEST.
 

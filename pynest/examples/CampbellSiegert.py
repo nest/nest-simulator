@@ -159,7 +159,7 @@ We now simulate neurons receiving Poisson spike trains as input,
 and compare the theoretical result to the empirical value.
 '''
 nest.ResetKernel()
-nest.set_verbosity('M_WARNING')
+nest.hl_api.set_verbosity('M_WARNING')
 neurondict = {'V_th': V_th, 'tau_m': tau_m, 'tau_syn_ex': tau_syn_ex,
               'tau_syn_in': tau_syn_in, 'C_m': C_m, 'E_L': E_L, 't_ref': t_ref,
               'V_m': E_L, 'V_reset': E_L}

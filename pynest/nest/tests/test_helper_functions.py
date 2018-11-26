@@ -26,7 +26,7 @@ import nest
 class TestHelperFunctions(unittest.TestCase):
 
     def test_get_verbosity(self):
-        verbosity = nest.get_verbosity()
+        verbosity = nest.hl_api.get_verbosity()
         self.assertTrue(isinstance(verbosity, int))
 
     def test_set_verbosity(self):
@@ -41,16 +41,16 @@ class TestHelperFunctions(unittest.TestCase):
                   ('M_QUIET', 100)
                   ]
         for level, code in levels:
-            nest.set_verbosity(level)
-            verbosity = nest.get_verbosity()
+            nest.hl_api.set_verbosity(level)
+            verbosity = nest.hl_api.get_verbosity()
             self.assertEqual(verbosity, code)
 
     def test_stack_checker(self):
         def empty_stack():
-            nest.hl_api.sli_run('clear')
+            nest.ll_api.sli_run('clear')
 
         def leave_on_stack():
-            nest.hl_api.sli_push(1)
+            nest.ll_api.sli_push(1)
 
         check_empty_stack = nest.hl_api.stack_checker(empty_stack)
         check_leave_on_stack = nest.hl_api.stack_checker(leave_on_stack)
@@ -63,7 +63,7 @@ class TestHelperFunctions(unittest.TestCase):
         check_empty_stack()
 
         try:
-            self.assertRaises(nest.hl_api.NESTError, check_leave_on_stack)
+            self.assertRaises(nest.ll_api.NESTError, check_leave_on_stack)
         except:  # Ensure that debug is reset if we get an error.
             nest.hl_api.set_debug(debug)
             raise

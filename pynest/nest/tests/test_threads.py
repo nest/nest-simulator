@@ -34,7 +34,7 @@ class ThreadTestCase(unittest.TestCase):
     def nest_multithreaded(self):
         """Return True, if we have a thread-enabled NEST, False otherwise"""
 
-        return nest.hl_api.sli_func("statusdict/threading :: (no) eq not")
+        return nest.ll_api.sli_func("statusdict/threading :: (no) eq not")
 
     def test_Threads(self):
         """Multiple threads"""

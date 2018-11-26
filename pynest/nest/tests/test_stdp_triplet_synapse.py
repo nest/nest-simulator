@@ -32,7 +32,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
     """Check stdp_triplet_connection model properties."""
 
     def setUp(self):
-        nest.set_verbosity('M_WARNING')
+        nest.hl_api.set_verbosity('M_WARNING')
         nest.ResetKernel()
 
         # settings
@@ -121,7 +121,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
         def badPropertyWith(content, parameters):
             self.assertRaisesRegexp(
-                nest.hl_api.NESTError, "BadProperty(.+)" + content,
+                nest.ll_api.NESTError, "BadProperty(.+)" + content,
                 setupProperty, parameters
             )
 
@@ -298,7 +298,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 class STDPTripletInhTestCase(STDPTripletConnectionTestCase):
 
     def setUp(self):
-        nest.set_verbosity('M_WARNING')
+        nest.hl_api.set_verbosity('M_WARNING')
         nest.ResetKernel()
 
         # settings

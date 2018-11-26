@@ -55,7 +55,7 @@ Details:
   recorded variables and the reference is smaller than a given tolerance.
 """
 
-HAVE_GSL = nest.hl_api.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 path = os.path.abspath(os.path.dirname(__file__))
 
 # --------------------------------------------------------------------------- #

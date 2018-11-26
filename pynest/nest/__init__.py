@@ -19,4 +19,27 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from .hl_api import *
+"""
+Initializer of PyNEST.
+"""
+
+from . import pynestkernel as kernel      # noqa
+from .ll_api import init      # noqa
+init()
+
+from .hl_api import *      # noqa
+
+
+def test():
+    """Runs all PyNEST unit tests."""
+    from . import tests
+    import unittest
+    from .lib.hl_api_helper import get_debug, set_debug
+
+    debug = get_debug()
+    set_debug(True)
+
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(tests.suite())
+
+    set_debug(debug)

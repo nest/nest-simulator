@@ -195,7 +195,7 @@ verbosity using `set_verbosity()` to suppress info messages.
 
 nest.ResetKernel()
 nest.SetStatus([0], [{'resolution': simulation_resolution}])
-nest.set_verbosity("M_WARNING")
+nest.hl_api.set_verbosity("M_WARNING")
 
 '''
 2.1 Afterwards we create several neurons, the same amount

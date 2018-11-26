@@ -40,7 +40,7 @@ amplitude = 100.  # Set externally applied current amplitude in pA
 dt = 0.1  # simulation step length [ms]
 
 nest.ResetKernel()
-nest.set_verbosity('M_ERROR')
+nest.hl_api.set_verbosity('M_ERROR')
 
 nest.SetKernelStatus({'resolution': dt})
 neuron = nest.Create('hh_psc_alpha')

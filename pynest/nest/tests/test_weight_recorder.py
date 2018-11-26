@@ -27,7 +27,7 @@ import unittest
 import nest
 import numpy as np
 
-HAVE_GSL = nest.hl_api.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 @nest.hl_api.check_stack
 class WeightRecorderTestCase(unittest.TestCase):

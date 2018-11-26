@@ -31,7 +31,7 @@ from . import test_disconnect_multiple
 from . import test_enable_multithread
 from . import test_get_sp_status
 
-HAVE_MPI = nest.hl_api.sli_func("statusdict/have_mpi ::")
+HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
 if HAVE_MPI:
     print("Testing with MPI")
     from subprocess import call
@@ -48,7 +48,7 @@ def suite():
             path = os.path.dirname(__file__)
             for test in mpitests:
                 test = os.path.join(path, test)
-                command = nest.hl_api.sli_func("mpirun", 2, "python", test)
+                command = nest.ll_api.sli_func("mpirun", 2, "python", test)
                 print("Executing test with command: " + command)
                 command = command.split()
                 my_env = os.environ.copy()
@@ -76,6 +76,6 @@ def suite():
     return test_suite
 
 if __name__ == "__main__":
-    nest.set_verbosity('M_WARNING')
+    nest.hl_api.set_verbosity('M_WARNING')
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

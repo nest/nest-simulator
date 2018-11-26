@@ -23,7 +23,15 @@
 Functions for parallel computing
 """
 
+from ..ll_api import *
 from .hl_api_helper import *
+
+__all__ = [
+    'Rank',
+    'NumProcesses',
+    'SetAcceptableLatency',
+    'SetMaxBuffered',
+]
 
 
 @check_stack

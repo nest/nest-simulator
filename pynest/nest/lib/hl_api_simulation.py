@@ -23,8 +23,27 @@
 Functions for simulation control
 """
 
+from ..ll_api import *
 from .hl_api_helper import *
 from contextlib import contextmanager
+
+__all__ = [
+    'Simulate',
+    'Run',
+    'Prepare',
+    'Cleanup',
+    'RunManager',
+    'ResumeSimulation',
+    'ResetKernel',
+    'ResetNetwork',
+    'SetKernelStatus',
+    'GetKernelStatus',
+    'Install',
+    'SetStructuralPlasticityStatus',
+    'GetStructuralPlasticityStatus',
+    'EnableStructuralPlasticity',
+    'DisableStructuralPlasticity',
+]
 
 
 @check_stack

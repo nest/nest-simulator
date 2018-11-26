@@ -24,7 +24,7 @@ import subprocess as sp
 import unittest
 import nest
 
-HAVE_MPI = nest.hl_api.sli_func("statusdict/have_mpi ::")
+HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
 
 
 class TestConnectAllPatterns(unittest.TestCase):
@@ -47,7 +47,7 @@ class TestConnectAllPatterns(unittest.TestCase):
         failing_tests = []
         for script in scripts:
             test_script = os.path.join(directory, script)
-            command = nest.hl_api.sli_func(
+            command = nest.ll_api.sli_func(
                 "mpirun", 2, "nosetests", test_script)
             command = command.split()
             process = sp.Popen(command, stdout=sp.PIPE, stderr=sp.PIPE)

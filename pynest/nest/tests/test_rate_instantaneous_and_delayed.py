@@ -44,7 +44,7 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
         simtime = 100.
         dt = 0.001
 
-        nest.set_verbosity('M_WARNING')
+        nest.hl_api.set_verbosity('M_WARNING')
         nest.ResetKernel()
         nest.SetKernelStatus(
             {'resolution': dt, 'use_wfr': True, 'print_time': False})

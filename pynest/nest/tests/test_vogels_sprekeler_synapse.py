@@ -33,7 +33,7 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
 
     def setUp(self):
         """Set up the test."""
-        nest.set_verbosity('M_WARNING')
+        nest.hl_api.set_verbosity('M_WARNING')
         nest.ResetKernel()
 
         # settings
@@ -102,7 +102,7 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
                          syn_spec=bad_syn_spec)
 
         def badPropertyWith(content, parameters):
-            self.assertRaisesRegexp(nest.hl_api.NESTError, "BadProperty(.+)" +
+            self.assertRaisesRegexp(nest.ll_api.NESTError, "BadProperty(.+)" +
                                     content, setupProperty, parameters)
 
         badPropertyWith("Kplus", {"Kplus": -1.0})

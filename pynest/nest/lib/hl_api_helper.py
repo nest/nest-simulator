@@ -36,9 +36,8 @@ import sys
 
 from string import Template
 
-# These variables MUST be set by __init__.py right after importing.
-# There is no safety net, whatsoever.
-sps = spp = sr = pcd = kernel = None
+from ..ll_api import *
+
 
 # These flags are used to print deprecation warnings only once. The
 # corresponding functions will be removed in the 2.6 release of NEST.

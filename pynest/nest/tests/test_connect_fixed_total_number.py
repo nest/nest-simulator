@@ -54,7 +54,7 @@ class TestFixedTotalNumber(TestParams):
         conn_params['N'] = self.N1 * self.N2 + 1
         try:
             self.setUpNetwork(conn_params)
-        except hf.nest.hl_api.NESTError:
+        except hf.nest.ll_api.NESTError:
             got_error = True
         self.assertTrue(got_error)
 

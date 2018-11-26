@@ -66,14 +66,14 @@ class TestParams(unittest.TestCase):
             N2 = self.N2
         self.pop1 = hf.nest.Create('iaf_psc_alpha', N1)
         self.pop2 = hf.nest.Create('iaf_psc_alpha', N2)
-        hf.nest.set_verbosity('M_FATAL')
+        hf.nest.hl_api.set_verbosity('M_FATAL')
         hf.nest.Connect(self.pop1, self.pop2, conn_dict, syn_dict)
 
     def setUpNetworkOnePop(self, conn_dict=None, syn_dict=None, N=None):
         if N is None:
             N = self.N1
         self.pop = hf.nest.Create('iaf_psc_alpha', N)
-        hf.nest.set_verbosity('M_FATAL')
+        hf.nest.hl_api.set_verbosity('M_FATAL')
         hf.nest.Connect(self.pop, self.pop, conn_dict, syn_dict)
 
     def testWeightSetting(self):

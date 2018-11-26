@@ -98,7 +98,7 @@ class CreateTestCase(unittest.TestCase):
         self.assertEqual(w, 10.0)
 
         self.assertRaisesRegex(
-            nest.hl_api.NESTError, "NewModelNameExists",
+            nest.ll_api.NESTError, "NewModelNameExists",
             nest.CopyModel, 'iaf_psc_alpha', 'new_neuron')
 
 

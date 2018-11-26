@@ -23,8 +23,14 @@
 Functions for node handling
 """
 
+from ..ll_api import *
 from .hl_api_helper import *
 from .hl_api_info import SetStatus
+
+__all__ = [
+    'Create',
+    'GetLID',
+]
 
 
 @check_stack

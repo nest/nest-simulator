@@ -40,8 +40,8 @@ try:
 except ImportError:
     HAVE_NUMPY = False
 
-nest.hl_api.sli_run("statusdict/have_libneurosim ::")
-HAVE_LIBNEUROSIM = nest.hl_api.sli_pop()
+nest.ll_api.sli_run("statusdict/have_libneurosim ::")
+HAVE_LIBNEUROSIM = nest.ll_api.sli_pop()
 
 
 @nest.hl_api.check_stack
@@ -186,7 +186,7 @@ class CSATestCase(unittest.TestCase):
 
         # We expect CGConnect to fail with an UnknownNode exception if
         # unknown nodes are given
-        self.assertRaisesRegex(nest.hl_api.NESTError, "UnknownNode",
+        self.assertRaisesRegex(nest.ll_api.NESTError, "UnknownNode",
                                nest.CGConnect, nonnodes, nonnodes, cs)
 
     def test_CSA_error_unknown_synapse(self):
@@ -204,7 +204,7 @@ class CSATestCase(unittest.TestCase):
 
         # We expect CGConnect to fail with an UnknownSynapseType
         # exception if an unknown synapse model is given
-        self.assertRaisesRegex(nest.hl_api.NESTError, "UnknownSynapseType",
+        self.assertRaisesRegex(nest.ll_api.NESTError, "UnknownSynapseType",
                                nest.CGConnect, sources, targets, cs,
                                model="nonexistent_synapse")
 

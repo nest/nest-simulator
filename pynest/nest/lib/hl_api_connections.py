@@ -23,12 +23,24 @@
 Functions for connection handling
 """
 
+from ..ll_api import *
 from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_subnets import GetChildren
 import numpy
+
+__all__ = [
+    'GetConnections',
+    'Connect',
+    'DataConnect',
+    'CGConnect',
+    'CGParse',
+    'CGSelectImplementation',
+    'DisconnectOneToOne',
+    'Disconnect',
+]
 
 
 @check_stack

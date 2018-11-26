@@ -25,7 +25,7 @@ import nest
 import unittest
 import numpy as np
 
-HAVE_GSL = nest.hl_api.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
 @nest.hl_api.check_stack
@@ -54,7 +54,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         self.dt = 0.1
         self.start = 200.
 
-        nest.set_verbosity('M_WARNING')
+        nest.hl_api.set_verbosity('M_WARNING')
         nest.ResetKernel()
         nest.SetKernelStatus(
             {'resolution': self.dt, 'use_wfr': False, 'print_time': True})

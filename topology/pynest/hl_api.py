@@ -91,10 +91,10 @@ def topology_func(slifunc, *args):
 
     See also
     --------
-    nest.hl_api.sli_func
+    nest.ll_api.sli_func
     """
 
-    return nest.hl_api.sli_func(slifunc, *args)
+    return nest.ll_api.sli_func(slifunc, *args)
 
 
 class Mask(object):
@@ -112,7 +112,7 @@ class Mask(object):
     # The constructor should not be called by the user
     def __init__(self, datum):
         """Masks must be created using the CreateMask command."""
-        if not isinstance(datum, nest.hl_api.SLIDatum) or \
+        if not isinstance(datum, nest.ll_api.SLIDatum) or \
             datum.dtype != "masktype":
             raise TypeError("expected mask Datum")
         self._datum = datum
@@ -313,7 +313,7 @@ class Parameter(object):
     # The constructor should not be called by the user
     def __init__(self, datum):
         """Parameters must be created using the CreateParameter command."""
-        if not isinstance(datum, nest.hl_api.SLIDatum) or \
+        if not isinstance(datum, nest.ll_api.SLIDatum) or \
             datum.dtype != "parametertype":
             raise TypeError("expected parameter datum")
         self._datum = datum
@@ -815,7 +815,7 @@ def ConnectLayers(pre, post, projections):
         raise TypeError("post must be a sequence of GIDs")
 
     if not len(pre) == len(post):
-        raise nest.hl_api.NESTError("pre and post must have the same length.")
+        raise nest.ll_api.NESTError("pre and post must have the same length.")
 
     # ensure projections is list of full length
     projections = nest.hl_api.broadcast(projections, len(pre), (dict, ),
@@ -1005,10 +1005,10 @@ def GetElement(layers, locations):
         raise TypeError("layers must be a sequence of GIDs")
 
     if not len(layers) > 0:
-        raise nest.hl_api.NESTError("layers cannot be empty")
+        raise nest.ll_api.NESTError("layers cannot be empty")
 
     if not (nest.hl_api.is_iterable(locations) and len(locations) > 0):
-        raise nest.hl_api.NESTError(
+        raise nest.ll_api.NESTError(
             "locations must be coordinate array or list of coordinate arrays")
 
     # ensure that all layers are grid-based, otherwise one ends up with an
@@ -1017,7 +1017,7 @@ def GetElement(layers, locations):
         topology_func('{ [ /topology [ /rows /columns ] ] get ; } forall',
                       layers)
     except:
-        raise nest.hl_api.NESTError(
+        raise nest.ll_api.NESTError(
             "layers must contain only grid-based topology layers")
 
     # SLI GetElement returns either single GID or list
@@ -1124,7 +1124,7 @@ def FindNearestElement(layers, locations, find_all=False):
         raise TypeError("layers must be a sequence of GIDs")
 
     if not len(layers) > 0:
-        raise nest.hl_api.NESTError("layers cannot be empty")
+        raise nest.ll_api.NESTError("layers cannot be empty")
 
     if not nest.hl_api.is_iterable(locations):
         raise TypeError(
@@ -1184,17 +1184,17 @@ def _check_displacement_args(from_arg, to_arg, caller):
     if isinstance(from_arg, numpy.ndarray):
         from_arg = (from_arg, )
     elif not (nest.hl_api.is_iterable(from_arg) and len(from_arg) > 0):
-        raise nest.hl_api.NESTError(
+        raise nest.ll_api.NESTError(
             "%s: from_arg must be lists of GIDs or positions" % caller)
     # invariant: from_arg is list
 
     if not nest.hl_api.is_sequence_of_gids(to_arg):
-        raise nest.hl_api.NESTError("%s: to_arg must be lists of GIDs" % caller)
+        raise nest.ll_api.NESTError("%s: to_arg must be lists of GIDs" % caller)
     # invariant: from_arg and to_arg are sequences
 
     if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(
             to_arg):
-        raise nest.hl_api.NESTError(
+        raise nest.ll_api.NESTError(
             "%s: If to_arg and from_arg are lists, they must have same length."
             % caller)
     # invariant: from_arg and to_arg have equal length,
@@ -1635,7 +1635,7 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
         raise TypeError("tgt_layer must be a sequence of GIDs")
 
     if len(tgt_layer) != 1:
-        raise nest.hl_api.NESTError("tgt_layer must be a one-element list")
+        raise nest.ll_api.NESTError("tgt_layer must be a one-element list")
 
     with nest.hl_api.SuppressedDeprecationWarning('GetLeaves'):
         # obtain local nodes in target layer, to pass to GetConnections
@@ -1846,7 +1846,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         plt.draw_if_interactive()
 
     else:
-        raise nest.hl_api.NESTError("unexpected dimension of layer")
+        raise nest.ll_api.NESTError("unexpected dimension of layer")
 
     return fig
 

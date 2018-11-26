@@ -53,7 +53,7 @@ suppress info messages. We also reset the kernel to be sure to start
 with a clean NEST.
 '''
 
-nest.set_verbosity("M_WARNING")
+nest.hl_api.set_verbosity("M_WARNING")
 nest.ResetKernel()
 
 '''

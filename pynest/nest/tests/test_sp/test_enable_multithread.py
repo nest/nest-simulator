@@ -30,7 +30,7 @@ __author__ = 'sdiaz'
 # and multiple threads are set, or if multiple threads are set and
 # the enable_structural_plasticity function is called.
 
-HAVE_OPENMP = nest.hl_api.sli_func("is_threaded")
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
 @unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
@@ -38,7 +38,7 @@ class TestEnableMultithread(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity('M_ERROR')
+        nest.hl_api.set_verbosity('M_ERROR')
 
     def test_enable_multithread(self):
 
@@ -46,7 +46,7 @@ class TestEnableMultithread(unittest.TestCase):
         nest.EnableStructuralPlasticity()
         # Setting multiple threads when structural plasticity is enabled should
         # throw an exception
-        with self.assertRaises(nest.hl_api.NESTError):
+        with self.assertRaises(nest.ll_api.NESTError):
             nest.SetKernelStatus(
                 {
                     'local_num_threads': 2
@@ -62,7 +62,7 @@ class TestEnableMultithread(unittest.TestCase):
         )
         # Setting multiple threads when structural plasticity is enabled should
         # throw an exception
-        with self.assertRaises(nest.hl_api.NESTError):
+        with self.assertRaises(nest.ll_api.NESTError):
             nest.EnableStructuralPlasticity()
 
 

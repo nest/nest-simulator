@@ -44,43 +44,49 @@
 namespace nest
 {
 
-/**
- * Base class for rate model with input noise of the form
- *
- * tau * dX_i(t) = [ - lambda * X_i(t) + mu
- *                              + phi( ∑ w_ij * psi( X_j(t-d_ij) ) ) ] dt
- *                  + [ √tau * sigma ] dW_{i}(t)
- *
- * or
- *
- * tau * dX_i(t) = [ - lambda * X_i(t) + mu
- *                   + mult_coupling_ex( X_i(t) ) *
- *                              phi( ∑ w^{ > 0 }_ij * psi( X_j(t-d_ij) ) )
- *                   + mult_coupling_in( X_i(t) ) *
- *                              phi( ∑ w^{ < 0 }_ij * psi( X_j(t-d_ij) ) ) ] dt
- *                   + [ √tau * sigma ] dW_{i}(t).
- *
- * This template class needs to be instantiated with a class
- * containing the following functions:
- *  - input (nonlinearity that is applied to the input, either psi or phi)
- *  - mult_coupling_ex (factor of multiplicative coupling for excitatory input)
- *  - mult_coupling_in (factor of multiplicative coupling for inhibitory input)
- *
- * The boolean parameter linear_summation determines whether the input function
- * is applied to the summed up incoming connections (True, default value, input
- * represents phi) or to each input individually (False, input represents psi).
- * In case of multiplicative coupling the nonlinearity is applied separately
- * to the summed excitatory and inhibitory inputs if linear_summation=True.
- *
- * References:
- *
- * Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
- * Bolten, M., Helias, M. and Diesmann, M. (2017).
- * Integration of Continuous-Time Dynamics in a
- * Spiking Neural Network Simulator.
- * Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
- *
- * @see lin_rate, tanh_rate, threshold_lin_rate
+/** @BeginDocumentation
+Name: rate_neuron_ipn - Base class for rate model with input noise.
+
+Description:
+
+Base class for rate model with input noise of the form
+
+tau * dX_i(t) = [ - lambda * X_i(t) + mu
+                             + phi( ∑ w_ij * psi( X_j(t-d_ij) ) ) ] dt
+                 + [ √tau * sigma ] dW_{i}(t)
+
+or
+
+tau * dX_i(t) = [ - lambda * X_i(t) + mu
+                  + mult_coupling_ex( X_i(t) ) *
+                             phi( ∑ w^{ > 0 }_ij * psi( X_j(t-d_ij) ) )
+                  + mult_coupling_in( X_i(t) ) *
+                             phi( ∑ w^{ < 0 }_ij * psi( X_j(t-d_ij) ) ) ] dt
+                  + [ √tau * sigma ] dW_{i}(t).
+
+This template class needs to be instantiated with a class
+containing the following functions:
+ - input (nonlinearity that is applied to the input, either psi or phi)
+ - mult_coupling_ex (factor of multiplicative coupling for excitatory input)
+ - mult_coupling_in (factor of multiplicative coupling for inhibitory input)
+
+The boolean parameter linear_summation determines whether the input function
+is applied to the summed up incoming connections (True, default value, input
+represents phi) or to each input individually (False, input represents psi).
+In case of multiplicative coupling the nonlinearity is applied separately
+to the summed excitatory and inhibitory inputs if linear_summation=True.
+
+References:
+
+Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
+Bolten, M., Helias, M. and Diesmann, M. (2017).
+Integration of Continuous-Time Dynamics in a
+Spiking Neural Network Simulator.
+Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
+
+Author: David Dahmen, Jan Hahne, Jannis Schuecker
+
+SeeAlso: lin_rate, tanh_rate, threshold_lin_rate
  */
 template < class TNonlinearities >
 class rate_neuron_ipn : public Archiving_Node

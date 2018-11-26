@@ -27,3 +27,4 @@
 // Includes from cpptests
 #include "test_sort.h"
 #include "test_target_fields.h"
+#include "test_block_vector.h"

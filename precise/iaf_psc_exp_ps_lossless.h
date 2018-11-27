@@ -42,7 +42,9 @@
 #include "slice_ring_buffer.h"
 
 
-/*Begin Documentation
+namespace nest
+{
+/** @BeginDocumentation
 Name: iaf_psc_exp_ps_lossless - Leaky integrate-and-fire neuron
 with exponential postsynaptic currents; precise implementation;
 predicts exact number of spikes by applying state space analysis
@@ -79,6 +81,9 @@ Note: In the current implementation, tau_syn_ex and tau_syn_in must be equal.
   Support for different time constants may be added in the future, see issue
   #921.
 
+Remarks:
+  @todo Implement current input in consistent way.
+
 References:
 [1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E
     (2018) Perfect Detection of Spikes in the Linear Sub-threshold
@@ -93,13 +98,6 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 SeeAlso: iaf_psc_exp_ps
 */
-
-namespace nest
-{
-/**
- * Leaky iaf neuron, exponential PSC synapses, lossless implementation.
- * @todo Implement current input in consistent way.
- */
 class iaf_psc_exp_ps_lossless : public Archiving_Node
 {
 public:

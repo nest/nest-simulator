@@ -51,18 +51,18 @@ Description:
 
 Base class for rate model with input noise of the form
 
-tau * dX_i(t) = [ - lambda * X_i(t) + mu
-                             + phi( ∑ w_ij * psi( X_j(t-d_ij) ) ) ] dt
-                 + [ √tau * sigma ] dW_{i}(t)
+$\tau dX_i(t) = [ - \lambda X_i(t) + \mu
+                + \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) ] dt
+                + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)$
 
 or
 
-tau * dX_i(t) = [ - lambda * X_i(t) + mu
-                  + mult_coupling_ex( X_i(t) ) *
-                             phi( ∑ w^{ > 0 }_ij * psi( X_j(t-d_ij) ) )
-                  + mult_coupling_in( X_i(t) ) *
-                             phi( ∑ w^{ < 0 }_ij * psi( X_j(t-d_ij) ) ) ] dt
-                  + [ √tau * sigma ] dW_{i}(t).
+$\tau dX_i(t) = [ - \lambda X_i(t) + \mu
+                + \text{mult\_coupling\_ex}( X_i(t) ) \cdot
+                \phi( \sum w^{ > 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) ) )
+                + \text{mult\_coupling\_in}( X_i(t) ) \cdot
+                \phi( \sum w^{ < 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) ] dt
+                + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)$.
 
 This template class needs to be instantiated with a class
 containing the following functions:

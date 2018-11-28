@@ -85,7 +85,6 @@ set( nestkernel_sources
     recording_backend_ascii.h recording_backend_ascii.cpp
     recording_backend_memory.h recording_backend_memory.cpp
     recording_backend_screen.h recording_backend_screen.cpp
-    recording_backend_arbor.h recording_backend_arbor.cpp
     manager_interface.h
     )
 
@@ -94,6 +93,13 @@ if ( HAVE_SIONLIB )
       ${nestkernel_sources}
       recording_backend_sionlib.h recording_backend_sionlib.cpp
       )
+endif ()
+
+if ( HAVE_MPI )
+  set( nestkernel_sources
+    ${nestkernel_sources}
+    recording_backend_arbor.h recording_backend_arbor.cpp
+  )
 endif ()
 
 add_library( nestkernel ${nestkernel_sources} )

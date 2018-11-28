@@ -548,8 +548,6 @@ function( NEST_PROCESS_WITH_MPI4PY )
   
     if ( HAVE_MPI4PY )
       include_directories( "${PY_MPI4PY}/include" )
-    else ()
-      message( FATAL_ERROR "MPI4PY not found: required with MPI and PYTHON" )
     endif ()
     
   endif ()

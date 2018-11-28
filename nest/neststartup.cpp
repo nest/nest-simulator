@@ -214,8 +214,7 @@ CYTHON_unpackConnectionGeneratorDatum( PyObject* obj )
 
 
 #ifdef _IS_PYNEST
-
-#ifdef HAVE_MPI
+#ifdef HAVE_MPI4PY
 
 #include <mpi4py/mpi4py.h>
 
@@ -231,12 +230,11 @@ void set_communicator(PyObject* pyobj) {
   nest::kernel().mpi_manager.set_communicator(*PyMPIComm_Get(pyobj));
 }
 
-#else // HAVE_MPI
+#else // ! HAVE_MPI4PY
 
 void set_communicator(PyObject*) {
-  throw nest::KernelException("set_communicator: NEST not compiled with MPI");
+  throw nest::KernelException("set_communicator: NEST not compiled with MPI4PY");
 }
 
-#endif //HAVE_MPI
-
+#endif
 #endif //_IS_PYNEST

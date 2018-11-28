@@ -69,10 +69,10 @@ SLIInterpreter& get_engine();
 #include <Python.h>
 // Call only with GIL
 void set_communicator(PyObject*);
-#ifdef HAVE_MPI
-inline bool nest_has_mpi() {return true;}
+#ifdef HAVE_MPI4PY
+inline bool nest_has_mpi4py() {return true;}
 #else
-inline bool nest_has_mpi() {return false;}
+inline bool nest_has_mpi4py() {return false;}
 #endif
 #endif
 

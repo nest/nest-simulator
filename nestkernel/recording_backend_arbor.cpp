@@ -61,7 +61,6 @@ std::unique_ptr<T> make_unique( Args&& ...args )
 
 nest::RecordingBackendArbor::RecordingBackendArbor()
   : prepared_(false)
-  , cleanedup_(false)
   , steps_left_(0)
   , arbor_steps_(0)
   , num_arbor_cells_(0)
@@ -108,7 +107,7 @@ nest::RecordingBackendArbor::initialize()
 void
 nest::RecordingBackendArbor::finalize()
 {
-    if (! cleanedup_ )
+    if ( prepared_ )
     {
         cleanup();
     }
@@ -172,10 +171,10 @@ nest::RecordingBackendArbor::prepare()
 void
 nest::RecordingBackendArbor::cleanup()
 {
-    if ( cleanedup_ ) {
-        throw BackendCleanedUp( "RecordingBackendArbor" );
+    if ( ! prepared_ ) {
+        throw BackendNotPrepared( "RecordingBackendArbor" );
     }
-    cleanedup_ = true;
+    prepared_ = true;
     
     if (steps_left_ != 0)
     {

@@ -81,18 +81,15 @@ sli_logging( const nest::LoggingEvent& e )
     static_cast< int >( e.severity ), e.function.c_str(), e.message.c_str() );
 }
 
-#ifndef _IS_PYNEST
-int
-neststartup( int* argc, char*** argv, SLIInterpreter& engine )
-#else
 int
 neststartup( int* argc,
   char*** argv,
   SLIInterpreter& engine,
   std::string modulepath )
-#endif
 {
-  nest::init_nest( argc, argv );
+  nest::KernelManager::create_kernel_manager();
+  nest::kernel().mpi_manager.init_mpi( argc, argv );
+  nest::kernel().initialize();
 
   sli_engine = &engine;
   register_logger_client( sli_logging );
@@ -191,6 +188,7 @@ neststartup( int* argc,
 void
 nestshutdown( int exitcode )
 {
+  nest::kernel().finalize();
   nest::kernel().mpi_manager.mpi_finalize( exitcode );
   nest::KernelManager::destroy_kernel_manager();
 }

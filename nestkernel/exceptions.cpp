@@ -428,9 +428,9 @@ nest::BackendPrepared::message() const
 }
 
 std::string
-nest::BackendCleanedUp::message() const
+nest::BackendNotPrepared::message() const
 {
     std::ostringstream msg;
-    msg << "Backend " << backend_ << " may not be cleanup()'d multiple times.";
+    msg << "Backend " << backend_ << " may not be cleanup()'d without preparation (multiple cleanups?).";
     return msg.str();
 }

@@ -48,6 +48,8 @@
 #include <sstream>
 #include <fstream>
 
+#include <cassert>
+
 #define DEBUG_ARCHIVER 1
 
 namespace nest

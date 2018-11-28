@@ -98,7 +98,6 @@ Archiving_Node::register_stdp_connection( double t_first_read )
 double
 nest::Archiving_Node::get_K_value( double t )
 {
-  const bool include_overlapping_spikes = true;
    std::cout << "* In Archiving_Node::get_K_value(t = " << t << ")" << std::endl; 
   if ( history_.empty() )
   {
@@ -118,9 +117,8 @@ nest::Archiving_Node::get_K_value( double t )
     }
     --i;
   }
-  _trace = 0.;
-  std::cout << "\tfall-through: K_value = " << _trace << std::endl;
-  return 0;
+  assert(false); // fall-through case: means that the trace value is requested at a time before the earliest postsynaptic spike in the history buffer. Something is wrong!
+  return 0; // just here to silence compiler warnings
 }
 
 void

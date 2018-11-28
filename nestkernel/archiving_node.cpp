@@ -98,20 +98,28 @@ Archiving_Node::register_stdp_connection( double t_first_read )
 double
 nest::Archiving_Node::get_K_value( double t )
 {
+  const bool include_overlapping_spikes = true;
+   std::cout << "* In Archiving_Node::get_K_value(t = " << t << ")" << std::endl; 
   if ( history_.empty() )
   {
+    _trace = Kminus_;
+    std::cout << "\thistory is empty: K_value = " << Kminus_ << std::endl; 
     return Kminus_;
   }
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    if ( t - history_[ i ].t_ > kernel().connection_manager.get_stdp_eps() )
+    if ( t >= history_[ i ].t_ ) //  kernel().connection_manager.get_stdp_eps() 
     {
-      return ( history_[ i ].Kminus_
+      _trace = ( history_[ i ].Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
+      std::cout << "\tK_value = " << _trace << std::endl;
+      return _trace;
     }
-    i--;
+    --i;
   }
+  _trace = 0.;
+  std::cout << "\tfall-through: K_value = " << _trace << std::endl;
   return 0;
 }
 
@@ -226,6 +234,7 @@ nest::Archiving_Node::get_status( DictionaryDatum& d ) const
   def< double >( d, names::tau_Ca, tau_Ca_ );
   def< double >( d, names::beta_Ca, beta_Ca_ );
   def< double >( d, names::tau_minus_triplet, tau_minus_triplet_ );
+  def< double >( d, names::post_trace, _trace );
 #ifdef DEBUG_ARCHIVER
   def< int >( d, names::archiver_length, history_.size() );
 #endif

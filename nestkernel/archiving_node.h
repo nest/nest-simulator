@@ -44,6 +44,10 @@
 // Includes from sli:
 #include "dictdatum.h"
 
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
 #define DEBUG_ARCHIVER 1
 
 namespace nest
@@ -211,6 +215,8 @@ private:
 
   double tau_minus_;
   double tau_minus_inv_;
+
+  double _trace;
 
   // time constant for triplet low pass filtering of "post" spike train
   double tau_minus_triplet_;

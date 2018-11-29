@@ -365,11 +365,11 @@ cdef class NESTEngine(object):
 
     def set_communicator(self, comm):
         # extract mpi_comm from mpi4py
-        if nest_has_mpi():
+        if nest_has_mpi4py():
             c_set_communicator(comm)
         else:
             raise NESTError("set_communicator: "
-                            "NEST not compiled with MPI")
+                            "NEST not compiled with MPI4PY")
 
     def init(self, argv, modulepath):
         if self.pEngine is not NULL:

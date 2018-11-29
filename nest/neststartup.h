@@ -52,14 +52,13 @@ class SLIInterpreter;
 #define CYTHON_DEREF( x ) ( *x )
 #define CYTHON_ADDR( x ) ( &x )
 
+#endif //_IS_PYNEST
+
 #include <string>
 int neststartup( int* argc,
   char*** argv,
   SLIInterpreter& engine,
   std::string modulepath = "" );
-#else  // #ifdef _IS_PYNEST
-int neststartup( int* argc, char*** argv, SLIInterpreter& engine );
-#endif // #ifdef _IS_PYNEST
 
 void nestshutdown( int exitcode );
 
@@ -69,11 +68,11 @@ SLIInterpreter& get_engine();
 #include <Python.h>
 // Call only with GIL
 void set_communicator(PyObject*);
-#ifdef HAVE_MPI
-inline bool nest_has_mpi() {return true;}
+#ifdef HAVE_MPI4PY
+inline bool nest_has_mpi4py() {return true;}
 #else
-inline bool nest_has_mpi() {return false;}
-#endif
-#endif
+inline bool nest_has_mpi4py() {return false;}
+#endif // HAVE_MPI4PY
+#endif // _IS_PYNEST
 
 #endif // #ifndef NEST_STARTUP_H

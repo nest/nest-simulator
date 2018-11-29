@@ -41,7 +41,6 @@ void
 nest::KernelManager::destroy_kernel_manager()
 {
   kernel_manager_instance_->logging_manager.set_logging_level( M_QUIET );
-  kernel_manager_instance_->finalize();
   delete kernel_manager_instance_;
 }
 

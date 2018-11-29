@@ -571,10 +571,13 @@ function( NEST_DEFAULT_MODULES )
 endfunction()
 
 function( NEST_PROCESS_WITH_MPI4PY )
-  include( FindPythonModule )
-  find_python_module(mpi4py)
+  if ( HAVE_MPI AND HAVE_PYTHON )
+    include( FindPythonModule )
+    find_python_module(mpi4py)
   
-  if ( HAVE_MPI4PY )
-    include_directories( "${PY_MPI4PY}/include" )
+    if ( HAVE_MPI4PY )
+      include_directories( "${PY_MPI4PY}/include" )
+    endif ()
+    
   endif ()
 endfunction ()

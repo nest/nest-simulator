@@ -1193,15 +1193,15 @@ private:
     const std::string backend_;
 };
 
-class BackendCleanedUp : public KernelException
+class BackendNotPrepared : public KernelException
 {
 public:
-    BackendCleanedUp( const std::string& backend )
+    BackendNotPrepared( const std::string& backend )
         : backend_(backend)
     {
     }
 
-    BackendCleanedUp( std::string&& backend )
+    BackendNotPrepared( std::string&& backend )
         : backend_(std::move(backend))
     {
     }

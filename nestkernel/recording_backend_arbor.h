@@ -64,7 +64,6 @@ private:
   void exchange_(std::vector<arb::shadow::spike>&);
 
   bool prepared_;
-  bool cleanedup_;
 
   int steps_left_;
   unsigned arbor_steps_;

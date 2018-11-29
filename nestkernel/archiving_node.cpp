@@ -108,7 +108,8 @@ nest::Archiving_Node::get_K_value( double t )
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    if ( t >= history_[ i ].t_ ) //  kernel().connection_manager.get_stdp_eps() 
+    if ( t >= history_[ i ].t_ )
+    // if (t - history_[i].t_ > kernel().connection_manager.get_stdp_eps())
     {
       _trace = ( history_[ i ].Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
@@ -118,6 +119,7 @@ nest::Archiving_Node::get_K_value( double t )
     --i;
   }
   assert(false); // fall-through case: means that the trace value is requested at a time before the earliest postsynaptic spike in the history buffer. Something is wrong!
+  // _trace = 0.;
   return 0; // just here to silence compiler warnings
 }
 
@@ -233,6 +235,7 @@ nest::Archiving_Node::get_status( DictionaryDatum& d ) const
   def< double >( d, names::beta_Ca, beta_Ca_ );
   def< double >( d, names::tau_minus_triplet, tau_minus_triplet_ );
   def< double >( d, names::post_trace, _trace );
+  std::cout << "In Archiving_Node::get_status(): trace = " << _trace << std::endl;
 #ifdef DEBUG_ARCHIVER
   def< int >( d, names::archiver_length, history_.size() );
 #endif

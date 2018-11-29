@@ -256,8 +256,10 @@ STDPConnection< targetidentifierT >::send( Event& e,
   }
 
   // depression due to new pre-synaptic spike
+  const double _K_value = target->get_K_value( t_spike - dendritic_delay );
+  std::cout << "In Synapse: got K_value = " << _K_value << std::endl;
   weight_ =
-    depress_( weight_, target->get_K_value( t_spike - dendritic_delay ) );
+    depress_( weight_, _K_value );
 
   e.set_receiver( *target );
   e.set_weight( weight_ );

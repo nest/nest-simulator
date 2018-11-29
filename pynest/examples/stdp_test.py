@@ -40,12 +40,15 @@ class StdpSynapse(unittest.TestCase):
 		"""
 		"""
 
-		resolution = .1	 # [ms]
+		resolution = .5	 # [ms]
 
 		delay = 1.  # [ms]
 
-		pre_spike_times = [25., 100., 110., 120., 200.]	  # [ms]
-		post_spike_times = [50., 100., 110., 120., 150., 250.]	  # [ms]
+		pre_spike_times = [2., 5., 7., 8., 10., 11., 15., 17., 20., 21., 22., 23., 26., 28.]	  # [ms]
+		post_spike_times = [3., 7., 8., 10., 12., 13., 14., 16., 17., 18., 19., 20., 21., 22.]	  # [ms]
+
+		# pre_spike_times = [10., 11., 12., 13., 14., 15., 25., 35., 45., 50., 51., 52., 70.]	  # [ms]
+		# post_spike_times = [10., 11., 12., 13., 30., 40., 50., 51., 52., 53., 54.]	  # [ms]
 
 		# pre_spike_times = [220., 300.]	  # [ms]
 		# post_spike_times = [150., 250., 350.]	  # [ms]
@@ -145,10 +148,12 @@ class StdpSynapse(unittest.TestCase):
 		for step in range(n_steps):
 			nest.Simulate(resolution)
 			t = nest.GetStatus([0], "time")[0]
+			# if True:
 			if np.any(np.abs(t - np.array(pre_spike_times) - delay) < resolution/2.):
 				trace_nest_t.append(t)
 				post_trace_value = nest.GetStatus(post_parrot)[0]['post_trace']
 				trace_nest.append(post_trace_value)
+				print("In Python: Getting trace = " + str(post_trace_value) + " at time t = " + str(t))
 
 		# get weight post protocol
 		w_post = nest.GetStatus(syn)[0]['weight']
@@ -177,7 +182,7 @@ class StdpSynapse(unittest.TestCase):
 			for i in range(len(ref_post_trace)):
 				t = (i / float(len(ref_post_trace - 1))) * sim_time
 				if t >= t_sp:
-					ref_post_trace[i] += np.exp(-(t - t_sp) / tau_minus)
+					ref_post_trace[i] += np.exp(-(t - t_sp -delay) / tau_minus)
 
 		ax2.plot(np.linspace(0., sim_time, len(ref_post_trace)), ref_post_trace, label="Expected", color="cyan", alpha=.6)
 
@@ -205,10 +210,12 @@ class StdpSynapse(unittest.TestCase):
 		ax2.set_ylabel("Trace")
 		ax2.legend()
 		for _ax in ax:
-			_ax.grid()
+			_ax.grid(which="major", axis="both")
+			_ax.grid(which="minor", axis="x", linestyle=":", alpha=.4)
+			_ax.minorticks_on()
+			# _ax.grid(major=True, minor=True)
 			_ax.set_xlim(0., sim_time)
 		fig.savefig("/tmp/traces.png")
-		import pdb;pdb.set_trace()
 
 		print("[py] w_post = " + str(w_post))
 		print("[py] w_post_ps = " + str(w_post_ps))

@@ -42,7 +42,9 @@
 #include "recording_backend_ascii.h"
 #include "recording_backend_memory.h"
 #include "recording_backend_screen.h"
+#ifdef HAVE_MPI
 #include "recording_backend_arbor.h"
+#endif
 #ifdef HAVE_SIONLIB
 #include "recording_backend_sionlib.h"
 #endif
@@ -56,7 +58,9 @@ nest::IOManager::IOManager()
   recording_backends_.insert(std::make_pair( "ascii", new RecordingBackendASCII() ) );
   recording_backends_.insert(std::make_pair( "memory", new RecordingBackendMemory() ) );
   recording_backends_.insert(std::make_pair( "screen", new RecordingBackendScreen() ) );
+#ifdef HAVE_MPI
   recording_backends_.insert(std::make_pair( "arbor", new RecordingBackendArbor() ) );
+#endif
 #ifdef HAVE_SIONLIB
   recording_backends_.insert(std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
 #endif

@@ -135,7 +135,7 @@ cdef extern from "interpret.h":
 cdef extern from "neststartup.h":
     int neststartup(int*, char***, SLIInterpreter&, string) except +
     void nestshutdown(int) except +
-    cbool nest_has_mpi()
+    cbool nest_has_mpi4py()
     void c_set_communicator "set_communicator" (object) with gil
 
 cdef extern from *:

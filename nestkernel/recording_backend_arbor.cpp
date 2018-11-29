@@ -253,7 +253,14 @@ nest::RecordingBackendArbor::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& values )
 {
-  throw UnsupportedEvent();
+  if ( ! enrolled_ )
+  {
+    return;
+  }
+  else
+  {
+      throw UnsupportedEvent();
+  }
 }
 
 /* ----------------------------------------------------------------

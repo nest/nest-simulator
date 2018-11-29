@@ -34,103 +34,105 @@
 
 namespace nest
 {
-/* BeginDocumentation
-   Name: iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential
-                       PSCs.
 
-   Description:
-   iaf_psc_expp is an implementation of a leaky integrate-and-fire model
-   with exponential shaped postsynaptic currents (PSCs) according to [1].
-   Thus, postsynaptic currents have an infinitely short rise time.
+/** @BeginDocumentation
+Name: iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential
+                   PSCs.
 
-   The threshold crossing is followed by an absolute refractory period (t_ref)
-   during which the membrane potential is clamped to the resting potential
-   and spiking is prohibited.
+Description:
 
-   The linear subthresold dynamics is integrated by the Exact
-   Integration scheme [2]. The neuron dynamics is solved on the time
-   grid given by the computation step size. Incoming as well as emitted
-   spikes are forced to that grid.
+iaf_psc_expp is an implementation of a leaky integrate-and-fire model
+with exponential shaped postsynaptic currents (PSCs) according to [1].
+Thus, postsynaptic currents have an infinitely short rise time.
 
-   An additional state variable and the corresponding differential
-   equation represents a piecewise constant external current.
+The threshold crossing is followed by an absolute refractory period (t_ref)
+during which the membrane potential is clamped to the resting potential
+and spiking is prohibited.
 
-   The general framework for the consistent formulation of systems with
-   neuron like dynamics interacting by point events is described in
-   [2]. A flow chart can be found in [3].
+The linear subthresold dynamics is integrated by the Exact
+Integration scheme [2]. The neuron dynamics is solved on the time
+grid given by the computation step size. Incoming as well as emitted
+spikes are forced to that grid.
 
-   Remarks:
-   The present implementation uses individual variables for the
-   components of the state vector and the non-zero matrix elements of
-   the propagator.  Because the propagator is a lower triangular matrix
-   no full matrix multiplication needs to be carried out and the
-   computation can be done "in place" i.e. no temporary state vector
-   object is required.
+An additional state variable and the corresponding differential
+equation represents a piecewise constant external current.
 
-   The template support of recent C++ compilers enables a more succinct
-   formulation without loss of runtime performance already at minimal
-   optimization levels. A future version of iaf_psc_exp will probably
-   address the problem of efficient usage of appropriate vector and
-   matrix objects.
-
-   Parameters:
-   The following parameters can be set in the status dictionary.
-
-   E_L          double - Resting membrane potential in mV.
-   C_m          double - Capacity of the membrane in pF
-   tau_m        double - Membrane time constant in ms.
-   tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
-   tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
-   t_ref        double - Duration of refractory period (V_m = V_reset) in ms.
-   V_m          double - Membrane potential in mV
-   V_th         double - Spike threshold in mV.
-   V_reset      double - Reset membrane potential after a spike in mV.
-   I_e          double - Constant input current in pA.
-   t_spike      double - Point in time of last spike in ms.
+The general framework for the consistent formulation of systems with
+neuron like dynamics interacting by point events is described in
+[2]. A flow chart can be found in [3].
 
 Remarks:
 
-   If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-   will numerically behave as if tau_m is equal to tau_syn_ex or
-   tau_syn_in, respectively, to avoid numerical instabilities.
-   For details, please see IAF_neurons_singularity.ipynb in the
-   NEST source code (docs/model_details).
+The present implementation uses individual variables for the
+components of the state vector and the non-zero matrix elements of
+the propagator.  Because the propagator is a lower triangular matrix
+no full matrix multiplication needs to be carried out and the
+computation can be done "in place" i.e. no temporary state vector
+object is required.
 
-   iaf_psc_exp can handle current input in two ways: Current input
-   through receptor_type 0 are handled as stepwise constant current
-   input as in other iaf models, i.e., this current directly enters
-   the membrane potential equation. Current input through
-   receptor_type 1, in contrast, is filtered through an exponential
-   kernel with the time constant of the excitatory synapse,
-   tau_syn_ex. For an example application, see [4].
+The template support of recent C++ compilers enables a more succinct
+formulation without loss of runtime performance already at minimal
+optimization levels. A future version of iaf_psc_exp will probably
+address the problem of efficient usage of appropriate vector and
+matrix objects.
 
-   References:
-   [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation
-   in Recurrent Networks with Frequency-Dependent Synapses, The Journal of
-   Neuroscience, 2000, Vol. 20 RC50 p. 1-5
-   [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-   systems with applications to neuronal modeling. Biologial Cybernetics
-   81:381-402.
-   [3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-   analysis of synchronous spiking in cortical neural networks.
-   Neurocomputing 38-40:565-571.
-   [4] Schuecker J, Diesmann M, Helias M (2015) Modulated escape from a
-   metastable state driven by colored noise.
-   Physical Review E 92:052119
+Parameters:
 
-   Sends: SpikeEvent
+The following parameters can be set in the status dictionary.
 
-   Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+E_L          double - Resting membrane potential in mV.
+C_m          double - Capacity of the membrane in pF
+tau_m        double - Membrane time constant in ms.
+tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
+tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
+t_ref        double - Duration of refractory period (V_m = V_reset) in ms.
+V_m          double - Membrane potential in mV
+V_th         double - Spike threshold in mV.
+V_reset      double - Reset membrane potential after a spike in mV.
+I_e          double - Constant input current in pA.
+t_spike      double - Point in time of last spike in ms.
 
-   SeeAlso: iaf_psc_exp_ps
+Remarks:
 
-   FirstVersion: March 2006
-   Author: Moritz Helias
+If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+will numerically behave as if tau_m is equal to tau_syn_ex or
+tau_syn_in, respectively, to avoid numerical instabilities.
+For details, please see IAF_neurons_singularity.ipynb in the
+NEST source code (docs/model_details).
+
+iaf_psc_exp can handle current input in two ways: Current input
+through receptor_type 0 are handled as stepwise constant current
+input as in other iaf models, i.e., this current directly enters
+the membrane potential equation. Current input through
+receptor_type 1, in contrast, is filtered through an exponential
+kernel with the time constant of the excitatory synapse,
+tau_syn_ex. For an example application, see [4].
+
+References:
+
+[1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation
+in Recurrent Networks with Frequency-Dependent Synapses, The Journal of
+Neuroscience, 2000, Vol. 20 RC50 p. 1-5
+[2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+systems with applications to neuronal modeling. Biologial Cybernetics
+81:381-402.
+[3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
+analysis of synchronous spiking in cortical neural networks.
+Neurocomputing 38-40:565-571.
+[4] Schuecker J, Diesmann M, Helias M (2015) Modulated escape from a
+metastable state driven by colored noise.
+Physical Review E 92:052119
+
+Sends: SpikeEvent
+
+Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+
+SeeAlso: iaf_psc_exp_ps
+
+FirstVersion: March 2006
+
+Author: Moritz Helias
 */
-
-/**
- * Leaky integrate-and-fire neuron with exponential PSCs.
- */
 class iaf_psc_exp : public Archiving_Node
 {
 

@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_ginzburg_neuron - Test parallel generation of Poissonian trains
 
 Synopsis: nest_indirect test_ginzburg_neuron.sli -> -

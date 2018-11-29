@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_iaf_psp_normalized - check if PSP can be normalized 
 
 Synopsis: (test_iaf_psp_normalized) run -> compare response with desired outcome

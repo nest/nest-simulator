@@ -12,6 +12,7 @@ pynest/pynestkernel.cpp
 *.pyc
 Makefile
 build/
+install/
 
 /juqueen/
 /extras/nest-config
@@ -54,6 +55,5 @@ doc/set_rcsinfo.cmake
 doc/fulldoc.conf
 doc/normaldoc.conf
 lib/sli/rcsinfo.sli
-extras/emacs/sli.el
 extras/nest_vars.sh
 

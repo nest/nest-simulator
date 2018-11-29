@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_assert_or_die_b - sli script to test the assert_or_die function (bool variant)
 
    Synopsis: (test_assert_or_die_b) run

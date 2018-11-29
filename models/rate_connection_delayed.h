@@ -21,31 +21,6 @@
  */
 
 
-/* BeginDocumentation
-Name: rate_connection_delayed - Synapse type for rate connections with delay.
-
-Description:
- rate_connection_delayed is a connector to create connections with delay
- between rate model neurons.
-
- To create instantaneous rate connections please use
- the synapse type rate_connection_instantaneous.
-
-Transmits: DelayedRateConnectionEvent
-
-References:
-
- Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
- Bolten, M., Helias, M. and Diesmann, M. (2017).
- Integration of Continuous-Time Dynamics in a
- Spiking Neural Network Simulator.
- Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
-
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
-SeeAlso: rate_connection_instantaneous, rate_neuron_ipn, rate_neuron_opn
-*/
-
-
 #ifndef RATE_CONNECTION_DELAYED_H
 #define RATE_CONNECTION_DELAYED_H
 
@@ -53,6 +28,33 @@ SeeAlso: rate_connection_instantaneous, rate_neuron_ipn, rate_neuron_opn
 
 namespace nest
 {
+
+/** @BeginDocumentation
+Name: rate_connection_delayed - Synapse type for rate connections with delay.
+
+Description:
+
+rate_connection_delayed is a connector to create connections with delay
+between rate model neurons.
+
+To create instantaneous rate connections please use
+the synapse type rate_connection_instantaneous.
+
+Transmits: DelayedRateConnectionEvent
+
+References:
+
+Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
+ Bolten, M., Helias, M. and Diesmann, M. (2017).
+ Integration of Continuous-Time Dynamics in a
+ Spiking Neural Network Simulator.
+ Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
+
+Author: David Dahmen, Jan Hahne, Jannis Schuecker
+
+SeeAlso: rate_connection_instantaneous, rate_neuron_ipn, rate_neuron_opn
+*/
+
 /**
  * Class representing a delayed rate connection. A rate_connection_delayed
  * has the properties weight, delay and receiver port.
@@ -91,7 +93,6 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double,
     const CommonPropertiesType& )
   {
     EventType ge;
@@ -107,13 +108,12 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    * \param p The port under which this connection is stored in the Connector.
-   * \param t_lastspike Time point of last spike emitted
    */
   void
-  send( Event& e, thread t, double, const CommonSynapseProperties& )
+  send( Event& e, thread t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
-    e.set_delay( get_delay_steps() );
+    e.set_delay_steps( get_delay_steps() );
     e.set_receiver( *get_target( t ) );
     e.set_rport( get_rport() );
     e();

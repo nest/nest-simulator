@@ -20,7 +20,7 @@
  *
  */
  
- /* BeginDocumentation
+ /** @BeginDocumentation
    Name: testsuite::test_aeif_cond_alpha_multisynapse - sli script for the aeif multisynapse model
 
    Synopsis: (test_aeif_cond_alpha_multisynapse) run
@@ -167,5 +167,155 @@ append
 	pop
 	
 } ScanThread
+
+% --------------------------------------
+
+% The following tests address #800
+% - Test that the default recordables are V_m, w and g_1
+% - Test that the recordable g's change when changing the number of receptor ports
+% - Test that g has alpha function dynamics
+% test default recordables include g_1
+{
+  << >> begin
+  ResetKernel
+  
+  /nrn /aeif_cond_alpha_multisynapse Create def
+  
+  /mm /multimeter << /withtime true /time_in_steps true
+                     /interval 1.0 /record_from [ /V_m /w /g_1 ] >> Create def
+  
+  mm nrn Connect
+  
+  /len 1 GetStatus /recordables get length def
+  len 3 eq
+  end
+}
+assert_or_die
+
+% test resize recordables
+{
+  << >> begin
+  ResetKernel
+  
+  /E_rev1    [0.0  0.0  -85.0] def
+  /E_rev2    [0.0  0.0] def
+  /E_rev3    [0.0  0.0  -85.0 0.] def
+  /tau_syn1  [5.0  1.0  25.0] def
+  /tau_syn2  [5.0  1.0] def
+  /tau_syn3  [5.0  1.0  25.0 50.] def
+  
+  /nrn /aeif_cond_alpha_multisynapse <<  
+    /E_rev E_rev1 /tau_syn tau_syn1
+      >> Create def
+  /len1 1 GetStatus /recordables get length def
+  
+  1 << /E_rev E_rev2 /tau_syn tau_syn2 >> SetStatus
+  /len2 1 GetStatus /recordables get length def
+  
+  1 << /E_rev E_rev3 /tau_syn tau_syn3 >> SetStatus
+  /len3 1 GetStatus /recordables get length def
+  
+  len1 5 eq len2 4 eq and len3 6 eq and
+  end
+}
+assert_or_die
+
+% test record g and check for alpha function synapse
+{
+  << >> begin
+  ResetKernel
+  /E_rev       [0.0  0.0  -85.0 20.] def % synaptic reversal potentials  
+  /tau_syn     [40.0 20.0  30.0 25.] def % synaptic time constants
+  /weights     [1.0  0.5   2.0  1.0] def % synaptic weights
+  /delays      [1.0  3.0   10.0 10.] def % ms - synaptic delays
+  /spike_time  10.  def    % time at which the single spike occurs
+  /dt          0.1  def    % time step
+  /total_t     500. def    % total simulation time
+  /tolerance   1e-7 def    % tolerable difference between theoretic and simulated alpha synapse conductances
+
+  /alpha_function
+  {
+    % Call like t0 W tau t alpha_function
+    << /tau 1.0 /W 1.0 /t0 0. >>
+    begin
+      /t exch def
+      /tau exch def
+      /W exch def
+      /t0 exch def
+      
+      t
+      {
+        /tt exch def
+        tt t0 geq
+        {
+          /tdiff_over_tau tt t0 sub tau div def
+          tdiff_over_tau neg exp E tdiff_over_tau W mul mul mul
+        }
+        % else
+        {
+          0.
+        } ifelse
+      } Map
+    end
+  } def
+
+  0 << /resolution dt >> SetStatus
+
+  % Create a spike generator that generates a single spike
+  /spike_generator Create /sg Set
+  sg << /spike_times [spike_time] >> SetStatus % generates a single peak
+
+  % Create the multisynapse neuron
+  /nrn /aeif_cond_alpha_multisynapse 
+    <<  /w 0. /a 0. /b 0. /Delta_T 0. /t_ref 0. /I_e 0.
+        /E_rev E_rev /tau_syn tau_syn
+    >> Create def
+
+  % Create an array of synaptic indexes to loop through 
+  delays length 1 arraystore Range /synapses_idx exch def
+  [delays weights synapses_idx] % loop on synaptic receptor ports
+  {
+    /syn_id exch def
+    /W exch def
+    /delay exch def
+    % Connect spike generator to each port
+    [sg] [nrn] /one_to_one <<
+      /model /static_synapse
+      /delay delay
+      /weight W
+      /receptor_type syn_id >>
+      Connect
+  } ScanThread
+
+  % Create the multimeter that will record from the 3 conductance channels
+  /mm /multimeter << /withtime true /time_in_steps true
+                     /interval dt /record_from [ /g_1 /g_2 /g_3 /g_4 ] >> Create def
+
+  mm nrn Connect
+
+  % Simulate
+  total_t Simulate
+
+  % Get the conductances measured during the simulation
+  /t       mm /events get /times get cva dt mul def
+  /sim_g_1 mm /events get /g_1   get cva def
+  /sim_g_2 mm /events get /g_2   get cva def
+  /sim_g_3 mm /events get /g_3   get cva def
+  /sim_g_4 mm /events get /g_4   get cva def
+  /sim_gs [sim_g_1 sim_g_2 sim_g_3 sim_g_4] def
+
+  true
+  [delays weights tau_syn sim_gs]
+  {
+    /sim_g  exch def
+    /tau    exch def
+    /W      exch def
+    /t0     exch spike_time add def
+    /theo_g t0 W tau t alpha_function def
+    sim_g theo_g sub { abs } Map Max tolerance leq and
+  } ScanThread
+  end
+}
+assert_or_die
 
 endusing

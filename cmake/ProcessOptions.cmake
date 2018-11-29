@@ -47,7 +47,11 @@ endfunction()
 function( NEST_PROCESS_WITH_WARNING )
   if ( with-warning )
     if ( with-warning STREQUAL "ON" )
-      set( with-warning "-Wall" )
+      if ( NOT k-computer STREQUAL "ON" )
+        set( with-warning "-Wall" )
+      else()
+        set( with-warning "" )
+      endif()
     endif ()
     foreach ( flag ${with-warning} )
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" PARENT_SCOPE )
@@ -107,7 +111,8 @@ function( NEST_PROCESS_K_COMPUTER )
     set( IS_K ON PARENT_SCOPE )
     # need alternative tokens command to compile NEST
     set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --alternative_tokens" PARENT_SCOPE )
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --alternative_tokens" PARENT_SCOPE )
+    # FCC accepts GNU flags when -Xg is supplied
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xg --alternative_tokens" PARENT_SCOPE )
   endif ()
 endfunction()
 
@@ -266,7 +271,7 @@ function( NEST_PROCESS_WITH_LIBLTDL )
   if ( with-ltdl AND NOT static-libraries )
     if ( NOT ${with-ltdl} STREQUAL "ON" )
       # a path is set
-      set( LTDL_ROOT_DIR "${with-ltdl}" PARENT_SCOPE )
+      set( LTDL_ROOT_DIR "${with-ltdl}" )
     endif ()
 
     find_package( LTDL )
@@ -353,7 +358,7 @@ function( NEST_PROCESS_WITH_PYTHON )
       set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )
       set( PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON ${PYTHON_EXECUTABLE} PARENT_SCOPE )
-      set( PYTHON_VERSION ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR} PARENT_SCOPE )
+      set( PYTHON_VERSION ${PYTHON_VERSION_STRING} PARENT_SCOPE )
 
       # Localize Python lib/header files and make sure that their version matches 
       # the Python interpreter version !
@@ -411,6 +416,8 @@ function( NEST_PROCESS_WITH_OPENMP )
       # set flags
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
+    else()
+      message( FATAL_ERROR "CMake can not find OpenMP." ) 
     endif ()
   endif ()
 endfunction()
@@ -521,6 +528,28 @@ function( NEST_PROCESS_WITH_SIONLIB )
     # is linked in nestkernel/CMakeLists.txt
     if ( SIONLIB_FOUND )
       set( HAVE_SIONLIB ON CACHE INTERNAL "cmake sucks" )
+    endif ()
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_WITH_BOOST )
+  # Find Boost
+  set( HAVE_BOOST OFF PARENT_SCOPE )
+  if ( with-boost )
+    if ( NOT ${with-boost} STREQUAL "ON" )
+      # a path is set
+      set( BOOST_ROOT "${with-boost}" )
+    endif ()
+
+    find_package( Boost COMPONENTS unit_test_framework )
+    if ( Boost_FOUND )
+      # export found variables to parent scope
+      set( HAVE_BOOST ON PARENT_SCOPE )
+      # Boost uses lower case in variable names
+      set( BOOST_FOUND "${Boost_FOUND}" PARENT_SCOPE )
+      set( BOOST_LIBRARIES "${Boost_LIBRARIES}" PARENT_SCOPE )
+      set( BOOST_INCLUDE_DIR "${Boost_INCLUDE_DIR}" PARENT_SCOPE )
+      set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
     endif ()
   endif ()
 endfunction()

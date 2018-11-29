@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_parse_message_line -> selftest for message line parser in unittest
 
 Synopsis: nest test_parse_message_line.sli -> -

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_poisson_generator_ps - basic test of poisson_generator_ps
 
 Synopsis: (test_poisson_generator_ps) run -> fails if targets receive identical spikes trains

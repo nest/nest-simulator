@@ -148,6 +148,9 @@ public:
   // TODO: rename / precisely how defined?
   delay get_to_step() const;
 
+  //! Sorts source table and connections and create new target table.
+  void update_connection_infrastructure( const thread tid );
+
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
   void update_();      //! actually perform simulation
@@ -163,7 +166,9 @@ private:
   delay to_step_;         //!< update clock_+from_step<=T<clock_+to_step_
   timeval t_slice_begin_; //!< Wall-clock time at the begin of a time slice
   timeval t_slice_end_;   //!< Wall-clock time at the end of time slice
-  long t_real_;     //!< Accumunated wall-clock time spent simulating (in us)
+  long t_real_;   //!< Accumulated wall-clock time spent simulating (in us)
+  bool prepared_; //!< Indicates whether the SimulationManager is in a prepared
+                  //!< state
   bool simulating_; //!< true if simulation in progress
   bool simulated_; //!< indicates whether the SimulationManager has already been
                    //!< simulated for sometime

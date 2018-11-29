@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_sinusoidal_gamma_generator - test basic properties of sinusoidal gamma generator
 
 Synopsis: (test_sinusoidal_gamma_generator) run -> dies if assertion fails

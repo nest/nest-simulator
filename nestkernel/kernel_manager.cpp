@@ -66,10 +66,10 @@ nest::KernelManager::KernelManager()
       &rng_manager,
       &simulation_manager,
       &modelrange_manager,
+      &model_manager,
       &connection_manager,
       &sp_manager,
       &event_delivery_manager,
-      &model_manager,
       &music_manager,
       &node_manager,
       &io_manager
@@ -97,7 +97,7 @@ nest::KernelManager::~KernelManager()
   // // "Core kernel managers" follow
   // simulation_manager.initialize(); // independent of others
   // modelrange_manager.initialize(); // independent of others
-  // connection_manager.initialize(); // depends only on num of threads
+  // connection_manager.initialize(); // depends on number of threads
   // sp_manager.initialize();
 
   // // prerequisites:
@@ -169,20 +169,23 @@ nest::KernelManager::reset()
 }
 
 void
-nest::KernelManager::num_threads_changed_reset()
+nest::KernelManager::change_num_threads( size_t num_threads )
 {
   io_manager.finalize();
   node_manager.finalize();
-  model_manager.finalize();
   connection_manager.finalize();
+  model_manager.finalize();
   modelrange_manager.finalize();
   rng_manager.finalize();
+
+  vp_manager.set_num_threads( num_threads );   // JME/nestio: is this needed here? apeyser/nestio does not have it, master does added it in 18acd78aa1c00
 
   rng_manager.initialize();
   // independent of threads, but node_manager needs it reset
   modelrange_manager.initialize();
-  connection_manager.initialize();
   model_manager.initialize();
+  connection_manager.initialize();
+  event_delivery_manager.initialize();
   music_manager.initialize();
   node_manager.initialize();
   io_manager.initialize();
@@ -192,6 +195,9 @@ void
 nest::KernelManager::set_status( const DictionaryDatum& dict )
 {
   assert( is_initialized() );
+
+  //JME: can we make this a loop?
+
   logging_manager.set_status( dict );
   io_manager.set_status( dict );
 
@@ -202,11 +208,11 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
   rng_manager.set_status( dict );
   simulation_manager.set_status( dict );
   modelrange_manager.set_status( dict );
+  model_manager.set_status( dict );
   connection_manager.set_status( dict );
   sp_manager.set_status( dict );
 
   event_delivery_manager.set_status( dict );
-  model_manager.set_status( dict );
   music_manager.set_status( dict );
 
   node_manager.set_status( dict ); // has to be called last
@@ -216,6 +222,9 @@ void
 nest::KernelManager::get_status( DictionaryDatum& dict )
 {
   assert( is_initialized() );
+
+  //JME: can we make this a loop?
+
   logging_manager.get_status( dict );
   io_manager.get_status( dict );
 
@@ -225,11 +234,11 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
   rng_manager.get_status( dict );
   simulation_manager.get_status( dict );
   modelrange_manager.get_status( dict );
+  model_manager.get_status( dict );
   connection_manager.get_status( dict );
   sp_manager.get_status( dict );
 
   event_delivery_manager.get_status( dict );
-  model_manager.get_status( dict );
   music_manager.get_status( dict );
 
   node_manager.get_status( dict );

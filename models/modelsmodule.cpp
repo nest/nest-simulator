@@ -52,6 +52,7 @@
 #include "aeif_psc_exp.h"
 #include "aeif_psc_delta.h"
 #include "amat2_psc_exp.h"
+#include "erfc_neuron.h"
 #include "gauss_rate.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
@@ -86,6 +87,7 @@
 #include "gif_psc_exp_multisynapse.h"
 #include "gif_cond_exp.h"
 #include "gif_cond_exp_multisynapse.h"
+#include "gif_pop_psc_exp.h"
 
 // Stimulation devices
 #include "ac_generator.h"
@@ -94,6 +96,7 @@
 #include "mip_generator.h"
 #include "noise_generator.h"
 #include "poisson_generator.h"
+#include "inhomogeneous_poisson_generator.h"
 #include "ppd_sup_generator.h"
 #include "pulsepacket_generator.h"
 #include "sinusoidal_gamma_generator.h"
@@ -250,6 +253,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
   kernel().model_manager.register_node_model< spike_generator >(
     "spike_generator" );
+  kernel().model_manager.register_node_model< inhomogeneous_poisson_generator >(
+    "inhomogeneous_poisson_generator" );
   kernel().model_manager.register_node_model< poisson_generator >(
     "poisson_generator" );
   kernel().model_manager.register_node_model< pulsepacket_generator >(
@@ -266,6 +271,7 @@ ModelsModule::init( SLIInterpreter* )
     "ppd_sup_generator" );
   kernel().model_manager.register_node_model< gamma_sup_generator >(
     "gamma_sup_generator" );
+  kernel().model_manager.register_node_model< erfc_neuron >( "erfc_neuron" );
   kernel().model_manager.register_node_model< ginzburg_neuron >(
     "ginzburg_neuron" );
   kernel().model_manager.register_node_model< mcculloch_pitts_neuron >(
@@ -291,7 +297,7 @@ ModelsModule::init( SLIInterpreter* )
     "volume_transmitter" );
 
   // Create voltmeter as a multimeter pre-configured to record V_m.
-  /*BeginDocumentation
+  /** @BeginDocumentation
   Name: voltmeter - Device to record membrane potential from neurons.
   Synopsis: voltmeter Create
 
@@ -385,6 +391,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< gif_cond_exp >( "gif_cond_exp" );
   kernel().model_manager.register_node_model< gif_cond_exp_multisynapse >(
     "gif_cond_exp_multisynapse" );
+  kernel().model_manager.register_node_model< gif_pop_psc_exp >(
+    "gif_pop_psc_exp" );
 
   kernel().model_manager.register_node_model< aeif_cond_alpha >(
     "aeif_cond_alpha" );
@@ -426,7 +434,7 @@ ModelsModule::init( SLIInterpreter* )
 
   // register synapses
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: static_synapse_hpc - Variant of static_synapse with low memory
      consumption.
 
@@ -448,7 +456,7 @@ ModelsModule::init( SLIInterpreter* )
       "static_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: static_synapse_hom_w_hpc - Variant of static_synapse_hom_w with low
      memory consumption.
      SeeAlso: synapsedict, static_synapse_hom_w, static_synapse_hpc
@@ -462,29 +470,41 @@ ModelsModule::init( SLIInterpreter* )
     .register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
       "static_synapse_hom_w_hpc" );
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: gap_junction - Connection model for gap junctions.
      SeeAlso: synapsedict
   */
   kernel()
     .model_manager
     .register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
-      "gap_junction", /*has_delay=*/false, /*requires_symmetric=*/true );
+      "gap_junction",
+      /*has_delay=*/false,
+      /*requires_symmetric=*/true,
+      /*supports_wfr=*/true );
   kernel()
     .model_manager
     .register_secondary_connection_model< RateConnectionInstantaneous< TargetIdentifierPtrRport > >(
-      "rate_connection_instantaneous", /*has_delay=*/false );
+      "rate_connection_instantaneous",
+      /*has_delay=*/false,
+      /*requires_symmetric=*/false,
+      /*supports_wfr=*/true );
   kernel()
     .model_manager
     .register_secondary_connection_model< RateConnectionDelayed< TargetIdentifierPtrRport > >(
-      "rate_connection_delayed" );
+      "rate_connection_delayed",
+      /*has_delay=*/true,
+      /*requires_symmetric=*/false,
+      /*supports_wfr=*/false );
   kernel()
     .model_manager
     .register_secondary_connection_model< DiffusionConnection< TargetIdentifierPtrRport > >(
-      "diffusion_connection", /*has_delay=*/false );
+      "diffusion_connection",
+      /*has_delay=*/false,
+      /*requires_symmetric=*/false,
+      /*supports_wfr=*/true );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: stdp_synapse_hpc - Variant of stdp_synapse with low memory
      consumption.
      SeeAlso: synapsedict, stdp_synapse, static_synapse_hpc
@@ -499,7 +519,7 @@ ModelsModule::init( SLIInterpreter* )
       "stdp_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: stdp_pl_synapse_hom_hpc - Variant of stdp_pl_synapse_hom with low
      memory consumption.
      SeeAlso: synapsedict, stdp_pl_synapse_hom, static_synapse_hpc
@@ -514,7 +534,7 @@ ModelsModule::init( SLIInterpreter* )
       "stdp_pl_synapse_hom_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: stdp_triplet_synapse_hpc - Variant of stdp_triplet_synapse with low
      memory consumption.
      SeeAlso: synapsedict, stdp_synapse, static_synapse_hpc
@@ -529,7 +549,7 @@ ModelsModule::init( SLIInterpreter* )
       "stdp_triplet_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: quantal_stp_synapse_hpc - Variant of quantal_stp_synapse with low
      memory consumption.
      SeeAlso: synapsedict, quantal_stp_synapse, static_synapse_hpc
@@ -544,7 +564,7 @@ ModelsModule::init( SLIInterpreter* )
       "quantal_stp_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: stdp_synapse_hom_hpc - Variant of quantal_stp_synapse with low memory
      consumption.
      SeeAlso: synapsedict, stdp_synapse_hom, static_synapse_hpc
@@ -559,7 +579,7 @@ ModelsModule::init( SLIInterpreter* )
       "stdp_synapse_hom_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: stdp_facetshw_synapse_hom_hpc - Variant of stdp_facetshw_synapse_hom
      with low memory consumption.
      SeeAlso: synapsedict, stdp_facetshw_synapse_hom, static_synapse_hpc
@@ -574,7 +594,7 @@ ModelsModule::init( SLIInterpreter* )
       "stdp_facetshw_synapse_hom_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: cont_delay_synapse_hpc - Variant of cont_delay_synapse with low
      memory consumption.
      SeeAlso: synapsedict, cont_delay_synapse, static_synapse_hpc
@@ -589,7 +609,7 @@ ModelsModule::init( SLIInterpreter* )
       "cont_delay_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: tsodyks_synapse_hpc - Variant of tsodyks_synapse with low memory
      consumption.
      SeeAlso: synapsedict, tsodyks_synapse, static_synapse_hpc
@@ -604,7 +624,7 @@ ModelsModule::init( SLIInterpreter* )
       "tsodyks_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: tsodyks_synapse_hom_hpc - Variant of tsodyks_synapse_hom with low
      memory consumption.
      SeeAlso: synapsedict, tsodyks_synapse_hom, static_synapse_hpc
@@ -619,7 +639,7 @@ ModelsModule::init( SLIInterpreter* )
       "tsodyks_synapse_hom_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: tsodyks2_synapse_hpc - Variant of tsodyks2_synapse with low memory
      consumption.
      SeeAlso: synapsedict, tsodyks2_synapse, static_synapse_hpc
@@ -634,7 +654,7 @@ ModelsModule::init( SLIInterpreter* )
       "tsodyks2_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: ht_synapse_hpc - Variant of ht_synapse with low memory consumption.
      SeeAlso: synapsedict, ht_synapse, static_synapse_hpc
   */
@@ -648,7 +668,7 @@ ModelsModule::init( SLIInterpreter* )
       "ht_synapse_hpc" );
 
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: stdp_dopamine_synapse_hpc - Variant of stdp_dopamine_synapse with low
      memory consumption.
      SeeAlso: synapsedict, stdp_dopamine_synapse, static_synapse_hpc
@@ -662,7 +682,7 @@ ModelsModule::init( SLIInterpreter* )
     .register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
       "stdp_dopamine_synapse_hpc" );
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: vogels_sprekeler_synapse_hpc - Variant of vogels_sprekeler_synapse
      with low memory
      consumption.
@@ -677,7 +697,7 @@ ModelsModule::init( SLIInterpreter* )
     .register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
       "vogels_sprekeler_synapse_hpc" );
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: bernoulli_synapse - Static synapse with stochastic transmission
      SeeAlso: synapsedict, static_synapse, static_synapse_hom_w
   */

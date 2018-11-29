@@ -28,17 +28,20 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
 #include "nest_types.h"
-#include "node.h"
 #include "recording_device.h"
 
-/* BeginDocumentation
+namespace nest
+{
 
+/** @BeginDocumentation
 Name: spin_detector - Device for detecting binary states in neurons.
 
 Description:
+
 The spin_detector is a recording device. It is used to decode and
 record binary states from spiking activity from a single neuron, or
 from multiple neurons at once. A single spike signals the 0 state, two
@@ -77,9 +80,6 @@ Receives: SpikeEvent
 SeeAlso: spike_detector, Device, RecordingDevice
 */
 
-
-namespace nest
-{
 /**
  * Spin detector class.
  *
@@ -103,6 +103,7 @@ namespace nest
  *
  * @ingroup Devices
  */
+
 class spin_detector : public RecordingDevice
 {
 

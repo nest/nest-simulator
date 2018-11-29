@@ -127,6 +127,19 @@ Node::get_status_dict_()
   return DictionaryDatum( new Dictionary );
 }
 
+void
+Node::set_local_device_id( const index lsdid )
+{
+  assert(
+    false && "set_local_device_id() called on a non-device node of type" );
+}
+
+index
+Node::get_local_device_id() const
+{
+  assert( false && "set_local_device_id() called on a non-device node." );
+}
+
 DictionaryDatum
 Node::get_status_base()
 {

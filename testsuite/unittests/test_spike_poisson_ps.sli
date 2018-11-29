@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_spike_poisson_ps - tests if spikes independent of resolution
 
 Synopsis: (test_spike_poisson_ps) run -> compare with results at other resolutions

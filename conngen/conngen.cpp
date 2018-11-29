@@ -64,6 +64,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
     throw UnknownSynapseType( synmodel_name.toString() );
   }
   const index synmodel_id = static_cast< index >( synmodel );
+  DictionaryDatum dummy_params = new Dictionary();
 
   cg_set_masks( cg, source_gids, target_gids );
   cg->start();
@@ -78,11 +79,10 @@ cg_connect( ConnectionGeneratorDatum& cg,
     {
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contain local nodes.
-      Node* const target_node =
-        kernel().node_manager.get_node( target_gids[ target ] );
-      const thread target_thread = target_node->get_thread();
-      kernel().connection_manager.connect(
-        source_gids[ source ], target_node, target_thread, synmodel_id );
+      kernel().connection_manager.connect( source_gids[ source ],
+        target_gids[ target ],
+        dummy_params,
+        synmodel_id );
     }
   }
   else if ( num_parameters == 2 )
@@ -120,6 +120,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
         target_node,
         target_thread,
         synmodel_id,
+        dummy_params,
         params[ d_idx ],
         params[ w_idx ] );
     }

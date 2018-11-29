@@ -114,11 +114,17 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set(
   updateValue< bool >( d, names::mult_coupling, mult_coupling_ );
 
   if ( tau_ <= 0 )
+  {
     throw BadProperty( "Time constant must be > 0." );
+  }
   if ( lambda_ < 0 )
+  {
     throw BadProperty( "Passive decay rate must be >= 0." );
+  }
   if ( std_ < 0 )
+  {
     throw BadProperty( "Standard deviation of noise must not be negative." );
+  }
 }
 
 template < class TNonlinearities >
@@ -359,7 +365,9 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
 
     // modifiy new_rates for rate-neuron-event as proxy for next min_delay
     for ( long temp = from; temp < to; ++temp )
+    {
       new_rates[ temp ] = S_.rate_;
+    }
 
     // create new random numbers
     B_.random_numbers.resize( buffer_size, numerics::nan );
@@ -388,6 +396,8 @@ void
 nest::rate_neuron_ipn< TNonlinearities >::handle(
   InstantaneousRateConnectionEvent& e )
 {
+  const double weight = e.get_weight();
+
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
@@ -395,26 +405,26 @@ nest::rate_neuron_ipn< TNonlinearities >::handle(
   {
     if ( P_.linear_summation_ )
     {
-      if ( e.get_weight() >= 0.0 )
+      if ( weight >= 0.0 )
       {
-        B_.instant_rates_ex_[ i ] += e.get_weight() * e.get_coeffvalue( it );
+        B_.instant_rates_ex_[ i ] += weight * e.get_coeffvalue( it );
       }
       else
       {
-        B_.instant_rates_in_[ i ] += e.get_weight() * e.get_coeffvalue( it );
+        B_.instant_rates_in_[ i ] += weight * e.get_coeffvalue( it );
       }
     }
     else
     {
-      if ( e.get_weight() >= 0.0 )
+      if ( weight >= 0.0 )
       {
         B_.instant_rates_ex_[ i ] +=
-          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) );
+          weight * nonlinearities_.input( e.get_coeffvalue( it ) );
       }
       else
       {
         B_.instant_rates_in_[ i ] +=
-          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) );
+          weight * nonlinearities_.input( e.get_coeffvalue( it ) );
       }
     }
     i++;
@@ -426,6 +436,9 @@ void
 nest::rate_neuron_ipn< TNonlinearities >::handle(
   DelayedRateConnectionEvent& e )
 {
+  const double weight = e.get_weight();
+  const long delay = e.get_delay_steps();
+
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
@@ -433,32 +446,28 @@ nest::rate_neuron_ipn< TNonlinearities >::handle(
   {
     if ( P_.linear_summation_ )
     {
-      if ( e.get_weight() >= 0.0 )
+      if ( weight >= 0.0 )
       {
         B_.delayed_rates_ex_.add_value(
-          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-          e.get_weight() * e.get_coeffvalue( it ) );
+          delay + i, weight * e.get_coeffvalue( it ) );
       }
       else
       {
         B_.delayed_rates_in_.add_value(
-          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-          e.get_weight() * e.get_coeffvalue( it ) );
+          delay + i, weight * e.get_coeffvalue( it ) );
       }
     }
     else
     {
-      if ( e.get_weight() >= 0.0 )
+      if ( weight >= 0.0 )
       {
         B_.delayed_rates_ex_.add_value(
-          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) ) );
+          delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
       else
       {
         B_.delayed_rates_in_.add_value(
-          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) ) );
+          delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
     }
     ++i;

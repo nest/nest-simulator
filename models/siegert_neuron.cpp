@@ -157,19 +157,29 @@ nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::t_ref, t_ref_ );
 
   if ( V_reset_ >= theta_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
+  }
 
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time must not be negative." );
+  }
 
   if ( tau_ <= 0 )
+  {
     throw BadProperty( "time constant must be > 0." );
+  }
 
   if ( tau_m_ <= 0 )
+  {
     throw BadProperty( "Membrane time constant must be > 0." );
+  }
 
   if ( tau_syn_ < 0 )
+  {
     throw BadProperty( "Membrane time constant must not be negative." );
+  }
 }
 
 void
@@ -206,6 +216,7 @@ nest::siegert_neuron::siegert_neuron()
 {
   recordablesMap_.create();
   Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  gsl_w_ = gsl_integration_workspace_alloc( 1000 );
 }
 
 nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
@@ -215,6 +226,12 @@ nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
   , B_( n.B_, *this )
 {
   Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  gsl_w_ = gsl_integration_workspace_alloc( 1000 );
+}
+
+nest::siegert_neuron::~siegert_neuron()
+{
+  gsl_integration_workspace_free( gsl_w_ );
 }
 
 /* ----------------------------------------------------------------
@@ -231,8 +248,6 @@ nest::siegert_neuron::siegert1( double theta_shift,
   y_th = ( theta_shift - mu ) / sigma;
   double y_r;
   y_r = ( V_reset_shift - mu ) / sigma;
-
-  gsl_integration_workspace* w = gsl_integration_workspace_alloc( 1000 );
 
   double result, error;
 
@@ -265,9 +280,7 @@ nest::siegert_neuron::siegert1( double theta_shift,
   }
 
   gsl_integration_qags(
-    &F, lower_bound, upper_bound, 0.1, 0.1, 1000, w, &result, &error );
-
-  gsl_integration_workspace_free( w );
+    &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
 
   // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
   return 1e3 * 1. / ( P_.t_ref_ + exp( y_th * y_th ) * result * P_.tau_m_ );
@@ -283,8 +296,6 @@ nest::siegert_neuron::siegert2( double theta_shift,
   y_th = ( theta_shift - mu ) / sigma;
   double y_r;
   y_r = ( V_reset_shift - mu ) / sigma;
-
-  gsl_integration_workspace* w = gsl_integration_workspace_alloc( 1000 );
 
   double result, error;
 
@@ -307,9 +318,7 @@ nest::siegert_neuron::siegert2( double theta_shift,
   }
 
   gsl_integration_qags(
-    &F, lower_bound, upper_bound, 0.1, 0.1, 1000, w, &result, &error );
-
-  gsl_integration_workspace_free( w );
+    &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
 
   // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
   return 1e3 * 1. / ( P_.t_ref_ + result * P_.tau_m_ );
@@ -330,11 +339,14 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   double V_r_shift =
     P_.V_reset_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
 
-  if ( abs( mu - 0. ) < 1e-12 )
+  // Catch cases where neurons get no input.
+  // Use (Brunel, 2000) eq. (22) to estimate
+  // firing rate to be ~ 1e-16
+  if ( ( theta_shift - mu ) > 6. * sigma )
   {
     return 0.;
   }
-  if ( mu <= theta_shift - 0.05 * abs( theta_shift ) )
+  if ( mu <= theta_shift - 0.05 * std::abs( theta_shift ) )
   {
     return siegert1( theta_shift, V_r_shift, mu, sigma );
   }
@@ -434,7 +446,9 @@ nest::siegert_neuron::update_( Time const& origin,
 
     // modifiy new_rates for diffusion-event as proxy for next min_delay
     for ( long temp = from; temp < to; ++temp )
+    {
       new_rates[ temp ] = S_.r_;
+    }
   }
 
   // Send diffusion-event
@@ -452,14 +466,17 @@ nest::siegert_neuron::update_( Time const& origin,
 void
 nest::siegert_neuron::handle( DiffusionConnectionEvent& e )
 {
+  const double drift = e.get_drift_factor();
+  const double diffusion = e.get_diffusion_factor();
+
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
   while ( it != e.end() )
   {
-    double value = e.get_coeffvalue( it );
-    B_.drift_input_[ i ] += e.get_drift_factor() * value;
-    B_.diffusion_input_[ i ] += e.get_diffusion_factor() * value;
+    const double value = e.get_coeffvalue( it );
+    B_.drift_input_[ i ] += drift * value;
+    B_.diffusion_input_[ i ] += diffusion * value;
     ++i;
   }
 }

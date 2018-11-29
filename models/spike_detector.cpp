@@ -154,3 +154,19 @@ nest::spike_detector::handle( SpikeEvent& e )
     }
   }
 }
+
+
+//JME: Find out if the problem described in 1f3ce613a80 still exist with nestio
+//void
+//nest::spike_detector::finalize()
+//{
+//  // The order of the major simulation steps is:
+//  // update nodes -- gather spikes -- deliver spikes
+//  // Therefore, spikes from the last deliver might still reside in the
+//  // B_.spikes_ buffer and need to be recorded.
+//  // --> final call to update()
+//  const Time time;
+//  update( time, -1, -1 );
+//  device_.finalize();
+//}
+//

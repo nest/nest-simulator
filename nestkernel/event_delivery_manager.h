@@ -25,6 +25,7 @@
 
 // C++ includes:
 #include <cassert>
+#include <limits>
 #include <vector>
 
 // Includes from libnestutil:
@@ -32,11 +33,15 @@
 #include "stopwatch.h"
 
 // Includes from nestkernel:
+#include "completed_checker.h"
 #include "event.h"
 #include "mpi_manager.h" // OffGridSpike
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
+#include "target_table.h"
+#include "spike_data.h"
+#include "vp_manager.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -44,6 +49,9 @@
 namespace nest
 {
 typedef MPIManager::OffGridSpike OffGridSpike;
+
+class TargetData;
+class SendBufferPosition;
 
 class EventDeliveryManager : public ManagerInterface
 {
@@ -73,7 +81,7 @@ public:
   /**
    * Send a secondary event remote.
    */
-  void send_secondary( Node& source, SecondaryEvent& e );
+  void send_secondary( const Node& source, SecondaryEvent& e );
 
   /**
    * Send event e to all targets of node source on thread t
@@ -97,9 +105,7 @@ public:
    * in a synchronised (single threaded) state.
    * @see send_to_targets()
    */
-  void send_remote( thread p, SpikeEvent&, const long lag = 0 );
-
-  void send_remote( thread t, SecondaryEvent& e );
+  void send_remote( thread tid, SpikeEvent&, const long lag = 0 );
 
   /**
    * Add global id of event sender to the spike_register.
@@ -119,7 +125,7 @@ public:
    * in a synchronised (single threaded) state.
    * @see send_to_targets()
    */
-  void send_offgrid_remote( thread p, SpikeEvent&, const long lag = 0 );
+  void send_off_grid_remote( thread tid, SpikeEvent& e, const long lag = 0 );
 
   /**
    * Send event e directly to its target node. This should be
@@ -177,30 +183,46 @@ public:
 
   /**
    * Resize spike_register and comm_buffer to correct dimensions.
-   * Resizes also offgrid_*_buffer_.
+   * Resizes also off_grid_*_buffer_.
    * This is done by resume() when called for the first time.
    * The spike buffers cannot be reconfigured later, whence neither
    * the number of local threads or the min_delay can change after
    * simulate() has been called. ConnectorModel::check_delay() and
    * Network::set_status() ensure this.
    */
-  void configure_spike_buffers();
+  void configure_spike_data_buffers();
+
+  void configure_spike_register();
+
+  void resize_send_recv_buffers_target_data();
+
+  void configure_secondary_buffers();
 
   /**
-   * Read all event buffers for thread t and send the corresponding
-   * Events to the Nodes that are targeted.
-   *
-   * @note It is a crucial property of deliver_events_() that events
-   * are delivered ordered by non-decreasing time stamps. BUT: this
-   * ordering applies to time stamps only, it does NOT take into
-   * account the offsets of precise spikes.
+   * Collocates spikes from register to MPI buffers, communicates via
+   * MPI and delivers events to targets.
    */
-  bool deliver_events( thread t );
+  void gather_spike_data( const thread tid );
 
   /**
-   * Collocate buffers and exchange events with other MPI processes.
+   * Collocates presynaptic connection information, communicates via
+   * MPI and creates presynaptic connection infrastructure.
    */
-  void gather_events( bool );
+  void gather_target_data( const thread tid );
+
+  /**
+   * Collocates presynaptic connection information for secondary events (MPI
+   * buffer offsets), communicates via MPI and create presynaptic connection
+   * infrastructure for secondary events.
+   */
+  void gather_secondary_target_data();
+
+  void write_done_marker_secondary_events_( const bool done );
+
+  void gather_secondary_events( const bool done );
+
+  bool deliver_secondary_events( const thread tid,
+    const bool called_from_wfr_update );
 
   /**
    * Update table of fixed modulos, including slice-based.
@@ -221,15 +243,118 @@ public:
   virtual void reset_timers_counters();
 
 private:
+  template < typename SpikeDataT >
+  void gather_spike_data_( const thread tid,
+    std::vector< SpikeDataT >& send_buffer,
+    std::vector< SpikeDataT >& recv_buffer );
+
+  void resize_send_recv_buffers_spike_data_();
+
   /**
-   * Rearrange the spike_register into a 2-dim structure. This is
-   * done by collecting the spikes from all threads in each slice of
-   * the min_delay_ interval.
+   * Moves spikes from on grid and off grid spike registers to correct
+   * locations in MPI buffers.
    */
-  void collocate_buffers_( bool );
+  template < typename TargetT, typename SpikeDataT >
+  bool collocate_spike_data_buffers_( const thread tid,
+    const AssignedRanks& assigned_ranks,
+    SendBufferPosition& send_buffer_position,
+    std::vector< std::vector< std::vector< std::vector< TargetT > > > >&
+      spike_register,
+    std::vector< SpikeDataT >& send_buffer );
 
+  /**
+   * Marks end of valid regions in MPI buffers.
+   */
+  template < typename SpikeDataT >
+  void set_end_and_invalid_markers_( const AssignedRanks& assigned_ranks,
+    const SendBufferPosition& send_buffer_position,
+    std::vector< SpikeDataT >& send_buffer );
 
-private:
+  /**
+   * Resets marker in MPI buffer that signals end of communication
+   * across MPI ranks.
+   */
+  template < typename SpikeDataT >
+  void reset_complete_marker_spike_data_( const AssignedRanks& assigned_ranks,
+    const SendBufferPosition& send_buffer_position,
+    std::vector< SpikeDataT >& send_buffer ) const;
+
+  /**
+   * Sets marker in MPI buffer that signals end of communication
+   * across MPI ranks.
+   */
+  template < typename SpikeDataT >
+  void set_complete_marker_spike_data_( const AssignedRanks& assigned_ranks,
+    const SendBufferPosition& send_buffer_position,
+    std::vector< SpikeDataT >& send_buffer ) const;
+
+  /**
+   * Reads spikes from MPI buffers and delivers them to ringbuffer of
+   * nodes.
+   */
+  template < typename SpikeDataT >
+  bool deliver_events_( const thread tid,
+    const std::vector< SpikeDataT >& recv_buffer );
+
+  /**
+   * Deletes all spikes from spike registers and resets spike
+   * counters.
+   */
+  void reset_spike_register_( const thread tid );
+
+  /**
+   * Resizes spike registers according minimal delay so it can
+   * accommodate all possible lags.
+   */
+  void resize_spike_register_( const thread tid );
+
+  /**
+   * Returns true if spike has been moved to MPI buffer, such that it
+   * can be removed by clean_spike_register. Required static function
+   * by std::remove_if.
+   */
+  static bool is_marked_for_removal_( const Target& target );
+
+  /**
+   * Removes spikes that were successfully moved to MPI buffers from
+   * spike register, such that they are not considered in (potential)
+   * next communication round.
+   */
+  void clean_spike_register_( const thread tid );
+
+  /**
+   * Fills MPI buffer for communication of connection information from
+   * presynaptic to postsynaptic side. Builds TargetData objects from
+   * SourceTable and connections information.
+   */
+  bool collocate_target_data_buffers_( const thread tid,
+    const AssignedRanks& assigned_ranks,
+    SendBufferPosition& send_buffer_position );
+
+  /**
+   * Sets marker in MPI buffer that signals end of communication
+   * across MPI ranks.
+   */
+  void set_complete_marker_target_data_( const thread tid,
+    const AssignedRanks& assigned_ranks,
+    const SendBufferPosition& send_buffer_position );
+
+  /**
+   * Reads TargetData objects from MPI buffers and creates Target
+   * objects on TargetTable (presynaptic part of connection
+   * infrastructure).
+   */
+  bool distribute_target_data_buffers_( const thread tid );
+
+  /**
+   * Sends event e to all targets of node source. Delivers events from
+   * devices directly to targets.
+   */
+  template < class EventT >
+  void send_local_( Node& source, EventT& e, const long lag );
+
+  //--------------------------------------------------//
+
   bool off_grid_spiking_; //!< indicates whether spikes are not constrained to
                           //!< the grid
 
@@ -256,69 +381,37 @@ private:
   std::vector< delay > slice_moduli_;
 
   /**
-   * Register for gids of neurons that spiked. This is a 3-dim
-   * structure.
-   * - First dim: Each thread has its own vector to write to.
-   * - Second dim: A vector for each slice of the min_delay interval
-   * - Third dim: The gids.
+   * Register for gids of neurons that spiked. This is a 4-dim
+   * structure. While spikes are written to the buffer they are
+   * immediately sorted by the thread that will later move the spikes to the
+   * MPI buffers.
+   * - First dim: write threads (from node to register)
+   * - Second dim: read threads (from register to MPI buffer)
+   * - Third dim: lag
+   * - Fourth dim: Target (will be converted in SpikeData)
    */
-  std::vector< std::vector< std::vector< unsigned int > > > spike_register_;
+  std::vector< std::vector< std::vector< std::vector< Target > > > >
+    spike_register_;
 
   /**
-   * Register for off-grid spikes.
-   * This is a 3-dim structure.
-   * - First dim: Each thread has its own vector to write to.
-   * - Second dim: A vector for each slice of the min_delay interval
-   * - Third dim: Struct containing GID and offset.
+   * Register for gids of precise neurons that spiked. This is a 4-dim
+   * structure. While spikes are written to the buffer they are
+   * immediately sorted by the thread that will later move the spikes to the
+   * MPI buffers.
+   * - First dim: write threads (from node to register)
+   * - Second dim: read threads (from register to MPI buffer)
+   * - Third dim: lag
+   * - Fourth dim: OffGridTarget (will be converted in OffGridSpikeData)
    */
-  std::vector< std::vector< std::vector< OffGridSpike > > >
-    offgrid_spike_register_;
+  std::vector< std::vector< std::vector< std::vector< OffGridTarget > > > >
+    off_grid_spike_register_;
 
   /**
    * Buffer to collect the secondary events
    * after serialization.
    */
-  std::vector< std::vector< unsigned int > > secondary_events_buffer_;
-
-  /**
-   * Buffer containing the gids of local neurons that spiked in the
-   * last min_delay_ interval. The single slices are separated by a
-   * marker value.
-   */
-  std::vector< unsigned int > local_grid_spikes_;
-
-  /**
-   * Buffer containing the gids of all neurons that spiked in the
-   * last min_delay_ interval. The single slices are separated by a
-   * marker value
-   */
-  std::vector< unsigned int > global_grid_spikes_;
-
-  /**
-   * Buffer containing the gids and offsets for local neurons that
-   * fired off-grid spikes in the last min_delay_ interval. The
-   * single slices are separated by a marker value.
-   */
-  std::vector< OffGridSpike > local_offgrid_spikes_;
-
-  /**
-   * Buffer containing the gids and offsets for all neurons that
-   * fired off-grid spikes in the last min_delay_ interval. The
-   * single slices are separated by a marker value.
-   */
-  std::vector< OffGridSpike > global_offgrid_spikes_;
-
-  /**
-   * Buffer containing the starting positions for the spikes from
-   * each process within the global_(off)grid_spikes_ buffer.
-   */
-  std::vector< int > displacements_;
-
-  /**
-   * Marker Value to be put between the data fields from different time
-   * steps during communication.
-   */
-  const unsigned int comm_marker_;
+  std::vector< unsigned int > send_buffer_secondary_events_;
+  std::vector< unsigned int > recv_buffer_secondary_events_;
 
   /**
    * Time that was spent on collocation of MPI buffers during the last call to
@@ -336,37 +429,100 @@ private:
    * Number of generated spike events (both off- and on-grid) during the last
    * call to simulate.
    */
-  unsigned long local_spike_counter_;
+  std::vector< unsigned long > local_spike_counter_;
+
+  std::vector< SpikeData > send_buffer_spike_data_;
+  std::vector< SpikeData > recv_buffer_spike_data_;
+  std::vector< OffGridSpikeData > send_buffer_off_grid_spike_data_;
+  std::vector< OffGridSpikeData > recv_buffer_off_grid_spike_data_;
+
+  std::vector< TargetData > send_buffer_target_data_;
+  std::vector< TargetData > recv_buffer_target_data_;
+  //!< whether size of MPI buffer for communication of connections was changed
+  bool buffer_size_target_data_has_changed_;
+  //!< whether size of MPI buffer for communication of spikes was changed
+  bool buffer_size_spike_data_has_changed_;
+
+  CompletedChecker gather_completed_checker_;
 };
 
+inline void
+EventDeliveryManager::reset_spike_register_( const thread tid )
+{
+  for ( std::vector< std::vector< std::vector< Target > > >::iterator it =
+          spike_register_[ tid ].begin();
+        it < spike_register_[ tid ].end();
+        ++it )
+  {
+    for ( std::vector< std::vector< Target > >::iterator iit = it->begin();
+          iit < it->end();
+          ++iit )
+    {
+      ( *iit ).clear();
+    }
+  }
+
+  for (
+    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
+      off_grid_spike_register_[ tid ].begin();
+    it < off_grid_spike_register_[ tid ].end();
+    ++it )
+  {
+    for (
+      std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin();
+      iit < it->end();
+      ++iit )
+    {
+      iit->clear();
+    }
+  }
+}
+
+inline bool
+EventDeliveryManager::is_marked_for_removal_( const Target& target )
+{
+  return target.is_processed();
+}
+
+inline void
+EventDeliveryManager::clean_spike_register_( const thread tid )
+{
+  for ( std::vector< std::vector< std::vector< Target > > >::iterator it =
+          spike_register_[ tid ].begin();
+        it < spike_register_[ tid ].end();
+        ++it )
+  {
+    for ( std::vector< std::vector< Target > >::iterator iit = it->begin();
+          iit < it->end();
+          ++iit )
+    {
+      std::vector< Target >::iterator new_end =
+        std::remove_if( iit->begin(), iit->end(), is_marked_for_removal_ );
+      iit->erase( new_end, iit->end() );
+    }
+  }
+  for (
+    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
+      off_grid_spike_register_[ tid ].begin();
+    it < off_grid_spike_register_[ tid ].end();
+    ++it )
+  {
+    for (
+      std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin();
+      iit < it->end();
+      ++iit )
+    {
+      std::vector< OffGridTarget >::iterator new_end =
+        std::remove_if( iit->begin(), iit->end(), is_marked_for_removal_ );
+      iit->erase( new_end, iit->end() );
+    }
+  }
+}
 
 inline void
 EventDeliveryManager::send_to_node( Event& e )
 {
   e();
-}
-
-inline void
-EventDeliveryManager::send_remote( thread t, SpikeEvent& e, const long lag )
-{
-  // Put the spike in a buffer for the remote machines
-  for ( int i = 0; i < e.get_multiplicity(); ++i )
-  {
-    spike_register_[ t ][ lag ].push_back( e.get_sender().get_gid() );
-  }
-}
-
-inline void
-EventDeliveryManager::send_offgrid_remote( thread t,
-  SpikeEvent& e,
-  const long lag )
-{
-  // Put the spike in a buffer for the remote machines
-  OffGridSpike ogs( e.get_sender().get_gid(), e.get_offset() );
-  for ( int i = 0; i < e.get_multiplicity(); ++i )
-  {
-    offgrid_spike_register_[ t ][ lag ].push_back( ogs );
-  }
 }
 
 inline bool
@@ -392,7 +548,7 @@ inline delay
 EventDeliveryManager::get_modulo( delay d )
 {
   // Note, here d may be 0, since bin 0 represents the "current" time
-  // when all evens due are read out.
+  // when all events due are read out.
   assert(
     static_cast< std::vector< delay >::size_type >( d ) < moduli_.size() );
 
@@ -402,25 +558,12 @@ EventDeliveryManager::get_modulo( delay d )
 inline delay
 EventDeliveryManager::get_slice_modulo( delay d )
 {
-  /// Note, here d may be 0, since bin 0 represents the "current" time
-  // when all evens due are read out.
+  // Note, here d may be 0, since bin 0 represents the "current" time
+  // when all events due are read out.
   assert( static_cast< std::vector< delay >::size_type >( d )
     < slice_moduli_.size() );
 
   return slice_moduli_[ d ];
-}
-
-inline void
-EventDeliveryManager::send_remote( thread t, SecondaryEvent& e )
-{
-
-  // put the secondary events in a buffer for the remote machines
-  size_t old_size = secondary_events_buffer_[ t ].size();
-
-  secondary_events_buffer_[ t ].resize( old_size + e.size() );
-  std::vector< unsigned int >::iterator it =
-    secondary_events_buffer_[ t ].begin() + old_size;
-  e >> it;
 }
 
 } // namespace nest

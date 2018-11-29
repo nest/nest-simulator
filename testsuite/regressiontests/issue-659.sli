@@ -1,0 +1,64 @@
+/*
+ *  issue-659.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/** @BeginDocumentation
+
+Name: testsuite::issue-659 Check that we get an error if trying to call Run or Cleanup without calling Prepare first.
+
+Synopsis: (issue-659) run -> NEST exits if test fails
+
+Author: Håkon Mørk, 2018-03-07
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+{
+  % Run without prepare.
+  ResetKernel
+  10 Run
+} fail_or_die
+
+{
+  % Cleanup without prepare.
+  ResetKernel
+  Cleanup
+} fail_or_die
+
+{
+  % Prepare twice.
+  ResetKernel
+  Prepare
+  Prepare
+} fail_or_die
+
+{
+  % Run after cleanup, without prepare.
+  ResetKernel
+  Prepare
+  10 Run
+  Cleanup
+  10 Run
+} fail_or_die
+

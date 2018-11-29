@@ -22,16 +22,18 @@ set( nestkernel_sources
     recordables_map.h
     archiving_node.h archiving_node.cpp
     common_synapse_properties.h common_synapse_properties.cpp
+    completed_checker.h completed_checker.cpp
     sibling_container.h sibling_container.cpp
     subnet.h subnet.cpp
     connection.h
     connection_label.h
     common_properties_hom_w.h
     syn_id_delay.h
-    connector_base.h connector_base.cpp
+    connector_base.h connector_base_impl.h
     connector_model.h connector_model_impl.h connector_model.cpp
     connection_id.h connection_id.cpp
     device.h device.cpp
+    device_node.h
     dynamicloader.h dynamicloader.cpp
     event.h event.cpp
     exceptions.h exceptions.cpp
@@ -87,6 +89,14 @@ set( nestkernel_sources
     recording_backend_screen.h recording_backend_screen.cpp
     recording_backend_arbor.h recording_backend_arbor.cpp
     manager_interface.h
+    target_table.h target_table.cpp
+    target_table_devices.h target_table_devices.cpp target_table_devices_impl.h
+    target.h target_data.h static_assert.h
+    send_buffer_position.h
+    source.h
+    source_table.h source_table.cpp
+    source_table_position.h
+    spike_data.h
     )
 
 if ( HAVE_SIONLIB )

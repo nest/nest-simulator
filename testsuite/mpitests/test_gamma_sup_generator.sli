@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_gamma_sup_generator - Test parallel generation of trains
 
 Synopsis: nest_indirect test_gamma_sup_generator.sli -> -

@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_noise_generator - Test parallel noise injection
 
 Synopsis: nest_indirect test_noise_generator.sli -> -

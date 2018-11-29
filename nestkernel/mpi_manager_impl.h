@@ -39,7 +39,7 @@
 #include "kernel_manager.h"
 
 inline nest::thread
-nest::MPIManager::get_process_id( nest::thread vp ) const
+nest::MPIManager::get_process_id_of_vp( const thread vp ) const
 {
   return vp % num_processes_;
 }
@@ -95,7 +95,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   bool remote )
 {
   size_t np = get_num_processes();
-  if ( np > 1 && remote )
+  if ( np > 1 and remote )
   {
     std::vector< long > localnodes;
     for ( typename NodeListType::iterator n = local_nodes.begin();
@@ -165,7 +165,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 {
   size_t np = get_num_processes();
 
-  if ( np > 1 && remote )
+  if ( np > 1 and remote )
   {
     std::vector< long > localnodes;
     if ( params->empty() )
@@ -196,7 +196,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
           {
             const Token token = node_status->lookup( i->first );
             if ( not( token == i->second
-                   || token.matches_as_string( i->second ) ) )
+                   or token.matches_as_string( i->second ) ) )
             {
               match = false;
               break;
@@ -278,7 +278,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
           {
             const Token token = node_status->lookup( i->first );
             if ( not( token == i->second
-                   || token.matches_as_string( i->second ) ) )
+                   or token.matches_as_string( i->second ) ) )
             {
               match = false;
               break;
@@ -297,6 +297,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   }
 }
 
+inline nest::thread
+nest::MPIManager::get_process_id_of_gid( const index gid ) const
+{
+  return gid % kernel().vp_manager.get_num_virtual_processes() % num_processes_;
+}
 
 #else // HAVE_MPI
 
@@ -352,7 +357,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
         {
           const Token token = node_status->lookup( i->first );
           if ( not(
-                 token == i->second || token.matches_as_string( i->second ) ) )
+                 token == i->second or token.matches_as_string( i->second ) ) )
           {
             match = false;
             break;
@@ -368,6 +373,12 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     }
   }
   std::sort( all_nodes.begin(), all_nodes.end() );
+}
+
+inline nest::thread
+nest::MPIManager::get_process_id_of_gid( const index gid ) const
+{
+  return 0;
 }
 
 #endif

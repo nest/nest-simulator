@@ -25,6 +25,7 @@
 
 // Generated includes:
 #include "config.h"
+#include <sstream>
 
 #ifdef HAVE_GSL
 
@@ -41,44 +42,60 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
- Name: aeif_cond_alpha_multisynapse - Conductance based adaptive exponential
-                                      integrate-and-fire neuron model according
-                                      to Brette and Gerstner (2005) with
-                                      multiple synaptic rise time and decay
-                                      time constants, and synaptic conductance
-                                      modeled by an alpha function.
+namespace nest
+{
+/**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int
+aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
 
- Description:
+/** @BeginDocumentation
+Name: aeif_cond_alpha_multisynapse - Conductance based adaptive exponential
+                                     integrate-and-fire neuron model according
+                                     to Brette and Gerstner (2005) with
+                                     multiple synaptic rise time and decay
+                                     time constants, and synaptic conductance
+                                     modeled by an alpha function.
 
- aeif_cond_alpha_multisynapse is a conductance-based adaptive exponential
- integrate-and-fire neuron model. It allows an arbitrary number of synaptic
- time constants. Synaptic conductance is modeled by an alpha function, as
- described by A. Roth and M.C.W. van Rossum in Computational Modeling Methods
- for Neuroscientists, MIT Press 2013, Chapter 6.
+Description:
 
- The time constants are supplied by an array, "tau_syn", and the pertaining
- synaptic reversal potentials are supplied by the array "E_rev". Port numbers
- are automatically assigned in the range from 1 to n_receptors.
- During connection, the ports are selected with the property "receptor_type".
+aeif_cond_alpha_multisynapse is a conductance-based adaptive exponential
+integrate-and-fire neuron model. It allows an arbitrary number of synaptic
+time constants. Synaptic conductance is modeled by an alpha function, as
+described by A. Roth and M.C.W. van Rossum in Computational Modeling Methods
+for Neuroscientists, MIT Press 2013, Chapter 6.
 
- The membrane potential is given by the following differential equation:
+The time constants are supplied by an array, "tau_syn", and the pertaining
+synaptic reversal potentials are supplied by the array "E_rev". Port numbers
+are automatically assigned in the range from 1 to n_receptors.
+During connection, the ports are selected with the property "receptor_type".
 
- C dV/dt = -g_L(V-E_L) + g_L*Delta_T*exp((V-V_T)/Delta_T) + I_syn_tot(V, t)
-           - w + I_e
+The membrane potential is given by the following differential equation:
 
- where
+C dV/dt = -g_L(V-E_L) + g_L*Delta_T*exp((V-V_T)/Delta_T) + I_syn_tot(V, t)
+          - w + I_e
 
- I_syn_tot(V,t) = \sum_i g_i(t) (V - E_{rev,i}) ,
+where
 
- the synapse i is excitatory or inhibitory depending on the value of E_{rev,i}
- and the differential equation for the spike-adaptation current w is:
+I_syn_tot(V,t) = \sum_i g_i(t) (V - E_{rev,i}) ,
 
- tau_w * dw/dt = a(V - E_L) - w
+the synapse i is excitatory or inhibitory depending on the value of E_{rev,i}
+and the differential equation for the spike-adaptation current w is:
 
- When the neuron fires a spike, the adaptation current w <- w + b.
+tau_w * dw/dt = a(V - E_L) - w
+
+When the neuron fires a spike, the adaptation current w <- w + b.
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
 Dynamic state variables:
@@ -110,68 +127,48 @@ Integration parameters
                           GSL integrator. Reduce it if NEST complains about
                           numerical instabilities.
 
- Examples:
+Examples:
 
- import nest
- import numpy as np
+import nest
+import numpy as np
 
- neuron = nest.Create('aeif_cond_alpha_multisynapse')
- nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
- nest.SetStatus(neuron, {'E_rev':[0.0, 0.0, 0.0, -85.0],
-                         'tau_syn':[1.0, 5.0, 10.0, 8.0]})
+neuron = nest.Create('aeif_cond_alpha_multisynapse')
+nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
+nest.SetStatus(neuron, {'E_rev':[0.0, 0.0, 0.0, -85.0],
+                        'tau_syn':[1.0, 5.0, 10.0, 8.0]})
 
- spike = nest.Create('spike_generator', params = {'spike_times':
-                                                 np.array([10.0])})
+spike = nest.Create('spike_generator', params = {'spike_times':
+                                                np.array([10.0])})
 
- voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
+voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
 
- delays=[1.0, 300.0, 500.0, 700.0]
- w=[1.0, 1.0, 1.0, 1.0]
- for syn in range(4):
-     nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
-                                           'receptor_type': 1 + syn,
-                                           'weight': w[syn],
-                                           'delay': delays[syn]})
+delays=[1.0, 300.0, 500.0, 700.0]
+w=[1.0, 1.0, 1.0, 1.0]
+for syn in range(4):
+    nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+                                          'receptor_type': 1 + syn,
+                                          'weight': w[syn],
+                                          'delay': delays[syn]})
 
- nest.Connect(voltmeter, neuron)
+nest.Connect(voltmeter, neuron)
 
- nest.Simulate(1000.0)
- dmm = nest.GetStatus(voltmeter)[0]
- Vms = dmm["events"]["V_m"]
- ts = dmm["events"]["times"]
- import pylab
- pylab.figure(2)
- pylab.plot(ts, Vms)
- pylab.show()
+nest.Simulate(1000.0)
+dmm = nest.GetStatus(voltmeter)[0]
+Vms = dmm["events"]["V_m"]
+ts = dmm["events"]["times"]
+import pylab
+pylab.figure(2)
+pylab.plot(ts, Vms)
+pylab.show()
 
- Sends: SpikeEvent
+Sends: SpikeEvent
 
- Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
- author: Hans Ekkehard Plesser, based on aeif_cond_beta_multisynapse
- SeeAlso: aeif_cond_alpha_multisynapse
- */
+Author: Hans Ekkehard Plesser, based on aeif_cond_beta_multisynapse
 
-namespace nest
-{
-/**
- * Function computing right-hand side of ODE for GSL solver.
- * @note Must be declared here so we can befriend it in class.
- * @note Must have C-linkage for passing to GSL. Internally, it is
- *       a first-class C++ function, but cannot be a member function
- *       because of the C-linkage.
- * @note No point in declaring it inline, since it is called
- *       through a function pointer.
- * @param void* Pointer to model neuron instance.
- */
-extern "C" int
-aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
-
-/**
- * Conductance based exponential integrate-and-fire neuron model according to
- * Brette and Gerstner
- * (2005) with multiple ports.
- */
+SeeAlso: aeif_cond_alpha_multisynapse
+*/
 class aeif_cond_alpha_multisynapse : public Archiving_Node
 {
 
@@ -212,9 +209,10 @@ private:
   void calibrate();
   void update( Time const&, const long, const long );
 
-  // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< aeif_cond_alpha_multisynapse >;
-  friend class UniversalDataLogger< aeif_cond_alpha_multisynapse >;
+  // The next three classes need to be friends to access the State_ class/member
+  friend class DynamicRecordablesMap< aeif_cond_alpha_multisynapse >;
+  friend class DynamicUniversalDataLogger< aeif_cond_alpha_multisynapse >;
+  friend class DataAccessFunctor< aeif_cond_alpha_multisynapse >;
 
   // ----------------------------------------------------------------
 
@@ -286,8 +284,8 @@ private:
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2;        // V_M, W
-    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2; // DG, G
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2; // V_M, W
+    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 2; // DG, G
 
     std::vector< double > y_; //!< neuron state
     int r_;                   //!< number of refractory steps remaining
@@ -312,7 +310,7 @@ private:
     Buffers_( const Buffers_&, aeif_cond_alpha_multisynapse& );
 
     //! Logger for all analog data
-    UniversalDataLogger< aeif_cond_alpha_multisynapse > logger_;
+    DynamicUniversalDataLogger< aeif_cond_alpha_multisynapse > logger_;
 
     /** buffers and sums up incoming spikes/currents */
     std::vector< RingBuffer > spikes_;
@@ -361,16 +359,6 @@ private:
     unsigned int refractory_counts_;
   };
 
-  // Access functions for UniversalDataLogger -------------------------------
-
-  //! Read out state vector elements, used by UniversalDataLogger
-  template < State_::StateVecElems elem >
-  double
-  get_y_elem_() const
-  {
-    return S_.y_[ elem ];
-  }
-
   // Data members -----------------------------------------------------------
 
   /**
@@ -386,8 +374,25 @@ private:
   Buffers_ B_;
   /** @} */
 
+  // Access functions for UniversalDataLogger -------------------------------
+
   //! Mapping of recordables names to access functions
-  static RecordablesMap< aeif_cond_alpha_multisynapse > recordablesMap_;
+  DynamicRecordablesMap< aeif_cond_alpha_multisynapse > recordablesMap_;
+
+  // Data Access Functor getter
+  DataAccessFunctor< aeif_cond_alpha_multisynapse > get_data_access_functor(
+    size_t elem );
+  inline double
+  get_state_element( size_t elem )
+  {
+    return S_.y_[ elem ];
+  };
+
+  // Utility function that inserts the synaptic conductances to the
+  // recordables map
+
+  Name get_g_receptor_name( size_t receptor );
+  void insert_conductance_recordables( size_t first = 0 );
 };
 
 inline port
@@ -432,25 +437,6 @@ aeif_cond_alpha_multisynapse::get_status( DictionaryDatum& d ) const
   Archiving_Node::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
-}
-
-inline void
-aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
-{
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
-
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
-  Archiving_Node::set_status( d );
-
-  // if we get here, temporaries contain consistent set of properties
-  P_ = ptmp;
-  S_ = stmp;
 }
 
 } // namespace

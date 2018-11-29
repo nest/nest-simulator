@@ -26,6 +26,7 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection_label.h"
+#include "connector_base_impl.h"
 #include "delay_checker.h"
 #include "event.h"
 #include "kernel_manager.h"
@@ -236,14 +237,60 @@ public:
     const CommonSynapseProperties& );
 
   Node*
-  get_target( thread t ) const
+  get_target( const thread tid ) const
   {
-    return target_.get_target_ptr( t );
+    return target_.get_target_ptr( tid );
   }
   rport
   get_rport() const
   {
     return target_.get_rport();
+  }
+
+  /**
+   * Sets a flag in the connection to signal that the following connection has
+   * the same source.
+   *
+   * @see has_source_subsequent_targets
+   */
+  void
+  set_has_source_subsequent_targets( const bool subsequent_targets )
+  {
+    syn_id_delay_.set_has_source_subsequent_targets( subsequent_targets );
+  }
+
+  /**
+   * Returns a flag denoting whether the connection has source subsequent
+   * targets.
+   *
+   * @see set_has_source_subsequent_targets
+   */
+  bool
+  has_source_subsequent_targets() const
+  {
+    return syn_id_delay_.has_source_subsequent_targets();
+  }
+
+  /**
+   * Disables the connection.
+   *
+   * @see is_disabled
+   */
+  void
+  disable()
+  {
+    syn_id_delay_.disable();
+  }
+
+  /**
+   * Returns a flag denoting if the connection is disabled.
+   *
+   * @see disable
+   */
+  bool
+  is_disabled() const
+  {
+    return syn_id_delay_.is_disabled();
   }
 
 protected:
@@ -260,7 +307,7 @@ protected:
   void check_connection_( Node& dummy_target,
     Node& source,
     Node& target,
-    rport receptor_type );
+    const rport receptor_type );
 
   /* the order of the members below is critical
      as it influcences the size of the object. Please leave unchanged
@@ -281,7 +328,7 @@ inline void
 Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   Node& source,
   Node& target,
-  rport receptor_type )
+  const rport receptor_type )
 {
   // 1. does this connection support the event type sent by source
   // try to send event from source to dummy_target

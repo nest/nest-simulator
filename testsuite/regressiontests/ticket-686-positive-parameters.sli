@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-686 - catch nodes which do not require tau_*, C_m > 0
 
@@ -153,21 +153,28 @@ skipped_models { modeldict exch undef } forall
 
     /model Set
 
-    % now test one at a time    
-    model GetPositiveKeys {
+    model /iaf_psc_exp_ps_lossless neq 
+    {
+      % now test one at a time    
+      model GetPositiveKeys {
+  
+        /key Set      
+  
+        /nrn model Create def
+        /newval nrn key get 1.0 add def
+        nrn << >> dup key newval put SetStatus
+        nrn key get newval eq 
+  
+      } Map
 
-      /key Set      
-
-      /nrn model Create def
-      /newval nrn key get 1.0 add def
-      nrn << >> dup key newval put SetStatus
-      nrn key get newval eq 
-
-    } Map
-
-    true exch { and } Fold
-    dup not { (ERROR2: ) model cvs join == } if
-
+      true exch { and } Fold
+      dup not { (ERROR2: ) model cvs join == } if
+    }
+    {
+      true
+    }
+    ifelse
+    
   }  
   Map   % modeldict keys
 

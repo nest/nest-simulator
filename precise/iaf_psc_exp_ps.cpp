@@ -375,15 +375,21 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
       {
         // time is measured backward: inverse order in difference
         const double ministep = last_offset - ev_offset;
+        assert( ministep >= 0 );
 
-        propagate_( ministep );
-
-        // check for threshold crossing during ministep
-        // this must be done before adding the input, since
-        // interpolation requires continuity
-        if ( S_.y2_ >= P_.U_th_ )
+        // dt == 0 may occur if two spikes arrive simultaneously;
+        // no propagation in that case; see #368
+        if ( ministep > 0 )
         {
-          emit_spike_( origin, lag, V_.h_ms_ - last_offset, ministep );
+          propagate_( ministep );
+
+          // check for threshold crossing during ministep
+          // this must be done before adding the input, since
+          // interpolation requires continuity
+          if ( S_.y2_ >= P_.U_th_ )
+          {
+            emit_spike_( origin, lag, V_.h_ms_ - last_offset, ministep );
+          }
         }
 
         // handle event
@@ -437,13 +443,13 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
 void
 nest::iaf_psc_exp_ps::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   /* We need to compute the absolute time stamp of the delivery time
      of the spike, since spikes might spend longer than min_delay_
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
-  const long Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
+  const long Tdeliver = e.get_stamp().get_steps() + e.get_delay_steps() - 1;
 
   B_.events_.add_spike(
     e.get_rel_delivery_steps(
@@ -456,7 +462,7 @@ nest::iaf_psc_exp_ps::handle( SpikeEvent& e )
 void
 nest::iaf_psc_exp_ps::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();
@@ -479,10 +485,9 @@ nest::iaf_psc_exp_ps::handle( DataLoggingRequest& e )
 void
 nest::iaf_psc_exp_ps::propagate_( const double dt )
 {
-  if ( dt == 0 )
-  {
-    return; // if two input spikes arrived simultaneously (#368)
-  }
+  // dt == 0 may occur if two spikes arrive simultaneously;
+  // propagate_() shall not be called then; see #368.
+  assert( dt > 0 );
 
   const double expm1_tau_ex = numerics::expm1( -dt / P_.tau_ex_ );
   const double expm1_tau_in = numerics::expm1( -dt / P_.tau_in_ );

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_conngen_interface - Test runability of all CGConnect variants
 
    Synopsis: (test_conngen_interface) run
@@ -43,7 +43,7 @@ M_ERROR setverbosity
 /unittest using
 
 % Only run the test if NEST was compiled with support for libneurosim
-statusdict/have_libneurosim :: not { exit_test_gracefully } if 
+statusdict/have_libneurosim :: not { /skipped exit_test_gracefully } if
 
 % Tell the ConnectionGenerator interface, which implementation to use
 (CSA) (libcsa.so) CGSelectImplementation

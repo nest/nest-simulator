@@ -17,8 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>
 
-cmake_minimum_required( VERSION 2.8.12 )
-# juqueen 2.8.12.2
+cmake_minimum_required( VERSION 3.1 )
 
 # add cmake modules: for all `include(...)` first look here
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
@@ -26,9 +25,9 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 project( nest CXX C )
 set( NEST_USER_EMAIL "nest_user@nest-initiative.org" )
 
-# VERSION exported to libnestutil/config.h, extras/create_release.sh
+# VERSION exported to libnestutil/config.h, pynest/setup.py
 set( NEST_VERSION_MAJOR 2 )
-set( NEST_VERSION_MINOR 14 )
+set( NEST_VERSION_MINOR 16 )
 set( NEST_VERSION_PATCHLEVEL 0 )
 
 set( NEST_VERSION_VERSION "${NEST_VERSION_MAJOR}.${NEST_VERSION_MINOR}.${NEST_VERSION_PATCHLEVEL}" )
@@ -51,10 +50,11 @@ set( external-modules OFF CACHE STRING "External NEST modules to be linked in, s
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
 set( with-sionlib OFF CACHE STRING "Request the use of SIONlib. Optionally give the directory where SIONlib is installed. [default=OFF]" )
+set( with-boost OFF CACHE STRING "Request compilation with Boost, required for C++ testsuite. Optionally give directory with Boost installation. [default=OFF]" )
 
 # set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
-set( with-openmp ON CACHE STRING "Enable OpenMP multithreading. Optional: set OMP flag. [default=ON]" )
+set( with-openmp ON CACHE BOOL "Enable OpenMP multithreading. Optional: set OMP flag. [default=ON]" )
 
 # define default libraries
 set( with-gsl ON CACHE STRING "Find a gsl library. To set a specific gsl installation, set install path. [default=ON]" )
@@ -77,6 +77,9 @@ set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1'. Separate
 # should be set via toolchain files
 set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
 option( k-computer "Enable K computer." OFF )
+
+set( disable-timing OFF CACHE BOOL "Disable measurements via Stopwatches. [default OFF]" )
+set( disable-counts ON CACHE BOOL "Disable measurements of call counts. [default ON]" )
 
 ################################################################################
 ##################      Project Directory variables           ##################
@@ -104,6 +107,11 @@ endif ()
 ##################           Find utility programs            ##################
 ################################################################################
 
+# needed for pynest test suite
+if ( ${with-python} STREQUAL "ON" OR  ${with-python} STREQUAL "2" OR  ${with-python} STREQUAL "3" )
+  find_program( NOSETESTS NAMES nosetests )
+endif ()
+
 # needed for target doc and fulldoc
 find_package( Doxygen )
 find_program( SED NAMES sed gsed )
@@ -122,6 +130,7 @@ include( CPackVariables )
 include( CheckExtraCompilerFeatures )
 include( ConfigureSummary )
 include( GetTriple )
+include( DefaultCompilerFlags )
 
 # get triples arch-vendor-os
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
@@ -130,6 +139,9 @@ get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_T
 # set cpack variables and
 # generate CPackConfig.cmake CPackSourceConfig.cmake files
 nest_set_cpack_variables()
+
+# set default compiler flags
+nest_set_default_compiler_flags()
 
 # Process the command line arguments
 nest_process_with_optimize()
@@ -155,6 +167,7 @@ nest_process_with_libneurosim()
 nest_process_with_music()
 nest_process_with_sionlib()
 nest_process_with_mpi4py()
+nest_process_with_boost()
 
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
@@ -191,7 +204,7 @@ if ( HAVE_PYTHON )
       NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
       PYTHON="${PYTHON}"
       NEST_PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}"
-      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
+      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     COMMENT "Execute NEST's testsuite...."
   )
@@ -199,17 +212,11 @@ else ()
   add_custom_target( installcheck
     COMMAND ${CMAKE_COMMAND} -E env
       NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
-      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
+      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     COMMENT "Execute NEST's testsuite...."
   )
 endif ()
-
-add_custom_target( check
-    COMMAND export CTEST_OUTPUT_ON_FAILURE=1 &&
-    ${CMAKE_CTEST_COMMAND} -C ${CMAKE_BUILD_TYPE}
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-    )
 
 ################################################################################
 ##################        Define Subdirectories here          ##################
@@ -274,6 +281,7 @@ set( ALL_LIBS
   "-lrandom"
   "-lsli"
   "-lnestkernel"
+  "-ltopology"
   "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${READLINE_LIBRARIES}"
@@ -339,18 +347,8 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/extras/EditorSupport/emacs/sli.el.in"
-    "${PROJECT_BINARY_DIR}/extras/EditorSupport/emacs/sli.el" @ONLY
-)
-
-configure_file(
     "${PROJECT_SOURCE_DIR}/extras/nest-config.in"
     "${PROJECT_BINARY_DIR}/extras/nest-config" @ONLY
-)
-
-configure_file(
-    "${PROJECT_SOURCE_DIR}/extras/create_release.sh.in"
-    "${PROJECT_BINARY_DIR}/extras/create_release.sh" @ONLY
 )
 
 configure_file(
@@ -362,8 +360,12 @@ configure_file(
 ##################            Install Extra Files             ##################
 ################################################################################
 
-install( FILES LICENSE README.md NEWS
+install( FILES LICENSE README.md
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
+
+add_custom_target( install-nodoc
+  COMMAND make NEST_INSTALL_NODOC=true install
+)
 
 nest_print_config_summary()

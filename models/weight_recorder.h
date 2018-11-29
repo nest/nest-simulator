@@ -28,43 +28,42 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
 #include "nest_types.h"
-#include "node.h"
 #include "recording_device.h"
 #include "kernel_manager.h"
 
-/* BeginDocumentation
+namespace nest
+{
 
-Name: weight_recorder - Device for recording the weights of spikes.
+/** @BeginDocumentation
+Name: weight_recorder - Device for detecting single spikes.
 
 Description:
-The weight_recorder is a recording device used to record weights from
-synapses by storing source GID, target GID, time and weight
-of each received spike.
-In order to restrict recording to a subset of connected synapses, the
-parameters 'senders' and 'targets' can be set accordingly.
-Please note that data is not necessarily recorded in chronological
-order.
+
+The weight_recorder device is a recording device. It is used to record
+weights from synapses. Data is recorded in memory or to file as for all
+RecordingDevices.
+By default, source GID, target GID, time and weight of each spike is recorded.
+
+In order to record only from a subset of connected synapses, the
+weight_recorder accepts the parameters 'senders' and 'targets', with which the
+recorded data is limited to the synapses with the corresponding source or target
+gid.
+
+The weight recorder can also record weights with full precision
+from neurons emitting precisely timed spikes. Set /precise_times to
+achieve this.
+
+Data is not necessarily written to file in chronological order.
 
 Receives: WeightRecordingEvent
 
 SeeAlso: weight_recorder, spike_detector, Device, RecordingDevice
 */
 
-namespace nest
-{
-/**
- * Weight recorder class.
- *
- * This class manages weight recording for normal and precise spikes. It
- * receives events via its handle(WeightRecordingEvent&) method, buffers them,
- *and
- * stores them via its RecordingDevice in the update() method.
- *
- * @ingroup Devices
- */
 class weight_recorder : public RecordingDevice
 {
 

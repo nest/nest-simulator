@@ -35,8 +35,9 @@
 namespace nest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: Device - General properties of devices.
+
    Description:
 
    Devices are elements that inject signals into a network (stimulating

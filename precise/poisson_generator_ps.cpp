@@ -90,7 +90,7 @@ nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d )
  * ---------------------------------------------------------------- */
 
 nest::poisson_generator_ps::poisson_generator_ps()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
 {
@@ -98,7 +98,7 @@ nest::poisson_generator_ps::poisson_generator_ps()
 
 nest::poisson_generator_ps::poisson_generator_ps(
   const poisson_generator_ps& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
 {

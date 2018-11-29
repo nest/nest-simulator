@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_iaf_min_delay_simblocks - sli script for testing block wise simulation
 
 Synopsis: (test_iaf_min_delay_simblocks) run -> compares results for different min_delays

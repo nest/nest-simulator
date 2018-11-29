@@ -119,6 +119,16 @@ public:
    */
   index size() const;
 
+  /**
+   * Returns the maximal number of nodes per virtual process.
+   */
+  index get_max_num_local_nodes() const;
+
+  /**
+   * Returns the number of devices per virtual process.
+   */
+  index get_num_local_devices() const;
+
   Subnet* get_root() const; ///< return root subnet.
   Subnet* get_cwn() const;  ///< current working node.
 
@@ -233,6 +243,8 @@ public:
    * Number of process-local nodes.
    */
   size_t local_nodes_size() const;
+  bool have_nodes_changed() const;
+  void set_have_nodes_changed( const bool changed );
 
 private:
   /**
@@ -295,6 +307,11 @@ private:
   //! Network size when nodes_vec_ was last updated
   index nodes_vec_network_size_;
   size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
+
+  index num_local_devices_; //!< stores number of local devices
+
+  bool have_nodes_changed_; //!< true if new nodes have been created
+                            //!< since startup or last call to simulate
 };
 
 inline index
@@ -361,6 +378,18 @@ inline size_t
 NodeManager::local_nodes_size() const
 {
   return local_nodes_.size();
+}
+
+inline bool
+NodeManager::have_nodes_changed() const
+{
+  return have_nodes_changed_;
+}
+
+inline void
+NodeManager::set_have_nodes_changed( const bool changed )
+{
+  have_nodes_changed_ = changed;
 }
 
 } // namespace

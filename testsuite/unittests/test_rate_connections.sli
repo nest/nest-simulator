@@ -20,7 +20,7 @@
  *
  */
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
 
     Name: testsuite::test_rate_connections - This test ensures that rate connections
     (rate_connection_instantaneous, rate_connection_delayed, diffusion_connection) work properly.

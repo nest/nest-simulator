@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
     Name: testsuite::issue-600 - Checks that waveform relaxation works with MPI
 
     Synopsis: (issue-600) run -> - 

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_cva - check if cva function works
 
 Synopsis: (test_cva) run -> 

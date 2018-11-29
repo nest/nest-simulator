@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
     Name: testsuite::test_hh_cond_exp_traub - sli script for overall test of hh_cond_exp_traub model
 
     Synopsis: (test_hh_cond_exp_traub) run -> 
@@ -61,11 +61,11 @@ ResetKernel
    /E_Na    40.0
    /E_K    -80.0   
    /E_L	   -70.0
-   %/U_tr   -60.0
    /E_ex     1.0
    /E_in   -90.0
    /tau_syn_ex 0.3
    /tau_syn_in 3.0
+   /t_ref    3.5
    /I_e	     1.0
 >> /hh_params Set
 
@@ -85,6 +85,7 @@ neuron GetStatus /result Set
   result /E_in get 6 ToUnitTestPrecision -90 eq and
   result /tau_syn_ex get 6 ToUnitTestPrecision 0.3 eq and
   result /tau_syn_in get 6 ToUnitTestPrecision 3 eq and
+  result /t_ref get 6 ToUnitTestPrecision 3.5 eq and
   result /I_e get 6 ToUnitTestPrecision 1 eq and
 } assert_or_die
 
@@ -115,7 +116,7 @@ vm neuron Connect
 mm neuron Connect
 neuron sp_det Connect
 
-%% Test: Simulation
+%% Test: Simulation --- check that implementation provides consistent results
 5 Simulate
 
 {
@@ -150,5 +151,5 @@ neuron sp_det Connect
 
 {
   sp_det [/events /times] get cva dup ==
-  [2 3 4 5 6 7] eq 
+  [2] eq 
 } assert_or_die

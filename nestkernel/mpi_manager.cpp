@@ -58,9 +58,18 @@ MPI_Datatype MPI_Type< unsigned long >::type = MPI_UNSIGNED_LONG;
 nest::MPIManager::MPIManager()
   : num_processes_( 1 )
   , rank_( 0 )
-  , send_buffer_size_( 1 )
-  , recv_buffer_size_( 1 )
   , use_mpi_( false )
+  , buffer_size_target_data_( 1 )
+  , buffer_size_spike_data_( 1 )
+  , chunk_size_secondary_events_in_int_( 0 )
+  , max_buffer_size_target_data_( 16777216 )
+  , max_buffer_size_spike_data_( 8388608 )
+  , adaptive_target_buffers_( true )
+  , adaptive_spike_buffers_( true )
+  , growth_factor_buffer_spike_data_( 1.5 )
+  , growth_factor_buffer_target_data_( 1.5 )
+  , send_recv_count_spike_data_per_rank_( 0 )
+  , send_recv_count_target_data_per_rank_( 0 )
 #ifdef HAVE_MPI
   , comm_step_( std::vector< int >() )
   , COMM_OVERFLOW_ERROR( std::numeric_limits< unsigned int >::max() )
@@ -70,20 +79,33 @@ nest::MPIManager::MPIManager()
 {
 }
 
-#ifdef HAVE_MPI
-void nest::MPIManager::set_communicator(MPI_Comm global_comm)
+#ifndef HAVE_MPI
+
+void
+nest::MPIManager::init_mpi( int* argc, char** argv[] )
+{
+  // if ! HAVE_MPI, initialize process entries for 1 rank
+  // use 2 processes entries (need at least two
+  // entries per process to use flag of first entry as validity and
+  // last entry to communicate end of communication)
+  kernel().mpi_manager.set_buffer_size_target_data( 2 );
+  kernel().mpi_manager.set_buffer_size_spike_data( 2 );
+}
+
+#else /* HAVE_MPI */
+
+void
+nest::MPIManager::set_communicator(MPI_Comm global_comm)
 {
   comm = global_comm;
   MPI_Comm_size( comm, &num_processes_ );
   MPI_Comm_rank( comm, &rank_ );
   recv_buffer_size_ = send_buffer_size_ * get_num_processes();
 }
-#endif
 
 void
 nest::MPIManager::init_mpi( int* argc, char** argv[] )
 {
-#ifdef HAVE_MPI
   int init;
   MPI_Initialized( &init );
 
@@ -99,6 +121,17 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
     set_communicator(MPI_COMM_WORLD);
 #endif /* #ifdef HAVE_MUSIC */
   }
+
+  MPI_Comm_size( comm, &num_processes_ );
+  MPI_Comm_rank( comm, &rank_ );
+
+  // use at least 2 * number of processes entries (need at least two
+  // entries per process to use flag of first entry as validity and
+  // last entry to communicate end of communication)
+  kernel().mpi_manager.set_buffer_size_target_data(
+    2 * kernel().mpi_manager.get_num_processes() );
+  kernel().mpi_manager.set_buffer_size_spike_data(
+    2 * kernel().mpi_manager.get_num_processes() );
 
   // create off-grid-spike type for MPI communication
   // creating derived datatype
@@ -127,8 +160,9 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   MPI_Type_commit( &MPI_OFFGRID_SPIKE );
 
   use_mpi_ = true;
-#endif /* #ifdef HAVE_MPI */
 }
+
+#endif /* #ifdef HAVE_MPI */
 
 void
 nest::MPIManager::initialize()
@@ -141,16 +175,70 @@ nest::MPIManager::finalize()
 }
 
 void
-nest::MPIManager::set_status( const DictionaryDatum& )
+nest::MPIManager::set_status( const DictionaryDatum& dict )
 {
+  updateValue< bool >(
+    dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
+  updateValue< bool >(
+    dict, names::adaptive_spike_buffers, adaptive_spike_buffers_ );
+
+  long new_buffer_size_target_data = buffer_size_target_data_;
+  updateValue< long >(
+    dict, names::buffer_size_target_data, new_buffer_size_target_data );
+  if ( new_buffer_size_target_data
+      != static_cast< long >( buffer_size_target_data_ )
+    and new_buffer_size_target_data
+      < static_cast< long >( max_buffer_size_target_data_ ) )
+  {
+    set_buffer_size_target_data( new_buffer_size_target_data );
+  }
+
+  long new_buffer_size_spike_data = buffer_size_spike_data_;
+  updateValue< long >(
+    dict, names::buffer_size_spike_data, new_buffer_size_spike_data );
+  if ( new_buffer_size_spike_data
+      != static_cast< long >( buffer_size_spike_data_ )
+    and new_buffer_size_spike_data
+      < static_cast< long >( max_buffer_size_spike_data_ ) )
+  {
+    set_buffer_size_spike_data( new_buffer_size_spike_data );
+  }
+
+  updateValue< double >( dict,
+    names::growth_factor_buffer_spike_data,
+    growth_factor_buffer_spike_data_ );
+  updateValue< double >( dict,
+    names::growth_factor_buffer_target_data,
+    growth_factor_buffer_target_data_ );
+
+  updateValue< long >(
+    dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
+  updateValue< long >(
+    dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
 }
 
 void
-nest::MPIManager::get_status( DictionaryDatum& d )
+nest::MPIManager::get_status( DictionaryDatum& dict )
 {
-  def< long >( d, names::num_processes, num_processes_ );
-  def< long >( d, names::send_buffer_size, send_buffer_size_ );
-  def< long >( d, names::receive_buffer_size, recv_buffer_size_ );
+  def< long >( dict, names::num_processes, num_processes_ );
+  def< bool >( dict, names::adaptive_spike_buffers, adaptive_spike_buffers_ );
+  def< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
+  def< size_t >(
+    dict, names::buffer_size_target_data, buffer_size_target_data_ );
+  def< size_t >( dict, names::buffer_size_spike_data, buffer_size_spike_data_ );
+  def< size_t >( dict,
+    names::buffer_size_secondary_events,
+    get_buffer_size_secondary_events_in_int() );
+  def< size_t >(
+    dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
+  def< size_t >(
+    dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
+  def< double >( dict,
+    names::growth_factor_buffer_spike_data,
+    growth_factor_buffer_spike_data_ );
+  def< double >( dict,
+    names::growth_factor_buffer_target_data,
+    growth_factor_buffer_target_data_ );
 }
 
 /**
@@ -168,7 +256,7 @@ nest::MPIManager::mpi_finalize( int exitcode )
   int initialized;
   MPI_Initialized( &initialized );
 
-  if ( finalized == 0 && initialized == 1 )
+  if ( finalized == 0 and initialized == 1 )
   {
     if ( exitcode == 0 )
     {
@@ -629,11 +717,46 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
 }
 
 void
+nest::MPIManager::communicate_Allreduce_max_in_place(
+  std::vector< long >& buffer )
+{
+  MPI_Allreduce( MPI_IN_PLACE, &buffer[ 0 ], 1, MPI_LONG, MPI_MAX, comm );
+}
+
+void
 nest::MPIManager::communicate_Allgather( std::vector< long >& buffer )
 {
   // avoid aliasing, see http://www.mpi-forum.org/docs/mpi-11-html/node10.html
   long my_val = buffer[ get_rank() ];
   MPI_Allgather( &my_val, 1, MPI_LONG, &buffer[ 0 ], 1, MPI_LONG, comm );
+}
+
+void
+nest::MPIManager::communicate_Alltoall_( void* send_buffer,
+  void* recv_buffer,
+  const unsigned int send_recv_count )
+{
+  MPI_Alltoall( send_buffer,
+    send_recv_count,
+    MPI_UNSIGNED,
+    recv_buffer,
+    send_recv_count,
+    MPI_UNSIGNED,
+    comm );
+}
+
+
+void
+nest::MPIManager::communicate_secondary_events_Alltoall_( void* send_buffer,
+  void* recv_buffer )
+{
+  MPI_Alltoall( send_buffer,
+    chunk_size_secondary_events_in_int_,
+    MPI_UNSIGNED,
+    recv_buffer,
+    chunk_size_secondary_events_in_int_,
+    MPI_UNSIGNED,
+    comm );
 }
 
 /**
@@ -649,7 +772,7 @@ nest::MPIManager::synchronize()
 void
 nest::MPIManager::test_link( int sender, int receiver )
 {
-  assert( sender < get_num_processes() && receiver < get_num_processes() );
+  assert( sender < get_num_processes() and receiver < get_num_processes() );
 
   if ( get_num_processes() > 1 )
   {
@@ -932,16 +1055,16 @@ nest::MPIManager::communicate_connector_properties( DictionaryDatum& dict )
   {
     // Move local dictionary values to temporary storage vectors.
     std::vector< long > targets =
-      getValue< std::vector< long > >( dict, "targets" );
+      getValue< std::vector< long > >( dict, names::targets );
 
     std::vector< double > weights =
-      getValue< std::vector< double > >( dict, "weights" );
+      getValue< std::vector< double > >( dict, names::weights );
 
     std::vector< double > delays =
-      getValue< std::vector< double > >( dict, "delays" );
+      getValue< std::vector< double > >( dict, names::delays );
 
     std::vector< long > receptors =
-      getValue< std::vector< long > >( dict, "receptors" );
+      getValue< std::vector< long > >( dict, names::receptors );
 
     // Calculate size of communication buffers (number of connections).
     std::vector< int > num_connections( get_num_processes() );
@@ -1092,6 +1215,14 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
   std::vector< double >& recv_buffer )
 {
   recv_buffer.swap( send_buffer );
+}
+
+void
+nest::MPIManager::communicate_Allreduce_max_in_place(
+  std::vector< long >& buffer )
+{
+  // Null operator for ranks == 1
+  // Max already is the input
 }
 
 #endif /* #ifdef HAVE_MPI */

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_iaf_1to2 - sli script for test of iaf_psc_alpha spike interaction
 
 Synopsis: (test_iaf_1to2) run -> compare response with reference data

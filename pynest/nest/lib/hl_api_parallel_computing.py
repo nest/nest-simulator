@@ -34,6 +34,16 @@ def Rank():
     -------
     int:
         MPI rank of the local process
+
+    Note
+    ----
+    DO NOT USE Rank() TO EXECUTE ANY FUNCTION IMPORTED FROM THE nest
+    MODULE ON A SUBSET OF RANKS IN AN MPI-PARALLEL SIMULATION.
+
+    This will lead to unpredictable behavior. Symptoms may be an
+    error message about non-synchronous global random number generators
+    or deadlocks during simulation. In the worst case, the simulation
+    may complete but generate nonsensical results.
     """
 
     sr("Rank")

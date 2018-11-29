@@ -91,4 +91,4 @@ if HAVE_GSL:
     mpitest = TestIssue578()
     mpitest.do_test_targets()
 else:
-    print ("Skipping because GSL is not available")
+    print("Skipping because GSL is not available")

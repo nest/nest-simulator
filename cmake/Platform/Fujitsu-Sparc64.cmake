@@ -50,13 +50,22 @@ set( CMAKE_FIND_LIBRARY_PREFIXES "lib" )
 set( CMAKE_FIND_LIBRARY_SUFFIXES ".a" )
 
 # set the compiler
-set( CMAKE_C_COMPILER mpifccpx )
-set( CMAKE_CXX_COMPILER mpiFCCpx )
+set( CMAKE_C_COMPILER mpifccpx CACHE FILEPATH "Override C compiler" )
+set( CMAKE_CXX_COMPILER mpiFCCpx CACHE FILEPATH "Override C++ compiler" )
 
 # Prevent CMake from adding GNU-specific linker flags (-rdynamic)
 set( CMAKE_C_COMPILER_ID "Fujitsu" CACHE STRING "Fujitsu C cross-compiler" FORCE )
 set( CMAKE_CXX_COMPILER_ID "Fujitsu" CACHE STRING "Fujitsu C++ cross-compiler" FORCE )
 
-# Set specific OpenMP flag
+# Set specific OpenMPI variables
+set( MPI_CXX_COMPIER mpiFCCpx )
+set( MPI_CXX_HEADER_DIR "/opt/FJSVtclang/GM-1.2.0-24/include/mpi/fujitsu/" CACHE PATH "Location of the mpi.h header on disk" FORCE )
+#set( MPI_CXX_LIBRARIES "mpi" CACHE STRING "" FORCE )
+#set( MPI_CXX_LINK_FLAGS "-mt -Kident_mpi -lmpi_cxx -lmpi -ltofucom -ltofutop -lm -lnsl -lutil" CACHE STRING "" FORCE )
+
+# Set specific OpenMP variables
 set( OpenMP_C_FLAGS "-Kopenmp" CACHE STRING "Compiler flag for OpenMP parallelization" FORCE )
 set( OpenMP_CXX_FLAGS "-Kopenmp" CACHE STRING "Compiler flag for OpenMP parallelization" FORCE )
+set( OpenMP_C_LIB_NAMES "fjomp" CACHE STRING "libfjomp" FORCE )
+set( OpenMP_CXX_LIB_NAMES "fjomp" CACHE STRING "libfjomp" FORCE )
+set( OpenMP_fjomp_LIBRARY "/opt/FJSVtclang/GM-1.2.0-24/lib64/" CACHE STRING "PATH to fjomp" FORCE )

@@ -482,8 +482,7 @@ public:
 
 //---------------------------------------------------------------------------------
 //(C84) is maximum width for LaTeX-include1
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: cvi_s - convert string to integer
 
 Synopsis: string cvi_s -> integer
@@ -518,7 +517,7 @@ public:
 
 //---------------------------------------------------------------------------------
 //(C84) is maximum width for LaTeX-include1
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: cvd_s - convert string to double
 

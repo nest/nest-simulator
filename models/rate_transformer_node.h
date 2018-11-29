@@ -41,18 +41,20 @@
 #include "recordables_map.h"
 #include "universal_data_logger.h"
 
-
 namespace nest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: rate_transformer_node - Rate neuron that sums up incoming rates
                 and applies a nonlinearity specified via the template.
 
 Description:
 
-The rate transformer node simply sums up all incoming rates and applies
-the nonlinearity specified in the function input of the template class.
+The rate transformer node simply applies the nonlinearity specified in the
+input-function of the template class to all incoming inputs. The boolean
+parameter linear_summation determines whether the input function is applied to
+the summed up incoming connections (True, default value) or to each input
+individually (False).
 An important application is to provide the possibility to
 apply different nonlinearities to different incoming connections of the
 same rate neuron by connecting the sending rate neurons to the
@@ -72,10 +74,12 @@ Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
 Parameters:
-Only the parameters from the class Nonlinearities can be set in the
-status dictionary.
+
+Only the parameter linear_summation and the parameters from the
+class Nonlinearities can be set in the status dictionary.
 
 Author: Mario Senden, Jan Hahne, Jannis Schuecker
+
 FirstVersion: November 2017
 */
 template < class TNonlinearities >
@@ -137,6 +141,25 @@ private:
   friend class RecordablesMap< rate_transformer_node< TNonlinearities > >;
   friend class UniversalDataLogger< rate_transformer_node< TNonlinearities > >;
 
+  // ----------------------------------------------------------------
+
+  /**
+   * Independent parameters of the model.
+   */
+  struct Parameters_
+  {
+    /** Target of non-linearity.
+        True (default): Gain function applied to linearly summed input.
+        False: Gain function applied to each input before summation.
+    **/
+    bool linear_summation_;
+
+    Parameters_(); //!< Sets default parameter values
+
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+
+    void set( const DictionaryDatum& );
+  };
 
   // ----------------------------------------------------------------
 
@@ -194,6 +217,7 @@ private:
 
   // ----------------------------------------------------------------
 
+  Parameters_ P_;
   State_ S_;
   Buffers_ B_;
 
@@ -231,7 +255,9 @@ rate_transformer_node< TNonlinearities >::handles_test_event(
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -242,7 +268,9 @@ rate_transformer_node< TNonlinearities >::handles_test_event(
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -253,7 +281,9 @@ rate_transformer_node< TNonlinearities >::handles_test_event(
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
@@ -261,6 +291,7 @@ template < class TNonlinearities >
 inline void
 rate_transformer_node< TNonlinearities >::get_status( DictionaryDatum& d ) const
 {
+  P_.get( d );
   S_.get( d );
   Archiving_Node::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
@@ -272,8 +303,10 @@ template < class TNonlinearities >
 inline void
 rate_transformer_node< TNonlinearities >::set_status( const DictionaryDatum& d )
 {
-  State_ stmp = S_; // temporary copy in case of errors
-  stmp.set( d );    // throws if BadProperty
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( d );         // throws if BadProperty
+  State_ stmp = S_;      // temporary copy in case of errors
+  stmp.set( d );         // throws if BadProperty
 
   // We now know that (stmp) is consistent. We do not
   // write it back to (S_) before we are also sure that
@@ -282,6 +315,7 @@ rate_transformer_node< TNonlinearities >::set_status( const DictionaryDatum& d )
   Archiving_Node::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
   S_ = stmp;
 
   nonlinearities_.set( d );

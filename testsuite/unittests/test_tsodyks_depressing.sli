@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: test_tsodyks_depressing - sli script for overall test of tsodyks synapse models
 
 Synopsis:(test_tsodyks_depressing) run -> compare cout with comments in file

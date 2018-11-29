@@ -33,6 +33,7 @@
 // Includes from nestkernel:
 #include "node.h"
 #include "device.h"
+#include "device_node.h"
 #include "recording_backend.h"
 #include "nest_types.h"
 #include "kernel_manager.h"
@@ -44,7 +45,207 @@
 namespace nest
 {
 
-class RecordingDevice : public Node, public Device
+/** @BeginDocumentation
+  Name: RecordingDevice - Common properties of all recording devices.
+
+  Description:
+
+  Recording devices are used to measure properties of or signals emitted
+  by network nodes, e.g., using a multimeter, voltmeter or a spike detector.
+
+  Recording devices can collect data in memory, display it on the terminal
+  output or write it to file in any combination. The output format can be
+  controlled by device parameters as discussed below.
+
+  Recording devices can be subdivided into two groups: collectors and samplers.
+  - Collectors collect events sent to them; the spike detector is the
+    archetypical example. Nodes are connected to collectors and the collector
+    then collects all spikes emitted by the nodes connected to it and records
+    them.
+  - Samplers actively interrogate their targets at given time intervals
+    (default: 1ms), and record the data they obtain. This means that the sampler
+    must be connected to the node (not the node to the sampler), and that the
+    node must support the particular type of sampling; see device specific
+    documentation for details.
+
+  Recording devices share the start, stop, and origin parameters global to
+  devices. Start and stop have the following meaning for stimulating devices
+  (origin is just a global offset):
+  - Collectors collect all events with timestamps T that fulfill
+      start < T <= stop.
+    Note that events with timestamp T == start are NOT recorded.
+  - Sampling devices sample at times t = nh with
+      start < t <= stop
+      (t-start) mod interval == 0
+
+  Remarks:
+  - Recording devices can only reliably record data generated during the
+    previous min_delay interval. This means that in order to ensure consistent
+    results, you should always set a stop time for a recording device that is at
+    least one min_delay before the end of the simulation time.
+  - By default, devices record to memory. If you want to record to file, it may
+    be a good idea to turn off recording to memory, to avoid that you computer's
+    memory fills up with gigabytes of data:
+      << /to_file true /to_memory false >>.
+  - Events are not necessarily recorded in chronological order.
+  - The device will not open an existing file, since that would erase the
+    existing data in the file. If you want existing files to be overwritten
+    automatically, you must set /overwrite_files in the root node.
+
+  Parameters:
+  The following parameters are shared with all devices:
+  /start  - Activation time, relative to origin.
+  /stop   - Inactivation time, relative to origin.
+  /origin - Reference time for start and stop.
+
+  The following parameter is only relevant for sampling devices:
+  /interval - Sampling interval in ms (default: 1ms).
+
+  The following parameters control where output is sent/data collected:
+  /record_to - An array containing any combination of /file, /memory, /screen,
+               indicating whether to write to file, record in memory or write
+               to the console window. An empty array turns all recording of
+               individual events off, only an event count is kept. You can also
+               pass strings (file), (memory), (screen), mainly for compatibility
+               with Python.
+
+               The name of the output file is
+                 data_path/data_prefix(label|model_name)-gid-vp.file_extension
+
+               See /label and /file_extension for how to change the name.
+               /data_prefix is changed in the root node. If you change any part
+               of the name, an open file will be closed and a new file opened.
+
+               To close the file, pass a /record_to array without /file, or pass
+               /to_file false. If you later turn recording to file on again, the
+               file will be overwritten, unless you have changed data_prefix,
+               label, or file_extension.
+
+  /to_file   - If true, turn on recording to file. Similar to /record_to
+               [/file], but does not affect settings for recording to memory and
+               screen.
+  /to_screen - If true, turn on recording to screen. Similar to /record_to
+               [/screen], but does not affect settings for recording to memory
+               and file.
+  /to_memory - If true, turn on recording to memory Similar to /record_to
+               [/memory], but does not affect settings for recording to file and
+               screen.
+
+  /filenames - Array containing the filenames where data is recorded to. This
+               array has one entry per local thread and is only available if
+               /to_file is set to true, or if /record_to contains /to_file.
+
+  /label     - String specifying an arbitrary label for the device. It is used
+               instead of model_name in the output file name.
+  /file_extension - String specifying the file name extension, without leading
+                    dot. The default depends on the specific device.
+  /close_after_simulate - Close output stream before Simulate returns. If set to
+                          false, any output streams will remain open when
+                          Simulate returns. (Default: false).
+  /flush_after_simulate - Flush output stream before Simulate returns. If set to
+                          false, any output streams will be in an undefined
+                          state when Simulate returns. (Default: true).
+  /flush_records - Flush output stream whenever new data has been written to the
+                   stream. This may impede performance (Default: false).
+  /close_on_reset - Close output file stream upon ResetNetwork. Upon the next
+                    call to Simulate, the file is reopened, overwriting its
+                    contents. If set to false, the file will remain open after
+                    ResetNetwork, so you can record continuously. NB:
+                    the file is always closed upon ResetKernel. (Default: true).
+  /use_gid_in_filename - Determines if the GID is used in the file name of the
+  recording device. Setting this to false can lead to conflicting file names.
+
+  The following parameters control how output is formatted:
+  /withtime      - boolean value which specifies whether the network time should
+                   be recorded (default: true).
+  /withgid       - boolean value which specifies whether the global id of the
+                   observed node(s) should be recorded (default: false).
+  /withweight    - boolean value which specifies whether the weight of the event
+                   should be recorded (default: false).
+  /time_in_steps - boolean value which specifies whether to print time in steps,
+                   i.e., multiples of the resolution, rather than in ms. If
+                   combined with /precise_times, each time is printed as a pair
+                   of an integer step number and a double offset < 0.
+  /precise_times - boolean value which specifies whether offsets describing the
+                   precise timing of a spike within a time step should be taken
+                   into account when computing the spike time. This is only
+                   useful when recording from neurons that can emit spikes
+                   off-grid (see module precise). Times are given in
+                   milliseconds. If /time_in_steps is true, times are given as
+                   steps and negative offset.
+  /scientific    - if set to true, doubles are written in scientific format,
+                   otherwise in fixed format; affects file output only, not
+                   screen output (default: false)
+  /precision     - number of digits to use in output of doubles to file
+                   (default: 3)
+  /binary        - if set to true, data is written in binary mode to files
+                   instead of ASCII. This setting affects file output only, not
+                   screen output (default: false)
+  /fbuffer_size  - the size of the buffer to use for writing to files. Setting
+                   this value to 0 will reduce buffering to a system-dependent
+                   minimum. Set /flush_after_simulate to true to ensure that all
+                   pending data is written to file before Simulate returns. A
+                   value of -1 shows that the system default is in use. This
+                   value can only be changed before Simulate is called.
+
+  Data recorded in memory is available through the following parameter:
+  /n_events      - Number of events collected or sampled. n_events can be set to
+                   0, but no other value. Setting n_events to 0 will delete all
+                   spikes recorded in memory. n_events will count events even
+                   when not recording to memory.
+  /events        - Dictionary with elements /senders (sender GID, only if
+                   /withgid or /withpath are true), /times (spike times in ms or
+                   steps, depending on /time_in_steps; only if /withtime is
+                   true) and /offsets (only if /time_in_steps, /precise_times
+                   and /withtime are true). All data stored in memory is erased
+                   when /n_events is set to 0.
+
+  SeeAlso: Device, StimulatingDevice
+*/
+
+/**
+ * Base class for all recording devices.
+ *
+ * Recording devices collect data and output it to the screen,
+ * store it internally or write it to files. This class provides
+ * for time windowing of data registration, temporary storage of
+ * data and output of data to files.
+ *
+ * If the device is configured to record from start to stop, this
+ * is interpreted as (start, stop], i.e., the earliest recorded
+ * event will have time stamp start+1, as it was generated during
+ * the update step (start, start+1].
+ *
+ * Class RecordingDevice by itself manages the identity and time
+ * of the recorded events, including precise event times, but not
+ * any additional data about the events. Use class AnalogRecordingDevice
+ * if you need to store additional data; that class also provides
+ * sampling at a given interval.
+ *
+ * @note The RecordingDevice class breaks the general persistence rules
+ *       with respect to Parameters, State, Buffers and Variables. The
+ *       central problem is that changes to /data_prefix in the root node
+ *       require us to close output file streams and re-open them under
+ *       new names. The only way to detect such changes is by comparing the
+ *       current file name with a filename constructed anew upon each
+ *       call to calibrate(). We cannot use init_buffers() here, since it
+ *       is called only once after ResetNetwork. Thus, even though the file
+ *       stream is a Buffer, we need to place all file opening in calibrate().
+ *       init_buffers() merely closes the stream if close_on_reset_ is true.
+ *
+ *  @todo Some aspects of RecordingDevice behavior depend on the type of device:
+ *        Multimeter needs to have its data cleared on n_events==0 and provides
+ *        an accumulator mode which is administered by RecordingDevice. To tell
+ *        recording device about this deviating behavior, we mark the type of
+ *        "owning device" with an enum flag on construction. This is not very
+ *        clean and should probably be solved by subclassing instead.
+ *
+ * @ingroup Devices
+ *
+ * @author HEP 2002-07-22, 2008-03-21, 2011-02-11
+ */
+
+class RecordingDevice : public DeviceNode, public Device
 {
 public:
   void

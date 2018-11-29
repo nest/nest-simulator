@@ -104,9 +104,6 @@ public:
   {
   }
 
-  /** Reset parameters to those of model; also resets state. */
-  virtual void init_parameters( const Device& );
-
   /** Reset dynamic state to that of model. */
   virtual void
   init_state( const Device& )

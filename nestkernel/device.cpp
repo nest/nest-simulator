@@ -133,12 +133,6 @@ nest::Device::Device( const Device& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::Device::init_parameters( const Device& proto )
-{
-  P_ = Parameters_( proto.P_ ); // force recalibration of Time objects
-}
-
-void
 nest::Device::calibrate()
 {
   // We do not need to recalibrate time objects, since they are

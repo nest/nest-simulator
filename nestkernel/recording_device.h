@@ -248,14 +248,6 @@ namespace nest
 class RecordingDevice : public DeviceNode, public Device
 {
 public:
-  void
-  init_parameters( const RecordingDevice& pr )
-  {
-    Device::init_parameters( pr );
-
-    P_ = pr.P_;
-    S_ = pr.S_;
-  }
 
   void
   init_state( const RecordingDevice& pr )

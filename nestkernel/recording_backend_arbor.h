@@ -63,6 +63,7 @@ public:
 private:
   void exchange_(std::vector<arb::shadow::spike>&);
 
+  bool enrolled_;
   bool prepared_;
 
   int steps_left_;

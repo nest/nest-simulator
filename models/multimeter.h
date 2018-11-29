@@ -69,10 +69,10 @@ same name as the /recordable. If /withtime is set, times are given in the
 /times vector in /events.
 
 Remarks:
- - The set of variables to record and the recording interval must be set
-   BEFORE the multimeter is connected to any node, and cannot be changed
-   afterwards.
- - A multimeter cannot be frozen.
+- The set of variables to record and the recording interval must be set
+  BEFORE the multimeter is connected to any node, and cannot be changed
+  afterwards.
+- A multimeter cannot be frozen.
 
 @note If you want to pick up values at every time stamp,
   you must set the interval to the simulation resolution.
@@ -151,9 +151,9 @@ public:
 
   void handle( DataLoggingReply& );
 
-  Type get_type() const;
-
   SignalType sends_signal() const;
+
+  Type get_type() const;
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 

@@ -81,39 +81,6 @@ nest::KernelManager::~KernelManager()
 {
 }
 
-  // logging_manager.initialize(); // must come first so others can log
-  // io_manager.initialize();      // independent of others
-
-  // mpi_manager.initialize(); // set up inter-process communication
-  // vp_manager.initialize();  // set up threads
-
-  // // invariant: process infrastructure (MPI, threads) in place
-
-  // rng_manager.initialize(); // depends on number of VPs
-
-  // // invariant: supporting managers set up
-
-  // // "Core kernel managers" follow
-  // simulation_manager.initialize(); // independent of others
-  // modelrange_manager.initialize(); // independent of others
-  // connection_manager.initialize(); // depends on number of threads
-  // sp_manager.initialize();
-
-  // // prerequisites:
-  // //   - min_delay/max_delay available (connection_manager)
-  // //   - clock initialized (simulation_manager)
-  // event_delivery_manager.initialize();
-
-  // model_manager.initialize(); // depends on number of threads
-
-  // music_manager.initialize();
-
-  // // prerequisites:
-  // //   - modelrange_manager initialized
-  // //   - model_manager for pristine models
-  // //   - vp_manager for number of threads
-  // node_manager.initialize(); // must come last
-
 void
 nest::KernelManager::initialize()
 {

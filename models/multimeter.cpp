@@ -159,6 +159,7 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
 void
 Multimeter::init_state_( const Node& np )
 {
+  // JME: Fix nestio
   // const Multimeter& asd = dynamic_cast< const Multimeter& >( np );
   // device_.init_state( asd.device_ );
   S_.data_.clear();

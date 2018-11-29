@@ -98,7 +98,12 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
 
   if ( min_delay_updated and max_delay_updated )
   {
-    if ( new_min_delay < Time::get_resolution() )
+    if ( kernel().connection_manager.get_num_connections() > 0 )
+    {
+      throw BadProperty(
+        "Connections already exist. Please call ResetKernel first" );
+    }
+    else if ( new_min_delay < Time::get_resolution() )
     {
       throw BadDelay( new_min_delay.get_ms(),
         "min_delay must be greater than or equal to resolution." );

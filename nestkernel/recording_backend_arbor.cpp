@@ -60,7 +60,8 @@ std::unique_ptr<T> make_unique( Args&& ...args )
 }
 
 nest::RecordingBackendArbor::RecordingBackendArbor()
-  : prepared_(false)
+  : enrolled_(false)
+  , prepared_(false)
   , steps_left_(0)
   , arbor_steps_(0)
   , num_arbor_cells_(0)
@@ -93,6 +94,7 @@ nest::RecordingBackendArbor::enroll( const RecordingDevice& device )
   }
   
   devices_[ tid ].insert( std::make_pair( gid, &device ) );
+  enrolled_ = true;
 }
 
 void
@@ -127,6 +129,11 @@ nest::RecordingBackendArbor::exchange_(std::vector<arb::shadow::spike>& local_sp
 void
 nest::RecordingBackendArbor::prepare()
 {
+    if (! enrolled_)
+    {
+        return;
+    }
+    
     if ( prepared_ ) {
       throw BackendPrepared( "RecordingBackendArbor" );
     }
@@ -171,10 +178,15 @@ nest::RecordingBackendArbor::prepare()
 void
 nest::RecordingBackendArbor::cleanup()
 {
+    if (! enrolled_)
+    {
+        return;
+    }
+
     if ( ! prepared_ ) {
         throw BackendNotPrepared( "RecordingBackendArbor" );
     }
-    prepared_ = true;
+    prepared_ = false;
     
     if (steps_left_ != 0)
     {
@@ -187,9 +199,9 @@ nest::RecordingBackendArbor::cleanup()
 void
 nest::RecordingBackendArbor::synchronize()
 {
-  if (devices_.size() == 0)
+  if (! enrolled_)
   {
-    return;
+      return;
   }
 
 #pragma omp single

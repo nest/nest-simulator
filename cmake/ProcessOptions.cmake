@@ -163,6 +163,9 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
       # be used, so we'll add both to the preference list.
       set( CMAKE_FIND_LIBRARY_SUFFIXES ".a;.lib;.dylib;.so" PARENT_SCOPE )
     endif ()
+    if ( UNIX )
+      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --static" PARENT_SCOPE )
+    endif ()
   else ()
     set( BUILD_SHARED_LIBS ON PARENT_SCOPE )
 

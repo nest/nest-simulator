@@ -39,15 +39,31 @@ namespace nest
  * a target neuron on a (remote) machine. Used in TargetTable for the presynaptic part
  * of the connection infrastructure.
  *
- * The bitwise layout of the neuron identifier:
+ * The bitwise layout of the neuron identifier for the "standard" CMAKE option:
  *
  *  +-------- processed flag
  *  |   +---- synapse-type id (syn_id)
  *  |   |
- *  ||-----||-----tid-----||---------rank------------||----local connection id (lcid)----|
+ *  ||----------||--thread--||---------rank----------||----local connection id (lcid)----|
  *  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000
  *  |       |  |       |  |       |  |       |  |       |  |       |  |       |  |       |
  *  63      56 55      48 47      40 39      32 31      24 23      16 15      8  7       0
+ *
+ * The bitwise layout of the neuron identifier for the "hpc" CMAKE option:
+ *
+ *  +-------- processed flag
+ *  |   +---- synapse-type id (syn_id)
+ *  |   |
+ *  ||-----||---thread----||---------rank------------||----local connection id (lcid)----|
+ *  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000
+ *  |       |  |       |  |       |  |       |  |       |  |       |  |       |  |       |
+ *  63      56 55      48 47      40 39      32 31      24 23      16 15      8  7       0
+ *
+ * Other custom layouts can be chosen by providing a list of 5
+ * numbers, representing the bits required for rank, thread, synapse
+ * id, local connection id and processed flag, repectively. The number
+ * of bit needs to sum to 64. The processed flag must always use one
+ * bit.
  */
 // clang-format on
 
@@ -78,19 +94,15 @@ class Target
 private:
   uint64_t remote_target_id_;
 
-  // define the structure of the remote target neuron identifier
-  static constexpr uint8_t NUM_BITS_LCID = 27U;
-  static constexpr uint8_t NUM_BITS_RANK = 20U;
-  static constexpr uint8_t NUM_BITS_TID = 10U;
-  static constexpr uint8_t NUM_BITS_SYN_ID = 6U;
-  static constexpr uint8_t NUM_BITS_PROCESSED_FLAG = 1U;
-
   static constexpr uint8_t BITPOS_LCID = 0U;
   static constexpr uint8_t BITPOS_RANK = NUM_BITS_LCID;
   static constexpr uint8_t BITPOS_TID = BITPOS_RANK + NUM_BITS_RANK;
   static constexpr uint8_t BITPOS_SYN_ID = BITPOS_TID + NUM_BITS_TID;
   static constexpr uint8_t BITPOS_PROCESSED_FLAG =
     BITPOS_SYN_ID + NUM_BITS_SYN_ID;
+
+  typedef StaticAssert< NUM_BITS_PROCESSED_FLAG == 1U >::success
+    bits_for_processed_flag;
   typedef StaticAssert< BITPOS_PROCESSED_FLAG == 63U >::success
     position_of_processed_flag;
 

@@ -80,6 +80,8 @@ option( k-computer "Enable K computer." OFF )
 set( disable-timing OFF CACHE BOOL "Disable measurements via Stopwatches. [default OFF]" )
 set( disable-counts ON CACHE BOOL "Disable measurements of call counts. [default ON]" )
 
+set( target-bits-split "standard" CACHE STRING "Split of the 64bits of the Target class. See target.h for details. Choose 'standard', 'hpc' or define custom split. [default standard]" )
+
 ################################################################################
 ##################      Project Directory variables           ##################
 ################################################################################
@@ -165,6 +167,7 @@ nest_process_with_mpi()
 nest_process_with_libneurosim()
 nest_process_with_music()
 nest_process_with_boost()
+nest_process_target_bits_split()
 
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )

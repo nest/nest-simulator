@@ -175,4 +175,11 @@
 /* Use PS array construction semantics */
 #cmakedefine PS_ARRAYS 1
 
+/* Bit counts for Target members */
+#define NUM_BITS_RANK @NUM_BITS_RANK@
+#define NUM_BITS_TID @NUM_BITS_TID@
+#define NUM_BITS_SYN_ID @NUM_BITS_SYN_ID@
+#define NUM_BITS_LCID @NUM_BITS_LCID@
+#define NUM_BITS_PROCESSED_FLAG @NUM_BITS_PROCESSED_FLAG@
+
 #endif // #ifndef CONFIG_H

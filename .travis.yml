@@ -1,3 +1,4 @@
+
 # .travis.yaml
 #
 # This file is part of NEST.
@@ -62,10 +63,135 @@ matrix:
     # Notify immediately when a build job fails.
     fast_finish: true
 #https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
+
+    include:
+    - language: cpp
+      compiler: gcc-8
+      env:
+        - C_COMPILER=gcc-8
+        - CXX_COMPILER=g++-8       
+      addons:
+        apt:
+          sources:
+            - r-packages-trusty
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+            - build-essential
+            - cmake
+            - libltdl-dev
+            - libreadline6-dev
+            - libncurses5-dev 
+            - libgsl0-dev
+            - python-all-dev
+            - python-numpy
+            - ipython
+            - pkg-config
+            - openmpi-bin
+            - libopenmpi-dev
+            - python-nose
+            - libpcre3
+            - libpcre3-dev
+            - llvm-3.6-dev
+            - jq
+            - pep8
+            - libboost-filesystem-dev
+            - libboost-regex-dev
+            - libboost-wave-dev
+            - libboost-python-dev
+            - libboost-program-options-dev
+            - libboost-test-dev
+            - python-mpi4py
+          
+      before_install:
+        - pyenv install -s 2.7.13
+        - pyenv global 2.7.13
+        - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+        - echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
+        - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+        - export SOURCEDIR=$PWD
+        - echo $PWD
+        - ls $PWD
+        - cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
+        - cd $HOME/build
+        - echo $PATH
+        # Upgrade pip and setuptools
+        - pip install -U pip
+        - pip install -U setuptools
+  
+       # Installing additional packages using pip as they only have
+       # outdated versions in the Travis package whitelist.
+       # terminaltables is required by parse_travis_log.py to create
+       # the build summary.
+        - pip install cython scipy matplotlib terminaltables mpi4py
+    - language: cpp
+      compiler: clang-7.0
+      env:
+        - C_COMPILER=clang-7
+        - CXX_COMPILER=clang++-7
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - r-packages-trusty
+            - llvm-toolchain-trusty-7
+          packages:
+            - clang-7
+            - build-essential
+            - cmake
+            - libltdl-dev
+            - libreadline6-dev
+            - libncurses5-dev
+            - libgsl0-dev
+            - python-all-dev
+            - python-numpy
+            - ipython
+            - pkg-config
+            - openmpi-bin
+            - libopenmpi-dev
+            - python-nose
+            - libpcre3
+            - libpcre3-dev
+            - llvm-3.6-dev
+            - jq
+            - pep8
+            - libboost-filesystem-dev
+            - libboost-regex-dev
+            - libboost-wave-dev
+            - libboost-python-dev
+            - libboost-program-options-dev
+            - libboost-test-dev
+            - python-mpi4py
+              
+      before_install:
+        - pyenv install -s 2.7.13
+        - pyenv global 2.7.13
+        - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+        - echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
+        - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+        - export SOURCEDIR=$PWD
+        - echo $PWD
+        - ls $PWD
+        - cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
+        - cd $HOME/build
+        - echo $PATH
+        # Upgrade pip and setuptools
+        - pip install -U pip
+        - pip install -U setuptools
+
+        # Installing additional packages using pip as they only have
+        # outdated versions in the Travis package whitelist.
+        # terminaltables is required by parse_travis_log.py to create
+        # the build summary.
+        - pip install cython scipy matplotlib terminaltables
+    # Notify immediately when a build job fails.
+    fast_finish: true
+#https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
 addons:
    apt:
     sources:
      - r-packages-trusty
+     - ubuntu-toolchain-r-test
     packages:
      - build-essential
      - cmake
@@ -91,30 +217,31 @@ addons:
      - libboost-python-dev
      - libboost-program-options-dev
      - libboost-test-dev
+     - python-mpi4py
 cache:
    directory:
      - $HOME/.cache
 
 before_install:
-   - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-   - echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
-   - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-   - export SOURCEDIR=$PWD
-   - echo $PWD
-   - ls $PWD
-   - cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
-   - cd $HOME/build
-   - echo $PATH
-  # Upgrade pip and setuptools
-   - pip install -U pip
-   - pip install -U setuptools
+     - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+     - echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
+     - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+     - export SOURCEDIR=$PWD
+     - echo $PWD
+     - ls $PWD
+     - cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
+     - cd $HOME/build
+     - echo $PATH
+   # Upgrade pip and setuptools
+     - pip install -U pip
+     - pip install -U setuptools
   
-  # Installing additional packages using pip as they only have
-  # outdated versions in the Travis package whitelist.
-  # terminaltables is required by parse_travis_log.py to create
-  # the build summary.
-   - pip install cython scipy matplotlib terminaltables mpi4py
-    
+   # Installing additional packages using pip as they only have
+   # outdated versions in the Travis package whitelist.
+   # terminaltables is required by parse_travis_log.py to create
+   # the build summary.
+     - pip install cython scipy matplotlib terminaltables
+
 install:
    - which cython
    - cython --version
@@ -126,6 +253,10 @@ install:
    - nosetests --plugins
    - which cmake
    - cmake --version
+   - if [ "$CXX" = "g++" ]; then export CXX="g++-8" CC="gcc-8"; ${CXX} --version; fi
+   - if [ "$CXX" = "clang++" ]; then export CXX="clang++-7" CC="clang-7"; ${CXX} --version; fi
+   - echo ${CC}
+   - echo ${CXX}
   
 before_script:
    # Change directory back to the NEST source code directory.
@@ -133,6 +264,7 @@ before_script:
    - chmod +x extras/travis_build.sh
 script:
    - set -o pipefail
+   - export CXXFLAGS=${CI_CXX_FLAGS}
    - ./extras/travis_build.sh 2>&1 | tee travis_build.sh.log
    - python extras/parse_travis_log.py travis_build.sh.log
 

@@ -182,7 +182,7 @@ DropOddSpikeConnection< targetidentifierT >::send( nest::Event& e,
   // Even time stamp, we send the spike using the normal sending mechanism
   // send the spike to the target
   e.set_weight( weight_ );
-  e.set_delay( ConnectionBase::get_delay_steps() );
+  e.set_delay_steps( ConnectionBase::get_delay_steps() );
   e.set_receiver( *ConnectionBase::get_target( t ) );
   e.set_rport( ConnectionBase::get_rport() );
   e(); // this sends the event

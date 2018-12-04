@@ -25,8 +25,8 @@ dependencies:
 - jupyter
 - libedit
 - libffi
-- libgcc-ng
-- libstdcxx-ng
+- libgcc-ng # Linux only
+- libstdcxx-ng # Linux only
 - markupsafe
 - matplotlib
 - ncurses=5.9

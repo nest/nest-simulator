@@ -497,8 +497,8 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
     if parameter_map is None:
         parameter_map = {}
 
-    ll_api.sli_func('CGConnect', cg, pre, post,
-             parameter_map, '/' + model, litconv=True)
+    ll_api.sli_func('CGConnect', cg, pre, post, parameter_map, '/' + model,
+                    litconv=True)
 
 
 @check_stack

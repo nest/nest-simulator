@@ -174,7 +174,7 @@ def sli_func(s, *args, **kwargs):
 initialized = False
 
 
-def init():
+def init(argv):
     """Initializes NEST.
 
     Parameters
@@ -187,9 +187,6 @@ def init():
     kernel.NESTError.PyNESTError
     """
 
-    if 'DELAY_PYNEST_INIT' in os.environ:
-        return
-
     global initialized
 
     if initialized:
@@ -201,7 +198,7 @@ def init():
     # handle NEST's arguments here and pass it a modified copy, while
     # we leave the original list unchanged for further use by the user
     # or other modules.
-    nest_argv = sys.argv[:]
+    nest_argv = argv[:]
 
     quiet = "--quiet" in nest_argv
     if quiet:
@@ -237,3 +234,9 @@ def init():
 
 
 from .pynestkernel import *         # noqa
+
+if 'DELAY_PYNEST_INIT' not in os.environ:
+    init(sys.argv)
+
+__all__ = [
+]

@@ -50,7 +50,7 @@ Installation
 With the following steps a full development environment is installed -
 even NEST 2.14.0.
 
-Change to the doc/ folder (if you’re not already there).
+Change to the doc/ folder in the source directory (if you’re not already there).
 
 ::
 

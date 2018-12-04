@@ -5,7 +5,7 @@ Restructured Text
 Restructured Text is a markup language designed for technical documentation writing
 and is used in NEST documentation.
 
-Here, we've included some useful directives and roles for reST. 
+Here, we've included some useful directives and roles for reST.
 Please follow the reST guidelines and the corresponding templates for writing docs,
 as this will help produce consistent, clear and beautiful documentation!
 
@@ -16,14 +16,14 @@ For further details see http://www.sphinx-doc.org/en/master/usage/restructuredte
 Basic Formatting
 ------------------
 
-Indentation is significant in reST, so all lines of the same paragraph must be 
-left-aligned to the same level of indentation. Paragraphs, titles, and directives 
+Indentation is significant in reST, so all lines of the same paragraph must be
+left-aligned to the same level of indentation. Paragraphs, titles, and directives
 should be separated from other text by blank lines.
 
  one asterisk: *text* for emphasis (italics),
  two asterisks: **text** for strong emphasis (boldface), and
  backquotes (literal): ``text`` for inline code.
- bullet lists begin with * 
+ bullet lists begin with *
  numbered lists begin with #
 
 
@@ -45,7 +45,7 @@ A few examples of roles and directives
 --------------------------------------
 
 Literal code blocks can be introduced with the special marker :: .
-The literal block must be indented and separated by blank lines 
+The literal block must be indented and separated by blank lines
 
 This is a normal text paragraph. The next paragraph is a code sample::
 
@@ -87,7 +87,7 @@ Any time you cite a reference in your text you need to include full citation
        3:7-29. doi link
 
 Note the authors first names are initials and always follow the surname. If more
-you have more than 3 authors use et al. 
+you have more than 3 authors use et al.
 
 Cross-referencing and hyperlinks
 ----------------------------------------

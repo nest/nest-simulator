@@ -34,8 +34,8 @@ index via the command line
 Local install of user documentation
 --------------------------------------
 
-To access user documentation, you can check out the website or generate
-the html files by following the steps below.
+If you are using Linux and want to locally install the docs
+and  generate the html files, you can follow the steps below.
 
 Requirements
 ~~~~~~~~~~~~
@@ -60,7 +60,7 @@ Create and activate the environment.
 
 ::
 
-   conda env create -f environment.yml
+   conda env create -f conda_environment.yml
    conda update -n base conda
    source activate doc
 

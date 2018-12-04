@@ -35,7 +35,7 @@ Local install of user documentation
 --------------------------------------
 
 If you are using Linux and want to locally install the docs
-and  generate the html files, you can follow the steps below.
+and generate the html files, follow the steps below.
 
 Requirements
 ~~~~~~~~~~~~

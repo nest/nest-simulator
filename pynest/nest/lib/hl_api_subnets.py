@@ -23,7 +23,7 @@
 Functions for hierarchical networks
 """
 
-from ..ll_api import *
+from .. import ll_api
 from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_info import GetStatus, SetStatus
@@ -65,10 +65,10 @@ def PrintNetwork(depth=1, subnet=None):
         with SuppressedDeprecationWarning('CurrentSubnet'):
             subnet = CurrentSubnet()
     elif len(subnet) > 1:
-        raise NESTError("PrintNetwork() expects exactly one GID.")
+        raise ll_api.NESTError("PrintNetwork() expects exactly one GID.")
 
-    sps(subnet[0])
-    sr("%i PrintNetwork" % depth)
+    ll_api.sps(subnet[0])
+    ll_api.sr("%i PrintNetwork" % depth)
 
 
 @check_stack
@@ -82,8 +82,8 @@ def CurrentSubnet():
         GID of current subnet
     """
 
-    sr("CurrentSubnet")
-    return (spp(), )
+    ll_api.sr("CurrentSubnet")
+    return (ll_api.spp(), )
 
 
 @check_stack
@@ -102,10 +102,10 @@ def ChangeSubnet(subnet):
     """
 
     if len(subnet) > 1:
-        raise NESTError("ChangeSubnet() expects exactly one GID.")
+        raise ll_api.NESTError("ChangeSubnet() expects exactly one GID.")
 
-    sps(subnet[0])
-    sr("ChangeSubnet")
+    ll_api.sps(subnet[0])
+    ll_api.sr("ChangeSubnet")
 
 
 @check_stack
@@ -145,8 +145,8 @@ def GetLeaves(subnets, properties=None, local_only=False):
     if properties is None:
         properties = {}
     func = 'GetLocalLeaves' if local_only else 'GetGlobalLeaves'
-    return sli_func('/props Set { props %s } Map' % func, subnets, properties,
-                    litconv=True)
+    return ll_api.sli_func('/props Set { props %s } Map' % func, subnets,
+                           properties, litconv=True)
 
 
 @check_stack
@@ -184,8 +184,8 @@ def GetNodes(subnets, properties=None, local_only=False):
     if properties is None:
         properties = {}
     func = 'GetLocalNodes' if local_only else 'GetGlobalNodes'
-    return sli_func('/props Set { props %s } Map' % func, subnets, properties,
-                    litconv=True)
+    return ll_api.sli_func('/props Set { props %s } Map' % func, subnets,
+                           properties, litconv=True)
 
 
 @check_stack
@@ -223,8 +223,8 @@ def GetChildren(subnets, properties=None, local_only=False):
     if properties is None:
         properties = {}
     func = 'GetLocalChildren' if local_only else 'GetGlobalChildren'
-    return sli_func('/props Set { props %s } Map' % func, subnets, properties,
-                    litconv=True)
+    return ll_api.sli_func('/props Set { props %s } Map' % func, subnets,
+                           properties, litconv=True)
 
 
 @check_stack
@@ -253,12 +253,12 @@ def GetNetwork(gid, depth):
     """
 
     if len(gid) > 1:
-        raise NESTError("GetNetwork() expects exactly one GID.")
+        raise ll_api.NESTError("GetNetwork() expects exactly one GID.")
 
-    sps(gid[0])
-    sps(depth)
-    sr("GetNetwork")
-    return spp()
+    ll_api.sps(gid[0])
+    ll_api.sps(depth)
+    ll_api.sr("GetNetwork")
+    return ll_api.spp()
 
 
 @check_stack
@@ -302,7 +302,7 @@ def EndSubnet():
         ChangeSubnet(parent)
         return csn
     else:
-        raise NESTError(
+        raise ll_api.NESTError(
             "Unexpected EndSubnet(). Cannot go higher than the root node.")
 
 
@@ -335,15 +335,15 @@ def LayoutNetwork(model, dim, label=None, params=None):
     """
 
     if is_literal(model):
-        sps(dim)
-        sr('/%s exch LayoutNetwork' % model)
+        ll_api.sps(dim)
+        ll_api.sr('/%s exch LayoutNetwork' % model)
         if label is not None:
-            sr("dup << /label (%s) >> SetStatus" % label)
+            ll_api.sr("dup << /label (%s) >> SetStatus" % label)
         if params is not None:
-            sr("dup << /customdict")
-            sps(params)
-            sr(">> SetStatus")
-        return (spp(), )
+            ll_api.sr("dup << /customdict")
+            ll_api.sps(params)
+            ll_api.sr(">> SetStatus")
+        return (ll_api.spp(), )
     elif inspect.isfunction(model):
         BeginSubnet(label, params)
         if len(dim) == 1:

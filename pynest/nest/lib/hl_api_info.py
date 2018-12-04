@@ -23,7 +23,7 @@
 Functions to get information on NEST.
 """
 
-from ..ll_api import *
+from .. import ll_api
 from .hl_api_helper import *
 import sys
 import os
@@ -46,7 +46,7 @@ __all__ = [
 def sysinfo():
     """Print information on the platform on which NEST was compiled."""
 
-    sr("sysinfo")
+    ll_api.sr("sysinfo")
 
 
 @check_stack
@@ -59,15 +59,15 @@ def version():
         The version of NEST.
     """
 
-    sr("statusdict [[ /kernelname /version ]] get")
-    return " ".join(spp())
+    ll_api.sr("statusdict [[ /kernelname /version ]] get")
+    return " ".join(ll_api.spp())
 
 
 @check_stack
 def authors():
     """Print the authors of NEST."""
 
-    sr("authors")
+    ll_api.sr("authors")
 
 
 @check_stack
@@ -154,8 +154,8 @@ def get_argv():
         Argv, as seen by NEST.
     """
 
-    sr('statusdict')
-    statusdict = spp()
+    ll_api.sr('statusdict')
+    statusdict = ll_api.spp()
     return statusdict['argv']
 
 
@@ -173,10 +173,10 @@ def message(level, sender, text):
         Text to be sent in the message
     """
 
-    sps(level)
-    sps(sender)
-    sps(text)
-    sr('message')
+    ll_api.sps(level)
+    ll_api.sps(sender)
+    ll_api.sps(text)
+    ll_api.sr('message')
 
 
 @check_stack
@@ -229,13 +229,13 @@ def SetStatus(nodes, params, val=None):
             "or len(nodes)")
 
     if is_sequence_of_connections(nodes):
-        pcd(nodes)
+        ll_api.pcd(nodes)
     else:
-        sps(nodes)
+        ll_api.sps(nodes)
 
-    sps(params)
-    sr('2 arraystore')
-    sr('Transpose { arrayload pop SetStatus } forall')
+    ll_api.sps(params)
+    ll_api.sr('2 arraystore')
+    ll_api.sr('Transpose { arrayload pop SetStatus } forall')
 
 
 @check_stack
@@ -288,10 +288,10 @@ def GetStatus(nodes, keys=None):
         raise TypeError("keys should be either a string or an iterable")
 
     if is_sequence_of_connections(nodes):
-        pcd(nodes)
+        ll_api.pcd(nodes)
     else:
-        sps(nodes)
+        ll_api.sps(nodes)
 
-    sr(cmd)
+    ll_api.sr(cmd)
 
-    return spp()
+    return ll_api.spp()

@@ -23,7 +23,7 @@
 Functions for model handling
 """
 
-from ..ll_api import *
+from .. import ll_api
 from .hl_api_helper import *
 
 __all__ = [
@@ -75,12 +75,12 @@ def Models(mtype="all", sel=None):
     models = []
 
     if mtype in ("all", "nodes"):
-        sr("modeldict")
-        models += spp().keys()
+        ll_api.sr("modeldict")
+        models += ll_api.spp().keys()
 
     if mtype in ("all", "synapses"):
-        sr("synapsedict")
-        models += spp().keys()
+        ll_api.sr("synapsedict")
+        models += ll_api.spp().keys()
 
     if sel is not None:
         models = [x for x in models if x.find(sel) >= 0]
@@ -101,8 +101,8 @@ def ConnectionRules():
 
     """
 
-    sr('connruledict')
-    return tuple(sorted(spp().keys()))
+    ll_api.sr('connruledict')
+    return tuple(sorted(ll_api.spp().keys()))
 
 
 @check_stack
@@ -128,8 +128,8 @@ def SetDefaults(model, params, val=None):
         if is_literal(params):
             params = {params: val}
 
-    sps(params)
-    sr('/{0} exch SetDefaults'.format(model))
+    ll_api.sps(params)
+    ll_api.sr('/{0} exch SetDefaults'.format(model))
 
 
 @check_stack
@@ -177,8 +177,8 @@ def GetDefaults(model, keys=None):
     else:
         raise TypeError("keys should be either a string or an iterable")
 
-    sr(cmd)
-    return spp()
+    ll_api.sr(cmd)
+    return ll_api.spp()
 
 
 @check_stack
@@ -199,7 +199,7 @@ def CopyModel(existing, new, params=None):
     model_deprecation_warning(existing)
 
     if params is not None:
-        sps(params)
-        sr("/%s /%s 3 2 roll CopyModel" % (existing, new))
+        ll_api.sps(params)
+        ll_api.sr("/%s /%s 3 2 roll CopyModel" % (existing, new))
     else:
-        sr("/%s /%s CopyModel" % (existing, new))
+        ll_api.sr("/%s /%s CopyModel" % (existing, new))

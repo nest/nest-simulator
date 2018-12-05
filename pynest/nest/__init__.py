@@ -23,8 +23,8 @@
 Initializer of PyNEST.
 """
 
-from . import pynestkernel as kernel      # noqa
 from . import ll_api      # noqa
+from . import pynestkernel as kernel      # noqa
 from .hl_api import *      # noqa
 
 
@@ -41,6 +41,3 @@ def test():
     runner.run(tests.suite())
 
     set_debug(debug)
-
-
-ll_api.init()

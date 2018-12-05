@@ -64,37 +64,7 @@ using the same dictionary to specify both connections.
 """
 
 import nest
-
-
-def topology_func(slifunc, *args):
-    """
-    Execute SLI function `slifunc` with arguments `args` in Topology namespace.
-
-
-    Parameters
-    ----------
-    slifunc : str
-        SLI namespace expression
-
-
-    Other parameters
-    ----------------
-    args : dict
-        An arbitrary number of arguments
-
-
-    Returns
-    -------
-    out :
-        Values from SLI function `slifunc`
-
-
-    See also
-    --------
-    nest.ll_api.sli_func
-    """
-
-    return nest.ll_api.sli_func(slifunc, *args)
+from .ll_api import topology_func
 
 
 class Mask(object):

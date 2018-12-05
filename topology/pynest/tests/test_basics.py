@@ -45,7 +45,7 @@ class BasicsTestCase(unittest.TestCase):
                               'rows': nr,
                               'columns': nc})
         self.assertEqual(len(l), 1)
-        self.assertEqual(len(nest.GetLeaves(l)[0]), nr * nc)
+        self.assertEqual(len(nest.hl_api.GetLeaves(l)[0]), nr * nc)
 
     def test_CreateLayerN(self):
         """Creating multiple layers from tuple of dicts."""
@@ -59,7 +59,7 @@ class BasicsTestCase(unittest.TestCase):
         nest.ResetKernel()
         l = topo.CreateLayer((ldict,) * nlayers)
         self.assertEqual(len(l), nlayers)
-        self.assertEqual([len(lvs) for lvs in nest.GetLeaves(l)],
+        self.assertEqual([len(lvs) for lvs in nest.hl_api.GetLeaves(l)],
                          [nr * nc] * nlayers)
 
     def test_GetLayer(self):
@@ -75,7 +75,7 @@ class BasicsTestCase(unittest.TestCase):
 
         # obtain list containing list of results from GetLayer for all
         # nodes in layers
-        layers_exp = (topo.GetLayer(node) for node in nest.GetLeaves(l))
+        layers_exp = (topo.GetLayer(node) for node in nest.hl_api.GetLeaves(l))
 
         # the list comprehension builds a list of lists of layer gids,
         # each list containing nr*nc copies of the layer gid
@@ -95,7 +95,8 @@ class BasicsTestCase(unittest.TestCase):
         l = topo.CreateLayer((ldict,) * nlayers)
 
         nodepos_ref = (pos,) * nlayers
-        nodepos_exp = (topo.GetPosition(node) for node in nest.GetLeaves(l))
+        nodepos_exp = (topo.GetPosition(node) for node in
+            nest.hl_api.GetLeaves(l))
 
         for npe, npr in zip(nodepos_exp, nodepos_ref):
             self.assertEqual(npe, npr)
@@ -140,7 +141,7 @@ class BasicsTestCase(unittest.TestCase):
                  'rows': 4, 'columns': 5}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        n = nest.GetLeaves(l)[0]
+        n = nest.hl_api.GetLeaves(l)[0]
 
         # gids -> gids, all displacements must be zero here
         d = topo.Displacement(n, n)
@@ -176,7 +177,7 @@ class BasicsTestCase(unittest.TestCase):
                  'rows': 4, 'columns': 5}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        n = nest.GetLeaves(l)[0]
+        n = nest.hl_api.GetLeaves(l)[0]
 
         # gids -> gids, all displacements must be zero here
         d = topo.Distance(n, n)
@@ -273,9 +274,9 @@ class BasicsTestCase(unittest.TestCase):
                  'mask': {'grid': {'rows': 2, 'columns': 2}}}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        ian = [gid for gid in nest.GetLeaves(l)[0]
+        ian = [gid for gid in nest.hl_api.GetLeaves(l)[0]
                if nest.GetStatus([gid], 'model')[0] == 'iaf_psc_alpha']
-        ipa = [gid for gid in nest.GetLeaves(l)[0]
+        ipa = [gid for gid in nest.hl_api.GetLeaves(l)[0]
                if nest.GetStatus([gid], 'model')[0] == 'iaf_psc_delta']
 
         # connect ian -> all using static_synapse

@@ -201,7 +201,7 @@ def init():
     # handle NEST's arguments here and pass it a modified copy, while
     # we leave the original list unchanged for further use by the user
     # or other modules.
-    nest_argv = argv=sys.argv[:]
+    nest_argv = sys.argv[:]
 
     quiet = "--quiet" in nest_argv
     if quiet:

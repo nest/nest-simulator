@@ -112,7 +112,7 @@ class Mask(object):
     # The constructor should not be called by the user
     def __init__(self, datum):
         """Masks must be created using the CreateMask command."""
-        if not isinstance(datum, nest.ll_api.SLIDatum) or \
+        if not isinstance(datum, nest.kernel.SLIDatum) or \
             datum.dtype != "masktype":
             raise TypeError("expected mask Datum")
         self._datum = datum
@@ -313,7 +313,7 @@ class Parameter(object):
     # The constructor should not be called by the user
     def __init__(self, datum):
         """Parameters must be created using the CreateParameter command."""
-        if not isinstance(datum, nest.ll_api.SLIDatum) or \
+        if not isinstance(datum, nest.kernel.SLIDatum) or \
             datum.dtype != "parametertype":
             raise TypeError("expected parameter datum")
         self._datum = datum

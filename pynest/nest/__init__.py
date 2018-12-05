@@ -26,6 +26,7 @@ Initializer of PyNEST.
 from . import pynestkernel as kernel      # noqa
 from . import ll_api      # noqa
 from .hl_api import *      # noqa
+ll_api.init()
 
 
 def test():

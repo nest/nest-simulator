@@ -23,7 +23,7 @@
 Functions for node handling
 """
 
-from .. import ll_api
+from ..ll_api import kernel, spp, sps, sr
 from .hl_api_helper import *
 from .hl_api_info import SetStatus
 
@@ -57,14 +57,14 @@ def Create(model, n=1, params=None):
 
     if isinstance(params, dict):
         cmd = "/%s 3 1 roll exch Create" % model
-        ll_api.sps(params)
+        sps(params)
     else:
         cmd = "/%s exch Create" % model
 
-    ll_api.sps(n)
-    ll_api.sr(cmd)
+    sps(n)
+    sr(cmd)
 
-    last_gid = ll_api.spp()
+    last_gid = spp()
     gids = tuple(range(last_gid - n + 1, last_gid + 1))
 
     if params is not None and not isinstance(params, dict):
@@ -101,9 +101,9 @@ def GetLID(gid):
     """
 
     if len(gid) > 1:
-        raise ll_api.NESTError("GetLID() expects exactly one GID.")
+        raise kernel.NESTError("GetLID() expects exactly one GID.")
 
-    ll_api.sps(gid[0])
-    ll_api.sr("GetLID")
+    sps(gid[0])
+    sr("GetLID")
 
-    return ll_api.spp()
+    return spp()

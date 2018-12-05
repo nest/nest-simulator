@@ -187,11 +187,11 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             symm = nest.GetDefaults(syn, 'requires_symmetric')
 
             # try set a label during SetDefaults
-            with self.assertRaises(nest.ll_api.NESTError):
+            with self.assertRaises(nest.kernel.NESTError):
                 nest.SetDefaults(syn, {'synapse_label': 123})
 
             # try set on connect
-            with self.assertRaises(nest.ll_api.NESTError):
+            with self.assertRaises(nest.kernel.NESTError):
                 nest.Connect(a, a, {"rule": "one_to_one",
                                     "make_symmetric": symm},
                              {"model": syn, "synapse_label": 123})
@@ -201,7 +201,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                          {"model": syn})
             # try set on SetStatus
             c = nest.GetConnections(a, a)
-            with self.assertRaises(nest.ll_api.NESTError):
+            with self.assertRaises(nest.kernel.NESTError):
                 nest.SetStatus(c, {'synapse_label': 123})
 
 

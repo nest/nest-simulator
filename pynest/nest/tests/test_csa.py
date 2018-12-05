@@ -186,7 +186,7 @@ class CSATestCase(unittest.TestCase):
 
         # We expect CGConnect to fail with an UnknownNode exception if
         # unknown nodes are given
-        self.assertRaisesRegex(nest.ll_api.NESTError, "UnknownNode",
+        self.assertRaisesRegex(nest.kernel.NESTError, "UnknownNode",
                                nest.CGConnect, nonnodes, nonnodes, cs)
 
     def test_CSA_error_unknown_synapse(self):
@@ -204,7 +204,7 @@ class CSATestCase(unittest.TestCase):
 
         # We expect CGConnect to fail with an UnknownSynapseType
         # exception if an unknown synapse model is given
-        self.assertRaisesRegex(nest.ll_api.NESTError, "UnknownSynapseType",
+        self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType",
                                nest.CGConnect, sources, targets, cs,
                                model="nonexistent_synapse")
 

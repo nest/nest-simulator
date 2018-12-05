@@ -121,7 +121,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
         def badPropertyWith(content, parameters):
             self.assertRaisesRegexp(
-                nest.ll_api.NESTError, "BadProperty(.+)" + content,
+                nest.kernel.NESTError, "BadProperty(.+)" + content,
                 setupProperty, parameters
             )
 

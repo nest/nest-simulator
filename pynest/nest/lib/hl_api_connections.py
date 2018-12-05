@@ -23,13 +23,14 @@
 Functions for connection handling
 """
 
-from .. import ll_api
+import numpy
+
+from ..ll_api import kernel, spp, sps, sr
 from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_subnets import GetChildren
-import numpy
 
 __all__ = [
     'GetConnections',
@@ -94,15 +95,15 @@ def GetConnections(source=None, target=None, synapse_model=None,
         params['target'] = target
 
     if synapse_model is not None:
-        params['synapse_model'] = ll_api.kernel.SLILiteral(synapse_model)
+        params['synapse_model'] = kernel.SLILiteral(synapse_model)
 
     if synapse_label is not None:
         params['synapse_label'] = synapse_label
 
-    ll_api.sps(params)
-    ll_api.sr("GetConnections")
+    sps(params)
+    sr("GetConnections")
 
-    return ll_api.spp()
+    return spp()
 
 
 @check_stack
@@ -129,7 +130,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 
     Raises
     ------
-    ll_api.kernel.NESTError
+    kernel.NESTError
 
     Notes
     -----
@@ -253,36 +254,36 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                                  text=deprecation_text)
 
     if model is not None and syn_spec is not None:
-        raise ll_api.kernel.NESTError(
+        raise kernel.NESTError(
             "'model' is an alias for 'syn_spec' and cannot "
             "be used together with 'syn_spec'.")
 
-    ll_api.sps(pre)
-    ll_api.sps(post)
+    sps(pre)
+    sps(post)
 
     # default rule
     rule = 'all_to_all'
 
     if conn_spec is not None:
-        ll_api.sps(conn_spec)
+        sps(conn_spec)
         if is_string(conn_spec):
             rule = conn_spec
-            ll_api.sr("cvlit")
+            sr("cvlit")
         elif isinstance(conn_spec, dict):
             rule = conn_spec['rule']
         else:
-            raise ll_api.kernel.NESTError(
+            raise kernel.NESTError(
                 "conn_spec needs to be a string or dictionary.")
     else:
-        ll_api.sr('/Connect /conn_spec GetOption')
+        sr('/Connect /conn_spec GetOption')
 
     if model is not None:
         syn_spec = model
 
     if syn_spec is not None:
         if is_string(syn_spec):
-            ll_api.sps(syn_spec)
-            ll_api.sr("cvlit")
+            sps(syn_spec)
+            sr("cvlit")
         elif isinstance(syn_spec, dict):
             for key, value in syn_spec.items():
 
@@ -295,14 +296,14 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                     if len(value.shape) == 1:
                         if rule == 'one_to_one':
                             if value.shape[0] != len(pre):
-                                raise ll_api.kernel.NESTError(
+                                raise kernel.NESTError(
                                     "'" + key + "' has to be an array of "
                                     "dimension " + str(len(pre)) + ", a "
                                     "scalar or a dictionary.")
                             else:
                                 syn_spec[key] = value
                         else:
-                            raise ll_api.kernel.NESTError(
+                            raise kernel.NESTError(
                                 "'" + key + "' has the wrong type. "
                                 "One-dimensional parameter arrays can "
                                 "only be used in conjunction with rule "
@@ -313,7 +314,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                             if value.shape[0] != len(post) or \
                                     value.shape[1] != len(pre):
 
-                                raise ll_api.kernel.NESTError(
+                                raise kernel.NESTError(
                                     "'" + key + "' has to be an array of "
                                     "dimension " + str(len(post)) + "x" +
                                     str(len(pre)) +
@@ -325,7 +326,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                             indegree = conn_spec['indegree']
                             if value.shape[0] != len(post) or \
                                     value.shape[1] != indegree:
-                                raise ll_api.kernel.NESTError(
+                                raise kernel.NESTError(
                                     "'" + key + "' has to be an array of "
                                     "dimension " + str(len(post)) + "x" +
                                     str(indegree) +
@@ -337,7 +338,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                             outdegree = conn_spec['outdegree']
                             if value.shape[0] != len(pre) or \
                                     value.shape[1] != outdegree:
-                                raise ll_api.kernel.NESTError(
+                                raise kernel.NESTError(
                                     "'" + key + "' has to be an array of "
                                     "dimension " + str(len(pre)) + "x" +
                                     str(outdegree) +
@@ -346,18 +347,18 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                             else:
                                 syn_spec[key] = value.flatten()
                         else:
-                            raise ll_api.kernel.NESTError(
+                            raise kernel.NESTError(
                                 "'" + key + "' has the wrong type. "
                                 "Two-dimensional parameter arrays can "
                                 "only be used in conjunction with rules "
                                 "'all_to_all', 'fixed_indegree' or "
                                 "'fixed_outdegree'.")
-            ll_api.sps(syn_spec)
+            sps(syn_spec)
         else:
-            raise ll_api.kernel.NESTError(
+            raise kernel.NESTError(
                 "syn_spec needs to be a string or dictionary.")
 
-    ll_api.sr('Connect')
+    sr('Connect')
 
 
 @check_stack
@@ -430,9 +431,9 @@ def DataConnect(pre, params=None, model="static_synapse"):
         cmd = '({0}) DataConnect_i_D_s '.format(model)
 
         for s, p in zip(pre, params):
-            ll_api.sps(s)
-            ll_api.sps(p)
-            ll_api.sr(cmd)
+            sps(s)
+            sps(p)
+            sr(cmd)
     else:
         # Call the variant where all connections are given explicitly
         # Disable dict checking, because most models can't re-use
@@ -441,8 +442,8 @@ def DataConnect(pre, params=None, model="static_synapse"):
         dict_miss = GetKernelStatus('dict_miss_is_error')
         SetKernelStatus({'dict_miss_is_error': False})
 
-        ll_api.sps(pre)
-        ll_api.sr('DataConnect_a')
+        sps(pre)
+        sr('DataConnect_a')
 
         SetKernelStatus({'dict_miss_is_error': dict_miss})
 
@@ -485,20 +486,20 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
 
     Raises
     ------
-    ll_api.kernel.NESTError
+    kernel.NESTError
     """
 
-    ll_api.sr("statusdict/have_libneurosim ::")
-    if not ll_api.spp():
-        raise ll_api.kernel.NESTError(
+    sr("statusdict/have_libneurosim ::")
+    if not spp():
+        raise kernel.NESTError(
             "NEST was not compiled with support for libneurosim: " +
             "CGConnect is not available.")
 
     if parameter_map is None:
         parameter_map = {}
 
-    ll_api.sli_func('CGConnect', cg, pre, post, parameter_map, '/' + model,
-                    litconv=True)
+    sli_func('CGConnect', cg, pre, post, parameter_map, '/' + model,
+             litconv=True)
 
 
 @check_stack
@@ -516,18 +517,18 @@ def CGParse(xml_filename):
 
     Raises
     ------
-    ll_api.kernel.NESTError
+    kernel.NESTError
     """
 
-    ll_api.sr("statusdict/have_libneurosim ::")
-    if not ll_api.spp():
-        raise ll_api.kernel.NESTError(
+    sr("statusdict/have_libneurosim ::")
+    if not spp():
+        raise kernel.NESTError(
             "NEST was not compiled with support for libneurosim: " +
             "CGParse is not available.")
 
-    ll_api.sps(xml_filename)
-    ll_api.sr("CGParse")
-    return ll_api.spp()
+    sps(xml_filename)
+    sr("CGParse")
+    return spp()
 
 
 @check_stack
@@ -546,18 +547,18 @@ def CGSelectImplementation(tag, library):
 
     Raises
     ------
-    ll_api.kernel.NESTError
+    kernel.NESTError
     """
 
-    ll_api.sr("statusdict/have_libneurosim ::")
-    if not ll_api.spp():
-        raise ll_api.kernel.NESTError(
+    sr("statusdict/have_libneurosim ::")
+    if not spp():
+        raise kernel.NESTError(
             "NEST was not compiled with support for libneurosim: " +
             "CGSelectImplementation is not available.")
 
-    ll_api.sps(tag)
-    ll_api.sps(library)
-    ll_api.sr("CGSelectImplementation")
+    sps(tag)
+    sps(library)
+    sr("CGSelectImplementation")
 
 
 @check_stack
@@ -574,13 +575,13 @@ def DisconnectOneToOne(source, target, syn_spec):
         See Connect() for definition
     """
 
-    ll_api.sps(source)
-    ll_api.sps(target)
+    sps(source)
+    sps(target)
     if syn_spec is not None:
-        ll_api.sps(syn_spec)
+        sps(syn_spec)
         if is_string(syn_spec):
-            ll_api.sr("cvlit")
-    ll_api.sr('Disconnect')
+            sr("cvlit")
+    sr('Disconnect')
 
 
 @check_stack
@@ -641,19 +642,19 @@ def Disconnect(pre, post, conn_spec, syn_spec):
     specified nodes.
     """
 
-    ll_api.sps(pre)
-    ll_api.sr('cvgidcollection')
-    ll_api.sps(post)
-    ll_api.sr('cvgidcollection')
+    sps(pre)
+    sr('cvgidcollection')
+    sps(post)
+    sr('cvgidcollection')
 
     if conn_spec is not None:
-        ll_api.sps(conn_spec)
+        sps(conn_spec)
         if is_string(conn_spec):
-            ll_api.sr("cvlit")
+            sr("cvlit")
 
     if syn_spec is not None:
-        ll_api.sps(syn_spec)
+        sps(syn_spec)
         if is_string(syn_spec):
-            ll_api.sr("cvlit")
+            sr("cvlit")
 
-    ll_api.sr('Disconnect_g_g_D_D')
+    sr('Disconnect_g_g_D_D')

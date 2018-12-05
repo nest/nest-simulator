@@ -108,7 +108,7 @@ class TestDisconnectSingle(unittest.TestCase):
                 try:
                     nest.DisconnectOneToOne(neurons[0], neurons[1], syn_dict)
                     assert False
-                except nest.ll_api.NESTError:
+                except nest.kernel.NESTError:
                     print("Synapse deletion ok: " + syn_model)
 
 

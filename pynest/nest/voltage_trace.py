@@ -145,23 +145,23 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
 
     Raises
     ------
-    nest.ll_api.NESTError
+    nest.kernel.NESTError
         Description
     """
 
     if len(detec) > 1:
-        raise nest.ll_api.NESTError("Please provide a single voltmeter.")
+        raise nest.kernel.NESTError("Please provide a single voltmeter.")
 
     if not nest.GetStatus(detec)[0]['model'] in ('voltmeter', 'multimeter'):
-        raise nest.ll_api.NESTError("Please provide a voltmeter or a \
+        raise nest.kernel.NESTError("Please provide a voltmeter or a \
             multimeter measuring V_m.")
     elif nest.GetStatus(detec)[0]['model'] == 'multimeter':
         if "V_m" not in nest.GetStatus(detec, "record_from")[0]:
-            raise nest.ll_api.NESTError("Please provide a multimeter \
+            raise nest.kernel.NESTError("Please provide a multimeter \
                 measuring V_m.")
         elif (not nest.GetStatus(detec, "to_memory")[0] and
               len(nest.GetStatus(detec, "record_from")[0]) > 1):
-            raise nest.ll_api.NESTError("Please provide a multimeter \
+            raise nest.kernel.NESTError("Please provide a multimeter \
                 measuring only V_m or record to memory!")
 
     if nest.GetStatus(detec, "to_memory")[0]:
@@ -176,7 +176,7 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
         times, voltages = _from_memory(detec)
 
         if not len(times):
-            raise nest.ll_api.NESTError("No events recorded! Make sure that \
+            raise nest.kernel.NESTError("No events recorded! Make sure that \
                 withtime and withgid are set to True.")
 
         if neurons is None:
@@ -219,7 +219,7 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
         fname = nest.GetStatus(detec, "filenames")[0]
         return from_file(fname, title, grayscale)
     else:
-        raise nest.ll_api.NESTError("Provided devices neither records to file, \
+        raise nest.kernel.NESTError("Provided devices neither records to file, \
             nor to memory.")
 
 

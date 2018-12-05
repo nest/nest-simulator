@@ -38,7 +38,7 @@ class ErrorTestCase(unittest.TestCase):
             raise exc(msg)
 
         message = "test"
-        exception = nest.ll_api.NESTError
+        exception = nest.kernel.NESTError
 
         self.assertRaisesRegex(
             exception, message, raise_custom_exception, exception, message)
@@ -49,7 +49,7 @@ class ErrorTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         self.assertRaisesRegex(
-            nest.ll_api.NESTError, "StackUnderflow", nest.ll_api.sr, 'clear ;')
+            nest.kernel.NESTError, "StackUnderflow", nest.ll_api.sr, 'clear ;')
 
     def test_DivisionByZero(self):
         """Division by zero"""
@@ -57,7 +57,7 @@ class ErrorTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         self.assertRaisesRegex(
-            nest.ll_api.NESTError, "DivisionByZero", nest.ll_api.sr, '1 0 div')
+            nest.kernel.NESTError, "DivisionByZero", nest.ll_api.sr, '1 0 div')
 
     def test_UnknownNode(self):
         """Unknown node"""
@@ -65,7 +65,7 @@ class ErrorTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         self.assertRaisesRegex(
-            nest.ll_api.NESTError, "UnknownNode", nest.Connect, (99, ), (99, ))
+            nest.kernel.NESTError, "UnknownNode", nest.Connect, (99, ), (99, ))
 
     def test_UnknownModel(self):
         """Unknown model name"""
@@ -73,7 +73,7 @@ class ErrorTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         self.assertRaisesRegex(
-            nest.ll_api.NESTError, "UnknownModelName", nest.Create, -1)
+            nest.kernel.NESTError, "UnknownModelName", nest.Create, -1)
 
 
 def suite():

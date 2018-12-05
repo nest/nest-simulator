@@ -120,7 +120,7 @@ def find_loc_pspmax(tau_s, tau_m):
     It returns the location of the maximum (in sec)
     '''
     var = tau_m / tau_s
-    lam = nest.sli_func('LambertWm1', -numpy.exp(-1 / var) / var)
+    lam = nest.ll_api.sli_func('LambertWm1', -numpy.exp(-1 / var) / var)
     t_maxpsp = (-var * lam - 1) / var / (1 / tau_s - 1 / tau_m) * 1e-3
     return t_maxpsp
 

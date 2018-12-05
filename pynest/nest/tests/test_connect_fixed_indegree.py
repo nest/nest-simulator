@@ -54,7 +54,7 @@ class TestFixedInDegree(TestParams):
         conn_params['indegree'] = self.N1 + 1
         try:
             self.setUpNetwork(conn_params)
-        except hf.nest.ll_api.NESTError:
+        except hf.nest.kernel.NESTError:
             got_error = True
         self.assertTrue(got_error)
 

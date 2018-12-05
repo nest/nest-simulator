@@ -23,9 +23,10 @@
 Functions for simulation control
 """
 
-from .. import ll_api
-from .hl_api_helper import *
 from contextlib import contextmanager
+
+from ..ll_api import spp, sps, sr
+from .hl_api_helper import *
 
 __all__ = [
     'Simulate',
@@ -56,8 +57,8 @@ def Simulate(t):
         Time to simulate in ms
     """
 
-    ll_api.sps(float(t))
-    ll_api.sr('ms Simulate')
+    sps(float(t))
+    sr('ms Simulate')
 
 
 @check_stack
@@ -79,8 +80,8 @@ def Run(t):
     behavior.
     """
 
-    ll_api.sps(float(t))
-    ll_api.sr('ms Run')
+    sps(float(t))
+    sr('ms Run')
 
 
 @check_stack
@@ -91,7 +92,7 @@ def Prepare():
     set_status calls before Prepare().
     """
 
-    ll_api.sr('Prepare')
+    sr('Prepare')
 
 
 @check_stack
@@ -102,7 +103,7 @@ def Cleanup():
     Closes state for a series of runs, such as flushing and closing files.
     A Prepare() is needed after a Cleanup() before any more calls to Run().
     """
-    ll_api.sr('Cleanup')
+    sr('Cleanup')
 
 
 @contextmanager
@@ -130,7 +131,7 @@ def ResumeSimulation():
     """Resume an interrupted simulation.
     """
 
-    ll_api.sr("ResumeSimulation")
+    sr("ResumeSimulation")
 
 
 @check_stack
@@ -141,7 +142,7 @@ def ResetKernel():
     CopyModel(). Calling this function is equivalent to restarting NEST.
     """
 
-    ll_api.sr('ResetKernel')
+    sr('ResetKernel')
 
 
 @check_stack
@@ -149,7 +150,7 @@ def ResetNetwork():
     """Reset all nodes and connections to their original state.
     """
 
-    ll_api.sr('ResetNetwork')
+    sr('ResetNetwork')
 
 
 @check_stack
@@ -166,9 +167,9 @@ def SetKernelStatus(params):
     GetKernelStatus
     """
 
-    ll_api.sps(0)
-    ll_api.sps(params)
-    ll_api.sr('SetStatus')
+    sps(0)
+    sps(params)
+    sr('SetStatus')
 
 
 @check_stack
@@ -194,11 +195,11 @@ def GetKernelStatus(keys=None):
     TypeError
     """
 
-    ll_api.sr('0 GetStatus')
-    status_root = ll_api.spp()
+    sr('0 GetStatus')
+    status_root = spp()
 
-    ll_api.sr('/subnet GetDefaults')
-    status_subnet = ll_api.spp()
+    sr('/subnet GetDefaults')
+    status_subnet = spp()
 
     d = dict((k, v) for k, v in status_root.items() if k not in status_subnet)
 
@@ -235,7 +236,7 @@ def Install(module_name):
     (DYLD_LIBRARY_PATH under OSX).
     """
 
-    return ll_api.sr("(%s) Install" % module_name)
+    return sr("(%s) Install" % module_name)
 
 
 @check_stack
@@ -248,8 +249,8 @@ def SetStructuralPlasticityStatus(params):
         Dictionary of structural plasticity parameters to set
     """
 
-    ll_api.sps(params)
-    ll_api.sr('SetStructuralPlasticityStatus')
+    sps(params)
+    sr('SetStructuralPlasticityStatus')
 
 
 @check_stack
@@ -263,9 +264,9 @@ def GetStructuralPlasticityStatus(keys=None):
         Keys indicating the values of interest to be retrieved by the get call
     """
 
-    ll_api.sps({})
-    ll_api.sr('GetStructuralPlasticityStatus')
-    d = ll_api.spp()
+    sps({})
+    sr('GetStructuralPlasticityStatus')
+    d = spp()
     if keys is None:
         return d
     elif is_literal(keys):
@@ -281,11 +282,11 @@ def EnableStructuralPlasticity():
     """Enable structural plasticity for the network simulation
     """
 
-    ll_api.sr('EnableStructuralPlasticity')
+    sr('EnableStructuralPlasticity')
 
 
 @check_stack
 def DisableStructuralPlasticity():
     """Disable structural plasticity for the network simulation
     """
-    ll_api.sr('DisableStructuralPlasticity')
+    sr('DisableStructuralPlasticity')

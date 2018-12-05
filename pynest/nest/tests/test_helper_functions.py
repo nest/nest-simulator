@@ -63,7 +63,7 @@ class TestHelperFunctions(unittest.TestCase):
         check_empty_stack()
 
         try:
-            self.assertRaises(nest.ll_api.NESTError, check_leave_on_stack)
+            self.assertRaises(nest.kernel.NESTError, check_leave_on_stack)
         except:  # Ensure that debug is reset if we get an error.
             nest.hl_api.set_debug(debug)
             raise

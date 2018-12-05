@@ -233,10 +233,5 @@ def init(argv):
         raise kernel.NESTErrors.PyNESTError("Initiatization of NEST failed.")
 
 
-from .pynestkernel import *         # noqa
-
 if 'DELAY_PYNEST_INIT' not in os.environ:
     init(sys.argv)
-
-__all__ = [
-]

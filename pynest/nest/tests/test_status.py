@@ -57,7 +57,7 @@ class StatusTestCase(unittest.TestCase):
         nest.SetKernelStatus({'resolution': 0.2})
 
         self.assertRaisesRegex(
-            nest.ll_api.NESTError, "DictError",
+            nest.kernel.NESTError, "DictError",
             nest.SetKernelStatus, {'nonexistent_status_key': 0})
 
     def test_GetDefaults(self):
@@ -103,7 +103,7 @@ class StatusTestCase(unittest.TestCase):
                 self.assertEqual(nest.GetDefaults(m, 'V_m'), v_m)
 
                 self.assertRaisesRegex(
-                    nest.ll_api.NESTError, "DictError",
+                    nest.kernel.NESTError, "DictError",
                     nest.SetDefaults, m, 'nonexistent_status_key', 0)
 
     def test_GetStatus(self):
@@ -224,7 +224,7 @@ class StatusTestCase(unittest.TestCase):
 
                 # should raise exception
                 self.assertRaisesRegex(
-                    nest.ll_api.NESTError, "BadProperty",
+                    nest.kernel.NESTError, "BadProperty",
                     nest.SetStatus, neuron,
                     {'V_reset': 10., 'V_th': 0.}
                 )

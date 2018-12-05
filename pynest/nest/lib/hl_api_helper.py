@@ -36,7 +36,7 @@ import sys
 
 from string import Template
 
-from .. import ll_api
+from ..ll_api import kernel, sli_func, spp, sr
 
 
 # These flags are used to print deprecation warnings only once. The
@@ -153,7 +153,7 @@ def is_literal(obj):
     bool:
         True if obj is a "literal"
     """
-    return isinstance(obj, (uni_str, ll_api.kernel.SLILiteral))
+    return isinstance(obj, (uni_str, kernel.SLILiteral))
 
 
 def is_string(obj):
@@ -228,15 +228,15 @@ def stack_checker(f):
         if not get_debug():
             return f(*args, **kwargs)
         else:
-            ll_api.sr('count')
-            stackload_before = ll_api.spp()
+            sr('count')
+            stackload_before = spp()
             result = f(*args, **kwargs)
-            ll_api.sr('count')
-            num_leftover_elements = ll_api.spp() - stackload_before
+            sr('count')
+            num_leftover_elements = spp() - stackload_before
             if num_leftover_elements != 0:
                 eargs = (f.__name__, num_leftover_elements)
                 etext = "Function '%s' left %i elements on the stack."
-                raise ll_api.kernel.NESTError(etext % eargs)
+                raise kernel.NESTError(etext % eargs)
             return result
 
     return stack_checker_func
@@ -336,7 +336,7 @@ def is_sequence_of_connections(seq):
 
     try:
         cnn = next(iter(seq))
-        return isinstance(cnn, dict) or len(cnn) == ll_api.kernel.CONN_LEN
+        return isinstance(cnn, dict) or len(cnn) == kernel.CONN_LEN
     except TypeError:
         pass
 
@@ -457,7 +457,7 @@ def get_help_filepath(hlpobj):
         Filepath of the help object or None if no help available
     """
 
-    helpdir = os.path.join(ll_api.sli_func("statusdict/prgdocdir ::"), "help")
+    helpdir = os.path.join(sli_func("statusdict/prgdocdir ::"), "help")
     objname = hlpobj + '.hlp'
     for dirpath, dirnames, files in os.walk(helpdir):
         for hlp in files:
@@ -546,7 +546,7 @@ def show_help_with_pager(hlpobj, pager=None):
     # Help is to be displayed by pager
     # try to find a pager if not explicitly given
     if pager is None:
-        pager = ll_api.sli_func('/page /command GetOption')
+        pager = sli_func('/page /command GetOption')
 
         # pager == false if .nestrc does not define one
         if not pager:
@@ -584,8 +584,8 @@ def get_verbosity():
 
     # Defined in hl_api_helper to avoid circular inclusion problem with
     # hl_api_info.py
-    ll_api.sr('verbosity')
-    return ll_api.spp()
+    sr('verbosity')
+    return spp()
 
 
 @check_stack
@@ -601,7 +601,7 @@ def set_verbosity(level):
 
     # Defined in hl_api_helper to avoid circular inclusion problem with
     # hl_api_info.py
-    ll_api.sr("{} setverbosity".format(level))
+    sr("{} setverbosity".format(level))
 
 
 def model_deprecation_warning(model):
@@ -655,8 +655,8 @@ class SuppressedDeprecationWarning(object):
             _deprecation_warning[func_name] = False
 
             # Suppress only if verbosity level is deprecated or lower
-            if self._verbosity_level <= ll_api.sli_func('M_DEPRECATED'):
-                set_verbosity(ll_api.sli_func('M_WARNING'))
+            if self._verbosity_level <= sli_func('M_DEPRECATED'):
+                set_verbosity(sli_func('M_WARNING'))
 
     def __exit__(self, *args):
 

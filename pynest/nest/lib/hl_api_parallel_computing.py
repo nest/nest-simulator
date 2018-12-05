@@ -23,7 +23,7 @@
 Functions for parallel computing
 """
 
-from .. import ll_api
+from ..ll_api import kernel, spp, sps, sr
 from .hl_api_helper import *
 
 __all__ = [
@@ -54,8 +54,8 @@ def Rank():
     may complete but generate nonsensical results.
     """
 
-    ll_api.sr("Rank")
-    return ll_api.spp()
+    sr("Rank")
+    return spp()
 
 
 @check_stack
@@ -68,8 +68,8 @@ def NumProcesses():
         Number of overall MPI processes
     """
 
-    ll_api.sr("NumProcesses")
-    return ll_api.spp()
+    sr("NumProcesses")
+    return spp()
 
 
 @check_stack
@@ -84,9 +84,9 @@ def SetAcceptableLatency(port_name, latency):
         Latency in ms
     """
 
-    ll_api.sps(ll_api.kernel.SLILiteral(port_name))
-    ll_api.sps(latency)
-    ll_api.sr("SetAcceptableLatency")
+    sps(kernel.SLILiteral(port_name))
+    sps(latency)
+    sr("SetAcceptableLatency")
 
 
 @check_stack
@@ -101,6 +101,6 @@ def SetMaxBuffered(port_name, size):
         Buffer size
     """
 
-    ll_api.sps(ll_api.kernel.SLILiteral(port_name))
-    ll_api.sps(size)
-    ll_api.sr("SetMaxBuffered")
+    sps(kernel.SLILiteral(port_name))
+    sps(size)
+    sr("SetMaxBuffered")

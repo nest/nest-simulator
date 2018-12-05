@@ -23,7 +23,7 @@
 Functions for node handling
 """
 
-from ..ll_api import  spp, sps, sr
+from ..ll_api import spp, sps, sr
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_info import SetStatus

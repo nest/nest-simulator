@@ -77,7 +77,7 @@ class StackTestCase(unittest.TestCase):
             ('string', ) * 2,
 
             # Literals should be converted to SLI literals
-            (nest.ll_api.kernel.SLILiteral('test'), ) * 2,
+            (nest.kernel.SLILiteral('test'), ) * 2,
 
             # Arrays are converted to tuples on the way out
             ((1, 2, 3, 4, 5), ) * 2,
@@ -87,7 +87,7 @@ class StackTestCase(unittest.TestCase):
             ({
                 'key': 123,
                 'sub_dict': {
-                    nest.ll_api.kernel.SLILiteral('foo'): 'bar'
+                    nest.kernel.SLILiteral('foo'): 'bar'
                 }
             }, ) * 2,
         )

@@ -25,7 +25,8 @@ Functions for connection handling
 
 import numpy
 
-from ..ll_api import kernel, spp, sps, sr
+from ..ll_api import spp, sps, sr
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_info import GetStatus

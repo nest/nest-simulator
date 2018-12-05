@@ -23,7 +23,8 @@
 Functions for hierarchical networks
 """
 
-from ..ll_api import kernel, sli_func, spp, sps, sr
+from ..ll_api import sli_func, spp, sps, sr
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_info import GetStatus, SetStatus

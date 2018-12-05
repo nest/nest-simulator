@@ -36,7 +36,8 @@ import sys
 
 from string import Template
 
-from ..ll_api import kernel, sli_func, spp, sr
+from ..ll_api import sli_func, spp, sr
+from .. import pynestkernel as kernel
 
 
 # These flags are used to print deprecation warnings only once. The

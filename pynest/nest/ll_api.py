@@ -67,13 +67,13 @@ except AttributeError:
                 # RTLD_NOW (OSX)
                 sys.setdlopenflags(ctypes.RTLD_GLOBAL)
 
-from . import pynestkernel as kernel      # noqa
+from . import pynestkernel as _kernel      # noqa
 
-engine = kernel.NESTEngine()
+_engine = _kernel.NESTEngine()
 
-sli_push = sps = engine.push
-sli_pop = spp = engine.pop
-pcd = engine.push_connection_datums
+sli_push = sps = _engine.push
+sli_pop = spp = _engine.pop
+pcd = _engine.push_connection_datums
 
 
 def catching_sli_run(cmd):
@@ -103,14 +103,14 @@ def catching_sli_run(cmd):
         def decode(s):
             return s.decode('utf-8')
 
-    engine.run('{%s} runprotected' % decode(cmd))
+    _engine.run('{%s} runprotected' % decode(cmd))
     if not sli_pop():
         errorname = sli_pop()
         message = sli_pop()
         commandname = sli_pop()
-        engine.run('clear')
+        _engine.run('clear')
 
-        exceptionCls = getattr(kernel.NESTErrors, errorname)
+        exceptionCls = getattr(_kernel.NESTErrors, errorname)
         raise exceptionCls(commandname, message)
 
 sli_run = sr = catching_sli_run
@@ -156,7 +156,7 @@ def sli_func(s, *args, **kwargs):
         if kwargs['litconv']:
             slifun = 'sli_func_litconv'
     elif len(kwargs) > 0:
-        raise kernel.NESTErrors.PyNESTError(
+        raise _kernel.NESTErrors.PyNESTError(
             "'namespace' and 'litconv' are the only valid keyword arguments.")
 
     sli_push(args)       # push array of arguments on SLI stack
@@ -190,7 +190,7 @@ def init(argv):
     global initialized
 
     if initialized:
-        raise kernel.NESTErrors.PyNESTError("NEST already initialized.")
+        raise _kernel.NESTErrors.PyNESTError("NEST already initialized.")
 
     # Some commandline arguments of NEST and Python have the same
     # name, but different meaning. To avoid unintended behavior, we
@@ -209,11 +209,11 @@ def init(argv):
         nest_argv.append("--debug")
 
     path = os.path.dirname(__file__)
-    initialized = engine.init(nest_argv, path)
+    initialized = _engine.init(nest_argv, path)
 
     if initialized:
         if not quiet:
-            engine.run("pywelcome")
+            _engine.run("pywelcome")
 
         # Dirty hack to get tab-completion for models in IPython.
         try:
@@ -229,7 +229,7 @@ def init(argv):
                 pass
 
     else:
-        raise kernel.NESTErrors.PyNESTError("Initialization of NEST failed.")
+        raise _kernel.NESTErrors.PyNESTError("Initialization of NEST failed.")
 
 
 if 'DELAY_PYNEST_INIT' not in os.environ:

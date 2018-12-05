@@ -23,7 +23,8 @@
 Functions for parallel computing
 """
 
-from ..ll_api import kernel, spp, sps, sr
+from ..ll_api import spp, sps, sr
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
 
 __all__ = [

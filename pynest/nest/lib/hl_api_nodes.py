@@ -23,6 +23,8 @@
 Functions for node handling
 """
 
+import warnings
+
 from ..ll_api import spp, sps, sr
 from .. import pynestkernel as kernel
 from .hl_api_helper import *

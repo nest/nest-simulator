@@ -39,6 +39,32 @@ from string import Template
 from ..ll_api import sli_func, spp, sr
 from .. import pynestkernel as kernel
 
+__all__ = [
+    'get_wrapped_text',
+    'show_deprecation_warning',
+    'deprecated',
+    'get_unistring_type',
+    'uni_str',
+    'is_literal',
+    'is_string',
+    'get_debug',
+    'set_debug',
+    'stack_checker',
+    'check_stack',
+    'is_iterable',
+    'is_coercible_to_sli_array',
+    'is_sequence_of_connections',
+    'is_sequence_of_gids',
+    'broadcast',
+    'get_help_filepath',
+    'load_help',
+    'show_help_with_pager',
+    'get_verbosity',
+    'set_verbosity',
+    'model_deprecation_warning',
+    'SuppressedDeprecationWarning',
+]
+
 
 # These flags are used to print deprecation warnings only once. The
 # corresponding functions will be removed in the 2.6 release of NEST.

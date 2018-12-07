@@ -36,7 +36,7 @@ import sys
 
 from string import Template
 
-from ..ll_api import sli_func, spp, sr
+from ..ll_api import *
 from .. import pynestkernel as kernel
 
 __all__ = [

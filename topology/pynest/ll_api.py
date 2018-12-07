@@ -25,6 +25,10 @@ Low-level API of PyNEST Topology Module
 
 import nest
 
+__all__ = [
+    'topology_func',
+]
+
 
 def topology_func(slifunc, *args):
     """

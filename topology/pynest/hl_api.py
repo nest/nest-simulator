@@ -66,6 +66,31 @@ using the same dictionary to specify both connections.
 import nest
 from .ll_api import topology_func
 
+# With '__all__' we provide an explicit index of this submodule. 
+__all__ = [
+    'ConnectLayers',
+    'CreateLayer',
+    'CreateMask',
+    'CreateParameter',
+    'Displacement',
+    'Distance',
+    'DumpLayerConnections',
+    'DumpLayerNodes',
+    'FindCenterElement',
+    'FindNearestElement',
+    'GetElement',
+    'GetLayer',
+    'GetPosition',
+    'GetTargetNodes',
+    'GetTargetPositions',
+    'Mask',
+    'Parameter',
+    'PlotKernel',
+    'PlotLayer',
+    'PlotTargets',
+    'SelectNodesByMask',
+]
+
 
 class Mask(object):
     """
@@ -2152,31 +2177,3 @@ def SelectNodesByMask(layer, anchor, mask_obj):
     gid_list = topology_func('SelectNodesByMask', layer[0], anchor, mask_datum)
 
     return gid_list
-
-
-# With '__all__' we provide an explicit index of the package. Without any
-# imported submodules and any redundant functions we could achieve shorter
-# time of importing 'nest.topology'.
-__all__ = [
-    'ConnectLayers',
-    'CreateLayer',
-    'CreateMask',
-    'CreateParameter',
-    'Displacement',
-    'Distance',
-    'DumpLayerConnections',
-    'DumpLayerNodes',
-    'FindCenterElement',
-    'FindNearestElement',
-    'GetElement',
-    'GetLayer',
-    'GetPosition',
-    'GetTargetNodes',
-    'GetTargetPositions',
-    'Mask',
-    'Parameter',
-    'PlotKernel',
-    'PlotLayer',
-    'PlotTargets',
-    'SelectNodesByMask',
-]

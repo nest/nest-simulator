@@ -24,6 +24,8 @@ Initializer of PyNEST.
 """
 
 from . import ll_api      # noqa
+
+# Import kernel in __init__ after initializing low-level APIs.
 from . import pynestkernel as kernel      # noqa
 from .hl_api import *      # noqa
 

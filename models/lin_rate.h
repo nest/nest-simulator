@@ -60,8 +60,8 @@ The following parameters can be set in the status dictionary.
 rate                double - Rate (unitless)
 tau                 double - Time constant of rate dynamics in ms.
 lambda              double - Passive decay rate.
-mean                double - Mean of Gaussian white noise.
-std                 double - Standard deviation of Gaussian white noise.
+mu                  double - Mean input.
+sigma               double - Noise parameter.
 g                   double - Gain parameter
 mult_coupling       bool   - Switch to enable/disable multiplicative coupling.
 g_ex                double - Linear factor in multiplicative coupling.

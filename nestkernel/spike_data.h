@@ -28,6 +28,7 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
+#include "target.h"
 
 namespace nest
 {
@@ -164,9 +165,9 @@ SpikeData::set( const thread tid,
   const unsigned int lag,
   const double )
 {
-  assert( tid < 1024 );
-  // assert( syn_id < 256 ); // no need to check, because syn_id is of type char
-  assert( lcid < 134217728 );
+  assert( tid <= Target::MAX_TID );
+  assert( syn_id <= Target::MAX_SYN_ID );
+  assert( lcid <= Target::MAX_LCID );
   assert( lag < 16384 );
 
   lcid_ = lcid;
@@ -291,9 +292,9 @@ OffGridSpikeData::set( const thread tid,
   const unsigned int lag,
   const double offset )
 {
-  assert( tid < 1024 );
-  // assert( syn_id < 256 ); // no need to check, because syn_id is of type char
-  assert( lcid < 134217728 );
+  assert( tid <= Target::MAX_TID );
+  assert( syn_id <= Target::MAX_SYN_ID );
+  assert( lcid <= Target::MAX_LCID );
   assert( lag < 16384 );
 
   lcid_ = lcid;

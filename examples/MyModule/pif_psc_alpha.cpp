@@ -284,7 +284,7 @@ mynest::pif_psc_alpha::update( Time const& slice_origin,
 void
 mynest::pif_psc_alpha::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   B_.spikes.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
@@ -294,7 +294,7 @@ mynest::pif_psc_alpha::handle( SpikeEvent& e )
 void
 mynest::pif_psc_alpha::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   B_.currents.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),

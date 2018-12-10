@@ -42,7 +42,7 @@ class StepRateGeneratorTestCase(unittest.TestCase):
             {'resolution': 0.1, 'use_wfr': False, 'print_time': False})
 
         # create nodes
-        neuron = nest.Create("lin_rate_ipn", 1, {"std": 0.0})
+        neuron = nest.Create("lin_rate_ipn", 1, {"sigma": 0.0})
         srg = nest.Create("step_rate_generator", 1)
         mm = nest.Create('multimeter', params={
                          'record_from': ['rate'], 'interval': 100.0})

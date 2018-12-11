@@ -301,10 +301,9 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
   if ( new_id == invalid_synindex ) // we wrapped around (=63), maximal id of
                                     // synapse_model = 62, see nest_types.h
   {
-    LOG( M_ERROR,
-      "ModelManager::copy_synapse_model_",
-      "CopyModel cannot generate another synapse. Maximal synapse model count "
-      "of 63 exceeded." );
+    const std::string msg = "CopyModel cannot generate another synapse. Maximal synapse model count "
+      "of " + std::to_string( MAX_SYN_ID ) + " exceeded.";
+    LOG( M_ERROR, "ModelManager::copy_synapse_model_", msg );
     throw KernelException( "Synapse model count exceeded" );
   }
   assert( new_id != invalid_synindex );

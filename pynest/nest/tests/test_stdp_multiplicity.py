@@ -27,7 +27,7 @@ import math
 import numpy as np
 
 
-@nest.hl_api.check_stack
+@nest.ll_api.check_stack
 class StdpSpikeMultiplicity(unittest.TestCase):
     """
     Test correct handling of spike multiplicity in STDP.

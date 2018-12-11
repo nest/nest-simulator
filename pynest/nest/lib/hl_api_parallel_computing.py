@@ -28,8 +28,8 @@ from .. import pynestkernel as kernel
 from .hl_api_helper import *
 
 __all__ = [
-    'Rank',
     'NumProcesses',
+    'Rank',
     'SetAcceptableLatency',
     'SetMaxBuffered',
 ]

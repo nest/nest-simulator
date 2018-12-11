@@ -34,14 +34,14 @@ from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_subnets import GetChildren
 
 __all__ = [
-    'GetConnections',
-    'Connect',
-    'DataConnect',
     'CGConnect',
     'CGParse',
     'CGSelectImplementation',
-    'DisconnectOneToOne',
+    'Connect',
+    'DataConnect',
     'Disconnect',
+    'DisconnectOneToOne',
+    'GetConnections',
 ]
 
 

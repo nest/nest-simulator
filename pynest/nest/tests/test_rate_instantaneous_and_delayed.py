@@ -24,7 +24,7 @@ import unittest
 import numpy as np
 
 
-@nest.hl_api.check_stack
+@nest.ll_api.check_stack
 class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
 
     '''

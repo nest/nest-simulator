@@ -44,7 +44,7 @@ nest.ll_api.sli_run("statusdict/have_libneurosim ::")
 HAVE_LIBNEUROSIM = nest.ll_api.sli_pop()
 
 
-@nest.hl_api.check_stack
+@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_CSA, 'Python CSA package is not available')
 @unittest.skipIf(
     not HAVE_LIBNEUROSIM,

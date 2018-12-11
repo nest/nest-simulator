@@ -27,11 +27,11 @@ from ..ll_api import *
 from .hl_api_helper import *
 
 __all__ = [
-    'Models',
     'ConnectionRules',
-    'SetDefaults',
-    'GetDefaults',
     'CopyModel',
+    'GetDefaults',
+    'Models',
+    'SetDefaults',
 ]
 
 

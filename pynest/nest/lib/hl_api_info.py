@@ -31,15 +31,15 @@ from ..ll_api import *
 from .hl_api_helper import *
 
 __all__ = [
-    'sysinfo',
-    'version',
     'authors',
-    'helpdesk',
-    'help',
     'get_argv',
+    'GetStatus',
+    'help',
+    'helpdesk',
     'message',
     'SetStatus',
-    'GetStatus',
+    'sysinfo',
+    'version',
 ]
 
 

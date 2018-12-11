@@ -34,12 +34,11 @@ def test():
     """Runs all PyNEST unit tests."""
     from . import tests
     import unittest
-    from .lib.hl_api_helper import get_debug, set_debug
 
-    debug = get_debug()
-    set_debug(True)
+    debug = ll_api.get_debug()
+    ll_api.set_debug(True)
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(tests.suite())
 
-    set_debug(debug)
+    ll_api.set_debug(debug)

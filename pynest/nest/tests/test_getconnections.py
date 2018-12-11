@@ -27,7 +27,7 @@ import unittest
 import nest
 
 
-@nest.hl_api.check_stack
+@nest.ll_api.check_stack
 class GetConnectionsTestCase(unittest.TestCase):
     """Find connections and test if values can be set."""
 

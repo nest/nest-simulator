@@ -27,7 +27,7 @@ import unittest
 import nest
 
 
-@nest.hl_api.check_stack
+@nest.ll_api.check_stack
 class OneToOneConnectTestCase(unittest.TestCase):
     """Tests of Connect with OneToOne pattern"""
 

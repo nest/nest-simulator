@@ -29,21 +29,21 @@ from ..ll_api import *
 from .hl_api_helper import *
 
 __all__ = [
-    'Simulate',
-    'Run',
-    'Prepare',
     'Cleanup',
-    'RunManager',
-    'ResumeSimulation',
+    'DisableStructuralPlasticity',
+    'EnableStructuralPlasticity',
+    'GetKernelStatus',
+    'GetStructuralPlasticityStatus',
+    'Install',
+    'Prepare',
     'ResetKernel',
     'ResetNetwork',
+    'ResumeSimulation',
+    'Run',
+    'RunManager',
     'SetKernelStatus',
-    'GetKernelStatus',
-    'Install',
     'SetStructuralPlasticityStatus',
-    'GetStructuralPlasticityStatus',
-    'EnableStructuralPlasticity',
-    'DisableStructuralPlasticity',
+    'Simulate',
 ]
 
 

@@ -37,9 +37,33 @@ except ImportError:
     HAVE_NUMPY = False
 
 
-@nest.hl_api.check_stack
+@nest.ll_api.check_stack
 class StackTestCase(unittest.TestCase):
     """Stack tests"""
+
+    def test_stack_checker(self):
+        def empty_stack():
+            nest.ll_api.sli_run('clear')
+
+        def leave_on_stack():
+            nest.ll_api.sli_push(1)
+
+        check_empty_stack = nest.ll_api.stack_checker(empty_stack)
+        check_leave_on_stack = nest.ll_api.stack_checker(leave_on_stack)
+
+        debug = nest.ll_api.get_debug()
+        # We have to set debug to True to check the stack
+        nest.ll_api.set_debug(True)
+
+        # This should pass without errors
+        check_empty_stack()
+
+        try:
+            self.assertRaises(nest.kernel.NESTError, check_leave_on_stack)
+        except:  # Ensure that debug is reset if we get an error.
+            nest.ll_api.set_debug(debug)
+            raise
+        nest.ll_api.set_debug(debug)
 
     def test_Count(self):
         """Object count"""

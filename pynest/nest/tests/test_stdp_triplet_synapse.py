@@ -27,7 +27,7 @@ from math import exp
 import numpy as np
 
 
-@nest.hl_api.check_stack
+@nest.ll_api.check_stack
 class STDPTripletConnectionTestCase(unittest.TestCase):
     """Check stdp_triplet_connection model properties."""
 
@@ -294,7 +294,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
             "weight"), "weight should have been limited")
 
 
-@nest.hl_api.check_stack
+@nest.ll_api.check_stack
 class STDPTripletInhTestCase(STDPTripletConnectionTestCase):
 
     def setUp(self):

@@ -67,22 +67,6 @@ namespace nest
  */
 // clang-format on
 
-// constexpr-functions for convenient compile-time generation of the bit-masks
-// and bit-constants. An ill-defined length or size will cause a compile-time
-// error, e.g., num_bits to be shifted exceeds the sizeof(<datatype>) * 8.
-constexpr uint64_t
-generate_bit_mask( uint8_t num_bits, uint8_t bit_position )
-{
-  return (
-    ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 ) << bit_position );
-}
-
-constexpr int
-generate_max_value( uint8_t num_bits )
-{
-  return ( ( static_cast< int >( 1 ) << num_bits ) - 1 );
-}
-
 enum enum_status_target_id
 {
   TARGET_ID_PROCESSED,
@@ -93,6 +77,8 @@ class Target
 {
 private:
   uint64_t remote_target_id_;
+
+  // NUM_BITS_* set via cmake
 
   static constexpr uint8_t BITPOS_LCID = 0U;
   static constexpr uint8_t BITPOS_RANK = NUM_BITS_LCID;
@@ -125,11 +111,6 @@ public:
     const thread rank,
     const synindex syn_id,
     const index lcid );
-
-  static constexpr int MAX_LCID = generate_max_value( NUM_BITS_LCID );
-  static constexpr int MAX_RANK = generate_max_value( NUM_BITS_RANK );
-  static constexpr int MAX_TID = generate_max_value( NUM_BITS_TID );
-  static constexpr int MAX_SYN_ID = generate_max_value( NUM_BITS_SYN_ID );
 
   /**
    * Set local connection id.
@@ -191,6 +172,10 @@ public:
    */
   double get_offset() const;
 };
+
+//!< check legal size
+typedef StaticAssert< sizeof( Target ) == 8 >::success
+  success_target_size;
 
 inline Target::Target()
   : remote_target_id_( 0 )
@@ -309,7 +294,7 @@ Target::get_status() const
 inline bool
 Target::is_processed() const
 {
-  return ( Target::get_status() == TARGET_ID_PROCESSED );
+  return ( get_status() == TARGET_ID_PROCESSED );
 }
 
 inline double

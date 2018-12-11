@@ -59,6 +59,27 @@ namespace nest
  * different architectures (e.g. 32 or 64 bit).
  */
 
+// constexpr-functions for convenient compile-time generation of the bit-masks
+// and bit-constants. An ill-defined length or size will cause a compile-time
+// error, e.g., num_bits to be shifted exceeds the sizeof(<datatype>) * 8.
+constexpr uint64_t
+generate_bit_mask( const uint8_t num_bits, const uint8_t bit_position )
+{
+  return (
+    ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 ) << bit_position );
+}
+
+constexpr int
+generate_max_value( const uint8_t num_bits )
+{
+  return ( ( static_cast< int >( 1 ) << num_bits ) - 1 );
+}
+
+constexpr int MAX_LCID = generate_max_value( NUM_BITS_LCID );
+constexpr int MAX_RANK = generate_max_value( NUM_BITS_RANK );
+constexpr int MAX_TID = generate_max_value( NUM_BITS_TID );
+constexpr int MAX_SYN_ID = generate_max_value( NUM_BITS_SYN_ID );
+
 /**
  * Type for Time tics.
  */
@@ -89,10 +110,8 @@ const index invalid_index = SIZE_MAX;
 /**
  *  Unsigned char type for enumerations of synapse types.
  */
-typedef unsigned char synindex;
-// const synindex invalid_synindex = UCHAR_MAX;
-const synindex invalid_synindex =
-  63; // number of synapse types limited by size of syn_id in target.h
+typedef unsigned int synindex;
+const synindex invalid_synindex = MAX_SYN_ID;
 
 /**
  * Unsigned short type for compact target representation.

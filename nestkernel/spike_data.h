@@ -33,6 +33,14 @@
 namespace nest
 {
 
+enum enum_status_spike_data_id
+{
+  SPIKE_DATA_ID_DEFAULT,
+  SPIKE_DATA_ID_END,
+  SPIKE_DATA_ID_COMPLETE,
+  SPIKE_DATA_ID_INVALID,
+};
+
 /**
  * Used to communicate spikes. These are the elements of the MPI
  * buffers.
@@ -42,16 +50,21 @@ namespace nest
 class SpikeData
 {
 protected:
-  const static unsigned int default_marker_ = 0;
-  const static unsigned int end_marker_ = 1;
-  const static unsigned int complete_marker_ = 2;
-  const static unsigned int invalid_marker_ = 3;
 
-  index lcid_ : 27;         //!< local connection index
-  unsigned int marker_ : 2; //!< status flag
-  unsigned int lag_ : 14;   //!< lag in this min-delay interval
-  thread tid_ : 10;         //!< thread index
-  synindex syn_id_ : 8;     //!< synapse-type index
+  // NUM_BITS_LCID set via cmake
+  static constexpr uint8_t NUM_BITS_MARKER = 2U;
+  static constexpr uint8_t NUM_BITS_LAG = 14U;
+  // NUM_BITS_TID set via cmake
+  // NUM_BITS_SYN_ID set via cmake
+
+  static constexpr int MAX_MARKER = generate_max_value( NUM_BITS_MARKER );
+  static constexpr int MAX_LAG = generate_max_value( NUM_BITS_LAG );
+
+  index lcid_ : NUM_BITS_LCID;             //!< local connection index
+  unsigned int marker_ : NUM_BITS_MARKER;  //!< status flag
+  unsigned int lag_ : NUM_BITS_LAG;        //!< lag in this min-delay interval
+  thread tid_ : NUM_BITS_TID;              //!< thread index
+  synindex syn_id_ : NUM_BITS_SYN_ID;      //!< synapse-type index
 
 public:
   SpikeData();
@@ -128,9 +141,13 @@ public:
   double get_offset() const;
 };
 
+//!< check legal size
+typedef StaticAssert< sizeof( SpikeData ) == 8 >::success
+  success_spike_data_size;
+
 inline SpikeData::SpikeData()
   : lcid_( 0 )
-  , marker_( default_marker_ )
+  , marker_( SPIKE_DATA_ID_DEFAULT )
   , lag_( 0 )
   , tid_( 0 )
   , syn_id_( 0 )
@@ -139,7 +156,7 @@ inline SpikeData::SpikeData()
 
 inline SpikeData::SpikeData( const SpikeData& rhs )
   : lcid_( rhs.lcid_ )
-  , marker_( default_marker_ )
+  , marker_( SPIKE_DATA_ID_DEFAULT )
   , lag_( rhs.lag_ )
   , tid_( rhs.tid_ )
   , syn_id_( rhs.syn_id_ )
@@ -151,7 +168,7 @@ inline SpikeData::SpikeData( const thread tid,
   const index lcid,
   const unsigned int lag )
   : lcid_( lcid )
-  , marker_( default_marker_ )
+  , marker_( SPIKE_DATA_ID_DEFAULT )
   , lag_( lag )
   , tid_( tid )
   , syn_id_( syn_id )
@@ -165,13 +182,13 @@ SpikeData::set( const thread tid,
   const unsigned int lag,
   const double )
 {
-  assert( tid <= Target::MAX_TID );
-  assert( syn_id <= Target::MAX_SYN_ID );
-  assert( lcid <= Target::MAX_LCID );
-  assert( lag < 16384 );
+  assert( tid <= MAX_TID );
+  assert( syn_id <= MAX_SYN_ID );
+  assert( lcid <= MAX_LCID );
+  assert( lag < MAX_LAG );
 
   lcid_ = lcid;
-  marker_ = default_marker_;
+  marker_ = SPIKE_DATA_ID_DEFAULT;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;
@@ -204,43 +221,43 @@ SpikeData::get_syn_id() const
 inline void
 SpikeData::reset_marker()
 {
-  marker_ = default_marker_;
+  marker_ = SPIKE_DATA_ID_DEFAULT;
 }
 
 inline void
 SpikeData::set_complete_marker()
 {
-  marker_ = complete_marker_;
+  marker_ = SPIKE_DATA_ID_COMPLETE;
 }
 
 inline void
 SpikeData::set_end_marker()
 {
-  marker_ = end_marker_;
+  marker_ = SPIKE_DATA_ID_END;
 }
 
 inline void
 SpikeData::set_invalid_marker()
 {
-  marker_ = invalid_marker_;
+  marker_ = SPIKE_DATA_ID_INVALID;
 }
 
 inline bool
 SpikeData::is_complete_marker() const
 {
-  return marker_ == complete_marker_;
+  return marker_ == SPIKE_DATA_ID_COMPLETE;
 }
 
 inline bool
 SpikeData::is_end_marker() const
 {
-  return marker_ == end_marker_;
+  return marker_ == SPIKE_DATA_ID_END;
 }
 
 inline bool
 SpikeData::is_invalid_marker() const
 {
-  return marker_ == invalid_marker_;
+  return marker_ == SPIKE_DATA_ID_INVALID;
 }
 
 inline double
@@ -269,6 +286,10 @@ public:
   double get_offset() const;
 };
 
+//!< check legal size
+typedef StaticAssert< sizeof( OffGridSpikeData ) == 16 >::success
+  success_offgrid_spike_data_size;
+
 inline OffGridSpikeData::OffGridSpikeData()
   : SpikeData()
   , offset_( 0. )
@@ -292,13 +313,13 @@ OffGridSpikeData::set( const thread tid,
   const unsigned int lag,
   const double offset )
 {
-  assert( tid <= Target::MAX_TID );
-  assert( syn_id <= Target::MAX_SYN_ID );
-  assert( lcid <= Target::MAX_LCID );
-  assert( lag < 16384 );
+  assert( tid <= MAX_TID );
+  assert( syn_id <= MAX_SYN_ID );
+  assert( lcid <= MAX_LCID );
+  assert( lag < MAX_LAG );
 
   lcid_ = lcid;
-  marker_ = default_marker_;
+  marker_ = SPIKE_DATA_ID_DEFAULT;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;

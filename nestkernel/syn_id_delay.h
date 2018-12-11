@@ -32,10 +32,15 @@ namespace nest
 
 struct SynIdDelay
 {
-  unsigned int delay : 22;
-  unsigned int syn_id : 8;
-  bool subsequent_targets : 1;
-  bool disabled : 1;
+  static constexpr uint8_t NUM_BITS_DELAY = 21U;
+  // NUM_BITS_SYN_ID set via cmake
+  static constexpr uint8_t NUM_BITS_SUBSEQUENT_TARGETS = 1U;
+  static constexpr uint8_t NUM_BITS_DISABLED = 1U;
+
+  unsigned int delay : NUM_BITS_DELAY;
+  unsigned int syn_id : NUM_BITS_SYN_ID;
+  bool subsequent_targets : NUM_BITS_SUBSEQUENT_TARGETS;
+  bool disabled : NUM_BITS_DISABLED;
 
   explicit SynIdDelay( double d )
     : syn_id( invalid_synindex )
@@ -105,6 +110,11 @@ struct SynIdDelay
     return disabled;
   }
 };
+
+//!< check legal size
+typedef StaticAssert< sizeof( SynIdDelay ) == 4 >::success
+  success_syn_id_delay_data_size;
+
 }
 
 #endif

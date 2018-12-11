@@ -36,9 +36,11 @@ namespace nest
 class TargetDataFields
 {
 private:
-  unsigned int lcid_ : 27;
-  unsigned int tid_ : 10;
-  unsigned int syn_id_ : 8;
+
+  // NUM_BITS_* set via cmake
+  unsigned int lcid_ : NUM_BITS_LCID;
+  unsigned int tid_ : NUM_BITS_TID;
+  unsigned int syn_id_ : NUM_BITS_SYN_ID;
 
 public:
   // Members must be set explicitly -- no defaults
@@ -73,6 +75,10 @@ public:
    */
   synindex get_syn_id() const;
 };
+
+//!< check legal size
+typedef StaticAssert< sizeof( TargetDataFields ) == 8 >::success
+  success_target_data_fields_size;
 
 inline void
 TargetDataFields::set_lcid( const index lcid )
@@ -124,6 +130,10 @@ public:
   synindex get_syn_id() const;
 };
 
+//!< check legal size
+typedef StaticAssert< sizeof( SecondaryTargetDataFields ) == 8 >::success
+  success_secondary_target_data_fields_size;
+
 inline void
 SecondaryTargetDataFields::set_send_buffer_pos( const size_t pos )
 {
@@ -150,6 +160,14 @@ SecondaryTargetDataFields::get_syn_id() const
   return syn_id_;
 }
 
+enum enum_status_target_data_id
+{
+  TARGET_DATA_ID_DEFAULT,
+  TARGET_DATA_ID_COMPLETE,
+  TARGET_DATA_ID_END,
+  TARGET_DATA_ID_INVALID
+};
+
 /**
  * Used to communicate part of the connection infrastructure from
  * post- to presynaptic side. These are the elements of the MPI
@@ -163,16 +181,20 @@ class TargetData
   // and to handle variant fields
 
 private:
-  static const unsigned int default_marker_ = 0;
-  static const unsigned int complete_marker_ = 1;
-  static const unsigned int end_marker_ = 2;
-  static const unsigned int invalid_marker_ = 3;
 
-  unsigned int source_lid_ : 19; //!< local id of presynaptic neuron
-  unsigned int source_tid_ : 10; //!< thread index of presynaptic neuron
-  unsigned int marker_ : 2;
-  bool is_primary_ : 1; //!< TargetData has TargetDataFields
-                        //!< else has SecondaryTargetDataFields
+  static constexpr uint8_t NUM_BITS_LID = 19U;
+  // NUM_BITS_TID set via cmake
+  static constexpr uint8_t NUM_BITS_MARKER = 2U;
+  static constexpr uint8_t NUM_BITS_IS_PRIMARY = 1U;
+
+  static constexpr int MAX_LID = generate_max_value( NUM_BITS_LID );
+  static constexpr int MAX_MARKER = generate_max_value( NUM_BITS_MARKER );
+
+  unsigned int source_lid_ : NUM_BITS_LID; //!< local id of presynaptic neuron
+  unsigned int source_tid_ : NUM_BITS_TID; //!< thread index of presynaptic neuron
+  unsigned int marker_ : NUM_BITS_MARKER;
+  bool is_primary_ : NUM_BITS_IS_PRIMARY; //!< TargetData has TargetDataFields
+                                          //!< else has SecondaryTargetDataFields
 
 public:
   //<! variant fields
@@ -204,56 +226,56 @@ typedef StaticAssert< sizeof( TargetData ) == 12 >::success
 inline void
 TargetData::reset_marker()
 {
-  marker_ = default_marker_;
+  marker_ = TARGET_DATA_ID_DEFAULT;
 }
 
 inline void
 TargetData::set_complete_marker()
 {
-  marker_ = complete_marker_;
+  marker_ = TARGET_DATA_ID_COMPLETE;
 }
 
 inline void
 TargetData::set_end_marker()
 {
-  marker_ = end_marker_;
+  marker_ = TARGET_DATA_ID_END;
 }
 
 inline void
 TargetData::set_invalid_marker()
 {
-  marker_ = invalid_marker_;
+  marker_ = TARGET_DATA_ID_INVALID;
 }
 
 inline bool
 TargetData::is_complete_marker() const
 {
-  return marker_ == complete_marker_;
+  return marker_ == TARGET_DATA_ID_COMPLETE;
 }
 
 inline bool
 TargetData::is_end_marker() const
 {
-  return marker_ == end_marker_;
+  return marker_ == TARGET_DATA_ID_END;
 }
 
 inline bool
 TargetData::is_invalid_marker() const
 {
-  return marker_ == invalid_marker_;
+  return marker_ == TARGET_DATA_ID_INVALID;
 }
 
 inline void
 TargetData::set_source_lid( const index source_lid )
 {
-  assert( source_lid < 1048576 );
+  assert( source_lid < MAX_LID );
   source_lid_ = source_lid;
 }
 
 inline void
 TargetData::set_source_tid( const thread source_tid )
 {
-  assert( source_tid < 1024 );
+  assert( source_tid < MAX_TID );
   source_tid_ = source_tid;
 }
 

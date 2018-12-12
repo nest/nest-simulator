@@ -200,8 +200,9 @@ ModelManager::set_status( const DictionaryDatum& )
 }
 
 void
-ModelManager::get_status( DictionaryDatum& )
+ModelManager::get_status( DictionaryDatum& dict )
 {
+  def< int >( dict, "max_num_syn_models", MAX_SYN_ID );
 }
 
 index

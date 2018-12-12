@@ -94,16 +94,6 @@ ModelManager::register_connection_model( const std::string& name,
     requires_symmetric,
     /*supports_wfr*/ false );
   register_connection_model_( cf );
-
-  if ( not ends_with( name, "_hpc" ) )
-  {
-    cf = new ConnectorModelT< ConnectionLabel< ConnectionT > >( name + "_lbl",
-      /*is_primary=*/true,
-      /*has_delay=*/true,
-      requires_symmetric,
-      /*supports_wfr=*/false );
-    register_connection_model_( cf );
-  }
 }
 
 template < typename ConnectionT >

@@ -109,6 +109,7 @@
 #include "correlomatrix_detector.h"
 #include "correlospinmatrix_detector.h"
 #include "multimeter.h"
+#include "voltmeter.h"
 #include "spike_detector.h"
 #include "spin_detector.h"
 #include "weight_recorder.h"
@@ -287,6 +288,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< spin_detector >(
     "spin_detector" );
   kernel().model_manager.register_node_model< Multimeter >( "multimeter" );
+  kernel().model_manager.register_node_model< Voltmeter >( "voltmeter" );
   kernel().model_manager.register_node_model< correlation_detector >(
     "correlation_detector" );
   kernel().model_manager.register_node_model< correlomatrix_detector >(
@@ -295,15 +297,6 @@ ModelsModule::init( SLIInterpreter* )
     "correlospinmatrix_detector" );
   kernel().model_manager.register_node_model< volume_transmitter >(
     "volume_transmitter" );
-
-  // Create voltmeter as a multimeter pre-configured to record V_m.
-  DictionaryDatum vmdict = DictionaryDatum( new Dictionary );
-  ArrayDatum ad;
-  ad.push_back( LiteralDatum( names::V_m.toString() ) );
-  ( *vmdict )[ names::record_from ] = ad;
-  const Name name = "voltmeter";
-  kernel().model_manager.register_preconf_node_model< Multimeter >(
-    name, vmdict, false );
 
 #ifdef HAVE_GSL
   kernel().model_manager.register_node_model< iaf_chxk_2008 >(
@@ -369,6 +362,7 @@ ModelsModule::init( SLIInterpreter* )
   // register all connection models: once for the normal indexing type and
   // once for the more efficient "HPC" indexing type
   register_connection_models< TargetIdentifierPtrRport >();
+  register_connection_models< ConnectionLabel< TargetIdentifierPtrRport > >( "_lbl" );
   register_connection_models< TargetIdentifierIndex >( "_hpc" );
 
   // register secondary connection models

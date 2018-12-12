@@ -359,8 +359,10 @@ ModelsModule::init( SLIInterpreter* )
     "music_message_in_proxy" );
 #endif
 
-  // register all connection models: once for the normal indexing type and
-  // once for the more efficient "HPC" indexing type
+  // register all connection models: 
+  // once for the normal indexing type
+  // once for the ConnectionLabel type (postfix: "_lbl")
+  // once for the high-performance indexing type (postfix: "_hpc")
   register_connection_models< TargetIdentifierPtrRport >();
   register_connection_models< ConnectionLabel< TargetIdentifierPtrRport > >( "_lbl" );
   register_connection_models< TargetIdentifierIndex >( "_hpc" );

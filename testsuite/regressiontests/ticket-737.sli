@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-737 Ensure that stimulating devices can only be connected with a single synapse type
 

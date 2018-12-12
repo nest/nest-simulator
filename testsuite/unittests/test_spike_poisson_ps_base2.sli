@@ -21,7 +21,7 @@
  */
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_spike_poisson_ps_base2.sli
 
 Synopsis: (test_spike_poisson_ps_base2) run

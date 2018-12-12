@@ -38,6 +38,7 @@
 #include "source_table_position.h"
 
 // Includes from libnestutil
+#include "block_vector.h"
 #include "vector_util.h"
 
 namespace nest
@@ -64,7 +65,7 @@ private:
   /**
    * 3D structure storing gids of presynaptic neurons.
    */
-  std::vector< std::vector< std::vector< Source > > > sources_;
+  std::vector< std::vector< BlockVector< Source > > > sources_;
 
   /**
    * Whether the 3D structure has been deleted.
@@ -171,7 +172,7 @@ public:
    * Returns a reference to all sources local on thread; necessary
    * for sorting.
    */
-  std::vector< std::vector< Source > >& get_thread_local_sources(
+  std::vector< BlockVector< Source > >& get_thread_local_sources(
     const thread tid );
 
   /**
@@ -263,9 +264,6 @@ SourceTable::add_source( const thread tid,
   const bool is_primary )
 {
   const Source src( gid, is_primary );
-
-  vector_util::grow( sources_[ tid ][ syn_id ] );
-
   sources_[ tid ][ syn_id ].push_back( src );
 }
 
@@ -273,7 +271,7 @@ inline void
 SourceTable::clear( const thread tid )
 {
   for (
-    std::vector< std::vector< Source > >::iterator it = sources_[ tid ].begin();
+    std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin();
     it != sources_[ tid ].end();
     ++it )
   {
@@ -370,11 +368,11 @@ inline void
 SourceTable::reset_processed_flags( const thread tid )
 {
   for (
-    std::vector< std::vector< Source > >::iterator it = sources_[ tid ].begin();
+    std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin();
     it != sources_[ tid ].end();
     ++it )
   {
-    for ( std::vector< Source >::iterator iit = it->begin(); iit != it->end();
+    for ( BlockVector< Source >::iterator iit = it->begin(); iit != it->end();
           ++iit )
     {
       iit->set_processed( false );
@@ -396,11 +394,11 @@ SourceTable::find_first_source( const thread tid,
   const index sgid ) const
 {
   // binary search in sorted sources
-  const std::vector< Source >::const_iterator begin =
+  const BlockVector< Source >::const_iterator begin =
     sources_[ tid ][ syn_id ].begin();
-  const std::vector< Source >::const_iterator end =
+  const BlockVector< Source >::const_iterator end =
     sources_[ tid ][ syn_id ].end();
-  std::vector< Source >::const_iterator it =
+  BlockVector< Source >::const_iterator it =
     std::lower_bound( begin, end, Source( sgid, true ) );
 
   // source found by binary search could be disabled, iterate through
@@ -449,7 +447,7 @@ SourceTable::num_unique_sources( const thread tid, const synindex syn_id ) const
 {
   size_t n = 0;
   index last_source = 0;
-  for ( std::vector< Source >::const_iterator cit =
+  for ( BlockVector< Source >::const_iterator cit =
           sources_[ tid ][ syn_id ].begin();
         cit != sources_[ tid ][ syn_id ].end();
         ++cit )

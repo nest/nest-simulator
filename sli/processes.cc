@@ -845,7 +845,7 @@ Processes::MkfifoFunction::execute( SLIInterpreter* i ) const
 }
 
 #if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: memory_thisjob_bg - Reports memory usage on Blue Gene/P/Q systems
  Description:
  memory_thisjob_bg returns a dictionary with the heap and stack memory
@@ -871,7 +871,7 @@ Processes::MemoryThisjobBgFunction::execute( SLIInterpreter* i ) const
 #endif
 
 #if defined __APPLE__ && defined HAVE_MACH_MACH_H
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: memory_thisjob_darwin - Reports memory usage on Darwin/Apple systems
  Description:
  memory_thisjob_darwin returns the resident memory usage of a process in Bytes.

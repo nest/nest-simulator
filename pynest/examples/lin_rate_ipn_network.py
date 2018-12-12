@@ -72,10 +72,10 @@ neuron_params = {'linear_summation': True,
                  # type of non-linearity (not affecting linear rate models)
                  'tau': 10.0,
                  # time constant of neuronal dynamics in ms
-                 'mean': 2.0,
-                 # mean of Gaussian white noise input
-                 'std': 5.
-                 # standard deviation of Gaussian white noise input
+                 'mu': 2.0,
+                 # mean input
+                 'sigma': 5.
+                 # noise parameter
                  }
 
 

@@ -33,11 +33,14 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
-/* BeginDocumentation
+namespace nest
+{
 
+/** @BeginDocumentation
 Name: spike_detector - Device for detecting single spikes.
 
 Description:
+
 The spike_detector device is a recording device. It is used to record
 spikes from a single neuron, or from multiple neurons at once. Data
 is recorded in memory or to file as for all RecordingDevices.
@@ -63,38 +66,28 @@ all spikes desired to be recorded, are recorded.
 
 Spike are not necessarily written to file in chronological order.
 
+Note:
+
+Spikes are buffered in a two-segment buffer. We need to distinguish between
+two types of spikes: those delivered from the global event queue (almost all
+spikes) and spikes delivered locally from devices that are replicated on VPs
+(has_proxies() == false).
+- Spikes from the global queue are delivered by deliver_events() at the
+  beginning of each update cycle and are stored only until update() is called
+  during the same update cycle. Global queue spikes are thus written to the
+  read_toggle() segment of the buffer, from which update() reads.
+- Spikes delivered locally may be delivered before or after
+  spike_detector::update() is executed. These spikes are therefore buffered
+  in the write_toggle() segment of the buffer and output during the next
+  cycle.
+- After all spikes are recorded, update() clears the read_toggle() segment
+  of the buffer.
+
+
 Receives: SpikeEvent
 
 SeeAlso: spike_detector, Device, RecordingDevice
 */
-
-
-namespace nest
-{
-/**
- * Spike detector class.
- *
- * This class manages spike recording for normal and precise spikes. It
- * receives spikes via its handle(SpikeEvent&) method, buffers them, and
- * stores them via its RecordingDevice in the update() method.
- *
- * Spikes are buffered in a two-segment buffer. We need to distinguish between
- * two types of spikes: those delivered from the global event queue (almost all
- * spikes) and spikes delivered locally from devices that are replicated on VPs
- * (has_proxies() == false).
- * - Spikes from the global queue are delivered by deliver_events() at the
- *   beginning of each update cycle and are stored only until update() is called
- *   during the same update cycle. Global queue spikes are thus written to the
- *   read_toggle() segment of the buffer, from which update() reads.
- * - Spikes delivered locally may be delivered before or after
- *   spike_detector::update() is executed. These spikes are therefore buffered
- *   in the write_toggle() segment of the buffer and output during the next
- *   cycle.
- * - After all spikes are recorded, update() clears the read_toggle() segment
- *   of the buffer.
- *
- * @ingroup Devices
- */
 class spike_detector : public DeviceNode
 {
 

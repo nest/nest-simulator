@@ -34,7 +34,7 @@
 #include "integerdatum.h"
 
 //******************* Stack Functions
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: pop - Pop the top object off the stack
 
 Description: Alternatives: You can use ; (undocumented),
@@ -57,7 +57,7 @@ PopFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: npop - Pop n object off the stack
 Synopsis: obj_k ... obj_n+1 ojb_n ... obj_0 n pop -> obj_k ... obj_n
 Diagnostics: Raises StackUnderflow error if the stack contains less
@@ -88,7 +88,7 @@ NpopFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: dup - Duplicate the object which is on top of the stack
 Synopsis: any dup -> any any
 Diagnostics: Raises StackUnderflow error if the stack is empty.
@@ -109,7 +109,7 @@ DupFunction::execute( SLIInterpreter* i ) const
   i->OStack.index( 0 );
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: over - Copy object at stack level 1
 Synopsis: any obj over -> any obj any
 Diagnostics: Raises StackUnderflow error if there are less than two objects on
@@ -130,7 +130,7 @@ OverFunction::execute( SLIInterpreter* i ) const
   i->OStack.index( 1 );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: exch - Exchange the order of the first two stack objects.
 Synopsis: obj1 obj2 exch -> obj2 obj1
 Diagnostics: Raises StackUnderflow error if there are less than two objects on
@@ -150,7 +150,7 @@ ExchFunction::execute( SLIInterpreter* i ) const
   i->OStack.swap();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: index - Copy object at stack level n
 Synopsis: ... obj_n ... obj0 n index -> ... obj_n ... obj0 obj_n
 Diagnostics: Raises StackUnderflow error if there are less than n+1 objects on
@@ -181,7 +181,7 @@ IndexFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: copy - Copy the top n stack objects
 Synopsis: ... obj_n ... obj1 n copy -> ... obj_n ... obj1 obj_n ... obj1
 Examples: 1 2 3 4 2 copy
@@ -219,7 +219,7 @@ CopyFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: roll - Roll a portion n stack levels k times
 Synopsis: objn ... obj1 n k roll
 Description:
@@ -283,7 +283,7 @@ RollFunction::execute( SLIInterpreter* i ) const
   i->OStack.roll( n, idk->get() );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rollu - Roll the three top stack elements upwards
 Synopsis: obj1 obj2 obj3 rollu -> obj3 obj1 obj2
 Description: rollu is equivalent to 3 1 roll
@@ -305,7 +305,7 @@ RolluFunction::execute( SLIInterpreter* i ) const
   i->OStack.roll( 3, 1 );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rolld - Roll the three top stack elements downwards
 Synopsis: obj1 obj2 obj3 rolld -> obj2 obj3 obj1
 Description: rolld is equivalent to 3 -1 roll
@@ -327,7 +327,7 @@ RolldFunction::execute( SLIInterpreter* i ) const
   i->OStack.roll( 3, -1 );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rot - Rotate entire stack contents
 Synopsis: obj_n ... obj1 obj0 rot -> obj0 obj_n ... obj1
 SeeAlso: roll, rollu, rolld
@@ -341,7 +341,7 @@ RotFunction::execute( SLIInterpreter* i ) const
   i->OStack.roll( i->OStack.load(), 1 );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: count - Count the number of objects on the stack.
 Synopsis: obj_n-1 ... obj0 count -> obj_n-1 ... obj0 n
 */
@@ -354,7 +354,7 @@ CountFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( load );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: clear - Clear the entire stack.
 SeeAlso: pop, npop
 */
@@ -365,7 +365,7 @@ ClearFunction::execute( SLIInterpreter* i ) const
   i->OStack.clear();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: execstack - Return the contents of the execution stack as array.
 Synopsis: - execstack -> array
 Description: execstack converts the current contents of the execution stack
@@ -382,7 +382,7 @@ ExecstackFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( st );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: restoreestack - Restore the execution stack from an array.
 Synopsis: array restoreexecstack -> -
 
@@ -411,7 +411,7 @@ RestoreestackFunction::execute( SLIInterpreter* i ) const
   i->EStack = ta;
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: restoreostack - Restore the stack from an array.
 Synopsis: [any0 ... any_n] restoreexecstack -> any0 ... any_n
 
@@ -440,7 +440,7 @@ RestoreostackFunction::execute( SLIInterpreter* i ) const
   i->OStack = ta;
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: operandstack - Return the contents of the stack as array.
 Synopsis: anyn ... any0 operandstack -> [anyn ... any0]
 SeeAlso: restoreostack, arrayload, arraystore

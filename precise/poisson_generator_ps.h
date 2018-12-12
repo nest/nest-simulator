@@ -36,46 +36,38 @@
 #include "nest_types.h"
 #include "stimulating_device.h"
 
-/*BeginDocumentation
-Name: poisson_generator_ps - simulate neuron firing with Poisson processes
-(with arbitrary dead time) statistics and exact timing
-Description:
-
-  The poisson_generator_ps generator simulates a neuron firing with Poisson
-  statistics (with dead time), ie, exponentially distributed interspike
-  intervals plus constant dead time, spike events have exact timing
-  (i.e. not binned).
-
-Parameters:
-   The following parameters appear in the element's status dictionary:
-
-   rate     - mean firing rate. (double, var)
-   dead_time - minimal time between two spikes. (double, var)
-
-Remarks:
-   - This generator must be connected to all its targets using the
-     same synapse model. Failure to do so will only be detected at
-     runtime.
-   - This generator has only been validated in a very basic manner.
-
-   Sends: SpikeEvent
-
-SeeAlso: poisson_generator, spike_generator, Device, StimulatingDevice
-*/
-
 namespace nest
 {
 
-/**
- * Poisson generator (with dead time) with precisely timed spikes.
- *
- * This Poisson process (with dead time) generator sends different spike
- * trains to all its targets.
- * All spikes are sent individually with offsets identifying their precise
- * times.
- *
- * @ingroup Devices
- */
+/** @BeginDocumentation
+Name: poisson_generator_ps - simulate neuron firing with Poisson processes
+(with arbitrary dead time) statistics and exact timing
+
+Description:
+
+The poisson_generator_ps generator simulates a neuron firing with Poisson
+statistics (with dead time), ie, exponentially distributed interspike
+intervals plus constant dead time, spike events have exact timing
+(i.e. not binned).
+
+Parameters:
+
+The following parameters appear in the element's status dictionary:
+
+rate     - mean firing rate. (double, var)
+dead_time - minimal time between two spikes. (double, var)
+
+Remarks:
+
+- This generator must be connected to all its targets using the
+  same synapse model. Failure to do so will only be detected at
+  runtime.
+- This generator has only been validated in a very basic manner.
+
+Sends: SpikeEvent
+
+SeeAlso: poisson_generator, spike_generator, Device, StimulatingDevice
+*/
 class poisson_generator_ps : public DeviceNode
 {
 

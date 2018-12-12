@@ -121,6 +121,9 @@ public:
   Token( long );
   Token( bool );
   Token( unsigned long );
+#ifdef HAVE_32BIT_ARCH
+  Token( uint64_t );
+#endif
   Token( double );
   Token( const char* );
   Token( std::string );

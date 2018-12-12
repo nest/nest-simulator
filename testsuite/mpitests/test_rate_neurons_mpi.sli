@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
     Name: testsuite::test_rate_neurons_mpi - Test rate model neurons in parallel
 
     Synopsis: (test_rate_neurons_mpi) run -> - 
@@ -59,9 +59,9 @@ skip_if_without_gsl
         /wfr_comm_interval 1.0
     >> SetStatus
       
-  /lin_rate_ipn << /mean 0.0 /std 0.0 /rate 20.0 >> Create /lin_neuron1 Set
+  /lin_rate_ipn << /mu 0.0 /sigma 0.0 /rate 20.0 >> Create /lin_neuron1 Set
   /siegert_neuron << /rate 20.0 >> Create /siegert_neuron1 Set
-  /lin_rate_ipn << /mean 0.0 /std 0.0 >> Create /lin_neuron2 Set
+  /lin_rate_ipn << /mu 0.0 /sigma 0.0 >> Create /lin_neuron2 Set
   /siegert_neuron Create /siegert_neuron2 Set
   
   /mm /multimeter << /record_from [/rate]

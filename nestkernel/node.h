@@ -79,8 +79,10 @@ class Archiving_Node;
  * @ingroup user_interface
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
+
    Name: Node - General properties of all nodes.
+
    Parameters:
    frozen     booltype    - Whether the node is updated during simulation
    global_id  integertype - The global id of the node (cf. local_id)
@@ -94,6 +96,7 @@ class Archiving_Node;
                             locally)
    vp         integertype - The id of the virtual process the node is assigned
                             to (valid globally)
+
    SeeAlso: GetStatus, SetStatus, elementstates
  */
 

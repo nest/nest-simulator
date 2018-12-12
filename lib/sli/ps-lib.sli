@@ -23,7 +23,7 @@
 
 %% Library for PS conforming operators which are not 
 %% strictly needed by the startup process.
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: array - construct array with n zeros (PS)
 Synopsis: int array -> array
 Examples: 10 array ->[0 0 0 0 0 0 0 0 0 0]
@@ -45,7 +45,7 @@ SeeAlso: Range, LayoutArray, Table, arraystore
 % call:  array  integer array  putinterval array
 %        string integer string putinterval string
 %
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: putinterval - replace sections of an array/string 
 
 Synopsis: string int string putinterval -> string
@@ -67,7 +67,7 @@ SeeAlso: getinterval
  size exch replace
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: trunc - Truncate decimals of a double
 
 Synopsis: double trunc -> int
@@ -83,7 +83,7 @@ SeeAlso: floor, ceil
  [/doubletype] { int_d double_i } addtotrie
 def 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: round - Round double to the nearest integer
 Synopsis: double round -> double
 	integer round -> double
@@ -117,7 +117,7 @@ SeeAlso: iround, floor, ceil, cvi
  [/integertype]  {cvd} addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: iround - Round and convert double to the nearest integer
 Synopsis: double iround -> int
 Description: 
@@ -137,7 +137,7 @@ SeeAlso: iround, floor, ceil
  [/doubletype]  /iround_d load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: ceil - Return nearest integer larger than or equal to the argument.
 
 Description: Alternatives: Function ceil_d (undocumented) 
@@ -161,7 +161,7 @@ SeeAlso: floor
  [/integertype] {} addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: floor - Return nearest integer smaller than or equal to the argument.
 
 Description: Alternatives: Function floor_d (undocumented) 

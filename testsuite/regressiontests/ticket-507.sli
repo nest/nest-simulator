@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-507 - Ensure that spike_detector throws exception on SetStatus if off-grid times are set
 

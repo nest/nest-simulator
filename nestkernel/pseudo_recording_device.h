@@ -41,7 +41,7 @@
 namespace nest
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: PseudoRecordingDevice - Common properties of all pseudo-recording
                                 devices.
   Description:

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_sort - sli script to test if sorting works
 
    Synopsis: (test_sort) run

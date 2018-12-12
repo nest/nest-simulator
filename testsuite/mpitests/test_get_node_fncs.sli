@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_get_node_fncs - sli script for test of Get(Local/Global)(Nodes/Leaves/Children)
 
 Synopsis: nest_indirect test_get_node_fncs --> success

@@ -35,11 +35,14 @@
 #include "recording_device.h"
 #include "kernel_manager.h"
 
-/* BeginDocumentation
+namespace nest
+{
 
+/** @BeginDocumentation
 Name: weight_recorder - Device for detecting single spikes.
 
 Description:
+
 The weight_recorder device is a recording device. It is used to record
 weights from synapses. Data is recorded in memory or to file as for all
 RecordingDevices.
@@ -60,20 +63,6 @@ Receives: WeightRecordingEvent
 
 SeeAlso: weight_recorder, spike_detector, Device, RecordingDevice
 */
-
-
-namespace nest
-{
-/**
- * Weight recorder class.
- *
- * This class manages weight recording for normal and precise spikes. It
- * receives events via its handle(WeightRecordingEvent&) method, buffers them,
- *and
- * stores them via its RecordingDevice in the update() method.
- *
- * @ingroup Devices
- */
 class weight_recorder : public DeviceNode
 {
 

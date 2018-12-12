@@ -82,13 +82,16 @@ VPManager::is_gid_vp_local( const index gid ) const
 inline index
 VPManager::gid_to_lid( const index gid ) const
 {
-  return floor( static_cast< double >( gid ) / get_num_virtual_processes() );
+  // starts at lid 0 for gids >= 1 (expected value for neurons, excl. gid 0)
+  return ceil( static_cast< double >( gid ) / get_num_virtual_processes() ) - 1;
 }
 
 inline index
 VPManager::lid_to_gid( const index lid ) const
 {
-  return lid * get_num_virtual_processes() + get_vp();
+  const index vp = get_vp();
+  return ( lid + static_cast< index >( vp == 0 ) ) * get_num_virtual_processes()
+    + vp;
 }
 
 inline thread

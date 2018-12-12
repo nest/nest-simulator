@@ -35,7 +35,7 @@ class RateCopyModelTestCase(unittest.TestCase):
     def test_rate_copy_model(self):
 
         # neuron parameters
-        neuron_params = {'tau': 5., 'std': 0.}
+        neuron_params = {'tau': 5., 'sigma': 0.}
         drive = 1.5
         weight = 0.5
 
@@ -50,7 +50,7 @@ class RateCopyModelTestCase(unittest.TestCase):
 
         # set up rate neuron network
         rate_neuron_drive = nest.Create(
-            'lin_rate_ipn', params={'mean': drive, 'std': 0.})
+            'lin_rate_ipn', params={'mu': drive, 'sigma': 0.})
 
         rate_neuron_1 = nest.Create(
             'lin_rate_ipn', params=neuron_params)

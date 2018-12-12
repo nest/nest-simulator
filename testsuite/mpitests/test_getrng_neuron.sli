@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_getrng_neuron - sli script of assignment of rng to neuron
 
 Synopsis: nest_indirect test_getrng_neuron.sli -> compare results for different numbers of jobs 

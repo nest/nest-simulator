@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_delay_exchange - check that delay extrema are exchanged correctly
 
 Synopsis: nest_indirect test_delay_exchange.sli -> compare results for different numbers of jobs 

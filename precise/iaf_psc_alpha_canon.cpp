@@ -459,13 +459,13 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
 void
 nest::iaf_psc_alpha_canon::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   /* We need to compute the absolute time stamp of the delivery time
      of the spike, since spikes might spend longer than min_delay_
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
-  const long Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
+  const long Tdeliver = e.get_stamp().get_steps() + e.get_delay_steps() - 1;
   B_.events_.add_spike(
     e.get_rel_delivery_steps(
       nest::kernel().simulation_manager.get_slice_origin() ),
@@ -477,7 +477,7 @@ nest::iaf_psc_alpha_canon::handle( SpikeEvent& e )
 void
 nest::iaf_psc_alpha_canon::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

@@ -1744,7 +1744,7 @@ def _draw_extent(ax, xctr, yctr, xext, yext):
            xticks=tuple(), yticks=tuple())
 
 
-def _get_newpos(pos, ext):
+def _shifted_positions(pos, ext):
     """Get shifted positions corresponding to boundary conditions."""
     return [[pos[0] + ext[0], pos[1]],
             [pos[0] - ext[0], pos[1]],
@@ -2112,7 +2112,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
 
     layer = GetLayer(src_nrn)
     periodic = nest.GetStatus(layer)[0]['topology']['edge_wrap']
-    ext = nest.GetStatus(layer)[0]['topology']['extent']
+    extent = nest.GetStatus(layer)[0]['topology']['extent']
 
     if 'circular' in mask:
         r = mask['circular']['radius']
@@ -2121,9 +2121,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                                 fc='none', ec=mask_color, lw=3))
 
         if periodic:
-            new_pos = _get_newpos(srcpos + offs, ext)
-
-            for pos in new_pos:
+            for pos in _shifted_positions(srcpos + offs, extent):
                 ax.add_patch(plt.Circle(pos, radius=r, zorder=-1000,
                                         fc='none', ec=mask_color, lw=3))
     elif 'doughnut' in mask:
@@ -2135,9 +2133,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                                 fc='none', ec=mask_color, lw=3))
 
         if periodic:
-            new_pos = _get_newpos(srcpos + offs, ext)
-
-            for pos in new_pos:
+            for pos in _shifted_positions(srcpos + offs, extent):
                 ax.add_patch(plt.Circle(pos, radius=r_in, zorder=-1000,
                                         fc='none', ec=mask_color, lw=3))
                 ax.add_patch(plt.Circle(pos, radius=r_out, zorder=-1000,
@@ -2150,9 +2146,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                           zorder=-1000, fc='none', ec=mask_color, lw=3))
 
         if periodic:
-            new_pos = _get_newpos(srcpos + ll + offs, ext)
-
-            for pos in new_pos:
+            for pos in _shifted_positions(srcpos + ll + offs, extent):
                 ax.add_patch(
                     plt.Rectangle(pos, ur[0] - ll[0], ur[1] - ll[1],
                                   zorder=-1000, fc='none', ec=mask_color,
@@ -2174,9 +2168,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                                        ec=mask_color, lw=3))
 
         if periodic:
-            new_pos = _get_newpos(srcpos + offs + anchor, ext)
-
-            for pos in new_pos:
+            for pos in _shifted_positions(srcpos + offs + anchor, extent):
                 ax.add_patch(
                     matplotlib.patches.Ellipse(pos, width, height, angle=angle,
                                                zorder=-1000, fc='none',
@@ -2195,9 +2187,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                                         ls='dashed'))
 
             if periodic:
-                new_pos = _get_newpos(srcpos + offs, ext)
-
-                for pos in new_pos:
+                for pos in _shifted_positions(srcpos + offs, extent):
                     for r in range(3):
                         ax.add_patch(plt.Circle(pos, radius=(r + 1) * sigma,
                                                 zorder=-1000, fc='none',

@@ -260,17 +260,6 @@ class TestDisconnect(unittest.TestCase):
 
         self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
 
-    def test_disconnect_dict(self):
-
-        nodes = nest.Create('iaf_psc_alpha', 5)
-        nest.Connect(nodes, nodes)
-
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 25)
-
-        nest.Disconnect(nodes, nodes, 'all_to_all', {})
-
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 0)
-
 
 def suite():
     test_suite = unittest.makeSuite(TestDisconnect, 'test')

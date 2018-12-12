@@ -642,8 +642,6 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
         conn_spec = {'rule': conn_spec}
     if is_string(syn_spec):
         syn_spec = {'model': syn_spec}
-    if not syn_spec:
-        syn_spec = {'model': 'static_synapse'}
 
     sps(conn_spec)
     sps(syn_spec)

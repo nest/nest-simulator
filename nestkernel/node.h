@@ -136,6 +136,11 @@ public:
   virtual bool has_proxies() const;
 
   /**
+   * Returns true if node supports the Clopath plasticity rule.
+   */
+  virtual bool supports_clopath_archiving() const;
+
+  /**
    * Returns true if the node only receives events from nodes/devices
    * on the same thread.
    */
@@ -680,6 +685,8 @@ public:
    */
   virtual double get_K_value( double t );
 
+  virtual double get_LTD_value( double t );
+
   /**
    * write the Kminus and triplet_Kminus values at t (in ms) to
    * the provided locations.
@@ -695,6 +702,11 @@ public:
     double t2,
     std::deque< histentry >::iterator* start,
     std::deque< histentry >::iterator* finish );
+
+  virtual void get_LTP_history( double t1,
+    double t2,
+    std::deque< histentry_cl >::iterator* start,
+    std::deque< histentry_cl >::iterator* finish );
 
   /**
    * Modify Event object parameters during event delivery.
@@ -944,6 +956,12 @@ inline bool
 Node::is_frozen() const
 {
   return frozen_;
+}
+
+inline bool
+Node::supports_clopath_archiving() const
+{
+  return false;
 }
 
 inline bool

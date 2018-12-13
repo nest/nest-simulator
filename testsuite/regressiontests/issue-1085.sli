@@ -84,19 +84,4 @@ assert_or_die
 }
 assert_or_die
 
-{
-  ResetKernel
-
-  /nodes /iaf_cond_exp 5 Create def
-  /nodes [nodes] Range def
-  
-  nodes nodes << /rule /all_to_all >>
-              << /model /static_synapse_lbl /synapse_label 123 >> Connect
-  nodes nodes << /rule /all_to_all >>
-              << /model /static_synapse_lbl /synapse_label 456 >> Connect
-  
-  << /source nodes /synapse_label 123 >> GetConnections length_a 25 eq
-}
-assert_or_die
-
 endusing

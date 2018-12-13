@@ -66,6 +66,7 @@ neurons_interspike = [
 ]
 
 neurons_interspike_ps = [
+    "aeif_cbvg_2010",
     "iaf_psc_alpha_canon",
     "iaf_psc_alpha_presc",
     "iaf_psc_delta_canon",
@@ -78,6 +79,7 @@ ignore_model = [
      "gif_pop_psc_exp",          # This one commits spikes at same time
      "hh_cond_exp_traub",        # This one does not support V_reset
      "hh_psc_alpha",             # This one does not support V_reset
+     "hh_psc_alpha_clopath",         # This one does not support V_reset
      "hh_psc_alpha_gap",         # This one does not support V_reset
      "iaf_psc_exp_ps_lossless",  # This one use presice times
      "sli_neuron",               # This one is not optimal for PyNEST
@@ -210,6 +212,11 @@ class TestRefractoryCase(unittest.TestCase):
 
             # Get and compare t_ref
             t_ref_sim = self.compute_reftime(model, sd, vm, neuron)
+
+            # For models that first clamp the membrane potential
+            # at a higher value (see e.g. aeif_cbvg_2010)
+            if "t_clamp" in nest.GetDefaults(model):
+                t_ref_sim = t_ref_sim - nest.GetStatus(neuron, "t_clamp")[0]
 
             # Approximate result for precise spikes (interpolation error)
             if model in neurons_interspike_ps:

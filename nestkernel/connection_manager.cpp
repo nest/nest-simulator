@@ -1232,7 +1232,8 @@ nest::ConnectionManager::get_connections(
           for ( size_t i = 0; i < source_lcids.size(); ++i )
           {
             if ( synapse_label == UNLABELED_CONNECTION
-                 or connections->get_syn_label( source_lcids[ i ] ) == synapse_label )
+              or connections->get_syn_label( source_lcids[ i ] )
+                == synapse_label )
             {
               conns_in_thread.push_back( ConnectionDatum( ConnectionID(
                 source_table_.get_gid( tid, syn_id, source_lcids[ i ] ),

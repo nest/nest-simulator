@@ -42,7 +42,7 @@ M_ERROR setverbosity
 {
   ResetKernel
 
-  /nodes /iaf_cond_exp 5 Create def
+  /nodes /iaf_psc_alpha 5 Create def
   /nodes [nodes] Range def
   
   nodes nodes << /rule /all_to_all >>
@@ -57,7 +57,7 @@ assert_or_die
 {
   ResetKernel
 
-  /nodes /iaf_cond_exp 5 Create def
+  /nodes /iaf_psc_alpha 5 Create def
   /nodes [nodes] Range def
   
   nodes nodes << /rule /all_to_all >>
@@ -72,7 +72,7 @@ assert_or_die
 {
   ResetKernel
 
-  /nodes /iaf_cond_exp 5 Create def
+  /nodes /iaf_psc_alpha 5 Create def
   /nodes [nodes] Range def
   
   nodes nodes << /rule /all_to_all >>

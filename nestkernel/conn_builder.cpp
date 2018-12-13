@@ -341,6 +341,40 @@ nest::ConnBuilder::connect()
       "This connection rule does not support symmetric connections." );
   }
 
+  if ( kernel().model_manager.connector_requires_clopath_archiving(
+         synapse_model_id_ ) )
+  {
+    // get thread id
+    const thread tid = kernel().vp_manager.get_thread_id();
+    for ( GIDCollection::const_iterator tgid = targets_->begin();
+          tgid != targets_->end();
+          ++tgid )
+    {
+      Node* const target = kernel().node_manager.get_node( *tgid, tid );
+      if ( not target->supports_clopath_archiving() )
+      {
+        throw NotImplemented(
+          "This synapse model is not supported by the target population." );
+      }
+    }
+    // if symmetric connections are enabled sources are targets as well
+    if ( make_symmetric_ )
+    {
+      for ( GIDCollection::const_iterator sgid = sources_->begin();
+            sgid != sources_->end();
+            ++sgid )
+      {
+        Node* const source = kernel().node_manager.get_node( *sgid, tid );
+        if ( not source->supports_clopath_archiving() )
+        {
+          throw NotImplemented(
+            "Symmetric connections cannot be used here, since the synapse "
+            "model is not supported by the source population." );
+        }
+      }
+    }
+  }
+
   if ( use_structural_plasticity_() )
   {
     if ( make_symmetric_ )

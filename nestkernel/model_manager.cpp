@@ -460,6 +460,14 @@ ModelManager::connector_requires_symmetric( synindex syn_id ) const
   return prototypes_[ 0 ][ syn_id ]->requires_symmetric();
 }
 
+bool
+ModelManager::connector_requires_clopath_archiving( synindex syn_id ) const
+{
+  assert_valid_syn_id( syn_id );
+
+  return prototypes_[ 0 ][ syn_id ]->requires_clopath_archiving();
+}
+
 void
 ModelManager::clear_models_( bool called_from_destructor )
 {

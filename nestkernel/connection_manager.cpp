@@ -1231,13 +1231,18 @@ nest::ConnectionManager::get_connections(
 
           for ( size_t i = 0; i < source_lcids.size(); ++i )
           {
-            conns_in_thread.push_back( ConnectionDatum( ConnectionID(
-              source_table_.get_gid( tid, syn_id, source_lcids[ i ] ),
-              *t_gid,
-              tid,
-              syn_id,
-              source_lcids[ i ] ) ) );
+            if ( synapse_label == UNLABELED_CONNECTION
+                 or connections->get_syn_label( source_lcids[ i ] ) == synapse_label )
+            {
+              conns_in_thread.push_back( ConnectionDatum( ConnectionID(
+                source_table_.get_gid( tid, syn_id, source_lcids[ i ] ),
+                *t_gid,
+                tid,
+                syn_id,
+                source_lcids[ i ] ) ) );
+            }
           }
+
           // target_table_devices_ contains connections both to and from
           // devices. First we get connections from devices.
           target_table_devices_.get_connections_from_devices_(

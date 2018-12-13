@@ -78,6 +78,11 @@ public:
   virtual size_t size() const = 0;
 
   /**
+   * Return synapse_label of connection at position lcid.
+   */
+  virtual long get_syn_label( index lcid ) = 0;
+
+  /**
    * Write status of the connection at position lcid to the dictionary
    * dict.
    */
@@ -245,6 +250,12 @@ public:
   size() const
   {
     return C_.size();
+  }
+
+  long
+  get_syn_label( index lcid )
+  {
+    return C_[ lcid ].get_label();
   }
 
   void

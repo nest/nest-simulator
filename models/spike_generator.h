@@ -74,7 +74,7 @@ namespace nest
      receiving the spike train can handle precise timing information. In this
      case, the other two options are ignored.
 
-  /allow_offgrid_times and /allow_offgrid_spikes   default: false
+  /allow_offgrid_times   default: false
      If false, spike times will be rounded to the nearest step if they are
      less than tic/2 from the step, otherwise NEST reports an error.
      If true, spike times are rounded to the nearest step if within tic/2
@@ -166,7 +166,6 @@ namespace nest
 
        precise_times        bool - see above
        allow_offgrid_times  bool - see above
-       allow_offgrid_spikes bool - see above
        shift_now_spikes     bool - see above
 
   Sends: SpikeEvent
@@ -251,8 +250,6 @@ private:
 
     //! Allow and round up spikes not on steps; irrelevant if precise_times_
     bool allow_offgrid_times_;
-    //! Same as allow_offgrid_times_, here for backward compatibility
-    bool allow_offgrid_spikes_;
 
     //! Shift spike times at present to next step
     bool shift_now_spikes_;

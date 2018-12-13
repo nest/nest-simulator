@@ -27,8 +27,10 @@ set( OpenMP_C_FLAGS "-fopenmp" CACHE STRING "Compier flag for OpenMP paralleliza
 if ( with-openmp )
   if ( with-offload )
     set(OpenMP_CXX_FLAGS "-fopenmp -fopenmp-targets=nvptx64-nvidia-cuda --cuda-path=$ENV{CUDA}" CACHE STRING "Compiler flag for OpenMP offloading" FORCE )
+    set(OpenMP_C_FLAGS "-fopenmp -fopenmp-targets=nvptx64-nvidia-cuda --cuda-path=$ENV{CUDA}" CACHE STRING "Compiler flag for OpenMP offloading" FORCE )
   else()
     set(OpenMP_CXX_FLAGS "-fopenmp" CACHE STRING "Compiler flags for OpenMP parallelization" FORCE )
+    set(OpenMP_C_FLAGS "-fopenmp" CACHE STRING "Compiler flags for OpenMP parallelization" FORCE )
   endif()
 endif()
 

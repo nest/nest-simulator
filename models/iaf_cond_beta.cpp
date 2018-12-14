@@ -477,7 +477,7 @@ nest::iaf_cond_beta::update( Time const& origin,
 void
 nest::iaf_cond_beta::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   if ( e.get_weight() > 0.0 )
   {
@@ -496,7 +496,7 @@ nest::iaf_cond_beta::handle( SpikeEvent& e )
 void
 nest::iaf_cond_beta::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

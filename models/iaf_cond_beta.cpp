@@ -98,12 +98,10 @@ nest::iaf_cond_beta_dynamics( double,
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
   const double& V = y[ S::V_M ];
-  const double& g_ex = y[ S::G_EXC ];
-  const double& g_in = y[ S::G_INH ];
 
-  const double I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex );
-  const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in );
-  const double I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
+  const double I_syn_exc = y[ S::G_EXC ] * ( V - node.P_.E_ex );
+  const double I_syn_inh = y[ S::G_INH ] * ( V - node.P_.E_in );
+  const double I_leak = node.P_.g_L * ( V - node.P_.E_L );
 
   // dV_m/dt
   f[ 0 ] = ( -I_leak - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e )

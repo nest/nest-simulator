@@ -105,7 +105,7 @@ nest::iaf_cond_beta_dynamics( double,
     ( y[ S::G_EXC ] + node.P_.g_ext_ex ) * ( y[ S::V_M ] - node.P_.E_ex );
   const double I_syn_inh =
     ( g_in + node.P_.g_ext_in ) * ( V - node.P_.E_in );
-  const double I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
+  const double I_leak = node.P_.g_L * ( V - node.P_.E_L );
 
   // dV_m/dt
   f[ 0 ] = ( -I_leak - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e )

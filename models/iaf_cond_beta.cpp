@@ -113,7 +113,7 @@ nest::iaf_cond_beta_dynamics( double,
 
   // d dg_exc/dt, dg_exc/dt
   f[ 1 ] = -y[ S::DG_EXC ] / node.P_.tau_Edecay;
-  f[ 2 ] = y[ S::DG_EXC ] - ( y[ S::G_EXC ] / node.P_.tau_Erise );
+  f[ 2 ] = y[ S::DG_EXC ] - ( g_ex / node.P_.tau_Erise );
 
   // d dg_exc/dt, dg_exc/dt
   f[ 3 ] = -y[ S::DG_INH ] / node.P_.tau_Idecay;

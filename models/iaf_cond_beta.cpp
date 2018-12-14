@@ -102,10 +102,10 @@ nest::iaf_cond_beta_dynamics( double,
   const double& g_in = y[ S::G_INH ];
 
   const double I_syn_exc =
-    ( g_ex + node.P_.g_ext_ex ) * ( V - node.P_.E_ex );
+    ( y[ S::G_EXC ] ) * ( y[ S::V_M ] - node.P_.E_ex );
   const double I_syn_inh =
-    ( g_in + node.P_.g_ext_in ) * ( V - node.P_.E_in );
-  const double I_leak = node.P_.g_L * ( V - node.P_.E_L );
+    ( y[ S::G_INH ] ) * ( y[ S::V_M ] - node.P_.E_in );
+  const double I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
 
   // dV_m/dt
   f[ 0 ] = ( -I_leak - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e )
@@ -113,11 +113,11 @@ nest::iaf_cond_beta_dynamics( double,
 
   // d dg_exc/dt, dg_exc/dt
   f[ 1 ] = -y[ S::DG_EXC ] / node.P_.tau_Edecay;
-  f[ 2 ] = y[ S::DG_EXC ] - ( g_ex / node.P_.tau_Erise );
+  f[ 2 ] = y[ S::DG_EXC ] - ( y[ S::G_EXC ] / node.P_.tau_Erise );
 
   // d dg_exc/dt, dg_exc/dt
   f[ 3 ] = -y[ S::DG_INH ] / node.P_.tau_Idecay;
-  f[ 4 ] = y[ S::DG_INH ] - ( g_in / node.P_.tau_Irise );
+  f[ 4 ] = y[ S::DG_INH ] - ( y[ S::G_INH ] / node.P_.tau_Irise );
 
   return GSL_SUCCESS;
 }
@@ -140,8 +140,6 @@ nest::iaf_cond_beta::Parameters_::Parameters_()
   , tau_Irise( 2.0 )  // ms
   , tau_Idecay( 2.0 ) // ms
   , I_e( 0.0 )        // pA
-  , g_ext_ex( 0.0 )   // uS
-  , g_ext_in( 0.0 )   // uS
 {
 }
 
@@ -220,8 +218,6 @@ nest::iaf_cond_beta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_in_rise, tau_Irise );
   def< double >( d, names::tau_in_decay, tau_Idecay );
   def< double >( d, names::I_e, I_e );
-  def< double >( d, names::g_ext_ex, g_ext_ex );
-  def< double >( d, names::g_ext_in, g_ext_in );
 }
 
 void
@@ -245,8 +241,6 @@ nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_in_decay, tau_Idecay );
 
   updateValue< double >( d, names::I_e, I_e );
-  updateValue< double >( d, names::g_ext_ex, g_ext_ex );
-  updateValue< double >( d, names::g_ext_in, g_ext_in );
   if ( V_reset >= V_th )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -262,10 +256,6 @@ nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d )
   if ( tau_Erise <= 0 || tau_Edecay <= 0 || tau_Irise <= 0 || tau_Idecay <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
-  }
-  if ( g_ext_ex < 0 || g_ext_in < 0 )
-  {
-    throw BadProperty( "All external conductances must be nonnegative." );
   }
 }
 

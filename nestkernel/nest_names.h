@@ -181,8 +181,6 @@ extern const Name g;
 extern const Name g_ahp;
 extern const Name g_AMPA;
 extern const Name g_ex;
-extern const Name g_ext_ex;
-extern const Name g_ext_in;
 extern const Name g_GABA_A;
 extern const Name g_GABA_B;
 extern const Name g_in;

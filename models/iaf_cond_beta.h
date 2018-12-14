@@ -198,8 +198,6 @@ private:
     double
       tau_Idecay; //!< Synaptic Decay Time Constant for Inhibitory Synapse in ms
     double I_e;   //!< Constant Current in pA
-    double g_ext_ex; //!< Constant External Excitatory Conductance in uS
-    double g_ext_in; //!< Constant External Inhibitory Conductance in uS
 
     Parameters_(); //!< Set default parameter values
 

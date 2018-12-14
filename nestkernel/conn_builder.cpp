@@ -351,7 +351,7 @@ nest::ConnBuilder::connect()
           ++tgid )
     {
       Node* const target = kernel().node_manager.get_node( *tgid, tid );
-      if ( not target->supports_clopath_archiving() )
+      if ( not target->is_proxy() and not target->supports_clopath_archiving() )
       {
         throw NotImplemented(
           "This synapse model is not supported by the target population." );
@@ -365,7 +365,8 @@ nest::ConnBuilder::connect()
             ++sgid )
       {
         Node* const source = kernel().node_manager.get_node( *sgid, tid );
-        if ( not source->supports_clopath_archiving() )
+        if ( not source->is_proxy()
+          and not source->supports_clopath_archiving() )
         {
           throw NotImplemented(
             "Symmetric connections cannot be used here, since the synapse "

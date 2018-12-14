@@ -108,12 +108,12 @@ nest::iaf_cond_beta_dynamics( double,
     / node.P_.C_m;
 
   // d dg_exc/dt, dg_exc/dt
-  f[ 1 ] = -y[ S::DG_EXC ] / node.P_.tau_Edecay;
-  f[ 2 ] = y[ S::DG_EXC ] - ( y[ S::G_EXC ] / node.P_.tau_Erise );
+  f[ 1 ] = -y[ S::DG_EXC ] / node.P_.tau_decay_ex;
+  f[ 2 ] = y[ S::DG_EXC ] - ( y[ S::G_EXC ] / node.P_.tau_rise_ex );
 
   // d dg_exc/dt, dg_exc/dt
-  f[ 3 ] = -y[ S::DG_INH ] / node.P_.tau_Idecay;
-  f[ 4 ] = y[ S::DG_INH ] - ( y[ S::G_INH ] / node.P_.tau_Irise );
+  f[ 3 ] = -y[ S::DG_INH ] / node.P_.tau_decay_in;
+  f[ 4 ] = y[ S::DG_INH ] - ( y[ S::G_INH ] / node.P_.tau_rise_in );
 
   return GSL_SUCCESS;
 }
@@ -131,10 +131,10 @@ nest::iaf_cond_beta::Parameters_::Parameters_()
   , E_ex( 0.0 )       // mV
   , E_in( -85.0 )     // mV
   , E_L( -70.0 )      // mV
-  , tau_Erise( 0.2 )  // ms
-  , tau_Edecay( 0.2 ) // ms
-  , tau_Irise( 2.0 )  // ms
-  , tau_Idecay( 2.0 ) // ms
+  , tau_rise_ex( 0.2 )  // ms
+  , tau_decay_ex( 0.2 ) // ms
+  , tau_rise_in( 2.0 )  // ms
+  , tau_decay_in( 2.0 ) // ms
   , I_e( 0.0 )        // pA
 {
 }
@@ -209,10 +209,10 @@ nest::iaf_cond_beta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::E_ex, E_ex );
   def< double >( d, names::E_in, E_in );
   def< double >( d, names::C_m, C_m );
-  def< double >( d, names::tau_ex_rise, tau_Erise );
-  def< double >( d, names::tau_ex_decay, tau_Edecay );
-  def< double >( d, names::tau_in_rise, tau_Irise );
-  def< double >( d, names::tau_in_decay, tau_Idecay );
+  def< double >( d, names::tau_rise_ex, tau_rise_ex );
+  def< double >( d, names::tau_decay_ex, tau_decay_ex );
+  def< double >( d, names::tau_rise_in, tau_rise_in );
+  def< double >( d, names::tau_decay_in, tau_decay_in );
   def< double >( d, names::I_e, I_e );
 }
 
@@ -231,10 +231,10 @@ nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::C_m, C_m );
   updateValue< double >( d, names::g_L, g_L );
 
-  updateValue< double >( d, names::tau_ex_rise, tau_Erise );
-  updateValue< double >( d, names::tau_ex_decay, tau_Edecay );
-  updateValue< double >( d, names::tau_in_rise, tau_Irise );
-  updateValue< double >( d, names::tau_in_decay, tau_Idecay );
+  updateValue< double >( d, names::tau_rise_ex, tau_rise_ex );
+  updateValue< double >( d, names::tau_decay_ex, tau_decay_ex );
+  updateValue< double >( d, names::tau_rise_in, tau_rise_in );
+  updateValue< double >( d, names::tau_decay_in, tau_decay_in );
 
   updateValue< double >( d, names::I_e, I_e );
   if ( V_reset >= V_th )
@@ -249,7 +249,7 @@ nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_Erise <= 0 || tau_Edecay <= 0 || tau_Irise <= 0 || tau_Idecay <= 0 )
+  if ( tau_rise_ex <= 0 || tau_decay_ex <= 0 || tau_rise_in <= 0 || tau_decay_in <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -384,9 +384,9 @@ nest::iaf_cond_beta::calibrate()
   B_.logger_.init();
 
   V_.PSConInit_E = nest::iaf_cond_beta::get_normalisation_factor(
-    P_.tau_Erise, P_.tau_Edecay );
+    P_.tau_rise_ex, P_.tau_decay_ex );
   V_.PSConInit_I = nest::iaf_cond_beta::get_normalisation_factor(
-    P_.tau_Irise, P_.tau_Idecay );
+    P_.tau_rise_in, P_.tau_decay_in );
   V_.RefractoryCounts = Time( Time::ms( P_.t_ref ) ).get_steps();
 
   // since t_ref >= 0, this can only fail in error

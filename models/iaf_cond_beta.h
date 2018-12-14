@@ -65,10 +65,10 @@ V_reset      double - Reset potential of the membrane in mV.
 E_ex         double - Excitatory reversal potential in mV.
 E_in         double - Inhibitory reversal potential in mV.
 g_L          double - Leak conductance in nS;
-tau_ex_rise  double - Rise time of the excitatory synaptic beta function in ms.
-tau_ex_decay double - Rise time of the excitatory synaptic beta function in ms.
-tau_in_rise  double - Rise time of the inhibitory synaptic beta function in ms.
-tau_in_decay double - Rise time of the inhibitory synaptic beta function in ms.
+tau_rise_ex  double - Rise time of the excitatory synaptic beta function in ms.
+tau_decay_ex double - Rise time of the excitatory synaptic beta function in ms.
+tau_rise_in  double - Rise time of the inhibitory synaptic beta function in ms.
+tau_decay_in double - Rise time of the inhibitory synaptic beta function in ms.
 I_e          double - Constant input current in pA.
 G_ex        double - Constant external input conductance in uS.
 G_in        double - Constant external input conductance in uS.
@@ -191,12 +191,10 @@ private:
     double E_ex;      //!< Excitatory reversal Potential in mV
     double E_in;      //!< Inhibitory reversal Potential in mV
     double E_L;       //!< Leak reversal Potential (aka resting potential) in mV
-    double tau_Erise; //!< Synaptic Rise Time Constant Excitatory Synapse in ms
-    double
-      tau_Edecay; //!< Synaptic Decay Time Constant for Excitatory Synapse in ms
-    double tau_Irise; //!< Synaptic Rise Time Constant Inhibitory Synapse in ms
-    double
-      tau_Idecay; //!< Synaptic Decay Time Constant for Inhibitory Synapse in ms
+    double tau_rise_ex; //!< Synaptic Rise Time Constant Excitatory Synapse in ms
+    double tau_decay_ex; //!< Synaptic Decay Time Constant for Excitatory Synapse in ms
+    double tau_rise_in; //!< Synaptic Rise Time Constant Inhibitory Synapse in ms
+    double tau_decay_in; //!< Synaptic Decay Time Constant for Inhibitory Synapse in ms
     double I_e;   //!< Constant Current in pA
 
     Parameters_(); //!< Set default parameter values

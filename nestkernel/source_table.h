@@ -121,6 +121,7 @@ private:
 
   void populate_target_data_fields_( const SourceTablePosition& current_position,
     const Source& current_source,
+    const thread source_rank,
     TargetData& next_target_data ) const;
 
 public:

@@ -451,13 +451,7 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
                     # section. Stop reading the log file.
                     break
 
-    #return status_tests, total_number_of_tests, number_of_tests_failed
-
-    if in_installcheck_section:
-        return status_tests, total_number_of_tests, number_of_tests_failed
-    else:
-        # No make installcheck
-        return None, None, None
+    return status_tests, total_number_of_tests, number_of_tests_failed
 
 
 def convert_bool_value_to_status_string(value):
@@ -904,14 +898,14 @@ def build_return_code(status_cmake_configure,
     0 (success) or 1.
     """
     if ((status_cmake_configure) and
-       (status_make) and
-       (status_make_install) and
-       (skip_installcheck or status_tests) and
-       (skip_code_analysis or
-       ((ignore_vera or get_num_msgs(summary_vera) == 0) and
-       (ignore_cppcheck or get_num_msgs(summary_cppcheck) == 0) and
-       (ignore_format or get_num_msgs(summary_format) == 0) and
-       (ignore_pep8 or get_num_msgs(summary_pep8) == 0)))):
+        (status_make) and
+        (status_make_install) and
+        (skip_installcheck or status_tests) and
+        (skip_code_analysis or
+        ((ignore_vera or get_num_msgs(summary_vera) == 0) and
+         (ignore_cppcheck or get_num_msgs(summary_cppcheck) == 0) and
+         (ignore_format or get_num_msgs(summary_format) == 0) and
+         (ignore_pep8 or get_num_msgs(summary_pep8) == 0)))):
 
         return 0
     else:

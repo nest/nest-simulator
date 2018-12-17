@@ -183,19 +183,19 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    double V_th;      //!< Threshold Potential in mV
-    double V_reset;   //!< Reset Potential in mV
-    double t_ref;     //!< Refractory period in ms
-    double g_L;       //!< Leak Conductance in nS
-    double C_m;       //!< Membrane Capacitance in pF
-    double E_ex;      //!< Excitatory reversal Potential in mV
-    double E_in;      //!< Inhibitory reversal Potential in mV
-    double E_L;       //!< Leak reversal Potential (aka resting potential) in mV
-    double tau_rise_ex; //!< Synaptic Rise Time Constant Excitatory Synapse in ms
-    double tau_decay_ex; //!< Synaptic Decay Time Constant for Excitatory Synapse in ms
-    double tau_rise_in; //!< Synaptic Rise Time Constant Inhibitory Synapse in ms
-    double tau_decay_in; //!< Synaptic Decay Time Constant for Inhibitory Synapse in ms
-    double I_e;   //!< Constant Current in pA
+    double V_th;         //!< Threshold Potential in mV
+    double V_reset;      //!< Reset Potential in mV
+    double t_ref;        //!< Refractory period in ms
+    double g_L;          //!< Leak Conductance in nS
+    double C_m;          //!< Membrane Capacitance in pF
+    double E_ex;         //!< Excitatory reversal Potential in mV
+    double E_in;         //!< Inhibitory reversal Potential in mV
+    double E_L;          //!< Leak reversal Potential (resting potential) in mV
+    double tau_rise_ex;  //!< Excitatory Synaptic Rise Time Constant in ms
+    double tau_decay_ex; //!< Excitatory Synaptic Decay Time Constant in ms
+    double tau_rise_in;  //!< Inhibitory Synaptic Rise Time Constant in ms
+    double tau_decay_in; //!< Inhibitory Synaptic Decay Time Constant  in ms
+    double I_e;          //!< Constant Current in pA
 
     Parameters_(); //!< Set default parameter values
 

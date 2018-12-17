@@ -123,19 +123,19 @@ nest::iaf_cond_beta_dynamics( double,
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_beta::Parameters_::Parameters_()
-  : V_th( -55.0 )     // mV
-  , V_reset( -60.0 )  // mV
-  , t_ref( 2.0 )      // ms
-  , g_L( 16.6667 )    // nS
-  , C_m( 250.0 )      // pF
-  , E_ex( 0.0 )       // mV
-  , E_in( -85.0 )     // mV
-  , E_L( -70.0 )      // mV
+  : V_th( -55.0 )       // mV
+  , V_reset( -60.0 )    // mV
+  , t_ref( 2.0 )        // ms
+  , g_L( 16.6667 )      // nS
+  , C_m( 250.0 )        // pF
+  , E_ex( 0.0 )         // mV
+  , E_in( -85.0 )       // mV
+  , E_L( -70.0 )        // mV
   , tau_rise_ex( 0.2 )  // ms
   , tau_decay_ex( 0.2 ) // ms
   , tau_rise_in( 2.0 )  // ms
   , tau_decay_in( 2.0 ) // ms
-  , I_e( 0.0 )        // pA
+  , I_e( 0.0 )          // pA
 {
 }
 
@@ -249,7 +249,8 @@ nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_rise_ex <= 0 || tau_decay_ex <= 0 || tau_rise_in <= 0 || tau_decay_in <= 0 )
+  if ( tau_rise_ex <= 0 || tau_decay_ex <= 0 || tau_rise_in <= 0
+    || tau_decay_in <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }

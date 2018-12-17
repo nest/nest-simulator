@@ -868,7 +868,9 @@ def build_return_code(status_cmake_configure,
                       ignore_vera,
                       ignore_cppcheck,
                       ignore_format,
-                      ignore_pep8):
+                      ignore_pep8,
+                      skip_code_analysis,
+                      skip_installcheck):
     """Depending in the build results, create a return code.
 
     Parameters
@@ -894,6 +896,8 @@ def build_return_code(status_cmake_configure,
                             fail: True, False
     ignore_pep8:            PEP8 messages will not cause the build to
                             fail: True, False
+    skip_code_analysis:     build ran w/o static code analysis: True, False
+    skip_installcheck:      build ran w/o executing the test suite: True, False
 
     Returns
     -------
@@ -902,11 +906,12 @@ def build_return_code(status_cmake_configure,
     if ((status_cmake_configure) and
        (status_make) and
        (status_make_install) and
-       (status_tests) and
-       (ignore_vera or get_num_msgs(summary_vera) == 0) and
+       (skip_installcheck or status_tests) and
+       (skip_code_analysis or
+       ((ignore_vera or get_num_msgs(summary_vera) == 0) and
        (ignore_cppcheck or get_num_msgs(summary_cppcheck) == 0) and
        (ignore_format or get_num_msgs(summary_format) == 0) and
-       (ignore_pep8 or get_num_msgs(summary_pep8) == 0)):
+       (ignore_pep8 or get_num_msgs(summary_pep8) == 0)))):
 
         return 0
     else:
@@ -923,6 +928,9 @@ if __name__ == '__main__':
     changed_files = \
         list_of_changed_files(log_filename, "MSGBLD0070",
                               "MSGBLD0100", "MSGBLD0095")
+
+    skip_code_analysis = is_message_in_logfile(log_filename, "MSGBLD0225")
+    skip_installcheck = is_message_in_logfile(log_filename, "MSGBLD0305")
 
     # The NEST Travis CI build consists of several steps and sections.
     # Each section is enclosed in a start- and an end-message.
@@ -974,7 +982,9 @@ if __name__ == '__main__':
                                   ignore_vera,
                                   ignore_cppcheck,
                                   ignore_format,
-                                  ignore_pep8)
+                                  ignore_pep8,
+                                  skip_code_analysis,
+                                  skip_installcheck)
 
     # Only after a successful build, Travis CI will upload the build artifacts
     # to Amazon S3.

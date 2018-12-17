@@ -189,7 +189,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     IGNORE_MSG_CLANG_FORMAT=false
     IGNORE_MSG_PEP8=false
 
-    # The script is called within the Travis CI environment and cannot be run incremental.
+    # The script is called within the Travis CI environment and thus can not be run incremental.
     RUNS_ON_TRAVIS=true
     INCREMENTAL=false
 
@@ -199,7 +199,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
     "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
 else
-    echo "MSGBLD0225: Skip static code analysis."
+    echo "MSGBLD0225: Static code analysis skipped due to build configuration."
 fi  # End of Static code analysis.
 
 

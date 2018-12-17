@@ -423,6 +423,7 @@ extern const Name tau_c;
 extern const Name tau_Ca;
 extern const Name tau_D_KNa;
 extern const Name tau_decay;
+extern const Name tau_decay_AMPA;
 extern const Name tau_decay_ex;
 extern const Name tau_decay_in;
 extern const Name tau_decay_GABA_A;

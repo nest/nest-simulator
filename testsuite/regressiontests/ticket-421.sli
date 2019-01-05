@@ -50,7 +50,7 @@ Author: Hans Ekkehard Plesser, 2010-05-05
 % steady state
 /exclude_models [/aeif_cond_exp /aeif_cond_alpha /aeif_cond_alpha_RK5 /a2eif_cond_exp /a2eif_cond_exp_HW /aeif_cond_alpha_multisynapse
                  /aeif_psc_exp /aeif_psc_alpha /aeif_psc_delta /aeif_cond_beta_multisynapse /hh_cond_exp_traub
-                 /hh_psc_alpha /hh_psc_alpha_gap /ht_neuron /ht_neuron_fs
+                 /hh_psc_alpha /hh_psc_alpha_gap /hh_cond_beta_gap_traub /ht_neuron /ht_neuron_fs
                  /iaf_cond_exp_sfa_rr /izhikevich] def
 
 % use power-of-two resolution to avoid roundof problems

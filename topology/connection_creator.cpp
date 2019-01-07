@@ -33,13 +33,13 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   , number_of_connections_()
   , mask_()
   , kernel_()
-  , synapse_model_( kernel().model_manager.get_synapsedict()->lookup(
-      "static_synapse" ) )
+  , synapse_model_(
+      kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
   , weight_()
   , delay_()
 {
   Name connection_type;
-  long number_of_connections ( -1 ); // overwritten by dict entry
+  long number_of_connections( -1 ); // overwritten by dict entry
 
   for ( Dictionary::iterator dit = dict->begin(); dit != dict->end(); ++dit )
   {
@@ -72,7 +72,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
       if ( number_of_connections < 0 )
       {
 
-        throw BadProperty("Number of connections cannot be less than zero." );
+        throw BadProperty( "Number of connections cannot be less than zero." );
       }
 
       number_of_connections_ = number_of_connections;

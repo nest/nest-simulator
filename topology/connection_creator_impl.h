@@ -437,11 +437,11 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
       if ( kernel_.valid() )
       {
 
-        for (
-          typename std::vector< std::pair< Position< D >, index > >::iterator
-            iter = positions->begin();
-          iter != positions->end();
-          ++iter )
+        for ( typename std::vector<
+                std::pair< Position< D >, index > >::iterator iter =
+                positions->begin();
+              iter != positions->end();
+              ++iter )
         {
 
           if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
@@ -472,11 +472,11 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
       else
       {
 
-        for (
-          typename std::vector< std::pair< Position< D >, index > >::iterator
-            iter = positions->begin();
-          iter != positions->end();
-          ++iter )
+        for ( typename std::vector<
+                std::pair< Position< D >, index > >::iterator iter =
+                positions->begin();
+              iter != positions->end();
+              ++iter )
         {
 
           if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
@@ -504,7 +504,7 @@ template < int D >
 void
 ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 {
-  if ( number_of_connections_ < 1)
+  if ( number_of_connections_ < 1 )
   {
     return;
   }
@@ -587,11 +587,11 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
         std::vector< double > probabilities;
 
         // Collect probabilities for the sources
-        for (
-          typename std::vector< std::pair< Position< D >, index > >::iterator
-            iter = positions.begin();
-          iter != positions.end();
-          ++iter )
+        for ( typename std::vector<
+                std::pair< Position< D >, index > >::iterator iter =
+                positions.begin();
+              iter != positions.end();
+              ++iter )
         {
 
           probabilities.push_back( kernel_->value(
@@ -745,11 +745,11 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
         std::vector< double > probabilities;
 
         // Collect probabilities for the sources
-        for (
-          typename std::vector< std::pair< Position< D >, index > >::iterator
-            iter = positions->begin();
-          iter != positions->end();
-          ++iter )
+        for ( typename std::vector<
+                std::pair< Position< D >, index > >::iterator iter =
+                positions->begin();
+              iter != positions->end();
+              ++iter )
         {
           probabilities.push_back( kernel_->value(
             source.compute_displacement( target_pos, iter->first ), rng ) );
@@ -843,7 +843,7 @@ template < int D >
 void
 ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
 {
-  if ( number_of_connections_ < 1)
+  if ( number_of_connections_ < 1 )
   {
     return;
   }
@@ -894,11 +894,10 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
   std::vector< std::pair< Position< D >, index > >* sources =
     source.get_global_positions_vector( source_filter_ );
 
-  for (
-    typename std::vector< std::pair< Position< D >, index > >::iterator src_it =
-      sources->begin();
-    src_it != sources->end();
-    ++src_it )
+  for ( typename std::vector< std::pair< Position< D >, index > >::iterator
+          src_it = sources->begin();
+        src_it != sources->end();
+        ++src_it )
   {
 
     Position< D > source_pos = src_it->first;

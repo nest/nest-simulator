@@ -33,8 +33,8 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   , number_of_connections_()
   , mask_()
   , kernel_()
-  , synapse_model_(
-      kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
+  , synapse_model_( kernel().model_manager.get_synapsedict()->lookup(
+      "static_synapse" ) )
   , weight_()
   , delay_()
 {

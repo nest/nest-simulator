@@ -71,7 +71,6 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
 
       if ( number_of_connections < 0 )
       {
-
         throw BadProperty( "Number of connections cannot be less than zero." );
       }
 

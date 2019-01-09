@@ -26,8 +26,7 @@ import unittest
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-
-
+import matplotlib.ticker as plticker
 
 
 @nest.check_stack
@@ -37,8 +36,9 @@ class PostTraceTestCase(unittest.TestCase):
         """
         """
 
-        resolution = .5     # [ms]
+        show_all_nest_trace_samples = True
 
+        resolution = .1     # [ms]
         delay = 1.  # [ms]
 
         pre_spike_times1 = [2., 5., 7., 8., 10., 11., 15., 17., 20., 21., 22., 23., 26., 28.]      # [ms]
@@ -121,26 +121,20 @@ class PostTraceTestCase(unittest.TestCase):
             # not repeated postsynaptically.
             nest.Connect(
                 pre_parrot, post_parrot,
-                syn_spec={'model': 'stdp_synapse_rec', 'receptor_type': 1})
+                syn_spec={'model': 'stdp_synapse_rec', 'receptor_type': 1, 'delay' : delay})
             nest.Connect(
                 pre_parrot_ps, post_parrot_ps,
-                syn_spec={'model': 'stdp_synapse_rec', 'receptor_type': 1})
+                syn_spec={'model': 'stdp_synapse_rec', 'receptor_type': 1, 'delay' : delay})
 
-            # get STDP synapse and weight before protocol
+            # get STDP synapse
             syn = nest.GetConnections(source=pre_parrot,
                                     synapse_model="stdp_synapse_rec")
-            w_pre = nest.GetStatus(syn)[0]['weight']
             syn_ps = nest.GetConnections(source=pre_parrot_ps,
                                         synapse_model="stdp_synapse_rec")
-            w_pre_ps = nest.GetStatus(syn)[0]['weight']
 
-            print()
-            print("[py] w_pre = " + str(w_pre))
-            print("[py] w_pre_ps = " + str(w_pre_ps))
-            print()
 
             sim_time = np.amax(np.concatenate((pre_spike_times[spike_times_idx], post_spike_times[spike_times_idx]))) + 5 * delay
-            n_steps = int(np.ceil(sim_time / resolution)) + 1
+            n_steps = int(np.ceil(sim_time / delay)) + 1
             trace_nest = []
             trace_nest_t = []
             t = nest.GetStatus([0], "time")[0]
@@ -148,43 +142,56 @@ class PostTraceTestCase(unittest.TestCase):
             post_trace_value = nest.GetStatus(post_parrot)[0]['post_trace']
             trace_nest.append(post_trace_value)
             for step in range(n_steps):
-                nest.Simulate(resolution)
+                nest.Simulate(delay)
                 t = nest.GetStatus([0], "time")[0]
-                # if True:
-                if np.any(np.abs(t - np.array(pre_spike_times[spike_times_idx]) - delay) < resolution/2.):
+                if show_all_nest_trace_samples or np.any(np.abs(t - np.array(pre_spike_times[spike_times_idx]) - delay) < resolution/2.):
                     trace_nest_t.append(t)
                     post_trace_value = nest.GetStatus(post_parrot)[0]['post_trace']
                     trace_nest.append(post_trace_value)
-                    print("In Python: Getting trace = " + str(post_trace_value) + " at time t = " + str(t))
+                    print("In Python: trace = " + str(post_trace_value) + " at time t = " + str(t))
 
-            # get weight post protocol
-            w_post = nest.GetStatus(syn)[0]['weight']
-            w_post_ps = nest.GetStatus(syn_ps)[0]['weight']
 
+            #
+            #   compute Python known-good reference of postsynaptic trace
+            #
 
             tau_minus = nest.GetStatus(post_parrot)[0]['tau_minus']
-            # post_trace_value = nest.GetStatus(post_parrot)[0]['post_trace']
-            # print("kljpjijiiiiiiiiiiiiiiiiiiiiiiiiiiiiii " + str(post_trace_value))
+            n_timepoints = 10000
+            ref_post_trace = np.zeros(n_timepoints)
+            n_spikes = len(post_spike_times[spike_times_idx])
+            for sp_idx in range(n_spikes):
+                t_sp = post_spike_times[spike_times_idx][sp_idx] + delay
+                for i in range(n_timepoints):
+                    t = (i / float(n_timepoints - 1)) * sim_time
+                    if t >= t_sp:
+                        ref_post_trace[i] += np.exp(-(t - t_sp) / tau_minus)
+            
+            n_spikes = len(pre_spike_times[spike_times_idx])
+            for sp_idx in range(n_spikes):
+                t_sp = pre_spike_times[spike_times_idx][sp_idx] + delay
+                i = int(np.round(t_sp / sim_time * float(len(ref_post_trace - 1))))
+                print("* At t_sp = " + str(t_sp) + ", post_trace should be " + str(ref_post_trace[i]))
+                #import pdb;pdb.set_trace()
+
+
+            #
+            #   plotting
+            #
 
             fig, ax = plt.subplots(nrows=3)
             ax1, ax3, ax2 = ax
+            ax1.set_ylim([0., 1.])
+            ax3.set_ylim([0., 1.])
+            ax2.set_ylim([0., np.amax(ref_post_trace)])
 
             n_spikes = len(pre_spike_times[spike_times_idx])
             for i in range(n_spikes):
-                ax1.plot(2 * [pre_spike_times[spike_times_idx][i] + delay], [0, 1], linewidth=2, color="blue", alpha=.4)
+                for _ax in [ax1, ax2]:
+                    _ax.plot(2 * [pre_spike_times[spike_times_idx][i] + delay], _ax.get_ylim(), linewidth=2, color="blue", alpha=.4)
 
             n_spikes = len(post_spike_times[spike_times_idx])
             for i in range(n_spikes):
                     ax3.plot(2 * [post_spike_times[spike_times_idx][i] + delay], [0, 1], linewidth=2, color="red", alpha=.4)
-
-            ref_post_trace = np.zeros(1000)
-            n_spikes = len(post_spike_times[spike_times_idx])
-            for sp_idx in range(n_spikes):
-                t_sp = post_spike_times[spike_times_idx][sp_idx] + delay
-                for i in range(len(ref_post_trace)):
-                    t = (i / float(len(ref_post_trace - 1))) * sim_time
-                    if t >= t_sp:
-                        ref_post_trace[i] += np.exp(-(t - t_sp -delay) / tau_minus)
 
             ax2.plot(np.linspace(0., sim_time, len(ref_post_trace)), ref_post_trace, label="Expected", color="cyan", alpha=.6)
 
@@ -205,34 +212,22 @@ class PostTraceTestCase(unittest.TestCase):
 
             ax2.scatter(trace_nest_t, trace_nest, marker=".", alpha=.5, color="orange", label="NEST")
 
-
             ax2.set_xlabel("Time [ms]")
             ax1.set_ylabel("Pre spikes")
             ax3.set_ylabel("Post spikes")
             ax2.set_ylabel("Trace")
             ax2.legend()
+                        
+            
             for _ax in ax:
+                _ax.xaxis.set_major_locator(plticker.MultipleLocator(base=10*delay))
+                _ax.xaxis.set_minor_locator(plticker.MultipleLocator(base=delay))
                 _ax.grid(which="major", axis="both")
                 _ax.grid(which="minor", axis="x", linestyle=":", alpha=.4)
-                _ax.minorticks_on()
-                # _ax.grid(major=True, minor=True)
+                #_ax.minorticks_on()
                 _ax.set_xlim(0., sim_time)
-            fig.savefig("/tmp/traces.png")
 
-            print("[py] w_post = " + str(w_post))
-            print("[py] w_post_ps = " + str(w_post_ps))
-            print()
-
-            wr_weights = nest.GetStatus(wr, "events")[0]["weights"]
-            print("[py] wr_weights = " + str(wr_weights))
-
-
-            assert w_post != w_pre, "Plain parrot weight did not change."
-            assert w_post_ps != w_pre_ps, "Precise parrot \
-                weight did not change."
-
-            post_weights['parrot'].append(w_post)
-            post_weights['parrot_ps'].append(w_post_ps)
+            fig.savefig("/tmp/traces.png", dpi=300.)
 
 
 def suite():

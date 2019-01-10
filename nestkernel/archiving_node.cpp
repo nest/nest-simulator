@@ -53,6 +53,7 @@ nest::Archiving_Node::Archiving_Node()
   , Ca_minus_( 0.0 )
   , tau_Ca_( 10000.0 )
   , beta_Ca_( 0.001 )
+  , trace_(0.)
   , synaptic_elements_map_()
 {
 }
@@ -71,6 +72,7 @@ nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
   , Ca_minus_( n.Ca_minus_ )
   , tau_Ca_( n.tau_Ca_ )
   , beta_Ca_( n.beta_Ca_ )
+  , trace_(n.trace_)
   , synaptic_elements_map_( n.synaptic_elements_map_ )
 {
 }
@@ -96,57 +98,49 @@ Archiving_Node::register_stdp_connection( double t_first_read )
 }
 
 double
-nest::Archiving_Node::get_K_value( double t ) //const
+nest::Archiving_Node::get_K_value( double t )
 {
-
-#ifdef DO_HISTORY_SEARCH
+  std::cout << "* In Archiving_Node::get_K_value(t = " << t << ")\n";
   if ( history_.empty() )
   {
-    _trace = Kminus_;
-    std::cout << "\thistory is empty: K_value = " << Kminus_ << std::endl; 
-    return Kminus_;
+    trace_ = 0.;
+    std::cout << "\t--> trace = " << trace_ << std::endl;
+    return trace_;
   }
-
-  {
-    std::cout << "\thistory list dump: " << Kminus_ << std::endl; 
-    int i = history_.size() - 1;
-    while ( i >= 0 )
-    {
-        std::cout << "\t\thistory_[ " << i << " ].t_ = " << history_[i].t_ << std::endl;
-        --i;
-    }
-  }
-
-  std::cout << "\tACTUAL t_last_spike_ = " << last_spike_ << std::endl;
   
-  // N.B. iterating over the private member `history_` directly instead of calling get_history() avoids incrementing any access counters
+  
+  {
+  std::cout << "\tCurrent history list:\n";
+  int i = 0;
+  while ( i < history_.size() )
+  {
+    std::cout << "\t\thistory["<<i<<"] t = " << history_[ i ].t_ << std::endl;
+    ++i;
+  }
+
+  
+  }
+  
+  
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-      std::cout << "\t\tcomparing " << t << " >= " << history_[i].t_ << ": " << ( t >= history_[ i ].t_ ) << std::endl;
-    //if ( t >= history_[ i ].t_ )
-    if (t - history_[i].t_ > -kernel().connection_manager.get_stdp_eps())
+    if ( t >= history_[ i ].t_)
     {
-      _trace = ( history_[ i ].Kminus_
+      trace_ = ( history_[ i ].Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
-      std::cout << "\tK_value = " << _trace << std::endl;
-      return _trace;
+    std::cout << "\t   updating trace from t = " << history_[i].t_ << " to t = " << t << std::endl;
+    std::cout << "\t   --> trace = " << trace_ << std::endl;
+      return trace_;
     }
-    --i;
-  }
-  assert(false); // fall-through case: means that the trace value is requested at a time before the earliest postsynaptic spike in the history buffer. Something is wrong!
-  // _trace = 0.;
-  return 0; // just here to silence compiler warnings
-#endif
-
-  if (last_spike_ < 0) {
-      // neuron has not spiked yet!
-      return 0.;
+    i--;
   }
   
-  // decay from t = last_spike_ to t = t
-     std::cout << "* In Archiving_Node::get_K_value(t = " << t << "): decay from t = last_spike_ = " << last_spike_ << " to t = t = " << t << " --> new value = " << Kminus_ * std::exp( ( last_spike_ - t ) * tau_minus_inv_ ) <<  "\n";
-  return Kminus_ * std::exp( ( last_spike_ - t ) * tau_minus_inv_ );
+  
+  
+  trace_ = 0.;
+  std::cout << "\t--> fall-through: trace = " << trace_ << std::endl;
+  return trace_;
 }
 
 void
@@ -176,7 +170,7 @@ nest::Archiving_Node::get_K_values( double t,
     i--;
   }
 
-  // we only get here if t < time of all spikes in history
+  // we only get here if t< time of all spikes in history)
 
   // return 0.0 for both K values
   triplet_K_value = 0.0;
@@ -196,16 +190,16 @@ nest::Archiving_Node::get_history( double t1,
     return;
   }
   std::deque< histentry >::reverse_iterator runner = history_.rbegin();
-  const double t2_lim = t2 + kernel().connection_manager.get_stdp_eps();
-  const double t1_lim = t1 + kernel().connection_manager.get_stdp_eps();
+  const double t2_lim = t2;// + kernel().connection_manager.get_stdp_eps();
+  const double t1_lim = t1;// + kernel().connection_manager.get_stdp_eps();
   while ( runner != history_.rend() and runner->t_ >= t2_lim )
   {
     ++runner;
   }
   *finish = runner.base();
-  while ( runner != history_.rend() and runner->t_ >= t1_lim )
+  while ( runner != history_.rend() and runner->t_ > t1_lim )
   {
-    runner->access_counter_++;
+    //runner->access_counter_++;
     ++runner;
   }
   *start = runner.base();
@@ -214,11 +208,11 @@ nest::Archiving_Node::get_history( double t1,
 void
 nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
 {
+    std::cout << "* In Archiving_Node::set_spiketime(t_sp = " << t_sp << ", offset = " << offset << ")" << std::endl;
+
   const double t_sp_ms = t_sp.get_ms() - offset;
   update_synaptic_elements( t_sp_ms );
   Ca_minus_ += beta_Ca_;
-
-  std::cout << "In Archiving_Node(" << std::hex<<this << ")::set_spiketime(" << t_sp_ms << ")\n";
 
   if ( n_incoming_ )
   {
@@ -228,7 +222,6 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
     {
       if ( history_.front().access_counter_ >= n_incoming_ )
       {
-        std::cout << "\tpop_front()\n";
         history_.pop_front();
       }
       else
@@ -236,21 +229,9 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
         break;
       }
     }
- 
-    // decay from t = last_spike_ to t = t_sp_ms
-    if (last_spike_ >= 0.) {
-        Kminus_ *= std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_inv_ );
-    }
-        
-    // bump the trace due to incoming spike
-    Kminus_ += 1.;
-        
-        // update spiking history
-    std::cout << "\tupdating trace from t = " << last_spike_ << " to t = " << t_sp_ms << "; new value = " << Kminus_<< "\n";
-    //Kminus_ =
-    //  Kminus_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_inv_ ) + 1.0;
-      
-   
+    // update spiking history
+    Kminus_ =
+      Kminus_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_inv_ ) + 1.0;
     triplet_Kminus_ = triplet_Kminus_
         * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_triplet_inv_ )
       + 1.0;
@@ -275,10 +256,8 @@ nest::Archiving_Node::get_status( DictionaryDatum& d ) const
   def< double >( d, names::tau_Ca, tau_Ca_ );
   def< double >( d, names::beta_Ca, beta_Ca_ );
   def< double >( d, names::tau_minus_triplet, tau_minus_triplet_ );
-  //const double t_ms = kernel().simulation_manager.get_time().get_ms();
-  //const double K_value = get_K_value(t_ms);
-  def< double >( d, names::post_trace, Kminus_ );
-  std::cout << "In Archiving_Node::get_status(): trace = " << Kminus_ << std::endl;
+  def< double >( d, names::post_trace, trace_ );
+     std::cout << "In Archiving_Node::get_status(): trace = " << trace_ << std::endl;
 #ifdef DEBUG_ARCHIVER
   def< int >( d, names::archiver_length, history_.size() );
 #endif

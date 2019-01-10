@@ -44,12 +44,6 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-#include <iostream>
-#include <sstream>
-#include <fstream>
-
-#include <cassert>
-
 #define DEBUG_ARCHIVER 1
 
 namespace nest
@@ -94,10 +88,8 @@ public:
 
   /**
    * \fn int get_synaptic_elements_vacant(Name n)
-   * Get the number of synaptic elements of type n which are available
+   * get the number of synaptic elements of type n which are available
    * for new synapse creation
-   * Returns a negative number to indicate that synaptic elements
-   * must be deleted during the next update
    */
   int get_synaptic_elements_vacant( Name n ) const;
 
@@ -218,8 +210,6 @@ private:
   double tau_minus_;
   double tau_minus_inv_;
 
-  double _trace;
-
   // time constant for triplet low pass filtering of "post" spike train
   double tau_minus_triplet_;
   double tau_minus_triplet_inv_;
@@ -229,6 +219,10 @@ private:
   // spiking history needed by stdp synapses
   std::deque< histentry > history_;
 
+  
+  double trace_;    // XXX: DEBUGGING ONLY: REMOVE
+  
+  
   /*
    * Structural plasticity
    */

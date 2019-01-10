@@ -99,15 +99,17 @@ I_e        double - Constant external input current in pA.
 
 Clopath rule parameters:
 u_bar_plus    double - Low-pass filtered Membrane potential in mV.
-u-bar_minus   double - Low-pass filtered Membrane potential in mV.
+u_bar_minus   double - Low-pass filtered Membrane potential in mV.
 u_bar_bar     double - Low-pass filtered u_bar_minus in mV.
 A_LTD         double - Amplitude of depression in 1/mV.
 A_LTP         double - Amplitude of facilitation in 1/mV^2.
 theta_plus    double - threshold for u in mV.
-theta_minus   double - threshold for u_bar_p/m in mV.
+theta_minus   double - threshold for u_bar_[plus/minus] in mV.
 A_LTD_const   bool   - Flag that indicates whether A_LTD_ should
                        be constant (true, default) or multiplied by
                        u_bar_bar^2 / u_ref_squared (false).
+delay_u_bars  double - Delay with which u_bar_[plus/minus] are processed
+                       to compute the synaptic weights.
 U_ref_squared double - Reference value for u_bar_bar_^2.
 
 Problems/Todo:
@@ -229,8 +231,7 @@ private:
     double I_e;       //!< Constant Current in pA
     double tau_plus;  //!< time constant of u_bar_plus in ms
     double tau_minus; //!< time constant of u_bar_minus in ms
-    double tau_bar_bar;  //!< time constant of u_bar_bar in ms
-    double delay_u_bars; //!< Delay of the convolved membrane potentials in ms
+    double tau_bar_bar; //!< time constant of u_bar_bar in ms
 
     Parameters_(); //!< Sets default parameter values
 

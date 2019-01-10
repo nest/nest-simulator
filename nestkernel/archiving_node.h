@@ -305,8 +305,8 @@ public:
 protected:
   /**
    * \fn void write_LTD_history( Time const& t_sp,
-    double u_bar_minus )
-   * Creates a new entry in the LTD history and delets old entries that
+   * double u_bar_minus, double u_bar_bar )
+   * Creates a new entry in the LTD history and deletes old entries that
    * are not needed any more.
    */
   void write_LTD_history( const double t_ltd_ms,
@@ -314,17 +314,17 @@ protected:
     double u_bar_bar );
 
   /**
-   * \fn void write_LTP_history( Time const& t_sp,
-   * double u, double u_bar_plus )
+   * \fn void write_LTP_history( const double t_ltp_ms, double u,
+   * double u_bar_plus )
    * Creates a new entry in the LTP history and delets old entries that
    * are not needed any more.
    */
   void write_LTP_history( const double t_ltp_ms, double u, double u_bar_plus );
 
   /**
-   * \fn void write_LTP_history( Time const& t_sp,
-   * double u, double u_bar_plus, double offset = 0.0 )
-   * Writes and reads the delayed_u_bar_p/m buffers and
+   * \fn void write_LTP_LTD_history( Time const& t_sp,
+   * double u, double u_bar_plus, double u_bar_minus, double u_bar_bar )
+   * Writes and reads the delayed_u_bar_[plus/minus] buffers and
    * calls write_LTD_history and write_LTP_history if
    * the corresponding Heaviside functions yield 1.
    */

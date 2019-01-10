@@ -71,8 +71,8 @@ present in a Matlab implementation by Claudia Clopath. The first one is the
 clamping of the membrane potential to a fixed value after a spike occured to
 mimik a real spike and not just the upswing. This is important since the finite
 duration of the spike influences the evolution of the convolved versions
-(u_bar_plus/minus) of the membrane potential and thus the change of the
-synaptic weight. Secondly, there is a delay with which u_bar_plus/minus are
+(u_bar_[plus/minus]) of the membrane potential and thus the change of the
+synaptic weight. Secondly, there is a delay with which u_bar_[plus/minus] are
 used to compute the change of the synaptic weight.
 
 Parameters:
@@ -101,7 +101,6 @@ a          double - Subthreshold adaptation in nS.
 b          double - Spike-triggered adaptation in pA.
 Delta_T    double - Slope factor in mV.
 tau_w      double - Adaptation time constant in ms.
-V_t        double - Spike initiation threshold in mV
 V_peak     double - Spike detection threshold in mV.
 
 Clopath rule parameters:
@@ -111,18 +110,18 @@ u_bar_bar     double - Low-pass filtered u_bar_minus in mV.
 A_LTD         double - Amplitude of depression in 1/mV.
 A_LTP         double - Amplitude of facilitation in 1/mV^2.
 theta_plus    double - threshold for u in mV.
-theta_minus   double - threshold for u_bar_p/m in mV.
+theta_minus   double - threshold for u_bar_[plus/minus] in mV.
 A_LTD_const   bool   - Flag that indicates whether A_LTD_ should
                        be constant (true, default) or multiplied by
                        u_bar_bar^2 / u_ref_squared (false).
+delay_u_bars  double - Delay with which u_bar_[plus/minus] are processed
+                       to compute the synaptic weights.
 U_ref_squared double - Reference value for u_bar_bar_^2.
 
 Other parameters:
 t_clamp      double - Duration of clamping of Membrane potential after a spike
                       in ms.
 V_clamp      double - Value to which the Membrane potential is clamped in mV.
-delay_u_bars double - Delay with which u_bar_p/m are processed to compute the
-                      synaptic weights.
 
 Integration parameters:
 gsl_error_tol double - This parameter controls the admissible error of the
@@ -131,10 +130,11 @@ gsl_error_tol double - This parameter controls the admissible error of the
 
 Note:
 
-Neither the clamping nor the delayed processing of u_bar_p/m are mentioned in
-the paper. However, they are part of an reference implementation by Claudia
-Clopath  et al. that can be found on ModelDB. The clamping is important to
-mimic a spike which is otherwise not described by the aeif neuron model.
+Neither the clamping nor the delayed processing of u_bar_[plus/minus] are
+mentioned in the paper. However, they are part of an reference implementation
+by Claudia Clopath et al. that can be found on ModelDB. The clamping is
+important to mimic a spike which is otherwise not described by the aeif neuron
+model.
 
 Author: Jonas Stapmanns, David Dahmen, Jan Hahne
 
@@ -321,10 +321,6 @@ public:
    */
   struct Variables_
   {
-    /**
-     * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
-     * P.V_th if Delta_T == 0.
-     */
     double V_peak;
 
     unsigned int refractory_counts_;

@@ -624,7 +624,7 @@ nest::Clopath_Archiving_Node::write_LTP_LTD_history( Time const& t_sp,
 {
   const double t_ms = t_sp.get_ms();
 
-  // write u_bar_p/m in ring buffer
+  // write u_bar_[plus/minus] in ring buffer
   delayed_u_bar_plus_[ delayed_u_bars_idx_ ] = u_bar_plus;
 
   delayed_u_bar_minus_[ delayed_u_bars_idx_ ] = u_bar_minus;

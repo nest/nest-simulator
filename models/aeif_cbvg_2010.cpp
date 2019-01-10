@@ -110,8 +110,7 @@ nest::aeif_cbvg_2010_dynamics( double,
   // good compiler will optimize the verbosity away...
 
   // Clamp membrane potential to V_reset while refractory, otherwise bound
-  // it to V_peak. Do not use V_.V_peak_ here, since that is set to V_th if
-  // Delta_T == 0.
+  // it to V_peak.
   const double& V = ( is_refractory || is_clamped )
     ? ( is_clamped ? node.P_.V_clamp_ : node.P_.V_reset_ )
     : std::min( y[ S::V_M ], node.P_.V_peak_ );

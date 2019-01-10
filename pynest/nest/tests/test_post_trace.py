@@ -88,7 +88,7 @@ class PostTraceTestCase(unittest.TestCase):
         #post_spike_times1 = np.array([2.0, 7.0, 13.0, 18, 23, 28, 33, 37])
 
 
-        pre_spike_times = [pre_spike_times1]
+        pre_spike_times = [np.concatenate((pre_spike_times1, np.array([70.])))]
         post_spike_times = [post_spike_times1]
 
         pre_spike_times = [np.array(a) for a in pre_spike_times]
@@ -165,7 +165,8 @@ class PostTraceTestCase(unittest.TestCase):
                                         synapse_model="stdp_synapse_rec")
 
             sim_time = np.amax(np.concatenate((pre_spike_times[spike_times_idx], post_spike_times[spike_times_idx]))) + 5 * delay
-            n_steps = int(np.ceil(sim_time / delay)) + 1
+            print("* Simulating for " + str(sim_time) + " ms...")
+            n_steps = int(np.ceil(sim_time / delay))
             trace_nest = []
             trace_nest_t = []
             t = nest.GetStatus([0], "time")[0]
@@ -241,12 +242,14 @@ class PostTraceTestCase(unittest.TestCase):
 
 
             ax2.scatter(trace_nest_t, trace_nest, marker=".", alpha=.5, color="orange", label="NEST")
+            print("trace_nest_t = " + str(trace_nest_t) + ", trace_nest = " + str(trace_nest))
+            
             n_points = len(trace_nest_t)
             for i in range(n_points):
                 t = trace_nest_t[i]
-                print("* Finding ref for NEST timepoint t = " + str(t) + ", trace = " + str(trace_nest[i]))
+                #print("* Finding ref for NEST timepoint t = " + str(t) + ", trace = " + str(trace_nest[i]))
                 for i_search, t_search in enumerate(reversed(np.array(pre_spike_times[spike_times_idx]) + delay)):
-                    print("\t* Testing " + str(t_search) + "...")
+                    #print("\t* Testing " + str(t_search) + "...")
                     if t_search <= t:
                         _trace_at_t_search = ref_post_trace[int(np.round(t_search / sim_time * float(len(ref_post_trace) - 1)))]
                         #if (t_search - trace_nest_t[i])**2 > resolution/2. \
@@ -266,7 +269,7 @@ class PostTraceTestCase(unittest.TestCase):
                             pre_spike_occurred_between_t_search_and_t = False
                             if not pre_spike_occurred_between_t_search_and_t:
                                 _trace_at_t_search += 1."""
-                        ax2.scatter(t_search, _trace_at_t_search, 100, marker=".", color="#A7FF00FF", facecolor="#FFFFFF7F")
+                        ax2.scatter(t_search, _trace_at_t_search, 100, marker=".", color="#A7FF00FF", facecolor="none")#"#FFFFFF7F")
                         ax2.plot([trace_nest_t[i], t_search], [trace_nest[i], _trace_at_t_search], linewidth=.5, color="#0000007F")
                         break
 

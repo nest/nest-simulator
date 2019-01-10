@@ -25,6 +25,8 @@ import nest
 import unittest
 import math
 import numpy as np
+import scipy as sp
+import scipy.stats
 import matplotlib.pyplot as plt
 import matplotlib.ticker as plticker
 
@@ -58,9 +60,6 @@ class PostTraceTestCase(unittest.TestCase):
         pre_spike_times1 = [2., 5., 7., 8., 10., 11., 15., 17., 20., 21., 22., 23., 26., 28.]      # [ms]
         post_spike_times1 = [3., 7., 8., 10., 12., 13., 14., 16., 17., 18., 19., 20., 21., 22.]      # [ms]
         
-        pre_spike_times = [pre_spike_times1]
-        post_spike_times = [post_spike_times1]
-
         # pre_spike_times = [10., 11., 12., 13., 14., 15., 25., 35., 45., 50., 51., 52., 70.]      # [ms]
         # post_spike_times = [10., 11., 12., 13., 30., 40., 50., 51., 52., 53., 54.]      # [ms]
 
@@ -73,14 +72,33 @@ class PostTraceTestCase(unittest.TestCase):
         # pre_spike_times = [   4.,   6.  , 6.]    # [ms]
         # post_spike_times = [  2.,   6. ]      # [ms]
 
-        # pre_spike_times = 1 + np.round(100 * np.sort(np.abs(np.random.randn(100))))      # [ms]
-        # post_spike_times =  np.sort(np.unique(1 + np.round(100 * np.sort(np.abs(np.random.randn(100))))))     # [ms]
+        #pre_spike_times1 = np.sort(np.unique(1 + np.round(100 * np.abs(np.random.randn(100)))))      # [ms]
+        #post_spike_times1 = np.sort(np.unique(1 + np.round(100 * np.sort(np.abs(np.random.randn(100))))))     # [ms]
+
+        t_sp_min = 1.
+        t_sp_max = 50
+        n_spikes = int(t_sp_max)
+        pre_spike_times1 = np.sort(np.unique(np.ceil(sp.stats.uniform.rvs(t_sp_min, t_sp_max - t_sp_min, n_spikes))))
+        post_spike_times1 = np.sort(np.unique(np.ceil(sp.stats.uniform.rvs(t_sp_min, t_sp_max - t_sp_min, n_spikes))))
+        
+        #pre_spike_times1 = [2.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 11.0, 12.0, 13.0, 16.0, 17.0, 18.0, 20.0, 21.0, 22.0, 24.0, 26.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 46.0, 48.0, 50.0]
+        #post_spike_times1 = [2.0, 4.0, 5.0, 6.0, 8.0, 13.0, 14.0, 17.0, 18.0, 19.0, 21.0, 22.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 46.0, 48.0, 49.0, 50.0]
+
+        #pre_spike_times1 = np.array([2.0, 7.0, 13.0, 18, 23, 28, 33, 37])
+        #post_spike_times1 = np.array([2.0, 7.0, 13.0, 18, 23, 28, 33, 37])
+
+
+        pre_spike_times = [pre_spike_times1]
+        post_spike_times = [post_spike_times1]
+
+        pre_spike_times = [np.array(a) for a in pre_spike_times]
+        post_spike_times = [np.array(a) for a in post_spike_times]
 
         for spike_times_idx in range(len(pre_spike_times)):
 
-            print("Pre spike times: " + str(pre_spike_times[spike_times_idx]))
-            print("Post spike times: " + str(post_spike_times[spike_times_idx]))
-
+            print("Pre spike times: [" + ", ".join([str(t) for t in pre_spike_times[spike_times_idx]]) + "]")
+            print("Post spike times: [" + ", ".join([str(t) for t in post_spike_times[spike_times_idx]]) + "]")
+        
             nest.set_verbosity("M_WARNING")
 
             post_weights = {'parrot': [], 'parrot_ps': []}
@@ -176,7 +194,7 @@ class PostTraceTestCase(unittest.TestCase):
                 t_sp = post_spike_times[spike_times_idx][sp_idx] + delay + dendritic_delay
                 for i in range(n_timepoints):
                     t = (i / float(n_timepoints - 1)) * sim_time
-                    if t >= t_sp:
+                    if t > t_sp + 1E-3:
                         ref_post_trace[i] += np.exp(-(t - t_sp) / tau_minus)
             
             n_spikes = len(pre_spike_times[spike_times_idx])
@@ -231,8 +249,23 @@ class PostTraceTestCase(unittest.TestCase):
                     print("\t* Testing " + str(t_search) + "...")
                     if t_search <= t:
                         _trace_at_t_search = ref_post_trace[int(np.round(t_search / sim_time * float(len(ref_post_trace) - 1)))]
-                        if np.any((t_search - (np.array(post_spike_times[spike_times_idx]) + delay + dendritic_delay))**2 < resolution/2.):
-                            _trace_at_t_search += 1.
+                        #if (t_search - trace_nest_t[i])**2 > resolution/2. \
+                        #idx = np.argmin((t_search - (np.array(post_spike_times[spike_times_idx]) + delay + dendritic_delay))**2)
+                        #t_found = (t_search - (np.array(post_spike_times[spike_times_idx]) + delay + dendritic_delay)
+                        traces_match = (_trace_at_t_search - trace_nest[i])**2 < 1E-3  # XXX: try np.allclose
+                        if not traces_match:
+                            post_spike_occurred_at_t_search = np.any((t_search - (np.array(post_spike_times[spike_times_idx]) + delay + dendritic_delay))**2 < resolution/2.)
+                            if post_spike_occurred_at_t_search:
+                                traces_match = (_trace_at_t_search + 1 - trace_nest[i])**2 < 1E-3  # XXX: try np.allclose
+                                if traces_match:
+                                    _trace_at_t_search += 1.
+                                    
+                                
+                            """_pre_spike_times = np.array(pre_spike_times[spike_times_idx])
+                            pre_spike_occurred_between_t_search_and_t = np.any(_pre_spike_times[np.logical_and(_pre_spike_times > t_search, _pre_spike_times < t)])
+                            pre_spike_occurred_between_t_search_and_t = False
+                            if not pre_spike_occurred_between_t_search_and_t:
+                                _trace_at_t_search += 1."""
                         ax2.scatter(t_search, _trace_at_t_search, 100, marker=".", color="#A7FF00FF", facecolor="#FFFFFF7F")
                         ax2.plot([trace_nest_t[i], t_search], [trace_nest[i], _trace_at_t_search], linewidth=.5, color="#0000007F")
                         break
@@ -269,4 +302,5 @@ def run():
 
 if __name__ == "__main__":
     #unittest.findTestCases(__main__).debug()
-    run()
+    #run()
+    PostTraceTestCase().test_post_trace()

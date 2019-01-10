@@ -13,7 +13,7 @@
 #
 # NEST is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See thed
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
@@ -34,12 +34,26 @@ class PostTraceTestCase(unittest.TestCase):
 
     def test_post_trace(self):
         """
+        construct a network of the form:
+        
+                               static_synapse                   stdp_synapse                    static_synapse
+            [ pre_spike_gen ] ----(delay)----o [ pre_parrot ] ----(delay)----o [ post_parrot ] o----(delay)---- [ post_spike_gen ]
+
+
+        The spike times of the spike generators are defined in `pre_spike_times` and `post_spike_times`. From the perspective of the stdp_synapse, spikes arrive with the following delays (with respect to the values in these lists):
+        
+        - for the presynaptic neuron: one synaptic delay in the leftmost static synapse
+        - for the postsynaptic neuron: one synaptic delay in the rightmost static synapse
+        - from the postsynaptic neuron: one dendritic delay between the post_parrot node and the synapse itself---see the C++ variable `dendritic_delay`).
+                
         """
 
         show_all_nest_trace_samples = True
 
         resolution = .1     # [ms]
-        delay = 1.  # [ms]
+        delay = 5.  # [ms]
+        
+        dendritic_delay = delay
 
         pre_spike_times1 = [2., 5., 7., 8., 10., 11., 15., 17., 20., 21., 22., 23., 26., 28.]      # [ms]
         post_spike_times1 = [3., 7., 8., 10., 12., 13., 14., 16., 17., 18., 19., 20., 21., 22.]      # [ms]
@@ -132,7 +146,6 @@ class PostTraceTestCase(unittest.TestCase):
             syn_ps = nest.GetConnections(source=pre_parrot_ps,
                                         synapse_model="stdp_synapse_rec")
 
-
             sim_time = np.amax(np.concatenate((pre_spike_times[spike_times_idx], post_spike_times[spike_times_idx]))) + 5 * delay
             n_steps = int(np.ceil(sim_time / delay)) + 1
             trace_nest = []
@@ -160,7 +173,7 @@ class PostTraceTestCase(unittest.TestCase):
             ref_post_trace = np.zeros(n_timepoints)
             n_spikes = len(post_spike_times[spike_times_idx])
             for sp_idx in range(n_spikes):
-                t_sp = post_spike_times[spike_times_idx][sp_idx] + delay
+                t_sp = post_spike_times[spike_times_idx][sp_idx] + delay + dendritic_delay
                 for i in range(n_timepoints):
                     t = (i / float(n_timepoints - 1)) * sim_time
                     if t >= t_sp:
@@ -169,9 +182,9 @@ class PostTraceTestCase(unittest.TestCase):
             n_spikes = len(pre_spike_times[spike_times_idx])
             for sp_idx in range(n_spikes):
                 t_sp = pre_spike_times[spike_times_idx][sp_idx] + delay
-                i = int(np.round(t_sp / sim_time * float(len(ref_post_trace - 1))))
+                i = int(np.round(t_sp / sim_time * float(len(ref_post_trace) - 1)))
                 print("* At t_sp = " + str(t_sp) + ", post_trace should be " + str(ref_post_trace[i]))
-                #import pdb;pdb.set_trace()
+                #import pdb;pdb.set_trace()`
 
 
             #
@@ -186,12 +199,11 @@ class PostTraceTestCase(unittest.TestCase):
 
             n_spikes = len(pre_spike_times[spike_times_idx])
             for i in range(n_spikes):
-                for _ax in [ax1, ax2]:
-                    _ax.plot(2 * [pre_spike_times[spike_times_idx][i] + delay], _ax.get_ylim(), linewidth=2, color="blue", alpha=.4)
+                ax1.plot(2 * [pre_spike_times[spike_times_idx][i] + delay], ax1.get_ylim(), linewidth=2, color="blue", alpha=.4)
 
             n_spikes = len(post_spike_times[spike_times_idx])
             for i in range(n_spikes):
-                    ax3.plot(2 * [post_spike_times[spike_times_idx][i] + delay], [0, 1], linewidth=2, color="red", alpha=.4)
+                ax3.plot(2 * [post_spike_times[spike_times_idx][i] + delay + dendritic_delay], [0, 1], linewidth=2, color="red", alpha=.4)
 
             ax2.plot(np.linspace(0., sim_time, len(ref_post_trace)), ref_post_trace, label="Expected", color="cyan", alpha=.6)
 
@@ -211,11 +223,24 @@ class PostTraceTestCase(unittest.TestCase):
 
 
             ax2.scatter(trace_nest_t, trace_nest, marker=".", alpha=.5, color="orange", label="NEST")
+            n_points = len(trace_nest_t)
+            for i in range(n_points):
+                t = trace_nest_t[i]
+                print("* Finding ref for NEST timepoint t = " + str(t) + ", trace = " + str(trace_nest[i]))
+                for i_search, t_search in enumerate(reversed(np.array(pre_spike_times[spike_times_idx]) + delay)):
+                    print("\t* Testing " + str(t_search) + "...")
+                    if t_search <= t:
+                        _trace_at_t_search = ref_post_trace[int(np.round(t_search / sim_time * float(len(ref_post_trace) - 1)))]
+                        if np.any((t_search - (np.array(post_spike_times[spike_times_idx]) + delay + dendritic_delay))**2 < resolution/2.):
+                            _trace_at_t_search += 1.
+                        ax2.scatter(t_search, _trace_at_t_search, 100, marker=".", color="#A7FF00FF", facecolor="#FFFFFF7F")
+                        ax2.plot([trace_nest_t[i], t_search], [trace_nest[i], _trace_at_t_search], linewidth=.5, color="#0000007F")
+                        break
 
             ax2.set_xlabel("Time [ms]")
             ax1.set_ylabel("Pre spikes")
             ax3.set_ylabel("Post spikes")
-            ax2.set_ylabel("Trace")
+            ax2.set_ylabel("Synaptic trace")
             ax2.legend()
                         
             
@@ -226,6 +251,8 @@ class PostTraceTestCase(unittest.TestCase):
                 _ax.grid(which="minor", axis="x", linestyle=":", alpha=.4)
                 #_ax.minorticks_on()
                 _ax.set_xlim(0., sim_time)
+
+            fig.suptitle("Postsynaptic trace testbench. Spike times are\nshown from the perspective of the STDP synapse.")
 
             fig.savefig("/tmp/traces.png", dpi=300.)
 

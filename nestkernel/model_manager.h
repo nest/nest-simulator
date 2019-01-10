@@ -221,12 +221,12 @@ public:
   /**
    * Checks, whether synapse type requires symmetric connections
    */
-  bool connector_requires_symmetric( synindex syn_id ) const;
+  bool connector_requires_symmetric( const synindex syn_id ) const;
 
   /**
    * Checks, whether synapse type requires Clopath archiving
    */
-  bool connector_requires_clopath_archiving( synindex syn_id ) const;
+  bool connector_requires_clopath_archiving( const synindex syn_id ) const;
 
   void set_connector_defaults( synindex syn_id, const DictionaryDatum& d );
 

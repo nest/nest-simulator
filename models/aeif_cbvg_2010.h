@@ -106,7 +106,7 @@ V_peak     double - Spike detection threshold in mV.
 
 Clopath rule parameters:
 u_bar_plus    double - Low-pass filtered Membrane potential in mV.
-u-bar_minus   double - Low-pass filtered Membrane potential in mV.
+u_bar_minus   double - Low-pass filtered Membrane potential in mV.
 u_bar_bar     double - Low-pass filtered u_bar_minus in mV.
 A_LTD         double - Amplitude of depression in 1/mV.
 A_LTP         double - Amplitude of facilitation in 1/mV^2.

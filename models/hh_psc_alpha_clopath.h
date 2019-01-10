@@ -64,8 +64,8 @@ Name: hh_psc_alpha_clopath - Hodgkin-Huxley neuron model.
 Description:
 
 hh_psc_alpha_clopath is an implementation of a spiking neuron using the
-Hodgkin-Huxley
-formalism and that is capable of connecting to a Clopath synapse.
+Hodgkin-Huxley formalism and that is capable of connecting to a Clopath
+synapse.
 
 (1) Post-synaptic currents
 Incoming spike events induce a post-synaptic change of current modelled
@@ -130,12 +130,16 @@ A Quantitative Description of Membrane Current
 and Its Application to Conduction and Excitation in Nerve,
 Journal of Physiology, 117, 500-544 (1952)
 
+Clopath et al., Connectivity reflects coding:
+a model of voltage-based STDP with homeostasis.
+Nature Neuroscience, 13:3, 344-352  (2010)
+
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author: Schrader (adapted for clopath_stdp_synapse by
-         Jonas Stapmanns, David Dahmen, Jan Hahne)
+Author: Jonas Stapmanns, David Dahmen, Jan Hahne
+        (adapted from hh_psc_alpha by Schrader)
 
 SeeAlso: hh_cond_exp_traub, clopath_stdp_synapse
 */

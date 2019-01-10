@@ -521,7 +521,6 @@ nest::aeif_cbvg_2010::update( const Time& origin,
         S_.y_ );              // neuronal state
       if ( status != GSL_SUCCESS )
       {
-        std::cout << "GSLSolverFailure" << std::endl;
         throw GSLSolverFailure( get_name(), status );
       }
 
@@ -529,7 +528,6 @@ nest::aeif_cbvg_2010::update( const Time& origin,
       if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
         || S_.y_[ State_::W ] > 1e6 )
       {
-        std::cout << "NumericalInstability" << std::endl;
         throw NumericalInstability( get_name() );
       }
 

@@ -35,7 +35,7 @@
 #include <gsl/gsl_sf_exp.h>
 
 // Includes from nestkernel:
-#include "archiving_node.h"
+#include "clopath_archiving_node.h"
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"

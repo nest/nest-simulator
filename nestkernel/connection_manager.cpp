@@ -685,6 +685,10 @@ nest::ConnectionManager::increase_connection_count( const thread tid,
     num_connections_[ tid ].resize( syn_id + 1 );
   }
   ++num_connections_[ tid ][ syn_id ];
+  if ( num_connections_[ tid ][ syn_id ] >= 1 << 27 )
+  {
+    throw KernelException("Too many connections per thread for synapse.");
+  }
 }
 
 nest::index

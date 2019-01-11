@@ -136,6 +136,11 @@ Clopath et al., Connectivity reflects coding:
 a model of voltage-based STDP with homeostasis.
 Nature Neuroscience, 13:3, 344-352  (2010)
 
+Clopath and Gerstner, Voltage and spike timing interact
+in STDP – a unified model.
+Front. Synaptic Neurosci., 2:25, (2010)
+doi: 10.3389/fnsyn.2010.00025
+
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest

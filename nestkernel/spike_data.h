@@ -51,20 +51,14 @@ class SpikeData
 {
 protected:
 
-  // NUM_BITS_LCID set via cmake
-  static constexpr uint8_t NUM_BITS_MARKER = 2U;
-  static constexpr uint8_t NUM_BITS_LAG = 14U;
-  // NUM_BITS_TID set via cmake
-  // NUM_BITS_SYN_ID set via cmake
-
-  static constexpr int MAX_MARKER = generate_max_value( NUM_BITS_MARKER );
+  static constexpr int MAX_MARKER = generate_max_value( NUM_BITS_MARKER_SPIKE_DATA );
   static constexpr int MAX_LAG = generate_max_value( NUM_BITS_LAG );
 
-  index lcid_ : NUM_BITS_LCID;             //!< local connection index
-  unsigned int marker_ : NUM_BITS_MARKER;  //!< status flag
-  unsigned int lag_ : NUM_BITS_LAG;        //!< lag in this min-delay interval
-  thread tid_ : NUM_BITS_TID;              //!< thread index
-  synindex syn_id_ : NUM_BITS_SYN_ID;      //!< synapse-type index
+  index lcid_ : NUM_BITS_LCID;                        //!< local connection index
+  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA;  //!< status flag
+  unsigned int lag_ : NUM_BITS_LAG;                   //!< lag in this min-delay interval
+  thread tid_ : NUM_BITS_TID;                         //!< thread index
+  synindex syn_id_ : NUM_BITS_SYN_ID;                 //!< synapse-type index
 
 public:
   SpikeData();

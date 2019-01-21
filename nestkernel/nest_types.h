@@ -69,16 +69,32 @@ generate_bit_mask( const uint8_t num_bits, const uint8_t bit_position )
     ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 ) << bit_position );
 }
 
-constexpr int
+constexpr uint64_t
 generate_max_value( const uint8_t num_bits )
 {
-  return ( ( static_cast< int >( 1 ) << num_bits ) - 1 );
+  return ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 );
 }
 
-constexpr int MAX_LCID = generate_max_value( NUM_BITS_LCID );
+/*
+ * Sizes of bitfields used in various classes in the kernel.
+ */
+// NUM_BITS_LCID set via cmake
+// NUM_BITS_RANK set via cmake
+// NUM_BITS_TID set via cmake
+// NUM_BITS_SYN_ID set via cmake
+constexpr uint8_t NUM_BITS_MARKER_SPIKE_DATA = 2U;
+constexpr uint8_t NUM_BITS_LAG = 14U;
+constexpr uint8_t NUM_BITS_DELAY = 21U;
+constexpr uint8_t NUM_BITS_GID = 62U;
+
+/*
+ * Maximally allowed values for bitfields
+ */
+constexpr uint64_t MAX_LCID = generate_max_value( NUM_BITS_LCID );
 constexpr int MAX_RANK = generate_max_value( NUM_BITS_RANK );
 constexpr int MAX_TID = generate_max_value( NUM_BITS_TID );
 constexpr int MAX_SYN_ID = generate_max_value( NUM_BITS_SYN_ID );
+constexpr uint64_t MAX_GID = generate_max_value( NUM_BITS_GID );
 
 /**
  * Type for Time tics.

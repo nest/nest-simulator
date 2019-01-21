@@ -40,12 +40,10 @@ namespace nest
 class Source
 {
 private:
-  uint64_t gid_ : 62;  //!< gid of source
+  uint64_t gid_ : NUM_BITS_GID;  //!< gid of source
   bool processed_ : 1; //!< whether this target has already been moved
                        //!to the MPI buffer
   bool primary_ : 1;
-  static constexpr uint64_t GID_DISABLED =
-    ( static_cast< uint64_t >( 1 ) << 62 ) - 1; // 2 ** 62 - 1
 
 public:
   Source();
@@ -101,13 +99,13 @@ inline Source::Source( const uint64_t gid, const bool is_primary )
   , processed_( false )
   , primary_( is_primary )
 {
-  assert( gid < GID_DISABLED );
+  assert( gid < MAX_GID );
 }
 
 inline void
 Source::set_gid( const uint64_t gid )
 {
-  assert( gid < GID_DISABLED );
+  assert( gid < MAX_GID );
   gid_ = gid;
 }
 
@@ -144,13 +142,13 @@ Source::is_primary() const
 inline void
 Source::disable()
 {
-  gid_ = GID_DISABLED;
+  gid_ = MAX_GID;
 }
 
 inline bool
 Source::is_disabled() const
 {
-  return gid_ == GID_DISABLED;
+  return gid_ == MAX_GID;
 }
 
 inline bool operator<( const Source& lhs, const Source& rhs )

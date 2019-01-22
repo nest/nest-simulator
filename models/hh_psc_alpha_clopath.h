@@ -35,7 +35,7 @@
 #include <gsl/gsl_sf_exp.h>
 
 // Includes from nestkernel:
-#include "archiving_node.h"
+#include "clopath_archiving_node.h"
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
@@ -64,8 +64,8 @@ Name: hh_psc_alpha_clopath - Hodgkin-Huxley neuron model.
 Description:
 
 hh_psc_alpha_clopath is an implementation of a spiking neuron using the
-Hodgkin-Huxley
-formalism and that is capable of connecting to a Clopath synapse.
+Hodgkin-Huxley formalism and that is capable of connecting to a Clopath
+synapse.
 
 (1) Post-synaptic currents
 Incoming spike events induce a post-synaptic change of current modelled
@@ -99,15 +99,17 @@ I_e        double - Constant external input current in pA.
 
 Clopath rule parameters:
 u_bar_plus    double - Low-pass filtered Membrane potential in mV.
-u-bar_minus   double - Low-pass filtered Membrane potential in mV.
+u_bar_minus   double - Low-pass filtered Membrane potential in mV.
 u_bar_bar     double - Low-pass filtered u_bar_minus in mV.
 A_LTD         double - Amplitude of depression in 1/mV.
 A_LTP         double - Amplitude of facilitation in 1/mV^2.
 theta_plus    double - threshold for u in mV.
-theta_minus   double - threshold for u_bar_p/m in mV.
+theta_minus   double - threshold for u_bar_[plus/minus] in mV.
 A_LTD_const   bool   - Flag that indicates whether A_LTD_ should
                        be constant (true, default) or multiplied by
                        u_bar_bar^2 / u_ref_squared (false).
+delay_u_bars  double - Delay with which u_bar_[plus/minus] are processed
+                       to compute the synaptic weights.
 U_ref_squared double - Reference value for u_bar_bar_^2.
 
 Problems/Todo:
@@ -130,12 +132,21 @@ A Quantitative Description of Membrane Current
 and Its Application to Conduction and Excitation in Nerve,
 Journal of Physiology, 117, 500-544 (1952)
 
+Clopath et al., Connectivity reflects coding:
+a model of voltage-based STDP with homeostasis.
+Nature Neuroscience, 13:3, 344-352  (2010)
+
+Clopath and Gerstner, Voltage and spike timing interact
+in STDP – a unified model.
+Front. Synaptic Neurosci., 2:25, (2010)
+doi: 10.3389/fnsyn.2010.00025
+
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author: Schrader (adapted for clopath_stdp_synapse by
-         Jonas Stapmanns, David Dahmen, Jan Hahne)
+Author: Jonas Stapmanns, David Dahmen, Jan Hahne
+        (adapted from hh_psc_alpha by Schrader)
 
 SeeAlso: hh_cond_exp_traub, clopath_stdp_synapse
 */
@@ -225,8 +236,7 @@ private:
     double I_e;       //!< Constant Current in pA
     double tau_plus;  //!< time constant of u_bar_plus in ms
     double tau_minus; //!< time constant of u_bar_minus in ms
-    double tau_bar_bar;  //!< time constant of u_bar_bar in ms
-    double delay_u_bars; //!< Delay of the convolved membrane potentials in ms
+    double tau_bar_bar; //!< time constant of u_bar_bar in ms
 
     Parameters_(); //!< Sets default parameter values
 

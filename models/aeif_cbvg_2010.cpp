@@ -110,8 +110,7 @@ nest::aeif_cbvg_2010_dynamics( double,
   // good compiler will optimize the verbosity away...
 
   // Clamp membrane potential to V_reset while refractory, otherwise bound
-  // it to V_peak. Do not use V_.V_peak_ here, since that is set to V_th if
-  // Delta_T == 0.
+  // it to V_peak.
   const double& V = ( is_refractory || is_clamped )
     ? ( is_clamped ? node.P_.V_clamp_ : node.P_.V_reset_ )
     : std::min( y[ S::V_M ], node.P_.V_peak_ );
@@ -521,7 +520,6 @@ nest::aeif_cbvg_2010::update( const Time& origin,
         S_.y_ );              // neuronal state
       if ( status != GSL_SUCCESS )
       {
-        std::cout << "GSLSolverFailure" << std::endl;
         throw GSLSolverFailure( get_name(), status );
       }
 
@@ -529,7 +527,6 @@ nest::aeif_cbvg_2010::update( const Time& origin,
       if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
         || S_.y_[ State_::W ] > 1e6 )
       {
-        std::cout << "NumericalInstability" << std::endl;
         throw NumericalInstability( get_name() );
       }
 

@@ -195,7 +195,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
         voltages = data[0]['events']['V_m']
 
         vm1 = voltages[np.where(senders == 1)]
-        vm2 = voltages[np.where(senders == 1)]
+        vm2 = voltages[np.where(senders == 2)]
 
         # Compare results for static synapse and Clopath stdp synapse
         self.assertTrue(np.allclose(vm1, vm2, rtol=1e-5))

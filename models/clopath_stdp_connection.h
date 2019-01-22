@@ -69,6 +69,9 @@ Transmits: SpikeEvent
 References:  [1] Clopath et al. (2010) Connectivity reflects coding:
                 a model of voltage-based STDP with homeostasis.
                 Nature Neuroscience 13:3,344--352
+             [2] Clopath and Gerstner (2010) Voltage and spike timing interact
+                in STDP – a unified model. Front. Synaptic Neurosci. 2:25
+                doi: 10.3389/fnsyn.2010.00025
 
 Authors: Jonas Stapmanns, David Dahmen, Jan Hahne
 

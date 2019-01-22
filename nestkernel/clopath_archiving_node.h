@@ -62,12 +62,6 @@ public:
    */
   Clopath_Archiving_Node( const Clopath_Archiving_Node& );
 
-  bool
-  supports_clopath_archiving() const
-  {
-    return true;
-  }
-
   /**
    * \fn double get_LTD_value(long t)
    * Returns value in LTD history at time t

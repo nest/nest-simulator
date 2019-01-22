@@ -136,11 +136,6 @@ public:
   virtual bool has_proxies() const;
 
   /**
-   * Returns true if node supports the Clopath plasticity rule.
-   */
-  virtual bool supports_clopath_archiving() const;
-
-  /**
    * Returns true if the node only receives events from nodes/devices
    * on the same thread.
    */
@@ -956,12 +951,6 @@ inline bool
 Node::is_frozen() const
 {
   return frozen_;
-}
-
-inline bool
-Node::supports_clopath_archiving() const
-{
-  return false;
 }
 
 inline bool

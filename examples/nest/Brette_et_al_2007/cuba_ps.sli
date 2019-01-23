@@ -91,7 +91,7 @@
   /detector /spike_detector
   /detector_params
   <<
-   /record_to [/ascii]
+   /record_to [/ascii /memory]
    /label (cuba_ps)
   >>
 

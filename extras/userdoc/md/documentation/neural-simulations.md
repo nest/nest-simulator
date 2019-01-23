@@ -44,7 +44,7 @@ configure it to show us the time stamp of each value as well. We also set it to
 print the time and potential to the screen and we set the recording interval to
 0.1 ms. The default is 1.0 ms.
 
-    SLI ] vm << /record_to [/screen] /interval 0.1 >> SetStatus
+    SLI ] vm << /record_to [/screen /memory] /interval 0.1 >> SetStatus
 
 The double angled brackets ` << ` and ` >> `delimit a dictionary definition
 which consists of successive `/key value ` pairs.
@@ -422,14 +422,17 @@ All devices which are used to observe the state of other network nodes are
 called recording devices. Examples are `voltmeter` and `spike_detector`.
 
 
-JME: UPDATE FOR NESTIO!! 
+Recording devices have properties which control the amount, the format, and
+the destination of their output. The latter is done by setting their property
+`record_to` to an array containing the name(s) of the recording backend(s) to
+use. To dump recorded data to a file, add `/ascii` to the array, to print to
+the screen, add `/screen` and to hold the data in memory, add `/memory`, which
+is also the default behavior for most devices. Data stored in memory can be
+retrieved after the simulation using `GetStatus`. To get a list of all available
+recording backends, run
 
+    0 GetStatus /recording_backends get keys ==
 
-Recording devices have properties which control the amount, the format, and the
-destination of their output. All recorders can either dump the recorded data to
-a file (property `to_file`), print it to the screen (property `to_screen`) or
-hold the data in memory (property `to_memory`). Data stored in memory can be
-retrieved after the simulation using `GetStatus`.
 
 Device models are also stored in the dictionary `modeldict`. The most important
 devices are:

@@ -225,10 +225,10 @@ tic % start timer on construction
   % but by recording the populations separately,
   % we save us a lot of sorting work later
   (Creating excitatory spike detector.) =
-  /exsd /spike_detector << /record_to [/ascii] >> Create def
+  /exsd /spike_detector << /record_to [/ascii /memory] >> Create def
 
   (Creating inhibitory spike detector.) =
-  /insd /spike_detector << /record_to [/ascii] >> Create def
+  /insd /spike_detector << /record_to [/ascii /memory] >> Create def
 
   % some connecting functions need lists (arrays) over all
   % neurons they should work on, so we need to extract these

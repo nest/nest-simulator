@@ -191,10 +191,11 @@ private:
   static constexpr int MAX_MARKER = generate_max_value( NUM_BITS_MARKER );
 
   unsigned int source_lid_ : NUM_BITS_LID; //!< local id of presynaptic neuron
-  unsigned int source_tid_ : NUM_BITS_TID; //!< thread index of presynaptic neuron
+  //!< thread index of presynaptic neuron
+  unsigned int source_tid_:  NUM_BITS_TID;
   unsigned int marker_ : NUM_BITS_MARKER;
-  bool is_primary_ : NUM_BITS_IS_PRIMARY; //!< TargetData has TargetDataFields
-                                          //!< else has SecondaryTargetDataFields
+   //!< TargetData has TargetDataFields else SecondaryTargetDataFields
+  bool is_primary_ : NUM_BITS_IS_PRIMARY;
 
 public:
   //<! variant fields

@@ -41,8 +41,8 @@ class Source
 {
 private:
   uint64_t gid_ : NUM_BITS_GID;  //!< gid of source
-  bool processed_ : 1; //!< whether this target has already been moved
-                       //!to the MPI buffer
+  bool processed_ : 1;           //!< whether this target has already been moved
+                                 //!to the MPI buffer
   bool primary_ : 1;
 
 public:

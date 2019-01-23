@@ -174,8 +174,7 @@ public:
 };
 
 //!< check legal size
-typedef StaticAssert< sizeof( Target ) == 8 >::success
-  success_target_size;
+typedef StaticAssert< sizeof( Target ) == 8 >::success success_target_size;
 
 inline Target::Target()
   : remote_target_id_( 0 )

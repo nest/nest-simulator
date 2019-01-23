@@ -43,8 +43,9 @@
 #include "dictdatum.h"
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rdevdict::binomial - binomial random deviate generator
+
 Description:
    Generates binomially distributed random numbers.
 
@@ -55,6 +56,7 @@ Parameters:
    n - number of trials (positive integer)
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
+
 Author: Hans Ekkehard Plesser, Moritz Deger
 */
 

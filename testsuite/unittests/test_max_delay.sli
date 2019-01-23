@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_max_delay - sli script to test whether max_delay is updated correctly
 
    Synopsis: (test_max_delay) run

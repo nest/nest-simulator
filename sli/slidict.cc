@@ -39,9 +39,7 @@
 #include "namedatum.h"
 #include "tokenutils.h"
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: dict - Create new, empty dictionary
 
    Synopsis: dict -> <<>>
@@ -68,9 +66,7 @@ DictFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( DictionaryDatum( new Dictionary ) );
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: put_d - Add an entry to a dictionary
 
    Synopsis: <<dict>> /key val -> <<dict>>
@@ -143,9 +139,7 @@ DictputFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: get_d - look a name up in a dictionary
 
    Synopsis: dict /key get_d -> any
@@ -208,9 +202,7 @@ DictgetFunction::execute( SLIInterpreter* i ) const
     throw StackUnderflow( 2, i->OStack.load() );
   }
 }
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: info - Display the contents of a dictionary
 
    Synopsis: ostream dict info -> -
@@ -256,14 +248,18 @@ DictinfoFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 2 );
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: length_d - counts elements of a dictionary
+
  Synopsis: dict length_d -> int
 
  Examples: <</a 1 /b 2>> length_d -> 2
    modeldict length_d --> 34
+
  Author: docu by Sirko Straube
+
  Remarks: Use length if you are not sure of the data type.
+
  SeeAlso: length
 */
 
@@ -299,9 +295,7 @@ Empty_DFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: countdictstack - return number of dictionaries on the dictionary stack.
 
    Synopsis:
@@ -327,15 +321,16 @@ CountdictstackFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( st );
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: dictstack - return current dictionary stack as array
+
    Synopsis: dictstack -> array
+
    Description: Returns an array whose entries are references to the
      dictionaries on the dictionary stack. The dictionaries are stored from
      bottom to top, such that the first array element refers to the bottom of
      the stack and the last array element to the top.
+
    SeeAlso: currentdict, countdictstack, cleardictstack, whos
 */
 void
@@ -350,12 +345,13 @@ DictstackFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( st );
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: currentdict - return topmost dictionary of the dictionary stack
+
    Synopsis: currentdict -> dict
+
    Description: Returns a reference to the current dictionary.
+
    SeeAlso: dictstack, begin, end, cleardictstack, who, whos
 */
 void
@@ -369,14 +365,14 @@ CurrentdictFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( dt );
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: cleardictstack - Pop all non standard dictionaries off the dictionary
                           stack.
+
    Description: Removes all non standard dictionaries off the dictionary stack.
      After this, only the systemdict and the userdict dictionaries remain on the
      dictionary stack.
+
    SeeAlso: dictstack, begin, end, currentdict, who, whos
 */
 void
@@ -390,9 +386,7 @@ CleardictstackFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: topinfo_d - print contents of top dictionary to stream
 
    Synopsis: ostream topinfo_d -> -
@@ -402,18 +396,6 @@ BeginDocumentation
 
    Parameters:
      ostream - a valid output stream
-
-   Examples:
-
-   Diagnostics:
-
-   Bugs:
-
-   Author:
-
-   FirstVersion:
-
-   Remarks:
 
    SeeAlso: dictstack, currentdict, info, who, whos
 */
@@ -430,9 +412,7 @@ DicttopinfoFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: info_ds - print contents of all dictionaries on the dicitonary stack to
                    stream
 
@@ -461,9 +441,7 @@ WhoFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: begin - Make a dictionary the current dictionary.
 
    Synopsis: dict begin -> -
@@ -505,9 +483,7 @@ DictbeginFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: end - Close the current (topmost) dictionary.
 
    Synopsis: - end -> -
@@ -538,9 +514,7 @@ DictendFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: undef - Remove a key from a dictionary.
 
    Synopsis: dict key undef -> -
@@ -620,9 +594,7 @@ UndefFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: <<>> - Create a new dictionary.
 
    Synopsis: << /key1 val1 ... /keyn valn >> -> dict
@@ -724,9 +696,7 @@ DictconstructFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: known - check whether a name is defined in a dictionary or object
 
    Synopsis: dict /key known -> bool
@@ -758,9 +728,7 @@ KnownFunction::execute( SLIInterpreter* i ) const
   i->OStack.top() = new BoolDatum( known );
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: cleardict - Clears the contents of a dictionary
 
    Synopsis: dict cleardict
@@ -786,9 +754,7 @@ CleardictFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: clonedict - create a copy of a dictionary
 
    Synopsis: dict1 clonedict -> dict1 dict2
@@ -823,9 +789,7 @@ ClonedictFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop(); // never forget me
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: cva_d - Convert dictionary to array
 
    Synopsis: dict cva_d -> array
@@ -904,9 +868,7 @@ Cva_dFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( ad );
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: keys - Return array of keys in a dictionary
 
    Synopsis:
@@ -958,9 +920,7 @@ KeysFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( ad );
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: values - Return array of values in a dictionary
 
    Synopsis:

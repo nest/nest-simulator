@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-336-serial - Check that vp-specific RNGs only provided for nodes with proxies
 

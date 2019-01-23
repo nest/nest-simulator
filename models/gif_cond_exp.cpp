@@ -598,7 +598,7 @@ nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
 void
 nest::gif_cond_exp::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   // EX: We must compute the arrival time of the incoming spike
   //     explicitly, since it depends on delay and offset within
@@ -621,7 +621,7 @@ nest::gif_cond_exp::handle( SpikeEvent& e )
 void
 nest::gif_cond_exp::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

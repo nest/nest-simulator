@@ -261,9 +261,11 @@ class TestDists(unittest.TestCase):
         self.assertTrue(is_dist)
 
 
-if __name__ == '__main__':
+def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestDists)
-    unittest.TextTestRunner(verbosity=2).run(suite)
-    # suite = unittest.TestSuite()
-    # suite.addTest(TestDists('testGslBinomialDist'))
-    # unittest.TextTestRunner().run(suite)
+    return suite
+
+
+if __name__ == '__main__':
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())

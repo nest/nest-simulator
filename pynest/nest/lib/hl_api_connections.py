@@ -549,6 +549,8 @@ def CGSelectImplementation(tag, library):
 
 
 @check_stack
+@deprecated('', 'DisconnectOneToOne is deprecated and will be removed in \
+NEST-3.0. Use Disconnect instead.')
 def DisconnectOneToOne(source, target, syn_spec):
     """Disconnect a currently existing synapse.
 
@@ -564,15 +566,14 @@ def DisconnectOneToOne(source, target, syn_spec):
 
     sps(source)
     sps(target)
-    if syn_spec is not None:
-        sps(syn_spec)
-        if is_string(syn_spec):
-            sr("cvlit")
+    if is_string(syn_spec):
+        syn_spec = {'model': syn_spec}
+    sps(syn_spec)
     sr('Disconnect')
 
 
 @check_stack
-def Disconnect(pre, post, conn_spec, syn_spec):
+def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     """Disconnect pre neurons from post neurons.
 
     Neurons in pre and post are disconnected using the specified disconnection
@@ -604,6 +605,10 @@ def Disconnect(pre, post, conn_spec, syn_spec):
     string describing one synapse model (synapse models are listed in the
     synapsedict) or as a dictionary as described below.
 
+    Note that only the synapse type is checked when we disconnect and that if
+    syn_spec is given as a non-empty dictionary, the 'model' parameter must be
+    present.
+
     If no synapse model is specified the default model 'static_synapse'
     will be used.
 
@@ -621,11 +626,10 @@ def Disconnect(pre, post, conn_spec, syn_spec):
     types in NEST or manually specified synapses created via CopyModel().
 
     All other parameters are not currently implemented.
-    Note: model is alias for syn_spec for backward compatibility.
 
     Notes
     -----
-    Disconnect does not iterate over subnets, it only connects explicitly
+    Disconnect does not iterate over subnets, it only disconnects explicitly
     specified nodes.
     """
 
@@ -634,14 +638,12 @@ def Disconnect(pre, post, conn_spec, syn_spec):
     sps(post)
     sr('cvgidcollection')
 
-    if conn_spec is not None:
-        sps(conn_spec)
-        if is_string(conn_spec):
-            sr("cvlit")
+    if is_string(conn_spec):
+        conn_spec = {'rule': conn_spec}
+    if is_string(syn_spec):
+        syn_spec = {'model': syn_spec}
 
-    if syn_spec is not None:
-        sps(syn_spec)
-        if is_string(syn_spec):
-            sr("cvlit")
+    sps(conn_spec)
+    sps(syn_spec)
 
     sr('Disconnect_g_g_D_D')

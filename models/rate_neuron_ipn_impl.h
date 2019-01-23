@@ -66,8 +66,8 @@ template < class TNonlinearities >
 nest::rate_neuron_ipn< TNonlinearities >::Parameters_::Parameters_()
   : tau_( 10.0 )   // ms
   , lambda_( 1.0 ) // ms
-  , std_( 1.0 )
-  , mean_( 0.0 )
+  , sigma_( 1.0 )
+  , mu_( 0.0 )
   , linear_summation_( true )
   , rectify_output_( false )
   , mult_coupling_( false )
@@ -93,11 +93,15 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::get(
 {
   def< double >( d, names::tau, tau_ );
   def< double >( d, names::lambda, lambda_ );
-  def< double >( d, names::std, std_ );
-  def< double >( d, names::mean, mean_ );
+  def< double >( d, names::sigma, sigma_ );
+  def< double >( d, names::mu, mu_ );
   def< bool >( d, names::linear_summation, linear_summation_ );
   def< bool >( d, names::rectify_output, rectify_output_ );
   def< bool >( d, names::mult_coupling, mult_coupling_ );
+
+  // Also allow old names (to not break old scripts)
+  def< double >( d, names::std, sigma_ );
+  def< double >( d, names::mean, mu_ );
 }
 
 template < class TNonlinearities >
@@ -107,12 +111,30 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set(
 {
   updateValue< double >( d, names::tau, tau_ );
   updateValue< double >( d, names::lambda, lambda_ );
-  updateValue< double >( d, names::mean, mean_ );
-  updateValue< double >( d, names::std, std_ );
+  updateValue< double >( d, names::mu, mu_ );
+  updateValue< double >( d, names::sigma, sigma_ );
   updateValue< bool >( d, names::linear_summation, linear_summation_ );
   updateValue< bool >( d, names::rectify_output, rectify_output_ );
   updateValue< bool >( d, names::mult_coupling, mult_coupling_ );
 
+  // Check for old names
+  if ( updateValue< double >( d, names::mean, mu_ ) )
+  {
+    LOG( M_WARNING,
+      "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
+      "The parameter mean has been renamed to mu. Please use the new "
+      "name from now on." );
+  }
+
+  if ( updateValue< double >( d, names::std, sigma_ ) )
+  {
+    LOG( M_WARNING,
+      "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
+      "The parameter std has been renamed to sigma. Please use the new "
+      "name from now on." );
+  }
+
+  // Check for invalid parameters
   if ( tau_ <= 0 )
   {
     throw BadProperty( "Time constant must be > 0." );
@@ -121,9 +143,9 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set(
   {
     throw BadProperty( "Passive decay rate must be >= 0." );
   }
-  if ( std_ < 0 )
+  if ( sigma_ < 0 )
   {
-    throw BadProperty( "Standard deviation of noise must not be negative." );
+    throw BadProperty( "Noise parameter must not be negative." );
   }
 }
 
@@ -275,9 +297,9 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
     // store rate
     new_rates[ lag ] = S_.rate_;
     // get noise
-    S_.noise_ = P_.std_ * B_.random_numbers[ lag ];
+    S_.noise_ = P_.sigma_ * B_.random_numbers[ lag ];
     // propagate rate to new time step (exponential integration)
-    S_.rate_ = V_.P1_ * new_rates[ lag ] + V_.P2_ * P_.mean_
+    S_.rate_ = V_.P1_ * new_rates[ lag ] + V_.P2_ * P_.mu_
       + V_.input_noise_factor_ * S_.noise_;
 
     double delayed_rates_in = 0;
@@ -437,7 +459,7 @@ nest::rate_neuron_ipn< TNonlinearities >::handle(
   DelayedRateConnectionEvent& e )
 {
   const double weight = e.get_weight();
-  const long delay = e.get_delay();
+  const long delay = e.get_delay_steps();
 
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();

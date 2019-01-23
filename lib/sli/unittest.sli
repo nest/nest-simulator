@@ -35,7 +35,7 @@
 
 /unittest namespace
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::exit_test_gracefully - End test script and report it as skipped
 Synopsis: literal exit_test_gracefully -> -
 Description:
@@ -54,7 +54,7 @@ is_threaded not { /skipped_no_openmp exit_test_gracefully } if
 } bind def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::assert_or_die - Check condition and quit with exit code 1 if it fails
 
 Synopsis: {condition}        assert_or_die -> -
@@ -154,7 +154,7 @@ SeeAlso: unittest::fail_or_die, unittest::pass_or_die, assert, quit
   end
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::pass_or_die - Execute a code block and quit with exit code 2 if it fails.
 
 Synopsis: {code}        pass_or_die -> -
@@ -212,7 +212,7 @@ SeeAlso: unittest::assert_or_die, unittest::fail_or_die, stopped, assert, quit
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::fail_or_die - Execute a code block and exit with exit code 3 if it does not raise an error.
 
 Synopsis: { code } fail_or_die -> -
@@ -280,7 +280,7 @@ SeeAlso: unittest::assert_or_die, unittest::pass_or_die, assert, quit
 } bind def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::failbutnocrash_or_die - Execute a code block and exit with exit code 3 if it does not raise a scripterror
 
 Synopsis: { code } [string] failbutnocrash_or_die -> -
@@ -367,7 +367,7 @@ SeeAlso: unittest::fail_or_die, assert, quit
 } bind def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::passorfailbutnocrash_or_die - Execute a code block and exit with exit code 3 if it crashes
 
 Synopsis: { code } [string] passorfailbutnocrash_or_die -> -
@@ -444,7 +444,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
 } bind def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::crash_or_die - Execute a code block and exit with exit code 3 if nest does not crash
 
 Synopsis: { code } [string] crash_or_die -> -
@@ -537,7 +537,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::ToUnitTestPrecision  - reduce argument to specified precision.
    
 Synopsis:
@@ -604,7 +604,7 @@ SeeAlso: unittest::assert_or_die, token, cvd, testsuite::test_iaf
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::InflateUnitTestData  - reformat compressed reference data
 Synopsis:
  array1 array2 InflateUnitTestData -> array3
@@ -686,7 +686,7 @@ SeeAlso: unittest::ToUnitTestPrecision
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::mpirun_self - calls a distributed version of nest on the calling file
 
 Synopsis: integer mpirun_self -> -
@@ -988,7 +988,7 @@ SeeAlso: unittest::mpirun_self
 } def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::distributed_assert_or_die - Checks whether code is independent of number of number of jobs
 
 Synopsis: array proc proc distributed_assert_or_die -> -
@@ -1069,7 +1069,7 @@ def
 def 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::distributed_invariant_assert_or_die - Checks whether code is independent of number of number of jobs
 
 Synopsis: array proc distributed_invariant_assert_or_die -> -
@@ -1104,7 +1104,7 @@ SeeAlso: unittest::distributed_assert_or_die, nest_indirect, unittest::mpirun_se
 def 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::distributed_collect_assert_or_die - Checks whether result is independent of number of number of jobs
 
 Synopsis: array proc proc distributed_collect assert_or_die -> -
@@ -1187,7 +1187,7 @@ def
 }
 def 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::distributed_process_invariant_collect_assert_or_die - Checks whether the pooled results of all ranks are equal, independent of the number of MPI processes
 
 Synopsis: array proc distributed_process_invariant_collect_assert_or_die -> -
@@ -1276,7 +1276,7 @@ SeeAlso: unittest::distributed_assert_or_die, unittest::distributed_collect_asse
 def 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::distributed_process_invariant_events_assert_or_die - Checks whether the pooled event dictionaries from all ranks are equal, independent of the number of MPI processes
 
 Synopsis: array proc distributed_process_invariant_events_assert_or_die -> -
@@ -1339,7 +1339,7 @@ SeeAlso: unittest::distributed_assert_or_die, unittest::distributed_collect_asse
 def 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::distributed_rank_invariant_collect_assert_or_die - Checks whether all ranks produce equal results, independent of the number of MPI processes
 
 Synopsis: array proc distributed_rank_invariant_collect_assert_or_die -> -
@@ -1383,7 +1383,7 @@ SeeAlso: unittest::distributed_assert_or_die, unittest::distributed_collect_asse
 def 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: unittest::distributed_pass_or_die - Checks whether code runs for different numbers of jobs
 
 Synopsis: array proc distributed_pass_or_die -> -

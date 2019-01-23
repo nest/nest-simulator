@@ -27,8 +27,9 @@ Name: testsuite::issue-1100
 Synopsis: (issue-1100) run -> NEST exits if test fails
 
 Description:
-This test ensures that local_spike_counter also counts the spikes with
-multiplicity.
+Creates a parrot neuron, which receives one spike with multiplicity two from a
+spike generator. The parrot neuron should then emit a spike with multiplicity
+two, which should be counted as two spikes by the local spike counter.
 
 Author: Stine Brekke Vennemo
 FirstVersion: January 2019
@@ -40,26 +41,20 @@ FirstVersion: January 2019
 M_ERROR setverbosity
 
 {
-  /s_to /parrot_neuron 4000 Create def
-  /t_to /parrot_neuron 10 Create def
+  /parrot /parrot_neuron 1 Create def
 
-  /sources 1 s_to cvgidcollection def
-  /targets s_to 1 add t_to cvgidcollection def
-
-  /pg /poisson_generator << /rate 1.0 >> Create def
+  /sg /spike_generator << /spike_times [ 1.0 ]
+                          /spike_multiplicities [ 2 ] >> Create def
   /sd /spike_detector Create def
 
-  pg pg cvgidcollection sources Connect
-  sources targets Connect
+  sg parrot Connect
 
-  sources sd sd cvgidcollection Connect
-  targets sd sd cvgidcollection Connect
+  parrot sd Connect
 
   10.0 Simulate
 
   0 GetStatus /local_spike_counter get
-  sd GetStatus /n_events get
-  eq
+  2 eq
 } assert_or_die
 
 endusing

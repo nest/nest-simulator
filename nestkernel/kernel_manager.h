@@ -170,7 +170,7 @@ public:
    *
    * @see initialize(), finalize()
    */
-  void change_num_threads( size_t num_threads );
+  void change_num_threads( thread num_threads );
 
   void prepare();
   void cleanup(); 

@@ -53,12 +53,8 @@ file as for all RecordingDevices. By default, GID, time, and binary
 state (0 or 1) for each decoded state is recorded. The state can be
 accessed from ['events']['weight'].
 
-The spin_detector can also record binary state times with full
-precision from neurons emitting precisely timed spikes. Set
-/precise_times to true to achieve this. If there are precise models
-and /precise_times is not set, it will be set to True at the start of
-the simulation and /precision will be increased to 15 from its default
-value of 3.
+The spin_detector will record binary state times with full
+precision from neurons emitting precisely timed spikes.
 
 Any node from which binary states are to be recorded, must be
 connected to the spin_detector using the Connect command. Any

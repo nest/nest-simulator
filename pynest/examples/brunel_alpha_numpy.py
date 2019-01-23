@@ -205,9 +205,9 @@ ispikes = nest.Create("spike_detector")
 '''
 Configuration of the spike detectors recording excitatory and
 inhibitory spikes using `SetStatus`, which expects a list of node
-handles and a list of parameter dictionaries. Setting the variable
-"to_file" to True ensures that the spikes will be recorded in a .gdf
-file starting with the string assigned to label.
+handles and a list of parameter dictionaries. Setting the property
+"record_to" to `["ascii"]` ensures that the spikes will be recorded to
+a file, whos name starts with the string assigned to label.
 '''
 
 nest.SetStatus(espikes, [{"label": "brunel-py-ex",

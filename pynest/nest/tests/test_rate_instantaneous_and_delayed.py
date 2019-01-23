@@ -61,7 +61,6 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
         multimeter = nest.Create(
             'multimeter', params={
                 'record_from': ['rate'],
-                'precision': 10,
                 'interval': dt})
 
         # record rates and connect neurons

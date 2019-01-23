@@ -111,10 +111,7 @@ address the problem of efficient usage of appropriate vector and
 matrix objects.
 
 Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time plus offset). If this node is
-connected to a spike_detector, the property "precise_times" of the
-spike_detector has to be set to true in order to record the offsets
-in addition to the on-grid spike times.
+to target nodes (on-grid spike time plus offset).
 
 Parameters:
 

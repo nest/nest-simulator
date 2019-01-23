@@ -89,10 +89,7 @@ V_reset       double - Reset value for the membrane potential in mV.
 Remarks:
 
 Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time plus offset). If this node is
-connected to a spike_detector, the property "precise_times" of the
-spike_detector has to be set to true in order to record the offsets
-in addition to the on-grid spike times.
+to target nodes (on-grid spike time plus offset).
 
 If tau_m is very close to tau_syn_ex or tau_syn_in, the model
 will numerically behave as if tau_m is equal to tau_syn_ex or

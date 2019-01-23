@@ -44,7 +44,7 @@ configure it to show us the time stamp of each value as well. We also set it to
 print the time and potential to the screen and we set the recording interval to
 0.1 ms. The default is 1.0 ms.
 
-    SLI ] vm << /withtime true /to_screen true /interval 0.1 >> SetStatus
+    SLI ] vm << /record_to [/screen] /interval 0.1 >> SetStatus
 
 The double angled brackets ` << ` and ` >> `delimit a dictionary definition
 which consists of successive `/key value ` pairs.
@@ -420,6 +420,10 @@ Device to generate a step current with different amplitudes at different times.
 
 All devices which are used to observe the state of other network nodes are
 called recording devices. Examples are `voltmeter` and `spike_detector`.
+
+
+JME: UPDATE FOR NESTIO!! 
+
 
 Recording devices have properties which control the amount, the format, and the
 destination of their output. All recorders can either dump the recorded data to

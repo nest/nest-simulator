@@ -162,24 +162,19 @@ will result in an error. This conveniently protects us from making integer
 division errors, which are hard to catch.
 
 Next we create a `multimeter`, a *device* we can use to record the membrane
-voltage of a neuron over time. We set its property `withtime` such that it will
-also record the points in time at which it samples the membrane voltage. The
-property `record_from` expects a list of the names of the variables we would
-like to record. The variables exposed to the multimeter vary from model to
-model. For a specific model, you can check the names of the exposed variables
-by looking at the neuron’s property `recordables`.
+voltage of a neuron over time. The property `record_from` expects a list of
+the names of the variables we would like to record. The variables exposed to
+the multimeter vary from model to model. For a specific model, you can check
+the names of the exposed variables by looking at the neuron’s property `recordables`.
 
     multimeter = nest.Create("multimeter")
-    nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
+    nest.SetStatus(multimeter, {"record_from":["V_m"]})
 
 We now create a `spikedetector`, another device that records the spiking events
 produced by a neuron. We use the optional keyword argument `params` to set its
-properties. This is an alternative to using `SetStatus`. The property `withgid`
-indicates whether the spike detector is to record the source id from which it
-received the event (i.e. the id of our neuron).
+properties. This is an alternative to using `SetStatus`.
 
-    spikedetector = nest.Create("spike_detector",
-                    params={"withgid": True, "withtime": True})
+    spikedetector = nest.Create("spike_detector")
 
 A short note on naming: here we have called the neuron `neuron`, the multimeter
 `multimeter` and so on. Of course, you can assign your created nodes to any
@@ -387,7 +382,7 @@ current, and add a second neuron.
     nest.SetStatus(neuron1, {"I_e": 376.0})
     neuron2 = nest.Create("iaf_psc_alpha")
     multimeter = nest.Create("multimeter")
-    nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
+    nest.SetStatus(multimeter, {"record_from":["V_m"]})
 
 We now connect `neuron1` to `neuron2`, and record the membrane potential from
 `neuron2` so we can observe the postsynaptic potentials caused by the spikes of

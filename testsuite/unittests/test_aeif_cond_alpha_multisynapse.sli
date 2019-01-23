@@ -181,8 +181,10 @@ append
   
   /nrn /aeif_cond_alpha_multisynapse Create def
   
-  /mm /multimeter << /withtime true /time_in_steps true
-                     /interval 1.0 /record_from [ /V_m /w /g_1 ] >> Create def
+  /mm /multimeter << /time_in_steps true
+                     /interval 1.0
+		     /record_from [ /V_m /w /g_1 ]
+		  >> Create def
   
   mm nrn Connect
   
@@ -288,8 +290,10 @@ assert_or_die
   } ScanThread
 
   % Create the multimeter that will record from the 3 conductance channels
-  /mm /multimeter << /withtime true /time_in_steps true
-                     /interval dt /record_from [ /g_1 /g_2 /g_3 /g_4 ] >> Create def
+  /mm /multimeter << /time_in_steps true
+                     /interval dt
+		     /record_from [ /g_1 /g_2 /g_3 /g_4 ]
+		  >> Create def
 
   mm nrn Connect
 

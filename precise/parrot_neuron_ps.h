@@ -63,10 +63,7 @@ two parrot neurons spiking at desired times by, e.g., a
 stdp_synapse onto port 1 on the post-synaptic parrot neuron.
 
 Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time plus offset). If this node is
-connected to a spike_detector, the property "precise_times" of the
-spike_detector has to be set to true in order to record the offsets
-in addition to the on-grid spike times.
+to target nodes (on-grid spike time plus offset).
 
 Sends: SpikeEvent
 

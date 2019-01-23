@@ -139,7 +139,7 @@ ten neurons each.
     nest.SetStatus(pop1, {"I_e": 376.0})
     pop2 = nest.Create("iaf_psc_alpha", 10)
     multimeter = nest.Create("multimeter", 10)
-    nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
+    nest.SetStatus(multimeter, {"record_from":["V_m"]})
 
 If no connectivity pattern is specified, the populations are connected via 
 the default rule, namely `all_to_all`. Each neuron of `pop1` is connected 
@@ -233,6 +233,10 @@ creates a `poisson_generator` which is only active between 100 and 150ms:
 
 This functionality is useful for setting up experimental protocols with stimuli
 that start and stop at particular times.
+
+
+JME: Update for NESTIO!!
+
 
 So far we have accessed the data recorded by devices directly, by extracting the
 value of `events`. However, for larger or longer simulations, we may prefer to

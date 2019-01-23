@@ -162,8 +162,6 @@ detector:
 # monitor the output using a multimeter, this only records with dt_rec!
 nest_mm = nest.Create('multimeter')
 nest.SetStatus(nest_mm, {'record_from': ['n_events', 'mean'],
-                         'withgid': True,
-                         'withtime': False,
                          'interval': dt_rec})
 nest.Connect(nest_mm, nest_pops, 'all_to_all')
 
@@ -171,9 +169,7 @@ nest.Connect(nest_mm, nest_pops, 'all_to_all')
 nest_sd = []
 for i, nest_i in enumerate(nest_pops):
     nest_sd.append(nest.Create('spike_detector'))
-    nest.SetStatus(nest_sd[i], {'withgid': False,
-                                'withtime': True,
-                                'time_in_steps': True})
+    nest.SetStatus(nest_sd[i], {'time_in_steps': True})
     nest.SetDefaults('static_synapse', {'weight': 1.,
                                         'delay': dt})
     nest.Connect([nest_pops[i]], nest_sd[i], 'all_to_all')
@@ -311,8 +307,7 @@ neurons:
 nest_sd = []
 for i, nest_i in enumerate(nest_pops):
     nest_sd.append(nest.Create('spike_detector'))
-    nest.SetStatus(nest_sd[i], {'withgid': False,
-                                'withtime': True, 'time_in_steps': True})
+    nest.SetStatus(nest_sd[i], {'time_in_steps': True})
     nest.SetDefaults('static_synapse', {'weight': 1., 'delay': dt})
 
     # record all spikes from population to compute population activity
@@ -324,7 +319,6 @@ nest_mm_Vm = []
 for i, nest_i in enumerate(nest_pops):
     nest_mm_Vm.append(nest.Create('multimeter'))
     nest.SetStatus(nest_mm_Vm[i], {'record_from': ['V_m'],
-                                   'withgid': True, 'withtime': True,
                                    'interval': dt_rec})
     nest.Connect(nest_mm_Vm[i], list(
         np.array(nest_pops[i])[:Nrecord[i]]), 'all_to_all')

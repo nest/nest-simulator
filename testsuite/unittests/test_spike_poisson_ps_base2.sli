@@ -33,9 +33,8 @@ uniform absolute accuracy of spike times even for long simulation
 times.
 
 The user has access to the two components of the spike if the spike 
-detector is set to
-   /time_in_steps true  /precise_times true .
-In thie case the spike detector returns events with the properties
+detector is set to /time_in_steps true.
+In this case the spike_detector returns events with the properties
 /times and /offsets, where /times are the integer parts s in units of h
 and offsets are the fractional parts o in milliseconds. According to
 NEST's definition of a grid-constrained spike as a spike occuring 

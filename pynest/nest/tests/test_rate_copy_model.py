@@ -60,7 +60,6 @@ class RateCopyModelTestCase(unittest.TestCase):
         multimeter = nest.Create(
             'multimeter', params={
                 'record_from': ['rate'],
-                'precision': 10,
                 'interval': dt})
 
         # create new connection

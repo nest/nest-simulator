@@ -128,3 +128,6 @@ sd GetStatus info
 %  - Fix that setting precision messes with stream permanently
 %  - Re-add spin_detector and weight_recorder
 %  - Write tests and documentation.
+%  - Rename RecordingBackend to OutputBackend
+%  - Fix SIONlib documentation and change data format
+%  - Provide NEST API + PyNEST function for accessing backend settings

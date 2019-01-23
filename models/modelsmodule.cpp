@@ -311,8 +311,7 @@ ModelsModule::init( SLIInterpreter* )
 
   Results are returned in the /events entry of the status dictionary,
   which contains membrane potential as vector /V_m and pertaining
-  times as vector /times and node GIDs as /senders, if /withtime and
-  /withgid are set, respectively.
+  times as vector /times and node GIDs as /senders.
 
   Accumulator mode:
   Voltmeter can operate in accumulator mode. In this case, values for all

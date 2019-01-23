@@ -82,10 +82,7 @@ disappear and the canonical neuron will also be able to handle CurrentEvents.
 For now, the only way to inject a current is the built-in current I_e.
 
 Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time plus offset). If this node is
-connected to a spike_detector, the property "precise_times" of the
-spike_detector has to be set to true in order to record the offsets
-in addition to the on-grid spike times.
+to target nodes (on-grid spike time plus offset).
 
 A further improvement of precise simulation is implemented in iaf_psc_exp_ps
 based on [3].

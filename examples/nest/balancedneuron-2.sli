@@ -70,11 +70,6 @@ ResetKernel
     /rate r_ex n_ex mul % multiply rate and number of neurons
  >> SetStatus
 
- spikes
- <<
-   /withtime false    % suppress output from spike detector
- >> SetStatus
-
  ex_pop neuron epsc d Connect
  in_pop neuron ipsc d Connect
  neuron spikes        Connect

@@ -444,3 +444,9 @@ nest::KeyError::message() const
       << " when applying operation: '" << map_op_ << "'";
   return msg.str();
 }
+
+std::string
+nest::InternalError::message() const
+{
+  return msg_;
+}

@@ -24,8 +24,8 @@
 #include <iostream>
 
 // Includes from nestkernel:
-#include "connection_manager_impl.h"
 #include "connection_manager.h"
+#include "connection_manager_impl.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "source_table.h"
@@ -88,7 +88,7 @@ nest::SourceTable::is_cleared() const
   return all_cleared;
 }
 
-std::vector< std::vector< nest::Source > >&
+std::vector< BlockVector< nest::Source > >&
 nest::SourceTable::get_thread_local_sources( const thread tid )
 {
   return sources_[ tid ];
@@ -127,7 +127,7 @@ nest::SourceTable::clean( const thread tid )
           syn_id < sources_[ tid ].size();
           ++syn_id )
     {
-      std::vector< Source >& sources = sources_[ tid ][ syn_id ];
+      BlockVector< Source >& sources = sources_[ tid ][ syn_id ];
       if ( max_position.syn_id == syn_id )
       {
         // we need to add 2 to max_position.lcid since
@@ -135,14 +135,8 @@ nest::SourceTable::clean( const thread tid )
         // do not want to delete.
         if ( max_position.lcid + 2 < static_cast< long >( sources.size() ) )
         {
-          const size_t deleted_elements =
-            sources.end() - ( sources.begin() + max_position.lcid + 2 );
           sources.erase(
             sources.begin() + max_position.lcid + 2, sources.end() );
-          if ( deleted_elements > min_deleted_elements_ )
-          {
-            std::vector< Source >( sources ).swap( sources );
-          }
         }
       }
       else
@@ -168,7 +162,6 @@ nest::SourceTable::reserve( const thread tid,
   const synindex syn_id,
   const size_t count )
 {
-  vector_util::grow( sources_[ tid ][ syn_id ] );
 }
 
 nest::index
@@ -193,7 +186,7 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
     return invalid_index;
   }
 
-  std::vector< Source >& mysources = sources_[ tid ][ syn_id ];
+  BlockVector< Source >& mysources = sources_[ tid ][ syn_id ];
   const index max_size = mysources.size();
   if ( max_size == 0 )
   {
@@ -245,7 +238,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources(
                .model_manager.get_synapse_prototype( syn_id, tid )
                .is_primary() )
     {
-      for ( std::vector< Source >::const_iterator source_cit =
+      for ( BlockVector< Source >::const_iterator source_cit =
               sources_[ tid ][ syn_id ].begin();
             source_cit != sources_[ tid ][ syn_id ].end();
             ++source_cit )

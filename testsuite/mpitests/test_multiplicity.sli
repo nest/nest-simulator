@@ -27,8 +27,11 @@ Name: testsuite::test_multiplicity - Test parallel transmission of spikes with
 Synopsis: nest_indirect test_multiplicity.sli -> -
 
 Description:
-   Creates two parrot neurons that receive one spike with multiplicity 2. Both
-   neurons should then have 2 spikes.
+  Creates two parrot neurons and connects the first one to the second one. The
+  first parrot neuron receives one spike with multiplicity two from a spike
+  generator, which should be communicated as two spikes to the second parrot
+  neuron. Each parrot neuron is connected to a spike detector, which should
+  record two spikes.
 
 Author: Stine Brekke Vennemo, January 2019
 */
@@ -38,9 +41,9 @@ Author: Stine Brekke Vennemo, January 2019
 
 skip_if_not_threaded
 
-/total_vps 4 def
+/total_vps 2 def
 
-[1 2 4]
+[1 2]
 {
   % set resolution and total/local number of threads
   0

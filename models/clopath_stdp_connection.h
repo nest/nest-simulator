@@ -75,7 +75,7 @@ References:  [1] Clopath et al. (2010) Connectivity reflects coding:
 
 Authors: Jonas Stapmanns, David Dahmen, Jan Hahne
 
-SeeAlso: stdp_synapse, aeif_cbvg_2010, hh_psc_alpha
+SeeAlso: stdp_synapse, aeif_cbvg_2010, hh_psc_alpha_clopath
 */
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template

@@ -635,11 +635,13 @@ nest::ConnectionManager::connect_( Node& s,
 
   if ( is_primary )
   {
-    has_primary_connections_ = true;
+#pragma omp atomic update
+    has_primary_connections_ |= true;
   }
   else
   {
-    secondary_connections_exist_ = true;
+#pragma omp atomic update
+    secondary_connections_exist_ |= true;
   }
 }
 

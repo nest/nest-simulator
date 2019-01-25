@@ -122,10 +122,8 @@ nest::aeif_cbvg_2010_dynamics( double,
   const double& u_bar_minus = y[ S::U_BAR_MINUS ];
   const double& u_bar_bar = y[ S::U_BAR_BAR ];
 
-  const double I_spike = node.P_.Delta_T == 0.
-    ? 0.
-    : ( node.P_.g_L * node.P_.Delta_T
-        * std::exp( ( V - V_T ) / node.P_.Delta_T ) );
+  const double I_spike = ( node.P_.g_L * node.P_.Delta_T
+    * std::exp( ( V - V_T ) / node.P_.Delta_T ) );
 
   // dv/dt
   f[ S::V_M ] = ( is_refractory || is_clamped )
@@ -285,9 +283,24 @@ nest::aeif_cbvg_2010::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Ensure that V_reset < V_peak ." );
   }
 
-  if ( Delta_T < 0. )
+  if ( Delta_T <= 0. )
   {
     throw BadProperty( "Delta_T must be positive." );
+  }
+  else
+  {
+    // check for possible numerical overflow with the exponential divergence at
+    // spike time, keep a 1e20 margin for the subsequent calculations
+    const double max_delta_arg =
+      std::log( std::numeric_limits< double >::max() / 1e20 );
+    if ( ( V_peak_ - V_T_rest ) / Delta_T >= max_delta_arg )
+    {
+      throw BadProperty(
+        "The current combination of V_peak, V_T_rest and Delta_T"
+        "will lead to numerical overflow at spike time; try"
+        "for instance to increase Delta_T or to reduce V_peak"
+        "to avoid this problem." );
+    }
   }
 
   if ( C_m <= 0 )

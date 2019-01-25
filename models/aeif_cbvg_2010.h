@@ -83,7 +83,7 @@ Dynamic state variables:
 V_m         double - Membrane potential in mV.
 w           double - Spike-adaptation current in pA.
 z           double - Spike-adaptation current in pA.
-V_T         double - Spike-adaptation current in pA.
+V_T         double - Adaptive spike initiation threshold in mV.
 
 Membrane Parameters:
 C_m         double - Capacity of the membrane in pF
@@ -102,6 +102,8 @@ b          double - Spike-triggered adaptation in pA.
 Delta_T    double - Slope factor in mV.
 tau_w      double - Adaptation time constant in ms.
 V_peak     double - Spike detection threshold in mV.
+V_T_max    double - Value of V_T afer a spike in mV
+V_T_rest   double - Resting value of V_T in mV
 
 Clopath rule parameters:
 u_bar_plus    double - Low-pass filtered Membrane potential in mV.

@@ -70,7 +70,9 @@ nest::ConnectionManager::ConnectionManager()
   , have_connections_changed_( true )
   , sort_connections_by_source_( true )
   , has_primary_connections_( false )
+  , check_primary_connections_()
   , secondary_connections_exist_( false )
+  , check_secondary_connections_()
   , stdp_eps_( 1.0e-6 )
 {
 }
@@ -92,6 +94,9 @@ nest::ConnectionManager::initialize()
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
   sort_connections_by_source_ = true;
+
+  check_primary_connections_.resize( num_threads, false );
+  check_secondary_connections_.resize( num_threads, false );
 
 #pragma omp parallel
   {
@@ -633,15 +638,17 @@ nest::ConnectionManager::connect_( Node& s,
 
   increase_connection_count( tid, syn_id );
 
-  if ( is_primary )
+  if ( not check_primary_connections_[ tid ] and is_primary )
   {
-#pragma omp atomic update
-    has_primary_connections_ |= true;
+#pragma omp atomic write
+    has_primary_connections_ = true;
+    check_primary_connections_.set( tid, true );
   }
-  else
+  else if ( not check_secondary_connections_[ tid ] and not is_primary )
   {
-#pragma omp atomic update
-    secondary_connections_exist_ |= true;
+#pragma omp atomic write
+    secondary_connections_exist_ = true;
+    check_secondary_connections_.set( tid, true );
   }
 }
 

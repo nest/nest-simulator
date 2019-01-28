@@ -174,4 +174,6 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   }
 }
 
+const DictionaryDatum ConnectionCreator::dummy_param_ = new Dictionary;
+
 } // namespace nest

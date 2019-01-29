@@ -504,6 +504,11 @@ template < int D >
 void
 ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 {
+  if ( number_of_connections_ < 1 )
+  {
+    return;
+  }
+
   DictionaryDatum dummy_params = new Dictionary; // empty parameter dictionary
                                                  // required by connect() calls
 
@@ -838,6 +843,11 @@ template < int D >
 void
 ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
 {
+  if ( number_of_connections_ < 1 )
+  {
+    return;
+  }
+
   DictionaryDatum dummy_params = new Dictionary; // empty parameter dictionary
                                                  // required by connect() calls
 

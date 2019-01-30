@@ -63,11 +63,11 @@ jobs:
       python: 2.7.13
       env: xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # full
     - stage: GCC8Clang7
-      language: cpp
-      env: MATRIX_EVAL="CC=gcc-8 && CXX=g++-8" PYTHON=3.5
+      language: generic
+      env: MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
     - stage: GCC8Clang7
-      language: cpp
-      env: PYTHON=2.7 MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
+      language: generic
+      env: MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
 
 #https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
 

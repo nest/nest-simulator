@@ -121,7 +121,7 @@ before_install:
    - cd $HOME/build
    - echo $PATH
   # Upgrade pip and setuptools
-   - if [[ $TRAVIS_BUILD_STAGE_NAME == "GCC8Clang7" ]]; then pyenv global 3.6.3; fi
+   - if [[ $TRAVIS_BUILD_STAGE_NAME == "Gcc8clang7" ]]; then pyenv global 3.6.3; fi
    - pip install -U pip
    - pip install -U setuptools
   

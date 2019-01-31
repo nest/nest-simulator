@@ -68,6 +68,8 @@ nest::Clopath_Archiving_Node::init_clopath_buffers()
   // Implementation of the delay of the convolved membrane potentials.
   // This delay is not described in Clopath et al. 2010 but is present in
   // the code which was presumably used to create the figures in the paper.
+  // Since we write into the buffer before we read from it, we have to
+  // add 1 to the size of the buffers.
   delayed_u_bars_idx_ = 0;
   delay_u_bars_steps_ = Time::delay_ms_to_steps( delay_u_bars_ ) + 1;
   delayed_u_bar_plus_.resize( delay_u_bars_steps_ );
@@ -75,7 +77,7 @@ nest::Clopath_Archiving_Node::init_clopath_buffers()
 
   // initialize the ltp-history
   ltd_hist_current_ = 0;
-  ltd_hist_len_ = kernel().connection_manager.get_max_delay();
+  ltd_hist_len_ = kernel().connection_manager.get_max_delay() + 1;
   ltd_history_.resize( ltd_hist_len_, histentry_cl( 0.0, 0.0, 0 ) );
 }
 
@@ -142,9 +144,8 @@ nest::Clopath_Archiving_Node::get_LTD_value( double t )
     runner = ltd_history_.begin();
     while ( runner != ltd_history_.end() )
     {
-      if ( abs( t - runner->t_ ) < 1e-4 )
+      if ( fabs( t - runner->t_ ) < 1.0e-7 )
       {
-        // Return the corresponding value if an entry at time t exists
         return runner->dw_;
       }
       ( runner->access_counter_ )++;

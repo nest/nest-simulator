@@ -46,8 +46,6 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-using namespace nest;
-
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -207,6 +205,7 @@ nest::aeif_cbvg_2010::State_& nest::aeif_cbvg_2010::State_::operator=(
   const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
+
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
@@ -283,11 +282,11 @@ nest::aeif_cbvg_2010::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Ensure that V_reset < V_peak ." );
   }
 
-  if ( Delta_T <= 0. )
+  if ( Delta_T < 0. )
   {
     throw BadProperty( "Delta_T must be positive." );
   }
-  else
+  else if ( Delta_T > 0. )
   {
     // check for possible numerical overflow with the exponential divergence at
     // spike time, keep a 1e20 margin for the subsequent calculations
@@ -296,11 +295,16 @@ nest::aeif_cbvg_2010::Parameters_::set( const DictionaryDatum& d )
     if ( ( V_peak_ - V_T_rest ) / Delta_T >= max_delta_arg )
     {
       throw BadProperty(
-        "The current combination of V_peak, V_T_rest and Delta_T"
+        "The current combination of V_peak, V_T_rest and Delta_T "
         "will lead to numerical overflow at spike time; try"
         "for instance to increase Delta_T or to reduce V_peak"
         "to avoid this problem." );
     }
+  }
+
+  if ( V_peak_ < V_T_rest )
+  {
+    throw BadProperty( "V_peak >= V_T_rest required." );
   }
 
   if ( C_m <= 0 )
@@ -444,7 +448,6 @@ nest::aeif_cbvg_2010::init_buffers_()
   {
     gsl_odeiv_step_reset( B_.s_ );
   }
-
   if ( B_.c_ == 0 )
   {
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
@@ -480,8 +483,7 @@ nest::aeif_cbvg_2010::calibrate()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  // set the right threshold and GSL function depending on Delta_T
-  V_.V_peak = P_.V_peak_;
+  V_.V_peak_ = P_.V_peak_;
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   // since t_ref_ >= 0, this can only fail in error
@@ -531,11 +533,11 @@ nest::aeif_cbvg_2010::update( const Time& origin,
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
+
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
       }
-
       // check for unreasonable values; we allow V_M to explode
       if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
         || S_.y_[ State_::W ] > 1e6 )
@@ -555,7 +557,15 @@ nest::aeif_cbvg_2010::update( const Time& origin,
       {
         B_.spikes_.get_value( lag ); // clear buffer entry, ignore spike
       }
-      if ( S_.y_[ State_::V_M ] >= V_.V_peak && S_.clamp_r_ == 0 )
+
+      // set the right threshold depending on Delta_T
+      if ( P_.Delta_T == 0. )
+      {
+        V_.V_peak_ = S_.y_[ State_::V_T ]; // same as IAF dynamics for spikes if
+                                           // Delta_T == 0.
+      }
+
+      if ( S_.y_[ State_::V_M ] >= V_.V_peak_ && S_.clamp_r_ == 0 )
       {
         S_.y_[ State_::V_M ] = P_.V_clamp_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation

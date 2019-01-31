@@ -42,6 +42,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
+
 namespace nest
 {
 /**
@@ -326,7 +327,11 @@ public:
    */
   struct Variables_
   {
-    double V_peak;
+    /**
+     * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
+     * S_.y_[ State_::V_T ] if Delta_T == 0.
+     */
+    double V_peak_;
 
     unsigned int refractory_counts_;
     unsigned int clamp_counts_;

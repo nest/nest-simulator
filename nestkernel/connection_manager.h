@@ -621,10 +621,14 @@ private:
 
   //! Whether primary connections (spikes) exist.
   bool has_primary_connections_;
+
+  //! Check for primary connections (spikes) on each thread.
   CompletedChecker check_primary_connections_;
 
   //! Whether secondary connections (e.g., gap junctions) exist.
   bool secondary_connections_exist_;
+
+  //! Check for secondary connections (e.g., gap junctions) on each thread.
   CompletedChecker check_secondary_connections_;
 
   //! Maximum distance between (double) spike times in STDP that is

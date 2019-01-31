@@ -189,6 +189,7 @@ private:
   lockPTR< TopologyParameter > weight_;
   lockPTR< TopologyParameter > delay_;
 
+  //! Empty dictionary to pass to connect functions
   const static DictionaryDatum dummy_param_;
 };
 

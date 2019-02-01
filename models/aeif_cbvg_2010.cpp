@@ -120,8 +120,10 @@ nest::aeif_cbvg_2010_dynamics( double,
   const double& u_bar_minus = y[ S::U_BAR_MINUS ];
   const double& u_bar_bar = y[ S::U_BAR_BAR ];
 
-  const double I_spike = ( node.P_.g_L * node.P_.Delta_T
-    * std::exp( ( V - V_T ) / node.P_.Delta_T ) );
+  const double I_spike = node.P_.Delta_T == 0.
+    ? 0.
+    : ( node.P_.g_L * node.P_.Delta_T
+        * std::exp( ( V - V_T ) / node.P_.Delta_T ) );
 
   // dv/dt
   f[ S::V_M ] = ( is_refractory || is_clamped )
@@ -284,7 +286,7 @@ nest::aeif_cbvg_2010::Parameters_::set( const DictionaryDatum& d )
 
   if ( Delta_T < 0. )
   {
-    throw BadProperty( "Delta_T must be positive." );
+    throw BadProperty( "Delta_T must be greater than or equal to zero." );
   }
   else if ( Delta_T > 0. )
   {

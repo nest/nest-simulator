@@ -55,8 +55,8 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         ]
 
         self.clopath_connections = [
-            'clopath_stdp_synapse',
-            'clopath_stdp_synapse_lbl'
+            'clopath_synapse',
+            'clopath_synapse_lbl'
         ]
 
         # create neurons that accept all synapse connections (especially gap

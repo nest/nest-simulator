@@ -66,7 +66,7 @@ neurons_interspike = [
 ]
 
 neurons_interspike_ps = [
-    "aeif_cbvg_2010",
+    "aeif_psc_delta_clopath",
     "iaf_psc_alpha_canon",
     "iaf_psc_alpha_presc",
     "iaf_psc_delta_canon",
@@ -75,7 +75,7 @@ neurons_interspike_ps = [
 
 # Models that first clamp the membrane potential at a higher value
 neurons_with_clamping = [
-    "aeif_cbvg_2010",
+    "aeif_psc_delta_clopath",
 ]
 
 # Models that cannot be tested

@@ -1,5 +1,5 @@
 /*
- *  aeif_cbvg_2010.cpp
+ *  aeif_psc_delta_clopath.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "aeif_cbvg_2010.h"
+#include "aeif_psc_delta_clopath.h"
 
 #ifdef HAVE_GSL
 
@@ -50,8 +50,8 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_cbvg_2010 >
-  nest::aeif_cbvg_2010::recordablesMap_;
+nest::RecordablesMap< nest::aeif_psc_delta_clopath >
+  nest::aeif_psc_delta_clopath::recordablesMap_;
 
 namespace nest
 {
@@ -63,40 +63,45 @@ namespace nest
  */
 template <>
 void
-RecordablesMap< aeif_cbvg_2010 >::create()
+RecordablesMap< aeif_psc_delta_clopath >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_(
-    names::V_m, &aeif_cbvg_2010::get_y_elem_< aeif_cbvg_2010::State_::V_M > );
-  insert_(
-    names::w, &aeif_cbvg_2010::get_y_elem_< aeif_cbvg_2010::State_::W > );
-  insert_(
-    names::z, &aeif_cbvg_2010::get_y_elem_< aeif_cbvg_2010::State_::Z > );
-  insert_(
-    names::V_T, &aeif_cbvg_2010::get_y_elem_< aeif_cbvg_2010::State_::V_T > );
+  insert_( names::V_m,
+    &aeif_psc_delta_clopath::
+      get_y_elem_< aeif_psc_delta_clopath::State_::V_M > );
+  insert_( names::w,
+    &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::W > );
+  insert_( names::z,
+    &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::Z > );
+  insert_( names::V_th,
+    &aeif_psc_delta_clopath::
+      get_y_elem_< aeif_psc_delta_clopath::State_::V_TH > );
   insert_( names::u_bar_plus,
-    &aeif_cbvg_2010::get_y_elem_< aeif_cbvg_2010::State_::U_BAR_PLUS > );
+    &aeif_psc_delta_clopath::
+      get_y_elem_< aeif_psc_delta_clopath::State_::U_BAR_PLUS > );
   insert_( names::u_bar_minus,
-    &aeif_cbvg_2010::get_y_elem_< aeif_cbvg_2010::State_::U_BAR_MINUS > );
+    &aeif_psc_delta_clopath::
+      get_y_elem_< aeif_psc_delta_clopath::State_::U_BAR_MINUS > );
   insert_( names::u_bar_bar,
-    &aeif_cbvg_2010::get_y_elem_< aeif_cbvg_2010::State_::U_BAR_BAR > );
+    &aeif_psc_delta_clopath::
+      get_y_elem_< aeif_psc_delta_clopath::State_::U_BAR_BAR > );
 }
 }
 
 
 extern "C" int
-nest::aeif_cbvg_2010_dynamics( double,
+nest::aeif_psc_delta_clopath_dynamics( double,
   const double y[],
   double f[],
   void* pnode )
 {
   // a shorthand
-  typedef nest::aeif_cbvg_2010::State_ S;
+  typedef nest::aeif_psc_delta_clopath::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_cbvg_2010& node =
-    *( reinterpret_cast< nest::aeif_cbvg_2010* >( pnode ) );
+  const nest::aeif_psc_delta_clopath& node =
+    *( reinterpret_cast< nest::aeif_psc_delta_clopath* >( pnode ) );
 
   const bool is_refractory = node.S_.r_ > 0;
   const bool is_clamped = node.S_.clamp_r_ > 0;
@@ -115,7 +120,7 @@ nest::aeif_cbvg_2010_dynamics( double,
   // shorthand for the other state variables
   const double& w = y[ S::W ];
   const double& z = y[ S::Z ];
-  const double& V_T = y[ S::V_T ];
+  const double& V_th = y[ S::V_TH ];
   const double& u_bar_plus = y[ S::U_BAR_PLUS ];
   const double& u_bar_minus = y[ S::U_BAR_MINUS ];
   const double& u_bar_bar = y[ S::U_BAR_BAR ];
@@ -123,7 +128,7 @@ nest::aeif_cbvg_2010_dynamics( double,
   const double I_spike = node.P_.Delta_T == 0.
     ? 0.
     : ( node.P_.g_L * node.P_.Delta_T
-        * std::exp( ( V - V_T ) / node.P_.Delta_T ) );
+        * std::exp( ( V - V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
   f[ S::V_M ] = ( is_refractory || is_clamped )
@@ -137,7 +142,7 @@ nest::aeif_cbvg_2010_dynamics( double,
 
   f[ S::Z ] = -z / node.P_.tau_z;
 
-  f[ S::V_T ] = -( V_T - node.P_.V_T_rest ) / node.P_.tau_V_T;
+  f[ S::V_TH ] = -( V_th - node.P_.V_th_rest ) / node.P_.tau_V_th;
 
   f[ S::U_BAR_PLUS ] = ( -u_bar_plus + V ) / node.P_.tau_plus;
 
@@ -152,8 +157,8 @@ nest::aeif_cbvg_2010_dynamics( double,
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::aeif_cbvg_2010::Parameters_::Parameters_()
-  : V_peak_( 0.0 )       // mV
+nest::aeif_psc_delta_clopath::Parameters_::Parameters_()
+  : V_peak_( 20.0 )      // mV
   , V_reset_( -60.0 )    // mV
   , t_ref_( 0.0 )        // ms
   , g_L( 30.0 )          // nS
@@ -162,9 +167,9 @@ nest::aeif_cbvg_2010::Parameters_::Parameters_()
   , Delta_T( 2.0 )       // mV
   , tau_w( 144.0 )       // ms
   , tau_z( 40.0 )        // ms
-  , tau_V_T( 50.0 )      // ms
-  , V_T_max( 30.4 )      // mV
-  , V_T_rest( -50.4 )    // mV
+  , tau_V_th( 50.0 )     // ms
+  , V_th_max( 30.4 )     // mV
+  , V_th_rest( -50.4 )   // mV
   , tau_plus( 7.0 )      // ms
   , tau_minus( 10.0 )    // ms
   , tau_bar_bar( 500.0 ) // ms
@@ -178,7 +183,7 @@ nest::aeif_cbvg_2010::Parameters_::Parameters_()
 {
 }
 
-nest::aeif_cbvg_2010::State_::State_( const Parameters_& p )
+nest::aeif_psc_delta_clopath::State_::State_( const Parameters_& p )
   : r_( 0 )
   , clamp_r_( 0 )
 {
@@ -187,13 +192,13 @@ nest::aeif_cbvg_2010::State_::State_( const Parameters_& p )
     y_[ i ] = 0;
   }
   y_[ V_M ] = p.E_L;
-  y_[ V_T ] = p.V_T_rest;
+  y_[ V_TH ] = p.V_th_rest;
   y_[ U_BAR_PLUS ] = p.E_L;
   y_[ U_BAR_MINUS ] = p.E_L;
   y_[ U_BAR_BAR ] = p.E_L;
 }
 
-nest::aeif_cbvg_2010::State_::State_( const State_& s )
+nest::aeif_psc_delta_clopath::State_::State_( const State_& s )
   : r_( s.r_ )
   , clamp_r_( s.clamp_r_ )
 {
@@ -203,8 +208,8 @@ nest::aeif_cbvg_2010::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_cbvg_2010::State_& nest::aeif_cbvg_2010::State_::operator=(
-  const State_& s )
+nest::aeif_psc_delta_clopath::State_& nest::aeif_psc_delta_clopath::State_::
+operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -222,12 +227,12 @@ nest::aeif_cbvg_2010::State_& nest::aeif_cbvg_2010::State_::operator=(
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cbvg_2010::Parameters_::get( DictionaryDatum& d ) const
+nest::aeif_psc_delta_clopath::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::C_m, C_m );
-  def< double >( d, names::V_T_max, V_T_max );
-  def< double >( d, names::V_T_rest, V_T_rest );
-  def< double >( d, names::tau_V_T, tau_V_T );
+  def< double >( d, names::V_th_max, V_th_max );
+  def< double >( d, names::V_th_rest, V_th_rest );
+  def< double >( d, names::tau_V_th, tau_V_th );
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::g_L, g_L );
   def< double >( d, names::E_L, E_L );
@@ -249,11 +254,11 @@ nest::aeif_cbvg_2010::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cbvg_2010::Parameters_::set( const DictionaryDatum& d )
+nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d )
 {
-  updateValue< double >( d, names::V_T_max, V_T_max );
-  updateValue< double >( d, names::V_T_rest, V_T_rest );
-  updateValue< double >( d, names::tau_V_T, tau_V_T );
+  updateValue< double >( d, names::V_th_max, V_th_max );
+  updateValue< double >( d, names::V_th_rest, V_th_rest );
+  updateValue< double >( d, names::tau_V_th, tau_V_th );
   updateValue< double >( d, names::V_peak, V_peak_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
   updateValue< double >( d, names::E_L, E_L );
@@ -294,19 +299,19 @@ nest::aeif_cbvg_2010::Parameters_::set( const DictionaryDatum& d )
     // spike time, keep a 1e20 margin for the subsequent calculations
     const double max_delta_arg =
       std::log( std::numeric_limits< double >::max() / 1e20 );
-    if ( ( V_peak_ - V_T_rest ) / Delta_T >= max_delta_arg )
+    if ( ( V_peak_ - V_th_rest ) / Delta_T >= max_delta_arg )
     {
       throw BadProperty(
-        "The current combination of V_peak, V_T_rest and Delta_T "
+        "The current combination of V_peak, V_th_rest and Delta_T "
         "will lead to numerical overflow at spike time; try"
         "for instance to increase Delta_T or to reduce V_peak"
         "to avoid this problem." );
     }
   }
 
-  if ( V_peak_ < V_T_rest )
+  if ( V_peak_ < V_th_rest )
   {
-    throw BadProperty( "V_peak >= V_T_rest required." );
+    throw BadProperty( "V_peak >= V_th_rest required." );
   }
 
   if ( C_m <= 0 )
@@ -324,7 +329,7 @@ nest::aeif_cbvg_2010::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Ensure that t_clamp >= 0" );
   }
 
-  if ( tau_w <= 0 or tau_V_T <= 0 or tau_w <= 0 or tau_z <= 0 or tau_plus <= 0
+  if ( tau_w <= 0 or tau_V_th <= 0 or tau_w <= 0 or tau_z <= 0 or tau_plus <= 0
     or tau_minus <= 0
     or tau_bar_bar <= 0 )
   {
@@ -338,7 +343,7 @@ nest::aeif_cbvg_2010::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::aeif_cbvg_2010::State_::get( DictionaryDatum& d ) const
+nest::aeif_psc_delta_clopath::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
   def< double >( d, names::w, y_[ W ] );
@@ -348,7 +353,7 @@ nest::aeif_cbvg_2010::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cbvg_2010::State_::set( const DictionaryDatum& d,
+nest::aeif_psc_delta_clopath::State_::set( const DictionaryDatum& d,
   const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
@@ -358,7 +363,7 @@ nest::aeif_cbvg_2010::State_::set( const DictionaryDatum& d,
   updateValue< double >( d, names::u_bar_bar, y_[ U_BAR_BAR ] );
 }
 
-nest::aeif_cbvg_2010::Buffers_::Buffers_( aeif_cbvg_2010& n )
+nest::aeif_psc_delta_clopath::Buffers_::Buffers_( aeif_psc_delta_clopath& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -368,7 +373,8 @@ nest::aeif_cbvg_2010::Buffers_::Buffers_( aeif_cbvg_2010& n )
   // init_buffers_().
 }
 
-nest::aeif_cbvg_2010::Buffers_::Buffers_( const Buffers_&, aeif_cbvg_2010& n )
+nest::aeif_psc_delta_clopath::Buffers_::Buffers_( const Buffers_&,
+  aeif_psc_delta_clopath& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -382,7 +388,7 @@ nest::aeif_cbvg_2010::Buffers_::Buffers_( const Buffers_&, aeif_cbvg_2010& n )
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::aeif_cbvg_2010::aeif_cbvg_2010()
+nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath()
   : Clopath_Archiving_Node()
   , P_()
   , S_( P_ )
@@ -391,7 +397,8 @@ nest::aeif_cbvg_2010::aeif_cbvg_2010()
   recordablesMap_.create();
 }
 
-nest::aeif_cbvg_2010::aeif_cbvg_2010( const aeif_cbvg_2010& n )
+nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath(
+  const aeif_psc_delta_clopath& n )
   : Clopath_Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -399,7 +406,7 @@ nest::aeif_cbvg_2010::aeif_cbvg_2010( const aeif_cbvg_2010& n )
 {
 }
 
-nest::aeif_cbvg_2010::~aeif_cbvg_2010()
+nest::aeif_psc_delta_clopath::~aeif_psc_delta_clopath()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -421,14 +428,15 @@ nest::aeif_cbvg_2010::~aeif_cbvg_2010()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cbvg_2010::init_state_( const Node& proto )
+nest::aeif_psc_delta_clopath::init_state_( const Node& proto )
 {
-  const aeif_cbvg_2010& pr = downcast< aeif_cbvg_2010 >( proto );
+  const aeif_psc_delta_clopath& pr =
+    downcast< aeif_psc_delta_clopath >( proto );
   S_ = pr.S_;
 }
 
 void
-nest::aeif_cbvg_2010::init_buffers_()
+nest::aeif_psc_delta_clopath::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
@@ -472,7 +480,7 @@ nest::aeif_cbvg_2010::init_buffers_()
   B_.sys_.jacobian = NULL;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
-  B_.sys_.function = aeif_cbvg_2010_dynamics;
+  B_.sys_.function = aeif_psc_delta_clopath_dynamics;
 
   B_.I_stim_ = 0.0;
 
@@ -480,7 +488,7 @@ nest::aeif_cbvg_2010::init_buffers_()
 }
 
 void
-nest::aeif_cbvg_2010::calibrate()
+nest::aeif_psc_delta_clopath::calibrate()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -502,7 +510,7 @@ nest::aeif_cbvg_2010::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cbvg_2010::update( const Time& origin,
+nest::aeif_psc_delta_clopath::update( const Time& origin,
   const long from,
   const long to )
 {
@@ -563,8 +571,9 @@ nest::aeif_cbvg_2010::update( const Time& origin,
       // set the right threshold depending on Delta_T
       if ( P_.Delta_T == 0. )
       {
-        V_.V_peak_ = S_.y_[ State_::V_T ]; // same as IAF dynamics for spikes if
-                                           // Delta_T == 0.
+        V_.V_peak_ =
+          S_.y_[ State_::V_TH ]; // same as IAF dynamics for spikes if
+                                 // Delta_T == 0.
       }
 
       if ( S_.y_[ State_::V_M ] >= V_.V_peak_ && S_.clamp_r_ == 0 )
@@ -572,9 +581,10 @@ nest::aeif_cbvg_2010::update( const Time& origin,
         S_.y_[ State_::V_M ] = P_.V_clamp_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
         S_.y_[ State_::Z ] = P_.I_sp;
-        S_.y_[ State_::V_T ] = P_.V_T_max;
+        S_.y_[ State_::V_TH ] = P_.V_th_max;
 
-        S_.clamp_r_ = V_.clamp_counts_ > 0 ? V_.clamp_counts_ : 0;
+        // Initialize clamping step counter.
+        S_.clamp_r_ = V_.clamp_counts_;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
@@ -627,7 +637,7 @@ nest::aeif_cbvg_2010::update( const Time& origin,
 }
 
 void
-nest::aeif_cbvg_2010::handle( SpikeEvent& e )
+nest::aeif_psc_delta_clopath::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -637,7 +647,7 @@ nest::aeif_cbvg_2010::handle( SpikeEvent& e )
 }
 
 void
-nest::aeif_cbvg_2010::handle( CurrentEvent& e )
+nest::aeif_psc_delta_clopath::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -651,7 +661,7 @@ nest::aeif_cbvg_2010::handle( CurrentEvent& e )
 }
 
 void
-nest::aeif_cbvg_2010::handle( DataLoggingRequest& e )
+nest::aeif_psc_delta_clopath::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }

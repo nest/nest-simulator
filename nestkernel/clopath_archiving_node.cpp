@@ -144,8 +144,7 @@ nest::Clopath_Archiving_Node::get_LTD_value( double t )
     runner = ltd_history_.begin();
     while ( runner != ltd_history_.end() )
     {
-      if ( fabs( t - runner->t_ ) < 
-          kernel().connection_manager.get_stdp_eps() )
+      if ( fabs( t - runner->t_ ) < kernel().connection_manager.get_stdp_eps() )
       {
         return runner->dw_;
       }

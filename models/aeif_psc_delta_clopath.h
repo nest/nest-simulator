@@ -1,5 +1,5 @@
 /*
- *  aeif_cbvg_2010.h
+ *  aeif_psc_delta_clopath.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AEIF_CBVG_2010_H
-#define AEIF_CBVG_2010_H
+#ifndef AEIF_PSC_DELTA_CLOPATH_H
+#define AEIF_PSC_DELTA_CLOPATH_H
 
 // Generated includes:
 #include "config.h"
@@ -55,20 +55,22 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int aeif_cbvg_2010_dynamics( double, const double*, double*, void* );
+extern "C" int
+aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
-Name: aeif_cbvg_2010 - Exponential integrate-and-fire neuron
-                        model according to Clopath et al. (2010).
+Name: aeif_psc_delta_clopath - Exponential integrate-and-fire neuron
+model according to Clopath et al. (2010).
 
 Description:
 
-aeif_cbvg_2010 is an implementation of the neuron model as it is used in [1].
+aeif_psc_delta_clopath is an implementation of the neuron model as it is used in
+[1].
 It is an extension of the aeif_psc_delta model and capable of connecting to a
 Clopath synapse.
 
 Note that there are two points that are not mentioned in the paper but
-present in a Matlab implementation by Claudia Clopath. The first one is the
+present in a MATLAB implementation by Claudia Clopath. The first one is the
 clamping of the membrane potential to a fixed value after a spike occured to
 mimik a real spike and not just the upswing. This is important since the finite
 duration of the spike influences the evolution of the convolved versions
@@ -84,7 +86,7 @@ Dynamic state variables:
 V_m         double - Membrane potential in mV.
 w           double - Spike-adaptation current in pA.
 z           double - Spike-adaptation current in pA.
-V_T         double - Adaptive spike initiation threshold in mV.
+V_th        double - Adaptive spike initiation threshold in mV.
 
 Membrane Parameters:
 C_m         double - Capacity of the membrane in pF
@@ -103,8 +105,8 @@ b          double - Spike-triggered adaptation in pA.
 Delta_T    double - Slope factor in mV.
 tau_w      double - Adaptation time constant in ms.
 V_peak     double - Spike detection threshold in mV.
-V_T_max    double - Value of V_T afer a spike in mV
-V_T_rest   double - Resting value of V_T in mV
+V_th_max   double - Value of V_th afer a spike in mV.
+V_th_rest  double - Resting value of V_th in mV.
 
 Clopath rule parameters:
 u_bar_plus    double - Low-pass filtered Membrane potential in mV.
@@ -134,7 +136,7 @@ gsl_error_tol double - This parameter controls the admissible error of the
 Note:
 
 Neither the clamping nor the delayed processing of u_bar_[plus/minus] are
-mentioned in the paper. However, they are part of an reference implementation
+mentioned in [1]. However, they are part of an reference implementation
 by Claudia Clopath et al. that can be found on ModelDB. The clamping is
 important to mimic a spike which is otherwise not described by the aeif neuron
 model.
@@ -152,15 +154,15 @@ References:  [1] Clopath et al. (2010) Connectivity reflects coding:
                 in STDP – a unified model. Front. Synaptic Neurosci. 2:25
                 doi: 10.3389/fnsyn.2010.00025
 
-SeeAlso: aeif_cond_exp, aeif_psc_delta, clopath_stdp_synapse
+SeeAlso: aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
 */
-class aeif_cbvg_2010 : public Clopath_Archiving_Node
+class aeif_psc_delta_clopath : public Clopath_Archiving_Node
 {
 
 public:
-  aeif_cbvg_2010();
-  aeif_cbvg_2010( const aeif_cbvg_2010& );
-  ~aeif_cbvg_2010();
+  aeif_psc_delta_clopath();
+  aeif_psc_delta_clopath( const aeif_psc_delta_clopath& );
+  ~aeif_psc_delta_clopath();
 
   /**
    * Import sets of overloaded virtual functions.
@@ -194,11 +196,12 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int aeif_cbvg_2010_dynamics( double, const double*, double*, void* );
+  friend int
+  aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< aeif_cbvg_2010 >;
-  friend class UniversalDataLogger< aeif_cbvg_2010 >;
+  friend class RecordablesMap< aeif_psc_delta_clopath >;
+  friend class UniversalDataLogger< aeif_psc_delta_clopath >;
 
 private:
   // ----------------------------------------------------------------
@@ -216,9 +219,9 @@ private:
     double Delta_T;   //!< Slope faktor in ms
     double tau_w;     //!< adaptation time-constant in ms
     double tau_z;     //!< adaptation time-constant in ms
-    double tau_V_T;   //!< adaptive threshold time-constant in ms
-    double V_T_max;   //!< value of V_T afer a spike in mV
-    double V_T_rest;  //!< resting value of V_T in mV
+    double tau_V_th;  //!< adaptive threshold time-constant in ms
+    double V_th_max;  //!< value of V_th afer a spike in mV
+    double V_th_rest; //!< resting value of V_th in mV
     double tau_plus;  //!< time constant of u_bar_plus in ms
     double tau_minus; //!< time constant of u_bar_minus in ms
     double tau_bar_bar; //!< time constant of u_bar_bar in ms
@@ -260,7 +263,7 @@ public:
       V_M = 0,
       W,           // 1
       Z,           // 2
-      V_T,         // 3
+      V_TH,        // 3
       U_BAR_PLUS,  // 4
       U_BAR_MINUS, // 5
       U_BAR_BAR,   // 6
@@ -287,11 +290,12 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_cbvg_2010& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_cbvg_2010& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_psc_delta_clopath& ); //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&,
+      aeif_psc_delta_clopath& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
-    UniversalDataLogger< aeif_cbvg_2010 > logger_;
+    UniversalDataLogger< aeif_psc_delta_clopath > logger_;
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spikes_;
@@ -329,7 +333,7 @@ public:
   {
     /**
      * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
-     * S_.y_[ State_::V_T ] if Delta_T == 0.
+     * S_.y_[ State_::V_TH ] if Delta_T == 0.
      */
     double V_peak_;
 
@@ -355,11 +359,11 @@ public:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< aeif_cbvg_2010 > recordablesMap_;
+  static RecordablesMap< aeif_psc_delta_clopath > recordablesMap_;
 };
 
 inline port
-aeif_cbvg_2010::send_test_event( Node& target,
+aeif_psc_delta_clopath::send_test_event( Node& target,
   rport receptor_type,
   synindex,
   bool )
@@ -371,7 +375,7 @@ aeif_cbvg_2010::send_test_event( Node& target,
 }
 
 inline port
-aeif_cbvg_2010::handles_test_event( SpikeEvent&, rport receptor_type )
+aeif_psc_delta_clopath::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -381,7 +385,7 @@ aeif_cbvg_2010::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cbvg_2010::handles_test_event( CurrentEvent&, rport receptor_type )
+aeif_psc_delta_clopath::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -391,7 +395,7 @@ aeif_cbvg_2010::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cbvg_2010::handles_test_event( DataLoggingRequest& dlr,
+aeif_psc_delta_clopath::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
@@ -402,7 +406,7 @@ aeif_cbvg_2010::handles_test_event( DataLoggingRequest& dlr,
 }
 
 inline void
-aeif_cbvg_2010::get_status( DictionaryDatum& d ) const
+aeif_psc_delta_clopath::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -412,7 +416,7 @@ aeif_cbvg_2010::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-aeif_cbvg_2010::set_status( const DictionaryDatum& d )
+aeif_psc_delta_clopath::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
@@ -433,4 +437,4 @@ aeif_cbvg_2010::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL
-#endif // AEIF_CBVG_2010_H
+#endif // AEIF_PSC_DELTA_CLOPATH_H

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_clopath_stdp_synapse.py
+# test_clopath_synapse.py
 #
 # This file is part of NEST.
 #
@@ -33,25 +33,25 @@ HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 @nest.check_stack
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class ClopathSynapseTestCase(unittest.TestCase):
-    """Test Clopath stdp synapse"""
+    """Test Clopath synapse"""
 
     def test_ConnectNeuronsWithClopathSynapse(self):
         """Ensures that the restriction to supported neuron models works."""
 
         # Specify supported models
         supported_models = [
-            'aeif_cbvg_2010',
+            'aeif_psc_delta_clopath',
             'hh_psc_alpha_clopath',
         ]
 
-        # Connect supported models with clopath synapse
+        # Connect supported models with Clopath synapse
         for nm in supported_models:
             nest.ResetKernel()
 
             n = nest.Create(nm, 2)
 
             nest.Connect(n, n, {"rule": "all_to_all"},
-                         {"model": "clopath_stdp_synapse"})
+                         {"model": "clopath_synapse"})
 
         # Compute not supported models
         not_supported_models = [n for n in nest.Models(mtype='nodes')
@@ -66,7 +66,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
             # try to connect with clopath_rule
             with self.assertRaises(nest.NESTError):
                 nest.Connect(n, n, {"rule": "all_to_all"},
-                             {"model": "clopath_stdp_synapse"})
+                             {"model": "clopath_synapse"})
 
     def test_SynapseDepressionFacilitation(self):
         """Ensure that depression and facilitation work correctly"""
@@ -76,6 +76,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
         resolution = 0.1
         nrn_params = {'V_m': -70.6,
                       'E_L': -70.6,
+                      'V_peak': 0.0,
                       'C_m': 281.0,
                       'theta_minus': -70.6,
                       'theta_plus': -45.3,
@@ -113,7 +114,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
             nest.SetKernelStatus({"resolution": resolution})
 
             # Create one neuron
-            nrn = nest.Create("aeif_cbvg_2010", 1, nrn_params)
+            nrn = nest.Create("aeif_psc_delta_clopath", 1, nrn_params)
             prrt_nrn = nest.Create("parrot_neuron", 1)
 
             # Create and connect spike generator
@@ -134,9 +135,9 @@ class ClopathSynapseTestCase(unittest.TestCase):
             wr = nest.Create('weight_recorder', 1)
 
             # Create Clopath-STDP synapse with weight recorder
-            nest.CopyModel("clopath_stdp_synapse", "clopath_stdp_synapse_rec",
+            nest.CopyModel("clopath_synapse", "clopath_synapse_rec",
                            {"weight_recorder": wr[0]})
-            syn_dict = {"model": "clopath_stdp_synapse_rec",
+            syn_dict = {"model": "clopath_synapse_rec",
                         "weight": init_w, "delay": resolution}
             nest.Connect(prrt_nrn, nrn, syn_spec=syn_dict)
 
@@ -163,7 +164,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         # Create neurons and devices
-        nrns = nest.Create('aeif_cbvg_2010', 2, {'V_m': -70.6})
+        nrns = nest.Create('aeif_psc_delta_clopath', 2, {'V_m': -70.6})
         prrt_nrn = nest.Create('parrot_neuron', 1)
 
         spike_times = [10.0]
@@ -182,7 +183,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
         nest.Connect(prrt_nrn, nrns[0:1], conn_dict, static_syn_dict)
 
         # Connect one neuron with Clopath stdp connection
-        cl_stdp_syn_dict = {'model': 'clopath_stdp_synapse',
+        cl_stdp_syn_dict = {'model': 'clopath_synapse',
                             'weight': 2.0, 'delay': 1.0}
         nest.Connect(prrt_nrn, nrns[1:2], conn_dict, cl_stdp_syn_dict)
 
@@ -200,7 +201,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
         # Compare results for static synapse and Clopath stdp synapse
         self.assertTrue(np.allclose(vm1, vm2, rtol=1e-5))
         # Check that a spike with weight 2.0 is processes properly
-        # in the aeif_cbvg_2010 model
+        # in the aeif_psc_delta_clopath model
         self.assertTrue(np.isclose(vm2[11]-vm2[10], 2.0, rtol=1e-5))
 
 

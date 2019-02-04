@@ -273,6 +273,11 @@ if ( with-defines )
     set( ALL_CXXFLAGS "${def} ${ALL_CXXFLAGS}" )
   endforeach ()
 endif ()
+# add sionlib defines
+foreach ( def ${SIONLIB_DEFINES} )
+    set( ALL_CFLAGS "${ALL_CFLAGS} ${def}" )
+    set( ALL_CXXFLAGS "${ALL_CXXFLAGS} ${def}" )
+endforeach ()
 
 # all libraries
 set( ALL_LIBS
@@ -289,7 +294,8 @@ set( ALL_LIBS
   "${LIBNEUROSIM_LIBRARIES}"
   "${MUSIC_LIBRARIES}"
   "${MPI_CXX_LIBRARIES}"
-  "${SIONLIB_LIBS}" )
+  "${SIONLIB_LIBRARIES}" )
+
 if ( with-libraries )
   set( ALL_LIBS "${ALL_LIBS};${with-libraries}" )
 endif ()

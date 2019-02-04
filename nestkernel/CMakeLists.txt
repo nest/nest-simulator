@@ -73,6 +73,7 @@ set( nestkernel_sources
     kernel_manager.h kernel_manager.cpp
     vp_manager.h vp_manager_impl.h vp_manager.cpp
     io_manager.h io_manager_impl.h io_manager.cpp
+    mpiutil.h mpiutil_impl.h
     mpi_manager.h mpi_manager_impl.h mpi_manager.cpp
     simulation_manager.h simulation_manager.cpp
     connection_manager.h connection_manager_impl.h connection_manager.cpp

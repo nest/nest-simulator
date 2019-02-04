@@ -5,7 +5,8 @@
 #include <vector>
 #include <mpi.h>
 
-namespace arb::shadow {
+namespace arb {
+namespace shadow {
 
 using cell_gid_type = std::uint32_t;
 using cell_lid_type = std::uint32_t;
@@ -28,4 +29,6 @@ float broadcast(float local, MPI_Comm comm, int root);
 struct comm_info;
 comm_info get_comm_info(bool is_arbor, MPI_Comm comm);
 
+
+} // namespace shadow
 } // namespace arb

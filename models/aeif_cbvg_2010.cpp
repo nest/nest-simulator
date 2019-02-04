@@ -153,7 +153,7 @@ nest::aeif_cbvg_2010_dynamics( double,
  * ---------------------------------------------------------------- */
 
 nest::aeif_cbvg_2010::Parameters_::Parameters_()
-  : V_peak_( 0.0 )       // mV
+  : V_peak_( 20.0 )      // mV
   , V_reset_( -60.0 )    // mV
   , t_ref_( 0.0 )        // ms
   , g_L( 30.0 )          // nS
@@ -574,7 +574,12 @@ nest::aeif_cbvg_2010::update( const Time& origin,
         S_.y_[ State_::Z ] = P_.I_sp;
         S_.y_[ State_::V_T ] = P_.V_T_max;
 
-        S_.clamp_r_ = V_.clamp_counts_ > 0 ? V_.clamp_counts_ : 0;
+        /* Initialize clamping step counter.
+        * - We need to add 1 to compensate for count-down immediately after
+        *   while loop.
+        * - If neuron does not use clamping, set to 0
+        */
+        S_.clamp_r_ = V_.clamp_counts_ > 0 ? V_.clamp_counts_ + 1 : 0;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;

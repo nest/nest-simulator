@@ -84,7 +84,7 @@ Dynamic state variables:
 V_m         double - Membrane potential in mV.
 w           double - Spike-adaptation current in pA.
 z           double - Spike-adaptation current in pA.
-V_T         double - Adaptive spike initiation threshold in mV.
+V_th        double - Adaptive spike initiation threshold in mV.
 
 Membrane Parameters:
 C_m         double - Capacity of the membrane in pF
@@ -103,8 +103,8 @@ b          double - Spike-triggered adaptation in pA.
 Delta_T    double - Slope factor in mV.
 tau_w      double - Adaptation time constant in ms.
 V_peak     double - Spike detection threshold in mV.
-V_T_max    double - Value of V_T afer a spike in mV
-V_T_rest   double - Resting value of V_T in mV
+V_th_max   double - Value of V_th afer a spike in mV.
+V_th_rest  double - Resting value of V_th in mV.
 
 Clopath rule parameters:
 u_bar_plus    double - Low-pass filtered Membrane potential in mV.
@@ -134,7 +134,7 @@ gsl_error_tol double - This parameter controls the admissible error of the
 Note:
 
 Neither the clamping nor the delayed processing of u_bar_[plus/minus] are
-mentioned in the paper. However, they are part of an reference implementation
+mentioned in [1]. However, they are part of an reference implementation
 by Claudia Clopath et al. that can be found on ModelDB. The clamping is
 important to mimic a spike which is otherwise not described by the aeif neuron
 model.
@@ -216,9 +216,9 @@ private:
     double Delta_T;   //!< Slope faktor in ms
     double tau_w;     //!< adaptation time-constant in ms
     double tau_z;     //!< adaptation time-constant in ms
-    double tau_V_T;   //!< adaptive threshold time-constant in ms
-    double V_T_max;   //!< value of V_T afer a spike in mV
-    double V_T_rest;  //!< resting value of V_T in mV
+    double tau_V_th;  //!< adaptive threshold time-constant in ms
+    double V_th_max;  //!< value of V_th afer a spike in mV
+    double V_th_rest; //!< resting value of V_th in mV
     double tau_plus;  //!< time constant of u_bar_plus in ms
     double tau_minus; //!< time constant of u_bar_minus in ms
     double tau_bar_bar; //!< time constant of u_bar_bar in ms
@@ -260,7 +260,7 @@ public:
       V_M = 0,
       W,           // 1
       Z,           // 2
-      V_T,         // 3
+      V_TH,        // 3
       U_BAR_PLUS,  // 4
       U_BAR_MINUS, // 5
       U_BAR_BAR,   // 6
@@ -329,7 +329,7 @@ public:
   {
     /**
      * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
-     * S_.y_[ State_::V_T ] if Delta_T == 0.
+     * S_.y_[ State_::V_TH ] if Delta_T == 0.
      */
     double V_peak_;
 

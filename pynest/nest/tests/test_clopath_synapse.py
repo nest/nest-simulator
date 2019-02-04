@@ -33,18 +33,18 @@ HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 @nest.check_stack
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class ClopathSynapseTestCase(unittest.TestCase):
-    """Test Clopath stdp synapse"""
+    """Test Clopath synapse"""
 
     def test_ConnectNeuronsWithClopathSynapse(self):
         """Ensures that the restriction to supported neuron models works."""
 
         # Specify supported models
         supported_models = [
-            'aeif_cbvg_2010',
+            'aeif_psc_delta_clopath',
             'hh_psc_alpha_clopath',
         ]
 
-        # Connect supported models with clopath synapse
+        # Connect supported models with Clopath synapse
         for nm in supported_models:
             nest.ResetKernel()
 
@@ -114,7 +114,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
             nest.SetKernelStatus({"resolution": resolution})
 
             # Create one neuron
-            nrn = nest.Create("aeif_cbvg_2010", 1, nrn_params)
+            nrn = nest.Create("aeif_psc_delta_clopath", 1, nrn_params)
             prrt_nrn = nest.Create("parrot_neuron", 1)
 
             # Create and connect spike generator
@@ -164,7 +164,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         # Create neurons and devices
-        nrns = nest.Create('aeif_cbvg_2010', 2, {'V_m': -70.6})
+        nrns = nest.Create('aeif_psc_delta_clopath', 2, {'V_m': -70.6})
         prrt_nrn = nest.Create('parrot_neuron', 1)
 
         spike_times = [10.0]
@@ -201,7 +201,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
         # Compare results for static synapse and Clopath stdp synapse
         self.assertTrue(np.allclose(vm1, vm2, rtol=1e-5))
         # Check that a spike with weight 2.0 is processes properly
-        # in the aeif_cbvg_2010 model
+        # in the aeif_psc_delta_clopath model
         self.assertTrue(np.isclose(vm2[11]-vm2[10], 2.0, rtol=1e-5))
 
 

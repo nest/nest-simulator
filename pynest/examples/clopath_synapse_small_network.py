@@ -23,8 +23,8 @@
 Clopath Rule: Bidirectional connections
 ------------------
 This script simulates a small network of ten excitatory and three
-inhibitory aeif_cbvg_2010 neurons. The neurons are randomly connected and
-driven by 500 Poisson generators. The synapses from the Poisson generators
+inhibitory aeif_psc_delta_clopath neurons. The neurons are randomly connected
+and driven by 500 Poisson generators. The synapses from the Poisson generators
 to the excitatory population and those among the neurons of the network
 are Clopath synapses. The rate of the Poisson generators is modulated with
 a Gaussian profile whose center shifts randomly each 100ms between ten
@@ -55,7 +55,7 @@ nest.ResetKernel()
 nest.SetKernelStatus({'resolution': resolution})
 
 # Create neurons and devices
-nrn_model = 'aeif_cbvg_2010'
+nrn_model = 'aeif_psc_delta_clopath'
 nrn_params = {'V_m': -30.6,
               'g_L': 30.0,
               'w': 0.0,

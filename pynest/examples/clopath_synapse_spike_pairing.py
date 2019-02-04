@@ -22,8 +22,8 @@
 '''
 Clopath Rule: Spike pairing experiment
 ------------------
-This script simulates one aeif_cbvg_2010 neuron that is connected with a
-Clopath connection. The synapse receives pairs of a pre- and a postsynaptic
+This script simulates one aeif_psc_delta_clopath neuron that is connected with
+a Clopath connection. The synapse receives pairs of a pre- and a postsynaptic
 spikes that are separated by either 10ms (pre before post) or -10ms (post
 before pre). The change of the synaptic weight is measured after five of such
 pairs. This experiment is repeated five times with different rates of the
@@ -97,7 +97,7 @@ for (s_t_pre, s_t_post) in zip(spike_times_pre, spike_times_post):
     nest.SetKernelStatus({"resolution": resolution})
 
     # Create one neuron
-    nrn = nest.Create("aeif_cbvg_2010", 1, nrn_params)
+    nrn = nest.Create("aeif_psc_delta_clopath", 1, nrn_params)
 
     # We need a parrot neuron since spike generators can only
     # be connected with static connections

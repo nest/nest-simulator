@@ -52,7 +52,8 @@ postsynaptic membrane potential.
 
 Clopath synapses require archiving of continuous quantities. Therefore Clopath
 synapses can only be connected to neuron models that are capable of doing this
-archiving. So far, compatible models are aeif_cbvg_2010 and hh_psc_alpha.
+archiving. So far, compatible models are aeif_psc_delta_clopath and
+hh_psc_alpha.
 
 Parameters:
 
@@ -74,7 +75,7 @@ References:  [1] Clopath et al. (2010) Connectivity reflects coding:
 
 Authors: Jonas Stapmanns, David Dahmen, Jan Hahne
 
-SeeAlso: stdp_synapse, aeif_cbvg_2010, hh_psc_alpha_clopath
+SeeAlso: stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath
 */
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template

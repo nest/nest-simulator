@@ -19,7 +19,6 @@
 
 set( models_sources
     ac_generator.h ac_generator.cpp
-    aeif_cbvg_2010.h aeif_cbvg_2010.cpp
     aeif_cond_alpha.h aeif_cond_alpha.cpp
     aeif_cond_alpha_RK5.h aeif_cond_alpha_RK5.cpp
     aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp
@@ -28,6 +27,7 @@ set( models_sources
     aeif_psc_alpha.h aeif_psc_alpha.cpp
     aeif_psc_exp.h aeif_psc_exp.cpp
     aeif_psc_delta.h aeif_psc_delta.cpp
+    aeif_psc_delta_clopath.h aeif_psc_delta_clopath.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
     bernoulli_connection.h
     binary_neuron.h

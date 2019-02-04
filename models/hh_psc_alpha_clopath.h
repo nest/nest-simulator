@@ -149,7 +149,7 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 Author: Jonas Stapmanns, David Dahmen, Jan Hahne
         (adapted from hh_psc_alpha by Schrader)
 
-SeeAlso: hh_psc_alpha, clopath_synapse
+SeeAlso: hh_psc_alpha, clopath_synapse, aeif_psc_delta_clopath
 */
 class hh_psc_alpha_clopath : public Clopath_Archiving_Node
 {

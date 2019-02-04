@@ -43,7 +43,6 @@
 #include "config.h"
 
 // Neuron models
-#include "aeif_cbvg_2010.h"
 #include "aeif_cond_alpha.h"
 #include "aeif_cond_alpha_multisynapse.h"
 #include "aeif_cond_beta_multisynapse.h"
@@ -52,6 +51,7 @@
 #include "aeif_psc_alpha.h"
 #include "aeif_psc_exp.h"
 #include "aeif_psc_delta.h"
+#include "aeif_psc_delta_clopath.h"
 #include "amat2_psc_exp.h"
 #include "erfc_neuron.h"
 #include "gauss_rate.h"
@@ -402,8 +402,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< gif_pop_psc_exp >(
     "gif_pop_psc_exp" );
 
-  kernel().model_manager.register_node_model< aeif_cbvg_2010 >(
-    "aeif_cbvg_2010" );
+  kernel().model_manager.register_node_model< aeif_psc_delta_clopath >(
+    "aeif_psc_delta_clopath" );
   kernel().model_manager.register_node_model< aeif_cond_alpha >(
     "aeif_cond_alpha" );
   kernel().model_manager.register_node_model< aeif_cond_exp >(

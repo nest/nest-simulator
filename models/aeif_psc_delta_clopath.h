@@ -1,5 +1,5 @@
 /*
- *  aeif_cbvg_2010.h
+ *  aeif_psc_delta_clopath.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AEIF_CBVG_2010_H
-#define AEIF_CBVG_2010_H
+#ifndef AEIF_PSC_DELTA_CLOPATH_H
+#define AEIF_PSC_DELTA_CLOPATH_H
 
 // Generated includes:
 #include "config.h"
@@ -55,20 +55,22 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int aeif_cbvg_2010_dynamics( double, const double*, double*, void* );
+extern "C" int
+aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
-Name: aeif_cbvg_2010 - Exponential integrate-and-fire neuron
-                        model according to Clopath et al. (2010).
+Name: aeif_psc_delta_clopath - Exponential integrate-and-fire neuron
+model according to Clopath et al. (2010).
 
 Description:
 
-aeif_cbvg_2010 is an implementation of the neuron model as it is used in [1].
+aeif_psc_delta_clopath is an implementation of the neuron model as it is used in
+[1].
 It is an extension of the aeif_psc_delta model and capable of connecting to a
 Clopath synapse.
 
 Note that there are two points that are not mentioned in the paper but
-present in a Matlab implementation by Claudia Clopath. The first one is the
+present in a MATLAB implementation by Claudia Clopath. The first one is the
 clamping of the membrane potential to a fixed value after a spike occured to
 mimik a real spike and not just the upswing. This is important since the finite
 duration of the spike influences the evolution of the convolved versions
@@ -154,13 +156,13 @@ References:  [1] Clopath et al. (2010) Connectivity reflects coding:
 
 SeeAlso: aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
 */
-class aeif_cbvg_2010 : public Clopath_Archiving_Node
+class aeif_psc_delta_clopath : public Clopath_Archiving_Node
 {
 
 public:
-  aeif_cbvg_2010();
-  aeif_cbvg_2010( const aeif_cbvg_2010& );
-  ~aeif_cbvg_2010();
+  aeif_psc_delta_clopath();
+  aeif_psc_delta_clopath( const aeif_psc_delta_clopath& );
+  ~aeif_psc_delta_clopath();
 
   /**
    * Import sets of overloaded virtual functions.
@@ -194,11 +196,12 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int aeif_cbvg_2010_dynamics( double, const double*, double*, void* );
+  friend int
+  aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< aeif_cbvg_2010 >;
-  friend class UniversalDataLogger< aeif_cbvg_2010 >;
+  friend class RecordablesMap< aeif_psc_delta_clopath >;
+  friend class UniversalDataLogger< aeif_psc_delta_clopath >;
 
 private:
   // ----------------------------------------------------------------
@@ -287,11 +290,12 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_cbvg_2010& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_cbvg_2010& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_psc_delta_clopath& ); //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&,
+      aeif_psc_delta_clopath& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
-    UniversalDataLogger< aeif_cbvg_2010 > logger_;
+    UniversalDataLogger< aeif_psc_delta_clopath > logger_;
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spikes_;
@@ -355,11 +359,11 @@ public:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< aeif_cbvg_2010 > recordablesMap_;
+  static RecordablesMap< aeif_psc_delta_clopath > recordablesMap_;
 };
 
 inline port
-aeif_cbvg_2010::send_test_event( Node& target,
+aeif_psc_delta_clopath::send_test_event( Node& target,
   rport receptor_type,
   synindex,
   bool )
@@ -371,7 +375,7 @@ aeif_cbvg_2010::send_test_event( Node& target,
 }
 
 inline port
-aeif_cbvg_2010::handles_test_event( SpikeEvent&, rport receptor_type )
+aeif_psc_delta_clopath::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -381,7 +385,7 @@ aeif_cbvg_2010::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cbvg_2010::handles_test_event( CurrentEvent&, rport receptor_type )
+aeif_psc_delta_clopath::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -391,7 +395,7 @@ aeif_cbvg_2010::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cbvg_2010::handles_test_event( DataLoggingRequest& dlr,
+aeif_psc_delta_clopath::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
@@ -402,7 +406,7 @@ aeif_cbvg_2010::handles_test_event( DataLoggingRequest& dlr,
 }
 
 inline void
-aeif_cbvg_2010::get_status( DictionaryDatum& d ) const
+aeif_psc_delta_clopath::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -412,7 +416,7 @@ aeif_cbvg_2010::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-aeif_cbvg_2010::set_status( const DictionaryDatum& d )
+aeif_psc_delta_clopath::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
@@ -433,4 +437,4 @@ aeif_cbvg_2010::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL
-#endif // AEIF_CBVG_2010_H
+#endif // AEIF_PSC_DELTA_CLOPATH_H

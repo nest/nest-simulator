@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_clopath_stdp_synapse.py
+# test_clopath_synapse.py
 #
 # This file is part of NEST.
 #
@@ -51,7 +51,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
             n = nest.Create(nm, 2)
 
             nest.Connect(n, n, {"rule": "all_to_all"},
-                         {"model": "clopath_stdp_synapse"})
+                         {"model": "clopath_synapse"})
 
         # Compute not supported models
         not_supported_models = [n for n in nest.Models(mtype='nodes')
@@ -66,7 +66,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
             # try to connect with clopath_rule
             with self.assertRaises(nest.NESTError):
                 nest.Connect(n, n, {"rule": "all_to_all"},
-                             {"model": "clopath_stdp_synapse"})
+                             {"model": "clopath_synapse"})
 
     def test_SynapseDepressionFacilitation(self):
         """Ensure that depression and facilitation work correctly"""
@@ -76,6 +76,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
         resolution = 0.1
         nrn_params = {'V_m': -70.6,
                       'E_L': -70.6,
+                      'V_peak': 0.0,
                       'C_m': 281.0,
                       'theta_minus': -70.6,
                       'theta_plus': -45.3,
@@ -134,9 +135,9 @@ class ClopathSynapseTestCase(unittest.TestCase):
             wr = nest.Create('weight_recorder', 1)
 
             # Create Clopath-STDP synapse with weight recorder
-            nest.CopyModel("clopath_stdp_synapse", "clopath_stdp_synapse_rec",
+            nest.CopyModel("clopath_synapse", "clopath_synapse_rec",
                            {"weight_recorder": wr[0]})
-            syn_dict = {"model": "clopath_stdp_synapse_rec",
+            syn_dict = {"model": "clopath_synapse_rec",
                         "weight": init_w, "delay": resolution}
             nest.Connect(prrt_nrn, nrn, syn_spec=syn_dict)
 
@@ -152,8 +153,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
         # Compare to expected result
         syn_weights = np.array(syn_weights)
         syn_weights = 100.0*15.0*(syn_weights - init_w)/init_w + 100.0
-        correct_weights = [57.82638722, 72.16729592, 146.04380036,
-                           103.30408341, 124.03640477, 153.36245009]
+        correct_weights = [60.27717273, 72.83202162, 141.91383624,
+                           102.74121415, 120.01918347, 148.76674224]
 
         self.assertTrue(np.allclose(syn_weights, correct_weights, rtol=1e-7))
 
@@ -182,7 +183,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
         nest.Connect(prrt_nrn, nrns[0:1], conn_dict, static_syn_dict)
 
         # Connect one neuron with Clopath stdp connection
-        cl_stdp_syn_dict = {'model': 'clopath_stdp_synapse',
+        cl_stdp_syn_dict = {'model': 'clopath_synapse',
                             'weight': 2.0, 'delay': 1.0}
         nest.Connect(prrt_nrn, nrns[1:2], conn_dict, cl_stdp_syn_dict)
 

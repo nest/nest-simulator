@@ -121,9 +121,9 @@ for (s_t_pre, s_t_post) in zip(spike_times_pre, spike_times_post):
     wr = nest.Create('weight_recorder', 1)
 
     # Create Clopath connection with weight recorder
-    nest.CopyModel("clopath_stdp_synapse", "clopath_stdp_synapse_rec",
+    nest.CopyModel("clopath_synapse", "clopath_synapse_rec",
                    {"weight_recorder": wr[0]})
-    syn_dict = {"model": "clopath_stdp_synapse_rec",
+    syn_dict = {"model": "clopath_synapse_rec",
                 "weight": init_w, "delay": resolution}
     nest.Connect(prrt_nrn, nrn, syn_spec=syn_dict)
 

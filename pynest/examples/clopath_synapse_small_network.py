@@ -86,7 +86,7 @@ nest.Connect(pg, pop_input, 'one_to_one', {'model': 'static_synapse',
                                            'weight': 1.0, 'delay': delay})
 
 # Create input->exc connections
-nest.CopyModel('clopath_stdp_synapse', 'clopath_input_to_exc',
+nest.CopyModel('clopath_synapse', 'clopath_input_to_exc',
                {'Wmax': 3.0})
 conn_dict_input_to_exc = {'rule': 'all_to_all'}
 syn_dict_input_to_exc = {'model': 'clopath_input_to_exc',
@@ -105,7 +105,7 @@ syn_dict_input_to_inh = {'model': 'static_synapse',
 nest.Connect(pop_input, pop_inh, conn_dict_input_to_inh, syn_dict_input_to_inh)
 
 # Create exc->exc connections
-nest.CopyModel('clopath_stdp_synapse', 'clopath_exc_to_exc',
+nest.CopyModel('clopath_synapse', 'clopath_exc_to_exc',
                {'Wmax': 0.75, 'weight_recorder': wr[0]})
 syn_dict_exc_to_exc = {'model': 'clopath_exc_to_exc', 'weight': 0.25,
                        'delay': delay}

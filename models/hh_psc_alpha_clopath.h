@@ -59,7 +59,8 @@ extern "C" int
 hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
-Name: hh_psc_alpha_clopath - Hodgkin-Huxley neuron model.
+Name: hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for the
+Clopath synapse.
 
 Description:
 
@@ -148,7 +149,7 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 Author: Jonas Stapmanns, David Dahmen, Jan Hahne
         (adapted from hh_psc_alpha by Schrader)
 
-SeeAlso: hh_cond_exp_traub, clopath_stdp_synapse
+SeeAlso: hh_psc_alpha, clopath_synapse
 */
 class hh_psc_alpha_clopath : public Clopath_Archiving_Node
 {

@@ -1,5 +1,5 @@
 /*
- *  clopath_stdp_connection.h
+ *  clopath_connection.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CLOPATH_STDP_CONNECTION_H
-#define CLOPATH_STDP_CONNECTION_H
+#ifndef CLOPATH_CONNECTION_H
+#define CLOPATH_CONNECTION_H
 
 // C++ includes:
 #include <cmath>
@@ -41,13 +41,12 @@ namespace nest
 {
 
 /** @BeginDocumentation
-Name: clopath_stdp_connection - Synapse type for Clopath spike time dependent
-                                plasticity.
+Name: clopath_synapse - Synapse type for voltage-based STDP after Clopath.
 
 Description:
 
-clopath_stdp_synapse is a connector to create Clopath synapses (as defined
-in [1]). In contrast to usual stdp, the change of the synaptic weight does
+clopath_synapse is a connector to create Clopath synapses as defined
+in [1]. In contrast to usual STDP, the change of the synaptic weight does
 not only depend on the pre- and postsynaptic spike timing but also on the
 postsynaptic membrane potential.
 
@@ -80,7 +79,7 @@ SeeAlso: stdp_synapse, aeif_cbvg_2010, hh_psc_alpha_clopath
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
 template < typename targetidentifierT >
-class Clopath_STDPConnection : public Connection< targetidentifierT >
+class ClopathConnection : public Connection< targetidentifierT >
 {
 
 public:
@@ -91,14 +90,14 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  Clopath_STDPConnection();
+  ClopathConnection();
 
 
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  Clopath_STDPConnection( const Clopath_STDPConnection& );
+  ClopathConnection( const ClopathConnection& );
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -193,7 +192,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-Clopath_STDPConnection< targetidentifierT >::send( Event& e,
+ClopathConnection< targetidentifierT >::send( Event& e,
   thread t,
   const CommonSynapseProperties& )
 {
@@ -250,7 +249,7 @@ Clopath_STDPConnection< targetidentifierT >::send( Event& e,
 
 
 template < typename targetidentifierT >
-Clopath_STDPConnection< targetidentifierT >::Clopath_STDPConnection()
+ClopathConnection< targetidentifierT >::ClopathConnection()
   : ConnectionBase()
   , weight_( 1.0 )
   , x_bar_( 0.0 )
@@ -262,8 +261,8 @@ Clopath_STDPConnection< targetidentifierT >::Clopath_STDPConnection()
 }
 
 template < typename targetidentifierT >
-Clopath_STDPConnection< targetidentifierT >::Clopath_STDPConnection(
-  const Clopath_STDPConnection< targetidentifierT >& rhs )
+ClopathConnection< targetidentifierT >::ClopathConnection(
+  const ClopathConnection< targetidentifierT >& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , x_bar_( rhs.x_bar_ )
@@ -276,8 +275,7 @@ Clopath_STDPConnection< targetidentifierT >::Clopath_STDPConnection(
 
 template < typename targetidentifierT >
 void
-Clopath_STDPConnection< targetidentifierT >::get_status(
-  DictionaryDatum& d ) const
+ClopathConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -290,8 +288,7 @@ Clopath_STDPConnection< targetidentifierT >::get_status(
 
 template < typename targetidentifierT >
 void
-Clopath_STDPConnection< targetidentifierT >::set_status(
-  const DictionaryDatum& d,
+ClopathConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
@@ -318,4 +315,4 @@ Clopath_STDPConnection< targetidentifierT >::set_status(
 
 } // of namespace nest
 
-#endif // of #ifndef CLOPATH_STDP_CONNECTION_H
+#endif // of #ifndef CLOPATH_CONNECTION_H

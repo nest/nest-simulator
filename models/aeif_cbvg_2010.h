@@ -152,7 +152,7 @@ References:  [1] Clopath et al. (2010) Connectivity reflects coding:
                 in STDP – a unified model. Front. Synaptic Neurosci. 2:25
                 doi: 10.3389/fnsyn.2010.00025
 
-SeeAlso: aeif_cond_exp, aeif_psc_delta, clopath_stdp_synapse
+SeeAlso: aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
 */
 class aeif_cbvg_2010 : public Clopath_Archiving_Node
 {

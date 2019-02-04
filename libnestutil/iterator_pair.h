@@ -46,31 +46,14 @@ swap( boost::tuple< T&, U& > a, boost::tuple< T&, U& > b ) noexcept
   swap( boost::get< 1 >( a ), boost::get< 1 >( b ) );
 }
 
-namespace detail
-{
-/**
- * @brief Customized boost tuple less than comparator.
- * @tparam T1 Left hand side tuple type.
- * @tparam T2 Right hand side tuple type.
- *
- * Customized to compare only the first element
- * of the tuples.
- */
-template < class T1, class T2 >
-inline bool
-lt( const T1& lhs, const T2& rhs )
-{
-  return lhs.get_head() < rhs.get_head();
-}
-} // namespace detail
-
 /**
  * @brief Less than relational operator for Boost tuples.
  * @param lhs First operand.
  * @param rhs Second operand.
  *
- * From tuple_comparison.hpp. Have to implement a custom operator
- * to only compare the first values of the tuples.
+ * Modified operator, based on the less than operator from the Boost
+ * library. Have to implement a custom operator to only compare the
+ * first values of the tuples.
  */
 template < class T1, class T2, class S1, class S2 >
 inline bool operator<( const cons< T1, T2 >& lhs, const cons< S1, S2 >& rhs )
@@ -78,7 +61,7 @@ inline bool operator<( const cons< T1, T2 >& lhs, const cons< S1, S2 >& rhs )
   // check that tuple lengths are equal
   BOOST_STATIC_ASSERT( length< T2 >::value == length< S2 >::value );
 
-  return detail::lt( lhs, rhs );
+  return lhs.get_head() < rhs.get_head();
 }
 } // namespace tuples
 } // namespace boost

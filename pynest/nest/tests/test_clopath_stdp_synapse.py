@@ -152,8 +152,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
         # Compare to expected result
         syn_weights = np.array(syn_weights)
         syn_weights = 100.0*15.0*(syn_weights - init_w)/init_w + 100.0
-        correct_weights = [60.27717273, 72.83202162, 141.91383624,
-                           102.74121415, 120.01918347, 148.76674224]
+        correct_weights = [57.82638722, 72.16729592, 146.04380036,
+                           103.30408341, 124.03640477, 153.36245009]
 
         self.assertTrue(np.allclose(syn_weights, correct_weights, rtol=1e-7))
 

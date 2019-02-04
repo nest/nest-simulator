@@ -6,7 +6,8 @@
 #include <ostream>
 #include <type_traits>
 
-namespace arb::shadow {
+namespace arb {
+namespace shadow {
 
 struct cell_member_type {
     cell_gid_type gid;
@@ -98,7 +99,7 @@ struct comm_info {
 };
 
 comm_info get_comm_info(bool is_arbor, MPI_Comm comm) {
-    static_assert((sizeof(spike) % alignof(spike)) == 0);
+    static_assert((sizeof(spike) % alignof(spike)) == 0, "Alignment requirements of spike data type not met!");
     
     comm_info info;
     info.is_arbor = is_arbor;
@@ -140,4 +141,6 @@ comm_info get_comm_info(bool is_arbor, MPI_Comm comm) {
     return info;
 }
 
+
+} // namespace shadow
 } // namespace arb

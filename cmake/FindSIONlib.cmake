@@ -88,6 +88,8 @@ if ( NOT SIONLIB_CONFIG STREQUAL "SIONLIB_CONFIG-NOTFOUND" )
       if ( "${def}" MATCHES "^-D.*" )
         # add to defines
         set( SIONLIB_DEFINES ${SIONLIB_DEFINES} "${def}" CACHE INTERNAL "cmake sucks" )
+        # add current definition at CMake level
+        add_definitions( "${def}" )
       endif ()
     endforeach ()
   endif ()

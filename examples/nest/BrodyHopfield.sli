@@ -59,7 +59,7 @@ model N Create ;
 0 ChangeSubnet
 net GetGlobalNodes /neurons Set
 
-sd << /to_file true /withgid true >> SetStatus
+sd << /record_to [/ascii /memory] >> SetStatus
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 drive

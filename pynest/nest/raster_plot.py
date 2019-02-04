@@ -197,13 +197,13 @@ def from_device(detec, plot_lid=False, **kwargs):
 
         return _make_plot(ts, ts, gids, gids, xlabel=xlabel, **kwargs)
 
-    elif nest.GetStatus(detec, "to_file")[0]:
+    elif "ascii" in nest.GetStatus(detec, "record_to")[0]:
         fname = nest.GetStatus(detec, "filenames")[0]
         return from_file(fname, **kwargs)
 
     else:
         raise nest.NESTError("No data to plot. Make sure that \
-            either to_memory or to_file are set.")
+            record_to is set to either 'ascii' or 'memory'.")
 
 
 def _from_memory(detec):

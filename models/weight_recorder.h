@@ -53,9 +53,8 @@ weight_recorder accepts the parameters 'senders' and 'targets', with which the
 recorded data is limited to the synapses with the corresponding source or target
 gid.
 
-The weight recorder can also record weights with full precision
-from neurons emitting precisely timed spikes. Set /precise_times to
-achieve this.
+The weight recorder will record weights with full precision from
+neurons emitting precisely timed spikes.
 
 Data is not necessarily written to file in chronological order.
 

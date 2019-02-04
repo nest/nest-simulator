@@ -33,6 +33,15 @@
 // Generated includes:
 #include "config.h"
 
+#ifdef HAVE_32BIT_ARCH
+#ifdef HAVE_UINT64_T // 32-bit platforms usually provide the ...
+#include <stdint.h> // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
+#else
+#error "32-bit platform does not provide a 64-bit unsigned integer data type"
+#endif
+#else
+#include <cstdint> // `uint64_t` on 64-bit platforms
+#endif
 
 /**
  * Namespace for the NEST simulation kernel.
@@ -54,7 +63,6 @@ namespace nest
 /**
  * Type for Time tics.
  */
-
 #ifdef HAVE_LONG_LONG
 typedef long long tic_t;
 #ifdef LLONG_MAX

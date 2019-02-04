@@ -23,6 +23,9 @@
 #ifndef MANAGER_INTERFACE_H
 #define MANAGER_INTERFACE_H
 
+// Includes from nestkernel:
+#include "nest_types.h"
+
 // Includes from sli:
 #include "dictdatum.h"
 
@@ -86,6 +89,16 @@ public:
    * @see initialize()
    */
   virtual void finalize() = 0;
+
+  /**
+   * Change the number of threads
+   *
+   * Many data structures depend on the number of threads. This
+   * function is called on each manager upon a change of that number
+   * and allows the manager to re-allocate data structures
+   * accordingly.
+   */
+  virtual void change_num_threads( thread ) {};
 
   virtual void set_status( const DictionaryDatum& ) = 0;
   virtual void get_status( DictionaryDatum& ) = 0;

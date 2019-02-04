@@ -214,20 +214,15 @@ modeldict begin
   } forall
   (-DONE-) =
 
+  /record_to tofile { [/ascii /memory] } { [/memory] } ifelse def
+
   (Create voltmeter ) =only
   %% generate spike detectors and voltmeter for each neuron
-  % /spike_detector Create /detec Set   % spike detectors will generate enormous amount of data!
-  %  detec  << /to_file tofile /withgid true /interval 0.1 >> SetStatus
+  % /spike_detector Create /detec Set   % spike detectors will generate enormous amounts of data!
+  % detec << /record_to record_to >> SetStatus
+
   /voltmeter Create /volt Set
-
-
-
-  volt  << /to_file tofile              % write to file
-         /to_memory false               % not to memory
-         /withgid true                  % important to know which neuron
-         /withtime true
-%         /interval 1.0                 % record only every msec.
-      >> SetStatus
+  volt << /record_to record_to >> SetStatus
 
   sim 1 eq {volt  <<  /label (voltmeter-Canon-) strength cvs join >> SetStatus}
            {volt  <<  /label (voltmeter-Grid-) strength cvs join >> SetStatus} ifelse

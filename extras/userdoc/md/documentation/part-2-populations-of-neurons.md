@@ -139,7 +139,7 @@ ten neurons each.
     nest.SetStatus(pop1, {"I_e": 376.0})
     pop2 = nest.Create("iaf_psc_alpha", 10)
     multimeter = nest.Create("multimeter", 10)
-    nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
+    nest.SetStatus(multimeter, {"record_from":["V_m"]})
 
 If no connectivity pattern is specified, the populations are connected via 
 the default rule, namely `all_to_all`. Each neuron of `pop1` is connected 
@@ -237,15 +237,19 @@ that start and stop at particular times.
 So far we have accessed the data recorded by devices directly, by extracting the
 value of `events`. However, for larger or longer simulations, we may prefer to
 write the data to file for later analysis instead. All recording devices allow
-the specification of where data is stored over the parameters `to_memory`
-(default: `True`), `to_file` (default: `False`) and `to_screen`
-(default: `False`). The following code sets up a `multimeter` to record data to
-a named file:
+the specification of where data is stored over the parameter `record_to`, which
+defaults to `["memory"]`. The list can be changed to contain the desired recording
+backends. To write data to file, use "ascii", to get it printed to the terminal,
+use "screen". A full list is available by running
 
-    recdict = {"to_memory" : False, "to_file" : True, "label" : "epop_mp"}
+    nest.GetKernelStatus("recording_backends").keys()
+
+The following code sets up a `multimeter` to record data to a named file:
+
+    recdict = {"record_to": ["ascii"], "label": "epop_mp"}
     mm1 = nest.Create("multimeter", params=recdict)
 
-If no name for the file is specified using the `label` parameter, NEST will
+If no name for the file were specified using the `label` parameter, NEST would
 generate its own using the name of the device, and its id. If the simulation is
 multithreaded or distributed, multiple files will be created, one for each
 process and/or thread. For more information on how to customise the behaviour

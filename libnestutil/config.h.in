@@ -61,6 +61,9 @@
 /* when to truncate the recursive instantiation of the connector */
 #define CONFIG_CONNECTOR_CUTOFF @connector_cutoff@
 
+/* Define to 1 if you have a 32 bit architecture */
+#cmakedefine HAVE_32BIT_ARCH 1
+
 /* define if the compiler does not include *.h headers ISO conformant */
 #cmakedefine HAVE_ALPHA_CXX_STD_BUG 1
 
@@ -90,6 +93,12 @@
 
 /* Define to 1 if you have usable long long type. */
 #cmakedefine HAVE_LONG_LONG 1
+
+/* Define to 1 if you have u_int46_t type. */
+#cmakedefine HAVE_U_INT64_T 1
+
+/* Define to 1 if you have uint46_t type. */
+#cmakedefine HAVE_UINT64_T 1
 
 /* Define to 1 if you have the <mach/mach.h> header file. */
 #cmakedefine HAVE_MACH_MACH_H 1

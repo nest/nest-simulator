@@ -228,6 +228,38 @@ class TestDisconnect(unittest.TestCase):
                     [neurons[srcId]], [neurons[targId]], syn_model)
                 assert not conns
 
+    def test_disconnect_defaults(self):
+
+        nodes = nest.Create('iaf_psc_alpha', 5)
+        nest.Connect(nodes, nodes)
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 25)
+
+        nest.Disconnect(nodes, nodes)
+
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
+
+    def test_disconnect_all_to_all(self):
+
+        nodes = nest.Create('iaf_psc_alpha', 5)
+        nest.Connect(nodes, nodes)
+
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 25)
+
+        nest.Disconnect(nodes, nodes, 'all_to_all')
+
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 0)
+
+    def test_disconnect_static_synapse(self):
+
+        nodes = nest.Create('iaf_psc_alpha', 5)
+        nest.Connect(nodes, nodes)
+
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 25)
+
+        nest.Disconnect(nodes, nodes, syn_spec='static_synapse')
+
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
+
 
 def suite():
     test_suite = unittest.makeSuite(TestDisconnect, 'test')

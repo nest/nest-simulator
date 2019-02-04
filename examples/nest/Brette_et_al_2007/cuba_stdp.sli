@@ -114,9 +114,7 @@
   /detector /spike_detector
   /detector_params
   <<
-   /withtime true
-   /withgid true
-   /to_file true
+   /record_to [/ascii /memory]
    /label (cuba_stdp)
   >>
 

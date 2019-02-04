@@ -33,7 +33,7 @@ import io
 import re
 import sys
 import textwrap
-import html
+import cgi
 
 from writers import coll_data
 from helpers import check_ifdef, create_helpdirs, cut_it
@@ -132,7 +132,7 @@ for fname in allfiles:
                     line = name_line_0 + ' ' + name_line_1
                 line = textwrap.dedent(line).strip()
                 # Tricks for the blanks
-                line = html.escape(line)
+                line = cgi.escape(line)
                 line = re.sub('^(\s)*- ', ' &bull; ', line)
                 line = re.sub('^(\s)*@note', ' &bull; ', line)
                 alllines.append(line)

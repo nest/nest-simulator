@@ -65,8 +65,7 @@ to change this. The recording interval cannot be smaller than the resolution.
 
 Results are returned in the /events entry of the status dictionary. For
 each recorded quantity, a vector of doubles is returned. The vector has the
-same name as the /recordable. If /withtime is set, times are given in the
-/times vector in /events.
+same name as the /recordable.
 
 Remarks:
 - The set of variables to record and the recording interval must be set

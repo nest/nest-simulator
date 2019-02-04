@@ -50,7 +50,7 @@ Example:
 /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
 def
 /n  /iaf_psc_delta_canon Create def
-/sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create
+/sd /spike_detector << /record_to [ /memory ] >> Create
 def
 
 /cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults

@@ -165,6 +165,17 @@ nest::IOManager::finalize()
   }
 }
 
+void
+nest::IOManager::change_num_threads( thread )
+{
+  std::map< Name, RecordingBackend* >::const_iterator it;
+  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
+  {
+    it->second->finalize();
+    it->second->initialize();
+  } 
+}
+
 /*
      - set the data_path, data_prefix and overwrite_files properties
 */

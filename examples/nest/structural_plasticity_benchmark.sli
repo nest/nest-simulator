@@ -284,7 +284,7 @@
     noise nodes_i << /rule /all_to_all >> << /weight psc_ext /delay delay >> Connect
 
     record_spikes {
-        /spike_detector 1 << /to_file true >> Create dup cvgidcollection /spike_detector Set
+        /spike_detector 1 << /record_to [/ascii /memory] >> Create dup cvgidcollection /spike_detector Set
         nodes_e spike_detector Connect
         nodes_i spike_detector Connect
     } if

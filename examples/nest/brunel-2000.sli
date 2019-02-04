@@ -252,10 +252,7 @@ statusdict/userargs :: size 1 geq
       exsd
       <<
         /label (brunel-2-ex-threaded)
-        /withtime true   % record time of spikes
-        /withgid  true   % and the global ID of the neuron
-        /to_file true    % write results to a file
-        /to_memory true  % record spikes in memory
+        /record_to [/ascii /memory]
       >> SetStatus
 
       (Creating inhibitory spike detector.) =
@@ -263,10 +260,7 @@ statusdict/userargs :: size 1 geq
       insd
       <<
         /label (brunel-2-in-threaded)
-        /withtime true   % record time of spikes
-        /withgid  true   % and the global ID of the neuron
-        /to_file true    % write results to a file
-        /to_memory true  % record spikes in memory
+        /record_to [/ascii /memory]
       >> SetStatus
 
       % Create custom synapse types with appropriate values for

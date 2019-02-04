@@ -263,8 +263,10 @@ def build_network(logger):
         detector_label = os.path.join(
             brunel_params['filestem'],
             'alpha_' + str(stdp_params['alpha']) + '_spikes')
-        E_detector = nest.Create('spike_detector', 1, {
-            'withtime': True, 'to_file': True, 'label': detector_label})
+        E_detector = nest.Create('spike_detector', params={
+            'record_to': ['ascii', 'memory'],
+            'label': detector_label
+        })
 
     BuildNodeTime = time.time() - tic
 

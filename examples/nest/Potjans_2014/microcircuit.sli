@@ -255,23 +255,27 @@
 	    /subnet Create /device_subnet Set
 	    device_subnet ChangeSubnet
             /spike_detector Create /this_spike_detector Set
+	    /record_spikes_to save_cortical_spikes
+	       { [ /ascii /memory ] }{ [ /memory ] } ifelse def
 	    this_spike_detector
 	    <<
 	       % Set spike detector label for filenames. The GID of the spike
                % detector and the process number are appended automatically.
 	       /label spike_detector_label layer_index cvs join (_) join
                population_index cvs join
-	       /to_file save_cortical_spikes
+	       /record_to record_spikes_to
 	    >> SetStatus 
             spike_detector_GIDs [layer_index population_index]
             this_spike_detector put
 	    /spike_detector_GIDs Set
 	    /voltmeter Create /this_voltmeter Set
+	    /record_voltages_to save_voltages {} {} ifelse
+	       { [ /ascii /memory ] }{ [ /memory ] } ifelse def
 	    this_voltmeter
 	    <<
 	       /label voltmeter_label layer_index cvs join (_) join
                population_index cvs join
-	       /to_file save_voltages
+	       /record_to record_voltages_to
 	    >> SetStatus
             voltmeter_GIDs [layer_index population_index] this_voltmeter put
 	    /voltmeter_GIDs Set
@@ -314,6 +318,8 @@
            /start th_start 
            /stop th_start th_duration add 
         >> SetStatus
+	/record_thalamic_spikes_to save_thalamic_spikes
+	    { [ /ascii /memory ] }{ [ /memory ] } ifelse def
         record_thalamic_spikes
         {
             /spike_detector Create /th_spike_detector_GID Set
@@ -322,7 +328,7 @@
 	       % Set thalamic spike detector label. The GID of the spike
                % detector and the process number are appended automatically.
 	       /label th_spike_detector_label
-	       /to_file save_thalamic_spikes
+	       /record_to record_thalamic_spikes_to
 	    >> SetStatus
         } if
     } if

@@ -46,11 +46,8 @@ spikes from a single neuron, or from multiple neurons at once. Data
 is recorded in memory or to file as for all RecordingDevices.
 By default, GID and time of each spike is recorded.
 
-The spike detector can also record spike times with full precision
-from neurons emitting precisely timed spikes. Set /precise_times to
-achieve this. If there are precise models and /precise_times is not
-set, it will be set to True at the start of the simulation and
-/precision will be increased to 15 from its default value of 3.
+The spike detector will record spike times with full precision
+from neurons emitting precisely timed spikes.
 
 Any node from which spikes are to be recorded, must be connected to
 the spike detector using a normal connect command. Any connection weight

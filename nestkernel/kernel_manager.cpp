@@ -99,8 +99,6 @@ nest::KernelManager::prepare()
   {
     m->prepare();
   }
-
-  std::cerr << "Starting kernelmanager prepare" << std::endl;
 }
 
 void
@@ -135,16 +133,25 @@ nest::KernelManager::reset()
 }
 
 void
-nest::KernelManager::change_num_threads( size_t num_threads )
+nest::KernelManager::change_num_threads( thread num_threads )
 {
-  io_manager.finalize();
+  // JME: TODO check all managers for a dependency on the number of
+  // threads and implement change_num_threads() for the ones that have
+  // one. The sequence below is really dangerous, as this function is
+  // called by VPManager::set_status(), which is in turn called from
+  // the UI. Finalizing and re-initializing all managers will discard
+  // all changes to the corresponding manager's status dictionaries.
+  
   node_manager.finalize();
   connection_manager.finalize();
   model_manager.finalize();
   modelrange_manager.finalize();
   rng_manager.finalize();
 
-  vp_manager.set_num_threads( num_threads );   // JME/nestio: is this needed here? apeyser/nestio does not have it, master does added it in 18acd78aa1c00
+  // JME: this should go to where KernelManager::change_num_threads()
+  // is called in VPManager. apeyser/nestio did not have this line. It
+  // was added in master in 18acd78aa1c00
+  vp_manager.set_num_threads( num_threads );
 
   rng_manager.initialize();
   // independent of threads, but node_manager needs it reset
@@ -154,7 +161,11 @@ nest::KernelManager::change_num_threads( size_t num_threads )
   event_delivery_manager.initialize();
   music_manager.initialize();
   node_manager.initialize();
-  io_manager.initialize();
+
+  for (auto& manager: managers)
+  {
+    manager->change_num_threads( num_threads );
+  }  
 }
 
 void

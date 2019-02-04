@@ -162,8 +162,10 @@ exch assert_or_die
   
   /nrn /iaf_psc_exp_multisynapse Create def
   
-  /mm /multimeter << /withtime true /time_in_steps true
-                     /interval 1.0 /record_from [ /V_m /I_syn /I_syn_1 ] >> Create def
+  /mm /multimeter << /time_in_steps true
+                     /interval 1.0
+		     /record_from [ /V_m /I_syn /I_syn_1 ]
+		  >> Create def
   
   mm nrn Connect
   
@@ -261,10 +263,10 @@ assert_or_die
   } ScanThread
 
   % Create the multimeter that will record from the 4 synapse channels
-  /mm /multimeter << /withtime true /time_in_steps true
-                     /interval dt /record_from
-                     [ /I_syn_1 /I_syn_2 /I_syn_3 /I_syn_4 ]
-                       >> Create def
+  /mm /multimeter << /time_in_steps true
+                     /interval dt
+		     /record_from [ /I_syn_1 /I_syn_2 /I_syn_3 /I_syn_4 ]
+                  >> Create def
 
   mm nrn Connect
 

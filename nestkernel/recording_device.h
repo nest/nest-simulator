@@ -85,8 +85,7 @@ namespace nest
     least one min_delay before the end of the simulation time.
   - By default, devices record to memory. If you want to record to file, it may
     be a good idea to turn off recording to memory, to avoid that you computer's
-    memory fills up with gigabytes of data:
-      << /to_file true /to_memory false >>.
+    memory fills up with gigabytes of data: << /record_to [/ascii] >>.
   - Events are not necessarily recorded in chronological order.
   - The device will not open an existing file, since that would erase the
     existing data in the file. If you want existing files to be overwritten
@@ -100,6 +99,10 @@ namespace nest
 
   The following parameter is only relevant for sampling devices:
   /interval - Sampling interval in ms (default: 1ms).
+
+
+JME: Update for NESTIO!! All of this documentation is kind of outdated
+
 
   The following parameters control where output is sent/data collected:
   /record_to - An array containing any combination of /file, /memory, /screen,
@@ -120,16 +123,6 @@ namespace nest
                /to_file false. If you later turn recording to file on again, the
                file will be overwritten, unless you have changed data_prefix,
                label, or file_extension.
-
-  /to_file   - If true, turn on recording to file. Similar to /record_to
-               [/file], but does not affect settings for recording to memory and
-               screen.
-  /to_screen - If true, turn on recording to screen. Similar to /record_to
-               [/screen], but does not affect settings for recording to memory
-               and file.
-  /to_memory - If true, turn on recording to memory Similar to /record_to
-               [/memory], but does not affect settings for recording to file and
-               screen.
 
   /filenames - Array containing the filenames where data is recorded to. This
                array has one entry per local thread and is only available if
@@ -156,23 +149,12 @@ namespace nest
   recording device. Setting this to false can lead to conflicting file names.
 
   The following parameters control how output is formatted:
-  /withtime      - boolean value which specifies whether the network time should
-                   be recorded (default: true).
-  /withgid       - boolean value which specifies whether the global id of the
-                   observed node(s) should be recorded (default: false).
   /withweight    - boolean value which specifies whether the weight of the event
                    should be recorded (default: false).
   /time_in_steps - boolean value which specifies whether to print time in steps,
                    i.e., multiples of the resolution, rather than in ms. If
                    combined with /precise_times, each time is printed as a pair
                    of an integer step number and a double offset < 0.
-  /precise_times - boolean value which specifies whether offsets describing the
-                   precise timing of a spike within a time step should be taken
-                   into account when computing the spike time. This is only
-                   useful when recording from neurons that can emit spikes
-                   off-grid (see module precise). Times are given in
-                   milliseconds. If /time_in_steps is true, times are given as
-                   steps and negative offset.
   /scientific    - if set to true, doubles are written in scientific format,
                    otherwise in fixed format; affects file output only, not
                    screen output (default: false)

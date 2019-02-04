@@ -939,6 +939,34 @@ public:
   std::string message() const;
 };
 
+/**
+ * Exception to be thrown if an internal error occures.
+ * @ingroup KernelExceptions
+*/
+class InternalError : public KernelException
+{
+  std::string msg_;
+
+public:
+  //! @param detailed error message
+  InternalError()
+    : KernelException( "InternalError" )
+    , msg_()
+  {
+  }
+  InternalError( std::string msg )
+    : KernelException( "InternalError" )
+    , msg_( msg )
+  {
+  }
+
+  ~InternalError() throw()
+  {
+  }
+
+  std::string message() const;
+};
+
 
 #ifdef HAVE_MUSIC
 /**

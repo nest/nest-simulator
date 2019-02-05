@@ -58,9 +58,9 @@ public:
   ~RecordingBackendSoundClick() throw();
 
   // Register a device to record data using a certain backend
-  void enroll( const RecordingDevice& device );
-  void enroll( const RecordingDevice& device,
-    const std::vector< Name >& value_names );
+  void enroll( const RecordingDevice&,         // device
+               const std::vector< Name >&,     // double value names
+               const std::vector< Name >& );   // long value names
 
   // Clean up the backend at the end of a call to Simulate
   void finalize();
@@ -69,10 +69,10 @@ public:
   void synchronize();
 
   // Write the data from the event to the backend specific channel
-  void write( const RecordingDevice& device, const Event& event );
-  void write( const RecordingDevice& device,
-    const Event& event,
-    const std::vector< double >& );
+  void write( const RecordingDevice&,          // device
+              const Event&,                    // event
+              const std::vector< double >&,    // double values
+              const std::vector< long >& );    // long values
 
   // Initialize global backend-specific data structures
   void initialize();

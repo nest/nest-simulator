@@ -65,14 +65,9 @@ public:
    * Function called by spike detectors using this recording
    * backend. This function opens the socket.
    */
-  void enroll( const RecordingDevice& device );
-
-  /**
-   * Function called by all multimeters. This function will throw an
-   * exception, as multi-value data ist not supported by this backend.
-   */
-  void enroll( const RecordingDevice& device,
-	       const std::vector< Name >& value_names );
+  void enroll( const RecordingDevice&,         // device
+               const std::vector< Name >&,     // double value names
+               const std::vector< Name >& );   // long value names
 
   /**
    * Flush files after a single call to Run
@@ -93,10 +88,10 @@ public:
   /**
    * Functions to write data to file.
    */
-  void write( const RecordingDevice& device, const Event& event );
-  void write( const RecordingDevice& device,
-    const Event& event,
-    const std::vector< double >& );
+  void write( const RecordingDevice&,          // device
+              const Event&,                    // event
+              const std::vector< double >&,    // double values
+              const std::vector< long >& );    // long values
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;

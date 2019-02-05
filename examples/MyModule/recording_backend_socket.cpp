@@ -42,20 +42,26 @@ nest::RecordingBackendSocket::~RecordingBackendSocket() throw()
 }
 
 void
-nest::RecordingBackendSocket::enroll( const RecordingDevice& device )
-{
-  B_.addr_.sin_family = AF_INET;
-  inet_aton( P_.ip_.c_str(), &B_.addr_.sin_addr );
-  B_.addr_.sin_port = htons( P_.port_ );
+nest::RecordingBackendSocket::enroll(
+        const RecordingDevice& device,
+        const std::vector< Name >& double_value_names,
+        const std::vector< Name >& long_value_names ) {
+  // Spike detector data consists of events.
+  // Thus, the absence of value names is used to ensure that the
+  // socket backend is connected to a spike detector.
+  // TODO: This is an unfortunate design. For clarity, handing over
+  //       the recording device type in addition could be a solution.
+  if (double_value_names.empty() && long_value_names.empty()) {
+    B_.addr_.sin_family = AF_INET;
+    inet_aton(P_.ip_.c_str(), &B_.addr_.sin_addr);
+    B_.addr_.sin_port = htons(P_.port_);
 
-  B_.socket_ = socket(PF_INET, SOCK_DGRAM, 0);
-}
-
-void
-nest::RecordingBackendSocket::enroll( const RecordingDevice& device,
-  const std::vector< Name >& /* value_names */ )
-{
-  throw KernelException("RecordingBackendSocket does not support multimeters");
+    B_.socket_ = socket(PF_INET, SOCK_DGRAM, 0);
+  } else {
+    throw BadProperty(
+            "Only spike detectors can record to recording backend "
+            ">Socket<");
+  }
 }
 
 void
@@ -79,28 +85,36 @@ nest::RecordingBackendSocket::synchronize()
 }
 
 void
-nest::RecordingBackendSocket::write( const RecordingDevice& device,
-  const Event& event )
+nest::RecordingBackendSocket::write(
+        const RecordingDevice& device,
+        const Event& event,
+        const std::vector< double >& double_values,
+        const std::vector< long >& long_values )
 {
+  // Spike detector data consists of events.
+  // Thus, the absence of values is used to ensure that the
+  // socket backend is connected to a spike detector.
+  // TODO: This is an unfortunate design. For clarity, handing over
+  //       the recording device type in addition could be a solution.
+  if (double_values.empty() && long_values.empty()) {
 #pragma omp critical
-  {
-    index sd_gid = device.get_gid();
-    index node_gid = event.get_sender_gid();
-    std::string msg = String::compose(
-	"spike_detector %1 got a spike by node %2", sd_gid, node_gid );
+    {
+      index sd_gid = device.get_gid();
+      index node_gid = event.get_sender_gid();
+      std::string msg = String::compose(
+              "spike_detector %1 got a spike by node %2", sd_gid, node_gid );
 
-    // We explicitly ignore errors here by not evaluating the return
-    // code of the sendto() function.
-    sendto(B_.socket_, msg.c_str(), msg.size(), 0,
-	   ( struct sockaddr * )& B_.addr_, sizeof( B_.addr_ ) );
+      // We explicitly ignore errors here by not evaluating the return
+      // code of the sendto() function.
+      sendto(B_.socket_, msg.c_str(), msg.size(), 0,
+             ( struct sockaddr * )& B_.addr_, sizeof( B_.addr_ ) );
+    }
   }
-}
-
-void
-nest::RecordingBackendSocket::write( const RecordingDevice& device,
-  const Event& event,
-  const std::vector< double >& values )
-{
+  else {
+    // Must not happen !
+    // Only spike detectors are allowed to connect to the socket backend.
+    throw;
+  }
 }
 
 nest::RecordingBackendSocket::Parameters_::Parameters_()

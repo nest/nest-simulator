@@ -39,15 +39,9 @@ nest::RecordingBackendMemory::~RecordingBackendMemory() throw()
 }
 
 void
-nest::RecordingBackendMemory::enroll( const RecordingDevice& device )
-{
-  std::vector< Name > value_names;
-  enroll( device, value_names );
-}
-
-void
 nest::RecordingBackendMemory::enroll( const RecordingDevice& device,
-  const std::vector< Name >& value_names )
+				     const std::vector< Name >& double_value_names,
+				     const std::vector< Name >& long_value_names )
 {
   thread t = device.get_thread();
   index gid = device.get_gid();
@@ -55,7 +49,7 @@ nest::RecordingBackendMemory::enroll( const RecordingDevice& device,
   // If the device is not already enrolled, enroll it
   if ( data_[ t ].find( gid ) == data_[ t ].end() )
   {
-    data_[ t ].insert( std::make_pair( gid, new Recordings( value_names ) ) );
+      data_[ t ].insert( std::make_pair( gid, new Recordings( double_value_names, long_value_names ) ) );
   }
 
   bool time_in_steps = device.get_time_in_steps();
@@ -116,24 +110,9 @@ nest::RecordingBackendMemory::clear( const RecordingDevice& device )
 
 void
 nest::RecordingBackendMemory::write( const RecordingDevice& device,
-  const Event& event )
-{
-  thread t = device.get_thread();
-  index gid = device.get_gid();
-
-  if ( data_[ t ].find( gid ) == data_[ t ].end() )
-  {
-    return;
-  }
-  
-  index sender = event.get_sender_gid();
-  data_[ t ][ gid ]->push_back( sender, event );
-}
-
-void
-nest::RecordingBackendMemory::write( const RecordingDevice& device,
-  const Event& event,
-  const std::vector< double >& values )
+				     const Event& event,
+				     const std::vector< double >& double_values,
+				     const std::vector< long >& long_values )
 {
   thread t = device.get_thread();
   index gid = device.get_gid();
@@ -144,7 +123,7 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
   }
 
   index sender = event.get_sender_gid();
-  data_[ t ][ gid ]->push_back( sender, event, values );
+  data_[ t ][ gid ]->push_back( sender, event, double_values, long_values );
 }
 
 void

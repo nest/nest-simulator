@@ -60,13 +60,9 @@ public:
    */
   ~RecordingBackendMemory() throw();
 
-  /**
-   * Functions called by all instantiated recording devices to register
-   * themselves with their metadata.
-   */
-  void enroll( const RecordingDevice& device );
-  void enroll( const RecordingDevice& device,
-    const std::vector< Name >& value_names );
+  virtual void enroll( const RecordingDevice& device,
+		       const std::vector< Name >& double_value_names,
+		       const std::vector< Name >& long_value_names );
 
   /**
    * Finalize the RecordingBackendMemory after the simulation has finished.
@@ -84,13 +80,10 @@ public:
    */
   void clear( const RecordingDevice& );
 
-  /**
-   * Functions to write data to memory.
-   */
-  void write( const RecordingDevice& device, const Event& event );
-  void write( const RecordingDevice& device,
-    const Event& event,
-    const std::vector< double >& values );
+  virtual void write( const RecordingDevice&,
+		      const Event&,
+		      const std::vector< double >&,
+		      const std::vector< long >& );
 
   /**
    * Initialize the RecordingBackendMemory during simulation preparation.
@@ -107,15 +100,17 @@ private:
   class Recordings
   {
   public:
-    Recordings( const std::vector< Name >& extra_data_names)
-      : extra_data_names_( extra_data_names )
+    Recordings( const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names)
+      : double_value_names_( double_value_names )
+      , long_value_names_( long_value_names )
       , time_in_steps_( false )
     {
-      extra_data_.resize( extra_data_names.size() );
+      double_values_.resize( double_value_names.size() );
+      long_values_.resize( long_value_names.size() );
     }
 
     void
-    push_back( index sender, const Event& event )
+    push_back( index sender, const Event& event, const std::vector< double >& double_values, const std::vector< long >& long_values )
     {
       const Time stamp = event.get_stamp();
       const double offset = event.get_offset();
@@ -136,15 +131,14 @@ private:
       {
         times_ms_.push_back( stamp.get_ms() - offset );
       }
-    }
-
-    void
-    push_back( index sender, const Event& event, const std::vector< double >& values )
-    {
-      push_back( sender, event );
-      for ( size_t i = 0; i < values.size(); ++i )
+    
+      for ( size_t i = 0; i < double_values.size(); ++i )
       {
-        extra_data_[ i ].push_back( values[ i ] );
+        double_values_[ i ].push_back( double_values[ i ] );
+      }
+      for ( size_t i = 0; i < long_values.size(); ++i )
+      {
+        long_values_[ i ].push_back( double_values[ i ] );
       }
     }
 
@@ -186,10 +180,15 @@ private:
         append_property( events,  names::times, times_ms_ );
       }
 
-      for ( size_t i = 0; i < extra_data_.size(); ++i )
+      for ( size_t i = 0; i < double_values_.size(); ++i )
       {
-        initialize_property_doublevector( events, extra_data_names_[ i ] );
-        append_property( events,  extra_data_names_[ i ], extra_data_ [ i ] );
+        initialize_property_doublevector( events, double_value_names_[ i ] );
+        append_property( events,  double_value_names_[ i ], double_values_[ i ] );
+      }
+      for ( size_t i = 0; i < long_values_.size(); ++i )
+      {
+        initialize_property_intvector( events, long_value_names_[ i ] );
+        append_property( events,  long_value_names_[ i ], long_values_[ i ] );
       }
     }
 
@@ -214,10 +213,15 @@ private:
       times_steps_.clear();
       times_offset_.clear();
 
-      for ( size_t i = 0; i < extra_data_.size(); ++i )
+      for ( size_t i = 0; i < double_values_.size(); ++i )
       {
-        extra_data_[ i ].clear();
+        double_values_[ i ].clear();
       }
+      for ( size_t i = 0; i < long_values_.size(); ++i )
+      {
+        long_values_[ i ].clear();
+      }
+      
     }
 
   private:
@@ -228,8 +232,10 @@ private:
     std::vector< double > times_ms_; //!< times of registered events in ms
     std::vector< long > times_steps_; //!< times of registered events in steps
     std::vector< double > times_offset_; //!< offsets of registered events if time_in_steps_
-    std::vector< std::vector< double > > extra_data_;
-    std::vector< Name > extra_data_names_;
+    std::vector< Name > double_value_names_;
+    std::vector< Name > long_value_names_;
+    std::vector< std::vector< double > > double_values_;
+    std::vector< std::vector< long > > long_values_;
     bool time_in_steps_;
     bool record_targets_;
   };

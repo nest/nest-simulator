@@ -75,20 +75,6 @@ nest::spike_detector::calibrate()
 void
 nest::spike_detector::update( Time const&, const long, const long )
 {
-  for ( std::vector< Event* >::iterator e =
-          B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].begin();
-        e != B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].end();
-        ++e )
-  {
-    assert( *e != 0 );
-
-    RecordingDevice::write( **e, RecordingBackend::NO_DOUBLE_VALUES, RecordingBackend::NO_LONG_VALUES );
-    delete *e;
-  }
-
-  // do not use swap here to clear, since we want to keep the reserved()
-  // memory for the next round
-  B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].clear();
 }
 
 nest::RecordingDevice::Type
@@ -133,41 +119,10 @@ nest::spike_detector::handle( SpikeEvent& e )
   {
     assert( e.get_multiplicity() > 0 );
 
-    long dest_buffer;
-    if ( kernel()
-           .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
-           ->has_proxies() )
-    {
-      // events from central queue
-      dest_buffer = kernel().event_delivery_manager.read_toggle();
-    }
-    else
-    {
-      // locally delivered events
-      dest_buffer = kernel().event_delivery_manager.write_toggle();
-    }
-
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
-      // We store the complete events
-      Event* event = e.clone();
-      B_.spikes_[ dest_buffer ].push_back( event );
+       RecordingDevice::write( e, RecordingBackend::NO_DOUBLE_VALUES,
+         RecordingBackend::NO_LONG_VALUES );
     }
   }
 }
-
-
-//JME: Find out if the problem described in 1f3ce613a80 still exist with nestio
-//void
-//nest::spike_detector::finalize()
-//{
-//  // The order of the major simulation steps is:
-//  // update nodes -- gather spikes -- deliver spikes
-//  // Therefore, spikes from the last deliver might still reside in the
-//  // B_.spikes_ buffer and need to be recorded.
-//  // --> final call to update()
-//  const Time time;
-//  update( time, -1, -1 );
-//  device_.finalize();
-//}
-//

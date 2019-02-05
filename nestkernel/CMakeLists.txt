@@ -84,7 +84,7 @@ set( nestkernel_sources
     event_delivery_manager.cpp
     node_manager.h node_manager.cpp
     logging_manager.h logging_manager.cpp
-    recording_backend.h
+    recording_backend.h recording_backend.cpp
     recording_backend_ascii.h recording_backend_ascii.cpp
     recording_backend_memory.h recording_backend_memory.cpp
     recording_backend_screen.h recording_backend_screen.cpp

@@ -68,7 +68,8 @@ void
 nest::spike_detector::calibrate()
 {
   RecordingDevice::calibrate();
-  RecordingDevice::enroll();
+  RecordingDevice::enroll(RecordingBackend::NO_DOUBLE_VALUE_NAMES,
+			  RecordingBackend::NO_LONG_VALUE_NAMES);
 }
 
 void
@@ -81,7 +82,7 @@ nest::spike_detector::update( Time const&, const long, const long )
   {
     assert( *e != 0 );
 
-    RecordingDevice::write( **e );
+    RecordingDevice::write( **e, RecordingBackend::NO_DOUBLE_VALUES, RecordingBackend::NO_LONG_VALUES );
     delete *e;
   }
 

@@ -103,11 +103,9 @@ public:
 
   void clear_recording_backends( const RecordingDevice& );
 
-  void write( const RecordingDevice&, const Event& );
-  void write( const RecordingDevice&, const Event&, const std::vector< double >& );
+  void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
 
-  void enroll_recorder( Name, const RecordingDevice& );
-  void enroll_recorder( Name, const RecordingDevice&, const std::vector< Name >& );
+  void enroll_recorder( Name, const RecordingDevice&, const std::vector< Name >&, const std::vector< Name >& );
 
   void get_recording_device_status( const RecordingDevice&, DictionaryDatum& );
   void set_recording_device_status( const RecordingDevice&, const DictionaryDatum& );

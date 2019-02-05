@@ -105,10 +105,7 @@ void
 nest::weight_recorder::calibrate()
 {
   RecordingDevice::calibrate();
-  
-  std::vector< Name > value_names;
-  value_names.push_back( names::weights );
-  RecordingDevice::enroll(value_names);
+  //RecordingDevice::enroll(value_names);
 }
 
 void
@@ -175,6 +172,6 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
 
     std::vector< double > values;
     values.push_back( e.get_weight() );
-    RecordingDevice::write( e, values );
+//    RecordingDevice::write( e, values );
   }
 }

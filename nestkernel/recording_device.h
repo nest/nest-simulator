@@ -279,10 +279,8 @@ public:
   void get_status( DictionaryDatum& ) const;
 
 protected:
-  void write( const Event& );
-  void write( const Event&, const std::vector< double >& );
-  void enroll();
-  void enroll( const std::vector< Name >& );
+  void write( const Event&, const std::vector< double >&, const std::vector< long >& );
+  void enroll( const std::vector< Name >&, const std::vector< Name >& );
 
 private:
   struct Parameters_
@@ -320,7 +318,11 @@ RecordingDevice::get_status( DictionaryDatum& d ) const
 
   ( *d )[ names::element_type ] = LiteralDatum( names::recorder );
 
-  kernel().io_manager.get_recording_device_status( *this, d );
+  for ( auto& backend_token : P_.record_to_ )
+  {
+    Name backend_name( getValue< std::string >( backend_token ) );
+    kernel().io_manager.get_recording_device_status( backend_name, *this, d );
+  }
 }
 
 inline bool
@@ -350,38 +352,28 @@ RecordingDevice::set_record_targets( bool record_targets )
 }
 
 inline void
-RecordingDevice::write( const Event& event )
+RecordingDevice::write( const Event& event,
+			const std::vector< double >& double_values,
+			const std::vector< long >& long_values)
 {
+  //JME: The number of events needs to be stored on a per-backend basis
   ++S_.n_events_;
-  kernel().io_manager.write( *this, event );
-}
-
-inline void
-RecordingDevice::write( const Event& event, const std::vector< double >& data)
-{
-  ++S_.n_events_;
-  kernel().io_manager.write( *this, event, data );
-}
-
-inline void
-RecordingDevice::enroll()
-{
-  //JME: also handle disenroll
-  for ( Token* t = P_.record_to_.begin(); t != P_.record_to_.end(); ++t )
+  for ( auto& backend_token : P_.record_to_ )
   {
-    Name backend_name( getValue< std::string >( *t ) );
-    kernel().io_manager.enroll_recorder( backend_name, *this );
+    Name backend_name( getValue< std::string >( backend_token ) );
+    kernel().io_manager.write( backend_name, *this, event, double_values, long_values );
   }
 }
 
 inline void
-RecordingDevice::enroll( const std::vector< Name >& value_names )
+RecordingDevice::enroll( const std::vector< Name >& double_value_names,
+			 const std::vector< Name >& long_value_names)
 {
   //JME: also handle disenroll
-  for ( Token* t = P_.record_to_.begin(); t != P_.record_to_.end(); ++t )
+  for ( auto& backend_token : P_.record_to_ )
   {
-    Name backend_name( getValue< std::string >( *t ) );
-    kernel().io_manager.enroll_recorder( backend_name, *this, value_names );
+    Name backend_name( getValue< std::string >( backend_token ) );
+    kernel().io_manager.enroll_recorder( backend_name, *this, double_value_names, long_value_names );
   }
 }
 

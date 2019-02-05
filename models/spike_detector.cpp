@@ -68,7 +68,8 @@ void
 nest::spike_detector::calibrate()
 {
   RecordingDevice::calibrate();
-  RecordingDevice::enroll();
+  RecordingDevice::enroll(RecordingBackend::NO_DOUBLE_VALUE_NAMES,
+			  RecordingBackend::NO_LONG_VALUE_NAMES);
 }
 
 void
@@ -120,10 +121,8 @@ nest::spike_detector::handle( SpikeEvent& e )
 
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
-      RecordingDevice::write( e );
-      // We store the complete events
-      //Event* event = e.clone();
-      //B_.spikes_[ dest_buffer ].push_back( event );
+       RecordingDevice::write( e, RecordingBackend::NO_DOUBLE_VALUES,
+         RecordingBackend::NO_LONG_VALUES );
     }
   }
 }

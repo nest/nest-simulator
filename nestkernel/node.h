@@ -274,6 +274,10 @@ public:
    */
   void init_buffers();
 
+//JME: we should call calibrate() at the end of set_status and at the
+//end of the constructor call instead of during Prepare. This would
+//make Prepare -> Run Run ... -> Cleanup much more robust.
+
   /**
    * Re-calculate dependent parameters of the node.
    * This function is called each time a simulation is begun/resumed.

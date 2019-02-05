@@ -48,14 +48,9 @@ public:
 
   ~RecordingBackendASCII() throw();
 
-  /**
-   * Functions called by all instantiated recording devices to register
-   * themselves with their
-   * metadata. Here, files are opened.
-   */
-  void enroll( const RecordingDevice& device );
-  void enroll( const RecordingDevice& device,
-    const std::vector< Name >& value_names );
+  virtual void enroll( const RecordingDevice& device,
+		       const std::vector< Name >& double_value_names,
+		       const std::vector< Name >& long_value_names );
 
   /**
    * Flush files after a single call to Run
@@ -73,13 +68,10 @@ public:
    */
   void synchronize();
 
-  /**
-   * Functions to write data to file.
-   */
-  void write( const RecordingDevice& device, const Event& event );
-  void write( const RecordingDevice& device,
-    const Event& event,
-    const std::vector< double >& );
+  virtual void write( const RecordingDevice&,
+		      const Event&,
+		      const std::vector< double >&,
+		      const std::vector< long >& );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;

@@ -32,7 +32,7 @@
 #include "vp_manager_impl.h"
 
 #include "recording_backend_arbor.h"
-#include "mpiutil-impl.hpp"
+#include "mpiutil_impl.h"
 #include "exceptions.h"
 
 // this is here to hide the arbor internal header info from nest

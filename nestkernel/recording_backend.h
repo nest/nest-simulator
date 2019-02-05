@@ -48,9 +48,9 @@ public:
   {
   }
 
-  virtual void enroll( const RecordingDevice& device ) = 0;
-  virtual void enroll( const RecordingDevice& device,
-    const std::vector< Name >& value_names ) = 0;
+  virtual void enroll( const RecordingDevice&,
+		       const std::vector< Name >&,
+		       const std::vector< Name >&) = 0;
 
   virtual void
   initialize() = 0;
@@ -79,10 +79,10 @@ public:
   {
   }
 
-  virtual void write( const RecordingDevice& device, const Event& event ) = 0;
-  virtual void write( const RecordingDevice& device,
-    const Event& event,
-    const std::vector< double >& ) = 0;
+  virtual void write( const RecordingDevice&,
+		      const Event&,
+		      const std::vector< double >&,
+		      const std::vector< long >& ) = 0;
 
   virtual void
   set_status( const DictionaryDatum& )
@@ -103,6 +103,12 @@ public:
   get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
   {
   }
+
+  static const std::vector< Name > NO_DOUBLE_VALUE_NAMES;
+  static const std::vector< Name > NO_LONG_VALUE_NAMES;
+  static const std::vector< double > NO_DOUBLE_VALUES;
+  static const std::vector< long > NO_LONG_VALUES;
+  
 };
 
 } // namespace

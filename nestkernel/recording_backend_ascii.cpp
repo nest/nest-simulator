@@ -42,15 +42,9 @@ nest::RecordingBackendASCII::~RecordingBackendASCII() throw()
 }
 
 void
-nest::RecordingBackendASCII::enroll( const RecordingDevice& device )
-{
-  std::vector< Name > value_names;
-  enroll( device, value_names );
-}
-
-void
 nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
-  const std::vector< Name >& /* value_names */ )
+				     const std::vector< Name >& double_value_names,
+				     const std::vector< Name >& long_value_names )
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
@@ -95,6 +89,24 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
 
     throw IOError();
   }
+
+  ( *file ) << "# sender";
+  if ( device.get_time_in_steps() )
+  {
+      ( *file ) << "time(step)\toffset";
+  }
+  else
+  {
+      ( *file ) << "time(ms)";
+  }
+  for ( auto& val: double_value_names )
+  {
+    ( *file ) << "\t" << val;
+  }
+  for ( auto& val: long_value_names )
+  {
+    ( *file ) << "\t" << val;
+  }
   
   //enroll the device
   files_[ t ].insert( std::make_pair( gid, std::make_pair( filename, file ) ) );
@@ -120,6 +132,10 @@ nest::RecordingBackendASCII::post_run_cleanup()
     }
   }
 }
+
+//JME: Document that Simulate used to append to files previously
+//unless close_after_simulate (default:false) was set to true and will
+//overwrite files now with nestio.
 
 void
 nest::RecordingBackendASCII::finalize()
@@ -147,7 +163,9 @@ nest::RecordingBackendASCII::synchronize()
 
 void
 nest::RecordingBackendASCII::write( const RecordingDevice& device,
-  const Event& event )
+				    const Event& event,
+				    const std::vector< double >& double_values,
+				    const std::vector< long >& long_values )
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
@@ -171,40 +189,14 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
   {
     file << stamp.get_ms() - offset;
   }
-  file << "\n";
-}
-
-void
-nest::RecordingBackendASCII::write( const RecordingDevice& device,
-  const Event& event,
-  const std::vector< double >& values )
-{
-  const thread t = device.get_thread();
-  const index gid = device.get_gid();
-
-  if ( files_[ t ].find( gid ) == files_[ t ].end() )
+  
+  for ( auto& val: double_values )
   {
-    return;
+    file << "\t" << val;
   }
-
-  const index sender = event.get_sender_gid();
-  const Time stamp = event.get_stamp();
-  const double offset = event.get_offset();
-
-  std::ofstream& file = *( files_[ t ][ gid ].second );
-  file << sender << "\t";
-  if ( device.get_time_in_steps() )
+  for ( auto& val: long_values )
   {
-    file << stamp.get_steps() << "\t" << offset;
-  }
-  else
-  {
-    file << stamp.get_ms() - offset;
-  }
-  std::vector< double >::const_iterator val;
-  for ( val = values.begin(); val != values.end(); ++val )
-  {
-    file << "\t" << *val;
+    file << "\t" << val;
   }
   file << "\n";
 }

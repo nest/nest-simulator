@@ -27,7 +27,7 @@
 #include <memory>
 
 #include "recording_backend.h"
-#include "mpiutil.hpp"
+#include "mpiutil.h"
 
 namespace nest
 {

@@ -126,7 +126,12 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
   ptmp.set( *this, d, stmp.n_events_ ); // throws if BadProperty
 
   Device::set_status( d );
-  kernel().io_manager.set_recording_device_status( *this, d );
+  
+  for ( auto& backend_token : P_.record_to_ )
+  {
+    Name backend_name( getValue< std::string >( backend_token ) );
+    kernel().io_manager.set_recording_device_status( backend_name, *this, d );
+  }
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

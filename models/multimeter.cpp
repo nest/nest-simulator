@@ -174,7 +174,8 @@ void
 Multimeter::calibrate()
 {
   RecordingDevice::calibrate();
-  RecordingDevice::enroll( P_.record_from_ );
+  RecordingDevice::enroll( P_.record_from_,
+			   RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void
@@ -229,7 +230,7 @@ Multimeter::handle( DataLoggingReply& reply )
     // const Time stamp = reply.get_stamp();
     // const double offset = reply.get_offset();
 
-    RecordingDevice::write( reply, info[ j ].data );
+    RecordingDevice::write( reply, info[ j ].data, RecordingBackend::NO_LONG_VALUES );
 
     S_.data_.push_back( info[ j ].data );
   }

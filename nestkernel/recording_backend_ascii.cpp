@@ -90,7 +90,15 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
     throw IOError();
   }
 
-  ( *file ) << "#";
+  ( *file ) << "# sender";
+  if ( device.get_time_in_steps() )
+  {
+      ( *file ) << "time(step)\toffset";
+  }
+  else
+  {
+      ( *file ) << "time(ms)";
+  }
   for ( auto& val: double_value_names )
   {
     ( *file ) << "\t" << val;

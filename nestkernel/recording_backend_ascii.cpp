@@ -133,6 +133,10 @@ nest::RecordingBackendASCII::post_run_cleanup()
   }
 }
 
+//JME: Document that Simulate used to append to files previously
+//unless close_after_simulate (default:false) was set to true and will
+//overwrite files now with nestio.
+
 void
 nest::RecordingBackendASCII::finalize()
 {

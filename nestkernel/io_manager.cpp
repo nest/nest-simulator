@@ -284,15 +284,14 @@ nest::IOManager::clear_recording_backends( const RecordingDevice& device )
 }
 
 void
-nest::IOManager::write( const RecordingDevice& device,
+nest::IOManager::write( Name backend_name,
+			const RecordingDevice& device,
 			const Event& event,
 			const std::vector< double >& double_values,
     			const std::vector< long >& long_values )
 {
-  for ( auto& backend : recording_backends_ )
-  {
-    backend.second->write( device, event, double_values, long_values );
-  }
+  RecordingBackend* backend = get_recording_backend_( backend_name );
+  backend->write( device, event, double_values, long_values );
 }
 
 void
@@ -301,27 +300,24 @@ nest::IOManager::enroll_recorder( Name backend_name,
 				  const std::vector< Name >& double_value_names,
 				  const std::vector< Name >& long_value_names )
 {
-  get_recording_backend_( backend_name )->enroll( device, double_value_names, long_value_names );
+  RecordingBackend* backend = get_recording_backend_( backend_name );
+  backend->enroll( device, double_value_names, long_value_names );
 }
 
 void
-nest::IOManager::get_recording_device_status( const RecordingDevice& device,
+nest::IOManager::get_recording_device_status( Name backend_name,
+					      const RecordingDevice& device,
 					      DictionaryDatum& d )
 {
-  std::map< Name, RecordingBackend* >::const_iterator it;
-  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
-  {
-    it->second->get_device_status( device, d );
-  }
+  RecordingBackend* backend = get_recording_backend_( backend_name );
+  backend->get_device_status( device, d );
 }
 
 void
-nest::IOManager::set_recording_device_status( const RecordingDevice& device,
+nest::IOManager::set_recording_device_status( Name backend_name,
+					      const RecordingDevice& device,
 					      const DictionaryDatum& d )
 {
-  std::map< Name, RecordingBackend* >::const_iterator it;
-  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
-  {
-    it->second->set_device_status( device, d );
-  }
+  RecordingBackend* backend = get_recording_backend_( backend_name );
+  backend->set_device_status( device, d );
 }

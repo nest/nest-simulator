@@ -131,6 +131,9 @@ private:
     unsigned int type;
     std::string name;
     std::string label;
+
+    long origin, t_start, t_stop;
+
     unsigned long int n_rec;
     std::vector< std::string > double_value_names;
     std::vector< std::string > long_value_names;

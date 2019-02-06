@@ -76,6 +76,10 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device,
   info.name = device.get_name();
   info.label = device.get_label();
 
+  info.origin = device.get_origin().get_steps();
+  info.t_start = device.get_start().get_steps();
+  info.t_stop = device.get_stop().get_steps();
+
   info.double_value_names.reserve( double_value_names.size() );
   for ( auto& val: double_value_names )
   {
@@ -308,6 +312,9 @@ nest::RecordingBackendSIONlib::close_files_()
 
       sion_uint64 gid;
       sion_uint32 type;
+      sion_int64 origin;
+      sion_int64 t_start;
+      sion_int64 t_stop;
       sion_uint64 n_rec;
       sion_uint32 double_n_val;
       sion_uint32 long_n_val;
@@ -332,6 +339,13 @@ nest::RecordingBackendSIONlib::close_files_()
         strncpy( label, dev_info.label.c_str(), DEV_NAME_BUFFERSIZE-1 );
         label[DEV_NAME_BUFFERSIZE-1] = '\0';
         sion_fwrite( &label, sizeof( char ), DEV_NAME_BUFFERSIZE, file.sid );
+
+        origin = static_cast< sion_int64 >( dev_info.origin );
+        sion_fwrite( &origin, sizeof( sion_int64 ), 1, file.sid );
+        t_start = static_cast< sion_int64 >( dev_info.t_start );
+        sion_fwrite( &t_start, sizeof( sion_int64 ), 1, file.sid );
+        t_stop = static_cast< sion_int64 >( dev_info.t_stop );
+        sion_fwrite( &t_stop, sizeof( sion_int64 ), 1, file.sid );
 
         n_rec = static_cast< sion_uint64 >( dev_info.n_rec );
         sion_fwrite( &n_rec, sizeof( sion_uint64 ), 1, file.sid );

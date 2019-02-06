@@ -74,7 +74,10 @@ nest::spin_detector::init_buffers_()
 void
 nest::spin_detector::calibrate()
 {
-  // device_.calibrate(); //FIXME
+  RecordingDevice::calibrate();
+  RecordingDevice::enroll( RecordingBackend::NO_DOUBLE_VALUE_NAMES,
+	{ nest::names::S }
+	 );
 }
 
 void
@@ -86,7 +89,9 @@ nest::spin_detector::update( Time const&, const long, const long )
         ++e )
   {
     assert( *e != 0 );
-    // device_.write( **e ); //FIXME
+    std::vector< long > values;
+    values.push_back((**e).get_weight());
+    RecordingDevice::write(**e, RecordingBackend::NO_DOUBLE_VALUES, values );
     delete *e;
   }
 

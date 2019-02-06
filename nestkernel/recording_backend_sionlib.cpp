@@ -54,13 +54,6 @@ nest::RecordingBackendSIONlib::~RecordingBackendSIONlib() throw()
   finalize();
 }
 
-// void
-// nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device )
-// {
-//   std::vector< Name > value_names;
-//   nest::RecordingBackendSIONlib::enroll( device, value_names );
-// }
-
 void
 nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device,
   const std::vector< Name >& double_value_names,
@@ -350,7 +343,6 @@ nest::RecordingBackendSIONlib::close_files_()
         long_n_val = static_cast< sion_uint32 >( dev_info.long_value_names.size() );
         sion_fwrite( &long_n_val, sizeof( sion_uint32 ), 1, file.sid );
 
-        // TODO: Check proper null termination in all C strings in sionlib rec. backend
         for ( const auto& val: dev_info.double_value_names )
         {
           char name[ VALUE_NAME_BUFFERSIZE ];

@@ -61,9 +61,9 @@ nest::IOManager::IOManager()
 //#ifdef HAVE_MPI
 //  recording_backends_.insert(std::make_pair( "arbor", new RecordingBackendArbor() ) );
 //#endif
-//#ifdef HAVE_SIONLIB
-//  recording_backends_.insert(std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
-//#endif
+#ifdef HAVE_SIONLIB
+  recording_backends_.insert(std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
+#endif
 }
 
 nest::IOManager::~IOManager()

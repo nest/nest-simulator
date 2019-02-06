@@ -35,21 +35,27 @@ namespace nest
 class RecordingBackendSIONlib : public RecordingBackend
 {
 public:
+  const static unsigned int SIONLIB_REC_BACKEND_VERSION;
+  const static unsigned int DEV_NAME_BUFFERSIZE;
+  const static unsigned int DEV_LABEL_BUFFERSIZE;
+  const static unsigned int VALUE_NAME_BUFFERSIZE;
+  const static unsigned int NEST_VERSION_BUFFERSIZE;
+
   RecordingBackendSIONlib();
 
   ~RecordingBackendSIONlib() throw();
 
-  void enroll( const RecordingDevice& device );
   void enroll( const RecordingDevice& device,
-    const std::vector< Name >& value_names );
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names );
 
   void finalize();
   void synchronize();
 
-  void write( const RecordingDevice& device, const Event& event );
   void write( const RecordingDevice& device,
     const Event& event,
-    const std::vector< double >& );
+    const std::vector< double >& double_values,
+    const std::vector< long >& long_values );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
@@ -126,7 +132,8 @@ private:
     std::string name;
     std::string label;
     unsigned long int n_rec;
-    std::vector< std::string > value_names;
+    std::vector< std::string > double_value_names;
+    std::vector< std::string > long_value_names;
   };
 
   struct DeviceEntry

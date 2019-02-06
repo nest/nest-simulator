@@ -31,8 +31,6 @@
    Afterwards a neuron with four synaptic time constants with different weights and delays 
    is simulated and the resulting membrane potential values after the income of one spike  
    are checked against analytically obtained values.
-   The textual output of the voltmeter documented in this file can be regenerated 
-   by setting adding /to_screen true to the SetStatus call of vm below.
   
    SeeAlso: testsuite::test_iaf_psc_alpha_multisynapse, iaf_psc_exp_multisynapse
 

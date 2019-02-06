@@ -39,7 +39,7 @@ n = nest.Create('iaf_psc_alpha')
 nest.Connect(sg, n, 'one_to_one', {'weight': 750.0, 'delay': 1.0})
 
 vm = nest.Create('voltmeter')
-nest.SetStatus(vm, {'to_memory': False, 'to_screen': True})
+nest.SetStatus(vm, {"record_to": "screen"})
 
 nest.Connect(vm, n)
 

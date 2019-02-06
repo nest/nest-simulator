@@ -53,7 +53,7 @@ MUSIC port `spikes_out` to the second, which receives the events on the port
     /iaf_psc_alpha Create /n Set
     sg n << /weight 750.0 >> Connect
     /voltmeter Create /vm Set
-    vm << /to_memory false /to_screen true >> SetStatus
+    vm << /record_to [ /screen ] >> SetStatus
     vm n Connect
     /music_event_out_proxy Create /meop Set
     meop << /port_name (spikes_out) >> SetStatus
@@ -78,7 +78,7 @@ meip << /port_name (spikes_in) /music_channel 0 >> SetStatus
 /iaf_psc_alpha Create /n Set
 meip n << /weight 750.0 >> Connect
 /voltmeter Create /vm Set
-vm << /to_memory false /to_screen true >> SetStatus
+vm << /record_to [ /screen ] >> SetStatus
 vm n Connect
 10 Simulate
 

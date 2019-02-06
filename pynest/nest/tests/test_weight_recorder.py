@@ -216,7 +216,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus({"local_num_threads": 2})
 
-        wr = nest.Create('weight_recorder', params={"withport": True})
+        wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
                        {"weight_recorder": wr[0], "weight": 1.})
 

@@ -177,7 +177,7 @@ def from_device(detec, plot_lid=False, **kwargs):
     if not nest.GetStatus(detec)[0]["model"] == "spike_detector":
         raise nest.NESTError("Please provide a spike_detector.")
 
-    if nest.GetStatus(detec, "to_memory")[0]:
+    if "memory" in nest.GetStatus(detec, "record_to")[0]:
 
         ts, gids = _from_memory(detec)
 

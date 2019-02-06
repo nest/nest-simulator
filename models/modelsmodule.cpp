@@ -314,18 +314,6 @@ ModelsModule::init( SLIInterpreter* )
   which contains membrane potential as vector /V_m and pertaining
   times as vector /times and node GIDs as /senders.
 
-  Accumulator mode:
-  Voltmeter can operate in accumulator mode. In this case, values for all
-  recorded variables are added across all recorded nodes (but kept separate in
-  time). This can be useful to record average membrane potential in a
-  population.
-
-  To activate accumulator mode, either set /to_accumulator to true, or set
-  /record_to [ /accumulator ].  In accumulator mode, you cannot record to file,
-  to memory, to screen, with GID or with weight. You must activate accumulator
-  mode before simulating. Accumulator data is never written to file. You must
-  extract it from the device using GetStatus.
-
   Remarks:
    - The voltmeter model is implemented as a multimeter preconfigured to
      record /V_m.

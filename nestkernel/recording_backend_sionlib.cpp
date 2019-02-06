@@ -412,10 +412,14 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
     
   FileEntry& file = files_[ device.get_vp() ];
   SIONBuffer& buffer = file.buffer;
+  DeviceInfo& device_info = devices_[ t ].find( device_gid )->second.info;
 
-  devices_[ t ].find( device_gid )->second.info.n_rec++;
+  assert( device_info.double_value_names.size() == double_values.size() );
   const sion_uint32 double_n_values = static_cast< sion_uint32 >( double_values.size() );
+  assert( device_info.long_value_names.size() == long_values.size() );
   const sion_uint32 long_n_values = static_cast< sion_uint32 >( long_values.size() );
+
+  device_info.n_rec++;
 
   // 2 * GID (device, source) + time in steps + offset (double) + number of
   // double values + number of long values + one double per double value +

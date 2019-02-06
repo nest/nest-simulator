@@ -35,6 +35,12 @@ namespace nest
 class RecordingBackendSIONlib : public RecordingBackend
 {
 public:
+  const static unsigned int SIONLIB_REC_BACKEND_VERSION;
+  const static unsigned int DEV_NAME_BUFFERSIZE;
+  const static unsigned int DEV_LABEL_BUFFERSIZE;
+  const static unsigned int VALUE_NAME_BUFFERSIZE;
+  const static unsigned int NEST_VERSION_BUFFERSIZE;
+
   RecordingBackendSIONlib();
 
   ~RecordingBackendSIONlib() throw();

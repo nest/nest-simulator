@@ -29,11 +29,20 @@
 // Includes from libnestutil:
 #include "compose.hpp"
 
+// Includes from nest:
+#include "../nest/neststartup.h"
+
 // Includes from nestkernel:
 #include "recording_device.h"
 #include "vp_manager_impl.h"
 
 #include "recording_backend_sionlib.h"
+
+const unsigned int nest::RecordingBackendSIONlib::SIONLIB_REC_BACKEND_VERSION = 2;
+const unsigned int nest::RecordingBackendSIONlib::DEV_NAME_BUFFERSIZE = 16;
+const unsigned int nest::RecordingBackendSIONlib::DEV_LABEL_BUFFERSIZE = 16;
+const unsigned int nest::RecordingBackendSIONlib::VALUE_NAME_BUFFERSIZE = 8;
+const unsigned int nest::RecordingBackendSIONlib::NEST_VERSION_BUFFERSIZE = 128;
 
 nest::RecordingBackendSIONlib::RecordingBackendSIONlib()
  : files_opened_( false )
@@ -285,8 +294,19 @@ nest::RecordingBackendSIONlib::close_files_()
       sion_fwrite( &t_end, sizeof( double ), 1, file.sid );
       sion_fwrite( &resolution, sizeof( double ), 1, file.sid );
 
-      // write version info
-      
+      // write version of the sionlib recording backend into container file
+      sion_fwrite( &SIONLIB_REC_BACKEND_VERSION, sizeof( sion_int32 ), 1, file.sid );
+
+      // get nest version info from the SLI interpreter's statusdict
+      SLIInterpreter& i = get_engine();
+      const Token& rcsinfo_token = i.statusdict->lookup2( Name("rcsinfo") );
+      std::string rcsinfo = getValue< std::string >( rcsinfo_token );
+
+      // write nest version into sionlib container file
+      char rcsinfo_buffer[NEST_VERSION_BUFFERSIZE];
+      strncpy( rcsinfo_buffer, rcsinfo.c_str(), NEST_VERSION_BUFFERSIZE-1 );
+      rcsinfo_buffer[NEST_VERSION_BUFFERSIZE-1] = '\0';
+      sion_fwrite( rcsinfo_buffer, sizeof( char ), NEST_VERSION_BUFFERSIZE, file.sid );
 
       // write device info
       const sion_uint64 n_dev =
@@ -310,13 +330,15 @@ nest::RecordingBackendSIONlib::close_files_()
         sion_fwrite( &gid, sizeof( sion_uint64 ), 1, file.sid );
         sion_fwrite( &type, sizeof( sion_uint32 ), 1, file.sid );
 
-        char name[ 16 ];
-        strncpy( name, dev_info.name.c_str(), 16 );
-        sion_fwrite( &name, sizeof( char ), 16, file.sid );
+        char name[ DEV_NAME_BUFFERSIZE ];
+        strncpy( name, dev_info.name.c_str(), DEV_NAME_BUFFERSIZE-1 );
+        name[DEV_NAME_BUFFERSIZE-1] = '\0';
+        sion_fwrite( &name, sizeof( char ), DEV_NAME_BUFFERSIZE, file.sid );
 
-        char label[ 16 ];
-        strncpy( label, dev_info.label.c_str(), 16 );
-        sion_fwrite( &label, sizeof( char ), 16, file.sid );
+        char label[ DEV_NAME_BUFFERSIZE ];
+        strncpy( label, dev_info.label.c_str(), DEV_NAME_BUFFERSIZE-1 );
+        label[DEV_NAME_BUFFERSIZE-1] = '\0';
+        sion_fwrite( &label, sizeof( char ), DEV_NAME_BUFFERSIZE, file.sid );
 
         n_rec = static_cast< sion_uint64 >( dev_info.n_rec );
         sion_fwrite( &n_rec, sizeof( sion_uint64 ), 1, file.sid );
@@ -331,17 +353,17 @@ nest::RecordingBackendSIONlib::close_files_()
         // TODO: Check proper null termination in all C strings in sionlib rec. backend
         for ( const auto& val: dev_info.double_value_names )
         {
-          char name[ 8 ];
-          strncpy( name, val.c_str(), 7 );
-          name[7] = '\0';
-          sion_fwrite( &name, sizeof( char ), 8, file.sid );
+          char name[ VALUE_NAME_BUFFERSIZE ];
+          strncpy( name, val.c_str(), VALUE_NAME_BUFFERSIZE-1 );
+          name[VALUE_NAME_BUFFERSIZE-1] = '\0';
+          sion_fwrite( &name, sizeof( char ), VALUE_NAME_BUFFERSIZE, file.sid );
         }
         for ( const auto& val: dev_info.long_value_names )
         {
-          char name[ 8 ];
-          strncpy( name, val.c_str(), 7 );
-          name[7] = '\0';
-          sion_fwrite( &name, sizeof( char ), 8, file.sid );
+          char name[ VALUE_NAME_BUFFERSIZE ];
+          strncpy( name, val.c_str(), VALUE_NAME_BUFFERSIZE-1 );
+          name[VALUE_NAME_BUFFERSIZE-1] = '\0';
+          sion_fwrite( &name, sizeof( char ), VALUE_NAME_BUFFERSIZE, file.sid );
         }
       }
 

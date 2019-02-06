@@ -506,9 +506,7 @@ nest::RecordingBackendSIONlib::build_filename_() const
     basename << path << '/';
   basename << kernel().io_manager.get_data_prefix();
 
-  basename << "output";
-
-  return basename.str() + '.' + P_.file_ext_;
+  return basename.str() + P_.filename_;
 }
 
 /* ----------------------------------------------------------------
@@ -592,7 +590,7 @@ nest::RecordingBackendSIONlib::SIONBuffer&
  * ---------------------------------------------------------------- */
 
 nest::RecordingBackendSIONlib::Parameters_::Parameters_()
-  : file_ext_( "sion" )
+  : filename_( "output.sion" )
   , sion_collective_( false )
   , sion_chunksize_( 1 << 18 )
   , sion_n_files_( 1 )
@@ -605,7 +603,7 @@ nest::RecordingBackendSIONlib::Parameters_::get(
   const RecordingBackendSIONlib& al,
   DictionaryDatum& d ) const
 {
-  ( *d )[ names::file_extension ] = file_ext_;
+  ( *d )[ names::filename ] = filename_;
   ( *d )[ names::buffer_size ] = buffer_size_;
   ( *d )[ names::sion_chunksize ] = sion_chunksize_;
   ( *d )[ names::sion_collective ] = sion_collective_;
@@ -617,7 +615,7 @@ nest::RecordingBackendSIONlib::Parameters_::set(
   const RecordingBackendSIONlib& al,
   const DictionaryDatum& d )
 {
-  updateValue< std::string >( d, names::file_extension, file_ext_ );
+  updateValue< std::string >( d, names::filename, filename_ );
   updateValue< long >( d, names::buffer_size, buffer_size_ );
   updateValue< long >( d, names::sion_chunksize, sion_chunksize_ );
   updateValue< bool >( d, names::sion_collective, sion_collective_ );

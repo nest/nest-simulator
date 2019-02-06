@@ -164,20 +164,20 @@ private:
   file_map files_;
 
   std::string filename_;
-  MPI_Comm local_comm_;    // single copy of local MPI communicator
-                           // for all threads using the sionlib
-                           // recording backend in parallel (for broadcasting
-                           // the results of MPIX..(..) in open_files_(..))
+  MPI_Comm local_comm_;     // single copy of local MPI communicator
+                            // for all threads using the sionlib
+                            // recording backend in parallel (for broadcasting
+                            // the results of MPIX..(..) in open_files_(..))
 
   double t_start_; // simulation start time for storing
 
   struct Parameters_
   {
-    std::string file_ext_; //!< the file name extension to use, without .
-    bool sion_collective_; //!< use SIONlib's collective mode.
-    long sion_chunksize_;  //!< the size of SIONlib's buffer.
-    int sion_n_files_;     //!< the number of SIONLIB container files automatically used.
-    long buffer_size_;     //!< the size of the internal buffer.
+    std::string filename_; //!< the file name extension to use, without .
+    bool sion_collective_;  //!< use SIONlib's collective mode.
+    long sion_chunksize_;   //!< the size of SIONlib's buffer.
+    int sion_n_files_;      //!< the number of SIONLIB container files automatically used.
+    long buffer_size_;      //!< the size of the internal buffer.
 
     Parameters_();
 

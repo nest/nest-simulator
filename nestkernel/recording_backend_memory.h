@@ -138,7 +138,7 @@ private:
       }
       for ( size_t i = 0; i < long_values.size(); ++i )
       {
-        long_values_[ i ].push_back( double_values[ i ] );
+        long_values_[ i ].push_back( long_values[ i ] );
       }
     }
 

@@ -93,11 +93,11 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
   ( *file ) << "# sender";
   if ( device.get_time_in_steps() )
   {
-      ( *file ) << "time(step)\toffset";
+      ( *file ) << "\ttime(step)\toffset";
   }
   else
   {
-      ( *file ) << "time(ms)";
+      ( *file ) << "\ttime(ms)";
   }
   for ( auto& val: double_value_names )
   {
@@ -107,7 +107,8 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
   {
     ( *file ) << "\t" << val;
   }
-  
+  ( *file ) << std::endl;
+
   //enroll the device
   files_[ t ].insert( std::make_pair( gid, std::make_pair( filename, file ) ) );
 }

@@ -29,15 +29,9 @@
 #include "recording_backend_screen.h"
 
 void
-nest::RecordingBackendScreen::enroll( const RecordingDevice& device)
-{
-  std::vector< Name > value_names;
-  enroll( device, value_names );
-}
-
-void
 nest::RecordingBackendScreen::enroll( const RecordingDevice& device,
-  const std::vector< Name >& )
+				      const std::vector< Name >&,
+				      const std::vector< Name >& )
 {
   const index gid = device.get_gid();
   const thread t = device.get_thread();
@@ -64,42 +58,9 @@ nest::RecordingBackendScreen::synchronize()
 
 void
 nest::RecordingBackendScreen::write( const RecordingDevice& device,
-  const Event& event )
-{
-  const thread t = device.get_thread();
-  const index gid = device.get_gid();
-
-  if ( enrolled_devices_[ t ].find( gid ) == enrolled_devices_[ t ].end() )
-  {
-    return;
-  }
-
-  const index sender = event.get_sender_gid();
-  const Time stamp = event.get_stamp();
-  const double offset = event.get_offset();
-
-#pragma omp critical
-  {
-    prepare_cout_();
-
-    std::cout << sender << "\t";
-    if ( device.get_time_in_steps() )
-    {
-      std::cout << stamp.get_steps() << "\t" << offset << std::endl;
-    }
-    else
-    {
-      std::cout << stamp.get_ms() - offset << std::endl;
-    }
-
-    restore_cout_();
-  }
-}
-
-void
-nest::RecordingBackendScreen::write( const RecordingDevice& device,
-  const Event& event,
-  const std::vector< double >& values )
+				     const Event& event,
+				     const std::vector< double >& double_values,
+				     const std::vector< long >& long_values )
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
@@ -126,10 +87,13 @@ nest::RecordingBackendScreen::write( const RecordingDevice& device,
     {
       std::cout	<< stamp.get_ms() - offset;
     }
-    std::vector< double >::const_iterator val;
-    for ( val = values.begin(); val != values.end(); ++val )
+    for ( auto& val : double_values )
     {
-      std::cout << "\t" << *val;
+      std::cout << "\t" << val;
+    }
+    for ( auto& val : long_values )
+    {
+      std::cout << "\t" << val;
     }
     std::cout << std::endl;
 

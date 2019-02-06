@@ -57,7 +57,7 @@ nest::IOManager::IOManager()
 {
   recording_backends_.insert(std::make_pair( "ascii", new RecordingBackendASCII() ) );
   recording_backends_.insert(std::make_pair( "memory", new RecordingBackendMemory() ) );
-//  recording_backends_.insert(std::make_pair( "screen", new RecordingBackendScreen() ) );
+  recording_backends_.insert(std::make_pair( "screen", new RecordingBackendScreen() ) );
 //#ifdef HAVE_MPI
 //  recording_backends_.insert(std::make_pair( "arbor", new RecordingBackendArbor() ) );
 //#endif

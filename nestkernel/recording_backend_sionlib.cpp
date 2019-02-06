@@ -54,13 +54,6 @@ nest::RecordingBackendSIONlib::~RecordingBackendSIONlib() throw()
   finalize();
 }
 
-// void
-// nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device )
-// {
-//   std::vector< Name > value_names;
-//   nest::RecordingBackendSIONlib::enroll( device, value_names );
-// }
-
 void
 nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device,
   const std::vector< Name >& double_value_names,
@@ -82,6 +75,10 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device,
   info.type = static_cast< unsigned int >( device.get_type() );
   info.name = device.get_name();
   info.label = device.get_label();
+
+  info.origin = device.get_origin().get_steps();
+  info.t_start = device.get_start().get_steps();
+  info.t_stop = device.get_stop().get_steps();
 
   info.double_value_names.reserve( double_value_names.size() );
   for ( auto& val: double_value_names )
@@ -315,6 +312,9 @@ nest::RecordingBackendSIONlib::close_files_()
 
       sion_uint64 gid;
       sion_uint32 type;
+      sion_int64 origin;
+      sion_int64 t_start;
+      sion_int64 t_stop;
       sion_uint64 n_rec;
       sion_uint32 double_n_val;
       sion_uint32 long_n_val;
@@ -340,6 +340,13 @@ nest::RecordingBackendSIONlib::close_files_()
         label[DEV_NAME_BUFFERSIZE-1] = '\0';
         sion_fwrite( &label, sizeof( char ), DEV_NAME_BUFFERSIZE, file.sid );
 
+        origin = static_cast< sion_int64 >( dev_info.origin );
+        sion_fwrite( &origin, sizeof( sion_int64 ), 1, file.sid );
+        t_start = static_cast< sion_int64 >( dev_info.t_start );
+        sion_fwrite( &t_start, sizeof( sion_int64 ), 1, file.sid );
+        t_stop = static_cast< sion_int64 >( dev_info.t_stop );
+        sion_fwrite( &t_stop, sizeof( sion_int64 ), 1, file.sid );
+
         n_rec = static_cast< sion_uint64 >( dev_info.n_rec );
         sion_fwrite( &n_rec, sizeof( sion_uint64 ), 1, file.sid );
 
@@ -350,7 +357,6 @@ nest::RecordingBackendSIONlib::close_files_()
         long_n_val = static_cast< sion_uint32 >( dev_info.long_value_names.size() );
         sion_fwrite( &long_n_val, sizeof( sion_uint32 ), 1, file.sid );
 
-        // TODO: Check proper null termination in all C strings in sionlib rec. backend
         for ( const auto& val: dev_info.double_value_names )
         {
           char name[ VALUE_NAME_BUFFERSIZE ];
@@ -500,9 +506,7 @@ nest::RecordingBackendSIONlib::build_filename_() const
     basename << path << '/';
   basename << kernel().io_manager.get_data_prefix();
 
-  basename << "output";
-
-  return basename.str() + '.' + P_.file_ext_;
+  return basename.str() + P_.filename_;
 }
 
 /* ----------------------------------------------------------------
@@ -586,7 +590,7 @@ nest::RecordingBackendSIONlib::SIONBuffer&
  * ---------------------------------------------------------------- */
 
 nest::RecordingBackendSIONlib::Parameters_::Parameters_()
-  : file_ext_( "sion" )
+  : filename_( "output.sion" )
   , sion_collective_( false )
   , sion_chunksize_( 1 << 18 )
   , sion_n_files_( 1 )
@@ -599,7 +603,7 @@ nest::RecordingBackendSIONlib::Parameters_::get(
   const RecordingBackendSIONlib& al,
   DictionaryDatum& d ) const
 {
-  ( *d )[ names::file_extension ] = file_ext_;
+  ( *d )[ names::filename ] = filename_;
   ( *d )[ names::buffer_size ] = buffer_size_;
   ( *d )[ names::sion_chunksize ] = sion_chunksize_;
   ( *d )[ names::sion_collective ] = sion_collective_;
@@ -611,7 +615,7 @@ nest::RecordingBackendSIONlib::Parameters_::set(
   const RecordingBackendSIONlib& al,
   const DictionaryDatum& d )
 {
-  updateValue< std::string >( d, names::file_extension, file_ext_ );
+  updateValue< std::string >( d, names::filename, filename_ );
   updateValue< long >( d, names::buffer_size, buffer_size_ );
   updateValue< long >( d, names::sion_chunksize, sion_chunksize_ );
   updateValue< bool >( d, names::sion_collective, sion_collective_ );

@@ -151,21 +151,25 @@ nest::spin_detector::handle( SpikeEvent& e )
     {
       // if it's the second event we write out the last event first
       RecordingDevice::write(last_event_, RecordingBackend::NO_DOUBLE_VALUES, {static_cast<int>(last_event_.get_weight())} );
+    }
+    if ( m == 2 )
+    { // already full event
+      RecordingDevice::write(e, RecordingBackend::NO_DOUBLE_VALUES, {1} );
       last_in_gid_ = 0;
     }
     else
     {
-      if ( m == 2 )
-      { // already full event
-        RecordingDevice::write(e, RecordingBackend::NO_DOUBLE_VALUES, {1} );
-      }
-      else
+      if (last_in_gid_ == 0)
       {
         // store the new event as last_event_ for the next iteration
         last_event_ = e;
-        last_event_.set_weight( (double)(m==2) );
+        last_event_.set_weight(0.0);
         last_in_gid_ = gid;
         t_last_in_spike_ = t_spike;
+      }
+      else
+      {
+        last_in_gid_ = 0;
       }
     }
   }

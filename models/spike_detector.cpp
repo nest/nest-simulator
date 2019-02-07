@@ -60,8 +60,6 @@ nest::spike_detector::init_state_( const Node& )
 void
 nest::spike_detector::init_buffers_()
 {
-  std::vector< std::vector< Event* > > tmp( 2, std::vector< Event* >() );
-  B_.spikes_.swap( tmp );
 }
 
 void

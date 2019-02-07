@@ -369,6 +369,7 @@ const Name spike_multiplicities( "spike_multiplicities" );
 const Name spike_times( "spike_times" );
 const Name spike_weights( "spike_weights" );
 const Name start( "start" );
+const Name state( "state" );
 const Name std( "std" );
 const Name std_mod( "std_mod" );
 const Name stimulator( "stimulator" );

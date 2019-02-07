@@ -28,7 +28,7 @@ Example PyNest script to demonstrate the soundclick recording backend.
 Recorded spike events produce a clicking sound similar to that heard in 
 electrophysiological recordings. The recording backend makes use of the
 SFML (Simple and Fast Multimedia Library) audio module. 
-This requires lifsml-dev to be installed. To create the illusion of a 
+This requires libsfml-dev to be installed. To create the illusion of a
 realistic sound from an electrophysiological recording, the recording 
 backend slows down the simulation to biological real time.
 '''

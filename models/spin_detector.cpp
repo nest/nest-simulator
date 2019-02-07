@@ -70,7 +70,7 @@ nest::spin_detector::calibrate()
 {
   RecordingDevice::calibrate();
   RecordingDevice::enroll( RecordingBackend::NO_DOUBLE_VALUE_NAMES,
-	{ nest::names::S }
+	{ nest::names::state }
 	 );
 }
 

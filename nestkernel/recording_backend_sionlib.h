@@ -35,21 +35,27 @@ namespace nest
 class RecordingBackendSIONlib : public RecordingBackend
 {
 public:
+  const static unsigned int SIONLIB_REC_BACKEND_VERSION;
+  const static unsigned int DEV_NAME_BUFFERSIZE;
+  const static unsigned int DEV_LABEL_BUFFERSIZE;
+  const static unsigned int VALUE_NAME_BUFFERSIZE;
+  const static unsigned int NEST_VERSION_BUFFERSIZE;
+
   RecordingBackendSIONlib();
 
   ~RecordingBackendSIONlib() throw();
 
-  void enroll( const RecordingDevice& device );
   void enroll( const RecordingDevice& device,
-    const std::vector< Name >& value_names );
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names );
 
   void finalize();
   void synchronize();
 
-  void write( const RecordingDevice& device, const Event& event );
   void write( const RecordingDevice& device,
     const Event& event,
-    const std::vector< double >& );
+    const std::vector< double >& double_values,
+    const std::vector< long >& long_values );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
@@ -125,8 +131,12 @@ private:
     unsigned int type;
     std::string name;
     std::string label;
+
+    long origin, t_start, t_stop;
+
     unsigned long int n_rec;
-    std::vector< std::string > value_names;
+    std::vector< std::string > double_value_names;
+    std::vector< std::string > long_value_names;
   };
 
   struct DeviceEntry
@@ -154,20 +164,20 @@ private:
   file_map files_;
 
   std::string filename_;
-  MPI_Comm local_comm_;    // single copy of local MPI communicator
-                           // for all threads using the sionlib
-                           // recording backend in parallel (for broadcasting
-                           // the results of MPIX..(..) in open_files_(..))
+  MPI_Comm local_comm_;     // single copy of local MPI communicator
+                            // for all threads using the sionlib
+                            // recording backend in parallel (for broadcasting
+                            // the results of MPIX..(..) in open_files_(..))
 
   double t_start_; // simulation start time for storing
 
   struct Parameters_
   {
-    std::string file_ext_; //!< the file name extension to use, without .
-    bool sion_collective_; //!< use SIONlib's collective mode.
-    long sion_chunksize_;  //!< the size of SIONlib's buffer.
-    int sion_n_files_;     //!< the number of SIONLIB container files automatically used.
-    long buffer_size_;     //!< the size of the internal buffer.
+    std::string filename_; //!< the file name extension to use, without .
+    bool sion_collective_;  //!< use SIONlib's collective mode.
+    long sion_chunksize_;   //!< the size of SIONlib's buffer.
+    int sion_n_files_;      //!< the number of SIONLIB container files automatically used.
+    long buffer_size_;      //!< the size of the internal buffer.
 
     Parameters_();
 

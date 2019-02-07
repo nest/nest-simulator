@@ -42,23 +42,27 @@ nest::RecordingBackendSoundClick::~RecordingBackendSoundClick() throw()
   finalize();
 }
 
-// Called by each spike detector during network calibration before
-// simulation run
-void
-nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device )
-{
-  // Start or resume, repectively, the stopwatch, which represents the
-  // real time.
-  stopwatch_.start();
-}
-
 // Called by each multimeter during network calibration
-void nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device,
-  const std::vector< Name >& ) // value_names, i.e. recordables
+void nest::RecordingBackendSoundClick::enroll(
+        const RecordingDevice& device,
+        const std::vector< Name >& double_value_names,
+        const std::vector< Name >& long_value_names )
 {
-  throw BadProperty(
-    "Only spike detectors can record to recording backend "
-    ">SoundClick<" );
+  // Spike detector data consists of events.
+  // Thus, the absence of value names is used to ensure that the
+  // soundclick backend is connected to a spike detector.
+  // TODO: This is an unfortunate design. For clarity, handing over
+  //       the recording device type in addition could be a solution.
+  if ( double_value_names.empty() && long_value_names.empty()) {
+    // Start or resume, respectively, the stopwatch, which represents the
+    // real time.
+    stopwatch_.start();
+  }
+  else {
+    throw BadProperty(
+            "Only spike detectors can record to recording backend "
+            ">SoundClick<");
+  }
 }
 
 // Called on simulation startup
@@ -89,8 +93,11 @@ nest::RecordingBackendSoundClick::synchronize()
 
 // Called by the spike detectors on every spike event
 void
-nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
-  const Event& event )
+nest::RecordingBackendSoundClick::write(
+            const RecordingDevice& device,
+            const Event& event,
+            const std::vector< double >& double_values,
+            const std::vector< long >& long_values )
 {
   // Calculate the time lag between real time (i.e., the stopwatch) and the
   // time of the spike event, and, if necessary, delay playing the sound.
@@ -99,27 +106,31 @@ nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
 
   // NOTE: This slows down the simulation to biological real time!
 
-  int time_spike_event_us =
-    static_cast< int >( floor( event.get_stamp().get_ms() * 1000.0 ) );
-  int time_elapsed_us =
-    static_cast< int >( floor( stopwatch_.elapsed_timestamp() ) );
-  int time_lag_us = time_spike_event_us - time_elapsed_us;
+  // Spike detector data consists of events.
+  // Thus, the absence of values is used to ensure that the
+  // soundclick backend is connected to a spike detector.
+  // TODO: This is an unfortunate design. For clarity, handing over
+  //       the recording device type in addition could be a solution.
+  if (double_values.empty() && long_values.empty()) {
+    int time_spike_event_us =
+        static_cast< int >( floor(event.get_stamp().get_ms() * 1000.0));
+    int time_elapsed_us =
+        static_cast< int >( floor(stopwatch_.elapsed_timestamp()));
+    int time_lag_us = time_spike_event_us - time_elapsed_us;
 
-  if ( time_lag_us > 0 )
-  {
-    usleep( time_lag_us );
+    if ( time_lag_us > 0 )
+    {
+        usleep( time_lag_us );
+    }
+
+    sound_.
+
+    play();
   }
-
-  sound_.play();
+  else {
+    // Must not happen !
+    // Only spike detectors are allowed to connect to the SoundClick backend.
+    throw;
+  }
 }
 
-// Called by each multimeter on every event
-void
-nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
-  const Event& event,
-  const std::vector< double >& values )
-{
-  // Must not happen !
-  // Only spike detectors are allowed to connect to the SoundClick backend.
-  throw;
-}

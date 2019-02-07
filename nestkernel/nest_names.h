@@ -393,6 +393,7 @@ extern const Name spike_multiplicities;
 extern const Name spike_times;
 extern const Name spike_weights;
 extern const Name start;
+extern const Name state;
 extern const Name std;
 extern const Name std_mod;
 extern const Name stimulator;

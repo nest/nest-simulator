@@ -57,13 +57,13 @@ nest::IOManager::IOManager()
 {
   recording_backends_.insert(std::make_pair( "ascii", new RecordingBackendASCII() ) );
   recording_backends_.insert(std::make_pair( "memory", new RecordingBackendMemory() ) );
-//  recording_backends_.insert(std::make_pair( "screen", new RecordingBackendScreen() ) );
-//#ifdef HAVE_MPI
-//  recording_backends_.insert(std::make_pair( "arbor", new RecordingBackendArbor() ) );
-//#endif
-//#ifdef HAVE_SIONLIB
-//  recording_backends_.insert(std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
-//#endif
+  recording_backends_.insert(std::make_pair( "screen", new RecordingBackendScreen() ) );
+#ifdef HAVE_MPI
+  recording_backends_.insert(std::make_pair( "arbor", new RecordingBackendArbor() ) );
+#endif
+#ifdef HAVE_SIONLIB
+  recording_backends_.insert(std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
+#endif
 }
 
 nest::IOManager::~IOManager()

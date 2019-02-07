@@ -74,27 +74,27 @@ nest::RecordingBackendArbor::~RecordingBackendArbor() throw()
   finalize();
 }
 
-void
-nest::RecordingBackendArbor::enroll( const RecordingDevice& device,
-  const std::vector< Name >& value_names )
+void nest::RecordingBackendArbor::enroll(
+        const RecordingDevice& device,
+        const std::vector< Name >& double_value_names,
+        const std::vector< Name >& long_value_names )
 {
-  throw UnsupportedEvent();
-}
-
-void
-nest::RecordingBackendArbor::enroll( const RecordingDevice& device )
-{
-  const auto tid = device.get_thread();
-  const auto gid = device.get_gid();
-
-  auto device_it = devices_[ tid ].find( gid );
-  if ( device_it  != devices_[ tid ].end() )
+  if ( double_value_names.empty() && long_value_names.empty())
   {
-    devices_[ tid ].erase( device_it );
-  }
+    const auto tid = device.get_thread();
+    const auto gid = device.get_gid();
+
+    auto device_it = devices_[ tid ].find( gid );
+    if ( device_it  != devices_[ tid ].end() )
+    {
+      devices_[ tid ].erase( device_it );
+    }
   
-  devices_[ tid ].insert( std::make_pair( gid, &device ) );
-  enrolled_ = true;
+    devices_[ tid ].insert( std::make_pair( gid, &device ) );
+  }
+  else {
+    throw BadProperty("Only spike detectors can record to arbor recording backend");
+  }
 }
 
 void
@@ -109,101 +109,98 @@ nest::RecordingBackendArbor::initialize()
 void
 nest::RecordingBackendArbor::finalize()
 {
-    if ( prepared_ )
-    {
-        cleanup();
-    }
+  if ( prepared_ )
+  {
+    cleanup();
+  }
 }
 
 void
 nest::RecordingBackendArbor::exchange_(std::vector<arb::shadow::spike>& local_spikes)
 {
-    static int step = 0;
-    std::cerr << "NEST n: " << step++ << std::endl;
-    std::cerr << "NEST: Output spikes" << std::endl;
-    arb::shadow::gather_spikes(local_spikes, MPI_COMM_WORLD);
-    std::cerr << "NEST: Output spikes done: " << steps_left_ << std::endl;
-    steps_left_--;
+  static int step = 0;
+  //std::cerr << "NEST: n: " << step++ << std::endl;
+  //std::cerr << "NEST: Output spikes" << std::endl;
+  arb::shadow::gather_spikes(local_spikes, MPI_COMM_WORLD);
+  //std::cerr << "NEST: Output spikes done: " << steps_left_ << std::endl;
+  steps_left_--;
 }
 
 void
 nest::RecordingBackendArbor::prepare()
 {
-    if (! enrolled_)
-    {
-        return;
-    }
+  if (! enrolled_)
+  {
+    return;
+  }
+
+  if ( prepared_ )
+  {
+    throw BackendPrepared( "RecordingBackendArbor" );
+  }
+  prepared_ = true;
     
-    if ( prepared_ ) {
-      throw BackendPrepared( "RecordingBackendArbor" );
-    }
-    prepared_ = true;
+  //  INITIALISE MPI
+  arbor_->info = arb::shadow::get_comm_info(false, kernel().mpi_manager.get_communicator());
+
+  //  MODEL SETUP
+  DictionaryDatum dict_out(new Dictionary);
+  kernel().get_status(dict_out);
+  const float nest_min_delay = (*dict_out)["min_delay"];
+  const int num_nest_cells = (long) (*dict_out)["network_size"];
     
-    //  INITIALISE MPI
-    arbor_->info = arb::shadow::get_comm_info(false, kernel().mpi_manager.get_communicator());
+  // HAND SHAKE ARBOR-NEST
+  // hand shake #1: communicate cell populations
+  num_arbor_cells_ = arb::shadow::broadcast(0, MPI_COMM_WORLD, arbor_->info.arbor_root);
+  arb::shadow::broadcast(num_nest_cells, MPI_COMM_WORLD, arbor_->info.nest_root);
 
-    //  MODEL SETUP
-    DictionaryDatum dict_out(new Dictionary);
-    kernel().get_status(dict_out);
-    const float nest_min_delay = (*dict_out)["min_delay"];
-    const int num_nest_cells = (long) (*dict_out)["network_size"];
-    
-    // HAND SHAKE ARBOR-NEST
-    // hand shake #1: communicate cell populations
-    num_arbor_cells_ = arb::shadow::broadcast(0, MPI_COMM_WORLD, arbor_->info.arbor_root);
-    arb::shadow::broadcast(num_nest_cells, MPI_COMM_WORLD, arbor_->info.nest_root);
+  // hand shake #2: communications step size synchronized
+  const float arb_comm_time = arb::shadow::broadcast(0.f, MPI_COMM_WORLD, arbor_->info.arbor_root);
+  const float nest_comm_time = nest_min_delay;
+  arb::shadow::broadcast(nest_comm_time, MPI_COMM_WORLD, arbor_->info.nest_root);
+  const float min_delay = std::min(nest_comm_time, arb_comm_time);
 
-    // hand shake #2: communications step size synchronized
-    const float arb_comm_time = arb::shadow::broadcast(0.f, MPI_COMM_WORLD, arbor_->info.arbor_root);
-    const float nest_comm_time = nest_min_delay;
-    arb::shadow::broadcast(nest_comm_time, MPI_COMM_WORLD, arbor_->info.nest_root);
-    const float min_delay = std::min(nest_comm_time, arb_comm_time);
+  // hand shake #3: steps
+  steps_left_ = arbor_steps_
+      = arb::shadow::broadcast(0u, MPI_COMM_WORLD, arbor_->info.arbor_root)
+      + 1; // arbor has a pre-exchange
 
-    // hand shake #3: steps
-    steps_left_ = arbor_steps_
-        = arb::shadow::broadcast(0u, MPI_COMM_WORLD, arbor_->info.arbor_root)
-        + 1; // arbor has a pre-exchange
+  // set min_delay
+  DictionaryDatum dict_in(new Dictionary);
+  (*dict_in)["min_delay"] = min_delay;
+  (*dict_in)["max_delay"] = (*dict_out)["max_delay"];
+  kernel().set_status(dict_in);
 
-    // set min_delay
-    DictionaryDatum dict_in(new Dictionary);
-    (*dict_in)["min_delay"] = min_delay;
-    (*dict_in)["max_delay"] = (*dict_out)["max_delay"];
-    kernel().set_status(dict_in);
-
-    // Arbor has an initial exchange before time 0
-    std::vector<arb::shadow::spike> empty_spikes;
-    exchange_(empty_spikes);
+  // Arbor has an initial exchange before time 0
+  std::vector<arb::shadow::spike> empty_spikes;
+  exchange_(empty_spikes);
 }
 
 void
 nest::RecordingBackendArbor::cleanup()
 {
-    if (! enrolled_)
-    {
-        return;
-    }
+  if (! enrolled_)
+  {
+    return;
+  }
 
-    if ( ! prepared_ ) {
-        throw BackendNotPrepared( "RecordingBackendArbor" );
-    }
-    prepared_ = false;
+  if ( ! prepared_ )
+  {
+    throw BackendNotPrepared( "RecordingBackendArbor" );
+  }
+  prepared_ = false;
     
-    if (steps_left_ != 0)
-    {
-        throw UnmatchedSteps( steps_left_, arbor_steps_ );
-    }
+  if (steps_left_ != 0)
+  {
+    throw UnmatchedSteps( steps_left_, arbor_steps_ );
+  }
 
-    MPI_Comm_free( &arbor_->info.comm );
+  MPI_Comm_free( &arbor_->info.comm );
 }
 
 void
 nest::RecordingBackendArbor::synchronize()
 {
-  if (! enrolled_)
-  {
-      return;
-  }
-
 #pragma omp single
   {
     auto& buffers = arbor_->spike_buffers;
@@ -212,7 +209,7 @@ nest::RecordingBackendArbor::synchronize()
     std::size_t size = 0;
     for (const auto& spikes: buffers)
     {
-        size += spikes.size();
+      size += spikes.size();
     }    
     local_spikes.reserve(size);
     
@@ -228,7 +225,9 @@ nest::RecordingBackendArbor::synchronize()
 
 void
 nest::RecordingBackendArbor::write( const RecordingDevice& device,
-  const Event& event )
+				    const Event& event,
+				    const std::vector< double >&,
+				    const std::vector< long >&)
 {
   const thread t = device.get_thread();
   const auto device_gid = device.get_gid();
@@ -248,20 +247,6 @@ nest::RecordingBackendArbor::write( const RecordingDevice& device,
   buffer.push_back({{num_arbor_cells_ + sender_gid, 0}, time});
 }
 
-void
-nest::RecordingBackendArbor::write( const RecordingDevice& device,
-  const Event& event,
-  const std::vector< double >& values )
-{
-  if ( ! enrolled_ )
-  {
-    return;
-  }
-  else
-  {
-      throw UnsupportedEvent();
-  }
-}
 
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions

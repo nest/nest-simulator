@@ -61,9 +61,6 @@ SeeAlso: spike_detector
   sd [ /events /senders ] get cva length 0 eq res exch append /res Set
   sd [ /events /times   ] get cva length 0 eq res exch append /res Set
 
-% JME: fails because there are only 5 spikes. Is this related to the
-% change in 1f3ce613a80cc at the end of models/spike_tetector.cpp?
-
   % simulate more, till 160
   55 Simulate % spikes 110 .. 160 -> 6 spikes
   sd [ /n_events ] get                   6 eq res exch append /res Set

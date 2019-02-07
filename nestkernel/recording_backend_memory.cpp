@@ -54,9 +54,6 @@ nest::RecordingBackendMemory::enroll( const RecordingDevice& device,
 
   bool time_in_steps = device.get_time_in_steps();
   data_[ t ].find( gid )->second->set_time_in_steps( time_in_steps );
-
-  bool record_targets = device.get_record_targets();
-  data_[ t ].find( gid )->second->set_record_targets( record_targets );  
 }
 
 void

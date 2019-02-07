@@ -29,7 +29,6 @@
 nest::RecordingDevice::Parameters_::Parameters_()
   : label_()
   , time_in_steps_( false )
-  , record_targets_( false )
 {
   record_to_.push_back( LiteralDatum( Name( "memory" ) ) );
 }

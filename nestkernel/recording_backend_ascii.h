@@ -48,9 +48,9 @@ public:
 
   ~RecordingBackendASCII() throw();
 
-  virtual void enroll( const RecordingDevice& device,
-		       const std::vector< Name >& double_value_names,
-		       const std::vector< Name >& long_value_names );
+  void enroll( const RecordingDevice& device,
+	       const std::vector< Name >& double_value_names,
+	       const std::vector< Name >& long_value_names );
 
   /**
    * Flush files after a single call to Run
@@ -68,10 +68,10 @@ public:
    */
   void synchronize();
 
-  virtual void write( const RecordingDevice&,
-		      const Event&,
-		      const std::vector< double >&,
-		      const std::vector< long >& );
+  void write( const RecordingDevice&,
+	      const Event&,
+	      const std::vector< double >&,
+	      const std::vector< long >& );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;

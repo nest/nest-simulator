@@ -240,9 +240,6 @@ public:
 
   bool get_time_in_steps() const;
 
-  bool get_record_targets() const;
-  void set_record_targets( bool );
-
   /**
    * Device type.
    */
@@ -273,7 +270,6 @@ private:
   {
     std::string label_;    //!< A user-defined label for symbolic device names.
     bool time_in_steps_;   //!< Should time be recorded in steps (ms if false)
-    bool record_targets_;  //!< Should the targets of events be recorded?
     ArrayDatum record_to_; //!< Array of recording backends to use
 
     Parameters_();
@@ -323,18 +319,6 @@ inline bool
 RecordingDevice::get_time_in_steps() const
 {
   return P_.time_in_steps_;
-}
-
-inline bool
-RecordingDevice::get_record_targets() const
-{
-  return P_.record_targets_;
-}
-
-inline void
-RecordingDevice::set_record_targets( bool record_targets )
-{
-  P_.record_targets_ = record_targets;
 }
 
 inline void

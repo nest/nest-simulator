@@ -79,8 +79,7 @@ void nest::RecordingBackendArbor::enroll(
         const std::vector< Name >& double_value_names,
         const std::vector< Name >& long_value_names )
 {
-  if ( double_value_names.empty() && long_value_names.empty())
-  {
+  if (device.get_type() == RecordingDevice::SPIKE_DETECTOR) {
     const auto tid = device.get_thread();
     const auto gid = device.get_gid();
 

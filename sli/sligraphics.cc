@@ -36,7 +36,7 @@
 #include "stringdatum.h"
 
 
-/*   BeginDocumentation
+/** @BeginDocumentation
 Name:readPGM - read in grey-level image in PGM Format.
 
 Synopsis:string readPGM -> int    int    int   arraytype
@@ -232,7 +232,7 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
   }
 }
 
-/*   BeginDocumentation
+/** @BeginDocumentation
 Name:writePGM - write out a grey-level image in PGM format
 
 Synopsis:string arraytype   int    int   int   writePGM

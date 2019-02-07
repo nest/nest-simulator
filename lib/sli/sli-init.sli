@@ -54,7 +54,7 @@ systemdict begin
 %% immediately needed. All others are loaded from
 %% typeinit.sli at the end of this initialization.
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: length - counts elements of a container object
  Synopsis: proc/literal/array/string/dict length -> int
  Description:
@@ -84,7 +84,7 @@ systemdict begin
   [/dictionarytype ]       /length_d  load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: get - retrieve element indexed Object of a container
  Synopsis:
   array/proc/litproc/string int --> obj
@@ -170,7 +170,7 @@ def
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: put - put indexed object into container
  Synopsis: 
            array/proc int any         --> array/proc
@@ -254,7 +254,7 @@ init_errordict
   [/literaltype /literaltype] /raiseerror load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: bind - recursively replaces executable operator names by their values.
  Synopsis: proc bind --> proc
  Description:
@@ -308,7 +308,7 @@ def
 } def
 /bind dup load bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: = - Print object to screen.
  Synopsis: any = --> -
  Description:
@@ -336,7 +336,7 @@ def
    cout exch <- endl ;
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: == - Print object to screen in syntax-form.
  Synopsis: any == --> -
  Description:
@@ -364,7 +364,7 @@ def
    cout exch <-- endl ;
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: =only - Print object to screen without linefeed
  Synopsis: any =only --> -
  Description: like =, but without a linefeed.
@@ -386,7 +386,7 @@ def
    cout exch <- ;
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: ==only - Print syntax form of object to screen without linefeed
  Synopsis: any ==only --> -
  Description: like ==, but without linefeed
@@ -409,7 +409,7 @@ def
    cout exch <-- ;
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: stack - Display operand stack
  Synopsis: stack --> - 
  Description:
@@ -438,7 +438,7 @@ def
   for
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: typestack - Display types of operand stack
  Synopsis: typestack --> - 
  Description:
@@ -466,7 +466,7 @@ proceduretype:{1}
   for
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: pstack - Display operand stack in syntax form.
  Synopsis: pstack --> - 
  Description:
@@ -495,7 +495,7 @@ proceduretype:{1}
 } bind def
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: pick - copy element from stack level n
 Synopsis: on ..ok .. o0 k pick -> on ..ok .. o0 ok
 Examples: 1 2 3 4 5 6 7 3 pick -> 4
@@ -506,7 +506,7 @@ SeeAlso: over, index
 %% Routines for benchmarking
 %% ptimes, realtime, usertime, systemtime, tic, toc
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: ptimes - returns real, user, and system time
  Synopsis:  ptimes -> [rtimes utimes stimes cutimes cstimes] 
  Description: 
@@ -528,7 +528,7 @@ SeeAlso: over, index
   pclocks pclockspersec cvd div
 } def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: realtime - returns realtime 
  Synopsis:  realtime -> rtime
  Description: 
@@ -545,7 +545,7 @@ SeeAlso: over, index
   ptimes 0 get 
 } def  
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: usertime - returns usertime for current process 
  Synopsis:  usertime -> utime
  Description: 
@@ -563,7 +563,7 @@ SeeAlso: over, index
   ptimes 1 get 
 } bind def  
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: systemtime - returns system time for current process 
  Synopsis:  systemtime -> stime
  Description: 
@@ -582,7 +582,7 @@ SeeAlso: over, index
 } bind def  
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: tic - start timing script execution
  Synopsis:  tic -> -
  Description: 
@@ -600,7 +600,7 @@ SeeAlso: over, index
  end
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: toc - Return wall clock time elapsed since tic was called.
  Synopsis:  toc -> runtime
  Description: 
@@ -618,7 +618,7 @@ SeeAlso: over, index
  end
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: clock - returns realtime 
  Synopsis:  clock -> double
  Description: 
@@ -630,7 +630,7 @@ SeeAlso: over, index
 */ 
 /clock { realtime } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: sleep - Pauses current process.
  Synopsis:  t sleep -> -
  Description: 
@@ -648,7 +648,7 @@ SeeAlso: over, index
   [/doubletype]  /sleep_d load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: ms2hms - Convert milliseconds to an array  [h min sec].
  Synopsis: ms ms2hms -> [h min sec]
  Converts the given number of milliseconds into
@@ -674,7 +674,7 @@ def
 %% The result includes also the cycles taken up by the 
 %% involved routines.
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: clic - Start measuring interpreter cycles.
   Description:	    
   clic/cloc can be used to measure the number of
@@ -689,7 +689,7 @@ def
  end
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: cloc - Return elapsed interpreter cycles since clic was called.
  SeeAlso: clic, tic, toc
 */
@@ -705,7 +705,7 @@ def
 /:clicclocs 0 def
 /:clicclocs clic cloc def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: reset - Reset the SLI interpreter
  Description:
  reset re-initializes most of the SLI interpreter by clearing the operand stack, the dictionary stack, 
@@ -730,7 +730,7 @@ def
 % * Dictionary Query Functions
 % * 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
    Name: who - list contents of  the top-level dicitonary
 
@@ -754,8 +754,7 @@ def
   cout topinfo_d
 } bind def
 
-/*
-BeginDocumentation
+/** @BeginDocumentation
 
    Name: whos - list contents of all dictionaries on the dicitonary stack
 
@@ -806,7 +805,7 @@ BeginDocumentation
 % PostScript style conversion to string
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: cvs - Convert object to string
  Description: cvs converts every object into a string
  Examples: 23 cvs -> (23)
@@ -823,7 +822,7 @@ BeginDocumentation
  str
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: pcvs - Convert object to string (long version)
  Description: pcvs converts every object into a string (long version)
  Examples: 23 pcvs -> (23)
@@ -841,7 +840,7 @@ BeginDocumentation
 } bind def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: cvs_f - Formatted conversion of double to string 
  
  Synopsis:
@@ -912,7 +911,7 @@ BeginDocumentation
 } def
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: statusdict - dictionary with platform dependent status
 information.
 Description: 
@@ -955,7 +954,7 @@ end
 def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: joinpath - Join filename and path strings, adding the slash.
 
 Synopsis: (path) (filename) joinpath -> (path/filename)
@@ -973,7 +972,7 @@ SeeAlso: join
 } bind addtotrie def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: searchfile - tries to open a file for reading using one of
        the pathes given within an array of pathnames.
  Synopsis: (filename) [pathnames] searchfile -> istream true
@@ -1045,7 +1044,7 @@ SeeAlso: join
 } bind def
 /searchfile /:searchfile_nodebug load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: LocateFileNames - Look up complete pathnames of given file in given search path.
  Synopsis: stringarray string LocateFileNames -> stringarray
  Description: 
@@ -1085,7 +1084,7 @@ SeeAlso: join
 } bind def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: searchifstream - searches SLI's search path for a file
  Synopsis: string searchifstream -> istreamtype true
                                  -> false
@@ -1132,7 +1131,7 @@ SeeAlso: join
 } bind def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: file - opens file for reading or writing
  Synopsis: string1 string2 file -> ostreamtype
                                 -> istreamtype
@@ -1203,7 +1202,7 @@ SeeAlso: join
 } bind addtotrie def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: run - execute a sli file
  Synopsis: string run -> -
  Description:
@@ -1238,7 +1237,7 @@ SeeAlso: join
 } bind addtotrie def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: addpath - add a path to SLISearchPath
  Synopsis: string addpath -> -
  Description:
@@ -1275,7 +1274,7 @@ SeeAlso: join
 % 
 % Side Effects: sets SLISeachPath in systemdict.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: setpath -  Append string to path array
  SeeAlso: addpath, path
 */
@@ -1301,7 +1300,7 @@ SeeAlso: join
 } bind addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: path -  Return current search path as array
  SeeAlso: addpath, setpath
 */
@@ -1313,7 +1312,7 @@ def
 
 %%%%%%%%%%%%%%%%%%% Error Handling %%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation  
+/** @BeginDocumentation  
 Name: handleerror - Default error handler
 Description: 
   handleerror is the default error handler. 
@@ -1366,7 +1365,7 @@ SeeAlso: raiseerror, raiseagain, stopped, stop, errordict
 def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: assert - assert that procedure returns true
 Synopsis: {assertion} assert -> -
 Remarks: assertion is a boolean
@@ -1393,7 +1392,7 @@ Author: docu by Sirko Straube
 % First Version: 19. July 1995             %
 %                Diesmann & Gewaltig       %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: cst - Convert string to array of tokens
 Synopsis: string cst -> array
 Examples: (hello) cst -> [hello]
@@ -1471,7 +1470,7 @@ SeeAlso: cv1d, cv2d, cva, cvd_s, cvi_s, cvlit, cvn, cvs, cvt_a
 % (prompt) readline (input) true
 %                           false
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: readline - read and edit a line from standard input
 
 Synopsis: any readline -> any true
@@ -1528,8 +1527,7 @@ SeeAlso: GNUreadline
   quit_i
 } bind def
 
-/*
-BeginDocumentation
+/** @BeginDocumentation
 Name: save - save interpreter state in a state dictionary
 Synopsis: save -> statedict true
 Description: 
@@ -1561,8 +1559,7 @@ Author: Marc-Oliver Gewaltig
   true
 } def
   
-/*
-BeginDocumentation
+/** @BeginDocumentation
 Name: restore - restore interpreter state from state dictionary
 synopsis: statedict restore -> false
 Description: 
@@ -1588,8 +1585,7 @@ Author: Marc-Oliver Gewaltig
   /estack get restoreestack
 } def
 
-/*
-BeginDocumentation
+/** @BeginDocumentation
 Name: exithook - Procedure executed if the executive mode is left.
 Description: 
 
@@ -1618,7 +1614,7 @@ SeeAlso: quit, exit, executive
   quit
 } def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: callback - Function to execute before each input prompt.
 Description: 
 callback is a procedure which is called in the executive mode, before
@@ -1644,7 +1640,7 @@ SeeAlso: executive, debug, break, continue
 
 /callback {} def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: executive - Start interactive interpreter session.
 SeeAlso: callback, exithook, quit, exit
 */
@@ -1711,7 +1707,7 @@ systemdict /GNUreadline known
 % Display Welcome Message      %
 % Now DOCUMENTED               %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: welcome - Print SLI welcome message
 
 Description: After the startup process of the interpreter is
@@ -1801,7 +1797,7 @@ SeeAlso: nestrc
     
 } def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: license - Display the NEST license.
 
 Description:
@@ -2104,7 +2100,7 @@ moduleinitializers
 } bind def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: start - interpreter start symbol
  Synopsis: - start -> -
  Description:
@@ -2162,7 +2158,7 @@ moduleinitializers
 } def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: nestrc - Personal interpreter initialization file
 
 Description: During startup, the NEST searches
@@ -2294,7 +2290,7 @@ SeeAlso: eval
 } def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: environment - return dictionary of environment variables
 Synopsis: enviromnent -> dict
 Description: 
@@ -2316,7 +2312,7 @@ end % systemdict
 evalrcfile
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: is_threaded - returns true if NEST/SLI was compiled with thread support
 Synopsis: is_threaded -> bool
 Description:
@@ -2331,7 +2327,7 @@ SeeAlso: statusdict
   statusdict/threading :: (no) neq 
 } def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: is_threaded_with_openmp - returns true if NEST/SLI was compiled with OpenMP support
 Synopsis: is_threaded_with_openmp -> bool
 Description:
@@ -2349,7 +2345,7 @@ SeeAlso: statusdict
 (SLI_PATH) getenv { (:) breakup { addpath } forall } if
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: skip_if_* - End script and report it as skipped
 Synopsis: skip_if_* -> -
 Description:

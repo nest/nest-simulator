@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
     Name: testsuite::test_delay_after_res_change - sli script to test delay after the resolution has changed
 
     Synopsis: (test_delay_after_res_change) run

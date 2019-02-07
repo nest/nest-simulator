@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multithreading_devices - sli script to test data collection across threads
 
 Synopsis: (test_multithreading_devices) run

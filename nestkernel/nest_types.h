@@ -32,31 +32,15 @@
 // Generated includes:
 #include "config.h"
 
-/**
- * @mainpage NEST: Neural Simulation Tool
- *
- * The main resource on information about NEST is the homepage of the
- * NEST simulator at http://www.nest-simulator.org
- * <p>
- *
- * @see Diesmann, Markus and Gewaltig, Marc-Oliver (2002) NEST: An
- * Environment for Neural Systems Simulations Goettingen : Ges. fuer
- * Wiss. Datenverarbeitung, Forschung und wisschenschaftliches
- * Rechnen, Beitraege zum Heinz-Billing-Preis 2001. 58 : 43--70
- *
- * @see Morrison, Abigail and Mehring, Carsten and Geisel, Theo and
- * Aertsen, Ad and Diesmann, Markus (2005) Advancing the boundaries of
- * high connectivity network simulation with distributed computing
- * Neural Computation. 17 (8) : 1776--1801
- *
- * @see Eppler, Jochen, Diploma Thesis, University of Freiburg (2006),
- * http://mindzoo.de/files/DiplomaThesis-Eppler.pdf
- *
- * @see Eppler, Jochen and Helias, Moritz and Muller, Eilif and
- * Diesmann, Markus and Gewaltig, Marc-Oliver (2008) PyNEST: A
- * convenient interface to the NEST simulator.  Front. Neuroinform. 2
- * : 12. doi:10.3389/neuro.11.012.2008
- */
+#ifdef HAVE_32BIT_ARCH
+#ifdef HAVE_UINT64_T // 32-bit platforms usually provide the ...
+#include <stdint.h> // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
+#else
+#error "32-bit platform does not provide a 64-bit unsigned integer data type"
+#endif
+#else
+#include <cstdint> // `uint64_t` on 64-bit platforms
+#endif
 
 /**
  * Namespace for the NEST simulation kernel.
@@ -78,7 +62,6 @@ namespace nest
 /**
  * Type for Time tics.
  */
-
 #ifdef HAVE_LONG_LONG
 typedef long long tic_t;
 #ifdef LLONG_MAX

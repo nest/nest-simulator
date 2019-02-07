@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_recorde_close_flush - test {close,flush}_after_simulate flags for recording devices
 
 Description:

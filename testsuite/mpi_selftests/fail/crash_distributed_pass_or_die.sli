@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::crash_distributed_pass_or_die - self test of distributed_pass_or_die
 
 Synopsis: nest_indirect crash_distributed_pass_or_die.sli -> -

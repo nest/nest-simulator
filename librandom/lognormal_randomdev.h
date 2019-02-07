@@ -37,8 +37,9 @@
 namespace librandom
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rdevdict::lognormal - lognormal random deviate generator
+
 Description: Generates lognormally distributed random numbers.
 
   p(x) = 1 / (x * sigma * \sqrt{2 pi}) * exp (-(ln(x)-mu)^2 / 2 sigma^2)
@@ -54,6 +55,7 @@ Mean and variance of the lognormal numbers are given by
   Var[X] = (exp(sigma^2) - 1) * E[X]^2
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
+
 Author: Hans Ekkehard Plesser
 */
 

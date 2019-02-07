@@ -41,34 +41,55 @@
 #include "recordables_map.h"
 #include "universal_data_logger.h"
 
-
 namespace nest
 {
 
-/**
- * Base class for rate model with output noise.
- *
- * This template class needs to be instantiated with a class
- * containing the following functions:
- *  - input (nonlinearity that is applied to the input)
- *  - mult_coupling_ex (factor of multiplicative coupling for excitatory input)
- *  - mult_coupling_in (factor of multiplicative coupling for inhibitory input)
- *
- * The boolean parameter linear_summation determines whether the input function
- * is applied to the summed up incoming connections (True, default value) or
- * to each input individually (False). In case of multiplicative coupling the
- * nonlinearity is applied separately to the summed excitatory and inhibitory
- * inputs if linear_summation=True.
- *
- * References:
- *
- * Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
- * Bolten, M., Helias, M. and Diesmann, M. (2017).
- * Integration of Continuous-Time Dynamics in a
- * Spiking Neural Network Simulator.
- * Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
- *
- * @see lin_rate, tanh_rate, threshold_lin_rate
+/** @BeginDocumentation
+Name: rate_neuron_opn - Base class for rate model with output noise.
+
+Description:
+
+Base class for rate model with output noise of the form
+
+$\tau dX_i(t) / dt = - X_i(t) + \mu + \phi( \sum w_{ij} \cdot
+                     \psi( X_j(t-d_{ij}) + \sqrt{tau} \cdot
+                     \sigma \cdot \xi_j(t) ) )$
+
+or
+
+$\tau dX_i(t) / dt = - X_i(t) + \mu
+                     + \text{mult\_coupling\_ex}( X_i(t) ) \cdot
+                     \phi( \sum w^{ > 0 }_{ij} \cdot \psi( X_j(t-d_{ij})
+                     + \sqrt{tau} \cdot \sigma \cdot \xi_j(t) ) )
+                     + \text{mult\_coupling\_in}( X_i(t) ) \cdot
+                     \phi( \sum w^{ < 0 }_{ij} \cdot \psi( X_j(t-d_{ij})
+                     + \sqrt{tau} \cdot \sigma \cdot \xi_j(t) ) )$.
+
+Here $\xi_j(t)$ denotes a Gaussian white noise.
+
+This template class needs to be instantiated with a class
+containing the following functions:
+ - input (nonlinearity that is applied to the input, either psi or phi)
+ - mult_coupling_ex (factor of multiplicative coupling for excitatory input)
+ - mult_coupling_in (factor of multiplicative coupling for inhibitory input)
+
+The boolean parameter linear_summation determines whether the input function
+is applied to the summed up incoming connections (True, default value, input
+represents phi) or to each input individually (False, input represents psi).
+In case of multiplicative coupling the nonlinearity is applied separately
+to the summed excitatory and inhibitory inputs if linear_summation=True.
+
+References:
+
+Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
+Bolten, M., Helias, M. and Diesmann, M. (2017).
+Integration of Continuous-Time Dynamics in a
+Spiking Neural Network Simulator.
+Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
+
+Author: David Dahmen, Jan Hahne, Jannis Schuecker
+
+SeeAlso: lin_rate, tanh_rate, threshold_lin_rate
  */
 template < class TNonlinearities >
 class rate_neuron_opn : public Archiving_Node
@@ -138,11 +159,11 @@ private:
     /** Time constant in ms. */
     double tau_;
 
-    /** Gaussian white noise standard deviation. */
-    double std_;
+    /** Noise parameter. */
+    double sigma_;
 
-    /** Gaussian white noise mean.*/
-    double mean_;
+    /** Mean input.*/
+    double mu_;
 
     /** Target of non-linearity.
         True (default): Gain function applied to linearly summed input.

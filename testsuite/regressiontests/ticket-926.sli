@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-926 Ensure stdp_dopamine_synapse does not lead to segfault
 

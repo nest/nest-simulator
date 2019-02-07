@@ -47,7 +47,7 @@ regcomp def
 regcomp def
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: ppage - print a file to cout in chunks of 20 lines.
 
 Description:
@@ -100,7 +100,7 @@ SeeAlso: page
 } def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: page - Conveniently display contents of a long file
 
 Synopsis: (filename) page -> - 
@@ -213,7 +213,7 @@ SeeAlso: help, helpindex, license, system
 } def  
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: help - prints help text for a given command
 
  Synopsis: /name help -> -
@@ -293,7 +293,7 @@ def
 } def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: helpindex - displays a list of all commands
 
  Synopsis: helpindex -> -
@@ -376,7 +376,7 @@ def
 def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: helpdesk - Display on-line help in external browser
 
 Description:
@@ -454,7 +454,7 @@ SeeAlso: SetOptions, help, helpindex
 } def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: edit - Open a file in an external editor
 
  Synopsis: (filename) edit -> -
@@ -534,7 +534,7 @@ SeeAlso: SetOptions, help, helpindex
 % implementation
 % 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: --> - longrightarrow, usually delayed comparison
  Synopsis: --> -> /-->
  Description:
@@ -563,7 +563,7 @@ SeeAlso: SetOptions, help, helpindex
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: EvaluateLiteralInfixes - Evaluates an array of infix expressions  
  Synopsis: array -> array
  Description:
@@ -634,7 +634,7 @@ SeeAlso: SetOptions, help, helpindex
 } def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: validate - Check if a function is consistent with all its examples
  Synopsis: /literal -> boolean
  Description:
@@ -776,7 +776,7 @@ The algorithm of function validate is as follows:
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: apropos - Search the command index for a regular expression.
 
 Synopsis: (regexp) apropos -> -
@@ -869,7 +869,7 @@ SeeAlso: helpindex, help, which, regcomp
 /apropos[/literaltype] {cvs apropos} def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: which - Display the name of a command's source file.
 
 Synopsis: /command which -> 

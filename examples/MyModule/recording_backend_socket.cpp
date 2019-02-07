@@ -46,12 +46,8 @@ nest::RecordingBackendSocket::enroll(
         const RecordingDevice& device,
         const std::vector< Name >& double_value_names,
         const std::vector< Name >& long_value_names ) {
-  // Spike detector data consists of events.
-  // Thus, the absence of value names is used to ensure that the
-  // socket backend is connected to a spike detector.
-  // TODO: This is an unfortunate design. For clarity, handing over
-  //       the recording device type in addition could be a solution.
-  if (double_value_names.empty() && long_value_names.empty()) {
+
+  if (device.get_type() == RecordingDevice::SPIKE_DETECTOR) {
     B_.addr_.sin_family = AF_INET;
     inet_aton(P_.ip_.c_str(), &B_.addr_.sin_addr);
     B_.addr_.sin_port = htons(P_.port_);
@@ -91,12 +87,7 @@ nest::RecordingBackendSocket::write(
         const std::vector< double >& double_values,
         const std::vector< long >& long_values )
 {
-  // Spike detector data consists of events.
-  // Thus, the absence of values is used to ensure that the
-  // socket backend is connected to a spike detector.
-  // TODO: This is an unfortunate design. For clarity, handing over
-  //       the recording device type in addition could be a solution.
-  if (double_values.empty() && long_values.empty()) {
+  if (device.get_type() == RecordingDevice::SPIKE_DETECTOR) {
 #pragma omp critical
     {
       index sd_gid = device.get_gid();
@@ -111,8 +102,6 @@ nest::RecordingBackendSocket::write(
     }
   }
   else {
-    // Must not happen !
-    // Only spike detectors are allowed to connect to the socket backend.
     throw;
   }
 }

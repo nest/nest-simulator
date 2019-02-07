@@ -48,13 +48,8 @@ void nest::RecordingBackendSoundClick::enroll(
         const std::vector< Name >& double_value_names,
         const std::vector< Name >& long_value_names )
 {
-  // Spike detector data consists of events.
-  // Thus, the absence of value names is used to ensure that the
-  // soundclick backend is connected to a spike detector.
-  // TODO: This is an unfortunate design. For clarity, handing over
-  //       the recording device type in addition could be a solution.
-  if ( double_value_names.empty() && long_value_names.empty()) {
-    // Start or resume, respectively, the stopwatch, which represents the
+  if (device.get_type() == RecordingDevice::SPIKE_DETECTOR) {
+     // Start or resume, respectively, the stopwatch, which represents the
     // real time.
     stopwatch_.start();
   }
@@ -104,20 +99,14 @@ nest::RecordingBackendSoundClick::write(
   // This creates the illusion of a realistic sound from an
   // electrophysiological recording.
 
-  // NOTE: This slows down the simulation to biological real time!
-
-  // Spike detector data consists of events.
-  // Thus, the absence of values is used to ensure that the
-  // soundclick backend is connected to a spike detector.
-  // TODO: This is an unfortunate design. For clarity, handing over
-  //       the recording device type in addition could be a solution.
-  if (double_values.empty() && long_values.empty()) {
+  if (device.get_type() == RecordingDevice::SPIKE_DETECTOR) {
     int time_spike_event_us =
         static_cast< int >( floor(event.get_stamp().get_ms() * 1000.0));
     int time_elapsed_us =
         static_cast< int >( floor(stopwatch_.elapsed_timestamp()));
     int time_lag_us = time_spike_event_us - time_elapsed_us;
 
+    // Slow down the simulation to biological real time!
     if ( time_lag_us > 0 )
     {
         usleep( time_lag_us );
@@ -128,8 +117,6 @@ nest::RecordingBackendSoundClick::write(
     play();
   }
   else {
-    // Must not happen !
-    // Only spike detectors are allowed to connect to the SoundClick backend.
     throw;
   }
 }

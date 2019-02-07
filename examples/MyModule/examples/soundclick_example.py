@@ -37,9 +37,9 @@ import nest
 nest.Install("mymodule")
 
 population = nest.Create("izhikevich", 1)
-spike_detectors = nest.Create("spike_detector", 1)
-nest.SetStatus(spike_detectors, {"record_to": ["soundclick"]})
-nest.Connect(population, spike_detectors)
+spike_detector = nest.Create("spike_detector", 1)
+nest.SetStatus(spike_detector, {"record_to": ["soundclick"]})
+nest.Connect(population, spike_detector)
 
 # regular spiking
 nest.SetStatus(population, {"a": 0.02,

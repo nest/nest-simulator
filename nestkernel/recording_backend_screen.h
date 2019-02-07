@@ -52,16 +52,9 @@ public:
   {
   }
 
-  /**
-   * Functions called by all instantiated recording devices to register
-   * themselves with their
-   * metadata.
-   * Both functions are implemented trivially, since the RecordingBackendScreen
-   * does not handle metadata.
-   */
-  void enroll( const RecordingDevice& device );
   void enroll( const RecordingDevice& device,
-    const std::vector< Name >& value_names );
+	       const std::vector< Name >& double_value_names,
+	       const std::vector< Name >& long_value_names );
 
   /**
    * Finalization function. Nothing has to be finalized in case of the
@@ -75,13 +68,10 @@ public:
    */
   void synchronize();
 
-  /**
-   * Write functions simply dumping all recorded data to standard output.
-   */
-  void write( const RecordingDevice& device, const Event& event );
-  void write( const RecordingDevice& device,
-    const Event& event,
-    const std::vector< double >& );
+  void write( const RecordingDevice&,
+	      const Event&,
+	      const std::vector< double >&,
+	      const std::vector< long >& );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;

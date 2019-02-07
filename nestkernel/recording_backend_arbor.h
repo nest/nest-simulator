@@ -38,10 +38,9 @@ public:
   RecordingBackendArbor();
   ~RecordingBackendArbor() throw();
 
-  void enroll( const RecordingDevice& device );
-  // should never be called (below)
   void enroll( const RecordingDevice& device,
-    const std::vector< Name >& value_names );
+	       const std::vector< Name >& double_value_names,
+	       const std::vector< Name >& long_value_names );
 
   void finalize();
   void synchronize();
@@ -49,10 +48,10 @@ public:
   void prepare();
   void cleanup();
 
-  void write( const RecordingDevice& device, const Event& event );
-  void write( const RecordingDevice& device,
-    const Event& event,
-    const std::vector< double >& );
+  void write( const RecordingDevice&,
+	      const Event&,
+	      const std::vector< double >&,
+	      const std::vector< long >& );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;

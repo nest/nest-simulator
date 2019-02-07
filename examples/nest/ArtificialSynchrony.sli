@@ -19,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+ % autorun=true
+
 %%%%%%%%%%%%%%%% Write welcome message %%%%%%%%%%%%%%%%%%%%%%
 (\n\n) =
 1 1 80 { (#) =only } for ( ) =

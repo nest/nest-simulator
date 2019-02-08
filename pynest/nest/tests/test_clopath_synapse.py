@@ -74,23 +74,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
         # This is done using the spike pairing experiment of
         # Clopath et al. 2010. First we specify the parameters
         resolution = 0.1
-        nrn_params = {'V_m': -70.6,
-                      'E_L': -70.6,
-                      'V_peak': 0.0,
-                      'C_m': 281.0,
-                      'theta_minus': -70.6,
-                      'theta_plus': -45.3,
-                      'A_LTD': 14.0e-5,
-                      'A_LTP': 8.0e-5,
-                      'tau_minus': 10.0,
-                      'tau_plus': 7.0,
-                      'delay_u_bars': 4.0,
-                      'a': 4.0,
-                      'b': 0.0805,
-                      'V_reset': -70.6 + 21.0,
-                      'V_clamp': 33.0,
-                      't_clamp': 2.0,
-                      't_ref': 0.0, }
+        init_w = 0.5
         spike_times_pre = [
             [29.,  129.,  229.,  329.,  429.],
             [29.,   62.3,   95.7,  129.,  162.3],
@@ -105,58 +89,101 @@ class ClopathSynapseTestCase(unittest.TestCase):
             [139.,  239.,  339.,  439.,  539.,  639.],
             [72.3,  105.6,  139.,  172.3,  205.6,  239.],
             [59.,   79.,   99.,  119.,  139.,  159.]]
-        init_w = 0.5
-        syn_weights = []
+        tested_models = ["aeif_psc_delta_clopath", "hh_psc_alpha_clopath"]
 
-        # Loop over pairs of spike trains
-        for (s_t_pre, s_t_post) in zip(spike_times_pre, spike_times_post):
-            nest.ResetKernel()
-            nest.SetKernelStatus({"resolution": resolution})
+        # Loop over tested neuron models
+        for nrn_model in tested_models:
+            if(nrn_model == "aeif_psc_delta_clopath"):
+                nrn_params = {'V_m': -70.6,
+                              'E_L': -70.6,
+                              'V_peak': 33.0,
+                              'C_m': 281.0,
+                              'theta_minus': -70.6,
+                              'theta_plus': -45.3,
+                              'A_LTD': 14.0e-5,
+                              'A_LTP': 8.0e-5,
+                              'tau_minus': 10.0,
+                              'tau_plus': 7.0,
+                              'delay_u_bars': 4.0,
+                              'a': 4.0,
+                              'b': 0.0805,
+                              'V_reset': -70.6 + 21.0,
+                              'V_clamp': 33.0,
+                              't_clamp': 2.0,
+                              't_ref': 0.0, }
+            elif(nrn_model == "hh_psc_alpha_clopath"):
+                nrn_params = {'V_m': -64.9,
+                              'C_m': 100.0,
+                              'tau_syn_ex': 0.2,
+                              'tau_syn_in': 2.0,
+                              'theta_minus': -64.9,
+                              'theta_plus': -35.0,
+                              'A_LTD': 14.0e-5,
+                              'A_LTP': 8.0e-5,
+                              'tau_minus': 10.0,
+                              'tau_plus': 114.0,
+                              'delay_u_bars': 5.0,
+                              }
+            syn_weights = []
+            # Loop over pairs of spike trains
+            for (s_t_pre, s_t_post) in zip(spike_times_pre, spike_times_post):
+                nest.ResetKernel()
+                nest.SetKernelStatus({"resolution": resolution})
 
-            # Create one neuron
-            nrn = nest.Create("aeif_psc_delta_clopath", 1, nrn_params)
-            prrt_nrn = nest.Create("parrot_neuron", 1)
+                # Create one neuron
+                nrn = nest.Create(nrn_model, 1, nrn_params)
+                prrt_nrn = nest.Create("parrot_neuron", 1)
 
-            # Create and connect spike generator
-            spike_gen_pre = nest.Create("spike_generator", 1, {
-                                        "spike_times": s_t_pre})
+                # Create and connect spike generator
+                spike_gen_pre = nest.Create("spike_generator", 1, {
+                                            "spike_times": s_t_pre})
 
-            nest.Connect(spike_gen_pre, prrt_nrn,
-                         syn_spec={"delay": resolution})
+                nest.Connect(spike_gen_pre, prrt_nrn,
+                             syn_spec={"delay": resolution})
 
-            spike_gen_params_post = {"spike_times": s_t_post}
-            spike_gen_post = nest.Create("spike_generator", 1, {
-                                         "spike_times": s_t_post})
+                if(nrn_model == "aeif_psc_delta_clopath"):
+                    conn_weight = 80.0
+                elif(nrn_model == "hh_psc_alpha_clopath"):
+                    conn_weight = 2000.0
 
-            nest.Connect(spike_gen_post, nrn, syn_spec={
-                         "delay": resolution, "weight": 80.0})
+                spike_gen_params_post = {"spike_times": s_t_post}
+                spike_gen_post = nest.Create("spike_generator", 1, {
+                    "spike_times": s_t_post})
 
-            # Create weight recorder
-            wr = nest.Create('weight_recorder', 1)
+                nest.Connect(spike_gen_post, nrn, syn_spec={
+                    "delay": resolution, "weight": conn_weight})
 
-            # Create Clopath-STDP synapse with weight recorder
-            nest.CopyModel("clopath_synapse", "clopath_synapse_rec",
-                           {"weight_recorder": wr[0]})
-            syn_dict = {"model": "clopath_synapse_rec",
-                        "weight": init_w, "delay": resolution}
-            nest.Connect(prrt_nrn, nrn, syn_spec=syn_dict)
+                # Create weight recorder
+                wr = nest.Create('weight_recorder', 1)
 
-            # Simulation
-            simulation_time = (10.0 + max(s_t_pre[-1], s_t_post[-1]))
-            nest.Simulate(simulation_time)
+                # Create Clopath synapse with weight recorder
+                nest.CopyModel("clopath_synapse", "clopath_synapse_rec",
+                               {"weight_recorder": wr[0]})
+                syn_dict = {"model": "clopath_synapse_rec",
+                            "weight": init_w, "delay": resolution}
+                nest.Connect(prrt_nrn, nrn, syn_spec=syn_dict)
 
-            # Evaluation
-            w_events = nest.GetStatus(wr)[0]["events"]
-            weights = w_events["weights"]
-            syn_weights.append(weights[-1])
+                # Simulation
+                simulation_time = (10.0 + max(s_t_pre[-1], s_t_post[-1]))
+                nest.Simulate(simulation_time)
 
-        # Compare to expected result
-        syn_weights = np.array(syn_weights)
-        syn_weights = 100.0*15.0*(syn_weights - init_w)/init_w + 100.0
-        correct_weights = [60.27717273, 72.83202162, 141.91383624,
-                           102.74121415, 120.01918347, 148.76674224]
+                # Evaluation
+                w_events = nest.GetStatus(wr)[0]["events"]
+                weights = w_events["weights"]
+                syn_weights.append(weights[-1])
 
-        self.assertTrue(np.allclose(syn_weights, correct_weights, rtol=1e-7))
+            # Compare to expected result
+            syn_weights = np.array(syn_weights)
+            syn_weights = 100.0*15.0*(syn_weights - init_w)/init_w + 100.0
+            if(nrn_model == "aeif_psc_delta_clopath"):
+                correct_weights = [59.05711455,  72.3802947,  145.20714407,
+                                   102.96572018, 121.71497456, 152.39683446]
+            elif(nrn_model == "hh_psc_alpha_clopath"):
+                correct_weights = [70.14343863, 99.49206222, 178.1028757,
+                                   119.63314118, 167.37750688, 178.83111685]
+
+            self.assertTrue(np.allclose(
+                syn_weights, correct_weights, rtol=1e-7))
 
     def test_SynapseFunctionWithAeifModel(self):
         """Ensure that spikes are properly processed"""

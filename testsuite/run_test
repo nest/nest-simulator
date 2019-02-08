@@ -1,0 +1,175 @@
+#!/bin/sh
+
+# from http://redsymbol.net/articles/unofficial-bash-strict-mode/
+set -eu
+#set -o pipefail
+#IFS=$' \n\t'
+#set -x # or -o xtrace
+#set -v # or -o verbose
+
+#
+# run_test script_name codes_success codes_failure
+#
+# script_name: name of a .sli / .py script absolute path or relative to build directory
+#
+# codes_success: variable that contains an explanation string for
+#                all exit codes that are to be regarded as a success
+# codes_skipped: variable that contains an explanation string for
+#                all exit codes that mean the test was skipped
+# codes_failure: variable that contains an explanation string for
+#                all exit codes that are to be regarded as a failure
+# Examples:
+#
+#   codes_success=' 0 Success'
+#   codes_skipped=\
+#   ' 200 Skipped,'\
+#   ' 201 Skipped (MPI required),'\
+#   ' 202 Skipped (build with-mpi=OFF required),'\
+#   ' 203 Skipped (Threading required),'\
+#   ' 204 Skipped (GSL required),'\
+#   ' 205 Skipped (MUSIC required),'
+#   codes_failure=\
+#   ' 1 Failed: missed assertion,'\
+#   ' 2 Failed: error in tested code block,'\
+#   ' 3 Failed: tested code block failed to fail,'\
+#   ' 126 Failed: error in test script,'
+#
+# Description:
+#
+#   The function runs the NEST binary with the SLI script script_name.
+#   The exit code is then transformed into a human readable string
+#   (if possible) using the global variables CODES_SUCCESS, CODES_SKIPPED, and
+#   CODES_FAILURE which contain a comma separated list of exit codes
+#   and strings describing the exit code.
+#
+#   If any of the variables CODES_SUCCESS, CODES_SKIPPED or CODES_FAILURE
+#   contain an entry for the exit code, the respective string is logged, 
+#   and the test is either counted as passed or failed.
+#
+#   If none of the variables CODES_SUCCESS, CODES_SKIPPED or CODES_FAILURE
+#   contain an entry != "" for the returned exit code, the pass is counted as
+#   failed, too, and unexpected exit code is logged).
+#
+#   Additionally this script needs TEST_PASSED, TEST_SKIPPED, TEST_FAILED, and
+#   TEST_TOTAL to be defined in the environment. Their values are treated as
+#   filenames where one line is added for the passed/skipped/failed test and
+#   one line in total.
+#
+# measure runtime of command
+#
+time_cmd()
+{
+    start=`date +%s%N`
+    $1
+    end=`date +%s%N`
+    echo `awk "BEGIN {print ($end - $start) / 1000000000}"`
+}
+
+
+param_script="$1"
+param_success="$2"
+param_skipped="$3"
+param_failure="$4"
+
+msg_error=
+
+script_name="$( echo "${param_script}" | sed 's/^.*\/\([^/]\+\)$/\1/' )"
+
+#
+# make local test names
+#
+LOGFILE="${TEST_LOGFILE}-${script_name}"
+OUTFILE="${TEST_OUTFILE}-${script_name}"
+RETFILE="${TEST_RETFILE}-${script_name}"
+RUNFILE="${TEST_RUNFILE}-${script_name}"
+
+
+echo "Running test '${param_script}'... " >> "${LOGFILE}"
+echo "  Running test '${param_script}'..."
+
+# Very unfortunately, it is cheaper to generate a test runner on fly
+# rather than trying to fight with sh, dash, bash, etc. variable
+# expansion algorithms depending on whether the command is a built-in
+# or not, how many subshells have been forked and so on.
+
+
+command="/bin/false"
+echo "${param_script}" | grep -q '\.sli' && command="'${NEST}'"
+echo "${param_script}" | grep -q '\.py' && command="'${PYTHON:-python}'"
+
+# Write temporary test run file
+cat >${RUNFILE} <<EOT
+#!/bin/sh
+set +e
+
+${command} '${param_script}' >'${OUTFILE}' 2>&1
+echo \$? >'${RETFILE}';
+exit 0
+EOT
+chmod 755 "${RUNFILE}"
+
+#
+# Run the test
+#
+TIME_ELAPSED="$( time_cmd "${RUNFILE}" 2>&1 )"
+rm -f "${RUNFILE}"
+
+exit_code="$(cat "${RETFILE}")"
+echo "${TIME_ELAPSED} ${param_script}:${exit_code}" >>"${TEST_TOTAL}"
+
+#
+# put test output to logfile
+#
+sed 's/^/   > /g' "${OUTFILE}" >> "${LOGFILE}"
+
+msg_dirty=${param_success##* ${exit_code} }
+msg_dirty_skip=${param_skipped##* ${exit_code} }
+msg_clean=${msg_dirty%%,*}
+
+unexpected_exitcode=''
+if test "${msg_dirty}" != "${param_success}" ; then
+    echo "${param_script}" >>"${TEST_PASSED}"
+    explanation="${msg_clean}"
+elif test "${msg_dirty_skip}" != "${param_skipped}" ; then
+    echo "${param_script}" >>"${TEST_SKIPPED}"
+    msg_dirty=${msg_dirty_skip}
+    msg_clean=${msg_dirty%%,*}
+    explanation="${msg_clean}"
+else
+    echo "${param_script}" >>"${TEST_FAILED}"
+
+    echo "${param_script} FAILED:"
+    cat ${OUTFILE}
+
+    msg_dirty=${param_failure##* ${exit_code} }
+    msg_clean=${msg_dirty%%,*}
+    msg_error="$( cat "${OUTFILE}" )"
+    if test "${msg_dirty}" != "${param_failure}" ; then
+        explanation="${msg_clean}"
+    else
+        explanation="Failed: unexpected exit code ${exit_code}"
+        unexpected_exitcode=true
+        exit 2;
+    fi
+fi
+
+echo "               '${param_script}' ${explanation}"
+
+if test "x${msg_error}" != x ; then
+    echo
+    echo "${msg_error}"
+    echo
+fi
+
+echo >> "${LOGFILE}" "-> ${exit_code} (${explanation})"
+echo >> "${LOGFILE}" "----------------------------------------"
+
+# Panic on "unexpected" exit code
+if test "x${unexpected_exitcode}" != x ; then
+    echo "***"
+    echo "*** An unexpected exit code usually hints at a bug in the test suite!"
+    exit 1
+fi
+
+rm -f "${OUTFILE}" "${RETFILE}"
+

@@ -9,6 +9,12 @@
 # For commandline options, see the the function usage() below.
 #
 
+# from http://redsymbol.net/articles/unofficial-bash-strict-mode/
+set -eu
+#set -o pipefail
+#IFS=$' \n\t'
+#set -x # or -o xtrace
+#set -v # or -o verbose
 
 #
 # usage <exit_code> <argument>
@@ -61,42 +67,6 @@ bail_out ()
     exit 1
 }
 
-#
-# ask_results
-#
-ask_results ()
-{
-    echo "***"
-    echo "*** Please report the problem at"
-    echo "***     https://github.com/nest/nest-simulator/issues"
-    echo "***"
-    echo "*** To help us diagnose the problem, please attach the archived content"
-    echo "*** of these directories to the issue:"
-    echo "***     - '${REPORTDIR}'"
-    echo "***"
-    echo
-}
-
-#
-# portable_inplace_sed file_name expression
-#
-portable_inplace_sed ()
-{
-    cp -f "$1" "$1.XXX"
-    sed -e "$2" "$1.XXX" > "$1"
-    rm -f "$1.XXX"
-}
-
-#
-# measure runtime of command
-#
-time_cmd()
-{
-    start=`date +%s%N`
-    $1
-    end=`date +%s%N`
-    echo `awk "BEGIN {print ($end - $start) / 1000000000}"`
-}
 
 #
 # sed has different syntax for extended regular expressions
@@ -107,233 +77,11 @@ time_cmd()
 EXTENDED_REGEX_PARAM=r
 /bin/sh -c "echo 'hello' | sed -${EXTENDED_REGEX_PARAM} 's/[aeou]/_/g' "  >/dev/null 2>&1 || EXTENDED_REGEX_PARAM=E
 
-JUNIT_FILE=
-JUNIT_TESTS=
-JUNIT_FAILURES=
-JUNIT_CLASSNAME='core'
 
-#
-# junit_open file_name
-#
-junit_open ()
-{
-    if test "x$1" = x ; then
-        bail_out 'junit_open: file_name not given!'
-    fi
 
-    JUNIT_FILE="${REPORTDIR}/TEST-$1.xml"
-    JUNIT_TESTS=0
-    JUNIT_FAILURES=0
-
-    TIME_TOTAL=0
-
-    # Be compatible with BSD date; no --rfc-3339 and :z modifier
-    timestamp="$( date -u '+%FT%T+00:00' )"
-
-    echo '<?xml version="1.0" encoding="UTF-8" ?>' > "${JUNIT_FILE}"
-
-    echo "<testsuite errors=\"0\" failures=XXX hostname=\"${INFO_HOST}\" name=\"$1\" tests=XXX time=XXX timestamp=\"${timestamp}\">" >> "${JUNIT_FILE}"
-    echo '  <properties>' >> "${JUNIT_FILE}"
-    echo "    <property name=\"os.arch\" value=\"${INFO_ARCH}\" />" >> "${JUNIT_FILE}"
-    echo "    <property name=\"os.name\" value=\"${INFO_OS}\" />" >> "${JUNIT_FILE}"
-    echo "    <property name=\"os.version\" value=\"${INFO_VER}\" />" >> "${JUNIT_FILE}"
-    echo "    <property name=\"user.home\" value=\"${INFO_HOME}\" />" >> "${JUNIT_FILE}"
-    echo "    <property name=\"user.name\" value=\"${INFO_USER}\" />" >> "${JUNIT_FILE}"
-    echo '  </properties>' >> "${JUNIT_FILE}"
-}
-
-#
-# junit_write classname testname [fail_message fail_trace]
-#
-junit_write ()
-{
-    if test "x${JUNIT_FILE}" = x ; then
-        bail_out 'junit_write: report file not open, call junit_open first!'
-    fi
-
-    if test "x$1" = x || test "x$2" = x ; then
-        bail_out 'junit_write: classname and testname arguments are mandatory!'
-    fi
-
-    JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
-
-    printf '%s' "  <testcase classname=\"$1\" name=\"$2\" time=\"${TIME_ELAPSED}\"" >> "${JUNIT_FILE}"
-
-    if test "x$3" != x ; then
-        echo '>' >> "${JUNIT_FILE}"
-        echo "    <failure message=\"$3\" type=\"\"><![CDATA[" >> "${JUNIT_FILE}"
-        echo "$4" | sed 's/]]>/]]>]]\&gt;<![CDATA[/' >> "${JUNIT_FILE}"
-        echo "]]></failure>" >> "${JUNIT_FILE}"
-        echo "  </testcase>" >> "${JUNIT_FILE}"
-    else
-        echo ' />' >> "${JUNIT_FILE}"
-    fi
-}
-
-#
-# junit_close
-#
-junit_close ()
-{
-    if test "x${JUNIT_FILE}" = x ; then
-        bail_out 'junit_close: report file not open, call junit_open first!'
-    fi
-
-    portable_inplace_sed "${JUNIT_FILE}" "s/time=XXX/time=\"${TIME_TOTAL}\"/"
-    portable_inplace_sed "${JUNIT_FILE}" "s/tests=XXX/tests=\"${JUNIT_TESTS}\"/"
-    portable_inplace_sed "${JUNIT_FILE}" "s/failures=XXX/failures=\"${JUNIT_FAILURES}\"/"
-
-    echo '  <system-out><![CDATA[]]></system-out>' >> "${JUNIT_FILE}"
-    echo '  <system-err><![CDATA[]]></system-err>' >> "${JUNIT_FILE}"
-    echo '</testsuite>' >> "${JUNIT_FILE}"
-
-    JUNIT_FILE=
-}
-
-#
-# run_test script_name codes_success codes_failure
-#
-# script_name: name of a .sli / .py script in $TEST_BASEDIR
-#
-# codes_success: variable that contains an explanation string for
-#                all exit codes that are to be regarded as a success
-# codes_skipped: variable that contains an explanation string for
-#                all exit codes that mean the test was skipped
-# codes_failure: variable that contains an explanation string for
-#                all exit codes that are to be regarded as a failure
-# Examples:
-#
-#   codes_success=' 0 Success'
-#   codes_skipped=\
-#   ' 200 Skipped,'\
-#   ' 201 Skipped (MPI required),'\
-#   ' 202 Skipped (build with-mpi=OFF required),'\
-#   ' 203 Skipped (Threading required),'\
-#   ' 204 Skipped (GSL required),'\
-#   ' 205 Skipped (MUSIC required),'
-#   codes_failure=\
-#   ' 1 Failed: missed assertion,'\
-#   ' 2 Failed: error in tested code block,'\
-#   ' 3 Failed: tested code block failed to fail,'\
-#   ' 126 Failed: error in test script,'
-#
-# Description:
-#
-#   The function runs the NEST binary with the SLI script script_name.
-#   The exit code is then transformed into a human readable string
-#   (if possible) using the global variables CODES_SUCCESS, CODES_SKIPPED, and
-#   CODES_FAILURE which contain a comma separated list of exit codes
-#   and strings describing the exit code.
-#
-#   If any of the variables CODES_SUCCESS, CODES_SKIPPED or CODES_FAILURE
-#   contain an entry for the exit code, the respective string is logged, 
-#   and the test is either counted as passed or failed.
-#
-#   If none of the variables CODES_SUCCESS, CODES_SKIPPED or CODES_FAILURE
-#   contain an entry != "" for the returned exit code, the pass is counted as
-#   failed, too, and unexpected exit code is logged).
-#
-run_test ()
-{
-    TEST_TOTAL=$(( ${TEST_TOTAL} + 1 ))
-
-    param_script="$1"
-    param_success="$2"
-    param_skipped="$3"
-    param_failure="$4"
-
-    msg_error=
-
-    junit_class="$( echo "${param_script}" | sed 's/.[^.]\+$//' | sed 's/\/[^/]\+$//' | sed 's/\//./' )"
-    junit_name="$( echo "${param_script}" | sed 's/^.*\/\([^/]\+\)$/\1/' )"
-
-    echo          "Running test '${param_script}'... " >> "${TEST_LOGFILE}"
-    printf '%s' "  Running test '${param_script}'... "
-
-    # Very unfortunately, it is cheaper to generate a test runner on fly
-    # rather than trying to fight with sh, dash, bash, etc. variable
-    # expansion algorithms depending on whether the command is a built-in
-    # or not, how many subshells have been forked and so on.
-
-    echo "#!/bin/sh" >  "${TEST_RUNFILE}"
-    echo "set +e"   >> "${TEST_RUNFILE}"
-
-    echo "${param_script}" | grep -q '\.sli'
-    if test $? -eq 0 ; then
-      command="'${NEST}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
-    else
-      command="'${PYTHON}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
-    fi
-
-    echo "${command}" >> "${TEST_RUNFILE}"
-    echo "echo \$? > '${TEST_RETFILE}' ; exit 0" >> "${TEST_RUNFILE}"
-
-    chmod 755 "${TEST_RUNFILE}"
-
-    TIME_ELAPSED="$( time_cmd "${TEST_RUNFILE}" 2>&1 )"
-    TIME_TOTAL="$( awk "BEGIN { print (${TIME_TOTAL} + ${TIME_ELAPSED}) ; }" )"
-    rm -f "${TEST_RUNFILE}"
-
-    exit_code="$(cat "${TEST_RETFILE}")"
-
-    sed 's/^/   > /g' "${TEST_OUTFILE}" >> "${TEST_LOGFILE}"
-
-    msg_dirty=${param_success##* ${exit_code} }
-    msg_dirty_skip=${param_skipped##* ${exit_code} }
-    msg_clean=${msg_dirty%%,*}
-    if test "${msg_dirty}" != "${param_success}" ; then
-        TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
-        explanation="${msg_clean}"
-        junit_failure=
-    elif test "${msg_dirty_skip}" != "${param_skipped}" ; then
-        TEST_SKIPPED=$(( ${TEST_SKIPPED} + 1 ))
-        msg_dirty=${msg_dirty_skip}
-        msg_clean=${msg_dirty%%,*}
-        explanation="${msg_clean}"
-        junit_failure=
-    else
-        TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
-        JUNIT_FAILURES=$(( ${JUNIT_FAILURES} + 1 ))
-
-	cat ${TEST_OUTFILE}
-
-        msg_dirty=${param_failure##* ${exit_code} }
-        msg_clean=${msg_dirty%%,*}
-        msg_error="$( cat "${TEST_OUTFILE}" )"
-        if test "${msg_dirty}" != "${param_failure}" ; then
-            explanation="${msg_clean}"
-        else
-            explanation="Failed: unexpected exit code ${exit_code}"
-            unexpected_exitcode=true
-        fi
-
-        junit_failure="${exit_code} (${explanation})"
-    fi
-
-    echo "${explanation}"
-
-    if test "x${msg_error}" != x ; then
-        echo
-        echo "${msg_error}"
-        echo
-    fi
-
-    echo >> "${TEST_LOGFILE}" "-> ${exit_code} (${explanation})"
-    echo >> "${TEST_LOGFILE}" "----------------------------------------"
-
-    junit_write "${JUNIT_CLASSNAME}.${junit_class}" "${junit_name}" "${junit_failure}" "$(cat "${TEST_OUTFILE}")"
-
-    # Panic on "unexpected" exit code
-    if test "x${unexpected_exitcode}" != x ; then
-        echo "***"
-        echo "*** An unexpected exit code usually hints at a bug in the test suite!"
-        ask_results
-        exit 2
-    fi
-
-    rm -f "${TEST_OUTFILE}" "${TEST_RETFILE}"
-}
-
+RUN_TEST=$(dirname $0)/run_test
+MUSIC=""
+PYTHON=""
 
 
 while test $# -gt 0 ; do
@@ -365,25 +113,24 @@ while test $# -gt 0 ; do
     shift
 done
 
-NEST=nest_serial
+export NEST=nest_serial
 export PATH=${PREFIX}/bin:$PATH
 
 unset NEST_INSTALL_DIR
 unset NEST_DATA_DIR
 unset NEST_DOCL_DIR
-
 if test ${PYTHON}; then
     if test ! ${PYTHONPATH_}; then
 	usage 3 "Error: \'--with-python\' also requires \'--python-path\'" 
     fi
 
-    NOSETESTS=`command -v nosetests 2>&1`
+    NOSETESTS="$(command -v nosetests 2>&1)"
     PYTHON_HARNESS="${PREFIX}/share/nest/extras/do_tests.py"
-    
+
     export PYTHONPATH=$PYTHONPATH_:$PYTHONPATH
 fi
 
-TEST_BASEDIR=${PREFIX}/share/doc/nest
+export TEST_BASEDIR=${PREFIX}/share/doc/nest
 
 # Gather some information about the host
 INFO_ARCH="$(uname -m)"
@@ -407,10 +154,27 @@ echo "  PREFIX ............. $PREFIX"
 echo "  REPORTDIR .......... $REPORTDIR"
 echo "================================================================================"
 
-TEST_LOGFILE="${REPORTDIR}/installcheck.log"
-TEST_OUTFILE="${REPORTDIR}/output.log"
-TEST_RETFILE="${REPORTDIR}/output.ret"
-TEST_RUNFILE="${REPORTDIR}/runtest.sh"
+export TEST_LOGFILE="${REPORTDIR}/installcheck.log"
+export TEST_OUTFILE="${REPORTDIR}/output.log"
+export TEST_RETFILE="${REPORTDIR}/output.ret"
+export TEST_RUNFILE="${REPORTDIR}/runtest.sh"
+export TEST_TIMES="${REPORTDIR}/TIMES"
+
+# parallel execution line-counting files
+export TEST_TOTAL="${REPORTDIR}/TOTAL"
+export TEST_PASSED="${REPORTDIR}/PASSED"
+export TEST_SKIPPED="${REPORTDIR}/SKIPPED"
+export TEST_FAILED="${REPORTDIR}/FAILED"
+
+# integer counting variables for serial tests
+CPP_TEST_TOTAL=0
+CPP_TEST_PASSED=0
+CPP_TEST_SKIPPED=0
+CPP_TEST_FAILED=0
+PYNEST_TEST_TOTAL=0
+PYNEST_TEST_PASSED=0
+PYNEST_TEST_SKIPPED=0
+PYNEST_TEST_FAILED=0
 
 if test -d "${REPORTDIR}" ; then
     rm -rf "${REPORTDIR}"
@@ -421,6 +185,8 @@ TEST_TMPDIR="$(mktemp -d ${REPORTDIR}/tmp.XXX)"
 NEST_DATA_PATH="${TEST_TMPDIR}"
 export NEST_DATA_PATH
 
+# touch output files in case they are never written (e.g. no tests fail)
+touch "$TEST_TOTAL" "$TEST_PASSED" "$TEST_SKIPPED" "$TEST_FAILED"
 
 # Check for old version of the /mpirun command, which had the NEST executable hardcoded
 if test "x$(sli -c '/mpirun load cva_t Flatten length 3 eq =')" = xtrue ; then
@@ -446,27 +212,15 @@ if test "x$(sli -c '/mpirun load cva_t Flatten length 3 eq =')" = xtrue ; then
     exit 1
 fi
 
-
-# Remember: single line exports are unportable!
-
-
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
 if test "x${INFO_OS}" = xDarwin ; then
     TEST_CRSTATE="$( defaults read com.apple.CrashReporter DialogType )"
     defaults write com.apple.CrashReporter DialogType server
 fi
 
-TEST_TOTAL=0
-TEST_PASSED=0
-TEST_SKIPPED=0
-TEST_FAILED=0
-
-TIME_TOTAL=0
-TIME_ELAPSED=0
-
-HEADLINE="`nest -v` testsuite log"
-echo >  "${TEST_LOGFILE}" $HEADLINE
-echo >> "${TEST_LOGFILE}" `printf '%0.s=' $(seq 1 ${#HEADLINE})`
+HEADLINE="$(nest -v) testsuite log"
+echo >  "${TEST_LOGFILE}" "$HEADLINE"
+echo >> "${TEST_LOGFILE}" "$(printf '%0.s=' $(seq 1 ${#HEADLINE}))"
 echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
 
 CODES_SKIPPED=\
@@ -476,279 +230,294 @@ CODES_SKIPPED=\
 ' 203 Skipped (Threading required),'\
 ' 204 Skipped (GSL required),'\
 ' 205 Skipped (MUSIC required),'
+NPROCS="$(cat /proc/cpuinfo | grep processor | wc -l)"
 
-echo
-echo 'Phase 1: Testing if SLI can execute scripts and report errors'
-echo '-------------------------------------------------------------'
+phase_one() {
+    echo
+    echo 'Phase 1: Testing if SLI can execute scripts and report errors'
+    echo '-------------------------------------------------------------'
 
-junit_open 'core.phase_1'
 
-CODES_SUCCESS=' 0 Success'
-CODES_FAILURE=
-for test_name in test_pass.sli test_goodhandler.sli test_lazyhandler.sli ; do
-    run_test "selftests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-done
+    CODES_SUCCESS=' 0 Success'
+    CODES_FAILURE=
+    #for test_name in test_pass.sli test_goodhandler.sli test_lazyhandler.sli ; do
+    #    $RUN_TEST "selftests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    #done
+    xargs -L1 -P${NPROCS} -I'{}' $RUN_TEST "${TEST_BASEDIR}/selftests/{}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}" <<TESTS
+        test_pass.sli
+        test_goodhandler.sli
+        test_lazyhandler.sli
+TESTS
 
-CODES_SUCCESS=' 126 Success'
-CODES_FAILURE=
-for test_name in test_fail.sli test_stop.sli test_badhandler.sli ; do
-    run_test "selftests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-done
+    CODES_SUCCESS=' 126 Success'
+    CODES_FAILURE=
+    xargs -L1 -P${NPROCS} -I'{}' $RUN_TEST "${TEST_BASEDIR}/selftests/{}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}" <<TESTS
+        test_fail.sli
+        test_stop.sli
+        test_badhandler.sli
+TESTS
+}
 
-junit_close
+phase_one
 
-# At this point, we are sure that
-#
-#  * NEST will return 0 after finishing a script
-#  * NEST will return 126 when a script raises an unhandled error
-#  * Error handling in stopped contexts works
+phase_two() {
+    # At this point, we are sure that
+    #
+    #  * NEST will return 0 after finishing a script
+    #  * NEST will return 126 when a script raises an unhandled error
+    #  * Error handling in stopped contexts works
 
-echo
-echo "Phase 2: Testing SLI's unittest library"
-echo "---------------------------------------"
+    echo
+    echo "Phase 2: Testing SLI's unittest library"
+    echo "---------------------------------------"
 
-junit_open 'core.phase_2'
 
-# assert_or_die uses pass_or_die, so pass_or_die should be tested first.
+    # assert_or_die uses pass_or_die, so pass_or_die should be tested first.
 
-CODES_SUCCESS=' 2 Success'
-CODES_FAILURE=' 126 Failed: error in test script'
+    CODES_SUCCESS=' 2 Success'
+    CODES_FAILURE=' 126 Failed: error in test script'
+    $RUN_TEST ${TEST_BASEDIR}/selftests/test_pass_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 
-run_test selftests/test_pass_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    CODES_SUCCESS=' 1 Success'
+    CODES_FAILURE=\
+'     2 Failed: error in tested code block,'\
+'     126 Failed: error in test script,'
+    xargs -L1 -P${NPROCS} -I'{}' $RUN_TEST "${TEST_BASEDIR}/selftests/{}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}" <<TESTS
+        test_assert_or_die_b.sli
+        test_assert_or_die_p.sli
+TESTS
 
-CODES_SUCCESS=' 1 Success'
-CODES_FAILURE=\
-' 2 Failed: error in tested code block,'\
-' 126 Failed: error in test script,'
+    CODES_SUCCESS=' 3 Success'
+    CODES_FAILURE=\
+'     1 Failed: missed assertion,'\
+'     2 Failed: error in tested code block,'\
+'     126 Failed: error in test script,'
+    $RUN_TEST ${TEST_BASEDIR}/selftests/test_fail_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 
-run_test selftests/test_assert_or_die_b.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-run_test selftests/test_assert_or_die_p.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    CODES_SUCCESS=' 3 Success'
+    CODES_FAILURE=\
+'     1 Failed: missed assertion,'\
+'     2 Failed: error in tested code block,'\
+'     126 Failed: error in test script,'
+    $RUN_TEST ${TEST_BASEDIR}/selftests/test_crash_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 
-CODES_SUCCESS=' 3 Success'
-CODES_FAILURE=\
-' 1 Failed: missed assertion,'\
-' 2 Failed: error in tested code block,'\
-' 126 Failed: error in test script,'
+    CODES_SUCCESS=' 3 Success'
+    CODES_FAILURE=' 1 Failed: missed assertion,'\
+'     2 Failed: error in tested code block,'\
+'     126 Failed: error in test script,'
+    xargs -L1 -P${NPROCS} -I'{}' $RUN_TEST "${TEST_BASEDIR}/selftests/{}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}" <<TESTS
+        test_failbutnocrash_or_die_crash.sli
+        test_failbutnocrash_or_die_pass.sli
+TESTS
 
-run_test selftests/test_fail_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    CODES_SUCCESS=' 3 Success'
+    CODES_FAILURE=\
+'     1 Failed: missed assertion,'\
+'     2 Failed: error in tested code block,'\
+'     126 Failed: error in test script,'
 
-CODES_SUCCESS=' 3 Success'
-CODES_FAILURE=\
-' 1 Failed: missed assertion,'\
-' 2 Failed: error in tested code block,'\
-' 126 Failed: error in test script,'
+    $RUN_TEST ${TEST_BASEDIR}/selftests/test_passorfailbutnocrash_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 
-run_test selftests/test_crash_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 
-CODES_SUCCESS=' 3 Success'
-CODES_FAILURE=\
-' 1 Failed: missed assertion,'\
-' 2 Failed: error in tested code block,'\
-' 126 Failed: error in test script,'
+    # At this point, we are sure that
+    #
+    #  * unittest::pass_or_die works
+    #  * unittest::assert_or_die works
+    #  * unittest::fail_or_die works
+    #  * unittest::crash_or_die works
 
-run_test selftests/test_failbutnocrash_or_die_crash.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-run_test selftests/test_failbutnocrash_or_die_pass.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    # These are the default exit codes and their explanations
+    CODES_SUCCESS=' 0 Success'
+    CODES_FAILURE=\
+'     1 Failed: missed SLI assertion,'\
+'     2 Failed: error in tested code block,'\
+'     3 Failed: tested code block failed to fail,'\
+'     4 Failed: re-run serial,'\
+'     10 Failed: unknown error,'\
+'     20 Failed: inconsistent copyright header(s),'\
+'     30 Failed: inconsistent Name definition(s)/declaration(s),'\
+'     31 Failed: unused Name definition(s),'\
+'     125 Failed: unknown C++ exception,'\
+'     126 Failed: error in test script,'\
+'     127 Failed: fatal error,'\
+'     134 Failed: missed C++ assertion,'\
+'     139 Failed: segmentation fault,'
+}
 
-CODES_SUCCESS=' 3 Success'
-CODES_FAILURE=\
-' 1 Failed: missed assertion,'\
-' 2 Failed: error in tested code block,'\
-' 126 Failed: error in test script,'
+phase_two
 
-run_test selftests/test_passorfailbutnocrash_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+phase_three() {
+    echo
+    echo "Phase 3: Integration  tests"
+    echo "---------------------------"
 
-junit_close
+    #for test_ext in sli py ; do
+    #    for test_dir in "unittests/" "topology/unittests/" ; do
+    #        for test_name in $(ls "${TEST_BASEDIR}/${test_dir}" | grep ".*\.${test_ext}\$") ; do
+    echo "TEST_BASEDIR $TEST_BASEDIR"
+    echo "PWD $(pwd)"
+    find "${TEST_BASEDIR}/unittests" "${TEST_BASEDIR}/topology/unittests" -name "*.py" -o -name "*.sli" |\
+        xargs -L1 -P${NPROCS} -I'{}' $RUN_TEST "{}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+}
 
-# At this point, we are sure that
-#
-#  * unittest::pass_or_die works
-#  * unittest::assert_or_die works
-#  * unittest::fail_or_die works
-#  * unittest::crash_or_die works
+phase_three
 
-# These are the default exit codes and their explanations
-CODES_SUCCESS=' 0 Success'
-CODES_FAILURE=\
-' 1 Failed: missed SLI assertion,'\
-' 2 Failed: error in tested code block,'\
-' 3 Failed: tested code block failed to fail,'\
-' 4 Failed: re-run serial,'\
-' 10 Failed: unknown error,'\
-' 20 Failed: inconsistent copyright header(s),'\
-' 30 Failed: inconsistent Name definition(s)/declaration(s),'\
-' 31 Failed: unused Name definition(s),'\
-' 125 Failed: unknown C++ exception,'\
-' 126 Failed: error in test script,'\
-' 127 Failed: fatal error,'\
-' 134 Failed: missed C++ assertion,'\
-' 139 Failed: segmentation fault,'
+phase_four() {
+    echo
+    echo "Phase 4: Regression tests"
+    echo "-------------------------"
 
-echo
-echo "Phase 3: Integration  tests"
-echo "---------------------------"
+    #for test_ext in sli py ; do
+    #    for test_name in $(ls "${TEST_BASEDIR}/regressiontests/" | grep ".*\.${test_ext}$") ; do
+    find "${TEST_BASEDIR}/regressiontests/" -name "*.sli" -o -name "*.py" |\
+        xargs -L1 -P${NPROCS} -I'{}' $RUN_TEST "{}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+}
 
-junit_open 'core.phase_3'
+phase_four
 
-for test_ext in sli py ; do
-    for test_dir in "unittests/" "topology/unittests/" ; do
-        for test_name in $(ls "${TEST_BASEDIR}/${test_dir}" | grep ".*\.${test_ext}\$") ; do
-            run_test "${test_dir}${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+phase_five() {
+    echo
+    echo "Phase 5: MPI tests"
+    echo "------------------"
+    if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
+
+        NEST=${PREFIX}/bin/nest_indirect
+        for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/pass" | grep '.*\.sli$') ; do
+            $RUN_TEST "${TEST_BASEDIR}/mpi_selftests/pass/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
         done
-    done
-done
 
-junit_close
-
-echo
-echo "Phase 4: Regression tests"
-echo "-------------------------"
-
-junit_open 'core.phase_4'
-
-for test_ext in sli py ; do
-    for test_name in $(ls "${TEST_BASEDIR}/regressiontests/" | grep ".*\.${test_ext}$") ; do
-        run_test "regressiontests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-    done
-done
-
-junit_close
-
-echo
-echo "Phase 5: MPI tests"
-echo "------------------"
-if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
-    junit_open 'core.phase_5'
-
-    NEST=${PREFIX}/bin/nest_indirect
-    for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/pass" | grep '.*\.sli$') ; do
-        run_test "mpi_selftests/pass/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-    done
-
-    # tests meant to fail
-    SAVE_CODES_SUCCESS=${CODES_SUCCESS}
-    SAVE_CODES_FAILURE=${CODES_FAILURE}
-    CODES_SUCCESS=' 1 Success (expected failure)'
-    CODES_FAILURE=' 0 Failed: Unittest failed to detect error.'
-    for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/fail" | grep '.*\.sli$') ; do
-        run_test "mpi_selftests/fail/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-    done
-    CODES_SUCCESS=${SAVE_CODES_SUCCESS}
-    CODES_FAILURE=${SAVE_CODES_FAILURE}
-
-    for test_dir in "mpitests/" "topology/mpitests/" ; do
-        for test_name in $(ls "${TEST_BASEDIR}/${test_dir}" | grep '.*\.sli$') ; do
-            run_test "${test_dir}${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+        # tests meant to fail
+        SAVE_CODES_SUCCESS=${CODES_SUCCESS}
+        SAVE_CODES_FAILURE=${CODES_FAILURE}
+        CODES_SUCCESS=' 1 Success (expected failure)'
+        CODES_FAILURE=' 0 Failed: Unittest failed to detect error.'
+        for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/fail" | grep '.*\.sli$') ; do
+            $RUN_TEST "${TEST_BASEDIR}/mpi_selftests/fail/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
         done
-    done
+        CODES_SUCCESS=${SAVE_CODES_SUCCESS}
+        CODES_FAILURE=${SAVE_CODES_FAILURE}
 
-    junit_close
-else
-  echo "  Not running MPI tests because NEST was compiled without support"
-  echo "  for distributed computing. See the file README.md for details."
-fi
+        for test_dir in "mpitests/" "topology/mpitests/" ; do
+            for test_name in $(ls "${TEST_BASEDIR}/${test_dir}" | grep '.*\.sli$') ; do
+                $RUN_TEST "${TEST_BASEDIR}/${test_dir}${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+            done
+        done
 
+    else
+      echo "  Not running MPI tests because NEST was compiled without support"
+      echo "  for distributed computing. See the file README.md for details."
+    fi
+}
 
-echo
-echo "Phase 6: MUSIC tests"
-echo "--------------------"
-if test ${MUSIC}; then
-    junit_open 'core.phase_6'
+phase_five
 
-    BASEDIR=$PWD
-    tmpdir=$(mktemp -d)
+phase_six() {
+    echo
+    echo "Phase 6: MUSIC tests"
+    echo "--------------------"
+    if test ${MUSIC}; then
 
-    TESTDIR=${TEST_BASEDIR}/musictests/
+        BASEDIR="$PWD"
 
-    for test_name in $(ls ${TESTDIR} | grep '.*\.music$') ; do
-        music_file=${TESTDIR}/${test_name}
+        TESTDIR="${TEST_BASEDIR}/musictests/"
 
-        # Collect the list of SLI files from the .music file.
-        sli_files=$(grep '\.sli' ${music_file} | sed -e "s#args=#${TESTDIR}#g")
-        sli_files=$(for f in ${sli_files}; do if test -f ${f}; then echo ${f}; fi; done)
+        for test_name in $(ls "${TESTDIR}" | grep '.*\.music$') ; do
+            tmpdir="$(mktemp -d)"
+            music_file="${TESTDIR}/${test_name}"
 
-        # Check if there is an accompanying shell script for the test.
-        sh_file=${TESTDIR}/$(basename ${music_file} .music).sh
-        if test ! -f ${sh_file}; then unset sh_file; fi
+            # Collect the list of SLI files from the .music file.
+            sli_files="$(grep '\.sli' "${music_file}" | sed -e "s#args=#${TESTDIR}#g")"
+            sli_files="$(for f in ${sli_files}; do if test -f ${f}; then echo ${f}; fi; done)"
 
-        # Calculate the total number of processes in the .music file.
-        np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
-        command=$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =")
+            # Check if there is an accompanying shell script for the test.
+            sh_file="${TESTDIR}/$(basename ${music_file} .music).sh"
+            if test ! -f "${sh_file}"; then sh_file=""; fi
 
-        proc_txt="processes"
-        if test $np -eq 1; then proc_txt="process"; fi
-        echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
-        printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
+            # Calculate the total number of processes in the .music file.
+            np="$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))"
+            command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =")"
 
-        # Copy everything to the tmpdir.
-        cp ${music_file} ${sh_file} ${sli_files} ${tmpdir}
-        cd ${tmpdir}
+            proc_txt="processes"
+            if test "$np" -eq 1; then proc_txt="process"; fi
+            echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
+            printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
 
-        # Create the runner script
-        echo "#!/bin/sh" >  runner.sh
-        echo "set +e" >> runner.sh
-        echo "export NEST_DATA_PATH=${tmpdir}" >> runner.sh
-        echo "${command} > output.log 2>&1" >> runner.sh
-        if test -n "${sh_file}"; then
-            chmod 755 $(basename ${sh_file})
-            echo "./"$(basename ${sh_file}) >> runner.sh
-        fi
-        echo "echo \$? > exit_code ; exit 0" >> runner.sh
+            # Copy everything to the tmpdir.
+            cp "${music_file}" ${sh_file} ${sli_files} "${tmpdir}"
+            cd "${tmpdir}"
 
-        # Run the script and copy all output to the logfile.
-        chmod 755 runner.sh
-        ./runner.sh
-        sed -e 's/^/   > /g' output.log >> "${TEST_LOGFILE}"
-
-        # Retrieve the exit code. This is either the one of the mpirun
-        # call or of the accompanying shell script if present.
-        exit_code=$(cat exit_code)
-
-        rm ${tmpdir}/*
-        cd ${BASEDIR}
-
-        # If the name of the test contains 'failure', we expect it to
-        # fail and the test logic is inverted.
-        TEST_TOTAL=$(( ${TEST_TOTAL} + 1 ))
-        if test -z $(echo ${test_name} | grep failure); then
-            if test $exit_code -eq 0 ; then
-                echo "Success"
-                TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
-            elif test $exit_code -ge 200 && $exit_code -le 215; then
-                echo "Skipped"
-                TEST_SKIPPED=$(( ${TEST_SKIPPED} + 1 ))
-            else
-                echo "Failure"
-                TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
+            # Create the runner script
+            SHFILE=""
+            if test -n "${sh_file}"; then
+                chmod 755 "$(basename ${sh_file})"
+                SHFILE="./$(basename ${sh_file})"
             fi
-        else
-            if test $exit_code -ne 0 ; then
-                echo "Success (expected failure)"
-                TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
-            elif test $exit_code -ge 200 && $exit_code -le 215; then
-                echo "Skipped"
-                TEST_SKIPPED=$(( ${TEST_SKIPPED} + 1 ))
+            cat >runner.sh <<EOT
+#!/bin/sh
+set +e
+export NEST_DATA_PATH="${tmpdir}"
+${command} > output.log 2>&1
+$SHFILE
+echo \$? > exit_code ; exit 0
+EOT
+
+            # Run the script and copy all output to the logfile.
+            chmod 755 runner.sh
+            ./runner.sh
+            sed -e 's/^/   > /g' output.log >> "${TEST_LOGFILE}"
+
+            # Retrieve the exit code. This is either the one of the mpirun
+            # call or of the accompanying shell script if present.
+            exit_code=$(cat exit_code)
+
+            echo "CHECK ${tmpdir}" >>"${TEST_LOGFILE}"
+            cd "${BASEDIR}"
+
+            # If the name of the test contains 'failure', we expect it to
+            # fail and the test logic is inverted.
+            echo "${test_name}" >> "${TEST_TOTAL}"
+            if test -z $(echo "${test_name}" | grep failure); then
+                if test $exit_code -eq 0 ; then
+                    echo "Success"
+                    echo "${test_name}" >> "${TEST_PASSED}"
+                    rm -rf $tmpdir
+                elif test $exit_code -ge 200 && $exit_code -le 215; then
+                    echo "Skipped"
+                    echo "${test_name}" >> "${TEST_SKIPPED}"
+                else
+                    echo "Failure"
+                    echo "${test_name}" >> "${TEST_FAILED}"
+                fi
             else
-                echo "Failure (test failed to fail)"
-                TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
+                if test $exit_code -ne 0 ; then
+                    echo "Success (expected failure)"
+                    echo "${test_name}" >> "${TEST_PASSED}"
+                    rm -rf $tmpdir
+                elif test $exit_code -ge 200 && $exit_code -le 215; then
+                    echo "Skipped"
+                    echo "${test_name}" >> "${TEST_SKIPPED}"
+                else
+                    echo "Failure (test failed to fail)"
+                    echo "${test_name}" >> "${TEST_FAILED}"
+                fi
             fi
-        fi
-    done
-
-    rm -rf $tmpdir
-
-    junit_close
-else
-  echo "  Not running MUSIC tests because NEST was compiled without support"
-  echo "  for it. See the file README.md for details."
-fi
+        done
 
 
-if test ${PYTHON}; then
+    else
+      echo "  Not running MUSIC tests because NEST was compiled without support"
+      echo "  for it. See the file README.md for details."
+    fi
+}
 
+phase_six
+
+
+phase_seven() {
     echo
     echo "Phase 7: PyNEST tests."
     echo "----------------------"
-    
+
     # If possible, we run using nosetests. To find out if nosetests work, 
     # we proceed in two steps:
     # 1. Check if nosetests is available
@@ -758,16 +527,16 @@ if test ${PYTHON}; then
     #    of support for nosetests. We use the REPORTDIR as Python-free
     #    dummy directory to search for tests.
 
-    if ${NOSETESTS} --with-xunit --xunit-file=/dev/null --where=${REPORTDIR} >/dev/null 2>&1; then
+    if "${NOSETESTS}" --with-xunit --xunit-file=/dev/null --where="${REPORTDIR}" >/dev/null 2>&1; then
 
         echo
         echo "  Using nosetests."
         echo
 
-        XUNIT_FILE=${REPORTDIR}/pynest_tests.xml
+        XUNIT_FILE="${REPORTDIR}/pynest_tests.xml"
         TESTS="${PYTHONPATH_}/nest/tests ${PYTHONPATH_}/nest/topology/tests"
 
-        ${NOSETESTS} -v --with-xunit --xunit-file=${XUNIT_FILE} ${TESTS} 2>&1 \
+        "${NOSETESTS}" -v --with-xunit --xunit-file="${XUNIT_FILE}" ${TESTS} 2>&1 \
             | tee -a "${TEST_LOGFILE}" \
             | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" \
             | sed 's/^/  /'
@@ -826,10 +595,10 @@ if test ${PYTHON}; then
     PYNEST_TEST_SKIPPED_TEXT="(${PYNEST_TEST_SKIPPED} PyNEST)"
     PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
 
-    TEST_TOTAL=$(( $TEST_TOTAL + $PYNEST_TEST_TOTAL ))
-    TEST_PASSED=$(( $TEST_PASSED + $PYNEST_TEST_PASSED ))
-    TEST_SKIPPED=$(( $TEST_SKIPPED + $PYNEST_TEST_SKIPPED ))
-    TEST_FAILED=$(( $TEST_FAILED + $PYNEST_TEST_FAILED ))
+}
+
+if test ${PYTHON}; then
+    phase_seven
 else
     echo
     echo "Phase 7: PyNEST tests"
@@ -838,41 +607,40 @@ else
     echo "  for Python. See the file README.md for details."
 fi
 
+phase_eight() {
+    echo
+    echo "Phase 8: C++ tests (experimental)"
+    echo "---------------------------------"
 
-echo
-echo "Phase 8: C++ tests (experimental)"
-echo "---------------------------------"
+    CPP_TEST_OUTPUT="$(${TEST_BASEDIR}/testsuite/cpptests/run_all_cpptests 2>&1)"
+    # TODO:
+    # We should check the return code ($?) of run_all_cpptests here to see
+    # if a fatal crash occured. We cannot simply test $? != 0, since
+    # run_all_cpptests will return a non-zero code if tests fail.
 
-if command -v ${NEST_PATH}/run_all_cpptests > /dev/null 2>&1; then
-  CPP_TEST_OUTPUT="$(${NEST_PATH}/run_all_cpptests 2>&1)"
-  # TODO:
-  # We should check the return code ($?) of run_all_cpptests here to see
-  # if a fatal crash occured. We cannot simply test $? != 0, since
-  # run_all_cpptests will return a non-zero code if tests fail.
+    # TODO:
+    # The regex for the total number seems fine according to
+    # https://www.boost.org/doc/libs/1_65_0/libs/test/doc/html/boost_test/test_output/log_formats/log_human_readable_format.html
+    # but does the check for failures work as it should?
+    # At some point, we should also count skipped tests.
+    CPP_TEST_TOTAL=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*Running ([0-9]+).*/\1/p')
+    CPP_TEST_FAILED=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*([0-9]+) failure.*/\1/p')
 
-  # TODO:
-  # The regex for the total number seems fine according to
-  # https://www.boost.org/doc/libs/1_65_0/libs/test/doc/html/boost_test/test_output/log_formats/log_human_readable_format.html
-  # but does the check for failures work as it should?
-  # At some point, we should also count skipped tests.
-  CPP_TEST_TOTAL=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*Running ([0-9]+).*/\1/p')
-  CPP_TEST_FAILED=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*([0-9]+) failure.*/\1/p')
+    # replace empty strings by zero so arithmetic expressions below work
+    CPP_TEST_TOTAL=${CPP_TEST_TOTAL:-0}
+    CPP_TEST_FAILED=${CPP_TEST_FAILED:-0}
+    CPP_TEST_PASSED=$(( $CPP_TEST_TOTAL - $CPP_TEST_FAILED ))
+    CPP_TEST_SKIPPED=0
 
-  # replace empty strings by zero so arithmetic expressions below work
-  CPP_TEST_TOTAL=${CPP_TEST_TOTAL:-0}
-  CPP_TEST_FAILED=${CPP_TEST_FAILED:-0}
-  CPP_TEST_PASSED=$(( $CPP_TEST_TOTAL - $CPP_TEST_FAILED ))
+    echo "  C++ tests : ${CPP_TEST_TOTAL}"
+    echo "     Passed : ${CPP_TEST_PASSED}"
+    echo "     Failed : ${CPP_TEST_FAILED}"
+}
 
-  TEST_TOTAL=$(( $TEST_TOTAL + $CPP_TEST_TOTAL ))
-  TEST_PASSED=$(( $TEST_PASSED + $CPP_TEST_PASSED ))
-  TEST_FAILED=$(( $TEST_FAILED + $CPP_TEST_FAILED ))
-
-  echo "  C++ tests : ${CPP_TEST_TOTAL}"
-  echo "     Passed : ${CPP_TEST_PASSED}"
-  echo "     Failed : ${CPP_TEST_FAILED}"
-
+if command -v ${TEST_BASEDIR}/testsuite/cpptests/run_all_cpptests > /dev/null 2>&1; then
+    phase_eight
 else
-  echo "  Not running C++ tests because NEST was compiled without Boost."
+    echo "  Not running C++ tests because NEST was compiled without Boost."
 fi
 
 
@@ -881,16 +649,24 @@ echo "NEST Testsuite Summary"
 echo "----------------------"
 echo "  NEST Executable: $(which nest)"
 echo "  SLI Executable : $(which sli)"
-echo "  Total number of tests: ${TEST_TOTAL}"
-echo "     Passed: ${TEST_PASSED}"
-echo "     Skipped: ${TEST_SKIPPED} ${PYNEST_TEST_SKIPPED_TEXT:-}"
-echo "     Failed: ${TEST_FAILED} ${PYNEST_TEST_FAILED_TEXT:-}"
+echo "  Total number of tests: $(( $(cat "${TEST_TOTAL}" | wc -l) + $CPP_TEST_TOTAL + $PYNEST_TEST_TOTAL))"
+echo "     Passed: $(( $(cat "${TEST_PASSED}" | wc -l) + $CPP_TEST_PASSED + $PYNEST_TEST_PASSED ))"
+echo "     Skipped: $(( $(cat "${TEST_SKIPPED}" | wc -l) + $CPP_TEST_SKIPPED + $PYNEST_TEST_SKIPPED )) ${PYNEST_TEST_SKIPPED_TEXT:-}"
+echo "     Failed: $(( $(cat "${TEST_FAILED}" | wc -l) + $CPP_TEST_FAILED + $PYNEST_TEST_FAILED )) ${PYNEST_TEST_FAILED_TEXT:-}"
 echo
 
-if test ${TEST_FAILED} -gt 0 ; then
+if test "$(cat "${TEST_FAILED}" | wc -l)" -gt 0 ; then
     echo "***"
     echo "*** There were errors detected during the run of the NEST test suite!"
-    ask_results
+    echo "***"
+    echo "*** Please report the problem at"
+    echo "***     https://github.com/nest/nest-simulator/issues"
+    echo "***"
+    echo "*** To help us diagnose the problem, please attach the archived content"
+    echo "*** of these directories to the issue:"
+    echo "***     - '${REPORTDIR}'"
+    echo "***"
+    echo
 else
     rm -rf "${TEST_TMPDIR}"
 fi
@@ -900,7 +676,7 @@ if test "x${INFO_OS}" = xDarwin ; then
     defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}"
 fi
 
-if test ${TEST_FAILED} -gt 0 ; then
+if test "$(cat "${TEST_FAILED}" | wc -l)" -gt 0 ; then
     exit 1
 else
     exit 0

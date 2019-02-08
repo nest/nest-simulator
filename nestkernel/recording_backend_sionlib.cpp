@@ -39,9 +39,9 @@
 #include "recording_backend_sionlib.h"
 
 const unsigned int nest::RecordingBackendSIONlib::SIONLIB_REC_BACKEND_VERSION = 2;
-const unsigned int nest::RecordingBackendSIONlib::DEV_NAME_BUFFERSIZE = 16;
-const unsigned int nest::RecordingBackendSIONlib::DEV_LABEL_BUFFERSIZE = 16;
-const unsigned int nest::RecordingBackendSIONlib::VALUE_NAME_BUFFERSIZE = 8;
+const unsigned int nest::RecordingBackendSIONlib::DEV_NAME_BUFFERSIZE = 32;
+const unsigned int nest::RecordingBackendSIONlib::DEV_LABEL_BUFFERSIZE = 32;
+const unsigned int nest::RecordingBackendSIONlib::VALUE_NAME_BUFFERSIZE = 16;
 const unsigned int nest::RecordingBackendSIONlib::NEST_VERSION_BUFFERSIZE = 128;
 
 nest::RecordingBackendSIONlib::RecordingBackendSIONlib()
@@ -292,7 +292,7 @@ nest::RecordingBackendSIONlib::close_files_()
       sion_fwrite( &resolution, sizeof( double ), 1, file.sid );
 
       // write version of the sionlib recording backend into container file
-      sion_fwrite( &SIONLIB_REC_BACKEND_VERSION, sizeof( sion_int32 ), 1, file.sid );
+      sion_fwrite( &SIONLIB_REC_BACKEND_VERSION, sizeof( sion_uint32 ), 1, file.sid );
 
       // get nest version info from the SLI interpreter's statusdict
       SLIInterpreter& i = get_engine();

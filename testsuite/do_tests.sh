@@ -418,11 +418,11 @@ phase_six() {
     if test ${MUSIC}; then
 
         BASEDIR="$PWD"
-        tmpdir="$(mktemp -d)"
 
         TESTDIR="${TEST_BASEDIR}/musictests/"
 
         for test_name in $(ls "${TESTDIR}" | grep '.*\.music$') ; do
+            tmpdir="$(mktemp -d)"
             music_file="${TESTDIR}/${test_name}"
 
             # Collect the list of SLI files from the .music file.
@@ -431,7 +431,7 @@ phase_six() {
 
             # Check if there is an accompanying shell script for the test.
             sh_file="${TESTDIR}/$(basename ${music_file} .music).sh"
-            if test ! -f "${sh_file}"; then unset sh_file; fi
+            if test ! -f "${sh_file}"; then sh_file=""; fi
 
             # Calculate the total number of processes in the .music file.
             np="$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))"
@@ -443,7 +443,7 @@ phase_six() {
             printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
 
             # Copy everything to the tmpdir.
-            cp "${music_file}" "${sh_file}" ${sli_files} "${tmpdir}"
+            cp "${music_file}" ${sh_file} ${sli_files} "${tmpdir}"
             cd "${tmpdir}"
 
             # Create the runner script
@@ -470,17 +470,17 @@ EOT
             # call or of the accompanying shell script if present.
             exit_code=$(cat exit_code)
 
-            rm "${tmpdir}/*"
+            echo "CHECK ${tmpdir}" >>"${TEST_LOGFILE}"
             cd "${BASEDIR}"
 
-            set -x
             # If the name of the test contains 'failure', we expect it to
             # fail and the test logic is inverted.
             echo "${test_name}" >> "${TEST_TOTAL}"
             if test -z $(echo "${test_name}" | grep failure); then
                 if test $exit_code -eq 0 ; then
-                    echo "Success ###############################################################################################"
+                    echo "Success"
                     echo "${test_name}" >> "${TEST_PASSED}"
+                    rm -rf $tmpdir
                 elif test $exit_code -ge 200 && $exit_code -le 215; then
                     echo "Skipped"
                     echo "${test_name}" >> "${TEST_SKIPPED}"
@@ -492,6 +492,7 @@ EOT
                 if test $exit_code -ne 0 ; then
                     echo "Success (expected failure)"
                     echo "${test_name}" >> "${TEST_PASSED}"
+                    rm -rf $tmpdir
                 elif test $exit_code -ge 200 && $exit_code -le 215; then
                     echo "Skipped"
                     echo "${test_name}" >> "${TEST_SKIPPED}"
@@ -500,10 +501,8 @@ EOT
                     echo "${test_name}" >> "${TEST_FAILED}"
                 fi
             fi
-            set +x
         done
 
-        rm -rf $tmpdir
 
     else
       echo "  Not running MUSIC tests because NEST was compiled without support"

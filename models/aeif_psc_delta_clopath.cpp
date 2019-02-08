@@ -158,7 +158,7 @@ nest::aeif_psc_delta_clopath_dynamics( double,
  * ---------------------------------------------------------------- */
 
 nest::aeif_psc_delta_clopath::Parameters_::Parameters_()
-  : V_peak_( 20.0 )      // mV
+  : V_peak_( 33.0 )      // mV
   , V_reset_( -60.0 )    // mV
   , t_ref_( 0.0 )        // ms
   , g_L( 30.0 )          // nS
@@ -307,6 +307,11 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d )
         "for instance to increase Delta_T or to reduce V_peak"
         "to avoid this problem." );
     }
+  }
+
+  if ( V_th_max < V_th_rest )
+  {
+    throw BadProperty( "V_th_max >= V_th_rest required." );
   }
 
   if ( V_peak_ < V_th_rest )

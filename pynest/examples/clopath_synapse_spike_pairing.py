@@ -110,7 +110,6 @@ for (s_t_pre, s_t_post) in zip(spike_times_pre, spike_times_post):
     nest.Connect(spike_gen_pre, prrt_nrn,
                  syn_spec={"delay": resolution})
 
-    spike_gen_params_post = {"spike_times": s_t_post}
     spike_gen_post = nest.Create("spike_generator", 1, {
                                  "spike_times": s_t_post})
 

@@ -38,5 +38,5 @@ add_subdirectory( cpptests )
 install( DIRECTORY ${TESTSUBDIRS}
     DESTINATION ${CMAKE_INSTALL_DOCDIR} )
 
-install( PROGRAMS do_tests.sh
+install( PROGRAMS do_tests.sh run_test
     DESTINATION ${CMAKE_INSTALL_DATADIR}/extras )

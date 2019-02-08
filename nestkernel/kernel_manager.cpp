@@ -70,9 +70,9 @@ nest::KernelManager::KernelManager()
       &sp_manager,
       &event_delivery_manager,
       &music_manager,
-      &node_manager,
-      &io_manager
-    })
+      &io_manager,
+      &node_manager
+      })
   , initialized_( false )
 {
 }
@@ -141,7 +141,7 @@ nest::KernelManager::change_num_threads( thread num_threads )
   // called by VPManager::set_status(), which is in turn called from
   // the UI. Finalizing and re-initializing all managers will discard
   // all changes to the corresponding manager's status dictionaries.
-  
+
   node_manager.finalize();
   connection_manager.finalize();
   model_manager.finalize();
@@ -165,7 +165,7 @@ nest::KernelManager::change_num_threads( thread num_threads )
   for (auto& manager: managers)
   {
     manager->change_num_threads( num_threads );
-  }  
+  }
 }
 
 void
@@ -173,26 +173,10 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
 {
   assert( is_initialized() );
 
-  //JME: can we make this a loop?
-
-  logging_manager.set_status( dict );
-  io_manager.set_status( dict );
-
-  mpi_manager.set_status( dict );
-  vp_manager.set_status( dict );
-
-  // set RNGs --- MUST come after n_threads_ is updated
-  rng_manager.set_status( dict );
-  simulation_manager.set_status( dict );
-  modelrange_manager.set_status( dict );
-  model_manager.set_status( dict );
-  connection_manager.set_status( dict );
-  sp_manager.set_status( dict );
-
-  event_delivery_manager.set_status( dict );
-  music_manager.set_status( dict );
-
-  node_manager.set_status( dict ); // has to be called last
+  for ( auto& manager : managers )
+  {
+    manager->set_status( dict );
+  }
 }
 
 void
@@ -200,23 +184,8 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
 {
   assert( is_initialized() );
 
-  //JME: can we make this a loop?
-
-  logging_manager.get_status( dict );
-  io_manager.get_status( dict );
-
-  mpi_manager.get_status( dict );
-  vp_manager.get_status( dict );
-
-  rng_manager.get_status( dict );
-  simulation_manager.get_status( dict );
-  modelrange_manager.get_status( dict );
-  model_manager.get_status( dict );
-  connection_manager.get_status( dict );
-  sp_manager.get_status( dict );
-
-  event_delivery_manager.get_status( dict );
-  music_manager.get_status( dict );
-
-  node_manager.get_status( dict );
+  for ( auto& manager : managers )
+  {
+    manager->get_status( dict );
+  }
 }

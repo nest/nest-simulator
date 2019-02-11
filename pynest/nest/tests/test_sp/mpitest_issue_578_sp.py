@@ -23,12 +23,14 @@
 import nest
 import sys
 import traceback
+import unittest
 HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 
 
-class TestIssue578():
+class TestIssue578(unittest.TestCase):
 
-    def do_test_targets(self):
+    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
+    def test_targets(self):
         nest.ResetKernel()
         nest.set_verbosity('M_ALL')
         # Testing with 2 MPI processes
@@ -87,8 +89,6 @@ class TestIssue578():
             print(sys.exc_info()[0])
             self.fail("Exception during simulation")
 
-if HAVE_GSL:
-    mpitest = TestIssue578()
-    mpitest.do_test_targets()
-else:
-    print("Skipping because GSL is not available")
+
+mpitest = TestIssue578()
+mpitest.test_targets()

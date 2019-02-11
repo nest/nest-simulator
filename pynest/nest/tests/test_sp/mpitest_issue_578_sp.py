@@ -90,5 +90,10 @@ class TestIssue578(unittest.TestCase):
             self.fail("Exception during simulation")
 
 
-mpitest = TestIssue578()
-mpitest.test_targets()
+def suite():
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestIssue578)
+    return suite
+
+if __name__ == '__main__':
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())

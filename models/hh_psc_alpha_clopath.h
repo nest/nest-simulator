@@ -142,6 +142,9 @@ in STDP – a unified model.
 Front. Synaptic Neurosci., 2:25, (2010)
 doi: 10.3389/fnsyn.2010.00025
 
+Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
+https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
+
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest

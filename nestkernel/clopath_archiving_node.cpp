@@ -65,9 +65,10 @@ nest::Clopath_Archiving_Node::Clopath_Archiving_Node(
 void
 nest::Clopath_Archiving_Node::init_clopath_buffers()
 {
-  // Implementation of the delay of the convolved membrane potentials.
-  // This delay is not described in Clopath et al. 2010 but is present in
-  // the code which was presumably used to create the figures in the paper.
+  // Implementation of the delay of the convolved membrane potentials. This
+  // delay is not described in Clopath et al. 2010 but is present in the code
+  // (https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566) on
+  // ModelDB which was presumably used to create the figures in the paper.
   // Since we write into the buffer before we read from it, we have to
   // add 1 to the size of the buffers.
   delayed_u_bars_idx_ = 0;

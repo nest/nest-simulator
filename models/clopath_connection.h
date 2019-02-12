@@ -53,7 +53,7 @@ postsynaptic membrane potential.
 Clopath synapses require archiving of continuous quantities. Therefore Clopath
 synapses can only be connected to neuron models that are capable of doing this
 archiving. So far, compatible models are aeif_psc_delta_clopath and
-hh_psc_alpha.
+hh_psc_alpha_clopath.
 
 Parameters:
 

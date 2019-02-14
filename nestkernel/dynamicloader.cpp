@@ -138,10 +138,11 @@ has_name( SLIModule const* const m, const std::string n )
 }
 
 
-/*
-  BeginDocumentation
+/** @BeginDocumentation
   Name: Install - Load a dynamic module to extend the functionality.
+
   Description:
+
   Synopsis: (module_name) Install -> handle
 */
 DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction(

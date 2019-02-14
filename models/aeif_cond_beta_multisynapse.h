@@ -42,42 +42,57 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
- Name: aeif_cond_beta_multisynapse - Conductance based adaptive exponential
-                                      integrate-and-fire neuron model according
-                                      to Brette and Gerstner (2005) with
-                                      multiple synaptic rise time and decay
-                                      time constants, and synaptic conductance
-                                      modeled by a beta function.
+namespace nest
+{
+/**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int
+aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
- Description:
+/** @BeginDocumentation
+Name: aeif_cond_beta_multisynapse - Conductance based adaptive exponential
+                                     integrate-and-fire neuron model according
+                                     to Brette and Gerstner (2005) with
+                                     multiple synaptic rise time and decay
+                                     time constants, and synaptic conductance
+                                     modeled by a beta function.
 
- aeif_cond_beta_multisynapse is a conductance-based adaptive exponential
- integrate-and-fire neuron model. It allows an arbitrary number of synaptic
- rise time and decay time constants. Synaptic conductance is modeled by a
- beta function, as described by A. Roth and M.C.W. van Rossum
- in Computational Modeling Methods for Neuroscientists, MIT Press 2013,
- Chapter 6.
+Description:
 
- The time constants are supplied by two arrays, "tau_rise" and "tau_decay" for
- the synaptic rise time and decay time, respectively. The synaptic
- reversal potentials are supplied by the array "E_rev". The port numbers
- are automatically assigned in the range from 1 to n_receptors.
- During connection, the ports are selected with the property "receptor_type".
+aeif_cond_beta_multisynapse is a conductance-based adaptive exponential
+integrate-and-fire neuron model. It allows an arbitrary number of synaptic
+rise time and decay time constants. Synaptic conductance is modeled by a
+beta function, as described by A. Roth and M.C.W. van Rossum
+in Computational Modeling Methods for Neuroscientists, MIT Press 2013,
+Chapter 6.
 
- The membrane potential is given by the following differential equation:
- C dV/dt = -g_L(V-E_L) + g_L*Delta_T*exp((V-V_T)/Delta_T) + I_syn_tot(V, t)
-           - w + I_e
+The time constants are supplied by two arrays, "tau_rise" and "tau_decay" for
+the synaptic rise time and decay time, respectively. The synaptic
+reversal potentials are supplied by the array "E_rev". The port numbers
+are automatically assigned in the range from 1 to n_receptors.
+During connection, the ports are selected with the property "receptor_type".
 
- where:
- I_syn_tot(V,t) = \sum_i g_i(t) (V - E_{rev,i}) ,
+The membrane potential is given by the following differential equation:
+C dV/dt = -g_L(V-E_L) + g_L*Delta_T*exp((V-V_T)/Delta_T) + I_syn_tot(V, t)
+          - w + I_e
 
- the synapse i is excitatory or inhibitory depending on the value of E_{rev,i}
- and the differential equation for the spike-adaptation current w is:
+where:
+I_syn_tot(V,t) = \sum_i g_i(t) (V - E_{rev,i}) ,
 
- tau_w * dw/dt = a(V - E_L) - w
+the synapse i is excitatory or inhibitory depending on the value of E_{rev,i}
+and the differential equation for the spike-adaptation current w is:
 
- When the neuron fires a spike, the adaptation current w <- w + b.
+tau_w * dw/dt = a(V - E_L) - w
+
+When the neuron fires a spike, the adaptation current w <- w + b.
 
 Parameters:
 The following parameters can be set in the status dictionary.
@@ -114,69 +129,49 @@ Integration parameters
                           GSL integrator. Reduce it if NEST complains about
                           numerical instabilities.
 
- Examples:
+Examples:
 
- import nest
- import numpy as np
+import nest
+import numpy as np
 
- neuron = nest.Create('aeif_cond_beta_multisynapse')
- nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
- nest.SetStatus(neuron, {'E_rev':[0.0,0.0,0.0,-85.0],
-                         'tau_decay':[50.0,20.0,20.0,20.0],
-                         'tau_rise':[10.0,10.0,1.0,1.0]})
+neuron = nest.Create('aeif_cond_beta_multisynapse')
+nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
+nest.SetStatus(neuron, {'E_rev':[0.0,0.0,0.0,-85.0],
+                        'tau_decay':[50.0,20.0,20.0,20.0],
+                        'tau_rise':[10.0,10.0,1.0,1.0]})
 
- spike = nest.Create('spike_generator', params = {'spike_times':
-                                                 np.array([10.0])})
+spike = nest.Create('spike_generator', params = {'spike_times':
+                                                np.array([10.0])})
 
- voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
+voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
 
- delays=[1.0, 300.0, 500.0, 700.0]
- w=[1.0, 1.0, 1.0, 1.0]
- for syn in range(4):
-     nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
-                                           'receptor_type': 1 + syn,
-                                           'weight': w[syn],
-                                           'delay': delays[syn]})
+delays=[1.0, 300.0, 500.0, 700.0]
+w=[1.0, 1.0, 1.0, 1.0]
+for syn in range(4):
+    nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+                                          'receptor_type': 1 + syn,
+                                          'weight': w[syn],
+                                          'delay': delays[syn]})
 
- nest.Connect(voltmeter, neuron)
+nest.Connect(voltmeter, neuron)
 
- nest.Simulate(1000.0)
- dmm = nest.GetStatus(voltmeter)[0]
- Vms = dmm["events"]["V_m"]
- ts = dmm["events"]["times"]
- import pylab
- pylab.figure(2)
- pylab.plot(ts, Vms)
- pylab.show()
+nest.Simulate(1000.0)
+dmm = nest.GetStatus(voltmeter)[0]
+Vms = dmm["events"]["V_m"]
+ts = dmm["events"]["times"]
+import pylab
+pylab.figure(2)
+pylab.plot(ts, Vms)
+pylab.show()
 
- Sends: SpikeEvent
+Sends: SpikeEvent
 
- Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
- author: Bruno Golosio 07/10/2016
- SeeAlso: aeif_cond_alpha_multisynapse
- */
+Author: Bruno Golosio 07/10/2016
 
-namespace nest
-{
-/**
- * Function computing right-hand side of ODE for GSL solver.
- * @note Must be declared here so we can befriend it in class.
- * @note Must have C-linkage for passing to GSL. Internally, it is
- *       a first-class C++ function, but cannot be a member function
- *       because of the C-linkage.
- * @note No point in declaring it inline, since it is called
- *       through a function pointer.
- * @param void* Pointer to model neuron instance.
- */
-extern "C" int
-aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
-
-/**
- * Conductance based exponential integrate-and-fire neuron model according to
- * Brette and Gerstner
- * (2005) with multiple ports.
- */
+SeeAlso: aeif_cond_alpha_multisynapse
+*/
 class aeif_cond_beta_multisynapse : public Archiving_Node
 {
 

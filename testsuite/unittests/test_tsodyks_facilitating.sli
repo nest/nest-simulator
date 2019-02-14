@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: test_tsodyks_facilitating - sli script for overall test of tsodyks synapse models
 
 Synopsis:(test_tsodyks_facilitating) run -> compare cout with comments in file

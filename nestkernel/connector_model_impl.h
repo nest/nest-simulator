@@ -295,27 +295,6 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
   thread_local_connectors[ syn_id ] = connector;
 }
 
-template < typename ConnectionT >
-void
-GenericConnectorModel< ConnectionT >::reserve_connections(
-  std::vector< ConnectorBase* >& thread_local_connectors,
-  const synindex syn_id,
-  const size_t count )
-{
-  assert( syn_id != invalid_synindex );
-
-  if ( thread_local_connectors[ syn_id ] == NULL )
-  {
-    // No homogeneous Connector with this syn_id exists, we need to create a new
-    // homogeneous Connector.
-    thread_local_connectors[ syn_id ] = new Connector< ConnectionT >( syn_id );
-  }
-
-  ConnectorBase& connector = *thread_local_connectors[ syn_id ];
-
-  connector.reserve( connector.size() + count );
-}
-
 } // namespace nest
 
 #endif

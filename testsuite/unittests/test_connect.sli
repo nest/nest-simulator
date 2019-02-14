@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_connect - SLI script to test runability of all Connect variants
 
    Synopsis: (test_connect) run

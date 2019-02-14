@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_global_rng - check whether global rng gives consistent results
 
 Synopsis: nest_indirect test_global_rng.sli -> compare results for different numbers of jobs 

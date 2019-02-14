@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
     Name: testsuite::issue-832 - The test ensures that the marker primary_end
     is still valid if particular connections are deleted
 

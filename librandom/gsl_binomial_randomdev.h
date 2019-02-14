@@ -44,8 +44,9 @@
 #include <gsl/gsl_rng.h>
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rdevdict::gsl_binomial - GSL binomial random deviate generator
+
 Description:
 This function returns a random integer from the binomial distribution,
 the number of successes in n independent trials with probability
@@ -61,6 +62,7 @@ Parameters:
    n - number of trials (positive integer)
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
+
 Author: Jochen Martin Eppler
 */
 

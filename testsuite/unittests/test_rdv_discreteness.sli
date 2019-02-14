@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_rdv_discreteness - test discreteness of random distributions
 
 Synopsis: (test_rdv_discreteness.sli) run -> dies if assertion fails

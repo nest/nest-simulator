@@ -917,7 +917,7 @@ ht_neuron::update( Time const& origin, const long from, const long to )
 void
 nest::ht_neuron::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
   assert( e.get_rport() < static_cast< int >( B_.spike_inputs_.size() ) );
 
   B_.spike_inputs_[ e.get_rport() ].add_value(
@@ -928,7 +928,7 @@ nest::ht_neuron::handle( SpikeEvent& e )
 void
 nest::ht_neuron::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double I = e.get_current();
   const double w = e.get_weight();

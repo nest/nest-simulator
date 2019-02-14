@@ -362,16 +362,19 @@ private:
   std::vector< std::map< synindex, SecondaryEvent* > >
     secondary_events_prototypes_;
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
    Name: modeldict - dictionary containing all devices and models of NEST
+
    Description:
    'modeldict info' shows the contents of the dictionary
+
    SeeAlso: info, Device, RecordingDevice
    */
   DictionaryDatum modeldict_; //!< Dictionary of all models
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
    Name: synapsedict - Dictionary containing all synapse models.
+
    Description:
    'synapsedict info' shows the contents of the dictionary
    Synapse model names ending with '_hpc' provide minimal memory requirements by
@@ -379,8 +382,11 @@ private:
    Synapse model names ending with '_lbl' allow to assign an individual integer
    label (`synapse_label`) to created synapses at the cost of increased memory
    requirements.
+
    FirstVersion: October 2005
+
    Author: Jochen Martin Eppler
+
    SeeAlso: info
    */
   DictionaryDatum synapsedict_; //!< Dictionary of all synapse models

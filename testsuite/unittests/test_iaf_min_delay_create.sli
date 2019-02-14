@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_iaf_min_delay_create - sli script for testing automatic adjustment of min_delay
 
 Synopsis: (test_iaf_min_delay_create) run -> compares results for different min_delays

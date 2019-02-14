@@ -42,7 +42,7 @@
 #include "dictdatum.h"
 
 // clang-format off
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: kernel - Global properties of the simulation kernel.
 
  Description:

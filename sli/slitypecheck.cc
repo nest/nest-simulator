@@ -32,7 +32,7 @@
 #include "namedatum.h"
 #include "triedatum.h"
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: trie - Create a new type-trie object
 Synopsis: /name -> /name typetrie
 Description: Create a new typetrie with internal
@@ -70,7 +70,7 @@ TrieFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: addtotrie - Add a function variant to a trie-object
 Synopsis: trie [type-list] obj addtotrie -> trie
 Parameters:
@@ -155,7 +155,7 @@ AddtotrieFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
    Name: cva_t - Converts a type trie to an equivalent array
 
@@ -242,7 +242,7 @@ TrieInfoFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 2 );
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
    Name: cvt_a - Converts an array to the equivalent type trie.
 
@@ -325,7 +325,7 @@ Cvt_aFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( tmp );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: type - Return the type of an object
 Synopsis: obj type -> /typename
 Examples: 1 type -> /integertype

@@ -33,7 +33,8 @@
 
 namespace nest
 {
-/* BeginDocumentation
+
+/** @BeginDocumentation
    Name: izhikevich - Izhikevich neuron model
 
    Description:
@@ -86,8 +87,11 @@ namespace nest
    Sends: SpikeEvent
 
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+
    FirstVersion: 2009
+
    Author: Hanuschkin, Morrison, Kunkel
+
    SeeAlso: iaf_psc_delta, mat2_psc_exp
 */
 class izhikevich : public Archiving_Node

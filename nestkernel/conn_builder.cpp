@@ -48,6 +48,8 @@
 #include "fdstream.h"
 #include "name.h"
 
+const DictionaryDatum nest::ConnBuilder::dummy_param_ = new Dictionary;
+
 nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   const GIDCollection& targets,
   const DictionaryDatum& conn_spec,
@@ -246,8 +248,6 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
     }
   }
 }
-
-const DictionaryDatum nest::ConnBuilder::dummy_param_ = new Dictionary;
 
 nest::ConnBuilder::~ConnBuilder()
 {

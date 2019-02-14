@@ -25,6 +25,8 @@
 namespace nest
 {
 
+const DictionaryDatum ConnectionCreator::dummy_param_ = new Dictionary;
+
 ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   : allow_autapses_( true )
   , allow_multapses_( true )
@@ -173,7 +175,5 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     throw BadProperty( "Unknown connection type." );
   }
 }
-
-const DictionaryDatum ConnectionCreator::dummy_param_ = new Dictionary;
 
 } // namespace nest

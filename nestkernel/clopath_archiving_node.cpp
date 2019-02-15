@@ -190,7 +190,7 @@ nest::Clopath_Archiving_Node::get_LTP_history( double t1,
 }
 
 void
-nest::Clopath_Archiving_Node::write_LTP_LTD_history( Time const& t_sp,
+nest::Clopath_Archiving_Node::write_clopath_history( Time const& t_sp,
   double u,
   double u_bar_plus,
   double u_bar_minus,

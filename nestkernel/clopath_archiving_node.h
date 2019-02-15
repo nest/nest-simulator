@@ -112,13 +112,13 @@ protected:
   void write_LTP_history( const double t_ltp_ms, double u, double u_bar_plus );
 
   /**
-   * \fn void write_LTP_LTD_history( Time const& t_sp,
+   * \fn void write_clopath_history( Time const& t_sp,
    * double u, double u_bar_plus, double u_bar_minus, double u_bar_bar )
    * Writes and reads the delayed_u_bar_[plus/minus] buffers and
    * calls write_LTD_history and write_LTP_history if
    * the corresponding Heaviside functions yield 1.
    */
-  void write_LTP_LTD_history( Time const& t_sp,
+  void write_clopath_history( Time const& t_sp,
     double u,
     double u_bar_plus,
     double u_bar_minus,

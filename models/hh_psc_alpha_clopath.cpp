@@ -499,8 +499,8 @@ nest::hh_psc_alpha_clopath::update( Time const& origin,
     S_.y_[ State_::DI_INH ] +=
       B_.spike_inh_.get_value( lag ) * V_.PSCurrInit_I_;
 
-    // save data for Clopath STDP
-    write_LTP_LTD_history( Time::step( origin.get_steps() + lag + 1 ),
+    // save data for Clopath synapses
+    write_clopath_history( Time::step( origin.get_steps() + lag + 1 ),
       S_.y_[ State_::V_M ],
       S_.y_[ State_::U_BAR_PLUS ],
       S_.y_[ State_::U_BAR_MINUS ],

@@ -615,8 +615,8 @@ nest::aeif_psc_delta_clopath::update( const Time& origin,
       }
     }
 
-    // save data for Clopath STDP
-    write_LTP_LTD_history( Time::step( origin.get_steps() + lag + 1 ),
+    // save data for Clopath synapses
+    write_clopath_history( Time::step( origin.get_steps() + lag + 1 ),
       S_.y_[ State_::V_M ],
       S_.y_[ State_::U_BAR_PLUS ],
       S_.y_[ State_::U_BAR_MINUS ],

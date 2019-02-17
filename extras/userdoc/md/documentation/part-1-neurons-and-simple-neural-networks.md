@@ -337,8 +337,8 @@ to the synaptic model.
 
     syn_dict_ex = {"weight": 1.2}
     syn_dict_in = {"weight": -2.0}
-    nest.Connect([noise_ex], neuron, syn_spec=syn_dict_ex)
-    nest.Connect([noise_in], neuron, syn_spec=syn_dict_in)
+    nest.Connect(noise_ex, neuron, syn_spec=syn_dict_ex)
+    nest.Connect(noise_in, neuron, syn_spec=syn_dict_in)
 
 <table><tr>
 <td style="max-width: 400px;">

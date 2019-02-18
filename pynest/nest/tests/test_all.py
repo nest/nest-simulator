@@ -132,10 +132,10 @@ def suite():
 
 if __name__ == "__main__":
 
-    debug = nest.get_debug()
-    nest.set_debug(True)
+    debug = nest.ll_api.get_debug()
+    nest.ll_api.set_debug(True)
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
 
-    nest.set_debug(debug)
+    nest.ll_api.set_debug(debug)

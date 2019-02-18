@@ -144,7 +144,7 @@ class StructralPlasticityExample:
 
     def prepare_simulation(self):
         nest.ResetKernel()
-        nest.set_verbosity('M_ERROR')
+        nest.hl_api.set_verbosity('M_ERROR')
         '''
         We set global kernel parameters. Here we define the resolution
         for the simulation, which is also the time resolution for the update

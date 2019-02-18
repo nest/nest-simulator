@@ -395,7 +395,7 @@ iaf_psc_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 void
 iaf_psc_exp_multisynapse::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
@@ -405,7 +405,7 @@ iaf_psc_exp_multisynapse::handle( SpikeEvent& e )
 void
 iaf_psc_exp_multisynapse::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double I = e.get_current();
   const double w = e.get_weight();

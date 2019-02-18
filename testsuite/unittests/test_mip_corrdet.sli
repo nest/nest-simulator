@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_mip_corrdet - sli script for testing mip_generator and correlation_detector
 
 Synopsis: (test_mip_corrdet) run -> compare cout with comments in file

@@ -382,7 +382,7 @@ layerProps.update({'elements': 'RetinaNode'})
 retina = topo.CreateLayer(layerProps)
 
 # retina_leaves is a work-around until NEST 3.0 is released
-retina_leaves = nest.GetLeaves(retina)[0]
+retina_leaves = nest.hl_api.GetLeaves(retina)[0]
 
 # ! Now set phases of retinal oscillators; we use a list comprehension instead
 # ! of a loop.
@@ -452,7 +452,7 @@ populations = (retina, Tp, Rp, Vp_h, Vp_v)
 # ! ----------
 
 # ! We can now look at the network using `PrintNetwork`:
-nest.PrintNetwork()
+nest.hl_api.PrintNetwork()
 
 # ! We can also try to plot a single layer in a network. For
 # ! simplicity, we use Rp, which has only a single neuron per position.
@@ -830,7 +830,7 @@ for name, loc, population, model in [('TpRelay', 1, Tp, 'TpRelay'),
                                      ('Vp_h L4pyr', 4, Vp_h, 'L4pyr')]:
     recorders[name] = (nest.Create('RecordingNode'), loc)
     # population_leaves is a work-around until NEST 3.0 is released
-    population_leaves = nest.GetLeaves(population)[0]
+    population_leaves = nest.hl_api.GetLeaves(population)[0]
     tgts = [nd for nd in population_leaves
             if nest.GetStatus([nd], 'model')[0] == model]
     nest.Connect(recorders[name][0], tgts)  # one recorder to all targets

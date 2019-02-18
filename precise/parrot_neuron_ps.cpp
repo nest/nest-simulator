@@ -117,12 +117,12 @@ parrot_neuron_ps::handle( SpikeEvent& e )
   // Repeat only spikes incoming on port 0, port 1 will be ignored
   if ( 0 == e.get_rport() )
   {
-    assert( e.get_delay() > 0 );
+    assert( e.get_delay_steps() > 0 );
 
     // We need to compute the absolute time stamp of the delivery time
     // of the spike, since spikes might spend longer than min_delay_
     // in the queue.  The time is computed according to Time Memo, Rule 3.
-    const long Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
+    const long Tdeliver = e.get_stamp().get_steps() + e.get_delay_steps() - 1;
 
     // parrot ignores weight of incoming connection, store multiplicity
     B_.events_.add_spike(

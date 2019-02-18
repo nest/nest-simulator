@@ -118,7 +118,7 @@ FilesystemModule::SetDirectoryFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: Directory - Return current working directory
  Synopsis: Directory -> string
  Description: Returns name of current working directory. This is where all ls,
@@ -291,7 +291,7 @@ FilesystemModule::RemoveDirectoryFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: tmpnam - Generate a string that is a valid non-existing file-name.
 
    Synopsis: tpmnam -> filename
@@ -334,7 +334,7 @@ FilesystemModule::TmpNamFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: CompareFiles - Compare two files for equality.
 
    Synopsis: filenameA filenameB CompareFiles -> bool

@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_fail - test if SLI returns exit code 126 when executing a file with unhandled errors.
 
 Synopsis: (test_fail) run -> 

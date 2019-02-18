@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # generate_help.py
@@ -32,6 +33,7 @@ import io
 import re
 import sys
 import textwrap
+import cgi
 
 from writers import coll_data
 from helpers import check_ifdef, create_helpdirs, cut_it
@@ -69,19 +71,22 @@ sli_command_list = []
 cc_command_list = []
 index_dic_list = []
 
+# which keywords to ignore: can put e.g. doxygen commands here
+keywords_ignore = ["@ingroup"]
+
 keywords = ["Name:", "Synopsis:", "Examples:", "Description:", "Parameters:",
             "Options:", "Requires:", "Require:", "Receives:", "Transmits:",
             "Sends:", "Variants:", "Bugs:", "Diagnostics:", "Remarks:",
-            "Availability:", "References:", "SeeAlso:", "Author:",
+            "Availability:", "References:", "SeeAlso:", "Author:", "Authors:",
             "FirstVersion:", "Source:"]
 
 # Now begin to collect the data for the help files and start generating.
-dcs = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
+dcs = r'\/\**\s*@BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
 
-# searching for a sli_command_list
-for file in allfiles:
-    if file.endswith('.sli'):
-        f = io.open(file, encoding='utf-8')
+# compile the sli command list
+for fname in allfiles:
+    if fname.endswith('.sli'):
+        f = io.open(fname, encoding='utf-8')
         filetext = f.read()
         f.close()
         items = re.findall(dcs, filetext, re.DOTALL)
@@ -89,15 +94,15 @@ for file in allfiles:
             for line in item.splitlines():
                 name_line = re.findall(r"([\s*]?Name[\s*]?\:)(.*)", line)
                 if name_line:
-                    if name_line:
-                        # Clean the Name: line!
-                        name_line_0 = name_line[0][0].strip()
-                        name_line_1 = name_line[0][1].strip()
-                        sliname = cut_it(' - ', name_line_1)[0]
-                        sli_command_list.append(sliname)
+                    # Clean the Name: line!
+                    name_line_0 = name_line[0][0].strip()
+                    name_line_1 = name_line[0][1].strip()
+                    sliname = cut_it(' - ', name_line_1)[0]
+                    sli_command_list.append(sliname)
 
-# Now begin to collect the data for the help files and start generating.
-dcs = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
+dcs = r'\/\*[(\*|\s)?]*[\n?]*@BeginDocumentation' \
+      r'[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
+
 for fname in allfiles:
     # .py is for future use
     if not fname.endswith('.py'):
@@ -106,7 +111,12 @@ for fname in allfiles:
         f.close()
         # Multiline matching to find codeblock
         items = re.findall(dcs, filetext, re.DOTALL)
+
         for item in items:
+            # remove paragraph if this keyword is to be ignored
+            for kw in keywords_ignore:
+                item = re.sub(r"(" + kw + ".+?\n\n|" + kw + ".+?$)", "", item,
+                              flags=re.DOTALL)
             # Check the ifdef in code
             require = check_ifdef(item, filetext, dcs)
             if require:
@@ -116,27 +126,27 @@ for fname in allfiles:
             for line in item.splitlines():
                 name_line = re.findall(r"([\s*]?Name[\s*]?\:)(.*)", line)
                 if name_line:
-                    # Clean the Name: line!
+                    # Clean the Name: line
                     name_line_0 = name_line[0][0].strip()
                     name_line_1 = name_line[0][1].strip()
                     line = name_line_0 + ' ' + name_line_1
                 line = textwrap.dedent(line).strip()
                 # Tricks for the blanks
-                line = re.sub(r"(\s){5,}", '~~~ ', line)
-                line = re.sub(r"(\s){3,4}", '~~ ', line)
-                line = re.sub(r"(\s){2}", '~ ', line)
+                line = cgi.escape(line)
+                line = re.sub('^(\s)*- ', ' &bull; ', line)
+                line = re.sub('^(\s)*@note', ' &bull; ', line)
                 alllines.append(line)
-            item = s.join(alllines)
+            item = '\n'.join(alllines)
             num += 1
             documentation = {}
+            split_items = re.split("(^|\n)(" + "|".join(keywords) + ")", item)
             keyword_curr = ""
-            for token in item.split():
+            for i, token in enumerate(split_items):
                 if token in keywords:
                     keyword_curr = token
                     documentation[keyword_curr] = ""
                 else:
                     if keyword_curr in documentation:
                         documentation[keyword_curr] += " " + token
-
             all_data = coll_data(keywords, documentation, num, helpdir, fname,
                                  sli_command_list)

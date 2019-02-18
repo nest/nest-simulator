@@ -38,11 +38,16 @@
 #include "dictutils.h"
 #include "name.h"
 
-/*BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
 Name: multimeter - Device to record analog data from neurons.
+
 Synopsis: multimeter Create
 
 Description:
+
 A multimeter records a user-defined set of state variables from connected nodes
 to memory, file or stdout.
 
@@ -75,23 +80,32 @@ mode before simulating. Accumulator data is never written to file. You must
 extract it from the device using GetStatus.
 
 Remarks:
- - The set of variables to record and the recording interval must be set
-   BEFORE the multimeter is connected to any node, and cannot be changed
-   afterwards.
- - A multimeter cannot be frozen.
- - If you record with multimeter in accumulator mode and some of the nodes
-   you record from are frozen and others are not, data will only be collected
-   from the unfrozen nodes. Most likely, this will lead to confusing results,
-   so you should not use multimeter with frozen nodes.
+
+- The set of variables to record and the recording interval must be set
+  BEFORE the multimeter is connected to any node, and cannot be changed
+  afterwards.
+- A multimeter cannot be frozen.
+- If you record with multimeter in accumulator mode and some of the nodes
+  you record from are frozen and others are not, data will only be collected
+  from the unfrozen nodes. Most likely, this will lead to confusing results,
+  so you should not use multimeter with frozen nodes.
+
+@note If you want to pick up values at every time stamp,
+  you must set the interval to the simulation resolution.
+@ingroup Devices
+@see UniversalDataLogger
+
 
 Parameters:
-     The following parameters can be set in the status dictionary:
-     interval     double - Recording interval in ms
-     record_from  array  - Array containing the names of variables to record
-                           from, obtained from the /recordables entry of the
-                           model from which one wants to record
+
+The following parameters can be set in the status dictionary:
+interval     double - Recording interval in ms
+record_from  array  - Array containing the names of variables to record
+                      from, obtained from the /recordables entry of the
+                      model from which one wants to record
 
 Examples:
+
 SLI ] /iaf_cond_alpha Create /n Set
 SLI ] n /recordables get ==
 [/V_m /g_ex /g_in /t_ref_remaining]
@@ -120,41 +134,8 @@ FirstVersion: 2009-04-01
 
 Author: Hans Ekkehard Plesser, Barna Zajzon (added offset support March 2017)
 
-
 SeeAlso: Device, RecordingDevice
 */
-
-namespace nest
-{
-/**
- * General analog data recorder.
- *
- * This class is based on RecordingDevice and adds common
- * functionality for devices sampling analog values at
- * given time intervals. The user specifies which data
- * are to be sampled at what interval.
- *
- * Sampling works in the way the the sampled node must store
- * the relevant data for the most recent completed time slice
- * and that the sampling device then sends a Request for data
- * with a given time stamp.
- *
- * Data is recorded at time steps T for which
- *   start < T - origin <= stop
- * and
- *   ( T - offset ) mod interval == 0.
- *
- * The recording interval defaults to 1ms; this entails that
- * the simulation resolution cannot be set to larger values than
- * 1ms unless the analog recording device interval is set to at
- * least that resolution.
- *
- * @note If you want to pick up values at every time stamp,
- *       you must set the interval to the simulation resolution.
- * *
- * @ingroup Devices
- * @see UniversalDataLogger
- */
 class Multimeter : public DeviceNode
 {
 

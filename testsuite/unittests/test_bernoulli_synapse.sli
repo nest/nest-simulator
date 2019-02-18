@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
     Name: testsuite::test_bernoulli_synapse - test of bernoulli_synapse connection
 
     Synopsis: (test_bernoulli_synapse) run -> measure average number of spikes transmitted 

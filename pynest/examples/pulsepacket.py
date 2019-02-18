@@ -120,7 +120,7 @@ def find_loc_pspmax(tau_s, tau_m):
     It returns the location of the maximum (in sec)
     '''
     var = tau_m / tau_s
-    lam = nest.sli_func('LambertWm1', -numpy.exp(-1 / var) / var)
+    lam = nest.ll_api.sli_func('LambertWm1', -numpy.exp(-1 / var) / var)
     t_maxpsp = (-var * lam - 1) / var / (1 / tau_s - 1 / tau_m) * 1e-3
     return t_maxpsp
 
@@ -195,7 +195,7 @@ verbosity using `set_verbosity()` to suppress info messages.
 
 nest.ResetKernel()
 nest.SetStatus([0], [{'resolution': simulation_resolution}])
-nest.set_verbosity("M_WARNING")
+nest.hl_api.set_verbosity("M_WARNING")
 
 '''
 2.1 Afterwards we create several neurons, the same amount

@@ -107,14 +107,6 @@ def RunManager():
 
 
 @check_stack
-def ResumeSimulation():
-    """Resume an interrupted simulation.
-    """
-
-    sr("ResumeSimulation")
-
-
-@check_stack
 def ResetKernel():
     """Reset the simulation kernel.
 

@@ -125,8 +125,6 @@ expression.
 ### Controlling the simulation
 
 [Simulate](../helpindex/cmds/Simulate.md) Simulate n milliseconds.
-[ResumeSimulation](../helpindex/cmds/ResumeSimulation.md) Resume an interrupted
-simulation.
 [ResetKernel](../helpindex/cmds/ResetKernel.md) Put the simulation kernel back
 to its initial state.
 [ResetNetwork](../helpindex/cmds/ResetNetwork.md) Reset the dynamic state of the

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_spike_generator - sli script to test spike_generator device
 
    Synopsis: (test_spike_generator) run

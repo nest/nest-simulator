@@ -23,10 +23,24 @@
 Functions to get information on NEST.
 """
 
-from .hl_api_helper import *
 import sys
 import os
 import webbrowser
+
+from ..ll_api import *
+from .hl_api_helper import *
+
+__all__ = [
+    'authors',
+    'get_argv',
+    'GetStatus',
+    'help',
+    'helpdesk',
+    'message',
+    'SetStatus',
+    'sysinfo',
+    'version',
+]
 
 
 @check_stack

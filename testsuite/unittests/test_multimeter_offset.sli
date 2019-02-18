@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multimeter_offset - Test if offset attribute works properly
  
 Synopsis: (test_multimeter_offset) run -> NEST exits if test fails

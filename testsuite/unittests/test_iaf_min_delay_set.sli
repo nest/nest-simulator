@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_iaf_min_delay_set - sli script for testing explicit specification of min_delay
 
 Synopsis: (test_iaf_min_delay_set) run -> compares results for different min_delays

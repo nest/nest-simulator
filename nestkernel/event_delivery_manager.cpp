@@ -501,7 +501,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
             ( *iiit ).get_lcid(),
             lag,
             ( *iiit ).get_offset() );
-          ( *iiit ).set_is_processed( true ); // mark entry for removal
+          ( *iiit ).set_status( TARGET_ID_PROCESSED ); // mark entry for removal
           send_buffer_position.increase( rank );
         }
       }

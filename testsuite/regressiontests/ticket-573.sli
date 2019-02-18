@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-573 - Maximum number of synapse types reached in copy_synapse_prototype without error message 
 

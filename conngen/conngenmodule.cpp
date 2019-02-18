@@ -79,36 +79,36 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
   i->createcommand( ":cgnext", &cgnext_cgfunction );
 }
 
-/* BeginDocumentation
-   Name: CGConnect - Establish connections contained in a ConnectionGenerator
+/** @BeginDocumentation
+Name: CGConnect - Establish connections contained in a ConnectionGenerator
 
-   Synopsis:
-   cg sources targets                  ->  -
-   cg sources targets params           ->  -
-   cg sources targets        syn_model ->  -
-   cg sources targets params syn_model ->  -
+Synopsis:
+cg sources targets                  ->  -
+cg sources targets params           ->  -
+cg sources targets        syn_model ->  -
+cg sources targets params syn_model ->  -
 
-   Parameters:
-   cg         connectiongenerator            - ConnectionGenerator
-   sources    gidcollection/array/intvector  - the GIDs of the sources
-   targets    gidcollection/array/intvector  - the GIDs of the targets
-   params     dict (optional)    - A map that translates the names /weight and
-                                   /delay to indices in the value set
-   syn_model  literal (optional) - A literal specifying the synapse model
+Parameters:
+cg         connectiongenerator            - ConnectionGenerator
+sources    gidcollection/array/intvector  - the GIDs of the sources
+targets    gidcollection/array/intvector  - the GIDs of the targets
+params     dict (optional)    - A map that translates the names /weight and
+                               /delay to indices in the value set
+syn_model  literal (optional) - A literal specifying the synapse model
 
-   Description:
-   CGConnect connects a source and a target population according to
-   the rules defined in the given connection generator. params is an
-   optional dictionary, that maps the names /weight and/or /delay to
-   their integer index in the value set in the connection generator.
-   If not specified, the synapse model is taken from the Options of
-   the Connect command.
+Description:
+CGConnect connects a source and a target population according to
+the rules defined in the given connection generator. params is an
+optional dictionary, that maps the names /weight and/or /delay to
+their integer index in the value set in the connection generator.
+If not specified, the synapse model is taken from the Options of
+the Connect command.
 
-   Availability: Only if compiled with libneurosim support
-   Author: Jochen Martin Eppler
-   FirstVersion: August 2012
-   SeeAlso: Connect, synapsedict, GetOptions, CGParse, CGParseFile,
-   CGSelectImplementation
+Availability: Only if compiled with libneurosim support
+Author: Jochen Martin Eppler
+FirstVersion: August 2012
+SeeAlso: Connect, synapsedict, GetOptions, CGParse, CGParseFile,
+CGSelectImplementation
 */
 
 // CGConnect for conngen gidcollection gidcollection dict literal
@@ -135,25 +135,25 @@ ConnectionGeneratorModule::CGConnect_cg_g_g_D_lFunction::execute(
 }
 
 
-/* BeginDocumentation
-   Name: CGParse - Call ConnectionGenerator::fromXML() and return a
-   ConnectionGenerator
+/** @BeginDocumentation
+Name: CGParse - Call ConnectionGenerator::fromXML() and return a
+ConnectionGenerator
 
-   Synopsis:
-   xml_string CGParse -> cg
+Synopsis:
+xml_string CGParse -> cg
 
-   Parameters:
-   xml_string - The XML string to parse.
+Parameters:
+xml_string - The XML string to parse.
 
-   Description:
-   Return a ConnectionGenerator created by deserializing the given
-   XML string. The library to parse the XML string can be selected using
-   CGSelectImplementation
+Description:
+Return a ConnectionGenerator created by deserializing the given
+XML string. The library to parse the XML string can be selected using
+CGSelectImplementation
 
-   Availability: Only if compiled with libneurosim support
-   Author: Jochen Martin Eppler
-   FirstVersion: September 2013
-   SeeAlso: CGParseFile, CGConnect, CGSelectImplementation
+Availability: Only if compiled with libneurosim support
+Author: Jochen Martin Eppler
+FirstVersion: September 2013
+SeeAlso: CGParseFile, CGConnect, CGSelectImplementation
 */
 void
 ConnectionGeneratorModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
@@ -169,25 +169,25 @@ ConnectionGeneratorModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/* BeginDocumentation
-   Name: CGParseFile - Call ConnectionGenerator::fromXMLFile() and return a
-   ConnectionGenerator
+/** @BeginDocumentation
+Name: CGParseFile - Call ConnectionGenerator::fromXMLFile() and return a
+ConnectionGenerator
 
-   Synopsis:
-   xml_filename CGParseFile -> cg
+Synopsis:
+xml_filename CGParseFile -> cg
 
-   Parameters:
-   xml_filename - The XML file to read.
+Parameters:
+xml_filename - The XML file to read.
 
-   Description:
-   Return a ConnectionGenerator created by deserializing the given
-   XML file. The library to parse the XML file can be selected using
-   CGSelectImplementation
+Description:
+Return a ConnectionGenerator created by deserializing the given
+XML file. The library to parse the XML file can be selected using
+CGSelectImplementation
 
-   Availability: Only if compiled with libneurosim support
-   Author: Jochen Martin Eppler
-   FirstVersion: February 2014
-   SeeAlso: CGParse, CGConnect, CGSelectImplementation
+Availability: Only if compiled with libneurosim support
+Author: Jochen Martin Eppler
+FirstVersion: February 2014
+SeeAlso: CGParse, CGConnect, CGSelectImplementation
 */
 void
 ConnectionGeneratorModule::CGParseFile_sFunction::execute(
@@ -204,25 +204,25 @@ ConnectionGeneratorModule::CGParseFile_sFunction::execute(
 }
 
 
-/* BeginDocumentation
-   Name: CGSelectImplementation - Call
-   ConnectionGenerator::selectCGImplementation()
+/** @BeginDocumentation
+Name: CGSelectImplementation - Call
+ConnectionGenerator::selectCGImplementation()
 
-   Synopsis:
-   tag library CGParse -> -
+Synopsis:
+tag library CGParse -> -
 
-   Parameters:
-   tag     - The XML tag to associate with a library.
-   library - The library to provide the parsing for CGParse
+Parameters:
+tag     - The XML tag to associate with a library.
+library - The library to provide the parsing for CGParse
 
-   Description:
-   Select a library to provide a parser for XML files and associate
-   an XML tag with the library.
+Description:
+Select a library to provide a parser for XML files and associate
+an XML tag with the library.
 
-   Availability: Only if compiled with libneurosim support
-   Author: Jochen Martin Eppler
-   FirstVersion: September 2013
-   SeeAlso: CGParse, CGParseFile, CGConnect
+Availability: Only if compiled with libneurosim support
+Author: Jochen Martin Eppler
+FirstVersion: September 2013
+SeeAlso: CGParse, CGParseFile, CGConnect
 */
 void
 ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute(
@@ -240,31 +240,31 @@ ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute(
 }
 
 
-/* BeginDocumentation
-   Name: :cgsetmask - Call setMasks() on a ConnectionGenerator
+/** @BeginDocumentation
+Name: :cgsetmask - Call setMasks() on a ConnectionGenerator
 
-   Synopsis:
-   cg sources targets :cgsetmask -> -
+Synopsis:
+cg sources targets :cgsetmask -> -
 
-   Parameters:
-   cg      - ConnectionGenerator
-   sources - A gidcollection of nodes used as source masks
-   targets - A gidcollection of nodes used as target masks
+Parameters:
+cg      - ConnectionGenerator
+sources - A gidcollection of nodes used as source masks
+targets - A gidcollection of nodes used as target masks
 
-   Description:
-   Set masks for sources and targets on a given ConnectionGenerator
-   cg. This is calling the setMasks() function on cg internally.
+Description:
+Set masks for sources and targets on a given ConnectionGenerator
+cg. This is calling the setMasks() function on cg internally.
 
-   Remarks:
-   This function is part of the low-level access API for the
-   ConnectionGenerator module. It is mainly used for debugging
-   purposes. Usually, connections are created from a
-   ConnectionGenerator using CGConnect.
+Remarks:
+This function is part of the low-level access API for the
+ConnectionGenerator module. It is mainly used for debugging
+purposes. Usually, connections are created from a
+ConnectionGenerator using CGConnect.
 
-   Availability: Only if compiled with libneurosim support
-   Author: Mikael Djurfeldt
-   FirstVersion: March 2011
-   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation
+Availability: Only if compiled with libneurosim support
+Author: Mikael Djurfeldt
+FirstVersion: March 2011
+SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation
 */
 void
 ConnectionGeneratorModule::CGSetMask_cg_g_gFunction::execute(
@@ -286,28 +286,28 @@ ConnectionGeneratorModule::CGSetMask_cg_g_gFunction::execute(
 }
 
 
-/* BeginDocumentation
-   Name: :cgstart - Call start() on a ConnectionGenerator
+/** @BeginDocumentation
+Name: :cgstart - Call start() on a ConnectionGenerator
 
-   Synopsis:
-   cg :cgstart -> -
+Synopsis:
+cg :cgstart -> -
 
-   Parameters:
-   cg - ConnectionGenerator
+Parameters:
+cg - ConnectionGenerator
 
-   Description:
-   Call the start() function on a given ConnectionGenerator cg.
+Description:
+Call the start() function on a given ConnectionGenerator cg.
 
-   Remarks:
-   This function is part of the low-level access API for the
-   ConnectionGenerator module. It is mainly used for debugging
-   purposes. Usually, connections are created from a
-   ConnectionGenerator using CGConnect.
+Remarks:
+This function is part of the low-level access API for the
+ConnectionGenerator module. It is mainly used for debugging
+purposes. Usually, connections are created from a
+ConnectionGenerator using CGConnect.
 
-   Availability: Only if compiled with libneurosim support
-   Author: Mikael Djurfeldt
-   FirstVersion: March 2011
-   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation
+Availability: Only if compiled with libneurosim support
+Author: Mikael Djurfeldt
+FirstVersion: March 2011
+SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation
 */
 void
 ConnectionGeneratorModule::CGStart_cgFunction::execute(
@@ -325,32 +325,32 @@ ConnectionGeneratorModule::CGStart_cgFunction::execute(
 }
 
 
-/* BeginDocumentation
-   Name: :cgnext - Call next() on a ConnectionGenerator
+/** @BeginDocumentation
+Name: :cgnext - Call next() on a ConnectionGenerator
 
-   Synopsis:
-   cg :cgnext -> source target v[0] ... true | false
+Synopsis:
+cg :cgnext -> source target v[0] ... true | false
 
-   Parameters:
-   cg - ConnectionGenerator
+Parameters:
+cg - ConnectionGenerator
 
-   Description:
-   Call the next() function on a given ConnectionGenerator cg
-   to iterate cg's connections on the SLI level. This function
-   will return the source and the target of the connection, the
-   values for the connection (if there are any), and true, or
-   false, if cg cannot be iterated further.
+Description:
+Call the next() function on a given ConnectionGenerator cg
+to iterate cg's connections on the SLI level. This function
+will return the source and the target of the connection, the
+values for the connection (if there are any), and true, or
+false, if cg cannot be iterated further.
 
-   Remarks:
-   This function is part of the low-level access API for the
-   ConnectionGenerator module. It is mainly used for debugging
-   purposes. Usually, connections are created from a
-   ConnectionGenerator using CGConnect.
+Remarks:
+This function is part of the low-level access API for the
+ConnectionGenerator module. It is mainly used for debugging
+purposes. Usually, connections are created from a
+ConnectionGenerator using CGConnect.
 
-   Availability: Only if compiled with libneurosim support
-   Author: Mikael Djurfeldt, Jochen Martin Eppler
-   FirstVersion: December 2012
-   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation
+Availability: Only if compiled with libneurosim support
+Author: Mikael Djurfeldt, Jochen Martin Eppler
+FirstVersion: December 2012
+SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation
 */
 void
 ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const

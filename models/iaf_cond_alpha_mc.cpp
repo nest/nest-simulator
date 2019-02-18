@@ -674,7 +674,7 @@ nest::iaf_cond_alpha_mc::update( Time const& origin,
 void
 nest::iaf_cond_alpha_mc::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
   assert( 0 <= e.get_rport() && e.get_rport() < 2 * NCOMP );
 
   B_.spikes_[ e.get_rport() ].add_value(
@@ -685,7 +685,7 @@ nest::iaf_cond_alpha_mc::handle( SpikeEvent& e )
 void
 nest::iaf_cond_alpha_mc::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
   // not 100% clean, should look at MIN, SUP
   assert( 0 <= e.get_rport() && e.get_rport() < NCOMP );
 

@@ -28,16 +28,16 @@ set -eu
 #
 usage ()
 {
-    if test $1 = 1 ; then
+    if test "$1" = 1 ; then
         echo "Error: Unknown option \'$2\'"
     fi
 
-    if test $1 = 2 ; then
+    if test "$1" = 2 ; then
         echo "Error: Missing required option \'$2\'"
     fi
 
-    if test $1 = 3 ; then
-        echo $2
+    if test "$1" = 3 ; then
+        echo "$2"
     fi
 
     cat <<EOF
@@ -54,7 +54,7 @@ Options:
     --help                 Print program options and exit
 EOF
 
-    exit $1
+    exit "$1"
 }
 
 
@@ -74,12 +74,12 @@ bail_out ()
 # BSD: -E
 # other: -r
 #
-EXTENDED_REGEX_PARAM=r
+EXTENDED_REGEX_PARAM="r"
 /bin/sh -c "echo 'hello' | sed -${EXTENDED_REGEX_PARAM} 's/[aeou]/_/g' "  >/dev/null 2>&1 || EXTENDED_REGEX_PARAM=E
 
 
 
-RUN_TEST=$(dirname $0)/run_test
+RUN_TEST="$(dirname $0)/run_test"
 MUSIC=""
 PYTHON=""
 
@@ -91,11 +91,11 @@ while test $# -gt 0 ; do
             ;;
         --prefix=*)
             PREFIX="$( echo "$1" | sed 's/^--prefix=//' )"
-	    if test ! ${PREFIX}; then usage 2 "--prefix"; fi
+	    if test ! "${PREFIX}"; then usage 2 "--prefix"; fi
             ;;
         --report-dir=*)
             REPORTDIR="$( echo "$1" | sed 's/^--report-dir=//' )"
-	    if test ! ${REPORTDIR}; then usage 2 "--report-dir"; fi
+	    if test ! "${REPORTDIR}"; then usage 2 "--report-dir"; fi
             ;;
         --with-python=*)
             PYTHON="$( echo "$1" | sed 's/^--with-python=//' )"
@@ -112,25 +112,26 @@ while test $# -gt 0 ; do
     esac
     shift
 done
+if test ! "${PREFIX}"; then usage 2 "--prefix"; fi
 
-export NEST=nest_serial
-export PATH=${PREFIX}/bin:$PATH
+export NEST="nest_serial"
+export PATH="${PREFIX}/bin:$PATH"
 
 unset NEST_INSTALL_DIR
 unset NEST_DATA_DIR
 unset NEST_DOCL_DIR
-if test ${PYTHON}; then
-    if test ! ${PYTHONPATH_}; then
+if test "${PYTHON}"; then
+    if test ! "${PYTHONPATH_}"; then
 	usage 3 "Error: \'--with-python\' also requires \'--python-path\'" 
     fi
 
     NOSETESTS="$(command -v nosetests 2>&1)"
     PYTHON_HARNESS="${PREFIX}/share/nest/extras/do_tests.py"
 
-    export PYTHONPATH=$PYTHONPATH_:$PYTHONPATH
+    export PYTHONPATH="$PYTHONPATH_:$PYTHONPATH"
 fi
 
-export TEST_BASEDIR=${PREFIX}/share/doc/nest
+export TEST_BASEDIR="${PREFIX}/share/doc/nest"
 
 # Gather some information about the host
 INFO_ARCH="$(uname -m)"
@@ -148,17 +149,17 @@ echo "==========================================================================
 echo "  NEST executable .... $NEST"
 echo "  PATH ............... $PATH"
 echo "  Python executable .. $PYTHON"
-echo "  PYTHONPATH ......... $PYTHONPATH"
+echo "  PYTHONPATH ......... ${PYTHONPATH:-}"
 echo "  TEST_BASEDIR ....... $TEST_BASEDIR"
 echo "  PREFIX ............. $PREFIX"
 echo "  REPORTDIR .......... $REPORTDIR"
 echo "================================================================================"
 
+# logfiles and log-prefixes for test specific logs
 export TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 export TEST_OUTFILE="${REPORTDIR}/output.log"
 export TEST_RETFILE="${REPORTDIR}/output.ret"
 export TEST_RUNFILE="${REPORTDIR}/runtest.sh"
-export TEST_TIMES="${REPORTDIR}/TIMES"
 
 # parallel execution line-counting files
 export TEST_TOTAL="${REPORTDIR}/TOTAL"
@@ -223,6 +224,9 @@ echo >  "${TEST_LOGFILE}" "$HEADLINE"
 echo >> "${TEST_LOGFILE}" "$(printf '%0.s=' $(seq 1 ${#HEADLINE}))"
 echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
 
+NPROCS="$(cat /proc/cpuinfo | grep processor | wc -l)"
+echo "running ${NPROCS} in parallel where possible."
+
 CODES_SKIPPED=\
 ' 200 Skipped,'\
 ' 201 Skipped (MPI required),'\
@@ -230,7 +234,6 @@ CODES_SKIPPED=\
 ' 203 Skipped (Threading required),'\
 ' 204 Skipped (GSL required),'\
 ' 205 Skipped (MUSIC required),'
-NPROCS="$(cat /proc/cpuinfo | grep processor | wc -l)"
 
 phase_one() {
     echo

@@ -438,7 +438,7 @@ nest::glif_lif_r_asc_psc::handles_test_event( SpikeEvent&,
 void
 nest::glif_lif_r_asc_psc::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   B_.spikes_[e.get_rport() - 1].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
@@ -448,7 +448,7 @@ nest::glif_lif_r_asc_psc::handle( SpikeEvent& e )
 void
 nest::glif_lif_r_asc_psc::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   B_.currents_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),

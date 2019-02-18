@@ -341,7 +341,7 @@ nest::glif_lif_r_asc::update( Time const& origin, const long from, const long to
 void
 nest::glif_lif_r_asc::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   B_.spikes_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
@@ -351,7 +351,7 @@ nest::glif_lif_r_asc::handle( SpikeEvent& e )
 void
 nest::glif_lif_r_asc::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   B_.currents_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),

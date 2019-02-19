@@ -24,7 +24,8 @@ import nest
 import sys
 import traceback
 import unittest
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+
+HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
 class TestIssue578(unittest.TestCase):
@@ -32,7 +33,7 @@ class TestIssue578(unittest.TestCase):
     @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_targets(self):
         nest.ResetKernel()
-        nest.set_verbosity('M_ALL')
+        nest.hl_api.set_verbosity('M_ALL')
         # Testing with 2 MPI processes
         nest.SetKernelStatus(
             {

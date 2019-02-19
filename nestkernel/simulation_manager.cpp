@@ -676,12 +676,12 @@ nest::SimulationManager::call_update_()
   if ( exit_on_user_signal_ )
   {
     LOG( M_WARNING,
-      "SimulationManager::resume",
+      "SimulationManager::run",
       String::compose( "Exiting on user signal %1.", SLIsignalflag ) );
     SLIsignalflag = 0;
   }
 
-  LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
+  LOG( M_INFO, "SimulationManager::run", "Simulation finished." );
 }
 
 void

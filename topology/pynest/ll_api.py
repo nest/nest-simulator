@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# __init__.py
+# ll_api.py
 #
 # This file is part of NEST.
 #
@@ -20,25 +20,42 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Initializer of PyNEST.
+Low-level API of PyNEST Topology Module
 """
 
-from . import ll_api      # noqa
+import nest
 
-# Import kernel in __init__ after initializing low-level APIs.
-from . import pynestkernel as kernel      # noqa
-from .hl_api import *      # noqa
+__all__ = [
+    'topology_func',
+]
 
 
-def test():
-    """Runs all PyNEST unit tests."""
-    from . import tests
-    import unittest
+def topology_func(slifunc, *args):
+    """
+    Execute SLI function `slifunc` with arguments `args` in Topology namespace.
 
-    debug = ll_api.get_debug()
-    ll_api.set_debug(True)
 
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(tests.suite())
+    Parameters
+    ----------
+    slifunc : str
+        SLI namespace expression
 
-    ll_api.set_debug(debug)
+
+    Other parameters
+    ----------------
+    args : dict
+        An arbitrary number of arguments
+
+
+    Returns
+    -------
+    out :
+        Values from SLI function `slifunc`
+
+
+    See also
+    --------
+    nest.ll_api.sli_func
+    """
+
+    return nest.ll_api.sli_func(slifunc, *args)

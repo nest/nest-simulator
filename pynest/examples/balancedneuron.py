@@ -51,7 +51,7 @@ Additionally, we set the verbosity using `set_verbosity` to
 suppress info messages.
 '''
 
-nest.set_verbosity("M_WARNING")
+nest.hl_api.set_verbosity("M_WARNING")
 nest.ResetKernel()
 
 '''

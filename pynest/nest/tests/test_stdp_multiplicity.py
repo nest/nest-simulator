@@ -27,7 +27,7 @@ import math
 import numpy as np
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class StdpSpikeMultiplicity(unittest.TestCase):
     """
     Test correct handling of spike multiplicity in STDP.
@@ -108,7 +108,7 @@ class StdpSpikeMultiplicity(unittest.TestCase):
         # k spikes will be emitted at these two times
         pre_spike_times_base = [100., 200.]
 
-        nest.set_verbosity("M_WARNING")
+        nest.hl_api.set_verbosity("M_WARNING")
 
         post_weights = {'parrot': [], 'parrot_ps': []}
 

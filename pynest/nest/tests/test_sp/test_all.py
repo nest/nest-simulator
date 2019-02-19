@@ -34,7 +34,7 @@ from . import test_synaptic_elements
 from . import test_update_synaptic_elements
 
 
-HAVE_MPI = nest.sli_func("statusdict/have_mpi ::")
+HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
 if HAVE_MPI:
     print("Testing with MPI")
     from subprocess import call
@@ -61,6 +61,6 @@ def suite():
     return test_suite
 
 if __name__ == "__main__":
-    nest.set_verbosity('M_WARNING')
+    nest.hl_api.set_verbosity('M_WARNING')
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

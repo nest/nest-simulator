@@ -219,8 +219,8 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
         fname = nest.GetStatus(detec, "filenames")[0]
         return from_file(fname, title, grayscale)
     else:
-        raise nest.kernel.NESTError("Provided devices neither records to file, \
-            nor to memory.")
+        raise nest.kernel.NESTError(
+            "Provided devices neither records to file, nor to memory.")
 
 
 def _from_memory(detec):

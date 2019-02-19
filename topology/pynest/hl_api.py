@@ -108,7 +108,7 @@ class Mask(object):
     def __init__(self, datum):
         """Masks must be created using the CreateMask command."""
         if not isinstance(datum, nest.kernel.SLIDatum) or \
-            datum.dtype != "masktype":
+                datum.dtype != "masktype":
             raise TypeError("expected mask Datum")
         self._datum = datum
 
@@ -309,7 +309,7 @@ class Parameter(object):
     def __init__(self, datum):
         """Parameters must be created using the CreateParameter command."""
         if not isinstance(datum, nest.kernel.SLIDatum) or \
-            datum.dtype != "parametertype":
+                datum.dtype != "parametertype":
             raise TypeError("expected parameter datum")
         self._datum = datum
 
@@ -814,7 +814,7 @@ def ConnectLayers(pre, post, projections):
 
     # ensure projections is list of full length
     projections = nest.hl_api.broadcast(projections, len(pre), (dict, ),
-                                 "projections")
+                                        "projections")
 
     # Replace python classes with SLI datums
     def fixdict(d):
@@ -1184,7 +1184,8 @@ def _check_displacement_args(from_arg, to_arg, caller):
     # invariant: from_arg is list
 
     if not nest.hl_api.is_sequence_of_gids(to_arg):
-        raise nest.kernel.NESTError("%s: to_arg must be lists of GIDs" % caller)
+        raise nest.kernel.NESTError(
+            "%s: to_arg must be lists of GIDs" % caller)
     # invariant: from_arg and to_arg are sequences
 
     if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(

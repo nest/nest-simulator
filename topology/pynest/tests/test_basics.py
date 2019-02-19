@@ -96,7 +96,7 @@ class BasicsTestCase(unittest.TestCase):
 
         nodepos_ref = (pos,) * nlayers
         nodepos_exp = (topo.GetPosition(node) for node in
-            nest.hl_api.GetLeaves(l))
+                       nest.hl_api.GetLeaves(l))
 
         for npe, npr in zip(nodepos_exp, nodepos_ref):
             self.assertEqual(npe, npr)

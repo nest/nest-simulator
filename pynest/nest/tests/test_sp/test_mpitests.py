@@ -27,7 +27,7 @@ from subprocess import call
 HAVE_MPI = nest.sli_func("statusdict/have_mpi ::")
 
 
-class TestConnectAllPatterns(unittest.TestCase):
+class TestStructuralPlasticityMPI(unittest.TestCase):
 
     @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
     def testWithMPI(self):
@@ -56,7 +56,8 @@ class TestConnectAllPatterns(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestConnectAllPatterns)
+    suite = unittest.TestLoader().loadTestsFromTestCase(
+        TestStructuralPlasticityMPI)
     return suite
 
 if __name__ == '__main__':

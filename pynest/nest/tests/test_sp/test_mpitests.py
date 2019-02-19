@@ -24,7 +24,7 @@ import nest
 import os
 from subprocess import call
 
-HAVE_MPI = nest.sli_func("statusdict/have_mpi ::")
+HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
 
 
 class TestStructuralPlasticityMPI(unittest.TestCase):
@@ -38,7 +38,7 @@ class TestStructuralPlasticityMPI(unittest.TestCase):
 
             for test in mpitests:
                 test = os.path.join(path, test)
-                command = nest.sli_func("mpirun", 2, "python", test)
+                command = nest.ll_api.sli_func("mpirun", 2, "python", test)
                 print("Executing test with command: " + command)
                 command = command.split()
                 my_env = os.environ.copy()

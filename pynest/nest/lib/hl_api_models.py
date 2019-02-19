@@ -37,36 +37,39 @@ __all__ = [
 
 @check_stack
 def Models(mtype="all", sel=None):
-    """Return a tuple of all available model (neurons, devices and
-    synapses) names, sorted by name.
+    """Return a tuple of model names, sorted by name.
+
+    All available models are neurons, devices and synapses.
 
     Parameters
     ----------
     mtype : str, optional
-        Use mtype='nodes' to only see neuron and device models,
-        or mtype='synapses' to only see synapse models.
+        Use ``'mtype='nodes'`` to only see neuron and device models,
+        or ``'type='synapses'`` to only see synapse models.
     sel : str, optional
         String used to filter the result list and only return models
         containing it.
 
     Returns
     -------
-    tuple:
+    tuple
         Available model names
-
-    Notes
-    -----
-    - Synapse model names ending with '_hpc' provide minimal memory
-      requirements by using thread-local target neuron IDs and fixing
-      the `rport` to 0.
-    - Synapse model names ending with '_lbl' allow to assign an individual
-      integer label (`synapse_label`) to created synapses at the cost
-      of increased memory requirements.
 
     Raises
     ------
     ValueError
         Description
+
+    Notes
+    -----
+    - Synapse model names ending with ``'_hpc'`` provide minimal memory
+      requirements by using thread-local target neuron IDs and fixing
+      the ``'rport'`` to 0.
+    - Synapse model names ending with ``'_lbl'`` allow to assign an individual
+      integer label (``'synapse_label'``) to created synapses at the cost
+      of increased memory requirements.
+
+    KEYWORDS: models
     """
 
     if mtype not in ("all", "nodes", "synapses"):
@@ -96,9 +99,10 @@ def ConnectionRules():
 
     Returns
     -------
-    tuple:
+    tuple
         Available connection rules
 
+    KEYWORDS: models
     """
 
     sr('connruledict')
@@ -107,8 +111,7 @@ def ConnectionRules():
 
 @check_stack
 def SetDefaults(model, params, val=None):
-    """Set the default parameters of the given model to the values
-    specified in the params dictionary.
+    """Set the default parameter values of the given model.
 
     New default values are used for all subsequently created instances
     of the model.
@@ -118,10 +121,11 @@ def SetDefaults(model, params, val=None):
     model : str
         Name of the model
     params : str or dict
-        Dictionary of new default values. If val is given, this has to
-        be the name of a model property as a str.
+        Dictionary of new default parameter values
     val : str, optional
-        If given, params has to be the name of a model property.
+        If given, `params` has to be the name of a model property.
+
+    KEYWORDS: models
     """
 
     if val is not None:
@@ -134,36 +138,44 @@ def SetDefaults(model, params, val=None):
 
 @check_stack
 def GetDefaults(model, keys=None):
-    """Return a dictionary with the default parameters of the given
-    model, specified by a string.
+    """Return default parameters of the given model, specified by a string.
 
     Parameters
     ----------
     model : str
         Name of the model
     keys : str or list, optional
-        String or a list of strings naming model properties. GetDefaults then
+        String or a list of strings naming model properties. `GetDefaults` then
         returns a single value or a list of values belonging to the keys
         given.
 
     Returns
     -------
-    dict:
-        All default parameters
-    type:
-        If keys is a string, the corrsponding default parameter is returned
-    list:
+    dict
+        A dictionary of default parameters.
+    type
+        If keys is a string, the corrsponding default parameter is returned.
+    list
         If keys is a list of strings, a list of corrsponding default parameters
-        is returned
+        is returned.
 
     Raises
     ------
     TypeError
 
-    Examples
-    --------
-    GetDefaults('iaf_psc_alpha','V_m') -> -70.0
-    GetDefaults('iaf_psc_alpha',['V_m', 'model']) -> [-70.0, 'iaf_psc_alpha']
+    Notes
+    -----
+    **Example**
+
+    .. code_block:: python
+
+        >>> nest.GetDefaults('iaf_psc_alpha', 'V_m')
+        -70.0
+
+        >>> nest.GetDefaults('iaf_psc_alpha', ['V_m', 'V_th'])
+        (-70.0, -55.0)
+
+    KEYWORDS: models
     """
 
     if keys is None:
@@ -190,10 +202,12 @@ def CopyModel(existing, new, params=None):
     existing : str
         Name of existing model
     new : str
-        Name of the copy of the existing model
+        Name of the copied model
     params : dict, optional
         Default parameters assigned to the copy. Not provided parameters are
         taken from the existing model.
+
+    KEYWORDS: models
     """
 
     model_deprecation_warning(existing)

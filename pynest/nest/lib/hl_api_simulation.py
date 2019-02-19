@@ -38,7 +38,6 @@ __all__ = [
     'Prepare',
     'ResetKernel',
     'ResetNetwork',
-    'ResumeSimulation',
     'Run',
     'RunManager',
     'SetKernelStatus',

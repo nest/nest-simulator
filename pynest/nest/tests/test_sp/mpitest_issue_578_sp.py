@@ -91,10 +91,13 @@ class TestIssue578(unittest.TestCase):
             self.fail("Exception during simulation")
 
 
-def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestIssue578)
-    return suite
-
-if __name__ == '__main__':
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
+# We can not define the regular suite() and runner() functions here, because
+# it will not show up as failed in the testsuite if it fails. This is
+# because the test is called from test_mpitests, and the unittest system in
+# test_mpitests will only register the failing test if we call this test
+# directly.
+if HAVE_GSL:
+    mpitest = TestIssue578()
+    mpitest.test_targets()
+else:
+    print("Skipping because GSL is not available")

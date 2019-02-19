@@ -60,7 +60,7 @@ l1 = topo.CreateLayer(
 # xctr, yctr = nest.GetStatus(l1, 'topology')[0]['center']
 
 # l1_children is a work-around until NEST 3.0 is released
-l1_children = nest.GetChildren(l1)[0]
+l1_children = nest.hl_api.GetChildren(l1)[0]
 
 # extract position information, transpose to list of x, y and z positions
 xpos, ypos, zpos = zip(*topo.GetPosition(l1_children))

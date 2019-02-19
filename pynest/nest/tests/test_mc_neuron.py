@@ -23,7 +23,7 @@ import unittest
 import nest
 import numpy as np
 
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
@@ -155,6 +155,10 @@ class TestMCNeuron(unittest.TestCase):
                                     self.gex_dist_test))
 
 
-if __name__ == '__main__':
+def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestMCNeuron)
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    return suite
+
+if __name__ == '__main__':
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())

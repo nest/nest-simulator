@@ -122,13 +122,13 @@ unset NEST_DATA_DIR
 unset NEST_DOCL_DIR
 if test "${PYTHON}"; then
     if test ! "${PYTHONPATH_}"; then
-	usage 3 "Error: \'--with-python\' also requires \'--python-path\'" 
+	usage 3 "Error: \'--with-python\' also requires \'--python-path\'"
     fi
 
     NOSETESTS="$(command -v nosetests 2>&1)"
     PYTHON_HARNESS="${PREFIX}/share/nest/extras/do_tests.py"
 
-    export PYTHONPATH="$PYTHONPATH_:$PYTHONPATH"
+    export PYTHONPATH="$PYTHONPATH_:${PYTHONPATH:-}"
 fi
 
 export TEST_BASEDIR="${PREFIX}/share/doc/nest"
@@ -261,8 +261,6 @@ TESTS
 TESTS
 }
 
-phase_one
-
 phase_two() {
     # At this point, we are sure that
     #
@@ -347,8 +345,6 @@ TESTS
 '     139 Failed: segmentation fault,'
 }
 
-phase_two
-
 phase_three() {
     echo
     echo "Phase 3: Integration  tests"
@@ -363,8 +359,6 @@ phase_three() {
         xargs -L1 -P${NPROCS} -I'{}' $RUN_TEST "{}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 }
 
-phase_three
-
 phase_four() {
     echo
     echo "Phase 4: Regression tests"
@@ -375,8 +369,6 @@ phase_four() {
     find "${TEST_BASEDIR}/regressiontests/" -name "*.sli" -o -name "*.py" |\
         xargs -L1 -P${NPROCS} -I'{}' $RUN_TEST "{}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 }
-
-phase_four
 
 phase_five() {
     echo
@@ -411,8 +403,6 @@ phase_five() {
       echo "  for distributed computing. See the file README.md for details."
     fi
 }
-
-phase_five
 
 phase_six() {
     echo
@@ -513,139 +503,141 @@ EOT
     fi
 }
 
-phase_six
-
-
 phase_seven() {
-    echo
-    echo "Phase 7: PyNEST tests."
-    echo "----------------------"
-
-    # If possible, we run using nosetests. To find out if nosetests work, 
-    # we proceed in two steps:
-    # 1. Check if nosetests is available
-    # 2. Check that nosetests supports --with-xunit by running nosetests.
-    #    We need to run nosetests on a directory without any Python test
-    #    files, because if they failed that would be interpreted as lack
-    #    of support for nosetests. We use the REPORTDIR as Python-free
-    #    dummy directory to search for tests.
-
-    if "${NOSETESTS}" --with-xunit --xunit-file=/dev/null --where="${REPORTDIR}" >/dev/null 2>&1; then
+    if test ${PYTHON}; then
 
         echo
-        echo "  Using nosetests."
+        echo "Phase 7: PyNEST tests."
+        echo "----------------------"
+
+        # If possible, we run using nosetests. To find out if nosetests work,
+        # we proceed in two steps:
+        # 1. Check if nosetests is available
+        # 2. Check that nosetests supports --with-xunit by running nosetests.
+        #    We need to run nosetests on a directory without any Python test
+        #    files, because if they failed that would be interpreted as lack
+        #    of support for nosetests. We use the REPORTDIR as Python-free
+        #    dummy directory to search for tests.
+
+        if "${NOSETESTS}" --with-xunit --xunit-file=/dev/null --where="${REPORTDIR}" >/dev/null 2>&1; then
+
+            echo
+            echo "  Using nosetests."
+            echo
+
+            XUNIT_FILE="${REPORTDIR}/pynest_tests.xml"
+            TESTS="${PYTHONPATH_}/nest/tests ${PYTHONPATH_}/nest/topology/tests"
+
+            "${NOSETESTS}" -v --with-xunit --xunit-file="${XUNIT_FILE}" ${TESTS} 2>&1 \
+                | tee -a "${TEST_LOGFILE}" \
+                | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" \
+                | sed 's/^/  /'
+
+            PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
+            PYNEST_TEST_SKIPPED="$(  tail -n 1 ${TEST_LOGFILE} | sed -$EXTENDED_REGEX_PARAM 's/.*SKIP=([0-9]+).*/\1/')"
+            PYNEST_TEST_FAILURES="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*failures=([0-9]+).*/\1/' )"
+            PYNEST_TEST_ERRORS="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*errors=([0-9]+).*/\1/' )"
+
+            # check that PYNEST_TEST_FAILURES/PYNEST_TEST_ERRORS contain numbers
+            if test ${PYNEST_TEST_FAILURES} -eq ${PYNEST_TEST_FAILURES} 2>/dev/null ; then
+              # PYNEST_TEST_FAILURES is a valid number
+              :
+            else
+              PYNEST_TEST_FAILURES=0
+            fi
+            if test ${PYNEST_TEST_ERRORS} -eq ${PYNEST_TEST_ERRORS} 2>/dev/null ; then
+              # PYNEST_TEST_ERRORS is a valid number
+              :
+            else
+              PYNEST_TEST_ERRORS=0
+            fi
+            if test ${PYNEST_TEST_SKIPPED} -eq ${PYNEST_TEST_SKIPPED} 2>/dev/null ; then
+              # PYNEST_TEST_SKIPPED is a valid number
+              :
+            else
+              PYNEST_TEST_SKIPPED=0
+            fi
+            PYNEST_TEST_FAILED=$(($PYNEST_TEST_ERRORS + $PYNEST_TEST_FAILURES))
+            PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_SKIPPED - $PYNEST_TEST_FAILED))
+
+        else
+
+            echo
+            echo "  Nosetests unavailable. Using fallback test harness."
+            echo "  Fewer tests will be excuted."
+            echo
+
+            "${PYTHON}" "${PYTHON_HARNESS}" >> "${TEST_LOGFILE}"
+
+            PYNEST_TEST_TOTAL="$(  cat pynest_test_numbers.log | cut -d' ' -f1 )"
+            PYNEST_TEST_PASSED="$( cat pynest_test_numbers.log | cut -d' ' -f2 )"
+            PYNEST_TEST_SKIPPED="$( cat pynest_test_numbers.log | cut -d' ' -f3 )"
+            PYNEST_TEST_FAILED="$( cat pynest_test_numbers.log | cut -d' ' -f4 )"
+
+            rm -f "pynest_test_numbers.log"
+
+        fi
+
         echo
+        echo "  PyNEST tests: ${PYNEST_TEST_TOTAL}"
+        echo "     Passed: ${PYNEST_TEST_PASSED}"
+        echo "     Skipped: ${PYNEST_TEST_SKIPPED}"
+        echo "     Failed: ${PYNEST_TEST_FAILED}"
 
-        XUNIT_FILE="${REPORTDIR}/pynest_tests.xml"
-        TESTS="${PYTHONPATH_}/nest/tests ${PYTHONPATH_}/nest/topology/tests"
-
-        "${NOSETESTS}" -v --with-xunit --xunit-file="${XUNIT_FILE}" ${TESTS} 2>&1 \
-            | tee -a "${TEST_LOGFILE}" \
-            | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" \
-            | sed 's/^/  /'
-
-        PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
-        PYNEST_TEST_SKIPPED="$(  tail -n 1 ${TEST_LOGFILE} | sed -$EXTENDED_REGEX_PARAM 's/.*SKIP=([0-9]+).*/\1/')"
-        PYNEST_TEST_FAILURES="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*failures=([0-9]+).*/\1/' )"
-        PYNEST_TEST_ERRORS="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*errors=([0-9]+).*/\1/' )"
-
-        # check that PYNEST_TEST_FAILURES/PYNEST_TEST_ERRORS contain numbers
-        if test ${PYNEST_TEST_FAILURES} -eq ${PYNEST_TEST_FAILURES} 2>/dev/null ; then
-          # PYNEST_TEST_FAILURES is a valid number
-          :
-        else
-          PYNEST_TEST_FAILURES=0
-        fi
-        if test ${PYNEST_TEST_ERRORS} -eq ${PYNEST_TEST_ERRORS} 2>/dev/null ; then
-          # PYNEST_TEST_ERRORS is a valid number
-          :
-        else
-          PYNEST_TEST_ERRORS=0
-        fi
-        if test ${PYNEST_TEST_SKIPPED} -eq ${PYNEST_TEST_SKIPPED} 2>/dev/null ; then
-          # PYNEST_TEST_SKIPPED is a valid number
-          :
-        else
-          PYNEST_TEST_SKIPPED=0
-        fi
-        PYNEST_TEST_FAILED=$(($PYNEST_TEST_ERRORS + $PYNEST_TEST_FAILURES))
-        PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_SKIPPED - $PYNEST_TEST_FAILED))
+        PYNEST_TEST_SKIPPED_TEXT="(${PYNEST_TEST_SKIPPED} PyNEST)"
+        PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
 
     else
-
-        echo
-        echo "  Nosetests unavailable. Using fallback test harness."
-        echo "  Fewer tests will be excuted."
-        echo
-
-        "${PYTHON}" "${PYTHON_HARNESS}" >> "${TEST_LOGFILE}"
-
-        PYNEST_TEST_TOTAL="$(  cat pynest_test_numbers.log | cut -d' ' -f1 )"
-        PYNEST_TEST_PASSED="$( cat pynest_test_numbers.log | cut -d' ' -f2 )"
-        PYNEST_TEST_SKIPPED="$( cat pynest_test_numbers.log | cut -d' ' -f3 )"
-        PYNEST_TEST_FAILED="$( cat pynest_test_numbers.log | cut -d' ' -f4 )"
-
-        rm -f "pynest_test_numbers.log"
-
+	echo
+	echo "Phase 7: PyNEST tests"
+	echo "---------------------"
+	echo "  Not running PyNEST tests because NEST was compiled without support"
+	echo "  for Python. See the file README.md for details."
     fi
-
-    echo
-    echo "  PyNEST tests: ${PYNEST_TEST_TOTAL}"
-    echo "     Passed: ${PYNEST_TEST_PASSED}"
-    echo "     Skipped: ${PYNEST_TEST_SKIPPED}"
-    echo "     Failed: ${PYNEST_TEST_FAILED}"
-
-    PYNEST_TEST_SKIPPED_TEXT="(${PYNEST_TEST_SKIPPED} PyNEST)"
-    PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
-
 }
-
-if test ${PYTHON}; then
-    phase_seven
-else
-    echo
-    echo "Phase 7: PyNEST tests"
-    echo "---------------------"
-    echo "  Not running PyNEST tests because NEST was compiled without support"
-    echo "  for Python. See the file README.md for details."
-fi
 
 phase_eight() {
-    echo
-    echo "Phase 8: C++ tests (experimental)"
-    echo "---------------------------------"
+    if command -v ${TEST_BASEDIR}/testsuite/cpptests/run_all_cpptests > /dev/null 2>&1; then
+        echo
+        echo "Phase 8: C++ tests (experimental)"
+        echo "---------------------------------"
 
-    CPP_TEST_OUTPUT="$(${TEST_BASEDIR}/testsuite/cpptests/run_all_cpptests 2>&1)"
-    # TODO:
-    # We should check the return code ($?) of run_all_cpptests here to see
-    # if a fatal crash occured. We cannot simply test $? != 0, since
-    # run_all_cpptests will return a non-zero code if tests fail.
+        CPP_TEST_OUTPUT="$(${TEST_BASEDIR}/testsuite/cpptests/run_all_cpptests 2>&1)"
+        # TODO:
+        # We should check the return code ($?) of run_all_cpptests here to see
+        # if a fatal crash occured. We cannot simply test $? != 0, since
+        # run_all_cpptests will return a non-zero code if tests fail.
 
-    # TODO:
-    # The regex for the total number seems fine according to
-    # https://www.boost.org/doc/libs/1_65_0/libs/test/doc/html/boost_test/test_output/log_formats/log_human_readable_format.html
-    # but does the check for failures work as it should?
-    # At some point, we should also count skipped tests.
-    CPP_TEST_TOTAL=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*Running ([0-9]+).*/\1/p')
-    CPP_TEST_FAILED=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*([0-9]+) failure.*/\1/p')
+        # TODO:
+        # The regex for the total number seems fine according to
+        # https://www.boost.org/doc/libs/1_65_0/libs/test/doc/html/boost_test/test_output/log_formats/log_human_readable_format.html
+        # but does the check for failures work as it should?
+        # At some point, we should also count skipped tests.
+        CPP_TEST_TOTAL=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*Running ([0-9]+).*/\1/p')
+        CPP_TEST_FAILED=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*([0-9]+) failure.*/\1/p')
 
-    # replace empty strings by zero so arithmetic expressions below work
-    CPP_TEST_TOTAL=${CPP_TEST_TOTAL:-0}
-    CPP_TEST_FAILED=${CPP_TEST_FAILED:-0}
-    CPP_TEST_PASSED=$(( $CPP_TEST_TOTAL - $CPP_TEST_FAILED ))
-    CPP_TEST_SKIPPED=0
+        # replace empty strings by zero so arithmetic expressions below work
+        CPP_TEST_TOTAL=${CPP_TEST_TOTAL:-0}
+        CPP_TEST_FAILED=${CPP_TEST_FAILED:-0}
+        CPP_TEST_PASSED=$(( $CPP_TEST_TOTAL - $CPP_TEST_FAILED ))
+        CPP_TEST_SKIPPED=0
 
-    echo "  C++ tests : ${CPP_TEST_TOTAL}"
-    echo "     Passed : ${CPP_TEST_PASSED}"
-    echo "     Failed : ${CPP_TEST_FAILED}"
+        echo "  C++ tests : ${CPP_TEST_TOTAL}"
+        echo "     Passed : ${CPP_TEST_PASSED}"
+        echo "     Failed : ${CPP_TEST_FAILED}"
+    else
+	echo "  Not running C++ tests because NEST was compiled without Boost."
+    fi
 }
 
-if command -v ${TEST_BASEDIR}/testsuite/cpptests/run_all_cpptests > /dev/null 2>&1; then
-    phase_eight
-else
-    echo "  Not running C++ tests because NEST was compiled without Boost."
-fi
-
+phase_one
+phase_two
+phase_three
+phase_four
+phase_five
+phase_six
+phase_seven
+phase_eight
 
 echo
 echo "NEST Testsuite Summary"

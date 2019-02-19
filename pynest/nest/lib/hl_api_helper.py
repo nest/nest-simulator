@@ -25,7 +25,6 @@ API of the PyNEST wrapper.
 """
 
 import warnings
-import inspect
 import json
 import functools
 import textwrap
@@ -36,9 +35,31 @@ import sys
 
 from string import Template
 
-# These variables MUST be set by __init__.py right after importing.
-# There is no safety net, whatsoever.
-sps = spp = sr = pcd = kernel = None
+from ..ll_api import *
+from .. import pynestkernel as kernel
+
+__all__ = [
+    'broadcast',
+    'deprecated',
+    'get_help_filepath',
+    'get_unistring_type',
+    'get_verbosity',
+    'get_wrapped_text',
+    'is_coercible_to_sli_array',
+    'is_iterable',
+    'is_literal',
+    'is_sequence_of_connections',
+    'is_sequence_of_gids',
+    'is_string',
+    'load_help',
+    'model_deprecation_warning',
+    'set_verbosity',
+    'show_deprecation_warning',
+    'show_help_with_pager',
+    'SuppressedDeprecationWarning',
+    'uni_str',
+]
+
 
 # These flags are used to print deprecation warnings only once. The
 # corresponding functions will be removed in the 2.6 release of NEST.
@@ -46,9 +67,7 @@ _deprecation_warning = {'BackwardCompatibilityConnect': True}
 
 
 def get_wrapped_text(text, width=80):
-    """Formats a given multiline string to wrap at a given width.
-
-    Formats a given multiline string to wrap at a given width, while
+    """Formats a given multiline string to wrap at a given width, while
     preserving newlines (and removing excessive whitespace).
 
     Parameters
@@ -58,10 +77,8 @@ def get_wrapped_text(text, width=80):
 
     Returns
     -------
-    str
+    str:
         Wrapped string
-
-    KEYWORDS: helper
     """
 
     lines = text.split("\n")
@@ -80,10 +97,7 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
         Name of the function to use instead
     text : str, optional
         Text to display instead of standard text
-
-    KEYWORDS: helper
     """
-
     if _deprecation_warning[func_name]:
         if alt_func_name is None:
             alt_func_name = 'Connect'
@@ -115,10 +129,8 @@ def deprecated(alt_func_name, text=None):
 
     Returns
     -------
-    function
+    function:
         Decorator function
-
-    KEYWORDS: helper, decorator
     """
 
     def deprecated_decorator(func):
@@ -134,27 +146,24 @@ def deprecated(alt_func_name, text=None):
 
 
 def get_unistring_type():
-    """Returns string type dependent on Python version.
+    """Returns string type dependent on python version.
 
     Returns
     -------
-    str or basestring
+    str or basestring:
         Depending on Python version
 
-    KEYWORDS: helper
     """
-
     import sys
     if sys.version_info[0] < 3:
         return basestring
     return str
 
-
 uni_str = get_unistring_type()
 
 
 def is_literal(obj):
-    """Check whether an object is a SLI literal.
+    """Check whether obj is a "literal": a unicode string or SLI literal
 
     Parameters
     ----------
@@ -163,17 +172,14 @@ def is_literal(obj):
 
     Returns
     -------
-    bool
-        True if the object is a SLI literal.
-
-    KEYWORDS: helper, check
+    bool:
+        True if obj is a "literal"
     """
-
     return isinstance(obj, (uni_str, kernel.SLILiteral))
 
 
 def is_string(obj):
-    """Check whether an object is an unicode string.
+    """Check whether obj is a unicode string
 
     Parameters
     ----------
@@ -182,129 +188,14 @@ def is_string(obj):
 
     Returns
     -------
-    bool
-        True if the object is na unicode string.
-
-    KEYWORDS: helper, check
+    bool:
+        True if obj is a unicode string
     """
-
     return isinstance(obj, uni_str)
 
 
-__debug = False
-
-
-def get_debug():
-    """Return the current value of the debug flag of the high-level API.
-
-    Returns
-    -------
-    bool
-        Current value of the debug flag
-
-    KEYWORDS: helper
-    """
-
-    global __debug
-    return __debug
-
-
-def set_debug(dbg=True):
-    """Set the debug flag of the high-level API.
-
-    Parameters
-    ----------
-    dbg : bool, optional
-        Value to set the debug flag to
-
-    KEYWORDS: helper
-    """
-
-    global __debug
-    __debug = dbg
-
-
-def stack_checker(f):
-    """Decorator to add stack checks to functions.
-
-    This decorator uses PyNEST's low-level API and works only on functions.
-    See :code:`check_stack()` for the generic version for functions and
-    classes.
-
-    Parameters
-    ----------
-    f : function
-        Function to decorate
-
-    Returns
-    -------
-    function
-        Decorated function
-
-    Raises
-    ------
-    kernel.NESTError
-
-    KEYWORDS: helper, decorator
-    """
-
-    @functools.wraps(f)
-    def stack_checker_func(*args, **kwargs):
-        if not get_debug():
-            return f(*args, **kwargs)
-        else:
-            sr('count')
-            stackload_before = spp()
-            result = f(*args, **kwargs)
-            sr('count')
-            num_leftover_elements = spp() - stackload_before
-            if num_leftover_elements != 0:
-                eargs = (f.__name__, num_leftover_elements)
-                etext = "Function '%s' left %i elements on the stack."
-                raise kernel.NESTError(etext % eargs)
-            return result
-
-    return stack_checker_func
-
-
-def check_stack(thing):
-    """Convenience wrapper for applying the `stack_checker` decorator.
-
-    Convenience wrapper for applying the `stack_checker` decorator to
-    all class methods of the given class, or to a given function.
-
-    If the object cannot be decorated, it is returned unchanged.
-
-    Parameters
-    ----------
-    thing : function or class
-        Description
-
-    Returns
-    -------
-    function or class
-        Decorated function or class
-
-    Raises
-    ------
-    ValueError
-
-    KEYWORDS: helper, check
-    """
-
-    if inspect.isfunction(thing):
-        return stack_checker(thing)
-    elif inspect.isclass(thing):
-        for name, mtd in inspect.getmembers(thing, predicate=inspect.ismethod):
-            if name.startswith("test_"):
-                setattr(thing, name, stack_checker(mtd))
-        return thing
-    else:
-        raise ValueError("unable to decorate {0}".format(thing))
-
-
 def is_iterable(seq):
-    """Check if the given object is an iterable.
+    """Return True if the given object is an iterable, False otherwise.
 
     Parameters
     ----------
@@ -313,10 +204,8 @@ def is_iterable(seq):
 
     Returns
     -------
-    bool
-        Return ``True`` if an object is an iterable
-
-    KEYWORDS: helper, check
+    bool:
+        True if object is an iterable
     """
 
     try:
@@ -328,7 +217,7 @@ def is_iterable(seq):
 
 
 def is_coercible_to_sli_array(seq):
-    """Check whether a given object is coercible to a SLI array.
+    """Checks whether a given object is coercible to a SLI array
 
     Parameters
     ----------
@@ -337,10 +226,8 @@ def is_coercible_to_sli_array(seq):
 
     Returns
     -------
-    bool
-        ``True`` if an object is coercible to a SLI array
-
-    KEYWORDS: helper, check
+    bool:
+        True if object is coercible to a SLI array
     """
 
     import sys
@@ -352,7 +239,7 @@ def is_coercible_to_sli_array(seq):
 
 
 def is_sequence_of_connections(seq):
-    """Check whether low-level API accepts seq as a sequence of
+    """Checks whether low-level API accepts seq as a sequence of
     connections.
 
     Parameters
@@ -362,11 +249,9 @@ def is_sequence_of_connections(seq):
 
     Returns
     -------
-    bool
-        ``True`` if object is an iterable of dictionaries or
-        subscriptables of CONN_LEN.
-
-    KEYWORDS: helper, check
+    bool:
+        True if object is an iterable of dictionaries or
+        subscriptables of CONN_LEN
     """
 
     try:
@@ -379,7 +264,8 @@ def is_sequence_of_connections(seq):
 
 
 def is_sequence_of_gids(seq):
-    """Check if an object is a potentially valid sequence of GIDs.
+    """Checks whether the argument is a potentially valid sequence of
+    GIDs (non-negative integers).
 
     Parameters
     ----------
@@ -388,10 +274,8 @@ def is_sequence_of_gids(seq):
 
     Returns
     -------
-    bool
-        True if object is a potentially valid sequence of GIDs.
-
-    KEYWORDS: helper, check
+    bool:
+        True if object is a potentially valid sequence of GIDs
     """
 
     return all(isinstance(n, int) and n >= 0 for n in seq)
@@ -413,14 +297,14 @@ def broadcast(item, length, allowed_types, name="item"):
 
     Returns
     -------
-    object
+    object:
         The original item broadcasted to sequence form of length
 
     Raises
     ------
     TypeError
 
-    KEYWORDS: helper
+
     """
 
     if isinstance(item, allowed_types):
@@ -436,7 +320,6 @@ def broadcast(item, length, allowed_types, name="item"):
 
 def __check_nb():
     """Return true if called from a Jupyter notebook."""
-
     try:
         return get_ipython().__class__.__name__.startswith('ZMQ')
     except NameError:
@@ -444,16 +327,14 @@ def __check_nb():
 
 
 def __show_help_in_modal_window(objname, hlptxt):
-    """Open modal window with help text.
+    """Open modal window with help text
 
     Parameters
     ----------
-    objname : str
-        Filename
-    hlptxt : str
-        Full text
-
-    KEYWORDS: helper
+    objname :   str
+            filename
+    hlptxt  :   str
+            Full text
     """
 
     hlptxt = json.dumps(hlptxt)
@@ -481,9 +362,9 @@ def __show_help_in_modal_window(objname, hlptxt):
 
 
 def get_help_filepath(hlpobj):
-    """Get file path of help object.
+    """Get file path of help object
 
-    Print message if no help is available for `hlpobj`.
+    Prints message if no help is available for hlpobj.
 
     Parameters
     ----------
@@ -492,10 +373,8 @@ def get_help_filepath(hlpobj):
 
     Returns
     -------
-    str
+    string:
         Filepath of the help object or None if no help available
-
-    KEYWORDS: helper
     """
 
     helpdir = os.path.join(sli_func("statusdict/prgdocdir ::"), "help")
@@ -511,7 +390,7 @@ def get_help_filepath(hlpobj):
 
 
 def load_help(hlpobj):
-    """Return documentation of the object.
+    """Returns documentation of the object
 
     Parameters
     ----------
@@ -520,10 +399,8 @@ def load_help(hlpobj):
 
     Returns
     -------
-    str
-        The documentation of the object or None if no help available.
-
-    KEYWORDS: helper
+    string:
+        The documentation of the object or None if no help available
     """
 
     objf = get_help_filepath(hlpobj)
@@ -550,9 +427,7 @@ def show_help_with_pager(hlpobj, pager=None):
     hlpobj : object
         Object to display
     pager: str, optional
-        pager to use, False if you want to display help using :code:`print()`.
-
-    KEYWORDS: helper
+        pager to use, False if you want to display help using print().
     """
 
     if sys.version_info < (2, 7, 8):
@@ -623,10 +498,8 @@ def get_verbosity():
 
     Returns
     -------
-    int
+    int:
         The current verbosity level
-
-    KEYWORDS: helper
     """
 
     # Defined in hl_api_helper to avoid circular inclusion problem with
@@ -644,8 +517,6 @@ def set_verbosity(level):
     level : str
         Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', 'M_DEPRECATED',
         'M_INFO' or 'M_ALL'.
-
-    KEYWORDS: helper
     """
 
     # Defined in hl_api_helper to avoid circular inclusion problem with
@@ -661,8 +532,6 @@ def model_deprecation_warning(model):
     ----------
     model: str
         Name of model
-
-    KEYWORDS: helper
     """
 
     deprecated_models = {'subnet': 'GIDCollection',
@@ -677,7 +546,8 @@ def model_deprecation_warning(model):
 
 
 class SuppressedDeprecationWarning(object):
-    """Context manager turning off deprecation warnings for given methods.
+    """
+    Context manager turning off deprecation warnings for given methods.
 
     Think thoroughly before use. This context should only be used as a way to
     make sure examples do not display deprecation warnings, that is, used in
@@ -691,8 +561,6 @@ class SuppressedDeprecationWarning(object):
         ----------
         no_dep_funcs: Function name (string) or iterable of function names
                       for which to suppress deprecation warnings
-
-        KEYWORDS: helper
         """
 
         self._no_dep_funcs = (no_dep_funcs if not is_string(no_dep_funcs)

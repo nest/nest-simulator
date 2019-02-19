@@ -179,9 +179,9 @@ def simulate(parameters):
     # Code taken from brunel_alpha_nest.py
 
     def LambertWm1(x):
-        nest.sli_push(x)
-        nest.sli_run('LambertWm1')
-        y = nest.sli_pop()
+        nest.ll_api.sli_push(x)
+        nest.ll_api.sli_run('LambertWm1')
+        y = nest.ll_api.sli_pop()
         return y
 
     def ComputePSPnorm(tauMem, CMem, tauSyn):
@@ -232,7 +232,7 @@ def simulate(parameters):
     p_rate = 1000.0 * nu_ex * CE
 
     nest.ResetKernel()
-    nest.set_verbosity('M_FATAL')
+    nest.hl_api.set_verbosity('M_FATAL')
 
     nest.SetKernelStatus({'rng_seeds': [parameters['seed']],
                           'resolution': parameters['dt']})

@@ -37,21 +37,18 @@ NEST:
       matched with the pertaining GID.
 
     **Example**
-
-        .. code-block:: python
+        ::
 
             layers = CreateLayer(({...}, {...}, {...}))
 
     creates three layers and returns a tuple of three GIDs.
-
-        .. code-block:: python
+        ::
 
             ConnectLayers(layers[:2], layers[1:], {...})
 
     connects `layers[0]` to `layers[1]` and `layers[1]` to `layers[2]` \
 using the same dictionary to specify both connections.
-
-        .. code-block:: python
+        ::
 
             ConnectLayers(layers[:2], layers[1:], ({...}, {...}))
 
@@ -67,44 +64,42 @@ using the same dictionary to specify both connections.
 """
 
 import nest
-import nest.lib.hl_api_helper as hlh
+from .ll_api import topology_func
 
-
-def topology_func(slifunc, *args):
-    """Execute a SLI function in Topology namespace
-
-    The SLI function can be called without arguments, or with an arbitrary
-    number of arguments.
-
-    Parameters
-    ----------
-    slifunc : str
-        SLI namespace expression
-    *args :
-        An arbitrary number of arguments
-
-    Returns
-    -------
-    out :
-        Values returned from SLI function
-
-    See Also
-    --------
-    nest.sli_func
-
-    KEYWORDS:
-    """
-
-    return nest.sli_func(slifunc, *args)
+# With '__all__' we provide an explicit index of this submodule.
+__all__ = [
+    'ConnectLayers',
+    'CreateLayer',
+    'CreateMask',
+    'CreateParameter',
+    'Displacement',
+    'Distance',
+    'DumpLayerConnections',
+    'DumpLayerNodes',
+    'FindCenterElement',
+    'FindNearestElement',
+    'GetElement',
+    'GetLayer',
+    'GetPosition',
+    'GetTargetNodes',
+    'GetTargetPositions',
+    'Mask',
+    'Parameter',
+    'PlotKernel',
+    'PlotLayer',
+    'PlotTargets',
+    'SelectNodesByMask',
+]
 
 
 class Mask(object):
-    """Class for spatial masks.
+    """
+    Class for spatial masks.
 
     Masks are used when creating connections in the Topology module. A mask
     describes which area of the pool layer shall be searched for nodes to
-    connect for any given node in the driver layer. Masks are created
-    `CreateMask` command.
+    connect for any given node in the driver layer. Masks are created using
+    the ``CreateMask`` command.
     """
 
     _datum = None
@@ -112,7 +107,8 @@ class Mask(object):
     # The constructor should not be called by the user
     def __init__(self, datum):
         """Masks must be created using the CreateMask command."""
-        if not isinstance(datum, nest.SLIDatum) or datum.dtype != "masktype":
+        if not isinstance(datum, nest.kernel.SLIDatum) or \
+            datum.dtype != "masktype":
             raise TypeError("expected mask Datum")
         self._datum = datum
 
@@ -132,25 +128,27 @@ class Mask(object):
         return self._binop("sub", other)
 
     def Inside(self, point):
-        """Return if a point is inside the mask.
+        """
+        Test if a point is inside a mask.
+
 
         Parameters
         ----------
         point : tuple/list of float values
             Coordinate of point
 
+
         Returns
         -------
         out : bool
-            ``True`` if the point is inside the mask, ``False`` otherwise
-
-        KEYWORDS:
+            True if the point is inside the mask, False otherwise
         """
         return topology_func("Inside", point, self._datum)
 
 
 def CreateMask(masktype, specs, anchor=None):
-    """Create a spatial mask for connections.
+    """
+    Create a spatial mask for connections.
 
     Masks are used when creating connections in the Topology module. A mask
     describes the area of the pool layer that is searched for nodes to
@@ -158,47 +156,46 @@ def CreateMask(masktype, specs, anchor=None):
     are available. Examples are the grid region, the rectangular, circular or
     doughnut region.
 
-    The function `CreateMask` creates a `Mask` object which may be combined
-    with other `Mask` objects using Boolean operators. The mask is specified
+    The command ``CreateMask`` creates a Mask object which may be combined
+    with other ``Mask`` objects using Boolean operators. The mask is specified
     in a dictionary.
 
-    `Mask` objects can be passed to `ConnectLayers` in a
-    connection dictionary with the key ``'mask'``.
+    ``Mask`` objects can be passed to ``ConnectLayers`` in a
+    connection dictionary with the key `'mask'`.
 
 
     Parameters
     ----------
-    masktype : str
-        ``'rectangular'``, ``'circular'``, ``'doughnut'``, ``'elliptical'``
-        for 2D masks, ``'box'``, ``'spherical'``, ``'ellipsoidal'`` for 3D
-        masks, ``'grid'`` only for grid-based layers in 2D. The mask name
-        corresponds to the geometrical shape of the mask. There are different
-        types for 2- and 3-dimensional layers.
+    masktype : str, ['rectangular' | 'circular' | 'doughnut' | 'elliptical']
+        for 2D masks, \ ['box' | 'spherical' | 'ellipsoidal] for 3D masks,
+        ['grid'] only for grid-based layers in 2D
+        The mask name corresponds to the geometrical shape of the mask. There
+        are different types for 2- and 3-dimensional layers.
     specs : dict
         Dictionary specifying the parameters of the provided `masktype`,
-        see *Notes*.
-    anchor : tuple/list of floats or dict, optional
-        Can either be a tuple/list with floats as coordinates, or a ``dict``
-        with the keys ``'column'`` and ``'row'`` (for grid masks only).
+        see **Notes**.
+    anchor : [tuple/list of floats | dict with the keys `'column'` and \
+`'row'` (for grid masks only)], optional, default: None
         By providing anchor coordinates, the location of the mask relative to
-        the driver node can be changed. The list of coordinates has a length of
-        2 or 3 dependent on the number of dimensions.
+        the driver node can be changed. The list of coordinates has a length
+        of 2 or 3 dependent on the number of dimensions.
+
 
     Returns
     -------
-    out : `Mask` object
+    out : ``Mask`` object
 
 
-    See Also
+    See also
     --------
-    ConnectLayers : Connect two (lists of) layers pairwise according to
-        specified projections. `Mask` objects can be passed in a connection
-        dictionary with the key ``'mask'``.
+    ConnectLayers: Connect two (lists of) layers pairwise according to
+        specified projections. ``Mask`` objects can be passed in a connection
+        dictionary with the key `'mask'`.
 
 
     Notes
     -----
-    * All angles must be given in degrees.
+    - All angles must be given in degrees.
 
 
     **Mask types**
@@ -207,8 +204,7 @@ def CreateMask(masktype, specs, anchor=None):
     dictionaries:
 
     * 2D free and grid-based layers
-
-        .. code-block:: python
+        ::
 
             'rectangular' :
                 {'lower_left'   : [float, float],
@@ -230,8 +226,7 @@ def CreateMask(masktype, specs, anchor=None):
 
 
     * 3D free and grid-based layers
-
-        .. code-block:: python
+        ::
 
             'box' :
                 {'lower_left'  : [float, float, float],
@@ -252,18 +247,16 @@ def CreateMask(masktype, specs, anchor=None):
 
 
     * 2D grid-based layers only
-
-        .. code-block:: python
+        ::
 
             'grid' :
                 {'rows' : float,
                  'columns' : float}
 
         By default the top-left corner of a grid mask, i.e., the grid
-        mask element with grid index ``[0, 0]``, is aligned with the driver
+        mask element with grid index [0, 0], is aligned with the driver
         node. It can be changed by means of the 'anchor' parameter:
-
-            .. code-block:: python
+            ::
 
                 'anchor' :
                     {'row' : float,
@@ -271,8 +264,7 @@ def CreateMask(masktype, specs, anchor=None):
 
 
     **Example**
-
-        .. code-block:: python
+        ::
 
             import nest.topology as tp
 
@@ -291,7 +283,6 @@ def CreateMask(masktype, specs, anchor=None):
             # connect layer l with itself according to the specifications
             tp.ConnectLayers(l, l, conndict)
 
-    KEYWORDS:
     """
 
     if anchor is None:
@@ -302,13 +293,14 @@ def CreateMask(masktype, specs, anchor=None):
 
 
 class Parameter(object):
-    """Class for parameters for distance dependency or randomization.
+    """
+    Class for parameters for distance dependency or randomization.
 
     Parameters are spatial functions which are used when creating
     connections in the Topology module. A parameter may be used as a
     probability kernel when creating connections or as synaptic parameters
     (such as weight and delay). Parameters are created using the
-    `CreateParameter` command.
+    ``CreateParameter`` command.
     """
 
     _datum = None
@@ -316,8 +308,8 @@ class Parameter(object):
     # The constructor should not be called by the user
     def __init__(self, datum):
         """Parameters must be created using the CreateParameter command."""
-        if not isinstance(datum,
-                          nest.SLIDatum) or datum.dtype != "parametertype":
+        if not isinstance(datum, nest.kernel.SLIDatum) or \
+            datum.dtype != "parametertype":
             raise TypeError("expected parameter datum")
         self._datum = datum
 
@@ -343,7 +335,8 @@ class Parameter(object):
         return self._binop("div", other)
 
     def GetValue(self, point):
-        """Compute value of parameter at a point.
+        """
+        Compute value of parameter at a point.
 
 
         Parameters
@@ -358,7 +351,7 @@ class Parameter(object):
             The value of the parameter at the point
 
 
-        See Also
+        See also
         --------
         CreateParameter : create parameter for e.g., distance dependency
 
@@ -369,8 +362,7 @@ class Parameter(object):
 
 
         **Example**
-
-        .. code-block:: python
+            ::
 
                 import nest.topology as tp
 
@@ -385,7 +377,8 @@ class Parameter(object):
 
 
 def CreateParameter(parametertype, specs):
-    """Create a parameter for distance dependency or randomization.
+    """
+    Create a parameter for distance dependency or randomization.
 
     Parameters are (spatial) functions which are used when creating
     connections in the Topology module for distance dependency or
@@ -395,32 +388,30 @@ def CreateParameter(parametertype, specs):
 
     A parameter may be used as a probability kernel when creating connections
     or as synaptic parameters (such as weight and delay), i.e., for specifying
-    the parameters ``'kernel'``, ``'weights'`` and ``'delays'`` in the
-    connection dictionary passed to `ConnectLayers`.
+    the parameters `'kernel'`, `'weights'` and `'delays'` in the
+    connection dictionary passed to ``ConnectLayers``.
 
 
     Parameters
     ----------
-    parametertype : str
-        Function types with or without distance dependency. Can be one of the
-        following: ``'constant'``, ``'linear'``, ``'exponential'``,
-        ``'gaussian'``, ``'gaussian2D'``, ``'uniform'``, ``'normal'``,
-        ``'lognormal'``
+    parametertype : {'constant', 'linear', 'exponential', 'gaussian', \
+'gaussian2D', 'uniform', 'normal', 'lognormal'}
+        Function types with or without distance dependency
     specs : dict
         Dictionary specifying the parameters of the provided
-        `'parametertype'`, see *Notes*.
+        `'parametertype'`, see **Notes**.
 
 
     Returns
     -------
-    out : `Parameter` object
+    out : ``Parameter`` object
 
 
     See also
     --------
     ConnectLayers : Connect two (lists of) layers pairwise according to
         specified projections. Parameters can be used to specify the
-        parameters ``'kernel'``, ``'weights'`` and ``'delays'`` in the
+        parameters `'kernel'`, `'weights'` and `'delays'` in the
         connection dictionary.
     Parameters : Class for parameters for distance dependency or randomization.
 
@@ -436,15 +427,13 @@ def CreateParameter(parametertype, specs):
     acceptable keys for their corresponding specification dictionaries
 
     * Constant
-
-        .. code-block:: python
+        ::
 
             'constant' :
                 {'value' : float} # constant value
 
     * With dependence on the distance `d`
-
-        .. code-block:: python
+        ::
 
             # p(d) = c + a * d
             'linear' :
@@ -465,8 +454,7 @@ def CreateParameter(parametertype, specs):
                  'c'        : float} # constant offset, default: 0.0
 
     * Bivariate Gaussian parameter:
-
-        .. code-block:: python
+        ::
 
             # p(x,y) = c + p_center *
             #          exp( -( (x-mean_x)^2/sigma_x^2 + (y-mean_y)^2/sigma_y^2
@@ -482,8 +470,7 @@ def CreateParameter(parametertype, specs):
                  'c'        : float} # constant offset, default: 0.0
 
     * Without distance dependency, for randomization
-
-        .. code-block:: python
+        ::
 
             # random parameter with uniform distribution in [min,max)
             'uniform' :
@@ -509,8 +496,7 @@ def CreateParameter(parametertype, specs):
 
 
     **Example**
-
-        .. code-block:: python
+        ::
 
             import nest.topology as tp
 
@@ -529,13 +515,13 @@ def CreateParameter(parametertype, specs):
 
             tp.ConnectLayers(l, l, conndict)
 
-    KEYWORDS:
     """
     return Parameter(topology_func('CreateParameter', {parametertype: specs}))
 
 
 def CreateLayer(specs):
-    """Create one or more Topology layer(s) according to given specifications.
+    """
+    Create one ore more Topology layer(s) according to given specifications.
 
     The Topology module organizes neuronal networks in layers. A layer is a
     special type of subnet which contains information about the spatial
@@ -550,16 +536,16 @@ def CreateLayer(specs):
           regular grid
         * free layers in which elements can be placed arbitrarily
 
-    Obligatory dictionary entries define the class of layer (grid-based layers:
-    ``'columns'`` and ``'rows'``; free layers: ``'positions'``) and the
-    ``'elements'``.
+    Obligatory dictionary entries define the class of layer
+    (grid-based layers: 'columns' and 'rows'; free layers: 'positions')
+    and the 'elements'.
 
 
     Parameters
     ----------
-    specs : tuple/list of dict(s)
+    specs : (tuple/list of) dict(s)
         Dictionary or list of dictionaries with layer specifications, see
-        *Other Parameters*.
+        **Notes**.
 
     Returns
     -------
@@ -569,19 +555,20 @@ def CreateLayer(specs):
 
     See also
     --------
-    ConnectLayers : Connect two (lists of) layers which were created with
+    ConnectLayers: Connect two (lists of) layers which were created with
         ``CreateLayer`` pairwise according to specified projections.
 
 
-    Other Parameters
+    Other parameters
     ----------------
-    center : tuple/list of floats, optional
+    Available parameters for the layer-specifying dictionary `specs`
+    center : tuple/list of floats, optional, default: (0.0, 0.0)
         Layers are centered about the origin by default, but the center
-        coordinates can also be changed. Default: ``(0.0, 0.0)``.
-        ``'center'`` has length 2 or 3 dependent on the number of dimensions.
+        coordinates can also be changed.
+        'center' has length 2 or 3 dependent on the number of dimensions.
     columns : int, obligatory for grid-based layers
         Number of columns.
-        Needs ``'rows'``; mutually exclusive with ``'positions'``.
+        Needs `'rows'`; mutually exclusive with `'positions'`.
     edge_wrap : bool, default: False
         Periodic boundary conditions.
     elements : (tuple/list of) str or str followed by int
@@ -591,26 +578,28 @@ def CreateLayer(specs):
         number of nodes to be created must follow the model name.
         For composite elements, a collection of nodes can be passed as
         list or tuple.
-    extent : tuple of floats, optional
+    extent : tuple of floats, optional, default in 2D: (1.0, 1.0)
         Size of the layer. It has length 2 or 3 dependent on the number of
-        dimensions. Default in 2D: ``(1.0, 1.0)``.
-    positions : tuple/list of coordinates (lists/tuples of floats)
-        Obligatory for free layers.
+        dimensions.
+    positions : tuple/list of coordinates (lists/tuples of floats),
+        obligatory for free layers
         Explicit specification of the positions of all elements.
         The coordinates have a length 2 or 3 dependent on the number of
         dimensions.
         All element positions must be within the layer's extent.
-        Mutually exclusive with ``'rows'`` and ``'columns'``.
-    rows : int
-        Number of rows. Obligatory for grid-based layers.
-        Needs ``'columns'``; mutually exclusive with ``'positions'``.
+        Mutually exclusive with 'rows' and 'columns'.
+    rows : int, obligatory for grid-based layers
+        Number of rows.
+        Needs `'columns'`; mutually exclusive with `'positions'`.
+
 
     Notes
     -----
+    -
+
 
     **Example**
-
-        .. code-block:: python
+        ::
 
             import nest
             import nest.topology as tp
@@ -645,7 +634,6 @@ def CreateLayer(specs):
             # investigate the status dictionary of a layer
             nest.GetStatus(gl)[0]['topology']
 
-    KEYWORDS:
     """
 
     if isinstance(specs, dict):
@@ -657,18 +645,19 @@ def CreateLayer(specs):
         elements = dicts['elements']
         if isinstance(elements, list):
             for elem in elements:
-                hlh.model_deprecation_warning(elem)
+                nest.hl_api.model_deprecation_warning(elem)
         else:
-            hlh.model_deprecation_warning(elements)
+            nest.hl_api.model_deprecation_warning(elements)
 
     return topology_func('{ CreateLayer } Map', specs)
 
 
 def ConnectLayers(pre, post, projections):
-    """Pairwise connect of presynaptic and postsynaptic (lists of) layers.
+    """
+    Pairwise connect of pre- and postsynaptic (lists of) layers.
 
     `pre` and `post` must be a tuple/list of GIDs of equal length. The GIDs
-    must refer to layers created with `CreateLayers`. Layers in the `pre`
+    must refer to layers created with ``CreateLayers``. Layers in the `pre`
     and `post` lists are connected pairwise.
 
     * If `projections` is a single dictionary, it applies to all pre-post
@@ -677,10 +666,10 @@ def ConnectLayers(pre, post, projections):
       length as `pre` and `post` and each dictionary is matched with the proper
       pre-post pair.
 
-    A minimal call of `ConnectLayers` expects a source layer `pre`, a
+    A minimal call of ``ConnectLayers`` expects a source layer `pre`, a
     target layer `post` and a connection dictionary `projections`
-    containing at least the entry ``'connection_type'`` (either
-    ``'convergent'`` or ``'divergent'``).
+    containing at least the entry `'connection_type'` (either
+    `'convergent'` or `'divergent'`).
 
     When connecting two layers, the driver layer is the one in which each node
     is considered in turn. The pool layer is the one from which nodes are
@@ -694,51 +683,56 @@ def ConnectLayers(pre, post, projections):
     post : tuple/list of int(s)
         List of GIDs of postsynaptic layers (targets)
     projections : (tuple/list of) dict(s)
-        Dictionary or list of dictionaries specifying projection properties,
-        see *Other Parameters*
+        Dictionary or list of dictionaries specifying projection properties
+
+
+    Returns
+    -------
+    out : None
+        ConnectLayers returns `None`
 
 
     See also
     --------
     CreateLayer : Create one or more Topology layer(s).
-    CreateMask : Create a `Mask` object. Documentation on available spatial
-        masks. Masks can be used to specify the key ``'mask'`` of the
+    CreateMask : Create a ``Mask`` object. Documentation on available spatial
+        masks. Masks can be used to specify the key `'mask'` of the
         connection dictionary.
-    CreateParameter : Create a `Parameter` object. Documentation on available
+    CreateParameter : Create a ``Parameter`` object. Documentation on available
         parameters for distance dependency and randomization. Parameters can
-        be used to specify the parameters ``'kernel'``, ``'weights'`` and
-        ``'delays'`` of the connection dictionary.
+        be used to specify the parameters `'kernel'`, `'weights'` and
+        `'delays'` of the connection dictionary.
     nest.GetConnections : Retrieve connections.
 
 
-    Other Parameters
+    Other parameters
     ----------------
-    allow_autapses : bool, optional
+    Available keys for the layer-specifying dictionary `projections`
+    allow_autapses : bool, optional, default: True
         An autapse is a synapse (connection) from a node onto itself.
-        It is used together with the ``'number_of_connections'`` option.
-        Default: ``True``.
-    allow_multapses : bool, optional
+        It is used together with the `'number_of_connections'` option.
+    allow_multapses : bool, optional, default: True
         Node A is connected to node B by a multapse if there are synapses
-        (connections) from A to B. Default: ``True``
+        (connections) from A to B.
         It is used together with the `'number_of_connections'` option.
     connection_type : str
-        The type of connections can be either ``'convergent'`` or
-        ``'divergent'``. In case of convergent connections, the target
+        The type of connections can be either `'convergent'` or
+        `'divergent'`. In case of convergent connections, the target
         layer is considered as driver layer and the source layer as pool
         layer - and vice versa for divergent connections.
-    delays : float or dict or Parameter object, optional
+    delays : [float | dict | Parameter object], optional, default: 1.0
         Delays can be constant, randomized or distance-dependent according
-        to a provided function. Default: 1.0.
+        to a provided function.
         Information on available functions can be found in the
-        documentation on the function `CreateParameter`.
-    kernel : float or dict or Parameter object, optional
+        documentation on the function ``CreateParameter``.
+    kernel : [float | dict | Parameter object], optional, default: 1.0
         A kernel is a function mapping the distance (or displacement)
         between a driver and a pool node to a connection probability. The
         default kernel is 1.0, i.e., connections are created with
         certainty.
         Information on available functions can be found in the
-        documentation on the function `CreateParameter`.
-    mask : dict or Mask object, optional
+        documentation on the function ``CreateParameter``.
+    mask : [dict | Mask object], optional
         The mask defines which pool nodes are considered as potential
         targets for each driver node. Parameters of the different
         available masks in 2 and 3 dimensions are also defined in
@@ -746,7 +740,7 @@ def ConnectLayers(pre, post, projections):
         If no mask is specified, all neurons from the pool layer are
         possible targets for each driver node.
         Information on available masks can be found in the documentation on
-        the function `CreateMask`.
+        the function ``CreateMask``.
     number_of_connections : int, optional
         Prescribed number of connections for each driver node. The actual
         connections being created are picked at random from all the
@@ -754,9 +748,9 @@ def ConnectLayers(pre, post, projections):
     synapse_model : str, optional
         The default synapse model in NEST is used if not specified
         otherwise.
-    weights : float or dict or Parameter object, optional
+    weights : [float | dict | Parameter object], optional, default: 1.0
         Weights can be constant, randomized or distance-dependent according
-        to a provided function. Default: 1.0.
+        to a provided function.
         Information on available functions can be found in the
         documentation on the function ``CreateParameter``.
 
@@ -778,8 +772,7 @@ def ConnectLayers(pre, post, projections):
 
 
     **Example**
-
-        .. code-block:: python
+        ::
 
             import nest.topology as tp
 
@@ -808,21 +801,19 @@ def ConnectLayers(pre, post, projections):
                          'mask': {'circular': {'radius': 2.0}},
                          'kernel': gauss_kernel,
                          'weights': {'uniform': {'min': 0.2, 'max': 0.8}}}
-
-    KEYWORDS:
     """
 
-    if not nest.is_sequence_of_gids(pre):
+    if not nest.hl_api.is_sequence_of_gids(pre):
         raise TypeError("pre must be a sequence of GIDs")
 
-    if not nest.is_sequence_of_gids(pre):
+    if not nest.hl_api.is_sequence_of_gids(pre):
         raise TypeError("post must be a sequence of GIDs")
 
     if not len(pre) == len(post):
-        raise nest.NESTError("pre and post must have the same length.")
+        raise nest.kernel.NESTError("pre and post must have the same length.")
 
     # ensure projections is list of full length
-    projections = nest.broadcast(projections, len(pre), (dict, ),
+    projections = nest.hl_api.broadcast(projections, len(pre), (dict, ),
                                  "projections")
 
     # Replace python classes with SLI datums
@@ -842,17 +833,21 @@ def ConnectLayers(pre, post, projections):
 
 
 def GetPosition(nodes):
-    """Return the spatial locations of nodes.
+    """
+    Return the spatial locations of nodes.
+
 
     Parameters
     ----------
-    nodes : tuple/list of int
+    nodes : tuple/list of int(s)
         List of GIDs
+
 
     Returns
     -------
-    tuple of tuple
-        Tuple of positions as 2- or 3-element tuples
+    out : tuple of tuple(s)
+        List of positions as 2- or 3-element lists
+
 
     See also
     --------
@@ -861,82 +856,87 @@ def GetPosition(nodes):
     DumpLayerConnections : Write connectivity information to file.
     DumpLayerNodes : Write layer node positions to file.
 
+
     Notes
     -----
-    * The functions `GetPosition`, `Displacement` and `Distance` now
+    * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
       only works for nodes local to the current MPI process, if used in a
       MPI-parallel simulation.
 
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest
+            import nest.topology as tp
 
-        import nest
-        import nest.topology as tp
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 5,
+                                'columns'   : 5,
+                                'elements'  : 'iaf_psc_alpha'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'      : 5,
-                            'columns'   : 5,
-                            'elements'  : 'iaf_psc_alpha'})
-
-        # retrieve positions of all (local) nodes belonging to the layer
-        gids = nest.GetNodes(l, {'local_only': True})[0]
-        tp.GetPosition(gids)
-
-    KEYWORDS: topology
+            # retrieve positions of all (local) nodes belonging to the layer
+            gids = nest.GetNodes(l, {'local_only': True})[0]
+            tp.GetPosition(gids)
     """
 
-    if not nest.is_sequence_of_gids(nodes):
+    if not nest.hl_api.is_sequence_of_gids(nodes):
         raise TypeError("nodes must be a sequence of GIDs")
 
     return topology_func('{ GetPosition } Map', nodes)
 
 
 def GetLayer(nodes):
-    """Return the layer to which nodes belong.
+    """
+    Return the layer to which nodes belong.
+
 
     Parameters
     ----------
-    nodes : tuple/list of int
+    nodes : tuple/list of int(s)
         List of neuron GIDs
+
 
     Returns
     -------
-    tuple of int
+    out : tuple of int(s)
         List of layer GIDs
+
 
     See also
     --------
     GetElement : Return the node(s) at the location(s) in the given layer(s).
     GetPosition : Return the spatial locations of nodes.
 
+
     Notes
     -----
+    -
+
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest.topology as tp
 
-        import nest.topology as tp
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 5,
+                                'columns'   : 5,
+                                'elements'  : 'iaf_psc_alpha'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'      : 5,
-                            'columns'   : 5,
-                            'elements'  : 'iaf_psc_alpha'})
-
-        # get layer GID of nodes in layer
-        tp.GetLayer(nest.GetNodes(l)[0])
-
-    KEYWORDS: topology
+            # get layer GID of nodes in layer
+            tp.GetLayer(nest.GetNodes(l)[0])
     """
 
-    if not nest.is_sequence_of_gids(nodes):
+    if not nest.hl_api.is_sequence_of_gids(nodes):
         raise TypeError("nodes must be a sequence of GIDs")
 
     return topology_func('{ GetLayer } Map', nodes)
 
 
 def GetElement(layers, locations):
-    """Return the node(s) at the location(s) in the given layer(s).
+    """
+    Return the node(s) at the location(s) in the given layer(s).
 
     This function works for fixed grid layers only.
 
@@ -952,19 +952,22 @@ def GetElement(layers, locations):
     * If layers and locations are lists, it returns a nested list of GIDs, one
       list for each layer and each location.
 
+
     Parameters
     ----------
-    layers : tuple/list of int
+    layers : tuple/list of int(s)
         List of layer GIDs
-    locations : tuple/list of floats or tuple/list of tuples/lists of floats
+    locations : [tuple/list of floats | tuple/list of tuples/lists of floats]
         2-element list with coordinates of a single grid location,
         or list of 2-element lists of coordinates for 2-dimensional layers,
-        i.e., on the format :code:`[column, row]`.
+        i.e., on the format [column, row]
+
 
     Returns
     -------
-    out : tuple of int
+    out : tuple of int(s)
         List of GIDs
+
 
     See also
     --------
@@ -973,33 +976,34 @@ def GetElement(layers, locations):
         given layer(s).
     GetPosition : Return the spatial locations of nodes.
 
+
     Notes
     -----
+    -
+
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest.topology as tp
 
-        import nest.topology as tp
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 5,
+                                'columns'   : 4,
+                                'elements'  : 'iaf_psc_alpha'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'      : 5,
-                            'columns'   : 4,
-                            'elements'  : 'iaf_psc_alpha'})
-
-        # get GID of element in last row and column
-        tp.GetElement(l, [3, 4])
-
-    KEYWORDS: topology
+            # get GID of element in last row and column
+            tp.GetElement(l, [3, 4])
     """
 
-    if not nest.is_sequence_of_gids(layers):
+    if not nest.hl_api.is_sequence_of_gids(layers):
         raise TypeError("layers must be a sequence of GIDs")
 
     if not len(layers) > 0:
-        raise nest.NESTError("layers cannot be empty")
+        raise nest.kernel.NESTError("layers cannot be empty")
 
-    if not (nest.is_iterable(locations) and len(locations) > 0):
-        raise nest.NESTError(
+    if not (nest.hl_api.is_iterable(locations) and len(locations) > 0):
+        raise nest.kernel.NESTError(
             "locations must be coordinate array or list of coordinate arrays")
 
     # ensure that all layers are grid-based, otherwise one ends up with an
@@ -1008,17 +1012,17 @@ def GetElement(layers, locations):
         topology_func('{ [ /topology [ /rows /columns ] ] get ; } forall',
                       layers)
     except:
-        raise nest.NESTError(
+        raise nest.kernel.NESTError(
             "layers must contain only grid-based topology layers")
 
     # SLI GetElement returns either single GID or list
     def make_tuple(x):
-        if not nest.is_iterable(x):
+        if not nest.hl_api.is_iterable(x):
             return (x, )
         else:
             return x
 
-    if nest.is_iterable(locations[0]):
+    if nest.hl_api.is_iterable(locations[0]):
 
         # layers and locations are now lists
         nodes = topology_func(
@@ -1045,7 +1049,8 @@ def GetElement(layers, locations):
 
 
 def FindNearestElement(layers, locations, find_all=False):
-    """Return the node(s) closest to the location(s) in the given layer(s).
+    """
+    Return the node(s) closest to the location(s) in the given layer(s).
 
     This function works for fixed grid layers only.
 
@@ -1061,23 +1066,26 @@ def FindNearestElement(layers, locations, find_all=False):
     * If layers and locations are lists, it returns a nested list of GIDs, one
       list for each layer and each location.
 
+
     Parameters
     ----------
-    layers : tuple/list of int
+    layers : tuple/list of int(s)
         List of layer GIDs
-    locations : tuple/list of tuple/list
+    locations : tuple(s)/list(s) of tuple(s)/list(s)
         2-element list with coordinates of a single position, or list of
         2-element list of positions
-    find_all : bool, optional
+    find_all : bool, default: False
         If there are several nodes with same minimal distance, return only the
-        first found, if ``False``.
-        If ``True``, instead of returning a single GID, return a list of GIDs
+        first found, if `False`.
+        If `True`, instead of returning a single GID, return a list of GIDs
         containing all nodes with minimal distance.
+
 
     Returns
     -------
-    tuple of int
+    out : tuple of int(s)
         List of node GIDs
+
 
     See also
     --------
@@ -1085,45 +1093,46 @@ def FindNearestElement(layers, locations, find_all=False):
     GetElement : Return the node(s) at the location(s) in the given layer(s).
     GetPosition : Return the spatial locations of nodes.
 
+
     Notes
     -----
+    -
+
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest.topology as tp
 
-        import nest.topology as tp
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 5,
+                                'columns'   : 5,
+                                'elements'  : 'iaf_psc_alpha'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'      : 5,
-                            'columns'   : 5,
-                            'elements'  : 'iaf_psc_alpha'})
-
-        # get GID of element closest to some location
-        tp.FindNearestElement(l, [3.0, 4.0], True)
-
-    KEYWORDS: topology
+            # get GID of element closest to some location
+            tp.FindNearestElement(l, [3.0, 4.0], True)
     """
 
     import numpy
 
-    if not nest.is_sequence_of_gids(layers):
+    if not nest.hl_api.is_sequence_of_gids(layers):
         raise TypeError("layers must be a sequence of GIDs")
 
     if not len(layers) > 0:
-        raise nest.NESTError("layers cannot be empty")
+        raise nest.kernel.NESTError("layers cannot be empty")
 
-    if not nest.is_iterable(locations):
+    if not nest.hl_api.is_iterable(locations):
         raise TypeError(
             "locations must be coordinate array or list of coordinate arrays")
 
     # ensure locations is sequence, keeps code below simpler
-    if not nest.is_iterable(locations[0]):
+    if not nest.hl_api.is_iterable(locations[0]):
         locations = (locations, )
 
     result = []  # collect one list per layer
     # loop over layers
     for lyr in layers:
-        els = nest.GetChildren((lyr, ))[0]
+        els = nest.hl_api.GetChildren((lyr, ))[0]
 
         lyr_result = []
         # loop over locations
@@ -1160,30 +1169,27 @@ def FindNearestElement(layers, locations, find_all=False):
 
 
 def _check_displacement_args(from_arg, to_arg, caller):
-    """Check displacement and distance arguments.
-
+    """
     Internal helper function to check arguments to Displacement
     and Distance and make them lists of equal length.
-
-    KEYWORDS: topology
     """
 
     import numpy
 
     if isinstance(from_arg, numpy.ndarray):
         from_arg = (from_arg, )
-    elif not (nest.is_iterable(from_arg) and len(from_arg) > 0):
-        raise nest.NESTError(
+    elif not (nest.hl_api.is_iterable(from_arg) and len(from_arg) > 0):
+        raise nest.kernel.NESTError(
             "%s: from_arg must be lists of GIDs or positions" % caller)
     # invariant: from_arg is list
 
-    if not nest.is_sequence_of_gids(to_arg):
-        raise nest.NESTError("%s: to_arg must be lists of GIDs" % caller)
+    if not nest.hl_api.is_sequence_of_gids(to_arg):
+        raise nest.kernel.NESTError("%s: to_arg must be lists of GIDs" % caller)
     # invariant: from_arg and to_arg are sequences
 
     if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(
             to_arg):
-        raise nest.NESTError(
+        raise nest.kernel.NESTError(
             "%s: If to_arg and from_arg are lists, they must have same length."
             % caller)
     # invariant: from_arg and to_arg have equal length,
@@ -1199,7 +1205,9 @@ def _check_displacement_args(from_arg, to_arg, caller):
 
 
 def Displacement(from_arg, to_arg):
-    """Get vector of lateral displacement from node(s) to node(s).
+    """
+    Get vector of lateral displacement from node(s) `from_arg`
+    to node(s) `to_arg`.
 
     Displacement is always measured in the layer to which the `to_arg` node
     belongs. If a node in the `from_arg` list belongs to a different layer,
@@ -1215,17 +1223,20 @@ def Displacement(from_arg, to_arg):
       to be lists of the same length and the displacement for each pair is
       returned.
 
+
     Parameters
     ----------
-    from_arg : tuple/list of int(s) or tuple/list of tuples/lists of floats
+    from_arg : [tuple/list of int(s) | tuple/list of tuples/lists of floats]
         List of GIDs or position(s)
     to_arg : tuple/list of int(s)
         List of GIDs
+
 
     Returns
     -------
     out : tuple
         Displacement vectors between pairs of nodes in `from_arg` and `to_arg`
+
 
     See also
     --------
@@ -1233,30 +1244,29 @@ def Displacement(from_arg, to_arg):
     DumpLayerConnections : Write connectivity information to file.
     GetPosition : Return the spatial locations of nodes.
 
+
     Notes
     -----
-    * The functions `GetPosition`, `Displacement` and `Distance` now
+    * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
       only works for nodes local to the current MPI process, if used in a
       MPI-parallel simulation.
 
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest.topology as tp
 
-        import nest.topology as tp
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 5,
+                                'columns'   : 5,
+                                'elements'  : 'iaf_psc_alpha'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'      : 5,
-                            'columns'   : 5,
-                            'elements'  : 'iaf_psc_alpha'})
+            # displacement between node 2 and 3
+            print(tp.Displacement([2], [3]))
 
-        # displacement between node 2 and 3
-        print(tp.Displacement([2], [3]))
-
-        # displacment between the position (0.0., 0.0) and node 2
-        print(tp.Displacement([(0.0, 0.0)], [2]))
-
-    KEYWORDS: topology
+            # displacment between the position (0.0., 0.0) and node 2
+            print(tp.Displacement([(0.0, 0.0)], [2]))
     """
 
     from_arg, to_arg = _check_displacement_args(from_arg, to_arg,
@@ -1265,7 +1275,8 @@ def Displacement(from_arg, to_arg):
 
 
 def Distance(from_arg, to_arg):
-    """Get lateral distances from node(s) from_arg to node(s) to_arg.
+    """
+    Get lateral distances from node(s) from_arg to node(s) to_arg.
 
     The distance between two nodes is the length of its displacement.
 
@@ -1283,17 +1294,20 @@ def Distance(from_arg, to_arg):
       to be lists of the same length and the distance for each pair is
       returned.
 
+
     Parameters
     ----------
-    from_arg : tuple/list of ints or tuple/list with tuples/lists of floats
+    from_arg : [tuple/list of ints | tuple/list with tuples/lists of floats]
         List of GIDs or position(s)
     to_arg : tuple/list of ints
         List of GIDs
+
 
     Returns
     -------
     out : tuple
         Distances between from and to
+
 
     See also
     --------
@@ -1301,30 +1315,30 @@ def Distance(from_arg, to_arg):
     DumpLayerConnections : Write connectivity information to file.
     GetPosition : Return the spatial locations of nodes.
 
+
     Notes
     -----
-    * The functions `GetPosition`, `Displacement` and `Distance` now
+    * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
       only works for nodes local to the current MPI process, if used in a
       MPI-parallel simulation.
 
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest.topology as tp
 
-        import nest.topology as tp
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 5,
+                                'columns'   : 5,
+                                'elements'  : 'iaf_psc_alpha'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'      : 5,
-                            'columns'   : 5,
-                            'elements'  : 'iaf_psc_alpha'})
+            # distance between node 2 and 3
+            print(tp.Distance([2], [3]))
 
-        # distance between node 2 and 3
-        print(tp.Distance([2], [3]))
+            # distance between the position (0.0., 0.0) and node 2
+            print(tp.Distance([(0.0, 0.0)], [2]))
 
-        # distance between the position (0.0., 0.0) and node 2
-        print(tp.Distance([(0.0, 0.0)], [2]))
-
-    KEYWORDS: topology
     """
 
     from_arg, to_arg = _check_displacement_args(from_arg, to_arg, 'Distance')
@@ -1348,29 +1362,37 @@ def _rank_specific_filename(basename):
 
 
 def DumpLayerNodes(layers, outname):
-    """Write GID and position data of layer(s) to file.
+    """
+    Write GID and position data of layer(s) to file.
 
     Write GID and position data to layer(s) file. For each node in a layer,
     a line with the following information is written:
+        ::
 
-    .. code_block:: python
-
-        GID x-position y-position [z-position]
+            GID x-position y-position [z-position]
 
     If `layers` contains several GIDs, data for all layers will be written to a
     single file.
 
+
     Parameters
     ----------
-    layers : tuple/list of int
+    layers : tuple/list of int(s)
         List of GIDs of a Topology layer
     outname : str
         Name of file to write to (existing files are overwritten)
+
+
+    Returns
+    -------
+    out : None
+
 
     See also
     --------
     DumpLayerConnections : Write connectivity information to file.
     GetPosition : Return the spatial locations of nodes.
+
 
     Notes
     -----
@@ -1380,21 +1402,20 @@ def DumpLayerNodes(layers, outname):
       the file name suffix.
     * Each file stores data for nodes local to that file.
 
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest.topology as tp
 
-        import nest.topology as tp
+            # create a layer
+            l = tp.CreateLayer({'rows'     : 5,
+                                'columns'  : 5,
+                                'elements' : 'iaf_psc_alpha'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'     : 5,
-                            'columns'  : 5,
-                            'elements' : 'iaf_psc_alpha'})
+            # write layer node positions to file
+            tp.DumpLayerNodes(l, 'positions.txt')
 
-        # write layer node positions to file
-        tp.DumpLayerNodes(l, 'positions.txt')
-
-    KEYWORDS: topology
     """
     topology_func("""
                   (w) file exch { DumpLayerNodes } forall close
@@ -1403,30 +1424,37 @@ def DumpLayerNodes(layers, outname):
 
 
 def DumpLayerConnections(layers, synapse_model, outname):
-    """Write connectivity information to file.
+    """
+    Write connectivity information to file.
 
     This function writes connection information to file for all outgoing
     connections from the given layers with the given synapse model.
     Data for all layers in the list is combined.
 
     For each connection, one line is stored, in the following format:
+        ::
 
-    .. code_block:: python
-
-        source_gid target_gid weight delay dx dy [dz]
+            source_gid target_gid weight delay dx dy [dz]
 
     where (dx, dy [, dz]) is the displacement from source to target node.
     If targets do not have positions (eg spike detectors outside any layer),
     NaN is written for each displacement coordinate.
 
+
     Parameters
     ----------
-    layers : tuple/list of int
+    layers : tuple/list of int(s)
         List of GIDs of a Topology layer
     synapse_model : str
         NEST synapse model
     outname : str
         Name of file to write to (will be overwritten if it exists)
+
+
+    Returns
+    -------
+    out : None
+
 
     See also
     --------
@@ -1434,6 +1462,7 @@ def DumpLayerConnections(layers, synapse_model, outname):
     GetPosition : Return the spatial locations of nodes.
     nest.GetConnections : Return connection identifiers between
         sources and targets
+
 
     Notes
     -----
@@ -1443,23 +1472,21 @@ def DumpLayerConnections(layers, synapse_model, outname):
       the MPI Rank into the file name before the file name suffix.
     * Each file stores data for local nodes.
 
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest.topology as tp
 
-        import nest.topology as tp
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 5,
+                                'columns'   : 5,
+                                'elements'  : 'iaf_psc_alpha'})
+            tp.ConnectLayers(l,l, {'connection_type': 'divergent',
+                                   'synapse_model': 'static_synapse'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'      : 5,
-                            'columns'   : 5,
-                            'elements'  : 'iaf_psc_alpha'})
-        tp.ConnectLayers(l,l, {'connection_type': 'divergent',
-                               'synapse_model': 'static_synapse'})
-
-        # write connectivity information to file
-        tp.DumpLayerConnections(l, 'static_synapse', 'connections.txt')
-
-    KEYWORDS: topology
+            # write connectivity information to file
+            tp.DumpLayerConnections(l, 'static_synapse', 'connections.txt')
     """
 
     topology_func("""
@@ -1473,20 +1500,24 @@ def DumpLayerConnections(layers, synapse_model, outname):
 
 
 def FindCenterElement(layers):
-    """Return GID(s) of node closest to center of layers.
+    """
+    Return GID(s) of node closest to center of layers.
+
 
     Parameters
     ----------
-    layers : tuple/list of int
+    layers : tuple/list of int(s)
         List of layer GIDs
+
 
     Returns
     -------
-    tuple of int
+    out : tuple of int(s)
         A list containing for each layer the GID of the node closest to the
         center of the layer, as specified in the layer parameters. If several
         nodes are equally close to the center, an arbitrary one of them is
         returned.
+
 
     See also
     --------
@@ -1495,24 +1526,27 @@ def FindCenterElement(layers):
     GetElement : Return the node(s) at the location(s) in the given layer(s).
     GetPosition : Return the spatial locations of nodes.
 
+
+    Notes
+    -----
+    -
+
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest.topology as tp
 
-        import nest.topology as tp
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 5,
+                                'columns'   : 5,
+                                'elements'  : 'iaf_psc_alpha'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'      : 5,
-                            'columns'   : 5,
-                            'elements'  : 'iaf_psc_alpha'})
-
-        # get GID of the element closest to the center of the layer
-        tp.FindCenterElement(l)
-
-    KEYWORDS: topology
+            # get GID of the element closest to the center of the layer
+            tp.FindCenterElement(l)
     """
 
-    if not nest.is_sequence_of_gids(layers):
+    if not nest.hl_api.is_sequence_of_gids(layers):
         raise TypeError("layers must be a sequence of GIDs")
 
     # Do each layer on its own since FindNearestElement does not thread
@@ -1523,18 +1557,21 @@ def FindCenterElement(layers):
 
 
 def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
-    """Obtain targets of a list of sources in given target layer.
+    """
+    Obtain targets of a list of sources in given target layer.
+
 
     Parameters
     ----------
-    sources : tuple/list of int
+    sources : tuple/list of int(s)
         List of GID(s) of source neurons
-    tgt_layer : tuple/list of int
+    tgt_layer : tuple/list of int(s)
         Single-element list with GID of tgt_layer
-    tgt_model : None or str, optional
+    tgt_model : [None | str], optional, default: None
         Return only target positions for a given neuron model.
-    syn_model : None or str, optional
+    syn_model : [None | str], optional, default: None
         Return only target positions for a given synapse model.
+
 
     Returns
     -------
@@ -1545,7 +1582,8 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
         For each neuron in `sources`, this function finds all target elements
         in `tgt_layer`. If `tgt_model` is not given (default), all targets are
         returned, otherwise only targets of specific type, and similarly for
-        `syn_model`.
+        syn_model.
+
 
     See also
     --------
@@ -1554,48 +1592,47 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     nest.GetConnections : Return connection identifiers between
         sources and targets
 
+
     Notes
     -----
     * For distributed simulations, this function only returns targets on the
       local MPI process.
 
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest.topology as tp
 
-        import nest.topology as tp
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 11,
+                                'columns'   : 11,
+                                'extent'    : [11.0, 11.0],
+                                'elements'  : 'iaf_psc_alpha'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'      : 11,
-                            'columns'   : 11,
-                            'extent'    : [11.0, 11.0],
-                            'elements'  : 'iaf_psc_alpha'})
+            # connectivity specifications with a mask
+            conndict = {'connection_type': 'divergent',
+                        'mask': {'rectangular': {'lower_left' : [-2.0, -1.0],
+                                                 'upper_right': [2.0, 1.0]}}}
 
-        # connectivity specifications with a mask
-        conndict = {'connection_type': 'divergent',
-                    'mask': {'rectangular': {'lower_left' : [-2.0, -1.0],
-                                             'upper_right': [2.0, 1.0]}}}
+            # connect layer l with itself according to the given
+            # specifications
+            tp.ConnectLayers(l, l, conndict)
 
-        # connect layer l with itself according to the given
-        # specifications
-        tp.ConnectLayers(l, l, conndict)
-
-        # get the GIDs of the targets of the source neuron with GID 5
-        tp.GetTargetNodes([5], l)
-
-    KEYWORDS: topology
+            # get the GIDs of the targets of the source neuron with GID 5
+            tp.GetTargetNodes([5], l)
     """
 
-    if not nest.is_sequence_of_gids(sources):
+    if not nest.hl_api.is_sequence_of_gids(sources):
         raise TypeError("sources must be a sequence of GIDs")
 
-    if not nest.is_sequence_of_gids(tgt_layer):
+    if not nest.hl_api.is_sequence_of_gids(tgt_layer):
         raise TypeError("tgt_layer must be a sequence of GIDs")
 
     if len(tgt_layer) != 1:
-        raise nest.NESTError("tgt_layer must be a one-element list")
+        raise nest.kernel.NESTError("tgt_layer must be a one-element list")
 
-    with nest.SuppressedDeprecationWarning('GetLeaves'):
+    with nest.hl_api.SuppressedDeprecationWarning('GetLeaves'):
         # obtain local nodes in target layer, to pass to GetConnections
         tgt_nodes = nest.GetLeaves(tgt_layer,
                                    properties={'model': tgt_model}
@@ -1615,65 +1652,68 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
 
 
 def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
-    """Obtain target positions of a list of sources in a given target layer.
+    """
+    Obtain positions of targets of a list of sources in a given target layer.
+
 
     Parameters
     ----------
-    sources : tuple/list of int
+    sources : tuple/list of int(s)
         List of GID(s) of source neurons
-    tgt_layer : tuple/list of int
-        Single-element list with GID of `tgt_layer`
-    tgt_model : None or str, optional
+    tgt_layer : tuple/list of int(s)
+        Single-element list with GID of tgt_layer
+    tgt_model : [None | str], optional, default: None
         Return only target positions for a given neuron model.
-    syn_type : None or str, optional
+    syn_type : [None | str], optional, default: None
         Return only target positions for a given synapse model.
+
 
     Returns
     -------
-    tuple of tuple(s) of tuple(s) of floats
+    out : tuple of tuple(s) of tuple(s) of floats
         Positions of target neurons fulfilling the given criteria as a nested
         list, containing one list of positions per node in sources.
 
         For each neuron in `sources`, this function finds all target elements
         in `tgt_layer`. If `tgt_model` is not given (default), all targets are
         returned, otherwise only targets of specific type, and similarly for
-        `syn_model`.
+        syn_model.
+
 
     See also
     --------
     GetTargetNodes : Obtain targets of a list of sources in a given target
         layer.
 
+
     Notes
     -----
     * For distributed simulations, this function only returns targets on the
       local MPI process.
 
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest.topology as tp
 
-        import nest.topology as tp
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 11,
+                                'columns'   : 11,
+                                'extent'    : [11.0, 11.0],
+                                'elements'  : 'iaf_psc_alpha'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'      : 11,
-                            'columns'   : 11,
-                            'extent'    : [11.0, 11.0],
-                            'elements'  : 'iaf_psc_alpha'})
+            # connectivity specifications with a mask
+            conndict1 = {'connection_type': 'divergent',
+                         'mask': {'rectangular': {'lower_left'  : [-2.0, -1.0],
+                                                  'upper_right' : [2.0, 1.0]}}}
 
-        # connectivity specifications with a mask
-        conndict1 = {'connection_type': 'divergent',
-                     'mask': {'rectangular': {'lower_left'  : [-2.0, -1.0],
-                                              'upper_right' : [2.0, 1.0]}}}
+            # connect layer l with itself according to the given
+            # specifications
+            tp.ConnectLayers(l, l, conndict1)
 
-        # connect layer l with itself according to the given
-        # specifications
-        tp.ConnectLayers(l, l, conndict1)
-
-        # get the positions of the targets of the source neuron with GID 5
-        tp.GetTargetPositions([5], l)
-
-    KEYWORDS: topology
+            # get the positions of the targets of the source neuron with GID 5
+            tp.GetTargetPositions([5], l)
     """
 
     return tuple(GetPosition(nodes) for nodes
@@ -1699,28 +1739,43 @@ def _draw_extent(ax, xctr, yctr, xext, yext):
            xticks=tuple(), yticks=tuple())
 
 
+def _shifted_positions(pos, ext):
+    """Get shifted positions corresponding to boundary conditions."""
+    return [[pos[0] + ext[0], pos[1]],
+            [pos[0] - ext[0], pos[1]],
+            [pos[0], pos[1] + ext[1]],
+            [pos[0], pos[1] - ext[1]],
+            [pos[0] + ext[0], pos[1] - ext[1]],
+            [pos[0] - ext[0], pos[1] + ext[1]],
+            [pos[0] + ext[0], pos[1] + ext[1]],
+            [pos[0] - ext[0], pos[1] - ext[1]]]
+
+
 def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
-    """Plot all nodes in a layer.
+    """
+    Plot all nodes in a layer.
 
     This function plots only top-level nodes, not the content of composite
     nodes.
 
+
     Parameters
     ----------
-    layer : tuple/list of int
-        GID of layer to plot, The length of tuple/list must be 1.
-    fig : None or object, optional
+    layer : tuple/list of int(s)
+        GID of layer to plot, must be tuple/list of length 1
+    fig : [None | matplotlib.figure.Figure object], optional, default: None
         Matplotlib figure to plot to. If not given, a new figure is
         created.
-    nodecolor : str, optional
-        Color for nodes. Any matplotlib color.
-    nodesize : float, optional
+    nodecolor : [None | any matplotlib color], optional, default: 'b'
+        Color for nodes
+    nodesize : float, optional, default: 20
         Marker size for nodes
+
 
     Returns
     -------
-    object
-        Figure of the matplotlib
+    out : `matplotlib.figure.Figure` object
+
 
     See also
     --------
@@ -1728,28 +1783,27 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
     PlotTargets : Plot all targets of a given source.
     matplotlib.figure.Figure : matplotlib Figure class
 
+
     Notes
     -----
     * Do not use this function in distributed simulations.
 
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest.topology as tp
+            import matplotlib.pyplot as plt
 
-        import nest.topology as tp
-        import matplotlib.pyplot as plt
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 11,
+                                'columns'   : 11,
+                                'extent'    : [11.0, 11.0],
+                                'elements'  : 'iaf_psc_alpha'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'      : 11,
-                            'columns'   : 11,
-                            'extent'    : [11.0, 11.0],
-                            'elements'  : 'iaf_psc_alpha'})
-
-        # plot layer with all its nodes
-        tp.PlotLayer(l)
-        plt.show()
-
-    KEYWORDS: topology
+            # plot layer with all its nodes
+            tp.PlotLayer(l)
+            plt.show()
     """
 
     import matplotlib.pyplot as plt
@@ -1767,9 +1821,9 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         xext, yext = ext
         xctr, yctr = nest.GetStatus(layer, 'topology')[0]['center']
 
-        with nest.SuppressedDeprecationWarning('GetChildren'):
+        with nest.hl_api.SuppressedDeprecationWarning('GetChildren'):
             # extract position information, transpose to list of x and y pos
-            xpos, ypos = zip(*GetPosition(nest.GetChildren(layer)[0]))
+            xpos, ypos = zip(*GetPosition(nest.hl_api.GetChildren(layer)[0]))
 
         if fig is None:
             fig = plt.figure()
@@ -1785,9 +1839,9 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         # 3D layer
         from mpl_toolkits.mplot3d import Axes3D
 
-        with nest.SuppressedDeprecationWarning('GetChildren'):
+        with nest.hl_api.SuppressedDeprecationWarning('GetChildren'):
             # extract position information, transpose to list of x,y,z pos
-            pos = zip(*GetPosition(nest.GetChildren(layer)[0]))
+            pos = zip(*GetPosition(nest.hl_api.GetChildren(layer)[0]))
 
         if fig is None:
             fig = plt.figure()
@@ -1799,7 +1853,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         plt.draw_if_interactive()
 
     else:
-        raise nest.NESTError("unexpected dimension of layer")
+        raise nest.kernel.NESTError("unexpected dimension of layer")
 
     return fig
 
@@ -1808,41 +1862,44 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
                 mask=None, kernel=None,
                 src_color='red', src_size=50, tgt_color='blue', tgt_size=20,
                 mask_color='red', kernel_color='red'):
-    """Plot all targets of a source neuron in a target layer.
+    """
+    Plot all targets of source neuron `src_nrn` in a target layer `tgt_layer`.
+
 
     Parameters
     ----------
     src_nrn : int
         GID of source neuron (as single-element list)
-    tgt_layer : tuple/list of int
-        GID of `tgt_layer` (as single-element list)
-    tgt_model : None or str, optional
+    tgt_layer : tuple/list of int(s)
+        GID of tgt_layer (as single-element list)
+    tgt_model : [None | str], optional, default: None
         Show only targets of a given model.
-    syn_type : None or str, optional
-        Show only targets connected to with a given synapse type.
-    fig : None or object, optional
+    syn_type : [None | str], optional, default: None
+        Show only targets connected to with a given synapse type
+    fig : [None | matplotlib.figure.Figure object], optional, default: None
         Matplotlib figure to plot to. If not given, a new figure is created.
-    mask : None or dict, optional
-        Draw topology mask with targets; see :code:`PlotKernel` for details.
-    kernel : None or dict, optional
-        Draw topology kernel with targets; see :code:`PlotKernel` for details.
-    src_color : str or object, optional
-        Color used to mark source node position. Any matplotlib color.
-    src_size : float, optional
-        Size of source marker (see scatter for details).
-    tgt_color : str or object, optional
-        Color used to mark target node positions. Any matplotlib color.
-    tgt_size : float, optional
+    mask : [None | dict], optional, default: None
+        Draw topology mask with targets; see ``PlotKernel`` for details.
+    kernel : [None | dict], optional, default: None
+        Draw topology kernel with targets; see ``PlotKernel`` for details.
+    src_color : [None | any matplotlib color], optional, default: 'red'
+        Color used to mark source node position
+    src_size : float, optional, default: 50
+        Size of source marker (see scatter for details)
+    tgt_color : [None | any matplotlib color], optional, default: 'blue'
+        Color used to mark target node positions
+    tgt_size : float, optional, default: 20
         Size of target markers (see scatter for details)
-    mask_color : str or object, optional
-        Color used for line marking mask. Any matplotlib color.
-    kernel_color : str or object, optional
-        Color used for lines marking kernel. Any matplotlib color.
+    mask_color : [None | any matplotlib color], optional, default: 'red'
+        Color used for line marking mask
+    kernel_color : [None | any matplotlib color], optional, default: 'red'
+        Color used for lines marking kernel
+
 
     Returns
     -------
-    object
-        Figure of the matplotlib
+    out : matplotlib.figure.Figure object
+
 
     See also
     --------
@@ -1854,37 +1911,36 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
     PlotLayer : Plot all nodes in a layer.
     matplotlib.pyplot.scatter : matplotlib scatter plot.
 
+
     Notes
     -----
     * Do not use this function in distributed simulations.
 
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest.topology as tp
+            import matplotlib.pyplot as plt
 
-        import nest.topology as tp
-        import matplotlib.pyplot as plt
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 11,
+                                'columns'   : 11,
+                                'extent'    : [11.0, 11.0],
+                                'elements'  : 'iaf_psc_alpha'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'      : 11,
-                            'columns'   : 11,
-                            'extent'    : [11.0, 11.0],
-                            'elements'  : 'iaf_psc_alpha'})
+            # connectivity specifications with a mask
+            conndict = {'connection_type': 'divergent',
+                         'mask': {'rectangular': {'lower_left'  : [-2.0, -1.0],
+                                                  'upper_right' : [2.0, 1.0]}}}
 
-        # connectivity specifications with a mask
-        conndict = {'connection_type': 'divergent',
-                     'mask': {'rectangular': {'lower_left'  : [-2.0, -1.0],
-                                              'upper_right' : [2.0, 1.0]}}}
+            # connect layer l with itself according to the given
+            # specifications
+            tp.ConnectLayers(l, l, conndict)
 
-        # connect layer l with itself according to the given
-        # specifications
-        tp.ConnectLayers(l, l, conndict)
-
-        # plot the targets of the source neuron with GID 5
-        tp.PlotTargets([5], l)
-        plt.show()
-
-    KEYWORDS: topology
+            # plot the targets of the source neuron with GID 5
+            tp.PlotTargets([5], l)
+            plt.show()
     """
 
     import matplotlib.pyplot as plt
@@ -1952,28 +2008,35 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
 
 def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                kernel_color='red'):
-    """Add indication of mask and kernel to axes.
+    """
+    Add indication of mask and kernel to axes.
 
     Adds solid red line for mask. For doughnut mask show inner and outer line.
     If kern is Gaussian, add blue dashed lines marking 1, 2, 3 sigma.
-    This function ignores periodic boundary conditions.
-    Usually, this function is invoked by :code:`PlotTargets()`.
+    Usually, this function is invoked by ``PlotTargets``.
+
 
     Parameters
     ----------
-    ax : object
-        Subplot of reference returned by :code:`PlotTargets`.
+    ax : matplotlib.axes.AxesSubplot,
+        subplot reference returned by PlotTargets
     src_nrn : int
-        GID of source neuron (as single element list), mask and kernel
-        plotted relative to it.
+        GID of source neuron  (as single element list), mask and kernel
+        plotted relative to it
     mask : dict
         Mask used in creating connections.
-    kern : None or dict, optional
-        Kernel used in creating connections.
-    mask_color : str or object, optional,
-        Color used for line marking mask. Any matplotlib color.
-    kernel_color : str or object, optional
-        Color used for lines marking kernel. Any matplotlib color.
+    kern : [None | dict], optional, default: None
+        Kernel used in creating connections
+    mask_color : [None | any matplotlib color], optional, default: 'red'
+        Color used for line marking mask
+    kernel_color : [None | any matplotlib color], optional, default: 'red'
+        Color used for lines marking kernel
+
+
+    Returns
+    -------
+    out : None
+
 
     See also
     --------
@@ -1983,49 +2046,48 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
         parameters for distance dependency and randomization.
     PlotLayer : Plot all nodes in a layer.
 
+
     Notes
     -----
     * Do not use this function in distributed simulations.
 
+
     **Example**
+        ::
 
-    .. code_block:: python
+            import nest.topology as tp
+            import matplotlib.pyplot as plt
 
-        import nest.topology as tp
-        import matplotlib.pyplot as plt
+            # create a layer
+            l = tp.CreateLayer({'rows'      : 11,
+                                'columns'   : 11,
+                                'extent'    : [11.0, 11.0],
+                                'elements'  : 'iaf_psc_alpha'})
 
-        # create a layer
-        l = tp.CreateLayer({'rows'      : 11,
-                            'columns'   : 11,
-                            'extent'    : [11.0, 11.0],
-                            'elements'  : 'iaf_psc_alpha'})
+            # connectivity specifications
+            mask_dict = {'rectangular': {'lower_left'  : [-2.0, -1.0],
+                                         'upper_right' : [2.0, 1.0]}}
+            kernel_dict = {'gaussian': {'p_center' : 1.0,
+                                        'sigma'    : 1.0}}
+            conndict = {'connection_type': 'divergent',
+                        'mask'   : mask_dict,
+                        'kernel' : kernel_dict}
 
-        # connectivity specifications
-        mask_dict = {'rectangular': {'lower_left'  : [-2.0, -1.0],
-                                     'upper_right' : [2.0, 1.0]}}
-        kernel_dict = {'gaussian': {'p_center' : 1.0,
-                                    'sigma'    : 1.0}}
-        conndict = {'connection_type': 'divergent',
-                    'mask'   : mask_dict,
-                    'kernel' : kernel_dict}
+            # connect layer l with itself according to the given
+            # specifications
+            tp.ConnectLayers(l, l, conndict)
 
-        # connect layer l with itself according to the given
-        # specifications
-        tp.ConnectLayers(l, l, conndict)
+            # set up figure
+            fig, ax = plt.subplots()
 
-        # set up figure
-        fig, ax = plt.subplots()
+            # plot layer nodes
+            tp.PlotLayer(l, fig)
 
-        # plot layer nodes
-        tp.PlotLayer(l, fig)
+            # choose center element of the layer as source node
+            ctr_elem = tp.FindCenterElement(l)
 
-        # choose center element of the layer as source node
-        ctr_elem = tp.FindCenterElement(l)
-
-        # plot mask and kernel of the center element
-        tp.PlotKernel(ax, ctr_elem, mask=mask_dict, kern=kernel_dict)
-
-    KEYWORDS: topology, plot
+            # plot mask and kernel of the center element
+            tp.PlotKernel(ax, ctr_elem, mask=mask_dict, kern=kernel_dict)
     """
 
     import matplotlib
@@ -2043,10 +2105,20 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     else:
         offs = np.array([0., 0.])
 
+    layer = GetLayer(src_nrn)
+    periodic = nest.GetStatus(layer)[0]['topology']['edge_wrap']
+    extent = nest.GetStatus(layer)[0]['topology']['extent']
+
     if 'circular' in mask:
         r = mask['circular']['radius']
+
         ax.add_patch(plt.Circle(srcpos + offs, radius=r, zorder=-1000,
                                 fc='none', ec=mask_color, lw=3))
+
+        if periodic:
+            for pos in _shifted_positions(srcpos + offs, extent):
+                ax.add_patch(plt.Circle(pos, radius=r, zorder=-1000,
+                                        fc='none', ec=mask_color, lw=3))
     elif 'doughnut' in mask:
         r_in = mask['doughnut']['inner_radius']
         r_out = mask['doughnut']['outer_radius']
@@ -2054,6 +2126,13 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                                 fc='none', ec=mask_color, lw=3))
         ax.add_patch(plt.Circle(srcpos + offs, radius=r_out, zorder=-1000,
                                 fc='none', ec=mask_color, lw=3))
+
+        if periodic:
+            for pos in _shifted_positions(srcpos + offs, extent):
+                ax.add_patch(plt.Circle(pos, radius=r_in, zorder=-1000,
+                                        fc='none', ec=mask_color, lw=3))
+                ax.add_patch(plt.Circle(pos, radius=r_out, zorder=-1000,
+                                        fc='none', ec=mask_color, lw=3))
     elif 'rectangular' in mask:
         ll = mask['rectangular']['lower_left']
         ur = mask['rectangular']['upper_right']
@@ -2072,6 +2151,13 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
         ax.add_patch(
             plt.Rectangle(pos, ur[0] - ll[0], ur[1] - ll[1], angle=angle,
                           zorder=-1000, fc='none', ec=mask_color, lw=3))
+
+        if periodic:
+            for pos in _shifted_positions(srcpos + ll + offs, extent):
+                ax.add_patch(
+                    plt.Rectangle(pos, ur[0] - ll[0], ur[1] - ll[1],
+                                  angle=angle, zorder=-1000, fc='none',
+                                  ec=mask_color, lw=3))
     elif 'elliptical' in mask:
         width = mask['elliptical']['major_axis']
         height = mask['elliptical']['minor_axis']
@@ -2087,6 +2173,13 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
             matplotlib.patches.Ellipse(srcpos + offs + anchor, width, height,
                                        angle=angle, zorder=-1000, fc='none',
                                        ec=mask_color, lw=3))
+
+        if periodic:
+            for pos in _shifted_positions(srcpos + offs + anchor, extent):
+                ax.add_patch(
+                    matplotlib.patches.Ellipse(pos, width, height, angle=angle,
+                                               zorder=-1000, fc='none',
+                                               ec=mask_color, lw=3))
     else:
         raise ValueError(
             'Mask type cannot be plotted with this version of PyTopology.')
@@ -2099,6 +2192,14 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                                         zorder=-1000,
                                         fc='none', ec=kernel_color, lw=3,
                                         ls='dashed'))
+
+            if periodic:
+                for pos in _shifted_positions(srcpos + offs, extent):
+                    for r in range(3):
+                        ax.add_patch(plt.Circle(pos, radius=(r + 1) * sigma,
+                                                zorder=-1000, fc='none',
+                                                ec=kernel_color, lw=3,
+                                                ls='dashed'))
         else:
             raise ValueError('Kernel type cannot be plotted with this ' +
                              'version of PyTopology')
@@ -2107,7 +2208,8 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
 
 
 def SelectNodesByMask(layer, anchor, mask_obj):
-    """Obtain the GIDs inside a masked area of a topology layer.
+    """
+    Obtain the GIDs inside a masked area of a topology layer.
 
     The function finds and returns all the GIDs inside a given mask of a single
     layer. It works on both 2-dimensional and 3-dimensional masks and layers.
@@ -2125,10 +2227,8 @@ def SelectNodesByMask(layer, anchor, mask_obj):
 
     Returns
     -------
-    out : list of int
+    out : list of int(s)
         GID(s) of nodes/elements inside the mask.
-
-    KEYWORDS: topology
     """
 
     if len(layer) != 1:

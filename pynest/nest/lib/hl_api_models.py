@@ -23,7 +23,16 @@
 Functions for model handling
 """
 
+from ..ll_api import *
 from .hl_api_helper import *
+
+__all__ = [
+    'ConnectionRules',
+    'CopyModel',
+    'GetDefaults',
+    'Models',
+    'SetDefaults',
+]
 
 
 @check_stack

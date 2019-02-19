@@ -23,7 +23,16 @@
 Functions for parallel computing
 """
 
+from ..ll_api import *
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
+
+__all__ = [
+    'NumProcesses',
+    'Rank',
+    'SetAcceptableLatency',
+    'SetMaxBuffered',
+]
 
 
 @check_stack

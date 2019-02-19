@@ -28,7 +28,7 @@ import nest
 import os
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class UseGidInFilenameTestCase(unittest.TestCase):
     """Tests of use_gid_in_filename"""
 

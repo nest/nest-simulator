@@ -23,8 +23,17 @@
 Functions for node handling
 """
 
+import warnings
+
+from ..ll_api import *
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_info import SetStatus
+
+__all__ = [
+    'Create',
+    'GetLID',
+]
 
 
 @check_stack
@@ -114,7 +123,7 @@ def GetLID(gid):
     """
 
     if len(gid) > 1:
-        raise NESTError("GetLID() expects exactly one GID.")
+        raise kernel.NESTError("GetLID() expects exactly one GID.")
 
     sps(gid[0])
     sr("GetLID")

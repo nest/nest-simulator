@@ -149,26 +149,6 @@ public:
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
-  /**
-   * Return membrane potential at time t.
-potentials_.connect_logging_device();
-   * This function is not thread-safe and should not be used in threaded
-   * contexts to access the current membrane potential values.
-   * @param Time the current network time
-   *
-   */
-  double get_potential( Time const& ) const;
-
-  /**
-   * Define current membrane potential.
-   * This function is thread-safe and should be used in threaded
-   * contexts to change the current membrane potential value.
-   * @param Time     the current network time
-   * @param double new value of the mebrane potential
-   *
-   */
-  void set_potential( Time const&, double );
-
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 

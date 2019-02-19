@@ -44,7 +44,7 @@ import nest
 import numpy as np
 import matplotlib.pyplot as plt
 
-nest.set_verbosity('M_WARNING')
+nest.hl_api.set_verbosity('M_WARNING')
 nest.ResetKernel()
 
 simtime = 1000

@@ -23,18 +23,29 @@
 Functions for hierarchical networks
 """
 
+from ..ll_api import *
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_info import GetStatus, SetStatus
+
+__all__ = [
+    'BeginSubnet',
+    'ChangeSubnet',
+    'CurrentSubnet',
+    'EndSubnet',
+    'GetChildren',
+    'GetLeaves',
+    'GetNetwork',
+    'GetNodes',
+    'LayoutNetwork',
+    'PrintNetwork',
+]
 
 
 @check_stack
 def PrintNetwork(depth=1, subnet=None):
     """Print the network tree up to depth, starting at subnet.
-
-    .. deprecated:: 2.14
-        Subnets have been deprecated. Therefore this function will
-        be removed in NEST 3.0.
 
     If subnet is omitted, the current subnet is used instead.
 
@@ -42,15 +53,12 @@ def PrintNetwork(depth=1, subnet=None):
     ----------
     depth : int, optional
         Depth to print to
-    subnet : list, optional
+    subnet : TYPE, optional
         Subnet to start at
 
     Raises
     ------
-    NESTError
-        if `subnet` is a list of more than one GIDs
-
-    KEYWORDS
+    kernel.NESTError
     """
 
     if subnet is None:
@@ -58,7 +66,7 @@ def PrintNetwork(depth=1, subnet=None):
         with SuppressedDeprecationWarning('CurrentSubnet'):
             subnet = CurrentSubnet()
     elif len(subnet) > 1:
-        raise NESTError("PrintNetwork() expects exactly one GID.")
+        raise kernel.NESTError("PrintNetwork() expects exactly one GID.")
 
     sps(subnet[0])
     sr("%i PrintNetwork" % depth)
@@ -69,16 +77,10 @@ def PrintNetwork(depth=1, subnet=None):
 def CurrentSubnet():
     """Returns the global id of the current subnet.
 
-    .. deprecated:: 2.14
-        Subnets have been deprecated. Therefore this function will
-        be removed in NEST 3.0.
-
     Returns
     -------
     int:
         GID of current subnet
-
-    KEYWORDS
     """
 
     sr("CurrentSubnet")
@@ -90,25 +92,18 @@ def CurrentSubnet():
 def ChangeSubnet(subnet):
     """Make given subnet the current.
 
-    .. deprecated:: 2.14
-        Subnets have been deprecated. Therefore this function will
-        be removed in NEST 3.0.
-
     Parameters
     ----------
-    subnet : list
-        containing GID of the subnet
+    subnet : int
+        GID of the subnet
 
     Raises
     ------
-    NESTError
-        if `subnet` is a list of more than one GIDs
-
-    KEYWORDS
+    kernel.NESTError
     """
 
     if len(subnet) > 1:
-        raise NESTError("ChangeSubnet() expects exactly one GID.")
+        raise kernel.NESTError("ChangeSubnet() expects exactly one GID.")
 
     sps(subnet[0])
     sr("ChangeSubnet")
@@ -119,10 +114,6 @@ def ChangeSubnet(subnet):
 GIDCollection instead.')
 def GetLeaves(subnets, properties=None, local_only=False):
     """Return the GIDs of the leaf nodes of the given subnets.
-
-    .. deprecated:: 2.14
-        Subnets have been deprecated. Therefore this function will
-        be removed in NEST 3.0.
 
     Leaf nodes are all nodes that are not subnets.
 
@@ -136,7 +127,7 @@ def GetLeaves(subnets, properties=None, local_only=False):
         values (e.g. the membrane potential) may fail due to tiny numerical
         discrepancies and should be avoided.
     local_only : bool, optional
-        If ``True``, only GIDs of nodes simulated on the local MPI process will
+        If True, only GIDs of nodes simulated on the local MPI process will
         be returned. By default, global ids of nodes in the entire simulation
         will be returned. This requires MPI communication and may slow down
         the script.
@@ -146,11 +137,10 @@ def GetLeaves(subnets, properties=None, local_only=False):
     list:
         GIDs of leaf nodes
 
-    See Also
+    See also
     --------
-    GetNodes, GetChildren
-
-    KEYWORDS
+    GetNodes
+    GetChildren
     """
 
     if properties is None:
@@ -166,10 +156,6 @@ GIDCollection instead.')
 def GetNodes(subnets, properties=None, local_only=False):
     """Return the global ids of the all nodes of the given subnets.
 
-    .. deprecated:: 2.14
-        Subnets have been deprecated. Therefore this function will
-        be removed in NEST 3.0.
-
     Parameters
     ----------
     subnets : list
@@ -190,11 +176,10 @@ def GetNodes(subnets, properties=None, local_only=False):
     list:
         GIDs of leaf nodes
 
-    See Also
+    See also
     --------
-    GetLeaves, GetChildren
-
-    KEYWORDS
+    GetLeaves
+    GetChildren
     """
 
     if properties is None:
@@ -210,10 +195,6 @@ def GetNodes(subnets, properties=None, local_only=False):
 def GetChildren(subnets, properties=None, local_only=False):
     """Return the global ids of the immediate children of the given subnets.
 
-    .. deprecated:: 2.14
-        Subnets have been deprecated. Therefore this function will
-        be removed in NEST 3.0.
-
     Parameters
     ----------
     subnets : list
@@ -234,11 +215,10 @@ def GetChildren(subnets, properties=None, local_only=False):
     list:
         GIDs of leaf nodes
 
-    See Also
+    See also
     --------
-    GetLeaves, GetNodes
-
-    KEYWORDS:
+    GetLeaves
+    GetNodes
     """
 
     if properties is None:
@@ -255,14 +235,10 @@ def GetNetwork(gid, depth):
     """Return a nested list with the children of subnet id at level
     depth.
 
-    .. deprecated:: 2.14
-        Subnets have been deprecated. Therefore this function will
-        be removed in NEST 3.0.
-
     Parameters
     ----------
-    gid : list
-        list containing GID of subnet
+    gid : int
+        GID of subnet
     depth : int
         Depth of list to return. If depth==0, the immediate children of the
         subnet are returned. The returned list is depth+1 dimensional.
@@ -274,14 +250,11 @@ def GetNetwork(gid, depth):
 
     Raises
     ------
-    NESTError
-        if gid contains more than one GID
-
-    KEYWORDS:
+    kernel.NESTError
     """
 
     if len(gid) > 1:
-        raise NESTError("GetNetwork() expects exactly one GID.")
+        raise kernel.NESTError("GetNetwork() expects exactly one GID.")
 
     sps(gid[0])
     sps(depth)
@@ -295,22 +268,12 @@ Use GIDCollection instead.')
 def BeginSubnet(label=None, params=None):
     """Create a new subnet and change into it.
 
-    .. deprecated:: 2.14
-        Subnets have been deprecated. Therefore this function will
-        be removed in NEST 3.0.
-
     Parameters
     ----------
     label : str, optional
         Name of the new subnet
     params : dict, optional
         The customdict of the new subnet
-
-    See Also
-    --------
-    EndSubnet
-
-    KEYWORDS:
     """
 
     sn = Create("subnet")
@@ -327,16 +290,10 @@ GIDCollection instead.')
 def EndSubnet():
     """Change to the parent subnet and return the gid of the current.
 
-    .. deprecated:: 2.14
-        Subnets have been deprecated. Therefore this function will
-        be removed in NEST 3.0.
-
     Raises
     ------
-    NESTError
-        if the current subnet is the root subnet
-
-    KEYWORDS:
+    kernel.NESTError
+        Description
     """
 
     csn = CurrentSubnet()
@@ -346,7 +303,7 @@ def EndSubnet():
         ChangeSubnet(parent)
         return csn
     else:
-        raise NESTError(
+        raise kernel.NESTError(
             "Unexpected EndSubnet(). Cannot go higher than the root node.")
 
 
@@ -357,29 +314,25 @@ def LayoutNetwork(model, dim, label=None, params=None):
     """Create a subnetwork of dimension dim with nodes of type model and
     return a list of ids.
 
-    .. deprecated:: 2.14
-        Subnets have been deprecated. Therefore this function will
-        be removed in NEST 3.0.
-
-    `params` is a dictionary, which will be set as
+    params is a dictionary, which will be set as
     customdict of the newly created subnet.
 
     Parameters
     ----------
-    model : str or function
+    model : str
         Neuron model to use
     dim : int
         Dimension of subnetwork
     label : str, optional
         Name of the new subnet
     params : dict, optional
-        Parameters of the new subnet. Not the parameters
+        The customdict of the new subnet. Not the parameters
         for the neurons in the subnetwork.
 
     Raises
     ------
     ValueError
-        if model is not a string or function
+        Description
     """
 
     if is_literal(model):

@@ -120,7 +120,7 @@ def make_psp(Time, Tau_s, Tau_m, Cm, Weight):
 
 def find_loc_pspmax(tau_s, tau_m):
     var = tau_m / tau_s
-    lam = nest.sli_func('LambertWm1', -numpy.exp(-1 / var) / var)
+    lam = nest.ll_api.sli_func('LambertWm1', -numpy.exp(-1 / var) / var)
     t_maxpsp = (-var * lam - 1) / var / (1 / tau_s - 1 / tau_m) * 1e-3
     return t_maxpsp
 
@@ -192,7 +192,7 @@ t_U = (convolution_resolution * numpy.linspace(-l / 2., l / 2., l) +
 
 nest.ResetKernel()
 nest.SetStatus([0], [{'resolution': simulation_resolution}])
-nest.set_verbosity("M_WARNING")
+nest.hl_api.set_verbosity("M_WARNING")
 
 
 ###############################################################################

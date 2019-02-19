@@ -71,7 +71,6 @@ __all__ = [
     'Rank',
     'ResetKernel',
     'ResetNetwork',
-    'ResumeSimulation',
     'Run',
     'RunManager',
     'SetAcceptableLatency',

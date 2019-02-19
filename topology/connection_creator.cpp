@@ -139,8 +139,15 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   }
   if ( not delay_.valid() )
   {
-    delay_ =
-      TopologyModule::create_parameter( ( *syn_defaults )[ names::delay ] );
+    if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) )
+    {
+      delay_ = TopologyModule::create_parameter( numerics::nan );
+    }
+    else
+    {
+      delay_ =
+        TopologyModule::create_parameter( ( *syn_defaults )[ names::delay ] );
+    }
   }
 
   if ( connection_type == names::convergent )

@@ -36,8 +36,6 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-#define DEBUG_ARCHIVER 1
-
 namespace nest
 {
 

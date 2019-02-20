@@ -137,7 +137,6 @@ nest::Clopath_Archiving_Node::get_LTD_value( double t )
   std::vector< histentry_cl >::iterator runner;
   if ( ltd_history_.empty() || t < 0.0 )
   {
-    // Return 0.0 if history is empty
     return 0.0;
   }
   else

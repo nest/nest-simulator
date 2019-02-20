@@ -224,10 +224,9 @@ ClopathConnection< targetidentifierT >::send( Event& e,
     &start,
     &finish );
   // facilitation due to post-synaptic activity since last pre-synaptic spike
-  double minus_dt;
   while ( start != finish )
   {
-    minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
+    const double minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
     weight_ =
       facilitate_( weight_, start->dw_, x_bar_ * exp( minus_dt / tau_x_ ) );
     ++start;

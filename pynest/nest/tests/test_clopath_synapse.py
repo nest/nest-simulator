@@ -180,8 +180,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
             syn_weights = np.array(syn_weights)
             syn_weights = 100.0*15.0*(syn_weights - init_w)/init_w + 100.0
             if(nrn_model == "aeif_psc_delta_clopath"):
-                correct_weights = [59.05711455,  72.3802947,  145.20714407,
-                                   102.96572018, 121.71497456, 152.39683446]
+                correct_weights = [57.82638722, 72.16730112, 149.43359357,
+                                   103.30408341, 124.03640668, 157.02882555]
             elif(nrn_model == "hh_psc_alpha_clopath"):
                 correct_weights = [70.14343863, 99.49206222, 178.1028757,
                                    119.63314118, 167.37750688, 178.83111685]

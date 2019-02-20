@@ -66,7 +66,6 @@ neurons_interspike = [
 ]
 
 neurons_interspike_ps = [
-    "aeif_psc_delta_clopath",
     "iaf_psc_alpha_canon",
     "iaf_psc_alpha_presc",
     "iaf_psc_delta_canon",
@@ -195,7 +194,7 @@ class TestRefractoryCase(unittest.TestCase):
             vm_params = {"interval": resolution, "record_from": [name_Vm]}
             vm = nest.Create("voltmeter", params=vm_params)
             sd = nest.Create("spike_detector", params={'precise_times': True})
-            cg = nest.Create("dc_generator", params={"amplitude": 900.})
+            cg = nest.Create("dc_generator", params={"amplitude": 1200.})
 
             # For models that do not clamp V_m, use very large current to
             # trigger almost immediate spiking => t_ref almost equals

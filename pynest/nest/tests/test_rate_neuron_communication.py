@@ -32,7 +32,7 @@ def H(x):
     return 0.5 * (np.sign(x) + 1.)
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class RateNeuronCommunicationTestCase(unittest.TestCase):
 
     """Check rate_neuron"""
@@ -55,7 +55,7 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         self.simtime = 100.
         self.dt = 0.1
 
-        nest.set_verbosity('M_WARNING')
+        nest.hl_api.set_verbosity('M_WARNING')
         nest.ResetKernel()
         nest.SetKernelStatus({'resolution': self.dt, 'use_wfr': True})
 

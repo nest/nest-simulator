@@ -27,16 +27,18 @@ import unittest
 import nest
 import numpy as np
 
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class ClopathSynapseTestCase(unittest.TestCase):
     """Test Clopath synapse"""
 
     def test_ConnectNeuronsWithClopathSynapse(self):
         """Ensures that the restriction to supported neuron models works."""
+
+        nest.hl_api.set_verbosity('M_WARNING')
 
         # Specify supported models
         supported_models = [
@@ -64,12 +66,14 @@ class ClopathSynapseTestCase(unittest.TestCase):
             n = nest.Create(nm, 2)
 
             # try to connect with clopath_rule
-            with self.assertRaises(nest.NESTError):
+            with self.assertRaises(nest.kernel.NESTError):
                 nest.Connect(n, n, {"rule": "all_to_all"},
                              {"model": "clopath_synapse"})
 
     def test_SynapseDepressionFacilitation(self):
         """Ensure that depression and facilitation work correctly"""
+
+        nest.hl_api.set_verbosity('M_WARNING')
 
         # This is done using the spike pairing experiment of
         # Clopath et al. 2010. First we specify the parameters
@@ -188,6 +192,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
     def test_SynapseFunctionWithAeifModel(self):
         """Ensure that spikes are properly processed"""
 
+        nest.hl_api.set_verbosity('M_WARNING')
         nest.ResetKernel()
 
         # Create neurons and devices

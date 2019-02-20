@@ -235,8 +235,6 @@ nest::RNGManager::create_rngs_()
     rng_.clear();
   }
 
-  LOG( M_INFO, "Network::create_rngs_", "Creating default RNGs" );
-
   rng_seeds_.resize( kernel().vp_manager.get_num_virtual_processes() );
 
   for ( index i = 0; i < static_cast< index >(
@@ -280,8 +278,6 @@ nest::RNGManager::create_rngs_()
 void
 nest::RNGManager::create_grng_()
 {
-  // create new grng
-  LOG( M_INFO, "Network::create_grng_", "Creating new default global RNG" );
 
 // create default RNG with default seed
 #ifdef HAVE_GSL

@@ -163,6 +163,7 @@ def get_unistring_type():
         return basestring
     return str
 
+
 uni_str = get_unistring_type()
 
 
@@ -572,7 +573,8 @@ def serializable(data):
         result = [serializable(d) for d in data]
 
     elif isinstance(data, dict):
-        result = dict([(key, serializable(value)) for key, value in data.items()])
+        result = dict([(key, serializable(value))
+                       for key, value in data.items()])
 
     else:
         result = data

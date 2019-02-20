@@ -23,9 +23,24 @@
 Functions for hierarchical networks
 """
 
+from ..ll_api import *
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_info import GetStatus, SetStatus
+
+__all__ = [
+    'BeginSubnet',
+    'ChangeSubnet',
+    'CurrentSubnet',
+    'EndSubnet',
+    'GetChildren',
+    'GetLeaves',
+    'GetNetwork',
+    'GetNodes',
+    'LayoutNetwork',
+    'PrintNetwork',
+]
 
 
 @check_stack
@@ -43,7 +58,7 @@ def PrintNetwork(depth=1, subnet=None):
 
     Raises
     ------
-    NESTError
+    kernel.NESTError
     """
 
     if subnet is None:
@@ -51,7 +66,7 @@ def PrintNetwork(depth=1, subnet=None):
         with SuppressedDeprecationWarning('CurrentSubnet'):
             subnet = CurrentSubnet()
     elif len(subnet) > 1:
-        raise NESTError("PrintNetwork() expects exactly one GID.")
+        raise kernel.NESTError("PrintNetwork() expects exactly one GID.")
 
     sps(subnet[0])
     sr("%i PrintNetwork" % depth)
@@ -84,11 +99,11 @@ def ChangeSubnet(subnet):
 
     Raises
     ------
-    NESTError
+    kernel.NESTError
     """
 
     if len(subnet) > 1:
-        raise NESTError("ChangeSubnet() expects exactly one GID.")
+        raise kernel.NESTError("ChangeSubnet() expects exactly one GID.")
 
     sps(subnet[0])
     sr("ChangeSubnet")
@@ -235,11 +250,11 @@ def GetNetwork(gid, depth):
 
     Raises
     ------
-    NESTError
+    kernel.NESTError
     """
 
     if len(gid) > 1:
-        raise NESTError("GetNetwork() expects exactly one GID.")
+        raise kernel.NESTError("GetNetwork() expects exactly one GID.")
 
     sps(gid[0])
     sps(depth)
@@ -277,7 +292,7 @@ def EndSubnet():
 
     Raises
     ------
-    NESTError
+    kernel.NESTError
         Description
     """
 
@@ -288,7 +303,7 @@ def EndSubnet():
         ChangeSubnet(parent)
         return csn
     else:
-        raise NESTError(
+        raise kernel.NESTError(
             "Unexpected EndSubnet(). Cannot go higher than the root node.")
 
 

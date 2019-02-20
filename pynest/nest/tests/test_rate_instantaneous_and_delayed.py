@@ -46,8 +46,7 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
 
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
-        nest.SetKernelStatus(
-            {'resolution': dt, 'use_wfr': True, 'print_time': False})
+        nest.SetKernelStatus({'resolution': dt, 'use_wfr': True})
 
         # set up rate neuron network
         rate_neuron_drive = nest.Create(

@@ -140,19 +140,28 @@ INFO_HOST="$(hostname -f)"
 INFO_OS="$(uname -s)"
 INFO_USER="$(whoami)"
 INFO_VER="$(uname -r)"
+NPROCS="$(cat /proc/cpuinfo | grep processor | wc -l)"
+
+print_paths () {
+    indent="`printf '%23s'`"
+    echo "$1" | sed "s/:/\n$indent/g" | sed '/^\s*$/d'
+}
 
 echo "================================================================================"
+echo
 echo "  NEST testsuite"
 echo "  Date: $(date -u)"
 echo "  Sysinfo: $(uname -s -r -m -o)"
-echo "================================================================================"
+echo "  Running ${NPROCS} tests in parallel where possible"
+echo
 echo "  NEST executable .... $NEST"
-echo "  PATH ............... $PATH"
 echo "  Python executable .. $PYTHON"
-echo "  PYTHONPATH ......... ${PYTHONPATH:-}"
+echo "  PYTHONPATH ......... `print_paths ${PYTHONPATH:-}`"
 echo "  TEST_BASEDIR ....... $TEST_BASEDIR"
 echo "  PREFIX ............. $PREFIX"
 echo "  REPORTDIR .......... $REPORTDIR"
+echo "  PATH ............... `print_paths $PATH`"
+echo
 echo "================================================================================"
 
 # logfiles and log-prefixes for test specific logs
@@ -223,9 +232,6 @@ HEADLINE="$(nest -v) testsuite log"
 echo >  "${TEST_LOGFILE}" "$HEADLINE"
 echo >> "${TEST_LOGFILE}" "$(printf '%0.s=' $(seq 1 ${#HEADLINE}))"
 echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
-
-NPROCS="$(cat /proc/cpuinfo | grep processor | wc -l)"
-echo "running ${NPROCS} in parallel where possible."
 
 CODES_SKIPPED=\
 ' 200 Skipped,'\

@@ -137,7 +137,7 @@ def SetDefaults(model, params, val=None):
 
 
 @check_stack
-def GetDefaults(model, keys=None):
+def GetDefaults(model, keys=None, output=''):
     """Return default parameters of the given model, specified by a string.
 
     Parameters
@@ -148,6 +148,9 @@ def GetDefaults(model, keys=None):
         String or a list of strings naming model properties. `GetDefaults` then
         returns a single value or a list of values belonging to the keys
         given.
+    output : str, optional
+        Whether the returned data should be in a format
+        (``output='json'``). Default is ''.
 
     Returns
     -------
@@ -158,6 +161,8 @@ def GetDefaults(model, keys=None):
     list
         If keys is a list of strings, a list of corrsponding default parameters
         is returned.
+    str :
+        If `output` is `json`, returns parameters in JSON format.
 
     Raises
     ------
@@ -190,7 +195,12 @@ def GetDefaults(model, keys=None):
         raise TypeError("keys should be either a string or an iterable")
 
     sr(cmd)
-    return spp()
+    result = spp()
+
+    if output == 'json':
+        result = to_json(result)
+
+    return result
 
 
 @check_stack

@@ -48,6 +48,7 @@ nest::Archiving_Node::Archiving_Node()
   , tau_minus_inv_( 1. / tau_minus_ )
   , tau_minus_triplet_( 110.0 )
   , tau_minus_triplet_inv_( 1. / tau_minus_triplet_ )
+  , max_delay_( -1.0 )
   , last_spike_( -1.0 )
   , Ca_t_( 0.0 )
   , Ca_minus_( 0.0 )
@@ -67,6 +68,7 @@ nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
   , tau_minus_inv_( n.tau_minus_inv_ )
   , tau_minus_triplet_( n.tau_minus_triplet_ )
   , tau_minus_triplet_inv_( n.tau_minus_triplet_inv_ )
+  , max_delay_( n.max_delay_ )
   , last_spike_( n.last_spike_ )
   , Ca_t_( n.Ca_t_ )
   , Ca_minus_( n.Ca_minus_ )
@@ -78,7 +80,7 @@ nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
 }
 
 void
-Archiving_Node::register_stdp_connection( double t_first_read )
+Archiving_Node::register_stdp_connection( double t_first_read, double delay )
 {
   // Mark all entries in the deque, which we will not read in future as read by
   // this input input, so that we savely increment the incoming number of
@@ -95,6 +97,8 @@ Archiving_Node::register_stdp_connection( double t_first_read )
   }
 
   n_incoming_++;
+
+  max_delay_ = std::max(delay, max_delay_);
 }
 
 double
@@ -107,8 +111,7 @@ nest::Archiving_Node::get_K_value( double t )
     std::cout << "\t--> trace = " << trace_ << std::endl;
     return trace_;
   }
-  
-  
+
   {
   std::cout << "\tCurrent history list:\n";
   int i = 0;
@@ -120,8 +123,7 @@ nest::Archiving_Node::get_K_value( double t )
 
   
   }
-  
-  
+
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
@@ -135,9 +137,7 @@ nest::Archiving_Node::get_K_value( double t )
     }
     i--;
   }
-  
-  
-  
+
   trace_ = 0.;
   std::cout << "\t--> fall-through: trace = " << trace_ << std::endl;
   return trace_;
@@ -199,7 +199,7 @@ nest::Archiving_Node::get_history( double t1,
   *finish = runner.base();
   while ( runner != history_.rend() and runner->t_ > t1_lim )
   {
-    //runner->access_counter_++;
+    runner->access_counter_++;
     ++runner;
   }
   *start = runner.base();
@@ -220,7 +220,9 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
     // except the penultimate one. we might still need it.
     while ( history_.size() > 1 )
     {
-      if ( history_.front().access_counter_ >= n_incoming_ )
+      const double next_t_sp = history_[1].t_;
+      if ( history_.front().access_counter_ >= n_incoming_
+           && abs(next_t_sp - t_sp_ms) > 2. * max_delay_ )
       {
         history_.pop_front();
       }

@@ -32,6 +32,7 @@
 #define ARCHIVING_NODE_H
 
 // C++ includes:
+#include <algorithm>
 #include <deque>
 
 // Includes from nestkernel:
@@ -213,6 +214,8 @@ private:
   // time constant for triplet low pass filtering of "post" spike train
   double tau_minus_triplet_;
   double tau_minus_triplet_inv_;
+
+  double max_delay_;
 
   double last_spike_;
 

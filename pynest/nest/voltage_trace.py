@@ -27,6 +27,12 @@ import nest
 import numpy
 import pylab
 
+__all__ = [
+    'from_device',
+    'from_file',
+    'show',
+]
+
 
 def from_file(fname, title=None, grayscale=False):
     """Plot voltage trace from file.
@@ -44,7 +50,7 @@ def from_file(fname, title=None, grayscale=False):
     ------
     ValueError
     """
-    if nest.is_iterable(fname):
+    if nest.hl_api.is_iterable(fname):
         data = None
         for f in fname:
             if data is None:
@@ -139,24 +145,24 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
 
     Raises
     ------
-    nest.NESTError
+    nest.kernel.NESTError
         Description
     """
 
     if len(detec) > 1:
-        raise nest.NESTError("Please provide a single voltmeter.")
+        raise nest.kernel.NESTError("Please provide a single voltmeter.")
 
     if not nest.GetStatus(detec)[0]['model'] in ('voltmeter', 'multimeter'):
-        raise nest.NESTError("Please provide a voltmeter or a \
+        raise nest.kernel.NESTError("Please provide a voltmeter or a \
             multimeter measuring V_m.")
     elif nest.GetStatus(detec)[0]['model'] == 'multimeter':
         if "V_m" not in nest.GetStatus(detec, "record_from")[0]:
-            raise nest.NESTError("Please provide a multimeter \
+            raise nest.kernel.NESTError("Please provide a multimeter \
                 measuring V_m.")
         elif ("memory" not in nest.GetStatus(detec, "record_to")[0] and
               len(nest.GetStatus(detec, "record_from")[0]) > 1):
-            raise nest.NESTError("Please provide a multimeter measuring \
-                only V_m or record to memory!")
+            raise nest.kernel.NESTError("Please provide a multimeter \
+                measuring only V_m or record to memory!")
 
     if "memory" in nest.GetStatus(detec, "record_to")[0]:
 

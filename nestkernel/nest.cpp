@@ -230,7 +230,7 @@ get_connections( const DictionaryDatum& dict )
 }
 
 void
-simulate( double t )
+simulate( const double& t )
 {
   prepare();
   run( t );

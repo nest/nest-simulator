@@ -36,12 +36,12 @@ def _round_up(simtime):
     return res * math.ceil(float(simtime) / float(res))
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class ParrotNeuronPSTestCase(unittest.TestCase):
     """Check parrot_neuron spike repetition properties"""
 
     def setUp(self):
-        nest.set_verbosity('M_WARNING')
+        nest.hl_api.set_verbosity('M_WARNING')
         nest.ResetKernel()
 
         # set up source spike generator, as well as parrot neurons
@@ -107,7 +107,7 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
             "Parrot neuron failed to correctly repeat multiple spikes."
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
     """Check parrot_neuron spike repetition properties"""
 
@@ -142,7 +142,7 @@ class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
         assert spikes_expected - 3 * spikes_std > 10. * t_sim / h, \
             "Internal inconsistency: too few spikes."
 
-        nest.set_verbosity('M_WARNING')
+        nest.hl_api.set_verbosity('M_WARNING')
         nest.ResetKernel()
         nest.SetKernelStatus({'resolution': h,
                               'grng_seed': 123,
@@ -165,7 +165,7 @@ class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
             "parrot_neuron adds spikes."
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class ParrotNeuronPSSTDPTestCase(unittest.TestCase):
     """
     Check STDP protocol between two parrot_neurons_ps connected by a
@@ -179,7 +179,7 @@ class ParrotNeuronPSSTDPTestCase(unittest.TestCase):
         """Set up a network with pre-post spike pairings with
         t_post - t_pre = dt"""
 
-        nest.set_verbosity("M_WARNING")
+        nest.hl_api.set_verbosity("M_WARNING")
         nest.ResetKernel()
 
         # set pre and postsynaptic spike times

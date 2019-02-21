@@ -37,7 +37,7 @@ and records its membrane potential.
 
 import nest
 import nest.voltage_trace
-nest.set_verbosity("M_WARNING")
+nest.hl_api.set_verbosity("M_WARNING")
 nest.ResetKernel()
 # Second, the nodes (neurons and devices) are created using `Create()`.
 # We store the returned handles in variables for later reference.

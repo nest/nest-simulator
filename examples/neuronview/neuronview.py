@@ -163,8 +163,8 @@ class Main():
 
     def get_help_text(self, name):
 
-        nest.sli_run("statusdict /prgdocdir get")
-        docdir = nest.sli_pop()
+        nest.ll_api.sli_run("statusdict /prgdocdir get")
+        docdir = nest.ll_api.sli_pop()
 
         helptext = "No documentation available"
 

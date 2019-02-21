@@ -27,7 +27,7 @@ import unittest
 import nest
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class EventsTestCase(unittest.TestCase):
     """Tests of the Connect API"""
 
@@ -36,7 +36,7 @@ class EventsTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        nest.sr('20 setverbosity')
+        nest.ll_api.sr('20 setverbosity')
         n = nest.Create('iaf_psc_alpha')
         vm = nest.Create('voltmeter', params={'interval': 1.})
 
@@ -53,7 +53,7 @@ class EventsTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        nest.sr('20 setverbosity')
+        nest.ll_api.sr('20 setverbosity')
 
         n = nest.Create('iaf_psc_alpha', params={'I_e': 1000.})
         sd = nest.Create('spike_detector')

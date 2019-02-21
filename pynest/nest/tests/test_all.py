@@ -47,6 +47,7 @@ from . import test_events
 from . import test_facetshw_stdp
 from . import test_getconnections
 from . import test_helper_functions
+from . import test_json
 from . import test_labeled_synapses
 from . import test_mc_neuron
 from . import test_networks
@@ -100,6 +101,7 @@ def suite():
     suite.addTest(test_facetshw_stdp.suite())
     suite.addTest(test_getconnections.suite())
     suite.addTest(test_helper_functions.suite())
+    suite.addTest(test_json.suite())
     suite.addTest(test_labeled_synapses.suite())
     suite.addTest(test_mc_neuron.suite())
     suite.addTest(test_networks.suite())
@@ -130,10 +132,10 @@ def suite():
 
 if __name__ == "__main__":
 
-    debug = nest.get_debug()
-    nest.set_debug(True)
+    debug = nest.ll_api.get_debug()
+    nest.ll_api.set_debug(True)
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
 
-    nest.set_debug(debug)
+    nest.ll_api.set_debug(debug)

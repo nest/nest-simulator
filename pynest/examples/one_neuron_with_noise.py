@@ -19,21 +19,64 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+One neuron with noise
+----------------------
+
+This script simulates a neuron with input from the Poisson generator, and
+records the neuron's membrane potential.
+
+KEYWORDS: iaf_psc_alpha, Poisson generator, voltmeter
+"""
+
+###############################################################################
+# First, we import all necessary modules needed to simulate, analyze and
+# plot our example. Additionally, we set the verbosity to only show warnings
+# and reset the kernel.
+# Resetting the kernel removes any nodes we may have created previously and
+# resets the internal clock to zero. This allows us to execute the script
+# several times in a Python shell without interference from previous NEST
+# simulations.
+
 import nest
 import nest.voltage_trace
 
+nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
 
-neuron = nest.Create("iaf_psc_alpha")
+###############################################################################
+# Second, the nodes (the neuron, poisson generator (two of them), and the
+# voltmeter) are created using  the `Create()` function.
+# We store the returned handles in variables for later reference.
 
+neuron = nest.Create("iaf_psc_alpha")
 noise = nest.Create("poisson_generator", 2)
+voltmeter = nest.Create("voltmeter")
+
+###############################################################################
+# Third, the Poisson generator is configured using `SetStatus()`, which expects
+# a list of node handles and a list of parameter dictionaries. We set each
+# Poisson generator to 8,000 Hz and 15,000 Hz, respectively. Note that we do
+# not need to set parameters for the neuron and the voltmeter, since they have
+# satisfactory defaults.
+
 nest.SetStatus(noise, [{"rate": 80000.0}, {"rate": 15000.0}])
 
-voltmeter = nest.Create("voltmeter")
+###############################################################################
+# Fourth, the neuron is connected to the Poisson generator and to the
+# voltmeter. We also specify the synaptic weight and delay in this step.
 
 nest.Connect(noise, neuron, syn_spec={'weight': [[1.2, -1.0]], 'delay': 1.0})
 nest.Connect(voltmeter, neuron)
 
+###############################################################################
+# Now we simulate the network using `Simulate()`, which takes the
+# desired simulation time in milliseconds.
+
 nest.Simulate(1000.0)
+
+###############################################################################
+# Finally, we plot the neuron's membrane potential as a function of
+# time.
 
 nest.voltage_trace.from_device(voltmeter)

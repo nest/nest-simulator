@@ -229,7 +229,7 @@ Node::send_test_event( Node&, rport, synindex, bool )
  * throws IllegalConnection
  */
 void
-Node::register_stdp_connection( double )
+Node::register_stdp_connection( double, double )
 {
   throw IllegalConnection();
 }

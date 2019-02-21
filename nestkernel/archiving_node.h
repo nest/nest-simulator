@@ -89,7 +89,7 @@ public:
 
   /**
    * \fn int get_synaptic_elements_vacant(Name n)
-   * get the number of synaptic elements of type n which are available
+   * Get the number of synaptic elements of type n which are available
    * for new synapse creation
    */
   int get_synaptic_elements_vacant( Name n ) const;

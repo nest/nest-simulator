@@ -173,7 +173,7 @@ populations of ten neurons each.
     nest.SetStatus(pop1, {"I_e": 376.0})
     pop2 = nest.Create("iaf_psc_alpha", 10)
     multimeter = nest.Create("multimeter", 10)
-    nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
+    nest.SetStatus(multimeter, {"record_from":["V_m"]})
 
 If no connectivity pattern is specified, the populations are connected
 via the default rule, namely ``all_to_all``. Each neuron of ``pop1`` is
@@ -292,16 +292,18 @@ stimuli that start and stop at particular times.
 
 So far we have accessed the data recorded by devices directly, by
 extracting the value of ``events``. However, for larger or longer
-simulations, we may prefer to write the data to file for later analysis
-instead. All recording devices allow the specification of where data is
-stored over the parameters ``to_memory`` (default: ``True``),
-``to_file`` (default: ``False``) and ``to_screen`` (default: ``False``).
-The following code sets up a ``multimeter`` to record data to a named
-file:
+simulations, we may prefer to write the data to file for later
+analysis instead. All recording devices allow the specification of
+where data is stored over the parameter ``record_to``, which is set to
+an array of recording backend to record to.  To dump recorded data to
+a file, add ``/ascii`` to the array, to print to the screen, add
+``/screen`` and to hold the data in memory, add ``/memory``, which is
+also the default behavior for most devices. The following code sets up
+a ``multimeter`` to record data to a named file:
 
 ::
 
-    recdict = {"to_memory" : False, "to_file" : True, "label" : "epop_mp"}
+    recdict = {"record_to" : ["ascii"], "label" : "epop_mp"}
     mm1 = nest.Create("multimeter", params=recdict)
 
 If no name for the file is specified using the ``label`` parameter, NEST

@@ -32,6 +32,8 @@ import subprocess
 import os
 import re
 import sys
+import numpy
+import json
 
 from string import Template
 
@@ -53,10 +55,12 @@ __all__ = [
     'is_string',
     'load_help',
     'model_deprecation_warning',
+    'serializable',
     'set_verbosity',
     'show_deprecation_warning',
     'show_help_with_pager',
     'SuppressedDeprecationWarning',
+    'to_json',
     'uni_str',
 ]
 
@@ -158,6 +162,7 @@ def get_unistring_type():
     if sys.version_info[0] < 3:
         return basestring
     return str
+
 
 uni_str = get_unistring_type()
 
@@ -543,6 +548,56 @@ def model_deprecation_warning(model):
         ".format(model, deprecated_models[model])
         text = get_wrapped_text(text)
         warnings.warn('\n' + text)
+
+
+def serializable(data):
+    """Make data serializable for JSON.
+
+    Parameters
+    ----------
+    data : str, int, float, SLILiteral, list, tuple, dict, ndarray
+
+    Returns
+    -------
+    result : str, int, float, list, dict
+
+    """
+
+    if isinstance(data, kernel.SLILiteral):
+        result = data.name
+
+    elif isinstance(data, numpy.ndarray):
+        result = data.tolist()
+
+    elif type(data) in [list, tuple]:
+        result = [serializable(d) for d in data]
+
+    elif isinstance(data, dict):
+        result = dict([(key, serializable(value))
+                       for key, value in data.items()])
+
+    else:
+        result = data
+
+    return result
+
+
+def to_json(data):
+    """Serialize data to JSON.
+
+    Parameters
+    ----------
+    data : str, int, float, SLILiteral, list, tuple, dict, ndarray
+
+    Returns
+    -------
+    data_json : str
+        JSON format of the data
+    """
+
+    data_serializable = serializable(data)
+    data_json = json.dumps(data_serializable)
+    return data_json
 
 
 class SuppressedDeprecationWarning(object):

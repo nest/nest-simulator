@@ -128,6 +128,7 @@ nest::Archiving_Node::get_K_value( double t )
   while ( i >= 0 )
   {
     if ( t >= history_[ i ].t_)
+    //if ( t - history_[ i ].t_ > kernel().connection_manager.get_stdp_eps())
     {
       trace_ = ( history_[ i ].Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
@@ -190,14 +191,17 @@ nest::Archiving_Node::get_history( double t1,
     return;
   }
   std::deque< histentry >::reverse_iterator runner = history_.rbegin();
-  const double t2_lim = t2;// + kernel().connection_manager.get_stdp_eps();
-  const double t1_lim = t1;// + kernel().connection_manager.get_stdp_eps();
+  //const double t2_lim = t2;// + kernel().connection_manager.get_stdp_eps();
+  //const double t1_lim = t1;// + kernel().connection_manager.get_stdp_eps();
+  const double t2_lim = t2 + kernel().connection_manager.get_stdp_eps();
+  const double t1_lim = t1 + kernel().connection_manager.get_stdp_eps();
   while ( runner != history_.rend() and runner->t_ >= t2_lim )
   {
     ++runner;
   }
   *finish = runner.base();
-  while ( runner != history_.rend() and runner->t_ > t1_lim )
+//  while ( runner != history_.rend() and runner->t_ > t1_lim )
+  while ( runner != history_.rend() and runner->t_ >= t1_lim )
   {
     runner->access_counter_++;
     ++runner;
@@ -217,7 +221,7 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
   if ( n_incoming_ )
   {
     // prune all spikes from history which are no longer needed
-    // except the penultimate one. we might still need it.
+    // the 
     while ( history_.size() > 1 )
     {
       const double next_t_sp = history_[1].t_;

@@ -166,7 +166,7 @@ public:
    * t_first_read: The newly registered synapse will read the history entries
    * with t > t_first_read.
    */
-  void register_stdp_connection( double t_first_read );
+  void register_stdp_connection( double t_first_read, double delay );
 
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d );

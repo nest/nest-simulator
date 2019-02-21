@@ -19,45 +19,40 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
-import nest
 import os
-from subprocess import call
+import subprocess
+import unittest
 
-HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
+cmd = ["nest", "-c", "statusdict/have_mpi :: =only"]
+HAVE_MPI = subprocess.check_output(cmd) == "true"
 
 
-class TestStructuralPlasticityMPI(unittest.TestCase):
+class TestSPwithMPI(unittest.TestCase):
 
     @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
     def testWithMPI(self):
-        if HAVE_MPI:
-            failing_tests = []
-            mpitests = ["mpitest_issue_578_sp.py"]
-            path = os.path.dirname(__file__)
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        scripts = ["mpitest_issue_578_sp.py"]
 
-            for test in mpitests:
-                test = os.path.join(path, test)
-                command = nest.ll_api.sli_func("mpirun", 2, "python", test)
-                print("Executing test with command: " + command)
-                command = command.split()
-                my_env = os.environ.copy()
-                try:
-                    my_env.pop("DELAY_PYNEST_INIT")
-                except:
-                    pass
-                returncode = call(command, env=my_env)
-                if returncode != 0:  # call returns 0 for passing tests
-                    failing_tests.append(test)
+        failing = []
+        for script_name in scripts:
+            print("")
+            script = os.path.join(script_dir, script_name)
+            cmd = ["nest", "-c", "2 (nosetests) (%s) mpirun =only" % script]
+            test_cmd = subprocess.check_output(cmd)
+            process = subprocess.Popen(cmd)
+            process.communicate()
+            if process.returncode != 0:
+                failing.append(script_name)
 
-            self.assertTrue(not failing_tests, 'The following tests failed ' +
-                            'when executing with "mpirun -np 2 nosetests ' +
-                            '[script]": {}'.format(failing_tests))
+        print("")
+        cmd = ["nest", "-c", "2 (nosetests) ([script]) mpirun =only"]
+        test_str = subprocess.check_output(cmd)
+        self.assertTrue(not failing, 'The following tests failed when ' +
 
 
 def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(
-        TestStructuralPlasticityMPI)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestSPwithMPI)
     return suite
 
 if __name__ == '__main__':

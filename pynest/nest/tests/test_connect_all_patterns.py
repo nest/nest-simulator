@@ -43,10 +43,11 @@ class TestConnectAllPatterns(unittest.TestCase):
 
         failing = []
         for script_name in scripts:
+            print("")
             script = os.path.join(script_dir, script_name)
             cmd = ["nest", "-c", "2 (nosetests) (%s) mpirun =only" % script]
             test_cmd = subprocess.check_output(cmd)
-            print(""); process = subprocess.Popen(cmd)
+            process = subprocess.Popen(cmd)
             process.communicate()
             if process.returncode != 0:
                 failing.append(script_name)

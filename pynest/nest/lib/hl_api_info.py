@@ -270,7 +270,7 @@ def SetStatus(nodes, params, val=None):
 
 
 @check_stack
-def GetStatus(nodes, keys=None):
+def GetStatus(nodes, keys=None, output=''):
     """Return the parameter dictionaries of nodes or connections.
 
     If `keys` is given, a ``list`` of values is returned instead. `keys` may
@@ -286,6 +286,9 @@ def GetStatus(nodes, keys=None):
         ``string`` or a ``list`` of strings naming model properties.
         `GetDefaults` then returns a single value or a ``list`` of values
         belonging to the keys given.
+    output : str, optional
+        Whether the returned data should be in a selected format
+        (``output='json'``). Default is ''.
 
     Returns
     -------
@@ -297,6 +300,8 @@ def GetStatus(nodes, keys=None):
     list :
         If keys is a ``list`` of strings, a ``list`` of corrsponding default
         parameters is returned.
+    str :
+        If `output` is `json`, returns parameters in JSON format.
 
     Raises
     ------
@@ -332,5 +337,9 @@ def GetStatus(nodes, keys=None):
         sps(nodes)
 
     sr(cmd)
+    result = spp()
 
-    return spp()
+    if output == 'json':
+        result = to_json(result)
+
+    return result

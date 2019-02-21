@@ -31,7 +31,7 @@ class TestConnectAllPatterns(unittest.TestCase):
 
     @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
     def testWithMPI(self):
-        directory = os.path.dirname(os.path.realpath(__file__))
+        script_dir = os.path.dirname(os.path.realpath(__file__))
         scripts = [
             "test_connect_all_to_all.py",
             "test_connect_one_to_one.py",
@@ -41,19 +41,21 @@ class TestConnectAllPatterns(unittest.TestCase):
             "test_connect_pairwise_bernoulli.py"
         ]
 
-        failing_tests = []
-        for script in scripts:
-            script_abs = os.path.join(directory, script)
-            cmd = ["nest", "-c", "2 (nosetests) (%s) mpirun =only" % script_abs]
+        failing = []
+        for script_name in scripts:
+            script = os.path.join(script_dir, script_name)
+            cmd = ["nest", "-c", "2 (nosetests) (%s) mpirun =only" % script]
             test_cmd = subprocess.check_output(cmd)
-            process = subprocess.Popen(cmd)
+            print(""); process = subprocess.Popen(cmd)
             process.communicate()
             if process.returncode != 0:
-                failing_tests.append(script)
+                failing.append(script_name)
 
-        self.assertTrue(not failing_tests, 'The following tests failed when ' +
-                        'executing with "mpirun -np 2 nosetests [script]": ' +
-                        ", ".join(failing_tests))
+        print("")
+        cmd = ["nest", "-c", "2 (nosetests) ([script]) mpirun =only"]
+        test_str = subprocess.check_output(cmd)
+        self.assertTrue(not failing, 'The following tests failed when ' +
+                        'executing "%s": %s' % (test_str, ", ".join(failing)))
 
 
 def suite():

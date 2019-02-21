@@ -49,7 +49,7 @@ class TestSPwithMPI(unittest.TestCase):
         cmd = ["nest", "-c", "2 (nosetests) ([script]) mpirun =only"]
         test_str = subprocess.check_output(cmd)
         self.assertTrue(not failing, 'The following tests failed when ' +
-
+                        'executing "%s": %s' % (test_str, ", ".join(failing)))
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestSPwithMPI)

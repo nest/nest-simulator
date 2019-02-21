@@ -51,6 +51,7 @@ class TestSPwithMPI(unittest.TestCase):
         self.assertTrue(not failing, 'The following tests failed when ' +
                         'executing "%s": %s' % (test_str, ", ".join(failing)))
 
+
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestSPwithMPI)
     return suite

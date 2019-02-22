@@ -44,6 +44,20 @@ __all__ = [
 
 
 @check_stack
+def PrintNodes():
+    """Print nodes in the network.
+
+    PrintNodes will replace PrintNetwork in NEST 3.0, so this function is here
+    to allow users to switch now if they want to.
+    """
+
+    with SuppressedDeprecationWarning('PrintNetwork'):
+        PrintNetwork()
+
+
+@check_stack
+@deprecated('', 'PrintNetwork is deprecated and will be removed in NEST 3.0. \
+Use PrintNodes instead.')
 def PrintNetwork(depth=1, subnet=None):
     """Print the network tree up to depth, starting at subnet.
 

@@ -182,8 +182,8 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   const Time& now )
 {
   bool allow_offgrid_spikes;
-  const bool allow_offgrid_spikes_changed = updateValue< bool >(
-    d, names::allow_offgrid_spikes, allow_offgrid_spikes );
+  const bool allow_offgrid_spikes_changed =
+    updateValue< bool >( d, names::allow_offgrid_spikes, allow_offgrid_spikes );
   const bool allow_offgrid_times_changed =
     updateValue< bool >( d, names::allow_offgrid_times, allow_offgrid_times_ );
 

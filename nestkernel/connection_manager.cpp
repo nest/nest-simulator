@@ -687,7 +687,10 @@ nest::ConnectionManager::increase_connection_count( const thread tid,
   ++num_connections_[ tid ][ syn_id ];
   if ( num_connections_[ tid ][ syn_id ] >= ( 1 << 27 ) - 1 )
   {
-    throw KernelException( "Too many connections per thread for synapse." );
+    throw KernelException( String::compose(
+      "Too many connections: at most %1 connections supported per virtual "
+      "process and synapse model.",
+      ( 1 << 27 ) - 1 ) );
   }
 }
 

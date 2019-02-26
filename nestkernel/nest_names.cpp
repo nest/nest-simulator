@@ -249,6 +249,7 @@ const Name lookuptable_2( "lookuptable_2" );
 const Name make_symmetric( "make_symmetric" );
 const Name max_buffer_size_spike_data( "max_buffer_size_spike_data" );
 const Name max_buffer_size_target_data( "max_buffer_size_target_data" );
+const Name max_num_syn_models( "max_num_syn_models" );
 const Name max_delay( "max_delay" );
 const Name MAXERR( "MAXERR" );
 const Name mean( "mean" );

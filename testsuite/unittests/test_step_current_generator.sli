@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_step_current_generator - minimal test of step_current_generator
 
 Synopsis: (test_step_current_generator) run -> dies if assertion fails

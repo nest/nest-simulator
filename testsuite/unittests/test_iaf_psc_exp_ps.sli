@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
     Name: testsuite::test_iaf_psc_exp_ps - sli script for overall test of iaf_psc_exp_ps model
 
     Synopsis: (test_iaf_psc_exp_ps) run -> compares response to current step with reference data 

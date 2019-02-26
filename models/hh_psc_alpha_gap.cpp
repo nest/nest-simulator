@@ -671,7 +671,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 void
 nest::hh_psc_alpha_gap::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   if ( e.get_weight() > 0.0 )
   {
@@ -690,7 +690,7 @@ nest::hh_psc_alpha_gap::handle( SpikeEvent& e )
 void
 nest::hh_psc_alpha_gap::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

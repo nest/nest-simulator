@@ -384,6 +384,11 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
   Layer< D >& target,
   GIDCollectionPTR target_gc )
 {
+  if ( number_of_connections_ < 1 )
+  {
+    return;
+  }
+
   DictionaryDatum dummy_params = new Dictionary; // empty parameter dictionary
                                                  // required by connect() calls
 
@@ -679,6 +684,11 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
   Layer< D >& target,
   GIDCollectionPTR target_gc )
 {
+  if ( number_of_connections_ < 1 )
+  {
+    return;
+  }
+
   DictionaryDatum dummy_params = new Dictionary; // empty parameter dictionary
                                                  // required by connect() calls
 

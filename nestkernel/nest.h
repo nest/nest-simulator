@@ -80,7 +80,6 @@ void connect( GIDCollectionPTR sources,
 ArrayDatum get_connections( const DictionaryDatum& dict );
 
 void simulate( const double& t );
-void resume_simulation();
 /**
  * @fn run(const double& time)
  * @brief Run a partial simulation for `time` ms

@@ -384,7 +384,7 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 void
 iaf_psc_alpha::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double s = e.get_weight() * e.get_multiplicity();
 
@@ -405,7 +405,7 @@ iaf_psc_alpha::handle( SpikeEvent& e )
 void
 iaf_psc_alpha::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double I = e.get_current();
   const double w = e.get_weight();

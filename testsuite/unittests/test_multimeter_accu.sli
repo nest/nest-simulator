@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multimeter_accu - test support for multimeter accumulation mode
 
 Synopsis: (test_multimeter_accu.sli) run -> dies if assertion fails

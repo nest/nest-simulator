@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::ticket-386 - ensure all models supporting multimeter work at minimal interval
 
 Synopsis: (ticket-386.sli) run -> dies if test code crashes

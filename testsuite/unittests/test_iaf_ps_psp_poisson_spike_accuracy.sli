@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_iaf_ps_psp_poisson_spike_accuracy - test  precise poisson spike input to neuron model
 
 Synopsis: (test_iaf_ps_psp_poisson_spike_accuracy) run -> compare with analytical  solution

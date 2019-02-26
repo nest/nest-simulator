@@ -53,6 +53,7 @@ l1 = topo.CreateLayer(
      'elements': 'iaf_psc_alpha'})
 
 # visualize
+
 # extract position information, transpose to list of x, y and z positions
 xpos, ypos, zpos = zip(*topo.GetPosition(l1))
 fig = plt.figure()

@@ -34,61 +34,75 @@
 #include "node.h"
 #include "pseudo_recording_device.h"
 
-/* BeginDocumentation
 
-   Name: correlospinmatrix_detector - Device for measuring the covariance matrix
-                                      from several inputs
+namespace nest
+{
+/** @BeginDocumentation
+Name: correlospinmatrix_detector - Device for measuring the covariance matrix
+                                  from several inputs
 
-   Description: The correlospinmatrix_detector is a recording device. It is used
-   to record correlations from binary neurons from several binary sources and
-   calculates the raw auto and cross correlation binned to bins of duration
-   delta_tau. The result can be obtained via GetStatus under the key
-   /count_covariance. The result is a tensor of rank 3 of size
-   N_channels x N_channels, with each entry C_ij being a vector of size
-   2*tau_max/delta_tau + 1 containing the histogram for the different time lags.
+Description:
 
-   The bins are centered around the time difference they represent, and are
-   left-closed and right-open in the lower triangular part of the matrix. On the
-   diagonal and in the upper triangular part the intervals are left-open and
-   right-closed. This ensures proper counting of events at the border of bins.
+The correlospinmatrix_detector is a recording device. It is used
+to record correlations from binary neurons from several binary sources and
+calculates the raw auto and cross correlation binned to bins of duration
+delta_tau. The result can be obtained via GetStatus under the key
+/count_covariance. The result is a tensor of rank 3 of size
+N_channels x N_channels, with each entry C_ij being a vector of size
+2*tau_max/delta_tau + 1 containing the histogram for the different time lags.
 
-   The correlospinmatrix_detector has a variable number of inputs which can be
-   set via SetStatus under the key N_channels. All incoming connections to a
-   specified receptor will be pooled.
+The bins are centered around the time difference they represent, and are
+left-closed and right-open in the lower triangular part of the matrix. On the
+diagonal and in the upper triangular part the intervals are left-open and
+right-closed. This ensures proper counting of events at the border of bins.
 
-   Parameters:
-   Tstart     double    - Time when to start counting events. This time should
-                          be set to at least start + tau_max in order to avoid
-                          edge effects of the correlation counts.
-   Tstop      double    - Time when to stop counting events. This time should be
-                          set to at most Tsim - tau_max, where Tsim is the
-                          duration of simulation, in order to avoid edge effects
-                          of the correlation counts.
-   delta_tau  double    - bin width in ms. This has to be a multiple of the
-                          resolution.
-   tau_max    double    - one-sided width in ms. In the lower triangular part
-                          events with differences in [0, tau_max+delta_tau/2)
-                          are counted. On the diagonal and in the upper
-                          triangular part events with differences in (0,
-                          tau_max+delta_tau/2]
-   N_channels long      - The number of inputs to correlate. This defines the
-                          range of receptor_type. Default is 1.
+The correlospinmatrix_detector has a variable number of inputs which can be
+set via SetStatus under the key N_channels. All incoming connections to a
+specified receptor will be pooled.
 
-   count_covariance matrix of long vectors, read-only   - raw, auto/cross
-                                                          correlation counts
+Parameters:
 
-   Remarks: This recorder does not record to file, screen or memory in the usual
-   sense. The result must be obtained by a call to GetStatus. Setting either
-   N_channels, Tstart, Tstop, tau_max or delta_tau clears count_covariance.
+Tstart     double    - Time when to start counting events. This time should
+                      be set to at least start + tau_max in order to avoid
+                      edge effects of the correlation counts.
+Tstop      double    - Time when to stop counting events. This time should be
+                      set to at most Tsim - tau_max, where Tsim is the
+                      duration of simulation, in order to avoid edge effects
+                      of the correlation counts.
+delta_tau  double    - bin width in ms. This has to be a multiple of the
+                      resolution.
+tau_max    double    - one-sided width in ms. In the lower triangular part
+                      events with differences in [0, tau_max+delta_tau/2)
+                      are counted. On the diagonal and in the upper
+                      triangular part events with differences in (0,
+                      tau_max+delta_tau/2]
+N_channels long      - The number of inputs to correlate. This defines the
+                      range of receptor_type. Default is 1.
 
-   Example:
+count_covariance matrix of long vectors, read-only   - raw, auto/cross
+                                                      correlation counts
 
-   See also pynest/examples/correlospinmatrix_detector_two_neuron.py
-   for a script reproducing a setting studied in Fig 1 of Grinzburg &
-   Sompolinsky (1994) PRE 50(4) p. 3171.
+Remarks:
 
-   See also examples/nest/correlospinmatrix_detector.sli for a basic
-   example in sli.
+This recorder does not record to file, screen or memory in the usual
+sense. The result must be obtained by a call to GetStatus. Setting either
+N_channels, Tstart, Tstop, tau_max or delta_tau clears count_covariance.
+
+Correlospinmatrix detectors IGNORE any connection delays.
+
+Correlospinmatrix detector breaks with the persistence scheme as
+follows: the internal buffers for storing spikes are part
+of State_, but are initialized by init_buffers_().
+
+
+Example:
+
+See also pynest/examples/correlospinmatrix_detector_two_neuron.py
+for a script reproducing a setting studied in Fig 1 of Grinzburg &
+Sompolinsky (1994) PRE 50(4) p. 3171.
+
+See also examples/nest/correlospinmatrix_detector.sli for a basic
+example in sli.
 
    /sg1 /spike_generator Create def
    /sg2 /spike_generator Create def
@@ -112,29 +126,17 @@
 
    100. Simulate
 
-   Receives: SpikeEvent
+Receives: SpikeEvent
 
-   Author: Moritz Helias
+Author: Moritz Helias
 
-   FirstVersion: 2015/08/25
-   SeeAlso: correlation_detector, correlomatrix_detector, spike_detector,
-            Device, PseudoRecordingDevice
-   Availability: NEST
+FirstVersion: 2015/08/25
+
+SeeAlso: correlation_detector, correlomatrix_detector, spike_detector,
+        Device, PseudoRecordingDevice
+
+Availability: NEST
 */
-
-
-namespace nest
-{
-/**
- * Correlospinmatrixdetector class.
- *
- * @note Correlospinmatrix detectors IGNORE any connection delays.
- *
- * @note Correlospinmatrix detector breaks with the persistence scheme as
- *       follows: the internal buffers for storing spikes are part
- *       of State_, but are initialized by init_buffers_().
- */
-
 class correlospinmatrix_detector : public Node
 {
 

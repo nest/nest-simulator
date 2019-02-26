@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_pulsepacket_generator - minimal test of pulsepacket_generator
 
 Synopsis: (test_pulsepacket_generator) run -> dies if assertion fails

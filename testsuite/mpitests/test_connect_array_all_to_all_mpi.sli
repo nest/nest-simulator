@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_connect_array_all_to_all_mpi - SLI script to test connection with parameter arrays and connection rule all_to_all, with hybrid MPI and thread parallelism
 
    Synopsis: (test_connect_array_all_to_all_mpi) run

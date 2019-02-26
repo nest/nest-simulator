@@ -44,11 +44,15 @@
 // Includes from sli:
 #include "arraydatum.h"
 
-/*BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
 
 Name: music_cont_in_proxy - A device which receives continuous data from MUSIC.
 
 Description:
+
 A music_cont_in_proxy can be used to receive continuous data from
 remote MUSIC applications in NEST.
 
@@ -58,6 +62,7 @@ connect and send data. The music_cont_in_proxy can queried using
 GetStatus to retrieve the messages.
 
 Parameters:
+
 The following properties are available in the status dictionary:
 
 port_name      - The name of the MUSIC input port to listen to (default:
@@ -70,24 +75,19 @@ published      - A bool indicating if the port has been already published
 The parameter port_name can be set using SetStatus.
 
 Examples:
+
 /music_cont_in_proxy Create /mcip Set
 10 Simulate
 mcip GetStatus /data get /gaze_directions Set
 
 Author: Jochen Martin Eppler
+
 FirstVersion: July 2010
+
 Availability: Only when compiled with MUSIC
 
 SeeAlso: music_event_out_proxy, music_event_in_proxy, music_message_in_proxy
 */
-
-namespace nest
-{
-/**
- * Emit spikes at times received from another application via a
- * MUSIC port. The timestamps of the events also contain offsets,
- * which makes it also useful for precise spikes.
- */
 class music_cont_in_proxy : public DeviceNode
 {
 

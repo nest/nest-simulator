@@ -27,7 +27,10 @@
 #include "connection.h"
 
 
-/* BeginDocumentation
+namespace mynest
+{
+
+/** @BeginDocumentation
   Name: drop_odd_spike - Synapse dropping spikes with odd time stamps.
 
   Description:
@@ -41,16 +44,6 @@
 
   SeeAlso: synapsedict
 */
-
-namespace mynest
-{
-
-/**
- * Connection class for illustration purposes.
- *
- * For a discussion of how synapses are created and represented in NEST 2.6,
- * please see Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.
- */
 template < typename targetidentifierT >
 class DropOddSpikeConnection : public nest::Connection< targetidentifierT >
 {
@@ -182,7 +175,7 @@ DropOddSpikeConnection< targetidentifierT >::send( nest::Event& e,
   // Even time stamp, we send the spike using the normal sending mechanism
   // send the spike to the target
   e.set_weight( weight_ );
-  e.set_delay( ConnectionBase::get_delay_steps() );
+  e.set_delay_steps( ConnectionBase::get_delay_steps() );
   e.set_receiver( *ConnectionBase::get_target( t ) );
   e.set_rport( ConnectionBase::get_rport() );
   e(); // this sends the event

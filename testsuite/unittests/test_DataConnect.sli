@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_DataConnect - sli script to test if DataConnect works as expected
 
    Synopsis: (test_DataConnect) run

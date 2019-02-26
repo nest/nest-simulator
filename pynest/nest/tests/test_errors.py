@@ -27,7 +27,7 @@ import unittest
 import nest
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class ErrorTestCase(unittest.TestCase):
     """Tests if errors are handled correctly"""
 
@@ -38,7 +38,7 @@ class ErrorTestCase(unittest.TestCase):
             raise exc(msg)
 
         message = "test"
-        exception = nest.NESTError
+        exception = nest.kernel.NESTError
 
         self.assertRaisesRegex(
             exception, message, raise_custom_exception, exception, message)
@@ -49,7 +49,7 @@ class ErrorTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         self.assertRaisesRegex(
-            nest.NESTError, "StackUnderflow", nest.sli_run, 'clear ;')
+            nest.kernel.NESTError, "StackUnderflow", nest.ll_api.sr, 'clear ;')
 
     def test_DivisionByZero(self):
         """Division by zero"""
@@ -57,7 +57,7 @@ class ErrorTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         self.assertRaisesRegex(
-            nest.NESTError, "DivisionByZero", nest.sli_run, '1 0 div')
+            nest.kernel.NESTError, "DivisionByZero", nest.ll_api.sr, '1 0 div')
 
     def test_InvalidGIDCollection(self):
         """Invalid GIDCollection"""
@@ -87,19 +87,19 @@ class ErrorTestCase(unittest.TestCase):
             return gc_c[8:9]
 
         self.assertRaisesRegexp(
-            nest.NESTError, "InvalidGIDCollection", add_test_primitive)
+            nest.kernel.NESTError, "InvalidGIDCollection", add_test_primitive)
 
         self.assertRaisesRegexp(
-            nest.NESTError, "InvalidGIDCollection", add_test_composite)
+            nest.kernel.NESTError, "InvalidGIDCollection", add_test_composite)
 
         self.assertRaisesRegexp(
-            nest.NESTError, "InvalidGIDCollection", add_test_pc)
+            nest.kernel.NESTError, "InvalidGIDCollection", add_test_pc)
 
         self.assertRaisesRegexp(
-            nest.NESTError, "InvalidGIDCollection", slice_test_primitive)
+            nest.kernel.NESTError, "InvalidGIDCollection", slice_test_primitive)
 
         self.assertRaisesRegexp(
-            nest.NESTError, "InvalidGIDCollection", slice_test_composite)
+            nest.kernel.NESTError, "InvalidGIDCollection", slice_test_composite)
 
     def test_UnknownNode(self):
         """Unknown node"""
@@ -110,7 +110,7 @@ class ErrorTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         self.assertRaisesRegexp(
-            nest.NESTError, "UnknownNode", nest.GIDCollection, [99])
+            nest.kernel.NESTError, "UnknownNode", nest.GIDCollection, [99])
 
     def test_UnknownModel(self):
         """Unknown model name"""
@@ -118,7 +118,7 @@ class ErrorTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         self.assertRaisesRegex(
-            nest.NESTError, "UnknownModelName", nest.Create, -1)
+            nest.kernel.NESTError, "UnknownModelName", nest.Create, -1)
 
 
 def suite():

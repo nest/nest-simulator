@@ -40,7 +40,7 @@ class GetSetTestCase(unittest.TestCase):
                  'extent': [2., 2.], 'edge_wrap': True}
         layer = topo.CreateLayer(ldict)
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             nest.SetStatus(layer, {'center': [1., 1.]})
 
         nest.SetStatus(layer, 'V_m', -50.)

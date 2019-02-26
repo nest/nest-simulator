@@ -34,20 +34,23 @@
 namespace nest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: spike_dilutor - repeats incoming spikes with a certain probability.
 
 Description:
-  The device repeats incoming spikes with a certain probability.
-  Targets will receive diffenrent spike trains.
+
+The device repeats incoming spikes with a certain probability.
+Targets will receive diffenrent spike trains.
 
 Remarks:
-  In parallel simulations, a copy of the device is present on each process
-  and spikes are collected only from local sources.
+
+In parallel simulations, a copy of the device is present on each process
+and spikes are collected only from local sources.
 
 Parameters:
-   The following parameters appear in the element's status dictionary:
-   p_copy double - Copy probability
+
+The following parameters appear in the element's status dictionary:
+p_copy double - Copy probability
 
 Sends: SpikeEvent
 
@@ -56,7 +59,6 @@ ported to Nest 2.6 by: Setareh, April 2015
 
 SeeAlso: mip_generator
 */
-
 class spike_dilutor : public DeviceNode
 {
 

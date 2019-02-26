@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
     Name: testsuite::test_spin_detector - test decoding mechanism of binary events by spin_detector
 
     Synopsis: (test_spin_detector) run -> test decoding mechanism of binary events by spin_detector

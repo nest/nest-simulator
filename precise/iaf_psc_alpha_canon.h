@@ -40,11 +40,15 @@
 // Includes from precise:
 #include "slice_ring_buffer.h"
 
-/*BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
 Name: iaf_psc_alpha_canon - Leaky integrate-and-fire neuron
 with alpha-shape postsynaptic currents; canoncial implementation.
 
 Description:
+
 iaf_psc_alpha_canon is the "canonical" implementatoin of the leaky
 integrate-and-fire model neuron with alpha-shaped postsynaptic
 currents in the sense of [1].  This is the most exact implementation
@@ -68,6 +72,7 @@ performance given an accuracy goal; see [1] for details.  Subthreshold
 dynamics are integrated using exact integration between events [2].
 
 Remarks:
+
 The iaf_psc_delta_canon neuron does not accept CurrentEvent connections.
 This is because the present method for transmitting CurrentEvents in
 NEST (sending the current to be applied) is not compatible with off-grid
@@ -86,28 +91,31 @@ A further improvement of precise simulation is implemented in iaf_psc_exp_ps
 based on [3].
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
-  V_m          double - Membrane potential in mV
-  E_L          double - Resting membrane potential in mV.
-  V_min        double - Absolute lower value for the membrane potential.
-  C_m          double - Capacity of the membrane in pF
-  tau_m        double - Membrane time constant in ms.
-  t_ref        double - Duration of refractory period in ms.
-  V_th         double - Spike threshold in mV.
-  V_reset      double - Reset potential of the membrane in mV.
-  tau_syn      double - Rise time of the synaptic alpha function in ms.
-  I_e          double - Constant external input current in pA.
-  Interpol_Order  int - Interpolation order for spike time:
-                        0-none, 1-linear, 2-quadratic, 3-cubic
+V_m          double - Membrane potential in mV
+E_L          double - Resting membrane potential in mV.
+V_min        double - Absolute lower value for the membrane potential.
+C_m          double - Capacity of the membrane in pF
+tau_m        double - Membrane time constant in ms.
+t_ref        double - Duration of refractory period in ms.
+V_th         double - Spike threshold in mV.
+V_reset      double - Reset potential of the membrane in mV.
+tau_syn      double - Rise time of the synaptic alpha function in ms.
+I_e          double - Constant external input current in pA.
+Interpol_Order  int - Interpolation order for spike time:
+                      0-none, 1-linear, 2-quadratic, 3-cubic
 
 Remarks:
+
 If tau_m is very close to tau_syn, the model will numerically behave as
 if tau_m is equal to tau_syn, to avoid numerical instabilities.
 For details, please see IAF_Neruons_Singularity.ipynb in
 the NEST source code (docs/model_details).
 
 References:
+
 [1] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact Subthreshold
     Integration with Continuous Spike Times in Discrete Time Neural Network
     Simulations. To appear in Neural Computation.
@@ -125,18 +133,7 @@ Sends: SpikeEvent
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 SeeAlso: iaf_psc_alpha, iaf_psc_alpha_presc, iaf_psc_exp_ps
-
 */
-
-namespace nest
-{
-
-/**
- * Leaky iaf neuron, alpha PSC synapses, canonical implementation.
- * @note Inherit privately from Node, so no classes can be derived
- * from this one.
- * @todo Implement current input in consistent way.
- */
 class iaf_psc_alpha_canon : public Archiving_Node
 {
 public:

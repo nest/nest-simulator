@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_spike_detector - sli script to test spike_detector device
 
    Synopsis: (test_spike_detector) run

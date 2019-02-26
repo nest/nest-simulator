@@ -99,7 +99,7 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-1.5, -0.5],
                     'upper_right': [1.5, 0.5],
                     'polar_angle': 45.0}
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             mask = topo.CreateMask('rectangular', maskdict)
 
     def test_RotatedBoxMaskByAzimuthAngle(self):

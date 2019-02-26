@@ -26,6 +26,17 @@ import numpy
 import pylab
 from pylab import show, savefig
 
+__all__ = [
+    'extract_events',
+    'from_data',
+    'from_device',
+    'from_file',
+    'from_file_numpy',
+    'frim_file_pandas',
+    'show',
+    'savefig',
+]
+
 
 def extract_events(data, time=None, sel=None):
     """Extract all events within a given time interval.
@@ -170,17 +181,17 @@ def from_device(detec, **kwargs):
 
     Raises
     ------
-    nest.NESTError
+    nest.kernel.NESTError
     """
     if not nest.GetStatus(detec)[0]["model"] == "spike_detector":
-        raise nest.NESTError("Please provide a spike_detector.")
+        raise nest.kernel.NESTError("Please provide a spike_detector.")
 
     if nest.GetStatus(detec, "to_memory")[0]:
 
         ts, gids = _from_memory(detec)
 
         if not len(ts):
-            raise nest.NESTError("No events recorded!")
+            raise nest.kernel.NESTError("No events recorded!")
 
         if "title" not in kwargs:
             kwargs["title"] = "Raster plot from device '%i'" % nest.GetStatus(
@@ -198,7 +209,7 @@ def from_device(detec, **kwargs):
         return from_file(fname, **kwargs)
 
     else:
-        raise nest.NESTError("No data to plot. Make sure that \
+        raise nest.kernel.NESTError("No data to plot. Make sure that \
             either to_memory or to_file are set.")
 
 

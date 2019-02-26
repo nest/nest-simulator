@@ -829,7 +829,7 @@ for name, loc, population, model in [('TpRelay', 1, Tp, 'TpRelay'),
                                      ('Vp_h L4pyr', 4, Vp_h, 'L4pyr')]:
     recorders[name] = (nest.Create('RecordingNode'), loc)
     # population_leaves is a work-around until NEST 3.0 is released
-    population_leaves = nest.GetLeaves(population)[0]
+    population_leaves = nest.hl_api.GetLeaves(population)[0]
     tgts = [nd for nd in population_leaves
             if nest.GetStatus([nd], 'model')[0] == model]
     # one recorder to all targetss

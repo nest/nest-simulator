@@ -174,13 +174,7 @@ public:
   /**
    * Sort connections according to source gids.
    */
-  virtual void sort_connections( std::vector< Source >& ) = 0;
-  virtual void sort_connections( std::deque< Source >& ) = 0;
-
-  /**
-   * Reserve memory for the specified amount of connections.
-   */
-  virtual void reserve( const size_t ) = 0;
+  virtual void sort_connections( BlockVector< Source >& ) = 0;
 
   /**
    * Set a flag in the connection indicating whether the following
@@ -228,7 +222,7 @@ template < typename ConnectionT >
 class Connector : public ConnectorBase
 {
 private:
-  std::deque< ConnectionT > C_;
+  BlockVector< ConnectionT > C_;
   const synindex syn_id_;
 
 public:
@@ -283,8 +277,6 @@ public:
   Connector< ConnectionT >&
   push_back( const ConnectionT& c )
   {
-    vector_util::grow( C_ );
-
     C_.push_back( c );
     return *this;
   }
@@ -452,13 +444,7 @@ public:
   }
 
   void
-  reserve( const size_t count )
-  {
-    // C_.reserve( count );
-  }
-
-  void
-  sort_connections( std::vector< Source >& sources )
+  sort_connections( BlockVector< Source >& sources )
   {
     nest::sort( sources, C_ );
   }

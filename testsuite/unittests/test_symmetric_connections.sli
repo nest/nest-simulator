@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::test_symmetric_connections - Tests that the functionality to create
 symmetric connections works properly.

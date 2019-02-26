@@ -40,7 +40,7 @@
 #include "stringdatum.h"
 #include "tokenutils.h"
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: allocations - Return the number of array reallocations.
 Synopsis: - allocations -> int
 Description: This function returns the total number of array-allocations
@@ -239,7 +239,7 @@ Append_pFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: append - Append an object to a string or array.
 
 Synopsis: (string) int append -> string
@@ -272,7 +272,7 @@ Append_sFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: join - Join two strings or arrays.
 Synopsis:
 (string1) (string2) join -> (string1string2)
@@ -349,7 +349,7 @@ Join_pFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: insert - Insert all elements of one container in another container.
 Synopsis: (string1) n (string2) insert -> (string3)
            Inserts string2 into string1, starting at position n.
@@ -387,7 +387,7 @@ Insert_sFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: insertelement - insert an element to a container at a specific position
 Synopsis: (string1) n c insertelement -> (string2)
            Inserts the character c into string1, starting at position n.
@@ -425,7 +425,7 @@ InsertElement_sFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation:
+/** @BeginDocumentation:
 Name: prepend - Attach an object to the front of an array or string.
 
 Synopsis: (string) int prepend -> string
@@ -542,7 +542,7 @@ Prepend_pFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 1 );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: replace - Replace a section of a string or array by a new sequence.
 
 Synopsis: (string1) a b (string2) replace -> (string3)
@@ -625,7 +625,7 @@ Replace_aFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: erase - Deletes a subsequece of a string or array.
 Synopsis: (string1) a n erase -> (string2)
           [array1] a n erase -> [array2]
@@ -846,7 +846,7 @@ Put_lpFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: length_s - counts elements of a string
  Synopsis: string length -> int
 
@@ -872,7 +872,7 @@ Length_sFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( t );
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: length_a - counts elements of an array
  Synopsis: array length_a -> int
 
@@ -898,7 +898,7 @@ Length_aFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( t );
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: length_p - counts elements of a procedure
  Synopsis: procedure length_p -> int
 
@@ -925,7 +925,7 @@ Length_pFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( t );
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: length_lp - counts elements of a literal procedure
  Synopsis: literal procedure length_lp -> int
 
@@ -956,7 +956,7 @@ Length_lpFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( t );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: capacity - Returns the capacity of an array.
   Synopsis: array capacity -> n
   Description: Returns the number of elements that a given array
@@ -985,7 +985,7 @@ Capacity_aFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( t );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: size - Returns the size of an array/string.
   Synopsis: array size -> n array
   string size -> n string
@@ -1012,7 +1012,7 @@ Size_aFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( t );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: reserve - Prepare an array or string to hold a given number of elements.
 Synopsis: array n reserve -> array
 Description: reserve makes sure that the array can hold at least n objects.
@@ -1044,7 +1044,7 @@ Reserve_aFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: :resize - Change the internal size of an array.
 Synopsis: array n resize -> array.
 Description: resize changes the size of the supplied array
@@ -1117,7 +1117,7 @@ References_aFunction::execute( SLIInterpreter* i ) const
   i->OStack.push_move( t );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: shrink - Reduce the capacity of an array or string to its minimum.
 Synopsis: array shrink -> array bool
 Description: Shrink reduces the capacity of an array or string to its minimum.
@@ -1245,7 +1245,7 @@ Empty_sFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: getinterval - Return a subsequence of a string or array.
 Synopsis: (string1) a b getinterval -> (string2)
 [array1]  a b getinterval -> [array2]
@@ -1474,7 +1474,7 @@ Get_sFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: search - Search for a sequence in an array or string.
 Synopsis: (string) (seek) search -> (post) (match) (pre) true
                                  -> (string) false
@@ -1580,7 +1580,7 @@ IrepeatanyFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: repeatany - Place any object n times on stack.
 

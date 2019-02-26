@@ -33,14 +33,14 @@ except ImportError:
 else:
     # Test with MPI
     mpi_test = 1
-mpi_test = nest.sli_func("statusdict/have_mpi ::") & mpi_test
+mpi_test = nest.ll_api.sli_func("statusdict/have_mpi ::") & mpi_test
 
 
 class TestDisconnectSingle(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity('M_ERROR')
+        nest.hl_api.set_verbosity('M_ERROR')
         self.num_procs = 1
         if mpi_test:
             self.comm = MPI.COMM_WORLD
@@ -107,7 +107,7 @@ class TestDisconnectSingle(unittest.TestCase):
                 try:
                     nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_dict)
                     assert False
-                except nest.NESTError:
+                except nest.kernel.NESTError:
                     print("Synapse deletion ok: " + syn_model)
 
 

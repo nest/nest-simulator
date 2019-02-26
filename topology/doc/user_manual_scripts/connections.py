@@ -137,7 +137,6 @@ def free_mask_fig(fig, loc, cdict):
     fig.add_subplot(loc)
     conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2))
 
-
 fig = plt.figure()
 
 #{ conn2r #}
@@ -145,7 +144,33 @@ conndict = {'connection_type': 'divergent',
             'mask': {'rectangular': {'lower_left': [-2., -1.],
                                      'upper_right': [2., 1.]}}}
 #{ end #}
-free_mask_fig(fig, 231, conndict)
+free_mask_fig(fig, 221, conndict)
+
+#{ conn2c #}
+conndict = {'connection_type': 'divergent',
+            'mask': {'circular': {'radius': 2.0}}}
+#{ end #}
+free_mask_fig(fig, 222, conndict)
+
+#{ conn2d #}
+conndict = {'connection_type': 'divergent',
+            'mask': {'doughnut': {'inner_radius': 1.5,
+                                  'outer_radius': 3.}}}
+#{ end #}
+free_mask_fig(fig, 223, conndict)
+
+#{ conn2e #}
+conndict = {'connection_type': 'divergent',
+            'mask': {'elliptical': {'major_axis': 7.,
+                                    'minor_axis': 4.}}}
+#{ end #}
+free_mask_fig(fig, 224, conndict)
+
+plt.savefig('../user_manual_figures/conn2_a.png', bbox_inches='tight')
+
+#-----------------------------------------------------------------------------#
+
+fig = plt.figure()
 
 #{ conn2ro #}
 conndict = {'connection_type': 'divergent',
@@ -153,27 +178,14 @@ conndict = {'connection_type': 'divergent',
                                      'upper_right': [2., 1.]},
                      'anchor': [-1.5, -1.5]}}
 #{ end #}
-free_mask_fig(fig, 234, conndict)
-
-#{ conn2c #}
-conndict = {'connection_type': 'divergent',
-            'mask': {'circular': {'radius': 2.0}}}
-#{ end #}
-free_mask_fig(fig, 232, conndict)
+free_mask_fig(fig, 221, conndict)
 
 #{ conn2co #}
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 2.0},
                      'anchor': [-2.0, 0.0]}}
 #{ end #}
-free_mask_fig(fig, 235, conndict)
-
-#{ conn2d #}
-conndict = {'connection_type': 'divergent',
-            'mask': {'doughnut': {'inner_radius': 1.5,
-                                  'outer_radius': 3.}}}
-#{ end #}
-free_mask_fig(fig, 233, conndict)
+free_mask_fig(fig, 222, conndict)
 
 #{ conn2do #}
 conndict = {'connection_type': 'divergent',
@@ -181,14 +193,44 @@ conndict = {'connection_type': 'divergent',
                                   'outer_radius': 3.},
                      'anchor': [1.5, 1.5]}}
 #{ end #}
-free_mask_fig(fig, 236, conndict)
+free_mask_fig(fig, 223, conndict)
 
-plt.savefig('../user_manual_figures/conn2.png', bbox_inches='tight')
+#{ conn2eo #}
+conndict = {'connection_type': 'divergent',
+            'mask': {'elliptical': {'major_axis': 7.,
+                                    'minor_axis': 4.},
+                     'anchor': [2.0, -1.0]}}
+#{ end #}
+free_mask_fig(fig, 224, conndict)
 
+plt.savefig('../user_manual_figures/conn2_b.png', bbox_inches='tight')
+
+#-----------------------------------------------------------------------------#
+
+fig = plt.figure()
+
+#{ conn2rr #}
+conndict = {'connection_type': 'divergent',
+            'mask': {'rectangular': {'lower_left': [-2., -1.],
+                                     'upper_right': [2., 1.],
+                                     'azimuth_angle': 120.}}}
+#{ end #}
+free_mask_fig(fig, 121, conndict)
+
+#{ conn2er #}
+conndict = {'connection_type': 'divergent',
+            'mask': {'elliptical': {'major_axis': 7.,
+                                    'minor_axis': 4.,
+                                    'azimuth_angle': 45.}}}
+#{ end #}
+free_mask_fig(fig, 122, conndict)
+
+plt.savefig('../user_manual_figures/conn2_c.png', bbox_inches='tight')
 
 # -----------------------------------------------
 
 # 3d masks
+
 
 def conn_figure_3d(fig, layer, connd, targets=None, showmask=True,
                    showkern=False,
@@ -242,6 +284,13 @@ conndict = {'connection_type': 'divergent',
             'mask': {'spherical': {'radius': 2.5}}}
 #{ end #}
 free_mask_3d_fig(fig, 122, conndict)
+
+#{ conn_3d_c #}
+conndict = {'connection_type': 'divergent',
+            'mask': {'ellipsoidal': {'major_axis': 7.,
+                                     'minor_axis': 4.,
+                                     'polar_axis': 4.5}}}
+#{ end #}
 
 plt.savefig('../user_manual_figures/conn_3d.png', bbox_inches='tight')
 

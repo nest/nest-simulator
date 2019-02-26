@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::issue-545
 
 Synopsis: (issue-545) run -> NEST exits if test fails

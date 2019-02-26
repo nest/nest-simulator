@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_sinusoidal_poisson_generator - test basic properties of sinusoidal poisson generator
 
 Synopsis: (test_sinusoidal_poisson_generator) run -> dies if assertion fails

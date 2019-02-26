@@ -23,16 +23,33 @@
 Functions to get information on NEST.
 """
 
-from .hl_api_helper import *
-import nest
 import sys
 import os
 import webbrowser
 
+from ..ll_api import *
+from .hl_api_helper import *
+import nest
+
+__all__ = [
+    'authors',
+    'get_argv',
+    'GetStatus',
+    'help',
+    'helpdesk',
+    'message',
+    'SetStatus',
+    'sysinfo',
+    'version',
+]
+
 
 @check_stack
 def sysinfo():
-    """Print information on the platform on which NEST was compiled."""
+    """Print information on the platform on which NEST was compiled.
+
+    KEYWORDS: info
+    """
 
     sr("sysinfo")
 
@@ -43,8 +60,10 @@ def version():
 
     Returns
     -------
-    str:
-        The version of NEST.
+    str
+        The version of NEST
+
+    KEYWORDS: info
     """
 
     sr("statusdict [[ /kernelname /version ]] get")
@@ -53,7 +72,10 @@ def version():
 
 @check_stack
 def authors():
-    """Print the authors of NEST."""
+    """Print the authors of NEST.
+
+    KEYWORDS: info
+    """
 
     sr("authors")
 
@@ -63,9 +85,12 @@ def helpdesk():
     """Open the NEST helpdesk in browser.
 
     Use the system default browser.
+
+    KEYWORDS: info
     """
+
     if sys.version_info < (2, 7, 8):
-        print("The NEST Helpdesk is only available with Python 2.7.8 or "
+        print("The NEST helpdesk is only available with Python 2.7.8 or "
               "later. \n")
         return
 
@@ -95,7 +120,7 @@ def helpdesk():
 def help(obj=None, pager=None, return_text=False):
     """Show the help page for the given object using the given pager.
 
-    The default pager is more.
+    The default pager is `more` (See `.nestrc`).
 
     Parameters
     ----------
@@ -105,6 +130,13 @@ def help(obj=None, pager=None, return_text=False):
         Pager to use
     return_text : bool, optional
         Option for returning the help text
+
+    Returns
+    -------
+    None or str
+        The help text of the object if `return_text` is ``True``.
+
+    KEYWORDS: info
     """
     hlpobj = obj
     if hlpobj is not None:
@@ -133,13 +165,15 @@ def help(obj=None, pager=None, return_text=False):
 def get_argv():
     """Return argv as seen by NEST.
 
-    This is similar to Python sys.argv but might have changed after
+    This is similar to Python :code:`sys.argv` but might have changed after
     MPI initialization.
 
     Returns
     -------
-    tuple:
-        Argv, as seen by NEST.
+    tuple
+        Argv, as seen by NEST
+
+    KEYWORDS: info
     """
 
     sr('statusdict')
@@ -149,7 +183,7 @@ def get_argv():
 
 @check_stack
 def message(level, sender, text):
-    """Print a message using NEST's message system.
+    """Print a message using message system of NEST.
 
     Parameters
     ----------
@@ -159,6 +193,8 @@ def message(level, sender, text):
         Message sender
     text : str
         Text to be sent in the message
+
+    KEYWORDS: info
     """
 
     sps(level)
@@ -169,20 +205,21 @@ def message(level, sender, text):
 
 @check_stack
 def SetStatus(nodes, params, val=None):
-    """Set the parameters of nodes or connections to params.
+    """Set parameters of nodes or connections.
 
-    If val is given, params has to be the name
-    of an attribute, which is set to val on the nodes/connections. val
+    Parameters of nodes or connections, given in `nodes`, is set as specified
+    by `params`. If `val` is given, `params` has to be a ``string`` with the
+    name of an attribute, which is set to `val` on the nodes/connections. `val`
     can be a single value or a list of the same size as nodes.
 
     Parameters
     ----------
     nodes : GIDCollection or tuple
-        Either a GIDCollection representing nodes, or a tuple of connection
-        handles as returned by GetConnections()
+        Either a ``GIDCollection`` representing nodes, or a ``tuple`` of
+        connection handles as returned by `GetConnections()`.
     params : str or dict or list
-        Dictionary of parameters or list of dictionaries of parameters of
-        same length as nodes. If val is given, this has to be the name of
+        Dictionary of parameters or ``list`` of dictionaries of parameters of
+        same length as `nodes`. If `val` is given, this has to be the name of
         a model property as a str.
     val : int, list, optional
         If given, params has to be the name of a model property.
@@ -190,14 +227,21 @@ def SetStatus(nodes, params, val=None):
     Raises
     ------
     TypeError
-        Description
+        If `nodes` is not a list of nodes or synapses, or if the number of
+        parameters don't match the number of nodes or synapses.
+
+    See Also
+    -------
+    GetStatus
+
+    KEYWORDS:
     """
 
     if not (isinstance(nodes, nest.GIDCollection) or
             isinstance(nodes, nest.Connectome)):
         try:
             nodes = nest.GIDCollection(nodes)
-        except nest.NESTError:
+        except nest.kernel.NESTError:
             raise TypeError("The first input (nodes) must be GIDCollection, "
                             "convertible to GIDCollection or a Connectome "
                             "with connection handles ")
@@ -257,43 +301,56 @@ def SetStatus(nodes, params, val=None):
 
 
 @check_stack
-def GetStatus(nodes, keys=None):
+def GetStatus(nodes, keys=None, output=''):
     """Return the parameter dictionaries of nodes or connections.
 
-    If keys is given, a list of values is returned instead. keys may also be a
-    list, in which case the returned list contains lists of values.
+    If `keys` is given, a ``list`` of values is returned instead. `keys` may
+    also be a ``list``, in which case the returned ``list`` contains lists of
+    values.
 
     Parameters
     ----------
     nodes : GIDCollection or tuple
-        Either a GIDCollection representing nodes, or a tuple of connection
-        handles as returned by GetConnections()
+        Either a ``GIDCollection`` representing nodes, or a ``tuple`` of
+        connection handles as returned by `GetConnections()`.
     keys : str or list, optional
-        String or a list of strings naming model properties. GetStatus then
-        returns a single value or a list of values belonging to the keys
-        given.
+        ``string`` or a ``list`` of strings naming model properties.
+        `GetStatus` then returns a single value or a ``list`` of values
+        belonging to the keys given.
+    output : str, optional
+        Whether the returned data should be in a selected format
+        (``output='json'``). Default is ''.
 
     Returns
     -------
-    dict:
+    dict :
         All parameters
-    type:
-        If keys is a string, the corrsponding default parameter is returned
-    list:
-        If keys is a list of strings, a list of corrsponding default parameters
-        is returned
+    type :
+        If `keys` is a ``string``, the corrsponding default parameter is
+        returned.
+    list :
+        If keys is a ``list`` of strings, a ``list`` of corrsponding default
+        parameters is returned.
+    str :
+        If `output` is `json`, returns parameters in JSON format.
 
     Raises
     ------
     TypeError
-        Description
+        If `nodes` or `keys` are on the wrong form.
+
+    See Also
+    -------
+    SetStatus
+
+    KEYWORDS:
     """
 
     if not (isinstance(nodes, nest.GIDCollection) or
             isinstance(nodes, nest.Connectome)):
         try:
             nodes = nest.GIDCollection(nodes)
-        except nest.NESTError:
+        except nest.kernel.NESTError:
             raise TypeError("The first input (nodes) must be GIDCollection, "
                             "convertible to GIDCollection or a Connectome "
                             "with connection handles ")
@@ -322,5 +379,8 @@ def GetStatus(nodes, keys=None):
         # with metadata, which returns a dictionary from C++, so we need to
         # turn it into a tuple for consistency.
         result = (result,)
+
+    if output == 'json':
+        result = to_json(result)
 
     return result

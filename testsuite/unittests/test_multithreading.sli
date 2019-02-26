@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multithreading - sli script for several tests regarding multithreading
 
 Synopsis: (test_multithreading) run

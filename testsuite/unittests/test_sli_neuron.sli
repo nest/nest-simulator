@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
     Name: testsuite::test_sli_neuron - test of sli_neuron
 
     Synopsis: (test_sli_neuron) run -> completes successfully 

@@ -21,7 +21,7 @@
  */
 
  
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_syn_hom_w - sli script for test synapse with homogeneous weight and delay.
 
 Synopsis: (test_syn_hom_w) run -> compare response with reference data

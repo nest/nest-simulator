@@ -41,12 +41,16 @@
 // Includes from precise:
 #include "slice_ring_buffer.h"
 
-/*BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
 Name: iaf_psc_exp_ps - Leaky integrate-and-fire neuron
 with exponential postsynaptic currents; canoncial implementation;
 bisectioning method for approximation of threshold crossing.
 
 Description:
+
 iaf_psc_exp_ps is the "canonical" implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
 that uses the bisectioning method to approximate the timing of a threshold
@@ -69,33 +73,35 @@ details. Subthreshold dynamics are integrated using exact integration
 between events [3].
 
 Parameters:
-  The following parameters can be set in the status dictionary.
-  E_L           double - Resting membrane potential in mV.
-  C_m           double - Capacitance of the membrane in pF.
-  tau_m         double - Membrane time constant in ms.
-  tau_syn_ex    double - Excitatory synaptic time constant in ms.
-  tau_syn_in    double - Inhibitory synaptic time constant in ms.
-  t_ref         double - Duration of refractory period in ms.
-  V_th          double - Spike threshold in mV.
-  I_e           double - Constant input current in pA.
-  V_min         double - Absolute lower value for the membrane potential in mV.
-  V_reset       double - Reset value for the membrane potential in mV.
+
+The following parameters can be set in the status dictionary.
+E_L           double - Resting membrane potential in mV.
+C_m           double - Capacitance of the membrane in pF.
+tau_m         double - Membrane time constant in ms.
+tau_syn_ex    double - Excitatory synaptic time constant in ms.
+tau_syn_in    double - Inhibitory synaptic time constant in ms.
+t_ref         double - Duration of refractory period in ms.
+V_th          double - Spike threshold in mV.
+I_e           double - Constant input current in pA.
+V_min         double - Absolute lower value for the membrane potential in mV.
+V_reset       double - Reset value for the membrane potential in mV.
 
 Remarks:
-  Please note that this node is capable of sending precise spike times
-  to target nodes (on-grid spike time plus offset). If this node is
-  connected to a spike_detector, the property "precise_times" of the
-  spike_detector has to be set to true in order to record the offsets
-  in addition to the on-grid spike times.
 
-Remarks:
-  If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-  will numerically behave as if tau_m is equal to tau_syn_ex or
-  tau_syn_in, respectively, to avoid numerical instabilities.
-  For details, please see IAF_Neruons_Singularity.ipynb in the
-  NEST source code (docs/model_details).
+Please note that this node is capable of sending precise spike times
+to target nodes (on-grid spike time plus offset). If this node is
+connected to a spike_detector, the property "precise_times" of the
+spike_detector has to be set to true in order to record the offsets
+in addition to the on-grid spike times.
+
+If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+will numerically behave as if tau_m is equal to tau_syn_ex or
+tau_syn_in, respectively, to avoid numerical instabilities.
+For details, please see IAF_Neruons_Singularity.ipynb in the
+NEST source code (docs/model_details).
 
 References:
+
   [1] Morrison A, Straube S, Plesser HE & Diesmann M (2007) Exact subthreshold
       integration with continuous spike times in discrete time neural network
       simulations. Neural Comput 19, 47-79
@@ -113,16 +119,6 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 SeeAlso: iaf_psc_exp, iaf_psc_alpha_canon
 */
-
-namespace nest
-{
-
-/**
- * Leaky iaf neuron, exponential PSC synapses, canonical implementation.
- * @note Inherit privately from Node, so no classes can be derived
- * from this one.
- * @todo Implement current input in consistent way.
- */
 class iaf_psc_exp_ps : public Archiving_Node
 {
 public:

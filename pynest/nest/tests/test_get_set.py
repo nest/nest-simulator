@@ -40,7 +40,7 @@ except ImportError:
     HAVE_PANDAS = False
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class TestGIDCollectionGetSet(unittest.TestCase):
     """GIDCollection get/set tests"""
 
@@ -124,15 +124,15 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Check that we get None where not applicable
         # tau_syn_ex is part of iaf_psc_alpha
-        tau_ref = (2., 2., nest.SLILiteral('None'), nest.SLILiteral('None'),
+        tau_ref = (2., 2., nest.kernel.SLILiteral('None'), nest.kernel.SLILiteral('None'),
                    2., 2., 2., 2.)
         self.assertEqual(status_dict['tau_syn_ex'], tau_ref)
 
         # refractory_input is part of iaf_psc_delta
-        refrac_ref = (nest.SLILiteral('None'), nest.SLILiteral('None'),
+        refrac_ref = (nest.kernel.SLILiteral('None'), nest.kernel.SLILiteral('None'),
                       False, False,
-                      nest.SLILiteral('None'), nest.SLILiteral('None'),
-                      nest.SLILiteral('None'), nest.SLILiteral('None'))
+                      nest.kernel.SLILiteral('None'), nest.kernel.SLILiteral('None'),
+                      nest.kernel.SLILiteral('None'), nest.kernel.SLILiteral('None'))
 
         self.assertEqual(status_dict['refractory_input'], refrac_ref)
 
@@ -427,7 +427,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         self.assertEqual(g['tau_minus'], (42.0, 42.0, 42.0, 42.0, 42.0,
                                           42.0, 42.0, 42.0, 42.0, 42.0))
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             nodes.set({'vp': 2})
 
     def test_set_composite(self):

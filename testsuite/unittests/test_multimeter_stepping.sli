@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multimeter_stepping - test if multimeter returns same values for stepped simulation
 
 Synopsis: (test_multimeter_stepping.sli) run -> dies if assertion fails

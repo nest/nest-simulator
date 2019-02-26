@@ -37,82 +37,77 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/*BeginDocumentation
-  Name: iaf_psc_alpha_presc - Leaky integrate-and-fire neuron
-  with alpha-shape postsynaptic currents; prescient implementation.
-
-  Description:
-  iaf_psc_alpha_presc is the "prescient" implementation of the leaky
-  integrate-and-fire model neuron with alpha-shaped postsynaptic
-  currents in the sense of [1].
-
-  PSCs are normalized to an amplitude of 1pA.
-
-  The prescient implementation predicts the effect of spikes arriving
-  during a time step by exactly integrating their effect from the
-  precise time of spike arrival to the end of the time step.  This is
-  exact if the neuron was not refractory at the beginning of the
-  interval and remains subthreshold throughout the
-  interval. Subthreshold dynamics are integrated using exact integration
-  between events [2].
-
-  Parameters:
-  The following parameters can be set in the status dictionary.
-
-
-  V_m          double - Membrane potential in mV
-  E_L          double - Resting membrane potential in mV.
-  V_min        double - Absolute lower value for the membrane potential.
-  C_m          double - Capacity of the membrane in pF
-  tau_m        double - Membrane time constant in ms.
-  t_ref        double - Duration of refractory period in ms.
-  V_th         double - Spike threshold in mV.
-  V_reset      double - Reset potential of the membrane in mV.
-  tau_syn      double - Rise time of the synaptic alpha function in ms.
-  I_e          double - Constant external input current in pA.
-  Interpol_Order  int - Interpolation order for spike time:
-                        0-none, 1-linear, 2-quadratic, 3-cubic
-
-  Remarks:
-  Please note that this node is capable of sending precise spike times
-  to target nodes (on-grid spike time plus offset). If this node is
-  connected to a spike_detector, the property "precise_times" of the
-  spike_detector has to be set to true in order to record the offsets
-  in addition to the on-grid spike times.
-
-  Remarks:
-  If tau_m is very close to tau_syn, the model will numerically behave
-  as if tau_m is equal to tau_syn, to avoid numerical instabilities.
-  For details, please see IAF_Neruons_Singularity.ipynb in
-  the NEST source code (docs/model_details).
-
-  References:
-  [1] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact Subthreshold
-  Integration with Continuous Spike Times in Discrete Time Neural Network
-  Simulations. To appear in Neural Computation.
-  [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-  systems with applications to neuronal modeling. Biologial Cybernetics
-  81:381-402.
-
-  Author: Diesmann, Eppler, Morrison, Plesser, Straube
-
-  Sends: SpikeEvent
-
-  Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
-
-  SeeAlso: iaf_psc_alpha, iaf_psc_alpha_canon, iaf_psc_delta_canon
-
-*/
-
 namespace nest
 {
 
-/**
- * Leaky iaf neuron, alpha PSC synapses, canonical implementation.
- * @note Inherit privately from Node, so no classes can be derived
- * from this one.
- * @todo Implement current input in consistent way.
- */
+/** @BeginDocumentation
+Name: iaf_psc_alpha_presc - Leaky integrate-and-fire neuron
+with alpha-shape postsynaptic currents; prescient implementation.
+
+Description:
+
+iaf_psc_alpha_presc is the "prescient" implementation of the leaky
+integrate-and-fire model neuron with alpha-shaped postsynaptic
+currents in the sense of [1].
+
+PSCs are normalized to an amplitude of 1pA.
+
+The prescient implementation predicts the effect of spikes arriving
+during a time step by exactly integrating their effect from the
+precise time of spike arrival to the end of the time step.  This is
+exact if the neuron was not refractory at the beginning of the
+interval and remains subthreshold throughout the
+interval. Subthreshold dynamics are integrated using exact integration
+between events [2].
+
+Parameters:
+
+The following parameters can be set in the status dictionary.
+
+
+V_m          double - Membrane potential in mV
+E_L          double - Resting membrane potential in mV.
+V_min        double - Absolute lower value for the membrane potential.
+C_m          double - Capacity of the membrane in pF
+tau_m        double - Membrane time constant in ms.
+t_ref        double - Duration of refractory period in ms.
+V_th         double - Spike threshold in mV.
+V_reset      double - Reset potential of the membrane in mV.
+tau_syn      double - Rise time of the synaptic alpha function in ms.
+I_e          double - Constant external input current in pA.
+Interpol_Order  int - Interpolation order for spike time:
+                      0-none, 1-linear, 2-quadratic, 3-cubic
+
+Remarks:
+
+Please note that this node is capable of sending precise spike times
+to target nodes (on-grid spike time plus offset). If this node is
+connected to a spike_detector, the property "precise_times" of the
+spike_detector has to be set to true in order to record the offsets
+in addition to the on-grid spike times.
+
+If tau_m is very close to tau_syn, the model will numerically behave
+as if tau_m is equal to tau_syn, to avoid numerical instabilities.
+For details, please see IAF_Neruons_Singularity.ipynb in
+the NEST source code (docs/model_details).
+
+References:
+
+[1] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact Subthreshold
+Integration with Continuous Spike Times in Discrete Time Neural Network
+Simulations. To appear in Neural Computation.
+[2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+systems with applications to neuronal modeling. Biologial Cybernetics
+81:381-402.
+
+Author: Diesmann, Eppler, Morrison, Plesser, Straube
+
+Sends: SpikeEvent
+
+Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+
+SeeAlso: iaf_psc_alpha, iaf_psc_alpha_canon, iaf_psc_delta_canon
+*/
 class iaf_psc_alpha_presc : public Archiving_Node
 {
 public:

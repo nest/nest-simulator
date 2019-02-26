@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multiple_multimeter - test support for multiple multimeters
 
 Synopsis: (test_multiple_multimeter.sli) run -> dies if assertion fails

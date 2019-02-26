@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multimeter - Minimal test for correct multimeter setup
  
 Synopsis: (test_multimeter) run -> NEST exits if test fails

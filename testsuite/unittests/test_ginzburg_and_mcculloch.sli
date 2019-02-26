@@ -21,7 +21,7 @@
  */
  
  
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: testsuite::test_ginzburg_and_mcculloch
   
  Synopsis: (test_ginzburg_and_mcculloch) run -> NEST exits if test fails

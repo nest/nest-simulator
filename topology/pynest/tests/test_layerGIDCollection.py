@@ -40,9 +40,9 @@ class TestLayerGIDCollection(unittest.TestCase):
                                   'columns': 5,
                                   'elements': 'iaf_psc_alpha'})
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             c = nodes + layer
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             d = layer + nodes
 
     def test_addTwoLayers(self):
@@ -54,7 +54,7 @@ class TestLayerGIDCollection(unittest.TestCase):
                                    'columns': 5,
                                    'elements': 'iaf_psc_alpha'})
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             c = layer1 + layer2
 
 

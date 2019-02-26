@@ -19,14 +19,14 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
+"""
 pynest microcircuit network
 ---------------------------
 
 Main file for the microcircuit.
 
 Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
-'''
+"""
 
 import nest
 import numpy as np
@@ -149,10 +149,10 @@ class Network:
         else:
             if nest.Rank() == 0:
                 print(
-                    '''
+                    """
                     no poisson input provided
                     calculating dc input to compensate
-                    '''
+                    """
                     )
             self.DC_amp_e = compute_DC(self.net_dict, self.w_ext)
 

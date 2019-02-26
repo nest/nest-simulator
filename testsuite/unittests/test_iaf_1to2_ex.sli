@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_iaf_1to2_ex - sli script for test of min_delay
 
 Synopsis: (test_iaf_1to2_ex) run -> compare with reference data

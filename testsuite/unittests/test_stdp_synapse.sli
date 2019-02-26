@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_stdp_synapse - basic test of stdp_synapse
 
 Synopsis: (test_stdp_synapse) run

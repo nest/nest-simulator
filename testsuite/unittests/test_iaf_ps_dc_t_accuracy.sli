@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_iaf_ps_dc_t_accuracy - test of temporal accuracy of precise integrate-and-fire neurons subject to DC current
 
 Synopsis: (test_iaf_ps_dc_t_accuracy) run ->  comparison with analytical solution

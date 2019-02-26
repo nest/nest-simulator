@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_sinusoidal_gamma_generator_4 - Test parallel generation of sinusoidally modulate Gammaian trains with individual spike trains
 
 Synopsis: nest_indirect test_sinusoidal_gamma_generator_4.sli -> -

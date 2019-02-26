@@ -33,7 +33,7 @@ except ImportError:
     HAVE_NUMPY = False
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class TestGIDCollection(unittest.TestCase):
     """GIDCollection tests"""
 
@@ -52,7 +52,7 @@ class TestGIDCollection(unittest.TestCase):
         """Conversion from list to GIDCollection"""
 
         gids_in = [5, 10, 15, 20]
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             gc = nest.GIDCollection(gids_in)
 
         n = nest.Create('iaf_psc_alpha', 20)
@@ -103,7 +103,7 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(n[4], gc_4)
         self.assertEqual(n[-1], gc_4)
         self.assertEqual(n[-3], gc_2)
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             n[7]
 
         nest.ResetKernel()
@@ -149,7 +149,7 @@ class TestGIDCollection(unittest.TestCase):
         n_list_negative_end = [x for x in n_slice_negative_end]
         self.assertEqual(n_list_negative_end, [1, 2, 3, 4, 5, 6, 7, 8])
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             n[::-3]
 
     def test_correct_index(self):
@@ -224,7 +224,7 @@ class TestGIDCollection(unittest.TestCase):
         gc_b = nest.Create('iaf_psc_exp', 7)
         gc_c = nest.GIDCollection([6, 8, 10, 12, 14])
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             gc_sum = gc_a + gc_b + gc_c
 
     def test_GIDCollection_membership(self):
@@ -308,7 +308,7 @@ class TestGIDCollection(unittest.TestCase):
         d = c[::2]
         e = nest.Create('iaf_psc_delta', 13)
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             f = d + e
 
     def test_modelID(self):
@@ -316,8 +316,8 @@ class TestGIDCollection(unittest.TestCase):
 
         n = nest.Create('iaf_psc_alpha')
 
-        nest.sli_run("modeldict")
-        model_dict = nest.sli_pop()
+        nest.ll_api.sli_run("modeldict")
+        model_dict = nest.ll_api.sli_pop()
 
         models = model_dict.keys()
         modelID = list(model_dict.values())
@@ -375,9 +375,9 @@ class TestGIDCollection(unittest.TestCase):
 
         gc = nest.Create('iaf_psc_exp', 5)
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             nest.SetStatus(n, {'V_m': -40.})
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             nest.GetStatus(n)
 
         nest.ResetKernel()

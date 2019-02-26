@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_thread_local_ids - test that thread-local ids are set correctly 
 
 Synopsis: (test_thread_local_ids.sli) run -> dies if assertion fails

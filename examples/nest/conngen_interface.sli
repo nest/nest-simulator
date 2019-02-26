@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_conngen_interface - Test runability of all CGConnect variants
 
    Synopsis: (test_conngen_interface) run

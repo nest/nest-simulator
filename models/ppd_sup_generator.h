@@ -37,36 +37,42 @@
 #include "nest_types.h"
 #include "stimulating_device.h"
 
-/*BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
 Name: ppd_sup_generator - simulate the superimposed spike train of a population
 of Poisson processes
 with dead time.
+
 Description:
 
-  The ppd_sup_generator generator simulates the pooled spike train of a
-  population of neurons firing independently with Poisson process with dead
-  time statistics.
-  The rate parameter can also be sine-modulated. The generator does not
-  initialize to equilibrium in this case, initial transients might occur.
+The ppd_sup_generator generator simulates the pooled spike train of a
+population of neurons firing independently with Poisson process with dead
+time statistics.
+The rate parameter can also be sine-modulated. The generator does not
+initialize to equilibrium in this case, initial transients might occur.
 
 Parameters:
-   The following parameters appear in the element's status dictionary:
 
-   rate                double - mean firing rate of the component processes,
-                                default: 0 s^-1
-   dead_time           double - minimal time between two spikes of the component
-                                processes, default: 0 ms
-   n_proc              long   - number of superimposed independent component
-                                processes, default: 1
-   frequency           double - rate modulation frequency, default: 0 Hz
-   relative_amplitude  double - relative rate modulation amplitude, default: 0
+The following parameters appear in the element's status dictionary:
+
+rate                double - mean firing rate of the component processes,
+                             default: 0 s^-1
+dead_time           double - minimal time between two spikes of the component
+                             processes, default: 0 ms
+n_proc              long   - number of superimposed independent component
+                             processes, default: 1
+frequency           double - rate modulation frequency, default: 0 Hz
+relative_amplitude  double - relative rate modulation amplitude, default: 0
 
 Remarks:
-   The generator has been published in Deger, Helias, Boucsein, Rotter (2011)
-   Statistical properties of superimposed stationary spike trains,
-   Journal of Computational Neuroscience.
-   URL: http://www.springerlink.com/content/u75211r381p08301/
-   DOI: 10.1007/s10827-011-0362-8
+
+The generator has been published in Deger, Helias, Boucsein, Rotter (2011)
+Statistical properties of superimposed stationary spike trains,
+Journal of Computational Neuroscience.
+URL: http://www.springerlink.com/content/u75211r381p08301/
+DOI: 10.1007/s10827-011-0362-8
 
 Authors:
    June 2009, Moritz Deger, Moritz Helias
@@ -74,20 +80,6 @@ Authors:
 SeeAlso: gamma_sup_generator, poisson_generator_ps, spike_generator, Device,
 StimulatingDevice
 */
-
-
-namespace nest
-{
-
-/**
- * Generator of the spike output of a population of Poisson processes with dead
- * time.
- *
- * This Poisson process with dead time superposition generator sends different
- * spike trains to all its targets.
- *
- * @ingroup Devices
- */
 class ppd_sup_generator : public DeviceNode
 {
 

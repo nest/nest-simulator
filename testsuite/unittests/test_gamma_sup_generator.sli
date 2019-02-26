@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_gamma_sup_generator - sli script for test of gamma_sup_generator output 
 
 Synopsis: (test_gamma_sup_generator) run -> compare spike train statistics with expectations

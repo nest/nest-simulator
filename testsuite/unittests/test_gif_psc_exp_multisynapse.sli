@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_gif_psc_exp_multisynapse - sli script for test of
 gif_psc_exp_multisynapse with external DC current and spike generators
 

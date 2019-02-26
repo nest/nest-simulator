@@ -35,9 +35,6 @@ Options:
     --help              Print program options and exit
     --test-pynest       Test the PyNEST installation and APIs
     --output-dir=/path  Output directory (default: ./reports)
-    --source-dir=/path  Toplevel NEST source code directory. Only used for
-                        checking the copyright headers of the sources. Set to
-                        'SKIP', if you want it to be skipped.
 EOF
 
     exit $1
@@ -55,9 +52,6 @@ while test $# -gt 0 ; do
             ;;
         --output-dir=*)
             TEST_OUTDIR="$( echo "$1" | sed 's/^--output-dir=//' )"
-            ;;
-        --source-dir=*)
-            export NEST_SOURCE="$( echo "$1" | sed 's/^--source-dir=//' )"
             ;;
         *)
             usage 1 "$1"

@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-520 - Ensure that multimeter returns correct number of time points in accumulator mode
 

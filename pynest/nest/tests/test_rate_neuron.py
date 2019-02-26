@@ -30,7 +30,7 @@ import unittest
 import numpy as np
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class RateNeuronTestCase(unittest.TestCase):
 
     """Check rate_neuron"""
@@ -40,14 +40,14 @@ class RateNeuronTestCase(unittest.TestCase):
         self.rtol = 0.05
 
         # neuron parameters
-        self.neuron_params = {'mean': 1.5, 'std': 0.5, 'tau': 5.}
+        self.neuron_params = {'mu': 1.5, 'sigma': 0.5, 'tau': 5.}
 
         # simulation parameters
         self.simtime = 10000.
         self.dt = 0.1
         self.tstart = 10. * self.neuron_params['tau']
 
-        nest.set_verbosity('M_WARNING')
+        nest.hl_api.set_verbosity('M_WARNING')
         nest.ResetKernel()
         nest.SetKernelStatus({'resolution': self.dt, 'use_wfr': False})
 
@@ -82,10 +82,10 @@ class RateNeuronTestCase(unittest.TestCase):
         mean_rate_opn = np.mean(events['rate'][senders_opn])
 
         self.assertTrue(
-            np.isclose(mean_rate_ipn, self.neuron_params['mean'],
+            np.isclose(mean_rate_ipn, self.neuron_params['mu'],
                        rtol=self.rtol))
         self.assertTrue(
-            np.isclose(mean_rate_opn, self.neuron_params['mean'],
+            np.isclose(mean_rate_opn, self.neuron_params['mu'],
                        rtol=self.rtol))
 
     def test_RateNeuronNoise(self):
@@ -108,10 +108,10 @@ class RateNeuronTestCase(unittest.TestCase):
         std_noise_opn = np.std(noise_opn)
 
         self.assertTrue(
-            np.isclose(std_noise_ipn, self.neuron_params['std'],
+            np.isclose(std_noise_ipn, self.neuron_params['sigma'],
                        rtol=self.rtol))
         self.assertTrue(
-            np.isclose(std_noise_opn, self.neuron_params['std'],
+            np.isclose(std_noise_opn, self.neuron_params['sigma'],
                        rtol=self.rtol))
 
     def test_RateNeuronVariance(self):
@@ -130,7 +130,7 @@ class RateNeuronTestCase(unittest.TestCase):
         var_rate = np.var(rate)
 
         # expected variance
-        var_test = self.neuron_params['std']**2 / 2.
+        var_test = self.neuron_params['sigma']**2 / 2.
 
         # assert
         self.assertTrue(

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_iaf_ps_psp_poisson_accuracy - probes interaction of precise poisson generator and neuron model
 
 Synopsis: (test_iaf_ps_psp_poisson_accuracy) run -> compare with analytical result

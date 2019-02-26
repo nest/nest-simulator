@@ -20,8 +20,15 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 from nest.topology import CreateParameter
-from nest import Parameter
+from ..lib.hl_api_types import Parameter
 import numpy as np
+
+__all__ = [
+    'exponential',
+    'uniform',
+    'normal',
+    'lognormal',
+    ]
 
 
 class ParameterWrapper(Parameter):

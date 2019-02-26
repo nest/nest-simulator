@@ -27,7 +27,7 @@ import unittest
 import nest
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class OneToOneConnectTestCase(unittest.TestCase):
     """Tests of Connect with OneToOne pattern"""
 
@@ -100,7 +100,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         vm = nest.Create('voltmeter')
 
         self.assertRaisesRegex(
-            nest.NESTError, "IllegalConnection", nest.Connect, n, vm)
+            nest.kernel.NESTError, "IllegalConnection", nest.Connect, n, vm)
 
     def test_UnexpectedEvent(self):
         """Unexpected Event"""
@@ -110,7 +110,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         sd = nest.Create('spike_detector')
 
         self.assertRaisesRegex(
-            nest.NESTError, "UnexpectedEvent", nest.Connect, sd, n)
+            nest.kernel.NESTError, "UnexpectedEvent", nest.Connect, sd, n)
 
 
 def suite():

@@ -381,15 +381,6 @@ public:
    */
   void restructure_connection_tables( const thread tid );
 
-  /**
-   * Reserves memory in connections and source table. Should be called
-   * directly from the respective Connect functions when the number of
-   * synapses could be estimated.
-   */
-  void reserve_connections( const thread tid,
-    const synindex syn_id,
-    const size_t count );
-
   void set_has_source_subsequent_targets( const thread tid,
     const synindex syn_id,
     const index lcid,
@@ -604,12 +595,14 @@ private:
   std::vector< std::vector< size_t > > num_connections_;
 
   /**
-   * BeginDocumentation
+   * @BeginDocumentation
    * Name: connruledict - dictionary containing all connectivity rules
+   *
    * Description:
    * This dictionary provides the connection rules that can be used
    * in Connect.
    * 'connruledict info' shows the contents of the dictionary.
+   *
    * SeeAlso: Connect
    */
   DictionaryDatum connruledict_; //!< Dictionary for connection rules.
@@ -829,6 +822,42 @@ inline double
 ConnectionManager::get_stdp_eps() const
 {
   return stdp_eps_;
+}
+
+inline index
+ConnectionManager::get_target_gid( const thread tid,
+  const synindex syn_id,
+  const index lcid ) const
+{
+  return connections_[ tid ][ syn_id ]->get_target_gid( tid, lcid );
+}
+
+inline void
+ConnectionManager::send( const thread tid,
+  const synindex syn_id,
+  const index lcid,
+  const std::vector< ConnectorModel* >& cm,
+  Event& e )
+{
+  connections_[ tid ][ syn_id ]->send( tid, lcid, cm, e );
+}
+
+inline void
+ConnectionManager::restructure_connection_tables( const thread tid )
+{
+  assert( not source_table_.is_cleared() );
+  target_table_.clear( tid );
+  source_table_.reset_processed_flags( tid );
+}
+
+inline void
+ConnectionManager::set_has_source_subsequent_targets( const thread tid,
+  const synindex syn_id,
+  const index lcid,
+  const bool subsequent_targets )
+{
+  connections_[ tid ][ syn_id ]->set_has_source_subsequent_targets(
+    lcid, subsequent_targets );
 }
 
 } // namespace nest

@@ -120,10 +120,12 @@ nest::Archiving_Node::get_K_value( double t )
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
       return trace_;
     }
-    i--;
+    --i;
   }
 
-  assert(0);  // this case should never happen, i.e. a suitable spike should always be present in the history buffer
+  // this case occurs when the trace was requested at a time precisely at or before the first spike in the history
+  trace_ = 0.;
+  return trace_;
 }
 
 void

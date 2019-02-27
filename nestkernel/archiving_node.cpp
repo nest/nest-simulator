@@ -135,9 +135,10 @@ nest::Archiving_Node::get_K_value( double t )
     std::cout << "\t   --> trace = " << trace_ << std::endl;
       return trace_;
     }
-    i--;
+    --i;
   }
 
+  // this case occurs when the trace was requested at a time precisely at or before the first spike in the history
   trace_ = 0.;
   std::cout << "\t--> fall-through: trace = " << trace_ << std::endl;
   return trace_;

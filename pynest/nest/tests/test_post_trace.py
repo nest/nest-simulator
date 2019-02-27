@@ -63,7 +63,7 @@ class PostTraceTestCase(unittest.TestCase):
                                         #'precise_times': True})
         post_sg_ps = nest.Create("spike_generator",
                                 params={"spike_times": post_spike_times})
-#                                            'precise_times': True})
+                                        #'precise_times': True})
 
         # create parrot neurons and connect spike_generators
         #pre_parrot = nest.Create("parrot_neuron")
@@ -81,8 +81,8 @@ class PostTraceTestCase(unittest.TestCase):
                     syn_spec={"delay": delay})
 
         # create spike detector --- debugging only
-        spikes = nest.Create("spike_detector")#,
-           #                 params={'precise_times': True})
+        spikes = nest.Create("spike_detector",
+                           params={'precise_times': True})
         nest.Connect(
             #pre_parrot + post_parrot +
             pre_parrot_ps + post_parrot_ps,

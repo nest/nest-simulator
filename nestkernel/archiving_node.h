@@ -216,16 +216,13 @@ private:
   double tau_minus_triplet_inv_;
 
   double max_delay_;
+  double trace_;
 
   double last_spike_;
 
   // spiking history needed by stdp synapses
   std::deque< histentry > history_;
 
-  
-  double trace_;    // XXX: DEBUGGING ONLY: REMOVE
-  
-  
   /*
    * Structural plasticity
    */

@@ -104,43 +104,26 @@ Archiving_Node::register_stdp_connection( double t_first_read, double delay )
 double
 nest::Archiving_Node::get_K_value( double t )
 {
-  std::cout << "* In Archiving_Node::get_K_value(t = " << t << ")\n";
   if ( history_.empty() )
   {
     trace_ = 0.;
-    std::cout << "\t--> trace = " << trace_ << std::endl;
     return trace_;
-  }
-
-  {
-  std::cout << "\tCurrent history list:\n";
-  int i = 0;
-  while ( i < history_.size() )
-  {
-    std::cout << "\t\thistory["<<i<<"] t = " << history_[ i ].t_ << std::endl;
-    ++i;
-  }
   }
 
   // search for the latest post spike in the history buffer that came strictly before `t`
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    // if ( t >= history_[ i ].t_)		// XXX: CAP: TRACES FIX
     if ( t - history_[ i ].t_ > kernel().connection_manager.get_stdp_eps() )
     {
       trace_ = ( history_[ i ].Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
-    std::cout << "\t   updating trace from t = " << history_[i].t_ << " to t = " << t << std::endl;
-    std::cout << "\t   --> trace = " << trace_ << std::endl;
       return trace_;
     }
     i--;
   }
 
-  trace_ = 0.;
-  std::cout << "\t--> fall-through: trace = " << trace_ << std::endl;
-  return trace_;
+  assert(0);  // this case should never happen, i.e. a suitable spike should always be present in the history buffer
 }
 
 void
@@ -183,7 +166,6 @@ nest::Archiving_Node::get_history( double t1,
   std::deque< histentry >::iterator* start,
   std::deque< histentry >::iterator* finish )
 {
-  std::cout << "* In Archiving_Node::get_history( t1 = " << t1 << " (excl.); t2 = " << t2 << " (incl.)\n";
   *finish = history_.end();
   if ( history_.empty() )
   {
@@ -191,8 +173,6 @@ nest::Archiving_Node::get_history( double t1,
     return;
   }
   std::deque< histentry >::reverse_iterator runner = history_.rbegin();
-  //const double t2_lim = t2;// + kernel().connection_manager.get_stdp_eps();
-  //const double t1_lim = t1;// + kernel().connection_manager.get_stdp_eps();
   const double t2_lim = t2 + kernel().connection_manager.get_stdp_eps();
   const double t1_lim = t1 + kernel().connection_manager.get_stdp_eps();
   while ( runner != history_.rend() and runner->t_ >= t2_lim )
@@ -200,7 +180,6 @@ nest::Archiving_Node::get_history( double t1,
     ++runner;
   }
   *finish = runner.base();
-//  while ( runner != history_.rend() and runner->t_ > t1_lim )
   while ( runner != history_.rend() and runner->t_ >= t1_lim )
   {
     runner->access_counter_++;
@@ -212,8 +191,6 @@ nest::Archiving_Node::get_history( double t1,
 void
 nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
 {
-    std::cout << "* In Archiving_Node::set_spiketime(t_sp = " << t_sp << ", offset = " << offset << ")" << std::endl;
-
   const double t_sp_ms = t_sp.get_ms() - offset;
   update_synaptic_elements( t_sp_ms );
   Ca_minus_ += beta_Ca_;
@@ -223,14 +200,13 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
     // prune all spikes from history which are no longer needed
     // only remove a spike if:
     // - its access counter indicates it has been read out by all connected STDP synapses, and
-    // - there is another, later spike, that is strictly more than max_delay_ away from the current spike at t_sp_ms
+    // - there is another, later spike, that is strictly more than (max_delay_ + eps) away from the new spike (at t_sp_ms)
     while ( history_.size() > 1 )
     {
       const double next_t_sp = history_[1].t_;
       if ( history_.front().access_counter_ >= n_incoming_
            && t_sp_ms - next_t_sp > max_delay_ + kernel().connection_manager.get_stdp_eps() )	// XXX: CAP: TRACES FIX
       {
-        std::cout << "\tRemoving spike at t = " << history_[0].t_ << " from history\n";
         history_.pop_front();
       }
       else
@@ -266,7 +242,6 @@ nest::Archiving_Node::get_status( DictionaryDatum& d ) const
   def< double >( d, names::beta_Ca, beta_Ca_ );
   def< double >( d, names::tau_minus_triplet, tau_minus_triplet_ );
   def< double >( d, names::post_trace, trace_ );
-     std::cout << "In Archiving_Node::get_status(): trace = " << trace_ << std::endl;
 #ifdef DEBUG_ARCHIVER
   def< int >( d, names::archiver_length, history_.size() );
 #endif

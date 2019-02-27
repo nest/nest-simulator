@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_stdp_multiplicity.py
+# test_post_trace.py
 #
 # This file is part of NEST.
 #
@@ -19,8 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# This script tests the parrot_neuron in NEST.
-
 import nest
 import unittest
 import math
@@ -31,7 +29,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as plticker
 
 
-#@nest.check_stack
+@nest.check_stack
 class PostTraceTestCase(unittest.TestCase):
 
     trace_match_atol_ = 1E-2

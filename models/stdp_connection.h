@@ -247,7 +247,6 @@ STDPConnection< targetidentifierT >::send( Event& e,
   double minus_dt;
   while ( start != finish )
   {
-    std::cout << "\tlooping over the history: it->t_ = " << start->t_ << std::endl;
     minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
     ++start;
     // get_history() should make sure that
@@ -257,7 +256,6 @@ STDPConnection< targetidentifierT >::send( Event& e,
   }
 
   const double _K_value = target->get_K_value( t_spike - dendritic_delay );
-  std::cout << "In Synapse: t_spike = " << t_spike << ", dendritic_delay = " << dendritic_delay << ", got K_value = " << _K_value << std::endl;
   weight_ = depress_( weight_, _K_value );
 
   e.set_receiver( *target );

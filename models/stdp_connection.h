@@ -247,6 +247,7 @@ STDPConnection< targetidentifierT >::send( Event& e,
   double minus_dt;
   while ( start != finish )
   {
+    std::cout << "\tlooping over the history: it->t_ = " << start->t_ << std::endl;
     minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
     ++start;
     // get_history() should make sure that

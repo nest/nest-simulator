@@ -120,15 +120,14 @@ nest::Archiving_Node::get_K_value( double t )
     std::cout << "\t\thistory["<<i<<"] t = " << history_[ i ].t_ << std::endl;
     ++i;
   }
-
-  
   }
 
+  // search for the latest post spike in the history buffer that came strictly before `t`
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    if ( t >= history_[ i ].t_)
-    //if ( t - history_[ i ].t_ > kernel().connection_manager.get_stdp_eps())
+    // if ( t >= history_[ i ].t_)		// XXX: CAP: TRACES FIX
+    if ( t - history_[ i ].t_ > kernel().connection_manager.get_stdp_eps() )
     {
       trace_ = ( history_[ i ].Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
@@ -184,6 +183,7 @@ nest::Archiving_Node::get_history( double t1,
   std::deque< histentry >::iterator* start,
   std::deque< histentry >::iterator* finish )
 {
+  std::cout << "* In Archiving_Node::get_history( t1 = " << t1 << " (excl.); t2 = " << t2 << " (incl.)\n";
   *finish = history_.end();
   if ( history_.empty() )
   {
@@ -221,13 +221,16 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
   if ( n_incoming_ )
   {
     // prune all spikes from history which are no longer needed
-    // the 
+    // only remove a spike if:
+    // - its access counter indicates it has been read out by all connected STDP synapses, and
+    // - there is another, later spike, that is strictly more than max_delay_ away from the current spike at t_sp_ms
     while ( history_.size() > 1 )
     {
       const double next_t_sp = history_[1].t_;
       if ( history_.front().access_counter_ >= n_incoming_
-           && abs(next_t_sp - t_sp_ms) > 2. * max_delay_ )
+           && t_sp_ms - next_t_sp > max_delay_ + kernel().connection_manager.get_stdp_eps() )	// XXX: CAP: TRACES FIX
       {
+        std::cout << "\tRemoving spike at t = " << history_[0].t_ << " from history\n";
         history_.pop_front();
       }
       else

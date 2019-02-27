@@ -176,20 +176,6 @@ sort( BlockVector< T1 >& vec_sort, BlockVector< T2 >& vec_perm )
   quicksort3way( vec_sort, vec_perm, 0, vec_sort.size() - 1 );
 }
 
-template < typename T1, typename T2 >
-void
-sort( std::vector< T1 >& vec_sort, std::deque< T2 >& vec_perm )
-{
-  quicksort3way( vec_sort, vec_perm, 0, vec_sort.size() - 1 );
-}
-
-template < typename T1, typename T2 >
-void
-sort( std::deque< T1 >& vec_sort, std::deque< T2 >& vec_perm )
-{
-  quicksort3way( vec_sort, vec_perm, 0, vec_sort.size() - 1 );
-}
-
 } // namespace sort
 
 #endif /* #ifndef SORT_H */

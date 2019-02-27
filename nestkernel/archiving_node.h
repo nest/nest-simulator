@@ -129,7 +129,9 @@ public:
 
   /**
    * \fn double get_K_value(long t)
-   * return the Kminus (synaptic trace) value at t (in ms). When the trace is requested at the exact same time that the neuron emits a spike, the trace value as it was just before the spike is returned.
+   * return the Kminus (synaptic trace) value at t (in ms). When the trace is
+   * requested at the exact same time that the neuron emits a spike, the trace
+   * value as it was just before the spike is returned.
    */
   double get_K_value( double t );
 

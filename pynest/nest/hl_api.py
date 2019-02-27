@@ -24,6 +24,7 @@ High-level API of PyNEST Module
 """
 
 import os
+from .random.hl_api_random import *
 
 # We search through the subdirectory "lib" of the "nest" module
 # directory and import the content of all Python files therein into
@@ -32,7 +33,6 @@ import os
 for name in os.listdir(os.path.join(os.path.dirname(__file__), "lib")):
     if name.endswith(".py") and not name.startswith('__'):
         exec("from .lib.{0} import *".format(name[:-3]))
-from .random.hl_api_random import *
 
 # With '__all__' we provide an explicit index of the package. Without any
 # imported submodules and any redundant functions we could minimize list.

@@ -95,11 +95,13 @@ class ErrorTestCase(unittest.TestCase):
         self.assertRaisesRegexp(
             nest.kernel.NESTError, "InvalidGIDCollection", add_test_pc)
 
-        self.assertRaisesRegexp(
-            nest.kernel.NESTError, "InvalidGIDCollection", slice_test_primitive)
+        self.assertRaisesRegexp(nest.kernel.NESTError,
+                                "InvalidGIDCollection",
+                                slice_test_primitive)
 
-        self.assertRaisesRegexp(
-            nest.kernel.NESTError, "InvalidGIDCollection", slice_test_composite)
+        self.assertRaisesRegexp(nest.kernel.NESTError,
+                                "InvalidGIDCollection",
+                                slice_test_composite)
 
     def test_UnknownNode(self):
         """Unknown node"""

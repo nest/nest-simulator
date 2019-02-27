@@ -29,6 +29,7 @@ import numpy as np
 
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
+
 @nest.ll_api.check_stack
 class WeightRecorderTestCase(unittest.TestCase):
     """Tests for the Weight Recorder"""

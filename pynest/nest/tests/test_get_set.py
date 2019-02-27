@@ -124,15 +124,15 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Check that we get None where not applicable
         # tau_syn_ex is part of iaf_psc_alpha
-        tau_ref = (2., 2., nest.kernel.SLILiteral('None'), nest.kernel.SLILiteral('None'),
-                   2., 2., 2., 2.)
+        None_literal = nest.kernel.SLILiteral('None')
+        tau_ref = (2., 2., None_literal, None_literal, 2., 2., 2., 2.)
         self.assertEqual(status_dict['tau_syn_ex'], tau_ref)
 
         # refractory_input is part of iaf_psc_delta
-        refrac_ref = (nest.kernel.SLILiteral('None'), nest.kernel.SLILiteral('None'),
+        refrac_ref = (None_literal, None_literal,
                       False, False,
-                      nest.kernel.SLILiteral('None'), nest.kernel.SLILiteral('None'),
-                      nest.kernel.SLILiteral('None'), nest.kernel.SLILiteral('None'))
+                      None_literal, None_literal,
+                      None_literal, None_literal)
 
         self.assertEqual(status_dict['refractory_input'], refrac_ref)
 

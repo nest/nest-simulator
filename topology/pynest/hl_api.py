@@ -238,7 +238,8 @@ def CreateMask(masktype, specs, anchor=None):
     if anchor is None:
         return nest.ll_api.sli_func('CreateMask', {masktype: specs})
     else:
-        return nest.ll_api.sli_func('CreateMask', {masktype: specs, 'anchor': anchor})
+        return nest.ll_api.sli_func('CreateMask',
+                                    {masktype: specs, 'anchor': anchor})
 
 
 def CreateParameter(parametertype, specs):
@@ -1055,9 +1056,9 @@ def DumpLayerNodes(layer, outname):
         raise TypeError("layer must be a GIDCollection")
 
     nest.ll_api.sli_func("""
-                  (w) file exch DumpLayerNodes close
-                  """,
-                  layer, _rank_specific_filename(outname))
+                         (w) file exch DumpLayerNodes close
+                         """,
+                         layer, _rank_specific_filename(outname))
 
 
 def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
@@ -1133,15 +1134,15 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
         raise nest.kernel.NESTError("target_layer must be a GIDCollection")
 
     nest.ll_api.sli_func("""
-                  /oname  Set
-                  cvlit /synmod Set
-                  /lyr_target Set
-                  /lyr_source Set
-                  oname (w) file lyr_target lyr_source synmod
-                  DumpLayerConnections close
-                  """,
-                  source_layer, target_layer, synapse_model,
-                  _rank_specific_filename(outname))
+                         /oname  Set
+                         cvlit /synmod Set
+                         /lyr_target Set
+                         /lyr_source Set
+                         oname (w) file lyr_target lyr_source synmod
+                         DumpLayerConnections close
+                         """,
+                         source_layer, target_layer, synapse_model,
+                         _rank_specific_filename(outname))
 
 
 def FindCenterElement(layer):
@@ -1889,6 +1890,7 @@ def SelectNodesByMask(layer, anchor, mask_obj):
 
     mask_datum = mask_obj._datum
 
-    gid_list = nest.ll_api.sli_func('SelectNodesByMask', layer, anchor, mask_datum)
+    gid_list = nest.ll_api.sli_func('SelectNodesByMask',
+                                    layer, anchor, mask_datum)
 
     return gid_list

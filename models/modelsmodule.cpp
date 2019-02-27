@@ -106,6 +106,7 @@
 #include "sinusoidal_poisson_generator.h"
 #include "spike_generator.h"
 #include "step_current_generator.h"
+#include "step_rate_generator.h"
 
 // Recording devices
 #include "correlation_detector.h"
@@ -267,6 +268,8 @@ ModelsModule::init( SLIInterpreter* )
     "noise_generator" );
   kernel().model_manager.register_node_model< step_current_generator >(
     "step_current_generator" );
+  kernel().model_manager.register_node_model< step_rate_generator >(
+    "step_rate_generator" );
   kernel().model_manager.register_node_model< mip_generator >(
     "mip_generator" );
   kernel().model_manager.register_node_model< sinusoidal_poisson_generator >(

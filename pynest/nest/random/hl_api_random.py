@@ -25,9 +25,9 @@ import numpy as np
 
 __all__ = [
     'exponential',
-    'uniform',
-    'normal',
     'lognormal',
+    'normal',
+    'uniform',
     ]
 
 

@@ -328,7 +328,7 @@ global RNG with MT19937 seeded with 101:
 
 ::
 
-    nest.sli_run('0 << /grng rngdict/MT19937 :: 101 CreateRNG >> SetStatus')
+    nest.sli_run('<< /grng rngdict/MT19937 :: 101 CreateRNG >> SetKernelStatus')
 
 The following happens here:
 
@@ -350,7 +350,7 @@ This is done by (assuming \\(N\_{vp}=2\\) ):
 
 ::
 
-    nest.sli_run('0 << /rngs [102 103] { rngdict/MT19937 :: exch CreateRNG } Map >> SetStatus')
+    nest.sli_run('<< /rngs [102 103] { rngdict/MT19937 :: exch CreateRNG } Map >> SetKernelStatus')
 
 The following happens here:
 

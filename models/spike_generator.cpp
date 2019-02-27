@@ -101,7 +101,6 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
     IntVectorDatum( new std::vector< long >( spike_multiplicities_ ) );
   ( *d )[ names::precise_times ] = BoolDatum( precise_times_ );
   ( *d )[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_times_ );
-  ( *d )[ names::allow_offgrid_spikes ] = BoolDatum( allow_offgrid_times_ );
   ( *d )[ names::shift_now_spikes ] = BoolDatum( shift_now_spikes_ );
 }
 
@@ -181,43 +180,15 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   const Time& origin,
   const Time& now )
 {
-  bool allow_offgrid_spikes;
-  const bool allow_offgrid_spikes_changed =
-    updateValue< bool >( d, names::allow_offgrid_spikes, allow_offgrid_spikes );
-  const bool allow_offgrid_times_changed =
-    updateValue< bool >( d, names::allow_offgrid_times, allow_offgrid_times_ );
-
-  if ( allow_offgrid_spikes_changed and allow_offgrid_times_changed )
-  {
-    throw BadProperty(
-      "allow_offgrid_spikes and allow_offgrid_times can "
-      "not be set at the same time." );
-  }
-  if ( allow_offgrid_spikes_changed )
-  {
-    allow_offgrid_times_ = allow_offgrid_spikes;
-  }
-
-  if ( not deprecation_warning_issued_ and allow_offgrid_spikes_changed )
-  {
-    LOG( M_DEPRECATED,
-      "set",
-      "allow_offgrid_spikes is deprecated and will be removed in NEST 3.0. "
-      "Use allow_offgrid_times instead." );
-    deprecation_warning_issued_ = true;
-  }
-
   bool flags_changed =
     updateValue< bool >( d, names::precise_times, precise_times_ )
-    || updateValue< bool >( d, names::shift_now_spikes, shift_now_spikes_ );
-  flags_changed = flags_changed or allow_offgrid_spikes_changed
-    or allow_offgrid_times_changed;
+    or updateValue< bool >( d, names::shift_now_spikes, shift_now_spikes_ )
+    or updateValue< bool >( d, names::allow_offgrid_times, allow_offgrid_times_ );
   if ( precise_times_ && ( allow_offgrid_times_ || shift_now_spikes_ ) )
   {
     throw BadProperty(
       "Option precise_times cannot be set to true when either "
-      "allow_offgrid_spikes, allow_offgrid_times or "
-      "shift_now_spikes is set to true." );
+      "allow_offgrid_times or shift_now_spikes is set to true." );
   }
 
   const bool updated_spike_times = d->known( names::spike_times );

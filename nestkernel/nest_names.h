@@ -66,7 +66,6 @@ extern const Name activity;
 extern const Name adaptive_spike_buffers;
 extern const Name adaptive_target_buffers;
 extern const Name ahp_bug;
-extern const Name allow_offgrid_spikes;
 extern const Name allow_offgrid_times;
 extern const Name alpha;
 extern const Name alpha_1;

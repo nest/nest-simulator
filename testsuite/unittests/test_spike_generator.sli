@@ -208,7 +208,7 @@ assert_or_die
   /spike_generator Create /sg Set
   sg <<
         /spike_times [1.0 1.05 3.0001]   % in ms
-        /allow_offgrid_spikes true  
+        /allow_offgrid_times true  
         /origin 0.0                        % in ms
         /start 0.0                         % in ms  
         /stop  6.0                         % in ms
@@ -402,8 +402,8 @@ assert_or_die
 (----------------------- 3.6 ------------------------------) ==
 
 
-% ensure exclusivity between /precise_times and /allow_offgrid_spikes and /shift_now_spikes
-{ /spike_generator << /precise_times true /allow_offgrid_spikes true >> Create } fail_or_die
+% ensure exclusivity between /precise_times and /allow_offgrid_times and /shift_now_spikes
+{ /spike_generator << /precise_times true /allow_offgrid_times true >> Create } fail_or_die
 (----------------------- 4 ------------------------------) ==
 
 
@@ -430,7 +430,7 @@ assert_or_die
   << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /spike_generator << /spike_times [ 0.1 10.0 10.5 10.50001 10.55 ] 
-                      /allow_offgrid_spikes true >> Create
+                      /allow_offgrid_times true >> Create
   /spike_times get cva 5 ToUnitTestPrecision
   [0.1 10.0 10.5 10.5 10.6 ] 5 ToUnitTestPrecision pstack
   eq

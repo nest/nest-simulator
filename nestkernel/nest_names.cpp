@@ -45,7 +45,6 @@ const Name activity( "activity" );
 const Name adaptive_spike_buffers( "adaptive_spike_buffers" );
 const Name adaptive_target_buffers( "adaptive_target_buffers" );
 const Name ahp_bug( "ahp_bug" );
-const Name allow_offgrid_spikes( "allow_offgrid_spikes" );
 const Name allow_offgrid_times( "allow_offgrid_times" );
 const Name alpha( "alpha" );
 const Name alpha_1( "alpha_1" );

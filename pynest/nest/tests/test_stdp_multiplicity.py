@@ -128,10 +128,10 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             # create spike_generators with these times
             pre_sg = nest.Create("spike_generator",
                                  params={"spike_times": pre_times,
-                                         'allow_offgrid_spikes': True})
+                                         'allow_offgrid_times': True})
             post_sg = nest.Create("spike_generator",
                                   params={"spike_times": post_times,
-                                          'allow_offgrid_spikes': True})
+                                          'allow_offgrid_times': True})
             pre_sg_ps = nest.Create("spike_generator",
                                     params={"spike_times": pre_times,
                                             'precise_times': True})

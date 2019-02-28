@@ -31,7 +31,8 @@ urlcolor: RedOrange
 filecolor: Purple
 citecolor: Violet
 toccolor: MidnightBlue
-bibliography: ../../extras/bibliography/nest.bib
+bibliography: bib.yaml
+csl: nest_style.csl
 #biblio-style: plain
 
 date: NEST 2.16

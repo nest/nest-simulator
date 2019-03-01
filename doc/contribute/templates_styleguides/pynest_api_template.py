@@ -2,13 +2,14 @@
 
    If you have modified an API, please ensure you update the docstring!
 
-   The format is based on `NumPy style docstring <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
-   reStructured text mark up. Please review the syntax rules if you are unfamiliar with
-   either reStructured text or NumPy style docstrings.
+   The format is based on `NumPy style docstring
+   <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
+   reStructured text mark up. Please review the syntax rules if you are
+   unfamiliar with either reStructured text or NumPy style docstrings.
 
    Copy this file and replace the sample text with a description of the API.
-   The double bracketed sections [[ ]], which provide explanations, should be completely
-   removed from your final version - Including this entire docstring!
+   The double bracketed sections [[ ]], which provide explanations, should be
+   completel removed from your final version - Including this entire docstring!
 
    ]]
 """
@@ -55,8 +56,9 @@ def get.Connections(source=None, target=None, synape_model=None,
 
             `ndobj_old` will be removed in NumPy 2.0.0, it is replaced by
             `ndobj_new` because the latter works also with array subclasses.
-    
-    [[ For all headings ensure the underline --- is at least the length of the heading ]] 
+
+    [[ For all headings ensure the underline --- is at least the length of the
+    heading ]]
 
     Parameters
     ----------

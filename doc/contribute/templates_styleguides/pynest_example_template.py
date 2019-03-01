@@ -1,12 +1,16 @@
-"""[[ This template demonstrates how to create an example python script for NEST.
+"""[[ This template demonstrates how to create an example python script for
+      NEST.
 
-   The format is based on `NumPy style docstring <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
-   reStructured text mark up. Please review the syntax rules if you are unfamiliar with
-   either reStructured text or NumPy style docstrings.
+   The format is based on `NumPy style docstring
+   <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
+   reStructured text mark up. Please review the syntax rules if you are
+   unfamiliar with either reStructured text or NumPy style docstrings.
 
-   Copy this file and replace the sample text with a description of your script.
-   The double bracketed sections [[ ]], which provide explanations, should be completely
-   removed from your final version - Including this entire docstring!
+   Copy this file and replace the sample text with a description of your
+   script.
+   The double bracketed sections [[ ]], which provide explanations, should be
+   completely removed from your final version - Including this entire
+   docstring!
 
    Your script should contain a complete code-block that begins with all
    necessary imports and ends with code that displays the output.]]
@@ -35,10 +39,11 @@
 """ Simulate a balanced neuron with the bisection method
 ----------------------------------------------------------------
 [[ Titles should be one line and state what the example does.
-It should begin with a verb in the present tense and include type of model and/or method]]
+  It should begin with a verb in the present tense and include type of model
+  and/or method]]
 
-[[ Extended summary - a detailed explanation of your example. Try to answer the 
-folowing questions. ]]
+[[ Extended summary - a detailed explanation of your example. Try to answer the
+   folowing questions. ]]
 [[ What does this script do? What is the purpose?]]
 
 This script simulates a neuron by an excitatory and an inhibitory
@@ -55,26 +60,30 @@ population.
 The output shows the target neuron's membrane potential as a function of time.
 
 [[ Does this example have a real world application or use case?
-  Are there particular applications or areas of research that would benefit from this example?
-  ]]
+  Are there particular applications or areas of research that would benefit
+  from this example?]]
 
-This model used here is applicable for neurorobotics, particularly for cases ...
+This model used here is applicable for neurorobotics, particularly cases of ...
 
 
-[[ If applicable, state any prerequisite the reader needs to have installed or configured
-   that is not standard ]]
+[[ If applicable, state any prerequisite the reader needs to have installed or
+   configured that is not standard ]]
 
-Please ensure that you have configured MUSIC to be ON in your NEST configuration.
+Please ensure that you have configured MUSIC to be ON in your NEST
+configuration:
 ``cmake -Dwith-music=[ON</path/to/music>]``
 
 [[ If applicable, mention the literature reference for this example.
-   Note the syntax of the citation. And don't forget to add a "References" section!]]
+   Note the syntax of the citation. And don't forget to add a "References"
+   section!]]
 
-This model used here corresponds to the formulation presented in Sander et al. [1]_
-and the bisection method developed in Gewaltig and Diesmann [2]_.
+This model used here corresponds to the formulation presented in
+Sander et al. [1]_ and the bisection method developed in
+Gewaltig and Diesmann [2]_.
 
 
-[[ See Also section - Include a couple of related examples, models, or functions. ]]
+[[ See Also section - Include a couple of related examples, models,
+   or functions. ]]
 
 See Also
 ---------
@@ -83,11 +92,13 @@ See Also
 
 Notes
 ------
-[[ Additional information can be included here regarding background theory, relevant mathetmatical equations etc.]]
+[[ Additional information can be included here regarding background theory,
+   relevant mathetmatical equations etc.]]
 
 The value of :math:`\omega` is X.
 For the population and time-averaged from the spiking simulation:
-[[ Note the syntax used for displaying equations uses reStructured text directive with LaTeX math formulae ]]
+[[ Note the syntax used for displaying equations uses reStructured text
+   directive with LaTeX math formulae ]]
 
 .. math::
 
@@ -107,17 +118,18 @@ References
        evolution of gigantism. Biological Reviews. 86(1):117-155.
        https://doi.org/10.111/j.1469-185x.2010.00137.x
 
-.. [2] Gewaltig M-O, Diesmann M (2007). NEST (Neural Simulation Tool) Scholarpedia
-       2(4):1430.
+.. [2] Gewaltig M-O, Diesmann M (2007). NEST (Neural Simulation Tool).
+       Scholarpedia 2(4):1430.
 
-[[ Include your name in the author section, so we know who contributed. 
-  Author(s) should be comma separated with first name as initials followed by last name ]]
+[[ Include your name in the author section, so we know who contributed.
+  Author(s) should be comma separated with first name as initials followed
+  by last name ]]
 
 :Authors:
     D Adams, N Gaiman
 
-    [[ Include a couple of comma-separated keywords - this will help us increase
-       discoverability of related documents ]]
+    [[ Include a couple of comma-separated keywords - this will help us
+       increase discoverability of related documents ]]
 
 KEYWORDS: scipy, poisson spike train, precise
 """
@@ -126,9 +138,9 @@ import nest  # [[ begin code section with imports]]
 import scipy
 
 ###############################################################################
-# [[After the initial docstring above, all following comment blocks must begin with a 
-# a line of hashes and each line of a block must begin with a hash. This will
-# allow us to generate nice looking examples for the website! ]]
+# [[After the initial docstring above, all following comment blocks must begin
+# with a line of hashes and each line of a block must begin with a hash.
+# This will allow us to generate nice looking examples for the website! ]]
 #
 # The excitatory `poisson_generator` (`noise[0]`) and the voltmeter are
 # configured using `SetStatus`, which expects a list of node handles and

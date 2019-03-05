@@ -48,6 +48,8 @@ extern "C" int
 gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: gif_cond_exp_multisynapse - Conductance-based generalized
 integrate-and-fire neuron model with multiple synaptic time constants
 according to Mensi et al. (2012) and Pozzorini et al. (2015).

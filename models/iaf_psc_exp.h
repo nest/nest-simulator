@@ -36,6 +36,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+
+@ingroup Neurons
+
 Name: iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential
                    PSCs.
 

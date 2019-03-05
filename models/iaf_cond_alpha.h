@@ -57,6 +57,8 @@ namespace nest
 extern "C" int iaf_cond_alpha_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron
                        model.
 

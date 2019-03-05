@@ -62,6 +62,8 @@ namespace nest
 extern "C" int ht_neuron_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: ht_neuron - Neuron model after Hill & Tononi (2005).
 
 Description:

@@ -30,6 +30,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside
                               activation function.
 

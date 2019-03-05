@@ -34,6 +34,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: parrot_neuron - Neuron that repeats incoming spikes.
 
 Description:

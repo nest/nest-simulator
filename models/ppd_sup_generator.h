@@ -41,6 +41,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+
 Name: ppd_sup_generator - simulate the superimposed spike train of a population
 of Poisson processes
 with dead time.

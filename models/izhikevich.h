@@ -35,6 +35,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+
    Name: izhikevich - Izhikevich neuron model
 
    Description:

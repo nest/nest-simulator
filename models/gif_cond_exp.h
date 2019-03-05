@@ -49,6 +49,8 @@ namespace nest
 extern "C" int gif_cond_exp_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: gif_cond_exp - Conductance-based generalized integrate-and-fire neuron
 model according to Mensi et al. (2012) and Pozzorini et al. (2015).
 

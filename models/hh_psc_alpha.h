@@ -58,6 +58,8 @@ namespace nest
 extern "C" int hh_psc_alpha_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: hh_psc_alpha - Hodgkin-Huxley neuron model.
 
 Description:

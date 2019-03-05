@@ -45,6 +45,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: rate_transformer_node - Rate neuron that sums up incoming rates
                 and applies a nonlinearity specified via the template.
 

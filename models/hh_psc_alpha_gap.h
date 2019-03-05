@@ -60,6 +60,8 @@ extern "C" int
 hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: hh_psc_alpha_gap - Hodgkin-Huxley neuron model with gap-junction support.
 
 Description:

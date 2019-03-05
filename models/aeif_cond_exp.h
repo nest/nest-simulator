@@ -70,6 +70,8 @@ extern "C" int
 aeif_cond_exp_dynamics_DT0( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: aeif_cond_exp - Conductance based exponential integrate-and-fire neuron
                       model according to Brette and Gerstner (2005).
 

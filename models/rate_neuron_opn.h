@@ -45,6 +45,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: rate_neuron_opn - Base class for rate model with output noise.
 
 Description:

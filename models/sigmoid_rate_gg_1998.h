@@ -36,6 +36,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: sigmoid_rate_gg_1998 - rate model with sigmoidal gain function
 as defined in [1].
 

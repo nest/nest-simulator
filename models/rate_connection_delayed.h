@@ -30,6 +30,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: rate_connection_delayed - Synapse type for rate connections with delay.
 
 Description:

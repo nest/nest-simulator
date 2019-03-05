@@ -30,6 +30,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+
 Name: rate_connection_instantaneous - Synapse type for instantaneous rate
 connections.
 

@@ -37,6 +37,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: mat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model with
 exponential PSCs and adaptive threshold.
 

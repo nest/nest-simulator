@@ -35,6 +35,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: iaf_psc_delta - Leaky integrate-and-fire neuron model.
 
 Description:

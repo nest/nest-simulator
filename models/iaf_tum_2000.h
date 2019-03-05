@@ -36,6 +36,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential
                     PSCs.
 

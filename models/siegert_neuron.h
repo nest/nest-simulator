@@ -46,6 +46,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: siegert_neuron
 
 Description:

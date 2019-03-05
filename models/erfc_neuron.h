@@ -29,6 +29,8 @@
 namespace nest
 {
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: erfc_neuron - Binary stochastic neuron with complementary error
 function as activation function.
 

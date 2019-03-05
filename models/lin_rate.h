@@ -35,6 +35,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: lin_rate - Linear rate model
 
 Description:

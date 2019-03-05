@@ -42,6 +42,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+
 Name: poisson_generator - simulate neuron firing with Poisson processes
                           statistics.
 Description:

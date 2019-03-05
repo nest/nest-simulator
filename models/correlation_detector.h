@@ -39,6 +39,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+
 Name: correlation_detector - Device for evaluating cross correlation between
                              two spike sources
 

@@ -42,6 +42,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+
 Name: multimeter - Device to record analog data from neurons.
 
 Synopsis: multimeter Create
@@ -92,7 +94,6 @@ Remarks:
 
 @note If you want to pick up values at every time stamp,
   you must set the interval to the simulation resolution.
-@ingroup Devices
 @see UniversalDataLogger
 
 

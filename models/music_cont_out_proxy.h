@@ -49,6 +49,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+
 
 Name: music_cont_out_proxy - A device which sends continuous data from NEST to
 MUSIC.

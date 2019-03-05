@@ -40,6 +40,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+
 Name: step_rate_generator - provides a piecewise constant input rate
 
 Description:

@@ -38,6 +38,8 @@
 namespace nest
 {
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: correlomatrix_detector - Device for measuring the covariance matrix
 from several inputs
 

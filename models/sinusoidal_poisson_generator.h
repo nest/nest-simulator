@@ -38,6 +38,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+
 Name: sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson
                                      spike trains.
 

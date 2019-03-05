@@ -37,6 +37,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+
 Name: spike_detector - Device for detecting single spikes.
 
 Description:

@@ -41,6 +41,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+
 Name: noise_generator - Device to generate Gaussian white noise current.
 
 Description:

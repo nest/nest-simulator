@@ -48,6 +48,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+
 
 Name: music_cont_in_proxy - A device which receives continuous data from MUSIC.
 

@@ -41,6 +41,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+
 Name: pulsepacket_generator - Generate sequence of Gaussian pulse packets.
 
 Description:

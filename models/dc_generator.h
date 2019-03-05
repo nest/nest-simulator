@@ -39,6 +39,8 @@
 namespace nest
 {
 /** @BeginDocumentation
+@ingroup Devices
+
 Name: dc_generator - provides DC input current
 
 @ingroup Devices

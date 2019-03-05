@@ -38,6 +38,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+
 Name: spin_detector - Device for detecting binary states in neurons.
 
 Description:

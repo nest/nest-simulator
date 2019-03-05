@@ -41,6 +41,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+
 Name: music_event_in_proxy - A device which receives spikes from MUSIC.
 
 Description:

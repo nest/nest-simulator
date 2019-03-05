@@ -31,6 +31,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+
 Name: vogels_sprekeler_synapse - Synapse type for symmetric spike-timing
 dependent
 plasticity with constant depression.

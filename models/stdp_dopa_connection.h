@@ -37,6 +37,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+
 Name: stdp_dopamine_synapse - Synapse type for dopamine-modulated
                               spike-timing dependent plasticity.
 

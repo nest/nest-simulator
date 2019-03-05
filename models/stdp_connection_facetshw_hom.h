@@ -34,6 +34,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+
 Name: stdp_facetshw_synapse_hom - Synapse type for spike-timing dependent
                                   plasticity using homogeneous parameters,
                                   i.e. all synapses have the same parameters.

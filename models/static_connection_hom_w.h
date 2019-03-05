@@ -31,6 +31,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+
 Name: static_synapse_hom_w - Synapse type for static connections with
 homogeneous weight.
 

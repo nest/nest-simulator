@@ -33,6 +33,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+
 Name: stdp_synapse_hom - Synapse type for spike-timing dependent
 plasticity using homogeneous parameters.
 

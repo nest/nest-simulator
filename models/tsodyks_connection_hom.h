@@ -32,6 +32,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+
 Name: tsodyks_synapse_hom - Synapse type with short term plasticity using
                             homogeneous parameters, i.e. all synapses have
                             the same parameters.

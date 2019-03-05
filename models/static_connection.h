@@ -30,6 +30,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+
 Name: static_synapse - Synapse type for static connections.
 
 Description:

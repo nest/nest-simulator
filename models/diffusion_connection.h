@@ -29,6 +29,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+
 Name: diffusion_connection - Synapse type for instantaneous rate connections
 between neurons of type siegert_neuron.
 

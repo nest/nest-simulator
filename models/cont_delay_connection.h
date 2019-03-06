@@ -47,21 +47,24 @@ combined with off-grid spike times.
 
 Example:
 
-0 << /resolution 1.0 >> SetStatus
+    SLI
 
-/sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
-def
-/n  /iaf_psc_delta_canon Create def
-/sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create
-def
+    0 << /resolution 1.0 >> SetStatus
 
-/cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
-sg n /cont_delay_synapse Connect
-n sd Connect
+    /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
 
-10 Simulate
+    def
+    /n  /iaf_psc_delta_canon Create def
+    /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create
+    def
 
-sd GetStatus /events/times :: ==   %  --> <. 3.7 7.2 .>
+    /cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
+    sg n /cont_delay_synapse Connect
+    n sd Connect
+
+    10 Simulate
+
+    sd GetStatus /events/times :: ==   %  --> <. 3.7 7.2 .>
 
 Remarks:
 
@@ -85,8 +88,6 @@ Continuous delays cannot be shorter than the simulation resolution.
 
 Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
            DoubleDataEvent
-
-References: none
 
 FirstVersion: June 2007
 

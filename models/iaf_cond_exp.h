@@ -74,20 +74,20 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m        double - Membrane potential in mV
-E_L        double - Leak reversal potential in mV.
-C_m        double - Capacity of the membrane in pF
-t_ref      double - Duration of refractory period in ms.
-V_th       double - Spike threshold in mV.
-V_reset    double - Reset potential of the membrane in mV.
-E_ex       double - Excitatory reversal potential in mV.
-E_in       double - Inhibitory reversal potential in mV.
-g_L        double - Leak conductance in nS;
-tau_syn_ex double - Time constant of the excitatory synaptic exponential
-                    function in ms.
-tau_syn_in double - Time constant of the inhibitory synaptic exponential
-                    function in ms.
-I_e        double - Constant external input current in pA.
+- V_m        double - Membrane potential in mV
+- E_L        double - Leak reversal potential in mV.
+- C_m        double - Capacity of the membrane in pF
+- t_ref      double - Duration of refractory period in ms.
+- V_th       double - Spike threshold in mV.
+- V_reset    double - Reset potential of the membrane in mV.
+- E_ex       double - Excitatory reversal potential in mV.
+- E_in       double - Inhibitory reversal potential in mV.
+- g_L        double - Leak conductance in nS;
+- tau_syn_ex double - Time constant of the excitatory synaptic exponential
+                      function in ms.
+- tau_syn_in double - Time constant of the inhibitory synaptic exponential
+                      function in ms.
+- I_e        double - Constant external input current in pA.
 
 Sends: SpikeEvent
 
@@ -95,9 +95,12 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 References:
 
-Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
-model for the large, fluctuating synaptic conductance state typical of
-neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
+\verbatim embed:rst
+.. [1] Meffin H, Burkitt AN, Grayden DB. (2004). An analytical
+       model for the large, fluctuating synaptic conductance state typical of
+       neocortical neurons in vivo. Journal of  Computational Neuroscience,
+       16, 159-175.
+\endverbatim
 
 Author: Sven Schrader
 

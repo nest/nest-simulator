@@ -41,23 +41,27 @@ See docs/model_details/HillTononi.ipynb for details.
 
 Synaptic dynamics are given by
 
+@f[
 P'(t) = ( 1 - P ) / tau_P
 P(T+) = (1 - delta_P) P(T-)   for T : time of a spike
 P(t=0) = 1
-
+@f]
+@f[
 w(t) = w_max * P(t)  is the resulting synaptic weight
-
+@f]
 Parameters:
 
 The following parameters can be set in the status dictionary:
-tau_P    double - synaptic vesicle pool recovery time constant [ms]
-delta_P  double - fractional change in vesicle pool on incoming spikes
-                  [unitless]
-P        double - current size of the vesicle pool [unitless, 0 <= P <= 1]
+- tau_P    double - synaptic vesicle pool recovery time constant [ms]
+- delta_P  double - fractional change in vesicle pool on incoming spikes
+                   [unitless]
+- P        double - current size of the vesicle pool [unitless, 0 <= P <= 1]
 
 References:
 
-[1] S Hill and G Tononi (2005). J Neurophysiol 93:1671-1698.
+\verbatim embed:rst
+.. [1] Hill S, Tononi G (2005). Journal of Neurophysiology. 93:1671-1698.
+\endverbatim 
 
 Sends: SpikeEvent
 

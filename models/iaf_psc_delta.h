@@ -94,26 +94,29 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m        double - Membrane potential in mV
-E_L        double - Resting membrane potential in mV.
-C_m        double - Capacitance of the membrane in pF
-tau_m      double - Membrane time constant in ms.
-t_ref      double - Duration of refractory period in ms.
-V_th       double - Spike threshold in mV.
-V_reset    double - Reset potential of the membrane in mV.
-I_e        double - Constant input current in pA.
-V_min      double - Absolute lower value for the membrane potential in mV
+- V_m        double - Membrane potential in mV
+- E_L        double - Resting membrane potential in mV.
+- C_m        double - Capacitance of the membrane in pF
+- tau_m      double - Membrane time constant in ms.
+- t_ref      double - Duration of refractory period in ms.
+- V_th       double - Spike threshold in mV.
+- V_reset    double - Reset potential of the membrane in mV.
+- I_e        double - Constant input current in pA.
+- V_min      double - Absolute lower value for the membrane potential in mV
 
-refractory_input bool - If true, do not discard input during
-refractory period. Default: false.
+- refractory_input bool - If true, do not discard input during
+                          refractory period. Default: false.
 
 References:
-[1] Rotter S & Diesmann M (1999) Exact digital simulation of time-invariant
-linear systems with applications to neuronal modeling. Biologial Cybernetics
-81:381-402.
-[2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-analysis of synchronous spiking in cortical neural networks.
-Neurocomputing 38-40:565-571.
+
+\verbatim embed:rst
+.. [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+       systems with applications to neuronal modeling. Biologial Cybernetics
+       81:381-402.
+.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
+       analysis of synchronous spiking in cortical neural networks.
+       Neurocomputing 38-40:565-571.
+\endverbatim
 
 Sends: SpikeEvent
 

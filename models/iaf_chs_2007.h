@@ -73,20 +73,22 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-tau_epsp       double - Membrane time constant in ms.
-tau_reset      double - Refractory time constant in ms.
-U_epsp         double - Maximum amplitude of the EPSP. Normalized.
-U_reset        double - Reset value of the membrane potential. Normalized.
-U_noise        double - Noise scale. Normalized.
-noise   vector<double>- Noise signal.
+- tau_epsp       double - Membrane time constant in ms.
+- tau_reset      double - Refractory time constant in ms.
+- U_epsp         double - Maximum amplitude of the EPSP. Normalized.
+- U_reset        double - Reset value of the membrane potential. Normalized.
+- U_noise        double - Noise scale. Normalized.
+- noise   vector<double>- Noise signal.
 
 References:
 
-[1] Carandini M, Horton JC, Sincich LC (2007) Thalamic filtering of retinal
-spike trains by postsynaptic summation. J Vis 7(14):20,1-11.
-[2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-systems with applications to neuronal modeling. Biologial Cybernetics
-81:381-402.
+\verbatim embed:rst
+.. [1] Carandini M, Horton JC, Sincich LC (2007). Thalamic filtering of retinal
+       spike trains by postsynaptic summation. J Vis 7(14):20,1-11.
+.. [2] Rotter S,  Diesmann M (1999). Exact simulation of time-invariant linear
+       systems with applications to neuronal modeling. Biologial Cybernetics
+       81:381-402.
+\endverbatim
 
 Sends: SpikeEvent
 

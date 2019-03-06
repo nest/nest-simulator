@@ -47,28 +47,32 @@ Description:
 This device produces an ac-current sent by a CurrentEvent. The
 current is given by
 
-        I(t) = offset + amplitude * sin ( om * t + phi )
+       @f[ I(t) = offset + amplitude * sin ( om * t + phi ) @f]
 
 where
-
+    @f[
     om  = 2 * pi * frequency
     phi = phase / 180 * pi
+    @f]
 
 Parameters:
 
-amplitude   double -  Amplitude of sine current in pA
-offset      double -  Constant amplitude offset in pA
-frequency   double -  Frequency in Hz
-phase       double -  Phase of sine current (0-360 deg)
+- amplitude   double -  Amplitude of sine current in pA
+- offset      double -  Constant amplitude offset in pA
+- frequency   double -  Frequency in Hz
+- phase       double -  Phase of sine current (0-360 deg)
 
 Setting start and stop (see StimulatingDevice) only windows the current
 as defined above. It does not shift the time axis.
 
 References:
 
-[1] S. Rotter and M. Diesmann (1999). Exact digital simulation of time-
-invariant linear systems with applications to neuronal modeling,
-Biol. Cybern. 81, 381-402.
+\verbatim embed:rst
+
+.. [1] Rotter S and Diesmann M (1999). Exact digital simulation of time-
+       invariant linear systems with applications to neuronal modeling,
+       Biol. Cybern. 81, 381-402.
+\endverbatim
 
 Sends: CurrentEvent
 

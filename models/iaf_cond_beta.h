@@ -74,20 +74,20 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m          double - Membrane potential in mV
-E_L          double - Leak reversal potential in mV.
-C_m          double - Capacity of the membrane in pF
-t_ref        double - Duration of refractory period in ms.
-V_th         double - Spike threshold in mV.
-V_reset      double - Reset potential of the membrane in mV.
-E_ex         double - Excitatory reversal potential in mV.
-E_in         double - Inhibitory reversal potential in mV.
-g_L          double - Leak conductance in nS;
-tau_rise_ex  double - Rise time of the excitatory synaptic beta function in ms.
-tau_decay_ex double - Rise time of the excitatory synaptic beta function in ms.
-tau_rise_in  double - Rise time of the inhibitory synaptic beta function in ms.
-tau_decay_in double - Rise time of the inhibitory synaptic beta function in ms.
-I_e          double - Constant input current in pA.
+- V_m          double - Membrane potential in mV
+- E_L          double - Leak reversal potential in mV.
+- C_m          double - Capacity of the membrane in pF
+- t_ref        double - Duration of refractory period in ms.
+- V_th         double - Spike threshold in mV.
+- V_reset      double - Reset potential of the membrane in mV.
+- E_ex         double - Excitatory reversal potential in mV.
+- E_in         double - Inhibitory reversal potential in mV.
+- g_L          double - Leak conductance in nS;
+- tau_rise_ex  double - Rise time of the excitatory synaptic beta function in ms.
+- tau_decay_ex double - Rise time of the excitatory synaptic beta function in ms.
+- tau_rise_in  double - Rise time of the inhibitory synaptic beta function in ms.
+- tau_decay_in double - Rise time of the inhibitory synaptic beta function in ms.
+- I_e          double - Constant input current in pA.
 
 Sends: SpikeEvent
 
@@ -104,23 +104,22 @@ Remarks:
 
 References:
 
-Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
-model for the large, fluctuating synaptic conductance state typical of
-neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
-
-Bernander, O ., Douglas, R. J., Martin, K. A. C., & Koch, C. (1991).
-Synaptic background activity influences spatiotemporal integration in
-single pyramidal cells.  Proc. Natl. Acad. Sci. USA, 88(24),
-11569-11573.
-
-Kuhn, Aertsen, Rotter (2004) Neuronal Integration of Synaptic Input in
-the Fluctuation- Driven Regime. Jneurosci 24(10) 2345-2356
-
-Rotter & Diesmann, Biol Cybern 81:381 (1999)
-
-Roth and van Rossum,
-Ch 6, in De Schutter, Computational Modeling Methods for Neuroscientists,
-MIT Press, 2010.
+\verbatim embed:rst
+.. [1] Meffin H, Burkitt AN, Grayden DB. (2004). An analytical
+       model for the large, fluctuating synaptic conductance state typical of
+       neocortical neurons in vivo. Journal of  Computational Neuroscience,
+       16, 159-175.
+.. [2] Bernander O, Douglas RJ, Martin KAC, Koch C (1991). Synaptic background
+       activity influences spatiotemporal integration in single pyramidal
+       cells.  Proceedings of the National Academy of Science USA,
+       88(24):11569-11573.
+.. [3] Kuhn A, Rotter S (2004) Neuronal integration of synaptic input in
+       the fluctuation- driven regime. Journal of Neuroscience,
+       24(10):2345-2356
+.. [4] Rotter S, Diesmann M (1999). Biol Cybern 81:381
+.. [5] Roth and van Rossum (2010).` Ch 6, in De Schutter, Computational Modeling 
+       Methods for Neuroscientists, MIT Press.
+\endverbatim
 
 Author: Daniel Naoumenko (modified iaf_cond_alpha by Schrader, Plesser)
 

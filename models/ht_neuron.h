@@ -86,34 +86,34 @@ Documentation and Examples:
 
 Parameters:
 
-V_m            - membrane potential
-tau_m          - membrane time constant applying to all currents except
-                 repolarizing K-current (see [1], p 1677)
-t_ref          - refractory time and duration of post-spike repolarizing
-                 potassium current (t_spike in [1])
-tau_spike      - membrane time constant for post-spike repolarizing
-                 potassium current
-voltage_clamp  - if true, clamp voltage to value at beginning of simulation
-                 (default: false, mainly for testing)
-theta, theta_eq, tau_theta - threshold, equilibrium value, time constant
-g_KL, E_K, g_NaL, E_Na     - conductances and reversal potentials for K and
-                             Na leak currents
-{E_rev,g_peak,tau_rise,tau_decay}_{AMPA,NMDA,GABA_A,GABA_B}
-                             - reversal potentials, peak conductances and
-                               time constants for synapses (tau_rise/
-                               tau_decay correspond to tau_1/tau_2 in the
-                               paper)
-V_act_NMDA, S_act_NMDA, tau_Mg_{fast, slow}_NMDA
-                             - parameters for voltage dependence of NMDA-
-                               conductance, see above
-instant_unblock_NMDA         - instantaneous NMDA unblocking (default: false)
-{E_rev,g_peak}_{h,T,NaP,KNa} - reversal potential and peak conductance for
-                               intrinsic currents
-tau_D_KNa                    - relaxation time constant for I_KNa
-receptor_types               - dictionary mapping synapse names to ports on
-                               neuron model
-recordables                  - list of recordable quantities
-equilibrate                  - if given and true, time-dependent activation
+- V_m            - membrane potential
+- tau_m          - membrane time constant applying to all currents except
+                   repolarizing K-current (see [1], p 1677)
+- t_ref          - refractory time and duration of post-spike repolarizing
+                   potassium current (t_spike in [1])
+- tau_spike      - membrane time constant for post-spike repolarizing
+                   potassium current
+- voltage_clamp  - if true, clamp voltage to value at beginning of simulation
+                   (default: false, mainly for testing)
+- theta, theta_eq, tau_theta - threshold, equilibrium value, time constant
+- g_KL, E_K, g_NaL, E_Na     - conductances and reversal potentials for K and
+-                              Na leak currents
+- {E_rev,g_peak,tau_rise,tau_decay}_{AMPA,NMDA,GABA_A,GABA_B}
+                               - reversal potentials, peak conductances and
+                                 time constants for synapses (tau_rise/
+                                 tau_decay correspond to tau_1/tau_2 in the
+                                 paper)
+- V_act_NMDA, S_act_NMDA, tau_Mg_{fast, slow}_NMDA
+                               - parameters for voltage dependence of NMDA-
+                                 conductance, see above
+- instant_unblock_NMDA         - instantaneous NMDA unblocking (default: false)
+- {E_rev,g_peak}_{h,T,NaP,KNa} - reversal potential and peak conductance for
+                                 intrinsic currents
+- tau_D_KNa                    - relaxation time constant for I_KNa
+- receptor_types               - dictionary mapping synapse names to ports on
+                                 neuron model
+- recordables                  - list of recordable quantities
+- equilibrate                  - if given and true, time-dependent activation
                                and inactivation state variables (h, m) of
                                intrinsic currents and NMDA channels are set
                                to their equilibrium values during this
@@ -131,8 +131,11 @@ FirstVersion: October 2009; full revision November 2016
 
 References:
 
-[1] S Hill and G Tononi (2005). J Neurophysiol 93:1671-1698.
-[2] M Vargas-Caballero HPC Robinson (2003). J Neurophysiol 89:2778-2783.
+\verbatim embed:rst
+.. [1] Hill S, Tononi G (2005). Journal of Neurophysiology 93:1671-1698.
+.. [2] Vargas-Caballero M, Robinson HPC (2003). Journal of Neurophysiology
+       89:2778-2783.
+\endverbatim
 
 SeeAlso: ht_synapse
 */

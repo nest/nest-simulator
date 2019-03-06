@@ -63,11 +63,13 @@ Transmits: DiffusionConnectionEvent
 
 References:
 
- [1] Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
- Bolten, M., Helias, M. and Diesmann, M. (2017).
- Integration of Continuous-Time Dynamics in a
- Spiking Neural Network Simulator.
- Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
+\verbatim embed:rst
+.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A,
+       Bolten M, Helias M, Diesmann, M. (2017).
+       Integration of continuous-time dynamics in a
+       spiking neural network simulator.
+       Frontiers in Neuroinformatics, 11:34. doi: 10.3389/fninf.2017.00034
+\endverbatim
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
 

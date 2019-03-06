@@ -83,17 +83,17 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-E_L          double - Resting membrane potential in mV.
-C_m          double - Capacity of the membrane in pF
-tau_m        double - Membrane time constant in ms.
-tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
-tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
-t_ref        double - Duration of refractory period (V_m = V_reset) in ms.
-V_m          double - Membrane potential in mV
-V_th         double - Spike threshold in mV.
-V_reset      double - Reset membrane potential after a spike in mV.
-I_e          double - Constant input current in pA.
-t_spike      double - Point in time of last spike in ms.
+- E_L          double - Resting membrane potential in mV.
+- C_m          double - Capacity of the membrane in pF
+- tau_m        double - Membrane time constant in ms.
+- tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
+- tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
+- t_ref        double - Duration of refractory period (V_m = V_reset) in ms.
+- V_m          double - Membrane potential in mV
+- V_th         double - Spike threshold in mV.
+- V_reset      double - Reset membrane potential after a spike in mV.
+- I_e          double - Constant input current in pA.
+- t_spike      double - Point in time of last spike in ms.
 
 Remarks:
 
@@ -113,18 +113,19 @@ tau_syn_ex. For an example application, see [4].
 
 References:
 
-[1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation
-in Recurrent Networks with Frequency-Dependent Synapses, The Journal of
-Neuroscience, 2000, Vol. 20 RC50 p. 1-5
-[2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-systems with applications to neuronal modeling. Biologial Cybernetics
-81:381-402.
-[3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-analysis of synchronous spiking in cortical neural networks.
-Neurocomputing 38-40:565-571.
-[4] Schuecker J, Diesmann M, Helias M (2015) Modulated escape from a
-metastable state driven by colored noise.
-Physical Review E 92:052119
+\verbatim embed:rst
+.. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
+       networks with frequency-dependent synapses, The Journal of Neuroscience,
+       20,RC50:1-5
+.. [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+       systems with applications to neuronal modeling. Biologial Cybernetics
+       81:381-402.
+.. [3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
+       analysis of synchronous spiking in cortical neural networks.
+       Neurocomputing 38-40:565-571.
+.. [4] Schuecker J, Diesmann M, Helias M (2015). Modulated escape from a
+       metastable state driven by colored noise. Physical Review E 92:052119
+\endverbatim
 
 Sends: SpikeEvent
 

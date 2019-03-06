@@ -81,16 +81,16 @@ NEST.
 The model has three compartments: soma, proximal and distal dendrite,
 labeled as s, p, and d, respectively. Compartments are connected through
 passive conductances as follows
-
+@f[
 C_m.s d/dt V_m.s = ... - g_sp ( V_m.s - V_m.p )
 
 C_m.p d/dt V_m.p = ... - g_sp ( V_m.p - V_m.s ) - g_pd ( V_m.p - V_m.d )
 
 C_m.d d/dt V_m.d = ...                          - g_pd ( V_m.d - V_m.p )
-
+@f]
 A spike is fired when the somatic membrane potential exceeds threshold,
-V_m.s >= V_th. After a spike, somatic membrane potential is clamped to
-a reset potential, V_m.s == V_reset, for the refractory period. Dendritic
+\f$ V_m.s >= V_th \f$. After a spike, somatic membrane potential is clamped to
+a reset potential, \f$ V_m.s == V_reset \f$, for the refractory period. Dendritic
 membrane potentials are not manipulated after a spike.
 
 There is one excitatory and one inhibitory conductance-based synapse
@@ -113,29 +113,29 @@ for each compartment are collected in a sub-dictionary; these sub-dictionaries
 are called "soma", "proximal", and "distal", respectively. In the list below,
 these parameters are marked with an asterisk.
 
-V_m*         double - Membrane potential in mV
-E_L*         double - Leak reversal potential in mV.
-C_m*         double - Capacity of the membrane in pF
-E_ex*        double - Excitatory reversal potential in mV.
-E_in*        double - Inhibitory reversal potential in mV.
-g_L*         double - Leak conductance in nS;
-tau_syn_ex*  double - Rise time of the excitatory synaptic alpha function in ms.
-tau_syn_in*  double - Rise time of the inhibitory synaptic alpha function in ms.
-I_e*         double - Constant input current in pA.
+- V_m*         double - Membrane potential in mV
+- E_L*         double - Leak reversal potential in mV.
+- C_m*         double - Capacity of the membrane in pF
+- E_ex*        double - Excitatory reversal potential in mV.
+- E_in*        double - Inhibitory reversal potential in mV.
+- g_L*         double - Leak conductance in nS;
+- tau_syn_ex*  double - Rise time of the excitatory synaptic alpha function in ms.
+- tau_syn_in*  double - Rise time of the inhibitory synaptic alpha function in ms.
+- I_e*         double - Constant input current in pA.
 
-g_sp         double - Conductance connecting soma and proximal dendrite, in nS.
-g_pd         double - Conductance connecting proximal and distal dendrite, in
-                      nS.
-t_ref        double - Duration of refractory period in ms.
-V_th         double - Spike threshold in mV.
-V_reset      double - Reset potential of the membrane in mV.
+- g_sp         double - Conductance connecting soma and proximal dendrite, in nS.
+- g_pd         double - Conductance connecting proximal and distal dendrite, in
+                        nS.
+- t_ref        double - Duration of refractory period in ms.
+- V_th         double - Spike threshold in mV.
+- V_reset      double - Reset potential of the membrane in mV.
 
 Example:
-See examples/nest/mc_neuron.py.
+See pynest/examples/mc_neuron.py.
 
 Remarks:
 
-This is a prototype for illustration which has undergone only limited 
+This is a prototype for illustration which has undergone only limited
 testing. Details of the implementation and user-interface will likely
 change. USE AT YOUR OWN PERIL!
 
@@ -148,14 +148,16 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 References:
 
-[1] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
-model for the large, fluctuating synaptic conductance state typical of
-neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
-
-[2] Bernander, O ., Douglas, R. J., Martin, K. A. C., & Koch, C. (1991).
-Synaptic background activity influences spatiotemporal integration in
-single pyramidal cells.  Proc. Natl. Acad. Sci. USA, 88(24),
-11569-11573.
+\verbatim embed:rst
+.. [1] Meffin H, Burkitt AN, Grayden DB. (2004). An analytical
+       model for the large, fluctuating synaptic conductance state typical of
+       neocortical neurons in vivo. Journal of  Computational Neuroscience,
+       16, 159-175.
+.. [2] Bernander O, Douglas RJ, Martin KAC, Koch C (1991). Synaptic background
+       activity influences spatiotemporal integration in single pyramidal
+       cells.  Proceedings of the National Academy of Science USA,
+       88(24):11569-11573.
+\endverbatim
 
 Author: Plesser
 

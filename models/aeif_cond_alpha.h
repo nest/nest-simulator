@@ -86,51 +86,51 @@ This implementation uses the embedded 4th order Runge-Kutta-Fehlberg solver with
 adaptive step size to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
-C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e)
-                                                     -g_i(t)(V-E_i)-w +I_e
+@f[ C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e)
+                                                     -g_i(t)(V-E_i)-w +I_e @f]
 
 and
 
-tau_w * dw/dt= a(V-E_L) -W
+@f[ tau_w * dw/dt= a(V-E_L) -W @f]
 
 Parameters:
 
 The following parameters can be set in the status dictionary.
 
 Dynamic state variables:
-  V_m        double - Membrane potential in mV
-  g_ex       double - Excitatory synaptic conductance in nS.
-  dg_ex      double - First derivative of g_ex in nS/ms
-  g_in       double - Inhibitory synaptic conductance in nS.
-  dg_in      double - First derivative of g_in in nS/ms.
-  w          double - Spike-adaptation current in pA.
+-  V_m        double - Membrane potential in mV
+-  g_ex       double - Excitatory synaptic conductance in nS.
+-  dg_ex      double - First derivative of g_ex in nS/ms
+-  g_in       double - Inhibitory synaptic conductance in nS.
+-  dg_in      double - First derivative of g_in in nS/ms.
+-  w          double - Spike-adaptation current in pA.
 
 Membrane Parameters:
-  C_m        double - Capacity of the membrane in pF
-  t_ref      double - Duration of refractory period in ms.
-  V_reset    double - Reset value for V_m after a spike. In mV.
-  E_L        double - Leak reversal potential in mV.
-  g_L        double - Leak conductance in nS.
-  I_e        double - Constant external input current in pA.
+-  C_m        double - Capacity of the membrane in pF
+-  t_ref      double - Duration of refractory period in ms.
+-  V_reset    double - Reset value for V_m after a spike. In mV.
+-  E_L        double - Leak reversal potential in mV.
+-  g_L        double - Leak conductance in nS.
+-  I_e        double - Constant external input current in pA.
 
 Spike adaptation parameters:
-  a          double - Subthreshold adaptation in nS.
-  b          double - Spike-triggered adaptation in pA.
-  Delta_T    double - Slope factor in mV
-  tau_w      double - Adaptation time constant in ms
-  V_th       double - Spike initiation threshold in mV
-  V_peak     double - Spike detection threshold in mV.
+-  a          double - Subthreshold adaptation in nS.
+-  b          double - Spike-triggered adaptation in pA.
+-  Delta_T    double - Slope factor in mV
+-  tau_w      double - Adaptation time constant in ms
+-  V_th       double - Spike initiation threshold in mV
+-  V_peak     double - Spike detection threshold in mV.
 
 Synaptic parameters
-  E_ex       double - Excitatory reversal potential in mV.
-  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (alpha
-                      function).
-  E_in       double - Inhibitory reversal potential in mV.
-  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms
+-  E_ex       double - Excitatory reversal potential in mV.
+-  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (alpha
+                       function).
+-  E_in       double - Inhibitory reversal potential in mV.
+-  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms
                       (alpha function).
 
 Integration parameters
-  gsl_error_tol  double - This parameter controls the admissible error of the
+-  gsl_error_tol  double - This parameter controls the admissible error of the
                           GSL integrator. Reduce it if NEST complains about
                           numerical instabilities.
 
@@ -140,9 +140,13 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-References: Brette R and Gerstner W (2005) Adaptive Exponential
-            Integrate-and-Fire Model as an Effective Description of Neuronal
-            Activity. J Neurophysiol 94:3637-3642
+References:
+
+\verbatim embed:rst
+.. [1] Brette R and Gerstner W (2005). Adaptive Exponential
+       Integrate-and-Fire Model as an Effective Description of Neuronal
+       Activity. J Neurophysiol 94:3637-3642
+\endverbatim
 
 SeeAlso: iaf_cond_alpha, aeif_cond_exp
 */

@@ -43,23 +43,24 @@ namespace nest
 
 Name: dc_generator - provides DC input current
 
-@ingroup Devices
-
 Description: The DC-Generator provides a constant DC Input
 to the connected node. The unit of the current is pA.
 
 Parameters:
 
 The following parameters can be set in the status dictionary:
-amplitude  double - Amplitude of current in pA
+
+- amplitude  double - Amplitude of current in pA
 
 Examples:
 
-The dc current can be altered in the following way:
-/dc_generator Create /dc_gen Set    % Creates a dc_generator, which is a node
-dc_gen GetStatus info                    % View properties (amplitude is 0)
-dc_gen << /amplitude 1500. >> SetStatus
-dc_gen GetStatus info                    % amplitude is now 1500.0
+    SLI
+
+    The dc current can be altered in the following way:
+    /dc_generator Create /dc_gen Set  % Creates a dc_generator, which is a node
+    dc_gen GetStatus info             % View properties (amplitude is 0)
+    dc_gen << /amplitude 1500. >> SetStatus
+    dc_gen GetStatus info             % amplitude is now 1500.0
 
 Remarks:
 

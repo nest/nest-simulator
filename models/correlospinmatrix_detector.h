@@ -64,24 +64,24 @@ specified receptor will be pooled.
 
 Parameters:
 
-Tstart     double    - Time when to start counting events. This time should
-                      be set to at least start + tau_max in order to avoid
-                      edge effects of the correlation counts.
-Tstop      double    - Time when to stop counting events. This time should be
-                      set to at most Tsim - tau_max, where Tsim is the
-                      duration of simulation, in order to avoid edge effects
-                      of the correlation counts.
-delta_tau  double    - bin width in ms. This has to be a multiple of the
-                      resolution.
-tau_max    double    - one-sided width in ms. In the lower triangular part
-                      events with differences in [0, tau_max+delta_tau/2)
-                      are counted. On the diagonal and in the upper
-                      triangular part events with differences in (0,
-                      tau_max+delta_tau/2]
-N_channels long      - The number of inputs to correlate. This defines the
-                      range of receptor_type. Default is 1.
+- Tstart     double    - Time when to start counting events. This time should
+                        be set to at least start + tau_max in order to avoid
+                        edge effects of the correlation counts.
+- Tstop      double    - Time when to stop counting events. This time should be
+                        set to at most Tsim - tau_max, where Tsim is the
+                        duration of simulation, in order to avoid edge effects
+                        of the correlation counts.
+- delta_tau  double    - bin width in ms. This has to be a multiple of the
+                        resolution.
+- tau_max    double    - one-sided width in ms. In the lower triangular part
+                        events with differences in [0, tau_max+delta_tau/2)
+                        are counted. On the diagonal and in the upper
+                        triangular part events with differences in (0,
+                        tau_max+delta_tau/2]
+- N_channels long      - The number of inputs to correlate. This defines the
+                        range of receptor_type. Default is 1.
 
-count_covariance matrix of long vectors, read-only   - raw, auto/cross
+- count_covariance matrix of long vectors, read-only   - raw, auto/cross
                                                       correlation counts
 
 Remarks:
@@ -106,27 +106,27 @@ Sompolinsky (1994) PRE 50(4) p. 3171.
 See also examples/nest/correlospinmatrix_detector.sli for a basic
 example in sli.
 
-   /sg1 /spike_generator Create def
-   /sg2 /spike_generator Create def
-   /sg3 /spike_generator Create def
+    /sg1 /spike_generator Create def
+    /sg2 /spike_generator Create def
+    /sg3 /spike_generator Create def
 
-   /csd /correlospinmatrix_detector Create def
+    /csd /correlospinmatrix_detector Create def
 
-   csd << /N_channels 3 /tau_max 10. /delta_tau 1.0 >> SetStatus
+    csd << /N_channels 3 /tau_max 10. /delta_tau 1.0 >> SetStatus
 
-   sg1 << /spike_times [10. 10. 16.] >> SetStatus
-   sg2 << /spike_times [15. 15. 20.] >> SetStatus
-
-
-   % one final event needed so that last down transition will be detected
-   sg3 << /spike_times [25.] >> SetStatus
+    sg1 << /spike_times [10. 10. 16.] >> SetStatus
+    sg2 << /spike_times [15. 15. 20.] >> SetStatus
 
 
-   sg1 csd << /receptor_type 0 >> Connect
-   sg2 csd << /receptor_type 1 >> Connect
-   sg3 csd << /receptor_type 2 >> Connect
+    % one final event needed so that last down transition will be detected
+    sg3 << /spike_times [25.] >> SetStatus
 
-   100. Simulate
+
+    sg1 csd << /receptor_type 0 >> Connect
+    sg2 csd << /receptor_type 1 >> Connect
+    sg3 csd << /receptor_type 2 >> Connect
+
+    100. Simulate
 
 Receives: SpikeEvent
 

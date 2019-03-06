@@ -74,9 +74,9 @@ Remarks:
 - If identical parameters are used, and beta==0, then this model shall
   behave exactly as mat2_psc_exp.
 - The time constants in the model must fullfill the following conditions:
-  - tau_m != {tau_syn_ex, tau_syn_in}
-  - tau_v != {tau_syn_ex, tau_syn_in}
-  - tau_m != tau_v
+  - \f$ tau_m != {tau_syn_ex, tau_syn_in} \f$
+  - \f$ tau_v != {tau_syn_ex, tau_syn_in} \f$
+  - \f$ tau_m != tau_v \f$
   This is required to avoid singularities in the numerics. This is a
   problem of implementation only, not a principal problem of the model.
 - Expect unstable numerics if time constants that are required to be
@@ -86,57 +86,59 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-C_m          double - Capacity of the membrane in pF
-E_L          double - Resting potential in mV
-tau_m        double - Membrane time constant in ms
-tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
-tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
-t_ref        double - Duration of absolute refractory period (no spiking) in
-                      ms
-V_m          double - Membrane potential in mV
-I_e          double - Constant input current in pA
-t_spike      double - Point in time of last spike in ms
-tau_1        double - Short time constant of adaptive threshold in ms
-                      [3, eqs 2-3]
-tau_2        double - Long time constant of adaptive threshold in ms
-                      [3, eqs 2-3]
-alpha_1      double - Amplitude of short time threshold adaption in mV
-                      [3, eqs 2-3]
-alpha_2      double - Amplitude of long time threshold adaption in mV
-                      [3, eqs 2-3]
-tau_v        double - Time constant of kernel for voltage-dependent threshold
-                      component in ms [3, eqs 16-17]
-beta         double - Scaling coefficient for voltage-dependent threshold
-                      component in 1/ms [3, eqs 16-17]
-omega        double - Resting spike threshold in mV (absolute value, not
-                      relative to E_L as in [3])
+- C_m          double - Capacity of the membrane in pF
+- E_L          double - Resting potential in mV
+- tau_m        double - Membrane time constant in ms
+- tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
+- tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
+- t_ref        double - Duration of absolute refractory period (no spiking) in
+                        ms
+- V_m          double - Membrane potential in mV
+- I_e          double - Constant input current in pA
+- t_spike      double - Point in time of last spike in ms
+- tau_1        double - Short time constant of adaptive threshold in ms
+                        [3, eqs 2-3]
+- tau_2        double - Long time constant of adaptive threshold in ms
+                        [3, eqs 2-3]
+- alpha_1      double - Amplitude of short time threshold adaption in mV
+                        [3, eqs 2-3]
+- alpha_2      double - Amplitude of long time threshold adaption in mV
+                        [3, eqs 2-3]
+- tau_v        double - Time constant of kernel for voltage-dependent threshold
+                        component in ms [3, eqs 16-17]
+- beta         double - Scaling coefficient for voltage-dependent threshold
+                        component in 1/ms [3, eqs 16-17]
+- omega        double - Resting spike threshold in mV (absolute value, not
+                        relative to E_L as in [3])
 
 The following state variables can be read out with the multimeter device:
 
-V_m          Non-resetting membrane potential
-V_th         Two-timescale adaptive threshold
+- V_m          Non-resetting membrane potential
+- V_th         Two-timescale adaptive threshold
 
 Remarks:
 
-tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
-degenerate case of the ODE describing the model [1]. For very similar values,
-numerics will be unstable.
+\f$ tau_m != tau_syn_{ex,in} \f$ is required by the current implementation to
+avoid a degenerate case of the ODE describing the model [1].
+For very similar values, numerics will be unstable.
 
 References:
 
-[1] Rotter S & Diesmann M (1999) Exact simulation of
-    time-invariant linear systems with applications to neuronal
-    modeling. Biologial Cybernetics 81:381-402.
-[2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State
-    space analysis of synchronous spiking in cortical neural
-    networks. Neurocomputing 38-40:565-571.
-[3] Kobayashi R, Tsubo Y and Shinomoto S (2009) Made-to-order
-    spiking neuron model equipped with a multi-timescale adaptive
-    threshold. Front. Comput. Neurosci. 3:9. doi:10.3389/neuro.10.009.2009
-[4] Yamauchi S, Kim H and Shinomoto S (2011) Elemental spiking neuron model
-            for reproducing diverse firing patterns and predicting precise
-            firing times. Front. Comput. Neurosci. 5:42.
-            doi: 10.3389/fncom.2011.00042
+\verbatim embed:rst
+.. [1] Rotter S & Diesmann M (1999) Exact simulation of
+       time-invariant linear systems with applications to neuronal
+       modeling. Biologial Cybernetics 81:381-402.
+.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State
+       space analysis of synchronous spiking in cortical neural
+       networks. Neurocomputing 38-40:565-571.
+.. [3] Kobayashi R, Tsubo Y and Shinomoto S (2009) Made-to-order
+       spiking neuron model equipped with a multi-timescale adaptive
+       threshold. Front. Comput. Neurosci. 3:9. doi:10.3389/neuro.10.009.2009
+.. [4] Yamauchi S, Kim H and Shinomoto S (2011) Elemental spiking neuron model
+       for reproducing diverse firing patterns and predicting precise
+       firing times. Front. Comput. Neurosci. 5:42.
+      doi: 10.3389/fncom.2011.00042
+\endverbatim
 
 Sends: SpikeEvent
 

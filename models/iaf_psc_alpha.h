@@ -50,7 +50,7 @@ The threshold crossing is followed by an absolute refractory period
 during which the membrane potential is clamped to the resting potential.
 
 The linear subthresold dynamics is integrated by the Exact
-Integration scheme [1]. The neuron dynamics is solved on the time
+Integration scheme [][1]. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -90,17 +90,17 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m        double - Membrane potential in mV
-E_L        double - Resting membrane potential in mV.
-C_m        double - Capacity of the membrane in pF
-tau_m      double - Membrane time constant in ms.
-t_ref      double - Duration of refractory period in ms.
-V_th       double - Spike threshold in mV.
-V_reset    double - Reset potential of the membrane in mV.
-tau_syn_ex double - Rise time of the excitatory synaptic alpha function in ms.
-tau_syn_in double - Rise time of the inhibitory synaptic alpha function in ms.
-I_e        double - Constant external input current in pA.
-V_min      double - Absolute lower value for the membrane potential.
+- V_m        double - Membrane potential in mV
+- E_L        double - Resting membrane potential in mV.
+- C_m        double - Capacity of the membrane in pF
+- tau_m      double - Membrane time constant in ms.
+- t_ref      double - Duration of refractory period in ms.
+- V_th       double - Spike threshold in mV.
+- V_reset    double - Reset potential of the membrane in mV.
+- tau_syn_ex double - Rise time of the excitatory synaptic alpha function in ms.
+- tau_syn_in double - Rise time of the inhibitory synaptic alpha function in ms.
+- I_e        double - Constant external input current in pA.
+- V_min      double - Absolute lower value for the membrane potential.
 
 Remarks:
 
@@ -112,15 +112,17 @@ the NEST source code (docs/model_details).
 
 References:
 
-[1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-    systems with applications to neuronal modeling. Biologial Cybernetics
-    81:381-402.
-[2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-    analysis of synchronous spiking in cortical neural networks.
-    Neurocomputing 38-40:565-571.
-[3] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact subthreshold
-    integration with continuous spike times in discrete time neural network
-    simulations. Neural Computation, in press
+\verbatim embed:rst
+.. [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+       systems with applications to neuronal modeling. Biologial Cybernetics
+       81:381-402.
+.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
+       analysis of synchronous spiking in cortical neural networks.
+       Neurocomputing 38-40:565-571.
+.. [3] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact
+       subthreshold integration with continuous spike times in discrete time
+       neural network simulations. Neural Computation, in press
+\endverbatim
 
 Sends: SpikeEvent
 

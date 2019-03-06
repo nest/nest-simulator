@@ -60,10 +60,12 @@ counts in the following way:
 
 Let t_{1,i} be the spike times of source 1,
 t_{2,j} the spike times of source 2.
-histogram[n] then contains the sum of products of the weight w_{1,i}*w_{2,j},
-count_histogram[n] contains 1 summed over all events with t_{2,j}-t_{1,i} in
+histogram[n] then contains the sum of products of the weight
+\f$ w_{1,i}*w_{2,j}, \f$ count_histogram[n] contains 1 summed over all events
+with\f$ t_{2,j}-t_{1,i} \f$ in
 
-[ n*delta_tau - tau_max - delta_tau/2 , n*delta_tau - tau_max + delta_tau/2 )
+   @f[ n*delta_tau - tau_max - delta_tau/2 ,
+      n*delta_tau - tau_max + delta_tau/2 @f]
 
 The bins are centered around the time difference they represent, but are
 left-closed and right-open. This means that events with time difference
@@ -77,29 +79,29 @@ receptor_port = 1 will be used as spike source 2.
 
 Parameters:
 
-Tstart     double    - Time when to start counting events. This time should
-                       be set to at least start + tau_max in order to avoid
-                       edge effects of the correlation counts.
-Tstop      double    - Time when to stop counting events. This time should be
-                       set to at most Tsim - tau_max, where Tsim is the
-                       duration of simulation, in order to avoid edge effects
-                       of the correlation counts.
-delta_tau  double    - bin width in ms
-tau_max    double    - one-sided histogram width in ms. Events with
-                       differences in
-                       [-tau_max-delta_tau/2, tau_max+delta_tau/2)
-                       are counted.
+- Tstart     double    - Time when to start counting events. This time should
+                         be set to at least start + tau_max in order to avoid
+                         edge effects of the correlation counts.
+- Tstop      double    - Time when to stop counting events. This time should be
+                         set to at most Tsim - tau_max, where Tsim is the
+                         duration of simulation, in order to avoid edge effects
+                         of the correlation counts.
+- delta_tau  double    - bin width in ms
+- tau_max    double    - one-sided histogram width in ms. Events with
+                         differences in
+                         [-tau_max-delta_tau/2, tau_max+delta_tau/2)
+                         are counted.
 
-histogram            double vector, read-only  - raw, weighted cross
+- histogram            double vector, read-only  - raw, weighted cross
                                                  correlation counts
-histogram_correction double_vector, read-only  - correction factors for kahan
-                                                 summation algorithm
-count_histogram      long vector, read-only    - raw, cross correlation
-                                                 counts
-n_events             integer vector            - number of events from source
-                                                 0 and 1. By setting n_events
-                                                 to [0 0], the histogram is
-                                                 cleared.
+- histogram_correction double_vector, read-only  - correction factors for kahan
+                                                   summation algorithm
+- count_histogram      long vector, read-only    - raw, cross correlation
+                                                   counts
+- n_events             integer vector            - number of events from source
+                                                   0 and 1. By setting n_events
+                                                   to [0 0], the histogram is
+                                                   cleared.
 
 Remarks:
 
@@ -123,19 +125,24 @@ of State_, but are initialized by init_buffers_().
 
 Example:
 
-/s1 /spike_generator Create def
-/s2 /spike_generator Create def
-s1 << /spike_times [ 1.0 1.5 2.7 4.0 5.1 ] >> SetStatus
-s2 << /spike_times [ 0.9 1.8 2.1 2.3 3.5 3.8 4.9 ] >> SetStatus
-/cd /correlation_detector Create def
-cd << /delta_tau 0.5 /tau_max 2.5 >> SetStatus
-s1 cd << /receptor_type 0 >> Connect
-s2 cd << /receptor_type 1 >> Connect
-10 Simulate
-cd [/n_events] get ==   --> [# 5 7 #]
-cd [/histogram] get ==  --> [. 0 3 3 1 4 3 2 6 1 2 2 .]
-cd << /reset true >> SetStatus
-cd [/histogram] get ==  --> [. 0 0 0 0 0 0 0 0 0 0 0 .]
+See Auto- and crosscorrelation functions for spike trains[cross_check_mip_corrdet.py]
+in pynest/examples.
+
+     SLI
+
+     /s1 /spike_generator Create def
+     /s2 /spike_generator Create def
+     s1 << /spike_times [ 1.0 1.5 2.7 4.0 5.1 ] >> SetStatus
+     s2 << /spike_times [ 0.9 1.8 2.1 2.3 3.5 3.8 4.9 ] >> SetStatus
+     /cd /correlation_detector Create def
+     cd << /delta_tau 0.5 /tau_max 2.5 >> SetStatus
+     s1 cd << /receptor_type 0 >> Connect
+     s2 cd << /receptor_type 1 >> Connect
+     10 Simulate
+     cd [/n_events] get ==   --> [# 5 7 #]
+     cd [/histogram] get ==  --> [. 0 3 3 1 4 3 2 6 1 2 2 .]
+     cd << /reset true >> SetStatus
+     cd [/histogram] get ==  --> [. 0 0 0 0 0 0 0 0 0 0 0 .]
 
 Receives: SpikeEvent
 

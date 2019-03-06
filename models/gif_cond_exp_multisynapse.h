@@ -64,38 +64,50 @@ This model features both an adaptation current and a dynamic threshold for
 spike-frequency adaptation. The membrane potential (V) is described by the
 differential equation:
 
+@f[
 C*dV(t)/dt = -g_L*(V(t)-E_L) - eta_1(t) - eta_2(t) - ... - eta_n(t) + I(t)
+@f]
 
 where each eta_i is a spike-triggered current (stc), and the neuron model can
 have arbitrary number of them.
 Dynamic of each eta_i is described by:
-
+@f[
 tau_eta_i*d{eta_i}/dt = -eta_i
-
+@f]
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
 
+@f[
 eta_i = eta_i + q_eta_i  (in case of spike emission).
+@f]
 
 Neuron produces spikes STOCHASTICALLY according to a point process with the
 firing intensity:
 
+@f[
 lambda(t) = lambda_0 * exp[ (V(t)-V_T(t)) / Delta_V ]
+@f]
 
 where V_T(t) is a time-dependent firing threshold:
 
+@f[
 V_T(t) = V_T_star + gamma_1(t) + gamma_2(t) + ... + gamma_m(t)
+@f]
 
 where gamma_i is a kernel of spike-frequency adaptation (sfa), and the neuron
 model can have arbitrary number of them.
 Dynamic of each gamma_i is described by:
 
+@f[
 tau_gamma_i*d{gamma_i}/dt = -gamma_i
+@f]
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
 
+@f[
 gamma_i = gamma_i + q_gamma_i  (in case of spike emission).
+@f]
 
 Note that in the current implementation of the model (as described in [1] and
 [2]) the values of eta_i and gamma_i are affected immediately after spike
@@ -118,63 +130,66 @@ Parameters:
 The following parameters can be set in the status dictionary.
 
 Membrane Parameters:
-  C_m        double - Capacity of the membrane in pF
-  t_ref      double - Duration of refractory period in ms.
-  V_reset    double - Reset value after a spike in mV.
-  E_L        double - Leak reversal potential in mV.
-  g_L        double - Leak conductance in nS.
-  I_e        double - Constant external input current in pA.
+-  C_m        double - Capacity of the membrane in pF
+-  t_ref      double - Duration of refractory period in ms.
+-  V_reset    double - Reset value after a spike in mV.
+-  E_L        double - Leak reversal potential in mV.
+-  g_L        double - Leak conductance in nS.
+-  I_e        double - Constant external input current in pA.
 
 Spike adaptation and firing intensity parameters:
-  q_stc      vector of double - Values added to spike-triggered currents (stc)
-                                after each spike emission in pA.
-  tau_stc    vector of double - Time constants of stc variables in ms.
-  q_sfa      vector of double - Values added to spike-frequency adaptation
-                                (sfa) after each spike emission in mV.
-  tau_sfa    vector of double - Time constants of sfa variables in ms.
-  Delta_V    double - Stochasticity level in mV.
-  lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
-  V_T_star   double - Base threshold in mV.
+-  q_stc      vector of double - Values added to spike-triggered currents (stc)
+-                                after each spike emission in pA.
+-  tau_stc    vector of double - Time constants of stc variables in ms.
+-  q_sfa      vector of double - Values added to spike-frequency adaptation
+-                                (sfa) after each spike emission in mV.
+-  tau_sfa    vector of double - Time constants of sfa variables in ms.
+-  Delta_V    double - Stochasticity level in mV.
+-  lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
+-  V_T_star   double - Base threshold in mV.
 
 Synaptic parameters
-  tau_syn    double vector - Time constants of the synaptic conductance
+-  tau_syn    double vector - Time constants of the synaptic conductance
                                in ms (same size as E_rev).
-  E_rev      double vector - Reversal potentials in mV (same size as tau_syn).
+-  E_rev      double vector - Reversal potentials in mV (same size as tau_syn).
 
 Integration parameters
-  gsl_error_tol  double - This parameter controls the admissible error of the
+-  gsl_error_tol  double - This parameter controls the admissible error of the
                           GSL integrator. Reduce it if NEST complains about
                           numerical instabilities.
 
 Example:
 
-neuron = nest.Create('gif_cond_exp_multisynapse',
-                     params={'E_rev': [0.0, -85.0],
-                             'tau_syn': [4.0, 8.0]})
+    neuron = nest.Create('gif_cond_exp_multisynapse',
+                         params={'E_rev': [0.0, -85.0],
+                                 'tau_syn': [4.0, 8.0]})
 
-spike = nest.Create('spike_generator', params={'spike_times':
-                                               np.array([10.0])})
+    spike = nest.Create('spike_generator', params={'spike_times':
+                                                   np.array([10.0])})
 
-delays = [1., 30.]
-w = [1., 5.]
-for syn in range(2):
-    nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
-                                          'receptor_type': 1 + syn,
-                                          'weight': w[syn],
-                                          'delay': delays[syn]})
-nest.Simulate(100.)
+    delays = [1., 30.]
+    w = [1., 5.]
+    for syn in range(2):
+        nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+                                              'receptor_type': 1 + syn,
+                                              'weight': w[syn],
+                                              'delay': delays[syn]})
+    nest.Simulate(100.)
 
 
 References:
 
-[1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
-Parameter extraction and classification of three cortical neuron types
-reveals two distinct adaptation mechanisms. J. Neurophysiol., 107(6),
-1756-1775.
+\verbatim embed:rst
 
-[2] Pozzorini C, Mensi S, Hagens O, Naud R, Koch C, Gerstner W (2015)
-Automated High-Throughput Characterization of Single Neurons by Means of
-Simplified Spiking Models. PLoS Comput. Biol., 11(6), e1004275.
+.. [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
+       Parameter extraction and classification of three cortical neuron types
+       reveals two distinct adaptation mechanisms. Journal of Neurophysiology,
+       107(6):1756-1775.
+
+.. [2] Pozzorini C, Mensi S, Hagens O, Naud R, Koch C, Gerstner W (2015)
+       Automated high-throughput characterization of single neurons by means of
+       simplified spiking models. PLoS Computational Biology, 11(6), e1004275.
+\endverbatim
 
 Sends: SpikeEvent
 

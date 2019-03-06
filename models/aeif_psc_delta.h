@@ -73,13 +73,15 @@ This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
 solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
-C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)+I(t)+I_e
+
+@f[ C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e)
+                                                     -g_i(t)(V-E_i)-w +I_e @f]
 
 and
 
-tau_w * dw/dt= a(V-E_L) -W
-
-I(t) = J Sum_k delta(t - t^k).
+@f[ tau_w * dw/dt= a(V-E_L) -W @f]
+ 
+@f[ I(t) = J Sum_k delta(t - t^k). @f]
 
 Here delta is the dirac delta function and k indexes incoming
 spikes. This is implemented such that V_m will be incremented/decremented by
@@ -90,29 +92,29 @@ Parameters:
 The following parameters can be set in the status dictionary.
 
 Dynamic state variables:
-  V_m        double - Membrane potential in mV
-  w          double - Spike-adaptation current in pA.
+-  V_m        double - Membrane potential in mV
+-  w          double - Spike-adaptation current in pA.
 
 Membrane Parameters:
-  C_m        double - Capacity of the membrane in pF
-  t_ref      double - Duration of refractory period in ms.
-  V_reset    double - Reset value for V_m after a spike. In mV.
-  E_L        double - Leak reversal potential in mV.
-  g_L        double - Leak conductance in nS.
-  I_e        double - Constant external input current in pA.
+-  C_m        double - Capacity of the membrane in pF
+-  t_ref      double - Duration of refractory period in ms.
+-  V_reset    double - Reset value for V_m after a spike. In mV.
+-  E_L        double - Leak reversal potential in mV.
+-  g_L        double - Leak conductance in nS.
+-  I_e        double - Constant external input current in pA.
 
 Spike adaptation parameters:
-  a          double - Subthreshold adaptation in nS.
-  b          double - Spike-triggered adaptation in pA.
-  Delta_T    double - Slope factor in mV
-  tau_w      double - Adaptation time constant in ms
-  V_th       double - Spike initiation threshold in mV
-  V_peak     double - Spike detection threshold in mV.
+-  a          double - Subthreshold adaptation in nS.
+-  b          double - Spike-triggered adaptation in pA.
+-  Delta_T    double - Slope factor in mV
+-  tau_w      double - Adaptation time constant in ms
+-  V_th       double - Spike initiation threshold in mV
+-  V_peak     double - Spike detection threshold in mV.
 
 Integration parameters
-  gsl_error_tol  double - This parameter controls the admissible error of the
-                          GSL integrator. Reduce it if NEST complains about
-                          numerical instabilities.
+-  gsl_error_tol  double - This parameter controls the admissible error of the
+                           GSL integrator. Reduce it if NEST complains about
+                           numerical instabilities.
 
 Author: Mikkel Elle Lepperød adapted from aeif_psc_exp and iaf_psc_delta
 
@@ -120,9 +122,13 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-References: Brette R and Gerstner W (2005) Adaptive Exponential
-            Integrate-and-Fire Model as an Effective Description of
-            Neuronal Activity. J Neurophysiol 94:3637-3642
+References: 
+
+\verbatim embed:rst
+.. [1] Brette R and Gerstner W (2005). Adaptive Exponential
+       Integrate-and-Fire Model as an Effective Description of Neuronal
+       Activity. J Neurophysiol 94:3637-3642
+\endverbatim
 
 SeeAlso: iaf_psc_delta, aeif_cond_exp, aeif_psc_exp
 */

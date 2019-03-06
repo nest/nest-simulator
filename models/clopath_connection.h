@@ -61,8 +61,9 @@ tau_x    double - Time constant of the trace of the presynaptic spike train.
 Wmax     double - Maximum allowed weight.
 Wmin     double - Minimum allowed weight.
 
-Other parameters like the amplitudes for depression and facilitation are
-stored in in the neuron models that are compatible with the Clopath synapse.
+Other parameters like the amplitudes for long-term potentiation (LTP) and
+depression (LTD) are stored in in the neuron models that are compatible with the
+Clopath synapse.
 
 Transmits: SpikeEvent
 

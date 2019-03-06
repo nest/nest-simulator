@@ -86,6 +86,9 @@ V_m         double - Membrane potential in mV.
 w           double - Spike-adaptation current in pA.
 z           double - Spike-adaptation current in pA.
 V_th        double - Adaptive spike initiation threshold in mV.
+u_bar_plus  double - Low-pass filtered Membrane potential in mV.
+u_bar_minus double - Low-pass filtered Membrane potential in mV.
+u_bar_bar   double - Low-pass filtered u_bar_minus in mV.
 
 Membrane Parameters:
 C_m         double - Capacity of the membrane in pF
@@ -108,9 +111,6 @@ V_th_max   double - Value of V_th afer a spike in mV.
 V_th_rest  double - Resting value of V_th in mV.
 
 Clopath rule parameters:
-u_bar_plus    double - Low-pass filtered Membrane potential in mV.
-u_bar_minus   double - Low-pass filtered Membrane potential in mV.
-u_bar_bar     double - Low-pass filtered u_bar_minus in mV.
 A_LTD         double - Amplitude of depression in 1/mV.
 A_LTP         double - Amplitude of facilitation in 1/mV^2.
 theta_plus    double - threshold for u in mV.
@@ -155,7 +155,8 @@ References:
     in STDP – a unified model. Front. Synaptic Neurosci. 2:25
     doi: 10.3389/fnsyn.2010.00025
 [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
-    https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
+    https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file=%2f
+      modeldb_package%2fVoTriCode%2faEIF.m
 
 SeeAlso: aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
 */

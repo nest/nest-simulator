@@ -13,6 +13,7 @@ Table of Contents
    installation/index
    getting_started
    tutorials/index
+   models/index
    examples/index
    guides/index
    getting_help

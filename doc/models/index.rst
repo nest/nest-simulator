@@ -8,10 +8,9 @@ We also have a `list of user-contributed modules <https://github.com/nest/nest-s
 on Github for you to check out.
 
 .. toctree::
-   :maxdepth: 1
+  :maxdepth: 1
 
-   neurons/index
-   synapses/index
-   devices/index
-   topology/index
-   create_model
+  neurons
+  synapses
+  devices
+  create_model

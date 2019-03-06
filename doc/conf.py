@@ -121,8 +121,12 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
+    'breathe',
 ]
 
+breathe_projects = {"EXTRACT_MODELS": "./models/xml_doxyoutput/xml"}    
+
+breathe_default_project = "EXTRACT_MODELS"  
 # sphinx_gallery_conf = {
 #    'doc_module': ('sphinx_gallery', 'numpy'),
 #    # path to your examples scripts

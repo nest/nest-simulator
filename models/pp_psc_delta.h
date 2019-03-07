@@ -60,7 +60,7 @@ both by adjusting three parameters:
 
 @f[  rate = Rect[ c_1 * V' + c_2 * exp(c_3 * V') ], @f]
 
-where the effective potential V' = V_m - E_sfa and E_sfa is called
+where the effective potential \f$ V' = V_m - E_sfa \f$ and E_sfa is called
 the adaptive threshold. Here Rect means rectifier:
 \f$ Rect(x) = {x if x>=0, 0 else} \f$ (this is necessary because negative rates are
 not possible).

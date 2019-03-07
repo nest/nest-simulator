@@ -75,10 +75,10 @@ using cont_delay_connection. To set non-grid delays, you must either
 2) set the delay for each synapse after the connections have been created,
    e.g.,
 
-     sg n 100. 1.0 /cont_delay_synapse Connect
-     << /source [ sg ] /synapse_model /cont_delay_synapse >> GetConnections
-        { << /delay 1.7 >> SetStatus }
-     forall
+    sg n 100. 1.0 /cont_delay_synapse Connect
+    << /source [ sg ] /synapse_model /cont_delay_synapse >> GetConnections
+       { << /delay 1.7 >> SetStatus }
+    forall
 
 Alternative 1) is much more efficient, but all synapses then will have the
                same delay.

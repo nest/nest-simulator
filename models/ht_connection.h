@@ -47,8 +47,8 @@ P(T+) = (1 - delta_P) P(T-)   for T : time of a spike
 P(t=0) = 1
 @f]
 @f[
-w(t) = w_max * P(t)  is the resulting synaptic weight
-@f]
+w(t) = w_max * P(t)  @f] is the resulting synaptic weight
+
 Parameters:
 
 The following parameters can be set in the status dictionary:
@@ -61,7 +61,7 @@ References:
 
 \verbatim embed:rst
 .. [1] Hill S, Tononi G (2005). Journal of Neurophysiology. 93:1671-1698.
-\endverbatim 
+\endverbatim
 
 Sends: SpikeEvent
 

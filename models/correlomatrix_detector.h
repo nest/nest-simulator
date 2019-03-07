@@ -50,8 +50,8 @@ record spikes from several pools of spike inputs and calculates the
 covariance matrix of inter-spike intervals (raw auto and cross correlation)
 binned to bins of duration delta_tau. The histogram is only recorded for
 non-negative time lags. The negative part can be obtained by the symmetry of
-the covariance matrix 
-    C(t) = C^T(-t).
+the covariance matrix
+  \f$  C(t) = C^T(-t) \f$.
 The result can be obtained via GetStatus under the key /count_covariance.
 In parallel it records a weighted histogram, where the connection weight are
 used to weight every count, which is available under the key /covariance.
@@ -65,7 +65,9 @@ diagonal and in the upper triangular part the intervals are left-open and
 right-closed. This ensures proper counting of events at the border of bins,
 allowing consistent integration of a histogram over negative and positive
 time lags by stacking two parts of the histogram
+
     (C(t)=[C[i][j][::-1],C[j][i][1:]]).
+
 In this case one needs to exclude C[j][i][0] to avoid counting the zero-lag
 bin twice.
 

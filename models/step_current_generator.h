@@ -75,6 +75,7 @@ which typically would not fall onto simulation time steps.
 Examples:
 
 The current can be altered in the following way:
+
     /step_current_generator Create /sc Set
     sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
 

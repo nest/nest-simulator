@@ -53,18 +53,18 @@ Description:
 
 Base class for rate model with input noise of the form
 @f[
-$\tau dX_i(t) = [ - \lambda X_i(t) + \mu
+\tau dX_i(t) = [ - \lambda X_i(t) + \mu
                 + \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) ] dt
-                + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)$
+                + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)
 @f]
 or
 @f[
-$\tau dX_i(t) = [ - \lambda X_i(t) + \mu
+\tau dX_i(t) = [ - \lambda X_i(t) + \mu
                 + \text{mult\_coupling\_ex}( X_i(t) ) \cdot
                 \phi( \sum w^{ > 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) ) )
                 + \text{mult\_coupling\_in}( X_i(t) ) \cdot
                 \phi( \sum w^{ < 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) ] dt
-                + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)$.
+                + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t).
 @f]
 This template class needs to be instantiated with a class
 containing the following functions:

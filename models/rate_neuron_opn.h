@@ -53,19 +53,19 @@ Description:
 
 Base class for rate model with output noise of the form
 @f[
-$\tau dX_i(t) / dt = - X_i(t) + \mu + \phi( \sum w_{ij} \cdot
+\tau dX_i(t) / dt = - X_i(t) + \mu + \phi( \sum w_{ij} \cdot
                      \psi( X_j(t-d_{ij}) + \sqrt{tau} \cdot
-                     \sigma \cdot \xi_j(t) ) )$
+                     \sigma \cdot \xi_j(t) ) )
 @f]
 or
 @f[
-$\tau dX_i(t) / dt = - X_i(t) + \mu
+\tau dX_i(t) / dt = - X_i(t) + \mu
                      + \text{mult\_coupling\_ex}( X_i(t) ) \cdot
                      \phi( \sum w^{ > 0 }_{ij} \cdot \psi( X_j(t-d_{ij})
                      + \sqrt{tau} \cdot \sigma \cdot \xi_j(t) ) )
                      + \text{mult\_coupling\_in}( X_i(t) ) \cdot
                      \phi( \sum w^{ < 0 }_{ij} \cdot \psi( X_j(t-d_{ij})
-                     + \sqrt{tau} \cdot \sigma \cdot \xi_j(t) ) )$.
+                     + \sqrt{tau} \cdot \sigma \cdot \xi_j(t) ) ).
 @f]
 Here $\xi_j(t)$ denotes a Gaussian white noise.
 

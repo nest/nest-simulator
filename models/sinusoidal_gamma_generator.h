@@ -93,7 +93,7 @@ Receives: DataLoggingRequest
 
 Sends: SpikeEvent
 
-References: 
+References:
 
 \verbatim embed:rst
 .. [1] Barbieri et al. (2001) Journal of Neuroscience Methods, 105:25-3.
@@ -113,25 +113,26 @@ SeeAlso: sinusoidal_poisson_generator, gamma_sup_generator
  * performance at all.
  * @note  The simulator works by calculating the hazard h(t) for each time step
  * and comparing h(t) dt to a [0,1)-uniform number. The hazard is given by
- * $[
+ * @f[
  *     h(t) = \frac{a \lambda(t) \Lambda(t)^{a-1} e^{-\Lambda(t)}}{\Gamma(a,
  *                                                                  \Lambda(t))}
- * $]
+ * @f]
  * with
- * $[  \lambda(t) = dc + ac \sin ( 2 \pi f t + \phi ) $]
- * $[  \Lambda(t) = a \int_{t_0}^t \lambda(s) ds $]
+ * @f[  \lambda(t) = dc + ac \sin ( 2 \pi f t + \phi ) @f]
+ * @f[  \Lambda(t) = a \int_{t_0}^t \lambda(s) ds @f]
  * and the incomplete Gamma function $\Gamma(a,z)$; $a$ is the order of the
- * gamma function and $t_0$ the time of the most recent spike.
+ * gamma function and \f$t_0\f$ the time of the most recent spike.
  *
  * @note This implementation includes an additional $a$ factor in the
- * calculation of $\Lambda(t)$ and $h(t)$ in order to keep the mean rate
- * constant with varying $a$
+ * calculation of \f$\Lambda(t)\f$ and \f$h(t)\f$ in order to keep the mean rate
+ * constant with varying \f$a\f$
  *
  * @note Let $t_0$ be the time of the most recent spike. If stimulus parameters
  * are changed at
- *       $t_c > t_0$, then $\Lambda(t)$ is integrated piecewise for $t>t_c$ as
- *       $[ \Lambda(t) = \a_{old} \int_{t_0}^{t_c]} \lambda_{old}(s) ds
- *                      + \a_{new} \int_{t_c}^{t]} \lambda_{new}(s) ds $]
+ *       \f$t_c > t_0\f$, then \f$\Lambda(t)\f$ is integrated piecewise for
+ *       \f$t>t_c\f$ as
+ *       @f[ \Lambda(t) = \a_{old} \int_{t_0}^{t_c]} \lambda_{old}(s) ds
+ *                      + \a_{new} \int_{t_c}^{t]} \lambda_{new}(s) ds @f]
  *       where "old" and "new" indicate old an new parameter values,
  *       respectively.
  *

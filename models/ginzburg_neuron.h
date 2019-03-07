@@ -102,8 +102,8 @@ References:
        Westview (1991)
 .. [3] Morrison A, Diesmann M (2008). Maintaining causality in discrete time
        neuronal simulations. In: Lectures in Supercomputational Neuroscience,
-      p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
-        (Eds.), Springer.
+       p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
+       (Eds.), Springer.
 \endverbatim
 
 Sends: SpikeEvent

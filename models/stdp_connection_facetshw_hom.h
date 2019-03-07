@@ -55,7 +55,7 @@ stdp_connection_hom.
 
 Parameters:
 
-- Common properties:
+Common properties:
 - tau_plus        double - Time constant of STDP window, causal branch in ms
 - tau_minus_stdp  double - Time constant of STDP window, anti-causal branch
                            in ms
@@ -88,7 +88,7 @@ Parameters:
                                         false; never reset) or (all true;
                                         always reset) is allowed.
 
-- Individual properties:
+Individual properties:
 - a_causal     double - causal and anti-causal spike pair accumulations
 - a_acausal    double
 - a_thresh_th  double - two thresholds used in evaluation function.

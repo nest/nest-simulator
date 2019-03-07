@@ -124,9 +124,9 @@ extensions = [
     'breathe',
 ]
 
-breathe_projects = {"EXTRACT_MODELS": "./models/xml_doxyoutput/xml"}    
+breathe_projects = {"EXTRACT_MODELS": "."}
 
-breathe_default_project = "EXTRACT_MODELS"  
+breathe_default_project = "EXTRACT_MODELS"
 # sphinx_gallery_conf = {
 #    'doc_module': ('sphinx_gallery', 'numpy'),
 #    # path to your examples scripts

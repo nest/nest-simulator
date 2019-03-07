@@ -42,36 +42,38 @@ stdp_triplet_synapse is a connection with spike time dependent
 plasticity accounting for spike triplet effects (as defined in [1]).
 
 STDP examples:
-  pair-based   Aplus_triplet = Aminus_triplet = 0.0
-  triplet      Aplus_triplet = Aminus_triplet = 1.0
+    pair-based   Aplus_triplet = Aminus_triplet = 0.0
+    triplet      Aplus_triplet = Aminus_triplet = 1.0
 
 Parameters:
 
-tau_plus           double - time constant of short presynaptic trace
+- tau_plus           double - time constant of short presynaptic trace
                             - (tau_plus of [1])
-tau_plus_triplet   double - time constant of long presynaptic trace
+- tau_plus_triplet   double - time constant of long presynaptic trace
                             - (tau_x of [1])
-Aplus              double - weight of pair potentiation rule
-                          - (A_plus_2 of [1])
-Aplus_triplet      double - weight of triplet potentiation rule
-                          - (A_plus_3 of [1])
-Aminus             double - weight of pair depression rule
-                            (A_minus_2 of [1])
-Aminus_triplet     double - weight of triplet depression rule
-                          - (A_minus_3 of [1])
-Wmax               double - maximum allowed weight
+- Aplus              double - weight of pair potentiation rule
+                            - (A_plus_2 of [1])
+- Aplus_triplet      double - weight of triplet potentiation rule
+                            - (A_plus_3 of [1])
+- Aminus             double - weight of pair depression rule
+                              (A_minus_2 of [1])
+- Aminus_triplet     double - weight of triplet depression rule
+                            - (A_minus_3 of [1])
+- Wmax               double - maximum allowed weight
 
 States:
-  Kplus              double: pre-synaptic trace (r_1 of [1])
-  Kplus_triplet      double: triplet pre-synaptic trace (r_2 of [1])
+-   Kplus              double: pre-synaptic trace (r_1 of [1])
+-   Kplus_triplet      double: triplet pre-synaptic trace (r_2 of [1])
 
 Transmits: SpikeEvent
 
 References:
 
-[1] J.-P. Pfister & W. Gerstner (2006) Triplets of Spikes in a Model
-      of Spike Timing-Dependent Plasticity.  The Journal of Neuroscience
-      26(38):9673-9682; doi:10.1523/JNEUROSCI.1425-06.2006
+\verbatim embed:rst
+.. [1] Pfister JP, Gerstner W (2006). Triplets of spikes in a model
+       of spike timing-dependent plasticity.  The Journal of Neuroscience
+       26(38):9673-9682; doi:10.1523/JNEUROSCI.1425-06.2006
+\endverbatim
 
 Notes:
 - Presynaptic traces r_1 and r_2 of [1] are stored in the connection as

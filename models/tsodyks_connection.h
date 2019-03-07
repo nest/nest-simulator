@@ -86,19 +86,22 @@ an arbitrary postsynaptic effect depending on y(t).
 Parameters:
 
 The following parameters can be set in the status dictionary:
-U         double - maximum probability of release [0,1]
-tau_psc   double - time constant of synaptic current in ms
-tau_fac   double - time constant for facilitation in ms
-tau_rec   double - time constant for depression in ms
-x         double - initial fraction of synaptic vesicles in the readily
-                   releasable pool [0,1]
-y         double - initial fraction of synaptic vesicles in the synaptic
-                   cleft [0,1]
+
+- U         double - maximum probability of release [0,1]
+- tau_psc   double - time constant of synaptic current in ms
+- tau_fac   double - time constant for facilitation in ms
+- tau_rec   double - time constant for depression in ms
+- x         double - initial fraction of synaptic vesicles in the readily
+                     releasable pool [0,1]
+- y         double - initial fraction of synaptic vesicles in the synaptic
+                     cleft [0,1]
 
 References:
 
-[1] Tsodyks, Uziel, Markram (2000) Synchrony Generation in Recurrent Networks
-    with Frequency-Dependent Synapses. Journal of Neuroscience, vol 20 RC50
+\verbatim embed:rst
+.. [1] Tsodyks, Uziel, Markram (2000). Synchrony Generation in Recurrent Networks
+    with Frequency-Dependent Synapses. Journal of Neuroscience, 20 RC50
+\endverbatim
 
 Transmits: SpikeEvent
 

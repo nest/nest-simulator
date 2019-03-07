@@ -86,14 +86,14 @@ Parameters:
 - tau_m      double - Membrane time constant (mean inter-update-interval) (ms)
 - theta      double - threshold for sigmoidal activation function (mV)
 - sigma      double - 1/sqrt(2pi) x inverse of maximal slope (mV)
- 
+
 References:
 
 \verbatim embed:rst
 .. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
        neural networks. PRE 50(4) p. 3171
 .. [2] McCulloch W, Pitts W (1943). A logical calculus of the ideas
-       immanent in nervous activity. Bulletin of Mathematical Biophysics, 
+       immanent in nervous activity. Bulletin of Mathematical Biophysics,
        5:115-133.
 .. [3] Morrison A, Diesmann M. Maintaining causality in discrete time
        neuronal simulations. In: Lectures in Supercomputational Neuroscience,

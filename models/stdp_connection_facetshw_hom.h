@@ -55,48 +55,48 @@ stdp_connection_hom.
 
 Parameters:
 
-Common properties:
-tau_plus        double - Time constant of STDP window, causal branch in ms
-tau_minus_stdp  double - Time constant of STDP window, anti-causal branch
-                         in ms
-Wmax            double - Maximum allowed weight
+- Common properties:
+- tau_plus        double - Time constant of STDP window, causal branch in ms
+- tau_minus_stdp  double - Time constant of STDP window, anti-causal branch
+                           in ms
+- Wmax            double - Maximum allowed weight
 
-no_synapses                    long - total number of synapses
-synapses_per_driver            long - number of synapses updated at once
-driver_readout_time          double - time for processing of one synapse row
-                                      (synapse line driver)
-readout_cycle_duration       double - duration between two subsequent
-                                      updates of same synapse (synapse line
-                                      driver)
-lookuptable_0          vector<long> - three look-up tables (LUT)
-lookuptable_1          vector<long>
-lookuptable_2          vector<long>
-configbit_0            vector<long> - configuration bits for evaluation
-                                      function. For details see code in
-                                      function eval_function_ and [4]
-                                      (configbit[0]=e_cc, ..[1]=e_ca,
-                                      ..[2]=e_ac, ..[3]=e_aa).
-                                      Depending on these two sets of
-                                      configuration bits weights are updated
-                                      according LUTs (out of three: (1,0),
-                                      (0,1), (1,1)). For (0,0) continue
-                                      without reset.
-configbit_1            vector<long>
-reset_pattern          vector<long> - configuration bits for reset behavior.
-                                      Two bits for each LUT (reset causal
-                                      and acausal). In hardware only (all
-                                      false; never reset) or (all true;
-                                      always reset) is allowed.
+- no_synapses                    long - total number of synapses
+- synapses_per_driver            long - number of synapses updated at once
+- driver_readout_time          double - time for processing of one synapse row
+                                        (synapse line driver)
+- readout_cycle_duration       double - duration between two subsequent
+                                        updates of same synapse (synapse line
+                                        driver)
+- lookuptable_0          vector<long> - three look-up tables (LUT)
+- lookuptable_1          vector<long>
+- lookuptable_2          vector<long>
+- configbit_0            vector<long> - configuration bits for evaluation
+                                        function. For details see code in
+                                        function eval_function_ and [4]
+                                        (configbit[0]=e_cc, ..[1]=e_ca,
+                                        ..[2]=e_ac, ..[3]=e_aa).
+                                        Depending on these two sets of
+                                        configuration bits weights are updated
+                                        according LUTs (out of three: (1,0),
+                                        (0,1), (1,1)). For (0,0) continue
+                                        without reset.
+- configbit_1            vector<long>
+- reset_pattern          vector<long> - configuration bits for reset behavior.
+                                        Two bits for each LUT (reset causal
+                                        and acausal). In hardware only (all
+                                        false; never reset) or (all true;
+                                        always reset) is allowed.
 
-Individual properties:
-a_causal     double - causal and anti-causal spike pair accumulations
-a_acausal    double
-a_thresh_th  double - two thresholds used in evaluation function.
-                      No common property, because variation of analog
-                      synapse circuitry can be applied here
-a_thresh_tl  double
-synapse_id   long   - synapse ID, used to assign synapses to groups (synapse
-                      drivers)
+- Individual properties:
+- a_causal     double - causal and anti-causal spike pair accumulations
+- a_acausal    double
+- a_thresh_th  double - two thresholds used in evaluation function.
+                        No common property, because variation of analog
+                        synapse circuitry can be applied here
+- a_thresh_tl  double
+- synapse_id   long   - synapse ID, used to assign synapses to groups (synapse
+                        drivers)
 
 Remarks:
 
@@ -113,23 +113,19 @@ Transmits: SpikeEvent
 
 References:
 
-[1] Morrison, A., Diesmann, M., and Gerstner, W. (2008).
-    Phenomenological models of synaptic plasticity based on
-    spike-timing, Biol. Cybern., 98,459--478
-
-[2] Schemmel, J., Gruebl, A., Meier, K., and Mueller, E. (2006).
-    Implementing synaptic plasticity in a VLSI spiking neural
-    network model, In Proceedings of the 2006 International
-    Joint Conference on Neural Networks, pp.1--6, IEEE Press
-
-[3] Pfeil, T., Potjans, T. C., Schrader, S., Potjans, W., Schemmel, J.,
-    Diesmann, M., & Meier, K. (2012).
-    Is a 4-bit synaptic weight resolution enough? -
-    constraints on enabling spike-timing dependent plasticity in neuromorphic
-    hardware. Front. Neurosci. 6 (90).
-
-[4] Friedmann, S. in preparation
-
+\verbatim embed:rst
+.. [1] Morrison A, Diesmann M, Gerstner W (2008). Phenomenological models of
+       synaptic plasticity based on spike-timing. Biol. Cybern, 98:459-478
+.. [2] Schemmel J, Gruebl A, Meier K, Mueller E (2006). Implementing synaptic
+       plasticity in a VLSI spiking neural network model. In Proceedings of the
+       2006 International Joint Conference on Neural Networks, pp.1--6,
+       IEEE Press.
+.. [3] Pfeil T, Potjans TC, Schrader S, Potjans W, Schemmel J, Diesmann M,
+       Meier K (2012). Is a 4-bit synaptic weight resolution enough? -
+       constraints on enabling spike-timing dependent plasticity in
+       neuromorphic hardware. Frontiers in Neuroscience 6 (90).
+.. [4] Friedmann, S. in preparation
+\endverbatim
 
 FirstVersion: July 2011
 

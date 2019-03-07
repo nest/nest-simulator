@@ -47,12 +47,12 @@ dependent plasticity (as defined in [1]).
 
 Parameters:
 
-tau_plus  double - Time constant of STDP window, potentiation in ms
-                   (tau_minus defined in post-synaptic neuron)
-lambda    double - Learning rate
-alpha     double - Asymmetry parameter (scales depressing increments as
-                   alpha*lambda)
-mu        double - Weight dependence exponent, potentiation
+- tau_plus  double - Time constant of STDP window, potentiation in ms
+                     (tau_minus defined in post-synaptic neuron)
+- lambda    double - Learning rate
+- alpha     double - Asymmetry parameter (scales depressing increments as
+                     alpha*lambda)
+- mu        double - Weight dependence exponent, potentiation
 
 Remarks:
 
@@ -60,8 +60,11 @@ The parameters can only be set by SetDefaults and apply to all synapses of
 the model.
 
 References:
-[1] Morrison et al. (2007) Spike-timing dependent plasticity in balanced
-    random networks. Neural Computation.
+
+\verbatim embed:rst
+.. [1] Morrison et al. (2007) Spike-timing dependent plasticity in balanced
+       random networks. Neural Computation.
+\endverbatim
 
 Transmits: SpikeEvent
 

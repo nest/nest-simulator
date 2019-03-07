@@ -66,24 +66,27 @@ neuromodulatory synapse is defined. The implementation is based on the
 framework presented in [1].
 
 Examples:
-/volume_transmitter Create /vol Set
-/iaf_psc_alpha Create /pre_neuron Set
-/iaf_psc_alpha Create /post_neuron Set
-/iaf_psc_alpha Create /neuromod_neuron Set
-/stdp_dopamine_synapse  << /vt vol >>  SetDefaults
-neuromod_neuron vol Connect
-pre_neuron post_neuron /stdp_dopamine_synapse Connect
+    /volume_transmitter Create /vol Set
+    /iaf_psc_alpha Create /pre_neuron Set
+    /iaf_psc_alpha Create /post_neuron Set
+    /iaf_psc_alpha Create /neuromod_neuron Set
+    /stdp_dopamine_synapse  << /vt vol >>  SetDefaults
+    neuromod_neuron vol Connect
+    pre_neuron post_neuron /stdp_dopamine_synapse Connect
 
 Parameters:
-deliver_interval - time interval given in d_min time steps, in which
-                   the volume signal is delivered from the volume
-                   transmitter to the assigned synapses
+- deliver_interval - time interval given in d_min time steps, in which
+                     the volume signal is delivered from the volume
+                     transmitter to the assigned synapses
 
 References:
-[1] Potjans W, Morrison A and Diesmann M (2010). Enabling functional
-    neural circuit simulations with distributed computing of
-    neuromodulated plasticity.
-    Front. Comput. Neurosci. 4:141. doi:10.3389/fncom.2010.00141
+
+\verbatim embed:rst
+.. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional
+       neural circuit simulations with distributed computing of
+       neuromodulated plasticity. Frontiers in Computattional Neuroscience,
+       4:141. doi:10.3389/fncom.2010.00141
+\endverbatim
 
 Author: Wiebke Potjans, Abigail Morrison
 

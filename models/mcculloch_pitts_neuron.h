@@ -77,20 +77,23 @@ noise_generator.
 
 Parameters:
 
-tau_m      double - Membrane time constant (mean inter-update-interval)
-                   in ms.
-theta      double - threshold for sigmoidal activation function mV
+- tau_m      double - Membrane time constant (mean inter-update-interval)
+                      in ms.
+- theta      double - threshold for sigmoidal activation function mV
 
 References:
 
-[1] W. McCulloch und W. Pitts (1943). A logical calculus of the ideas
-immanent in nervous activity. Bulletin of Mathematical Biophysics, 5:115-133.
-[2] Hertz Krogh, Palmer. Introduction to the theory of neural computation.
-Westview (1991).
-[3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time
-Neuronal Simulations.
-In: Lectures in Supercomputational Neuroscience, p. 267. Peter beim Graben,
-Changsong Zhou, Marco Thiel, Juergen Kurths (Eds.), Springer 2008.
+\verbatim embed:rst
+.. [1] McCulloch W, Pitts W (1943). A logical calculus of the ideas
+       immanent in nervous activity. Bulletin of Mathematical Biophysics,
+       5:115-133.
+.. [2] Krogh H, Palmer (1991). Introduction to the theory of neural computation.
+       Westview.
+.. [3] Morrison A, Diesmann M. Maintaining causality in discrete time
+       neuronal simulations. In: Lectures in Supercomputational Neuroscience,
+       p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
+       (Eds.), Springer.
+\endverbatim
 
 Sends: SpikeEvent
 

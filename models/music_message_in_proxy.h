@@ -68,27 +68,27 @@ Parameters:
 
 The following properties are available in the status dictionary:
 
-port_name      - The name of the MUSIC input port to listen to (default:
-                 message_in)
-port_width     - The width of the MUSIC input port
-data           - A sub-dictionary that contains the string messages
-                 in the form of two arrays:
-                 messages      - The strings
-                 message_times - The times the messages were sent (ms)
-n_messages     - The number of messages.
-published      - A bool indicating if the port has been already published
-                 with MUSIC
+- port_name      - The name of the MUSIC input port to listen to (default:
+                   message_in)
+- port_width     - The width of the MUSIC input port
+- data           - A sub-dictionary that contains the string messages
+                   in the form of two arrays:
+                   messages      - The strings
+                   message_times - The times the messages were sent (ms)
+- n_messages     - The number of messages.
+- published      - A bool indicating if the port has been already published
+                   with MUSIC
 
 The parameter port_name can be set using SetStatus. The field n_messages
 can be set to 0 to clear the data arrays.
 
 Examples:
 
-/music_message_in_proxy Create /mmip Set
-10 Simulate
-mmip GetStatus /data get /messages get 0 get /command Set
-(Executing command ') command join ('.) join =
-command cvx exec
+    /music_message_in_proxy Create /mmip Set
+    10 Simulate
+    mmip GetStatus /data get /messages get 0 get /command Set
+    (Executing command ') command join ('.) join =
+    command cvx exec
 
 Author: Jochen Martin Eppler
 

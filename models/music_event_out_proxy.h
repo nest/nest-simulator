@@ -64,19 +64,19 @@ Parameters:
 
 The following properties are available in the status dictionary:
 
-port_name      - The name of the MUSIC output_port to forward events to
-                 (default: event_out)
-port_width     - The width of the MUSIC input port
-published      - A bool indicating if the port has been already published
-                 with MUSIC
+- port_name      - The name of the MUSIC output_port to forward events to
+                   (default: event_out)
+- port_width     - The width of the MUSIC input port
+- published      - A bool indicating if the port has been already published
+                   with MUSIC
 
 The parameter port_name can be set using SetStatus.
 
 Examples:
 
-/iaf_psc_alpha Create /n Set
-/music_event_out_proxy Create /meop Set
-n meop << /music_channel 2 >> Connect
+    /iaf_psc_alpha Create /n Set
+    /music_event_out_proxy Create /meop Set
+    n meop << /music_channel 2 >> Connect
 
 Author: Moritz Helias, Jochen Martin Eppler
 

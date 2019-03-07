@@ -52,7 +52,8 @@ and spikes are collected only from local sources.
 Parameters:
 
 The following parameters appear in the element's status dictionary:
-p_copy double - Copy probability
+
+- p_copy double - Copy probability
 
 Sends: SpikeEvent
 

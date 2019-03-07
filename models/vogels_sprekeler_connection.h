@@ -46,19 +46,21 @@ pre-synaptic spike also causes a constant depression of the synaptic weight
 which differentiates this rule from other classical stdp rules.
 
 Parameters:
-tau        double - Time constant of STDP window, potentiation in ms
-Wmax       double - Maximum allowed weight
-eta        double - learning rate
-alpha      double - constant depression (= 2 * tau * target firing rate in
- [1])
+- tau        double - Time constant of STDP window, potentiation in ms
+- Wmax       double - Maximum allowed weight
+- eta        double - learning rate
+- alpha      double - constant depression (= 2 * tau * target firing rate in
+                       [1])
 
 Transmits: SpikeEvent
 
 References:
-[1] Vogels et al. (2011) Inhibitory Plasticity Balances Excitation and
-Inhibition in Sensory Pathways and Memory Networks.
-Science Vol. 334, Issue 6062, pp. 1569-1573
-DOI: 10.1126/science.1211095
+
+\verbatim embed:rst
+.. [1] Vogels et al. (2011). Inhibitory plasticity balances excitation and
+       inhibition in sensory pathways and memory networks. Science, 
+       334(6062):1569-1573. DOI: 10.1126/science.1211095
+\endverbatim
 
 FirstVersion: January 2016
 

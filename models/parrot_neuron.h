@@ -69,6 +69,7 @@ Receives: SpikeEvent
 Sends: SpikeEvent
 
 Parameters:
+
 No parameters to be set in the status dictionary.
 
 Author: David Reichert, Abigail Morrison, Alexander Seeholzer, Hans Ekkehard

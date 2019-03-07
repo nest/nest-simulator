@@ -58,10 +58,10 @@ Parameters:
 
 The following parameters appear in the element's status dictionary:
 
-rate     double - mean firing rate in Hz
-origin   double - Time origin for device timer in ms
-start    double - begin of device application with resp. to origin in ms
-stop     double - end of device application with resp. to origin in ms
+- rate     double - mean firing rate in Hz
+- origin   double - Time origin for device timer in ms
+- start    double - begin of device application with resp. to origin in ms
+- stop     double - end of device application with resp. to origin in ms
 
 Sends: SpikeEvent
 

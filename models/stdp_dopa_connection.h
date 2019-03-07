@@ -54,34 +54,34 @@ dopaminergic dynamics is calculated in the synapse itself.
 
 Examples:
 
-/volume_transmitter Create /vol Set
-/iaf_psc_alpha Create /pre_neuron Set
-/iaf_psc_alpha Create /post_neuron Set
-/iaf_psc_alpha Create /neuromod_neuron Set
-/stdp_dopamine_synapse  << /vt vol >>  SetDefaults
-neuromod_neuron vol Connect
-pre_neuron post_neuron /stdp_dopamine_synapse Connect
+    /volume_transmitter Create /vol Set
+    /iaf_psc_alpha Create /pre_neuron Set
+    /iaf_psc_alpha Create /post_neuron Set
+    /iaf_psc_alpha Create /neuromod_neuron Set
+    /stdp_dopamine_synapse  << /vt vol >>  SetDefaults
+    neuromod_neuron vol Connect
+    pre_neuron post_neuron /stdp_dopamine_synapse Connect
 
 Parameters:
 
 Common properties:
-      vt        long   - ID of volume_transmitter collecting the spikes
-                         from the pool of dopamine releasing neurons and
-                         transmitting the spikes to the synapse. A value of
-                         -1 indicates that no volume transmitter has been
-                         assigned.
-      A_plus    double - Amplitude of weight change for facilitation
-      A_minus   double - Amplitude of weight change for depression
-      tau_plus  double - STDP time constant for facilitation in ms
-      tau_c     double - Time constant of eligibility trace in ms
-      tau_n     double - Time constant of dopaminergic trace in ms
-      b         double - Dopaminergic baseline concentration
-      Wmin      double - Minimal synaptic weight
-      Wmax      double - Maximal synaptic weight
+- vt        long   - ID of volume_transmitter collecting the spikes
+                     from the pool of dopamine releasing neurons and
+                     transmitting the spikes to the synapse. A value of
+                     -1 indicates that no volume transmitter has been
+                     assigned.
+- A_plus    double - Amplitude of weight change for facilitation
+- A_minus   double - Amplitude of weight change for depression
+- tau_plus  double - STDP time constant for facilitation in ms
+- tau_c     double - Time constant of eligibility trace in ms
+- tau_n     double - Time constant of dopaminergic trace in ms
+- b         double - Dopaminergic baseline concentration
+- Wmin      double - Minimal synaptic weight
+- Wmax      double - Maximal synaptic weight
 
 Individual properties:
-      c         double - eligibility trace
-      n         double - neuromodulator concentration
+- c         double - eligibility trace
+- n         double - neuromodulator concentration
 
 Remarks:
 The common properties can only be set by SetDefaults and apply to all
@@ -89,13 +89,14 @@ synapses of the model.
 
 References:
 
-[1] Potjans W, Morrison A and Diesmann M (2010). Enabling
-    functional neural circuit simulations with distributed
-    computing of neuromodulated plasticity.
-    Front. Comput. Neurosci. 4:141. doi:10.3389/fncom.2010.00141
-[2] Izhikevich, E.M. (2007). Solving the distal reward problem
-    through linkage of STDP and dopamine signaling. Cereb. Cortex,
-    17(10), 2443-2452.
+\verbatim embed:rst
+.. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional neural
+       circuit simulations with distributed computing of neuromodulated
+       plasticity. Frontiers in Computational Neuroscience, 4:141.
+       doi:10.3389/fncom.2010.00141
+.. [2] Izhikevich EM (2007). Solving the distal reward problem through linkage
+       of STDP and dopamine signaling. Cereb. Cortex, 17(10):2443-2452.
+\endverbatim
 
 Transmits: SpikeEvent
 

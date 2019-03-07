@@ -67,20 +67,20 @@ Parameters:
 
 The following properties are available in the status dictionary:
 
-port_name      - The name of the MUSIC input port to listen to (default:
-                 cont_in)
-port_width     - The width of the MUSIC input port
-data           - The data received on the port as vector of doubles
-published      - A bool indicating if the port has been already published
-                 with MUSIC
+- port_name      - The name of the MUSIC input port to listen to (default:
+                   cont_in)
+- port_width     - The width of the MUSIC input port
+- data           - The data received on the port as vector of doubles
+- published      - A bool indicating if the port has been already published
+                   with MUSIC
 
 The parameter port_name can be set using SetStatus.
 
 Examples:
 
-/music_cont_in_proxy Create /mcip Set
-10 Simulate
-mcip GetStatus /data get /gaze_directions Set
+    /music_cont_in_proxy Create /mcip Set
+    10 Simulate
+    mcip GetStatus /data get /gaze_directions Set
 
 Author: Jochen Martin Eppler
 

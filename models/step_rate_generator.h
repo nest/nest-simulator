@@ -55,9 +55,11 @@ at the specified times. The unit of the rate is Hz.
 Parameters:
 
 The following parameters can be set in the status dictionary:
-amplitude_times     list of doubles - Times at which rate changes in ms
-amplitude_values    list of doubles - Amplitudes of rates in Hz
-allow_offgrid_times bool            - Default false
+
+- amplitude_times     list of doubles - Times at which rate changes in ms
+- amplitude_values    list of doubles - Amplitudes of rates in Hz
+- allow_offgrid_times bool            - Default false
+
   If false, times will be rounded to the nearest step if they are
   less than tic/2 from the step, otherwise NEST reports an error.
   If true,  times are rounded to the nearest step if within tic/2
@@ -74,11 +76,11 @@ which typically would not fall onto simulation time steps.
 Examples:
 
 The rate can be altered in the following way:
-/step_rate_generator Create /sc Set
-sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
+   /step_rate_generator Create /sc Set
+   sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
 
-The amplitude of the rate will be 0.0 Hz in the time interval [0, 0.2),
-2.0 Hz in the interval [0.2, 0.5) and 4.0 Hz from then on.
+   The amplitude of the rate will be 0.0 Hz in the time interval [0, 0.2),
+   2.0 Hz in the interval [0.2, 0.5) and 4.0 Hz from then on.
 
 Sends: DelayedRateConnectionEvent
 

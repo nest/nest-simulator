@@ -59,20 +59,20 @@ spike train.
 
 The instantaneous rate of the process is given by
 
-    f(t) = rate + amplitude sin ( 2 pi frequency t + phase * pi/180 )
+@f[ f(t) = rate + amplitude sin ( 2 pi frequency t + phase * pi/180 ) @f]
 
 Parameters:
 
 The following parameters can be set in the status dictionary:
 
-rate       double - Mean firing rate in spikes/second, default: 0 s^-1
-amplitude  double - Firing rate modulation amplitude in spikes/second,
-                    default: 0 s^-1
-frequency  double - Modulation frequency in Hz, default: 0 Hz
-phase      double - Modulation phase in degree [0-360], default: 0
-order      double - Gamma order (>= 1), default: 1
+- rate       double - Mean firing rate in spikes/second, default: 0 s^-1
+- amplitude  double - Firing rate modulation amplitude in spikes/second,
+                      default: 0 s^-1
+- frequency  double - Modulation frequency in Hz, default: 0 Hz
+- phase      double - Modulation phase in degree [0-360], default: 0
+- order      double - Gamma order (>= 1), default: 1
 
-individual_spike_trains   bool - See note below, default: true
+- individual_spike_trains   bool - See note below, default: true
 
 Remarks:
 
@@ -93,7 +93,11 @@ Receives: DataLoggingRequest
 
 Sends: SpikeEvent
 
-References: Barbieri et al, J Neurosci Methods 105:25-37 (2001)
+References: 
+
+\verbatim embed:rst
+.. [1] Barbieri et al. (2001) Journal of Neuroscience Methods, 105:25-3.
+\endverbatim
 
 FirstVersion: October 2007, May 2013
 

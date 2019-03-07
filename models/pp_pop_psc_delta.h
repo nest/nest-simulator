@@ -55,7 +55,7 @@ receives, and the output is the pooled spike train.
 
 The instantaneous firing rate of the N component neurons is defined as
 
-   rate(t) = rho_0 * exp( (h(t) - eta(t))/delta_u ),
+@f[ rate(t) = rho_0 * exp( (h(t) - eta(t))/delta_u ), @f]
 
 where h(t) is the input potential (synaptic delta currents convolved with
 an exponential kernel with time constant tau_m), eta(t) models the effect
@@ -92,54 +92,55 @@ presumably much faster population model implementation is now available, see
 gif_pop_psc_exp.
 
 
-References:
-
-[1] Naud R, Gerstner W (2012) Coding and decoding with adapting neurons:
-a population approach to the peri-stimulus time histogram.
-PLoS Compututational Biology 8: e1002711.
-
-[2] Deger M, Helias M, Boucsein C, Rotter S (2012) Statistical properties
-of superimposed stationary spike trains. Journal of Computational
-Neuroscience 32:3, 443-463.
-
-[3] Deger M, Schwalger T, Naud R, Gerstner W (2014) Fluctuations and
-information filtering in coupled populations of spiking neurons with
-adaptation. Physical Review E 90:6, 062704.
-
-
 Parameters:
 
 The following parameters can be set in the status dictionary.
 
 
-N                 int    - Number of represented neurons.
-tau_m             double - Membrane time constant in ms.
-C_m               double - Capacitance of the membrane in pF.
-rho_0             double - Base firing rate in 1/s.
-delta_u           double - Voltage scale parameter in mV.
-I_e               double - Constant input current in pA.
-tau_eta           list of doubles - time constants of post-spike kernel
-                                    in ms.
-val_eta           list of doubles - amplitudes of exponentials in
-                                    post-spike-kernel in mV.
-len_kernel        double - post-spike kernel eta is truncated after
+- N                 int    - Number of represented neurons.
+- tau_m             double - Membrane time constant in ms.
+- C_m               double - Capacitance of the membrane in pF.
+- rho_0             double - Base firing rate in 1/s.
+- delta_u           double - Voltage scale parameter in mV.
+- I_e               double - Constant input current in pA.
+- tau_eta           list of doubles - time constants of post-spike kernel
+                                      in ms.
+- val_eta           list of doubles - amplitudes of exponentials in
+                                      post-spike-kernel in mV.
+- len_kernel        double - post-spike kernel eta is truncated after
                            max(tau_eta) * len_kernel.
 
 
 The parameters correspond to the ones of pp_psc_delta as follows.
 
-   c_1              =  0.0
-   c_2              =  rho_0
-   c_3              =  1/delta_u
-   q_sfa            =  val_eta
-   tau_sfa          =  tau_eta
-   I_e              =  I_e
+    c_1              =  0.0
+    c_2              =  rho_0
+    c_3              =  1/delta_u
+    q_sfa            =  val_eta
+    tau_sfa          =  tau_eta
+    I_e              =  I_e
 
-   dead_time        =  simulation resolution
-   dead_time_random =  False
-   with_reset       =  False
-   t_ref_remaining  =  0.0
+    dead_time        =  simulation resolution
+    dead_time_random =  False
+    with_reset       =  False
+    t_ref_remaining  =  0.0
 
+
+References:
+
+\verbatim embed:rst
+.. [1] Naud R, Gerstner W (2012). Coding and decoding with adapting neurons:
+       a population approach to the peri-stimulus time histogram.
+       PLoS Compututational Biology 8: e1002711.
+
+.. [2] Deger M, Helias M, Boucsein C, Rotter S (2012). Statistical properties
+       of superimposed stationary spike trains. Journal of Computational
+       Neuroscience 32:3, 443-463.
+
+.. [3] Deger M, Schwalger T, Naud R, Gerstner W (2014). Fluctuations and
+       information filtering in coupled populations of spiking neurons with
+       adaptation. Physical Review E 90:6, 062704.
+\endverbatim
 
 Sends: SpikeEvent
 

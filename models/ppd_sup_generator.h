@@ -59,14 +59,14 @@ Parameters:
 
 The following parameters appear in the element's status dictionary:
 
-rate                double - mean firing rate of the component processes,
-                             default: 0 s^-1
-dead_time           double - minimal time between two spikes of the component
-                             processes, default: 0 ms
-n_proc              long   - number of superimposed independent component
-                             processes, default: 1
-frequency           double - rate modulation frequency, default: 0 Hz
-relative_amplitude  double - relative rate modulation amplitude, default: 0
+- rate                double - mean firing rate of the component processes,
+                               default: 0 s^-1
+- dead_time           double - minimal time between two spikes of the component
+                               processes, default: 0 ms
+- n_proc              long   - number of superimposed independent component
+                               processes, default: 1
+- frequency           double - rate modulation frequency, default: 0 Hz
+- relative_amplitude  double - relative rate modulation amplitude, default: 0
 
 Remarks:
 

@@ -100,33 +100,34 @@ Remarks:
 Parameters:
 
 The following parameters can be set in the status dictionary:
-interval     double - Recording interval in ms
-record_from  array  - Array containing the names of variables to record
-                      from, obtained from the /recordables entry of the
-                      model from which one wants to record
+
+- interval     double - Recording interval in ms
+- record_from  array  - Array containing the names of variables to record
+                       from, obtained from the /recordables entry of the
+                       model from which one wants to record
 
 Examples:
 
-SLI ] /iaf_cond_alpha Create /n Set
-SLI ] n /recordables get ==
-[/V_m /g_ex /g_in /t_ref_remaining]
-SLI ] /multimeter Create /mm Set
-SLI ] mm << /interval 0.5 /record_from [/V_m /g_ex /g_in] >> SetStatus
-SLI ] mm n Connect
-SLI ] 10 Simulate
-SLI ] mm /events get info
---------------------------------------------------
-Name                     Type                Value
---------------------------------------------------
-g_ex                     doublevectortype    <doublevectortype>
-g_in                     doublevectortype    <doublevectortype>
-senders                  intvectortype       <intvectortype>
-times                    doublevectortype    <doublevectortype>
-t_ref_remaining          doublevectortype    <doublevectortype>
-V_m                      doublevectortype    <doublevectortype>
-rate                     doublevectortype    <doublevectortype>
---------------------------------------------------
-Total number of entries: 6
+    SLI ] /iaf_cond_alpha Create /n Set
+    SLI ] n /recordables get ==
+    [/V_m /g_ex /g_in /t_ref_remaining]
+    SLI ] /multimeter Create /mm Set
+    SLI ] mm << /interval 0.5 /record_from [/V_m /g_ex /g_in] >> SetStatus
+    SLI ] mm n Connect
+    SLI ] 10 Simulate
+    SLI ] mm /events get info
+    --------------------------------------------------
+    Name                     Type                Value
+    --------------------------------------------------
+    g_ex                     doublevectortype    <doublevectortype>
+    g_in                     doublevectortype    <doublevectortype>
+    senders                  intvectortype       <intvectortype>
+    times                    doublevectortype    <doublevectortype>
+    t_ref_remaining          doublevectortype    <doublevectortype>
+    V_m                      doublevectortype    <doublevectortype>
+    rate                     doublevectortype    <doublevectortype>
+    --------------------------------------------------
+    Total number of entries: 6
 
 
 Sends: DataLoggingRequest

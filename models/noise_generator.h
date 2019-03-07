@@ -57,15 +57,15 @@ deviation of the noise.
 
 The current generated is given by
 
-  I(t) = mean + std * N_j  for t_0 + j dt <= t < t_0 + (j-1) dt
+@f[  I(t) = mean + std * N_j  for t_0 + j dt <= t < t_0 + (j-1) dt @f]
 
 where N_j are Gaussian random numbers with unit standard deviation and t_0 is
 the device onset time.
 If the modulation is added the current is given by
-
+  @f[
   I(t) = mean + sqrt(std^2 + std_mod^2 * sin(omega * t + phase)) * N_j
                                             for t_0 + j dt <= t < t_0 + (j-1) dt
-
+   @f]
 For a detailed discussion of the properties of the noise generator, please see
 the noise_generator.ipynb notebook included in the NEST source code
 (docs/model_details).
@@ -74,12 +74,12 @@ Parameters:
 The following parameters can be set in the status dictionary:
 
 
-mean      double - mean value of the noise current in pA
-std       double - standard deviation of noise current in pA
-dt        double - interval between changes in current in ms, default 1.0ms
-std_mod   double - modulated standard deviation of noise current in pA
-phase     double - Phase of sine modulation (0-360 deg)
-frequency double - Frequency of sine modulation in Hz
+- mean      double - mean value of the noise current in pA
+- std       double - standard deviation of noise current in pA
+- dt        double - interval between changes in current in ms, default 1.0ms
+- std_mod   double - modulated standard deviation of noise current in pA
+- phase     double - Phase of sine modulation (0-360 deg)
+- frequency double - Frequency of sine modulation in Hz
 
 Remarks:
 - All targets receive different currents.
@@ -92,13 +92,13 @@ Remarks:
   For the leaky integrate-and-fire neuron with time constant tau_m and
   capacity C_m, membrane potential fluctuations Sigma at times t_j+delay are
   given by
-
-    Sigma = std * tau_m / C_m * sqrt( (1-x) / (1+x) ) where x = exp(-dt/tau_m)
-
+  @f[
+  Sigma = std * tau_m / C_m * sqrt( (1-x) / (1+x) ) where x = exp(-dt/tau_m)
+  @f]
   for large t_j. In the white noise limit, dt -> 0, one has
-
-    Sigma -> std / C_m * sqrt(dt * tau / 2).
-
+  @f[  
+  Sigma -> std / C_m * sqrt(dt * tau / 2).
+  @f]
   To obtain comparable results for different values of dt, you must
   adapt std.
 - As the noise generator provides a different current for each of its targets,

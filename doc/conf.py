@@ -124,7 +124,7 @@ extensions = [
     'breathe',
 ]
 
-breathe_projects = {"EXTRACT_MODELS": "."}
+breathe_projects = {"EXTRACT_MODELS": "./xml/"}
 
 breathe_default_project = "EXTRACT_MODELS"
 # sphinx_gallery_conf = {

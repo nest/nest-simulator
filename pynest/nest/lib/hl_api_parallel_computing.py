@@ -107,6 +107,7 @@ def SetMaxBuffered(port_name, size):
     sps(size)
     sr("SetMaxBuffered")
 
+
 @check_stack
 def SyncProcesses():
     """Synchronize all MPI processes.

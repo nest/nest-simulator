@@ -32,6 +32,7 @@ __all__ = [
     'Rank',
     'SetAcceptableLatency',
     'SetMaxBuffered',
+    'SyncProcesses',
 ]
 
 
@@ -105,3 +106,10 @@ def SetMaxBuffered(port_name, size):
     sps(kernel.SLILiteral(port_name))
     sps(size)
     sr("SetMaxBuffered")
+
+@check_stack
+def SyncProcesses():
+    """Synchronize all MPI processes.
+    """
+
+    sr("SyncProcesses")

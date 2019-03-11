@@ -203,27 +203,3 @@ fail_or_die
   >> SetStatus
 }
 fail_or_die
-
-% Test 7
-% Parameters on creation set properly
-{
-  ResetKernel
-
-  /params
-  <<
-    /rate_times [ 10.0 110.0 210.0 ]
-    /rate_values [ 400.0 1000.0 200.0 ]
-  >> def
-  /ipg /inhomogeneous_poisson_generator params Create def
-  /status ipg GetStatus def
-
-  true
-  [ /rate_times /rate_values ]
-  {
-    /element Set
-    status element get
-    params element get cv_dv
-    eq
-  } Fold
-}
-assert_or_die

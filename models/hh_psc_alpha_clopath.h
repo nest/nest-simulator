@@ -83,7 +83,13 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m        double - Membrane potential in mV
+Dynamic state variables:
+V_m          double - Membrane potential in mV.
+u_bar_plus   double - Low-pass filtered Membrane potential in mV.
+u_bar_minus  double - Low-pass filtered Membrane potential in mV.
+u_bar_bar    double - Low-pass filtered u_bar_minus in mV.
+
+Model parameters:
 E_L        double - Resting membrane potential in mV.
 g_L        double - Leak conductance in nS.
 C_m        double - Capacity of the membrane in pF.
@@ -99,14 +105,11 @@ Inact_n    double - Inactivation variable n
 I_e        double - Constant external input current in pA.
 
 Clopath rule parameters:
-u_bar_plus    double - Low-pass filtered Membrane potential in mV.
-u_bar_minus   double - Low-pass filtered Membrane potential in mV.
-u_bar_bar     double - Low-pass filtered u_bar_minus in mV.
-A_LTD         double - Amplitude of depression in 1/mV.
-A_LTP         double - Amplitude of facilitation in 1/mV^2.
-theta_plus    double - threshold for u in mV.
-theta_minus   double - threshold for u_bar_[plus/minus] in mV.
-A_LTD_const   bool   - Flag that indicates whether A_LTD_ should
+A_LTD        double - Amplitude of depression in 1/mV.
+A_LTP        double - Amplitude of facilitation in 1/mV^2.
+theta_plus   double - threshold for u in mV.
+theta_minus  double - threshold for u_bar_[plus/minus] in mV.
+A_LTD_const  bool   - Flag that indicates whether A_LTD_ should
                        be constant (true, default) or multiplied by
                        u_bar_bar^2 / u_ref_squared (false).
 delay_u_bars  double - Delay with which u_bar_[plus/minus] are processed
@@ -142,8 +145,8 @@ in STDP – a unified model.
 Front. Synaptic Neurosci., 2:25, (2010)
 doi: 10.3389/fnsyn.2010.00025
 
-Voltage-based STDP synapse (Clopath et al. 2010) connected to a Hodgkin Huxley
-neuronon on ModelDB:
+Voltage-based STDP synapse (Clopath et al. 2010) connected to a Hodgkin-Huxley
+neuron on ModelDB:
 https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file=%2fmode
   ldb_package%2fstdp_cc.mod
 

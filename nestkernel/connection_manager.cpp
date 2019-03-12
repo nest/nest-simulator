@@ -638,6 +638,8 @@ nest::ConnectionManager::connect_( Node& s,
 
   increase_connection_count( tid, syn_id );
 
+  // We do not check has_primary_connections_ and secondary_connections_exist_
+  // directly as this led to worse performance on the supercomputer Piz Daint.
   if ( not check_primary_connections_[ tid ] and is_primary )
   {
 #pragma omp atomic write

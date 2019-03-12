@@ -371,6 +371,12 @@ Aborting the simulation!) message
   {
     E_detector ComputeRate cvs ( # average rate) join logger /log call
   } if
+  
+  E_neurons size I_neurons size add cvs ( # num_neurons) join logger /log call
+  0 /num_connections get cvs ( # num_connections) join logger /log call
+  0 /min_delay get cvs ( # min_delay) join logger /log call
+  0 /max_delay get cvs ( # max_delay) join logger /log call
+  0 /local_spike_counter get cvs ( # local_spike_counter) join logger /log call
 
   logger /done call
 } def
@@ -460,7 +466,6 @@ def
 	} if
         Rank max_rank_cout lt {
             cout Rank <- ( ) <- value <- endl flush pop
-            cerr Rank <- ( ) <- value <- endl flush pop
 	} if
     }
 

@@ -88,11 +88,14 @@ V_reset       double - Reset value for the membrane potential in mV.
 
 Remarks:
 
-Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time plus offset). If this node is
-connected to a spike_detector, the property "precise_times" of the
-spike_detector has to be set to true in order to record the offsets
-in addition to the on-grid spike times.
+This model transmits precise spike times to target nodes (on-grid spike
+time and offset). If this node is connected to a spike_detector, the
+property "precise_times" of the spike_detector has to be set to true in
+order to record the offsets in addition to the on-grid spike times.
+
+The iaf_psc_delta_canon neuron accepts connections transmitting
+CurrentEvents. These events transmit stepwise-constant currents which
+can only change at on-grid times.
 
 If tau_m is very close to tau_syn_ex or tau_syn_in, the model
 will numerically behave as if tau_m is equal to tau_syn_ex or

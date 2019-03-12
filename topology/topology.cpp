@@ -210,8 +210,8 @@ connect_layers( const index source_gid,
   const index target_gid,
   const DictionaryDatum& connection_dict )
 {
-  kernel().connection_manager.set_have_connections_changed(true);
-  
+  kernel().connection_manager.set_have_connections_changed( true );
+
   AbstractLayer* source = dynamic_cast< AbstractLayer* >(
     kernel().node_manager.get_node( source_gid ) );
   AbstractLayer* target = dynamic_cast< AbstractLayer* >(

@@ -337,7 +337,7 @@ brunel_params dup using
     E_neurons size Nrec lt
     {
       M_ERROR (BuildNetwork)
-      (Networks is smaller than number of neurons to record from!) message
+      (The exitatory network is smaller than number of neurons to record from!) message
       1 quit_i
     } if
 
@@ -371,8 +371,7 @@ brunel_params dup using
 
   tic
 
-  Prepare
-  presimtime Run
+  presimtime Simulate
 
   toc /PreparationTime Set
 
@@ -381,14 +380,12 @@ brunel_params dup using
 
   tic
 
-  simtime Run
+  simtime Simulate
 
   toc /SimCPUTime Set
 
   memory_thisjob cvs ( # virt_mem_after_sim) join logger /log call
   SimCPUTime cvs ( # sim_time) join logger /log call
-  
-  Cleanup
 
   0 ShowStatus
 

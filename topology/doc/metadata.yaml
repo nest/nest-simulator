@@ -19,19 +19,38 @@ rights: Copyright (C) 2004 The NEST Initiative
 papersize: a4
 documentclass: report
 tableofcontent: true
+link-citations: true
 link-as-notes: true
 #toc: true
 #lof: true
 #lot: true
 secnumdepth: 5
 geometry: margin=1in
+include-before:
+  - "\\definecolor{lstcolor}{gray}{0.9}"
+  - "\\lstset{language=Python,
+              numbers=none,
+              basicstyle=\\small,
+              showstringspaces=false,
+              lineskip=2pt,
+              backgroundcolor=\\color{lstcolor},
+              morekeywords={Create,SetStatus,GetStatus,Connect,
+                GetNodes,GetLeaves,Simulate,CopyModel,
+                SetKernelStatus,PrintNetwork,SetDefaults,
+                voltage_trace,raster_plot,ResetKernel,GetConnections,
+                CreateLayer,ConnectLayers,GetPosition,GetLayer,
+                GetElement,FindNearestElement,Displacement,Distance,
+                DumpLayerNodes,DumpLayerConnections,FindCenterElement,
+                GetTargetNodes,GetTargetPositions, SelectNodesByMask,
+                PlotTargets,PlotKernel,PlotLayer,Install}
+      }"
 
 linkcolor: Blue
 urlcolor: RedOrange
 filecolor: Purple
 citecolor: Violet
 toccolor: MidnightBlue
-bibliography: bib.yaml
+bibliography: nest_bib.yaml
 csl: nest_style.csl
 #biblio-style: plain
 

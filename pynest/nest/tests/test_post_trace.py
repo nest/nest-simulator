@@ -433,10 +433,11 @@ class PostTraceTestCase(unittest.TestCase):
                     resolution, delay, dendritic_delay, sim_time, tau_minus)
 
                 if make_debug_plots:
-                    fname = os.path.join(debug_plots_output_dir, "traces_[delay=" \
+                    fname = "traces_[delay=" \
                             + str(delay) \
                             + "]_[experiment=" \
                             + str(spike_times_idx) + "].png"
+                    fname = os.path.join(debug_plots_output_dir, fn)
                     self.plot_run(
                         trace_nest_t, trace_nest, trace_python_ref,
                         pre_spike_times[spike_times_idx],

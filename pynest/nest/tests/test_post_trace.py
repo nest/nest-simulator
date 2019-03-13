@@ -13,7 +13,7 @@
 #
 # NEST is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See thed
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
@@ -21,7 +21,6 @@
 
 import nest
 import unittest
-import math
 import numpy as np
 import scipy as sp
 import scipy.stats
@@ -45,8 +44,6 @@ class PostTraceTestCase(unittest.TestCase):
               + ", ".join([str(t) for t in post_spike_times]) + "]")
 
         nest.set_verbosity("M_WARNING")
-
-        post_weights = {'parrot': [], 'parrot_ps': []}
 
         nest.ResetKernel()
         nest.SetKernelStatus({'resolution': resolution})
@@ -205,8 +202,7 @@ class PostTraceTestCase(unittest.TestCase):
             t = trace_nest_t[i]
             print("* Finding ref for NEST timepoint t = "
                   + str(t) + ", trace = " + str(trace_nest[i]))
-            for i_search, t_search in enumerate(
-                                        reversed(pre_spike_times + delay)):
+            for t_search in reversed(pre_spike_times + delay):
                 if t_search <= t:
                     print("\t* Testing " + str(t_search) + "...")
                     _idx = int(np.round(t_search / sim_time

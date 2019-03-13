@@ -111,7 +111,8 @@ nest::Archiving_Node::get_K_value( double t )
     return trace_;
   }
 
-  // search for the latest post spike in the history buffer that came strictly before `t`
+  // search for the latest post spike in the history buffer that came strictly
+  // before `t`
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
@@ -124,7 +125,8 @@ nest::Archiving_Node::get_K_value( double t )
     --i;
   }
 
-  // this case occurs when the trace was requested at a time precisely at or before the first spike in the history
+  // this case occurs when the trace was requested at a time precisely at or
+  // before the first spike in the history
   trace_ = 0.;
   return trace_;
 }
@@ -142,7 +144,8 @@ nest::Archiving_Node::get_K_values( double t,
     return;
   }
 
-  // search for the latest post spike in the history buffer that came strictly before `t`
+  // search for the latest post spike in the history buffer that came strictly
+  // before `t`
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
@@ -157,7 +160,8 @@ nest::Archiving_Node::get_K_values( double t,
     --i;
   }
 
-  // this case occurs when the trace was requested at a time precisely at or before the first spike in the history
+  // this case occurs when the trace was requested at a time precisely at or
+  // before the first spike in the history
   triplet_K_value = 0.0;
   K_value = 0.0;
 }
@@ -201,13 +205,16 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
   {
     // prune all spikes from history which are no longer needed
     // only remove a spike if:
-    // - its access counter indicates it has been read out by all connected STDP synapses, and
-    // - there is another, later spike, that is strictly more than (max_delay_ + eps) away from the new spike (at t_sp_ms)
+    // - its access counter indicates it has been read out by all connected
+    //   STDP synapses, and
+    // - there is another, later spike, that is strictly more than
+    //   (max_delay_ + eps) away from the new spike (at t_sp_ms)
     while ( history_.size() > 1 )
     {
       const double next_t_sp = history_[1].t_;
       if ( history_.front().access_counter_ >= n_incoming_
-           && t_sp_ms - next_t_sp > max_delay_ + kernel().connection_manager.get_stdp_eps() )
+           && t_sp_ms - next_t_sp > max_delay_ +
+                  kernel().connection_manager.get_stdp_eps() )
       {
         history_.pop_front();
       }

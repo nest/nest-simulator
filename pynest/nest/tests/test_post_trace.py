@@ -19,13 +19,14 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest
-import unittest
-import numpy as np
-import scipy as sp
-import scipy.stats
 import matplotlib.pyplot as plt
 import matplotlib.ticker as plticker
+import nest
+import numpy as np
+import os
+import scipy as sp
+import scipy.stats
+import unittest
 
 
 @nest.check_stack
@@ -377,16 +378,19 @@ class PostTraceTestCase(unittest.TestCase):
           node and the synapse itself (see the C++ variable `dendritic_delay`).
         """
 
-        show_all_nest_trace_samples = True
-
         resolution = .1     # [ms]
         delays = np.array([1., 5.])  # [ms]
 
-        # minimal reproducing example of the original bug
+        # settings for plotting debug information
+        make_debug_plots = False
+        show_all_nest_trace_samples = True
+        debug_plots_output_dir = "/tmp"
+
+        # spike test pattern 1: minimal reproducing example of the original bug
         pre_spike_times1 = np.array([2., 3., 10.])
         post_spike_times1 = np.array([1., 2., 3.])
 
-        # generate some random integer spike times
+        # spike test pattern 2: generate some random integer spike times
         t_sp_min = 1.
         t_sp_max = 50
         n_spikes = 10
@@ -404,6 +408,7 @@ class PostTraceTestCase(unittest.TestCase):
         tau_minus = 2.  # [ms]
 
         # for each parameter set, run the test
+        # spike test pattern 3 is a pre/post-reversed version of test pattern 2
         pre_spike_times = [pre_spike_times1,
                            pre_spike_times2,
                            post_spike_times2]
@@ -414,10 +419,6 @@ class PostTraceTestCase(unittest.TestCase):
         for delay in delays:
             dendritic_delay = delay
             for spike_times_idx in range(len(pre_spike_times)):
-                fname = "/tmp/traces_[delay=" \
-                        + str(delay) \
-                        + "]_[experiment=" \
-                        + str(spike_times_idx) + "].png"
                 max_t_sp = max(np.amax(pre_spike_times[spike_times_idx]),
                                np.amax(post_spike_times[spike_times_idx]))
                 sim_time = max_t_sp + 5 * delay
@@ -430,18 +431,24 @@ class PostTraceTestCase(unittest.TestCase):
                     pre_spike_times[spike_times_idx],
                     post_spike_times[spike_times_idx],
                     resolution, delay, dendritic_delay, sim_time, tau_minus)
-                self.plot_run(
-                    trace_nest_t, trace_nest, trace_python_ref,
-                    pre_spike_times[spike_times_idx],
-                    post_spike_times[spike_times_idx], resolution, delay,
-                    dendritic_delay, sim_time, fname)
-                self.assertTrue(self.nest_trace_matches_ref_trace(
-                    trace_nest_t,
-                    trace_nest,
-                    trace_python_ref,
-                    pre_spike_times[spike_times_idx],
-                    post_spike_times[spike_times_idx],
-                    resolution, delay, dendritic_delay, sim_time))
+
+                if make_debug_plots:
+                    fname = os.path.join(debug_plots_output_dir, "traces_[delay=" \
+                            + str(delay) \
+                            + "]_[experiment=" \
+                            + str(spike_times_idx) + "].png"
+                    self.plot_run(
+                        trace_nest_t, trace_nest, trace_python_ref,
+                        pre_spike_times[spike_times_idx],
+                        post_spike_times[spike_times_idx], resolution, delay,
+                        dendritic_delay, sim_time, fname)
+                    self.assertTrue(self.nest_trace_matches_ref_trace(
+                        trace_nest_t,
+                        trace_nest,
+                        trace_python_ref,
+                        pre_spike_times[spike_times_idx],
+                        post_spike_times[spike_times_idx],
+                        resolution, delay, dendritic_delay, sim_time))
 
 
 def suite():

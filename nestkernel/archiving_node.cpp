@@ -104,6 +104,7 @@ Archiving_Node::register_stdp_connection( double t_first_read, double delay )
 double
 nest::Archiving_Node::get_K_value( double t )
 {
+  // case when the neuron has not yet spiked
   if ( history_.empty() )
   {
     trace_ = 0.;
@@ -140,7 +141,8 @@ nest::Archiving_Node::get_K_values( double t,
     K_value = Kminus_;
     return;
   }
-  // case
+
+  // search for the latest post spike in the history buffer that came strictly before `t`
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
@@ -152,12 +154,10 @@ nest::Archiving_Node::get_K_values( double t,
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
       return;
     }
-    i--;
+    --i;
   }
 
-  // we only get here if t< time of all spikes in history)
-
-  // return 0.0 for both K values
+  // this case occurs when the trace was requested at a time precisely at or before the first spike in the history
   triplet_K_value = 0.0;
   K_value = 0.0;
 }

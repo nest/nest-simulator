@@ -91,8 +91,7 @@ can only change at on-grid times.
 
 If tau_m is very close to tau_syn, the model will numerically behave
 as if tau_m is equal to tau_syn, to avoid numerical instabilities.
-For details, please see IAF_Neruons_Singularity.ipynb in
-the NEST source code (docs/model_details).
+For details, please see doc/model_details/IAF_neurons_singularity.ipynb.
 
 References:
 

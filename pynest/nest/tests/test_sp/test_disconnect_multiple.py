@@ -29,7 +29,7 @@ class TestDisconnect(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity('M_ERROR')
+        nest.hl_api.set_verbosity('M_ERROR')
         self.exclude_synapse_model = [
             'stdp_dopamine_synapse',
             'stdp_dopamine_synapse_lbl',
@@ -42,7 +42,9 @@ class TestDisconnect(unittest.TestCase):
             'rate_connection_instantaneous',
             'rate_connection_instantaneous_lbl',
             'rate_connection_delayed',
-            'rate_connection_delayed_lbl'
+            'rate_connection_delayed_lbl',
+            'clopath_synapse',
+            'clopath_synapse_lbl'
         ]
 
     def test_multiple_synapse_deletion_all_to_all(self):

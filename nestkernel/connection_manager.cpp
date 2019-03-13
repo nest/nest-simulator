@@ -39,6 +39,7 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "clopath_archiving_node.h"
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
 #include "connection_label.h"
@@ -625,6 +626,14 @@ nest::ConnectionManager::connect_( Node& s,
 {
   const bool is_primary =
     kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary();
+
+  if ( kernel().model_manager.connector_requires_clopath_archiving( syn_id )
+    and not dynamic_cast< Clopath_Archiving_Node* >( &r ) )
+  {
+    throw NotImplemented(
+      "This synapse model is not supported by the neuron model of at least one "
+      "connection." );
+  }
 
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )

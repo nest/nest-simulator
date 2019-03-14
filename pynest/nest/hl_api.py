@@ -38,23 +38,21 @@ def _pkg_attrs(pkg):
     except AttributeError: # otherwise, return everything at top level that doesn't start with `_`
         return (attr for attr in pkg.__dict__ if attr[0] != '_')
 
-# for pkg_name, does a module level `from $pkg_name import *`
-def _import_lib(pkg_name):
-    #from importlib import import_module
-    print(pkg_name)
-    pkg = __import__(pkg_name, globals(), locals())
+# import * names from pkg to the dictionary of mod_dict
+def _import_names(mod_dict, pkg):
     for attr in _pkg_attrs(pkg):
-        globals()[attr] = getattr(pkg, attr)
+        mod_dict[attr] = getattr(pkg, attr)
 
 # get all files ./lib/*.py except specials starting with __
-def _import_libs():
-    print(__file__)
+def _import_libs(mod_dict):
     libdir = os.path.join(os.path.dirname(__file__), "lib")
     for name in os.listdir(libdir):
         if name.endswith(".py") and not name.startswith('__'):
-            _import_lib(".lib.{}".format(name[:-3])) # ./lib/$x.py -> .lib.$x
+            pkg = __import__("lib.{}".format(name[:-3]), globals(), locals(), ['*'], 1)
+            _import_names(mod_dict, pkg)
 
-_import_libs()
+# do `from .libs.$X import *` for every module in ./libs/$X.py
+_import_libs(globals())
 
 # With '__all__' we provide an explicit index of the package. Without any
 # imported submodules and any redundant functions we could minimize list.

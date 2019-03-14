@@ -23,7 +23,7 @@
 High-level API of PyNEST Module
 """
 
-import os
+import os, sys
 
 # We search through the subdirectory "lib" of the "nest" module
 # directory and import the content of all Python files therein into
@@ -39,20 +39,33 @@ def _pkg_attrs(pkg):
         return (attr for attr in pkg.__dict__ if attr[0] != '_')
 
 # import * names from pkg to the dictionary of mod_dict
-def _import_names(mod_dict, pkg):
+def _import_names(pkg, mod_dict):
     for attr in _pkg_attrs(pkg):
         mod_dict[attr] = getattr(pkg, attr)
 
-# get all files ./lib/*.py except specials starting with __
-def _import_libs(mod_dict):
-    libdir = os.path.join(os.path.dirname(__file__), "lib")
+# from .$prefix.$x import * ; relative to mod_file which is the filename from which mod_dict was read
+# where $x.py is all files ./$path/*.py not starting with __
+# Ignores modules that have been previously (statically) loaded
+def _import_libs(mod_file, mod_dict, path, prefix):
+    libdir = os.path.join(os.path.dirname(mod_file), path)
     for name in os.listdir(libdir):
-        if name.endswith(".py") and not name.startswith('__'):
-            pkg = __import__("lib.{}".format(name[:-3]), globals(), locals(), ['*'], 1)
-            _import_names(mod_dict, pkg)
+        if not name.endswith(".py") or name.startswith('__'):
+            continue # not a regular python module
+        
+        pkg_name = "{}.{}".format(prefix, name[:-3])
+        if "nest." + pkg_name in sys.modules:
+            continue # has already been statically imported
+            
+        pkg = __import__(pkg_name, mod_dict, locals(), ['*'], 1)
+        _import_names(pkg, mod_dict)
 
-# do `from .libs.$X import *` for every module in ./libs/$X.py
-_import_libs(globals())
+# insert static imports here
+#
+# from libs.$X import *
+
+# Then whatever is left over, load dynamically
+# then do `from .libs.$X import *` for every module in ./libs/$X.py that is left
+_import_libs(__file__, globals(), 'lib', 'lib')
 
 # With '__all__' we provide an explicit index of the package. Without any
 # imported submodules and any redundant functions we could minimize list.

@@ -29,9 +29,32 @@ import os
 # directory and import the content of all Python files therein into
 # the global namespace. This makes the API functions of PyNEST itself
 # and those of extra modules available to the user.
-for name in os.listdir(os.path.join(os.path.dirname(__file__), "lib")):
-    if name.endswith(".py") and not name.startswith('__'):
-        exec("from .lib.{0} import *".format(name[:-3]))
+
+# return all package attributes that from pkg import * would put in the module namespace
+# see https://docs.python.org/3/reference/simple_stmts.html#import
+def _pkg_attrs(pkg):
+    try: # if there's an "all", return that
+        return pkg.__all__
+    except AttributeError: # otherwise, return everything at top level that doesn't start with `_`
+        return (attr for attr in pkg.__dict__ if attr[0] != '_')
+
+# for pkg_name, does a module level `from $pkg_name import *`
+def _import_lib(pkg_name):
+    #from importlib import import_module
+    print(pkg_name)
+    pkg = __import__(pkg_name, globals(), locals())
+    for attr in _pkg_attrs(pkg):
+        globals()[attr] = getattr(pkg, attr)
+
+# get all files ./lib/*.py except specials starting with __
+def _import_libs():
+    print(__file__)
+    libdir = os.path.join(os.path.dirname(__file__), "lib")
+    for name in os.listdir(libdir):
+        if name.endswith(".py") and not name.startswith('__'):
+            _import_lib(".lib.{}".format(name[:-3])) # ./lib/$x.py -> .lib.$x
+
+_import_libs()
 
 # With '__all__' we provide an explicit index of the package. Without any
 # imported submodules and any redundant functions we could minimize list.

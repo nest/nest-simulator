@@ -44,7 +44,7 @@ class PostTraceTestCase(unittest.TestCase):
         print("Post spike times: ["
               + ", ".join([str(t) for t in post_spike_times]) + "]")
 
-        nest.set_verbosity("M_WARNING")
+        nest.hl_api.set_verbosity("M_WARNING")
 
         nest.ResetKernel()
         nest.SetKernelStatus({'resolution': resolution})

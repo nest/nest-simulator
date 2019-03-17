@@ -29,7 +29,7 @@ import scipy.stats
 import unittest
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class PostTraceTestCase(unittest.TestCase):
 
     trace_match_atol_ = 1E-2

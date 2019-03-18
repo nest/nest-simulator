@@ -454,11 +454,20 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
 }
 
 bool
-ModelManager::connector_requires_symmetric( synindex syn_id ) const
+ModelManager::connector_requires_symmetric( const synindex syn_id ) const
 {
   assert_valid_syn_id( syn_id );
 
   return prototypes_[ 0 ][ syn_id ]->requires_symmetric();
+}
+
+bool
+ModelManager::connector_requires_clopath_archiving(
+  const synindex syn_id ) const
+{
+  assert_valid_syn_id( syn_id );
+
+  return prototypes_[ 0 ][ syn_id ]->requires_clopath_archiving();
 }
 
 void

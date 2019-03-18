@@ -52,11 +52,13 @@ namespace nest
 {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
-template<>
+template <>
 void
 RecordablesMap< nest::glif_lif_r_asc_cond >::create()
 {
-  insert_( names::V_m, &nest::glif_lif_r_asc_cond::get_y_elem_< nest::glif_lif_r_asc_cond::State_::V_M > );
+  insert_( names::V_m,
+    &nest::glif_lif_r_asc_cond::
+      get_y_elem_< nest::glif_lif_r_asc_cond::State_::V_M > );
 }
 }
 
@@ -87,28 +89,32 @@ nest::glif_lif_r_asc_cond_dynamics( double,
   double I_syn = 0.0;
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
   {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR + node.P_.n_ASCurrents_() - 1;
-    I_syn += y[ S::G_SYN + j ] * ( y[ S::V_M] - node.P_.E_rev_[ i ]);
+    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+      + node.P_.n_ASCurrents_() - 1;
+    I_syn += y[ S::G_SYN + j ] * ( y[ S::V_M ] - node.P_.E_rev_[ i ] );
   }
 
   const double I_leak = node.P_.G_ * ( y[ S::V_M ] - node.P_.E_L_ );
 
   // dV_m/dt
-  f[ 0 ] = ( -I_leak - I_syn  + node.B_.I_stim_ + node.S_.ASCurrents_sum_ ) / node.P_.C_m_;
+  f[ 0 ] = ( -I_leak - I_syn + node.B_.I_stim_ + node.S_.ASCurrents_sum_ )
+    / node.P_.C_m_;
 
   // dI_asc/dt
-  for(std::size_t a = 0; a < node.P_.n_ASCurrents_(); ++a)
+  for ( std::size_t a = 0; a < node.P_.n_ASCurrents_(); ++a )
   {
-    f[ S::ASC + a ]= -node.P_.k_[a] * y[ S::ASC + a ];
+    f[ S::ASC + a ] = -node.P_.k_[ a ] * y[ S::ASC + a ];
   }
 
   // d dg_exc/dt, dg_exc/dt
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
   {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR + node.P_.n_ASCurrents_() - 1;
+    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+      + node.P_.n_ASCurrents_() - 1;
     // Synaptic conductance derivative dG/dt
     f[ S::DG_SYN + j ] = -y[ S::DG_SYN + j ] / node.P_.tau_syn_[ i ];
-    f[ S::G_SYN + j ] = y[ S::DG_SYN + j ] - (y[ S::G_SYN + j ] / node.P_.tau_syn_[ i ]);
+    f[ S::G_SYN + j ] =
+      y[ S::DG_SYN + j ] - ( y[ S::G_SYN + j ] / node.P_.tau_syn_[ i ] );
   }
 
   return GSL_SUCCESS;
@@ -120,33 +126,33 @@ nest::glif_lif_r_asc_cond_dynamics( double,
  * ---------------------------------------------------------------- */
 
 nest::glif_lif_r_asc_cond::Parameters_::Parameters_()
-  : th_inf_(26.5) // in mV
-  , G_(4.6951) // in nS
-  , E_L_(-77.4) // in mV
-  , C_m_(99.182) // in pF
-  , t_ref_(0.5) // in ms
-  , a_spike_(0.0) // in mV
-  , b_spike_(0.0) // in 1/ms
-  , voltage_reset_a_(0.0) // coefficient
-  , voltage_reset_b_(0.0) // in mV
-  , asc_init_(std::vector<double>(2, 0.0)) // in pA
-  , k_(std::vector<double>(2, 0.0)) // in 1/ms
-  , asc_amps_(std::vector<double>(2, 0.0)) // in pA
-  , r_(std::vector<double>(2, 1.0)) // coefficient
-  , tau_syn_(1, 2.0) // in ms
-  , E_rev_(1, -70.0) // mV
+  : th_inf_( 26.5 )                              // in mV
+  , G_( 4.6951 )                                 // in nS
+  , E_L_( -77.4 )                                // in mV
+  , C_m_( 99.182 )                               // in pF
+  , t_ref_( 0.5 )                                // in ms
+  , a_spike_( 0.0 )                              // in mV
+  , b_spike_( 0.0 )                              // in 1/ms
+  , voltage_reset_a_( 0.0 )                      // coefficient
+  , voltage_reset_b_( 0.0 )                      // in mV
+  , asc_init_( std::vector< double >( 2, 0.0 ) ) // in pA
+  , k_( std::vector< double >( 2, 0.0 ) )        // in 1/ms
+  , asc_amps_( std::vector< double >( 2, 0.0 ) ) // in pA
+  , r_( std::vector< double >( 2, 1.0 ) )        // coefficient
+  , tau_syn_( 1, 2.0 )                           // in ms
+  , E_rev_( 1, -70.0 )                           // mV
   , has_connections_( false )
 {
 }
 
 nest::glif_lif_r_asc_cond::State_::State_( const Parameters_& p )
-  : threshold_(26.5) // in mV
+  : threshold_( 26.5 ) // in mV
   , y_( STATE_VECTOR_MIN_SIZE, 0.0 )
 {
   y_[ V_M ] = p.E_L_; // initialize to membrane potential
-  for(std::size_t a = 0; a < p.n_ASCurrents_(); ++a)
+  for ( std::size_t a = 0; a < p.n_ASCurrents_(); ++a )
   {
-    y_[ ASC + a ]= p.asc_init_[a];
+    y_[ ASC + a ] = p.asc_init_[ a ];
   }
 }
 
@@ -177,21 +183,21 @@ nest::glif_lif_r_asc_cond::State_& nest::glif_lif_r_asc_cond::State_::operator=(
 void
 nest::glif_lif_r_asc_cond::Parameters_::get( DictionaryDatum& d ) const
 {
-  def<double>(d, names::V_th, th_inf_);
-  def<double>(d, Name("g_m"), G_);
-  def<double>(d, names::E_L, E_L_);
-  def<double>(d, names::C_m, C_m_);
-  def<double>(d, names::t_ref, t_ref_);
+  def< double >( d, names::V_th, th_inf_ );
+  def< double >( d, Name( "g_m" ), G_ );
+  def< double >( d, names::E_L, E_L_ );
+  def< double >( d, names::C_m, C_m_ );
+  def< double >( d, names::t_ref, t_ref_ );
 
-  def<double>(d, "a_spike", a_spike_);
-  def<double>(d, "b_spike", b_spike_);
-  def<double>(d, "a_reset", voltage_reset_a_);
-  def<double>(d, "b_reset", voltage_reset_b_);
+  def< double >( d, "a_spike", a_spike_ );
+  def< double >( d, "b_spike", b_spike_ );
+  def< double >( d, "a_reset", voltage_reset_a_ );
+  def< double >( d, "b_reset", voltage_reset_b_ );
 
-  def< std::vector<double> >(d, Name("asc_init"), asc_init_);
-  def< std::vector<double> >(d, Name("k"), k_ );
-  def< std::vector<double> >(d, Name("asc_amps"), asc_amps_);
-  def< std::vector<double> >(d, Name("r"), r_);
+  def< std::vector< double > >( d, Name( "asc_init" ), asc_init_ );
+  def< std::vector< double > >( d, Name( "k" ), k_ );
+  def< std::vector< double > >( d, Name( "asc_amps" ), asc_amps_ );
+  def< std::vector< double > >( d, Name( "r" ), r_ );
   ArrayDatum tau_syn_ad( tau_syn_ );
   def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
   ArrayDatum E_rev_ad( E_rev_ );
@@ -202,21 +208,21 @@ nest::glif_lif_r_asc_cond::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::glif_lif_r_asc_cond::Parameters_::set( const DictionaryDatum& d )
 {
-  updateValue< double >(d, names::V_th, th_inf_ );
-  updateValue< double >(d, Name("g_m"), G_ );
-  updateValue< double >(d, names::E_L, E_L_ );
-  updateValue< double >(d, names::C_m, C_m_ );
-  updateValue< double >(d, names::t_ref, t_ref_ );
+  updateValue< double >( d, names::V_th, th_inf_ );
+  updateValue< double >( d, Name( "g_m" ), G_ );
+  updateValue< double >( d, names::E_L, E_L_ );
+  updateValue< double >( d, names::C_m, C_m_ );
+  updateValue< double >( d, names::t_ref, t_ref_ );
 
-  updateValue< double >(d, "a_spike", a_spike_ );
-  updateValue< double >(d, "b_spike", b_spike_ );
-  updateValue< double >(d, "a_reset", voltage_reset_a_ );
-  updateValue< double >(d, "b_reset", voltage_reset_b_ );
+  updateValue< double >( d, "a_spike", a_spike_ );
+  updateValue< double >( d, "b_spike", b_spike_ );
+  updateValue< double >( d, "a_reset", voltage_reset_a_ );
+  updateValue< double >( d, "b_reset", voltage_reset_b_ );
 
-  updateValue< std::vector<double> >(d, Name("asc_init"), asc_init_);
-  updateValue< std::vector<double> >(d, Name("k"), k_ );
-  updateValue< std::vector<double> >(d, Name("asc_amps"), asc_amps_);
-  updateValue< std::vector<double> >(d, Name("r"), r_);
+  updateValue< std::vector< double > >( d, Name( "asc_init" ), asc_init_ );
+  updateValue< std::vector< double > >( d, Name( "k" ), k_ );
+  updateValue< std::vector< double > >( d, Name( "asc_amps" ), asc_amps_ );
+  updateValue< std::vector< double > >( d, Name( "r" ), r_ );
 
   if ( C_m_ <= 0.0 )
   {
@@ -234,12 +240,15 @@ nest::glif_lif_r_asc_cond::Parameters_::set( const DictionaryDatum& d )
   }
 
   const size_t old_n_receptors = this->n_receptors_();
-  bool tau_flag = updateValue< std::vector< double > >( d, "tau_syn", tau_syn_ );
+  bool tau_flag =
+    updateValue< std::vector< double > >( d, "tau_syn", tau_syn_ );
   bool Erev_flag = updateValue< std::vector< double > >( d, "E_rev", E_rev_ );
 
-  if (tau_flag || Erev_flag)
+  if ( tau_flag || Erev_flag )
   { // receptor arrays have been modified
-    if ( ( E_rev_.size() != old_n_receptors || tau_syn_.size() != old_n_receptors ) and ( not Erev_flag || not tau_flag ) )
+    if ( ( E_rev_.size() != old_n_receptors
+           || tau_syn_.size() != old_n_receptors )
+      and ( not Erev_flag || not tau_flag ) )
     {
       throw BadProperty(
         "If the number of receptor ports is changed, both arrays "
@@ -269,31 +278,33 @@ nest::glif_lif_r_asc_cond::Parameters_::set( const DictionaryDatum& d )
       }
     }
   }
-
 }
 
 void
-nest::glif_lif_r_asc_cond::State_::get( DictionaryDatum& d, const Parameters_& p) const
+nest::glif_lif_r_asc_cond::State_::get( DictionaryDatum& d,
+  const Parameters_& p ) const
 {
-  def< double >(d, names::V_m, y_[V_M] );
+  def< double >( d, names::V_m, y_[ V_M ] );
 
   std::vector< double >* dg = new std::vector< double >();
   std::vector< double >* g = new std::vector< double >();
 
   for ( size_t i = 0;
-        i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS - p.n_ASCurrents_() )
+        i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS
+                - p.n_ASCurrents_() )
               / State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
         ++i )
   {
-    dg->push_back( y_[ State_::DG_SYN
-      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i + p.n_ASCurrents_() - 1 ) ] );
-    g->push_back( y_[ State_::G_SYN
-      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i + p.n_ASCurrents_() - 1 ) ] );
+    dg->push_back(
+      y_[ State_::DG_SYN + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i
+                             + p.n_ASCurrents_() - 1 ) ] );
+    g->push_back(
+      y_[ State_::G_SYN + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i
+                            + p.n_ASCurrents_() - 1 ) ] );
   }
 
   ( *d )[ names::dg ] = DoubleVectorDatum( dg );
   ( *d )[ names::g ] = DoubleVectorDatum( g );
-
 }
 
 void
@@ -315,7 +326,8 @@ nest::glif_lif_r_asc_cond::Buffers_::Buffers_( glif_lif_r_asc_cond& n )
 {
 }
 
-nest::glif_lif_r_asc_cond::Buffers_::Buffers_( const Buffers_& b, glif_lif_r_asc_cond& n )
+nest::glif_lif_r_asc_cond::Buffers_::Buffers_( const Buffers_& b,
+  glif_lif_r_asc_cond& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -381,7 +393,7 @@ nest::glif_lif_r_asc_cond::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // include resize
-  B_.logger_.reset();  // includes resize
+  B_.logger_.reset();   // includes resize
 
   B_.step_ = Time::get_resolution().get_ms();
   // We must integrate this model with high-precision to obtain decent results
@@ -401,7 +413,6 @@ nest::glif_lif_r_asc_cond::init_buffers_()
   B_.sys_.params = reinterpret_cast< void* >( this );
 
   B_.I_stim_ = 0.0;
-
 }
 
 void
@@ -415,13 +426,13 @@ nest::glif_lif_r_asc_cond::calibrate()
 
   V_.CondInitialValues_.resize( P_.n_receptors_() );
   B_.spikes_.resize( P_.n_receptors_() );
-  S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-      + P_.n_ASCurrents_() + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.n_receptors_() ),
+  S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS + P_.n_ASCurrents_()
+      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.n_receptors_() ),
     0.0 );
 
-  for (size_t i = 0; i < P_.n_receptors_() ; i++ )
+  for ( size_t i = 0; i < P_.n_receptors_(); i++ )
   {
-    V_.CondInitialValues_[i] = 1.0 * numerics::e / P_.tau_syn_[i];
+    V_.CondInitialValues_[ i ] = 1.0 * numerics::e / P_.tau_syn_[ i ];
     B_.spikes_[ i ].resize();
   }
 
@@ -440,7 +451,6 @@ nest::glif_lif_r_asc_cond::calibrate()
   B_.e_ = gsl_odeiv_evolve_alloc( S_.y_.size() );
 
   B_.sys_.dimension = S_.y_.size();
-
 }
 
 /* ----------------------------------------------------------------
@@ -448,25 +458,28 @@ nest::glif_lif_r_asc_cond::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::glif_lif_r_asc_cond::update( Time const& origin, const long from, const long to )
+nest::glif_lif_r_asc_cond::update( Time const& origin,
+  const long from,
+  const long to )
 {
   const double dt = Time::get_resolution().get_ms();
 
   double v_old = S_.y_[ State_::V_M ];
   double spike_component = 0.0;
-  double th_old=S_.threshold_;
+  double th_old = S_.threshold_;
 
   for ( long lag = from; lag < to; ++lag )
   {
 
-    // update threshold via exact solution of dynamics of spike component of threshold
-    spike_component = V_.last_spike_ * std::exp(-P_.b_spike_ * dt);
+    // update threshold via exact solution of dynamics of spike component of
+    // threshold
+    spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
     S_.threshold_ = spike_component + P_.th_inf_;
     V_.last_spike_ = spike_component;
 
     // Calculate new ASCurrents value using exponential methods
     S_.ASCurrents_sum_ = 0.0;
-    for(std::size_t a = 0; a < P_.n_ASCurrents_(); ++a)
+    for ( std::size_t a = 0; a < P_.n_ASCurrents_(); ++a )
     {
       S_.ASCurrents_sum_ += S_.y_[ State_::ASC + a ];
     }
@@ -493,30 +506,33 @@ nest::glif_lif_r_asc_cond::update( Time const& origin, const long from, const lo
         &t,                   // from t
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
-        &S_.y_[0] );               // neuronal state
+        &S_.y_[ 0 ] );        // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
       }
     }
 
-    if( V_.t_ref_remaining_ > 0.0)
+    if ( V_.t_ref_remaining_ > 0.0 )
     {
       // While neuron is in refractory period count-down in time steps (since dt
       // may change while in refractory) while holding the voltage at last peak.
       V_.t_ref_remaining_ -= dt;
-      if( V_.t_ref_remaining_ <= 0.0)
+      if ( V_.t_ref_remaining_ <= 0.0 )
       {
-        // Neuron has left refractory period, reset voltage and after-spike current
+        // Neuron has left refractory period, reset voltage and after-spike
+        // current
 
         // Reset ASC_currents
-        for(std::size_t a = 0; a < P_.n_ASCurrents_(); ++a)
+        for ( std::size_t a = 0; a < P_.n_ASCurrents_(); ++a )
         {
-          S_.y_[ State_::ASC + a ] =  P_.asc_amps_[a] + S_.y_[ State_::ASC + a ];
+          S_.y_[ State_::ASC + a ] =
+            P_.asc_amps_[ a ] + S_.y_[ State_::ASC + a ];
         }
 
         // Reset voltage
-        S_.y_[ State_::V_M ] = P_.E_L_ + P_.voltage_reset_a_ * ( v_old - P_.E_L_ ) + P_.voltage_reset_b_;
+        S_.y_[ State_::V_M ] = P_.E_L_
+          + P_.voltage_reset_a_ * ( v_old - P_.E_L_ ) + P_.voltage_reset_b_;
 
         // reset spike component of threshold
         V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
@@ -524,11 +540,15 @@ nest::glif_lif_r_asc_cond::update( Time const& origin, const long from, const lo
 
         // Check if bad reset
         // TODO: Better way to handle?
-        if(S_.y_[ State_::V_M ] > S_.threshold_){
-          printf("Simulation Terminated: Voltage (%f) reset above threshold (%f)!!\n", S_.y_[ State_::V_M ], S_.threshold_);
+        if ( S_.y_[ State_::V_M ] > S_.threshold_ )
+        {
+          printf(
+            "Simulation Terminated: Voltage (%f) reset above threshold "
+            "(%f)!!\n",
+            S_.y_[ State_::V_M ],
+            S_.threshold_ );
         }
         assert( S_.y_[ State_::V_M ] <= S_.threshold_ );
-
       }
       else
       {
@@ -538,35 +558,42 @@ nest::glif_lif_r_asc_cond::update( Time const& origin, const long from, const lo
     else
     {
       // Check if their is an action potential
-      if( S_.y_[ State_::V_M ] >  S_.threshold_ )
+      if ( S_.y_[ State_::V_M ] > S_.threshold_ )
       {
         // Marks that the neuron is in a refractory period
         V_.t_ref_remaining_ = V_.t_ref_total_;
 
-        // Find the exact time during this step that the neuron crossed the threshold and record it
-        double spike_offset = (1 - (v_old - th_old)/(( S_.threshold_- th_old)-(S_.y_[ State_::V_M ] - v_old))) * Time::get_resolution().get_ms();
-        set_spiketime( Time::step( origin.get_steps() + lag + 1 ), spike_offset );
+        // Find the exact time during this step that the neuron crossed the
+        // threshold and record it
+        double spike_offset =
+          ( 1
+            - ( v_old - th_old ) / ( ( S_.threshold_ - th_old )
+                                     - ( S_.y_[ State_::V_M ] - v_old ) ) )
+          * Time::get_resolution().get_ms();
+        set_spiketime(
+          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
         SpikeEvent se;
-        se.set_offset(spike_offset);
+        se.set_offset( spike_offset );
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
 
     // spike input
-    for( size_t i = 0; i < P_.n_receptors_(); i++ )
+    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
     {
       // Apply spikes delivered in this step: The spikes arriving at T+1 have an
       // immediate effect on the state of the neuron
-      S_.y_[ State_::DG_SYN
-          + P_.n_ASCurrents_() - 1 + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
-          B_.spikes_[ i ].get_value( lag ) * V_.CondInitialValues_[i]; // add incoming spike
+      S_.y_[ State_::DG_SYN + P_.n_ASCurrents_() - 1
+        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
+        B_.spikes_[ i ].get_value( lag )
+        * V_.CondInitialValues_[ i ]; // add incoming spike
     }
 
     // Update any external currents
     B_.I_stim_ = B_.currents_.get_value( lag );
 
     // Save voltage
-    B_.logger_.record_data( origin.get_steps() + lag);
+    B_.logger_.record_data( origin.get_steps() + lag );
 
     v_old = S_.y_[ State_::V_M ];
 
@@ -593,9 +620,9 @@ nest::glif_lif_r_asc_cond::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.spikes_[e.get_rport() - 1].add_value(
+  B_.spikes_[ e.get_rport() - 1 ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_multiplicity()  );
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void

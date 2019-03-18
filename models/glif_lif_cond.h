@@ -47,12 +47,17 @@ Name: glif_lif_cond - Generalized leaky integrate and fire (GLIF) model 1 -
                       Traditional leaky integrate and fire (LIF) model.
 Description:
 
-  glif_lif_cond is an implementation of a generalized leaky integrate and fire (GLIF) model 1
-  (i.e., traditional leaky integrate and fire (LIF) model) [1] with conductance-based synapses.
+  glif_lif_cond is an implementation of a generalized leaky integrate and fire
+(GLIF) model 1
+  (i.e., traditional leaky integrate and fire (LIF) model) [1] with
+conductance-based synapses.
   Incoming spike events induce a post-synaptic change of conductance modeled
-  by an alpha function [2]. The alpha function is normalized such that an event of weight 1.0
-  results in a peak conductance change of 1 nS at t = tau_syn. On the postsynapic side,
-  there can be arbitrarily many synaptic time constants. This can be reached by specifying
+  by an alpha function [2]. The alpha function is normalized such that an event
+of weight 1.0
+  results in a peak conductance change of 1 nS at t = tau_syn. On the
+postsynapic side,
+  there can be arbitrarily many synaptic time constants. This can be reached by
+specifying
   separate receptor ports, each for a different time constant.
   The port number has to match the respective "receptor_type" in the connectors.
 
@@ -67,16 +72,21 @@ Parameters:
   C_m               double - Capacitance of the membrane in pF.
   t_ref             double - Duration of refractory time in ms.
   V_reset           double - Reset potential of the membrane in mV.
-  tau_syn           double vector - Rise time constants of the synaptic alpha function in ms.
+  tau_syn           double vector - Rise time constants of the synaptic alpha
+function in ms.
   E_rev             double vector - Reversal potential in mV.
-  V_dynamics_method string - Voltage dynamics (Equation (1) in [1]) solution methods:
-                             'linear_forward_euler' - Linear Euler forward (RK1) to find next V_m value, or
-                             'linear_exact' - Linear exact to find next V_m value.
+  V_dynamics_method string - Voltage dynamics (Equation (1) in [1]) solution
+methods:
+                             'linear_forward_euler' - Linear Euler forward (RK1)
+to find next V_m value, or
+                             'linear_exact' - Linear exact to find next V_m
+value.
 
 References:
   [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
       Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
-      Generalized leaky integrate-and-fire models classify multiple neuron types.
+      Generalized leaky integrate-and-fire models classify multiple neuron
+types.
       Nature Communications 9:709.
   [2] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
       model for the large, fluctuating synaptic conductance state typical of
@@ -94,7 +104,6 @@ extern "C" int glif_lif_cond_dynamics( double, const double*, double*, void* );
 class glif_lif_cond : public nest::Archiving_Node
 {
 public:
-
   glif_lif_cond();
 
   glif_lif_cond( const glif_lif_cond& );
@@ -114,7 +123,7 @@ public:
   nest::port handles_test_event( nest::CurrentEvent&, nest::port );
   nest::port handles_test_event( nest::DataLoggingRequest&, nest::port );
 
-  bool is_off_grid() const  // uses off_grid events
+  bool is_off_grid() const // uses off_grid events
   {
     return true;
   }
@@ -147,14 +156,14 @@ private:
 
   struct Parameters_
   {
-    double th_inf_; // A constant spiking threshold in mV
-    double G_; // membrane conductance in nS
-    double E_L_; // resting potential in mV
-    double C_m_; // capacitance in pF
-    double t_ref_; // refractory time in ms
-    double V_reset_; // Membrane voltage following spike in mV
+    double th_inf_;                 // A constant spiking threshold in mV
+    double G_;                      // membrane conductance in nS
+    double E_L_;                    // resting potential in mV
+    double C_m_;                    // capacitance in pF
+    double t_ref_;                  // refractory time in ms
+    double V_reset_;                // Membrane voltage following spike in mV
     std::vector< double > tau_syn_; // synaptic port time constants in ms
-    std::vector< double > E_rev_; // reversal potential in mV
+    std::vector< double > E_rev_;   // reversal potential in mV
 
     // boolean flag which indicates whether the neuron has connections
     bool has_connections_;
@@ -165,7 +174,6 @@ private:
 
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum& );
-
   };
 
 public:
@@ -182,8 +190,9 @@ public:
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;        // V_M
-    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2; // DG_SYN, G_SYN
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1; // V_M
+    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR =
+      2; // DG_SYN, G_SYN
 
     std::vector< double > y_; //!< neuron state
 
@@ -201,7 +210,8 @@ private:
     Buffers_( glif_lif_cond& );
     Buffers_( const Buffers_&, glif_lif_cond& );
 
-    std::vector< nest::RingBuffer > spikes_;   //!< Buffer incoming spikes through delay, as sum
+    std::vector< nest::RingBuffer >
+      spikes_; //!< Buffer incoming spikes through delay, as sum
     nest::RingBuffer currents_; //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
@@ -233,10 +243,11 @@ private:
   struct Variables_
   {
     double t_ref_remaining_; // counter during refractory period, in ms
-    double t_ref_total_; // total time of refractory period, in ms
+    double t_ref_total_;     // total time of refractory period, in ms
 
     /** Amplitude of the synaptic conductance.
-        This value is chosen such that an event of weight 1.0 results in a peak conductance of 1 nS
+        This value is chosen such that an event of weight 1.0 results in a peak
+       conductance of 1 nS
         at t = tau_syn..
     */
     std::vector< double > CondInitialValues_;
@@ -301,7 +312,8 @@ nest::glif_lif_cond::handles_test_event( nest::CurrentEvent&,
   // It confirms to the connection management system that we are able
   // to handle @c CurrentEvent on port 0. You need to extend the function
   // if you want to differentiate between input ports.
-  if ( receptor_type != 0 ){
+  if ( receptor_type != 0 )
+  {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -316,7 +328,8 @@ nest::glif_lif_cond::handles_test_event( nest::DataLoggingRequest& dlr,
   // to handle @c DataLoggingRequest on port 0.
   // The function also tells the built-in UniversalDataLogger that this node
   // is recorded from and that it thus needs to collect data during simulation.
-  if ( receptor_type != 0 ){
+  if ( receptor_type != 0 )
+  {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
   }
 

@@ -56,8 +56,8 @@ The following parameters can be set in the status dictionary.
 
 rate                double - Rate (unitless)
 tau                 double - Time constant of rate dynamics in ms.
-mean                double - Mean of Gaussian white noise.
-std                 double - Standard deviation of Gaussian white noise.
+mu                  double - Mean input.
+sigma               double - Noise parameter.
 g                   double - Gain parameter.
 beta                double - Slope parameter.
 theta               double - Threshold.

@@ -184,7 +184,7 @@ public:
   /**
    * Resize spike_register and comm_buffer to correct dimensions.
    * Resizes also off_grid_*_buffer_.
-   * This is done by resume() when called for the first time.
+   * This is done by simulate() when called for the first time.
    * The spike buffers cannot be reconfigured later, whence neither
    * the number of local threads or the min_delay can change after
    * simulate() has been called. ConnectorModel::check_delay() and

@@ -42,7 +42,9 @@
 #include "slice_ring_buffer.h"
 
 
-/*Begin Documentation
+namespace nest
+{
+/** @BeginDocumentation
 Name: iaf_psc_exp_ps_lossless - Leaky integrate-and-fire neuron
 with exponential postsynaptic currents; precise implementation;
 predicts exact number of spikes by applying state space analysis
@@ -73,11 +75,23 @@ Parameters:
   V_min         double - Absolute lower value for the membrane potential.
   V_reset       double - Reset value for the membrane potential.
 
-Note: In the current implementation, tau_syn_ex and tau_syn_in must be equal.
-  This is because the state space would be 3-dimensional otherwise, which
-  makes the detection of threshold crossing more difficult [1].
-  Support for different time constants may be added in the future, see issue
-  #921.
+Remarks:
+
+This model transmits precise spike times to target nodes (on-grid spike
+time and offset). If this node is connected to a spike_detector, the
+property "precise_times" of the spike_detector has to be set to true in
+order to record the offsets in addition to the on-grid spike times.
+
+The iaf_psc_delta_canon neuron accepts connections transmitting
+CurrentEvents. These events transmit stepwise-constant currents which
+can only change at on-grid times.
+
+In the current implementation, tau_syn_ex and tau_syn_in must be equal.
+This is because the state space would be 3-dimensional otherwise, which
+makes the detection of threshold crossing more difficult [1].
+Support for different time constants may be added in the future,
+see issue #921.
+
 
 References:
 [1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E
@@ -93,13 +107,6 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 SeeAlso: iaf_psc_exp_ps
 */
-
-namespace nest
-{
-/**
- * Leaky iaf neuron, exponential PSC synapses, lossless implementation.
- * @todo Implement current input in consistent way.
- */
 class iaf_psc_exp_ps_lossless : public Archiving_Node
 {
 public:

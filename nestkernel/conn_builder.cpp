@@ -632,11 +632,6 @@ nest::OneToOneBuilder::connect_()
 
     try
     {
-      const size_t expected_targets =
-        std::ceil( targets_->size()
-          / static_cast< double >(
-                     kernel().vp_manager.get_num_virtual_processes() ) );
-
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
@@ -886,11 +881,6 @@ nest::AllToAllBuilder::connect_()
 
     try
     {
-      const size_t expected_targets =
-        std::ceil( sources_->size() * targets_->size()
-          / static_cast< double >(
-                     kernel().vp_manager.get_num_virtual_processes() ) );
-
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
@@ -1185,11 +1175,6 @@ nest::FixedInDegreeBuilder::connect_()
 
     try
     {
-      const size_t expected_targets =
-        std::ceil( targets_->size()
-          / static_cast< double >(
-                     kernel().vp_manager.get_num_virtual_processes() ) );
-
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
@@ -1374,11 +1359,6 @@ nest::FixedOutDegreeBuilder::connect_()
 
       try
       {
-        const size_t expected_new_syns =
-          std::ceil( sources_->size() * outdegree_
-            / static_cast< double >(
-                       kernel().vp_manager.get_num_virtual_processes() ) );
-
         // allocate pointer to thread specific random generator
         librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
@@ -1621,16 +1601,6 @@ nest::BernoulliBuilder::connect_()
     // get thread id
     const thread tid = kernel().vp_manager.get_thread_id();
 
-    // compute expected number of connections from binomial
-    // distribution; estimate an upper bound by assuming Gaussianity
-    const size_t max_num_connections =
-      std::ceil( float( targets_->size() ) * float( sources_->size() )
-        / kernel().vp_manager.get_num_virtual_processes() );
-
-    const size_t expected_num_connections = max_num_connections * p_;
-    const size_t std_num_connections =
-      std::sqrt( max_num_connections * p_ * ( 1 - p_ ) );
-
     try
     {
       // allocate pointer to thread specific random generator
@@ -1789,16 +1759,6 @@ nest::SymmetricBernoulliBuilder::connect_()
 #endif
       bino.set_p( p_ );
       bino.set_n( sources_->size() );
-
-      // compute expected number of connections from binomial
-      // distribution; estimate an upper bound by assuming Gaussianity
-      const size_t max_num_connections =
-        std::ceil( targets_->size() * sources_->size()
-          / static_cast< double >(
-                     kernel().vp_manager.get_num_virtual_processes() ) );
-      const size_t expected_num_connections = max_num_connections * p_;
-      const size_t std_num_connections =
-        std::sqrt( max_num_connections * p_ * ( 1 - p_ ) );
 
       unsigned long indegree;
       index sgid;

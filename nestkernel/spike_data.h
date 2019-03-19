@@ -50,11 +50,10 @@ enum enum_status_spike_data_id
 class SpikeData
 {
 protected:
-
   static constexpr int MAX_LAG = generate_max_value( NUM_BITS_LAG );
 
-  index lcid_ : NUM_BITS_LCID;                        //!< local connection index
-  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA;  //!< status flag
+  index lcid_ : NUM_BITS_LCID;                       //!< local connection index
+  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA; //!< status flag
   unsigned int lag_ : NUM_BITS_LAG;   //!< lag in this min-delay interval
   thread tid_ : NUM_BITS_TID;         //!< thread index
   synindex syn_id_ : NUM_BITS_SYN_ID; //!< synapse-type index
@@ -135,7 +134,8 @@ public:
 };
 
 //! check legal size
-using success_spike_data_size = StaticAssert< sizeof( SpikeData ) == 8 >::success;
+using success_spike_data_size =
+  StaticAssert< sizeof( SpikeData ) == 8 >::success;
 
 inline SpikeData::SpikeData()
   : lcid_( 0 )
@@ -279,7 +279,8 @@ public:
 };
 
 //! check legal size
-using success_offgrid_spike_data_size = StaticAssert< sizeof( OffGridSpikeData ) == 16 >::success;
+using success_offgrid_spike_data_size =
+  StaticAssert< sizeof( OffGridSpikeData ) == 16 >::success;
 
 inline OffGridSpikeData::OffGridSpikeData()
   : SpikeData()

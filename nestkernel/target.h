@@ -87,8 +87,10 @@ private:
   static constexpr uint8_t BITPOS_PROCESSED_FLAG =
     BITPOS_SYN_ID + NUM_BITS_SYN_ID;
 
-  using bits_for_processed_flag = StaticAssert< NUM_BITS_PROCESSED_FLAG == 1U >::success;
-  using position_of_processed_flag = StaticAssert< BITPOS_PROCESSED_FLAG == 63U >::success;
+  using bits_for_processed_flag =
+    StaticAssert< NUM_BITS_PROCESSED_FLAG == 1U >::success;
+  using position_of_processed_flag =
+    StaticAssert< BITPOS_PROCESSED_FLAG == 63U >::success;
 
   // generate bit-masks used in bit-operations
   static constexpr uint64_t MASK_LCID =

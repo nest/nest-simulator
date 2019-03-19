@@ -77,8 +77,7 @@ public:
 };
 
 //! check legal size
-typedef StaticAssert< sizeof( TargetDataFields ) == 8 >::success
-  success_target_data_fields_size;
+using success_target_data_fields_size = StaticAssert< sizeof( TargetDataFields ) == 8 >::success;
 
 inline void
 TargetDataFields::set_lcid( const index lcid )
@@ -131,8 +130,7 @@ public:
 };
 
 //! check legal size
-typedef StaticAssert< sizeof( SecondaryTargetDataFields ) == 8 >::success
-  success_secondary_target_data_fields_size;
+using success_secondary_target_data_fields_size = StaticAssert< sizeof( SecondaryTargetDataFields ) == 8 >::success;
 
 inline void
 SecondaryTargetDataFields::set_send_buffer_pos( const size_t pos )
@@ -220,8 +218,7 @@ public:
 };
 
 //! check legal size
-typedef StaticAssert< sizeof( TargetData ) == 12 >::success
-  success_target_data_size;
+using success_target_data_size = StaticAssert< sizeof( TargetData ) == 12 >::success;
 
 inline void
 TargetData::reset_marker()

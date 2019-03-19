@@ -87,10 +87,8 @@ private:
   static constexpr uint8_t BITPOS_PROCESSED_FLAG =
     BITPOS_SYN_ID + NUM_BITS_SYN_ID;
 
-  typedef StaticAssert< NUM_BITS_PROCESSED_FLAG == 1U >::success
-    bits_for_processed_flag;
-  typedef StaticAssert< BITPOS_PROCESSED_FLAG == 63U >::success
-    position_of_processed_flag;
+  using bits_for_processed_flag = StaticAssert< NUM_BITS_PROCESSED_FLAG == 1U >::success;
+  using position_of_processed_flag = StaticAssert< BITPOS_PROCESSED_FLAG == 63U >::success;
 
   // generate bit-masks used in bit-operations
   static constexpr uint64_t MASK_LCID =
@@ -174,7 +172,7 @@ public:
 };
 
 //!< check legal size
-typedef StaticAssert< sizeof( Target ) == 8 >::success success_target_size;
+using success_target_size = StaticAssert< sizeof( Target ) == 8 >::success;
 
 inline Target::Target()
   : remote_target_id_( 0 )

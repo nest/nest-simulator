@@ -135,8 +135,7 @@ public:
 };
 
 //! check legal size
-typedef StaticAssert< sizeof( SpikeData ) == 8 >::success
-  success_spike_data_size;
+using success_spike_data_size = StaticAssert< sizeof( SpikeData ) == 8 >::success;
 
 inline SpikeData::SpikeData()
   : lcid_( 0 )
@@ -280,8 +279,7 @@ public:
 };
 
 //! check legal size
-typedef StaticAssert< sizeof( OffGridSpikeData ) == 16 >::success
-  success_offgrid_spike_data_size;
+using success_offgrid_spike_data_size = StaticAssert< sizeof( OffGridSpikeData ) == 16 >::success;
 
 inline OffGridSpikeData::OffGridSpikeData()
   : SpikeData()

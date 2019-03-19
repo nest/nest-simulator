@@ -211,35 +211,23 @@ ModelsModule::init( SLIInterpreter* )
 {
 
   // glif models
-  nest::kernel().model_manager.register_node_model< glif_lif >( "glif_lif" );
-  nest::kernel().model_manager.register_node_model< glif_lif_r >(
-    "glif_lif_r" );
-  nest::kernel().model_manager.register_node_model< glif_lif_asc >(
-    "glif_lif_asc" );
-  nest::kernel().model_manager.register_node_model< glif_lif_r_asc >(
+  kernel().model_manager.register_node_model< glif_lif >( "glif_lif" );
+  kernel().model_manager.register_node_model< glif_lif_r >( "glif_lif_r" );
+  kernel().model_manager.register_node_model< glif_lif_asc >( "glif_lif_asc" );
+  kernel().model_manager.register_node_model< glif_lif_r_asc >(
     "glif_lif_r_asc" );
-  nest::kernel().model_manager.register_node_model< glif_lif_r_asc_a >(
+  kernel().model_manager.register_node_model< glif_lif_r_asc_a >(
     "glif_lif_r_asc_a" );
-  nest::kernel().model_manager.register_node_model< glif_lif_psc >(
-    "glif_lif_psc" );
-  nest::kernel().model_manager.register_node_model< glif_lif_r_psc >(
+  kernel().model_manager.register_node_model< glif_lif_psc >( "glif_lif_psc" );
+  kernel().model_manager.register_node_model< glif_lif_r_psc >(
     "glif_lif_r_psc" );
-  nest::kernel().model_manager.register_node_model< glif_lif_asc_psc >(
+  kernel().model_manager.register_node_model< glif_lif_asc_psc >(
     "glif_lif_asc_psc" );
-  nest::kernel().model_manager.register_node_model< glif_lif_r_asc_psc >(
+  kernel().model_manager.register_node_model< glif_lif_r_asc_psc >(
     "glif_lif_r_asc_psc" );
-  nest::kernel().model_manager.register_node_model< glif_lif_r_asc_a_psc >(
+  kernel().model_manager.register_node_model< glif_lif_r_asc_a_psc >(
     "glif_lif_r_asc_a_psc" );
-  nest::kernel().model_manager.register_node_model< glif_lif_cond >(
-    "glif_lif_cond" );
-  nest::kernel().model_manager.register_node_model< glif_lif_r_cond >(
-    "glif_lif_r_cond" );
-  nest::kernel().model_manager.register_node_model< glif_lif_asc_cond >(
-    "glif_lif_asc_cond" );
-  nest::kernel().model_manager.register_node_model< glif_lif_r_asc_cond >(
-    "glif_lif_r_asc_cond" );
-  nest::kernel().model_manager.register_node_model< glif_lif_r_asc_a_cond >(
-    "glif_lif_r_asc_a_cond" );
+
 
   // rate models with input noise
   kernel().model_manager.register_node_model< gauss_rate_ipn >(
@@ -422,6 +410,18 @@ ModelsModule::init( SLIInterpreter* )
     name, vmdict, false );
 
 #ifdef HAVE_GSL
+  // glif cond models
+  kernel().model_manager.register_node_model< glif_lif_cond >(
+    "glif_lif_cond" );
+  kernel().model_manager.register_node_model< glif_lif_r_cond >(
+    "glif_lif_r_cond" );
+  kernel().model_manager.register_node_model< glif_lif_asc_cond >(
+    "glif_lif_asc_cond" );
+  kernel().model_manager.register_node_model< glif_lif_r_asc_cond >(
+    "glif_lif_r_asc_cond" );
+  kernel().model_manager.register_node_model< glif_lif_r_asc_a_cond >(
+    "glif_lif_r_asc_a_cond" );
+
   kernel().model_manager.register_node_model< iaf_chxk_2008 >(
     "iaf_chxk_2008" );
   kernel().model_manager.register_node_model< iaf_cond_alpha >(

@@ -22,6 +22,8 @@
 
 #include "glif_lif_r_cond.h"
 
+#ifdef HAVE_GSL
+
 // C++ includes:
 #include <limits>
 #include <iostream>
@@ -587,3 +589,5 @@ nest::glif_lif_r_cond::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e ); // the logger does this for us
 }
+
+#endif // HAVE_GSL

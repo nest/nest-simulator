@@ -61,8 +61,8 @@ namespace nest
  *
  * Other custom layouts can be chosen by providing a list of 5
  * numbers, representing the bits required for rank, thread, synapse
- * id, local connection id and processed flag, repectively. The number
- * of bit needs to sum to 64. The processed flag must always use one
+ * id, local connection id and processed flag, respectively. The number
+ * of bits needs to sum to 64. The processed flag must always use one
  * bit.
  */
 // clang-format on

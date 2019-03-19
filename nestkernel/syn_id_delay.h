@@ -106,7 +106,7 @@ struct SynIdDelay
   }
 };
 
-//!< check legal size
+//! check legal size
 typedef StaticAssert< sizeof( SynIdDelay ) == 4 >::success
   success_syn_id_delay_data_size;
 

@@ -124,7 +124,7 @@ typedef size_t index;
 const index invalid_index = SIZE_MAX;
 
 /**
- *  Unsigned char type for enumerations of synapse types.
+ *  For enumerations of synapse types.
  */
 typedef unsigned int synindex;
 const synindex invalid_synindex = MAX_SYN_ID;

@@ -136,7 +136,7 @@ public:
   double get_offset() const;
 };
 
-//!< check legal size
+//! check legal size
 typedef StaticAssert< sizeof( SpikeData ) == 8 >::success
   success_spike_data_size;
 
@@ -281,7 +281,7 @@ public:
   double get_offset() const;
 };
 
-//!< check legal size
+//! check legal size
 typedef StaticAssert< sizeof( OffGridSpikeData ) == 16 >::success
   success_offgrid_spike_data_size;
 

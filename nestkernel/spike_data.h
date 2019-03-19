@@ -51,8 +51,6 @@ class SpikeData
 {
 protected:
 
-  static constexpr int MAX_MARKER =
-    generate_max_value( NUM_BITS_MARKER_SPIKE_DATA );
   static constexpr int MAX_LAG = generate_max_value( NUM_BITS_LAG );
 
   index lcid_ : NUM_BITS_LCID;                        //!< local connection index

@@ -188,7 +188,6 @@ private:
   static constexpr uint8_t NUM_BITS_IS_PRIMARY = 1U;
 
   static constexpr int MAX_LID = generate_max_value( NUM_BITS_LID );
-  static constexpr int MAX_MARKER = generate_max_value( NUM_BITS_MARKER );
 
   unsigned int source_lid_ : NUM_BITS_LID; //!< local id of presynaptic neuron
   //! thread index of presynaptic neuron

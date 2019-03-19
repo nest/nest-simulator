@@ -107,8 +107,8 @@ struct SynIdDelay
 };
 
 //! check legal size
-using success_syn_id_delay_data_size = StaticAssert< sizeof( SynIdDelay ) == 4 >::success;
-
+using success_syn_id_delay_data_size =
+  StaticAssert< sizeof( SynIdDelay ) == 4 >::success;
 }
 
 #endif

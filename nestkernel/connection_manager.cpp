@@ -1237,23 +1237,23 @@ nest::ConnectionManager::get_connections(
       ConnectorBase* connections = connections_[ tid ][ syn_id ];
       if ( connections != NULL )
       {
+        const size_t num_connections_in_thread = connections->size();
+        for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
+        {
+          const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
+          connections->get_connection_with_specified_targets( source_gid,
+            target_neuron_gids,
+            tid,
+            lcid,
+            synapse_label,
+            conns_in_thread );
+        }
+
         for ( std::vector< index >::const_iterator t_gid =
                 target_neuron_gids.begin();
               t_gid != target_neuron_gids.end();
               ++t_gid )
         {
-          std::vector< index > source_lcids;
-          connections->get_source_lcids( tid, *t_gid, source_lcids );
-
-          for ( size_t i = 0; i < source_lcids.size(); ++i )
-          {
-            conns_in_thread.push_back( ConnectionDatum( ConnectionID(
-              source_table_.get_gid( tid, syn_id, source_lcids[ i ] ),
-              *t_gid,
-              tid,
-              syn_id,
-              source_lcids[ i ] ) ) );
-          }
           // target_table_devices_ contains connections both to and from
           // devices. First we get connections from devices.
           target_table_devices_.get_connections_from_devices_(
@@ -1321,18 +1321,12 @@ nest::ConnectionManager::get_connections(
             }
             else
             {
-              for ( std::vector< index >::const_iterator t_gid =
-                      target_neuron_gids.begin();
-                    t_gid != target_neuron_gids.end();
-                    ++t_gid )
-              {
-                connections->get_connection( source_gid,
-                  *t_gid,
-                  tid,
-                  lcid,
-                  synapse_label,
-                  conns_in_thread );
-              }
+              connections->get_connection_with_specified_targets( source_gid,
+                target_neuron_gids,
+                tid,
+                lcid,
+                synapse_label,
+                conns_in_thread );
             }
           }
         }

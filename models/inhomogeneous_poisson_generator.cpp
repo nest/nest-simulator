@@ -144,15 +144,19 @@ nest::inhomogeneous_poisson_generator::Parameters_::set(
     throw BadProperty( "Rate times and values must be reset together." );
   }
 
-  // if empty parameters given, return here
+  // if neither times or rates are given, return here
   if ( not( times or rates ) )
   {
     return;
   }
 
-  // from here on we are sure the passed arguments are not empty
   const std::vector< double_t > d_times =
     getValue< std::vector< double_t > >( d->lookup( names::rate_times ) );
+
+  if ( d_times.empty() )
+  {
+    return;
+  }
 
   if ( d_times.size() != rate_values_.size() )
   {

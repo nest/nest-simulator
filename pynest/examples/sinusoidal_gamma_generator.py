@@ -207,7 +207,7 @@ steps = int(t / dt)
 offset = t / 1000. * 2 * np.pi
 
 
-We create a figure with a 2x3 grid.
+# We create a figure with a 2x3 grid.
 
 
 grid = (2, 3)

@@ -69,11 +69,10 @@ result = runner.run(nest.tests.suite())
 result_topo = runner.run(nest.topology.tests.suite())
 
 total = result.testsRun + result_topo.testsRun
-failed = len(result.failures) + \
-         len(result.errors) + \
-         len(result_topo.failures) + \
-         len(result_topo.errors)
+failures = len(result.failures) + len(result_topo.failures)
+errors = len(result.errors) + len(result_topo.errors)
 skipped = len(result.skipped) + len(result_topo.skipped)
+failed = failures + errors
 passed = total - failed - skipped
 
 # We return the numbers of tests via a temporaty file

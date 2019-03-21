@@ -39,6 +39,7 @@ from string import Template
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
+from . import hl_api_types
 
 __all__ = [
     'broadcast',
@@ -583,7 +584,8 @@ def serializable(data):
     elif isinstance(data, dict):
         result = dict([(key, serializable(value))
                        for key, value in data.items()])
-
+    elif isinstance(data, hl_api_types.GIDCollection):
+        result = tuple(data)
     else:
         result = data
 

@@ -38,15 +38,15 @@ class TestSPwithMPI(unittest.TestCase):
         for script_name in scripts:
             print("")
             script = os.path.join(script_dir, script_name)
-            cmd = ["nest", "-c", "2 (nosetests) (%s) mpirun =only" % script]
+            cmd = ["nest", "-c", "2 (python) (%s) mpirun =only" % script]
             test_cmd = subprocess.check_output(cmd)
-            process = subprocess.Popen(cmd)
+            process = subprocess.Popen(test_cmd.split(), env=os.environ)
             process.communicate()
             if process.returncode != 0:
                 failing.append(script_name)
 
         print("")
-        cmd = ["nest", "-c", "2 (nosetests) ([script]) mpirun =only"]
+        cmd = ["nest", "-c", "2 (python) ([script]) mpirun =only"]
         test_str = subprocess.check_output(cmd)
         self.assertTrue(not failing, 'The following tests failed when ' +
                         'executing "%s": %s' % (test_str, ", ".join(failing)))

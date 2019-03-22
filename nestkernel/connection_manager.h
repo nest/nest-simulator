@@ -31,6 +31,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
+#include "completed_checker.h"
 #include "conn_builder.h"
 #include "connection_id.h"
 #include "connector_base.h"
@@ -621,8 +622,14 @@ private:
   //! Whether primary connections (spikes) exist.
   bool has_primary_connections_;
 
+  //! Check for primary connections (spikes) on each thread.
+  CompletedChecker check_primary_connections_;
+
   //! Whether secondary connections (e.g., gap junctions) exist.
   bool secondary_connections_exist_;
+
+  //! Check for secondary connections (e.g., gap junctions) on each thread.
+  CompletedChecker check_secondary_connections_;
 
   //! Maximum distance between (double) spike times in STDP that is
   //! still considered 0. See issue #894

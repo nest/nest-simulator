@@ -64,7 +64,13 @@ CommonSynapseProperties::get_status( DictionaryDatum& d ) const
 void
 CommonSynapseProperties::set_status( const DictionaryDatum& d, ConnectorModel& )
 {
-  updateValue< GIDCollectionDatum >( d, names::weight_recorder, weight_recorder_ );
+  const bool update_wr = updateValue< GIDCollectionDatum >(
+    d, names::weight_recorder, weight_recorder_ );
+  if ( update_wr and ( *weight_recorder_ ).size() > 1 )
+  {
+    throw BadProperty(
+      "weight_recorder must be a single element GIDCollection" );
+  }
 }
 
 Node*

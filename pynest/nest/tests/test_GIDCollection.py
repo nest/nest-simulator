@@ -262,8 +262,8 @@ class TestGIDCollection(unittest.TestCase):
         n_c = nest.Create('iaf_psc_delta', num_c)
 
         nodes = n_a + n_c
-        nodes = nodes[::2]
-        nodes_list = list(nodes)
+        nodes_step = nodes[::2]
+        nodes_list = list(nodes_step)
         compare_list = (list(range(1, 11))[::2] + list(range(26, 55))[::2])
         self.assertEqual(nodes_list, compare_list)
 
@@ -271,31 +271,23 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(nodes_list[5], 26)
         self.assertEqual(nodes_list[19], 54)
 
-        # Rebuild GIDCollection as a composite to be able to slice
         ngc = nest.GIDCollection(nodes_list)
-        self.assertEqual(nodes, ngc)
+        self.assertEqual(nodes_step, ngc)
 
-        n_slice_first = ngc[:10]
-        n_slice_middle = ngc[2:7]
-        n_slice_middle_jump = ngc[2:12:2]
+        n_slice_first = nodes[:10]
+        n_slice_middle = nodes[2:7]
+        n_slice_middle_jump = nodes[2:12:2]
 
         n_list_first = list(n_slice_first)
         n_list_middle = list(n_slice_middle)
         n_list_middle_jump = list(n_slice_middle_jump)
 
-        compare_list_first = [1, 3, 5, 7, 9, 26, 28, 30, 32, 34]
-        compare_list_middle = [5, 7, 9, 26, 28]
-        compare_list_middle_jump = [5, 9, 28, 32, 36]
+        compare_list_first = list(range(1, 11))
+        compare_list_middle = list(range(3, 8))
+        compare_list_middle_jump = [3, 5, 7, 9, 26]
         self.assertEqual(n_list_first, compare_list_first)
         self.assertEqual(n_list_middle, compare_list_middle)
         self.assertEqual(n_list_middle_jump, compare_list_middle_jump)
-
-        self.assertTrue(5 in nodes)
-        self.assertTrue(44 in nodes)
-        self.assertFalse(6 in nodes)
-        self.assertFalse(10 in nodes)
-        self.assertFalse(15 in nodes)
-        self.assertFalse(25 in nodes)
 
     def test_composite_wrong_slice(self):
         """

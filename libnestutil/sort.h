@@ -23,6 +23,7 @@
 #ifndef SORT_H
 #define SORT_H
 
+#include <algorithm>
 #include <cstddef>
 #include <vector>
 
@@ -112,7 +113,10 @@ quicksort3way( BlockVector< T1 >& vec_sort,
   }
 
   // use median-of-3 as partitioning element
-  size_t m = median3_( vec_sort, lo, lo + n / 2, hi );
+  size_t m = median3_( vec_sort,
+    lo + std::rand() % ( hi - lo ),
+    lo + std::rand() % ( hi - lo ),
+    lo + std::rand() % ( hi - lo ) );
 
   // in case of many equal entries, make sure to use first entry with
   // this value (useful for sorted arrays)

@@ -26,7 +26,7 @@ Classes defining the different PyNEST types
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
-from .hl_api_helper import broadcast, is_iterable, is_literal, serializable, uni_str
+from .hl_api_helper import broadcast, is_iterable, is_literal, to_json, uni_str
 from .hl_api_simulation import GetKernelStatus
 from nest.topology import CreateParameter
 
@@ -421,7 +421,7 @@ class GIDCollection(object):
                 result = {key: [val] for key, val in result.items()}
             result = pandas.DataFrame(result, index=index)
         elif output == 'json':
-            result = serializable(result)
+            result = to_json(result)
 
         return result
 
@@ -648,7 +648,7 @@ class Connectome(object):
                 final_result = {keys: final_result}
             final_result = pandas.DataFrame(final_result, index=index)
         elif output == 'json':
-            final_result = serializable(final_result)
+            final_result = to_json(final_result)
 
         return final_result
 

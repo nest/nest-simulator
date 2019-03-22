@@ -208,9 +208,6 @@ class GIDCollectionIterator(object):
             raise StopIteration
         return val
 
-    def __str__(self):
-        return sli_func('pcvs', self._datum)
-
     next = __next__  # Python2.x
 
 
@@ -508,12 +505,40 @@ class GIDCollection(object):
         sli_func('SetStatus', self._datum, params)
 
 
+class ConnectomeIterator(object):
+    """
+    Iterator class for Connectome.
+    Returns list with source, target.
+    """
+
+    def __init__(self, conn):
+        self._connectome = conn
+        self._counter = 0
+        self._source = self._connectome.get('source')
+        self._target = self._connectome.get('target')
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._counter >= len(self._connectome):
+            raise StopIteration
+
+        conn = self._connectome[self._counter]
+        #conn = [self._source[self._counter], self._target[self._counter]]
+        self._counter += 1
+
+        return conn
+
+    next = __next__  # Python2.x
+
+
 class Connectome(object):
     """
     Class for Connections.
 
     Connectome represents the connections of a network. The class supports
-    get(), set(), len() and equality.
+    get(), set(), len(), indexing, iteration and equality.
 
     A Connectome is created by the ``GetConnections`` function.
     """
@@ -539,6 +564,9 @@ class Connectome(object):
             # self._datum is a list of Connection datums.
             self._datum = [data]
 
+    def __iter__(self):
+        return ConnectomeIterator(self)
+
     def __len__(self):
         if self._datum is None:
             return 0
@@ -562,6 +590,12 @@ class Connectome(object):
         if not isinstance(other, Connectome):
             return NotImplemented
         return not self == other
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return Connectome(self._datum[key])
+        else:
+            return Connectome([self._datum[key]])
 
     def __str__(self):
         """
@@ -620,12 +654,11 @@ class Connectome(object):
         Returns
         -------
         dict:
-            All parameters
+            All parameters, or, if keys is a list of strings, a dictionary with
+            lists of corresponding parameters
         type:
-            If keys is a string, the corrsponding default parameter is returned
-        list:
-            If keys is a list of strings, a dictionary with a list of
-            corresponding parameters is returned
+            If keys is a string, the corrsponding parameter(s) is returned
+
 
         Raises
         ------

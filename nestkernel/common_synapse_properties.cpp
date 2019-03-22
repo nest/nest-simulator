@@ -39,7 +39,7 @@ namespace nest
  */
 
 CommonSynapseProperties::CommonSynapseProperties()
-  : weight_recorder_( -1 )
+  : weight_recorder_()
 {
 }
 
@@ -50,13 +50,21 @@ CommonSynapseProperties::~CommonSynapseProperties()
 void
 CommonSynapseProperties::get_status( DictionaryDatum& d ) const
 {
-  def< long >( d, names::weight_recorder, weight_recorder_ );
+  if ( weight_recorder_.valid() )
+  {
+    def< GIDCollectionDatum >( d, names::weight_recorder, weight_recorder_ );
+  }
+  else
+  {
+    ArrayDatum ad;
+    def< ArrayDatum >( d, names::weight_recorder, ad );
+  }
 }
 
 void
 CommonSynapseProperties::set_status( const DictionaryDatum& d, ConnectorModel& )
 {
-  updateValue< long >( d, names::weight_recorder, weight_recorder_ );
+  updateValue< GIDCollectionDatum >( d, names::weight_recorder, weight_recorder_ );
 }
 
 Node*

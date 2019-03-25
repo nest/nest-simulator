@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-if ( with-boost )
+if ( HAVE_BOOST )
   include_directories( ${BOOST_INCLUDE_DIR} )
 
   add_executable( run_all_cpptests run_all.cpp )

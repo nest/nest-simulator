@@ -1,5 +1,5 @@
 /*
- *  hpc_benchmark.sli
+ *  hpc_benchmark_2_16.sli
  *
  *  This file is part of NEST.
  *
@@ -21,6 +21,10 @@
  */
 
 /*
+   This script was previously called hpc_benchmark.sli. If you want to
+   reproduce your hpc_benchmark results from NEST versions 2.16 and below, you
+   should use this version.
+
    This script produces a balanced random network of scale*11250 neurons in
    which the excitatory-excitatory neurons exhibit STDP with
    multiplicative depression and power-law potentiation. A mutual

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_post_trace.py
+# issue-1034.py
 #
 # This file is part of NEST.
 #
@@ -19,8 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import matplotlib.pyplot as plt
-import matplotlib.ticker as plticker
 import nest
 import numpy as np
 import os
@@ -143,134 +141,6 @@ class PostTraceTestCase(unittest.TestCase):
                   + ", post_trace should be " + str(trace_python_ref[i]))
 
         return trace_python_ref
-
-    def plot_run(self, trace_nest_t, trace_nest, trace_python_ref,
-                 pre_spike_times, post_spike_times, resolution, delay,
-                 dendritic_delay, sim_time, fname):
-
-        fig, ax = plt.subplots(nrows=3)
-        ax1, ax2, ax3 = ax
-
-        #
-        #   pre spikes
-        #
-
-        ax1.set_ylim([0., 1.])
-        ax1.set_ylabel("Pre spikes")
-        n_spikes = len(pre_spike_times)
-        for i in range(n_spikes):
-            ax1.plot(2 * [pre_spike_times[i] + delay],
-                     ax1.get_ylim(),
-                     linewidth=2, color="blue", alpha=.4)
-
-        #
-        #   post spikes
-        #
-
-        ax2.set_ylim([0., 1.])
-        ax2.set_ylabel("Post spikes")
-        n_spikes = len(post_spike_times)
-        for i in range(n_spikes):
-            ax2.plot(2 * [post_spike_times[i] + delay + dendritic_delay],
-                     [0, 1],
-                     linewidth=2, color="red", alpha=.4)
-
-        #
-        #   traces
-        #
-
-        ax3.legend()
-        ax3.set_ylabel("Synaptic trace")
-        ax3.set_ylim([0., np.amax(trace_python_ref)])
-        ax3.plot(np.linspace(0., sim_time, len(trace_python_ref)),
-                 trace_python_ref,
-                 label="Expected", color="cyan", alpha=.6)
-        ax3.scatter(trace_nest_t, trace_nest,
-                    marker=".", alpha=.5, color="orange", label="NEST")
-
-        #
-        #   Trace values are returned from NEST at regular intervals, but only
-        #   updated at presynaptic spike times.
-        #
-        #   Step backwards in time from the sampled value, to find the last
-        #   time at which the trace value was updated, namely the time of
-        #   occurrence of the last presynaptic spike.
-        #
-
-        pre_spike_times = np.array(pre_spike_times)
-        n_timepoints = len(trace_nest_t)
-        for i in range(n_timepoints):
-            t = trace_nest_t[i]
-            print("* Finding ref for NEST timepoint t = "
-                  + str(t) + ", trace = " + str(trace_nest[i]))
-            for t_search in reversed(pre_spike_times + delay):
-                if t_search <= t:
-                    print("\t* Testing " + str(t_search) + "...")
-                    _idx = int(np.round(t_search / sim_time
-                               * float(len(trace_python_ref) - 1)))
-                    _trace_at_t_search = trace_python_ref[_idx]
-                    traces_match = np.allclose(_trace_at_t_search,
-                                               trace_nest[i],
-                                               atol=self.trace_match_atol_,
-                                               rtol=self.trace_match_rtol_)
-                    print("\t   traces_match = " + str(traces_match))
-                    if not traces_match:
-                        post_spike_occurred_at_t_search = np.any(
-                            (t_search - (np.array(post_spike_times)
-                             + delay + dendritic_delay))**2 < resolution/2.)
-                        print("\t   post_spike_occurred_at_t_search = "
-                              + str(post_spike_occurred_at_t_search))
-                        if post_spike_occurred_at_t_search:
-                            traces_match = np.allclose(
-                                _trace_at_t_search + 1,
-                                trace_nest[i],
-                                atol=self.trace_match_atol_,
-                                rtol=self.trace_match_rtol_)
-                            print("\t   traces_match = " + str(traces_match)
-                                  + " (nest trace = " + str(trace_nest[i])
-                                  + ", ref trace = "
-                                  + str(_trace_at_t_search+1) + ")")
-                            if traces_match:
-                                _trace_at_t_search += 1.
-
-                        if not traces_match \
-                                and post_spike_occurred_at_t_search:
-                            traces_match = np.allclose(
-                                _trace_at_t_search - 1,
-                                trace_nest[i],
-                                atol=self.trace_match_atol_,
-                                rtol=self.trace_match_rtol_)
-                            print("\t   traces_match = "
-                                  + str(traces_match)
-                                  + " (nest trace = "
-                                  + str(trace_nest[i])
-                                  + ", ref trace = "
-                                  + str(_trace_at_t_search-1) + ")")
-                            if traces_match:
-                                _trace_at_t_search -= 1.
-
-                    ax3.scatter(t_search, _trace_at_t_search, 100, marker=".",
-                                color="#A7FF00FF", facecolor="none")
-                    ax3.plot([trace_nest_t[i], t_search],
-                             [trace_nest[i], _trace_at_t_search],
-                             linewidth=.5, color="#0000007F")
-                    break
-
-        for _ax in ax:
-            _ax.xaxis.set_major_locator(
-                plticker.MultipleLocator(base=10*delay))
-            _ax.xaxis.set_minor_locator(
-                plticker.MultipleLocator(base=delay))
-            _ax.grid(which="major", axis="both")
-            _ax.grid(which="minor", axis="x", linestyle=":", alpha=.4)
-            _ax.set_xlim(0., sim_time)
-
-        ax3.set_xlabel("Time [ms]")
-        fig.suptitle("""Postsynaptic trace testbench. Spike times are\n"""
-                     """shown from the perspective of the STDP synapse.""")
-
-        print("* Saving to " + fname)
-        fig.savefig(fname, dpi=300.)
 
     def nest_trace_matches_ref_trace(self, trace_nest_t, trace_nest,
                                      trace_python_ref, pre_spike_times,

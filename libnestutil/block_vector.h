@@ -78,7 +78,6 @@ public:
   using reference = ref_;
   using difference_type = long int;
 
-
   bv_iterator() = default;
 
   /**

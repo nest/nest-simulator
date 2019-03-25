@@ -137,7 +137,7 @@ quicksort3way( BlockVector< T1 >& vec_sort,
   const T1 v = vec_sort[ lt ]; // pivot
 
   // adjust position of i and lt (useful for sorted arrays)
-  while ( vec_sort[ i ] < v )
+  while ( vec_sort[ i ] < v and i < vec_sort.size() )
   {
     ++i;
   }
@@ -146,7 +146,7 @@ quicksort3way( BlockVector< T1 >& vec_sort,
   lt = i - 1;
 
   // adjust position of gt (useful for sorted arrays)
-  while ( vec_sort[ gt ] > v )
+  while ( vec_sort[ gt ] > v and gt > 0 )
   {
     --gt;
   }

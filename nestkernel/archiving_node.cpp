@@ -49,7 +49,7 @@ nest::Archiving_Node::Archiving_Node()
   , tau_minus_triplet_( 110.0 )
   , tau_minus_triplet_inv_( 1. / tau_minus_triplet_ )
   , max_delay_( -1.0 )
-  , trace_(0.)
+  , trace_( 0. )
   , last_spike_( -1.0 )
   , Ca_t_( 0.0 )
   , Ca_minus_( 0.0 )
@@ -69,7 +69,7 @@ nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
   , tau_minus_triplet_( n.tau_minus_triplet_ )
   , tau_minus_triplet_inv_( n.tau_minus_triplet_inv_ )
   , max_delay_( n.max_delay_ )
-  , trace_(n.trace_)
+  , trace_( n.trace_ )
   , last_spike_( n.last_spike_ )
   , Ca_t_( n.Ca_t_ )
   , Ca_minus_( n.Ca_minus_ )
@@ -98,7 +98,7 @@ Archiving_Node::register_stdp_connection( double t_first_read, double delay )
 
   n_incoming_++;
 
-  max_delay_ = std::max(delay, max_delay_);
+  max_delay_ = std::max( delay, max_delay_ );
 }
 
 double
@@ -211,10 +211,10 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
     //   (max_delay_ + eps) away from the new spike (at t_sp_ms)
     while ( history_.size() > 1 )
     {
-      const double next_t_sp = history_[1].t_;
+      const double next_t_sp = history_[ 1 ].t_;
       if ( history_.front().access_counter_ >= n_incoming_
-           && t_sp_ms - next_t_sp > max_delay_ +
-                  kernel().connection_manager.get_stdp_eps() )
+        && t_sp_ms - next_t_sp > max_delay_
+            + kernel().connection_manager.get_stdp_eps() )
       {
         history_.pop_front();
       }

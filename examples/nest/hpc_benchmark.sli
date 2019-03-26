@@ -38,8 +38,8 @@
      computers. Front. Neuroinform. 8:78
 
 
-   The difference between this script and hpc_benchmark.sli is that this version
-   is invariant under mpi/thread splits. This affects
+   The difference between this script and hpc_benchmark_2_16.sli is that this
+   version is invariant under mpi/thread splits. This affects
      - Randomization of the membrane potential (here it is based on the virtual
        processes)
      - Neurons that are being recorded from (here we always record from the

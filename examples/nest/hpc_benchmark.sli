@@ -171,6 +171,9 @@ def
   
   /eta 1.685              % scaling of external stimulus
   /filestem path_name
+  
+  /max_rank_cout 5  % copy output to cout for ranks 0..max_rank_cout-1
+  /max_rank_log 30  % write to log files for ranks 0..max_rank_log-1
 
 >> def
 
@@ -191,6 +194,8 @@ brunel_params dup using
      /resolution  dt
      /overwrite_files true
   >> SetStatus
+  
+  %------------------------- Creation -----------------------------------------
 
   /iaf_psc_alpha    model_params    SetDefaults
   M_INFO (BuildNetwork)
@@ -298,6 +303,7 @@ brunel_params dup using
   stdp_params /weight JE_pA put 
   /stdp_pl_synapse_hom_hpc stdp_params SetDefaults
 
+ %------------------------- Connection -----------------------------------------
 
   M_INFO (BuildNetwork)
   (Connecting stimulus generators.) message
@@ -356,6 +362,8 @@ brunel_params dup using
   memory_thisjob cvs ( # virt_mem_after_edges) join logger /log call
 
  } def % end of buildnetwork
+
+%-------------------------- Simulation -----------------------------------------
 
 /RunSimulation
 {
@@ -437,14 +445,12 @@ def
 
 /*
     This function defines a logger class used to properly log memory and timing
-    information from network simulations. It is used by hpc_benchmark_invariant.sli
+    information from network simulations. It is used by hpc_benchmark.sli
     to store the information to the log files.
 */
 
 /logger
 <<
-  /max_rank_cout 5  % copy output to cout for ranks 0..max_rank_cout-1
-  /max_rank_log 30  % write to log files for ranks 0..max_rank_log-1
   /line_counter 0
 
   % constructor

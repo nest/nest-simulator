@@ -829,25 +829,23 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
         if ( it != begin() )
         {
           // Need to count the primitive, so can't start at begin()
-          std::stringstream string_buffer;
-          string_buffer
+          out
             << "\n" + space << "model="
             << kernel().model_manager.get_model( gt.model_id )->get_name()
             << ", size=" << primitive_size << ", ";
           if ( primitive_size == 1 )
           {
-            string_buffer << "first=" << gt.gid << ", last=" << gt.gid << ";";
+            out << "first=" << gt.gid << ", last=" << gt.gid << ";";
           }
           else
           {
-            string_buffer << "first=" << gt.gid << ", last=";
-            string_buffer << primitive_last;
+            out << "first=" << gt.gid << ", last=";
+            out << primitive_last;
             if ( step_ > 1 )
             {
-              string_buffer << ", step=" << step_ << ";";
+              out << ", step=" << step_ << ";";
             }
           }
-          string_vector.push_back( string_buffer.str() );
         }
         primitive_size = 1;
         gt = *it;
@@ -858,21 +856,6 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
       }
       primitive_last = ( *it ).gid;
       previous_part = current_part;
-    }
-
-    for ( std::vector< std::string >::const_iterator it = string_vector.begin();
-          it < string_vector.end();
-          ++it )
-    {
-      if ( string_vector.size() < 7 or it < ( string_vector.begin() + 3 )
-        or ( string_vector.end() - 3 ) < it )
-      {
-        out << *it;
-      }
-      else if ( it == ( string_vector.begin() + 3 ) )
-      {
-        out << "\n" + space + "..";
-      }
     }
 
     // Need to also print the last primitive
@@ -907,15 +890,11 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
         out << "\n" + space;
         it->print_primitive( out );
       }
-      else if ( it < ( parts_.begin() + 3 ) or ( parts_.end() - 4 ) < it )
+      else
       {
         out << "\n" + space;
         it->print_primitive( out );
         out << ";";
-      }
-      else if ( it == ( parts_.begin() + 3 ) )
-      {
-        out << "\n" + space + "..";
       }
     }
   }

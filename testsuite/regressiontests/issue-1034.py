@@ -26,7 +26,6 @@ import scipy.stats
 import unittest
 
 
-@nest.ll_api.check_stack
 class PostTraceTester(object):
 
     def __init__(self, pre_spike_times, post_spike_times, delay, resolution,

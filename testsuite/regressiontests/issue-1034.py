@@ -123,7 +123,7 @@ class PostTraceTester(object):
         compute Python known-good reference of postsynaptic trace
         """
 
-        n_timepoints = int(np.ceil(100 * self.sim_time_))
+        n_timepoints = int(np.ceil(1000 * self.sim_time_))
         trace_python_ref = np.zeros(n_timepoints)
 
         n_spikes = len(self.post_spike_times_)
@@ -133,7 +133,7 @@ class PostTraceTester(object):
                    + self.dendritic_delay_
             for i in range(n_timepoints):
                 t = (i / float(n_timepoints - 1)) * self.sim_time_
-                if t > t_sp + 1E-3:
+                if t > t_sp:
                     trace_python_ref[i] += np.exp(-(t - t_sp)
                                                   / self.tau_minus_)
 
@@ -311,8 +311,8 @@ class PostTraceTestCase(unittest.TestCase):
                     delay=delay,
                     resolution=resolution,
                     tau_minus=tau_minus,
-                    trace_match_atol=1E-2,
-                    trace_match_rtol=1E-2)
+                    trace_match_atol=1E-3,
+                    trace_match_rtol=1E-3)
                 assert test.nest_trace_matches_python_trace()
 
 

@@ -516,25 +516,15 @@ phase_seven() {
         echo "Phase 7: PyNEST tests."
         echo "----------------------"
 
-        # If possible, we run using nosetests. To find out if nosetests work,
-        # we proceed in two steps:
-        # 1. Check if nosetests is available
-        # 2. Check that nosetests supports --with-xunit by running nosetests.
-        #    We need to run nosetests on a directory without any Python test
-        #    files, because if they failed that would be interpreted as lack
-        #    of support for nosetests. We use the REPORTDIR as Python-free
-        #    dummy directory to search for tests.
-
-        if "${NOSETESTS}" --with-xunit --xunit-file=/dev/null --where="${REPORTDIR}" >/dev/null 2>&1; then
+        if "${NOSETESTS}" --where="${REPORTDIR}" >/dev/null 2>&1; then
 
             echo
             echo "  Using nosetests."
             echo
 
-            XUNIT_FILE="${REPORTDIR}/pynest_tests.xml"
             TESTS="${PYTHONPATH_}/nest/tests ${PYTHONPATH_}/nest/topology/tests"
 
-            "${NOSETESTS}" -v --with-xunit --xunit-file="${XUNIT_FILE}" ${TESTS} 2>&1 \
+            "${NOSETESTS}" -v ${TESTS} 2>&1 \
                 | tee -a "${TEST_LOGFILE}" \
                 | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" \
                 | sed 's/^/  /'

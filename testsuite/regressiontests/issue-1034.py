@@ -21,31 +21,36 @@
 
 import nest
 import numpy as np
-import os
 import scipy as sp
 import scipy.stats
 import unittest
 
 
 @nest.ll_api.check_stack
-class PostTraceTestCase(unittest.TestCase):
+class PostTraceTester(object):
 
-    trace_match_atol_ = 1E-2
-    trace_match_rtol_ = 1E-2
+    def __init__(self, pre_spike_times, post_spike_times, delay, resolution, tau_minus, trace_match_atol, trace_match_rtol):
+        self.pre_spike_times_ = pre_spike_times
+        self.post_spike_times_ = post_spike_times
+        self.delay_ = delay
+        self.dendritic_delay_ = delay
+        self.resolution_ = resolution
+        self.tau_minus_ = tau_minus
+        self.trace_match_atol_ = trace_match_atol
+        self.trace_match_rtol_ = trace_match_rtol
 
-    def run_post_trace_test_nest_(self, pre_spike_times, post_spike_times,
-                                  resolution, delay, sim_time, tau_minus,
+        self.max_t_sp_ = max(np.amax(self.pre_spike_times_),
+                             np.amax(self.post_spike_times_))
+        self.sim_time_ = self.max_t_sp_ + 5 * self.delay_
+
+
+    def run_post_trace_test_nest_(self,
                                   show_all_nest_trace_samples=False):
-
-        print("Pre spike times: ["
-              + ", ".join([str(t) for t in pre_spike_times]) + "]")
-        print("Post spike times: ["
-              + ", ".join([str(t) for t in post_spike_times]) + "]")
 
         nest.hl_api.set_verbosity("M_WARNING")
 
         nest.ResetKernel()
-        nest.SetKernelStatus({'resolution': resolution})
+        nest.SetKernelStatus({'resolution': self.resolution_})
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
@@ -53,21 +58,21 @@ class PostTraceTestCase(unittest.TestCase):
 
         # create spike_generators with these times
         pre_sg_ps = nest.Create("spike_generator",
-                                params={"spike_times": pre_spike_times,
+                                params={"spike_times": self.pre_spike_times_,
                                         'precise_times': True})
         post_sg_ps = nest.Create("spike_generator",
-                                 params={"spike_times": post_spike_times,
+                                 params={"spike_times": self.post_spike_times_,
                                          'precise_times': True})
 
         # create parrot neurons and connect spike_generators
         pre_parrot_ps = nest.Create("parrot_neuron_ps")
         post_parrot_ps = nest.Create("parrot_neuron_ps",
-                                     params={"tau_minus": tau_minus})
+                                     params={"tau_minus": self.tau_minus_})
 
         nest.Connect(pre_sg_ps, pre_parrot_ps,
-                     syn_spec={"delay": delay})
+                     syn_spec={"delay": self.delay_})
         nest.Connect(post_sg_ps, post_parrot_ps,
-                     syn_spec={"delay": delay})
+                     syn_spec={"delay": self.delay_})
 
         # create spike detector --- debugging only
         spikes = nest.Create("spike_detector",
@@ -84,14 +89,14 @@ class PostTraceTestCase(unittest.TestCase):
             pre_parrot_ps, post_parrot_ps,
             syn_spec={'model': 'stdp_synapse_rec',
                       'receptor_type': 1,
-                      'delay': delay})
+                      'delay': self.delay_})
 
         # get STDP synapse
         syn_ps = nest.GetConnections(source=pre_parrot_ps,
                                      synapse_model="stdp_synapse_rec")
 
-        print("[py] Total simulation time: " + str(sim_time) + " ms")
-        n_steps = int(np.ceil(sim_time / delay))
+        print("[py] Total simulation time: " + str(self.sim_time_) + " ms")
+        n_steps = int(np.ceil(self.sim_time_ / self.delay_))
         trace_nest = []
         trace_nest_t = []
         t = nest.GetStatus([0], "time")[0]
@@ -99,11 +104,11 @@ class PostTraceTestCase(unittest.TestCase):
         post_tr = nest.GetStatus(post_parrot_ps)[0]['post_trace']
         trace_nest.append(post_tr)
         for step in range(n_steps):
-            print("\n[py] simulating for " + str(delay) + " ms")
-            nest.Simulate(delay)
+            print("\n[py] simulating for " + str(self.delay_) + " ms")
+            nest.Simulate(self.delay_)
             t = nest.GetStatus([0], "time")[0]
             nearby_pre_spike = np.any(
-                np.abs(t - np.array(pre_spike_times) - delay) < resolution/2.)
+                np.abs(t - np.array(self.pre_spike_times_) - self.delay_) < self.resolution_/2.)
             if show_all_nest_trace_samples or nearby_pre_spike:
                 trace_nest_t.append(t)
                 post_tr = nest.GetStatus(post_parrot_ps)[0]['post_trace']
@@ -113,39 +118,37 @@ class PostTraceTestCase(unittest.TestCase):
 
         return trace_nest_t, trace_nest
 
-    def run_post_trace_test_python_reference_(self, pre_spike_times,
-                                              post_spike_times, resolution,
-                                              delay, dendritic_delay, sim_time,
-                                              tau_minus):
+    def run_post_trace_test_python_reference_(self, debug=False):
         """
         compute Python known-good reference of postsynaptic trace
         """
 
-        max_t_sp = max(np.amax(pre_spike_times), np.amax(post_spike_times))
-        n_timepoints = 100 * int(np.ceil(max_t_sp))
+        n_timepoints = int(np.ceil(100 * self.sim_time_))
         trace_python_ref = np.zeros(n_timepoints)
-        n_spikes = len(post_spike_times)
-        for sp_idx in range(n_spikes):
-            t_sp = post_spike_times[sp_idx] + delay + dendritic_delay
-            for i in range(n_timepoints):
-                t = (i / float(n_timepoints - 1)) * sim_time
-                if t > t_sp + 1E-3:
-                    trace_python_ref[i] += np.exp(-(t - t_sp) / tau_minus)
 
-        n_spikes = len(pre_spike_times)
+        n_spikes = len(self.post_spike_times_)
         for sp_idx in range(n_spikes):
-            t_sp = pre_spike_times[sp_idx] + delay
-            i = int(np.round(t_sp / sim_time
+            t_sp = self.post_spike_times_[sp_idx] \
+                   + self.delay_ \
+                   + self.dendritic_delay_
+            for i in range(n_timepoints):
+                t = (i / float(n_timepoints - 1)) * self.sim_time_
+                if t > t_sp + 1E-3:
+                    trace_python_ref[i] += np.exp(-(t - t_sp) / self.tau_minus_)
+
+        n_spikes = len(self.pre_spike_times_)
+        for sp_idx in range(n_spikes):
+            t_sp = self.pre_spike_times_[sp_idx] + self.delay_
+            i = int(np.round(t_sp / self.sim_time_
                              * float(len(trace_python_ref) - 1)))
-            print("* At t_sp = " + str(t_sp)
-                  + ", post_trace should be " + str(trace_python_ref[i]))
+            if debug:
+                print("* At t_sp = " + str(t_sp)
+                    + ", post_trace should be " + str(trace_python_ref[i]))
 
         return trace_python_ref
 
-    def nest_trace_matches_ref_trace(self, trace_nest_t, trace_nest,
-                                     trace_python_ref, pre_spike_times,
-                                     post_spike_times, resolution, delay,
-                                     dendritic_delay, sim_time, debug=True):
+    def nest_trace_matches_ref_trace_(self, trace_nest_t, trace_nest,
+                                     trace_python_ref, debug=True):
         """
         Trace values are returned from NEST at regular intervals, but only
         updated at presynaptic spike times.
@@ -165,10 +168,10 @@ class PostTraceTestCase(unittest.TestCase):
 
             traces_match = False
             for i_search, t_search in enumerate(
-                    reversed(np.array(pre_spike_times) + delay)):
+                    reversed(np.array(self.pre_spike_times_) + self.delay_)):
                 if t_search <= t:
                     _trace_at_t_search = trace_python_ref[int(np.round(
-                        t_search / sim_time
+                        t_search / self.sim_time_
                         * float(len(trace_python_ref) - 1)))]
                     traces_match = np.allclose(
                         _trace_at_t_search,
@@ -176,10 +179,10 @@ class PostTraceTestCase(unittest.TestCase):
                         atol=self.trace_match_atol_,
                         rtol=self.trace_match_rtol_)
                     post_spike_occurred_at_t_search = np.any(
-                        (t_search - (np.array(post_spike_times)
-                                     + delay
-                                     + dendritic_delay))**2
-                        < resolution/2.)
+                        (t_search - (np.array(self.post_spike_times_)
+                                     + self.delay_
+                                     + self.dendritic_delay_))**2
+                        < self.resolution_/2.)
 
                     if debug:
                         print("\t* Testing " + str(t_search) + "...")
@@ -219,7 +222,7 @@ class PostTraceTestCase(unittest.TestCase):
 
                     break
 
-            if (not traces_match) and i_search == len(pre_spike_times) - 1:
+            if (not traces_match) and i_search == len(self.pre_spike_times_) - 1:
                 if debug:
                     print("\tthe time before the first pre spike")
                 # the time before the first pre spike
@@ -229,6 +232,19 @@ class PostTraceTestCase(unittest.TestCase):
                 return False
 
         return True
+
+
+    def nest_trace_matches_python_trace(self):
+        trace_nest_t, trace_nest = self.run_post_trace_test_nest_()
+        trace_python_ref = self.run_post_trace_test_python_reference_()
+        return self.nest_trace_matches_ref_trace_(
+            trace_nest_t,
+            trace_nest,
+            trace_python_ref)
+
+
+
+class PostTraceTestCase(unittest.TestCase):
 
     def test_post_trace(self):
         """
@@ -250,11 +266,6 @@ class PostTraceTestCase(unittest.TestCase):
 
         resolution = .1     # [ms]
         delays = np.array([1., 5.])  # [ms]
-
-        # settings for plotting debug information
-        make_debug_plots = False
-        show_all_nest_trace_samples = True
-        debug_plots_output_dir = "/tmp"
 
         # spike test pattern 1: minimal reproducing example of the original bug
         pre_spike_times1 = np.array([2., 3., 10.])
@@ -286,51 +297,30 @@ class PostTraceTestCase(unittest.TestCase):
                             post_spike_times2,
                             pre_spike_times2]
 
-        for delay in delays:
-            dendritic_delay = delay
-            for spike_times_idx in range(len(pre_spike_times)):
-                max_t_sp = max(np.amax(pre_spike_times[spike_times_idx]),
-                               np.amax(post_spike_times[spike_times_idx]))
-                sim_time = max_t_sp + 5 * delay
-                trace_nest_t, trace_nest = self.run_post_trace_test_nest_(
-                    pre_spike_times[spike_times_idx],
-                    post_spike_times[spike_times_idx],
-                    resolution, delay, sim_time, tau_minus,
-                    show_all_nest_trace_samples)
-                trace_python_ref = self.run_post_trace_test_python_reference_(
-                    pre_spike_times[spike_times_idx],
-                    post_spike_times[spike_times_idx],
-                    resolution, delay, dendritic_delay, sim_time, tau_minus)
+        for spike_times_idx in range(len(pre_spike_times)):
+            print("Pre spike times: ["
+                + ", ".join([str(t) for t in pre_spike_times]) + "]")
+            print("Post spike times: ["
+                + ", ".join([str(t) for t in post_spike_times]) + "]")
 
-                if make_debug_plots:
-                    fname = "traces_[delay=" \
-                            + str(delay) \
-                            + "]_[experiment=" \
-                            + str(spike_times_idx) + "].png"
-                    fname = os.path.join(debug_plots_output_dir, fn)
-                    self.plot_run(
-                        trace_nest_t, trace_nest, trace_python_ref,
-                        pre_spike_times[spike_times_idx],
-                        post_spike_times[spike_times_idx], resolution, delay,
-                        dendritic_delay, sim_time, fname)
-                    self.assertTrue(self.nest_trace_matches_ref_trace(
-                        trace_nest_t,
-                        trace_nest,
-                        trace_python_ref,
-                        pre_spike_times[spike_times_idx],
-                        post_spike_times[spike_times_idx],
-                        resolution, delay, dendritic_delay, sim_time))
+            for delay in delays:
+                dendritic_delay = delay
+                test = PostTraceTester(
+                    pre_spike_times=pre_spike_times[spike_times_idx],
+                    post_spike_times=post_spike_times[spike_times_idx],
+                    delay=delay,
+                    resolution=resolution,
+                    tau_minus=tau_minus,
+                    trace_match_atol=1E-2,
+                    trace_match_rtol=1E-2)
+                assert test.nest_trace_matches_python_trace()
 
 
 def suite():
-    suite1 = unittest.TestLoader().loadTestsFromTestCase(PostTraceTestCase)
-    return unittest.TestSuite([suite1])
-
-
-def run():
-    runner = unittest.TextTestRunner(verbosity=99)
-    runner.run(suite())
+    t = unittest.TestLoader().loadTestsFromTestCase(PostTraceTestCase)
+    return unittest.TestSuite([t])
 
 
 if __name__ == "__main__":
-    PostTraceTestCase().test_post_trace()
+    runner = unittest.TextTestRunner(verbosity=99)
+    runner.run(suite())

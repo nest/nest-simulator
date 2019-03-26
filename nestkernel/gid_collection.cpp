@@ -829,10 +829,9 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
         if ( it != begin() )
         {
           // Need to count the primitive, so can't start at begin()
-          out
-            << "\n" + space << "model="
-            << kernel().model_manager.get_model( gt.model_id )->get_name()
-            << ", size=" << primitive_size << ", ";
+          out << "\n" + space << "model="
+              << kernel().model_manager.get_model( gt.model_id )->get_name()
+              << ", size=" << primitive_size << ", ";
           if ( primitive_size == 1 )
           {
             out << "first=" << gt.gid << ", last=" << gt.gid << ";";

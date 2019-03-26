@@ -458,8 +458,8 @@ GIDCollectionComposite::GIDCollectionComposite(
   , step_( step )
   , start_part_( 0 )
   , start_offset_( start )
-  , stop_part_( 0 )
-  , stop_offset_( stop )
+  , stop_part_( stop == primitive.size() )
+  , stop_offset_( stop == primitive.size() ? 0 : stop )
 {
   parts_.reserve( 1 );
   parts_.push_back( primitive );

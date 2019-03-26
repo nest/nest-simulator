@@ -37,7 +37,7 @@ install( FILES EditorSupport/vim/syntax/sli.vim
     )
 
 install( FILES nestrc.sli
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/extras
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
     )
 
 install( PROGRAMS

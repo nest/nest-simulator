@@ -76,7 +76,7 @@ class TestConnectAllPatterns(unittest.TestCase):
         failing = []
         for script_name in scripts:
             script = os.path.join(script_dir, script_name)
-            cmd = "nest -c '2 (nosetests) ({}) mpirun =only'".format(script)
+            cmd = "nest -c '2 (python) ({}) mpirun =only'".format(script)
             test_cmd = check_output(cmd)
             try:
                 output = check_output(test_cmd)
@@ -86,7 +86,7 @@ class TestConnectAllPatterns(unittest.TestCase):
                 failing.append(script_name)
 
         if failing:
-            cmd = "nest -c '2 (nosetests) ([script]) mpirun =only'"
+            cmd = "nest -c '2 (python) ([script]) mpirun =only'"
             test_str = check_output(cmd)
             self.fail("The following tests failed when executing '{}': {}"
                       .format(test_str, ", ".join(failing)))

@@ -21,14 +21,11 @@
 
 from __future__ import print_function
 import sys
-
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
-
 import os
 import subprocess
 import unittest
 import shlex
+
 
 # The lines below ensure that Popened subprocesses run in a minimal
 # environment that prevents mpirun from noticing that the parent is
@@ -45,12 +42,17 @@ import shlex
 # will probably only be implemented when we move to another test
 # framework for PyNEST altogether (see also https://git.io/fjUCg).
 required_env_vars = ("PATH", "PYTHONPATH", "HOME")
-env = {k:v for k,v in os.environ.items() if k in required_env_vars}
+env = {k: v for k, v in os.environ.items() if k in required_env_vars}
+
 
 def check_output(cmd):
     cmd = shlex.split(cmd)
     output = subprocess.check_output(cmd, env=env)
     return output.decode("utf-8")
+
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 
 cmd = "nest -c 'statusdict/have_mpi :: =only'"
@@ -87,6 +89,7 @@ class TestSPwithMPI(unittest.TestCase):
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestSPwithMPI)
     return suite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner(verbosity=2)

@@ -28,7 +28,6 @@ import nest
 import os
 
 
-
 @nest.ll_api.check_stack
 class UseGidInFilenameTestCase(unittest.TestCase):
     """Tests of use_gid_in_filename"""
@@ -45,7 +44,6 @@ class UseGidInFilenameTestCase(unittest.TestCase):
 
         filename = nest.GetStatus(sd, "filenames")[0][0].split("/")[-1]
         self.assertEqual(filename, "sd-1-0.gdf")
-
 
     def test_NoGid(self):
         """Without GID"""

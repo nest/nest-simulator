@@ -41,7 +41,7 @@ def _import_libs(mod_file, mod_dict, path,
       level: relative level (1 is relative to path, 2 is ../path, ...)
              (default 1)
       """
-                 
+
     import ast
     import os
 

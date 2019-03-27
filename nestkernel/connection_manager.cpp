@@ -936,6 +936,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
 bool
 nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
 {
+  kernel().connection_manager.set_have_connections_changed( true );
   for ( Token* ct = connectome.begin(); ct != connectome.end(); ++ct )
   {
     DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
@@ -964,7 +965,6 @@ nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
     Node* source_node = kernel().node_manager.get_node( source_gid );
     connect_( *source_node, *target_node, source_gid, thr, syn_id, cd );
   }
-  kernel().connection_manager.set_have_connections_changed( true );
   return true;
 }
 

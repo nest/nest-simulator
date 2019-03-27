@@ -45,16 +45,21 @@
 // Neuron models
 #include "aeif_cond_alpha.h"
 #include "aeif_cond_alpha_multisynapse.h"
-#include "aeif_cond_beta_multisynapse.h"
 #include "aeif_cond_alpha_RK5.h"
+#include "aeif_cond_beta_multisynapse.h"
 #include "aeif_cond_exp.h"
 #include "aeif_psc_alpha.h"
-#include "aeif_psc_exp.h"
 #include "aeif_psc_delta.h"
+#include "aeif_psc_exp.h"
 #include "aeif_psc_delta_clopath.h"
 #include "amat2_psc_exp.h"
 #include "erfc_neuron.h"
 #include "gauss_rate.h"
+#include "gif_cond_exp.h"
+#include "gif_cond_exp_multisynapse.h"
+#include "gif_pop_psc_exp.h"
+#include "gif_psc_exp.h"
+#include "gif_psc_exp_multisynapse.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
 #include "hh_cond_beta_gap_traub.h"
@@ -77,8 +82,6 @@
 #include "iaf_tum_2000.h"
 #include "izhikevich.h"
 #include "lin_rate.h"
-#include "tanh_rate.h"
-#include "threshold_lin_rate.h"
 #include "mat2_psc_exp.h"
 #include "mcculloch_pitts_neuron.h"
 #include "parrot_neuron.h"
@@ -87,20 +90,17 @@
 #include "siegert_neuron.h"
 #include "sigmoid_rate.h"
 #include "sigmoid_rate_gg_1998.h"
-#include "gif_psc_exp.h"
-#include "gif_psc_exp_multisynapse.h"
-#include "gif_cond_exp.h"
-#include "gif_cond_exp_multisynapse.h"
-#include "gif_pop_psc_exp.h"
+#include "tanh_rate.h"
+#include "threshold_lin_rate.h"
 
 // Stimulation devices
 #include "ac_generator.h"
 #include "dc_generator.h"
 #include "gamma_sup_generator.h"
+#include "inhomogeneous_poisson_generator.h"
 #include "mip_generator.h"
 #include "noise_generator.h"
 #include "poisson_generator.h"
-#include "inhomogeneous_poisson_generator.h"
 #include "ppd_sup_generator.h"
 #include "pulsepacket_generator.h"
 #include "sinusoidal_gamma_generator.h"
@@ -131,8 +131,8 @@
 #include "ht_connection.h"
 #include "quantal_stp_connection.h"
 #include "quantal_stp_connection_impl.h"
-#include "rate_connection_instantaneous.h"
 #include "rate_connection_delayed.h"
+#include "rate_connection_instantaneous.h"
 #include "spike_dilutor.h"
 #include "static_connection.h"
 #include "static_connection_hom_w.h"
@@ -158,10 +158,10 @@
 #include "target_identifier.h"
 
 #ifdef HAVE_MUSIC
-#include "music_event_in_proxy.h"
-#include "music_event_out_proxy.h"
 #include "music_cont_in_proxy.h"
 #include "music_cont_out_proxy.h"
+#include "music_event_in_proxy.h"
+#include "music_event_out_proxy.h"
 #include "music_message_in_proxy.h"
 #endif
 
@@ -295,6 +295,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< spin_detector >(
     "spin_detector" );
   kernel().model_manager.register_node_model< Multimeter >( "multimeter" );
+  kernel().model_manager.register_node_model< Voltmeter >( "voltmeter" );
   kernel().model_manager.register_node_model< correlation_detector >(
     "correlation_detector" );
   kernel().model_manager.register_node_model< correlomatrix_detector >(
@@ -303,15 +304,6 @@ ModelsModule::init( SLIInterpreter* )
     "correlospinmatrix_detector" );
   kernel().model_manager.register_node_model< volume_transmitter >(
     "volume_transmitter" );
-
-  // Create voltmeter as a multimeter pre-configured to record V_m.
-  DictionaryDatum vmdict = DictionaryDatum( new Dictionary );
-  ArrayDatum ad;
-  ad.push_back( LiteralDatum( names::V_m.toString() ) );
-  ( *vmdict )[ names::record_from ] = ad;
-  const Name name = "voltmeter";
-  kernel().model_manager.register_preconf_node_model< Multimeter >(
-    name, vmdict, false );
 
 #ifdef HAVE_GSL
   kernel().model_manager.register_node_model< iaf_chxk_2008 >(
@@ -382,9 +374,12 @@ ModelsModule::init( SLIInterpreter* )
     "music_message_in_proxy" );
 #endif
 
-  // register all connection models: once for the normal indexing type and
-  // once for the more efficient "HPC" indexing type
+  // register all connection models: 
+  // once for the normal indexing type
+  // once for the ConnectionLabel type (postfix: "_lbl")
+  // once for the high-performance indexing type (postfix: "_hpc")
   register_connection_models< TargetIdentifierPtrRport >();
+  register_connection_models< ConnectionLabel< TargetIdentifierPtrRport > >( "_lbl" );
   register_connection_models< TargetIdentifierIndex >( "_hpc" );
 
   // register secondary connection models
@@ -423,15 +418,49 @@ void
 ModelsModule::register_connection_models( std::string name_postfix )
 {
   kernel()
-    .model_manager.register_connection_model< StaticConnection< ConnectionT > >(
+    .model_manager
+    .register_connection_model< BernoulliConnection< ConnectionT > >(
+      "bernoulli_synapse" + name_postfix );
+  kernel()
+    .model_manager
+    .register_connection_model< ClopathConnection< ConnectionT > >(
+      "clopath_synapse" + name_postfix );
+  kernel()
+    .model_manager
+    .register_connection_model< ContDelayConnection< ConnectionT > >(
+      "cont_delay_synapse" + name_postfix );
+  kernel()
+    .model_manager
+    .register_connection_model< HTConnection< ConnectionT > >(
+      "ht_synapse" + name_postfix );
+  kernel()
+    .model_manager
+    .register_connection_model< Quantal_StpConnection< ConnectionT > >(
+      "quantal_stp_synapse" + name_postfix );
+  kernel()
+    .model_manager
+    .register_connection_model< StaticConnection< ConnectionT > >(
       "static_synapse" + name_postfix );
   kernel()
     .model_manager
     .register_connection_model< StaticConnectionHomW< ConnectionT > >(
       "static_synapse_hom_w" + name_postfix );
   kernel()
-    .model_manager.register_connection_model< STDPConnection< ConnectionT > >(
+    .model_manager
+    .register_connection_model< STDPConnection< ConnectionT > >(
       "stdp_synapse" + name_postfix );
+  kernel()
+    .model_manager
+    .register_connection_model< STDPConnectionHom< ConnectionT > >(
+      "stdp_synapse_hom" + name_postfix );
+  kernel()
+    .model_manager
+    .register_connection_model< STDPDopaConnection< ConnectionT > >(
+      "stdp_dopamine_synapse" + name_postfix );
+  kernel()
+    .model_manager
+    .register_connection_model< STDPFACETSHWConnectionHom< ConnectionT > >(
+      "stdp_facetshw_synapse_hom" + name_postfix );
   kernel()
     .model_manager
     .register_connection_model< STDPPLConnectionHom< ConnectionT > >(
@@ -440,22 +469,6 @@ ModelsModule::register_connection_models( std::string name_postfix )
     .model_manager
     .register_connection_model< STDPTripletConnection< ConnectionT > >(
       "stdp_triplet_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< Quantal_StpConnection< ConnectionT > >(
-      "quantal_stp_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPConnectionHom< ConnectionT > >(
-      "stdp_synapse_hom" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPFACETSHWConnectionHom< ConnectionT > >(
-      "stdp_facetshw_synapse_hom" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< ContDelayConnection< ConnectionT > >(
-      "cont_delay_synapse" + name_postfix );
   kernel()
     .model_manager
     .register_connection_model< TsodyksConnection< ConnectionT > >(
@@ -469,24 +482,9 @@ ModelsModule::register_connection_models( std::string name_postfix )
     .register_connection_model< Tsodyks2Connection< ConnectionT > >(
       "tsodyks2_synapse" + name_postfix );
   kernel()
-    .model_manager.register_connection_model< HTConnection< ConnectionT > >(
-      "ht_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPDopaConnection< ConnectionT > >(
-      "stdp_dopamine_synapse" + name_postfix );
-  kernel()
     .model_manager
     .register_connection_model< VogelsSprekelerConnection< ConnectionT > >(
       "vogels_sprekeler_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< BernoulliConnection< ConnectionT > >(
-      "bernoulli_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< ClopathConnection< ConnectionT > >(
-      "clopath_synapse" + name_postfix );
 }
 
 } // namespace nest

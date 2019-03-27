@@ -52,7 +52,14 @@ public:
   const std::string name( void ) const;
   const std::string commandstring( void ) const;
 
-protected:
+private:
+  /**
+   * Adds all the known synapse models to the NEST kernel by calling
+   * kernel().model_manager.register_connection_model() with the given
+   * connection data type and name. This is an internal helper function
+   * that is called during construction of the ModelsModule and is not
+   * intended to be used outside of this.
+  **/
   template < typename ConnectionT >
   void register_connection_models( std::string name_postfix = "" );
 };

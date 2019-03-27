@@ -187,16 +187,24 @@ public:
    */
   template < typename ConnectionT >
   void register_connection_model( const std::string& name,
-    const bool requires_symmetric = false );
+    const bool requires_symmetric = false,
+    const bool requires_clopath_archiving = false );
 
   /**
    * Register a synape model with a custom Connector model and without any
    * common properties.
+   *
+   * "hpc synapses" use `TargetIdentifierIndex` for `ConnectionT` and store
+   * the target neuron in form of a 2 Byte index instead of an 8 Byte pointer.
+   * This limits the number of thread local neurons to 65,536. No support for
+   * different receptor types. Otherwise identical to non-hpc version.
+   *
    * @param name The name under which the ConnectorModel will be registered.
    */
   template < typename ConnectionT, template < typename > class ConnectorModelT >
   void register_connection_model( const std::string& name,
-    const bool requires_symmetric = false );
+    const bool requires_symmetric = false,
+    const bool requires_clopath_archiving = false );
 
   template < typename ConnectionT >
   void register_secondary_connection_model( const std::string& name,
@@ -219,7 +227,12 @@ public:
   /**
    * Checks, whether synapse type requires symmetric connections
    */
-  bool connector_requires_symmetric( synindex syn_id ) const;
+  bool connector_requires_symmetric( const synindex syn_id ) const;
+
+  /**
+   * Checks, whether synapse type requires Clopath archiving
+   */
+  bool connector_requires_clopath_archiving( const synindex syn_id ) const;
 
   void set_connector_defaults( synindex syn_id, const DictionaryDatum& d );
 
@@ -362,16 +375,19 @@ private:
   std::vector< std::map< synindex, SecondaryEvent* > >
     secondary_events_prototypes_;
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
    Name: modeldict - dictionary containing all devices and models of NEST
+
    Description:
    'modeldict info' shows the contents of the dictionary
+
    SeeAlso: info, Device, RecordingDevice
    */
   DictionaryDatum modeldict_; //!< Dictionary of all models
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
    Name: synapsedict - Dictionary containing all synapse models.
+
    Description:
    'synapsedict info' shows the contents of the dictionary
    Synapse model names ending with '_hpc' provide minimal memory requirements by
@@ -379,8 +395,11 @@ private:
    Synapse model names ending with '_lbl' allow to assign an individual integer
    label (`synapse_label`) to created synapses at the cost of increased memory
    requirements.
+
    FirstVersion: October 2005
+
    Author: Jochen Martin Eppler
+
    SeeAlso: info
    */
   DictionaryDatum synapsedict_; //!< Dictionary of all synapse models

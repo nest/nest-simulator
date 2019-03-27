@@ -37,7 +37,7 @@
 namespace librandom
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rdevdict::normal - normal random deviate generator
 Description: Generates normally distributed random numbers.
 
@@ -48,6 +48,7 @@ Parameters:
  sigma - standard deviation (default: 1.0)
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
+
 Author: Hans Ekkehard Plesser
 */
 

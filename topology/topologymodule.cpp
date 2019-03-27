@@ -409,8 +409,7 @@ TopologyModule::init( SLIInterpreter* i )
   register_parameter< LognormalParameter >( "lognormal" );
 }
 
-/*BeginDocumentation
-
+/** @BeginDocumentation
   Name: topology::CreateLayer - create a spatial layer of nodes
 
   Synopsis:
@@ -446,9 +445,7 @@ TopologyModule::CreateLayer_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*
-  BeginDocumentation
-
+/** @BeginDocumentation
   Name: topology::GetPosition - retrieve position of input node
 
   Synopsis: node_gid GetPosition -> [array]
@@ -490,9 +487,7 @@ TopologyModule::GetPosition_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*
-  BeginDocumentation
-
+/** @BeginDocumentation
   Name: topology::Displacement - compute displacement vector
 
   Synopsis: from_gid to_gid Displacement -> [double vector]
@@ -550,9 +545,7 @@ TopologyModule::Displacement_a_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*
-  BeginDocumentation
-
+/** @BeginDocumentation
   Name: topology::Distance - compute distance between nodes
 
   Synopsis: from_gid to_gid Distance -> double
@@ -610,8 +603,7 @@ TopologyModule::Distance_a_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*BeginDocumentation
-
+/** @BeginDocumentation
   Name: topology::CreateMask - create a spatial mask
 
   Synopsis:
@@ -644,8 +636,7 @@ TopologyModule::CreateMask_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*BeginDocumentation
-
+/** @BeginDocumentation
   Name: topology::Inside - test if a point is inside a mask
 
   Synopsis:
@@ -798,9 +789,7 @@ TopologyModule::GetGlobalChildren_i_M_aFunction::execute(
   i->EStack.pop();
 }
 
-/*
-  BeginDocumentation
-
+/** @BeginDocumentation
   Name: topology::ConnectLayers - connect two layers
 
   Synopsis: sourcelayergid targetlayergid connection_dict
@@ -998,8 +987,7 @@ TopologyModule::ConnectLayers_i_i_DFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/*BeginDocumentation
-
+/** @BeginDocumentation
   Name: topology::CreateParameter - create a spatial function
 
   Synopsis:
@@ -1033,8 +1021,7 @@ TopologyModule::CreateParameter_DFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/*BeginDocumentation
-
+/** @BeginDocumentation
   Name: topology::GetValue - compute value of parameter at a point
 
   Synopsis:
@@ -1065,9 +1052,7 @@ TopologyModule::GetValue_a_PFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*
-  BeginDocumentation
-
+/** @BeginDocumentation
   Name: topology::DumpLayerNodes - write information about layer nodes to file
 
   Synopsis: ostream layer_gid DumpLayerNodes -> ostream
@@ -1119,9 +1104,7 @@ TopologyModule::DumpLayerNodes_os_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*
-  BeginDocumentation
-
+/** @BeginDocumentation
   Name: topology::DumpLayerConnections - prints a list of the connections of the
                                          nodes in the layer to file
 
@@ -1179,9 +1162,7 @@ TopologyModule::DumpLayerConnections_os_i_lFunction::execute(
   i->EStack.pop();
 }
 
-/*
-  BeginDocumentation
-
+/** @BeginDocumentation
   Name: topology::GetElement - return node GID at specified layer position
 
   Synopsis: layer_gid [array] GetElement -> node_gid

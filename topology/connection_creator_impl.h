@@ -275,10 +275,6 @@ void
 ConnectionCreator::source_driven_connect_( Layer< D >& source,
   Layer< D >& target )
 {
-
-  DictionaryDatum dummy_params = new Dictionary; // empty parameter dictionary
-                                                 // required by connect() calls
-
   // Source driven connect is actually implemented as target driven,
   // but with displacements computed in the target layer. The Mask has been
   // reversed so that it can be applied to the source instead of the target.
@@ -373,7 +369,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
               *tgt_it,
               target_thread,
               synapse_model_,
-              dummy_params,
+              dummy_param_,
               d,
               w );
           }
@@ -401,7 +397,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
             *tgt_it,
             target_thread,
             synapse_model_,
-            dummy_params,
+            dummy_param_,
             d,
             w );
         }
@@ -463,7 +459,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
               *tgt_it,
               target_thread,
               synapse_model_,
-              dummy_params,
+              dummy_param_,
               d,
               w );
           }
@@ -491,7 +487,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
             *tgt_it,
             target_thread,
             synapse_model_,
-            dummy_params,
+            dummy_param_,
             d,
             w );
         }
@@ -504,8 +500,10 @@ template < int D >
 void
 ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 {
-  DictionaryDatum dummy_params = new Dictionary; // empty parameter dictionary
-                                                 // required by connect() calls
+  if ( number_of_connections_ < 1 )
+  {
+    return;
+  }
 
   // Convergent connections (fixed fan in)
   //
@@ -639,7 +637,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             *tgt_it,
             target_thread,
             synapse_model_,
-            dummy_params,
+            dummy_param_,
             d,
             w );
           is_selected[ random_id ] = true;
@@ -686,7 +684,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             *tgt_it,
             target_thread,
             synapse_model_,
-            dummy_params,
+            dummy_param_,
             d,
             w );
           is_selected[ random_id ] = true;
@@ -783,7 +781,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             *tgt_it,
             target_thread,
             synapse_model_,
-            dummy_params,
+            dummy_param_,
             d,
             w );
           is_selected[ random_id ] = true;
@@ -823,7 +821,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             *tgt_it,
             target_thread,
             synapse_model_,
-            dummy_params,
+            dummy_param_,
             d,
             w );
           is_selected[ random_id ] = true;
@@ -838,8 +836,10 @@ template < int D >
 void
 ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
 {
-  DictionaryDatum dummy_params = new Dictionary; // empty parameter dictionary
-                                                 // required by connect() calls
+  if ( number_of_connections_ < 1 )
+  {
+    return;
+  }
 
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
@@ -973,7 +973,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
         target_ptr,
         target_ptr->get_thread(),
         synapse_model_,
-        dummy_params,
+        dummy_param_,
         d,
         w );
     }

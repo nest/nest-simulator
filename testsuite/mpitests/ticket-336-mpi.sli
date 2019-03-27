@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-336-mpi - Check that vp-specific RNGs generate proper random numbers
 

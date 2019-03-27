@@ -23,32 +23,31 @@
 #ifndef SORT_H
 #define SORT_H
 
-#include <vector>
+#include <algorithm>
 #include <cstddef>
+#include <vector>
+
+// Generated includes:
+#include "config.h"
+
+#include "block_vector.h"
+
+#ifdef HAVE_BOOST
+#include <boost/sort/spreadsort/spreadsort.hpp>
+#include "iterator_pair.h"
+#endif
 
 #define INSERTION_SORT_CUTOFF 10 // use insertion sort for smaller arrays
 
 namespace nest
 {
 /**
- * Exchanges elements i and j in vector vec.
- */
-template < typename T >
-inline void
-exchange_( std::vector< T >& vec, const size_t i, const size_t j )
-{
-  const T tmp = vec[ i ];
-  vec[ i ] = vec[ j ];
-  vec[ j ] = tmp;
-}
-
-/**
  * Calculates the median of three elements.
  * See http://algs4.cs.princeton.edu/23quicksort/QuickX.java.html.
  */
 template < typename T >
 inline size_t
-median3_( const std::vector< T >& vec,
+median3_( const BlockVector< T >& vec,
   const size_t i,
   const size_t j,
   const size_t k )
@@ -67,8 +66,8 @@ median3_( const std::vector< T >& vec,
  */
 template < typename T1, typename T2 >
 void
-insertion_sort( std::vector< T1 >& vec_sort,
-  std::vector< T2 >& vec_perm,
+insertion_sort( BlockVector< T1 >& vec_sort,
+  BlockVector< T2 >& vec_perm,
   const size_t lo,
   const size_t hi )
 {
@@ -77,8 +76,8 @@ insertion_sort( std::vector< T1 >& vec_sort,
     for ( size_t j = i; ( j > lo ) and ( vec_sort[ j ] < vec_sort[ j - 1 ] );
           --j )
     {
-      exchange_( vec_sort, j, j - 1 );
-      exchange_( vec_perm, j, j - 1 );
+      std::swap( vec_sort[ j ], vec_sort[ j - 1 ] );
+      std::swap( vec_perm[ j ], vec_perm[ j - 1 ] );
     }
   }
 }
@@ -94,8 +93,8 @@ insertion_sort( std::vector< T1 >& vec_sort,
  */
 template < typename T1, typename T2 >
 void
-quicksort3way( std::vector< T1 >& vec_sort,
-  std::vector< T2 >& vec_perm,
+quicksort3way( BlockVector< T1 >& vec_sort,
+  BlockVector< T2 >& vec_perm,
   const size_t lo,
   const size_t hi )
 {
@@ -114,7 +113,10 @@ quicksort3way( std::vector< T1 >& vec_sort,
   }
 
   // use median-of-3 as partitioning element
-  size_t m = median3_( vec_sort, lo, lo + n / 2, hi );
+  size_t m = median3_( vec_sort,
+    lo + std::rand() % ( hi - lo ),
+    lo + std::rand() % ( hi - lo ),
+    lo + std::rand() % ( hi - lo ) );
 
   // in case of many equal entries, make sure to use first entry with
   // this value (useful for sorted arrays)
@@ -125,8 +127,8 @@ quicksort3way( std::vector< T1 >& vec_sort,
   }
 
   // move pivot to the front
-  exchange_( vec_sort, m, lo );
-  exchange_( vec_perm, m, lo );
+  std::swap( vec_sort[ m ], vec_sort[ lo ] );
+  std::swap( vec_perm[ m ], vec_perm[ lo ] );
 
   // Dijkstra's three-way-sort
   size_t lt = lo;
@@ -135,16 +137,16 @@ quicksort3way( std::vector< T1 >& vec_sort,
   const T1 v = vec_sort[ lt ]; // pivot
 
   // adjust position of i and lt (useful for sorted arrays)
-  while ( vec_sort[ i ] < v )
+  while ( vec_sort[ i ] < v and i < vec_sort.size() - 1 )
   {
     ++i;
   }
-  exchange_( vec_sort, lo, i - 1 );
-  exchange_( vec_perm, lo, i - 1 );
+  std::swap( vec_sort[ lo ], vec_sort[ i - 1 ] );
+  std::swap( vec_perm[ lo ], vec_perm[ i - 1 ] );
   lt = i - 1;
 
   // adjust position of gt (useful for sorted arrays)
-  while ( vec_sort[ gt ] > v )
+  while ( vec_sort[ gt ] > v and gt > 0 )
   {
     --gt;
   }
@@ -153,15 +155,15 @@ quicksort3way( std::vector< T1 >& vec_sort,
   {
     if ( vec_sort[ i ] < v )
     {
-      exchange_( vec_sort, lt, i );
-      exchange_( vec_perm, lt, i );
+      std::swap( vec_sort[ lt ], vec_sort[ i ] );
+      std::swap( vec_perm[ lt ], vec_perm[ i ] );
       ++lt;
       ++i;
     }
     else if ( vec_sort[ i ] > v )
     {
-      exchange_( vec_sort, i, gt );
-      exchange_( vec_perm, i, gt );
+      std::swap( vec_sort[ i ], vec_sort[ gt ] );
+      std::swap( vec_perm[ i ], vec_perm[ gt ] );
       --gt;
     }
     else
@@ -178,11 +180,19 @@ quicksort3way( std::vector< T1 >& vec_sort,
  * Sorts two vectors according to elements in
  * first vector. Convenience function.
  */
+
 template < typename T1, typename T2 >
 void
-sort( std::vector< T1 >& vec_sort, std::vector< T2 >& vec_perm )
+sort( BlockVector< T1 >& vec_sort, BlockVector< T2 >& vec_perm )
 {
+#ifdef HAVE_BOOST
+  boost::sort::spreadsort::integer_sort(
+    make_iterator_pair( vec_sort.begin(), vec_perm.begin() ),
+    make_iterator_pair( vec_sort.end(), vec_perm.end() ),
+    rightshift_iterator_pair() );
+#else
   quicksort3way( vec_sort, vec_perm, 0, vec_sort.size() - 1 );
+#endif
 }
 
 } // namespace sort

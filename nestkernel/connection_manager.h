@@ -31,6 +31,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
+#include "completed_checker.h"
 #include "conn_builder.h"
 #include "connection_id.h"
 #include "connector_base.h"
@@ -375,15 +376,6 @@ public:
    */
   void restructure_connection_tables( const thread tid );
 
-  /**
-   * Reserves memory in connections and source table. Should be called
-   * directly from the respective Connect functions when the number of
-   * synapses could be estimated.
-   */
-  void reserve_connections( const thread tid,
-    const synindex syn_id,
-    const size_t count );
-
   void set_has_source_subsequent_targets( const thread tid,
     const synindex syn_id,
     const index lcid,
@@ -598,12 +590,14 @@ private:
   std::vector< std::vector< size_t > > num_connections_;
 
   /**
-   * BeginDocumentation
+   * @BeginDocumentation
    * Name: connruledict - dictionary containing all connectivity rules
+   *
    * Description:
    * This dictionary provides the connection rules that can be used
    * in Connect.
    * 'connruledict info' shows the contents of the dictionary.
+   *
    * SeeAlso: Connect
    */
   DictionaryDatum connruledict_; //!< Dictionary for connection rules.
@@ -628,8 +622,14 @@ private:
   //! Whether primary connections (spikes) exist.
   bool has_primary_connections_;
 
+  //! Check for primary connections (spikes) on each thread.
+  CompletedChecker check_primary_connections_;
+
   //! Whether secondary connections (e.g., gap junctions) exist.
   bool secondary_connections_exist_;
+
+  //! Check for secondary connections (e.g., gap junctions) on each thread.
+  CompletedChecker check_secondary_connections_;
 
   //! Maximum distance between (double) spike times in STDP that is
   //! still considered 0. See issue #894

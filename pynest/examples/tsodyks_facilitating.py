@@ -19,37 +19,46 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-tsodyks facilitating example
------------------------
+"""Tsodyks facilitating example
+--------------------------------
 
 This scripts simulates two neurons. One is driven with dc-input and
 connected to the other one with a facilitating tsodyks synapse. The
 membrane potential trace of the second neuron is recorded.
 
-
-This example reproduces figure 1B of Tsodyks et al. (1998)
-**Neural Networks with Dynamic Synapses**.
-*Neural computation*, http://dx.doi.org/10.1162/089976698300017502
+This example reproduces figure 1B of [1]
 This example is analog to ``tsodyks_depressing.py``, except that
 different synapse parameters are used. Here, a small facilitation
 parameter ``U`` causes a slow saturation of the synaptic efficacy
 (Eq. 2.2), enabling a facilitating behavior.
-'''
 
-'''
-First, we import all necessary modules for simulation and plotting.
-'''
+References
+~~~~~~~~~~~~
+
+.. [1] Tsodyks et al. (1998) Neural Networks with Dynamic Synapses.Neural
+       computation, http://dx.doi.org/10.1162/089976698300017502
+
+See Also
+~~~~~~~~~~
+
+tsodyks_depressing.py
+
+:Authors:
+
+KEYWORDS:
+"""
+
+###############################################################################
+# First, we import all necessary modules for simulation and plotting.
 
 import nest
 import nest.voltage_trace
 import pylab
 from numpy import exp
 
-'''
-Second, the simulation parameters are assigned to variables. The
-neuron and synapse parameters are stored into a dictionary.
-'''
+###############################################################################
+# Second, the simulation parameters are assigned to variables. The neuron
+# and synapse parameters are stored into a dictionary.
 
 h = 0.1    # simulation step size (ms)
 Tau = 40.    # membrane time constant
@@ -88,66 +97,56 @@ syn_param = {"tau_psc": Tau_psc,
              "u": 0.0,
              "x": 1.0}
 
-'''
-Third, we reset the kernel and set the resolution using `SetKernelStatus`.
-'''
+###############################################################################
+# Third, we reset the kernel and set the resolution using `SetKernelStatus`.
 
 nest.ResetKernel()
 nest.SetKernelStatus({"resolution": h})
 
-'''
-Fourth, the nodes are created using `Create`. We store the returned
-handles in variables for later reference.
-'''
+###############################################################################
+# Fourth, the nodes are created using `Create`. We store the returned
+# handles in variables for later reference.
 
 neurons = nest.Create("iaf_psc_exp", 2)
 dc_gen = nest.Create("dc_generator")
 volts = nest.Create("voltmeter")
 
-'''
-Fifth, the `iaf_psc_exp`-neurons, the `dc_generator` and the
-`voltmeter` are configured using `SetStatus`, which expects a list of
-node handles and a parameter dictionary or a list of parameter
-dictionaries.
-'''
+###############################################################################
+# Fifth, the `iaf_psc_exp`-neurons, the `dc_generator` and the `voltmeter`
+# are configured using `SetStatus`, which expects a list of node handles and
+#  a parameter dictionary or a list of parameter dictionaries.
 
 nest.SetStatus(neurons, neuron_param)
 nest.SetStatus(dc_gen, {"amplitude": I0, "start": TIstart, "stop": TIend})
 nest.SetStatus(volts, {"label": "voltmeter", "withtime": True, "withgid": True,
                        "interval": 1.})
 
-'''
-Sixth, the `dc_generator` is connected to the first neuron
-(``neurons[0]``) and the `voltmeter` is connected to the second neuron
-(``neurons[1]``). The command `Connect` has different variants. Plain
-`Connect` just takes the handles of pre- and post-synaptic nodes and
-uses the default values for weight and delay. Note that the connection
-direction for the `voltmeter` reflects the signal flow in the
-simulation kernel, because it observes the neuron instead of receiving
-events from it.
-
-'''
+###############################################################################
+# Sixth, the `dc_generator` is connected to the first neuron
+# (``neurons[# 0]``) and the `voltmeter` is connected to the second neuron
+# (``neurons[1]``). The command `Connect` has different variants. Plain
+# `Connect` just takes the handles of pre- and post-synaptic nodes and
+# uses the default values for weight and delay. Note that the connection
+# direction for the `voltmeter` reflects the signal flow in the simulation
+# kernel, because it observes the neuron instead of receiving events from it.
 
 nest.Connect(dc_gen, [neurons[0]])
 nest.Connect(volts, [neurons[1]])
 
-'''
-Seventh, the first neuron (``neurons[0]``) is connected to the
-second neuron (``neurons[1]``).  The command `CopyModel` copies the
-`tsodyks_synapse` model to the new name ``syn`` with parameters
-``syn_param``.  The manually defined model ``syn`` is used in the
-connection routine via the ``syn_spec`` parameter.
-'''
+###############################################################################
+# Seventh, the first neuron (``neurons[0]``) is connected to the second
+# neuron (``neurons[1]``).  The command `CopyModel` copies the
+# `tsodyks_synapse` model to the new name ``syn`` with parameters
+# ``syn_param``.  The manually defined model ``syn`` is used in the
+# connection routine via the ``syn_spec`` parameter.
 
 nest.CopyModel("tsodyks_synapse", "syn", syn_param)
 nest.Connect([neurons[0]], [neurons[1]], syn_spec="syn")
 
-'''
-Finally, we simulate the configuration using the command
-`Simulate`, where the simulation time ``Tend`` is passed as the
-argument.  We plot the target neuron's membrane potential as a
-function of time.
-'''
+###############################################################################
+# Finally, we simulate the configuration using the command `Simulate`,
+# where the simulation time ``Tend`` is passed as the argument.  We plot the
+#  target neuron's membrane potential as function of time.
 
 nest.Simulate(Tend)
 nest.voltage_trace.from_device(volts)

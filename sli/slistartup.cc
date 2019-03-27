@@ -85,7 +85,7 @@ SLIStartup::checkpath( std::string const& path, std::string& result ) const
 }
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: getenv - evaluates if a string is an evironment variable
 
 Synopsis: string getenv -> path true

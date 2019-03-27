@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_iaf_dc - sli script for test of iaf_psc_alpha with external DC current
 
 Synopsis: (test_iaf_dc) run -> compare cout with comments in file

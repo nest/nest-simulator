@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-955 - Check that CreateLayer even works with a single neuron layer on multiple processes
 

@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_crash_or_die - sli script to test the crash_or_die function
 
    Synopsis: (test_crash_or_die) run

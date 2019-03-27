@@ -45,12 +45,17 @@
 // Includes from sli:
 #include "arraydatum.h"
 
-/* BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
 
 Name: music_cont_out_proxy - A device which sends continuous data from NEST to
 MUSIC.
 
-Description: A music_cont_out_proxy can be used to send continuous data from
+Description:
+
+A music_cont_out_proxy can be used to send continuous data from
 neurons over MUSIC to remote applications. It works in a similar fashion like
 the multimeter model. The user has to specify the recordable values to observe
 (e.g. ["V_m"]) via the record_from parameter. The target neurons are specified
@@ -69,30 +74,29 @@ For example:  target_gids = [ 2, 5, 4 ], record_from = ["V_m"] and
 we want to get "V_m" for neuron with GID 5: buffer[ 1*1 + 0 ]
 
 Parameters:
-  The following properties are available in the status dictionary:
 
-  interval     double   - Recording interval in milliseconds
-  targets      array    - Global id list of neurons to be observed
-  port_name    string   - The name of the MUSIC output port to send to
-                          (default: cont_out)
-  port_width   integer  - The width of the MUSIC input port
-  published    bool     - A bool indicating if the port has been already
-                          published with MUSIC. Read only property.
-  record_from  array    - Array containing the names of variables to record
-                          from, obtained from the /recordables entry of the
-                          model from which one wants to record
+The following properties are available in the status dictionary:
+
+interval     double   - Recording interval in milliseconds
+targets      array    - Global id list of neurons to be observed
+port_name    string   - The name of the MUSIC output port to send to
+                        (default: cont_out)
+port_width   integer  - The width of the MUSIC input port
+published    bool     - A bool indicating if the port has been already
+                        published with MUSIC. Read only property.
+record_from  array    - Array containing the names of variables to record
+                        from, obtained from the /recordables entry of the
+                        model from which one wants to record
 
 Author: Martin Asghar Schulze, Forschungszentrum fur Informatik Karlsruhe (FZI)
+
 FirstVersion: March 2016
+
 Availability: Only when compiled with MPI and MUSIC
 
 SeeAlso: music_cont_in_proxy, music_event_out_proxy, music_event_in_proxy,
 music_message_in_proxy
 */
-
-namespace nest
-{
-
 class music_cont_out_proxy : public DeviceNode
 {
 

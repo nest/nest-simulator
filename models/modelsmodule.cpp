@@ -44,30 +44,29 @@
 
 // Neuron models
 #include "aeif_cond_alpha.h"
-#include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_alpha_multisynapse.h"
 #include "aeif_cond_beta_multisynapse.h"
+#include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_exp.h"
 #include "aeif_psc_alpha.h"
-#include "aeif_psc_delta.h"
 #include "aeif_psc_exp.h"
+#include "aeif_psc_delta.h"
+#include "aeif_psc_delta_clopath.h"
 #include "amat2_psc_exp.h"
 #include "erfc_neuron.h"
 #include "gauss_rate.h"
-#include "gif_cond_exp.h"
-#include "gif_cond_exp_multisynapse.h"
-#include "gif_pop_psc_exp.h"
-#include "gif_psc_exp.h"
-#include "gif_psc_exp_multisynapse.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
+#include "hh_cond_beta_gap_traub.h"
 #include "hh_psc_alpha.h"
+#include "hh_psc_alpha_clopath.h"
 #include "hh_psc_alpha_gap.h"
 #include "ht_neuron.h"
 #include "iaf_chs_2007.h"
 #include "iaf_chxk_2008.h"
 #include "iaf_cond_alpha.h"
 #include "iaf_cond_alpha_mc.h"
+#include "iaf_cond_beta.h"
 #include "iaf_cond_exp.h"
 #include "iaf_cond_exp_sfa_rr.h"
 #include "iaf_psc_alpha.h"
@@ -78,6 +77,8 @@
 #include "iaf_tum_2000.h"
 #include "izhikevich.h"
 #include "lin_rate.h"
+#include "tanh_rate.h"
+#include "threshold_lin_rate.h"
 #include "mat2_psc_exp.h"
 #include "mcculloch_pitts_neuron.h"
 #include "parrot_neuron.h"
@@ -86,23 +87,27 @@
 #include "siegert_neuron.h"
 #include "sigmoid_rate.h"
 #include "sigmoid_rate_gg_1998.h"
-#include "tanh_rate.h"
-#include "threshold_lin_rate.h"
+#include "gif_psc_exp.h"
+#include "gif_psc_exp_multisynapse.h"
+#include "gif_cond_exp.h"
+#include "gif_cond_exp_multisynapse.h"
+#include "gif_pop_psc_exp.h"
 
 // Stimulation devices
 #include "ac_generator.h"
 #include "dc_generator.h"
 #include "gamma_sup_generator.h"
-#include "inhomogeneous_poisson_generator.h"
 #include "mip_generator.h"
 #include "noise_generator.h"
 #include "poisson_generator.h"
+#include "inhomogeneous_poisson_generator.h"
 #include "ppd_sup_generator.h"
 #include "pulsepacket_generator.h"
 #include "sinusoidal_gamma_generator.h"
 #include "sinusoidal_poisson_generator.h"
 #include "spike_generator.h"
 #include "step_current_generator.h"
+#include "step_rate_generator.h"
 
 // Recording devices
 #include "correlation_detector.h"
@@ -117,6 +122,7 @@
 
 // Prototypes for synapses
 #include "bernoulli_connection.h"
+#include "clopath_connection.h"
 #include "common_synapse_properties.h"
 #include "cont_delay_connection.h"
 #include "cont_delay_connection_impl.h"
@@ -125,8 +131,8 @@
 #include "ht_connection.h"
 #include "quantal_stp_connection.h"
 #include "quantal_stp_connection_impl.h"
-#include "rate_connection_delayed.h"
 #include "rate_connection_instantaneous.h"
+#include "rate_connection_delayed.h"
 #include "spike_dilutor.h"
 #include "static_connection.h"
 #include "static_connection_hom_w.h"
@@ -152,10 +158,10 @@
 #include "target_identifier.h"
 
 #ifdef HAVE_MUSIC
-#include "music_cont_in_proxy.h"
-#include "music_cont_out_proxy.h"
 #include "music_event_in_proxy.h"
 #include "music_event_out_proxy.h"
+#include "music_cont_in_proxy.h"
+#include "music_cont_out_proxy.h"
 #include "music_message_in_proxy.h"
 #endif
 
@@ -263,6 +269,8 @@ ModelsModule::init( SLIInterpreter* )
     "noise_generator" );
   kernel().model_manager.register_node_model< step_current_generator >(
     "step_current_generator" );
+  kernel().model_manager.register_node_model< step_rate_generator >(
+    "step_rate_generator" );
   kernel().model_manager.register_node_model< mip_generator >(
     "mip_generator" );
   kernel().model_manager.register_node_model< sinusoidal_poisson_generator >(
@@ -310,12 +318,18 @@ ModelsModule::init( SLIInterpreter* )
     "iaf_chxk_2008" );
   kernel().model_manager.register_node_model< iaf_cond_alpha >(
     "iaf_cond_alpha" );
+  kernel().model_manager.register_node_model< iaf_cond_beta >(
+    "iaf_cond_beta" );
   kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
   kernel().model_manager.register_node_model< iaf_cond_exp_sfa_rr >(
     "iaf_cond_exp_sfa_rr" );
   kernel().model_manager.register_node_model< iaf_cond_alpha_mc >(
     "iaf_cond_alpha_mc" );
+  kernel().model_manager.register_node_model< hh_cond_beta_gap_traub >(
+    "hh_cond_beta_gap_traub" );
   kernel().model_manager.register_node_model< hh_psc_alpha >( "hh_psc_alpha" );
+  kernel().model_manager.register_node_model< hh_psc_alpha_clopath >(
+    "hh_psc_alpha_clopath" );
   kernel().model_manager.register_node_model< hh_psc_alpha_gap >(
     "hh_psc_alpha_gap" );
   kernel().model_manager.register_node_model< hh_cond_exp_traub >(
@@ -328,6 +342,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< gif_pop_psc_exp >(
     "gif_pop_psc_exp" );
 
+  kernel().model_manager.register_node_model< aeif_psc_delta_clopath >(
+    "aeif_psc_delta_clopath" );
   kernel().model_manager.register_node_model< aeif_cond_alpha >(
     "aeif_cond_alpha" );
   kernel().model_manager.register_node_model< aeif_cond_exp >(
@@ -467,6 +483,10 @@ ModelsModule::register_connection_models( std::string name_postfix )
     .model_manager
     .register_connection_model< BernoulliConnection< ConnectionT > >(
       "bernoulli_synapse" + name_postfix );
+  kernel()
+    .model_manager
+    .register_connection_model< ClopathConnection< ConnectionT > >(
+      "clopath_synapse" + name_postfix );
 }
 
 } // namespace nest

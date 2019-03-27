@@ -23,35 +23,31 @@
 High-level API of PyNEST Module
 """
 
-import os
-import sys
-
 # We search through the subdirectory "lib" of the "nest" module
 # directory and import the content of all Python files therein into
 # the global namespace. This makes the API functions of PyNEST itself
 # and those of extra modules available to the user.
 
 
-def _pkg_attrs(pkg):
-    # return all package attributes that
-    # from $pkg import *
-    # would put in the module namespace $pkg
-    # see https://docs.python.org/3/reference/simple_stmts.html#import
-    try:
-        # if there's an "__all__", return that
-        return pkg.__all__
-    except AttributeError:
-        # otherwise, return everything at top level that doesn't start with `_`
-        return (attr for attr in pkg.__dict__ if attr[0] != '_')
+def _import_libs(mod_file, mod_dict, path,
+                 prefix=None, ignore=frozenset(), level=1):
+    """
+    _import_libs: construct a relative import of all modules
+      mod_file: name of calling module file (__file__)
+      mod_dict: globals() of calling module
+      path: relative path to check for modules
+      prefix: string for import prefix (defaults to path)
+      ignore: set of import names ($prefix.$name) to not import
+      level: relative level (1 is relative to path, 2 is ../path, ...)
+             (default 1)
+      """
+                 
+    import ast
+    import os
 
+    if prefix is None:
+        prefix = path
 
-def _import_names(pkg, mod_dict):
-    # import * names from pkg to the dictionary of mod_dict
-    for attr in _pkg_attrs(pkg):
-        mod_dict[attr] = getattr(pkg, attr)
-
-
-def _import_libs(mod_file, mod_dict, path, prefix, ignore_modules=frozenset()):
     # from .$prefix.$x import *
     # relative to mod_file which is the filename from which mod_dict was read
     # where $x.py is all files ./$path/*.py not starting with __
@@ -61,11 +57,17 @@ def _import_libs(mod_file, mod_dict, path, prefix, ignore_modules=frozenset()):
             continue  # not a regular python module
 
         pkg_name = "{}.{}".format(prefix, name[:-3])
-        if pkg_name in ignore_modules:
+        if pkg_name in ignore:
             continue  # this package is not to be imported dynamically
 
-        pkg = __import__(pkg_name, mod_dict, locals(), ['*'], 1)
-        _import_names(pkg, mod_dict)
+        # construct from .pkg_name import * ; this is the old 'exec(string)'
+        names = [ast.alias(name='*', asname=None)]
+        body = [ast.ImportFrom(module=pkg_name, names=names, level=level)]
+        module = ast.fix_missing_locations(ast.Module(body=body))
+
+        code = compile(module, mod_file, 'exec')
+        exec(code, mod_dict, mod_dict)
+
 
 #############################
 # insert static imports here
@@ -79,9 +81,7 @@ _ignore_modules = set()
 # then do
 #   `from .libs.$X import *`
 # for every module in ./libs/$X.py that is left
-_import_libs(__file__, globals(),
-             'lib', 'lib',
-             _ignore_modules)
+_import_libs(__file__, globals(), 'lib', ignore=_ignore_modules)
 ############################
 
 # With '__all__' we provide an explicit index of the package. Without any

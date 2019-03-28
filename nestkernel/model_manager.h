@@ -36,7 +36,6 @@
 #include "nest_types.h"
 #include "node.h"
 
-
 // Includes from sli:
 #include "dictutils.h"
 

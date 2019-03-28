@@ -131,7 +131,6 @@ ModelManager::register_connection_model( const std::string& name,
 
 }
 
-
 /**
  * Register a synape with default Connector and without any common properties.
  */

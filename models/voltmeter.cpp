@@ -1,5 +1,5 @@
 /*
- *  multimeter.cpp
+ *  voltmeter.cpp
  *
  *  This file is part of NEST.
  *
@@ -30,7 +30,6 @@ namespace nest
 Voltmeter::Voltmeter()
   : Multimeter()
 {
-    //record_from_.push_back( names::V_m );
   DictionaryDatum vmdict = DictionaryDatum( new Dictionary );
   ArrayDatum ad;
   ad.push_back( LiteralDatum( names::V_m.toString() ) );
@@ -41,20 +40,7 @@ Voltmeter::Voltmeter()
 Voltmeter::Voltmeter( const Voltmeter& n )
   : Multimeter( n )
 {
-  /*DictionaryDatum vmdict;
-  n.get_status(vmdict);
-  assert(vmdict[names::record_from] == names::V_m.toString());*/
 }
-
-/*nest::Voltmeter::Parameters_::Parameters_( const Parameters_& p )
-  : interval_( p.interval_ )
-  , offset_( p.offset_ )
-  , record_from_( p.record_from_ )
-{
-  assert (p.record_from_.size() == 1 
-          && p.record_from_[0] == names::V_m );
-  interval_.calibrate();
-}*/
 
 }
 

@@ -1,5 +1,5 @@
 /*
- *  multimeter.h
+ *  voltmeter.h
  *
  *  This file is part of NEST.
  *
@@ -44,7 +44,7 @@
 
 namespace nest
 {
-/*BeginDocumentation
+/* @BeginDocumentation
 Name: voltmeter - Device to record membrane potential from neurons.
 Synopsis: voltmeter Create
 

@@ -37,7 +37,6 @@ class TargetDataFields
 {
 private:
 
-  // NUM_BITS_* set via cmake
   unsigned int lcid_ : NUM_BITS_LCID;
   unsigned int tid_ : NUM_BITS_TID;
   unsigned int syn_id_ : NUM_BITS_SYN_ID;
@@ -183,7 +182,6 @@ class TargetData
 private:
 
   static constexpr uint8_t NUM_BITS_LID = 19U;
-  // NUM_BITS_TID set via cmake
   static constexpr uint8_t NUM_BITS_MARKER = 2U;
   static constexpr uint8_t NUM_BITS_IS_PRIMARY = 1U;
 

@@ -78,10 +78,17 @@ generate_max_value( const uint8_t num_bits )
 /*
  * Sizes of bitfields used in various classes in the kernel.
  */
-// NUM_BITS_LCID set via cmake
-// NUM_BITS_RANK set via cmake
-// NUM_BITS_TID set via cmake
-// NUM_BITS_SYN_ID set via cmake
+#if TARGET_BITS_SPLIT == TARGET_BTTS_SPLIT_STANDARD
+constexpr uint8_t NUM_BITS_RANK = 18U;
+constexpr uint8_t NUM_BITS_TID = 9U;
+constexpr uint8_t NUM_BITS_SYN_ID = 9U;
+#elif TARGET_BITS_SPLIT == TARGET_BTTS_SPLIT_HPC
+constexpr uint8_t NUM_BITS_RANK = 20U;
+constexpr uint8_t NUM_BITS_TID = 10U;
+constexpr uint8_t NUM_BITS_SYN_ID = 6U;
+#endif
+constexpr uint8_t NUM_BITS_LCID = 27U;
+constexpr uint8_t NUM_BITS_PROCESSED_FLAG = 1U;
 constexpr uint8_t NUM_BITS_MARKER_SPIKE_DATA = 2U;
 constexpr uint8_t NUM_BITS_LAG = 14U;
 constexpr uint8_t NUM_BITS_DELAY = 21U;

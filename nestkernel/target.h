@@ -78,8 +78,6 @@ class Target
 private:
   uint64_t remote_target_id_;
 
-  // NUM_BITS_* set via cmake
-
   static constexpr uint8_t BITPOS_LCID = 0U;
   static constexpr uint8_t BITPOS_RANK = NUM_BITS_LCID;
   static constexpr uint8_t BITPOS_TID = BITPOS_RANK + NUM_BITS_RANK;

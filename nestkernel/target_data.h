@@ -36,7 +36,6 @@ namespace nest
 class TargetDataFields
 {
 private:
-
   unsigned int lcid_ : NUM_BITS_LCID;
   unsigned int tid_ : NUM_BITS_TID;
   unsigned int syn_id_ : NUM_BITS_SYN_ID;
@@ -75,9 +74,9 @@ public:
   synindex get_syn_id() const;
 };
 
-//!< check legal size
-typedef StaticAssert< sizeof( TargetDataFields ) == 8 >::success
-  success_target_data_fields_size;
+//! check legal size
+using success_target_data_fields_size =
+  StaticAssert< sizeof( TargetDataFields ) == 8 >::success;
 
 inline void
 TargetDataFields::set_lcid( const index lcid )
@@ -129,9 +128,9 @@ public:
   synindex get_syn_id() const;
 };
 
-//!< check legal size
-typedef StaticAssert< sizeof( SecondaryTargetDataFields ) == 8 >::success
-  success_secondary_target_data_fields_size;
+//! check legal size
+using success_secondary_target_data_fields_size =
+  StaticAssert< sizeof( SecondaryTargetDataFields ) == 8 >::success;
 
 inline void
 SecondaryTargetDataFields::set_send_buffer_pos( const size_t pos )
@@ -180,23 +179,21 @@ class TargetData
   // and to handle variant fields
 
 private:
-
   static constexpr uint8_t NUM_BITS_LID = 19U;
   static constexpr uint8_t NUM_BITS_MARKER = 2U;
   static constexpr uint8_t NUM_BITS_IS_PRIMARY = 1U;
 
   static constexpr int MAX_LID = generate_max_value( NUM_BITS_LID );
-  static constexpr int MAX_MARKER = generate_max_value( NUM_BITS_MARKER );
 
   unsigned int source_lid_ : NUM_BITS_LID; //!< local id of presynaptic neuron
-  //!< thread index of presynaptic neuron
-  unsigned int source_tid_:  NUM_BITS_TID;
+  //! thread index of presynaptic neuron
+  unsigned int source_tid_ : NUM_BITS_TID;
   unsigned int marker_ : NUM_BITS_MARKER;
-   //!< TargetData has TargetDataFields else SecondaryTargetDataFields
+  //! TargetData has TargetDataFields else SecondaryTargetDataFields
   bool is_primary_ : NUM_BITS_IS_PRIMARY;
 
 public:
-  //<! variant fields
+  //! variant fields
   union
   {
     TargetDataFields target_data;
@@ -218,9 +215,9 @@ public:
   bool is_primary() const;
 };
 
-//!< check legal size
-typedef StaticAssert< sizeof( TargetData ) == 12 >::success
-  success_target_data_size;
+//! check legal size
+using success_target_data_size =
+  StaticAssert< sizeof( TargetData ) == 12 >::success;
 
 inline void
 TargetData::reset_marker()

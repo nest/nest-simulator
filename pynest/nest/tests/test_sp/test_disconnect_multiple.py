@@ -29,7 +29,7 @@ class TestDisconnect(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity('M_ERROR')
+        nest.hl_api.set_verbosity('M_ERROR')
         self.exclude_synapse_model = [
             'stdp_dopamine_synapse',
             'stdp_dopamine_synapse_lbl',
@@ -42,7 +42,9 @@ class TestDisconnect(unittest.TestCase):
             'rate_connection_instantaneous',
             'rate_connection_instantaneous_lbl',
             'rate_connection_delayed',
-            'rate_connection_delayed_lbl'
+            'rate_connection_delayed_lbl',
+            'clopath_synapse',
+            'clopath_synapse_lbl'
         ]
 
     def test_multiple_synapse_deletion_all_to_all(self):
@@ -227,6 +229,38 @@ class TestDisconnect(unittest.TestCase):
                 conns = nest.GetConnections(
                     [neurons[srcId]], [neurons[targId]], syn_model)
                 assert not conns
+
+    def test_disconnect_defaults(self):
+
+        nodes = nest.Create('iaf_psc_alpha', 5)
+        nest.Connect(nodes, nodes)
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 25)
+
+        nest.Disconnect(nodes, nodes)
+
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
+
+    def test_disconnect_all_to_all(self):
+
+        nodes = nest.Create('iaf_psc_alpha', 5)
+        nest.Connect(nodes, nodes)
+
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 25)
+
+        nest.Disconnect(nodes, nodes, 'all_to_all')
+
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 0)
+
+    def test_disconnect_static_synapse(self):
+
+        nodes = nest.Create('iaf_psc_alpha', 5)
+        nest.Connect(nodes, nodes)
+
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 25)
+
+        nest.Disconnect(nodes, nodes, syn_spec='static_synapse')
+
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
 
 
 def suite():

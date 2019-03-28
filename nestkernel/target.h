@@ -61,8 +61,8 @@ namespace nest
  *
  * Other custom layouts can be chosen by providing a list of 5
  * numbers, representing the bits required for rank, thread, synapse
- * id, local connection id and processed flag, repectively. The number
- * of bit needs to sum to 64. The processed flag must always use one
+ * id, local connection id and processed flag, respectively. The number
+ * of bits needs to sum to 64. The processed flag must always use one
  * bit.
  */
 // clang-format on
@@ -85,10 +85,10 @@ private:
   static constexpr uint8_t BITPOS_PROCESSED_FLAG =
     BITPOS_SYN_ID + NUM_BITS_SYN_ID;
 
-  typedef StaticAssert< NUM_BITS_PROCESSED_FLAG == 1U >::success
-    bits_for_processed_flag;
-  typedef StaticAssert< BITPOS_PROCESSED_FLAG == 63U >::success
-    position_of_processed_flag;
+  using bits_for_processed_flag =
+    StaticAssert< NUM_BITS_PROCESSED_FLAG == 1U >::success;
+  using position_of_processed_flag =
+    StaticAssert< BITPOS_PROCESSED_FLAG == 63U >::success;
 
   // generate bit-masks used in bit-operations
   static constexpr uint64_t MASK_LCID =
@@ -172,7 +172,7 @@ public:
 };
 
 //!< check legal size
-typedef StaticAssert< sizeof( Target ) == 8 >::success success_target_size;
+using success_target_size = StaticAssert< sizeof( Target ) == 8 >::success;
 
 inline Target::Target()
   : remote_target_id_( 0 )

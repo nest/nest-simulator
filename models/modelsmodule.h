@@ -34,7 +34,16 @@
 namespace nest
 {
 /**
- * Module supplying all models that are included in the NEST release.
+ * Module supplying all models that are included in the NEST release. Sets up
+ * the modeldict with all models included with the NEST distribution.
+ * 
+ * Author(s):
+ * Marc-Oliver Gewaltig
+ * Rüdiger Kupper
+ * Hans Ekkehard Plesser
+ * 
+ * First Version: June 2006
+ *  
  * @todo Should this be a dynamic module?
  */
 class ModelsModule : public SLIModule
@@ -51,17 +60,6 @@ public:
 
   const std::string name( void ) const;
   const std::string commandstring( void ) const;
-
-private:
-  /**
-   * Adds all the known synapse models to the NEST kernel by calling
-   * kernel().model_manager.register_connection_model() with the given
-   * connection data type and name. This is an internal helper function
-   * that is called during construction of the ModelsModule and is not
-   * intended to be used outside of this.
-  **/
-  template < typename ConnectionT >
-  void register_connection_models( std::string name_postfix = "" );
 };
 
 

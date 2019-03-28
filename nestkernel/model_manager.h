@@ -36,6 +36,7 @@
 #include "nest_types.h"
 #include "node.h"
 
+
 // Includes from sli:
 #include "dictutils.h"
 
@@ -180,17 +181,6 @@ public:
   void set_model_defaults( Name name, DictionaryDatum params );
 
   /**
-   * Register a synape model with default Connector and without any common
-   * properties. Convenience function that used the default Connector model
-   * GenericConnectorModel.
-   * @param name The name under which the ConnectorModel will be registered.
-   */
-  template < typename ConnectionT >
-  void register_connection_model( const std::string& name,
-    const bool requires_symmetric = false,
-    const bool requires_clopath_archiving = false );
-
-  /**
    * Register a synape model with a custom Connector model and without any
    * common properties.
    *
@@ -201,10 +191,15 @@ public:
    *
    * @param name The name under which the ConnectorModel will be registered.
    */
-  template < typename ConnectionT, template < typename > class ConnectorModelT >
-  void register_connection_model( const std::string& name,
-    const bool requires_symmetric = false,
-    const bool requires_clopath_archiving = false );
+  template < template < typename > class ConnectorModelT >
+  void register_connection_model(const std::string& name,
+    const bool register_hpc=true,
+    const bool register_lbl=true,
+    const bool is_primary=true,
+    const bool has_delay=true,
+    const bool supports_wfr=false,
+    const bool requires_symmetric=false,
+    const bool requires_clopath_archiving=false);
 
   template < typename ConnectionT >
   void register_secondary_connection_model( const std::string& name,

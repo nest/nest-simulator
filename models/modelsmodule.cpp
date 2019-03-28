@@ -20,20 +20,6 @@
  *
  */
 
-/*
-    This file is part of NEST.
-
-    modelsmodule.cpp -- sets up the modeldict with all models included
-    with the NEST distribution.
-
-    Author(s):
-    Marc-Oliver Gewaltig
-    R"udiger Kupper
-    Hans Ekkehard Plesser
-
-    First Version: June 2006
-*/
-
 #include "modelsmodule.h"
 
 // Includes from nestkernel
@@ -116,6 +102,7 @@
 #include "multimeter.h"
 #include "spike_detector.h"
 #include "spin_detector.h"
+#include "voltmeter.h"
 #include "weight_recorder.h"
 
 #include "volume_transmitter.h"
@@ -374,13 +361,78 @@ ModelsModule::init( SLIInterpreter* )
     "music_message_in_proxy" );
 #endif
 
-  // register all connection models: 
-  // once for the normal indexing type
-  // once for the ConnectionLabel type (postfix: "_lbl")
-  // once for the high-performance indexing type (postfix: "_hpc")
-  register_connection_models< TargetIdentifierPtrRport >();
-  register_connection_models< ConnectionLabel< TargetIdentifierPtrRport > >( "_lbl" );
-  register_connection_models< TargetIdentifierIndex >( "_hpc" );
+  // register all connection models
+  kernel()
+    .model_manager
+    .register_connection_model< BernoulliConnection >(
+      "bernoulli_synapse" );
+  kernel()
+    .model_manager
+    .register_connection_model< ClopathConnection >(
+      "clopath_synapse",
+      /*requires_symmetric=*/false,
+      /*requires_clopath_archiving=*/true);
+  kernel()
+    .model_manager
+    .register_connection_model< ContDelayConnection >(
+      "cont_delay_synapse" );
+  kernel()
+    .model_manager
+    .register_connection_model< HTConnection >(
+      "ht_synapse" );
+  kernel()
+    .model_manager
+    .register_connection_model< Quantal_StpConnection >(
+      "quantal_stp_synapse" );
+  kernel()
+    .model_manager
+    .register_connection_model< StaticConnection >(
+      "static_synapse" );
+  kernel()
+    .model_manager
+    .register_connection_model< StaticConnectionHomW >(
+      "static_synapse_hom_w" );
+  kernel()
+    .model_manager
+    .register_connection_model< STDPConnection >(
+      "stdp_synapse" );
+  kernel()
+    .model_manager
+    .register_connection_model< STDPConnectionHom >(
+      "stdp_synapse_hom" );
+  kernel()
+    .model_manager
+    .register_connection_model< STDPDopaConnection >(
+      "stdp_dopamine_synapse" );
+  kernel()
+    .model_manager
+    .register_connection_model< STDPFACETSHWConnectionHom >(
+      "stdp_facetshw_synapse_hom" );
+  kernel()
+    .model_manager
+    .register_connection_model< STDPPLConnectionHom >(
+      "stdp_pl_synapse_hom" );
+  kernel()
+    .model_manager
+    .register_connection_model< STDPTripletConnection >(
+      "stdp_triplet_synapse" );
+  kernel()
+    .model_manager
+    .register_connection_model< TsodyksConnection >(
+      "tsodyks_synapse" );
+  kernel()
+    .model_manager
+    .register_connection_model< TsodyksConnectionHom >(
+      "tsodyks_synapse_hom" );
+  kernel()
+    .model_manager
+    .register_connection_model< Tsodyks2Connection >(
+      "tsodyks2_synapse" );
+  kernel()
+    .model_manager
+    .register_connection_model< VogelsSprekelerConnection >(
+      "vogels_sprekeler_synapse" );
+
 
   // register secondary connection models
   kernel()
@@ -411,80 +463,6 @@ ModelsModule::init( SLIInterpreter* )
       /*has_delay=*/false,
       /*requires_symmetric=*/false,
       /*supports_wfr=*/true );
-}
-
-template < typename ConnectionT >
-void
-ModelsModule::register_connection_models( std::string name_postfix )
-{
-  kernel()
-    .model_manager
-    .register_connection_model< BernoulliConnection< ConnectionT > >(
-      "bernoulli_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< ClopathConnection< ConnectionT > >(
-      "clopath_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< ContDelayConnection< ConnectionT > >(
-      "cont_delay_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< HTConnection< ConnectionT > >(
-      "ht_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< Quantal_StpConnection< ConnectionT > >(
-      "quantal_stp_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< StaticConnection< ConnectionT > >(
-      "static_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< StaticConnectionHomW< ConnectionT > >(
-      "static_synapse_hom_w" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPConnection< ConnectionT > >(
-      "stdp_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPConnectionHom< ConnectionT > >(
-      "stdp_synapse_hom" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPDopaConnection< ConnectionT > >(
-      "stdp_dopamine_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPFACETSHWConnectionHom< ConnectionT > >(
-      "stdp_facetshw_synapse_hom" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPPLConnectionHom< ConnectionT > >(
-      "stdp_pl_synapse_hom" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPTripletConnection< ConnectionT > >(
-      "stdp_triplet_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< TsodyksConnection< ConnectionT > >(
-      "tsodyks_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< TsodyksConnectionHom< ConnectionT > >(
-      "tsodyks_synapse_hom" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< Tsodyks2Connection< ConnectionT > >(
-      "tsodyks2_synapse" + name_postfix );
-  kernel()
-    .model_manager
-    .register_connection_model< VogelsSprekelerConnection< ConnectionT > >(
-      "vogels_sprekeler_synapse" + name_postfix );
 }
 
 } // namespace nest

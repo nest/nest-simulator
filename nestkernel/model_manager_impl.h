@@ -33,6 +33,7 @@
 #include "connection_label.h"
 #include "kernel_manager.h"
 
+#include "target_identifier.h"
 
 namespace nest
 {
@@ -83,41 +84,53 @@ ModelManager::register_preconf_node_model( const Name& name,
   return register_node_model_( model, private_model );
 }
 
-template < typename ConnectionT, template < typename > class ConnectorModelT >
+template < template < typename > class ConnectionT >
 void
 ModelManager::register_connection_model( const std::string& name,
+  const bool register_hpc,
+  const bool register_lbl,
+  const bool is_primary,
+  const bool has_delay,
+  const bool supports_wfr,
   const bool requires_symmetric,
   const bool requires_clopath_archiving )
 {
-  ConnectorModel* cf = new ConnectorModelT< ConnectionT >( name,
-    /*is_primary=*/true,
-    /*has_delay=*/true,
+    // register normal version of the synapse
+    ConnectorModel* cf = new GenericConnectorModel< ConnectionT < TargetIdentifierPtrRport > >( name,
+    is_primary,
+    has_delay,
     requires_symmetric,
-    /*supports_wfr*/ false,
+    supports_wfr,
     requires_clopath_archiving );
   register_connection_model_( cf );
 
-  if ( not ends_with( name, "_hpc" ) )
+  // register the "hpc" version with the same parameters but a different ConnectionT
+  if ( register_hpc )
   {
-    cf = new ConnectorModelT< ConnectionLabel< ConnectionT > >( name + "_lbl",
-      /*is_primary=*/true,
-      /*has_delay=*/true,
+    cf = new GenericConnectorModel< ConnectionT < TargetIdentifierIndex > >(
+        name + "_hpc",
+      is_primary,
+      has_delay,
       requires_symmetric,
-      /*supports_wfr=*/false,
+      supports_wfr,
       requires_clopath_archiving );
     register_connection_model_( cf );
   }
+
+  // register the "lbl" (labeled) version with the same parameters but a different ConnectionT
+  if ( register_lbl )
+  {
+    cf = new GenericConnectorModel< ConnectionLabel < ConnectionT < TargetIdentifierPtrRport > > >( name + "_lbl",
+      is_primary,
+      has_delay,
+      requires_symmetric,
+      supports_wfr,
+      requires_clopath_archiving );
+    register_connection_model_( cf );
+  }
+
 }
 
-template < typename ConnectionT >
-void
-ModelManager::register_connection_model( const std::string& name,
-  const bool requires_symmetric,
-  const bool requires_clopath_archiving )
-{
-  register_connection_model< ConnectionT, GenericConnectorModel >(
-    name, requires_symmetric, requires_clopath_archiving );
-}
 
 /**
  * Register a synape with default Connector and without any common properties.

@@ -177,7 +177,7 @@
 
 /* Bit counts for Target members */
 #define TARGET_BITS_SPLIT @TARGET_BITS_SPLIT@
-#define TARGET_BTTS_SPLIT_STANDARD 0
-#define TARGET_BTTS_SPLIT_HPC 1
+#define TARGET_BITS_SPLIT_STANDARD 0
+#define TARGET_BITS_SPLIT_HPC 1
 
 #endif // #ifndef CONFIG_H

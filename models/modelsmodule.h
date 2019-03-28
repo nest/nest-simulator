@@ -27,8 +27,6 @@
 #include <string>
 
 // Includes from sli:
-#include "connector_model.h"
-#include "genericmodel.h"
 #include "slimodule.h"
 
 namespace nest

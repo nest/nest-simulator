@@ -59,7 +59,7 @@ public:
   const std::string commandstring( void ) const;
 
   static SLIType MaskType;      ///< SLI type for masks
-  static SLIType ParameterType; ///< SLI type for parameters
+  static SLIType TopologyParameterType; ///< SLI type for parameters
 
   /*
    * SLI functions: See source file for documentation
@@ -167,11 +167,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } sub_P_Pfunction;
 
-  class CreateParameter_DFunction : public SLIFunction
+  class CreateTopologyParameter_DFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } createparameter_Dfunction;
+  } createtopologyparameter_Dfunction;
 
   class GetValue_a_PFunction : public SLIFunction
   {
@@ -298,7 +298,7 @@ public:
    */
   static lockPTRDatum< TopologyParameter,
     &TopologyModule::
-      ParameterType > /*ParameterDatum*/ create_parameter( const Token& );
+      TopologyParameterType > /*ParameterDatum*/ create_topology_parameter( const Token& );
 
   /**
    * Create a new Parameter object using the parameter factory.
@@ -307,7 +307,7 @@ public:
    *             type.
    * @returns dynamically allocated new Parameter object.
    */
-  static TopologyParameter* create_parameter( const Name& name,
+  static TopologyParameter* create_topology_parameter( const Name& name,
     const DictionaryDatum& d );
 
 private:

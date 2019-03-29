@@ -360,28 +360,28 @@ minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
   return mask1->minus_mask( *mask2 );
 }
 
-ParameterDatum
-multiply_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
+TopologyParameterDatum
+multiply_parameter( const TopologyParameterDatum& param1, const TopologyParameterDatum& param2 )
 {
-  return param1->multiply_parameter( *param2 );
+  return param1->multiply_topology_parameter( *param2 );
 }
 
-ParameterDatum
-divide_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
+TopologyParameterDatum
+divide_parameter( const TopologyParameterDatum& param1, const TopologyParameterDatum& param2 )
 {
-  return param1->divide_parameter( *param2 );
+  return param1->divide_topology_parameter( *param2 );
 }
 
-ParameterDatum
-add_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
+TopologyParameterDatum
+add_parameter( const TopologyParameterDatum& param1, const TopologyParameterDatum& param2 )
 {
-  return param1->add_parameter( *param2 );
+  return param1->add_topology_parameter( *param2 );
 }
 
-ParameterDatum
-subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
+TopologyParameterDatum
+subtract_parameter( const TopologyParameterDatum& param1, const TopologyParameterDatum& param2 )
 {
-  return param1->subtract_parameter( *param2 );
+  return param1->subtract_topology_parameter( *param2 );
 }
 
 void
@@ -400,12 +400,12 @@ connect_layers( GIDCollectionPTR source_gc,
   source->connect( target, target_gc, connector );
 }
 
-ParameterDatum
+TopologyParameterDatum
 create_parameter( const DictionaryDatum& param_dict )
 {
   param_dict->clear_access_flags();
 
-  ParameterDatum datum( TopologyModule::create_parameter( param_dict ) );
+  TopologyParameterDatum datum( TopologyModule::create_topology_parameter( param_dict ) );
 
   ALL_ENTRIES_ACCESSED(
     *param_dict, "topology::CreateParameter", "Unread dictionary entries: " );
@@ -414,7 +414,7 @@ create_parameter( const DictionaryDatum& param_dict )
 }
 
 double
-get_value( const std::vector< double >& point, const ParameterDatum& param )
+get_value( const std::vector< double >& point, const TopologyParameterDatum& param )
 {
   librandom::RngPtr rng = get_global_rng();
   return param->value( point, rng );

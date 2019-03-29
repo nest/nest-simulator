@@ -56,14 +56,14 @@
 namespace nest
 {
 SLIType TopologyModule::MaskType;
-SLIType TopologyModule::ParameterType;
+SLIType TopologyModule::TopologyParameterType;
 
 TopologyModule::TopologyModule()
 {
   MaskType.settypename( "masktype" );
   MaskType.setdefaultaction( SLIInterpreter::datatypefunction );
-  ParameterType.settypename( "parametertype" );
-  ParameterType.setdefaultaction( SLIInterpreter::datatypefunction );
+  TopologyParameterType.settypename( "topologyparametertype" );
+  TopologyParameterType.setdefaultaction( SLIInterpreter::datatypefunction );
 }
 
 TopologyModule::~TopologyModule()
@@ -224,13 +224,13 @@ TopologyModule::create_mask( const Token& t )
   }
 }
 
-ParameterDatum
-TopologyModule::create_parameter( const Token& t )
+TopologyParameterDatum
+TopologyModule::create_topology_parameter( const Token& t )
 {
   // t can be an existing ParameterDatum, a DoubleDatum containing a
   // constant value for this parameter, or a Dictionary containing
   // parameters
-  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
+  TopologyParameterDatum* pd = dynamic_cast< TopologyParameterDatum* >( t.datum() );
   if ( pd )
   {
     return *pd;
@@ -240,7 +240,7 @@ TopologyModule::create_parameter( const Token& t )
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
   if ( dd )
   {
-    return new ConstantParameter( *dd );
+    return new ConstantTopologyParameter( *dd );
   }
 
   DictionaryDatum* dictd = dynamic_cast< DictionaryDatum* >( t.datum() );
@@ -257,7 +257,7 @@ TopologyModule::create_parameter( const Token& t )
 
     Name n = ( *dictd )->begin()->first;
     DictionaryDatum pdict = getValue< DictionaryDatum >( *dictd, n );
-    return create_parameter( n, pdict );
+    return create_topology_parameter( n, pdict );
   }
   else
   {
@@ -267,7 +267,7 @@ TopologyModule::create_parameter( const Token& t )
 }
 
 TopologyParameter*
-TopologyModule::create_parameter( const Name& name, const DictionaryDatum& d )
+TopologyModule::create_topology_parameter( const Name& name, const DictionaryDatum& d )
 {
   // The parameter factory will create the parameter without regard for
   // the anchor
@@ -283,10 +283,10 @@ TopologyModule::create_parameter( const Name& name, const DictionaryDatum& d )
     switch ( anchor.size() )
     {
     case 2:
-      aparam = new AnchoredParameter< 2 >( *param, anchor );
+      aparam = new AnchoredTopologyParameter< 2 >( *param, anchor );
       break;
     case 3:
-      aparam = new AnchoredParameter< 3 >( *param, anchor );
+      aparam = new AnchoredTopologyParameter< 3 >( *param, anchor );
       break;
     default:
       throw BadProperty( "Anchor must be 2- or 3-dimensional." );
@@ -362,7 +362,7 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "ConnectLayers_g_g_D", &connectlayers_g_g_Dfunction );
 
-  i->createcommand( "CreateParameter_D", &createparameter_Dfunction );
+  i->createcommand( "CreateParameter_D", &createtopologyparameter_Dfunction );
 
   i->createcommand( "GetValue_a_P", &getvalue_a_Pfunction );
 
@@ -390,15 +390,15 @@ TopologyModule::init( SLIInterpreter* i )
   register_mask< GridMask< 2 > >();
 
   // Register parameter types
-  register_parameter< ConstantParameter >( "constant" );
-  register_parameter< LinearParameter >( "linear" );
-  register_parameter< ExponentialParameter >( "exponential" );
-  register_parameter< GaussianParameter >( "gaussian" );
-  register_parameter< Gaussian2DParameter >( "gaussian2D" );
-  register_parameter< GammaParameter >( "gamma" );
-  register_parameter< UniformParameter >( "uniform" );
-  register_parameter< NormalParameter >( "normal" );
-  register_parameter< LognormalParameter >( "lognormal" );
+  register_parameter< ConstantTopologyParameter >( "constant" );
+  register_parameter< LinearTopologyParameter >( "linear" );
+  register_parameter< ExponentialTopologyParameter >( "exponential" );
+  register_parameter< GaussianTopologyParameter >( "gaussian" );
+  register_parameter< Gaussian2DTopologyParameter >( "gaussian2D" );
+  register_parameter< GammaTopologyParameter >( "gamma" );
+  register_parameter< UniformTopologyParameter >( "uniform" );
+  register_parameter< NormalTopologyParameter >( "normal" );
+  register_parameter< LognormalTopologyParameter >( "lognormal" );
 }
 
 /** @BeginDocumentation
@@ -768,10 +768,10 @@ TopologyModule::Mul_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  ParameterDatum param1 = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
-  ParameterDatum param2 = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+  TopologyParameterDatum param1 = getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
+  TopologyParameterDatum param2 = getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
 
-  ParameterDatum newparam = multiply_parameter( param1, param2 );
+  TopologyParameterDatum newparam = multiply_parameter( param1, param2 );
 
   i->OStack.pop( 2 );
   i->OStack.push( newparam );
@@ -783,10 +783,10 @@ TopologyModule::Div_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  ParameterDatum param1 = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
-  ParameterDatum param2 = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+  TopologyParameterDatum param1 = getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
+  TopologyParameterDatum param2 = getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
 
-  ParameterDatum newparam = divide_parameter( param1, param2 );
+  TopologyParameterDatum newparam = divide_parameter( param1, param2 );
 
   i->OStack.pop( 2 );
   i->OStack.push( newparam );
@@ -798,10 +798,10 @@ TopologyModule::Add_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  ParameterDatum param1 = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
-  ParameterDatum param2 = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+  TopologyParameterDatum param1 = getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
+  TopologyParameterDatum param2 = getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
 
-  ParameterDatum newparam = add_parameter( param1, param2 );
+  TopologyParameterDatum newparam = add_parameter( param1, param2 );
 
   i->OStack.pop( 2 );
   i->OStack.push( newparam );
@@ -813,10 +813,10 @@ TopologyModule::Sub_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  ParameterDatum param1 = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
-  ParameterDatum param2 = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+  TopologyParameterDatum param1 = getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
+  TopologyParameterDatum param2 = getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
 
-  ParameterDatum newparam = subtract_parameter( param1, param2 );
+  TopologyParameterDatum newparam = subtract_parameter( param1, param2 );
 
   i->OStack.pop( 2 );
   i->OStack.push( newparam );
@@ -1043,13 +1043,13 @@ TopologyModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
   Author: Håkon Enger
 */
 void
-TopologyModule::CreateParameter_DFunction::execute( SLIInterpreter* i ) const
+TopologyModule::CreateTopologyParameter_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   const DictionaryDatum param_dict =
     getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  ParameterDatum datum = nest::create_parameter( param_dict );
+  TopologyParameterDatum datum = create_topology_parameter( param_dict );
 
   i->OStack.pop( 1 );
   i->OStack.push( datum );
@@ -1107,7 +1107,7 @@ TopologyModule::GetValue_a_PFunction::execute( SLIInterpreter* i ) const
 
   std::vector< double > point =
     getValue< std::vector< double > >( i->OStack.pick( 1 ) );
-  ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+  TopologyParameterDatum param = getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
 
   double value = get_value( point, param );
 

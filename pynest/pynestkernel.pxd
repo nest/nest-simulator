@@ -68,13 +68,13 @@ cdef extern from "mask.h" namespace "nest":
         MaskDatum(const MaskDatum&)
 
 cdef extern from "topology_parameter.h" namespace "nest":
-    cppclass ParameterDatum:
-        ParameterDatum(const ParameterDatum&)
+    cppclass TopologyParameterDatum:
+        TopologyParameterDatum(const TopologyParameterDatum&)
 
 cdef extern from "gid_collection.h":
     cppclass GIDCollectionDatum:
         GIDCollectionDatum(const GIDCollectionDatum&)
-        
+
     cppclass GIDCollectionIteratorDatum:
         GIDCollectionIteratorDatum(const GIDCollectionIteratorDatum&)
 

@@ -101,19 +101,19 @@
     /sub_M_M load
   def
   
-  /mul [/parametertype /parametertype]
+  /mul [/topologyparametertype /topologyparametertype]
     /mul_P_P load
   def
   
-  /div [/parametertype /parametertype]
+  /div [/topologyparametertype /topologyparametertype]
     /div_P_P load
   def
   
-  /add [/parametertype /parametertype]
+  /add [/topologyparametertype /topologyparametertype]
     /add_P_P load
   def
   
-  /sub [/parametertype /parametertype]
+  /sub [/topologyparametertype /topologyparametertype]
     /sub_P_P load
   def
   
@@ -125,7 +125,7 @@
     /CreateParameter_D load
   def
   
-  /GetValue [/arraytype /parametertype]
+  /GetValue [/arraytype /topologyparametertype]
     /GetValue_a_P load
   def
   

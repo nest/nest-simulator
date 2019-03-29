@@ -792,7 +792,7 @@ class Parameter(object):
     def __init__(self, datum):
         """Parameters must be created using the CreateParameter command."""
         if not isinstance(datum,
-                          kernel.SLIDatum) or datum.dtype != "parametertype":
+                          kernel.SLIDatum) or datum.dtype != "topologyparametertype":
             raise TypeError("expected parameter datum")
         self._datum = datum
 

@@ -75,7 +75,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
     else if ( dit->first == names::kernel )
     {
-      kernel_ = TopologyModule::create_parameter( dit->second );
+      kernel_ = TopologyModule::create_topology_parameter( dit->second );
     }
     else if ( dit->first == names::synapse_model )
     {
@@ -93,11 +93,11 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
     else if ( dit->first == names::weights )
     {
-      weight_ = TopologyModule::create_parameter( dit->second );
+      weight_ = TopologyModule::create_topology_parameter( dit->second );
     }
     else if ( dit->first == names::delays )
     {
-      delay_ = TopologyModule::create_parameter( dit->second );
+      delay_ = TopologyModule::create_topology_parameter( dit->second );
     }
     else
     {
@@ -112,18 +112,18 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   if ( not weight_.valid() )
   {
     weight_ =
-      TopologyModule::create_parameter( ( *syn_defaults )[ names::weight ] );
+      TopologyModule::create_topology_parameter( ( *syn_defaults )[ names::weight ] );
   }
   if ( not delay_.valid() )
   {
     if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) )
     {
-      delay_ = TopologyModule::create_parameter( numerics::nan );
+      delay_ = TopologyModule::create_topology_parameter( numerics::nan );
     }
     else
     {
       delay_ =
-        TopologyModule::create_parameter( ( *syn_defaults )[ names::delay ] );
+        TopologyModule::create_topology_parameter( ( *syn_defaults )[ names::delay ] );
     }
   }
 

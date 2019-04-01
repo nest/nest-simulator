@@ -315,7 +315,6 @@ const Name ports( "ports" );
 const Name post_synaptic_element( "post_synaptic_element" );
 const Name post_trace( "post_trace" );
 const Name pre_synaptic_element( "pre_synaptic_element" );
-const Name pre_trace( "pre_trace" );
 const Name precise_times( "precise_times" );
 const Name precision( "precision" );
 const Name print_time( "print_time" );

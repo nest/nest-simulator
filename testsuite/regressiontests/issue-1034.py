@@ -80,10 +80,7 @@ class PostTraceTester(object):
         # create spike detector --- debugging only
         spikes = nest.Create("spike_detector",
                              params={'precise_times': True})
-        nest.Connect(
-            pre_parrot_ps + post_parrot_ps,
-            spikes
-        )
+        nest.Connect(pre_parrot_ps + post_parrot_ps, spikes)
 
         # connect both parrot neurons with a stdp synapse onto port 1
         # thereby spikes transmitted through the stdp connection are
@@ -130,9 +127,8 @@ class PostTraceTester(object):
         n_timepoints = int(np.ceil(1000 * self.sim_time_))
         trace_python_ref = np.zeros(n_timepoints)
 
-        n_spikes = len(self.post_spike_times_)
-        for sp_idx in range(n_spikes):
-            t_sp = self.post_spike_times_[sp_idx] \
+        for post_spike_time in self.post_spike_times_:
+            t_sp = post_spike_time \
                    + self.delay_ \
                    + self.dendritic_delay_
             for i in range(n_timepoints):
@@ -141,9 +137,8 @@ class PostTraceTester(object):
                     trace_python_ref[i] += np.exp(-(t - t_sp)
                                                   / self.tau_minus_)
 
-        n_spikes = len(self.pre_spike_times_)
-        for sp_idx in range(n_spikes):
-            t_sp = self.pre_spike_times_[sp_idx] + self.delay_
+        for pre_spike_time in self.pre_spike_times_:
+            t_sp = pre_spike_time + self.delay_
             i = int(np.round(t_sp / self.sim_time_
                              * float(len(trace_python_ref) - 1)))
             if debug:
@@ -164,12 +159,11 @@ class PostTraceTester(object):
         the last presynaptic spike.
         """
 
-        n_timepoints = len(trace_nest_t)
-        for i in range(n_timepoints)[1:]:
+        for t, trace_nest_val in zip(trace_nest_t[1:], trace_nest[1:]):
             t = trace_nest_t[i]
             if debug:
                 print("* Finding ref for NEST timepoint t = " + str(t)
-                      + ", trace = " + str(trace_nest[i]))
+                      + ", trace = " + str(trace_nest_val))
 
             traces_match = False
             for i_search, t_search in enumerate(
@@ -180,7 +174,7 @@ class PostTraceTester(object):
                         * float(len(trace_python_ref) - 1)))]
                     traces_match = np.allclose(
                         _trace_at_t_search,
-                        trace_nest[i],
+                        trace_nest_val,
                         atol=self.trace_match_atol_,
                         rtol=self.trace_match_rtol_)
                     post_spike_occurred_at_t_search = np.any(
@@ -198,12 +192,12 @@ class PostTraceTester(object):
                     if (not traces_match) and post_spike_occurred_at_t_search:
                         traces_match = np.allclose(
                             _trace_at_t_search + 1,
-                            trace_nest[i],
+                            trace_nest_val,
                             atol=self.trace_match_atol_,
                             rtol=self.trace_match_rtol_)
                         if debug:
                             print("\t   traces_match = " + str(traces_match)
-                                  + " (nest trace = " + str(trace_nest[i])
+                                  + " (nest trace = " + str(trace_nest_val)
                                   + ", ref trace = "
                                   + str(_trace_at_t_search + 1)
                                   + ")")
@@ -213,12 +207,12 @@ class PostTraceTester(object):
                     if (not traces_match) and post_spike_occurred_at_t_search:
                         traces_match = np.allclose(
                             _trace_at_t_search - 1,
-                            trace_nest[i],
+                            trace_nest_val,
                             atol=self.trace_match_atol_,
                             rtol=self.trace_match_rtol_)
                         if debug:
                             print("\t   traces_match = " + str(traces_match)
-                                  + " (nest trace = " + str(trace_nest[i])
+                                  + " (nest trace = " + str(trace_nest_val)
                                   + ", ref trace = "
                                   + str(_trace_at_t_search - 1)
                                   + ")")
@@ -227,12 +221,12 @@ class PostTraceTester(object):
 
                     break
 
-            if (not traces_match) \
-               and i_search == len(self.pre_spike_times_) - 1:
+            if ((not traces_match)
+               and i_search == len(self.pre_spike_times_) - 1):
                 if debug:
                     print("\tthe time before the first pre spike")
                 # the time before the first pre spike
-                traces_match = trace_nest[i] == 0.
+                traces_match = trace_nest_val == 0.
 
             if not traces_match:
                 return False
@@ -301,23 +295,23 @@ class PostTraceTestCase(unittest.TestCase):
                             post_spike_times2,
                             pre_spike_times2]
 
-        for spike_times_idx in range(len(pre_spike_times)):
+        for pre_spike_time, post_spike_time in zip(pre_spike_times,
+                                                   post_spike_times):
             print("Pre spike times: ["
-                  + ", ".join([str(t) for t in pre_spike_times]) + "]")
+                  + ", ".join([str(t) for t in pre_spike_time]) + "]")
             print("Post spike times: ["
-                  + ", ".join([str(t) for t in post_spike_times]) + "]")
+                  + ", ".join([str(t) for t in post_spike_time]) + "]")
 
             for delay in delays:
-                dendritic_delay = delay
                 test = PostTraceTester(
-                    pre_spike_times=pre_spike_times[spike_times_idx],
-                    post_spike_times=post_spike_times[spike_times_idx],
+                    pre_spike_times=pre_spike_time,
+                    post_spike_times=post_spike_time,
                     delay=delay,
                     resolution=resolution,
                     tau_minus=tau_minus,
                     trace_match_atol=1E-3,
                     trace_match_rtol=1E-3)
-                assert test.nest_trace_matches_python_trace()
+                self.assertTrue(test.nest_trace_matches_python_trace())
 
 
 def suite():

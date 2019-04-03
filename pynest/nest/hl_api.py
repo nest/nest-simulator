@@ -23,7 +23,7 @@
 High-level API of PyNEST Module
 """
 
-import .import_libs as _il
+from . import import_libs as _il
 
 #############################
 # insert static imports here

@@ -26,7 +26,7 @@ Classes defining the different PyNEST types
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
-from .hl_api_helper import broadcast, is_iterable, is_literal, to_json, uni_str
+from .hl_api_helper import *
 from .hl_api_simulation import GetKernelStatus
 from nest.topology import CreateParameter
 
@@ -488,6 +488,9 @@ class GIDCollection(object):
                 "len(nodes)")
 
         sli_func('SetStatus', self._datum, params)
+
+    def tolist(self):
+        return list(self)
 
 
 class Connectome(object):

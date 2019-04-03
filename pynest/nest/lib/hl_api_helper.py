@@ -39,7 +39,6 @@ from string import Template
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
-from . import hl_api_types
 
 __all__ = [
     'broadcast',
@@ -572,12 +571,16 @@ def serializable(data):
     result : str, int, float, list, dict
 
     """
+    try:
+        # Numpy array and GIDCollection can be converted to list
+        result = data.tolist()
+        return result
+    except AttributeError:
+        # Not able to inherently convert to list
+        pass
 
     if isinstance(data, kernel.SLILiteral):
         result = data.name
-
-    elif isinstance(data, numpy.ndarray):
-        result = data.tolist()
 
     elif type(data) in [list, tuple]:
         result = [serializable(d) for d in data]
@@ -585,8 +588,6 @@ def serializable(data):
     elif isinstance(data, dict):
         result = dict([(key, serializable(value))
                        for key, value in data.items()])
-    elif isinstance(data, hl_api_types.GIDCollection):
-        result = tuple(data)
     else:
         result = data
 

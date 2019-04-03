@@ -25,6 +25,7 @@ GIDCollection get/set tests
 
 import unittest
 import nest
+import json
 
 try:
     import numpy as np
@@ -311,51 +312,59 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         multi_sd = nest.Create('spike_detector', 10)
 
         # Single node, literal parameter
-        self.assertEqual(single_sd.get('start', output='json'), 0.0)
+        self.assertEqual(json.loads(
+            single_sd.get('start', output='json')), 0.0)
 
         # Multiple nodes, literal parameter
         self.assertEqual(
-            multi_sd.get('start', output='json'), len(multi_sd) * [0.0])
+            json.loads(multi_sd.get('start', output='json')),
+            len(multi_sd) * [0.0])
 
         # Single node, array parameter
         ref_dict = {'start': 0.0, 'n_events': 0}
         self.assertEqual(
-            single_sd.get(['start', 'n_events'], output='json'), ref_dict)
+            json.loads(single_sd.get(['start', 'n_events'], output='json')),
+            ref_dict)
 
         # Multiple nodes, array parameter
         ref_dict = {'start': len(multi_sd) * [0.0],
                     'n_events': len(multi_sd) * [0]}
         self.assertEqual(
-            multi_sd.get(['start', 'n_events'], output='json'), ref_dict)
+            json.loads(multi_sd.get(['start', 'n_events'], output='json')),
+            ref_dict)
 
         # Single node, hierarchical with literal parameter
-        self.assertEqual(single_sd.get('events', 'times', output='json'), [])
+        self.assertEqual(json.loads(single_sd.get(
+            'events', 'times', output='json')), [])
 
         # Multiple nodes, hierarchical with literal parameter
         ref_list = len(multi_sd) * [[]]
         self.assertEqual(
-            multi_sd.get('events', 'times', output='json'), ref_list)
+            json.loads(multi_sd.get('events', 'times', output='json')),
+            ref_list)
 
         # Single node, hierarchical with array parameter
         ref_dict = {'senders': [], 'times': []}
         self.assertEqual(
-            single_sd.get('events', ['senders', 'times'], output='json'),
+            json.loads(single_sd.get(
+                'events', ['senders', 'times'], output='json')),
             ref_dict)
 
         # Multiple nodes, hierarchical with array parameter
         ref_dict = {'times': len(multi_sd) * [[]],
                     'senders': len(multi_sd) * [[]]}
         self.assertEqual(
-            multi_sd.get('events', ['senders', 'times'], output='json'),
+            json.loads(multi_sd.get(
+                'events', ['senders', 'times'], output='json')),
             ref_dict)
 
         # Single node, no parameter (gets all values)
-        values = single_sd.get(output='json')
+        values = json.loads(single_sd.get(output='json'))
         self.assertEqual(len(values), 38)
         self.assertEqual(values['start'], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
-        values = multi_sd.get(output='json')
+        values = json.loads(multi_sd.get(output='json'))
         self.assertEqual(len(values), 38)
         self.assertEqual(values['start'], len(multi_sd) * [0.0])
 
@@ -370,14 +379,16 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         ref_dict = {'times': [31.8, 36.1, 38.5],
                     'senders': [17, 12, 20]}
         self.assertEqual(
-            single_sd.get('events', ['senders', 'times'], output='json'),
+            json.loads(single_sd.get(
+                'events', ['senders', 'times'], output='json')),
             ref_dict)
 
         ref_dict = {'times': [[36.1], [], [], [], [], [31.8], [], [], [38.5],
                               []],
                     'senders': [[12], [], [], [], [], [17], [], [], [20], []]}
         self.assertEqual(
-            multi_sd.get('events', ['senders', 'times'], output='json'),
+            json.loads(multi_sd.get(
+                'events', ['senders', 'times'], output='json')),
             ref_dict)
 
     def test_set(self):

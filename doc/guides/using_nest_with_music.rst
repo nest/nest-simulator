@@ -207,7 +207,9 @@ time stamps. For this example, we use the data file, ``messages0.dat``:
     0.3     Hello
     0.7     !
 
-.. note:: In MUSIC, the default unit for time is seconds for the specification
+.. note::
+
+  In MUSIC, the default unit for time is seconds for the specification
   of times, while NEST uses miliseconds.
 
 The script that sets up the receiving side (``msgtest.py``)

@@ -23,7 +23,17 @@
 Functions for parallel computing
 """
 
+from ..ll_api import *
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
+
+__all__ = [
+    'NumProcesses',
+    'Rank',
+    'SetAcceptableLatency',
+    'SetMaxBuffered',
+    'SyncProcesses',
+]
 
 
 @check_stack
@@ -96,3 +106,11 @@ def SetMaxBuffered(port_name, size):
     sps(kernel.SLILiteral(port_name))
     sps(size)
     sr("SetMaxBuffered")
+
+
+@check_stack
+def SyncProcesses():
+    """Synchronize all MPI processes.
+    """
+
+    sr("SyncProcesses")

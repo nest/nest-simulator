@@ -19,61 +19,68 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
+"""
 Comparing precise and grid-based neuron models
 ----------------------------------------------
 
 In traditional time-driven simulations, spikes are constrained to the
 time grid at a user-defined resolution. The precise spiking models
-overcome this by handling spikes in continuous time [1, 2].
+overcome this by handling spikes in continuous time [1]_ and [2]_.
 
 The precise spiking neuron models in NEST include: iaf_psc_exp_ps,
-iaf_psc_alpha_canon, iaf_psc_alpha_presc, and iaf_psc_delta_canon.
+iaf_psc_alpha_canon, iaf_psc_alpha_presc and iaf_psc_delta_canon.
 More detailed information about the precise spiking models can be
 found here:
   http://www.nest-simulator.org/simulations-with-precise-spike-times/
 
 This example compares the conventional grid-constrained model and the
 precise version for an integrate-and-fire neuron model with exponential
-post-synaptic currents [2].
+post-synaptic currents [2]_.
 
-References:
-[1] Morrison A, Straube S, Plesser HE, Diesmann M (2007) Exact
-    subthreshold integration with continuous spike times in
-    discrete-time neural network simulations. Neural
-    Comput. 19(1):47-79. doi: 10.1162/neco.2007.19.1.47
-[2] Hanuschkin A, Kunkel S, Helias M, Morrison A and Diesmann M (2010)
-    A general and efficient method for incorporating precise spike
-    times in globally time-driven simulations. Front. Neuroinform.
-    4:113. doi:10.3389/fninf.2010.00113
-'''
+References
+~~~~~~~~~~~
 
-'''
-First, we import all necessary modules for simulation, analysis and
-plotting.
-'''
+.. [1] Morrison A, Straube S, Plesser HE, Diesmann M. 2007. Exact subthreshold
+       integration with continuous spike times in discrete-time neural network
+       simulations. Neural Computation. 19(1):47-79.
+       https://doi.org/10.1162/neco.2007.19.1.47
+
+.. [2] Hanuschkin A, Kunkel S, Helias M, Morrison A and Diesmann M. 2010. A
+       general and efficient method for incorporating precise spike times in
+       globally time-driven simulations. Froniers in Neuroinformatics. 4:113.
+       https://doi.org/10.3389/fninf.2010.00113
+
+KEYWORDS:
+"""
+
+
+###############################################################################
+# First, we import all necessary modules for simulation, analysis and
+# plotting.
+
 
 import nest
 import pylab
 
-'''
-Second, we assign the simulation parameters to variables.
-'''
+
+###############################################################################
+# Second, we assign the simulation parameters to variables.
+
 
 simtime = 100.0           # ms
 stim_current = 700.0           # pA
 resolutions = [0.1, 0.5, 1.0]  # ms
 
-'''
-Now, we simulate the two versions of the neuron models (i.e.
-discrete-time: `iaf_psc_exp`; precise: `iaf_psc_exp_ps`) for each of
-the defined resolutions. The neurons use their default parameters and
-we stimulate them by injecting a current using a `dc_generator`
-device. The membrane potential is recorded by a `voltmeter`, the
-spikes are recorded by a `spike_detector`, whose property
-'precise_times' is set to True. The data is stored in a dictionary for
-later use.
-'''
+
+###############################################################################
+# Now, we simulate the two versions of the neuron models (i.e. discrete-time:
+# `iaf_psc_exp`; precise: `iaf_psc_exp_ps`) for each of the defined
+# resolutions. The neurons use their default parameters and we stimulate them
+# by injecting a current using a `dc_generator` device. The membrane potential
+# is recorded by a `voltmeter`, the spikes are recorded by a `spike_detector`,
+# whose property 'precise_times' is set to True. The data is stored in a
+# dictionary for later use.
+
 
 data = {}
 
@@ -101,16 +108,17 @@ for h in resolutions:
                           "spikes": sd_status['times'],
                           "V_th": nest.GetStatus(neuron, 'V_th')[0]}
 
-'''
-After simulation, we plot the results from the simulation. The figure
-illustrates the membrane potential excursion of the two models due to
-injected current simulated for 100 ms for a different timestep in each
-panel. The blue line is the voltage trace of the discrete-time neuron,
-the red line is that of the precise spiking version of the same model.
 
-Please note that the temporal differences between the traces in the
-different panels is caused by the different resolutions used.
-'''
+###############################################################################
+# After simulation, we plot the results from the simulation. The figure
+# illustrates the membrane potential excursion of the two models due to
+# injected current simulated for 100 ms for a different timestep in each panel.
+# The blue line is the voltage trace of the discrete-time neuron, the red line
+# is that of the precise spiking version of the same model.
+#
+# Please note that the temporal differences between the traces in the different
+# panels is caused by the different resolutions used.
+
 
 colors = ["#3465a4", "#cc0000"]
 

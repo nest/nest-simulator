@@ -38,7 +38,16 @@
      neuroscience. Front. Neuroinform. 6:26
    Kunkel et al (2014). Spiking network simulation code for petascale 
      computers. Front. Neuroinform. 8:78
-     
+
+
+   The difference between this script and hpc_benchmark_2_16.sli is that this
+   version is invariant under mpi/thread splits. This affects
+     - Randomization of the membrane potential (here it is based on the virtual
+       processes)
+     - Neurons that are being recorded from (here we always record from the
+       first Nrec neurons).
+ 
+ 
    A note on scaling
    -----------------
    
@@ -66,24 +75,24 @@
    per second. 
 */
   
-%%% PARAMETER SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% PARAMETER SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % define all relevant parameters: changes should be made here
 % all data is placed in the userdict dictionary
 
 /nvp 1 def              % total number of virtual processes
-/scale 1.0 def          % scaling factor of the network size, 
+/scale 1.0 def          % scaling factor of the network size,
                         % total network size = scale*11250 neurons
 /simtime 250. def       % total simulation time in ms
-/presimtime 50. ms def % simulation time until reaching equilibrium
+/presimtime 50. ms def  % simulation time until reaching equilibrium
 /dt 0.1 ms def          % simulation step
 /record_spikes true def % switch to record spikes of excitatory neurons to file
 /path_name (.) def      % path where all files will have to be written
 /log_file (log) def     % naming scheme for the log files
 
-% -------------------------------------------------------------------------------------
+% -----------------------------------------------------------------------------
 
-%%% Define function to convert synapse weight from  mV to pA %%%%%%%%%%
+%%%%%%%%% Define function to convert synapse weight from  mV to pA %%%%%%%%%%%
 
 /ConvertSynapseWeight
 {
@@ -114,7 +123,7 @@ def
 
 /tau_syn 0.32582722403722841 ms def
 
-% -------------------------------------------------------------------------------------
+% -----------------------------------------------------------------------------
 
 /brunel_params
 <<
@@ -130,7 +139,7 @@ def
     /E_L     0.0  mV  % Resting membrane potential (mV)
     /C_m   250.0  pF  % Capacity of the membrane (pF)
     /tau_m  10.0  ms  % Membrane time constant (ms)
-    /t_ref 0.5  ms  % duration of refractory period (ms)
+    /t_ref   0.5  ms  % duration of refractory period (ms)
     /V_th   20.0  mV  % Threshold (mV)
     /V_reset 0.0  mV  % Reset Potential (mV)
     /tau_syn_ex   tau_syn % time const. postsynaptic excitatory currents (ms)
@@ -145,25 +154,28 @@ def
   /sigma_potential 7.2 mV % in the paper were used for the benchmarks on K, the values given
                           % here were used for the benchmark on JUQUEEN.
 
-  /delay  1.5 ms         % synaptic delay, all connections (ms)
+  /delay 1.5 ms           % synaptic delay, all connections (ms)
 
    % synaptic weight
-  /JE 0.14 mV %peak of EPSP
+  /JE 0.14 mV             % peak of EPSP
 
-  /sigma_w 3.47 pA      %standard dev. of E->E synapses (pA)
+  /sigma_w 3.47 pA        % standard dev. of E->E synapses (pA)
   /g  -5.0
 
   /stdp_params
   <<
     /delay 1.5 ms
     /alpha  0.0513
-    /lambda 0.1          %STDP step size
-    /mu     0.4          %STDP weight dependence exponent (potentiation)
-    /tau_plus 15.0       %time constant for potentiation
+    /lambda 0.1           % STDP step size
+    /mu     0.4           % STDP weight dependence exponent (potentiation)
+    /tau_plus 15.0        % time constant for potentiation
   >>
   
-  /eta 1.685         %scaling of external stimulus
+  /eta 1.685              % scaling of external stimulus
   /filestem path_name
+  
+  /max_rank_cout 5  % copy output to cout for ranks 0..max_rank_cout-1
+  /max_rank_log 30  % write to log files for ranks 0..max_rank_log-1
 
 >> def
 
@@ -171,7 +183,7 @@ def
 % values visible
 brunel_params dup using
 
-%%% FUNCTION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FUNCTION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /BuildNetwork
 {
@@ -184,50 +196,62 @@ brunel_params dup using
      /resolution  dt
      /overwrite_files true
   >> SetStatus
+  
+  %------------------------- Creation -----------------------------------------
 
   /iaf_psc_alpha    model_params    SetDefaults
   M_INFO (BuildNetwork)
-  (Creating excitatory population.) message  % show message
+  (Creating excitatory population.) message     % show message
   /iaf_psc_alpha [NE] LayoutNetwork /E_net Set  % subnet gets own gid
-  /E_from E_net 1 add def                    % gid of first child
-  /E_to E_from NE add 1 sub def              % gid of last child
+  /E_from E_net 1 add def                       % gid of first child
+  /E_to E_from NE add 1 sub def                 % gid of last child
   
   M_INFO (BuildNetwork)
-  (Creating inhibitory population.) message  % show message
+  (Creating inhibitory population.) message     % show message
   /iaf_psc_alpha [NI] LayoutNetwork /I_net Set  % subnet gets own gid
-  /I_from I_net 1 add def                    % gid of first child
-  /I_to I_from NI add 1 sub def              % gid of last child
+  /I_from I_net 1 add def                       % gid of first child
+  /I_to I_from NI add 1 sub def                 % gid of last child
+
 
   randomize_Vm
   {
       M_INFO (BuildNetwork)
       (Randomzing membrane potentials.) message
 
-      0 GetStatus /rng_seeds get Last 1 add 0 /vp get add
-      rngdict/MT19937 :: exch CreateRNG
-      rdevdict/normal :: CreateRDV /normal Set
+      /base_seed 0 GetStatus /rng_seeds get Last def
+      /rdevs
+        [ nvp ]
+        { base_seed add rngdict/MT19937 :: exch CreateRNG rdevdict/normal :: CreateRDV }
+        Table
+      def
 
       E_net GetLocalNodes
       {
-          << /V_m mean_potential sigma_potential normal Random mul add >>
-	  SetStatus
+        dup
+        /vp get rdevs exch get /normal Set  % Gaussian generator for VP of node
+        <<
+          /V_m mean_potential sigma_potential normal Random mul add
+        >>
+        SetStatus
       } forall
 
       I_net GetLocalNodes
       { 
-	  << /V_m mean_potential sigma_potential normal Random mul add >>
-	  SetStatus
+        dup
+        /vp get rdevs exch get /normal Set  % Gaussian generator for VP of node
+        <<
+          /V_m mean_potential sigma_potential normal Random mul add
+        >>
+        SetStatus
       } forall
   } if
+  
 
-  /E_neurons E_from E_to cvgidcollection def % get memory efficient gid-collection
+  /E_neurons E_from E_to cvgidcollection def % get memory efficient GIDCollection
+  /I_neurons I_from I_to cvgidcollection def % get memory efficient GIDCollection
 
-  /I_neurons I_from I_to cvgidcollection def % get memory efficient gid-collection
-
-  /N E_neurons size I_neurons size add def
-
-  /CE NE scale cvd div iround def %number of incoming excitatory connections
-  /CI NI scale cvd div iround def %number of incomining inhibitory connections
+  /CE NE scale cvd div iround def % number of incoming excitatory connections
+  /CI NI scale cvd div iround def % number of incoming inhibitory connections
 
   M_INFO (BuildNetwork)
   (Creating excitatory stimulus generator.) message
@@ -251,7 +275,7 @@ brunel_params dup using
   M_INFO (BuildNetwork)
   (Creating excitatory spike detector.) message
 
-  record_spikes true eq
+  record_spikes
   {
     /detector_label  filestem (/alpha_) join stdp_params /alpha get cvs join (_spikes) join def
     /E_detector /spike_detector Create def
@@ -278,9 +302,10 @@ brunel_params dup using
   /static_synapse_hpc /syn_ex << /weight JE_pA >> CopyModel
   /static_synapse_hpc /syn_in << /weight JE_pA g mul >> CopyModel
 
-  stdp_params /weight JE_pA put	
+  stdp_params /weight JE_pA put 
   /stdp_pl_synapse_hom_hpc stdp_params SetDefaults
 
+ %------------------------- Connection -----------------------------------------
 
   M_INFO (BuildNetwork)
   (Connecting stimulus generators.) message
@@ -293,41 +318,44 @@ brunel_params dup using
   M_INFO (BuildNetwork)
   (Connecting excitatory -> excitatory population.) message
 
-  E_neurons E_neurons << /rule (fixed_indegree) /indegree CE /autapses false /multapses true >> << /model /stdp_pl_synapse_hom_hpc >> Connect
+  E_neurons E_neurons << /rule (fixed_indegree) /indegree CE /autapses false /multapses true >>
+                      << /model /stdp_pl_synapse_hom_hpc >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting inhibitory -> excitatory population.) message
 
-  I_neurons E_neurons << /rule (fixed_indegree) /indegree CI /autapses false /multapses true >> << /model /syn_in >> Connect
+  I_neurons E_neurons << /rule (fixed_indegree) /indegree CI /autapses false /multapses true >>
+                      << /model /syn_in >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting excitatory -> inhibitory population.) message
 
-  E_neurons I_neurons << /rule (fixed_indegree) /indegree CE /autapses false /multapses true >> << /model /syn_ex >> Connect
+  E_neurons I_neurons << /rule (fixed_indegree) /indegree CE /autapses false /multapses true >>
+                      << /model /syn_ex >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting inhibitory -> inhibitory population.) message
 
-  I_neurons I_neurons << /rule (fixed_indegree) /indegree CI /autapses false /multapses true >> << /model /syn_in >> Connect
+  I_neurons I_neurons << /rule (fixed_indegree) /indegree CI /autapses false /multapses true >>
+                      << /model /syn_in >> Connect
 
 
   record_spikes true eq
   {
-    E_net GetLocalNodes size /local_neurons Set
-
-    local_neurons Nrec lt
+    E_neurons size Nrec lt
     {
       M_ERROR (BuildNetwork)
-      (Spikes can only be recorded from local neurons, but the number of local 
-neurons is smaller than the number of neurons spikes should be recorded from. 
-Aborting the simulation!) message
+      (The exitatory network is smaller than number of neurons to record from!) message
       1 quit_i
     } if
 
     M_INFO (BuildNetwork)
     (Connecting spike detectors.) message
-    E_net GetLocalNodes Nrec Take [E_detector] << /rule (all_to_all) >> << /model /syn_std >> Connect
-  } if
+
+    /recordees E_from E_from Nrec add 1 sub cvgidcollection def
+    /detector E_detector E_detector cvgidcollection def
+    recordees detector << /rule (all_to_all) >> << /model /syn_std >> Connect
+  } if  
 
   % read out time used for building
   toc /BuildEdgeTime Set
@@ -336,6 +364,8 @@ Aborting the simulation!) message
   memory_thisjob cvs ( # virt_mem_after_edges) join logger /log call
 
  } def % end of buildnetwork
+
+%-------------------------- Simulation -----------------------------------------
 
 /RunSimulation
 {
@@ -373,11 +403,18 @@ Aborting the simulation!) message
   {
     E_detector ComputeRate cvs ( # average rate) join logger /log call
   } if
+  
+  
+  E_neurons size I_neurons size add cvs ( # num_neurons) join logger /log call
+  0 /num_connections get cvs ( # num_connections) join logger /log call
+  0 /min_delay get cvs ( # min_delay) join logger /log call
+  0 /max_delay get cvs ( # max_delay) join logger /log call
+  0 /local_spike_counter get cvs ( # local_spike_counter) join logger /log call
 
   logger /done call
 } def
 
-% ------------------------------------------------------------------------------------
+% -----------------------------------------------------------------------------
 
 % Take spike detector, find total number of spikes registered,
 % return average rate per neuron in Hz.
@@ -389,93 +426,92 @@ Aborting the simulation!) message
 {
   << >> begin  % anonymous dictionary for local variables
 
-    /sdet Set
+  /sdet Set
 
-    % We need to guess how many neurons we record from.
-    % This assumes an even distribution of nodes across
-    % processes, as well as homogeneous activity in the
-    % network. So this is really a hack. NEST needs better
-    % support for rate calculations, such as giving the
-    % number of neurons recorded from by each spike detector.
+  % We need to guess how many neurons we record from.
+  % This assumes an even distribution of nodes across
+  % processes, as well as homogeneous activity in the
+  % network. So this is really a hack. NEST needs better
+  % support for rate calculations, such as giving the
+  % number of neurons recorded from by each spike detector.
 
-    /n_local_neurons Nrec cvd NumProcesses div def
-    sdet /n_events get cvd n_local_neurons simtime mul div
-    1000 mul         % convert from mHz to Hz, leave on stack
+  /n_local_neurons Nrec cvd NumProcesses div def
+  sdet /n_events get cvd n_local_neurons simtime mul div
+  1000 mul         % convert from mHz to Hz, leave on stack
 
   end
 } bind             % optional, improves performance
 def
 
-% ------------------------------------------------------------------------------------
+% -----------------------------------------------------------------------------
 
 /*
     This function defines a logger class used to properly log memory and timing
-    information from network simulations. It is used by hpc_benchmark.sli to
-    store the information to the log files.
+    information from network simulations. It is used by hpc_benchmark.sli
+    to store the information to the log files.
 */
 
 /logger
 <<
-    /max_rank_cout 5  % copy output to cout for ranks 0..max_rank_cout-1
-    /max_rank_log 30  % write to log files for ranks 0..max_rank_log-1
-    /line_counter 0
+  /line_counter 0
 
-    % constructor
-    % expects file name on stack
-    /init
+  % constructor
+  % expects file name on stack
+  /init
+  {
+    Rank max_rank_log lt
     {
-	Rank max_rank_log lt {
+      (_) join
 
-            (_) join
+      % convert rank to string, prepend 0 if necessary to make
+      % numbers equally wide for all ranks
+      Rank cvs 
+      dup length max_rank_log cvs length exch sub
+      {
+        48 prepend   % 48 is ASCII code for 0
+      }
+      repeat
+      join
+      (.dat) join
 
-	    % convert rank to string, prepend 0 if necessary to make
-            % numbers equally wide for all ranks
-            Rank cvs 
-            dup length max_rank_log cvs length exch sub
-            {
-	      48 prepend   % 48 is ASCII code for 0
-            }
-            repeat
-            join
-            (.dat) join
+      /f exch (w) ofsopen
+      {
+        def
+      }
+      {
+        /Logger_init /CannotOpenFile raiseerror
+      } ifelse
 
-            /f exch (w) ofsopen
-	    {
-		def
-	    }
-	    {
-		/Logger_init /CannotOpenFile raiseerror
-	    }
-	    ifelse
+    } if
+  }
 
-	} if
-    }
-
-    % logging function
-    % expects one operand on stack to write to file
-    /log
+  % logging function
+  % expects one operand on stack to write to file
+  /log
+  {
+    /value Set
+    Rank max_rank_log lt
     {
-      /value Set
-	Rank max_rank_log lt {
-	    f line_counter <- ( ) <- Rank <- ( ) <- value <- (\n) <- pop
-	    /line_counter line_counter 1 add def
-	} if
-        Rank max_rank_cout lt {
-            cout Rank <- ( ) <- value <- endl flush pop
-            cerr Rank <- ( ) <- value <- endl flush pop
-	} if
-    }
-
-    % closes file
-    /done
+      f line_counter <- ( ) <- Rank <- ( ) <- value <- (\n) <- pop
+      /line_counter line_counter 1 add def
+    } if
+    Rank max_rank_cout lt
     {
-	Rank max_rank_log lt {
-	    f close
-	} if
-    }
+      cout Rank <- ( ) <- value <- endl flush pop
+    } if
+  }
+
+  % closes file
+  /done
+  {
+    Rank max_rank_log lt
+    {
+      f close
+    } if
+  }
 
 >> def
 
-% ------------------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% RUN BENCHMARK %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 RunSimulation

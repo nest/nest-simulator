@@ -23,12 +23,26 @@
 Functions for connection handling
 """
 
+import numpy
+
+from ..ll_api import *
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_subnets import GetChildren
-import numpy
+
+__all__ = [
+    'CGConnect',
+    'CGParse',
+    'CGSelectImplementation',
+    'Connect',
+    'DataConnect',
+    'Disconnect',
+    'DisconnectOneToOne',
+    'GetConnections',
+]
 
 
 @check_stack
@@ -485,8 +499,8 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
     if parameter_map is None:
         parameter_map = {}
 
-    sli_func('CGConnect', cg, pre, post,
-             parameter_map, '/' + model, litconv=True)
+    sli_func('CGConnect', cg, pre, post, parameter_map, '/' + model,
+             litconv=True)
 
 
 @check_stack

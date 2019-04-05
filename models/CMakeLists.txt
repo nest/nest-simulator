@@ -27,9 +27,11 @@ set( models_sources
     aeif_psc_alpha.h aeif_psc_alpha.cpp
     aeif_psc_exp.h aeif_psc_exp.cpp
     aeif_psc_delta.h aeif_psc_delta.cpp
+    aeif_psc_delta_clopath.h aeif_psc_delta_clopath.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
     bernoulli_connection.h
     binary_neuron.h
+    clopath_connection.h
     cont_delay_connection.h cont_delay_connection_impl.h
     correlation_detector.h correlation_detector.cpp
     correlomatrix_detector.h correlomatrix_detector.cpp
@@ -47,7 +49,9 @@ set( models_sources
     gif_pop_psc_exp.h gif_pop_psc_exp.cpp
     ginzburg_neuron.h ginzburg_neuron.cpp
     hh_cond_exp_traub.h hh_cond_exp_traub.cpp
+    hh_cond_beta_gap_traub.h hh_cond_beta_gap_traub.cpp
     hh_psc_alpha.h hh_psc_alpha.cpp
+    hh_psc_alpha_clopath.h hh_psc_alpha_clopath.cpp
     hh_psc_alpha_gap.h hh_psc_alpha_gap.cpp
     ht_connection.h
     ht_neuron.h ht_neuron.cpp
@@ -108,6 +112,7 @@ set( models_sources
     stdp_pl_connection_hom.h stdp_pl_connection_hom.cpp
     stdp_triplet_connection.h
     step_current_generator.h step_current_generator.cpp
+    step_rate_generator.h step_rate_generator.cpp
     tanh_rate.h tanh_rate.cpp
     threshold_lin_rate.h threshold_lin_rate.cpp
     tsodyks2_connection.h

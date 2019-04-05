@@ -99,13 +99,13 @@ inline Source::Source( const uint64_t gid, const bool is_primary )
   , processed_( false )
   , primary_( is_primary )
 {
-  assert( gid < MAX_GID );
+  assert( gid <= MAX_GID );
 }
 
 inline void
 Source::set_gid( const uint64_t gid )
 {
-  assert( gid < MAX_GID );
+  assert( gid <= MAX_GID );
   gid_ = gid;
 }
 
@@ -142,13 +142,13 @@ Source::is_primary() const
 inline void
 Source::disable()
 {
-  gid_ = MAX_GID;
+  gid_ = DISABLED_GID;
 }
 
 inline bool
 Source::is_disabled() const
 {
-  return gid_ == MAX_GID;
+  return gid_ == DISABLED_GID;
 }
 
 inline bool operator<( const Source& lhs, const Source& rhs )

@@ -101,7 +101,8 @@ constexpr uint64_t MAX_LCID = generate_max_value( NUM_BITS_LCID );
 constexpr int64_t MAX_RANK = generate_max_value( NUM_BITS_RANK );
 constexpr int64_t MAX_TID = generate_max_value( NUM_BITS_TID );
 constexpr uint64_t MAX_SYN_ID = generate_max_value( NUM_BITS_SYN_ID );
-constexpr uint64_t MAX_GID = generate_max_value( NUM_BITS_GID );
+constexpr uint64_t DISABLED_GID = generate_max_value( NUM_BITS_GID );
+constexpr uint64_t MAX_GID = DISABLED_GID - 1;
 
 /**
  * Type for Time tics.

@@ -26,10 +26,10 @@ Test setting and getting labels on synapses.
 import unittest
 import nest
 
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class LabeledSynapsesTestCase(unittest.TestCase):
     """Test labeled synapses"""
@@ -57,6 +57,11 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             'diffusion_connection_lbl'
         ]
 
+        self.clopath_connections = [
+            'clopath_synapse',
+            'clopath_synapse_lbl'
+        ]
+
         # create neurons that accept all synapse connections (especially gap
         # junctions)... hh_psc_alpha_gap is only available with GSL, hence the
         # skipIf above
@@ -69,6 +74,10 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         # in case of siegert connections use the siegert_neuron model instead
         if syn_model in self.siegert_connections:
             neurons = nest.Create("siegert_neuron", 5)
+
+        # in case of the clopath stdp synapse use the a supported model instead
+        if syn_model in self.clopath_connections:
+            neurons = nest.Create("hh_psc_alpha_clopath", 5)
 
         return neurons
 
@@ -175,11 +184,11 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             symm = nest.GetDefaults(syn, 'requires_symmetric')
 
             # try set a label during SetDefaults
-            with self.assertRaises(nest.NESTError):
+            with self.assertRaises(nest.kernel.NESTError):
                 nest.SetDefaults(syn, {'synapse_label': 123})
 
             # try set on connect
-            with self.assertRaises(nest.NESTError):
+            with self.assertRaises(nest.kernel.NESTError):
                 nest.Connect(a, a, {"rule": "one_to_one",
                                     "make_symmetric": symm},
                              {"model": syn, "synapse_label": 123})
@@ -189,7 +198,8 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                          {"model": syn})
             # try set on SetStatus
             c = nest.GetConnections(a, a)
-            with self.assertRaises(nest.NESTError):
+
+            with self.assertRaises(nest.kernel.NESTError):
                 c.set({'synapse_label': 123})
 
 

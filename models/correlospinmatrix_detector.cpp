@@ -406,10 +406,11 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       // must happen here so event is taken into account in autocorrelation
       const BinaryPulse_ bp_i( t_i_on, t_i_off, i );
 
-      BinaryPulselistType::iterator insert_pos =
-        std::find_if( S_.incoming_.begin(),
-          S_.incoming_.end(),
-          std::bind2nd( std::greater< BinaryPulse_ >(), bp_i ) );
+      BinaryPulselistType::iterator insert_pos = std::find_if(
+        S_.incoming_.begin(),
+        S_.incoming_.end(),
+        std::bind(
+          std::greater< BinaryPulse_ >(), std::placeholders::_1, bp_i ) );
 
       // insert before the position we have found
       // if no element greater found, insert_pos == end(), so append at the end

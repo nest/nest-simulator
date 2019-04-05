@@ -23,39 +23,6 @@
 #ifndef STDP_PL_CONNECTION_HOM_H
 #define STDP_PL_CONNECTION_HOM_H
 
-/* BeginDocumentation
-  Name: stdp_pl_synapse_hom - Synapse type for spike-timing dependent
-   plasticity with power law implementation using homogeneous parameters, i.e.
-   all synapses have the same parameters.
-
-  Description:
-   stdp_pl_synapse is a connector to create synapses with spike time
-   dependent plasticity (as defined in [1]).
-
-
-  Parameters:
-   tau_plus  double - Time constant of STDP window, potentiation in ms
-                      (tau_minus defined in post-synaptic neuron)
-   lambda    double - Learning rate
-   alpha     double - Asymmetry parameter (scales depressing increments as
-                      alpha*lambda)
-   mu        double - Weight dependence exponent, potentiation
-
-  Remarks:
-   The parameters can only be set by SetDefaults and apply to all synapses of
-   the model.
-
-  References:
-   [1] Morrison et al. (2007) Spike-timing dependent plasticity in balanced
-       random networks. Neural Computation.
-
-  Transmits: SpikeEvent
-
-  FirstVersion: May 2007
-  Author: Abigail Morrison
-  SeeAlso: synapsedict, stdp_synapse, tsodyks_synapse, static_synapse
-*/
-
 // C++ includes:
 #include <cmath>
 
@@ -65,6 +32,43 @@
 namespace nest
 {
 
+/** @BeginDocumentation
+Name: stdp_pl_synapse_hom - Synapse type for spike-timing dependent
+plasticity with power law implementation using homogeneous parameters, i.e.
+all synapses have the same parameters.
+
+Description:
+
+stdp_pl_synapse is a connector to create synapses with spike time
+dependent plasticity (as defined in [1]).
+
+
+Parameters:
+
+tau_plus  double - Time constant of STDP window, potentiation in ms
+                   (tau_minus defined in post-synaptic neuron)
+lambda    double - Learning rate
+alpha     double - Asymmetry parameter (scales depressing increments as
+                   alpha*lambda)
+mu        double - Weight dependence exponent, potentiation
+
+Remarks:
+
+The parameters can only be set by SetDefaults and apply to all synapses of
+the model.
+
+References:
+[1] Morrison et al. (2007) Spike-timing dependent plasticity in balanced
+    random networks. Neural Computation.
+
+Transmits: SpikeEvent
+
+FirstVersion: May 2007
+
+Author: Abigail Morrison
+
+SeeAlso: synapsedict, stdp_synapse, tsodyks_synapse, static_synapse
+*/
 /**
  * Class containing the common properties for all synapses of type
  * STDPConnectionHom.
@@ -265,7 +269,7 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
-  e.set_delay( get_delay_steps() );
+  e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
 

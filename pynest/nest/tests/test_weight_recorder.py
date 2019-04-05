@@ -26,10 +26,11 @@ Test of events
 import unittest
 import nest
 import numpy as np
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+
+HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class WeightRecorderTestCase(unittest.TestCase):
     """Tests for the Weight Recorder"""
 
@@ -56,7 +57,7 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr.get('global_id'), "weight": 1.})
+                       {"weight_recorder": wr, "weight": 1.})
 
         sg = nest.Create("spike_generator",
                          params={"spike_times": [10., 15., 55., 70.]})
@@ -86,7 +87,7 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr.get('global_id'), "weight": 1.})
+                       {"weight_recorder": wr, "weight": 1.})
 
         sg = nest.Create("spike_generator",
                          params={"spike_times": [10., 15., 55., 70.]})
@@ -116,7 +117,7 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr.get('global_id'), "weight": 1.})
+                       {"weight_recorder": wr, "weight": 1.})
 
         sg = nest.Create("spike_generator",
                          params={"spike_times": [10., 15., 55., 70.]})
@@ -147,7 +148,7 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr.get('global_id'), "weight": 1.})
+                       {"weight_recorder": wr, "weight": 1.})
 
         sg = nest.Create("spike_generator",
                          params={"spike_times": [10., 15., 55., 70.]})
@@ -178,7 +179,7 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr.get('global_id'), "weight": 1.})
+                       {"weight_recorder": wr, "weight": 1.})
 
         sg = nest.Create("spike_generator",
                          params={"spike_times": [10., 15., 55., 70.]})
@@ -213,7 +214,7 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         wr = nest.Create('weight_recorder', params={"withport": True})
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr.get('global_id'), "weight": 1.})
+                       {"weight_recorder": wr, "weight": 1.})
 
         sg = nest.Create("spike_generator",
                          params={"spike_times": [10., 15., 55., 70.]})
@@ -263,11 +264,11 @@ class WeightRecorderTestCase(unittest.TestCase):
         wr = nest.Create('weight_recorder', params={"withrport": True})
 
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec_0",
-                       {"weight_recorder": wr.get('global_id'), "weight": 1.,
+                       {"weight_recorder": wr, "weight": 1.,
                         "receptor_type": 1})
 
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec_1",
-                       {"weight_recorder": wr.get('global_id'), "weight": 1.,
+                       {"weight_recorder": wr, "weight": 1.,
                         "receptor_type": 2})
 
         sg = nest.Create("spike_generator",

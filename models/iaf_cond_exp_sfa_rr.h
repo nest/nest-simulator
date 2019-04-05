@@ -42,11 +42,27 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
+namespace nest
+{
+/**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int
+iaf_cond_exp_sfa_rr_dynamics( double, const double*, double*, void* );
+
+/** @BeginDocumentation
 Name: iaf_cond_exp_sfa_rr - Simple conductance based leaky integrate-and-fire
                             neuron model.
 
 Description:
+
 iaf_cond_exp_sfa_rr is an iaf_cond_exp_sfa_rr i.e. an implementation of a
 spiking neuron using IAF dynamics with conductance-based synapses,
 with additional spike-frequency adaptation and relative refractory
@@ -63,6 +79,7 @@ these conductances decay exponentially with time constants tau_sfa
 and tau_rr, respectively.
 
 Parameters:
+
 The following parameters can be set in the status dictionary.
 
 V_m        double - Membrane potential in mV
@@ -108,22 +125,6 @@ Author: Sven Schrader, Eilif Muller
 SeeAlso: iaf_cond_exp_sfa_rr, aeif_cond_alpha, iaf_psc_delta, iaf_psc_exp,
 iaf_cond_alpha
 */
-
-namespace nest
-{
-/**
- * Function computing right-hand side of ODE for GSL solver.
- * @note Must be declared here so we can befriend it in class.
- * @note Must have C-linkage for passing to GSL. Internally, it is
- *       a first-class C++ function, but cannot be a member function
- *       because of the C-linkage.
- * @note No point in declaring it inline, since it is called
- *       through a function pointer.
- * @param void* Pointer to model neuron instance.
- */
-extern "C" int
-iaf_cond_exp_sfa_rr_dynamics( double, const double*, double*, void* );
-
 class iaf_cond_exp_sfa_rr : public Archiving_Node
 {
 

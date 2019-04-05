@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_threaded_neuron_device_connections - test for correct creation of neuron-neuron, neuron-device, device-neuron and device-device connections using multiple threads
 
 Synopsis: (test_threaded_neuron_device_connections) run -> dies if assertion fails

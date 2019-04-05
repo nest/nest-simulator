@@ -92,50 +92,81 @@ def
 % concatenates into a single dictionary.
 /get [/gidcollectiontype]
 {
-  << >> begin
   GetStatus
-  /d << >> def
+  /status_dict << >> def
+
   size 1 neq
-  { % if not a layer or single GIDCollection
-    dup First {d rollu 1 arraystore put_d} forall
+  { % If not a single value GIDCollection. We have a list of dictionaries.
+  
+    % The first thing we do is set the keys in the dictionary based on the
+    % first GID in the GIDCollection, and set the corresponding value in an
+    % array.
+    dup First {status_dict rollu 1 arraystore put_d} forall
+    
+    status_dict keys /ks Set
+    
+    % Then, we put the values for the rest of the GIDCollection in the right
+    % place in the dictionary.
+    /counter 1 def
     Rest
     {
+      dup
       {
-        exch dup d dup rolld get
-        4 -1 roll 1 arraystore join
-        rollu exch rolld put_d
+        /v Set
+        /k Set
+        % Check if we have a composite GIDCollection by checking if k is part
+        % of dict keys.
+        ks k MemberQ
+        {
+          % If primitive, add value to dictionary array
+          status_dict k get [v] join /val_array Set
+        }
+        {
+          % If composite, set values for previous GIDs to None, and add value.
+          [counter] /None LayoutArray [v] join /val_array Set
+          ks [k] join /ks Set
+        } ifelse
+        
+        % Add value array to status dictionary.
+        status_dict k val_array put_d
       } forall
+      
+      % If we have a composite gc and there have been values for previous GIDs
+      % that is not part of this particular dictionary, we must set a None
+      % value for this value.
+      keys /dict_keys Set
+      ks
+      {
+        /k Set
+        dict_keys k MemberQ not
+        {
+          status_dict k get [/None] join /val_array Set
+          status_dict k val_array put_d
+        } if
+      } forall
+      
+      counter 1 add /counter Set
     } forall
-    d
+    
+    status_dict
   }
   {
     0 get
   } ifelse
-  end
 } def
 
 % Get parameter value of all GIDs in GIDCollection
 /get [/gidcollectiontype /literaltype]
 {
-  exch dup size 1 eq
+  /value Set
+  /gidcoll Set
+
+  gidcoll size 1 eq
   { % if size == 1
-    /GIDColl Set
-    /value Set
-    GIDColl GetStatus 0 get value get
+    gidcoll GetStatus 0 get value get
   }
   { % if size > 1
-    exch
-    << >> begin
-    /value Set
-
-    GetStatus dup size 1 neq
-    { % if not a layer
-      { value get } Map
-    }
-    { % if a layer
-      0 get value get
-    } ifelse
-    end
+    gidcoll GetStatus { value get } Map
   } ifelse
 } def
 
@@ -146,6 +177,11 @@ def
   dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
   0 get_g_i GetStatus exch get_d_a
 } def
+
+% Get metadata values of GIDCollection
+/GetMetadata [/gidcollectiontype]
+  /GetMetadata_g load
+def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -296,7 +332,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: cvgidcollection - Create a container of global ids.
 
    Synopsis:
@@ -589,7 +625,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ShowDefaults - Show the default parameters of a model.
 
    Synopsis:
@@ -615,7 +651,7 @@ def
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: Connect - Establish a connection between two nodes or lists of nodes.
 
    Synopsis:
@@ -861,7 +897,7 @@ def
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetConnections - Retrieve connections between nodes
 
    Synopsis:
@@ -929,7 +965,7 @@ def
 def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetSynapseStatus - Return synapse status information
 
    Synopsis:
@@ -950,7 +986,7 @@ def
 */
 /GetSynapseStatus [/arraytype] /GetStatus_a load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: SetSynapseStatus - Return synapse status information
 
    Synopsis:
@@ -975,7 +1011,7 @@ def
 */   
 /SetSynapseStatus [/arraytype /arraytype] /SetStatus_aa load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
      Name: DataConnect - Connect many neurons from data.
 
      Synopsis: 
@@ -1030,12 +1066,12 @@ def
 /DataConnect trie
   [/integertype /dictionarytype /literaltype] /DataConnect_i_D_s load addtotrie
   [/integertype /dictionarytype /stringtype] /DataConnect_i_D_s load addtotrie
-  [/arraytype] /DataConnect_a load addtotrie 
+  [/arraytype] /DataConnect_a load addtotrie
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: elementstates - dictionary with symbolic element state tag
 
    Description:
@@ -1082,7 +1118,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: unit_conversion - Conversion factors for SI units.
 
    Description:
@@ -1120,48 +1156,48 @@ def
 
 %% Some auxiliary definitions, just for readibility
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ms - Specification in ms (for readability)
    SeeAlso: unit_conversion, ms2hms
 */
 /ms /cvd load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: s - Specification in s (for readability)
    SeeAlso: unit_conversion, ms2hms
 */
 /s {1000.0 mul} bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: pA - Specification in pA (for readability)
    SeeAlso: unit_conversion
 */
 /pA /cvd load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: nS - Specification in nS (for readability)
    SeeAlso: unit_conversion
 */
 /nS /cvd load def
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: pF - Specification in pF (for readability)
    SeeAlso: unit_conversion
 */
 /pF /cvd load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: mV - Specification in mV (for readability)
    SeeAlso: unit_conversion
 */
 /mV /cvd load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: Hz - Specification in Hz (for readability)
    SeeAlso: unit_conversion
 */
 /Hz /cvd load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: spikes - Specification in spikes (for readability)
    SeeAlso: unit_conversion
 */
@@ -1172,7 +1208,7 @@ def
 /int    /cvi load def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: SubsetQ - Test if one dictionary is a subset of another
 
    Synopsis:
@@ -1217,7 +1253,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ShowStatus - Show the status dictionary of a network node.
 
    Synopsis:
@@ -1237,19 +1273,18 @@ def
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-  /* BeginDocumentation
-     Name: TimeCommunication - returns average time taken for MPI_Allgather over n calls with m bytes
-     Synopsis:
-     n m [bool] TimeCommunication -> time
-     Availability: NEST 2.0
-     Author: Abigail Morrison
-     FirstVersion: August 2009
-     Description:
-     The function allows a user to test how much time a call the Allgather costs
-     If boolean third argument is passed and true, time offgrid spike communication.
-     SeeAlso: TimeCommunicationOffgrid
-   */
+/** @BeginDocumentation
+   Name: TimeCommunication - returns average time taken for MPI_Allgather over n calls with m bytes
+   Synopsis:
+   n m [bool] TimeCommunication -> time
+   Availability: NEST 2.0
+   Author: Abigail Morrison
+   FirstVersion: August 2009
+   Description:
+   The function allows a user to test how much time a call the Allgather costs
+   If boolean third argument is passed and true, time offgrid spike communication.
+   SeeAlso: TimeCommunicationOffgrid
+ */
 /TimeCommunication trie
 [/integertype /integertype /booltype] /TimeCommunication_i_i_b load addtotrie
 [/integertype /integertype] { false TimeCommunication_i_i_b } bind addtotrie
@@ -1259,7 +1294,7 @@ def
 [/integertype /integertype] /TimeCommunicationv_i_i load addtotrie
 def
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: TimeCommunicationOffgrid - returns average time taken for MPI_Allgather over n calls with m bytes when communication offgrid spikes
      Synopsis:
      n m [bool] TimeCommunication -> time
@@ -1274,7 +1309,7 @@ def
 [/integertype /integertype] { true TimeCommunication_i_i_b } bind addtotrie
 
 def
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: TimeCommunicationAlltoall - returns average time taken for MPI_Alltoall over n calls with m bytes
      Synopsis:
      n m TimeCommunicationAlltoall -> time
@@ -1289,7 +1324,7 @@ def
 [/integertype /integertype] /TimeCommunicationAlltoall_i_i load addtotrie
 def
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
      Name: TimeCommunicationAlltoallv - returns average time taken for MPI_Alltoallv over n calls with m bytes
      Synopsis:
      n m TimeCommunicationAlltoallv -> time
@@ -1310,7 +1345,7 @@ statusdict /platform get dup (bg/p) eq exch (bg/q) eq or
  /memory_thisjob { :memory_thisjob_bg } def
 } if
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name - RestoreNodes - Restore nodes from an array of status dictionaries.
 Description:
 RestoreNodes takes an array of status dictionaries and creates nodes with these properties.
@@ -1322,7 +1357,7 @@ Thus, RestoreNodes can be used to copy a range of neurons to different locations
 
 /RestoreNodes [/arraytype] /RestoreNodes_a load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: SaveModels - Retrieve the state of all models.
 Description: 
 */
@@ -1349,7 +1384,7 @@ Description:
  end
 } def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: RestoreModels - Restore saved models from an array of status dictionaries.
 Description:
 */

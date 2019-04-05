@@ -20,7 +20,7 @@
  *
  */
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
 
     Name: testsuite::test_gap_junction - Ensure that gap_junction connection can only be created between neurons which support them.
 

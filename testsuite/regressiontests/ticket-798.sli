@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-798 - Random number generation fails in multi-threaded simulation of quantal_stp_synapse
 

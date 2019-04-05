@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
     Name: testsuite::test_hh_psc_alpha_gap - sli script for overall test of hh_psc_alpha_gap model 
     with gap_junction connection
 

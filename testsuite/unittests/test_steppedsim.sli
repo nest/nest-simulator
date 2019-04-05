@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_steppedsim - test multiple calls of Simulate
 
    Synopsis: (test_steppedsim) run

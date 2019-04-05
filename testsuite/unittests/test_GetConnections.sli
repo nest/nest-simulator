@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_GetConnections - sli script to test if GetConnections works as expected
 
    Synopsis: (test_getConnections) run

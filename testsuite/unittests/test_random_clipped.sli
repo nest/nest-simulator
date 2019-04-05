@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_random_clipped - test clipped random number distributions
 
 Synopsis: (test_random_clipped.sli) run -> dies if assertion fails

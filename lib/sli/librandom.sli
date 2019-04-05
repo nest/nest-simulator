@@ -32,7 +32,7 @@
 
 %% RNG tries: HEP 2002-07-09 --- see sli/rangen.cc
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rngdict - dictionary with random generator types
 Description: 
   rngdict contains the random generator types available.
@@ -52,7 +52,7 @@ References: GNU Scientific Library, http://www.gnu.org/software/gsl
 Remarks: See librandom/random_numbers.cpp for implementation.    
 */
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rdevdict - dictionary with random deviate generator types
 Description: 
   rdevdict contains the random deviate generators available.
@@ -74,7 +74,7 @@ Remarks: See librandom/random_numbers.cpp for implementation.
 */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name:CreateRNG - Create a new random generator 
 Synopsis:GeneratorType int CreateRNG -> rangen
 Description:Create a new random generator of a given type and seed 
@@ -93,7 +93,7 @@ SeeAlso:rngdict, rdevdict, CreateRDV, seed, drand, irand
   [/rngfactorytype /integertype] /CreateRNG_gt_i load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name:CreateRDV - Create a new random deviate generator 
 
 Synopsis:
@@ -143,7 +143,7 @@ SeeAlso:rdevdict, Random, RandomArray, CreateRNG
                                                rolld SetStatus } addtotrie
 def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: seed - Set the seed of a random number generator.
 Synopsis: rangen int seed -> -
 Description: Seeds random number generator with a new seed.
@@ -153,7 +153,7 @@ SeeAlso: CreateRNG
   [/rngtype /integertype] /seed_g_i load addtotrie
 def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: irand - Generate a random positive integer number.
 Synopsis: rangen n irand -> int
 Description: irand uses the supplied random number generator to generate
@@ -170,7 +170,7 @@ SeeAlso: drand, CreateRNG, seed
   [/rngtype /integertype] /irand_g_i load addtotrie
 def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: drand - Generate a random double number.
 Synopsis: rangen drand -> double
 Description: drand uses the supplied random number generator to generate
@@ -188,7 +188,7 @@ SeeAlso: irand, CreateRNG, seed
 def
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: SetStatus_v - modify the properties of a random deviate generator
 Synopsis:
 rdvtype dict  SetStatus -> -
@@ -219,7 +219,7 @@ SeeAlso: GetStatus_v, SetStatus_dict, CreateRDV, rdevdict, Random, RandomArray
 
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: GetStatus_v - return the property dictionary of a random deviate generator
 Synopsis:rdvtype  GetStatus -> dict
 Description:  
@@ -240,7 +240,7 @@ SeeAlso: SetStatus_v, GetStatus_dict, CreateRDV, rdevdict
 /get [/rdvtype /arraytype] { exch GetStatus exch get_d_a } def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: RandomArray - Returns array with random numbers.
 Synopsis:
 rdvtype  n RandomArray -> [r1 .. rn]
@@ -257,7 +257,7 @@ SeeAlso: Random, CreateRDV, rdevdict
 def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: Random - Returns a  random number.
 Synopsis:
 rdvtype  Random -> r
@@ -285,7 +285,7 @@ SeeAlso: RandomArray, CreateRDV, rdevdict
 def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: RandomSubset - random subset of an array without repetitions 
   Synopsis: rng array int RandomSubset -> array 
                    

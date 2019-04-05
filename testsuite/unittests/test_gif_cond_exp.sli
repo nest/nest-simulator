@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_gif_cond_exp - sli script for test of gif_cond_exp with
       external DC current and spike generators
 

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
     Name: testsuite::test_pairwise_bernoulli - Test correct connection with many targets
     Synopsis: (test_pairwise_bernoulli) run -> - 
 

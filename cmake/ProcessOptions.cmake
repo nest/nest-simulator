@@ -154,6 +154,11 @@ endfunction()
 function( NEST_PROCESS_STATIC_LIBRARIES )
   # build static or shared libraries
   if ( static-libraries )
+
+    if ( with-readline )
+      message( FATAL_ERROR "-Dstatic-libraries=ON requires -Dwith-readline=OFF" )
+    endif ()
+
     set( BUILD_SHARED_LIBS OFF PARENT_SCOPE )
     # set RPATH stuff
     set( CMAKE_SKIP_RPATH TRUE PARENT_SCOPE )
@@ -163,6 +168,9 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
       # be used, so we'll add both to the preference list.
       set( CMAKE_FIND_LIBRARY_SUFFIXES ".a;.lib;.dylib;.so" PARENT_SCOPE )
     endif ()
+
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static" PARENT_SCOPE )
+
   else ()
     set( BUILD_SHARED_LIBS ON PARENT_SCOPE )
 
@@ -416,6 +424,8 @@ function( NEST_PROCESS_WITH_OPENMP )
       # set flags
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
+    else()
+      message( FATAL_ERROR "CMake can not find OpenMP." ) 
     endif ()
   endif ()
 endfunction()

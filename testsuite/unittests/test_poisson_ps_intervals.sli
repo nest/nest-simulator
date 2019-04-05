@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_poisson_ps_intervals - checks coefficient of variation
 
 Synopsis: (test_poisson_ps_intervals) run -> CV sufficiently close to 1

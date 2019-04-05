@@ -23,55 +23,6 @@
 #ifndef STDP_CONNECTION_H
 #define STDP_CONNECTION_H
 
-/* BeginDocumentation
-  Name: stdp_synapse - Synapse type for spike-timing dependent
-   plasticity.
-
-  Description:
-   stdp_synapse is a connector to create synapses with spike time
-   dependent plasticity (as defined in [1]). Here the weight dependence
-   exponent can be set separately for potentiation and depression.
-
-  Examples:
-   multiplicative STDP [2]  mu_plus = mu_minus = 1.0
-   additive STDP       [3]  mu_plus = mu_minus = 0.0
-   Guetig STDP         [1]  mu_plus = mu_minus = [0.0,1.0]
-   van Rossum STDP     [4]  mu_plus = 0.0 mu_minus = 1.0
-
-  Parameters:
-   tau_plus   double - Time constant of STDP window, potentiation in ms
-                       (tau_minus defined in post-synaptic neuron)
-   lambda     double - Step size
-   alpha      double - Asymmetry parameter (scales depressing increments as
-                       alpha*lambda)
-   mu_plus    double - Weight dependence exponent, potentiation
-   mu_minus   double - Weight dependence exponent, depression
-   Wmax       double - Maximum allowed weight
-
-  Transmits: SpikeEvent
-
-  References:
-   [1] Guetig et al. (2003) Learning Input Correlations through Nonlinear
-       Temporally Asymmetric Hebbian Plasticity. Journal of Neuroscience
-
-   [2] Rubin, J., Lee, D. and Sompolinsky, H. (2001). Equilibrium
-       properties of temporally asymmetric Hebbian plasticity, PRL
-       86,364-367
-
-   [3] Song, S., Miller, K. D. and Abbott, L. F. (2000). Competitive
-       Hebbian learning through spike-timing-dependent synaptic
-       plasticity,Nature Neuroscience 3:9,919--926
-
-   [4] van Rossum, M. C. W., Bi, G-Q and Turrigiano, G. G. (2000).
-       Stable Hebbian learning from spike timing-dependent
-       plasticity, Journal of Neuroscience, 20:23,8812--8821
-
-  FirstVersion: March 2006
-  Author: Moritz Helias, Abigail Morrison
-  Adapted by: Philipp Weidel
-  SeeAlso: synapsedict, tsodyks_synapse, static_synapse
-*/
-
 // C++ includes:
 #include <cmath>
 
@@ -85,10 +36,64 @@
 #include "dictdatum.h"
 #include "dictutils.h"
 
-
 namespace nest
 {
 
+/** @BeginDocumentation
+Name: stdp_synapse - Synapse type for spike-timing dependent
+plasticity.
+
+Description:
+
+stdp_synapse is a connector to create synapses with spike time
+dependent plasticity (as defined in [1]). Here the weight dependence
+exponent can be set separately for potentiation and depression.
+
+Examples:
+
+multiplicative STDP [2]  mu_plus = mu_minus = 1.0
+additive STDP       [3]  mu_plus = mu_minus = 0.0
+Guetig STDP         [1]  mu_plus = mu_minus = [0.0,1.0]
+van Rossum STDP     [4]  mu_plus = 0.0 mu_minus = 1.0
+
+Parameters:
+
+tau_plus   double - Time constant of STDP window, potentiation in ms
+                    (tau_minus defined in post-synaptic neuron)
+lambda     double - Step size
+alpha      double - Asymmetry parameter (scales depressing increments as
+                    alpha*lambda)
+mu_plus    double - Weight dependence exponent, potentiation
+mu_minus   double - Weight dependence exponent, depression
+Wmax       double - Maximum allowed weight
+
+Transmits: SpikeEvent
+
+References:
+
+[1] Guetig et al. (2003) Learning Input Correlations through Nonlinear
+    Temporally Asymmetric Hebbian Plasticity. Journal of Neuroscience
+
+[2] Rubin, J., Lee, D. and Sompolinsky, H. (2001). Equilibrium
+    properties of temporally asymmetric Hebbian plasticity, PRL
+    86,364-367
+
+[3] Song, S., Miller, K. D. and Abbott, L. F. (2000). Competitive
+    Hebbian learning through spike-timing-dependent synaptic
+    plasticity,Nature Neuroscience 3:9,919--926
+
+[4] van Rossum, M. C. W., Bi, G-Q and Turrigiano, G. G. (2000).
+    Stable Hebbian learning from spike timing-dependent
+    plasticity, Journal of Neuroscience, 20:23,8812--8821
+
+FirstVersion: March 2006
+
+Author: Moritz Helias, Abigail Morrison
+
+Adapted by: Philipp Weidel
+
+SeeAlso: synapsedict, tsodyks_synapse, static_synapse
+*/
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
 template < typename targetidentifierT >
@@ -258,7 +263,7 @@ STDPConnection< targetidentifierT >::send( Event& e,
   e.set_weight( weight_ );
   // use accessor functions (inherited from Connection< >) to obtain delay in
   // steps and rport
-  e.set_delay( get_delay_steps() );
+  e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
 

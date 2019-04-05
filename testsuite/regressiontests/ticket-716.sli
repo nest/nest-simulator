@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-716 - stdp dopamine synapse changes weight in the absence of presynaptic spikes
 

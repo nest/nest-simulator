@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_connect_array_fixed_outdegree_mpi - SLI script to test connection with parameter arrays and connection rule fixed_outdegree, with hybrid MPI and thread parallelism
 
    Synopsis: (test_connect_array_fixed_outdegree_mpi) run

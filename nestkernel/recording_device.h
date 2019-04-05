@@ -41,8 +41,9 @@
 namespace nest
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: RecordingDevice - Common properties of all recording devices.
+
   Description:
 
   Recording devices are used to measure properties of or signals emitted

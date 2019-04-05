@@ -20,7 +20,7 @@
  *
  */
  
- /* BeginDocumentation
+ /** @BeginDocumentation
    Name: testsuite::test_aeif_cond_beta_multisynapse - sli script for the aeif multisynapse model with synaptic conductance modeled by a double exponential function
 
    Synopsis: (test_aeif_cond_beta_multisynapse) run

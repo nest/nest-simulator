@@ -74,7 +74,27 @@ Functions in the Topology module:
 """
 
 import nest
-import nest.lib.hl_api_helper as hlh
+
+# With '__all__' we provide an explicit index of this submodule.
+__all__ = [
+    'ConnectLayers',
+    'CreateLayer',
+    'CreateMask',
+    'CreateParameter',
+    'Displacement',
+    'Distance',
+    'DumpLayerConnections',
+    'DumpLayerNodes',
+    'FindCenterElement',
+    'FindNearestElement',
+    'GetPosition',
+    'GetTargetNodes',
+    'GetTargetPositions',
+    'PlotKernel',
+    'PlotLayer',
+    'PlotTargets',
+    'SelectNodesByMask',
+]
 
 
 def CreateMask(masktype, specs, anchor=None):
@@ -216,9 +236,10 @@ def CreateMask(masktype, specs, anchor=None):
 
     """
     if anchor is None:
-        return nest.sli_func('CreateMask', {masktype: specs})
+        return nest.ll_api.sli_func('CreateMask', {masktype: specs})
     else:
-        return nest.sli_func('CreateMask', {masktype: specs, 'anchor': anchor})
+        return nest.ll_api.sli_func('CreateMask',
+                                    {masktype: specs, 'anchor': anchor})
 
 
 def CreateParameter(parametertype, specs):
@@ -361,7 +382,7 @@ def CreateParameter(parametertype, specs):
             tp.ConnectLayers(l, l, conndict)
 
     """
-    return nest.sli_func('CreateParameter', {parametertype: specs})
+    return nest.ll_api.sli_func('CreateParameter', {parametertype: specs})
 
 
 def CreateLayer(specs):
@@ -471,9 +492,11 @@ def CreateLayer(specs):
         raise TypeError("specs must be a dictionary")
 
     elements = specs['elements']
-    hlh.model_deprecation_warning(elements)
+    nest.hl_api.model_deprecation_warning(elements)
 
-    return nest.sli_func('CreateLayer', specs)
+    layer = nest.ll_api.sli_func('CreateLayer', specs)
+    layer.set_spatial()
+    return layer
 
 
 def ConnectLayers(pre, post, projections):
@@ -640,7 +663,7 @@ def ConnectLayers(pre, post, projections):
 
     projections = fixdict(projections)
 
-    nest.sli_func('ConnectLayers', pre, post, projections)
+    nest.ll_api.sli_func('ConnectLayers', pre, post, projections)
 
 
 def GetPosition(nodes):
@@ -704,7 +727,7 @@ def GetPosition(nodes):
     if not isinstance(nodes, nest.GIDCollection):
         raise TypeError("nodes must be a layer GIDCollection")
 
-    return nest.sli_func('GetPosition', nodes)
+    return nest.ll_api.sli_func('GetPosition', nodes)
 
 
 def Displacement(from_arg, to_arg):
@@ -778,10 +801,10 @@ def Displacement(from_arg, to_arg):
 
     if (len(from_arg) > 1 and len(to_arg) > 1 and not
             len(from_arg) == len(to_arg)):
-        raise nest.NESTError(
+        raise nest.kernel.NESTError(
             "to_arg and from_arg must have same size unless one have size 1.")
 
-    return nest.sli_func('Displacement', from_arg, to_arg)
+    return nest.ll_api.sli_func('Displacement', from_arg, to_arg)
 
 
 def Distance(from_arg, to_arg):
@@ -856,10 +879,10 @@ def Distance(from_arg, to_arg):
 
     if (len(from_arg) > 1 and len(to_arg) > 1 and not
             len(from_arg) == len(to_arg)):
-        raise nest.NESTError(
+        raise nest.kernel.NESTError(
             "to_arg and from_arg must have same size unless one have size 1.")
 
-    return nest.sli_func('Distance', from_arg, to_arg)
+    return nest.ll_api.sli_func('Distance', from_arg, to_arg)
 
 
 def FindNearestElement(layer, locations, find_all=False):
@@ -925,34 +948,33 @@ def FindNearestElement(layer, locations, find_all=False):
         raise TypeError("layer must be a GIDCollection")
 
     if not len(layer) > 0:
-        raise nest.NESTError("layer cannot be empty")
+        raise nest.kernel.NESTError("layer cannot be empty")
 
-    if not nest.is_iterable(locations):
+    if not nest.hl_api.is_iterable(locations):
         raise TypeError(
             "locations must be coordinate array or list of coordinate arrays")
 
     # Ensure locations is sequence, keeps code below simpler
-    if not nest.is_iterable(locations[0]):
+    if not nest.hl_api.is_iterable(locations[0]):
         locations = (locations, )
 
     result = []
-    nodes = layer.get('nodes')
 
     for loc in locations:
         d = Distance(numpy.array(loc), layer)
 
         if not find_all:
             dx = numpy.argmin(d)  # finds location of one minimum
-            result.append(nodes[dx].get('global_id'))
+            result.append(layer[dx].get('global_id'))
         else:
             mingids = list(layer[:1])
             minval = d[0]
             for idx in range(1, len(layer)):
                 if d[idx] < minval:
-                    mingids = [nodes[idx].get('global_id')]
+                    mingids = [layer[idx].get('global_id')]
                     minval = d[idx]
                 elif numpy.abs(d[idx] - minval) <= 1e-14 * minval:
-                    mingids.append(nodes[idx].get('global_id'))
+                    mingids.append(layer[idx].get('global_id'))
             result.append(tuple(mingids))
 
     return tuple(result)
@@ -1033,10 +1055,10 @@ def DumpLayerNodes(layer, outname):
     if not isinstance(layer, nest.GIDCollection):
         raise TypeError("layer must be a GIDCollection")
 
-    nest.sli_func("""
-                  (w) file exch DumpLayerNodes close
-                  """,
-                  layer, _rank_specific_filename(outname))
+    nest.ll_api.sli_func("""
+                         (w) file exch DumpLayerNodes close
+                         """,
+                         layer, _rank_specific_filename(outname))
 
 
 def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
@@ -1107,20 +1129,20 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
             tp.DumpLayerConnections(l, l, 'static_synapse', 'connections.txt')
     """
     if not isinstance(source_layer, nest.GIDCollection):
-        raise nest.NESTError("source_layer must be a GIDCollection")
+        raise nest.kernel.NESTError("source_layer must be a GIDCollection")
     if not isinstance(target_layer, nest.GIDCollection):
-        raise nest.NESTError("target_layer must be a GIDCollection")
+        raise nest.kernel.NESTError("target_layer must be a GIDCollection")
 
-    nest.sli_func("""
-                  /oname  Set
-                  cvlit /synmod Set
-                  /lyr_target Set
-                  /lyr_source Set
-                  oname (w) file lyr_target lyr_source synmod
-                  DumpLayerConnections close
-                  """,
-                  source_layer, target_layer, synapse_model,
-                  _rank_specific_filename(outname))
+    nest.ll_api.sli_func("""
+                         /oname  Set
+                         cvlit /synmod Set
+                         /lyr_target Set
+                         /lyr_source Set
+                         oname (w) file lyr_target lyr_source synmod
+                         DumpLayerConnections close
+                         """,
+                         source_layer, target_layer, synapse_model,
+                         _rank_specific_filename(outname))
 
 
 def FindCenterElement(layer):
@@ -1169,9 +1191,9 @@ def FindCenterElement(layer):
     """
 
     if not isinstance(layer, nest.GIDCollection):
-        raise nest.NESTError("layer must be a GIDCollection")
+        raise nest.kernel.NESTError("layer must be a GIDCollection")
 
-    return FindNearestElement(layer, nest.GetStatus(layer[:1])[0]['center'])[0]
+    return FindNearestElement(layer, layer.spatial['center'])[0]
 
 
 def GetTargetNodes(sources, tgt_layer, syn_model=None):
@@ -1237,11 +1259,11 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
             # get the GIDs of the targets of the source neuron with GID 5
             tp.GetTargetNodes([5], l)
     """
-    if not nest.is_sequence_of_gids(sources):
+    if not nest.hl_api.is_sequence_of_gids(sources):
         raise TypeError("sources must be a sequence of GIDs")
 
     if not isinstance(tgt_layer, nest.GIDCollection):
-        raise nest.NESTError("tgt_layer must be a GIDCollection")
+        raise nest.kernel.NESTError("tgt_layer must be a GIDCollection")
 
     conns = nest.GetConnections(sources, tgt_layer, synapse_model=syn_model)
     srcs = conns.get('source')
@@ -1323,7 +1345,7 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     # Find positions to all nodes in target layer
     pos_all_tgts = GetPosition(tgt_layer)
-    first_tgt_gid = tgt_layer[0].get('nodes').get('global_id')
+    first_tgt_gid = tgt_layer[0].get('global_id')
 
     connections = nest.GetConnections(sources, tgt_layer,
                                       synapse_model=syn_model)
@@ -1362,6 +1384,18 @@ def _draw_extent(ax, xctr, yctr, xext, yext):
            xlim=(llx - 0.05 * xext, urx + 0.05 * xext),
            ylim=(lly - 0.05 * yext, ury + 0.05 * yext),
            xticks=tuple(), yticks=tuple())
+
+
+def _shifted_positions(pos, ext):
+    """Get shifted positions corresponding to boundary conditions."""
+    return [[pos[0] + ext[0], pos[1]],
+            [pos[0] - ext[0], pos[1]],
+            [pos[0], pos[1] + ext[1]],
+            [pos[0], pos[1] - ext[1]],
+            [pos[0] + ext[0], pos[1] - ext[1]],
+            [pos[0] - ext[0], pos[1] + ext[1]],
+            [pos[0] + ext[0], pos[1] + ext[1]],
+            [pos[0] - ext[0], pos[1] - ext[1]]]
 
 
 def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
@@ -1425,14 +1459,14 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         raise ValueError("layer must be a GIDCollection.")
 
     # get layer extent
-    ext = nest.GetStatus(layer)[0]['extent']
+    ext = layer.spatial['extent']
 
     if len(ext) == 2:
         # 2D layer
 
         # get layer extent and center, x and y
         xext, yext = ext
-        xctr, yctr = nest.GetStatus(layer)[0]['center']
+        xctr, yctr = layer.spatial['center']
 
         # extract position information, transpose to list of x and y pos
         xpos, ypos = zip(*GetPosition(layer))
@@ -1464,7 +1498,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         plt.draw_if_interactive()
 
     else:
-        raise nest.NESTError("unexpected dimension of layer")
+        raise nest.kernel.NESTError("unexpected dimension of layer")
 
     return fig
 
@@ -1562,15 +1596,15 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     # get position of source
     srcpos = GetPosition(src_nrn)
 
-    # get layer extent and center, x and y
-    ext = nest.GetStatus(tgt_layer)[0]['extent']
+    # get layer extent
+    ext = tgt_layer.spatial['extent']
 
     if len(ext) == 2:
         # 2D layer
 
         # get layer extent and center, x and y
         xext, yext = ext
-        xctr, yctr = nest.GetStatus(tgt_layer)[0]['center']
+        xctr, yctr = tgt_layer.spatial['center']
 
         if fig is None:
             fig = plt.figure()
@@ -1627,7 +1661,6 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
 
     Adds solid red line for mask. For doughnut mask show inner and outer line.
     If kern is Gaussian, add blue dashed lines marking 1, 2, 3 sigma.
-    This function ignores periodic boundary conditions.
     Usually, this function is invoked by ``PlotTargets``.
 
 
@@ -1726,10 +1759,20 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     else:
         offs = np.array([0., 0.])
 
+    src_nrn.set_spatial()
+    periodic = src_nrn.spatial['edge_wrap']
+    extent = src_nrn.spatial['extent']
+
     if 'circular' in mask:
         r = mask['circular']['radius']
+
         ax.add_patch(plt.Circle(srcpos + offs, radius=r, zorder=-1000,
                                 fc='none', ec=mask_color, lw=3))
+
+        if periodic:
+            for pos in _shifted_positions(srcpos + offs, extent):
+                ax.add_patch(plt.Circle(pos, radius=r, zorder=-1000,
+                                        fc='none', ec=mask_color, lw=3))
     elif 'doughnut' in mask:
         r_in = mask['doughnut']['inner_radius']
         r_out = mask['doughnut']['outer_radius']
@@ -1737,12 +1780,38 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                                 fc='none', ec=mask_color, lw=3))
         ax.add_patch(plt.Circle(srcpos + offs, radius=r_out, zorder=-1000,
                                 fc='none', ec=mask_color, lw=3))
+
+        if periodic:
+            for pos in _shifted_positions(srcpos + offs, extent):
+                ax.add_patch(plt.Circle(pos, radius=r_in, zorder=-1000,
+                                        fc='none', ec=mask_color, lw=3))
+                ax.add_patch(plt.Circle(pos, radius=r_out, zorder=-1000,
+                                        fc='none', ec=mask_color, lw=3))
     elif 'rectangular' in mask:
         ll = mask['rectangular']['lower_left']
         ur = mask['rectangular']['upper_right']
+        pos = srcpos + ll + offs
+
+        if 'azimuth_angle' in mask['rectangular']:
+            angle = mask['rectangular']['azimuth_angle']
+            angle_rad = angle * np.pi / 180
+            cs = np.cos([angle_rad])[0]
+            sn = np.sin([angle_rad])[0]
+            pos = [pos[0] * cs - pos[1] * sn,
+                   pos[0] * sn + pos[1] * cs]
+        else:
+            angle = 0.0
+
         ax.add_patch(
-            plt.Rectangle(srcpos + ll + offs, ur[0] - ll[0], ur[1] - ll[1],
+            plt.Rectangle(pos, ur[0] - ll[0], ur[1] - ll[1], angle=angle,
                           zorder=-1000, fc='none', ec=mask_color, lw=3))
+
+        if periodic:
+            for pos in _shifted_positions(srcpos + ll + offs, extent):
+                ax.add_patch(
+                    plt.Rectangle(pos, ur[0] - ll[0], ur[1] - ll[1],
+                                  angle=angle, zorder=-1000, fc='none',
+                                  ec=mask_color, lw=3))
     elif 'elliptical' in mask:
         width = mask['elliptical']['major_axis']
         height = mask['elliptical']['minor_axis']
@@ -1758,6 +1827,13 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
             matplotlib.patches.Ellipse(srcpos + offs + anchor, width, height,
                                        angle=angle, zorder=-1000, fc='none',
                                        ec=mask_color, lw=3))
+
+        if periodic:
+            for pos in _shifted_positions(srcpos + offs + anchor, extent):
+                ax.add_patch(
+                    matplotlib.patches.Ellipse(pos, width, height, angle=angle,
+                                               zorder=-1000, fc='none',
+                                               ec=mask_color, lw=3))
     else:
         raise ValueError(
             'Mask type cannot be plotted with this version of PyTopology.')
@@ -1770,6 +1846,14 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                                         zorder=-1000,
                                         fc='none', ec=kernel_color, lw=3,
                                         ls='dashed'))
+
+            if periodic:
+                for pos in _shifted_positions(srcpos + offs, extent):
+                    for r in range(3):
+                        ax.add_patch(plt.Circle(pos, radius=(r + 1) * sigma,
+                                                zorder=-1000, fc='none',
+                                                ec=kernel_color, lw=3,
+                                                ls='dashed'))
         else:
             raise ValueError('Kernel type cannot be plotted with this ' +
                              'version of PyTopology')
@@ -1806,6 +1890,7 @@ def SelectNodesByMask(layer, anchor, mask_obj):
 
     mask_datum = mask_obj._datum
 
-    gid_list = nest.sli_func('SelectNodesByMask', layer, anchor, mask_datum)
+    gid_list = nest.ll_api.sli_func('SelectNodesByMask',
+                                    layer, anchor, mask_datum)
 
     return gid_list

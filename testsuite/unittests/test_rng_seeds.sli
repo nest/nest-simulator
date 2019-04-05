@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_rng_seeds - test if setting and getting of the rng seeds works
 
 Synopsis: (test_rng_seeds) run -> dies if assertion fails

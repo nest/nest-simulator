@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multimeter_support - test if multimeter support works in neurons
 
 Synopsis: (test_multimeter_support.sli) run -> dies if assertion fails

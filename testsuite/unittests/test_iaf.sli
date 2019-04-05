@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
     Name: testsuite::test_iaf - sli script for overall test of iaf_psc_alpha model
 
     Synopsis: (test_iaf) run -> compares response to current step with reference data 

@@ -38,7 +38,7 @@
 
 #include "step_pattern_builder.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: step_pattern - Rule connecting sources and targets with a step pattern
 
    Synopsis:

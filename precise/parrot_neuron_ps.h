@@ -32,11 +32,15 @@
 // Includes from precise:
 #include "slice_ring_buffer.h"
 
-/* BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
 Name: parrot_neuron_ps - Neuron that repeats incoming spikes handling
 precise spike times.
 
 Description:
+
 The parrot neuron simply emits one spike for every incoming spike.
 An important application is to provide identical poisson spike
 trains to a group of neurons. The poisson_generator sends a different
@@ -70,9 +74,6 @@ Receives: SpikeEvent
 
 Author: adapted from parrot_neuron by Kunkel
 */
-
-namespace nest
-{
 class parrot_neuron_ps : public Archiving_Node
 {
 public:

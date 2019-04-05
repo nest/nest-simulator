@@ -26,7 +26,7 @@ from numpy import testing
 import unittest
 import nest
 import time
-HAVE_OPENMP = nest.sli_func("is_threaded")
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
 class SynapticElementIntegrator(object):
@@ -270,7 +270,7 @@ class TestGrowthCurve(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus({"total_num_virtual_procs": 4})
         nest.ResetNetwork()
-        nest.set_verbosity('M_DEBUG')
+        nest.hl_api.set_verbosity('M_DEBUG')
 
         self.sim_time = 10000
         self.sim_step = 100

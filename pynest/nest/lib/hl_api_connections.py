@@ -23,12 +23,25 @@
 Functions for connection handling
 """
 
+import numpy
+
+from ..ll_api import *
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_types import GIDCollection, Connectome
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
-import numpy
+
+__all__ = [
+    'CGConnect',
+    'CGParse',
+    'CGSelectImplementation',
+    'Connect',
+    'DataConnect',
+    'Disconnect',
+    'GetConnections',
+]
 
 
 @check_stack
@@ -507,8 +520,8 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
     if parameter_map is None:
         parameter_map = {}
 
-    sli_func('CGConnect', cg, pre, post,
-             parameter_map, '/' + model, litconv=True)
+    sli_func('CGConnect', cg, pre, post, parameter_map, '/' + model,
+             litconv=True)
 
 
 @check_stack
@@ -603,6 +616,10 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     string describing one synapse model (synapse models are listed in the
     synapsedict) or as a dictionary as described below.
 
+    Note that only the synapse type is checked when we disconnect and that if
+    syn_spec is given as a non-empty dictionary, the 'model' parameter must be
+    present.
+
     If no synapse model is specified the default model 'static_synapse'
     will be used.
 
@@ -620,7 +637,6 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     types in NEST or manually specified synapses created via CopyModel().
 
     All other parameters are not currently implemented.
-    Note: model is alias for syn_spec for backward compatibility.
 
     Notes
     -----
@@ -630,14 +646,12 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     sps(pre)
     sps(post)
 
-    if conn_spec is not None:
-        if is_string(conn_spec):
-            conn_spec = {'rule': conn_spec}
-        sps(conn_spec)
+    if is_string(conn_spec):
+        conn_spec = {'rule': conn_spec}
+    if is_string(syn_spec):
+        syn_spec = {'model': syn_spec}
 
-    if syn_spec is not None:
-        if is_string(syn_spec):
-            syn_spec = {'model': syn_spec}
-        sps(syn_spec)
+    sps(conn_spec)
+    sps(syn_spec)
 
     sr('Disconnect_g_g_D_D')

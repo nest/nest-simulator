@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::issue-521 - *_hpc connections return local id instead of global id of target neuron
 
    Ensure that *_hpc connections also return correct global target GID on GetConnections.

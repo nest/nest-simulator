@@ -229,7 +229,7 @@ class SpatialTester(object):
             self._ls = topo.CreateLayer(ldict_s)
             self._lt = topo.CreateLayer(ldict_t)
             cntr = topo.FindCenterElement(self._ls)
-            indx = cntr - self._ls[0].get('nodes').get('global_id')
+            indx = cntr - self._ls[0].get('global_id')
             self._driver = self._ls[indx]
 
     def _connect(self):
@@ -775,15 +775,20 @@ class TestSpatial3D(unittest.TestCase):
         self.assertGreater(p_Z, P_MIN, '{} failed Z-test'.format(kernel))
 
 
+def suite():
+    suite = unittest.TestSuite([
+        unittest.TestLoader().loadTestsFromTestCase(TestSpatial2D),
+        unittest.TestLoader().loadTestsFromTestCase(TestSpatial2DOBC),
+        unittest.TestLoader().loadTestsFromTestCase(TestSpatial3D),
+        ])
+    return suite
+
+
 if __name__ == '__main__':
 
     if not DEBUG_MODE:
-        suite = unittest.TestSuite([
-            unittest.TestLoader().loadTestsFromTestCase(TestSpatial2D),
-            unittest.TestLoader().loadTestsFromTestCase(TestSpatial2DOBC),
-            unittest.TestLoader().loadTestsFromTestCase(TestSpatial3D),
-            ])
-        unittest.TextTestRunner(verbosity=2).run(suite)
+        runner = unittest.TextTestRunner(verbosity=2)
+        runner.run(suite())
     elif PLOTTING_POSSIBLE:
         test = PlottingSpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
                                      kernel_name='gaussian')

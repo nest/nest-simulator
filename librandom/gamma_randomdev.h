@@ -71,8 +71,9 @@
 namespace librandom
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rdevdict::gamma - gamma random deviate generator
+
 Description:
    Generates gamma-distributed random numbers.
 
@@ -83,6 +84,7 @@ Parameters:
    b - scale parameter (default: 1)
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
+
 Author: Hans Ekkehard Plesser
 */
 

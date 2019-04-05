@@ -27,6 +27,10 @@ import pydot
 import nest
 import types
 
+__all__ = [
+    'plot_network',
+]
+
 
 def plot_network(nodes, filename, ext_conns=False,
                  plot_modelnames=False):
@@ -50,18 +54,18 @@ def plot_network(nodes, filename, ext_conns=False,
 
     Raises
     ------
-    nest.NESTError
+    nest.kernel.NESTError
     """
 
     if len(nodes) == 0:
-        nest.NESTError("nodes must at least contain one node")
+        nest.kernel.NESTError("nodes must at least contain one node")
 
     nodes_types = map(lambda x: type(x), nodes)
     homogeneous = reduce(
         lambda x, y: x == y and x or None, nodes_types) == nodes_types[0]
 
     if not homogeneous:
-        raise nest.NESTError("nodes must either contain only integers \
+        raise nest.kernel.NESTError("nodes must either contain only integers \
             or only list of integers")
 
     def get_name(node):
@@ -116,4 +120,4 @@ def plot_network(nodes, filename, ext_conns=False,
     elif filetype == "png":
         graph.write_png(filename)
     else:
-        raise nest.NESTError("Filename must end in '.png' or '.pdf'.")
+        raise nest.kernel.NESTError("Filename must end in '.png' or '.pdf'.")

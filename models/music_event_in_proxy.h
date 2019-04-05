@@ -37,11 +37,14 @@
 #include "event.h"
 #include "nest_types.h"
 
-/*BeginDocumentation
+namespace nest
+{
 
+/** @BeginDocumentation
 Name: music_event_in_proxy - A device which receives spikes from MUSIC.
 
 Description:
+
 A music_event_in_proxy can be used to pass spikes to nodes within NEST
 which are received from another application.
 
@@ -54,6 +57,7 @@ on the same port, but each channel can only listened to by a
 single proxy.
 
 Parameters:
+
 The following properties are available in the status dictionary:
 
 port_name      - The name of the MUSIC input port to listen to (default:
@@ -67,6 +71,7 @@ The acceptable latency of the MUSIC input port can be set using the
 command SetAcceptableLatency.
 
 Examples:
+
 /music_event_in_proxy Create /meip Set
 meip << /music_channel 2 >> SetStatus
 /iaf_psc_alpha Create /n Set
@@ -74,20 +79,14 @@ meip << /music_channel 2 >> SetStatus
 meip n Connect
 
 Author: Moritz Helias, Jochen Martin Eppler
+
 FirstVersion: October 2008
+
 Availability: Only when compiled with MUSIC
 
 SeeAlso: SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy,
 music_message_in_proxy
 */
-
-namespace nest
-{
-/**
- * Emit spikes at times received from another application via a
- * MUSIC port. The timestamps of the events also contain offsets,
- * which makes it also useful for precise spikes.
- */
 class music_event_in_proxy : public DeviceNode
 {
 

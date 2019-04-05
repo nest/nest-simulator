@@ -88,8 +88,10 @@ public:
 
   /**
    * \fn int get_synaptic_elements_vacant(Name n)
-   * get the number of synaptic elements of type n which are available
+   * Get the number of synaptic elements of type n which are available
    * for new synapse creation
+   * Returns a negative number to indicate that synaptic elements
+   * must be deleted during the next update
    */
   int get_synaptic_elements_vacant( Name n ) const;
 
@@ -195,12 +197,12 @@ protected:
    */
   void clear_history();
 
-private:
   // number of incoming connections from stdp connectors.
   // needed to determine, if every incoming connection has
   // read the spikehistory for a given point in time
   size_t n_incoming_;
 
+private:
   // sum exp(-(t-ti)/tau_minus)
   double Kminus_;
 

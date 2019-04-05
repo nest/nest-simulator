@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-787 Ensure that all commands raise errors instead of crashing
 
@@ -75,8 +75,7 @@ systemdict /GNUReadline known not {
 	/Distance_a_i /DumpLayerConnections_os_i_l
 	/DumpLayerNodes_os_i /FileNames_r /FileNames_s /FixedPoint__p
 	/FixedPoint__p_i /Flatten_a /Flatten_a_i
-	/GetConnections_D /GetDefaults_l /GetElement_i_ia
-	/GetPosition_i /GetStatus_C /GetStatus_a
+	/GetConnections_D /GetDefaults_l /GetPosition_i /GetStatus_C /GetStatus_a
 	/GetStatus_dict /GetStatus_i /GetStatus_v /GetValue_a_P /Inside_a_M
 	/JoinTo_ald /JoinTo_cont /JoinTo_d /MapIndexed_a /MapIndexed_s /MapThread_a
 	/Map_s /MathematicaToSliIndex_a /MathematicaToSliIndex_i

@@ -34,7 +34,7 @@
 #include <cassert>
 #include <ctime>
 #include <fstream>
-
+#include <mutex>
 // Includes from libnestutil:
 #include "compose.hpp"
 
@@ -118,7 +118,7 @@ FilesystemModule::SetDirectoryFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: Directory - Return current working directory
  Synopsis: Directory -> string
  Description: Returns name of current working directory. This is where all ls,
@@ -291,7 +291,7 @@ FilesystemModule::RemoveDirectoryFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: tmpnam - Generate a string that is a valid non-existing file-name.
 
    Synopsis: tpmnam -> filename
@@ -308,10 +308,11 @@ FilesystemModule::RemoveDirectoryFunction::execute( SLIInterpreter* i ) const
    References: Donald Lewin, "The POSIX Programmer's Guide"
 
 */
-
+std::mutex mtx;
 void
 FilesystemModule::TmpNamFunction::execute( SLIInterpreter* i ) const
 {
+  std::lock_guard< std::mutex > lock( mtx );
   static unsigned int seed = std::time( 0 );
   char* env = getenv( "TMPDIR" );
   std::string tmpdir( "/tmp" );
@@ -333,7 +334,7 @@ FilesystemModule::TmpNamFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: CompareFiles - Compare two files for equality.
 
    Synopsis: filenameA filenameB CompareFiles -> bool

@@ -19,15 +19,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
+"""
 pynest microcircuit example
 ---------------------------
 
 Example file to run the microcircuit.
 
 Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
-'''
+"""
 
+###############################################################################
+# Import the necessary modules
 import time
 import numpy as np
 import network
@@ -35,7 +37,7 @@ from network_params import net_dict
 from sim_params import sim_dict
 from stimulus_params import stim_dict
 
-
+###############################################################################
 # Initialize the network and pass parameters to it.
 tic = time.time()
 net = network.Network(sim_dict, net_dict, stim_dict)
@@ -51,6 +53,8 @@ tic = time.time()
 net.simulate()
 toc = time.time() - tic
 print("Time to simulate: %.2f s" % toc)
+
+###############################################################################
 # Plot a raster plot of the spikes of the simulated neurons and the average
 # spike rate of all populations. For visual purposes only spikes 100 ms
 # before and 100 ms after the thalamic stimulus time are plotted here by

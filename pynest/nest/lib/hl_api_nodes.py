@@ -23,22 +23,35 @@
 Functions for node handling
 """
 
-import nest
+import warnings
+
+from ..ll_api import *
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_info import SetStatus
+from .hl_api_types import Parameter
+
+__all__ = [
+    'Create',
+    'PrintNodes',
+]
 
 
 @check_stack
 def Create(model, n=1, params=None):
-    """Create n instances of type model.
+    """Create one or more nodes.
+
+   Generates `n` new network objects of the supplied model type. If `n` is not
+   given, a single node is created. Note that if setting parameters of the
+   nodes fail, the nodes will still have been created.
 
     Parameters
     ----------
     model : str
         Name of the model to create
     n : int, optional
-        Number of instances to create
-    params : TYPE, optional
+        Number of nodes to create
+    params : dict or list, optional
         Parameters for the new nodes. A single dictionary or a list of
         dictionaries with size n. If omitted, the model's defaults are used.
 
@@ -46,11 +59,28 @@ def Create(model, n=1, params=None):
     -------
     GIDCollection:
         Object representing global IDs of created nodes
+
+    Raises
+    ------
+    NESTError
+        If setting node parameters fail. However, the nodes will still have
+        been created.
+
+    KEYWORDS:
     """
 
     model_deprecation_warning(model)
 
+    params_contains_list = True
     if isinstance(params, dict):
+        # Convert Parameter to list
+        for key, val in params.items():
+            if isinstance(val, Parameter):
+                params[key] = [val.get_value() for _ in range(n)]
+        params_contains_list = [is_iterable(v) for k, v in params.items()]
+        params_contains_list = max(params_contains_list)
+
+    if not params_contains_list:
         cmd = "/%s 3 1 roll exch Create" % model
         sps(params)
     else:
@@ -61,7 +91,7 @@ def Create(model, n=1, params=None):
 
     gids = spp()
 
-    if params is not None and not isinstance(params, dict):
+    if params is not None and params_contains_list:
         try:
             SetStatus(gids, params)
         except:

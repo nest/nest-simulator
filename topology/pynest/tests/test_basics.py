@@ -133,7 +133,7 @@ class BasicsTestCase(unittest.TestCase):
 
         # Test that an error is thrown if to_arg and from_arg have different
         # size.
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             d = topo.Displacement(l[1:3], l[2:7])
 
         # position -> gids
@@ -217,7 +217,7 @@ class BasicsTestCase(unittest.TestCase):
 
         # Test that an error is thrown if to_arg and from_arg have different
         # size.
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             d = topo.Distance(l[1:3], l[2:7])
 
         # position -> gids

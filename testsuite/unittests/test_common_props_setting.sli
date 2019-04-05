@@ -21,7 +21,7 @@
  */
 
  
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_common_props_setting - test that common properties can be set as defaults, not else
 
 Synopsis: (test_common_props_setting) run -> compare response with reference data

@@ -68,9 +68,11 @@
 #endif
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: backtrace_on - enable stack backtrace on error.
+
 Synopsis: backtrace_on -> -
+
 Description:
 
 This functions enables a human readable backtrace of the execution
@@ -92,8 +94,9 @@ Backtrace_onFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: backtrace_off - Disable the stack backtrace on error.
+
 Synopsis: backtrace_off -> -
 
 Description:
@@ -124,9 +127,11 @@ EStackdumpFunction::execute( SLIInterpreter* i ) const
 
   i->EStack.dump( std::cout );
 }
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: loop - repeatedly execute a procedure
+
 Synopsis: proc loop -
+
 Description:
  loop takes a procedure object an executes it repeatedly.
  Since there is no direct termination condition, the loop
@@ -134,6 +139,7 @@ Description:
  If the procedure has to be evaluated for a certain number of
  times, consider the use of repeat or for.
  If some container should be iterated, consider forall or Map
+
 SeeAlso: exit, repeat, for, forall, forallindexed, Map
 */
 void
@@ -159,11 +165,13 @@ LoopFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: exit - exit a loop construct
+
 Description: exit can be used to leave loop structures
              like loop, repeat, for, forall, Map, etc.
              in a clean way.
+
 Remarks: This command does not exit the SLI interpreter! Use quit instead.
 */
 void
@@ -187,11 +195,13 @@ ExitFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop( n );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: if - conditionaly execute a procedure
+
 Synopsis:
   boolean {procedure} if -> -
   boolean   anytoken  if -> -
+
 Description: if executes the supplied token if the boolean
              is true. The supplied token usually is a procedure.
 
@@ -235,11 +245,13 @@ IfFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: ifelse - conditionaly execute a procedure
+
 Synopsis:
   boolean  {proc1}  {proc2}   ifelse -> -
   boolean anytoken1 anytoken1 ifelse -> -
+
 Description:
   ifelse executes anytoken1 if the boolean is true, and anytoken2
   otherwise.
@@ -296,9 +308,11 @@ IfelseFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 3 );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: repeat - execute a procedure n times
+
 Synopsis: n proc repeat
+
 Description:
  repeat executes the supplied procedure n times.
  The loop can be left prematurely using exit.
@@ -355,11 +369,13 @@ RepeatFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: stopped - returns true if execution was stopped by stop
+
 Synopsis:
   xobj stopped -> true;  if the object was aborted with stop
                -> false; otherwise.
+
 Description:
   stopped is part of a pair of commands which implement the
   PostScript exception mechanism.
@@ -380,7 +396,9 @@ Description:
   capabilities.
 
 Notes: stop, stopped is PostScript compatible
+
 References:   The Red Book, sec. 3.10
+
 SeeAlso: stop, raiseerror
 */
 void
@@ -397,8 +415,9 @@ StoppedFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: stop - raise a stop signal
+
 Synopsis:
   stop -> -
 
@@ -409,8 +428,11 @@ Desctiption:
   C++.
   stop/stopped is used to implement SLI's error handling
   capabilities.
+
 Notes: stop, stopped is PostScript compatible.
+
 References: The Red Book, sec. 3.10
+
 SeeAlso: stopped, raiseerror
 */
 void
@@ -473,8 +495,10 @@ StopFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop( n );
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
+
 Name: closeinput - Close current input file.
+
 FirstVersion: 25 Jul 2005, Gewaltig
 */
 
@@ -535,8 +559,9 @@ CloseinputFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop( n );
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: currentname -  returns the most recently resolved name
+
 Synopsis:
  currentname -> name true
              -> false
@@ -613,8 +638,9 @@ IparsestdinFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: parsestdin - Read and execute tokens from standard input
+
 Description: parsestdin repeatedly reads and executes SLI commands from
 the standard input stream (cin) until an end-of-file symbol is excountered
 or the command exit is executed.
@@ -701,12 +727,14 @@ DefFunction::execute( SLIInterpreter* i ) const
   // }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: Set - Define an association between a name and an object in the current
             dictionary
+
 Synopsis:
   obj literal   Set -> -
   [... [obj_1 ...] ... obj_n] [... [literal_1 ...] ... literal_n] Set -> -
+
 Description:
  In the first form Set is identical to def, except for the reversed parameters
  and creates or modifies an entry for the literal in the current dictionary. The
@@ -754,13 +782,16 @@ SetFunction::execute( SLIInterpreter* i ) const
   //   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: load - Search for a key in each dictionary on the dictionary stack.
+
 Synopsis: /name load -> obj
+
 Description: Load tries to find an association for /name in each dictionary
  on the dictionary stack, starting with the current (top) dictionary.
  If an association is found, load pushes the associated value on the
  stack. If no association is found, an UndefineName error is raised.
+
 SeeAlso: lookup, def
 */
 void
@@ -791,15 +822,18 @@ LoadFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: lookup -  Search for a key in each dictionay on the dictionary stack.
+
 Synopsis: /name lookup -> obj true
                        -> false
+
 Description: lookup tries to find an association for /name in each dictionary
  on the dictionary stack, starting with the current (top) dictionary.
  If an association is found, lookup pushes the associated value on the
  stack followed by the boolean true.
  If no association is found, false is pushed.
+
 SeeAlso: load, def
 */
 void
@@ -835,9 +869,11 @@ LookupFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: for - execute a procedure for a sequence of numbers
+
 Synopsis: n1 s n2 proc for -> -
+
 Description:
    for repeatedly evaluates the supplied procedure for all
    values from n1 to n2 in steps of s. In each iteration
@@ -846,6 +882,7 @@ Description:
    The loop can be quit prematurely by calling exit.
    If the value of the iteration counter is not needed,
    use repeat instead.
+
 Examples:
 SLI ] 1 1 10 {=} for
 1
@@ -859,6 +896,7 @@ SLI ] 1 1 10 {=} for
 9
 10
 SLI ]
+
 SeeAlso: repeat, exit, loop
 */
 void
@@ -880,9 +918,7 @@ ForFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 4 );
 }
 
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: forall - Call a procedure for each element of a list/string/dictionary
 
    Synopsis:
@@ -964,10 +1000,7 @@ Forall_aFunction::execute( SLIInterpreter* i ) const
   i->inc_call_depth();
 }
 
-
-/*
-BeginDocumentation
-
+/** @BeginDocumentation
    Name: forallindexed - Call a procedure for each element of a list/string
 
    Synopsis:
@@ -1085,8 +1118,9 @@ Forall_sFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 2 );
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: raiseerror - raise an error to the system
+
  Synopsis:
  /command /error raiserror -> /command (side-effects see below!)
 
@@ -1124,10 +1158,12 @@ Forall_sFunction::execute( SLIInterpreter* i ) const
       } ifelse
    } def
 
- Bugs: lets wait...
  Author: Gewaltig
+
  Remarks: not part of PostScript, but conform to the mechanism
+
  References: See the Red Book for PostScript's error handling facilities
+
  SeeAlso: raiseagain, stop, stopped, errordict
 */
 
@@ -1158,8 +1194,9 @@ RaiseerrorFunction::execute( SLIInterpreter* i ) const
   i->raiseerror( *cmdname, *errorname );
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: print_error - print an error based on the errordict
+
  Synopsis:
  /command print_error -> --
 
@@ -1178,10 +1215,6 @@ RaiseerrorFunction::execute( SLIInterpreter* i ) const
    errordict /message (Something went wrong.) put_d
    /my_function print_error
 
- Bugs:
- Author:
- Remarks:
- References:
  SeeAlso: handleerror, raiseerror, raiseagain, stop, stopped, errordict
 */
 
@@ -1199,8 +1232,9 @@ PrinterrorFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: raiseagain - re-raise the last error
+
  Synopsis:  raiseagain
 
  Description:
@@ -1209,10 +1243,12 @@ PrinterrorFunction::execute( SLIInterpreter* i ) const
    and wants to pass it to an upper level handler. Thus, nestet error handlers
    are possible.
 
- Bugs: lets wait...
  Author: Gewaltig
+
  Remarks: not part of PostScript
+
  References: See the Red Book for PostScript's error handling facilities
+
  SeeAlso: raiseerror, stop, stopped, errordict
 */
 
@@ -1223,8 +1259,9 @@ RaiseagainFunction::execute( SLIInterpreter* i ) const
   i->raiseagain();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: cycles - return the number of elapsed interpreter cycles
+
 Synopsis: cycles -> n
 */
 void
@@ -1255,7 +1292,7 @@ CodeExecutedFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: quit - leave the SLI interpreter, optionally return exit code
 
 Synopsis:
@@ -1300,12 +1337,16 @@ QuitFunction::execute( SLIInterpreter* i ) const
   i->EStack.clear();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: exec - execute an object
+
 Synopsis: any exec -> -
+
 Description: exec tries to execute the object by moving it to
 the execution stack.
+
 Examples: {1 2 add} exec -> 3
+
 SeeAlso: cvx
 */
 void
@@ -1316,11 +1357,14 @@ ExecFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: typeinfo - return the type of an object
+
 Synopsis: any type -> any literal
+
 Description: typeinfo returns a literal name, which represents
  the type of the argument. The argument is left on the stack.
+
 SeeAlso: typestack, type
 */
 void
@@ -1449,9 +1493,11 @@ CaseFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: counttomark - count number of objects on the stack from top to marker
+
 Synopsis: mark obj1 ... objn counttomark -> mark obj1 ... objn n
+
 SeeAlso: count
 */
 void
@@ -1483,9 +1529,11 @@ CounttomarkFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: pclocks - returns POSIX clocks for real, user, system time
+
  Synopsis:  pclocks -> [rclocks uclocks sclocks cuclocks csclocks]
+
  Description:
  Calls the POSIX times() function to obtain real, user,
  and system time clock counts, as well as user and system time clock
@@ -1497,8 +1545,11 @@ CounttomarkFunction::execute( SLIInterpreter* i ) const
  than one thread is used.
 
  Author: Hans Ekkehard Plesser
+
  FirstVersion: 2003-07-29, based on Ptimesfunction
+
  References: man 2 times
+
  SeeAlso: pclockspersec, ptimes, realtime, usertime, systemtime, tic, toc
 */
 
@@ -1534,16 +1585,23 @@ PclocksFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( result );
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: pclockspersec - POSIX clock ticks per second
+
 Synopsis: pclockspersec -> clockticks
+
 Description:
 pclockspersec i an integer variable containing the number of
 POSIX clock ticks per second.
+
 Author: Hans Ekkehard Plesser
+
 FirstVersion: 2003-07-29
+
 Remarks: Replaces clockspersecond.
+
 References: man 2 times
+
 SeeAlso: pclocks, ptimes, realtime, usertime, systemtime, tic, toc
 */
 void
@@ -1565,9 +1623,11 @@ PclockspersecFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( result );
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: pgetrusage - Get resource consumption information
+
  Synopsis:  pgetrusage - selfinfo childinfo
+
  Description:
  Calls the POSIX getrusage() function to obtain information on
  memory consumption, context switches, I/O operatin count, etc,
@@ -1575,11 +1635,15 @@ PclockspersecFunction::execute( SLIInterpreter* i ) const
  returned in dictionaries.
 
  Author: Hans Ekkehard Plesser
+
  FirstVersion: 2003-07-29
+
  Remarks: At least under Linux, child processes return 0 for all
  entries, while the main process seems to produce meaningfull data
  only for minflt and majflt, i.e., page reclaims and faults.
+
  References: man 2 getrusage
+
  SeeAlso: pclockspersec, ptimes, realtime, usertime, systemtime, tic, toc
 */
 
@@ -1644,13 +1708,18 @@ PgetrusageFunction::getinfo_( int who, DictionaryDatum& dict ) const
 }
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: time - return wall clock time in s since 1.1.1970 0
+
  Synopsis:  time -> int
+
  Description: calls time() and returns seconds since 1.1.1970,
  00:00:00 UTC.  This is mainly meant as a tool to generate random seeds.
+
  Author: Hans E. Plesser
+
  FirstVersion: 2001-10-03
+
  SeeAlso: clock, usertime, tic, toc, sleep
 */
 
@@ -1696,11 +1765,14 @@ Sleep_dFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: token_s - read a token from a string
+
 Synopsis:  string token_s -> post any true
                             false
+
 References: The Red Book
+
 SeeAlso: token
 */
 
@@ -1733,11 +1805,14 @@ Token_sFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( true );
   }
 }
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: token_is - read a token from an input stream
+
 Synopsis:  istream token_is -> istream any true
                               istream false
+
 References: The Red Book
+
 SeeAlso: token
 */
 
@@ -1767,10 +1842,12 @@ Token_isFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: symbol_s - read a symbol from a string
+
 Synopsis:  string symbol_s -> post any true
                               false
+
 SeeAlso: token
 */
 
@@ -1805,20 +1882,21 @@ Symbol_sFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: setguard - limit the number of interpreter cycles
+
  Synopsis:  n setguard -> --
+
  Description: This command forces the interpreter to stop after
    it has performed n cycles. setguard is useful for testing programs
    with long running loops.
 
  Parameters: n : an integer argument greater than zero
- Examples:
- Bugs:
+
  Author: Gewaltig
- FirstVersion: ?
+
  Remarks: not part of PostScript
- References:
+
  SeeAlso: removeguard
 */
 
@@ -1835,19 +1913,20 @@ SetGuardFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: removeguard - removes the limit on the number of interpreter cycles
+
  Synopsis:  removeguard -> --
+
  Description: This command removes the restriction on the number
    of possible interpreter cycles, imposed by setguard.
 
  Parameters: none
- Examples:
- Bugs:
+
  Author: Gewaltig
- FirstVersion: ?
+
  Remarks: not part of PostScript
- References:
+
  SeeAlso: setguard
 */
 void
@@ -1858,8 +1937,7 @@ RemoveGuardFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/*
-BeginDocumentation
+/** @BeginDocumentation
 Name: debugon - Start SLI level debugger.
 
 Description:
@@ -1905,6 +1983,7 @@ The following commands are available:
   toggle tailrecursion - toggle tail-recursion optimisation.
 
 Note: This mode is still experimental.
+
 SeeAlso: debugoff, debug
 */
 void
@@ -1917,11 +1996,12 @@ DebugOnFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*
-BeginDocumentation
+/** @BeginDocumentation
 Name: debugoff - Stop SLI level debugging mode.
+
 Description:
 debugoff is used to quit the debugging mode at a specific position in the code.
+
 Example:
 
 In this example, the parameter assignments as well as the
@@ -1939,6 +2019,7 @@ calculation will be dine in debug mode.
 } def
 
 Note: This mode is still experimental.
+
 SeeAlso: debugon, debug
 */
 void
@@ -1948,12 +2029,16 @@ DebugOffFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: debug - execute an object in debug mode.
+
 Synopsis: any debug -> -
+
 Description: debug tries to execute the object by moving it to
 the execution stack.
+
 Examples: {1 2 add} debug -> 3
+
 SeeAlso: exec, debugon, debugoff
 */
 void
@@ -1984,9 +2069,11 @@ SetVerbosityFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: verbosity - return the current verbosity level for interpreter messages
+
 Synopsis: verbosity -> n
+
 SeeAlso: setverbosity, message
 */
 
@@ -2033,8 +2120,9 @@ MessageFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: noop - no operation function
+
 Description: This function does nothing. It is used for benchmark purposes.
 */
 
@@ -2109,7 +2197,7 @@ const DebugOnFunction debugonfunction;
 const DebugOffFunction debugofffunction;
 const DebugFunction debugfunction;
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: mark - puts a mark on the stack
 
 Description: A mark is a token which is lying on the stack and

@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::issue-707
 
 Synopsis: (issue-707) run -> NEST exits if test fails
@@ -50,7 +50,7 @@ skip_if_without_gsl
   /hh_psc_alpha_gap Create /neuron_out Set
   /weight_recorder Create /wr Set
 
-  /gap_junction << /weight_recorder wr 0 get >> SetDefaults
+  /gap_junction << /weight_recorder wr >> SetDefaults
 
   neuron_in neuron_out
   << /rule /one_to_one /make_symmetric true >>

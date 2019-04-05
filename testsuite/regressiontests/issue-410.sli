@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::issue-410 - Ensure thread safety of volume transmitter
 
    Synopsis: (issue-410) run -> NEST exits if test fails

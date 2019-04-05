@@ -39,6 +39,7 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "clopath_archiving_node.h"
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
 #include "connection_label.h"
@@ -651,6 +652,14 @@ nest::ConnectionManager::connect_( Node& s,
   const bool is_primary =
     kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary();
 
+  if ( kernel().model_manager.connector_requires_clopath_archiving( syn_id )
+    and not dynamic_cast< Clopath_Archiving_Node* >( &r ) )
+  {
+    throw NotImplemented(
+      "This synapse model is not supported by the neuron model of at least one "
+      "connection." );
+  }
+
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
     .add_connection( s, r, connections_[ tid ], syn_id, params, delay, weight );
@@ -710,6 +719,13 @@ nest::ConnectionManager::increase_connection_count( const thread tid,
     num_connections_[ tid ].resize( syn_id + 1 );
   }
   ++num_connections_[ tid ][ syn_id ];
+  if ( num_connections_[ tid ][ syn_id ] >= ( 1 << 27 ) - 1 )
+  {
+    throw KernelException( String::compose(
+      "Too many connections: at most %1 connections supported per virtual "
+      "process and synapse model.",
+      ( 1 << 27 ) - 1 ) );
+  }
 }
 
 nest::index
@@ -1235,25 +1251,23 @@ nest::ConnectionManager::get_connections(
       ConnectorBase* connections = connections_[ tid ][ syn_id ];
       if ( connections != NULL )
       {
+        const size_t num_connections_in_thread = connections->size();
+        for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
+        {
+          const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
+          connections->get_connection_with_specified_targets( source_gid,
+            target_neuron_gids,
+            tid,
+            lcid,
+            synapse_label,
+            conns_in_thread );
+        }
+
         for ( std::vector< index >::const_iterator t_gid =
                 target_neuron_gids.begin();
               t_gid != target_neuron_gids.end();
               ++t_gid )
         {
-          const index target_gid = *t_gid;
-
-          std::vector< index > source_lcids;
-          connections->get_source_lcids( tid, target_gid, source_lcids );
-
-          for ( size_t i = 0; i < source_lcids.size(); ++i )
-          {
-            conns_in_thread.push_back( ConnectionDatum( ConnectionID(
-              source_table_.get_gid( tid, syn_id, source_lcids[ i ] ),
-              target_gid,
-              tid,
-              syn_id,
-              source_lcids[ i ] ) ) );
-          }
           // target_table_devices_ contains connections both to and from
           // devices. First we get connections from devices.
           target_table_devices_.get_connections_from_devices_(
@@ -1316,18 +1330,12 @@ nest::ConnectionManager::get_connections(
             }
             else
             {
-              for ( std::vector< index >::const_iterator t_gid =
-                      target_neuron_gids.begin();
-                    t_gid != target_neuron_gids.end();
-                    ++t_gid )
-              {
-                connections->get_connection( source_gid,
-                  *t_gid,
-                  tid,
-                  lcid,
-                  synapse_label,
-                  conns_in_thread );
-              }
+              connections->get_connection_with_specified_targets( source_gid,
+                target_neuron_gids,
+                tid,
+                lcid,
+                synapse_label,
+                conns_in_thread );
             }
           }
         }
@@ -1459,30 +1467,6 @@ nest::ConnectionManager::sort_connections( const thread tid )
     }
     remove_disabled_connections( tid );
   }
-}
-
-void
-nest::ConnectionManager::reserve_connections( const thread tid,
-  const synindex syn_id,
-  const size_t count )
-{
-  /*
-   * @TODO
-   * This method currently does nothing, since a large number of
-   * Connect() calls with precisely resized vectors can lead to
-   * unnecessarily many vector resize operations that significantly
-   * impair performance. Once we have containers that can grow
-   * intelligently using hints, this method should be reactivated.
-   */
-  return;
-
-  /*
-  kernel()
-    .model_manager.get_synapse_prototype( syn_id, tid )
-    .reserve_connections( connections_[ tid ], syn_id, count );
-
-  source_table_.reserve( tid, syn_id, count );
-  */
 }
 
 void

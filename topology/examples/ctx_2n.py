@@ -50,9 +50,6 @@ ctx_in = topo.CreateLayer({'columns': 4, 'rows': 3,
                            'elements': 'in'})
 nest.PrintNodes()
 
-print(topo.GetPosition(ctx_pyr))
-print(topo.GetPosition(ctx_in))
-
 # extract position information
 ppyr = topo.GetPosition(ctx_pyr)
 pin = topo.GetPosition(ctx_in)

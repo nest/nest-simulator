@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_iaf_dc_aligned_automatic - sli script for test of iaf_psc_alpha resolution independence
 
 Synopsis: (test_iaf_dc_aligned_automatic) run -> compare response with reference data

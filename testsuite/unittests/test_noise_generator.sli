@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_noise_generator - minimal test of noise_generator
 
 Synopsis: (test_noise_generator) run -> dies if assertion fails

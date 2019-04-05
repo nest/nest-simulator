@@ -39,6 +39,7 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "clopath_archiving_node.h"
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
 #include "connection_label.h"
@@ -70,7 +71,9 @@ nest::ConnectionManager::ConnectionManager()
   , have_connections_changed_( true )
   , sort_connections_by_source_( true )
   , has_primary_connections_( false )
+  , check_primary_connections_()
   , secondary_connections_exist_( false )
+  , check_secondary_connections_()
   , stdp_eps_( 1.0e-6 )
 {
 }
@@ -92,6 +95,9 @@ nest::ConnectionManager::initialize()
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
   sort_connections_by_source_ = true;
+
+  check_primary_connections_.resize( num_threads, false );
+  check_secondary_connections_.resize( num_threads, false );
 
 #pragma omp parallel
   {
@@ -626,6 +632,14 @@ nest::ConnectionManager::connect_( Node& s,
   const bool is_primary =
     kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary();
 
+  if ( kernel().model_manager.connector_requires_clopath_archiving( syn_id )
+    and not dynamic_cast< Clopath_Archiving_Node* >( &r ) )
+  {
+    throw NotImplemented(
+      "This synapse model is not supported by the neuron model of at least one "
+      "connection." );
+  }
+
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
     .add_connection( s, r, connections_[ tid ], syn_id, params, delay, weight );
@@ -633,13 +647,19 @@ nest::ConnectionManager::connect_( Node& s,
 
   increase_connection_count( tid, syn_id );
 
-  if ( is_primary )
+  // We do not check has_primary_connections_ and secondary_connections_exist_
+  // directly as this led to worse performance on the supercomputer Piz Daint.
+  if ( not check_primary_connections_[ tid ] and is_primary )
   {
+#pragma omp atomic write
     has_primary_connections_ = true;
+    check_primary_connections_.set( tid, true );
   }
-  else
+  else if ( not check_secondary_connections_[ tid ] and not is_primary )
   {
+#pragma omp atomic write
     secondary_connections_exist_ = true;
+    check_secondary_connections_.set( tid, true );
   }
 }
 
@@ -685,6 +705,13 @@ nest::ConnectionManager::increase_connection_count( const thread tid,
     num_connections_[ tid ].resize( syn_id + 1 );
   }
   ++num_connections_[ tid ][ syn_id ];
+  if ( num_connections_[ tid ][ syn_id ] >= ( 1 << 27 ) - 1 )
+  {
+    throw KernelException( String::compose(
+      "Too many connections: at most %1 connections supported per virtual "
+      "process and synapse model.",
+      ( 1 << 27 ) - 1 ) );
+  }
 }
 
 nest::index
@@ -1221,23 +1248,23 @@ nest::ConnectionManager::get_connections(
       ConnectorBase* connections = connections_[ tid ][ syn_id ];
       if ( connections != NULL )
       {
+        const size_t num_connections_in_thread = connections->size();
+        for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
+        {
+          const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
+          connections->get_connection_with_specified_targets( source_gid,
+            target_neuron_gids,
+            tid,
+            lcid,
+            synapse_label,
+            conns_in_thread );
+        }
+
         for ( std::vector< index >::const_iterator t_gid =
                 target_neuron_gids.begin();
               t_gid != target_neuron_gids.end();
               ++t_gid )
         {
-          std::vector< index > source_lcids;
-          connections->get_source_lcids( tid, *t_gid, source_lcids );
-
-          for ( size_t i = 0; i < source_lcids.size(); ++i )
-          {
-            conns_in_thread.push_back( ConnectionDatum( ConnectionID(
-              source_table_.get_gid( tid, syn_id, source_lcids[ i ] ),
-              *t_gid,
-              tid,
-              syn_id,
-              source_lcids[ i ] ) ) );
-          }
           // target_table_devices_ contains connections both to and from
           // devices. First we get connections from devices.
           target_table_devices_.get_connections_from_devices_(
@@ -1305,18 +1332,12 @@ nest::ConnectionManager::get_connections(
             }
             else
             {
-              for ( std::vector< index >::const_iterator t_gid =
-                      target_neuron_gids.begin();
-                    t_gid != target_neuron_gids.end();
-                    ++t_gid )
-              {
-                connections->get_connection( source_gid,
-                  *t_gid,
-                  tid,
-                  lcid,
-                  synapse_label,
-                  conns_in_thread );
-              }
+              connections->get_connection_with_specified_targets( source_gid,
+                target_neuron_gids,
+                tid,
+                lcid,
+                synapse_label,
+                conns_in_thread );
             }
           }
         }

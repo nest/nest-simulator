@@ -355,7 +355,7 @@ def run_simulation():
     with Logger(params['log_file']) as logger:
 
         nest.ResetKernel()
-        nest.set_verbosity(M_INFO)
+        nest.hl_api.set_verbosity(M_INFO)
 
         logger.log(str(memory_thisjob()) + ' # virt_mem_0')
 
@@ -406,16 +406,16 @@ def compute_rate(sdet):
 
 def memory_thisjob():
     '''Wrapper to obtain current memory usage'''
-    nest.sr('memory_thisjob')
-    return nest.spp()
+    nest.ll_api.sr('memory_thisjob')
+    return nest.ll_api.spp()
 
 #  ----------------------------------------------------------------------------
 
 
 def lambertwm1(x):
     '''Wrapper for LambertWm1 function'''
-    nest.sr('{} LambertWm1'.format(x))
-    return nest.spp()
+    nest.ll_api.sr('{} LambertWm1'.format(x))
+    return nest.ll_api.spp()
 
 #  ----------------------------------------------------------------------------
 

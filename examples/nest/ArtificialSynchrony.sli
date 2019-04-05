@@ -20,7 +20,7 @@
  *
  */
 
- % autorun=true
+% autorun=true
 
 %%%%%%%%%%%%%%%% Write welcome message %%%%%%%%%%%%%%%%%%%%%%
 (\n\n) =

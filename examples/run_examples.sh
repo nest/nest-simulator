@@ -35,9 +35,14 @@ fi
 
 FAILURES=0
 
-# Find all examples in the installation directory that have a line
-# containing "autorun=true"
-EXAMPLES=$(grep -rl --include=\*\.sli 'autorun=true' nest/)
+# Find all examples that have a line containing "autorun=true"
+# The examples can be found in subdirectory nest and in the 
+# examples installation path.
+if [ -d "nest/" ] ; then
+    EXAMPLES=$(grep -rl --include=\*\.sli 'autorun=true' nest/)
+else
+    EXAMPLES=$(grep -rl --include=\*\.sli 'autorun=true' examples/)
+fi
 
 if test -n "$SKIP_LIST"; then
     EXAMPLES=$(echo $EXAMPLES | tr ' ' '\n' | grep -vE $SKIP)

@@ -73,7 +73,6 @@ for i in $EXAMPLES ; do
 
     export NEST_DATA_PATH=$output_dir
     /usr/bin/time -f "$time_format" --quiet sh -c "$runner $example >$logfile 2>&1"
-    
     if [ $? != 0 ] ; then
         echo "    FAILURE!"
         FAILURES=$(( $FAILURES + 1 ))

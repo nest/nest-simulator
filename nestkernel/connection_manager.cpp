@@ -963,6 +963,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
 bool
 nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
 {
+  kernel().connection_manager.set_have_connections_changed( true );
   for ( Token* ct = connectome.begin(); ct != connectome.end(); ++ct )
   {
     DictionaryDatum cd = getValue< DictionaryDatum >( *ct );

@@ -98,9 +98,9 @@ constexpr uint8_t NUM_BITS_GID = 62U;
  * Maximally allowed values for bitfields
  */
 constexpr uint64_t MAX_LCID = generate_max_value( NUM_BITS_LCID );
-constexpr int MAX_RANK = generate_max_value( NUM_BITS_RANK );
-constexpr int MAX_TID = generate_max_value( NUM_BITS_TID );
-constexpr int MAX_SYN_ID = generate_max_value( NUM_BITS_SYN_ID );
+constexpr uint64_t MAX_RANK = generate_max_value( NUM_BITS_RANK );
+constexpr uint64_t MAX_TID = generate_max_value( NUM_BITS_TID );
+constexpr uint64_t MAX_SYN_ID = generate_max_value( NUM_BITS_SYN_ID );
 constexpr uint64_t MAX_GID = generate_max_value( NUM_BITS_GID );
 
 /**

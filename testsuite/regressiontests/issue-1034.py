@@ -164,7 +164,6 @@ class PostTraceTester(object):
         """
 
         for t, trace_nest_val in zip(trace_nest_t[1:], trace_nest[1:]):
-            t = trace_nest_t[i]
             if debug:
                 print("* Finding ref for NEST timepoint t = " + str(t)
                       + ", trace = " + str(trace_nest_val))

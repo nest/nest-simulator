@@ -77,7 +77,7 @@ __all__ = [
     'Prepare',
     'Rank',
     'ResetKernel',
-    'ResetNetwork',
+    'ResetNetwork',  # deprecated
     'Run',
     'RunManager',
     'SetAcceptableLatency',

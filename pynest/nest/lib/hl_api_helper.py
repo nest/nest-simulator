@@ -64,10 +64,11 @@ __all__ = [
     'uni_str',
 ]
 
-
-# These flags are used to print deprecation warnings only once. The
-# corresponding functions will be removed in a future release of NEST.
-_deprecation_warning = {'BackwardCompatibilityConnect': True, 'subnet': True,
+# These flags are used to print deprecation warnings only once.
+# Only flags for special cases need to be entered here, all flags for
+# deprecated functions will be registered by the @deprecated decorator.
+_deprecation_warning = {'BackwardCompatibilityConnect': True,
+                        'subnet': True,
                         'aeif_cond_alpha_RK5': True}
 
 
@@ -116,9 +117,7 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
             alt_func_name = 'Connect'
         if text is None:
             text = "{0} is deprecated and will be removed in a future \
-            version of NEST.\nPlease use {1} instead!\n\
-            For details, see\
-            http://www.nest-simulator.org/connection_management\
+            version of NEST.\nPlease use {1} instead!\
             ".format(func_name, alt_func_name)
             text = get_wrapped_text(text)
 
@@ -136,7 +135,7 @@ def deprecated(alt_func_name, text=None):
     Parameters
     ----------
     alt_func_name : str, optional
-        Name of the function to use instead
+        Name of the function to use instead, may be em
     text : str, optional
         Text to display instead of standard text
 
@@ -171,7 +170,6 @@ def get_unistring_type():
     if sys.version_info[0] < 3:
         return basestring
     return str
-
 
 uni_str = get_unistring_type()
 

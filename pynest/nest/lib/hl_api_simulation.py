@@ -175,10 +175,6 @@ def ResetKernel():
     are reset. The only exception is that dynamically loaded modules are not
     unloaded. This may change in a future version of NEST.
 
-    See Also
-    --------
-    ResetNetwork
-
     KEYWORDS:
    """
 
@@ -186,8 +182,15 @@ def ResetKernel():
 
 
 @check_stack
+@deprecated('', 'ResetNetwork is deprecated and will be removed in NEST 3.0.')
 def ResetNetwork():
     """Reset all nodes and connections to their original state.
+
+    .. deprecated:: 2.18
+    `ResetNetwork` is deprecated and will be removed in NEST 3.0, because
+    this function is not fully able to reset network and simulator state.
+    The only reliable way to reset state is to call `ResetKernel` and then
+    rebuild the network.
 
     Resets the dynamic state of the entire network to its original state.
     The dynamic state comprises typically the membrane potential,

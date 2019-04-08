@@ -115,7 +115,7 @@ end of the interval* during which the threshold was crossed.
 
 NEST also has a some models that determine the precise time of the
 threshold crossing during the interval. Please see the documentation on
-`precise spike time neurons <simulations-with-precise-spike-times.md>`__
+:doc:`precise spike time neurons <simulations_with_precise_spike_time>`
 for details about neuron update in continuous time and the
-`documentation on connection management <connection-management.md>`__
+:doc:`documentation on connection management <connection_management>`
 for how to set the delay when creating synapses.

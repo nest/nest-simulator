@@ -207,7 +207,9 @@ time stamps. For this example, we use the data file, ``messages0.dat``:
     0.3     Hello
     0.7     !
 
-.. note:: In MUSIC, the default unit for time is seconds for the specification
+.. note::
+
+  In MUSIC, the default unit for time is seconds for the specification
   of times, while NEST uses miliseconds.
 
 The script that sets up the receiving side (``msgtest.py``)
@@ -331,7 +333,7 @@ where w is the width of the port. The MUSIC configuration file
     from.cont_out -> to.cont_in [10]
 
 The receiving side is again implemented using a
-`PyNEST <introduction-to-pynest.md>`__ script (``conttest.py``).
+:doc:`PyNEST <../tutorials/index>` script (``conttest.py``).
 We first import the NEST and create an instance of the
 ``music_cont_in_proxy``. we set the name of the port
 it listens on to ``msgdata``. We then simulate the network in

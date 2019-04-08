@@ -31,6 +31,12 @@ import unittest
 
 
 class PostTraceTester(object):
+    '''Test that postsynaptic trace values returned from NEST are consistent
+    with reference values generated in Python.
+
+    For more information, please see the Jupyter notebook in
+    `doc/model_details/test_post_trace.ipynb`.
+    '''
 
     def __init__(self, pre_spike_times, post_spike_times, delay, resolution,
                  tau_minus, trace_match_atol, trace_match_rtol):
@@ -128,9 +134,7 @@ class PostTraceTester(object):
         trace_python_ref = np.zeros(n_timepoints)
 
         for post_spike_time in self.post_spike_times_:
-            t_sp = post_spike_time \
-                   + self.delay_ \
-                   + self.dendritic_delay_
+            t_sp = post_spike_time + self.delay_ + self.dendritic_delay_
             for i in range(n_timepoints):
                 t = (i / float(n_timepoints - 1)) * self.sim_time_
                 if t > t_sp:

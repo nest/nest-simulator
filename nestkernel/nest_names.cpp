@@ -313,6 +313,7 @@ const Name port_name( "port_name" );
 const Name port_width( "port_width" );
 const Name ports( "ports" );
 const Name post_synaptic_element( "post_synaptic_element" );
+const Name post_trace( "post_trace" );
 const Name pre_synaptic_element( "pre_synaptic_element" );
 const Name precise_times( "precise_times" );
 const Name precision( "precision" );

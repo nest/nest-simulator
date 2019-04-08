@@ -333,6 +333,7 @@ extern const Name port_name;
 extern const Name port_width;
 extern const Name ports;
 extern const Name post_synaptic_element;
+extern const Name post_trace;
 extern const Name pre_synaptic_element;
 extern const Name precise_times;
 extern const Name precision;

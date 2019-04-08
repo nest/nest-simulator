@@ -478,7 +478,7 @@ public:
    * @throws IllegalConnection
    *
    */
-  virtual void register_stdp_connection( double );
+  virtual void register_stdp_connection( double, double );
 
   /**
    * Handle incoming spike events.

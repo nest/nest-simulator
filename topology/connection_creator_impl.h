@@ -545,6 +545,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 
   if ( mask_.valid() )
   {
+    MaskedLayer< D > masked_source(
+      source, source_filter_, mask_, true, allow_oversized_ );
 
     for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
           tgt_it != target_end;
@@ -564,11 +566,16 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
         target.get_position( ( *tgt_it )->get_subnet_index() );
 
       // Get (position,GID) pairs for sources inside mask
-      std::vector< std::pair< Position< D >, index > > positions =
-        source.get_global_positions_vector( source_filter_,
-          mask_,
-          target.get_position( ( *tgt_it )->get_subnet_index() ),
-          allow_oversized_ );
+      const Position< D > anchor =
+        target.get_position( ( *tgt_it )->get_subnet_index() );
+      std::vector< std::pair< Position< D >, index > > positions;
+      for ( typename Ntree< D, index >::masked_iterator iter =
+              masked_source.begin( anchor );
+            iter != masked_source.end();
+            ++iter )
+      {
+        positions.push_back( *iter );
+      }
 
       // We will select `number_of_connections_` sources within the mask.
       // If there is no kernel, we can just draw uniform random numbers,

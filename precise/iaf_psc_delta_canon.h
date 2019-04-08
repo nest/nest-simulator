@@ -88,31 +88,6 @@ of the nest simulation kernel because it is at the same time complex
 enough to exhibit non-trivial dynamics and simple enough compute
 relevant measures analytically.
 
-Remarks:
-
-The iaf_psc_delta_canon neuron accepts CurrentEvent connections.
-However, the present method for transmitting CurrentEvents in
-NEST (sending the current to be applied) is not compatible with off-grid
-currents, if more than one CurrentEvent-connection exists. Once CurrentEvents
-are changed to transmit change-of-current-strength, this problem will
-disappear and the canonical neuron will also be able to handle CurrentEvents.
-
-The present implementation uses individual variables for the
-components of the state vector and the non-zero matrix elements of
-the propagator.  Because the propagator is a lower triangular matrix
-no full matrix multiplication needs to be carried out and the
-computation can be done "in place" i.e. no temporary state vector
-object is required.
-
-The template support of recent C++ compilers enables a more succinct
-formulation without loss of runtime performance already at minimal
-optimization levels. A future version of iaf_psc_delta_canon will probably
-address the problem of efficient usage of appropriate vector and
-matrix objects.
-
-Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time plus offset).
-
 Parameters:
 
 The following parameters can be set in the status dictionary.
@@ -129,6 +104,15 @@ V_min      double - Absolute lower value for the membrane potential in mV.
 
 refractory_input bool - If true, do not discard input during
 refractory period. Default: false.
+
+Remarks:
+
+Please note that this node is capable of sending precise spike times
+to target nodes (on-grid spike time plus offset).
+
+The iaf_psc_delta_canon neuron accepts connections transmitting
+CurrentEvents. These events transmit stepwise-constant currents which
+can only change at on-grid times.
 
 References:
 

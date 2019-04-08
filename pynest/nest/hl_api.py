@@ -23,15 +23,22 @@
 High-level API of PyNEST Module
 """
 
-import os
+from . import import_libs as _il
 
-# We search through the subdirectory "lib" of the "nest" module
-# directory and import the content of all Python files therein into
-# the global namespace. This makes the API functions of PyNEST itself
-# and those of extra modules available to the user.
-for name in os.listdir(os.path.join(os.path.dirname(__file__), "lib")):
-    if name.endswith(".py") and not name.startswith('__'):
-        exec("from .lib.{0} import *".format(name[:-3]))
+#############################
+# insert static imports here
+# in the form:
+# from lib.$X import * ; _ignore_modules.add('lib.$X')
+############################
+_ignore_modules = set()
+
+############################
+# Then whatever is left over, load dynamically
+# then do
+#   `from .libs.$X import *`
+# for every module in ./libs/$X.py that is left
+_il.import_libs(__file__, globals(), 'lib', ignore=_ignore_modules)
+############################
 
 # With '__all__' we provide an explicit index of the package. Without any
 # imported submodules and any redundant functions we could minimize list.

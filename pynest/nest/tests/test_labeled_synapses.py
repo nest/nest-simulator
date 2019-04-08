@@ -54,6 +54,11 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             'diffusion_connection_lbl'
         ]
 
+        self.clopath_connections = [
+            'clopath_synapse',
+            'clopath_synapse_lbl'
+        ]
+
         # create neurons that accept all synapse connections (especially gap
         # junctions)... hh_psc_alpha_gap is only available with GSL, hence the
         # skipIf above
@@ -66,6 +71,10 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         # in case of siegert connections use the siegert_neuron model instead
         if syn_model in self.siegert_connections:
             neurons = nest.Create("siegert_neuron", 5)
+
+        # in case of the clopath stdp synapse use the a supported model instead
+        if syn_model in self.clopath_connections:
+            neurons = nest.Create("hh_psc_alpha_clopath", 5)
 
         return neurons
 

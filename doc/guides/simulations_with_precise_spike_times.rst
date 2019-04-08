@@ -2,8 +2,8 @@ Simulations with precise spike times
 ====================================
 
 The simulation resolution *h* and the minimum synaptic transmission
-delay *dmin* define the two major time intervals of the `scheduling and
-simulation flow of NEST <scheduling-and-simulation-flow.md>`__: neurons
+delay *dmin* define the two major time intervals of the :doc:`scheduling and
+simulation flow of NEST <scheduling_and_simulation_flow>`: neurons
 update their state variables in steps of *h*, whereas spikes are
 communicated and delivered to their targets in steps of *dmin*, where
 *dmin* is a multiple of *h*.
@@ -43,7 +43,7 @@ to update its state variables for each substep.
 
 .. figure:: ../_static/img/precise1-300x175.png
 
- Propagation of membrane potential in case of off-grid spiking. 
+ Propagation of membrane potential in case of off-grid spiking.
  Dashed red line indicates precise time of threshold crossing.
 
 If after an update the membrane potential is above the firing threshold,

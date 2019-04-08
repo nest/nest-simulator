@@ -20,6 +20,8 @@
  *
  */
 
+% autorun=true
+
 /*
    The fifth simulator review benchmark is implemented as a variation of the
       * Brunel Network *

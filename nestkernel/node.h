@@ -484,7 +484,7 @@ public:
    * @throws IllegalConnection
    *
    */
-  virtual void register_stdp_connection( double );
+  virtual void register_stdp_connection( double, double );
 
   /**
    * Handle incoming spike events.
@@ -686,6 +686,8 @@ public:
    */
   virtual double get_K_value( double t );
 
+  virtual double get_LTD_value( double t );
+
   /**
    * write the Kminus and triplet_Kminus values at t (in ms) to
    * the provided locations.
@@ -701,6 +703,11 @@ public:
     double t2,
     std::deque< histentry >::iterator* start,
     std::deque< histentry >::iterator* finish );
+
+  virtual void get_LTP_history( double t1,
+    double t2,
+    std::deque< histentry_cl >::iterator* start,
+    std::deque< histentry_cl >::iterator* finish );
 
   /**
    * Modify Event object parameters during event delivery.

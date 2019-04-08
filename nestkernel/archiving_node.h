@@ -32,6 +32,7 @@
 #define ARCHIVING_NODE_H
 
 // C++ includes:
+#include <algorithm>
 #include <deque>
 
 // Includes from nestkernel:
@@ -90,8 +91,6 @@ public:
    * \fn int get_synaptic_elements_vacant(Name n)
    * Get the number of synaptic elements of type n which are available
    * for new synapse creation
-   * Returns a negative number to indicate that synaptic elements
-   * must be deleted during the next update
    */
   int get_synaptic_elements_vacant( Name n ) const;
 
@@ -130,7 +129,9 @@ public:
 
   /**
    * \fn double get_K_value(long t)
-   * return the Kminus value at t (in ms).
+   * return the Kminus (synaptic trace) value at t (in ms). When the trace is
+   * requested at the exact same time that the neuron emits a spike, the trace
+   * value as it was just before the spike is returned.
    */
   double get_K_value( double t );
 
@@ -167,7 +168,7 @@ public:
    * t_first_read: The newly registered synapse will read the history entries
    * with t > t_first_read.
    */
-  void register_stdp_connection( double t_first_read );
+  void register_stdp_connection( double t_first_read, double delay );
 
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d );
@@ -197,12 +198,12 @@ protected:
    */
   void clear_history();
 
-private:
   // number of incoming connections from stdp connectors.
   // needed to determine, if every incoming connection has
   // read the spikehistory for a given point in time
   size_t n_incoming_;
 
+private:
   // sum exp(-(t-ti)/tau_minus)
   double Kminus_;
 
@@ -215,6 +216,9 @@ private:
   // time constant for triplet low pass filtering of "post" spike train
   double tau_minus_triplet_;
   double tau_minus_triplet_inv_;
+
+  double max_delay_;
+  double trace_;
 
   double last_spike_;
 

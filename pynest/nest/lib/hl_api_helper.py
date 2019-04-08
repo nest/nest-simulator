@@ -66,8 +66,17 @@ __all__ = [
 
 
 # These flags are used to print deprecation warnings only once. The
-# corresponding functions will be removed in the 2.6 release of NEST.
-_deprecation_warning = {'BackwardCompatibilityConnect': True}
+# corresponding functions will be removed in a future release of NEST.
+_deprecation_warning = {'BackwardCompatibilityConnect': True, 'subnet': True,
+                        'aeif_cond_alpha_RK5': True}
+
+
+def format_Warning(message, category, filename, lineno, line=None):
+    """Formats deprecation warning."""
+
+    return '%s:%s: %s:%s\n' % (filename, lineno, category.__name__, message)
+
+warnings.formatwarning = format_Warning
 
 
 def get_wrapped_text(text, width=80):
@@ -547,7 +556,7 @@ def model_deprecation_warning(model):
         future version of NEST, use {1} instead.\
         ".format(model, deprecated_models[model])
         text = get_wrapped_text(text)
-        warnings.warn('\n' + text)
+        show_deprecation_warning(model, text=text)
 
 
 def serializable(data):

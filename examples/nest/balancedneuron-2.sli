@@ -19,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+ % autorun=true
+
 %%
 % This is an extended version of the simple balancedneuron.sli script.
 % After finding the rate of the inhibitory background population that

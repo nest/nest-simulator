@@ -23,21 +23,34 @@
 Functions for node handling
 """
 
+import warnings
+
+from ..ll_api import *
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_info import SetStatus
+
+__all__ = [
+    'Create',
+    'GetLID',
+]
 
 
 @check_stack
 def Create(model, n=1, params=None):
-    """Create n instances of type model.
+    """Create one or more nodes.
+
+   Generates `n` new network objects of the supplied model type. If `n` is not
+   given, a single node is created. Note that if setting parameters of the
+   nodes fail, the nodes will still have been created.
 
     Parameters
     ----------
     model : str
         Name of the model to create
     n : int, optional
-        Number of instances to create
-    params : TYPE, optional
+        Number of nodes to create
+    params : dict or list, optional
         Parameters for the new nodes. A single dictionary or a list of
         dictionaries with size n. If omitted, the model's defaults are used.
 
@@ -45,6 +58,14 @@ def Create(model, n=1, params=None):
     -------
     list:
         Global IDs of created nodes
+
+    Raises
+    ------
+    NESTError
+        If setting node parameters fail. However, the nodes will still have
+        been created.
+
+    KEYWORDS:
     """
 
     model_deprecation_warning(model)
@@ -79,6 +100,10 @@ index into GIDCollection instead.')
 def GetLID(gid):
     """Return the local id of a node with the global ID gid.
 
+    .. deprecated:: 2.14
+    `GetLID` is deprecated and will be removed in NEST 3.0. Use
+    index into `GIDCollection` instead.
+
     Parameters
     ----------
     gid : int
@@ -92,10 +117,13 @@ def GetLID(gid):
     Raises
     ------
     NESTError
+        If `gid` contains more than one GID
+
+    KEYWORDS:
     """
 
     if len(gid) > 1:
-        raise NESTError("GetLID() expects exactly one GID.")
+        raise kernel.NESTError("GetLID() expects exactly one GID.")
 
     sps(gid[0])
     sr("GetLID")

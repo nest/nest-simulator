@@ -35,18 +35,10 @@
 namespace nest
 {
 
-const bool
-is_sorted( std::vector< size_t >::const_iterator begin,
-  std::vector< size_t >::const_iterator end )
+void
+nest_quicksort( BlockVector< size_t >& bv0, BlockVector< size_t >& bv1 )
 {
-  for ( std::vector< size_t >::const_iterator it = begin; it < --end; )
-  {
-    if ( *it > *( ++it ) )
-    {
-      return false;
-    }
-  }
-  return true;
+  nest::quicksort3way( bv0, bv1, 0, bv0.size() - 1 );
 }
 
 const bool
@@ -82,7 +74,7 @@ BOOST_AUTO_TEST_CASE( test_random )
     bv1[ i ] = k;
   }
 
-  nest::sort( bv0, bv1 );
+  nest_quicksort( bv0, bv1 );
 
   BOOST_REQUIRE( is_sorted( bv0.begin(), bv0.end() ) );
   BOOST_REQUIRE( is_sorted( bv1.begin(), bv1.end() ) );
@@ -104,7 +96,7 @@ BOOST_AUTO_TEST_CASE( test_linear )
     bv1[ i ] = N - i - 1;
   }
 
-  nest::sort( bv0, bv1 );
+  nest_quicksort( bv0, bv1 );
 
   BOOST_REQUIRE( is_sorted( bv0.begin(), bv0.end() ) );
   BOOST_REQUIRE( is_sorted( bv1.begin(), bv1.end() ) );

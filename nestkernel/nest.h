@@ -55,6 +55,30 @@ void reset_network();
 void enable_dryrun_mode( const index n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
+
+enum Register_Connection_Model_Flags {
+  REGISTER_HPC = 1 << 0,
+  REGISTER_LBL = 1 << 1,
+  IS_PRIMARY = 1 << 2,
+  HAS_DELAY = 1 << 3,
+  SUPPORTS_WFR = 1 << 4,
+  REQUIRES_SYMMETRIC = 1 << 5,
+  REQUIRES_CLOPATH_ARCHIVING = 1 << 6
+};
+
+const int default_connection_model_flags = 
+  REGISTER_HPC |
+  REGISTER_LBL |
+  IS_PRIMARY |
+  HAS_DELAY;
+
+template < template < typename > class ConnectorModelT >
+void
+register_connection_model( const std::string& name, 
+                           const enum Register_Connection_Model_Flags flags=static_cast<Register_Connection_Model_Flags>( default_connection_model_flags ) );
+
+// void nest::register_connection_model<nest::STDPConnection>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, nest::Register_Connection_Model_Flags)
+
 void print_network( index gid, index depth, std::ostream& out = std::cout );
 
 librandom::RngPtr get_vp_rng_of_gid( index target );

@@ -35,6 +35,8 @@
 
 #include "target_identifier.h"
 
+#include "nest.h"
+
 namespace nest
 {
 
@@ -84,48 +86,44 @@ ModelManager::register_preconf_node_model( const Name& name,
   return register_node_model_( model, private_model );
 }
 
-template < template < typename > class ConnectionT >
+// we're templating this function with a class template, e.g. BernoulliConnection< targetidentifierT >
+template < template < typename targetidentifierT > class ConnectionT >
 void
 ModelManager::register_connection_model( const std::string& name,
-  const bool register_hpc,
-  const bool register_lbl,
-  const bool is_primary,
-  const bool has_delay,
-  const bool supports_wfr,
-  const bool requires_symmetric,
-  const bool requires_clopath_archiving )
+                                         const enum Register_Connection_Model_Flags flags )
 {
-    // register normal version of the synapse
-    ConnectorModel* cf = new GenericConnectorModel< ConnectionT < TargetIdentifierPtrRport > >( name,
-    is_primary,
-    has_delay,
-    requires_symmetric,
-    supports_wfr,
-    requires_clopath_archiving );
+  // register normal version of the synapse
+  ConnectorModel* cf = new GenericConnectorModel< ConnectionT < TargetIdentifierPtrRport > >( name,
+    flags & IS_PRIMARY,
+    flags & HAS_DELAY,
+    flags & REQUIRES_SYMMETRIC,
+    flags & SUPPORTS_WFR,
+    flags & REQUIRES_CLOPATH_ARCHIVING );
   register_connection_model_( cf );
 
-  // register the "hpc" version with the same parameters but a different ConnectionT
-  if ( register_hpc )
+  // register the "hpc" version with the same parameters but a different target identifier
+  if ( flags & REGISTER_HPC )
   {
     cf = new GenericConnectorModel< ConnectionT < TargetIdentifierIndex > >(
-        name + "_hpc",
-      is_primary,
-      has_delay,
-      requires_symmetric,
-      supports_wfr,
-      requires_clopath_archiving );
+      name + "_hpc",
+      flags & IS_PRIMARY,
+      flags & HAS_DELAY,
+      flags & REQUIRES_SYMMETRIC,
+      flags & SUPPORTS_WFR,
+      flags & REQUIRES_CLOPATH_ARCHIVING );
     register_connection_model_( cf );
   }
 
-  // register the "lbl" (labeled) version with the same parameters but a different ConnectionT
-  if ( register_lbl )
+  // register the "lbl" (labeled) version with the same parameters but a different connection type
+  if ( flags & REGISTER_LBL )
   {
-    cf = new GenericConnectorModel< ConnectionLabel < ConnectionT < TargetIdentifierPtrRport > > >( name + "_lbl",
-      is_primary,
-      has_delay,
-      requires_symmetric,
-      supports_wfr,
-      requires_clopath_archiving );
+    cf = new GenericConnectorModel< ConnectionLabel < ConnectionT < TargetIdentifierPtrRport > > >(
+      name + "_lbl",
+      flags & IS_PRIMARY,
+      flags & HAS_DELAY,
+      flags & REQUIRES_SYMMETRIC,
+      flags & SUPPORTS_WFR,
+      flags & REQUIRES_CLOPATH_ARCHIVING );
     register_connection_model_( cf );
   }
 

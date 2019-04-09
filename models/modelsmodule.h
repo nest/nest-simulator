@@ -29,6 +29,9 @@
 // Includes from sli:
 #include "slimodule.h"
 
+#include "nest.h"
+#include "nest_impl.h"
+
 namespace nest
 {
 /**

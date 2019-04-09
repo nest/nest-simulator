@@ -35,6 +35,7 @@
 #include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "node.h"
+#include "nest.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -190,15 +191,9 @@ public:
    *
    * @param name The name under which the ConnectorModel will be registered.
    */
-  template < template < typename > class ConnectorModelT >
+  template < template < typename targetidentifierT > class ConnectionT >
   void register_connection_model(const std::string& name,
-    const bool register_hpc=true,
-    const bool register_lbl=true,
-    const bool is_primary=true,
-    const bool has_delay=true,
-    const bool supports_wfr=false,
-    const bool requires_symmetric=false,
-    const bool requires_clopath_archiving=false);
+                                 const enum Register_Connection_Model_Flags flags=default_connection_model_flags );
 
   template < typename ConnectionT >
   void register_secondary_connection_model( const std::string& name,

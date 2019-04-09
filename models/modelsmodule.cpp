@@ -362,76 +362,25 @@ ModelsModule::init( SLIInterpreter* )
 #endif
 
   // register all connection models
-  kernel()
-    .model_manager
-    .register_connection_model< BernoulliConnection >(
-      "bernoulli_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< ClopathConnection >(
+  register_connection_model< BernoulliConnection >( "bernoulli_synapse" );
+  register_connection_model< ClopathConnection >(
       "clopath_synapse",
-      /*requires_symmetric=*/false,
-      /*requires_clopath_archiving=*/true);
-  kernel()
-    .model_manager
-    .register_connection_model< ContDelayConnection >(
-      "cont_delay_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< HTConnection >(
-      "ht_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< Quantal_StpConnection >(
-      "quantal_stp_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< StaticConnection >(
-      "static_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< StaticConnectionHomW >(
-      "static_synapse_hom_w" );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPConnection >(
-      "stdp_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPConnectionHom >(
-      "stdp_synapse_hom" );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPDopaConnection >(
-      "stdp_dopamine_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPFACETSHWConnectionHom >(
-      "stdp_facetshw_synapse_hom" );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPPLConnectionHom >(
-      "stdp_pl_synapse_hom" );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPTripletConnection >(
-      "stdp_triplet_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< TsodyksConnection >(
-      "tsodyks_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< TsodyksConnectionHom >(
-      "tsodyks_synapse_hom" );
-  kernel()
-    .model_manager
-    .register_connection_model< Tsodyks2Connection >(
-      "tsodyks2_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< VogelsSprekelerConnection >(
-      "vogels_sprekeler_synapse" );
+      static_cast<Register_Connection_Model_Flags> ( default_connection_model_flags | REQUIRES_CLOPATH_ARCHIVING ));
+  register_connection_model< ContDelayConnection >( "cont_delay_synapse" );
+  register_connection_model< HTConnection >( "ht_synapse" );
+  register_connection_model< Quantal_StpConnection >( "quantal_stp_synapse" );
+  register_connection_model< StaticConnection >( "static_synapse" );
+  register_connection_model< StaticConnectionHomW >( "static_synapse_hom_w" );
+  register_connection_model< STDPConnection >( "stdp_synapse" );
+  register_connection_model< STDPConnectionHom >( "stdp_synapse_hom" );
+  register_connection_model< STDPDopaConnection >( "stdp_dopamine_synapse" );
+  register_connection_model< STDPFACETSHWConnectionHom >( "stdp_facetshw_synapse_hom" );
+  register_connection_model< STDPPLConnectionHom >( "stdp_pl_synapse_hom" );
+  register_connection_model< STDPTripletConnection >( "stdp_triplet_synapse" );
+  register_connection_model< TsodyksConnection >( "tsodyks_synapse" );
+  register_connection_model< TsodyksConnectionHom >( "tsodyks_synapse_hom" );
+  register_connection_model< Tsodyks2Connection >( "tsodyks2_synapse" );
+  register_connection_model< VogelsSprekelerConnection >( "vogels_sprekeler_synapse" );
 
 
   // register secondary connection models

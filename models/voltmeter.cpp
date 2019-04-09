@@ -43,4 +43,3 @@ Voltmeter::Voltmeter( const Voltmeter& n )
 }
 
 }
-

@@ -138,7 +138,10 @@ ModelManager::register_secondary_connection_model( const std::string& name,
                                                    const enum Register_Connection_Model_Flags flags )
 {
   ConnectorModel* cm = new GenericSecondaryConnectorModel< ConnectionT < TargetIdentifierPtrRport > >(
-    name, flags & HAS_DELAY, flags & REQUIRES_SYMMETRIC, flags & SUPPORTS_WFR );
+    name,
+    flags & HAS_DELAY,
+    flags & REQUIRES_SYMMETRIC,
+    flags & SUPPORTS_WFR );
 
   synindex syn_id = register_connection_model_( cm );
 
@@ -156,7 +159,10 @@ ModelManager::register_secondary_connection_model( const std::string& name,
 
   // create labeled secondary event connection model
   cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT < TargetIdentifierPtrRport > > >(
-    name + "_lbl", flags & HAS_DELAY, flags & REQUIRES_SYMMETRIC, flags & SUPPORTS_WFR );
+    name + "_lbl",
+    flags & HAS_DELAY,
+    flags & REQUIRES_SYMMETRIC,
+    flags & SUPPORTS_WFR );
 
   syn_id = register_connection_model_( cm );
 

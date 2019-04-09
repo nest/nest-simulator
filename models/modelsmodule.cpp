@@ -364,8 +364,8 @@ ModelsModule::init( SLIInterpreter* )
   // register all connection models
   register_connection_model< BernoulliConnection >( "bernoulli_synapse" );
   register_connection_model< ClopathConnection >(
-      "clopath_synapse",
-      static_cast<Register_Connection_Model_Flags> (default_connection_model_flags | REQUIRES_CLOPATH_ARCHIVING ) );
+    "clopath_synapse",
+    static_cast< Register_Connection_Model_Flags > (default_connection_model_flags | REQUIRES_CLOPATH_ARCHIVING ) );
   register_connection_model< ContDelayConnection >( "cont_delay_synapse" );
   register_connection_model< HTConnection >( "ht_synapse" );
   register_connection_model< Quantal_StpConnection >( "quantal_stp_synapse" );
@@ -384,8 +384,8 @@ ModelsModule::init( SLIInterpreter* )
 
   // register secondary connection models
   register_secondary_connection_model< GapJunction >(
-      "gap_junction",
-      static_cast<Register_Connection_Model_Flags> (REQUIRES_SYMMETRIC | SUPPORTS_WFR ));
+    "gap_junction",
+    static_cast< Register_Connection_Model_Flags > ( REQUIRES_SYMMETRIC | SUPPORTS_WFR ) );
   register_secondary_connection_model< RateConnectionInstantaneous >("rate_connection_instantaneous", SUPPORTS_WFR );
   register_secondary_connection_model< RateConnectionDelayed >( "rate_connection_delayed", HAS_DELAY );
   register_secondary_connection_model< DiffusionConnection >( "diffusion_connection", SUPPORTS_WFR );

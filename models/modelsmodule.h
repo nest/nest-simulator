@@ -42,9 +42,9 @@ namespace nest
  * Marc-Oliver Gewaltig
  * Rüdiger Kupper
  * Hans Ekkehard Plesser
- * 
+ *
  * First Version: June 2006
- *  
+ *
  * @todo Should this be a dynamic module?
  */
 class ModelsModule : public SLIModule

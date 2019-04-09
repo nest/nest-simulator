@@ -133,13 +133,13 @@ of doing this is to simply loop over ``Simulate()`` calls:
         nest.Simulate(10)
         # extract and analyse data
         
- would run a simulation in 20 rounds of 10 ms. With this solution, NEST takes
- a number of preparatory and cleanup steps for each ``Simulate()`` call. 
- This makes the solution robust and entirely reliable, but comes with a 
- performance cost.
+would run a simulation in 20 rounds of 10 ms. With this solution, NEST takes
+a number of preparatory and cleanup steps for each ``Simulate()`` call. 
+This makes the solution robust and entirely reliable, but comes with a 
+performance cost.
  
- A more efficient solution doing exactly the same thing is
- 
+A more efficient solution doing exactly the same thing is
+
 ::
 
     nest.Prepare()
@@ -148,7 +148,7 @@ of doing this is to simply loop over ``Simulate()`` calls:
         # extract and analyse data
     nest.Cleanup()
      
-For convenience, the `RunManager()` context manager can handle preparation
+For convenience, the ``RunManager()`` context manager can handle preparation
 and cleanup for you:
 
 ::

@@ -330,45 +330,50 @@ nest::iaf_psc_alpha_ps::calibrate()
  * Update and spike handling functions
  * ---------------------------------------------------------------- */
 
-bool nest::iaf_psc_alpha_ps::get_next_event_(const long T, double& ev_offset, double& ev_weight_ex, double& ev_weight_in, bool& in_spike, bool& ex_spike, bool& end_of_refract)
+bool
+nest::iaf_psc_alpha_ps::get_next_event_( const long T,
+  double& ev_offset,
+  double& ev_weight_ex,
+  double& ev_weight_in,
+  bool& in_spike,
+  bool& ex_spike,
+  bool& end_of_refract )
 {
-    double ev_offset_in(0.), ev_offset_ex(0.);
-    bool end_of_refract_ex, end_of_refract_in;
+  double ev_offset_in( 0. ), ev_offset_ex( 0. );
+  bool end_of_refract_ex, end_of_refract_in;
 
-    in_spike = B_.in_spikes_.get_next_spike(T, true, ev_offset_in,
-                                            ev_weight_in,
-                                            end_of_refract_in);
+  in_spike = B_.in_spikes_.get_next_spike(
+    T, true, ev_offset_in, ev_weight_in, end_of_refract_in );
 
-    ex_spike = B_.ex_spikes_.get_next_spike(T, true, ev_offset_ex,
-                                            ev_weight_ex,
-                                            end_of_refract_ex);
+  ex_spike = B_.ex_spikes_.get_next_spike(
+    T, true, ev_offset_ex, ev_weight_ex, end_of_refract_ex );
 
-    assert( end_of_refract_ex == end_of_refract_in );
-    end_of_refract = end_of_refract_ex;
+  assert( end_of_refract_ex == end_of_refract_in );
+  end_of_refract = end_of_refract_ex;
 
-    bool has_spike = in_spike || ex_spike;
+  bool has_spike = in_spike || ex_spike;
 
-    if (in_spike && ex_spike)
+  if ( in_spike && ex_spike )
+  {
+    if ( ev_offset_ex <= ev_offset_in )
     {
-        if (ev_offset_ex <= ev_offset_in)
-        {
-            ev_offset = ev_offset_ex;
-        }
-        else
-        {
-            ev_offset = ev_offset_in;
-        }
+      ev_offset = ev_offset_ex;
     }
-    else if (in_spike)
+    else
     {
-        ev_offset = ev_offset_in;
+      ev_offset = ev_offset_in;
     }
-    else if (ex_spike)
-    {
-        ev_offset = ev_offset_ex;
-    }
+  }
+  else if ( in_spike )
+  {
+    ev_offset = ev_offset_in;
+  }
+  else if ( ex_spike )
+  {
+    ev_offset = ev_offset_ex;
+  }
 
-    return has_spike;
+  return has_spike;
 }
 
 void
@@ -414,15 +419,21 @@ nest::iaf_psc_alpha_ps::update( Time const& origin,
 
     // save state at beginning of interval for spike-time interpolation
     V_.y_input_before_ = S_.y_input_;
-    V_.I_ex_before_    = S_.I_ex_;
-    V_.I_in_before_    = S_.I_in_;
-    V_.V_m_before_     = S_.V_m_;
+    V_.I_ex_before_ = S_.I_ex_;
+    V_.I_in_before_ = S_.I_in_;
+    V_.V_m_before_ = S_.V_m_;
 
     // get first event
     double ev_offset, ev_weight_in, ev_weight_ex;
     bool in_spike, ex_spike, end_of_refract;
 
-    bool has_spike = get_next_event_(T, ev_offset, ev_weight_ex, ev_weight_in, in_spike, ex_spike, end_of_refract);
+    bool has_spike = get_next_event_( T,
+      ev_offset,
+      ev_weight_ex,
+      ev_weight_in,
+      in_spike,
+      ex_spike,
+      end_of_refract );
 
     if ( not has_spike )
     {
@@ -442,13 +453,13 @@ nest::iaf_psc_alpha_ps::update( Time const& origin,
       }
 
       // update synaptic currents
-      S_.I_ex_ = (V_.expm1_tau_syn_ex_ + 1.) * V_.h_ms_ * S_.dI_ex_
-        + (V_.expm1_tau_syn_ex_ + 1.) * S_.I_ex_;
-      S_.dI_ex_ = (V_.expm1_tau_syn_ex_ + 1.) * S_.dI_ex_;
+      S_.I_ex_ = ( V_.expm1_tau_syn_ex_ + 1. ) * V_.h_ms_ * S_.dI_ex_
+        + ( V_.expm1_tau_syn_ex_ + 1. ) * S_.I_ex_;
+      S_.dI_ex_ = ( V_.expm1_tau_syn_ex_ + 1. ) * S_.dI_ex_;
 
-      S_.I_in_ = (V_.expm1_tau_syn_in_ + 1.) * V_.h_ms_ * S_.dI_in_
-        + (V_.expm1_tau_syn_in_ + 1.) * S_.I_in_;
-      S_.dI_in_ = (V_.expm1_tau_syn_in_ + 1.) * S_.dI_in_;
+      S_.I_in_ = ( V_.expm1_tau_syn_in_ + 1. ) * V_.h_ms_ * S_.dI_in_
+        + ( V_.expm1_tau_syn_in_ + 1. ) * S_.I_in_;
+      S_.dI_in_ = ( V_.expm1_tau_syn_in_ + 1. ) * S_.dI_in_;
 
       /* The following must not be moved before the y1_, dI_ex_ update,
          since the spike-time interpolation within emit_spike_ depends
@@ -504,7 +515,13 @@ nest::iaf_psc_alpha_ps::update( Time const& origin,
         V_.V_m_before_ = S_.V_m_;
         last_offset = ev_offset;
 
-      } while ( get_next_event_(T, ev_offset, ev_weight_ex, ev_weight_in, in_spike, ex_spike, end_of_refract) );
+      } while ( get_next_event_( T,
+        ev_offset,
+        ev_weight_ex,
+        ev_weight_in,
+        in_spike,
+        ex_spike,
+        end_of_refract ) );
 
       // no events remaining, plain update step across remainder
       // of interval
@@ -598,15 +615,20 @@ nest::iaf_psc_alpha_ps::propagate_( const double dt )
     const double ps_e_Tau = numerics::expm1( -dt / P_.tau_m_ );
     const double ps_P30 = -P_.tau_m_ / P_.c_m_ * ps_e_Tau;
 
-    const double ps_P31_ex = V_.gamma_sq_ex_ * ps_e_Tau - V_.gamma_sq_ex_ * ps_e_TauSyn_ex
-      - dt * V_.gamma_ex_ * ps_e_TauSyn_ex - dt * V_.gamma_ex_;
-    const double ps_P32_ex = V_.gamma_ex_ * ps_e_Tau - V_.gamma_ex_ * ps_e_TauSyn_ex;
+    const double ps_P31_ex = V_.gamma_sq_ex_ * ps_e_Tau
+      - V_.gamma_sq_ex_ * ps_e_TauSyn_ex - dt * V_.gamma_ex_ * ps_e_TauSyn_ex
+      - dt * V_.gamma_ex_;
+    const double ps_P32_ex =
+      V_.gamma_ex_ * ps_e_Tau - V_.gamma_ex_ * ps_e_TauSyn_ex;
 
-    const double ps_P31_in = V_.gamma_sq_in_ * ps_e_Tau - V_.gamma_sq_in_ * ps_e_TauSyn_in
-      - dt * V_.gamma_in_ * ps_e_TauSyn_in - dt * V_.gamma_in_;
-    const double ps_P32_in = V_.gamma_in_ * ps_e_Tau - V_.gamma_in_ * ps_e_TauSyn_in;
+    const double ps_P31_in = V_.gamma_sq_in_ * ps_e_Tau
+      - V_.gamma_sq_in_ * ps_e_TauSyn_in - dt * V_.gamma_in_ * ps_e_TauSyn_in
+      - dt * V_.gamma_in_;
+    const double ps_P32_in =
+      V_.gamma_in_ * ps_e_Tau - V_.gamma_in_ * ps_e_TauSyn_in;
 
-    S_.V_m_ = ps_P30 * ( P_.I_e_ + S_.y_input_ ) + ps_P31_ex * S_.dI_ex_ + ps_P32_ex * S_.I_ex_ + ps_P31_in * S_.dI_in_ + ps_P32_in * S_.I_in_
+    S_.V_m_ = ps_P30 * ( P_.I_e_ + S_.y_input_ ) + ps_P31_ex * S_.dI_ex_
+      + ps_P32_ex * S_.I_ex_ + ps_P31_in * S_.dI_in_ + ps_P32_in * S_.I_in_
       + ps_e_Tau * S_.V_m_ + S_.V_m_;
 
     // lower bound of membrane potential
@@ -614,13 +636,13 @@ nest::iaf_psc_alpha_ps::propagate_( const double dt )
   }
 
   // now the synaptic components
-  S_.I_ex_ =
-    (ps_e_TauSyn_ex + 1.) * dt * S_.dI_ex_ + (ps_e_TauSyn_ex + 1.) * S_.I_ex_;
-  S_.dI_ex_ = (ps_e_TauSyn_ex + 1.) * S_.dI_ex_;
+  S_.I_ex_ = ( ps_e_TauSyn_ex + 1. ) * dt * S_.dI_ex_
+    + ( ps_e_TauSyn_ex + 1. ) * S_.I_ex_;
+  S_.dI_ex_ = ( ps_e_TauSyn_ex + 1. ) * S_.dI_ex_;
 
-  S_.I_in_ =
-    (ps_e_TauSyn_in + 1.) * dt * S_.dI_in_ + (ps_e_TauSyn_in + 1.) * S_.I_in_;
-  S_.dI_in_ = (ps_e_TauSyn_in + 1.) * S_.dI_in_;
+  S_.I_in_ = ( ps_e_TauSyn_in + 1. ) * dt * S_.dI_in_
+    + ( ps_e_TauSyn_in + 1. ) * S_.I_in_;
+  S_.dI_in_ = ( ps_e_TauSyn_in + 1. ) * S_.dI_in_;
 }
 
 void
@@ -696,7 +718,8 @@ nest::iaf_psc_alpha_ps::thresh_find_( double const dt ) const
 double
 nest::iaf_psc_alpha_ps::thresh_find1_( double const dt ) const
 {
-  double tau = ( P_.U_th_ - V_.V_m_before_ ) * dt / ( S_.V_m_ - V_.V_m_before_ );
+  double tau =
+    ( P_.U_th_ - V_.V_m_before_ ) * dt / ( S_.V_m_ - V_.V_m_before_ );
   return tau;
 }
 
@@ -706,7 +729,8 @@ nest::iaf_psc_alpha_ps::thresh_find2_( double const dt ) const
 {
   const double h_sq = dt * dt;
   const double derivative = -V_.V_m_before_ / P_.tau_m_
-    + ( P_.I_e_ + V_.y_input_before_ + V_.I_ex_before_ + + V_.I_in_before_ ) / P_.c_m_;
+    + ( P_.I_e_ + V_.y_input_before_ + V_.I_ex_before_ + +V_.I_in_before_ )
+      / P_.c_m_;
 
   const double a =
     ( -V_.V_m_before_ / h_sq ) + ( S_.V_m_ / h_sq ) - ( derivative / dt );
@@ -738,9 +762,10 @@ nest::iaf_psc_alpha_ps::thresh_find3_( double const dt ) const
   const double h_cb = h_sq * h_ms;
 
   const double deriv_t1 = -V_.V_m_before_ / P_.tau_m_
-    + ( P_.I_e_ + V_.y_input_before_ + V_.I_ex_before_ + V_.I_in_before_ ) / P_.c_m_;
-  const double deriv_t2 =
-    -S_.V_m_ / P_.tau_m_ + ( P_.I_e_ + S_.y_input_ + S_.I_ex_ + + S_.I_in_ ) / P_.c_m_;
+    + ( P_.I_e_ + V_.y_input_before_ + V_.I_ex_before_ + V_.I_in_before_ )
+      / P_.c_m_;
+  const double deriv_t2 = -S_.V_m_ / P_.tau_m_
+    + ( P_.I_e_ + S_.y_input_ + S_.I_ex_ + +S_.I_in_ ) / P_.c_m_;
 
   const double w3_ = ( 2 * V_.V_m_before_ / h_cb ) - ( 2 * S_.V_m_ / h_cb )
     + ( deriv_t1 / h_sq ) + ( deriv_t2 / h_sq );

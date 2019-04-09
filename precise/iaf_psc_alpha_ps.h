@@ -119,7 +119,7 @@ References:
     A general and efficient method for incorporating exact spike times in
     globally time-driven simulations Front Neuroinformatics, 4:113
 
-Author: Diesmann, Eppler, Morrison, Plesser, Straube
+Author: Tanguy Fardet (from Diesmann, Eppler, Morrison, Plesser, Straube)
 
 Sends: SpikeEvent
 
@@ -182,7 +182,13 @@ private:
   void init_buffers_();
   void calibrate();
 
-  bool get_next_event_(const long T, double& ev_offset, double& ev_weight_ex, double& ev_weight_in, bool& in_spike, bool& ex_spike, bool& end_of_refract);
+  bool get_next_event_( const long T,
+    double& ev_offset,
+    double& ev_weight_ex,
+    double& ev_weight_in,
+    bool& in_spike,
+    bool& ex_spike,
+    bool& end_of_refract );
 
   /**
    * Time Evolution Operator.

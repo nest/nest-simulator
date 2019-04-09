@@ -83,7 +83,7 @@ def Run(t):
     `Prepare` must be called before `Run` to calibrate the system, and
     `Cleanup` must be called after `Run` to close files, cleanup handles, and
     so on. After `Cleanup`, `Prepare` can and must be called before more `Run`
-    calls. Any calls to `set_status` between `Prepare` and `Cleanup` have
+    calls. Any calls to `SetStatus` between `Prepare` and `Cleanup` have
     undefined behaviour.
 
     See Also
@@ -102,7 +102,7 @@ def Prepare():
     """Calibrate the system before a `Run` call. Not needed for `Simulate`.
 
     Call before the first `Run` call, or before calling `Run` after changing
-    the system, calling `set_status` or `Cleanup`.
+    the system, calling `SetStatus` or `Cleanup`.
 
     See Also
     --------

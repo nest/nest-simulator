@@ -365,7 +365,7 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< BernoulliConnection >( "bernoulli_synapse" );
   register_connection_model< ClopathConnection >(
       "clopath_synapse",
-      static_cast<Register_Connection_Model_Flags> ( (default_connection_model_flags | REQUIRES_CLOPATH_ARCHIVING) ^ REGISTER_HPC ));
+      static_cast<Register_Connection_Model_Flags> (default_connection_model_flags | REQUIRES_CLOPATH_ARCHIVING ) );
   register_connection_model< ContDelayConnection >( "cont_delay_synapse" );
   register_connection_model< HTConnection >( "ht_synapse" );
   register_connection_model< Quantal_StpConnection >( "quantal_stp_synapse" );

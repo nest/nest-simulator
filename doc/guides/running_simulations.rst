@@ -190,4 +190,4 @@ then to build the network anew. If your simulations are rather large and
 you are working on a computer with a job queueing system, it may be most
 efficient to submit individual jobs or a job array to smiulate network 
 instances in parallel; don't forget to use different 
-:doc:`random seeds <random_numbers>`!. 
+:doc:`random seeds <random_numbers>`! 

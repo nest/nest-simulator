@@ -128,6 +128,7 @@ to extract information while the simulation is running. The simplest way
 of doing this is to simply loop over ``Simulate()`` calls:
 
 ::
+
     for _ in range(20):
         nest.Simulate(10)
         # extract and analyse data
@@ -139,17 +140,19 @@ of doing this is to simply loop over ``Simulate()`` calls:
  
  A more efficient solution doing exactly the same thing is
  
- ::
-     nest.Prepare()
-     for _ in range(20):
-         nest.Run(10)
-         # extract and analyse data
-     nest.Cleanup()
+::
+
+    nest.Prepare()
+    for _ in range(20):
+        nest.Run(10)
+        # extract and analyse data
+    nest.Cleanup()
      
 For convenience, the `RunManager()` context manager can handle preparation
 and cleanup for you:
 
 ::
+
     with nest.RunManager():
         for _ in range(20):
             nest.Run(10)
@@ -160,7 +163,7 @@ and cleanup for you:
      ``Run()`` and ``Cleanup()`` in that order
    - You can call ``Run()`` any number of times inside a ``RunManager()`` 
      context or between ``Prepare()`` and ``Cleanup()`` calls
-   - Calling **``SetStatus()``** inside a ``RunManager()`` context or
+   - Calling ``SetStatus()`` inside a ``RunManager()`` context or
      between ``Prepare()`` and ``Cleanup()`` will **lead to unpredictable
      results** 
    - After calling ``Cleanup()``, you need to call ``Prepare()`` again before
@@ -179,7 +182,7 @@ without re-seeding. Unfortunately, **such a reset is not possible in NEST**.
 The ``ResetNetwork()`` function, which is available in NEST 2, but will be
 removed in NEST 3, resets state to default values and deletes spikes that 
 are in the delivery pipeline, but it does not, e.g., reset plastic synapses.
-We therefore **advise against using ``ResetNetwork()``**.
+We therefore **advise against using** ``ResetNetwork()``.
 
 The only reliable way to perform two simulations of a network from exactly
 the same starting point is to restart NEST or to call `ResetKernel()` and
@@ -187,4 +190,4 @@ then to build the network anew. If your simulations are rather large and
 you are working on a computer with a job queueing system, it may be most
 efficient to submit individual jobs or a job array to smiulate network 
 instances in parallel; don't forget to use different 
-:doc:`random seeds </random_numbers>`!. 
+:doc:`random seeds <random_numbers>`!. 

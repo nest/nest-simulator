@@ -246,7 +246,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     if model is not None:
         deprecation_text = "".join([
             "The argument 'model' is there for backward compatibility with ",
-            "the old Connect function and will be removed NEST 3. ",
+            "the old Connect function and will be removed in NEST 3.0. ",
             "Please change the name of the keyword argument from 'model' to ",
             "'syn_spec'. For details, see the documentation ",
             "at:\nhttp://www.nest-simulator.org/connection_management"

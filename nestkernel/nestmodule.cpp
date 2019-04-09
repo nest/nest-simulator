@@ -724,7 +724,7 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
    Synopsis: ResetNetwork -> -
    Description:
 
-   ResetNetwork is deprecated as of NEST 2.18 and will be removed in NEST3,
+   ResetNetwork is deprecated as of NEST 2.18 and will be removed in NEST 3.0,
    because it cannot be implemented in an efficient and consistent way.
 
    ResetNetwork resets the dynamic state of the entire network to its state

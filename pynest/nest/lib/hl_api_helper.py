@@ -135,7 +135,7 @@ def deprecated(alt_func_name, text=None):
     Parameters
     ----------
     alt_func_name : str, optional
-        Name of the function to use instead, may be em
+        Name of the function to use instead, may be empty string
     text : str, optional
         Text to display instead of standard text
 

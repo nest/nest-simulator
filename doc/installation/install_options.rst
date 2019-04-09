@@ -93,6 +93,9 @@ Change compilation behavior::
     -Dwith-debug=[OFF|ON|<list;of;flags>]     Enable user defined debug flags. Separate
                                               multiple flags by ';'.
                                               [default OFF, when ON, defaults to '-g']
+    -Dwith-intel=[OFF|ON|<list;of;flags>]     Enable user defined flags for the Intel compiler.
+                                              Separate multiple flags by ';'.
+                                              [default OFF, when ON, defaults to '-fp-model strict']
     -Dwith-libraries=<list;of;libraries>      Link additional libraries. Give full path.
                                               Separate multiple libraries by ';'.
                                               [default OFF]
@@ -208,6 +211,18 @@ Compiler-specific options
 
 NEST has reasonable default compiler options for the most common compilers.
 
-When compiling with the Portland compiler, use the ``-Kieee`` flag to ensure that computations obey the IEEE754 standard for floating point numerics.
+When compiling with the *Portland* compiler:
+  Use the ``-Kieee`` flag to ensure that computations obey the IEEE754 standard for floating point numerics.
+
+When compiling with the *Intel* compiler:
+  Use the option ::
+
+      -Dwith-intel=ON
+
+  or ::
+
+      -Dwith-intel="-fp-model strict;<additional-intel-flags>"
+
+  to ensure that computations obey the IEEE754 standard for floating point numerics.
 
 

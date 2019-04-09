@@ -1,4 +1,4 @@
-Scheduling and simulation flow
+Running simulations
 ==============================
 
 Introduction
@@ -119,3 +119,72 @@ threshold crossing during the interval. Please see the documentation on
 for details about neuron update in continuous time and the
 :doc:`documentation on connection management <connection_management>`
 for how to set the delay when creating synapses.
+
+Splitting a simulation into multiple intervals
+----------------------------------------------
+
+In some cases, it may be useful to run a simulation in shorter intervals
+to extract information while the simulation is running. The simplest way
+of doing this is to simply loop over ``Simulate()`` calls:
+
+::
+    for _ in range(20):
+        nest.Simulate(10)
+        # extract and analyse data
+        
+ would run a simulation in 20 rounds of 10 ms. With this solution, NEST takes
+ a number of preparatory and cleanup steps for each ``Simulate()`` call. 
+ This makes the solution robust and entirely reliable, but comes with a 
+ performance cost.
+ 
+ A more efficient solution doing exactly the same thing is
+ 
+ ::
+     nest.Prepare()
+     for _ in range(20):
+         nest.Run(10)
+         # extract and analyse data
+     nest.Cleanup()
+     
+For convenience, the `RunManager()` context manager can handle preparation
+and cleanup for you:
+
+::
+    with nest.RunManager():
+        for _ in range(20):
+            nest.Run(10)
+            # extract and analyse data
+
+.. note::
+   - If you do not use ``RunManager()``, you must call ``Prepare()``, 
+     ``Run()`` and ``Cleanup()`` in that order
+   - You can call ``Run()`` any number of times inside a ``RunManager()`` 
+     context or between ``Prepare()`` and ``Cleanup()`` calls
+   - Calling **``SetStatus()``** inside a ``RunManager()`` context or
+     between ``Prepare()`` and ``Cleanup()`` will **lead to unpredictable
+     results** 
+   - After calling ``Cleanup()``, you need to call ``Prepare()`` again before
+     calling ``Run()``
+
+Repeated simulations
+--------------------
+
+A possible use case for a NEST simulation is to build a network, simulate
+it for some time, then reset the network to the precise state in which
+it was created, and simulate it again. If the network receives random input,
+also re-seeding the random number generators should result in identical
+results in the first and second run, while different results should obtain
+without re-seeding. Unfortunately, **such a reset is not possible in NEST**.
+
+The ``ResetNetwork()`` function, which is available in NEST 2, but will be
+removed in NEST 3, resets state to default values and deletes spikes that 
+are in the delivery pipeline, but it does not, e.g., reset plastic synapses.
+We therefore **advise against using ``ResetNetwork()``**.
+
+The only reliable way to perform two simulations of a network from exactly
+the same starting point is to restart NEST or to call `ResetKernel()` and
+then to build the network anew. If your simulations are rather large and
+you are working on a computer with a job queueing system, it may be most
+efficient to submit individual jobs or a job array to smiulate network 
+instances in parallel; don't forget to use different 
+:doc:`random seeds </random_numbers>`!. 

@@ -195,11 +195,9 @@ public:
   void register_connection_model(const std::string& name,
                                  const enum Register_Connection_Model_Flags flags=default_connection_model_flags );
 
-  template < typename ConnectionT >
+  template < template < typename targetidentifierT > class ConnectionT >
   void register_secondary_connection_model( const std::string& name,
-    const bool has_delay = true,
-    const bool requires_symmetric = false,
-    const bool supports_wfr = true );
+                                            const enum Register_Connection_Model_Flags flags=default_secondary_connection_model_flags );
 
   /**
    * @return The model id of a given model name

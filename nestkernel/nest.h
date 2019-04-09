@@ -72,12 +72,19 @@ const int default_connection_model_flags =
   IS_PRIMARY |
   HAS_DELAY;
 
+const int default_secondary_connection_model_flags = 
+  SUPPORTS_WFR |
+  HAS_DELAY;
+
 template < template < typename > class ConnectorModelT >
 void
 register_connection_model( const std::string& name, 
                            const enum Register_Connection_Model_Flags flags=static_cast<Register_Connection_Model_Flags>( default_connection_model_flags ) );
 
-// void nest::register_connection_model<nest::STDPConnection>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, nest::Register_Connection_Model_Flags)
+template < template < typename > class ConnectorModelT >
+void
+register_secondary_connection_model( const std::string& name, 
+                                     const enum Register_Connection_Model_Flags flags=static_cast<Register_Connection_Model_Flags>( default_secondary_connection_model_flags ) );
 
 void print_network( index gid, index depth, std::ostream& out = std::cout );
 

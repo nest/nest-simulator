@@ -382,36 +382,13 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< Tsodyks2Connection >( "tsodyks2_synapse" );
   register_connection_model< VogelsSprekelerConnection >( "vogels_sprekeler_synapse" );
 
-
   // register secondary connection models
-  kernel()
-    .model_manager
-    .register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
+  register_secondary_connection_model< GapJunction >(
       "gap_junction",
-      /*has_delay=*/false,
-      /*requires_symmetric=*/true,
-      /*supports_wfr=*/true );
-  kernel()
-    .model_manager
-    .register_secondary_connection_model< RateConnectionInstantaneous< TargetIdentifierPtrRport > >(
-      "rate_connection_instantaneous",
-      /*has_delay=*/false,
-      /*requires_symmetric=*/false,
-      /*supports_wfr=*/true );
-  kernel()
-    .model_manager
-    .register_secondary_connection_model< RateConnectionDelayed< TargetIdentifierPtrRport > >(
-      "rate_connection_delayed",
-      /*has_delay=*/true,
-      /*requires_symmetric=*/false,
-      /*supports_wfr=*/false );
-  kernel()
-    .model_manager
-    .register_secondary_connection_model< DiffusionConnection< TargetIdentifierPtrRport > >(
-      "diffusion_connection",
-      /*has_delay=*/false,
-      /*requires_symmetric=*/false,
-      /*supports_wfr=*/true );
+      static_cast<Register_Connection_Model_Flags> (REQUIRES_SYMMETRIC | SUPPORTS_WFR ));
+  register_secondary_connection_model< RateConnectionInstantaneous >("rate_connection_instantaneous", SUPPORTS_WFR );
+  register_secondary_connection_model< RateConnectionDelayed >( "rate_connection_delayed", HAS_DELAY );
+  register_secondary_connection_model< DiffusionConnection >( "diffusion_connection", SUPPORTS_WFR );
 }
 
 } // namespace nest

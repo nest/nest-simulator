@@ -132,15 +132,13 @@ ModelManager::register_connection_model( const std::string& name,
 /**
  * Register a synape with default Connector and without any common properties.
  */
-template < typename ConnectionT >
+template < template < typename targetidentifierT > class ConnectionT >
 void
 ModelManager::register_secondary_connection_model( const std::string& name,
-  const bool has_delay,
-  const bool requires_symmetric,
-  const bool supports_wfr )
+                                                   const enum Register_Connection_Model_Flags flags )
 {
-  ConnectorModel* cm = new GenericSecondaryConnectorModel< ConnectionT >(
-    name, has_delay, requires_symmetric, supports_wfr );
+  ConnectorModel* cm = new GenericSecondaryConnectorModel< ConnectionT < TargetIdentifierPtrRport > >(
+    name, flags & HAS_DELAY, flags & REQUIRES_SYMMETRIC, flags & SUPPORTS_WFR );
 
   synindex syn_id = register_connection_model_( cm );
 
@@ -154,11 +152,11 @@ ModelManager::register_secondary_connection_model( const std::string& name,
 
   secondary_connector_models_[ syn_id ] = cm;
 
-  ConnectionT::EventType::set_syn_id( syn_id );
+  ConnectionT < TargetIdentifierPtrRport >::EventType::set_syn_id( syn_id );
 
   // create labeled secondary event connection model
-  cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT > >(
-    name + "_lbl", has_delay, requires_symmetric, supports_wfr );
+  cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT < TargetIdentifierPtrRport > > >(
+    name + "_lbl", flags & HAS_DELAY, flags & REQUIRES_SYMMETRIC, flags & SUPPORTS_WFR );
 
   syn_id = register_connection_model_( cm );
 
@@ -172,7 +170,7 @@ ModelManager::register_secondary_connection_model( const std::string& name,
 
   secondary_connector_models_[ syn_id ] = cm;
 
-  ConnectionT::EventType::set_syn_id( syn_id );
+  ConnectionT < TargetIdentifierPtrRport >::EventType::set_syn_id( syn_id );
 }
 
 inline Node*

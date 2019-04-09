@@ -44,7 +44,6 @@ function( NEST_PROCESS_WITH_DEBUG )
   endif ()
 endfunction()
 
-
 function( NEST_PROCESS_WITH_INTEL )
   if ( with-intel )
     if ( with-intel STREQUAL "ON" )

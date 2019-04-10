@@ -761,119 +761,6 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-   Name: DataConnect_i_D_s - Connect many neurons from data.
-
-   Synopsis:
-   gid dict model  DataConnect_i_D_s -> -
-
-   gid    - GID of the source neuron
-   dict   - dictionary with connection parameters
-   model  - the synapse model as string or literal
-
-   Description:
-   Connects the source neuron to targets according to the data in dict, using
-   the synapse 'model'.
-
-   Dict is a parameter dictionary that must contain the connection parameters as
-   DoubleVectors.
-   The parameter dictionary must contain at least the fields:
-   /target <. gid_1 ... gid_n .>
-   /weight <. w1_1 ... w_n .>
-   /delay  <. d_1 ... d_n .>
-   All of these must be DoubleVectors of the same length.
-
-   Depending on the synapse model, the dictionary may contain other keys, again
-   as DoubleVectors of the same length as /target.
-
-   DataConnect will iterate all vectors and create the connections according to
-   the parameters given.
-   SeeAlso: DataConnect_a, DataConnect
-   Author: Marc-Oliver Gewaltig
-   FirstVersion: August 2011
-   SeeAlso: Connect
-*/
-void
-NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 3 );
-
-  if ( kernel().vp_manager.get_num_threads() > 1 )
-  {
-    throw KernelException( "DataConnect cannot be used with multiple threads" );
-  }
-
-  const index source = getValue< long >( i->OStack.pick( 2 ) );
-  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-  {
-    throw UnknownSynapseType( synmodel_name.toString() );
-  }
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  kernel().connection_manager.data_connect_single(
-    source, params, synmodel_id );
-
-  ALL_ENTRIES_ACCESSED(
-    *params, "Connect", "The following synapse parameters are unused: " );
-
-  i->OStack.pop( 3 );
-  i->EStack.pop();
-}
-
-/** @BeginDocumentation
-    Name: DataConnect_a - Connect many neurons from a list of synapse status
-   dictionaries.
-
-    Synopsis:
-    [dict1, dict2, ..., dict_n ]  DataConnect_a -> -
-
-    This variant of DataConnect can be used to re-instantiate a given
-   connectivity matrix.
-    The argument is a list of dictionaries, each containing at least the keys
-    /source
-    /target
-    /weight
-    /delay
-    /synapse_model
-
-    Example:
-
-    % assume a connected network
-
-    << >> GetConnections    /conns Set % Get all connections
-    conns { GetStatus } Map /syns  Set % retrieve their synapse status
-
-    ResetKernel                        % clear everything
-    % rebuild neurons
-    syns DataConnect                   % restore the connecions
-
-
-    Author: Marc-Oliver Gewaltig
-    FirstVersion: May 2012
-    SeeAlso: DataConnect_i_D_s, Connect
- */
-void
-NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-
-  if ( kernel().vp_manager.get_num_threads() > 1 )
-  {
-    throw KernelException( "DataConnect cannot be used with multiple threads" );
-  }
-
-  const ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );
-
-  kernel().connection_manager.data_connect_connectome( connectome );
-  i->OStack.pop();
-  i->EStack.pop();
-}
-
-/** @BeginDocumentation
    Name: MemoryInfo - Report current memory usage.
    Description:
    MemoryInfo reports the current utilization of the memory manager for all
@@ -1742,10 +1629,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Create_l_i", &create_l_ifunction );
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
-
-  i->createcommand(
-    "DataConnect_i_D_s", &dataconnect_i_D_sfunction, "NEST 3.0" );
-  i->createcommand( "DataConnect_a", &dataconnect_afunction, "NEST 3.0" );
 
   i->createcommand( "ResetNetwork", &resetnetworkfunction );
   i->createcommand( "ResetKernel", &resetkernelfunction );

@@ -38,7 +38,6 @@ __all__ = [
     'CGParse',
     'CGSelectImplementation',
     'Connect',
-    'DataConnect',
     'Disconnect',
     'GetConnections',
 ]
@@ -381,93 +380,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                 "syn_spec needs to be a string or dictionary.")
 
     sr('Connect')
-
-
-@check_stack
-@deprecated('', 'DataConnect is deprecated and will be removed in NEST 3.0.\
-Use Connect() with one_to_one rule instead.')
-def DataConnect(pre, params=None, model="static_synapse"):
-    """Connect neurons from lists of connection data.
-
-    Parameters
-    ----------
-    pre : list
-        Presynaptic nodes, given as lists of GIDs or lists
-        of synapse status dictionaries. See below.
-    params : list, optional
-        See below
-    model : str, optional
-        Synapse model to use, see below
-
-    Raises
-    ------
-    TypeError
-
-    Usage Variants
-    --------------
-
-    Variant 1
-    ~~~~~~~~~
-
-    Connect each neuron in pre to the targets given in params,
-    using synapse type model.
-
-    - pre: [gid_1, ... gid_n]
-    - params: [ {param_1}, ..., {param_n} ]
-    - model= 'synapse_model'
-
-    The dictionaries param_1 to param_n must contain at least the
-    following keys:
-    - 'target'
-    - 'weight'
-    - 'delay'
-    Each key must resolve to a list or numpy.ndarray of values.
-
-    Depending on the synapse model, other parameters can be given
-    in the same format. All arrays in params must have the same
-    length as 'target'.
-
-    Variant 2
-    ~~~~~~~~~
-
-    Connect neurons according to a list of synapse status dictionaries,
-    as obtained from GetStatus.
-
-    pre = [ {synapse_state1}, ..., {synapse_state_n}]
-    params=None
-    model=None
-
-    During connection, status dictionary misses will not raise errors,
-    even if the kernel property 'dict_miss_is_error' is True.
-    """
-
-    if not is_coercible_to_sli_array(pre):
-        raise TypeError(
-            "pre must be a list of nodes or connection dictionaries")
-
-    if params is not None:
-
-        if not is_coercible_to_sli_array(params):
-            raise TypeError("params must be a list of dictionaries")
-
-        cmd = '({0}) DataConnect_i_D_s '.format(model)
-
-        for s, p in zip(pre, params):
-            sps(s)
-            sps(p)
-            sr(cmd)
-    else:
-        # Call the variant where all connections are given explicitly
-        # Disable dict checking, because most models can't re-use
-        # their own status dict
-
-        dict_miss = GetKernelStatus('dict_miss_is_error')
-        SetKernelStatus({'dict_miss_is_error': False})
-
-        sps(pre)
-        sr('DataConnect_a')
-
-        SetKernelStatus({'dict_miss_is_error': dict_miss})
 
 
 @check_stack

@@ -46,7 +46,6 @@ __all__ = [
     'Connectome',
     'CopyModel',
     'Create',
-    'DataConnect',  # deprecated
     'DisableStructuralPlasticity',
     'Disconnect',
     'EnableStructuralPlasticity',

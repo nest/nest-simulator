@@ -257,18 +257,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } restorenodes_afunction;
 
-  class DataConnect_i_D_sFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } dataconnect_i_D_sfunction;
-
-  class DataConnect_aFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } dataconnect_afunction;
-
   class Disconnect_g_g_D_DFunction : public SLIFunction
   {
   public:

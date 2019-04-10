@@ -937,20 +937,20 @@ def
       mainly important for NEST internally.
    4. In OpenMP mode, GetConnections works thread-parallel for better performance.
    5. Connection objects can be converted to SLI lists with cva.
-   6. Connection objects can be passed to SetSynapseStatus, GetSynapseStatus, and DataConnect
+   6. Connection objects can be passed to SetSynapseStatus, and GetSynapseStatus
 
-   SeeAlso: DataConnect, SetSynapseStatus, GetSynapseStatus, synapsedict
+   SeeAlso: SetSynapseStatus, GetSynapseStatus, synapsedict
 */
-/GetConnections [/dictionarytype] 
-{ 
+/GetConnections [/dictionarytype]
+{
   /pdict Set
   [ /source /target ]
   {
     /key Set
-    pdict key known 
-    { 
-      pdict key get 
-      GIDCollectionQ exch ; not  
+    pdict key known
+    {
+      pdict key get
+      GIDCollectionQ exch ; not
       {
 	      key cvs ( argument must be GIDCollection) join M_ERROR message
 	      /GetConnections /ArgumentError raiseerror
@@ -982,7 +982,7 @@ def
    Status information is only available for connections with targets on
    the MPI process executing the command.
 
-   See also: GetConnections, SetSynapseStatus, DataConnect
+   See also: GetConnections, SetSynapseStatus
 */
 /GetSynapseStatus [/arraytype] /GetStatus_a load def
 
@@ -1007,67 +1007,9 @@ def
    be changed for connections with targets on the MPI process executing
    SetSynapseStatus.
 
-   See also: GetConnections, GetSynapseStatus, DataConnect
-*/   
+   See also: GetConnections, GetSynapseStatus
+*/
 /SetSynapseStatus [/arraytype /arraytype] /SetStatus_aa load def
-
-/** @BeginDocumentation
-     Name: DataConnect - Connect many neurons from data.
-
-     Synopsis: 
-     1.   source dict model  DataConnect_i_D_a -> -
-
-     source - GID of the source neuron
-     dict   - dictionary with connection parameters
-     model  - the synapse model as string or literal
-
-     2. [dict1 dict2 .... dict_n] DataConnect_a -> -
-     
-     The argument is a list with synapse status dictionaries as obtained from GetStatus.
-
-     Description:
-
-     Variant 1:
-     This variant is used if connectivity data is explicitly given and read from files.
-     Connects the source neuron to targets according to the data in dict, using the synapse 'model'.
-     Dict is a parameter dictionary that must contain at least the following fields:
-     /target
-     /weight
-     /delay
-     Other parameters depend on the synapse model. 
-     The values in the dictionaries are arrays of equal size, specifying the parameters for the
-     respective connection. The arrays should all be of type DoubleVectorDatum (numpy.array(dtype=float)). 
-     Note that for performance reasons, target GIDs must be given as doubles rather than integers!
-
-     The second variant of DataConnect can be used to re-instantiate a given connectivity matrix.
-     The argument is a list of dictionaries, each containing at least the keys
-     /source
-     /target
-     /weight
-     /delay
-     /synapse_model
-     
-     Example:
-     
-     % assume a connected network
-
-     << >> GetConnections /conns Set      % Get all connections
-     conns { GetStatus } Map  /syns  Set  % retrieve their synapse status
-
-     ResetKernel                          % clear everything
-     % rebuild neurons
-     syns DataConnect                     % restore the connecions
-
-     Author: Marc-Oliver Gewaltig
-     FirstVersion: August 2011
-     SeeAlso: DataConnect_i_D_s, DataConnect_a, Connect
-  */ 
-
-/DataConnect trie
-  [/integertype /dictionarytype /literaltype] /DataConnect_i_D_s load addtotrie
-  [/integertype /dictionarytype /stringtype] /DataConnect_i_D_s load addtotrie
-  [/arraytype] /DataConnect_a load addtotrie
-def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

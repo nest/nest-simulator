@@ -27,17 +27,17 @@ Name: testsuite::ticket-787 Ensure that all commands raise errors instead of cra
 Synopsis: (ticket-787) run -> NEST fails if test fails
 
 Description:
-This ticket executes all tries, procedures and functions in systemdict. 
+This ticket executes all tries, procedures and functions in systemdict.
 
 Candidates with names beginning with :, ending with _ or explicitly
-excluded are not tested, since they are internals that need not implement 
+excluded are not tested, since they are internals that need not implement
 complete error checking.
 
-As long as they all either pass or raise proper errors, the test will pass. 
+As long as they all either pass or raise proper errors, the test will pass.
 
 Remark:
 - This test will only run in serial mode, as it needs to spawn subprocesses.
-- Functions defined in other dictionaries that systemdict are not tested. 
+- Functions defined in other dictionaries that systemdict are not tested.
 
 Author: Hans Ekkehard Plesser, 2014-11-26
  */
@@ -48,7 +48,7 @@ Author: Hans Ekkehard Plesser, 2014-11-26
 M_ERROR setverbosity
 
 % preparatory work for proper test code in case NEST is complied with MPI support
-% For now we just ignore this test, this will later be replaced 
+% For now we just ignore this test, this will later be replaced
 % by a restart of NEST with a serial binary.
 skip_if_have_mpi
 
@@ -71,7 +71,7 @@ systemdict /GNUReadline known not {
         /CopyModel_l_l /CopyModel_l_l_D /CreateLayer_D
 	/CreateMask_D /CreateParameter_D /CreateRDV_g_vf /CreateRNG_gt_i
 	/Create_l /Create_l_D /Create_l_i /Create_l_i_D /CyclicValue_d_a
-	/CyclicValue_d_d_d /DataConnect_a /DataConnect_i_D_s /Displacement_a_i
+	/CyclicValue_d_d_d /Displacement_a_i
 	/Distance_a_i /DumpLayerConnections_os_i_l
 	/DumpLayerNodes_os_i /FileNames_r /FileNames_s /FixedPoint__p
 	/FixedPoint__p_i /Flatten_a /Flatten_a_i
@@ -131,10 +131,10 @@ systemdict /GNUReadline known not {
 % find all tries, functions and procedures in systemdict
 /candidates
   systemdict keys
-  { 
+  {
     /k Set
     systemdict k get type [/trietype /functiontype /proceduretype] exch MemberQ
-    k cvs 1 Take (:) neq and 
+    k cvs 1 Take (:) neq and
     k cvs -1 Take (_) neq and
     private_skip k MemberQ not and
     special_skip k MemberQ not and
@@ -149,8 +149,8 @@ candidates
 {
   /cand Set
   cand ==
-  
-  % we trick a little to turn the item into a procedure ... 
+
+  % we trick a little to turn the item into a procedure ...
   cand cvs cvx passorfailbutnocrash_or_die
 } forall
 

@@ -71,6 +71,7 @@ neurons_interspike_ps = [
     "iaf_psc_alpha_presc",
     "iaf_psc_delta_canon",
     "iaf_psc_exp_ps",
+    "iaf_psc_alpha_ps",
 ]
 
 # Models that first clamp the membrane potential at a higher value

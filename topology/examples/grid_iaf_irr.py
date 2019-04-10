@@ -45,9 +45,9 @@ l1 = topo.CreateLayer({'extent': [2., 1.5],
                        'positions': pos,
                        'elements': 'iaf_psc_alpha'})
 
-nest.hl_api.PrintNetwork()
-nest.hl_api.PrintNetwork(2)
-nest.hl_api.PrintNetwork(2, l1)
+nest.PrintNetwork()
+nest.PrintNetwork(2)
+nest.PrintNetwork(2, l1)
 
 topo.PlotLayer(l1, nodesize=50)
 

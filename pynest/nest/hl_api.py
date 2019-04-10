@@ -75,6 +75,7 @@ __all__ = [
     'Models',
     'NumProcesses',
     'Prepare',
+    'PrintNetwork',  # deprecated
     'Rank',
     'ResetKernel',
     'ResetNetwork',
@@ -88,8 +89,11 @@ __all__ = [
     'SetStructuralPlasticityStatus',
     'Simulate',
     'authors',
+    'get_verbosity',
     'help',
     'helpdesk',
+    'message',
+    'set_verbosity',
     'sysinfo',
     'version',
 ]

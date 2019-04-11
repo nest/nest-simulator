@@ -161,6 +161,13 @@ function( NEST_PRINT_CONFIG_SUMMARY )
   endif ()
 
   message( "" )
+
+  if ( with-intel-flags AND NOT ("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel") )
+    message( "You have specified flags for the Intel compiler (-Dwith-intel-flags)," )
+    message( "but the Intel compiler is not used. These flags are therefore ignored." )
+    message( "" )
+  endif ()
+
   message( "--------------------------------------------------------------------------------" )
   message( "" )
   message( "The NEST executable will be installed to:" )

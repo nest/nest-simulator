@@ -83,7 +83,7 @@ def Run(t):
     `Prepare` must be called before `Run` to calibrate the system, and
     `Cleanup` must be called after `Run` to close files, cleanup handles, and
     so on. After `Cleanup`, `Prepare` can and must be called before more `Run`
-    calls. Any calls to `set_status` between `Prepare` and `Cleanup` have
+    calls. Any calls to `SetStatus` between `Prepare` and `Cleanup` have
     undefined behaviour.
 
     See Also
@@ -102,7 +102,7 @@ def Prepare():
     """Calibrate the system before a `Run` call. Not needed for `Simulate`.
 
     Call before the first `Run` call, or before calling `Run` after changing
-    the system, calling `set_status` or `Cleanup`.
+    the system, calling `SetStatus` or `Cleanup`.
 
     See Also
     --------
@@ -175,10 +175,6 @@ def ResetKernel():
     are reset. The only exception is that dynamically loaded modules are not
     unloaded. This may change in a future version of NEST.
 
-    See Also
-    --------
-    ResetNetwork
-
     KEYWORDS:
    """
 
@@ -186,8 +182,15 @@ def ResetKernel():
 
 
 @check_stack
+@deprecated('', 'ResetNetwork is deprecated and will be removed in NEST 3.0.')
 def ResetNetwork():
     """Reset all nodes and connections to their original state.
+
+    .. deprecated:: 2.18
+    `ResetNetwork` is deprecated and will be removed in NEST 3.0, because
+    this function is not fully able to reset network and simulator state.
+    The only reliable way to reset state is to call `ResetKernel` and then
+    rebuild the network.
 
     Resets the dynamic state of the entire network to its original state.
     The dynamic state comprises typically the membrane potential,

@@ -32,8 +32,7 @@
 
 #include "nest.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: gif_psc_exp_multisynapse - Current-based generalized
@@ -145,8 +144,7 @@ Author: March 2016, Setareh
 
 SeeAlso: pp_psc_delta, gif_psc_exp, gif_cond_exp, gif_cond_exp_multisynapse
 */
-class gif_psc_exp_multisynapse : public Archiving_Node
-{
+class gif_psc_exp_multisynapse : public Archiving_Node {
 
 public:
   gif_psc_exp_multisynapse();
@@ -189,8 +187,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     double g_L_;
     double E_L_;
     double V_reset_;
@@ -247,8 +244,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
     double I_stim_; //!< This is piecewise constant external current
     double V_;      //!< This is the membrane potential
     double sfa_;    //!< This is the change of the 'threshold' due to adaptation.
@@ -273,8 +269,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( gif_psc_exp_multisynapse& );
     Buffers_( const Buffers_&, gif_psc_exp_multisynapse& );
 
@@ -291,8 +286,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     double P30_; // coefficient for solving membrane potential equation
     double P33_; // decay term of membrane potential
     double P31_; // coefficient for solving membrane potential equation
@@ -362,8 +356,7 @@ gif_psc_exp_multisynapse::send_test_event( Node& target, rport receptor_type, sy
 inline port
 gif_psc_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors_() ) )
-  {
+  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors_() ) ) {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }
 
@@ -374,8 +367,7 @@ gif_psc_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 gif_psc_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -384,8 +376,7 @@ gif_psc_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type
 inline port
 gif_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

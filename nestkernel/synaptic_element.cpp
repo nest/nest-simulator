@@ -69,8 +69,7 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
 
 nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& other )
 {
-  if ( this != &other )
-  {
+  if ( this != &other ) {
     // 1: allocate new memory and copy the elements
     GrowthCurve* new_gc = kernel().sp_manager.new_growth_curve( other.growth_curve_->get_name() );
     DictionaryDatum gc_parameters = DictionaryDatum( new Dictionary );
@@ -122,18 +121,15 @@ nest::SynapticElement::set( const DictionaryDatum& d )
   updateValue< bool >( d, names::continuous, continuous_ );
   updateValue< double >( d, names::z, z_ );
 
-  if ( d->known( names::growth_curve ) )
-  {
+  if ( d->known( names::growth_curve ) ) {
     Name growth_curve_name( getValue< std::string >( d, names::growth_curve ) );
-    if ( not growth_curve_->is( growth_curve_name ) )
-    {
+    if ( not growth_curve_->is( growth_curve_name ) ) {
       growth_curve_ = kernel().sp_manager.new_growth_curve( growth_curve_name );
     }
   }
   growth_curve_->set( d );
 
-  if ( new_tau_vacant <= 0.0 )
-  {
+  if ( new_tau_vacant <= 0.0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
   tau_vacant_ = new_tau_vacant;
@@ -146,8 +142,7 @@ nest::SynapticElement::set( const DictionaryDatum& d )
 void
 nest::SynapticElement::update( double t, double t_minus, double Ca_minus, double tau_Ca )
 {
-  if ( z_t_ != t_minus )
-  {
+  if ( z_t_ != t_minus ) {
     throw KernelException(
       "Last update of the calcium concentration does not match the last update "
       "of the synaptic element" );

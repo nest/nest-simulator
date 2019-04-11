@@ -32,8 +32,7 @@
 // Includes from precise:
 #include "slice_ring_buffer.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: parrot_neuron_ps - Neuron that repeats incoming spikes handling
@@ -74,8 +73,7 @@ Receives: SpikeEvent
 
 Author: adapted from parrot_neuron by Kunkel
 */
-class parrot_neuron_ps : public Archiving_Node
-{
+class parrot_neuron_ps : public Archiving_Node {
 public:
   parrot_neuron_ps();
 
@@ -117,8 +115,7 @@ private:
   void update( Time const&, const long, const long );
 
   /** Queue for incoming events. */
-  struct Buffers_
-  {
+  struct Buffers_ {
     SliceRingBuffer events_;
   };
 
@@ -139,12 +136,10 @@ parrot_neuron_ps::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   // Allow connections to port 0 (spikes to be repeated)
   // and port 1 (spikes to be ignored).
-  if ( receptor_type == 0 or receptor_type == 1 )
-  {
+  if ( receptor_type == 0 or receptor_type == 1 ) {
     return receptor_type;
   }
-  else
-  {
+  else {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
 }

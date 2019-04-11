@@ -31,8 +31,7 @@
 #include "dictdatum.h"
 #include "token.h"
 
-namespace librandom
-{
+namespace librandom {
 
 librandom::RngDatum create_rng( const long seed, const RngFactoryDatum& factory );
 

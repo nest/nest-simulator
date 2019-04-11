@@ -35,11 +35,9 @@
 #include "slimodule.h"
 #include "stringdatum.h"
 
-class SLIgraphics : public SLIModule
-{
+class SLIgraphics : public SLIModule {
 
-  class ReadPGMFunction : public SLIFunction
-  {
+  class ReadPGMFunction : public SLIFunction {
   private:
     std::istream* openPGMFile( StringDatum* ) const;        //!< opens the file
     void readMagicNumber( std::istream*, char[ 2 ] ) const; //!< reads the magic number into string magic
@@ -50,8 +48,7 @@ class SLIgraphics : public SLIModule
     virtual void execute( SLIInterpreter* ) const;
   };
 
-  class WritePGMFunction : public SLIFunction
-  {
+  class WritePGMFunction : public SLIFunction {
   public:
     virtual void execute( SLIInterpreter* ) const;
   };

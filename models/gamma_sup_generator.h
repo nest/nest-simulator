@@ -37,8 +37,7 @@
 #include "nest_types.h"
 #include "stimulating_device.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: gamma_sup_generator - simulate the superimposed spike train of a
@@ -72,8 +71,7 @@ Author:
 SeeAlso: ppd_sup_generator, poisson_generator_ps, spike_generator, Device,
 StimulatingDevice
 */
-class gamma_sup_generator : public DeviceNode
-{
+class gamma_sup_generator : public DeviceNode {
 
 public:
   gamma_sup_generator();
@@ -125,8 +123,7 @@ private:
   /**
    * Store independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     double rate_;               //!< rate of component gamma process [Hz]
     unsigned long gamma_shape_; //!< gamma shape parameter [1]
     unsigned long n_proc_;      //!< number of component processes
@@ -147,8 +144,7 @@ private:
 
   // ------------------------------------------------------------
 
-  class Internal_states_
-  {
+  class Internal_states_ {
 
     librandom::BinomialRandomDev bino_dev_;   //!< random deviate generator
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
@@ -162,8 +158,7 @@ private:
   };
 
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     /**
      * Occupation numbers of the internal states of the generator
      */
@@ -173,8 +168,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
     double transition_prob_; //!< transition probabililty to go to next
                              //!< internal state
 
@@ -206,19 +200,16 @@ gamma_sup_generator::send_test_event( Node& target, rport receptor_type, syninde
 {
   device_.enforce_single_syn_type( syn_id );
 
-  if ( dummy_target )
-  {
+  if ( dummy_target ) {
     DSSpikeEvent e;
     e.set_sender( *this );
     return target.handles_test_event( e, receptor_type );
   }
-  else
-  {
+  else {
     SpikeEvent e;
     e.set_sender( *this );
     const port p = target.handles_test_event( e, receptor_type );
-    if ( p != invalid_port_ )
-    {
+    if ( p != invalid_port_ ) {
       ++P_.num_targets_;
     } // count number of targets
     return p;

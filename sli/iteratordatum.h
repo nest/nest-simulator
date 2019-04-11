@@ -45,8 +45,7 @@
 // according to ISO Standard Sec. 14.6.2(3) [temp.dep]
 // HEP, 2001-08-08
 
-class IteratorState
-{
+class IteratorState {
 public:
   long start;
   long stop;
@@ -63,8 +62,7 @@ public:
 std::ostream& operator<<( std::ostream&, const IteratorState& );
 
 
-class IteratorDatum : public GenericDatum< IteratorState, &SLIInterpreter::Iteratortype >
-{
+class IteratorDatum : public GenericDatum< IteratorState, &SLIInterpreter::Iteratortype > {
 protected:
   static sli::pool memory;
 
@@ -145,8 +143,7 @@ public:
 
   static void* operator new( size_t size )
   {
-    if ( size != memory.size_of() )
-    {
+    if ( size != memory.size_of() ) {
       return ::operator new( size );
     }
     return memory.alloc();
@@ -154,12 +151,10 @@ public:
 
   static void operator delete( void* p, size_t size )
   {
-    if ( p == NULL )
-    {
+    if ( p == NULL ) {
       return;
     }
-    if ( size != memory.size_of() )
-    {
+    if ( size != memory.size_of() ) {
       ::operator delete( p );
       return;
     }

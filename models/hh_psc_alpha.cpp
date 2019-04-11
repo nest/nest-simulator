@@ -49,8 +49,7 @@
 
 nest::RecordablesMap< nest::hh_psc_alpha > nest::hh_psc_alpha::recordablesMap_;
 
-namespace nest
-{
+namespace nest {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -144,8 +143,7 @@ nest::hh_psc_alpha::State_::State_( const Parameters_& )
   : r_( 0 )
 {
   y_[ 0 ] = -65; // p.E_L;
-  for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 1; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = 0;
   }
 
@@ -165,8 +163,7 @@ nest::hh_psc_alpha::State_::State_( const Parameters_& )
 nest::hh_psc_alpha::State_::State_( const State_& s )
   : r_( s.r_ )
 {
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = s.y_[ i ];
   }
 }
@@ -174,8 +171,7 @@ nest::hh_psc_alpha::State_::State_( const State_& s )
 nest::hh_psc_alpha::State_& nest::hh_psc_alpha::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = s.y_[ i ];
   }
   r_ = s.r_;
@@ -218,20 +214,16 @@ nest::hh_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_in, tau_synI );
 
   updateValue< double >( d, names::I_e, I_e );
-  if ( C_m <= 0 )
-  {
+  if ( C_m <= 0 ) {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( t_ref_ < 0 )
-  {
+  if ( t_ref_ < 0 ) {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 || tau_synI <= 0 )
-  {
+  if ( tau_synE <= 0 || tau_synI <= 0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
-  if ( g_K < 0 || g_Na < 0 || g_L < 0 )
-  {
+  if ( g_K < 0 || g_Na < 0 || g_L < 0 ) {
     throw BadProperty( "All conductances must be non-negative." );
   }
 }
@@ -252,8 +244,7 @@ nest::hh_psc_alpha::State_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::Act_m, y_[ HH_M ] );
   updateValue< double >( d, names::Act_h, y_[ HH_H ] );
   updateValue< double >( d, names::Inact_n, y_[ HH_N ] );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
-  {
+  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 ) {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }
 }
@@ -302,16 +293,13 @@ nest::hh_psc_alpha::hh_psc_alpha( const hh_psc_alpha& n )
 nest::hh_psc_alpha::~hh_psc_alpha()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
-  if ( B_.s_ )
-  {
+  if ( B_.s_ ) {
     gsl_odeiv_step_free( B_.s_ );
   }
-  if ( B_.c_ )
-  {
+  if ( B_.c_ ) {
     gsl_odeiv_control_free( B_.c_ );
   }
-  if ( B_.e_ )
-  {
+  if ( B_.e_ ) {
     gsl_odeiv_evolve_free( B_.e_ );
   }
 }
@@ -340,30 +328,24 @@ nest::hh_psc_alpha::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
-  {
+  if ( B_.s_ == 0 ) {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
-  else
-  {
+  else {
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
-  {
+  if ( B_.c_ == 0 ) {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
-  else
-  {
+  else {
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
-  {
+  if ( B_.e_ == 0 ) {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
-  else
-  {
+  else {
     gsl_odeiv_evolve_reset( B_.e_ );
   }
 
@@ -399,8 +381,7 @@ nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
 
     double t = 0.0;
     const double U_old = S_.y_[ State_::V_M ];
@@ -417,8 +398,7 @@ nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
     // enforce setting IntegrationStep to step-t; this is of advantage
     // for a consistent and efficient integration across subsequent
     // simulation intervals
-    while ( t < B_.step_ )
-    {
+    while ( t < B_.step_ ) {
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
@@ -427,8 +407,7 @@ nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
-      if ( status != GSL_SUCCESS )
-      {
+      if ( status != GSL_SUCCESS ) {
         throw GSLSolverFailure( get_name(), status );
       }
     }
@@ -438,14 +417,12 @@ nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
 
     // sending spikes: crossing 0 mV, pseudo-refractoriness and local maximum...
     // refractory?
-    if ( S_.r_ > 0 )
-    {
+    if ( S_.r_ > 0 ) {
       --S_.r_;
     }
     else
       // (    threshold    &&     maximum       )
-      if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] )
-    {
+      if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] ) {
       S_.r_ = V_.RefractoryCounts_;
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
@@ -467,13 +444,11 @@ nest::hh_psc_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  if ( e.get_weight() > 0.0 )
-  {
+  if ( e.get_weight() > 0.0 ) {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
-  else
-  {
+  else {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   } // current input, keep negative weight

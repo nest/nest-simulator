@@ -63,8 +63,7 @@ extern "C" {
 void SLIthrowsignal( int s );
 }
 
-class SLIInterpreter
-{
+class SLIInterpreter {
   std::list< SLIModule* > modules;
 
   /* Flags and variables to control debugging and
@@ -904,8 +903,7 @@ SLIInterpreter::addmodule( void )
 inline void
 SLIInterpreter::assert_stack_load( size_t n )
 {
-  if ( OStack.load() < n )
-  {
+  if ( OStack.load() < n ) {
     throw StackUnderflow( n, OStack.load() );
   }
 }

@@ -27,8 +27,7 @@
 #include <math.h>
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: vogels_sprekeler_synapse - Synapse type for symmetric spike-timing
@@ -68,8 +67,7 @@ SeeAlso: synapsedict
 // target index addressing)
 // derived from generic connection template
 template < typename targetidentifierT >
-class VogelsSprekelerConnection : public Connection< targetidentifierT >
-{
+class VogelsSprekelerConnection : public Connection< targetidentifierT > {
 
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
@@ -118,8 +116,7 @@ public:
   void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -203,8 +200,7 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e, thread t, const 
   // Facilitation for each post synaptic spike
   // Wij = Wij + eta*xj
   double minus_dt;
-  while ( start != finish )
-  {
+  while ( start != finish ) {
     minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
     ++start;
     // get_history() should make sure that
@@ -291,13 +287,11 @@ VogelsSprekelerConnection< targetidentifierT >::set_status( const DictionaryDatu
 
   // if the weight_ is not 0, we check to ensure that weight_ and Wmax_ are of
   // the same sign
-  if ( weight_ != 0 and ( std::signbit( weight_ ) != std::signbit( Wmax_ ) ) )
-  {
+  if ( weight_ != 0 and ( std::signbit( weight_ ) != std::signbit( Wmax_ ) ) ) {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }
 
-  if ( not( Kplus_ >= 0 ) )
-  {
+  if ( not( Kplus_ >= 0 ) ) {
     throw BadProperty( "State Kplus must be positive." );
   }
 }

@@ -32,17 +32,14 @@
 #include "topology_names.h"
 
 
-namespace nest
-{
+namespace nest {
 
 Selector::Selector( const DictionaryDatum& d )
   : model( -1 )
   , depth( -1 )
 {
-  if ( updateValue< long >( d, names::lid, depth ) )
-  {
-    if ( depth <= 0 )
-    {
+  if ( updateValue< long >( d, names::lid, depth ) ) {
+    if ( depth <= 0 ) {
       throw BadProperty( "lid must be >0" );
     }
 
@@ -50,13 +47,11 @@ Selector::Selector( const DictionaryDatum& d )
   }
 
   std::string modelname;
-  if ( updateValue< std::string >( d, names::model, modelname ) )
-  {
+  if ( updateValue< std::string >( d, names::model, modelname ) ) {
 
     const Token model_token = kernel().model_manager.get_modeldict()->lookup( modelname );
 
-    if ( model_token.empty() )
-    {
+    if ( model_token.empty() ) {
       throw UnknownModelName( modelname );
     }
     model = static_cast< long >( model_token );

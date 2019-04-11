@@ -32,8 +32,7 @@ std::streamsize const fdbuf::s_bufsiz;
 fdbuf*
 fdbuf::open( const char* s, std::ios_base::openmode mode )
 {
-  if ( is_open() )
-  {
+  if ( is_open() ) {
     //      std::cerr<<"Is already open!"<<std::endl;
     return NULL;
   }
@@ -67,8 +66,7 @@ fdbuf::open( const char* s, std::ios_base::openmode mode )
   {
     oflag = ( O_RDWR | O_TRUNC | O_CREAT );
   }
-  else
-  {
+  else {
     // std::cerr<<"bad flags!"<<std::endl;
     return NULL;
   }
@@ -76,18 +74,15 @@ fdbuf::open( const char* s, std::ios_base::openmode mode )
   // these file permissions are required by POSIX.1 (see Stevens 5.5)
   m_fd = ::open( s, oflag, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH );
 
-  if ( m_fd == -1 )
-  {
+  if ( m_fd == -1 ) {
     // std::cerr<<"::open failed!"<<std::endl;
     // perror(NULL);
     return NULL;
   }
 
   // beware of operator precedence --- HEP
-  if ( ( mode & std::ios_base::ate ) != 0 )
-  {
-    if ( lseek( m_fd, 0, SEEK_END ) == -1 )
-    {
+  if ( ( mode & std::ios_base::ate ) != 0 ) {
+    if ( lseek( m_fd, 0, SEEK_END ) == -1 ) {
       close();
       // std::cerr<<"seek failed!"<<std::endl;
       // perror(NULL);
@@ -102,21 +97,18 @@ fdbuf::open( const char* s, std::ios_base::openmode mode )
 fdbuf*
 fdbuf::close()
 {
-  if ( not is_open() )
-  {
+  if ( not is_open() ) {
     // std::cerr<<"File was not open."<<std::endl;
     return NULL;
   }
 
   bool success = true;
 
-  if ( overflow( traits_type::eof() ) == traits_type::eof() )
-  {
+  if ( overflow( traits_type::eof() ) == traits_type::eof() ) {
     // std::cerr<<"overflow failed!"<<std::endl;
     success = false;
   }
-  if (::close( m_fd ) == -1 )
-  {
+  if (::close( m_fd ) == -1 ) {
     // std::cerr<<"::close failed: "<<std::endl;perror(NULL);
     success = false;
   }
@@ -129,8 +121,7 @@ fdbuf::close()
 void
 ofdstream::close()
 {
-  if ( rdbuf()->close() == NULL )
-  {
+  if ( rdbuf()->close() == NULL ) {
     setstate( failbit );
   }
 }
@@ -139,8 +130,7 @@ ofdstream::close()
 void
 ifdstream::close()
 {
-  if ( rdbuf()->close() == NULL )
-  {
+  if ( rdbuf()->close() == NULL ) {
     setstate( failbit );
   }
 }
@@ -148,8 +138,7 @@ ifdstream::close()
 void
 fdstream::close()
 {
-  if ( rdbuf()->close() == NULL )
-  {
+  if ( rdbuf()->close() == NULL ) {
     setstate( failbit );
   }
 }

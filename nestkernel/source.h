@@ -29,16 +29,14 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Stores the global id of a presynaptic neuron
  * and the number of local targets, along with a flag, whether this
  * entry has been processed yet. Used in SourceTable.
  */
-class Source
-{
+class Source {
 private:
   uint64_t gid_ : NUM_BITS_GID; //!< gid of source
   bool processed_ : 1;          //!< whether this target has already been moved

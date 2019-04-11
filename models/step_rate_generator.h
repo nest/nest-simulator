@@ -36,8 +36,7 @@
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: step_rate_generator - provides a piecewise constant input rate
@@ -84,8 +83,7 @@ Author: Sandra Nestler, David Dahmen
 
 SeeAlso: step_current_generator, Device, StimulatingDevice
 */
-class step_rate_generator : public DeviceNode
-{
+class step_rate_generator : public DeviceNode {
 
 public:
   step_rate_generator();
@@ -130,8 +128,7 @@ private:
   /**
    * Store independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     //! Times of amplitude changes
     std::vector< Time > amp_time_stamps_;
 
@@ -161,8 +158,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
     double rate_; //!< Instantaneous rate value; used for recording current
 
     State_(); //!< Sets default parameter values
@@ -178,8 +174,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     size_t idx_; //!< index of current amplitude
     double amp_; //!< current amplitude
 
@@ -219,8 +214,7 @@ step_rate_generator::send_test_event( Node& target, rport receptor_type, syninde
 inline port
 step_rate_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

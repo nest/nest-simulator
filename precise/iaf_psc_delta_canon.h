@@ -37,8 +37,7 @@
 // Includes from precise:
 #include "slice_ring_buffer.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: iaf_psc_delta_canon - Leaky integrate-and-fire neuron model.
@@ -140,8 +139,7 @@ Straube, Eppler
 
 SeeAlso: iaf_psc_delta, iaf_psc_exp_ps
 */
-class iaf_psc_delta_canon : public Archiving_Node
-{
+class iaf_psc_delta_canon : public Archiving_Node {
 
 public:
   /** Basic constructor.
@@ -231,8 +229,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     /** Membrane time constant in ms. */
     double tau_m_;
@@ -283,8 +280,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
     double U_;
     double I_; //!< This is the current to be applied during this time step
@@ -315,8 +311,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( iaf_psc_delta_canon& );
     Buffers_( const Buffers_&, iaf_psc_delta_canon& );
 
@@ -341,8 +336,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     double exp_t_;   //!< @$ e^{-t/\tau_m} @$
     double expm1_t_; //!< @$ e^{-t/\tau_m} - 1 @$
     double R_;       //!< @$ \frac{\tau_m}{c_m} @$
@@ -397,8 +391,7 @@ nest::iaf_psc_delta_canon::send_test_event( Node& target, rport receptor_type, s
 inline port
 iaf_psc_delta_canon::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -407,8 +400,7 @@ iaf_psc_delta_canon::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 iaf_psc_delta_canon::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -417,8 +409,7 @@ iaf_psc_delta_canon::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 iaf_psc_delta_canon::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

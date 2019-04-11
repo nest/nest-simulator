@@ -39,8 +39,7 @@
 
 #define INSERTION_SORT_CUTOFF 10 // use insertion sort for smaller arrays
 
-namespace nest
-{
+namespace nest {
 /**
  * Calculates the median of three elements.
  * See http://algs4.cs.princeton.edu/23quicksort/QuickX.java.html.
@@ -64,10 +63,8 @@ template < typename T1, typename T2 >
 void
 insertion_sort( BlockVector< T1 >& vec_sort, BlockVector< T2 >& vec_perm, const size_t lo, const size_t hi )
 {
-  for ( size_t i = lo + 1; i < hi + 1; ++i )
-  {
-    for ( size_t j = i; ( j > lo ) and ( vec_sort[ j ] < vec_sort[ j - 1 ] ); --j )
-    {
+  for ( size_t i = lo + 1; i < hi + 1; ++i ) {
+    for ( size_t j = i; ( j > lo ) and ( vec_sort[ j ] < vec_sort[ j - 1 ] ); --j ) {
       std::swap( vec_sort[ j ], vec_sort[ j - 1 ] );
       std::swap( vec_perm[ j ], vec_perm[ j - 1 ] );
     }
@@ -87,16 +84,14 @@ template < typename T1, typename T2 >
 void
 quicksort3way( BlockVector< T1 >& vec_sort, BlockVector< T2 >& vec_perm, const size_t lo, const size_t hi )
 {
-  if ( lo >= hi )
-  {
+  if ( lo >= hi ) {
     return;
   }
 
   const size_t n = hi - lo + 1;
 
   // switch to insertion sort for small arrays
-  if ( n <= INSERTION_SORT_CUTOFF )
-  {
+  if ( n <= INSERTION_SORT_CUTOFF ) {
     insertion_sort( vec_sort, vec_perm, lo, hi );
     return;
   }
@@ -108,8 +103,7 @@ quicksort3way( BlockVector< T1 >& vec_sort, BlockVector< T2 >& vec_perm, const s
   // in case of many equal entries, make sure to use first entry with
   // this value (useful for sorted arrays)
   const T1 m_val = vec_sort[ m ];
-  while ( m > 0 and vec_sort[ m - 1 ] == m_val )
-  {
+  while ( m > 0 and vec_sort[ m - 1 ] == m_val ) {
     --m;
   }
 
@@ -124,8 +118,7 @@ quicksort3way( BlockVector< T1 >& vec_sort, BlockVector< T2 >& vec_perm, const s
   const T1 v = vec_sort[ lt ]; // pivot
 
   // adjust position of i and lt (useful for sorted arrays)
-  while ( vec_sort[ i ] < v and i < vec_sort.size() - 1 )
-  {
+  while ( vec_sort[ i ] < v and i < vec_sort.size() - 1 ) {
     ++i;
   }
   std::swap( vec_sort[ lo ], vec_sort[ i - 1 ] );
@@ -133,28 +126,23 @@ quicksort3way( BlockVector< T1 >& vec_sort, BlockVector< T2 >& vec_perm, const s
   lt = i - 1;
 
   // adjust position of gt (useful for sorted arrays)
-  while ( vec_sort[ gt ] > v and gt > 0 )
-  {
+  while ( vec_sort[ gt ] > v and gt > 0 ) {
     --gt;
   }
 
-  while ( i <= gt )
-  {
-    if ( vec_sort[ i ] < v )
-    {
+  while ( i <= gt ) {
+    if ( vec_sort[ i ] < v ) {
       std::swap( vec_sort[ lt ], vec_sort[ i ] );
       std::swap( vec_perm[ lt ], vec_perm[ i ] );
       ++lt;
       ++i;
     }
-    else if ( vec_sort[ i ] > v )
-    {
+    else if ( vec_sort[ i ] > v ) {
       std::swap( vec_sort[ i ], vec_sort[ gt ] );
       std::swap( vec_perm[ i ], vec_perm[ gt ] );
       --gt;
     }
-    else
-    {
+    else {
       ++i;
     }
   }

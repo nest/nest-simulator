@@ -52,8 +52,7 @@
 // External includes:
 #include <gsl/gsl_rng.h>
 
-namespace librandom
-{
+namespace librandom {
 
 /**
  * class GslRandomGen
@@ -64,8 +63,7 @@ namespace librandom
  * @ingroup RandomNumberGenerators
  */
 
-class GslRandomGen : public RandomGen
-{
+class GslRandomGen : public RandomGen {
   friend class GSL_BinomialRandomDev;
 
 public:
@@ -106,8 +104,7 @@ GslRandomGen::drand_( void )
 }
 
 //! Factory class for GSL-based random generators
-class GslRNGFactory : public GenericRNGFactory
-{
+class GslRNGFactory : public GenericRNGFactory {
 public:
   GslRNGFactory( gsl_rng_type const* const );
   RngPtr create( unsigned long ) const;
@@ -121,11 +118,9 @@ private:
 #else
 
 // NO GSL Available---Implement class as empty shell
-namespace librandom
-{
+namespace librandom {
 
-class GslRandomGen : public RandomGen
-{
+class GslRandomGen : public RandomGen {
 public:
   //! Add all GSL RNGs to rngdict
   //! Do nothing if GSL not available

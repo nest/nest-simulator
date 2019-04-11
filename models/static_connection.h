@@ -26,8 +26,7 @@
 // Includes from nestkernel:
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: static_synapse - Synapse type for static connections.
@@ -49,8 +48,7 @@ Remarks: Refactored for new connection system design, March 2007
 SeeAlso: synapsedict, tsodyks_synapse, stdp_synapse
 */
 template < typename targetidentifierT >
-class StaticConnection : public Connection< targetidentifierT >
-{
+class StaticConnection : public Connection< targetidentifierT > {
   double weight_;
 
 public:
@@ -88,8 +86,7 @@ public:
   using ConnectionBase::get_target;
 
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.

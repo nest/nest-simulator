@@ -43,8 +43,7 @@
 #include "universal_data_logger.h"
 
 
-namespace nest
-{
+namespace nest {
 /**
  * Function computing right-hand side of ODE for GSL solver.
  * @note Must be declared here so we can befriend it in class.
@@ -124,8 +123,7 @@ References: Brette R and Gerstner W (2005) Adaptive Exponential
 
 SeeAlso: iaf_psc_delta, aeif_cond_exp, aeif_psc_exp
 */
-class aeif_psc_delta : public Archiving_Node
-{
+class aeif_psc_delta : public Archiving_Node {
 
 public:
   aeif_psc_delta();
@@ -174,8 +172,7 @@ private:
   // ----------------------------------------------------------------
 
   //! Independent parameters
-  struct Parameters_
-  {
+  struct Parameters_ {
     double V_peak_;  //!< Spike detection threshold in mV
     double V_reset_; //!< Reset Potential in mV
 
@@ -210,8 +207,7 @@ public:
    * @note Copy constructor and assignment operator required because
    *       of C-style array.
    */
-  struct State_
-  {
+  struct State_ {
     /** Accumulate spikes arriving during refractory period, discounted for
         decay until end of refractory period.
     */
@@ -222,12 +218,7 @@ public:
      * identifies the elements of the vector. It must be public to be
      * accessible from the iteration function.
      */
-    enum StateVecElems
-    {
-      V_M = 0,
-      W,
-      STATE_VEC_SIZE
-    };
+    enum StateVecElems { V_M = 0, W, STATE_VEC_SIZE };
 
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
@@ -246,8 +237,7 @@ public:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( aeif_psc_delta& );                  //!<Sets buffer pointers to 0
     Buffers_( const Buffers_&, aeif_psc_delta& ); //!<Sets buffer pointers to 0
 
@@ -286,8 +276,7 @@ public:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     /**
      * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
      * P.V_th if Delta_T == 0.
@@ -336,8 +325,7 @@ aeif_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, bo
 inline port
 aeif_psc_delta::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -346,8 +334,7 @@ aeif_psc_delta::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 aeif_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -356,8 +343,7 @@ aeif_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 aeif_psc_delta::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

@@ -111,10 +111,8 @@ Scanner::Scanner( std::istream* is )
   , // interaction: Non-terminal symbols
   EndSymbol( "/EndSymbol" )
 {
-  for ( size_t s = start; s < lastscanstate; ++s )
-  {
-    for ( size_t c = invalid; c < lastcode; ++c )
-    {
+  for ( size_t s = start; s < lastscanstate; ++s ) {
+    for ( size_t c = invalid; c < lastcode; ++c ) {
       trans[ s ][ c ] = error;
     }
   }
@@ -514,8 +512,7 @@ Scanner::Scanner( std::istream* is )
 void
 Scanner::source( std::istream* in_s )
 {
-  if ( in != in_s )
-  {
+  if ( in != in_s ) {
     in = in_s;
     line = 0;
     col = 0;
@@ -547,11 +544,9 @@ bool Scanner::operator()( Token& t )
 
   t.clear();
 
-  do
-  {
+  do {
 
-    if ( not in->eof() && not in->good() )
-    {
+    if ( not in->eof() && not in->good() ) {
       std::cout << "I/O Error in scanner input stream." << std::endl;
       state = error;
       break;
@@ -562,31 +557,25 @@ bool Scanner::operator()( Token& t )
     // get() is not picky.  --- HEP 2001-08-09
     //     in->get(c);
     c = in->get();
-    if ( col++ == 0 )
-    {
+    if ( col++ == 0 ) {
       ++line;
     }
 
-    if ( c == '\0' || in->bad() )
-    {
+    if ( c == '\0' || in->bad() ) {
       c = endof;
     }
 
-    if ( in->eof() )
-    {
+    if ( in->eof() ) {
       c = endof;
     }
-    else
-    {
+    else {
       assert( in->good() );
     }
-    if ( c != endof )
-    {
+    if ( c != endof ) {
       context += c;
     }
 
-    if ( c == endoln )
-    {
+    if ( c == endoln ) {
       col = 0;
       old_context.clear();
       old_context.swap( context );
@@ -595,27 +584,23 @@ bool Scanner::operator()( Token& t )
 
     state = trans[ state ][ code( c ) ];
 
-    switch ( state )
-    {
+    switch ( state ) {
     case intdgtst:
       lng = sg * ( std::labs( lng ) * base + digval( c ) );
       ds.push_back( c );
       break;
 
-    case aheadintst:
-    {
+    case aheadintst: {
       IntegerDatum id( lng );
       t = id;
-      if ( c != endoln && c != endof )
-      {
+      if ( c != endoln && c != endof ) {
         in->unget();
         --col;
       }
 
       ds.clear();
       state = end;
-    }
-    break;
+    } break;
 
 
     case expntlst:
@@ -646,8 +631,7 @@ bool Scanner::operator()( Token& t )
       ds.push_back( c );
       break;
 
-    case aheadfracst:
-    {
+    case aheadfracst: {
       // cast base to double to help aCC with overloading
       // the first arg to pow is always a double, Stroustrup 22.3
       // HEP 2001-08--09
@@ -659,14 +643,12 @@ bool Scanner::operator()( Token& t )
       ds.clear();
 
       t.move( doubletoken );
-      if ( c != endoln && c != endof )
-      {
+      if ( c != endoln && c != endof ) {
         in->unget();
         --col;
       }
       state = end;
-    }
-    break;
+    } break;
 
     case minusst:
       sg = -1;
@@ -696,8 +678,7 @@ bool Scanner::operator()( Token& t )
         parenth--;
         state = stringst;
       }
-      else
-      {
+      else {
         Token temptoken( new StringDatum( s ) );
         t.move( temptoken );
         state = end;
@@ -739,10 +720,8 @@ bool Scanner::operator()( Token& t )
       break;
     case aheadsgst:
       s.append( 1, sgc );
-    case aheadalphst:
-    {
-      if ( c != endoln && c != endof )
-      {
+    case aheadalphst: {
+      if ( c != endoln && c != endof ) {
         in->unget();
         --col;
       }
@@ -752,53 +731,40 @@ bool Scanner::operator()( Token& t )
       state = end;
       break;
 
-    case aheadlitst:
-    {
-      if ( c != endoln && c != endof )
-      {
+    case aheadlitst: {
+      if ( c != endoln && c != endof ) {
         in->unget();
         --col;
       }
       LiteralDatum nd( s );
       t = nd;
       state = end;
-    }
-    break;
+    } break;
 
-    case openbracest:
-    {
+    case openbracest: {
       t = BeginProcedureSymbol;
       state = end;
-    }
-    break;
+    } break;
 
-    case openbracketst:
-    {
+    case openbracketst: {
       t = BeginArraySymbol;
       state = end;
-    }
-    break;
+    } break;
 
-    case closebracest:
-    {
+    case closebracest: {
       t = EndProcedureSymbol;
       state = end;
-    }
-    break;
+    } break;
 
-    case closebracketst:
-    {
+    case closebracketst: {
       t = EndArraySymbol;
       state = end;
-    }
-    break;
+    } break;
 
-    case eofst:
-    {
+    case eofst: {
       t = EndSymbol;
       state = end;
-    }
-    break;
+    } break;
 
     case error:
       print_error( "" );

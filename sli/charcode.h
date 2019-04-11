@@ -35,8 +35,7 @@
 #include <cstddef>
 #include <vector>
 
-class CharCode : public std::vector< size_t >
-{
+class CharCode : public std::vector< size_t > {
 public:
   CharCode( size_t, size_t );
 

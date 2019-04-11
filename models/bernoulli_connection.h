@@ -28,8 +28,7 @@
 #include "connection.h"
 #include "kernel_manager.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: bernoulli_synapse - Static synapse with stochastic transmission.
@@ -75,8 +74,7 @@ Sharp Waves, Journal of Neuroscience 28 October 2015, 35 (43) 14585-14601,
 DOI: 10.1523/JNEUROSCI.4944-14.2015
 */
 template < typename targetidentifierT >
-class BernoulliConnection : public Connection< targetidentifierT >
-{
+class BernoulliConnection : public Connection< targetidentifierT > {
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
@@ -113,8 +111,7 @@ public:
   using ConnectionBase::get_target;
 
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -142,16 +139,13 @@ public:
     const unsigned long n_spikes_in = e_spike.get_multiplicity();
     unsigned long n_spikes_out = 0;
 
-    for ( unsigned long n = 0; n < n_spikes_in; ++n )
-    {
-      if ( rng->drand() < p_transmit_ )
-      {
+    for ( unsigned long n = 0; n < n_spikes_in; ++n ) {
+      if ( rng->drand() < p_transmit_ ) {
         ++n_spikes_out;
       }
     }
 
-    if ( n_spikes_out > 0 )
-    {
+    if ( n_spikes_out > 0 ) {
       e_spike.set_multiplicity( n_spikes_out );
       e.set_weight( weight_ );
       e.set_delay_steps( get_delay_steps() );
@@ -197,8 +191,7 @@ BernoulliConnection< targetidentifierT >::set_status( const DictionaryDatum& d, 
   updateValue< double >( d, names::weight, weight_ );
   updateValue< double >( d, names::p_transmit, p_transmit_ );
 
-  if ( p_transmit_ < 0 || p_transmit_ > 1 )
-  {
+  if ( p_transmit_ < 0 || p_transmit_ > 1 ) {
     throw BadProperty( "Spike transmission probability must be in [0, 1]." );
   }
 }

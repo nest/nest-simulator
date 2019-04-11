@@ -34,8 +34,7 @@
 #include "randomgen.h"
 
 
-namespace librandom
-{
+namespace librandom {
 
 /** @BeginDocumentation
 Name: rdevdict::lognormal - lognormal random deviate generator
@@ -64,8 +63,7 @@ Author: Hans Ekkehard Plesser
  * @ingroup RandomDeviateGenerators
  */
 
-class LognormalRandomDev : public RandomDev
-{
+class LognormalRandomDev : public RandomDev {
 
 public:
   // accept only lockPTRs for initialization,

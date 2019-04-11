@@ -32,8 +32,7 @@
 
 class SLIInterpreter;
 
-namespace nest
-{
+namespace nest {
 
 class Event;
 
@@ -55,8 +54,7 @@ class Event;
  * @ingroup Exceptions
  * @ingroup KernelExceptions
  */
-class KernelException : public SLIException
-{
+class KernelException : public SLIException {
 public:
   KernelException()
     : SLIException( "KernelException" )
@@ -90,8 +88,7 @@ public:
  * @see UnknownModelID
  * @ingroup KernelExceptions
  */
-class UnknownModelName : public KernelException
-{
+class UnknownModelName : public KernelException {
   const Name n_;
 
 public:
@@ -112,8 +109,7 @@ public:
  * model exist already.
  * @ingroup KernelExceptions
  */
-class NewModelNameExists : public KernelException
-{
+class NewModelNameExists : public KernelException {
   const Name n_;
 
 public:
@@ -135,8 +131,7 @@ public:
  * @see UnknownModelID
  * @ingroup KernelExceptions
  */
-class UnknownModelID : public KernelException
-{
+class UnknownModelID : public KernelException {
   const long id_;
 
 public:
@@ -159,8 +154,7 @@ public:
  * @see UnknownModelID
  * @ingroup KernelExceptions
  */
-class ModelInUse : public KernelException
-{
+class ModelInUse : public KernelException {
   const std::string modelname_;
 
 public:
@@ -181,8 +175,7 @@ public:
  * Synapse type does not exist.
  * @ingroup KernelExceptions
  */
-class UnknownSynapseType : public KernelException
-{
+class UnknownSynapseType : public KernelException {
   int synapseid_;
   std::string synapsename_;
 
@@ -217,8 +210,7 @@ public:
  * @ingroup KernelExceptions
  */
 
-class UnknownNode : public KernelException
-{
+class UnknownNode : public KernelException {
   int id_;
 
 public:
@@ -249,8 +241,7 @@ public:
  * @ingroup KernelExceptions
  */
 
-class NoThreadSiblingsAvailable : public KernelException
-{
+class NoThreadSiblingsAvailable : public KernelException {
   int id_;
 
 public:
@@ -273,8 +264,7 @@ public:
 };
 
 
-class LocalNodeExpected : public KernelException
-{
+class LocalNodeExpected : public KernelException {
   int id_;
 
 public:
@@ -291,8 +281,7 @@ public:
   std::string message() const;
 };
 
-class NodeWithProxiesExpected : public KernelException
-{
+class NodeWithProxiesExpected : public KernelException {
   int id_;
 
 public:
@@ -314,8 +303,7 @@ public:
  * receptor type does not exist in the node.
  */
 
-class UnknownReceptorType : public KernelException
-{
+class UnknownReceptorType : public KernelException {
   long receptor_type_;
   std::string name_;
 
@@ -338,8 +326,7 @@ public:
  * receptor type does not accept the event type.
  */
 
-class IncompatibleReceptorType : public KernelException
-{
+class IncompatibleReceptorType : public KernelException {
   long receptor_type_;
   std::string name_;
   std::string event_type_;
@@ -365,8 +352,7 @@ public:
  * was unknown at the specified node.
  * @ingroup KernelExceptions
  */
-class UnknownPort : public KernelException
-{
+class UnknownPort : public KernelException {
   int id_;
 
 public:
@@ -389,8 +375,7 @@ public:
  * an unsupported Event type.
  * @ingroup KernelExceptions
  */
-class IllegalConnection : public KernelException
-{
+class IllegalConnection : public KernelException {
 public:
   IllegalConnection()
     : KernelException( "IllegalConnection" )
@@ -421,8 +406,7 @@ private:
  * an inexistent connection.
  * @ingroup KernelExceptions
  */
-class InexistentConnection : public KernelException
-{
+class InexistentConnection : public KernelException {
 public:
   InexistentConnection()
     : KernelException( "The connection does not exist" )
@@ -450,8 +434,7 @@ private:
  * Exception to be thrown if a thread id outside the range encountered.
  * @ingroup KernelExceptions
  */
-class UnknownThread : public KernelException
-{
+class UnknownThread : public KernelException {
   int id_;
 
 public:
@@ -473,8 +456,7 @@ public:
  * connection.
  * @ingroup KernelExceptions
  */
-class BadDelay : public KernelException
-{
+class BadDelay : public KernelException {
   double delay_;
   std::string message_;
 
@@ -499,8 +481,7 @@ public:
  * This case should be prevented by connect_sender().
  * @ingroup KernelExceptions
  */
-class UnexpectedEvent : public KernelException
-{
+class UnexpectedEvent : public KernelException {
 public:
   UnexpectedEvent()
     : KernelException( "UnexpectedEvent" )
@@ -520,8 +501,7 @@ public:
  * attempted
  * @ingroup KernelExceptions
  */
-class UnsupportedEvent : public KernelException
-{
+class UnsupportedEvent : public KernelException {
 public:
   UnsupportedEvent()
     : KernelException( "UnsupportedEvent" )
@@ -540,8 +520,7 @@ public:
  * Thrown by Node::set_/get_property methods.
  * @ingroup KernelExceptions
  */
-class BadProperty : public KernelException
-{
+class BadProperty : public KernelException {
   std::string msg_;
 
 public:
@@ -570,8 +549,7 @@ public:
  * Thrown by Node::set_/get_property methods.
  * @ingroup KernelExceptions
  */
-class BadParameter : public KernelException
-{
+class BadParameter : public KernelException {
   std::string msg_;
 
 public:
@@ -600,8 +578,7 @@ public:
  * Thrown by Node::set_/get_property methods.
  * @ingroup KernelExceptions
  */
-class DimensionMismatch : public KernelException
-{
+class DimensionMismatch : public KernelException {
   int expected_;
   int provided_;
   std::string msg_;
@@ -644,8 +621,7 @@ public:
  * distribution of elements is encountered
  * @ingroup KernelExceptions
  */
-class DistributionError : public KernelException
-{
+class DistributionError : public KernelException {
 public:
   DistributionError()
     : KernelException( "DistributionError" )
@@ -663,8 +639,7 @@ public:
  * is given to a function
  * @ingroup KernelExceptions
  */
-class SubnetExpected : public KernelException
-{
+class SubnetExpected : public KernelException {
 public:
   SubnetExpected()
     : KernelException( "SubnetExpected" )
@@ -682,8 +657,7 @@ public:
  * is given to a function
  * @ingroup KernelExceptions
  */
-class SimulationError : public KernelException
-{
+class SimulationError : public KernelException {
 public:
   SimulationError()
     : KernelException( "SimulationError" )
@@ -703,8 +677,7 @@ public:
  * @ingroup KernelExceptions
  * @see InvalidTimeInModel
  */
-class InvalidDefaultResolution : public KernelException
-{
+class InvalidDefaultResolution : public KernelException {
 public:
   /**
    * @note model should be passed from get_name() to ensure that
@@ -739,8 +712,7 @@ private:
  * @ingroup KernelExceptions
  * @see InvalidDefaultResolution
  */
-class InvalidTimeInModel : public KernelException
-{
+class InvalidTimeInModel : public KernelException {
 public:
   /**
   * @note model should be passed from get_name() to ensure that
@@ -773,8 +745,7 @@ private:
  * @see TimeMultipleRequired
  * @ingroup KernelExceptions
  */
-class StepMultipleRequired : public KernelException
-{
+class StepMultipleRequired : public KernelException {
 public:
   /**
   * @note model should be passed from get_name() to ensure that
@@ -807,8 +778,7 @@ private:
  * @see StepMultipleRequired
  * @ingroup KernelExceptions
  */
-class TimeMultipleRequired : public KernelException
-{
+class TimeMultipleRequired : public KernelException {
 public:
   /**
   * @note model should be passed from get_name() to ensure that
@@ -850,8 +820,7 @@ private:
  * Exception to be thrown if a GSL solver does not return GSL_SUCCESS
  * @ingroup KernelExceptions
  */
-class GSLSolverFailure : public KernelException
-{
+class GSLSolverFailure : public KernelException {
 public:
   /**
   * @note model should be passed from get_name() to ensure that
@@ -880,8 +849,7 @@ private:
  * Exception to be thrown if numerical instabilities are detected.
  * @ingroup KernelExceptions
  */
-class NumericalInstability : public KernelException
-{
+class NumericalInstability : public KernelException {
 public:
   /**
    * @note model should be passed from get_name() to ensure that
@@ -908,8 +876,7 @@ private:
  * DynamicRecordablesMap that does not exist.
  * @ingroup KernelExceptions
  */
-class KeyError : public KernelException
-{
+class KeyError : public KernelException {
   const Name key_;
   const std::string map_type_;
   const std::string map_op_;
@@ -933,8 +900,7 @@ public:
  * Exception to be thrown if an internal error occures.
  * @ingroup KernelExceptions
 */
-class InternalError : public KernelException
-{
+class InternalError : public KernelException {
   std::string msg_;
 
 public:
@@ -964,8 +930,7 @@ public:
  * port is unmapped.
  * @ingroup KernelExceptions
  */
-class MUSICPortUnconnected : public KernelException
-{
+class MUSICPortUnconnected : public KernelException {
 public:
   /**
   * @note model should be passed from get_name() to ensure that
@@ -995,8 +960,7 @@ private:
  * music port has no width.
  * @ingroup KernelExceptions
  */
-class MUSICPortHasNoWidth : public KernelException
-{
+class MUSICPortHasNoWidth : public KernelException {
 public:
   /**
   * @note model should be passed from get_name() to ensure that
@@ -1027,8 +991,7 @@ private:
  * published port.
  * @ingroup KernelExceptions
  */
-class MUSICPortAlreadyPublished : public KernelException
-{
+class MUSICPortAlreadyPublished : public KernelException {
 public:
   /**
    * @note model should be passed from get_name() to ensure that
@@ -1057,8 +1020,7 @@ private:
 * published port.
 * @ingroup KernelExceptions
 */
-class MUSICSimulationHasRun : public KernelException
-{
+class MUSICSimulationHasRun : public KernelException {
 public:
   /**
   * @note model should be passed from get_name() to ensure that
@@ -1086,8 +1048,7 @@ private:
  * width of the MUSIC port.
  * @ingroup KernelExceptions
  */
-class MUSICChannelUnknown : public KernelException
-{
+class MUSICChannelUnknown : public KernelException {
 public:
   /**
   * @note model should be passed from get_name() to ensure that
@@ -1118,8 +1079,7 @@ private:
  * NEST.
  * @ingroup KernelExceptions
  */
-class MUSICPortUnknown : public KernelException
-{
+class MUSICPortUnknown : public KernelException {
 public:
   MUSICPortUnknown( const std::string& portname )
     : KernelException( "MUSICPortUnknown" )
@@ -1141,8 +1101,7 @@ private:
  * width of the MUSIC port.
  * @ingroup KernelExceptions
  */
-class MUSICChannelAlreadyMapped : public KernelException
-{
+class MUSICChannelAlreadyMapped : public KernelException {
 public:
   /**
   * @note model should be passed from get_name() to ensure that

@@ -29,14 +29,12 @@
 // Includes from sli:
 #include "slimodule.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * Module supplying all models that are included in the NEST release.
  * @todo Should this be a dynamic module?
  */
-class ModelsModule : public SLIModule
-{
+class ModelsModule : public SLIModule {
 public:
   ModelsModule();
   ~ModelsModule();

@@ -22,8 +22,7 @@
 
 #include "completed_checker.h"
 
-namespace nest
-{
+namespace nest {
 
 CompletedChecker::CompletedChecker()
   : a_( NULL )
@@ -40,10 +39,8 @@ bool
 CompletedChecker::all_false() const
 {
 #pragma omp barrier
-  for ( size_t i = 0; i < size_; ++i )
-  {
-    if ( a_[ i ] )
-    {
+  for ( size_t i = 0; i < size_; ++i ) {
+    if ( a_[ i ] ) {
       return false;
     }
   }
@@ -54,10 +51,8 @@ bool
 CompletedChecker::all_true() const
 {
 #pragma omp barrier
-  for ( size_t i = 0; i < size_; ++i )
-  {
-    if ( not a_[ i ] )
-    {
+  for ( size_t i = 0; i < size_; ++i ) {
+    if ( not a_[ i ] ) {
       return false;
     }
   }
@@ -68,8 +63,7 @@ void
 CompletedChecker::clear()
 {
   VPManager::assert_single_threaded();
-  if ( a_ != NULL )
-  {
+  if ( a_ != NULL ) {
     delete a_;
     a_ = NULL;
     size_ = 0;
@@ -82,8 +76,7 @@ CompletedChecker::resize( const size_t new_size, const bool v )
   VPManager::assert_single_threaded();
   clear();
   a_ = new bool[ new_size ];
-  for ( size_t i = 0; i < new_size; ++i )
-  {
+  for ( size_t i = 0; i < new_size; ++i ) {
     a_[ i ] = v;
   }
   size_ = new_size;

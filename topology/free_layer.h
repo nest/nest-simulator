@@ -36,15 +36,13 @@
 #include "ntree_impl.h"
 #include "topology_names.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Layer with free positioning of neurons, positions specified by user.
  */
 template < int D >
-class FreeLayer : public Layer< D >
-{
+class FreeLayer : public Layer< D > {
 public:
   Position< D > get_position( index sind ) const;
   void set_status( const DictionaryDatum& );
@@ -67,8 +65,7 @@ protected:
   std::vector< Position< D > > positions_;
 
   /// This class is used when communicating positions across MPI procs.
-  class NodePositionData
-  {
+  class NodePositionData {
   public:
     index
     get_gid() const
@@ -102,11 +99,9 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
   Layer< D >::set_status( d );
 
   // Read positions from dictionary
-  if ( d->known( names::positions ) )
-  {
+  if ( d->known( names::positions ) ) {
     TokenArray pos = getValue< TokenArray >( d, names::positions );
-    if ( this->global_size() / this->depth_ != pos.size() )
-    {
+    if ( this->global_size() / this->depth_ != pos.size() ) {
       std::stringstream expected;
       std::stringstream got;
       expected << "position array with length " << this->global_size() / this->depth_;
@@ -117,28 +112,24 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     positions_.clear();
     positions_.reserve( this->local_size() );
 
-    if ( this->local_size() == 0 )
-    {
+    if ( this->local_size() == 0 ) {
       return; // nothing more to do
     }
 
     const index nodes_per_depth = this->global_size() / this->depth_;
     const index first_lid = this->nodes_[ 0 ]->get_lid();
 
-    for ( std::vector< Node* >::iterator i = this->local_begin(); i != this->local_end(); ++i )
-    {
+    for ( std::vector< Node* >::iterator i = this->local_begin(); i != this->local_end(); ++i ) {
 
       // Nodes are grouped by depth. When lid % nodes_per_depth ==
       // first_lid, we have "wrapped around", and do not need to gather
       // more positions.
-      if ( ( ( *i )->get_lid() != first_lid ) && ( ( *i )->get_lid() % nodes_per_depth == first_lid ) )
-      {
+      if ( ( ( *i )->get_lid() != first_lid ) && ( ( *i )->get_lid() % nodes_per_depth == first_lid ) ) {
         break;
       }
 
       Position< D > point = getValue< std::vector< double > >( pos[ ( *i )->get_lid() % nodes_per_depth ] );
-      if ( not( ( point >= this->lower_left_ ) and ( point < this->lower_left_ + this->extent_ ) ) )
-      {
+      if ( not( ( point >= this->lower_left_ ) and ( point < this->lower_left_ + this->extent_ ) ) ) {
         throw BadProperty( "Node position outside of layer" );
       }
 
@@ -156,8 +147,7 @@ FreeLayer< D >::get_status( DictionaryDatum& d ) const
   DictionaryDatum topology_dict = getValue< DictionaryDatum >( ( *d )[ names::topology ] );
 
   TokenArray points;
-  for ( typename std::vector< Position< D > >::const_iterator it = positions_.begin(); it != positions_.end(); ++it )
-  {
+  for ( typename std::vector< Position< D > >::const_iterator it = positions_.begin(); it != positions_.end(); ++it ) {
     points.push_back( it->getToken() );
   }
   def2< TokenArray, ArrayDatum >( topology_dict, names::positions, points );
@@ -186,32 +176,27 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
 
   // Nodes in the subnet are grouped by depth, so to select by depth, we
   // just adjust the begin and end pointers:
-  if ( filter.select_depth() )
-  {
+  if ( filter.select_depth() ) {
     local_gid_pos.reserve( ( D + 1 ) * ( this->nodes_.size() / this->depth_ + 1 ) );
     nodes_begin = this->local_begin( filter.depth );
     nodes_end = this->local_end( filter.depth );
   }
-  else
-  {
+  else {
     local_gid_pos.reserve( ( D + 1 ) * this->nodes_.size() );
     nodes_begin = this->local_begin();
     nodes_end = this->local_end();
   }
 
-  for ( std::vector< Node* >::const_iterator node_it = nodes_begin; node_it != nodes_end; ++node_it )
-  {
+  for ( std::vector< Node* >::const_iterator node_it = nodes_begin; node_it != nodes_end; ++node_it ) {
 
-    if ( filter.select_model() && ( ( *node_it )->get_model_id() != filter.model ) )
-    {
+    if ( filter.select_model() && ( ( *node_it )->get_model_id() != filter.model ) ) {
       continue;
     }
 
     // Push GID into array to communicate
     local_gid_pos.push_back( ( *node_it )->get_gid() );
     // Push coordinates one by one
-    for ( int j = 0; j < D; ++j )
-    {
+    for ( int j = 0; j < D; ++j ) {
       local_gid_pos.push_back( positions_[ ( *node_it )->get_subnet_index() % positions_.size() ][ j ] );
     }
   }
@@ -233,8 +218,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
   pos_end = std::unique( pos_ptr, pos_end );
 
   // Unpack GIDs and coordinates
-  for ( ; pos_ptr < pos_end; pos_ptr++ )
-  {
+  for ( ; pos_ptr < pos_end; pos_ptr++ ) {
     *iter++ = std::pair< Position< D >, index >( pos_ptr->get_position(), pos_ptr->get_gid() );
   }
 }
@@ -258,22 +242,18 @@ FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree, const Se
 
   // Nodes in the subnet are grouped by depth, so to select by depth, we
   // just adjust the begin and end pointers:
-  if ( filter.select_depth() )
-  {
+  if ( filter.select_depth() ) {
     nodes_begin = this->local_begin( filter.depth );
     nodes_end = this->local_end( filter.depth );
   }
-  else
-  {
+  else {
     nodes_begin = this->local_begin();
     nodes_end = this->local_end();
   }
 
-  for ( std::vector< Node* >::const_iterator node_it = nodes_begin; node_it != nodes_end; ++node_it )
-  {
+  for ( std::vector< Node* >::const_iterator node_it = nodes_begin; node_it != nodes_end; ++node_it ) {
 
-    if ( filter.select_model() && ( ( *node_it )->get_model_id() != filter.model ) )
-    {
+    if ( filter.select_model() && ( ( *node_it )->get_model_id() != filter.model ) ) {
       continue;
     }
 

@@ -29,12 +29,10 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 class TimeConverter;
 
-class DelayChecker
-{
+class DelayChecker {
 public:
   DelayChecker();
   DelayChecker( const DelayChecker& );

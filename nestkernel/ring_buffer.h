@@ -32,8 +32,7 @@
 #include "nest_time.h"
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
    Buffer Layout.
@@ -78,8 +77,7 @@ namespace nest
 */
 
 
-class RingBuffer
-{
+class RingBuffer {
 public:
   RingBuffer();
 
@@ -195,8 +193,7 @@ RingBuffer::get_index_( const delay d ) const
 }
 
 
-class MultRBuffer
-{
+class MultRBuffer {
 public:
   MultRBuffer();
 
@@ -276,8 +273,7 @@ MultRBuffer::get_index_( const delay d ) const
 }
 
 
-class ListRingBuffer
-{
+class ListRingBuffer {
 public:
   ListRingBuffer();
 

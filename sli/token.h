@@ -70,8 +70,7 @@ Datum *const p;   makes p a const pointer to a Datum. Any change to the
 /** A type-independent container for C++-types.
  *  @ingroup TokenHandling
  */
-class Token
-{
+class Token {
   friend class Datum;
   friend class TokenArrayObj;
 
@@ -86,8 +85,7 @@ private:
 public:
   ~Token()
   {
-    if ( p )
-    {
+    if ( p ) {
       p->removeReference();
     }
     p = 0;
@@ -96,8 +94,7 @@ public:
   Token( const Token& c_s )
     : p( NULL )
   {
-    if ( c_s.p )
-    {
+    if ( c_s.p ) {
       p = c_s.p->get_ptr();
     }
   }
@@ -149,8 +146,7 @@ public:
   void
   detach()
   {
-    if ( p and p->numReferences() > 1 )
-    {
+    if ( p and p->numReferences() > 1 ) {
       p->removeReference();
       p = p->clone();
     }
@@ -159,8 +155,7 @@ public:
   void
   move( Token& c )
   {
-    if ( p )
-    {
+    if ( p ) {
       p->removeReference();
     }
     p = c.p;
@@ -227,10 +222,8 @@ public:
   assign_by_ref( const Token& rhs )
   {
     //    assert(rhs.p !=NULL);
-    if ( p != rhs.p )
-    {
-      if ( p )
-      {
+    if ( p != rhs.p ) {
+      if ( p ) {
         p->removeReference();
       }
       p = rhs.p->get_ptr();
@@ -242,8 +235,7 @@ public:
   {
     assert( rhs != NULL );
     rhs->addReference();
-    if ( p )
-    {
+    if ( p ) {
       p->removeReference();
     }
     p = rhs;
@@ -259,8 +251,7 @@ public:
   void
   clear( void )
   {
-    if ( p )
-    {
+    if ( p ) {
       p->removeReference();
     }
     p = NULL;
@@ -320,18 +311,15 @@ public:
 
   Token& operator=( const Token& c_s )
   {
-    if ( c_s.p == p )
-    {
+    if ( c_s.p == p ) {
       return *this;
     }
 
-    if ( c_s.p == NULL )
-    {
+    if ( c_s.p == NULL ) {
       clear();
       return *this;
     }
-    if ( p )
-    {
+    if ( p ) {
       p->removeReference();
     }
     p = c_s.p->get_ptr();
@@ -341,10 +329,8 @@ public:
 
   Token& operator=( Datum* p_s )
   {
-    if ( p != p_s )
-    {
-      if ( p )
-      {
+    if ( p != p_s ) {
+      if ( p ) {
         p->removeReference();
       }
       p = p_s;
@@ -356,8 +342,7 @@ public:
 
   bool operator==( const Token& t ) const
   {
-    if ( p == t.p )
-    {
+    if ( p == t.p ) {
       return true;
     }
 

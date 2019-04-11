@@ -32,8 +32,7 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Vose's alias method for selecting a random number using a discrete
@@ -42,14 +41,12 @@ namespace nest
  * IEEE trans. softw. eng. 17(9):972.
  * See also http://www.keithschwarz.com/darts-dice-coins/
  */
-class Vose
-{
+class Vose {
   /**
    * An object containing two possible outcomes and a probability to
    * choose between the two.
    */
-  struct BiasedCoin
-  {
+  struct BiasedCoin {
     index heads, tails;
     double probability; ///< Probability for heads
     BiasedCoin()

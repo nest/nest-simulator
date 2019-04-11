@@ -32,8 +32,7 @@
 // Includes from nestkernel:
 #include "node.h"
 
-namespace nest
-{
+namespace nest {
 Event::Event()
   : sender_gid_( 0 ) // initializing to 0 as this is an unsigned type
                      // gid 0 is network, can never send an event, so

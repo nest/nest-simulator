@@ -38,8 +38,7 @@
 #include "dictdatum.h"
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
   Name: PseudoRecordingDevice - Common properties of all pseudo-recording
@@ -78,8 +77,7 @@ namespace nest
  *
  * @author HEP 2002-07-22, 2008-03-21, 2008-07-01
  */
-class PseudoRecordingDevice : public Device
-{
+class PseudoRecordingDevice : public Device {
 
 public:
   PseudoRecordingDevice();

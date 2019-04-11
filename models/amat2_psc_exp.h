@@ -33,8 +33,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 /** @BeginDocumentation
 Name: amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model
                       with exponential PSCs and adaptive threshold.
@@ -145,8 +144,7 @@ FirstVersion: April 2013
 Author: Thomas Heiberg & Hans E. Plesser (modified mat2_psc_exp model of
 Thomas Pfeil)
 */
-class amat2_psc_exp : public Archiving_Node
-{
+class amat2_psc_exp : public Archiving_Node {
 
 public:
   amat2_psc_exp();
@@ -188,8 +186,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     /** Membrane time constant in ms. */
     double Tau_;
@@ -247,8 +244,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
     // state variables
     double i_0_;      //!< synaptic dc input current, variable 0
     double I_syn_ex_; //!< postsynaptic current for exc. inputs, variable 1
@@ -281,8 +277,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( amat2_psc_exp& );                  //!<Sets buffer pointers to 0
     Buffers_( const Buffers_&, amat2_psc_exp& ); //!<Sets buffer pointers to 0
 
@@ -300,8 +295,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
 
     /** Amplitude of the synaptic current.
     This value is chosen such that a post-synaptic potential with
@@ -398,8 +392,7 @@ amat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, boo
 inline port
 amat2_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -408,8 +401,7 @@ amat2_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 amat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -418,8 +410,7 @@ amat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 amat2_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

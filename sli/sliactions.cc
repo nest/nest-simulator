@@ -86,15 +86,12 @@ FunctiontypeFunction::execute( SLIInterpreter* i ) const
 {
   FunctionDatum* fd = static_cast< FunctionDatum* >( i->EStack.top().datum() );
 
-  if ( i->step_mode() )
-  {
+  if ( i->step_mode() ) {
     std::cerr << "Calling builtin function: ";
-    if ( fd != NULL )
-    {
+    if ( fd != NULL ) {
       fd->pprint( std::cerr );
     }
-    else
-    {
+    else {
       std::cerr << "NULL" << std::endl;
       i->EStack.pop();
       return;

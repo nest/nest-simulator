@@ -23,10 +23,8 @@
 
 #include "librandom_names.h"
 
-namespace librandom
-{
-namespace names
-{
+namespace librandom {
+namespace names {
 const Name high( "high" );
 const Name is_discrete( "is_discrete" );
 const Name lambda( "lambda" );

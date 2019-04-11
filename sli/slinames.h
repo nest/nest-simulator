@@ -26,8 +26,7 @@
 // Includes from sli:
 #include "name.h"
 
-namespace sli
-{
+namespace sli {
 extern Name any;
 extern Name object;
 extern Name imap;

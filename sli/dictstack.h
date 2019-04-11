@@ -68,8 +68,7 @@ Problems:
 
 //#undef DICTSTACK_CACHE
 
-class DictionaryStack
-{
+class DictionaryStack {
 private:
   const Token VoidToken;
   std::list< DictionaryDatum > d;
@@ -93,8 +92,7 @@ public:
   cache_token( const Name& n, const Token* result )
   {
     Name::handle_t key = n.toIndex();
-    if ( key >= cache_.size() )
-    {
+    if ( key >= cache_.size() ) {
       cache_.resize( Name::num_handles() + 100, 0 );
     }
     cache_[ key ] = result;
@@ -104,8 +102,7 @@ public:
   basecache_token( const Name& n, const Token* result )
   {
     Name::handle_t key = n.toIndex();
-    if ( key >= basecache_.size() )
-    {
+    if ( key >= basecache_.size() ) {
       basecache_.resize( Name::num_handles() + 100, 0 );
     }
     basecache_[ key ] = result;
@@ -119,8 +116,7 @@ public:
   clear_token_from_cache( const Name& n )
   {
     Name::handle_t key = n.toIndex();
-    if ( key < cache_.size() )
-    {
+    if ( key < cache_.size() ) {
       cache_[ key ] = 0;
     }
   }
@@ -129,8 +125,7 @@ public:
   clear_token_from_basecache( const Name& n )
   {
     Name::handle_t key = n.toIndex();
-    if ( key < basecache_.size() )
-    {
+    if ( key < basecache_.size() ) {
       basecache_[ key ] = 0;
     }
   }
@@ -138,8 +133,7 @@ public:
   void
   clear_dict_from_cache( DictionaryDatum d )
   {
-    for ( TokenMap::iterator i = d->begin(); i != d->end(); ++i )
-    {
+    for ( TokenMap::iterator i = d->begin(); i != d->end(); ++i ) {
       clear_token_from_cache( i->first );
     }
   }
@@ -153,8 +147,7 @@ public:
   clear_cache()
   {
     const size_t cache_size = cache_.size();
-    for ( size_t i = 0; i < cache_size; ++i )
-    {
+    for ( size_t i = 0; i < cache_size; ++i ) {
       cache_[ i ] = 0;
     }
   }
@@ -164,12 +157,10 @@ public:
   const Token&
   lookup( const Name& n )
   {
-    try
-    {
+    try {
       return lookup2( n );
     }
-    catch ( UndefinedName& )
-    {
+    catch ( UndefinedName& ) {
       return VoidToken;
     }
   }
@@ -179,11 +170,9 @@ public:
   {
 #ifdef DICTSTACK_CACHE
     Name::handle_t key = n.toIndex();
-    if ( key < cache_.size() )
-    {
+    if ( key < cache_.size() ) {
       const Token* result = cache_[ key ];
-      if ( result )
-      {
+      if ( result ) {
         return *result;
       }
     }
@@ -191,11 +180,9 @@ public:
 
     std::list< DictionaryDatum >::const_iterator i = d.begin();
 
-    while ( i != d.end() )
-    {
+    while ( i != d.end() ) {
       TokenMap::const_iterator where = ( *i )->find( n );
-      if ( where != ( *i )->end() )
-      {
+      if ( where != ( *i )->end() ) {
 #ifdef DICTSTACK_CACHE
         cache_token( n, &( where->second ) ); // Update the cache
 #endif
@@ -214,27 +201,23 @@ public:
   {                                        // base dictionary
 #ifdef DICTSTACK_CACHE
     Name::handle_t key = n.toIndex();
-    if ( key < basecache_.size() )
-    {
+    if ( key < basecache_.size() ) {
       const Token* result = basecache_[ key ];
-      if ( result )
-      {
+      if ( result ) {
         return *result;
       }
     }
 #endif
     TokenMap::const_iterator where = base_->find( n );
 
-    if ( where != base_->end() )
-    {
+    if ( where != base_->end() ) {
 #ifdef DICTSTACK_CACHE
       cache_token( n, &( where->second ) );     // Update the cache
       basecache_token( n, &( where->second ) ); // and the basecache
 #endif
       return where->second;
     }
-    else
-    {
+    else {
       return VoidToken;
     }
   }
@@ -246,22 +229,18 @@ public:
   {
 #ifdef DICTSTACK_CACHE
     Name::handle_t key = n.toIndex();
-    if ( key < cache_.size() )
-    {
+    if ( key < cache_.size() ) {
       const Token* result = cache_[ key ];
-      if ( result )
-      {
+      if ( result ) {
         return true;
       }
     }
 #endif
     std::list< DictionaryDatum >::const_iterator i( d.begin() );
 
-    while ( i != d.end() )
-    {
+    while ( i != d.end() ) {
       TokenMap::const_iterator where = ( *i )->find( n );
-      if ( where != ( *i )->end() )
-      {
+      if ( where != ( *i )->end() ) {
 #ifdef DICTSTACK_CACHE
         cache_token( n, &( where->second ) ); // Update the cache
 #endif
@@ -278,18 +257,15 @@ public:
   {                               // base dictionary
 #ifdef DICTSTACK_CACHE
     Name::handle_t key = n.toIndex();
-    if ( key < basecache_.size() )
-    {
+    if ( key < basecache_.size() ) {
       const Token* result = basecache_[ key ];
-      if ( result )
-      {
+      if ( result ) {
         return true;
       }
     }
 #endif
     TokenMap::const_iterator where = base_->find( n );
-    if ( where != base_->end() )
-    {
+    if ( where != base_->end() ) {
 #ifdef DICTSTACK_CACHE
       basecache_token( n, &( where->second ) ); // Update the basecache
       cache_token( n, &( where->second ) );     // and the cache

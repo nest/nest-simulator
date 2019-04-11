@@ -26,8 +26,7 @@
 #include <algorithm>
 #include <cassert>
 
-namespace nest
-{
+namespace nest {
 Vose::Vose( std::vector< double > dist )
 {
   assert( not dist.empty() );
@@ -38,8 +37,7 @@ Vose::Vose( std::vector< double > dist )
 
   // We accept distributions that do not sum to 1.
   double sum = 0.0;
-  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end(); ++it )
-  {
+  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end(); ++it ) {
     sum += *it;
   }
   // Partition distribution into small (<=1/n) and large (>1/n) probabilities
@@ -48,21 +46,17 @@ Vose::Vose( std::vector< double > dist )
 
   index i = 0;
 
-  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end(); ++it )
-  {
-    if ( *it <= sum / n )
-    {
+  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end(); ++it ) {
+    if ( *it <= sum / n ) {
       *small++ = BiasedCoin( i++, 0, ( *it ) * n / sum );
     }
-    else
-    {
+    else {
       *--large = BiasedCoin( i++, 0, ( *it ) * n / sum );
     }
   }
 
   // Generate aliases
-  for ( small = dist_.begin(); ( small != large ) && ( large != dist_.end() ); ++small )
-  {
+  for ( small = dist_.begin(); ( small != large ) && ( large != dist_.end() ); ++small ) {
 
     small->tails = large->heads; // 'tails' is the alias
 
@@ -71,20 +65,17 @@ Vose::Vose( std::vector< double > dist )
     // equivalent calculation is more numerically stable:
     large->probability = ( large->probability + small->probability ) - 1.0;
 
-    if ( large->probability <= 1.0 )
-    {
+    if ( large->probability <= 1.0 ) {
       ++large;
     }
   }
 
   // Since floating point calculation is not perfect, there may be
   // probabilities left over, which should be very close to 1.0.
-  while ( small != large )
-  {
+  while ( small != large ) {
     ( small++ )->probability = 1.0;
   }
-  while ( large != dist_.end() )
-  {
+  while ( large != dist_.end() ) {
     ( large++ )->probability = 1.0;
   }
 }
@@ -101,12 +92,10 @@ Vose::get_random_id( librandom::RngPtr rng ) const
   // Remainder determines whether to return original value or alias
   r -= i;
 
-  if ( r < dist_[ i ].probability )
-  {
+  if ( r < dist_[ i ].probability ) {
     return dist_[ i ].heads;
   }
-  else
-  {
+  else {
     return dist_[ i ].tails;
   }
 }

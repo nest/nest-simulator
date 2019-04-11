@@ -30,14 +30,12 @@
 
 #include "block_vector.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Three-tuple to store position in 3d vector of sources.
  */
-struct SourceTablePosition
-{
+struct SourceTablePosition {
   long tid;    //!< thread index
   long syn_id; //!< synapse-type index
   long lcid;   //!< local connection index
@@ -77,21 +75,17 @@ inline void
 SourceTablePosition::wrap_position( const std::vector< std::vector< BlockVector< T > > >& sources )
 {
   // check for validity of indices and update if necessary
-  while ( lcid < 0 )
-  {
+  while ( lcid < 0 ) {
     --syn_id;
-    if ( syn_id >= 0 )
-    {
+    if ( syn_id >= 0 ) {
       lcid = sources[ tid ][ syn_id ].size() - 1;
       continue;
     }
 
     --tid;
-    if ( tid >= 0 )
-    {
+    if ( tid >= 0 ) {
       syn_id = sources[ tid ].size() - 1;
-      if ( syn_id >= 0 )
-      {
+      if ( syn_id >= 0 ) {
         lcid = sources[ tid ][ syn_id ].size() - 1;
       }
       continue;
@@ -107,12 +101,10 @@ SourceTablePosition::wrap_position( const std::vector< std::vector< BlockVector<
 inline bool
 SourceTablePosition::is_at_end() const
 {
-  if ( tid < 0 and syn_id < 0 and lcid < 0 )
-  {
+  if ( tid < 0 and syn_id < 0 and lcid < 0 ) {
     return true;
   }
-  else
-  {
+  else {
     return false;
   }
 }
@@ -129,19 +121,15 @@ inline bool operator!=( const SourceTablePosition& lhs, const SourceTablePositio
 
 inline bool operator<( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
-  if ( lhs.tid == rhs.tid )
-  {
-    if ( lhs.syn_id == rhs.syn_id )
-    {
+  if ( lhs.tid == rhs.tid ) {
+    if ( lhs.syn_id == rhs.syn_id ) {
       return lhs.lcid < rhs.lcid;
     }
-    else
-    {
+    else {
       return lhs.syn_id < rhs.syn_id;
     }
   }
-  else
-  {
+  else {
     return lhs.tid < rhs.tid;
   }
 }

@@ -42,8 +42,7 @@
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: sinusoidal_gamma_generator - Generates sinusoidally modulated gamma
@@ -133,8 +132,7 @@ SeeAlso: sinusoidal_poisson_generator, gamma_sup_generator
  *       the same synapse type, see #737. Once #681 is fixed, we need to add a
          check that his assumption holds.
  */
-class sinusoidal_gamma_generator : public DeviceNode
-{
+class sinusoidal_gamma_generator : public DeviceNode {
 
 public:
   sinusoidal_gamma_generator();
@@ -180,8 +178,7 @@ private:
 
   void update( Time const&, const long, const long );
 
-  struct Parameters_
-  {
+  struct Parameters_ {
     /** Frequency in radian/ms */
     double om_;
 
@@ -225,8 +222,7 @@ private:
     void set( const DictionaryDatum&, const sinusoidal_gamma_generator& );
   };
 
-  struct State_
-  {
+  struct State_ {
 
     double rate_; //!< current rate, kept for recording
 
@@ -248,8 +244,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( sinusoidal_gamma_generator& );
     Buffers_( const Buffers_&, sinusoidal_gamma_generator& );
     UniversalDataLogger< sinusoidal_gamma_generator > logger_;
@@ -275,8 +270,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
     double h_;    //!< time resolution (ms)
     double t_ms_; //!< current time in ms, for communication with event_hook()
     //! current time in steps, for communication with event_hook()
@@ -312,28 +306,23 @@ sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, 
 
   // to ensure correct overloading resolution, we need explicit event types
   // therefore, we need to duplicate the code here
-  if ( P_.individual_spike_trains_ )
-  {
-    if ( dummy_target )
-    {
+  if ( P_.individual_spike_trains_ ) {
+    if ( dummy_target ) {
       DSSpikeEvent e;
       e.set_sender( *this );
       return target.handles_test_event( e, receptor_type );
     }
-    else
-    {
+    else {
       SpikeEvent e;
       e.set_sender( *this );
       const rport r = target.handles_test_event( e, receptor_type );
-      if ( r != invalid_port_ and not is_model_prototype() )
-      {
+      if ( r != invalid_port_ and not is_model_prototype() ) {
         ++P_.num_trains_;
       }
       return r;
     }
   }
-  else
-  {
+  else {
     // We do not count targets here, since connections may be created through
     // proxies. Instead, we set P_.num_trains_ to 1 in Parameters_::set().
     SpikeEvent e;
@@ -345,8 +334,7 @@ sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, 
 inline port
 sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

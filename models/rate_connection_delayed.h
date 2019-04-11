@@ -26,8 +26,7 @@
 
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: rate_connection_delayed - Synapse type for rate connections with delay.
@@ -60,8 +59,7 @@ SeeAlso: rate_connection_instantaneous, rate_neuron_ipn, rate_neuron_opn
  * has the properties weight, delay and receiver port.
  */
 template < typename targetidentifierT >
-class RateConnectionDelayed : public Connection< targetidentifierT >
-{
+class RateConnectionDelayed : public Connection< targetidentifierT > {
 
 public:
   // this line determines which common properties to use

@@ -40,14 +40,12 @@
 #define ALL_ENTRIES_ACCESSED2( d, fctn, msg1, msg2 ) \
   nest::kernel().logging_manager.all_entries_accessed( ( d ), ( fctn ), ( msg1 ), ( msg2 ), __FILE__, __LINE__ )
 
-namespace nest
-{
+namespace nest {
 
 class LoggingEvent;
 class LoggingDeliverer;
 
-enum severity_t
-{
+enum severity_t {
   M_ALL = 0,
   M_DEBUG = 5,
   M_STATUS = 7,

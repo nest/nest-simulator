@@ -41,8 +41,7 @@
 // Includes from sli:
 #include "name.h"
 
-namespace nest
-{
+namespace nest {
 
 class Node;
 
@@ -85,8 +84,7 @@ class Node;
  * @ingroup event_interface
  */
 
-class Event
-{
+class Event {
 
 public:
   Event();
@@ -350,8 +348,7 @@ protected:
  * Event for spike information.
  * Used to send a spike from one node to the next.
  */
-class SpikeEvent : public Event
-{
+class SpikeEvent : public Event {
 public:
   SpikeEvent();
   void operator()();
@@ -391,8 +388,7 @@ SpikeEvent::get_multiplicity() const
 /**
  * Event for recording the weight of a spike.
  */
-class WeightRecorderEvent : public Event
-{
+class WeightRecorderEvent : public Event {
 public:
   WeightRecorderEvent();
   WeightRecorderEvent* clone() const;
@@ -453,8 +449,7 @@ WeightRecorderEvent::get_receiver_gid( void ) const
  *
  * @note Callback events must only be sent via static_synapse
  */
-class DSSpikeEvent : public SpikeEvent
-{
+class DSSpikeEvent : public SpikeEvent {
 public:
   void operator()();
 };
@@ -466,8 +461,7 @@ public:
  * object. Rather, the receiver has to poll this information
  * from the sender.
  */
-class RateEvent : public Event
-{
+class RateEvent : public Event {
   double r_;
 
 public:
@@ -500,8 +494,7 @@ RateEvent::get_rate() const
  * Event for electrical currents.
  * Used to send currents from one node to the next.
  */
-class CurrentEvent : public Event
-{
+class CurrentEvent : public Event {
   double c_;
 
 public:
@@ -546,8 +539,7 @@ CurrentEvent::get_current() const
  *
  * @note Callback events must only be sent via static_synapse.
  */
-class DSCurrentEvent : public CurrentEvent
-{
+class DSCurrentEvent : public CurrentEvent {
 public:
   void operator()();
 };
@@ -567,8 +559,7 @@ public:
  * @see DataLoggingReply
  * @ingroup DataLoggingEvents
  */
-class DataLoggingRequest : public Event
-{
+class DataLoggingRequest : public Event {
 public:
   /** Create empty request for use during simulation. */
   DataLoggingRequest();
@@ -670,8 +661,7 @@ DataLoggingRequest::record_from() const
  * @see DataLoggingRequest
  * @ingroup DataLoggingEvents
  */
-class DataLoggingReply : public Event
-{
+class DataLoggingReply : public Event {
 public:
   //! Data type data at single recording time
   typedef std::vector< double > DataItem;
@@ -683,8 +673,7 @@ public:
    * not require NaN, that would result in unportable code. max() should draw
    * the users att
    */
-  struct Item
-  {
+  struct Item {
     Item( size_t n )
       : data( n, std::numeric_limits< double >::max() )
       , timestamp( Time::neg_inf() )
@@ -736,8 +725,7 @@ inline DataLoggingReply::DataLoggingReply( const Container& d )
  * Used to send conductance from one node to the next.
  * The conductance is contained in the event object.
  */
-class ConductanceEvent : public Event
-{
+class ConductanceEvent : public Event {
   double g_;
 
 public:
@@ -783,8 +771,7 @@ ConductanceEvent::get_conductance() const
  *        otherwise.
  */
 template < typename D >
-class DataEvent : public Event
-{
+class DataEvent : public Event {
   lockPTR< D > data_;
 
 public:
@@ -806,8 +793,7 @@ DataEvent< D >::get_pointer() const
   return data_;
 }
 
-class DoubleDataEvent : public DataEvent< double >
-{
+class DoubleDataEvent : public DataEvent< double > {
 public:
   void operator()();
   DoubleDataEvent* clone() const;
@@ -833,8 +819,7 @@ DoubleDataEvent::clone() const
  * Front. Neuroinform. 9:22. (2015),
  * doi: 10.3389/fninf.2015.00022
  */
-class SecondaryEvent : public Event
-{
+class SecondaryEvent : public Event {
 
 public:
   virtual SecondaryEvent* clone() const = 0;
@@ -864,8 +849,7 @@ size_t
 number_of_uints_covered( void )
 {
   size_t num_uints = sizeof( T ) / sizeof( unsigned int );
-  if ( num_uints * sizeof( unsigned int ) < sizeof( T ) )
-  {
+  if ( num_uints * sizeof( unsigned int ) < sizeof( T ) ) {
     num_uints += 1;
   }
   return num_uints;
@@ -892,8 +876,7 @@ write_to_comm_buffer( T d, std::vector< unsigned int >::iterator& pos )
   const size_t num_uints = number_of_uints_covered< T >();
   size_t left_to_copy = sizeof( T );
 
-  for ( size_t i = 0; i < num_uints; i++ )
-  {
+  for ( size_t i = 0; i < num_uints; i++ ) {
     memcpy( &( *( pos + i ) ), c + i * sizeof( unsigned int ), std::min( left_to_copy, sizeof( unsigned int ) ) );
     left_to_copy -= sizeof( unsigned int );
   }
@@ -919,8 +902,7 @@ read_from_comm_buffer( T& d, std::vector< unsigned int >::iterator& pos )
   const size_t num_uints = number_of_uints_covered< T >();
   size_t left_to_copy = sizeof( T );
 
-  for ( size_t i = 0; i < num_uints; i++ )
-  {
+  for ( size_t i = 0; i < num_uints; i++ ) {
     memcpy( c + i * sizeof( unsigned int ), &( *( pos + i ) ), std::min( left_to_copy, sizeof( unsigned int ) ) );
     left_to_copy -= sizeof( unsigned int );
   }
@@ -952,8 +934,7 @@ read_from_comm_buffer( T& d, std::vector< unsigned int >::iterator& pos )
  * with the SecondaryEvent in question.
  */
 template < typename DataType, typename Subclass >
-class DataSecondaryEvent : public SecondaryEvent
-{
+class DataSecondaryEvent : public SecondaryEvent {
 private:
   // we chose std::vector over std::set because we expect this to be short
   static std::vector< synindex > pristine_supported_syn_ids_;
@@ -1011,8 +992,7 @@ public:
   reset_supported_syn_ids()
   {
     supported_syn_ids_.clear();
-    for ( size_t i = 0; i < pristine_supported_syn_ids_.size(); ++i )
-    {
+    for ( size_t i = 0; i < pristine_supported_syn_ids_.size(); ++i ) {
       supported_syn_ids_.push_back( pristine_supported_syn_ids_[ i ] );
     }
   }
@@ -1065,8 +1045,7 @@ public:
    */
   std::vector< unsigned int >::iterator& operator>>( std::vector< unsigned int >::iterator& pos )
   {
-    for ( typename std::vector< DataType >::iterator i = coeffarray_as_d_begin_; i != coeffarray_as_d_end_; i++ )
-    {
+    for ( typename std::vector< DataType >::iterator i = coeffarray_as_d_begin_; i != coeffarray_as_d_end_; i++ ) {
       // we need the static_cast here as the size of a stand-alone variable
       // and a std::vector entry may differ (e.g. for std::vector< bool >)
       write_to_comm_buffer( static_cast< DataType >( *i ), pos );
@@ -1103,8 +1082,7 @@ public:
  * Event for gap-junction information. The event transmits the interpolation
  * of the membrane potential to the connected neurons.
  */
-class GapJunctionEvent : public DataSecondaryEvent< double, GapJunctionEvent >
-{
+class GapJunctionEvent : public DataSecondaryEvent< double, GapJunctionEvent > {
 
 public:
   GapJunctionEvent()
@@ -1119,8 +1097,7 @@ public:
  * Event for rate model connections without delay. The event transmits
  * the rate to the connected neurons.
  */
-class InstantaneousRateConnectionEvent : public DataSecondaryEvent< double, InstantaneousRateConnectionEvent >
-{
+class InstantaneousRateConnectionEvent : public DataSecondaryEvent< double, InstantaneousRateConnectionEvent > {
 
 public:
   InstantaneousRateConnectionEvent()
@@ -1135,8 +1112,7 @@ public:
  * Event for rate model connections with delay. The event transmits
  * the rate to the connected neurons.
  */
-class DelayedRateConnectionEvent : public DataSecondaryEvent< double, DelayedRateConnectionEvent >
-{
+class DelayedRateConnectionEvent : public DataSecondaryEvent< double, DelayedRateConnectionEvent > {
 
 public:
   DelayedRateConnectionEvent()
@@ -1151,8 +1127,7 @@ public:
  * Event for diffusion connections (rate model connections for the
  * siegert_neuron). The event transmits the rate to the connected neurons.
  */
-class DiffusionConnectionEvent : public DataSecondaryEvent< double, DiffusionConnectionEvent >
-{
+class DiffusionConnectionEvent : public DataSecondaryEvent< double, DiffusionConnectionEvent > {
 private:
   // drift factor of the corresponding connection
   weight drift_factor_;
@@ -1320,8 +1295,7 @@ Event::get_delay_steps() const
 inline long
 Event::get_rel_delivery_steps( const Time& t ) const
 {
-  if ( stamp_steps_ == 0 )
-  {
+  if ( stamp_steps_ == 0 ) {
     stamp_steps_ = stamp_.get_steps();
   }
   return stamp_steps_ + d_ - 1 - t.get_steps();

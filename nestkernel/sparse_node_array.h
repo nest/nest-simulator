@@ -31,8 +31,7 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 class Node;
 
 /**
@@ -52,11 +51,9 @@ class Node;
  * computation may give an index that is too low and we must search to the right
  * for the actual node. We never need to search to the left.
  */
-class SparseNodeArray
-{
+class SparseNodeArray {
 public:
-  struct NodeEntry
-  {
+  struct NodeEntry {
     NodeEntry( Node&, index );
 
     // Accessor functions here are mostly in place to make things "look nice".

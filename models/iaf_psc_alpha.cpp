@@ -42,8 +42,7 @@
 
 nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;
 
-namespace nest
-{
+namespace nest {
 
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
@@ -118,30 +117,24 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
-  {
+  if ( updateValue< double >( d, names::V_reset, V_reset_ ) ) {
     V_reset_ -= E_L_;
   }
-  else
-  {
+  else {
     V_reset_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_th, Theta_ ) )
-  {
+  if ( updateValue< double >( d, names::V_th, Theta_ ) ) {
     Theta_ -= E_L_;
   }
-  else
-  {
+  else {
     Theta_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_min, LowerBound_ ) )
-  {
+  if ( updateValue< double >( d, names::V_min, LowerBound_ ) ) {
     LowerBound_ -= E_L_;
   }
-  else
-  {
+  else {
     LowerBound_ -= delta_EL;
   }
 
@@ -152,27 +145,22 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_in, tau_in_ );
   updateValue< double >( d, names::t_ref, TauR_ );
 
-  if ( C_ <= 0.0 )
-  {
+  if ( C_ <= 0.0 ) {
     throw BadProperty( "Capacitance must be > 0." );
   }
 
-  if ( Tau_ <= 0.0 )
-  {
+  if ( Tau_ <= 0.0 ) {
     throw BadProperty( "Membrane time constant must be > 0." );
   }
 
-  if ( tau_ex_ <= 0.0 || tau_in_ <= 0.0 )
-  {
+  if ( tau_ex_ <= 0.0 || tau_in_ <= 0.0 ) {
     throw BadProperty( "All synaptic time constants must be > 0." );
   }
 
-  if ( TauR_ < 0.0 )
-  {
+  if ( TauR_ < 0.0 ) {
     throw BadProperty( "The refractory time t_ref can't be negative." );
   }
-  if ( V_reset_ >= Theta_ )
-  {
+  if ( V_reset_ >= Theta_ ) {
     throw BadProperty( "Reset potential must be smaller than threshold." );
   }
 
@@ -188,12 +176,10 @@ iaf_psc_alpha::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 void
 iaf_psc_alpha::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
-  if ( updateValue< double >( d, names::V_m, y3_ ) )
-  {
+  if ( updateValue< double >( d, names::V_m, y3_ ) ) {
     y3_ -= p.E_L_;
   }
-  else
-  {
+  else {
     y3_ -= delta_EL;
   }
 }
@@ -318,10 +304,8 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
-    if ( S_.r_ == 0 )
-    {
+  for ( long lag = from; lag < to; ++lag ) {
+    if ( S_.r_ == 0 ) {
       // neuron not refractory
       S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ex_ * S_.dI_ex_ + V_.P32_ex_ * S_.I_ex_ + V_.P31_in_ * S_.dI_in_
         + V_.P32_in_ * S_.I_in_ + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
@@ -329,8 +313,7 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
       // lower bound of membrane potential
       S_.y3_ = ( S_.y3_ < P_.LowerBound_ ? P_.LowerBound_ : S_.y3_ );
     }
-    else
-    {
+    else {
       // neuron is absolute refractory
       --S_.r_;
     }
@@ -354,8 +337,7 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     S_.dI_in_ += V_.IPSCInitialValue_ * V_.weighted_spikes_in_;
 
     // threshold crossing
-    if ( S_.y3_ >= P_.Theta_ )
-    {
+    if ( S_.y3_ >= P_.Theta_ ) {
       S_.r_ = V_.RefractoryCounts_;
       S_.y3_ = P_.V_reset_;
       // A supra-threshold membrane potential should never be observable.
@@ -383,12 +365,10 @@ iaf_psc_alpha::handle( SpikeEvent& e )
 
   const double s = e.get_weight() * e.get_multiplicity();
 
-  if ( e.get_weight() > 0.0 )
-  {
+  if ( e.get_weight() > 0.0 ) {
     B_.ex_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
   }
-  else
-  {
+  else {
     B_.in_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
   }
 }

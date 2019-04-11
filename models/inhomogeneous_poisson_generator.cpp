@@ -61,8 +61,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::get( DictionaryDatum& d ) co
   const size_t n_rates = rate_times_.size();
   std::vector< double_t >* times_ms = new std::vector< double_t >();
   times_ms->reserve( n_rates );
-  for ( size_t n = 0; n < n_rates; ++n )
-  {
+  for ( size_t n = 0; n < n_rates; ++n ) {
     times_ms->push_back( rate_times_[ n ].get_ms() );
   }
 
@@ -76,24 +75,20 @@ nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_i
 {
   Time t_rate;
 
-  if ( t <= kernel().simulation_manager.get_time().get_ms() )
-  {
+  if ( t <= kernel().simulation_manager.get_time().get_ms() ) {
     throw BadProperty( "Time points must lie strictly in the future." );
   }
 
   // we need to force the rate time to the grid;
   // first, convert the rate time to tics, may not be on grid
   t_rate = Time::ms( t );
-  if ( not t_rate.is_grid_time() )
-  {
-    if ( allow_offgrid_times_ )
-    {
+  if ( not t_rate.is_grid_time() ) {
+    if ( allow_offgrid_times_ ) {
       // in this case, we need to round to the end of the step
       // in which t lies, ms_stamp does that for us.
       t_rate = Time::ms_stamp( t );
     }
-    else
-    {
+    else {
       std::stringstream msg;
       msg << "inhomogeneous_poisson_generator: Time point " << t << " is not representable in current resolution.";
       throw BadProperty( msg.str() );
@@ -115,42 +110,35 @@ nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& 
 
   // if offgrid flag changes, it must be done so either before any rates are
   // set or when setting new rates (which removes old ones)
-  if ( d->known( names::allow_offgrid_times ) )
-  {
+  if ( d->known( names::allow_offgrid_times ) ) {
     const bool flag_offgrid = d->lookup( names::allow_offgrid_times );
 
-    if ( flag_offgrid != allow_offgrid_times_ and not( times or rate_times_.empty() ) )
-    {
+    if ( flag_offgrid != allow_offgrid_times_ and not( times or rate_times_.empty() ) ) {
       throw BadProperty(
         "Option can only be set together with rate times "
         "or if no rate times have been set." );
     }
-    else
-    {
+    else {
       allow_offgrid_times_ = flag_offgrid;
     }
   }
 
-  if ( times xor rates )
-  {
+  if ( times xor rates ) {
     throw BadProperty( "Rate times and values must be reset together." );
   }
 
   // if neither times or rates are given, return here
-  if ( not( times or rates ) )
-  {
+  if ( not( times or rates ) ) {
     return;
   }
 
   const std::vector< double_t > d_times = getValue< std::vector< double_t > >( d->lookup( names::rate_times ) );
 
-  if ( d_times.empty() )
-  {
+  if ( d_times.empty() ) {
     return;
   }
 
-  if ( d_times.size() != rate_values_.size() )
-  {
+  if ( d_times.size() != rate_values_.size() ) {
     throw BadProperty( "Rate times and values have to be the same size." );
   }
 
@@ -168,13 +156,11 @@ nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& 
   std::vector< Time >::const_iterator prev_rate = rate_times_.begin();
 
   // handle all remaining rate times
-  for ( ++next; next != d_times.end(); ++next, ++prev_rate )
-  {
+  for ( ++next; next != d_times.end(); ++next, ++prev_rate ) {
     assert_valid_rate_time_and_insert( *next );
 
     // compare the aligned rate times, must be strictly increasing
-    if ( *prev_rate >= rate_times_.back() )
-    {
+    if ( *prev_rate >= rate_times_.back() ) {
       throw BadProperty( "Rate times must be strictly increasing." );
     }
   }
@@ -250,27 +236,23 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin, const long fr
   // Skip any times in the past. Since we must send events proactively,
   // idx_ must point to times in the future.
   const long first = t0 + from;
-  while ( B_.idx_ < P_.rate_times_.size() and P_.rate_times_[ B_.idx_ ].get_steps() <= first )
-  {
+  while ( B_.idx_ < P_.rate_times_.size() and P_.rate_times_[ B_.idx_ ].get_steps() <= first ) {
     ++B_.idx_;
   }
 
-  for ( long offs = from; offs < to; ++offs )
-  {
+  for ( long offs = from; offs < to; ++offs ) {
     const long curr_time = t0 + offs;
 
     // Keep the amplitude up-to-date at all times.
     // We need to change the amplitude one step ahead of time, see comment
     // on class StimulatingDevice.
-    if ( B_.idx_ < P_.rate_times_.size() and curr_time + 1 == P_.rate_times_[ B_.idx_ ].get_steps() )
-    {
+    if ( B_.idx_ < P_.rate_times_.size() and curr_time + 1 == P_.rate_times_[ B_.idx_ ].get_steps() ) {
       B_.rate_ = P_.rate_values_[ B_.idx_ ] / 1000.0; // scale the rate to ms^-1
       ++B_.idx_;
     }
 
     // create spikes
-    if ( B_.rate_ > 0 and device_.is_active( Time::step( curr_time ) ) )
-    {
+    if ( B_.rate_ > 0 and device_.is_active( Time::step( curr_time ) ) ) {
       DSSpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, offs );
     }

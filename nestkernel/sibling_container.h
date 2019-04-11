@@ -34,8 +34,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * SiblingContainer class.
  * This class is used to group the replicas of nodes on different
@@ -43,8 +42,7 @@ namespace nest
  * advantage of the pool allocator, which has only very little
  * overhead compared to a normal std::vector.
  */
-class SiblingContainer : public Node
-{
+class SiblingContainer : public Node {
 public:
   SiblingContainer();
 

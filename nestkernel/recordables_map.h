@@ -36,8 +36,7 @@
 #include "arraydatum.h"
 #include "name.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * Map names of recordables to data access functions.
  *
@@ -60,8 +59,7 @@ namespace nest
  * @ingroup Devices
  */
 template < typename HostNode >
-class RecordablesMap : public std::map< Name, double ( HostNode::* )() const >
-{
+class RecordablesMap : public std::map< Name, double ( HostNode::* )() const > {
   typedef std::map< Name, double ( HostNode::* )() const > Base_;
 
 public:
@@ -91,8 +89,7 @@ public:
   get_list() const
   {
     ArrayDatum recordables;
-    for ( typename Base_::const_iterator it = this->begin(); it != this->end(); ++it )
-    {
+    for ( typename Base_::const_iterator it = this->begin(); it != this->end(); ++it ) {
       recordables.push_back( new LiteralDatum( it->first ) );
     }
     return recordables;
@@ -132,8 +129,7 @@ RecordablesMap< HostNode >::create()
 
 //! Class that reads out state vector elements, used by UniversalDataLogger
 template < typename HostNode >
-class DataAccessFunctor
-{
+class DataAccessFunctor {
   // Pointer instead of reference required to avoid problems with
   // copying element in std::map when using libc++ under C++11.
   HostNode* parent_;
@@ -165,8 +161,7 @@ public:
  * @ingroup Devices
  */
 template < typename HostNode >
-class DynamicRecordablesMap : public std::map< Name, const DataAccessFunctor< HostNode > >
-{
+class DynamicRecordablesMap : public std::map< Name, const DataAccessFunctor< HostNode > > {
   typedef std::map< Name, const DataAccessFunctor< HostNode > > Base_;
 
 public:
@@ -196,8 +191,7 @@ public:
   get_list() const
   {
     ArrayDatum recordables;
-    for ( typename Base_::const_iterator it = this->begin(); it != this->end(); ++it )
-    {
+    for ( typename Base_::const_iterator it = this->begin(); it != this->end(); ++it ) {
       recordables.push_back( new LiteralDatum( it->first ) );
     }
     return recordables;
@@ -218,8 +212,7 @@ public:
     // .toString() required as work-around for #339, remove when #348 is solved.
     typename DynamicRecordablesMap< HostNode >::iterator it = this->find( n.toString() );
     // If the Name is not in the map, throw an error
-    if ( it == this->end() )
-    {
+    if ( it == this->end() ) {
       throw KeyError( n, "DynamicRecordablesMap", "erase" );
     }
 

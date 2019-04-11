@@ -64,16 +64,14 @@
 // Includes from librandom:
 #include "randomgen.h"
 
-namespace librandom
-{
+namespace librandom {
 /**
  * Mersenne Twister MT19937.
  * This class implements the 32-bit MT19937 Mersenne Twister
  * RNG by Matsumoto and Nishimura. The implementation wraps a C++ class
  * around the originial code.
  */
-class MT19937 : public RandomGen
-{
+class MT19937 : public RandomGen {
 public:
   //! Create generator with given seed
   explicit MT19937( unsigned long );

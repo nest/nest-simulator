@@ -37,8 +37,7 @@
  NOTE: dictionary operators are defined in slidict.{h,cc}
  */
 
-class Get_aFunction : public SLIFunction
-{
+class Get_aFunction : public SLIFunction {
 public:
   Get_aFunction()
   {
@@ -46,8 +45,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Get_a_aFunction : public SLIFunction
-{
+class Get_a_aFunction : public SLIFunction {
 public:
   Get_a_aFunction()
   {
@@ -55,8 +53,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Allocations_aFunction : public SLIFunction
-{
+class Allocations_aFunction : public SLIFunction {
 public:
   Allocations_aFunction()
   {
@@ -64,8 +61,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Get_pFunction : public SLIFunction
-{
+class Get_pFunction : public SLIFunction {
 public:
   Get_pFunction()
   {
@@ -73,8 +69,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Get_lpFunction : public SLIFunction
-{
+class Get_lpFunction : public SLIFunction {
 public:
   Get_lpFunction()
   {
@@ -82,8 +77,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Append_aFunction : public SLIFunction
-{
+class Append_aFunction : public SLIFunction {
 public:
   Append_aFunction()
   {
@@ -91,8 +85,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Append_pFunction : public SLIFunction
-{
+class Append_pFunction : public SLIFunction {
 public:
   Append_pFunction()
   {
@@ -100,8 +93,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Append_sFunction : public SLIFunction
-{
+class Append_sFunction : public SLIFunction {
 public:
   Append_sFunction()
   {
@@ -109,8 +101,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Prepend_aFunction : public SLIFunction
-{
+class Prepend_aFunction : public SLIFunction {
 public:
   Prepend_aFunction()
   {
@@ -118,8 +109,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Prepend_pFunction : public SLIFunction
-{
+class Prepend_pFunction : public SLIFunction {
 public:
   Prepend_pFunction()
   {
@@ -127,8 +117,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Prepend_sFunction : public SLIFunction
-{
+class Prepend_sFunction : public SLIFunction {
 public:
   Prepend_sFunction()
   {
@@ -136,8 +125,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Join_sFunction : public SLIFunction
-{
+class Join_sFunction : public SLIFunction {
 public:
   Join_sFunction()
   {
@@ -145,8 +133,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Join_aFunction : public SLIFunction
-{
+class Join_aFunction : public SLIFunction {
 public:
   Join_aFunction()
   {
@@ -154,8 +141,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Join_pFunction : public SLIFunction
-{
+class Join_pFunction : public SLIFunction {
 public:
   Join_pFunction()
   {
@@ -163,8 +149,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Insert_sFunction : public SLIFunction
-{
+class Insert_sFunction : public SLIFunction {
 public:
   Insert_sFunction()
   {
@@ -172,8 +157,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Insert_aFunction : public SLIFunction
-{
+class Insert_aFunction : public SLIFunction {
 public:
   Insert_aFunction()
   {
@@ -181,8 +165,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class InsertElement_sFunction : public SLIFunction
-{
+class InsertElement_sFunction : public SLIFunction {
 public:
   InsertElement_sFunction()
   {
@@ -190,8 +173,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class InsertElement_aFunction : public SLIFunction
-{
+class InsertElement_aFunction : public SLIFunction {
 public:
   InsertElement_aFunction()
   {
@@ -199,8 +181,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Replace_sFunction : public SLIFunction
-{
+class Replace_sFunction : public SLIFunction {
 public:
   Replace_sFunction()
   {
@@ -208,8 +189,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Replace_aFunction : public SLIFunction
-{
+class Replace_aFunction : public SLIFunction {
 public:
   Replace_aFunction()
   {
@@ -217,8 +197,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Erase_sFunction : public SLIFunction
-{
+class Erase_sFunction : public SLIFunction {
 public:
   Erase_sFunction()
   {
@@ -226,8 +205,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Erase_aFunction : public SLIFunction
-{
+class Erase_aFunction : public SLIFunction {
 public:
   Erase_aFunction()
   {
@@ -235,8 +213,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Erase_pFunction : public SLIFunction
-{
+class Erase_pFunction : public SLIFunction {
 public:
   Erase_pFunction()
   {
@@ -245,8 +222,7 @@ public:
 };
 
 
-class Length_sFunction : public SLIFunction
-{
+class Length_sFunction : public SLIFunction {
 public:
   Length_sFunction()
   {
@@ -254,8 +230,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Length_aFunction : public SLIFunction
-{
+class Length_aFunction : public SLIFunction {
 public:
   Length_aFunction()
   {
@@ -263,8 +238,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Length_pFunction : public SLIFunction
-{
+class Length_pFunction : public SLIFunction {
 public:
   Length_pFunction()
   {
@@ -272,8 +246,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Length_lpFunction : public SLIFunction
-{
+class Length_lpFunction : public SLIFunction {
 public:
   Length_lpFunction()
   {
@@ -281,8 +254,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Capacity_aFunction : public SLIFunction
-{
+class Capacity_aFunction : public SLIFunction {
 public:
   Capacity_aFunction()
   {
@@ -290,8 +262,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Size_aFunction : public SLIFunction
-{
+class Size_aFunction : public SLIFunction {
 public:
   Size_aFunction()
   {
@@ -299,8 +270,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Reserve_aFunction : public SLIFunction
-{
+class Reserve_aFunction : public SLIFunction {
 public:
   Reserve_aFunction()
   {
@@ -308,8 +278,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Resize_aFunction : public SLIFunction
-{
+class Resize_aFunction : public SLIFunction {
 public:
   Resize_aFunction()
   {
@@ -317,8 +286,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Empty_aFunction : public SLIFunction
-{
+class Empty_aFunction : public SLIFunction {
 public:
   Empty_aFunction()
   {
@@ -326,8 +294,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class References_aFunction : public SLIFunction
-{
+class References_aFunction : public SLIFunction {
 public:
   References_aFunction()
   {
@@ -335,8 +302,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Shrink_aFunction : public SLIFunction
-{
+class Shrink_aFunction : public SLIFunction {
 public:
   Shrink_aFunction()
   {
@@ -345,8 +311,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Capacity_sFunction : public SLIFunction
-{
+class Capacity_sFunction : public SLIFunction {
 public:
   Capacity_sFunction()
   {
@@ -354,8 +319,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Size_sFunction : public SLIFunction
-{
+class Size_sFunction : public SLIFunction {
 public:
   Size_sFunction()
   {
@@ -363,8 +327,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Reserve_sFunction : public SLIFunction
-{
+class Reserve_sFunction : public SLIFunction {
 public:
   Reserve_sFunction()
   {
@@ -372,8 +335,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Resize_sFunction : public SLIFunction
-{
+class Resize_sFunction : public SLIFunction {
 public:
   Resize_sFunction()
   {
@@ -381,8 +343,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Empty_sFunction : public SLIFunction
-{
+class Empty_sFunction : public SLIFunction {
 public:
   Empty_sFunction()
   {
@@ -390,8 +351,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Getinterval_sFunction : public SLIFunction
-{
+class Getinterval_sFunction : public SLIFunction {
 public:
   Getinterval_sFunction()
   {
@@ -399,8 +359,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Getinterval_aFunction : public SLIFunction
-{
+class Getinterval_aFunction : public SLIFunction {
 public:
   Getinterval_aFunction()
   {
@@ -408,8 +367,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Cvx_aFunction : public SLIFunction
-{
+class Cvx_aFunction : public SLIFunction {
 public:
   Cvx_aFunction()
   {
@@ -417,8 +375,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Cvlit_nFunction : public SLIFunction
-{
+class Cvlit_nFunction : public SLIFunction {
 public:
   Cvlit_nFunction()
   {
@@ -426,8 +383,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Cvlit_pFunction : public SLIFunction
-{
+class Cvlit_pFunction : public SLIFunction {
 public:
   Cvlit_pFunction()
   {
@@ -435,8 +391,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Cvlp_pFunction : public SLIFunction
-{
+class Cvlp_pFunction : public SLIFunction {
 public:
   Cvlp_pFunction()
   {
@@ -444,8 +399,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RangeIterator_aFunction : public SLIFunction
-{
+class RangeIterator_aFunction : public SLIFunction {
 public:
   RangeIterator_aFunction()
   {
@@ -453,8 +407,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IteratorSize_iterFunction : public SLIFunction
-{
+class IteratorSize_iterFunction : public SLIFunction {
 public:
   IteratorSize_iterFunction()
   {
@@ -462,8 +415,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Cvn_sFunction : public SLIFunction
-{
+class Cvn_sFunction : public SLIFunction {
 public:
   Cvn_sFunction()
   {
@@ -471,8 +423,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Cvn_lFunction : public SLIFunction
-{
+class Cvn_lFunction : public SLIFunction {
 public:
   Cvn_lFunction()
   {
@@ -506,8 +457,7 @@ FirstVersion: Nov 05 1999
 SeeAlso: cvi, cvd, cvs
 
 */
-class Cvi_sFunction : public SLIFunction
-{
+class Cvi_sFunction : public SLIFunction {
 public:
   Cvi_sFunction()
   {
@@ -542,8 +492,7 @@ FirstVersion: Nov 05 1999
 SeeAlso: cvi, cvd, cvs
 
 */
-class Cvd_sFunction : public SLIFunction
-{
+class Cvd_sFunction : public SLIFunction {
 public:
   Cvd_sFunction()
   {
@@ -551,8 +500,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Get_sFunction : public SLIFunction
-{
+class Get_sFunction : public SLIFunction {
 public:
   Get_sFunction()
   {
@@ -560,8 +508,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Put_sFunction : public SLIFunction
-{
+class Put_sFunction : public SLIFunction {
 public:
   Put_sFunction()
   {
@@ -569,8 +516,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Put_aFunction : public SLIFunction
-{
+class Put_aFunction : public SLIFunction {
 public:
   Put_aFunction()
   {
@@ -578,8 +524,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Put_pFunction : public SLIFunction
-{
+class Put_pFunction : public SLIFunction {
 public:
   Put_pFunction()
   {
@@ -587,8 +532,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Put_lpFunction : public SLIFunction
-{
+class Put_lpFunction : public SLIFunction {
 public:
   Put_lpFunction()
   {
@@ -596,8 +540,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Search_sFunction : public SLIFunction
-{
+class Search_sFunction : public SLIFunction {
 public:
   Search_sFunction()
   {
@@ -605,8 +548,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Search_aFunction : public SLIFunction
-{
+class Search_aFunction : public SLIFunction {
 public:
   Search_aFunction()
   {
@@ -624,8 +566,7 @@ public:
 //    void execute(SLIInterpreter *) const;
 //};
 
-class IrepeatanyFunction : public SLIFunction
-{
+class IrepeatanyFunction : public SLIFunction {
 public:
   IrepeatanyFunction()
   {
@@ -633,8 +574,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RepeatanyFunction : public SLIFunction
-{
+class RepeatanyFunction : public SLIFunction {
 public:
   RepeatanyFunction()
   {

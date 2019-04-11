@@ -35,8 +35,7 @@
 #include "slifunction.h"
 #include "typechk.h"
 
-class TrieDatum : public TypedDatum< &SLIInterpreter::Trietype >
-{
+class TrieDatum : public TypedDatum< &SLIInterpreter::Trietype > {
 protected:
   static sli::pool memory;
 
@@ -135,8 +134,7 @@ public:
 
   static void* operator new( size_t size )
   {
-    if ( size != memory.size_of() )
-    {
+    if ( size != memory.size_of() ) {
       return ::operator new( size );
     }
     return memory.alloc();
@@ -144,12 +142,10 @@ public:
 
   static void operator delete( void* p, size_t size )
   {
-    if ( p == NULL )
-    {
+    if ( p == NULL ) {
       return;
     }
-    if ( size != memory.size_of() )
-    {
+    if ( size != memory.size_of() ) {
       ::operator delete( p );
       return;
     }

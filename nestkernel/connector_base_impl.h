@@ -28,8 +28,7 @@
 #ifndef CONNECTOR_BASE_IMPL_H
 #define CONNECTOR_BASE_IMPL_H
 
-namespace nest
-{
+namespace nest {
 
 template < typename ConnectionT >
 void
@@ -38,8 +37,7 @@ Connector< ConnectionT >::send_weight_event( const thread tid,
   Event& e,
   const CommonSynapseProperties& cp )
 {
-  if ( cp.get_weight_recorder() )
-  {
+  if ( cp.get_weight_recorder() ) {
     // Create new event to record the weight and copy relevant content.
     WeightRecorderEvent wr_e;
     wr_e.set_port( e.get_port() );

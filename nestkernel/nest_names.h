@@ -26,8 +26,7 @@
 // Includes from sli:
 #include "name.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * This namespace contains global Name objects. These can be used in
@@ -46,8 +45,7 @@ namespace nest
  * if a) Name declarations and definitions are consistent
  *    b) all Name objects defined are also actually used.
  */
-namespace names
-{
+namespace names {
 extern const Name a;
 extern const Name a_acausal;
 extern const Name a_causal;

@@ -33,8 +33,7 @@
 #include "kernel_manager.h"
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 MusicEventHandler::MusicEventHandler()
   : music_port_( 0 )
   , music_perm_ind_( 0 )
@@ -57,14 +56,11 @@ MusicEventHandler::MusicEventHandler( std::string portname, double acceptable_la
 
 MusicEventHandler::~MusicEventHandler()
 {
-  if ( published_ )
-  {
-    if ( music_perm_ind_ != 0 )
-    {
+  if ( published_ ) {
+    if ( music_perm_ind_ != 0 ) {
       delete music_perm_ind_;
     }
-    if ( music_port_ != 0 )
-    {
+    if ( music_port_ != 0 ) {
       delete music_port_;
     }
   }
@@ -73,14 +69,12 @@ MusicEventHandler::~MusicEventHandler()
 void
 MusicEventHandler::register_channel( int channel, nest::Node* mp )
 {
-  if ( channel >= channelmap_.size() )
-  {
+  if ( channel >= channelmap_.size() ) {
     // all entries not explicitly set will be 0
     channelmap_.resize( channel + 1, 0 );
     eventqueue_.resize( channel + 1 );
   }
-  if ( channelmap_[ channel ] != 0 )
-  {
+  if ( channelmap_[ channel ] != 0 ) {
     throw MUSICChannelAlreadyMapped( "MusicEventHandler", portname_, channel );
   }
 
@@ -91,20 +85,17 @@ MusicEventHandler::register_channel( int channel, nest::Node* mp )
 void
 MusicEventHandler::publish_port()
 {
-  if ( not published_ )
-  {
+  if ( not published_ ) {
     music_port_ = kernel().music_manager.get_music_setup()->publishEventInput( portname_ );
 
     // MUSIC wants seconds, NEST has miliseconds
     const double acceptable_latency_s = 0.001 * acceptable_latency_;
 
-    if ( not music_port_->isConnected() )
-    {
+    if ( not music_port_->isConnected() ) {
       throw MUSICPortUnconnected( "MusicEventHandler", portname_ );
     }
 
-    if ( not music_port_->hasWidth() )
-    {
+    if ( not music_port_->hasWidth() ) {
       throw MUSICPortHasNoWidth( "MusicEventHandler", portname_ );
     }
 
@@ -112,20 +103,17 @@ MusicEventHandler::publish_port()
 
     // check, if all mappings are within the valid range of port width
     // the maximum channel mapped - 1 == size of channelmap
-    if ( channelmap_.size() > music_port_width )
-    {
+    if ( channelmap_.size() > music_port_width ) {
       throw MUSICChannelUnknown( "MusicEventHandler", portname_, channelmap_.size() - 1 );
     }
 
     // create the permutation index mapping
     music_perm_ind_ = new MUSIC::PermutationIndex( &indexmap_.front(), indexmap_.size() );
     // map the port
-    if ( max_buffered_ >= 0 )
-    {
+    if ( max_buffered_ >= 0 ) {
       music_port_->map( music_perm_ind_, this, acceptable_latency_s, max_buffered_ );
     }
-    else
-    {
+    else {
       music_port_->map( music_perm_ind_, this, acceptable_latency_s );
     }
 
@@ -133,8 +121,7 @@ MusicEventHandler::publish_port()
       portname_,
       music_port_width,
       acceptable_latency_ );
-    if ( max_buffered_ > 0 )
-    {
+    if ( max_buffered_ > 0 ) {
       msg += String::compose( " and max buffered=%1 ticks", max_buffered_ );
     }
     msg += ".";
@@ -151,17 +138,13 @@ void MusicEventHandler::operator()( double t, MUSIC::GlobalIndex channel )
 void
 MusicEventHandler::update( Time const& origin, const long from, const long to )
 {
-  for ( size_t channel = 0; channel < channelmap_.size(); ++channel )
-  {
-    if ( channelmap_[ channel ] != 0 )
-    {
-      while ( not eventqueue_[ channel ].empty() )
-      {
+  for ( size_t channel = 0; channel < channelmap_.size(); ++channel ) {
+    if ( channelmap_[ channel ] != 0 ) {
+      while ( not eventqueue_[ channel ].empty() ) {
         Time T = Time::ms( eventqueue_[ channel ].top() );
 
         if ( T > origin + Time::step( from ) - Time::ms( acceptable_latency_ )
-          and T <= origin + Time::step( from + to ) )
-        {
+          and T <= origin + Time::step( from + to ) ) {
           nest::SpikeEvent se;
           se.set_offset( Time( Time::step( T.get_steps() ) ).get_ms() - T.get_ms() );
           se.set_stamp( T );
@@ -170,8 +153,7 @@ MusicEventHandler::update( Time const& origin, const long from, const long to )
           channelmap_[ channel ]->handle( se );
           eventqueue_[ channel ].pop(); // remove the sent event from the queue
         }
-        else
-        {
+        else {
           break;
         }
       }

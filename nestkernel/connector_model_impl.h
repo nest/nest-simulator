@@ -41,8 +41,7 @@
 // Includes from sli:
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 
 // standard implementation to obtain the default delay, assuming that it
 // is located in GenericConnectorModel::default_connection
@@ -136,12 +135,9 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
   // MH 08-04-24
   // get_default_delay_ must be overridden by derived class to return the
   // correct default delay (either from commonprops or default connection)
-  if ( default_delay_needs_check_ )
-  {
-    try
-    {
-      if ( has_delay_ )
-      {
+  if ( default_delay_needs_check_ ) {
+    try {
+      if ( has_delay_ ) {
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( default_connection_.get_delay() );
       }
       // Let connections without delay contribute to the delay extrema with
@@ -150,14 +146,12 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
       // The call to assert_valid_delay_ms needs to happen only once
       // (either here or in add_connection()) when the first connection
       // without delay is created.
-      else
-      {
+      else {
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
           kernel().simulation_manager.get_wfr_comm_interval() );
       }
     }
-    catch ( BadDelay& e )
-    {
+    catch ( BadDelay& e ) {
       throw BadDelay( default_connection_.get_delay(),
         String::compose( "Default delay of '%1' must be between min_delay %2 "
                          "and max_delay %3.",
@@ -186,34 +180,27 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   const double delay,
   const double weight )
 {
-  if ( not numerics::is_nan( delay ) )
-  {
-    if ( has_delay_ )
-    {
+  if ( not numerics::is_nan( delay ) ) {
+    if ( has_delay_ ) {
       kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
     }
 
-    if ( p->known( names::delay ) )
-    {
+    if ( p->known( names::delay ) ) {
       throw BadParameter(
         "Parameter dictionary must not contain delay if delay is given "
         "explicitly." );
     }
   }
-  else
-  {
+  else {
     // check delay
     double delay = 0.0;
 
-    if ( updateValue< double >( p, names::delay, delay ) )
-    {
-      if ( has_delay_ )
-      {
+    if ( updateValue< double >( p, names::delay, delay ) ) {
+      if ( has_delay_ ) {
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
       }
     }
-    else
-    {
+    else {
       used_default_delay();
     }
   }
@@ -221,18 +208,15 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   // create a new instance of the default connection
   ConnectionT connection = ConnectionT( default_connection_ );
 
-  if ( not numerics::is_nan( weight ) )
-  {
+  if ( not numerics::is_nan( weight ) ) {
     connection.set_weight( weight );
   }
 
-  if ( not numerics::is_nan( delay ) )
-  {
+  if ( not numerics::is_nan( delay ) ) {
     connection.set_delay( delay );
   }
 
-  if ( not p->empty() )
-  {
+  if ( not p->empty() ) {
     // Reference to connector model needed here to check delay (maybe this could
     // be done one level above?).
     connection.set_status( p, *this );
@@ -263,8 +247,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
 {
   assert( syn_id != invalid_synindex );
 
-  if ( thread_local_connectors[ syn_id ] == NULL )
-  {
+  if ( thread_local_connectors[ syn_id ] == NULL ) {
     // No homogeneous Connector with this syn_id exists, we need to create a new
     // homogeneous Connector.
     thread_local_connectors[ syn_id ] = new Connector< ConnectionT >( syn_id );

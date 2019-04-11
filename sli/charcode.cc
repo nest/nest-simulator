@@ -35,8 +35,7 @@ CharCode::Range( size_t code, char lc, char uc )
 
   assert( lower <= upper );
   assert( upper < size() );
-  for ( size_t i = lower; i <= upper; ++i )
-  {
+  for ( size_t i = lower; i <= upper; ++i ) {
     ( *this )[ i ] = code;
   }
 }
@@ -44,8 +43,7 @@ CharCode::Range( size_t code, char lc, char uc )
 void
 CharCode::Group( size_t code, const char* g )
 {
-  while ( *g )
-  {
+  while ( *g ) {
     unsigned char c = *g++;
     assert( c < size() );
     ( *this )[ c ] = code;

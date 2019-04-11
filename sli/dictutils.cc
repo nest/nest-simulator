@@ -26,8 +26,7 @@ void
 initialize_property_array( DictionaryDatum& d, Name propname )
 {
   Token t = d->lookup( propname );
-  if ( t.empty() )
-  {
+  if ( t.empty() ) {
     ArrayDatum arrd;
     def< ArrayDatum >( d, propname, arrd );
   }
@@ -37,8 +36,7 @@ void
 initialize_property_doublevector( DictionaryDatum& d, Name propname )
 {
   Token t = d->lookup( propname );
-  if ( t.empty() )
-  {
+  if ( t.empty() ) {
     DoubleVectorDatum arrd( new std::vector< double > );
     def< DoubleVectorDatum >( d, propname, arrd );
   }
@@ -48,8 +46,7 @@ void
 initialize_property_intvector( DictionaryDatum& d, Name propname )
 {
   Token t = d->lookup( propname );
-  if ( t.empty() )
-  {
+  if ( t.empty() ) {
     IntVectorDatum arrd( new std::vector< long > );
     def< IntVectorDatum >( d, propname, arrd );
   }
@@ -102,8 +99,7 @@ accumulate_property( DictionaryDatum& d, Name propname, const std::vector< doubl
   {
     ( *arrd )->insert( ( *arrd )->end(), prop.begin(), prop.end() );
   }
-  else
-  {
+  else {
     assert( ( *arrd )->size() == prop.size() );
 
     // add contents of prop to **arrd elementwise

@@ -29,8 +29,7 @@
 // Includes from nestkernel:
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: quantal_stp_synapse - Probabilistic synapse model with short term
@@ -86,8 +85,7 @@ Author: Marc-Oliver Gewaltig, based on tsodyks2_synapse
 SeeAlso: tsodyks2_synapse, synapsedict, stdp_synapse, static_synapse
 */
 template < typename targetidentifierT >
-class Quantal_StpConnection : public Connection< targetidentifierT >
-{
+class Quantal_StpConnection : public Connection< targetidentifierT > {
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
@@ -134,8 +132,7 @@ public:
    */
   void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -193,26 +190,21 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   u_ = U_ + u_ * ( 1. - U_ ) * u_decay; // Eq. 4 from [2]
 
   // Compute number of sites that recovered during the interval.
-  for ( int depleted = n_ - a_; depleted > 0; --depleted )
-  {
-    if ( kernel().rng_manager.get_rng( t )->drand() < ( 1.0 - p_decay ) )
-    {
+  for ( int depleted = n_ - a_; depleted > 0; --depleted ) {
+    if ( kernel().rng_manager.get_rng( t )->drand() < ( 1.0 - p_decay ) ) {
       ++a_;
     }
   }
 
   // Compute number of released sites
   int n_release = 0;
-  for ( int i = a_; i > 0; --i )
-  {
-    if ( kernel().rng_manager.get_rng( t )->drand() < u_ )
-    {
+  for ( int i = a_; i > 0; --i ) {
+    if ( kernel().rng_manager.get_rng( t )->drand() < u_ ) {
       ++n_release;
     }
   }
 
-  if ( n_release > 0 )
-  {
+  if ( n_release > 0 ) {
     e.set_receiver( *get_target( t ) );
     e.set_weight( n_release * weight_ );
     e.set_delay_steps( get_delay_steps() );

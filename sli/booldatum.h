@@ -37,8 +37,7 @@
 class Name;
 class Token;
 
-class BoolDatum : public GenericDatum< bool, &SLIInterpreter::Booltype >
-{
+class BoolDatum : public GenericDatum< bool, &SLIInterpreter::Booltype > {
 protected:
   static sli::pool memory;
 

@@ -57,8 +57,7 @@
 #define EXITCODE_SKIPPED_NO_MUSIC 205
 
 
-class SLIStartup : public SLIModule
-{
+class SLIStartup : public SLIModule {
   const std::string startupfilename;
   const std::string slilibpath;
   std::string slihomepath;
@@ -131,8 +130,7 @@ public:
 
   Name environment_name;
 
-  class GetenvFunction : public SLIFunction
-  {
+  class GetenvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };

@@ -31,8 +31,7 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-namespace nest
-{
+namespace nest {
 
 RecordablesMap< ht_neuron > ht_neuron::recordablesMap_;
 
@@ -275,8 +274,7 @@ nest::ht_neuron::State_::State_( const ht_neuron& node, const Parameters_& p )
   y_[ V_M ] = ( p.g_NaL * p.E_Na + p.g_KL * p.E_K ) / ( p.g_NaL + p.g_KL );
   y_[ THETA ] = p.theta_eq;
 
-  for ( size_t i = 2; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 2; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = 0.0;
   }
 
@@ -295,16 +293,14 @@ nest::ht_neuron::State_::State_( const State_& s )
   , I_T_( s.I_T_ )
   , I_h_( s.I_h_ )
 {
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = s.y_[ i ];
   }
 }
 
 nest::ht_neuron::State_& nest::ht_neuron::State_::operator=( const State_& s )
 {
-  if ( this == &s )
-  {
+  if ( this == &s ) {
     return *this;
   }
 
@@ -314,8 +310,7 @@ nest::ht_neuron::State_& nest::ht_neuron::State_::operator=( const State_& s )
   I_T_ = s.I_T_;
   I_h_ = s.I_h_;
 
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = s.y_[ i ];
   }
 
@@ -419,131 +414,100 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_rev_h, E_rev_h );
   updateValue< bool >( d, names::voltage_clamp, voltage_clamp );
 
-  if ( g_peak_AMPA < 0 )
-  {
+  if ( g_peak_AMPA < 0 ) {
     throw BadParameter( "g_peak_AMPA >= 0 required." );
   }
-  if ( g_peak_GABA_A < 0 )
-  {
+  if ( g_peak_GABA_A < 0 ) {
     throw BadParameter( "g_peak_GABA_A >= 0 required." );
   }
-  if ( g_peak_GABA_B < 0 )
-  {
+  if ( g_peak_GABA_B < 0 ) {
     throw BadParameter( "g_peak_GABA_B >= 0 required." );
   }
-  if ( g_peak_KNa < 0 )
-  {
+  if ( g_peak_KNa < 0 ) {
     throw BadParameter( "g_peak_KNa >= 0 required." );
   }
-  if ( S_act_NMDA < 0 )
-  {
+  if ( S_act_NMDA < 0 ) {
     throw BadParameter( "S_act_NMDA >= 0 required." );
   }
-  if ( g_peak_NMDA < 0 )
-  {
+  if ( g_peak_NMDA < 0 ) {
     throw BadParameter( "g_peak_NMDA >= 0 required." );
   }
-  if ( g_peak_T < 0 )
-  {
+  if ( g_peak_T < 0 ) {
     throw BadParameter( "g_peak_T >= 0 required." );
   }
-  if ( g_peak_h < 0 )
-  {
+  if ( g_peak_h < 0 ) {
     throw BadParameter( "g_peak_h >= 0 required." );
   }
-  if ( g_peak_NaP < 0 )
-  {
+  if ( g_peak_NaP < 0 ) {
     throw BadParameter( "g_peak_NaP >= 0 required." );
   }
-  if ( g_KL < 0 )
-  {
+  if ( g_KL < 0 ) {
     throw BadParameter( "g_KL >= 0 required." );
   }
-  if ( g_NaL < 0 )
-  {
+  if ( g_NaL < 0 ) {
     throw BadParameter( "g_NaL >= 0 required." );
   }
 
-  if ( t_ref < 0 )
-  {
+  if ( t_ref < 0 ) {
     throw BadParameter( "t_ref >= 0 required." );
   }
 
-  if ( tau_rise_AMPA <= 0 )
-  {
+  if ( tau_rise_AMPA <= 0 ) {
     throw BadParameter( "tau_rise_AMPA > 0 required." );
   }
-  if ( tau_decay_AMPA <= 0 )
-  {
+  if ( tau_decay_AMPA <= 0 ) {
     throw BadParameter( "tau_decay_AMPA > 0 required." );
   }
-  if ( tau_rise_GABA_A <= 0 )
-  {
+  if ( tau_rise_GABA_A <= 0 ) {
     throw BadParameter( "tau_rise_GABA_A > 0 required." );
   }
-  if ( tau_decay_GABA_A <= 0 )
-  {
+  if ( tau_decay_GABA_A <= 0 ) {
     throw BadParameter( "tau_decay_GABA_A > 0 required." );
   }
-  if ( tau_rise_GABA_B <= 0 )
-  {
+  if ( tau_rise_GABA_B <= 0 ) {
     throw BadParameter( "tau_rise_GABA_B > 0 required." );
   }
-  if ( tau_decay_GABA_B <= 0 )
-  {
+  if ( tau_decay_GABA_B <= 0 ) {
     throw BadParameter( "tau_decay_GABA_B > 0 required." );
   }
-  if ( tau_rise_NMDA <= 0 )
-  {
+  if ( tau_rise_NMDA <= 0 ) {
     throw BadParameter( "tau_rise_NMDA > 0 required." );
   }
-  if ( tau_decay_NMDA <= 0 )
-  {
+  if ( tau_decay_NMDA <= 0 ) {
     throw BadParameter( "tau_decay_NMDA > 0 required." );
   }
-  if ( tau_Mg_fast_NMDA <= 0 )
-  {
+  if ( tau_Mg_fast_NMDA <= 0 ) {
     throw BadParameter( "tau_Mg_fast_NMDA > 0 required." );
   }
-  if ( tau_Mg_slow_NMDA <= 0 )
-  {
+  if ( tau_Mg_slow_NMDA <= 0 ) {
     throw BadParameter( "tau_Mg_slow_NMDA > 0 required." );
   }
-  if ( tau_spike <= 0 )
-  {
+  if ( tau_spike <= 0 ) {
     throw BadParameter( "tau_spike > 0 required." );
   }
-  if ( tau_theta <= 0 )
-  {
+  if ( tau_theta <= 0 ) {
     throw BadParameter( "tau_theta > 0 required." );
   }
-  if ( tau_m <= 0 )
-  {
+  if ( tau_m <= 0 ) {
     throw BadParameter( "tau_m > 0 required." );
   }
-  if ( tau_D_KNa <= 0 )
-  {
+  if ( tau_D_KNa <= 0 ) {
     throw BadParameter( "tau_D_KNa > 0 required." );
   }
 
-  if ( tau_rise_AMPA >= tau_decay_AMPA )
-  {
+  if ( tau_rise_AMPA >= tau_decay_AMPA ) {
     throw BadParameter( "tau_rise_AMPA < tau_decay_AMPA required." );
   }
-  if ( tau_rise_GABA_A >= tau_decay_GABA_A )
-  {
+  if ( tau_rise_GABA_A >= tau_decay_GABA_A ) {
     throw BadParameter( "tau_rise_GABA_A < tau_decay_GABA_A required." );
   }
-  if ( tau_rise_GABA_B >= tau_decay_GABA_B )
-  {
+  if ( tau_rise_GABA_B >= tau_decay_GABA_B ) {
     throw BadParameter( "tau_rise_GABA_B < tau_decay_GABA_B required." );
   }
-  if ( tau_rise_NMDA >= tau_decay_NMDA )
-  {
+  if ( tau_rise_NMDA >= tau_decay_NMDA ) {
     throw BadParameter( "tau_rise_NMDA < tau_decay_NMDA required." );
   }
-  if ( tau_Mg_fast_NMDA >= tau_Mg_slow_NMDA )
-  {
+  if ( tau_Mg_fast_NMDA >= tau_Mg_slow_NMDA ) {
     throw BadParameter( "tau_Mg_fast_NMDA < tau_Mg_slow_NMDA required." );
   }
 }
@@ -563,8 +527,7 @@ nest::ht_neuron::State_::set( const DictionaryDatum& d, const ht_neuron& node )
 
   bool equilibrate = false;
   updateValue< bool >( d, names::equilibrate, equilibrate );
-  if ( equilibrate )
-  {
+  if ( equilibrate ) {
     y_[ m_fast_NMDA ] = node.m_eq_NMDA_( y_[ V_M ] );
     y_[ m_slow_NMDA ] = node.m_eq_NMDA_( y_[ V_M ] );
     y_[ m_Ih ] = node.m_eq_h_( y_[ V_M ] );
@@ -622,16 +585,13 @@ nest::ht_neuron::ht_neuron( const ht_neuron& n )
 nest::ht_neuron::~ht_neuron()
 {
   // GSL structs may not be initialized, so we need to protect destruction.
-  if ( B_.e_ )
-  {
+  if ( B_.e_ ) {
     gsl_odeiv_evolve_free( B_.e_ );
   }
-  if ( B_.c_ )
-  {
+  if ( B_.c_ ) {
     gsl_odeiv_control_free( B_.c_ );
   }
-  if ( B_.s_ )
-  {
+  if ( B_.s_ ) {
     gsl_odeiv_step_free( B_.s_ );
   }
 }
@@ -651,8 +611,7 @@ void
 nest::ht_neuron::init_buffers_()
 {
   // Reset spike buffers.
-  for ( std::vector< RingBuffer >::iterator it = B_.spike_inputs_.begin(); it != B_.spike_inputs_.end(); ++it )
-  {
+  for ( std::vector< RingBuffer >::iterator it = B_.spike_inputs_.begin(); it != B_.spike_inputs_.end(); ++it ) {
     it->clear(); // include resize
   }
 
@@ -665,30 +624,24 @@ nest::ht_neuron::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.integration_step_ = B_.step_;
 
-  if ( B_.s_ == 0 )
-  {
+  if ( B_.s_ == 0 ) {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
-  else
-  {
+  else {
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
-  {
+  if ( B_.c_ == 0 ) {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
-  else
-  {
+  else {
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
-  {
+  if ( B_.e_ == 0 ) {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
-  else
-  {
+  else {
     gsl_odeiv_evolve_reset( B_.e_ );
   }
 
@@ -802,13 +755,11 @@ ht_neuron::update( Time const& origin, const long from, const long to )
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     double tt = 0.0; // it's all relative!
 
     // adaptive step integration
-    while ( tt < B_.step_ )
-    {
+    while ( tt < B_.step_ ) {
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
@@ -818,14 +769,12 @@ ht_neuron::update( Time const& origin, const long from, const long to )
         &B_.integration_step_, // integration window (written on!)
         S_.y_ );               // neuron state
 
-      if ( status != GSL_SUCCESS )
-      {
+      if ( status != GSL_SUCCESS ) {
         throw GSLSolverFailure( get_name(), status );
       }
 
       // Enforce voltage clamp
-      if ( P_.voltage_clamp )
-      {
+      if ( P_.voltage_clamp ) {
         S_.y_[ State_::V_M ] = V_.V_clamp_;
       }
 
@@ -836,8 +785,7 @@ ht_neuron::update( Time const& origin, const long from, const long to )
 
       // A spike is generated if the neuron is not refractory and the membrane
       // potential exceeds the threshold.
-      if ( S_.ref_steps_ == 0 and S_.y_[ State_::V_M ] >= S_.y_[ State_::THETA ] )
-      {
+      if ( S_.ref_steps_ == 0 and S_.y_[ State_::V_M ] >= S_.y_[ State_::THETA ] ) {
         // Set V and theta to the sodium reversal potential.
         S_.y_[ State_::V_M ] = P_.E_Na;
         S_.y_[ State_::THETA ] = P_.E_Na;
@@ -853,8 +801,7 @@ ht_neuron::update( Time const& origin, const long from, const long to )
       }
     }
 
-    if ( S_.ref_steps_ > 0 )
-    {
+    if ( S_.ref_steps_ > 0 ) {
       --S_.ref_steps_;
     }
 
@@ -863,8 +810,7 @@ ht_neuron::update( Time const& origin, const long from, const long to )
      * The input variable for the synapse type with buffer index i is
      * at position 2 + 2*i in the state variable vector.
      */
-    for ( size_t i = 0; i < B_.spike_inputs_.size(); ++i )
-    {
+    for ( size_t i = 0; i < B_.spike_inputs_.size(); ++i ) {
       S_.y_[ 2 + 2 * i ] += V_.cond_steps_[ i ] * B_.spike_inputs_[ i ].get_value( lag );
     }
 

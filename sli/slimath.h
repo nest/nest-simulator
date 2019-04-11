@@ -31,8 +31,7 @@
 
 void init_slimath( SLIInterpreter* );
 
-class Add_diFunction : public SLIFunction
-{
+class Add_diFunction : public SLIFunction {
 public:
   Add_diFunction()
   {
@@ -40,8 +39,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Add_iiFunction : public SLIFunction
-{
+class Add_iiFunction : public SLIFunction {
 public:
   Add_iiFunction()
   {
@@ -49,8 +47,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Add_idFunction : public SLIFunction
-{
+class Add_idFunction : public SLIFunction {
 public:
   Add_idFunction()
   {
@@ -58,8 +55,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Add_ddFunction : public SLIFunction
-{
+class Add_ddFunction : public SLIFunction {
 public:
   Add_ddFunction()
   {
@@ -68,8 +64,7 @@ public:
 };
 //---------------------------------------
 
-class Sub_diFunction : public SLIFunction
-{
+class Sub_diFunction : public SLIFunction {
 public:
   Sub_diFunction()
   {
@@ -77,8 +72,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Sub_iiFunction : public SLIFunction
-{
+class Sub_iiFunction : public SLIFunction {
 public:
   Sub_iiFunction()
   {
@@ -87,8 +81,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Sub_idFunction : public SLIFunction
-{
+class Sub_idFunction : public SLIFunction {
 public:
   Sub_idFunction()
   {
@@ -97,8 +90,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Sub_ddFunction : public SLIFunction
-{
+class Sub_ddFunction : public SLIFunction {
 public:
   Sub_ddFunction()
   {
@@ -108,8 +100,7 @@ public:
 };
 //---------------------------------------
 
-class Mul_diFunction : public SLIFunction
-{
+class Mul_diFunction : public SLIFunction {
 public:
   Mul_diFunction()
   {
@@ -118,8 +109,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Mul_iiFunction : public SLIFunction
-{
+class Mul_iiFunction : public SLIFunction {
 public:
   Mul_iiFunction()
   {
@@ -128,8 +118,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Mul_idFunction : public SLIFunction
-{
+class Mul_idFunction : public SLIFunction {
 public:
   Mul_idFunction()
   {
@@ -138,8 +127,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Mul_ddFunction : public SLIFunction
-{
+class Mul_ddFunction : public SLIFunction {
 public:
   Mul_ddFunction()
   {
@@ -149,8 +137,7 @@ public:
 };
 //---------------------------------------
 
-class Div_diFunction : public SLIFunction
-{
+class Div_diFunction : public SLIFunction {
 public:
   Div_diFunction()
   {
@@ -159,8 +146,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Div_iiFunction : public SLIFunction
-{
+class Div_iiFunction : public SLIFunction {
 public:
   Div_iiFunction()
   {
@@ -169,8 +155,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Div_idFunction : public SLIFunction
-{
+class Div_idFunction : public SLIFunction {
 public:
   Div_idFunction()
   {
@@ -178,8 +163,7 @@ public:
 
   void execute( SLIInterpreter* ) const;
 };
-class Div_ddFunction : public SLIFunction
-{
+class Div_ddFunction : public SLIFunction {
 public:
   Div_ddFunction()
   {
@@ -190,8 +174,7 @@ public:
 
 //--------------------------------------
 
-class Mod_iiFunction : public SLIFunction
-{
+class Mod_iiFunction : public SLIFunction {
 public:
   Mod_iiFunction()
   {
@@ -202,8 +185,7 @@ public:
 //--------------------------------------
 
 
-class Sin_dFunction : public SLIFunction
-{
+class Sin_dFunction : public SLIFunction {
 public:
   Sin_dFunction()
   {
@@ -212,8 +194,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Asin_dFunction : public SLIFunction
-{
+class Asin_dFunction : public SLIFunction {
 public:
   Asin_dFunction()
   {
@@ -222,8 +203,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Cos_dFunction : public SLIFunction
-{
+class Cos_dFunction : public SLIFunction {
 public:
   Cos_dFunction()
   {
@@ -232,8 +212,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Acos_dFunction : public SLIFunction
-{
+class Acos_dFunction : public SLIFunction {
 public:
   Acos_dFunction()
   {
@@ -242,8 +221,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Exp_dFunction : public SLIFunction
-{
+class Exp_dFunction : public SLIFunction {
 public:
   Exp_dFunction()
   {
@@ -252,8 +230,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Ln_dFunction : public SLIFunction
-{
+class Ln_dFunction : public SLIFunction {
 public:
   Ln_dFunction()
   {
@@ -262,8 +239,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Log_dFunction : public SLIFunction
-{
+class Log_dFunction : public SLIFunction {
 public:
   Log_dFunction()
   {
@@ -272,8 +248,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Sqr_dFunction : public SLIFunction
-{
+class Sqr_dFunction : public SLIFunction {
 public:
   Sqr_dFunction()
   {
@@ -282,8 +257,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Sqrt_dFunction : public SLIFunction
-{
+class Sqrt_dFunction : public SLIFunction {
 public:
   Sqrt_dFunction()
   {
@@ -292,8 +266,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Pow_ddFunction : public SLIFunction
-{
+class Pow_ddFunction : public SLIFunction {
 public:
   Pow_ddFunction()
   {
@@ -302,8 +275,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Pow_diFunction : public SLIFunction
-{
+class Pow_diFunction : public SLIFunction {
 public:
   Pow_diFunction()
   {
@@ -312,8 +284,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Modf_dFunction : public SLIFunction
-{
+class Modf_dFunction : public SLIFunction {
 public:
   Modf_dFunction()
   {
@@ -322,8 +293,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Frexp_dFunction : public SLIFunction
-{
+class Frexp_dFunction : public SLIFunction {
 public:
   Frexp_dFunction()
   {
@@ -332,8 +302,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Ldexp_diFunction : public SLIFunction
-{
+class Ldexp_diFunction : public SLIFunction {
 public:
   Ldexp_diFunction()
   {
@@ -343,8 +312,7 @@ public:
 };
 
 
-class Dexp_iFunction : public SLIFunction
-{
+class Dexp_iFunction : public SLIFunction {
 public:
   Dexp_iFunction()
   {
@@ -355,8 +323,7 @@ public:
 
 
 //--------------------------------------
-class Abs_iFunction : public SLIFunction
-{
+class Abs_iFunction : public SLIFunction {
 public:
   Abs_iFunction()
   {
@@ -364,8 +331,7 @@ public:
 
   void execute( SLIInterpreter* ) const;
 };
-class Abs_dFunction : public SLIFunction
-{
+class Abs_dFunction : public SLIFunction {
 public:
   Abs_dFunction()
   {
@@ -376,8 +342,7 @@ public:
 
 //--------------------------------------
 
-class Neg_iFunction : public SLIFunction
-{
+class Neg_iFunction : public SLIFunction {
 public:
   Neg_iFunction()
   {
@@ -385,8 +350,7 @@ public:
 
   void execute( SLIInterpreter* ) const;
 };
-class Neg_dFunction : public SLIFunction
-{
+class Neg_dFunction : public SLIFunction {
 public:
   Neg_dFunction()
   {
@@ -395,8 +359,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Inv_dFunction : public SLIFunction
-{
+class Inv_dFunction : public SLIFunction {
 public:
   Inv_dFunction()
   {
@@ -407,8 +370,7 @@ public:
 
 //-------------------------
 
-class EqFunction : public SLIFunction
-{
+class EqFunction : public SLIFunction {
 public:
   EqFunction()
   {
@@ -417,8 +379,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class NeqFunction : public SLIFunction
-{
+class NeqFunction : public SLIFunction {
 public:
   NeqFunction()
   {
@@ -427,8 +388,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class AndFunction : public SLIFunction
-{
+class AndFunction : public SLIFunction {
 public:
   AndFunction()
   {
@@ -437,8 +397,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class OrFunction : public SLIFunction
-{
+class OrFunction : public SLIFunction {
 public:
   OrFunction()
   {
@@ -447,8 +406,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class And_iiFunction : public SLIFunction
-{
+class And_iiFunction : public SLIFunction {
 public:
   And_iiFunction()
   {
@@ -457,8 +415,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Or_iiFunction : public SLIFunction
-{
+class Or_iiFunction : public SLIFunction {
 public:
   Or_iiFunction()
   {
@@ -467,8 +424,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class XorFunction : public SLIFunction
-{
+class XorFunction : public SLIFunction {
 public:
   XorFunction()
   {
@@ -477,8 +433,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Not_bFunction : public SLIFunction
-{
+class Not_bFunction : public SLIFunction {
 public:
   Not_bFunction()
   {
@@ -487,8 +442,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Not_iFunction : public SLIFunction
-{
+class Not_iFunction : public SLIFunction {
 public:
   Not_iFunction()
   {
@@ -497,8 +451,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Geq_iiFunction : public SLIFunction
-{
+class Geq_iiFunction : public SLIFunction {
 public:
   Geq_iiFunction()
   {
@@ -507,8 +460,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Geq_idFunction : public SLIFunction
-{
+class Geq_idFunction : public SLIFunction {
 public:
   Geq_idFunction()
   {
@@ -517,8 +469,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Geq_diFunction : public SLIFunction
-{
+class Geq_diFunction : public SLIFunction {
 public:
   Geq_diFunction()
   {
@@ -527,8 +478,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Geq_ddFunction : public SLIFunction
-{
+class Geq_ddFunction : public SLIFunction {
 public:
   Geq_ddFunction()
   {
@@ -537,8 +487,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Leq_iiFunction : public SLIFunction
-{
+class Leq_iiFunction : public SLIFunction {
 public:
   Leq_iiFunction()
   {
@@ -547,8 +496,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Leq_idFunction : public SLIFunction
-{
+class Leq_idFunction : public SLIFunction {
 public:
   Leq_idFunction()
   {
@@ -557,8 +505,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Leq_diFunction : public SLIFunction
-{
+class Leq_diFunction : public SLIFunction {
 public:
   Leq_diFunction()
   {
@@ -567,8 +514,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Leq_ddFunction : public SLIFunction
-{
+class Leq_ddFunction : public SLIFunction {
 public:
   Leq_ddFunction()
   {
@@ -580,8 +526,7 @@ public:
 
 //-------------------------
 
-class Gt_iiFunction : public SLIFunction
-{
+class Gt_iiFunction : public SLIFunction {
 public:
   Gt_iiFunction()
   {
@@ -590,8 +535,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Gt_ddFunction : public SLIFunction
-{
+class Gt_ddFunction : public SLIFunction {
 public:
   Gt_ddFunction()
   {
@@ -600,8 +544,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Gt_idFunction : public SLIFunction
-{
+class Gt_idFunction : public SLIFunction {
 public:
   Gt_idFunction()
   {
@@ -610,8 +553,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Gt_diFunction : public SLIFunction
-{
+class Gt_diFunction : public SLIFunction {
 public:
   Gt_diFunction()
   {
@@ -620,8 +562,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Gt_ssFunction : public SLIFunction
-{
+class Gt_ssFunction : public SLIFunction {
 public:
   Gt_ssFunction()
   {
@@ -630,8 +571,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Lt_iiFunction : public SLIFunction
-{
+class Lt_iiFunction : public SLIFunction {
 public:
   Lt_iiFunction()
   {
@@ -640,8 +580,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Lt_ddFunction : public SLIFunction
-{
+class Lt_ddFunction : public SLIFunction {
 public:
   Lt_ddFunction()
   {
@@ -650,8 +589,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Lt_idFunction : public SLIFunction
-{
+class Lt_idFunction : public SLIFunction {
 public:
   Lt_idFunction()
   {
@@ -660,8 +598,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Lt_diFunction : public SLIFunction
-{
+class Lt_diFunction : public SLIFunction {
 public:
   Lt_diFunction()
   {
@@ -670,8 +607,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Lt_ssFunction : public SLIFunction
-{
+class Lt_ssFunction : public SLIFunction {
 public:
   Lt_ssFunction()
   {
@@ -680,8 +616,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IntegerFunction : public SLIFunction
-{
+class IntegerFunction : public SLIFunction {
 public:
   IntegerFunction()
   {
@@ -690,8 +625,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class DoubleFunction : public SLIFunction
-{
+class DoubleFunction : public SLIFunction {
 public:
   DoubleFunction()
   {
@@ -700,8 +634,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class UnitStep_iFunction : public SLIFunction
-{
+class UnitStep_iFunction : public SLIFunction {
 public:
   UnitStep_iFunction()
   {
@@ -710,8 +643,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class UnitStep_dFunction : public SLIFunction
-{
+class UnitStep_dFunction : public SLIFunction {
 public:
   UnitStep_dFunction()
   {
@@ -720,8 +652,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class UnitStep_iaFunction : public SLIFunction
-{
+class UnitStep_iaFunction : public SLIFunction {
 public:
   UnitStep_iaFunction()
   {
@@ -730,8 +661,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class UnitStep_daFunction : public SLIFunction
-{
+class UnitStep_daFunction : public SLIFunction {
 public:
   UnitStep_daFunction()
   {
@@ -740,8 +670,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Round_dFunction : public SLIFunction
-{
+class Round_dFunction : public SLIFunction {
 public:
   Round_dFunction()
   {
@@ -749,8 +678,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Floor_dFunction : public SLIFunction
-{
+class Floor_dFunction : public SLIFunction {
 public:
   Floor_dFunction()
   {
@@ -759,8 +687,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Ceil_dFunction : public SLIFunction
-{
+class Ceil_dFunction : public SLIFunction {
 public:
   Ceil_dFunction()
   {
@@ -770,8 +697,7 @@ public:
 };
 
 
-class Max_i_iFunction : public SLIFunction
-{
+class Max_i_iFunction : public SLIFunction {
 public:
   Max_i_iFunction()
   {
@@ -779,8 +705,7 @@ public:
 
   void execute( SLIInterpreter* ) const;
 };
-class Max_i_dFunction : public SLIFunction
-{
+class Max_i_dFunction : public SLIFunction {
 public:
   Max_i_dFunction()
   {
@@ -788,8 +713,7 @@ public:
 
   void execute( SLIInterpreter* ) const;
 };
-class Max_d_iFunction : public SLIFunction
-{
+class Max_d_iFunction : public SLIFunction {
 public:
   Max_d_iFunction()
   {
@@ -797,8 +721,7 @@ public:
 
   void execute( SLIInterpreter* ) const;
 };
-class Max_d_dFunction : public SLIFunction
-{
+class Max_d_dFunction : public SLIFunction {
 public:
   Max_d_dFunction()
   {
@@ -808,8 +731,7 @@ public:
 };
 
 
-class Min_i_iFunction : public SLIFunction
-{
+class Min_i_iFunction : public SLIFunction {
 public:
   Min_i_iFunction()
   {
@@ -817,8 +739,7 @@ public:
 
   void execute( SLIInterpreter* ) const;
 };
-class Min_i_dFunction : public SLIFunction
-{
+class Min_i_dFunction : public SLIFunction {
 public:
   Min_i_dFunction()
   {
@@ -826,8 +747,7 @@ public:
 
   void execute( SLIInterpreter* ) const;
 };
-class Min_d_iFunction : public SLIFunction
-{
+class Min_d_iFunction : public SLIFunction {
 public:
   Min_d_iFunction()
   {
@@ -835,8 +755,7 @@ public:
 
   void execute( SLIInterpreter* ) const;
 };
-class Min_d_dFunction : public SLIFunction
-{
+class Min_d_dFunction : public SLIFunction {
 public:
   Min_d_dFunction()
   {

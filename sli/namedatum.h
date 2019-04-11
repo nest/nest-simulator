@@ -64,8 +64,7 @@ sli::pool AggregateDatum< Name, &SLIInterpreter::Literaltype >::memory;
 #endif
 
 
-class NameDatum : public AggregateDatum< Name, &SLIInterpreter::Nametype >
-{
+class NameDatum : public AggregateDatum< Name, &SLIInterpreter::Nametype > {
   Datum*
   clone( void ) const
   {
@@ -95,8 +94,7 @@ public:
   }
 };
 
-class LiteralDatum : public AggregateDatum< Name, &SLIInterpreter::Literaltype >
-{
+class LiteralDatum : public AggregateDatum< Name, &SLIInterpreter::Literaltype > {
   Datum*
   clone( void ) const
   {

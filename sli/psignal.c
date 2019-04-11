@@ -60,20 +60,17 @@ posix_signal( int signo, Sigfunc* func )
   act.sa_handler = ( void ( * ) () ) func;
   sigemptyset( &act.sa_mask );
   act.sa_flags = 0;
-  if ( signo == SIGALRM )
-  {
+  if ( signo == SIGALRM ) {
 #ifdef SA_INTERRUPT
     act.sa_flags |= SA_INTERRUPT; /* SunOS */
 #endif
   }
-  else
-  {
+  else {
 #ifdef SA_RESTART
     act.sa_flags |= SA_RESTART; /* SVR4, 4.3+BSD */
 #endif
   }
-  if ( sigaction( signo, &act, &oact ) < 0 )
-  {
+  if ( sigaction( signo, &act, &oact ) < 0 ) {
     return ( SIG_ERR );
   }
   return ( oact.sa_handler );

@@ -31,8 +31,7 @@
 /* -----                                                   */
 /*  base class for all Data Objects                        */
 /***********************************************************/
-class Datum
-{
+class Datum {
 
   friend class Token;
 
@@ -106,8 +105,7 @@ public:
   removeReference()
   {
     --reference_count_;
-    if ( reference_count_ == 0 )
-    {
+    if ( reference_count_ == 0 ) {
       delete this;
     }
   }
@@ -142,12 +140,10 @@ public:
   virtual void
   list( std::ostream& out, std::string prefix, int length ) const
   {
-    if ( length == 0 )
-    {
+    if ( length == 0 ) {
       prefix = "-->" + prefix;
     }
-    else
-    {
+    else {
       prefix = "   " + prefix;
     }
     out << prefix;
@@ -189,8 +185,7 @@ public:
 };
 
 template < SLIType* slt >
-class TypedDatum : public Datum
-{
+class TypedDatum : public Datum {
 public:
   TypedDatum( void )
     : Datum( slt )

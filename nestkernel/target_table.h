@@ -35,15 +35,13 @@
 #include "target.h"
 #include "target_data.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * This data structure stores all targets of the local neurons. This
  * is the presynaptic part of the connection infrastructure.
  */
-class TargetTable
-{
+class TargetTable {
 private:
   /**
    * Stores targets of local neurons

@@ -50,8 +50,7 @@
 #include "dictdatum.h"
 #include "sliexceptions.h"
 
-namespace nest
-{
+namespace nest {
 class Node;
 class ConnParameter;
 class SparseNodeArray;
@@ -66,8 +65,7 @@ class SparseNodeArray;
  * @note Naming classes *Builder to avoid name confusion with Connector classes.
  */
 
-class ConnBuilder
-{
+class ConnBuilder {
 public:
   /**
    * Connect sources to targets according to specifications in dictionary.
@@ -239,8 +237,7 @@ protected:
   std::vector< ConnParameter* > parameters_requiring_skipping_;
 };
 
-class OneToOneBuilder : public ConnBuilder
-{
+class OneToOneBuilder : public ConnBuilder {
 public:
   OneToOneBuilder( const GIDCollection& sources,
     const GIDCollection& targets,
@@ -266,8 +263,7 @@ protected:
   void sp_disconnect_();
 };
 
-class AllToAllBuilder : public ConnBuilder
-{
+class AllToAllBuilder : public ConnBuilder {
 public:
   AllToAllBuilder( const GIDCollection& sources,
     const GIDCollection& targets,
@@ -300,8 +296,7 @@ private:
 };
 
 
-class FixedInDegreeBuilder : public ConnBuilder
-{
+class FixedInDegreeBuilder : public ConnBuilder {
 public:
   FixedInDegreeBuilder( const GIDCollection&, const GIDCollection&, const DictionaryDatum&, const DictionaryDatum& );
 
@@ -313,8 +308,7 @@ private:
   long indegree_;
 };
 
-class FixedOutDegreeBuilder : public ConnBuilder
-{
+class FixedOutDegreeBuilder : public ConnBuilder {
 public:
   FixedOutDegreeBuilder( const GIDCollection&, const GIDCollection&, const DictionaryDatum&, const DictionaryDatum& );
 
@@ -325,8 +319,7 @@ private:
   long outdegree_;
 };
 
-class FixedTotalNumberBuilder : public ConnBuilder
-{
+class FixedTotalNumberBuilder : public ConnBuilder {
 public:
   FixedTotalNumberBuilder( const GIDCollection&, const GIDCollection&, const DictionaryDatum&, const DictionaryDatum& );
 
@@ -337,8 +330,7 @@ private:
   long N_;
 };
 
-class BernoulliBuilder : public ConnBuilder
-{
+class BernoulliBuilder : public ConnBuilder {
 public:
   BernoulliBuilder( const GIDCollection&, const GIDCollection&, const DictionaryDatum&, const DictionaryDatum& );
 
@@ -350,8 +342,7 @@ private:
   double p_; //!< connection probability
 };
 
-class SymmetricBernoulliBuilder : public ConnBuilder
-{
+class SymmetricBernoulliBuilder : public ConnBuilder {
 public:
   SymmetricBernoulliBuilder( const GIDCollection&,
     const GIDCollection&,
@@ -371,8 +362,7 @@ private:
   double p_; //!< connection probability
 };
 
-class SPBuilder : public ConnBuilder
-{
+class SPBuilder : public ConnBuilder {
 public:
   SPBuilder( const GIDCollection& sources,
     const GIDCollection& targets,
@@ -407,8 +397,7 @@ protected:
 inline void
 ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
 {
-  if ( param.is_array() )
-  {
+  if ( param.is_array() ) {
     parameters_requiring_skipping_.push_back( &param );
   }
 }
@@ -418,8 +407,7 @@ ConnBuilder::skip_conn_parameter_( thread target_thread, size_t n_skip )
 {
   for ( std::vector< ConnParameter* >::iterator it = parameters_requiring_skipping_.begin();
         it != parameters_requiring_skipping_.end();
-        ++it )
-  {
+        ++it ) {
     ( *it )->skip( target_thread, n_skip );
   }
 }

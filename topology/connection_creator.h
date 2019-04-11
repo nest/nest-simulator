@@ -38,8 +38,7 @@
 #include "topology_parameter.h"
 #include "vose.h"
 
-namespace nest
-{
+namespace nest {
 template < int D >
 class Layer;
 
@@ -67,16 +66,9 @@ class MaskedLayer;
  * between source driven and target driven connections is which layer
  * coordinates the mask and parameters are defined in.
  */
-class ConnectionCreator
-{
+class ConnectionCreator {
 public:
-  enum ConnectionType
-  {
-    Target_driven,
-    Source_driven,
-    Convergent,
-    Divergent
-  };
+  enum ConnectionType { Target_driven, Source_driven, Convergent, Divergent };
 
   /**
    * Construct a ConnectionCreator with the properties defined in the
@@ -116,8 +108,7 @@ private:
    * Essentially, the class works as a fancy union.
    */
   template < int D >
-  class PoolWrapper_
-  {
+  class PoolWrapper_ {
   public:
     PoolWrapper_();
     ~PoolWrapper_();
@@ -186,12 +177,10 @@ inline void
 ConnectionCreator::connect_( index s, Node* target, thread target_thread, double w, double d, index syn )
 {
   // check whether the target is on this process
-  if ( kernel().node_manager.is_local_gid( target->get_gid() ) )
-  {
+  if ( kernel().node_manager.is_local_gid( target->get_gid() ) ) {
     // check whether the target is on our thread
     thread tid = kernel().vp_manager.get_thread_id();
-    if ( tid == target_thread )
-    {
+    if ( tid == target_thread ) {
       // TODO implement in terms of nest-api
       kernel().connection_manager.connect( s, target, target_thread, syn, dummy_param_, d, w );
     }

@@ -41,8 +41,7 @@
 
 #include "nest.h"
 
-namespace nest
-{
+namespace nest {
 
 extern "C" int gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
 
@@ -182,8 +181,7 @@ Author: March 2016, Setareh
 SeeAlso: pp_psc_delta, gif_cond_exp, iaf_psc_exp_multisynapse,
 gif_psc_exp_multisynapse
 */
-class gif_cond_exp_multisynapse : public Archiving_Node
-{
+class gif_cond_exp_multisynapse : public Archiving_Node {
 
 public:
   gif_cond_exp_multisynapse();
@@ -231,8 +229,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     double g_L_;
     double E_L_;
@@ -293,16 +290,10 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
 
     //! Symbolic indices to the elements of the state vector y
-    enum StateVecElems
-    {
-      V_M = 0,
-      G,
-      STATE_VEC_SIZE
-    };
+    enum StateVecElems { V_M = 0, G, STATE_VEC_SIZE };
 
     static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1; //!< V_M
     static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1; //!< G
@@ -333,8 +324,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( gif_cond_exp_multisynapse& );
     Buffers_( const Buffers_&, gif_cond_exp_multisynapse& );
 
@@ -364,8 +354,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     std::vector< double > P_sfa_; // decay terms of spike-triggered current elements
     std::vector< double > P_stc_; // decay terms of adaptive threshold elements
 
@@ -428,8 +417,7 @@ gif_cond_exp_multisynapse::send_test_event( Node& target, rport receptor_type, s
 inline port
 gif_cond_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors() ) )
-  {
+  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors() ) ) {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }
 
@@ -440,8 +428,7 @@ gif_cond_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type 
 inline port
 gif_cond_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -450,8 +437,7 @@ gif_cond_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_typ
 inline port
 gif_cond_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

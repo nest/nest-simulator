@@ -21,11 +21,9 @@
  */
 #include "nest_names.h"
 
-namespace nest
-{
+namespace nest {
 
-namespace names
-{
+namespace names {
 
 const Name a( "a" );
 const Name a_acausal( "a_acausal" );

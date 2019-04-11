@@ -77,8 +77,7 @@ nest::music_event_in_proxy::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::music_event_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
 {
-  if ( not s.registered_ )
-  {
+  if ( not s.registered_ ) {
     updateValue< long >( d, names::music_channel, channel_ );
     updateValue< string >( d, names::port_name, port_name_ );
   }
@@ -137,8 +136,7 @@ void
 nest::music_event_in_proxy::calibrate()
 {
   // register my port and my channel at the scheduler
-  if ( not S_.registered_ )
-  {
+  if ( not S_.registered_ ) {
     kernel().music_manager.register_music_event_in_proxy( P_.port_name_, P_.channel_, this );
     S_.registered_ = true;
   }
@@ -173,8 +171,7 @@ nest::music_event_in_proxy::handle( SpikeEvent& e )
 {
   e.set_sender( *this );
 
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t ) {
     kernel().connection_manager.send_from_device( t, local_device_id_, e );
   }
 }

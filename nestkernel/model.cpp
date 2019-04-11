@@ -35,8 +35,7 @@
 // Includes from sli:
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 
 Model::Model( const std::string& name )
   : name_( name )
@@ -54,10 +53,8 @@ Model::set_threads()
 void
 Model::set_threads_( thread t )
 {
-  for ( size_t i = 0; i < memory_.size(); ++i )
-  {
-    if ( memory_[ i ].get_instantiations() > 0 )
-    {
+  for ( size_t i = 0; i < memory_.size(); ++i ) {
+    if ( memory_[ i ].get_instantiations() > 0 ) {
       throw KernelException();
     }
   }
@@ -65,8 +62,7 @@ Model::set_threads_( thread t )
   std::vector< sli::pool > tmp( t );
   memory_.swap( tmp );
 
-  for ( size_t i = 0; i < memory_.size(); ++i )
-  {
+  for ( size_t i = 0; i < memory_.size(); ++i ) {
     init_memory_( memory_[ i ] );
   }
 }
@@ -90,8 +86,7 @@ size_t
 Model::mem_available()
 {
   size_t result = 0;
-  for ( size_t t = 0; t < memory_.size(); ++t )
-  {
+  for ( size_t t = 0; t < memory_.size(); ++t ) {
     result += memory_[ t ].available();
   }
 
@@ -102,8 +97,7 @@ size_t
 Model::mem_capacity()
 {
   size_t result = 0;
-  for ( size_t t = 0; t < memory_.size(); ++t )
-  {
+  for ( size_t t = 0; t < memory_.size(); ++t ) {
     result += memory_[ t ].get_total();
   }
 
@@ -113,12 +107,10 @@ Model::mem_capacity()
 void
 Model::set_status( DictionaryDatum d )
 {
-  try
-  {
+  try {
     set_status_( d );
   }
-  catch ( BadProperty& e )
-  {
+  catch ( BadProperty& e ) {
     throw BadProperty( String::compose( "Setting status of model '%1': %2", get_name(), e.message() ) );
   }
 }
@@ -129,23 +121,20 @@ Model::get_status( void )
   DictionaryDatum d = get_status_();
 
   std::vector< long > tmp( memory_.size() );
-  for ( size_t t = 0; t < tmp.size(); ++t )
-  {
+  for ( size_t t = 0; t < tmp.size(); ++t ) {
     tmp[ t ] = memory_[ t ].get_instantiations();
   }
 
   ( *d )[ names::instantiations ] = Token( tmp );
   ( *d )[ names::type_id ] = LiteralDatum( kernel().model_manager.get_model( type_id_ )->get_name() );
 
-  for ( size_t t = 0; t < tmp.size(); ++t )
-  {
+  for ( size_t t = 0; t < tmp.size(); ++t ) {
     tmp[ t ] = memory_[ t ].get_total();
   }
 
   ( *d )[ names::capacity ] = Token( tmp );
 
-  for ( size_t t = 0; t < tmp.size(); ++t )
-  {
+  for ( size_t t = 0; t < tmp.size(); ++t ) {
     tmp[ t ] = memory_[ t ].available();
   }
 

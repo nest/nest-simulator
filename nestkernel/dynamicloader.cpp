@@ -52,11 +52,9 @@
 #include "stringdatum.h"
 
 
-namespace nest
-{
+namespace nest {
 
-struct sDynModule
-{
+struct sDynModule {
   std::string name;
   lt_dlhandle handle;
   SLIModule* pModule;
@@ -99,10 +97,8 @@ DynamicLoaderModule::DynamicLoaderModule( SLIInterpreter& interpreter )
 DynamicLoaderModule::~DynamicLoaderModule()
 {
   // unload all loaded modules
-  for ( vecDynModules::iterator it = dyn_modules.begin(); it != dyn_modules.end(); ++it )
-  {
-    if ( it->handle != NULL )
-    {
+  for ( vecDynModules::iterator it = dyn_modules.begin(); it != dyn_modules.end(); ++it ) {
+    if ( it->handle != NULL ) {
       lt_dlclose( it->handle );
       it->handle = NULL;
     }
@@ -153,24 +149,21 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  if ( kernel().model_manager.has_user_models() or kernel().model_manager.has_user_prototypes() )
-  {
+  if ( kernel().model_manager.has_user_models() or kernel().model_manager.has_user_prototypes() ) {
     throw DynamicModuleManagementError( "Modules cannot be installed after CopyModel has been called" );
   }
 
   sDynModule new_module;
 
   new_module.name = getValue< std::string >( i->OStack.top() );
-  if ( new_module.name.empty() )
-  {
+  if ( new_module.name.empty() ) {
     throw DynamicModuleManagementError( "Module name must not be empty." );
   }
 
   // check if module already loaded
   // this check can happen here, since we are comparing dynamically loaded
   // modules based on the name given to the Install command
-  if ( std::find( dyn_modules_.begin(), dyn_modules_.end(), new_module ) != dyn_modules_.end() )
-  {
+  if ( std::find( dyn_modules_.begin(), dyn_modules_.end(), new_module ) != dyn_modules_.end() ) {
     throw DynamicModuleManagementError( "Module '" + new_module.name + "' is loaded already." );
   }
 
@@ -179,12 +172,10 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   // try to open the module
   const lt_dlhandle hModule = lt_dlopenext( new_module.name.c_str() );
 
-  if ( not hModule )
-  {
+  if ( not hModule ) {
     char* errstr = ( char* ) lt_dlerror();
     std::string msg = "Module '" + new_module.name + "' could not be opened.";
-    if ( errstr )
-    {
+    if ( errstr ) {
       msg += "\nThe dynamic loader returned the following error: '" + std::string( errstr ) + "'.";
     }
     msg += "\n\nPlease check LD_LIBRARY_PATH (OSX: DYLD_LIBRARY_PATH)!";
@@ -194,8 +185,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   // see if we can find the mod symbol in the module
   SLIModule* pModule = ( SLIModule* ) lt_dlsym( hModule, "mod" );
   char* errstr = ( char* ) lt_dlerror();
-  if ( errstr )
-  {
+  if ( errstr ) {
     lt_dlclose( hModule ); // close module again
     lt_dlerror();          // remove any error caused by lt_dlclose()
     throw DynamicModuleManagementError(
@@ -210,8 +200,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   if ( std::find_if( DynamicLoaderModule::getLinkedModules().begin(),
          DynamicLoaderModule::getLinkedModules().end(),
          std::bind( has_name, std::placeholders::_1, pModule->name() ) )
-    != DynamicLoaderModule::getLinkedModules().end() )
-  {
+    != DynamicLoaderModule::getLinkedModules().end() ) {
     lt_dlclose( hModule ); // close module again
     lt_dlerror();          // remove any error caused by lt_dlclose()
     throw DynamicModuleManagementError(
@@ -220,12 +209,10 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   }
 
   // all is well an we can register the module with the interpreter
-  try
-  {
+  try {
     pModule->install( std::cerr, i );
   }
-  catch ( std::exception& e )
-  {
+  catch ( std::exception& e ) {
     // We should uninstall the partially installed module here, but
     // this must wait for #152.
     // For now, we just close the module file and rethrow the exception.
@@ -252,8 +239,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   ( *moduledict_ )[ new_module.name ] = moduleid;
 
   // now we can run the module initializer, after we have cleared the EStack
-  if ( not pModule->commandstring().empty() )
-  {
+  if ( not pModule->commandstring().empty() ) {
     Token t = new StringDatum( pModule->commandstring() );
     i->OStack.push_move( t );
     Token c = new NameDatum( "initialize_module" );
@@ -272,23 +258,19 @@ DynamicLoaderModule::init( SLIInterpreter* i )
 
   int dl_error = lt_dlinit();
 
-  if ( not dl_error )
-  {
+  if ( not dl_error ) {
     const char* path = getenv( "NEST_MODULE_PATH" );
-    if ( path != NULL )
-    {
+    if ( path != NULL ) {
       LOG( M_DEBUG, "DynamicLoaderModule::init", "Setting module path to" );
       LOG( M_DEBUG, "DynamicLoaderModule::init", path );
 
       dl_error = lt_dlsetsearchpath( path );
-      if ( dl_error )
-      {
+      if ( dl_error ) {
         LOG( M_ERROR, "DynamicLoaderModule::init", "Could not set dynamic module path." );
       }
     }
   }
-  else
-  {
+  else {
     LOG( M_ERROR, "DynamicLoaderModule::init", "Could not initialize libltdl. No dynamic modules will be avaiable." );
   }
 }
@@ -306,8 +288,7 @@ void
 DynamicLoaderModule::initLinkedModules( SLIInterpreter& interpreter )
 {
 
-  for ( vecLinkedModules::iterator it = getLinkedModules().begin(); it != getLinkedModules().end(); ++it )
-  {
+  for ( vecLinkedModules::iterator it = getLinkedModules().begin(); it != getLinkedModules().end(); ++it ) {
     interpreter.message( SLIInterpreter::M_STATUS, "DynamicLoaderModule::initLinkedModules", "adding linked module" );
     interpreter.message( SLIInterpreter::M_STATUS, "DynamicLoaderModule::initLinkedModules", ( *it )->name().c_str() );
     interpreter.addlinkedusermodule( *it );

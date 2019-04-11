@@ -22,8 +22,7 @@
 
 #include "connector_model.h"
 
-namespace nest
-{
+namespace nest {
 
 ConnectorModel::ConnectorModel( const std::string name,
   const bool is_primary,

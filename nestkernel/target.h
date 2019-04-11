@@ -31,8 +31,7 @@
 #include "static_assert.h"
 #include "exceptions.h"
 
-namespace nest
-{
+namespace nest {
 // clang-format off
 /**
  * This class implements a 64-bit target neuron identifier type. It uniquely identifies
@@ -67,14 +66,9 @@ namespace nest
  */
 // clang-format on
 
-enum enum_status_target_id
-{
-  TARGET_ID_PROCESSED,
-  TARGET_ID_UNPROCESSED
-};
+enum enum_status_target_id { TARGET_ID_PROCESSED, TARGET_ID_UNPROCESSED };
 
-class Target
-{
+class Target {
 private:
   uint64_t remote_target_id_;
 
@@ -244,8 +238,7 @@ Target::get_syn_id() const
 inline void
 Target::set_status( enum_status_target_id set_status_to )
 {
-  switch ( set_status_to )
-  {
+  switch ( set_status_to ) {
   case TARGET_ID_PROCESSED:
     remote_target_id_ = remote_target_id_ | MASK_PROCESSED_FLAG; // set single bit
     break;
@@ -279,8 +272,7 @@ Target::get_offset() const
   return 0;
 }
 
-class OffGridTarget : public Target
-{
+class OffGridTarget : public Target {
 private:
   double offset_;
 

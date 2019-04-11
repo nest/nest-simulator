@@ -35,8 +35,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: pp_psc_delta - Point process neuron with leaky integration of
@@ -174,8 +173,7 @@ Author:  July 2009, Deger, Helias; January 2011, Zaytsev; May 2014, Setareh
 SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp,
 iaf_psc_delta_canon
 */
-class pp_psc_delta : public Archiving_Node
-{
+class pp_psc_delta : public Archiving_Node {
 
 public:
   pp_psc_delta();
@@ -219,8 +217,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     /** Membrane time constant in ms. */
     double tau_m_;
@@ -276,8 +273,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
     double y0_; //!< This is piecewise constant external current
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
     double y3_;
@@ -301,8 +297,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( pp_psc_delta& );
     Buffers_( const Buffers_&, pp_psc_delta& );
 
@@ -319,8 +314,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
 
     double P30_;
     double P33_;
@@ -385,8 +379,7 @@ pp_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, bool
 inline port
 pp_psc_delta::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -395,8 +388,7 @@ pp_psc_delta::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 pp_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -405,8 +397,7 @@ pp_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 pp_psc_delta::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

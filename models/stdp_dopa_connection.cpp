@@ -31,8 +31,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 //
 // Implementation of class STDPDopaCommonProperties.
 //
@@ -55,12 +54,10 @@ void
 STDPDopaCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
-  if ( vt_ != 0 )
-  {
+  if ( vt_ != 0 ) {
     def< long >( d, names::vt, vt_->get_gid() );
   }
-  else
-  {
+  else {
     def< long >( d, names::vt, -1 );
   }
 
@@ -80,12 +77,10 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
   CommonSynapseProperties::set_status( d, cm );
 
   long vtgid;
-  if ( updateValue< long >( d, names::vt, vtgid ) )
-  {
+  if ( updateValue< long >( d, names::vt, vtgid ) ) {
     vt_ = dynamic_cast< volume_transmitter* >(
       kernel().node_manager.get_node( vtgid, kernel().vp_manager.get_thread_id() ) );
-    if ( vt_ == 0 )
-    {
+    if ( vt_ == 0 ) {
       throw BadProperty( "Dopamine source must be volume transmitter" );
     }
   }
@@ -103,12 +98,10 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
 Node*
 STDPDopaCommonProperties::get_node()
 {
-  if ( vt_ == 0 )
-  {
+  if ( vt_ == 0 ) {
     throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
   }
-  else
-  {
+  else {
     return vt_;
   }
 }

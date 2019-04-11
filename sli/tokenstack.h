@@ -36,8 +36,7 @@
    otherwise.
 */
 
-class TokenStack : private TokenArrayObj
-{
+class TokenStack : private TokenArrayObj {
 public:
   TokenStack( Index n )
     : TokenArrayObj( 0, Token(), n )
@@ -159,17 +158,14 @@ public:
   void
   roll( size_t n, long k )
   {
-    if ( n < 2 || k == 0 )
-    {
+    if ( n < 2 || k == 0 ) {
       return; // nothing to do
     }
 
-    if ( k > 0 )
-    {
+    if ( k > 0 ) {
       rotate( end() - n, end() - ( k % n ), end() );
     }
-    else
-    {
+    else {
       rotate( end() - n, end() - ( n + k ) % n, end() );
     }
   }

@@ -29,8 +29,7 @@
 // Includes from nestkernel:
 #include "model.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * Generic Model template.
  * The template GenericModel should be used
@@ -41,8 +40,7 @@ namespace nest
  * @ingroup user_interface
  */
 template < typename ElementT >
-class GenericModel : public Model
-{
+class GenericModel : public Model {
 public:
   GenericModel( const std::string&, const std::string& deprecation_info );
 

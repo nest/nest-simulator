@@ -22,8 +22,7 @@
 
 #include "tanh_rate.h"
 
-namespace nest
-{
+namespace nest {
 
 void
 nonlinearities_tanh_rate::get( DictionaryDatum& d ) const

@@ -32,13 +32,11 @@
 void
 SLIType::settypename( const std::string& s )
 {
-  if ( count == 0 )
-  {
+  if ( count == 0 ) {
     assert( Name::lookup( s ) == false );
     name = new Name( s );
   }
-  else
-  {
+  else {
     assert( Name( s ) == *name );
   }
   ++count;
@@ -48,8 +46,7 @@ void
 SLIType::deletetypename( void )
 {
   assert( count > 0 );
-  if ( count == 1 )
-  {
+  if ( count == 1 ) {
     delete name;
   }
   --count;
@@ -59,12 +56,10 @@ SLIType::deletetypename( void )
 void
 SLIType::setdefaultaction( SLIFunction& c )
 {
-  if ( defaultaction == NULL )
-  {
+  if ( defaultaction == NULL ) {
     defaultaction = &c;
   }
-  else
-  {
+  else {
     assert( &c == defaultaction );
   }
 }

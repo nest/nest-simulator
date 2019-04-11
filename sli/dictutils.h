@@ -92,37 +92,30 @@ get_double_in_range( const DictionaryDatum& d, Name const n, double min, double 
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
   double x = 0.0;
 
-  if ( dd != 0 )
-  {
+  if ( dd != 0 ) {
     x = dd->get();
   }
-  else
-  {
+  else {
     IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
-    if ( id == 0 )
-    {
+    if ( id == 0 ) {
       throw TypeMismatch();
     }
 
     x = static_cast< double >( id->get() );
   }
-  switch ( mode )
-  {
+  switch ( mode ) {
   case 0:
-    if ( min < x and x < max )
-    {
+    if ( min < x and x < max ) {
       return x;
     }
     break;
   case 1:
-    if ( min <= x and x < max )
-    {
+    if ( min <= x and x < max ) {
       return x;
     }
     break;
   case 2:
-    if ( min <= x and x <= max )
-    {
+    if ( min <= x and x <= max ) {
       return x;
     }
     break;
@@ -156,37 +149,30 @@ get_long_in_range( const DictionaryDatum& d, Name const n, long min, long max, i
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
   long x = 0;
 
-  if ( dd != 0 )
-  {
+  if ( dd != 0 ) {
     x = dd->get();
   }
-  else
-  {
+  else {
     IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
-    if ( id == 0 )
-    {
+    if ( id == 0 ) {
       throw TypeMismatch();
     }
 
     x = static_cast< double >( id->get() );
   }
-  switch ( mode )
-  {
+  switch ( mode ) {
   case 0:
-    if ( min < x and x < max )
-    {
+    if ( min < x and x < max ) {
       return x;
     }
     break;
   case 1:
-    if ( min <= x and x < max )
-    {
+    if ( min <= x and x < max ) {
       return x;
     }
     break;
   case 2:
-    if ( min <= x and x <= max )
-    {
+    if ( min <= x and x <= max ) {
       return x;
     }
     break;
@@ -243,8 +229,7 @@ updateValue( DictionaryDatum const& d, Name const n, VT& value )
   // token.
   const Token& t = d->lookup( n );
 
-  if ( t.empty() )
-  {
+  if ( t.empty() ) {
     return false;
   }
 

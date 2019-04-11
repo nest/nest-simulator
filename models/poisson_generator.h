@@ -38,8 +38,7 @@
 #include "nest_types.h"
 #include "stimulating_device.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: poisson_generator - simulate neuron firing with Poisson processes
@@ -97,8 +96,7 @@ http://ken.brainworks.uni-freiburg.de/cgi-bin/mailman/private/nest_developer/201
 
 SeeAlso: poisson_generator_ps, Device, parrot_neuron
 */
-class poisson_generator : public DeviceNode
-{
+class poisson_generator : public DeviceNode {
 
 public:
   /**
@@ -139,8 +137,7 @@ private:
   /**
    * Store independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     double rate_; //!< process rate in Hz
 
     Parameters_(); //!< Sets default parameter values
@@ -151,8 +148,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
     librandom::PoissonRandomDev poisson_dev_; //!< Random deviate generator
   };
 
@@ -168,14 +164,12 @@ poisson_generator::send_test_event( Node& target, rport receptor_type, synindex 
 {
   device_.enforce_single_syn_type( syn_id );
 
-  if ( dummy_target )
-  {
+  if ( dummy_target ) {
     DSSpikeEvent e;
     e.set_sender( *this );
     return target.handles_test_event( e, receptor_type );
   }
-  else
-  {
+  else {
     SpikeEvent e;
     e.set_sender( *this );
     return target.handles_test_event( e, receptor_type );

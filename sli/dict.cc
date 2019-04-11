@@ -56,13 +56,11 @@ Dictionary::clear()
   TokenMap cp( *this );
   TokenMap::clear();
 
-  for ( TokenMap::iterator i = cp.begin(); i != cp.end(); ++i )
-  {
+  for ( TokenMap::iterator i = cp.begin(); i != cp.end(); ++i ) {
     Token* tok = &i->second;
     Datum* datum = tok->datum();
     DictionaryDatum* d = dynamic_cast< DictionaryDatum* >( datum );
-    if ( not d )
-    {
+    if ( not d ) {
       continue;
     }
 
@@ -76,8 +74,7 @@ void
 Dictionary::info( std::ostream& out ) const
 {
   out.setf( std::ios::left );
-  if ( size() > 0 )
-  {
+  if ( size() > 0 ) {
     // copy to vector and sort
     typedef std::vector< std::pair< Name, Token > > DataVec;
     DataVec data;
@@ -89,8 +86,7 @@ Dictionary::info( std::ostream& out ) const
         << "Value" << std::endl;
     out << "--------------------------------------------------" << std::endl;
 
-    for ( DataVec::const_iterator where = data.begin(); where != data.end(); ++where )
-    {
+    for ( DataVec::const_iterator where = data.begin(); where != data.end(); ++where ) {
       out << std::setw( 25 ) << where->first << std::setw( 20 ) << where->second->gettypename() << where->second
           << std::endl;
     }
@@ -110,14 +106,11 @@ Dictionary::add_dict( const std::string& target, SLIInterpreter& i )
   Token d = i.baselookup( Name( target ) );
   targetdict = getValue< DictionaryDatum >( d );
 
-  for ( TokenMap::const_iterator it = TokenMap::begin(); it != TokenMap::end(); ++it )
-  {
-    if ( not targetdict->known( it->first ) )
-    {
+  for ( TokenMap::const_iterator it = TokenMap::begin(); it != TokenMap::end(); ++it ) {
+    if ( not targetdict->known( it->first ) ) {
       targetdict->insert( it->first, it->second );
     }
-    else
-    {
+    else {
       throw UndefinedName( ( it->first ).toString() );
       //      throw DictError();
     }
@@ -128,8 +121,7 @@ void
 Dictionary::remove( const Name& n )
 {
   TokenMap::iterator it = find( n );
-  if ( it != end() )
-  {
+  if ( it != end() ) {
     erase( it );
   }
 }
@@ -143,11 +135,9 @@ Dictionary::remove_dict( const std::string& target, SLIInterpreter& i )
   Token d = i.baselookup( Name( target ) );
   targetdict = getValue< DictionaryDatum >( d );
 
-  for ( TokenMap::const_iterator it = TokenMap::begin(); it != TokenMap::end(); ++it )
-  {
+  for ( TokenMap::const_iterator it = TokenMap::begin(); it != TokenMap::end(); ++it ) {
     TokenMap::iterator tgt_it = targetdict->find( it->first );
-    if ( tgt_it != targetdict->end() )
-    {
+    if ( tgt_it != targetdict->end() ) {
       targetdict->erase( tgt_it );
     }
   }
@@ -156,16 +146,14 @@ Dictionary::remove_dict( const std::string& target, SLIInterpreter& i )
 void
 Dictionary::clear_access_flags()
 {
-  for ( TokenMap::iterator it = TokenMap::begin(); it != TokenMap::end(); ++it )
-  {
+  for ( TokenMap::iterator it = TokenMap::begin(); it != TokenMap::end(); ++it ) {
     /*
        Clear flags in nested dictionaries recursively.
        We first test whether the token is a DictionaryDatum
        and then call getValue(). This entails two dynamic casts,
        but is likely more efficient than a try-catch construction.
     */
-    if ( it->second.is_a< DictionaryDatum >() )
-    {
+    if ( it->second.is_a< DictionaryDatum >() ) {
       DictionaryDatum subdict = getValue< DictionaryDatum >( it->second );
       subdict->clear_access_flags();
     }
@@ -182,14 +170,11 @@ Dictionary::all_accessed_( std::string& missed, std::string prefix ) const
   missed = "";
 
   // build list of all non-accessed Token names
-  for ( TokenMap::const_iterator it = TokenMap::begin(); it != TokenMap::end(); ++it )
-  {
-    if ( not it->second.accessed() )
-    {
+  for ( TokenMap::const_iterator it = TokenMap::begin(); it != TokenMap::end(); ++it ) {
+    if ( not it->second.accessed() ) {
       missed = missed + " " + prefix + it->first.toString();
     }
-    else if ( it->second.is_a< DictionaryDatum >() )
-    {
+    else if ( it->second.is_a< DictionaryDatum >() ) {
       // recursively check if nested dictionary content was accessed
       // see also comments in clear_access_flags()
 
@@ -208,8 +193,7 @@ std::ostream& operator<<( std::ostream& out, const Dictionary& d )
 {
   out << "<<";
 
-  for ( TokenMap::const_iterator where = d.begin(); where != d.end(); ++where )
-  {
+  for ( TokenMap::const_iterator where = d.begin(); where != d.end(); ++where ) {
     out << ( *where ).first << ' ' << ( *where ).second << ',';
   }
   out << ">>";

@@ -36,16 +36,14 @@
 #include "tokenstack.h"
 
 
-class Parser
-{
+class Parser {
   Scanner* s;
 
   Token arraytoken;
   Token proctoken;
   TokenStack ParseStack;
 
-  enum ParseResult
-  {
+  enum ParseResult {
     tokencontinue,
     scancontinue,
     tokencompleted,
@@ -86,8 +84,7 @@ public:
   void
   clear_context()
   {
-    if ( s != NULL )
-    {
+    if ( s != NULL ) {
       s->clear_context();
     }
   }

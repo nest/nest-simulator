@@ -64,8 +64,7 @@ printres( double mean, double sdev, double dt )
   std::cout << std::setprecision( 4 ) << std::fixed;
   std::cout << "<X> = " << std::setw( 6 ) << std::showpos << mean << std::noshowpos << std::setw( 4 ) << " +- "
             << std::setw( 6 ) << sdev;
-  if ( dt >= 0 )
-  {
+  if ( dt >= 0 ) {
     std::cout << ", dt = " << std::setw( 4 ) << std::setprecision( 0 ) << dt << " ms";
   }
 
@@ -82,8 +81,7 @@ rungen( librandom::RngPtr rng, const unsigned long N )
   std::clock_t t1, t2;
 
   t1 = std::clock();
-  for ( unsigned long k = 0; k < N; k++ )
-  {
+  for ( unsigned long k = 0; k < N; k++ ) {
     x = ( *rng )();
     sum += x;
     sum2 += std::pow( x, 2 );
@@ -106,8 +104,7 @@ rundev( librandom::RandomDev* rnd, const unsigned long N )
   std::clock_t t1, t2;
 
   t1 = std::clock();
-  for ( unsigned long k = 0; k < N; k++ )
-  {
+  for ( unsigned long k = 0; k < N; k++ ) {
     x = ( *rnd )();
     // std::cout << x << std::endl;
     sum += x;
@@ -151,8 +148,7 @@ main( void )
   std::cout << "Available random generators---Generating " << Ngen << " numbers" << std::endl;
   std::cout << "-----------------------------------------------------------" << std::endl;
   // check all implementations
-  for ( Dictionary::const_iterator it = rngdict.begin(); it != rngdict.end(); ++it )
-  {
+  for ( Dictionary::const_iterator it = rngdict.begin(); it != rngdict.end(); ++it ) {
     std::cout << std::left << std::setw( 25 ) << it->first << ": ";
 
     librandom::RngFactoryDatum fd = getValue< librandom::RngFactoryDatum >( it->second );

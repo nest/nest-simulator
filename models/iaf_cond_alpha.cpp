@@ -52,7 +52,7 @@
 nest::RecordablesMap< nest::iaf_cond_alpha > nest::iaf_cond_alpha::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
-{
+  {
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
  * for each quantity to be recorded.
@@ -130,8 +130,7 @@ nest::iaf_cond_alpha::State_::State_( const Parameters_& p )
   : r( 0 )
 {
   y[ V_M ] = p.E_L; // initialize to reversal potential
-  for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 1; i < STATE_VEC_SIZE; ++i ) {
     y[ i ] = 0;
   }
 }
@@ -139,8 +138,7 @@ nest::iaf_cond_alpha::State_::State_( const Parameters_& p )
 nest::iaf_cond_alpha::State_::State_( const State_& s )
   : r( s.r )
 {
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y[ i ] = s.y[ i ];
   }
 }
@@ -151,8 +149,7 @@ nest::iaf_cond_alpha::State_& nest::iaf_cond_alpha::State_::operator=( const Sta
   {
     return *this;
   }
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y[ i ] = s.y[ i ];
   }
 
@@ -219,20 +216,16 @@ nest::iaf_cond_alpha::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_in, tau_synI );
 
   updateValue< double >( d, names::I_e, I_e );
-  if ( V_reset >= V_th )
-  {
+  if ( V_reset >= V_th ) {
     throw BadProperty( "Reset potential must be smaller than threshold." );
   }
-  if ( C_m <= 0 )
-  {
+  if ( C_m <= 0 ) {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( t_ref < 0 )
-  {
+  if ( t_ref < 0 ) {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 || tau_synI <= 0 )
-  {
+  if ( tau_synE <= 0 || tau_synI <= 0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
 }
@@ -274,16 +267,13 @@ nest::iaf_cond_alpha::iaf_cond_alpha( const iaf_cond_alpha& n )
 nest::iaf_cond_alpha::~iaf_cond_alpha()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
-  if ( B_.s_ )
-  {
+  if ( B_.s_ ) {
     gsl_odeiv_step_free( B_.s_ );
   }
-  if ( B_.c_ )
-  {
+  if ( B_.c_ ) {
     gsl_odeiv_control_free( B_.c_ );
   }
-  if ( B_.e_ )
-  {
+  if ( B_.e_ ) {
     gsl_odeiv_evolve_free( B_.e_ );
   }
 }
@@ -313,30 +303,24 @@ nest::iaf_cond_alpha::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
-  {
+  if ( B_.s_ == 0 ) {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
-  else
-  {
+  else {
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
-  {
+  if ( B_.c_ == 0 ) {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
-  else
-  {
+  else {
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
-  {
+  if ( B_.e_ == 0 ) {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
-  else
-  {
+  else {
     gsl_odeiv_evolve_reset( B_.e_ );
   }
 
@@ -373,8 +357,7 @@ nest::iaf_cond_alpha::update( Time const& origin, const long from, const long to
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
 
     double t = 0.0;
 
@@ -390,8 +373,7 @@ nest::iaf_cond_alpha::update( Time const& origin, const long from, const long to
     // enforce setting IntegrationStep to step-t; this is of advantage
     // for a consistent and efficient integration across subsequent
     // simulation intervals
-    while ( t < B_.step_ )
-    {
+    while ( t < B_.step_ ) {
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
@@ -400,22 +382,19 @@ nest::iaf_cond_alpha::update( Time const& origin, const long from, const long to
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y );               // neuronal state
-      if ( status != GSL_SUCCESS )
-      {
+      if ( status != GSL_SUCCESS ) {
         throw GSLSolverFailure( get_name(), status );
       }
     }
 
     // refractoriness and spike generation
-    if ( S_.r )
-    { // neuron is absolute refractory
+    if ( S_.r ) { // neuron is absolute refractory
       --S_.r;
       S_.y[ State_::V_M ] = P_.V_reset; // clamp potential
     }
     else
       // neuron is not absolute refractory
-      if ( S_.y[ State_::V_M ] >= P_.V_th )
-    {
+      if ( S_.y[ State_::V_M ] >= P_.V_th ) {
       S_.r = V_.RefractoryCounts;
       S_.y[ State_::V_M ] = P_.V_reset;
 
@@ -443,13 +422,11 @@ nest::iaf_cond_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  if ( e.get_weight() > 0.0 )
-  {
+  if ( e.get_weight() > 0.0 ) {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
-  else
-  {
+  else {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   } // ensure conductance is positive

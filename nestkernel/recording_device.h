@@ -38,8 +38,7 @@
 #include "dictdatum.h"
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
   Name: RecordingDevice - Common properties of all recording devices.
@@ -241,20 +240,13 @@ namespace nest
  *
  * @author HEP 2002-07-22, 2008-03-21, 2011-02-11
  */
-class RecordingDevice : public Device
-{
+class RecordingDevice : public Device {
 
 public:
   /**
    * Device mode.
    */
-  enum Mode
-  {
-    SPIKE_DETECTOR,
-    MULTIMETER,
-    SPIN_DETECTOR,
-    WEIGHT_RECORDER
-  };
+  enum Mode { SPIKE_DETECTOR, MULTIMETER, SPIN_DETECTOR, WEIGHT_RECORDER };
 
   /**
    * Create recording device information.
@@ -474,8 +466,7 @@ private:
 
   // ------------------------------------------------------------------
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     std::ofstream fs_; //!< the file to write the recorded data to
 
     /**
@@ -493,8 +484,7 @@ private:
 
   // ------------------------------------------------------------------
 
-  struct Parameters_
-  {
+  struct Parameters_ {
     bool to_file_;        //!< true if recorder writes its output to a file
     bool to_screen_;      //!< true if recorder writes its output to stdout
     bool to_memory_;      //!< true if data should be recorded in memory, default
@@ -554,8 +544,7 @@ private:
 
   // ------------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
     size_t events_;                         //!< Event counter
     std::vector< long > event_senders_;     //!< List of event sender ids
     std::vector< long > event_targets_;     //!< List of event targets ids
@@ -637,20 +626,16 @@ template < typename ValueT >
 void
 RecordingDevice::print_value( const ValueT& value, bool endrecord )
 {
-  if ( P_.to_screen_ )
-  {
+  if ( P_.to_screen_ ) {
     std::cout << value << '\t';
-    if ( endrecord )
-    {
+    if ( endrecord ) {
       std::cout << '\n';
     }
   }
 
-  if ( P_.to_file_ )
-  {
+  if ( P_.to_file_ ) {
     B_.fs_ << value << '\t';
-    if ( endrecord )
-    {
+    if ( endrecord ) {
       B_.fs_ << '\n';
     }
   }
@@ -664,8 +649,7 @@ RecordingDevice::set_status( const DictionaryDatum& d, DataT& data )
   set_status( d );
 
   // if n_events is 0, also clear event data
-  if ( S_.events_ == 0 )
-  {
+  if ( S_.events_ == 0 ) {
     data.clear();
   }
 }

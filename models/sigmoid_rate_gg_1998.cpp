@@ -22,8 +22,7 @@
 
 #include "sigmoid_rate_gg_1998.h"
 
-namespace nest
-{
+namespace nest {
 
 void
 nonlinearities_sigmoid_rate_gg_1998::get( DictionaryDatum& d ) const

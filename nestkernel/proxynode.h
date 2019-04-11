@@ -26,8 +26,7 @@
 // Includes from nestkernel:
 #include "node.h"
 
-namespace nest
-{
+namespace nest {
 class SpikeEvent;
 class CurrentEvent;
 
@@ -48,8 +47,7 @@ Author: June 2005, Jochen Martin Eppler
 /**
  * Proxy Node to provide Nodes, where there aren't real Nodes to be
  */
-class proxynode : public Node
-{
+class proxynode : public Node {
 
 public:
   proxynode()

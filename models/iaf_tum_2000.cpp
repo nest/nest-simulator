@@ -46,8 +46,7 @@
 
 nest::RecordablesMap< nest::iaf_tum_2000 > nest::iaf_tum_2000::recordablesMap_;
 
-namespace nest
-{
+namespace nest {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -117,21 +116,17 @@ nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
-  {
+  if ( updateValue< double >( d, names::V_reset, V_reset_ ) ) {
     V_reset_ -= E_L_;
   }
-  else
-  {
+  else {
     V_reset_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_th, Theta_ ) )
-  {
+  if ( updateValue< double >( d, names::V_th, Theta_ ) ) {
     Theta_ -= E_L_;
   }
-  else
-  {
+  else {
     Theta_ -= delta_EL;
   }
 
@@ -142,22 +137,18 @@ nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_in, tau_in_ );
   updateValue< double >( d, names::t_ref_abs, tau_ref_abs_ );
   updateValue< double >( d, names::t_ref_tot, tau_ref_tot_ );
-  if ( V_reset_ >= Theta_ )
-  {
+  if ( V_reset_ >= Theta_ ) {
     throw BadProperty( "Reset potential must be smaller than threshold." );
   }
-  if ( tau_ref_abs_ > tau_ref_tot_ )
-  {
+  if ( tau_ref_abs_ > tau_ref_tot_ ) {
     throw BadProperty(
       "Total refractory period must be larger or equal than absolute "
       "refractory time." );
   }
-  if ( C_ <= 0 )
-  {
+  if ( C_ <= 0 ) {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_tot_ <= 0 || tau_ref_abs_ <= 0 )
-  {
+  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_tot_ <= 0 || tau_ref_abs_ <= 0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
 
@@ -173,12 +164,10 @@ nest::iaf_tum_2000::State_::get( DictionaryDatum& d, const Parameters_& p ) cons
 void
 nest::iaf_tum_2000::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
-  if ( updateValue< double >( d, names::V_m, V_m_ ) )
-  {
+  if ( updateValue< double >( d, names::V_m, V_m_ ) ) {
     V_m_ -= p.E_L_;
   }
-  else
-  {
+  else {
     V_m_ -= delta_EL;
   }
 }
@@ -290,13 +279,11 @@ nest::iaf_tum_2000::calibrate()
 
   V_.RefractoryCountsTot_ = Time( Time::ms( P_.tau_ref_tot_ ) ).get_steps();
 
-  if ( V_.RefractoryCountsAbs_ < 1 )
-  {
+  if ( V_.RefractoryCountsAbs_ < 1 ) {
     throw BadProperty( "Absolute refractory time must be at least one time step." );
   }
 
-  if ( V_.RefractoryCountsTot_ < 1 )
-  {
+  if ( V_.RefractoryCountsTot_ < 1 ) {
     throw BadProperty( "Total refractory time must be at least one time step." );
   }
 }
@@ -308,16 +295,14 @@ nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
 
     if ( S_.r_abs_ == 0 ) // neuron not refractory, so evolve V
     {
       S_.V_m_ =
         S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_ + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
     }
-    else
-    {
+    else {
       --S_.r_abs_;
     } // neuron is absolute refractory
 
@@ -329,8 +314,7 @@ nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
     S_.i_syn_ex_ += B_.spikes_ex_.get_value( lag );
     S_.i_syn_in_ += B_.spikes_in_.get_value( lag );
 
-    if ( S_.r_tot_ == 0 )
-    {
+    if ( S_.r_tot_ == 0 ) {
       if ( S_.V_m_ >= P_.Theta_ ) // threshold crossing
       {
         S_.r_abs_ = V_.RefractoryCountsAbs_;
@@ -343,8 +327,7 @@ nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
-    else
-    {
+    else {
       --S_.r_tot_;
     } // neuron is totally refractory (cannot generate spikes)
 
@@ -362,13 +345,11 @@ nest::iaf_tum_2000::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  if ( e.get_weight() >= 0.0 )
-  {
+  if ( e.get_weight() >= 0.0 ) {
     B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
-  else
-  {
+  else {
     B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }

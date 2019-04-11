@@ -36,8 +36,7 @@
 #include "kernel_manager.h"
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * Queue for all spikes arriving into a neuron.
  * Spikes are stored unsorted on arrival, but are sorted when
@@ -57,8 +56,7 @@ namespace nest
  * pseudo-events for return from refractoriness:
  * - There is at most one such event per time step (value of time stamp).
  */
-class SliceRingBuffer
-{
+class SliceRingBuffer {
 public:
   SliceRingBuffer();
 
@@ -126,8 +124,7 @@ private:
   /**
    * Information about spike.
    */
-  struct SpikeInfo
-  {
+  struct SpikeInfo {
     SpikeInfo( long stamp, double ps_offset, double weight );
 
     bool operator<( const SpikeInfo& b ) const;
@@ -181,10 +178,8 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
   bool& end_of_refract )
 {
   end_of_refract = false;
-  if ( deliver_->empty() || refract_ <= deliver_->back() )
-  {
-    if ( refract_.stamp_ == req_stamp )
-    { // if relies on stamp_==long::max() if not refractory
+  if ( deliver_->empty() || refract_ <= deliver_->back() ) {
+    if ( refract_.stamp_ == req_stamp ) { // if relies on stamp_==long::max() if not refractory
       // return from refractoriness
       ps_offset = refract_.ps_offset_;
       weight = 0;
@@ -194,24 +189,20 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
       refract_.stamp_ = std::numeric_limits< long >::max();
       return true;
     }
-    else
-    {
+    else {
       return false;
     }
   }
-  else if ( deliver_->back().stamp_ == req_stamp )
-  {
+  else if ( deliver_->back().stamp_ == req_stamp ) {
     // we have an event to deliver
     ps_offset = deliver_->back().ps_offset_;
     weight = deliver_->back().weight_;
     deliver_->pop_back();
 
-    if ( accumulate_simultaneous )
-    {
+    if ( accumulate_simultaneous ) {
       // add weights of all spikes with same stamp and offset
       while (
-        not deliver_->empty() and deliver_->back().ps_offset_ == ps_offset and deliver_->back().stamp_ == req_stamp )
-      {
+        not deliver_->empty() and deliver_->back().ps_offset_ == ps_offset and deliver_->back().stamp_ == req_stamp ) {
         weight += deliver_->back().weight_;
         deliver_->pop_back();
       }
@@ -219,8 +210,7 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
 
     return true;
   }
-  else
-  {
+  else {
     // ensure that we are not blocked by spike from the past, cf #404
     assert( deliver_->back().stamp_ > req_stamp );
     return false;

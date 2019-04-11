@@ -30,14 +30,12 @@
 // is defined in the global namespace.
 template class lockPTRDatum< nest::TopologyParameter, &nest::TopologyModule::ParameterType >;
 
-namespace nest
-{
+namespace nest {
 
 double
 TopologyParameter::value( const std::vector< double >& pt, librandom::RngPtr& rng ) const
 {
-  switch ( pt.size() )
-  {
+  switch ( pt.size() ) {
   case 2:
     return value( Position< 2 >( pt ), rng );
   case 3:
@@ -63,14 +61,12 @@ Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
   updateValue< double >( d, names::mean_y, mean_y_ );
   updateValue< double >( d, names::sigma_y, sigma_y_ );
   updateValue< double >( d, names::rho, rho_ );
-  if ( rho_ >= 1 || rho_ <= -1 )
-  {
+  if ( rho_ >= 1 || rho_ <= -1 ) {
     throw BadProperty(
       "topology::Gaussian2DParameter: "
       "-1 < rho < 1 required." );
   }
-  if ( sigma_x_ <= 0 || sigma_y_ <= 0 )
-  {
+  if ( sigma_x_ <= 0 || sigma_y_ <= 0 ) {
     throw BadProperty(
       "topology::Gaussian2DParameter: "
       "sigma_x > 0 and sigma_y > 0 required." );

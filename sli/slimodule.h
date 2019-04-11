@@ -33,8 +33,7 @@ class Dictionary;
 /**
  * Base class for all SLI Interpreter modules.
  */
-class SLIModule
-{
+class SLIModule {
 public:
   virtual ~SLIModule(){};
 

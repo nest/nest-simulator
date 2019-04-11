@@ -26,8 +26,7 @@
 // Includes from nestkernel:
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: ht_synapse - Synapse with depression after Hill & Tononi (2005).
@@ -66,8 +65,7 @@ Author: Hans Ekkehard Plesser, based on markram_synapse
 SeeAlso: ht_neuron, tsodyks_synapse, stdp_synapse, static_synapse
 */
 template < typename targetidentifierT >
-class HTConnection : public Connection< targetidentifierT >
-{
+class HTConnection : public Connection< targetidentifierT > {
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
@@ -117,8 +115,7 @@ public:
    */
   void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -228,18 +225,15 @@ HTConnection< targetidentifierT >::set_status( const DictionaryDatum& d, Connect
   updateValue< double >( d, names::delta_P, delta_P_ );
   updateValue< double >( d, names::P, p_ );
 
-  if ( tau_P_ <= 0.0 )
-  {
+  if ( tau_P_ <= 0.0 ) {
     throw BadProperty( "tau_P > 0 required." );
   }
 
-  if ( delta_P_ < 0.0 || delta_P_ > 1.0 )
-  {
+  if ( delta_P_ < 0.0 || delta_P_ > 1.0 ) {
     throw BadProperty( "0 <= delta_P <= 1 required." );
   }
 
-  if ( p_ < 0.0 || p_ > 1.0 )
-  {
+  if ( p_ < 0.0 || p_ > 1.0 ) {
     throw BadProperty( "0 <= P <= 1 required." );
   }
 }

@@ -66,8 +66,7 @@ class DelayedRateConnectionEvent;
    SeeAlso: Device, RecordingDevice
 */
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Base class for common properties of Stimulating Devices.
@@ -121,8 +120,7 @@ namespace nest
  * @ingroup Devices
  */
 template < typename EmittedEvent >
-class StimulatingDevice : public Device
-{
+class StimulatingDevice : public Device {
 public:
   StimulatingDevice();
   StimulatingDevice( StimulatingDevice< EmittedEvent > const& );
@@ -220,12 +218,10 @@ template < typename EmittedEvent >
 inline void
 nest::StimulatingDevice< EmittedEvent >::enforce_single_syn_type( synindex syn_id )
 {
-  if ( first_syn_id_ == invalid_synindex )
-  {
+  if ( first_syn_id_ == invalid_synindex ) {
     first_syn_id_ = syn_id;
   }
-  if ( syn_id != first_syn_id_ )
-  {
+  if ( syn_id != first_syn_id_ ) {
     throw IllegalConnection(
       "All outgoing connections from a device must use the same synapse "
       "type." );

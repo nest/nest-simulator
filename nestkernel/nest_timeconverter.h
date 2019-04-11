@@ -32,8 +32,7 @@
 
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 class Time;
 /**
  * Class to convert times from one representation to another.
@@ -44,8 +43,7 @@ class Time;
  * to convert steps or tics given with respect to the old representation
  * in the new representation.
  */
-class TimeConverter
-{
+class TimeConverter {
 
 private:
   double OLD_TICS_PER_MS;

@@ -43,8 +43,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-namespace nest
-{
+namespace nest {
 RecordablesMap< sinusoidal_poisson_generator > sinusoidal_poisson_generator::recordablesMap_;
 
 template <>
@@ -81,8 +80,7 @@ nest::sinusoidal_poisson_generator::Parameters_::Parameters_( const Parameters_&
 nest::sinusoidal_poisson_generator::Parameters_& nest::sinusoidal_poisson_generator::Parameters_::operator=(
   const Parameters_& p )
 {
-  if ( this == &p )
-  {
+  if ( this == &p ) {
     return *this;
   }
 
@@ -136,8 +134,7 @@ nest::sinusoidal_poisson_generator::State_::get( DictionaryDatum& ) const
 void
 nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d, const sinusoidal_poisson_generator& n )
 {
-  if ( not n.is_model_prototype() && d->known( names::individual_spike_trains ) )
-  {
+  if ( not n.is_model_prototype() && d->known( names::individual_spike_trains ) ) {
     throw BadProperty(
       "The individual_spike_trains property can only be set as"
       " a model default using SetDefaults or upon CopyModel." );
@@ -145,23 +142,19 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d, 
 
   updateValue< bool >( d, names::individual_spike_trains, individual_spike_trains_ );
 
-  if ( updateValue< double >( d, names::rate, rate_ ) )
-  {
+  if ( updateValue< double >( d, names::rate, rate_ ) ) {
     rate_ /= 1000.0; // scale to ms^-1
   }
 
-  if ( updateValue< double >( d, names::frequency, om_ ) )
-  {
+  if ( updateValue< double >( d, names::frequency, om_ ) ) {
     om_ *= 2.0 * numerics::pi / 1000.0;
   }
 
-  if ( updateValue< double >( d, names::phase, phi_ ) )
-  {
+  if ( updateValue< double >( d, names::phase, phi_ ) ) {
     phi_ *= numerics::pi / 180.0;
   }
 
-  if ( updateValue< double >( d, names::amplitude, amplitude_ ) )
-  {
+  if ( updateValue< double >( d, names::amplitude, amplitude_ ) ) {
     amplitude_ /= 1000.0;
   }
 }
@@ -248,8 +241,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
   // time-consuming, so it should be done only if the device is
   // on most of the time.
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     // update oscillator blocks, accumulate rate as sum of DC and N_osc_ AC
     // elements rate is instantaneous sum of state
     S_.rate_ = P_.rate_;
@@ -260,21 +252,17 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
     S_.y_0_ = new_y_0;
     S_.rate_ += S_.y_1_;
 
-    if ( S_.rate_ < 0 )
-    {
+    if ( S_.rate_ < 0 ) {
       S_.rate_ = 0;
     }
 
     // create spikes
-    if ( S_.rate_ > 0 && device_.is_active( Time::step( start + lag ) ) )
-    {
-      if ( P_.individual_spike_trains_ )
-      {
+    if ( S_.rate_ > 0 && device_.is_active( Time::step( start + lag ) ) ) {
+      if ( P_.individual_spike_trains_ ) {
         DSSpikeEvent se;
         kernel().event_delivery_manager.send( *this, se, lag );
       }
-      else
-      {
+      else {
         V_.poisson_dev_.set_lambda( S_.rate_ * V_.h_ );
         long n_spikes = V_.poisson_dev_.ldev( rng );
         SpikeEvent se;

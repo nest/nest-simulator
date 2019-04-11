@@ -35,14 +35,12 @@
 #include "kernel_manager.h"
 #include "nest.h"
 
-namespace nest
-{
+namespace nest {
 template < int D >
 void
 ConnectionCreator::connect( Layer< D >& source, Layer< D >& target )
 {
-  switch ( type_ )
-  {
+  switch ( type_ ) {
   case Target_driven:
 
     target_driven_connect_( source, target );
@@ -90,15 +88,12 @@ ConnectionCreator::connect_to_target_( Iterator from,
   librandom::RngPtr rng = get_vp_rng( tgt_thread );
 
   const bool without_kernel = not kernel_.valid();
-  for ( Iterator iter = from; iter != to; ++iter )
-  {
-    if ( ( not allow_autapses_ ) and ( iter->second == tgt_ptr->get_gid() ) )
-    {
+  for ( Iterator iter = from; iter != to; ++iter ) {
+    if ( ( not allow_autapses_ ) and ( iter->second == tgt_ptr->get_gid() ) ) {
       continue;
     }
 
-    if ( without_kernel or rng->drand() < kernel_->value( source.compute_displacement( tgt_pos, iter->first ), rng ) )
-    {
+    if ( without_kernel or rng->drand() < kernel_->value( source.compute_displacement( tgt_pos, iter->first ), rng ) ) {
       const Position< D > disp = source.compute_displacement( tgt_pos, iter->first );
       connect_(
         iter->second, tgt_ptr, tgt_thread, weight_->value( disp, rng ), delay_->value( disp, rng ), synapse_model_ );
@@ -116,8 +111,7 @@ ConnectionCreator::PoolWrapper_< D >::PoolWrapper_()
 template < int D >
 ConnectionCreator::PoolWrapper_< D >::~PoolWrapper_()
 {
-  if ( masked_layer_ )
-  {
+  if ( masked_layer_ ) {
     delete masked_layer_;
   }
 }
@@ -185,13 +179,11 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source, Layer< D >& targe
   // just adjust the begin and end pointers:
   std::vector< Node* >::const_iterator target_begin;
   std::vector< Node* >::const_iterator target_end;
-  if ( target_filter_.select_depth() )
-  {
+  if ( target_filter_.select_depth() ) {
     target_begin = target.local_begin( target_filter_.depth );
     target_end = target.local_end( target_filter_.depth );
   }
-  else
-  {
+  else {
     target_begin = target.local_begin();
     target_end = target.local_end();
   }
@@ -202,8 +194,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source, Layer< D >& targe
   {
     pool.define( new MaskedLayer< D >( source, source_filter_, mask_, true, allow_oversized_ ) );
   }
-  else
-  {
+  else {
     pool.define( source.get_global_positions_vector( source_filter_ ) );
   }
 
@@ -213,30 +204,25 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source, Layer< D >& targe
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
 
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
-    {
+    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it ) {
       Node* const tgt = kernel().node_manager.get_node( ( *tgt_it )->get_gid(), thread_id );
       const thread target_thread = tgt->get_thread();
 
       // check whether the target is on our thread
-      if ( thread_id != target_thread )
-      {
+      if ( thread_id != target_thread ) {
         continue;
       }
 
-      if ( target_filter_.select_model() && ( tgt->get_model_id() != target_filter_.model ) )
-      {
+      if ( target_filter_.select_model() && ( tgt->get_model_id() != target_filter_.model ) ) {
         continue;
       }
 
       const Position< D > target_pos = target.get_position( tgt->get_subnet_index() );
 
-      if ( mask_.valid() )
-      {
+      if ( mask_.valid() ) {
         connect_to_target_( pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, thread_id, source );
       }
-      else
-      {
+      else {
         connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
       }
     } // for target_begin
@@ -260,13 +246,11 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
   // just adjust the begin and end pointers:
   std::vector< Node* >::const_iterator target_begin;
   std::vector< Node* >::const_iterator target_end;
-  if ( target_filter_.select_depth() )
-  {
+  if ( target_filter_.select_depth() ) {
     target_begin = target.local_begin( target_filter_.depth );
     target_end = target.local_end( target_filter_.depth );
   }
-  else
-  {
+  else {
     target_begin = target.local_begin();
     target_end = target.local_end();
   }
@@ -274,28 +258,23 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
-  for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
-  {
-    if ( not( *tgt_it )->has_proxies() )
-    {
+  for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it ) {
+    if ( not( *tgt_it )->has_proxies() ) {
       throw IllegalConnection(
         "Topology Divergent connections"
         " to devices are not possible." );
     }
   }
 
-  if ( mask_.valid() )
-  {
+  if ( mask_.valid() ) {
 
     // By supplying the target layer to the MaskedLayer constructor, the
     // mask is mirrored so it may be applied to the source layer instead
     MaskedLayer< D > masked_layer( source, source_filter_, mask_, true, allow_oversized_, target );
 
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
-    {
+    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it ) {
 
-      if ( target_filter_.select_model() && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
-      {
+      if ( target_filter_.select_model() && ( ( *tgt_it )->get_model_id() != target_filter_.model ) ) {
         continue;
       }
 
@@ -307,21 +286,17 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
       // If there is a kernel, we create connections conditionally,
       // otherwise all sources within the mask are created. Test moved
       // outside the loop for efficiency.
-      if ( kernel_.valid() )
-      {
+      if ( kernel_.valid() ) {
 
         for ( typename Ntree< D, index >::masked_iterator iter = masked_layer.begin( target_pos );
               iter != masked_layer.end();
-              ++iter )
-        {
+              ++iter ) {
 
-          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
-          {
+          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) ) {
             continue;
           }
 
-          if ( rng->drand() < kernel_->value( target.compute_displacement( iter->first, target_pos ), rng ) )
-          {
+          if ( rng->drand() < kernel_->value( target.compute_displacement( iter->first, target_pos ), rng ) ) {
             double w, d;
             get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
             kernel().connection_manager.connect(
@@ -329,18 +304,15 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
           }
         }
       }
-      else
-      {
+      else {
 
         // no kernel
 
         for ( typename Ntree< D, index >::masked_iterator iter = masked_layer.begin( target_pos );
               iter != masked_layer.end();
-              ++iter )
-        {
+              ++iter ) {
 
-          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
-          {
+          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) ) {
             continue;
           }
           double w, d;
@@ -351,16 +323,13 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
       }
     }
   }
-  else
-  {
+  else {
     // no mask
 
     std::vector< std::pair< Position< D >, index > >* positions = source.get_global_positions_vector( source_filter_ );
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
-    {
+    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it ) {
 
-      if ( target_filter_.select_model() && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
-      {
+      if ( target_filter_.select_model() && ( ( *tgt_it )->get_model_id() != target_filter_.model ) ) {
         continue;
       }
 
@@ -372,21 +341,17 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
       // If there is a kernel, we create connections conditionally,
       // otherwise all sources within the mask are created. Test moved
       // outside the loop for efficiency.
-      if ( kernel_.valid() )
-      {
+      if ( kernel_.valid() ) {
 
         for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions->begin();
               iter != positions->end();
-              ++iter )
-        {
+              ++iter ) {
 
-          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
-          {
+          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) ) {
             continue;
           }
 
-          if ( rng->drand() < kernel_->value( target.compute_displacement( iter->first, target_pos ), rng ) )
-          {
+          if ( rng->drand() < kernel_->value( target.compute_displacement( iter->first, target_pos ), rng ) ) {
             double w, d;
             get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
             kernel().connection_manager.connect(
@@ -394,16 +359,13 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
           }
         }
       }
-      else
-      {
+      else {
 
         for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions->begin();
               iter != positions->end();
-              ++iter )
-        {
+              ++iter ) {
 
-          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
-          {
+          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) ) {
             continue;
           }
 
@@ -421,8 +383,7 @@ template < int D >
 void
 ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 {
-  if ( number_of_connections_ < 1 )
-  {
+  if ( number_of_connections_ < 1 ) {
     return;
   }
 
@@ -438,13 +399,11 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
   // just adjust the begin and end pointers:
   std::vector< Node* >::const_iterator target_begin;
   std::vector< Node* >::const_iterator target_end;
-  if ( target_filter_.select_depth() )
-  {
+  if ( target_filter_.select_depth() ) {
     target_begin = target.local_begin( target_filter_.depth );
     target_end = target.local_end( target_filter_.depth );
   }
-  else
-  {
+  else {
     target_begin = target.local_begin();
     target_end = target.local_end();
   }
@@ -452,25 +411,20 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
-  for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
-  {
-    if ( not( *tgt_it )->has_proxies() )
-    {
+  for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it ) {
+    if ( not( *tgt_it )->has_proxies() ) {
       throw IllegalConnection(
         "Topology Divergent connections"
         " to devices are not possible." );
     }
   }
 
-  if ( mask_.valid() )
-  {
+  if ( mask_.valid() ) {
     MaskedLayer< D > masked_source( source, source_filter_, mask_, true, allow_oversized_ );
 
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
-    {
+    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it ) {
 
-      if ( target_filter_.select_model() && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
-      {
+      if ( target_filter_.select_model() && ( ( *tgt_it )->get_model_id() != target_filter_.model ) ) {
         continue;
       }
 
@@ -484,8 +438,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
       std::vector< std::pair< Position< D >, index > > positions;
       for ( typename Ntree< D, index >::masked_iterator iter = masked_source.begin( anchor );
             iter != masked_source.end();
-            ++iter )
-      {
+            ++iter ) {
         positions.push_back( *iter );
       }
 
@@ -493,24 +446,21 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
       // If there is no kernel, we can just draw uniform random numbers,
       // but with a kernel we have to set up a probability distribution
       // function using the Vose class.
-      if ( kernel_.valid() )
-      {
+      if ( kernel_.valid() ) {
 
         std::vector< double > probabilities;
 
         // Collect probabilities for the sources
         for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions.begin();
               iter != positions.end();
-              ++iter )
-        {
+              ++iter ) {
 
           probabilities.push_back( kernel_->value( source.compute_displacement( target_pos, iter->first ), rng ) );
         }
 
         if ( positions.empty()
           or ( ( not allow_autapses_ ) and ( positions.size() == 1 ) and ( positions[ 0 ].second == target_id ) )
-          or ( ( not allow_multapses_ ) and ( positions.size() < number_of_connections_ ) ) )
-        {
+          or ( ( not allow_multapses_ ) and ( positions.size() < number_of_connections_ ) ) ) {
           std::string msg = String::compose( "Global target ID %1: Not enough sources found inside mask", target_id );
           throw KernelException( msg.c_str() );
         }
@@ -524,18 +474,15 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
         std::vector< bool > is_selected( positions.size() );
 
         // Draw `number_of_connections_` sources
-        for ( int i = 0; i < ( int ) number_of_connections_; ++i )
-        {
+        for ( int i = 0; i < ( int ) number_of_connections_; ++i ) {
           index random_id = lottery.get_random_id( rng );
-          if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
-          {
+          if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) ) {
             --i;
             continue;
           }
 
           index source_id = positions[ random_id ].second;
-          if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
-          {
+          if ( ( not allow_autapses_ ) and ( source_id == target_id ) ) {
             --i;
             continue;
           }
@@ -545,15 +492,13 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           is_selected[ random_id ] = true;
         }
       }
-      else
-      {
+      else {
 
         // no kernel
 
         if ( positions.empty()
           or ( ( not allow_autapses_ ) and ( positions.size() == 1 ) and ( positions[ 0 ].second == target_id ) )
-          or ( ( not allow_multapses_ ) and ( positions.size() < number_of_connections_ ) ) )
-        {
+          or ( ( not allow_multapses_ ) and ( positions.size() < number_of_connections_ ) ) ) {
           std::string msg = String::compose( "Global target ID %1: Not enough sources found inside mask", target_id );
           throw KernelException( msg.c_str() );
         }
@@ -563,11 +508,9 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
         std::vector< bool > is_selected( positions.size() );
 
         // Draw `number_of_connections_` sources
-        for ( int i = 0; i < ( int ) number_of_connections_; ++i )
-        {
+        for ( int i = 0; i < ( int ) number_of_connections_; ++i ) {
           index random_id = rng->ulrand( positions.size() );
-          if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
-          {
+          if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) ) {
             --i;
             continue;
           }
@@ -580,18 +523,15 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
       }
     }
   }
-  else
-  {
+  else {
     // no mask
 
     // Get (position,GID) pairs for all nodes in source layer
     std::vector< std::pair< Position< D >, index > >* positions = source.get_global_positions_vector( source_filter_ );
 
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
-    {
+    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it ) {
 
-      if ( target_filter_.select_model() && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
-      {
+      if ( target_filter_.select_model() && ( ( *tgt_it )->get_model_id() != target_filter_.model ) ) {
         continue;
       }
 
@@ -602,8 +542,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 
       if ( ( positions->size() == 0 )
         or ( ( not allow_autapses_ ) and ( positions->size() == 1 ) and ( ( *positions )[ 0 ].second == target_id ) )
-        or ( ( not allow_multapses_ ) and ( positions->size() < number_of_connections_ ) ) )
-      {
+        or ( ( not allow_multapses_ ) and ( positions->size() < number_of_connections_ ) ) ) {
         std::string msg = String::compose( "Global target ID %1: Not enough sources found", target_id );
         throw KernelException( msg.c_str() );
       }
@@ -612,16 +551,14 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
       // If there is no kernel, we can just draw uniform random numbers,
       // but with a kernel we have to set up a probability distribution
       // function using the Vose class.
-      if ( kernel_.valid() )
-      {
+      if ( kernel_.valid() ) {
 
         std::vector< double > probabilities;
 
         // Collect probabilities for the sources
         for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions->begin();
               iter != positions->end();
-              ++iter )
-        {
+              ++iter ) {
           probabilities.push_back( kernel_->value( source.compute_displacement( target_pos, iter->first ), rng ) );
         }
 
@@ -634,18 +571,15 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
         std::vector< bool > is_selected( positions->size() );
 
         // Draw `number_of_connections_` sources
-        for ( int i = 0; i < ( int ) number_of_connections_; ++i )
-        {
+        for ( int i = 0; i < ( int ) number_of_connections_; ++i ) {
           index random_id = lottery.get_random_id( rng );
-          if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
-          {
+          if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) ) {
             --i;
             continue;
           }
 
           index source_id = ( *positions )[ random_id ].second;
-          if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
-          {
+          if ( ( not allow_autapses_ ) and ( source_id == target_id ) ) {
             --i;
             continue;
           }
@@ -657,8 +591,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           is_selected[ random_id ] = true;
         }
       }
-      else
-      {
+      else {
 
         // no kernel
 
@@ -667,18 +600,15 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
         std::vector< bool > is_selected( positions->size() );
 
         // Draw `number_of_connections_` sources
-        for ( int i = 0; i < ( int ) number_of_connections_; ++i )
-        {
+        for ( int i = 0; i < ( int ) number_of_connections_; ++i ) {
           index random_id = rng->ulrand( positions->size() );
-          if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
-          {
+          if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) ) {
             --i;
             continue;
           }
 
           index source_id = ( *positions )[ random_id ].second;
-          if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
-          {
+          if ( ( not allow_autapses_ ) and ( source_id == target_id ) ) {
             --i;
             continue;
           }
@@ -699,8 +629,7 @@ template < int D >
 void
 ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
 {
-  if ( number_of_connections_ < 1 )
-  {
+  if ( number_of_connections_ < 1 ) {
     return;
   }
 
@@ -711,21 +640,17 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
   // just adjust the begin and end pointers:
   std::vector< Node* >::const_iterator target_begin;
   std::vector< Node* >::const_iterator target_end;
-  if ( target_filter_.select_depth() )
-  {
+  if ( target_filter_.select_depth() ) {
     target_begin = target.local_begin( target_filter_.depth );
     target_end = target.local_end( target_filter_.depth );
   }
-  else
-  {
+  else {
     target_begin = target.local_begin();
     target_end = target.local_end();
   }
 
-  for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
-  {
-    if ( not( *tgt_it )->has_proxies() )
-    {
+  for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it ) {
+    if ( not( *tgt_it )->has_proxies() ) {
       throw IllegalConnection(
         "Topology Divergent connections"
         " to devices are not possible." );
@@ -745,8 +670,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
 
   for ( typename std::vector< std::pair< Position< D >, index > >::iterator src_it = sources->begin();
         src_it != sources->end();
-        ++src_it )
-  {
+        ++src_it ) {
 
     Position< D > source_pos = src_it->first;
     index source_id = src_it->second;
@@ -758,11 +682,9 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
 
     for ( typename Ntree< D, index >::masked_iterator tgt_it = masked_target.begin( source_pos );
           tgt_it != masked_target.end();
-          ++tgt_it )
-    {
+          ++tgt_it ) {
 
-      if ( ( not allow_autapses_ ) and ( source_id == tgt_it->second ) )
-      {
+      if ( ( not allow_autapses_ ) and ( source_id == tgt_it->second ) ) {
         continue;
       }
 
@@ -772,18 +694,15 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
       targets.push_back( tgt_it->second );
       displacements.push_back( target_displ );
 
-      if ( kernel_.valid() )
-      {
+      if ( kernel_.valid() ) {
         probabilities.push_back( kernel_->value( target_displ, rng ) );
       }
-      else
-      {
+      else {
         probabilities.push_back( 1.0 );
       }
     }
 
-    if ( targets.empty() or ( ( not allow_multapses_ ) and ( targets.size() < number_of_connections_ ) ) )
-    {
+    if ( targets.empty() or ( ( not allow_multapses_ ) and ( targets.size() < number_of_connections_ ) ) ) {
       std::string msg = String::compose( "Global source ID %1: Not enough targets found", source_id );
       throw KernelException( msg.c_str() );
     }
@@ -797,11 +716,9 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
     std::vector< bool > is_selected( targets.size() );
 
     // Draw `number_of_connections_` targets
-    for ( long i = 0; i < ( long ) number_of_connections_; ++i )
-    {
+    for ( long i = 0; i < ( long ) number_of_connections_; ++i ) {
       index random_id = lottery.get_random_id( get_global_rng() );
-      if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
-      {
+      if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) ) {
         --i;
         continue;
       }
@@ -815,8 +732,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
       // We bail out for non-local neurons only now after all possible
       // random numbers haven been drawn. Bailing out any earlier may lead
       // to desynchronized global rngs.
-      if ( not kernel().node_manager.is_local_gid( target_id ) )
-      {
+      if ( not kernel().node_manager.is_local_gid( target_id ) ) {
         continue;
       }
 

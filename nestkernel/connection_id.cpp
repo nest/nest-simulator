@@ -28,8 +28,7 @@
 // Includes from sli:
 #include "integerdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 ConnectionID::ConnectionID( long source_gid, long target_gid, long target_thread, long synapse_modelid, long port )
   : source_gid_( source_gid )

@@ -37,16 +37,14 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * \class GrowthCurve
  * Defines the way the number of synaptic elements changes through time
  * according to the calcium concentration of the neuron.
  */
-class GrowthCurve
-{
+class GrowthCurve {
 public:
   virtual ~GrowthCurve()
   {
@@ -127,8 +125,7 @@ protected:
  * dz/dt = nu (1 - (1/eps) * Ca(t)), where nu is the growth rate and
  * eps is the desired average calcium concentration.
  */
-class GrowthCurveLinear : public GrowthCurve
-{
+class GrowthCurveLinear : public GrowthCurve {
 public:
   GrowthCurveLinear();
   void get( DictionaryDatum& d ) const;
@@ -214,8 +211,7 @@ private:
  * to be created, eps is the target mean calcium concentration in the
  * neuron and nu is the growth rate.
  */
-class GrowthCurveGaussian : public GrowthCurve
-{
+class GrowthCurveGaussian : public GrowthCurve {
 public:
   GrowthCurveGaussian();
   void get( DictionaryDatum& d ) const;
@@ -286,8 +282,7 @@ private:
  * neuron, psi controls the width of the sigmoid
  * and nu is the growth rate.
  */
-class GrowthCurveSigmoid : public GrowthCurve
-{
+class GrowthCurveSigmoid : public GrowthCurve {
 public:
   GrowthCurveSigmoid();
   void get( DictionaryDatum& d ) const;

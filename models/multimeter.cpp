@@ -25,8 +25,7 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 
-namespace nest
-{
+namespace nest {
 Multimeter::Multimeter()
   : DeviceNode()
   , device_( *this, RecordingDevice::MULTIMETER, "dat", true, true )
@@ -53,8 +52,7 @@ Multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
   DataLoggingRequest e( P_.interval_, P_.offset_, P_.record_from_ );
   e.set_sender( *this );
   port p = target.handles_test_event( e, receptor_type );
-  if ( p != invalid_port_ and not is_model_prototype() )
-  {
+  if ( p != invalid_port_ and not is_model_prototype() ) {
     B_.has_targets_ = true;
   }
   return p;
@@ -86,8 +84,7 @@ nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
   ( *d )[ names::interval ] = interval_.get_ms();
   ( *d )[ names::offset ] = offset_.get_ms();
   ArrayDatum ad;
-  for ( size_t j = 0; j < record_from_.size(); ++j )
-  {
+  for ( size_t j = 0; j < record_from_.size(); ++j ) {
     ad.push_back( LiteralDatum( record_from_[ j ] ) );
   }
   ( *d )[ names::record_from ] = ad;
@@ -97,8 +94,7 @@ void
 nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b )
 {
   if ( b.has_targets_
-    && ( d->known( names::interval ) || d->known( names::offset ) || d->known( names::record_from ) ) )
-  {
+    && ( d->known( names::interval ) || d->known( names::offset ) || d->known( names::record_from ) ) ) {
     throw BadProperty(
       "The recording interval, the interval offset and the list of properties "
       "to record cannot be changed after the multimeter has been connected "
@@ -106,10 +102,8 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b 
   }
 
   double v;
-  if ( updateValue< double >( d, names::interval, v ) )
-  {
-    if ( Time( Time::ms( v ) ) < Time::get_resolution() )
-    {
+  if ( updateValue< double >( d, names::interval, v ) ) {
+    if ( Time( Time::ms( v ) ) < Time::get_resolution() ) {
       throw BadProperty(
         "The sampling interval must be at least as long "
         "as the simulation resolution." );
@@ -117,20 +111,17 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b 
 
     // see if we can represent interval as multiple of step
     interval_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( not interval_.is_multiple_of( Time::get_resolution() ) )
-    {
+    if ( not interval_.is_multiple_of( Time::get_resolution() ) ) {
       throw BadProperty(
         "The sampling interval must be a multiple of "
         "the simulation resolution" );
     }
   }
 
-  if ( updateValue< double >( d, names::offset, v ) )
-  {
+  if ( updateValue< double >( d, names::offset, v ) ) {
     // if offset is different from the default value (0), it must be at least
     // as large as the resolution
-    if ( v != 0 && Time( Time::ms( v ) ) < Time::get_resolution() )
-    {
+    if ( v != 0 && Time( Time::ms( v ) ) < Time::get_resolution() ) {
       throw BadProperty(
         "The offset for the sampling interval must be at least as long as the "
         "simulation resolution." );
@@ -138,8 +129,7 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b 
 
     // see if we can represent offset as multiple of step
     offset_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( not offset_.is_multiple_of( Time::get_resolution() ) )
-    {
+    if ( not offset_.is_multiple_of( Time::get_resolution() ) ) {
       throw BadProperty(
         "The offset for the sampling interval must be a multiple of the "
         "simulation resolution" );
@@ -147,13 +137,11 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b 
   }
 
   // extract data
-  if ( d->known( names::record_from ) )
-  {
+  if ( d->known( names::record_from ) ) {
     record_from_.clear();
 
     ArrayDatum ad = getValue< ArrayDatum >( d, names::record_from );
-    for ( Token* t = ad.begin(); t != ad.end(); ++t )
-    {
+    for ( Token* t = ad.begin(); t != ad.end(); ++t ) {
       record_from_.push_back( Name( getValue< std::string >( *t ) ) );
     }
   }
@@ -201,8 +189,7 @@ Multimeter::update( Time const& origin, const long from, const long )
      previous slice if we are called at the beginning of the slice. Otherwise,
      we do nothing.
    */
-  if ( origin.get_steps() == 0 || from != 0 )
-  {
+  if ( origin.get_steps() == 0 || from != 0 ) {
     return;
   }
 
@@ -231,8 +218,7 @@ Multimeter::handle( DataLoggingReply& reply )
 
   // If this is the first Reply arriving, we need to mark the beginning of the
   // data for this round of replies
-  if ( V_.new_request_ )
-  {
+  if ( V_.new_request_ ) {
     V_.current_request_data_start_ = S_.data_.size();
   }
 
@@ -240,15 +226,12 @@ Multimeter::handle( DataLoggingReply& reply )
   size_t inactive_skipped = 0;
 
   // record all data, time point by time point
-  for ( size_t j = 0; j < info.size(); ++j )
-  {
-    if ( not info[ j ].timestamp.is_finite() )
-    {
+  for ( size_t j = 0; j < info.size(); ++j ) {
+    if ( not info[ j ].timestamp.is_finite() ) {
       break;
     }
 
-    if ( not is_active( info[ j ].timestamp ) )
-    {
+    if ( not is_active( info[ j ].timestamp ) ) {
       ++inactive_skipped;
       continue;
     }
@@ -258,37 +241,31 @@ Multimeter::handle( DataLoggingReply& reply )
 
     // record sender and time information; in accumulator mode only for first
     // Reply in slice
-    if ( not device_.to_accumulator() || V_.new_request_ )
-    {
+    if ( not device_.to_accumulator() || V_.new_request_ ) {
       device_.record_event( reply, false ); // false: more data to come
     }
 
-    if ( not device_.to_accumulator() )
-    {
+    if ( not device_.to_accumulator() ) {
       // "print" actual data, but not in accumulator mode
       print_value_( info[ j ].data );
 
-      if ( device_.to_memory() )
-      {
+      if ( device_.to_memory() ) {
         S_.data_.push_back( info[ j ].data );
       }
     }
-    else
-    {
+    else {
       if ( V_.new_request_ ) // first reply in slice, push back to create new
                              // time points
       {
         S_.data_.push_back( info[ j ].data );
       }
-      else
-      { // add data; offset j from current_request_data_start_, but inactive
+      else { // add data; offset j from current_request_data_start_, but inactive
         // skipped entries subtracted
         assert( j >= inactive_skipped );
         assert( V_.current_request_data_start_ + j - inactive_skipped < S_.data_.size() );
         assert( S_.data_[ V_.current_request_data_start_ + j - inactive_skipped ].size() == info[ j ].data.size() );
 
-        for ( size_t k = 0; k < info[ j ].data.size(); ++k )
-        {
+        for ( size_t k = 0; k < info[ j ].data.size(); ++k ) {
           S_.data_[ V_.current_request_data_start_ + j - inactive_skipped ][ k ] += info[ j ].data[ k ];
         }
       }
@@ -302,13 +279,11 @@ Multimeter::handle( DataLoggingReply& reply )
 void
 Multimeter::print_value_( const std::vector< double >& values )
 {
-  if ( values.size() < 1 )
-  {
+  if ( values.size() < 1 ) {
     return;
   }
 
-  for ( size_t j = 0; j < values.size() - 1; ++j )
-  {
+  for ( size_t j = 0; j < values.size() - 1; ++j ) {
     device_.print_value( values[ j ], false );
   }
 
@@ -320,21 +295,17 @@ void
 Multimeter::add_data_( DictionaryDatum& d ) const
 {
   // re-organize data into one vector per recorded variable
-  for ( size_t v = 0; v < P_.record_from_.size(); ++v )
-  {
+  for ( size_t v = 0; v < P_.record_from_.size(); ++v ) {
     std::vector< double > dv( S_.data_.size() );
-    for ( size_t t = 0; t < S_.data_.size(); ++t )
-    {
+    for ( size_t t = 0; t < S_.data_.size(); ++t ) {
       assert( v < S_.data_[ t ].size() );
       dv[ t ] = S_.data_[ t ][ v ];
     }
     initialize_property_doublevector( d, P_.record_from_[ v ] );
-    if ( device_.to_accumulator() && not dv.empty() )
-    {
+    if ( device_.to_accumulator() && not dv.empty() ) {
       accumulate_property( d, P_.record_from_[ v ], dv );
     }
-    else
-    {
+    else {
       append_property( d, P_.record_from_[ v ], dv );
     }
   }

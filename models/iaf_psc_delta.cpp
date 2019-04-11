@@ -41,8 +41,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -112,30 +111,24 @@ nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
-  {
+  if ( updateValue< double >( d, names::V_reset, V_reset_ ) ) {
     V_reset_ -= E_L_;
   }
-  else
-  {
+  else {
     V_reset_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_th, V_th_ ) )
-  {
+  if ( updateValue< double >( d, names::V_th, V_th_ ) ) {
     V_th_ -= E_L_;
   }
-  else
-  {
+  else {
     V_th_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_min, V_min_ ) )
-  {
+  if ( updateValue< double >( d, names::V_min, V_min_ ) ) {
     V_min_ -= E_L_;
   }
-  else
-  {
+  else {
     V_min_ -= delta_EL;
   }
 
@@ -143,20 +136,16 @@ nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::C_m, c_m_ );
   updateValue< double >( d, names::tau_m, tau_m_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
-  if ( V_reset_ >= V_th_ )
-  {
+  if ( V_reset_ >= V_th_ ) {
     throw BadProperty( "Reset potential must be smaller than threshold." );
   }
-  if ( c_m_ <= 0 )
-  {
+  if ( c_m_ <= 0 ) {
     throw BadProperty( "Capacitance must be >0." );
   }
-  if ( t_ref_ < 0 )
-  {
+  if ( t_ref_ < 0 ) {
     throw BadProperty( "Refractory time must not be negative." );
   }
-  if ( tau_m_ <= 0 )
-  {
+  if ( tau_m_ <= 0 ) {
     throw BadProperty( "Membrane time constant must be > 0." );
   }
 
@@ -174,12 +163,10 @@ nest::iaf_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& p ) con
 void
 nest::iaf_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
-  if ( updateValue< double >( d, names::V_m, y3_ ) )
-  {
+  if ( updateValue< double >( d, names::V_m, y3_ ) ) {
     y3_ -= p.E_L_;
   }
-  else
-  {
+  else {
     y3_ -= delta_EL;
   }
 }
@@ -280,17 +267,14 @@ nest::iaf_psc_delta::update( Time const& origin, const long from, const long to 
   assert( from < to );
 
   const double h = Time::get_resolution().get_ms();
-  for ( long lag = from; lag < to; ++lag )
-  {
-    if ( S_.r_ == 0 )
-    {
+  for ( long lag = from; lag < to; ++lag ) {
+    if ( S_.r_ == 0 ) {
       // neuron not refractory
       S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
 
       // if we have accumulated spikes from refractory period,
       // add and reset accumulator
-      if ( P_.with_refr_input_ && S_.refr_spikes_buffer_ != 0.0 )
-      {
+      if ( P_.with_refr_input_ && S_.refr_spikes_buffer_ != 0.0 ) {
         S_.y3_ += S_.refr_spikes_buffer_;
         S_.refr_spikes_buffer_ = 0.0;
       }
@@ -302,12 +286,10 @@ nest::iaf_psc_delta::update( Time const& origin, const long from, const long to 
     {
       // read spikes from buffer and accumulate them, discounting
       // for decay until end of refractory period
-      if ( P_.with_refr_input_ )
-      {
+      if ( P_.with_refr_input_ ) {
         S_.refr_spikes_buffer_ += B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / P_.tau_m_ );
       }
-      else
-      {
+      else {
         B_.spikes_.get_value( lag );
       } // clear buffer entry, ignore spike
 
@@ -315,8 +297,7 @@ nest::iaf_psc_delta::update( Time const& origin, const long from, const long to 
     }
 
     // threshold crossing
-    if ( S_.y3_ >= P_.V_th_ )
-    {
+    if ( S_.y3_ >= P_.V_th_ ) {
       S_.r_ = V_.RefractoryCounts_;
       S_.y3_ = P_.V_reset_;
 

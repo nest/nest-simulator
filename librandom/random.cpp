@@ -49,8 +49,7 @@ librandom::set_status( const DictionaryDatum& dict, RdvDatum& rdv )
   dict->clear_access_flags();
   rdv->set_status( dict );
   std::string missed;
-  if ( not dict->all_accessed( missed ) )
-  {
+  if ( not dict->all_accessed( missed ) ) {
     throw UnaccessedDictionaryEntry( missed );
   }
 }
@@ -90,17 +89,13 @@ librandom::random_array( RdvDatum& rdv, const size_t n )
   TokenArray result;
   result.reserve( n );
 
-  if ( rdv->has_ldev() )
-  {
-    for ( size_t j = 0; j < n; ++j )
-    {
+  if ( rdv->has_ldev() ) {
+    for ( size_t j = 0; j < n; ++j ) {
       result.push_back( rdv->ldev() );
     }
   }
-  else
-  {
-    for ( size_t j = 0; j < n; ++j )
-    {
+  else {
+    for ( size_t j = 0; j < n; ++j ) {
       result.push_back( ( *rdv )() );
     }
   }
@@ -111,13 +106,11 @@ librandom::random_array( RdvDatum& rdv, const size_t n )
 Token
 librandom::random( RdvDatum& rdv )
 {
-  if ( rdv->has_ldev() )
-  {
+  if ( rdv->has_ldev() ) {
     // returns long
     return Token( rdv->ldev() );
   }
-  else
-  {
+  else {
     // returns double
     return Token( ( *rdv )() );
   }

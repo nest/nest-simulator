@@ -31,8 +31,7 @@ void
 nest::RingBuffer::resize()
 {
   size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
-  if ( buffer_.size() != size )
-  {
+  if ( buffer_.size() != size ) {
     buffer_.resize( size );
   }
 }
@@ -55,8 +54,7 @@ void
 nest::MultRBuffer::resize()
 {
   size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
-  if ( buffer_.size() != size )
-  {
+  if ( buffer_.size() != size ) {
     buffer_.resize( size );
   }
 }
@@ -78,8 +76,7 @@ void
 nest::ListRingBuffer::resize()
 {
   size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
-  if ( buffer_.size() != size )
-  {
+  if ( buffer_.size() != size ) {
     buffer_.resize( size );
   }
 }
@@ -89,8 +86,7 @@ nest::ListRingBuffer::clear()
 {
   resize(); // does nothing if size is fine
   // clear all elements
-  for ( unsigned int i = 0; i < buffer_.size(); i++ )
-  {
+  for ( unsigned int i = 0; i < buffer_.size(); i++ ) {
     buffer_[ i ].clear();
   }
 }

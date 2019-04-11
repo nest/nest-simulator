@@ -40,8 +40,7 @@
 #include "exceptions.h"
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: music_event_out_proxy - Device to forward spikes to remote applications
@@ -84,8 +83,7 @@ Availability: Only when compiled with MUSIC
 
 SeeAlso: music_event_in_proxy, music_cont_in_proxy, music_message_in_proxy
 */
-class music_event_out_proxy : public DeviceNode
-{
+class music_event_out_proxy : public DeviceNode {
 
 public:
   music_event_out_proxy();
@@ -137,8 +135,7 @@ private:
 
   struct State_;
 
-  struct Parameters_
-  {
+  struct Parameters_ {
     std::string port_name_; //!< the name of MUSIC port to connect to
 
     Parameters_();                     //!< Sets default parameter values
@@ -150,8 +147,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
     bool published_; //!< indicates whether this node has been published already
                      //!< with MUSIC
     int port_width_; //!< the width of the MUSIC port
@@ -165,8 +161,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
     MUSIC::EventOutputPort* MP_; //!< The MUSIC event port for output of spikes
     std::vector< MUSIC::GlobalIndex > index_map_;
     MUSIC::PermutationIndex* music_perm_ind_; //!< The permutation index needed
@@ -188,12 +183,10 @@ music_event_out_proxy::handles_test_event( SpikeEvent&, rport receptor_type )
   // number to the local index of this connection the local index
   // equals the number of connection
 
-  if ( not S_.published_ )
-  {
+  if ( not S_.published_ ) {
     V_.index_map_.push_back( static_cast< int >( receptor_type ) );
   }
-  else
-  {
+  else {
     throw MUSICPortAlreadyPublished( get_name(), P_.port_name_ );
   }
 

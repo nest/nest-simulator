@@ -55,12 +55,10 @@ AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::pprint( std::ostream& 
 {
   out << '[';
   Token* i = this->begin();
-  while ( i != this->end() )
-  {
+  while ( i != this->end() ) {
     ( *i )->pprint( out );
     ++i;
-    if ( i != this->end() )
-    {
+    if ( i != this->end() ) {
       out << ' ';
     }
   }
@@ -80,12 +78,10 @@ AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::pprint( std::ostre
 {
   out << '{';
   Token* i = this->begin();
-  while ( i != this->end() )
-  {
+  while ( i != this->end() ) {
     ( *i )->pprint( out );
     ++i;
-    if ( i != this->end() )
-    {
+    if ( i != this->end() ) {
       out << ' ';
     }
   }
@@ -106,14 +102,11 @@ AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::list( std::ostream
   out << prefix << '{' << std::endl;
   Token* i = this->begin();
 
-  while ( i != this->end() )
-  {
-    if ( lc != line )
-    {
+  while ( i != this->end() ) {
+    if ( lc != line ) {
       ( *i )->list( out, prefix, -1 );
     }
-    else
-    {
+    else {
       ( *i )->list( out, prefix, 0 );
     }
     out << std::endl;
@@ -136,12 +129,10 @@ AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::pprint( std::os
 {
   out << "/{";
   Token* i = this->begin();
-  while ( i != this->end() )
-  {
+  while ( i != this->end() ) {
     ( *i )->pprint( out );
     ++i;
-    if ( i != this->end() )
-    {
+    if ( i != this->end() ) {
       out << ' ';
     }
   }
@@ -157,18 +148,15 @@ AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::list( std::ostr
 
   Token* i = this->begin();
 
-  if ( line == 0 )
-  {
+  if ( line == 0 ) {
     out << "-->" << prefix << '{' << std::endl;
   }
-  else
-  {
+  else {
     out << "   " << prefix << '{' << std::endl;
   }
   prefix = "   " + prefix;
 
-  while ( i != this->end() )
-  {
+  while ( i != this->end() ) {
     ( *i )->list( out, prefix, -1 );
     out << std::endl;
     ++i;
@@ -189,17 +177,13 @@ lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype >::pprint( std
 {
   std::vector< long >* v = this->get();
   out << "<# ";
-  if ( v->size() < 30 )
-  {
-    for ( size_t i = 0; i < v->size(); ++i )
-    {
+  if ( v->size() < 30 ) {
+    for ( size_t i = 0; i < v->size(); ++i ) {
       out << ( *v )[ i ] << " ";
     }
   }
-  else
-  {
-    for ( size_t i = 0; i < 30; ++i )
-    {
+  else {
+    for ( size_t i = 0; i < 30; ++i ) {
       out << ( *v )[ i ] << " ";
     }
     out << "... ";
@@ -217,17 +201,13 @@ lockPTRDatum< std::vector< double >, &SLIInterpreter::DoubleVectortype >::pprint
   out << "<. ";
 
   out.setf( std::ios::scientific );
-  if ( v->size() < 30 )
-  {
-    for ( size_t i = 0; i < v->size(); ++i )
-    {
+  if ( v->size() < 30 ) {
+    for ( size_t i = 0; i < v->size(); ++i ) {
       out << ( *v )[ i ] << " ";
     }
   }
-  else
-  {
-    for ( size_t i = 0; i < 30; ++i )
-    {
+  else {
+    for ( size_t i = 0; i < 30; ++i ) {
       out << ( *v )[ i ] << " ";
     }
     out << "... ";

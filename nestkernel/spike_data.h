@@ -30,11 +30,9 @@
 #include "nest_types.h"
 #include "target.h"
 
-namespace nest
-{
+namespace nest {
 
-enum enum_status_spike_data_id
-{
+enum enum_status_spike_data_id {
   SPIKE_DATA_ID_DEFAULT,
   SPIKE_DATA_ID_END,
   SPIKE_DATA_ID_COMPLETE,
@@ -47,8 +45,7 @@ enum enum_status_spike_data_id
  *
  * @see TargetData
  */
-class SpikeData
-{
+class SpikeData {
 protected:
   static constexpr int MAX_LAG = generate_max_value( NUM_BITS_LAG );
 
@@ -243,8 +240,7 @@ SpikeData::get_offset() const
   return 0;
 }
 
-class OffGridSpikeData : public SpikeData
-{
+class OffGridSpikeData : public SpikeData {
 private:
   double offset_;
 

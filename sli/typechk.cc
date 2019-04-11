@@ -72,15 +72,13 @@ TypeTrie::TypeNode::toTokenArray( TokenArray& a ) const
   {
     a.push_back( func );
   }
-  else
-  {
+  else {
     assert( next != NULL );
     a.push_back( LiteralDatum( type ) );
     TokenArray a_next;
     next->toTokenArray( a_next );
     a.push_back( ArrayDatum( a_next ) );
-    if ( alt != NULL )
-    {
+    if ( alt != NULL ) {
       TokenArray a_alt;
       alt->toTokenArray( a_alt );
       a.push_back( ArrayDatum( a_alt ) );
@@ -95,20 +93,17 @@ TypeTrie::TypeNode::info( std::ostream& out, std::vector< TypeNode const* >& tl 
   if ( next == NULL && alt == NULL ) // Leaf node
   {
     // print type list then function
-    for ( int i = tl.size() - 1; i >= 0; --i )
-    {
+    for ( int i = tl.size() - 1; i >= 0; --i ) {
       out << std::setw( 15 ) << std::left << LiteralDatum( tl[ i ]->type );
     }
     out << "calls " << func << std::endl;
   }
-  else
-  {
+  else {
     assert( next != NULL );
     tl.push_back( this );
     next->info( out, tl );
     tl.pop_back();
-    if ( alt != NULL )
-    {
+    if ( alt != NULL ) {
       alt->info( out, tl );
     }
   }
@@ -125,8 +120,7 @@ TypeTrie::newnode( const TokenArray& ta ) const
   {
     n = new TypeNode( sli::object, ta[ 0 ] );
   }
-  else
-  {
+  else {
     // first object in the array must be a literal, indicating the type
     // the second and third object must be an array.
     LiteralDatum* typed = dynamic_cast< LiteralDatum* >( ta[ 0 ].datum() );
@@ -135,8 +129,7 @@ TypeTrie::newnode( const TokenArray& ta ) const
     assert( nextd != NULL );
     n = new TypeNode( *typed );
     n->next = newnode( *nextd );
-    if ( ta.size() == 3 )
-    {
+    if ( ta.size() == 3 ) {
       ArrayDatum* altd = dynamic_cast< ArrayDatum* >( ta[ 2 ].datum() );
       assert( altd != NULL );
       n->alt = newnode( *altd );
@@ -164,22 +157,18 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
   // Node will be created.
   const Name empty;
 
-  if ( pos->type == empty )
-  {
+  if ( pos->type == empty ) {
     pos->type = type;
     //    assert(pos->next == NULL);
     return pos;
   }
 
-  while ( type != pos->type )
-  {
-    if ( pos->alt == NULL )
-    {
+  while ( type != pos->type ) {
+    if ( pos->alt == NULL ) {
       pos->alt = new TypeNode( type );
     }
 
-    if ( pos->type == sli::any )
-    {
+    if ( pos->type == sli::any ) {
       // any must have been the tail and the previous
       // if must have added an extra Node, thus the following
       // assertion must hold:
@@ -198,8 +187,7 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
       // this  while() cycle will terminate, as
       // pos->type==type by assignment.
     }
-    else
-    {
+    else {
       pos = pos->alt; // pos->alt is always defined here.
     }
   }
@@ -241,12 +229,10 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
   // structures, so it is best to forbid them!
   assert( not a.empty() );
 
-  for ( unsigned int level = 0; level < a.size(); ++level )
-  {
+  for ( unsigned int level = 0; level < a.size(); ++level ) {
 
     pos = getalternative( pos, a[ level ] );
-    if ( pos->next == NULL )
-    {
+    if ( pos->next == NULL ) {
       pos->next = new TypeNode( empty );
     }
     pos = pos->next;
@@ -258,13 +244,11 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
      2. If pos->alt != NULL, something undefined must have happened.
      This should be impossible.
   */
-  if ( pos->next == NULL )
-  {
+  if ( pos->next == NULL ) {
     pos->type = sli::object;
     pos->func.move( f );
   }
-  else
-  {
+  else {
     std::cout << "Method 'TypeTrie::InsertFunction'" << std::endl
               << "Warning! Ambigous Function Definition ." << std::endl
               << "A function with longer, but identical initial parameter "
@@ -280,8 +264,7 @@ void
 TypeTrie::toTokenArray( TokenArray& a ) const
 {
   a.clear();
-  if ( root != NULL )
-  {
+  if ( root != NULL ) {
     root->toTokenArray( a );
   }
 }
@@ -291,8 +274,7 @@ TypeTrie::info( std::ostream& out ) const
 {
   std::vector< TypeNode const* > tl;
   tl.reserve( 5 );
-  if ( root != NULL )
-  {
+  if ( root != NULL ) {
     root->info( out, tl );
   }
 }

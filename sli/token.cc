@@ -152,8 +152,7 @@ void
 Token::info( std::ostream& out ) const
 {
   out << "Token::info\n";
-  if ( p )
-  {
+  if ( p ) {
     p->Datum::info( out );
 
     out << "p    = " << p << std::endl;
@@ -161,8 +160,7 @@ Token::info( std::ostream& out ) const
     out << "Type = " << type().name() << std::endl;
     p->info( out );
   }
-  else
-  {
+  else {
     out << "<NULL token>\n";
   }
 }
@@ -170,24 +168,20 @@ Token::info( std::ostream& out ) const
 void
 Token::pprint( std::ostream& out ) const
 {
-  if ( not p )
-  {
+  if ( not p ) {
     out << "<Null token>";
   }
-  else
-  {
+  else {
     p->pprint( out );
   }
 }
 
 std::ostream& operator<<( std::ostream& o, const Token& c )
 {
-  if ( not c )
-  {
+  if ( not c ) {
     o << "<Null token>";
   }
-  else
-  {
+  else {
     c->print( o );
   }
   return o;
@@ -196,14 +190,12 @@ std::ostream& operator<<( std::ostream& o, const Token& c )
 bool
 Token::matches_as_string( const Token& rhs ) const
 {
-  try
-  {
+  try {
     const std::string& left = getValue< std::string >( *this );
     const std::string& right = getValue< std::string >( rhs );
     return left == right;
   }
-  catch ( TypeMismatch& )
-  {
+  catch ( TypeMismatch& ) {
     return false;
   }
   return false;

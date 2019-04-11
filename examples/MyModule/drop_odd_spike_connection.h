@@ -27,8 +27,7 @@
 #include "connection.h"
 
 
-namespace mynest
-{
+namespace mynest {
 
 /** @BeginDocumentation
   Name: drop_odd_spike - Synapse dropping spikes with odd time stamps.
@@ -45,8 +44,7 @@ namespace mynest
   SeeAlso: synapsedict
 */
 template < typename targetidentifierT >
-class DropOddSpikeConnection : public nest::Connection< targetidentifierT >
-{
+class DropOddSpikeConnection : public nest::Connection< targetidentifierT > {
 private:
   double weight_; //!< Synaptic weight
 
@@ -88,8 +86,7 @@ public:
    *
    * See Kunkel et al (2014), Sec 3.3.1, for background information.
    */
-  class ConnTestDummyNode : public nest::ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public nest::ConnTestDummyNodeBase {
   public:
     using nest::ConnTestDummyNodeBase::handles_test_event;
     nest::port

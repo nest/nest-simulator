@@ -34,8 +34,7 @@
 #include "universal_data_logger.h"
 
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: ac_generator - provides AC input current
@@ -74,8 +73,7 @@ Author: Johan Hake, Spring 2003
 
 SeeAlso: Device, StimulatingDevice, dc_generator, step_current_generator
 */
-class ac_generator : public DeviceNode
-{
+class ac_generator : public DeviceNode {
 
 public:
   ac_generator();
@@ -116,8 +114,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Parameters_
-  {
+  struct Parameters_ {
     double amp_;     //!< Amplitude of sine-current
     double offset_;  //!< Offset of sine-current
     double freq_;    //!< Standard frequency in Hz
@@ -133,8 +130,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
     double y_0_;
     double y_1_;
     double I_; //!< Instantaneous current value; used for recording current
@@ -156,8 +152,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( ac_generator& );
     Buffers_( const Buffers_&, ac_generator& );
     UniversalDataLogger< ac_generator > logger_;
@@ -165,8 +160,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
     double omega_;   //!< Angelfrequency i rad/s
     double phi_rad_; //!< Phase of sine current (0-2Pi rad)
 
@@ -207,8 +201,7 @@ ac_generator::send_test_event( Node& target, rport receptor_type, synindex syn_i
 inline port
 ac_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

@@ -33,8 +33,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 //
 // Implementation of class STDPFACETSHWHomCommonProperties.
 //
@@ -90,8 +89,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::STDPFACETSHWHomCommonPrope
   lookuptable_1_.at( 14 ) = 12;
   lookuptable_1_.at( 15 ) = 13;
 
-  for ( size_t i = 0; i < lookuptable_0_.size(); ++i )
-  {
+  for ( size_t i = 0; i < lookuptable_0_.size(); ++i ) {
     lookuptable_2_.at( i ) = i;
   }
 
@@ -109,8 +107,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::STDPFACETSHWHomCommonPrope
   configbit_1_.at( 3 ) = 0;
 
   reset_pattern_.resize( 6 );
-  for ( size_t i = 0; i < reset_pattern_.size(); ++i )
-  {
+  for ( size_t i = 0; i < reset_pattern_.size(); ++i ) {
     reset_pattern_.at( i ) = true;
   }
 
@@ -160,113 +157,91 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const Dictiona
 
   updateValue< double >( d, names::tau_plus, tau_plus_ );
   updateValue< double >( d, names::tau_minus_stdp, tau_minus_ );
-  if ( updateValue< double >( d, names::Wmax, Wmax_ ) )
-  {
+  if ( updateValue< double >( d, names::Wmax, Wmax_ ) ) {
     weight_per_lut_entry_ = Wmax_ / ( lookuptable_0_.size() - 1 );
   }
 
   // TP: they should not be allowed to be changed! But needed for CopyModel ...
   updateValue< double >( d, names::weight_per_lut_entry, weight_per_lut_entry_ );
   updateValue< double >( d, names::readout_cycle_duration, readout_cycle_duration_ );
-  if ( updateValue< long >( d, names::no_synapses, no_synapses_ ) )
-  {
+  if ( updateValue< long >( d, names::no_synapses, no_synapses_ ) ) {
     calc_readout_cycle_duration_();
   }
 
-  if ( updateValue< long >( d, names::synapses_per_driver, synapses_per_driver_ ) )
-  {
+  if ( updateValue< long >( d, names::synapses_per_driver, synapses_per_driver_ ) ) {
     calc_readout_cycle_duration_();
   }
-  if ( updateValue< double >( d, names::driver_readout_time, driver_readout_time_ ) )
-  {
+  if ( updateValue< double >( d, names::driver_readout_time, driver_readout_time_ ) ) {
     calc_readout_cycle_duration_();
   }
 
-  if ( d->known( names::lookuptable_0 ) )
-  {
+  if ( d->known( names::lookuptable_0 ) ) {
     updateValue< std::vector< long > >( d, names::lookuptable_0, lookuptable_0_ );
 
     // right size?
-    if ( lookuptable_0_.size() != lookuptable_1_.size() )
-    {
+    if ( lookuptable_0_.size() != lookuptable_1_.size() ) {
       throw BadProperty( "Look-up table has not 2^4 entries!" );
     }
 
     // are look-up table entries out of bounds?
-    for ( size_t i = 0; i < size_t( lookuptable_0_.size() ); ++i )
-    {
-      if ( ( lookuptable_0_[ i ] < 0 ) || ( lookuptable_0_[ i ] > 15 ) )
-      {
+    for ( size_t i = 0; i < size_t( lookuptable_0_.size() ); ++i ) {
+      if ( ( lookuptable_0_[ i ] < 0 ) || ( lookuptable_0_[ i ] > 15 ) ) {
         throw BadProperty( "Look-up table entries must be integers in [0,15]" );
       }
     }
   }
-  if ( d->known( names::lookuptable_1 ) )
-  {
+  if ( d->known( names::lookuptable_1 ) ) {
     updateValue< std::vector< long > >( d, names::lookuptable_1, lookuptable_1_ );
 
     // right size?
-    if ( lookuptable_1_.size() != lookuptable_0_.size() )
-    {
+    if ( lookuptable_1_.size() != lookuptable_0_.size() ) {
       throw BadProperty( "Look-up table has not 2^4 entries!" );
     }
 
     // are look-up table entries out of bounds?
-    for ( size_t i = 0; i < size_t( lookuptable_1_.size() ); ++i )
-    {
-      if ( ( lookuptable_1_[ i ] < 0 ) || ( lookuptable_1_[ i ] > 15 ) )
-      {
+    for ( size_t i = 0; i < size_t( lookuptable_1_.size() ); ++i ) {
+      if ( ( lookuptable_1_[ i ] < 0 ) || ( lookuptable_1_[ i ] > 15 ) ) {
         throw BadProperty( "Look-up table entries must be integers in [0,15]" );
       }
     }
   }
-  if ( d->known( names::lookuptable_2 ) )
-  {
+  if ( d->known( names::lookuptable_2 ) ) {
     updateValue< std::vector< long > >( d, names::lookuptable_2, lookuptable_2_ );
 
     // right size?
-    if ( lookuptable_2_.size() != lookuptable_0_.size() )
-    {
+    if ( lookuptable_2_.size() != lookuptable_0_.size() ) {
       throw BadProperty( "Look-up table has not 2^4 entries!" );
     }
 
     // are look-up table entries out of bounds?
-    for ( size_t i = 0; i < size_t( lookuptable_2_.size() ); ++i )
-    {
-      if ( ( lookuptable_2_[ i ] < 0 ) || ( lookuptable_2_[ i ] > 15 ) )
-      {
+    for ( size_t i = 0; i < size_t( lookuptable_2_.size() ); ++i ) {
+      if ( ( lookuptable_2_[ i ] < 0 ) || ( lookuptable_2_[ i ] > 15 ) ) {
         throw BadProperty( "Look-up table entries must be integers in [0,15]" );
       }
     }
   }
 
-  if ( d->known( names::configbit_0 ) )
-  {
+  if ( d->known( names::configbit_0 ) ) {
     updateValue< std::vector< long > >( d, names::configbit_0, configbit_0_ );
 
     // right size?
-    if ( configbit_0_.size() != 4 )
-    {
+    if ( configbit_0_.size() != 4 ) {
       throw BadProperty( "Wrong number of configuration bits (!=4)." );
     }
   }
-  if ( d->known( names::configbit_1 ) )
-  {
+  if ( d->known( names::configbit_1 ) ) {
     updateValue< std::vector< long > >( d, names::configbit_1, configbit_1_ );
 
     // right size?
-    if ( configbit_1_.size() != 4 )
-    {
+    if ( configbit_1_.size() != 4 ) {
       throw BadProperty( "Wrong number of configuration bits (!=4)." );
     }
   }
-  if ( d->known( names::reset_pattern ) )
-  {
+  if ( d->known( names::reset_pattern ) ) {
     updateValue< std::vector< long > >( d, names::reset_pattern, reset_pattern_ );
 
     // right size?
-    if ( reset_pattern_.size() != 6 )
-    {
+    if ( reset_pattern_.size() != 6 ) {
       throw BadProperty( "Wrong number of reset bits (!=6)." );
     }
   }

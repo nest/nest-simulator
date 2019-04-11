@@ -35,12 +35,10 @@ WrappedThreadException::WrappedThreadException( const std::exception& exc )
   : SLIException( exc.what() )
 {
   SLIException const* se = dynamic_cast< SLIException const* >( &exc );
-  if ( se )
-  {
+  if ( se ) {
     message_ = se->message();
   }
-  else
-  {
+  else {
     message_ = std::string( "C++ exception: " ) + exc.what();
   }
 }
@@ -54,16 +52,13 @@ DivisionByZero::message() const
 std::string
 TypeMismatch::message() const
 {
-  if ( not provided_.empty() && not expected_.empty() )
-  {
+  if ( not provided_.empty() && not expected_.empty() ) {
     return "Expected datatype: " + expected_ + "\nProvided datatype: " + provided_;
   }
-  else if ( not expected_.empty() )
-  {
+  else if ( not expected_.empty() ) {
     return "Expected datatype: " + expected_;
   }
-  else
-  {
+  else {
     return "The expected datatype is unknown in the current context.";
   }
 }
@@ -71,14 +66,12 @@ TypeMismatch::message() const
 std::string
 RangeCheck::message() const
 {
-  if ( size_ > 0 )
-  {
+  if ( size_ > 0 ) {
     std::ostringstream out;
     out << "Array with length " << size_ << " expected.";
     return out.str();
   }
-  else
-  {
+  else {
     // Empty message.
     // Added due to incorrect use of RangeCheck
     // in nestmodule.cpp
@@ -92,29 +85,23 @@ ArgumentType::message() const
   std::ostringstream out;
 
   out << "The type of";
-  if ( where )
-  {
+  if ( where ) {
     out << " the ";
-    if ( where == 1 )
-    {
+    if ( where == 1 ) {
       out << "first";
     }
-    else if ( where == 2 )
-    {
+    else if ( where == 2 ) {
       out << "second";
     }
-    else if ( where == 3 )
-    {
+    else if ( where == 3 ) {
       out << "third";
     }
-    else
-    {
+    else {
       out << where << "th";
     }
     out << " parameter";
   }
-  else
-  {
+  else {
     out << " one or more parameters";
   }
   out << " did not match the argument(s) of this function.";
@@ -145,20 +132,16 @@ std::string
 StackUnderflow::message() const
 {
   std::ostringstream out;
-  if ( needed )
-  {
+  if ( needed ) {
     out << "Command needs (at least) " << needed << " argument(s)";
-    if ( given )
-    {
+    if ( given ) {
       out << ", but the stack has only " << given;
     }
     out << ".";
   }
-  else
-  {
+  else {
     out << "Command needs more arguments";
-    if ( given )
-    {
+    if ( given ) {
       out << "than " << given;
     }
     out << ".";
@@ -190,12 +173,10 @@ UnaccessedDictionaryEntry::message() const
 std::string
 DynamicModuleManagementError::message() const
 {
-  if ( msg_.empty() )
-  {
+  if ( msg_.empty() ) {
     return "Unloading of dynamic modules is not implemented yet.";
   }
-  else
-  {
+  else {
     return msg_;
   }
 }

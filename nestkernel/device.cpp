@@ -85,11 +85,9 @@ nest::Device::Parameters_::update_( const DictionaryDatum& d, const Name& name, 
   */
 
   double val;
-  if ( updateValue< double >( d, name, val ) )
-  {
+  if ( updateValue< double >( d, name, val ) ) {
     const Time t = Time::ms( val );
-    if ( t.is_finite() and not t.is_grid_time() )
-    {
+    if ( t.is_finite() and not t.is_grid_time() ) {
       throw BadProperty( name.toString() +  " must be a multiple "
                                  "of the simulation resolution." );
     }
@@ -104,8 +102,7 @@ nest::Device::Parameters_::set( const DictionaryDatum& d )
   update_( d, names::start, start_ );
   update_( d, names::stop, stop_ );
 
-  if ( stop_ < start_ )
-  {
+  if ( stop_ < start_ ) {
     throw BadProperty( "stop >= start required." );
   }
 }

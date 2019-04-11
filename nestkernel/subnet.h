@@ -56,8 +56,7 @@ number_of_children (integertype) -
   SeeAlso: modeldict, Node
 */
 
-namespace nest
-{
+namespace nest {
 
 class Node;
 
@@ -68,8 +67,7 @@ class Node;
  * - to construct Node classes which are composed of multiple
  *   subnodes.
  */
-class Subnet : public Node
-{
+class Subnet : public Node {
 public:
   Subnet();
 
@@ -247,10 +245,8 @@ Subnet::add_node( Node* n )
 {
   const index lid = gids_.size();
   const index mid = n->get_model_id();
-  if ( ( homogeneous_ ) and ( lid > 0 ) )
-  {
-    if ( mid != last_mid_ )
-    {
+  if ( ( homogeneous_ ) and ( lid > 0 ) ) {
+    if ( mid != last_mid_ ) {
       homogeneous_ = false;
     }
   }
@@ -270,10 +266,8 @@ inline index
 Subnet::add_remote_node( index gid, index mid )
 {
   const index lid = gids_.size();
-  if ( ( homogeneous_ ) and ( lid > 0 ) )
-  {
-    if ( mid != last_mid_ )
-    {
+  if ( ( homogeneous_ ) and ( lid > 0 ) ) {
+    if ( mid != last_mid_ ) {
       homogeneous_ = false;
     }
   }
@@ -342,8 +336,7 @@ Subnet::at_lid( index lid ) const
   // defined for "dense" subnets only
   assert( local_size() == global_size() );
 
-  if ( lid >= nodes_.size() )
-  {
+  if ( lid >= nodes_.size() ) {
     throw UnknownNode();
   }
   return nodes_[ lid ];

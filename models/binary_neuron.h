@@ -51,8 +51,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * Binary stochastic neuron with linear or sigmoidal gain function.
  *
@@ -62,8 +61,7 @@ namespace nest
  * @see ginzburg_neuron, mccullogh_pitts_neuron
  */
 template < class TGainfunction >
-class binary_neuron : public Archiving_Node
-{
+class binary_neuron : public Archiving_Node {
 
 public:
   binary_neuron();
@@ -116,8 +114,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     //! mean inter-update interval in ms (acts like a membrane time constant).
     double tau_m_;
 
@@ -132,8 +129,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
     bool y_;               //!< output of neuron in [0,1]
     double h_;             //!< total input current to neuron
     double last_in_gid_;   //!< gid of the last spike being received
@@ -151,8 +147,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( binary_neuron& );
     Buffers_( const Buffers_&, binary_neuron& );
 
@@ -170,8 +165,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     librandom::RngPtr rng_;           //!< random number generator of my own thread
     librandom::ExpRandomDev exp_dev_; //!< random deviate generator
   };
@@ -226,8 +220,7 @@ template < class TGainfunction >
 inline port
 binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -237,8 +230,7 @@ template < class TGainfunction >
 inline port
 binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -248,8 +240,7 @@ template < class TGainfunction >
 inline port
 binary_neuron< TGainfunction >::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
@@ -345,8 +336,7 @@ void
 binary_neuron< TGainfunction >::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::tau_m, tau_m_ );
-  if ( tau_m_ <= 0 )
-  {
+  if ( tau_m_ <= 0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
 }
@@ -433,8 +423,7 @@ binary_neuron< TGainfunction >::calibrate()
 
   // draw next time of update for the neuron from exponential distribution
   // only if not yet initialized
-  if ( S_.t_next_.is_neg_inf() )
-  {
+  if ( S_.t_next_.is_neg_inf() ) {
     S_.t_next_ = Time::ms( V_.exp_dev_( V_.rng_ ) * P_.tau_m_ );
   }
 }
@@ -451,8 +440,7 @@ binary_neuron< TGainfunction >::update( Time const& origin, const long from, con
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     // update the input current
     // the buffer for incoming spikes for every time step contains the
     // difference
@@ -462,8 +450,7 @@ binary_neuron< TGainfunction >::update( Time const& origin, const long from, con
     double c = B_.currents_.get_value( lag );
 
     // check, if the update needs to be done
-    if ( Time::step( origin.get_steps() + lag ) > S_.t_next_ )
-    {
+    if ( Time::step( origin.get_steps() + lag ) > S_.t_next_ ) {
       // change the state of the neuron with probability given by
       // gain function
       // if the state has changed, the neuron produces an event sent to all its
@@ -471,8 +458,7 @@ binary_neuron< TGainfunction >::update( Time const& origin, const long from, con
 
       bool new_y = gain_( V_.rng_, S_.h_ + c );
 
-      if ( new_y != S_.y_ )
-      {
+      if ( new_y != S_.y_ ) {
         SpikeEvent se;
         // use multiplicity 2 to signal transition to 1 state
         // use multiplicity 1 to signal transition to 0 state
@@ -525,18 +511,15 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
   long gid = e.get_sender_gid();
   const Time& t_spike = e.get_stamp();
 
-  if ( m == 1 )
-  { // multiplicity == 1, either a single 1->0 event or the first or second of a
+  if ( m == 1 ) { // multiplicity == 1, either a single 1->0 event or the first or second of a
     // pair of 0->1 events
-    if ( gid == S_.last_in_gid_ && t_spike == S_.t_last_in_spike_ )
-    {
+    if ( gid == S_.last_in_gid_ && t_spike == S_.t_last_in_spike_ ) {
       // received twice the same gid, so transition 0->1
       // take double weight to compensate for subtracting first event
       B_.spikes_.add_value(
         e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), 2.0 * e.get_weight() );
     }
-    else
-    {
+    else {
       // count this event negatively, assuming it comes as single event
       // transition 1->0
       B_.spikes_.add_value(
@@ -544,8 +527,7 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
     }
   }
   else // multiplicity != 1
-    if ( m == 2 )
-  {
+    if ( m == 2 ) {
     // count this event positively, transition 0->1
     B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() );
   }

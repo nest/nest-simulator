@@ -35,8 +35,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: iaf_psc_exp_multisynapse - Leaky integrate-and-fire neuron model with
@@ -61,8 +60,7 @@ Author:  Plesser, adapted from iaf_psc_alpha_multisynapse
 SeeAlso: iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp,
 iaf_psc_alpha_multisynapse
 */
-class iaf_psc_exp_multisynapse : public Archiving_Node
-{
+class iaf_psc_exp_multisynapse : public Archiving_Node {
 
 public:
   iaf_psc_exp_multisynapse();
@@ -106,8 +104,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     /** Membrane time constant in ms. */
     double Tau_;
@@ -154,8 +151,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
     /**
      * Enumeration identifying recordable state elements.
      * This enum identifies the element that will be recorded when
@@ -168,8 +164,7 @@ private:
      * get_state_element( State_::I_SYN + k *
      *    State_::NUM_STATE_ELEMENTS_PER_RECEPTOR )
      */
-    enum StateVecElems
-    {
+    enum StateVecElems {
       V_M = 0,
       I,    // 1
       I_SYN // 2
@@ -204,8 +199,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( iaf_psc_exp_multisynapse& );
     Buffers_( const Buffers_&, iaf_psc_exp_multisynapse& );
 
@@ -222,8 +216,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     /** Amplitude of the synaptic current.
         This value is chosen such that a post-synaptic potential with
         weight one has an amplitude of 1 mV.
@@ -264,16 +257,13 @@ private:
   inline double
   get_state_element( size_t elem )
   {
-    if ( elem == State_::V_M )
-    {
+    if ( elem == State_::V_M ) {
       return S_.V_m_ + P_.E_L_;
     }
-    else if ( elem == State_::I )
-    {
+    else if ( elem == State_::I ) {
       return S_.current_;
     }
-    else
-    {
+    else {
       return S_.i_syn_[ elem - S_.NUMBER_OF_FIXED_STATES_ELEMENTS ];
     }
   };
@@ -303,8 +293,7 @@ iaf_psc_exp_multisynapse::send_test_event( Node& target, rport receptor_type, sy
 inline port
 iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -313,8 +302,7 @@ iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type
 inline port
 iaf_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

@@ -44,8 +44,7 @@
 // Includes from sli:
 #include "arraydatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 
@@ -88,8 +87,7 @@ Availability: Only when compiled with MUSIC
 
 SeeAlso: music_event_out_proxy, music_event_in_proxy, music_message_in_proxy
 */
-class music_cont_in_proxy : public DeviceNode
-{
+class music_cont_in_proxy : public DeviceNode {
 
 public:
   music_cont_in_proxy();
@@ -123,8 +121,7 @@ private:
 
   struct State_;
 
-  struct Parameters_
-  {
+  struct Parameters_ {
     std::string port_name_; //!< the name of MUSIC port to connect to
 
     Parameters_();                     //!< Sets default parameter values
@@ -136,8 +133,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
     bool published_; //!< indicates whether this node has been published already
                      //!< with MUSIC
     int port_width_; //!< the width of the MUSIC port
@@ -151,15 +147,13 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     std::vector< double > data_; //!< The buffer for incoming data
   };
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
     MUSIC::ContInputPort* MP_; //!< The MUSIC cont port for input of data
   };
 

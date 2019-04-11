@@ -32,8 +32,7 @@
 #include "rate_transformer_node.h"
 #include "rate_transformer_node_impl.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: sigmoid_rate_gg_1998 - rate model with sigmoidal gain function
@@ -97,8 +96,7 @@ Author: Mario Senden, Jan Hahne, Jannis Schuecker
 
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
-class nonlinearities_sigmoid_rate_gg_1998
-{
+class nonlinearities_sigmoid_rate_gg_1998 {
 private:
   /** gain factor of gain function */
   double g_;

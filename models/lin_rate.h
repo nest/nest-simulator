@@ -31,8 +31,7 @@
 #include "rate_transformer_node.h"
 #include "rate_transformer_node_impl.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: lin_rate - Linear rate model
@@ -94,8 +93,7 @@ Author: David Dahmen, Jan Hahne, Jannis Schuecker
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 
-class nonlinearities_lin_rate
-{
+class nonlinearities_lin_rate {
 private:
   /** gain factor of gain function */
   double g_;

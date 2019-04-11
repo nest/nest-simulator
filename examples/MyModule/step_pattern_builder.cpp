@@ -84,12 +84,10 @@ mynest::StepPatternBuilder::StepPatternBuilder( const nest::GIDCollection& sourc
   , source_step_( ( *conn_spec )[ Name( "source_step" ) ] )
   , target_step_( ( *conn_spec )[ Name( "target_step" ) ] )
 {
-  if ( source_step_ < 1 )
-  {
+  if ( source_step_ < 1 ) {
     throw nest::BadParameter( "source_step >= 1 required." );
   }
-  if ( target_step_ < 1 )
-  {
+  if ( target_step_ < 1 ) {
     throw nest::BadParameter( "target_step >= 1 required." );
   }
 }
@@ -111,20 +109,15 @@ mynest::StepPatternBuilder::connect_()
       librandom::RngPtr rng = nest::kernel().rng_manager.get_rng( tid );
 
       for ( nest::GIDCollection::const_iterator tgid = targets_->begin(); tgid != targets_->end();
-            tgid = advance_( tgid, targets_->end(), target_step_ ) )
-      {
+            tgid = advance_( tgid, targets_->end(), target_step_ ) ) {
         for ( nest::GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end();
-              sgid = advance_( sgid, sources_->end(), source_step_ ) )
-        {
-          if ( not autapses_ and *sgid == *tgid )
-          {
+              sgid = advance_( sgid, sources_->end(), source_step_ ) ) {
+          if ( not autapses_ and *sgid == *tgid ) {
             skip_conn_parameter_( tid );
             continue;
           }
-          if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
-          {
-            for ( nest::GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end(); ++sgid )
-            {
+          if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) ) {
+            for ( nest::GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end(); ++sgid ) {
               skip_conn_parameter_( tid );
             }
             continue;
@@ -135,8 +128,7 @@ mynest::StepPatternBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
-    {
+    catch ( std::exception& err ) {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
       exceptions_raised_.at( tid ) = lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
@@ -149,8 +141,7 @@ mynest::StepPatternBuilder::advance_( nest::GIDCollection::const_iterator& it,
   const nest::GIDCollection::const_iterator& end,
   size_t step )
 {
-  while ( step > 0 and it != end )
-  {
+  while ( step > 0 and it != end ) {
     --step;
     ++it;
   }

@@ -52,8 +52,7 @@
 
 nest::RecordablesMap< nest::aeif_psc_delta_clopath > nest::aeif_psc_delta_clopath::recordablesMap_;
 
-namespace nest
-{
+namespace nest {
 /*
  * template specialization must be placed in namespace
  *
@@ -164,8 +163,7 @@ nest::aeif_psc_delta_clopath::State_::State_( const Parameters_& p )
   : r_( 0 )
   , clamp_r_( 0 )
 {
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = 0;
   }
   y_[ V_M ] = p.E_L;
@@ -179,8 +177,7 @@ nest::aeif_psc_delta_clopath::State_::State_( const State_& s )
   : r_( s.r_ )
   , clamp_r_( s.clamp_r_ )
 {
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = s.y_[ i ];
   }
 }
@@ -189,8 +186,7 @@ nest::aeif_psc_delta_clopath::State_& nest::aeif_psc_delta_clopath::State_::oper
 {
   assert( this != &s ); // would be bad logical error in program
 
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = s.y_[ i ];
   }
   r_ = s.r_;
@@ -260,22 +256,18 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::V_clamp, V_clamp_ );
   updateValue< double >( d, names::t_clamp, t_clamp_ );
 
-  if ( V_reset_ >= V_peak_ )
-  {
+  if ( V_reset_ >= V_peak_ ) {
     throw BadProperty( "Ensure that V_reset < V_peak ." );
   }
 
-  if ( Delta_T < 0. )
-  {
+  if ( Delta_T < 0. ) {
     throw BadProperty( "Delta_T must be greater than or equal to zero." );
   }
-  else if ( Delta_T > 0. )
-  {
+  else if ( Delta_T > 0. ) {
     // check for possible numerical overflow with the exponential divergence at
     // spike time, keep a 1e20 margin for the subsequent calculations
     const double max_delta_arg = std::log( std::numeric_limits< double >::max() / 1e20 );
-    if ( ( V_peak_ - V_th_rest ) / Delta_T >= max_delta_arg )
-    {
+    if ( ( V_peak_ - V_th_rest ) / Delta_T >= max_delta_arg ) {
       throw BadProperty(
         "The current combination of V_peak, V_th_rest and Delta_T "
         "will lead to numerical overflow at spike time; try"
@@ -284,38 +276,32 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d )
     }
   }
 
-  if ( V_th_max < V_th_rest )
-  {
+  if ( V_th_max < V_th_rest ) {
     throw BadProperty( "V_th_max >= V_th_rest required." );
   }
 
-  if ( V_peak_ < V_th_rest )
-  {
+  if ( V_peak_ < V_th_rest ) {
     throw BadProperty( "V_peak >= V_th_rest required." );
   }
 
-  if ( C_m <= 0 )
-  {
+  if ( C_m <= 0 ) {
     throw BadProperty( "Ensure that C_m > 0" );
   }
 
-  if ( t_ref_ < 0 )
-  {
+  if ( t_ref_ < 0 ) {
     throw BadProperty( "Ensure that t_ref >= 0" );
   }
 
-  if ( t_clamp_ < 0 )
-  {
+  if ( t_clamp_ < 0 ) {
     throw BadProperty( "Ensure that t_clamp >= 0" );
   }
 
-  if ( tau_w <= 0 or tau_V_th <= 0 or tau_w <= 0 or tau_z <= 0 or tau_plus <= 0 or tau_minus <= 0 or tau_bar_bar <= 0 )
-  {
+  if ( tau_w <= 0 or tau_V_th <= 0 or tau_w <= 0 or tau_z <= 0 or tau_plus <= 0 or tau_minus <= 0
+    or tau_bar_bar <= 0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
 
-  if ( gsl_error_tol <= 0. )
-  {
+  if ( gsl_error_tol <= 0. ) {
     throw BadProperty( "The gsl_error_tol must be strictly positive." );
   }
 }
@@ -384,16 +370,13 @@ nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath( const aeif_psc_delta_clopa
 nest::aeif_psc_delta_clopath::~aeif_psc_delta_clopath()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
-  if ( B_.s_ )
-  {
+  if ( B_.s_ ) {
     gsl_odeiv_step_free( B_.s_ );
   }
-  if ( B_.c_ )
-  {
+  if ( B_.c_ ) {
     gsl_odeiv_control_free( B_.c_ );
   }
-  if ( B_.e_ )
-  {
+  if ( B_.e_ ) {
     gsl_odeiv_evolve_free( B_.e_ );
   }
 }
@@ -423,29 +406,23 @@ nest::aeif_psc_delta_clopath::init_buffers_()
   // We must integrate this model with high-precision to obtain decent results
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
-  if ( B_.s_ == 0 )
-  {
+  if ( B_.s_ == 0 ) {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
-  else
-  {
+  else {
     gsl_odeiv_step_reset( B_.s_ );
   }
-  if ( B_.c_ == 0 )
-  {
+  if ( B_.c_ == 0 ) {
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
   }
-  else
-  {
+  else {
     gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
   }
 
-  if ( B_.e_ == 0 )
-  {
+  if ( B_.e_ == 0 ) {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
-  else
-  {
+  else {
     gsl_odeiv_evolve_reset( B_.e_ );
   }
 
@@ -488,8 +465,7 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
   assert( from < to );
   assert( State_::V_M == 0 );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     double t = 0.0;
 
     // numerical integration with adaptive step size control:
@@ -502,8 +478,7 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
     // note that (t+IntegrationStep > step) leads to integration over
     // (t, step] and afterwards setting t to step, but it does not
     // enforce setting IntegrationStep to step-t
-    while ( t < B_.step_ )
-    {
+    while ( t < B_.step_ ) {
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
@@ -513,20 +488,17 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
 
-      if ( status != GSL_SUCCESS )
-      {
+      if ( status != GSL_SUCCESS ) {
         throw GSLSolverFailure( get_name(), status );
       }
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
-      {
+      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 ) {
         throw NumericalInstability( get_name() );
       }
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
-      if ( S_.r_ == 0 && S_.clamp_r_ == 0 )
-      {
+      if ( S_.r_ == 0 && S_.clamp_r_ == 0 ) {
         // neuron not refractory
         S_.y_[ State_::V_M ] = S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
       }
@@ -536,14 +508,12 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
       }
 
       // set the right threshold depending on Delta_T
-      if ( P_.Delta_T == 0. )
-      {
+      if ( P_.Delta_T == 0. ) {
         V_.V_peak_ = S_.y_[ State_::V_TH ]; // same as IAF dynamics for spikes if
                                             // Delta_T == 0.
       }
 
-      if ( S_.y_[ State_::V_M ] >= V_.V_peak_ && S_.clamp_r_ == 0 )
-      {
+      if ( S_.y_[ State_::V_M ] >= V_.V_peak_ && S_.clamp_r_ == 0 ) {
         S_.y_[ State_::V_M ] = P_.V_clamp_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
         S_.y_[ State_::Z ] = P_.I_sp;
@@ -560,8 +530,7 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
         SpikeEvent se;
         kernel().event_delivery_manager.send( *this, se, lag );
       }
-      else if ( S_.clamp_r_ == 1 )
-      {
+      else if ( S_.clamp_r_ == 1 ) {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.clamp_r_ = 0;
 
@@ -574,8 +543,7 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
         S_.r_ = V_.refractory_counts_ > 0 ? V_.refractory_counts_ + 1 : 0;
       }
 
-      if ( S_.r_ > 0 )
-      {
+      if ( S_.r_ > 0 ) {
         S_.y_[ State_::V_M ] = P_.V_reset_;
       }
     }
@@ -588,13 +556,11 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
       S_.y_[ State_::U_BAR_BAR ] );
 
     // decrement clamp count
-    if ( S_.clamp_r_ > 0 )
-    {
+    if ( S_.clamp_r_ > 0 ) {
       --S_.clamp_r_;
     }
     // decrement refractory count
-    if ( S_.r_ > 0 )
-    {
+    if ( S_.r_ > 0 ) {
       --S_.r_;
     }
 

@@ -26,8 +26,7 @@
 
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: rate_connection_instantaneous - Synapse type for instantaneous rate
@@ -62,8 +61,7 @@ SeeAlso: rate_connection_delayed, rate_neuron_ipn, rate_neuron_opn
  * has the properties weight and receiver port.
  */
 template < typename targetidentifierT >
-class RateConnectionInstantaneous : public Connection< targetidentifierT >
-{
+class RateConnectionInstantaneous : public Connection< targetidentifierT > {
 
 public:
   // this line determines which common properties to use
@@ -152,8 +150,7 @@ void
 RateConnectionInstantaneous< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
-  if ( d->known( names::delay ) )
-  {
+  if ( d->known( names::delay ) ) {
     throw BadProperty(
       "rate_connection_instantaneous has no delay. Please use "
       "rate_connection_delayed." );

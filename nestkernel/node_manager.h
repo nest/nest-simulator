@@ -38,16 +38,14 @@
 #include "arraydatum.h"
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 class SiblingContainer;
 class Node;
 class Subnet;
 class Model;
 
-class NodeManager : public ManagerInterface
-{
+class NodeManager : public ManagerInterface {
 public:
   NodeManager();
   ~NodeManager();

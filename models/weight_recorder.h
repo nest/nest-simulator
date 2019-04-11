@@ -35,8 +35,7 @@
 #include "recording_device.h"
 #include "kernel_manager.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: weight_recorder - Device for detecting single spikes.
@@ -63,8 +62,7 @@ Receives: WeightRecordingEvent
 
 SeeAlso: weight_recorder, spike_detector, Device, RecordingDevice
 */
-class weight_recorder : public DeviceNode
-{
+class weight_recorder : public DeviceNode {
 
 public:
   weight_recorder();
@@ -108,8 +106,7 @@ private:
   void finalize();
   void update( Time const&, const long, const long );
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     std::vector< WeightRecorderEvent > events_;
   };
 
@@ -118,8 +115,7 @@ private:
 
   bool user_set_precise_times_;
 
-  struct Parameters_
-  {
+  struct Parameters_ {
     std::vector< long > senders_;
     std::vector< long > targets_;
 
@@ -135,8 +131,7 @@ private:
 inline port
 weight_recorder::handles_test_event( WeightRecorderEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;

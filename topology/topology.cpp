@@ -45,8 +45,7 @@
                             // TopologyModule::create_mask
 
 
-namespace nest
-{
+namespace nest {
 index
 create_layer( const DictionaryDatum& layer_dict )
 {
@@ -62,15 +61,13 @@ create_layer( const DictionaryDatum& layer_dict )
 std::vector< double >
 get_position( const index node_gid )
 {
-  if ( not kernel().node_manager.is_local_gid( node_gid ) )
-  {
+  if ( not kernel().node_manager.is_local_gid( node_gid ) ) {
     throw KernelException( "GetPosition is currently implemented for local nodes only." );
   }
   Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
-  if ( not layer )
-  {
+  if ( not layer ) {
     throw LayerExpected();
   }
 
@@ -80,15 +77,13 @@ get_position( const index node_gid )
 std::vector< double >
 displacement( const std::vector< double >& point, const index node_gid )
 {
-  if ( not kernel().node_manager.is_local_gid( node_gid ) )
-  {
+  if ( not kernel().node_manager.is_local_gid( node_gid ) ) {
     throw KernelException( "Displacement is currently implemented for local nodes only." );
   }
   Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
-  if ( not layer )
-  {
+  if ( not layer ) {
     throw LayerExpected();
   }
 
@@ -98,15 +93,13 @@ displacement( const std::vector< double >& point, const index node_gid )
 double
 distance( const std::vector< double >& point, const index node_gid )
 {
-  if ( not kernel().node_manager.is_local_gid( node_gid ) )
-  {
+  if ( not kernel().node_manager.is_local_gid( node_gid ) ) {
     throw KernelException( "Distance is currently implemented for local nodes only." );
   }
   Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
-  if ( not layer )
-  {
+  if ( not layer ) {
     throw LayerExpected();
   }
 
@@ -177,8 +170,7 @@ ArrayDatum
 get_global_children( const index gid, const MaskDatum& maskd, const std::vector< double >& anchor )
 {
   AbstractLayer* layer = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( gid ) );
-  if ( layer == NULL )
-  {
+  if ( layer == NULL ) {
     throw LayerExpected();
   }
 
@@ -186,8 +178,7 @@ get_global_children( const index gid, const MaskDatum& maskd, const std::vector<
 
   ArrayDatum result;
   result.reserve( gids.size() );
-  for ( std::vector< index >::iterator it = gids.begin(); it != gids.end(); ++it )
-  {
+  for ( std::vector< index >::iterator it = gids.begin(); it != gids.end(); ++it ) {
     result.push_back( new IntegerDatum( *it ) );
   }
   return result;
@@ -201,8 +192,7 @@ connect_layers( const index source_gid, const index target_gid, const Dictionary
   AbstractLayer* source = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( source_gid ) );
   AbstractLayer* target = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( target_gid ) );
 
-  if ( ( source == NULL ) || ( target == NULL ) )
-  {
+  if ( ( source == NULL ) || ( target == NULL ) ) {
     throw LayerExpected();
   }
   connection_dict->clear_access_flags();
@@ -238,8 +228,7 @@ dump_layer_nodes( const index layer_gid, OstreamDatum& out )
 {
   AbstractLayer const* const layer = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( layer_gid ) );
 
-  if ( layer != 0 && out->good() )
-  {
+  if ( layer != 0 && out->good() ) {
     layer->dump_nodes( *out );
   }
 }
@@ -250,8 +239,7 @@ dump_layer_connections( const Token& syn_model, const index layer_gid, OstreamDa
   std::ostream& out = *out_file;
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( layer_gid ) );
-  if ( layer == NULL )
-  {
+  if ( layer == NULL ) {
     throw TypeMismatch( "any layer type", "something else" );
   }
 
@@ -263,33 +251,26 @@ get_element( const index layer_gid, const TokenArray array )
 {
   std::vector< index > node_gids;
 
-  switch ( array.size() )
-  {
-  case 2:
-  {
+  switch ( array.size() ) {
+  case 2: {
     GridLayer< 2 >* layer = dynamic_cast< GridLayer< 2 >* >( kernel().node_manager.get_node( layer_gid ) );
-    if ( layer == 0 )
-    {
+    if ( layer == 0 ) {
       throw TypeMismatch( "grid layer node", "something else" );
     }
 
     node_gids =
       layer->get_nodes( Position< 2, int >( static_cast< index >( array[ 0 ] ), static_cast< index >( array[ 1 ] ) ) );
-  }
-  break;
+  } break;
 
-  case 3:
-  {
+  case 3: {
     GridLayer< 3 >* layer = dynamic_cast< GridLayer< 3 >* >( kernel().node_manager.get_node( layer_gid ) );
-    if ( layer == 0 )
-    {
+    if ( layer == 0 ) {
       throw TypeMismatch( "grid layer node", "something else" );
     }
 
     node_gids = layer->get_nodes( Position< 3, int >(
       static_cast< index >( array[ 0 ] ), static_cast< index >( array[ 1 ] ), static_cast< index >( array[ 2 ] ) ) );
-  }
-  break;
+  } break;
 
   default:
     throw TypeMismatch( "array with length 2 or 3", "something else" );

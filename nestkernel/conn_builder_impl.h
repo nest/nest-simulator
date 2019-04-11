@@ -29,8 +29,7 @@
 #include "kernel_manager.h"
 #include "nest_names.h"
 
-namespace nest
-{
+namespace nest {
 
 inline void
 ConnBuilder::single_disconnect_( index sgid, Node& target, thread target_thread )

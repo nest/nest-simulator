@@ -68,15 +68,13 @@ Get_aFunction::execute( SLIInterpreter* i ) const
   assert( obj != NULL );
 
 
-  if ( ( idx->get() >= 0 ) && ( ( size_t ) idx->get() < obj->size() ) )
-  {
+  if ( ( idx->get() >= 0 ) && ( ( size_t ) idx->get() < obj->size() ) ) {
     i->EStack.pop();
     Token objT( obj->get( idx->get() ) );
     i->OStack.pop( 2 );
     i->OStack.push_move( objT );
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -88,8 +86,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
 
   ArrayDatum* idx = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  if ( idx == NULL )
-  {
+  if ( idx == NULL ) {
     i->message( SLIInterpreter::M_ERROR, "get_a_a", "Second argument must be an array of indices." );
     i->message( SLIInterpreter::M_ERROR, "get_a_a", "Usage: [a] [i1 .. in] get -> [a[i1] ... a[in]]" );
     i->raiseerror( i->ArgumentTypeError );
@@ -97,8 +94,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
   }
 
   ArrayDatum* obj = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( obj == NULL )
-  {
+  if ( obj == NULL ) {
     i->message( SLIInterpreter::M_ERROR, "get_a_a", "Usage: [a] [i1 .. in] get -> [a[i1] ... a[in]]" );
     i->message( SLIInterpreter::M_ERROR, "get_a_a", "First argument must be an array." );
     i->raiseerror( i->ArgumentTypeError );
@@ -108,11 +104,9 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
   std::vector< size_t > indices;
   indices.reserve( idx->size() );
 
-  for ( Token* t = idx->begin(); t != idx->end(); ++t )
-  {
+  for ( Token* t = idx->begin(); t != idx->end(); ++t ) {
     IntegerDatum* id = dynamic_cast< IntegerDatum* >( t->datum() );
-    if ( id == NULL )
-    {
+    if ( id == NULL ) {
       std::ostringstream sout;
 
       sout << "Index at position " << ( size_t )( t - idx->begin() ) << " ignored." << std::ends;
@@ -121,8 +115,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
       continue;
     }
 
-    if ( not( ( id->get() >= 0 ) && ( ( size_t ) id->get() < obj->size() ) ) )
-    {
+    if ( not( ( id->get() >= 0 ) && ( ( size_t ) id->get() < obj->size() ) ) ) {
       std::ostringstream sout;
       sout << "At position " << ( size_t )( t - idx->begin() ) << "." << std::ends;
       i->message( SLIInterpreter::M_ERROR, "get_a_a", sout.str().c_str() );
@@ -136,8 +129,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
   TokenArray result;
   result.reserve( idx->size() );
 
-  for ( size_t j = 0; j < indices.size(); ++j )
-  {
+  for ( size_t j = 0; j < indices.size(); ++j ) {
     result.push_back( obj->get( indices[ j ] ) );
   }
 
@@ -160,15 +152,13 @@ Get_pFunction::execute( SLIInterpreter* i ) const
   assert( obj != NULL );
 
 
-  if ( ( idx->get() >= 0 ) && ( ( size_t ) idx->get() < obj->size() ) )
-  {
+  if ( ( idx->get() >= 0 ) && ( ( size_t ) idx->get() < obj->size() ) ) {
     i->EStack.pop();
     Token objT( obj->get( idx->get() ) );
     i->OStack.pop( 2 );
     i->OStack.push_move( objT );
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -184,15 +174,13 @@ Get_lpFunction::execute( SLIInterpreter* i ) const
   LitprocedureDatum* obj = dynamic_cast< LitprocedureDatum* >( i->OStack.pick( 1 ).datum() );
   assert( obj != NULL );
 
-  if ( ( idx->get() >= 0 ) && ( ( size_t ) idx->get() < obj->size() ) )
-  {
+  if ( ( idx->get() >= 0 ) && ( ( size_t ) idx->get() < obj->size() ) ) {
     i->EStack.pop();
     Token objT( obj->get( idx->get() ) );
     i->OStack.pop( 2 );
     i->OStack.push_move( objT );
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -285,8 +273,7 @@ Join_sFunction::execute( SLIInterpreter* i ) const
   StringDatum* s1 = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   StringDatum* s2 = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( s1 == NULL || s2 == NULL )
-  {
+  if ( s1 == NULL || s2 == NULL ) {
     i->message( SLIInterpreter::M_ERROR, "join_s", "Usage: (string1) (string2) join_s" );
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -358,14 +345,12 @@ Insert_sFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 != NULL && id != NULL && s2 != NULL );
 
-  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
-  {
+  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) ) {
     i->EStack.pop();
     s1->insert( id->get(), *s2 );
     i->OStack.pop( 2 );
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -394,14 +379,12 @@ InsertElement_sFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 != NULL && id != NULL && c != NULL );
 
-  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
-  {
+  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) ) {
     i->EStack.pop();
     s1->insert( id->get(), 1, static_cast< char >( c->get() ) );
     i->OStack.pop( 2 );
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -450,14 +433,12 @@ Insert_aFunction::execute( SLIInterpreter* i ) const
 
   assert( a1 != NULL && id != NULL && a2 != NULL );
 
-  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < a1->size() ) )
-  {
+  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < a1->size() ) ) {
     i->EStack.pop();
     a1->insert_move( id->get(), *a2 ); // ArrayDatum is a TokenArray.
     i->OStack.pop( 2 );                // insert_move empties TokenArray *a2
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -473,14 +454,12 @@ InsertElement_aFunction::execute( SLIInterpreter* i ) const
 
   assert( a1 != NULL && id != NULL );
 
-  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < a1->size() ) )
-  {
+  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < a1->size() ) ) {
     i->EStack.pop();
     a1->insert_move( id->get(), i->OStack.top() );
     i->OStack.pop( 2 );
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -547,21 +526,17 @@ Replace_sFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 != NULL && id != NULL && n != NULL && s2 != NULL );
 
-  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
-  {
-    if ( n->get() >= 0 )
-    {
+  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) ) {
+    if ( n->get() >= 0 ) {
       i->EStack.pop();
       s1->replace( id->get(), n->get(), *s2 );
       i->OStack.pop( 3 );
     }
-    else
-    {
+    else {
       i->raiseerror( i->PositiveIntegerExpectedError );
     }
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -579,21 +554,17 @@ Replace_aFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 != NULL && id != NULL && n != NULL && s2 != NULL );
 
-  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
-  {
-    if ( n->get() >= 0 )
-    {
+  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) ) {
+    if ( n->get() >= 0 ) {
       i->EStack.pop();
       s1->replace_move( id->get(), n->get(), *s2 );
       i->OStack.pop( 3 );
     }
-    else
-    {
+    else {
       i->raiseerror( i->PositiveIntegerExpectedError );
     }
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -624,21 +595,17 @@ Erase_sFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 != NULL && id != NULL && n != NULL );
 
-  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
-  {
-    if ( n->get() >= 0 )
-    {
+  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) ) {
+    if ( n->get() >= 0 ) {
       i->EStack.pop();
       s1->erase( id->get(), n->get() );
       i->OStack.pop( 2 );
     }
-    else
-    {
+    else {
       i->raiseerror( i->PositiveIntegerExpectedError );
     }
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -655,21 +622,17 @@ Erase_aFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 != NULL && id != NULL && n != NULL );
 
-  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
-  {
-    if ( n->get() >= 0 )
-    {
+  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) ) {
+    if ( n->get() >= 0 ) {
       i->EStack.pop();
       s1->erase( id->get(), n->get() );
       i->OStack.pop( 2 );
     }
-    else
-    {
+    else {
       i->raiseerror( i->PositiveIntegerExpectedError );
     }
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -686,21 +649,17 @@ Erase_pFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 != NULL && id != NULL && n != NULL );
 
-  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
-  {
-    if ( n->get() >= 0 )
-    {
+  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) ) {
+    if ( n->get() >= 0 ) {
       i->EStack.pop();
       s1->erase( id->get(), n->get() );
       i->OStack.pop( 2 );
     }
-    else
-    {
+    else {
       i->raiseerror( i->PositiveIntegerExpectedError );
     }
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -718,14 +677,12 @@ Put_sFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 != NULL && id != NULL && cd != NULL );
 
-  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
-  {
+  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) ) {
     i->EStack.pop();
     ( *s1 )[ id->get() ] = static_cast< char >( cd->get() );
     i->OStack.pop( 2 );
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -742,14 +699,12 @@ Put_aFunction::execute( SLIInterpreter* i ) const
 
   assert( ad != NULL && id != NULL );
 
-  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < ad->size() ) )
-  {
+  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < ad->size() ) ) {
     i->EStack.pop();
     ad->assign_move( id->get(), i->OStack.top() ); // its safe to empty top() because
     i->OStack.pop( 2 );                            // it will be poped.
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -766,14 +721,12 @@ Put_pFunction::execute( SLIInterpreter* i ) const
 
   assert( ad != NULL && id != NULL );
 
-  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < ad->size() ) )
-  {
+  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < ad->size() ) ) {
     i->EStack.pop();
     ad->assign_move( id->get(), i->OStack.top() ); // its safe to empty top() because
     i->OStack.pop( 2 );                            // it will be poped.
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -790,14 +743,12 @@ Put_lpFunction::execute( SLIInterpreter* i ) const
 
   assert( ad != NULL && id != NULL );
 
-  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < ad->size() ) )
-  {
+  if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < ad->size() ) ) {
     i->EStack.pop();
     ad->assign_move( id->get(), i->OStack.top() ); // its safe to empty top() because
     i->OStack.pop( 2 );                            // it will be poped.
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -985,14 +936,12 @@ Reserve_aFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   assert( ad != NULL && id != NULL );
-  if ( id->get() >= 0 )
-  {
+  if ( id->get() >= 0 ) {
     i->EStack.pop();
     ad->reserve( id->get() );
     i->OStack.pop();
   }
-  else
-  {
+  else {
     i->raiseerror( i->PositiveIntegerExpectedError );
   }
 }
@@ -1020,14 +969,12 @@ Resize_aFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   assert( ad != NULL && id != NULL );
-  if ( id->get() >= 0 )
-  {
+  if ( id->get() >= 0 ) {
     i->EStack.pop();
     ad->resize( id->get() );
     i->OStack.pop();
   }
-  else
-  {
+  else {
     i->raiseerror( i->PositiveIntegerExpectedError );
   }
 }
@@ -1043,12 +990,10 @@ Empty_aFunction::execute( SLIInterpreter* i ) const
 
   assert( ad != NULL );
 
-  if ( ad->empty() )
-  {
+  if ( ad->empty() ) {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
-  else
-  {
+  else {
     i->OStack.push( i->baselookup( i->false_name ) );
   }
 }
@@ -1087,12 +1032,10 @@ Shrink_aFunction::execute( SLIInterpreter* i ) const
 
   assert( ad != NULL );
 
-  if ( ad->shrink() )
-  {
+  if ( ad->shrink() ) {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
-  else
-  {
+  else {
     i->OStack.push( i->baselookup( i->false_name ) );
   }
 }
@@ -1138,14 +1081,12 @@ Reserve_sFunction::execute( SLIInterpreter* i ) const
 
   assert( ad != NULL && id != NULL );
 
-  if ( id->get() >= 0 )
-  {
+  if ( id->get() >= 0 ) {
     i->EStack.pop();
     ad->reserve( id->get() );
     i->OStack.pop();
   }
-  else
-  {
+  else {
     i->raiseerror( i->PositiveIntegerExpectedError );
   }
 }
@@ -1161,14 +1102,12 @@ Resize_sFunction::execute( SLIInterpreter* i ) const
 
   assert( ad != NULL && id != NULL );
 
-  if ( id->get() >= 0 )
-  {
+  if ( id->get() >= 0 ) {
     i->EStack.pop();
     ad->resize( id->get(), ' ' ); // space as default char
     i->OStack.pop();
   }
-  else
-  {
+  else {
     i->raiseerror( i->PositiveIntegerExpectedError );
   }
 }
@@ -1185,12 +1124,10 @@ Empty_sFunction::execute( SLIInterpreter* i ) const
 
   assert( ad != NULL );
 
-  if ( ad->empty() )
-  {
+  if ( ad->empty() ) {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
-  else
-  {
+  else {
     i->OStack.push( i->baselookup( i->false_name ) );
   }
 }
@@ -1232,22 +1169,18 @@ Getinterval_sFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* cd = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   assert( sd != NULL && id != NULL && cd != NULL );
 
-  if ( cd->get() >= 0 )
-  {
+  if ( cd->get() >= 0 ) {
     if ( id->get() >= 0 && static_cast< size_t >( id->get() ) < sd->size()
-      && static_cast< size_t >( id->get() + cd->get() ) <= sd->size() )
-    {
+      && static_cast< size_t >( id->get() + cd->get() ) <= sd->size() ) {
       i->EStack.pop();
       sd->assign( *sd, id->get(), cd->get() );
       i->OStack.pop( 2 );
     }
-    else
-    {
+    else {
       i->raiseerror( i->RangeCheckError );
     }
   }
-  else
-  {
+  else {
     i->raiseerror( i->PositiveIntegerExpectedError );
   }
 }
@@ -1264,23 +1197,19 @@ Getinterval_aFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* cd = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   assert( sd != NULL && id != NULL && cd != NULL );
 
-  if ( cd->get() >= 0 )
-  {
+  if ( cd->get() >= 0 ) {
 
     if ( id->get() >= 0 && static_cast< size_t >( id->get() ) < sd->size()
-      && static_cast< size_t >( id->get() + cd->get() ) <= sd->size() )
-    {
+      && static_cast< size_t >( id->get() + cd->get() ) <= sd->size() ) {
       i->EStack.pop();
       sd->reduce( id->get(), cd->get() );
       i->OStack.pop( 2 );
     }
-    else
-    {
+    else {
       i->raiseerror( i->RangeCheckError );
     }
   }
-  else
-  {
+  else {
     i->raiseerror( i->PositiveIntegerExpectedError );
   }
 }
@@ -1439,15 +1368,13 @@ Get_sFunction::execute( SLIInterpreter* i ) const
   assert( obj != NULL );
 
 
-  if ( ( idx->get() >= 0 ) && ( ( size_t ) idx->get() < obj->size() ) )
-  {
+  if ( ( idx->get() >= 0 ) && ( ( size_t ) idx->get() < obj->size() ) ) {
     i->EStack.pop();
     Token objT( new IntegerDatum( ( *obj )[ idx->get() ] ) );
     i->OStack.pop( 2 );
     i->OStack.push_move( objT );
   }
-  else
-  {
+  else {
     i->raiseerror( i->RangeCheckError );
   }
 }
@@ -1485,8 +1412,7 @@ Search_sFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop();    // (see Stroustrup 3rd ed. p. 586)
     i->OStack.push( i->baselookup( i->false_name ) );
   }
-  else
-  {
+  else {
     StringDatum* s3 = new StringDatum();
 
     size_t n = p; // number of pre elements
@@ -1515,13 +1441,11 @@ Search_aFunction::execute( SLIInterpreter* i ) const
   Token* p = std::search( s1->begin(), s1->end(), s2->begin(), s2->end() );
 
 
-  if ( p == s1->end() )
-  {
+  if ( p == s1->end() ) {
     i->OStack.pop();
     i->OStack.push( i->baselookup( i->false_name ) );
   }
-  else
-  {
+  else {
     ArrayDatum* s3 = new ArrayDatum();
 
     size_t n = p - s1->begin();              // number of pre elements
@@ -1546,13 +1470,11 @@ IrepeatanyFunction::execute( SLIInterpreter* i ) const
 
   IntegerDatum* loopcount = static_cast< IntegerDatum* >( i->EStack.pick( 2 ).datum() );
 
-  if ( loopcount->get() > 0 )
-  {
+  if ( loopcount->get() > 0 ) {
     i->EStack.push( i->EStack.pick( 1 ) );
     --( loopcount->get() );
   }
-  else
-  {
+  else {
     i->EStack.pop( 4 );
   }
 }

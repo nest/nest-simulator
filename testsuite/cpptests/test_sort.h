@@ -32,8 +32,7 @@
 // Includes from libnestutil:
 #include "sort.h"
 
-namespace nest
-{
+namespace nest {
 
 void
 nest_quicksort( BlockVector< size_t >& bv0, BlockVector< size_t >& bv1 )
@@ -44,10 +43,8 @@ nest_quicksort( BlockVector< size_t >& bv0, BlockVector< size_t >& bv1 )
 const bool
 is_sorted( BlockVector< size_t >::const_iterator begin, BlockVector< size_t >::const_iterator end )
 {
-  for ( BlockVector< size_t >::const_iterator it = begin; it < --end; )
-  {
-    if ( *it > *( ++it ) )
-    {
+  for ( BlockVector< size_t >::const_iterator it = begin; it < --end; ) {
+    if ( *it > *( ++it ) ) {
       return false;
     }
   }
@@ -66,8 +63,7 @@ BOOST_AUTO_TEST_CASE( test_random )
   BlockVector< size_t > bv0( N );
   BlockVector< size_t > bv1( N );
 
-  for ( size_t i = 0; i < N; ++i )
-  {
+  for ( size_t i = 0; i < N; ++i ) {
     const size_t k = std::rand() % N;
     bv0[ i ] = k;
     bv1[ i ] = k;
@@ -89,8 +85,7 @@ BOOST_AUTO_TEST_CASE( test_linear )
   BlockVector< size_t > bv0( N );
   BlockVector< size_t > bv1( N );
 
-  for ( size_t i = 0; i < N; ++i )
-  {
+  for ( size_t i = 0; i < N; ++i ) {
     bv0[ i ] = N - i - 1;
     bv1[ i ] = N - i - 1;
   }

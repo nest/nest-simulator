@@ -30,8 +30,7 @@
 #include "nest_types.h"
 #include "ring_buffer.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: parrot_neuron - Neuron that repeats incoming spikes.
@@ -74,8 +73,7 @@ Plesser
 
 FirstVersion: May 2006
 */
-class parrot_neuron : public Archiving_Node
-{
+class parrot_neuron : public Archiving_Node {
 
 public:
   parrot_neuron();
@@ -117,8 +115,7 @@ private:
      Buffers and accumulates the number of incoming spikes per time step;
      RingBuffer stores doubles; for now the numbers are casted.
   */
-  struct Buffers_
-  {
+  struct Buffers_ {
     RingBuffer n_spikes_;
   };
 
@@ -139,12 +136,10 @@ parrot_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   // Allow connections to port 0 (spikes to be repeated)
   // and port 1 (spikes to be ignored).
-  if ( receptor_type == 0 or receptor_type == 1 )
-  {
+  if ( receptor_type == 0 or receptor_type == 1 ) {
     return receptor_type;
   }
-  else
-  {
+  else {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
 }

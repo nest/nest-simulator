@@ -34,138 +34,116 @@
  * SLI module defining array functions.
  * This class implements the SLI functions which operate on SLI arrays.
  */
-class SLIArrayModule : public SLIModule
-{
+class SLIArrayModule : public SLIModule {
   /**
    * @defgroup sliarray SLI array functions
    * SLI functions that operate on SLI arrays.
    * @{
    */
-  class MapFunction : public SLIFunction
-  {
+  class MapFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class IMapFunction : public SLIFunction
-  {
+  class IMapFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
     void backtrace( SLIInterpreter*, int ) const;
   };
-  class IMap_ivFunction : public SLIFunction
-  {
+  class IMap_ivFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
     void backtrace( SLIInterpreter*, int ) const;
   };
-  class IMap_dvFunction : public SLIFunction
-  {
+  class IMap_dvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
     void backtrace( SLIInterpreter*, int ) const;
   };
-  class MapThreadFunction : public SLIFunction
-  {
+  class MapThreadFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class IMapThreadFunction : public SLIFunction
-  {
+  class IMapThreadFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
     void backtrace( SLIInterpreter*, int ) const;
   };
 
-  class MapIndexedFunction : public SLIFunction
-  {
+  class MapIndexedFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class IMapIndexedFunction : public SLIFunction
-  {
+  class IMapIndexedFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
     void backtrace( SLIInterpreter*, int ) const;
   };
 
-  class RangeFunction : public SLIFunction
-  {
+  class RangeFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class ArraystoreFunction : public SLIFunction
-  {
+  class ArraystoreFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class ArrayloadFunction : public SLIFunction
-  {
+  class ArrayloadFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class ArraycreateFunction : public SLIFunction
-  {
+  class ArraycreateFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class ReverseFunction : public SLIFunction
-  {
+  class ReverseFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class RotateFunction : public SLIFunction
-  {
+  class RotateFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class FlattenFunction : public SLIFunction
-  {
+  class FlattenFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class SortFunction : public SLIFunction
-  {
+  class SortFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class UniqueFunction : public SLIFunction
-  {
+  class UniqueFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class TransposeFunction : public SLIFunction
-  {
+  class TransposeFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
 
-  class PartitionFunction : public SLIFunction
-  {
+  class PartitionFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class ValidFunction : public SLIFunction
-  {
+  class ValidFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Put_a_a_tFunction : public SLIFunction
-  {
+  class Put_a_a_tFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
@@ -204,8 +182,7 @@ class SLIArrayModule : public SLIModule
    *                         (hypothetical) source array in order to
    *                         access the desired subarea.
    */
-  class AreaFunction : public SLIFunction
-  {
+  class AreaFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
@@ -242,32 +219,27 @@ class SLIArrayModule : public SLIModule
    *                         (hypothetical) source array in order to
    *                         access the desired subarea.
    */
-  class Area2Function : public SLIFunction
-  {
+  class Area2Function : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Cv1dFunction : public SLIFunction
-  {
+  class Cv1dFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Cv2dFunction : public SLIFunction
-  {
+  class Cv2dFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class GetMaxFunction : public SLIFunction
-  {
+  class GetMaxFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class GetMinFunction : public SLIFunction
-  {
+  class GetMinFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
@@ -276,8 +248,7 @@ class SLIArrayModule : public SLIModule
   /**
    * Generate two-dimensional array with Gabor patch.
    */
-  class GaborFunction : public SLIFunction
-  {
+  class GaborFunction : public SLIFunction {
   public:
     GaborFunction()
     {
@@ -289,8 +260,7 @@ class SLIArrayModule : public SLIModule
   /**
    * Generate two-dimensional array with Gauss patch.
    */
-  class Gauss2dFunction : public SLIFunction
-  {
+  class Gauss2dFunction : public SLIFunction {
   public:
     Gauss2dFunction()
     {
@@ -304,8 +274,7 @@ class SLIArrayModule : public SLIModule
    * Convert SLI array to std::vector.
    */
 
-  class Array2IntVectorFunction : public SLIFunction
-  {
+  class Array2IntVectorFunction : public SLIFunction {
   public:
     Array2IntVectorFunction()
     {
@@ -317,8 +286,7 @@ class SLIArrayModule : public SLIModule
    * Convert SLI array to std::vector.
    */
 
-  class Array2DoubleVectorFunction : public SLIFunction
-  {
+  class Array2DoubleVectorFunction : public SLIFunction {
   public:
     Array2DoubleVectorFunction()
     {
@@ -326,8 +294,7 @@ class SLIArrayModule : public SLIModule
     void execute( SLIInterpreter* ) const;
   };
 
-  class DoubleVector2ArrayFunction : public SLIFunction
-  {
+  class DoubleVector2ArrayFunction : public SLIFunction {
   public:
     DoubleVector2ArrayFunction()
     {
@@ -335,8 +302,7 @@ class SLIArrayModule : public SLIModule
     void execute( SLIInterpreter* ) const;
   };
 
-  class IntVector2ArrayFunction : public SLIFunction
-  {
+  class IntVector2ArrayFunction : public SLIFunction {
   public:
     IntVector2ArrayFunction()
     {
@@ -344,162 +310,133 @@ class SLIArrayModule : public SLIModule
     void execute( SLIInterpreter* ) const;
   };
 
-  class Add_iv_ivFunction : public SLIFunction
-  {
+  class Add_iv_ivFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
-  class Add_i_ivFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  };
-
-  class Neg_ivFunction : public SLIFunction
-  {
+  class Add_i_ivFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Sub_iv_ivFunction : public SLIFunction
-  {
+  class Neg_ivFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Mul_iv_ivFunction : public SLIFunction
-  {
+  class Sub_iv_ivFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Mul_i_ivFunction : public SLIFunction
-  {
+  class Mul_iv_ivFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Mul_d_ivFunction : public SLIFunction
-  {
+  class Mul_i_ivFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Div_iv_ivFunction : public SLIFunction
-  {
+  class Mul_d_ivFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Add_dv_dvFunction : public SLIFunction
-  {
+  class Div_iv_ivFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Add_d_dvFunction : public SLIFunction
-  {
+  class Add_dv_dvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Sub_dv_dvFunction : public SLIFunction
-  {
+  class Add_d_dvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Mul_dv_dvFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  };
-  class Mul_d_dvFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  };
-  class Div_dv_dvFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  };
-  class Neg_dvFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  };
-  class Inv_dvFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  };
-  class Length_dvFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  };
-  class Length_ivFunction : public SLIFunction
-  {
+  class Sub_dv_dvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Get_iv_iFunction : public SLIFunction
-  {
+  class Mul_dv_dvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
-  class Get_iv_ivFunction : public SLIFunction
-  {
+  class Mul_d_dvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
-  class Get_dv_ivFunction : public SLIFunction
-  {
+  class Div_dv_dvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
-  class Get_dv_iFunction : public SLIFunction
-  {
+  class Neg_dvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
-
-  class Put_dv_i_dFunction : public SLIFunction
-  {
+  class Inv_dvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
-  class Put_iv_i_iFunction : public SLIFunction
-  {
+  class Length_dvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
-
-  class Zeros_ivFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  };
-  class Zeros_dvFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  };
-  class Ones_dvFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  };
-  class Ones_ivFunction : public SLIFunction
-  {
+  class Length_ivFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class ArangeFunction : public SLIFunction
-  {
+  class Get_iv_iFunction : public SLIFunction {
+  public:
+    void execute( SLIInterpreter* ) const;
+  };
+  class Get_iv_ivFunction : public SLIFunction {
+  public:
+    void execute( SLIInterpreter* ) const;
+  };
+  class Get_dv_ivFunction : public SLIFunction {
+  public:
+    void execute( SLIInterpreter* ) const;
+  };
+  class Get_dv_iFunction : public SLIFunction {
+  public:
+    void execute( SLIInterpreter* ) const;
+  };
+
+  class Put_dv_i_dFunction : public SLIFunction {
+  public:
+    void execute( SLIInterpreter* ) const;
+  };
+  class Put_iv_i_iFunction : public SLIFunction {
+  public:
+    void execute( SLIInterpreter* ) const;
+  };
+
+  class Zeros_ivFunction : public SLIFunction {
+  public:
+    void execute( SLIInterpreter* ) const;
+  };
+  class Zeros_dvFunction : public SLIFunction {
+  public:
+    void execute( SLIInterpreter* ) const;
+  };
+  class Ones_dvFunction : public SLIFunction {
+  public:
+    void execute( SLIInterpreter* ) const;
+  };
+  class Ones_ivFunction : public SLIFunction {
+  public:
+    void execute( SLIInterpreter* ) const;
+  };
+
+  class ArangeFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
@@ -509,8 +446,7 @@ class SLIArrayModule : public SLIModule
    * @todo This class does not really belong into sliarray, but is placed
    * here since it is a Mathematica-style Q function.
    */
-  class FiniteQ_dFunction : public SLIFunction
-  {
+  class FiniteQ_dFunction : public SLIFunction {
   public:
     FiniteQ_dFunction()
     {
@@ -518,41 +454,35 @@ class SLIArrayModule : public SLIModule
     void execute( SLIInterpreter* ) const;
   };
 
-  class Forall_ivFunction : public SLIFunction
-  {
+  class Forall_ivFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Forall_dvFunction : public SLIFunction
-  {
+  class Forall_dvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Iforall_ivFunction : public SLIFunction
-  {
+  class Iforall_ivFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
     void backtrace( SLIInterpreter*, int ) const;
   };
 
-  class Iforall_dvFunction : public SLIFunction
-  {
+  class Iforall_dvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
     void backtrace( SLIInterpreter*, int ) const;
   };
 
 
-  class Eq_dvFunction : public SLIFunction
-  {
+  class Eq_dvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class Eq_ivFunction : public SLIFunction
-  {
+  class Eq_ivFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };

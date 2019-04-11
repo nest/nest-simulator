@@ -40,8 +40,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Function computing right-hand side of ODE for GSL solver.
@@ -129,8 +128,7 @@ Author: Schrader
 
 SeeAlso: hh_psc_alpha
 */
-class hh_cond_exp_traub : public Archiving_Node
-{
+class hh_cond_exp_traub : public Archiving_Node {
 
 public:
   hh_cond_exp_traub();
@@ -182,8 +180,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     double g_Na; //!< Sodium Conductance in nS
     double g_K;  //!< Potassium Conductance in nS
     double g_L;  //!< Leak Conductance in nS
@@ -215,12 +212,10 @@ public:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
 
     //! Symbolic indices to the elements of the state vector y
-    enum StateVecElems
-    {
+    enum StateVecElems {
       V_M = 0,
       HH_M,  // 1
       HH_H,  // 2
@@ -248,8 +243,7 @@ public:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     int refractory_counts_;
     double U_old_; // for spike-detection
   };
@@ -259,8 +253,7 @@ public:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( hh_cond_exp_traub& ); //!<Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, hh_cond_exp_traub& );
@@ -328,8 +321,7 @@ hh_cond_exp_traub::send_test_event( Node& target, rport receptor_type, synindex,
 inline port
 hh_cond_exp_traub::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -338,8 +330,7 @@ hh_cond_exp_traub::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 hh_cond_exp_traub::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -348,8 +339,7 @@ hh_cond_exp_traub::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

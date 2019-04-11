@@ -47,8 +47,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -197,50 +196,42 @@ nest::rate_transformer_node< TNonlinearities >::update_( Time const& origin,
   // allocate memory to store rates to be sent by rate events
   std::vector< double > new_rates( buffer_size, 0.0 );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     // store rate
     new_rates[ lag ] = S_.rate_;
     // reinitialize output rate
     S_.rate_ = 0.0;
 
     double delayed_rates = 0;
-    if ( called_from_wfr_update )
-    {
+    if ( called_from_wfr_update ) {
       // use get_value_wfr_update to keep values in buffer
       delayed_rates = B_.delayed_rates_.get_value_wfr_update( lag );
     }
-    else
-    {
+    else {
       // use get_value to clear values in buffer after reading
       delayed_rates = B_.delayed_rates_.get_value( lag );
     }
 
-    if ( P_.linear_summation_ )
-    {
+    if ( P_.linear_summation_ ) {
       S_.rate_ += nonlinearities_.input( delayed_rates + B_.instant_rates_[ lag ] );
     }
-    else
-    {
+    else {
       S_.rate_ += delayed_rates + B_.instant_rates_[ lag ];
     }
 
-    if ( called_from_wfr_update )
-    {
+    if ( called_from_wfr_update ) {
       // check if deviation from last iteration exceeds wfr_tol
       wfr_tol_exceeded = wfr_tol_exceeded or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
       // update last_y_values for next wfr iteration
       B_.last_y_values[ lag ] = S_.rate_;
     }
-    else
-    {
+    else {
       // rate logging
       B_.logger_.record_data( origin.get_steps() + lag );
     }
   }
 
-  if ( not called_from_wfr_update )
-  {
+  if ( not called_from_wfr_update ) {
     // Send delay-rate-neuron-event. This only happens in the final iteration
     // to avoid accumulation in the buffers of the receiving neurons.
     DelayedRateConnectionEvent drve;
@@ -251,8 +242,7 @@ nest::rate_transformer_node< TNonlinearities >::update_( Time const& origin,
     std::vector< double >( buffer_size, 0.0 ).swap( B_.last_y_values );
 
     // modifiy new_rates for rate-neuron-event as proxy for next min_delay
-    for ( long temp = from; temp < to; ++temp )
-    {
+    for ( long temp = from; temp < to; ++temp ) {
       new_rates[ temp ] = S_.rate_;
     }
   }
@@ -278,14 +268,11 @@ nest::rate_transformer_node< TNonlinearities >::handle( InstantaneousRateConnect
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
-  while ( it != e.end() )
-  {
-    if ( P_.linear_summation_ )
-    {
+  while ( it != e.end() ) {
+    if ( P_.linear_summation_ ) {
       B_.instant_rates_[ i ] += weight * e.get_coeffvalue( it );
     }
-    else
-    {
+    else {
       B_.instant_rates_[ i ] += weight * nonlinearities_.input( e.get_coeffvalue( it ) );
     }
     ++i;
@@ -302,14 +289,11 @@ nest::rate_transformer_node< TNonlinearities >::handle( DelayedRateConnectionEve
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
-  while ( it != e.end() )
-  {
-    if ( P_.linear_summation_ )
-    {
+  while ( it != e.end() ) {
+    if ( P_.linear_summation_ ) {
       B_.delayed_rates_.add_value( delay + i, weight * e.get_coeffvalue( it ) );
     }
-    else
-    {
+    else {
       B_.delayed_rates_.add_value( delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
     }
     ++i;

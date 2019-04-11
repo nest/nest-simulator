@@ -81,8 +81,7 @@ void
 librandom::MT19937::init_genrand( unsigned long s )
 {
   mt[ 0 ] = s & 0xffffffffUL;
-  for ( mti = 1; static_cast< unsigned int >( mti ) < N; mti++ )
-  {
+  for ( mti = 1; static_cast< unsigned int >( mti ) < N; mti++ ) {
     mt[ mti ] = ( 1812433253UL * ( mt[ mti - 1 ] ^ ( mt[ mti - 1 ] >> 30 ) ) + mti );
     /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
     /* In the previous versions, MSBs of the seed affect   */
@@ -100,8 +99,7 @@ librandom::MT19937::genrand_int32()
   static unsigned long mag01[ 2 ] = { 0x0UL, MATRIX_A };
   /* mag01[x] = x * MATRIX_A  for x=0,1 */
 
-  if ( static_cast< unsigned int >( mti ) >= N )
-  { /* generate N words at one time */
+  if ( static_cast< unsigned int >( mti ) >= N ) { /* generate N words at one time */
     int kk;
 
     if ( mti == N + 1 ) /* if init_genrand() has not been called, */
@@ -109,13 +107,11 @@ librandom::MT19937::genrand_int32()
       init_genrand( 5489UL ); /* a default initial seed is used */
     }
 
-    for ( kk = 0; static_cast< unsigned int >( kk ) < N - M; kk++ )
-    {
+    for ( kk = 0; static_cast< unsigned int >( kk ) < N - M; kk++ ) {
       y = ( mt[ kk ] & UPPER_MASK ) | ( mt[ kk + 1 ] & LOWER_MASK );
       mt[ kk ] = mt[ kk + M ] ^ ( y >> 1 ) ^ mag01[ y & 0x1UL ];
     }
-    for ( ; static_cast< unsigned int >( kk ) < N - 1; kk++ )
-    {
+    for ( ; static_cast< unsigned int >( kk ) < N - 1; kk++ ) {
       y = ( mt[ kk ] & UPPER_MASK ) | ( mt[ kk + 1 ] & LOWER_MASK );
       mt[ kk ] = mt[ kk + ( M - N ) ] ^ ( y >> 1 ) ^ mag01[ y & 0x1UL ];
     }

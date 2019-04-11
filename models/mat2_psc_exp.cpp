@@ -46,7 +46,7 @@
 nest::RecordablesMap< nest::mat2_psc_exp > nest::mat2_psc_exp::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
-{
+  {
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
  * for each quantity to be recorded.
@@ -135,24 +135,19 @@ nest::mat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::alpha_1, alpha_1_ );
   updateValue< double >( d, names::alpha_2, alpha_2_ );
 
-  if ( updateValue< double >( d, names::omega, omega_ ) )
-  {
+  if ( updateValue< double >( d, names::omega, omega_ ) ) {
     omega_ -= E_L_;
   }
-  else
-  {
+  else {
     omega_ -= delta_EL;
   }
-  if ( C_ <= 0 )
-  {
+  if ( C_ <= 0 ) {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0 || tau_2_ <= 0 )
-  {
+  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0 || tau_2_ <= 0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
-  if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
-  {
+  if ( Tau_ == tau_ex_ || Tau_ == tau_in_ ) {
     throw BadProperty(
       "Membrane and synapse time constant(s) must differ."
       "See note in documentation." );
@@ -173,12 +168,10 @@ nest::mat2_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) cons
 void
 nest::mat2_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
-  if ( updateValue< double >( d, names::V_m, V_m_ ) )
-  {
+  if ( updateValue< double >( d, names::V_m, V_m_ ) ) {
     V_m_ -= p.E_L_;
   }
-  else
-  {
+  else {
     V_m_ -= delta_EL;
   }
 
@@ -300,8 +293,7 @@ nest::mat2_psc_exp::calibrate()
 
   V_.RefractoryCountsTot_ = Time( Time::ms( P_.tau_ref_ ) ).get_steps();
 
-  if ( V_.RefractoryCountsTot_ < 1 )
-  {
+  if ( V_.RefractoryCountsTot_ < 1 ) {
     throw BadProperty( "Total refractory time must be at least one time step." );
   }
 }
@@ -317,8 +309,7 @@ nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
 
     // evolve membrane potential
     S_.V_m_ = S_.V_m_ * V_.P22_expm1_ + S_.V_m_ + S_.i_syn_ex_ * V_.P21ex_ + S_.i_syn_in_ * V_.P21in_
@@ -351,8 +342,7 @@ nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
-    else
-    {
+    else {
       --S_.r_;
     } // neuron is totally refractory (cannot generate spikes)
 
@@ -370,13 +360,11 @@ nest::mat2_psc_exp::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  if ( e.get_weight() >= 0.0 )
-  {
+  if ( e.get_weight() >= 0.0 ) {
     B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
-  else
-  {
+  else {
     B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }

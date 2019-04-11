@@ -30,8 +30,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 //
 // Implementation of class STDPHomCommonProperties.
 //

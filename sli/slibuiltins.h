@@ -39,8 +39,7 @@
   either in builtins.{h,cc} or in user-defined modules
   *******************************************************/
 
-class IlookupFunction : public SLIFunction
-{
+class IlookupFunction : public SLIFunction {
 public:
   IlookupFunction()
   {
@@ -48,8 +47,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IsetcallbackFunction : public SLIFunction
-{
+class IsetcallbackFunction : public SLIFunction {
 public:
   IsetcallbackFunction()
   {
@@ -57,8 +55,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IiterateFunction : public SLIFunction
-{
+class IiterateFunction : public SLIFunction {
 public:
   IiterateFunction()
   {
@@ -67,8 +64,7 @@ public:
   void backtrace( SLIInterpreter*, int ) const;
 };
 
-class IloopFunction : public SLIFunction
-{
+class IloopFunction : public SLIFunction {
 public:
   IloopFunction()
   {
@@ -77,8 +73,7 @@ public:
   void backtrace( SLIInterpreter*, int ) const;
 };
 
-class IrepeatFunction : public SLIFunction
-{
+class IrepeatFunction : public SLIFunction {
 public:
   IrepeatFunction()
   {
@@ -87,8 +82,7 @@ public:
   void backtrace( SLIInterpreter*, int ) const;
 };
 
-class IforFunction : public SLIFunction
-{
+class IforFunction : public SLIFunction {
 public:
   IforFunction()
   {
@@ -97,8 +91,7 @@ public:
   void backtrace( SLIInterpreter*, int ) const;
 };
 
-class IforallarrayFunction : public SLIFunction
-{
+class IforallarrayFunction : public SLIFunction {
 public:
   IforallarrayFunction()
   {
@@ -107,8 +100,7 @@ public:
   void backtrace( SLIInterpreter*, int ) const;
 };
 
-class IforalliterFunction : public SLIFunction
-{
+class IforalliterFunction : public SLIFunction {
 public:
   IforalliterFunction()
   {
@@ -118,8 +110,7 @@ public:
 };
 
 
-class IforallindexedarrayFunction : public SLIFunction
-{
+class IforallindexedarrayFunction : public SLIFunction {
 public:
   IforallindexedarrayFunction()
   {
@@ -128,8 +119,7 @@ public:
   void backtrace( SLIInterpreter*, int ) const;
 };
 
-class IforallindexedstringFunction : public SLIFunction
-{
+class IforallindexedstringFunction : public SLIFunction {
 public:
   IforallindexedstringFunction()
   {
@@ -138,8 +128,7 @@ public:
   void backtrace( SLIInterpreter*, int ) const;
 };
 
-class IforallstringFunction : public SLIFunction
-{
+class IforallstringFunction : public SLIFunction {
 public:
   IforallstringFunction()
   {

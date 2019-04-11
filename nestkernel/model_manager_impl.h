@@ -34,15 +34,13 @@
 #include "kernel_manager.h"
 
 
-namespace nest
-{
+namespace nest {
 
 template < class ModelT >
 index
 ModelManager::register_node_model( const Name& name, bool private_model, std::string deprecation_info )
 {
-  if ( not private_model and modeldict_->known( name ) )
-  {
+  if ( not private_model and modeldict_->known( name ) ) {
     std::string msg = String::compose(
       "A model called '%1' already exists.\n"
       "Please choose a different name!",
@@ -61,8 +59,7 @@ ModelManager::register_preconf_node_model( const Name& name,
   bool private_model,
   std::string deprecation_info )
 {
-  if ( not private_model and modeldict_->known( name ) )
-  {
+  if ( not private_model and modeldict_->known( name ) ) {
     std::string msg = String::compose(
       "A model called '%1' already exists.\n"
       "Please choose a different name!",
@@ -93,8 +90,7 @@ ModelManager::register_connection_model( const std::string& name,
     requires_clopath_archiving );
   register_connection_model_( cf );
 
-  if ( not ends_with( name, "_hpc" ) )
-  {
+  if ( not ends_with( name, "_hpc" ) ) {
     cf = new ConnectorModelT< ConnectionLabel< ConnectionT > >( name + "_lbl",
       /*is_primary=*/true,
       /*has_delay=*/true,
@@ -133,8 +129,7 @@ ModelManager::register_secondary_connection_model( const std::string& name,
   // idea: save *cm in data structure
   // otherwise when number of threads is increased no way to get further
   // elements
-  if ( secondary_connector_models_.size() < syn_id + ( unsigned int ) 1 )
-  {
+  if ( secondary_connector_models_.size() < syn_id + ( unsigned int ) 1 ) {
     secondary_connector_models_.resize( syn_id + 1, NULL );
   }
 
@@ -151,8 +146,7 @@ ModelManager::register_secondary_connection_model( const std::string& name,
   // idea: save *cm in data structure
   // otherwise when number of threads is increased no way to get further
   // elements
-  if ( secondary_connector_models_.size() < syn_id + ( unsigned int ) 1 )
-  {
+  if ( secondary_connector_models_.size() < syn_id + ( unsigned int ) 1 ) {
     secondary_connector_models_.resize( syn_id + 1, NULL );
   }
 

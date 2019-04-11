@@ -35,8 +35,7 @@
 #include "kernel_manager.h"
 #include "target_table_devices_impl.h"
 
-namespace nest
-{
+namespace nest {
 
 template < typename ConnBuilder >
 void

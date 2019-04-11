@@ -34,8 +34,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace mynest
-{
+namespace mynest {
 
 /** @BeginDocumentation
 Name: pif_psc_alpha - Perfect integrate-and-fire neuron model with alpha PSC
@@ -87,8 +86,7 @@ Hans Ekkehard Plesser, based on iaf_psc_alpha
 
 SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
 */
-class pif_psc_alpha : public nest::Archiving_Node
-{
+class pif_psc_alpha : public nest::Archiving_Node {
 public:
   /**
    * The constructor is only used to create the model prototype in the model
@@ -174,8 +172,7 @@ private:
    *         as C-style arrays, you need to define the copy constructor and
    *         assignment operator to copy those members.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     double C_m;     //!< Membrane capacitance, in pF.
     double I_e;     //!< Intrinsic DC current, in nA.
     double tau_syn; //!< Synaptic time constant, in ms.
@@ -212,8 +209,7 @@ private:
    *         as C-style arrays, you need to define the copy constructor and
    *         assignment operator to copy those members.
    */
-  struct State_
-  {
+  struct State_ {
     double V_m;      //!< Membrane potential, in mV.
     double dI_syn;   //!< Derivative of synaptic current, in nA/ms.
     double I_syn;    //!< Synaptic current, in nA.
@@ -251,8 +247,7 @@ private:
    *       has members that cannot destroy themselves, Buffers_ will need a
    *       destructor.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( pif_psc_alpha& );
     Buffers_( const Buffers_&, pif_psc_alpha& );
 
@@ -273,8 +268,7 @@ private:
    *       has members that cannot destroy themselves, Variables_ will need a
    *       destructor.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     double P11;
     double P21;
     double P22;
@@ -338,8 +332,7 @@ mynest::pif_psc_alpha::handles_test_event( nest::SpikeEvent&, nest::port recepto
   // It confirms to the connection management system that we are able
   // to handle @c SpikeEvent on port 0. You need to extend the function
   // if you want to differentiate between input ports.
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -352,8 +345,7 @@ mynest::pif_psc_alpha::handles_test_event( nest::CurrentEvent&, nest::port recep
   // It confirms to the connection management system that we are able
   // to handle @c CurrentEvent on port 0. You need to extend the function
   // if you want to differentiate between input ports.
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -367,8 +359,7 @@ mynest::pif_psc_alpha::handles_test_event( nest::DataLoggingRequest& dlr, nest::
   // to handle @c DataLoggingRequest on port 0.
   // The function also tells the built-in UniversalDataLogger that this node
   // is recorded from and that it thus needs to collect data during simulation.
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
   }
 

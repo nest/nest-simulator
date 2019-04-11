@@ -100,37 +100,31 @@ nest::correlation_detector::Parameters_::set( const DictionaryDatum& d, const co
 {
   bool reset = false;
   double t;
-  if ( updateValue< double >( d, names::delta_tau, t ) )
-  {
+  if ( updateValue< double >( d, names::delta_tau, t ) ) {
     delta_tau_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::tau_max, t ) )
-  {
+  if ( updateValue< double >( d, names::tau_max, t ) ) {
     tau_max_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::Tstart, t ) )
-  {
+  if ( updateValue< double >( d, names::Tstart, t ) ) {
     Tstart_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::Tstop, t ) )
-  {
+  if ( updateValue< double >( d, names::Tstop, t ) ) {
     Tstop_ = Time::ms( t );
     reset = true;
   }
 
-  if ( not delta_tau_.is_step() )
-  {
+  if ( not delta_tau_.is_step() ) {
     throw StepMultipleRequired( n.get_name(), names::delta_tau, delta_tau_ );
   }
 
-  if ( not tau_max_.is_multiple_of( delta_tau_ ) )
-  {
+  if ( not tau_max_.is_multiple_of( delta_tau_ ) ) {
     throw TimeMultipleRequired( n.get_name(), names::tau_max, tau_max_, names::delta_tau, delta_tau_ );
   }
 
@@ -141,19 +135,15 @@ void
 nest::correlation_detector::State_::set( const DictionaryDatum& d, const Parameters_& p, bool reset_required )
 {
   std::vector< long > nev;
-  if ( updateValue< std::vector< long > >( d, names::n_events, nev ) )
-  {
-    if ( nev.size() == 2 && nev[ 0 ] == 0 && nev[ 1 ] == 0 )
-    {
+  if ( updateValue< std::vector< long > >( d, names::n_events, nev ) ) {
+    if ( nev.size() == 2 && nev[ 0 ] == 0 && nev[ 1 ] == 0 ) {
       reset_required = true;
     }
-    else
-    {
+    else {
       throw BadProperty( "/n_events can only be set to [0 0]." );
     }
   }
-  if ( reset_required )
-  {
+  if ( reset_required ) {
     reset( p );
   }
 }
@@ -188,8 +178,7 @@ nest::correlation_detector::correlation_detector()
   , P_()
   , S_()
 {
-  if ( not P_.delta_tau_.is_step() )
-  {
+  if ( not P_.delta_tau_.is_step() ) {
     throw InvalidDefaultResolution( get_name(), names::delta_tau, P_.delta_tau_ );
   }
 }
@@ -200,8 +189,7 @@ nest::correlation_detector::correlation_detector( const correlation_detector& n 
   , P_( n.P_ )
   , S_()
 {
-  if ( not P_.delta_tau_.is_step() )
-  {
+  if ( not P_.delta_tau_.is_step() ) {
     throw InvalidTimeInModel( get_name(), names::delta_tau, P_.delta_tau_ );
   }
 }
@@ -258,8 +246,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
   // accept spikes only if detector was active when spike was emitted
   Time const stamp = e.get_stamp();
 
-  if ( device_.is_active( stamp ) )
-  {
+  if ( device_.is_active( stamp ) ) {
 
     const long spike_i = stamp.get_steps();
     const port other = 1 - sender; // port of the neuron not sending
@@ -269,8 +256,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
     // throw away all spikes of the other neuron which are too old to
     // enter the correlation window
     // subtract 0.5*other to make left interval closed, keep right interval open
-    while ( not otherSpikes.empty() && ( spike_i - otherSpikes.front().timestep_ ) - 0.5 * other >= tau_edge )
-    {
+    while ( not otherSpikes.empty() && ( spike_i - otherSpikes.front().timestep_ ) - 0.5 * other >= tau_edge ) {
       otherSpikes.pop_front();
     }
     // all remaining spike times in the queue are
@@ -284,8 +270,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
     // only count events in histogram, if the current event is within the time
     // window [Tstart, Tstop]
     // this is needed in order to prevent boundary effects
-    if ( P_.Tstart_ <= stamp && stamp <= P_.Tstop_ )
-    {
+    if ( P_.Tstart_ <= stamp && stamp <= P_.Tstop_ ) {
       // calculate the effect of this spike immediately with respect to all
       // spikes in the past of the respectively other source
       // if source 1 and source 2 produce a spike at the same time
@@ -298,8 +283,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
       const long sign = 2 * sender - 1; // takes into account relative timing
                                         // of spike from source 1 and source 2
 
-      for ( SpikelistType::const_iterator spike_j = otherSpikes.begin(); spike_j != otherSpikes.end(); ++spike_j )
-      {
+      for ( SpikelistType::const_iterator spike_j = otherSpikes.begin(); spike_j != otherSpikes.end(); ++spike_j ) {
         const size_t bin = static_cast< size_t >(
           std::floor( ( tau_edge + sign * ( spike_i - spike_j->timestep_ ) ) / P_.delta_tau_.get_steps() ) );
         assert( bin < S_.histogram_.size() );

@@ -34,8 +34,7 @@
 #include "rate_transformer_node.h"
 #include "rate_transformer_node_impl.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: threshold_lin_rate - rate model with threshold-linear gain function
@@ -95,8 +94,7 @@ Author: David Dahmen, Jan Hahne, Jannis Schuecker
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 
-class nonlinearities_threshold_lin_rate
-{
+class nonlinearities_threshold_lin_rate {
 private:
   /** gain factor of gain function */
   double g_;

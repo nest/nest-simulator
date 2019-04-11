@@ -39,8 +39,7 @@
 #include "topology_names.h"
 #include "topologymodule.h"
 
-namespace nest
-{
+namespace nest {
 class AbstractMask;
 
 typedef lockPTRDatum< AbstractMask, &TopologyModule::MaskType > MaskDatum;
@@ -49,8 +48,7 @@ typedef lockPTRDatum< AbstractMask, &TopologyModule::MaskType > MaskDatum;
 /**
  * Abstract base class for masks with unspecified dimension.
  */
-class AbstractMask
-{
+class AbstractMask {
 public:
   /**
    * Virtual destructor
@@ -99,8 +97,7 @@ public:
  * Abstract base class for masks with given dimension.
  */
 template < int D >
-class Mask : public AbstractMask
-{
+class Mask : public AbstractMask {
 public:
   ~Mask()
   {
@@ -151,8 +148,7 @@ public:
  * Mask which covers all of space
  */
 template < int D >
-class AllMask : public Mask< D >
-{
+class AllMask : public Mask< D > {
 public:
   ~AllMask()
   {
@@ -205,8 +201,7 @@ public:
  * Mask defining a box region.
  */
 template < int D >
-class BoxMask : public Mask< D >
-{
+class BoxMask : public Mask< D > {
 public:
   /**
    * Parameters that should be in the dictionary:
@@ -304,8 +299,7 @@ protected:
  * Mask defining a circular or spherical region.
  */
 template < int D >
-class BallMask : public Mask< D >
-{
+class BallMask : public Mask< D > {
 public:
   /**
    * @param center Center of sphere
@@ -365,8 +359,7 @@ protected:
  * Mask defining an elliptical or ellipsoidal region.
  */
 template < int D >
-class EllipseMask : public Mask< D >
-{
+class EllipseMask : public Mask< D > {
 public:
   /**
    * @param center Center of ellipse
@@ -398,20 +391,17 @@ public:
     , polar_cos_( std::cos( polar_angle_ * numerics::pi / 180. ) )
     , polar_sin_( std::sin( polar_angle_ * numerics::pi / 180. ) )
   {
-    if ( major_axis_ <= 0 or minor_axis_ <= 0 or polar_axis_ <= 0 )
-    {
+    if ( major_axis_ <= 0 or minor_axis_ <= 0 or polar_axis_ <= 0 ) {
       throw BadProperty(
         "topology::EllipseMask<D>: "
         "All axis > 0 required." );
     }
-    if ( major_axis_ < minor_axis_ )
-    {
+    if ( major_axis_ < minor_axis_ ) {
       throw BadProperty(
         "topology::EllipseMask<D>: "
         "major_axis greater than minor_axis required." );
     }
-    if ( D == 2 and not( polar_angle_ == 0.0 ) )
-    {
+    if ( D == 2 and not( polar_angle_ == 0.0 ) ) {
       throw BadProperty(
         "topology::EllipseMask<D>: "
         "polar_angle not defined in 2D." );
@@ -487,8 +477,7 @@ private:
  * Mask combining two masks with a Boolean AND, the intersection.
  */
 template < int D >
-class IntersectionMask : public Mask< D >
-{
+class IntersectionMask : public Mask< D > {
 public:
   /**
    * Construct the intersection of the two given masks. Copies are made
@@ -534,8 +523,7 @@ protected:
  * Mask combining two masks with a Boolean OR, the sum.
  */
 template < int D >
-class UnionMask : public Mask< D >
-{
+class UnionMask : public Mask< D > {
 public:
   /**
    * Construct the union of the two given masks. Copies are made
@@ -581,8 +569,7 @@ protected:
  * Mask combining two masks with a minus operation, the difference.
  */
 template < int D >
-class DifferenceMask : public Mask< D >
-{
+class DifferenceMask : public Mask< D > {
 public:
   /**
    * Construct the difference of the two given masks. Copies are made
@@ -629,8 +616,7 @@ protected:
  * Mask oriented in the opposite direction.
  */
 template < int D >
-class ConverseMask : public Mask< D >
-{
+class ConverseMask : public Mask< D > {
 public:
   /**
    * Construct the converse of the two given mask. A copy is made of the
@@ -674,8 +660,7 @@ protected:
  * Mask shifted by an anchor
  */
 template < int D >
-class AnchoredMask : public Mask< D >
-{
+class AnchoredMask : public Mask< D > {
 public:
   /**
    * Construct the converse of the two given mask. A copy is made of the
@@ -739,34 +724,28 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
   lower_left_ = getValue< std::vector< double > >( d, names::lower_left );
   upper_right_ = getValue< std::vector< double > >( d, names::upper_right );
 
-  if ( not( lower_left_ < upper_right_ ) )
-  {
+  if ( not( lower_left_ < upper_right_ ) ) {
     throw BadProperty(
       "topology::BoxMask<D>: "
       "Upper right must be strictly to the right and above lower left." );
   }
 
-  if ( d->known( names::azimuth_angle ) )
-  {
+  if ( d->known( names::azimuth_angle ) ) {
     azimuth_angle_ = getValue< double >( d, names::azimuth_angle );
   }
-  else
-  {
+  else {
     azimuth_angle_ = 0.0;
   }
 
-  if ( d->known( names::polar_angle ) )
-  {
-    if ( D == 2 )
-    {
+  if ( d->known( names::polar_angle ) ) {
+    if ( D == 2 ) {
       throw BadProperty(
         "topology::BoxMask<D>: "
         "polar_angle not defined in 2D." );
     }
     polar_angle_ = getValue< double >( d, names::polar_angle );
   }
-  else
-  {
+  else {
     polar_angle_ = 0.0;
   }
 
@@ -776,8 +755,7 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
   polar_sin_ = std::sin( polar_angle_ * numerics::pi / 180. );
 
   cntr_ = ( upper_right_ + lower_left_ ) * 0.5;
-  for ( int i = 0; i != D; ++i )
-  {
+  for ( int i = 0; i != D; ++i ) {
     eps_[ i ] = 1e-12;
   }
 
@@ -785,8 +763,7 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
   cntr_x_az_sin_ = cntr_[ 0 ] * azimuth_sin_;
   cntr_y_az_cos_ = cntr_[ 1 ] * azimuth_cos_;
   cntr_y_az_sin_ = cntr_[ 1 ] * azimuth_sin_;
-  if ( D == 3 )
-  {
+  if ( D == 3 ) {
     cntr_z_pol_cos_ = cntr_[ 2 ] * polar_cos_;
     cntr_z_pol_sin_ = cntr_[ 2 ] * polar_sin_;
     cntr_x_az_cos_pol_cos_ = cntr_x_az_cos_ * polar_cos_;
@@ -798,8 +775,7 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
     az_sin_pol_cos_ = azimuth_sin_ * polar_cos_;
     az_sin_pol_sin_ = azimuth_sin_ * polar_sin_;
   }
-  else
-  {
+  else {
     cntr_z_pol_cos_ = 0.0;
     cntr_z_pol_sin_ = 0.0;
     cntr_x_az_cos_pol_cos_ = 0.0;
@@ -836,20 +812,17 @@ inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
   , cntr_y_az_cos_( cntr_[ 1 ] * azimuth_cos_ )
   , cntr_y_az_sin_( cntr_[ 1 ] * azimuth_sin_ )
 {
-  if ( D == 2 and not( polar_angle_ == 0.0 ) )
-  {
+  if ( D == 2 and not( polar_angle_ == 0.0 ) ) {
     throw BadProperty(
       "topology::BoxMask<D>: "
       "polar_angle not defined in 2D." );
   }
 
-  for ( int i = 0; i != D; ++i )
-  {
+  for ( int i = 0; i != D; ++i ) {
     eps_[ i ] = 1e-12;
   }
 
-  if ( D == 3 )
-  {
+  if ( D == 3 ) {
     cntr_z_pol_cos_ = cntr_[ 2 ] * polar_cos_;
     cntr_z_pol_sin_ = cntr_[ 2 ] * polar_sin_;
     cntr_x_az_cos_pol_cos_ = cntr_x_az_cos_ * polar_cos_;
@@ -861,8 +834,7 @@ inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
     az_sin_pol_cos_ = azimuth_sin_ * polar_cos_;
     az_sin_pol_sin_ = azimuth_sin_ * polar_sin_;
   }
-  else
-  {
+  else {
     cntr_z_pol_cos_ = 0.0;
     cntr_z_pol_sin_ = 0.0;
     cntr_x_az_cos_pol_cos_ = 0.0;
@@ -898,15 +870,13 @@ template < int D >
 BallMask< D >::BallMask( const DictionaryDatum& d )
 {
   radius_ = getValue< double >( d, names::radius );
-  if ( radius_ <= 0 )
-  {
+  if ( radius_ <= 0 ) {
     throw BadProperty(
       "topology::BallMask<D>: "
       "radius > 0 required." );
   }
 
-  if ( d->known( names::anchor ) )
-  {
+  if ( d->known( names::anchor ) ) {
     center_ = getValue< std::vector< double > >( d, names::anchor );
   }
 }
@@ -930,14 +900,12 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
 {
   major_axis_ = getValue< double >( d, names::major_axis );
   minor_axis_ = getValue< double >( d, names::minor_axis );
-  if ( major_axis_ <= 0 or minor_axis_ <= 0 )
-  {
+  if ( major_axis_ <= 0 or minor_axis_ <= 0 ) {
     throw BadProperty(
       "topology::EllipseMask<D>: "
       "All axis > 0 required." );
   }
-  if ( major_axis_ < minor_axis_ )
-  {
+  if ( major_axis_ < minor_axis_ ) {
     throw BadProperty(
       "topology::EllipseMask<D>: "
       "major_axis greater than minor_axis required." );
@@ -946,18 +914,15 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
   x_scale_ = 4.0 / ( major_axis_ * major_axis_ );
   y_scale_ = 4.0 / ( minor_axis_ * minor_axis_ );
 
-  if ( d->known( names::polar_axis ) )
-  {
-    if ( D == 2 )
-    {
+  if ( d->known( names::polar_axis ) ) {
+    if ( D == 2 ) {
       throw BadProperty(
         "topology::EllipseMask<D>: "
         "polar_axis not defined in 2D." );
     }
     polar_axis_ = getValue< double >( d, names::polar_axis );
 
-    if ( polar_axis_ <= 0 )
-    {
+    if ( polar_axis_ <= 0 ) {
       throw BadProperty(
         "topology::EllipseMask<D>: "
         "All axis > 0 required." );
@@ -965,38 +930,31 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
 
     z_scale_ = 4.0 / ( polar_axis_ * polar_axis_ );
   }
-  else
-  {
+  else {
     polar_axis_ = 0.0;
     z_scale_ = 0.0;
   }
 
-  if ( d->known( names::anchor ) )
-  {
+  if ( d->known( names::anchor ) ) {
     center_ = getValue< std::vector< double > >( d, names::anchor );
   }
 
-  if ( d->known( names::azimuth_angle ) )
-  {
+  if ( d->known( names::azimuth_angle ) ) {
     azimuth_angle_ = getValue< double >( d, names::azimuth_angle );
   }
-  else
-  {
+  else {
     azimuth_angle_ = 0.0;
   }
 
-  if ( d->known( names::polar_angle ) )
-  {
-    if ( D == 2 )
-    {
+  if ( d->known( names::polar_angle ) ) {
+    if ( D == 2 ) {
       throw BadProperty(
         "topology::EllipseMask<D>: "
         "polar_angle not defined in 2D." );
     }
     polar_angle_ = getValue< double >( d, names::polar_angle );
   }
-  else
-  {
+  else {
     polar_angle_ = 0.0;
   }
 

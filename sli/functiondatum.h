@@ -43,8 +43,7 @@
   by the same name as before).
  */
 
-class FunctionDatum : public TypedDatum< &SLIInterpreter::Functiontype >
-{
+class FunctionDatum : public TypedDatum< &SLIInterpreter::Functiontype > {
   static sli::pool memory;
 
   Name name;
@@ -102,8 +101,7 @@ public:
   void
   execute( SLIInterpreter* i )
   {
-    if ( not( deprecation_warning_issued_ or deprecation_info_.empty() ) )
-    {
+    if ( not( deprecation_warning_issued_ or deprecation_info_.empty() ) ) {
       i->message( SLIInterpreter::M_DEPRECATED,
         "SLIInterpreter",
         ( "SLI function " + name.toString() + " is deprecated in " + deprecation_info_ + "." ).c_str() );
@@ -136,8 +134,7 @@ public:
   equals( Datum const* dat ) const
   {
     const FunctionDatum* fd = dynamic_cast< FunctionDatum* >( const_cast< Datum* >( dat ) );
-    if ( fd == NULL )
-    {
+    if ( fd == NULL ) {
       return false;
     }
 
@@ -154,8 +151,7 @@ public:
 
   static void* operator new( size_t size )
   {
-    if ( size != sizeof( FunctionDatum ) )
-    {
+    if ( size != sizeof( FunctionDatum ) ) {
       return ::operator new( size );
     }
     return memory.alloc();
@@ -163,12 +159,10 @@ public:
 
   static void operator delete( void* p, size_t size )
   {
-    if ( p == NULL )
-    {
+    if ( p == NULL ) {
       return;
     }
-    if ( size != sizeof( FunctionDatum ) )
-    {
+    if ( size != sizeof( FunctionDatum ) ) {
       ::operator delete( p );
       return;
     }

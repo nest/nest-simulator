@@ -31,10 +31,8 @@
 #include "static_assert.h"
 #include "target.h"
 
-namespace nest
-{
-class TargetDataFields
-{
+namespace nest {
+class TargetDataFields {
 private:
   unsigned int lcid_ : NUM_BITS_LCID;
   unsigned int tid_ : NUM_BITS_TID;
@@ -113,8 +111,7 @@ TargetDataFields::get_syn_id() const
   return syn_id_;
 }
 
-class SecondaryTargetDataFields
-{
+class SecondaryTargetDataFields {
 private:
   unsigned int send_buffer_pos_;
   unsigned char syn_id_;
@@ -156,8 +153,7 @@ SecondaryTargetDataFields::get_syn_id() const
   return syn_id_;
 }
 
-enum enum_status_target_data_id
-{
+enum enum_status_target_data_id {
   TARGET_DATA_ID_DEFAULT,
   TARGET_DATA_ID_COMPLETE,
   TARGET_DATA_ID_END,
@@ -170,8 +166,7 @@ enum enum_status_target_data_id
  * buffers.
  * SeeAlso: SpikeData
  */
-class TargetData
-{
+class TargetData {
   // Members must be set explicitly -- no defaults
   // Done this way to create large vector without preconstruction
   // and to handle variant fields
@@ -192,8 +187,7 @@ private:
 
 public:
   //! variant fields
-  union
-  {
+  union {
     TargetDataFields target_data;
     SecondaryTargetDataFields secondary_data;
   };

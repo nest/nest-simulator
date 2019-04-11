@@ -79,22 +79,19 @@ FilesystemModule::FileNamesFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
 
   DIR* TheDirectory = opendir( sd->c_str() );
-  if ( TheDirectory != NULL )
-  {
+  if ( TheDirectory != NULL ) {
     ArrayDatum* a = new ArrayDatum();
     i->EStack.pop();
     i->OStack.pop();
     dirent* TheEntry;
-    while ( ( TheEntry = readdir( TheDirectory ) ) != NULL )
-    {
+    while ( ( TheEntry = readdir( TheDirectory ) ) != NULL ) {
       Token string_token( new StringDatum( TheEntry->d_name ) );
       a->push_back_move( string_token );
     }
     Token array_token( a );
     i->OStack.push_move( array_token );
   }
-  else
-  {
+  else {
     i->raiseerror( i->BadIOError );
   }
 }
@@ -107,12 +104,10 @@ FilesystemModule::SetDirectoryFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = chdir( sd->c_str() );
   i->OStack.pop();
-  if ( not s )
-  {
+  if ( not s ) {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
-  else
-  {
+  else {
     i->OStack.push( i->baselookup( i->false_name ) );
   };
   i->EStack.pop();
@@ -139,10 +134,8 @@ FilesystemModule::DirectoryFunction::execute( SLIInterpreter* i ) const
 
   int size = SIZE;
   char* path_buffer = new char[ size ];
-  while ( getcwd( path_buffer, size - 1 ) == NULL )
-  { // try again with a bigger buffer!
-    if ( errno != ERANGE )
-    {
+  while ( getcwd( path_buffer, size - 1 ) == NULL ) { // try again with a bigger buffer!
+    if ( errno != ERANGE ) {
       i->raiseerror( i->BadIOError ); // size wasn't reason
     }
     delete[] path_buffer;
@@ -165,8 +158,7 @@ FilesystemModule::MoveFileFunction::execute( SLIInterpreter* i ) const
   assert( src != NULL );
   assert( dst != NULL );
   int s = link( src->c_str(), dst->c_str() );
-  if ( not s )
-  {
+  if ( not s ) {
     s = unlink( src->c_str() );
     if ( s ) // failed to remove old link: undo everything
     {
@@ -175,12 +167,10 @@ FilesystemModule::MoveFileFunction::execute( SLIInterpreter* i ) const
     };
   };
   i->OStack.pop( 2 );
-  if ( not s )
-  {
+  if ( not s ) {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
-  else
-  {
+  else {
     i->OStack.push( i->baselookup( i->false_name ) );
   };
   i->EStack.pop();
@@ -196,16 +186,14 @@ FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
   assert( dst != NULL );
 
   std::ofstream deststream( dst->c_str() );
-  if ( not deststream )
-  {
+  if ( not deststream ) {
     i->message( SLIInterpreter::M_ERROR, "CopyFile", "Could not create destination file." );
     i->raiseerror( i->BadIOError );
     return;
   }
 
   std::ifstream sourcestream( src->c_str() );
-  if ( not sourcestream )
-  {
+  if ( not sourcestream ) {
     i->message( SLIInterpreter::M_ERROR, "CopyFile", "Could not open source file." );
     i->raiseerror( i->BadIOError );
     return;
@@ -214,8 +202,7 @@ FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
   // copy while file in one call (see Josuttis chap 13.9 (File Access), p. 631)
   deststream << sourcestream.rdbuf();
 
-  if ( not deststream )
-  {
+  if ( not deststream ) {
     i->message( SLIInterpreter::M_ERROR, "CopyFile", "Error copying file." );
     i->raiseerror( i->BadIOError );
     return;
@@ -235,12 +222,10 @@ FilesystemModule::DeleteFileFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = unlink( sd->c_str() );
   i->OStack.pop();
-  if ( not s )
-  {
+  if ( not s ) {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
-  else
-  {
+  else {
     i->OStack.push( i->baselookup( i->false_name ) );
   };
   i->EStack.pop();
@@ -254,12 +239,10 @@ FilesystemModule::MakeDirectoryFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = mkdir( sd->c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP );
   i->OStack.pop();
-  if ( not s )
-  {
+  if ( not s ) {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
-  else
-  {
+  else {
     i->OStack.push( i->baselookup( i->false_name ) );
   };
   i->EStack.pop();
@@ -273,12 +256,10 @@ FilesystemModule::RemoveDirectoryFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = rmdir( sd->c_str() );
   i->OStack.pop();
-  if ( not s )
-  {
+  if ( not s ) {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
-  else
-  {
+  else {
     i->OStack.push( i->baselookup( i->false_name ) );
   };
   i->EStack.pop();
@@ -309,14 +290,12 @@ FilesystemModule::TmpNamFunction::execute( SLIInterpreter* i ) const
   static unsigned int seed = std::time( 0 );
   char* env = getenv( "TMPDIR" );
   std::string tmpdir( "/tmp" );
-  if ( env )
-  {
+  if ( env ) {
     tmpdir = std::string( env );
   }
 
   std::string tempfile;
-  do
-  {
+  do {
     int rng = rand_r( &seed );
     tempfile = tmpdir + String::compose( "/nest-tmp-%1", rng );
   } while ( std::ifstream( tempfile.c_str() ) );
@@ -352,27 +331,23 @@ FilesystemModule::CompareFilesFunction::execute( SLIInterpreter* i ) const
   std::ifstream as( flA->c_str(), std::ifstream::in | std::ifstream::binary );
   std::ifstream bs( flB->c_str(), std::ifstream::in | std::ifstream::binary );
 
-  if ( not( as.good() && bs.good() ) )
-  {
+  if ( not( as.good() && bs.good() ) ) {
     as.close();
     bs.close();
     throw IOError();
   }
 
   bool equal = true;
-  while ( equal && as.good() && bs.good() )
-  {
+  while ( equal && as.good() && bs.good() ) {
     const int ac = as.get();
     const int bc = bs.get();
 
-    if ( not( as.fail() || bs.fail() ) )
-    {
+    if ( not( as.fail() || bs.fail() ) ) {
       equal = ac == bc;
     }
   }
 
-  if ( as.fail() != bs.fail() )
-  {
+  if ( as.fail() != bs.fail() ) {
     equal = false; // different lengths
   }
 
@@ -380,12 +355,10 @@ FilesystemModule::CompareFilesFunction::execute( SLIInterpreter* i ) const
   bs.close();
 
   i->OStack.pop( 2 );
-  if ( equal )
-  {
+  if ( equal ) {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
-  else
-  {
+  else {
     i->OStack.push( i->baselookup( i->false_name ) );
   }
 

@@ -31,15 +31,13 @@
 // Includes from nestkernel:
 #include "vp_manager.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * This class simplifies keeping track of write position in MPI buffer
  * while collocating spikes.
  */
-class SendBufferPosition
-{
+class SendBufferPosition {
 private:
   size_t num_spike_data_written_;
   std::vector< unsigned int > idx_;
@@ -96,8 +94,7 @@ inline SendBufferPosition::SendBufferPosition( const AssignedRanks& assigned_ran
   idx_.resize( assigned_ranks.size );
   begin_.resize( assigned_ranks.size );
   end_.resize( assigned_ranks.size );
-  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
-  {
+  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank ) {
     // thread-local index of (global) rank
     const thread lr_idx = rank % assigned_ranks.max_size;
     assert( lr_idx < assigned_ranks.size );

@@ -34,8 +34,7 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: spin_detector - Device for detecting binary states in neurons.
@@ -102,8 +101,7 @@ SeeAlso: spike_detector, Device, RecordingDevice
  *
  * @ingroup Devices
  */
-class spin_detector : public DeviceNode
-{
+class spin_detector : public DeviceNode {
 
 public:
   spin_detector();
@@ -176,8 +174,7 @@ private:
    * This does not violate order-independence, since all spikes are delivered
    * from the global queue before any node is updated.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     std::vector< std::vector< Event* > > spikes_;
   };
 
@@ -190,8 +187,7 @@ private:
 inline port
 spin_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;

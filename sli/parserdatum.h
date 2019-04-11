@@ -28,8 +28,7 @@
 #include "interpret.h"
 #include "parser.h"
 
-class ParserDatum : public AggregateDatum< Parser, &SLIInterpreter::Parsertype >
-{
+class ParserDatum : public AggregateDatum< Parser, &SLIInterpreter::Parsertype > {
   Datum*
   clone( void ) const
   {

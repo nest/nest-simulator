@@ -44,16 +44,14 @@
 #include "topology_names.h"
 #include "topologymodule.h"
 
-namespace nest
-{
+namespace nest {
 class TopologyParameter;
 typedef lockPTRDatum< TopologyParameter, &TopologyModule::ParameterType > ParameterDatum;
 
 /**
  * Abstract base class for parameters
  */
-class TopologyParameter
-{
+class TopologyParameter {
 public:
   /**
    * Default constructor
@@ -98,12 +96,10 @@ public:
   value( const Position< 2 >& p, librandom::RngPtr& rng ) const
   {
     double val = raw_value( p, rng );
-    if ( val < cutoff_ )
-    {
+    if ( val < cutoff_ ) {
       return 0.0;
     }
-    else
-    {
+    else {
       return val;
     }
   }
@@ -115,12 +111,10 @@ public:
   value( const Position< 3 >& p, librandom::RngPtr& rng ) const
   {
     double val = raw_value( p, rng );
-    if ( val < cutoff_ )
-    {
+    if ( val < cutoff_ ) {
       return 0.0;
     }
-    else
-    {
+    else {
       return val;
     }
   }
@@ -184,8 +178,7 @@ private:
 /**
  * Parameter with constant value.
  */
-class ConstantParameter : public TopologyParameter
-{
+class ConstantParameter : public TopologyParameter {
 public:
   ConstantParameter( double value )
     : TopologyParameter()
@@ -234,8 +227,7 @@ private:
 /**
  * Abstract base class for parameters only depending on distance.
  */
-class RadialParameter : public TopologyParameter
-{
+class RadialParameter : public TopologyParameter {
 public:
   RadialParameter()
     : TopologyParameter()
@@ -269,8 +261,7 @@ public:
 /**
  * Linear (affine) parameter p(d) = c + a*d.
  */
-class LinearParameter : public RadialParameter
-{
+class LinearParameter : public RadialParameter {
 public:
   /**
    * Parameters:
@@ -306,8 +297,7 @@ private:
 /**
  * Exponential parameter p(d) = c + a*exp(-d/tau).
  */
-class ExponentialParameter : public RadialParameter
-{
+class ExponentialParameter : public RadialParameter {
 public:
   /**
    * Parameters:
@@ -324,8 +314,7 @@ public:
     updateValue< double >( d, names::a, a_ );
     updateValue< double >( d, names::c, c_ );
     updateValue< double >( d, names::tau, tau_ );
-    if ( tau_ <= 0 )
-    {
+    if ( tau_ <= 0 ) {
       throw BadProperty(
         "topology::ExponentialParameter: "
         "tau > 0 required." );
@@ -352,8 +341,7 @@ private:
 /**
  * Gaussian parameter p(d) = c + p_center*exp(-(d-mean)^2/(2*sigma^2))
  */
-class GaussianParameter : public RadialParameter
-{
+class GaussianParameter : public RadialParameter {
 public:
   /**
    * Parameters:
@@ -373,8 +361,7 @@ public:
     updateValue< double >( d, names::p_center, p_center_ );
     updateValue< double >( d, names::mean, mean_ );
     updateValue< double >( d, names::sigma, sigma_ );
-    if ( sigma_ <= 0 )
-    {
+    if ( sigma_ <= 0 ) {
       throw BadProperty(
         "topology::GaussianParameter: "
         "sigma > 0 required." );
@@ -405,8 +392,7 @@ private:
  *                                2*rho*(x-mean_x)*(y-mean_y)/(sigma_x*sigma_y)
  *                               ) / (2*(1-rho^2)) )
  */
-class Gaussian2DParameter : public TopologyParameter
-{
+class Gaussian2DParameter : public TopologyParameter {
 public:
   /**
    * Parameters:
@@ -449,8 +435,7 @@ private:
 /**
  * Gamma parameter p(d) = d^(kappa-1)*exp(-d/theta)/(theta^kappa*Gamma(kappa))
  */
-class GammaParameter : public RadialParameter
-{
+class GammaParameter : public RadialParameter {
 public:
   /**
    * Parameters:
@@ -466,14 +451,12 @@ public:
   {
     updateValue< double >( d, names::kappa, kappa_ );
     updateValue< double >( d, names::theta, theta_ );
-    if ( kappa_ <= 0 )
-    {
+    if ( kappa_ <= 0 ) {
       throw BadProperty(
         "topology::GammaParameter: "
         "kappa > 0 required." );
     }
-    if ( theta_ <= 0 )
-    {
+    if ( theta_ <= 0 ) {
       throw BadProperty(
         "topology::GammaParameter: "
         "theta > 0 required." );
@@ -509,8 +492,7 @@ private:
 /**
  * Random parameter with uniform distribution in [min,max)
  */
-class UniformParameter : public TopologyParameter
-{
+class UniformParameter : public TopologyParameter {
 public:
 public:
   /**
@@ -525,8 +507,7 @@ public:
   {
     updateValue< double >( d, names::min, lower_ );
     updateValue< double >( d, names::max, range_ );
-    if ( lower_ >= range_ )
-    {
+    if ( lower_ >= range_ ) {
       throw BadProperty(
         "topology::UniformParameter: "
         "min < max required." );
@@ -562,8 +543,7 @@ private:
  * Random parameter with normal distribution, optionally truncated to [min,max).
  * Truncation is implemented by rejection.
  */
-class NormalParameter : public TopologyParameter
-{
+class NormalParameter : public TopologyParameter {
 public:
 public:
   /**
@@ -585,14 +565,12 @@ public:
     updateValue< double >( d, names::sigma, sigma_ );
     updateValue< double >( d, names::min, min_ );
     updateValue< double >( d, names::max, max_ );
-    if ( sigma_ <= 0 )
-    {
+    if ( sigma_ <= 0 ) {
       throw BadProperty(
         "topology::NormalParameter: "
         "sigma > 0 required." );
     }
-    if ( min_ >= max_ )
-    {
+    if ( min_ >= max_ ) {
       throw BadProperty(
         "topology::NormalParameter: "
         "min < max required." );
@@ -603,8 +581,7 @@ public:
   raw_value( librandom::RngPtr& rng ) const
   {
     double val;
-    do
-    {
+    do {
       val = mean_ + rdev( rng ) * sigma_;
     } while ( ( val < min_ ) or ( val >= max_ ) );
     return val;
@@ -638,8 +615,7 @@ private:
  * Random parameter with lognormal distribution, optionally truncated to
  * [min,max). Truncation is implemented by rejection.
  */
-class LognormalParameter : public TopologyParameter
-{
+class LognormalParameter : public TopologyParameter {
 public:
 public:
   /**
@@ -661,14 +637,12 @@ public:
     updateValue< double >( d, names::sigma, sigma_ );
     updateValue< double >( d, names::min, min_ );
     updateValue< double >( d, names::max, max_ );
-    if ( sigma_ <= 0 )
-    {
+    if ( sigma_ <= 0 ) {
       throw BadProperty(
         "topology::LognormalParameter: "
         "sigma > 0 required." );
     }
-    if ( min_ >= max_ )
-    {
+    if ( min_ >= max_ ) {
       throw BadProperty(
         "topology::LognormalParameter: "
         "min < max required." );
@@ -679,8 +653,7 @@ public:
   raw_value( librandom::RngPtr& rng ) const
   {
     double val;
-    do
-    {
+    do {
       val = std::exp( mu_ + rdev( rng ) * sigma_ );
     } while ( ( val < min_ ) or ( val >= max_ ) );
     return val;
@@ -714,8 +687,7 @@ private:
  * Parameter class representing a parameter centered at an anchor position.
  */
 template < int D >
-class AnchoredParameter : public TopologyParameter
-{
+class AnchoredParameter : public TopologyParameter {
 public:
   AnchoredParameter( const TopologyParameter& p, const Position< D >& anchor )
     : TopologyParameter( p )
@@ -762,8 +734,7 @@ private:
 /**
  * Parameter class representing the product of two parameters
  */
-class ProductParameter : public TopologyParameter
-{
+class ProductParameter : public TopologyParameter {
 public:
   /**
    * Construct the product of the two given parameters. Copies are made
@@ -819,8 +790,7 @@ protected:
 /**
  * Parameter class representing the quotient of two parameters
  */
-class QuotientParameter : public TopologyParameter
-{
+class QuotientParameter : public TopologyParameter {
 public:
   /**
    * Construct the quotient of the two given parameters. Copies are made
@@ -876,8 +846,7 @@ protected:
 /**
  * Parameter class representing the sum of two parameters
  */
-class SumParameter : public TopologyParameter
-{
+class SumParameter : public TopologyParameter {
 public:
   /**
    * Construct the sum of the two given parameters. Copies are made
@@ -933,8 +902,7 @@ protected:
 /**
  * Parameter class representing the difference of two parameters
  */
-class DifferenceParameter : public TopologyParameter
-{
+class DifferenceParameter : public TopologyParameter {
 public:
   /**
    * Construct the difference of the two given parameters. Copies are made
@@ -990,8 +958,7 @@ protected:
 /**
  * Parameter class for a parameter oriented in the opposite direction.
  */
-class ConverseParameter : public TopologyParameter
-{
+class ConverseParameter : public TopologyParameter {
 public:
   /**
    * Construct the converse of the given parameter. A copy is made of the

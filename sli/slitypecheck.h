@@ -29,8 +29,7 @@
 // Includes from sli:
 #include "slifunction.h"
 
-class TrieFunction : public SLIFunction
-{
+class TrieFunction : public SLIFunction {
 public:
   TrieFunction()
   {
@@ -38,8 +37,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class TrieInfoFunction : public SLIFunction
-{
+class TrieInfoFunction : public SLIFunction {
 public:
   TrieInfoFunction()
   {
@@ -47,8 +45,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class AddtotrieFunction : public SLIFunction
-{
+class AddtotrieFunction : public SLIFunction {
 public:
   AddtotrieFunction()
   {
@@ -56,8 +53,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Cva_tFunction : public SLIFunction
-{
+class Cva_tFunction : public SLIFunction {
 public:
   Cva_tFunction()
   {
@@ -65,8 +61,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Cvt_aFunction : public SLIFunction
-{
+class Cvt_aFunction : public SLIFunction {
 public:
   Cvt_aFunction()
   {
@@ -74,8 +69,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class TypeFunction : public SLIFunction
-{
+class TypeFunction : public SLIFunction {
 public:
   TypeFunction()
   {

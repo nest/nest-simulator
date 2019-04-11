@@ -63,10 +63,8 @@ nest::SourceTable::initialize()
 void
 nest::SourceTable::finalize()
 {
-  if ( not is_cleared() )
-  {
-    for ( thread tid = 0; tid < static_cast< thread >( sources_.size() ); ++tid )
-    {
+  if ( not is_cleared() ) {
+    for ( thread tid = 0; tid < static_cast< thread >( sources_.size() ); ++tid ) {
       clear( tid );
     }
   }
@@ -80,8 +78,7 @@ nest::SourceTable::is_cleared() const
 {
   bool all_cleared = true;
   // we only return true, if is_cleared is true for all threads
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid ) {
     all_cleared &= is_cleared_[ tid ];
   }
   return all_cleared;
@@ -97,10 +94,8 @@ nest::SourceTablePosition
 nest::SourceTable::find_maximal_position() const
 {
   SourceTablePosition max_position( -1, -1, -1 );
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    if ( max_position < saved_positions_[ tid ] )
-    {
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid ) {
+    if ( max_position < saved_positions_[ tid ] ) {
       max_position = saved_positions_[ tid ];
     }
   }
@@ -120,34 +115,27 @@ nest::SourceTable::clean( const thread tid )
   // delete part of the sources table, with indices larger than those
   // in max_position; if this thread is larger than max_positions's
   // thread, we can delete all sources; otherwise we do nothing.
-  if ( max_position.tid == tid )
-  {
-    for ( synindex syn_id = max_position.syn_id; syn_id < sources_[ tid ].size(); ++syn_id )
-    {
+  if ( max_position.tid == tid ) {
+    for ( synindex syn_id = max_position.syn_id; syn_id < sources_[ tid ].size(); ++syn_id ) {
       BlockVector< Source >& sources = sources_[ tid ][ syn_id ];
-      if ( max_position.syn_id == syn_id )
-      {
+      if ( max_position.syn_id == syn_id ) {
         // we need to add 2 to max_position.lcid since
         // max_position.lcid + 1 can contain a valid entry which we
         // do not want to delete.
-        if ( max_position.lcid + 2 < static_cast< long >( sources.size() ) )
-        {
+        if ( max_position.lcid + 2 < static_cast< long >( sources.size() ) ) {
           sources.erase( sources.begin() + max_position.lcid + 2, sources.end() );
         }
       }
-      else
-      {
+      else {
         assert( max_position.syn_id < syn_id );
         sources.clear();
       }
     }
   }
-  else if ( max_position.tid < tid )
-  {
+  else if ( max_position.tid < tid ) {
     sources_[ tid ].clear();
   }
-  else
-  {
+  else {
     // do nothing
     assert( tid < max_position.tid );
   }
@@ -161,8 +149,7 @@ nest::SourceTable::reserve( const thread tid, const synindex syn_id, const size_
 nest::index
 nest::SourceTable::get_gid( const thread tid, const synindex syn_id, const index lcid ) const
 {
-  if ( not kernel().connection_manager.get_keep_source_table() )
-  {
+  if ( not kernel().connection_manager.get_keep_source_table() ) {
     throw KernelException( "Cannot use SourceTable::get_gid when get_keep_source_table is false" );
   }
   return sources_[ tid ][ syn_id ][ lcid ].get_gid();
@@ -171,15 +158,13 @@ nest::SourceTable::get_gid( const thread tid, const synindex syn_id, const index
 nest::index
 nest::SourceTable::remove_disabled_sources( const thread tid, const synindex syn_id )
 {
-  if ( sources_[ tid ].size() <= syn_id )
-  {
+  if ( sources_[ tid ].size() <= syn_id ) {
     return invalid_index;
   }
 
   BlockVector< Source >& mysources = sources_[ tid ][ syn_id ];
   const index max_size = mysources.size();
-  if ( max_size == 0 )
-  {
+  if ( max_size == 0 ) {
     return invalid_index;
   }
 
@@ -187,16 +172,14 @@ nest::SourceTable::remove_disabled_sources( const thread tid, const synindex syn
   // to fail; afterwards we can be certain that it is non-negative and
   // we can static_cast it to index
   long lcid = max_size - 1;
-  while ( lcid >= 0 and mysources[ lcid ].is_disabled() )
-  {
+  while ( lcid >= 0 and mysources[ lcid ].is_disabled() ) {
     --lcid;
   }
   ++lcid; // lcid marks first disabled source, but the while loop only
           // exits if lcid points at a not disabled element, hence we
           // need to increase it by one again
   mysources.erase( mysources.begin() + lcid, mysources.end() );
-  if ( static_cast< index >( lcid ) == max_size )
-  {
+  if ( static_cast< index >( lcid ) == max_size ) {
     return invalid_index;
   }
   return static_cast< index >( lcid );
@@ -219,14 +202,11 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
   // corresponding to continuous-data connections on this MPI rank;
   // using a set makes sure secondary events are not duplicated for
   // targets on the same process, but different threads
-  for ( size_t syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id )
-  {
-    if ( not kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary() )
-    {
+  for ( size_t syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id ) {
+    if ( not kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary() ) {
       for ( BlockVector< Source >::const_iterator source_cit = sources_[ tid ][ syn_id ].begin();
             source_cit != sources_[ tid ][ syn_id ].end();
-            ++source_cit )
-      {
+            ++source_cit ) {
 #pragma omp critical
         {
           ( *unique_secondary_source_gid_syn_id ).insert( std::make_pair( source_cit->get_gid(), syn_id ) );
@@ -244,8 +224,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
 
     for ( std::set< std::pair< index, size_t > >::const_iterator cit = ( *unique_secondary_source_gid_syn_id ).begin();
           cit != ( *unique_secondary_source_gid_syn_id ).end();
-          ++cit )
-    {
+          ++cit ) {
       const thread source_rank = kernel().mpi_manager.get_process_id_of_gid( cit->first );
       const size_t event_size = kernel().model_manager.get_secondary_event_prototype( cit->second, tid ).size();
 
@@ -282,11 +261,9 @@ nest::SourceTable::get_next_target_data( const thread tid,
 
   // we stay in this loop either until we can return a valid
   // TargetData object or we have reached the end of the sources table
-  while ( true )
-  {
+  while ( true ) {
     current_position.wrap_position( sources_ );
-    if ( current_position.is_at_end() )
-    {
+    if ( current_position.is_at_end() ) {
       return false; // reached the end of the sources table
     }
 
@@ -294,8 +271,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
     const Source& const_current_source =
       sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid ];
 
-    if ( const_current_source.is_processed() or const_current_source.is_disabled() )
-    {
+    if ( const_current_source.is_processed() or const_current_source.is_disabled() ) {
       // looks like we've processed this already, let's continue
       --current_position.lcid;
       continue;
@@ -306,8 +282,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
     // determine whether this thread is responsible for this part of
     // the MPI buffer; if not we just continue with the next iteration
     // of the loop
-    if ( source_rank < rank_start or source_rank >= rank_end )
-    {
+    if ( source_rank < rank_start or source_rank >= rank_end ) {
       --current_position.lcid;
       continue;
     }
@@ -325,8 +300,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
     if ( ( current_position.lcid + 1
              < static_cast< long >( sources_[ current_position.tid ][ current_position.syn_id ].size() )
            and sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid + 1 ].get_gid()
-             == current_source.get_gid() ) )
-    {
+             == current_source.get_gid() ) ) {
       kernel().connection_manager.set_has_source_subsequent_targets(
         current_position.tid, current_position.syn_id, current_position.lcid, true );
     }
@@ -338,22 +312,19 @@ nest::SourceTable::get_next_target_data( const thread tid,
       and ( sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid - 1 ].get_gid()
             == current_source.get_gid() )
       and ( not sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid - 1 ]
-                  .is_processed() ) )
-    {
+                  .is_processed() ) ) {
       --current_position.lcid;
       continue;
     }
     // otherwise we return a valid TargetData
-    else
-    {
+    else {
       // set values of next_target_data
       next_target_data.set_source_lid( kernel().vp_manager.gid_to_lid( current_source.get_gid() ) );
       next_target_data.set_source_tid(
         kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp_for_gid( current_source.get_gid() ) ) );
       next_target_data.reset_marker();
 
-      if ( current_source.is_primary() )
-      {
+      if ( current_source.is_primary() ) {
         next_target_data.set_is_primary( true );
         // we store the thread index of the source table, not our own tid!
         TargetDataFields& target_fields = next_target_data.target_data;
@@ -361,8 +332,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
         target_fields.set_syn_id( current_position.syn_id );
         target_fields.set_lcid( current_position.lcid );
       }
-      else
-      {
+      else {
         next_target_data.set_is_primary( false );
 
         const size_t recv_buffer_pos = kernel().connection_manager.get_secondary_recv_buffer_position(

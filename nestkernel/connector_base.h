@@ -50,15 +50,13 @@
 #include "arraydatum.h"
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Base class to allow storing Connectors for different synapse types
  * in vectors. We define the interface here to avoid casting.
  */
-class ConnectorBase
-{
+class ConnectorBase {
 
 public:
   // Destructor needs to be declared virtual to avoid undefined
@@ -213,8 +211,7 @@ public:
  * Homogeneous connector, contains synapses of one particular type (syn_id_).
  */
 template < typename ConnectionT >
-class Connector : public ConnectorBase
-{
+class Connector : public ConnectorBase {
 private:
   BlockVector< ConnectionT > C_;
   const synindex syn_id_;
@@ -278,13 +275,10 @@ public:
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
-    if ( not C_[ lcid ].is_disabled() )
-    {
-      if ( synapse_label == UNLABELED_CONNECTION or C_[ lcid ].get_label() == synapse_label )
-      {
+    if ( not C_[ lcid ].is_disabled() ) {
+      if ( synapse_label == UNLABELED_CONNECTION or C_[ lcid ].get_label() == synapse_label ) {
         const index current_target_gid = C_[ lcid ].get_target( tid )->get_gid();
-        if ( current_target_gid == target_gid or target_gid == 0 )
-        {
+        if ( current_target_gid == target_gid or target_gid == 0 ) {
           conns.push_back( ConnectionDatum( ConnectionID( source_gid, current_target_gid, tid, syn_id_, lcid ) ) );
         }
       }
@@ -299,14 +293,11 @@ public:
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
-    if ( not C_[ lcid ].is_disabled() )
-    {
-      if ( synapse_label == UNLABELED_CONNECTION or C_[ lcid ].get_label() == synapse_label )
-      {
+    if ( not C_[ lcid ].is_disabled() ) {
+      if ( synapse_label == UNLABELED_CONNECTION or C_[ lcid ].get_label() == synapse_label ) {
         const index current_target_gid = C_[ lcid ].get_target( tid )->get_gid();
         if ( std::find( target_neuron_gids.begin(), target_neuron_gids.end(), current_target_gid )
-          != target_neuron_gids.end() )
-        {
+          != target_neuron_gids.end() ) {
           conns.push_back( ConnectionDatum( ConnectionID( source_gid, current_target_gid, tid, syn_id_, lcid ) ) );
         }
       }
@@ -320,8 +311,7 @@ public:
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
-    for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
-    {
+    for ( size_t lcid = 0; lcid < C_.size(); ++lcid ) {
       get_connection( source_gid, target_gid, tid, lcid, synapse_label, conns );
     }
   }
@@ -329,11 +319,9 @@ public:
   void
   get_source_lcids( const thread tid, const index target_gid, std::vector< index >& source_lcids ) const
   {
-    for ( index lcid = 0; lcid < C_.size(); ++lcid )
-    {
+    for ( index lcid = 0; lcid < C_.size(); ++lcid ) {
       const index current_target_gid = C_[ lcid ].get_target( tid )->get_gid();
-      if ( current_target_gid == target_gid and not C_[ lcid ].is_disabled() )
-      {
+      if ( current_target_gid == target_gid and not C_[ lcid ].is_disabled() ) {
         source_lcids.push_back( lcid );
       }
     }
@@ -346,16 +334,13 @@ public:
     std::vector< index >& target_gids ) const
   {
     index lcid = start_lcid;
-    while ( true )
-    {
+    while ( true ) {
       if ( C_[ lcid ].get_target( tid )->get_synaptic_elements( post_synaptic_element ) != 0.0
-        and not C_[ lcid ].is_disabled() )
-      {
+        and not C_[ lcid ].is_disabled() ) {
         target_gids.push_back( C_[ lcid ].get_target( tid )->get_gid() );
       }
 
-      if ( not C_[ lcid ].has_source_subsequent_targets() )
-      {
+      if ( not C_[ lcid ].has_source_subsequent_targets() ) {
         break;
       }
 
@@ -372,8 +357,7 @@ public:
   void
   send_to_all( const thread tid, const std::vector< ConnectorModel* >& cm, Event& e )
   {
-    for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
-    {
+    for ( size_t lcid = 0; lcid < C_.size(); ++lcid ) {
       e.set_port( lcid );
       assert( not C_[ lcid ].is_disabled() );
       C_[ lcid ].send(
@@ -388,20 +372,17 @@ public:
       static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
 
     index lcid_offset = 0;
-    while ( true )
-    {
+    while ( true ) {
       ConnectionT& conn = C_[ lcid + lcid_offset ];
       const bool is_disabled = conn.is_disabled();
       const bool has_source_subsequent_targets = conn.has_source_subsequent_targets();
 
       e.set_port( lcid + lcid_offset );
-      if ( not is_disabled )
-      {
+      if ( not is_disabled ) {
         conn.send( e, tid, cp );
         send_weight_event( tid, lcid + lcid_offset, e, cp );
       }
-      if ( not has_source_subsequent_targets )
-      {
+      if ( not has_source_subsequent_targets ) {
         break;
       }
       ++lcid_offset;
@@ -420,11 +401,9 @@ public:
     const double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
-    for ( size_t i = 0; i < C_.size(); ++i )
-    {
+    for ( size_t i = 0; i < C_.size(); ++i ) {
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties().get_vt_gid()
-        == vt_gid )
-      {
+        == vt_gid ) {
         C_[ i ].trigger_update_weight( tid,
           dopa_spikes,
           t_trig,
@@ -449,15 +428,12 @@ public:
   find_first_target( const thread tid, const index start_lcid, const index target_gid ) const
   {
     index lcid = start_lcid;
-    while ( true )
-    {
-      if ( C_[ lcid ].get_target( tid )->get_gid() == target_gid and not C_[ lcid ].is_disabled() )
-      {
+    while ( true ) {
+      if ( C_[ lcid ].get_target( tid )->get_gid() == target_gid and not C_[ lcid ].is_disabled() ) {
         return lcid;
       }
 
-      if ( not C_[ lcid ].has_source_subsequent_targets() )
-      {
+      if ( not C_[ lcid ].has_source_subsequent_targets() ) {
         return invalid_index;
       }
 
@@ -468,10 +444,8 @@ public:
   index
   find_matching_target( const thread tid, const std::vector< index >& matching_lcids, const index target_gid ) const
   {
-    for ( size_t i = 0; i < matching_lcids.size(); ++i )
-    {
-      if ( C_[ matching_lcids[ i ] ].get_target( tid )->get_gid() == target_gid )
-      {
+    for ( size_t i = 0; i < matching_lcids.size(); ++i ) {
+      if ( C_[ matching_lcids[ i ] ].get_target( tid )->get_gid() == target_gid ) {
         return matching_lcids[ i ];
       }
     }

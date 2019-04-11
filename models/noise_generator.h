@@ -37,8 +37,7 @@
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: noise_generator - Device to generate Gaussian white noise current.
@@ -110,8 +109,7 @@ SeeAlso: Device
 
 Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
 */
-class noise_generator : public DeviceNode
-{
+class noise_generator : public DeviceNode {
 
 public:
   noise_generator();
@@ -171,8 +169,7 @@ private:
   /**
    * Store independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     double mean_;    //!< mean current, in pA
     double std_;     //!< standard deviation of current, in pA
     double std_mod_; //!< standard deviation of current modulation, in pA
@@ -199,8 +196,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
     double y_0_;
     double y_1_;
     double I_avg_; //!< Average of instantaneous currents computed
@@ -219,8 +215,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     long next_step_; //!< time step of next change in current
     AmpVec_ amps_;   //!< amplitudes, one per target
     Buffers_( noise_generator& );
@@ -230,8 +225,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
     long dt_steps_;                         //!< update interval in steps
     librandom::NormalRandomDev normal_dev_; //!< random deviate generator
     double omega_;                          //!< Angelfrequency i rad/s
@@ -264,8 +258,7 @@ private:
 inline port
 noise_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

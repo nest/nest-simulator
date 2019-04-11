@@ -33,8 +33,7 @@
 typedef std::vector< ConnectionGenerator::ClosedInterval > RangeSet;
 typedef ConnectionGenerator::ClosedInterval Range;
 
-namespace nest
-{
+namespace nest {
 
 extern SLIType ConnectionGeneratorType;
 

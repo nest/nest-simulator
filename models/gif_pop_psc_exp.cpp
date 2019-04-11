@@ -37,8 +37,7 @@
 
 #ifdef HAVE_GSL
 
-namespace nest
-{
+namespace nest {
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -149,8 +148,7 @@ nest::gif_pop_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
 
 
-  if ( tau_sfa_.size() != q_sfa_.size() )
-  {
+  if ( tau_sfa_.size() != q_sfa_.size() ) {
     throw BadProperty( String::compose(
       "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of "
       "tau_sfa: %1\nSize of q_sfa: %2",
@@ -158,46 +156,37 @@ nest::gif_pop_psc_exp::Parameters_::set( const DictionaryDatum& d )
       q_sfa_.size() ) );
   }
 
-  if ( c_m_ <= 0 )
-  {
+  if ( c_m_ <= 0 ) {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
 
-  if ( tau_m_ <= 0 )
-  {
+  if ( tau_m_ <= 0 ) {
     throw BadProperty( "The membrane time constants must be strictly positive." );
   }
 
-  if ( tau_syn_ex_ <= 0 or tau_syn_in_ <= 0 )
-  {
+  if ( tau_syn_ex_ <= 0 or tau_syn_in_ <= 0 ) {
     throw BadProperty( "The synaptic time constants must be strictly positive." );
   }
 
-  for ( size_t i = 0; i < tau_sfa_.size(); ++i )
-  {
-    if ( tau_sfa_[ i ] <= 0 )
-    {
+  for ( size_t i = 0; i < tau_sfa_.size(); ++i ) {
+    if ( tau_sfa_[ i ] <= 0 ) {
       throw BadProperty( "All time constants must be strictly positive." );
     }
   }
 
-  if ( N_ <= 0 )
-  {
+  if ( N_ <= 0 ) {
     throw BadProperty( "Number of neurons must be positive." );
   }
 
-  if ( lambda_0_ < 0 )
-  {
+  if ( lambda_0_ < 0 ) {
     throw BadProperty( "lambda_0 must be positive." );
   }
 
-  if ( Delta_V_ <= 0 )
-  {
+  if ( Delta_V_ <= 0 ) {
     throw BadProperty( "Delta_V must be strictly positive." );
   }
 
-  if ( t_ref_ < 0 )
-  {
+  if ( t_ref_ < 0 ) {
     throw BadProperty( "Absolute refractory period cannot be negative." );
   }
 }
@@ -277,13 +266,11 @@ nest::gif_pop_psc_exp::init_buffers_()
 void
 nest::gif_pop_psc_exp::calibrate()
 {
-  if ( P_.tau_sfa_.size() == 0 )
-  {
+  if ( P_.tau_sfa_.size() == 0 ) {
     throw BadProperty( "Time constant array should not be empty. " );
   }
 
-  if ( P_.q_sfa_.size() == 0 )
-  {
+  if ( P_.q_sfa_.size() == 0 ) {
     throw BadProperty( "Adaptation value array should not be empty. " );
   }
 
@@ -303,13 +290,11 @@ nest::gif_pop_psc_exp::calibrate()
   V_.P11_in_ = std::exp( -V_.h_ / P_.tau_syn_in_ );
 
   // initializing internal state
-  if ( not S_.initialized_ )
-  {
+  if ( not S_.initialized_ ) {
     // relaxation time of refractory kernel. This sets the length of the spike
     // history buffer n_ and other internal variables.
 
-    if ( P_.len_kernel_ < 1 )
-    {
+    if ( P_.len_kernel_ < 1 ) {
       // a value smaller than one signals that the kernel length is to be
       // automatically chosen based on the remaining parameters.
       P_.len_kernel_ = get_history_size();
@@ -328,8 +313,7 @@ nest::gif_pop_psc_exp::calibrate()
     V_.theta_tld_.clear();
 
     // Procedure InitPopulations, see Fig. 11 of [1]
-    for ( int k = 0; k < P_.len_kernel_; ++k )
-    {
+    for ( int k = 0; k < P_.len_kernel_; ++k ) {
       V_.n_.push_back( 0 );      // line 3 of [1]
       V_.m_.push_back( 0 );      // line 3 of [1]
       V_.v_.push_back( 0 );      // line 3 of [1]
@@ -358,8 +342,7 @@ nest::gif_pop_psc_exp::calibrate()
     V_.Q30_.clear();
     V_.Q30K_.clear();
 
-    for ( size_t k = 0; k < P_.tau_sfa_.size(); ++k )
-    {
+    for ( size_t k = 0; k < P_.tau_sfa_.size(); ++k ) {
       // multiply by tau_sfa here because [1] defines J as product
       // of J and tau_sfa.
       V_.Q30K_.push_back( P_.q_sfa_[ k ] * P_.tau_sfa_[ k ] * std::exp( -V_.h_ * P_.len_kernel_ / P_.tau_sfa_[ k ] ) );
@@ -390,40 +373,33 @@ nest::gif_pop_psc_exp::draw_poisson( const double n_expect_ )
   // If n_expect_ is too large, the random numbers might get bad. So we use
   // N_ in case of excessive rates.
   long n_t_;
-  if ( n_expect_ > P_.N_ )
-  {
+  if ( n_expect_ > P_.N_ ) {
     n_t_ = P_.N_;
   }
-  else if ( n_expect_ > V_.min_double_ )
-  {
+  else if ( n_expect_ > V_.min_double_ ) {
     // if the probability of any spike at all (1-exp(-lambda)) is
     // indistinguishable from that of one spike (lambda * exp(-lambda)),
     // we draw a Bernoulli random number instead of Poisson.
-    if ( 1. - ( n_expect_ + 1. ) * std::exp( -n_expect_ ) > V_.min_double_ )
-    {
+    if ( 1. - ( n_expect_ + 1. ) * std::exp( -n_expect_ ) > V_.min_double_ ) {
       V_.poisson_dev_.set_lambda( n_expect_ );
       n_t_ = V_.poisson_dev_.ldev( V_.rng_ );
     }
-    else
-    {
+    else {
       n_t_ = static_cast< long >( V_.rng_->drand() < n_expect_ );
     }
 
     // in case the number of spikes exceeds N, we clip it to prevent
     // runaway activity
-    if ( n_t_ > P_.N_ )
-    {
+    if ( n_t_ > P_.N_ ) {
       n_t_ = P_.N_;
     }
     // in case the number of spikes is negative, we clip it to
     // prevent problems downstream. This should not happen.
-    if ( n_t_ < 0 )
-    {
+    if ( n_t_ < 0 ) {
       n_t_ = 0;
     }
   }
-  else
-  {
+  else {
     n_t_ = 0;
   }
   return n_t_;
@@ -434,16 +410,13 @@ inline long
 nest::gif_pop_psc_exp::draw_binomial( const double n_expect_ )
 {
   double p_bino_ = n_expect_ / P_.N_;
-  if ( p_bino_ >= 1. )
-  {
+  if ( p_bino_ >= 1. ) {
     return P_.N_;
   }
-  else if ( p_bino_ <= 0. )
-  {
+  else if ( p_bino_ <= 0. ) {
     return 0;
   }
-  else
-  {
+  else {
     V_.bino_dev_.set_p_n( p_bino_, P_.N_ );
   }
   return V_.bino_dev_.ldev( V_.rng_ );
@@ -458,8 +431,7 @@ nest::gif_pop_psc_exp::adaptation_kernel( const int k )
   // See below Eq. (87) of [1]. There is no division by tau here because
   // theta_tmp must be in units voltage just as q_sfa_.
   double theta_tmp = 0.;
-  for ( size_t j = 0; j < P_.tau_sfa_.size(); ++j )
-  {
+  for ( size_t j = 0; j < P_.tau_sfa_.size(); ++j ) {
     theta_tmp += P_.q_sfa_[ j ] * std::exp( -k * V_.h_ / P_.tau_sfa_[ j ] );
   }
   return theta_tmp;
@@ -475,12 +447,10 @@ nest::gif_pop_psc_exp::get_history_size()
 
   int k = tmax / V_.h_;
   int kmin = 5 * P_.tau_m_ / V_.h_;
-  while ( ( adaptation_kernel( k ) / P_.Delta_V_ < 0.1 ) and ( k > kmin ) )
-  {
+  while ( ( adaptation_kernel( k ) / P_.Delta_V_ < 0.1 ) and ( k > kmin ) ) {
     k--;
   }
-  if ( k * V_.h_ <= P_.t_ref_ )
-  {
+  if ( k * V_.h_ <= P_.t_ref_ ) {
     k = ( int ) ( P_.t_ref_ / V_.h_ ) + 1;
   }
   return k;
@@ -493,8 +463,7 @@ nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long t
   assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     // main update routine, see Fig. 11 of [1]
     double h_tot_;
     // this is the membrane and synapse update method of [1]
@@ -557,8 +526,7 @@ nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long t
     V_.lambda_free_ = lambda_tld;                                                             // line 10
     S_.theta_hat_ -= V_.n_[ 0 ] * V_.theta_tld_[ 0 ];                                         // line 11
 
-    for ( int k_marked = 0; k_marked < P_.len_kernel_; ++k_marked )
-    {
+    for ( int k_marked = 0; k_marked < P_.len_kernel_; ++k_marked ) {
       X_ += V_.m_[ k_marked ]; // line 12 of [1]
     }
 
@@ -567,16 +535,14 @@ nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long t
     double theta_hat_ = S_.theta_hat_;
 
     // line 13 of [1]
-    for ( int k_marked = 0; k_marked < P_.len_kernel_ - V_.k_ref_; ++k_marked )
-    {
+    for ( int k_marked = 0; k_marked < P_.len_kernel_ - V_.k_ref_; ++k_marked ) {
       int k = ( V_.k0_ + k_marked ) % P_.len_kernel_;           // line 14 of [1]
       const double theta = V_.theta_[ k_marked ] + theta_hat_;  // line 15
       theta_hat_ += V_.n_[ k ] * V_.theta_tld_[ k_marked ];     // line 16
       V_.u_[ k ] = ( V_.u_[ k ] - P_.E_L_ ) * V_.P22_ + h_tot_; // line 17
       lambda_tld = escrate( V_.u_[ k ] - theta );               // line 18
       double P_lambda_ = 0.0005 * ( lambda_tld + V_.lambda_[ k ] ) * V_.h_;
-      if ( P_lambda_ > 0.01 )
-      {
+      if ( P_lambda_ > 0.01 ) {
         P_lambda_ = 1. - std::exp( -P_lambda_ ); // line 20 of [1]
       }
       V_.lambda_[ k ] = lambda_tld; // line 21 of [1]
@@ -590,23 +556,19 @@ nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long t
     }                                 // line 27 of [1]
 
     double P_Lambda_;
-    if ( ( Z_ + V_.z_ ) > 0.0 )
-    {
+    if ( ( Z_ + V_.z_ ) > 0.0 ) {
       P_Lambda_ = ( Y_ + P_free * V_.z_ ) / ( Z_ + V_.z_ ); // line 28 of [1]
     }
-    else
-    {
+    else {
       P_Lambda_ = 0.0;
     }
 
     // finally compute expected number of spikes and draw a random number
     S_.n_expect_ = W_ + P_free * V_.x_ + P_Lambda_ * ( P_.N_ - X_ - V_.x_ ); // line 29
-    if ( P_.BinoRand_ )
-    {
+    if ( P_.BinoRand_ ) {
       S_.n_spikes_ = draw_binomial( S_.n_expect_ );
     }
-    else
-    {
+    else {
       S_.n_spikes_ = draw_poisson( S_.n_expect_ );
     }
 
@@ -653,12 +615,10 @@ gif_pop_psc_exp::handle( SpikeEvent& e )
 
   const double s = e.get_weight() * e.get_multiplicity();
 
-  if ( s > 0.0 )
-  {
+  if ( s > 0.0 ) {
     B_.ex_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
   }
-  else
-  {
+  else {
     B_.in_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
   }
 }

@@ -42,8 +42,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * Function computing right-hand side of ODE for GSL solver.
  * @note Must be declared here so we can befriend it in class.
@@ -102,8 +101,7 @@ Author: Heiberg
 
 SeeAlso: iaf_cond_alpha
 */
-class iaf_chxk_2008 : public Archiving_Node
-{
+class iaf_chxk_2008 : public Archiving_Node {
 
   // Boilerplate function declarations --------------------------------
 
@@ -160,8 +158,7 @@ private:
   // Parameters class -------------------------------------------------
 
   //! Model parameters
-  struct Parameters_
-  {
+  struct Parameters_ {
     double V_th;     //!< Threshold Potential in mV
     double g_L;      //!< Leak Conductance in nS
     double C_m;      //!< Membrane Capacitance in pF
@@ -195,21 +192,10 @@ private:
    *       of the C-style array.
    */
 public:
-  struct State_
-  {
+  struct State_ {
 
     //! Symbolic indices to the elements of the state vector y
-    enum StateVecElems
-    {
-      V_M = 0,
-      DG_EXC,
-      G_EXC,
-      DG_INH,
-      G_INH,
-      DG_AHP,
-      G_AHP,
-      STATE_VEC_SIZE
-    };
+    enum StateVecElems { V_M = 0, DG_EXC, G_EXC, DG_INH, G_INH, DG_AHP, G_AHP, STATE_VEC_SIZE };
 
     //! state vector, must be C-array for GSL solver
     double y[ STATE_VEC_SIZE ];
@@ -239,8 +225,7 @@ private:
    * i.e., initialized only upon first Simulate call after ResetKernel
    * or ResetNetwork, but are implementation details hidden from the user.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( iaf_chxk_2008& );                  //!<Sets buffer pointers to 0
     Buffers_( const Buffers_&, iaf_chxk_2008& ); //!<Sets buffer pointers to 0
 
@@ -281,8 +266,7 @@ private:
    * Internal variables of the model.
    * Variables are re-initialized upon each call to Simulate.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     /**
      * Impulse to add to DG_EXC on spike arrival to evoke unit-amplitude
      * conductance excursion.
@@ -363,8 +347,7 @@ iaf_chxk_2008::send_test_event( Node& target, rport receptor_type, synindex, boo
 inline port
 iaf_chxk_2008::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -373,8 +356,7 @@ iaf_chxk_2008::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 iaf_chxk_2008::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -383,8 +365,7 @@ iaf_chxk_2008::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 iaf_chxk_2008::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

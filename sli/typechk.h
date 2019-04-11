@@ -70,11 +70,9 @@ Date:      18.11.95
 #include "tokenstack.h"
 #include "typearray.h"
 
-class TypeTrie
-{
+class TypeTrie {
 private:
-  class TypeNode
-  {
+  class TypeNode {
   private:
     unsigned int refs; // number of references to this Node
 
@@ -95,8 +93,7 @@ private:
     void
     removereference( void )
     {
-      if ( --refs == 0 )
-      {
+      if ( --refs == 0 ) {
         delete this;
       }
     }
@@ -121,12 +118,10 @@ private:
 
     ~TypeNode()
     {
-      if ( next != NULL )
-      {
+      if ( next != NULL ) {
         next->removereference();
       }
-      if ( alt != NULL )
-      {
+      if ( alt != NULL ) {
         alt->removereference();
       }
     }
@@ -156,8 +151,7 @@ public:
   TypeTrie( const TypeTrie& tt )
     : root( tt.root )
   {
-    if ( root != NULL )
-    {
+    if ( root != NULL ) {
       root->addreference();
     }
   }
@@ -185,8 +179,7 @@ public:
 
 inline TypeTrie::~TypeTrie()
 {
-  if ( root != NULL )
-  {
+  if ( root != NULL ) {
     root->removereference();
   }
 }
@@ -224,29 +217,24 @@ TypeTrie::lookup( const TokenStack& st ) const
 
   TypeNode* pos = root;
 
-  while ( level < load )
-  {
+  while ( level < load ) {
     Name find_type = st.pick( level )->gettypename();
 
     // Step 1: find the type at the current stack level in the
     // list of alternatives. Unfortunately, this search is O(n).
 
-    while ( not equals( find_type, pos->type ) )
-    {
-      if ( pos->alt != NULL )
-      {
+    while ( not equals( find_type, pos->type ) ) {
+      if ( pos->alt != NULL ) {
         pos = pos->alt;
       }
-      else
-      {
+      else {
         throw ArgumentType( level );
       }
     }
 
     // Now go to the next argument.
     pos = pos->next;
-    if ( pos->type == sli::object )
-    {
+    if ( pos->type == sli::object ) {
       return pos->func;
     }
 

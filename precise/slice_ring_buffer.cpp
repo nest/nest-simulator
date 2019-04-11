@@ -38,16 +38,14 @@ nest::SliceRingBuffer::resize()
   long newsize = static_cast< long >( std::ceil(
     static_cast< double >( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() )
     / kernel().connection_manager.get_min_delay() ) );
-  if ( queue_.size() != static_cast< unsigned long >( newsize ) )
-  {
+  if ( queue_.size() != static_cast< unsigned long >( newsize ) ) {
     queue_.resize( newsize );
     clear();
   }
 
 #ifndef HAVE_STL_VECTOR_CAPACITY_BASE_UNITY
   // create 1-element buffers
-  for ( size_t j = 0; j < queue_.size(); ++j )
-  {
+  for ( size_t j = 0; j < queue_.size(); ++j ) {
     queue_[ j ].reserve( 1 );
   }
 #endif
@@ -56,8 +54,7 @@ nest::SliceRingBuffer::resize()
 void
 nest::SliceRingBuffer::clear()
 {
-  for ( size_t j = 0; j < queue_.size(); ++j )
-  {
+  for ( size_t j = 0; j < queue_.size(); ++j ) {
     queue_[ j ].clear();
   }
 }

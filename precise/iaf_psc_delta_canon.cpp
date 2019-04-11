@@ -42,8 +42,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-namespace nest
-{
+namespace nest {
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -119,51 +118,40 @@ nest::iaf_psc_delta_canon::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::t_ref, t_ref_ );
   updateValue< double >( d, names::I_e, I_e_ );
 
-  if ( updateValue< double >( d, names::V_th, U_th_ ) )
-  {
+  if ( updateValue< double >( d, names::V_th, U_th_ ) ) {
     U_th_ -= E_L_;
   }
-  else
-  {
+  else {
     U_th_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_min, U_min_ ) )
-  {
+  if ( updateValue< double >( d, names::V_min, U_min_ ) ) {
     U_min_ -= E_L_;
   }
-  else
-  {
+  else {
     U_min_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
-  {
+  if ( updateValue< double >( d, names::V_reset, U_reset_ ) ) {
     U_reset_ -= E_L_;
   }
-  else
-  {
+  else {
     U_reset_ -= delta_EL;
   }
-  if ( U_reset_ >= U_th_ )
-  {
+  if ( U_reset_ >= U_th_ ) {
     throw BadProperty( "Reset potential must be smaller than threshold." );
   }
-  if ( U_reset_ < U_min_ )
-  {
+  if ( U_reset_ < U_min_ ) {
     throw BadProperty( "Reset potential must be greater equal minimum potential." );
   }
-  if ( c_m_ <= 0 )
-  {
+  if ( c_m_ <= 0 ) {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
 
-  if ( Time( Time::ms( t_ref_ ) ).get_steps() < 1 )
-  {
+  if ( Time( Time::ms( t_ref_ ) ).get_steps() < 1 ) {
     throw BadProperty( "Refractory time must be at least one time step." );
   }
-  if ( tau_m_ <= 0 )
-  {
+  if ( tau_m_ <= 0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
 
@@ -181,12 +169,10 @@ nest::iaf_psc_delta_canon::State_::get( DictionaryDatum& d, const Parameters_& p
 void
 nest::iaf_psc_delta_canon::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
-  if ( updateValue< double >( d, names::V_m, U_ ) )
-  {
+  if ( updateValue< double >( d, names::V_m, U_ ) ) {
     U_ -= p.E_L_;
   }
-  else
-  {
+  else {
     U_ -= delta_EL;
   }
 }
@@ -271,8 +257,7 @@ iaf_psc_delta_canon::update( Time const& origin, const long from, const long to 
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
-  if ( from == 0 )
-  {
+  if ( from == 0 ) {
     B_.events_.prepare_delivery();
   }
 
@@ -296,13 +281,11 @@ iaf_psc_delta_canon::update( Time const& origin, const long from, const long to 
    */
 
   // check for super-threshold at beginning
-  if ( S_.U_ >= P_.U_th_ )
-  {
+  if ( S_.U_ >= P_.U_th_ ) {
     emit_instant_spike_( origin, from, V_.h_ms_ * ( 1 - std::numeric_limits< double >::epsilon() ) );
   }
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     // time at start of update step
     const long T = origin.get_steps() + lag;
 
@@ -311,8 +294,7 @@ iaf_psc_delta_canon::update( Time const& origin, const long from, const long to 
     double t = V_.h_ms_;
 
     // place pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
-    {
+    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) ) {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
 
@@ -321,14 +303,16 @@ iaf_psc_delta_canon::update( Time const& origin, const long from, const long to 
     double ev_weight;
     bool end_of_refract;
 
-    if ( not B_.events_.get_next_spike( T, true, ev_offset, ev_weight, end_of_refract ) )
-    { // No incoming spikes, handle with fixed propagator matrix.
+    if ( not B_.events_.get_next_spike( T,
+           true,
+           ev_offset,
+           ev_weight,
+           end_of_refract ) ) { // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
       // if there are many steps without input spikes.
 
       // update membrane potential
-      if ( not S_.is_refractory_ )
-      {
+      if ( not S_.is_refractory_ ) {
         /* The following way of updating U_ is numerically more precise
            than the more natural approach
 
@@ -343,8 +327,7 @@ iaf_psc_delta_canon::update( Time const& origin, const long from, const long to 
         S_.U_ = I_ext + V_.expm1_t_ * S_.U_ + S_.U_;
 
         S_.U_ = S_.U_ < P_.U_min_ ? P_.U_min_ : S_.U_; // lower bound on potential
-        if ( S_.U_ >= P_.U_th_ )
-        {
+        if ( S_.U_ >= P_.U_th_ ) {
           emit_spike_( origin, lag, 0 ); // offset is zero at end of step
         }
 
@@ -356,44 +339,36 @@ iaf_psc_delta_canon::update( Time const& origin, const long from, const long to 
       }
       // nothing to do if neuron is refractory
     }
-    else
-    {
+    else {
       // We only get here if there is at least one event,
       // which has been read above.  We can therefore use
       // a do-while loop.
 
-      do
-      {
+      do {
 
-        if ( S_.is_refractory_ )
-        {
+        if ( S_.is_refractory_ ) {
           // move time to time of event
           t = ev_offset;
 
           // normal spikes need to be accumulated
-          if ( not end_of_refract )
-          {
-            if ( S_.with_refr_input_ )
-            {
+          if ( not end_of_refract ) {
+            if ( S_.with_refr_input_ ) {
               V_.refr_spikes_buffer_ +=
                 ev_weight * std::exp( -( ( S_.last_spike_step_ - T - 1 ) * V_.h_ms_
                                         - ( S_.last_spike_offset_ - ev_offset ) + P_.t_ref_ ) / P_.tau_m_ );
             }
           }
-          else
-          {
+          else {
             // return from refractoriness---apply buffered spikes
             S_.is_refractory_ = false;
 
-            if ( S_.with_refr_input_ )
-            {
+            if ( S_.with_refr_input_ ) {
               S_.U_ += V_.refr_spikes_buffer_;
               V_.refr_spikes_buffer_ = 0.0;
             }
 
             // check if buffered spikes cause new spike
-            if ( S_.U_ >= P_.U_th_ )
-            {
+            if ( S_.U_ >= P_.U_th_ ) {
               emit_instant_spike_( origin, lag, t );
             }
           }
@@ -417,8 +392,7 @@ iaf_psc_delta_canon::update( Time const& origin, const long from, const long to 
         // since that violates the assumption that the neuron was not
         // refractory. We can thus ignore the event, since the neuron
         // is refractory after the spike and ignores all input.
-        if ( S_.U_ >= P_.U_th_ )
-        {
+        if ( S_.U_ >= P_.U_th_ ) {
           emit_spike_( origin, lag, t );
           continue;
         }
@@ -426,8 +400,7 @@ iaf_psc_delta_canon::update( Time const& origin, const long from, const long to 
         // neuron is not refractory: add input spike, check for output
         // spike
         S_.U_ += ev_weight;
-        if ( S_.U_ >= P_.U_th_ )
-        {
+        if ( S_.U_ >= P_.U_th_ ) {
           emit_instant_spike_( origin, lag, t );
         }
 
@@ -438,8 +411,7 @@ iaf_psc_delta_canon::update( Time const& origin, const long from, const long to 
       if ( not S_.is_refractory_ && t > 0 ) // not at end of step, do remainder
       {
         propagate_( t );
-        if ( S_.U_ >= P_.U_th_ )
-        {
+        if ( S_.U_ >= P_.U_th_ ) {
           emit_spike_( origin, lag, 0 );
         }
       }

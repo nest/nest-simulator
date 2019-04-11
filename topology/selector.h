@@ -29,15 +29,13 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Contains rules for selecting nodes from a layer when connecting. Users
  * may select by model or by depth.
  */
-struct Selector
-{
+struct Selector {
   /**
    * The default constructor creates a Selector with no specific rules,
    * so all nodes are selected.

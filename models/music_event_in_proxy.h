@@ -37,8 +37,7 @@
 #include "event.h"
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: music_event_in_proxy - A device which receives spikes from MUSIC.
@@ -87,8 +86,7 @@ Availability: Only when compiled with MUSIC
 SeeAlso: SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy,
 music_message_in_proxy
 */
-class music_event_in_proxy : public DeviceNode
-{
+class music_event_in_proxy : public DeviceNode {
 
 public:
   music_event_in_proxy();
@@ -132,8 +130,7 @@ private:
   // ------------------------------------------------------------
   struct State_;
 
-  struct Parameters_
-  {
+  struct Parameters_ {
     std::string port_name_; //!< the name of MUSIC port to connect to
     int channel_;           //!< the MUSIC channel of the port
 
@@ -150,8 +147,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
     bool registered_; //!< indicates whether this node has been registered
                       //!< already with MUSIC
 

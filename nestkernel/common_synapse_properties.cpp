@@ -32,8 +32,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Default implementation of an empty CommonSynapseProperties object.
@@ -58,8 +57,7 @@ void
 CommonSynapseProperties::set_status( const DictionaryDatum& d, ConnectorModel& )
 {
   long wrgid;
-  if ( updateValue< long >( d, names::weight_recorder, wrgid ) )
-  {
+  if ( updateValue< long >( d, names::weight_recorder, wrgid ) ) {
     weight_recorder_ = kernel().node_manager.get_thread_siblings( wrgid );
   }
 }

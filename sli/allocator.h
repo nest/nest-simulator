@@ -31,8 +31,7 @@
 #include <cstdlib>
 #include <string>
 
-namespace sli
-{
+namespace sli {
 
 /**
  * @addtogroup MemoryManagement Memory management
@@ -53,15 +52,12 @@ namespace sli
  * @ingroup PoolAllocator
  */
 
-class pool
-{
-  struct link
-  {
+class pool {
+  struct link {
     link* next;
   };
 
-  class chunk
-  {
+  class chunk {
     const size_t csize;
     chunk( const chunk& );            //!< not implemented
     chunk& operator=( const chunk& ); //!< not implemented
@@ -155,8 +151,7 @@ inline void*
 pool::alloc( void )
 {
 
-  if ( head == 0 )
-  {
+  if ( head == 0 ) {
     grow( block_size );
     block_size *= growth_factor;
   }
@@ -215,15 +210,13 @@ const int MAX_THREAD = 128;
  * end of the current chunk, a new chunk is allocated from the OS and
  * appends it to the linked list of chunks.
  */
-class PoorMansAllocator
-{
+class PoorMansAllocator {
 private:
   /**
    * A chunk of memory, one element in the linked list of the memory
    * pool.
    */
-  struct chunk
-  {
+  struct chunk {
     chunk( char* mem, chunk* next )
       : mem_( mem )
       , next_( next ){};
@@ -284,8 +277,7 @@ private:
  * that the instantiations for different threads lie on different
  * cache lines.
  */
-class PaddedPMA : public PoorMansAllocator
-{
+class PaddedPMA : public PoorMansAllocator {
   // Only works for sizeof(PoorMansAllocator) < 64
   char padding[ 64 - sizeof( PoorMansAllocator ) ];
 };

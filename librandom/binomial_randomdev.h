@@ -61,8 +61,7 @@ Author: Hans Ekkehard Plesser, Moritz Deger
 */
 
 
-namespace librandom
-{
+namespace librandom {
 
 /**
  Class BinomialRNG
@@ -96,8 +95,7 @@ namespace librandom
  * ---------------------------------------------------------------- */
 
 
-class BinomialRandomDev : public RandomDev
-{
+class BinomialRandomDev : public RandomDev {
 public:
   // accept only lockPTRs for initialization,
   // otherwise creation of a lock ptr would

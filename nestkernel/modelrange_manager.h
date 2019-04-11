@@ -33,12 +33,10 @@
 #include "modelrange.h"
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 class Model;
 
-class ModelRangeManager : public ManagerInterface
-{
+class ModelRangeManager : public ManagerInterface {
 public:
   ModelRangeManager();
   ~ModelRangeManager()

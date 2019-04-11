@@ -53,8 +53,7 @@
 #include "topology_parameter.h"
 
 
-namespace nest
-{
+namespace nest {
 SLIType TopologyModule::MaskType;
 SLIType TopologyModule::ParameterType;
 
@@ -102,16 +101,13 @@ TopologyModule::create_mask( const Token& t )
   // t can be either an existing MaskDatum, or a Dictionary containing
   // mask parameters
   MaskDatum* maskd = dynamic_cast< MaskDatum* >( t.datum() );
-  if ( maskd )
-  {
+  if ( maskd ) {
     return *maskd;
   }
-  else
-  {
+  else {
 
     DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( t.datum() );
-    if ( dd == 0 )
-    {
+    if ( dd == 0 ) {
       throw BadProperty( "Mask must be masktype or dictionary." );
     }
 
@@ -123,40 +119,33 @@ TopologyModule::create_mask( const Token& t )
     bool has_anchor = false;
     AbstractMask* mask = 0;
 
-    for ( Dictionary::iterator dit = ( *dd )->begin(); dit != ( *dd )->end(); ++dit )
-    {
+    for ( Dictionary::iterator dit = ( *dd )->begin(); dit != ( *dd )->end(); ++dit ) {
 
-      if ( dit->first == names::anchor )
-      {
+      if ( dit->first == names::anchor ) {
 
         anchor_token = dit->second;
         has_anchor = true;
       }
-      else
-      {
+      else {
 
-        if ( mask != 0 )
-        { // mask has already been defined
+        if ( mask != 0 ) { // mask has already been defined
           throw BadProperty( "Mask definition dictionary contains extraneous items." );
         }
         mask = create_mask( dit->first, getValue< DictionaryDatum >( dit->second ) );
       }
     }
 
-    if ( has_anchor )
-    {
+    if ( has_anchor ) {
 
       // The anchor may be an array of doubles (a spatial position), or a
       // dictionary containing the keys 'column' and 'row' (for grid
       // masks only)
-      try
-      {
+      try {
 
         std::vector< double > anchor = getValue< std::vector< double > >( anchor_token );
         AbstractMask* amask;
 
-        switch ( anchor.size() )
-        {
+        switch ( anchor.size() ) {
         case 2:
           amask = new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), anchor );
           break;
@@ -170,8 +159,7 @@ TopologyModule::create_mask( const Token& t )
         delete mask;
         mask = amask;
       }
-      catch ( TypeMismatch& e )
-      {
+      catch ( TypeMismatch& e ) {
 
         DictionaryDatum ad = getValue< DictionaryDatum >( anchor_token );
 
@@ -179,32 +167,26 @@ TopologyModule::create_mask( const Token& t )
         int column = getValue< long >( ad, names::column );
         int row = getValue< long >( ad, names::row );
         int layer;
-        if ( ad->known( names::layer ) )
-        {
+        if ( ad->known( names::layer ) ) {
           layer = getValue< long >( ad, names::layer );
           dim = 3;
         }
-        switch ( dim )
-        {
+        switch ( dim ) {
         case 2:
-          try
-          {
+          try {
             GridMask< 2 >& grid_mask_2d = dynamic_cast< GridMask< 2 >& >( *mask );
             grid_mask_2d.set_anchor( Position< 2, int >( column, row ) );
           }
-          catch ( std::bad_cast& e )
-          {
+          catch ( std::bad_cast& e ) {
             throw BadProperty( "Mask must be 2-dimensional grid mask." );
           }
           break;
         case 3:
-          try
-          {
+          try {
             GridMask< 3 >& grid_mask_3d = dynamic_cast< GridMask< 3 >& >( *mask );
             grid_mask_3d.set_anchor( Position< 3, int >( column, row, layer ) );
           }
-          catch ( std::bad_cast& e )
-          {
+          catch ( std::bad_cast& e ) {
             throw BadProperty( "Mask must be 3-dimensional grid mask." );
           }
           break;
@@ -223,26 +205,22 @@ TopologyModule::create_parameter( const Token& t )
   // constant value for this parameter, or a Dictionary containing
   // parameters
   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
-  if ( pd )
-  {
+  if ( pd ) {
     return *pd;
   }
 
   // If t is a DoubleDatum, create a ConstantParameter with this value
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
-  if ( dd )
-  {
+  if ( dd ) {
     return new ConstantParameter( *dd );
   }
 
   DictionaryDatum* dictd = dynamic_cast< DictionaryDatum* >( t.datum() );
-  if ( dictd )
-  {
+  if ( dictd ) {
 
     // The dictionary should only have a single key, which is the name of
     // the parameter type to create.
-    if ( ( *dictd )->size() != 1 )
-    {
+    if ( ( *dictd )->size() != 1 ) {
       throw BadProperty( "Parameter definition dictionary must contain one single key only." );
     }
 
@@ -250,8 +228,7 @@ TopologyModule::create_parameter( const Token& t )
     DictionaryDatum pdict = getValue< DictionaryDatum >( *dictd, n );
     return create_parameter( n, pdict );
   }
-  else
-  {
+  else {
     throw BadProperty( "Parameter must be parametertype, constant or dictionary." );
   }
 }
@@ -265,12 +242,10 @@ TopologyModule::create_parameter( const Name& name, const DictionaryDatum& d )
 
   // Wrap the parameter object created above in an AnchoredParameter if
   // the dictionary contains an anchor
-  if ( d->known( names::anchor ) )
-  {
+  if ( d->known( names::anchor ) ) {
     std::vector< double > anchor = getValue< std::vector< double > >( d, names::anchor );
     TopologyParameter* aparam;
-    switch ( anchor.size() )
-    {
+    switch ( anchor.size() ) {
     case 2:
       aparam = new AnchoredParameter< 2 >( *param, anchor );
       break;
@@ -294,15 +269,13 @@ create_doughnut( const DictionaryDatum& d )
 {
   // The doughnut (actually an annulus) is created using a DifferenceMask
   Position< 2 > center( 0, 0 );
-  if ( d->known( names::anchor ) )
-  {
+  if ( d->known( names::anchor ) ) {
     center = getValue< std::vector< double > >( d, names::anchor );
   }
 
   const double outer = getValue< double >( d, names::outer_radius );
   const double inner = getValue< double >( d, names::inner_radius );
-  if ( inner >= outer )
-  {
+  if ( inner >= outer ) {
     throw BadProperty(
       "topology::create_doughnut: "
       "inner_radius < outer_radius required." );
@@ -1177,12 +1150,10 @@ TopologyModule::GetElement_i_iaFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 2 );
 
   // For compatibility reasons, return either single node or array
-  if ( node_gids.size() == 1 )
-  {
+  if ( node_gids.size() == 1 ) {
     i->OStack.push( node_gids[ 0 ] );
   }
-  else
-  {
+  else {
     i->OStack.push( node_gids );
   }
 
@@ -1216,33 +1187,28 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute( SLIInterpreter* i ) co
 
   const int dim = anchor.size();
 
-  if ( dim != 2 and dim != 3 )
-  {
+  if ( dim != 2 and dim != 3 ) {
     throw BadProperty( "Center must be 2- or 3-dimensional." );
   }
 
-  if ( dim == 2 )
-  {
+  if ( dim == 2 ) {
     Layer< 2 >* layer = dynamic_cast< Layer< 2 >* >( kernel().node_manager.get_node( layer_gid ) );
 
     MaskedLayer< 2 > ml = MaskedLayer< 2 >( *layer, Selector(), mask, true, false );
 
     for ( Ntree< 2, index >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) ); it != ml.end();
-          ++it )
-    {
+          ++it ) {
       mask_gids.push_back( it->second );
     }
   }
-  else
-  {
+  else {
     Layer< 3 >* layer = dynamic_cast< Layer< 3 >* >( kernel().node_manager.get_node( layer_gid ) );
 
     MaskedLayer< 3 > ml = MaskedLayer< 3 >( *layer, Selector(), mask, true, false );
 
     for ( Ntree< 3, index >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
           it != ml.end();
-          ++it )
-    {
+          ++it ) {
       mask_gids.push_back( it->second );
     }
   }

@@ -128,12 +128,10 @@ RegexpModule::RegcompFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 2 );
   Token rt( new RegexDatum( MyRegex ) );
   i->OStack.push_move( rt );
-  if ( not e )
-  {
+  if ( not e ) {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
-  else
-  {
+  else {
     Token it( new IntegerDatum( e ) );
     i->OStack.push_move( it );
     i->OStack.push( i->baselookup( i->false_name ) );
@@ -195,11 +193,9 @@ RegexpModule::RegexecFunction::execute( SLIInterpreter* i ) const
   int e = regexec( r->get(), sd->c_str(), size, pm, eflagsd->get() );
   Token id( new IntegerDatum( e ) );
   i->OStack.pop( 4 );
-  if ( size )
-  {
+  if ( size ) {
     ArrayDatum* PushArray = new ArrayDatum();
-    for ( int k = 0; k <= ( size - 1 ); k++ )
-    {
+    for ( int k = 0; k <= ( size - 1 ); k++ ) {
       ArrayDatum* ThisEntry = new ArrayDatum();
       Token so( new IntegerDatum( pm[ k ].rm_so ) );
       ThisEntry->push_back_move( so );

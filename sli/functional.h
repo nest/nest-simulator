@@ -31,8 +31,7 @@
 // }
 
 template < class T >
-class delete_ptr
-{
+class delete_ptr {
 public:
   T* operator()( T* p )
   {

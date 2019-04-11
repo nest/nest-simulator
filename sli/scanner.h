@@ -38,8 +38,7 @@
 #include "token.h"
 
 
-class Scanner
-{
+class Scanner {
   std::istream* in;
 
   CharCode code; // some Chars cause the same Transition
@@ -48,8 +47,7 @@ class Scanner
   unsigned long col;   //!< Current column in line
   std::string context; //!< Current context.
   std::string old_context;
-  enum ScanStates
-  {
+  enum ScanStates {
     start = 0,
     intdgtst,
     intexpst,
@@ -98,8 +96,7 @@ class Scanner
     lastscanstate
   };
 
-  enum Codes
-  {
+  enum Codes {
     invalid = 0,
     whitespace,
     eof,

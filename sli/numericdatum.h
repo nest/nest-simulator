@@ -39,8 +39,7 @@
 // HEP, 2001-08-08
 
 template < class D, SLIType* slt >
-class NumericDatum : public GenericDatum< D, slt >
-{
+class NumericDatum : public GenericDatum< D, slt > {
 protected:
   static sli::pool memory;
   using GenericDatum< D, slt >::d;
@@ -81,8 +80,7 @@ public:
 
   static void* operator new( size_t size )
   {
-    if ( size != memory.size_of() )
-    {
+    if ( size != memory.size_of() ) {
       return ::operator new( size );
     }
     return memory.alloc();
@@ -90,12 +88,10 @@ public:
 
   static void operator delete( void* p, size_t size )
   {
-    if ( p == NULL )
-    {
+    if ( p == NULL ) {
       return;
     }
-    if ( size != memory.size_of() )
-    {
+    if ( size != memory.size_of() ) {
       ::operator delete( p );
       return;
     }

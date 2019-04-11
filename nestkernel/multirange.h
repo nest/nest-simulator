@@ -30,20 +30,17 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Class for sequences of ranges acting like a compressed vector.
  */
-class Multirange
-{
+class Multirange {
 public:
   typedef std::pair< index, index > Range;
   typedef std::vector< Range > RangeVector;
 
-  class iterator
-  {
+  class iterator {
   public:
     iterator( RangeVector::const_iterator iter, index n );
     index operator*() const;
@@ -81,17 +78,14 @@ inline Multirange::Multirange()
 inline void
 Multirange::push_back( index x )
 {
-  if ( contains( x ) )
-  {
+  if ( contains( x ) ) {
     return;
   }
 
-  if ( ( not ranges_.empty() ) and ( ranges_.back().second + 1 == x ) )
-  {
+  if ( ( not ranges_.empty() ) and ( ranges_.back().second + 1 == x ) ) {
     ++ranges_.back().second;
   }
-  else
-  {
+  else {
     ranges_.push_back( Range( x, x ) );
   }
   ++size_;
@@ -107,10 +101,8 @@ Multirange::add_range( index start, index end )
 inline bool
 Multirange::contains( index x )
 {
-  for ( size_t i = 0; i < ranges_.size(); i++ )
-  {
-    if ( ranges_[ i ].first <= x and x <= ranges_[ i ].second )
-    {
+  for ( size_t i = 0; i < ranges_.size(); i++ ) {
+    if ( ranges_[ i ].first <= x and x <= ranges_[ i ].second ) {
       return true;
     }
   }
@@ -155,8 +147,7 @@ inline index Multirange::iterator::operator*() const
 inline Multirange::iterator& Multirange::iterator::operator++()
 {
   ++n_;
-  if ( n_ > pair_iter_->second - pair_iter_->first )
-  {
+  if ( n_ > pair_iter_->second - pair_iter_->first ) {
     ++pair_iter_;
     n_ = 0;
   }

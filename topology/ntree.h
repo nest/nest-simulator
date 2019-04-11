@@ -31,8 +31,7 @@
 // Includes from topology:
 #include "position.h"
 
-namespace nest
-{
+namespace nest {
 
 class AbstractMask;
 
@@ -49,8 +48,7 @@ class Mask;
  *
  */
 template < int D, class T, int max_capacity = 100, int max_depth = 10 >
-class Ntree
-{
+class Ntree {
 public:
   static const int N = 1 << D;
 
@@ -63,8 +61,7 @@ public:
   /**
    * Iterator iterating the nodes in a Quadtree.
    */
-  class iterator
-  {
+  class iterator {
   public:
     /**
      * Initialize an invalid iterator.
@@ -142,8 +139,7 @@ public:
   /**
    * Iterator iterating the nodes in a Quadtree inside a Mask.
    */
-  class masked_iterator
-  {
+  class masked_iterator {
   public:
     /**
      * Initialize an invalid iterator.
@@ -384,13 +380,11 @@ Ntree< D, T, max_capacity, max_depth >::Ntree( const Position< D >& lower_left,
 template < int D, class T, int max_capacity, int max_depth >
 Ntree< D, T, max_capacity, max_depth >::~Ntree()
 {
-  if ( leaf_ )
-  {
+  if ( leaf_ ) {
     return;
   } // if T is a vector class, we do not delete the pointees
 
-  for ( size_t n = 0; n < static_cast< size_t >( N ); ++n )
-  {
+  for ( size_t n = 0; n < static_cast< size_t >( N ); ++n ) {
     delete children_[ n ]; // calls destructor in child, thus recursing
   }
 }
@@ -404,8 +398,7 @@ Ntree< D, T, max_capacity, max_depth >::iterator::iterator( Ntree& q, index n )
   assert( ntree_->leaf_ );
 
   // First ancestor
-  while ( top_->parent_ )
-  {
+  while ( top_->parent_ ) {
     top_ = top_->parent_;
   }
 }

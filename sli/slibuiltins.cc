@@ -86,15 +86,13 @@ IiterateFunction::execute( SLIInterpreter* i ) const
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
   long& pos = static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() )->get();
 
-  while ( pd->index_is_valid( pos ) )
-  {
+  while ( pd->index_is_valid( pos ) ) {
     const Token& t = pd->get( pos );
     ++pos;
 
     i->code_executed++; // code coverage
 
-    if ( t->is_executable() )
-    {
+    if ( t->is_executable() ) {
       i->EStack.push( t );
       return;
     }
@@ -114,12 +112,10 @@ IloopFunction::execute( SLIInterpreter* i ) const
   ProcedureDatum const* proc = static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
   long& pos = static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() )->get();
 
-  while ( proc->index_is_valid( pos ) )
-  {
+  while ( proc->index_is_valid( pos ) ) {
     const Token& t( proc->get( pos ) );
     ++pos;
-    if ( t->is_executable() )
-    {
+    if ( t->is_executable() ) {
       i->EStack.push( t );
       return;
     }
@@ -157,12 +153,10 @@ IrepeatFunction::execute( SLIInterpreter* i ) const
   ProcedureDatum* proc = static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
 
   long& pos = static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() )->get();
-  while ( proc->index_is_valid( pos ) )
-  {
+  while ( proc->index_is_valid( pos ) ) {
     const Token& t = proc->get( pos );
     ++pos;
-    if ( t->is_executable() )
-    {
+    if ( t->is_executable() ) {
       i->EStack.push( t );
       return;
     }
@@ -170,13 +164,11 @@ IrepeatFunction::execute( SLIInterpreter* i ) const
   }
 
   long& lc = static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() )->get();
-  if ( lc > 0 )
-  {
+  if ( lc > 0 ) {
     pos = 0; // reset procedure iterator
     --lc;
   }
-  else
-  {
+  else {
     i->EStack.pop( 5 );
     i->dec_call_depth();
   }
@@ -215,12 +207,10 @@ IforFunction::execute( SLIInterpreter* i ) const
 
   long& pos = proccount->get();
 
-  while ( proc->index_is_valid( pos ) )
-  {
+  while ( proc->index_is_valid( pos ) ) {
     const Token& t = proc->get( pos );
     ++pos;
-    if ( t->is_executable() )
-    {
+    if ( t->is_executable() ) {
       i->EStack.push( t );
       return;
     }
@@ -235,15 +225,13 @@ IforFunction::execute( SLIInterpreter* i ) const
 
 
   if ( ( ( inc->get() > 0 ) && ( count->get() <= lim->get() ) )
-    || ( ( inc->get() < 0 ) && ( count->get() >= lim->get() ) ) )
-  {
+    || ( ( inc->get() < 0 ) && ( count->get() >= lim->get() ) ) ) {
     pos = 0; // reset procedure interator
 
     i->OStack.push( i->EStack.pick( 3 ) ); // push counter to user
     ( count->get() ) += ( inc->get() );    // increment loop counter
   }
-  else
-  {
+  else {
     i->EStack.pop( 7 );
     i->dec_call_depth();
   }
@@ -280,12 +268,10 @@ IforallarrayFunction::execute( SLIInterpreter* i ) const
 
   long& pos = proccount->get();
 
-  while ( proc->index_is_valid( pos ) )
-  {
+  while ( proc->index_is_valid( pos ) ) {
     const Token& t = proc->get( pos );
     ++pos;
-    if ( t->is_executable() )
-    {
+    if ( t->is_executable() ) {
       i->EStack.push( t );
       return;
     }
@@ -297,15 +283,13 @@ IforallarrayFunction::execute( SLIInterpreter* i ) const
 
   long& idx = count->get();
 
-  if ( ad->index_is_valid( idx ) )
-  {
+  if ( ad->index_is_valid( idx ) ) {
     pos = 0; // reset procedure interator
 
     i->OStack.push( ad->get( idx ) ); // push counter to user
     ++idx;
   }
-  else
-  {
+  else {
     i->EStack.pop( 6 );
     i->dec_call_depth();
   }
@@ -333,22 +317,19 @@ IforalliterFunction::execute( SLIInterpreter* i ) const
   IteratorDatum* iter = static_cast< IteratorDatum* >( i->EStack.pick( 2 ).datum() );
 
 
-  if ( iter->pos() < iter->end() )
-  {
+  if ( iter->pos() < iter->end() ) {
 
     i->OStack.push( iter->pos() ); // push current element to operand stack
     iter->incr();
     i->EStack.push( i->EStack.pick( 1 ) );
-    if ( i->step_mode() )
-    {
+    if ( i->step_mode() ) {
       std::cerr << "foralliter:"
                 << " Limit: " << iter->end() << " Pos: " << iter->pos();
       i->OStack.pick( 0 ).pprint( std::cerr );
       std::cerr << std::endl;
     }
   }
-  else
-  {
+  else {
     i->EStack.pop( 4 );
     i->dec_call_depth();
   }
@@ -375,8 +356,7 @@ IforallindexedarrayFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* limit = static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
 
   long& cnt = count->get();
-  if ( cnt < limit->get() )
-  {
+  if ( cnt < limit->get() ) {
     ArrayDatum* obj = static_cast< ArrayDatum* >( i->EStack.pick( 4 ).datum() );
 
     i->OStack.push( obj->get( cnt ) );                    // push element to user
@@ -384,8 +364,7 @@ IforallindexedarrayFunction::execute( SLIInterpreter* i ) const
     ++cnt;
     i->EStack.push( i->EStack.pick( 1 ) );
   }
-  else
-  {
+  else {
     i->EStack.pop( 6 );
     i->dec_call_depth();
   }
@@ -420,24 +399,21 @@ IforallindexedstringFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( 2 ).datum() );
   IntegerDatum* limit = static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
 
-  if ( count->get() < limit->get() )
-  {
+  if ( count->get() < limit->get() ) {
     StringDatum const* obj = static_cast< StringDatum* >( i->EStack.pick( 4 ).datum() );
 
     i->OStack.push( ( *obj )[ count->get() ] ); // push element to user
     i->OStack.push( count->get() );             // push index to user
     ++( count->get() );
     i->EStack.push( i->EStack.pick( 1 ) );
-    if ( i->step_mode() )
-    {
+    if ( i->step_mode() ) {
       std::cerr << "forallindexed:"
                 << " Limit: " << limit->get() << " Pos: " << count->get() << " Iterator: ";
       i->OStack.pick( 1 ).pprint( std::cerr );
       std::cerr << std::endl;
     }
   }
-  else
-  {
+  else {
     i->EStack.pop( 6 );
     i->dec_call_depth();
   }
@@ -462,22 +438,19 @@ IforallstringFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( 2 ).datum() );
   IntegerDatum* limit = static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
 
-  if ( count->get() < limit->get() )
-  {
+  if ( count->get() < limit->get() ) {
     StringDatum const* obj = static_cast< StringDatum* >( i->EStack.pick( 4 ).datum() );
     i->OStack.push_by_pointer( new IntegerDatum( ( *obj )[ count->get() ] ) ); // push element to user
     ++( count->get() );
     i->EStack.push( i->EStack.pick( 1 ) );
-    if ( i->step_mode() )
-    {
+    if ( i->step_mode() ) {
       std::cerr << "forall:"
                 << " Limit: " << limit->get() << " Pos: " << count->get() << " Iterator: ";
       i->OStack.top().pprint( std::cerr );
       std::cerr << std::endl;
     }
   }
-  else
-  {
+  else {
     i->EStack.pop( 6 );
     i->dec_call_depth();
   }

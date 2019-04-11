@@ -28,10 +28,8 @@
 
 #include "../nestkernel/source.h"
 
-namespace boost
-{
-namespace tuples
-{
+namespace boost {
+namespace tuples {
 /**
  * @brief Exchanges values of two two-element tuples.
  * @tparam T Type of the first value in the tuples.
@@ -72,8 +70,7 @@ inline bool operator<( const cons< T1, T2 >& lhs, const cons< S1, S2 >& rhs )
  * @tparam perm_iter_type_ Iterator type of the container being permuted.
  */
 template < class sort_iter_type_, class perm_iter_type_ >
-struct iterator_pair_types
-{
+struct iterator_pair_types {
   using value_type = boost::tuple< typename std::iterator_traits< sort_iter_type_ >::value_type,
     typename std::iterator_traits< perm_iter_type_ >::value_type >;
   using ref_type = boost::tuple< typename std::iterator_traits< sort_iter_type_ >::reference,
@@ -92,8 +89,7 @@ class IteratorPair : public boost::iterator_facade< IteratorPair< sort_iter_type
                        typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::value_type,
                        std::random_access_iterator_tag,
                        typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::ref_type,
-                       typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::difference_type >
-{
+                       typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::difference_type > {
 public:
   IteratorPair() = default;
   IteratorPair( sort_iter_type_, perm_iter_type_ );
@@ -159,8 +155,7 @@ make_iterator_pair( sort_iter_type_ sort_iter, perm_iter_type_ perm_iter )
  * @brief A rightshift functor for tuples to be used with Boost's sorting
  *        function.
  */
-struct rightshift_iterator_pair
-{
+struct rightshift_iterator_pair {
   template < typename T >
   inline int operator()( boost::tuples::tuple< int&, T& > s, unsigned offset )
   {

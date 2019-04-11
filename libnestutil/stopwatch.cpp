@@ -22,8 +22,7 @@
 
 #include "stopwatch.h"
 
-namespace nest
-{
+namespace nest {
 std::ostream& operator<<( std::ostream& os, const Stopwatch& stopwatch )
 {
   stopwatch.print( "", Stopwatch::SECONDS, os );

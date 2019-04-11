@@ -29,8 +29,7 @@
 // Includes from nestkernel:
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: tsodyks2_synapse - Synapse type with short term plasticity.
@@ -89,8 +88,7 @@ Author: Marc-Oliver Gewaltig, based on tsodyks_synapse by Moritz Helias
 SeeAlso: tsodyks_synapse, synapsedict, stdp_synapse, static_synapse
 */
 template < typename targetidentifierT >
-class Tsodyks2Connection : public Connection< targetidentifierT >
-{
+class Tsodyks2Connection : public Connection< targetidentifierT > {
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
@@ -141,8 +139,7 @@ public:
   void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -260,26 +257,22 @@ Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d, C
   updateValue< double >( d, names::weight, weight_ );
 
   updateValue< double >( d, names::dU, U_ );
-  if ( U_ > 1.0 || U_ < 0.0 )
-  {
+  if ( U_ > 1.0 || U_ < 0.0 ) {
     throw BadProperty( "U must be in [0,1]." );
   }
 
   updateValue< double >( d, names::u, u_ );
-  if ( u_ > 1.0 || u_ < 0.0 )
-  {
+  if ( u_ > 1.0 || u_ < 0.0 ) {
     throw BadProperty( "u must be in [0,1]." );
   }
 
   updateValue< double >( d, names::tau_rec, tau_rec_ );
-  if ( tau_rec_ <= 0.0 )
-  {
+  if ( tau_rec_ <= 0.0 ) {
     throw BadProperty( "tau_rec must be > 0." );
   }
 
   updateValue< double >( d, names::tau_fac, tau_fac_ );
-  if ( tau_fac_ < 0.0 )
-  {
+  if ( tau_fac_ < 0.0 ) {
     throw BadProperty( "tau_fac must be >= 0." );
   }
 

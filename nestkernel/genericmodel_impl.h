@@ -29,20 +29,17 @@
 #include "kernel_manager.h"
 #include "logging_manager.h"
 
-namespace nest
-{
+namespace nest {
 
 template < typename ElementT >
 void
 GenericModel< ElementT >::deprecation_warning( const std::string& caller )
 {
-  if ( deprecation_warning_issued_ or deprecation_info_.empty() )
-  {
+  if ( deprecation_warning_issued_ or deprecation_info_.empty() ) {
     return;
   }
 
-  if ( not deprecation_info_.empty() )
-  {
+  if ( not deprecation_info_.empty() ) {
     LOG( M_DEPRECATED, caller, "Model " + get_name() + " is deprecated in " + deprecation_info_ + "." );
   }
 

@@ -25,8 +25,7 @@
 // C++ includes:
 #include <algorithm> // copy
 
-namespace nest
-{
+namespace nest {
 
 GIDCollection::GIDCollection( index first, index last )
   : is_range_( true )
@@ -46,8 +45,7 @@ GIDCollection::GIDCollection( TokenArray gids )
   : is_range_( false )
 {
   gid_array_.resize( gids.size() );
-  for ( size_t i = 0; i < gids.size(); ++i )
-  {
+  for ( size_t i = 0; i < gids.size(); ++i ) {
     gid_array_[ i ] = gids[ i ];
   }
 }
@@ -56,12 +54,10 @@ void
 GIDCollection::print_me( std::ostream& out ) const
 {
   out << "[[is_range=" << is_range_ << ",size=" << size() << ",";
-  if ( is_range_ )
-  {
+  if ( is_range_ ) {
     out << "(" << gid_range_.first << ".." << gid_range_.second << ")";
   }
-  else
-  {
+  else {
     out << "(" << gid_array_[ 0 ] << ".." << gid_array_[ gid_array_.size() - 1 ] << ")";
   }
   out << "]]";

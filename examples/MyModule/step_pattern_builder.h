@@ -26,11 +26,9 @@
 // Includes from nestkernel:
 #include "conn_builder.h"
 
-namespace mynest
-{
+namespace mynest {
 
-class StepPatternBuilder : public nest::ConnBuilder
-{
+class StepPatternBuilder : public nest::ConnBuilder {
 public:
   StepPatternBuilder( const nest::GIDCollection& sources,
     const nest::GIDCollection& targets,

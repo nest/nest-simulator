@@ -36,8 +36,7 @@
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 /** @BeginDocumentation
 Name: dc_generator - provides DC input current
 
@@ -72,8 +71,7 @@ Author: docu by Sirko Straube
 
 SeeAlso: Device, StimulatingDevice
 */
-class dc_generator : public DeviceNode
-{
+class dc_generator : public DeviceNode {
 
 public:
   dc_generator();
@@ -116,8 +114,7 @@ private:
   /**
    * Store independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     double amp_; //!< stimulation amplitude, in pA
 
     Parameters_(); //!< Sets default parameter values
@@ -130,8 +127,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
     double I_; //!< Instantaneous current value; used for recording current
                //!< Required to handle current values when device is inactive
 
@@ -151,8 +147,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( dc_generator& );
     Buffers_( const Buffers_&, dc_generator& );
     UniversalDataLogger< dc_generator > logger_;
@@ -189,8 +184,7 @@ dc_generator::send_test_event( Node& target, rport receptor_type, synindex syn_i
 inline port
 dc_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

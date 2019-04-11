@@ -37,8 +37,7 @@
 
 class Token;
 
-class TokenArrayObj
-{
+class TokenArrayObj {
 private:
   Token* p;
   Token* begin_of_free_storage;
@@ -130,8 +129,7 @@ public:
   remove_reference()
   {
     --refs_;
-    if ( refs_ == 0 )
-    {
+    if ( refs_ == 0 ) {
       delete this;
       return 0;
     }
@@ -151,8 +149,7 @@ public:
   void
   reserve_token( size_t n )
   {
-    if ( capacity() < size() + 1 + n )
-    {
+    if ( capacity() < size() + 1 + n ) {
       reserve( size() + n );
     }
   }
@@ -160,8 +157,7 @@ public:
   void
   push_back( const Token& t )
   {
-    if ( capacity() < size() + 1 )
-    {
+    if ( capacity() < size() + 1 ) {
       reserve( size() + alloc_block_size );
     }
 
@@ -171,8 +167,7 @@ public:
   void
   push_back_move( Token& t )
   {
-    if ( capacity() < size() + 1 )
-    {
+    if ( capacity() < size() + 1 ) {
       reserve( size() + alloc_block_size );
     }
 
@@ -187,8 +182,7 @@ public:
   void
   push_back_by_ref( const Token& t )
   {
-    if ( capacity() < size() + 1 )
-    {
+    if ( capacity() < size() + 1 ) {
       reserve( size() + alloc_block_size );
     }
 
@@ -204,8 +198,7 @@ public:
   void
   push_back_by_pointer( Datum* rhs )
   {
-    if ( capacity() < size() + 1 )
-    {
+    if ( capacity() < size() + 1 ) {
       reserve( size() + alloc_block_size );
     }
 

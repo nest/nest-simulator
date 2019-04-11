@@ -22,8 +22,7 @@
 
 #include "erfc_neuron.h"
 
-namespace nest
-{
+namespace nest {
 
 void
 gainfunction_erfc::get( DictionaryDatum& d ) const

@@ -40,8 +40,7 @@
 #include "compose.hpp"
 #include "propagator_stability.h"
 
-namespace nest
-{
+namespace nest {
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -143,8 +142,7 @@ nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::Delta_V, Delta_V_ );
   updateValue< double >( d, names::V_T_star, V_T_star_ );
 
-  if ( updateValue< double >( d, names::lambda_0, lambda_0_ ) )
-  {
+  if ( updateValue< double >( d, names::lambda_0, lambda_0_ ) ) {
     lambda_0_ /= 1000.0; // convert to 1/ms
   }
 
@@ -157,8 +155,7 @@ nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< std::vector< double > >( d, names::tau_stc, tau_stc_ );
   updateValue< std::vector< double > >( d, names::q_stc, q_stc_ );
 
-  if ( tau_sfa_.size() != q_sfa_.size() )
-  {
+  if ( tau_sfa_.size() != q_sfa_.size() ) {
     throw BadProperty( String::compose(
       "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
       "tau_sfa: %1\nSize of q_sfa: %2",
@@ -166,52 +163,41 @@ nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d )
       q_sfa_.size() ) );
   }
 
-  if ( tau_stc_.size() != q_stc_.size() )
-  {
+  if ( tau_stc_.size() != q_stc_.size() ) {
     throw BadProperty( String::compose(
       "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
       "tau_stc: %1\nSize of q_stc: %2",
       tau_stc_.size(),
       q_stc_.size() ) );
   }
-  if ( g_L_ <= 0 )
-  {
+  if ( g_L_ <= 0 ) {
     throw BadProperty( "Membrane conductance must be strictly positive." );
   }
-  if ( Delta_V_ <= 0 )
-  {
+  if ( Delta_V_ <= 0 ) {
     throw BadProperty( "Delta_V must be strictly positive." );
   }
-  if ( c_m_ <= 0 )
-  {
+  if ( c_m_ <= 0 ) {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( t_ref_ < 0 )
-  {
+  if ( t_ref_ < 0 ) {
     throw BadProperty( "Refractory time must not be negative." );
   }
-  if ( lambda_0_ < 0 )
-  {
+  if ( lambda_0_ < 0 ) {
     throw BadProperty( "lambda_0 must not be negative." );
   }
 
-  for ( size_t i = 0; i < tau_sfa_.size(); i++ )
-  {
-    if ( tau_sfa_[ i ] <= 0 )
-    {
+  for ( size_t i = 0; i < tau_sfa_.size(); i++ ) {
+    if ( tau_sfa_[ i ] <= 0 ) {
       throw BadProperty( "All time constants must be strictly positive." );
     }
   }
 
-  for ( size_t i = 0; i < tau_stc_.size(); i++ )
-  {
-    if ( tau_stc_[ i ] <= 0 )
-    {
+  for ( size_t i = 0; i < tau_stc_.size(); i++ ) {
+    if ( tau_stc_[ i ] <= 0 ) {
       throw BadProperty( "All time constants must be strictly positive." );
     }
   }
-  if ( tau_ex_ <= 0 || tau_in_ <= 0 )
-  {
+  if ( tau_ex_ <= 0 || tau_in_ <= 0 ) {
     throw BadProperty( "Synapse time constants must be strictly positive." );
   }
 }
@@ -312,14 +298,12 @@ nest::gif_psc_exp::calibrate()
   V_.P_sfa_.resize( P_.tau_sfa_.size(), 0.0 );
   V_.P_stc_.resize( P_.tau_stc_.size(), 0.0 );
 
-  for ( size_t i = 0; i < P_.tau_sfa_.size(); i++ )
-  {
+  for ( size_t i = 0; i < P_.tau_sfa_.size(); i++ ) {
     V_.P_sfa_[ i ] = std::exp( -h / P_.tau_sfa_[ i ] );
   }
   S_.sfa_elems_.resize( P_.tau_sfa_.size(), 0.0 );
 
-  for ( size_t i = 0; i < P_.tau_stc_.size(); i++ )
-  {
+  for ( size_t i = 0; i < P_.tau_stc_.size(); i++ ) {
     V_.P_stc_[ i ] = std::exp( -h / P_.tau_stc_[ i ] );
   }
   S_.stc_elems_.resize( P_.tau_stc_.size(), 0.0 );
@@ -336,20 +320,17 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
 
     // exponential decaying stc and sfa elements
     S_.stc_ = 0.0;
-    for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
-    {
+    for ( size_t i = 0; i < S_.stc_elems_.size(); i++ ) {
       S_.stc_ += S_.stc_elems_[ i ];
       S_.stc_elems_[ i ] = V_.P_stc_[ i ] * S_.stc_elems_[ i ];
     }
 
     S_.sfa_ = P_.V_T_star_;
-    for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ )
-    {
+    for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ ) {
       S_.sfa_ += S_.sfa_elems_[ i ];
       S_.sfa_elems_[ i ] = V_.P_sfa_[ i ] * S_.sfa_elems_[ i ];
     }
@@ -369,20 +350,16 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
 
       const double lambda = P_.lambda_0_ * std::exp( ( S_.V_ - S_.sfa_ ) / P_.Delta_V_ );
 
-      if ( lambda > 0.0 )
-      {
+      if ( lambda > 0.0 ) {
         // Draw random number and compare to prob to have a spike
         // hazard function is computed by 1 - exp(- lambda * dt)
-        if ( V_.rng_->drand() < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
-        {
+        if ( V_.rng_->drand() < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) ) {
 
-          for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
-          {
+          for ( size_t i = 0; i < S_.stc_elems_.size(); i++ ) {
             S_.stc_elems_[ i ] += P_.q_stc_[ i ];
           }
 
-          for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ )
-          {
+          for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ ) {
             S_.sfa_elems_[ i ] += P_.q_sfa_[ i ];
           }
 
@@ -395,8 +372,7 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
         }
       }
     }
-    else
-    {
+    else {
       --S_.r_ref_;         // neuron is absolute refractory
       S_.V_ = P_.V_reset_; // reset the membrane potential
     }
@@ -419,13 +395,11 @@ nest::gif_psc_exp::handle( SpikeEvent& e )
   //     explicitly, since it depends on delay and offset within
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
-  if ( e.get_weight() >= 0.0 )
-  {
+  if ( e.get_weight() >= 0.0 ) {
     B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
-  else
-  {
+  else {
     B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }

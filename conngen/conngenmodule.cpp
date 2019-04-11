@@ -35,8 +35,7 @@
 
 template class lockPTRDatum< ConnectionGenerator, &nest::ConnectionGeneratorType >;
 
-namespace nest
-{
+namespace nest {
 
 ConnectionGeneratorModule::ConnectionGeneratorModule()
 {
@@ -351,12 +350,10 @@ ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const
 
   int source_id;
   int target_id;
-  if ( cgd->next( source_id, target_id, values ) )
-  {
+  if ( cgd->next( source_id, target_id, values ) ) {
     i->OStack.push( source_id );
     i->OStack.push( target_id );
-    for ( int n = 0; n < arity; ++n )
-    {
+    for ( int n = 0; n < arity; ++n ) {
       i->OStack.push( values[ n ] );
     }
 
@@ -365,8 +362,7 @@ ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const
 
     i->OStack.push( true );
   }
-  else
-  {
+  else {
     cgd.unlock();
     i->OStack.push( false );
   }

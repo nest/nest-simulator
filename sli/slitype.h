@@ -49,8 +49,7 @@
 
 class SLIInterpreter;
 
-class SLIType
-{
+class SLIType {
   unsigned int count;
 
   Name* name;

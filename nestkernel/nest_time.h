@@ -40,15 +40,13 @@
 
 class Token;
 
-namespace nest
-{
+namespace nest {
 class Time;
 }
 
 std::ostream& operator<<( std::ostream&, const nest::Time& );
 
-namespace nest
-{
+namespace nest {
 /**
    Class to handle simulation time and realtime.
    Main idea:
@@ -138,8 +136,7 @@ time_abs( long long n )
 // Time class = tic_t
 /////////////////////////////////////////////////////////////
 
-class Time
-{
+class Time {
   // tic_t: tics in  a step, signed long or long long
   // delay: steps, signed long
   // double: milliseconds (double!)
@@ -151,8 +148,7 @@ class Time
   /////////////////////////////////////////////////////////////
 
 protected:
-  struct Range
-  {
+  struct Range {
     static tic_t TICS_PER_STEP;
     static double TICS_PER_STEP_INV;
     static tic_t TICS_PER_STEP_RND;
@@ -204,8 +200,7 @@ protected:
   /////////////////////////////////////////////////////////////
 
 protected:
-  struct Limit
-  {
+  struct Limit {
     tic_t tics;
     delay steps;
     double ms;
@@ -224,15 +219,13 @@ protected:
 
   // max is never larger than tics/INF_MARGIN, and we can use INF_MARGIN
   // to minimize range checks on +/- operations
-  static struct LimitPosInf
-  {
+  static struct LimitPosInf {
     static const tic_t tics = tic_t_max / Range::INF_MARGIN + 1;
     static const delay steps = delay_max;
 #define LIM_POS_INF_ms DBL_MAX // because C++ bites
   } LIM_POS_INF;
 
-  static struct LimitNegInf
-  {
+  static struct LimitNegInf {
     static const tic_t tics = -tic_t_max / Range::INF_MARGIN - 1;
     static const delay steps = -delay_max;
 #define LIM_NEG_INF_ms ( -DBL_MAX ) // c++ bites
@@ -243,15 +236,13 @@ protected:
   /////////////////////////////////////////////////////////////
 
 public:
-  struct tic
-  {
+  struct tic {
     tic_t t;
     explicit tic( tic_t t )
       : t( t ){};
   };
 
-  struct step
-  {
+  struct step {
     delay t;
     explicit step( delay t )
       : t( t )
@@ -259,8 +250,7 @@ public:
     }
   };
 
-  struct ms
-  {
+  struct ms {
     double t;
     explicit ms( double t )
       : t( t )
@@ -272,8 +262,7 @@ public:
       : t( fromtoken( t ) ){};
   };
 
-  struct ms_stamp
-  {
+  struct ms_stamp {
     double t;
     explicit ms_stamp( double t )
       : t( t )
@@ -459,8 +448,7 @@ public:
   void
   range()
   {
-    if ( time_abs( tics ) < LIM_MAX.tics )
-    {
+    if ( time_abs( tics ) < LIM_MAX.tics ) {
       return;
     }
     tics = ( tics < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics;
@@ -506,12 +494,10 @@ public:
   double
   get_ms() const
   {
-    if ( is_pos_inf() )
-    {
+    if ( is_pos_inf() ) {
       return LIM_POS_INF_ms;
     }
-    if ( is_neg_inf() )
-    {
+    if ( is_neg_inf() ) {
       return LIM_NEG_INF_ms;
     }
     return Range::MS_PER_TIC * tics;
@@ -520,12 +506,10 @@ public:
   delay
   get_steps() const
   {
-    if ( is_pos_inf() )
-    {
+    if ( is_pos_inf() ) {
       return LIM_POS_INF.steps;
     }
-    if ( is_neg_inf() )
-    {
+    if ( is_neg_inf() ) {
       return LIM_NEG_INF.steps;
     }
 
@@ -610,16 +594,13 @@ inline Time operator*( const long factor, const Time& t )
 {
   const tic_t n = factor * t.tics;
   // if no overflow:
-  if ( t.tics == 0 or n / t.tics == factor )
-  {
+  if ( t.tics == 0 or n / t.tics == factor ) {
     return Time::tic( n ); // check range
   }
-  if ( ( t.tics > 0 and factor > 0 ) or ( t.tics < 0 and factor < 0 ) )
-  {
+  if ( ( t.tics > 0 and factor > 0 ) or ( t.tics < 0 and factor < 0 ) ) {
     return Time( Time::LIM_POS_INF.tics );
   }
-  else
-  {
+  else {
     return Time( Time::LIM_NEG_INF.tics );
   }
 }

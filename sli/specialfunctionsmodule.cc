@@ -97,16 +97,14 @@ SpecialFunctionsModule::GammaIncFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop(); // pop yourself
 
-  if ( i->OStack.load() < 2 )
-  { // expect two arguments on stack
+  if ( i->OStack.load() < 2 ) { // expect two arguments on stack
     i->raiseerror( "Gammainc", "two arguments required" );
     return;
   }
 
   // get top argument
   DoubleDatum* da = dynamic_cast< DoubleDatum* >( i->OStack.top().datum() );
-  if ( not da )
-  {
+  if ( not da ) {
     i->raiseerror( "Gammainc", "arguments must be doubles" );
     return;
   }
@@ -114,8 +112,7 @@ SpecialFunctionsModule::GammaIncFunction::execute( SLIInterpreter* i ) const
 
   // get second argument, leave datum on stack
   DoubleDatum* dx = dynamic_cast< DoubleDatum* >( i->OStack.top().datum() );
-  if ( not dx )
-  {
+  if ( not dx ) {
     i->raiseerror( "Gammainc", "arguments must be doubles" );
     return;
   }
@@ -124,8 +121,7 @@ SpecialFunctionsModule::GammaIncFunction::execute( SLIInterpreter* i ) const
   gsl_sf_result result;
 
   int status = gsl_sf_gamma_inc_P_e( da->get(), dx->get(), &result );
-  if ( status )
-  {
+  if ( status ) {
     i->raiseerror( "Gammainc[GSL]", gsl_strerror( status ) );
     return;
   }
@@ -143,16 +139,14 @@ SpecialFunctionsModule::LambertW0Function::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop(); // pop yourself
 
-  if ( i->OStack.load() < 1 )
-  { // expect one arguments on stack
+  if ( i->OStack.load() < 1 ) { // expect one arguments on stack
     i->raiseerror( "LambertW0", "one argument required" );
     return;
   }
 
   // get argument, leave datum on stack
   DoubleDatum* dx = dynamic_cast< DoubleDatum* >( i->OStack.top().datum() );
-  if ( not dx )
-  {
+  if ( not dx ) {
     i->raiseerror( "LambertW0", "argument must be doubles" );
     return;
   }
@@ -160,8 +154,7 @@ SpecialFunctionsModule::LambertW0Function::execute( SLIInterpreter* i ) const
   // computation via GSL
   gsl_sf_result result;
   int status = gsl_sf_lambert_W0_e( dx->get(), &result );
-  if ( status )
-  {
+  if ( status ) {
     i->raiseerror( "LambertW0[GSL]", gsl_strerror( status ) );
     return;
   }
@@ -176,16 +169,14 @@ SpecialFunctionsModule::LambertWm1Function::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop(); // pop yourself
 
-  if ( i->OStack.load() < 1 )
-  { // expect one arguments on stack
+  if ( i->OStack.load() < 1 ) { // expect one arguments on stack
     i->raiseerror( "LambertWm1", "one argument required" );
     return;
   }
 
   // get argument, leave datum on stack
   DoubleDatum* dx = dynamic_cast< DoubleDatum* >( i->OStack.top().datum() );
-  if ( not dx )
-  {
+  if ( not dx ) {
     i->raiseerror( "LambertWm1", "argument must be doubles" );
     return;
   }
@@ -193,8 +184,7 @@ SpecialFunctionsModule::LambertWm1Function::execute( SLIInterpreter* i ) const
   // computation via GSL
   gsl_sf_result result;
   int status = gsl_sf_lambert_Wm1_e( dx->get(), &result );
-  if ( status )
-  {
+  if ( status ) {
     i->raiseerror( "LambertWm1[GSL]", gsl_strerror( status ) );
     return;
   }
@@ -209,16 +199,14 @@ SpecialFunctionsModule::ErfFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop(); // pop yourself
 
-  if ( i->OStack.load() < 1 )
-  { // expect one arguments on stack
+  if ( i->OStack.load() < 1 ) { // expect one arguments on stack
     i->raiseerror( "Erf", "one argument required" );
     return;
   }
 
   // get argument, leave datum on stack
   DoubleDatum* dx = dynamic_cast< DoubleDatum* >( i->OStack.top().datum() );
-  if ( not dx )
-  {
+  if ( not dx ) {
     i->raiseerror( "Erf", "arguments must be doubles" );
     return;
   }
@@ -226,8 +214,7 @@ SpecialFunctionsModule::ErfFunction::execute( SLIInterpreter* i ) const
   // computation via GSL
   gsl_sf_result result;
   int status = gsl_sf_erf_e( dx->get(), &result );
-  if ( status )
-  {
+  if ( status ) {
     i->raiseerror( "Erf[GSL]", gsl_strerror( status ) );
     return;
   }
@@ -243,16 +230,14 @@ SpecialFunctionsModule::ErfcFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop(); // pop yourself
 
-  if ( i->OStack.load() < 1 )
-  { // expect one arguments on stack
+  if ( i->OStack.load() < 1 ) { // expect one arguments on stack
     i->raiseerror( "Erfc", "one argument required" );
     return;
   }
 
   // get argument, leave datum on stack
   DoubleDatum* dx = dynamic_cast< DoubleDatum* >( i->OStack.top().datum() );
-  if ( not dx )
-  {
+  if ( not dx ) {
     i->raiseerror( "Erfc", "arguments must be doubles" );
     return;
   }
@@ -260,8 +245,7 @@ SpecialFunctionsModule::ErfcFunction::execute( SLIInterpreter* i ) const
   // computation via GSL
   gsl_sf_result result;
   int status = gsl_sf_erfc_e( dx->get(), &result );
-  if ( status )
-  {
+  if ( status ) {
     i->raiseerror( "Erfc[GSL]", gsl_strerror( status ) );
     return;
   }
@@ -307,46 +291,36 @@ SpecialFunctionsModule::GaussDiskConvFunction::execute( SLIInterpreter* i ) cons
   // check for simple cases first
   gsl_sf_result X;
   double result;
-  if ( y < 2 * GSL_DBL_EPSILON )
-  { /* disk has zero diameter */
+  if ( y < 2 * GSL_DBL_EPSILON ) { /* disk has zero diameter */
     result = 0.0;
   }
-  else if ( r0 < 2 * GSL_DBL_EPSILON )
-  { /* Gaussian is concentric */
+  else if ( r0 < 2 * GSL_DBL_EPSILON ) { /* Gaussian is concentric */
     int status = gsl_sf_expm1_e( -y, &X );
-    if ( not status )
-    {
+    if ( not status ) {
       result = -X.val;
     }
-    else
-    {
+    else {
       i->raiseerror( "GaussDiskConv[GSL]", gsl_strerror( status ) );
       return;
     }
   }
-  else if ( std::fabs( R - r0 ) < 2 * GSL_DBL_EPSILON )
-  { /* Gaussian on perimeter */
+  else if ( std::fabs( R - r0 ) < 2 * GSL_DBL_EPSILON ) { /* Gaussian on perimeter */
     int status = gsl_sf_bessel_I0_scaled_e( 2.0 * y, &X );
-    if ( not status )
-    {
+    if ( not status ) {
       result = 0.5 * ( 1.0 - X.val );
     }
-    else
-    {
+    else {
       i->raiseerror( "GaussDiskConv[GSL]", gsl_strerror( status ) );
       return;
     }
   }
-  else if ( R > r0 + sqrt( -log( GSL_DBL_EPSILON ) ) )
-  { /* Gaussian in disk */
+  else if ( R > r0 + sqrt( -log( GSL_DBL_EPSILON ) ) ) { /* Gaussian in disk */
     result = 1.0;
   }
-  else if ( y > 1 && r0 > R + sqrt( -log( GSL_DBL_EPSILON / y ) ) )
-  { /* tail */
+  else if ( y > 1 && r0 > R + sqrt( -log( GSL_DBL_EPSILON / y ) ) ) { /* tail */
     result = 0.25 * R / r0 * ( std::exp( -( r0 - R ) * ( r0 - R ) ) - std::exp( -( r0 + R ) * ( r0 + R ) ) );
   }
-  else
-  { /* in all other cases, integration */
+  else { /* in all other cases, integration */
 
     // parameter for integrand function
     F_.params = &r0;
@@ -355,18 +329,15 @@ SpecialFunctionsModule::GaussDiskConvFunction::execute( SLIInterpreter* i ) cons
     double Cerr = 0.0;
     int status = gsl_integration_qag( &F_, 0.0, R, 0.0, QUAD_ERR_LIM, MAX_QUAD_SIZE, GSL_INTEG_GAUSS61, w_, &C, &Cerr );
 
-    if ( status )
-    {
+    if ( status ) {
       i->raiseerror( "GaussDiskConv[GSL]", gsl_strerror( status ) );
       return;
     }
 
-    if ( C <= 1.0 )
-    {
+    if ( C <= 1.0 ) {
       result = C;
     }
-    else
-    {
+    else {
       result = 1.0;
     }
   }
@@ -386,12 +357,10 @@ SpecialFunctionsModule::GaussDiskConvFunction::f_( double r, void* params )
   gsl_sf_result X;
 
   status = gsl_sf_bessel_I0_scaled_e( 2.0 * r * r0, &X );
-  if ( status )
-  {
+  if ( status ) {
     return GSL_NAN;
   }
-  else
-  {
+  else {
     return 2.0 * r * exp( -( r - r0 ) * ( r - r0 ) ) * X.val;
   }
 }

@@ -30,8 +30,7 @@
 #include "mpi_manager.h"
 #include "mpi_manager_impl.h"
 
-namespace nest
-{
+namespace nest {
 
 inline thread
 VPManager::get_vp() const
@@ -111,13 +110,11 @@ VPManager::get_end_rank_per_thread( const thread tid,
   // if we have more threads than ranks, or if ranks can not be
   // distributed evenly on threads, we need to make sure, that all
   // threads care only about existing ranks
-  while ( rank_end > kernel().mpi_manager.get_num_processes() )
-  {
+  while ( rank_end > kernel().mpi_manager.get_num_processes() ) {
     --rank_end;
     // we use rank_end == rank_start, as a sign, that this thread
     // does not do any work
-    if ( rank_end == rank_start )
-    {
+    if ( rank_end == rank_start ) {
       break;
     }
   }

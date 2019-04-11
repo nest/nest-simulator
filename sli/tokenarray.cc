@@ -43,8 +43,7 @@ TokenArray::TokenArray( const std::vector< long >& a )
   : data( new TokenArrayObj( a.size(), Token(), 0 ) )
 {
   assert( data != NULL );
-  for ( size_t i = 0; i < a.size(); ++i )
-  {
+  for ( size_t i = 0; i < a.size(); ++i ) {
     Token idt( new IntegerDatum( a[ i ] ) );
     ( *data )[ i ].move( idt );
   }
@@ -54,8 +53,7 @@ TokenArray::TokenArray( const std::vector< size_t >& a )
   : data( new TokenArrayObj( a.size(), Token(), 0 ) )
 {
   assert( data != NULL );
-  for ( size_t i = 0; i < a.size(); ++i )
-  {
+  for ( size_t i = 0; i < a.size(); ++i ) {
     Token idt( new IntegerDatum( a[ i ] ) );
     ( *data )[ i ].move( idt );
   }
@@ -65,8 +63,7 @@ TokenArray::TokenArray( const std::vector< double >& a )
   : data( new TokenArrayObj( a.size(), Token(), 0 ) )
 {
   assert( data != NULL );
-  for ( size_t i = 0; i < a.size(); ++i )
-  {
+  for ( size_t i = 0; i < a.size(); ++i ) {
     Token ddt( new DoubleDatum( a[ i ] ) );
     ( *data )[ i ].move( ddt );
   }
@@ -76,8 +73,7 @@ TokenArray::TokenArray( const std::vector< float >& a )
   : data( new TokenArrayObj( a.size(), Token(), 0 ) )
 {
   assert( data != NULL );
-  for ( size_t i = 0; i < a.size(); ++i )
-  {
+  for ( size_t i = 0; i < a.size(); ++i ) {
     Token ddt( new DoubleDatum( a[ i ] ) );
     ( *data )[ i ].move( ddt );
   }
@@ -89,11 +85,9 @@ TokenArray::toVector( std::vector< long >& a ) const
 {
   a.clear();
   a.reserve( size() );
-  for ( Token* idx = begin(); idx != end(); ++idx )
-  {
+  for ( Token* idx = begin(); idx != end(); ++idx ) {
     IntegerDatum* targetid = dynamic_cast< IntegerDatum* >( idx->datum() );
-    if ( targetid == NULL )
-    {
+    if ( targetid == NULL ) {
       IntegerDatum const d;
       throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
     }
@@ -107,11 +101,9 @@ TokenArray::toVector( std::vector< size_t >& a ) const
 {
   a.clear();
   a.reserve( size() );
-  for ( Token* idx = begin(); idx != end(); ++idx )
-  {
+  for ( Token* idx = begin(); idx != end(); ++idx ) {
     IntegerDatum* targetid = dynamic_cast< IntegerDatum* >( idx->datum() );
-    if ( targetid == NULL )
-    {
+    if ( targetid == NULL ) {
       IntegerDatum const d;
       throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
     }
@@ -125,11 +117,9 @@ TokenArray::toVector( std::vector< double >& a ) const
 {
   a.clear();
   a.reserve( size() );
-  for ( Token* idx = begin(); idx != end(); ++idx )
-  {
+  for ( Token* idx = begin(); idx != end(); ++idx ) {
     DoubleDatum* targetid = dynamic_cast< DoubleDatum* >( idx->datum() );
-    if ( targetid == NULL )
-    {
+    if ( targetid == NULL ) {
       DoubleDatum const d;
       throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
     }
@@ -142,11 +132,9 @@ TokenArray::toVector( std::vector< std::string >& a ) const
 {
   a.clear();
   a.reserve( size() );
-  for ( Token* idx = begin(); idx != end(); ++idx )
-  {
+  for ( Token* idx = begin(); idx != end(); ++idx ) {
     std::string* target = dynamic_cast< std::string* >( idx->datum() );
-    if ( target == NULL )
-    {
+    if ( target == NULL ) {
       StringDatum const d;
       throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
     }
@@ -158,8 +146,7 @@ TokenArray::toVector( std::vector< std::string >& a ) const
 bool
 TokenArray::valid( void ) const
 {
-  if ( data == NULL )
-  {
+  if ( data == NULL ) {
     return false;
   }
   return data->valid();
@@ -169,8 +156,7 @@ TokenArray::valid( void ) const
 std::ostream& operator<<( std::ostream& out, const TokenArray& a )
 {
 
-  for ( Token* t = a.begin(); t < a.end(); ++t )
-  {
+  for ( Token* t = a.begin(); t < a.end(); ++t ) {
     out << *t << ' ';
   }
 

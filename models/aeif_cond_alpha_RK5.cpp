@@ -50,7 +50,7 @@
 nest::RecordablesMap< nest::aeif_cond_alpha_RK5 > nest::aeif_cond_alpha_RK5::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
-{
+  {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -96,8 +96,7 @@ nest::aeif_cond_alpha_RK5::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   y_[ 0 ] = p.E_L;
-  for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 1; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = 0.0;
   }
 }
@@ -105,8 +104,7 @@ nest::aeif_cond_alpha_RK5::State_::State_( const Parameters_& p )
 nest::aeif_cond_alpha_RK5::State_::State_( const State_& s )
   : r_( s.r_ )
 {
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = s.y_[ i ];
   }
 }
@@ -115,8 +113,7 @@ nest::aeif_cond_alpha_RK5::State_& nest::aeif_cond_alpha_RK5::State_::operator=(
 {
   assert( this != &s ); // would be bad logical error in program
 
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = s.y_[ i ];
   }
   r_ = s.r_;
@@ -176,40 +173,32 @@ nest::aeif_cond_alpha_RK5::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::I_e, I_e );
 
-  if ( updateValue< double >( d, names::MAXERR, tmp ) )
-  {
-    if ( not( tmp > 0.0 ) )
-    {
+  if ( updateValue< double >( d, names::MAXERR, tmp ) ) {
+    if ( not( tmp > 0.0 ) ) {
       throw BadProperty( "MAXERR must be positive." );
     }
     MAXERR = tmp;
   }
 
-  if ( updateValue< double >( d, names::HMIN, tmp ) )
-  {
-    if ( not( tmp > 0.0 ) )
-    {
+  if ( updateValue< double >( d, names::HMIN, tmp ) ) {
+    if ( not( tmp > 0.0 ) ) {
       throw BadProperty( "HMIN must be positive." );
     }
     HMIN = tmp;
   }
 
-  if ( V_peak_ <= V_th )
-  {
+  if ( V_peak_ <= V_th ) {
     throw BadProperty( "V_peak must be larger than threshold." );
   }
 
-  if ( Delta_T < 0. )
-  {
+  if ( Delta_T < 0. ) {
     throw BadProperty( "Delta_T must be positive." );
   }
-  else if ( Delta_T > 0. )
-  {
+  else if ( Delta_T > 0. ) {
     // check for possible numerical overflow with the exponential divergence at
     // spike time, keep a 1e20 margin for the subsequent calculations
     const double max_exp_arg = std::log( std::numeric_limits< double >::max() / 1e20 );
-    if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg )
-    {
+    if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg ) {
       throw BadProperty(
         "The current combination of V_peak, V_th and Delta_T"
         "will lead to numerical overflow at spike time; try"
@@ -218,18 +207,15 @@ nest::aeif_cond_alpha_RK5::Parameters_::set( const DictionaryDatum& d )
     }
   }
 
-  if ( C_m <= 0 )
-  {
+  if ( C_m <= 0 ) {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
 
-  if ( t_ref_ < 0 )
-  {
+  if ( t_ref_ < 0 ) {
     throw BadProperty( "Refractory time cannot be negative." );
   }
 
-  if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
-  {
+  if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
 }
@@ -254,8 +240,7 @@ nest::aeif_cond_alpha_RK5::State_::set( const DictionaryDatum& d, const Paramete
   updateValue< double >( d, names::g_in, y_[ G_INH ] );
   updateValue< double >( d, names::dg_in, y_[ DG_INH ] );
   updateValue< double >( d, names::w, y_[ W ] );
-  if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 )
-  {
+  if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 ) {
     throw BadProperty( "Conductances must not be negative." );
   }
 }
@@ -337,13 +322,11 @@ nest::aeif_cond_alpha_RK5::calibrate()
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
 
   // set model dynamics depending on the value of Delta_T
-  if ( P_.Delta_T > 0. )
-  {
+  if ( P_.Delta_T > 0. ) {
     V_.V_peak = P_.V_peak_;
     V_.model_dynamics = &aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics;
   }
-  else
-  {
+  else {
     V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
     V_.model_dynamics = &aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics_DT0;
   }
@@ -408,8 +391,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin, const long from, con
     {
       bool done = false;
 
-      do
-      {
+      do {
 
         if ( tend - t < h ) // stop integration at end of simulation step
         {
@@ -422,30 +404,26 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin, const long from, con
         ( this->*( V_.model_dynamics ) )( S_.y_, S_.k1 );
 
         // k2 = f(told + h/5, y + h*k1 / 5)
-        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
-        {
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i ) {
           S_.yin[ i ] = S_.y_[ i ] + h * S_.k1[ i ] / 5.0;
         }
         ( this->*( V_.model_dynamics ) )( S_.yin, S_.k2 );
 
         // k3 = f(told + 3/10*h, y + 3/40*h*k1 + 9/40*h*k2)
-        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
-        {
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i ) {
           S_.yin[ i ] = S_.y_[ i ] + h * ( 3.0 / 40.0 * S_.k1[ i ] + 9.0 / 40.0 * S_.k2[ i ] );
         }
         ( this->*( V_.model_dynamics ) )( S_.yin, S_.k3 );
 
         // k4
-        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
-        {
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i ) {
           S_.yin[ i ] =
             S_.y_[ i ] + h * ( 44.0 / 45.0 * S_.k1[ i ] - 56.0 / 15.0 * S_.k2[ i ] + 32.0 / 9.0 * S_.k3[ i ] );
         }
         ( this->*( V_.model_dynamics ) )( S_.yin, S_.k4 );
 
         // k5
-        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
-        {
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i ) {
           S_.yin[ i ] = S_.y_[ i ]
             + h * ( 19372.0 / 6561.0 * S_.k1[ i ] - 25360.0 / 2187.0 * S_.k2[ i ] + 64448.0 / 6561.0 * S_.k3[ i ]
                     - 212.0 / 729.0 * S_.k4[ i ] );
@@ -453,8 +431,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin, const long from, con
         ( this->*( V_.model_dynamics ) )( S_.yin, S_.k5 );
 
         // k6
-        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
-        {
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i ) {
           S_.yin[ i ] = S_.y_[ i ]
             + h * ( 9017.0 / 3168.0 * S_.k1[ i ] - 355.0 / 33.0 * S_.k2[ i ] + 46732.0 / 5247.0 * S_.k3[ i ]
                     + 49.0 / 176.0 * S_.k4[ i ]
@@ -463,8 +440,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin, const long from, con
         ( this->*( V_.model_dynamics ) )( S_.yin, S_.k6 );
 
         // 5th order
-        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
-        {
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i ) {
           S_.ynew[ i ] = S_.y_[ i ]
             + h * ( 35.0 / 384.0 * S_.k1[ i ] + 500.0 / 1113.0 * S_.k3[ i ] + 125.0 / 192.0 * S_.k4[ i ]
                     - 2187.0 / 6784.0 * S_.k5[ i ]
@@ -473,8 +449,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin, const long from, con
         ( this->*( V_.model_dynamics ) )( S_.ynew, S_.k7 );
 
         // 4th order
-        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
-        {
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i ) {
           S_.yref[ i ] = S_.y_[ i ]
             + h * ( 5179.0 / 57600.0 * S_.k1[ i ] + 7571.0 / 16695.0 * S_.k3[ i ] + 393.0 / 640.0 * S_.k4[ i ]
                     - 92097.0 / 339200.0 * S_.k5[ i ]
@@ -505,16 +480,14 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin, const long from, con
 
       } while ( ( err > 1.0 ) and ( not done ) ); // reject step if err > 1
 
-      for ( unsigned int i = 0; i < S_.STATE_VEC_SIZE; ++i )
-      {
+      for ( unsigned int i = 0; i < S_.STATE_VEC_SIZE; ++i ) {
         S_.y_[ i ] = S_.ynew[ i ]; // pass updated values
       }
 
       t = t_return;
 
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
-      {
+      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 ) {
         throw NumericalInstability( get_name() );
       }
 
@@ -556,13 +529,11 @@ nest::aeif_cond_alpha_RK5::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  if ( e.get_weight() > 0.0 )
-  {
+  if ( e.get_weight() > 0.0 ) {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
-  else
-  {
+  else {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   } // keep conductances positive

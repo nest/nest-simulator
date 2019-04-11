@@ -42,8 +42,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * Function computing right-hand side of ODE for GSL solver if Delta_T != 0.
  * @note Must be declared here so we can befriend it in class.
@@ -145,8 +144,7 @@ References: Brette R and Gerstner W (2005) Adaptive Exponential
 
 SeeAlso: iaf_cond_exp, aeif_cond_alpha
 */
-class aeif_cond_exp : public Archiving_Node
-{
+class aeif_cond_exp : public Archiving_Node {
 
 public:
   aeif_cond_exp();
@@ -195,8 +193,7 @@ private:
   // ----------------------------------------------------------------
 
   //! Independent parameters
-  struct Parameters_
-  {
+  struct Parameters_ {
     double V_peak_;  //!< Spike detection threshold in mV
     double V_reset_; //!< Reset Potential in mV
     double t_ref_;   //!< Refractory period in ms
@@ -232,16 +229,14 @@ public:
    * @note Copy constructor and assignment operator required because
    *       of C-style array.
    */
-  struct State_
-  {
+  struct State_ {
     /**
      * Enumeration identifying elements in state array State_::y_.
      * The state vector must be passed to GSL as a C array. This enum
      * identifies the elements of the vector. It must be public to be
      * accessible from the iteration function.
      */
-    enum StateVecElems
-    {
+    enum StateVecElems {
       V_M = 0,
       G_EXC, // 1
       G_INH, // 2
@@ -266,8 +261,7 @@ public:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( aeif_cond_exp& );                  //!<Sets buffer pointers to 0
     Buffers_( const Buffers_&, aeif_cond_exp& ); //!<Sets buffer pointers to 0
 
@@ -307,8 +301,7 @@ public:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     /**
      * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
      * P.V_th if Delta_T == 0.
@@ -351,8 +344,7 @@ aeif_cond_exp::send_test_event( Node& target, rport receptor_type, synindex, boo
 inline port
 aeif_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -361,8 +353,7 @@ aeif_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 aeif_cond_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -371,8 +362,7 @@ aeif_cond_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 aeif_cond_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

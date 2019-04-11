@@ -22,8 +22,7 @@
 
 #include "lin_rate.h"
 
-namespace nest
-{
+namespace nest {
 
 void
 nonlinearities_lin_rate::get( DictionaryDatum& d ) const

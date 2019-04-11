@@ -35,8 +35,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: iaf_chs_2007 - Spike-response model used in Carandini et al 2007.
@@ -94,8 +93,7 @@ FirstVersion: May 2012
 
 Author: Thomas Heiberg, Birgit Kriener
 */
-class iaf_chs_2007 : public Archiving_Node
-{
+class iaf_chs_2007 : public Archiving_Node {
 
 public:
   iaf_chs_2007();
@@ -137,8 +135,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
     // state variables
     double i_syn_ex_; // postsynaptic current for exc. inputs, variable 1
     double V_syn_;    // psp waveform, variable 2
@@ -158,8 +155,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     /** Membrane time constant in ms. */
     double tau_epsp_;
@@ -206,8 +202,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( iaf_chs_2007& );
     Buffers_( const Buffers_&, iaf_chs_2007& );
 
@@ -224,8 +219,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     /** Amplitude of the synaptic current.
         This value is chosen such that a post-synaptic potential with
         weight one has an amplitude of 1 mV.
@@ -283,8 +277,7 @@ iaf_chs_2007::send_test_event( Node& target, rport receptor_type, synindex, bool
 inline port
 iaf_chs_2007::handles_test_event( SpikeEvent&, port receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -293,8 +286,7 @@ iaf_chs_2007::handles_test_event( SpikeEvent&, port receptor_type )
 inline port
 iaf_chs_2007::handles_test_event( DataLoggingRequest& dlr, port receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

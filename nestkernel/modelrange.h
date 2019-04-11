@@ -26,11 +26,9 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 
-class modelrange
-{
+class modelrange {
 public:
   modelrange( index model, index first_gid, index last_gid );
   bool

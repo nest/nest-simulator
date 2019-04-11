@@ -39,10 +39,8 @@
 // Includes from sli:
 #include "dictutils.h"
 
-namespace nest
-{
-class ModelManager : public ManagerInterface
-{
+namespace nest {
+class ModelManager : public ManagerInterface {
 public:
   ModelManager();
   ~ModelManager();
@@ -411,8 +409,7 @@ private:
 inline Model*
 ModelManager::get_model( index m ) const
 {
-  if ( m >= models_.size() or models_[ m ] == 0 )
-  {
+  if ( m >= models_.size() or models_[ m ] == 0 ) {
     throw UnknownModelID( m );
   }
 
@@ -490,8 +487,7 @@ ModelManager::get_num_synapse_prototypes() const
 inline void
 ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
 {
-  if ( syn_id >= prototypes_[ t ].size() or prototypes_[ t ][ syn_id ] == 0 )
-  {
+  if ( syn_id >= prototypes_[ t ].size() or prototypes_[ t ][ syn_id ] == 0 ) {
     throw UnknownSynapseType( syn_id );
   }
 }
@@ -507,10 +503,8 @@ ModelManager::delete_secondary_events_prototypes()
 {
   for ( std::vector< std::map< synindex, SecondaryEvent* > >::iterator it = secondary_events_prototypes_.begin();
         it != secondary_events_prototypes_.end();
-        ++it )
-  {
-    for ( std::map< synindex, SecondaryEvent* >::iterator iit = it->begin(); iit != it->end(); ++iit )
-    {
+        ++it ) {
+    for ( std::map< synindex, SecondaryEvent* >::iterator iit = it->begin(); iit != it->end(); ++iit ) {
       ( *iit->second ).reset_supported_syn_ids();
       delete iit->second;
     }

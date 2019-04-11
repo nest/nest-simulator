@@ -25,8 +25,7 @@
 
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: diffusion_connection - Synapse type for instantaneous rate connections
@@ -72,8 +71,7 @@ Author: David Dahmen, Jan Hahne, Jannis Schuecker
 SeeAlso: siegert_neuron, rate_connection_instantaneous
 */
 template < typename targetidentifierT >
-class DiffusionConnection : public Connection< targetidentifierT >
-{
+class DiffusionConnection : public Connection< targetidentifierT > {
 
 public:
   // this line determines which common properties to use
@@ -168,13 +166,11 @@ void
 DiffusionConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
-  if ( d->known( names::delay ) )
-  {
+  if ( d->known( names::delay ) ) {
     throw BadProperty( "diffusion_connection has no delay." );
   }
   // If the parameter weight is set, we throw a BadProperty
-  if ( d->known( names::weight ) )
-  {
+  if ( d->known( names::weight ) ) {
     throw BadProperty(
       "Please use the parameters drift_factor and "
       "diffusion_factor to specifiy the weights." );

@@ -36,15 +36,13 @@
 #include "topology_names.h"
 #include "topologymodule.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * Mask defined in terms of grid points rather than spacial
  * coordinates. Only suitable for grid layers.
  */
 template < int D >
-class GridMask : public AbstractMask
-{
+class GridMask : public AbstractMask {
 public:
   /**
    * Parameters:
@@ -115,17 +113,14 @@ GridMask< D >::GridMask( const DictionaryDatum& d )
 {
   int columns = getValue< long >( d, names::columns );
   int rows = getValue< long >( d, names::rows );
-  if ( D == 3 )
-  {
+  if ( D == 3 ) {
     int layers = getValue< long >( d, names::layers );
     lower_right_ = Position< D, int >( columns, rows, layers );
   }
-  else if ( D == 2 )
-  {
+  else if ( D == 2 ) {
     lower_right_ = Position< D, int >( columns, rows );
   }
-  else
-  {
+  else {
     throw BadProperty( "Grid mask must be 2- or 3-dimensional." );
   }
 }
@@ -153,8 +148,7 @@ GridMask< D >::get_dict() const
   def< DictionaryDatum >( d, get_name(), maskd );
   def< long >( maskd, names::columns, lower_right_[ 0 ] - upper_left_[ 0 ] );
   def< long >( maskd, names::rows, lower_right_[ 1 ] - upper_left_[ 1 ] );
-  if ( D >= 3 )
-  {
+  if ( D >= 3 ) {
     def< long >( maskd, names::layers, lower_right_[ 2 ] - upper_left_[ 2 ] );
   }
   return d;

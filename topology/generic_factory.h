@@ -32,8 +32,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 class AbstractGeneric;
 
 /**
@@ -45,8 +44,7 @@ class AbstractGeneric;
  * @see Alexandrescu, A (2001). Modern C++ Design, Addison-Wesley, ch. 8.
  */
 template < class BaseT >
-class GenericFactory
-{
+class GenericFactory {
 public:
   typedef BaseT* ( *CreatorFunction )( const DictionaryDatum& d );
   typedef std::map< Name, CreatorFunction > AssocMap;
@@ -91,8 +89,7 @@ inline BaseT*
 GenericFactory< BaseT >::create( const Name& name, const DictionaryDatum& d ) const
 {
   typename AssocMap::const_iterator i = associations_.find( name );
-  if ( i != associations_.end() )
-  {
+  if ( i != associations_.end() ) {
     return ( i->second )( d );
   }
   throw UndefinedName( name.toString() );

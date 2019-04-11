@@ -54,8 +54,7 @@ librandom::UniformRandomDev::set_status( const DictionaryDatum& d )
 
   updateValue< double >( d, names::low, new_low );
   updateValue< double >( d, names::high, new_high );
-  if ( new_high <= new_low )
-  {
+  if ( new_high <= new_low ) {
     throw BadParameterValue( "Uniform RDV: low < high required." );
   }
 

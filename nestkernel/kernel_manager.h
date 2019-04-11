@@ -113,11 +113,9 @@
  */
 // clang-format on
 
-namespace nest
-{
+namespace nest {
 
-class KernelManager
-{
+class KernelManager {
 private:
   KernelManager();
   ~KernelManager();

@@ -32,8 +32,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
    Name: Device - General properties of devices.
@@ -95,8 +94,7 @@ namespace nest
  *
  * @author HEP 2002-07-22, 2008-03-21, 2008-06-20
  */
-class Device
-{
+class Device {
 public:
   Device();
   Device( const Device& n );
@@ -161,8 +159,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     //! Origin of device time axis, relative to network time. Defaults to 0.
     Time origin_;
 
@@ -191,8 +188,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
 
     /**
      * Time step of device activation.

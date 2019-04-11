@@ -30,8 +30,7 @@
 // Includes from nestkernel:
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: tsodyks_synapse - Synapse type with short term plasticity.
@@ -107,8 +106,7 @@ Author: Moritz Helias
 SeeAlso: synapsedict, stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
 */
 template < typename targetidentifierT >
-class TsodyksConnection : public Connection< targetidentifierT >
-{
+class TsodyksConnection : public Connection< targetidentifierT > {
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
@@ -158,8 +156,7 @@ public:
    */
   void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -313,8 +310,7 @@ TsodyksConnection< targetidentifierT >::set_status( const DictionaryDatum& d, Co
   updateValue< double >( d, names::x, x );
   updateValue< double >( d, names::y, y );
 
-  if ( x + y > 1.0 )
-  {
+  if ( x + y > 1.0 ) {
     throw BadProperty( "x + y must be <= 1.0." );
   }
 
@@ -325,26 +321,22 @@ TsodyksConnection< targetidentifierT >::set_status( const DictionaryDatum& d, Co
   updateValue< double >( d, names::weight, weight_ );
 
   updateValue< double >( d, names::U, U_ );
-  if ( U_ > 1.0 || U_ < 0.0 )
-  {
+  if ( U_ > 1.0 || U_ < 0.0 ) {
     throw BadProperty( "U must be in [0,1]." );
   }
 
   updateValue< double >( d, names::tau_psc, tau_psc_ );
-  if ( tau_psc_ <= 0.0 )
-  {
+  if ( tau_psc_ <= 0.0 ) {
     throw BadProperty( "tau_psc must be > 0." );
   }
 
   updateValue< double >( d, names::tau_rec, tau_rec_ );
-  if ( tau_rec_ <= 0.0 )
-  {
+  if ( tau_rec_ <= 0.0 ) {
     throw BadProperty( "tau_rec must be > 0." );
   }
 
   updateValue< double >( d, names::tau_fac, tau_fac_ );
-  if ( tau_fac_ < 0.0 )
-  {
+  if ( tau_fac_ < 0.0 ) {
     throw BadProperty( "tau_fac must be >= 0." );
   }
 

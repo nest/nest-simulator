@@ -46,8 +46,7 @@
 #include "slimodule.h"
 
 // A new SLI-Module:
-class Processes : public SLIModule
-{
+class Processes : public SLIModule {
   // The following concernes the new module: -----------------------
 
 public:
@@ -227,108 +226,88 @@ public:
 
 public:
   // Module contains classes defining new SLI-functions:
-  class ForkFunction : public SLIFunction
-  {
+  class ForkFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class Sysexec_aFunction : public SLIFunction
-  {
+  class Sysexec_aFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class WaitPIDFunction : public SLIFunction
-  {
+  class WaitPIDFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class KillFunction : public SLIFunction
-  {
+  class KillFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class PipeFunction : public SLIFunction
-  {
+  class PipeFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class Dup2_is_isFunction : public SLIFunction
-  {
+  class Dup2_is_isFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class Dup2_os_osFunction : public SLIFunction
-  {
+  class Dup2_os_osFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class Dup2_is_osFunction : public SLIFunction
-  {
+  class Dup2_is_osFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class Dup2_os_isFunction : public SLIFunction
-  {
+  class Dup2_os_isFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class AvailableFunction : public SLIFunction
-  {
+  class AvailableFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class GetPIDFunction : public SLIFunction
-  {
+  class GetPIDFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class GetPPIDFunction : public SLIFunction
-  {
+  class GetPPIDFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class GetPGRPFunction : public SLIFunction
-  {
+  class GetPGRPFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class MkfifoFunction : public SLIFunction
-  {
+  class MkfifoFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
 
 #if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-  class MemoryThisjobBgFunction : public SLIFunction
-  {
+  class MemoryThisjobBgFunction : public SLIFunction {
     void execute( SLIInterpreter* ) const;
   };
 #endif
 
 #if defined __APPLE__ && defined HAVE_MACH_MACH_H
-  class MemoryThisjobDarwinFunction : public SLIFunction
-  {
+  class MemoryThisjobDarwinFunction : public SLIFunction {
     void execute( SLIInterpreter* ) const;
   };
 #endif
 
-  class SetNonblockFunction : public SLIFunction
-  {
+  class SetNonblockFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class CtermidFunction : public SLIFunction
-  {
+  class CtermidFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class Isatty_isFunction : public SLIFunction
-  {
+  class Isatty_isFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
-  class Isatty_osFunction : public SLIFunction
-  {
+  class Isatty_osFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };

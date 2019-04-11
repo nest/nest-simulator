@@ -41,8 +41,7 @@
 #include "topology_parameter.h"
 
 
-namespace nest
-{
+namespace nest {
 index create_layer( const DictionaryDatum& layer_dict );
 std::vector< double > get_position( const index node_gid );
 std::vector< double > displacement( const std::vector< double >& point, const index node_gid );

@@ -40,8 +40,7 @@
 // Includes from precise:
 #include "slice_ring_buffer.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: iaf_psc_alpha_canon - Leaky integrate-and-fire neuron
@@ -128,8 +127,7 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 SeeAlso: iaf_psc_alpha, iaf_psc_alpha_presc, iaf_psc_exp_ps
 */
-class iaf_psc_alpha_canon : public Archiving_Node
-{
+class iaf_psc_alpha_canon : public Archiving_Node {
 public:
   /** Basic constructor.
       This constructor should only be used by GenericModel to create
@@ -243,14 +241,7 @@ private:
   //@{
 
   /** Interpolation orders. */
-  enum interpOrder
-  {
-    NO_INTERPOL,
-    LINEAR,
-    QUADRATIC,
-    CUBIC,
-    END_INTERP_ORDER
-  };
+  enum interpOrder { NO_INTERPOL, LINEAR, QUADRATIC, CUBIC, END_INTERP_ORDER };
 
   /**
    * Localize threshold crossing.
@@ -275,8 +266,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     /** Membrane time constant in ms. */
     double tau_m_;
@@ -328,8 +318,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
     double y0_;                //!< external input current
     double y1_;                //!< alpha current, first component
     double y2_;                //!< alpha current, second component
@@ -355,8 +344,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( iaf_psc_alpha_canon& );
     Buffers_( const Buffers_&, iaf_psc_alpha_canon& );
 
@@ -376,8 +364,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     double h_ms_;            //!< time resolution in ms
     double PSCInitialValue_; //!< e / tau_syn
     long refractory_steps_;  //!< refractory time in steps
@@ -446,8 +433,7 @@ nest::iaf_psc_alpha_canon::send_test_event( Node& target, rport receptor_type, s
 inline port
 iaf_psc_alpha_canon::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -456,8 +442,7 @@ iaf_psc_alpha_canon::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 iaf_psc_alpha_canon::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -466,8 +451,7 @@ iaf_psc_alpha_canon::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 iaf_psc_alpha_canon::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

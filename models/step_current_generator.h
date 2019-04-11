@@ -36,8 +36,7 @@
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: step_current_generator - provides a piecewise constant DC input current
@@ -84,8 +83,7 @@ Author: Jochen Martin Eppler, Jens Kremkow
 SeeAlso: ac_generator, dc_generator, step_current_generator, Device,
 StimulatingDevice
 */
-class step_current_generator : public DeviceNode
-{
+class step_current_generator : public DeviceNode {
 
 public:
   step_current_generator();
@@ -128,8 +126,7 @@ private:
   /**
    * Store independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     //! Times of amplitude changes
     std::vector< Time > amp_time_stamps_;
 
@@ -159,8 +156,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
     double I_; //!< Instantaneous current value; used for recording current
 
     State_(); //!< Sets default parameter values
@@ -176,8 +172,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     size_t idx_; //!< index of current amplitude
     double amp_; //!< current amplitude
 
@@ -217,8 +212,7 @@ step_current_generator::send_test_event( Node& target, rport receptor_type, syni
 inline port
 step_current_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

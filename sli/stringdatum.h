@@ -78,8 +78,7 @@ typedef AggregateDatum< std::string, &SLIInterpreter::Stringtype > StringDatum;
 
 void init_slistring( SLIInterpreter* );
 
-class ToUppercase_sFunction : public SLIFunction
-{
+class ToUppercase_sFunction : public SLIFunction {
 public:
   ToUppercase_sFunction()
   {
@@ -87,8 +86,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ToLowercase_sFunction : public SLIFunction
-{
+class ToLowercase_sFunction : public SLIFunction {
 public:
   ToLowercase_sFunction()
   {

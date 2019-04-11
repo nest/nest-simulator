@@ -26,14 +26,12 @@
 // Includes from nestkernel:
 #include "node.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Base class for device objects.
  */
-class DeviceNode : public Node
-{
+class DeviceNode : public Node {
 
 public:
   DeviceNode()

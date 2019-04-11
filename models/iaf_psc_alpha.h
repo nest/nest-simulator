@@ -32,8 +32,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: iaf_psc_alpha - Leaky integrate-and-fire neuron model.
@@ -130,8 +129,7 @@ Author:  Diesmann, Gewaltig
 
 SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 */
-class iaf_psc_alpha : public Archiving_Node
-{
+class iaf_psc_alpha : public Archiving_Node {
 
 public:
   iaf_psc_alpha();
@@ -171,8 +169,7 @@ private:
 
   // ----------------------------------------------------------------
 
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     /** Membrane time constant in ms. */
     double Tau_;
@@ -218,8 +215,7 @@ private:
 
   // ----------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
 
     double y0_; //!< Constant current
     double dI_ex_;
@@ -245,8 +241,7 @@ private:
 
   // ----------------------------------------------------------------
 
-  struct Buffers_
-  {
+  struct Buffers_ {
 
     Buffers_( iaf_psc_alpha& );
     Buffers_( const Buffers_&, iaf_psc_alpha& );
@@ -262,8 +257,7 @@ private:
 
   // ----------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
 
     /** Amplitude of the synaptic current.
         This value is chosen such that a post-synaptic potential with
@@ -354,8 +348,7 @@ nest::iaf_psc_alpha::send_test_event( Node& target, rport receptor_type, syninde
 inline port
 iaf_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -364,8 +357,7 @@ iaf_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 iaf_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -374,8 +366,7 @@ iaf_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 iaf_psc_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

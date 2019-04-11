@@ -49,11 +49,9 @@
  *   - an array of scalars: values are returned in order
  */
 
-namespace nest
-{
+namespace nest {
 
-class ConnParameter
-{
+class ConnParameter {
 
 public:
   ConnParameter()
@@ -121,8 +119,7 @@ public:
  *
  * On each request, it returns the same value.
  */
-class ScalarDoubleParameter : public ConnParameter
-{
+class ScalarDoubleParameter : public ConnParameter {
 public:
   ScalarDoubleParameter( double value, const size_t )
     : value_( value )
@@ -168,8 +165,7 @@ private:
  *
  * On each request, it returns the same value.
  */
-class ScalarIntegerParameter : public ConnParameter
-{
+class ScalarIntegerParameter : public ConnParameter {
 public:
   ScalarIntegerParameter( long value, const size_t )
     : value_( value )
@@ -225,8 +221,7 @@ private:
  *   throws an error.
  */
 
-class ArrayDoubleParameter : public ConnParameter
-{
+class ArrayDoubleParameter : public ConnParameter {
 public:
   ArrayDoubleParameter( const std::vector< double >& values, const size_t nthreads )
     : values_( &values )
@@ -237,12 +232,10 @@ public:
   void
   skip( thread tid, size_t n_skip ) const
   {
-    if ( next_[ tid ] < values_->end() )
-    {
+    if ( next_[ tid ] < values_->end() ) {
       next_[ tid ] += n_skip;
     }
-    else
-    {
+    else {
       throw KernelException( "Parameter values exhausted." );
     }
   }
@@ -256,12 +249,10 @@ public:
   double
   value_double( thread tid, librandom::RngPtr& ) const
   {
-    if ( next_[ tid ] != values_->end() )
-    {
+    if ( next_[ tid ] != values_->end() ) {
       return *next_[ tid ]++;
     }
-    else
-    {
+    else {
       throw KernelException( "Parameter values exhausted." );
     }
   }
@@ -281,8 +272,7 @@ public:
   void
   reset() const
   {
-    for ( std::vector< std::vector< double >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
-    {
+    for ( std::vector< std::vector< double >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it ) {
       *it = values_->begin();
     }
   }
@@ -307,8 +297,7 @@ private:
  *   throws an error.
  */
 
-class ArrayIntegerParameter : public ConnParameter
-{
+class ArrayIntegerParameter : public ConnParameter {
 public:
   ArrayIntegerParameter( const std::vector< long >& values, const size_t nthreads )
     : values_( &values )
@@ -319,12 +308,10 @@ public:
   void
   skip( thread tid, size_t n_skip ) const
   {
-    if ( next_[ tid ] < values_->end() )
-    {
+    if ( next_[ tid ] < values_->end() ) {
       next_[ tid ] += n_skip;
     }
-    else
-    {
+    else {
       throw KernelException( "Parameter values exhausted." );
     }
   }
@@ -338,12 +325,10 @@ public:
   long
   value_int( thread tid, librandom::RngPtr& ) const
   {
-    if ( next_[ tid ] != values_->end() )
-    {
+    if ( next_[ tid ] != values_->end() ) {
       return *next_[ tid ]++;
     }
-    else
-    {
+    else {
       throw KernelException( "Parameter values exhausted." );
     }
   }
@@ -351,12 +336,10 @@ public:
   double
   value_double( thread tid, librandom::RngPtr& ) const
   {
-    if ( next_[ tid ] != values_->end() )
-    {
+    if ( next_[ tid ] != values_->end() ) {
       return static_cast< double >( *next_[ tid ]++ );
     }
-    else
-    {
+    else {
       throw KernelException( "Parameter values exhausted." );
     }
   }
@@ -370,8 +353,7 @@ public:
   void
   reset() const
   {
-    for ( std::vector< std::vector< long >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
-    {
+    for ( std::vector< std::vector< long >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it ) {
       *it = values_->begin();
     }
   }
@@ -386,8 +368,7 @@ private:
  *
  * On each request, it returns a new value drawn from the given deviate.
  */
-class RandomParameter : public ConnParameter
-{
+class RandomParameter : public ConnParameter {
 public:
   RandomParameter( const DictionaryDatum&, const size_t );
 

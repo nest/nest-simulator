@@ -36,12 +36,10 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 class Node;
 
-class SimulationManager : public ManagerInterface
-{
+class SimulationManager : public ManagerInterface {
 public:
   SimulationManager();
 

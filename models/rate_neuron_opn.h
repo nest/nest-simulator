@@ -41,8 +41,7 @@
 #include "recordables_map.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: rate_neuron_opn - Base class for rate model with output noise.
@@ -92,8 +91,7 @@ Author: David Dahmen, Jan Hahne, Jannis Schuecker
 SeeAlso: lin_rate, tanh_rate, threshold_lin_rate
  */
 template < class TNonlinearities >
-class rate_neuron_opn : public Archiving_Node
-{
+class rate_neuron_opn : public Archiving_Node {
 
 public:
   typedef Node base;
@@ -153,8 +151,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     /** Time constant in ms. */
     double tau_;
@@ -186,8 +183,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
     double rate_;       //!< Rate
     double noise_;      //!< Noise
     double noisy_rate_; //!< Noisy rate, i.e. rate +noise
@@ -209,8 +205,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( rate_neuron_opn& );
     Buffers_( const Buffers_&, rate_neuron_opn& );
 
@@ -236,8 +231,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
 
     // propagators
     double P1_;
@@ -306,8 +300,7 @@ template < class TNonlinearities >
 inline port
 rate_neuron_opn< TNonlinearities >::handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -317,8 +310,7 @@ template < class TNonlinearities >
 inline port
 rate_neuron_opn< TNonlinearities >::handles_test_event( DelayedRateConnectionEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -328,8 +320,7 @@ template < class TNonlinearities >
 inline port
 rate_neuron_opn< TNonlinearities >::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

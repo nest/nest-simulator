@@ -35,8 +35,7 @@
 #include "ntree.h"
 #include "position.h"
 
-namespace nest
-{
+namespace nest {
 class AbstractLayer;
 class AbstractMask;
 class TopologyParameter;
@@ -44,8 +43,7 @@ class TopologyParameter;
 template < int D >
 class Layer;
 
-class TopologyModule : public SLIModule
-{
+class TopologyModule : public SLIModule {
 public:
   TopologyModule();
   ~TopologyModule();
@@ -65,134 +63,112 @@ public:
    * SLI functions: See source file for documentation
    */
 
-  class CreateLayer_DFunction : public SLIFunction
-  {
+  class CreateLayer_DFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } createlayer_Dfunction;
 
-  class GetPosition_iFunction : public SLIFunction
-  {
+  class GetPosition_iFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } getposition_ifunction;
 
-  class Displacement_a_iFunction : public SLIFunction
-  {
+  class Displacement_a_iFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } displacement_a_ifunction;
 
-  class Distance_a_iFunction : public SLIFunction
-  {
+  class Distance_a_iFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } distance_a_ifunction;
 
-  class GetGlobalChildren_i_M_aFunction : public SLIFunction
-  {
+  class GetGlobalChildren_i_M_aFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } getglobalchildren_i_M_afunction;
 
-  class ConnectLayers_i_i_DFunction : public SLIFunction
-  {
+  class ConnectLayers_i_i_DFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } connectlayers_i_i_Dfunction;
 
-  class CreateMask_DFunction : public SLIFunction
-  {
+  class CreateMask_DFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } createmask_Dfunction;
 
-  class Inside_a_MFunction : public SLIFunction
-  {
+  class Inside_a_MFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } inside_a_Mfunction;
 
-  class And_M_MFunction : public SLIFunction
-  {
+  class And_M_MFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } and_M_Mfunction;
 
-  class Or_M_MFunction : public SLIFunction
-  {
+  class Or_M_MFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } or_M_Mfunction;
 
-  class Sub_M_MFunction : public SLIFunction
-  {
+  class Sub_M_MFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } sub_M_Mfunction;
 
-  class Mul_P_PFunction : public SLIFunction
-  {
+  class Mul_P_PFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } mul_P_Pfunction;
 
-  class Div_P_PFunction : public SLIFunction
-  {
+  class Div_P_PFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } div_P_Pfunction;
 
-  class Add_P_PFunction : public SLIFunction
-  {
+  class Add_P_PFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } add_P_Pfunction;
 
-  class Sub_P_PFunction : public SLIFunction
-  {
+  class Sub_P_PFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } sub_P_Pfunction;
 
-  class CreateParameter_DFunction : public SLIFunction
-  {
+  class CreateParameter_DFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } createparameter_Dfunction;
 
-  class GetValue_a_PFunction : public SLIFunction
-  {
+  class GetValue_a_PFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } getvalue_a_Pfunction;
 
-  class DumpLayerNodes_os_iFunction : public SLIFunction
-  {
+  class DumpLayerNodes_os_iFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } dumplayernodes_os_ifunction;
 
-  class DumpLayerConnections_os_i_lFunction : public SLIFunction
-  {
+  class DumpLayerConnections_os_i_lFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } dumplayerconnections_os_i_lfunction;
 
-  class GetElement_i_iaFunction : public SLIFunction
-  {
+  class GetElement_i_iaFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } getelement_i_iafunction;
 
-  class Cvdict_MFunction : public SLIFunction
-  {
+  class Cvdict_MFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } cvdict_Mfunction;
 
-  class SelectNodesByMask_L_a_MFunction : public SLIFunction
-  {
+  class SelectNodesByMask_L_a_MFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   } selectnodesbymask_L_a_Mfunction;
@@ -316,8 +292,7 @@ private:
  * is given to a function
  * @ingroup KernelExceptions
  */
-class LayerExpected : public KernelException
-{
+class LayerExpected : public KernelException {
 public:
   LayerExpected()
     : KernelException( "LayerExpected" )

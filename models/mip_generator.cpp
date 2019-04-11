@@ -73,12 +73,10 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::rate, rate_ );
   updateValue< double >( d, names::p_copy, p_copy_ );
-  if ( rate_ < 0 )
-  {
+  if ( rate_ < 0 ) {
     throw BadProperty( "Rate must be non-negative." );
   }
-  if ( p_copy_ < 0 || p_copy_ > 1 )
-  {
+  if ( p_copy_ < 0 || p_copy_ > 1 ) {
     throw BadProperty( "Copy probability must be in [0, 1]." );
   }
 
@@ -86,8 +84,7 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d )
 
   // order important to avoid short-circuitung
   reset_rng = updateValue< long >( d, names::mother_seed, mother_seed_ ) || reset_rng;
-  if ( reset_rng )
-  {
+  if ( reset_rng ) {
     rng_->seed( mother_seed_ );
   }
 }
@@ -149,18 +146,15 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
-    if ( not device_.is_active( T ) || P_.rate_ <= 0 )
-    {
+  for ( long lag = from; lag < to; ++lag ) {
+    if ( not device_.is_active( T ) || P_.rate_ <= 0 ) {
       return; // no spikes to be generated
     }
 
     // generate spikes of mother process for each time slice
     long n_mother_spikes = V_.poisson_dev_.ldev( P_.rng_ );
 
-    if ( n_mother_spikes )
-    {
+    if ( n_mother_spikes ) {
       DSSpikeEvent se;
 
       se.set_multiplicity( n_mother_spikes );
@@ -187,16 +181,13 @@ nest::mip_generator::event_hook( DSSpikeEvent& e )
   unsigned long n_mother_spikes = e.get_multiplicity();
   unsigned long n_spikes = 0;
 
-  for ( unsigned long n = 0; n < n_mother_spikes; n++ )
-  {
-    if ( rng->drand() < P_.p_copy_ )
-    {
+  for ( unsigned long n = 0; n < n_mother_spikes; n++ ) {
+    if ( rng->drand() < P_.p_copy_ ) {
       n_spikes++;
     }
   }
 
-  if ( n_spikes > 0 )
-  {
+  if ( n_spikes > 0 ) {
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
   }

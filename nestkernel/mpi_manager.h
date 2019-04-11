@@ -51,11 +51,9 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
-class MPIManager : public ManagerInterface
-{
+class MPIManager : public ManagerInterface {
 public:
   // forward declaration of internal classes
   class OffGridSpike;
@@ -350,8 +348,7 @@ public:
    *       Otherwise, OpenMPI spends extreme amounts of time on packing
    *       and unpacking the data, see #458.
    */
-  class OffGridSpike
-  {
+  class OffGridSpike {
     friend void MPIManager::init_mpi( int*, char*** );
 
   public:
@@ -403,8 +400,7 @@ public:
     }
   };
 
-  class NodeAddressingData
-  {
+  class NodeAddressingData {
   public:
     NodeAddressingData()
       : gid_( 0 )
@@ -508,12 +504,10 @@ inline void
 MPIManager::set_buffer_size_target_data( const size_t buffer_size )
 {
   assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
-  if ( buffer_size <= max_buffer_size_target_data_ )
-  {
+  if ( buffer_size <= max_buffer_size_target_data_ ) {
     buffer_size_target_data_ = buffer_size;
   }
-  else
-  {
+  else {
     buffer_size_target_data_ = max_buffer_size_target_data_;
   }
   send_recv_count_target_data_per_rank_ = static_cast< size_t >(
@@ -526,12 +520,10 @@ inline void
 MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
 {
   assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
-  if ( buffer_size <= max_buffer_size_spike_data_ )
-  {
+  if ( buffer_size <= max_buffer_size_spike_data_ ) {
     buffer_size_spike_data_ = buffer_size;
   }
-  else
-  {
+  else {
     buffer_size_spike_data_ = max_buffer_size_spike_data_;
   }
 
@@ -564,20 +556,16 @@ inline bool
 MPIManager::increase_buffer_size_target_data()
 {
   assert( adaptive_target_buffers_ );
-  if ( buffer_size_target_data_ >= max_buffer_size_target_data_ )
-  {
+  if ( buffer_size_target_data_ >= max_buffer_size_target_data_ ) {
     return false;
   }
-  else
-  {
-    if ( buffer_size_target_data_ * growth_factor_buffer_target_data_ < max_buffer_size_target_data_ )
-    {
+  else {
+    if ( buffer_size_target_data_ * growth_factor_buffer_target_data_ < max_buffer_size_target_data_ ) {
       // this also adjusts send_recv_count_target_data_per_rank_
       set_buffer_size_target_data(
         static_cast< size_t >( floor( buffer_size_target_data_ * growth_factor_buffer_target_data_ ) ) );
     }
-    else
-    {
+    else {
       // this also adjusts send_recv_count_target_data_per_rank_
       set_buffer_size_target_data( max_buffer_size_target_data_ );
     }
@@ -589,18 +577,14 @@ inline bool
 MPIManager::increase_buffer_size_spike_data()
 {
   assert( adaptive_spike_buffers_ );
-  if ( buffer_size_spike_data_ >= max_buffer_size_spike_data_ )
-  {
+  if ( buffer_size_spike_data_ >= max_buffer_size_spike_data_ ) {
     return false;
   }
-  else
-  {
-    if ( buffer_size_spike_data_ * growth_factor_buffer_spike_data_ < max_buffer_size_spike_data_ )
-    {
+  else {
+    if ( buffer_size_spike_data_ * growth_factor_buffer_spike_data_ < max_buffer_size_spike_data_ ) {
       set_buffer_size_spike_data( floor( buffer_size_spike_data_ * growth_factor_buffer_spike_data_ ) );
     }
-    else
-    {
+    else {
       set_buffer_size_spike_data( max_buffer_size_spike_data_ );
     }
     return true;

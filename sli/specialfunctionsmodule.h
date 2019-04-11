@@ -47,8 +47,7 @@
 
 // NOTE: all gsl headers are included in specialfunctionsmodule.cc
 
-class SpecialFunctionsModule : public SLIModule
-{
+class SpecialFunctionsModule : public SLIModule {
 
   // Part 1: Methods pertaining to the module ----------------------
 
@@ -72,24 +71,21 @@ public:
    * These must be public, since we want to export
    * objects of these.
    */
-  class GammaIncFunction : public SLIFunction
-  {
+  class GammaIncFunction : public SLIFunction {
   public:
     GammaIncFunction()
     {
     }
     void execute( SLIInterpreter* ) const;
   };
-  class LambertW0Function : public SLIFunction
-  {
+  class LambertW0Function : public SLIFunction {
   public:
     LambertW0Function()
     {
     }
     void execute( SLIInterpreter* ) const;
   };
-  class LambertWm1Function : public SLIFunction
-  {
+  class LambertWm1Function : public SLIFunction {
   public:
     LambertWm1Function()
     {
@@ -97,8 +93,7 @@ public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class ErfFunction : public SLIFunction
-  {
+  class ErfFunction : public SLIFunction {
   public:
     ErfFunction()
     {
@@ -106,8 +101,7 @@ public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class ErfcFunction : public SLIFunction
-  {
+  class ErfcFunction : public SLIFunction {
   public:
     ErfcFunction()
     {
@@ -115,8 +109,7 @@ public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class GaussDiskConvFunction : public SLIFunction
-  {
+  class GaussDiskConvFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
 

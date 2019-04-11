@@ -37,8 +37,7 @@
 #include "node.h"
 #include "stimulating_device.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: pulsepacket_generator - Generate sequence of Gaussian pulse packets.
@@ -70,8 +69,7 @@ Sends: SpikeEvent
 
 SeeAlso: spike_generator, StimulatingDevice
 */
-class pulsepacket_generator : public Node
-{
+class pulsepacket_generator : public Node {
 
 public:
   pulsepacket_generator();
@@ -102,8 +100,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     std::vector< double > pulse_times_; //!< times of pulses
     long a_;                            //!< number of pulses in a packet
@@ -125,15 +122,13 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     std::deque< long > spiketimes_;
   };
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
 
     librandom::NormalRandomDev norm_dev_; //!< random deviate generator
 

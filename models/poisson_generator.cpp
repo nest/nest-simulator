@@ -56,8 +56,7 @@ void
 nest::poisson_generator::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::rate, rate_ );
-  if ( rate_ < 0 )
-  {
+  if ( rate_ < 0 ) {
     throw BadProperty( "The rate cannot be negative." );
   }
 }
@@ -120,15 +119,12 @@ nest::poisson_generator::update( Time const& T, const long from, const long to )
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  if ( P_.rate_ <= 0 )
-  {
+  if ( P_.rate_ <= 0 ) {
     return;
   }
 
-  for ( long lag = from; lag < to; ++lag )
-  {
-    if ( not device_.is_active( T + Time::step( lag ) ) )
-    {
+  for ( long lag = from; lag < to; ++lag ) {
+    if ( not device_.is_active( T + Time::step( lag ) ) ) {
       continue; // no spike at this lag
     }
 

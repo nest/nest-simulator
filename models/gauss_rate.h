@@ -33,8 +33,7 @@
 #include "rate_transformer_node_impl.h"
 
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: gauss_rate - rate model with Gaussian gain function
@@ -95,8 +94,7 @@ Author: Mario Senden, Jan Hahne, Jannis Schuecker
 
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
-class nonlinearities_gauss_rate
-{
+class nonlinearities_gauss_rate {
 private:
   /** gain factor of gain function */
   double g_;

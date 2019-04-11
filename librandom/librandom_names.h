@@ -26,14 +26,12 @@
 // Includes from sli:
 #include "name.h"
 
-namespace librandom
-{
+namespace librandom {
 /**
  * This namespace contains Name objects that are used by the librandom
  * libraries. See nest_names.h for more info.
  */
-namespace names
-{
+namespace names {
 extern const Name high;
 extern const Name is_discrete;
 extern const Name lambda;

@@ -72,13 +72,11 @@ SLIStartup::checkpath( std::string const& path, std::string& result ) const
 
   std::ifstream in( fullname.c_str() );
 
-  if ( in.good() )
-  {
+  if ( in.good() ) {
     result = fullname;
     return true;
   }
-  else
-  {
+  else {
     result.erase();
     return false;
   }
@@ -126,12 +124,10 @@ std::string
 SLIStartup::getenv( const std::string& v ) const
 {
   char* s = ::getenv( v.c_str() );
-  if ( not s )
-  {
+  if ( not s ) {
     return std::string();
   }
-  else
-  {
+  else {
     return std::string( s );
   }
 }
@@ -148,14 +144,12 @@ SLIStartup::GetenvFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   const char* s = ::getenv( sd->c_str() );
   i->OStack.pop();
-  if ( s != NULL )
-  {
+  if ( s != NULL ) {
     Token t( new StringDatum( s ) );
     i->OStack.push_move( t );
     i->OStack.push( i->baselookup( i->true_name ) );
   }
-  else
-  {
+  else {
     i->OStack.push( i->baselookup( i->false_name ) );
   }
 
@@ -171,19 +165,15 @@ SLIStartup::checkenvpath( std::string const& envvar, SLIInterpreter* i, std::str
 {
   const std::string envpath = getenv( envvar );
 
-  if ( envpath != "" )
-  {
+  if ( envpath != "" ) {
     DIR* dirptr = opendir( envpath.c_str() );
-    if ( dirptr != NULL )
-    {
+    if ( dirptr != NULL ) {
       closedir( dirptr );
       return envpath;
     }
-    else
-    {
+    else {
       std::string msg;
-      switch ( errno )
-      {
+      switch ( errno ) {
       case ENOTDIR:
         msg = String::compose( "'%1' is not a directory.", envpath );
         break;
@@ -197,8 +187,7 @@ SLIStartup::checkenvpath( std::string const& envvar, SLIInterpreter* i, std::str
 
       i->message( SLIInterpreter::M_ERROR, "SLIStartup", String::compose( "%1 is not usable:", envvar ).c_str() );
       i->message( SLIInterpreter::M_ERROR, "SLIStartup", msg.c_str() );
-      if ( defaultval != "" )
-      {
+      if ( defaultval != "" ) {
         i->message(
           SLIInterpreter::M_ERROR, "SLIStartup", String::compose( "I'm using the default: %1", defaultval ).c_str() );
       }
@@ -273,60 +262,49 @@ SLIStartup::SLIStartup( int argc, char** argv )
   // a script but by using an interactive session in Python, argv[0] is an
   // empty string, see documentation for argv in
   // https://docs.python.org/3/library/sys.html
-  for ( int i = 0; i < argc; ++i )
-  {
+  for ( int i = 0; i < argc; ++i ) {
     StringDatum* sd = new StringDatum( argv[ i ] );
     ad.push_back( Token( sd ) );
 
-    if ( *sd == "-d" || *sd == "--debug" )
-    {
+    if ( *sd == "-d" || *sd == "--debug" ) {
       debug_ = true;
       verbosity_ = SLIInterpreter::M_ALL; // make the interpreter verbose.
       continue;
     }
 
-    if ( *sd == "--verbosity=ALL" )
-    {
+    if ( *sd == "--verbosity=ALL" ) {
       verbosity_ = SLIInterpreter::M_ALL;
       continue;
     }
-    if ( *sd == "--verbosity=DEBUG" )
-    {
+    if ( *sd == "--verbosity=DEBUG" ) {
       verbosity_ = SLIInterpreter::M_DEBUG;
       continue;
     }
-    if ( *sd == "--verbosity=STATUS" )
-    {
+    if ( *sd == "--verbosity=STATUS" ) {
       verbosity_ = SLIInterpreter::M_STATUS;
       continue;
     }
-    if ( *sd == "--verbosity=INFO" )
-    {
+    if ( *sd == "--verbosity=INFO" ) {
       verbosity_ = SLIInterpreter::M_INFO;
       continue;
     }
-    if ( *sd == "--verbosity=DEPRECATED" )
-    {
+    if ( *sd == "--verbosity=DEPRECATED" ) {
       verbosity_ = SLIInterpreter::M_DEPRECATED;
       continue;
     }
-    if ( *sd == "--verbosity=WARNING" )
-    {
+    if ( *sd == "--verbosity=WARNING" ) {
       verbosity_ = SLIInterpreter::M_WARNING;
       continue;
     }
-    if ( *sd == "--verbosity=ERROR" )
-    {
+    if ( *sd == "--verbosity=ERROR" ) {
       verbosity_ = SLIInterpreter::M_ERROR;
       continue;
     }
-    if ( *sd == "--verbosity=FATAL" )
-    {
+    if ( *sd == "--verbosity=FATAL" ) {
       verbosity_ = SLIInterpreter::M_FATAL;
       continue;
     }
-    if ( *sd == "--verbosity=QUIET" )
-    {
+    if ( *sd == "--verbosity=QUIET" ) {
       verbosity_ = SLIInterpreter::M_QUIET;
       continue;
     }
@@ -344,8 +322,7 @@ SLIStartup::init( SLIInterpreter* i )
 
   // Check for supplied NEST_DATA_DIR
   std::string slihomepath_env = checkenvpath( "NEST_DATA_DIR", i, slihomepath );
-  if ( slihomepath_env != "" )
-  {
+  if ( slihomepath_env != "" ) {
     slihomepath = slihomepath_env; // absolute path & directory exists
     i->message(
       SLIInterpreter::M_DEBUG, "SLIStartup", String::compose( "Using NEST_DATA_DIR=%1", slihomepath ).c_str() );
@@ -353,23 +330,20 @@ SLIStartup::init( SLIInterpreter* i )
 
   // check for supplied NEST_DOC_DIR
   std::string slidocdir_env = checkenvpath( "NEST_DOC_DIR", i, slidocdir );
-  if ( slidocdir_env != "" )
-  {
+  if ( slidocdir_env != "" ) {
     slidocdir = slidocdir_env; // absolute path & directory exists
     i->message( SLIInterpreter::M_DEBUG, "SLIStartup", String::compose( "Using NEST_DOC_DIR=%1", slidocdir ).c_str() );
   }
 
   // check for supplied NEST_INSTALL_DIR
   std::string sliprefix_env = checkenvpath( "NEST_INSTALL_DIR", i, sliprefix );
-  if ( sliprefix_env != "" )
-  {
+  if ( sliprefix_env != "" ) {
     sliprefix = sliprefix_env; // absolute path & directory exists
     i->message(
       SLIInterpreter::M_DEBUG, "SLIStartup", String::compose( "Using NEST_INSTALL_DIR=%1", sliprefix ).c_str() );
   }
 
-  if ( not checkpath( slihomepath, fname ) )
-  {
+  if ( not checkpath( slihomepath, fname ) ) {
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "Your NEST installation seems broken. \n" );
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "I could not find the startup file that" );
     i->message( SLIInterpreter::M_FATAL,
@@ -384,8 +358,7 @@ SLIStartup::init( SLIInterpreter* i )
     debug_ = false;                          // switches off the -d/--debug switch!
     i->verbosity( SLIInterpreter::M_QUIET ); // suppress all further output.
   }
-  else
-  {
+  else {
     std::string fname_msg = std::string( "Initialising from file: " ) + fname;
     i->message( SLIInterpreter::M_DEBUG, "SLIStartup", fname_msg.c_str() );
   }
@@ -431,8 +404,7 @@ SLIStartup::init( SLIInterpreter* i )
 #ifdef IS_K
   platform = "k";
 #endif
-  if ( platform == "" )
-  {
+  if ( platform == "" ) {
     platform = "default";
   }
 
@@ -445,8 +417,7 @@ SLIStartup::init( SLIInterpreter* i )
 #ifdef _OPENMP
   threading += "openmp";
 #endif
-  if ( threading == "" )
-  {
+  if ( threading == "" ) {
     threading = "no";
   }
 
@@ -523,8 +494,7 @@ SLIStartup::init( SLIInterpreter* i )
   // Copy environment variables
   // The environ pointer is defined at the head of the file.
   DictionaryDatum environment( new Dictionary() );
-  for ( char* const* envptr = environ; *envptr; ++envptr )
-  {
+  for ( char* const* envptr = environ; *envptr; ++envptr ) {
     std::string const envstr( *envptr );
 
     // It is safe to assume that all entries contain the character '='
@@ -544,8 +514,7 @@ SLIStartup::init( SLIInterpreter* i )
 
   i->def( statusdict_name, statusdict );
 
-  if ( not fname.empty() )
-  {
+  if ( not fname.empty() ) {
     std::ifstream* input = new std::ifstream( fname.c_str() );
     Token input_token( new XIstreamDatum( input ) );
 
@@ -555,8 +524,7 @@ SLIStartup::init( SLIInterpreter* i )
 
   // If we start with debug option, we set the debugging mode, but disable
   // stepmode. This way, the debugger is entered only on error.
-  if ( debug_ )
-  {
+  if ( debug_ ) {
     i->debug_mode_on();
     i->backtrace_on();
   }

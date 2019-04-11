@@ -33,8 +33,7 @@
 #include "nest_types.h"
 #include "stimulating_device.h"
 
-namespace nest
-{
+namespace nest {
 //! class mip_generator
 /*! Class mip_generator generates spike trains as described
     in the MIP model.
@@ -97,8 +96,7 @@ Author: May 2006, Helias
 SeeAlso: Device
 
 */
-class mip_generator : public DeviceNode
-{
+class mip_generator : public DeviceNode {
 
 public:
   /**
@@ -154,8 +152,7 @@ private:
    * updates. But okay in the sense that it thus is not reset on
    * ResetNetwork. Should go once we have proper global RNG scheme.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     double rate_;               //!< process rate in Hz
     double p_copy_;             //!< copy probability for each spike in the mother process
     unsigned long mother_seed_; //!< seed of the mother process
@@ -170,8 +167,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
   };
 
@@ -187,14 +183,12 @@ mip_generator::send_test_event( Node& target, rport receptor_type, synindex syn_
 {
   device_.enforce_single_syn_type( syn_id );
 
-  if ( dummy_target )
-  {
+  if ( dummy_target ) {
     DSSpikeEvent e;
     e.set_sender( *this );
     return target.handles_test_event( e, receptor_type );
   }
-  else
-  {
+  else {
     SpikeEvent e;
     e.set_sender( *this );
     return target.handles_test_event( e, receptor_type );

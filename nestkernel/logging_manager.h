@@ -39,13 +39,11 @@
 
 class Dictionary;
 
-namespace nest
-{
+namespace nest {
 
 class LoggingEvent;
 
-class LoggingManager : public ManagerInterface
-{
+class LoggingManager : public ManagerInterface {
 public:
   LoggingManager();
 

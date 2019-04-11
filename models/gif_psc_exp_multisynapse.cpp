@@ -42,8 +42,7 @@
 #include "compose.hpp"
 #include "propagator_stability.h"
 
-namespace nest
-{
+namespace nest {
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -145,8 +144,7 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::Delta_V, Delta_V_ );
   updateValue< double >( d, names::V_T_star, V_T_star_ );
 
-  if ( updateValue< double >( d, names::lambda_0, lambda_0_ ) )
-  {
+  if ( updateValue< double >( d, names::lambda_0, lambda_0_ ) ) {
     lambda_0_ /= 1000.0; // convert to 1/ms
   }
 
@@ -157,8 +155,7 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
   updateValue< std::vector< double > >( d, names::tau_stc, tau_stc_ );
   updateValue< std::vector< double > >( d, names::q_stc, q_stc_ );
 
-  if ( tau_sfa_.size() != q_sfa_.size() )
-  {
+  if ( tau_sfa_.size() != q_sfa_.size() ) {
     throw BadProperty( String::compose(
       "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
       "tau_sfa: %1\nSize of q_sfa: %2",
@@ -166,65 +163,51 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
       q_sfa_.size() ) );
   }
 
-  if ( tau_stc_.size() != q_stc_.size() )
-  {
+  if ( tau_stc_.size() != q_stc_.size() ) {
     throw BadProperty( String::compose(
       "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
       "tau_stc: %1\nSize of q_stc: %2",
       tau_stc_.size(),
       q_stc_.size() ) );
   }
-  if ( g_L_ <= 0 )
-  {
+  if ( g_L_ <= 0 ) {
     throw BadProperty( "Membrane conductance must be strictly positive." );
   }
-  if ( Delta_V_ <= 0 )
-  {
+  if ( Delta_V_ <= 0 ) {
     throw BadProperty( "Delta_V must be strictly positive." );
   }
-  if ( c_m_ <= 0 )
-  {
+  if ( c_m_ <= 0 ) {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( t_ref_ < 0 )
-  {
+  if ( t_ref_ < 0 ) {
     throw BadProperty( "Refractory time must not be negative." );
   }
-  if ( lambda_0_ < 0 )
-  {
+  if ( lambda_0_ < 0 ) {
     throw BadProperty( "lambda_0 must not be negative." );
   }
 
-  for ( size_t i = 0; i < tau_sfa_.size(); i++ )
-  {
-    if ( tau_sfa_[ i ] <= 0 )
-    {
+  for ( size_t i = 0; i < tau_sfa_.size(); i++ ) {
+    if ( tau_sfa_[ i ] <= 0 ) {
       throw BadProperty( "All time constants must be strictly positive." );
     }
   }
 
-  for ( size_t i = 0; i < tau_stc_.size(); i++ )
-  {
-    if ( tau_stc_[ i ] <= 0 )
-    {
+  for ( size_t i = 0; i < tau_stc_.size(); i++ ) {
+    if ( tau_stc_[ i ] <= 0 ) {
       throw BadProperty( "All time constants must be strictly positive." );
     }
   }
 
   std::vector< double > tau_tmp;
-  if ( updateValue< std::vector< double > >( d, names::tau_syn, tau_tmp ) )
-  {
-    if ( has_connections_ && tau_tmp.size() < tau_syn_.size() )
-    {
+  if ( updateValue< std::vector< double > >( d, names::tau_syn, tau_tmp ) ) {
+    if ( has_connections_ && tau_tmp.size() < tau_syn_.size() ) {
       throw BadProperty(
         "The neuron has connections, "
         "therefore the number of ports cannot be reduced." );
     }
 
-    for ( size_t i = 0; i < tau_tmp.size(); ++i )
-    {
-      if ( tau_tmp[ i ] <= 0 )
-      {
+    for ( size_t i = 0; i < tau_tmp.size(); ++i ) {
+      if ( tau_tmp[ i ] <= 0 ) {
         throw BadProperty( "All synaptic time constants must be > 0." );
       }
     }
@@ -321,14 +304,12 @@ nest::gif_psc_exp_multisynapse::calibrate()
   V_.P_sfa_.resize( P_.tau_sfa_.size(), 0.0 );
   V_.P_stc_.resize( P_.tau_stc_.size(), 0.0 );
 
-  for ( size_t i = 0; i < P_.tau_sfa_.size(); i++ )
-  {
+  for ( size_t i = 0; i < P_.tau_sfa_.size(); i++ ) {
     V_.P_sfa_[ i ] = std::exp( -h / P_.tau_sfa_[ i ] );
   }
   S_.sfa_elems_.resize( P_.tau_sfa_.size(), 0.0 );
 
-  for ( size_t i = 0; i < P_.tau_stc_.size(); i++ )
-  {
+  for ( size_t i = 0; i < P_.tau_stc_.size(); i++ ) {
     V_.P_stc_[ i ] = std::exp( -h / P_.tau_stc_[ i ] );
   }
   S_.stc_elems_.resize( P_.tau_stc_.size(), 0.0 );
@@ -340,8 +321,7 @@ nest::gif_psc_exp_multisynapse::calibrate()
 
   B_.spikes_.resize( P_.n_receptors_() );
 
-  for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-  {
+  for ( size_t i = 0; i < P_.n_receptors_(); i++ ) {
     V_.P11_syn_[ i ] = std::exp( -h / P_.tau_syn_[ i ] );
     V_.P21_syn_[ i ] = propagator_32( P_.tau_syn_[ i ], tau_m, P_.c_m_, h );
 
@@ -360,27 +340,23 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin, const long from, con
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
 
     // exponential decaying stc and sfa elements
     S_.stc_ = 0.0;
-    for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
-    {
+    for ( size_t i = 0; i < S_.stc_elems_.size(); i++ ) {
       S_.stc_ += S_.stc_elems_[ i ];
       S_.stc_elems_[ i ] = V_.P_stc_[ i ] * S_.stc_elems_[ i ];
     }
 
     S_.sfa_ = P_.V_T_star_;
-    for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ )
-    {
+    for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ ) {
       S_.sfa_ += S_.sfa_elems_[ i ];
       S_.sfa_elems_[ i ] = V_.P_sfa_[ i ] * S_.sfa_elems_[ i ];
     }
 
     double sum_syn_pot = 0.0;
-    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-    {
+    for ( size_t i = 0; i < P_.n_receptors_(); i++ ) {
       // computing effect of synaptic currents on membrane potential
       sum_syn_pot += V_.P21_syn_[ i ] * S_.i_syn_[ i ];
       // exponential decaying PSCs
@@ -395,20 +371,16 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin, const long from, con
 
       const double lambda = P_.lambda_0_ * std::exp( ( S_.V_ - S_.sfa_ ) / P_.Delta_V_ );
 
-      if ( lambda > 0.0 )
-      {
+      if ( lambda > 0.0 ) {
         // Draw random number and compare to prob to have a spike
         // hazard function is computed by 1 - exp(- lambda * dt)
-        if ( V_.rng_->drand() < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
-        {
+        if ( V_.rng_->drand() < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) ) {
 
-          for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
-          {
+          for ( size_t i = 0; i < S_.stc_elems_.size(); i++ ) {
             S_.stc_elems_[ i ] += P_.q_stc_[ i ];
           }
 
-          for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ )
-          {
+          for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ ) {
             S_.sfa_elems_[ i ] += P_.q_sfa_[ i ];
           }
 
@@ -421,8 +393,7 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin, const long from, con
         }
       }
     }
-    else
-    {
+    else {
       --S_.r_ref_;         // neuron is absolute refractory
       S_.V_ = P_.V_reset_; // reset the membrane potential
     }

@@ -39,8 +39,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-namespace nest
-{
+namespace nest {
 RecordablesMap< ac_generator > ac_generator::recordablesMap_;
 
 template <>
@@ -73,8 +72,7 @@ nest::ac_generator::Parameters_::Parameters_( const Parameters_& p )
 
 nest::ac_generator::Parameters_& nest::ac_generator::Parameters_::operator=( const Parameters_& p )
 {
-  if ( this == &p )
-  {
+  if ( this == &p ) {
     return *this;
   }
 
@@ -211,8 +209,7 @@ nest::ac_generator::update( Time const& origin, const long from, const long to )
   long start = origin.get_steps();
 
   CurrentEvent ce;
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     // We need to iterate the oscillator throughout all steps, even when the
     // device is not active, since inactivity only windows the oscillator.
     const double y_0 = S_.y_0_;
@@ -220,8 +217,7 @@ nest::ac_generator::update( Time const& origin, const long from, const long to )
     S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
 
     S_.I_ = 0.0;
-    if ( device_.is_active( Time::step( start + lag ) ) )
-    {
+    if ( device_.is_active( Time::step( start + lag ) ) ) {
       S_.I_ = S_.y_1_ + P_.offset_;
       ce.set_current( S_.I_ );
       kernel().event_delivery_manager.send( *this, ce, lag );

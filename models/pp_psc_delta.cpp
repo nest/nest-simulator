@@ -49,8 +49,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-namespace nest
-{
+namespace nest {
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -122,23 +121,19 @@ nest::pp_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::c_3, c_3_ );
   def< double >( d, names::t_ref_remaining, t_ref_remaining_ );
 
-  if ( multi_param_ )
-  {
+  if ( multi_param_ ) {
     ArrayDatum tau_sfa_list_ad( tau_sfa_ );
     def< ArrayDatum >( d, names::tau_sfa, tau_sfa_list_ad );
 
     ArrayDatum q_sfa_list_ad( q_sfa_ );
     def< ArrayDatum >( d, names::q_sfa, q_sfa_list_ad );
   }
-  else
-  {
-    if ( tau_sfa_.size() == 0 )
-    {
+  else {
+    if ( tau_sfa_.size() == 0 ) {
       def< double >( d, names::tau_sfa, 0 );
       def< double >( d, names::q_sfa, 0 );
     }
-    else
-    {
+    else {
       def< double >( d, names::tau_sfa, tau_sfa_[ 0 ] );
       def< double >( d, names::q_sfa, q_sfa_[ 0 ] );
     }
@@ -161,13 +156,11 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::c_3, c_3_ );
   updateValue< double >( d, names::t_ref_remaining, t_ref_remaining_ );
 
-  try
-  {
+  try {
     updateValue< std::vector< double > >( d, names::tau_sfa, tau_sfa_ );
     updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
   }
-  catch ( TypeMismatch& e )
-  {
+  catch ( TypeMismatch& e ) {
     multi_param_ = 0;
     double tau_sfa_temp_;
     double q_sfa_temp_;
@@ -178,8 +171,7 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
   }
 
 
-  if ( tau_sfa_.size() != q_sfa_.size() )
-  {
+  if ( tau_sfa_.size() != q_sfa_.size() ) {
     throw BadProperty( String::compose(
       "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of "
       "tau_sfa: %1\nSize of q_sfa: %2",
@@ -187,41 +179,33 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
       q_sfa_.size() ) );
   }
 
-  if ( c_m_ <= 0 )
-  {
+  if ( c_m_ <= 0 ) {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
 
-  if ( dead_time_ < 0 )
-  {
+  if ( dead_time_ < 0 ) {
     throw BadProperty( "Absolute refractory time must not be negative." );
   }
 
-  if ( dead_time_shape_ < 1 )
-  {
+  if ( dead_time_shape_ < 1 ) {
     throw BadProperty( "Shape of the dead time gamma distribution must not be smaller than 1." );
   }
 
-  if ( tau_m_ <= 0 )
-  {
+  if ( tau_m_ <= 0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
 
-  for ( unsigned int i = 0; i < tau_sfa_.size(); i++ )
-  {
-    if ( tau_sfa_[ i ] <= 0 )
-    {
+  for ( unsigned int i = 0; i < tau_sfa_.size(); i++ ) {
+    if ( tau_sfa_[ i ] <= 0 ) {
       throw BadProperty( "All time constants must be strictly positive." );
     }
   }
 
-  if ( t_ref_remaining_ < 0 )
-  {
+  if ( t_ref_remaining_ < 0 ) {
     throw BadProperty( "Remaining refractory time can not be negative." );
   }
 
-  if ( c_3_ < 0 )
-  {
+  if ( c_3_ < 0 ) {
     throw BadProperty( "c_3 must be positive." );
   }
 }
@@ -306,16 +290,13 @@ nest::pp_psc_delta::calibrate()
   V_.P33_ = std::exp( -V_.h_ / P_.tau_m_ );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
 
-  if ( P_.dead_time_ != 0 && P_.dead_time_ < V_.h_ )
-  {
+  if ( P_.dead_time_ != 0 && P_.dead_time_ < V_.h_ ) {
     P_.dead_time_ = V_.h_;
   }
 
   // initializing internal state
-  if ( not S_.initialized_ )
-  {
-    for ( unsigned int i = 0; i < P_.tau_sfa_.size(); i++ )
-    {
+  if ( not S_.initialized_ ) {
+    for ( unsigned int i = 0; i < P_.tau_sfa_.size(); i++ ) {
       V_.Q33_.push_back( std::exp( -V_.h_ / P_.tau_sfa_[ i ] ) );
       S_.q_elems_.push_back( 0.0 );
     }
@@ -342,15 +323,13 @@ nest::pp_psc_delta::calibrate()
   // results. However, a neuron model capable of operating with real valued
   // spike time may exhibit a different effective refractory time.
 
-  if ( P_.dead_time_random_ )
-  {
+  if ( P_.dead_time_random_ ) {
     // Choose dead time rate parameter such that mean equals dead_time
     V_.dt_rate_ = P_.dead_time_shape_ / P_.dead_time_;
     V_.gamma_dev_.set_order( P_.dead_time_shape_ );
   }
 
-  else
-  {
+  else {
     V_.DeadTimeCounts_ = Time( Time::ms( P_.dead_time_ ) ).get_steps();
     // Since t_ref_ >= 0, this can only fail in error
     assert( V_.DeadTimeCounts_ >= 0 );
@@ -368,14 +347,12 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
 
     S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
 
     double q_temp_ = 0;
-    for ( unsigned int i = 0; i < S_.q_elems_.size(); i++ )
-    {
+    for ( unsigned int i = 0; i < S_.q_elems_.size(); i++ ) {
 
       S_.q_elems_[ i ] = V_.Q33_[ i ] * S_.q_elems_[ i ];
 
@@ -384,8 +361,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 
     S_.q_ = q_temp_;
 
-    if ( S_.r_ == 0 )
-    {
+    if ( S_.r_ == 0 ) {
       // Neuron not refractory
 
       // Calculate instantaneous rate from transfer function:
@@ -398,20 +374,16 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 
       double rate = ( P_.c_1_ * V_eff + P_.c_2_ * std::exp( P_.c_3_ * V_eff ) );
 
-      if ( rate > 0.0 )
-      {
+      if ( rate > 0.0 ) {
         unsigned long n_spikes = 0;
 
-        if ( P_.dead_time_ > 0.0 )
-        {
+        if ( P_.dead_time_ > 0.0 ) {
           // Draw random number and compare to prob to have a spike
-          if ( V_.rng_->drand() <= -numerics::expm1( -rate * V_.h_ * 1e-3 ) )
-          {
+          if ( V_.rng_->drand() <= -numerics::expm1( -rate * V_.h_ * 1e-3 ) ) {
             n_spikes = 1;
           }
         }
-        else
-        {
+        else {
           // Draw Poisson random number of spikes
           V_.poisson_dev_.set_lambda( rate * V_.h_ * 1e-3 );
           n_spikes = V_.poisson_dev_.ldev( V_.rng_ );
@@ -420,18 +392,15 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
         if ( n_spikes > 0 ) // Is there a spike? Then set the new dead time.
         {
           // Set dead time interval according to paramters
-          if ( P_.dead_time_random_ )
-          {
+          if ( P_.dead_time_random_ ) {
             S_.r_ = Time( Time::ms( V_.gamma_dev_( V_.rng_ ) / V_.dt_rate_ ) ).get_steps();
           }
-          else
-          {
+          else {
             S_.r_ = V_.DeadTimeCounts_;
           }
 
 
-          for ( unsigned int i = 0; i < S_.q_elems_.size(); i++ )
-          {
+          for ( unsigned int i = 0; i < S_.q_elems_.size(); i++ ) {
             S_.q_elems_[ i ] += P_.q_sfa_[ i ] * n_spikes;
           }
 
@@ -443,14 +412,12 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 
           // set spike time for STDP to work,
           // see https://github.com/nest/nest-simulator/issues/77
-          for ( unsigned int i = 0; i < n_spikes; i++ )
-          {
+          for ( unsigned int i = 0; i < n_spikes; i++ ) {
             set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
           }
 
           // Reset the potential if applicable
-          if ( P_.with_reset_ )
-          {
+          if ( P_.with_reset_ ) {
             S_.y3_ = 0.0;
           }
         } // S_.y3_ = P_.V_reset_;

@@ -38,15 +38,13 @@
 // Includes from sli:
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 class ConnectorBase;
 class CommonSynapseProperties;
 class TimeConverter;
 class Node;
 
-class ConnectorModel
-{
+class ConnectorModel {
 
 public:
   ConnectorModel( const std::string,
@@ -160,8 +158,7 @@ protected:
 
 
 template < typename ConnectionT >
-class GenericConnectorModel : public ConnectorModel
-{
+class GenericConnectorModel : public ConnectorModel {
 private:
   typename ConnectionT::CommonPropertiesType cp_;
   //! used to create secondary events that belong to secondary connections
@@ -255,8 +252,7 @@ private:
 }; // GenericConnectorModel
 
 template < typename ConnectionT >
-class GenericSecondaryConnectorModel : public GenericConnectorModel< ConnectionT >
-{
+class GenericSecondaryConnectorModel : public GenericConnectorModel< ConnectionT > {
 private:
   //! used to create secondary events that belong to secondary connections
   typename ConnectionT::EventType* pev_;
@@ -294,8 +290,7 @@ public:
   create_event( size_t n ) const
   {
     std::vector< SecondaryEvent* > prototype_events( n, NULL );
-    for ( size_t i = 0; i < n; i++ )
-    {
+    for ( size_t i = 0; i < n; i++ ) {
       prototype_events[ i ] = new typename ConnectionT::EventType();
     }
 
@@ -305,8 +300,7 @@ public:
 
   ~GenericSecondaryConnectorModel()
   {
-    if ( pev_ != 0 )
-    {
+    if ( pev_ != 0 ) {
       delete pev_;
     }
   }

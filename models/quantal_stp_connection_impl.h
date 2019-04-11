@@ -33,8 +33,7 @@
 // Includes from sli:
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 
 
 /* Polymorphic version of update_value.
@@ -45,23 +44,19 @@ namespace nest
 bool
 update_value_int( const DictionaryDatum& d, Name propname, int& prop )
 {
-  if ( d->known( propname ) )
-  {
+  if ( d->known( propname ) ) {
     Datum* dat = ( *d )[ propname ].datum();
     IntegerDatum* intdat = dynamic_cast< IntegerDatum* >( dat );
-    if ( intdat != 0 )
-    {
+    if ( intdat != 0 ) {
       prop = static_cast< int >( intdat->get() );
       return true;
     }
     DoubleDatum* doubledat = dynamic_cast< DoubleDatum* >( dat );
-    if ( doubledat != 0 )
-    {
+    if ( doubledat != 0 ) {
       prop = static_cast< int >( doubledat->get() );
       return true;
     }
-    else
-    {
+    else {
       throw TypeMismatch();
     }
   }
@@ -134,14 +129,12 @@ Quantal_StpConnection< targetidentifierT >::check_synapse_params( const Dictiona
 {
   // Throw error if n or a are set in quantal_stp_synapse, Connect cannot handle
   // them since they are integers.
-  if ( syn_spec->known( names::n ) )
-  {
+  if ( syn_spec->known( names::n ) ) {
     throw NotImplemented(
       "Connect doesn't support the setting of parameter "
       "n in quantal_stp_synapse. Use SetDefaults() or CopyModel()." );
   }
-  if ( syn_spec->known( names::a ) )
-  {
+  if ( syn_spec->known( names::a ) ) {
     throw NotImplemented(
       "Connect doesn't support the setting of parameter "
       "a in quantal_stp_synapse. Use SetDefaults() or CopyModel()." );

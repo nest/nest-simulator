@@ -65,20 +65,17 @@ nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d )
 {
 
   updateValue< double >( d, names::dead_time, dead_time_ );
-  if ( dead_time_ < 0 )
-  {
+  if ( dead_time_ < 0 ) {
     throw BadProperty( "The dead time cannot be negative." );
   }
 
   updateValue< double >( d, names::rate, rate_ );
 
-  if ( rate_ < 0.0 )
-  {
+  if ( rate_ < 0.0 ) {
     throw BadProperty( "The rate cannot be negative." );
   }
 
-  if ( 1000.0 / rate_ < dead_time_ )
-  {
+  if ( 1000.0 / rate_ < dead_time_ ) {
     throw BadProperty( "The inverse rate cannot be smaller than the dead time." );
   }
 }
@@ -129,12 +126,10 @@ void
 nest::poisson_generator_ps::calibrate()
 {
   device_.calibrate();
-  if ( P_.rate_ > 0 )
-  {
+  if ( P_.rate_ > 0 ) {
     V_.inv_rate_ms_ = 1000.0 / P_.rate_ - P_.dead_time_;
   }
-  else
-  {
+  else {
     V_.inv_rate_ms_ = std::numeric_limits< double >::infinity();
   }
 
@@ -146,20 +141,17 @@ nest::poisson_generator_ps::calibrate()
      consistent across targets, all targets are reset even if a
      single one has a spike time before origin+start.
   */
-  if ( not B_.next_spike_.empty() )
-  {
+  if ( not B_.next_spike_.empty() ) {
     // find minimum time stamp, offset does not matter here
     Time min_time = B_.next_spike_.begin()->first;
 
     for ( std::vector< Buffers_::SpikeTime >::const_iterator it = B_.next_spike_.begin() + 1;
           it != B_.next_spike_.end();
-          ++it )
-    {
+          ++it ) {
       min_time = std::min( min_time, it->first );
     }
 
-    if ( min_time < device_.get_origin() + device_.get_start() )
-    {
+    if ( min_time < device_.get_origin() + device_.get_start() ) {
       B_.next_spike_.clear(); // will be resized with neg_infs below
     }
   }
@@ -167,8 +159,7 @@ nest::poisson_generator_ps::calibrate()
   // If new targets have been added during a simulation break, we
   // initialize the new elements in next_spike_ with -1. The existing
   // elements are unchanged.
-  if ( B_.next_spike_.size() == 0 )
-  {
+  if ( B_.next_spike_.size() == 0 ) {
     B_.next_spike_.resize( P_.num_targets_, Buffers_::SpikeTime( Time::neg_inf(), 0 ) );
   }
 }
@@ -184,8 +175,7 @@ nest::poisson_generator_ps::update( Time const& T, const long from, const long t
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
-  {
+  if ( P_.rate_ <= 0 || P_.num_targets_ == 0 ) {
     return;
   }
 
@@ -198,8 +188,7 @@ nest::poisson_generator_ps::update( Time const& T, const long from, const long t
   V_.t_max_active_ = std::min( T + Time::step( to ), device_.get_origin() + device_.get_stop() );
 
   // Nothing to do for equality, since left boundary is excluded
-  if ( V_.t_min_active_ < V_.t_max_active_ )
-  {
+  if ( V_.t_min_active_ < V_.t_max_active_ ) {
     // we send the event as a "normal" event without offgrid-information
     // the event hook then sends out the real spikes with offgrid timing
     // We pretend to send at T+from
@@ -223,8 +212,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   // introduce nextspk as a shorthand
   Buffers_::SpikeTime& nextspk = B_.next_spike_[ prt ];
 
-  if ( nextspk.first.is_neg_inf() )
-  {
+  if ( nextspk.first.is_neg_inf() ) {
     // need to initialize relative to t_min_active_
     // first spike is drawn from backward recurrence time to initialize the
     // process in equilibrium.
@@ -238,13 +226,11 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
 
     double spike_offset = 0;
 
-    if ( P_.dead_time_ > 0 and rng->drand() < P_.dead_time_ * P_.rate_ / 1000.0 )
-    {
+    if ( P_.dead_time_ > 0 and rng->drand() < P_.dead_time_ * P_.rate_ / 1000.0 ) {
       // uniform case: spike occurs with uniform probability in [0, dead_time].
       spike_offset = rng->drand() * P_.dead_time_;
     }
-    else
-    {
+    else {
       // exponential case: spike occurs with exponential probability in
       // [dead_time, infinity]
       spike_offset = V_.inv_rate_ms_ * V_.exp_dev_( rng ) + P_.dead_time_;
@@ -258,8 +244,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   }
 
   // as long as there are spikes in active period, emit and redraw
-  while ( nextspk.first <= V_.t_max_active_ )
-  {
+  while ( nextspk.first <= V_.t_max_active_ ) {
     // std::cerr << nextspk.first << '\t' << nextspk.second << '\n';
     e.set_stamp( nextspk.first );
     e.set_offset( nextspk.second );
@@ -273,8 +258,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
     {
       nextspk.second = -new_offset; // stamps always 0 < stamp <= h
     }
-    else
-    {
+    else {
       // split into stamp and offset, then add to old stamp
       const Time delta_stamp = Time::ms_stamp( new_offset );
       nextspk.first += delta_stamp;

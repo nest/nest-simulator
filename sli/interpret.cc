@@ -281,8 +281,7 @@ SLIInterpreter::createdouble( Name const& n, double d )
 void
 SLIInterpreter::createcommand( Name const& n, SLIFunction const* fn, std::string deprecation_info )
 {
-  if ( DStack->known( n ) )
-  {
+  if ( DStack->known( n ) ) {
     throw NamingConflict("A function called '" + std::string(n.toString())
                          + "' exists already.\n"
                          "Please choose a different name!");
@@ -503,16 +502,13 @@ SLIInterpreter::SLIInterpreter( void )
   // Here, we use a posix conforming substitute for the
   // ISO C signal function. It is defined in psignal.{h,cc}
 
-  if ( posix_signal( SIGINT, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
-  {
+  if ( posix_signal( SIGINT, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN ) {
     posix_signal( SIGINT, ( Sigfunc* ) SLISignalHandler );
   }
-  if ( posix_signal( SIGUSR1, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
-  {
+  if ( posix_signal( SIGUSR1, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN ) {
     posix_signal( SIGUSR1, ( Sigfunc* ) SLISignalHandler );
   }
-  if ( posix_signal( SIGUSR2, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
-  {
+  if ( posix_signal( SIGUSR2, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN ) {
     posix_signal( SIGUSR2, ( Sigfunc* ) SLISignalHandler );
   }
 #endif
@@ -524,26 +520,22 @@ void
 SLIInterpreter::addmodule( SLIModule* m )
 {
   modules.push_back( m );
-  try
-  {
+  try {
     m->install( std::cerr, this );
   }
-  catch ( SLIException& e )
-  {
+  catch ( SLIException& e ) {
     message( M_ERROR, "SLIInterpreter", ( "An error occured while loading module " + m->name() ).c_str() );
     message( M_ERROR, "SLIInterpreter", e.what() );
     message( M_ERROR, "SLIInterpreter", e.message().c_str() );
     return;
   }
-  catch ( std::exception& e )
-  {
+  catch ( std::exception& e ) {
     message(
       M_ERROR, "SLIInterpreter", ( "A C++ library exception occured while loading module " + m->name() ).c_str() );
     message( M_ERROR, "SLIInterpreter", e.what() );
     return;
   }
-  catch ( ... )
-  {
+  catch ( ... ) {
     message(
       M_ERROR, "SLIInterpreter", ( "An unspecified exception occured while loading module " + m->name() ).c_str() );
     return;
@@ -551,8 +543,7 @@ SLIInterpreter::addmodule( SLIModule* m )
 
   // Add commandstring to list of module initializers. They will be executed
   // by sli-init.sli once all C++ stuff is loaded.
-  if ( not( m->commandstring().empty() ) )
-  {
+  if ( not( m->commandstring().empty() ) ) {
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
     assert( ad != NULL );
     ad->push_back( new StringDatum( m->commandstring() ) );
@@ -566,8 +557,7 @@ SLIInterpreter::addlinkedusermodule( SLIModule* m )
 
   // Add commandstring to list of module initializers. They will be executed
   // by sli-init.sli once all C++ stuff is loaded.
-  if ( not( m->commandstring().empty() ) )
-  {
+  if ( not( m->commandstring().empty() ) ) {
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
     assert( ad != NULL );
     ad->push_back( new StringDatum( m->commandstring() ) );
@@ -628,14 +618,12 @@ SLIInterpreter::raiseerror( std::exception& err )
   // SLIException provide addtional information
   SLIException* slierr = dynamic_cast< SLIException* >( &err );
 
-  if ( slierr )
-  {
+  if ( slierr ) {
     // err is a SLIException
     errordict->insert( Name( "message" ), slierr->message() );
     raiseerror( caller, slierr->what() );
   }
-  else
-  {
+  else {
     // plain std::exception: turn what() output into message
     errordict->insert( Name( "message" ), std::string( err.what() ) );
     raiseerror( caller, "C++Exception" );
@@ -651,13 +639,11 @@ SLIInterpreter::raiseerror( Name cmd, Name err )
 
   assert( errordict != NULL );
 
-  if ( errordict->lookup( newerror_name ) == baselookup( false_name ) )
-  {
+  if ( errordict->lookup( newerror_name ) == baselookup( false_name ) ) {
     errordict->insert( newerror_name, baselookup( true_name ) );
     errordict->insert( errorname_name, LiteralDatum( err ) );
     errordict->insert( commandname_name, LiteralDatum( cmd ) );
-    if ( errordict->lookup( recordstacks_name ) == baselookup( true_name ) )
-    {
+    if ( errordict->lookup( recordstacks_name ) == baselookup( true_name ) ) {
       Token est( new ArrayDatum( EStack.toArray() ) );
       Token ost( new ArrayDatum( OStack.toArray() ) );
       TokenArray olddstack;
@@ -689,8 +675,7 @@ SLIInterpreter::print_error( Token cmd )
   std::ostringstream msg;
 
   // Read errorname from dictionary.
-  if ( errordict->known( errorname_name ) )
-  {
+  if ( errordict->known( errorname_name ) ) {
     errorname = std::string( errordict->lookup( errorname_name ) );
   }
 
@@ -700,35 +685,28 @@ SLIInterpreter::print_error( Token cmd )
   // is printed. The if-else branching below follows the
   // syntax of the lib/sli/sli-init.sli function
   // /:print_error
-  if ( errorname == "SystemError" )
-  {
+  if ( errorname == "SystemError" ) {
   }
-  else if ( errorname == "BadErrorHandler" )
-  {
+  else if ( errorname == "BadErrorHandler" ) {
     msg << ": The error handler of a stopped context "
         << "contained itself an error.";
   }
-  else
-  {
+  else {
     // Read a pre-defined message from dictionary.
-    if ( errordict->known( Name( "message" ) ) )
-    {
+    if ( errordict->known( Name( "message" ) ) ) {
       msg << errordict->lookup( Name( "message" ) );
       errordict->erase( Name( "message" ) );
     }
 
     // Print command information for error command.
-    if ( errordict->known( Name( "command" ) ) )
-    {
+    if ( errordict->known( Name( "command" ) ) ) {
       Token command = errordict->lookup( Name( "command" ) );
       errordict->erase( Name( "command" ) );
 
       // Command information is only printed if the
       // command is of trietype
-      if ( command.datum() != NULL )
-      {
-        if ( command->gettypename() == Name( "trietype" ) )
-        {
+      if ( command.datum() != NULL ) {
+        if ( command->gettypename() == Name( "trietype" ) ) {
           msg << "\n\nCandidates for " << command << " are:\n";
 
           TrieDatum* trie = dynamic_cast< TrieDatum* >( command.datum() );
@@ -752,16 +730,14 @@ SLIInterpreter::raiseagain( void )
 {
   assert( errordict != NULL );
 
-  if ( errordict->known( commandname_name ) )
-  {
+  if ( errordict->known( commandname_name ) ) {
     Token cmd_t = errordict->lookup( commandname_name );
     assert( not cmd_t.empty() );
     errordict->insert( newerror_name, baselookup( true_name ) );
     OStack.push_move( cmd_t );
     EStack.push( baselookup( stop_name ) );
   }
-  else
-  {
+  else {
     raiseerror( Name( "raiseagain" ), BadErrorHandler );
   }
 }
@@ -791,8 +767,7 @@ SLIInterpreter::verbosity( void ) const
 void
 SLIInterpreter::terminate( int returnvalue )
 {
-  if ( returnvalue == -1 )
-  {
+  if ( returnvalue == -1 ) {
     assert( statusdict->known( "exitcodes" ) );
     DictionaryDatum exitcodes = getValue< DictionaryDatum >( *statusdict, "exitcodes" );
     returnvalue = getValue< long >( exitcodes, "fatal" );
@@ -811,38 +786,29 @@ SLIInterpreter::message( int level, const char from[], const char text[], const 
 #pragma omp critical( message )
   {
 #endif
-    if ( level >= verbositylevel )
-    {
-      if ( level >= M_FATAL )
-      {
+    if ( level >= verbositylevel ) {
+      if ( level >= M_FATAL ) {
         message( std::cout, M_FATAL_NAME, from, text, errorname );
       }
-      else if ( level >= M_ERROR )
-      {
+      else if ( level >= M_ERROR ) {
         message( std::cout, M_ERROR_NAME, from, text, errorname );
       }
-      else if ( level >= M_WARNING )
-      {
+      else if ( level >= M_WARNING ) {
         message( std::cout, M_WARNING_NAME, from, text, errorname );
       }
-      else if ( level >= M_DEPRECATED )
-      {
+      else if ( level >= M_DEPRECATED ) {
         message( std::cout, M_DEPRECATED_NAME, from, text, errorname );
       }
-      else if ( level >= M_INFO )
-      {
+      else if ( level >= M_INFO ) {
         message( std::cout, M_INFO_NAME, from, text, errorname );
       }
-      else if ( level >= M_STATUS )
-      {
+      else if ( level >= M_STATUS ) {
         message( std::cout, M_STATUS_NAME, from, text, errorname );
       }
-      else if ( level >= M_DEBUG )
-      {
+      else if ( level >= M_DEBUG ) {
         message( std::cout, M_DEBUG_NAME, from, text, errorname );
       }
-      else
-      {
+      else {
         message( std::cout, M_ALL_NAME, from, text, errorname );
       }
     }
@@ -882,12 +848,10 @@ SLIInterpreter::message( std::ostream& out,
   // printed by make install).
   char const* const columns = std::getenv( "COLUMNS" );
   size_t max_width = 78;
-  if ( columns )
-  {
+  if ( columns ) {
     max_width = std::atoi( columns );
   }
-  if ( max_width < 3 * indent )
-  {
+  if ( max_width < 3 * indent ) {
     max_width = 3 * indent;
   }
   const size_t width = max_width - indent;
@@ -896,18 +860,15 @@ SLIInterpreter::message( std::ostream& out,
   std::string text_str( text );
 
   // Indent first message line
-  if ( text_str.size() != 0 )
-  {
+  if ( text_str.size() != 0 ) {
     std::cout << std::endl
               << std::string( indent, ' ' );
   }
 
   size_t pos = 0;
 
-  for ( size_t i = 0; i < text_str.size(); ++i )
-  {
-    if ( text_str.at( i ) == '\n' && i != text_str.size() - 1 )
-    {
+  for ( size_t i = 0; i < text_str.size(); ++i ) {
+    if ( text_str.at( i ) == '\n' && i != text_str.size() - 1 ) {
       // Print a lineshift followed by an indented whitespace
       // Manually inserted lineshift at the end of the message
       // are suppressed.
@@ -915,16 +876,14 @@ SLIInterpreter::message( std::ostream& out,
           << std::string( indent, ' ' );
       pos = 0;
     }
-    else
-    {
+    else {
       // If we've reached the width of the output we'll print
       // a lineshift regardless of whether '\n' is found or not.
       // The printing is done so that no word splitting occurs.
       size_t space = text_str.find( ' ', i ) < text_str.find( '\n' ) ? text_str.find( ' ', i ) : text_str.find( '\n' );
       // If no space is found (i.e. the last word) the space
       // variable is set to the end of the string.
-      if ( space == std::string::npos )
-      {
+      if ( space == std::string::npos ) {
         space = text_str.size();
       }
 
@@ -932,8 +891,7 @@ SLIInterpreter::message( std::ostream& out,
       // space available (as long as the word is shorter than the
       // total width of the printout).
       if ( i != 0 && text_str.at( i - 1 ) == ' '
-        && static_cast< int >( space - i ) > static_cast< int >( width - pos ) )
-      {
+        && static_cast< int >( space - i ) > static_cast< int >( width - pos ) ) {
         out << std::endl
             << std::string( indent, ' ' );
         pos = 0;
@@ -941,8 +899,7 @@ SLIInterpreter::message( std::ostream& out,
 
       // Only print character if we're not at the end of the
       // line and the last character is a space.
-      if ( not( width - pos == 0 && text_str.at( i ) == ' ' ) )
-      {
+      if ( not( width - pos == 0 && text_str.at( i ) == ' ' ) ) {
         // Print the actual character.
         out << text_str.at( i );
       }
@@ -957,13 +914,11 @@ Name
 SLIInterpreter::getcurrentname( void ) const
 {
   FunctionDatum* func = dynamic_cast< FunctionDatum* >( EStack.top().datum() );
-  if ( func != NULL )
-  {
+  if ( func != NULL ) {
     return ( func->getname() );
   }
   TrieDatum* trie = dynamic_cast< TrieDatum* >( EStack.top().datum() );
-  if ( trie != NULL )
-  {
+  if ( trie != NULL ) {
     return ( trie->getname() );
   }
   return interpreter_name;
@@ -1018,30 +973,25 @@ SLIInterpreter::backtrace_off()
 void
 SLIInterpreter::stack_backtrace( int n )
 {
-  for ( int p = n - 1; p >= 0; --p )
-  {
-    if ( ( size_t ) p > EStack.load() )
-    {
+  for ( int p = n - 1; p >= 0; --p ) {
+    if ( ( size_t ) p > EStack.load() ) {
       continue;
     }
 
     FunctionDatum* fd = dynamic_cast< FunctionDatum* >( EStack.pick( p ).datum() );
-    if ( fd != 0 )
-    {
+    if ( fd != 0 ) {
       fd->backtrace( this, p );
       continue;
     }
     NameDatum* nd = dynamic_cast< NameDatum* >( EStack.pick( p ).datum() );
-    if ( nd != 0 )
-    {
+    if ( nd != 0 ) {
       std::cerr << "While executing: ";
       nd->print( std::cerr );
       std::cerr << std::endl;
       continue;
     }
     TrieDatum* td = dynamic_cast< TrieDatum* >( EStack.pick( p ).datum() );
-    if ( td != 0 )
-    {
+    if ( td != 0 ) {
       std::cerr << "While executing: ";
       td->print( std::cerr );
       std::cerr << std::endl;
@@ -1090,107 +1040,87 @@ SLIInterpreter::debug_commandline( Token& next )
   // with CTRL-D. If std::cin is closed with ctrl-D we cannot re-open it again
   // and the debugger would be dysfunctional for the remainder of the session.
   std::ifstream tty( "/dev/tty" );
-  if ( show_stack_ )
-  {
+  if ( show_stack_ ) {
     OStack.dump( std::cerr );
   }
   std::cerr << "Next token: ";
   next.pprint( std::cerr );
   std::cerr << std::endl;
 
-  do
-  {
+  do {
     std::cerr << call_depth_ << "/" << max_call_depth_ << ">";
 
     tty >> command;
-    if ( tty.eof() )
-    {
+    if ( tty.eof() ) {
       std::cerr << std::endl;
       debug_mode_off();
       return c;
     }
 
-    if ( SLIsignalflag != 0 )
-    {
+    if ( SLIsignalflag != 0 ) {
       std::cerr << "Caught Signal Number " << SLIsignalflag << std::endl;
       SLIsignalflag = 0;
       tty.clear();
       continue;
     }
 
-    if ( command == "show" )
-    {
+    if ( command == "show" ) {
       tty >> arg;
-      if ( arg == "stack" )
-      {
+      if ( arg == "stack" ) {
         OStack.dump( std::cerr );
       }
-      else if ( arg == "estack" )
-      {
+      else if ( arg == "estack" ) {
         EStack.dump( std::cerr );
       }
-      else if ( arg == "backtrace" )
-      {
+      else if ( arg == "backtrace" ) {
         stack_backtrace( EStack.load() );
       }
-      else if ( arg == "next" || arg == "n" )
-      {
+      else if ( arg == "next" || arg == "n" ) {
         std::cerr << "Next token: ";
         next.pprint( std::cerr );
         std::cerr << std::endl;
       }
-      else
-      {
+      else {
         std::cerr << "show: Unknown argument. Type 'help' for help." << std::endl;
       }
       continue;
     }
-    else if ( command == "toggle" )
-    {
+    else if ( command == "toggle" ) {
       tty >> arg;
-      if ( arg == "backtrace" )
-      {
+      if ( arg == "backtrace" ) {
         show_backtrace_ = not show_backtrace_;
         std::cerr << "Stack backtrace is now " << ( show_backtrace_ ? " On." : "Off." ) << std::endl;
       }
-      else if ( arg == "stack" )
-      {
+      else if ( arg == "stack" ) {
         show_stack_ = not show_stack_;
         std::cerr << "Stack display is now " << ( show_stack_ ? " On." : "Off." ) << std::endl;
       }
-      else if ( arg == "catch" )
-      {
+      else if ( arg == "catch" ) {
         catch_errors_ = not catch_errors_;
         std::cerr << "Catch error mode is now " << ( catch_errors_ ? " On." : "Off." ) << std::endl;
       }
-      else if ( arg == "tailrecursion" || arg == "tail" )
-      {
+      else if ( arg == "tailrecursion" || arg == "tail" ) {
         opt_tailrecursion_ = not opt_tailrecursion_;
         std::cerr << "Tail-recursion optimization is now " << ( opt_tailrecursion_ ? " On." : "Off." ) << std::endl;
       }
     }
-    else if ( command == "list" || command == "l" )
-    {
+    else if ( command == "list" || command == "l" ) {
       c = 'l';
       break;
     }
-    else if ( command == "stop" )
-    {
+    else if ( command == "stop" ) {
       debug_mode_off();
       EStack.push( new NameDatum( stop_name ) );
       break;
     }
-    else if ( command == "catch" )
-    {
+    else if ( command == "catch" ) {
       catch_errors_ = true;
       std::cerr << "Catch error mode is now " << ( catch_errors_ ? " On." : "Off." ) << std::endl;
     }
-    else if ( command == "where" || command == "w" )
-    {
+    else if ( command == "where" || command == "w" ) {
       stack_backtrace( EStack.load() );
     }
-    else if ( command == "edit" || command == "break" || command == "e" )
-    {
+    else if ( command == "edit" || command == "break" || command == "e" ) {
       debug_mode_off();
       std::cerr << "Type 'continue', to exit interactive mode." << std::endl;
       EStack.push( new NameDatum( "debugon" ) ); // restart debugging mode
@@ -1200,37 +1130,29 @@ SLIInterpreter::debug_commandline( Token& next )
       c = 'i';
       break;
     }
-    else if ( command == "stack" )
-    {
+    else if ( command == "stack" ) {
       OStack.dump( std::cerr );
     }
-    else if ( command == "estack" )
-    {
+    else if ( command == "estack" ) {
       EStack.dump( std::cerr );
     }
-    else if ( command == "help" || command == "?" || command == "h" )
-    {
+    else if ( command == "help" || command == "?" || command == "h" ) {
       debug_options();
     }
-    else if ( command == "next" || command == "n" )
-    {
+    else if ( command == "next" || command == "n" ) {
       break;
     }
-    else if ( command == "continue" || command == "cont" || command == "c" )
-    {
+    else if ( command == "continue" || command == "cont" || command == "c" ) {
       max_call_depth_ = call_depth_; // will show lower levels only
     }
-    else if ( command == "step" )
-    {
+    else if ( command == "step" ) {
       max_call_depth_ = call_depth_ + 1; // will this level and lower.
     }
-    else if ( command == "quit" || command == "q" )
-    {
+    else if ( command == "quit" || command == "q" ) {
       debug_mode_ = false;
       break;
     }
-    else
-    {
+    else {
       std::cerr << "Unknown command. Type 'help' for help, or 'quit' to leave debugger." << std::endl;
     }
   } while ( true );
@@ -1244,8 +1166,7 @@ SLIInterpreter::startup()
   static bool is_initialized = false;
   int exitcode = EXIT_SUCCESS;
 
-  if ( not is_initialized && EStack.load() > 0 )
-  {
+  if ( not is_initialized && EStack.load() > 0 ) {
     exitcode = execute_(); // run the interpreter
     is_initialized = true;
   }
@@ -1256,8 +1177,7 @@ int
 SLIInterpreter::execute( const std::string& cmdline )
 {
   int exitcode = startup();
-  if ( exitcode != EXIT_SUCCESS )
-  {
+  if ( exitcode != EXIT_SUCCESS ) {
     return -1;
   }
 
@@ -1270,8 +1190,7 @@ int
 SLIInterpreter::execute( const Token& cmd )
 {
   int exitcode = startup();
-  if ( exitcode != EXIT_SUCCESS )
-  {
+  if ( exitcode != EXIT_SUCCESS ) {
     return -1;
   }
 
@@ -1285,8 +1204,7 @@ SLIInterpreter::execute( int v )
 {
   startup();
   EStack.push( new NameDatum( "start" ) );
-  switch ( v )
-  {
+  switch ( v ) {
   case 0:
   case 1:
     return execute_(); // run the interpreter
@@ -1304,32 +1222,26 @@ SLIInterpreter::execute_debug_( size_t exitlevel )
   assert( statusdict->known( "exitcodes" ) );
   DictionaryDatum exitcodes = getValue< DictionaryDatum >( *statusdict, "exitcodes" );
 
-  if ( SLIsignalflag != 0 )
-  {
+  if ( SLIsignalflag != 0 ) {
     exitcode = getValue< long >( exitcodes, "unknownerror" );
     return exitcode;
   }
 
-  try
-  {
-    do
-    { // loop1  this double loop to keep the try/catch outside the inner loop
-      try
-      {
+  try {
+    do { // loop1  this double loop to keep the try/catch outside the inner loop
+      try {
         while ( EStack.load() > exitlevel ) // loop 2
         {
           ++cycle_count;
           EStack.top()->execute( this );
         }
       }
-      catch ( std::exception& exc )
-      {
+      catch ( std::exception& exc ) {
         raiseerror( exc );
       }
     } while ( EStack.load() > exitlevel );
   }
-  catch ( std::exception& e )
-  {
+  catch ( std::exception& e ) {
     message( M_FATAL, "SLIInterpreter", "A C++ library exception occured." );
     OStack.dump( std::cerr );
     EStack.dump( std::cerr );
@@ -1337,8 +1249,7 @@ SLIInterpreter::execute_debug_( size_t exitlevel )
     exitcode = getValue< long >( *exitcodes, "exception" );
     terminate( exitcode );
   }
-  catch ( ... )
-  {
+  catch ( ... ) {
     message( M_FATAL, "SLIInterpreter", "An unknown c++ exception occured." );
     OStack.dump( std::cerr );
     EStack.dump( std::cerr );
@@ -1348,8 +1259,7 @@ SLIInterpreter::execute_debug_( size_t exitlevel )
 
   assert( statusdict->known( "exitcode" ) );
   exitcode = getValue< long >( *statusdict, "exitcode" );
-  if ( exitcode != 0 )
-  {
+  if ( exitcode != 0 ) {
     errordict->insert( quitbyerror_name, baselookup( true_name ) );
   }
 
@@ -1363,37 +1273,30 @@ SLIInterpreter::execute_( size_t exitlevel )
   assert( statusdict->known( "exitcodes" ) );
   DictionaryDatum exitcodes = getValue< DictionaryDatum >( *statusdict, "exitcodes" );
 
-  if ( SLIsignalflag != 0 )
-  {
+  if ( SLIsignalflag != 0 ) {
     exitcode = getValue< long >( exitcodes, "unknownerror" );
     return exitcode;
   }
 
-  try
-  {
-    do
-    { // loop1  this double loop to keep the try/catch outside the inner loop
-      try
-      {
+  try {
+    do { // loop1  this double loop to keep the try/catch outside the inner loop
+      try {
         while ( not SLIsignalflag and ( EStack.load() > exitlevel ) ) // loop 2
         {
           ++cycle_count;
           EStack.top()->execute( this );
         }
-        if ( SLIsignalflag != 0 )
-        {
+        if ( SLIsignalflag != 0 ) {
           SLIsignalflag = 0;
           raisesignal( SLIsignalflag );
         }
       }
-      catch ( std::exception& exc )
-      {
+      catch ( std::exception& exc ) {
         raiseerror( exc );
       }
     } while ( EStack.load() > exitlevel );
   }
-  catch ( std::exception& e )
-  {
+  catch ( std::exception& e ) {
     message( M_FATAL, "SLIInterpreter", "A C++ library exception occured." );
     OStack.dump( std::cerr );
     EStack.dump( std::cerr );
@@ -1401,8 +1304,7 @@ SLIInterpreter::execute_( size_t exitlevel )
     exitcode = getValue< long >( *exitcodes, "exception" );
     terminate( exitcode );
   }
-  catch ( ... )
-  {
+  catch ( ... ) {
     message( M_FATAL, "SLIInterpreter", "An unknown c++ exception occured." );
     OStack.dump( std::cerr );
     EStack.dump( std::cerr );
@@ -1412,8 +1314,7 @@ SLIInterpreter::execute_( size_t exitlevel )
 
   assert( statusdict->known( "exitcode" ) );
   exitcode = getValue< long >( *statusdict, "exitcode" );
-  if ( exitcode != 0 )
-  {
+  if ( exitcode != 0 ) {
     errordict->insert( quitbyerror_name, baselookup( true_name ) );
   }
 

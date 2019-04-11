@@ -33,8 +33,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 template < typename targetidentifierT >
 ContDelayConnection< targetidentifierT >::ContDelayConnection()
@@ -74,22 +73,19 @@ ContDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d, 
   // set delay if mentioned
   double delay;
 
-  if ( updateValue< double >( d, names::delay, delay ) )
-  {
+  if ( updateValue< double >( d, names::delay, delay ) ) {
 
     const double h = Time::get_resolution().get_ms();
 
     double int_delay;
     const double frac_delay = std::modf( delay / h, &int_delay );
 
-    if ( frac_delay == 0 )
-    {
+    if ( frac_delay == 0 ) {
       kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
       set_delay_steps( Time::delay_ms_to_steps( delay ) );
       delay_offset_ = 0.0;
     }
-    else
-    {
+    else {
       const long lowerbound = static_cast< long >( int_delay );
       kernel().connection_manager.get_delay_checker().assert_two_valid_delays_steps( lowerbound, lowerbound + 1 );
       set_delay_steps( lowerbound + 1 );
@@ -102,8 +98,7 @@ template < typename targetidentifierT >
 void
 ContDelayConnection< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
 {
-  if ( syn_spec->known( names::delay ) )
-  {
+  if ( syn_spec->known( names::delay ) ) {
     LOG( M_WARNING,
       "Connect",
       "The delay will be rounded to the next multiple of the time step. "

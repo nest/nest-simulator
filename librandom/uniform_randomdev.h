@@ -50,8 +50,7 @@
 /*                                                          */
 /************************************************************/
 
-namespace librandom
-{
+namespace librandom {
 
 /** @BeginDocumentation
 Name: rdevdict::uniform - uniform random deviate generator
@@ -74,8 +73,7 @@ Author: Hans Ekkehard Plesser
  * @ingroup RandomDeviateGenerators
  */
 
-class UniformRandomDev : public RandomDev
-{
+class UniformRandomDev : public RandomDev {
 
 public:
   // accept only lockPTRs for initialization,

@@ -31,8 +31,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
    Name: izhikevich - Izhikevich neuron model
@@ -94,8 +93,7 @@ namespace nest
 
    SeeAlso: iaf_psc_delta, mat2_psc_exp
 */
-class izhikevich : public Archiving_Node
-{
+class izhikevich : public Archiving_Node {
 
 public:
   izhikevich();
@@ -137,8 +135,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     double a_;
     double b_;
     double c_;
@@ -167,8 +164,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
     double v_; // membrane potential
     double u_; // membrane recovery variable
     double I_; // input current
@@ -189,8 +185,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     /**
      * Buffer for recording
      */
@@ -208,8 +203,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
   };
 
   // Access functions for UniversalDataLogger -----------------------
@@ -251,8 +245,7 @@ izhikevich::send_test_event( Node& target, rport receptor_type, synindex, bool )
 inline port
 izhikevich::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -261,8 +254,7 @@ izhikevich::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 izhikevich::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -271,8 +263,7 @@ izhikevich::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 izhikevich::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

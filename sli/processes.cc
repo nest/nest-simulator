@@ -125,12 +125,10 @@ Processes::systemerror( SLIInterpreter* i )
 int
 Processes::fd( std::istream* s )
 {
-  if ( s == &std::cin )
-  {
+  if ( s == &std::cin ) {
     return STDIN_FILENO;
   }
-  else
-  {
+  else {
     ifdstream* fs = dynamic_cast< ifdstream* >( s );
     assert( fs != NULL );
     return fs->rdbuf()->fd();
@@ -140,16 +138,13 @@ Processes::fd( std::istream* s )
 int
 Processes::fd( std::ostream* s )
 {
-  if ( s == &std::cout )
-  {
+  if ( s == &std::cout ) {
     return STDOUT_FILENO;
   }
-  else if ( ( s == &std::cerr ) || ( s == &std::clog ) )
-  {
+  else if ( ( s == &std::cerr ) || ( s == &std::clog ) ) {
     return STDERR_FILENO;
   }
-  else
-  {
+  else {
     ofdstream* fs = dynamic_cast< ofdstream* >( s );
     assert( fs != NULL );
     return fs->rdbuf()->fd();
@@ -295,14 +290,11 @@ Processes::ForkFunction::execute( SLIInterpreter* i ) const
   // This is what happens, when the SLI-command is called:
   pid_t pid;
   pid = fork();
-  if ( pid < 0 )
-  {
+  if ( pid < 0 ) {
     i->raiseerror( systemerror( i ) );
   }
-  else
-  {
-    if ( pid != 0 )
-    { // I am the parent. pid is the PID of the new child.
+  else {
+    if ( pid != 0 ) { // I am the parent. pid is the PID of the new child.
 #ifdef HAVE_SSTREAM
       std::stringstream s;
       s << "Child PID: " << pid << "\n";
@@ -380,8 +372,7 @@ Processes::Sysexec_aFunction::execute( SLIInterpreter* i ) const
   //  int result = execvp(command, const_cast<char * const *> (argv) );
   delete[] argv;
 
-  if ( result == -1 )
-  {                                     // an error occured!
+  if ( result == -1 ) {                 // an error occured!
     i->OStack.push_move( array_token ); // restore operand stack
     i->raiseerror( systemerror( i ) );
   }
@@ -405,8 +396,7 @@ Processes::WaitPIDFunction::execute( SLIInterpreter* i ) const
   // call waitpid()
   int stat_value;
   int options = 0;
-  if ( *nohangflag_d )
-  {
+  if ( *nohangflag_d ) {
     options = WNOHANG;
   }
   pid_t pidout = waitpid( pidin_d->get(), &stat_value, options );
@@ -452,8 +442,7 @@ Processes::WaitPIDFunction::execute( SLIInterpreter* i ) const
       ( *normalexitflag_d ) = false;
       ( *status_d ) = WTERMSIG( stat_value ); // return number of terminating signal
     }
-    else
-    {
+    else {
       i->OStack.pop(); // restore OStack before raising an error
       i->raiseerror( "UnhandledExitOfChild" );
     }
@@ -477,12 +466,10 @@ Processes::KillFunction::execute( SLIInterpreter* i ) const
   // call kill()
   int result = kill( pid_d->get(), signal_d->get() );
 
-  if ( result == -1 )
-  { // an error occured!
+  if ( result == -1 ) { // an error occured!
     i->raiseerror( systemerror( i ) );
   }
-  else
-  {                     // no error
+  else {                // no error
     i->EStack.pop();    // pop command from execution stack
     i->OStack.pop( 2 ); // pop arguments from operand stack
   }
@@ -496,12 +483,10 @@ Processes::PipeFunction::execute( SLIInterpreter* i ) const
   int filedes[ 2 ];
   int result = pipe( filedes );
 
-  if ( result == -1 )
-  { // an error occured!
+  if ( result == -1 ) { // an error occured!
     i->raiseerror( systemerror( i ) );
   }
-  else
-  { // no error
+  else { // no error
     ifdstream* in = new ifdstream( filedes[ 0 ] );
     ofdstream* out = new ofdstream( filedes[ 1 ] );
 
@@ -538,12 +523,10 @@ Processes::Dup2_is_isFunction::execute( SLIInterpreter* i ) const
   // LockPTRs can be used like ordinary pointers!!! (*s_d1 is a LockPTR on an
   // istream)
 
-  if ( result == -1 )
-  { // an error occured!
+  if ( result == -1 ) { // an error occured!
     i->raiseerror( systemerror( i ) );
   }
-  else
-  {                     // no error
+  else {                // no error
     i->EStack.pop();    // pop command from execution stack
     i->OStack.pop( 2 ); // pop operands from operand stack
   }
@@ -566,12 +549,10 @@ Processes::Dup2_os_osFunction::execute( SLIInterpreter* i ) const
   // for comments on LockPTRs see Dup2_is_isFunction::execute
   int result = dup2( fd( **s_d1 ), fd( **s_d2 ) );
 
-  if ( result == -1 )
-  { // an error occurred!
+  if ( result == -1 ) { // an error occurred!
     i->raiseerror( systemerror( i ) );
   }
-  else
-  {                     // no error
+  else {                // no error
     i->EStack.pop();    // pop command from execution stack
     i->OStack.pop( 2 ); // pop operands from operand stack
   }
@@ -600,12 +581,10 @@ Processes::Dup2_is_osFunction::execute( SLIInterpreter* i ) const
   // LockPTRs can be used like ordinary pointers!!! (*s_d1 is a LockPTR on an
   // istream)
 
-  if ( result == -1 )
-  { // an error occurred!
+  if ( result == -1 ) { // an error occurred!
     i->raiseerror( systemerror( i ) );
   }
-  else
-  {                     // no error
+  else {                // no error
     i->EStack.pop();    // pop command from execution stack
     i->OStack.pop( 2 ); // pop operands from operand stack
   }
@@ -628,12 +607,10 @@ Processes::Dup2_os_isFunction::execute( SLIInterpreter* i ) const
   // for comments on LockPTRs see Dup2_is_isFunction::execute
   int result = dup2( fd( **s_d1 ), fd( **s_d2 ) );
 
-  if ( result == -1 )
-  { // an error occurred!
+  if ( result == -1 ) { // an error occurred!
     i->raiseerror( systemerror( i ) );
   }
-  else
-  {                     // no error
+  else {                // no error
     i->EStack.pop();    // pop command from execution stack
     i->OStack.pop( 2 ); // pop operands from operand stack
   }
@@ -650,13 +627,11 @@ Processes::AvailableFunction::execute( SLIInterpreter* i ) const
   assert( istreamdatum != 0 );
   assert( istreamdatum->valid() );
 
-  if ( not( **istreamdatum ).good() )
-  { // istream not good. Do nothing. Return false.
+  if ( not( **istreamdatum ).good() ) { // istream not good. Do nothing. Return false.
     i->EStack.pop();
     i->OStack.push( false );
   }
-  else
-  { // istream is good. Try to read from it.
+  else { // istream is good. Try to read from it.
     // istreamdatum is a pointer to a LockPTR
 
     // get filedescriptor: -
@@ -719,14 +694,12 @@ Processes::AvailableFunction::execute( SLIInterpreter* i ) const
     // ------------------------------
 
     bool result;
-    if ( not( **istreamdatum ).good() )
-    { // an error occured. No data can be read.
+    if ( not( **istreamdatum ).good() ) { // an error occured. No data can be read.
       // no data is currently available
       result = false;             // no data is available
       ( **istreamdatum ).clear(); // Lower eof and error Flag
     }
-    else
-    {                // the read attempt was successful.
+    else {           // the read attempt was successful.
       result = true; // data can be read
     }
 
@@ -745,12 +718,10 @@ Processes::GetPIDFunction::execute( SLIInterpreter* i ) const
   // This is what happens, when the SLI-command is called:
   pid_t pid;
   pid = getpid();
-  if ( pid < 0 )
-  {
+  if ( pid < 0 ) {
     i->raiseerror( systemerror( i ) );
   }
-  else
-  {
+  else {
     i->EStack.pop(); // Don't forget to pop yourself...
 
     Token result_token( new IntegerDatum( pid ) ); // Make Token, containing
@@ -766,12 +737,10 @@ Processes::GetPPIDFunction::execute( SLIInterpreter* i ) const
   // This is what happens, when the SLI-command is called:
   pid_t ppid;
   ppid = getppid();
-  if ( ppid < 0 )
-  {
+  if ( ppid < 0 ) {
     i->raiseerror( systemerror( i ) );
   }
-  else
-  {
+  else {
     i->EStack.pop(); // Don't forget to pop yourself...
 
     Token result_token( new IntegerDatum( ppid ) ); // Make Token, containing
@@ -788,12 +757,10 @@ Processes::GetPGRPFunction::execute( SLIInterpreter* i ) const
   // This is what happens, when the SLI-command is called:
   pid_t pgrp;
   pgrp = getpgrp();
-  if ( pgrp < 0 )
-  {
+  if ( pgrp < 0 ) {
     i->raiseerror( systemerror( i ) );
   }
-  else
-  {
+  else {
     i->EStack.pop(); // Don't forget to pop yourself...
 
     Token result_token( new IntegerDatum( pgrp ) ); // Make Token, containing
@@ -820,12 +787,10 @@ Processes::MkfifoFunction::execute( SLIInterpreter* i ) const
   // StringDatum is derived from string
   int result = mkfifo( s_d->c_str(), mode );
 
-  if ( result == -1 )
-  { // an error occurred!
+  if ( result == -1 ) { // an error occurred!
     i->raiseerror( systemerror( i ) );
   }
-  else
-  {                  // no error
+  else {             // no error
     i->EStack.pop(); // pop command from execution stack
     i->OStack.pop(); // pop operand from operand stack
   }
@@ -894,18 +859,15 @@ Processes::SetNonblockFunction::execute( SLIInterpreter* i ) const
   //-------------------------------
   // Get filestatus-flags on this fd:
   int flags = fcntl( fd, F_GETFL );
-  if ( flags == -1 )
-  {
+  if ( flags == -1 ) {
     i->raiseerror( systemerror( i ) ); // an error occured!
   }
 
   // modify flags to the new value:
-  if ( *newflag_d )
-  {
+  if ( *newflag_d ) {
     flags |= O_NONBLOCK; // set the flag
   }
-  else
-  {
+  else {
     flags &= ~O_NONBLOCK; // erase the flag
   }
 
@@ -914,12 +876,10 @@ Processes::SetNonblockFunction::execute( SLIInterpreter* i ) const
   // ------------------------------
 
 
-  if ( result == -1 )
-  { // an error occured!
+  if ( result == -1 ) { // an error occured!
     i->raiseerror( systemerror( i ) );
   }
-  else
-  { // no error
+  else { // no error
     // leave the istream on OStack
     i->EStack.pop();
     i->OStack.pop();
@@ -953,12 +913,10 @@ Processes::Isatty_osFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop();
 
-  if ( isatty( fd ) )
-  {
+  if ( isatty( fd ) ) {
     i->OStack.push( Token( BoolDatum( true ) ) );
   }
-  else
-  {
+  else {
     i->OStack.push( Token( BoolDatum( false ) ) );
   }
 
@@ -979,12 +937,10 @@ Processes::Isatty_isFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop();
 
-  if ( isatty( fd ) )
-  {
+  if ( isatty( fd ) ) {
     i->OStack.push( Token( BoolDatum( true ) ) );
   }
-  else
-  {
+  else {
     i->OStack.push( Token( BoolDatum( false ) ) );
   }
 

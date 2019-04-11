@@ -36,8 +36,7 @@
 #include "nest_types.h"
 #include "stimulating_device.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: poisson_generator_ps - simulate neuron firing with Poisson processes
@@ -68,8 +67,7 @@ Sends: SpikeEvent
 
 SeeAlso: poisson_generator, spike_generator, Device, StimulatingDevice
 */
-class poisson_generator_ps : public DeviceNode
-{
+class poisson_generator_ps : public DeviceNode {
 
 public:
   poisson_generator_ps();
@@ -121,8 +119,7 @@ private:
   /**
    * Store independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     double rate_;      //!< process rate [Hz]
     double dead_time_; //!< dead time [ms]
 
@@ -142,8 +139,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     typedef std::pair< Time, double > SpikeTime;
 
     /**
@@ -158,8 +154,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
     double inv_rate_ms_;              //!< 1000.0 / Parameters_.rate_
     librandom::ExpRandomDev exp_dev_; //!< random deviate generator
 
@@ -191,19 +186,16 @@ poisson_generator_ps::send_test_event( Node& target, rport receptor_type, synind
 {
   device_.enforce_single_syn_type( syn_id );
 
-  if ( dummy_target )
-  {
+  if ( dummy_target ) {
     DSSpikeEvent e;
     e.set_sender( *this );
     return target.handles_test_event( e, receptor_type );
   }
-  else
-  {
+  else {
     SpikeEvent e;
     e.set_sender( *this );
     const port p = target.handles_test_event( e, receptor_type );
-    if ( p != invalid_port_ and not is_model_prototype() )
-    {
+    if ( p != invalid_port_ and not is_model_prototype() ) {
       ++P_.num_targets_; // count number of targets
     }
     return p;

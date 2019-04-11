@@ -31,8 +31,7 @@
 #include "dictutils.h"
 
 
-namespace nest
-{
+namespace nest {
 
 proxynode::proxynode( index gid, index parent_gid, index model_id, index vp )
   : Node()

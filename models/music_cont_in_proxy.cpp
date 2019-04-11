@@ -75,8 +75,7 @@ nest::music_cont_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s
   //  if(d->known(names::port_name) && s.published_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
-  if ( not s.published_ )
-  {
+  if ( not s.published_ ) {
     updateValue< string >( d, names::port_name, port_name_ );
   }
 }
@@ -134,23 +133,19 @@ void
 nest::music_cont_in_proxy::calibrate()
 {
   // only publish the port once
-  if ( not S_.published_ )
-  {
+  if ( not S_.published_ ) {
     MUSIC::Setup* s = kernel().music_manager.get_music_setup();
-    if ( s == 0 )
-    {
+    if ( s == 0 ) {
       throw MUSICSimulationHasRun( get_name() );
     }
 
     V_.MP_ = s->publishContInput( P_.port_name_ );
 
-    if ( not V_.MP_->isConnected() )
-    {
+    if ( not V_.MP_->isConnected() ) {
       throw MUSICPortUnconnected( get_name(), P_.port_name_ );
     }
 
-    if ( not V_.MP_->hasWidth() )
-    {
+    if ( not V_.MP_->hasWidth() ) {
       throw MUSICPortHasNoWidth( get_name(), P_.port_name_ );
     }
 

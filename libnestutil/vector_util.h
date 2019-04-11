@@ -26,8 +26,7 @@
 #include <vector>
 #include <cstddef>
 
-namespace vector_util
-{
+namespace vector_util {
 
 template < typename T >
 inline void
@@ -41,8 +40,7 @@ grow( std::vector< T >& v )
   const size_t max_block_size =
     static_cast< size_t >( max_block_size_MiB * ( 2 << 20 ) / static_cast< double >( sizeof( T ) ) );
 
-  if ( v.size() == v.capacity() )
-  {
+  if ( v.size() == v.capacity() ) {
     v.reserve( v.size() < max_block_size ? 2 * v.size() : ( v.size() + max_block_size ) );
   }
 }

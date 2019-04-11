@@ -41,8 +41,7 @@
 #include "recordables_map.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: rate_transformer_node - Rate neuron that sums up incoming rates
@@ -83,8 +82,7 @@ Author: Mario Senden, Jan Hahne, Jannis Schuecker
 FirstVersion: November 2017
 */
 template < class TNonlinearities >
-class rate_transformer_node : public Archiving_Node
-{
+class rate_transformer_node : public Archiving_Node {
 
 public:
   typedef Node base;
@@ -146,8 +144,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     /** Target of non-linearity.
         True (default): Gain function applied to linearly summed input.
         False: Gain function applied to each input before summation.
@@ -166,8 +163,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
     double rate_; //!< Rate
 
     State_(); //!< Default initialization
@@ -187,8 +183,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( rate_transformer_node& );
     Buffers_( const Buffers_&, rate_transformer_node& );
 
@@ -247,8 +242,7 @@ template < class TNonlinearities >
 inline port
 rate_transformer_node< TNonlinearities >::handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -258,8 +252,7 @@ template < class TNonlinearities >
 inline port
 rate_transformer_node< TNonlinearities >::handles_test_event( DelayedRateConnectionEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -269,8 +262,7 @@ template < class TNonlinearities >
 inline port
 rate_transformer_node< TNonlinearities >::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

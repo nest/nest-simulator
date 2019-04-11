@@ -60,8 +60,7 @@ nest::TargetTable::prepare( const thread tid )
 
   secondary_send_buffer_pos_[ tid ].resize( num_local_nodes );
 
-  for ( size_t lid = 0; lid < num_local_nodes; ++lid )
-  {
+  for ( size_t lid = 0; lid < num_local_nodes; ++lid ) {
     // resize to maximal possible synapse-type index
     secondary_send_buffer_pos_[ tid ][ lid ].resize( kernel().model_manager.get_num_synapse_prototypes() );
   }
@@ -72,10 +71,8 @@ nest::TargetTable::compress_secondary_send_buffer_pos( const thread tid )
 {
   for ( std::vector< std::vector< std::vector< size_t > > >::iterator it = secondary_send_buffer_pos_[ tid ].begin();
         it != secondary_send_buffer_pos_[ tid ].end();
-        ++it )
-  {
-    for ( std::vector< std::vector< size_t > >::iterator iit = it->begin(); iit != it->end(); ++iit )
-    {
+        ++it ) {
+    for ( std::vector< std::vector< size_t > >::iterator iit = it->begin(); iit != it->end(); ++iit ) {
       std::sort( iit->begin(), iit->end() );
       const std::vector< size_t >::iterator new_it = std::unique( iit->begin(), iit->end() );
       iit->resize( std::distance( iit->begin(), new_it ) );
@@ -90,15 +87,13 @@ nest::TargetTable::add_target( const thread tid, const thread target_rank, const
 
   vector_util::grow( targets_[ tid ][ lid ] );
 
-  if ( target_data.is_primary() )
-  {
+  if ( target_data.is_primary() ) {
     const TargetDataFields& target_fields = target_data.target_data;
 
     targets_[ tid ][ lid ].push_back(
       Target( target_fields.get_tid(), target_rank, target_fields.get_syn_id(), target_fields.get_lcid() ) );
   }
-  else
-  {
+  else {
     const SecondaryTargetDataFields& secondary_fields = target_data.secondary_data;
     const size_t send_buffer_pos = secondary_fields.get_send_buffer_pos();
     const synindex syn_id = secondary_fields.get_syn_id();

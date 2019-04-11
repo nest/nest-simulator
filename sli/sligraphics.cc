@@ -73,16 +73,14 @@ SLIgraphics::ReadPGMFunction::execute( SLIInterpreter* i ) const
 {
   // call: filename readPGM -> width height maxval image(array)
 
-  if ( i->OStack.load() < 1 )
-  {
+  if ( i->OStack.load() < 1 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
 
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
 
-  if ( sd == NULL )
-  {
+  if ( sd == NULL ) {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
@@ -91,8 +89,7 @@ SLIgraphics::ReadPGMFunction::execute( SLIInterpreter* i ) const
   // for the image parameters: width, height, maxval
   int width = 0, height = 0, maxval = 0;
 
-  try
-  {
+  try {
     in = openPGMFile( sd );
     char magic[ 2 ];
     readMagicNumber( in, magic );
@@ -100,8 +97,7 @@ SLIgraphics::ReadPGMFunction::execute( SLIInterpreter* i ) const
     readImage( in, magic, image, width, height, maxval );
     delete in;
   }
-  catch ( std::string const& s )
-  {
+  catch ( std::string const& s ) {
     delete in;
     i->message( SLIInterpreter::M_ERROR, "readPGM", "Error reading image." );
     i->message( SLIInterpreter::M_ERROR, "readPGM", s.c_str() );
@@ -122,12 +118,10 @@ SLIgraphics::ReadPGMFunction::openPGMFile( StringDatum* filename ) const
 {
   // opens pgm file for reading and returns pointer to the istream
   std::istream* in = new ifdstream( filename->c_str() );
-  if ( in->good() )
-  {
+  if ( in->good() ) {
     return in;
   }
-  else
-  {
+  else {
     throw std::string( "File open error." );
   }
 }
@@ -136,12 +130,10 @@ void
 SLIgraphics::ReadPGMFunction::readMagicNumber( std::istream* in, char* magic ) const
 {
   // reads in the magic number which determines the file format
-  try
-  {
+  try {
     *in >> magic;
   }
-  catch ( std::exception& e )
-  {
+  catch ( std::exception& e ) {
     throw std::string( "Magic number read error: " ) + e.what();
   }
 }
@@ -151,27 +143,23 @@ SLIgraphics::ReadPGMFunction::initRead( std::istream* in, int& width, int& heigh
 {
   // reads the width, height, and max. gray value in this order
   char temp[ 256 ];
-  try
-  {
+  try {
     // throw away whitespaces after magic number
     // otherwise, >> gets confused about the newline before the numbers
     char trash;
-    while ( std::isspace( trash = in->get() ) )
-    {
+    while ( std::isspace( trash = in->get() ) ) {
       continue;
     }
     in->putback( trash );
     // skip comments
-    do
-    {
+    do {
       in->getline( temp, 255 );
     } while ( temp[ 0 ] == '#' );
     // width and height are now in temp, so parse it
     sscanf( temp, "%d %d", &width, &height );
     *in >> maxval;
   }
-  catch ( std::exception& e )
-  {
+  catch ( std::exception& e ) {
     throw std::string( "Read init error: " ) + e.what();
   }
 }
@@ -188,21 +176,18 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
   image.clear();
   image.reserve( width * height );
 
-  try
-  {
+  try {
     if ( std::string( magic ) == std::string( "P2" ) ) // ASCII PGM
     {
       int tmp;
-      while ( ( *in >> tmp ) && not( in->eof() ) )
-      {
+      while ( ( *in >> tmp ) && not( in->eof() ) ) {
         image.push_back( ( long ) tmp );
       }
     }
     else if ( std::string( magic ) == std::string( "P5" )
       || std::string( magic ) == std::string( "P6" ) ) // Raw PGM (resp. PPM)
     {
-      if ( maxval > 255 )
-      {
+      if ( maxval > 255 ) {
         throw std::string( "read: maxval too large for format RawPGM(P5)." );
       }
       char tmp;
@@ -210,19 +195,16 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
       in->read( &tmp, 1 ); // throw away LF after maxval
       // TODO: Protect this from reading too much data like trailing
       // newlines: use for instead of while
-      while ( in->read( &tmp, 1 ) && not( in->eof() ) )
-      {
+      while ( in->read( &tmp, 1 ) && not( in->eof() ) ) {
         tmp2 = ( unsigned char ) tmp;
         image.push_back( ( long ) tmp2 );
       }
     }
-    else
-    {
+    else {
       throw std::string( "image read error:" ) + std::string( magic ) + std::string( ": Unsupported file type." );
     }
   }
-  catch ( std::exception& e )
-  {
+  catch ( std::exception& e ) {
     throw std::string( "image read error: " ) + e.what();
   }
 }
@@ -267,8 +249,7 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
   // properly working!
 
   // call: filename image(array) maxval height width writePGM
-  if ( i->OStack.load() < 5 )
-  {
+  if ( i->OStack.load() < 5 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
@@ -285,17 +266,14 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
 
   std::ostream* out = NULL;
 
-  try
-  {
+  try {
     out = new ofdstream( filename->c_str() );
 
-    if ( not out->good() )
-    {
+    if ( not out->good() ) {
       throw std::string( "Error when opening file for writing." );
     }
 
-    if ( ( long ) image->size() != width * height )
-    {
+    if ( ( long ) image->size() != width * height ) {
       throw std::string( "Array size does not match given dimensions." );
     }
 
@@ -304,31 +282,24 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
     *out << "# CREATOR: SLI/Synod. The NEST cooperation 2003." << std::endl;
     *out << width << " " << height << std::endl;
     *out << maxval << std::endl;
-    for ( unsigned int i = 0; i < image->size(); i++ )
-    {
+    for ( unsigned int i = 0; i < image->size(); i++ ) {
       *out << image->get( i );
 
       // write newline after 20 written numbers or
       // one pixel row, which ever comes first
-      if ( width > 20 )
-      {
-        if ( ( i + 1 ) % 20 == 0 )
-        {
+      if ( width > 20 ) {
+        if ( ( i + 1 ) % 20 == 0 ) {
           *out << std::endl;
         }
-        else
-        {
+        else {
           *out << " ";
         }
       }
-      else
-      {
-        if ( ( i + 1 ) % width == 0 )
-        {
+      else {
+        if ( ( i + 1 ) % width == 0 ) {
           *out << std::endl;
         }
-        else
-        {
+        else {
           *out << " ";
         }
       }
@@ -337,12 +308,10 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
     *out << std::endl; // make sure file ends in a newline
     delete out;
   }
-  catch ( std::exception& e )
-  {
+  catch ( std::exception& e ) {
     throw std::string( "exception: " ) + e.what();
   }
-  catch ( std::string const& s )
-  {
+  catch ( std::string const& s ) {
     delete out;
     i->message( SLIInterpreter::M_ERROR, "writePGM", "Error writing image." );
     i->message( SLIInterpreter::M_ERROR, "writePGM", s.c_str() );

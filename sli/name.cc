@@ -53,8 +53,7 @@ Name::list_handles( std::ostream& out )
   out << "Handle Table: \n";
   out << "Total number of names : " << num_handles << std::endl;
 
-  for ( std::size_t n = 0; n < num_handles; ++n )
-  {
+  for ( std::size_t n = 0; n < num_handles; ++n ) {
     out << std::setw( 6 ) << n << ": " << table[ n ] << std::endl;
   }
 }
@@ -80,8 +79,7 @@ Name::insert( const std::string& s )
   Name::HandleMap_& map = Name::handleMapInstance_();
   Name::HandleMap_::const_iterator where = map.find( s );
 
-  if ( where == map.end() )
-  {
+  if ( where == map.end() ) {
 #ifdef _OPENMP
     // This assertion protects the global name table.  We do not
     // protect by pragma omp critical since that could lead to hard-to-find
@@ -97,8 +95,7 @@ Name::insert( const std::string& s )
     table.push_back( s );
     return newhandle;
   }
-  else
-  {
+  else {
     return ( ( *where ).second );
   }
 }
@@ -108,8 +105,7 @@ Name::list( std::ostream& out )
 {
   Name::HandleMap_& map = handleMapInstance_();
   out << "\nHandle Map content:" << std::endl;
-  for ( Name::HandleMap_::const_iterator where = map.begin(); where != map.end(); ++where )
-  {
+  for ( Name::HandleMap_::const_iterator where = map.begin(); where != map.end(); ++where ) {
     out << ( *where ).first << " -> " << ( *where ).second << std::endl;
   }
 

@@ -86,8 +86,7 @@ sli::pool::init( size_t n, size_t initial, size_t growth )
 sli::pool::~pool()
 {
   chunk* n = chunks;
-  while ( n )
-  {
+  while ( n ) {
     chunk* p = n;
     n = n->next;
     delete p;
@@ -96,8 +95,7 @@ sli::pool::~pool()
 
 sli::pool& sli::pool::operator=( const sli::pool& p )
 {
-  if ( &p == this )
-  {
+  if ( &p == this ) {
     return *this;
   }
 
@@ -124,8 +122,7 @@ sli::pool::grow( size_t nelements )
   chunks = n;
   char* start = n->mem;
   char* last = &start[ ( nelements - 1 ) * el_size ];
-  for ( char* p = start; p < last; p += el_size )
-  {
+  for ( char* p = start; p < last; p += el_size ) {
     reinterpret_cast< link* >( p )->next = reinterpret_cast< link* >( p + el_size );
   }
   reinterpret_cast< link* >( last )->next = NULL;
@@ -143,8 +140,7 @@ void
 sli::pool::reserve_additional( size_t n )
 {
   const size_t capacity = total - instantiations;
-  if ( capacity < n )
-  {
+  if ( capacity < n ) {
     grow( ( ( n - capacity ) / block_size + 1 ) * block_size );
   }
 }
@@ -176,8 +172,7 @@ PoorMansAllocator::new_chunk()
 void
 PoorMansAllocator::destruct()
 {
-  for ( chunk* chunks = chunks_; chunks != 0; chunks = chunks->next_ )
-  {
+  for ( chunk* chunks = chunks_; chunks != 0; chunks = chunks->next_ ) {
     free( chunks->mem_ );
   }
   init( chunk_size_ );
@@ -186,8 +181,7 @@ PoorMansAllocator::destruct()
 void*
 PoorMansAllocator::alloc( size_t obj_size )
 {
-  if ( obj_size > capacity_ )
-  {
+  if ( obj_size > capacity_ ) {
     new_chunk();
   }
   char* ptr = head_;

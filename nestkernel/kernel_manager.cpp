@@ -29,8 +29,7 @@ nest::KernelManager::create_kernel_manager()
 {
 #pragma omp critical( create_kernel_manager )
   {
-    if ( kernel_manager_instance_ == 0 )
-    {
+    if ( kernel_manager_instance_ == 0 ) {
       kernel_manager_instance_ = new KernelManager();
       assert( kernel_manager_instance_ );
     }

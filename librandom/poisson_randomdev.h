@@ -82,8 +82,7 @@
 
 /************************************************************/
 
-namespace librandom
-{
+namespace librandom {
 
 /** @BeginDocumentation
 Name: rdevdict::poisson - poisson random deviate generator
@@ -107,8 +106,7 @@ Author: Hans Ekkehard Plesser
  * @ingroup RandomDeviateGenerators
  */
 
-class PoissonRandomDev : public RandomDev
-{
+class PoissonRandomDev : public RandomDev {
   RngPtr r; // pointer to underlying uniform RNG
 
 public:

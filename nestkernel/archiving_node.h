@@ -47,16 +47,14 @@
 
 #define DEBUG_ARCHIVER 1
 
-namespace nest
-{
+namespace nest {
 
 /**
  * \class Archiving_Node
  * a node which archives spike history for the purposes of
  * timing dependent plasticity
  */
-class Archiving_Node : public Node
-{
+class Archiving_Node : public Node {
   using Node::get_synaptic_elements;
 
 public:

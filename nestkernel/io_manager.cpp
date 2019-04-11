@@ -49,20 +49,16 @@ void
 nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
 {
   std::string tmp;
-  if ( updateValue< std::string >( d, names::data_path, tmp ) )
-  {
+  if ( updateValue< std::string >( d, names::data_path, tmp ) ) {
     DIR* testdir = opendir( tmp.c_str() );
-    if ( testdir != NULL )
-    {
+    if ( testdir != NULL ) {
       data_path_ = tmp;    // absolute path & directory exists
       closedir( testdir ); // we only opened it to check it exists
     }
-    else
-    {
+    else {
       std::string msg;
 
-      switch ( errno )
-      {
+      switch ( errno ) {
       case ENOTDIR:
         msg = String::compose( "'%1' is not a directory.", tmp );
         break;
@@ -78,14 +74,11 @@ nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
     }
   }
 
-  if ( updateValue< std::string >( d, names::data_prefix, tmp ) )
-  {
-    if ( tmp.find( '/' ) == std::string::npos )
-    {
+  if ( updateValue< std::string >( d, names::data_prefix, tmp ) ) {
+    if ( tmp.find( '/' ) == std::string::npos ) {
       data_prefix_ = tmp;
     }
-    else
-    {
+    else {
       LOG( M_ERROR, "SetStatus", "Data prefix must not contain path elements." );
     }
   }
@@ -97,17 +90,14 @@ nest::IOManager::initialize()
   // data_path and data_prefix can be set via environment variables
   DictionaryDatum dict( new Dictionary );
   char* data_path = std::getenv( "NEST_DATA_PATH" );
-  if ( data_path )
-  {
+  if ( data_path ) {
     ( *dict )[ names::data_path ] = std::string( data_path );
   }
   char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
-  if ( data_prefix )
-  {
+  if ( data_prefix ) {
     ( *dict )[ names::data_prefix ] = std::string( data_prefix );
   }
-  if ( not dict->empty() )
-  {
+  if ( not dict->empty() ) {
     set_data_path_prefix_( dict );
   }
 }

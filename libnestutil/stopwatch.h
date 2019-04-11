@@ -30,8 +30,7 @@
 #include <cassert>
 #include <iostream>
 
-namespace nest
-{
+namespace nest {
 
 /***********************************************************************
  * Stopwatch                                                           *
@@ -63,14 +62,12 @@ namespace nest
  *     // > Time needed 1,8593 min. (on cerr)                          *
  *     // other units and output streams possible                      *
  ***********************************************************************/
-class Stopwatch
-{
+class Stopwatch {
 public:
   typedef size_t timestamp_t;
   typedef size_t timeunit_t;
 
-  enum
-  {
+  enum {
     MICROSEC = ( timeunit_t ) 1,
     MILLISEC = MICROSEC * 1000,
     SECONDS = MILLISEC * 1000,
@@ -165,8 +162,7 @@ inline void
 nest::Stopwatch::start()
 {
 #ifndef DISABLE_TIMING
-  if ( not isRunning() )
-  {
+  if ( not isRunning() ) {
     _prev_elapsed += _end - _beg;  // store prev. time, if we resume
     _end = _beg = get_timestamp(); // invariant: _end >= _beg
     _running = true;               // we start running
@@ -178,8 +174,7 @@ inline void
 nest::Stopwatch::stop()
 {
 #ifndef DISABLE_TIMING
-  if ( isRunning() )
-  {
+  if ( isRunning() ) {
     _end = get_timestamp(); // invariant: _end >= _beg
     _running = false;       // we stopped running
   }
@@ -211,13 +206,11 @@ inline nest::Stopwatch::timestamp_t
 nest::Stopwatch::elapsed_timestamp() const
 {
 #ifndef DISABLE_TIMING
-  if ( isRunning() )
-  {
+  if ( isRunning() ) {
     // get intermediate elapsed time; do not change _end, to be const
     return get_timestamp() - _beg + _prev_elapsed;
   }
-  else
-  {
+  else {
     // stopped before, get time of current measurment + last measurments
     return _end - _beg + _prev_elapsed;
   }
@@ -244,8 +237,7 @@ nest::Stopwatch::print( const char* msg, timeunit_t timeunit, std::ostream& os )
   assert( correct_timeunit( timeunit ) );
   double e = elapsed( timeunit );
   os << msg << e;
-  switch ( timeunit )
-  {
+  switch ( timeunit ) {
   case MICROSEC:
     os << " microsec.";
     break;

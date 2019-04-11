@@ -37,8 +37,7 @@
 #include "lockptrdatum.h"
 #include "lockptrdatum_impl.h"
 
-namespace librandom
-{
+namespace librandom {
 
 /** Encapsulates random number generators in SLI.
  *  @ingroup RandomNumberGenerators

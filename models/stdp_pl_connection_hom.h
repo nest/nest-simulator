@@ -29,8 +29,7 @@
 // Includes from nestkernel:
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: stdp_pl_synapse_hom - Synapse type for spike-timing dependent
@@ -73,8 +72,7 @@ SeeAlso: synapsedict, stdp_synapse, tsodyks_synapse, static_synapse
  * Class containing the common properties for all synapses of type
  * STDPConnectionHom.
  */
-class STDPPLHomCommonProperties : public CommonSynapseProperties
-{
+class STDPPLHomCommonProperties : public CommonSynapseProperties {
 
 public:
   /**
@@ -107,8 +105,7 @@ public:
  * parameters are the same for all synapses.
  */
 template < typename targetidentifierT >
-class STDPPLConnectionHom : public Connection< targetidentifierT >
-{
+class STDPPLConnectionHom : public Connection< targetidentifierT > {
 
 public:
   typedef STDPPLHomCommonProperties CommonPropertiesType;
@@ -152,8 +149,7 @@ public:
    */
   void send( Event& e, thread t, const STDPPLHomCommonProperties& );
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -244,8 +240,7 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e, thread t, const STDPPL
 
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   double minus_dt;
-  while ( start != finish )
-  {
+  while ( start != finish ) {
     minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
     start++;
     // get_history() should make sure that

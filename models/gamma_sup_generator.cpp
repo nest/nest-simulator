@@ -63,10 +63,8 @@ nest::gamma_sup_generator::Internal_states_::update( double transition_prob, lib
   n_trans.resize( occ_.size() );
 
   // go through all states and draw number of transitioning components
-  for ( unsigned long i = 0; i < occ_.size(); i++ )
-  {
-    if ( occ_[ i ] > 0 )
-    {
+  for ( unsigned long i = 0; i < occ_.size(); i++ ) {
+    if ( occ_[ i ] > 0 ) {
       /*The binomial distribution converges towards the Poisson distribution as
        the number of trials goes to infinity while the product np remains fixed.
        Therefore the Poisson distribution with parameter \lambda = np can be
@@ -77,39 +75,31 @@ nest::gamma_sup_generator::Internal_states_::update( double transition_prob, lib
        http://en.wikipedia.org/wiki/Binomial_distribution#Poisson_approximation
        */
       if ( ( occ_[ i ] >= 100 && transition_prob <= 0.01 )
-        || ( occ_[ i ] >= 500 && transition_prob * occ_[ i ] <= 0.1 ) )
-      {
+        || ( occ_[ i ] >= 500 && transition_prob * occ_[ i ] <= 0.1 ) ) {
         poisson_dev_.set_lambda( transition_prob * occ_[ i ] );
         n_trans[ i ] = poisson_dev_.ldev( rng );
-        if ( n_trans[ i ] > occ_[ i ] )
-        {
+        if ( n_trans[ i ] > occ_[ i ] ) {
           n_trans[ i ] = occ_[ i ];
         }
       }
-      else
-      {
+      else {
         bino_dev_.set_p_n( transition_prob, occ_[ i ] );
         n_trans[ i ] = bino_dev_.ldev( rng );
       }
     }
-    else
-    {
+    else {
       n_trans[ i ] = 0;
     }
   }
 
   // according to above numbers, change the occupation vector
-  for ( unsigned long i = 0; i < occ_.size(); i++ )
-  {
-    if ( n_trans[ i ] > 0 )
-    {
+  for ( unsigned long i = 0; i < occ_.size(); i++ ) {
+    if ( n_trans[ i ] > 0 ) {
       occ_[ i ] -= n_trans[ i ];
-      if ( i == occ_.size() - 1 )
-      {
+      if ( i == occ_.size() - 1 ) {
         occ_.front() += n_trans[ i ];
       }
-      else
-      {
+      else {
         occ_[ i + 1 ] += n_trans[ i ];
       }
     }
@@ -146,25 +136,21 @@ void
 nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< long >( d, names::gamma_shape, gamma_shape_ );
-  if ( gamma_shape_ < 1 )
-  {
+  if ( gamma_shape_ < 1 ) {
     throw BadProperty( "The shape must be larger or equal 1" );
   }
 
   updateValue< double >( d, names::rate, rate_ );
-  if ( rate_ < 0.0 )
-  {
+  if ( rate_ < 0.0 ) {
     throw BadProperty( "The rate must be larger than 0." );
   }
 
   long n_proc_l = n_proc_;
   updateValue< long >( d, names::n_proc, n_proc_l );
-  if ( n_proc_l < 1 )
-  {
+  if ( n_proc_l < 1 ) {
     throw BadProperty( "The number of component processes cannot be smaller than one" );
   }
-  else
-  {
+  else {
     n_proc_ = static_cast< unsigned long >( n_proc_l );
   }
 }
@@ -238,17 +224,14 @@ nest::gamma_sup_generator::update( Time const& T, const long from, const long to
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
-  {
+  if ( P_.rate_ <= 0 || P_.num_targets_ == 0 ) {
     return;
   }
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     Time t = T + Time::step( lag );
 
-    if ( not device_.is_active( t ) )
-    {
+    if ( not device_.is_active( t ) ) {
       continue; // no spike at this lag
     }
 

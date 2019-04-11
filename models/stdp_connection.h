@@ -36,8 +36,7 @@
 #include "dictdatum.h"
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: stdp_synapse - Synapse type for spike-timing dependent
@@ -97,8 +96,7 @@ SeeAlso: synapsedict, tsodyks_synapse, static_synapse
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
 template < typename targetidentifierT >
-class STDPConnection : public Connection< targetidentifierT >
-{
+class STDPConnection : public Connection< targetidentifierT > {
 
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
@@ -144,8 +142,7 @@ public:
   void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -235,8 +232,7 @@ STDPConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynap
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   double minus_dt;
-  while ( start != finish )
-  {
+  while ( start != finish ) {
     minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
     ++start;
     // get_history() should make sure that
@@ -321,8 +317,7 @@ STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d, Conne
   updateValue< double >( d, names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ has the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
-  {
+  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) ) {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }
 }

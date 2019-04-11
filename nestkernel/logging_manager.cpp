@@ -76,15 +76,13 @@ nest::LoggingManager::register_logging_client( const deliver_logging_event_ptr c
 void
 nest::LoggingManager::deliver_logging_event_( const LoggingEvent& event ) const
 {
-  if ( client_callbacks_.empty() )
-  {
+  if ( client_callbacks_.empty() ) {
     default_logging_callback_( event );
   }
   std::vector< deliver_logging_event_ptr >::iterator it;
   for ( std::vector< deliver_logging_event_ptr >::const_iterator it = client_callbacks_.begin();
         it != client_callbacks_.end();
-        ++it )
-  {
+        ++it ) {
     ( *it )( event );
   }
 }
@@ -94,12 +92,10 @@ nest::LoggingManager::default_logging_callback_( const LoggingEvent& event ) con
 {
   std::ostream* out;
 
-  if ( event.severity < M_WARNING )
-  {
+  if ( event.severity < M_WARNING ) {
     out = &std::cout;
   }
-  else
-  {
+  else {
     out = &std::cerr;
   }
 
@@ -113,8 +109,7 @@ nest::LoggingManager::publish_log( const nest::severity_t s,
   const std::string& file,
   const size_t line ) const
 {
-  if ( s >= logging_level_ )
-  {
+  if ( s >= logging_level_ ) {
     LoggingEvent e( s, fctn, msg, file, line );
 #pragma omp critical( logging )
     {
@@ -131,14 +126,11 @@ nest::LoggingManager::all_entries_accessed( const Dictionary& d,
   const size_t line ) const
 {
   std::string missed;
-  if ( not d.all_accessed( missed ) )
-  {
-    if ( dict_miss_is_error_ )
-    {
+  if ( not d.all_accessed( missed ) ) {
+    if ( dict_miss_is_error_ ) {
       throw UnaccessedDictionaryEntry( missed );
     }
-    else
-    {
+    else {
       publish_log( M_WARNING, where, msg + missed, file, line );
     }
   }
@@ -153,14 +145,11 @@ nest::LoggingManager::all_entries_accessed( const Dictionary& d,
   const size_t line ) const
 {
   std::string missed;
-  if ( not d.all_accessed( missed ) )
-  {
-    if ( dict_miss_is_error_ )
-    {
+  if ( not d.all_accessed( missed ) ) {
+    if ( dict_miss_is_error_ ) {
       throw UnaccessedDictionaryEntry( missed + "\n" + msg2 );
     }
-    else
-    {
+    else {
       publish_log( M_WARNING, where, msg1 + missed + "\n" + msg2, file, line );
     }
   }

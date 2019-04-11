@@ -51,8 +51,7 @@
 
 nest::RecordablesMap< nest::sli_neuron > nest::sli_neuron::recordablesMap_;
 
-namespace nest
-{
+namespace nest {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -125,14 +124,12 @@ nest::sli_neuron::calibrate()
 {
   B_.logger_.init();
 
-  if ( not state_->known( names::calibrate ) )
-  {
+  if ( not state_->known( names::calibrate ) ) {
     std::string msg = String::compose( "Node %1 has no /calibrate function in its status dictionary.", get_gid() );
     throw BadProperty( msg );
   }
 
-  if ( not state_->known( names::update ) )
-  {
+  if ( not state_->known( names::update ) ) {
     std::string msg = String::compose( "Node %1 has no /update function in its status dictionary", get_gid() );
     throw BadProperty( msg );
   }
@@ -154,14 +151,12 @@ nest::sli_neuron::update( Time const& origin, const long from, const long to )
   assert( from < to );
   ( *state_ )[ names::t_origin ] = origin.get_steps();
 
-  if ( state_->known( names::error ) )
-  {
+  if ( state_->known( names::error ) ) {
     std::string msg = String::compose( "Node %1 still has its error state set.", get_gid() );
     throw KernelException( msg );
   }
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     ( *state_ )[ names::in_spikes ] = B_.in_spikes_.get_value( lag ); // in spikes arriving at right border
     ( *state_ )[ names::ex_spikes ] = B_.ex_spikes_.get_value( lag ); // ex spikes arriving at right border
     ( *state_ )[ names::currents ] = B_.currents_.get_value( lag );
@@ -173,14 +168,12 @@ nest::sli_neuron::update( Time const& origin, const long from, const long to )
     }
 
     bool spike_emission = false;
-    if ( state_->known( names::spike ) )
-    {
+    if ( state_->known( names::spike ) ) {
       spike_emission = ( *state_ )[ names::spike ];
     }
 
     // threshold crossing
-    if ( spike_emission )
-    {
+    if ( spike_emission ) {
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
@@ -205,8 +198,7 @@ nest::sli_neuron::execute_sli_protected( DictionaryDatum state, Name cmd )
   int result = i.execute_( exitlevel );
   i.DStack->pop(); // pop neuron's namespace
 
-  if ( state->known( "error" ) )
-  {
+  if ( state->known( "error" ) ) {
     assert( state->known( names::global_id ) );
     index g_id = ( *state )[ names::global_id ];
     std::string model = getValue< std::string >( ( *state )[ names::model ] );
@@ -222,13 +214,11 @@ nest::sli_neuron::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  if ( e.get_weight() > 0.0 )
-  {
+  if ( e.get_weight() > 0.0 ) {
     B_.ex_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
-  else
-  {
+  else {
     B_.in_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }

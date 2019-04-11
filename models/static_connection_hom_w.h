@@ -27,8 +27,7 @@
 #include "common_properties_hom_w.h"
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: static_synapse_hom_w - Synapse type for static connections with
@@ -64,8 +63,7 @@ Author: Susanne Kunkel, Moritz Helias
 SeeAlso: synapsedict, static_synapse
 */
 template < typename targetidentifierT >
-class StaticConnectionHomW : public Connection< targetidentifierT >
-{
+class StaticConnectionHomW : public Connection< targetidentifierT > {
 
 public:
   // this line determines which common properties to use
@@ -80,8 +78,7 @@ public:
   using ConnectionBase::get_target;
   using ConnectionBase::get_delay_steps;
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -144,8 +141,7 @@ public:
   void
   check_synapse_params( const DictionaryDatum& syn_spec ) const
   {
-    if ( syn_spec->known( names::weight ) )
-    {
+    if ( syn_spec->known( names::weight ) ) {
       throw BadProperty(
         "Weight cannot be specified since it needs to be equal "
         "for all connections when static_synapse_hom_w is used." );

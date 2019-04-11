@@ -25,8 +25,7 @@
 
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: gap_junction - Synapse type for gap-junction connections.
@@ -70,8 +69,7 @@ Author: Jan Hahne, Moritz Helias, Susanne Kunkel
 SeeAlso: synapsedict, hh_psc_alpha_gap
 */
 template < typename targetidentifierT >
-class GapJunction : public Connection< targetidentifierT >
-{
+class GapJunction : public Connection< targetidentifierT > {
 
 public:
   // this line determines which common properties to use
@@ -159,8 +157,7 @@ void
 GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
-  if ( d->known( names::delay ) )
-  {
+  if ( d->known( names::delay ) ) {
     throw BadProperty( "gap_junction connection has no delay" );
   }
 

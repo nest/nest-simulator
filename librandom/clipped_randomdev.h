@@ -38,8 +38,7 @@
 #include "dictutils.h"
 #include "sliexceptions.h"
 
-namespace librandom
-{
+namespace librandom {
 
 /** @BeginDocumentation
 Name: rdevdict::*_clipped - clipped random deviate generators.
@@ -91,8 +90,7 @@ Author: Hans Ekkehard Plesser
  * @see ClippedRedrawDiscreteRandomDev
  */
 template < typename BaseRDV >
-class ClippedRedrawContinuousRandomDev : public BaseRDV
-{
+class ClippedRedrawContinuousRandomDev : public BaseRDV {
 
 public:
   // accept only lockPTRs for initialization,
@@ -148,8 +146,7 @@ ClippedRedrawContinuousRandomDev< BaseRDV >::set_status( const DictionaryDatum& 
 
   updateValue< double >( d, names::low, new_min );
   updateValue< double >( d, names::high, new_max );
-  if ( new_min >= new_max )
-  {
+  if ( new_min >= new_max ) {
     throw BadParameterValue( "Clipped RDVs require low < high." );
   }
 
@@ -178,8 +175,7 @@ inline double ClippedRedrawContinuousRandomDev< BaseRDV >::operator()( RngPtr r 
 {
   double value;
 
-  do
-  {
+  do {
     value = BaseRDV::operator()( r );
   } while ( value <= min_ || max_ <= value );
 
@@ -195,8 +191,7 @@ inline double ClippedRedrawContinuousRandomDev< BaseRDV >::operator()( RngPtr r 
  * @see ClippedRedrawContinuousRandomDev
  */
 template < typename BaseRDV >
-class ClippedRedrawDiscreteRandomDev : public BaseRDV
-{
+class ClippedRedrawDiscreteRandomDev : public BaseRDV {
 
 public:
   // accept only lockPTRs for initialization,
@@ -261,8 +256,7 @@ ClippedRedrawDiscreteRandomDev< BaseRDV >::set_status( const DictionaryDatum& d 
 
   updateValue< long >( d, names::low, new_min );
   updateValue< long >( d, names::high, new_max );
-  if ( new_min >= new_max )
-  {
+  if ( new_min >= new_max ) {
     throw BadParameterValue( "Clipped RDVs require low < high." );
   }
 
@@ -291,8 +285,7 @@ inline double ClippedRedrawDiscreteRandomDev< BaseRDV >::operator()( RngPtr r ) 
 {
   double value;
 
-  do
-  {
+  do {
     value = BaseRDV::operator()( r );
   } while ( value < min_ || max_ < value );
 
@@ -312,8 +305,7 @@ ClippedRedrawDiscreteRandomDev< BaseRDV >::ldev( RngPtr r ) const
 {
   long value;
 
-  do
-  {
+  do {
     value = BaseRDV::ldev( r );
   } while ( value < min_ || max_ < value );
 
@@ -333,8 +325,7 @@ ClippedRedrawDiscreteRandomDev< BaseRDV >::ldev( RngPtr r ) const
  * @see ClippedToBoundaryDiscreteRandomDev
  */
 template < typename BaseRDV >
-class ClippedToBoundaryContinuousRandomDev : public BaseRDV
-{
+class ClippedToBoundaryContinuousRandomDev : public BaseRDV {
 
 public:
   // accept only lockPTRs for initialization,
@@ -390,8 +381,7 @@ ClippedToBoundaryContinuousRandomDev< BaseRDV >::set_status( const DictionaryDat
 
   updateValue< double >( d, names::low, new_min );
   updateValue< double >( d, names::high, new_max );
-  if ( new_min >= new_max )
-  {
+  if ( new_min >= new_max ) {
     throw BadParameterValue( "Clipped RDVs require low < high." );
   }
 
@@ -419,12 +409,10 @@ template < typename BaseRDV >
 inline double ClippedToBoundaryContinuousRandomDev< BaseRDV >::operator()( RngPtr r ) const
 {
   const double value = BaseRDV::operator()( r );
-  if ( value < min_ )
-  {
+  if ( value < min_ ) {
     return min_;
   }
-  if ( value > max_ )
-  {
+  if ( value > max_ ) {
     return max_;
   }
   return value;
@@ -443,8 +431,7 @@ inline double ClippedToBoundaryContinuousRandomDev< BaseRDV >::operator()( RngPt
  * @see ClippedToBoundaryContinuousRandomDev
  */
 template < typename BaseRDV >
-class ClippedToBoundaryDiscreteRandomDev : public BaseRDV
-{
+class ClippedToBoundaryDiscreteRandomDev : public BaseRDV {
 
 public:
   // accept only lockPTRs for initialization,
@@ -509,8 +496,7 @@ ClippedToBoundaryDiscreteRandomDev< BaseRDV >::set_status( const DictionaryDatum
 
   updateValue< long >( d, names::low, new_min );
   updateValue< long >( d, names::high, new_max );
-  if ( new_min >= new_max )
-  {
+  if ( new_min >= new_max ) {
     throw BadParameterValue( "Clipped RDVs require low < high." );
   }
 
@@ -538,12 +524,10 @@ template < typename BaseRDV >
 inline double ClippedToBoundaryDiscreteRandomDev< BaseRDV >::operator()( RngPtr r ) const
 {
   const double value = BaseRDV::operator()( r );
-  if ( value < min_ )
-  {
+  if ( value < min_ ) {
     return min_;
   }
-  if ( value > max_ )
-  {
+  if ( value > max_ ) {
     return max_;
   }
   return value;
@@ -561,12 +545,10 @@ inline long
 ClippedToBoundaryDiscreteRandomDev< BaseRDV >::ldev( RngPtr r ) const
 {
   const long value = BaseRDV::ldev( r );
-  if ( value < min_ )
-  {
+  if ( value < min_ ) {
     return min_;
   }
-  if ( value > max_ )
-  {
+  if ( value > max_ ) {
     return max_;
   }
   return value;

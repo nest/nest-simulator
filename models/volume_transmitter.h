@@ -34,8 +34,7 @@
 #include "namedatum.h"
 
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: volume_transmitter - Node used in combination with neuromodulated synaptic
@@ -94,8 +93,7 @@ SeeAlso: stdp_dopamine_synapse
 */
 class ConnectorBase;
 
-class volume_transmitter : public Archiving_Node
-{
+class volume_transmitter : public Archiving_Node {
 
 public:
   volume_transmitter();
@@ -149,8 +147,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     Parameters_();
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum& );
@@ -159,8 +156,7 @@ private:
 
   //-----------------------------------------------
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     RingBuffer neuromodulatory_spikes_; //!< buffer to store incoming spikes
     //! vector to store and deliver spikes
     std::vector< spikecounter > spikecounter_;
@@ -175,8 +171,7 @@ private:
 inline port
 volume_transmitter::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;

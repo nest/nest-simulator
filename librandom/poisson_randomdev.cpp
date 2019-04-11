@@ -108,14 +108,11 @@ librandom::PoissonRandomDev::set_status( const DictionaryDatum& d )
 
   double new_mu = mu_;
 
-  if ( updateValue< double >( d, names::lambda, new_mu ) )
-  {
-    if ( new_mu < 0 )
-    {
+  if ( updateValue< double >( d, names::lambda, new_mu ) ) {
+    if ( new_mu < 0 ) {
       throw BadParameterValue( "Poisson RDV: lambda >= 0 required." );
     }
-    if ( new_mu > MU_MAX )
-    {
+    if ( new_mu > MU_MAX ) {
       throw BadParameterValue( String::compose( "Poisson RDV: lambda < %1 required.", MU_MAX ) );
     }
     set_lambda( new_mu );
@@ -135,8 +132,7 @@ librandom::PoissonRandomDev::init_()
 {
   assert( mu_ >= 0 );
 
-  if ( mu_ >= 10.0 )
-  {
+  if ( mu_ >= 10.0 ) {
 
     // case A
 
@@ -156,15 +152,13 @@ librandom::PoissonRandomDev::init_()
 
     c_ = 0.1069 / mu_;
   }
-  else if ( mu_ > 0.0 )
-  {
+  else if ( mu_ > 0.0 ) {
     // case B
 
     // tabulate Poisson CDF
     double p = std::exp( -mu_ );
     P_[ 0 ] = p;
-    for ( unsigned k = 1; k < n_tab_; ++k )
-    {
+    for ( unsigned k = 1; k < n_tab_; ++k ) {
       p *= mu_ / k;
       // avoid P_[k] > 1.0
       P_[ k ] = std::min( 1.0, P_[ k - 1 ] + p );
@@ -192,29 +186,25 @@ librandom::PoissonRandomDev::ldev( RngPtr r ) const
   // the result for lambda == 0 is well defined,
   // added the following two lines of code
   // Diesmann, 26.7.2002
-  if ( mu_ == 0.0 )
-  {
+  if ( mu_ == 0.0 ) {
     return 0;
   }
 
   unsigned long K = 0; // candidate
 
-  if ( mu_ < 10.0 )
-  {
+  if ( mu_ < 10.0 ) {
     // Case B in Ahrens & Dieter: table lookup
 
     double U = ( *r )();
 
     K = 0; // be defensive
-    while ( U > P_[ K ] && K != n_tab_ )
-    {
+    while ( U > P_[ K ] && K != n_tab_ ) {
       ++K;
     }
 
     return K; // maximum value: K == n_tab_ == 46
   }
-  else
-  {
+  else {
     // Case A in Ahrens & Dieter
 
     // Step N ******************************************************
@@ -225,11 +215,9 @@ librandom::PoissonRandomDev::ldev( RngPtr r ) const
 
     double U, V, T;
 
-    do
-    {
+    do {
       V = ( *r )();
-      do
-      {
+      do {
         U = ( *r )();
       } while ( U == 0 );
       /* Const 1.715... = sqrt(8/e) */
@@ -244,23 +232,20 @@ librandom::PoissonRandomDev::ldev( RngPtr r ) const
     */
     double G = mu_ + s_ * T;
 
-    if ( G >= 0 )
-    {
+    if ( G >= 0 ) {
 
       K = static_cast< unsigned long >( std::floor( G ) );
 
       // Step I ******************************************************
       // immediate acceptance
-      if ( K >= L_ )
-      {
+      if ( K >= L_ ) {
         return K;
       }
 
       // Step S ******************************************************
       // squeeze acceptance
       U = ( *r )();
-      if ( d_ * U >= std::pow( mu_ - K, 3 ) )
-      {
+      if ( d_ * U >= std::pow( mu_ - K, 3 ) ) {
         return K;
       }
 
@@ -271,8 +256,7 @@ librandom::PoissonRandomDev::ldev( RngPtr r ) const
       proc_f_( K, px, py, fx, fy );
       // re-use U from step S, okay since we only apply tighter
       // squeeze criterium
-      if ( fy * ( 1 - U ) <= py * std::exp( px - fx ) )
-      {
+      if ( fy * ( 1 - U ) <= py * std::exp( px - fx ) ) {
         return K;
       }
 
@@ -281,13 +265,11 @@ librandom::PoissonRandomDev::ldev( RngPtr r ) const
 
     // Step E ******************************************************
     double critH;
-    do
-    {
+    do {
 
       double E;
 
-      do
-      {
+      do {
         U = ( *r )();
         E = -std::log( ( *r )() );
 
@@ -321,37 +303,32 @@ librandom::PoissonRandomDev::proc_f_( const unsigned K, double& px, double& py, 
 {
   // Poisson PDF == py * exp(px), see Sec 2
 
-  if ( K < 10 )
-  {
+  if ( K < 10 ) {
 
     // compute directly
 
     px = -mu_;
     py = std::pow( mu_, static_cast< int >( K ) ) / fact_[ K ];
   }
-  else
-  {
+  else {
 
     // use Stirling
     double temp = 1.0 / ( 12.0 * K );
     double delta = temp - 4.8 * std::pow( temp, 3 );
     double V = ( mu_ - K ) / static_cast< double >( K );
 
-    if ( std::abs( V ) > 0.25 )
-    {
+    if ( std::abs( V ) > 0.25 ) {
 
       // cf Eq. (3)
       px = K * std::log( 1 + V ) - ( mu_ - K ) - delta;
     }
-    else
-    {
+    else {
 
       // approximating polynomical, cf Eq. (6)
       // should be converted to Horner form at some point
       px = 0;
       double Vp = 1;
-      for ( unsigned j = 0; j < n_a_; ++j )
-      {
+      for ( unsigned j = 0; j < n_a_; ++j ) {
         px += a_[ j ] * Vp;
         Vp *= V;
       }

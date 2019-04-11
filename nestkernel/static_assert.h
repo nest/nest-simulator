@@ -23,8 +23,7 @@
 #ifndef STATIC_ASSERT
 #define STATIC_ASSERT
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Compile time assertions.
@@ -43,15 +42,12 @@ namespace nest
  * fails to compile because success is not defined.
  */
 template < bool >
-struct StaticAssert
-{
+struct StaticAssert {
 };
 
 template <>
-struct StaticAssert< true >
-{
-  struct success
-  {
+struct StaticAssert< true > {
+  struct success {
   };
 };
 }

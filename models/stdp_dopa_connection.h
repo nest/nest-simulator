@@ -33,8 +33,7 @@
 #include "connection.h"
 #include "spikecounter.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: stdp_dopamine_synapse - Synapse type for dopamine-modulated
@@ -109,8 +108,7 @@ SeeAlso: volume_transmitter
  * Class containing the common properties for all synapses of type dopamine
  * connection.
  */
-class STDPDopaCommonProperties : public CommonSynapseProperties
-{
+class STDPDopaCommonProperties : public CommonSynapseProperties {
 public:
   /**
    * Default constructor.
@@ -146,12 +144,10 @@ public:
 inline long
 STDPDopaCommonProperties::get_vt_gid() const
 {
-  if ( vt_ != 0 )
-  {
+  if ( vt_ != 0 ) {
     return vt_->get_gid();
   }
-  else
-  {
+  else {
     return -1;
   }
 }
@@ -161,8 +157,7 @@ STDPDopaCommonProperties::get_vt_gid() const
  * i.e. parameters are the same for all synapses.
  */
 template < typename targetidentifierT >
-class STDPDopaConnection : public Connection< targetidentifierT >
-{
+class STDPDopaConnection : public Connection< targetidentifierT > {
 
 public:
   typedef STDPDopaCommonProperties CommonPropertiesType;
@@ -219,8 +214,7 @@ public:
     double t_trig,
     const STDPDopaCommonProperties& cp );
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -250,8 +244,7 @@ public:
   void
   check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& cp )
   {
-    if ( cp.vt_ == 0 )
-    {
+    if ( cp.vt_ == 0 ) {
       throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
     }
 
@@ -359,25 +352,21 @@ template < typename targetidentifierT >
 void
 STDPDopaConnection< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
 {
-  if ( syn_spec->known( names::vt ) )
-  {
+  if ( syn_spec->known( names::vt ) ) {
     throw NotImplemented(
       "Connect doesn't support the direct specification of the "
       "volume transmitter of stdp_dopamine_synapse in syn_spec."
       "Use SetDefaults() or CopyModel()." );
   }
   // Setting of parameter c and n not thread safe.
-  if ( kernel().vp_manager.get_num_threads() > 1 )
-  {
-    if ( syn_spec->known( names::c ) )
-    {
+  if ( kernel().vp_manager.get_num_threads() > 1 ) {
+    if ( syn_spec->known( names::c ) ) {
       throw NotImplemented(
         "For multi-threading Connect doesn't support the setting "
         "of parameter c in stdp_dopamine_synapse. "
         "Use SetDefaults() or CopyModel()." );
     }
-    if ( syn_spec->known( names::n ) )
-    {
+    if ( syn_spec->known( names::n ) ) {
       throw NotImplemented(
         "For multi-threading Connect doesn't support the setting "
         "of parameter n in stdp_dopamine_synapse. "
@@ -387,10 +376,8 @@ STDPDopaConnection< targetidentifierT >::check_synapse_params( const DictionaryD
   std::string param_arr[] = { "A_minus", "A_plus", "Wmax", "Wmin", "b", "tau_c", "tau_n", "tau_plus" };
 
   const size_t n_param = sizeof( param_arr ) / sizeof( std::string );
-  for ( size_t n = 0; n < n_param; ++n )
-  {
-    if ( syn_spec->known( param_arr[ n ] ) )
-    {
+  for ( size_t n = 0; n < n_param; ++n ) {
+    if ( syn_spec->known( param_arr[ n ] ) ) {
       throw NotImplemented(
         "Connect doesn't support the setting of parameter param_arr[ n ]"
         "in stdp_dopamine_synapse. Use SetDefaults() or CopyModel()." );
@@ -420,12 +407,10 @@ STDPDopaConnection< targetidentifierT >::update_weight_( double c0,
     - c0 * ( n0 / taus_ * numerics::expm1( taus_ * minus_dt )
              - cp.b_ * cp.tau_c_ * numerics::expm1( minus_dt / cp.tau_c_ ) );
 
-  if ( weight_ < cp.Wmin_ )
-  {
+  if ( weight_ < cp.Wmin_ ) {
     weight_ = cp.Wmin_;
   }
-  if ( weight_ > cp.Wmax_ )
-  {
+  if ( weight_ > cp.Wmax_ ) {
     weight_ = cp.Wmax_;
   }
 }
@@ -440,8 +425,7 @@ STDPDopaConnection< targetidentifierT >::process_dopa_spikes_( const std::vector
   // process dopa spikes in (t0, t1]
   // propagate weight from t0 to t1
   if ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 )
-    && ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
-  {
+    && ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) ) {
     // there is at least 1 dopa spike in (t0, t1]
     // propagate weight up to first dopa spike and update dopamine trace
     // weight and eligibility c are at time t0 but dopamine trace n is at time
@@ -453,9 +437,8 @@ STDPDopaConnection< targetidentifierT >::process_dopa_spikes_( const std::vector
 
     // process remaining dopa spikes in (t0, t1]
     double cd;
-    while ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 )
-      && ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
-    {
+    while ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 ) && ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_
+                                                               > -1.0 * kernel().connection_manager.get_stdp_eps() ) ) {
       // propagate weight up to next dopa spike and update dopamine trace
       // weight and dopamine trace n are at time of last dopa spike td but
       // eligibility c is at time
@@ -473,8 +456,7 @@ STDPDopaConnection< targetidentifierT >::process_dopa_spikes_( const std::vector
     cd = c_ * std::exp( ( t0 - dopa_spikes[ dopa_spikes_idx_ ].spike_time_ ) / cp.tau_c_ ); // eligibility c at time td
     update_weight_( cd, n_, dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t1, cp );
   }
-  else
-  {
+  else {
     // no dopamine spikes in (t0, t1]
     // weight and eligibility c are at time t0 but dopamine trace n is at time
     // of last dopa spike
@@ -529,15 +511,13 @@ STDPDopaConnection< targetidentifierT >::send( Event& e, thread t, const STDPDop
   // facilitation due to post-synaptic spikes since last update
   double t0 = t_last_update_;
   double minus_dt;
-  while ( start != finish )
-  {
+  while ( start != finish ) {
     process_dopa_spikes_( dopa_spikes, t0, start->t_ + dendritic_delay, cp );
     t0 = start->t_ + dendritic_delay;
     minus_dt = t_last_update_ - t0;
     // facilitate only in case of post- after presyn. spike
     // skip facilitation if pre- and postsyn. spike occur at the same time
-    if ( t_spike - start->t_ > kernel().connection_manager.get_stdp_eps() )
-    {
+    if ( t_spike - start->t_ > kernel().connection_manager.get_stdp_eps() ) {
       facilitate_( Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
     }
     ++start;
@@ -581,8 +561,7 @@ STDPDopaConnection< targetidentifierT >::trigger_update_weight( thread t,
   // facilitation due to postsyn. spikes since last update
   double t0 = t_last_update_;
   double minus_dt;
-  while ( start != finish )
-  {
+  while ( start != finish ) {
     process_dopa_spikes_( dopa_spikes, t0, start->t_ + dendritic_delay, cp );
     t0 = start->t_ + dendritic_delay;
     minus_dt = t_last_update_ - t0;

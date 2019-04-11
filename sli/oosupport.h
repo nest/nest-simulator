@@ -30,10 +30,8 @@
 #include "slifunction.h"
 #include "slimodule.h"
 
-class OOSupportModule : public SLIModule
-{
-  class CallMemberFunction : public SLIFunction
-  {
+class OOSupportModule : public SLIModule {
+  class CallMemberFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };

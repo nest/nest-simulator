@@ -44,8 +44,7 @@ inline bool operator==( const TokenMap& x, const TokenMap& y )
 /** A class that associates names and tokens.
  *  @ingroup TokenHandling
  */
-class Dictionary : private TokenMap
-{
+class Dictionary : private TokenMap {
   /**
    * Helper class for lexicographical sorting of dictionary entries.
    * Provides comparison operator for ascending, case-insensitive
@@ -54,8 +53,7 @@ class Dictionary : private TokenMap
    * N.M.Josuttis, The C++ Standard Library, Addison Wesley, 1999,
    * ch. 6.6.6.
    */
-  class DictItemLexicalOrder
-  {
+  class DictItemLexicalOrder {
   private:
     static bool nocase_compare( char c1, char c2 );
 
@@ -265,12 +263,10 @@ inline const Token&
 Dictionary::lookup( const Name& n ) const
 {
   TokenMap::const_iterator where = find( n );
-  if ( where != end() )
-  {
+  if ( where != end() ) {
     return ( *where ).second;
   }
-  else
-  {
+  else {
     return Dictionary::VoidToken;
   }
 }
@@ -279,12 +275,10 @@ inline const Token&
 Dictionary::lookup2( const Name& n ) const
 {
   TokenMap::const_iterator where = find( n );
-  if ( where != end() )
-  {
+  if ( where != end() ) {
     return ( *where ).second;
   }
-  else
-  {
+  else {
     throw UndefinedName( n.toString() );
   }
 }
@@ -293,12 +287,10 @@ inline bool
 Dictionary::known( const Name& n ) const
 {
   TokenMap::const_iterator where = find( n );
-  if ( where != end() )
-  {
+  if ( where != end() ) {
     return true;
   }
-  else
-  {
+  else {
     return false;
   }
 }
@@ -307,12 +299,10 @@ inline bool
 Dictionary::known_but_not_accessed( const Name& n ) const
 {
   TokenMap::const_iterator where = find( n );
-  if ( where != end() )
-  {
+  if ( where != end() ) {
     return not where->second.accessed();
   }
-  else
-  {
+  else {
     return false;
   }
 }
@@ -327,12 +317,10 @@ Dictionary::insert( const Name& n, const Token& t )
 inline const Token& Dictionary::operator[]( const Name& n ) const
 {
   TokenMap::const_iterator where = find( n );
-  if ( where != end() )
-  {
+  if ( where != end() ) {
     return ( *where ).second;
   }
-  else
-  {
+  else {
     throw UndefinedName( n.toString() );
   }
 }

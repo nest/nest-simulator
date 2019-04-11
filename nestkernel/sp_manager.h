@@ -47,8 +47,7 @@
 #include "dict.h"
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 class Node;
 
 class SPBuilder;
@@ -59,8 +58,7 @@ class SPBuilder;
  * Otherwise it behaves as the normal ConnectionManager.
  * @param
  */
-class SPManager : public ManagerInterface
-{
+class SPManager : public ManagerInterface {
 
 public:
   SPManager();

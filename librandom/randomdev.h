@@ -111,8 +111,7 @@
  *
  */
 
-namespace librandom
-{
+namespace librandom {
 
 class RandomDev;
 
@@ -133,8 +132,7 @@ typedef lockPTR< RandomDev > RdvPtr;
  * HEP 2002-07-09, 2004-06-28
  */
 
-class RandomDev
-{
+class RandomDev {
 
 public:
   /**
@@ -228,8 +226,7 @@ RandomDev::ldev( void )
 /**
  * Generic factory class for RandomDev.
  */
-class GenericRandomDevFactory
-{
+class GenericRandomDevFactory {
 public:
   virtual ~GenericRandomDevFactory()
   {
@@ -243,8 +240,7 @@ public:
  */
 
 template < typename DevType >
-class RandomDevFactory : public GenericRandomDevFactory
-{
+class RandomDevFactory : public GenericRandomDevFactory {
 
 public:
   //! create unbound deviate generator

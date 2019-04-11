@@ -46,8 +46,7 @@
 
 nest::RecordablesMap< nest::iaf_psc_exp_ps > nest::iaf_psc_exp_ps::recordablesMap_;
 
-namespace nest
-{
+namespace nest {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -133,51 +132,40 @@ nest::iaf_psc_exp_ps::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::t_ref, t_ref_ );
   updateValue< double >( d, names::I_e, I_e_ );
 
-  if ( updateValue< double >( d, names::V_th, U_th_ ) )
-  {
+  if ( updateValue< double >( d, names::V_th, U_th_ ) ) {
     U_th_ -= E_L_;
   }
-  else
-  {
+  else {
     U_th_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_min, U_min_ ) )
-  {
+  if ( updateValue< double >( d, names::V_min, U_min_ ) ) {
     U_min_ -= E_L_;
   }
-  else
-  {
+  else {
     U_min_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
-  {
+  if ( updateValue< double >( d, names::V_reset, U_reset_ ) ) {
     U_reset_ -= E_L_;
   }
-  else
-  {
+  else {
     U_reset_ -= delta_EL;
   }
-  if ( U_reset_ >= U_th_ )
-  {
+  if ( U_reset_ >= U_th_ ) {
     throw BadProperty( "Reset potential must be smaller than threshold." );
   }
-  if ( U_reset_ < U_min_ )
-  {
+  if ( U_reset_ < U_min_ ) {
     throw BadProperty( "Reset potential must be greater equal minimum potential." );
   }
-  if ( c_m_ <= 0 )
-  {
+  if ( c_m_ <= 0 ) {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
 
-  if ( Time( Time::ms( t_ref_ ) ).get_steps() < 1 )
-  {
+  if ( Time( Time::ms( t_ref_ ) ).get_steps() < 1 ) {
     throw BadProperty( "Refractory time must be at least one time step." );
   }
-  if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
-  {
+  if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
 
@@ -194,12 +182,10 @@ nest::iaf_psc_exp_ps::State_::get( DictionaryDatum& d, const Parameters_& p ) co
 void
 nest::iaf_psc_exp_ps::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
-  if ( updateValue< double >( d, names::V_m, y2_ ) )
-  {
+  if ( updateValue< double >( d, names::V_m, y2_ ) ) {
     y2_ -= p.E_L_;
   }
-  else
-  {
+  else {
     y2_ -= delta_EL;
   }
 }
@@ -282,8 +268,7 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long from, const long to
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
-  if ( from == 0 )
-  {
+  if ( from == 0 ) {
     B_.events_.prepare_delivery();
   }
 
@@ -291,20 +276,17 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long from, const long to
      We need to check for this here and issue spikes at the beginning of
      the interval.
   */
-  if ( S_.y2_ >= P_.U_th_ )
-  {
+  if ( S_.y2_ >= P_.U_th_ ) {
     emit_instant_spike_( origin, from, V_.h_ms_ * ( 1.0 - std::numeric_limits< double >::epsilon() ) );
   }
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     // time at start of update step
     const long T = origin.get_steps() + lag;
 
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
-    {
+    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) ) {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
 
@@ -319,15 +301,13 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long from, const long to
     double ev_weight;
     bool end_of_refract;
 
-    if ( not B_.events_.get_next_spike( T, false, ev_offset, ev_weight, end_of_refract ) )
-    {
+    if ( not B_.events_.get_next_spike( T, false, ev_offset, ev_weight, end_of_refract ) ) {
       // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
       // if there are many steps without input spikes.
 
       // update membrane potential
-      if ( not S_.is_refractory_ )
-      {
+      if ( not S_.is_refractory_ ) {
         S_.y2_ = V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.y1_ex_ + V_.P21_in_ * S_.y1_in_
           + V_.expm1_tau_m_ * S_.y2_ + S_.y2_;
 
@@ -344,13 +324,11 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long from, const long to
          on all state variables having their values at the end of the
          interval.
       */
-      if ( S_.y2_ >= P_.U_th_ )
-      {
+      if ( S_.y2_ >= P_.U_th_ ) {
         emit_spike_( origin, lag, 0, V_.h_ms_ );
       }
     }
-    else
-    {
+    else {
       // We only get here if there is at least on event,
       // which has been read above.  We can therefore use
       // a do-while loop.
@@ -359,40 +337,33 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long from, const long to
       // and 0 at the end of the step.
       double last_offset = V_.h_ms_; // start of step
 
-      do
-      {
+      do {
         // time is measured backward: inverse order in difference
         const double ministep = last_offset - ev_offset;
         assert( ministep >= 0 );
 
         // dt == 0 may occur if two spikes arrive simultaneously;
         // no propagation in that case; see #368
-        if ( ministep > 0 )
-        {
+        if ( ministep > 0 ) {
           propagate_( ministep );
 
           // check for threshold crossing during ministep
           // this must be done before adding the input, since
           // interpolation requires continuity
-          if ( S_.y2_ >= P_.U_th_ )
-          {
+          if ( S_.y2_ >= P_.U_th_ ) {
             emit_spike_( origin, lag, V_.h_ms_ - last_offset, ministep );
           }
         }
 
         // handle event
-        if ( end_of_refract )
-        {
+        if ( end_of_refract ) {
           S_.is_refractory_ = false;
         } // return from refractoriness
-        else
-        {
-          if ( ev_weight >= 0.0 )
-          {
+        else {
+          if ( ev_weight >= 0.0 ) {
             S_.y1_ex_ += ev_weight; // exc. spike input
           }
-          else
-          {
+          else {
             S_.y1_in_ += ev_weight;
           } // inh. spike input
         }
@@ -409,8 +380,7 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long from, const long to
       if ( last_offset > 0 ) // not at end of step, do remainder
       {
         propagate_( last_offset );
-        if ( S_.y2_ >= P_.U_th_ )
-        {
+        if ( S_.y2_ >= P_.U_th_ ) {
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, last_offset );
         }
       }
@@ -474,8 +444,7 @@ nest::iaf_psc_exp_ps::propagate_( const double dt )
   const double expm1_tau_ex = numerics::expm1( -dt / P_.tau_ex_ );
   const double expm1_tau_in = numerics::expm1( -dt / P_.tau_in_ );
 
-  if ( not S_.is_refractory_ )
-  {
+  if ( not S_.is_refractory_ ) {
     const double expm1_tau_m = numerics::expm1( -dt / P_.tau_m_ );
 
     const double P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
@@ -545,14 +514,11 @@ nest::iaf_psc_exp_ps::bisectioning_( const double dt ) const
 
   double div = 2.0;
 
-  while ( fabs( P_.U_th_ - y2_root ) > 1e-14 )
-  {
-    if ( y2_root > P_.U_th_ )
-    {
+  while ( fabs( P_.U_th_ - y2_root ) > 1e-14 ) {
+    if ( y2_root > P_.U_th_ ) {
       root -= dt / div;
     }
-    else
-    {
+    else {
       root += dt / div;
     }
 

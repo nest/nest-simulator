@@ -40,8 +40,7 @@
      The equals operator depends on that fact.
 */
 template < class D, SLIType* slt >
-class lockPTRDatum : public lockPTR< D >, public TypedDatum< slt >
-{
+class lockPTRDatum : public lockPTR< D >, public TypedDatum< slt > {
   Datum*
   clone( void ) const
   {

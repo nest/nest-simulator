@@ -48,8 +48,7 @@
 #include "dict.h"
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 class GenericConnBuilderFactory;
 class spikecounter;
 class Node;
@@ -60,8 +59,7 @@ class DelayChecker;
 class GrowthCurve;
 class SpikeData;
 
-class ConnectionManager : public ManagerInterface
-{
+class ConnectionManager : public ManagerInterface {
   friend class SimulationManager; // update_delay_extrema_
 public:
   ConnectionManager();
@@ -623,8 +621,7 @@ ConnectionManager::get_max_delay() const
 inline void
 ConnectionManager::clean_source_table( const thread tid )
 {
-  if ( not keep_source_table_ )
-  {
+  if ( not keep_source_table_ ) {
     source_table_.clean( tid );
   }
 }
@@ -632,8 +629,7 @@ ConnectionManager::clean_source_table( const thread tid )
 inline void
 ConnectionManager::clear_source_table( const thread tid )
 {
-  if ( not keep_source_table_ )
-  {
+  if ( not keep_source_table_ ) {
     source_table_.clear( tid );
   }
 }

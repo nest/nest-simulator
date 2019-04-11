@@ -58,8 +58,7 @@
 
 extern int SLIsignalflag;
 
-namespace nest
-{
+namespace nest {
 SLIType NestModule::ConnectionType;
 SLIType NestModule::GIDCollectionType;
 
@@ -185,12 +184,10 @@ NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
 
   // Network::set_status() performs entry access checks for each
   // target and throws UnaccessedDictionaryEntry where necessary
-  if ( node_id == 0 )
-  {
+  if ( node_id == 0 ) {
     set_kernel_status( dict );
   }
-  else
-  {
+  else {
     set_node_status( node_id, dict );
   }
 
@@ -235,16 +232,14 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
   ArrayDatum dict_a = getValue< ArrayDatum >( i->OStack.top() );
   ArrayDatum conn_a = getValue< ArrayDatum >( i->OStack.pick( 1 ) );
 
-  if ( ( dict_a.size() != 1 ) and ( dict_a.size() != conn_a.size() ) )
-  {
+  if ( ( dict_a.size() != 1 ) and ( dict_a.size() != conn_a.size() ) ) {
     throw RangeCheck();
   }
   if ( dict_a.size() == 1 ) // Broadcast
   {
     DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ 0 ] );
     const size_t n_conns = conn_a.size();
-    for ( size_t con = 0; con < n_conns; ++con )
-    {
+    for ( size_t con = 0; con < n_conns; ++con ) {
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
       kernel().connection_manager.set_synapse_status( con_id.get_source_gid(),
@@ -257,11 +252,9 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
     }
   }
-  else
-  {
+  else {
     const size_t n_conns = conn_a.size();
-    for ( size_t con = 0; con < n_conns; ++con )
-    {
+    for ( size_t con = 0; con < n_conns; ++con ) {
       DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ con ] );
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
@@ -333,12 +326,10 @@ NestModule::GetStatus_iFunction::execute( SLIInterpreter* i ) const
 
   index node_id = getValue< long >( i->OStack.pick( 0 ) );
   DictionaryDatum dict;
-  if ( node_id == 0 )
-  {
+  if ( node_id == 0 ) {
     dict = get_kernel_status();
   }
-  else
-  {
+  else {
     dict = get_node_status( node_id );
   }
 
@@ -377,8 +368,7 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
   size_t n_results = conns.size();
   ArrayDatum result;
   result.reserve( n_results );
-  for ( size_t nt = 0; nt < n_results; ++nt )
-  {
+  for ( size_t nt = 0; nt < n_results; ++nt ) {
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
     DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
       con_id.get_target_gid(),
@@ -611,8 +601,7 @@ NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
 
   // extract arguments
   const long n_nodes = getValue< long >( i->OStack.pick( 0 ) );
-  if ( n_nodes <= 0 )
-  {
+  if ( n_nodes <= 0 ) {
     throw RangeCheck();
   }
 
@@ -762,8 +751,7 @@ NestModule::Disconnect_i_i_lFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // check whether the target is on this process
-  if ( kernel().node_manager.is_local_gid( target ) )
-  {
+  if ( kernel().node_manager.is_local_gid( target ) ) {
     Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
     kernel().sp_manager.disconnect_single( source, target_node, target_thread, synapse_params );
@@ -847,8 +835,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  if ( kernel().vp_manager.get_num_threads() > 1 )
-  {
+  if ( kernel().vp_manager.get_num_threads() > 1 ) {
     throw KernelException( "DataConnect cannot be used with multiple threads" );
   }
 
@@ -857,8 +844,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
   const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-  {
+  if ( synmodel.empty() ) {
     throw UnknownSynapseType( synmodel_name.toString() );
   }
   const index synmodel_id = static_cast< index >( synmodel );
@@ -908,8 +894,7 @@ NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  if ( kernel().vp_manager.get_num_threads() > 1 )
-  {
+  if ( kernel().vp_manager.get_num_threads() > 1 ) {
     throw KernelException( "DataConnect cannot be used with multiple threads" );
   }
 
@@ -1219,12 +1204,10 @@ NestModule::TimeCommunication_i_i_bFunction::execute( SLIInterpreter* i ) const
   bool offgrid = getValue< bool >( i->OStack.pick( 0 ) );
 
   double time = 0.0;
-  if ( offgrid )
-  {
+  if ( offgrid ) {
     time = kernel().mpi_manager.time_communicate_offgrid( num_bytes, samples );
   }
-  else
-  {
+  else {
     time = kernel().mpi_manager.time_communicate( num_bytes, samples );
   }
 

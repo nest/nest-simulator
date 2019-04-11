@@ -56,8 +56,7 @@ class SLIInterpreter;
  * @ingroup Exceptions
  * @ingroup SLIExceptions
  */
-class SLIException : public std::exception
-{
+class SLIException : public std::exception {
   std::string what_;
 
 public:
@@ -107,8 +106,7 @@ public:
  * @ingroup SLIExceptions
  */
 
-class InterpreterError : public SLIException
-{
+class InterpreterError : public SLIException {
 public:
   virtual ~InterpreterError() throw()
   {
@@ -127,8 +125,7 @@ public:
  * It essentially packages the message of the wrapped exception,
  * avoiding the need of a clone() operation for each exception type.
  */
-class WrappedThreadException : public SLIException
-{
+class WrappedThreadException : public SLIException {
 public:
   WrappedThreadException( const std::exception& );
   virtual ~WrappedThreadException() throw()
@@ -144,8 +141,7 @@ private:
   std::string message_;
 };
 
-class DivisionByZero : public SLIException
-{
+class DivisionByZero : public SLIException {
 public:
   virtual ~DivisionByZero() throw()
   {
@@ -166,7 +162,7 @@ public:
  */
 
 class TypeMismatch : public InterpreterError // SLIException
-{
+                     {
   std::string expected_;
   std::string provided_;
 
@@ -196,8 +192,7 @@ public:
   std::string message() const;
 };
 
-class SystemSignal : public InterpreterError
-{
+class SystemSignal : public InterpreterError {
   int signal_;
 
 public:
@@ -218,8 +213,7 @@ public:
  * Exception to be thrown if a given SLI array has the wrong size.
  * @ingroup SLIExceptions
  */
-class RangeCheck : public InterpreterError
-{
+class RangeCheck : public InterpreterError {
   int size_;
 
 public:
@@ -236,8 +230,7 @@ public:
   std::string message() const;
 };
 
-class ArgumentType : public InterpreterError
-{
+class ArgumentType : public InterpreterError {
   int where; // Number of the parameter that was wrong.
 public:
   ArgumentType( int w )
@@ -253,8 +246,7 @@ public:
  * Exception to be thrown if a parameter value
  * is not acceptable.
  */
-class BadParameterValue : public SLIException
-{
+class BadParameterValue : public SLIException {
   std::string msg_;
 
 public:
@@ -283,8 +275,7 @@ public:
  * Base Class for all SLI errors related to dictionary processing.
  * @ingroup SLIExceptions
  */
-class DictError : public InterpreterError
-{
+class DictError : public InterpreterError {
 public:
   virtual ~DictError() throw()
   {
@@ -303,7 +294,7 @@ public:
  * @ingroup SLIExceptions
  */
 class UndefinedName : public DictError // was UnknownName
-{
+                      {
   std::string name_;
 
 public:
@@ -325,8 +316,7 @@ public:
  * dictionary has the wrong type.
  * @ingroup SLIExceptions
  */
-class EntryTypeMismatch : public DictError
-{
+class EntryTypeMismatch : public DictError {
   std::string expected_;
   std::string provided_;
 
@@ -349,8 +339,7 @@ public:
  * Exception to be thrown if an error occured while accessing the stack.
  * @ingroup SLIExceptions
  */
-class StackUnderflow : public InterpreterError
-{
+class StackUnderflow : public InterpreterError {
   int needed;
   int given;
 
@@ -369,8 +358,7 @@ public:
  * Exception to be thrown if an error occured in an I/O operation.
  * @ingroup SLIExceptions
  */
-class IOError : public SLIException
-{
+class IOError : public SLIException {
 public:
   ~IOError() throw()
   {
@@ -386,8 +374,7 @@ public:
 /**
  * Exception to be thrown if unaccessed dictionary items are found.
  */
-class UnaccessedDictionaryEntry : public DictError
-{
+class UnaccessedDictionaryEntry : public DictError {
   std::string msg_;
 
 public:
@@ -413,8 +400,7 @@ public:
  * @ingroup SLIExceptions
  * @todo Shouldn't this be a KernelException?
  */
-class DynamicModuleManagementError : public SLIException
-{
+class DynamicModuleManagementError : public SLIException {
   std::string msg_;
 
 public:
@@ -443,8 +429,7 @@ public:
  * redefine a model, synapse or function name.
  * @ingroup SLIExceptions
  */
-class NamingConflict : public SLIException
-{
+class NamingConflict : public SLIException {
   std::string msg_;
 
 public:
@@ -464,8 +449,7 @@ public:
  * Throw if an feature is unavailable.
  * @ingroup SLIExceptions
  */
-class NotImplemented : public SLIException
-{
+class NotImplemented : public SLIException {
   std::string msg_;
 
 public:

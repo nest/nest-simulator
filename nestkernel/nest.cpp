@@ -36,8 +36,7 @@
 #include "sliexceptions.h"
 #include "token.h"
 
-namespace nest
-{
+namespace nest {
 
 void
 init_nest( int* argc, char** argv[] )
@@ -96,15 +95,13 @@ get_vp_rng_of_gid( index target )
 {
   Node* target_node = kernel().node_manager.get_node( target );
 
-  if ( not kernel().node_manager.is_local_node( target_node ) )
-  {
+  if ( not kernel().node_manager.is_local_node( target_node ) ) {
     throw LocalNodeExpected( target );
   }
 
   // Only nodes with proxies have a well-defined VP and thus thread.
   // Asking for the VP of, e.g., a subnet or spike_detector is meaningless.
-  if ( not target_node->has_proxies() )
-  {
+  if ( not target_node->has_proxies() ) {
     throw NodeWithProxiesExpected( target );
   }
 
@@ -192,14 +189,12 @@ get_connection_status( const ConnectionDatum& conn )
 index
 create( const Name& model_name, const index n_nodes )
 {
-  if ( n_nodes == 0 )
-  {
+  if ( n_nodes == 0 ) {
     throw RangeCheck();
   }
 
   const Token model = kernel().model_manager.get_modeldict()->lookup( model_name );
-  if ( model.empty() )
-  {
+  if ( model.empty() ) {
     throw UnknownModelName( model_name );
   }
 
@@ -235,16 +230,13 @@ simulate( const double& time )
 {
   const Time t_sim = Time::ms( time );
 
-  if ( time < 0 )
-  {
+  if ( time < 0 ) {
     throw BadParameter( "The simulation time cannot be negative." );
   }
-  if ( not t_sim.is_finite() )
-  {
+  if ( not t_sim.is_finite() ) {
     throw BadParameter( "The simulation time must be finite." );
   }
-  if ( not t_sim.is_grid_time() )
-  {
+  if ( not t_sim.is_grid_time() ) {
     throw BadParameter(
       "The simulation time must be a multiple "
       "of the simulation resolution." );
@@ -258,16 +250,13 @@ run( const double& time )
 {
   const Time t_sim = Time::ms( time );
 
-  if ( time < 0 )
-  {
+  if ( time < 0 ) {
     throw BadParameter( "The simulation time cannot be negative." );
   }
-  if ( not t_sim.is_finite() )
-  {
+  if ( not t_sim.is_finite() ) {
     throw BadParameter( "The simulation time must be finite." );
   }
-  if ( not t_sim.is_grid_time() )
-  {
+  if ( not t_sim.is_grid_time() ) {
     throw BadParameter(
       "The simulation time must be a multiple "
       "of the simulation resolution." );
@@ -308,19 +297,16 @@ get_model_defaults( const Name& modelname )
 
   DictionaryDatum dict;
 
-  if ( not nodemodel.empty() )
-  {
+  if ( not nodemodel.empty() ) {
     const long model_id = static_cast< long >( nodemodel );
     Model* m = kernel().model_manager.get_model( model_id );
     dict = m->get_status();
   }
-  else if ( not synmodel.empty() )
-  {
+  else if ( not synmodel.empty() ) {
     const long synapse_id = static_cast< long >( synmodel );
     dict = kernel().model_manager.get_connector_defaults( synapse_id );
   }
-  else
-  {
+  else {
     throw UnknownModelName( modelname.toString() );
   }
 
@@ -330,12 +316,10 @@ get_model_defaults( const Name& modelname )
 void
 change_subnet( const index node_gid )
 {
-  if ( kernel().node_manager.get_node( node_gid )->is_subnet() )
-  {
+  if ( kernel().node_manager.get_node( node_gid )->is_subnet() ) {
     kernel().node_manager.go_to( node_gid );
   }
-  else
-  {
+  else {
     throw SubnetExpected();
   }
 }
@@ -351,32 +335,26 @@ ArrayDatum
 get_nodes( const index node_id, const DictionaryDatum& params, const bool include_remotes, const bool return_gids_only )
 {
   Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
-  if ( subnet == NULL )
-  {
+  if ( subnet == NULL ) {
     throw SubnetExpected();
   }
 
   LocalNodeList localnodes( *subnet );
   std::vector< MPIManager::NodeAddressingData > globalnodes;
-  if ( params->empty() )
-  {
+  if ( params->empty() ) {
     kernel().mpi_manager.communicate( localnodes, globalnodes, include_remotes );
   }
-  else
-  {
+  else {
     kernel().mpi_manager.communicate( localnodes, globalnodes, params, include_remotes );
   }
 
   ArrayDatum result;
   result.reserve( globalnodes.size() );
-  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n )
-  {
-    if ( return_gids_only )
-    {
+  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n ) {
+    if ( return_gids_only ) {
       result.push_back( new IntegerDatum( n->get_gid() ) );
     }
-    else
-    {
+    else {
       DictionaryDatum* node_info = new DictionaryDatum( new Dictionary );
       ( **node_info )[ names::global_id ] = n->get_gid();
       ( **node_info )[ names::vp ] = n->get_vp();
@@ -392,8 +370,7 @@ ArrayDatum
 get_leaves( const index node_id, const DictionaryDatum& params, const bool include_remotes )
 {
   Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
-  if ( subnet == NULL )
-  {
+  if ( subnet == NULL ) {
     throw SubnetExpected();
   }
 
@@ -401,18 +378,15 @@ get_leaves( const index node_id, const DictionaryDatum& params, const bool inclu
   ArrayDatum result;
 
   std::vector< MPIManager::NodeAddressingData > globalnodes;
-  if ( params->empty() )
-  {
+  if ( params->empty() ) {
     kernel().mpi_manager.communicate( localnodes, globalnodes, include_remotes );
   }
-  else
-  {
+  else {
     kernel().mpi_manager.communicate( localnodes, globalnodes, params, include_remotes );
   }
   result.reserve( globalnodes.size() );
 
-  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n )
-  {
+  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n ) {
     result.push_back( new IntegerDatum( n->get_gid() ) );
   }
 
@@ -423,8 +397,7 @@ ArrayDatum
 get_children( const index node_id, const DictionaryDatum& params, const bool include_remotes )
 {
   Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
-  if ( subnet == NULL )
-  {
+  if ( subnet == NULL ) {
     throw SubnetExpected();
   }
 
@@ -432,17 +405,14 @@ get_children( const index node_id, const DictionaryDatum& params, const bool inc
   ArrayDatum result;
 
   std::vector< MPIManager::NodeAddressingData > globalnodes;
-  if ( params->empty() )
-  {
+  if ( params->empty() ) {
     kernel().mpi_manager.communicate( localnodes, globalnodes, include_remotes );
   }
-  else
-  {
+  else {
     kernel().mpi_manager.communicate( localnodes, globalnodes, params, include_remotes );
   }
   result.reserve( globalnodes.size() );
-  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n )
-  {
+  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n ) {
     result.push_back( new IntegerDatum( n->get_gid() ) );
   }
 

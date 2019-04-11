@@ -34,8 +34,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: pp_pop_psc_delta - Population of point process neurons with leaky
@@ -148,8 +147,7 @@ Author: May 2014, Setareh, Deger
 SeeAlso: gif_pop_psc_exp, pp_psc_delta, ppd_sup_generator,
 gamma_sup_generator
 */
-class pp_pop_psc_delta : public Node
-{
+class pp_pop_psc_delta : public Node {
 
 public:
   pp_pop_psc_delta();
@@ -192,8 +190,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     /** Number of neurons in the population. */
     int N_; // by Hesam
@@ -232,8 +229,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
 
     double y0_;
     double h_;
@@ -261,8 +257,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( pp_pop_psc_delta& );
     Buffers_( const Buffers_&, pp_pop_psc_delta& );
 
@@ -279,8 +274,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
 
 
     double P30_;
@@ -349,8 +343,7 @@ pp_pop_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, 
 inline port
 pp_pop_psc_delta::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -359,8 +352,7 @@ pp_pop_psc_delta::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 pp_pop_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -369,8 +361,7 @@ pp_pop_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 pp_pop_psc_delta::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

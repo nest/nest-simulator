@@ -44,8 +44,7 @@
 // Includes from sli:
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 EventDeliveryManager::EventDeliveryManager()
   : off_grid_spiking_( false )
   , moduli_()
@@ -172,8 +171,7 @@ EventDeliveryManager::configure_spike_data_buffers()
 void
 EventDeliveryManager::configure_spike_register()
 {
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid ) {
     reset_spike_register_( tid );
     resize_spike_register_( tid );
   }
@@ -205,8 +203,7 @@ EventDeliveryManager::init_moduli()
 
   moduli_.resize( min_delay + max_delay );
 
-  for ( delay d = 0; d < min_delay + max_delay; ++d )
-  {
+  for ( delay d = 0; d < min_delay + max_delay; ++d ) {
     moduli_[ d ] = ( kernel().simulation_manager.get_clock().get_steps() + d ) % ( min_delay + max_delay );
   }
 
@@ -215,8 +212,7 @@ EventDeliveryManager::init_moduli()
   // The slice_moduli_ table maps time steps to these bins
   const size_t nbuff = static_cast< size_t >( std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   slice_moduli_.resize( min_delay + max_delay );
-  for ( delay d = 0; d < min_delay + max_delay; ++d )
-  {
+  for ( delay d = 0; d < min_delay + max_delay; ++d ) {
     slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
   }
 }
@@ -250,8 +246,7 @@ EventDeliveryManager::update_moduli()
    min_delay_.  Reference time is the time at the beginning of the slice.
    */
   const size_t nbuff = static_cast< size_t >( std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
-  for ( delay d = 0; d < min_delay + max_delay; ++d )
-  {
+  for ( delay d = 0; d < min_delay + max_delay; ++d ) {
     slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
   }
 }
@@ -262,8 +257,7 @@ EventDeliveryManager::reset_timers_counters()
   time_collocate_ = 0.0;
   time_communicate_ = 0.0;
   for ( std::vector< unsigned long >::iterator it = local_spike_counter_.begin(); it != local_spike_counter_.end();
-        ++it )
-  {
+        ++it ) {
     ( *it ) = 0;
   }
 }
@@ -273,8 +267,7 @@ EventDeliveryManager::write_done_marker_secondary_events_( const bool done )
 {
   // write done marker at last position in every chunk
   const size_t chunk_size_in_int = kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
-  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
-  {
+  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank ) {
     send_buffer_secondary_events_[ ( rank + 1 ) * chunk_size_in_int - 1 ] = done;
   }
 }
@@ -297,12 +290,10 @@ EventDeliveryManager::deliver_secondary_events( const thread tid, const bool cal
 void
 EventDeliveryManager::gather_spike_data( const thread tid )
 {
-  if ( off_grid_spiking_ )
-  {
+  if ( off_grid_spiking_ ) {
     gather_spike_data_( tid, send_buffer_off_grid_spike_data_, recv_buffer_off_grid_spike_data_ );
   }
-  else
-  {
+  else {
     gather_spike_data_( tid, send_buffer_spike_data_, recv_buffer_spike_data_ );
   }
 }
@@ -319,16 +310,14 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
-  while ( not gather_completed_checker_.all_true() )
-  {
+  while ( not gather_completed_checker_.all_true() ) {
     // Assume this is the last gather round and change to false
     // otherwise
     gather_completed_checker_.set( tid, true );
 
 #pragma omp single
     {
-      if ( kernel().mpi_manager.adaptive_spike_buffers() and buffer_size_spike_data_has_changed_ )
-      {
+      if ( kernel().mpi_manager.adaptive_spike_buffers() and buffer_size_spike_data_has_changed_ ) {
         resize_send_recv_buffers_spike_data_();
         buffer_size_spike_data_has_changed_ = false;
       }
@@ -343,8 +332,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, spike_register_, send_buffer );
     gather_completed_checker_.logical_and( tid, collocate_completed );
 
-    if ( off_grid_spiking_ )
-    {
+    if ( off_grid_spiking_ ) {
       const bool collocate_completed_off_grid = collocate_spike_data_buffers_(
         tid, assigned_ranks, send_buffer_position, off_grid_spike_register_, send_buffer );
       gather_completed_checker_.logical_and( tid, collocate_completed_off_grid );
@@ -358,8 +346,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
     // If we do not have any spikes left, set corresponding marker in
     // send buffer.
-    if ( gather_completed_checker_.all_true() )
-    {
+    if ( gather_completed_checker_.all_true() ) {
       // Needs to be called /after/ set_end_and_invalid_markers_.
       set_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
 #pragma omp barrier
@@ -368,12 +355,10 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 // Communicate spikes using a single thread.
 #pragma omp single
     {
-      if ( off_grid_spiking_ )
-      {
+      if ( off_grid_spiking_ ) {
         kernel().mpi_manager.communicate_off_grid_spike_data_Alltoall( send_buffer, recv_buffer );
       }
-      else
-      {
+      else {
         kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
       }
     } // of omp single; implicit barrier
@@ -386,8 +371,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 // done.
 #pragma omp barrier
     // Resize mpi buffers, if necessary and allowed.
-    if ( not gather_completed_checker_.all_true() and kernel().mpi_manager.adaptive_spike_buffers() )
-    {
+    if ( not gather_completed_checker_.all_true() and kernel().mpi_manager.adaptive_spike_buffers() ) {
 #pragma omp single
       {
         buffer_size_spike_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_spike_data();
@@ -418,36 +402,29 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   for (
     typename std::vector< std::vector< std::vector< std::vector< TargetT > > > >::iterator it = spike_register.begin();
     it != spike_register.end();
-    ++it )
-  {
+    ++it ) {
     // Second dimension: fixed reading thread
 
     // Third dimension: loop over lags
-    for ( unsigned int lag = 0; lag < ( *it )[ tid ].size(); ++lag )
-    {
+    for ( unsigned int lag = 0; lag < ( *it )[ tid ].size(); ++lag ) {
       // Fourth dimension: loop over entries
       for ( typename std::vector< TargetT >::iterator iiit = ( *it )[ tid ][ lag ].begin();
             iiit < ( *it )[ tid ][ lag ].end();
-            ++iiit )
-      {
+            ++iiit ) {
         assert( not iiit->is_processed() );
 
         const thread rank = iiit->get_rank();
 
-        if ( send_buffer_position.is_chunk_filled( rank ) )
-        {
+        if ( send_buffer_position.is_chunk_filled( rank ) ) {
           is_spike_register_empty = false;
-          if ( send_buffer_position.are_all_chunks_filled() )
-          {
+          if ( send_buffer_position.are_all_chunks_filled() ) {
             return is_spike_register_empty;
           }
-          else
-          {
+          else {
             continue;
           }
         }
-        else
-        {
+        else {
           send_buffer[ send_buffer_position.idx( rank ) ].set(
             ( *iiit ).get_tid(), ( *iiit ).get_syn_id(), ( *iiit ).get_lcid(), lag, ( *iiit ).get_offset() );
           ( *iiit ).set_status( TARGET_ID_PROCESSED ); // mark entry for removal
@@ -466,11 +443,9 @@ EventDeliveryManager::set_end_and_invalid_markers_( const AssignedRanks& assigne
   const SendBufferPosition& send_buffer_position,
   std::vector< SpikeDataT >& send_buffer )
 {
-  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
-  {
+  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank ) {
     // thread-local index of (global) rank
-    if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
-    {
+    if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) ) {
       // Set end marker at last position that contains a valid
       // entry. This could possibly be the last entry in this
       // chunk. Since we call set_complete_marker_spike_data_ /after/
@@ -482,8 +457,7 @@ EventDeliveryManager::set_end_and_invalid_markers_( const AssignedRanks& assigne
       assert( send_buffer_position.idx( rank ) - 1 < send_buffer_position.end( rank ) );
       send_buffer[ send_buffer_position.idx( rank ) - 1 ].set_end_marker();
     }
-    else
-    {
+    else {
       assert( send_buffer_position.idx( rank ) == send_buffer_position.begin( rank ) );
       send_buffer[ send_buffer_position.begin( rank ) ].set_invalid_marker();
     }
@@ -496,8 +470,7 @@ EventDeliveryManager::reset_complete_marker_spike_data_( const AssignedRanks& as
   const SendBufferPosition& send_buffer_position,
   std::vector< SpikeDataT >& send_buffer ) const
 {
-  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
-  {
+  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank ) {
     const thread idx = send_buffer_position.end( rank ) - 1;
     send_buffer[ idx ].reset_marker();
   }
@@ -509,8 +482,7 @@ EventDeliveryManager::set_complete_marker_spike_data_( const AssignedRanks& assi
   const SendBufferPosition& send_buffer_position,
   std::vector< SpikeDataT >& send_buffer ) const
 {
-  for ( thread target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
-  {
+  for ( thread target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank ) {
     // Use last entry for completion marker. For possible collision
     // with end marker, see comment in set_end_and_invalid_markers_.
     const thread idx = send_buffer_position.end( target_rank ) - 1;
@@ -535,32 +507,26 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
 
   // prepare Time objects for every possible time stamp within min_delay_
   std::vector< Time > prepared_timestamps( kernel().connection_manager.get_min_delay() );
-  for ( size_t lag = 0; lag < ( size_t ) kernel().connection_manager.get_min_delay(); ++lag )
-  {
+  for ( size_t lag = 0; lag < ( size_t ) kernel().connection_manager.get_min_delay(); ++lag ) {
     prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() + Time::step( lag + 1 );
   }
 
-  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
-  {
+  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank ) {
     // check last entry for completed marker; needs to be done before
     // checking invalid marker to assure that this is always read
-    if ( not recv_buffer[ ( rank + 1 ) * send_recv_count_spike_data_per_rank - 1 ].is_complete_marker() )
-    {
+    if ( not recv_buffer[ ( rank + 1 ) * send_recv_count_spike_data_per_rank - 1 ].is_complete_marker() ) {
       are_others_completed = false;
     }
 
     // continue with next rank if no spikes were sent by this rank
-    if ( recv_buffer[ rank * send_recv_count_spike_data_per_rank ].is_invalid_marker() )
-    {
+    if ( recv_buffer[ rank * send_recv_count_spike_data_per_rank ].is_invalid_marker() ) {
       continue;
     }
 
-    for ( unsigned int i = 0; i < send_recv_count_spike_data_per_rank; ++i )
-    {
+    for ( unsigned int i = 0; i < send_recv_count_spike_data_per_rank; ++i ) {
       const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i ];
 
-      if ( spike_data.get_tid() == tid )
-      {
+      if ( spike_data.get_tid() == tid ) {
         se.set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
         se.set_offset( spike_data.get_offset() );
 
@@ -573,8 +539,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       }
 
       // break if this was the last valid entry from this rank
-      if ( spike_data.is_end_marker() )
-      {
+      if ( spike_data.is_end_marker() ) {
         break;
       }
     }
@@ -597,16 +562,14 @@ EventDeliveryManager::gather_target_data( const thread tid )
   kernel().connection_manager.prepare_target_table( tid );
   kernel().connection_manager.reset_source_table_entry_point( tid );
 
-  while ( not gather_completed_checker_.all_true() )
-  {
+  while ( not gather_completed_checker_.all_true() ) {
     // assume this is the last gather round and change to false
     // otherwise
     gather_completed_checker_.set( tid, true );
 
 #pragma omp single
     {
-      if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
-      {
+      if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ ) {
         resize_send_recv_buffers_target_data();
       }
     } // of omp single; implicit barrier
@@ -619,8 +582,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
     const bool gather_completed = collocate_target_data_buffers_( tid, assigned_ranks, send_buffer_position );
     gather_completed_checker_.logical_and( tid, gather_completed );
 
-    if ( gather_completed_checker_.all_true() )
-    {
+    if ( gather_completed_checker_.all_true() ) {
       set_complete_marker_target_data_( tid, assigned_ranks, send_buffer_position );
 #pragma omp barrier
     }
@@ -637,8 +599,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
 #pragma omp barrier
 
     // resize mpi buffers, if necessary and allowed
-    if ( not gather_completed_checker_.all_true() and kernel().mpi_manager.adaptive_target_buffers() )
-    {
+    if ( not gather_completed_checker_.all_true() and kernel().mpi_manager.adaptive_target_buffers() ) {
 #pragma omp single
       {
         buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
@@ -662,15 +623,13 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
   bool is_source_table_read = true;
 
   // no ranks to process for this thread
-  if ( assigned_ranks.begin == assigned_ranks.end )
-  {
+  if ( assigned_ranks.begin == assigned_ranks.end ) {
     kernel().connection_manager.no_targets_to_process( tid );
     return is_source_table_read;
   }
 
   // reset markers
-  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
-  {
+  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank ) {
     // reset last entry to avoid accidentally communicating done
     // marker
     send_buffer_target_data_[ send_buffer_position.end( rank ) - 1 ].reset_marker();
@@ -679,14 +638,12 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
     send_buffer_target_data_[ send_buffer_position.begin( rank ) ].set_invalid_marker();
   }
 
-  while ( true )
-  {
+  while ( true ) {
     valid_next_target_data = kernel().connection_manager.get_next_target_data(
       tid, assigned_ranks.begin, assigned_ranks.end, source_rank, next_target_data );
     if ( valid_next_target_data ) // add valid entry to MPI buffer
     {
-      if ( send_buffer_position.idx( source_rank ) == send_buffer_position.end( source_rank ) )
-      {
+      if ( send_buffer_position.idx( source_rank ) == send_buffer_position.end( source_rank ) ) {
         // entry does not fit in this part of the MPI buffer any more,
         // so we need to reject it
         kernel().connection_manager.reject_last_target_data( tid );
@@ -702,13 +659,11 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
         {
           return is_source_table_read;
         }
-        else
-        {
+        else {
           continue;
         }
       }
-      else
-      {
+      else {
         send_buffer_target_data_[ send_buffer_position.idx( source_rank ) ] = next_target_data;
         send_buffer_position.increase( source_rank );
       }
@@ -716,14 +671,11 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
     else // all connections have been processed
     {
       // mark end of valid data for each rank
-      for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
-      {
-        if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
-        {
+      for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank ) {
+        if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) ) {
           send_buffer_target_data_[ send_buffer_position.idx( rank ) - 1 ].set_end_marker();
         }
-        else
-        {
+        else {
           send_buffer_target_data_[ send_buffer_position.begin( rank ) ].set_invalid_marker();
         }
       }
@@ -737,8 +689,7 @@ nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid,
   const AssignedRanks& assigned_ranks,
   const SendBufferPosition& send_buffer_position )
 {
-  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
-  {
+  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank ) {
     const thread idx = send_buffer_position.end( rank ) - 1;
     send_buffer_target_data_[ idx ].set_complete_marker();
   }
@@ -751,31 +702,26 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
   const unsigned int send_recv_count_target_data_per_rank =
     kernel().mpi_manager.get_send_recv_count_target_data_per_rank();
 
-  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
-  {
+  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank ) {
     // Check last entry for completed marker
-    if ( not recv_buffer_target_data_[ ( rank + 1 ) * send_recv_count_target_data_per_rank - 1 ].is_complete_marker() )
-    {
+    if ( not recv_buffer_target_data_[ ( rank + 1 ) * send_recv_count_target_data_per_rank - 1 ]
+               .is_complete_marker() ) {
       are_others_completed = false;
     }
 
     // Were targets sent by this rank?
-    if ( recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank ].is_invalid_marker() )
-    {
+    if ( recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank ].is_invalid_marker() ) {
       continue;
     }
 
-    for ( unsigned int i = 0; i < send_recv_count_target_data_per_rank; ++i )
-    {
+    for ( unsigned int i = 0; i < send_recv_count_target_data_per_rank; ++i ) {
       const TargetData& target_data = recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank + i ];
-      if ( target_data.get_source_tid() == tid )
-      {
+      if ( target_data.get_source_tid() == tid ) {
         kernel().connection_manager.add_target( tid, rank, target_data );
       }
 
       // Is this the last target from this rank?
-      if ( target_data.is_end_marker() )
-      {
+      if ( target_data.is_end_marker() ) {
         break;
       }
     }
@@ -789,16 +735,14 @@ EventDeliveryManager::resize_spike_register_( const thread tid )
 {
   for ( std::vector< std::vector< std::vector< Target > > >::iterator it = spike_register_[ tid ].begin();
         it != spike_register_[ tid ].end();
-        ++it )
-  {
+        ++it ) {
     it->resize( kernel().connection_manager.get_min_delay(), std::vector< Target >() );
   }
 
   for (
     std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = off_grid_spike_register_[ tid ].begin();
     it != off_grid_spike_register_[ tid ].end();
-    ++it )
-  {
+    ++it ) {
     it->resize( kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >() );
   }
 }

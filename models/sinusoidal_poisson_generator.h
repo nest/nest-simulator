@@ -34,8 +34,7 @@
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson
@@ -89,8 +88,7 @@ Author: Hans Ekkehard Plesser
 
 SeeAlso: poisson_generator, sinusoidal_gamma_generator
 */
-class sinusoidal_poisson_generator : public DeviceNode
-{
+class sinusoidal_poisson_generator : public DeviceNode {
 
 public:
   sinusoidal_poisson_generator();
@@ -136,8 +134,7 @@ private:
 
   void update( Time const&, const long, const long );
 
-  struct Parameters_
-  {
+  struct Parameters_ {
     /** Temporal frequency in radian/ms */
     double om_;
 
@@ -167,8 +164,7 @@ private:
     void set( const DictionaryDatum&, const sinusoidal_poisson_generator& );
   };
 
-  struct State_
-  {
+  struct State_ {
     //! Two-component oscillator state vector, see Rotter&Diesmann
     double y_0_;
     double y_1_;
@@ -193,8 +189,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( sinusoidal_poisson_generator& );
     Buffers_( const Buffers_&, sinusoidal_poisson_generator& );
     UniversalDataLogger< sinusoidal_poisson_generator > logger_;
@@ -202,8 +197,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
 
     double h_;   //! time resolution (ms)
@@ -235,14 +229,12 @@ sinusoidal_poisson_generator::send_test_event( Node& target, rport receptor_type
 
   // to ensure correct overloading resolution, we need explicit event types
   // therefore, we need to duplicate the code here
-  if ( dummy_target )
-  {
+  if ( dummy_target ) {
     DSSpikeEvent e;
     e.set_sender( *this );
     return target.handles_test_event( e, receptor_type );
   }
-  else
-  {
+  else {
     SpikeEvent e;
     e.set_sender( *this );
     return target.handles_test_event( e, receptor_type );
@@ -252,8 +244,7 @@ sinusoidal_poisson_generator::send_test_event( Node& target, rport receptor_type
 inline port
 sinusoidal_poisson_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

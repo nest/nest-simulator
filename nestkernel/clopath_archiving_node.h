@@ -36,16 +36,14 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * \class Clopath_Archiving_Node
  * a archiving node which additionally archives parameters
  * needed for the Clopath plasticity rule
  */
-class Clopath_Archiving_Node : public Archiving_Node
-{
+class Clopath_Archiving_Node : public Archiving_Node {
 
 public:
   /**

@@ -41,8 +41,7 @@
 #include <math.h>
 #endif
 
-namespace numerics
-{
+namespace numerics {
 
 extern const double e;
 extern const double pi;
@@ -59,22 +58,18 @@ expm1( double x )
 #else
   // compute using Taylor series, see GSL
   // e^x-1 = x + x^2/2! + x^3/3! + ...
-  if ( x == 0 )
-  {
+  if ( x == 0 ) {
     return 0;
   }
-  if ( std::abs( x ) > std::log( 2.0 ) )
-  {
+  if ( std::abs( x ) > std::log( 2.0 ) ) {
     return std::exp( x ) - 1;
   }
-  else
-  {
+  else {
     double sum = x;
     double term = x * x / 2;
     long n = 2;
 
-    while ( std::abs( term ) > std::abs( sum ) * std::numeric_limits< double >::epsilon() )
-    {
+    while ( std::abs( term ) > std::abs( sum ) * std::numeric_limits< double >::epsilon() ) {
       sum += term;
       ++n;
       term *= x / n;

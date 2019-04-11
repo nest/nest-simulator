@@ -47,8 +47,7 @@ librandom::GslRandomGen::add_gsl_rngs( Dictionary& rngdict )
 {
   // add all standard GSL RNG, or those from GSL replacement
   const gsl_rng_type** t0 = gsl_rng_types_setup();
-  for ( const gsl_rng_type** t = t0; *t != NULL; ++t )
-  {
+  for ( const gsl_rng_type** t = t0; *t != NULL; ++t ) {
     assert( *t != NULL );
     const std::string name = std::string( "gsl_" ) + ( *t )->name;
 

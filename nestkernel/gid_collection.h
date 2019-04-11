@@ -36,19 +36,16 @@
 #include "arraydatum.h"
 #include "tokenarray.h"
 
-namespace nest
-{
+namespace nest {
 
-class GIDCollection
-{
+class GIDCollection {
 
   std::vector< index > gid_array_;
   std::pair< index, index > gid_range_;
   bool is_range_;
 
 public:
-  class const_iterator
-  {
+  class const_iterator {
     friend class GIDCollection;
     const_iterator( const GIDCollection* gc, size_t offset )
       : gc_( gc )
@@ -87,23 +84,17 @@ public:
 inline int
 GIDCollection::find( const index neuron_id ) const
 {
-  if ( is_range_ )
-  {
-    if ( neuron_id > gid_range_.second )
-    {
+  if ( is_range_ ) {
+    if ( neuron_id > gid_range_.second ) {
       return -1;
     }
-    else
-    {
+    else {
       return neuron_id - gid_range_.first;
     }
   }
-  else
-  {
-    for ( size_t i = 0; i < gid_array_.size(); ++i )
-    {
-      if ( neuron_id == gid_array_[ i ] )
-      {
+  else {
+    for ( size_t i = 0; i < gid_array_.size(); ++i ) {
+      if ( neuron_id == gid_array_[ i ] ) {
         return i;
       }
     }
@@ -135,28 +126,24 @@ inline bool GIDCollection::const_iterator::operator!=( const GIDCollection::cons
 
 inline index GIDCollection::operator[]( const size_t pos ) const
 {
-  if ( ( is_range_ and pos + gid_range_.first > gid_range_.second ) or ( not is_range_ and pos >= gid_array_.size() ) )
-  {
+  if ( ( is_range_ and pos + gid_range_.first > gid_range_.second )
+    or ( not is_range_ and pos >= gid_array_.size() ) ) {
     throw std::out_of_range( "pos points outside of the GIDCollection" );
   }
-  if ( is_range_ )
-  {
+  if ( is_range_ ) {
     return gid_range_.first + pos;
   }
-  else
-  {
+  else {
     return gid_array_[ pos ];
   }
 }
 
 inline bool GIDCollection::operator==( const GIDCollection& rhs ) const
 {
-  if ( is_range_ )
-  {
+  if ( is_range_ ) {
     return gid_range_ == rhs.gid_range_;
   }
-  else
-  {
+  else {
     return gid_array_ == rhs.gid_array_;
   }
 }
@@ -176,12 +163,10 @@ GIDCollection::end() const
 inline size_t
 GIDCollection::size() const
 {
-  if ( is_range_ )
-  {
+  if ( is_range_ ) {
     return gid_range_.second - gid_range_.first + 1;
   }
-  else
-  {
+  else {
     return gid_array_.size();
   }
 }

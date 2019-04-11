@@ -45,8 +45,7 @@
 // Includes from sli:
 #include "arraydatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 
@@ -97,8 +96,7 @@ Availability: Only when compiled with MPI and MUSIC
 SeeAlso: music_cont_in_proxy, music_event_out_proxy, music_event_in_proxy,
 music_message_in_proxy
 */
-class music_cont_out_proxy : public DeviceNode
-{
+class music_cont_out_proxy : public DeviceNode {
 
 public:
   music_cont_out_proxy();
@@ -157,8 +155,7 @@ private:
 
   struct Buffers_;
 
-  struct Parameters_
-  {
+  struct Parameters_ {
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Copy constructor for parameter values
 
@@ -173,8 +170,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
     State_();                           //!< Sets default state value
     State_( const State_& );            //!< Copy constructor for state values
     bool published_;                    //!< indicates whether this node has been published
@@ -185,8 +181,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_();                  //!< Initializes default buffer
     Buffers_( const Buffers_& ); //!< Copy constructor for the data buffer
     bool has_targets_;           //!< Indicates whether the proxy is recording from any

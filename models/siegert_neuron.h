@@ -42,8 +42,7 @@
 #include "recordables_map.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: siegert_neuron
@@ -109,8 +108,7 @@ Author: Jannis Schuecker, David Dahmen, Jan Hahne
 
 SeeAlso: diffusion_connection
 */
-class siegert_neuron : public Archiving_Node
-{
+class siegert_neuron : public Archiving_Node {
 
 public:
   typedef Node base;
@@ -169,8 +167,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     /** Time constant in ms. */
     double tau_;
 
@@ -204,8 +201,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
     double r_; //!< Rate
 
     State_(); //!< Default initialization
@@ -219,8 +215,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( siegert_neuron& );
     Buffers_( const Buffers_&, siegert_neuron& );
 
@@ -236,8 +231,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
 
     // propagators
     double P1_;
@@ -283,16 +277,13 @@ siegert_neuron::wfr_update( Time const& origin, const long from, const long to )
 inline port
 siegert_neuron::handles_test_event( DiffusionConnectionEvent&, rport receptor_type )
 {
-  if ( receptor_type == 0 )
-  {
+  if ( receptor_type == 0 ) {
     return 0;
   }
-  else if ( receptor_type == 1 )
-  {
+  else if ( receptor_type == 1 ) {
     return 1;
   }
-  else
-  {
+  else {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
 }
@@ -300,8 +291,7 @@ siegert_neuron::handles_test_event( DiffusionConnectionEvent&, rport receptor_ty
 inline port
 siegert_neuron::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

@@ -62,22 +62,19 @@
 //
 // Diesmann, April 14 1998
 
-class TokenArray
-{
+class TokenArray {
 private:
   TokenArrayObj* data;
 
   bool
   clone( void )
   {
-    if ( data->references() > 1 )
-    {
+    if ( data->references() > 1 ) {
       data->remove_reference();
       data = new TokenArrayObj( *data );
       return true;
     }
-    else
-    {
+    else {
       return false;
     }
   }
@@ -85,14 +82,12 @@ private:
   bool
   detach( void )
   {
-    if ( data->references() > 1 )
-    {
+    if ( data->references() > 1 ) {
       data->remove_reference();
       data = new TokenArrayObj();
       return true;
     }
-    else
-    {
+    else {
       return false;
     }
   }
@@ -301,12 +296,10 @@ public:
     clear(); // no cloning, because we overwrite everything
     // This is slightly inefficient, because if a has references,
     // cloning is more expensive than just copying the desired range.
-    if ( a.references() == 1 )
-    {
+    if ( a.references() == 1 ) {
       data->assign_move( *( a.data ), i, n );
     }
-    else
-    {
+    else {
       data->assign( *( a.data ), i, n );
     }
   }
@@ -372,8 +365,7 @@ public:
   void
   erase( void )
   {
-    if ( not detach() )
-    {
+    if ( not detach() ) {
       erase( begin(), end() );
     }
   }
@@ -382,8 +374,7 @@ public:
   void
   erase( Token* from, Token* to )
   {
-    if ( from != to )
-    {
+    if ( from != to ) {
       size_t sf = from - data->begin();
       size_t st = to - data->begin();
 
@@ -395,8 +386,7 @@ public:
   void
   erase( size_t i, size_t n )
   {
-    if ( i < size() && n > 0 )
-    {
+    if ( i < size() && n > 0 ) {
       clone();
       data->erase( i, n );
     }
@@ -406,8 +396,7 @@ public:
   void
   reduce( size_t i, size_t n )
   {
-    if ( i > 0 || n < size() )
-    {
+    if ( i > 0 || n < size() ) {
       clone();
       data->reduce( i, n );
     }
@@ -449,23 +438,20 @@ public:
 
   /** Exception classes */
   //  class TypeMismatch {};
-  class OutOfRange
-  {
+  class OutOfRange {
   };
 };
 
 inline void
 TokenArray::reverse()
 {
-  if ( size() == 0 )
-  {
+  if ( size() == 0 ) {
     return;
   }
   clone();
   Token* b = begin();
   Token* e = end() - 1;
-  while ( b < e )
-  {
+  while ( b < e ) {
     b->swap( *e );
     ++b;
     --e;
@@ -475,8 +461,7 @@ TokenArray::reverse()
 inline void
 TokenArray::rotate( long n = 1 )
 {
-  if ( size() == 0 || n == 0 )
-  {
+  if ( size() == 0 || n == 0 ) {
     return;
   }
 

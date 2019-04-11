@@ -61,8 +61,7 @@ OOSupportModule::CallMemberFunction::execute( SLIInterpreter* i ) const
 
   Token value = ( *dict )->lookup( *key );
 
-  if ( value.datum() != NULL )
-  {
+  if ( value.datum() != NULL ) {
     Token nt( new NameDatum( *key ) );
     i->DStack->push( *dict );
     i->EStack.pop(); // never forget me
@@ -70,8 +69,7 @@ OOSupportModule::CallMemberFunction::execute( SLIInterpreter* i ) const
     i->EStack.push_move( nt );
     i->OStack.pop( 2 );
   }
-  else
-  {
+  else {
     i->raiseerror( "UnknownMember" );
   }
 }

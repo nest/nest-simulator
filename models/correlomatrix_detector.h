@@ -35,8 +35,7 @@
 #include "pseudo_recording_device.h"
 
 
-namespace nest
-{
+namespace nest {
 /** @BeginDocumentation
 Name: correlomatrix_detector - Device for measuring the covariance matrix
 from several inputs
@@ -148,8 +147,7 @@ SeeAlso: correlation_detector, spike_detector, Device, PseudoRecordingDevice
 
 Availability: NEST
 */
-class correlomatrix_detector : public Node
-{
+class correlomatrix_detector : public Node {
 
 public:
   correlomatrix_detector();
@@ -193,8 +191,7 @@ private:
    * Spike structure to store in the deque of recently
    * received events
    */
-  struct Spike_
-  {
+  struct Spike_ {
     long timestep_;
     double weight_;
     long receptor_channel_;
@@ -221,8 +218,7 @@ private:
 
   struct State_;
 
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     Time delta_tau_;  //!< width of correlation histogram bins
     Time tau_max_;    //!< maximum time difference of events to detect
@@ -254,8 +250,7 @@ private:
    * @note State_ only contains read-out values, so we copy-construct
    *       using the default c'tor.
    */
-  struct State_
-  {
+  struct State_ {
 
     std::vector< long > n_events_; //!< spike counters
     SpikelistType incoming_;       //!< incoming spikes, sorted
@@ -290,8 +285,7 @@ private:
 inline port
 correlomatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < 0 || receptor_type > P_.N_channels_ - 1 )
-  {
+  if ( receptor_type < 0 || receptor_type > P_.N_channels_ - 1 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return receptor_type;
@@ -315,8 +309,7 @@ nest::correlomatrix_detector::set_status( const DictionaryDatum& d )
 
   device_.set_status( d );
   P_ = ptmp;
-  if ( reset_required == true )
-  {
+  if ( reset_required == true ) {
     S_.reset( P_ );
   }
 }

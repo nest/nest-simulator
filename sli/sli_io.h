@@ -35,8 +35,7 @@
 
 void init_sli_io( SLIInterpreter* );
 
-class MathLinkPutStringFunction : public SLIFunction
-{
+class MathLinkPutStringFunction : public SLIFunction {
 public:
   MathLinkPutStringFunction()
   {
@@ -44,8 +43,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class XIfstreamFunction : public SLIFunction
-{
+class XIfstreamFunction : public SLIFunction {
 public:
   XIfstreamFunction()
   {
@@ -53,8 +51,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IfstreamFunction : public SLIFunction
-{
+class IfstreamFunction : public SLIFunction {
 public:
   IfstreamFunction()
   {
@@ -62,8 +59,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class OfstreamFunction : public SLIFunction
-{
+class OfstreamFunction : public SLIFunction {
 public:
   OfstreamFunction()
   {
@@ -71,8 +67,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class OfsopenFunction : public SLIFunction
-{
+class OfsopenFunction : public SLIFunction {
 public:
   OfsopenFunction()
   {
@@ -82,8 +77,7 @@ public:
 
 #ifdef HAVE_SSTREAM
 
-class IsstreamFunction : public SLIFunction
-{
+class IsstreamFunction : public SLIFunction {
 public:
   IsstreamFunction()
   {
@@ -91,8 +85,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class OsstreamFunction : public SLIFunction
-{
+class OsstreamFunction : public SLIFunction {
 public:
   OsstreamFunction()
   {
@@ -100,8 +93,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class StrSStreamFunction : public SLIFunction
-{
+class StrSStreamFunction : public SLIFunction {
 public:
   StrSStreamFunction()
   {
@@ -110,8 +102,7 @@ public:
 };
 #else
 
-class OstrstreamFunction : public SLIFunction
-{
+class OstrstreamFunction : public SLIFunction {
 public:
   OstrstreamFunction()
   {
@@ -119,8 +110,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class StrFunction : public SLIFunction
-{
+class StrFunction : public SLIFunction {
 public:
   StrFunction()
   {
@@ -129,8 +119,7 @@ public:
 };
 #endif
 
-class PrintFunction : public SLIFunction
-{
+class PrintFunction : public SLIFunction {
 public:
   PrintFunction()
   {
@@ -138,8 +127,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class PrettyprintFunction : public SLIFunction
-{
+class PrettyprintFunction : public SLIFunction {
 public:
   PrettyprintFunction()
   {
@@ -147,8 +135,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CloseistreamFunction : public SLIFunction
-{
+class CloseistreamFunction : public SLIFunction {
 public:
   CloseistreamFunction()
   {
@@ -156,8 +143,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CloseostreamFunction : public SLIFunction
-{
+class CloseostreamFunction : public SLIFunction {
 public:
   CloseostreamFunction()
   {
@@ -165,8 +151,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class FlushFunction : public SLIFunction
-{
+class FlushFunction : public SLIFunction {
 public:
   FlushFunction()
   {
@@ -174,8 +159,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class EndlFunction : public SLIFunction
-{
+class EndlFunction : public SLIFunction {
 public:
   EndlFunction()
   {
@@ -183,8 +167,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class EndsFunction : public SLIFunction
-{
+class EndsFunction : public SLIFunction {
 public:
   EndsFunction()
   {
@@ -192,8 +175,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class EatwhiteFunction : public SLIFunction
-{
+class EatwhiteFunction : public SLIFunction {
 public:
   EatwhiteFunction()
   {
@@ -201,8 +183,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class SetwFunction : public SLIFunction
-{
+class SetwFunction : public SLIFunction {
 public:
   SetwFunction()
   {
@@ -210,8 +191,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class SetprecisionFunction : public SLIFunction
-{
+class SetprecisionFunction : public SLIFunction {
 public:
   SetprecisionFunction()
   {
@@ -219,8 +199,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IOSFixedFunction : public SLIFunction
-{
+class IOSFixedFunction : public SLIFunction {
 public:
   IOSFixedFunction()
   {
@@ -228,8 +207,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IOSScientificFunction : public SLIFunction
-{
+class IOSScientificFunction : public SLIFunction {
 public:
   IOSScientificFunction()
   {
@@ -237,8 +215,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IOSDefaultFunction : public SLIFunction
-{
+class IOSDefaultFunction : public SLIFunction {
 public:
   IOSDefaultFunction()
   {
@@ -246,8 +223,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IOSShowpointFunction : public SLIFunction
-{
+class IOSShowpointFunction : public SLIFunction {
 public:
   IOSShowpointFunction()
   {
@@ -255,8 +231,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IOSNoshowpointFunction : public SLIFunction
-{
+class IOSNoshowpointFunction : public SLIFunction {
 public:
   IOSNoshowpointFunction()
   {
@@ -264,8 +239,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IOSShowbaseFunction : public SLIFunction
-{
+class IOSShowbaseFunction : public SLIFunction {
 public:
   IOSShowbaseFunction()
   {
@@ -273,8 +247,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IOSNoshowbaseFunction : public SLIFunction
-{
+class IOSNoshowbaseFunction : public SLIFunction {
 public:
   IOSNoshowbaseFunction()
   {
@@ -282,8 +255,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IOSDecFunction : public SLIFunction
-{
+class IOSDecFunction : public SLIFunction {
 public:
   IOSDecFunction()
   {
@@ -291,8 +263,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IOSHexFunction : public SLIFunction
-{
+class IOSHexFunction : public SLIFunction {
 public:
   IOSHexFunction()
   {
@@ -300,8 +271,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IOSOctFunction : public SLIFunction
-{
+class IOSOctFunction : public SLIFunction {
 public:
   IOSOctFunction()
   {
@@ -309,8 +279,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IOSLeftFunction : public SLIFunction
-{
+class IOSLeftFunction : public SLIFunction {
 public:
   IOSLeftFunction()
   {
@@ -318,8 +287,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IOSRightFunction : public SLIFunction
-{
+class IOSRightFunction : public SLIFunction {
 public:
   IOSRightFunction()
   {
@@ -327,8 +295,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IOSInternalFunction : public SLIFunction
-{
+class IOSInternalFunction : public SLIFunction {
 public:
   IOSInternalFunction()
   {
@@ -336,8 +303,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class GetcFunction : public SLIFunction
-{
+class GetcFunction : public SLIFunction {
 public:
   GetcFunction()
   {
@@ -345,8 +311,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class GetsFunction : public SLIFunction
-{
+class GetsFunction : public SLIFunction {
 public:
   GetsFunction()
   {
@@ -354,8 +319,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class GetlineFunction : public SLIFunction
-{
+class GetlineFunction : public SLIFunction {
 public:
   GetlineFunction()
   {
@@ -363,8 +327,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IGoodFunction : public SLIFunction
-{
+class IGoodFunction : public SLIFunction {
 public:
   IGoodFunction()
   {
@@ -372,8 +335,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IClearFunction : public SLIFunction
-{
+class IClearFunction : public SLIFunction {
 public:
   IClearFunction()
   {
@@ -381,8 +343,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class OClearFunction : public SLIFunction
-{
+class OClearFunction : public SLIFunction {
 public:
   OClearFunction()
   {
@@ -390,8 +351,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IFailFunction : public SLIFunction
-{
+class IFailFunction : public SLIFunction {
 public:
   IFailFunction()
   {
@@ -399,8 +359,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class OGoodFunction : public SLIFunction
-{
+class OGoodFunction : public SLIFunction {
 public:
   OGoodFunction()
   {
@@ -408,8 +367,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Cvx_fFunction : public SLIFunction
-{
+class Cvx_fFunction : public SLIFunction {
 public:
   Cvx_fFunction()
   {
@@ -417,8 +375,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IEofFunction : public SLIFunction
-{
+class IEofFunction : public SLIFunction {
 public:
   IEofFunction()
   {
@@ -426,8 +383,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class OEofFunction : public SLIFunction
-{
+class OEofFunction : public SLIFunction {
 public:
   OEofFunction()
   {
@@ -435,8 +391,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class In_AvailFunction : public SLIFunction
-{
+class In_AvailFunction : public SLIFunction {
 public:
   In_AvailFunction()
   {
@@ -444,8 +399,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ReadDoubleFunction : public SLIFunction
-{
+class ReadDoubleFunction : public SLIFunction {
 public:
   ReadDoubleFunction()
   {
@@ -453,8 +407,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ReadIntFunction : public SLIFunction
-{
+class ReadIntFunction : public SLIFunction {
 public:
   ReadIntFunction()
   {
@@ -462,8 +415,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ReadWordFunction : public SLIFunction
-{
+class ReadWordFunction : public SLIFunction {
 public:
   ReadWordFunction()
   {

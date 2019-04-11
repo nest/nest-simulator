@@ -22,8 +22,7 @@
 
 #include "threshold_lin_rate.h"
 
-namespace nest
-{
+namespace nest {
 
 void
 nonlinearities_threshold_lin_rate::get( DictionaryDatum& d ) const

@@ -25,8 +25,7 @@
 // Includes from nestkernel:
 #include "nest_time.h"
 
-namespace nest
-{
+namespace nest {
 
 TimeConverter::TimeConverter()
 {
@@ -37,8 +36,7 @@ TimeConverter::TimeConverter()
 Time
 TimeConverter::from_old_steps( long s_old ) const
 {
-  if ( s_old == Time::LIM_NEG_INF.steps or s_old == Time::LIM_POS_INF.steps )
-  {
+  if ( s_old == Time::LIM_NEG_INF.steps or s_old == Time::LIM_POS_INF.steps ) {
     return Time( Time::step( s_old ) );
   }
   double ms = s_old * OLD_TICS_PER_STEP / OLD_TICS_PER_MS;
@@ -48,8 +46,7 @@ TimeConverter::from_old_steps( long s_old ) const
 Time
 TimeConverter::from_old_tics( tic_t t_old ) const
 {
-  if ( t_old == Time::LIM_NEG_INF.tics or t_old == Time::LIM_POS_INF.tics )
-  {
+  if ( t_old == Time::LIM_NEG_INF.tics or t_old == Time::LIM_POS_INF.tics ) {
     return Time( Time::tic( t_old ) );
   }
   double ms = t_old / OLD_TICS_PER_MS;

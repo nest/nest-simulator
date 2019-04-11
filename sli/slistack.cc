@@ -48,8 +48,7 @@ SeeAlso: npop
 void
 PopFunction::execute( SLIInterpreter* i ) const
 {
-  if ( i->OStack.load() == 0 )
-  {
+  if ( i->OStack.load() == 0 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
@@ -68,8 +67,7 @@ SeeAlso: pop
 void
 NpopFunction::execute( SLIInterpreter* i ) const
 {
-  if ( i->OStack.load() == 0 )
-  {
+  if ( i->OStack.load() == 0 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
@@ -77,13 +75,11 @@ NpopFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
   assert( id != NULL );
   size_t n = id->get();
-  if ( n < i->OStack.load() )
-  {
+  if ( n < i->OStack.load() ) {
     i->EStack.pop();
     i->OStack.pop( n + 1 ); // pop one more and also remove the argument
   }
-  else
-  {
+  else {
     i->raiseerror( i->StackUnderflowError );
   }
 }
@@ -100,8 +96,7 @@ SeeAlso: over, index, copy
 void
 DupFunction::execute( SLIInterpreter* i ) const
 {
-  if ( i->OStack.load() == 0 )
-  {
+  if ( i->OStack.load() == 0 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
@@ -121,8 +116,7 @@ SeeAlso: dup, index, copy
 void
 OverFunction::execute( SLIInterpreter* i ) const
 {
-  if ( i->OStack.load() < 2 )
-  {
+  if ( i->OStack.load() < 2 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
@@ -141,8 +135,7 @@ SeeAlso: roll, rollu, rolld, rot
 void
 ExchFunction::execute( SLIInterpreter* i ) const
 {
-  if ( i->OStack.load() < 2 )
-  {
+  if ( i->OStack.load() < 2 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
@@ -160,8 +153,7 @@ SeeAlso: dup, over, copy
 void
 IndexFunction::execute( SLIInterpreter* i ) const
 {
-  if ( i->OStack.load() == 0 )
-  {
+  if ( i->OStack.load() == 0 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
@@ -169,14 +161,12 @@ IndexFunction::execute( SLIInterpreter* i ) const
   assert( id != NULL );
   size_t pos = id->get();
 
-  if ( pos + 1 < i->OStack.load() )
-  {
+  if ( pos + 1 < i->OStack.load() ) {
     i->EStack.pop();
     i->OStack.pop();
     i->OStack.index( pos );
   }
-  else
-  {
+  else {
     i->raiseerror( i->StackUnderflowError );
   }
 }
@@ -195,26 +185,22 @@ SeeAlso: dup, over, index
 void
 CopyFunction::execute( SLIInterpreter* i ) const
 {
-  if ( i->OStack.load() == 0 )
-  {
+  if ( i->OStack.load() == 0 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
   assert( id != NULL );
   size_t n = id->get();
-  if ( n < i->OStack.load() )
-  {
+  if ( n < i->OStack.load() ) {
     i->EStack.pop();
     i->OStack.pop();
-    for ( size_t p = 0; p < n; ++p )
-    {
+    for ( size_t p = 0; p < n; ++p ) {
       //  Since the stack is growing, the argument to index is constant.
       i->OStack.index( n - 1 );
     }
   }
-  else
-  {
+  else {
     i->raiseerror( i->StackUnderflowError );
   }
 }
@@ -247,31 +233,26 @@ void
 RollFunction::execute( SLIInterpreter* i ) const
 {
   const size_t load = i->OStack.load();
-  if ( load < 2 )
-  {
+  if ( load < 2 ) {
     throw StackUnderflow( 2, load );
   }
 
   IntegerDatum* idn = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( idn == NULL )
-  {
+  if ( idn == NULL ) {
     throw ArgumentType( 1 );
   }
 
   IntegerDatum* idk = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  if ( idk == NULL )
-  {
+  if ( idk == NULL ) {
     throw ArgumentType( 0 );
   }
 
   long& n = idn->get();
-  if ( n < 0 )
-  {
+  if ( n < 0 ) {
     i->raiseerror( i->RangeCheckError );
     return;
   }
-  if ( static_cast< size_t >( n + 2 ) > load )
-  {
+  if ( static_cast< size_t >( n + 2 ) > load ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
@@ -293,8 +274,7 @@ SeeAlso: roll, rolld, rot
 void
 RolluFunction::execute( SLIInterpreter* i ) const
 {
-  if ( i->OStack.load() < 3 )
-  {
+  if ( i->OStack.load() < 3 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
@@ -315,8 +295,7 @@ SeeAlso: roll, rollu, rot
 void
 RolldFunction::execute( SLIInterpreter* i ) const
 {
-  if ( i->OStack.load() < 3 )
-  {
+  if ( i->OStack.load() < 3 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
@@ -397,8 +376,7 @@ SeeAlso: execstack
 void
 RestoreestackFunction::execute( SLIInterpreter* i ) const
 {
-  if ( i->OStack.load() == 0 )
-  {
+  if ( i->OStack.load() == 0 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
@@ -425,8 +403,7 @@ SeeAlso: operandstack, arrayload, arraystore
 void
 RestoreostackFunction::execute( SLIInterpreter* i ) const
 {
-  if ( i->OStack.load() == 0 )
-  {
+  if ( i->OStack.load() == 0 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }

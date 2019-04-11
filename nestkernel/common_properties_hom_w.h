@@ -39,14 +39,12 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Class containing the common properties for all synapses with common weight.
  */
-class CommonPropertiesHomW : public CommonSynapseProperties
-{
+class CommonPropertiesHomW : public CommonSynapseProperties {
 public:
   /**
    * Default constructor.

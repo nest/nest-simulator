@@ -26,15 +26,13 @@
 // Includes from sli:
 #include "sliexceptions.h"
 
-namespace librandom
-{
+namespace librandom {
 
 /**
  * Exception to be thrown if no (suitable)
  * RNG is available.
  */
-class MissingRNG : public SLIException
-{
+class MissingRNG : public SLIException {
   std::string msg_;
 
 public:
@@ -66,8 +64,7 @@ public:
  * Exception to be thrown if no (suitable)
  * RNG is available.
  */
-class UnsuitableRNG : public SLIException
-{
+class UnsuitableRNG : public SLIException {
   std::string msg_;
 
 public:

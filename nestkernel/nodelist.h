@@ -27,8 +27,7 @@
 #include "node.h"
 #include "subnet.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Template for list interface to network tree.
@@ -51,8 +50,7 @@ namespace nest
  *       threads manipulate the same node simultaneously.
  */
 template < typename ListIterator >
-class LocalNodeListBase
-{
+class LocalNodeListBase {
 public:
   typedef ListIterator iterator;
 
@@ -103,8 +101,7 @@ private:
 /**
  * Iterator for post-order traversal of all local nodes in a subnet.
  */
-class LocalNodeListIterator
-{
+class LocalNodeListIterator {
   friend class LocalNodeListBase< LocalNodeListIterator >;
   friend class LocalLeafListIterator;
 
@@ -164,8 +161,7 @@ typedef LocalNodeListBase< LocalNodeListIterator > LocalNodeList;
 /**
  * Iterator for traversal of all local immediate child nodes in a subnet.
  */
-class LocalChildListIterator
-{
+class LocalChildListIterator {
   friend class LocalNodeListBase< LocalChildListIterator >;
 
 private:
@@ -219,8 +215,7 @@ typedef LocalNodeListBase< LocalChildListIterator > LocalChildList;
  * @note Leaf nodes are those children that are not subnets. Empty subnets
  *       are not considered leaves.
  */
-class LocalLeafListIterator
-{
+class LocalLeafListIterator {
   friend class LocalNodeListBase< LocalLeafListIterator >;
 
 private:
@@ -228,8 +223,7 @@ private:
   LocalLeafListIterator( std::vector< Node* >::iterator const& node, std::vector< Node* >::iterator const& list_end )
     : base_it_( node, list_end )
   {
-    while ( not base_it_.is_end_() and not is_leaf_( *base_it_ ) )
-    {
+    while ( not base_it_.is_end_() and not is_leaf_( *base_it_ ) ) {
       ++base_it_;
     }
   }

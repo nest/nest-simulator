@@ -27,11 +27,9 @@
 #include "nest_time.h"
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 
-struct SynIdDelay
-{
+struct SynIdDelay {
   unsigned int delay : NUM_BITS_DELAY;
   unsigned int syn_id : NUM_BITS_SYN_ID;
   bool subsequent_targets : 1;

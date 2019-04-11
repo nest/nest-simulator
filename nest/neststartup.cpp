@@ -192,8 +192,7 @@ CYTHON_unpackConnectionGeneratorDatum( PyObject* obj )
   ConnectionGenerator* cg = NULL;
 
   cg = PNS::unpackConnectionGenerator( obj );
-  if ( cg != NULL )
-  {
+  if ( cg != NULL ) {
     ret = static_cast< Datum* >( new nest::ConnectionGeneratorDatum( cg ) );
   }
 

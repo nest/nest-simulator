@@ -30,8 +30,7 @@
 #include "common_synapse_properties.h"
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: stdp_facetshw_synapse_hom - Synapse type for spike-timing dependent
@@ -145,8 +144,7 @@ class STDPFACETSHWConnectionHom;
  * STDPFACETSHWConnectionHom.
  */
 template < typename targetidentifierT >
-class STDPFACETSHWHomCommonProperties : public CommonSynapseProperties
-{
+class STDPFACETSHWHomCommonProperties : public CommonSynapseProperties {
   friend class STDPFACETSHWConnectionHom< targetidentifierT >;
 
 public:
@@ -207,8 +205,7 @@ private:
  * parameters are the same for all synapses.
  */
 template < typename targetidentifierT >
-class STDPFACETSHWConnectionHom : public Connection< targetidentifierT >
-{
+class STDPFACETSHWConnectionHom : public Connection< targetidentifierT > {
 
 public:
   typedef STDPFACETSHWHomCommonProperties< targetidentifierT > CommonPropertiesType;
@@ -252,8 +249,7 @@ public:
   void send( Event& e, thread t, const STDPFACETSHWHomCommonProperties< targetidentifierT >& );
 
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -390,8 +386,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
     const_cast< STDPFACETSHWHomCommonProperties< targetidentifierT >& >( cp );
 
   // init the readout time
-  if ( init_flag_ == false )
-  {
+  if ( init_flag_ == false ) {
     synapse_id_ = cp.no_synapses_;
     ++cp_nonconst.no_synapses_;
     cp_nonconst.calc_readout_cycle_duration_();
@@ -401,8 +396,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
   }
 
   // STDP controller is processing this synapse (synapse driver)?
-  if ( t_spike > next_readout_time_ )
-  {
+  if ( t_spike > next_readout_time_ ) {
     // transform weight to discrete representation
     discrete_weight_ = weight_to_entry_( weight_, cp_nonconst.weight_per_lut_entry_ );
 
@@ -411,46 +405,36 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
     bool eval_1 = eval_function_( a_causal_, a_acausal_, a_thresh_th_, a_thresh_tl_, cp.configbit_1_ );
 
     // select LUT, update weight and reset capacitors
-    if ( eval_0 == true && eval_1 == false )
-    {
+    if ( eval_0 == true && eval_1 == false ) {
       discrete_weight_ = lookup_( discrete_weight_, cp.lookuptable_0_ );
-      if ( cp.reset_pattern_[ 0 ] )
-      {
+      if ( cp.reset_pattern_[ 0 ] ) {
         a_causal_ = 0;
       }
-      if ( cp.reset_pattern_[ 1 ] )
-      {
+      if ( cp.reset_pattern_[ 1 ] ) {
         a_acausal_ = 0;
       }
     }
-    else if ( eval_0 == false && eval_1 == true )
-    {
+    else if ( eval_0 == false && eval_1 == true ) {
       discrete_weight_ = lookup_( discrete_weight_, cp.lookuptable_1_ );
-      if ( cp.reset_pattern_[ 2 ] )
-      {
+      if ( cp.reset_pattern_[ 2 ] ) {
         a_causal_ = 0;
       }
-      if ( cp.reset_pattern_[ 3 ] )
-      {
+      if ( cp.reset_pattern_[ 3 ] ) {
         a_acausal_ = 0;
       }
     }
-    else if ( eval_0 == true && eval_1 == true )
-    {
+    else if ( eval_0 == true && eval_1 == true ) {
       discrete_weight_ = lookup_( discrete_weight_, cp.lookuptable_2_ );
-      if ( cp.reset_pattern_[ 4 ] )
-      {
+      if ( cp.reset_pattern_[ 4 ] ) {
         a_causal_ = 0;
       }
-      if ( cp.reset_pattern_[ 5 ] )
-      {
+      if ( cp.reset_pattern_[ 5 ] ) {
         a_acausal_ = 0;
       }
     }
     // do nothing, if eval_0 == false and eval_1 == false
 
-    while ( t_spike > next_readout_time_ )
-    {
+    while ( t_spike > next_readout_time_ ) {
       next_readout_time_ += cp_nonconst.readout_cycle_duration_;
     }
     // std::cout << "synapse " << synapse_id_ << " updated at " << t_spike << ",
@@ -484,13 +468,11 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
     plus_dt = ( finish->t_ + dendritic_delay ) - t_spike;
   }
 
-  if ( minus_dt != 0 )
-  {
+  if ( minus_dt != 0 ) {
     a_causal_ += std::exp( minus_dt / cp.tau_plus_ );
   }
 
-  if ( plus_dt != 0 )
-  {
+  if ( plus_dt != 0 ) {
     a_acausal_ += std::exp( plus_dt / cp.tau_minus_ );
   }
 

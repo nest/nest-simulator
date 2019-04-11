@@ -36,8 +36,7 @@
 #include "ring_buffer.h"
 
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: inhomogeneous_poisson_generator - provides Poisson spike trains
@@ -80,8 +79,7 @@ Authors: Renato Duarte, Barna Zajzon
 SeeAlso: sinusoidal_poisson_generator, step_current_generator, Device,
        StimulatingDevice
 */
-class inhomogeneous_poisson_generator : public DeviceNode
-{
+class inhomogeneous_poisson_generator : public DeviceNode {
 
 public:
   inhomogeneous_poisson_generator();
@@ -119,8 +117,7 @@ private:
   /*
    * Store independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     std::vector< Time > rate_times_;
     std::vector< double_t > rate_values_;
 
@@ -140,16 +137,14 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     size_t idx_;    //!< index of current amplitude
     double_t rate_; //!< current amplitude
   };
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
     double_t h_;                              //! time resolution (ms)
   };
@@ -173,14 +168,12 @@ inhomogeneous_poisson_generator::send_test_event( Node& target,
 
   // to ensure correct overloading resolution, we need explicit event types
   // therefore, we need to duplicate the code here
-  if ( dummy_target )
-  {
+  if ( dummy_target ) {
     DSSpikeEvent e;
     e.set_sender( *this );
     return target.handles_test_event( e, receptor_type );
   }
-  else
-  {
+  else {
     SpikeEvent e;
     e.set_sender( *this );
     return target.handles_test_event( e, receptor_type );

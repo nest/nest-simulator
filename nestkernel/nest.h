@@ -41,8 +41,7 @@
 #include "arraydatum.h"
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 void init_nest( int* argc, char** argv[] );
 void fail_exit( int exitcode );

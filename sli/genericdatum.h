@@ -34,8 +34,7 @@
 /***********************************************************/
 
 template < class D, SLIType* slt >
-class GenericDatum : public TypedDatum< slt >
-{
+class GenericDatum : public TypedDatum< slt > {
 
   virtual Datum*
   clone( void ) const
@@ -116,8 +115,7 @@ public:
 
     //    std::cerr << "d = " << d << " ddc = " << ddc << " dat = " << dat <<
     //    std::endl;
-    if ( ddc == NULL )
-    {
+    if ( ddc == NULL ) {
       return false;
     }
 

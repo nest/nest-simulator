@@ -49,8 +49,7 @@
 #include "dictdatum.h"
 #include "name.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * Function computing right-hand side of ODE for GSL solver.
  * @note Must be declared here so we can befriend it in class.
@@ -159,8 +158,7 @@ Author: Plesser
 SeeAlso: iaf_cond_alpha
 
 */
-class iaf_cond_alpha_mc : public Archiving_Node
-{
+class iaf_cond_alpha_mc : public Archiving_Node {
 
   // Boilerplate function declarations --------------------------------
 
@@ -199,13 +197,7 @@ private:
   // Enumerations and constants specifying structure and properties ----
 
   //! Compartments, NCOMP is number
-  enum Compartments_
-  {
-    SOMA = 0,
-    PROX,
-    DIST,
-    NCOMP
-  };
+  enum Compartments_ { SOMA = 0, PROX, DIST, NCOMP };
 
   /**
    * Minimal spike receptor type.
@@ -217,8 +209,7 @@ private:
   /**
    * Spike receptors.
    */
-  enum SpikeSynapseTypes
-  {
+  enum SpikeSynapseTypes {
     SOMA_EXC = MIN_SPIKE_RECEPTOR,
     SOMA_INH,
     PROX_EXC,
@@ -240,13 +231,7 @@ private:
   /**
    * Current receptors.
    */
-  enum CurrentSynapseTypes
-  {
-    I_SOMA = MIN_CURR_RECEPTOR,
-    I_PROX,
-    I_DIST,
-    SUP_CURR_RECEPTOR
-  };
+  enum CurrentSynapseTypes { I_SOMA = MIN_CURR_RECEPTOR, I_PROX, I_DIST, SUP_CURR_RECEPTOR };
 
   static const size_t NUM_CURR_RECEPTORS = SUP_CURR_RECEPTOR - MIN_CURR_RECEPTOR;
 
@@ -278,8 +263,7 @@ private:
    *       the iteration function on the node (Stroustrup, p 418). But
    *       this appears to involved, and the extra indirections cost.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     double V_th;                //!< Threshold Potential in mV
     double V_reset;             //!< Reset Potential in mV
     double t_ref;               //!< Refractory period in ms
@@ -314,8 +298,7 @@ private:
    *       of C-style array.
    */
 public:
-  struct State_
-  {
+  struct State_ {
 
     /**
      * Elements of state vector.
@@ -323,15 +306,7 @@ public:
      * The state variables are stored in contiguous blocks for each
      * compartment, beginning with the soma.
      */
-    enum StateVecElems_
-    {
-      V_M = 0,
-      DG_EXC,
-      G_EXC,
-      DG_INH,
-      G_INH,
-      STATE_VEC_COMPS
-    };
+    enum StateVecElems_ { V_M = 0, DG_EXC, G_EXC, DG_INH, G_INH, STATE_VEC_COMPS };
 
     //! total size of state vector
     static const size_t STATE_VEC_SIZE = STATE_VEC_COMPS * NCOMP;
@@ -367,8 +342,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( iaf_cond_alpha_mc& ); //!<Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, iaf_cond_alpha_mc& );
@@ -410,8 +384,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     /** initial value to normalise excitatory synaptic conductance */
     double PSConInit_E_[ NCOMP ];
 
@@ -469,14 +442,11 @@ iaf_cond_alpha_mc::send_test_event( Node& target, rport receptor_type, synindex,
 inline port
 iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_SPIKE_RECEPTOR || receptor_type >= SUP_SPIKE_RECEPTOR )
-  {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
-    {
+  if ( receptor_type < MIN_SPIKE_RECEPTOR || receptor_type >= SUP_SPIKE_RECEPTOR ) {
+    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR ) {
       throw UnknownReceptorType( receptor_type, get_name() );
     }
-    else
-    {
+    else {
       throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
     }
   }
@@ -486,14 +456,11 @@ iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_CURR_RECEPTOR || receptor_type >= SUP_CURR_RECEPTOR )
-  {
-    if ( receptor_type >= 0 && receptor_type < MIN_CURR_RECEPTOR )
-    {
+  if ( receptor_type < MIN_CURR_RECEPTOR || receptor_type >= SUP_CURR_RECEPTOR ) {
+    if ( receptor_type >= 0 && receptor_type < MIN_CURR_RECEPTOR ) {
       throw IncompatibleReceptorType( receptor_type, get_name(), "CurrentEvent" );
     }
-    else
-    {
+    else {
       throw UnknownReceptorType( receptor_type, get_name() );
     }
   }
@@ -503,14 +470,11 @@ iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
-    {
+  if ( receptor_type != 0 ) {
+    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR ) {
       throw UnknownReceptorType( receptor_type, get_name() );
     }
-    else
-    {
+    else {
       throw IncompatibleReceptorType( receptor_type, get_name(), "DataLoggingRequest" );
     }
   }

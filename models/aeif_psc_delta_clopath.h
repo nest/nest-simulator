@@ -43,8 +43,7 @@
 #include "universal_data_logger.h"
 
 
-namespace nest
-{
+namespace nest {
 /**
  * Function computing right-hand side of ODE for GSL solver.
  * @note Must be declared here so we can befriend it in class.
@@ -159,8 +158,7 @@ References:
 
 SeeAlso: aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
 */
-class aeif_psc_delta_clopath : public Clopath_Archiving_Node
-{
+class aeif_psc_delta_clopath : public Clopath_Archiving_Node {
 
 public:
   aeif_psc_delta_clopath();
@@ -209,8 +207,7 @@ private:
   // ----------------------------------------------------------------
 
   //! Independent parameters
-  struct Parameters_
-  {
+  struct Parameters_ {
     double V_peak_;  //!< Spike detection threshold in mV
     double V_reset_; //!< Reset Potential in mV
     double t_ref_;   //!< Refractory period in ms
@@ -252,16 +249,14 @@ public:
    * @note Copy constructor and assignment operator required because
    *       of C-style array.
    */
-  struct State_
-  {
+  struct State_ {
     /**
      * Enumeration identifying elements in state array State_::y_.
      * The state vector must be passed to GSL as a C array. This enum
      * identifies the elements of the vector. It must be public to be
      * accessible from the iteration function.
      */
-    enum StateVecElems
-    {
+    enum StateVecElems {
       V_M = 0,
       W,           // 1
       Z,           // 2
@@ -290,8 +285,7 @@ public:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( aeif_psc_delta_clopath& );                  //!<Sets buffer pointers to 0
     Buffers_( const Buffers_&, aeif_psc_delta_clopath& ); //!<Sets buffer pointers to 0
 
@@ -330,8 +324,7 @@ public:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     /**
      * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
      * S_.y_[ State_::V_TH ] if Delta_T == 0.
@@ -375,8 +368,7 @@ aeif_psc_delta_clopath::send_test_event( Node& target, rport receptor_type, syni
 inline port
 aeif_psc_delta_clopath::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -385,8 +377,7 @@ aeif_psc_delta_clopath::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 aeif_psc_delta_clopath::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -395,8 +386,7 @@ aeif_psc_delta_clopath::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 aeif_psc_delta_clopath::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

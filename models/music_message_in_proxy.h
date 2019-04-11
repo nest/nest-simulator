@@ -46,8 +46,7 @@
 #include "arraydatum.h"
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 /** @BeginDocumentation
 Name: music_message_in_proxy - A device which receives message strings from
                               MUSIC.
@@ -96,8 +95,7 @@ Availability: Only when compiled with MUSIC
 
 SeeAlso: music_event_out_proxy, music_event_in_proxy, music_cont_in_proxy
 */
-class MsgHandler : public MUSIC::MessageHandler
-{
+class MsgHandler : public MUSIC::MessageHandler {
   ArrayDatum messages;                 //!< The buffer for incoming message
   std::vector< double > message_times; //!< The buffer for incoming message
 
@@ -131,8 +129,7 @@ public:
  * MUSIC port. The timestamps of the events also contain offsets,
  * which makes it also useful for precise spikes.
  */
-class music_message_in_proxy : public DeviceNode
-{
+class music_message_in_proxy : public DeviceNode {
 
 public:
   music_message_in_proxy();
@@ -165,8 +162,7 @@ private:
   // ------------------------------------------------------------
   struct State_;
 
-  struct Parameters_
-  {
+  struct Parameters_ {
     std::string port_name_;     //!< the name of MUSIC port to connect to
     double acceptable_latency_; //!< the acceptable latency of the port
 
@@ -183,8 +179,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
     bool published_; //!< indicates whether this node has been published already
                      //!< with MUSIC
     int port_width_; //!< the width of the MUSIC port
@@ -198,15 +193,13 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     MsgHandler message_handler_;
   };
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
     MUSIC::MessageInputPort* MP_; //!< The MUSIC cont port for input of data
   };
 
@@ -237,14 +230,11 @@ music_message_in_proxy::set_status( const DictionaryDatum& d )
   stmp.set( d, P_ ); // throws if BadProperty
 
   long nm = 0;
-  if ( updateValue< long >( d, names::n_messages, nm ) )
-  {
-    if ( nm == 0 )
-    {
+  if ( updateValue< long >( d, names::n_messages, nm ) ) {
+    if ( nm == 0 ) {
       B_.message_handler_.clear();
     }
-    else
-    {
+    else {
       throw BadProperty( "n_messaged can only be set to 0." );
     }
   }

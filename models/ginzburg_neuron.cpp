@@ -22,8 +22,7 @@
 
 #include "ginzburg_neuron.h"
 
-namespace nest
-{
+namespace nest {
 
 void
 gainfunction_ginzburg::get( DictionaryDatum& d ) const

@@ -38,8 +38,7 @@
 #include "arraydatum.h"
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 class Node;
 class ConnectorModel;
 
@@ -50,8 +49,7 @@ class ConnectorModel;
  * - first dim: threads
  * - second dim: local nodes/neurons
  */
-class TargetTableDevices
-{
+class TargetTableDevices {
 private:
   //! 3d structure storing connections from neurons to devices
   std::vector< std::vector< std::vector< ConnectorBase* > > > target_to_devices_;
@@ -228,10 +226,8 @@ TargetTableDevices::send_from_device( const thread tid,
 {
   for ( std::vector< ConnectorBase* >::iterator it = target_from_devices_[ tid ][ ldid ].begin();
         it != target_from_devices_[ tid ][ ldid ].end();
-        ++it )
-  {
-    if ( *it != NULL )
-    {
+        ++it ) {
+    if ( *it != NULL ) {
       ( *it )->send_to_all( tid, cm, e );
     }
   }

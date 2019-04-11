@@ -31,8 +31,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: aeif_cond_alpha_RK5 - Conductance based exponential integrate-and-fire
@@ -112,8 +111,7 @@ References: Brette R and Gerstner W (2005) Adaptive Exponential
 
 SeeAlso: iaf_cond_alpha, aeif_cond_exp, aeif_cond_alpha
 */
-class aeif_cond_alpha_RK5 : public Archiving_Node
-{
+class aeif_cond_alpha_RK5 : public Archiving_Node {
 
 public:
   typedef void ( aeif_cond_alpha_RK5::*func_ptr )( const double*, double* );
@@ -165,8 +163,7 @@ private:
   // ----------------------------------------------------------------
 
   //! Independent parameters
-  struct Parameters_
-  {
+  struct Parameters_ {
     double V_peak_;  //!< Spike detection threshold in mV
     double V_reset_; //!< Reset Potential in mV
     double t_ref_;   //!< Refractory period in ms
@@ -201,16 +198,14 @@ public:
    * @note Copy constructor and assignment operator required because
    *       of C-style array.
    */
-  struct State_
-  {
+  struct State_ {
     /**
      * Enumeration identifying elements in state array State_::y_.
      * The state vector is passed as a C array. This enum
      * identifies the elements of the vector. It must be public to be
      * accessible from the iteration function.
      */
-    enum StateVecElems
-    {
+    enum StateVecElems {
       V_M = 0,
       DG_EXC, // 1
       G_EXC,  // 2
@@ -246,8 +241,7 @@ public:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( aeif_cond_alpha_RK5& );                  //!<Sets buffer pointers to 0
     Buffers_( const Buffers_&, aeif_cond_alpha_RK5& ); //!<Sets buffer pointers to 0
 
@@ -281,8 +275,7 @@ public:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     /** initial value to normalise excitatory synaptic conductance */
     double g0_ex_;
 
@@ -334,8 +327,7 @@ aeif_cond_alpha_RK5::send_test_event( Node& target, rport receptor_type, syninde
 inline port
 aeif_cond_alpha_RK5::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -344,8 +336,7 @@ aeif_cond_alpha_RK5::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 aeif_cond_alpha_RK5::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -354,8 +345,7 @@ aeif_cond_alpha_RK5::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 aeif_cond_alpha_RK5::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

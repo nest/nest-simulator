@@ -38,12 +38,10 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 
 // entry in the spiking history
-class spikecounter
-{
+class spikecounter {
 public:
   spikecounter( double spike_time, double multiplicity );
 

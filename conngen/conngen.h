@@ -39,8 +39,7 @@
 #include "dictdatum.h"
 #include "stringdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 void cg_connect( ConnectionGeneratorDatum& cg,
   const GIDCollection& source_gids,

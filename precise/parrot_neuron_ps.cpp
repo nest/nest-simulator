@@ -39,8 +39,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 parrot_neuron_ps::parrot_neuron_ps()
   : Archiving_Node()
@@ -63,13 +62,11 @@ parrot_neuron_ps::update( Time const& origin, long const from, long const to )
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
-  if ( from == 0 )
-  {
+  if ( from == 0 ) {
     B_.events_.prepare_delivery();
   }
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     // time at start of update step
     long const T = origin.get_steps() + lag;
 
@@ -77,8 +74,7 @@ parrot_neuron_ps::update( Time const& origin, long const from, long const to )
     double ev_multiplicity; // parrot stores multiplicity in weight
     bool end_of_refract;
 
-    while ( B_.events_.get_next_spike( T, false, ev_offset, ev_multiplicity, end_of_refract ) )
-    {
+    while ( B_.events_.get_next_spike( T, false, ev_offset, ev_multiplicity, end_of_refract ) ) {
       const unsigned long multiplicity = static_cast< unsigned long >( ev_multiplicity );
 
       // send spike
@@ -87,8 +83,7 @@ parrot_neuron_ps::update( Time const& origin, long const from, long const to )
       se.set_offset( ev_offset );
       kernel().event_delivery_manager.send( *this, se, lag );
 
-      for ( unsigned long i = 0; i < multiplicity; ++i )
-      {
+      for ( unsigned long i = 0; i < multiplicity; ++i ) {
         set_spiketime( Time::step( T + 1 ), ev_offset );
       }
     }
@@ -112,8 +107,7 @@ void
 parrot_neuron_ps::handle( SpikeEvent& e )
 {
   // Repeat only spikes incoming on port 0, port 1 will be ignored
-  if ( 0 == e.get_rport() )
-  {
+  if ( 0 == e.get_rport() ) {
     assert( e.get_delay_steps() > 0 );
 
     // We need to compute the absolute time stamp of the delivery time

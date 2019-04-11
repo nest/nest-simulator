@@ -44,8 +44,7 @@
 #include "dictutils.h"
 #include "doubledatum.h"
 
-namespace nest
-{
+namespace nest {
 
 class ConnectorModel;
 
@@ -68,8 +67,7 @@ class ConnectorModel;
   *
   * @ingroup event_interface
   */
-class ConnTestDummyNodeBase : public Node
-{
+class ConnTestDummyNodeBase : public Node {
   void
   calibrate()
   {
@@ -115,8 +113,7 @@ class ConnTestDummyNodeBase : public Node
  * (i.e. after Event::operator() has been called).
  */
 template < typename targetidentifierT >
-class Connection
-{
+class Connection {
 
 public:
   // this typedef may be overwritten in the derived connection classes in order
@@ -343,8 +340,7 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   // interpreted in target?
   // note that we here use a bitwise and operation (&), because we interpret
   // each bit in the signal type as a collection of individual flags
-  if ( not( source.sends_signal() & target.receives_signal() ) )
-  {
+  if ( not( source.sends_signal() & target.receives_signal() ) ) {
     throw IllegalConnection();
   }
 
@@ -364,8 +360,7 @@ inline void
 Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& )
 {
   double delay;
-  if ( updateValue< double >( d, names::delay, delay ) )
-  {
+  if ( updateValue< double >( d, names::delay, delay ) ) {
     kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
     syn_id_delay_.set_delay_ms( delay );
   }
@@ -385,8 +380,7 @@ Connection< targetidentifierT >::calibrate( const TimeConverter& tc )
   Time t = tc.from_old_steps( syn_id_delay_.delay );
   syn_id_delay_.delay = t.get_steps();
 
-  if ( syn_id_delay_.delay == 0 )
-  {
+  if ( syn_id_delay_.delay == 0 ) {
     syn_id_delay_.delay = 1;
   }
 }

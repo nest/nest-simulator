@@ -205,8 +205,7 @@
  * Namespace for random number generators.
  */
 
-namespace librandom
-{
+namespace librandom {
 
 class RandomGen;
 
@@ -232,8 +231,7 @@ typedef lockPTR< RandomGen > RngPtr;
  * @ingroup RandomNumberGenerators
  */
 
-class RandomGen
-{
+class RandomGen {
 public:
   /**
    * @note All classes derived from RandomGen should
@@ -291,8 +289,7 @@ private:
  * Factory class for random generators.
  * @ingroup RandomNumberGenerators
  */
-class GenericRNGFactory
-{
+class GenericRNGFactory {
 public:
   /**
    * Create generator with given seed.
@@ -314,8 +311,7 @@ public:
  * @ingroup RandomNumberGenerators
  */
 template < typename Generator >
-class BuiltinRNGFactory : public GenericRNGFactory
-{
+class BuiltinRNGFactory : public GenericRNGFactory {
   RngPtr
   create( unsigned long s ) const
   {
@@ -339,8 +335,7 @@ RandomGen::drandpos( void )
 {
   double r;
 
-  do
-  {
+  do {
     r = drand();
   } while ( r == 0.0 );
 

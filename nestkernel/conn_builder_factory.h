@@ -34,8 +34,7 @@
 #include "lockptrdatum.h"
 #include "name.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * Generic factory class for ConnBuilder objects.
  *
@@ -43,8 +42,7 @@ namespace nest
  * of ConnBuilder subclasses and object creation.
  *
  */
-class GenericConnBuilderFactory
-{
+class GenericConnBuilderFactory {
 public:
   virtual ~GenericConnBuilderFactory()
   {
@@ -58,8 +56,7 @@ public:
  */
 
 template < typename ConnBuilderType >
-class ConnBuilderFactory : public GenericConnBuilderFactory
-{
+class ConnBuilderFactory : public GenericConnBuilderFactory {
 
 public:
   //! create conn builder

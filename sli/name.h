@@ -51,8 +51,7 @@
  *
  */
 
-class Name
-{
+class Name {
 
 public:
   typedef unsigned int handle_t;

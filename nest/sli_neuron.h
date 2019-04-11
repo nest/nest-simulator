@@ -34,8 +34,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: sli_neuron - neuron with SLI callback
@@ -94,8 +93,7 @@ SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, testsuite::test_sli_neuron
 /**
  *  neuron with state and dynamics defined as SLI code
  */
-class sli_neuron : public Archiving_Node
-{
+class sli_neuron : public Archiving_Node {
 
 public:
   sli_neuron();
@@ -150,8 +148,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( sli_neuron& );
     Buffers_( const Buffers_&, sli_neuron& );
 
@@ -172,8 +169,7 @@ private:
   get_V_m_() const
   {
     double vm = 0.0;
-    if ( state_->known( names::V_m ) )
-    {
+    if ( state_->known( names::V_m ) ) {
       vm = getValue< double >( state_, names::V_m );
     }
 
@@ -224,8 +220,7 @@ sli_neuron::send_test_event( Node& target, rport receptor_type, synindex, bool )
 inline port
 sli_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -234,8 +229,7 @@ sli_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 sli_neuron::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -244,8 +238,7 @@ sli_neuron::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 sli_neuron::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
@@ -277,8 +270,7 @@ sli_neuron::set_status( const DictionaryDatum& d )
   // Later, the state dictionary will be in the interpreter and values are
   // changed automatically. SetStatus is then only needed to change properties
   // of Archiving_Node.
-  for ( TokenMap::const_iterator it = d->begin(); it != d->end(); ++it )
-  {
+  for ( TokenMap::const_iterator it = d->begin(); it != d->end(); ++it ) {
     state_->insert( it->first, it->second );
     it->second.set_access_flag();
   }

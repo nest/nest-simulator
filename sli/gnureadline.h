@@ -32,8 +32,7 @@
 #include "slimodule.h"
 #include "slitype.h"
 
-class GNUReadline : public SLIModule
-{
+class GNUReadline : public SLIModule {
 public:
   GNUReadline()
   {
@@ -48,14 +47,12 @@ public:
 
   void init( SLIInterpreter* );
 
-  class GNUReadlineFunction : public SLIFunction
-  {
+  class GNUReadlineFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class GNUAddhistoryFunction : public SLIFunction
-  {
+  class GNUAddhistoryFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };

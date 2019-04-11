@@ -67,8 +67,7 @@ Author: Jochen Martin Eppler
 */
 
 
-namespace librandom
-{
+namespace librandom {
 
 /**
  Class GSL_BinomialRandomDev
@@ -89,8 +88,7 @@ namespace librandom
  @ingroup RandomDeviateGenerators
 */
 
-class GSL_BinomialRandomDev : public RandomDev
-{
+class GSL_BinomialRandomDev : public RandomDev {
 public:
   // accept only lockPTRs for initialization,
   // otherwise creation of a lock ptr would

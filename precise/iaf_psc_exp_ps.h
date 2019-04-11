@@ -41,8 +41,7 @@
 // Includes from precise:
 #include "slice_ring_buffer.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: iaf_psc_exp_ps - Leaky integrate-and-fire neuron
@@ -121,8 +120,7 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 SeeAlso: iaf_psc_exp, iaf_psc_alpha_canon
 */
-class iaf_psc_exp_ps : public Archiving_Node
-{
+class iaf_psc_exp_ps : public Archiving_Node {
 public:
   /** Basic constructor.
       This constructor should only be used by GenericModel to create
@@ -241,8 +239,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     /** Membrane time constant in ms. */
     double tau_m_;
 
@@ -292,8 +289,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
     double y0_;    //!< External input current
     double y1_ex_; //!< Exc. exponetial current
     double y1_in_; //!< Inh. exponetial current
@@ -320,8 +316,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( iaf_psc_exp_ps& );
     Buffers_( const Buffers_&, iaf_psc_exp_ps& );
 
@@ -341,8 +336,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     double h_ms_;           //!< Time resolution [ms]
     long refractory_steps_; //!< Refractory time in steps
     double expm1_tau_m_;    //!< exp(-h/tau_m) - 1
@@ -396,8 +390,7 @@ nest::iaf_psc_exp_ps::send_test_event( Node& target, rport receptor_type, synind
 inline port
 iaf_psc_exp_ps::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -406,8 +399,7 @@ iaf_psc_exp_ps::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -416,8 +408,7 @@ iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

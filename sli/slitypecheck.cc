@@ -48,16 +48,14 @@ void
 TrieFunction::execute( SLIInterpreter* i ) const
 {
 
-  if ( i->OStack.load() < 1 )
-  {
+  if ( i->OStack.load() < 1 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
 
   LiteralDatum* name = dynamic_cast< LiteralDatum* >( i->OStack.top().datum() );
 
-  if ( name == NULL )
-  {
+  if ( name == NULL ) {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
@@ -89,16 +87,14 @@ SeeAlso: trie
 void
 AddtotrieFunction::execute( SLIInterpreter* i ) const
 {
-  if ( i->OStack.load() < 3 )
-  {
+  if ( i->OStack.load() < 3 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }
 
   TrieDatum* trie = dynamic_cast< TrieDatum* >( i->OStack.pick( 2 ).datum() );
 
-  if ( trie == NULL )
-  {
+  if ( trie == NULL ) {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
@@ -108,14 +104,12 @@ AddtotrieFunction::execute( SLIInterpreter* i ) const
   // Construct a TypeArray from the TokenArray
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
 
-  if ( ad == NULL )
-  {
+  if ( ad == NULL ) {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
 
-  if ( ad->size() == 0 )
-  {
+  if ( ad->size() == 0 ) {
     i->message( SLIInterpreter::M_ERROR, "addtotrie", "type-array must not be empty." );
     i->message( SLIInterpreter::M_ERROR, "addtotrie", "No change was made to the trie." );
     i->raiseerror( i->ArgumentTypeError );
@@ -123,12 +117,10 @@ AddtotrieFunction::execute( SLIInterpreter* i ) const
   }
 
 
-  for ( Token* t = ad->end() - 1; t >= ad->begin(); --t )
-  {
+  for ( Token* t = ad->end() - 1; t >= ad->begin(); --t ) {
     LiteralDatum* nd = dynamic_cast< LiteralDatum* >( t->datum() );
 
-    if ( nd == NULL )
-    {
+    if ( nd == NULL ) {
       std::ostringstream message;
       message << "In trie " << trie->getname() << ". "
               << "Error at array position " << t - ad->begin() << '.' << std::ends;
@@ -324,8 +316,7 @@ Examples: 1 type -> /integertype
 void
 TypeFunction::execute( SLIInterpreter* i ) const
 {
-  if ( i->OStack.load() == 0 )
-  {
+  if ( i->OStack.load() == 0 ) {
     i->raiseerror( i->StackUnderflowError );
     return;
   }

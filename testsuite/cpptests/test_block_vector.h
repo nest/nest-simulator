@@ -39,8 +39,7 @@ BOOST_AUTO_TEST_CASE( test_size )
   // TODO: check both branches of if test in size()
   BlockVector< int > block_vector;
   int N = block_vector.get_max_block_size() + 10;
-  for ( int i = 0; i < N; ++i )
-  {
+  for ( int i = 0; i < N; ++i ) {
     block_vector.push_back( i );
   }
 
@@ -51,8 +50,7 @@ BOOST_AUTO_TEST_CASE( test_random_access )
 {
   BlockVector< int > block_vector;
   int N = block_vector.get_max_block_size() + 10;
-  for ( int i = 0; i < N; ++i )
-  {
+  for ( int i = 0; i < N; ++i ) {
     block_vector.push_back( i );
   }
 
@@ -65,8 +63,7 @@ BOOST_AUTO_TEST_CASE( test_clear )
 {
   BlockVector< int > block_vector;
   int N = block_vector.get_max_block_size() + 10;
-  for ( int i = 0; i < N; ++i )
-  {
+  for ( int i = 0; i < N; ++i ) {
     block_vector.push_back( i );
   }
 
@@ -75,8 +72,7 @@ BOOST_AUTO_TEST_CASE( test_clear )
   BOOST_REQUIRE( block_vector.size() == 0 );
 
   int n_elements = 0;
-  for ( int& it : block_vector )
-  {
+  for ( int& it : block_vector ) {
     BOOST_TEST_MESSAGE( it );
     ++n_elements;
   }
@@ -87,8 +83,7 @@ BOOST_AUTO_TEST_CASE( test_erase )
 {
   int N = 10;
   BlockVector< int > block_vector;
-  for ( int i = 0; i < N; ++i )
-  {
+  for ( int i = 0; i < N; ++i ) {
     block_vector.push_back( i );
   }
 
@@ -119,8 +114,7 @@ BOOST_AUTO_TEST_CASE( test_begin )
 {
   BlockVector< int > block_vector;
   int N = block_vector.get_max_block_size() + 10;
-  for ( int i = 0; i < N; ++i )
-  {
+  for ( int i = 0; i < N; ++i ) {
     block_vector.push_back( i );
   }
 
@@ -132,8 +126,7 @@ BOOST_AUTO_TEST_CASE( test_end )
 {
   BlockVector< int > block_vector;
   int N = block_vector.get_max_block_size() + 10;
-  for ( int i = 0; i < N; ++i )
-  {
+  for ( int i = 0; i < N; ++i ) {
     block_vector.push_back( i );
   }
 
@@ -146,23 +139,20 @@ BOOST_AUTO_TEST_CASE( test_iterating )
 {
   BlockVector< int > block_vector;
   int N = block_vector.get_max_block_size() + 10;
-  for ( int i = 0; i < N; ++i )
-  {
+  for ( int i = 0; i < N; ++i ) {
     block_vector.push_back( i );
   }
 
   // Iterating forwards
   int j = 0;
-  for ( int& it : block_vector )
-  {
+  for ( int& it : block_vector ) {
     BOOST_REQUIRE( it == j );
     ++j;
   }
 
   // Iterator decrement operator
   int k = N - 1;
-  for ( BlockVector< int >::const_iterator it = --block_vector.end(); it != block_vector.begin(); --it )
-  {
+  for ( BlockVector< int >::const_iterator it = --block_vector.end(); it != block_vector.begin(); --it ) {
     BOOST_REQUIRE( *it == k );
     --k;
   }
@@ -172,8 +162,7 @@ BOOST_AUTO_TEST_CASE( test_iterator_arithmetic )
 {
   BlockVector< int > block_vector;
   int N = block_vector.get_max_block_size() + 10;
-  for ( int i = 0; i < N; ++i )
-  {
+  for ( int i = 0; i < N; ++i ) {
     block_vector.push_back( i );
   }
   BOOST_REQUIRE( *( block_vector.begin() + 1 ) == block_vector[ 1 ] );
@@ -214,8 +203,7 @@ BOOST_AUTO_TEST_CASE( test_iterator_assign )
   BlockVector< int > block_vector;
   int N = block_vector.get_max_block_size() + 10;
   int shift = N - 5;
-  for ( int i = 0; i < N; ++i )
-  {
+  for ( int i = 0; i < N; ++i ) {
     block_vector.push_back( i );
   }
 
@@ -224,8 +212,7 @@ BOOST_AUTO_TEST_CASE( test_iterator_assign )
   int current_value = *it;
   auto it_copy = it;
   // increment the iterator a bit to make it different
-  for ( int j = 0; j < shift; ++j )
-  {
+  for ( int j = 0; j < shift; ++j ) {
     ++it;
   }
 
@@ -238,8 +225,7 @@ BOOST_AUTO_TEST_CASE( test_iterator_compare )
 {
   BlockVector< int > block_vector;
   int N = block_vector.get_max_block_size() + 10;
-  for ( int i = 0; i < N; ++i )
-  {
+  for ( int i = 0; i < N; ++i ) {
     block_vector.push_back( i );
   }
   BOOST_REQUIRE( block_vector.begin() < block_vector.end() );

@@ -34,8 +34,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * A thread-safe array to coordinate progress across threads during
@@ -44,8 +43,7 @@ namespace nest
  * assignments.
  */
 
-class CompletedChecker
-{
+class CompletedChecker {
 private:
   /**
    * Array holding status values for all threads. Must be of type

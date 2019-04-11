@@ -31,8 +31,7 @@
 #include "ring_buffer.h"
 #include "stimulating_device.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: spike_dilutor - repeats incoming spikes with a certain probability.
@@ -59,8 +58,7 @@ ported to Nest 2.6 by: Setareh, April 2015
 
 SeeAlso: mip_generator
 */
-class spike_dilutor : public DeviceNode
-{
+class spike_dilutor : public DeviceNode {
 
 public:
   spike_dilutor();
@@ -102,8 +100,7 @@ private:
   /**
    * Store independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     double p_copy_; //!< copy probability for each incoming spike
 
     Parameters_(); //!< Sets default parameter values
@@ -113,8 +110,7 @@ private:
     void set( const DictionaryDatum& ); //!< Set values from dicitonary
   };
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     RingBuffer n_spikes_;
   };
 
@@ -139,8 +135,7 @@ spike_dilutor::send_test_event( Node& target, rport receptor_type, synindex syn_
 inline port
 spike_dilutor::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;

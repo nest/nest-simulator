@@ -53,7 +53,7 @@
 nest::RecordablesMap< nest::aeif_cond_alpha > nest::aeif_cond_alpha::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
-{
+  {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -151,8 +151,7 @@ nest::aeif_cond_alpha::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   y_[ 0 ] = p.E_L;
-  for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 1; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = 0;
   }
 }
@@ -160,8 +159,7 @@ nest::aeif_cond_alpha::State_::State_( const Parameters_& p )
 nest::aeif_cond_alpha::State_::State_( const State_& s )
   : r_( s.r_ )
 {
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = s.y_[ i ];
   }
 }
@@ -169,8 +167,7 @@ nest::aeif_cond_alpha::State_::State_( const State_& s )
 nest::aeif_cond_alpha::State_& nest::aeif_cond_alpha::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = s.y_[ i ];
   }
   r_ = s.r_;
@@ -229,22 +226,18 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
 
-  if ( V_reset_ >= V_peak_ )
-  {
+  if ( V_reset_ >= V_peak_ ) {
     throw BadProperty( "Ensure that: V_reset < V_peak ." );
   }
 
-  if ( Delta_T < 0. )
-  {
+  if ( Delta_T < 0. ) {
     throw BadProperty( "Delta_T must be positive." );
   }
-  else if ( Delta_T > 0. )
-  {
+  else if ( Delta_T > 0. ) {
     // check for possible numerical overflow with the exponential divergence at
     // spike time, keep a 1e20 margin for the subsequent calculations
     const double max_exp_arg = std::log( std::numeric_limits< double >::max() / 1e20 );
-    if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg )
-    {
+    if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg ) {
       throw BadProperty(
         "The current combination of V_peak, V_th and Delta_T"
         "will lead to numerical overflow at spike time; try"
@@ -253,28 +246,23 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
     }
   }
 
-  if ( V_peak_ < V_th )
-  {
+  if ( V_peak_ < V_th ) {
     throw BadProperty( "V_peak >= V_th required." );
   }
 
-  if ( C_m <= 0 )
-  {
+  if ( C_m <= 0 ) {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
 
-  if ( t_ref_ < 0 )
-  {
+  if ( t_ref_ < 0 ) {
     throw BadProperty( "Refractory time cannot be negative." );
   }
 
-  if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
-  {
+  if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
 
-  if ( gsl_error_tol <= 0. )
-  {
+  if ( gsl_error_tol <= 0. ) {
     throw BadProperty( "The gsl_error_tol must be strictly positive." );
   }
 }
@@ -299,8 +287,7 @@ nest::aeif_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_&
   updateValue< double >( d, names::g_in, y_[ G_INH ] );
   updateValue< double >( d, names::dg_in, y_[ DG_INH ] );
   updateValue< double >( d, names::w, y_[ W ] );
-  if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 )
-  {
+  if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 ) {
     throw BadProperty( "Conductances must not be negative." );
   }
 }
@@ -349,16 +336,13 @@ nest::aeif_cond_alpha::aeif_cond_alpha( const aeif_cond_alpha& n )
 nest::aeif_cond_alpha::~aeif_cond_alpha()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
-  if ( B_.s_ )
-  {
+  if ( B_.s_ ) {
     gsl_odeiv_step_free( B_.s_ );
   }
-  if ( B_.c_ )
-  {
+  if ( B_.c_ ) {
     gsl_odeiv_control_free( B_.c_ );
   }
-  if ( B_.e_ )
-  {
+  if ( B_.e_ ) {
     gsl_odeiv_evolve_free( B_.e_ );
   }
 }
@@ -389,30 +373,24 @@ nest::aeif_cond_alpha::init_buffers_()
   // We must integrate this model with high-precision to obtain decent results
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
-  if ( B_.s_ == 0 )
-  {
+  if ( B_.s_ == 0 ) {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
-  else
-  {
+  else {
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
-  {
+  if ( B_.c_ == 0 ) {
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
   }
-  else
-  {
+  else {
     gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
   }
 
-  if ( B_.e_ == 0 )
-  {
+  if ( B_.e_ == 0 ) {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
-  else
-  {
+  else {
     gsl_odeiv_evolve_reset( B_.e_ );
   }
 
@@ -431,12 +409,10 @@ nest::aeif_cond_alpha::calibrate()
   B_.logger_.init();
 
   // set the right threshold and GSL function depending on Delta_T
-  if ( P_.Delta_T > 0. )
-  {
+  if ( P_.Delta_T > 0. ) {
     V_.V_peak = P_.V_peak_;
   }
-  else
-  {
+  else {
     V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
   }
 
@@ -457,8 +433,7 @@ nest::aeif_cond_alpha::update( Time const& origin, const long from, const long t
   assert( from < to );
   assert( State_::V_M == 0 );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     double t = 0.0;
 
     // numerical integration with adaptive step size control:
@@ -474,8 +449,7 @@ nest::aeif_cond_alpha::update( Time const& origin, const long from, const long t
     // for a consistent and efficient integration across subsequent
     // simulation intervals
 
-    while ( t < B_.step_ )
-    {
+    while ( t < B_.step_ ) {
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
@@ -484,25 +458,21 @@ nest::aeif_cond_alpha::update( Time const& origin, const long from, const long t
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
-      if ( status != GSL_SUCCESS )
-      {
+      if ( status != GSL_SUCCESS ) {
         throw GSLSolverFailure( get_name(), status );
       }
 
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
-      {
+      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 ) {
         throw NumericalInstability( get_name() );
       }
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
-      if ( S_.r_ > 0 )
-      {
+      if ( S_.r_ > 0 ) {
         S_.y_[ State_::V_M ] = P_.V_reset_;
       }
-      else if ( S_.y_[ State_::V_M ] >= V_.V_peak )
-      {
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak ) {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
 
@@ -521,8 +491,7 @@ nest::aeif_cond_alpha::update( Time const& origin, const long from, const long t
     }
 
     // decrement refractory count
-    if ( S_.r_ > 0 )
-    {
+    if ( S_.r_ > 0 ) {
       --S_.r_;
     }
 
@@ -543,13 +512,11 @@ nest::aeif_cond_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  if ( e.get_weight() > 0.0 )
-  {
+  if ( e.get_weight() > 0.0 ) {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
-  else
-  {
+  else {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   } // keep conductances positive

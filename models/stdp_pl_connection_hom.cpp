@@ -31,8 +31,7 @@
 #include "dictdatum.h"
 
 
-namespace nest
-{
+namespace nest {
 
 //
 // Implementation of class STDPPLHomCommonProperties.
@@ -65,12 +64,10 @@ STDPPLHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel&
   CommonSynapseProperties::set_status( d, cm );
 
   updateValue< double >( d, names::tau_plus, tau_plus_ );
-  if ( tau_plus_ > 0. )
-  {
+  if ( tau_plus_ > 0. ) {
     tau_plus_inv_ = 1. / tau_plus_;
   }
-  else
-  {
+  else {
     throw BadProperty( "tau_plus > 0. required." );
   }
   updateValue< double >( d, names::lambda, lambda_ );

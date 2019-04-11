@@ -42,8 +42,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * Function computing right-hand side of ODE for GSL solver.
  * @note Must be declared here so we can befriend it in class.
@@ -168,8 +167,7 @@ Author: Hans Ekkehard Plesser, based on aeif_cond_beta_multisynapse
 
 SeeAlso: aeif_cond_alpha_multisynapse
 */
-class aeif_cond_alpha_multisynapse : public Archiving_Node
-{
+class aeif_cond_alpha_multisynapse : public Archiving_Node {
 
 public:
   aeif_cond_alpha_multisynapse();
@@ -215,8 +213,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     double V_peak_;  //!< Spike detection threshold in mV
     double V_reset_; //!< Reset Potential in mV
     double t_ref_;   //!< Refractory period in ms
@@ -260,8 +257,7 @@ private:
    * @note Copy constructor and assignment operator required because
    *       of C-style arrays.
    */
-  struct State_
-  {
+  struct State_ {
 
     /**
      * Enumeration identifying elements in state vector State_::y_.
@@ -271,8 +267,7 @@ private:
      * n times at the end of the state vector State_::y with n being the number
      * of synapses.
      */
-    enum StateVecElems
-    {
+    enum StateVecElems {
       V_M = 0,
       W,  // 1
       DG, // 2
@@ -300,8 +295,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( aeif_cond_alpha_multisynapse& );
     Buffers_( const Buffers_&, aeif_cond_alpha_multisynapse& );
 
@@ -341,8 +335,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     /** initial value to normalise synaptic conductance */
     std::vector< double > g0_;
 
@@ -402,8 +395,7 @@ aeif_cond_alpha_multisynapse::send_test_event( Node& target, rport receptor_type
 inline port
 aeif_cond_alpha_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -412,8 +404,7 @@ aeif_cond_alpha_multisynapse::handles_test_event( CurrentEvent&, rport receptor_
 inline port
 aeif_cond_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

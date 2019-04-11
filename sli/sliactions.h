@@ -29,8 +29,7 @@
 // Includes from sli:
 #include "slifunction.h"
 
-class DatatypeFunction : public SLIFunction
-{
+class DatatypeFunction : public SLIFunction {
 public:
   DatatypeFunction()
   {
@@ -38,8 +37,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class NametypeFunction : public SLIFunction
-{
+class NametypeFunction : public SLIFunction {
 public:
   NametypeFunction()
   {
@@ -47,8 +45,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ProceduretypeFunction : public SLIFunction
-{
+class ProceduretypeFunction : public SLIFunction {
 public:
   ProceduretypeFunction()
   {
@@ -56,8 +53,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class LitproceduretypeFunction : public SLIFunction
-{
+class LitproceduretypeFunction : public SLIFunction {
 public:
   LitproceduretypeFunction()
   {
@@ -65,8 +61,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class FunctiontypeFunction : public SLIFunction
-{
+class FunctiontypeFunction : public SLIFunction {
 public:
   FunctiontypeFunction()
   {
@@ -74,8 +69,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CallbacktypeFunction : public SLIFunction
-{
+class CallbacktypeFunction : public SLIFunction {
 public:
   CallbacktypeFunction()
   {
@@ -83,8 +77,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class XIstreamtypeFunction : public SLIFunction
-{
+class XIstreamtypeFunction : public SLIFunction {
 public:
   XIstreamtypeFunction()
   {
@@ -92,8 +85,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class XIfstreamtypeFunction : public SLIFunction
-{
+class XIfstreamtypeFunction : public SLIFunction {
 public:
   XIfstreamtypeFunction()
   {
@@ -101,8 +93,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class TrietypeFunction : public SLIFunction
-{
+class TrietypeFunction : public SLIFunction {
 public:
   TrietypeFunction()
   {

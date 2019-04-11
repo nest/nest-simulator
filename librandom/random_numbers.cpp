@@ -106,8 +106,7 @@ RandomNumbers::init( SLIInterpreter* i )
   RdvType.setdefaultaction( SLIInterpreter::datatypefunction );
   RdvFactoryType.settypename( "rdvfactorytype" );
   RdvFactoryType.setdefaultaction( SLIInterpreter::datatypefunction );
-  if ( rngdict_ || rdvdict_ )
-  {
+  if ( rngdict_ || rdvdict_ ) {
     throw DynamicModuleManagementError( "RandomNumbers module has been initialized previously." );
   }
 

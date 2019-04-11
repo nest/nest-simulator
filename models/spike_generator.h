@@ -35,8 +35,7 @@
 #include "nest_types.h"
 #include "stimulating_device.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: spike_generator - A device which generates spikes from an array with
@@ -179,8 +178,7 @@ Author: Gewaltig, Diesmann, Eppler
 
 SeeAlso: Device, StimulatingDevice, testsuite::test_spike_generator
 */
-class spike_generator : public DeviceNode
-{
+class spike_generator : public DeviceNode {
 
 public:
   spike_generator();
@@ -221,8 +219,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
     size_t position_; //!< index of next spike to deliver
 
     State_(); //!< Sets default state value
@@ -230,8 +227,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Parameters_
-  {
+  struct Parameters_ {
     //! Spike time stamp as Time, rel to origin_
     std::vector< Time > spike_stamps_;
 
@@ -289,14 +285,12 @@ spike_generator::send_test_event( Node& target, rport receptor_type, synindex sy
 {
   device_.enforce_single_syn_type( syn_id );
 
-  if ( dummy_target )
-  {
+  if ( dummy_target ) {
     DSSpikeEvent e;
     e.set_sender( *this );
     return target.handles_test_event( e, receptor_type );
   }
-  else
-  {
+  else {
     SpikeEvent e;
     e.set_sender( *this );
     return target.handles_test_event( e, receptor_type );

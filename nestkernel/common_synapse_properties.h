@@ -33,8 +33,7 @@
 #include "dictdatum.h"
 
 
-namespace nest
-{
+namespace nest {
 
 // forward declarations
 class ConnectorModel;
@@ -48,8 +47,7 @@ class TimeConverter;
  * If the synapse type does not have any common properties, this class may be
  * used as a placeholder.
  */
-class CommonSynapseProperties
-{
+class CommonSynapseProperties {
 public:
   /**
    * Standard constructor. Sets all common properties to default values.

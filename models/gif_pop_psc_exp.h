@@ -32,8 +32,7 @@
 
 #ifdef HAVE_GSL
 
-namespace nest
-{
+namespace nest {
 
 
 class Network;
@@ -131,8 +130,7 @@ Authors: Nov 2016, Moritz Deger, Tilo Schwalger, Hesam Setareh
 
 SeeAlso: gif_psc_exp, pp_pop_psc_delta, spike_dilutor
 */
-class gif_pop_psc_exp : public Node
-{
+class gif_pop_psc_exp : public Node {
 
 public:
   gif_pop_psc_exp();
@@ -181,8 +179,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     /** Number of neurons in the population. */
     long N_;
@@ -240,8 +237,7 @@ private:
   /**
    * State variables of the model.
    */
-  struct State_
-  {
+  struct State_ {
 
     double y0_;        // DC input current
     double I_syn_ex_;  // synaptic current
@@ -265,8 +261,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( gif_pop_psc_exp& );
     Buffers_( const Buffers_&, gif_pop_psc_exp& );
 
@@ -284,8 +279,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
 
     double R_;      // membrane resistance
     double P20_;    // membrane integration constant
@@ -394,8 +388,7 @@ gif_pop_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, b
 inline port
 gif_pop_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -404,8 +397,7 @@ gif_pop_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 gif_pop_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -414,8 +406,7 @@ gif_pop_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 gif_pop_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

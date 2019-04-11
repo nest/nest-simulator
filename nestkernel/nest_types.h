@@ -46,8 +46,7 @@
  * Namespace for the NEST simulation kernel.
  */
 
-namespace nest
-{
+namespace nest {
 
 /**
  * \file nest_types.h
@@ -215,13 +214,7 @@ const long delay_max = LONG_MAX;
  * that can in a meaningful way be connected to either neuron model
  * can use the wildcard ALL, that will match any connection partner.
  */
-enum SignalType
-{
-  NONE = 0,
-  SPIKE = 1,
-  BINARY = 2,
-  ALL = SPIKE | BINARY
-};
+enum SignalType { NONE = 0, SPIKE = 1, BINARY = 2, ALL = SPIKE | BINARY };
 }
 
 #endif // NEST_TYPES_H

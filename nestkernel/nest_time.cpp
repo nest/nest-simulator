@@ -142,14 +142,12 @@ double
 Time::ms::fromtoken( const Token& t )
 {
   IntegerDatum* idat = dynamic_cast< IntegerDatum* >( t.datum() );
-  if ( idat )
-  {
+  if ( idat ) {
     return static_cast< double >( idat->get() );
   }
 
   DoubleDatum* ddat = dynamic_cast< DoubleDatum* >( t.datum() );
-  if ( ddat )
-  {
+  if ( ddat ) {
     return ddat->get();
   }
 
@@ -160,12 +158,10 @@ Time::ms::fromtoken( const Token& t )
 tic_t
 Time::fromstamp( Time::ms_stamp t )
 {
-  if ( t.t > LIM_MAX.ms )
-  {
+  if ( t.t > LIM_MAX.ms ) {
     return LIM_POS_INF.tics;
   }
-  else if ( t.t < LIM_MIN.ms )
-  {
+  else if ( t.t < LIM_MIN.ms ) {
     return LIM_NEG_INF.tics;
   }
   // why not just fmod STEPS_PER_MS? This gives different
@@ -174,8 +170,7 @@ Time::fromstamp( Time::ms_stamp t )
   tic_t n = static_cast< tic_t >( t.t * Range::TICS_PER_MS );
   n -= ( n % Range::TICS_PER_STEP );
   const double ms = n * Range::TICS_PER_STEP_INV * Range::MS_PER_STEP;
-  if ( ms < t.t )
-  {
+  if ( ms < t.t ) {
     n += Range::TICS_PER_STEP;
   }
   return n;
@@ -199,16 +194,13 @@ Time::reset_to_defaults()
 
 std::ostream& operator<<( std::ostream& strm, const Time& t )
 {
-  if ( t.is_neg_inf() )
-  {
+  if ( t.is_neg_inf() ) {
     strm << "-INF";
   }
-  else if ( t.is_pos_inf() )
-  {
+  else if ( t.is_pos_inf() ) {
     strm << "+INF";
   }
-  else
-  {
+  else {
     strm << t.get_ms() << " ms (= " << t.get_tics() << " tics = " << t.get_steps()
          << ( t.get_steps() != 1 ? " steps)" : " step)" );
   }

@@ -37,14 +37,12 @@
 #include "node.h"
 
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Event handler for all events of a MUSIC port received on this process.
  */
-class MusicEventHandler : public MUSIC::EventHandlerGlobalIndex
-{
+class MusicEventHandler : public MUSIC::EventHandlerGlobalIndex {
 public:
   MusicEventHandler();
   MusicEventHandler( std::string portname, double acceptable_latency, int max_buffered );

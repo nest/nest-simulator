@@ -36,8 +36,7 @@
 #include "dictutils.h"
 #include "namedatum.h"
 
-namespace nest
-{
+namespace nest {
 
 Node::Node()
   : gid_( 0 )
@@ -83,8 +82,7 @@ Node::init_state()
 void
 Node::init_buffers()
 {
-  if ( buffers_initialized_ )
-  {
+  if ( buffers_initialized_ ) {
     return;
   }
 
@@ -96,8 +94,7 @@ Node::init_buffers()
 std::string
 Node::get_name() const
 {
-  if ( model_id_ < 0 )
-  {
+  if ( model_id_ < 0 ) {
     return std::string( "UnknownNode" );
   }
 
@@ -107,8 +104,7 @@ Node::get_name() const
 Model&
 Node::get_model_() const
 {
-  if ( model_id_ < 0 )
-  {
+  if ( model_id_ < 0 ) {
     throw UnknownModelID( model_id_ );
   }
 
@@ -151,15 +147,13 @@ Node::get_status_base()
   ( *dict )[ names::model ] = LiteralDatum( get_name() );
 
   // add information available only for local nodes
-  if ( is_local() )
-  {
+  if ( is_local() ) {
     ( *dict )[ names::global_id ] = get_gid();
     ( *dict )[ names::frozen ] = is_frozen();
     ( *dict )[ names::node_uses_wfr ] = node_uses_wfr();
     ( *dict )[ names::thread ] = get_thread();
     ( *dict )[ names::vp ] = get_vp();
-    if ( parent_ )
-    {
+    if ( parent_ ) {
       ( *dict )[ names::parent ] = parent_->get_gid();
 
       // LIDs are only sensible for nodes with parents.
@@ -188,12 +182,10 @@ void
 Node::set_status_base( const DictionaryDatum& dict )
 {
   assert( dict.valid() );
-  try
-  {
+  try {
     set_status( dict );
   }
-  catch ( BadProperty& e )
-  {
+  catch ( BadProperty& e ) {
     throw BadProperty(
       String::compose( "Setting status of a '%1' with GID %2: %3", get_name(), get_gid(), e.message() ) );
   }

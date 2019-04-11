@@ -22,8 +22,7 @@
 
 #include "mcculloch_pitts_neuron.h"
 
-namespace nest
-{
+namespace nest {
 
 void
 gainfunction_mcculloch_pitts::get( DictionaryDatum& d ) const

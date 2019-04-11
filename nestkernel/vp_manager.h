@@ -37,19 +37,16 @@
 #include <omp.h>
 #endif
 
-namespace nest
-{
+namespace nest {
 
-struct AssignedRanks
-{
+struct AssignedRanks {
   thread begin;
   thread end;
   thread size;
   thread max_size;
 };
 
-class VPManager : public ManagerInterface
-{
+class VPManager : public ManagerInterface {
 public:
   VPManager();
   ~VPManager()

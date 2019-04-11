@@ -27,8 +27,7 @@
 #include <math.h>
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: stdp_triplet_synapse - Synapse type with spike-timing dependent
@@ -95,8 +94,7 @@ SeeAlso: stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse
 // (used for pointer / target index addressing)
 // derived from generic connection template
 template < typename targetidentifierT >
-class STDPTripletConnection : public Connection< targetidentifierT >
-{
+class STDPTripletConnection : public Connection< targetidentifierT > {
 
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
@@ -147,8 +145,7 @@ public:
    */
   void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -239,8 +236,7 @@ STDPTripletConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
-  while ( start != finish )
-  {
+  while ( start != finish ) {
     // post-synaptic spike is delayed by dendritic_delay so that
     // it is effectively late by that much at the synapse.
     double minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
@@ -346,18 +342,15 @@ STDPTripletConnection< targetidentifierT >::set_status( const DictionaryDatum& d
   updateValue< double >( d, names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ has the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
-  {
+  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) ) {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }
 
-  if ( not( Kplus_ >= 0 ) )
-  {
+  if ( not( Kplus_ >= 0 ) ) {
     throw BadProperty( "State Kplus must be positive." );
   }
 
-  if ( not( Kplus_triplet_ >= 0 ) )
-  {
+  if ( not( Kplus_triplet_ >= 0 ) ) {
     throw BadProperty( "State Kplus_triplet must be positive." );
   }
 }

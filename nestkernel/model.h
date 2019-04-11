@@ -37,8 +37,7 @@
 // Includes from sli:
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Base class for all Models.
@@ -52,8 +51,7 @@ namespace nest
  * @ingroup user_interface
  * @see Node
  */
-class Model
-{
+class Model {
 public:
   Model( const std::string& name );
   Model( const Model& m )

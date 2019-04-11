@@ -35,8 +35,7 @@
 /************************************************
   Stack manipulation functions
   ********************************************/
-class PopFunction : public SLIFunction
-{
+class PopFunction : public SLIFunction {
 public:
   PopFunction()
   {
@@ -44,8 +43,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class NpopFunction : public SLIFunction
-{
+class NpopFunction : public SLIFunction {
 public:
   NpopFunction()
   {
@@ -53,8 +51,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class DupFunction : public SLIFunction
-{
+class DupFunction : public SLIFunction {
 public:
   DupFunction()
   {
@@ -62,8 +59,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ExchFunction : public SLIFunction
-{
+class ExchFunction : public SLIFunction {
 public:
   ExchFunction()
   {
@@ -71,8 +67,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IndexFunction : public SLIFunction
-{
+class IndexFunction : public SLIFunction {
 public:
   IndexFunction()
   {
@@ -80,8 +75,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RollFunction : public SLIFunction
-{
+class RollFunction : public SLIFunction {
 public:
   RollFunction()
   {
@@ -89,8 +83,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RolluFunction : public SLIFunction
-{
+class RolluFunction : public SLIFunction {
 public:
   RolluFunction()
   {
@@ -98,8 +91,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RolldFunction : public SLIFunction
-{
+class RolldFunction : public SLIFunction {
 public:
   RolldFunction()
   {
@@ -107,8 +99,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RotFunction : public SLIFunction
-{
+class RotFunction : public SLIFunction {
 public:
   RotFunction()
   {
@@ -116,8 +107,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class OverFunction : public SLIFunction
-{
+class OverFunction : public SLIFunction {
 public:
   OverFunction()
   {
@@ -125,8 +115,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CountFunction : public SLIFunction
-{
+class CountFunction : public SLIFunction {
 public:
   CountFunction()
   {
@@ -134,8 +123,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CopyFunction : public SLIFunction
-{
+class CopyFunction : public SLIFunction {
 public:
   CopyFunction()
   {
@@ -143,8 +131,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ClearFunction : public SLIFunction
-{
+class ClearFunction : public SLIFunction {
 public:
   ClearFunction()
   {
@@ -152,8 +139,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ExecstackFunction : public SLIFunction
-{
+class ExecstackFunction : public SLIFunction {
 public:
   ExecstackFunction()
   {
@@ -161,8 +147,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RestoreestackFunction : public SLIFunction
-{
+class RestoreestackFunction : public SLIFunction {
 public:
   RestoreestackFunction()
   {
@@ -170,8 +155,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RestoreostackFunction : public SLIFunction
-{
+class RestoreostackFunction : public SLIFunction {
 public:
   RestoreostackFunction()
   {
@@ -179,8 +163,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class OperandstackFunction : public SLIFunction
-{
+class OperandstackFunction : public SLIFunction {
 public:
   OperandstackFunction()
   {

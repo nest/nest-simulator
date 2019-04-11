@@ -28,8 +28,7 @@
 #include "common_properties_hom_w.h"
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: tsodyks_synapse_hom - Synapse type with short term plasticity using
@@ -117,8 +116,7 @@ iaf_psc_exp, iaf_tum_2000
  * Class containing the common properties for all synapses of type
  * TsodyksConnectionHom.
  */
-class TsodyksHomCommonProperties : public CommonPropertiesHomW
-{
+class TsodyksHomCommonProperties : public CommonPropertiesHomW {
 
 public:
   /**
@@ -145,8 +143,7 @@ public:
 
 
 template < typename targetidentifierT >
-class TsodyksConnectionHom : public Connection< targetidentifierT >
-{
+class TsodyksConnectionHom : public Connection< targetidentifierT > {
 public:
   typedef TsodyksHomCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
@@ -195,8 +192,7 @@ public:
    */
   void send( Event& e, thread t, const TsodyksHomCommonProperties& cp );
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -328,8 +324,7 @@ TsodyksConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   updateValue< double >( d, names::x, x );
   updateValue< double >( d, names::y, y );
 
-  if ( x + y > 1.0 )
-  {
+  if ( x + y > 1.0 ) {
     throw BadProperty( "x + y must be <= 1.0." );
   }
 

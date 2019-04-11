@@ -32,8 +32,7 @@
 #include "growth_curve.h"
 #include "growth_curve_factory.h"
 
-namespace nest
-{
+namespace nest {
 
 template < typename GrowthCurve >
 void

@@ -26,8 +26,7 @@
 // Includes from nestkernel:
 #include "growth_curve.h"
 
-namespace nest
-{
+namespace nest {
 
 class GrowthCurveGaussian;
 class GrowthCurveLinear;
@@ -40,8 +39,7 @@ class GrowthCurveSigmoid;
  * of GrowthCurve subclasses and object creation.
  *
  */
-class GenericGrowthCurveFactory
-{
+class GenericGrowthCurveFactory {
 public:
   virtual ~GenericGrowthCurveFactory()
   {
@@ -54,8 +52,7 @@ public:
  */
 
 template < typename GrowthCurveType >
-class GrowthCurveFactory : public GenericGrowthCurveFactory
-{
+class GrowthCurveFactory : public GenericGrowthCurveFactory {
 
 public:
   GrowthCurve*

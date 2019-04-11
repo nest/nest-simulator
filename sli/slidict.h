@@ -39,8 +39,7 @@
 
 void init_slidict( SLIInterpreter* );
 
-class DictFunction : public SLIFunction
-{
+class DictFunction : public SLIFunction {
 public:
   DictFunction()
   {
@@ -48,8 +47,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class DictputFunction : public SLIFunction
-{
+class DictputFunction : public SLIFunction {
 public:
   DictputFunction()
   {
@@ -57,8 +55,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class DictgetFunction : public SLIFunction
-{
+class DictgetFunction : public SLIFunction {
 public:
   DictgetFunction()
   {
@@ -66,8 +63,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class DictbeginFunction : public SLIFunction
-{
+class DictbeginFunction : public SLIFunction {
 public:
   DictbeginFunction()
   {
@@ -75,8 +71,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class DictendFunction : public SLIFunction
-{
+class DictendFunction : public SLIFunction {
 public:
   DictendFunction()
   {
@@ -95,8 +90,7 @@ public:
 //    void execute(SLIInterpreter *) const;
 //};
 
-class DictinfoFunction : public SLIFunction
-{
+class DictinfoFunction : public SLIFunction {
 public:
   DictinfoFunction()
   {
@@ -104,8 +98,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class DicttopinfoFunction : public SLIFunction
-{
+class DicttopinfoFunction : public SLIFunction {
 public:
   DicttopinfoFunction()
   {
@@ -113,8 +106,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class WhoFunction : public SLIFunction
-{
+class WhoFunction : public SLIFunction {
 public:
   WhoFunction()
   {
@@ -122,8 +114,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class DictconstructFunction : public SLIFunction
-{
+class DictconstructFunction : public SLIFunction {
 public:
   DictconstructFunction()
   {
@@ -131,8 +122,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class DictstackFunction : public SLIFunction
-{
+class DictstackFunction : public SLIFunction {
 public:
   DictstackFunction()
   {
@@ -140,8 +130,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CurrentdictFunction : public SLIFunction
-{
+class CurrentdictFunction : public SLIFunction {
 public:
   CurrentdictFunction()
   {
@@ -149,8 +138,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CountdictstackFunction : public SLIFunction
-{
+class CountdictstackFunction : public SLIFunction {
 public:
   CountdictstackFunction()
   {
@@ -158,8 +146,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CleardictstackFunction : public SLIFunction
-{
+class CleardictstackFunction : public SLIFunction {
 public:
   CleardictstackFunction()
   {
@@ -167,8 +154,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Length_dFunction : public SLIFunction
-{
+class Length_dFunction : public SLIFunction {
 public:
   Length_dFunction()
   {
@@ -176,8 +162,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Empty_DFunction : public SLIFunction
-{
+class Empty_DFunction : public SLIFunction {
 public:
   Empty_DFunction()
   {
@@ -185,8 +170,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CleardictFunction : public SLIFunction
-{
+class CleardictFunction : public SLIFunction {
 public:
   CleardictFunction()
   {
@@ -194,8 +178,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ClonedictFunction : public SLIFunction
-{
+class ClonedictFunction : public SLIFunction {
 public:
   ClonedictFunction()
   {
@@ -203,8 +186,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class UndefFunction : public SLIFunction
-{
+class UndefFunction : public SLIFunction {
 public:
   UndefFunction()
   {
@@ -212,8 +194,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class KnownFunction : public SLIFunction
-{
+class KnownFunction : public SLIFunction {
 public:
   KnownFunction()
   {
@@ -221,8 +202,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Cva_dFunction : public SLIFunction
-{
+class Cva_dFunction : public SLIFunction {
 public:
   Cva_dFunction()
   {
@@ -230,8 +210,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class KeysFunction : public SLIFunction
-{
+class KeysFunction : public SLIFunction {
 public:
   KeysFunction()
   {
@@ -239,8 +218,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ValuesFunction : public SLIFunction
-{
+class ValuesFunction : public SLIFunction {
 public:
   ValuesFunction()
   {
@@ -248,8 +226,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RestoredstackFunction : public SLIFunction
-{
+class RestoredstackFunction : public SLIFunction {
 public:
   RestoredstackFunction()
   {

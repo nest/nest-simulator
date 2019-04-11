@@ -43,14 +43,12 @@
 #include "selector.h"
 #include "topology_names.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Abstract base class for Layers of unspecified dimension.
  */
-class AbstractLayer : public Subnet
-{
+class AbstractLayer : public Subnet {
 public:
   /**
    * Constructor.
@@ -200,8 +198,7 @@ class MaskedLayer;
  * Abstract base class for Layer of given dimension (D=2 or 3).
  */
 template < int D >
-class Layer : public AbstractLayer
-{
+class Layer : public AbstractLayer {
 public:
   /**
    * Creates an empty layer.
@@ -438,8 +435,7 @@ protected:
  * iterate over nodes inside a mask.
  */
 template < int D >
-class MaskedLayer
-{
+class MaskedLayer {
 public:
   /**
    * Regular constructor.
@@ -515,12 +511,10 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
   bool allow_oversized )
   : mask_( maskd )
 {
-  if ( include_global )
-  {
+  if ( include_global ) {
     ntree_ = layer.get_global_positions_ntree( filter );
   }
-  else
-  {
+  else {
     ntree_ = layer.get_local_positions_ntree( filter );
   }
 
@@ -536,8 +530,7 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
   Layer< D >& target )
   : mask_( maskd )
 {
-  if ( include_global )
-  {
+  if ( include_global ) {
     ntree_ = layer.get_global_positions_ntree(
       filter, target.get_periodic_mask(), target.get_lower_left(), target.get_extent() );
   }
@@ -559,12 +552,10 @@ template < int D >
 inline typename Ntree< D, index >::masked_iterator
 MaskedLayer< D >::begin( const Position< D >& anchor )
 {
-  try
-  {
+  try {
     return ntree_->masked_begin( dynamic_cast< const Mask< D >& >( *mask_ ), anchor );
   }
-  catch ( std::bad_cast& e )
-  {
+  catch ( std::bad_cast& e ) {
     throw BadProperty( "Mask is incompatible with layer." );
   }
 }
@@ -580,8 +571,7 @@ template < int D >
 inline Layer< D >::Layer()
 {
   // Default center (0,0) and extent (1,1)
-  for ( int i = 0; i < D; ++i )
-  {
+  for ( int i = 0; i < D; ++i ) {
     lower_left_[ i ] = -0.5;
     extent_[ i ] = 1.0;
   }
@@ -599,13 +589,11 @@ inline Layer< D >::Layer( const Layer& other_layer )
 template < int D >
 inline Layer< D >::~Layer()
 {
-  if ( cached_ntree_layer_ == get_gid() )
-  {
+  if ( cached_ntree_layer_ == get_gid() ) {
     clear_ntree_cache_();
   }
 
-  if ( cached_vector_layer_ == get_gid() )
-  {
+  if ( cached_vector_layer_ == get_gid() ) {
     clear_vector_cache_();
   }
 }
@@ -657,8 +645,7 @@ template < int D >
 inline void
 Layer< D >::clear_vector_cache_() const
 {
-  if ( cached_vector_ != 0 )
-  {
+  if ( cached_vector_ != 0 ) {
     delete cached_vector_;
   }
   cached_vector_ = 0;

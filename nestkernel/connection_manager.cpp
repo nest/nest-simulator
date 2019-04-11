@@ -135,29 +135,25 @@ nest::ConnectionManager::finalize()
 void
 nest::ConnectionManager::set_status( const DictionaryDatum& d )
 {
-  for ( size_t i = 0; i < delay_checkers_.size(); ++i )
-  {
+  for ( size_t i = 0; i < delay_checkers_.size(); ++i ) {
     delay_checkers_[ i ].set_status( d );
   }
 
   updateValue< bool >( d, names::keep_source_table, keep_source_table_ );
-  if ( not keep_source_table_ and kernel().sp_manager.is_structural_plasticity_enabled() )
-  {
+  if ( not keep_source_table_ and kernel().sp_manager.is_structural_plasticity_enabled() ) {
     throw KernelException(
       "If structural plasticity is enabled, keep_source_table can not be set "
       "to false." );
   }
 
   updateValue< bool >( d, names::sort_connections_by_source, sort_connections_by_source_ );
-  if ( not sort_connections_by_source_ and kernel().sp_manager.is_structural_plasticity_enabled() )
-  {
+  if ( not sort_connections_by_source_ and kernel().sp_manager.is_structural_plasticity_enabled() ) {
     throw KernelException(
       "If structural plasticity is enabled, sort_connections_by_source can not "
       "be set to false." );
   }
   //  Need to update the saved values if we have changed the delay bounds.
-  if ( d->known( names::min_delay ) or d->known( names::max_delay ) )
-  {
+  if ( d->known( names::min_delay ) or d->known( names::max_delay ) ) {
     update_delay_extrema_();
   }
 }
@@ -201,21 +197,17 @@ nest::ConnectionManager::get_synapse_status( const index source_gid,
   // receiving devices
   if ( ( source->has_proxies() and target->has_proxies() and connections_[ tid ][ syn_id ] != NULL )
     or ( ( source->has_proxies() and not target->has_proxies() and not target->local_receiver()
-         and connections_[ tid ][ syn_id ] != NULL ) ) )
-  {
+         and connections_[ tid ][ syn_id ] != NULL ) ) ) {
     connections_[ tid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
   }
-  else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() )
-  {
+  else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() ) {
     target_table_devices_.get_synapse_status_to_device( tid, source_gid, syn_id, dict, lcid );
   }
-  else if ( not source->has_proxies() )
-  {
+  else if ( not source->has_proxies() ) {
     const index ldid = source->get_local_device_id();
     target_table_devices_.get_synapse_status_from_device( tid, ldid, syn_id, dict, lcid );
   }
-  else
-  {
+  else {
     assert( false );
   }
 
@@ -235,33 +227,27 @@ nest::ConnectionManager::set_synapse_status( const index source_gid,
   const Node* source = kernel().node_manager.get_node( source_gid, tid );
   const Node* target = kernel().node_manager.get_node( target_gid, tid );
 
-  try
-  {
+  try {
     ConnectorModel& cm = kernel().model_manager.get_synapse_prototype( syn_id, tid );
     // synapses from neurons to neurons and from neurons to globally
     // receiving devices
     if ( ( source->has_proxies() and target->has_proxies() and connections_[ tid ][ syn_id ] != NULL )
       or ( ( source->has_proxies() and not target->has_proxies() and not target->local_receiver()
-           and connections_[ tid ][ syn_id ] != NULL ) ) )
-    {
+           and connections_[ tid ][ syn_id ] != NULL ) ) ) {
       connections_[ tid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
     }
-    else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() )
-    {
+    else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() ) {
       target_table_devices_.set_synapse_status_to_device( tid, source_gid, syn_id, cm, dict, lcid );
     }
-    else if ( not source->has_proxies() )
-    {
+    else if ( not source->has_proxies() ) {
       const index ldid = source->get_local_device_id();
       target_table_devices_.set_synapse_status_from_device( tid, ldid, syn_id, cm, dict, lcid );
     }
-    else
-    {
+    else {
       assert( false );
     }
   }
-  catch ( BadProperty& e )
-  {
+  catch ( BadProperty& e ) {
     throw BadProperty( String::compose( "Setting status of '%1' connecting from GID %2 to GID %3 via port %4: %5",
       kernel().model_manager.get_synapse_prototype( syn_id, tid ).get_name(),
       source_gid,
@@ -278,8 +264,7 @@ nest::ConnectionManager::delete_connections_()
   {
     const thread tid = kernel().vp_manager.get_thread_id();
     for ( std::vector< ConnectorBase* >::iterator conn = connections_[ tid ].begin(); conn != connections_[ tid ].end();
-          ++conn )
-    {
+          ++conn ) {
       delete *conn;
     }
   } // end omp parallel
@@ -291,8 +276,7 @@ nest::ConnectionManager::get_min_delay_time_() const
   Time min_delay = Time::pos_inf();
 
   std::vector< DelayChecker >::const_iterator it;
-  for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
-  {
+  for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it ) {
     min_delay = std::min( min_delay, it->get_min_delay() );
   }
 
@@ -305,8 +289,7 @@ nest::ConnectionManager::get_max_delay_time_() const
   Time max_delay = Time::get_resolution();
 
   std::vector< DelayChecker >::const_iterator it;
-  for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
-  {
+  for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it ) {
     max_delay = std::max( max_delay, it->get_max_delay() );
   }
 
@@ -319,8 +302,7 @@ nest::ConnectionManager::get_user_set_delay_extrema() const
   bool user_set_delay_extrema = false;
 
   std::vector< DelayChecker >::const_iterator it;
-  for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
-  {
+  for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it ) {
     user_set_delay_extrema |= it->get_user_set_delay_extrema();
   }
 
@@ -341,8 +323,7 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
 void
 nest::ConnectionManager::calibrate( const TimeConverter& tc )
 {
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid ) {
     delay_checkers_[ tid ].calibrate( tc );
   }
 }
@@ -358,14 +339,12 @@ nest::ConnectionManager::connect( const GIDCollection& sources,
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
-  if ( not conn_spec->known( names::rule ) )
-  {
+  if ( not conn_spec->known( names::rule ) ) {
     throw BadProperty( "Connectivity spec must contain connectivity rule." );
   }
   const Name rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
 
-  if ( not connruledict_->known( rule_name ) )
-  {
+  if ( not connruledict_->known( rule_name ) ) {
     throw BadProperty( String::compose( "Unknown connectivity rule: %1", rule_name ) );
   }
 
@@ -388,16 +367,14 @@ nest::ConnectionManager::update_delay_extrema_()
   min_delay_ = get_min_delay_time_().get_steps();
   max_delay_ = get_max_delay_time_().get_steps();
 
-  if ( not get_user_set_delay_extrema() )
-  {
+  if ( not get_user_set_delay_extrema() ) {
     // If no min/max_delay is set explicitly (SetKernelStatus), then the default
     // delay used by the SPBuilders have to be respected for the min/max_delay.
     min_delay_ = std::min( min_delay_, kernel().sp_manager.builder_min_delay() );
     max_delay_ = std::max( max_delay_, kernel().sp_manager.builder_max_delay() );
   }
 
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
-  {
+  if ( kernel().mpi_manager.get_num_processes() > 1 ) {
     std::vector< delay > min_delays( kernel().mpi_manager.get_num_processes() );
     min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;
     kernel().mpi_manager.communicate( min_delays );
@@ -409,8 +386,7 @@ nest::ConnectionManager::update_delay_extrema_()
     max_delay_ = *std::max_element( max_delays.begin(), max_delays.end() );
   }
 
-  if ( min_delay_ == Time::pos_inf().get_steps() )
-  {
+  if ( min_delay_ == Time::pos_inf().get_steps() ) {
     min_delay_ = Time::get_resolution().get_steps();
   }
 }
@@ -434,61 +410,51 @@ nest::ConnectionManager::connect( const index sgid,
 
   // normal nodes and devices with proxies -> normal nodes and devices with
   // proxies
-  if ( source->has_proxies() and target->has_proxies() )
-  {
+  if ( source->has_proxies() and target->has_proxies() ) {
     connect_( *source, *target, sgid, target_thread, syn_id, params, delay, weight );
   }
   // normal nodes and devices with proxies -> normal devices
-  else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() )
-  {
+  else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() ) {
     // Connections to nodes with one node per process (MUSIC proxies
     // or similar devices) have to be established by the thread of the
     // target if the source is on the local process even though the
     // source may be a proxy on target_thread.
-    if ( target->one_node_per_process() and not source->is_proxy() )
-    {
+    if ( target->one_node_per_process() and not source->is_proxy() ) {
       connect_to_device_( *source, *target, sgid, target_thread, syn_id, params, delay, weight );
       return;
     }
 
     // make sure source is on this MPI rank and on this thread
-    if ( source->is_proxy() or source->get_thread() != tid )
-    {
+    if ( source->is_proxy() or source->get_thread() != tid ) {
       return;
     }
 
     connect_to_device_( *source, *target, sgid, target_thread, syn_id, params, delay, weight );
   }
   // normal devices -> normal nodes and devices with proxies
-  else if ( not source->has_proxies() and target->has_proxies() )
-  {
+  else if ( not source->has_proxies() and target->has_proxies() ) {
     connect_from_device_( *source, *target, target_thread, syn_id, params, delay, weight );
   }
   // normal devices -> normal devices
-  else if ( not source->has_proxies() and not target->has_proxies() )
-  {
+  else if ( not source->has_proxies() and not target->has_proxies() ) {
     // create connection only on suggested thread of target
     const thread tid = kernel().vp_manager.get_thread_id();
     const thread suggested_thread =
       kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp_for_gid( target->get_gid() ) );
-    if ( suggested_thread == tid )
-    {
+    if ( suggested_thread == tid ) {
       connect_from_device_( *source, *target, suggested_thread, syn_id, params, delay, weight );
     }
   }
   // globally receiving devices, e.g. volume transmitter
-  else if ( not target->has_proxies() and not target->local_receiver() )
-  {
+  else if ( not target->has_proxies() and not target->local_receiver() ) {
     // we do not allow to connect a device to a global receiver at the moment
-    if ( not source->has_proxies() )
-    {
+    if ( not source->has_proxies() ) {
       return;
     }
     target = kernel().node_manager.get_node( target->get_gid(), tid );
     connect_( *source, *target, sgid, tid, syn_id, params, delay, weight );
   }
-  else
-  {
+  else {
     assert( false );
   }
 }
@@ -506,8 +472,7 @@ nest::ConnectionManager::connect( const index sgid,
 
   const thread tid = kernel().vp_manager.get_thread_id();
 
-  if ( not kernel().node_manager.is_local_gid( tgid ) )
-  {
+  if ( not kernel().node_manager.is_local_gid( tgid ) ) {
     return false;
   }
 
@@ -517,60 +482,50 @@ nest::ConnectionManager::connect( const index sgid,
 
   // normal nodes and devices with proxies -> normal nodes and devices with
   // proxies
-  if ( source->has_proxies() and target->has_proxies() )
-  {
+  if ( source->has_proxies() and target->has_proxies() ) {
     connect_( *source, *target, sgid, target_thread, syn_id, params );
   }
   // normal nodes and devices with proxies -> normal devices
-  else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() )
-  {
+  else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() ) {
     // Connections to nodes with one node per process (MUSIC proxies
     // or similar devices) have to be established by the thread of the
     // target if the source is on the local process even though the
     // source may be a proxy on target_thread.
-    if ( target->one_node_per_process() and not source->is_proxy() )
-    {
+    if ( target->one_node_per_process() and not source->is_proxy() ) {
       connect_to_device_( *source, *target, sgid, target_thread, syn_id, params );
       return true;
     }
 
     // make sure source is on this MPI rank
-    if ( source->is_proxy() or source->get_thread() != tid )
-    {
+    if ( source->is_proxy() or source->get_thread() != tid ) {
       return false;
     }
 
     connect_to_device_( *source, *target, sgid, target_thread, syn_id, params );
   }
   // normal devices -> normal nodes and devices with proxies
-  else if ( not source->has_proxies() and target->has_proxies() )
-  {
+  else if ( not source->has_proxies() and target->has_proxies() ) {
     connect_from_device_( *source, *target, target_thread, syn_id, params );
   }
   // normal devices -> normal devices
-  else if ( not source->has_proxies() and not target->has_proxies() )
-  {
+  else if ( not source->has_proxies() and not target->has_proxies() ) {
     // create connection only on suggested thread of target
     const thread suggested_thread =
       kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp_for_gid( target->get_gid() ) );
-    if ( suggested_thread == tid )
-    {
+    if ( suggested_thread == tid ) {
       connect_from_device_( *source, *target, suggested_thread, syn_id, params );
     }
   }
   // globally receiving devices, e.g. volume transmitter
-  else if ( not target->has_proxies() and not target->local_receiver() )
-  {
+  else if ( not target->has_proxies() and not target->local_receiver() ) {
     // we do not allow to connect a device to a global receiver at the moment
-    if ( not source->has_proxies() )
-    {
+    if ( not source->has_proxies() ) {
       return false;
     }
     target = kernel().node_manager.get_node( tgid, tid );
     connect_( *source, *target, sgid, tid, syn_id, params );
   }
-  else
-  {
+  else {
     assert( false );
   }
 
@@ -591,8 +546,7 @@ nest::ConnectionManager::connect_( Node& s,
   const bool is_primary = kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary();
 
   if ( kernel().model_manager.connector_requires_clopath_archiving( syn_id )
-    and not dynamic_cast< Clopath_Archiving_Node* >( &r ) )
-  {
+    and not dynamic_cast< Clopath_Archiving_Node* >( &r ) ) {
     throw NotImplemented(
       "This synapse model is not supported by the neuron model of at least one "
       "connection." );
@@ -607,14 +561,12 @@ nest::ConnectionManager::connect_( Node& s,
 
   // We do not check has_primary_connections_ and secondary_connections_exist_
   // directly as this led to worse performance on the supercomputer Piz Daint.
-  if ( not check_primary_connections_[ tid ] and is_primary )
-  {
+  if ( not check_primary_connections_[ tid ] and is_primary ) {
 #pragma omp atomic write
     has_primary_connections_ = true;
     check_primary_connections_.set( tid, true );
   }
-  else if ( not check_secondary_connections_[ tid ] and not is_primary )
-  {
+  else if ( not check_secondary_connections_[ tid ] and not is_primary ) {
 #pragma omp atomic write
     secondary_connections_exist_ = true;
     check_secondary_connections_.set( tid, true );
@@ -655,13 +607,11 @@ nest::ConnectionManager::connect_from_device_( Node& s,
 void
 nest::ConnectionManager::increase_connection_count( const thread tid, const synindex syn_id )
 {
-  if ( num_connections_[ tid ].size() <= syn_id )
-  {
+  if ( num_connections_[ tid ].size() <= syn_id ) {
     num_connections_[ tid ].resize( syn_id + 1 );
   }
   ++num_connections_[ tid ][ syn_id ];
-  if ( num_connections_[ tid ][ syn_id ] >= MAX_LCID )
-  {
+  if ( num_connections_[ tid ][ syn_id ] >= MAX_LCID ) {
     throw KernelException( String::compose(
       "Too many connections: at most %1 connections supported per virtual "
       "process and synapse model.",
@@ -675,16 +625,14 @@ nest::ConnectionManager::find_connection( const thread tid, const synindex syn_i
   // lcid will hold the position of the /first/ connection from node
   // sgid to any local node, or be invalid
   index lcid = source_table_.find_first_source( tid, syn_id, sgid );
-  if ( lcid == invalid_index )
-  {
+  if ( lcid == invalid_index ) {
     return invalid_index;
   }
 
   // lcid will hold the position of the /first/ connection from node
   // sgid to node tgid, or be invalid
   lcid = connections_[ tid ][ syn_id ]->find_first_target( tid, lcid, tgid );
-  if ( lcid != invalid_index )
-  {
+  if ( lcid != invalid_index ) {
     return lcid;
   }
 
@@ -729,34 +677,29 @@ nest::ConnectionManager::data_connect_single( const index source_id, DictionaryD
   // rather than using the lookup operator.
   // We also do the parameter checking here so that we can later use unsafe
   // operations.
-  for ( di_s = ( *params ).begin(); di_s != ( *params ).end(); ++di_s )
-  {
+  for ( di_s = ( *params ).begin(); di_s != ( *params ).end(); ++di_s ) {
     DoubleVectorDatum const* tmp = dynamic_cast< DoubleVectorDatum* >( di_s->second.datum() );
     IntVectorDatum const* tmpint = dynamic_cast< IntVectorDatum* >( di_s->second.datum() );
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( di_s->second.datum() );
-    if ( tmp == 0 )
-    {
+    if ( tmp == 0 ) {
 
       std::string msg =
         String::compose( "Parameter '%1' must be a DoubleVectorArray or numpy.array. ", di_s->first.toString() );
       LOG( M_DEBUG, "DataConnect", msg );
       LOG( M_DEBUG, "DataConnect", "Trying to convert, but this takes time." );
 
-      if ( tmpint )
-      {
+      if ( tmpint ) {
         std::vector< double >* data = new std::vector< double >( ( *tmpint )->begin(), ( *tmpint )->end() );
         DoubleVectorDatum* dvd = new DoubleVectorDatum( data );
         di_s->second = dvd;
       }
-      else if ( ad )
-      {
+      else if ( ad ) {
         std::vector< double >* data = new std::vector< double >;
         ad->toVector( *data );
         DoubleVectorDatum* dvd = new DoubleVectorDatum( data );
         di_s->second = dvd;
       }
-      else
-      {
+      else {
         throw TypeMismatch(
           DoubleVectorDatum().gettypename().toString() + " or " + ArrayDatum().gettypename().toString(),
           di_s->second.datum()->gettypename().toString() );
@@ -779,8 +722,7 @@ nest::ConnectionManager::data_connect_single( const index source_id, DictionaryD
   bool complete_wd_lists =
     ( ( *ptarget_ids )->size() == ( *pweights )->size() and ( *pweights )->size() == ( *pdelays )->size() );
   // check if we have consistent lists for weights and delays
-  if ( not complete_wd_lists )
-  {
+  if ( not complete_wd_lists ) {
     LOG( M_ERROR, "DataConnect", "All lists in the parameter dictionary must be of equal size." );
     throw DimensionMismatch();
   }
@@ -788,8 +730,7 @@ nest::ConnectionManager::data_connect_single( const index source_id, DictionaryD
   Node* source = kernel().node_manager.get_node( source_id );
 
   Subnet* source_comp = dynamic_cast< Subnet* >( source );
-  if ( source_comp != 0 )
-  {
+  if ( source_comp != 0 ) {
     LOG( M_INFO, "DataConnect", "Source ID is a subnet; I will iterate it." );
 
     // collect all leaves in source subnet, then data-connect each leaf
@@ -798,8 +739,7 @@ nest::ConnectionManager::data_connect_single( const index source_id, DictionaryD
     kernel().mpi_manager.communicate( local_sources, global_sources );
     for ( std::vector< MPIManager::NodeAddressingData >::iterator src = global_sources.begin();
           src != global_sources.end();
-          ++src )
-    {
+          ++src ) {
       data_connect_single( src->get_gid(), params, syn_id );
     }
 
@@ -812,81 +752,68 @@ nest::ConnectionManager::data_connect_single( const index source_id, DictionaryD
     DictionaryDatum par_i( new Dictionary() );
 
     size_t n_targets = target_ids.size();
-    for ( index i = 0; i < n_targets; ++i )
-    {
+    for ( index i = 0; i < n_targets; ++i ) {
       Node* target = 0;
-      try
-      {
+      try {
         target = kernel().node_manager.get_node( target_ids[ i ], tid );
       }
-      catch ( UnknownNode& e )
-      {
+      catch ( UnknownNode& e ) {
         std::string msg = String::compose(
           "Target with ID %1 does not exist. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( not e.message().empty() )
-        {
+        if ( not e.message().empty() ) {
           msg += "\nDetails: " + e.message();
         }
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
 
-      if ( target->get_thread() != tid )
-      {
+      if ( target->get_thread() != tid ) {
         continue;
       }
 
       // here we fill a parameter dictionary with the values of the current loop
       // index.
-      for ( di_s = ( *params ).begin(); di_s != ( *params ).end(); ++di_s )
-      {
+      for ( di_s = ( *params ).begin(); di_s != ( *params ).end(); ++di_s ) {
         DoubleVectorDatum const* tmp = static_cast< DoubleVectorDatum* >( di_s->second.datum() );
         const std::vector< double >& tmpvec = **tmp;
         par_i->insert( di_s->first, Token( new DoubleDatum( tmpvec[ i ] ) ) );
       }
 
-      try
-      {
+      try {
         connect( source_id, target_ids[ i ], par_i, syn_id );
       }
-      catch ( UnexpectedEvent& e )
-      {
+      catch ( UnexpectedEvent& e ) {
         std::string msg = String::compose(
           "Target with ID %1 does not support the connection. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( not e.message().empty() )
-        {
+        if ( not e.message().empty() ) {
           msg += "\nDetails: " + e.message();
         }
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
-      catch ( IllegalConnection& e )
-      {
+      catch ( IllegalConnection& e ) {
         std::string msg = String::compose(
           "Target with ID %1 does not support the connection. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( not e.message().empty() )
-        {
+        if ( not e.message().empty() ) {
           msg += "\nDetails: " + e.message();
         }
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
-      catch ( UnknownReceptorType& e )
-      {
+      catch ( UnknownReceptorType& e ) {
         std::string msg = String::compose(
           "In Connection from global source ID %1 to target ID %2: "
           "Target does not support requested receptor type. "
           "The connection will be ignored",
           source_id,
           target_ids[ i ] );
-        if ( not e.message().empty() )
-        {
+        if ( not e.message().empty() ) {
           msg += "\nDetails: " + e.message();
         }
         LOG( M_WARNING, "DataConnect", msg.c_str() );
@@ -900,8 +827,7 @@ bool
 nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
 {
   kernel().connection_manager.set_have_connections_changed( true );
-  for ( Token* ct = connectome.begin(); ct != connectome.end(); ++ct )
-  {
+  for ( Token* ct = connectome.begin(); ct != connectome.end(); ++ct ) {
     DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
     index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );
     Node* target_node = kernel().node_manager.get_node( target_gid );
@@ -911,16 +837,13 @@ nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
     index source_gid = ( *cd )[ names::source ];
 
     Token synmodel = cd->lookup( names::synapse_model );
-    if ( not synmodel.empty() )
-    {
+    if ( not synmodel.empty() ) {
       std::string synmodel_name = getValue< std::string >( synmodel );
       synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-      if ( not synmodel.empty() )
-      {
+      if ( not synmodel.empty() ) {
         syn_id = static_cast< size_t >( synmodel );
       }
-      else
-      {
+      else {
         throw UnknownModelName( synmodel_name );
       }
     }
@@ -939,10 +862,8 @@ nest::ConnectionManager::trigger_update_weight( const long vt_id,
   const thread tid = kernel().vp_manager.get_thread_id();
 
   for ( std::vector< ConnectorBase* >::iterator it = connections_[ tid ].begin(); it != connections_[ tid ].end();
-        ++it )
-  {
-    if ( *it != NULL )
-    {
+        ++it ) {
+    if ( *it != NULL ) {
       ( *it )->trigger_update_weight(
         vt_id, tid, dopa_spikes, t_trig, kernel().model_manager.get_synapse_prototypes( tid ) );
     }
@@ -953,10 +874,8 @@ size_t
 nest::ConnectionManager::get_num_target_data( const thread tid ) const
 {
   size_t num_connections = 0;
-  for ( synindex syn_id = 0; syn_id < connections_[ tid ].size(); ++syn_id )
-  {
-    if ( connections_[ tid ][ syn_id ] != NULL )
-    {
+  for ( synindex syn_id = 0; syn_id < connections_[ tid ].size(); ++syn_id ) {
+    if ( connections_[ tid ][ syn_id ] != NULL ) {
       num_connections += source_table_.num_unique_sources( tid, syn_id );
     }
   }
@@ -967,10 +886,8 @@ size_t
 nest::ConnectionManager::get_num_connections() const
 {
   size_t num_connections = 0;
-  for ( index t = 0; t < num_connections_.size(); ++t )
-  {
-    for ( index s = 0; s < num_connections_[ t ].size(); ++s )
-    {
+  for ( index t = 0; t < num_connections_.size(); ++t ) {
+    for ( index s = 0; s < num_connections_[ t ].size(); ++s ) {
       num_connections += num_connections_[ t ][ s ];
     }
   }
@@ -982,10 +899,8 @@ size_t
 nest::ConnectionManager::get_num_connections( const synindex syn_id ) const
 {
   size_t num_connections = 0;
-  for ( index t = 0; t < num_connections_.size(); ++t )
-  {
-    if ( num_connections_[ t ].size() > syn_id )
-    {
+  for ( index t = 0; t < num_connections_.size(); ++t ) {
+    if ( num_connections_[ t ].size() > syn_id ) {
       num_connections += num_connections_[ t ][ syn_id ];
     }
   }
@@ -1006,21 +921,17 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
   long synapse_label = UNLABELED_CONNECTION;
   updateValue< long >( params, names::synapse_label, synapse_label );
 
-  if ( not source_t.empty() )
-  {
+  if ( not source_t.empty() ) {
     source_a = dynamic_cast< TokenArray const* >( source_t.datum() );
   }
-  if ( not target_t.empty() )
-  {
+  if ( not target_t.empty() ) {
     target_a = dynamic_cast< TokenArray const* >( target_t.datum() );
   }
 
   // If connections have changed, (re-)build presynaptic infrastructure,
   // as this may involve sorting connections by source gids.
-  if ( have_connections_changed() )
-  {
-    if ( not kernel().simulation_manager.has_been_simulated() )
-    {
+  if ( have_connections_changed() ) {
+    if ( not kernel().simulation_manager.has_been_simulated() ) {
       kernel().model_manager.create_secondary_events_prototypes();
     }
 #pragma omp parallel
@@ -1034,24 +945,19 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
 
   // First we check, whether a synapse model is given.
   // If not, we will iterate all.
-  if ( not syn_model_t.empty() )
-  {
+  if ( not syn_model_t.empty() ) {
     Name synmodel_name = getValue< Name >( syn_model_t );
     const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-    if ( not synmodel.empty() )
-    {
+    if ( not synmodel.empty() ) {
       syn_id = static_cast< size_t >( synmodel );
     }
-    else
-    {
+    else {
       throw UnknownModelName( synmodel_name.toString() );
     }
     get_connections( connectome, source_a, target_a, syn_id, synapse_label );
   }
-  else
-  {
-    for ( syn_id = 0; syn_id < kernel().model_manager.get_num_synapse_prototypes(); ++syn_id )
-    {
+  else {
+    for ( syn_id = 0; syn_id < kernel().model_manager.get_num_synapse_prototypes(); ++syn_id ) {
       get_connections( connectome, source_a, target_a, syn_id, synapse_label );
     }
   }
@@ -1059,8 +965,7 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
   ArrayDatum result;
   result.reserve( connectome.size() );
 
-  while ( not connectome.empty() )
-  {
+  while ( not connectome.empty() ) {
     result.push_back( ConnectionDatum( connectome.front() ) );
     connectome.pop_front();
   }
@@ -1073,8 +978,7 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
 static inline std::deque< nest::ConnectionID >&
 extend_connectome( std::deque< nest::ConnectionID >& out, std::deque< nest::ConnectionID >& in )
 {
-  while ( not in.empty() )
-  {
+  while ( not in.empty() ) {
     out.push_back( in.front() );
     in.pop_front();
   }
@@ -1088,15 +992,12 @@ nest::ConnectionManager::split_to_neuron_device_vectors_( const thread tid,
   std::vector< index >& neuron_gids,
   std::vector< index >& device_gids ) const
 {
-  for ( size_t t_id = 0; t_id < gid_token_array->size(); ++t_id )
-  {
+  for ( size_t t_id = 0; t_id < gid_token_array->size(); ++t_id ) {
     const index gid = gid_token_array->get( t_id );
-    if ( kernel().node_manager.get_node( gid, tid )->has_proxies() )
-    {
+    if ( kernel().node_manager.get_node( gid, tid )->has_proxies() ) {
       neuron_gids.push_back( gid );
     }
-    else
-    {
+    else {
       device_gids.push_back( gid );
     }
   }
@@ -1109,8 +1010,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
   synindex syn_id,
   long synapse_label ) const
 {
-  if ( is_source_table_cleared() )
-  {
+  if ( is_source_table_cleared() ) {
     throw KernelException(
       "Invalid attempt to access connection information: source table was "
       "cleared." );
@@ -1118,13 +1018,11 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
 
   const size_t num_connections = get_num_connections( syn_id );
 
-  if ( num_connections == 0 )
-  {
+  if ( num_connections == 0 ) {
     return;
   }
 
-  if ( source == 0 and target == 0 )
-  {
+  if ( source == 0 and target == 0 ) {
 #pragma omp parallel
     {
       thread tid = kernel().vp_manager.get_thread_id();
@@ -1132,12 +1030,10 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
       std::deque< ConnectionID > conns_in_thread;
 
       ConnectorBase* connections = connections_[ tid ][ syn_id ];
-      if ( connections != NULL )
-      {
+      if ( connections != NULL ) {
         // Passing target_gid = 0 ignores target_gid while getting connections.
         const size_t num_connections_in_thread = connections->size();
-        for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
-        {
+        for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid ) {
           const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
           connections->get_connection( source_gid, 0, tid, lcid, synapse_label, conns_in_thread );
         }
@@ -1145,8 +1041,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
 
       target_table_devices_.get_connections( 0, 0, tid, syn_id, synapse_label, conns_in_thread );
 
-      if ( conns_in_thread.size() > 0 )
-      {
+      if ( conns_in_thread.size() > 0 ) {
 #pragma omp critical( get_connections )
         {
           extend_connectome( connectome, conns_in_thread );
@@ -1155,8 +1050,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
     } // of omp parallel
     return;
   } // if
-  else if ( source == 0 and target != 0 )
-  {
+  else if ( source == 0 and target != 0 ) {
 #pragma omp parallel
     {
       thread tid = kernel().vp_manager.get_thread_id();
@@ -1169,11 +1063,9 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
       split_to_neuron_device_vectors_( tid, target, target_neuron_gids, target_device_gids );
 
       ConnectorBase* connections = connections_[ tid ][ syn_id ];
-      if ( connections != NULL )
-      {
+      if ( connections != NULL ) {
         const size_t num_connections_in_thread = connections->size();
-        for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
-        {
+        for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid ) {
           const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
           connections->get_connection_with_specified_targets(
             source_gid, target_neuron_gids, tid, lcid, synapse_label, conns_in_thread );
@@ -1181,8 +1073,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
 
         for ( std::vector< index >::const_iterator t_gid = target_neuron_gids.begin();
               t_gid != target_neuron_gids.end();
-              ++t_gid )
-        {
+              ++t_gid ) {
           // target_table_devices_ contains connections both to and from
           // devices. First we get connections from devices.
           target_table_devices_.get_connections_from_devices_( 0, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
@@ -1190,14 +1081,12 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
       }
 
       for ( std::vector< index >::const_iterator t_gid = target_device_gids.begin(); t_gid != target_device_gids.end();
-            ++t_gid )
-      {
+            ++t_gid ) {
         // Then, we get connections to devices.
         target_table_devices_.get_connections_to_devices_( 0, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
       }
 
-      if ( conns_in_thread.size() > 0 )
-      {
+      if ( conns_in_thread.size() > 0 ) {
 #pragma omp critical( get_connections )
         {
           extend_connectome( connectome, conns_in_thread );
@@ -1206,8 +1095,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
     } // of omp parallel
     return;
   } // else if
-  else if ( source != 0 )
-  {
+  else if ( source != 0 ) {
 #pragma omp parallel
     {
       thread tid = kernel().vp_manager.get_thread_id();
@@ -1221,28 +1109,22 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
       // Split targets into neuron- and device-vectors.
       std::vector< index > target_neuron_gids;
       std::vector< index > target_device_gids;
-      if ( target != 0 )
-      {
+      if ( target != 0 ) {
         split_to_neuron_device_vectors_( tid, target, target_neuron_gids, target_device_gids );
       }
 
       const ConnectorBase* connections = connections_[ tid ][ syn_id ];
-      if ( connections != NULL )
-      {
+      if ( connections != NULL ) {
         const size_t num_connections_in_thread = connections->size();
-        for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
-        {
+        for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid ) {
           const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
-          if ( std::binary_search( sources.begin(), sources.end(), source_gid ) )
-          {
-            if ( target == 0 )
-            {
+          if ( std::binary_search( sources.begin(), sources.end(), source_gid ) ) {
+            if ( target == 0 ) {
               // Passing target_gid = 0 ignores target_gid while getting
               // connections.
               connections->get_connection( source_gid, 0, tid, lcid, synapse_label, conns_in_thread );
             }
-            else
-            {
+            else {
               connections->get_connection_with_specified_targets(
                 source_gid, target_neuron_gids, tid, lcid, synapse_label, conns_in_thread );
             }
@@ -1250,19 +1132,15 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
         }
       }
 
-      for ( size_t s_id = 0; s_id < source->size(); ++s_id )
-      {
+      for ( size_t s_id = 0; s_id < source->size(); ++s_id ) {
         const index source_gid = source->get( s_id );
-        if ( target == 0 )
-        {
+        if ( target == 0 ) {
           target_table_devices_.get_connections( source_gid, 0, tid, syn_id, synapse_label, conns_in_thread );
         }
-        else
-        {
+        else {
           for ( std::vector< index >::const_iterator t_gid = target_neuron_gids.begin();
                 t_gid != target_neuron_gids.end();
-                ++t_gid )
-          {
+                ++t_gid ) {
             // target_table_devices_ contains connections both to and from
             // devices. First we get connections from devices.
             target_table_devices_.get_connections_from_devices_(
@@ -1270,8 +1148,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
           }
           for ( std::vector< index >::const_iterator t_gid = target_device_gids.begin();
                 t_gid != target_device_gids.end();
-                ++t_gid )
-          {
+                ++t_gid ) {
             // Then, we get connections to devices.
             target_table_devices_.get_connections_to_devices_(
               source_gid, *t_gid, tid, syn_id, synapse_label, conns_in_thread );
@@ -1279,8 +1156,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
         }
       }
 
-      if ( conns_in_thread.size() > 0 )
-      {
+      if ( conns_in_thread.size() > 0 ) {
 #pragma omp critical( get_connections )
         {
           extend_connectome( connectome, conns_in_thread );
@@ -1298,8 +1174,7 @@ nest::ConnectionManager::get_source_gids_( const thread tid,
   std::vector< index >& sources )
 {
   std::vector< index > source_lcids;
-  if ( connections_[ tid ][ syn_id ] != NULL )
-  {
+  if ( connections_[ tid ][ syn_id ] != NULL ) {
     connections_[ tid ][ syn_id ]->get_source_lcids( tid, tgid, source_lcids );
     source_table_.get_source_gids( tid, syn_id, source_lcids, sources );
   }
@@ -1311,15 +1186,12 @@ nest::ConnectionManager::get_sources( const std::vector< index >& targets,
   std::vector< std::vector< index > >& sources )
 {
   sources.resize( targets.size() );
-  for ( std::vector< std::vector< index > >::iterator i = sources.begin(); i != sources.end(); ++i )
-  {
+  for ( std::vector< std::vector< index > >::iterator i = sources.begin(); i != sources.end(); ++i ) {
     ( *i ).clear();
   }
 
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    for ( size_t i = 0; i < targets.size(); ++i )
-    {
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid ) {
+    for ( size_t i = 0; i < targets.size(); ++i ) {
       get_source_gids_( tid, syn_id, targets[ i ], sources[ i ] );
     }
   }
@@ -1332,18 +1204,14 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
   std::vector< std::vector< index > >& targets )
 {
   targets.resize( sources.size() );
-  for ( std::vector< std::vector< index > >::iterator i = targets.begin(); i != targets.end(); ++i )
-  {
+  for ( std::vector< std::vector< index > >::iterator i = targets.begin(); i != targets.end(); ++i ) {
     ( *i ).clear();
   }
 
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    for ( size_t i = 0; i < sources.size(); ++i )
-    {
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid ) {
+    for ( size_t i = 0; i < sources.size(); ++i ) {
       const index start_lcid = source_table_.find_first_source( tid, syn_id, sources[ i ] );
-      if ( start_lcid != invalid_index )
-      {
+      if ( start_lcid != invalid_index ) {
         connections_[ tid ][ syn_id ]->get_target_gids( tid, start_lcid, post_synaptic_element, targets[ i ] );
       }
     }
@@ -1354,12 +1222,9 @@ void
 nest::ConnectionManager::sort_connections( const thread tid )
 {
   assert( not source_table_.is_cleared() );
-  if ( sort_connections_by_source_ )
-  {
-    for ( synindex syn_id = 0; syn_id < connections_[ tid ].size(); ++syn_id )
-    {
-      if ( connections_[ tid ][ syn_id ] != NULL )
-      {
+  if ( sort_connections_by_source_ ) {
+    for ( synindex syn_id = 0; syn_id < connections_[ tid ].size(); ++syn_id ) {
+      if ( connections_[ tid ][ syn_id ] != NULL ) {
         connections_[ tid ][ syn_id ]->sort_connections( source_table_.get_thread_local_sources( tid )[ syn_id ] );
       }
     }
@@ -1374,8 +1239,7 @@ nest::ConnectionManager::compute_target_data_buffer_size()
   // has its own data structures, we need to count connections on every
   // thread separately to compute the total number of sources.
   size_t num_target_data = 0;
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid ) {
     num_target_data += get_num_target_data( tid );
   }
 
@@ -1390,12 +1254,10 @@ nest::ConnectionManager::compute_target_data_buffer_size()
   const size_t min_num_target_data = 2 * kernel().mpi_manager.get_num_processes();
 
   // Adjust target data buffers accordingly
-  if ( min_num_target_data < max_num_target_data )
-  {
+  if ( min_num_target_data < max_num_target_data ) {
     kernel().mpi_manager.set_buffer_size_target_data( max_num_target_data );
   }
-  else
-  {
+  else {
     kernel().mpi_manager.set_buffer_size_target_data( min_num_target_data );
   }
 }
@@ -1414,22 +1276,18 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
   const size_t chunk_size_secondary_events_in_int = kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
 
   const synindex syn_id_end = connections_[ tid ].size();
-  for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
-  {
+  for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id ) {
     std::vector< size_t >& positions = secondary_recv_buffer_pos_[ tid ][ syn_id ];
 
-    if ( connections_[ tid ][ syn_id ] != NULL )
-    {
-      if ( not kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary() )
-      {
+    if ( connections_[ tid ][ syn_id ] != NULL ) {
+      if ( not kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary() ) {
         positions.clear();
         const size_t lcid_end = get_num_connections_( tid, syn_id );
         positions.resize( lcid_end, 0 );
 
         // Compute and store the buffer position from which this connection
         // should read secondary events.
-        for ( size_t lcid = 0; lcid < lcid_end; ++lcid )
-        {
+        for ( size_t lcid = 0; lcid < lcid_end; ++lcid ) {
           const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
           const index sg_s_id = source_table_.pack_source_gid_and_syn_id( source_gid, syn_id );
           const thread source_rank = kernel().mpi_manager.get_process_id_of_gid( source_gid );
@@ -1445,20 +1303,17 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
 void
 nest::ConnectionManager::set_stdp_eps( const double stdp_eps )
 {
-  if ( not( stdp_eps < Time::get_resolution().get_ms() ) )
-  {
+  if ( not( stdp_eps < Time::get_resolution().get_ms() ) ) {
     throw KernelException(
       "The epsilon used for spike-time comparison in STDP must be less "
       "than the simulation resolution." );
   }
-  else if ( stdp_eps < 0 )
-  {
+  else if ( stdp_eps < 0 ) {
     throw KernelException(
       "The epsilon used for spike-time comparison in STDP must not be "
       "negative." );
   }
-  else
-  {
+  else {
     stdp_eps_ = stdp_eps;
 
     std::ostringstream os;
@@ -1481,18 +1336,15 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
   const std::vector< std::vector< size_t > >& positions_tid = secondary_recv_buffer_pos_[ tid ];
 
   const synindex syn_id_end = positions_tid.size();
-  for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
-  {
-    if ( not called_from_wfr_update or kernel().model_manager.get_synapse_prototypes( tid )[ syn_id ]->supports_wfr() )
-    {
-      if ( positions_tid[ syn_id ].size() > 0 )
-      {
+  for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id ) {
+    if ( not called_from_wfr_update
+      or kernel().model_manager.get_synapse_prototypes( tid )[ syn_id ]->supports_wfr() ) {
+      if ( positions_tid[ syn_id ].size() > 0 ) {
         SecondaryEvent& prototype = kernel().model_manager.get_secondary_event_prototype( syn_id, tid );
 
         index lcid = 0;
         const size_t lcid_end = positions_tid[ syn_id ].size();
-        while ( lcid < lcid_end )
-        {
+        while ( lcid < lcid_end ) {
           std::vector< unsigned int >::iterator readpos = recv_buffer.begin() + positions_tid[ syn_id ][ lcid ];
           prototype << readpos;
           prototype.set_stamp( stamp );
@@ -1509,8 +1361,7 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
   // chunk
   bool done = true;
   const size_t chunk_size_in_int = kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
-  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
-  {
+  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank ) {
     done = done and recv_buffer[ ( rank + 1 ) * chunk_size_in_int - 1 ];
   }
   return done;
@@ -1527,16 +1378,13 @@ nest::ConnectionManager::remove_disabled_connections( const thread tid )
 {
   std::vector< ConnectorBase* >& connectors = connections_[ tid ];
 
-  for ( synindex syn_id = 0; syn_id < connectors.size(); ++syn_id )
-  {
-    if ( connectors[ syn_id ] == NULL )
-    {
+  for ( synindex syn_id = 0; syn_id < connectors.size(); ++syn_id ) {
+    if ( connectors[ syn_id ] == NULL ) {
       continue;
     }
     const index first_disabled_index = source_table_.remove_disabled_sources( tid, syn_id );
 
-    if ( first_disabled_index != invalid_index )
-    {
+    if ( first_disabled_index != invalid_index ) {
       connectors[ syn_id ]->remove_disabled_connections( first_disabled_index );
     }
   }
@@ -1548,8 +1396,7 @@ nest::ConnectionManager::resize_connections()
   kernel().vp_manager.assert_single_threaded();
 
   // Resize data structures for connections between neurons
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid ) {
     connections_[ tid ].resize( kernel().model_manager.get_num_synapse_prototypes() );
     source_table_.resize_sources( tid );
   }

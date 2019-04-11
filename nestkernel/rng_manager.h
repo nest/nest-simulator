@@ -39,11 +39,9 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
-class RNGManager : public ManagerInterface
-{
+class RNGManager : public ManagerInterface {
 public:
   RNGManager();
   virtual ~RNGManager()

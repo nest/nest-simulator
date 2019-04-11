@@ -37,8 +37,7 @@
 #include "dictdatum.h"
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: clopath_synapse - Synapse type for voltage-based STDP after Clopath.
@@ -85,8 +84,7 @@ SeeAlso: stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
 template < typename targetidentifierT >
-class ClopathConnection : public Connection< targetidentifierT >
-{
+class ClopathConnection : public Connection< targetidentifierT > {
 
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
@@ -132,8 +130,7 @@ public:
   void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -217,8 +214,7 @@ ClopathConnection< targetidentifierT >::send( Event& e, thread t, const CommonSy
   // details.
   target->get_LTP_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
   // facilitation due to post-synaptic activity since last pre-synaptic spike
-  while ( start != finish )
-  {
+  while ( start != finish ) {
     const double minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
     weight_ = facilitate_( weight_, start->dw_, x_bar_ * exp( minus_dt / tau_x_ ) );
     ++start;
@@ -291,14 +287,12 @@ ClopathConnection< targetidentifierT >::set_status( const DictionaryDatum& d, Co
   updateValue< double >( d, names::Wmax, Wmax_ );
 
   // check if weight_ and Wmin_ has the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmin_ >= 0 ) - ( Wmin_ < 0 ) ) ) )
-  {
+  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmin_ >= 0 ) - ( Wmin_ < 0 ) ) ) ) {
     throw BadProperty( "Weight and Wmin must have same sign." );
   }
 
   // check if weight_ and Wmax_ has the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ > 0 ) - ( Wmax_ <= 0 ) ) ) )
-  {
+  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ > 0 ) - ( Wmax_ <= 0 ) ) ) ) {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }
 }

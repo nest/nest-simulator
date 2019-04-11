@@ -47,8 +47,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-struct my_params
-{
+struct my_params {
   double a;
   double b;
 };
@@ -63,12 +62,10 @@ integrand1( double x, void* p )
   struct my_params* params = ( struct my_params* ) p;
   double y_th = ( params->a );
   double y_r = ( params->b );
-  if ( x == 0 )
-  {
+  if ( x == 0 ) {
     return exp( -y_th * y_th ) * 2 * ( y_th - y_r );
   }
-  else
-  {
+  else {
     return exp( -( x - y_th ) * ( x - y_th ) ) * ( 1. - exp( 2 * ( y_r - y_th ) * x ) ) / x;
   }
 }
@@ -79,18 +76,15 @@ integrand2( double x, void* p )
   struct my_params* params = ( struct my_params* ) p;
   double y_th = ( params->a );
   double y_r = ( params->b );
-  if ( x == 0 )
-  {
+  if ( x == 0 ) {
     return 2 * ( y_th - y_r );
   }
-  else
-  {
+  else {
     return ( exp( 2 * y_th * x - x * x ) - exp( 2 * y_r * x - x * x ) ) / x;
   }
 }
 
-namespace nest
-{
+namespace nest {
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -155,28 +149,23 @@ nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn, tau_syn_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
 
-  if ( V_reset_ >= theta_ )
-  {
+  if ( V_reset_ >= theta_ ) {
     throw BadProperty( "Reset potential must be smaller than threshold." );
   }
 
-  if ( t_ref_ < 0 )
-  {
+  if ( t_ref_ < 0 ) {
     throw BadProperty( "Refractory time must not be negative." );
   }
 
-  if ( tau_ <= 0 )
-  {
+  if ( tau_ <= 0 ) {
     throw BadProperty( "time constant must be > 0." );
   }
 
-  if ( tau_m_ <= 0 )
-  {
+  if ( tau_m_ <= 0 ) {
     throw BadProperty( "Membrane time constant must be > 0." );
   }
 
-  if ( tau_syn_ < 0 )
-  {
+  if ( tau_syn_ < 0 ) {
     throw BadProperty( "Membrane time constant must not be negative." );
   }
 }
@@ -255,22 +244,18 @@ nest::siegert_neuron::siegert1( double theta_shift, double V_reset_shift, double
 
   double lower_bound = y_th;
   double err = 1.;
-  while ( err >= 1e-12 )
-  {
+  while ( err >= 1e-12 ) {
     err = integrand1( lower_bound, &alpha );
-    if ( err > 1e-12 )
-    {
+    if ( err > 1e-12 ) {
       lower_bound /= 2.;
     }
   }
 
   double upper_bound = y_th;
   err = 1.;
-  while ( err >= 1e-12 )
-  {
+  while ( err >= 1e-12 ) {
     err = integrand1( upper_bound, &alpha );
-    if ( err > 1e-12 )
-    {
+    if ( err > 1e-12 ) {
       upper_bound *= 2.;
     }
   }
@@ -300,11 +285,9 @@ nest::siegert_neuron::siegert2( double theta_shift, double V_reset_shift, double
   double lower_bound = 0.;
   double upper_bound = 1.;
   double err = 1.;
-  while ( err >= 1e-12 )
-  {
+  while ( err >= 1e-12 ) {
     err = integrand2( upper_bound, &alpha );
-    if ( err > 1e-12 )
-    {
+    if ( err > 1e-12 ) {
       upper_bound *= 2.;
     }
   }
@@ -331,16 +314,13 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   // Catch cases where neurons get no input.
   // Use (Brunel, 2000) eq. (22) to estimate
   // firing rate to be ~ 1e-16
-  if ( ( theta_shift - mu ) > 6. * sigma )
-  {
+  if ( ( theta_shift - mu ) > 6. * sigma ) {
     return 0.;
   }
-  if ( mu <= theta_shift - 0.05 * std::abs( theta_shift ) )
-  {
+  if ( mu <= theta_shift - 0.05 * std::abs( theta_shift ) ) {
     return siegert1( theta_shift, V_r_shift, mu, sigma );
   }
-  else
-  {
+  else {
     return siegert2( theta_shift, V_r_shift, mu, sigma );
   }
 }
@@ -398,8 +378,7 @@ nest::siegert_neuron::update_( Time const& origin, const long from, const long t
   // allocate memory to store rates to be sent by rate events
   std::vector< double > new_rates( buffer_size, 0.0 );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     // register rate in buffer
     new_rates[ lag ] = S_.r_;
 
@@ -407,8 +386,7 @@ nest::siegert_neuron::update_( Time const& origin, const long from, const long t
     double drive = siegert( B_.drift_input_[ lag ], B_.diffusion_input_[ lag ] );
     S_.r_ = V_.P1_ * ( S_.r_ ) + ( 1 - V_.P1_ ) * P_.mean_ + V_.P2_ * drive;
 
-    if ( not called_from_wfr_update )
-    {
+    if ( not called_from_wfr_update ) {
       // rate logging
       B_.logger_.record_data( origin.get_steps() + lag );
     }
@@ -421,14 +399,12 @@ nest::siegert_neuron::update_( Time const& origin, const long from, const long t
     }
   }
 
-  if ( not called_from_wfr_update )
-  {
+  if ( not called_from_wfr_update ) {
     // clear last_y_values
     std::vector< double >( buffer_size, 0.0 ).swap( B_.last_y_values );
 
     // modifiy new_rates for diffusion-event as proxy for next min_delay
-    for ( long temp = from; temp < to; ++temp )
-    {
+    for ( long temp = from; temp < to; ++temp ) {
       new_rates[ temp ] = S_.r_;
     }
   }
@@ -454,8 +430,7 @@ nest::siegert_neuron::handle( DiffusionConnectionEvent& e )
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
-  while ( it != e.end() )
-  {
+  while ( it != e.end() ) {
     const double value = e.get_coeffvalue( it );
     B_.drift_input_[ i ] += drift * value;
     B_.diffusion_input_[ i ] += diffusion * value;

@@ -69,11 +69,9 @@ std::map< std::string, MusicPortData > music_in_portlist_;
 std::map< std::string, MusicEventHandler > music_in_portmap_;
  */
 
-namespace nest
-{
+namespace nest {
 
-class MUSICManager : public ManagerInterface
-{
+class MUSICManager : public ManagerInterface {
 public:
   virtual void initialize(); // called from meta-manager to construct
   virtual void finalize();   // called from meta-manger to reinit
@@ -144,8 +142,7 @@ public:
   /**
    * Data structure to hold variables and parameters associated with a port.
    */
-  struct MusicPortData
-  {
+  struct MusicPortData {
     MusicPortData( size_t n, double latency, int m )
       : n_input_proxies( n )
       , acceptable_latency( latency )

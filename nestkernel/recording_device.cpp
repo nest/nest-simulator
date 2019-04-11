@@ -115,8 +115,7 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDa
 
   ( *d )[ names::time_in_steps ] = time_in_steps_;
   if ( rd.mode_ == RecordingDevice::WEIGHT_RECORDER or rd.mode_ == RecordingDevice::SPIKE_DETECTOR
-    or rd.mode_ == RecordingDevice::SPIN_DETECTOR )
-  {
+    or rd.mode_ == RecordingDevice::SPIN_DETECTOR ) {
     ( *d )[ names::precise_times ] = precise_times_;
   }
   // We must maintain /to_file, /to_screen, and /to_memory, because
@@ -124,27 +123,21 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDa
   ( *d )[ names::to_screen ] = to_screen_;
   ( *d )[ names::to_memory ] = to_memory_;
   ( *d )[ names::to_file ] = to_file_;
-  if ( rd.mode_ == RecordingDevice::MULTIMETER )
-  {
+  if ( rd.mode_ == RecordingDevice::MULTIMETER ) {
     ( *d )[ names::to_accumulator ] = to_accumulator_;
   }
   ArrayDatum ad;
-  if ( to_file_ )
-  {
+  if ( to_file_ ) {
     ad.push_back( LiteralDatum( names::file ) );
   }
-  if ( to_memory_ )
-  {
+  if ( to_memory_ ) {
     ad.push_back( LiteralDatum( names::memory ) );
   }
-  if ( to_screen_ )
-  {
+  if ( to_screen_ ) {
     ad.push_back( LiteralDatum( names::screen ) );
   }
-  if ( rd.mode_ == RecordingDevice::MULTIMETER )
-  {
-    if ( to_accumulator_ )
-    {
+  if ( rd.mode_ == RecordingDevice::MULTIMETER ) {
+    if ( to_accumulator_ ) {
       ad.push_back( LiteralDatum( names::accumulator ) );
     }
   }
@@ -164,8 +157,7 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDa
 
   ( *d )[ names::use_gid_in_filename ] = use_gid_in_filename_;
 
-  if ( to_file_ and not filename_.empty() )
-  {
+  if ( to_file_ and not filename_.empty() ) {
     initialize_property_array( d, names::filenames );
     append_property( d, names::filenames, filename_ );
   }
@@ -183,17 +175,14 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd, Buffers_& B,
   updateValue< bool >( d, names::withrport, withrport_ );
   updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
   if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR or rd.mode_ == RecordingDevice::WEIGHT_RECORDER
-    or rd.mode_ == RecordingDevice::SPIN_DETECTOR )
-  {
-    if ( d->known( names::precise_times ) )
-    {
+    or rd.mode_ == RecordingDevice::SPIN_DETECTOR ) {
+    if ( d->known( names::precise_times ) ) {
       user_set_precise_times_ = true;
       updateValue< bool >( d, names::precise_times, precise_times_ );
     }
   }
   updateValue< std::string >( d, names::file_extension, file_ext_ );
-  if ( d->known( names::precision ) )
-  {
+  if ( d->known( names::precision ) ) {
     user_set_precision_ = true;
     updateValue< long >( d, names::precision, precision_ );
   }
@@ -202,16 +191,13 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd, Buffers_& B,
   updateValue< bool >( d, names::binary, binary_ );
 
   long fbuffer_size = -1;
-  if ( updateValue< long >( d, names::fbuffer_size, fbuffer_size ) )
-  {
-    if ( B.fs_.is_open() )
-    {
+  if ( updateValue< long >( d, names::fbuffer_size, fbuffer_size ) ) {
+    if ( B.fs_.is_open() ) {
       throw BadProperty( "fbuffer_size cannot be set on open files." );
     }
 
     // prohibit negative sizes but allow Create_l_i_D to reset -1 on prototype
-    if ( fbuffer_size < 0 and not( rd.node_.get_vp() == -1 and fbuffer_size == -1 ) )
-    {
+    if ( fbuffer_size < 0 and not( rd.node_.get_vp() == -1 and fbuffer_size == -1 ) ) {
       throw BadProperty( "fbuffer_size must be >= 0." );
     }
     fbuffer_size_ = fbuffer_size;
@@ -233,48 +219,38 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd, Buffers_& B,
   rec_change = updateValue< bool >( d, names::to_screen, to_screen_ ) or rec_change;
   rec_change = updateValue< bool >( d, names::to_memory, to_memory_ ) or rec_change;
   rec_change = updateValue< bool >( d, names::to_file, to_file_ ) or rec_change;
-  if ( rd.mode_ == RecordingDevice::MULTIMETER )
-  {
+  if ( rd.mode_ == RecordingDevice::MULTIMETER ) {
     rec_change = updateValue< bool >( d, names::to_accumulator, to_accumulator_ ) or rec_change;
   }
 
   const bool have_record_to = d->known( names::record_to );
-  if ( have_record_to )
-  {
+  if ( have_record_to ) {
     // clear all flags
     to_file_ = to_screen_ = to_memory_ = to_accumulator_ = false;
 
     // check for flags present in array, could be far more elegant ...
     ArrayDatum ad = getValue< ArrayDatum >( d, names::record_to );
-    for ( Token* t = ad.begin(); t != ad.end(); ++t )
-    {
-      if ( *t == LiteralDatum( names::file ) or *t == Token( names::file.toString() ) )
-      {
+    for ( Token* t = ad.begin(); t != ad.end(); ++t ) {
+      if ( *t == LiteralDatum( names::file ) or *t == Token( names::file.toString() ) ) {
         to_file_ = true;
       }
-      else if ( *t == LiteralDatum( names::memory ) or *t == Token( names::memory.toString() ) )
-      {
+      else if ( *t == LiteralDatum( names::memory ) or *t == Token( names::memory.toString() ) ) {
         to_memory_ = true;
       }
-      else if ( *t == LiteralDatum( names::screen ) or *t == Token( names::screen.toString() ) )
-      {
+      else if ( *t == LiteralDatum( names::screen ) or *t == Token( names::screen.toString() ) ) {
         to_screen_ = true;
       }
       else if ( rd.mode_ == RecordingDevice::MULTIMETER
-        and ( *t == LiteralDatum( names::accumulator ) or *t == Token( names::accumulator.toString() ) ) )
-      {
+        and ( *t == LiteralDatum( names::accumulator ) or *t == Token( names::accumulator.toString() ) ) ) {
         to_accumulator_ = true;
       }
-      else
-      {
-        if ( rd.mode_ == RecordingDevice::MULTIMETER )
-        {
+      else {
+        if ( rd.mode_ == RecordingDevice::MULTIMETER ) {
           throw BadProperty(
             "/to_record must be array, allowed entries: /file, /memory, "
             "/screen, /accumulator." );
         }
-        else
-        {
+        else {
           throw BadProperty(
             "/to_record must be array, allowed entries: /file, /memory, "
             "/screen." );
@@ -283,13 +259,11 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd, Buffers_& B,
     }
   }
 
-  if ( ( rec_change or have_record_to ) and to_file_ and to_memory_ )
-  {
+  if ( ( rec_change or have_record_to ) and to_file_ and to_memory_ ) {
     LOG( M_INFO, "RecordingDevice::set_status", "Data will be recorded to file and to memory." );
   }
 
-  if ( to_accumulator_ and ( to_file_ or to_screen_ or to_memory_ or withgid_ or withweight_ ) )
-  {
+  if ( to_accumulator_ and ( to_file_ or to_screen_ or to_memory_ or withgid_ or withweight_ ) ) {
     to_file_ = to_screen_ = to_memory_ = withgid_ = withweight_ = false;
     LOG( M_WARNING,
       "RecordingDevice::set_status()",
@@ -298,12 +272,10 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd, Buffers_& B,
       "have been set to false." );
   }
 
-  if ( not tmp_use_gid_in_filename and label_.empty() )
-  {
+  if ( not tmp_use_gid_in_filename and label_.empty() ) {
     throw BadProperty( "If /use_gid_in_filename is false, /label must be specified." );
   }
-  else
-  {
+  else {
     use_gid_in_filename_ = tmp_use_gid_in_filename;
   }
 }
@@ -312,101 +284,82 @@ void
 nest::RecordingDevice::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   // if we already have the n_events entry, we add to it, otherwise we create it
-  if ( d->known( names::n_events ) )
-  {
+  if ( d->known( names::n_events ) ) {
     ( *d )[ names::n_events ] = getValue< long >( d, names::n_events ) + events_;
   }
-  else
-  {
+  else {
     ( *d )[ names::n_events ] = events_;
   }
 
   DictionaryDatum dict;
 
   // if we already have the events dict, we use it, otherwise we create it
-  if ( not d->known( names::events ) )
-  {
+  if ( not d->known( names::events ) ) {
     dict = DictionaryDatum( new Dictionary );
   }
-  else
-  {
+  else {
     dict = getValue< DictionaryDatum >( d, names::events );
   }
 
-  if ( p.withgid_ )
-  {
+  if ( p.withgid_ ) {
     assert( not p.to_accumulator_ );
     initialize_property_intvector( dict, names::senders );
     append_property( dict, names::senders, std::vector< long >( event_senders_ ) );
   }
 
-  if ( p.withweight_ )
-  {
+  if ( p.withweight_ ) {
     assert( not p.to_accumulator_ );
     initialize_property_doublevector( dict, names::weights );
     append_property( dict, names::weights, std::vector< double >( event_weights_ ) );
   }
 
-  if ( p.withtargetgid_ )
-  {
+  if ( p.withtargetgid_ ) {
     assert( not p.to_accumulator_ );
     initialize_property_intvector( dict, names::targets );
     append_property( dict, names::targets, std::vector< long >( event_targets_ ) );
   }
 
-  if ( p.withport_ )
-  {
+  if ( p.withport_ ) {
     assert( not p.to_accumulator_ );
     initialize_property_intvector( dict, names::ports );
     append_property( dict, names::ports, std::vector< long >( event_ports_ ) );
   }
 
-  if ( p.withrport_ )
-  {
+  if ( p.withrport_ ) {
     assert( not p.to_accumulator_ );
     initialize_property_intvector( dict, names::rports );
     append_property( dict, names::rports, std::vector< long >( event_rports_ ) );
   }
 
-  if ( p.withtime_ )
-  {
-    if ( p.time_in_steps_ )
-    {
+  if ( p.withtime_ ) {
+    if ( p.time_in_steps_ ) {
       initialize_property_intvector( dict, names::times );
       // When not accumulating, we just add time data. When accumulating, we
       // must add time data only from one thread and ensure that time data from
       // other threads is either empty of identical to what is present.
-      if ( not p.to_accumulator_ )
-      {
+      if ( not p.to_accumulator_ ) {
         append_property( dict, names::times, std::vector< long >( event_times_steps_ ) );
       }
-      else
-      {
+      else {
         provide_property( dict, names::times, std::vector< long >( event_times_steps_ ) );
       }
 
-      if ( p.precise_times_ )
-      {
+      if ( p.precise_times_ ) {
         initialize_property_doublevector( dict, names::offsets );
-        if ( not p.to_accumulator_ )
-        {
+        if ( not p.to_accumulator_ ) {
           append_property( dict, names::offsets, std::vector< double >( event_times_offsets_ ) );
         }
-        else
-        {
+        else {
           provide_property( dict, names::offsets, std::vector< double >( event_times_offsets_ ) );
         }
       }
     }
-    else
-    {
+    else {
       initialize_property_doublevector( dict, names::times );
-      if ( not p.to_accumulator_ )
-      {
+      if ( not p.to_accumulator_ ) {
         append_property( dict, names::times, std::vector< double >( event_times_ms_ ) );
       }
-      else
-      {
+      else {
         provide_property( dict, names::times, std::vector< double >( event_times_ms_ ) );
       }
     }
@@ -419,14 +372,11 @@ void
 nest::RecordingDevice::State_::set( const DictionaryDatum& d )
 {
   long ne = 0;
-  if ( updateValue< long >( d, names::n_events, ne ) )
-  {
-    if ( ne == 0 )
-    {
+  if ( updateValue< long >( d, names::n_events, ne ) ) {
+    if ( ne == 0 ) {
       events_ = 0;
     }
-    else
-    {
+    else {
       throw BadProperty( "n_events can only be set to 0." );
     }
   }
@@ -441,8 +391,7 @@ nest::RecordingDevice::Buffers_::Buffers_()
 
 nest::RecordingDevice::Buffers_::~Buffers_()
 {
-  if ( fbuffer_ )
-  {
+  if ( fbuffer_ ) {
     delete[] fbuffer_;
   }
 }
@@ -508,8 +457,7 @@ nest::RecordingDevice::init_buffers()
   // we only close files here, opening is left to calibrate()
   // we must not touch B_.fbuffer_ here, as it will be used
   // as long as B_.fs_ exists.
-  if ( P_.close_on_reset_ and B_.fs_.is_open() )
-  {
+  if ( P_.close_on_reset_ and B_.fs_.is_open() ) {
     B_.fs_.close();
     P_.filename_.clear(); // filename_ only visible while file open
   }
@@ -520,21 +468,17 @@ nest::RecordingDevice::calibrate()
 {
   Device::calibrate();
 
-  if ( P_.to_file_ )
-  {
+  if ( P_.to_file_ ) {
     // do we need to (re-)open the file
     bool newfile = false;
 
-    if ( not B_.fs_.is_open() )
-    {
+    if ( not B_.fs_.is_open() ) {
       newfile = true; // no file from before
       P_.filename_ = build_filename_();
     }
-    else
-    {
+    else {
       std::string newname = build_filename_();
-      if ( newname != P_.filename_ )
-      {
+      if ( newname != P_.filename_ ) {
         std::string msg = String::compose( "Closing file '%1', opening file '%2'", P_.filename_, newname );
         LOG( M_INFO, "RecordingDevice::calibrate()", msg );
 
@@ -544,24 +488,20 @@ nest::RecordingDevice::calibrate()
       }
     }
 
-    if ( newfile )
-    {
+    if ( newfile ) {
       assert( not B_.fs_.is_open() );
 
       // pubsetbuf() must be called before the opening file: otherwise, it has
       // no effect (libstdc++) or may lead to undefined behavior (libc++), see
       // http://en.cppreference.com/w/cpp/io/basic_filebuf/setbuf.
-      if ( P_.fbuffer_size_ >= 0 )
-      {
-        if ( B_.fbuffer_ )
-        {
+      if ( P_.fbuffer_size_ >= 0 ) {
+        if ( B_.fbuffer_ ) {
           delete[] B_.fbuffer_;
           B_.fbuffer_ = 0;
         }
         // invariant: B_.fbuffer_ == 0
 
-        if ( P_.fbuffer_size_ > 0 )
-        {
+        if ( P_.fbuffer_size_ > 0 ) {
           B_.fbuffer_ = new char[ P_.fbuffer_size_ ];
         }
         // invariant: ( P_.fbuffer_size_ == 0 and B_.fbuffer_ == 0 )
@@ -572,30 +512,24 @@ nest::RecordingDevice::calibrate()
 
         std::basic_streambuf< char >* res = B_.fs_.rdbuf()->pubsetbuf( B_.fbuffer_, B_.fbuffer_size_ );
 
-        if ( res == 0 )
-        {
+        if ( res == 0 ) {
           LOG( M_ERROR, "RecordingDevice::calibrate()", "Failed to set file buffer." );
           throw IOError();
         }
       }
 
-      if ( kernel().io_manager.overwrite_files() )
-      {
-        if ( P_.binary_ )
-        {
+      if ( kernel().io_manager.overwrite_files() ) {
+        if ( P_.binary_ ) {
           B_.fs_.open( P_.filename_.c_str(), std::ios::out | std::ios::binary );
         }
-        else
-        {
+        else {
           B_.fs_.open( P_.filename_.c_str() );
         }
       }
-      else
-      {
+      else {
         // try opening for reading
         std::ifstream test( P_.filename_.c_str() );
-        if ( test.good() )
-        {
+        if ( test.good() ) {
           std::string msg = String::compose(
             "The device file '%1' exists already and will not be overwritten. "
             "Please change data_path, data_prefix or label, or set "
@@ -604,25 +538,21 @@ nest::RecordingDevice::calibrate()
           LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
           throw IOError();
         }
-        else
-        {
+        else {
           test.close();
         }
 
         // file does not exist, so we can open
-        if ( P_.binary_ )
-        {
+        if ( P_.binary_ ) {
           B_.fs_.open( P_.filename_.c_str(), std::ios::out | std::ios::binary );
         }
-        else
-        {
+        else {
           B_.fs_.open( P_.filename_.c_str() );
         }
       }
     }
 
-    if ( not B_.fs_.good() )
-    {
+    if ( not B_.fs_.good() ) {
       std::string msg = String::compose(
         "I/O error while opening file '%1'. "
         "This may be caused by too many open files in networks "
@@ -630,8 +560,7 @@ nest::RecordingDevice::calibrate()
         P_.filename_ );
       LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 
-      if ( B_.fs_.is_open() )
-      {
+      if ( B_.fs_.is_open() ) {
         B_.fs_.close();
       }
       P_.filename_.clear();
@@ -643,12 +572,10 @@ nest::RecordingDevice::calibrate()
        since different devices may have different settings and
        this would lead to a mess.
      */
-    if ( P_.scientific_ )
-    {
+    if ( P_.scientific_ ) {
       B_.fs_ << std::scientific;
     }
-    else
-    {
+    else {
       B_.fs_ << std::fixed;
     }
 
@@ -659,15 +586,12 @@ nest::RecordingDevice::calibrate()
 void
 nest::RecordingDevice::post_run_cleanup()
 {
-  if ( B_.fs_.is_open() )
-  {
-    if ( P_.flush_after_simulate_ )
-    {
+  if ( B_.fs_.is_open() ) {
+    if ( P_.flush_after_simulate_ ) {
       B_.fs_.flush();
     }
 
-    if ( not B_.fs_.good() )
-    {
+    if ( not B_.fs_.good() ) {
       std::string msg = String::compose( "I/O error while opening file '%1'", P_.filename_ );
       LOG( M_ERROR, "RecordingDevice::post_run_cleanup()", msg );
 
@@ -679,20 +603,16 @@ nest::RecordingDevice::post_run_cleanup()
 void
 nest::RecordingDevice::finalize()
 {
-  if ( B_.fs_.is_open() )
-  {
-    if ( P_.close_after_simulate_ )
-    {
+  if ( B_.fs_.is_open() ) {
+    if ( P_.close_after_simulate_ ) {
       B_.fs_.close();
       return;
     }
 
-    if ( P_.flush_after_simulate_ )
-    {
+    if ( P_.flush_after_simulate_ ) {
       B_.fs_.flush();
     }
-    if ( not B_.fs_.good() )
-    {
+    if ( not B_.fs_.good() ) {
       std::string msg = String::compose( "I/O error while opening file '%1'", P_.filename_ );
       LOG( M_ERROR, "RecordingDevice::finalize()", msg );
 
@@ -723,14 +643,12 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  if ( not P_.to_file_ and B_.fs_.is_open() )
-  {
+  if ( not P_.to_file_ and B_.fs_.is_open() ) {
     B_.fs_.close();
     P_.filename_.clear();
   }
 
-  if ( S_.events_ == 0 )
-  {
+  if ( S_.events_ == 0 ) {
     S_.clear_events();
   }
 }
@@ -748,46 +666,38 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
   const long rport = event.get_rport();
 
   index target = -1;
-  if ( P_.withtargetgid_ )
-  {
+  if ( P_.withtargetgid_ ) {
     const WeightRecorderEvent* wr_e = dynamic_cast< const WeightRecorderEvent* >( &event );
-    if ( wr_e != 0 )
-    {
+    if ( wr_e != 0 ) {
       target = wr_e->get_receiver_gid();
     }
-    else
-    {
+    else {
       target = event.get_receiver_gid();
     }
   }
 
-  if ( P_.to_screen_ )
-  {
+  if ( P_.to_screen_ ) {
     print_id_( std::cout, sender );
     print_target_( std::cout, target );
     print_port_( std::cout, port );
     print_rport_( std::cout, rport );
     print_time_( std::cout, stamp, offset );
     print_weight_( std::cout, weight );
-    if ( endrecord )
-    {
+    if ( endrecord ) {
       std::cout << '\n';
     }
   }
 
-  if ( P_.to_file_ )
-  {
+  if ( P_.to_file_ ) {
     print_id_( B_.fs_, sender );
     print_target_( B_.fs_, target );
     print_port_( B_.fs_, port );
     print_rport_( B_.fs_, rport );
     print_time_( B_.fs_, stamp, offset );
     print_weight_( B_.fs_, weight );
-    if ( endrecord )
-    {
+    if ( endrecord ) {
       B_.fs_ << '\n';
-      if ( P_.flush_records_ )
-      {
+      if ( P_.flush_records_ ) {
         B_.fs_.flush();
       }
     }
@@ -795,8 +705,7 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
 
   // storing data when recording to accumulator relies on the fact
   // that multimeter will call us only once per accumulation step
-  if ( P_.to_memory_ or P_.to_accumulator_ )
-  {
+  if ( P_.to_memory_ or P_.to_accumulator_ ) {
     store_data_( sender, stamp, offset, weight, target, port, rport );
   }
 }
@@ -804,8 +713,7 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
 void
 nest::RecordingDevice::print_id_( std::ostream& os, index gid )
 {
-  if ( P_.withgid_ )
-  {
+  if ( P_.withgid_ ) {
     os << gid << '\t';
   }
 }
@@ -813,24 +721,19 @@ nest::RecordingDevice::print_id_( std::ostream& os, index gid )
 void
 nest::RecordingDevice::print_time_( std::ostream& os, const Time& t, double offs )
 {
-  if ( not P_.withtime_ )
-  {
+  if ( not P_.withtime_ ) {
     return;
   }
-  if ( P_.time_in_steps_ )
-  {
+  if ( P_.time_in_steps_ ) {
     os << t.get_steps() << '\t';
-    if ( P_.precise_times_ )
-    {
+    if ( P_.precise_times_ ) {
       os << offs << '\t';
     }
   }
-  else if ( P_.precise_times_ )
-  {
+  else if ( P_.precise_times_ ) {
     os << t.get_ms() - offs << '\t';
   }
-  else
-  {
+  else {
     os << t.get_ms() << '\t';
   }
 }
@@ -838,8 +741,7 @@ nest::RecordingDevice::print_time_( std::ostream& os, const Time& t, double offs
 void
 nest::RecordingDevice::print_weight_( std::ostream& os, double weight )
 {
-  if ( P_.withweight_ )
-  {
+  if ( P_.withweight_ ) {
     os << weight << '\t';
   }
 }
@@ -847,8 +749,7 @@ nest::RecordingDevice::print_weight_( std::ostream& os, double weight )
 void
 nest::RecordingDevice::print_target_( std::ostream& os, index gid )
 {
-  if ( P_.withtargetgid_ )
-  {
+  if ( P_.withtargetgid_ ) {
     os << gid << '\t';
   }
 }
@@ -856,8 +757,7 @@ nest::RecordingDevice::print_target_( std::ostream& os, index gid )
 void
 nest::RecordingDevice::print_port_( std::ostream& os, long port )
 {
-  if ( P_.withport_ )
-  {
+  if ( P_.withport_ ) {
     os << port << '\t';
   }
 }
@@ -865,8 +765,7 @@ nest::RecordingDevice::print_port_( std::ostream& os, long port )
 void
 nest::RecordingDevice::print_rport_( std::ostream& os, long rport )
 {
-  if ( P_.withrport_ )
-  {
+  if ( P_.withrport_ ) {
     os << rport << '\t';
   }
 }
@@ -880,44 +779,34 @@ nest::RecordingDevice::store_data_( index sender,
   long port,
   long rport )
 {
-  if ( P_.withgid_ )
-  {
+  if ( P_.withgid_ ) {
     S_.event_senders_.push_back( sender );
   }
-  if ( P_.withtime_ )
-  {
-    if ( P_.time_in_steps_ )
-    {
+  if ( P_.withtime_ ) {
+    if ( P_.time_in_steps_ ) {
       S_.event_times_steps_.push_back( t.get_steps() );
-      if ( P_.precise_times_ )
-      {
+      if ( P_.precise_times_ ) {
         S_.event_times_offsets_.push_back( offs );
       }
     }
-    else if ( P_.precise_times_ )
-    {
+    else if ( P_.precise_times_ ) {
       S_.event_times_ms_.push_back( t.get_ms() - offs );
     }
-    else
-    {
+    else {
       S_.event_times_ms_.push_back( t.get_ms() );
     }
   }
 
-  if ( P_.withweight_ )
-  {
+  if ( P_.withweight_ ) {
     S_.event_weights_.push_back( weight );
   }
-  if ( P_.withtargetgid_ )
-  {
+  if ( P_.withtargetgid_ ) {
     S_.event_targets_.push_back( target );
   }
-  if ( P_.withport_ )
-  {
+  if ( P_.withport_ ) {
     S_.event_ports_.push_back( port );
   }
-  if ( P_.withrport_ )
-  {
+  if ( P_.withrport_ ) {
     S_.event_rports_.push_back( rport );
   }
 }
@@ -934,28 +823,23 @@ nest::RecordingDevice::build_filename_() const
 
   std::ostringstream basename;
   const std::string& path = kernel().io_manager.get_data_path();
-  if ( not path.empty() )
-  {
+  if ( not path.empty() ) {
     basename << path << '/';
   }
   basename << kernel().io_manager.get_data_prefix();
 
 
-  if ( not P_.label_.empty() )
-  {
+  if ( not P_.label_.empty() ) {
     basename << P_.label_;
   }
-  else
-  {
+  else {
     basename << node_.get_name();
   }
 
-  if ( not P_.use_gid_in_filename_ and not P_.label_.empty() )
-  {
+  if ( not P_.use_gid_in_filename_ and not P_.label_.empty() ) {
     basename << "-" << std::setfill( '0' ) << std::setw( vpdigits ) << node_.get_vp();
   }
-  else
-  {
+  else {
     basename << "-" << std::setfill( '0' ) << std::setw( gidigits ) << node_.get_gid() << "-" << std::setfill( '0' )
              << std::setw( vpdigits ) << node_.get_vp();
   }

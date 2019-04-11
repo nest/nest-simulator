@@ -26,8 +26,7 @@
 // Includes from models:
 #include "binary_neuron.h"
 
-namespace nest
-{
+namespace nest {
 /** @BeginDocumentation
 Name: erfc_neuron - Binary stochastic neuron with complementary error
 function as activation function.
@@ -106,8 +105,7 @@ Authors: Jakob Jordan, Tobias Kuehn
 
 SeeAlso: mcculloch_pitts_neuron, ginzburg_neuron
 */
-class gainfunction_erfc
-{
+class gainfunction_erfc {
 private:
   /** threshold of activation function */
   double_t theta_;

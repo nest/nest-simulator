@@ -34,8 +34,7 @@
 // Includes from sli:
 #include "token.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Low-level function of the ConnectionGenerator interface for
@@ -58,8 +57,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
   const Name& synmodel_name )
 {
   const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-  {
+  if ( synmodel.empty() ) {
     throw UnknownSynapseType( synmodel_name.toString() );
   }
   const index synmodel_id = static_cast< index >( synmodel );
@@ -71,20 +69,16 @@ cg_connect( ConnectionGeneratorDatum& cg,
   int source;
   int target;
   const int num_parameters = cg->arity();
-  if ( num_parameters == 0 )
-  {
+  if ( num_parameters == 0 ) {
     // connect source to target
-    while ( cg->next( source, target, NULL ) )
-    {
+    while ( cg->next( source, target, NULL ) ) {
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contain local nodes.
       kernel().connection_manager.connect( source_gids[ source ], target_gids[ target ], dummy_params, synmodel_id );
     }
   }
-  else if ( num_parameters == 2 )
-  {
-    if ( not params_map->known( names::weight ) or not params_map->known( names::delay ) )
-    {
+  else if ( num_parameters == 2 ) {
+    if ( not params_map->known( names::weight ) or not params_map->known( names::delay ) ) {
       throw BadProperty( "The parameter map has to contain the indices of weight and delay." );
     }
 
@@ -94,16 +88,14 @@ cg_connect( ConnectionGeneratorDatum& cg,
     const bool w_idx_is_0_or_1 = ( w_idx == 0 ) or ( w_idx == 1 );
     const bool d_idx_is_0_or_1 = ( d_idx == 0 ) or ( d_idx == 1 );
     const bool indices_differ = ( w_idx != d_idx );
-    if ( not( w_idx_is_0_or_1 and d_idx_is_0_or_1 and indices_differ ) )
-    {
+    if ( not( w_idx_is_0_or_1 and d_idx_is_0_or_1 and indices_differ ) ) {
       throw BadProperty( "w_idx and d_idx have to differ and be either 0 or 1." );
     }
 
     std::vector< double > params( 2 );
 
     // connect source to target with weight and delay
-    while ( cg->next( source, target, &params[ 0 ] ) )
-    {
+    while ( cg->next( source, target, &params[ 0 ] ) ) {
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contain local nodes.
       Node* const target_node = kernel().node_manager.get_node( target_gids[ target ] );
@@ -117,8 +109,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
         params[ w_idx ] );
     }
   }
-  else
-  {
+  else {
     LOG( M_ERROR, "CGConnect", "Either two or no parameters in the ConnectionSet expected." );
     throw DimensionMismatch();
   }
@@ -190,12 +181,10 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks, RangeSet& sour
   size_t cg_idx_left = 0;
 
   // For sources, we only need to translate from NEST to CG indices.
-  for ( RangeSet::iterator source = sources.begin(); source != sources.end(); ++source )
-  {
+  for ( RangeSet::iterator source = sources.begin(); source != sources.end(); ++source ) {
     const size_t num_elements = source->last - source->first + 1;
     const size_t right = cg_idx_left + num_elements - 1;
-    for ( size_t proc = 0; proc < static_cast< size_t >( kernel().mpi_manager.get_num_processes() ); ++proc )
-    {
+    for ( size_t proc = 0; proc < static_cast< size_t >( kernel().mpi_manager.get_num_processes() ); ++proc ) {
       masks[ proc ].sources.insert( cg_idx_left, right );
     }
     cg_idx_left += num_elements;
@@ -205,16 +194,13 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks, RangeSet& sour
   // translation for the targets.
   cg_idx_left = 0;
 
-  for ( RangeSet::iterator target = targets.begin(); target != targets.end(); ++target )
-  {
+  for ( RangeSet::iterator target = targets.begin(); target != targets.end(); ++target ) {
     size_t num_elements = target->last - target->first + 1;
-    for ( size_t proc = 0; proc < static_cast< size_t >( kernel().mpi_manager.get_num_processes() ); ++proc )
-    {
+    for ( size_t proc = 0; proc < static_cast< size_t >( kernel().mpi_manager.get_num_processes() ); ++proc ) {
       // Make sure that the range is only added on as many ranks as
       // there are elements in the range, or exactly on every rank,
       // if there are more elements in the range.
-      if ( proc < num_elements )
-      {
+      if ( proc < num_elements ) {
         // For the different ranks, left will take on the CG indices
         // of all first local nodes that are contained in the range.
         // The rank, where this mask is to be used is determined
@@ -254,8 +240,7 @@ cg_get_right_border( index left, size_t step, const GIDCollection& gids )
 {
   // Check if left is already the index of the last element in
   // gids. If yes, return left as the right border
-  if ( left == gids.size() - 1 )
-  {
+  if ( left == gids.size() - 1 ) {
     return left;
   }
 
@@ -266,8 +251,7 @@ cg_get_right_border( index left, size_t step, const GIDCollection& gids )
   // and last_i to i.
   long i = gids.size() - 1, last_i = i;
 
-  while ( true )
-  {
+  while ( true ) {
     // If i points to the end of gids and the distance between i and
     // left is the same as between the values gids[i] and gids[left]
     // (i.e. gid[i+1] == gid[i]+1 for all i), or if i is pointing at
@@ -275,8 +259,7 @@ cg_get_right_border( index left, size_t step, const GIDCollection& gids )
     // (i.e. we're back at an already visited index), we found the
     // right border of the contiguous range (last_i) and return it.
     if ( ( i == static_cast< long >( gids.size() ) - 1
-           and gids[ i ] - gids[ left ] == i - static_cast< index >( left ) ) or i == leftmost_r )
-    {
+           and gids[ i ] - gids[ left ] == i - static_cast< index >( left ) ) or i == leftmost_r ) {
       return last_i;
     }
 
@@ -288,20 +271,17 @@ cg_get_right_border( index left, size_t step, const GIDCollection& gids )
     // set i to the right by step steps, else update the variable
     // for leftmost_r to the current i (i.e. the known leftmost
     // position) and set i to the left by step steps.
-    if ( gids[ i ] - gids[ left ] == i - static_cast< index >( left ) )
-    {
+    if ( gids[ i ] - gids[ left ] == i - static_cast< index >( left ) ) {
       i += step;
     }
-    else
-    {
+    else {
       leftmost_r = i;
       i -= step;
     }
 
     // Reduce the search interval by half its size if it is > 1.
     // This adaptation is the basis of the binary search.
-    if ( step != 1 )
-    {
+    if ( step != 1 ) {
       step /= 2;
     }
   }
@@ -328,8 +308,7 @@ void
 cg_get_ranges( RangeSet& ranges, const GIDCollection& gids )
 {
   index right, left = 0;
-  while ( true )
-  {
+  while ( true ) {
     // Determine the right border of the contiguous range starting
     // at left. The initial step is set to half the length of the
     // interval between left and the end of gids.
@@ -339,8 +318,7 @@ cg_get_ranges( RangeSet& ranges, const GIDCollection& gids )
     {
       break;
     }
-    else
-    {
+    else {
       left = right + 1; // The new left border is one behind the old right
     }
   }

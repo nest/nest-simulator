@@ -48,8 +48,7 @@ using namespace nest;
 
 nest::RecordablesMap< mynest::pif_psc_alpha > mynest::pif_psc_alpha::recordablesMap_;
 
-namespace nest
-{
+namespace nest {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -109,20 +108,16 @@ mynest::pif_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::V_th, V_th );
   updateValue< double >( d, names::V_reset, V_reset );
   updateValue< double >( d, names::t_ref, t_ref );
-  if ( C_m <= 0 )
-  {
+  if ( C_m <= 0 ) {
     throw nest::BadProperty( "The membrane capacitance must be strictly positive." );
   }
-  if ( tau_syn <= 0 )
-  {
+  if ( tau_syn <= 0 ) {
     throw nest::BadProperty( "The synaptic time constant must be strictly positive." );
   }
-  if ( V_reset >= V_th )
-  {
+  if ( V_reset >= V_th ) {
     throw nest::BadProperty( "The reset potential must be below threshold." );
   }
-  if ( t_ref < 0 )
-  {
+  if ( t_ref < 0 ) {
     throw nest::BadProperty( "The refractory time must be at least one simulation step." );
   }
 }
@@ -229,8 +224,7 @@ mynest::pif_psc_alpha::calibrate()
 void
 mynest::pif_psc_alpha::update( Time const& slice_origin, const long from_step, const long to_step )
 {
-  for ( long lag = from_step; lag < to_step; ++lag )
-  {
+  for ( long lag = from_step; lag < to_step; ++lag ) {
     // order is important in this loop, since we have to use the old values
     // (those upon entry to the loop) on right hand sides everywhere
 
@@ -239,8 +233,7 @@ mynest::pif_psc_alpha::update( Time const& slice_origin, const long from_step, c
     {
       S_.V_m += V_.P30 * ( S_.I_ext + P_.I_e ) + V_.P31 * S_.dI_syn + V_.P32 * S_.I_syn;
     }
-    else
-    {
+    else {
       --S_.refr_count;
     } // count down refractory time
 
@@ -249,8 +242,7 @@ mynest::pif_psc_alpha::update( Time const& slice_origin, const long from_step, c
     S_.dI_syn *= V_.P11;
 
     // check for threshold crossing
-    if ( S_.V_m >= P_.V_th )
-    {
+    if ( S_.V_m >= P_.V_th ) {
       // reset neuron
       S_.refr_count = V_.t_ref_steps;
       S_.V_m = P_.V_reset;

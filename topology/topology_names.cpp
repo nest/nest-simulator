@@ -26,11 +26,9 @@
 
 #include "topology_names.h"
 
-namespace nest
-{
+namespace nest {
 
-namespace names
-{
+namespace names {
 
 const Name allow_autapses( "allow_autapses" );
 const Name allow_multapses( "allow_multapses" );

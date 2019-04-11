@@ -45,8 +45,7 @@
 
 nest::RecordablesMap< nest::iaf_chs_2007 > nest::iaf_chs_2007::recordablesMap_;
 
-namespace nest
-{
+namespace nest {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -110,8 +109,7 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s )
   updateValue< double >( d, names::V_noise, U_noise_ );
 
   const bool updated_noise = updateValue< std::vector< double > >( d, names::noise, noise_ );
-  if ( updated_noise )
-  {
+  if ( updated_noise ) {
     s.position_ = 0;
   }
   /*
@@ -121,8 +119,7 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s )
         throw BadProperty("Noise amplitude larger than zero while noise signal "
                           "is missing.");
   */
-  if ( U_epsp_ < 0 )
-  {
+  if ( U_epsp_ < 0 ) {
     throw BadProperty( "EPSP cannot be negative." );
   }
 
@@ -130,8 +127,7 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s )
   {
     throw BadProperty( "Reset potential cannot be negative." );
   }
-  if ( tau_epsp_ <= 0 || tau_reset_ <= 0 )
-  {
+  if ( tau_epsp_ <= 0 || tau_reset_ <= 0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
 }
@@ -240,8 +236,7 @@ nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     S_.V_syn_ = S_.V_syn_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_;
 
     // exponential decaying PSCs
@@ -281,8 +276,7 @@ nest::iaf_chs_2007::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  if ( e.get_weight() >= 0.0 )
-  {
+  if ( e.get_weight() >= 0.0 ) {
     B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }

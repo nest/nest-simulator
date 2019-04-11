@@ -93,8 +93,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * \class SynapticElement
@@ -107,8 +106,7 @@ namespace nest
  * node). The probability of two neurons creating a new synapse between them,
  * depends on the number of available synaptic elements of each neuron.
  */
-class SynapticElement
-{
+class SynapticElement {
 
 public:
   /**
@@ -202,8 +200,7 @@ public:
   connect( int n )
   {
     z_connected_ += n;
-    if ( z_connected_ > floor( z_ ) )
-    {
+    if ( z_connected_ > floor( z_ ) ) {
       z_ = z_connected_ + ( z_ - floor( z_ ) );
     }
   }
@@ -214,8 +211,7 @@ public:
   void
   set_growth_curve( GrowthCurve& g )
   {
-    if ( growth_curve_ != &g )
-    {
+    if ( growth_curve_ != &g ) {
       delete growth_curve_;
       growth_curve_ = &g;
     }
@@ -247,8 +243,7 @@ public:
   void
   decay_z_vacant()
   {
-    if ( get_z_vacant() > 0 )
-    {
+    if ( get_z_vacant() > 0 ) {
       z_ -= get_z_vacant() * tau_vacant_;
     }
   }

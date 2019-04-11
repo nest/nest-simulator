@@ -47,8 +47,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -115,16 +114,14 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set( const DictionaryDatu
   updateValue< bool >( d, names::mult_coupling, mult_coupling_ );
 
   // Check for old names
-  if ( updateValue< double >( d, names::mean, mu_ ) )
-  {
+  if ( updateValue< double >( d, names::mean, mu_ ) ) {
     LOG( M_WARNING,
       "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
       "The parameter mean has been renamed to mu. Please use the new "
       "name from now on." );
   }
 
-  if ( updateValue< double >( d, names::std, sigma_ ) )
-  {
+  if ( updateValue< double >( d, names::std, sigma_ ) ) {
     LOG( M_WARNING,
       "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
       "The parameter std has been renamed to sigma. Please use the new "
@@ -132,16 +129,13 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set( const DictionaryDatu
   }
 
   // Check for invalid parameters
-  if ( tau_ <= 0 )
-  {
+  if ( tau_ <= 0 ) {
     throw BadProperty( "Time constant must be > 0." );
   }
-  if ( lambda_ < 0 )
-  {
+  if ( lambda_ < 0 ) {
     throw BadProperty( "Passive decay rate must be >= 0." );
   }
-  if ( sigma_ < 0 )
-  {
+  if ( sigma_ < 0 ) {
     throw BadProperty( "Noise parameter must not be negative." );
   }
 }
@@ -226,8 +220,7 @@ nest::rate_neuron_ipn< TNonlinearities >::init_buffers_()
   B_.random_numbers.resize( buffer_size, numerics::nan );
 
   // initialize random numbers
-  for ( unsigned int i = 0; i < buffer_size; i++ )
-  {
+  for ( unsigned int i = 0; i < buffer_size; i++ ) {
     B_.random_numbers[ i ] = V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
   }
 
@@ -243,15 +236,13 @@ nest::rate_neuron_ipn< TNonlinearities >::calibrate()
 
   const double h = Time::get_resolution().get_ms();
 
-  if ( P_.lambda_ > 0 )
-  {
+  if ( P_.lambda_ > 0 ) {
     // use stochastic exponential Euler method
     V_.P1_ = std::exp( -P_.lambda_ * h / P_.tau_ );
     V_.P2_ = -1.0 / P_.lambda_ * numerics::expm1( -P_.lambda_ * h / P_.tau_ );
     V_.input_noise_factor_ = std::sqrt( -0.5 / P_.lambda_ * numerics::expm1( -2. * P_.lambda_ * h / P_.tau_ ) );
   }
-  else
-  {
+  else {
     // use Euler-Maruyama method
     V_.P1_ = 1;
     V_.P2_ = h / P_.tau_;
@@ -280,8 +271,7 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
   // allocate memory to store rates to be sent by rate events
   std::vector< double > new_rates( buffer_size, 0.0 );
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     // store rate
     new_rates[ lag ] = S_.rate_;
     // get noise
@@ -291,14 +281,12 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
 
     double delayed_rates_in = 0;
     double delayed_rates_ex = 0;
-    if ( called_from_wfr_update )
-    {
+    if ( called_from_wfr_update ) {
       // use get_value_wfr_update to keep values in buffer
       delayed_rates_in = B_.delayed_rates_in_.get_value_wfr_update( lag );
       delayed_rates_ex = B_.delayed_rates_ex_.get_value_wfr_update( lag );
     }
-    else
-    {
+    else {
       // use get_value to clear values in buffer after reading
       delayed_rates_in = B_.delayed_rates_in_.get_value( lag );
       delayed_rates_ex = B_.delayed_rates_ex_.get_value( lag );
@@ -307,58 +295,49 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
     double instant_rates_ex = B_.instant_rates_ex_[ lag ];
     double H_ex = 1.; // valid value for non-multiplicative coupling
     double H_in = 1.; // valid value for non-multiplicative coupling
-    if ( P_.mult_coupling_ )
-    {
+    if ( P_.mult_coupling_ ) {
       H_ex = nonlinearities_.mult_coupling_ex( new_rates[ lag ] );
       H_in = nonlinearities_.mult_coupling_in( new_rates[ lag ] );
     }
 
-    if ( P_.linear_summation_ )
-    {
+    if ( P_.linear_summation_ ) {
       // In this case we explicitly need to distinguish the cases of
       // multiplicative coupling and non-multiplicative coupling in
       // order to compute input( ex + in ) instead of input(ex) + input(in) in
       // the non-multiplicative case.
-      if ( P_.mult_coupling_ )
-      {
+      if ( P_.mult_coupling_ ) {
         S_.rate_ += V_.P2_ * H_ex * nonlinearities_.input( delayed_rates_ex + instant_rates_ex );
         S_.rate_ += V_.P2_ * H_in * nonlinearities_.input( delayed_rates_in + instant_rates_in );
       }
-      else
-      {
+      else {
         S_.rate_ +=
           V_.P2_ * nonlinearities_.input( delayed_rates_ex + instant_rates_ex + delayed_rates_in + instant_rates_in );
       }
     }
-    else
-    {
+    else {
       // In this case multiplicative and non-multiplicative coupling
       // can be handled with the same code.
       S_.rate_ += V_.P2_ * H_ex * ( delayed_rates_ex + instant_rates_ex );
       S_.rate_ += V_.P2_ * H_in * ( delayed_rates_in + instant_rates_in );
     }
 
-    if ( P_.rectify_output_ and S_.rate_ < 0 )
-    {
+    if ( P_.rectify_output_ and S_.rate_ < 0 ) {
       S_.rate_ = 0;
     }
 
-    if ( called_from_wfr_update )
-    {
+    if ( called_from_wfr_update ) {
       // check if deviation from last iteration exceeds wfr_tol
       wfr_tol_exceeded = wfr_tol_exceeded or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
       // update last_y_values for next wfr iteration
       B_.last_y_values[ lag ] = S_.rate_;
     }
-    else
-    {
+    else {
       // rate logging
       B_.logger_.record_data( origin.get_steps() + lag );
     }
   }
 
-  if ( not called_from_wfr_update )
-  {
+  if ( not called_from_wfr_update ) {
     // Send delay-rate-neuron-event. This only happens in the final iteration
     // to avoid accumulation in the buffers of the receiving neurons.
     DelayedRateConnectionEvent drve;
@@ -369,15 +348,13 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
     std::vector< double >( buffer_size, 0.0 ).swap( B_.last_y_values );
 
     // modifiy new_rates for rate-neuron-event as proxy for next min_delay
-    for ( long temp = from; temp < to; ++temp )
-    {
+    for ( long temp = from; temp < to; ++temp ) {
       new_rates[ temp ] = S_.rate_;
     }
 
     // create new random numbers
     B_.random_numbers.resize( buffer_size, numerics::nan );
-    for ( unsigned int i = 0; i < buffer_size; i++ )
-    {
+    for ( unsigned int i = 0; i < buffer_size; i++ ) {
       B_.random_numbers[ i ] = V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
     }
   }
@@ -404,27 +381,20 @@ nest::rate_neuron_ipn< TNonlinearities >::handle( InstantaneousRateConnectionEve
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
-  while ( it != e.end() )
-  {
-    if ( P_.linear_summation_ )
-    {
-      if ( weight >= 0.0 )
-      {
+  while ( it != e.end() ) {
+    if ( P_.linear_summation_ ) {
+      if ( weight >= 0.0 ) {
         B_.instant_rates_ex_[ i ] += weight * e.get_coeffvalue( it );
       }
-      else
-      {
+      else {
         B_.instant_rates_in_[ i ] += weight * e.get_coeffvalue( it );
       }
     }
-    else
-    {
-      if ( weight >= 0.0 )
-      {
+    else {
+      if ( weight >= 0.0 ) {
         B_.instant_rates_ex_[ i ] += weight * nonlinearities_.input( e.get_coeffvalue( it ) );
       }
-      else
-      {
+      else {
         B_.instant_rates_in_[ i ] += weight * nonlinearities_.input( e.get_coeffvalue( it ) );
       }
     }
@@ -442,27 +412,20 @@ nest::rate_neuron_ipn< TNonlinearities >::handle( DelayedRateConnectionEvent& e 
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
-  while ( it != e.end() )
-  {
-    if ( P_.linear_summation_ )
-    {
-      if ( weight >= 0.0 )
-      {
+  while ( it != e.end() ) {
+    if ( P_.linear_summation_ ) {
+      if ( weight >= 0.0 ) {
         B_.delayed_rates_ex_.add_value( delay + i, weight * e.get_coeffvalue( it ) );
       }
-      else
-      {
+      else {
         B_.delayed_rates_in_.add_value( delay + i, weight * e.get_coeffvalue( it ) );
       }
     }
-    else
-    {
-      if ( weight >= 0.0 )
-      {
+    else {
+      if ( weight >= 0.0 ) {
         B_.delayed_rates_ex_.add_value( delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
-      else
-      {
+      else {
         B_.delayed_rates_in_.add_value( delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
     }

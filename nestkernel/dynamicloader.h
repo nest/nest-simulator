@@ -37,8 +37,7 @@
 #include "slifunction.h"
 #include "slimodule.h"
 
-namespace nest
-{
+namespace nest {
 
 // structure to store handles and pointers to modules
 struct sDynModule;
@@ -54,8 +53,7 @@ typedef std::vector< SLIModule* > vecLinkedModules;
  * loading dynamic modules into the kernel to extend its functionality.
  */
 
-class DynamicLoaderModule : public SLIModule
-{
+class DynamicLoaderModule : public SLIModule {
 public:
   DynamicLoaderModule( SLIInterpreter& interpreter );
   ~DynamicLoaderModule();
@@ -79,8 +77,7 @@ public:
   void initLinkedModules( SLIInterpreter& );
 
 public:
-  class LoadModuleFunction : public SLIFunction
-  {
+  class LoadModuleFunction : public SLIFunction {
   public:
     LoadModuleFunction( vecDynModules& dyn_modules );
 

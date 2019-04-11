@@ -47,8 +47,7 @@ constexpr int max_block_size_sub_1 = max_block_size - 1;
  * BlockVector holds one of this internally, marking the end of the valid range.
  */
 template < typename value_type_, typename ref_, typename ptr_ >
-class bv_iterator
-{
+class bv_iterator {
   friend class BlockVector< value_type_ >;
 
   // Making all templated iterators friends to allow converting
@@ -137,8 +136,7 @@ private:
  * index to the right block and the right position in that block.
  */
 template < typename value_type_ >
-class BlockVector
-{
+class BlockVector {
   template < typename cv_value_type_, typename ref_, typename ptr_ >
   friend class bv_iterator;
 
@@ -270,8 +268,7 @@ inline BlockVector< value_type_ >::BlockVector( size_t n )
   , finish_( begin() )
 {
   size_t num_blocks_needed = std::ceil( ( float ) n / max_block_size );
-  for ( size_t i = 0; i < num_blocks_needed - 1; ++i )
-  {
+  for ( size_t i = 0; i < num_blocks_needed - 1; ++i ) {
     blockmap_.emplace_back( max_block_size );
   }
   finish_ += n;
@@ -340,8 +337,7 @@ inline void
 BlockVector< value_type_ >::push_back( const value_type_& value )
 {
   // If this is the last element in the current block, add another block
-  if ( finish_.block_it_ == finish_.current_block_end_ - 1 )
-  {
+  if ( finish_.block_it_ == finish_.current_block_end_ - 1 ) {
     blockmap_.emplace_back( max_block_size );
   }
   *finish_ = value;
@@ -352,8 +348,7 @@ template < typename value_type_ >
 inline void
 BlockVector< value_type_ >::clear()
 {
-  for ( auto it = blockmap_.begin(); it != blockmap_.end(); ++it )
-  {
+  for ( auto it = blockmap_.begin(); it != blockmap_.end(); ++it ) {
     it->clear();
   }
   blockmap_.clear();
@@ -367,12 +362,10 @@ inline size_t
 BlockVector< value_type_ >::size() const
 {
   size_t element_index;
-  if ( finish_.block_index_ >= blockmap_.size() )
-  {
+  if ( finish_.block_index_ >= blockmap_.size() ) {
     element_index = 0;
   }
-  else
-  {
+  else {
     element_index = finish_.block_it_ - blockmap_[ finish_.block_index_ ].begin();
   }
   return finish_.block_index_ * max_block_size + element_index;
@@ -385,20 +378,16 @@ BlockVector< value_type_ >::erase( const_iterator first, const_iterator last )
   assert( first.block_vector_ == this );
   assert( last.block_vector_ == this );
   assert( last < finish_ or last == finish_ );
-  if ( first == last )
-  {
+  if ( first == last ) {
     return iterator( first.const_cast_() );
   }
-  else if ( first == begin() and last == end() )
-  {
+  else if ( first == begin() and last == end() ) {
     clear();
     return end();
   }
-  else
-  {
+  else {
     auto repl_it = first.const_cast_(); // Iterator for elements to be replaced.
-    for ( auto element = last; element != end(); ++element )
-    {
+    for ( auto element = last; element != end(); ++element ) {
       *repl_it = std::move( *element );
       ++repl_it;
     }
@@ -414,8 +403,7 @@ BlockVector< value_type_ >::erase( const_iterator first, const_iterator last )
     // Refill the erased elements in the final block with default-initialised
     // elements.
     int num_default_init = max_block_size - new_final_block.size();
-    for ( int i = 0; i < num_default_init; ++i )
-    {
+    for ( int i = 0; i < num_default_init; ++i ) {
       new_final_block.emplace_back();
     }
     assert( new_final_block.size() == max_block_size );
@@ -440,13 +428,11 @@ BlockVector< value_type_ >::print_blocks() const
   std::cerr << "Finish block: " << finish_.block_index_ << "\n";
   std::cerr << "==============================================\n";
   auto seq_iter = begin();
-  for ( size_t block_index = 0; block_index != blockmap_.size() and seq_iter != end(); ++block_index )
-  {
+  for ( size_t block_index = 0; block_index != blockmap_.size() and seq_iter != end(); ++block_index ) {
     std::cerr << "----------------------------------------------\n";
     auto& block = blockmap_[ block_index ];
     std::cerr << "Block size: " << block.size() << "\n";
-    for ( auto block_it = block.begin(); block_it != block.end() and seq_iter != end(); ++block_it )
-    {
+    for ( auto block_it = block.begin(); block_it != block.end() and seq_iter != end(); ++block_it ) {
       std::cerr << *block_it << " ";
       ++seq_iter;
     }
@@ -500,8 +486,7 @@ template < typename value_type_, typename ref_, typename ptr_ >
 inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, ptr_ >::operator++()
 {
   ++block_it_;
-  if ( block_it_ == current_block_end_ )
-  {
+  if ( block_it_ == current_block_end_ ) {
     ++block_index_;
     block_it_ = block_vector_->blockmap_[ block_index_ ].begin();
     current_block_end_ = block_vector_->blockmap_[ block_index_ ].end();
@@ -514,12 +499,10 @@ inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, p
 {
   // If we are still within the block, we can just decrement the block iterator.
   // If not, we need to switch to the previous block.
-  if ( block_it_ != block_vector_->blockmap_[ block_index_ ].begin() )
-  {
+  if ( block_it_ != block_vector_->blockmap_[ block_index_ ].begin() ) {
     --block_it_;
   }
-  else
-  {
+  else {
     --block_index_;
     current_block_end_ = block_vector_->blockmap_[ block_index_ ].end();
     block_it_ = current_block_end_ - 1;
@@ -530,8 +513,7 @@ inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, p
 template < typename value_type_, typename ref_, typename ptr_ >
 inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, ptr_ >::operator+=( difference_type val )
 {
-  for ( difference_type i = 0; i < val; ++i )
-  {
+  for ( difference_type i = 0; i < val; ++i ) {
     operator++();
   }
   return *this;
@@ -540,8 +522,7 @@ inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, p
 template < typename value_type_, typename ref_, typename ptr_ >
 inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, ptr_ >::operator-=( difference_type val )
 {
-  for ( difference_type i = 0; i < val; ++i )
-  {
+  for ( difference_type i = 0; i < val; ++i ) {
     operator--();
   }
   return *this;

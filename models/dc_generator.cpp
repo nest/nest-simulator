@@ -33,8 +33,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-namespace nest
-{
+namespace nest {
 RecordablesMap< dc_generator > dc_generator::recordablesMap_;
 
 template <>
@@ -61,8 +60,7 @@ nest::dc_generator::Parameters_::Parameters_( const Parameters_& p )
 
 nest::dc_generator::Parameters_& nest::dc_generator::Parameters_::operator=( const Parameters_& p )
 {
-  if ( this == &p )
-  {
+  if ( this == &p ) {
     return *this;
   }
 
@@ -171,12 +169,10 @@ nest::dc_generator::update( Time const& origin, const long from, const long to )
 
   CurrentEvent ce;
   ce.set_current( P_.amp_ );
-  for ( long offs = from; offs < to; ++offs )
-  {
+  for ( long offs = from; offs < to; ++offs ) {
     S_.I_ = 0.0;
 
-    if ( device_.is_active( Time::step( start + offs ) ) )
-    {
+    if ( device_.is_active( Time::step( start + offs ) ) ) {
       S_.I_ = P_.amp_;
       kernel().event_delivery_manager.send( *this, ce, offs );
     }

@@ -97,12 +97,10 @@ nest::correlomatrix_detector::State_::get( DictionaryDatum& d ) const
 
   ArrayDatum* C = new ArrayDatum;
   ArrayDatum* CountC = new ArrayDatum;
-  for ( size_t i = 0; i < covariance_.size(); ++i )
-  {
+  for ( size_t i = 0; i < covariance_.size(); ++i ) {
     ArrayDatum* C_i = new ArrayDatum;
     ArrayDatum* CountC_i = new ArrayDatum;
-    for ( size_t j = 0; j < covariance_[ i ].size(); ++j )
-    {
+    for ( size_t j = 0; j < covariance_[ i ].size(); ++j ) {
       C_i->push_back( new DoubleVectorDatum( new std::vector< double >( covariance_[ i ][ j ] ) ) );
       CountC_i->push_back( new IntVectorDatum( new std::vector< long >( count_covariance_[ i ][ j ] ) ) );
     }
@@ -120,55 +118,45 @@ nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d, const 
   double t;
   long N;
 
-  if ( updateValue< long >( d, names::N_channels, N ) )
-  {
-    if ( N < 1 )
-    {
+  if ( updateValue< long >( d, names::N_channels, N ) ) {
+    if ( N < 1 ) {
       throw BadProperty( "/N_channels can only be larger than zero." );
     }
-    else
-    {
+    else {
       N_channels_ = N;
       reset = true;
     }
   }
 
-  if ( updateValue< double >( d, names::delta_tau, t ) )
-  {
+  if ( updateValue< double >( d, names::delta_tau, t ) ) {
     delta_tau_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::tau_max, t ) )
-  {
+  if ( updateValue< double >( d, names::tau_max, t ) ) {
     tau_max_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::Tstart, t ) )
-  {
+  if ( updateValue< double >( d, names::Tstart, t ) ) {
     Tstart_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::Tstop, t ) )
-  {
+  if ( updateValue< double >( d, names::Tstop, t ) ) {
     Tstop_ = Time::ms( t );
     reset = true;
   }
 
-  if ( not delta_tau_.is_step() )
-  {
+  if ( not delta_tau_.is_step() ) {
     throw StepMultipleRequired( n.get_name(), names::delta_tau, delta_tau_ );
   }
 
-  if ( not tau_max_.is_multiple_of( delta_tau_ ) )
-  {
+  if ( not tau_max_.is_multiple_of( delta_tau_ ) ) {
     throw TimeMultipleRequired( n.get_name(), names::tau_max, tau_max_, names::delta_tau, delta_tau_ );
   }
 
-  if ( delta_tau_.get_steps() % 2 != 1 )
-  {
+  if ( delta_tau_.get_steps() % 2 != 1 ) {
     throw BadProperty( "/delta_tau must be odd multiple of resolution." );
   }
 
@@ -196,12 +184,10 @@ nest::correlomatrix_detector::State_::reset( const Parameters_& p )
   count_covariance_.clear();
   count_covariance_.resize( p.N_channels_ );
 
-  for ( long i = 0; i < p.N_channels_; ++i )
-  {
+  for ( long i = 0; i < p.N_channels_; ++i ) {
     covariance_[ i ].resize( p.N_channels_ );
     count_covariance_[ i ].resize( p.N_channels_ );
-    for ( long j = 0; j < p.N_channels_; ++j )
-    {
+    for ( long j = 0; j < p.N_channels_; ++j ) {
       covariance_[ i ][ j ].resize( 1 + p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
       count_covariance_[ i ][ j ].resize( 1 + p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
     }
@@ -218,8 +204,7 @@ nest::correlomatrix_detector::correlomatrix_detector()
   , P_()
   , S_()
 {
-  if ( not P_.delta_tau_.is_step() )
-  {
+  if ( not P_.delta_tau_.is_step() ) {
     throw InvalidDefaultResolution( get_name(), names::delta_tau, P_.delta_tau_ );
   }
 }
@@ -230,8 +215,7 @@ nest::correlomatrix_detector::correlomatrix_detector( const correlomatrix_detect
   , P_( n.P_ )
   , S_()
 {
-  if ( not P_.delta_tau_.is_step() )
-  {
+  if ( not P_.delta_tau_.is_step() ) {
     throw InvalidTimeInModel( get_name(), names::delta_tau, P_.delta_tau_ );
   }
 }
@@ -288,8 +272,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
   // accept spikes only if detector was active when spike was emitted
   Time const stamp = e.get_stamp();
 
-  if ( device_.is_active( stamp ) )
-  {
+  if ( device_.is_active( stamp ) ) {
     const long spike_i = stamp.get_steps();
 
     // find first appearence of element which is greater than spike_i
@@ -308,8 +291,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
     // throw away all spikes which are too old to
     // enter the correlation window
     const delay min_delay = kernel().connection_manager.get_min_delay();
-    while ( not otherSpikes.empty() && ( spike_i - otherSpikes.front().timestep_ ) >= tau_edge + min_delay )
-    {
+    while ( not otherSpikes.empty() && ( spike_i - otherSpikes.front().timestep_ ) >= tau_edge + min_delay ) {
       otherSpikes.pop_front();
     }
     // all remaining spike times in the queue are >= spike_i - tau_edge -
@@ -319,54 +301,45 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
     // window [Tstart,
     // Tstop]
     // this is needed in order to prevent boundary effects
-    if ( P_.Tstart_ <= stamp && stamp <= P_.Tstop_ )
-    {
+    if ( P_.Tstart_ <= stamp && stamp <= P_.Tstop_ ) {
       // calculate the effect of this spike immediately with respect to all
       // spikes in the past of the respectively other sources
 
       S_.n_events_[ sender ]++; // count this spike
 
-      for ( SpikelistType::const_iterator spike_j = otherSpikes.begin(); spike_j != otherSpikes.end(); ++spike_j )
-      {
+      for ( SpikelistType::const_iterator spike_j = otherSpikes.begin(); spike_j != otherSpikes.end(); ++spike_j ) {
         size_t bin;
         long other = spike_j->receptor_channel_;
         long sender_ind, other_ind;
 
-        if ( spike_i < spike_j->timestep_ )
-        {
+        if ( spike_i < spike_j->timestep_ ) {
           sender_ind = other;
           other_ind = sender;
         }
-        else
-        {
+        else {
           sender_ind = sender;
           other_ind = other;
         }
 
-        if ( sender_ind <= other_ind )
-        {
+        if ( sender_ind <= other_ind ) {
           bin = -1. * std::floor( ( 0.5 * P_.delta_tau_.get_steps() - std::abs( spike_i - spike_j->timestep_ ) )
                         / P_.delta_tau_.get_steps() );
         }
-        else
-        {
+        else {
           bin = std::floor( ( 0.5 * P_.delta_tau_.get_steps() + std::abs( spike_i - spike_j->timestep_ ) )
             / P_.delta_tau_.get_steps() );
         }
 
-        if ( bin < S_.covariance_[ sender_ind ][ other_ind ].size() )
-        {
+        if ( bin < S_.covariance_[ sender_ind ][ other_ind ].size() ) {
           // weighted histogram
           S_.covariance_[ sender_ind ][ other_ind ][ bin ] += e.get_multiplicity() * e.get_weight() * spike_j->weight_;
-          if ( bin == 0 && ( spike_i - spike_j->timestep_ != 0 || other != sender ) )
-          {
+          if ( bin == 0 && ( spike_i - spike_j->timestep_ != 0 || other != sender ) ) {
             S_.covariance_[ other_ind ][ sender_ind ][ bin ] +=
               e.get_multiplicity() * e.get_weight() * spike_j->weight_;
           }
           // pure (unweighted) count histogram
           S_.count_covariance_[ sender_ind ][ other_ind ][ bin ] += e.get_multiplicity();
-          if ( bin == 0 && ( spike_i - spike_j->timestep_ != 0 || other != sender ) )
-          {
+          if ( bin == 0 && ( spike_i - spike_j->timestep_ != 0 || other != sender ) ) {
             S_.count_covariance_[ other_ind ][ sender_ind ][ bin ] += e.get_multiplicity();
           }
         }

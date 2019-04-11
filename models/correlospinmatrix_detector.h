@@ -35,8 +35,7 @@
 #include "pseudo_recording_device.h"
 
 
-namespace nest
-{
+namespace nest {
 /** @BeginDocumentation
 Name: correlospinmatrix_detector - Device for measuring the covariance matrix
                                   from several inputs
@@ -137,8 +136,7 @@ SeeAlso: correlation_detector, correlomatrix_detector, spike_detector,
 
 Availability: NEST
 */
-class correlospinmatrix_detector : public Node
-{
+class correlospinmatrix_detector : public Node {
 
 public:
   correlospinmatrix_detector();
@@ -185,8 +183,7 @@ private:
    * Structure to store in the deque of recently
    * received events marked by beginning and end of the binary on pulse
    */
-  struct BinaryPulse_
-  {
+  struct BinaryPulse_ {
     long t_on_;
     long t_off_;
     long receptor_channel_;
@@ -213,8 +210,7 @@ private:
 
   struct State_;
 
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     Time delta_tau_;  //!< width of correlation histogram bins
     Time tau_max_;    //!< maximum time difference of events to detect
@@ -246,8 +242,7 @@ private:
    * @note State_ only contains read-out values, so we copy-construct
    *       using the default c'tor.
    */
-  struct State_
-  {
+  struct State_ {
     BinaryPulselistType incoming_; //!< incoming binary pulses, sorted
                                    /**
                                     * rport of last event coming in
@@ -294,8 +289,7 @@ private:
 inline port
 correlospinmatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < 0 || receptor_type > P_.N_channels_ - 1 )
-  {
+  if ( receptor_type < 0 || receptor_type > P_.N_channels_ - 1 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return receptor_type;
@@ -319,8 +313,7 @@ nest::correlospinmatrix_detector::set_status( const DictionaryDatum& d )
 
   device_.set_status( d );
   P_ = ptmp;
-  if ( reset_required == true )
-  {
+  if ( reset_required == true ) {
     S_.reset( P_ );
   }
 }

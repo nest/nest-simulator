@@ -45,8 +45,7 @@
  * Declarations for base class Node
  */
 
-namespace nest
-{
+namespace nest {
 class Model;
 class Subnet;
 class Archiving_Node;
@@ -100,8 +99,7 @@ class Archiving_Node;
    SeeAlso: GetStatus, SetStatus, elementstates
  */
 
-class Node
-{
+class Node {
   friend class NodeManager;
   friend class Subnet;
   friend class proxynode;

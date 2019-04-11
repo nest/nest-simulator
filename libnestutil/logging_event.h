@@ -31,11 +31,9 @@
 // Includes from libnestutil:
 #include "logging.h"
 
-namespace nest
-{
+namespace nest {
 
-class LoggingEvent
-{
+class LoggingEvent {
 public:
   LoggingEvent( const severity_t s,
     const std::string& fctn,

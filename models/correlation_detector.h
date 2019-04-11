@@ -35,8 +35,7 @@
 #include "pseudo_recording_device.h"
 
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: correlation_detector - Device for evaluating cross correlation between
@@ -146,8 +145,7 @@ SeeAlso: spike_detector, Device, PseudoRecordingDevice
 
 Availability: NEST
 */
-class correlation_detector : public Node
-{
+class correlation_detector : public Node {
 
 public:
   correlation_detector();
@@ -191,8 +189,7 @@ private:
    * Spike structure to store in the deque of recently
    * received events
    */
-  struct Spike_
-  {
+  struct Spike_ {
     long timestep_;
     double weight_;
 
@@ -217,8 +214,7 @@ private:
 
   struct State_;
 
-  struct Parameters_
-  {
+  struct Parameters_ {
 
     Time delta_tau_; //!< width of correlation histogram bins
     Time tau_max_;   //!< maximum time difference of events to detect
@@ -249,8 +245,7 @@ private:
    * @note State_ only contains read-out values, so we copy-construct
    *       using the default c'tor.
    */
-  struct State_
-  {
+  struct State_ {
     std::vector< long > n_events_;          //!< spike counters
     std::vector< SpikelistType > incoming_; //!< incoming spikes, sorted
 
@@ -287,8 +282,7 @@ private:
 inline port
 correlation_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < 0 || receptor_type > 1 )
-  {
+  if ( receptor_type < 0 || receptor_type > 1 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
 

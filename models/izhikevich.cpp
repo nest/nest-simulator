@@ -46,8 +46,7 @@
 
 nest::RecordablesMap< nest::izhikevich > nest::izhikevich::recordablesMap_;
 
-namespace nest
-{
+namespace nest {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -113,8 +112,7 @@ nest::izhikevich::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::d, d_ );
   updateValue< bool >( d, names::consistent_integration, consistent_integration_ );
   const double h = Time::get_resolution().get_ms();
-  if ( not consistent_integration_ && h != 1.0 )
-  {
+  if ( not consistent_integration_ && h != 1.0 ) {
     LOG( M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
   }
 }
@@ -203,12 +201,10 @@ nest::izhikevich::update( Time const& origin, const long from, const long to )
   const double h = Time::get_resolution().get_ms();
   double v_old, u_old;
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
     // neuron is never refractory
     // use standard forward Euler numerics in this case
-    if ( P_.consistent_integration_ )
-    {
+    if ( P_.consistent_integration_ ) {
       v_old = S_.v_;
       u_old = S_.u_;
       S_.v_ +=
@@ -217,8 +213,7 @@ nest::izhikevich::update( Time const& origin, const long from, const long to )
     }
     // use numerics published in Izhikevich (2003) in this case (not
     // recommended)
-    else
-    {
+    else {
       double I_syn = B_.spikes_.get_value( lag );
       S_.v_ += h * 0.5 * ( 0.04 * S_.v_ * S_.v_ + 5.0 * S_.v_ + 140.0 - S_.u_ + S_.I_ + P_.I_e_ + I_syn );
       S_.v_ += h * 0.5 * ( 0.04 * S_.v_ * S_.v_ + 5.0 * S_.v_ + 140.0 - S_.u_ + S_.I_ + P_.I_e_ + I_syn );
@@ -229,8 +224,7 @@ nest::izhikevich::update( Time const& origin, const long from, const long to )
     S_.v_ = ( S_.v_ < P_.V_min_ ? P_.V_min_ : S_.v_ );
 
     // threshold crossing
-    if ( S_.v_ >= P_.V_th_ )
-    {
+    if ( S_.v_ >= P_.V_th_ ) {
       S_.v_ = P_.c_;
       S_.u_ = S_.u_ + P_.d_;
 

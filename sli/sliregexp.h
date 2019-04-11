@@ -35,8 +35,7 @@
 #include "slifunction.h"
 #include "slimodule.h"
 
-class Regex
-{
+class Regex {
   regex_t r;
 
 public:
@@ -45,20 +44,16 @@ public:
   regex_t* get( void );
 };
 
-class RegexpModule : public SLIModule
-{
-  class RegcompFunction : public SLIFunction
-  {
+class RegexpModule : public SLIModule {
+  class RegcompFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
-  class RegexecFunction : public SLIFunction
-  {
+  class RegexecFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
-  class RegerrorFunction : public SLIFunction
-  {
+  class RegerrorFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };

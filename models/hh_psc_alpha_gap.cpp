@@ -48,8 +48,7 @@
 
 nest::RecordablesMap< nest::hh_psc_alpha_gap > nest::hh_psc_alpha_gap::recordablesMap_;
 
-namespace nest
-{
+namespace nest {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -110,8 +109,7 @@ hh_psc_alpha_gap_dynamics( double time, const double y[], double f[], void* pnod
 
   const double t = time / node.B_.step_;
 
-  switch ( kernel().simulation_manager.get_wfr_interpolation_order() )
-  {
+  switch ( kernel().simulation_manager.get_wfr_interpolation_order() ) {
   case 0:
     gap = -node.B_.sumj_g_ij_ * V + node.B_.interpolation_coefficients[ node.B_.lag_ ];
     break;
@@ -179,8 +177,7 @@ nest::hh_psc_alpha_gap::State_::State_( const Parameters_& )
   y_[ 0 ] = -69.60401191631222; // p.E_L;
   //'Inact_n': 0.0005741576228359798, 'Inact_p': 0.00025113182271506364
   //'Act_h': 0.8684620412943986,
-  for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 1; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = 0;
   }
 
@@ -203,8 +200,7 @@ nest::hh_psc_alpha_gap::State_::State_( const Parameters_& )
 nest::hh_psc_alpha_gap::State_::State_( const State_& s )
   : r_( s.r_ )
 {
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = s.y_[ i ];
   }
 }
@@ -212,8 +208,7 @@ nest::hh_psc_alpha_gap::State_::State_( const State_& s )
 nest::hh_psc_alpha_gap::State_& nest::hh_psc_alpha_gap::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i ) {
     y_[ i ] = s.y_[ i ];
   }
   r_ = s.r_;
@@ -258,20 +253,16 @@ nest::hh_psc_alpha_gap::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_in, tau_synI );
 
   updateValue< double >( d, names::I_e, I_e );
-  if ( C_m <= 0 )
-  {
+  if ( C_m <= 0 ) {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( t_ref_ < 0 )
-  {
+  if ( t_ref_ < 0 ) {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 || tau_synI <= 0 )
-  {
+  if ( tau_synE <= 0 || tau_synI <= 0 ) {
     throw BadProperty( "All time constants must be strictly positive." );
   }
-  if ( g_Kv1 < 0 || g_Kv3 < 0 || g_Na < 0 || g_L < 0 )
-  {
+  if ( g_Kv1 < 0 || g_Kv3 < 0 || g_Na < 0 || g_L < 0 ) {
     throw BadProperty( "All conductances must be non-negative." );
   }
 }
@@ -294,8 +285,7 @@ nest::hh_psc_alpha_gap::State_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::Act_h, y_[ HH_H ] );
   updateValue< double >( d, names::Inact_n, y_[ HH_N ] );
   updateValue< double >( d, names::Inact_p, y_[ HH_P ] );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 || y_[ HH_P ] < 0 )
-  {
+  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 || y_[ HH_P ] < 0 ) {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }
 }
@@ -346,16 +336,13 @@ nest::hh_psc_alpha_gap::hh_psc_alpha_gap( const hh_psc_alpha_gap& n )
 nest::hh_psc_alpha_gap::~hh_psc_alpha_gap()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
-  if ( B_.s_ )
-  {
+  if ( B_.s_ ) {
     gsl_odeiv_step_free( B_.s_ );
   }
-  if ( B_.c_ )
-  {
+  if ( B_.c_ ) {
     gsl_odeiv_control_free( B_.c_ );
   }
-  if ( B_.e_ )
-  {
+  if ( B_.e_ ) {
     gsl_odeiv_evolve_free( B_.e_ );
   }
 }
@@ -404,30 +391,24 @@ nest::hh_psc_alpha_gap::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
-  {
+  if ( B_.s_ == 0 ) {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
-  else
-  {
+  else {
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
-  {
+  if ( B_.c_ == 0 ) {
     B_.c_ = gsl_odeiv_control_y_new( 1e-6, 0.0 );
   }
-  else
-  {
+  else {
     gsl_odeiv_control_init( B_.c_, 1e-6, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
-  {
+  if ( B_.e_ == 0 ) {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
-  else
-  {
+  else {
     gsl_odeiv_evolve_reset( B_.e_ );
   }
 
@@ -476,18 +457,15 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
   double y_i = 0.0, y_ip1 = 0.0, hf_i = 0.0, hf_ip1 = 0.0;
   double f_temp[ State_::STATE_VEC_SIZE ];
 
-  for ( long lag = from; lag < to; ++lag )
-  {
+  for ( long lag = from; lag < to; ++lag ) {
 
     // B_.lag is needed by hh_psc_alpha_gap_dynamics to
     // determine the current section
     B_.lag_ = lag;
 
-    if ( called_from_wfr_update )
-    {
+    if ( called_from_wfr_update ) {
       y_i = S_.y_[ State_::V_M ];
-      if ( interpolation_order == 3 )
-      {
+      if ( interpolation_order == 3 ) {
         hh_psc_alpha_gap_dynamics( 0, S_.y_, f_temp, reinterpret_cast< void* >( this ) );
         hf_i = B_.step_ * f_temp[ State_::V_M ];
       }
@@ -508,8 +486,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
     // enforce setting IntegrationStep to step-t; this is of advantage
     // for a consistent and efficient integration across subsequent
     // simulation intervals
-    while ( t < B_.step_ )
-    {
+    while ( t < B_.step_ ) {
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
@@ -518,27 +495,23 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
-      if ( status != GSL_SUCCESS )
-      {
+      if ( status != GSL_SUCCESS ) {
         throw GSLSolverFailure( get_name(), status );
       }
     }
 
-    if ( not called_from_wfr_update )
-    {
+    if ( not called_from_wfr_update ) {
       S_.y_[ State_::DI_EXC ] += B_.spike_exc_.get_value( lag ) * V_.PSCurrInit_E_;
       S_.y_[ State_::DI_INH ] += B_.spike_inh_.get_value( lag ) * V_.PSCurrInit_I_;
       // sending spikes: crossing 0 mV, pseudo-refractoriness and local
       // maximum...
       // refractory?
-      if ( S_.r_ > 0 )
-      {
+      if ( S_.r_ > 0 ) {
         --S_.r_;
       }
       else
         // (    threshold    &&     maximum       )
-        if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] )
-      {
+        if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] ) {
         S_.r_ = V_.RefractoryCounts_;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
@@ -566,8 +539,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
       // constant term is the same for each interpolation order
       new_coefficients[ lag * ( interpolation_order + 1 ) + 0 ] = y_i;
 
-      switch ( interpolation_order )
-      {
+      switch ( interpolation_order ) {
       case 0:
         break;
 
@@ -597,10 +569,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
 
   // if not called_from_wfr_update perform constant extrapolation
   // and reset last_y_values
-  if ( not called_from_wfr_update )
-  {
-    for ( long temp = from; temp < to; ++temp )
-    {
+  if ( not called_from_wfr_update ) {
+    for ( long temp = from; temp < to; ++temp ) {
       new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] = S_.y_[ State_::V_M ];
     }
 
@@ -624,13 +594,11 @@ nest::hh_psc_alpha_gap::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  if ( e.get_weight() > 0.0 )
-  {
+  if ( e.get_weight() > 0.0 ) {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
-  else
-  {
+  else {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   } // current input, keep negative weight
@@ -664,8 +632,7 @@ nest::hh_psc_alpha_gap::handle( GapJunctionEvent& e )
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
-  while ( it != e.end() )
-  {
+  while ( it != e.end() ) {
     B_.interpolation_coefficients[ i ] += weight * e.get_coeffvalue( it );
     ++i;
   }

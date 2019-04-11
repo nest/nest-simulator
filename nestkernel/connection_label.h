@@ -28,8 +28,7 @@
 #include "dictdatum.h"
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 class ConnectorModel;
 
 /**
@@ -51,8 +50,7 @@ const static long UNLABELED_CONNECTION = -1;
  * @see nest::ConnectionManager::get_connections
  */
 template < typename ConnectionT >
-class ConnectionLabel : public ConnectionT
-{
+class ConnectionLabel : public ConnectionT {
 public:
   ConnectionLabel();
 
@@ -99,14 +97,11 @@ void
 ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   long lbl;
-  if ( updateValue< long >( d, names::synapse_label, lbl ) )
-  {
-    if ( lbl >= 0 )
-    {
+  if ( updateValue< long >( d, names::synapse_label, lbl ) ) {
+    if ( lbl >= 0 ) {
       label_ = lbl;
     }
-    else
-    {
+    else {
       throw BadProperty( "Connection label must not be negative." );
     }
   }

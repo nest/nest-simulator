@@ -47,8 +47,7 @@
 // Includes from sli:
 #include "stringdatum.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * Function computing right-hand side of ODE for GSL solver.
  * @note Must be declared here so we can befriend it in class.
@@ -134,8 +133,7 @@ References:
 
 SeeAlso: ht_synapse
 */
-class ht_neuron : public Archiving_Node
-{
+class ht_neuron : public Archiving_Node {
 public:
   ht_neuron();
   ht_neuron( const ht_neuron& );
@@ -168,15 +166,7 @@ private:
    * @note Excluded upper and lower bounds are defined as INF_, SUP_.
    *       Excluding port 0 avoids accidental connections.
    */
-  enum SynapseTypes
-  {
-    INF_SPIKE_RECEPTOR = 0,
-    AMPA,
-    NMDA,
-    GABA_A,
-    GABA_B,
-    SUP_SPIKE_RECEPTOR
-  };
+  enum SynapseTypes { INF_SPIKE_RECEPTOR = 0, AMPA, NMDA, GABA_A, GABA_B, SUP_SPIKE_RECEPTOR };
 
   void init_state_( const Node& proto );
   void init_buffers_();
@@ -198,8 +188,7 @@ private:
   /**
    * Independent parameters of the model.
    */
-  struct Parameters_
-  {
+  struct Parameters_ {
     Parameters_();
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -270,12 +259,10 @@ private:
    * State variables of the model.
    */
 public:
-  struct State_
-  {
+  struct State_ {
 
     // y_ = [V, theta, Synapses]
-    enum StateVecElems_
-    {
+    enum StateVecElems_ {
       V_M = 0,
       THETA,
       DG_AMPA,
@@ -330,8 +317,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( ht_neuron& );
     Buffers_( const Buffers_&, ht_neuron& );
 
@@ -369,8 +355,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     //! size of conductance steps for arriving spikes
     std::vector< double > cond_steps_;
 
@@ -480,13 +465,11 @@ ht_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   assert( B_.spike_inputs_.size() == 4 );
 
-  if ( not( INF_SPIKE_RECEPTOR < receptor_type && receptor_type < SUP_SPIKE_RECEPTOR ) )
-  {
+  if ( not( INF_SPIKE_RECEPTOR < receptor_type && receptor_type < SUP_SPIKE_RECEPTOR ) ) {
     throw UnknownReceptorType( receptor_type, get_name() );
     return 0;
   }
-  else
-  {
+  else {
     return receptor_type - 1;
   }
 
@@ -502,8 +485,7 @@ return 0;*/
 inline port
 ht_neuron::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -512,8 +494,7 @@ ht_neuron::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 ht_neuron::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

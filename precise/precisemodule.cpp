@@ -56,8 +56,7 @@
 #include "poisson_generator_ps.h"
 #include "iaf_psc_exp_ps_lossless.h"
 
-namespace nest
-{
+namespace nest {
 
 /* At the time when PreciseModule is constructed, the SLI Interpreter
    must already be initialized. PreciseModule relies on the presence of

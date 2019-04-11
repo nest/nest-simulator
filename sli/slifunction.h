@@ -32,8 +32,7 @@ class SLIInterpreter;
   class SLICommand replaces the old class Function from SYNOD 1.x.
  */
 
-class SLIFunction
-{
+class SLIFunction {
 public:
   SLIFunction()
   {

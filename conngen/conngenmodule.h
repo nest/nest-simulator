@@ -36,10 +36,8 @@
 #include "dictdatum.h"
 #include "slimodule.h"
 
-namespace nest
-{
-class ConnectionGeneratorModule : public SLIModule
-{
+namespace nest {
+class ConnectionGeneratorModule : public SLIModule {
 public:
   ConnectionGeneratorModule();
   ~ConnectionGeneratorModule();
@@ -53,38 +51,31 @@ public:
   const std::string name() const;
   const std::string commandstring() const;
 
-  class CGConnect_cg_g_g_D_lFunction : public SLIFunction
-  {
+  class CGConnect_cg_g_g_D_lFunction : public SLIFunction {
     void execute( SLIInterpreter* ) const;
   } cgconnect_cg_g_g_D_lfunction;
 
-  class CGParse_sFunction : public SLIFunction
-  {
+  class CGParse_sFunction : public SLIFunction {
     void execute( SLIInterpreter* ) const;
   } cgparse_sfunction;
 
-  class CGParseFile_sFunction : public SLIFunction
-  {
+  class CGParseFile_sFunction : public SLIFunction {
     void execute( SLIInterpreter* ) const;
   } cgparsefile_sfunction;
 
-  class CGSelectImplementation_s_sFunction : public SLIFunction
-  {
+  class CGSelectImplementation_s_sFunction : public SLIFunction {
     void execute( SLIInterpreter* ) const;
   } cgselectimplementation_s_sfunction;
 
-  class CGSetMask_cg_g_gFunction : public SLIFunction
-  {
+  class CGSetMask_cg_g_gFunction : public SLIFunction {
     void execute( SLIInterpreter* ) const;
   } cgsetmask_cg_g_gfunction;
 
-  class CGStart_cgFunction : public SLIFunction
-  {
+  class CGStart_cgFunction : public SLIFunction {
     void execute( SLIInterpreter* ) const;
   } cgstart_cgfunction;
 
-  class CGNext_cgFunction : public SLIFunction
-  {
+  class CGNext_cgFunction : public SLIFunction {
     void execute( SLIInterpreter* ) const;
   } cgnext_cgfunction;
 };

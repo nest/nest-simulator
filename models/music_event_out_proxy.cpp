@@ -78,8 +78,7 @@ nest::music_event_out_proxy::Parameters_::set( const DictionaryDatum& d, State_&
   //  if(d->known(names::port_name) && s.published_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
-  if ( not s.published_ )
-  {
+  if ( not s.published_ ) {
     updateValue< string >( d, names::port_name, port_name_ );
   }
 }
@@ -117,8 +116,7 @@ nest::music_event_out_proxy::music_event_out_proxy( const music_event_out_proxy&
 
 nest::music_event_out_proxy::~music_event_out_proxy()
 {
-  if ( S_.published_ )
-  {
+  if ( S_.published_ ) {
     delete V_.MP_;
     delete V_.music_perm_ind_;
   }
@@ -140,23 +138,19 @@ void
 nest::music_event_out_proxy::calibrate()
 {
   // only publish the output port once,
-  if ( not S_.published_ )
-  {
+  if ( not S_.published_ ) {
     MUSIC::Setup* s = kernel().music_manager.get_music_setup();
-    if ( s == 0 )
-    {
+    if ( s == 0 ) {
       throw MUSICSimulationHasRun( get_name() );
     }
 
     V_.MP_ = s->publishEventOutput( P_.port_name_ );
 
-    if ( not V_.MP_->isConnected() )
-    {
+    if ( not V_.MP_->isConnected() ) {
       throw MUSICPortUnconnected( get_name(), P_.port_name_ );
     }
 
-    if ( not V_.MP_->hasWidth() )
-    {
+    if ( not V_.MP_->hasWidth() ) {
       throw MUSICPortHasNoWidth( get_name(), P_.port_name_ );
     }
 
@@ -165,10 +159,8 @@ nest::music_event_out_proxy::calibrate()
     // check, if there are connections to receiver ports, which are
     // beyond the width of the port
     std::vector< MUSIC::GlobalIndex >::const_iterator it;
-    for ( it = V_.index_map_.begin(); it != V_.index_map_.end(); ++it )
-    {
-      if ( *it > S_.port_width_ )
-      {
+    for ( it = V_.index_map_.begin(); it != V_.index_map_.end(); ++it ) {
+      if ( *it > S_.port_width_ ) {
         throw UnknownReceptorType( *it, get_name() );
       }
     }
@@ -229,8 +221,7 @@ nest::music_event_out_proxy::handle( SpikeEvent& e )
 #pragma omp critical( insertevent )
   {
 #endif
-    for ( int i = 0; i < e.get_multiplicity(); ++i )
-    {
+    for ( int i = 0; i < e.get_multiplicity(); ++i ) {
       V_.MP_->insertEvent( time, MUSIC::GlobalIndex( receiver_port ) );
     }
 #ifdef _OPENMP

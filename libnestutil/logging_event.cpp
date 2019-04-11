@@ -43,14 +43,12 @@ nest::LoggingEvent::LoggingEvent( const nest::severity_t s,
   time( const_cast< time_t* >( &time_stamp ) );
 }
 
-namespace nest
-{
+namespace nest {
 
 std::ostream& operator<<( std::ostream& out, const LoggingEvent& e )
 {
   struct tm* ptm = localtime( &e.time_stamp );
-  switch ( e.severity )
-  {
+  switch ( e.severity ) {
   case M_ALL:
     out << "[ALL] ";
     break;

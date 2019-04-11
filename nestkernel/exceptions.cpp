@@ -73,12 +73,10 @@ std::string
 nest::UnknownSynapseType::message() const
 {
   std::ostringstream out;
-  if ( synapsename_.empty() )
-  {
+  if ( synapsename_.empty() ) {
     out << "Synapse with id " << synapseid_ << " does not exist.";
   }
-  else
-  {
+  else {
     out << "Synapse with name " << synapsename_ << " does not exist.";
   }
   return out.str();
@@ -89,12 +87,10 @@ nest::UnknownNode::message() const
 {
   std::ostringstream out;
 
-  if ( id_ >= 0 )
-  {
+  if ( id_ >= 0 ) {
     out << "Node with id " << id_ << " doesn't exist.";
   }
-  else
-  {
+  else {
     // Empty message
   }
 
@@ -106,12 +102,10 @@ nest::NoThreadSiblingsAvailable::message() const
 {
   std::ostringstream out;
 
-  if ( id_ >= 0 )
-  {
+  if ( id_ >= 0 ) {
     out << "Node with id " << id_ << " does not have thread siblings.";
   }
-  else
-  {
+  else {
     // Empty message
   }
 
@@ -166,12 +160,10 @@ nest::UnknownPort::message() const
 std::string
 nest::IllegalConnection::message() const
 {
-  if ( msg_.empty() )
-  {
+  if ( msg_.empty() ) {
     return "Creation of connection is not possible.";
   }
-  else
-  {
+  else {
     return "Creation of connection is not possible because:\n" + msg_;
   }
 }
@@ -179,12 +171,10 @@ nest::IllegalConnection::message() const
 std::string
 nest::InexistentConnection::message() const
 {
-  if ( msg_.empty() )
-  {
+  if ( msg_.empty() ) {
     return "Deletion of connection is not possible.";
   }
-  else
-  {
+  else {
     return "Deletion of connection is not possible because:\n" + msg_;
   }
 }
@@ -238,16 +228,13 @@ nest::DimensionMismatch::message() const
 {
   std::ostringstream out;
 
-  if ( not msg_.empty() )
-  {
+  if ( not msg_.empty() ) {
     out << msg_;
   }
-  else if ( expected_ == -1 )
-  {
+  else if ( expected_ == -1 ) {
     out << "Dimensions of two or more variables do not match.";
   }
-  else
-  {
+  else {
     out << "Expected dimension size: " << expected_ << "\nProvided dimension size: " << provided_;
   }
 

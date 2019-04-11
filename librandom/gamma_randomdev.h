@@ -68,8 +68,7 @@
 /*                                                          */
 /************************************************************/
 
-namespace librandom
-{
+namespace librandom {
 
 /** @BeginDocumentation
 Name: rdevdict::gamma - gamma random deviate generator
@@ -94,8 +93,7 @@ Author: Hans Ekkehard Plesser
  * @ingroup RandomDeviateGenerators
  */
 
-class GammaRandomDev : public RandomDev
-{
+class GammaRandomDev : public RandomDev {
 
 public:
   // accept only lockPTRs for initialization,

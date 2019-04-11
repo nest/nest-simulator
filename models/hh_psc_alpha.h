@@ -43,8 +43,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
+namespace nest {
 /**
  * Function computing right-hand side of ODE for GSL solver.
  * @note Must be declared here so we can befriend it in class.
@@ -123,8 +122,7 @@ Authors: Schrader
 
 SeeAlso: hh_cond_exp_traub
 */
-class hh_psc_alpha : public Archiving_Node
-{
+class hh_psc_alpha : public Archiving_Node {
 
 public:
   hh_psc_alpha();
@@ -173,8 +171,7 @@ private:
   // ----------------------------------------------------------------
 
   //! Independent parameters
-  struct Parameters_
-  {
+  struct Parameters_ {
     double t_ref_;   //!< refractory time in ms
     double g_Na;     //!< Sodium Conductance in nS
     double g_K;      //!< Potassium Conductance in nS
@@ -201,8 +198,7 @@ public:
    * @note Copy constructor and assignment operator required because
    *       of C-style array.
    */
-  struct State_
-  {
+  struct State_ {
 
     /**
      * Enumeration identifying elements in state array State_::y_.
@@ -210,8 +206,7 @@ public:
      * identifies the elements of the vector. It must be public to be
      * accessible from the iteration function.
      */
-    enum StateVecElems
-    {
+    enum StateVecElems {
       V_M = 0,
       HH_M,   // 1
       HH_H,   // 2
@@ -242,8 +237,7 @@ private:
   /**
    * Buffers of the model.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     Buffers_( hh_psc_alpha& );                  //!<Sets buffer pointers to 0
     Buffers_( const Buffers_&, hh_psc_alpha& ); //!<Sets buffer pointers to 0
 
@@ -283,8 +277,7 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
+  struct Variables_ {
     /** initial value to normalise excitatory synaptic current */
     double PSCurrInit_E_;
 
@@ -329,8 +322,7 @@ hh_psc_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool
 inline port
 hh_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -339,8 +331,7 @@ hh_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 hh_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -349,8 +340,7 @@ hh_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 inline port
 hh_psc_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

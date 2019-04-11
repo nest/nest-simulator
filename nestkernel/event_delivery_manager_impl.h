@@ -29,8 +29,7 @@
 #include "connection_manager_impl.h"
 #include "kernel_manager.h"
 
-namespace nest
-{
+namespace nest {
 
 template < class EventT >
 inline void
@@ -58,25 +57,21 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
   const thread tid = source.get_thread();
   const index source_gid = source.get_gid();
   e.set_sender_gid( source_gid );
-  if ( source.has_proxies() )
-  {
+  if ( source.has_proxies() ) {
     local_spike_counter_[ tid ] += e.get_multiplicity();
 
     e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
     e.set_sender( source );
 
-    if ( source.is_off_grid() )
-    {
+    if ( source.is_off_grid() ) {
       send_off_grid_remote( tid, e, lag );
     }
-    else
-    {
+    else {
       send_remote( tid, e, lag );
     }
     kernel().connection_manager.send_to_devices( tid, source_gid, e );
   }
-  else
-  {
+  else {
     send_local_( source, e, lag );
   }
 }
@@ -96,11 +91,9 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
   const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
   const std::vector< Target >& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
 
-  for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
-  {
+  for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it ) {
     const thread assigned_tid = ( *it ).get_rank() / kernel().vp_manager.get_num_assigned_ranks_per_thread();
-    for ( int i = 0; i < e.get_multiplicity(); ++i )
-    {
+    for ( int i = 0; i < e.get_multiplicity(); ++i ) {
       spike_register_[ tid ][ assigned_tid ][ lag ].push_back( *it );
     }
   }
@@ -113,11 +106,9 @@ EventDeliveryManager::send_off_grid_remote( thread tid, SpikeEvent& e, const lon
   const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
   const std::vector< Target >& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
 
-  for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
-  {
+  for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it ) {
     const thread assigned_tid = ( *it ).get_rank() / kernel().vp_manager.get_num_assigned_ranks_per_thread();
-    for ( int i = 0; i < e.get_multiplicity(); ++i )
-    {
+    for ( int i = 0; i < e.get_multiplicity(); ++i ) {
       off_grid_spike_register_[ tid ][ assigned_tid ][ lag ].push_back( OffGridTarget( *it, e.get_offset() ) );
     }
   }
@@ -133,13 +124,12 @@ EventDeliveryManager::send_secondary( const Node& source, SecondaryEvent& e )
   // make sure also labeled and connection created by CopyModel are
   // considered.
   const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
-  for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin(); cit != supported_syn_ids.end(); ++cit )
-  {
+  for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin(); cit != supported_syn_ids.end();
+        ++cit ) {
     const std::vector< size_t >& positions =
       kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid, *cit );
 
-    for ( size_t i = 0; i < positions.size(); ++i )
-    {
+    for ( size_t i = 0; i < positions.size(); ++i ) {
       std::vector< unsigned int >::iterator it = send_buffer_secondary_events_.begin() + positions[ i ];
       e >> it;
     }

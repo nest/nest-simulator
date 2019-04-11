@@ -33,8 +33,7 @@
 #include "randomdev.h"
 #include "randomgen.h"
 
-namespace librandom
-{
+namespace librandom {
 
 /** @BeginDocumentation
 Name: rdevdict::exponential - exponential random deviate generator
@@ -65,8 +64,7 @@ Author: Hans Ekkehard Plesser
  * @ingroup RandomDeviateGenerators
  */
 
-class ExpRandomDev : public RandomDev
-{
+class ExpRandomDev : public RandomDev {
 
 public:
   // accept only lockPTRs for initialization,

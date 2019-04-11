@@ -37,8 +37,7 @@ DictionaryStack::~DictionaryStack()
 {
   // We have to clear the dictionary before we delete it, otherwise the
   // dictionary references will prevent proper deletion.
-  for ( std::list< DictionaryDatum >::iterator i = d.begin(); i != d.end(); ++i )
-  {
+  for ( std::list< DictionaryDatum >::iterator i = d.begin(); i != d.end(); ++i ) {
     ( *i )->clear();
   }
 }
@@ -48,12 +47,10 @@ DictionaryStack::undef( const Name& n )
 {
 
   size_t num_erased = 0;
-  for ( std::list< DictionaryDatum >::iterator it = d.begin(); it != d.end(); ++it )
-  {
+  for ( std::list< DictionaryDatum >::iterator it = d.begin(); it != d.end(); ++it ) {
     num_erased += ( *it )->erase( n );
   }
-  if ( num_erased == 0 )
-  {
+  if ( num_erased == 0 ) {
     throw UndefinedName( n.toString() );
   }
 #ifdef DICTSTACK_CACHE
@@ -145,8 +142,7 @@ DictionaryStack::toArray( TokenArray& ta ) const
 
   std::list< DictionaryDatum >::const_reverse_iterator i( d.rbegin() );
 
-  while ( i != d.rend() )
-  {
+  while ( i != d.rend() ) {
     ta.push_back( ( *i ) );
     ++i;
   }
@@ -204,8 +200,7 @@ DictionaryStack::info( std::ostream& o ) const
 
   o << "DictionaryStack::info" << std::endl;
   o << "Size = " << d.size() << std::endl;
-  while ( i != d.rend() )
-  {
+  while ( i != d.rend() ) {
     ( *i )->info( o );
     ++i;
   }
@@ -219,8 +214,7 @@ DictionaryStack::top_info( std::ostream& o ) const
 
 const DictionaryStack& DictionaryStack::operator=( const DictionaryStack& ds )
 {
-  if ( &ds != this )
-  {
+  if ( &ds != this ) {
     d = ds.d;
 #ifdef DICTSTACK_CACHE
     cache_ = ds.cache_;

@@ -41,8 +41,7 @@
 #include "block_vector.h"
 #include "vector_util.h"
 
-namespace nest
-{
+namespace nest {
 
 class TargetData;
 
@@ -59,8 +58,7 @@ class TargetData;
  * this structure is transferred to the presynaptic side and the
  * sources vector can be cleared.
  */
-class SourceTable
-{
+class SourceTable {
 private:
   /**
    * 3D structure storing gids of presynaptic neurons.
@@ -257,8 +255,8 @@ SourceTable::add_source( const thread tid, const synindex syn_id, const index gi
 inline void
 SourceTable::clear( const thread tid )
 {
-  for ( std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin(); it != sources_[ tid ].end(); ++it )
-  {
+  for ( std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin(); it != sources_[ tid ].end();
+        ++it ) {
     it->clear();
   }
   sources_[ tid ].clear();
@@ -282,14 +280,12 @@ SourceTable::reject_last_target_data( const thread tid )
 inline void
 SourceTable::save_entry_point( const thread tid )
 {
-  if ( not saved_entry_point_[ tid ] )
-  {
+  if ( not saved_entry_point_[ tid ] ) {
     saved_positions_[ tid ].tid = current_positions_[ tid ].tid;
     saved_positions_[ tid ].syn_id = current_positions_[ tid ].syn_id;
 
     // if tid and syn_id are valid entries, also store valid entry for lcid
-    if ( current_positions_[ tid ].tid > -1 and current_positions_[ tid ].syn_id > -1 )
-    {
+    if ( current_positions_[ tid ].tid > -1 and current_positions_[ tid ].syn_id > -1 ) {
       // either store current_position.lcid + 1, since this can
       // contain non-processed entry (see reject_last_target_data()) or
       // store maximal value for lcid.
@@ -297,8 +293,7 @@ SourceTable::save_entry_point( const thread tid )
         static_cast< long >( sources_[ current_positions_[ tid ].tid ][ current_positions_[ tid ].syn_id ].size()
                                                  - 1 ) );
     }
-    else
-    {
+    else {
       assert( current_positions_[ tid ].lcid == -1 );
       saved_positions_[ tid ].lcid = -1;
     }
@@ -322,20 +317,16 @@ SourceTable::reset_entry_point( const thread tid )
   // restore_entry_point. However, this can only be done if other
   // values have valid values.
   saved_positions_[ tid ].tid = sources_.size() - 1;
-  if ( saved_positions_[ tid ].tid > -1 )
-  {
+  if ( saved_positions_[ tid ].tid > -1 ) {
     saved_positions_[ tid ].syn_id = sources_[ saved_positions_[ tid ].tid ].size() - 1;
   }
-  else
-  {
+  else {
     saved_positions_[ tid ].syn_id = -1;
   }
-  if ( saved_positions_[ tid ].syn_id > -1 )
-  {
+  if ( saved_positions_[ tid ].syn_id > -1 ) {
     saved_positions_[ tid ].lcid = sources_[ saved_positions_[ tid ].tid ][ saved_positions_[ tid ].syn_id ].size() - 1;
   }
-  else
-  {
+  else {
     saved_positions_[ tid ].lcid = -1;
   }
 }
@@ -343,10 +334,9 @@ SourceTable::reset_entry_point( const thread tid )
 inline void
 SourceTable::reset_processed_flags( const thread tid )
 {
-  for ( std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin(); it != sources_[ tid ].end(); ++it )
-  {
-    for ( BlockVector< Source >::iterator iit = it->begin(); iit != it->end(); ++iit )
-    {
+  for ( std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin(); it != sources_[ tid ].end();
+        ++it ) {
+    for ( BlockVector< Source >::iterator iit = it->begin(); iit != it->end(); ++iit ) {
       iit->set_processed( false );
     }
   }
@@ -370,10 +360,8 @@ SourceTable::find_first_source( const thread tid, const synindex syn_id, const i
 
   // source found by binary search could be disabled, iterate through
   // sources until a valid one is found
-  while ( it != end )
-  {
-    if ( it->get_gid() == sgid and not it->is_disabled() )
-    {
+  while ( it != end ) {
+    if ( it->get_gid() == sgid and not it->is_disabled() ) {
       const index lcid = it - begin;
       return lcid;
     }
@@ -399,8 +387,7 @@ SourceTable::get_source_gids( const thread tid,
   const std::vector< index >& source_lcids,
   std::vector< index >& sources )
 {
-  for ( std::vector< index >::const_iterator cit = source_lcids.begin(); cit != source_lcids.end(); ++cit )
-  {
+  for ( std::vector< index >::const_iterator cit = source_lcids.begin(); cit != source_lcids.end(); ++cit ) {
     sources.push_back( sources_[ tid ][ syn_id ][ *cit ].get_gid() );
   }
 }
@@ -412,10 +399,8 @@ SourceTable::num_unique_sources( const thread tid, const synindex syn_id ) const
   index last_source = 0;
   for ( BlockVector< Source >::const_iterator cit = sources_[ tid ][ syn_id ].begin();
         cit != sources_[ tid ][ syn_id ].end();
-        ++cit )
-  {
-    if ( last_source != ( *cit ).get_gid() )
-    {
+        ++cit ) {
+    if ( last_source != ( *cit ).get_gid() ) {
       last_source = ( *cit ).get_gid();
       ++n;
     }

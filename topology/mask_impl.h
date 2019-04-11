@@ -25,16 +25,14 @@
 
 #include "mask.h"
 
-namespace nest
-{
+namespace nest {
 
 template < int D >
 AbstractMask*
 Mask< D >::intersect_mask( const AbstractMask& other ) const
 {
   const Mask* other_d = dynamic_cast< const Mask* >( &other );
-  if ( other_d == 0 )
-  {
+  if ( other_d == 0 ) {
     throw BadProperty( "Masks must have same number of dimensions." );
   }
   return new IntersectionMask< D >( *this, *other_d );
@@ -45,8 +43,7 @@ AbstractMask*
 Mask< D >::union_mask( const AbstractMask& other ) const
 {
   const Mask* other_d = dynamic_cast< const Mask* >( &other );
-  if ( other_d == 0 )
-  {
+  if ( other_d == 0 ) {
     throw BadProperty( "Masks must have same number of dimensions." );
   }
   return new UnionMask< D >( *this, *other_d );
@@ -57,8 +54,7 @@ AbstractMask*
 Mask< D >::minus_mask( const AbstractMask& other ) const
 {
   const Mask* other_d = dynamic_cast< const Mask* >( &other );
-  if ( other_d == 0 )
-  {
+  if ( other_d == 0 ) {
     throw BadProperty( "Masks must have same number of dimensions." );
   }
   return new DifferenceMask< D >( *this, *other_d );
@@ -76,10 +72,8 @@ bool
 Mask< D >::outside( const Box< D >& b ) const
 {
   Box< D > bb = get_bbox();
-  for ( int i = 0; i < D; ++i )
-  {
-    if ( ( b.upper_right[ i ] < bb.lower_left[ i ] ) || ( b.lower_left[ i ] > bb.upper_right[ i ] ) )
-    {
+  for ( int i = 0; i < D; ++i ) {
+    if ( ( b.upper_right[ i ] < bb.lower_left[ i ] ) || ( b.lower_left[ i ] > bb.upper_right[ i ] ) ) {
       return true;
     }
   }
@@ -91,8 +85,7 @@ bool
 BoxMask< 2 >::inside( const Position< 2 >& p ) const
 {
   // If the box is not rotated we just check if the point is inside the box.
-  if ( not is_rotated_ )
-  {
+  if ( not is_rotated_ ) {
     return ( lower_left_ <= p ) && ( p <= upper_right_ );
   }
 
@@ -118,8 +111,7 @@ bool
 BoxMask< 3 >::inside( const Position< 3 >& p ) const
 {
   // If the box is not rotated we just check if the point is inside the box.
-  if ( not is_rotated_ )
-  {
+  if ( not is_rotated_ ) {
     return ( lower_left_ <= p ) && ( p <= upper_right_ );
   }
 
@@ -163,10 +155,8 @@ BoxMask< D >::outside( const Box< D >& b ) const
   // to overlap of the inside and outside functions. None of the tests have
   // picked up any problems with this potential overlap as of yet (autumn 2017),
   // so we don't know if it is an actual problem.
-  for ( int i = 0; i < D; ++i )
-  {
-    if ( ( b.upper_right[ i ] < min_values_[ i ] ) || ( b.lower_left[ i ] > max_values_[ i ] ) )
-    {
+  for ( int i = 0; i < D; ++i ) {
+    if ( ( b.upper_right[ i ] < min_values_[ i ] ) || ( b.lower_left[ i ] > max_values_[ i ] ) ) {
       return true;
     }
   }
@@ -182,13 +172,11 @@ BoxMask< 2 >::calculate_min_max_values_()
   // rotated, the min values correspond to the lower_left values and the max
   // values correspond to the upper_right values.
 
-  if ( not is_rotated_ )
-  {
+  if ( not is_rotated_ ) {
     min_values_ = lower_left_;
     max_values_ = upper_right_;
   }
-  else
-  {
+  else {
     const Position< 2 > lower_left_cos = ( lower_left_ - cntr_ ) * azimuth_cos_;
     const Position< 2 > lower_left_sin = ( lower_left_ - cntr_ ) * azimuth_sin_;
     const Position< 2 > upper_right_cos = ( upper_right_ - cntr_ ) * azimuth_cos_;
@@ -252,13 +240,11 @@ BoxMask< 3 >::calculate_min_max_values_()
    * min_values_
    */
 
-  if ( not is_rotated_ )
-  {
+  if ( not is_rotated_ ) {
     min_values_ = lower_left_;
     max_values_ = upper_right_;
   }
-  else
-  {
+  else {
     const Position< 3 > lower_left_cos = ( lower_left_ - cntr_ ) * azimuth_cos_;
     const Position< 3 > lower_left_sin = ( lower_left_ - cntr_ ) * azimuth_sin_;
     const Position< 3 > upper_right_cos = ( upper_right_ - cntr_ ) * azimuth_cos_;
@@ -379,26 +365,22 @@ BallMask< 2 >::inside( const Box< 2 >& b ) const
 
   // Test if all corners are inside circle
 
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // (0,0)
   }
 
   p[ 0 ] = b.upper_right[ 0 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // (0,1)
   }
 
   p[ 1 ] = b.upper_right[ 1 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // (1,1)
   }
 
   p[ 0 ] = b.lower_left[ 0 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // (1,0)
   }
 
@@ -413,50 +395,42 @@ BallMask< 3 >::inside( const Box< 3 >& b ) const
 
   // Test if all corners are inside sphere
 
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // (0,0,0)
   }
 
   p[ 0 ] = b.upper_right[ 0 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // (0,0,1)
   }
 
   p[ 1 ] = b.upper_right[ 1 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // (0,1,1)
   }
 
   p[ 0 ] = b.lower_left[ 0 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // (0,1,0)
   }
 
   p[ 2 ] = b.upper_right[ 2 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // (1,1,0)
   }
 
   p[ 0 ] = b.upper_right[ 0 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // (1,1,1)
   }
 
   p[ 1 ] = b.lower_left[ 1 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // (1,0,1)
   }
 
   p[ 0 ] = b.lower_left[ 0 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // (1,0,0)
   }
 
@@ -469,10 +443,8 @@ BallMask< D >::outside( const Box< D >& b ) const
 {
   // Currently only checks if the box is outside the bounding box of
   // the ball. This could be made more refined.
-  for ( int i = 0; i < D; ++i )
-  {
-    if ( ( b.upper_right[ i ] < center_[ i ] - radius_ ) || ( b.lower_left[ i ] > center_[ i ] + radius_ ) )
-    {
+  for ( int i = 0; i < D; ++i ) {
+    if ( ( b.upper_right[ i ] < center_[ i ] - radius_ ) || ( b.lower_left[ i ] > center_[ i ] + radius_ ) ) {
       return true;
     }
   }
@@ -484,8 +456,7 @@ Box< D >
 BallMask< D >::get_bbox() const
 {
   Box< D > bb( center_, center_ );
-  for ( int i = 0; i < D; ++i )
-  {
+  for ( int i = 0; i < D; ++i ) {
     bb.lower_left[ i ] -= radius_;
     bb.upper_right[ i ] += radius_;
   }
@@ -553,26 +524,22 @@ EllipseMask< 2 >::inside( const Box< 2 >& b ) const
   Position< 2 > p = b.lower_left;
 
   // Test if all corners are inside ellipse
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // lower left corner not inside ellipse
   }
 
   p[ 0 ] = b.upper_right[ 0 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // upper left corner not inside ellipse
   }
 
   p[ 1 ] = b.upper_right[ 1 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // upper right corner not inside ellipse
   }
 
   p[ 0 ] = b.lower_left[ 0 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // lower right corner not inside ellipse
   }
 
@@ -586,50 +553,42 @@ EllipseMask< 3 >::inside( const Box< 3 >& b ) const
   Position< 3 > p = b.lower_left;
 
   // Test if all corners are inside ellipsoid
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // first lower left corner not inside ellipsoid
   }
 
   p[ 0 ] = b.upper_right[ 0 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // second lower left corner not inside ellipsoid
   }
 
   p[ 1 ] = b.upper_right[ 1 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // second lower right corner not inside ellipsoid
   }
 
   p[ 0 ] = b.lower_left[ 0 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // first lower right corner not inside ellipsoid
   }
 
   p[ 2 ] = b.upper_right[ 2 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // first upper right corner not inside ellipsoid
   }
 
   p[ 0 ] = b.upper_right[ 0 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // second upper right corner not inside ellipsoid
   }
 
   p[ 1 ] = b.lower_left[ 1 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // second upper left corner not inside ellipsoid
   }
 
   p[ 0 ] = b.lower_left[ 0 ];
-  if ( not inside( p ) )
-  {
+  if ( not inside( p ) ) {
     return false; // first upper left corner not inside ellipsoid
   }
 
@@ -645,14 +604,12 @@ EllipseMask< D >::create_bbox_()
   // big. The construction of the box is done in accordance with the actual
   // dimensions.
   std::vector< double > radii( 3 );
-  if ( azimuth_angle_ == 0.0 and polar_angle_ == 0.0 )
-  {
+  if ( azimuth_angle_ == 0.0 and polar_angle_ == 0.0 ) {
     radii[ 0 ] = major_axis_ / 2.0;
     radii[ 1 ] = minor_axis_ / 2.0;
     radii[ 2 ] = polar_axis_ / 2.0;
   }
-  else
-  {
+  else {
     // If the ellipse or ellipsoid is tilted, we make the boundary box
     // quadratic, with the length of the sides equal to the axis with greatest
     // length. This could be more refined.
@@ -662,8 +619,7 @@ EllipseMask< D >::create_bbox_()
     radii[ 2 ] = greatest_semi_axis;
   }
 
-  for ( int i = 0; i < D; ++i )
-  {
+  for ( int i = 0; i < D; ++i ) {
     bbox_.lower_left[ i ] = center_[ i ] - radii[ i ];
     bbox_.upper_right[ i ] = center_[ i ] + radii[ i ];
   }
@@ -678,10 +634,8 @@ EllipseMask< D >::outside( const Box< D >& b ) const
 
   const Box< D >& bb = bbox_;
 
-  for ( int i = 0; i < D; ++i )
-  {
-    if ( ( b.upper_right[ i ] < bb.lower_left[ i ] ) || ( b.lower_left[ i ] > bb.upper_right[ i ] ) )
-    {
+  for ( int i = 0; i < D; ++i ) {
+    if ( ( b.upper_right[ i ] < bb.lower_left[ i ] ) || ( b.lower_left[ i ] > bb.upper_right[ i ] ) ) {
       return true;
     }
   }
@@ -746,14 +700,11 @@ IntersectionMask< D >::get_bbox() const
 {
   Box< D > bb = mask1_->get_bbox();
   Box< D > bb2 = mask2_->get_bbox();
-  for ( int i = 0; i < D; ++i )
-  {
-    if ( bb2.lower_left[ i ] > bb.lower_left[ i ] )
-    {
+  for ( int i = 0; i < D; ++i ) {
+    if ( bb2.lower_left[ i ] > bb.lower_left[ i ] ) {
       bb.lower_left[ i ] = bb2.lower_left[ i ];
     }
-    if ( bb2.upper_right[ i ] < bb.upper_right[ i ] )
-    {
+    if ( bb2.upper_right[ i ] < bb.upper_right[ i ] ) {
       bb.upper_right[ i ] = bb2.upper_right[ i ];
     }
   }
@@ -794,14 +745,11 @@ UnionMask< D >::get_bbox() const
 {
   Box< D > bb = mask1_->get_bbox();
   Box< D > bb2 = mask2_->get_bbox();
-  for ( int i = 0; i < D; ++i )
-  {
-    if ( bb2.lower_left[ i ] < bb.lower_left[ i ] )
-    {
+  for ( int i = 0; i < D; ++i ) {
+    if ( bb2.lower_left[ i ] < bb.lower_left[ i ] ) {
       bb.lower_left[ i ] = bb2.lower_left[ i ];
     }
-    if ( bb2.upper_right[ i ] > bb.upper_right[ i ] )
-    {
+    if ( bb2.upper_right[ i ] > bb.upper_right[ i ] ) {
       bb.upper_right[ i ] = bb2.upper_right[ i ];
     }
   }

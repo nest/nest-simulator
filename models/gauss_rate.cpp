@@ -22,8 +22,7 @@
 
 #include "gauss_rate.h"
 
-namespace nest
-{
+namespace nest {
 
 void
 nonlinearities_gauss_rate::get( DictionaryDatum& d ) const

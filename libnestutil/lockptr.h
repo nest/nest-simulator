@@ -82,10 +82,8 @@
 */
 
 template < class D >
-class lockPTR
-{
-  class PointerObject
-  {
+class lockPTR {
+  class PointerObject {
 
   private:
     D* pointee; // pointer to handled Datum object
@@ -118,8 +116,7 @@ class lockPTR
       assert( number_of_references == 0 ); // This will invalidate the still
                                            // existing pointer!
       assert( not locked );
-      if ( ( pointee != NULL ) && deletable && ( not locked ) )
-      {
+      if ( ( pointee != NULL ) && deletable && ( not locked ) ) {
         delete pointee;
       }
     }
@@ -142,8 +139,7 @@ class lockPTR
       //      assert(number_of_references > 0);
 
       --number_of_references;
-      if ( number_of_references == 0 )
-      {
+      if ( number_of_references == 0 ) {
         delete this;
       }
     }

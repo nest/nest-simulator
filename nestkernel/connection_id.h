@@ -27,11 +27,9 @@
 #include "arraydatum.h"
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 
-class ConnectionID
-{
+class ConnectionID {
 public:
   ConnectionID()
   {

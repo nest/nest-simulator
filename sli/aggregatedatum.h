@@ -56,8 +56,7 @@
 *************************************************/
 
 template < class C, SLIType* slt >
-class AggregateDatum : public TypedDatum< slt >, public C
-{
+class AggregateDatum : public TypedDatum< slt >, public C {
 protected:
   static sli::pool memory;
 
@@ -96,8 +95,7 @@ public:
     // to work.
 
     const AggregateDatum< C, slt >* ddc = dynamic_cast< AggregateDatum< C, slt >* >( const_cast< Datum* >( dat ) );
-    if ( ddc == NULL )
-    {
+    if ( ddc == NULL ) {
       return false;
     }
 
@@ -106,8 +104,7 @@ public:
 
   static void* operator new( size_t size )
   {
-    if ( size != memory.size_of() )
-    {
+    if ( size != memory.size_of() ) {
       return ::operator new( size );
     }
     return memory.alloc();
@@ -115,12 +112,10 @@ public:
 
   static void operator delete( void* p, size_t size )
   {
-    if ( p == NULL )
-    {
+    if ( p == NULL ) {
       return;
     }
-    if ( size != memory.size_of() )
-    {
+    if ( size != memory.size_of() ) {
       ::operator delete( p );
       return;
     }
@@ -162,12 +157,10 @@ template < class C, SLIType* slt >
 void
 AggregateDatum< C, slt >::list( std::ostream& out, std::string prefix, int length ) const
 {
-  if ( length == 0 )
-  {
+  if ( length == 0 ) {
     prefix = "-->" + prefix;
   }
-  else
-  {
+  else {
     prefix = "   " + prefix;
   }
 

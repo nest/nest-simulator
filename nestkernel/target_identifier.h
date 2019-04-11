@@ -31,8 +31,7 @@
 #include "kernel_manager.h"
 #include "compose.hpp"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Class providing classic target identified information with target pointer and
@@ -44,8 +43,7 @@ namespace nest
  *
  * See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.
  */
-class TargetIdentifierPtrRport
-{
+class TargetIdentifierPtrRport {
 
 public:
   TargetIdentifierPtrRport()
@@ -66,8 +64,7 @@ public:
   get_status( DictionaryDatum& d ) const
   {
     // Do nothing if called on synapse prototype
-    if ( target_ != 0 )
-    {
+    if ( target_ != 0 ) {
       def< long >( d, names::rport, rport_ );
       def< long >( d, names::target, target_->get_gid() );
     }
@@ -112,8 +109,7 @@ private:
  *
  * See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.
  */
-class TargetIdentifierIndex
-{
+class TargetIdentifierIndex {
 
 public:
   TargetIdentifierIndex()
@@ -132,8 +128,7 @@ public:
   get_status( DictionaryDatum& d ) const
   {
     // Do nothing if called on synapse prototype
-    if ( target_ != invalid_targetindex )
-    {
+    if ( target_ != invalid_targetindex ) {
       def< long >( d, names::rport, 0 );
       def< long >( d, names::target, target_ );
     }
@@ -157,8 +152,7 @@ public:
   void
   set_rport( rport rprt )
   {
-    if ( rprt != 0 )
-    {
+    if ( rprt != 0 ) {
       throw IllegalConnection(
         "Only rport==0 allowed for HPC synpases. Use normal synapse models "
         "instead. See Kunkel et al, Front Neuroinform 8:78 (2014), Sec "
@@ -176,8 +170,7 @@ TargetIdentifierIndex::set_target( Node* target )
   kernel().node_manager.ensure_valid_thread_local_ids();
 
   index target_lid = target->get_thread_lid();
-  if ( target_lid > max_targetindex )
-  {
+  if ( target_lid > max_targetindex ) {
     throw IllegalConnection( String::compose(
       "HPC synapses support at most %1 nodes per thread. "
       "See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.2.",

@@ -29,8 +29,7 @@
 // Includes from nestkernel:
 #include "connection.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: cont_delay_synapse - Synapse type for continuous delays
@@ -93,8 +92,7 @@ Author: Abigail Morrison
 SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_canon
 */
 template < typename targetidentifierT >
-class ContDelayConnection : public Connection< targetidentifierT >
-{
+class ContDelayConnection : public Connection< targetidentifierT > {
 
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
@@ -157,8 +155,7 @@ public:
    */
   void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
+  class ConnTestDummyNode : public ConnTestDummyNodeBase {
   public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
@@ -236,13 +233,11 @@ ContDelayConnection< targetidentifierT >::send( Event& e, thread t, const Common
   // by the Time-class to allow more precise spike-times, hence comparing
   // on the tics level here is not reasonable. Still, the double comparison
   // seems save.
-  if ( total_offset < Time::get_resolution().get_ms() )
-  {
+  if ( total_offset < Time::get_resolution().get_ms() ) {
     e.set_delay_steps( get_delay_steps() );
     e.set_offset( total_offset );
   }
-  else
-  {
+  else {
     e.set_delay_steps( get_delay_steps() - 1 );
     e.set_offset( total_offset - Time::get_resolution().get_ms() );
   }

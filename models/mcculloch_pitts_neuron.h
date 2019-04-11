@@ -26,8 +26,7 @@
 // Includes from models:
 #include "binary_neuron.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside
@@ -100,8 +99,7 @@ Author: Moritz Helias
 
 SeeAlso: pp_psc_delta
 */
-class gainfunction_mcculloch_pitts
-{
+class gainfunction_mcculloch_pitts {
 private:
   /** threshold of sigmoidal activation function */
   double theta_;

@@ -26,8 +26,7 @@
 // Includes from models:
 #include "binary_neuron.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: ginzburg_neuron - Binary stochastic neuron with sigmoidal activation
@@ -113,8 +112,7 @@ Author: Moritz Helias
 
 SeeAlso: pp_psc_delta
 */
-class gainfunction_ginzburg
-{
+class gainfunction_ginzburg {
 private:
   /** threshold of sigmoidal activation function */
   double theta_;

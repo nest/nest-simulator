@@ -37,8 +37,7 @@
 
 void init_slicontrol( SLIInterpreter* );
 
-class Backtrace_onFunction : public SLIFunction
-{
+class Backtrace_onFunction : public SLIFunction {
 public:
   Backtrace_onFunction()
   {
@@ -46,8 +45,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Backtrace_offFunction : public SLIFunction
-{
+class Backtrace_offFunction : public SLIFunction {
 public:
   Backtrace_offFunction()
   {
@@ -55,8 +53,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class OStackdumpFunction : public SLIFunction
-{
+class OStackdumpFunction : public SLIFunction {
 public:
   OStackdumpFunction()
   {
@@ -64,8 +61,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class EStackdumpFunction : public SLIFunction
-{
+class EStackdumpFunction : public SLIFunction {
 public:
   EStackdumpFunction()
   {
@@ -73,8 +69,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class LoopFunction : public SLIFunction
-{
+class LoopFunction : public SLIFunction {
 public:
   LoopFunction()
   {
@@ -82,8 +77,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ExitFunction : public SLIFunction
-{
+class ExitFunction : public SLIFunction {
 public:
   ExitFunction()
   {
@@ -91,8 +85,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class QuitFunction : public SLIFunction
-{
+class QuitFunction : public SLIFunction {
 public:
   QuitFunction()
   {
@@ -100,8 +93,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IfFunction : public SLIFunction
-{
+class IfFunction : public SLIFunction {
 public:
   IfFunction()
   {
@@ -109,8 +101,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IfelseFunction : public SLIFunction
-{
+class IfelseFunction : public SLIFunction {
 public:
   IfelseFunction()
   {
@@ -118,8 +109,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RepeatFunction : public SLIFunction
-{
+class RepeatFunction : public SLIFunction {
 public:
   RepeatFunction()
   {
@@ -127,8 +117,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CloseinputFunction : public SLIFunction
-{
+class CloseinputFunction : public SLIFunction {
 public:
   CloseinputFunction()
   {
@@ -136,8 +125,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class StoppedFunction : public SLIFunction
-{
+class StoppedFunction : public SLIFunction {
 public:
   StoppedFunction()
   {
@@ -145,8 +133,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class StopFunction : public SLIFunction
-{
+class StopFunction : public SLIFunction {
 public:
   StopFunction()
   {
@@ -154,8 +141,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CurrentnameFunction : public SLIFunction
-{
+class CurrentnameFunction : public SLIFunction {
 public:
   CurrentnameFunction()
   {
@@ -163,8 +149,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IparsestdinFunction : public SLIFunction
-{
+class IparsestdinFunction : public SLIFunction {
 public:
   IparsestdinFunction()
   {
@@ -172,8 +157,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class StartFunction : public SLIFunction
-{
+class StartFunction : public SLIFunction {
 public:
   StartFunction()
   {
@@ -181,8 +165,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ParsestdinFunction : public SLIFunction
-{
+class ParsestdinFunction : public SLIFunction {
 public:
   ParsestdinFunction()
   {
@@ -190,8 +173,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class IparseFunction : public SLIFunction
-{
+class IparseFunction : public SLIFunction {
 public:
   IparseFunction()
   {
@@ -199,8 +181,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class DefFunction : public SLIFunction
-{
+class DefFunction : public SLIFunction {
 public:
   DefFunction()
   {
@@ -208,8 +189,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class SetFunction : public SLIFunction
-{
+class SetFunction : public SLIFunction {
 public:
   SetFunction()
   {
@@ -217,8 +197,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class LoadFunction : public SLIFunction
-{
+class LoadFunction : public SLIFunction {
 public:
   LoadFunction()
   {
@@ -226,8 +205,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class LookupFunction : public SLIFunction
-{
+class LookupFunction : public SLIFunction {
 public:
   LookupFunction()
   {
@@ -235,8 +213,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ForFunction : public SLIFunction
-{
+class ForFunction : public SLIFunction {
 public:
   ForFunction()
   {
@@ -244,8 +221,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Forall_aFunction : public SLIFunction
-{
+class Forall_aFunction : public SLIFunction {
 public:
   Forall_aFunction()
   {
@@ -253,8 +229,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Forall_iterFunction : public SLIFunction
-{
+class Forall_iterFunction : public SLIFunction {
 public:
   Forall_iterFunction()
   {
@@ -263,8 +238,7 @@ public:
 };
 
 
-class Forallindexed_aFunction : public SLIFunction
-{
+class Forallindexed_aFunction : public SLIFunction {
 public:
   Forallindexed_aFunction()
   {
@@ -272,8 +246,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Forallindexed_sFunction : public SLIFunction
-{
+class Forallindexed_sFunction : public SLIFunction {
 public:
   Forallindexed_sFunction()
   {
@@ -281,8 +254,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Forall_sFunction : public SLIFunction
-{
+class Forall_sFunction : public SLIFunction {
 public:
   Forall_sFunction()
   {
@@ -290,8 +262,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RaiseerrorFunction : public SLIFunction
-{
+class RaiseerrorFunction : public SLIFunction {
 public:
   RaiseerrorFunction()
   {
@@ -299,8 +270,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class PrinterrorFunction : public SLIFunction
-{
+class PrinterrorFunction : public SLIFunction {
 public:
   PrinterrorFunction()
   {
@@ -308,8 +278,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RaiseagainFunction : public SLIFunction
-{
+class RaiseagainFunction : public SLIFunction {
 public:
   RaiseagainFunction()
   {
@@ -317,8 +286,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CyclesFunction : public SLIFunction
-{
+class CyclesFunction : public SLIFunction {
 public:
   CyclesFunction()
   {
@@ -326,8 +294,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CodeAccessedFunction : public SLIFunction
-{
+class CodeAccessedFunction : public SLIFunction {
 public:
   CodeAccessedFunction()
   {
@@ -335,8 +302,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CodeExecutedFunction : public SLIFunction
-{
+class CodeExecutedFunction : public SLIFunction {
 public:
   CodeExecutedFunction()
   {
@@ -344,8 +310,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class ExecFunction : public SLIFunction
-{
+class ExecFunction : public SLIFunction {
 public:
   ExecFunction()
   {
@@ -354,8 +319,7 @@ public:
 };
 
 
-class TypeinfoFunction : public SLIFunction
-{
+class TypeinfoFunction : public SLIFunction {
 public:
   TypeinfoFunction()
   {
@@ -394,8 +358,7 @@ public:
 */
 
 
-class SwitchFunction : public SLIFunction
-{
+class SwitchFunction : public SLIFunction {
 public:
   SwitchFunction()
   {
@@ -446,8 +409,7 @@ public:
  SeeAlso: case, switch, exit, mark
 */
 
-class SwitchdefaultFunction : public SLIFunction
-{
+class SwitchdefaultFunction : public SLIFunction {
 public:
   SwitchdefaultFunction()
   {
@@ -489,8 +451,7 @@ public:
  SeeAlso: switch, switchdefault, exit, mark, if
 */
 
-class CaseFunction : public SLIFunction
-{
+class CaseFunction : public SLIFunction {
 public:
   CaseFunction()
   {
@@ -498,8 +459,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class CounttomarkFunction : public SLIFunction
-{
+class CounttomarkFunction : public SLIFunction {
 public:
   CounttomarkFunction()
   {
@@ -507,8 +467,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class PclocksFunction : public SLIFunction
-{
+class PclocksFunction : public SLIFunction {
 public:
   PclocksFunction()
   {
@@ -516,8 +475,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class PclockspersecFunction : public SLIFunction
-{
+class PclockspersecFunction : public SLIFunction {
 public:
   PclockspersecFunction()
   {
@@ -525,8 +483,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class PgetrusageFunction : public SLIFunction
-{
+class PgetrusageFunction : public SLIFunction {
 public:
   PgetrusageFunction()
   {
@@ -537,8 +494,7 @@ private:
   bool getinfo_( int, DictionaryDatum& ) const;
 };
 
-class TimeFunction : public SLIFunction
-{
+class TimeFunction : public SLIFunction {
 public:
   TimeFunction()
   {
@@ -546,8 +502,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Sleep_dFunction : public SLIFunction
-{
+class Sleep_dFunction : public SLIFunction {
 public:
   Sleep_dFunction()
   {
@@ -555,8 +510,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Token_sFunction : public SLIFunction
-{
+class Token_sFunction : public SLIFunction {
 public:
   Token_sFunction()
   {
@@ -564,8 +518,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Token_isFunction : public SLIFunction
-{
+class Token_isFunction : public SLIFunction {
 public:
   Token_isFunction()
   {
@@ -573,8 +526,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Symbol_sFunction : public SLIFunction
-{
+class Symbol_sFunction : public SLIFunction {
 public:
   Symbol_sFunction()
   {
@@ -582,8 +534,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class SetGuardFunction : public SLIFunction
-{
+class SetGuardFunction : public SLIFunction {
 public:
   SetGuardFunction()
   {
@@ -591,8 +542,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RemoveGuardFunction : public SLIFunction
-{
+class RemoveGuardFunction : public SLIFunction {
 public:
   RemoveGuardFunction()
   {
@@ -600,8 +550,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class MessageFunction : public SLIFunction
-{
+class MessageFunction : public SLIFunction {
 public:
   MessageFunction()
   {
@@ -609,8 +558,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class SetVerbosityFunction : public SLIFunction
-{
+class SetVerbosityFunction : public SLIFunction {
 public:
   SetVerbosityFunction()
   {
@@ -618,8 +566,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class VerbosityFunction : public SLIFunction
-{
+class VerbosityFunction : public SLIFunction {
 public:
   VerbosityFunction()
   {
@@ -628,8 +575,7 @@ public:
 };
 
 
-class NoopFunction : public SLIFunction
-{
+class NoopFunction : public SLIFunction {
 public:
   NoopFunction()
   {
@@ -637,8 +583,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class DebugOnFunction : public SLIFunction
-{
+class DebugOnFunction : public SLIFunction {
 public:
   DebugOnFunction()
   {
@@ -646,8 +591,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class DebugOffFunction : public SLIFunction
-{
+class DebugOffFunction : public SLIFunction {
 public:
   DebugOffFunction()
   {
@@ -655,8 +599,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class DebugFunction : public SLIFunction
-{
+class DebugFunction : public SLIFunction {
 public:
   DebugFunction()
   {

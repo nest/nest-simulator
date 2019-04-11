@@ -35,12 +35,10 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-namespace nest
-{
+namespace nest {
 
 // entry in the spiking history
-class histentry
-{
+class histentry {
 public:
   histentry( double t, double Kminus, double triplet_Kminus, size_t access_counter );
 
@@ -53,8 +51,7 @@ public:
 };
 
 // entry in the history of LTD and LTP for clopath-STDP synapse
-class histentry_cl
-{
+class histentry_cl {
 public:
   histentry_cl( double t, double dw, size_t access_counter );
 

@@ -42,8 +42,7 @@
 // Includes from sli:
 #include "dictutils.h"
 
-namespace nest
-{
+namespace nest {
 
 MUSICManager::MUSICManager()
 {
@@ -102,8 +101,7 @@ MUSICManager::enter_runtime( double h_min_delay )
   // MUSIC needs the step size in seconds
   // std::cout << "nest::MPIManager::enter_runtime\n";
   // std::cout << "timestep = " << h_min_delay*1e-3 << std::endl;
-  if ( music_runtime == 0 )
-  {
+  if ( music_runtime == 0 ) {
     music_runtime = new MUSIC::Runtime( music_setup, h_min_delay * 1e-3 );
   }
 #endif
@@ -113,8 +111,7 @@ void
 MUSICManager::music_finalize()
 {
 #ifdef HAVE_MUSIC
-  if ( music_runtime == 0 )
-  {
+  if ( music_runtime == 0 ) {
     // we need a Runtime object to call finalize(), so we create
     // one, if we don't have one already
     music_runtime = new MUSIC::Runtime( music_setup, 1e-3 );
@@ -159,18 +156,15 @@ MUSICManager::register_music_in_port( std::string portname, bool pristine )
 {
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
-  if ( it == music_in_portlist_.end() )
-  {
+  if ( it == music_in_portlist_.end() ) {
     music_in_portlist_[ portname ] = MusicPortData( 1, 0.0, -1 );
   }
-  else
-  {
+  else {
     music_in_portlist_[ portname ].n_input_proxies++;
   }
 
   // pristine is true if we are building up the initial portlist
-  if ( pristine )
-  {
+  if ( pristine ) {
     pristine_music_in_portlist_[ portname ] = music_in_portlist_[ portname ];
   }
 }
@@ -180,17 +174,14 @@ MUSICManager::unregister_music_in_port( std::string portname )
 {
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
-  if ( it == music_in_portlist_.end() )
-  {
+  if ( it == music_in_portlist_.end() ) {
     throw MUSICPortUnknown( portname );
   }
-  else
-  {
+  else {
     music_in_portlist_[ portname ].n_input_proxies--;
   }
 
-  if ( music_in_portlist_[ portname ].n_input_proxies == 0 )
-  {
+  if ( music_in_portlist_[ portname ].n_input_proxies == 0 ) {
     music_in_portlist_.erase( it );
   }
 }
@@ -200,15 +191,13 @@ MUSICManager::register_music_event_in_proxy( std::string portname, int channel, 
 {
   std::map< std::string, MusicEventHandler >::iterator it;
   it = music_in_portmap_.find( portname );
-  if ( it == music_in_portmap_.end() )
-  {
+  if ( it == music_in_portmap_.end() ) {
     MusicEventHandler tmp(
       portname, music_in_portlist_[ portname ].acceptable_latency, music_in_portlist_[ portname ].max_buffered );
     tmp.register_channel( channel, mp );
     music_in_portmap_[ portname ] = tmp;
   }
-  else
-  {
+  else {
     it->second.register_channel( channel, mp );
   }
 }
@@ -218,12 +207,10 @@ MUSICManager::set_music_in_port_acceptable_latency( std::string portname, double
 {
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
-  if ( it == music_in_portlist_.end() )
-  {
+  if ( it == music_in_portlist_.end() ) {
     throw MUSICPortUnknown( portname );
   }
-  else
-  {
+  else {
     music_in_portlist_[ portname ].acceptable_latency = latency;
   }
 }
@@ -233,12 +220,10 @@ MUSICManager::set_music_in_port_max_buffered( std::string portname, int maxbuffe
 {
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
-  if ( it == music_in_portlist_.end() )
-  {
+  if ( it == music_in_portlist_.end() ) {
     throw MUSICPortUnknown( portname );
   }
-  else
-  {
+  else {
     music_in_portlist_[ portname ].max_buffered = maxbuffered;
   }
 }
@@ -247,8 +232,7 @@ void
 MUSICManager::publish_music_in_ports_()
 {
   std::map< std::string, MusicEventHandler >::iterator it;
-  for ( it = music_in_portmap_.begin(); it != music_in_portmap_.end(); ++it )
-  {
+  for ( it = music_in_portmap_.begin(); it != music_in_portmap_.end(); ++it ) {
     it->second.publish_port();
   }
 }
@@ -257,8 +241,7 @@ void
 MUSICManager::update_music_event_handlers( Time const& origin, const long from, const long to )
 {
   std::map< std::string, MusicEventHandler >::iterator it;
-  for ( it = music_in_portmap_.begin(); it != music_in_portmap_.end(); ++it )
-  {
+  for ( it = music_in_portmap_.begin(); it != music_in_portmap_.end(); ++it ) {
     it->second.update( origin, from, to );
   }
 }

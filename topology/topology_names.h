@@ -30,15 +30,13 @@
 // Includes from sli:
 #include "name.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * This namespace contains Name objects that are used by the topology
  * module. See nest_names.h for more info.
  */
-namespace names
-{
+namespace names {
 
 extern const Name allow_autapses;
 extern const Name allow_multapses;

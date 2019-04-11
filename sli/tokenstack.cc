@@ -31,10 +31,8 @@ TokenStack::dump( std::ostream& out ) const
 {
   out << '\n';
   out << " --> ";
-  for ( Index i = 0; i < load(); i++ )
-  {
-    if ( i != 0 )
-    {
+  for ( Index i = 0; i < load(); i++ ) {
+    if ( i != 0 ) {
       out << "     ";
     }
     pick( i ).pprint( out );

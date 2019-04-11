@@ -48,8 +48,7 @@ template <>
 sli::pool AggregateDatum< Name, &SLIInterpreter::Symboltype >::memory;
 #endif
 
-class SymbolDatum : public AggregateDatum< Name, &SLIInterpreter::Symboltype >
-{
+class SymbolDatum : public AggregateDatum< Name, &SLIInterpreter::Symboltype > {
   Datum*
   clone( void ) const
   {

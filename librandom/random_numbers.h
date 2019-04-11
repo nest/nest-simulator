@@ -35,8 +35,7 @@ class Dictionary;
 /**
  *  Provides random numbers and deviates to SLI.
  */
-class RandomNumbers : public SLIModule
-{
+class RandomNumbers : public SLIModule {
 public:
   static SLIType RngType;        // actual RNG
   static SLIType RngFactoryType; // random generator factory
@@ -74,58 +73,49 @@ public:
   static const Dictionary& get_rdvdict();
 
   // RNG creation function
-  class CreateRNGFunction : public SLIFunction
-  {
+  class CreateRNGFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
   // RNG creation function
-  class CreateRDVFunction : public SLIFunction
-  {
+  class CreateRDVFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class SetStatus_vdFunction : public SLIFunction
-  {
+  class SetStatus_vdFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class GetStatus_vFunction : public SLIFunction
-  {
+  class GetStatus_vFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
   // RNG access functions
-  class IrandFunction : public SLIFunction
-  {
+  class IrandFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class DrandFunction : public SLIFunction
-  {
+  class DrandFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class SeedFunction : public SLIFunction
-  {
+  class SeedFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class RandomArrayFunction : public SLIFunction
-  {
+  class RandomArrayFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };
 
-  class RandomFunction : public SLIFunction
-  {
+  class RandomFunction : public SLIFunction {
   public:
     void execute( SLIInterpreter* ) const;
   };

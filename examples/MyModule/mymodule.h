@@ -28,15 +28,13 @@
 #include "slimodule.h"
 
 // Put your stuff into your own namespace.
-namespace mynest
-{
+namespace mynest {
 
 /**
  * Class defining your model.
  * @note For each model, you must define one such class, with a unique name.
  */
-class MyModule : public SLIModule
-{
+class MyModule : public SLIModule {
 public:
   // Interface functions ------------------------------------------
 

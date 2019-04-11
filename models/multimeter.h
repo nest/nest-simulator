@@ -38,8 +38,7 @@
 #include "dictutils.h"
 #include "name.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: multimeter - Device to record analog data from neurons.
@@ -136,8 +135,7 @@ Author: Hans Ekkehard Plesser, Barna Zajzon (added offset support March 2017)
 
 SeeAlso: Device, RecordingDevice
 */
-class Multimeter : public DeviceNode
-{
+class Multimeter : public DeviceNode {
 
 public:
   Multimeter();
@@ -219,8 +217,7 @@ private:
 
   struct Buffers_;
 
-  struct Parameters_
-  {
+  struct Parameters_ {
     Time interval_;                   //!< recording interval, in ms
     Time offset_;                     //!< offset relative to which interval is calculated, in ms
     std::vector< Name > record_from_; //!< which data to record
@@ -233,8 +230,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_
-  {
+  struct State_ {
     /** Recorded data.
      * First dimension: time
      * Second dimension: recorded variables
@@ -250,8 +246,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Buffers_
-  {
+  struct Buffers_ {
     /** Does this multimeter have targets?
      * Placed here since it is implementation detail.
      * @todo Ideally, one should be able to ask ConnectionManager.
@@ -263,8 +258,7 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
+  struct Variables_ {
     /** Flag active till first DataLoggingReply during an update() call
      * processed. This flag is set to true by update() before dispatching the
      * DataLoggingRequest event and is reset to false by handle() as soon as the
@@ -303,12 +297,10 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
-  if ( get_thread() == 0 )
-  {
+  if ( get_thread() == 0 ) {
     const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
-    {
+    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling ) {
       ( *sibling )->get_status( d );
     }
   }
@@ -321,8 +313,7 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
 {
   // protect Multimeter from being frozen
   bool freeze = false;
-  if ( updateValue< bool >( d, names::frozen, freeze ) && freeze )
-  {
+  if ( updateValue< bool >( d, names::frozen, freeze ) && freeze ) {
     throw BadProperty( "Multimeter cannot be frozen." );
   }
 

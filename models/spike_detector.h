@@ -33,8 +33,7 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
-namespace nest
-{
+namespace nest {
 
 /** @BeginDocumentation
 Name: spike_detector - Device for detecting single spikes.
@@ -88,8 +87,7 @@ Receives: SpikeEvent
 
 SeeAlso: spike_detector, Device, RecordingDevice
 */
-class spike_detector : public DeviceNode
-{
+class spike_detector : public DeviceNode {
 
 public:
   spike_detector();
@@ -163,8 +161,7 @@ private:
    * This does not violate order-independence, since all spikes are delivered
    * from the global queue before any node is updated.
    */
-  struct Buffers_
-  {
+  struct Buffers_ {
     std::vector< std::vector< Event* > > spikes_;
   };
 
@@ -175,8 +172,7 @@ private:
 inline port
 spike_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
-  {
+  if ( receptor_type != 0 ) {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;

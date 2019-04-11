@@ -80,14 +80,12 @@ nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
 {
-  if ( d->known( names::senders ) )
-  {
+  if ( d->known( names::senders ) ) {
     senders_ = getValue< std::vector< long > >( d->lookup( names::senders ) );
     std::sort( senders_.begin(), senders_.end() );
   }
 
-  if ( d->known( names::targets ) )
-  {
+  if ( d->known( names::targets ) ) {
     targets_ = getValue< std::vector< long > >( d->lookup( names::targets ) );
     std::sort( targets_.begin(), targets_.end() );
   }
@@ -111,8 +109,7 @@ nest::weight_recorder::init_buffers_()
 void
 nest::weight_recorder::calibrate()
 {
-  if ( kernel().event_delivery_manager.get_off_grid_communication() and not device_.is_precise_times_user_set() )
-  {
+  if ( kernel().event_delivery_manager.get_off_grid_communication() and not device_.is_precise_times_user_set() ) {
     device_.set_precise_times( true );
     std::string msg = String::compose(
       "Precise neuron models exist: the property precise_times "
@@ -120,13 +117,11 @@ nest::weight_recorder::calibrate()
       get_name(),
       get_gid() );
 
-    if ( device_.is_precision_user_set() )
-    {
+    if ( device_.is_precision_user_set() ) {
       // if user explicitly set the precision, there is no need to do anything.
       msg += ".";
     }
-    else
-    {
+    else {
       // it makes sense to increase the precision if precise models are used.
       device_.set_precision( 15 );
       msg += ", precision has been set to 15.";
@@ -142,8 +137,7 @@ void
 nest::weight_recorder::update( Time const&, const long from, const long to )
 {
 
-  for ( std::vector< WeightRecorderEvent >::iterator e = B_.events_.begin(); e != B_.events_.end(); ++e )
-  {
+  for ( std::vector< WeightRecorderEvent >::iterator e = B_.events_.begin(); e != B_.events_.end(); ++e ) {
     device_.record_event( *e );
   }
 
@@ -160,12 +154,10 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
-  if ( get_thread() == 0 )
-  {
+  if ( get_thread() == 0 ) {
     const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
-    {
+    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling ) {
       ( *sibling )->get_status( d );
     }
   }
@@ -176,8 +168,7 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
 void
 nest::weight_recorder::set_status( const DictionaryDatum& d )
 {
-  if ( d->known( names::precise_times ) )
-  {
+  if ( d->known( names::precise_times ) ) {
     user_set_precise_times_ = true;
   }
 
@@ -192,15 +183,13 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
 {
   // accept spikes only if detector was active when spike was
   // emitted
-  if ( device_.is_active( e.get_stamp() ) )
-  {
+  if ( device_.is_active( e.get_stamp() ) ) {
     // P_senders_ is defined and sender is not in it
     // or P_targets_ is defined and receiver is not in it
     if ( ( not P_.senders_.empty()
            and not std::binary_search( P_.senders_.begin(), P_.senders_.end(), e.get_sender_gid() ) )
       or ( not P_.targets_.empty()
-           and not std::binary_search( P_.targets_.begin(), P_.targets_.end(), e.get_receiver_gid() ) ) )
-    {
+           and not std::binary_search( P_.targets_.begin(), P_.targets_.end(), e.get_receiver_gid() ) ) ) {
       return;
     }
 

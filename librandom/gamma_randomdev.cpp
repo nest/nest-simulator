@@ -50,53 +50,43 @@ double
 librandom::GammaRandomDev::unscaled_gamma( RngPtr r ) const
 {
   // algorithm depends on order a
-  if ( a == 1 )
-  {
+  if ( a == 1 ) {
     return -std::log( r->drandpos() );
   }
-  else if ( a < 1 )
-  {
+  else if ( a < 1 ) {
     // Johnk's rejection algorithm, see [1], p. 418
     double X;
     double Y;
     double S;
-    do
-    {
+    do {
       X = std::pow( r->drand(), ju );
       Y = std::pow( r->drand(), jv );
       S = X + Y;
     } while ( S > 1 );
-    if ( X > 0 )
-    {
+    if ( X > 0 ) {
       return -std::log( r->drandpos() ) * X / S;
     }
-    else
-    {
+    else {
       return 0;
     }
   }
-  else
-  {
+  else {
     // Best's rejection algorithm, see [1], p. 410
     bool accept = false;
     double X = 0.0;
-    do
-    {
+    do {
       const double U = r->drand();
-      if ( U == 0 or U == 1 )
-      {
+      if ( U == 0 or U == 1 ) {
         continue; // accept guaranteed false
       }
       const double V = r->drand();
       const double W = U * ( 1 - U ); // != 0
       const double Y = std::sqrt( bc / W ) * ( U - 0.5 );
       X = bb + Y;
-      if ( X > 0 )
-      {
+      if ( X > 0 ) {
         const double Z = 64 * W * W * W * V * V;
         accept = Z <= 1 - 2 * Y * Y / X;
-        if ( not accept )
-        {
+        if ( not accept ) {
           accept = std::log( Z ) <= 2 * ( bb * std::log( X / bb ) - Y );
         }
       }
@@ -115,13 +105,11 @@ librandom::GammaRandomDev::set_status( const DictionaryDatum& d )
   updateValue< double >( d, names::order, a_new );
   updateValue< double >( d, names::scale, b_new );
 
-  if ( a_new <= 0. )
-  {
+  if ( a_new <= 0. ) {
     throw BadParameterValue( "Gamma RDV: order > 0 required." );
   }
 
-  if ( b_new <= 0. )
-  {
+  if ( b_new <= 0. ) {
     throw BadParameterValue( "Gamma RDV: scale > 0 required." );
   }
 

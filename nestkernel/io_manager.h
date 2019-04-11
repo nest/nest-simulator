@@ -32,16 +32,14 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest
-{
+namespace nest {
 
 /*
   IOManager: Handles data storage files from spike detectors and
   multimeters to file system(s)/memory/output. Distinct from logging
   for error streams.
 */
-class IOManager : public ManagerInterface
-{
+class IOManager : public ManagerInterface {
 public:
   virtual void initialize(); // called from meta-manager to construct
   virtual void finalize();   // called from meta-manger to reinit

@@ -81,29 +81,23 @@ bool Parser::operator()( Token& t )
   bool ok;
   ParseResult result = scancontinue;
 
-  do
-  {
-    if ( result == scancontinue )
-    {
+  do {
+    if ( result == scancontinue ) {
       ok = ( *s )( t );
     }
-    else
-    {
+    else {
       ok = true;
     }
 
 
-    if ( ok )
-    {
+    if ( ok ) {
 
-      if ( t.contains( s->BeginProcedureSymbol ) )
-      {
+      if ( t.contains( s->BeginProcedureSymbol ) ) {
         ParseStack.push( new LitprocedureDatum() );
         ParseStack.top()->set_executable();
         result = scancontinue;
       }
-      else if ( t.contains( s->BeginArraySymbol ) )
-      {
+      else if ( t.contains( s->BeginArraySymbol ) ) {
 #ifdef PS_ARRAYS
         Token cb( new NameDatum( "[" ) );
         t.move( cb );
@@ -113,74 +107,58 @@ bool Parser::operator()( Token& t )
         result = scancontinue;
 #endif
       }
-      else if ( t.contains( s->EndProcedureSymbol ) )
-      {
-        if ( not ParseStack.empty() )
-        {
+      else if ( t.contains( s->EndProcedureSymbol ) ) {
+        if ( not ParseStack.empty() ) {
           ParseStack.pop_move( pt );
-          if ( pt->isoftype( SLIInterpreter::Litproceduretype ) )
-          {
+          if ( pt->isoftype( SLIInterpreter::Litproceduretype ) ) {
             t.move( pt ); // procedure completed
             result = tokencontinue;
           }
-          else
-          {
+          else {
             result = endarrayexpected;
           }
         }
-        else
-        {
+        else {
           result = noopenproc;
         }
       }
-      else if ( t.contains( s->EndArraySymbol ) )
-      {
+      else if ( t.contains( s->EndArraySymbol ) ) {
 #ifdef PS_ARRAYS
         Token ob( new NameDatum( "]" ) );
         t.move( ob );
         result = tokencontinue;
 #else
-        if ( not ParseStack.empty() )
-        {
+        if ( not ParseStack.empty() ) {
           ParseStack.pop_move( pt );
-          if ( pt->isoftype( SLIInterpreter::Arraytype ) )
-          {
+          if ( pt->isoftype( SLIInterpreter::Arraytype ) ) {
             t.move( pt ); // array completed
             result = tokencontinue;
           }
-          else
-          {
+          else {
             result = endprocexpected;
           }
         }
-        else
-        {
+        else {
           result = noopenarray;
         }
 #endif
       }
-      else if ( t.contains( s->EndSymbol ) )
-      {
-        if ( not ParseStack.empty() )
-        {
+      else if ( t.contains( s->EndSymbol ) ) {
+        if ( not ParseStack.empty() ) {
           result = unexpectedeof;
           ParseStack.clear();
         }
-        else
-        {
+        else {
           result = tokencompleted;
         }
       }
-      else
-      {
+      else {
         // Now we should be left with a "simple" Token
         assert( not t->isoftype( SLIInterpreter::Symboltype ) );
-        if ( not ParseStack.empty() )
-        {
+        if ( not ParseStack.empty() ) {
           // append token to array on stack
           ParseStack.pop_move( pt );
-          if ( pt->isoftype( SLIInterpreter::Arraytype ) )
-          {
+          if ( pt->isoftype( SLIInterpreter::Arraytype ) ) {
             ArrayDatum* pa = dynamic_cast< ArrayDatum* >( pt.datum() );
             assert( pa != NULL );
             pa->push_back( t );
@@ -195,8 +173,7 @@ bool Parser::operator()( Token& t )
           ParseStack.push_move( pt );
           result = scancontinue;
         }
-        else
-        {
+        else {
           result = tokencompleted;
         }
       }
@@ -206,10 +183,8 @@ bool Parser::operator()( Token& t )
     //      << '\n';
   } while ( ( result == tokencontinue ) || ( result == scancontinue ) );
 
-  if ( result != tokencompleted )
-  {
-    switch ( result )
-    {
+  if ( result != tokencompleted ) {
+    switch ( result ) {
     case noopenproc:
       s->print_error( "Open brace missing." );
       break;

@@ -34,8 +34,7 @@
 #include "nest_types.h"
 #include "target.h"
 
-namespace nest
-{
+namespace nest {
 
 /**
  * Test cases: Target data type object
@@ -55,8 +54,7 @@ BOOST_AUTO_TEST_CASE( test_target_object_type_size )
 BOOST_AUTO_TEST_CASE( test_target_object_type_constructor )
 {
   std::srand( time( nullptr ) );
-  for ( int i = 0; i < NUM_TEST_TRIALS; ++i )
-  {
+  for ( int i = 0; i < NUM_TEST_TRIALS; ++i ) {
     const thread tid = std::rand() % ( MAX_TID + 1 );
     const thread rank = std::rand() % ( MAX_RANK + 1 );
     const synindex syn_id = std::rand() % ( MAX_SYN_ID + 1 );
@@ -76,16 +74,14 @@ BOOST_AUTO_TEST_CASE( test_target_object_type_set_get )
 {
   std::srand( time( nullptr ) );
   Target target_id_testSetGet;
-  for ( int i = 0; i < NUM_TEST_TRIALS; ++i )
-  {
+  for ( int i = 0; i < NUM_TEST_TRIALS; ++i ) {
     const thread tid = std::rand() % ( MAX_TID + 1 );
     const thread rank = std::rand() % ( MAX_RANK + 1 );
     const synindex syn_id = std::rand() % ( MAX_SYN_ID + 1 );
     const index lcid = std::rand() % ( MAX_LCID + 1 );
 
     enum_status_target_id status_target_id = TARGET_ID_UNPROCESSED;
-    if ( static_cast< bool >( std::rand() % 2 ) )
-    {
+    if ( static_cast< bool >( std::rand() % 2 ) ) {
       status_target_id = TARGET_ID_PROCESSED;
     }
 

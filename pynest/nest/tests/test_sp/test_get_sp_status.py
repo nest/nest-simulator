@@ -72,7 +72,7 @@ class TestGetStructuralPlasticityStatus(unittest.TestCase):
     assert ('structural_plasticity_synapses' in all)
     assert ('syn1' in all['structural_plasticity_synapses'])
     assert ('structural_plasticity_update_interval' in all)
-    assert (all['structural_plasticity_update_interval'] == 1000)
+    assert (all['structural_plasticity_update_interval'] == 10000)
 
     sp_synapses = nest.GetStructuralPlasticityStatus(
         'structural_plasticity_synapses'
@@ -88,7 +88,7 @@ class TestGetStructuralPlasticityStatus(unittest.TestCase):
         'structural_plasticity_update_interval'
     )
     print(sp_interval)
-    assert (sp_interval == 1000)
+    assert (sp_interval == 10000)
 
 
 def suite():

@@ -46,7 +46,7 @@ class TestIssue578():
         nest.EnableStructuralPlasticity()
         nest.SetStructuralPlasticityStatus({
             'structural_plasticity_update_interval':
-            100,
+            1000,
         })
 
         growth_curve = {

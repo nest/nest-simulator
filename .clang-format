@@ -16,7 +16,7 @@ AlwaysBreakTemplateDeclarations: true
 BinPackArguments: false # not in 3.4, 3.5
 BinPackParameters: false
 BreakBeforeBinaryOperators: NonAssignment # not in 3.4 # true in 3.5
-BreakBeforeBraces: Allman
+BreakBeforeBraces: Stroustrup
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: true
 

@@ -61,7 +61,7 @@ class StructralPlasticityExample:
         self.number_inhibitory_neurons = 200
 
         # Structural_plasticity properties
-        self.update_interval = 1000
+        self.update_interval = 10000.0
         self.record_interval = 1000.0
         # rate of background Poisson input
         self.bg_rate = 10000.0

@@ -132,7 +132,7 @@ public:
 
   bool is_structural_plasticity_enabled() const;
 
-  long get_structural_plasticity_update_interval() const;
+  double get_structural_plasticity_update_interval() const;
 
   /**
    * Returns the minimum delay of all SP builders.
@@ -194,7 +194,7 @@ private:
    * Time interval for structural plasticity update (creation/deletion of
    * synapses).
    */
-  long structural_plasticity_update_interval_;
+  double structural_plasticity_update_interval_;
 
   /**
    * Indicates whether the Structrual Plasticity functionality is On (True) of
@@ -237,7 +237,7 @@ SPManager::is_structural_plasticity_enabled() const
   return structural_plasticity_enabled_;
 }
 
-inline long
+inline double
 SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;

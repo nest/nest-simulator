@@ -760,9 +760,10 @@ nest::SimulationManager::update_()
       }
 
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
-        and ( ( clock_.get_steps() + from_step_ )
-                % kernel()
-                    .sp_manager.get_structural_plasticity_update_interval()
+        and ( std::fmod(
+                Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms(),
+                kernel()
+                  .sp_manager.get_structural_plasticity_update_interval() )
               == 0 ) )
       {
         for ( SparseNodeArray::const_iterator i =

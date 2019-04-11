@@ -202,7 +202,7 @@ ModelManager::set_status( const DictionaryDatum& )
 void
 ModelManager::get_status( DictionaryDatum& dict )
 {
-  // syn_ids start at zero, so the maximal number of syn models is MAX_SYN_ID + 1
+  // syn_ids start at 0, so the maximal number of syn models is MAX_SYN_ID + 1
   def< int >( dict, names::max_num_syn_models, MAX_SYN_ID + 1 );
 }
 

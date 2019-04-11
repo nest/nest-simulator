@@ -119,14 +119,12 @@ public:
   bool operator()( librandom::RngPtr, double h );
 };
 
-inline bool gainfunction_mcculloch_pitts::operator()( librandom::RngPtr,
-  double h )
+inline bool gainfunction_mcculloch_pitts::operator()( librandom::RngPtr, double h )
 {
   return h > theta_;
 }
 
-typedef nest::binary_neuron< nest::gainfunction_mcculloch_pitts >
-  mcculloch_pitts_neuron;
+typedef nest::binary_neuron< nest::gainfunction_mcculloch_pitts > mcculloch_pitts_neuron;
 
 template <>
 void RecordablesMap< mcculloch_pitts_neuron >::create();

@@ -211,8 +211,7 @@ class STDPFACETSHWConnectionHom : public Connection< targetidentifierT >
 {
 
 public:
-  typedef STDPFACETSHWHomCommonProperties< targetidentifierT >
-    CommonPropertiesType;
+  typedef STDPFACETSHWHomCommonProperties< targetidentifierT > CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
   /**
@@ -250,9 +249,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e,
-    thread t,
-    const STDPFACETSHWHomCommonProperties< targetidentifierT >& );
+  void send( Event& e, thread t, const STDPFACETSHWHomCommonProperties< targetidentifierT >& );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -283,10 +280,7 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -311,11 +305,9 @@ private:
   // transformation biological weight <-> discrete weight (represented in index
   // of look-up table)
   unsigned int weight_to_entry_( double weight, double weight_per_lut_entry );
-  double entry_to_weight_( unsigned int discrete_weight,
-    double weight_per_lut_entry );
+  double entry_to_weight_( unsigned int discrete_weight, double weight_per_lut_entry );
 
-  unsigned int lookup_( unsigned int discrete_weight_,
-    std::vector< long > table );
+  unsigned int lookup_( unsigned int discrete_weight_, std::vector< long > table );
 
   // data members of each connection
   double weight_;
@@ -327,9 +319,8 @@ private:
   bool init_flag_;
   long synapse_id_;
   double next_readout_time_;
-  unsigned int
-    discrete_weight_; // TODO: TP: only needed in send, move to common
-                      // properties or "static"?
+  unsigned int discrete_weight_; // TODO: TP: only needed in send, move to common
+                                 // properties or "static"?
   double t_lastspike_;
 };
 
@@ -342,8 +333,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::eval_function_( double a_causal,
   std::vector< long > configbit )
 {
   // compare charge on capacitors with thresholds and return evaluation bit
-  return ( a_thresh_tl + configbit[ 2 ] * a_causal
-           + configbit[ 1 ] * a_acausal )
+  return ( a_thresh_tl + configbit[ 2 ] * a_causal + configbit[ 1 ] * a_acausal )
     / ( 1 + configbit[ 2 ] + configbit[ 1 ] )
     > ( a_thresh_th + configbit[ 0 ] * a_causal + configbit[ 3 ] * a_acausal )
     / ( 1 + configbit[ 0 ] + configbit[ 3 ] );
@@ -351,8 +341,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::eval_function_( double a_causal,
 
 template < typename targetidentifierT >
 inline unsigned int
-STDPFACETSHWConnectionHom< targetidentifierT >::weight_to_entry_( double weight,
-  double weight_per_lut_entry )
+STDPFACETSHWConnectionHom< targetidentifierT >::weight_to_entry_( double weight, double weight_per_lut_entry )
 {
   // returns the discrete weight in terms of the look-up table index
   return round( weight / weight_per_lut_entry );
@@ -360,8 +349,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::weight_to_entry_( double weight,
 
 template < typename targetidentifierT >
 inline double
-STDPFACETSHWConnectionHom< targetidentifierT >::entry_to_weight_(
-  unsigned int discrete_weight,
+STDPFACETSHWConnectionHom< targetidentifierT >::entry_to_weight_( unsigned int discrete_weight,
   double weight_per_lut_entry )
 {
   // returns the continuous weight
@@ -370,9 +358,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::entry_to_weight_(
 
 template < typename targetidentifierT >
 inline unsigned int
-STDPFACETSHWConnectionHom< targetidentifierT >::lookup_(
-  unsigned int discrete_weight_,
-  std::vector< long > table )
+STDPFACETSHWConnectionHom< targetidentifierT >::lookup_( unsigned int discrete_weight_, std::vector< long > table )
 {
   // look-up in table
   return table[ discrete_weight_ ];
@@ -409,10 +395,8 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
     synapse_id_ = cp.no_synapses_;
     ++cp_nonconst.no_synapses_;
     cp_nonconst.calc_readout_cycle_duration_();
-    next_readout_time_ = int( synapse_id_ / cp_nonconst.synapses_per_driver_ )
-      * cp_nonconst.driver_readout_time_;
-    std::cout << "init synapse " << synapse_id_
-              << " - first readout time: " << next_readout_time_ << std::endl;
+    next_readout_time_ = int( synapse_id_ / cp_nonconst.synapses_per_driver_ ) * cp_nonconst.driver_readout_time_;
+    std::cout << "init synapse " << synapse_id_ << " - first readout time: " << next_readout_time_ << std::endl;
     init_flag_ = true;
   }
 
@@ -420,14 +404,11 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
   if ( t_spike > next_readout_time_ )
   {
     // transform weight to discrete representation
-    discrete_weight_ =
-      weight_to_entry_( weight_, cp_nonconst.weight_per_lut_entry_ );
+    discrete_weight_ = weight_to_entry_( weight_, cp_nonconst.weight_per_lut_entry_ );
 
     // obtain evaluation bits
-    bool eval_0 = eval_function_(
-      a_causal_, a_acausal_, a_thresh_th_, a_thresh_tl_, cp.configbit_0_ );
-    bool eval_1 = eval_function_(
-      a_causal_, a_acausal_, a_thresh_th_, a_thresh_tl_, cp.configbit_1_ );
+    bool eval_0 = eval_function_( a_causal_, a_acausal_, a_thresh_th_, a_thresh_tl_, cp.configbit_0_ );
+    bool eval_1 = eval_function_( a_causal_, a_acausal_, a_thresh_th_, a_thresh_tl_, cp.configbit_1_ );
 
     // select LUT, update weight and reset capacitors
     if ( eval_0 == true && eval_1 == false )
@@ -487,10 +468,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  get_target( t )->get_history( t_lastspike_ - dendritic_delay,
-    t_spike - dendritic_delay,
-    &start,
-    &finish );
+  get_target( t )->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   double minus_dt = 0;
   double plus_dt = 0;

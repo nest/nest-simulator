@@ -222,24 +222,19 @@ private:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< rate_transformer_node< TNonlinearities > >
-    recordablesMap_;
+  static RecordablesMap< rate_transformer_node< TNonlinearities > > recordablesMap_;
 };
 
 template < class TNonlinearities >
 inline void
-rate_transformer_node< TNonlinearities >::update( Time const& origin,
-  const long from,
-  const long to )
+rate_transformer_node< TNonlinearities >::update( Time const& origin, const long from, const long to )
 {
   update_( origin, from, to, false );
 }
 
 template < class TNonlinearities >
 inline bool
-rate_transformer_node< TNonlinearities >::wfr_update( Time const& origin,
-  const long from,
-  const long to )
+rate_transformer_node< TNonlinearities >::wfr_update( Time const& origin, const long from, const long to )
 {
   State_ old_state = S_; // save state before wfr update
   const bool wfr_tol_exceeded = update_( origin, from, to, true );
@@ -250,9 +245,7 @@ rate_transformer_node< TNonlinearities >::wfr_update( Time const& origin,
 
 template < class TNonlinearities >
 inline port
-rate_transformer_node< TNonlinearities >::handles_test_event(
-  InstantaneousRateConnectionEvent&,
-  rport receptor_type )
+rate_transformer_node< TNonlinearities >::handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -263,9 +256,7 @@ rate_transformer_node< TNonlinearities >::handles_test_event(
 
 template < class TNonlinearities >
 inline port
-rate_transformer_node< TNonlinearities >::handles_test_event(
-  DelayedRateConnectionEvent&,
-  rport receptor_type )
+rate_transformer_node< TNonlinearities >::handles_test_event( DelayedRateConnectionEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -276,9 +267,7 @@ rate_transformer_node< TNonlinearities >::handles_test_event(
 
 template < class TNonlinearities >
 inline port
-rate_transformer_node< TNonlinearities >::handles_test_event(
-  DataLoggingRequest& dlr,
-  rport receptor_type )
+rate_transformer_node< TNonlinearities >::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

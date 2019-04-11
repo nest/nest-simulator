@@ -217,9 +217,7 @@ private:
    * @param lag           Time step within slice
    * @param spike_offset  Time offset for spike
    */
-  void emit_instant_spike_( Time const& origin,
-    const long lag,
-    const double spike_offset );
+  void emit_instant_spike_( Time const& origin, const long lag, const double spike_offset );
 
   /**
    * Propagate neuron state.
@@ -389,10 +387,7 @@ private:
 
 
 inline port
-nest::iaf_psc_delta_canon::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+nest::iaf_psc_delta_canon::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -420,8 +415,7 @@ iaf_psc_delta_canon::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_delta_canon::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_psc_delta_canon::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

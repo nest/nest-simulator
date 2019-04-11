@@ -159,9 +159,8 @@ private:
 
   struct Parameters_
   {
-    Parameters_(); //!< Sets default parameter values
-    Parameters_(
-      const Parameters_& ); //!< Copy constructor for parameter values
+    Parameters_();                     //!< Sets default parameter values
+    Parameters_( const Parameters_& ); //!< Copy constructor for parameter values
 
     Time interval_;                   //!< sampling interval, in ms
     std::string port_name_;           //!< the name of MUSIC port to connect to
@@ -169,21 +168,18 @@ private:
     std::vector< long > target_gids_; //!< Neuron GIDs to be observed
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      const Node&,
-      const State_&,
-      const Buffers_& ); //!< Set values from dictionary
+    void set( const DictionaryDatum&, const Node&, const State_&, const Buffers_& ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
 
   struct State_
   {
-    State_();                //!< Sets default state value
-    State_( const State_& ); //!< Copy constructor for state values
-    bool published_;         //!< indicates whether this node has been published
-                             //!< already with MUSIC
-    size_t port_width_;      //!< the width of the MUSIC port
+    State_();                           //!< Sets default state value
+    State_( const State_& );            //!< Copy constructor for state values
+    bool published_;                    //!< indicates whether this node has been published
+                                        //!< already with MUSIC
+    size_t port_width_;                 //!< the width of the MUSIC port
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   };
 
@@ -193,8 +189,8 @@ private:
   {
     Buffers_();                  //!< Initializes default buffer
     Buffers_( const Buffers_& ); //!< Copy constructor for the data buffer
-    bool has_targets_; //!< Indicates whether the proxy is recording from any
-                       //!neurons or not
+    bool has_targets_;           //!< Indicates whether the proxy is recording from any
+                                 //!neurons or not
     std::vector< double > data_; //!< Recorded data
   };
 

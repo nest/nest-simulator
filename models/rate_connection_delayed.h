@@ -90,17 +90,13 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     EventType ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
-    Connection< targetidentifierT >::target_.set_rport(
-      t.handles_test_event( ge, receptor_type ) );
+    Connection< targetidentifierT >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
     Connection< targetidentifierT >::target_.set_target( &t );
   }
 
@@ -135,8 +131,7 @@ private:
 
 template < typename targetidentifierT >
 void
-RateConnectionDelayed< targetidentifierT >::get_status(
-  DictionaryDatum& d ) const
+RateConnectionDelayed< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -145,9 +140,7 @@ RateConnectionDelayed< targetidentifierT >::get_status(
 
 template < typename targetidentifierT >
 void
-RateConnectionDelayed< targetidentifierT >::set_status(
-  const DictionaryDatum& d,
-  ConnectorModel& cm )
+RateConnectionDelayed< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );

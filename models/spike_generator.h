@@ -273,8 +273,7 @@ private:
      * @param origin
      * @param current simulation time
      */
-    void
-    assert_valid_spike_time_and_insert_( double, const Time&, const Time& );
+    void assert_valid_spike_time_and_insert_( double, const Time&, const Time& );
   };
 
   // ------------------------------------------------------------
@@ -286,10 +285,7 @@ private:
 };
 
 inline port
-spike_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+spike_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 

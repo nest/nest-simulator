@@ -304,10 +304,7 @@ protected:
    * \param the last spike produced by the presynaptic neuron (for STDP and
    * maturing connections)
    */
-  void check_connection_( Node& dummy_target,
-    Node& source,
-    Node& target,
-    const rport receptor_type );
+  void check_connection_( Node& dummy_target, Node& source, Node& target, const rport receptor_type );
 
   /* the order of the members below is critical
      as it influcences the size of the object. Please leave unchanged
@@ -340,8 +337,7 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   // this returns the port of the incoming connection
   // p must be stored in the base class connection
   // this line might throw an exception
-  target_.set_rport(
-    source.send_test_event( target, receptor_type, get_syn_id(), false ) );
+  target_.set_rport( source.send_test_event( target, receptor_type, get_syn_id(), false ) );
 
   // 3. do the events sent by source mean the same thing as they are
   // interpreted in target?
@@ -365,14 +361,12 @@ Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& )
+Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& )
 {
   double delay;
   if ( updateValue< double >( d, names::delay, delay ) )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-      delay );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
     syn_id_delay_.set_delay_ms( delay );
   }
   // no call to target_.set_status() because target and rport cannot be changed
@@ -380,8 +374,7 @@ Connection< targetidentifierT >::set_status( const DictionaryDatum& d,
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::check_synapse_params(
-  const DictionaryDatum& d ) const
+Connection< targetidentifierT >::check_synapse_params( const DictionaryDatum& d ) const
 {
 }
 

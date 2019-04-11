@@ -49,45 +49,29 @@ sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::memory;
 template <>
 sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::memory;
 template <>
-sli::pool
-  AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::memory;
+sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::memory;
 #endif
 
 template <>
-void AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::print(
-  std::ostream& ) const;
+void AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::print( std::ostream& ) const;
 template <>
-void AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::pprint(
-  std::ostream& ) const;
+void AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::pprint( std::ostream& ) const;
 template <>
-void AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::print(
-  std::ostream& ) const;
+void AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::print( std::ostream& ) const;
 template <>
-void AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::list(
-  std::ostream&,
-  std::string,
-  int ) const;
+void AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::list( std::ostream&, std::string, int ) const;
 template <>
-void AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::pprint(
-  std::ostream& ) const;
+void AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::pprint( std::ostream& ) const;
 template <>
-void AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::print(
-  std::ostream& ) const;
+void AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::print( std::ostream& ) const;
 template <>
-void AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::pprint(
-  std::ostream& ) const;
+void AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::pprint( std::ostream& ) const;
 template <>
-void AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::list(
-  std::ostream&,
-  std::string,
-  int ) const;
+void AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::list( std::ostream&, std::string, int ) const;
 template <>
-void
-lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype >::pprint(
-  std::ostream& out ) const;
+void lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype >::pprint( std::ostream& out ) const;
 template <>
-void lockPTRDatum< std::vector< double >,
-  &SLIInterpreter::DoubleVectortype >::pprint( std::ostream& out ) const;
+void lockPTRDatum< std::vector< double >, &SLIInterpreter::DoubleVectortype >::pprint( std::ostream& out ) const;
 
 /**
  * @remark This type was introduced to pass numeric arrays between
@@ -99,8 +83,7 @@ void lockPTRDatum< std::vector< double >,
  *         functions to access the data in such arrays. (MOG 2009-01-23, see
  *         #253)
  */
-typedef lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype >
-  IntVectorDatum;
+typedef lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype > IntVectorDatum;
 
 /**
  * @remark This type was introduced to pass numeric arrays between
@@ -112,14 +95,11 @@ typedef lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype >
  *         functions to access the data in such arrays. (MOG 2009-01-23, see
  *         #253)
  */
-typedef lockPTRDatum< std::vector< double >, &SLIInterpreter::DoubleVectortype >
-  DoubleVectorDatum;
+typedef lockPTRDatum< std::vector< double >, &SLIInterpreter::DoubleVectortype > DoubleVectorDatum;
 
 typedef AggregateDatum< TokenArray, &SLIInterpreter::Arraytype > ArrayDatum;
-typedef AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >
-  ProcedureDatum;
-typedef AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >
-  LitprocedureDatum;
+typedef AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype > ProcedureDatum;
+typedef AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype > LitprocedureDatum;
 
 
 #endif

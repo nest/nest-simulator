@@ -53,8 +53,7 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int
-hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
+extern "C" int hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 Name: hh_cond_exp_traub - Hodgkin-Huxley model for Brette et al (2007) review
@@ -171,8 +170,7 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int
-  hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
+  friend int hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< hh_cond_exp_traub >;
@@ -318,10 +316,7 @@ public:
 };
 
 inline port
-hh_cond_exp_traub::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+hh_cond_exp_traub::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -351,8 +346,7 @@ hh_cond_exp_traub::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

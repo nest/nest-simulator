@@ -54,8 +54,7 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int
-aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
+extern "C" int aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 Name: aeif_cond_beta_multisynapse - Conductance based adaptive exponential
@@ -180,8 +179,7 @@ public:
   aeif_cond_beta_multisynapse( const aeif_cond_beta_multisynapse& );
   virtual ~aeif_cond_beta_multisynapse();
 
-  friend int
-  aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
+  friend int aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
   /**
    * Import sets of overloaded virtual functions.
@@ -385,8 +383,7 @@ private:
   DynamicRecordablesMap< aeif_cond_beta_multisynapse > recordablesMap_;
 
   // Data Access Functor getter
-  DataAccessFunctor< aeif_cond_beta_multisynapse > get_data_access_functor(
-    size_t elem );
+  DataAccessFunctor< aeif_cond_beta_multisynapse > get_data_access_functor( size_t elem );
   inline double
   get_state_element( size_t elem )
   {
@@ -401,10 +398,7 @@ private:
 };
 
 inline port
-aeif_cond_beta_multisynapse::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+aeif_cond_beta_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -413,8 +407,7 @@ aeif_cond_beta_multisynapse::send_test_event( Node& target,
 }
 
 inline port
-aeif_cond_beta_multisynapse::handles_test_event( CurrentEvent&,
-  rport receptor_type )
+aeif_cond_beta_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -424,8 +417,7 @@ aeif_cond_beta_multisynapse::handles_test_event( CurrentEvent&,
 }
 
 inline port
-aeif_cond_beta_multisynapse::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+aeif_cond_beta_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

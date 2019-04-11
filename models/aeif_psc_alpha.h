@@ -184,15 +184,15 @@ private:
     double V_reset_; //!< Reset Potential in mV
     double t_ref_;   //!< Refractory period in ms
 
-    double g_L;     //!< Leak Conductance in nS
-    double C_m;     //!< Membrane Capacitance in pF
-    double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T; //!< Slope faktor in ms.
-    double tau_w;   //!< adaptation time-constant in ms.
-    double a;       //!< Subthreshold adaptation in nS.
-    double b;       //!< Spike-triggered adaptation in pA
-    double V_th;    //!< Spike threshold in mV.
-    double t_ref;   //!< Refractory period in ms.
+    double g_L;        //!< Leak Conductance in nS
+    double C_m;        //!< Membrane Capacitance in pF
+    double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
+    double Delta_T;    //!< Slope faktor in ms.
+    double tau_w;      //!< adaptation time-constant in ms.
+    double a;          //!< Subthreshold adaptation in nS.
+    double b;          //!< Spike-triggered adaptation in pA
+    double V_th;       //!< Spike threshold in mV.
+    double t_ref;      //!< Refractory period in ms.
     double tau_syn_ex; //!< Excitatory synaptic rise time.
     double tau_syn_in; //!< Excitatory synaptic rise time.
     double I_e;        //!< Intrinsic current in pA.
@@ -329,10 +329,7 @@ public:
 };
 
 inline port
-aeif_psc_alpha::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+aeif_psc_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -361,8 +358,7 @@ aeif_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-aeif_psc_alpha::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+aeif_psc_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

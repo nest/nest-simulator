@@ -42,13 +42,10 @@ RecordablesMap< ht_neuron >::create()
 {
   insert_( names::V_m, &ht_neuron::get_y_elem_< ht_neuron::State_::V_M > );
   insert_( names::theta, &ht_neuron::get_y_elem_< ht_neuron::State_::THETA > );
-  insert_(
-    names::g_AMPA, &ht_neuron::get_y_elem_< ht_neuron::State_::G_AMPA > );
+  insert_( names::g_AMPA, &ht_neuron::get_y_elem_< ht_neuron::State_::G_AMPA > );
   insert_( names::g_NMDA, &ht_neuron::get_g_NMDA_ );
-  insert_(
-    names::g_GABA_A, &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_A > );
-  insert_(
-    names::g_GABA_B, &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_B > );
+  insert_( names::g_GABA_A, &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_A > );
+  insert_( names::g_GABA_B, &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_B > );
   insert_( names::I_NaP, &ht_neuron::get_I_NaP_ );
   insert_( names::I_KNa, &ht_neuron::get_I_KNa_ );
   insert_( names::I_T, &ht_neuron::get_I_T_ );
@@ -92,13 +89,11 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // Sign convention: For each current, write I = - g * ( V - E )
   //    then dV/dt ~ Sum(I)
   const double I_syn = -y[ S::G_AMPA ] * ( V - node.P_.E_rev_AMPA )
-    - y[ S::G_NMDA_TIMECOURSE ] * m_NMDA * ( V - node.P_.E_rev_NMDA )
-    - y[ S::G_GABA_A ] * ( V - node.P_.E_rev_GABA_A )
+    - y[ S::G_NMDA_TIMECOURSE ] * m_NMDA * ( V - node.P_.E_rev_NMDA ) - y[ S::G_GABA_A ] * ( V - node.P_.E_rev_GABA_A )
     - y[ S::G_GABA_B ] * ( V - node.P_.E_rev_GABA_B );
 
   // The post-spike K-current, only while refractory
-  const double I_spike =
-    node.S_.ref_steps_ > 0 ? -( V - node.P_.E_K ) / node.P_.tau_spike : 0.0;
+  const double I_spike = node.S_.ref_steps_ > 0 ? -( V - node.P_.E_K ) / node.P_.tau_spike : 0.0;
 
   // leak currents
   const double I_Na = -node.P_.g_NaL * ( V - node.P_.E_Na );
@@ -108,28 +103,23 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // I_Na(p), m_inf^3 according to Compte et al, J Neurophysiol 2003 89:2707
   const double INaP_thresh = -55.7;
   const double INaP_slope = 7.7;
-  const double m_inf_NaP =
-    1.0 / ( 1.0 + std::exp( -( V - INaP_thresh ) / INaP_slope ) );
-  node.S_.I_NaP_ = -node.P_.g_peak_NaP * std::pow( m_inf_NaP, 3.0 )
-    * ( V - node.P_.E_rev_NaP );
+  const double m_inf_NaP = 1.0 / ( 1.0 + std::exp( -( V - INaP_thresh ) / INaP_slope ) );
+  node.S_.I_NaP_ = -node.P_.g_peak_NaP * std::pow( m_inf_NaP, 3.0 ) * ( V - node.P_.E_rev_NaP );
 
   // I_DK
   const double d_half = 0.25;
-  const double m_inf_KNa =
-    1.0 / ( 1.0 + std::pow( d_half / y[ S::D_IKNa ], 3.5 ) );
+  const double m_inf_KNa = 1.0 / ( 1.0 + std::pow( d_half / y[ S::D_IKNa ], 3.5 ) );
   node.S_.I_KNa_ = -node.P_.g_peak_KNa * m_inf_KNa * ( V - node.P_.E_rev_KNa );
 
   // I_T
-  node.S_.I_T_ = -node.P_.g_peak_T * y[ S::m_IT ] * y[ S::m_IT ] * y[ S::h_IT ]
-    * ( V - node.P_.E_rev_T );
+  node.S_.I_T_ = -node.P_.g_peak_T * y[ S::m_IT ] * y[ S::m_IT ] * y[ S::h_IT ] * ( V - node.P_.E_rev_T );
 
   // I_h
   node.S_.I_h_ = -node.P_.g_peak_h * y[ S::m_Ih ] * ( V - node.P_.E_rev_h );
 
   // delta V
-  f[ S::V_M ] =
-    ( I_Na + I_K + I_syn + node.S_.I_NaP_ + node.S_.I_KNa_ + node.S_.I_T_
-      + node.S_.I_h_ + node.B_.I_stim_ ) / node.P_.tau_m
+  f[ S::V_M ] = ( I_Na + I_K + I_syn + node.S_.I_NaP_ + node.S_.I_KNa_ + node.S_.I_T_ + node.S_.I_h_ + node.B_.I_stim_ )
+      / node.P_.tau_m
     + I_spike;
 
   // delta theta
@@ -142,39 +132,31 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   f[ S::G_AMPA ] = y[ S::DG_AMPA ] - y[ S::G_AMPA ] / node.P_.tau_decay_AMPA;
 
   // NMDA
-  f[ S::DG_NMDA_TIMECOURSE ] =
-    -y[ S::DG_NMDA_TIMECOURSE ] / node.P_.tau_rise_NMDA;
-  f[ S::G_NMDA_TIMECOURSE ] = y[ S::DG_NMDA_TIMECOURSE ]
-    - y[ S::G_NMDA_TIMECOURSE ] / node.P_.tau_decay_NMDA;
+  f[ S::DG_NMDA_TIMECOURSE ] = -y[ S::DG_NMDA_TIMECOURSE ] / node.P_.tau_rise_NMDA;
+  f[ S::G_NMDA_TIMECOURSE ] = y[ S::DG_NMDA_TIMECOURSE ] - y[ S::G_NMDA_TIMECOURSE ] / node.P_.tau_decay_NMDA;
   f[ S::m_fast_NMDA ] = ( m_eq_NMDA - m_fast_NMDA ) / node.P_.tau_Mg_fast_NMDA;
   f[ S::m_slow_NMDA ] = ( m_eq_NMDA - m_slow_NMDA ) / node.P_.tau_Mg_slow_NMDA;
 
   // GABA_A
   f[ S::DG_GABA_A ] = -y[ S::DG_GABA_A ] / node.P_.tau_rise_GABA_A;
-  f[ S::G_GABA_A ] =
-    y[ S::DG_GABA_A ] - y[ S::G_GABA_A ] / node.P_.tau_decay_GABA_A;
+  f[ S::G_GABA_A ] = y[ S::DG_GABA_A ] - y[ S::G_GABA_A ] / node.P_.tau_decay_GABA_A;
 
   // GABA_B
   f[ S::DG_GABA_B ] = -y[ S::DG_GABA_B ] / node.P_.tau_rise_GABA_B;
-  f[ S::G_GABA_B ] =
-    y[ S::DG_GABA_B ] - y[ S::G_GABA_B ] / node.P_.tau_decay_GABA_B;
+  f[ S::G_GABA_B ] = y[ S::DG_GABA_B ] - y[ S::G_GABA_B ] / node.P_.tau_decay_GABA_B;
 
   // I_KNa
   f[ S::D_IKNa ] = ( node.D_eq_KNa_( V ) - y[ S::D_IKNa ] ) / node.P_.tau_D_KNa;
 
   // I_T
-  const double tau_m_T = 0.22
-      / ( std::exp( -( V + 132.0 ) / 16.7 ) + std::exp( ( V + 16.8 ) / 18.2 ) )
-    + 0.13;
-  const double tau_h_T = 8.2
-    + ( 56.6 + 0.27 * std::exp( ( V + 115.2 ) / 5.0 ) )
-      / ( 1.0 + std::exp( ( V + 86.0 ) / 3.2 ) );
+  const double tau_m_T = 0.22 / ( std::exp( -( V + 132.0 ) / 16.7 ) + std::exp( ( V + 16.8 ) / 18.2 ) ) + 0.13;
+  const double tau_h_T =
+    8.2 + ( 56.6 + 0.27 * std::exp( ( V + 115.2 ) / 5.0 ) ) / ( 1.0 + std::exp( ( V + 86.0 ) / 3.2 ) );
   f[ S::m_IT ] = ( node.m_eq_T_( V ) - y[ S::m_IT ] ) / tau_m_T;
   f[ S::h_IT ] = ( node.h_eq_T_( V ) - y[ S::h_IT ] ) / tau_h_T;
 
   // I_h
-  const double tau_m_h =
-    1.0 / ( std::exp( -14.59 - 0.086 * V ) + std::exp( -1.87 + 0.0701 * V ) );
+  const double tau_m_h = 1.0 / ( std::exp( -14.59 - 0.086 * V ) + std::exp( -1.87 + 0.0701 * V ) );
   f[ S::m_Ih ] = ( node.m_eq_h_( V ) - y[ S::m_Ih ] ) / tau_m_h;
 
   return GSL_SUCCESS;
@@ -207,8 +189,7 @@ nest::ht_neuron::D_eq_KNa_( double V ) const
   const double D_slope = 5.0;
   const double D_eq = 0.001;
 
-  const double D_influx =
-    D_influx_peak / ( 1.0 + std::exp( -( V - D_thresh ) / D_slope ) );
+  const double D_influx = D_influx_peak / ( 1.0 + std::exp( -( V - D_thresh ) / D_slope ) );
   return P_.tau_D_KNa * D_influx + D_eq;
 }
 
@@ -219,10 +200,7 @@ nest::ht_neuron::m_eq_NMDA_( double V ) const
 }
 
 inline double
-nest::ht_neuron::m_NMDA_( double V,
-  double m_eq,
-  double m_fast,
-  double m_slow ) const
+nest::ht_neuron::m_NMDA_( double V, double m_eq, double m_fast, double m_slow ) const
 {
   const double A1 = 0.51 - 0.0028 * V;
   const double A2 = 1 - A1;
@@ -232,11 +210,10 @@ nest::ht_neuron::m_NMDA_( double V,
 inline double
 nest::ht_neuron::get_g_NMDA_() const
 {
-  return S_.y_[ State_::G_NMDA_TIMECOURSE ]
-    * m_NMDA_( S_.y_[ State_::V_M ],
-           m_eq_NMDA_( S_.y_[ State_::V_M ] ),
-           S_.y_[ State_::m_fast_NMDA ],
-           S_.y_[ State_::m_slow_NMDA ] );
+  return S_.y_[ State_::G_NMDA_TIMECOURSE ] * m_NMDA_( S_.y_[ State_::V_M ],
+                                                m_eq_NMDA_( S_.y_[ State_::V_M ] ),
+                                                S_.y_[ State_::m_fast_NMDA ],
+                                                S_.y_[ State_::m_slow_NMDA ] );
 }
 
 /* ----------------------------------------------------------------
@@ -674,9 +651,7 @@ void
 nest::ht_neuron::init_buffers_()
 {
   // Reset spike buffers.
-  for ( std::vector< RingBuffer >::iterator it = B_.spike_inputs_.begin();
-        it != B_.spike_inputs_.end();
-        ++it )
+  for ( std::vector< RingBuffer >::iterator it = B_.spike_inputs_.begin(); it != B_.spike_inputs_.end(); ++it )
   {
     it->clear(); // include resize
   }
@@ -692,8 +667,7 @@ nest::ht_neuron::init_buffers_()
 
   if ( B_.s_ == 0 )
   {
-    B_.s_ =
-      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
   else
   {
@@ -727,9 +701,7 @@ nest::ht_neuron::init_buffers_()
 }
 
 double
-nest::ht_neuron::get_synapse_constant( double tau_1,
-  double tau_2,
-  double g_peak )
+nest::ht_neuron::get_synapse_constant( double tau_1, double tau_2, double g_peak )
 {
   /* The solution to the beta function ODE obtained by the solver is
    *
@@ -752,13 +724,11 @@ nest::ht_neuron::get_synapse_constant( double tau_1,
    * MIT Press, 2010.
    */
 
-  const double t_peak =
-    ( tau_2 * tau_1 ) * std::log( tau_2 / tau_1 ) / ( tau_2 - tau_1 );
+  const double t_peak = ( tau_2 * tau_1 ) * std::log( tau_2 / tau_1 ) / ( tau_2 - tau_1 );
 
   const double prefactor = ( 1 / tau_1 ) - ( 1 / tau_2 );
 
-  const double peak_value =
-    ( std::exp( -t_peak / tau_2 ) - std::exp( -t_peak / tau_1 ) );
+  const double peak_value = ( std::exp( -t_peak / tau_2 ) - std::exp( -t_peak / tau_1 ) );
 
   return g_peak * prefactor / peak_value;
 }
@@ -772,17 +742,13 @@ nest::ht_neuron::calibrate()
   // The code below initializes conductance step size for incoming pulses.
   V_.cond_steps_.resize( SUP_SPIKE_RECEPTOR - 1 );
 
-  V_.cond_steps_[ AMPA - 1 ] =
-    get_synapse_constant( P_.tau_rise_AMPA, P_.tau_decay_AMPA, P_.g_peak_AMPA );
+  V_.cond_steps_[ AMPA - 1 ] = get_synapse_constant( P_.tau_rise_AMPA, P_.tau_decay_AMPA, P_.g_peak_AMPA );
 
-  V_.cond_steps_[ NMDA - 1 ] =
-    get_synapse_constant( P_.tau_rise_NMDA, P_.tau_decay_NMDA, P_.g_peak_NMDA );
+  V_.cond_steps_[ NMDA - 1 ] = get_synapse_constant( P_.tau_rise_NMDA, P_.tau_decay_NMDA, P_.g_peak_NMDA );
 
-  V_.cond_steps_[ GABA_A - 1 ] = get_synapse_constant(
-    P_.tau_rise_GABA_A, P_.tau_decay_GABA_A, P_.g_peak_GABA_A );
+  V_.cond_steps_[ GABA_A - 1 ] = get_synapse_constant( P_.tau_rise_GABA_A, P_.tau_decay_GABA_A, P_.g_peak_GABA_A );
 
-  V_.cond_steps_[ GABA_B - 1 ] = get_synapse_constant(
-    P_.tau_rise_GABA_B, P_.tau_decay_GABA_B, P_.g_peak_GABA_B );
+  V_.cond_steps_[ GABA_B - 1 ] = get_synapse_constant( P_.tau_rise_GABA_B, P_.tau_decay_GABA_B, P_.g_peak_GABA_B );
 
   V_.PotassiumRefractoryCounts_ = Time( Time::ms( P_.t_ref ) ).get_steps();
 
@@ -833,8 +799,7 @@ nest::ht_neuron::set_status( const DictionaryDatum& d )
 void
 ht_neuron::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -866,15 +831,12 @@ ht_neuron::update( Time const& origin, const long from, const long to )
 
       // Enforce instantaneous blocking of NMDA channels
       const double m_eq_NMDA = m_eq_NMDA_( S_.y_[ State_::V_M ] );
-      S_.y_[ State_::m_fast_NMDA ] =
-        std::min( m_eq_NMDA, S_.y_[ State_::m_fast_NMDA ] );
-      S_.y_[ State_::m_slow_NMDA ] =
-        std::min( m_eq_NMDA, S_.y_[ State_::m_slow_NMDA ] );
+      S_.y_[ State_::m_fast_NMDA ] = std::min( m_eq_NMDA, S_.y_[ State_::m_fast_NMDA ] );
+      S_.y_[ State_::m_slow_NMDA ] = std::min( m_eq_NMDA, S_.y_[ State_::m_slow_NMDA ] );
 
       // A spike is generated if the neuron is not refractory and the membrane
       // potential exceeds the threshold.
-      if ( S_.ref_steps_ == 0
-        and S_.y_[ State_::V_M ] >= S_.y_[ State_::THETA ] )
+      if ( S_.ref_steps_ == 0 and S_.y_[ State_::V_M ] >= S_.y_[ State_::THETA ] )
       {
         // Set V and theta to the sodium reversal potential.
         S_.y_[ State_::V_M ] = P_.E_Na;
@@ -903,8 +865,7 @@ ht_neuron::update( Time const& origin, const long from, const long to )
      */
     for ( size_t i = 0; i < B_.spike_inputs_.size(); ++i )
     {
-      S_.y_[ 2 + 2 * i ] +=
-        V_.cond_steps_[ i ] * B_.spike_inputs_[ i ].get_value( lag );
+      S_.y_[ 2 + 2 * i ] += V_.cond_steps_[ i ] * B_.spike_inputs_[ i ].get_value( lag );
     }
 
     // set new input current
@@ -921,8 +882,7 @@ nest::ht_neuron::handle( SpikeEvent& e )
   assert( e.get_rport() < static_cast< int >( B_.spike_inputs_.size() ) );
 
   B_.spike_inputs_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -934,9 +894,7 @@ nest::ht_neuron::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * I );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
 }
 
 void

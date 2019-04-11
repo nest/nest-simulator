@@ -132,10 +132,7 @@ public:
   void get_status( DictionaryDatum& d ) const;
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -184,8 +181,7 @@ public:
 
 template < typename targetidentifierT >
 void
-StaticConnectionHomW< targetidentifierT >::get_status(
-  DictionaryDatum& d ) const
+StaticConnectionHomW< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< long >( d, names::size_of, sizeof( *this ) );

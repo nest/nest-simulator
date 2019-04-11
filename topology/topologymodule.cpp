@@ -123,8 +123,7 @@ TopologyModule::create_mask( const Token& t )
     bool has_anchor = false;
     AbstractMask* mask = 0;
 
-    for ( Dictionary::iterator dit = ( *dd )->begin(); dit != ( *dd )->end();
-          ++dit )
+    for ( Dictionary::iterator dit = ( *dd )->begin(); dit != ( *dd )->end(); ++dit )
     {
 
       if ( dit->first == names::anchor )
@@ -138,11 +137,9 @@ TopologyModule::create_mask( const Token& t )
 
         if ( mask != 0 )
         { // mask has already been defined
-          throw BadProperty(
-            "Mask definition dictionary contains extraneous items." );
+          throw BadProperty( "Mask definition dictionary contains extraneous items." );
         }
-        mask =
-          create_mask( dit->first, getValue< DictionaryDatum >( dit->second ) );
+        mask = create_mask( dit->first, getValue< DictionaryDatum >( dit->second ) );
       }
     }
 
@@ -155,19 +152,16 @@ TopologyModule::create_mask( const Token& t )
       try
       {
 
-        std::vector< double > anchor =
-          getValue< std::vector< double > >( anchor_token );
+        std::vector< double > anchor = getValue< std::vector< double > >( anchor_token );
         AbstractMask* amask;
 
         switch ( anchor.size() )
         {
         case 2:
-          amask = new AnchoredMask< 2 >(
-            dynamic_cast< Mask< 2 >& >( *mask ), anchor );
+          amask = new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), anchor );
           break;
         case 3:
-          amask = new AnchoredMask< 3 >(
-            dynamic_cast< Mask< 3 >& >( *mask ), anchor );
+          amask = new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), anchor );
           break;
         default:
           throw BadProperty( "Anchor must be 2- or 3-dimensional." );
@@ -195,8 +189,7 @@ TopologyModule::create_mask( const Token& t )
         case 2:
           try
           {
-            GridMask< 2 >& grid_mask_2d =
-              dynamic_cast< GridMask< 2 >& >( *mask );
+            GridMask< 2 >& grid_mask_2d = dynamic_cast< GridMask< 2 >& >( *mask );
             grid_mask_2d.set_anchor( Position< 2, int >( column, row ) );
           }
           catch ( std::bad_cast& e )
@@ -207,8 +200,7 @@ TopologyModule::create_mask( const Token& t )
         case 3:
           try
           {
-            GridMask< 3 >& grid_mask_3d =
-              dynamic_cast< GridMask< 3 >& >( *mask );
+            GridMask< 3 >& grid_mask_3d = dynamic_cast< GridMask< 3 >& >( *mask );
             grid_mask_3d.set_anchor( Position< 3, int >( column, row, layer ) );
           }
           catch ( std::bad_cast& e )
@@ -251,8 +243,7 @@ TopologyModule::create_parameter( const Token& t )
     // the parameter type to create.
     if ( ( *dictd )->size() != 1 )
     {
-      throw BadProperty(
-        "Parameter definition dictionary must contain one single key only." );
+      throw BadProperty( "Parameter definition dictionary must contain one single key only." );
     }
 
     Name n = ( *dictd )->begin()->first;
@@ -261,8 +252,7 @@ TopologyModule::create_parameter( const Token& t )
   }
   else
   {
-    throw BadProperty(
-      "Parameter must be parametertype, constant or dictionary." );
+    throw BadProperty( "Parameter must be parametertype, constant or dictionary." );
   }
 }
 
@@ -277,8 +267,7 @@ TopologyModule::create_parameter( const Name& name, const DictionaryDatum& d )
   // the dictionary contains an anchor
   if ( d->known( names::anchor ) )
   {
-    std::vector< double > anchor =
-      getValue< std::vector< double > >( d, names::anchor );
+    std::vector< double > anchor = getValue< std::vector< double > >( d, names::anchor );
     TopologyParameter* aparam;
     switch ( anchor.size() )
     {
@@ -356,8 +345,7 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "sub_P_P", &sub_P_Pfunction );
 
-  i->createcommand(
-    "GetGlobalChildren_i_M_a", &getglobalchildren_i_M_afunction );
+  i->createcommand( "GetGlobalChildren_i_M_a", &getglobalchildren_i_M_afunction );
 
   i->createcommand( "ConnectLayers_i_i_D", &connectlayers_i_i_Dfunction );
 
@@ -367,24 +355,18 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "DumpLayerNodes_os_i", &dumplayernodes_os_ifunction );
 
-  i->createcommand(
-    "DumpLayerConnections_os_i_l", &dumplayerconnections_os_i_lfunction );
+  i->createcommand( "DumpLayerConnections_os_i_l", &dumplayerconnections_os_i_lfunction );
 
   i->createcommand( "GetElement_i_ia", &getelement_i_iafunction );
 
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
 
-  i->createcommand(
-    "SelectNodesByMask_L_a_M", &selectnodesbymask_L_a_Mfunction );
+  i->createcommand( "SelectNodesByMask_L_a_M", &selectnodesbymask_L_a_Mfunction );
 
-  kernel().model_manager.register_node_model< FreeLayer< 2 > >(
-    "topology_layer_free" );
-  kernel().model_manager.register_node_model< FreeLayer< 3 > >(
-    "topology_layer_free_3d" );
-  kernel().model_manager.register_node_model< GridLayer< 2 > >(
-    "topology_layer_grid" );
-  kernel().model_manager.register_node_model< GridLayer< 3 > >(
-    "topology_layer_grid_3d" );
+  kernel().model_manager.register_node_model< FreeLayer< 2 > >( "topology_layer_free" );
+  kernel().model_manager.register_node_model< FreeLayer< 3 > >( "topology_layer_free_3d" );
+  kernel().model_manager.register_node_model< GridLayer< 2 > >( "topology_layer_grid" );
+  kernel().model_manager.register_node_model< GridLayer< 3 > >( "topology_layer_grid_3d" );
 
   // Register mask types
   register_mask< BallMask< 2 > >();
@@ -435,8 +417,7 @@ TopologyModule::CreateLayer_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  DictionaryDatum layer_dict =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  DictionaryDatum layer_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   index layernode = create_layer( layer_dict );
 
@@ -533,8 +514,7 @@ TopologyModule::Displacement_a_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  std::vector< double > point =
-    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
+  std::vector< double > point = getValue< std::vector< double > >( i->OStack.pick( 1 ) );
 
   index node_gid = getValue< long >( i->OStack.pick( 0 ) );
 
@@ -591,8 +571,7 @@ TopologyModule::Distance_a_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  std::vector< double > point =
-    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
+  std::vector< double > point = getValue< std::vector< double > >( i->OStack.pick( 1 ) );
 
   index node_gid = getValue< long >( i->OStack.pick( 0 ) );
 
@@ -626,8 +605,7 @@ TopologyModule::CreateMask_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  const DictionaryDatum mask_dict =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const DictionaryDatum mask_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   MaskDatum datum = nest::create_mask( mask_dict );
 
@@ -654,8 +632,7 @@ TopologyModule::Inside_a_MFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  std::vector< double > point =
-    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
+  std::vector< double > point = getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
 
   bool ret = inside( point, mask );
@@ -772,15 +749,13 @@ TopologyModule::Sub_P_PFunction::execute( SLIInterpreter* i ) const
 
 
 void
-TopologyModule::GetGlobalChildren_i_M_aFunction::execute(
-  SLIInterpreter* i ) const
+TopologyModule::GetGlobalChildren_i_M_aFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
   index gid = getValue< long >( i->OStack.pick( 2 ) );
   MaskDatum maskd = getValue< MaskDatum >( i->OStack.pick( 1 ) );
-  std::vector< double > anchor =
-    getValue< std::vector< double > >( i->OStack.pick( 0 ) );
+  std::vector< double > anchor = getValue< std::vector< double > >( i->OStack.pick( 0 ) );
 
   ArrayDatum result = get_global_children( gid, maskd, anchor );
 
@@ -977,8 +952,7 @@ TopologyModule::ConnectLayers_i_i_DFunction::execute( SLIInterpreter* i ) const
 
   index source_gid = getValue< long >( i->OStack.pick( 2 ) );
   index target_gid = getValue< long >( i->OStack.pick( 1 ) );
-  const DictionaryDatum connection_dict =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const DictionaryDatum connection_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   connect_layers( source_gid, target_gid, connection_dict );
 
@@ -1010,8 +984,7 @@ void
 TopologyModule::CreateParameter_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  const DictionaryDatum param_dict =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const DictionaryDatum param_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   ParameterDatum datum = nest::create_parameter( param_dict );
 
@@ -1041,8 +1014,7 @@ TopologyModule::GetValue_a_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  std::vector< double > point =
-    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
+  std::vector< double > point = getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
 
   double value = get_value( point, param );
@@ -1145,8 +1117,7 @@ TopologyModule::DumpLayerNodes_os_iFunction::execute( SLIInterpreter* i ) const
 */
 
 void
-TopologyModule::DumpLayerConnections_os_i_lFunction::execute(
-  SLIInterpreter* i ) const
+TopologyModule::DumpLayerConnections_os_i_lFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
@@ -1233,14 +1204,12 @@ TopologyModule::Cvdict_MFunction::execute( SLIInterpreter* i ) const
 
 
 void
-TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
-  SLIInterpreter* i ) const
+TopologyModule::SelectNodesByMask_L_a_MFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
   const index& layer_gid = getValue< long >( i->OStack.pick( 2 ) );
-  std::vector< double > anchor =
-    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
+  std::vector< double > anchor = getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
 
   std::vector< index > mask_gids;
@@ -1254,15 +1223,11 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
 
   if ( dim == 2 )
   {
-    Layer< 2 >* layer = dynamic_cast< Layer< 2 >* >(
-      kernel().node_manager.get_node( layer_gid ) );
+    Layer< 2 >* layer = dynamic_cast< Layer< 2 >* >( kernel().node_manager.get_node( layer_gid ) );
 
-    MaskedLayer< 2 > ml =
-      MaskedLayer< 2 >( *layer, Selector(), mask, true, false );
+    MaskedLayer< 2 > ml = MaskedLayer< 2 >( *layer, Selector(), mask, true, false );
 
-    for ( Ntree< 2, index >::masked_iterator it =
-            ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
-          it != ml.end();
+    for ( Ntree< 2, index >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) ); it != ml.end();
           ++it )
     {
       mask_gids.push_back( it->second );
@@ -1270,14 +1235,11 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
   }
   else
   {
-    Layer< 3 >* layer = dynamic_cast< Layer< 3 >* >(
-      kernel().node_manager.get_node( layer_gid ) );
+    Layer< 3 >* layer = dynamic_cast< Layer< 3 >* >( kernel().node_manager.get_node( layer_gid ) );
 
-    MaskedLayer< 3 > ml =
-      MaskedLayer< 3 >( *layer, Selector(), mask, true, false );
+    MaskedLayer< 3 > ml = MaskedLayer< 3 >( *layer, Selector(), mask, true, false );
 
-    for ( Ntree< 3, index >::masked_iterator it =
-            ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
+    for ( Ntree< 3, index >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
           it != ml.end();
           ++it )
     {

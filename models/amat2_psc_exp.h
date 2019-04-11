@@ -387,10 +387,7 @@ private:
 
 
 inline port
-amat2_psc_exp::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+amat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -419,8 +416,7 @@ amat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-amat2_psc_exp::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+amat2_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

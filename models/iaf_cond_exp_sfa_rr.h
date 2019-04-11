@@ -54,8 +54,7 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int
-iaf_cond_exp_sfa_rr_dynamics( double, const double*, double*, void* );
+extern "C" int iaf_cond_exp_sfa_rr_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 Name: iaf_cond_exp_sfa_rr - Simple conductance based leaky integrate-and-fire
@@ -165,8 +164,7 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int
-  iaf_cond_exp_sfa_rr_dynamics( double, const double*, double*, void* );
+  friend int iaf_cond_exp_sfa_rr_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_cond_exp_sfa_rr >;
@@ -315,10 +313,7 @@ private:
 
 
 inline port
-nest::iaf_cond_exp_sfa_rr::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+nest::iaf_cond_exp_sfa_rr::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -346,8 +341,7 @@ iaf_cond_exp_sfa_rr::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_cond_exp_sfa_rr::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_cond_exp_sfa_rr::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

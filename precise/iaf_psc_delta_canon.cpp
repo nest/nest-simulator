@@ -151,8 +151,7 @@ nest::iaf_psc_delta_canon::Parameters_::set( const DictionaryDatum& d )
   }
   if ( U_reset_ < U_min_ )
   {
-    throw BadProperty(
-      "Reset potential must be greater equal minimum potential." );
+    throw BadProperty( "Reset potential must be greater equal minimum potential." );
   }
   if ( c_m_ <= 0 )
   {
@@ -172,8 +171,7 @@ nest::iaf_psc_delta_canon::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::iaf_psc_delta_canon::State_::get( DictionaryDatum& d,
-  const Parameters_& p ) const
+nest::iaf_psc_delta_canon::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, U_ + p.E_L_ ); // Membrane potential
   def< bool >( d, names::is_refractory, is_refractory_ );
@@ -181,9 +179,7 @@ nest::iaf_psc_delta_canon::State_::get( DictionaryDatum& d,
 }
 
 void
-nest::iaf_psc_delta_canon::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  double delta_EL )
+nest::iaf_psc_delta_canon::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, U_ ) )
   {
@@ -200,8 +196,7 @@ nest::iaf_psc_delta_canon::Buffers_::Buffers_( iaf_psc_delta_canon& n )
 {
 }
 
-nest::iaf_psc_delta_canon::Buffers_::Buffers_( const Buffers_&,
-  iaf_psc_delta_canon& n )
+nest::iaf_psc_delta_canon::Buffers_::Buffers_( const Buffers_&, iaf_psc_delta_canon& n )
   : logger_( n )
 {
 }
@@ -269,13 +264,10 @@ iaf_psc_delta_canon::calibrate()
 }
 
 void
-iaf_psc_delta_canon::update( Time const& origin,
-  const long from,
-  const long to )
+iaf_psc_delta_canon::update( Time const& origin, const long from, const long to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from )
-    < kernel().connection_manager.get_min_delay() );
+  assert( static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -306,9 +298,7 @@ iaf_psc_delta_canon::update( Time const& origin,
   // check for super-threshold at beginning
   if ( S_.U_ >= P_.U_th_ )
   {
-    emit_instant_spike_( origin,
-      from,
-      V_.h_ms_ * ( 1 - std::numeric_limits< double >::epsilon() ) );
+    emit_instant_spike_( origin, from, V_.h_ms_ * ( 1 - std::numeric_limits< double >::epsilon() ) );
   }
 
   for ( long lag = from; lag < to; ++lag )
@@ -321,8 +311,7 @@ iaf_psc_delta_canon::update( Time const& origin,
     double t = V_.h_ms_;
 
     // place pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_
-      && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
@@ -332,8 +321,7 @@ iaf_psc_delta_canon::update( Time const& origin,
     double ev_weight;
     bool end_of_refract;
 
-    if ( not B_.events_.get_next_spike(
-           T, true, ev_offset, ev_weight, end_of_refract ) )
+    if ( not B_.events_.get_next_spike( T, true, ev_offset, ev_weight, end_of_refract ) )
     { // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
       // if there are many steps without input spikes.
@@ -354,8 +342,7 @@ iaf_psc_delta_canon::update( Time const& origin,
         const double I_ext = -V_.expm1_t_ * V_.R_ * ( S_.I_ + P_.I_e_ );
         S_.U_ = I_ext + V_.expm1_t_ * S_.U_ + S_.U_;
 
-        S_.U_ =
-          S_.U_ < P_.U_min_ ? P_.U_min_ : S_.U_; // lower bound on potential
+        S_.U_ = S_.U_ < P_.U_min_ ? P_.U_min_ : S_.U_; // lower bound on potential
         if ( S_.U_ >= P_.U_th_ )
         {
           emit_spike_( origin, lag, 0 ); // offset is zero at end of step
@@ -388,10 +375,9 @@ iaf_psc_delta_canon::update( Time const& origin,
           {
             if ( S_.with_refr_input_ )
             {
-              V_.refr_spikes_buffer_ += ev_weight
-                * std::exp( -( ( S_.last_spike_step_ - T - 1 ) * V_.h_ms_
-                              - ( S_.last_spike_offset_ - ev_offset )
-                              + P_.t_ref_ ) / P_.tau_m_ );
+              V_.refr_spikes_buffer_ +=
+                ev_weight * std::exp( -( ( S_.last_spike_step_ - T - 1 ) * V_.h_ms_
+                                        - ( S_.last_spike_offset_ - ev_offset ) + P_.t_ref_ ) / P_.tau_m_ );
             }
           }
           else
@@ -445,8 +431,7 @@ iaf_psc_delta_canon::update( Time const& origin,
           emit_instant_spike_( origin, lag, t );
         }
 
-      } while ( B_.events_.get_next_spike(
-        T, true, ev_offset, ev_weight, end_of_refract ) );
+      } while ( B_.events_.get_next_spike( T, true, ev_offset, ev_weight, end_of_refract ) );
 
       // no events remaining, plain update step across remainder
       // of interval
@@ -483,16 +468,13 @@ nest::iaf_psc_delta_canon::propagate_( const double dt )
 }
 
 void
-nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
-  const long lag,
-  const double offset_U )
+nest::iaf_psc_delta_canon::emit_spike_( Time const& origin, const long lag, const double offset_U )
 {
   assert( S_.U_ >= P_.U_th_ ); // ensure we are superthreshold
 
   // compute time since threshold crossing
   const double v_inf = V_.R_ * ( S_.I_ + P_.I_e_ );
-  const double dt =
-    -P_.tau_m_ * std::log( ( v_inf - S_.U_ ) / ( v_inf - P_.U_th_ ) );
+  const double dt = -P_.tau_m_ * std::log( ( v_inf - S_.U_ ) / ( v_inf - P_.U_th_ ) );
 
   // set stamp and offset for spike
   S_.last_spike_step_ = origin.get_steps() + lag + 1;
@@ -512,9 +494,7 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
 }
 
 void
-nest::iaf_psc_delta_canon::emit_instant_spike_( Time const& origin,
-  const long lag,
-  const double spike_offs )
+nest::iaf_psc_delta_canon::emit_instant_spike_( Time const& origin, const long lag, const double spike_offs )
 {
   assert( S_.U_ >= P_.U_th_ ); // ensure we are superthreshold
 
@@ -545,8 +525,7 @@ iaf_psc_delta_canon::handle( SpikeEvent& e )
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
   const long Tdeliver = e.get_stamp().get_steps() + e.get_delay_steps() - 1;
-  B_.events_.add_spike(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  B_.events_.add_spike( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -561,9 +540,7 @@ iaf_psc_delta_canon::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add stepwise constant current; MH 2009-10-14
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 

@@ -156,8 +156,7 @@ nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_tot_ <= 0
-    || tau_ref_abs_ <= 0 )
+  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_tot_ <= 0 || tau_ref_abs_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -166,16 +165,13 @@ nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::iaf_tum_2000::State_::get( DictionaryDatum& d,
-  const Parameters_& p ) const
+nest::iaf_tum_2000::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
 }
 
 void
-nest::iaf_tum_2000::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  double delta_EL )
+nest::iaf_tum_2000::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
   {
@@ -296,22 +292,19 @@ nest::iaf_tum_2000::calibrate()
 
   if ( V_.RefractoryCountsAbs_ < 1 )
   {
-    throw BadProperty(
-      "Absolute refractory time must be at least one time step." );
+    throw BadProperty( "Absolute refractory time must be at least one time step." );
   }
 
   if ( V_.RefractoryCountsTot_ < 1 )
   {
-    throw BadProperty(
-      "Total refractory time must be at least one time step." );
+    throw BadProperty( "Total refractory time must be at least one time step." );
   }
 }
 
 void
 nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -320,8 +313,8 @@ nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
 
     if ( S_.r_abs_ == 0 ) // neuron not refractory, so evolve V
     {
-      S_.V_m_ = S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_
-        + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
+      S_.V_m_ =
+        S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_ + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
     }
     else
     {
@@ -371,14 +364,12 @@ nest::iaf_tum_2000::handle( SpikeEvent& e )
 
   if ( e.get_weight() >= 0.0 )
   {
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -392,9 +383,7 @@ nest::iaf_tum_2000::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

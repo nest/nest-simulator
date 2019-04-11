@@ -222,10 +222,7 @@ private:
    * @param t0      Beginning of mini-timestep
    * @param dt      Duration of mini-timestep
    */
-  void emit_spike_( Time const& origin,
-    const long lag,
-    const double t0,
-    const double dt );
+  void emit_spike_( Time const& origin, const long lag, const double t0, const double dt );
 
   /**
    * Instantaneously emit a spike at the precise time defined by
@@ -235,9 +232,7 @@ private:
    * @param lag           Time step within slice
    * @param spike_offset  Time offset for spike
    */
-  void emit_instant_spike_( Time const& origin,
-    const long lag,
-    const double spike_offset );
+  void emit_instant_spike_( Time const& origin, const long lag, const double spike_offset );
 
   /** @name Threshold-crossing interpolation
    * These functions determine the time of threshold crossing using
@@ -393,9 +388,9 @@ private:
     double P30_;             //!< progagator matrix elem, 3rd row
     double P31_;             //!< progagator matrix elem, 3rd row
     double P32_;             //!< progagator matrix elem, 3rd row
-    double y0_before_; //!< y0_ at beginning of mini-step, forinterpolation
-    double y2_before_; //!< y2_ at beginning of mini-step, for interpolation
-    double y3_before_; //!< y3_ at beginning of mini-step, for interpolation
+    double y0_before_;       //!< y0_ at beginning of mini-step, forinterpolation
+    double y2_before_;       //!< y2_ at beginning of mini-step, for interpolation
+    double y3_before_;       //!< y3_ at beginning of mini-step, for interpolation
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -441,10 +436,7 @@ private:
 };
 
 inline port
-nest::iaf_psc_alpha_canon::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+nest::iaf_psc_alpha_canon::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -472,8 +464,7 @@ iaf_psc_alpha_canon::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_alpha_canon::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_psc_alpha_canon::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

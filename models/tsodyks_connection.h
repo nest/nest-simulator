@@ -172,10 +172,7 @@ public:
   };
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -207,9 +204,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-TsodyksConnection< targetidentifierT >::send( Event& e,
-  thread t,
-  const CommonSynapseProperties& )
+TsodyksConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;
@@ -227,8 +222,7 @@ TsodyksConnection< targetidentifierT >::send( Event& e,
   double Pyy = std::exp( -h / tau_psc_ );
   double Pzz = std::exp( -h / tau_rec_ );
 
-  double Pxy = ( ( Pzz - 1.0 ) * tau_rec_ - ( Pyy - 1.0 ) * tau_psc_ )
-    / ( tau_psc_ - tau_rec_ );
+  double Pxy = ( ( Pzz - 1.0 ) * tau_rec_ - ( Pyy - 1.0 ) * tau_psc_ ) / ( tau_psc_ - tau_rec_ );
   double Pxz = 1.0 - Pzz;
 
   double z = 1.0 - x_ - y_;
@@ -276,8 +270,7 @@ TsodyksConnection< targetidentifierT >::TsodyksConnection()
 }
 
 template < typename targetidentifierT >
-TsodyksConnection< targetidentifierT >::TsodyksConnection(
-  const TsodyksConnection& rhs )
+TsodyksConnection< targetidentifierT >::TsodyksConnection( const TsodyksConnection& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , tau_psc_( rhs.tau_psc_ )
@@ -310,8 +303,7 @@ TsodyksConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-TsodyksConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+TsodyksConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // Handle parameters that may throw an exception first, so we can leave the
   // synapse untouched

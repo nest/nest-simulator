@@ -55,8 +55,7 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int
-hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
+extern "C" int hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 Name: hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for the
@@ -199,8 +198,7 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int
-  hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
+  friend int hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friend to access the State_ class/member
   friend class RecordablesMap< hh_psc_alpha_clopath >;
@@ -212,19 +210,19 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double t_ref_;    //!< refractory time in ms
-    double g_Na;      //!< Sodium Conductance in nS
-    double g_K;       //!< Potassium Conductance in nS
-    double g_L;       //!< Leak Conductance in nS
-    double C_m;       //!< Membrane Capacitance in pF
-    double E_Na;      //!< Sodium Reversal Potential in mV
-    double E_K;       //!< Potassium Reversal Potential in mV
-    double E_L;       //!< Leak reversal Potential (aka resting potential) in mV
-    double tau_synE;  //!< Synaptic Time Constant Excitatory Synapse in ms
-    double tau_synI;  //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double I_e;       //!< Constant Current in pA
-    double tau_plus;  //!< time constant of u_bar_plus in ms
-    double tau_minus; //!< time constant of u_bar_minus in ms
+    double t_ref_;      //!< refractory time in ms
+    double g_Na;        //!< Sodium Conductance in nS
+    double g_K;         //!< Potassium Conductance in nS
+    double g_L;         //!< Leak Conductance in nS
+    double C_m;         //!< Membrane Capacitance in pF
+    double E_Na;        //!< Sodium Reversal Potential in mV
+    double E_K;         //!< Potassium Reversal Potential in mV
+    double E_L;         //!< Leak reversal Potential (aka resting potential) in mV
+    double tau_synE;    //!< Synaptic Time Constant Excitatory Synapse in ms
+    double tau_synI;    //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double I_e;         //!< Constant Current in pA
+    double tau_plus;    //!< time constant of u_bar_plus in ms
+    double tau_minus;   //!< time constant of u_bar_minus in ms
     double tau_bar_bar; //!< time constant of u_bar_bar in ms
 
     Parameters_(); //!< Sets default parameter values
@@ -287,9 +285,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( hh_psc_alpha_clopath& ); //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&,
-      hh_psc_alpha_clopath& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_psc_alpha_clopath& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, hh_psc_alpha_clopath& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< hh_psc_alpha_clopath > logger_;
@@ -361,10 +358,7 @@ private:
 
 
 inline port
-hh_psc_alpha_clopath::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+hh_psc_alpha_clopath::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -394,8 +388,7 @@ hh_psc_alpha_clopath::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-hh_psc_alpha_clopath::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+hh_psc_alpha_clopath::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

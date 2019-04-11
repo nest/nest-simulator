@@ -325,10 +325,7 @@ public:
 };
 
 inline port
-aeif_psc_delta::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+aeif_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -357,8 +354,7 @@ aeif_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-aeif_psc_delta::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+aeif_psc_delta::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

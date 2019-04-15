@@ -26,7 +26,7 @@ import nest
 class TestHelperFunctions(unittest.TestCase):
 
     def test_get_verbosity(self):
-        verbosity = nest.hl_api.get_verbosity()
+        verbosity = nest.get_verbosity()
         self.assertTrue(isinstance(verbosity, int))
 
     def test_set_verbosity(self):
@@ -41,8 +41,8 @@ class TestHelperFunctions(unittest.TestCase):
                   ('M_QUIET', 100)
                   ]
         for level, code in levels:
-            nest.hl_api.set_verbosity(level)
-            verbosity = nest.hl_api.get_verbosity()
+            nest.set_verbosity(level)
+            verbosity = nest.get_verbosity()
             self.assertEqual(verbosity, code)
 
 

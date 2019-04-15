@@ -730,12 +730,12 @@ nest::ConnectionManager::increase_connection_count( const thread tid,
     num_connections_[ tid ].resize( syn_id + 1 );
   }
   ++num_connections_[ tid ][ syn_id ];
-  if ( num_connections_[ tid ][ syn_id ] >= ( 1 << 27 ) - 1 )
+  if ( num_connections_[ tid ][ syn_id ] >= MAX_LCID )
   {
     throw KernelException( String::compose(
       "Too many connections: at most %1 connections supported per virtual "
       "process and synapse model.",
-      ( 1 << 27 ) - 1 ) );
+      MAX_LCID ) );
   }
 }
 
@@ -967,6 +967,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
 bool
 nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
 {
+  kernel().connection_manager.set_have_connections_changed( true );
   for ( Token* ct = connectome.begin(); ct != connectome.end(); ++ct )
   {
     DictionaryDatum cd = getValue< DictionaryDatum >( *ct );

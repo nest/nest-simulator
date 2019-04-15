@@ -20,7 +20,7 @@
  *
  */
 
-% autorun=true
+ % autorun=true
 
 %%
 % This is an extended version of the simple balancedneuron.sli script.

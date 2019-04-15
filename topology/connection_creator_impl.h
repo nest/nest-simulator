@@ -420,6 +420,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
 
   if ( mask_.valid() )
   {
+    MaskedLayer< D > masked_source( source, mask_, allow_oversized_ );
+
     for ( GIDCollection::const_iterator tgt_it = target_begin;
           tgt_it < target_end;
           ++tgt_it )
@@ -432,9 +434,15 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
       Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
       // Get (position,GID) pairs for sources inside mask
-      std::vector< std::pair< Position< D >, index > > positions =
-        source.get_global_positions_vector(
-          mask_, target.get_position( ( *tgt_it ).lid ), allow_oversized_ );
+      const Position< D > anchor = target.get_position( ( *tgt_it ).lid );
+      std::vector< std::pair< Position< D >, index > > positions;
+      for ( typename Ntree< D, index >::masked_iterator iter =
+              masked_source.begin( anchor );
+            iter != masked_source.end();
+            ++iter )
+      {
+        positions.push_back( *iter );
+      }
 
       // We will select `number_of_connections_` sources within the mask.
       // If there is no kernel, we can just draw uniform random numbers,

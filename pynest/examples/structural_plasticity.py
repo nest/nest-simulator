@@ -61,7 +61,7 @@ class StructralPlasticityExample:
         self.number_inhibitory_neurons = 200
 
         # Structural_plasticity properties
-        self.update_interval = 1000
+        self.update_interval = 10000.0
         self.record_interval = 1000.0
         # rate of background Poisson input
         self.bg_rate = 10000.0
@@ -145,7 +145,7 @@ class StructralPlasticityExample:
 
     def prepare_simulation(self):
         nest.ResetKernel()
-        nest.hl_api.set_verbosity('M_ERROR')
+        nest.set_verbosity('M_ERROR')
         '''
         We set global kernel parameters. Here we define the resolution
         for the simulation, which is also the time resolution for the update

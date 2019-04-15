@@ -54,7 +54,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         self.dt = 0.1
         self.start = 200.
 
-        nest.hl_api.set_verbosity('M_WARNING')
+        nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
         nest.SetKernelStatus({'resolution': self.dt, 'use_wfr': False})
 

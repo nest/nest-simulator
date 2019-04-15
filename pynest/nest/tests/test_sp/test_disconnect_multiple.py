@@ -29,7 +29,7 @@ class TestDisconnect(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.hl_api.set_verbosity('M_ERROR')
+        nest.set_verbosity('M_ERROR')
         self.exclude_synapse_model = [
             'stdp_dopamine_synapse',
             'stdp_dopamine_synapse_lbl',

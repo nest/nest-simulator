@@ -270,9 +270,9 @@ class TestGrowthCurve(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus({"total_num_virtual_procs": 4})
         nest.ResetNetwork()
-        nest.hl_api.set_verbosity('M_DEBUG')
+        nest.set_verbosity('M_DEBUG')
 
-        self.sim_time = 10000
+        self.sim_time = 10000.0
         self.sim_step = 100
 
         nest.SetKernelStatus(

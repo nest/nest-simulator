@@ -35,9 +35,15 @@ fi
 
 FAILURES=0
 
-# Find all examples in the installation directory that have a line
-# containing "autorun=true"
-EXAMPLES=$(grep -rl --include=\*\.sli 'autorun=true' nest/)
+
+# Find all examples that have a line containing "autorun=true"
+# The examples can be found in subdirectory nest and in the 
+# examples installation path.
+if [ -d "nest/" ] ; then
+    EXAMPLES=$(grep -rl --include=\*\.sli 'autorun=true' nest/)
+else
+    EXAMPLES=$(grep -rl --include=\*\.sli 'autorun=true' examples/)
+fi
 
 if test -n "$SKIP_LIST"; then
     EXAMPLES=$(echo $EXAMPLES | tr ' ' '\n' | grep -vE $SKIP)
@@ -61,7 +67,7 @@ for i in $EXAMPLES ; do
     if [ $ext = sli ] ; then
         runner=nest
     elif [ $ext = py ] ; then
-        runner=$(nest-config --python-executable)
+        runner=python
     fi
 
     output_dir=$basedir/example_logs/$example
@@ -73,7 +79,7 @@ for i in $EXAMPLES ; do
 
     export NEST_DATA_PATH=$output_dir
     /usr/bin/time -f "$time_format" --quiet sh -c "$runner $example >$logfile 2>&1"
-    
+
     if [ $? != 0 ] ; then
         echo "    FAILURE!"
         FAILURES=$(( $FAILURES + 1 ))

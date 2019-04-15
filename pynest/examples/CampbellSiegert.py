@@ -164,7 +164,7 @@ r = 1. / (t_ref * ms + tau_m * ms * tmpsum)
 
 nest.ResetKernel()
 
-nest.hl_api.set_verbosity('M_WARNING')
+nest.set_verbosity('M_WARNING')
 neurondict = {'V_th': V_th,
               'tau_m': tau_m,
               'tau_syn_ex': tau_syn_ex,

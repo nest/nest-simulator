@@ -59,7 +59,7 @@ print_vector( const std::vector< T >& vec )
 
 SPManager::SPManager()
   : ManagerInterface()
-  , structural_plasticity_update_interval_( 10000 )
+  , structural_plasticity_update_interval_( 10000. )
   , structural_plasticity_enabled_( false )
   , sp_conn_builders_()
   , growthcurvedict_( new Dictionary() )
@@ -75,7 +75,7 @@ SPManager::~SPManager()
 void
 SPManager::initialize()
 {
-  structural_plasticity_update_interval_ = 10000;
+  structural_plasticity_update_interval_ = 10000.;
   structural_plasticity_enabled_ = false;
 }
 

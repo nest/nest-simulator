@@ -58,7 +58,7 @@
 
 % structural plasticity parameters
 
-/sp_update_interval 1000 def % update interval of structural plasticity (ms)
+/sp_update_interval 1000. def % update interval of structural plasticity (ms)
 /sp_record_interval 1000 def  % recording of structural plasticity status (Ca, #Axons) (ms)
 
 % Growth curves for synaptic elements of excitatory neurons

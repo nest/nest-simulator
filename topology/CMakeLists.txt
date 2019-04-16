@@ -80,6 +80,10 @@ install( FILES ${topo_mpitests}
     DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology/mpitests
     )
 
+install( DIRECTORY testsuite/pytests/
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/tests/python/topology
+    )
+
 FILTER_HEADERS("${topo_sources}" install_headers )
 install( FILES ${install_headers}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

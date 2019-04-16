@@ -86,6 +86,10 @@ if ( HAVE_PYTHON )
       DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
       )
 
+  install( DIRECTORY tests/
+      DESTINATION ${CMAKE_INSTALL_DATADIR}/tests/python
+      )
+
   install( DIRECTORY examples/
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
       )

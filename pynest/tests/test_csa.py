@@ -25,8 +25,7 @@ CSA tests
 
 import unittest
 import nest
-
-from . import compatibility
+import compatibility
 
 try:
     import csa

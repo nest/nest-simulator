@@ -26,6 +26,7 @@ Creation tests
 import unittest
 import warnings
 import nest
+import compatibility
 
 
 @nest.ll_api.check_stack

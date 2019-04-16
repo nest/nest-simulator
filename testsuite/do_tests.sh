@@ -522,9 +522,7 @@ phase_seven() {
             echo "  Using nosetests."
             echo
 
-            TESTS="${PYTHONPATH_}/nest/tests ${PYTHONPATH_}/nest/topology/tests"
-
-            "${NOSETESTS}" -v ${TESTS} 2>&1 \
+            "${NOSETESTS}" -v "${PREFIX}/share/nest/tests/python" 2>&1 \
                 | tee -a "${TEST_LOGFILE}" \
                 | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" \
                 | sed 's/^/  /'
@@ -630,7 +628,7 @@ phase_one
 phase_two
 phase_three
 phase_four
-phase_five
+#phase_five
 phase_six
 phase_seven
 phase_eight

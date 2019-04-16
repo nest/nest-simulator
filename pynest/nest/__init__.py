@@ -28,17 +28,3 @@ from . import ll_api      # noqa
 # Import kernel in __init__ after initializing low-level APIs.
 from . import pynestkernel as kernel      # noqa
 from .hl_api import *      # noqa
-
-
-def test():
-    """Runs all PyNEST unit tests."""
-    from . import tests
-    import unittest
-
-    debug = ll_api.get_debug()
-    ll_api.set_debug(True)
-
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(tests.suite())
-
-    ll_api.set_debug(debug)

@@ -21,9 +21,7 @@
 
 import nest
 import unittest
-from .utils import extract_dict_a_from_b
-
-__author__ = 'naveau'
+from utils import extract_dict_a_from_b
 
 
 class TestStructuralPlasticityManager(unittest.TestCase):

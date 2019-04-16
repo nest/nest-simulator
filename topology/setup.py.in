@@ -26,6 +26,5 @@ setup(name         = 'Topology',
       description  = 'Python bindings for NEST Topology module',
       author       = 'The NEST Initiative',
       url          = 'http://www.nest-simulator.org',
-      packages     = ['nest.topology', 'nest.topology.tests'],
-      package_dir  = {'nest.topology': '@PROJECT_SOURCE_DIR@/topology/pynest',
-                      'nest.topology.tests': '@PROJECT_SOURCE_DIR@/topology/pynest/tests'})
+      packages     = ['nest.topology'],
+      package_dir  = {'nest.topology': '@PROJECT_SOURCE_DIR@/topology/pynest'})

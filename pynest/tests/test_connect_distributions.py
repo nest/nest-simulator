@@ -21,7 +21,7 @@
 
 import unittest
 import nest
-from . import test_connect_helpers as hf
+import test_connect_helpers as hf
 
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 

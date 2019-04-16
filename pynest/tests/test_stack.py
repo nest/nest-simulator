@@ -25,10 +25,8 @@ Stack tests
 
 import unittest
 import nest
-
-from . import compatibility
-
 from array import array
+import compatibility
 
 try:
     import numpy

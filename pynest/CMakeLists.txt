@@ -97,9 +97,7 @@ if ( HAVE_PYTHON )
   find_program( NOSETESTS nosetests )
   if ( NOT NOSETESTS STREQUAL "NOSETESTS-NOTFOUND" )
     add_test( NAME PyNEST
-        COMMAND ${NOSETESTS} -v --with-xunit
-        --xunit-file=${PROJECT_BINARY_DIR}/reports/pynest_tests.xml
-        ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/tests
+        COMMAND ${NOSETESTS} -v ${CMAKE_INSTALL_DATADIR}/tests/python
         )
   endif ()
 endif ()

@@ -20,7 +20,7 @@
  *
  */
 
- % autorun=true
+% autorun=true
 
 /*
    This script produces a balanced random network of scale*11250 neurons in
@@ -36,8 +36,9 @@
      networks. Neural Comput 19(6):1437-67
    Helias et al (2012). Supercomputers ready for use as discovery machines for
      neuroscience. Front. Neuroinform. 6:26
-   Kunkel et al (2014). Spiking network simulation code for petascale
+   Kunkel et al (2014). Spiking network simulation code for petascale 
      computers. Front. Neuroinform. 8:78
+
 
    The difference between this script and hpc_benchmark_2_16.sli is that this
    version is invariant under mpi/thread splits. This affects
@@ -46,10 +47,10 @@
      - Neurons that are being recorded from (here we always record from the
        first Nrec neurons).
  
-
+ 
    A note on scaling
    -----------------
-
+   
    This benchmark was originally developed for very large-scale simulations on
    supercomputers with more than 1 million neurons in the network and
    11.250 incoming synapses per neuron. For such large networks, synaptic input
@@ -64,22 +65,17 @@
    Over time, network dynamics will therefore become unstable and all neurons
    in the network will fire in synchrony, leading to extremely slow simulation
    speeds.
-
+   
    Therefore, the presimulation time is reduced to 50 ms below and the
    simulation time to 250 ms, while we usually use 100 ms presimulation and
    1000 ms simulation time.
-
+   
    For meaningful use of this benchmark, you should use a scale > 10 and check
    that the firing rate reported at the end of the benchmark is below 10 spikes
-   per second.
+   per second. 
 */
-<<<<<<< HEAD
-
-%%% PARAMETER SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-=======
   
 %%%%%%%%%%%%%%%%%%%%%%%%% PARAMETER SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
->>>>>>> refs/remotes/nest-simulator/master
 
 % define all relevant parameters: changes should be made here
 % all data is placed in the userdict dictionary
@@ -174,13 +170,8 @@ def
     /mu     0.4           % STDP weight dependence exponent (potentiation)
     /tau_plus 15.0        % time constant for potentiation
   >>
-<<<<<<< HEAD
-
-  /eta 1.685         %scaling of external stimulus
-=======
   
   /eta 1.685              % scaling of external stimulus
->>>>>>> refs/remotes/nest-simulator/master
   /filestem path_name
   
   /max_rank_cout 5  % copy output to cout for ranks 0..max_rank_cout-1
@@ -196,86 +187,54 @@ brunel_params dup using
 
 /BuildNetwork
 {
-
+  
   tic % start timer on construction
   % set global kernel parameters
   <<
      /total_num_virtual_procs nvp
      /resolution  dt
      /overwrite_files true
-<<<<<<< HEAD
   >> SetKernelStatus
-=======
-  >> SetStatus
   
   %------------------------- Creation -----------------------------------------
->>>>>>> refs/remotes/nest-simulator/master
 
   /iaf_psc_alpha    model_params    SetDefaults
-  M_INFO (BuildNetwork)
-<<<<<<< HEAD
-  (Creating excitatory population.) message  % show message
-  /E_neurons /iaf_psc_alpha NE Create def
-
-=======
-  (Creating excitatory population.) message     % show message
-  /iaf_psc_alpha [NE] LayoutNetwork /E_net Set  % subnet gets own gid
-  /E_from E_net 1 add def                       % gid of first child
-  /E_to E_from NE add 1 sub def                 % gid of last child
   
->>>>>>> refs/remotes/nest-simulator/master
+  %/iaf_psc_alpha 1 Create  % Remove comment to get same spike counter as before NEST 3.0!
+  
+  M_INFO (BuildNetwork)  
+  (Creating excitatory population.) message     % show message  
+  /E_neurons /iaf_psc_alpha NE Create def
+  
+  %/iaf_psc_alpha 1 Create  % Remove comment to get same spike counter as before NEST 3.0!
+  
   M_INFO (BuildNetwork)
-<<<<<<< HEAD
-  (Creating inhibitory population.) message  % show message
-  /I_neurons /iaf_psc_alpha NI Create def
-=======
   (Creating inhibitory population.) message     % show message
-  /iaf_psc_alpha [NI] LayoutNetwork /I_net Set  % subnet gets own gid
-  /I_from I_net 1 add def                       % gid of first child
-  /I_to I_from NI add 1 sub def                 % gid of last child
-
->>>>>>> refs/remotes/nest-simulator/master
+  /I_neurons /iaf_psc_alpha NI Create def
 
   randomize_Vm
   {
       M_INFO (BuildNetwork)
       (Randomzing membrane potentials.) message
 
-<<<<<<< HEAD
-      GetKernelStatus /rng_seeds get Last 1 add E_neurons 0 get /vp get add
-      rngdict/MT19937 :: exch CreateRNG
-      rdevdict/normal :: CreateRDV /normal Set
-=======
-      /base_seed 0 GetStatus /rng_seeds get Last def
+      /base_seed GetKernelStatus /rng_seeds get Last def
       /rdevs
         [ nvp ]
         { base_seed add rngdict/MT19937 :: exch CreateRNG rdevdict/normal :: CreateRDV }
         Table
       def
->>>>>>> refs/remotes/nest-simulator/master
 
-      E_neurons
+      E_neurons LocalOnly
       {
-<<<<<<< HEAD
-          << /V_m mean_potential sigma_potential normal Random mul add >>
-          SetStatus
-=======
         dup
         /vp get rdevs exch get /normal Set  % Gaussian generator for VP of node
         <<
           /V_m mean_potential sigma_potential normal Random mul add
         >>
         SetStatus
->>>>>>> refs/remotes/nest-simulator/master
       } forall
 
-<<<<<<< HEAD
-      I_neurons
-      {
-          << /V_m mean_potential sigma_potential normal Random mul add >>
-          SetStatus
-=======
-      I_net GetLocalNodes
+      I_neurons LocalOnly
       { 
         dup
         /vp get rdevs exch get /normal Set  % Gaussian generator for VP of node
@@ -283,24 +242,11 @@ brunel_params dup using
           /V_m mean_potential sigma_potential normal Random mul add
         >>
         SetStatus
->>>>>>> refs/remotes/nest-simulator/master
       } forall
   } if
-<<<<<<< HEAD
-
-  /N E_neurons size I_neurons size add def
-
-  /CE NE scale cvd div iround def %number of incoming excitatory connections
-  /CI NI scale cvd div iround def %number of incomining inhibitory connections
-=======
-  
-
-  /E_neurons E_from E_to cvgidcollection def % get memory efficient GIDCollection
-  /I_neurons I_from I_to cvgidcollection def % get memory efficient GIDCollection
 
   /CE NE scale cvd div iround def % number of incoming excitatory connections
   /CI NI scale cvd div iround def % number of incoming inhibitory connections
->>>>>>> refs/remotes/nest-simulator/master
 
   M_INFO (BuildNetwork)
   (Creating excitatory stimulus generator.) message
@@ -351,11 +297,7 @@ brunel_params dup using
   /static_synapse_hpc /syn_ex << /weight JE_pA >> CopyModel
   /static_synapse_hpc /syn_in << /weight JE_pA g mul >> CopyModel
 
-<<<<<<< HEAD
-  stdp_params /weight JE_pA put
-=======
   stdp_params /weight JE_pA put 
->>>>>>> refs/remotes/nest-simulator/master
   /stdp_pl_synapse_hom_hpc stdp_params SetDefaults
 
  %------------------------- Connection -----------------------------------------
@@ -395,37 +337,18 @@ brunel_params dup using
 
   record_spikes true eq
   {
-<<<<<<< HEAD
-    E_neurons size /local_neurons Set
-
-    local_neurons Nrec lt
-=======
     E_neurons size Nrec lt
->>>>>>> refs/remotes/nest-simulator/master
     {
       M_ERROR (BuildNetwork)
-<<<<<<< HEAD
-      (Spikes can only be recorded from local neurons, but the number of local
-neurons is smaller than the number of neurons spikes should be recorded from.
-Aborting the simulation!) message
-=======
       (The exitatory network is smaller than number of neurons to record from!) message
->>>>>>> refs/remotes/nest-simulator/master
       1 quit_i
     } if
 
     M_INFO (BuildNetwork)
     (Connecting spike detectors.) message
-<<<<<<< HEAD
-    E_neurons Nrec Take E_detector << /rule (all_to_all) >> << /model /syn_std >> Connect
-  } if
-=======
 
-    /recordees E_from E_from Nrec add 1 sub cvgidcollection def
-    /detector E_detector E_detector cvgidcollection def
-    recordees detector << /rule (all_to_all) >> << /model /syn_std >> Connect
+    E_neurons Nrec Take E_detector << /rule (all_to_all) >> << /model /syn_std >> Connect
   } if  
->>>>>>> refs/remotes/nest-simulator/master
 
   % read out time used for building
   toc /BuildEdgeTime Set
@@ -476,10 +399,10 @@ Aborting the simulation!) message
   
   
   E_neurons size I_neurons size add cvs ( # num_neurons) join logger /log call
-  0 /num_connections get cvs ( # num_connections) join logger /log call
-  0 /min_delay get cvs ( # min_delay) join logger /log call
-  0 /max_delay get cvs ( # max_delay) join logger /log call
-  0 /local_spike_counter get cvs ( # local_spike_counter) join logger /log call
+  GetKernelStatus /num_connections get cvs ( # num_connections) join logger /log call
+  GetKernelStatus /min_delay get cvs ( # min_delay) join logger /log call
+  GetKernelStatus /max_delay get cvs ( # max_delay) join logger /log call
+  GetKernelStatus /local_spike_counter get cvs ( # local_spike_counter) join logger /log call
 
   logger /done call
 } def
@@ -531,11 +454,7 @@ def
   {
     Rank max_rank_log lt
     {
-<<<<<<< HEAD
-        Rank max_rank_log lt {
-=======
       (_) join
->>>>>>> refs/remotes/nest-simulator/master
 
       % convert rank to string, prepend 0 if necessary to make
       % numbers equally wide for all ranks
@@ -548,18 +467,6 @@ def
       join
       (.dat) join
 
-<<<<<<< HEAD
-            % convert rank to string, prepend 0 if necessary to make
-            % numbers equally wide for all ranks
-            Rank cvs
-            dup length max_rank_log cvs length exch sub
-            {
-              48 prepend   % 48 is ASCII code for 0
-            }
-            repeat
-            join
-            (.dat) join
-=======
       /f exch (w) ofsopen
       {
         def
@@ -567,74 +474,22 @@ def
       {
         /Logger_init /CannotOpenFile raiseerror
       } ifelse
->>>>>>> refs/remotes/nest-simulator/master
 
-<<<<<<< HEAD
-            % log to the data_path if that is non-empty
-            GetKernelStatus /data_path get
-            empty not {
-                (/) join exch join
-            }
-            {
-                pop
-            } ifelse
-=======
     } if
   }
->>>>>>> refs/remotes/nest-simulator/master
 
-<<<<<<< HEAD
-            /f exch (w) ofsopen
-            {
-                def
-            }
-            {
-                /Logger_init /CannotOpenFile raiseerror
-            }
-            ifelse
-
-        } if
-    }
-
-    % logging function
-    % expects one operand on stack to write to file
-    /log
-=======
   % logging function
   % expects one operand on stack to write to file
   /log
   {
     /value Set
     Rank max_rank_log lt
->>>>>>> refs/remotes/nest-simulator/master
     {
-<<<<<<< HEAD
-      /value Set
-        Rank max_rank_log lt {
-            f line_counter <- ( ) <- Rank <- ( ) <- value <- (\n) <- pop
-            /line_counter line_counter 1 add def
-        } if
-        Rank max_rank_cout lt {
-            cout Rank <- ( ) <- value <- endl flush pop
-            cerr Rank <- ( ) <- value <- endl flush pop
-        } if
-    }
-
-    % closes file
-    /done
-=======
       f line_counter <- ( ) <- Rank <- ( ) <- value <- (\n) <- pop
       /line_counter line_counter 1 add def
     } if
     Rank max_rank_cout lt
->>>>>>> refs/remotes/nest-simulator/master
     {
-<<<<<<< HEAD
-        Rank max_rank_log lt {
-            f close
-        } if
-    }
-=======
       cout Rank <- ( ) <- value <- endl flush pop
     } if
   }
@@ -647,7 +502,6 @@ def
       f close
     } if
   }
->>>>>>> refs/remotes/nest-simulator/master
 
 >> def
 

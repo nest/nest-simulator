@@ -19,6 +19,8 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+ 
+ % autorun=true
 
 /*
    This script was previously called hpc_benchmark.sli. If you want to
@@ -180,51 +182,44 @@ brunel_params dup using
   
   tic % start timer on construction
   % set global kernel parameters
-  0
   <<
      /total_num_virtual_procs nvp
      /resolution  dt
      /overwrite_files true
-  >> SetStatus
+  >> SetKernelStatus
 
   /iaf_psc_alpha    model_params    SetDefaults
   M_INFO (BuildNetwork)
   (Creating excitatory population.) message  % show message
-  /iaf_psc_alpha [NE] LayoutNetwork /E_net Set  % subnet gets own gid
-  /E_from E_net 1 add def                    % gid of first child
-  /E_to E_from NE add 1 sub def              % gid of last child
   
+  /E_neurons /iaf_psc_alpha NE Create def
+ 
   M_INFO (BuildNetwork)
   (Creating inhibitory population.) message  % show message
-  /iaf_psc_alpha [NI] LayoutNetwork /I_net Set  % subnet gets own gid
-  /I_from I_net 1 add def                    % gid of first child
-  /I_to I_from NI add 1 sub def              % gid of last child
+  
+  /I_neurons /iaf_psc_alpha NI Create def
 
   randomize_Vm
   {
       M_INFO (BuildNetwork)
       (Randomzing membrane potentials.) message
-
-      0 GetStatus /rng_seeds get Last 1 add 0 /vp get add
+      
+      GetKernelStatus /rng_seeds get Last 1 add E_neurons 1 Take /vp get add
       rngdict/MT19937 :: exch CreateRNG
       rdevdict/normal :: CreateRDV /normal Set
 
-      E_net GetLocalNodes
+      E_neurons LocalOnly
       {
           << /V_m mean_potential sigma_potential normal Random mul add >>
-	  SetStatus
+	        SetStatus
       } forall
 
-      I_net GetLocalNodes
+      I_neurons LocalOnly
       { 
-	  << /V_m mean_potential sigma_potential normal Random mul add >>
-	  SetStatus
+          << /V_m mean_potential sigma_potential normal Random mul add >>
+      	  SetStatus
       } forall
   } if
-
-  /E_neurons E_from E_to cvgidcollection def % get memory efficient gid-collection
-
-  /I_neurons I_from I_to cvgidcollection def % get memory efficient gid-collection
 
   /N E_neurons size I_neurons size add def
 
@@ -289,8 +284,8 @@ brunel_params dup using
 
   % Connect Poisson generator to neuron
 
-  E_stimulus E_stimulus cvgidcollection E_neurons << /rule (all_to_all) >> << /model /syn_ex >> Connect
-  E_stimulus E_stimulus cvgidcollection I_neurons << /rule (all_to_all) >> << /model /syn_ex >> Connect
+  E_stimulus E_neurons << /rule (all_to_all) >> << /model /syn_ex >> Connect
+  E_stimulus I_neurons << /rule (all_to_all) >> << /model /syn_ex >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting excitatory -> excitatory population.) message
@@ -315,7 +310,7 @@ brunel_params dup using
 
   record_spikes true eq
   {
-    E_net GetLocalNodes size /local_neurons Set
+    E_neurons LocalOnly size /local_neurons Set
 
     local_neurons Nrec lt
     {
@@ -328,7 +323,7 @@ Aborting the simulation!) message
 
     M_INFO (BuildNetwork)
     (Connecting spike detectors.) message
-    E_net GetLocalNodes Nrec Take [E_detector] << /rule (all_to_all) >> << /model /syn_std >> Connect
+    E_neurons LocalOnly cva Nrec Take cvgidcollection E_detector << /rule (all_to_all) >> << /model /syn_std >> Connect
   } if
 
   % read out time used for building
@@ -369,7 +364,7 @@ Aborting the simulation!) message
   memory_thisjob cvs ( # virt_mem_after_sim) join logger /log call
   SimCPUTime cvs ( # sim_time) join logger /log call
 
-  0 ShowStatus
+  GetKernelStatus info
 
   record_spikes true eq
   {
@@ -377,10 +372,10 @@ Aborting the simulation!) message
   } if
   
   E_neurons size I_neurons size add cvs ( # num_neurons) join logger /log call
-  0 /num_connections get cvs ( # num_connections) join logger /log call
-  0 /min_delay get cvs ( # min_delay) join logger /log call
-  0 /max_delay get cvs ( # max_delay) join logger /log call
-  0 /local_spike_counter get cvs ( # local_spike_counter) join logger /log call
+  GetKernelStatus /num_connections get cvs ( # num_connections) join logger /log call
+  GetKernelStatus /min_delay get cvs ( # min_delay) join logger /log call
+  GetKernelStatus /max_delay get cvs ( # max_delay) join logger /log call
+  GetKernelStatus /local_spike_counter get cvs ( # local_spike_counter) join logger /log call
 
   logger /done call
 } def

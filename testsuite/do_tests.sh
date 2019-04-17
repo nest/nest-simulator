@@ -119,13 +119,17 @@ export PATH="${PREFIX}/bin:$PATH"
 
 unset NEST_INSTALL_DIR
 unset NEST_DATA_DIR
-unset NEST_DOCL_DIR
+unset NEST_DOC_DIR
+
 if test "${PYTHON}"; then
     if test ! "${PYTHONPATH_}"; then
 	usage 3 "Error: \'--with-python\' also requires \'--python-path\'"
     fi
 
-    NOSETESTS="$(command -v nosetests 2>&1)"
+    NOSETESTS="$(command -v nosetests 2>&1)" || {
+	echo "Error: PyNEST testing requested but 'nosetests' not executable."
+	exit 1
+    }
 
     export PYTHONPATH="$PYTHONPATH_:${PYTHONPATH:-}"
 fi
@@ -515,53 +519,47 @@ phase_seven() {
 
     if test ${PYTHON}; then
 
-	if test "${NOSETESTS}"; then
+        PYTESTDIR="${PREFIX}/share/nest/tests/python"
+        "${NOSETESTS}" -v --where="${REPORTDIR}" "${PYTESTDIR}" 2>&1 \
+            | tee -a "${TEST_LOGFILE}" \
+            | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" \
+            | sed 's/^/  /'
 
-	    PYTESTDIR="${PREFIX}/share/nest/tests/python"
-            "${NOSETESTS}" -v --where="${REPORTDIR}" "${PYTESTDIR}" 2>&1 \
-                | tee -a "${TEST_LOGFILE}" \
-                | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" \
-                | sed 's/^/  /'
+        PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
+        PYNEST_TEST_SKIPPED="$(  tail -n 1 ${TEST_LOGFILE} | sed -$EXTENDED_REGEX_PARAM 's/.*SKIP=([0-9]+).*/\1/')"
+        PYNEST_TEST_FAILURES="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*failures=([0-9]+).*/\1/' )"
+        PYNEST_TEST_ERRORS="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*errors=([0-9]+).*/\1/' )"
 
-            PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
-            PYNEST_TEST_SKIPPED="$(  tail -n 1 ${TEST_LOGFILE} | sed -$EXTENDED_REGEX_PARAM 's/.*SKIP=([0-9]+).*/\1/')"
-            PYNEST_TEST_FAILURES="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*failures=([0-9]+).*/\1/' )"
-            PYNEST_TEST_ERRORS="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*errors=([0-9]+).*/\1/' )"
-
-            # check that PYNEST_TEST_FAILURES/PYNEST_TEST_ERRORS contain numbers
-            if test ${PYNEST_TEST_FAILURES} -eq ${PYNEST_TEST_FAILURES} 2>/dev/null ; then
-              # PYNEST_TEST_FAILURES is a valid number
-              :
-            else
-              PYNEST_TEST_FAILURES=0
-            fi
-            if test ${PYNEST_TEST_ERRORS} -eq ${PYNEST_TEST_ERRORS} 2>/dev/null ; then
-              # PYNEST_TEST_ERRORS is a valid number
-              :
-            else
-              PYNEST_TEST_ERRORS=0
-            fi
-            if test ${PYNEST_TEST_SKIPPED} -eq ${PYNEST_TEST_SKIPPED} 2>/dev/null ; then
-              # PYNEST_TEST_SKIPPED is a valid number
-              :
-            else
-              PYNEST_TEST_SKIPPED=0
-            fi
-            PYNEST_TEST_FAILED=$(($PYNEST_TEST_ERRORS + $PYNEST_TEST_FAILURES))
-            PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_SKIPPED - $PYNEST_TEST_FAILED))
+        # check that PYNEST_TEST_FAILURES/PYNEST_TEST_ERRORS contain numbers
+        if test ${PYNEST_TEST_FAILURES} -eq ${PYNEST_TEST_FAILURES} 2>/dev/null ; then
+          # PYNEST_TEST_FAILURES is a valid number
+          :
+        else
+          PYNEST_TEST_FAILURES=0
+        fi
+        if test ${PYNEST_TEST_ERRORS} -eq ${PYNEST_TEST_ERRORS} 2>/dev/null ; then
+          # PYNEST_TEST_ERRORS is a valid number
+          :
+        else
+          PYNEST_TEST_ERRORS=0
+        fi
+        if test ${PYNEST_TEST_SKIPPED} -eq ${PYNEST_TEST_SKIPPED} 2>/dev/null ; then
+          # PYNEST_TEST_SKIPPED is a valid number
+          :
+        else
+          PYNEST_TEST_SKIPPED=0
+        fi
+        PYNEST_TEST_FAILED=$(($PYNEST_TEST_ERRORS + $PYNEST_TEST_FAILURES))
+        PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_SKIPPED - $PYNEST_TEST_FAILED))
 
 	    echo
-            echo "  PyNEST tests: ${PYNEST_TEST_TOTAL}"
-            echo "     Passed: ${PYNEST_TEST_PASSED}"
-            echo "     Skipped: ${PYNEST_TEST_SKIPPED}"
-            echo "     Failed: ${PYNEST_TEST_FAILED}"
+        echo "  PyNEST tests: ${PYNEST_TEST_TOTAL}"
+        echo "     Passed: ${PYNEST_TEST_PASSED}"
+        echo "     Skipped: ${PYNEST_TEST_SKIPPED}"
+        echo "     Failed: ${PYNEST_TEST_FAILED}"
 
-            PYNEST_TEST_SKIPPED_TEXT="(${PYNEST_TEST_SKIPPED} PyNEST)"
-            PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
-	    
-        else
-	    echo "  Not running PyNEST tests because nosetests is unavailable."
-        fi
+        PYNEST_TEST_SKIPPED_TEXT="(${PYNEST_TEST_SKIPPED} PyNEST)"
+        PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
 
     else
 	echo "  Not running PyNEST tests because NEST was compiled without support"
@@ -607,7 +605,7 @@ phase_one
 phase_two
 phase_three
 phase_four
-#phase_five
+phase_five
 phase_six
 phase_seven
 phase_eight

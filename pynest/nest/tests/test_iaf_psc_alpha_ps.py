@@ -148,8 +148,8 @@ class IAFPreciseTestCase(unittest.TestCase):
         Ie = 370.
 
         ref = nest.Create("iaf_psc_alpha_canon", params={"I_e": Ie})
-        new = nest.Create("iaf_psc_alpha_ps", params={
-                          "I_e": Ie, "tau_syn_in": 5.})
+        new = nest.Create("iaf_psc_alpha_ps",
+                          params={"I_e": Ie, "tau_syn_in": 5.})
 
         espikes = nest.Create("spike_generator", params={"spike_times": [
                               10., 100., 500.], "spike_weights": [20.]*3})

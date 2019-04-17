@@ -330,7 +330,7 @@ nest::iaf_psc_alpha_ps::get_next_event_( const long T,
   bool& end_of_refract )
 {
   return B_.events_.get_next_spike(
-    T, true, ev_offset, ev_weight, end_of_refract );
+    T, false, ev_offset, ev_weight, end_of_refract );
 }
 
 void
@@ -457,7 +457,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin,
           }
           else
           {
-            S_.dI_in_ += V_.psc_norm_ex_ * ev_weight;
+            S_.dI_in_ += V_.psc_norm_in_ * ev_weight;
           } // inh. spike input
         }
 

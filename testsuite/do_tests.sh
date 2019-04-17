@@ -126,7 +126,6 @@ if test "${PYTHON}"; then
     fi
 
     NOSETESTS="$(command -v nosetests 2>&1)"
-    PYTHON_HARNESS="${PREFIX}/share/nest/extras/do_tests.py"
 
     export PYTHONPATH="$PYTHONPATH_:${PYTHONPATH:-}"
 fi
@@ -510,19 +509,16 @@ EOT
 }
 
 phase_seven() {
+    echo
+    echo "Phase 7: PyNEST tests."
+    echo "----------------------"
+
     if test ${PYTHON}; then
 
-        echo
-        echo "Phase 7: PyNEST tests."
-        echo "----------------------"
+	if test "${NOSETESTS}"; then
 
-        if "${NOSETESTS}" --where="${REPORTDIR}" >/dev/null 2>&1; then
-
-            echo
-            echo "  Using nosetests."
-            echo
-
-            "${NOSETESTS}" -v "${PREFIX}/share/nest/tests/python" 2>&1 \
+	    PYTESTDIR="${PREFIX}/share/nest/tests/python"
+            "${NOSETESTS}" -v --where="${REPORTDIR}" "${PYTESTDIR}" 2>&1 \
                 | tee -a "${TEST_LOGFILE}" \
                 | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" \
                 | sed 's/^/  /'
@@ -554,37 +550,20 @@ phase_seven() {
             PYNEST_TEST_FAILED=$(($PYNEST_TEST_ERRORS + $PYNEST_TEST_FAILURES))
             PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_SKIPPED - $PYNEST_TEST_FAILED))
 
+	    echo
+            echo "  PyNEST tests: ${PYNEST_TEST_TOTAL}"
+            echo "     Passed: ${PYNEST_TEST_PASSED}"
+            echo "     Skipped: ${PYNEST_TEST_SKIPPED}"
+            echo "     Failed: ${PYNEST_TEST_FAILED}"
+
+            PYNEST_TEST_SKIPPED_TEXT="(${PYNEST_TEST_SKIPPED} PyNEST)"
+            PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
+	    
         else
-
-            echo
-            echo "  Nosetests unavailable. Using fallback test harness."
-            echo "  Fewer tests will be excuted."
-            echo
-
-            "${PYTHON}" "${PYTHON_HARNESS}" >> "${TEST_LOGFILE}"
-
-            PYNEST_TEST_TOTAL="$(  cat pynest_test_numbers.log | cut -d' ' -f1 )"
-            PYNEST_TEST_PASSED="$( cat pynest_test_numbers.log | cut -d' ' -f2 )"
-            PYNEST_TEST_SKIPPED="$( cat pynest_test_numbers.log | cut -d' ' -f3 )"
-            PYNEST_TEST_FAILED="$( cat pynest_test_numbers.log | cut -d' ' -f4 )"
-
-            rm -f "pynest_test_numbers.log"
-
+	    echo "  Not running PyNEST tests because nosetests is unavailable."
         fi
 
-        echo
-        echo "  PyNEST tests: ${PYNEST_TEST_TOTAL}"
-        echo "     Passed: ${PYNEST_TEST_PASSED}"
-        echo "     Skipped: ${PYNEST_TEST_SKIPPED}"
-        echo "     Failed: ${PYNEST_TEST_FAILED}"
-
-        PYNEST_TEST_SKIPPED_TEXT="(${PYNEST_TEST_SKIPPED} PyNEST)"
-        PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
-
     else
-	echo
-	echo "Phase 7: PyNEST tests"
-	echo "---------------------"
 	echo "  Not running PyNEST tests because NEST was compiled without support"
 	echo "  for Python. See the file README.md for details."
     fi

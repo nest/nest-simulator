@@ -82,7 +82,6 @@ exclude_file_regex = [re.compile(pattern) for pattern in exclude_file_patterns]
 exclude_files = [
     'doc/copyright_header.cpp',
     'doc/copyright_header.py',
-    'do_tests.py',
     'libnestutil/config.h',
     'hashtable-common.h',
     'libc_allocator_with_realloc.h',

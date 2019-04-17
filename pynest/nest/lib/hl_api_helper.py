@@ -547,7 +547,8 @@ def model_deprecation_warning(model):
     """
 
     deprecated_models = {'subnet': 'GIDCollection',
-                         'aeif_cond_alpha_RK5': 'aeif_cond_alpha'}
+                         'aeif_cond_alpha_RK5': 'aeif_cond_alpha',
+                         'iaf_psc_alpha_canon': 'iaf_psc_alpha_ps'}
 
     if model in deprecated_models:
         text = "The {0} model is deprecated and will be removed in a \

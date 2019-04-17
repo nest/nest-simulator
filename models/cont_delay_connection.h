@@ -90,7 +90,7 @@ FirstVersion: June 2007
 
 Author: Abigail Morrison
 
-SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_canon
+SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_ps
 */
 template < typename targetidentifierT >
 class ContDelayConnection : public Connection< targetidentifierT >

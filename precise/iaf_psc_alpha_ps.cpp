@@ -224,11 +224,6 @@ nest::iaf_psc_alpha_ps::State_::set( const DictionaryDatum& d,
   {
     V_m_ -= delta_EL;
   }
-
-  updateValue< double >( d, names::I_syn_ex, I_ex_ );
-  updateValue< double >( d, names::I_syn_in, I_in_ );
-  updateValue< double >( d, names::dI_syn_ex, dI_ex_ );
-  updateValue< double >( d, names::dI_syn_in, dI_in_ );
 }
 
 nest::iaf_psc_alpha_ps::Buffers_::Buffers_( iaf_psc_alpha_ps& n )
@@ -278,10 +273,8 @@ nest::iaf_psc_alpha_ps::init_state_( const Node& proto )
 void
 nest::iaf_psc_alpha_ps::init_buffers_()
 {
-  B_.ex_spikes_.resize();
-  B_.ex_spikes_.clear();
-  B_.in_spikes_.resize();
-  B_.in_spikes_.clear();
+  B_.events_.resize();
+  B_.events_.clear();
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();
 
@@ -333,47 +326,11 @@ nest::iaf_psc_alpha_ps::calibrate()
 bool
 nest::iaf_psc_alpha_ps::get_next_event_( const long T,
   double& ev_offset,
-  double& ev_weight_ex,
-  double& ev_weight_in,
-  bool& in_spike,
-  bool& ex_spike,
+  double& ev_weight,
   bool& end_of_refract )
 {
-  double ev_offset_in( 0. ), ev_offset_ex( 0. );
-  bool end_of_refract_ex, end_of_refract_in;
-
-  in_spike = B_.in_spikes_.get_next_spike(
-    T, true, ev_offset_in, ev_weight_in, end_of_refract_in );
-
-  ex_spike = B_.ex_spikes_.get_next_spike(
-    T, true, ev_offset_ex, ev_weight_ex, end_of_refract_ex );
-
-  assert( end_of_refract_ex == end_of_refract_in );
-  end_of_refract = end_of_refract_ex;
-
-  bool has_spike = in_spike || ex_spike;
-
-  if ( in_spike && ex_spike )
-  {
-    if ( ev_offset_ex <= ev_offset_in )
-    {
-      ev_offset = ev_offset_ex;
-    }
-    else
-    {
-      ev_offset = ev_offset_in;
-    }
-  }
-  else if ( in_spike )
-  {
-    ev_offset = ev_offset_in;
-  }
-  else if ( ex_spike )
-  {
-    ev_offset = ev_offset_ex;
-  }
-
-  return has_spike;
+  return B_.events_.get_next_spike(
+    T, true, ev_offset, ev_weight, end_of_refract );
 }
 
 void
@@ -389,8 +346,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin,
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
   {
-    B_.ex_spikes_.prepare_delivery();
-    B_.in_spikes_.prepare_delivery();
+    B_.events_.prepare_delivery();
   }
 
   /* Neurons may have been initialized to superthreshold potentials.
@@ -413,8 +369,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin,
     if ( S_.is_refractory_
       && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
     {
-      B_.ex_spikes_.add_refractory( T, S_.last_spike_offset_ );
-      B_.in_spikes_.add_refractory( T, S_.last_spike_offset_ );
+      B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
 
     // save state at beginning of interval for spike-time interpolation
@@ -424,18 +379,11 @@ nest::iaf_psc_alpha_ps::update( Time const& origin,
     V_.V_m_before_ = S_.V_m_;
 
     // get first event
-    double ev_offset, ev_weight_in, ev_weight_ex;
-    bool in_spike, ex_spike, end_of_refract;
+    double ev_offset;
+    double ev_weight;
+    bool end_of_refract;
 
-    bool has_spike = get_next_event_( T,
-      ev_offset,
-      ev_weight_ex,
-      ev_weight_in,
-      in_spike,
-      ex_spike,
-      end_of_refract );
-
-    if ( not has_spike )
+    if ( not get_next_event_( T, ev_offset, ev_weight, end_of_refract ) )
     {
       // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
@@ -495,19 +443,23 @@ nest::iaf_psc_alpha_ps::update( Time const& origin,
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, ministep );
         }
 
+
         // handle event
         if ( end_of_refract )
         {
           S_.is_refractory_ = false;
         } // return from refractoriness
-        if ( ex_spike )
+        else
         {
-          S_.dI_ex_ += V_.psc_norm_ex_ * ev_weight_ex;
-        } // excitatory spike input
-        if ( in_spike )
-        {
-          S_.dI_in_ += V_.psc_norm_ex_ * ev_weight_in;
-        } // inhibitory spike input
+          if ( ev_weight >= 0.0 )
+          {
+            S_.dI_ex_ += V_.psc_norm_ex_ * ev_weight; // exc. spike input
+          }
+          else
+          {
+            S_.dI_in_ += V_.psc_norm_ex_ * ev_weight;
+          } // inh. spike input
+        }
 
         // store state
         V_.I_ex_before_ = S_.I_ex_;
@@ -515,13 +467,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin,
         V_.V_m_before_ = S_.V_m_;
         last_offset = ev_offset;
 
-      } while ( get_next_event_( T,
-        ev_offset,
-        ev_weight_ex,
-        ev_weight_in,
-        in_spike,
-        ex_spike,
-        end_of_refract ) );
+      } while ( get_next_event_( T, ev_offset, ev_weight, end_of_refract ) );
 
       // no events remaining, plain update step across remainder
       // of interval
@@ -559,24 +505,12 @@ nest::iaf_psc_alpha_ps::handle( SpikeEvent& e )
   */
   const long Tdeliver = e.get_stamp().get_steps() + e.get_delay_steps() - 1;
 
-  if ( e.get_weight() > 0.0 )
-  {
-    B_.ex_spikes_.add_spike(
-      e.get_rel_delivery_steps(
-        nest::kernel().simulation_manager.get_slice_origin() ),
-      Tdeliver,
-      e.get_offset(),
-      e.get_weight() * e.get_multiplicity() );
-  }
-  else
-  {
-    B_.in_spikes_.add_spike(
-      e.get_rel_delivery_steps(
-        nest::kernel().simulation_manager.get_slice_origin() ),
-      Tdeliver,
-      e.get_offset(),
-      e.get_weight() * e.get_multiplicity() );
-  }
+  B_.events_.add_spike(
+    e.get_rel_delivery_steps(
+      nest::kernel().simulation_manager.get_slice_origin() ),
+    Tdeliver,
+    e.get_offset(),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -696,7 +630,7 @@ nest::iaf_psc_alpha_ps::emit_instant_spike_( Time const& origin,
 
 // finds threshpassing
 inline double
-nest::iaf_psc_alpha_ps::thresh_find_( double const dt ) const
+nest::iaf_psc_alpha_ps::thresh_find_( const double dt ) const
 {
   switch ( P_.Interpol_ )
   {
@@ -716,16 +650,16 @@ nest::iaf_psc_alpha_ps::thresh_find_( double const dt ) const
 
 // finds threshpassing via linear interpolation
 double
-nest::iaf_psc_alpha_ps::thresh_find1_( double const dt ) const
+nest::iaf_psc_alpha_ps::thresh_find1_( const double dt ) const
 {
-  double tau =
+  const double tau =
     ( P_.U_th_ - V_.V_m_before_ ) * dt / ( S_.V_m_ - V_.V_m_before_ );
   return tau;
 }
 
 // finds threshpassing via quadratic interpolation
 double
-nest::iaf_psc_alpha_ps::thresh_find2_( double const dt ) const
+nest::iaf_psc_alpha_ps::thresh_find2_( const double dt ) const
 {
   const double h_sq = dt * dt;
   const double derivative = -V_.V_m_before_ / P_.tau_m_
@@ -755,7 +689,7 @@ nest::iaf_psc_alpha_ps::thresh_find2_( double const dt ) const
 }
 
 double
-nest::iaf_psc_alpha_ps::thresh_find3_( double const dt ) const
+nest::iaf_psc_alpha_ps::thresh_find3_( const double dt ) const
 {
   const double h_ms = dt;
   const double h_sq = h_ms * h_ms;

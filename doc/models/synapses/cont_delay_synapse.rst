@@ -97,7 +97,7 @@ cont\_delay\_synapse
 
 -  `synapsedict <../cc/synapsedict.html>`__
 -  `static\_synapse <../cc/static_synapse.html>`__
--  `iaf\_psc\_alpha\_canon <../cc/iaf_psc_alpha_canon.html>`__
+-  `iaf\_psc\_alpha\_ps <../cc/iaf_psc_alpha_ps.html>`__
 
 **Source:**
 ::

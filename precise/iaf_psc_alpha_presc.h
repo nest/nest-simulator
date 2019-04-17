@@ -108,7 +108,7 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso: iaf_psc_alpha, iaf_psc_alpha_canon, iaf_psc_delta_canon
+SeeAlso: iaf_psc_alpha, iaf_psc_alpha_ps, iaf_psc_delta_canon
 */
 class iaf_psc_alpha_presc : public Archiving_Node
 {

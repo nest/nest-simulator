@@ -69,7 +69,8 @@ __all__ = [
 # deprecated functions will be registered by the @deprecated decorator.
 _deprecation_warning = {'BackwardCompatibilityConnect': True,
                         'subnet': True,
-                        'aeif_cond_alpha_RK5': True}
+                        'aeif_cond_alpha_RK5': True,
+                        'iaf_psc_alpha_canon': True}
 
 
 def format_Warning(message, category, filename, lineno, line=None):

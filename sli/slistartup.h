@@ -48,7 +48,7 @@
 #define EXITCODE_FATAL 127
 
 // The range 200-215 is reserved for test skipping exitcodes. Any new codes must
-// also be added to testsuite/do_tests_sh.in.
+// also be added to testsuite/do_tests_sh.
 #define EXITCODE_SKIPPED 200
 #define EXITCODE_SKIPPED_NO_MPI 201
 #define EXITCODE_SKIPPED_HAVE_MPI 202

@@ -173,13 +173,13 @@ class IAFPreciseTestCase(unittest.TestCase):
         data_ref = nest.GetStatus(mm_ref, "events")[0]
         data_new = nest.GetStatus(mm_new, "events")[0]
 
-        # test before 500. (exc/inh spikes are separated => identical behaviors)
+        # test before 500. (ex/in spikes don't overlap => identical behaviors)
         before500 = data_new["times"] < 500.
 
         self.assertTrue(np.allclose(
             data_new["V_m"][before500], data_ref["V_m"][before500]))
 
-        # test after 500. (exc/inh spikes overlap => different behaviors)
+        # test after 500. (ex/in spikes overlap => different behaviors)
         self.assertFalse(np.allclose(
             data_new["V_m"][~before500], data_ref["V_m"][~before500]))
 

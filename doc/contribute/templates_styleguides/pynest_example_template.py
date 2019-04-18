@@ -51,7 +51,7 @@ population of neurons firing a Poisson spike train.
 Optimization is performed using the `bisection` method from Scipy,
 which simulates the network repeatedly.
 
-The aim  of this example script is to find a firing rate for the inhibitory
+The aim of this example script is to find a firing rate for the inhibitory
 population that will make the neuron fire at the same rate as the excitatory
 population.
 

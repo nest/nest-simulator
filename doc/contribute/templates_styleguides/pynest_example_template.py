@@ -75,7 +75,7 @@ configuration:
 
 [[ If applicable, mention the literature reference for this example.
    Note the syntax of the citation. And don't forget to add a "References"
-   section!]]
+   section! ]]
 
 This model used here corresponds to the formulation presented in
 Sander et al. [1]_ and the bisection method developed in

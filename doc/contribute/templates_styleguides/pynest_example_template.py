@@ -93,7 +93,7 @@ See Also
 Notes
 ------
 [[ Additional information can be included here regarding background theory,
-   relevant mathetmatical equations etc.]]
+   relevant mathematical equations etc. ]]
 
 The value of :math:`\omega` is X.
 For the population and time-averaged from the spiking simulation:

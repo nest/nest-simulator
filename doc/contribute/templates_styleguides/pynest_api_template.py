@@ -9,7 +9,7 @@
 
    Copy this file and replace the sample text with a description of the API.
    The double bracketed sections [[ ]], which provide explanations, should be
-   completel removed from your final version - Including this entire docstring!
+   completely removed from your final version - Including this entire docstring!
 
    ]]
 """

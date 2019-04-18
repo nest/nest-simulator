@@ -108,7 +108,7 @@ For the population and time-averaged from the spiking simulation:
  * bullet points are usually more easily read than paragraphs
 
 References
-------------
+----------
     [[ Note the format of the reference. No bold nor italics is used. Last name
        of author(s) followed by year, title in sentence case and full name of
        journal followed by volume and page range. Include the doi if

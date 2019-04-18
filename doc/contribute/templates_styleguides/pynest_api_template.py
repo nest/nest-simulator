@@ -89,7 +89,7 @@ def get.Connections(source=None, target=None, synape_model=None,
     Details on the connectivity. [[ Here details regarding the code or further
     explanations can be included. This section may include mathematical
     equations, written in LaTeX format. You can include references to relevant
-    papers using the reStructured format. Do not include model formulas ]]
+    papers using the reStructuredText syntax. Do not include model formulas ]]
 
     The discrete-time Fourier time-convolution [1]_ property states that
 

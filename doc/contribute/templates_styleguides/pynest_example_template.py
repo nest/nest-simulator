@@ -55,7 +55,7 @@ The aim of this example script is to find a firing rate for the inhibitory
 population that will make the neuron fire at the same rate as the excitatory
 population.
 
-[[ What kind of output is expected?]]
+[[ What kind of output is expected? ]]
 
 The output shows the target neuron's membrane potential as a function of time.
 

@@ -97,7 +97,7 @@ Notes
 
 The value of :math:`\omega` is X.
 For the population and time-averaged from the spiking simulation:
-[[ Note the syntax used for displaying equations uses reStructured text
+[[ Note the syntax used for displaying equations uses reStructuredText
    directive with LaTeX math formulae ]]
 
 .. math::

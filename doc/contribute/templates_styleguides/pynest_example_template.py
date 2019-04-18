@@ -44,7 +44,7 @@
 
 [[ Extended summary - a detailed explanation of your example. Try to answer the
    folowing questions. ]]
-[[ What does this script do? What is the purpose?]]
+[[ What does this script do? What is the purpose? ]]
 
 This script simulates a neuron by an excitatory and an inhibitory
 population of neurons firing a Poisson spike train.

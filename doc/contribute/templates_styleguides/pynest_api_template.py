@@ -5,7 +5,7 @@
    The format is based on `NumPy style docstring
    <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
    reStructuredText markup. Please review the syntax rules if you are
-   unfamiliar with either reStructured text or NumPy style docstrings.
+   unfamiliar with either reStructuredText or NumPy style docstrings.
 
    Copy this file and replace the sample text with a description of the API.
    The double bracketed sections [[ ]], which provide explanations, should be

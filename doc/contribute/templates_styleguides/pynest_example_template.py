@@ -1,4 +1,4 @@
-"""[[ This template demonstrates how to create an example python script for
+"""[[ This template demonstrates how to create an example Python script for
       NEST.
 
    The format is based on `NumPy style docstring

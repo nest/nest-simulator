@@ -48,7 +48,7 @@ def get.Connections(source=None, target=None, synape_model=None,
     synapse_label parameters is permitted.
 
     [[ Deprecation warnings should appear directly after a brief description.
-      It should state  what version the object was deprecated, when it will be
+      It should state in what version the object was deprecated, when it will be
       removed and what recommend way obtains the same functionality]]
 
     .. deprecated:: 1.6.0

@@ -61,7 +61,7 @@ The output shows the target neuron's membrane potential as a function of time.
 
 [[ Does this example have a real world application or use case?
   Are there particular applications or areas of research that would benefit
-  from this example?]]
+  from this example? ]]
 
 This model used here is applicable for neurorobotics, particularly cases of ...
 

@@ -41,7 +41,6 @@ def get.Connections(source=None, target=None, synape_model=None,
     [[ In a single 'summary line', state what the function does ]]
     [[ All functions should have a docstring with at least a summary line ]]
 
-
     [[ Below summary line (separated by new line), there should be an extended
        summary section that should be used to clarify functionality.]]
 

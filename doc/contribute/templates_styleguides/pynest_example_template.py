@@ -158,4 +158,4 @@ complete code ...
 ##############################################################################
 # Finally, we plot the target neuron's membrane potential as a function of time
 
-nest.voltage_trace.from_device(voltmeter)  # [[ end with output]]
+nest.voltage_trace.from_device(voltmeter)  # [[ end with output ]]

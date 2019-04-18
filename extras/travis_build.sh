@@ -56,6 +56,9 @@ if [ "$xPYTHON" = "1" ] ; then
    elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.4.4/include/python3.4m/"
    fi
+   if [[ $OSTYPE == darwin* ]]; then
+      CONFIGURE_PYTHON="-DPYTHON-LIBRARY= /usr/lib/libpython2.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python@2/2.7.16/Frameworks/Python.framework/Versions/2.7/include/python2.7"
+   fi
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
 fi
@@ -94,11 +97,15 @@ else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
 
-
 NEST_VPATH=build
 NEST_RESULT=result
-NEST_RESULT=$(readlink -f $NEST_RESULT)
+if [ "$(uname -s)" = 'Linux' ]; then
+    NEST_RESULT=$(readlink -f $NEST_RESULT)
+else
+    NEST_RESULT=$(greadlink -f $NEST_RESULT)
+fi
 
+echo $NEST_VPATH
 mkdir "$NEST_VPATH" "$NEST_RESULT"
 mkdir "$NEST_VPATH/reports"
 
@@ -205,26 +212,55 @@ fi  # End of Static code analysis.
 
 cd "$NEST_VPATH"
 cp ../examples/sli/nestrc.sli ~/.nestrc
+# Fix for the Open-mpi slot error when using Open-mpi>3.0
+if [[ "$OSTYPE" == "darwin"* ]] ; then
+    sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
+fi
 
 echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "MSGBLD0230: Configuring CMake."
-cmake \
-  -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
-  -Dwith-optimize=ON \
-  -Dwith-warning=ON \
-  -Dwith-boost=ON \
-  $CONFIGURE_THREADING \
-  $CONFIGURE_MPI \
-  $CONFIGURE_PYTHON \
-  $CONFIGURE_MUSIC \
-  $CONFIGURE_GSL \
-  $CONFIGURE_LTDL \
-  $CONFIGURE_READLINE \
-  $CONFIGURE_LIBNEUROSIM \
-  ..
+if [[ "$OSTYPE" == "darwin"* ]] ; then
+    cmake \
+      -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
+      -Dwith-optimize=ON \
+      -Dwith-warning=ON \
+      -Dwith-boost=OFF \
+      -DCMAKE_C_COMPILER=/usr/local/opt/gcc/bin/gcc-8 \
+      -DOpenMP_C_FLAGS="-fopenmp -I/usr/local/opt/libomp/include" \
+      -DOpenMP_C_LIB_NAMES="omp" \
+      -DOpenMP_omp_LIBRARY=/usr/local/opt/libomp \
+      -DCMAKE_CXX_COMPILER=/usr/local/opt/gcc/bin/g++-8 \
+      -DOpenMP_CXX_FLAGS="-fopenmp -I/usr/local/opt/libomp/include" \
+      -DOpenMP_CXX_LIB_NAMES="omp" \
+      -D_GLIBCXX_USE_CXX11_ABI=0 \
+      $CONFIGURE_THREADING \
+      $CONFIGURE_MPI \
+      $CONFIGURE_PYTHON \
+      $CONFIGURE_MUSIC \
+      $CONFIGURE_GSL \
+      $CONFIGURE_LTDL \
+      $CONFIGURE_READLINE \
+      $CONFIGURE_LIBNEUROSIM \
+      ..
+else
+    cmake \
+      -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
+      -Dwith-optimize=ON \
+      -Dwith-warning=ON \
+      -Dwith-boost=ON \
+      $CONFIGURE_THREADING \
+      $CONFIGURE_MPI \
+      $CONFIGURE_PYTHON \
+      $CONFIGURE_MUSIC \
+      $CONFIGURE_GSL \
+      $CONFIGURE_LTDL \
+      $CONFIGURE_READLINE \
+      $CONFIGURE_LIBNEUROSIM \
+      ..
+fi
 echo "MSGBLD0240: CMake configure completed."
 
 echo

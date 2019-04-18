@@ -36,7 +36,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Simulate a balanced neuron with the bisection method
+"""Simulate a balanced neuron with the bisection method
 ----------------------------------------------------------------
 [[ Titles should be one line and state what the example does.
   It should begin with a verb in the present tense and include type of model

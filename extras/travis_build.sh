@@ -225,7 +225,8 @@ fi  # End of Static code analysis.
 
 cd "$NEST_VPATH"
 cp ../examples/sli/nestrc.sli ~/.nestrc
-# Fix for the Open-mpi slot error when using Open-mpi>3.0
+# Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
+# Not having this in place leads to a "not enough slots available" error.
 if [[ "$OSTYPE" == "darwin"* ]] ; then
     sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
 fi

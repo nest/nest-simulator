@@ -57,10 +57,10 @@ BOOST_AUTO_TEST_CASE( test_target_object_type_constructor )
   std::srand( time( nullptr ) );
   for ( int i = 0; i < NUM_TEST_TRIALS; ++i )
   {
-    const thread tid = std::rand() % ( Target::MAX_TID + 1 );
-    const thread rank = std::rand() % ( Target::MAX_RANK + 1 );
-    const synindex syn_id = std::rand() % ( Target::MAX_SYN_ID + 1 );
-    const index lcid = std::rand() % ( Target::MAX_LCID + 1 );
+    const thread tid = std::rand() % ( MAX_TID + 1 );
+    const thread rank = std::rand() % ( MAX_RANK + 1 );
+    const synindex syn_id = std::rand() % ( MAX_SYN_ID + 1 );
+    const index lcid = std::rand() % ( MAX_LCID + 1 );
 
     Target target_id_testInit( tid, rank, syn_id, lcid );
 
@@ -78,10 +78,10 @@ BOOST_AUTO_TEST_CASE( test_target_object_type_set_get )
   Target target_id_testSetGet;
   for ( int i = 0; i < NUM_TEST_TRIALS; ++i )
   {
-    const thread tid = std::rand() % ( Target::MAX_TID + 1 );
-    const thread rank = std::rand() % ( Target::MAX_RANK + 1 );
-    const synindex syn_id = std::rand() % ( Target::MAX_SYN_ID + 1 );
-    const index lcid = std::rand() % ( Target::MAX_LCID + 1 );
+    const thread tid = std::rand() % ( MAX_TID + 1 );
+    const thread rank = std::rand() % ( MAX_RANK + 1 );
+    const synindex syn_id = std::rand() % ( MAX_SYN_ID + 1 );
+    const index lcid = std::rand() % ( MAX_LCID + 1 );
 
     enum_status_target_id status_target_id = TARGET_ID_UNPROCESSED;
     if ( static_cast< bool >( std::rand() % 2 ) )

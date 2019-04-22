@@ -20,23 +20,33 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-'''
-Population rate model of generalized integrate-and-fire neurons
-===============================================================
+"""Population rate model of generalized integrate-and-fire neurons
+--------------------------------------------------------------------
 
-This script simulates a finite network of generalized
-integrate-and-fire (GIF) neurons directly on the mesoscopic
-population level using the effective stochastic population rate
-dynamics derived in the paper [Schwalger et al. PLoS Comput
-Biol. 2017]. The stochastic population dynamics is implemented in
-the NEST model gif_pop_psc_exp. We demonstrate this model using the
-example of a Brunel network of two coupled populations, one excitatory
-and one inhibitory population.
+This script simulates a finite network of generalized integrate-and-fire
+(GIF) neurons directly on the mesoscopic population level using the effective
+stochastic population rate dynamics derived in the paper [1]. The stochastic
+population dynamics is implemented in the NEST model gif_pop_psc_exp. We
+demonstrate this model using the example of a Brunel network of two coupled
+populations, one excitatory and one inhibitory population.
 
 Note that the population model represents the mesoscopic level
 description of the corresponding microscopic network based on the
 NEST model gif_psc_exp.
-'''
+
+References
+~~~~~~~~~~~
+
+.. [1] Schwalger et al. PLoS Comput Biol. 2017
+
+
+See Also
+~~~~~~~~~~
+
+:Authors:
+
+KEYWORDS:
+"""
 
 
 # Loading the necessary modules:
@@ -45,9 +55,9 @@ import matplotlib.pyplot as plt
 import nest
 
 
-'''
-We first set the parameters of the microscopic model:
-'''
+###############################################################################
+# We first set the parameters of the microscopic model:
+
 
 # all times given in milliseconds
 dt = 0.5
@@ -102,17 +112,16 @@ tstep = np.array([[1500.], [1500.]])  # times of jumps
 tau_ex = 3.  # in ms
 tau_in = 6.  # in ms
 
-'''
-Simulation on the mesoscopic level
-----------------------------------
+###############################################################################
+# Simulation on the mesoscopic level
+# ----------------------------------
+#
+# To directly simulate the mesoscopic population activities (i.e. generating
+# the activity of a finite-size population without simulating single
+# neurons), we can build the populations using the NEST model
+# gif_pop_psc_exp:
 
-To directly simulate the mesoscopic population activities
-(i.e. generating the activity of a finite-size population without
-simulating single neurons), we can build the populations using the
-NEST model gif_pop_psc_exp:
-'''
-
-nest.hl_api.set_verbosity("M_WARNING")
+nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
 nest.SetKernelStatus(
     {'resolution': dt, 'print_time': True, 'local_num_threads': 1})
@@ -153,11 +162,9 @@ for i, nest_i in enumerate(nest_pops):
             'delay': delay[i, j]})
         nest.Connect([nest_j], [nest_i], 'all_to_all')
 
-'''
-To record the instantaneous population rate Abar(t) we use a
-multimeter, and to get the population activity A_N(t) we use spike
-detector:
-'''
+###############################################################################
+# To record the instantaneous population rate Abar(t) we use a multimeter,
+# and to get the population activity A_N(t) we use spike detector:
 
 # monitor the output using a multimeter, this only records with dt_rec!
 nest_mm = nest.Create('multimeter')
@@ -178,9 +185,9 @@ for i, nest_i in enumerate(nest_pops):
                                         'delay': dt})
     nest.Connect([nest_pops[i]], nest_sd[i], 'all_to_all')
 
-'''
-All neurons in a given population will be stimulated with a step input current:
-'''
+###############################################################################
+# All neurons in a given population will be stimulated with a step input
+# current:
 
 # set initial value (at t0+dt) of step current generator to zero
 tstep = np.hstack((dt * np.ones((M, 1)), tstep))
@@ -198,9 +205,8 @@ for i in range(M):
         pop_ = [pop_]
     nest.Connect([nest_stepcurrent[i]], pop_, syn_spec={'weight': 1.})
 
-'''
-We can now start the simulation:
-'''
+###############################################################################
+# We can now start the simulation:
 
 local_num_threads = 1
 seed = 1
@@ -226,9 +232,8 @@ for i, nest_i in enumerate(nest_pops):
     A = np.histogram(data_sd, bins=bins)[0] / float(N[i]) / dt_rec
     A_N[:, i] = A
 
-'''
-and plot the activity:
-'''
+###############################################################################
+# and plot the activity:
 
 plt.figure(1)
 plt.clf()
@@ -241,18 +246,15 @@ plt.plot(t, Abar * 1000)  # plot instantaneous population rates (in Hz)
 plt.ylabel(r'$\bar A$ [Hz]')
 plt.xlabel('time [ms]')
 
-
-'''
-Microscopic ("direct") simulation
----------------------------------
-
-As mentioned above, the population model gif_pop_psc_exp directly
-simulates the mesoscopic population activities, i.e. without the
-need to simulate single neurons. On the other hand, if we want to
-know single neuron activities, we must simulate on the microscopic
-level. This is possible by building a corresponding network of
-gif_psc_exp neuron models:
-'''
+###############################################################################
+# Microscopic ("direct") simulation
+# ----------------------------------
+#
+# As mentioned above, the population model gif_pop_psc_exp directly
+# simulates the mesoscopic population activities, i.e. without the need to
+#  simulate single neurons. On the other hand, if we want to know single
+# neuron activities, we must simulate on the microscopic #level. This is
+# possible by building a corresponding network of gif_psc_exp neuron models:
 
 nest.ResetKernel()
 nest.SetKernelStatus(
@@ -300,12 +302,10 @@ for i, nest_i in enumerate(nest_pops):
 
         nest.Connect(nest_j, nest_i, conn_spec)
 
-'''
-We want to record all spikes of each population in order to compute
-the mesoscopic population activities A_N(t) from the microscopic
-simulation. We also record the membrane potentials of five example
-neurons:
-'''
+###############################################################################
+# We want to record all spikes of each population in order to compute the
+# mesoscopic population activities A_N(t) from the microscopic simulation.
+# We also record the membrane potentials of five example neurons:
 
 # monitor the output using a multimeter and a spike detector
 nest_sd = []
@@ -329,11 +329,10 @@ for i, nest_i in enumerate(nest_pops):
     nest.Connect(nest_mm_Vm[i], list(
         np.array(nest_pops[i])[:Nrecord[i]]), 'all_to_all')
 
-'''
-As before, all neurons in a given population will be stimulated with
-a step input current. The following code block is identical to the
-one for the mesoscopic simulation above:
-'''
+###############################################################################
+# As before, all neurons in a given population will be stimulated with a
+# step input current. The following code block is identical to the one for
+# the mesoscopic simulation above:
 
 # create the step current devices if they do not exist already
 nest_stepcurrent = nest.Create('step_current_generator', M)
@@ -348,9 +347,8 @@ for i in range(M):
         pop_ = [pop_]
     nest.Connect([nest_stepcurrent[i]], pop_, syn_spec={'weight': 1.})
 
-'''
-We can now start the microscopic simulation:
-'''
+###############################################################################
+# We can now start the microscopic simulation:
 
 local_num_threads = 1
 seed = 1
@@ -363,10 +361,9 @@ A_N = np.ones((t.size, M)) * np.nan
 # simulate 1 step longer to make sure all t are simulated
 nest.Simulate(t_end + dt)
 
-'''
-Let's retrieve the data of the spike detector and plot the activity
-of the excitatory population (in Hz):
-'''
+###############################################################################
+# Let's retrieve the data of the spike detector and plot the activity of the
+#  excitatory population (in Hz):
 
 for i, nest_i in enumerate(nest_pops):
     data_sd = nest.GetStatus(
@@ -382,13 +379,12 @@ plt.xlabel('time [ms]')
 plt.ylabel('population activity [Hz]')
 plt.title('Population activities (microscopic sim.)')
 
-'''
-This should look similar to the population activity obtained from the
-mesoscopic simulation based on the NEST model gif_pop_psc_exp (cf. figure 1).
-Now we retrieve the data of the multimeter, which allows us to look at the
-membrane potentials of single neurons. Here we plot the voltage traces (in mV)
-of five example neurons:
-'''
+###############################################################################
+# This should look similar to the population activity obtained from the
+# mesoscopic simulation based on the NEST model gif_pop_psc_exp (cf. figure
+# 1). Now we retrieve the data of the multimeter, which allows us to look at
+# the membrane potentials of single neurons. Here we plot the voltage traces
+# (in mV) of five example neurons:
 
 voltage = []
 for i in range(M):
@@ -409,9 +405,8 @@ axarr[i].set_xlabel('time [ms]')
 axarr[2].set_ylabel('membrane potential [mV]')
 axarr[0].set_title('5 example GIF neurons (microscopic sim.)')
 
-'''
-Note that this plots only the subthreshold membrane potentials but not the
-spikes (as with every leaky integrate-and-fire model).
-'''
+###############################################################################
+# Note that this plots only the subthreshold membrane potentials but not the
+#  spikes (as with every leaky integrate-and-fire model).
 
 plt.show()

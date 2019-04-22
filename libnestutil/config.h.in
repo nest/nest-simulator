@@ -22,10 +22,10 @@
 
 #ifndef CONFIG_H
 #define CONFIG_H
-/* 
+/*
     Configuration header.
     config.h is automatically generated from config.h.in
-    during the configuration process. 
+    during the configuration process.
 
     Please make all changes in config.h.in.
 */
@@ -112,6 +112,9 @@
 /* MPI is available. */
 #cmakedefine HAVE_MPI 1
 
+/* Boost is available. */
+#cmakedefine HAVE_BOOST 1
+
 /* MUSIC support enabled? */
 #cmakedefine HAVE_MUSIC 1
 
@@ -174,5 +177,10 @@
 
 /* Use PS array construction semantics */
 #cmakedefine PS_ARRAYS 1
+
+/* Bit counts for Target members */
+#define TARGET_BITS_SPLIT @TARGET_BITS_SPLIT@
+#define TARGET_BITS_SPLIT_STANDARD 0
+#define TARGET_BITS_SPLIT_HPC 1
 
 #endif // #ifndef CONFIG_H

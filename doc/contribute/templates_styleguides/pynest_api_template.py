@@ -30,10 +30,12 @@
 
    Copy this file and replace the sample text with a description of the API.
    The double bracketed sections [[ ]], which provide explanations, should be
-   completely removed from your final version - Including this entire docstring!
+   completely removed from your final version - Including this entire 
+   docstring!
 
    ]]
 """
+
 
 def get.Connections(source=None, target=None, synape_model=None,
                     synapse_label=None):
@@ -48,8 +50,8 @@ def get.Connections(source=None, target=None, synape_model=None,
     synapse_label parameters is permitted.
 
     [[ Deprecation warnings should appear directly after a brief description.
-      It should state in what version the object was deprecated, when it will be
-      removed and what recommend way obtains the same functionality]]
+      It should state in what version the object was deprecated, when it will 
+      be removed and what recommend way obtains the same functionality]]
 
     .. deprecated:: 1.6.0
 

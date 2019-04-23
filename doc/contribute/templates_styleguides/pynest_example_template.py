@@ -1,20 +1,3 @@
-"""[[ This template demonstrates how to create an example Python script for
-      NEST.
-
-   The format is based on `NumPy style docstring
-   <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
-   reStructuredText markup. Please review the syntax rules if you are
-   unfamiliar with either reStructuredText or NumPy style docstrings.
-
-   Copy this file and replace the sample text with a description of your
-   script.
-   The double bracketed sections [[ ]], which provide explanations, should be
-   completely removed from your final version - Including this entire
-   docstring!
-
-   Your script should contain a complete code-block that begins with all
-   necessary imports and ends with code that displays the output.]]
-"""
 # -*- coding: utf-8 -*-
 #
 # pynest_example_template.py
@@ -35,6 +18,24 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+"""[[ This template demonstrates how to create an example Python script for
+      NEST.
+
+   The format is based on `NumPy style docstring
+   <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
+   reStructuredText markup. Please review the syntax rules if you are
+   unfamiliar with either reStructuredText or NumPy style docstrings.
+
+   Copy this file and replace the sample text with a description of your
+   script.
+   The double bracketed sections [[ ]], which provide explanations, should be
+   completely removed from your final version - Including this entire
+   docstring!
+
+   Your script should contain a complete code-block that begins with all
+   necessary imports and ends with code that displays the output.]]
+"""
 
 """Simulate a balanced neuron with the bisection method
 ----------------------------------------------------------------

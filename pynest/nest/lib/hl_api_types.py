@@ -504,7 +504,6 @@ class ConnectomeIterator(object):
     def __next__(self):
         return Connectome(next(self._iter))
 
-
     next = __next__  # Python2.x
 
 
@@ -612,7 +611,7 @@ class Connectome(object):
         Return iterator containing the source gids of the connectome.
         """
         return iter(self.get('source'))
-    
+
     def target(self):
         """
         Return iterator containing the target gids of the connectome.

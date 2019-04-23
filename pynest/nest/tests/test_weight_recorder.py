@@ -231,7 +231,7 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         conn = nest.GetConnections(pre, post)
         conn_dict = conn.get(['source', 'target', 'port'])
-        
+
         connections = list(zip(conn_dict['source'], conn_dict['target'],
                                conn_dict['port']))
 

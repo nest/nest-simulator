@@ -68,7 +68,7 @@ option( static-libraries "Build static executable and libraries. [default=OFF]" 
 set( with-optimize ON CACHE STRING "Enable user defined optimizations. [default ON, when ON, defaults to '-O2']" )
 set( with-warning ON CACHE STRING "Enable user defined warnings. [default ON, when ON, defaults to '-Wall']" )
 set( with-debug OFF CACHE STRING "Enable user defined debug flags. [default OFF, when ON, defaults to '-g']" )
-set( with-intel-flags OFF CACHE STRING "User defined flags for the Intel compiler. [defaults to '-fp-model strict']" )
+set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Intel compiler. [defaults to '-fp-model strict']" )
 set( with-libraries OFF CACHE STRING "Link additional libraries. Give full path. Separate multiple libraries by ';'. [default OFF]" )
 set( with-includes OFF CACHE STRING "Add additional include paths. Give full path without '-I'. Separate multiple include paths by ';'. [default OFF]" )
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1'. Separate multiple defines by ';'. [default OFF]" )

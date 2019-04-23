@@ -93,7 +93,7 @@ Change compilation behavior::
     -Dwith-debug=[OFF|ON|<list;of;flags>]     Enable user defined debug flags. Separate
                                               multiple flags by ';'.
                                               [default OFF, when ON, defaults to '-g']
-    -Dwith-intel-flags=[<list;of;flags>]      User defined flags for the Intel compiler.
+    -Dwith-intel-compiler-flags=[<list;of;flags>]      User defined flags for the Intel compiler.
                                               Separate multiple flags by ';'.
                                               [defaults to '-fp-model strict']
     -Dwith-libraries=<list;of;libraries>      Link additional libraries. Give full path.
@@ -219,4 +219,4 @@ When compiling with the *Intel* compiler:
   numerics, the ``-fp-model strict`` flag is used by default, but can be
   overridden with ::
 
-      -Dwith-intel-flags="<intel-flags>"
+      -Dwith-intel-compiler-flags="<intel-flags>"

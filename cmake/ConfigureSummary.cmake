@@ -162,8 +162,8 @@ function( NEST_PRINT_CONFIG_SUMMARY )
 
   message( "" )
 
-  if ( with-intel-flags AND NOT ("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel") )
-    message( "You have specified flags for the Intel compiler (-Dwith-intel-flags)," )
+  if ( with-intel-compiler-flags AND NOT ("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel") )
+    message( "You have specified flags for the Intel compiler (-Dwith-intel-compiler-flags)," )
     message( "but the Intel compiler is not used. These flags are therefore ignored." )
     message( "" )
   endif ()

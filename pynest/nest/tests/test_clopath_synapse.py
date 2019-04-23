@@ -38,7 +38,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
     def test_ConnectNeuronsWithClopathSynapse(self):
         """Ensures that the restriction to supported neuron models works."""
 
-        nest.hl_api.set_verbosity('M_WARNING')
+        nest.set_verbosity('M_WARNING')
 
         # Specify supported models
         supported_models = [
@@ -73,7 +73,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
     def test_SynapseDepressionFacilitation(self):
         """Ensure that depression and facilitation work correctly"""
 
-        nest.hl_api.set_verbosity('M_WARNING')
+        nest.set_verbosity('M_WARNING')
 
         # This is done using the spike pairing experiment of
         # Clopath et al. 2010. First we specify the parameters
@@ -162,7 +162,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
 
                 # Create Clopath synapse with weight recorder
                 nest.CopyModel("clopath_synapse", "clopath_synapse_rec",
-                               {"weight_recorder": wr.get('global_id')})
+                               {"weight_recorder": wr})
+
                 syn_dict = {"model": "clopath_synapse_rec",
                             "weight": init_w, "delay": resolution}
                 nest.Connect(prrt_nrn, nrn, syn_spec=syn_dict)
@@ -192,7 +193,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
     def test_SynapseFunctionWithAeifModel(self):
         """Ensure that spikes are properly processed"""
 
-        nest.hl_api.set_verbosity('M_WARNING')
+        nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
 
         # Create neurons and devices

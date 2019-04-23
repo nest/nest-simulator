@@ -34,7 +34,7 @@ class TestIssue578():
 
     def test_targets(self):
         nest.ResetKernel()
-        nest.hl_api.set_verbosity('M_ALL')
+        nest.set_verbosity('M_ALL')
         # Testing with 2 MPI processes
         nest.SetKernelStatus(
             {
@@ -45,8 +45,7 @@ class TestIssue578():
         # Update the SP interval
         nest.EnableStructuralPlasticity()
         nest.SetStructuralPlasticityStatus({
-            'structural_plasticity_update_interval':
-            100,
+            'structural_plasticity_update_interval': 1000.,
         })
 
         growth_curve = {

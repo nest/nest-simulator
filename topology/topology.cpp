@@ -389,6 +389,8 @@ connect_layers( GIDCollectionPTR source_gc,
   GIDCollectionPTR target_gc,
   const DictionaryDatum& connection_dict )
 {
+  kernel().connection_manager.set_have_connections_changed( true );
+
   AbstractLayerPTR source = get_layer( source_gc );
   AbstractLayerPTR target = get_layer( target_gc );
 

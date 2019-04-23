@@ -36,7 +36,7 @@ class StepRateGeneratorTestCase(unittest.TestCase):
 
         rates = np.array([400.0, 1000.0, 200.0])
 
-        nest.hl_api.set_verbosity('M_WARNING')
+        nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
         nest.SetKernelStatus(
             {'resolution': 0.1, 'use_wfr': False, 'print_time': False})

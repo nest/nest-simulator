@@ -42,30 +42,12 @@ __all__ = [
     '_get_hierarchical_addressing',
     '_get_params_is_strings',
     '_restructure_data',
-    '_serialize',
     'Connectome',
     'GIDCollection',
     'GIDCollectionIterator',
     'Mask',
     'Parameter',
 ]
-
-
-def _serialize(data):
-    """
-    Serialize the output data of Collections or Connectomes for JSON.
-    """
-
-    if type(data) in [list, tuple, numpy.ndarray]:
-        return [_serialize(d) for d in data]
-
-    elif isinstance(data, dict):
-        return dict([(key, _serialize(value)) for key, value in data.items()])
-
-    elif isinstance(data, kernel.SLILiteral):
-        return data.name
-
-    return data
 
 
 def _restructure_data(result, keys):
@@ -436,7 +418,7 @@ class GIDCollection(object):
                 result = {key: [val] for key, val in result.items()}
             result = pandas.DataFrame(result, index=index)
         elif output == 'json':
-            result = _serialize(result)
+            result = to_json(result)
 
         return result
 
@@ -503,6 +485,9 @@ class GIDCollection(object):
                 "len(nodes)")
 
         sli_func('SetStatus', self._datum, params)
+
+    def tolist(self):
+        return list(self)
 
 
 class ConnectomeIterator(object):
@@ -701,7 +686,7 @@ class Connectome(object):
                 final_result = {keys: final_result}
             final_result = pandas.DataFrame(final_result, index=index)
         elif output == 'json':
-            final_result = _serialize(final_result)
+            final_result = to_json(final_result)
 
         return final_result
 

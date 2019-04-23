@@ -59,7 +59,7 @@ print_vector( const std::vector< T >& vec )
 
 SPManager::SPManager()
   : ManagerInterface()
-  , structural_plasticity_update_interval_( 1000 )
+  , structural_plasticity_update_interval_( 10000. )
   , structural_plasticity_enabled_( false )
   , sp_conn_builders_()
   , growthcurvedict_( new Dictionary() )
@@ -75,7 +75,7 @@ SPManager::~SPManager()
 void
 SPManager::initialize()
 {
-  structural_plasticity_update_interval_ = 1000;
+  structural_plasticity_update_interval_ = 10000.;
   structural_plasticity_enabled_ = false;
 }
 
@@ -122,7 +122,7 @@ SPManager::get_status( DictionaryDatum& d )
     def< DictionaryDatum >( sp_synapses, syn_name.str(), sp_synapse );
   }
 
-  def< long >( d,
+  def< double >( d,
     names::structural_plasticity_update_interval,
     structural_plasticity_update_interval_ );
 }
@@ -137,7 +137,7 @@ SPManager::set_status( const DictionaryDatum& d )
 {
   if ( d->known( names::structural_plasticity_update_interval ) )
   {
-    updateValue< long >( d,
+    updateValue< double >( d,
       names::structural_plasticity_update_interval,
       structural_plasticity_update_interval_ );
   }

@@ -680,6 +680,10 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
    Name: ResetNetwork - Reset the dynamic state of the network.
    Synopsis: ResetNetwork -> -
    Description:
+
+   ResetNetwork is deprecated as of NEST 2.18 and will be removed in NEST 3.0,
+   because it cannot be implemented in an efficient and consistent way.
+
    ResetNetwork resets the dynamic state of the entire network to its state
    at T=0. The dynamic state comprises typically the membrane potential,
    synaptic currents, buffers holding input that has been delivered, but not

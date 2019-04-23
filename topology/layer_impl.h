@@ -28,6 +28,7 @@
 // Includes from nestkernel:
 #include "gid_collection.h"
 #include "nest_datums.h"
+#include "booldatum.h"
 
 // Includes from topology:
 #include "grid_layer.h"

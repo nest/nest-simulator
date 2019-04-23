@@ -36,7 +36,7 @@ import pylab
 
 
 nest.ResetKernel()
-nest.hl_api.set_verbosity('M_WARNING')
+nest.set_verbosity('M_WARNING')
 
 # create two test layers
 a = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],

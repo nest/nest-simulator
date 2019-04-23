@@ -152,7 +152,7 @@ spike\_generator
       as spike_times; mostly for debugging  
        
       precise_times   bool   - see above  
-      allow_offgrid_spikes bool   - see above  
+      allow_offgrid_times  bool   - see above  
       shift_now_spikes     bool   - see above  
        
       

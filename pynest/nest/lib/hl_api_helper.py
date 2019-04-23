@@ -64,10 +64,11 @@ __all__ = [
     'uni_str',
 ]
 
-
-# These flags are used to print deprecation warnings only once. The
-# corresponding functions will be removed in a future release of NEST.
-_deprecation_warning = {'BackwardCompatibilityConnect': True, 'subnet': True,
+# These flags are used to print deprecation warnings only once.
+# Only flags for special cases need to be entered here, all flags for
+# deprecated functions will be registered by the @deprecated decorator.
+_deprecation_warning = {'BackwardCompatibilityConnect': True,
+                        'subnet': True,
                         'aeif_cond_alpha_RK5': True}
 
 
@@ -75,6 +76,7 @@ def format_Warning(message, category, filename, lineno, line=None):
     """Formats deprecation warning."""
 
     return '%s:%s: %s:%s\n' % (filename, lineno, category.__name__, message)
+
 
 warnings.formatwarning = format_Warning
 
@@ -116,9 +118,7 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
             alt_func_name = 'Connect'
         if text is None:
             text = "{0} is deprecated and will be removed in a future \
-            version of NEST.\nPlease use {1} instead!\n\
-            For details, see\
-            http://www.nest-simulator.org/connection_management\
+            version of NEST.\nPlease use {1} instead!\
             ".format(func_name, alt_func_name)
             text = get_wrapped_text(text)
 
@@ -136,7 +136,7 @@ def deprecated(alt_func_name, text=None):
     Parameters
     ----------
     alt_func_name : str, optional
-        Name of the function to use instead
+        Name of the function to use instead, may be empty string
     text : str, optional
         Text to display instead of standard text
 
@@ -171,7 +171,6 @@ def get_unistring_type():
     if sys.version_info[0] < 3:
         return basestring
     return str
-
 
 uni_str = get_unistring_type()
 
@@ -570,12 +569,16 @@ def serializable(data):
     result : str, int, float, list, dict
 
     """
+    try:
+        # Numpy array and GIDCollection can be converted to list
+        result = data.tolist()
+        return result
+    except AttributeError:
+        # Not able to inherently convert to list
+        pass
 
     if isinstance(data, kernel.SLILiteral):
         result = data.name
-
-    elif isinstance(data, numpy.ndarray):
-        result = data.tolist()
 
     elif type(data) in [list, tuple]:
         result = [serializable(d) for d in data]
@@ -583,7 +586,6 @@ def serializable(data):
     elif isinstance(data, dict):
         result = dict([(key, serializable(value))
                        for key, value in data.items()])
-
     else:
         result = data
 

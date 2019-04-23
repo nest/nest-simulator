@@ -508,27 +508,17 @@ class GIDCollection(object):
 class ConnectomeIterator(object):
     """
     Iterator class for Connectome.
-    Returns list with source, target.
     """
 
     def __init__(self, conn):
-        self._connectome = conn
-        self._counter = 0
-        self._source = self._connectome.get('source')
-        self._target = self._connectome.get('target')
+        self._iter = iter(conn._datum)
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        if self._counter >= len(self._connectome):
-            raise StopIteration
+        return Connectome(next(self._iter))
 
-        conn = self._connectome[self._counter]
-        #conn = [self._source[self._counter], self._target[self._counter]]
-        self._counter += 1
-
-        return conn
 
     next = __next__  # Python2.x
 
@@ -631,6 +621,18 @@ class Connectome(object):
         result = (borderline_s + '\n' + source + '\n' + borderline_m + '\n' +
                   target + '\n' + borderline_t)
         return result
+
+    def source(self):
+        """
+        Return iterator containing the source gids of the connectome.
+        """
+        return iter(self.get('source'))
+    
+    def target(self):
+        """
+        Return iterator containing the target gids of the connectome.
+        """
+        return iter(self.get('target'))
 
     def get(self, keys=None, output=''):
         """

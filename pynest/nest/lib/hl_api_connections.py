@@ -122,7 +122,8 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
 
 @check_stack
-def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
+def Connect(pre, post, conn_spec=None, syn_spec=None, model=None,
+            return_connectome=False):
     """
     Connect pre nodes to post nodes.
 
@@ -142,6 +143,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
         Specifies synapse model, see below
     model : str or dict, optional
         alias for syn_spec for backward compatibility
+    return_connectome: bool
+        Specifies whether or not we should return a connectome of pre and post
 
     Raises
     ------
@@ -381,6 +384,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                 "syn_spec needs to be a string or dictionary.")
 
     sr('Connect')
+    
+    if return_connectome:
+        return GetConnections(pre, post)
 
 
 @check_stack

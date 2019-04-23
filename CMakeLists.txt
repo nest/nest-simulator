@@ -146,7 +146,7 @@ nest_set_default_compiler_flags()
 # Process the command line arguments
 nest_process_with_optimize()
 nest_process_with_debug()
-nest_process_with_intel_flags()
+nest_process_with_intel_compiler_flags()
 nest_process_with_warning()
 nest_process_with_libraries()
 nest_process_with_includes()

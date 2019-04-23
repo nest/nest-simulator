@@ -44,7 +44,7 @@ function( NEST_PROCESS_WITH_DEBUG )
   endif ()
 endfunction()
 
-function( NEST_PROCESS_WITH_INTEL_FLAGS )
+function( NEST_PROCESS_WITH_INTEL_COMPILER_FLAGS )
   if ( NOT with-intel-compiler-flags )
     set( with-intel-compiler-flags "-fp-model strict" )
   endif ()

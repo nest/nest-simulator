@@ -43,6 +43,20 @@ def makeMatrix(sources, targets, weights):
     return aa
 
 
+def plotMatrix(srcs, tgts, weights, title, pos):
+    """
+    Plots weight matrix.
+    """
+    plt.subplot(pos)
+    plt.matshow(makeMatrix(srcs, tgts, weights), fignum=False)
+    plt.xlim([min(tgts)-0.5, max(tgts)+0.5])
+    plt.xlabel('target')
+    plt.ylim([max(srcs)+0.5, min(srcs)-0.5])
+    plt.ylabel('source')
+    plt.title(title)
+    plt.colorbar(fraction=0.046, pad=0.04)
+
+
 """
 Start with a simple, one_to_one example.
 We create the neurons, connect them, and get the connections. From this we can
@@ -55,22 +69,15 @@ nrns = nest.Create('iaf_psc_alpha', 10)
 
 nest.Connect(nrns, nrns, 'one_to_one')
 conns = nest.GetConnections(nrns, nrns)  # This returns a Connectome
-# We can get desired information of the Connectome with simple get() calls.
+# We can get desired information of the Connectome with simple get() call.
 g = conns.get(['source', 'target', 'weight'])
 srcs = g['source']
 tgts = g['target']
-wghts = g['weight']
+weights = g['weight']
 
 # Plot the matrix consisting of the weights between the sources and targets
 plt.figure(figsize=(12, 10))
-plt.subplot(121)
-plt.matshow(makeMatrix(srcs, tgts, wghts), fignum=False)
-plt.xlim([min(tgts)-0.5, max(tgts)+0.5])
-plt.xlabel('target')
-plt.ylim([max(srcs)+0.5, min(srcs)-0.5])
-plt.ylabel('source')
-plt.title('Uniform weight')
-plt.colorbar(fraction=0.046, pad=0.04)
+plotMatrix(srcs, tgts, weights, 'Uniform weight', 121)
 
 """
 Add some weights to the connections, and plot the updated weight matrix.
@@ -78,16 +85,9 @@ Add some weights to the connections, and plot the updated weight matrix.
 # We can set data of the connections with a simple set() call.
 w = [{'weight': x*1.0} for x in range(1, 11)]
 conns.set(w)
-wghts = conns.get('weight')
+weights = conns.get('weight')
 
-plt.subplot(122)
-plt.matshow(makeMatrix(srcs, tgts, wghts), fignum=False)
-plt.xlim([min(tgts)-0.5, max(tgts)+0.5])
-plt.xlabel('target')
-plt.ylim([max(srcs)+0.5, min(srcs)-0.5])
-plt.ylabel('source')
-plt.title('Set weight')
-plt.colorbar(fraction=0.046, pad=0.04)
+plotMatrix(srcs, tgts, weights, 'Set weight', 122)
 
 """
 We can also plot an all_to_all connection, with uniformly distributed weights,
@@ -105,15 +105,10 @@ nest.Connect(pre, post,
 conns = nest.GetConnections()
 srcs = conns.get('source')
 tgts = conns.get('target')
-wghts = conns.get('weight')
+weights = conns.get('weight')
 
-plt.matshow(makeMatrix(srcs, tgts, wghts))
-plt.xlim([min(tgts)-0.5, max(tgts)+0.5])
-plt.xlabel('target')
-plt.ylim([max(srcs)+0.5, min(srcs)-0.5])
-plt.ylabel('source')
-plt.title('All to all connection')
-plt.colorbar()
+plt.figure(figsize=(12, 10))
+plotMatrix(srcs, tgts, weights, 'All to all connection', 111)
 
 """
 Lastly, we'll do an exmple that is a bit more complex. We connect different
@@ -142,52 +137,30 @@ nest.Connect(nrns, nrns[12:],
 
 # First get a Connectome consisting of all the connections
 conns = nest.GetConnections()
-g = conns.get(['source', 'target', 'weight'])
-srcs = g['source']
-tgts = g['target']
-wghts = g['weight']
+srcs = conns.source()
+tgts = conns.target()  # source() and target() are iterators
+weights = conns.get('weight')
 
 plt.figure(figsize=(14, 12))
-plt.subplot(221)
-plt.matshow(makeMatrix(srcs, tgts, wghts), fignum=False, aspect='auto')
-plt.xlim([min(tgts)-0.5, max(tgts)+0.5])
-plt.xlabel('target')
-plt.ylim([max(srcs)+0.5, min(srcs)-0.5])
-plt.ylabel('source')
-plt.title('All connections')
-plt.colorbar()
+plotMatrix(list(srcs), list(tgts), weights, 'All connections', 221)
 
 # Get Connectome consisting of a subset of connections
 conns = nest.GetConnections(nrns[:10], nrns[:10])
 g = conns.get(['source', 'target', 'weight'])
 srcs = g['source']
 tgts = g['target']
-wghts = g['weight']
+weights = g['weight']
 
-plt.subplot(222)
-plt.matshow(makeMatrix(srcs, tgts, wghts), fignum=False, aspect='auto')
-plt.xlim([min(tgts)-0.5, max(tgts)+0.5])
-plt.xlabel('target')
-plt.ylim([max(srcs)+0.5, min(srcs)-0.5])
-plt.ylabel('source')
-plt.title('Connections of the first ten neurons')
-plt.colorbar()
+plotMatrix(srcs, tgts, weights, 'Connections of the first ten neurons', 222)
 
 # Get Connectome consisting of just the stdp_synapses
 conns = nest.GetConnections(synapse_model='stdp_synapse')
 g = conns.get(['source', 'target', 'weight'])
 srcs = g['source']
 tgts = g['target']
-wghts = g['weight']
+weights = g['weight']
 
-plt.subplot(223)
-plt.matshow(makeMatrix(srcs, tgts, wghts), fignum=False, aspect='auto')
-plt.xlim([min(tgts)-0.5, max(tgts)+0.5])
-plt.xlabel('target')
-plt.ylim([max(srcs)+0.5, min(srcs)-0.5])
-plt.ylabel('source')
-plt.title('Connections with stdp_synapse')
-plt.colorbar()
+plotMatrix(srcs, tgts, weights, 'Connections with stdp_synapse', 223)
 
 # Get Connectome consisting of the fixed_total_number connections, but set
 # weight before plotting
@@ -197,16 +170,9 @@ conns.set(w)
 g = conns.get(['source', 'target', 'weight'])
 srcs = g['source']
 tgts = g['target']
-wghts = g['weight']
+weights = g['weight']
 
-plt.subplot(224)
-plt.matshow(makeMatrix(srcs, tgts, wghts), fignum=False, aspect='auto')
-plt.xlim([min(tgts)-0.5, max(tgts)+0.5])
-plt.xlabel('target')
-plt.ylim([max(srcs)+0.5, min(srcs)-0.5])
-plt.ylabel('source')
-plt.title('fixed_total_number, set weight')
-plt.colorbar()
+plotMatrix(srcs, tgts, weights, 'fixed_total_number, set weight', 224)
 
 
 plt.show()

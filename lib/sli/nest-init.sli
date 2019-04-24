@@ -700,7 +700,7 @@ def
    are shorthand for the corresponding calls with connectivity or
    synapse specification dictionaries as explained in the Options
    section.  The literals are expanded to << /rule /conn_rule >> and
-   << /model /syn_model >>, respectively.
+   << /synapse_model /syn_model >>, respectively.
 
    Parameters for connectivity rules must have fixed values.
 
@@ -718,7 +718,7 @@ def
 
 /Connect <<
   /conn_spec << /rule /all_to_all >>
-  /syn_spec << /model /static_synapse >>
+  /syn_spec << /synapse_model /static_synapse >>
 >> Options
 
 
@@ -787,7 +787,7 @@ def
           mark 4 1 roll         % put a mark before weight and delay
           /weight 4 1 roll      % add a label for the weight
           /delay 3 1 roll       % add a label for the delay
-          /model 2 1 roll       % add a label for the synapse model
+          /synapse_model 2 1 roll  % add a label for the synapse model
           >>                    % create the syn_spec dictionary
           /syn_spec :Connect_complete_dict    % fill in missing defaults
           /Connect /conn_spec GetOption exch  % use default conn_spec
@@ -829,7 +829,7 @@ def
       % Connect nodes from two sets of GIDs using the given rule and
       % synapse model
       [gidlisttype gidlisttype /literaltype /literaltype] {
-	  mark exch /model exch >>  % create the syn_spec dictionary
+	  mark exch /synapse_model exch >>  % create the syn_spec dictionary
 	  /syn_spec :Connect_complete_dict   % fill in missing defaults
 	  exch                      % exchange syn_spec and conn_spec		
 	  mark exch /rule exch >>   % create the conn_spec dictionary
@@ -862,7 +862,7 @@ def
       % Connect nodes from two sets of GIDs using the given connectivity
       % specification and synapse model
       [gidlisttype gidlisttype /dictionarytype /literaltype] {
-	  mark exch /model exch >>  % create the syn_spec dictionary
+	  mark exch /synapse_model exch >>  % create the syn_spec dictionary
 	  /syn_spec :Connect_complete_dict   % fill in missing defaults
 	  exch                      % exchange syn_spec and conn_spec		
 	  /conn_spec :Connect_complete_dict  % fill in missing defaults

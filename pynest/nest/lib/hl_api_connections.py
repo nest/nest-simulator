@@ -251,7 +251,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None,
     ~~~~~~~~~~~~~~~~~~~~~~~~~
     - 'stdp_synapse'
     - {'weight': 2.4, 'receptor_type': 1}
-    - {'model': 'stdp_synapse',
+    - {'synapse_model': 'stdp_synapse',
        'weight': 2.5,
        'delay': {'distribution': 'uniform', 'low': 0.8, 'high': 2.5},
        'alpha': {
@@ -655,7 +655,7 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     if is_string(conn_spec):
         conn_spec = {'rule': conn_spec}
     if is_string(syn_spec):
-        syn_spec = {'model': syn_spec}
+        syn_spec = {'synapse_model': syn_spec}
 
     sps(conn_spec)
     sps(syn_spec)

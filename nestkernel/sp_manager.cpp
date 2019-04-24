@@ -113,7 +113,7 @@ SPManager::get_status( DictionaryDatum& d )
       names::post_synaptic_element,
       ( *i )->get_post_synaptic_element_name() );
     def< std::string >( sp_synapse,
-      names::model,
+      names::synapse_model,
       kernel()
         .model_manager.get_synapse_prototype( ( *i )->get_synapse_model(), 0 )
         .get_name() );
@@ -337,7 +337,7 @@ SPManager::disconnect( GIDCollectionPTR sources,
       i != sp_conn_builders_.end();
       i++ )
     {
-      std::string synModel = getValue< std::string >( syn_spec, names::model );
+      std::string synModel = getValue< std::string >( syn_spec, names::synapse_model );
       if ( ( *i )->get_synapse_model()
         == ( index )(
              kernel().model_manager.get_synapsedict()->lookup( synModel ) ) )

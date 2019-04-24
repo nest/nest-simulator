@@ -77,11 +77,11 @@ nest::ConnBuilder::ConnBuilder( GIDCollectionPTR sources,
   updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
 
   // read out synapse-related parameters ----------------------
-  if ( not syn_spec->known( names::model ) )
+  if ( not syn_spec->known( names::synapse_model ) )
   {
     throw BadProperty( "Synapse spec must contain synapse model." );
   }
-  const std::string syn_name = ( *syn_spec )[ names::model ];
+  const std::string syn_name = ( *syn_spec )[ names::synapse_model ];
   if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
   {
     throw UnknownSynapseType( syn_name );

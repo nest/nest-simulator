@@ -384,7 +384,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None,
                 "syn_spec needs to be a string or dictionary.")
 
     sr('Connect')
-    
+
     if return_connectome:
         return GetConnections(pre, post)
 

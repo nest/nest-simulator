@@ -271,16 +271,16 @@ statusdict/userargs :: size 1 geq
       (Connecting excitatory neurons.) =
       expoisson E_neurons /all_to_all /syn_ex Connect
 
-      E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
+      E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model /syn_ex >> Connect
 
-      I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+      I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
       (Connecting inhibitory population.) =
       inpoisson I_neurons /all_to_all /syn_ex Connect
 
-      E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
+      E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model /syn_ex >> Connect
       
-      I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+      I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
       % Spike detectors are connected to the first Nrec neurons in each
       % population.  Since neurons are equal and connectivity is homogeneously

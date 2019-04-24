@@ -277,20 +277,20 @@ tic % start timer on construction
   E_neurons   % source population [we pick from this]
   E_neurons   % target neurons
   << /rule /fixed_indegree /indegree CE >> % number of source neurons to pick
-  << /model /syn_ex >>    % synapse model
+  << /synapse_model /syn_ex >>    % synapse model
   Connect
 
   % I -> E connections
   % as above, but on a single line
-  I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+  I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
   (Connecting inhibitory population.) =
   inpoisson I_neurons /all_to_all /syn_ex Connect
 
   % ... as above, just written more compact
 
-  E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
-  I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+  E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model /syn_ex >> Connect
+  I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
   % Spike detectors are connected to the first Nrec neurons in each
   % population.  Since neurons are equal and connectivity is homogeneously

@@ -91,7 +91,7 @@ def
 % delay distribution of connections between populations
 /delay_dict << /distribution /normal_clipped /low 0.1 >> def
 % default synapse dictionary
-/syn_dict << /model /static_synapse >> def
+/syn_dict << /synapse_model /static_synapse >> def
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -249,12 +249,12 @@
         /structural_plasticity_update_interval sp_update_interval
         /structural_plasticity_synapses <<
                                             /synapse_ex <<
-                                                            /model /synapse_ex
+                                                            /synapse_model /synapse_ex
                                                             /post_synaptic_element /den_ex
                                                             /pre_synaptic_element /axon_ex
                                                         >>
                                             /synapse_in <<
-                                                            /model /synapse_in
+                                                            /synapse_model /synapse_in
                                                             /post_synaptic_element /den_in
                                                             /pre_synaptic_element /axon_in
                                                         >>

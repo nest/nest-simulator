@@ -75,7 +75,7 @@ supported
    model_supported Create /neuron_supported Set
    neuron_supported neuron_supported
    << /rule /one_to_one >> 
-   << /model /rate_connection_instantaneous >> 
+   << /synapse_model /rate_connection_instantaneous >>
    Connect
  }
  pass_or_die
@@ -91,7 +91,7 @@ supported
       model_not_supported Create /neuron_not_supported Set
       neuron_supported neuron_not_supported
       << /rule /one_to_one >> 
-      << /model /rate_connection_instantaneous >> 
+      << /synapse_model /rate_connection_instantaneous >>
       Connect
     }
     fail_or_die
@@ -106,7 +106,7 @@ forall
   /lin_rate_ipn Create /neuron_supported Set
   neuron_supported neuron_supported
   << /rule /all_to_all >> 
-  << /model /rate_connection_instantaneous /delay 2.0 >> 
+  << /synapse_model /rate_connection_instantaneous /delay 2.0 >>
   Connect
 } fail_or_die
 
@@ -139,7 +139,7 @@ supported
    model_supported Create /neuron_supported Set
    neuron_supported neuron_supported
    << /rule /one_to_one >> 
-   << /model /rate_connection_delayed >> 
+   << /synapse_model /rate_connection_delayed >>
    Connect
  }
  pass_or_die
@@ -155,7 +155,7 @@ supported
       model_not_supported Create /neuron_not_supported Set
       neuron_supported neuron_not_supported
       << /rule /one_to_one >> 
-      << /model /rate_connection_delayed >> 
+      << /synapse_model /rate_connection_delayed >>
       Connect
     }
     fail_or_die    
@@ -193,7 +193,7 @@ supported
    model_supported Create /neuron_supported Set
    neuron_supported neuron_supported
    << /rule /one_to_one >> 
-   << /model /diffusion_connection >> 
+   << /synapse_model /diffusion_connection >>
    Connect
  }
  pass_or_die
@@ -209,7 +209,7 @@ supported
       model_not_supported Create /neuron_not_supported Set
       neuron_supported neuron_not_supported
       << /rule /one_to_one >> 
-      << /model /diffusion_connection >> 
+      << /synapse_model /diffusion_connection >>
       Connect
     }
     fail_or_die
@@ -224,7 +224,7 @@ forall
   /siegert_neuron Create /neuron_supported Set
   neuron_supported neuron_supported
   << /rule /all_to_all >> 
-  << /model /diffusion_connection /delay 2.0 >> 
+  << /synapse_model /diffusion_connection /delay 2.0 >>
   Connect
 } fail_or_die
 
@@ -234,7 +234,7 @@ forall
   /siegert_neuron Create /neuron_supported Set
   neuron_supported neuron_supported
   << /rule /all_to_all >> 
-  << /model /diffusion_connection /weight 2.0 >> 
+  << /synapse_model /diffusion_connection /weight 2.0 >>
   Connect
 } fail_or_die
 
@@ -244,7 +244,7 @@ forall
   /siegert_neuron Create /neuron_supported Set
   neuron_supported neuron_supported
   << /rule /all_to_all >> 
-  << /model /diffusion_connection /diffusion_factor 2.0 /drift_factor 2.0 >> 
+  << /synapse_model /diffusion_connection /diffusion_factor 2.0 /drift_factor 2.0 >>
   Connect
 } pass_or_die
 

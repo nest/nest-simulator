@@ -60,12 +60,12 @@ skip_if_without_gsl
 
   neuron_in neuron_out1
   << /rule /one_to_one /make_symmetric true >>
-  << /model /syn0 /weight 10.0 >>
+  << /synapse_model /syn0 /weight 10.0 >>
   Connect
 
   neuron_in neuron_out2
   << /rule /one_to_one /make_symmetric true >>
-  << /model /syn1 /weight 10.0 >>
+  << /synapse_model /syn1 /weight 10.0 >>
   Connect
 
   vm1 neuron_out1 Connect

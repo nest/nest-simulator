@@ -73,7 +73,7 @@ class TestIssue578():
             'synaptic_elements': structural_p_elements_E})
 
         # synapses
-        synDictE = {'model': 'static_synapse',
+        synDictE = {'synapse_model': 'static_synapse',
                     'weight': 3.,
                     'pre_synaptic_element': 'Axon_ex',
                     'post_synaptic_element': 'Den_ex'}

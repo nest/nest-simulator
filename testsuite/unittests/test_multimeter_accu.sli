@@ -107,8 +107,8 @@ def
         ac nrns /all_to_all Connect
 
         /pg /poisson_generator << /rate 1000. >> Create def
-        pg nrns /all_to_all << /model /static_synapse /delay 1.0 /weight  1.0 >> Connect
-        pg nrns /all_to_all << /model /static_synapse /delay 1.0 /weight -1.0 >> Connect
+        pg nrns /all_to_all << /synapse_model /static_synapse /delay 1.0 /weight  1.0 >> Connect
+        pg nrns /all_to_all << /synapse_model /static_synapse /delay 1.0 /weight -1.0 >> Connect
 
         250. Simulate
 

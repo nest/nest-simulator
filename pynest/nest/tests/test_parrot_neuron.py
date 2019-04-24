@@ -203,7 +203,7 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
         # thereby spikes transmitted through the stdp connection are
         # not repeated postsynaptically.
         syn_spec = {
-            "model": "stdp_synapse",
+            "synapse_model": "stdp_synapse",
             # set receptor 1 postsynaptically, to not generate extra spikes
             "receptor_type": 1,
         }

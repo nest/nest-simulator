@@ -40,7 +40,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         self.decay_duration = 5.0
         self.synapse_model = "stdp_triplet_synapse"
         self.syn_spec = {
-            "model": self.synapse_model,
+            "synapse_model": self.synapse_model,
             "delay": self.dendritic_delay,
             # set receptor 1 post-synaptically, to not generate extra spikes
             "receptor_type": 1,
@@ -308,7 +308,7 @@ class STDPTripletInhTestCase(STDPTripletConnectionTestCase):
         self.decay_duration = 5.0
         self.synapse_model = "stdp_triplet_synapse"
         self.syn_spec = {
-            "model": self.synapse_model,
+            "synapse_model": self.synapse_model,
             "delay": self.dendritic_delay,
             # set receptor 1 post-synaptically, to not generate extra spikes
             "receptor_type": 1,
@@ -347,6 +347,7 @@ def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
     runner.run(suite_inh())
+
 
 if __name__ == "__main__":
     run()

@@ -147,7 +147,7 @@ M_ERROR setverbosity
       /sg2 /spike_generator << /spike_times [ 5.0 ] 
                                /spike_multiplicities [ 2 ] >> Create def
 
-      /syn_spec << /model /static_synapse
+      /syn_spec << /synapse_model /static_synapse
                    /receptor_type 
                      extra_params model known
                      {

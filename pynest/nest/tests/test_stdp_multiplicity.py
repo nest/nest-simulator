@@ -168,10 +168,10 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             # not repeated postsynaptically.
             nest.Connect(
                 pre_parrot, post_parrot,
-                syn_spec={'model': 'stdp_synapse', 'receptor_type': 1})
+                syn_spec={'synapse_model': 'stdp_synapse', 'receptor_type': 1})
             nest.Connect(
                 pre_parrot_ps, post_parrot_ps,
-                syn_spec={'model': 'stdp_synapse', 'receptor_type': 1})
+                syn_spec={'synapse_model': 'stdp_synapse', 'receptor_type': 1})
 
             # get STDP synapse and weight before protocol
             syn = nest.GetConnections(source=pre_parrot,

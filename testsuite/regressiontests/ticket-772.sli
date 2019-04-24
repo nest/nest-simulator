@@ -48,21 +48,21 @@ skip_if_not_threaded
   ResetKernel
   
   /iaf_psc_alpha 2 Create /n Set
-  n n 1 Take << /rule /all_to_all >> << /model /static_synapse /weight 1 /delay 4 >> Connect
+  n n 1 Take << /rule /all_to_all >> << /synapse_model /static_synapse /weight 1 /delay 4 >> Connect
 } pass_or_die
 
 {
   ResetKernel
   
   /iaf_psc_alpha 2 Create /n Set
-  n n 1 Take << /rule /all_to_all >> << /model /static_synapse /weight [1 1] cv_iv /delay [4 6] cv_iv >> Connect
+  n n 1 Take << /rule /all_to_all >> << /synapse_model /static_synapse /weight [1 1] cv_iv /delay [4 6] cv_iv >> Connect
 } pass_or_die
 
 {
   ResetKernel
   
   /iaf_psc_alpha 2 Create /n Set
-  n n << /rule /one_to_one >> << /model /static_synapse /weight [1 1] cv_iv /delay [4 6] cv_iv >> Connect
+  n n << /rule /one_to_one >> << /synapse_model /static_synapse /weight [1 1] cv_iv /delay [4 6] cv_iv >> Connect
 } pass_or_die
 
 endusing

@@ -178,13 +178,13 @@ def % brunel_setup
     /static_synapse /syn_in << /weight JI >> CopyModel
 
     expoisson E_neurons stack /all_to_all /syn_ex Connect
-    E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
-    I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+    E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model /syn_ex >> Connect
+    I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
 
     inpoisson I_neurons /all_to_all /syn_ex Connect
-    E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
-    I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+    E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model /syn_ex >> Connect
+    I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
     
     E_neurons Nrec Take exsd Connect
     
@@ -200,4 +200,3 @@ def % brunel_setup
 
 
 
-    

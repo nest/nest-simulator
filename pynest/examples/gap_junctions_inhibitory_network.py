@@ -106,13 +106,13 @@ conn_dict = {'rule': 'fixed_indegree',
              'autapses': False,
              'multapses': True}
 
-syn_dict = {'model': 'static_synapse',
+syn_dict = {'synapse_model': 'static_synapse',
             'weight': j_inh,
             'delay': delay}
 
 nest.Connect(neurons, neurons, conn_dict, syn_dict)
 
-nest.Connect(pg, neurons, 'all_to_all', syn_spec={'model': 'static_synapse',
+nest.Connect(pg, neurons, 'all_to_all', syn_spec={'synapse_model': 'static_synapse',
                                                   'weight': j_exc,
                                                   'delay': delay})
 
@@ -145,7 +145,7 @@ for indx in range(n_connection):
     nest.Connect(nest.GIDCollection([connections[0][indx]]),
                  nest.GIDCollection([connections[1][indx]]),
                  {'rule': 'one_to_one', 'make_symmetric': True},
-                 {'model': 'gap_junction', 'weight': gap_weight})
+                 {'synapse_model': 'gap_junction', 'weight': gap_weight})
 
 ###############################################################################
 # In the end we start the simulation and plot the spike pattern.

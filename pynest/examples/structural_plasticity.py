@@ -182,12 +182,12 @@ class StructralPlasticityExample:
         nest.SetStructuralPlasticityStatus({
             'structural_plasticity_synapses': {
                 'synapse_ex': {
-                    'model': 'synapse_ex',
+                    'synapse_model': 'synapse_ex',
                     'post_synaptic_element': 'Den_ex',
                     'pre_synaptic_element': 'Axon_ex',
                 },
                 'synapse_in': {
-                    'model': 'synapse_in',
+                    'synapse_model': 'synapse_in',
                     'post_synaptic_element': 'Den_in',
                     'pre_synaptic_element': 'Axon_in',
                 },

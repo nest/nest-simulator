@@ -78,7 +78,7 @@ skip_if_not_threaded
 
   (Connecting neurons.) =
   population population connspec
-  << /model /stdp_synapse
+  << /synapse_model /stdp_synapse
      /delay << /distribution /uniform /low 0.5 /high 1.5 >>
      /weight << /distribution /normal_clipped /low 0.0 /mu 10.0 /sigma 5.0 >>
      /receptor_type << /distribution /uniform_int /low receptor_min /high receptor_max >>  

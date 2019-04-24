@@ -76,17 +76,17 @@ skip_if_without_gsl
   
   neuron1 neuron3
   << /rule /one_to_one /make_symmetric true >> 
-  << /model /gap_junction /weight 10.0 >> 
+  << /synapse_model /gap_junction /weight 10.0 >>
   Connect
   
   neuron1 neuron2
   << /rule /one_to_one >> 
-  << /model /static_synapse /weight 8.0 >> 
+  << /synapse_model /static_synapse /weight 8.0 >>
   Connect
   
   neuron1 neuron4
   << /rule /one_to_one >> 
-  << /model /static_synapse /weight 12.0 >> 
+  << /synapse_model /static_synapse /weight 12.0 >>
   Connect
   
   neuron1 sd Connect

@@ -52,7 +52,7 @@ M_ERROR setverbosity
 /Warr [1 50] Range cv_dv def
 
 % Define connection and synapse dictionaries
-/syn_dict << /model /static_synapse /weight Warr >> def
+/syn_dict << /synapse_model /static_synapse /weight Warr >> def
 /conn_dict << /rule /fixed_indegree /indegree 5 >> def
 
 net1 net2 conn_dict syn_dict Connect % Connect source to target neurons

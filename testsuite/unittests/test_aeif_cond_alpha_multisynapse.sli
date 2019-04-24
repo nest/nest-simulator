@@ -86,7 +86,7 @@ sg << /spike_times [spike_time] >> SetStatus
  	singlesynapse_neuron << /tau_syn_in tau_syn_in_var >> SetStatus
 
 
- 	sg singlesynapse_neuron /one_to_one << /model /static_synapse /delay delay_var /weight weight_var >> Connect
+ 	sg singlesynapse_neuron /one_to_one << /synapse_model /static_synapse /delay delay_var /weight weight_var >> Connect
  	/voltmeter Create /vm_for_single_synapse_neuron Set
  	vm_for_single_synapse_neuron << /withtime true /time_in_steps true /interval 0.1 /precision 5 >> SetStatus
  
@@ -114,7 +114,7 @@ delays length 1 arraystore Range /synapses_indices exch def
 	/synapses_indice_var exch def
 	abs /weight_var exch def
 	/delay_var exch def
-	sg multisynapse_neuron /one_to_one << /model /static_synapse /delay delay_var /weight weight_var /receptor_type synapses_indice_var >> Connect
+	sg multisynapse_neuron /one_to_one << /synapse_model /static_synapse /delay delay_var /weight weight_var /receptor_type synapses_indice_var >> Connect
 } ScanThread
 
 vm multisynapse_neuron  1. 8. /static_synapse Connect
@@ -273,7 +273,7 @@ assert_or_die
     /delay exch def
     % Connect spike generator to each port
     sg nrn /one_to_one <<
-      /model /static_synapse
+      /synapse_model /static_synapse
       /delay delay
       /weight W
       /receptor_type syn_id >>

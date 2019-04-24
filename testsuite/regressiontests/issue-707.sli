@@ -54,7 +54,7 @@ skip_if_without_gsl
 
   neuron_in neuron_out
   << /rule /one_to_one /make_symmetric true >>
-  << /model /gap_junction /weight 2.0 >>
+  << /synapse_model /gap_junction /weight 2.0 >>
   Connect
 
   10 Simulate

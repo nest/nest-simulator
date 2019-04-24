@@ -53,9 +53,9 @@ SeeAlso:
   % Create connections, need to be of different types to create
   % heterogenenous connector
   neurons [1] Take neurons [2] Take << /rule /all_to_all >>
-    << /weight 0. /model /static_synapse >> Connect
+    << /weight 0. /synapse_model /static_synapse >> Connect
   neurons [1] Take neurons [2] Take << /rule /all_to_all >>
-    << /weight 0. /model /stdp_synapse >> Connect
+    << /weight 0. /synapse_model /stdp_synapse >> Connect
 
   % Create connection to spike detector
   neurons [1] Take sd Connect
@@ -72,7 +72,7 @@ sd /n_events get /n_events_target Set
 BuildNetwork
 
 neurons [1] Take neurons [2] Take << /rule /all_to_all >>
-  << /model /static_synapse >> Disconnect_g_g_D_D
+  << /synapse_model /static_synapse >> Disconnect_g_g_D_D
 
 100 Simulate
 

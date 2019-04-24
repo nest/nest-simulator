@@ -138,7 +138,7 @@ Last /target get 6 eq assert_or_die
 ResetKernel
 /a /iaf_psc_alpha 3 Create def
 /b /iaf_psc_alpha 3 Create def
-a b /one_to_one << /model /stdp_synapse >> Connect
+a b /one_to_one << /synapse_model /stdp_synapse >> Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
 Last /target get 6 eq assert_or_die
@@ -156,7 +156,7 @@ Last /target get 6 eq assert_or_die
 ResetKernel
 /a /iaf_psc_alpha 3 Create def
 /b /iaf_psc_alpha 3 Create def
-a b << /rule /one_to_one >> << /model /stdp_synapse >> Connect
+a b << /rule /one_to_one >> << /synapse_model /stdp_synapse >> Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
 Last /target get 6 eq assert_or_die
@@ -165,7 +165,7 @@ Last /target get 6 eq assert_or_die
 ResetKernel
 /a /iaf_psc_alpha 3 Create def
 /b /iaf_psc_alpha 3 Create def
-a b << >> << /model /stdp_synapse >> Connect
+a b << >> << /synapse_model /stdp_synapse >> Connect
 << /source a >> GetConnections dup
 First /target get 4 eq assert_or_die
 Last /target get 6 eq assert_or_die

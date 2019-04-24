@@ -45,9 +45,9 @@ M_ERROR setverbosity
   /nodes /iaf_psc_alpha 5 Create def
   
   nodes nodes << /rule /all_to_all >>
-              << /model /static_synapse_lbl /synapse_label 123 >> Connect
+              << /synapse_model /static_synapse_lbl /synapse_label 123 >> Connect
   nodes nodes << /rule /all_to_all >>
-              << /model /static_synapse_lbl /synapse_label 456 >> Connect
+              << /synapse_model /static_synapse_lbl /synapse_label 456 >> Connect
   
   << /source nodes /synapse_label 123 >> GetConnections length_a 25 eq
 }
@@ -59,9 +59,9 @@ assert_or_die
   /nodes /iaf_psc_alpha 5 Create def
   
   nodes nodes << /rule /all_to_all >>
-              << /model /static_synapse_lbl /synapse_label 123 >> Connect
+              << /synapse_model /static_synapse_lbl /synapse_label 123 >> Connect
   nodes nodes << /rule /all_to_all >>
-              << /model /static_synapse_lbl /synapse_label 456 >> Connect
+              << /synapse_model /static_synapse_lbl /synapse_label 456 >> Connect
   
   << /source nodes /target nodes /synapse_label 123 >> GetConnections length_a 25 eq
 }
@@ -73,9 +73,9 @@ assert_or_die
   /nodes /iaf_psc_alpha 5 Create def
   
   nodes nodes << /rule /all_to_all >>
-              << /model /static_synapse_lbl /synapse_label 123 >> Connect
+              << /synapse_model /static_synapse_lbl /synapse_label 123 >> Connect
   nodes nodes << /rule /all_to_all >>
-              << /model /static_synapse_lbl /synapse_label 456 >> Connect
+              << /synapse_model /static_synapse_lbl /synapse_label 456 >> Connect
   
   << /target nodes /synapse_label 123 >> GetConnections length_a 25 eq
 }

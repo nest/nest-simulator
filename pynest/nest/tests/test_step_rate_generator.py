@@ -53,7 +53,7 @@ class StepRateGeneratorTestCase(unittest.TestCase):
 
         # connect srg to neuron
         nest.Connect(srg, neuron, "one_to_one", {
-                     "model": "rate_connection_delayed", "weight": 1.0})
+                     "synapse_model": "rate_connection_delayed", "weight": 1.0})
         nest.Connect(mm, neuron)
         nest.Connect(mm, srg)
 

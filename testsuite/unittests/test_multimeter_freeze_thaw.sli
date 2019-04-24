@@ -189,8 +189,8 @@ def
 
         /pg /poisson_generator << /rate 1000. >> Create def
 
-        pg nrns << /rule /all_to_all >> << /model /static_synapse /weight 1.0 >> Connect
-        pg nrns << /rule /all_to_all >> << /model /static_synapse /weight -1.0 >> Connect
+        pg nrns << /rule /all_to_all >> << /synapse_model /static_synapse /weight 1.0 >> Connect
+        pg nrns << /rule /all_to_all >> << /synapse_model /static_synapse /weight -1.0 >> Connect
 
         nrns { << /frozen true >> SetStatus } forall
         20. Simulate

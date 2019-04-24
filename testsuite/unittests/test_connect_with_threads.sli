@@ -59,7 +59,7 @@ M_ERROR setverbosity
   /net2 /iaf_psc_alpha 10 Create def
   
   % Define connection and synapse dictionaries
-  /syn_dict << /model /static_synapse >> def
+  /syn_dict << /synapse_model /static_synapse >> def
   /conn_dict << /rule /one_to_one >> def
   
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
@@ -85,7 +85,7 @@ forall
   /net1 /iaf_psc_alpha 10 Create def
   /net2 /iaf_psc_alpha 10 Create def
   
-  /syn_dict << /model /static_synapse >> def
+  /syn_dict << /synapse_model /static_synapse >> def
   /conn_dict << /rule /all_to_all >> def
   
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
@@ -111,7 +111,7 @@ forall
   /net2 /iaf_psc_alpha 10 Create def
   
   % Define connection and synapse dictionaries
-  /syn_dict << /model /static_synapse >> def
+  /syn_dict << /synapse_model /static_synapse >> def
   /conn_dict << /rule /fixed_indegree /indegree 5 >> def
   
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
@@ -137,7 +137,7 @@ forall
   /net2 /iaf_psc_alpha 10 Create def
   
   % Define connection and synapse dictionaries
-  /syn_dict << /model /static_synapse >> def
+  /syn_dict << /synapse_model /static_synapse >> def
   /conn_dict << /rule /fixed_outdegree /outdegree 5 >> def
   
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
@@ -163,7 +163,7 @@ forall
   /net2 /iaf_psc_alpha 10 Create def
   
   % Define connection and synapse dictionaries
-  /syn_dict << /model /static_synapse >> def
+  /syn_dict << /synapse_model /static_synapse >> def
   /conn_dict << /rule /fixed_total_number /N 5 >> def
   
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
@@ -198,7 +198,7 @@ forall
   /net2 /iaf_psc_alpha 10 Create def
   
   % Define connection and synapse dictionaries
-  /syn_dict << /model /static_synapse >> def
+  /syn_dict << /synapse_model /static_synapse >> def
   /conn_dict << /rule /pairwise_bernoulli /p 0.1 >> def
   
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons

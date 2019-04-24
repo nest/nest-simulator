@@ -362,7 +362,7 @@ class Network:
                         'rule': 'fixed_total_number', 'N': synapse_nr
                         }
                     syn_dict = {
-                        'model': 'static_synapse',
+                        'synapse_model': 'static_synapse',
                         'weight': {
                             'distribution': 'normal_clipped', 'mu': weight,
                             'sigma': w_sd
@@ -390,7 +390,7 @@ class Network:
         for i, target_pop in enumerate(self.pops):
             conn_dict_poisson = {'rule': 'all_to_all'}
             syn_dict_poisson = {
-                'model': 'static_synapse',
+                'synapse_model': 'static_synapse',
                 'weight': self.w_ext,
                 'delay': self.net_dict['poisson_delay']
                 }

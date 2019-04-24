@@ -133,10 +133,10 @@ hpcwithpartner
 
   /iaf_psc_alpha 2 << /V_th 100000. >> Create ;
   sg pn Connect
-  [3 4] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
+  [3 4] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
 
   /iaf_psc_alpha 2 << /V_th 100000. >> Create ;
-  [5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
+  [5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
 
   10. Simulate
   [3 4 5 6] { /V_m get } Map
@@ -165,7 +165,7 @@ hpcwithpartner
   /iaf_psc_alpha 4 << /V_th 100000. >> Create ;
   3 << /frozen true >> SetStatus
   sg pn Connect
-  [4 5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
+  [4 5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
 
   10. Simulate
   [4 5 6] { /V_m get } Map
@@ -193,7 +193,7 @@ hpcwithpartner
   /iaf_psc_alpha 4 << /V_th 100000. >> Create ;
   3 << /frozen true >> SetStatus
   sg pn Connect
-  [3 4 5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
+  [3 4 5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
 
   10. Simulate
   [3 4 5 6] { /V_m get } Map
@@ -217,7 +217,7 @@ hpcwithpartner
 
   /iaf_psc_alpha 4 << /V_th 100000. >> Create ;
   sg pn Connect
-  [3 4 5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
+  [3 4 5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
   3 << /frozen true >> SetStatus
 
   10. Simulate

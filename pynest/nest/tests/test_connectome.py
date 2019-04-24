@@ -223,12 +223,12 @@ class TestConnectome(unittest.TestCase):
         Test GetConnections with synapse_model
         """
         nrns = nest.Create('iaf_psc_alpha', 10)
-        nest.Connect(nrns[:4], nrns[2:6], syn_spec={'model': 'stdp_synapse'})
+        nest.Connect(nrns[:4], nrns[2:6], syn_spec={'synapse_model': 'stdp_synapse'})
         nest.Connect(nrns[5:7], nrns[8:],
                      conn_spec={'rule': 'one_to_one'},
-                     syn_spec={'model': 'tsodyks_synapse'})
+                     syn_spec={'synapse_model': 'tsodyks_synapse'})
         nest.Connect(nrns[7:], nrns[:5],
-                     syn_spec={'model': 'stdp_triplet_synapse',
+                     syn_spec={'synapse_model': 'stdp_triplet_synapse',
                                'weight': 5.})
 
         get_conn_1 = nest.GetConnections(nrns, nrns,

@@ -39,7 +39,7 @@ class TestGetStructuralPlasticityStatus(unittest.TestCase):
     nest.SetStructuralPlasticityStatus({
         'structural_plasticity_synapses': {
             'synapse_ex': {
-                'model': 'synapse_ex',
+                'synapse_model': 'synapse_ex',
                 'post_synaptic_element': 'Den_ex',
                 'pre_synaptic_element': 'Axon_ex',
             },

@@ -45,7 +45,7 @@ class PpPscDeltaSTDPTestCase(unittest.TestCase):
         nrn_post2 = nest.Create('pp_psc_delta')
 
         nest.Connect(nrn_pre, nrn_post1 + nrn_post2,
-                     syn_spec={'model': 'stdp_synapse', 'weight': w_0})
+                     syn_spec={'synapse_model': 'stdp_synapse', 'weight': w_0})
         conn1 = nest.GetConnections(nrn_pre, nrn_post1)
         conn2 = nest.GetConnections(nrn_pre, nrn_post2)
 

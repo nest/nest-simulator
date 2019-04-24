@@ -41,7 +41,7 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
         self.decay_duration = 5.0
         self.synapse_model = "vogels_sprekeler_synapse"
         self.syn_spec = {
-            "model": self.synapse_model,
+            "synapse_model": self.synapse_model,
             "delay": self.dendritic_delay,
             "weight": 5.0,
             "eta": 0.001,

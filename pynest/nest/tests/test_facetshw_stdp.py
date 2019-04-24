@@ -94,7 +94,7 @@ class FacetsTestCase(unittest.TestCase):
         nest.Connect(stim, neuronA)
         nest.Connect(neuronA, neuronB, syn_spec={
             'weight': float(startWeight) / 15.0 * Wmax,
-            'delay': delay, 'model': modelName})
+            'delay': delay, 'synapse_model': modelName})
 
         nest.Simulate(50.0)
         weightTrace = []

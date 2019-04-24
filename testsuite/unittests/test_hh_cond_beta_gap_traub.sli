@@ -83,7 +83,7 @@ vm << /withtime true  /time_in_steps true /interval h >> SetStatus
 
 neuron1 neuron2 
 << /rule /one_to_one /make_symmetric true >> 
-<< /model /gap_junction /weight 20.0 >>  Connect
+<< /synapse_model /gap_junction /weight 20.0 >>  Connect
 
 vm neuron2     1.0 h Connect
 

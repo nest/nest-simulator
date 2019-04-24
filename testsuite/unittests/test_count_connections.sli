@@ -61,7 +61,7 @@ nodes nodes << /rule /fixed_indegree /indegree C >> Connect
 { GetKernelStatus /num_connections get ConnExpected eq } assert_or_die
 { /static_synapse GetDefaults /num_connections get ConnExpected eq } assert_or_die
 
-nodes nodes << /rule /fixed_indegree /indegree C >> << /model /stdp_synapse >> Connect
+nodes nodes << /rule /fixed_indegree /indegree C >> << /synapse_model /stdp_synapse >> Connect
 
 { GetKernelStatus /num_connections get ConnExpected 2 mul eq } assert_or_die
 { /stdp_synapse GetDefaults /num_connections get ConnExpected eq } assert_or_die

@@ -193,7 +193,7 @@ assert_or_die
     /delay exch def
     % Connect spike generator to each port
     sg nrn /one_to_one <<
-      /model /static_synapse
+      /synapse_model /static_synapse
       /delay delay
       /weight W
       /receptor_type syn_id >>

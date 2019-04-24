@@ -125,8 +125,8 @@ mm = nest.Create('multimeter', params={'record_from': ['rate'],
 # Connections originating from inhibitory neurons are not associatated
 # with a delay (rate_connection_instantaneous).
 
-syn_e = {'weight': w, 'delay': d_e, 'model': 'rate_connection_delayed'}
-syn_i = {'weight': -g*w, 'model': 'rate_connection_instantaneous'}
+syn_e = {'weight': w, 'delay': d_e, 'synapse_model': 'rate_connection_delayed'}
+syn_i = {'weight': -g*w, 'synapse_model': 'rate_connection_instantaneous'}
 conn_e = {'rule': connection_rule, 'outdegree': KE}
 conn_i = {'rule': connection_rule, 'outdegree': KI}
 

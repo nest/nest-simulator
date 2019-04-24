@@ -53,7 +53,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
             n = nest.Create(nm, 2)
 
             nest.Connect(n, n, {"rule": "all_to_all"},
-                         {"model": "clopath_synapse"})
+                         {"synapse_model": "clopath_synapse"})
 
         # Compute not supported models
         not_supported_models = [n for n in nest.Models(mtype='nodes')
@@ -68,7 +68,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
             # try to connect with clopath_rule
             with self.assertRaises(nest.kernel.NESTError):
                 nest.Connect(n, n, {"rule": "all_to_all"},
-                             {"model": "clopath_synapse"})
+                             {"synapse_model": "clopath_synapse"})
 
     def test_SynapseDepressionFacilitation(self):
         """Ensure that depression and facilitation work correctly"""
@@ -164,7 +164,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
                 nest.CopyModel("clopath_synapse", "clopath_synapse_rec",
                                {"weight_recorder": wr})
 
-                syn_dict = {"model": "clopath_synapse_rec",
+                syn_dict = {"synapse_model": "clopath_synapse_rec",
                             "weight": init_w, "delay": resolution}
                 nest.Connect(prrt_nrn, nrn, syn_spec=syn_dict)
 
@@ -211,12 +211,12 @@ class ClopathSynapseTestCase(unittest.TestCase):
 
         # Connect one neuron with static connection
         conn_dict = {'rule': 'all_to_all'}
-        static_syn_dict = {'model': 'static_synapse',
+        static_syn_dict = {'synapse_model': 'static_synapse',
                            'weight': 2.0, 'delay': 1.0}
         nest.Connect(prrt_nrn, nrns[0:1], conn_dict, static_syn_dict)
 
         # Connect one neuron with Clopath stdp connection
-        cl_stdp_syn_dict = {'model': 'clopath_synapse',
+        cl_stdp_syn_dict = {'synapse_model': 'clopath_synapse',
                             'weight': 2.0, 'delay': 1.0}
         nest.Connect(prrt_nrn, nrns[1:2], conn_dict, cl_stdp_syn_dict)
 

@@ -54,7 +54,7 @@ class TestDisconnect(unittest.TestCase):
                 nest.CopyModel('static_synapse', 'my_static_synapse')
                 nest.SetDefaults(syn_model, {'delay': 0.5})
                 syn_dict = {
-                    'model': syn_model,
+                    'synapse_model': syn_model,
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
@@ -87,7 +87,7 @@ class TestDisconnect(unittest.TestCase):
                 assert conns
 
                 conndictionary = {'rule': 'all_to_all'}
-                syndictionary = {'model': syn_model}
+                syndictionary = {'synapse_model': syn_model}
                 nest.Disconnect(
                     src_neurons,
                     tgt_neurons,
@@ -109,7 +109,7 @@ class TestDisconnect(unittest.TestCase):
                 nest.CopyModel('static_synapse', 'my_static_synapse')
                 nest.SetDefaults(syn_model, {'delay': 0.5})
                 syn_dict = {
-                    'model': syn_model,
+                    'synapse_model': syn_model,
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
@@ -142,7 +142,7 @@ class TestDisconnect(unittest.TestCase):
                 assert conns
 
                 conndictionary = {'rule': 'one_to_one'}
-                syndictionary = {'model': syn_model}
+                syndictionary = {'synapse_model': syn_model}
                 nest.Disconnect(
                     src_neurons,
                     tgt_neurons,
@@ -163,7 +163,7 @@ class TestDisconnect(unittest.TestCase):
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
                 neurons = nest.Create('iaf_psc_alpha', 10)
-                syn_dict = {'model': syn_model}
+                syn_dict = {'synapse_model': syn_model}
                 nest.Connect(neurons, neurons, "all_to_all", syn_dict)
 
                 src_neurons = neurons[:5]
@@ -174,7 +174,7 @@ class TestDisconnect(unittest.TestCase):
                 assert len(conns) == 25
 
                 conndictionary = {'rule': 'one_to_one'}
-                syndictionary = {'model': syn_model}
+                syndictionary = {'synapse_model': syn_model}
                 nest.Disconnect(
                     src_neurons,
                     tgt_neurons,
@@ -192,7 +192,7 @@ class TestDisconnect(unittest.TestCase):
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
                 syn_dict = {
-                    'model': syn_model,
+                    'synapse_model': syn_model,
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
@@ -207,7 +207,7 @@ class TestDisconnect(unittest.TestCase):
                 })
                 nest.Connect(neurons, neurons, "all_to_all", syn_dict)
                 nest.Connect(neurons, neurons, "all_to_all",
-                             {'model': 'my_static_synapse'})
+                             {'synapse_model': 'my_static_synapse'})
 
                 # Test if the connected synaptic elements before the simulation
                 # are correct

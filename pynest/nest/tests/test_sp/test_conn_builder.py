@@ -32,7 +32,7 @@ class TestSPBuilder(unittest.TestCase):
 
     def test_synapse_initialisation_one_to_one(self):
         syn_model = 'static_synapse'
-        syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1',
+        syn_dict = {'synapse_model': syn_model, 'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'}
         neurons = nest.Create('iaf_psc_alpha', 2, {
             'synaptic_elements': {
@@ -48,7 +48,7 @@ class TestSPBuilder(unittest.TestCase):
 
     def test_synapse_initialisation_all_to_all(self):
         syn_model = 'static_synapse'
-        syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1',
+        syn_dict = {'synapse_model': syn_model, 'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'}
         neurons = nest.Create('iaf_psc_alpha', 2, {
             'synaptic_elements': {
@@ -64,7 +64,7 @@ class TestSPBuilder(unittest.TestCase):
 
     def test_not_implemented_rules(self):
         syn_model = 'static_synapse'
-        syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1',
+        syn_dict = {'synapse_model': syn_model, 'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'}
         neurons = nest.Create('iaf_psc_alpha', 2, {
             'synaptic_elements': {

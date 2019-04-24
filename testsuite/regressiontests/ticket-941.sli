@@ -80,8 +80,8 @@ M_ERROR setverbosity
  /pn2 /parrot_neuron Create def
  /sd /spike_detector << /record_to [ /memory ] /withtime true >> Create def
  
- sg pn1 << /rule /one_to_one >> << /model /static_synapse >> Connect
- pn2 sd << /rule /one_to_one >> << /model /static_synapse >> Connect
+ sg pn1 << /rule /one_to_one >> << /synapse_model /static_synapse >> Connect
+ pn2 sd << /rule /one_to_one >> << /synapse_model /static_synapse >> Connect
  
  % check that we have precisely two connections
  { GetKernelStatus /num_connections get 2 eq } assert_or_die 
@@ -95,7 +95,7 @@ M_ERROR setverbosity
  
  % Add one synapse between pn1 and pn2 --------------------------------------
  
- pn1 pn2 << /rule /one_to_one >> << /model /static_synapse /delay 1.0 >> Connect
+ pn1 pn2 << /rule /one_to_one >> << /synapse_model /static_synapse /delay 1.0 >> Connect
  
  % check that we now have precisely three connections
  { GetKernelStatus /num_connections get 3 eq } assert_or_die
@@ -107,7 +107,7 @@ M_ERROR setverbosity
  
  % Add another synapse of same type between pn1 and pn2 ---------------------
  
- pn1 pn2 << /rule /one_to_one >> << /model /static_synapse /delay 2.0 >> Connect
+ pn1 pn2 << /rule /one_to_one >> << /synapse_model /static_synapse /delay 2.0 >> Connect
  
  % check that we now have precisely four connections
  { GetKernelStatus /num_connections get 4 eq } assert_or_die
@@ -119,7 +119,7 @@ M_ERROR setverbosity
  
  % Add synapse with different type  between pn1 and pn2 -----------------------
  
- pn1 pn2 << /rule /one_to_one >> << /model /static_synapse_hom_w /delay 3.0 >> Connect
+ pn1 pn2 << /rule /one_to_one >> << /synapse_model /static_synapse_hom_w /delay 3.0 >> Connect
  
  % check that we now have precisely five connections
  { GetKernelStatus /num_connections get 5 eq } assert_or_die
@@ -146,5 +146,4 @@ M_ERROR setverbosity
  } assert_or_die  
  
 endusing
- 
  

@@ -74,7 +74,7 @@ nest.Connect(vm, neuron, 'all_to_all')
 
 nest.Connect(neuron, neuron,
              {'rule': 'all_to_all', 'autapses': False},
-             {'model': 'gap_junction', 'weight': 0.5})
+             {'synapse_model': 'gap_junction', 'weight': 0.5})
 
 ###############################################################################
 # Finally we start the simulation and plot the membrane potentials of both

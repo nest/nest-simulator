@@ -170,7 +170,7 @@ multimeter = nest.Create(
 
 syn_dict = {'drift_factor': drift_factor_ext,
             'diffusion_factor': diffusion_factor_ext,
-            'model': 'diffusion_connection'}
+            'synapse_model': 'diffusion_connection'}
 
 nest.Connect(
     siegert_drive, siegert_ex + siegert_in, 'all_to_all', syn_dict)
@@ -181,14 +181,14 @@ nest.Connect(multimeter, siegert_ex + siegert_in)
 
 
 syn_dict = {'drift_factor': drift_factor_ex, 'diffusion_factor':
-            diffusion_factor_ex, 'model': 'diffusion_connection'}
+            diffusion_factor_ex, 'synapse_model': 'diffusion_connection'}
 nest.Connect(siegert_ex, siegert_ex + siegert_in, 'all_to_all', syn_dict)
 
 ###############################################################################
 # Connections originating from the inhibitory neuron
 
 syn_dict = {'drift_factor': drift_factor_in, 'diffusion_factor':
-            diffusion_factor_in, 'model': 'diffusion_connection'}
+            diffusion_factor_in, 'synapse_model': 'diffusion_connection'}
 nest.Connect(siegert_in, siegert_ex + siegert_in, 'all_to_all', syn_dict)
 
 ###############################################################################

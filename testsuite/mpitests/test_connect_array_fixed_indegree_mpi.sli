@@ -69,7 +69,7 @@ ResetKernel
 % cv_dv converts sli-array type to double-vector type
 
 % synapses and connection dictionaries
-/syn_dict << /model /static_synapse /weight Warr /delay Darr >> def
+/syn_dict << /synapse_model /static_synapse /weight Warr /delay Darr >> def
 /conn_dict << /rule /fixed_indegree /indegree K >> def
 
 net1 net2 conn_dict syn_dict Connect % connects source to target subnet

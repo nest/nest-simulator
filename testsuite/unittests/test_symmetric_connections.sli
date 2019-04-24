@@ -105,7 +105,7 @@ fail_or_die
   set1 set2 
   << /rule /one_to_one 
      /make_symmetric true >> 
-  << /model /stdp_synapse 
+  << /synapse_model /stdp_synapse
      /weight << /distribution  /uniform >> >> 
   Connect
 }
@@ -116,7 +116,7 @@ fail_or_die
   set1 set2 
   << /rule /one_to_one 
      /make_symmetric true >> 
-  << /model /stdp_synapse 
+  << /synapse_model /stdp_synapse
      /alpha << /distribution  /uniform >> >> 
   Connect
 }
@@ -129,7 +129,7 @@ fail_or_die
   set1 set2 
   << /rule /one_to_one 
      /make_symmetric true >> 
-  << /model /stdp_synapse 
+  << /synapse_model /stdp_synapse
      /weight <. 1.0 2.0 3.0 4.0 5.0 .>
      /delay <. 1.5 2.5 3.5 4.5 5.5 .>
      /alpha <. 1.2 2.2 3.2 4.2 5.2 .> >> 
@@ -202,7 +202,7 @@ fail_or_die
   setup2
   set1 set1 
   << /rule /all_to_all /make_symmetric false >> 
-  << /model /gap_junction /weight <. 1.0 2.0 3.0 4.0 .> >> 
+  << /synapse_model /gap_junction /weight <. 1.0 2.0 3.0 4.0 .> >>
   Connect
 }
 fail_or_die
@@ -211,7 +211,7 @@ fail_or_die
   setup2
   set1 set1 
   << /rule /all_to_all /make_symmetric false >> 
-  << /model /gap_junction /weight << /distribution  /uniform >> >> 
+  << /synapse_model /gap_junction /weight << /distribution  /uniform >> >>
   Connect
 }
 fail_or_die
@@ -226,7 +226,7 @@ pass_or_die
   setup2
   set1 set1 
   << /rule /all_to_all /make_symmetric false >> 
-  << /model /gap_junction /weight 2.0 >> 
+  << /synapse_model /gap_junction /weight 2.0 >>
   Connect
 }
 pass_or_die

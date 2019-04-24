@@ -141,7 +141,7 @@ M_ERROR setverbosity
                           % plastic synapses.
 
       /initial_weight 10.0 def
-      /syn_spec << /model /stdp_synapse
+      /syn_spec << /synapse_model /stdp_synapse
                    /weight
                      extra_params model known
                      {

@@ -73,16 +73,16 @@ ResetKernel
 /iaf_psc_alpha 5 Create /neurons Set
 
 % default weight and delay
-neurons [1 1] Take neurons [5 5] Take /one_to_one << /model /static_synapse >> Connect
+neurons [1 1] Take neurons [5 5] Take /one_to_one << /synapse_model /static_synapse >> Connect
 
 % default weight; delay = 15ms
-neurons [2 2] Take neurons [5 5] Take /one_to_one << /model /static_synapse /delay d >> Connect
+neurons [2 2] Take neurons [5 5] Take /one_to_one << /synapse_model /static_synapse /delay d >> Connect
 
 % default delay; weight = 23
-neurons [3 3] Take neurons [5 5] Take /one_to_one << /model /static_synapse /weight w >> Connect
+neurons [3 3] Take neurons [5 5] Take /one_to_one << /synapse_model /static_synapse /weight w >> Connect
 
 % delay = 15ms ; weight = 23
-neurons [4 4] Take neurons [5 5] Take /one_to_one << /model /static_synapse /delay d /weight w >> Connect
+neurons [4 4] Take neurons [5 5] Take /one_to_one << /synapse_model /static_synapse /delay d /weight w >> Connect
 
 << /source neurons [1 1] Take >> GetConnections GetSynapseStatus 0 get /syn Set
 { defaults /weight get syn /weight get eq } assert_or_die

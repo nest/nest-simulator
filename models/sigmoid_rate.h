@@ -44,7 +44,7 @@ Name: sigmoid_rate - rate model with sigmoidal gain function
 Description:
 
 sigmoid_rate is an implementation of a nonlinear rate model with input
-function \f$ input(h) = g / ( 1. + exp( -beta * ( h - theta ) ) ) \f$.
+function \f$ input(h) = g / ( 1. + \exp( -\beta * ( h - \theta ) ) ) \f$.
 Input transformation can either be applied to individual inputs
 or to the sum of all inputs.
 

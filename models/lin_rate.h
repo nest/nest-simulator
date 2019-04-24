@@ -47,9 +47,9 @@ The model supports multiplicative coupling which can
 be switched on and off via the boolean parameter mult_coupling
 (default=false). In case multiplicative coupling is actived
 the excitatory input of the model is multiplied with the function
-\f$ mult_coupling_ex(rate) = g_ex_ * ( theta_ex_ - rate ) \f$
+\f$ mult\_coupling\_ex(rate) = g_{ex} * ( \theta_{ex} - rate ) \f$
 and the inhibitory input is multiplied with the function
-\f$ mult_coupling_in(rate) = g_in_ * ( theta_in_ + rate ) \f$.
+\f$ mult\_coupling\_in(rate) = g_{in} * ( \theta_{in} + rate ) \f$.
 
 The model supports connections to other rate models with either zero or
 non-zero delay, and uses the secondary_event concept introduced with

@@ -55,7 +55,7 @@ receives, and the output is the pooled spike train.
 
 The instantaneous firing rate of the N component neurons is defined as
 
-@f[ rate(t) = rho_0 * exp( (h(t) - eta(t))/delta_u ), @f]
+@f[ rate(t) = \rho_0 * \exp( (h(t) - \eta(t))/\delta_u ), @f]
 
 where h(t) is the input potential (synaptic delta currents convolved with
 an exponential kernel with time constant tau_m), eta(t) models the effect

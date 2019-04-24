@@ -51,13 +51,13 @@ to integrate the differential equation (see Numerical Recipes 3rd Edition,
 Press et al. 2007, Ch. 17.2).
 
 The membrane potential is given by the following differential equation:
-@f[ 
-C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e)
+@f[
+C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e)
                                                      -g_i(t)(V-E_i)-w +I_e
 @f]
 and
 
-@f[ tau_w * dw/dt= a(V-E_L) -w @f]
+@f[ \tau_w * dw/dt= a(V-E_L) -w @f]
 
 Parameters:
 

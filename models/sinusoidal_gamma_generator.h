@@ -59,7 +59,7 @@ spike train.
 
 The instantaneous rate of the process is given by
 
-@f[ f(t) = rate + amplitude sin ( 2 pi frequency t + phase * pi/180 ) @f]
+@f[ f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase * \pi/180 ) @f]
 
 Parameters:
 
@@ -120,19 +120,19 @@ SeeAlso: sinusoidal_poisson_generator, gamma_sup_generator
  * with
  * @f[  \lambda(t) = dc + ac \sin ( 2 \pi f t + \phi ) @f]
  * @f[  \Lambda(t) = a \int_{t_0}^t \lambda(s) ds @f]
- * and the incomplete Gamma function $\Gamma(a,z)$; $a$ is the order of the
- * gamma function and \f$t_0\f$ the time of the most recent spike.
+ * and the incomplete Gamma function \f$ Gamma(a,z) \f$; \f$ a \f$ is the order
+ * of the gamma function and \f$t_0\f$ the time of the most recent spike.
  *
- * @note This implementation includes an additional $a$ factor in the
+ * @note This implementation includes an additional \f$ a \f$ factor in the
  * calculation of \f$\Lambda(t)\f$ and \f$h(t)\f$ in order to keep the mean rate
  * constant with varying \f$a\f$
  *
- * @note Let $t_0$ be the time of the most recent spike. If stimulus parameters
+ * @note Let \f$t_0\f$ be the time of the most recent spike. If stimulus parameters
  * are changed at
  *       \f$t_c > t_0\f$, then \f$\Lambda(t)\f$ is integrated piecewise for
  *       \f$t>t_c\f$ as
- *       @f[ \Lambda(t) = \a_{old} \int_{t_0}^{t_c]} \lambda_{old}(s) ds
- *                      + \a_{new} \int_{t_c}^{t]} \lambda_{new}(s) ds @f]
+ *       @f[ \Lambda(t) = a_{old} \int_{t_0}^{t_c]} \lambda_{old}(s) ds
+ *                      + a_{new} \int_{t_c}^{t]} \lambda_{new}(s) ds @f]
  *       where "old" and "new" indicate old an new parameter values,
  *       respectively.
  *

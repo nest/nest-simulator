@@ -46,7 +46,7 @@ Implementation of the simple spiking neuron model introduced by Izhikevich
   dv/dt = 0.04*v^2 + 5*v + 140 - u + I
      du/dt = a*(b*v - u)] @f]
 
-    if v >= V_th:
+    if  \f$ v >= V_{th} \f$:
       v is set to c
       u is incremented by d
 

@@ -83,18 +83,18 @@ During connection, the ports are selected with the property "receptor_type".
 The membrane potential is given by the following differential equation:
 
 @f[
- C dV/dt = -g_L(V-E_L) + g_L*Delta_T*exp((V-V_T)/Delta_T) + I_syn_tot(V, t)
-          - w + I_e
+ C dV/dt = -g_L(V-E_L) + g_L*\Delta_T*\exp((V-V_T)/\Delta_T)
+ + I_{syn_{tot}}(V, t)- w + I_e
 @f]
 where
 
-@f[ I_syn_tot(V,t) = \sum_i g_i(t) (V - E_{rev,i}) , @f]
+@f[ I_{syn_{tot}}(V,t) = \sum_i g_i(t) (V - E_{rev,i}) , @f]
 
-the synapse i is excitatory or inhibitory depending on the value of 
+the synapse i is excitatory or inhibitory depending on the value of
 \f$ E_{rev,i}\f$
 and the differential equation for the spike-adaptation current w is:
 
-@f[ tau_w * dw/dt = a(V - E_L) - w @f]
+@f[ \tau_w * dw/dt = a(V - E_L) - w @f]
 
 When the neuron fires a spike, the adaptation current w <- w + b.
 

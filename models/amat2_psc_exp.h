@@ -74,9 +74,9 @@ Remarks:
 - If identical parameters are used, and beta==0, then this model shall
   behave exactly as mat2_psc_exp.
 - The time constants in the model must fullfill the following conditions:
-  - \f$ tau_m != {tau_syn_ex, tau_syn_in} \f$
-  - \f$ tau_v != {tau_syn_ex, tau_syn_in} \f$
-  - \f$ tau_m != tau_v \f$
+  - \f$ \tau_m != {\tau_{syn_{ex}}, \tau_{syn_{in}}} \f$
+  - \f$ \tau_v != {\tau_{syn_{ex}}, \tau_{syn_{in}}} \f$
+  - \f$ \tau_m != \tau_v \f$
   This is required to avoid singularities in the numerics. This is a
   problem of implementation only, not a principal problem of the model.
 - Expect unstable numerics if time constants that are required to be
@@ -118,7 +118,7 @@ The following state variables can be read out with the multimeter device:
 
 Remarks:
 
-\f$ tau_m != tau_syn_{ex,in} \f$ is required by the current implementation to
+\f$ \tau_m != \tau_{syn_{ex,in}} \f$ is required by the current implementation to
 avoid a degenerate case of the ODE describing the model [1].
 For very similar values, numerics will be unstable.
 

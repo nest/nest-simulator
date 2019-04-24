@@ -42,7 +42,7 @@ Name: tanh_rate - rate model with hyperbolic tangent non-linearity
 Description:
 
 tanh_rate is an implementation of a nonlinear rate model with input function
-\f$ input(h) = tanh(g * (h-theta)) \f$.
+\f$ input(h) = \tanh(g * (h-\theta)) \f$.
 Input transformation can either be applied to individual inputs
 or to the sum of all inputs.
 

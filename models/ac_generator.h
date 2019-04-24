@@ -47,12 +47,12 @@ Description:
 This device produces an ac-current sent by a CurrentEvent. The
 current is given by
 
-       @f[ I(t) = offset + amplitude * sin ( om * t + phi ) @f]
+       @f[ I(t) = offset + amplitude * \sin ( om * t + \phi ) @f]
 
 where
     @f[
-    om  = 2 * pi * frequency
-    phi = phase / 180 * pi
+    om  = 2 * \pi * frequency \\
+    \phi = phase / 180 * \pi
     @f]
 
 Parameters:

@@ -63,53 +63,51 @@ conductances in the form of truncated exponentials.
 This model features both an adaptation current and a dynamic threshold for
 spike-frequency adaptation. The membrane potential (V) is described by the
 differential equation:
-@f[
-C*dV(t)/dt = -g_L*(V(t)-E_L) - eta_1(t) - eta_2(t) - ... - eta_n(t) + I(t)
-@f]
-where each eta_i is a spike-triggered current (stc), and the neuron model can
-have arbitrary number of them.
-Dynamic of each eta_i is described by:
-@f[
-tau_eta_i*d{eta_i}/dt = -eta_i
-@f]
+@f[ C*dV(t)/dt = -g_L*(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots
+    - \eta_n(t) + I(t) @f]
+
+where each \f$ \eta_i \f$ is a spike-triggered current (stc), and the neuron
+model can have arbitrary number of them.
+Dynamic of each \f$ \eta_i \f$ is described by:
+@f[ \tau_\eta{_i}*d{\eta_i}/dt = -\eta_i  @f]
+
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
-@f[
-eta_i = eta_i + q_eta_i  (in case of spike emission).
-@f]
+
+@f[ \eta_i = \eta_i + q_{\eta_i} \text{ (in case of spike emission).} @f]
+
 Neuron produces spikes STOCHASTICALLY according to a point process with the
 firing intensity:
-@f[
-lambda(t) = lambda_0 * exp[ (V(t)-V_T(t)) / Delta_V ]
-@f]
+
+@f[ \lambda(t) = \lambda_0 * \exp (V(t)-V_T(t)) / \Delta_V  @f]
 
 where \f$ V_T(t) \f$ is a time-dependent firing threshold:
-@f[
-V_T(t) = V_T_star + gamma_1(t) + gamma_2(t) + ... + gamma_m(t)
-@f]
 
-where gamma_i is a kernel of spike-frequency adaptation (sfa), and the neuron
-model can have arbitrary number of them.
-Dynamic of each gamma_i is described by:
+@f[ V_T(t) = V_{T_star} + \gamma_1(t) + \gamma_2(t) + \ldots + \gamma_m(t) @f]
+
+where \f$ \gamma_i \f$ is a kernel of spike-frequency adaptation (sfa), and the
+neuron model can have arbitrary number of them.
+Dynamic of each \f$ \gamma_i \f$ is described by:
 @f[
-tau_gamma_i*d{gamma_i}/dt = -gamma_i
+\tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
 @f]
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
 @f[
-gamma_i = gamma_i + q_gamma_i  (in case of spike emission).
+\gamma_i = \gamma_i + q_{\gamma_i}  \text{ (in case of spike emission).}
 @f]
 
 Note:
 
 In the current implementation of the model (as described in [1] and
-[2]), the values of eta_i and gamma_i are affected immediately after spike
-emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox) which fits
-the model using experimental data, requires a different set of eta_i and
-gamma_i. It applies the jump of eta_i and gamma_i after the refractory period.
-One can easily convert between q_eta/gamma of these two approaches: \f$
-q_eta_giftoolbox = q_eta_NEST * (1 - exp( -tau_ref / tau_eta )) \f$
-The same formula applies for q_gamma.
+[2]), the values of \f$ \eta_i \f$ and \f$ \gamma_i \f$ are affected
+immediately after spike emission. However, GIF toolbox
+(http://wiki.epfl.ch/giftoolbox) which fits the model using experimental data,
+requires a different set of \f$ \eta_i \f$ and \f$ \gamma_i\f$ . It applies the
+jump of \f$ \eta_i \f$ and \f$ \gamma_i \f$ after the refractory period. One can
+easily convert between \f$ q_\eta/\gamma \f$ of these two approaches:
+\f$ q{_\eta}_{giftoolbox} = q_{\eta_{NEST}} * (1 - \exp( -\tau_{ref} /
+ \tau_\eta )) \f$ The same formula applies for \f$ q_{\gamma} \f$.
 
 The shape of synaptic conductance is exponential.
 

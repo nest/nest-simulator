@@ -58,12 +58,12 @@ true will reset the membrane potential after each spike.
 The transfer function can be chosen to be linear, exponential or a sum of
 both by adjusting three parameters:
 
-@f[  rate = Rect[ c_1 * V' + c_2 * exp(c_3 * V') ], @f]
+@f[  rate = Rect[ c_1 * V' + c_2 * \exp(c_3 * V') ], @f]
 
-where the effective potential \f$ V' = V_m - E_sfa \f$ and E_sfa is called
-the adaptive threshold. Here Rect means rectifier:
-\f$ Rect(x) = {x if x>=0, 0 else} \f$ (this is necessary because negative rates are
-not possible).
+where the effective potential \f$ V' = V_m - E_{sfa} \f$ and \f$ E_{sfa} \f$
+is called the adaptive threshold. Here Rect means rectifier:
+\f$ Rect(x) = {x \text{ if } x>=0, 0 \text{ else}} \f$ (this is necessary because
+negative rates are not possible).
 
 By setting c_3 = 0, c_2 can be used as an offset spike rate for an otherwise
 linear rate model.
@@ -71,7 +71,7 @@ linear rate model.
 The dead time enables to include refractoriness. If dead time is 0, the
 number of spikes in one time step might exceed one and is drawn from the
 Poisson distribution accordingly. Otherwise, the probability for a spike
-is given by 1 - exp(-rate*h), where h is the simulation time step. If
+is given by \f$ 1 - \exp(-rate*h) \f$, where h is the simulation time step. If
 dead_time is smaller than the simulation resolution (time step), it is
 internally set to the resolution.
 

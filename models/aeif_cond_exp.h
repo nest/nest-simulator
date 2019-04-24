@@ -85,12 +85,12 @@ This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
 solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
-@f[ C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e)
+@f[ C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e)
                                                      -g_i(t)(V-E_i)-w +I_e @f]
 
 and
 
-@f[ tau_w * dw/dt= a(V-E_L) -W @f]
+@f[ \tau_w * dw/dt= a(V-E_L) -W @f]
 
 Note that the spike detection threshold V_peak is automatically set to
 \f$ V_th+10 mV \f$ to avoid numerical instabilites that may result from

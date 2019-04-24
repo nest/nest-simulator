@@ -82,16 +82,17 @@ The model has three compartments: soma, proximal and distal dendrite,
 labeled as s, p, and d, respectively. Compartments are connected through
 passive conductances as follows
 @f[
-C_m.s d/dt V_m.s = ... - g_sp ( V_m.s - V_m.p )
+C_{m.s} d/dt V_{m.s} = \ldots - g_{sp} ( V_{m.s} - V_{m.p} ) \\
 
-C_m.p d/dt V_m.p = ... - g_sp ( V_m.p - V_m.s ) - g_pd ( V_m.p - V_m.d )
+C_{m.p} d/dt V_{m.p} = \ldots - g_{sp} ( V_{m.p} - V_{m.s} )
+    - g_{pd} ( V_{m.p} - V_{m.d} ) \\
 
-C_m.d d/dt V_m.d = ...                          - g_pd ( V_m.d - V_m.p )
+C_{m.d} d/dt V_{m.d} = \ldots \qquad - g_{pd} ( V_{m.d} - V_{m.p} )
 @f]
 A spike is fired when the somatic membrane potential exceeds threshold,
-\f$ V_m.s >= V_th \f$. After a spike, somatic membrane potential is clamped to
-a reset potential, \f$ V_m.s == V_reset \f$, for the refractory period. Dendritic
-membrane potentials are not manipulated after a spike.
+\f$ V_{m.s} >= V_{th} \f$. After a spike, somatic membrane potential is
+clamped to a reset potential, \f$ V_{m.s} == V_{reset} \f$, for the refractory
+period. Dendritic membrane potentials are not manipulated after a spike.
 
 There is one excitatory and one inhibitory conductance-based synapse
 onto each compartment, with alpha-function time course. The alpha

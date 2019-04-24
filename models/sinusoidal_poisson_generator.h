@@ -51,8 +51,8 @@ spike train.
 
 The instantaneous rate of the process is given by
 
-@f[  f(t) = max(0, rate + amplitude sin ( 2 pi frequency t + phase * pi/180 ))
-        >= 0
+@f[  f(t) = max(0, rate + amplitude \sin ( 2 \pi frequency t + phase
+     * \pi/180 )) >= 0
 @f]
 Parameters:
 

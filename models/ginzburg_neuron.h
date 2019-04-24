@@ -44,24 +44,24 @@ passed through a gain function g whose output is interpreted as
 the probability of the neuron to be in the active (1) state.
 
 The gain function g used here is \f$ g(h) = c1*h + c2 * 0.5*(1 +
-tanh(c3*(h-theta))) \f$ (output clipped to [0,1]). This allows to
+\tanh(c3*(h-\theta))) \f$ (output clipped to [0,1]). This allows to
 obtain affin-linear (c1!=0, c2!=0, c3=0) or sigmoidal (c1=0,
 c2=1, c3!=0) shaped gain functions.  The latter choice
 corresponds to the definition in [1], giving the name to this
 neuron model.
 The choice c1=0, c2=1, c3=beta/2 corresponds to the Glauber
-dynamics [2],\f$ g(h) = 1 / (1 + exp(-beta (h-theta))) \f$.
-The time constant tau_m is defined as the mean
+dynamics [2], \f$ g(h) = 1 / (1 + \exp(-\beta (h-\theta))) \f$.
+The time constant \f$ \tau_m \f$ is defined as the mean
 inter-update-interval that is drawn from an exponential
 distribution with this parameter. Using this neuron to reprodce
 simulations with asynchronous update [1], the time constant needs
-to be chosen as tau_m = dt*N, where dt is the simulation time
+to be chosen as \f$ \tau_m = dt*N \f$, where dt is the simulation time
 step and N the number of neurons in the original simulation with
 asynchronous update. This ensures that a neuron is updated on
-average every tau_m ms. Since in the original paper [1] neurons
+average every \f$ \tau_m \f$ ms. Since in the original paper [1] neurons
 are coupled with zero delay, this implementation follows this
 definition. It uses the update scheme described in [3] to
-maintain causality: The incoming events in time step t_i are
+maintain causality: The incoming events in time step \f$ t_i \f$ are
 taken into account at the beginning of the time step to calculate
 the gain function and to decide upon a transition.  In order to
 obtain delayed coupling with delay d, the user has to specify the

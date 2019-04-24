@@ -44,7 +44,7 @@ the probability of the neuron to be in the active (1) state.
 
 The gain function g used here is
 
-@f[ g(h) = 0.5 * erfc (( h - theta_ ) / ( sqrt( 2. ) * sigma)). @f]
+@f[ g(h) = 0.5 * erfc (( h - \theta ) / ( \sqrt( 2. ) * \sigma)). @f]
 
 This corresponds to a McCulloch-Pitts neuron receiving additional
 Gaussian noise with mean 0 and standard deviation sigma.

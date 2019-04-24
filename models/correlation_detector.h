@@ -49,23 +49,23 @@ Description:
 The correlation_detector device is a recording device. It is used to record
 spikes from two pools of spike inputs and calculates the count_histogram of
 inter-spike intervals (raw cross correlation) binned to bins of duration
-delta_tau. The result can be obtained via GetStatus under the key
+\f$ \delta_\tau \f$. The result can be obtained via GetStatus under the key
 /count_histogram.
 In parallel it records a weighted histogram, where the connection weights
 are used to weight every count. In order to minimize numerical errors the
 Kahan summation algorithm is used when calculating the weighted histogram.
 (http://en.wikipedia.org/wiki/Kahan_summation_algorithm)
-Both are arrays of 2*tau_max/delta_tau+1 values containing the histogram
-counts in the following way:
+Both are arrays of \f$ 2*\tau_{max}/\delta_\tau+1 \f$ values containing the
+histogram counts in the following way:
 
-Let t_{1,i} be the spike times of source 1,
-t_{2,j} the spike times of source 2.
+Let \f$ t_{1,i}\f$ be the spike times of source 1,
+\f$ t_{2,j} \f$ the spike times of source 2.
 histogram[n] then contains the sum of products of the weight
 \f$ w_{1,i}*w_{2,j}, \f$ count_histogram[n] contains 1 summed over all events
 with\f$ t_{2,j}-t_{1,i} \f$ in
 
-   @f[ n*delta_tau - tau_max - delta_tau/2 ,
-      n*delta_tau - tau_max + delta_tau/2 @f]
+   @f[ n*\delta_\tau - \tau_{max} - \delta_\tau/2 @f]
+   @f[ n*\delta_\tau - \tau_{max} + \delta_\tau/2 @f]
 
 The bins are centered around the time difference they represent, but are
 left-closed and right-open. This means that events with time difference

@@ -42,12 +42,12 @@ See docs/model_details/HillTononi.ipynb for details.
 Synaptic dynamics are given by
 
 @f[
-P'(t) = ( 1 - P ) / tau_P
-P(T+) = (1 - delta_P) P(T-)   for T : time of a spike
+P'(t) = ( 1 - P ) / \tau_P
+P(T+) = (1 - \delta_P) P(T-)    \text{ for T : time of a spike } \\
 P(t=0) = 1
 @f]
 @f[
-w(t) = w_max * P(t)  @f] is the resulting synaptic weight
+w(t) = w_{max} * P(t)  @f] is the resulting synaptic weight
 
 Parameters:
 

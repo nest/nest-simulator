@@ -74,14 +74,14 @@ solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
 
-@f[ C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e)
+@f[ C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e)
                                                      -g_i(t)(V-E_i)-w +I_e @f]
 
 and
 
-@f[ tau_w * dw/dt= a(V-E_L) -W @f]
- 
-@f[ I(t) = J Sum_k delta(t - t^k). @f]
+@f[ \tau_w * dw/dt= a(V-E_L) -W @f]
+
+@f[ I(t) = J \sum_k \delta(t - t^k). @f]
 
 Here delta is the dirac delta function and k indexes incoming
 spikes. This is implemented such that V_m will be incremented/decremented by
@@ -122,7 +122,7 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-References: 
+References:
 
 \verbatim embed:rst
 .. [1] Brette R and Gerstner W (2005). Adaptive Exponential

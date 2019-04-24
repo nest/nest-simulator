@@ -93,11 +93,8 @@ class ConnectWithEllipticalMask(unittest.TestCase):
                [23, 47], [23, 48], [23, 49], [24, 44], [24, 48], [24, 49],
                [24, 50], [25, 45], [25, 49], [25, 50]]
 
-        connections = nest.GetConnections()
-        sources = connections.get('source')
-        targets = connections.get('target')
-        connections = [[sources[i], targets[i]]
-                       for i in range(len(connections))]
+        conns = nest.GetConnections()
+        connections = [[s, t] for s, t in zip(conns.source(), conns.target())]
 
         for conn, conn_ref in zip(sorted(connections), ref):
             self.assertEqual(conn, conn_ref)
@@ -155,11 +152,8 @@ class ConnectWithEllipticalMask(unittest.TestCase):
                [19, 48], [20, 45], [20, 49], [21, 42], [21, 46], [22, 43],
                [22, 47], [23, 44], [23, 48], [24, 45], [24, 49], [25, 50]]
 
-        connections = nest.GetConnections()
-        sources = connections.get('source')
-        targets = connections.get('target')
-        connections = [[sources[i], targets[i]]
-                       for i in range(len(connections))]
+        conns = nest.GetConnections()
+        connections = [[s, t] for s, t in zip(conns.source(), conns.target())]
 
         for conn, conn_ref in zip(sorted(connections), ref):
             self.assertEqual(conn, conn_ref)
@@ -224,11 +218,8 @@ class ConnectWithEllipticalMask(unittest.TestCase):
                [20, 45], [20, 49], [20, 50], [21, 46], [22, 47], [23, 48],
                [24, 49], [25, 50]]
 
-        connections = nest.GetConnections()
-        sources = connections.get('source')
-        targets = connections.get('target')
-        connections = [[sources[i], targets[i]]
-                       for i in range(len(connections))]
+        conns = nest.GetConnections()
+        connections = [[s, t] for s, t in zip(conns.source(), conns.target())]
 
         for conn, conn_ref in zip(sorted(connections), ref):
             self.assertEqual(conn, conn_ref)
@@ -301,11 +292,8 @@ class ConnectWithEllipticalMask(unittest.TestCase):
                [23, 49], [24, 29], [24, 44], [24, 48], [24, 49], [24, 50],
                [25, 30], [25, 45], [25, 46], [25, 49], [25, 50]]
 
-        connections = nest.GetConnections()
-        sources = connections.get('source')
-        targets = connections.get('target')
-        connections = [[sources[i], targets[i]]
-                       for i in range(len(connections))]
+        conns = nest.GetConnections()
+        connections = [[s, t] for s, t in zip(conns.source(), conns.target())]
 
         for conn, conn_ref in zip(sorted(connections), ref):
             self.assertEqual(conn, conn_ref)

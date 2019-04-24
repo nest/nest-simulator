@@ -230,12 +230,10 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Simulate(1)
 
         conn = nest.GetConnections(pre, post)
-        sources = conn.get('source')
-        targets = conn.get('target')
-        ports = conn.get('port')
+        conn_dict = conn.get(['source', 'target', 'port'])
 
-        connections = [(sources[i], targets[i], ports[i]) for i in
-                       range(len(conn))]
+        connections = list(zip(conn_dict['source'], conn_dict['target'],
+                               conn_dict['port']))
 
         nest.Simulate(100)
 

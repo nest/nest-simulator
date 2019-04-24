@@ -1266,14 +1266,11 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
         raise nest.kernel.NESTError("tgt_layer must be a GIDCollection")
 
     conns = nest.GetConnections(sources, tgt_layer, synapse_model=syn_model)
-    srcs = conns.get('source')
-    tgts = conns.get('target')
 
-    # conns is a flat list of connections.
-    # Re-organize into one list per source, containing only target GIDs.
+    # Re-organize conns into one list per source, containing only target GIDs.
     src_tgt_map = dict((sgid, []) for sgid in sources)
-    for i in range(len(conns)):
-        src_tgt_map[srcs[i]].append(tgts[i])
+    for src, tgt in zip(conns.source(), conns.target()):
+        src_tgt_map[src].append(tgt)
 
     # convert dict to nested list in same order as sources
     return tuple(src_tgt_map[sgid] for sgid in sources)

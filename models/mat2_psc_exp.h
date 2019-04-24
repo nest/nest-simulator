@@ -81,27 +81,27 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-C_m          double - Capacity of the membrane in pF
-E_L          double - Resting potential in mV
-tau_m        double - Membrane time constant in ms
-tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
-tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
-t_ref        double - Duration of absolute refractory period (no spiking)
-                     in ms
-V_m          double - Membrane potential in mV
-I_e          double - Constant input current in pA
-t_spike      double - Point in time of last spike in ms
-tau_1        double - Short time constant of adaptive threshold in ms
-tau_2        double - Long time constant of adaptive threshold in ms
-alpha_1      double - Amplitude of short time threshold adaption in mV [3]
-alpha_2      double - Amplitude of long time threshold adaption in mV [3]
-omega        double - Resting spike threshold in mV (absolute value, not
+- C_m          double - Capacity of the membrane in pF
+- E_L          double - Resting potential in mV
+- tau_m        double - Membrane time constant in ms
+- tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
+- tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
+- t_ref        double - Duration of absolute refractory period (no spiking)
+-                      in ms
+- V_m          double - Membrane potential in mV
+- I_e          double - Constant input current in pA
+- t_spike      double - Point in time of last spike in ms
+- tau_1        double - Short time constant of adaptive threshold in ms
+- tau_2        double - Long time constant of adaptive threshold in ms
+- alpha_1      double - Amplitude of short time threshold adaption in mV [3]
+- alpha_2      double - Amplitude of long time threshold adaption in mV [3]
+- omega        double - Resting spike threshold in mV (absolute value, not
                      relative to E_L as in [3])
 
 The following state variables can be read out with the multimeter device:
 
-V_m          Non-resetting membrane potential
-V_th         Two-timescale adaptive threshold
+- V_m          Non-resetting membrane potential
+- V_th         Two-timescale adaptive threshold
 
 Remarks:
 
@@ -111,16 +111,18 @@ numerics will be unstable.
 
 References:
 
-[1] Rotter S & Diesmann M (1999) Exact simulation of
-   time-invariant linear systems with applications to neuronal
-   modeling. Biologial Cybernetics 81:381-402.
-[2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State
-   space analysis of synchronous spiking in cortical neural
-   networks. Neurocomputing 38-40:565-571.
-[3] Kobayashi R, Tsubo Y and Shinomoto S (2009) Made-to-order
-   spiking neuron model equipped with a multi-timescale adaptive
-   threshold. Front. Comput. Neurosci. 3:9. doi:10.3389/neuro.10.009.2009
-
+\verbatim embed:rst
+.. [1] Rotter S and Diesmann M (1999). Exact simulation of
+       time-invariant linear systems with applications to neuronal
+       modeling. Biologial Cybernetics 81:381-402.
+.. [2] Diesmann M, Gewaltig M-O, Rotter S, Aertsen A (2001). State
+       space analysis of synchronous spiking in cortical neural
+       networks. Neurocomputing 38-40:565-571.
+.. [3] Kobayashi R, Tsubo Y and Shinomoto S (2009). Made-to-order
+       spiking neuron model equipped with a multi-timescale adaptive
+       threshold. Frontiers in Computuational Neuroscience 3:9.
+       doi:10.3389/neuro.10.009.2009
+\endverbatim
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest

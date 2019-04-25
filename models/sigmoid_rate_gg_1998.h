@@ -56,15 +56,19 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-- rate                double - Rate (unitless)
-- tau                 double - Time constant of rate dynamics in ms.
-- mu                  double - Mean input.
-- sigma               double - Noise parameter.
-- g                   double - Gain parameter.
-- linear_summation    bool   - Specifies type of non-linearity (see above).
-- rectify_output      bool   - Switch to restrict rate to values >= 0.
+\verbatim embed:rst
+==================  ======  ==============================================
+ rate               double  Rate (unitless)
+ tau                double  Time constant of rate dynamics in ms
+ mu                 double  Mean input
+ sigma              double  Noise parameter
+ g                  double  Gain parameter
+ linear_summation   bool    Specifies type of non-linearity (see above)
+ rectify_output     bool    Switch to restrict rate to values >= 0
+==================  ======  ==============================================
+\endverbatim
 
-Note:
+-Note:
 
 The boolean parameter linear_summation determines whether the
 input from different presynaptic neurons is first summed linearly and

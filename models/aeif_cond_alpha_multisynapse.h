@@ -102,34 +102,52 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-Dynamic state variables:
--  V_m        double - Membrane potential in mV
--  w          double - Spike-adaptation current in pA.
 
-Membrane Parameters:
--  C_m        double - Capacity of the membrane in pF
--  t_ref      double - Duration of refractory period in ms.
--  V_reset    double - Reset value for V_m after a spike. In mV.
--  E_L        double - Leak reversal potential in mV.
--  g_L        double - Leak conductance in nS.
--  I_e        double - Constant external input current in pA.
--  Delta_T    double - Slope factor in mV
--  V_th       double - Spike initiation threshold in mV
--  V_peak     double - Spike detection threshold in mV.
+\verbatim embed:rst
+======== ======= =======================================
+**Dynamic state variables:**
+--------------------------------------------------------
+ V_m     double  Membrane potential in mV
+ w       double  Spike-adaptation current in pA.
+======== ======= =======================================
 
-Adaptation parameters:
--  a          double - Subthreshold adaptation in nS.
--  b          double - Spike-triggered adaptation in pA.
--  tau_w      double - Adaptation time constant in ms
+======== ======= =======================================
+**Membrane Parameters**
+--------------------------------------------------------
+ C_m     double  Capacity of the membrane in pF
+ t_ref   double  Duration of refractory period in ms.
+ V_reset double  Reset value for V_m after a spike in mV.
+ E_L     double  Leak reversal potential in mV.
+ g_L     double  Leak conductance in nS.
+ I_e     double  Constant external input current in pA.
+ Delta_T double  Slope factor in mV
+ V_th    double  Spike initiation threshold in mV
+ V_peak  double  Spike detection threshold in mV
+======== ======= =======================================
 
-Synaptic parameters
--  E_rev      double vector - Reversal potential in mV.
--  tau_syn    double vector - Time constant of synaptic conductance in ms
+======== ======= ==================================
+**Spike adaptation parameters**
+---------------------------------------------------
+ a       double  Subthreshold adaptation in nS.
+ b       double  Spike-triggered adaptation in pA.
+ tau_w   double  Adaptation time constant in ms
+======== ======= ==================================
 
-Integration parameters
--  gsl_error_tol  double - This parameter controls the admissible error of the
-                          GSL integrator. Reduce it if NEST complains about
-                          numerical instabilities.
+======== ============= ========================================================
+**Synaptic parameters**
+-------------------------------------------------------------------------------
+E_rev    double vector Reversal potential in mV.
+tau_syn  double vector Time constant of synaptic conductance in ms
+======== ============= ========================================================
+
+============= ======= =========================================================
+**Integration parameters**
+-------------------------------------------------------------------------------
+gsl_error_tol double  This parameter controls the admissible error of the
+                      GSL integrator. Reduce it if NEST complains about
+                      numerical instabilities.
+============= ======= =========================================================
+\endverbatim
 
 Examples:
 

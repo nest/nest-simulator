@@ -79,29 +79,37 @@ receptor_port = 1 will be used as spike source 2.
 
 Parameters:
 
-- Tstart     double    - Time when to start counting events. This time should
-                         be set to at least start + tau_max in order to avoid
-                         edge effects of the correlation counts.
-- Tstop      double    - Time when to stop counting events. This time should be
-                         set to at most Tsim - tau_max, where Tsim is the
-                         duration of simulation, in order to avoid edge effects
-                         of the correlation counts.
-- delta_tau  double    - bin width in ms
-- tau_max    double    - one-sided histogram width in ms. Events with
-                         differences in
-                         [-tau_max-delta_tau/2, tau_max+delta_tau/2)
-                         are counted.
+\verbatim embed:rst
+==================== ======= ====================================================
+Tstart               double  Time when to start counting events. This time should
+                             be set to at least start + tau_max in order to avoid
+                             edge effects of the correlation counts.
+Tstop                doubl   Time when to stop counting events. This time should
+                             be set to at most Tsim - tau_max, where Tsim is the
+                             duration of simulation, in order to avoid edge
+                             effects of the correlation counts.
+delta_tau            double  Bin width in ms. This has to be an odd multiple of
+                             the resolution, to allow the symmetry between
+                             positive and negative time-lags.
+tau_max              double  One-sided width in ms. In the lower triagnular part
+                             events with differences in [0, tau_max+delta_tau/2)
+                             are counted. On the diagonal and in the upper
+                             triangular part events with differences in
+                             (0, tau_max+delta_tau/2].
+N_channels           long    The number of pools. This defines the range of
+                             receptor_type. Default is 1.
+                             Setting N_channels clears count_covariance,
+                             covariance and n_events.
 
-- histogram            double vector, read-only  - raw, weighted cross
-                                                 correlation counts
-- histogram_correction double_vector, read-only  - correction factors for kahan
-                                                   summation algorithm
-- count_histogram      long vector, read-only    - raw, cross correlation
-                                                   counts
-- n_events             integer vector            - number of events from source
-                                                   0 and 1. By setting n_events
-                                                   to [0 0], the histogram is
-                                                   cleared.
+histogram            double  read-only - raw, weighted, cross
+                     vector  correlation counts
+
+histogram_correction double  read-only - Correction factors for kahan summation
+                     vector  algoritm
+n_events             integer Number of events from source 0 and 1. By setting
+                     vector  n_events to [0,0], the histogram is cleared.
+==================== ======= ====================================================
+\endverbatim
 
 Remarks:
 

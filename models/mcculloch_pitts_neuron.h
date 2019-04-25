@@ -77,9 +77,13 @@ noise_generator.
 
 Parameters:
 
-- tau_m      double - Membrane time constant (mean inter-update-interval)
-                      in ms.
-- theta      double - threshold for sigmoidal activation function mV
+\verbatim embed:rst
+======= =======  ====================================================
+ tau_m   double  Membrane time constant (mean inter-update-interval)
+                 in ms
+ theta   double  Threshold for sigmoidal activation function mV
+======= =======  ====================================================
+\endverbatim
 
 References:
 

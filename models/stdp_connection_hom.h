@@ -56,14 +56,18 @@ Examples:
 
 Parameters:
 
-- tau_plus   double - Time constant of STDP window, potentiation in ms
-                      (tau_minus defined in post-synaptic neuron)
-- lambda     double - Step size
-- alpha      double - Asymmetry parameter (scales depressing increments as
-                      alpha*lambda)
-- mu_plus    double - Weight dependence exponent, potentiation
-- mu_minus   double - Weight dependence exponent, depression
-- Wmax       double - Maximum allowed weight
+\verbatim embed:rst
+========= =======  ======================================================
+ tau_plus  double  Time constant of STDP window, potentiation in ms
+                   (tau_minus defined in post-synaptic neuron)
+ lambda    double  Step size
+ alpha     double  Asymmetry parameter (scales depressing increments as
+                   alpha*lambda)
+ mu_plus   double  Weight dependence exponent, potentiation
+ mu_minus  double  Weight dependence exponent, depression
+ Wmax      double  Maximum allowed weight
+========= =======  ======================================================
+\endverbatim
 
 Remarks:
 

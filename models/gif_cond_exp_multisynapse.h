@@ -131,34 +131,51 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-Membrane Parameters:
--  C_m        double - Capacity of the membrane in pF
--  t_ref      double - Duration of refractory period in ms.
--  V_reset    double - Reset value after a spike in mV.
--  E_L        double - Leak reversal potential in mV.
--  g_L        double - Leak conductance in nS.
--  I_e        double - Constant external input current in pA.
+\verbatim embed:rst
+=========   ======   ======================================================
+**Membrane Parameters**
+---------------------------------------------------------------------------
+ C_m        double   Capacitance of the membrane in pF
+ t_ref      double   Duration of refractory period in ms
+ V_reset    double   Membrane potential is reset to this value in mV after
+                     a spike
+ E_L        double   Resting potential in mV
+ g_L        double   Leak conductance in nS
+ I_e        double   Constant input current in pA
+=========   ======   ======================================================
 
-Spike adaptation and firing intensity parameters:
--  q_stc      vector of double - Values added to spike-triggered currents (stc)
--                                after each spike emission in pA.
--  tau_stc    vector of double - Time constants of stc variables in ms.
--  q_sfa      vector of double - Values added to spike-frequency adaptation
--                                (sfa) after each spike emission in mV.
--  tau_sfa    vector of double - Time constants of sfa variables in ms.
--  Delta_V    double - Stochasticity level in mV.
--  lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
--  V_T_star   double - Base threshold in mV.
+========= ==============  =====================================================
+**Spike adaptation and firing intensity parameters**
+-------------------------------------------------------------------------------
+ q_stc      double vector   Values added to spike-triggered currents (stc)
+                            after each spike emission in pA
+ tau_stc    double vector   Time constants of stc variables in ms
+ q_sfa      double vector   Values added to spike-frequency adaptation
+                            (sfa) after each spike emission in mV
+ tau_sfa    double vector   Time constants of sfa variables in ms
+ Delta_V    double          Stochasticity level in mV
+ lambda_0   double          Stochastic intensity at firing threshold V_T in 1/s
+ V_T_star   double          Base threshold in mV
+========= ==============  =====================================================
 
-Synaptic parameters
--  tau_syn    double vector - Time constants of the synaptic conductance
-                               in ms (same size as E_rev).
--  E_rev      double vector - Reversal potentials in mV (same size as tau_syn).
+=========   =============  ===================================================
+**Synaptic parameters**
+------------------------------------------------------------------------------
+ tau_syn    double vector  Time constants of the synaptic conductance
+                           in ms (same size as E_rev)
+ E_rev      double vector  Reversal potentials in mV (same size as tau_syn)
+=========   =============  ===================================================
 
-Integration parameters
--  gsl_error_tol  double - This parameter controls the admissible error of the
-                          GSL integrator. Reduce it if NEST complains about
-                          numerical instabilities.
+==============  ======  ======================================================
+**Integration parameters**
+------------------------------------------------------------------------------
+ gsl_error_tol  double   This parameter controls the admissible error of the
+                         GSL integrator. Reduce it if NEST complains about
+                         numerical instabilities
+==============  ======  ======================================================
+
+\endverbatim
+
 
 Example:
 

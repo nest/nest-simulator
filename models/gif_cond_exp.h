@@ -115,35 +115,50 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-Membrane Parameters:
--  C_m        double - Capacity of the membrane in pF
--  t_ref      double - Duration of refractory period in ms.
--  V_reset    double - Reset value after a spike in mV.
--  E_L        double - Leak reversal potential in mV.
--  g_L        double - Leak conductance in nS.
--  I_e        double - Constant external input current in pA.
+\verbatim embed:rst
+======== ======= =======================================
+**Membrane Parameters**
+--------------------------------------------------------
+ C_m     double  Capacity of the membrane in pF
+ t_ref   double  Duration of refractory period in ms.
+ V_reset double  Reset value for V_m after a spike in mV.
+ E_L     double  Leak reversal potential in mV.
+ g_L     double  Leak conductance in nS.
+ I_e     double  Constant external input current in pA.
+======== ======= =======================================
 
-Spike adaptation and firing intensity parameters:
--  q_stc      vector of double - Values added to spike-triggered currents (stc)
-                                 after each spike emission in nA.
--  tau_stc    vector of double - Time constants of stc variables in ms.
--  q_sfa      vector of double - Values added to spike-frequency adaptation
-                                 (sfa) after each spike emission in mV.
--  tau_sfa    vector of double - Time constants of sfa variables in ms.
--  Delta_V    double - Stochasticity level in mV.
--  lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
--  V_T_star   double - Base threshold in mV
+=========  =================  ===============================================
+**Spike adaptation and firing intensity parameters**
+-----------------------------------------------------------------------------
+ q_stc      vector of double  Values added to spike-triggered currents (stc)
+                              after each spike emission in nA.
+ tau_stc    vector of double  Time constants of stc variables in ms.
+ q_sfa      vector of double  Values added to spike-frequency adaptation
+                              (sfa) after each spike emission in mV.
+ tau_sfa    vector of double  Time constants of sfa variables in ms.
+ Delta_V    double            Stochasticity level in mV.
+ lambda_0   double            Stochastic intensity at firing threshold V_T i
+                              n 1/s.
+ V_T_star   double            Base threshold in mV
+=========  =================  ===============================================
 
-Synaptic parameters
--  E_ex       double - Excitatory reversal potential in mV.
--  tau_syn_ex double - Decay time of excitatory synaptic conductance in ms.
--  E_in       double - Inhibitory reversal potential in mV.
--  tau_syn_in double - Decay time of the inhibitory synaptic conductance in ms.
+=========== ======= ===========================================================
+**Synaptic parameters**
+-------------------------------------------------------------------------------
+ E_ex       double  Excitatory reversal potential in mV.
+ tau_syn_ex double  Decay time of excitatory synaptic conductance in ms
+ E_in       double  Inhibitory reversal potential in mV.
+ tau_syn_in double  Decay time of the inhibitory synaptic conductance in ms
+=========== ======= ===========================================================
 
-Integration parameters
--  gsl_error_tol  double - This parameter controls the admissible error of the
-                           GSL integrator. Reduce it if NEST complains about
-                           numerical instabilities.
+============= ======= =========================================================
+**Integration parameters**
+-------------------------------------------------------------------------------
+gsl_error_tol double  This parameter controls the admissible error of the
+                      GSL integrator. Reduce it if NEST complains about
+                      numerical instabilities.
+============= ======= =========================================================
+\endverbatim
 
 References:
 

@@ -65,21 +65,27 @@ gap-junction framework.
 Parameters:
 
 The following parameters can be set in the status dictionary.
-
-- rate                double - Rate (1/s)
-- tau                 double - Time constant in ms.
-- mean                double - Additional constant input
+\verbatim embed:rst
+=====  ====== ==============================
+ rate  double  Rate (1/s)
+ tau   double  Time constant in ms
+ mean  double  Additional constant input
+=====  ====== ==============================
+\endverbatim
 
 The following parameters can be set in the status directory and are
 used in the evaluation of the gain function. Parameters as in
 iaf_psc_exp/delta.
 
-- tau_m               double - Membrane time constant in ms.
-- tau_syn             double - Time constant of postsynaptic currents in ms.
-- t_ref               double - Duration of refractory period in ms.
-- theta               double - Threshold relative to resting potential in mV.
-- V_reset             double - Reset relative to resting membrane potential in
-                                               mV.
+\verbatim embed:rst
+=========  ======  =====================================================
+ tau_m     double  Membrane time constant in ms
+ tau_syn   double  Time constant of postsynaptic currents in ms
+ t_ref     double  Duration of refractory period in ms
+ theta     double  Threshold relative to resting potential in mV
+ V_reset   double  Reset relative to resting membrane potential in mV
+=========  ======  =====================================================
+\endverbatim
 
 References:
 

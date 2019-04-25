@@ -52,7 +52,7 @@ Press et al. 2007, Ch. 17.2).
 
 The membrane potential is given by the following differential equation:
 @f[
-C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e)
+C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
                                                      -g_i(t)(V-E_i)-w +I_e
 @f]
 and
@@ -63,47 +63,68 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-Dynamic state variables:
--  V_m        double - Membrane potential in mV
--  g_ex       double - Excitatory synaptic conductance in nS.
--  dg_ex      double - First derivative of g_ex in nS/ms
--  g_in       double - Inhibitory synaptic conductance in nS.
--  dg_in      double - First derivative of g_in in nS/ms.
--  w          double - Spike-adaptation current in pA.
+\verbatim embed:rst
 
-Membrane Parameters:
--  C_m        double - Capacity of the membrane in pF
--  t_ref      double - Duration of refractory period in ms.
--  V_reset    double - Reset value for V_m after a spike. In mV.
--  E_L        double - Leak reversal potential in mV.
--  g_L        double - Leak conductance in nS.
--  I_e        double - Constant external input current in pA.
+======== ======= =======================================
+**Dynamic state variables:**
+--------------------------------------------------------
+ V_m     double  Membrane potential in mV
+ g_ex    double  Excitatory synaptic conductance in nS.
+ dg_ex   double  First derivative of g_ex in nS/ms
+ g_in    double  Inhibitory synaptic conductance in nS.
+ dg_in   double  First derivative of g_in in nS/ms.
+ w       double  Spike-adaptation current in pA.
+======== ======= =======================================
 
-Spike adaptation parameters:
--  a          double - Subthreshold adaptation in nS.
--  b          double - Spike-triggered adaptation in pA.
--  Delta_T    double - Slope factor in mV
--  tau_w      double - Adaptation time constant in ms
--  V_th       double - Spike initiation threshold in mV
--  V_peak     double - Spike detection threshold in mV.
 
-Synaptic parameters:
--  E_ex       double - Excitatory reversal potential in mV.
--  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (alpha
-                       function).
--  E_in       double - Inhibitory reversal potential in mV.
--  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms
-                       (alpha function).
+======== ======= =======================================
+**Membrane Parameters**
+--------------------------------------------------------
+ C_m     double  Capacity of the membrane in pF
+ t_ref   double  Duration of refractory period in ms.
+ V_reset double  Reset value for V_m after a spike in mV.
+ E_L     double  Leak reversal potential in mV.
+ g_L     double  Leak conductance in nS.
+ I_e     double  Constant external input current in pA.
+======== ======= =======================================
 
-Numerical integration parameters:
--  HMIN       double - Minimal stepsize for numerical integration in ms
-                      (default 0.001ms).
--  MAXERR     double - Error estimate tolerance for adaptive stepsize control
-                      (steps accepted if err<=MAXERR). In mV.
-                      Note that the error refers to the difference between the
-                      4th and 5th order RK terms. Default 1e-10 mV.
 
-Authors: Stefan Bucher, Marc-Oliver Gewaltig.
+======== ======= ==================================
+**Spike adaptation parameters**
+---------------------------------------------------
+ a       double  Subthreshold adaptation in nS.
+ b       double  Spike-triggered adaptation in pA.
+ Delta_T double  Slope factor in mV
+ tau_w   double  Adaptation time constant in ms
+ V_th    double  Spike initiation threshold in mV
+ V_peak  double  Spike detection threshold in mV
+======== ======= ==================================
+
+=========== ======= ===========================================================
+**Synaptic parameters**
+-------------------------------------------------------------------------------
+ E_ex       double  Excitatory reversal potential in mV.
+ tau_syn_ex double  Rise time of excitatory synaptic conductance in ms (alpha
+                    function).
+ E_in       double  Inhibitory reversal potential in mV.
+ tau_syn_in double  Rise time of the inhibitory synaptic conductance in ms
+                    (alpha function).
+=========== ======= ===========================================================
+
+========= ======= =========================================================
+**Numerical integration parameters**
+---------------------------------------------------------------------------
+ HMIN     double  Minimal stepsize for numerical integration in ms
+                  default 0.001ms).
+ MAXERR   double  Error estimate tolerance for adaptive stepsize control
+                  (steps accepted if err<=MAXERR). In mV.
+                  Note that the error refers to the difference between the
+                  4th and 5th order RK terms. Default 1e-10 mV.
+========= ======= =========================================================
+
+\endverbatim
+
+-  Authors: Stefan Bucher, Marc-Oliver Gewaltig.
 
 Sends: SpikeEvent
 

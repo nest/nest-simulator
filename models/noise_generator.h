@@ -73,13 +73,16 @@ the noise_generator.ipynb notebook included in the NEST source code
 Parameters:
 The following parameters can be set in the status dictionary:
 
-
-- mean      double - mean value of the noise current in pA
-- std       double - standard deviation of noise current in pA
-- dt        double - interval between changes in current in ms, default 1.0ms
-- std_mod   double - modulated standard deviation of noise current in pA
-- phase     double - Phase of sine modulation (0-360 deg)
-- frequency double - Frequency of sine modulation in Hz
+\verbatim embed:rst
+========== ======  =========================================================
+ mean      double  Mean value of the noise current in pA
+ std       double  Standard deviation of noise current in pA
+ dt        double  Interval between changes in current in ms, default 1.0ms
+ std_mod   double  Modulated standard deviation of noise current in pA
+ phase     double  Phase of sine modulation (0-360 deg)
+ frequency double  Frequency of sine modulation in Hz
+========== ======  =========================================================
+\endverbatim
 
 Remarks:
 - All targets receive different currents.

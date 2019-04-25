@@ -53,7 +53,11 @@ Parameters:
 
 The following parameters appear in the element's status dictionary:
 
-- p_copy double - Copy probability
+\verbatim embed:rst
+======== ======  ================
+ p_copy  double  Copy probability
+======== ======  ================
+ \endverbatim
 
 Sends: SpikeEvent
 

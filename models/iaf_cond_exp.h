@@ -73,21 +73,24 @@ is normalised such that an event of weight 1.0 results in a peak conductance of
 Parameters:
 
 The following parameters can be set in the status dictionary.
-
-- V_m        double - Membrane potential in mV
-- E_L        double - Leak reversal potential in mV.
-- C_m        double - Capacity of the membrane in pF
-- t_ref      double - Duration of refractory period in ms.
-- V_th       double - Spike threshold in mV.
-- V_reset    double - Reset potential of the membrane in mV.
-- E_ex       double - Excitatory reversal potential in mV.
-- E_in       double - Inhibitory reversal potential in mV.
-- g_L        double - Leak conductance in nS;
-- tau_syn_ex double - Time constant of the excitatory synaptic exponential
-                      function in ms.
-- tau_syn_in double - Time constant of the inhibitory synaptic exponential
-                      function in ms.
-- I_e        double - Constant external input current in pA.
+\verbatim embed:rst
+=========== ======  =======================================================
+ V_m        double  Membrane potential in mV
+ E_L        double  Leak reversal potential in mV
+ C_m        double  Capacity of the membrane in pF
+ t_ref      double  Duration of refractory period in ms
+ V_th       double  Spike threshold in mV
+ V_reset    double  Reset potential of the membrane in mV
+ E_ex       double  Excitatory reversal potential in mV
+ E_in       double  Inhibitory reversal potential in mV
+ g_L        double  Leak conductance in nS;
+ tau_syn_ex double  Time constant of the excitatory synaptic exponential
+                    function in ms
+ tau_syn_in double  Time constant of the inhibitory synaptic exponential
+                    function in ms
+ I_e        double  Constant external input current in pA
+=========== ======  =======================================================
+\endverbatim
 
 Sends: SpikeEvent
 

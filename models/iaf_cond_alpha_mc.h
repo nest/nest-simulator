@@ -114,22 +114,24 @@ for each compartment are collected in a sub-dictionary; these sub-dictionaries
 are called "soma", "proximal", and "distal", respectively. In the list below,
 these parameters are marked with an asterisk.
 
-- V_m*         double - Membrane potential in mV
-- E_L*         double - Leak reversal potential in mV.
-- C_m*         double - Capacity of the membrane in pF
-- E_ex*        double - Excitatory reversal potential in mV.
-- E_in*        double - Inhibitory reversal potential in mV.
-- g_L*         double - Leak conductance in nS;
-- tau_syn_ex*  double - Rise time of the excitatory synaptic alpha function in ms.
-- tau_syn_in*  double - Rise time of the inhibitory synaptic alpha function in ms.
-- I_e*         double - Constant input current in pA.
-
-- g_sp         double - Conductance connecting soma and proximal dendrite, in nS.
-- g_pd         double - Conductance connecting proximal and distal dendrite, in
-                        nS.
-- t_ref        double - Duration of refractory period in ms.
-- V_th         double - Spike threshold in mV.
-- V_reset      double - Reset potential of the membrane in mV.
+\verbatim embed:rst
+============ ======= ==========================================================
+ V_m*        double  Membrane potential in mV
+ E_L*        double  Leak reversal potential in mV
+ C_m*        double  Capacity of the membrane in pF
+ E_ex*       double  Excitatory reversal potential in mV
+ E_in*       double  Inhibitory reversal potential in mV
+ g_L*        double  Leak conductance in nS;
+ tau_syn_ex* double  Rise time of the excitatory synaptic alpha function in ms
+ tau_syn_in* double  Rise time of the inhibitory synaptic alpha function in ms
+ I_e*        double  Constant input current in pA
+ g_sp        double  Conductance connecting soma and proximal dendrite, in nS
+ g_pd        double  Conductance connecting proximal and distal dendrite, in
+ t_ref       double  Duration of refractory period in ms
+ V_th        double  Spike threshold in mV
+ V_reset     double  Reset potential of the membrane in mV
+============ ======= ==========================================================
+\endverbatim
 
 Example:
 See pynest/examples/mc_neuron.py.

@@ -64,24 +64,32 @@ Examples:
 
 Parameters:
 
-Common properties:
-- vt        long   - ID of volume_transmitter collecting the spikes
-                     from the pool of dopamine releasing neurons and
-                     transmitting the spikes to the synapse. A value of
-                     -1 indicates that no volume transmitter has been
-                     assigned.
-- A_plus    double - Amplitude of weight change for facilitation
-- A_minus   double - Amplitude of weight change for depression
-- tau_plus  double - STDP time constant for facilitation in ms
-- tau_c     double - Time constant of eligibility trace in ms
-- tau_n     double - Time constant of dopaminergic trace in ms
-- b         double - Dopaminergic baseline concentration
-- Wmin      double - Minimal synaptic weight
-- Wmax      double - Maximal synaptic weight
+\verbatim embed:rst
+=========  ======= ======================================================
+**Common properties**
+-------------------------------------------------------------------------
+ vt        long    ID of volume_transmitter collecting the spikes
+                   from the pool of dopamine releasing neurons and
+                   transmitting the spikes to the synapse. A value of
+                   -1 indicates that no volume transmitter has been
+                   assigned.
+ A_plus    double  Amplitude of weight change for facilitation
+ A_minus   double  Amplitude of weight change for depression
+ tau_plus  double  STDP time constant for facilitation in ms
+ tau_c     double  Time constant of eligibility trace in ms
+ tau_n     double  Time constant of dopaminergic trace in ms
+ b         double  Dopaminergic baseline concentration
+ Wmin      double  Minimal synaptic weight
+ Wmax      double  Maximal synaptic weight
+=========  ======= ======================================================
 
-Individual properties:
-- c         double - eligibility trace
-- n         double - neuromodulator concentration
+=== ======  =====================================
+**Individual properties**
+-------------------------------------------------------------------------
+ c  double  Eligibility trace
+ n  double  Neuromodulator concentration
+=== ======  =====================================
+\endverbatim
 
 Remarks:
 The common properties can only be set by SetDefaults and apply to all

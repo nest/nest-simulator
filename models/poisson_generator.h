@@ -57,11 +57,14 @@ parrot neuron inbetween the poisson generator and the targets.
 Parameters:
 
 The following parameters appear in the element's status dictionary:
-
-- rate     double - mean firing rate in Hz
-- origin   double - Time origin for device timer in ms
-- start    double - begin of device application with resp. to origin in ms
-- stop     double - end of device application with resp. to origin in ms
+\verbatim embed:rst
+=======   ======  =========================================================
+ rate     double  Mean firing rate in Hz
+ origin   double  Time origin for device timer in ms
+ start    double  Begin of device application with resp. to origin in ms
+ stop     double  End of device application with resp. to origin in ms
+=======   ======  =========================================================
+\endverbatim
 
 Sends: SpikeEvent
 

@@ -48,8 +48,11 @@ the parameters target, weight, transmission probability, delay and
 receiver port for each connection.
 
 Parameters:
-
-- p_transmit double - Transmission probability, must be between 0 and 1
+\verbatim embed:rst
+=========== ====== ===================================================
+ p_transmit double Transmission probability, must be between 0 and 1
+=========== ====== ===================================================
+\endverbatim
 
 FirstVersion: June 2017
 

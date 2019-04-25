@@ -58,13 +58,17 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-- rate       double - Mean firing rate in spikes/second, default: 0 s^-1
-- amplitude  double - Firing rate modulation amplitude in spikes/second,
-                      default: 0 s^-1
-- frequency  double - Modulation frequency in Hz, default: 0 Hz
-- phase      double - Modulation phase in degree [0-360], default: 0
-
-- individual_spike_trains   bool - See note below, default: true
+\verbatim embed:rst
+======================== ======  ==============================================
+ rate                    double  Mean firing rate in spikes/second,
+                                 default: 0 s^-1
+ amplitude               double  Firing rate modulation amplitude in
+                                 spikes/second, default: 0 s^-1
+ frequency               double  Modulation frequency in Hz, default: 0 Hz
+ phase                   double  Modulation phase in degree [0-360], default: 0
+ individual_spike_trains bool    See note below, default: true
+======================== ======  ==============================================
+\endverbatim
 
 Remarks:
 - If amplitude > rate, firing rate is cut off at zero. In this case, the mean

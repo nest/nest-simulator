@@ -46,24 +46,30 @@ STDP examples:
     triplet      Aplus_triplet = Aminus_triplet = 1.0
 
 Parameters:
+\verbatim embed:rst
+=================  ======  ===========================================
+ tau_plus          double  Time constant of short presynaptic trace
+                           (tau_plus of [1])
+ tau_plus_triplet  double  Time constant of long presynaptic trace
+                           (tau_x of [1])
+ Aplus             double  Weight of pair potentiation rule
+                           (A_plus_2 of [1])
+ Aplus_triplet     double  Weight of triplet potentiation rule
+                           (A_plus_3 of [1])
+ Aminus            double  Weight of pair depression rule
+                           (A_minus_2 of [1])
+ Aminus_triplet    double  Weight of triplet depression rule
+                           (A_minus_3 of [1])
+ Wmax              double  Maximum allowed weight
+=================  ======  ===========================================
 
-- tau_plus           double - time constant of short presynaptic trace
-                            - (tau_plus of [1])
-- tau_plus_triplet   double - time constant of long presynaptic trace
-                            - (tau_x of [1])
-- Aplus              double - weight of pair potentiation rule
-                            - (A_plus_2 of [1])
-- Aplus_triplet      double - weight of triplet potentiation rule
-                            - (A_plus_3 of [1])
-- Aminus             double - weight of pair depression rule
-                              (A_minus_2 of [1])
-- Aminus_triplet     double - weight of triplet depression rule
-                            - (A_minus_3 of [1])
-- Wmax               double - maximum allowed weight
-
-States:
--   Kplus              double: pre-synaptic trace (r_1 of [1])
--   Kplus_triplet      double: triplet pre-synaptic trace (r_2 of [1])
+=============== ======  ===========================================
+States
+-------------------------------------------------------------------
+ Kplus          double  Pre-synaptic trace (r_1 of [1])
+ Kplus_triplet  double  Triplet pre-synaptic trace (r_2 of [1])
+=============== ======  ===========================================
+\endverbatim
 
 Transmits: SpikeEvent
 

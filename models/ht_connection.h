@@ -52,10 +52,14 @@ w(t) = w_{max} * P(t)  @f] is the resulting synaptic weight
 Parameters:
 
 The following parameters can be set in the status dictionary:
-- tau_P    double - synaptic vesicle pool recovery time constant [ms]
-- delta_P  double - fractional change in vesicle pool on incoming spikes
-                   [unitless]
-- P        double - current size of the vesicle pool [unitless, 0 <= P <= 1]
+\verbatim embed:rst
+========  ======  =========================================================
+ tau_P    double  Synaptic vesicle pool recovery time constant [ms]
+ delta_P  double  Fractional change in vesicle pool on incoming spikes
+                  [unitless]
+ P        double  Current size of the vesicle pool [unitless, 0 <= P <= 1]
+========  ======  =========================================================
+\endverbatim
 
 References:
 

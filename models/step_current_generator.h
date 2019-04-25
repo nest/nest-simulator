@@ -54,10 +54,14 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-- amplitude_times   list of doubles - Times at which current changes in ms
-- amplitude_values  list of doubles - Amplitudes of step current current in
+\verbatim embed:rst
+==================== ===============  ======================================
+ amplitude_times     list of doubles  Times at which current changes in ms
+ amplitude_values    list of doubles  Amplitudes of step current current in
                                       pA
-- allow_offgrid_times  bool - Default false
+ allow_offgrid_times  bool            Default false
+==================== ===============  ======================================
+\endverbatim
 
   If false, times will be rounded to the nearest step if they are
   less than tic/2 from the step, otherwise NEST reports an error.

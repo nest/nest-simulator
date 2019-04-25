@@ -46,11 +46,16 @@ pre-synaptic spike also causes a constant depression of the synaptic weight
 which differentiates this rule from other classical stdp rules.
 
 Parameters:
-- tau        double - Time constant of STDP window, potentiation in ms
-- Wmax       double - Maximum allowed weight
-- eta        double - learning rate
-- alpha      double - constant depression (= 2 * tau * target firing rate in
-                       [1])
+
+\verbatim embed:rst
+======  ======  =========================================================
+ tau    double  Time constant of STDP window, potentiation in ms
+ Wmax   double  Maximum allowed weight
+ eta    double  Learning rate
+ alpha  double  Constant depression (= 2 * tau * target firing rate in
+                [1])
+======  ======  =========================================================
+\endverbatim
 
 Transmits: SpikeEvent
 

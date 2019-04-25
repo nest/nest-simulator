@@ -58,15 +58,18 @@ initialize to equilibrium in this case, initial transients might occur.
 Parameters:
 
 The following parameters appear in the element's status dictionary:
-
-- rate                double - mean firing rate of the component processes,
-                               default: 0 s^-1
-- dead_time           double - minimal time between two spikes of the component
-                               processes, default: 0 ms
-- n_proc              long   - number of superimposed independent component
-                               processes, default: 1
-- frequency           double - rate modulation frequency, default: 0 Hz
-- relative_amplitude  double - relative rate modulation amplitude, default: 0
+\verbatim embed:rst
+===================  ======  =================================================
+ rate                double  Mean firing rate of the component processes,
+                             default: 0 s^-1
+ dead_time           double  Minimal time between two spikes of the component
+                             processes, default: 0 ms
+ n_proc              long    Number of superimposed independent component
+                             processes, default: 1
+ frequency           double  Rate modulation frequency, default: 0 Hz
+ relative_amplitude  double  Relative rate modulation amplitude, default: 0
+===================  ======  =================================================
+\endverbatim
 
 Remarks:
 

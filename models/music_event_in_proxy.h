@@ -62,11 +62,15 @@ Parameters:
 
 The following properties are available in the status dictionary:
 
-- port_name      - The name of the MUSIC input port to listen to (default:
-                   event_in)
-- music_channel  - The MUSIC global index on the input port to listen to
-- registered     - A bool indicating if the port has been already registered
-                   with the corresponding MUSIC event handler
+\verbatim embed:rst
+==============  ===========================================================
+ port_name      The name of the MUSIC input port to listen to (default:
+                event_in)
+ music_channel  The MUSIC global index on the input port to listen to
+ registered     A bool indicating if the port has been already registered
+                with the corresponding MUSIC event handler
+==============  ===========================================================
+\endverbatim
 
 The parameters port_name and music_channel can be set using SetStatus.
 The acceptable latency of the MUSIC input port can be set using the

@@ -50,7 +50,12 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-- amplitude  double - Amplitude of current in pA
+\verbatim embed:rst
+========== ======  =============================
+ amplitude double  Amplitude of current in pA
+========== ======  =============================
+\endverbatim
+
 
 Examples:
 

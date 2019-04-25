@@ -58,19 +58,22 @@ the gap-junction framework.
 Parameters:
 
 The following parameters can be set in the status dictionary.
-
-- rate                double - Rate (unitless)
-- tau                 double - Time constant of rate dynamics in ms.
-- lambda              double - Passive decay rate.
-- mu                  double - Mean input.
-- sigma               double - Noise parameter.
-- g                   double - Gain parameter
-- mult_coupling       bool   - Switch to enable/disable multiplicative coupling.
-- g_ex                double - Linear factor in multiplicative coupling.
-- g_in                double - Linear factor in multiplicative coupling.
-- theta_ex            double - Shift in multiplicative coupling.
-- theta_in            double - Shift in multiplicative coupling.
-- rectify_output      bool   - Switch to restrict rate to values >= 0
+\verbatim embed:rst
+===============  ======  ==================================================
+ rate            double  Rate (unitless)
+ tau             double  Time constant of rate dynamics in ms
+ lambda          double  Passive decay rate
+ mu              double  Mean input
+ sigma           double  Noise parameter
+ g               double  Gain parameter
+ mult_coupling   bool    Switch to enable/disable multiplicative coupling
+ g_ex            double  Linear factor in multiplicative coupling
+ g_in            double  Linear factor in multiplicative coupling
+ theta_ex        double  Shift in multiplicative coupling
+ theta_in        double  Shift in multiplicative coupling
+ rectify_output  bool    Switch to restrict rate to values >= 0
+===============  ======  ==================================================
+\endverbatim
 
 References:
 

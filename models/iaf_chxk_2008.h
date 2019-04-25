@@ -69,27 +69,31 @@ conductance-based synapses [1]. It is modeled after iaf_cond_alpha with the
 addition of after hyper-polarization current instead of a membrane potential
 reset. Incoming spike events induce a post-synaptic change of conductance
 modeled by an alpha function. The alpha function is normalized such that an
-event of weight 1.0 results in a peak current of 1 nS at t = tau_syn.
+event of weight 1.0 results in a peak current of 1 nS at \f$ t = tau_{syn} \f$.
 
 Parameters:
 
 The following parameters can be set in the status dictionary.
 
-- V_m        double - Membrane potential in mV
-- E_L        double - Leak reversal potential in mV.
-- C_m        double - Capacity of the membrane in pF
-- V_th       double - Spike threshold in mV.
-- E_ex       double - Excitatory reversal potential in mV.
-- E_in       double - Inhibitory reversal potential in mV.
-- g_L        double - Leak conductance in nS.
-- tau_ex     double - Rise time of the excitatory synaptic alpha function in ms.
-- tau_in     double - Rise time of the inhibitory synaptic alpha function in ms.
-- I_e        double - Constant input current in pA.
-- tau_ahp    double - Afterhyperpolarization (AHP) time constant in ms.
-- E_ahp      double - AHP potential in mV.
-- g_ahp      double - AHP conductance in nS.
-- ahp_bug    bool   - Defaults to false. If true, behaves like original
-                    model implementation.
+\verbatim embed:rst
+========  ======  ===========================================================
+ V_m      double  Membrane potential in mV
+ E_L      double  Leak reversal potential in mV
+ C_m      double  Capacity of the membrane in pF
+ V_th     double  Spike threshold in mV
+ E_ex     double  Excitatory reversal potential in mV
+ E_in     double  Inhibitory reversal potential in mV
+ g_L      double  Leak conductance in nS
+ tau_ex   double  Rise time of the excitatory synaptic alpha function in ms
+ tau_in   double  Rise time of the inhibitory synaptic alpha function in ms
+ I_e      double  Constant input current in pA
+ tau_ahp  double  Afterhyperpolarization (AHP) time constant in ms
+ E_ahp    double  AHP potential in mV
+ g_ahp    double  AHP conductance in nS
+ ahp_bug  bool    Defaults to false. If true, behaves like original
+                  model implementation
+========  ======  ===========================================================
+\endverbatim
 
 References:
 

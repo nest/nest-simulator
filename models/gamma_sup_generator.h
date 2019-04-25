@@ -53,12 +53,15 @@ population of neurons firing independently with gamma process statistics.
 Parameters:
 
 The following parameters appear in the element's status dictionary:
-
-- rate         double - mean firing rate of the component processes,
-                        default: 0s^-1
-- gamma_shape  long   - shape paramter of component gamma processes, default: 1
-- n_proc       long   - number of superimposed independent component processes,
-                        default: 1
+\verbatim embed:rst
+============  ======  =========================================================
+ rate         double  Mean firing rate of the component processes,
+                      default: 0s^-1
+ gamma_shape  long    Shape paramter of component gamma processes, default: 1
+ n_proc       long    Number of superimposed independent component processes,
+                      default: 1
+============  ======  =========================================================
+\endverbatim
 
 References:
 

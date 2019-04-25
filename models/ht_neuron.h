@@ -86,41 +86,56 @@ Documentation and Examples:
 
 Parameters:
 
-- V_m            - membrane potential
-- tau_m          - membrane time constant applying to all currents except
-                   repolarizing K-current (see [1], p 1677)
-- t_ref          - refractory time and duration of post-spike repolarizing
-                   potassium current (t_spike in [1])
-- tau_spike      - membrane time constant for post-spike repolarizing
-                   potassium current
-- voltage_clamp  - if true, clamp voltage to value at beginning of simulation
-                   (default: false, mainly for testing)
-- theta, theta_eq, tau_theta - threshold, equilibrium value, time constant
-- g_KL, E_K, g_NaL, E_Na     - conductances and reversal potentials for K and
--                              Na leak currents
-- {E_rev,g_peak,tau_rise,tau_decay}_{AMPA,NMDA,GABA_A,GABA_B}
-                               - reversal potentials, peak conductances and
-                                 time constants for synapses (tau_rise/
-                                 tau_decay correspond to tau_1/tau_2 in the
-                                 paper)
-- V_act_NMDA, S_act_NMDA, tau_Mg_{fast, slow}_NMDA
-                               - parameters for voltage dependence of NMDA-
-                                 conductance, see above
-- instant_unblock_NMDA         - instantaneous NMDA unblocking (default: false)
-- {E_rev,g_peak}_{h,T,NaP,KNa} - reversal potential and peak conductance for
-                                 intrinsic currents
-- tau_D_KNa                    - relaxation time constant for I_KNa
-- receptor_types               - dictionary mapping synapse names to ports on
-                                 neuron model
-- recordables                  - list of recordable quantities
-- equilibrate                  - if given and true, time-dependent activation
-                               and inactivation state variables (h, m) of
-                               intrinsic currents and NMDA channels are set
-                               to their equilibrium values during this
-                               SetStatus call; otherwise they retain their
-                               present values.
+\verbatim embed:rst
+===============  =============================================================
+ V_m             Membrane potential
+ tau_m           Membrane time constant applying to all currents except
+                 repolarizing K-current (see [1], p 1677)
+ t_ref           Refractory time and duration of post-spike repolarizing
+                 potassium current (t_spike in [1])
+ tau_spike       Membrane time constant for post-spike repolarizing
+                 potassium current
+ voltage_clamp   If true, clamp voltage to value at beginning of simulation
+                 (default: false, mainly for testing)
+ theta           Threshold
+ theta_eq        Equilibrium value
+ tau_theta       Time constant
+ g_KL            Conductance for potassium leak current
+ E_K             Reversal potential for potassium leak currents
+ g_NaL           Conductance for sodium leak currents
+ E_Na            Reversal potential for Na leak currents
+ tau_D_KNa       Relaxation time constant for I_KNa
+ receptor_types  Dictionary mapping synapse names to ports on neuron model
+ recordables     List of recordable quantities
+===============  =============================================================
 
-Note: Conductances are unitless in this model and currents are in mV.
++------------------------------------------------------------+
+|{E_rev,g_peak,tau_rise,tau_decay}_{AMPA,NMDA,GABA_A,GABA_B} |
++------------------------------------------------------------+
+| Reversal potentials, peak conductances and time constants  |
+| for synapses (tau_rise/tau_decay correspond to tau_1/tau_2 |
+| in the paper)                                              |
++------------------------------------------------------------+
+
++------------------------+------------------------------------------------+
+|V_act_NMDA, S_act_NMDA, |  Parameters for voltage dependence of NMDA-    |
+|tau_Mg_{fast, slow}_NMDA|  conductance, see above                        |
++------------------------+------------------------------------------------+
+
+============================ =================================================
+nstant_unblock_NMDA          Instantaneous NMDA unblocking (default: false)
+{E_rev,g_peak}_{h,T,NaP,KNa} Reversal potential and peak conductance for
+                             intrinsic currents
+equilibrate                  If given and true, time-dependent activation
+                             and inactivation state variables (h, m) of
+                             intrinsic currents and NMDA channels are set
+                             to their equilibrium values during this
+                             SetStatus call; otherwise they retain their
+                             present values.
+============================ =================================================
+\endverbatim
+
+@Note Conductances are unitless in this model and currents are in mV.
 
 Author: Hans Ekkehard Plesser
 

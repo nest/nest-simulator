@@ -56,11 +56,15 @@ where
     @f]
 
 Parameters:
+\verbatim embed:rst
+==========   ======   ====================================
+ amplitude   double   Amplitude of sine current in pA
+ offset      double   Constant amplitude offset in pA
+ frequency   double   Frequency in Hz
+ phase       double   Phase of sine current (0-360 deg)
+==========   ======   ====================================
+\endverbatim
 
-- amplitude   double -  Amplitude of sine current in pA
-- offset      double -  Constant amplitude offset in pA
-- frequency   double -  Frequency in Hz
-- phase       double -  Phase of sine current (0-360 deg)
 
 Setting start and stop (see StimulatingDevice) only windows the current
 as defined above. It does not shift the time axis.

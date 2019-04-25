@@ -56,14 +56,18 @@ be obtained if all n release sites are activated.
 Parameters:
 
 The following parameters can be set in the status dictionary:
-- U          double - Maximal fraction of available resources [0,1],
-                      default=0.5
-- u          double - available fraction of resources [0,1], default=0.5
-- p          double - probability that a vesicle is available, default = 1.0
-- n          long   - total number of release sites, default = 1
-- a          long   - number of available release sites, default = n
-- tau_rec    double - time constant for depression in ms, default=800 ms
-- tau_rec    double - time constant for facilitation in ms, default=0 (off)
+\verbatim embed:rst
+==========  ======  =========================================================
+ U          double  Maximal fraction of available resources [0,1],
+                    default=0.5
+ u          double  available fraction of resources [0,1], default=0.5
+ p          double  probability that a vesicle is available, default = 1.0
+ n          long    total number of release sites, default = 1
+ a          long    number of available release sites, default = n
+ tau_rec    double  time constant for depression in ms, default=800 ms
+ tau_rec    double  time constant for facilitation in ms, default=0 (off)
+==========  ======  =========================================================
+\endverbatim
 
 
 References:

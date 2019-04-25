@@ -85,14 +85,18 @@ an arbitrary postsynaptic effect depending on y(t).
 
 Parameters:
 
-- U         double - maximum probability of release [0,1]
-- tau_psc   double - time constant of synaptic current in ms
-- tau_fac   double - time constant for facilitation in ms
-- tau_rec   double - time constant for depression in ms
-- x         double - initial fraction of synaptic vesicles in the readily
-                     releasable pool [0,1]
-- y         double - initial fraction of synaptic vesicles in the synaptic
-                     cleft [0,1]
+\verbatim embed:rst
+========  ======  ======================================================
+ U        double  Maximum probability of release [0,1]
+ tau_psc  double  Time constant of synaptic current in ms
+ tau_fac  double  Time constant for facilitation in ms
+ tau_rec  double  Time constant for depression in ms
+ x        double  Initial fraction of synaptic vesicles in the readily
+                  releasable pool [0,1]
+ y        double  Initial fraction of synaptic vesicles in the synaptic
+                   cleft [0,1]
+========  ======  ======================================================
+\endverbatim
 
 Remarks:
 

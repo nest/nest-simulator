@@ -163,20 +163,23 @@ Example:
 Parameters:
 The following properties can be set in the status dictionary.
 
-- origin               double - Time origin for device timer in ms
-- start                double - earliest possible time stamp of a spike to
-                                be emitted in ms
-- stop                 double - earliest time stamp of a potential spike
-                                event that is not emitted in ms
-- spike_times          double array - spike-times in ms
-- spike_weights        double array - corresponding spike-weights, the unit
-                                      depends on the receiver
-- spike_multiplicities int array - multiplicities of spikes, same length
-                                   as spike_times; mostly for debugging
-
-- precise_times        bool - see above
-- allow_offgrid_times  bool - see above
-- shift_now_spikes     bool - see above
+\verbatim embed:rst
+===================== ============= ==========================================
+ origin               double        Time origin for device timer in ms
+ start                double        Earliest possible time stamp of a spike to
+                                    be emitted in ms
+ stop                 double        Earliest time stamp of a potential spike
+                                    event that is not emitted in ms
+ spike_times          double array  Spike-times in ms
+ spike_weights        double array  Corresponding spike-weights, the unit
+                                    depends on the receiver
+ spike_multiplicities int array     Multiplicities of spikes, same length
+                                    as spike_times; mostly for debugging
+ precise_times        bool          see above
+ allow_offgrid_times  bool          see above
+ shift_now_spikes     bool          see above
+===================== ============= ==========================================
+\endverbatim
 
 Sends: SpikeEvent
 

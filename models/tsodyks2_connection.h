@@ -54,15 +54,19 @@ factor that scales the synaptic weight.
 Parameters:
 
 The following parameters can be set in the status dictionary:
-- U          double - probability of release increment (U1) [0,1],
-                      default=0.5
-- u          double - Maximum probability of release (U_se) [0,1],
-                      default=0.5
-- x          double - current scaling factor of the weight, default=U
-- tau_rec    double - time constant for depression in ms, default=800 ms
-- tau_fac    double - time constant for facilitation in ms, default=0 (off)
 
-Remarks:
+\verbatim embed:rst
+========  ======  ========================================================
+ U        double  Maximum probability of release (U1) [0,1], default=0.5
+ u        double  Maximum probability of release (U_se) [0,1],
+                  default=0.5
+ x        double  Current scaling factor of the weight, default=U
+ tau_fac  double  Time constant for facilitation in ms, default = 0(off)
+ tau_rec  double  Time constant for depression in ms, default = 800ms
+========  ======  ========================================================
+\endverbatim
+
+ Remarks:
 
 Under identical conditions, the tsodyks2_synapse produces
 slightly lower peak amplitudes than the tsodyks_synapse. However,

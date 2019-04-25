@@ -88,20 +88,23 @@ matrix objects.
 Parameters:
 
 The following parameters can be set in the status dictionary.
-
-- E_L          double - Resting membrane potential in mV.
-- C_m          double - Capacity of the membrane in pF
-- tau_m        double - Membrane time constant in ms.
-- tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
-- tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
-- t_ref_abs    double - Duration of absolute refractory period (V_m = V_reset)
-                        in ms.
-- t_ref_tot    double - Duration of total refractory period (no spiking) in ms.
-- V_m          double - Membrane potential in mV
-- V_th         double - Spike threshold in mV.
-- V_reset      double - Reset membrane potential after a spike in mV.
-- I_e          double - Constant input current in pA.
-- t_spike      double - Point in time of last spike in ms.
+\verbatim embed:rst
+===========   ======  ========================================================
+ E_L          double  Resting membrane potential in mV
+ C_m          double  Capacity of the membrane in pF
+ tau_m        double  Membrane time constant in ms
+ tau_syn_ex   double  Time constant of postsynaptic excitatory currents in ms
+ tau_syn_in   double  Time constant of postsynaptic inhibitory currents in ms
+ t_ref_abs    double  Duration of absolute refractory period (V_m = V_reset)
+                      in ms
+ t_ref_tot    double  Duration of total refractory period (no spiking) in ms
+ V_m          double  Membrane potential in mV
+ V_th         double  Spike threshold in mV
+ V_reset      double  Reset membrane potential after a spike in mV
+ I_e          double  Constant input current in pA
+ t_spike      double  Point in time of last spike in ms
+===========   ======  ========================================================
+\endverbatim
 
 Remarks:
 

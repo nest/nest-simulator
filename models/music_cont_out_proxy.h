@@ -82,16 +82,20 @@ Parameters:
 
 The following properties are available in the status dictionary:
 
-- interval     double   - Recording interval in milliseconds
-- targets      array    - Global id list of neurons to be observed
-- port_name    string   - The name of the MUSIC output port to send to
-                          (default: cont_out)
-- port_width   integer  - The width of the MUSIC input port
-- published    bool     - A bool indicating if the port has been already
-                          published with MUSIC. Read only property.
-- record_from  array    - Array containing the names of variables to record
-                          from, obtained from the /recordables entry of the
-                          model from which one wants to record
+\verbatim embed:rst
+============ ========  ========================================================
+ interval    double    Recording interval in milliseconds
+ targets     array     Global id list of neurons to be observed
+ port_name   string    The name of the MUSIC input port to listen to (default:
+                       cont_in)
+ port_width  integer   The width of the MUSIC input port
+ published   bool      A bool indicating if the port has been already published
+                       with MUSIC
+ record_from array     Array containing the names of variables to record
+                       from, obtained from the /recordables entry of the
+                       model from which one wants to record
+============ ========  ========================================================
+\endverbatim
 
 Author: Martin Asghar Schulze, Forschungszentrum fur Informatik Karlsruhe (FZI)
 

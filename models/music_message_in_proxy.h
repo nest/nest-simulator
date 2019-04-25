@@ -68,16 +68,20 @@ Parameters:
 
 The following properties are available in the status dictionary:
 
-- port_name      - The name of the MUSIC input port to listen to (default:
-                   message_in)
-- port_width     - The width of the MUSIC input port
-- data           - A sub-dictionary that contains the string messages
-                   in the form of two arrays:
-                   messages      - The strings
-                   message_times - The times the messages were sent (ms)
-- n_messages     - The number of messages.
-- published      - A bool indicating if the port has been already published
-                   with MUSIC
+\verbatim embed:rst
+============   =========================================================
+ port_name     The name of the MUSIC input port to listen to (default:
+               message_in)
+ port_width    The width of the MUSIC input port
+ data          A sub-dictionary that contains the string messages
+               in the form of two arrays:
+               messages      - The strings
+               message_times - The times the messages were sent (ms)
+ n_messages    The number of messages.
+ published     A bool indicating if the port has been already published
+               with MUSIC
+============   =========================================================
+\endverbatim
 
 The parameter port_name can be set using SetStatus. The field n_messages
 can be set to 0 to clear the data arrays.

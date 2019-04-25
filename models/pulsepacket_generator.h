@@ -55,9 +55,13 @@ It resembles the output of synfire groups of neurons.
 
 Parameters:
 
-- pulse_times  double - Times of the centers of pulses in ms
-- activity     int    - Number of spikes per pulse
-- sdev         double - Standard deviation of spike times in each pulse in ms
+\verbatim embed:rst
+============  ======  =======================================================
+ pulse_times  double  Times of the centers of pulses in ms
+ activity     int     Number of spikes per pulse
+ sdev         double  Standard deviation of spike times in each pulse in ms
+============  ======  =======================================================
+\endverbatim
 
 Remarks:
 

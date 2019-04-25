@@ -90,18 +90,21 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-- V_m        double - Membrane potential in mV
-- E_L        double - Resting membrane potential in mV.
-- C_m        double - Capacity of the membrane in pF
-- tau_m      double - Membrane time constant in ms.
-- t_ref      double - Duration of refractory period in ms.
-- V_th       double - Spike threshold in mV.
-- V_reset    double - Reset potential of the membrane in mV.
-- tau_syn_ex double - Rise time of the excitatory synaptic alpha function in ms.
-- tau_syn_in double - Rise time of the inhibitory synaptic alpha function in ms.
-- I_e        double - Constant external input current in pA.
-- V_min      double - Absolute lower value for the membrane potential.
-
+\verbatim embed:rst
+=========== ======  ==========================================================
+ V_m        double  Membrane potential in mV
+ E_L        double  Resting membrane potential in mV
+ C_m        double  Capacity of the membrane in pF
+ tau_m      double  Membrane time constant in ms
+ t_ref      double  Duration of refractory period in ms
+ V_th       double  Spike threshold in mV
+ V_reset    double  Reset potential of the membrane in mV
+ tau_syn_ex double  Rise time of the excitatory synaptic alpha function in ms
+ tau_syn_in double  Rise time of the inhibitory synaptic alpha function in ms
+ I_e        double  Constant external input current in pA
+ V_min      double  Absolute lower value for the membrane potential
+=========== ======  ==========================================================
+\endverbatim
 Remarks:
 
 If tau_m is very close to tau_syn_ex or tau_syn_in, the model

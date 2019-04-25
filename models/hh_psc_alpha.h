@@ -81,21 +81,24 @@ it is considered a spike.
 Parameters:
 
 The following parameters can be set in the status dictionary.
-
-- V_m        double - Membrane potential in mV
-- E_L        double - Resting membrane potential in mV.
-- g_L        double - Leak conductance in nS.
-- C_m        double - Capacity of the membrane in pF.
-- tau_ex     double - Rise time of the excitatory synaptic alpha function in ms.
-- tau_in     double - Rise time of the inhibitory synaptic alpha function in ms.
-- E_Na       double - Sodium reversal potential in mV.
-- g_Na       double - Sodium peak conductance in nS.
-- E_K        double - Potassium reversal potential in mV.
-- g_K        double - Potassium peak conductance in nS.
-- Act_m      double - Activation variable m
-- Act_h      double - Activation variable h
-- Inact_n    double - Inactivation variable n
-- I_e        double - Constant external input current in pA.
+\verbatim embed:rst
+========  ======  ============================================================
+ V_m      double  Membrane potential in mV
+ E_L      double  Resting membrane potential in mV
+ g_L      double  Leak conductance in nS
+ C_m      double  Capacity of the membrane in pF
+ tau_ex   double  Rise time of the excitatory synaptic alpha function in ms
+ tau_in   double  Rise time of the inhibitory synaptic alpha function in ms
+ E_Na     double  Sodium reversal potential in mV
+ g_Na     double  Sodium peak conductance in nS
+ E_K      double  Potassium reversal potential in mV
+ g_K      double  Potassium peak conductance in nS
+ Act_m    double  Activation variable m
+ Act_h    double  Activation variable h
+ Inact_n  double  Inactivation variable n
+ I_e      double  Constant external input current in pA
+========  ======  ============================================================
+\endverbatim
 
 Problems/Todo:
 

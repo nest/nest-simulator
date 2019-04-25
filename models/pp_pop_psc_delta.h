@@ -96,35 +96,38 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-
-- N                 int    - Number of represented neurons.
-- tau_m             double - Membrane time constant in ms.
-- C_m               double - Capacitance of the membrane in pF.
-- rho_0             double - Base firing rate in 1/s.
-- delta_u           double - Voltage scale parameter in mV.
-- I_e               double - Constant input current in pA.
-- tau_eta           list of doubles - time constants of post-spike kernel
-                                      in ms.
-- val_eta           list of doubles - amplitudes of exponentials in
-                                      post-spike-kernel in mV.
-- len_kernel        double - post-spike kernel eta is truncated after
-                           max(tau_eta) * len_kernel.
-
+\verbatim embed:rst
+==========  =============== ===========================================
+ N          int             Number of represented neurons
+ tau_m      double          Membrane time constant in ms
+ C_m        double          Capacitance of the membrane in pF
+ rho_0      double          Base firing rate in 1/s
+ delta_u    double          Voltage scale parameter in mV
+ I_e        double          Constant input current in pA
+ tau_eta    list of doubles Time constants of post-spike kernel
+                             in ms
+ val_eta    list of doubles Amplitudes of exponentials in
+                            post-spike-kernel in mV
+ len_kernel double          Post-spike kernel eta is truncated after
+                            max(tau_eta) * len_kernel
+==========  =============== ===========================================
+\endverbatim
 
 The parameters correspond to the ones of pp_psc_delta as follows.
-
-    c_1              =  0.0
-    c_2              =  rho_0
-    c_3              =  1/delta_u
-    q_sfa            =  val_eta
-    tau_sfa          =  tau_eta
-    I_e              =  I_e
-
-    dead_time        =  simulation resolution
-    dead_time_random =  False
-    with_reset       =  False
-    t_ref_remaining  =  0.0
-
+\verbatim embed:rst
+==================  ============================
+ c_1                0.0
+ c_2                rho_0
+ c_3                1/delta_u
+ q_sfa              val_eta
+ tau_sfa            tau_eta
+ I_e                I_e
+ dead_time          simulation resolution
+ dead_time_random   False
+ with_reset         False
+ t_ref_remaining    0.0
+==================  ============================
+\endverbatim
 
 References:
 

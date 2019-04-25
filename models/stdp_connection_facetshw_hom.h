@@ -55,48 +55,57 @@ stdp_connection_hom.
 
 Parameters:
 
-Common properties:
-- tau_plus        double - Time constant of STDP window, causal branch in ms
-- tau_minus_stdp  double - Time constant of STDP window, anti-causal branch
-                           in ms
-- Wmax            double - Maximum allowed weight
+\verbatim embed:rst
+======================= =========== ===========================================
+Common properties
+-------------------------------------------------------------------------------
+ tau_plus               double      Time constant of STDP window, causal branch
+                                    in ms
+ tau_minus_stdp         double      Time constant of STDP window, anti-causal
+                                    branch in ms
+ Wmax                   double      Maximum allowed weight
+ no_synapses            long        Total number of synapses
+ synapses_per_driver    long        Number of synapses updated at once
+ driver_readout_time    double      Time for processing of one synapse row
+                                    (synapse line driver)
+ readout_cycle_duration double      Duration between two subsequent
+                                    updates of same synapse (synapse line
+                                    driver)
+ lookuptable_0          vector long Three look-up tables (LUT)
+ lookuptable_1          vector long
+ lookuptable_2          vector long
+ configbit_0            vector long Configuration bits for evaluation
+                                    function. For details see code in
+                                    function eval_function_ and [4]
+                                    (configbit[0]=e_cc, ..[1]=e_ca,
+                                    ..[2]=e_ac, ..[3]=e_aa).
+                                    Depending on these two sets of
+                                    configuration bits weights are updated
+                                    according LUTs (out of three: (1,0),
+                                    (0,1), (1,1)). For (0,0) continue
+                                    without reset.
+ configbit_1            vector long
+ reset_pattern          vector long Configuration bits for reset behavior.
+                                    Two bits for each LUT (reset causal
+                                    and acausal). In hardware only (all
+                                    false; never reset) or (all true;
+                                    always reset) is allowed.
+======================= =========== ===========================================
 
-- no_synapses                    long - total number of synapses
-- synapses_per_driver            long - number of synapses updated at once
-- driver_readout_time          double - time for processing of one synapse row
-                                        (synapse line driver)
-- readout_cycle_duration       double - duration between two subsequent
-                                        updates of same synapse (synapse line
-                                        driver)
-- lookuptable_0          vector<long> - three look-up tables (LUT)
-- lookuptable_1          vector<long>
-- lookuptable_2          vector<long>
-- configbit_0            vector<long> - configuration bits for evaluation
-                                        function. For details see code in
-                                        function eval_function_ and [4]
-                                        (configbit[0]=e_cc, ..[1]=e_ca,
-                                        ..[2]=e_ac, ..[3]=e_aa).
-                                        Depending on these two sets of
-                                        configuration bits weights are updated
-                                        according LUTs (out of three: (1,0),
-                                        (0,1), (1,1)). For (0,0) continue
-                                        without reset.
-- configbit_1            vector<long>
-- reset_pattern          vector<long> - configuration bits for reset behavior.
-                                        Two bits for each LUT (reset causal
-                                        and acausal). In hardware only (all
-                                        false; never reset) or (all true;
-                                        always reset) is allowed.
 
-Individual properties:
-- a_causal     double - causal and anti-causal spike pair accumulations
-- a_acausal    double
-- a_thresh_th  double - two thresholds used in evaluation function.
-                        No common property, because variation of analog
-                        synapse circuitry can be applied here
-- a_thresh_tl  double
-- synapse_id   long   - synapse ID, used to assign synapses to groups (synapse
-                        drivers)
+============  ======= =====================================================
+**Individual properties**
+---------------------------------------------------------------------------
+ a_causal     double  Causal and anti-causal spike pair accumulations
+ a_acausal    double
+ a_thresh_th  double  Two thresholds used in evaluation function.
+                      No common property, because variation of analog
+                      synapse circuitry can be applied here
+ a_thresh_tl  double
+ synapse_id   long    Synapse ID, used to assign synapses to groups (synapse
+                      drivers)
+============  ======= =====================================================
+\endverbatim
 
 Remarks:
 

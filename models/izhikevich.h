@@ -43,7 +43,7 @@ Description:
 Implementation of the simple spiking neuron model introduced by Izhikevich
 [1]. The dynamics are given by:
   @f[
-  dv/dt = 0.04*v^2 + 5*v + 140 - u + I
+  dv/dt = 0.04*v^2 + 5*v + 140 - u + I \\
      du/dt = a*(b*v - u)] @f]
 
     if  \f$ v >= V_{th} \f$:
@@ -71,16 +71,19 @@ Euler integration. In this case, consistent_integration must be set to true
 Parameters:
 The following parameters can be set in the status dictionary.
 
-- V_m        double - Membrane potential in mV
-- U_m        double - Membrane potential recovery variable
-- V_th       double - Spike threshold in mV.
-- I_e        double - Constant input current in pA. (R=1)
-- V_min      double - Absolute lower value for the membrane potential.
-- a          double - describes time scale of recovery variable
-- b          double - sensitivity of recovery variable
-- c          double - after-spike reset value of V_m
-- d          double - after-spike reset value of U_m
-- consistent_integration  bool - use standard integration technique
+\verbatim embed:rst
+======================= ======  ==============================================
+ V_m                    double  Membrane potential in mV
+ U_m                    double  Membrane potential recovery variable
+ V_th                   double  Spike threshold in mV
+ I_e                    double  Constant input current in pA. (R=1)
+ V_min                  double  Absolute lower value for the membrane potential
+ a                      double  Describes time scale of recovery variable
+ b                      double  Sensitivity of recovery variable
+ c                      double  After-spike reset value of V_m
+ d                      double  After-spike reset value of U_m
+ consistent_integration bool    Use standard integration technique
+======================= ======  ==============================================
 
 
 References:

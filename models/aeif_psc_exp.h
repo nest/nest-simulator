@@ -74,7 +74,7 @@ solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
 
-@f[ C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e)
+@f[ C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
                                                      -g_i(t)(V-E_i)-w +I_e @f]
 
 and
@@ -90,38 +90,58 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-Dynamic state variables:
--  V_m        double - Membrane potential in mV
--  I_ex       double - Excitatory synaptic conductance in nS.
--  I_in       double - Inhibitory synaptic conductance in nS.
--  w          double - Spike-adaptation current in pA.
+\verbatim embed:rst
 
-Membrane Parameters:
--  C_m        double - Capacity of the membrane in pF
--  t_ref      double - Duration of refractory period in ms.
--  V_reset    double - Reset value for V_m after a spike. In mV.
--  E_L        double - Leak reversal potential in mV.
--  g_L        double - Leak conductance in nS.
--  I_e        double - Constant external input current in pA.
+======== ======= =======================================
+**Dynamic state variables:**
+--------------------------------------------------------
+ V_m     double  Membrane potential in mV
+ I_ex    double  Excitatory synaptic current in pA
+ I_in    double  Inhibitory synaptic current in pA
+ w       double  Spike-adaptation current in pA
+======== ======= =======================================
 
-Spike adaptation parameters:
--  a          double - Subthreshold adaptation in nS.
--  b          double - Spike-triggered adaptation in pA.
--  Delta_T    double - Slope factor in mV
--  tau_w      double - Adaptation time constant in ms
--  V_t        double - Spike initiation threshold in mV
--  V_peak     double - Spike detection threshold in mV.
 
-Synaptic parameters
--  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (exp
-                       function).
--  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms
-                       (exp function).
+======== ======= =======================================
+**Membrane Parameters**
+--------------------------------------------------------
+ C_m     double  Capacity of the membrane in pF
+ t_ref   double  Duration of refractory period in ms
+ V_reset double  Reset value for V_m after a spike in mV
+ E_L     double  Leak reversal potential in mV
+ g_L     double  Leak conductance in nS
+ I_e     double  Constant external input current in pA
+======== ======= =======================================
 
-Integration parameters
--  gsl_error_tol  double - This parameter controls the admissible error of the
-                           GSL integrator. Reduce it if NEST complains about
-                           numerical instabilities.
+
+======== ======= ==================================
+**Spike adaptation parameters**
+---------------------------------------------------
+ a       double  Subthreshold adaptation in nS
+ b       double  Spike-triggered adaptation in pA
+ Delta_T double  Slope factor in mV
+ tau_w   double  Adaptation time constant in ms
+ V_t     double  Spike initiation threshold in mV
+ V_peak  double  Spike detection threshold in mV
+======== ======= ==================================
+
+=========== ======= ===========================================================
+**Synaptic parameters**
+-------------------------------------------------------------------------------
+ tau_syn_ex double  Rise time of excitatory synaptic conductance in ms (alpha
+                    function)
+ tau_syn_in double  Rise time of the inhibitory synaptic conductance in ms
+                    (alpha function)
+=========== ======= ===========================================================
+
+============= ======= =========================================================
+**Integration parameters**
+-------------------------------------------------------------------------------
+gsl_error_tol double  This parameter controls the admissible error of the
+                      GSL integrator. Reduce it if NEST complains about
+                      numerical instabilities
+============= ======= =========================================================
+\endverbatim
 
 Author: Tanguy Fardet
 

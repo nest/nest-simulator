@@ -40,7 +40,7 @@ class TestDisconnectSingle(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.hl_api.set_verbosity('M_ERROR')
+        nest.set_verbosity('M_ERROR')
         self.num_procs = 1
         if mpi_test:
             self.comm = MPI.COMM_WORLD
@@ -60,6 +60,8 @@ class TestDisconnectSingle(unittest.TestCase):
             'gap_junction_lbl',
             'diffusion_connection',
             'diffusion_connection_lbl',
+            'clopath_synapse',
+            'clopath_synapse_lbl'
         ]
 
     def test_synapse_deletion_one_to_one_no_sp(self):

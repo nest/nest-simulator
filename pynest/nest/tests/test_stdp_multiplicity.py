@@ -108,7 +108,7 @@ class StdpSpikeMultiplicity(unittest.TestCase):
         # k spikes will be emitted at these two times
         pre_spike_times_base = [100., 200.]
 
-        nest.hl_api.set_verbosity("M_WARNING")
+        nest.set_verbosity("M_WARNING")
 
         post_weights = {'parrot': [], 'parrot_ps': []}
 

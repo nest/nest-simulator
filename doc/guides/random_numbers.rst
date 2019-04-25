@@ -40,18 +40,19 @@ N}. Random *deviate* generators, on the other hand, provide random
 numbers drawn from a range of distributions, such as the normal or
 binomial distributions. In most cases, you will be using random deviate
 generators. They are in particular used to initialize properties during
-network construction, as described in the sections `Changes in NEST
-2.4 <random-numbers.md#changes-in-random-number-generation-in-nest-2.4>`__
-and `Examples <random-numbers.md#examples>`__ below.
+network construction, as described in the sections :ref:`changes-nest>`
+and :ref:`examples-rng` below.
+
+.. _changes-nest:
 
 Changes in random number generation in NEST 2.4
 -----------------------------------------------
 
 Random deviate generation has become significantly more powerful in NEST
 2.4, to fully support randomization of connections parameters offered by
-the revised ``Connect`` function, as described in `Connection
-Management <connection-management.md>`__ and illustrated by the
-`examples <random-numbers.md#examples>`__ below. We have also made minor
+the revised ``Connect`` function, as described in :doc:`Connection
+Management <connection_management>` and illustrated by the
+:ref:`examples-rng` below. We have also made minor
 changes to make to achieve greater similarity between NEST, PyNN, and
 NumPy. For most users, these changes only add new features. Only
 existing scripts using
@@ -359,6 +360,9 @@ The following happens here:
 
 -  This array is then passed to the ``/rngs`` status variable of the
    kernel. This variable is invisible as well.
+
+
+.. _examples-rng:
 
 Examples
 --------

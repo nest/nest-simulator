@@ -20,6 +20,7 @@
  *
  */
 
+% autorun=true
 
 /* simple example of usage for the
    correlospinmatrix detector

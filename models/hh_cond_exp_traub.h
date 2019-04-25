@@ -95,25 +95,30 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
--  V_m        double - Membrane potential in mV
--  V_T        double - Voltage offset that controls dynamics. For default
-                       parameters, V_T = -63mV results in a threshold around
-                       -50mV.
--  E_L        double - Leak reversal potential in mV.
--  C_m        double - Capacity of the membrane in pF.
--  g_L        double - Leak conductance in nS.
--  tau_syn_ex double - Time constant of the excitatory synaptic exponential
-                       function in ms.
--  tau_syn_in double - Time constant of the inhibitory synaptic exponential
-                       function in ms.
--  t_ref      double - Duration of refractory period in ms (see Note).
--  E_ex       double - Excitatory synaptic reversal potential in mV.
--  E_in       double - Inhibitory synaptic reversal potential in mV.
--  E_Na       double - Sodium reversal potential in mV.
--  g_Na       double - Sodium peak conductance in nS.
--  E_K        double - Potassium reversal potential in mV.
--  g_K        double - Potassium peak conductance in nS.
--  I_e        double - External input current in pA.
+\verbatim embed:rst
+=========== ======  =========================================================
+ V_m        double  Membrane potential in mV
+ V_T        double  Voltage offset that controls dynamics. For default
+                    parameters, V_T = -63mV results in a threshold around
+                    -50mV
+ E_L        double  Leak reversal potential in mV
+ C_m        double  Capacity of the membrane in pF
+ g_L        double  Leak conductance in nS
+ tau_syn_ex double  Time constant of the excitatory synaptic exponential
+                    function in ms
+ tau_syn_in double  Time constant of the inhibitory synaptic exponential
+                    function in ms
+ t_ref      double  Duration of refractory period in ms (see Note)
+ E_ex       double  Excitatory synaptic reversal potential in mV
+ E_in       double  Inhibitory synaptic reversal potential in mV
+ E_Na       double  Sodium reversal potential in mV
+ g_Na       double  Sodium peak conductance in nS
+ E_K        double  Potassium reversal potential in mV
+ g_K        double  Potassium peak conductance in nS
+ I_e        double  External input current in pA
+=========== ======  =========================================================
+\endverbatim
+
 
 References:
 

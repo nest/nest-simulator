@@ -20,6 +20,8 @@
  *
  */
 
+% autorun=true
+
 /*
     This script simulates a network with two populations, 80% Excitatory, 20% Inhibitory,
     initially without connections and relies on structuraly plasticity to generate

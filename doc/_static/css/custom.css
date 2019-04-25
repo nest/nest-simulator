@@ -4,7 +4,7 @@ t.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
 
 
 .wy-side-nav-search>a, .wy-side-nav-search .wy-dropdown>a {
-   content: url(https://nest-simulator-sg.readthedocs.io/en/doc-doc/_static/img/nest_logo.png);
+   content: url(../../_static/img/nest_logo.png);
 }
 
 .wy-side-nav-search {

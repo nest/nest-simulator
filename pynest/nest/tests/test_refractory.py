@@ -45,6 +45,7 @@ Untested models
 * ``aeif_cond_alpha_RK5``
 * ``gif_pop_psc_exp``
 * ``hh_cond_exp_traub``
+* ``hh_cond_beta_gap_traub``
 * ``hh_psc_alpha``
 * ``hh_psc_alpha_gap``
 * ``iaf_psc_exp_ps_lossless``
@@ -72,12 +73,19 @@ neurons_interspike_ps = [
     "iaf_psc_exp_ps",
 ]
 
+# Models that first clamp the membrane potential at a higher value
+neurons_with_clamping = [
+    "aeif_psc_delta_clopath",
+]
+
 # Models that cannot be tested
 ignore_model = [
      "aeif_cond_alpha_RK5",      # This one is faulty and will be removed
      "gif_pop_psc_exp",          # This one commits spikes at same time
      "hh_cond_exp_traub",        # This one does not support V_reset
+     "hh_cond_beta_gap_traub",   # This one does not support V_reset
      "hh_psc_alpha",             # This one does not support V_reset
+     "hh_psc_alpha_clopath",     # This one does not support V_reset
      "hh_psc_alpha_gap",         # This one does not support V_reset
      "iaf_psc_exp_ps_lossless",  # This one use presice times
      "sli_neuron",               # This one is not optimal for PyNEST
@@ -189,7 +197,7 @@ class TestRefractoryCase(unittest.TestCase):
             vm_params = {"interval": resolution, "record_from": [name_Vm]}
             vm = nest.Create("voltmeter", params=vm_params)
             sd = nest.Create("spike_detector", params={'precise_times': True})
-            cg = nest.Create("dc_generator", params={"amplitude": 900.})
+            cg = nest.Create("dc_generator", params={"amplitude": 1200.})
 
             # For models that do not clamp V_m, use very large current to
             # trigger almost immediate spiking => t_ref almost equals
@@ -211,6 +219,9 @@ class TestRefractoryCase(unittest.TestCase):
 
             # Get and compare t_ref
             t_ref_sim = self.compute_reftime(model, sd, vm, neuron)
+
+            if model in neurons_with_clamping:
+                t_ref_sim = t_ref_sim - nest.GetStatus(neuron, "t_clamp")[0]
 
             # Approximate result for precise spikes (interpolation error)
             if model in neurons_interspike_ps:

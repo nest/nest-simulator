@@ -38,7 +38,7 @@ pylab.ion()
 
 
 nest.ResetKernel()
-nest.hl_api.set_verbosity('M_WARNING')
+nest.set_verbosity('M_WARNING')
 
 # create two test layers
 nest.CopyModel('iaf_psc_alpha', 'pyr')

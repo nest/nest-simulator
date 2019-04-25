@@ -171,7 +171,7 @@ public:
 
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_lastspike_ - get_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_delay(), get_delay() );
   }
 
   void
@@ -224,7 +224,7 @@ STDPConnection< targetidentifierT >::send( Event& e,
   const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
-  double t_spike = e.get_stamp().get_ms();
+  const double t_spike = e.get_stamp().get_ms();
 
   // use accessor functions (inherited from Connection< >) to obtain delay and
   // target
@@ -259,9 +259,8 @@ STDPConnection< targetidentifierT >::send( Event& e,
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ) );
   }
 
-  // depression due to new pre-synaptic spike
-  weight_ =
-    depress_( weight_, target->get_K_value( t_spike - dendritic_delay ) );
+  const double _K_value = target->get_K_value( t_spike - dendritic_delay );
+  weight_ = depress_( weight_, _K_value );
 
   e.set_receiver( *target );
   e.set_weight( weight_ );

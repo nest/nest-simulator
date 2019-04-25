@@ -20,6 +20,8 @@
  *
  */
 
+% autorun=true
+
 /*
    Benchmark 3 of the simulator review
 

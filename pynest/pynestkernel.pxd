@@ -67,7 +67,7 @@ cdef extern from "mask.h" namespace "nest":
     cppclass MaskDatum:
         MaskDatum(const MaskDatum&)
 
-cdef extern from "parameter.h" namespace "nest":
+cdef extern from "parameter.h":
     cppclass ParameterDatum:
         ParameterDatum(const ParameterDatum&)
 

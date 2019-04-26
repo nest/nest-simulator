@@ -44,6 +44,7 @@ __all__ = [
     '_restructure_data',
     '_serialize',
     'Connectome',
+    'CreateParameter',
     'GIDCollection',
     'GIDCollectionIterator',
     'Mask',
@@ -184,6 +185,73 @@ def _get_hierarchical_addressing(gc, params):
     else:
         result = {key: result[key] for key in params[-1]}
     return result
+
+
+def CreateParameter(parametertype, specs):
+    """
+    Create a parameter.
+
+    Parameters
+    ----------
+    parametertype : {'constant', 'linear', 'exponential', 'gaussian', \
+        'gaussian2D', 'uniform', 'normal', 'lognormal'}
+        Function types with or without distance dependency
+    specs : dict
+        Dictionary specifying the parameters of the provided
+        `'parametertype'`, see **Parameter types**.
+
+
+    Returns
+    -------
+    out : ``Parameter`` object
+
+    Notes
+    -----
+    -
+
+
+    **Parameter types**
+
+    Available parameter types (`parametertype` parameter), their function and
+    acceptable keys for their corresponding specification dictionaries
+
+    * Constant
+        ::
+
+            'constant' :
+                {'value' : float} # constant value
+
+    * Randomization
+        ::
+
+            # random parameter with uniform distribution in [min,max)
+            'uniform' :
+                {'min' : float, # minimum value, default: 0.0
+                 'max' : float} # maximum value, default: 1.0
+            # or
+            # random parameter with normal distribution, optionally truncated
+            # to [min,max)
+            'normal':
+                {'mean' : float, # mean value, default: 0.0
+                 'sigma': float, # standard deviation, default: 1.0
+                 'min'  : float, # minimum value, default: -inf
+
+                 'max'  : float} # maximum value, default: +inf
+            # or
+            # random parameter with lognormal distribution,
+            # optionally truncated to [min,max)
+            'lognormal' :
+                {'mu'   : float, # mean value of logarithm, default: 0.0
+                 'sigma': float, # standard deviation of log, default: 1.0
+                 'min'  : float, # minimum value, default: -inf
+                 'max'  : float} # maximum value, default: +inf
+
+
+    **Example**
+        ::
+
+    """
+    return sli_func('CreateParameter', {parametertype: specs})
 
 
 class GIDCollectionIterator(object):
@@ -778,13 +846,11 @@ class Mask(object):
 
 class Parameter(object):
     """
-    Class for parameters for distance dependency or randomization.
+    Class for parameters
 
-    Parameters are spatial functions which are used when creating
-    connections in the Topology module. A parameter may be used as a
-    probability kernel when creating connections or as synaptic parameters
-    (such as weight and delay). Parameters are created using the
-    ``CreateParameter`` command.
+    A parameter may be used as a probability kernel when creating
+    connections or as synaptic parameters (such as weight and delay).
+    Parameters are created using the ``CreateParameter`` command.
     """
 
     _datum = None
@@ -833,6 +899,41 @@ class Parameter(object):
     def __truediv__(self, other):
         return self._binop("div", other)
 
+    def GetValue(self):
+        """
+        Compute value of parameter.
+
+
+        Returns
+        -------
+        out : value
+            The value of the parameter
+
+
+        See also
+        --------
+        CreateParameter
+
+
+        Notes
+        -----
+        -
+
+
+        **Example**
+            ::
+
+                import nest
+
+                # normal distribution parameter
+                P = nest.CreateParameter('normal', {'mean': 0.0, 'sigma': 1.0})
+
+                # get out value
+                P.GetValue()
+
+        """
+        return sli_func("GetValue", self._datum)
+
 
 class TopologyParameter(Parameter):
     """
@@ -845,6 +946,7 @@ class TopologyParameter(Parameter):
     ``CreateTopologyParameter`` command.
     """
     # The constructor should not be called by the user
+
     def __init__(self, datum):
         """Parameters must be created using the CreateTopologyParameter command."""
         if not isinstance(datum,
@@ -855,7 +957,8 @@ class TopologyParameter(Parameter):
     # Generic binary operation
     def _binop(self, op, other):
         if isinstance(other, (int, float)):
-            other = CreateTopologyParameter('constant', {'value': float(other)})
+            other = CreateTopologyParameter(
+                'constant', {'value': float(other)})
         if not isinstance(other, Parameter):
             return NotImplemented
 

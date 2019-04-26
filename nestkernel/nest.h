@@ -130,6 +130,17 @@ void set_model_defaults( const Name& model_name, const DictionaryDatum& );
 DictionaryDatum get_model_defaults( const Name& model_name );
 
 void restore_nodes( const ArrayDatum& node_list );
+
+ParameterDatum multiply_parameter( const ParameterDatum& param1,
+  const ParameterDatum& param2 );
+ParameterDatum divide_parameter( const ParameterDatum& param1,
+  const ParameterDatum& param2 );
+ParameterDatum add_parameter( const ParameterDatum& param1,
+  const ParameterDatum& param2 );
+ParameterDatum subtract_parameter( const ParameterDatum& param1,
+  const ParameterDatum& param2 );
+ParameterDatum create_parameter( const DictionaryDatum& param_dict );
+double get_value( const ParameterDatum& param );
 }
 
 

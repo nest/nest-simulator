@@ -26,6 +26,7 @@
 // Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"
+#include "parameter.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -33,9 +34,12 @@
 #include "slimodule.h"
 #include "slitype.h"
 
+#include "generic_factory.h"
+
 namespace nest
 {
 class Node;
+class Parameter;
 
 /**
  * SLI interface of the NEST kernel.
@@ -49,6 +53,7 @@ public:
   static SLIType ConnectionType;
   static SLIType GIDCollectionType;
   static SLIType GIDCollectionIteratorType;
+  static SLIType ParameterType;
 
   NestModule();
   ~NestModule();
@@ -57,6 +62,16 @@ public:
 
   const std::string commandstring( void ) const;
   const std::string name( void ) const;
+
+  static lockPTRDatum< Parameter, &ParameterType > create_nest_parameter( const Token& );
+  static Parameter* create_nest_parameter( const Name& name,
+    const DictionaryDatum& d );
+
+  using ParameterFactory = GenericFactory< Parameter >;
+  using ParameterCreatorFunction = GenericFactory< Parameter >::CreatorFunction;
+
+  template < class T >
+  static bool register_parameter( const Name& name );
 
   /**
    * @defgroup NestSliInterface SLI Interface functions of the NEST kernel.
@@ -497,8 +512,54 @@ public:
     void execute( SLIInterpreter* ) const;
   } setstdpeps_dfunction;
 
+  class Mul_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } mul_P_Pfunction;
+
+  class Div_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } div_P_Pfunction;
+
+  class Add_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } add_P_Pfunction;
+
+  class Sub_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } sub_P_Pfunction;
+
+  class CreateParameter_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } createparameter_Dfunction;
+
+  class GetValue_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getvalue_Pfunction;
+
+private:
+  static ParameterFactory& parameter_factory_();
+
   //@}
 };
+
+template < class T >
+inline bool
+NestModule::register_parameter( const Name& name )
+{
+  return parameter_factory_().register_subtype< T >( name );
+}
 
 } // namespace
 

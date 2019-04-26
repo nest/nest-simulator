@@ -352,17 +352,17 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "sub_M_M", &sub_M_Mfunction );
 
-  i->createcommand( "mul_P_P", &mul_P_Pfunction );
+  i->createcommand( "multopo_P_P", &multopo_P_Pfunction );
 
-  i->createcommand( "div_P_P", &div_P_Pfunction );
+  i->createcommand( "divtopo_P_P", &divtopo_P_Pfunction );
 
-  i->createcommand( "add_P_P", &add_P_Pfunction );
+  i->createcommand( "addtopo_P_P", &addtopo_P_Pfunction );
 
-  i->createcommand( "sub_P_P", &sub_P_Pfunction );
+  i->createcommand( "subtopo_P_P", &subtopo_P_Pfunction );
 
   i->createcommand( "ConnectLayers_g_g_D", &connectlayers_g_g_Dfunction );
 
-  i->createcommand( "CreateParameter_D", &createtopologyparameter_Dfunction );
+  i->createcommand( "CreateTopologyParameter_D", &createtopologyparameter_Dfunction );
 
   i->createcommand( "GetValue_a_P", &getvalue_a_Pfunction );
 
@@ -764,7 +764,7 @@ TopologyModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-TopologyModule::Mul_P_PFunction::execute( SLIInterpreter* i ) const
+TopologyModule::MulTopo_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
@@ -779,7 +779,7 @@ TopologyModule::Mul_P_PFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-TopologyModule::Div_P_PFunction::execute( SLIInterpreter* i ) const
+TopologyModule::DivTopo_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
@@ -794,7 +794,7 @@ TopologyModule::Div_P_PFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-TopologyModule::Add_P_PFunction::execute( SLIInterpreter* i ) const
+TopologyModule::AddTopo_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
@@ -809,7 +809,7 @@ TopologyModule::Add_P_PFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-TopologyModule::Sub_P_PFunction::execute( SLIInterpreter* i ) const
+TopologyModule::SubTopo_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
@@ -1024,10 +1024,10 @@ TopologyModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
 
 
 /** @BeginDocumentation
-  Name: topology::CreateParameter - create a spatial function
+  Name: topology::CreateTopologyParameter - create a spatial function
 
   Synopsis:
-  << /type dict >> CreateParameter -> parameter
+  << /type dict >> CreateTopologyParameter -> parameter
 
   Parameters:
   /type - parameter type
@@ -1049,7 +1049,7 @@ TopologyModule::CreateTopologyParameter_DFunction::execute( SLIInterpreter* i ) 
   const DictionaryDatum param_dict =
     getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  TopologyParameterDatum datum = create_topology_parameter( param_dict );
+  TopologyParameterDatum datum = nest::create_topology_parameter( param_dict );
 
   i->OStack.pop( 1 );
   i->OStack.push( datum );

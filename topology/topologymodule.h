@@ -24,6 +24,7 @@
 #define TOPOLOGYMODULE_H
 
 // Includes from nestkernel:
+#include "generic_factory.h"
 #include "exceptions.h"
 
 // Includes from sli:
@@ -31,7 +32,6 @@
 #include "slimodule.h"
 
 // Includes from topology:
-#include "generic_factory.h"
 #include "ntree.h"
 #include "position.h"
 
@@ -143,29 +143,29 @@ public:
     void execute( SLIInterpreter* ) const;
   } sub_M_Mfunction;
 
-  class Mul_P_PFunction : public SLIFunction
+  class MulTopo_P_PFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } mul_P_Pfunction;
+  } multopo_P_Pfunction;
 
-  class Div_P_PFunction : public SLIFunction
+  class DivTopo_P_PFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } div_P_Pfunction;
+  } divtopo_P_Pfunction;
 
-  class Add_P_PFunction : public SLIFunction
+  class AddTopo_P_PFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } add_P_Pfunction;
+  } addtopo_P_Pfunction;
 
-  class Sub_P_PFunction : public SLIFunction
+  class SubTopo_P_PFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } sub_P_Pfunction;
+  } subtopo_P_Pfunction;
 
   class CreateTopologyParameter_DFunction : public SLIFunction
   {

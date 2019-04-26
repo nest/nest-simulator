@@ -42,6 +42,8 @@ typedef lockPTRDatum< nest::GIDCollection,
   &nest::NestModule::GIDCollectionType > GIDCollectionDatum;
 typedef lockPTRDatum< nest::gc_const_iterator,
   &nest::NestModule::GIDCollectionIteratorType > GIDCollectionIteratorDatum;
+typedef lockPTRDatum< nest::Parameter,
+  &nest::NestModule::ParameterType > ParameterDatum;
 
 #ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
 template <>

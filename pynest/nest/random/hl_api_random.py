@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from nest.topology import CreateParameter
+from nest.topology import CreateTopologyParameter
 from ..lib.hl_api_types import Parameter
 import numpy as np
 
@@ -28,12 +28,12 @@ __all__ = [
     'lognormal',
     'normal',
     'uniform',
-    ]
+]
 
 
 class ParameterWrapper(Parameter):
     def __init__(self, parametertype, specs):
-        self._parameter = CreateParameter(parametertype, specs)
+        self._parameter = CreateTopologyParameter(parametertype, specs)
 
     def get_value(self):
         return self._parameter.GetValue([0.0, 0.0])

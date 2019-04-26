@@ -600,13 +600,13 @@ public:
     if ( sigma_ <= 0 )
     {
       throw BadProperty(
-        "topology::NormalParameter: "
+        "topology::NormalTopologyParameter: "
         "sigma > 0 required." );
     }
     if ( min_ >= max_ )
     {
       throw BadProperty(
-        "topology::NormalParameter: "
+        "topology::NormalTopologyParameter: "
         "min < max required." );
     }
   }

@@ -50,7 +50,7 @@ NEST:
 
 Functions in the Topology module:
   - CreateMask(masktype, specs, anchor=None)
-  - CreateParameter(parametertype, specs)
+  - CreateTopologyParameter(parametertype, specs)
   - CreateLayer(specs)
   - ConnectLayers(pre, post, projections)
   - Distance(from_arg, to_arg)
@@ -80,7 +80,7 @@ __all__ = [
     'ConnectLayers',
     'CreateLayer',
     'CreateMask',
-    'CreateParameter',
+    'CreateTopologyParameter',
     'Displacement',
     'Distance',
     'DumpLayerConnections',
@@ -242,14 +242,14 @@ def CreateMask(masktype, specs, anchor=None):
                                     {masktype: specs, 'anchor': anchor})
 
 
-def CreateParameter(parametertype, specs):
+def CreateTopologyParameter(parametertype, specs):
     """
     Create a parameter for distance dependency or randomization.
 
     Parameters are (spatial) functions which are used when creating
     connections in the Topology module for distance dependency or
     randomization. This command creates a Parameter object which may be
-    combined with other ``Parameter`` objects using arithmetic operators.
+    combined with other ``TopologyParameter`` objects using arithmetic operators.
     The parameter is specified in a dictionary.
 
     A parameter may be used as a probability kernel when creating connections
@@ -270,7 +270,7 @@ def CreateParameter(parametertype, specs):
 
     Returns
     -------
-    out : ``Parameter`` object
+    out : ``TopologyParameter`` object
 
 
     See also
@@ -372,7 +372,7 @@ def CreateParameter(parametertype, specs):
                                 'elements'  : 'iaf_psc_alpha'})
 
             # parameter for delay with linear distance dependency
-            d = tp.CreateParameter('linear', {'a': 0.2,
+            d = tp.CreateTopologyParameter('linear', {'a': 0.2,
                                               'c': 0.2})
 
             # connectivity specifications
@@ -382,7 +382,7 @@ def CreateParameter(parametertype, specs):
             tp.ConnectLayers(l, l, conndict)
 
     """
-    return nest.ll_api.sli_func('CreateParameter', {parametertype: specs})
+    return nest.ll_api.sli_func('CreateTopologyParameter', {parametertype: specs})
 
 
 def CreateLayer(specs):
@@ -541,7 +541,7 @@ def ConnectLayers(pre, post, projections):
     CreateMask : Create a ``Mask`` object. Documentation on available spatial
         masks. Masks can be used to specify the key `'mask'` of the
         connection dictionary.
-    CreateParameter : Create a ``Parameter`` object. Documentation on available
+    CreateTopologyParameter : Create a ``TopologyParameter`` object. Documentation on available
         parameters for distance dependency and randomization. Parameters can
         be used to specify the parameters `'kernel'`, `'weights'` and
         `'delays'` of the connection dictionary.
@@ -567,14 +567,14 @@ def ConnectLayers(pre, post, projections):
         Delays can be constant, randomized or distance-dependent according
         to a provided function.
         Information on available functions can be found in the
-        documentation on the function ``CreateParameter``.
+        documentation on the function ``CreateTopologyParameter``.
     kernel : [float | dict | Parameter object], optional, default: 1.0
         A kernel is a function mapping the distance (or displacement)
         between a driver and a pool node to a connection probability. The
         default kernel is 1.0, i.e., connections are created with
         certainty.
         Information on available functions can be found in the
-        documentation on the function ``CreateParameter``.
+        documentation on the function ``CreateTopologyParameter``.
     mask : [dict | Mask object], optional
         The mask defines which pool nodes are considered as potential
         targets for each driver node. Parameters of the different
@@ -595,7 +595,7 @@ def ConnectLayers(pre, post, projections):
         Weights can be constant, randomized or distance-dependent according
         to a provided function.
         Information on available functions can be found in the
-        documentation on the function ``CreateParameter``.
+        documentation on the function ``CreateTopologyParameter``.
 
 
     Notes
@@ -638,7 +638,7 @@ def ConnectLayers(pre, post, projections):
             # connection dictionary with distance-dependent kernel
             # (given as Parameter object) and randomized weights
             # (given as a dictionary)
-            gauss_kernel = tp.CreateParameter('gaussian', {'p_center' : 1.0,
+            gauss_kernel = tp.CreateTopologyParameter('gaussian', {'p_center' : 1.0,
                                                            'sigma'    : 1.0})
             conndict2 = {'connection_type': 'divergent',
                          'mask': {'circular': {'radius': 2.0}},
@@ -1690,7 +1690,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     --------
     CreateMask : Create a ``Mask`` object. Documentation on available spatial
         masks.
-    CreateParameter : Create a ``Parameter`` object. Documentation on available
+    CreateTopologyParameter : Create a ``TopologyParameter`` object. Documentation on available
         parameters for distance dependency and randomization.
     PlotLayer : Plot all nodes in a layer.
 

@@ -29,6 +29,7 @@ template class lockPTRDatum< nest::GIDCollection,
   &nest::NestModule::GIDCollectionType >;
 template class lockPTRDatum< nest::gc_const_iterator,
   &nest::NestModule::GIDCollectionIteratorType >;
+//template class lockPTRDatum< nest::Parameter, &nest::NestModule::ParameterType  >;
 
 // instantiate memory management pool
 template <>

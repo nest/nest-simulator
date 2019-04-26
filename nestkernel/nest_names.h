@@ -270,6 +270,7 @@ extern const Name lookuptable_1;
 extern const Name lookuptable_2;
 
 extern const Name make_symmetric;
+extern const Name max;
 extern const Name max_buffer_size_spike_data;
 extern const Name max_buffer_size_target_data;
 extern const Name max_delay;
@@ -278,6 +279,7 @@ extern const Name mean;
 extern const Name memory;
 extern const Name message_times;
 extern const Name messages;
+extern const Name min;
 extern const Name min_delay;
 extern const Name model;
 extern const Name mother_rng;

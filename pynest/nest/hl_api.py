@@ -61,6 +61,7 @@ __all__ = [
     'Models',
     'NumProcesses',
     'Parameter',
+    'TopologyParameter',
     'Prepare',
     'Rank',
     'ResetKernel',

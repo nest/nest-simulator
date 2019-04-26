@@ -61,6 +61,7 @@ namespace nest
 SLIType NestModule::ConnectionType;
 SLIType NestModule::GIDCollectionType;
 SLIType NestModule::GIDCollectionIteratorType;
+SLIType NestModule::ParameterType;
 
 // At the time when NestModule is constructed, the SLI Interpreter
 // must already be initialized. NestModule relies on the presence of
@@ -78,6 +79,7 @@ NestModule::~NestModule()
   ConnectionType.deletetypename();
   GIDCollectionType.deletetypename();
   GIDCollectionIteratorType.deletetypename();
+  ParameterType.deletetypename();
 }
 
 // The following concerns the new module:
@@ -92,6 +94,66 @@ const std::string
 NestModule::commandstring( void ) const
 {
   return std::string( "(nest-init) run" );
+}
+
+ParameterDatum
+NestModule::create_nest_parameter( const Token& t )
+{
+  // t can be an existing ParameterDatum, a DoubleDatum containing a
+  // constant value for this parameter, or a Dictionary containing
+  // parameters
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
+  if ( pd )
+  {
+    return *pd;
+  }
+
+  // If t is a DoubleDatum, create a ConstantParameter with this value
+  DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
+  if ( dd )
+  {
+    return new ConstantParameter( *dd );
+  }
+
+  DictionaryDatum* dictd = dynamic_cast< DictionaryDatum* >( t.datum() );
+  if ( dictd )
+  {
+
+    // The dictionary should only have a single key, which is the name of
+    // the parameter type to create.
+    if ( ( *dictd )->size() != 1 )
+    {
+      throw BadProperty(
+        "Parameter definition dictionary must contain one single key only." );
+    }
+
+    Name n = ( *dictd )->begin()->first;
+    DictionaryDatum pdict = getValue< DictionaryDatum >( *dictd, n );
+    return create_nest_parameter( n, pdict );
+  }
+  else
+  {
+    throw BadProperty(
+      "Parameter must be parametertype, constant or dictionary." );
+  }
+}
+
+Parameter*
+NestModule::create_nest_parameter( const Name& name, const DictionaryDatum& d )
+{
+  // The parameter factory will create the parameter without regard for
+  // the anchor
+  Parameter* param = parameter_factory_().create( name, d );
+
+  return param;
+}
+
+
+GenericFactory< Parameter >&
+NestModule::parameter_factory_( void )
+{
+  static GenericFactory< Parameter > factory;
+  return factory;
 }
 
 /** @BeginDocumentation
@@ -1699,6 +1761,101 @@ NestModule::SetStdpEps_dFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+
+/** @BeginDocumentation
+  Name: CreateParameter
+*/
+void
+NestModule::CreateParameter_DFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  const DictionaryDatum param_dict =
+    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+
+  ParameterDatum datum = nest::create_parameter( param_dict );
+
+  i->OStack.pop( 1 );
+  i->OStack.push( datum );
+  i->EStack.pop();
+}
+
+void
+NestModule::Mul_P_PFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  ParameterDatum param1 = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+  ParameterDatum param2 = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = multiply_parameter( param1, param2 );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
+void
+NestModule::Div_P_PFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  ParameterDatum param1 = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+  ParameterDatum param2 = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = divide_parameter( param1, param2 );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
+void
+NestModule::Add_P_PFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  ParameterDatum param1 = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+  ParameterDatum param2 = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = add_parameter( param1, param2 );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
+void
+NestModule::Sub_P_PFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  ParameterDatum param1 = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+  ParameterDatum param2 = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = subtract_parameter( param1, param2 );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
+/** @BeginDocumentation
+  Name: GetValue
+*/
+void
+NestModule::GetValue_PFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+
+  double value = get_value( param );
+
+  i->OStack.pop( 1 );
+  i->OStack.push( value );
+  i->EStack.pop();
+}
+
 void
 NestModule::init( SLIInterpreter* i )
 {
@@ -1711,6 +1868,9 @@ NestModule::init( SLIInterpreter* i )
   GIDCollectionIteratorType.settypename( "gidcollectioniteratortype" );
   GIDCollectionIteratorType.setdefaultaction(
     SLIInterpreter::datatypefunction );
+
+  ParameterType.settypename( "parametertype" );
+  ParameterType.setdefaultaction( SLIInterpreter::datatypefunction );
 
   // register interface functions with interpreter
   i->createcommand( "RestoreNodes_a", &restorenodes_afunction );
@@ -1740,6 +1900,15 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "GetDefaults_l", &getdefaults_lfunction );
 
   i->createcommand( "Create_l_i", &create_l_ifunction );
+
+  i->createcommand( "mul_P_P", &mul_P_Pfunction );
+  i->createcommand( "div_P_P", &div_P_Pfunction );
+  i->createcommand( "add_P_P", &add_P_Pfunction );
+  i->createcommand( "sub_P_P", &sub_P_Pfunction );
+
+  i->createcommand( "CreateParameter_D", &createparameter_Dfunction );
+
+  i->createcommand( "GetValue_P", &getvalue_Pfunction );
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
 
@@ -1837,6 +2006,11 @@ NestModule::init( SLIInterpreter* i )
   dd->insert( Name( "kernelname" ), new StringDatum( "NEST" ) );
   dd->insert(
     Name( "is_mpi" ), new BoolDatum( kernel().mpi_manager.is_mpi_used() ) );
+
+  register_parameter< ConstantParameter >( "constant" );
+  register_parameter< UniformParameter >( "uniform" );
+  register_parameter< NormalParameter >( "normal" );
+  register_parameter< LognormalParameter >( "lognormal" );
 }
 
 } // namespace nest

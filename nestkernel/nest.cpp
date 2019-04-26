@@ -29,6 +29,7 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
+#include "parameter.h"
 
 // Includes from sli:
 #include "sliexceptions.h"
@@ -319,6 +320,55 @@ void
 restore_nodes( const ArrayDatum& node_list )
 {
   kernel().node_manager.restore_nodes( node_list );
+}
+
+
+ParameterDatum
+multiply_parameter( const ParameterDatum& param1,
+  const ParameterDatum& param2 )
+{
+  return param1->multiply_parameter( *param2 );
+}
+
+ParameterDatum
+divide_parameter( const ParameterDatum& param1,
+  const ParameterDatum& param2 )
+{
+  return param1->divide_parameter( *param2 );
+}
+
+ParameterDatum
+add_parameter( const ParameterDatum& param1,
+  const ParameterDatum& param2 )
+{
+  return param1->add_parameter( *param2 );
+}
+
+ParameterDatum
+subtract_parameter( const ParameterDatum& param1,
+  const ParameterDatum& param2 )
+{
+  return param1->subtract_parameter( *param2 );
+}
+
+ParameterDatum
+create_parameter( const DictionaryDatum& param_dict )
+{
+  param_dict->clear_access_flags();
+
+  ParameterDatum datum( NestModule::create_nest_parameter( param_dict ) );
+
+  ALL_ENTRIES_ACCESSED(
+    *param_dict, "nest::CreateParameter", "Unread dictionary entries: " );
+
+  return datum;
+}
+
+double
+get_value( const ParameterDatum& param )
+{
+  librandom::RngPtr rng = get_global_rng();
+  return param->value( rng );
 }
 
 } // namespace nest

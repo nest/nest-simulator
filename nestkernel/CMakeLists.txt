@@ -38,6 +38,7 @@ set( nestkernel_sources
     exceptions.h exceptions.cpp
     genericmodel.h genericmodel_impl.h
     gid_collection.h gid_collection.cpp
+    generic_factory.h
     histentry.h histentry.cpp
     model.h model.cpp
     model_manager.h model_manager_impl.h model_manager.cpp

@@ -371,6 +371,7 @@ extern const Name rule;
 
 extern const Name S;
 extern const Name S_act_NMDA;
+extern const Name scale;
 extern const Name scientific;
 extern const Name screen;
 extern const Name sdev;

@@ -349,6 +349,40 @@ private:
 
 
 /**
+ * Exponential parameter.
+ */
+class ExponentialParameter : public Parameter
+{
+public:
+  /**
+   * Parameters:
+   * scale - the scale parameter
+   */
+  ExponentialParameter( const DictionaryDatum& d )
+    : Parameter( d )
+    , scale_( 1.0 )
+  {
+    updateValue< double >( d, names::scale, scale_ );
+  }
+
+  double
+  value( librandom::RngPtr& rng ) const
+  {
+    return scale_ * ( -std::log( 1 - rng->drand() ) );
+  }
+
+  Parameter*
+  clone() const
+  {
+    return new ExponentialParameter( *this );
+  }
+
+private:
+  double scale_;
+};
+
+
+/**
  * Parameter class representing the product of two parameters
  */
 class ProductParameter : public Parameter

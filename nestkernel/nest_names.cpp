@@ -351,6 +351,7 @@ const Name rule( "rule" );
 
 const Name S( "S" );
 const Name S_act_NMDA( "S_act_NMDA" );
+const Name scale( "scale" );
 const Name scientific( "scientific" );
 const Name screen( "screen" );
 const Name sdev( "sdev" );

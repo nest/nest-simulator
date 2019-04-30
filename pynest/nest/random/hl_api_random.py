@@ -58,26 +58,6 @@ class ParameterWrapper(Parameter):
         return self
 
 
-class Exponential(Parameter):
-    def __init__(self, scale=1.0):
-        self._scale = scale
-
-    def __add__(self, other):
-        return np.random.exponential(self._scale) + other
-
-    def __sub__(self, other):
-        return np.random.exponential(self._scale) - other
-
-    def __mul__(self, other):
-        return np.random.exponential(self._scale) * other
-
-    def __div__(self, other):
-        return np.random.exponential(self._scale) / other
-
-    def get_value(self):
-        return np.random.exponential(self._scale)
-
-
 def uniform(min=0.0, max=1.0):
     return CreateParameter('uniform', {'min': min, 'max': max})
 
@@ -94,7 +74,7 @@ def normal(loc=0.0, scale=1.0, min=None, max=None, redraw=False):
 
 
 def exponential(scale=1.0):
-    return Exponential(scale=scale)
+    return CreateParameter('exponential', {'scale': scale})
 
 
 def lognormal(mean=0.0, sigma=1.0, min=None, max=None):

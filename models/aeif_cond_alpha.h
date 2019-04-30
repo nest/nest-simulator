@@ -85,12 +85,12 @@ This implementation uses the embedded 4th order Runge-Kutta-Fehlberg solver with
 adaptive step size to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
-@f[ C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
+@f[ C_m \frac{dV}{dt} = -g_L(V-E_L)+g_L\Delta_T\exp\left(\frac{V-V_{th}}{\Delta_T}\right) - g_e(t)(V-E_e) \\
                                                      -g_i(t)(V-E_i)-w +I_e @f]
 
 and
 
-@f[ \tau_w * dw/dt= a(V-E_L) -W @f]
+@f[ \tau_w \frac{dw}{dt} = a(V-E_L) - w @f]
 
 Parameters:
 

@@ -90,7 +90,7 @@ The membrane potential is given by the following differential equation:
 
 and
 
-@f[ \tau_w * dw/dt= a(V-E_L) -W @f]
+@f[ \tau_w \frac{dw}{dt} = a(V-E_L) - w @f]
 
 Parameters:
 

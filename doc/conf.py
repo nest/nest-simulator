@@ -84,7 +84,8 @@ for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
 
 # import errors on libraries that depend on C modules
 # http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-
-#compile-with-readthedocs-when-youre-using-numpy-and-scipy/
+# compile-with-readthedocs-when-youre-using-numpy-and-scipy/
+
 
 class Mock(MagicMock):
     @classmethod
@@ -138,13 +139,11 @@ breathe_default_project = "EXTRACT_MODELS"
 #    'backreferences_dir': False
 # }
 
-read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
-
 subprocess.call('doxygen', shell=True)
 
 mathjax_path = \
     "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax" \
-                ".js?config=TeX" \
+              ".js?config=TeX" \
               "-AMS-MML_HTMLorMML"
 
 

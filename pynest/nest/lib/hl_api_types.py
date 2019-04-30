@@ -538,9 +538,6 @@ class GIDCollection(object):
         """
 
         if isinstance(params, dict) and self[0].get('local'):
-            for key, vals in params.items():
-                if isinstance(vals, Parameter):
-                    params[key] = [vals.get_value() for _ in range(len(self))]
 
             contains_list = [is_iterable(vals) and not
                              is_iterable(self[0].get(key))
@@ -562,9 +559,6 @@ class GIDCollection(object):
             if (is_iterable(val) and not
                     isinstance(val, (uni_str, dict))):
                 params = [{params: x} for x in val]
-            elif isinstance(val, Parameter):
-                params = [{params: val.get_value()}
-                          for _ in range(self.__len__())]
             else:
                 params = {params: val}
 

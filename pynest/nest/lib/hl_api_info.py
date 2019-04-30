@@ -255,12 +255,9 @@ def SetStatus(nodes, params, val=None):
 
     if (isinstance(params, dict) and isinstance(nodes, nest.GIDCollection) and
             nodes[0].get('local')):
-        for key, vals in params.items():
-            if isinstance(vals, nest.Parameter):
-                params[key] = [vals.get_value() for _ in range(len(nodes))]
 
-        contains_list = [is_iterable(vals) and not
-                         is_iterable(nest.GetStatus(nodes[0], key)[0])
+        contains_list = [is_iterable(vals) #or isinstance(vals, nest.Parameter)
+                         and not is_iterable(nest.GetStatus(nodes[0], key)[0])
                          for key, vals in params.items()]
 
         if any(contains_list):
@@ -278,8 +275,6 @@ def SetStatus(nodes, params, val=None):
     if val is not None and is_literal(params):
         if is_iterable(val) and not isinstance(val, (uni_str, dict)):
             params = [{params: x} for x in val]
-        elif isinstance(val, nest.Parameter):
-            params = [{params: val.get_value()} for _ in range(len(nodes))]
         else:
             params = {params: val}
 

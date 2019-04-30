@@ -19,8 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from nest.topology import CreateTopologyParameter
-from ..lib.hl_api_types import Parameter
+from ..lib.hl_api_types import Parameter, CreateParameter
 import numpy as np
 
 __all__ = [
@@ -33,10 +32,10 @@ __all__ = [
 
 class ParameterWrapper(Parameter):
     def __init__(self, parametertype, specs):
-        self._parameter = CreateTopologyParameter(parametertype, specs)
+        self._parameter = CreateParameter(parametertype, specs)
 
     def get_value(self):
-        return self._parameter.GetValue([0.0, 0.0])
+        return self._parameter.GetValue()
 
     def __add__(self, other):
         self._parameter += other
@@ -59,7 +58,7 @@ class ParameterWrapper(Parameter):
         return self
 
 
-class Exponential(ParameterWrapper):
+class Exponential(Parameter):
     def __init__(self, scale=1.0):
         self._scale = scale
 
@@ -80,7 +79,7 @@ class Exponential(ParameterWrapper):
 
 
 def uniform(min=0.0, max=1.0):
-    return ParameterWrapper('uniform', {'min': min, 'max': max})
+    return CreateParameter('uniform', {'min': min, 'max': max})
 
 
 def normal(loc=0.0, scale=1.0, min=None, max=None, redraw=False):
@@ -91,7 +90,7 @@ def normal(loc=0.0, scale=1.0, min=None, max=None, redraw=False):
         parameters.update({'min': min})
     if max:
         parameters.update({'max': max})
-    return ParameterWrapper('normal', parameters)
+    return CreateParameter('normal', parameters)
 
 
 def exponential(scale=1.0):
@@ -105,4 +104,4 @@ def lognormal(mean=0.0, sigma=1.0, min=None, max=None):
         parameters.update({'min': min})
     if max:
         parameters.update({'max': max})
-    return ParameterWrapper('lognormal', parameters)
+    return CreateParameter('lognormal', parameters)

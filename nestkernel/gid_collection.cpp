@@ -414,25 +414,31 @@ GIDCollectionPrimitive::GIDCollectionPrimitive::slice( size_t start,
 void
 GIDCollectionPrimitive::print_me( std::ostream& out ) const
 {
+  std::string metadata = metadata_.valid() ? metadata_->get_type() : "None";
+
+  out << "GIDCollection("
+      << "metadata=" << metadata << ", ";
+  print_primitive( out );
+  out << ")";
+}
+
+void
+GIDCollectionPrimitive::print_primitive( std::ostream& out ) const
+{
   std::string model = model_id_ != invalid_index
     ? kernel().model_manager.get_model( model_id_ )->get_name()
     : "none";
-  out << "[["
-      << "model=" << model << ", size=" << size();
+
+  out << "model=" << model << ", size=" << size();
 
   if ( size() == 1 )
   {
-    out << " (" << first_ << ")";
+    out << ", first=" << first_;
   }
-  else if ( size() == 2 )
+  else
   {
-    out << " (" << first_ << ", " << last_ << ")";
+    out << ", first=" << first_ << ", last=" << last_;
   }
-  else if ( size() > 2 )
-  {
-    out << " (" << first_ << ".." << last_ << ")";
-  }
-  out << "]]";
 }
 
 bool
@@ -788,8 +794,15 @@ GIDCollectionComposite::merge_parts(
 void
 GIDCollectionComposite::print_me( std::ostream& out ) const
 {
+  std::string metadata =
+    get_metadata().valid() ? get_metadata()->get_type() : "None";
+  std::string gc = "GIDCollection(";
+  std::string space( gc.size(), ' ' );
+
   if ( step_ > 1 or ( stop_part_ != 0 or stop_offset_ != 0 ) )
   {
+    // Sliced composite GIDCollection
+
     size_t current_part = 0;
     size_t current_offset = 0;
     size_t previous_part = 4294967295; // initializing as large number (for now)
@@ -800,40 +813,31 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
 
     std::vector< std::string > string_vector;
 
-    out << "[["
-        << "size=" << size() << ": ";
+    out << gc << "metadata=" << metadata << ",";
     for ( const_iterator it = begin(); it < end(); ++it )
     {
       it.get_current_part_offset( current_part, current_offset );
-      if ( current_part != previous_part )
+      if ( current_part != previous_part ) // New primitive
       {
         if ( it != begin() )
         {
-          std::stringstream string_buffer;
-          string_buffer
-            << "\n  [["
-            << "model="
-            << kernel().model_manager.get_model( gt.model_id )->get_name()
-            << ", size=" << primitive_size << " ";
+          // Need to count the primitive, so can't start at begin()
+          out << "\n" + space << "model="
+              << kernel().model_manager.get_model( gt.model_id )->get_name()
+              << ", size=" << primitive_size << ", ";
           if ( primitive_size == 1 )
           {
-            string_buffer << "(" << gt.gid << ")]]";
-          }
-          else if ( primitive_size == 2 )
-          {
-            string_buffer << "(" << gt.gid << ", ";
-            string_buffer << primitive_last << ")]]";
+            out << "first=" << gt.gid << ", last=" << gt.gid << ";";
           }
           else
           {
-            string_buffer << "(" << gt.gid << "..";
+            out << "first=" << gt.gid << ", last=";
+            out << primitive_last;
             if ( step_ > 1 )
             {
-              string_buffer << "{" << step_ << "}..";
+              out << ", step=" << step_ << ";";
             }
-            string_buffer << primitive_last << ")]]";
           }
-          string_vector.push_back( string_buffer.str() );
         }
         primitive_size = 1;
         gt = *it;
@@ -846,66 +850,47 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
       previous_part = current_part;
     }
 
-    for ( std::vector< std::string >::const_iterator it = string_vector.begin();
-          it < string_vector.end();
-          ++it )
-    {
-      if ( string_vector.size() < 7 or it < ( string_vector.begin() + 3 )
-        or ( string_vector.end() - 3 ) < it )
-      {
-        out << *it;
-      }
-      else if ( it == ( string_vector.begin() + 3 ) )
-      {
-        out << "\n  ..,";
-      }
-    }
-
-    out << "\n  [["
-        << "model="
+    // Need to also print the last primitive
+    out << "\n" + space << "model="
         << kernel().model_manager.get_model( gt.model_id )->get_name()
-        << ", size=" << primitive_size << " ";
+        << ", size=" << primitive_size << ", ";
     if ( primitive_size == 1 )
     {
-      out << "(" << gt.gid << ")]]";
-    }
-    else if ( primitive_size == 2 )
-    {
-      out << "(" << gt.gid << ", ";
-      out << primitive_last << ")]]";
+      out << "first=" << gt.gid << ", last=" << gt.gid;
     }
     else
     {
-      out << "(" << gt.gid << "..";
+      out << "first=" << gt.gid << ", last=";
+      out << primitive_last;
       if ( step_ > 1 )
       {
-        out << "{" << step_ << "}..";
+        out << ", step=" << step_;
       }
-      out << primitive_last << ")]]";
     }
-    out << "]]";
   }
   else
   {
-    out << "[["
-        << "size=" << size() << ": ";
+    // None-sliced Composite GIDCollection
+    out << gc << "metadata=" << metadata << ",";
     for (
       std::vector< GIDCollectionPrimitive >::const_iterator it = parts_.begin();
       it != parts_.end();
       ++it )
     {
-      if ( it < ( parts_.begin() + 3 ) or ( parts_.end() - 4 ) < it )
+      if ( it == parts_.end() - 1 )
       {
-        out << "\n  ";
-        it->print_me( out );
+        out << "\n" + space;
+        it->print_primitive( out );
       }
-      else if ( it == ( parts_.begin() + 3 ) )
+      else
       {
-        out << "\n  ..,";
+        out << "\n" + space;
+        it->print_primitive( out );
+        out << ";";
       }
     }
-    out << "]]";
   }
+  out << ")";
 }
 
 } // namespace nest

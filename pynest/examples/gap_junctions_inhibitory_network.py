@@ -112,9 +112,10 @@ syn_dict = {'synapse_model': 'static_synapse',
 
 nest.Connect(neurons, neurons, conn_dict, syn_dict)
 
-nest.Connect(pg, neurons, 'all_to_all', syn_spec={'synapse_model': 'static_synapse',
-                                                  'weight': j_exc,
-                                                  'delay': delay})
+nest.Connect(pg, neurons, 'all_to_all',
+             syn_spec={'synapse_model': 'static_synapse',
+                       'weight': j_exc,
+                       'delay': delay})
 
 ###############################################################################
 # Then the neurons are connected to the `spike_detector` and the initial

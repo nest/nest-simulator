@@ -71,8 +71,9 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
             multimeter, neurons, 'all_to_all', {'delay': 10.})
 
         nest.Connect(rate_neuron_drive, rate_neuron_1,
-                     'all_to_all', {'synapse_model': 'rate_connection_instantaneous',
-                                    'weight': weight})
+                     'all_to_all',
+                     {'synapse_model': 'rate_connection_instantaneous',
+                      'weight': weight})
 
         nest.Connect(rate_neuron_drive, rate_neuron_2,
                      'all_to_all', {'synapse_model': 'rate_connection_delayed',

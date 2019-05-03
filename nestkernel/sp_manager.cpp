@@ -337,7 +337,8 @@ SPManager::disconnect( GIDCollectionPTR sources,
       i != sp_conn_builders_.end();
       i++ )
     {
-      std::string synModel = getValue< std::string >( syn_spec, names::synapse_model );
+      std::string synModel =
+        getValue< std::string >( syn_spec, names::synapse_model );
       if ( ( *i )->get_synapse_model()
         == ( index )(
              kernel().model_manager.get_synapsedict()->lookup( synModel ) ) )

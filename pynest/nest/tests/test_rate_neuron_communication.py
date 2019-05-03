@@ -100,24 +100,29 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
                                     'weight': self.weight})
 
         nest.Connect(self.rate_neuron_drive, self.rate_neuron_2,
-                     'all_to_all', {'synapse_model': 'rate_connection_instantaneous',
-                                    'weight': self.weight})
+                     'all_to_all',
+                     {'synapse_model': 'rate_connection_instantaneous',
+                      'weight': self.weight})
 
         nest.Connect(self.rate_neuron_drive, self.rate_neuron_3,
-                     'all_to_all', {'synapse_model': 'rate_connection_instantaneous',
-                                    'weight': self.weight})
+                     'all_to_all',
+                     {'synapse_model': 'rate_connection_instantaneous',
+                      'weight': self.weight})
 
         nest.Connect(self.rate_neuron_drive, self.rate_neuron_4,
-                     'all_to_all', {'synapse_model': 'rate_connection_instantaneous',
-                                    'weight': self.weight})
+                     'all_to_all',
+                     {'synapse_model': 'rate_connection_instantaneous',
+                      'weight': self.weight})
 
         nest.Connect(self.rate_neuron_negative_drive, self.rate_neuron_5,
-                     'all_to_all', {'synapse_model': 'rate_connection_instantaneous',
-                                    'weight': self.weight})
+                     'all_to_all',
+                     {'synapse_model': 'rate_connection_instantaneous',
+                      'weight': self.weight})
 
         nest.Connect(self.rate_neuron_drive, self.parrot_neuron,
-                     'all_to_all', {'synapse_model': 'rate_connection_instantaneous',
-                                    'weight': self.weight})
+                     'all_to_all',
+                     {'synapse_model': 'rate_connection_instantaneous',
+                      'weight': self.weight})
 
     def test_RateNeuronDelay(self):
         """Check the delay of the connection"""

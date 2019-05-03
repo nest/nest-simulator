@@ -105,7 +105,8 @@ class TestParams(unittest.TestCase):
         rtype = 2
         self.pop1 = hf.nest.Create(neuron_model, self.N1, neuron_dict)
         self.pop2 = hf.nest.Create(neuron_model, self.N2, neuron_dict)
-        syn_params = {'synapse_model': 'static_synapse', 'receptor_type': rtype}
+        syn_params = {'synapse_model': 'static_synapse',
+                      'receptor_type': rtype}
         hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
         conns = hf.nest.GetConnections(self.pop1, self.pop2)
         ports = conns.get('receptor')

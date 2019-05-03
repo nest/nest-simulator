@@ -51,7 +51,8 @@ class ConnectArrayFixedIndegreeTestCase(unittest.TestCase):
         Darr = [[y*K+x + 1 for x in range(K)] for y in range(N)]  # delay array
 
         # synapses and connection dictionaries
-        syn_dict = {'synapse_model': 'static_synapse', 'weight': Warr, 'delay': Darr}
+        syn_dict = {'synapse_model': 'static_synapse',
+                    'weight': Warr, 'delay': Darr}
         conn_dict = {'rule': 'fixed_indegree', 'indegree': K}
 
         # connects source to target subnet

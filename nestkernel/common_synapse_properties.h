@@ -89,6 +89,11 @@ public:
   long get_vt_gid() const;
 
   /**
+   * get gid of weight_recorder
+   */
+  long get_wr_gid() const;
+
+  /**
    * get weight_recorder
    */
   GIDCollectionDatum get_weight_recorder() const;
@@ -96,12 +101,19 @@ public:
 
 private:
   GIDCollectionDatum weight_recorder_;
+  long wr_gid_;
 };
 
 inline long
 CommonSynapseProperties::get_vt_gid() const
 {
   return -1;
+}
+
+inline long
+CommonSynapseProperties::get_wr_gid() const
+{
+  return wr_gid_;
 }
 
 inline GIDCollectionDatum

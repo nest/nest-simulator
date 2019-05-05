@@ -40,6 +40,7 @@ namespace nest
 
 CommonSynapseProperties::CommonSynapseProperties()
   : weight_recorder_()
+  , wr_gid_( -1 )
 {
 }
 
@@ -70,6 +71,10 @@ CommonSynapseProperties::set_status( const DictionaryDatum& d, ConnectorModel& )
   {
     throw BadProperty(
       "weight_recorder must be a single element GIDCollection" );
+  }
+  else if ( update_wr )
+  {
+    wr_gid_ = ( *weight_recorder_ )[ 0 ];
   }
 }
 

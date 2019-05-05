@@ -38,7 +38,7 @@ Connector< ConnectionT >::send_weight_event( const thread tid,
   Event& e,
   const CommonSynapseProperties& cp )
 {
-  if ( not cp.get_weight_recorder() == 0 )
+  if ( cp.get_wr_gid() != -1 )
   {
     // Create new event to record the weight and copy relevant content.
     WeightRecorderEvent wr_e;
@@ -51,7 +51,7 @@ Connector< ConnectionT >::send_weight_event( const thread tid,
     wr_e.set_weight( e.get_weight() );
     wr_e.set_delay_steps( e.get_delay_steps() );
     // Set weight_recorder as receiver
-    index wr_gid = ( *cp.get_weight_recorder() )[ 0 ];
+    index wr_gid = cp.get_wr_gid();
     Node* wr_node = kernel().node_manager.get_node_or_proxy( wr_gid, tid );
     wr_e.set_receiver( *wr_node );
     // Put the gid of the postsynaptic node as receiver gid

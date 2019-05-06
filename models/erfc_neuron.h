@@ -125,7 +125,8 @@ public:
   }
 
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-  void set( const DictionaryDatum& ); //!< Set values from dictionary
+  void set( const DictionaryDatum&,
+    Node* node ); //!< Set values from dictionary
 
   bool operator()( librandom::RngPtr rng, double_t h );
 };

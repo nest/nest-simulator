@@ -52,28 +52,16 @@ public:
    * Default constructor
    */
   Parameter()
-  // : cutoff_( -std::numeric_limits< double >::infinity() )
   {
   }
-
-  // /**
-  //  * Constructor
-  //  * @param cutoff Values less than the cutoff are set to zero.
-  //  */
-  // Parameter( /* double cutoff */ )
-  // // : cutoff_( cutoff )
-  // {
-  // }
 
   /**
    * Constructor
    * Parameter that can be set in the Dictionary:
-   *  cutoff - Values less than the cutoff are set to zero.
    * @param d dictionary with parameter values
    */
   Parameter( const DictionaryDatum& d )
   {
-    // updateValue< double >( d, names::cutoff, cutoff_ );
   }
 
   /**
@@ -87,18 +75,6 @@ public:
    * @returns the value of the parameter.
    */
   virtual double value( librandom::RngPtr& rng ) const = 0;
-  // {
-  // return raw_value();
-  // double val = raw_value( p, rng );
-  // if ( val < cutoff_ )
-  // {
-  //   return 0.0;
-  // }
-  // else
-  // {
-  //   return val;
-  // }
-  // }
 
   /**
    * Clone method.
@@ -126,9 +102,6 @@ public:
    * @returns a new dynamically allocated parameter.
    */
   virtual Parameter* subtract_parameter( const Parameter& other ) const;
-
-  // private:
-  // double cutoff_;
 };
 
 /**
@@ -198,7 +171,7 @@ public:
     if ( lower_ >= range_ )
     {
       throw BadProperty(
-        "topology::UniformParameter: "
+        "nest::UniformParameter: "
         "min < max required." );
     }
 
@@ -251,13 +224,13 @@ public:
     if ( sigma_ <= 0 )
     {
       throw BadProperty(
-        "topology::NormalParameter: "
+        "nest::NormalParameter: "
         "sigma > 0 required." );
     }
     if ( min_ >= max_ )
     {
       throw BadProperty(
-        "topology::NormalParameter: "
+        "nest::NormalParameter: "
         "min < max required." );
     }
   }
@@ -314,13 +287,13 @@ public:
     if ( sigma_ <= 0 )
     {
       throw BadProperty(
-        "topology::LognormalParameter: "
+        "nest::LognormalParameter: "
         "sigma > 0 required." );
     }
     if ( min_ >= max_ )
     {
       throw BadProperty(
-        "topology::LognormalParameter: "
+        "nest::LognormalParameter: "
         "min < max required." );
     }
   }

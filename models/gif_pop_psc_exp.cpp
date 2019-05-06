@@ -35,6 +35,10 @@
 #include "universal_data_logger_impl.h"
 #include "compose.hpp"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
+
 #ifdef HAVE_GSL
 
 namespace nest
@@ -128,22 +132,22 @@ nest::gif_pop_psc_exp::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::gif_pop_psc_exp::Parameters_::set( const DictionaryDatum& d )
+nest::gif_pop_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< long >( d, names::N, N_ );
-  updateValue< double >( d, names::tau_m, tau_m_ );
-  updateValue< double >( d, names::C_m, c_m_ );
-  updateValue< double >( d, names::lambda_0, lambda_0_ );
-  updateValue< double >( d, names::Delta_V, Delta_V_ );
-  updateValue< long >( d, names::len_kernel, len_kernel_ );
-  updateValue< double >( d, names::I_e, I_e_ );
-  updateValue< double >( d, names::V_reset, V_reset_ );
-  updateValue< double >( d, names::V_T_star, V_T_star_ );
-  updateValue< double >( d, names::E_L, E_L_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::tau_syn_ex, tau_syn_ex_ );
-  updateValue< double >( d, names::tau_syn_in, tau_syn_in_ );
-  updateValue< bool >( d, "BinoRand", BinoRand_ );
+  updateValueParam< long >( d, names::N, N_, node );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  updateValueParam< double >( d, names::C_m, c_m_, node );
+  updateValueParam< double >( d, names::lambda_0, lambda_0_, node );
+  updateValueParam< double >( d, names::Delta_V, Delta_V_, node );
+  updateValueParam< long >( d, names::len_kernel, len_kernel_, node );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
+  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  updateValueParam< double >( d, names::V_T_star, V_T_star_, node );
+  updateValueParam< double >( d, names::E_L, E_L_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::tau_syn_ex, tau_syn_ex_, node );
+  updateValueParam< double >( d, names::tau_syn_in, tau_syn_in_, node );
+  updateValueParam< bool >( d, "BinoRand", BinoRand_, node );
 
   updateValue< std::vector< double > >( d, names::tau_sfa, tau_sfa_ );
   updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
@@ -218,11 +222,12 @@ nest::gif_pop_psc_exp::State_::get( DictionaryDatum& d,
 
 void
 nest::gif_pop_psc_exp::State_::set( const DictionaryDatum& d,
-  const Parameters_& )
+  const Parameters_&,
+  Node* node )
 {
-  updateValue< double >( d, names::V_m, V_m_ );
-  updateValue< double >( d, names::I_syn_ex, I_syn_ex_ );
-  updateValue< double >( d, names::I_syn_in, I_syn_in_ );
+  updateValueParam< double >( d, names::V_m, V_m_, node );
+  updateValueParam< double >( d, names::I_syn_ex, I_syn_ex_, node );
+  updateValueParam< double >( d, names::I_syn_in, I_syn_in_, node );
   initialized_ =
     false; // vectors of the state should be initialized with new parameter set.
 }

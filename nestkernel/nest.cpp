@@ -128,10 +128,7 @@ get_kernel_status()
 void
 set_node_status( const index node_id, const DictionaryDatum& dict )
 {
-  // If dict contains any parameters, replace them with values generated
-  // from the parameters.
-  DictionaryDatum dict_converted = convert_params_to_values( dict );
-  kernel().node_manager.set_status( node_id, dict_converted );
+  kernel().node_manager.set_status( node_id, dict );
 }
 
 DictionaryDatum
@@ -327,29 +324,25 @@ restore_nodes( const ArrayDatum& node_list )
 
 
 ParameterDatum
-multiply_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 )
+multiply_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
 {
   return param1->multiply_parameter( *param2 );
 }
 
 ParameterDatum
-divide_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 )
+divide_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
 {
   return param1->divide_parameter( *param2 );
 }
 
 ParameterDatum
-add_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 )
+add_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
 {
   return param1->add_parameter( *param2 );
 }
 
 ParameterDatum
-subtract_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 )
+subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
 {
   return param1->subtract_parameter( *param2 );
 }
@@ -373,30 +366,4 @@ get_value( const ParameterDatum& param )
   librandom::RngPtr rng = get_global_rng();
   return param->value( rng );
 }
-
-DictionaryDatum
-convert_params_to_values( const DictionaryDatum& dict )
-{
-  DictionaryDatum dict_converted = DictionaryDatum( new Dictionary );
-  for ( auto it = dict->begin(); it != dict->end(); ++it )
-  {
-    if ( it->second.is_a< ParameterDatum >() )
-    {
-      ParameterDatum* pd =
-        dynamic_cast< ParameterDatum* >( it->second.datum() );
-      double value = get_value( *( pd->get() ) );
-      if ( pd->islocked() )
-      {
-        pd->unlock();
-      }
-      def< double >( dict_converted, it->first, value );
-    }
-    else
-    {
-      ( *dict_converted )[ it->first ] = it->second;
-    }
-  }
-  return dict_converted;
-}
-
 } // namespace nest

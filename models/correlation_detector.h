@@ -225,7 +225,6 @@ private:
 
   struct Parameters_
   {
-
     Time delta_tau_; //!< width of correlation histogram bins
     Time tau_max_;   //!< maximum time difference of events to detect
     Time Tstart_;    //!< start of recording
@@ -241,7 +240,7 @@ private:
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool set( const DictionaryDatum&, const correlation_detector& );
+    bool set( const DictionaryDatum&, const correlation_detector&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -278,7 +277,7 @@ private:
     /**
      * @param bool if true, force state reset
      */
-    void set( const DictionaryDatum&, const Parameters_&, bool );
+    void set( const DictionaryDatum&, const Parameters_&, bool, Node* );
 
     void reset( const Parameters_& );
   };
@@ -313,9 +312,9 @@ inline void
 nest::correlation_detector::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;
-  const bool reset_required = ptmp.set( d, *this );
+  const bool reset_required = ptmp.set( d, *this, this );
   State_ stmp = S_;
-  stmp.set( d, P_, reset_required );
+  stmp.set( d, P_, reset_required, this );
 
   device_.set_status( d );
   P_ = ptmp;

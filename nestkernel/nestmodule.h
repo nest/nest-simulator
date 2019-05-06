@@ -63,7 +63,8 @@ public:
   const std::string commandstring( void ) const;
   const std::string name( void ) const;
 
-  static lockPTRDatum< Parameter, &ParameterType > create_nest_parameter( const Token& );
+  static lockPTRDatum< Parameter, &ParameterType > create_nest_parameter(
+    const Token& );
   static Parameter* create_nest_parameter( const Name& name,
     const DictionaryDatum& d );
 

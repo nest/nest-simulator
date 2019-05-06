@@ -208,7 +208,8 @@ private:
     Parameters_();
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&,
+      Node* node ); //!< Set values from dicitonary
   };
 
 public:
@@ -219,7 +220,6 @@ public:
    */
   struct State_
   {
-
     //! Symbolic indices to the elements of the state vector y
     enum StateVecElems
     {
@@ -242,7 +242,7 @@ public:
     State_& operator=( const State_& s );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -376,10 +376,10 @@ hh_cond_exp_traub::get_status( DictionaryDatum& d ) const
 inline void
 hh_cond_exp_traub::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

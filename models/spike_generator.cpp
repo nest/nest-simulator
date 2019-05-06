@@ -27,6 +27,9 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from sli:
 #include "arraydatum.h"
 #include "booldatum.h"
@@ -179,13 +182,14 @@ void
 nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   State_& s,
   const Time& origin,
-  const Time& now )
+  const Time& now,
+  Node* node )
 {
   bool allow_offgrid_spikes;
-  const bool allow_offgrid_spikes_changed =
-    updateValue< bool >( d, names::allow_offgrid_spikes, allow_offgrid_spikes );
-  const bool allow_offgrid_times_changed =
-    updateValue< bool >( d, names::allow_offgrid_times, allow_offgrid_times_ );
+  const bool allow_offgrid_spikes_changed = updateValueParam< bool >(
+    d, names::allow_offgrid_spikes, allow_offgrid_spikes, node );
+  const bool allow_offgrid_times_changed = updateValueParam< bool >(
+    d, names::allow_offgrid_times, allow_offgrid_times_, node );
 
   if ( allow_offgrid_spikes_changed and allow_offgrid_times_changed )
   {
@@ -208,8 +212,9 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   }
 
   bool flags_changed =
-    updateValue< bool >( d, names::precise_times, precise_times_ )
-    || updateValue< bool >( d, names::shift_now_spikes, shift_now_spikes_ );
+    updateValueParam< bool >( d, names::precise_times, precise_times_, node )
+    || updateValueParam< bool >(
+         d, names::shift_now_spikes, shift_now_spikes_, node );
   flags_changed = flags_changed or allow_offgrid_spikes_changed
     or allow_offgrid_times_changed;
   if ( precise_times_ && ( allow_offgrid_times_ || shift_now_spikes_ ) )
@@ -478,7 +483,7 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   }
 
   // throws if BadProperty
-  ptmp.set( d, S_, origin, kernel().simulation_manager.get_time() );
+  ptmp.set( d, S_, origin, kernel().simulation_manager.get_time(), this );
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

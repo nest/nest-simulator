@@ -112,6 +112,7 @@ nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d ) const
 
 void
 nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
+  Node* node,
   const Node& self,
   const State_& state,
   const Buffers_& buffers )
@@ -119,7 +120,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 
   if ( state.published_ == false )
   {
-    updateValue< string >( d, names::port_name, port_name_ );
+    updateValueParam< string >( d, names::port_name, port_name_, node );
   }
 
   if ( buffers.has_targets_
@@ -131,7 +132,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
   }
 
   double v;
-  if ( updateValue< double >( d, names::interval, v ) )
+  if ( updateValueParam< double >( d, names::interval, v, node ) )
   {
     if ( Time( Time::ms( v ) ) < Time::get_resolution() )
     {

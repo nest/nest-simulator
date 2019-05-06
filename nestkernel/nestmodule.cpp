@@ -141,8 +141,7 @@ NestModule::create_nest_parameter( const Token& t )
 Parameter*
 NestModule::create_nest_parameter( const Name& name, const DictionaryDatum& d )
 {
-  // The parameter factory will create the parameter without regard for
-  // the anchor
+  // The parameter factory will create the parameter
   Parameter* param = parameter_factory_().create( name, d );
 
   return param;

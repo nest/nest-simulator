@@ -229,7 +229,6 @@ private:
 
   struct Parameters_
   {
-
     Time delta_tau_;  //!< width of correlation histogram bins
     Time tau_max_;    //!< maximum time difference of events to detect
     Time Tstart_;     //!< start of recording
@@ -246,7 +245,8 @@ private:
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool set( const DictionaryDatum&, const correlomatrix_detector& );
+    bool
+    set( const DictionaryDatum&, const correlomatrix_detector&, Node* node );
   };
 
   // ------------------------------------------------------------
@@ -262,7 +262,6 @@ private:
    */
   struct State_
   {
-
     std::vector< long > n_events_; //!< spike counters
     SpikelistType incoming_;       //!< incoming spikes, sorted
                                    /** Weighted covariance matrix.
@@ -281,7 +280,7 @@ private:
     /**
      * @param bool if true, force state reset
      */
-    void set( const DictionaryDatum&, const Parameters_&, bool );
+    void set( const DictionaryDatum&, const Parameters_&, bool, Node* node );
 
     void reset( const Parameters_& );
   };
@@ -315,7 +314,7 @@ inline void
 nest::correlomatrix_detector::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;
-  const bool reset_required = ptmp.set( d, *this );
+  const bool reset_required = ptmp.set( d, *this, this );
 
   device_.set_status( d );
   P_ = ptmp;

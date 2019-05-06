@@ -270,7 +270,11 @@ private:
      *       spike_times_ or spike_weights_ vector has been filled with
      *       new data, or if the origin was reset.
      */
-    void set( const DictionaryDatum&, State_&, const Time&, const Time& );
+    void set( const DictionaryDatum&,
+      State_&,
+      const Time&,
+      const Time&,
+      Node* node );
 
     /**
      * Insert spike time to arrays, throw BadProperty for invalid spike times.

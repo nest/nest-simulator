@@ -47,8 +47,8 @@
 namespace nest
 {
 class TopologyParameter;
-typedef lockPTRDatum< TopologyParameter, &TopologyModule::TopologyParameterType >
-  TopologyParameterDatum;
+typedef lockPTRDatum< TopologyParameter,
+  &TopologyModule::TopologyParameterType > TopologyParameterDatum;
 
 /**
  * Abstract base class for parameters
@@ -729,7 +729,8 @@ template < int D >
 class AnchoredTopologyParameter : public TopologyParameter
 {
 public:
-  AnchoredTopologyParameter( const TopologyParameter& p, const Position< D >& anchor )
+  AnchoredTopologyParameter( const TopologyParameter& p,
+    const Position< D >& anchor )
     : TopologyParameter( p )
     , p_( p.clone() )
     , anchor_( anchor )
@@ -781,7 +782,8 @@ public:
    * Construct the product of the two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
-  ProductTopologyParameter( const TopologyParameter& m1, const TopologyParameter& m2 )
+  ProductTopologyParameter( const TopologyParameter& m1,
+    const TopologyParameter& m2 )
     : TopologyParameter()
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
@@ -838,7 +840,8 @@ public:
    * Construct the quotient of the two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
-  QuotientTopologyParameter( const TopologyParameter& m1, const TopologyParameter& m2 )
+  QuotientTopologyParameter( const TopologyParameter& m1,
+    const TopologyParameter& m2 )
     : TopologyParameter()
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
@@ -895,7 +898,8 @@ public:
    * Construct the sum of the two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
-  SumTopologyParameter( const TopologyParameter& m1, const TopologyParameter& m2 )
+  SumTopologyParameter( const TopologyParameter& m1,
+    const TopologyParameter& m2 )
     : TopologyParameter()
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
@@ -1055,25 +1059,29 @@ protected:
 };
 
 inline TopologyParameter*
-TopologyParameter::multiply_topology_parameter( const TopologyParameter& other ) const
+TopologyParameter::multiply_topology_parameter(
+  const TopologyParameter& other ) const
 {
   return new ProductTopologyParameter( *this, other );
 }
 
 inline TopologyParameter*
-TopologyParameter::divide_topology_parameter( const TopologyParameter& other ) const
+TopologyParameter::divide_topology_parameter(
+  const TopologyParameter& other ) const
 {
   return new QuotientTopologyParameter( *this, other );
 }
 
 inline TopologyParameter*
-TopologyParameter::add_topology_parameter( const TopologyParameter& other ) const
+TopologyParameter::add_topology_parameter(
+  const TopologyParameter& other ) const
 {
   return new SumTopologyParameter( *this, other );
 }
 
 inline TopologyParameter*
-TopologyParameter::subtract_topology_parameter( const TopologyParameter& other ) const
+TopologyParameter::subtract_topology_parameter(
+  const TopologyParameter& other ) const
 {
   return new DifferenceTopologyParameter( *this, other );
 }

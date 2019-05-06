@@ -233,7 +233,7 @@ private:
     Parameters_();
     Parameters_( const Parameters_& );
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Buffers_& );
+    void set( const DictionaryDatum&, const Buffers_&, Node* node );
   };
 
   // ------------------------------------------------------------
@@ -336,7 +336,7 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
   }
 
   Parameters_ ptmp = P_;
-  ptmp.set( d, B_ );
+  ptmp.set( d, B_, this );
 
   // Set properties in device. As a side effect, this will clear data_,
   // if /clear_events set in d

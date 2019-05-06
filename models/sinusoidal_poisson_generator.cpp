@@ -28,6 +28,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -61,7 +62,6 @@ RecordablesMap< sinusoidal_poisson_generator >::create()
  * ---------------------------------------------------------------- */
 
 nest::sinusoidal_poisson_generator::Parameters_::Parameters_()
-
   : om_( 0.0 )        // radian/ms
   , phi_( 0.0 )       // radian
   , rate_( 0.0 )      // spikes/ms
@@ -140,7 +140,8 @@ nest::sinusoidal_poisson_generator::State_::get( DictionaryDatum& ) const
 
 void
 nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
-  const sinusoidal_poisson_generator& n )
+  const sinusoidal_poisson_generator& n,
+  Node* node )
 {
   if ( not n.is_model_prototype()
     && d->known( names::individual_spike_trains ) )
@@ -153,22 +154,22 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
   updateValue< bool >(
     d, names::individual_spike_trains, individual_spike_trains_ );
 
-  if ( updateValue< double >( d, names::rate, rate_ ) )
+  if ( updateValueParam< double >( d, names::rate, rate_, node ) )
   {
     rate_ /= 1000.0; // scale to ms^-1
   }
 
-  if ( updateValue< double >( d, names::frequency, om_ ) )
+  if ( updateValueParam< double >( d, names::frequency, om_, node ) )
   {
     om_ *= 2.0 * numerics::pi / 1000.0;
   }
 
-  if ( updateValue< double >( d, names::phase, phi_ ) )
+  if ( updateValueParam< double >( d, names::phase, phi_, node ) )
   {
     phi_ *= numerics::pi / 180.0;
   }
 
-  if ( updateValue< double >( d, names::amplitude, amplitude_ ) )
+  if ( updateValueParam< double >( d, names::amplitude, amplitude_, node ) )
   {
     amplitude_ /= 1000.0;
   }

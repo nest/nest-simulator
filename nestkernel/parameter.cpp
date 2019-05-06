@@ -29,9 +29,6 @@
 template class lockPTRDatum< nest::Parameter,
   &nest::NestModule::ParameterType >;
 
-// tmp stuff
-// end of tmp stuff
-
 namespace nest
 {
 } /* namespace nest */

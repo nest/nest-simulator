@@ -230,7 +230,8 @@ TopologyModule::create_topology_parameter( const Token& t )
   // t can be an existing ParameterDatum, a DoubleDatum containing a
   // constant value for this parameter, or a Dictionary containing
   // parameters
-  TopologyParameterDatum* pd = dynamic_cast< TopologyParameterDatum* >( t.datum() );
+  TopologyParameterDatum* pd =
+    dynamic_cast< TopologyParameterDatum* >( t.datum() );
   if ( pd )
   {
     return *pd;
@@ -267,7 +268,8 @@ TopologyModule::create_topology_parameter( const Token& t )
 }
 
 TopologyParameter*
-TopologyModule::create_topology_parameter( const Name& name, const DictionaryDatum& d )
+TopologyModule::create_topology_parameter( const Name& name,
+  const DictionaryDatum& d )
 {
   // The parameter factory will create the parameter without regard for
   // the anchor
@@ -362,7 +364,8 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "ConnectLayers_g_g_D", &connectlayers_g_g_Dfunction );
 
-  i->createcommand( "CreateTopologyParameter_D", &createtopologyparameter_Dfunction );
+  i->createcommand(
+    "CreateTopologyParameter_D", &createtopologyparameter_Dfunction );
 
   i->createcommand( "GetValue_a_P", &getvalue_a_Pfunction );
 
@@ -768,8 +771,10 @@ TopologyModule::MulTopo_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  TopologyParameterDatum param1 = getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
-  TopologyParameterDatum param2 = getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
+  TopologyParameterDatum param1 =
+    getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
+  TopologyParameterDatum param2 =
+    getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
 
   TopologyParameterDatum newparam = multiply_parameter( param1, param2 );
 
@@ -783,8 +788,10 @@ TopologyModule::DivTopo_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  TopologyParameterDatum param1 = getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
-  TopologyParameterDatum param2 = getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
+  TopologyParameterDatum param1 =
+    getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
+  TopologyParameterDatum param2 =
+    getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
 
   TopologyParameterDatum newparam = divide_parameter( param1, param2 );
 
@@ -798,8 +805,10 @@ TopologyModule::AddTopo_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  TopologyParameterDatum param1 = getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
-  TopologyParameterDatum param2 = getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
+  TopologyParameterDatum param1 =
+    getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
+  TopologyParameterDatum param2 =
+    getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
 
   TopologyParameterDatum newparam = add_parameter( param1, param2 );
 
@@ -813,8 +822,10 @@ TopologyModule::SubTopo_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  TopologyParameterDatum param1 = getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
-  TopologyParameterDatum param2 = getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
+  TopologyParameterDatum param1 =
+    getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
+  TopologyParameterDatum param2 =
+    getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
 
   TopologyParameterDatum newparam = subtract_parameter( param1, param2 );
 
@@ -1043,7 +1054,8 @@ TopologyModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
   Author: Håkon Enger
 */
 void
-TopologyModule::CreateTopologyParameter_DFunction::execute( SLIInterpreter* i ) const
+TopologyModule::CreateTopologyParameter_DFunction::execute(
+  SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   const DictionaryDatum param_dict =
@@ -1107,7 +1119,8 @@ TopologyModule::GetValue_a_PFunction::execute( SLIInterpreter* i ) const
 
   std::vector< double > point =
     getValue< std::vector< double > >( i->OStack.pick( 1 ) );
-  TopologyParameterDatum param = getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
+  TopologyParameterDatum param =
+    getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
 
   double value = get_value( point, param );
 

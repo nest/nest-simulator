@@ -26,6 +26,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 #include "propagator_stability.h"
 
@@ -111,21 +112,22 @@ nest::iaf_psc_alpha_presc::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::iaf_psc_alpha_presc::Parameters_::set( const DictionaryDatum& d )
+nest::iaf_psc_alpha_presc::Parameters_::set( const DictionaryDatum& d,
+  Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValue< double >( d, names::E_L, E_L_ );
+  updateValueParam< double >( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  updateValue< double >( d, names::tau_m, tau_m_ );
-  updateValue< double >( d, names::tau_syn, tau_syn_ );
-  updateValue< double >( d, names::C_m, c_m_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::I_e, I_e_ );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  updateValueParam< double >( d, names::tau_syn, tau_syn_, node );
+  updateValueParam< double >( d, names::C_m, c_m_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
 
-  if ( updateValue< double >( d, names::V_th, U_th_ ) )
+  if ( updateValueParam< double >( d, names::V_th, U_th_, node ) )
   {
     U_th_ -= E_L_;
   }
@@ -134,7 +136,7 @@ nest::iaf_psc_alpha_presc::Parameters_::set( const DictionaryDatum& d )
     U_th_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_min, U_min_ ) )
+  if ( updateValueParam< double >( d, names::V_min, U_min_, node ) )
   {
     U_min_ -= E_L_;
   }
@@ -143,7 +145,7 @@ nest::iaf_psc_alpha_presc::Parameters_::set( const DictionaryDatum& d )
     U_min_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
+  if ( updateValueParam< double >( d, names::V_reset, U_reset_, node ) )
   {
     U_reset_ -= E_L_;
   }
@@ -153,7 +155,7 @@ nest::iaf_psc_alpha_presc::Parameters_::set( const DictionaryDatum& d )
   }
 
   long tmp;
-  if ( updateValue< long >( d, names::Interpol_Order, tmp ) )
+  if ( updateValueParam< long >( d, names::Interpol_Order, tmp, node ) )
   {
     if ( NO_INTERPOL <= tmp && tmp < END_INTERP_ORDER )
     {
@@ -201,9 +203,10 @@ nest::iaf_psc_alpha_presc::State_::get( DictionaryDatum& d,
 void
 nest::iaf_psc_alpha_presc::State_::set( const DictionaryDatum& d,
   const Parameters_& p,
-  double delta_EL )
+  double delta_EL,
+  Node* node )
 {
-  if ( updateValue< double >( d, names::V_m, y3_ ) )
+  if ( updateValueParam< double >( d, names::V_m, y3_, node ) )
   {
     y3_ -= p.E_L_;
   }

@@ -49,7 +49,8 @@ TopologyParameter::value( const std::vector< double >& pt,
   }
 }
 
-Gaussian2DTopologyParameter::Gaussian2DTopologyParameter( const DictionaryDatum& d )
+Gaussian2DTopologyParameter::Gaussian2DTopologyParameter(
+  const DictionaryDatum& d )
   : c_( 0.0 )
   , p_center_( 1.0 )
   , mean_x_( 0.0 )

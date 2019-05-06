@@ -141,7 +141,6 @@ ParameterDatum subtract_parameter( const ParameterDatum& param1,
   const ParameterDatum& param2 );
 ParameterDatum create_parameter( const DictionaryDatum& param_dict );
 double get_value( const ParameterDatum& param );
-DictionaryDatum convert_params_to_values( const DictionaryDatum& dict );
 }
 
 

@@ -115,7 +115,8 @@ TopologyParameterDatum subtract_parameter( const TopologyParameterDatum& param1,
 void connect_layers( GIDCollectionPTR source_gc,
   GIDCollectionPTR target_gc,
   const DictionaryDatum& dict );
-TopologyParameterDatum create_topology_parameter( const DictionaryDatum& param_dict );
+TopologyParameterDatum create_topology_parameter(
+  const DictionaryDatum& param_dict );
 double get_value( const std::vector< double >& point,
   const TopologyParameterDatum& param );
 void dump_layer_nodes( GIDCollectionPTR layer_gc, OstreamDatum& out );

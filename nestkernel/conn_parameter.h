@@ -33,6 +33,8 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "parameter.h"
+#include "nest_datums.h"
 
 // Includes from sli:
 #include "token.h"
@@ -422,6 +424,33 @@ public:
 
 private:
   librandom::RdvPtr rdv_;
+};
+
+class ParameterConnParameterWrapper : public ConnParameter
+{
+public:
+  ParameterConnParameterWrapper( const ParameterDatum&, const size_t );
+
+  double
+  value_double( thread, librandom::RngPtr& rng ) const
+  {
+    return parameter_->value( rng );
+  }
+
+  long
+  value_int( thread, librandom::RngPtr& rng ) const
+  {
+    return parameter_->value( rng );
+  }
+
+  inline bool
+  is_array() const
+  {
+    return false;
+  }
+
+private:
+  Parameter* parameter_;
 };
 
 } // namespace nest

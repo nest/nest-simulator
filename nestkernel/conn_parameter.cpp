@@ -69,6 +69,13 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
     return new ArrayDoubleParameter( **dvd, nthreads );
   }
 
+  // Parameter
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
+  if ( pd )
+  {
+    return new ParameterConnParameterWrapper( **pd, nthreads );
+  }
+
   // array of integer
   IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( t.datum() );
   if ( ivd )
@@ -101,4 +108,13 @@ nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec,
 
   rdv_ = factory->create();
   rdv_->set_status( rdv_spec );
+}
+
+
+nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper(
+  const ParameterDatum& pd,
+  const size_t )
+  : parameter_( pd.get() )
+{
+  pd.unlock();
 }

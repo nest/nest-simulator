@@ -37,6 +37,7 @@
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
+#include "gid_collection.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -814,6 +815,8 @@ public:
 private:
   void set_gid_( index ); //!< Set global node id
 
+  void set_gc_( GIDCollectionPTR );
+
   /** Return a new dictionary datum .
    *
    * This function is called by get_status_base() and returns a new
@@ -888,6 +891,8 @@ private:
   bool frozen_;              //!< node shall not be updated if true
   bool buffers_initialized_; //!< Buffers have been initialized
   bool node_uses_wfr_;       //!< node uses waveform relaxation method
+
+  GIDCollectionPTR gc_ptr_;
 };
 
 inline bool
@@ -954,6 +959,13 @@ inline void
 Node::set_gid_( index i )
 {
   gid_ = i;
+}
+
+
+inline void
+Node::set_gc_( GIDCollectionPTR gc_ptr )
+{
+  gc_ptr_ = gc_ptr;
 }
 
 inline int

@@ -25,7 +25,6 @@
 
 // C++ includes:
 #include <cassert>
-#include <deque>
 #include <iostream>
 #include <vector>
 

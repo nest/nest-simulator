@@ -28,7 +28,6 @@
 
 // C++ includes:
 #include <cstdlib>
-#include <deque>
 #include <vector>
 
 // Includes from libnestutil:
@@ -483,12 +482,6 @@ public:
 
   void
   sort_connections( BlockVector< Source >& sources )
-  {
-    nest::sort( sources, C_ );
-  }
-
-  void
-  sort_connections( std::deque< Source >& sources )
   {
     nest::sort( sources, C_ );
   }

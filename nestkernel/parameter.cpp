@@ -20,6 +20,9 @@
  *
  */
 
+#include "gid_collection.h"
+#include "node.h"
+#include "topology.h"
 
 // includes from sli
 #include "lockptrdatum_impl.h"
@@ -31,4 +34,37 @@ template class lockPTRDatum< nest::Parameter,
 
 namespace nest
 {
+double
+NodePosParameter::value( librandom::RngPtr& rng, Node* node ) const
+{
+  if ( not node )
+  {
+    throw KernelException( "NodePosParameter: not node" );
+  }
+  GIDCollectionPTR gc = node->get_gc();
+  if ( not gc.valid() )
+  {
+    throw KernelException( "NodePosParameter: not gc" );
+  }
+  GIDCollectionMetadataPTR meta = gc->get_metadata();
+  if ( not meta.valid() )
+  {
+    throw KernelException( "NodePosParameter: not meta" );
+  }
+  LayerMetadata const* const layer_meta =
+    dynamic_cast< LayerMetadata const* >( meta.get() );
+  meta.unlock();
+  if ( not layer_meta )
+  {
+    throw KernelException( "NodePosParameter: not layer_meta" );
+  }
+  AbstractLayerPTR layer = layer_meta->get_layer();
+  if ( not layer.valid() )
+  {
+    throw KernelException( "NodePosParameter: not valid layer" );
+  }
+  index lid = node->get_gid() - meta->get_first_gid();
+  std::vector< double > pos = layer->get_position_vector( lid );
+  return pos[ dimension_ ];
+}
 } /* namespace nest */

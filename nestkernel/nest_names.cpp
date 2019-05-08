@@ -115,6 +115,7 @@ const Name dI_syn_ex( "dI_syn_ex" );
 const Name dI_syn_in( "dI_syn_in" );
 const Name dict_miss_is_error( "dict_miss_is_error" );
 const Name diffusion_factor( "diffusion_factor" );
+const Name dimension( "dimension" );
 const Name distal_curr( "distal_curr" );
 const Name distal_exc( "distal_exc" );
 const Name distal_inh( "distal_inh" );

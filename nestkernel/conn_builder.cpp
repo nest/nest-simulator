@@ -450,7 +450,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         target_thread,
         synapse_model_id_,
         params,
-        delay_->value_double( target_thread, rng ) );
+        delay_->value_double( target_thread, rng, sgid, &target ) );
     }
     else if ( default_delay_ )
     {
@@ -460,12 +460,12 @@ nest::ConnBuilder::single_connect_( index sgid,
         synapse_model_id_,
         params,
         numerics::nan,
-        weight_->value_double( target_thread, rng ) );
+        weight_->value_double( target_thread, rng, sgid, &target ) );
     }
     else
     {
-      double delay = delay_->value_double( target_thread, rng );
-      double weight = weight_->value_double( target_thread, rng );
+      double delay = delay_->value_double( target_thread, rng, sgid, &target );
+      double weight = weight_->value_double( target_thread, rng, sgid, &target );
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
@@ -492,7 +492,7 @@ nest::ConnBuilder::single_connect_( index sgid,
           // change value of dictionary entry without allocating new datum
           IntegerDatum* id = static_cast< IntegerDatum* >(
             ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-          ( *id ) = it->second->value_int( target_thread, rng );
+          ( *id ) = it->second->value_int( target_thread, rng, sgid, &target );
         }
         catch ( KernelException& e )
         {
@@ -515,7 +515,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         // change value of dictionary entry without allocating new datum
         DoubleDatum* dd = static_cast< DoubleDatum* >(
           ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-        ( *dd ) = it->second->value_double( target_thread, rng );
+        ( *dd ) = it->second->value_double( target_thread, rng, sgid, &target );
       }
     }
 
@@ -534,7 +534,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         target_thread,
         synapse_model_id_,
         param_dicts_[ target_thread ],
-        delay_->value_double( target_thread, rng ) );
+        delay_->value_double( target_thread, rng, sgid, &target ) );
     }
     else if ( default_delay_ )
     {
@@ -544,12 +544,12 @@ nest::ConnBuilder::single_connect_( index sgid,
         synapse_model_id_,
         param_dicts_[ target_thread ],
         numerics::nan,
-        weight_->value_double( target_thread, rng ) );
+        weight_->value_double( target_thread, rng, sgid, &target ) );
     }
     else
     {
-      double delay = delay_->value_double( target_thread, rng );
-      double weight = weight_->value_double( target_thread, rng );
+      double delay = delay_->value_double( target_thread, rng, sgid, &target );
+      double weight = weight_->value_double( target_thread, rng, sgid, &target );
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,

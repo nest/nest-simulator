@@ -74,7 +74,9 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  virtual double value( librandom::RngPtr& rng ) const = 0;
+  virtual double value( librandom::RngPtr& rng, Node* node ) const = 0;
+  virtual double
+  value( librandom::RngPtr& rng, Node* source, Node* target ) const = 0;
 
   /**
    * Clone method.
@@ -134,9 +136,15 @@ public:
    * @returns the constant value of this parameter.
    */
   double
-  value( librandom::RngPtr& ) const
+  value( librandom::RngPtr&, Node* ) const
   {
     return value_;
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* ) const
+  {
+    return value( rng, source );
   }
 
   Parameter*
@@ -179,9 +187,15 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng ) const
+  value( librandom::RngPtr& rng, Node* ) const
   {
     return lower_ + rng->drand() * range_;
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* ) const
+  {
+    return value( rng, source );
   }
 
   Parameter*
@@ -236,7 +250,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng ) const
+  value( librandom::RngPtr& rng, Node* ) const
   {
     double val;
     do
@@ -244,6 +258,12 @@ public:
       val = mean_ + rdev( rng ) * sigma_;
     } while ( ( val < min_ ) or ( val >= max_ ) );
     return val;
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* ) const
+  {
+    return value( rng, source );
   }
 
   Parameter*
@@ -299,7 +319,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng ) const
+  value( librandom::RngPtr& rng, Node* ) const
   {
     double val;
     do
@@ -307,6 +327,12 @@ public:
       val = std::exp( mu_ + rdev( rng ) * sigma_ );
     } while ( ( val < min_ ) or ( val >= max_ ) );
     return val;
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* ) const
+  {
+    return value( rng, source );
   }
 
   Parameter*
@@ -339,9 +365,15 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng ) const
+  value( librandom::RngPtr& rng, Node* ) const
   {
     return scale_ * ( -std::log( 1 - rng->drand() ) );
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* ) const
+  {
+    return value( rng, source );
   }
 
   Parameter*
@@ -352,6 +384,42 @@ public:
 
 private:
   double scale_;
+};
+
+
+/**
+ * Node position parameter.
+ */
+class NodePosParameter : public Parameter
+{
+public:
+  /**
+   * Parameters:
+   * dimension - Dimension from which to get the position value of the node.
+   */
+  NodePosParameter( const DictionaryDatum& d )
+    : Parameter( d )
+  {
+    updateValue< long >( d, names::dimension, dimension_ );
+  }
+
+  double value( librandom::RngPtr& rng, Node* ) const;
+
+  double
+  value( librandom::RngPtr&, Node*, Node* ) const
+  {
+    throw BadParameterValue(
+      "Node position parameter cannot be used when connecting." );
+  }
+
+  Parameter*
+  clone() const
+  {
+    return new NodePosParameter( *this );
+  }
+
+private:
+  int dimension_;
 };
 
 
@@ -392,9 +460,16 @@ public:
    * @returns the value of the product.
    */
   double
-  value( librandom::RngPtr& rng ) const
+  value( librandom::RngPtr& rng, Node* node ) const
   {
-    return parameter1_->value( rng ) * parameter2_->value( rng );
+    return parameter1_->value( rng, node ) * parameter2_->value( rng, node );
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  {
+    return parameter1_->value( rng, source, target )
+      * parameter2_->value( rng, source, target );
   }
 
   Parameter*
@@ -444,9 +519,16 @@ public:
    * @returns the value of the product.
    */
   double
-  value( librandom::RngPtr& rng ) const
+  value( librandom::RngPtr& rng, Node* node ) const
   {
-    return parameter1_->value( rng ) / parameter2_->value( rng );
+    return parameter1_->value( rng, node ) / parameter2_->value( rng, node );
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  {
+    return parameter1_->value( rng, source, target )
+      / parameter2_->value( rng, source, target );
   }
 
   Parameter*
@@ -496,9 +578,16 @@ public:
    * @returns the value of the sum.
    */
   double
-  value( librandom::RngPtr& rng ) const
+  value( librandom::RngPtr& rng, Node* node ) const
   {
-    return parameter1_->value( rng ) + parameter2_->value( rng );
+    return parameter1_->value( rng, node ) + parameter2_->value( rng, node );
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  {
+    return parameter1_->value( rng, source, target )
+      + parameter2_->value( rng, source, target );
   }
 
   Parameter*
@@ -548,9 +637,16 @@ public:
    * @returns the value of the difference.
    */
   double
-  value( librandom::RngPtr& rng ) const
+  value( librandom::RngPtr& rng, Node* node ) const
   {
-    return parameter1_->value( rng ) - parameter2_->value( rng );
+    return parameter1_->value( rng, node ) - parameter2_->value( rng, node );
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  {
+    return parameter1_->value( rng, source, target )
+      - parameter2_->value( rng, source, target );
   }
 
   Parameter*
@@ -597,9 +693,15 @@ public:
    * @returns the value of the parameter.
    */
   double
-  value( librandom::RngPtr& rng ) const
+  value( librandom::RngPtr& rng, Node* node ) const
   {
-    return p_->value( rng );
+    return p_->value( rng, node );
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  {
+    return p_->value( rng, source, target );
   }
 
   Parameter*

@@ -28,6 +28,7 @@
 
 // Includes from nestkernel:
 #include "nest_names.h"
+#include "kernel_manager.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -117,4 +118,14 @@ nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper(
   : parameter_( pd.get() )
 {
   pd.unlock();
+}
+
+double
+nest::ParameterConnParameterWrapper::value_double( thread target_thread,
+  librandom::RngPtr& rng,
+  index sgid,
+  Node* target ) const
+{
+  Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
+  return parameter_->value( rng, source, target );
 }

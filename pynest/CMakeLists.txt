@@ -89,10 +89,14 @@ if ( HAVE_PYTHON )
   install( DIRECTORY examples/
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
       )
-  
+
   file( GLOB pynest_random "nest/random/*" )
   install( FILES ${pynest_random}
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/random
+      )
+
+  install( DIRECTORY nest/spatial/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/spatial
       )
 
   find_program( NOSETESTS nosetests )

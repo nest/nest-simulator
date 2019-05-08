@@ -136,6 +136,7 @@ extern const Name dI_syn_ex;
 extern const Name dI_syn_in;
 extern const Name dict_miss_is_error;
 extern const Name diffusion_factor;
+extern const Name dimension;
 extern const Name distal_curr;
 extern const Name distal_exc;
 extern const Name distal_inh;

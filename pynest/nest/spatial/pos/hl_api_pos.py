@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# __init__.py
+# hl_api_pos.py
 #
 # This file is part of NEST.
 #
@@ -19,27 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Initializer of PyNEST.
-"""
+from ...lib.hl_api_types import CreateParameter
 
-from . import ll_api      # noqa
-
-from . import pynestkernel as kernel      # noqa
-from .hl_api import *      # noqa
-
-from . import random  # noqa
-from . import spatial  # noqa
-
-def test():
-    """Runs all PyNEST unit tests."""
-    from . import tests
-    import unittest
-
-    debug = ll_api.get_debug()
-    ll_api.set_debug(True)
-
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(tests.suite())
-
-    ll_api.set_debug(debug)
+x = CreateParameter('position', {'dimension': 0})
+y = CreateParameter('position', {'dimension': 1})
+z = CreateParameter('position', {'dimension': 2})

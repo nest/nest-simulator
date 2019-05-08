@@ -364,6 +364,6 @@ double
 get_value( const ParameterDatum& param )
 {
   librandom::RngPtr rng = get_global_rng();
-  return param->value( rng );
+  return param->value( rng, nullptr);
 }
 } // namespace nest

@@ -2011,6 +2011,7 @@ NestModule::init( SLIInterpreter* i )
   register_parameter< NormalParameter >( "normal" );
   register_parameter< LognormalParameter >( "lognormal" );
   register_parameter< ExponentialParameter >( "exponential" );
+  register_parameter< NodePosParameter >( "position" );
 }
 
 } // namespace nest

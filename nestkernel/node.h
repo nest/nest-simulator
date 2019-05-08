@@ -191,6 +191,11 @@ public:
   index get_gid() const;
 
   /**
+   * Return lockpointer to the GIDCollection that created this node.
+   */
+  GIDCollectionPTR get_gc() const;
+
+  /**
    * Return model ID of the node.
    * Returns the model ID of the model for this node.
    * Model IDs start with 0.
@@ -953,6 +958,12 @@ inline index
 Node::get_gid() const
 {
   return gid_;
+}
+
+inline GIDCollectionPTR
+Node::get_gc() const
+{
+  return gc_ptr_;
 }
 
 inline void

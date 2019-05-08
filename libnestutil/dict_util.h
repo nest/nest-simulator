@@ -55,7 +55,7 @@ bool updateValueParam(  DictionaryDatum const& d, Name const n, VT& value, nest:
     auto vp = kernel().vp_manager.suggest_vp_for_gid( node->get_gid() );
     auto tid = kernel().vp_manager.vp_to_thread( vp );
     auto rng = get_vp_rng( tid );
-    value = pd->get()->value( rng );
+    value = pd->get()->value( rng, node );
     pd->unlock();
     return true;
   }

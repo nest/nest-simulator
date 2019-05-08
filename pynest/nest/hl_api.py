@@ -24,7 +24,6 @@ High-level API of PyNEST Module
 """
 
 import os
-from .random.hl_api_random import *
 
 # We search through the subdirectory "lib" of the "nest" module
 # directory and import the content of all Python files therein into

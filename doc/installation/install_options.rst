@@ -188,7 +188,7 @@ will install all required prequisites. You can then configure NEST with ::
         </path/to/NEST/src>
 
 For detailed information on installing NEST under OSX/macOS, please see the
-"macOS" section of http://www.nest-simulator.org/installation.
+"macOS" section of https://www.nest-simulator.org/installation.
 
 Choice of compiler
 ------------------

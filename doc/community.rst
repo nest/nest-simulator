@@ -59,4 +59,4 @@ Become a NEST member
 --------------------
 
 If you would like to be actively involved in the NEST Initiative and support its
-goals, please see our `member page <http://www.nest-initiative.org/membership>`_.
+goals, please see our `member page <https://www.nest-initiative.org/membership>`_.

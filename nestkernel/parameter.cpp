@@ -67,4 +67,79 @@ NodePosParameter::value( librandom::RngPtr& rng, Node* node ) const
   std::vector< double > pos = layer->get_position_vector( lid );
   return pos[ dimension_ ];
 }
+
+double
+SpatialDistanceParameter::value( librandom::RngPtr& rng,
+  Node* source,
+  Node* target ) const
+{
+  // Initial checks
+  if ( not source )
+  {
+    throw KernelException( "SpatialDistanceParameter: source not node" );
+  }
+  if ( not target )
+  {
+    throw KernelException( "SpatialDistanceParameter: target not node" );
+  }
+
+  // Source
+
+  GIDCollectionPTR source_gc = source->get_gc();
+  if ( not source_gc.valid() )
+  {
+    throw KernelException( "SpatialDistanceParameter: not source gc" );
+  }
+  GIDCollectionMetadataPTR source_meta = source_gc->get_metadata();
+  if ( not source_meta.valid() )
+  {
+    throw KernelException( "SpatialDistanceParameter: not source meta" );
+  }
+  LayerMetadata const* const source_layer_meta =
+    dynamic_cast< LayerMetadata const* >( source_meta.get() );
+  source_meta.unlock();
+  if ( not source_layer_meta )
+  {
+    throw KernelException( "SpatialDistanceParameter: not source_layer_meta" );
+  }
+  AbstractLayerPTR source_layer = source_layer_meta->get_layer();
+  if ( not source_layer.valid() )
+  {
+    throw KernelException( "SpatialDistanceParameter: not valid source layer" );
+  }
+  index source_lid = source->get_gid() - source_meta->get_first_gid();
+  // std::vector< double > pos = source_layer->get_position_vector( source_lid
+  // );
+
+  // Target
+
+  GIDCollectionPTR target_gc = target->get_gc();
+  if ( not target_gc.valid() )
+  {
+    throw KernelException( "SpatialDistanceParameter: not target gc" );
+  }
+  GIDCollectionMetadataPTR target_meta = target_gc->get_metadata();
+  if ( not target_meta.valid() )
+  {
+    throw KernelException( "SpatialDistanceParameter: not target meta" );
+  }
+  LayerMetadata const* const target_layer_meta =
+    dynamic_cast< LayerMetadata const* >( target_meta.get() );
+  target_meta.unlock();
+  if ( not target_layer_meta )
+  {
+    throw KernelException( "SpatialDistanceParameter: not target_layer_meta" );
+  }
+  AbstractLayerPTR target_layer = target_layer_meta->get_layer();
+  if ( not target_layer.valid() )
+  {
+    throw KernelException( "SpatialDistanceParameter: not valid target layer" );
+  }
+  index target_lid = target->get_gid() - target_meta->get_first_gid();
+  std::vector< double > target_pos =
+    target_layer->get_position_vector( target_lid );
+
+  return source_layer->compute_distance( target_pos, source_lid );
+}
+
 } /* namespace nest */

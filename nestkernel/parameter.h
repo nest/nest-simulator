@@ -424,6 +424,44 @@ private:
 
 
 /**
+ * Node distance parameter.
+ */
+class SpatialDistanceParameter : public Parameter
+{
+public:
+  /**
+   * Parameters:
+   * dimension - Dimension in which to measure the distance.
+   *             If not given, Euclidian distance is measured.
+   */
+  SpatialDistanceParameter( const DictionaryDatum& d )
+    : Parameter( d )
+    , dimension_( -1 )
+  {
+    updateValue< long >( d, names::dimension, dimension_ );
+  }
+
+  double value( librandom::RngPtr& rng, Node* ) const
+  {
+    throw BadParameterValue(
+      "Spatial distance parameter can only be used when connecting." );
+  }
+
+  double
+  value( librandom::RngPtr&, Node*, Node* ) const;
+
+  Parameter*
+  clone() const
+  {
+    return new SpatialDistanceParameter( *this );
+  }
+
+private:
+  int dimension_;
+};
+
+
+/**
  * Parameter class representing the product of two parameters
  */
 class ProductParameter : public Parameter

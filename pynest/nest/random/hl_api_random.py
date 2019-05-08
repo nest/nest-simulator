@@ -29,7 +29,7 @@ __all__ = [
     'uniform',
 ]
 
-
+# TODO: Can ParameterWrapper be removed?
 class ParameterWrapper(Parameter):
     def __init__(self, parametertype, specs):
         self._parameter = CreateParameter(parametertype, specs)

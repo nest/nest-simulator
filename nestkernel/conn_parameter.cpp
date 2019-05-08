@@ -126,6 +126,7 @@ nest::ParameterConnParameterWrapper::value_double( thread target_thread,
   index sgid,
   Node* target ) const
 {
+  // TODO: Finding source node can probably be moved into value(rng, src, tgt)
   Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
   return parameter_->value( rng, source, target );
 }

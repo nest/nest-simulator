@@ -73,12 +73,13 @@ The following parameters appear in the element's status dictionary:
 
 Remarks:
 
-The generator has been published in Deger, Helias, Boucsein, Rotter (2011)
-Statistical properties of superimposed stationary spike trains,
-Journal of Computational Neuroscience.
-URL: http://www.springerlink.com/content/u75211r381p08301/
-DOI: 10.1007/s10827-011-0362-8
+References:
 
+\verbatime embed:rst
+.. [1]  Deger M, Helias M, Boucsein C, Rotter S (2011). Statistical properties
+        of superimposed stationary spike trains. Journal of Computational
+        Neuroscience. DOI: https://doi.org/10.1007/s10827-011-0362-8
+\endverbatim
 Authors:
    June 2009, Moritz Deger, Moritz Helias
 

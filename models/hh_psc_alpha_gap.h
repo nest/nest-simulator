@@ -117,14 +117,16 @@ References:
 .. [2] Mancilla JG, Lewis TG, Pinto DJ, Rinzel J, Connors BW (2007).
        Synchronization of electrically coupled pairs of inhibitory
        interneurons in neocortex, Journal of Neurosciece, 27:2058-2073
-       doi: 10.1523/JNEUROSCI.2715-06.2007 (parameters taken from here)
-.. [3] Hodgkin AL, Huxley AF (1952). A quantitative description of membrane
-       current and its application to conduction and excitation in nerve.
-       Journal of Physiology, 117:500-544.
+       DOI: https://doi.org/10.1523/JNEUROSCI.2715-06.2007
+       (parameters taken from here)
+.. [3] Hodgkin AL and Huxley A F (1952). A quantitative description of
+       membrane current and its application to conduction and excitation in
+       nerve. The Journal of Physiology 117.
+       DOI: https://doi.org/10.1113/jphysiol.1952.sp004764
 .. [4] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal netowrk simulations. Frontiers in
-       Neuroinformatics, 9:22. doi: 10.3389/fninf.2015.00022
+       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
 \endverbatim
 
 

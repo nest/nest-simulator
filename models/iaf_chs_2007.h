@@ -88,10 +88,12 @@ References:
 
 \verbatim embed:rst
 .. [1] Carandini M, Horton JC, Sincich LC (2007). Thalamic filtering of retinal
-       spike trains by postsynaptic summation. J Vis 7(14):20,1-11.
+       spike trains by postsynaptic summation. Journal of Vision 7(14):20,1-11.
+       DOI: https://doi.org/10.1167/7.14.20
 .. [2] Rotter S,  Diesmann M (1999). Exact simulation of time-invariant linear
        systems with applications to neuronal modeling. Biologial Cybernetics
        81:381-402.
+       DOI: https://doi.org/10.1007/s004220050570
 \endverbatim
 
 Sends: SpikeEvent

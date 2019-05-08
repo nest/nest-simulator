@@ -76,12 +76,14 @@ References:
 .. [1] Fuhrmann G, Segev I, Markram H, Tsodyks MV (2002). Coding of
        temporal information by activity-dependent synapses. Journal of
        neurophysiology, 87(1):140-8.
+       DOI: https://doi.org/10.1152/jn.00258.2001
 .. [2] Loebel A, Silberberg G, Helbig D, Markram H, Tsodyks  MV, Richardson MJE
        (2009). Multiquantal release underlies the distribution of synaptic
        efficacies in the neocortex. Frontiers in Computational Neuroscience,
-       3, 27.  doi:10.3389/neuro.10.027.2009
+       3, 27.  DOI: https://doi.org/10.3389/neuro.10.027.2009
 .. [3] Maass W, Markram H (2002). Synapses as dynamic memory buffers.
        Neural Networks, 15(2):155-161.
+       DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
 \endverbatim
 
 Transmits: SpikeEvent

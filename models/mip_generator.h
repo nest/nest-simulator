@@ -97,7 +97,8 @@ References:
 .. [1] Kuhn A, Aertsen A, Rotter S (2003). Higher-order statistics of input
        ensembles and the response of simple model neurons. Neural Computation
        15:67-101.
-\endverbatim
+       DOI: https://doi.org/10.1162/089976603321043702
+ \endverbatim
 
 Author: May 2006, Helias
 

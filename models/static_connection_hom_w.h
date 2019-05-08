@@ -51,13 +51,6 @@ CopyModel, each derived model can have a different weight.
 Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
 DataLoggingRequest, DoubleDataEvent
 
-Parameters:
-
-No Parameters
-
-References:
-
-No References
 
 FirstVersion: April 2008
 

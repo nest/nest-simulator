@@ -81,56 +81,80 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-Dynamic state variables:
-V_m         double - Membrane potential in mV.
-w           double - Spike-adaptation current in pA.
-z           double - Spike-adaptation current in pA.
-V_th        double - Adaptive spike initiation threshold in mV.
-u_bar_plus  double - Low-pass filtered Membrane potential in mV.
-u_bar_minus double - Low-pass filtered Membrane potential in mV.
-u_bar_bar   double - Low-pass filtered u_bar_minus in mV.
+\verbatim embed:rst
 
-Membrane Parameters:
-C_m         double - Capacity of the membrane in pF
-t_ref       double - Duration of refractory period in ms.
-V_reset     double - Reset value for V_m after a spike. In mV.
-E_L         double - Leak reversal potential in mV.
-g_L         double - Leak conductance in nS.
-I_e         double - Constant external input current in pA.
-tau_plus    double - Time constant of u_bar_plus.
-tau_minus   double - Time constant of u_bar_minus.
-tau_bar_bar double - Time constant of u_bar_bar.
+=========== ======  ===================================================
+**Dynamic state variables**
+-----------------------------------------------------------------------
+V_m         double  Membrane potential in mV.
+w           double  Spike-adaptation current in pA.
+z           double  Spike-adaptation current in pA.
+V_th        double  Adaptive spike initiation threshold in mV.
+u_bar_plus  double  Low-pass filtered Membrane potential in mV.
+u_bar_minus double  Low-pass filtered Membrane potential in mV.
+u_bar_bar   double  Low-pass filtered u_bar_minus in mV.
+=========== ======  ===================================================
 
-Spike adaptation parameters:
-a          double - Subthreshold adaptation in nS.
-b          double - Spike-triggered adaptation in pA.
-Delta_T    double - Slope factor in mV.
-tau_w      double - Adaptation time constant in ms.
-V_peak     double - Spike detection threshold in mV.
-V_th_max   double - Value of V_th afer a spike in mV.
-V_th_rest  double - Resting value of V_th in mV.
+=========== ======  =================================================
+**Membrane Parameters**
+---------------------------------------------------------------------
+C_m         double  Capacity of the membrane in pF
+t_ref       double  Duration of refractory period in ms.
+V_reset     double  Reset value for V_m after a spike. In mV.
+E_L         double  Leak reversal potential in mV.
+g_L         double  Leak conductance in nS.
+I_e         double  Constant external input current in pA.
+tau_plus    double  Time constant of u_bar_plus.
+tau_minus   double  Time constant of u_bar_minus.
+tau_bar_bar double  Time constant of u_bar_bar.
+=========== ======  =================================================
 
-Clopath rule parameters:
-A_LTD         double - Amplitude of depression in 1/mV.
-A_LTP         double - Amplitude of facilitation in 1/mV^2.
-theta_plus    double - threshold for u in mV.
-theta_minus   double - threshold for u_bar_[plus/minus] in mV.
-A_LTD_const   bool   - Flag that indicates whether A_LTD_ should
-                       be constant (true, default) or multiplied by
-                       u_bar_bar^2 / u_ref_squared (false).
-delay_u_bars  double - Delay with which u_bar_[plus/minus] are processed
-                       to compute the synaptic weights.
-U_ref_squared double - Reference value for u_bar_bar_^2.
 
-Other parameters:
-t_clamp      double - Duration of clamping of Membrane potential after a spike
-                      in ms.
-V_clamp      double - Value to which the Membrane potential is clamped in mV.
+========== ======  ===================================================
+**Spike adaptation parameters**
+----------------------------------------------------------------------
+a          double  Subthreshold adaptation in nS.
+b          double  Spike-triggered adaptation in pA.
+Delta_T    double  Slope factor in mV.
+tau_w      double  Adaptation time constant in ms.
+V_peak     double  Spike detection threshold in mV.
+V_th_max   double  Value of V_th afer a spike in mV.
+V_th_rest  double  Resting value of V_th in mV.
+========== ======  ===================================================
 
-Integration parameters:
-gsl_error_tol double - This parameter controls the admissible error of the
-                       GSL integrator. Reduce it if NEST complains about
-                       numerical instabilities.
+============= ======  =======================================================
+**Clopath rule parameters**
+-----------------------------------------------------------------------------
+A_LTD         double  Amplitude of depression in 1/mV.
+A_LTP         double  Amplitude of facilitation in 1/mV^2.
+theta_plus    double  threshold for u in mV.
+theta_minus   double  threshold for u_bar_[plus/minus] in mV.
+A_LTD_const   bool    Flag that indicates whether A_LTD_ should
+                      be constant (true, default) or multiplied by
+                      u_bar_bar^2 / u_ref_squared (false).
+delay_u_bars  double  Delay with which u_bar_[plus/minus] are processed
+                      to compute the synaptic weights.
+U_ref_squared double  Reference value for u_bar_bar_^2.
+============= ======  =======================================================
+
+
+=======  ====== =============================================================
+**Other parameters**
+-----------------------------------------------------------------------------
+t_clamp  double Duration of clamping of Membrane potential after a spike
+                in ms.
+V_clamp  double Value to which the Membrane potential is clamped in mV.
+=======  ====== =============================================================
+
+
+============= ======= =========================================================
+**Integration parameters**
+-------------------------------------------------------------------------------
+gsl_error_tol double  This parameter controls the admissible error of the
+                      GSL integrator. Reduce it if NEST complains about
+                      numerical instabilities.
+============= ======= =========================================================
+\endverbatim
 
 Note:
 
@@ -147,17 +171,17 @@ Sends: SpikeEvent
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 References:
-
-[1] Clopath et al. (2010) Connectivity reflects coding:
-    a model of voltage-based STDP with homeostasis.
-    Nature Neuroscience 13:3, 344--352
-[2] Clopath and Gerstner (2010) Voltage and spike timing interact
-    in STDP – a unified model. Front. Synaptic Neurosci. 2:25
-    doi: 10.3389/fnsyn.2010.00025
-[3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
-    https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file=%2f
-      modeldb_package%2fVoTriCode%2faEIF.m
-
+\verbatim embed:rst
+.. [1] Clopath et al. (2010). Connectivity reflects coding: a model of
+       voltage-based STDP with homeostasis. Nature Neuroscience 13(3):344-352.
+       DOI: https://doi.org/10.1038/nn.2479
+.. [2] Clopath and Gerstner (2010). Voltage and spike timing interact
+       in STDP – a unified model. Frontiers in Synaptic Neuroscience. 2:25
+       DOI: https://doi.org/10.3389/fnsyn.2010.00025
+.. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
+       https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file=%2f
+       modeldb_package%2fVoTriCode%2faEIF.m
+\endverbatim
 SeeAlso: aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
 */
 class aeif_psc_delta_clopath : public Clopath_Archiving_Node

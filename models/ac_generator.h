@@ -75,7 +75,7 @@ References:
 
 .. [1] Rotter S and Diesmann M (1999). Exact digital simulation of time-
        invariant linear systems with applications to neuronal modeling,
-       Biol. Cybern. 81, 381-402.
+       Biol. Cybern. 81, 381-402. DOI: https://doi.org/10.1007/s004220050570
 \endverbatim
 
 Sends: CurrentEvent

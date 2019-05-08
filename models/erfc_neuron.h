@@ -96,13 +96,14 @@ References:
 \verbatim embed:rst
 .. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
        neural networks. PRE 50(4) p. 3171
+       DOI: https://doi.org/10.1103/PhysRevE.50.3171
 .. [2] McCulloch W, Pitts W (1943). A logical calculus of the ideas
        immanent in nervous activity. Bulletin of Mathematical Biophysics,
-       5:115-133.
-.. [3] Morrison A, Diesmann M. Maintaining causality in discrete time
+       5:115-133. DOI: https://doi.org/10.1007/BF02478259
+.. [3] Morrison A, Diesmann M (2007). Maintaining causality in discrete time
        neuronal simulations. In: Lectures in Supercomputational Neuroscience,
        p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
-       (Eds.), Springer.
+       (Eds.), Springer. DOI: https://doi.org/10.1007/978-3-540-73159-7_10
 \endverbatim
 
 Sends: SpikeEvent

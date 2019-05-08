@@ -81,11 +81,14 @@ References:
 .. [1] Tsodyks MV,  Markram H (1997). The neural code between neocortical
        pyramidal neurons depends on neurotransmitter release probability.
        PNAS, 94(2):719-23.
+       DOI: https://doi.org/10.1073/pnas.94.2.719
 .. [2] Fuhrman, G, Segev I, Markram H, Tsodyks MV (2002). Coding of
        temporal information by activity-dependent synapses. Journal of
        Neurophysiology, 87(1):140-8.
+       DOI: https://doi.org/10.1152/jn.00258.2001
 .. [3] Maass W, Markram H (2002). Synapses as dynamic memory buffers.
        Neural Networks, 15(2):155-61.
+       DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
 \endverbatim
 
 Transmits: SpikeEvent

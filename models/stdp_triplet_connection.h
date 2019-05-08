@@ -78,7 +78,7 @@ References:
 \verbatim embed:rst
 .. [1] Pfister JP, Gerstner W (2006). Triplets of spikes in a model
        of spike timing-dependent plasticity.  The Journal of Neuroscience
-       26(38):9673-9682; doi:10.1523/JNEUROSCI.1425-06.2006
+       26(38):9673-9682. DOI: https://doi.org/10.1523/JNEUROSCI.1425-06.2006
 \endverbatim
 
 Notes:

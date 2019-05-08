@@ -89,8 +89,9 @@ The following parameters can be set in the status dictionary.
 References:
 
 \verbatim embed:rst
-.. [1] Izhikevich 2003. Simple model of spiking neurons. IEEE Transactions on 
-       Neural Networks, 14:1569-1572
+.. [1] Izhikevich EM (2003). Simple model of spiking neurons. IEEE Transactions on
+       Neural Networks, 14:1569-1572.
+       DOI: https://doi.org/10.1109/TNN.2003.820440
 \endverbatim
 
 Sends: SpikeEvent

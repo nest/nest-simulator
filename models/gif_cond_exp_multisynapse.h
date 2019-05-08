@@ -202,12 +202,13 @@ References:
 
 .. [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
        Parameter extraction and classification of three cortical neuron types
-       reveals two distinct adaptation mechanisms. Journal of Neurophysiology,
-       107(6):1756-1775.
-
-.. [2] Pozzorini C, Mensi S, Hagens O, Naud R, Koch C, Gerstner W (2015)
+       reveals two distinct adaptation mechanisms. Journal of
+       Neurophysiology, 107(6):1756-1775.
+       DOI: https://doi.org/10.1152/jn.00408.2011
+.. [2] Pozzorini C, Mensi S, Hagens O, Naud R, Koch C, Gerstner W (2015).
        Automated high-throughput characterization of single neurons by means of
        simplified spiking models. PLoS Computational Biology, 11(6), e1004275.
+       DOI: https://doi.org/10.1371/journal.pcbi.1004275
 \endverbatim
 
 Sends: SpikeEvent

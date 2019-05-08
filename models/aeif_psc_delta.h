@@ -94,7 +94,7 @@ The following parameters can be set in the status dictionary.
 \verbatim embed:rst
 
 ======== ======= =======================================
-**Dynamic state variables:**
+**Dynamic state variables**
 --------------------------------------------------------
  V_m     double  Membrane potential in mV
  w       double  Spike-adaptation current in pA.
@@ -142,7 +142,8 @@ References:
 \verbatim embed:rst
 .. [1] Brette R and Gerstner W (2005). Adaptive Exponential
        Integrate-and-Fire Model as an Effective Description of Neuronal
-       Activity. J Neurophysiol 94:3637-3642
+       Activity. J Neurophysiol 94:3637-3642.
+       DOI: https://doi.org/10.1152/jn.00686.2005
 \endverbatim
 
 SeeAlso: iaf_psc_delta, aeif_cond_exp, aeif_psc_exp

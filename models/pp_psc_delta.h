@@ -149,24 +149,24 @@ References:
 \verbatim embed:rst
 .. [1] Cardanobile S, Rotter S (2010). Multiplicatively interacting point
        processes and applications to neural modeling. Journal of
-       Computational Neuroscience
-
-.. [2] Jolivet R, Rauch A, Luescher H-R, Gerstner W. (2006) Predicting spike
+       Computational Neuroscience 28(2):267-284
+       DOI: https://doi.org/10.1007/s10827-009-0204-0
+.. [2] Jolivet R, Rauch A, Luescher H-R, Gerstner W. (2006). Predicting spike
        timing of neocortical pyramidal neurons by simple threshold models.
        Journal of Computational Neuroscience 21:35-49.
-
+       DOI: https://doi.org/10.1007/s10827-006-7074-5
 .. [3] Pozzorini C, Naud R, Mensi S, Gerstner W (2013). Temporal whitening by
-       power-law adaptation in neocortical neurons. Nat Neurosci 16: 942-948.
-       (uses a similar model of multi-timescale adaptation)
-
+       power-law adaptation in neocortical neurons. Nature Neuroscience
+       16:942-948. (Uses a similar model of multi-timescale adaptation)
+       DOI: https://doi.org/10.1038/nn.3431
 .. [4] Grytskyy D, Tetzlaff T, Diesmann M, Helias M (2013). A unified view
        on weakly correlated recurrent networks. Frontiers in Computational
        Neuroscience, 7:131.
-
+       DOI: https://doi.org/10.3389/fncom.2013.00131
 .. [5] Deger M, Schwalger T, Naud R, Gerstner W (2014). Fluctuations and
        information filtering in coupled populations of spiking neurons with
        adaptation. Physical Review E 90:6, 062704.
-
+       DOI: https://doi.org/10.1103/PhysRevE.90.062704
 .. [6] Gerstner W, Kistler WM, Naud R, Paninski L (2014). Neuronal Dynamics:
        From single neurons to networks and models of cognition.
        Cambridge University Press

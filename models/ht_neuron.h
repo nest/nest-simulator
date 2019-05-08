@@ -147,9 +147,13 @@ FirstVersion: October 2009; full revision November 2016
 References:
 
 \verbatim embed:rst
-.. [1] Hill S, Tononi G (2005). Journal of Neurophysiology 93:1671-1698.
-.. [2] Vargas-Caballero M, Robinson HPC (2003). Journal of Neurophysiology
-       89:2778-2783.
+.. [1] Hill S, Tononi G (2005). Modeling sleep and wakefulness in the
+       thalamocortical system. Journal of Neurophysiology. 93:1671-1698.
+       DOI: https://doi.org/10.1152/jn.00915.2004
+.. [2] Vargas-Caballero M, Robinson HPC (2003). A slow fraction of Mg2+
+       unblock of NMDA receptors limits their  contribution to spike generation
+       in cortical pyramidal neurons. Journal of Neurophysiology 89:2778-2783.
+       DOI: https://doi.org/10.1152/jn.01038.2002
 \endverbatim
 
 SeeAlso: ht_synapse

@@ -135,14 +135,15 @@ References:
 .. [1] Naud R, Gerstner W (2012). Coding and decoding with adapting neurons:
        a population approach to the peri-stimulus time histogram.
        PLoS Compututational Biology 8: e1002711.
-
+       DOI: https://doi.org/10.1371/journal.pcbi.1002711
 .. [2] Deger M, Helias M, Boucsein C, Rotter S (2012). Statistical properties
        of superimposed stationary spike trains. Journal of Computational
        Neuroscience 32:3, 443-463.
-
+       DOI: https://doi.org/10.1007/s10827-011-0362-8
 .. [3] Deger M, Schwalger T, Naud R, Gerstner W (2014). Fluctuations and
        information filtering in coupled populations of spiking neurons with
        adaptation. Physical Review E 90:6, 062704.
+       DOI: https://doi.org/10.1103/PhysRevE.90.062704
 \endverbatim
 
 Sends: SpikeEvent

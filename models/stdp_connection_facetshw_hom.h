@@ -124,15 +124,17 @@ References:
 
 \verbatim embed:rst
 .. [1] Morrison A, Diesmann M, Gerstner W (2008). Phenomenological models of
-       synaptic plasticity based on spike-timing. Biol. Cybern, 98:459-478
+       synaptic plasticity based on spike-timing. Biological Cybernetics,
+       98:459-478. DOI: https://doi.org/10.1007/s00422-008-0233-1
 .. [2] Schemmel J, Gruebl A, Meier K, Mueller E (2006). Implementing synaptic
        plasticity in a VLSI spiking neural network model. In Proceedings of the
        2006 International Joint Conference on Neural Networks, pp.1--6,
-       IEEE Press.
+       IEEE Press. DOI: https://doi.org/10.1109/IJCNN.2006.246651
 .. [3] Pfeil T, Potjans TC, Schrader S, Potjans W, Schemmel J, Diesmann M,
        Meier K (2012). Is a 4-bit synaptic weight resolution enough? -
        constraints on enabling spike-timing dependent plasticity in
-       neuromorphic hardware. Frontiers in Neuroscience 6 (90).
+       neuromorphic hardware. Frontiers in Neuroscience 6(90).
+       DOI: https://doi.org/10.3389/fnins.2012.00090
 .. [4] Friedmann, S. in preparation
 \endverbatim
 

@@ -100,6 +100,7 @@ References:
 \verbatim embed:rst
 .. [1] Casti A, Hayot F, Xiao Y, Kaplan E (2008) A simple model of retina-LGN
        transmission. Journal of Computational Neuroscience 24:235-252.
+       DOI: https://doi.org/10.1007/s10827-007-0053-7
 \endverbatim
 
 Sends: SpikeEvent

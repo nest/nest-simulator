@@ -125,7 +125,7 @@ References:
 \verbatim embed:rst
 .. [1] Brette R et al. (2007). Simulation of networks of spiking neurons: A
        review of tools and strategies. Journal of Computational Neuroscience
-       23:349-98. doi 10.1007/s10827-007-0038-6
+       23:349-98. DOI: https://doi.org/10.1007/s10827-007-0038-6
 .. [2] Traub RD and Miles R (1991). Neuronal networks of the hippocampus.
        Cambridge University Press, Cambridge UK.
 .. [3] http://modeldb.yale.edu/83319

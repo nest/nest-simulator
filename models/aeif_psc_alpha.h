@@ -152,7 +152,8 @@ References:
 \verbatim embed:rst
 .. [1] Brette R and Gerstner W (2005). Adaptive Exponential
        Integrate-and-Fire Model as an Effective Description of Neuronal
-       Activity. J Neurophysiol 94:3637-3642
+       Activity. J Neurophysiol 94:3637-3642.
+       DOI: https://doi.org/10.1152/jn.00686.2005
 \endverbatim
 
 SeeAlso: iaf_psc_alpha, aeif_cond_exp

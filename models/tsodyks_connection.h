@@ -103,8 +103,9 @@ The following parameters can be set in the status dictionary:
 References:
 
 \verbatim embed:rst
-.. [1] Tsodyks, Uziel, Markram (2000). Synchrony Generation in Recurrent Networks
-    with Frequency-Dependent Synapses. Journal of Neuroscience, 20 RC50
+.. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
+       networks with frequency-dependent synapses. Journal of Neuroscience,
+       20 RC50. URL: http://infoscience.epfl.ch/record/183402
 \endverbatim
 
 Transmits: SpikeEvent

@@ -93,16 +93,18 @@ References:
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
        Diesmann M (2017). Integration of continuous-time dynamics in a
        spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
-       doi: 10.3389/fninf.2017.00034
+       DOI: https://doi.org/10.3389/fninf.2017.00034
 .. [2] Fourcaud N, Brunel N (2002). Dynamics of the firing
        probability of noisy integrate-and-fire neurons, Neural Computation,
        14(9):2057-2110
+       DOI: https://doi.org/10.1162/089976602320264015
 .. [3] Schuecker J, Diesmann M, Helias M  (2015). Modulated escape from a
        metastable state driven by colored noise. Physical Review E 92:052119
+       DOI: https://doi.org/10.1103/PhysRevE.92.052119
 .. [4] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal network simulations. Frontiers in
-       Neuroinformatics, 9:22. doi: 10.3389/fninf.2015.00022
+       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
 \endverbatim
 
 Sends: DiffusionConnectionEvent

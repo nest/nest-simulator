@@ -101,12 +101,14 @@ References:
 \verbatim embed:rst
 .. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
        neural networks. PRE 50(4) p. 3171
-.. [2] Krogh H, Palmer. Introduction to the theory of neural computation.
-       Westview (1991)
-.. [3] Morrison A, Diesmann M (2008). Maintaining causality in discrete time
+       DOI: https://doi.org/10.1103/PhysRevE.50.3171
+.. [2] Hertz J, Krogh A, Palmer R (1991). Introduction to the theory of neural
+       computation. Addison-Wesley Publishing Conmpany.
+.. [3] Morrison A, Diesmann M (2007). Maintaining causality in discrete time
        neuronal simulations. In: Lectures in Supercomputational Neuroscience,
        p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
        (Eds.), Springer.
+       DOI: https://doi.org/10.1007/978-3-540-73159-7_10
 \endverbatim
 
 Sends: SpikeEvent

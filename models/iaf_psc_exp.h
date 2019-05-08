@@ -124,16 +124,19 @@ References:
 
 \verbatim embed:rst
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
-       networks with frequency-dependent synapses, The Journal of Neuroscience,
-       20,RC50:1-5
-.. [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biologial Cybernetics
-       81:381-402.
-.. [3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-       analysis of synchronous spiking in cortical neural networks.
-       Neurocomputing 38-40:565-571.
+       networks with frequency-dependent synapses. The Journal of Neuroscience,
+       20,RC50:1-5. URL: https://infoscience.epfl.ch/record/183402
+.. [2] Rotter S,  Diesmann M (1999). Exact simulation of
+       time-invariant linear systems with applications to neuronal
+       modeling. Biologial Cybernetics 81:381-402.
+       DOI: https://doi.org/10.1007/s004220050570
+.. [3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
+       space analysis of synchronous spiking in cortical neural
+       networks. Neurocomputing 38-40:565-571.
+       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
 .. [4] Schuecker J, Diesmann M, Helias M (2015). Modulated escape from a
        metastable state driven by colored noise. Physical Review E 92:052119
+       DOI: https://doi.org/10.1103/PhysRevE.92.052119
 \endverbatim
 =======
 

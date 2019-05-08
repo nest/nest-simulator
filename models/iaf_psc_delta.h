@@ -113,12 +113,14 @@ The following parameters can be set in the status dictionary.
 References:
 
 \verbatim embed:rst
-.. [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biologial Cybernetics
-       81:381-402.
-.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-       analysis of synchronous spiking in cortical neural networks.
-       Neurocomputing 38-40:565-571.
+.. [1] Rotter S,  Diesmann M (1999). Exact simulation of
+       time-invariant linear systems with applications to neuronal
+       modeling. Biologial Cybernetics 81:381-402.
+       DOI: https://doi.org/10.1007/s004220050570
+.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
+       space analysis of synchronous spiking in cortical neural
+       networks. Neurocomputing 38-40:565-571.
+       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
 \endverbatim
 
 Sends: SpikeEvent

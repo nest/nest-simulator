@@ -116,15 +116,18 @@ the NEST source code (docs/model_details).
 References:
 
 \verbatim embed:rst
-.. [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biologial Cybernetics
-       81:381-402.
-.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-       analysis of synchronous spiking in cortical neural networks.
-       Neurocomputing 38-40:565-571.
-.. [3] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact
+.. [1] Rotter S,  Diesmann M (1999). Exact simulation of
+       time-invariant linear systems with applications to neuronal
+       modeling. Biologial Cybernetics 81:381-402.
+       DOI: https://doi.org/10.1007/s004220050570
+.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
+       space analysis of synchronous spiking in cortical neural
+       networks. Neurocomputing 38-40:565-571.
+       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
+.. [3] Morrison A, Straube S, Plesser H E, Diesmann M (2006). Exact
        subthreshold integration with continuous spike times in discrete time
        neural network simulations. Neural Computation, in press
+       DOI: https://doi.org/10.1162/neco.2007.19.1.47
 \endverbatim
 
 Sends: SpikeEvent

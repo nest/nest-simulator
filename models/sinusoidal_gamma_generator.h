@@ -100,7 +100,10 @@ Sends: SpikeEvent
 References:
 
 \verbatim embed:rst
-.. [1] Barbieri et al. (2001) Journal of Neuroscience Methods, 105:25-3.
+.. [1] Barbieri et al. (2001). Construction and analysis of non-Poisson
+       stimulus-response models of neural spiking activity. Journal of
+       Neuroscience Methods, 105:25-3.
+       DOI: https://doi.org/10.1016/S0165-0270(00)00344-7
 \endverbatim
 
 FirstVersion: October 2007, May 2013

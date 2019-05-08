@@ -64,7 +64,7 @@ References:
 \verbatim embed:rst
 .. [1] Vogels et al. (2011). Inhibitory plasticity balances excitation and
        inhibition in sensory pathways and memory networks. Science, 
-       334(6062):1569-1573. DOI: 10.1126/science.1211095
+       334(6062):1569-1573. DOI: https://doi.org/10.1126/science.1211095
 \endverbatim
 
 FirstVersion: January 2016

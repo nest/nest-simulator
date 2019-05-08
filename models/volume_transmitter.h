@@ -85,7 +85,7 @@ References:
 .. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional
        neural circuit simulations with distributed computing of
        neuromodulated plasticity. Frontiers in Computattional Neuroscience,
-       4:141. doi:10.3389/fncom.2010.00141
+       4:141. DOI: https://doi.org/10.3389/fncom.2010.00141
 \endverbatim
 
 Author: Wiebke Potjans, Abigail Morrison

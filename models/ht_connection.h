@@ -64,7 +64,9 @@ The following parameters can be set in the status dictionary:
 References:
 
 \verbatim embed:rst
-.. [1] Hill S, Tononi G (2005). Journal of Neurophysiology. 93:1671-1698.
+.. [1] Hill S, Tononi G (2005). Modeling sleep and wakefulness in the
+       thalamocortical system. Journal of Neurophysiology. 93:1671-1698.
+       DOI: https://doi.org/10.1152/jn.00915.2004
 \endverbatim
 
 Sends: SpikeEvent

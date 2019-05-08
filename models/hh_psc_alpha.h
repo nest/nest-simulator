@@ -108,13 +108,15 @@ initial wavelet/spike at simulation onset
 References:
 
 \verbatim embed:rst
-.. [1] Gerstner W, Kistler W. Spiking neuron models: Single neurons,
-       populations, plasticity. Cambridge University Press
-.. [2] Dayan P, Abbott LF. Theoretical neuroscience: Computational and
-       mathematical modeling of neural systems. MIT Press.
-.. [3] Hodgkin AL, Huxley AF (1952). A quantitative description of membrane
-       current and its application to conduction and excitation in nerve.
-       Journal of Physiology, 117:500-544.
+.. [1] Gerstner W, Kistler W (2002). Spiking neuron models: Single neurons,
+       populations, plasticity. New York: Cambridge University Press
+.. [2] Dayan P, Abbott LF (2001). Theoretical neuroscience: Computational and
+       mathematical modeling of neural systems. Cambridge, MA: MIT Press.
+       https://pure.mpg.de/pubman/faces/ViewItemOverviewPage.jsp?itemId=item_3006127>
+.. [3] Hodgkin AL and Huxley A F (1952). A quantitative description of
+       membrane current and its application to conduction and excitation in
+       nerve. The Journal of Physiology 117.
+       DOI: https://doi.org/10.1113/jphysiol.1952.sp004764
 \endverbatim
 
 Sends: SpikeEvent

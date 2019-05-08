@@ -59,6 +59,8 @@ extern "C" int
 hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+
 Name: hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for the
 Clopath synapse.
 
@@ -82,39 +84,53 @@ it is considered a spike.
 Parameters:
 
 The following parameters can be set in the status dictionary.
+\verbatim embed:rst
+=========== ======  ===================================================
+**Dynamic state variables**
+-----------------------------------------------------------------------
+V_m         double  Membrane potential in mV.
+u_bar_plus  double  Low-pass filtered Membrane potential in mV.
+u_bar_minus double  Low-pass filtered Membrane potential in mV.
+u_bar_bar   double  Low-pass filtered u_bar_minus in mV.
+=========== ======  ===================================================
 
-Dynamic state variables:
-V_m          double - Membrane potential in mV.
-u_bar_plus   double - Low-pass filtered Membrane potential in mV.
-u_bar_minus  double - Low-pass filtered Membrane potential in mV.
-u_bar_bar    double - Low-pass filtered u_bar_minus in mV.
+=========== ======  ===========================================================
+**Membrane Parameters**
+-------------------------------------------------------------------------------
+E_L         double  Resting membrane potential in mV.
+g_L         double  Leak conductance in nS.
+C_m         double  Capacity of the membrane in pF.
+tau_ex      double  Rise time of the excitatory synaptic alpha function in ms.
+tau_in      double  Rise time of the inhibitory synaptic alpha function in ms.
+E_Na        double  Sodium reversal potential in mV.
+g_Na        double  Sodium peak conductance in nS.
+E_K         double  Potassium reversal potential in mV.
+g_K         double  Potassium peak conductance in nS.
+Act_m       double  Activation variable m
+Act_h       double  Activation variable h
+Inact_n     double  Inactivation variable n
+I_e         double  Constant external input current in pA.
+=========== ======  ===========================================================
 
-Model parameters:
-E_L        double - Resting membrane potential in mV.
-g_L        double - Leak conductance in nS.
-C_m        double - Capacity of the membrane in pF.
-tau_ex     double - Rise time of the excitatory synaptic alpha function in ms.
-tau_in     double - Rise time of the inhibitory synaptic alpha function in ms.
-E_Na       double - Sodium reversal potential in mV.
-g_Na       double - Sodium peak conductance in nS.
-E_K        double - Potassium reversal potential in mV.
-g_K        double - Potassium peak conductance in nS.
-Act_m      double - Activation variable m
-Act_h      double - Activation variable h
-Inact_n    double - Inactivation variable n
-I_e        double - Constant external input current in pA.
+============= ======  =======================================================
+**Clopath rule parameters**
+-----------------------------------------------------------------------------
+A_LTD         double  Amplitude of depression in 1/mV.
+A_LTP         double  Amplitude of facilitation in 1/mV^2.
+theta_plus    double  threshold for u in mV.
+theta_minus   double  threshold for u_bar_[plus/minus] in mV.
+A_LTD_const   bool    Flag that indicates whether A_LTD_ should
+                      be constant (true, default) or multiplied by
+                      u_bar_bar^2 / u_ref_squared (false).
+delay_u_bars  double  Delay with which u_bar_[plus/minus] are processed
+                      to compute the synaptic weights.
+U_ref_squared double  Reference value for u_bar_bar_^2.
+============= ======  =======================================================
 
-Clopath rule parameters:
-A_LTD        double - Amplitude of depression in 1/mV.
-A_LTP        double - Amplitude of facilitation in 1/mV^2.
-theta_plus   double - threshold for u in mV.
-theta_minus  double - threshold for u_bar_[plus/minus] in mV.
-A_LTD_const  bool   - Flag that indicates whether A_LTD_ should
-                       be constant (true, default) or multiplied by
-                       u_bar_bar^2 / u_ref_squared (false).
-delay_u_bars  double - Delay with which u_bar_[plus/minus] are processed
-                       to compute the synaptic weights.
-U_ref_squared double - Reference value for u_bar_bar_^2.
+
+============ ======= =========================================================
+\endverbatim
+
 
 Problems/Todo:
 
@@ -123,32 +139,27 @@ initial wavelet/spike at simulation onset
 
 References:
 
-Spiking Neuron Models:
-Single Neurons, Populations, Plasticity
-Wulfram Gerstner, Werner Kistler,  Cambridge University Press
-
-Theoretical Neuroscience:
-Computational and Mathematical Modeling of Neural Systems
-Peter Dayan, L. F. Abbott, MIT Press (parameters taken from here)
-
-Hodgkin, A. L. and Huxley, A. F.,
-A Quantitative Description of Membrane Current
-and Its Application to Conduction and Excitation in Nerve,
-Journal of Physiology, 117, 500-544 (1952)
-
-Clopath et al., Connectivity reflects coding:
-a model of voltage-based STDP with homeostasis.
-Nature Neuroscience, 13:3, 344-352  (2010)
-
-Clopath and Gerstner, Voltage and spike timing interact
-in STDP – a unified model.
-Front. Synaptic Neurosci., 2:25, (2010)
-doi: 10.3389/fnsyn.2010.00025
-
-Voltage-based STDP synapse (Clopath et al. 2010) connected to a Hodgkin-Huxley
-neuron on ModelDB:
-https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file=%2fmode
-  ldb_package%2fstdp_cc.mod
+\verbatim embed:rst
+.. [1] Gerstner W and Kistler WM (2002). Spiking neuron models: Single neurons,
+       populations, plasticity. New York: Cambridge university press.
+.. [2] Dayan P and Abbott L (2001). Theoretical Neuroscience: Computational
+       and Mathematical Modeling of Neural Systems. Cambridge, MA: MIT Press.
+       https://pure.mpg.de/pubman/faces/ViewItemOverviewPage.jsp?itemId=item_3006127
+.. [3] Hodgkin AL and Huxley A F (1952). A quantitative description of
+       membrane current and its application to conduction and excitation in
+       nerve. The Journal of Physiology 117.
+       DOI: https://doi.org/10.1113/jphysiol.1952.sp004764
+.. [4] Clopath et al. (2010). Connectivity reflects coding: a model of
+       voltage-based STDP with homeostasis. Nature Neuroscience 13(3):344-352.
+       DOI: https://doi.org/10.1038/nn.2479
+.. [5] Clopath and Gerstner (2010). Voltage and spike timing interact
+       in STDP – a unified model. Frontiers in Synaptic Neuroscience. 2:25
+       DOI: https://doi.org/10.3389/fnsyn.2010.00025
+.. [6] Voltage-based STDP synapse (Clopath et al. 2010) connected to a
+       Hodgkin-Huxley neuron on ModelDB:
+       https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file
+       =%2fmodeldb_package%2fstdp_cc.mod
+\endverbatim
 
 Sends: SpikeEvent
 

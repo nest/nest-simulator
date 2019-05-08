@@ -84,7 +84,7 @@ References:
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
        Diesmann M (2017). Integration of continuous-time dynamics in a
        spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
-       doi: 10.3389/fninf.2017.00034
+       DOI: https://doi.org/10.3389/fninf.2017.00034
 \endverbatim
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker

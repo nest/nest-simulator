@@ -114,39 +114,45 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m          double - Membrane potential in mV
-V_T          double - Voltage offset that controls dynamics. For default
-                      parameters, V_T = -63mV results in a threshold around
-                      -50mV.
-E_L          double - Leak reversal potential in mV.
-C_m          double - Capacity of the membrane in pF.
-g_L          double - Leak conductance in nS.
-tau_rise_ex  double - Excitatory synaptic beta function rise time in ms.
-tau_decay_ex double - Excitatory synaptic beta function decay time in ms.
-tau_rise_in  double - Inhibitory synaptic beta function rise time in ms.
-tau_decay_in double - Inhibitory synaptic beta function decay time in ms.
-t_ref        double - Duration of refractory period in ms (see Note).
-E_ex         double - Excitatory synaptic reversal potential in mV.
-E_in         double - Inhibitory synaptic reversal potential in mV.
-E_Na         double - Sodium reversal potential in mV.
-g_Na         double - Sodium peak conductance in nS.
-E_K          double - Potassium reversal potential in mV.
-g_K          double - Potassium peak conductance in nS.
-I_e          double - External input current in pA.
+\verbatim embed:rst
+============ ======  =======================================================
+V_m          double  Membrane potential in mV
+V_T          double  Voltage offset that controls dynamics. For default
+                     parameters, V_T = -63mV results in a threshold around
+                     -50mV.
+E_L          double  Leak reversal potential in mV.
+C_m          double  Capacity of the membrane in pF.
+g_L          double  Leak conductance in nS.
+tau_rise_ex  double  Excitatory synaptic beta function rise time in ms.
+tau_decay_ex double  Excitatory synaptic beta function decay time in ms.
+tau_rise_in  double  Inhibitory synaptic beta function rise time in ms.
+tau_decay_in double  Inhibitory synaptic beta function decay time in ms.
+t_ref        double  Duration of refractory period in ms (see Note).
+E_ex         double  Excitatory synaptic reversal potential in mV.
+E_in         double  Inhibitory synaptic reversal potential in mV.
+E_Na         double  Sodium reversal potential in mV.
+g_Na         double  Sodium peak conductance in nS.
+E_K          double  Potassium reversal potential in mV.
+g_K          double  Potassium peak conductance in nS.
+I_e          double  External input current in pA.
+============ ======  =======================================================
+\endverbatim
 
 References:
-
-[1] Brette R et al (2007) Simulation of networks of spiking neurons: A review
-    of tools and strategies. J Comp Neurosci 23:349-98.
-    doi 10.1007/s10827-007-0038-6
-[2] Traub RD and Miles R (1991) Neuronal Networks of the Hippocampus.
-    Cambridge University Press, Cambridge UK.
-[3] http://modeldb.yale.edu/83319
-[4] Rotter & Diesmann, Biol Cybern 81:381 (1999)
-[5] Roth and van Rossum,
-    Ch 6, in De Schutter, Computational Modeling Methods for Neuroscientists,
-    MIT Press, 2010.
-
+\verbatim embed:rst
+.. [1] Brette R et al (2007). Simulation of networks of spiking neurons: A
+       review of tools and strategies. Journal of Computational Neuroscience
+       23:349-98. DOI: https://doi.org/10.1007/s10827-007-0038-6
+.. [2] Traub RD and Miles R (1991). Neuronal Networks of the Hippocampus.
+       Cambridge University Press, Cambridge UK.
+.. [3] http://modeldb.yale.edu/83319
+.. [4] Rotter S and Diesmann M (1999). Exact digital simulation of
+       time-invariant linear systems with applications to neuronal modeling.
+       Biological Cybernetics 81:381 DOI: https://doi.org/10.1007/s004220050570
+.. [5] Roth A and van Rossum M (2010). Chapter 6: Modeling synapses.
+       in De Schutter, Computational Modeling Methods for Neuroscientists,
+       MIT Press.
+\endverbatim
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest

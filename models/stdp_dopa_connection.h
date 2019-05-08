@@ -101,9 +101,10 @@ References:
 .. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional neural
        circuit simulations with distributed computing of neuromodulated
        plasticity. Frontiers in Computational Neuroscience, 4:141.
-       doi:10.3389/fncom.2010.00141
+       DOI: https://doi.org/10.3389/fncom.2010.00141
 .. [2] Izhikevich EM (2007). Solving the distal reward problem through linkage
-       of STDP and dopamine signaling. Cereb. Cortex, 17(10):2443-2452.
+       of STDP and dopamine signaling. Cerebral Cortex, 17(10):2443-2452.
+       DOI: https://doi.org/10.1093/cercor/bhl152
 \endverbatim
 
 Transmits: SpikeEvent

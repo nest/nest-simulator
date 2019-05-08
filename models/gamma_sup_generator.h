@@ -68,8 +68,8 @@ References:
 \verbatim embed:rst
 .. [1] Deger, Helias, Boucsein, Rotter (2011). Statistical properties of
        superimposed stationary spike trains. Journal of Computational
-       Neuroscience. DOI: 10.1007/s10827-011-0362-8
-\endverbatim       
+       Neuroscience. DOI: https://doi.org/10.1007/s10827-011-0362-8
+\endverbatim
 
 Author:
    Jan 2011, Moritz Deger

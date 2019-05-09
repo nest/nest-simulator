@@ -22,3 +22,12 @@
 from ..lib.hl_api_types import CreateParameter
 
 distance = CreateParameter('distance', {})
+
+__all__ = [
+    'pos',
+]
+
+class pos(object):
+    x = CreateParameter('position', {'dimension': 0})
+    y = CreateParameter('position', {'dimension': 1})
+    z = CreateParameter('position', {'dimension': 2})

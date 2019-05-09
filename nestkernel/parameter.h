@@ -411,20 +411,53 @@ public:
   /**
    * Parameters:
    * dimension - Dimension from which to get the position value of the node.
+   * type_id - If specified, specifies if the position should be taken from the
+   *           presynaptic or postsynaptic node in a connection.
+   *           0: unspecified, 1: presynaptic, 2: postsynaptic.
    */
   NodePosParameter( const DictionaryDatum& d )
     : Parameter( d )
+    , dimension_( 0 )
+    , node_location_( 0 )
   {
     updateValue< long >( d, names::dimension, dimension_ );
+    updateValue< long >(
+      d, names::type_id, node_location_ ); // TODO: Better name than "type_id"?
+    if ( node_location_ < 0 or 2 < node_location_ )
+    {
+      throw BadParameterValue(
+        "Node location must either be unspecified (0), source (1) or target "
+        "(2)" );
+    }
   }
 
-  double value( librandom::RngPtr& rng, Node* ) const;
-
   double
-  value( librandom::RngPtr&, Node*, Node* ) const
+  value( librandom::RngPtr& rng, Node* node ) const
   {
-    throw BadParameterValue(
-      "Node position parameter cannot be used when connecting." );
+    if ( node_location_ != 0 )
+    {
+      throw BadParameterValue(
+        "Source or target position parameter can only be used when "
+        "connecting." );
+    }
+    return get_node_pos_( rng, node );
+  }
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  {
+    switch ( node_location_ )
+    {
+    case 0:
+      throw BadParameterValue(
+        "Node position parameter cannot be used when connecting." );
+    case 1:
+      return get_node_pos_( rng, source );
+    case 2:
+      return get_node_pos_( rng, target );
+    }
+    // TODO: assert that we don't get here
+    throw KernelException(
+        "Wrong node_location_." );
   }
 
   Parameter*
@@ -435,6 +468,9 @@ public:
 
 private:
   int dimension_;
+  int node_location_;
+
+  double get_node_pos_( librandom::RngPtr& rng, Node* node ) const;
 };
 
 
@@ -444,16 +480,9 @@ private:
 class SpatialDistanceParameter : public Parameter
 {
 public:
-  /**
-   * Parameters:
-   * dimension - Dimension in which to measure the distance.
-   *             If not given, Euclidian distance is measured.
-   */
   SpatialDistanceParameter( const DictionaryDatum& d )
     : Parameter( d )
-    , dimension_( -1 )
   {
-    updateValue< long >( d, names::dimension, dimension_ );
   }
 
   double
@@ -470,9 +499,6 @@ public:
   {
     return new SpatialDistanceParameter( *this );
   }
-
-private:
-  int dimension_;
 };
 
 

@@ -35,7 +35,7 @@ template class lockPTRDatum< nest::Parameter,
 namespace nest
 {
 double
-NodePosParameter::value( librandom::RngPtr& rng, Node* node ) const
+NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
 {
   if ( not node )
   {

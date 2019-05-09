@@ -58,6 +58,8 @@ hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup hh
+@ingroup cond
 
 Name: hh_cond_exp_traub - Hodgkin-Huxley model for Brette et al (2007) review
 
@@ -88,8 +90,8 @@ In this model, a spike is emitted if
 
 To avoid that this leads to multiple spikes during the falling flank of a
 spike, it is essential to chose a sufficiently long refractory period.
-Traub and Miles used \f$ t_ref = 3 ms \f$ [2, p 118], while we used t_ref = 2 ms
-in [2].
+Traub and Miles used \f$ t_ref = 3 ms \f$ [2, p 118], while we used
+\f$ t_ref = 2 ms \f$ in [2].
 
 Parameters:
 

@@ -35,6 +35,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Synapses
+@ingroup stp
 
 Name: tsodyks_synapse - Synapse type with short term plasticity.
 

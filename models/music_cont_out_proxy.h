@@ -50,7 +50,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Devices
-
+@ingroup music
 
 Name: music_cont_out_proxy - A device which sends continuous data from NEST to
 MUSIC.

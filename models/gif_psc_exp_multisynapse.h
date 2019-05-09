@@ -37,6 +37,8 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup iaf
+@ingroup psc
 
 Name: gif_psc_exp_multisynapse - Current-based generalized
 integrate-and-fire neuron model with multiple synaptic time
@@ -114,28 +116,40 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
+\verbatim embed:rst
+
+========   ======  =======================================================
 Membrane Parameters:
--  C_m        double - Capacity of the membrane in pF
--  t_ref      double - Duration of refractory period in ms.
--  V_reset    double - Reset value after a spike in mV.
--  E_L        double - Leak reversal potential in mV.
--  g_L        double - Leak conductance in nS.
--  I_e        double - Constant external input current in pA.
+--------------------------------------------------------------------------
+C_m        double  Capacity of the membrane in pF
+t_ref      double  Duration of refractory period in ms
+V_reset    double  Reset value after a spike in mV
+E_L        double  Leak reversal potential in mV
+g_L        double  Leak conductance in nS
+I_e        double  Constant external input current in pA
+========   ======  =======================================================
 
+=========  ================ ===================================================
 Spike adaptation and firing intensity parameters:
--  q_stc      vector of double - Values added to spike-triggered currents (stc)
-                                 after each spike emission in nA.
--  tau_stc    vector of double - Time constants of stc variables in ms.
--  q_sfa      vector of double - Values added to spike-frequency adaptation
-                                 (sfa) after each spike emission in mV.
--  tau_sfa    vector of double - Time constants of sfa variables in ms.
--  Delta_V    double - Stochasticity level in mV.
--  lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
--  V_T_star   double - Base threshold in mV
+-------------------------------------------------------------------------------
+q_stc      vector of double  Values added to spike-triggered currents (stc)
+                             after each spike emission in nA
+tau_stc    vector of double  Time constants of stc variables in ms
+q_sfa      vector of double  Values added to spike-frequency adaptation
+                             (sfa) after each spike emission in mV
+tau_sfa    vector of double  Time constants of sfa variables in ms
+Delta_V    double            Stochasticity level in mV
+lambda_0   double            Stochastic intensity at firing threshold V_T
+                             in 1/s
+V_T_star   double            Base threshold in mV
+=========  ================ ===================================================
 
+=======  ================  ==================================================
 Synaptic parameters
--  tau_syn  vector of double - Time constants of the synaptic currents in ms.
-
+-----------------------------------------------------------------------------
+tau_syn  vector of double  Time constants of the synaptic currents in ms
+=======  ================  ==================================================
+\endverbatim
 References:
 
 \verbatim embed:rst

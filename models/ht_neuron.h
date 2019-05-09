@@ -63,6 +63,7 @@ extern "C" int ht_neuron_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup ht
 
 Name: ht_neuron - Neuron model after Hill & Tononi (2005).
 

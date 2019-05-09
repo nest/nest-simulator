@@ -40,6 +40,8 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup pp
+@ingroup psc
 
 Name: pp_psc_delta - Point process neuron with leaky integration of
                      delta-shaped PSCs.

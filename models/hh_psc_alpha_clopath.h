@@ -60,6 +60,9 @@ hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup hh
+@ingroup psc
+@ingroup clopath
 
 Name: hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for the
 Clopath synapse.

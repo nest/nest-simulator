@@ -36,6 +36,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Devices
+@ingroup generator
 
 Name: spike_dilutor - repeats incoming spikes with a certain probability.
 

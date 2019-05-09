@@ -39,6 +39,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Devices
+@ingroup generator
 
 Name: ac_generator - provides AC input current
 

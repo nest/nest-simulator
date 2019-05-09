@@ -72,6 +72,8 @@ aeif_cond_alpha_dynamics_DT0( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup aeif
+@ingroup cond
 
 Name: aeif_cond_alpha -  Conductance based exponential integrate-and-fire neuron
                          model according to Brette and Gerstner (2005).

@@ -41,6 +41,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Synapses
+@ingroup stdp
 
 Name: stdp_synapse - Synapse type for spike-timing dependent
 plasticity.

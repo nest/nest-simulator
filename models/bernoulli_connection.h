@@ -33,6 +33,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Synapses
+@ingroup static
 
 Name: bernoulli_synapse - Static synapse with stochastic transmission.
 

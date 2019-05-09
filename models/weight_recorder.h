@@ -40,6 +40,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Devices
+@ingroup detector
 
 Name: weight_recorder - Device for detecting single spikes.
 

@@ -47,6 +47,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup rate
 
 Name: siegert_neuron
 

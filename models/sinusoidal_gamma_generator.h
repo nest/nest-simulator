@@ -47,6 +47,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Devices
+@ingroup generator
 
 Name: sinusoidal_gamma_generator - Generates sinusoidally modulated gamma
                                    spike trains.

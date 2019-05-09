@@ -40,6 +40,8 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup iaf
+@ingroup psc
 
 Name: iaf_psc_alpha_multisynapse - Leaky integrate-and-fire neuron model with
                                    multiple ports.

@@ -61,6 +61,10 @@ extern "C" int
 hh_cond_beta_gap_traub_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup hh
+@ingroup cond
+
 Name: hh_cond_beta_gap_traub - modified Hodgkin-Huxley neuron as featured in
 Brette et al (2007) review with added gap junction support and beta function
 synaptic conductance.
@@ -89,18 +93,18 @@ simulators covered is available from ModelDB [3].
 Note:
 In this model, a spike is emitted if
 
-         V_m >= V_T + 30 mV and V_m has fallen during the current time step
+@f[ V_m >= V_T + 30 mV and V_m has fallen during the current time step @f]
 
 To avoid that this leads to multiple spikes during the falling flank of a
 spike, it is essential to chose a sufficiently long refractory period.
-Traub and Miles used t_ref = 3 ms [2, p 118], while we used t_ref = 2 ms
-in [2].
+Traub and Miles used \f$ t_ref = 3 ms \f$ [2, p 118], while we used
+\f$ t_ref = 2 ms \f$ in [2].
 
 Post-synaptic currents
 Incoming spike events induce a post-synaptic change of conductance modelled by a
 beta function as outlined in [4,5]. The beta function is normalised such that an
-event of weight 1.0 results in a peak current of 1 nS at t = tau_rise_xx where
-xx is ex or in.
+event of weight 1.0 results in a peak current of 1 nS at \f$ t = tau_rise_xx \f$
+where xx is ex or in.
 
 Spike Detection
 Spike detection is done by a combined threshold-and-local-maximum search: if
@@ -108,7 +112,8 @@ there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
 
 Gap Junctions
-Gap Junctions are implemented by a gap current of the form g_ij( V_i - V_j).
+Gap Junctions are implemented by a gap current of the form
+\f$ g_ij( V_i - V_j) \f$.
 
 Parameters:
 

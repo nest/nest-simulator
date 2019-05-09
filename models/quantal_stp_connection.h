@@ -34,6 +34,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Synapses
+@ingroup stp
 
 Name: quantal_stp_synapse - Probabilistic synapse model with short term
 plasticity.

@@ -31,6 +31,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup binary
 
 Name: ginzburg_neuron - Binary stochastic neuron with sigmoidal activation
                         function.

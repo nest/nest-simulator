@@ -30,6 +30,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Synapses
+@ingroup gap
 
 Name: gap_junction - Synapse type for gap-junction connections.
 

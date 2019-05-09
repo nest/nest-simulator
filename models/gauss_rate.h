@@ -38,6 +38,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup rate
 
 Name: gauss_rate - rate model with Gaussian gain function
 

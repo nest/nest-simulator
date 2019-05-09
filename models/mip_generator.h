@@ -43,6 +43,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Devices
+@ingroup generator
 
 Name: mip_generator - create spike trains as described by the MIP model.
 

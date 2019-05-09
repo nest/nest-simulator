@@ -32,6 +32,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Synapses
+@ingroup stdp
 
 Name: stdp_triplet_synapse - Synapse type with spike-timing dependent
                              plasticity (triplets).

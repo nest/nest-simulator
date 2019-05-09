@@ -43,6 +43,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Devices
+@ingroup detector
 
 Name: multimeter - Device to record analog data from neurons.
 

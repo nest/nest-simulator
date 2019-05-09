@@ -31,6 +31,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Synapses
+@ingroup cont_delay
 
 Name: rate_connection_delayed - Synapse type for rate connections with delay.
 

@@ -32,6 +32,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Synapses
+@ingroup stdp
 
 Name: vogels_sprekeler_synapse - Synapse type for symmetric spike-timing
 dependent

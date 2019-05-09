@@ -41,6 +41,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Devices
+@ingroup generator
 
 Name: inhomogeneous_poisson_generator - provides Poisson spike trains
     at a piecewise constant rate

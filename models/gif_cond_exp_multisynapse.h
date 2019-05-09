@@ -49,6 +49,8 @@ gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup iaf
+@ingroup cond
 
 Name: gif_cond_exp_multisynapse - Conductance-based generalized
 integrate-and-fire neuron model with multiple synaptic time constants

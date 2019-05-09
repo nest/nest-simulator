@@ -50,6 +50,7 @@ namespace nest
 {
 /** @BeginDocumentation
 @ingroup Devices
+@ingroup music
 
 Name: music_message_in_proxy - A device which receives message strings from
                               MUSIC.

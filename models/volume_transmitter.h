@@ -39,6 +39,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Devices
+@ingroup generator
 
 Name: volume_transmitter - Node used in combination with neuromodulated synaptic
 plasticity. It collects all spikes emitted by the population of neurons

@@ -36,6 +36,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup rate
 
 Name: tanh_rate - rate model with hyperbolic tangent non-linearity
 

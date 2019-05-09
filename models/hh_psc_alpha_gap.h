@@ -61,6 +61,9 @@ hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup psc
+@ingroup hh
+@ingroup gap
 
 Name: hh_psc_alpha_gap - Hodgkin-Huxley neuron model with gap-junction support.
 

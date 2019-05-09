@@ -39,6 +39,7 @@ namespace nest
 {
 /** @BeginDocumentation
 @ingroup Devices
+@ingroup detector
 
 Name: correlospinmatrix_detector - Device for measuring the covariance matrix
                                   from several inputs

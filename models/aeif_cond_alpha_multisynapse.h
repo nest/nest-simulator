@@ -59,6 +59,8 @@ aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup aeif
+@ingroup cond
 
 Name: aeif_cond_alpha_multisynapse - Conductance based adaptive exponential
                                      integrate-and-fire neuron model according

@@ -64,6 +64,9 @@ iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup iaf
+@ingroup cond
+
 
 Name: iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky
                           integrate-and-fire neuron model.

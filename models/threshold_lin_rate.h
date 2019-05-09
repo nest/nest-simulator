@@ -39,6 +39,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup rate
 
 Name: threshold_lin_rate - rate model with threshold-linear gain function
 

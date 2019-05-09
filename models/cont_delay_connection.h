@@ -34,6 +34,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Synapses
+@ingroup cont_delay
 
 Name: cont_delay_synapse - Synapse type for continuous delays
 

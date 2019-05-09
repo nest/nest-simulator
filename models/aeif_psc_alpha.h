@@ -59,6 +59,8 @@ extern "C" int aeif_psc_alpha_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup aeif
+@ingroup psc
 
 Name: aeif_psc_alpha -  Current-based exponential integrate-and-fire neuron
                          model according to Brette and Gerstner (2005).

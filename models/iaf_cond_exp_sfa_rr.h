@@ -59,6 +59,8 @@ iaf_cond_exp_sfa_rr_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup iaf
+@ingroup cond
 
 Name: iaf_cond_exp_sfa_rr - Simple conductance based leaky integrate-and-fire
                             neuron model.

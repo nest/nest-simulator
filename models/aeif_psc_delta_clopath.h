@@ -59,6 +59,10 @@ extern "C" int
 aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup aeif
+@ingroup psc
+
 Name: aeif_psc_delta_clopath - Exponential integrate-and-fire neuron
 model according to Clopath et al. (2010).
 

@@ -45,6 +45,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Devices
+@ingroup music
 
 Name: music_event_out_proxy - Device to forward spikes to remote applications
                               using MUSIC.

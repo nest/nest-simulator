@@ -104,6 +104,21 @@ public:
    * @returns a new dynamically allocated parameter.
    */
   virtual Parameter* subtract_parameter( const Parameter& other ) const;
+  /**
+   * Create the exponential of this parameter.
+   * @returns a new dynamically allocated parameter.
+   */
+  virtual Parameter* exp() const;
+  /**
+   * Create the sine of this parameter.
+   * @returns a new dynamically allocated parameter.
+   */
+  virtual Parameter* sin() const;
+  /**
+   * Create the cosine of this parameter.
+   * @returns a new dynamically allocated parameter.
+   */
+  virtual Parameter* cos() const;
 };
 
 /**
@@ -441,14 +456,14 @@ public:
     updateValue< long >( d, names::dimension, dimension_ );
   }
 
-  double value( librandom::RngPtr& rng, Node* ) const
+  double
+  value( librandom::RngPtr& rng, Node* ) const
   {
     throw BadParameterValue(
       "Spatial distance parameter can only be used when connecting." );
   }
 
-  double
-  value( librandom::RngPtr&, Node*, Node* ) const;
+  double value( librandom::RngPtr&, Node*, Node* ) const;
 
   Parameter*
   clone() const
@@ -752,6 +767,172 @@ protected:
   Parameter* p_;
 };
 
+/**
+ * Parameter class representing the exponential of a parameter.
+ */
+class ExpParameter : public Parameter
+{
+public:
+  /**
+   * Construct the exponential of the given parameter. A copy is made of the
+   * supplied Parameter object.
+   */
+  ExpParameter( const Parameter& p )
+    : Parameter( p )
+    , p_( p.clone() )
+  {
+  }
+
+  /**
+   * Copy constructor.
+   */
+  ExpParameter( const ExpParameter& p )
+    : Parameter( p )
+    , p_( p.p_->clone() )
+  {
+  }
+
+  ~ExpParameter()
+  {
+    delete p_;
+  }
+
+  /**
+   * @returns the value of the parameter.
+   */
+  double
+  value( librandom::RngPtr& rng, Node* node ) const
+  {
+    return std::exp( p_->value( rng, node ) );
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  {
+    return std::exp( p_->value( rng, source, target ) );
+  }
+
+  Parameter*
+  clone() const
+  {
+    return new ExpParameter( *this );
+  }
+
+protected:
+  Parameter* p_;
+};
+
+
+/**
+ * Parameter class representing the sine of a parameter.
+ */
+class SinParameter : public Parameter
+{
+public:
+  /**
+   * Construct the sine of the given parameter. A copy is made of the
+   * supplied Parameter object.
+   */
+  SinParameter( const Parameter& p )
+    : Parameter( p )
+    , p_( p.clone() )
+  {
+  }
+
+  /**
+   * Copy constructor.
+   */
+  SinParameter( const SinParameter& p )
+    : Parameter( p )
+    , p_( p.p_->clone() )
+  {
+  }
+
+  ~SinParameter()
+  {
+    delete p_;
+  }
+
+  /**
+   * @returns the value of the parameter.
+   */
+  double
+  value( librandom::RngPtr& rng, Node* node ) const
+  {
+    return std::sin( p_->value( rng, node ) );
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  {
+    return std::sin( p_->value( rng, source, target ) );
+  }
+
+  Parameter*
+  clone() const
+  {
+    return new SinParameter( *this );
+  }
+
+protected:
+  Parameter* p_;
+};
+
+/**
+ * Parameter class representing the cosine of a parameter.
+ */
+class CosParameter : public Parameter
+{
+public:
+  /**
+   * Construct the exponential of the given parameter. A copy is made of the
+   * supplied Parameter object.
+   */
+  CosParameter( const Parameter& p )
+    : Parameter( p )
+    , p_( p.clone() )
+  {
+  }
+
+  /**
+   * Copy constructor.
+   */
+  CosParameter( const CosParameter& p )
+    : Parameter( p )
+    , p_( p.p_->clone() )
+  {
+  }
+
+  ~CosParameter()
+  {
+    delete p_;
+  }
+
+  /**
+   * @returns the value of the parameter.
+   */
+  double
+  value( librandom::RngPtr& rng, Node* node ) const
+  {
+    return std::cos( p_->value( rng, node ) );
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  {
+    return std::cos( p_->value( rng, source, target ) );
+  }
+
+  Parameter*
+  clone() const
+  {
+    return new CosParameter( *this );
+  }
+
+protected:
+  Parameter* p_;
+};
+
 inline Parameter*
 Parameter::multiply_parameter( const Parameter& other ) const
 {
@@ -774,6 +955,24 @@ inline Parameter*
 Parameter::subtract_parameter( const Parameter& other ) const
 {
   return new DifferenceParameter( *this, other );
+}
+
+inline Parameter*
+Parameter::exp() const
+{
+  return new ExpParameter( *this );
+}
+
+inline Parameter*
+Parameter::sin() const
+{
+  return new SinParameter( *this );
+}
+
+inline Parameter*
+Parameter::cos() const
+{
+  return new CosParameter( *this );
 }
 
 

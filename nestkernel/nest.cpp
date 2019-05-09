@@ -348,6 +348,24 @@ subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
 }
 
 ParameterDatum
+exp_parameter( const ParameterDatum& param )
+{
+  return param->exp();
+}
+
+ParameterDatum
+sin_parameter( const ParameterDatum& param )
+{
+  return param->sin();
+}
+
+ParameterDatum
+cos_parameter( const ParameterDatum& param )
+{
+  return param->cos();
+}
+
+ParameterDatum
 create_parameter( const DictionaryDatum& param_dict )
 {
   param_dict->clear_access_flags();

@@ -537,6 +537,24 @@ public:
     void execute( SLIInterpreter* ) const;
   } sub_P_Pfunction;
 
+  class Exp_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } exp_Pfunction;
+
+  class Sin_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } sin_Pfunction;
+
+  class Cos_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } cos_Pfunction;
+
   class CreateParameter_DFunction : public SLIFunction
   {
   public:

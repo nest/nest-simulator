@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# __init__.py
+# hl_api_math.py
 #
 # This file is part of NEST.
 #
@@ -19,28 +19,24 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Initializer of PyNEST.
-"""
+from ..ll_api import sli_func
 
-from . import ll_api      # noqa
+__all__ = [
+    'exp',
+    'sin',
+    'cos',
+]
 
-from . import pynestkernel as kernel      # noqa
-from .hl_api import *      # noqa
+# TODO: Special cases when argument is a number?
 
-from . import random  # noqa
-from . import spatial  # noqa
-from . import math  # noqa
 
-def test():
-    """Runs all PyNEST unit tests."""
-    from . import tests
-    import unittest
+def exp(parameter):
+    return sli_func("exp", parameter)
 
-    debug = ll_api.get_debug()
-    ll_api.set_debug(True)
 
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(tests.suite())
+def sin(parameter):
+    return sli_func("sin", parameter)
 
-    ll_api.set_debug(debug)
+
+def cos(parameter):
+    return sli_func("cos", parameter)

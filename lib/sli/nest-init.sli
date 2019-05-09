@@ -332,6 +332,18 @@ def
   /sub_P_P load
 def
 
+/exp [/parametertype]
+  /exp_P load
+def
+
+/sin [/parametertype]
+  /sin_P load
+def
+
+/cos [/parametertype]
+  /cos_P load
+def
+
 /CreateParameter trie
 [/dictionarytype] /CreateParameter_D load addtotrie
 [/doubletype] /CreateParameter_D load addtotrie

@@ -1824,6 +1824,48 @@ NestModule::Add_P_PFunction::execute( SLIInterpreter* i ) const
 }
 
 void
+NestModule::Exp_PFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = exp_parameter( param );
+
+  i->OStack.pop( 1 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
+void
+NestModule::Sin_PFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = sin_parameter( param );
+
+  i->OStack.pop( 1 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
+void
+NestModule::Cos_PFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = cos_parameter( param );
+
+  i->OStack.pop( 1 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
+void
 NestModule::Sub_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
@@ -1904,6 +1946,10 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "div_P_P", &div_P_Pfunction );
   i->createcommand( "add_P_P", &add_P_Pfunction );
   i->createcommand( "sub_P_P", &sub_P_Pfunction );
+
+  i->createcommand( "exp_P", &exp_Pfunction );
+  i->createcommand( "sin_P", &sin_Pfunction );
+  i->createcommand( "cos_P", &cos_Pfunction );
 
   i->createcommand( "CreateParameter_D", &createparameter_Dfunction );
 

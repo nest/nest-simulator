@@ -1,4 +1,4 @@
-Model Documentation - Devices
+All devices
 ==============================
 
 

@@ -1,6 +1,5 @@
-All synapse models
+Binary Neurons
 ================================
 
-
-.. doxygengroup:: Synapses
+.. doxygengroup:: binary
    :content-only:

@@ -1,6 +1,5 @@
-All synapse models
+MUSIC related devices
 ================================
 
-
-.. doxygengroup:: Synapses
+.. doxygengroup:: music
    :content-only:

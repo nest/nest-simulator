@@ -1,6 +1,5 @@
-All synapse models
+Generator type Devices
 ================================
 
-
-.. doxygengroup:: Synapses
+.. doxygengroup:: generator
    :content-only:

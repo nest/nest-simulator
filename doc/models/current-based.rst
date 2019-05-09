@@ -1,6 +1,5 @@
-All synapse models
+Current-based Models
 ================================
 
-
-.. doxygengroup:: Synapses
+.. doxygengroup:: psc
    :content-only:

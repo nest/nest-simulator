@@ -1,6 +1,5 @@
-All synapse models
+Conductance-based Models
 ================================
 
-
-.. doxygengroup:: Synapses
+.. doxygengroup:: cond
    :content-only:

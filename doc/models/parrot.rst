@@ -1,6 +1,5 @@
-All synapse models
+Parrot neuron
 ================================
 
-
-.. doxygengroup:: Synapses
+.. doxygengroup:: parrot
    :content-only:

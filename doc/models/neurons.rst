@@ -1,4 +1,4 @@
-Model Documentation - Neurons
+All neuron models
 ==============================
 
 .. doxygengroup:: Neurons

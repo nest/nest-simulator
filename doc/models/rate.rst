@@ -1,6 +1,5 @@
-All synapse models
+Rate-based Neurons
 ================================
 
-
-.. doxygengroup:: Synapses
+.. doxygengroup:: rate
    :content-only:

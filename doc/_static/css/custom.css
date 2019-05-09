@@ -88,6 +88,9 @@ code.descclassname {
     display: none;
 }
 
+.rst-content dl:not(.docutils) dt  em[class^='property']{
+     display:none;
+}
 .rst-content pre.literal-block, .rst-content div[class^='highlight'] pre, .rst-content .linenodiv pre {
     line-height: 1.3em;
 }

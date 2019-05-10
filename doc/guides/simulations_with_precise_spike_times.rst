@@ -72,7 +72,7 @@ delta-shaped post-synaptic currents that employs precise spike times;
 its grid-constrained counterpart is ``iaf_psc_delta``. In this model the
 precise location of an outgoing spike is determined analytically.
 
-``iaf_psc_alpha_psc`` and ``iaf_psc_alpha_presc`` are
+``iaf_psc_alpha_ps`` and ``iaf_psc_alpha_presc`` are
 integrate-and-fire neuron models with alpha-shaped post-synaptic
 currents that employ precise spike times; their grid-constrained
 counterpart is ``iaf_psc_alpha``. The neuron models have been developed

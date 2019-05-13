@@ -11,11 +11,7 @@ is that all users profit by sharing their experience. All NEST core developers
 are subscribed to this list and will participate in the discussions as far as
 time allows.
 
-Subscription
-http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user
-
-Archive (only subscribed users)
-http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user
+Subscribe here: https://www.nest-simulator.org/mailinglist/
 
 
 Contributing to NEST

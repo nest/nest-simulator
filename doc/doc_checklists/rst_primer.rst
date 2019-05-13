@@ -108,6 +108,6 @@ Linking to other documents in the NEST repository:
 To link to an exernal webpage you can simply write the URL, or you can use
 link text:
 
-    `link text <http://www.nest-simulator.org>`_
+    `link text <https://www.nest-simulator.org>`_
 
 

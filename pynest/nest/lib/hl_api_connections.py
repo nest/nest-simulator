@@ -249,7 +249,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
             "the old Connect function and will be removed in NEST 3.0. ",
             "Please change the name of the keyword argument from 'model' to ",
             "'syn_spec'. For details, see the documentation ",
-            "at:\nhttp://www.nest-simulator.org/connection_management"
+            "at:\nhttps://www.nest-simulator.org/connection_management"
         ])
         show_deprecation_warning("BackwardCompatibilityConnect",
                                  text=deprecation_text)
@@ -465,7 +465,7 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
 
     For further information, see
     * The NEST documentation on using the CG Interface at
-      http://www.nest-simulator.org/connection-generator-interface
+      https://www.nest-simulator.org/connection-generator-interface
     * The GitHub repository and documentation for libneurosim at
       https://github.com/INCF/libneurosim/
     * The publication about the Connection Generator Interface at

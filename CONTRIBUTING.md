@@ -74,5 +74,5 @@ We review each pull request according to our [code review guidelines](https://ne
     * Writing [Synapse Models](https://nest.github.io/nest-simulator/synapse_models).
     * [Updating Models](https://nest.github.io/nest-simulator/model_conversion_3g_4g).
     * [Dig Deeper](https://nest.github.io/nest-simulator/#dig-deeper) into NEST.
-* The [NEST Simulator homepage](http://www.nest-simulator.org/).
-* The [NEST Initiative homepage](http://www.nest-initiative.org/).
+* The [NEST Simulator homepage](https://www.nest-simulator.org/).
+* The [NEST Initiative homepage](https://www.nest-initiative.org/).

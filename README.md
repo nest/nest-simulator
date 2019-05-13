@@ -101,8 +101,8 @@ you received in the NEST sources.
 
 - You can run the `help` command in the NEST interpreter to find documentation
   and learn more about available commands.
-- For queries regarding NEST usage, please use the [nest-users mailing
-  list](http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user).
+- For queries regarding NEST usage, please use the [NEST users mailing
+  list](https://www.nest-initiative.org/mailinglist/).
 - Information on the Python bindings to NEST can be found in
   `${prefix}/share/doc/nest/README.md`.
 - For those looking to extend NEST a [developer

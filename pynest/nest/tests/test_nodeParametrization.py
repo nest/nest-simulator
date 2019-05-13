@@ -432,7 +432,41 @@ class TestNodeParametrization(unittest.TestCase):
 
     def test_parameter_conditional(self):
         """Test conditional parameter"""
-        pass
+        positions = [[x, x, x] for x in np.linspace(0, 0.5, 20)]
+        layer = tp.CreateLayer({'extent': [5.0, 5.0, 5.0],
+                                'positions': positions,
+                                'elements': 'iaf_psc_alpha'})
+
+        layer.set({'V_m': nest.logic.conditional(nest.spatial.pos.x > 0.3,
+                                                 nest.spatial.pos.x,
+                                                 -nest.spatial.pos.x)})
+        status = layer.get()
+
+        for pos, vm in zip(positions, status['V_m']):
+            x_pos = pos[0]
+            # Almost equal because of roundoff errors.
+            self.assertAlmostEqual(vm,
+                                   x_pos if x_pos > 0.3 else -x_pos,
+                                   places=12)
+
+    def test_parameter_conditional_scalars(self):
+        """Test conditional parameter with scalars"""
+        positions = [[x, x, x] for x in np.linspace(0, 0.5, 20)]
+        layer = tp.CreateLayer({'extent': [5.0, 5.0, 5.0],
+                                'positions': positions,
+                                'elements': 'iaf_psc_alpha'})
+
+        layer.set({'V_m': nest.logic.conditional(nest.spatial.pos.x > 0.3,
+                                                 -42,
+                                                 -50)})
+        status = layer.get()
+
+        for pos, vm in zip(positions, status['V_m']):
+            x_pos = pos[0]
+            # Almost equal because of roundoff errors.
+            self.assertAlmostEqual(vm,
+                                   -42 if x_pos > 0.3 else -50,
+                                   places=12)
 
 
 def suite():

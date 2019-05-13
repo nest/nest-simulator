@@ -356,6 +356,14 @@ compare_parameter( const ParameterDatum& param1,
 }
 
 ParameterDatum
+conditional_parameter( const ParameterDatum& param1,
+  const ParameterDatum& param2,
+  const ParameterDatum& param3 )
+{
+  return param1->conditional_parameter( *param2, *param3 );
+}
+
+ParameterDatum
 exp_parameter( const ParameterDatum& param )
 {
   return param->exp();

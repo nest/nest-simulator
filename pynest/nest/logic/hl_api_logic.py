@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# __init__.py
+# hl_api_logic.py
 #
 # This file is part of NEST.
 #
@@ -19,29 +19,19 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Initializer of PyNEST.
-"""
+from ..ll_api import sli_func
+from ..lib.hl_api_types import CreateParameter
 
-from . import ll_api      # noqa
+__all__ = [
+    'conditional',
+]
 
-from . import pynestkernel as kernel      # noqa
-from .hl_api import *      # noqa
 
-from . import random  # noqa
-from . import spatial  # noqa
-from . import math  # noqa
-from . import logic  # noqa
-
-def test():
-    """Runs all PyNEST unit tests."""
-    from . import tests
-    import unittest
-
-    debug = ll_api.get_debug()
-    ll_api.set_debug(True)
-
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(tests.suite())
-
-    ll_api.set_debug(debug)
+def conditional(condition, param_if_true, param_if_false):
+    if isinstance(param_if_true, (int, float)):
+        param_if_true = CreateParameter(
+            'constant', {'value': float(param_if_true)})
+    if isinstance(param_if_false, (int, float)):
+        param_if_false = CreateParameter(
+            'constant', {'value': float(param_if_false)})
+    return sli_func("conditional", condition, param_if_true, param_if_false)

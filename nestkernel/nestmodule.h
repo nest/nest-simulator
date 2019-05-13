@@ -543,6 +543,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } compare_P_P_Dfunction;
 
+  class Conditional_P_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } conditional_P_P_Pfunction;
+
   class Exp_PFunction : public SLIFunction
   {
   public:

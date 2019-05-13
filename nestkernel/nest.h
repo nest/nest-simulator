@@ -142,6 +142,9 @@ ParameterDatum subtract_parameter( const ParameterDatum& param1,
 ParameterDatum compare_parameter( const ParameterDatum& param1,
   const ParameterDatum& param2,
   const DictionaryDatum& d );
+ParameterDatum conditional_parameter( const ParameterDatum& param1,
+  const ParameterDatum& param2,
+  const ParameterDatum& param3 );
 ParameterDatum exp_parameter( const ParameterDatum& param );
 ParameterDatum sin_parameter( const ParameterDatum& param );
 ParameterDatum cos_parameter( const ParameterDatum& param );

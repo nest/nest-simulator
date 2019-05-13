@@ -111,6 +111,13 @@ public:
   virtual Parameter* compare_parameter( const Parameter& other,
     const DictionaryDatum& d ) const;
   /**
+   * Create parameter choosing between two other parameters,
+   * based on this parameter.
+   * @returns a new dynamically allocated parameter.
+   */
+  virtual Parameter* conditional_parameter( const Parameter& if_true,
+    const Parameter& if_false ) const;
+  /**
    * Create the exponential of this parameter.
    * @returns a new dynamically allocated parameter.
    */
@@ -906,6 +913,86 @@ private:
   int comparator_;
 };
 
+
+/**
+ * Parameter class choosing a value based on a comparing parameter.
+ */
+class ConditionalParameter : public Parameter
+{
+public:
+  /**
+   * Construct the choice of two given parameters, based on a third.
+   * Copies are made of the supplied Parameter objects.
+   */
+  ConditionalParameter( const Parameter& condition,
+    const Parameter& if_true,
+    const Parameter& if_false )
+    : Parameter()
+    , condition_( condition.clone() )
+    , if_true_( if_true.clone() )
+    , if_false_( if_false.clone() )
+  {
+  }
+
+  /**
+   * Copy constructor.
+   */
+  ConditionalParameter( const ConditionalParameter& p )
+    : Parameter( p )
+    , condition_( p.condition_->clone() )
+    , if_true_( p.if_true_->clone() )
+    , if_false_( p.if_false_->clone() )
+  {
+  }
+
+  ~ConditionalParameter()
+  {
+    delete condition_;
+    delete if_true_;
+    delete if_false_;
+  }
+
+  /**
+   * @returns the value chosen by the comparison.
+   */
+  double
+  value( librandom::RngPtr& rng, Node* node ) const
+  {
+    if ( condition_->value( rng, node ) )
+    {
+      return if_true_->value( rng, node );
+    }
+    else
+    {
+      return if_false_->value( rng, node );
+    }
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  {
+    if ( condition_->value( rng, source, target ) )
+    {
+      return if_true_->value( rng, source, target );
+    }
+    else
+    {
+      return if_false_->value( rng, source, target );
+    }
+  }
+
+
+  Parameter*
+  clone() const
+  {
+    return new ConditionalParameter( *this );
+  }
+
+protected:
+  Parameter* condition_, *if_true_, *if_false_;
+};
+
+
 /**
  * Parameter class representing the exponential of a parameter.
  */
@@ -1101,6 +1188,13 @@ Parameter::compare_parameter( const Parameter& other,
   const DictionaryDatum& d ) const
 {
   return new ComparingParameter( *this, other, d );
+}
+
+inline Parameter*
+Parameter::conditional_parameter( const Parameter& if_true,
+  const Parameter& if_false ) const
+{
+  return new ConditionalParameter( *this, if_true, if_false );
 }
 
 inline Parameter*

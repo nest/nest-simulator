@@ -103,6 +103,10 @@ if ( HAVE_PYTHON )
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/math
       )
 
+  install( DIRECTORY nest/logic/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/logic
+      )
+
   find_program( NOSETESTS nosetests )
   if ( NOT NOSETESTS STREQUAL "NOSETESTS-NOTFOUND" )
     add_test( NAME PyNEST

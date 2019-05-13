@@ -52,12 +52,12 @@ NEST is extensible and new models for neurons, synapses, and devices can be
 added.
 
 To get started with NEST, please see the [Documentation Page for
-Tutorials](http://nest-simulator.org/documentation/).
+Tutorials](http://www.nest-simulator.org/documentation/).
 
 ## Why should I use NEST?
 
 To learn more about the capabilities of NEST, please read the complete [feature
-summary](http://nest-simulator.org/features/).
+summary](http://www.nest-simulator.org/features/).
 
 - NEST provides over 50 neuron models many of which have been published. Choose
   from simple integrate-and-fire neurons with current or conductance based

@@ -465,7 +465,7 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
 
     For further information, see
     * The NEST documentation on using the CG Interface at
-      http://nest-simulator.org/connection-generator-interface
+      http://www.nest-simulator.org/connection-generator-interface
     * The GitHub repository and documentation for libneurosim at
       https://github.com/INCF/libneurosim/
     * The publication about the Connection Generator Interface at

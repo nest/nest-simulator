@@ -537,6 +537,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } sub_P_Pfunction;
 
+  class Compare_P_P_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } compare_P_P_Dfunction;
+
   class Exp_PFunction : public SLIFunction
   {
   public:

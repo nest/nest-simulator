@@ -348,6 +348,14 @@ subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
 }
 
 ParameterDatum
+compare_parameter( const ParameterDatum& param1,
+  const ParameterDatum& param2,
+  const DictionaryDatum& d )
+{
+  return param1->compare_parameter( *param2, d );
+}
+
+ParameterDatum
 exp_parameter( const ParameterDatum& param )
 {
   return param->exp();
@@ -382,6 +390,6 @@ double
 get_value( const ParameterDatum& param )
 {
   librandom::RngPtr rng = get_global_rng();
-  return param->value( rng, nullptr);
+  return param->value( rng, nullptr );
 }
 } // namespace nest

@@ -105,6 +105,12 @@ public:
    */
   virtual Parameter* subtract_parameter( const Parameter& other ) const;
   /**
+   * Create comparison of this parameter with another.
+   * @returns a new dynamically allocated parameter.
+   */
+  virtual Parameter* compare_parameter( const Parameter& other,
+    const DictionaryDatum& d ) const;
+  /**
    * Create the exponential of this parameter.
    * @returns a new dynamically allocated parameter.
    */
@@ -456,8 +462,7 @@ public:
       return get_node_pos_( rng, target );
     }
     // TODO: assert that we don't get here
-    throw KernelException(
-        "Wrong node_location_." );
+    throw KernelException( "Wrong node_location_." );
   }
 
   Parameter*
@@ -793,6 +798,114 @@ protected:
   Parameter* p_;
 };
 
+
+/**
+ * Parameter class representing the comparison of two parameters.
+ */
+class ComparingParameter : public Parameter
+{
+public:
+  /**
+   * Construct the comparison of the two given parameters. Copies are made
+   * of the supplied Parameter objects.
+   *
+   * comparator - Operator to use as a comparator.
+   *              0: <
+   *              2: <=
+   *              4: ==
+   *              5: !=
+   *              3: >=
+   *              1: >
+   *
+   */
+  ComparingParameter( const Parameter& m1,
+    const Parameter& m2,
+    const DictionaryDatum& d )
+    : Parameter()
+    , parameter1_( m1.clone() )
+    , parameter2_( m2.clone() )
+    , comparator_( -1 )
+  {
+    if ( not updateValue< long >( d, names::comparator, comparator_ ) )
+    {
+      throw BadParameter( "A comparator has to be specified." );
+    }
+    if ( comparator_ < 0 or 5 < comparator_ )
+    {
+      throw BadParameter(
+        "Comparator specification has to be in the range 0-5." );
+    }
+  }
+
+  /**
+   * Copy constructor.
+   */
+  ComparingParameter( const ComparingParameter& p )
+    : Parameter( p )
+    , parameter1_( p.parameter1_->clone() )
+    , parameter2_( p.parameter2_->clone() )
+    , comparator_( p.comparator_ )
+  {
+  }
+
+  ~ComparingParameter()
+  {
+    delete parameter1_;
+    delete parameter2_;
+  }
+
+  /**
+   * @returns the result of the comparison, bool given as a double.
+   */
+  double
+  value( librandom::RngPtr& rng, Node* node ) const
+  {
+    return compare_(
+      parameter1_->value( rng, node ), parameter2_->value( rng, node ) );
+  }
+
+  double
+  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  {
+    return compare_( parameter1_->value( rng, source, target ),
+      parameter2_->value( rng, source, target ) );
+  }
+
+
+  Parameter*
+  clone() const
+  {
+    return new ComparingParameter( *this );
+  }
+
+protected:
+  Parameter* parameter1_, *parameter2_;
+
+private:
+  bool
+  compare_( double value_a, double value_b ) const
+  {
+    switch ( comparator_ )
+    {
+    case 0:
+      return value_a < value_b;
+    case 1:
+      return value_a <= value_b;
+    case 2:
+      return value_a == value_b;
+    case 3:
+      return value_a != value_b;
+    case 4:
+      return value_a >= value_b;
+    case 5:
+      return value_a > value_b;
+    }
+    throw KernelException( "Wrong comparison operator." );
+  }
+
+  int comparator_;
+};
+
 /**
  * Parameter class representing the exponential of a parameter.
  */
@@ -981,6 +1094,13 @@ inline Parameter*
 Parameter::subtract_parameter( const Parameter& other ) const
 {
   return new DifferenceParameter( *this, other );
+}
+
+inline Parameter*
+Parameter::compare_parameter( const Parameter& other,
+  const DictionaryDatum& d ) const
+{
+  return new ComparingParameter( *this, other, d );
 }
 
 inline Parameter*

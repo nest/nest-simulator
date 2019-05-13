@@ -858,13 +858,16 @@ class Parameter(object):
         self._datum = datum
 
     # Generic binary operation
-    def _binop(self, op, other):
+    def _binop(self, op, other, params=None):
         if isinstance(other, (int, float)):
             other = CreateParameter('constant', {'value': float(other)})
         if not isinstance(other, Parameter):
             return NotImplemented
 
-        return sli_func(op, self._datum, other._datum)
+        if params is None:
+            return sli_func(op, self._datum, other._datum)
+        else:
+            return sli_func(op, self._datum, other._datum, params)
 
     def __add__(self, other):
         return self._binop("add", other)
@@ -892,6 +895,24 @@ class Parameter(object):
 
     def __truediv__(self, other):
         return self._binop("div", other)
+
+    def __lt__(self, other):
+        return self._binop("compare", other, {'comparator': 0})
+
+    def __le__(self, other):
+        return self._binop("compare", other, {'comparator': 1})
+
+    def __eq__(self, other):
+        return self._binop("compare", other, {'comparator': 2})
+
+    def __ne__(self, other):
+        return self._binop("compare", other, {'comparator': 3})
+
+    def __ge__(self, other):
+        return self._binop("compare", other, {'comparator': 4})
+
+    def __gt__(self, other):
+        return self._binop("compare", other, {'comparator': 5})
 
     def GetValue(self):
         """

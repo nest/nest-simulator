@@ -1880,6 +1880,23 @@ NestModule::Sub_P_PFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+
+void
+NestModule::Compare_P_P_DFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 3 );
+
+  ParameterDatum param1 = getValue< ParameterDatum >( i->OStack.pick( 2 ) );
+  ParameterDatum param2 = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+  DictionaryDatum param3 = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = compare_parameter( param1, param2, param3 );
+
+  i->OStack.pop( 3 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
 /** @BeginDocumentation
   Name: GetValue
 */
@@ -1946,6 +1963,8 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "div_P_P", &div_P_Pfunction );
   i->createcommand( "add_P_P", &add_P_Pfunction );
   i->createcommand( "sub_P_P", &sub_P_Pfunction );
+
+  i->createcommand( "compare_P_P_D", &compare_P_P_Dfunction );
 
   i->createcommand( "exp_P", &exp_Pfunction );
   i->createcommand( "sin_P", &sin_Pfunction );

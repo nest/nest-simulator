@@ -332,6 +332,10 @@ def
   /sub_P_P load
 def
 
+/compare [/parametertype /parametertype /dictionarytype]
+  /compare_P_P_D load
+def
+
 /exp [/parametertype]
   /exp_P load
 def

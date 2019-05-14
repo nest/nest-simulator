@@ -30,6 +30,7 @@ __all__ = [
 
 distance = CreateParameter('distance', {})
 
+
 class pos(object):
     x = CreateParameter('position', {'dimension': 0})
     y = CreateParameter('position', {'dimension': 1})

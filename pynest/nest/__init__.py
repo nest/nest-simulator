@@ -33,6 +33,7 @@ from . import spatial  # noqa
 from . import math  # noqa
 from . import logic  # noqa
 
+
 def test():
     """Runs all PyNEST unit tests."""
     from . import tests

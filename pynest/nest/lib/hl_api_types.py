@@ -963,9 +963,12 @@ class TopologyParameter(Parameter):
     # The constructor should not be called by the user
 
     def __init__(self, datum):
-        """Parameters must be created using the CreateTopologyParameter command."""
-        if not isinstance(datum,
-                          kernel.SLIDatum) or datum.dtype != "topologyparametertype":
+        """
+        Parameters must be created using the CreateTopologyParameter
+        command.
+        """
+        if not (isinstance(datum, kernel.SLIDatum)
+                           or datum.dtype != "topologyparametertype"):
             raise TypeError("expected parameter datum")
         self._datum = datum
 
@@ -998,7 +1001,8 @@ class TopologyParameter(Parameter):
 
         See also
         --------
-        CreateTopologyParameter : create parameter for e.g., distance dependency
+        CreateTopologyParameter : create parameter for e.g.,
+        distance dependency
 
 
         Notes

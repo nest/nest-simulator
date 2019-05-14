@@ -378,7 +378,8 @@ class TestNodeParametrization(unittest.TestCase):
                                     'elements': 'iaf_psc_alpha'})
             # Scale up delay because of limited number of digits.
             nest.Connect(layer, layer, syn_spec={
-                'weight': source_positions[i], 'delay': 100*target_positions[i]})
+                'weight': source_positions[i],
+                'delay': 100*target_positions[i]})
             conns = nest.GetConnections()
             conn_status = conns.get()
 

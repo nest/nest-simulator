@@ -465,7 +465,8 @@ nest::ConnBuilder::single_connect_( index sgid,
     else
     {
       double delay = delay_->value_double( target_thread, rng, sgid, &target );
-      double weight = weight_->value_double( target_thread, rng, sgid, &target );
+      double weight =
+        weight_->value_double( target_thread, rng, sgid, &target );
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
@@ -549,7 +550,8 @@ nest::ConnBuilder::single_connect_( index sgid,
     else
     {
       double delay = delay_->value_double( target_thread, rng, sgid, &target );
-      double weight = weight_->value_double( target_thread, rng, sgid, &target );
+      double weight =
+        weight_->value_double( target_thread, rng, sgid, &target );
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,

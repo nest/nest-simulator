@@ -77,7 +77,8 @@ public:
    * @param rng   random number generator pointer
    * will be ignored except for random parameters.
    */
-  virtual double value_double( thread, librandom::RngPtr&, index, Node* ) const = 0;
+  virtual double
+  value_double( thread, librandom::RngPtr&, index, Node* ) const = 0;
   virtual long value_int( thread, librandom::RngPtr&, index, Node* ) const = 0;
   virtual void
   skip( thread, size_t n_skip ) const
@@ -431,13 +432,18 @@ class ParameterConnParameterWrapper : public ConnParameter
 public:
   ParameterConnParameterWrapper( const ParameterDatum&, const size_t );
 
-  double
-  value_double( thread target_thread, librandom::RngPtr& rng, index sgid, Node* target ) const;
+  double value_double( thread target_thread,
+    librandom::RngPtr& rng,
+    index sgid,
+    Node* target ) const;
 
   long
-  value_int( thread target_thread, librandom::RngPtr& rng, index sgid, Node* target ) const
+  value_int( thread target_thread,
+    librandom::RngPtr& rng,
+    index sgid,
+    Node* target ) const
   {
-    return value_double(target_thread, rng, sgid, target);
+    return value_double( target_thread, rng, sgid, target );
   }
 
   inline bool

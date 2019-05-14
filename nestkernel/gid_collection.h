@@ -71,6 +71,7 @@ public:
 
   virtual void set_first_gid( index ) = 0;
   virtual const index get_first_gid() const = 0;
+  virtual std::string get_type() const = 0;
 };
 
 class GIDTriple
@@ -410,6 +411,7 @@ public:
   GIDCollectionPrimitive();
 
   void print_me( std::ostream& ) const;
+  void print_primitive( std::ostream& ) const;
 
   index operator[]( const size_t ) const;
   GIDCollectionPTR operator+( GIDCollectionPTR rhs ) const;

@@ -30,7 +30,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.hl_api.set_verbosity('M_INFO')
+        nest.set_verbosity('M_INFO')
         self.exclude_synapse_model = [
             'stdp_dopamine_synapse',
             'stdp_dopamine_synapse_lbl',

@@ -1,3 +1,25 @@
+/*
+ *  glif_lif_r_psc.h
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #ifndef GLIF_LIF_R_PSC_H
 #define GLIF_LIF_R_PSC_H
 
@@ -12,17 +34,25 @@
 
 /* BeginDocumentation
 Name: glif_lif_r_psc - Generalized leaky integrate and fire (GLIF) model 2 -
-                       Leaky integrate and fire with biologically defined reset rules model.
+                       Leaky integrate and fire with biologically defined reset
+rules model.
 
 Description:
 
-  glif_lif_r_psc is an implementation of a generalized leaky integrate and fire (GLIF) model 2
-  (i.e., leaky integrate and fire with biologically defined reset rules model) [1]
-  with alpha-function shaped synaptic currents. Incoming spike events induce a post-synaptic change
-  of current modeled by an alpha function. The alpha function is normalized such that an event of
-  weight 1.0 results in a peak current of 1 pA at t = tau_syn. On the postsynapic side, there can be
-  arbitrarily many synaptic time constants. This can be reached by specifying separate receptor ports,
-  each for a different time constant. The port number has to match the respective
+  glif_lif_r_psc is an implementation of a generalized leaky integrate and fire
+(GLIF) model 2
+  (i.e., leaky integrate and fire with biologically defined reset rules model)
+[1]
+  with alpha-function shaped synaptic currents. Incoming spike events induce a
+post-synaptic change
+  of current modeled by an alpha function. The alpha function is normalized such
+that an event of
+  weight 1.0 results in a peak current of 1 pA at t = tau_syn. On the
+postsynapic side, there can be
+  arbitrarily many synaptic time constants. This can be reached by specifying
+separate receptor ports,
+  each for a different time constant. The port number has to match the
+respective
   "receptor_type" in the connectors.
 
 Parameters:
@@ -39,15 +69,20 @@ Parameters:
   b_spike           double - Spike-induced threshold time constant in 1/ms.
   a_reset           double - Voltage fraction coefficient following spike.
   b_reset           double - Voltage addition following spike in mV.
-  tau_syn           double vector - Rise time constants of the synaptic alpha function in ms.
-  V_dynamics_method string - Voltage dynamics (Equation (1) in [1]) solution methods:
-                             'linear_forward_euler' - Linear Euler forward (RK1) to find next V_m value, or
-                             'linear_exact' - Linear exact to find next V_m value.
+  tau_syn           double vector - Rise time constants of the synaptic alpha
+function in ms.
+  V_dynamics_method string - Voltage dynamics (Equation (1) in [1]) solution
+methods:
+                             'linear_forward_euler' - Linear Euler forward (RK1)
+to find next V_m value, or
+                             'linear_exact' - Linear exact to find next V_m
+value.
 
 References:
   [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
       Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
-      Generalized leaky integrate-and-fire models classify multiple neuron types.
+      Generalized leaky integrate-and-fire models classify multiple neuron
+types.
       Nature Communications 9:709.
 
 Author: Binghuang Cai and Kael Dai @ Allen Institute for Brain Science
@@ -59,7 +94,6 @@ namespace nest
 class glif_lif_r_psc : public nest::Archiving_Node
 {
 public:
-
   glif_lif_r_psc();
 
   glif_lif_r_psc( const glif_lif_r_psc& );
@@ -77,7 +111,7 @@ public:
   nest::port handles_test_event( nest::CurrentEvent&, nest::port );
   nest::port handles_test_event( nest::DataLoggingRequest&, nest::port );
 
-  bool is_off_grid() const  // uses off_grid events
+  bool is_off_grid() const // uses off_grid events
   {
     return true;
   }
@@ -106,14 +140,14 @@ private:
 
   struct Parameters_
   {
-    double th_inf_; // A threshold in mV
-    double G_; // membrane conductance in nS
-    double E_L_; // resting potential in mV
-    double C_m_; // capacitance in pF
-    double t_ref_; // refractory time in ms
+    double th_inf_;  // A threshold in mV
+    double G_;       // membrane conductance in nS
+    double E_L_;     // resting potential in mV
+    double C_m_;     // capacitance in pF
+    double t_ref_;   // refractory time in ms
     double a_spike_; // threshold additive constant following reset in mV
     double b_spike_; // spike induced threshold in 1/ms
-    double voltage_reset_a_; //voltage fraction following reset coefficient
+    double voltage_reset_a_; // voltage fraction following reset coefficient
     double voltage_reset_b_; // voltage additive constant following reset in mV
     std::vector< double > tau_syn_; // synaptic port time constants in ms
     std::string V_dynamics_method_; // voltage dynamic methods
@@ -132,10 +166,10 @@ private:
 
   struct State_
   {
-    double V_m_;  // membrane potential in mV
+    double V_m_;       // membrane potential in mV
     double threshold_; // voltage threshold in mV
-    double I_; // external current in pA
-    double I_syn_; // post synaptic current in pA
+    double I_;         // external current in pA
+    double I_syn_;     // post synaptic current in pA
 
     std::vector< double > y1_; // synapse current evolution state 1 in pA
     std::vector< double > y2_; // synapse current evolution state 2 in pA
@@ -152,7 +186,8 @@ private:
     Buffers_( glif_lif_r_psc& );
     Buffers_( const Buffers_&, glif_lif_r_psc& );
 
-    std::vector< nest::RingBuffer > spikes_;   //!< Buffer incoming spikes through delay, as sum
+    std::vector< nest::RingBuffer >
+      spikes_; //!< Buffer incoming spikes through delay, as sum
     nest::RingBuffer currents_; //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
@@ -162,15 +197,16 @@ private:
   struct Variables_
   {
     double t_ref_remaining_; // counter during refractory period, in ms
-    double t_ref_total_; // total time of refractory period, in ms
-    double last_spike_; // last spike component of threshold in mV
-    int method_; // voltage dynamics solver method flag: 0-linear forward euler; 1-linear exact
+    double t_ref_total_;     // total time of refractory period, in ms
+    double last_spike_;      // last spike component of threshold in mV
+    int method_; // voltage dynamics solver method flag: 0-linear forward euler;
+                 // 1-linear exact
 
     std::vector< double > P11_; // synaptic current evolution parameter
     std::vector< double > P21_; // synaptic current evolution parameter
     std::vector< double > P22_; // synaptic current evolution parameter
-    double P30_; // membrane current/voltage evolution parameter
-    double P33_; // membrane voltage evolution parameter
+    double P30_;                // membrane current/voltage evolution parameter
+    double P33_;                // membrane voltage evolution parameter
     std::vector< double > P31_; // synaptic/membrane current evolution parameter
     std::vector< double > P32_; // synaptic/membrane current evolution parameter
 
@@ -178,17 +214,20 @@ private:
               This value is chosen such that a post-synaptic current with
               weight one has an amplitude of 1 pA.
     */
-    std::vector< double > PSCInitialValues_; // post synaptic current intial values in pA
+    std::vector< double >
+      PSCInitialValues_; // post synaptic current intial values in pA
 
     unsigned int receptor_types_size_;
   };
 
-  double get_V_m_() const
+  double
+  get_V_m_() const
   {
     return S_.V_m_;
   }
 
-  double get_I_syn_() const
+  double
+  get_I_syn_() const
   {
     return S_.I_syn_;
   }
@@ -200,7 +239,6 @@ private:
 
   //! Mapping of recordables names to access functions
   static nest::RecordablesMap< glif_lif_r_psc > recordablesMap_;
-
 };
 
 inline size_t
@@ -231,7 +269,8 @@ nest::glif_lif_r_psc::handles_test_event( nest::CurrentEvent&,
   // It confirms to the connection management system that we are able
   // to handle @c CurrentEvent on port 0. You need to extend the function
   // if you want to differentiate between input ports.
-  if ( receptor_type != 0 ){
+  if ( receptor_type != 0 )
+  {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -246,7 +285,8 @@ nest::glif_lif_r_psc::handles_test_event( nest::DataLoggingRequest& dlr,
   // to handle @c DataLoggingRequest on port 0.
   // The function also tells the built-in UniversalDataLogger that this node
   // is recorded from and that it thus needs to collect data during simulation.
-  if ( receptor_type != 0 ){
+  if ( receptor_type != 0 )
+  {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

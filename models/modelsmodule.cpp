@@ -51,12 +51,15 @@
 #include "aeif_psc_alpha.h"
 #include "aeif_psc_exp.h"
 #include "aeif_psc_delta.h"
+#include "aeif_psc_delta_clopath.h"
 #include "amat2_psc_exp.h"
 #include "erfc_neuron.h"
 #include "gauss_rate.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
+#include "hh_cond_beta_gap_traub.h"
 #include "hh_psc_alpha.h"
+#include "hh_psc_alpha_clopath.h"
 #include "hh_psc_alpha_gap.h"
 #include "ht_neuron.h"
 #include "iaf_chs_2007.h"
@@ -121,6 +124,7 @@
 #include "sinusoidal_poisson_generator.h"
 #include "spike_generator.h"
 #include "step_current_generator.h"
+#include "step_rate_generator.h"
 
 // Recording devices
 #include "correlation_detector.h"
@@ -135,6 +139,7 @@
 
 // Prototypes for synapses
 #include "bernoulli_connection.h"
+#include "clopath_connection.h"
 #include "common_synapse_properties.h"
 #include "cont_delay_connection.h"
 #include "cont_delay_connection_impl.h"
@@ -210,22 +215,24 @@ void
 ModelsModule::init( SLIInterpreter* )
 {
 
-  //glif models
-  nest::kernel().model_manager.register_node_model<glif_lif>("glif_lif");
-  nest::kernel().model_manager.register_node_model<glif_lif_r>("glif_lif_r");
-  nest::kernel().model_manager.register_node_model<glif_lif_asc>("glif_lif_asc");
-  nest::kernel().model_manager.register_node_model<glif_lif_r_asc>("glif_lif_r_asc");
-  nest::kernel().model_manager.register_node_model<glif_lif_r_asc_a>("glif_lif_r_asc_a");
-  nest::kernel().model_manager.register_node_model<glif_lif_psc>("glif_lif_psc");
-  nest::kernel().model_manager.register_node_model<glif_lif_r_psc>("glif_lif_r_psc");
-  nest::kernel().model_manager.register_node_model<glif_lif_asc_psc>("glif_lif_asc_psc");
-  nest::kernel().model_manager.register_node_model<glif_lif_r_asc_psc>("glif_lif_r_asc_psc");
-  nest::kernel().model_manager.register_node_model<glif_lif_r_asc_a_psc>("glif_lif_r_asc_a_psc");
-  nest::kernel().model_manager.register_node_model<glif_lif_cond>("glif_lif_cond");
-  nest::kernel().model_manager.register_node_model<glif_lif_r_cond>("glif_lif_r_cond");
-  nest::kernel().model_manager.register_node_model<glif_lif_asc_cond>("glif_lif_asc_cond");
-  nest::kernel().model_manager.register_node_model<glif_lif_r_asc_cond>("glif_lif_r_asc_cond");
-  nest::kernel().model_manager.register_node_model<glif_lif_r_asc_a_cond>("glif_lif_r_asc_a_cond");
+  // glif models
+  kernel().model_manager.register_node_model< glif_lif >( "glif_lif" );
+  kernel().model_manager.register_node_model< glif_lif_r >( "glif_lif_r" );
+  kernel().model_manager.register_node_model< glif_lif_asc >( "glif_lif_asc" );
+  kernel().model_manager.register_node_model< glif_lif_r_asc >(
+    "glif_lif_r_asc" );
+  kernel().model_manager.register_node_model< glif_lif_r_asc_a >(
+    "glif_lif_r_asc_a" );
+  kernel().model_manager.register_node_model< glif_lif_psc >( "glif_lif_psc" );
+  kernel().model_manager.register_node_model< glif_lif_r_psc >(
+    "glif_lif_r_psc" );
+  kernel().model_manager.register_node_model< glif_lif_asc_psc >(
+    "glif_lif_asc_psc" );
+  kernel().model_manager.register_node_model< glif_lif_r_asc_psc >(
+    "glif_lif_r_asc_psc" );
+  kernel().model_manager.register_node_model< glif_lif_r_asc_a_psc >(
+    "glif_lif_r_asc_a_psc" );
+
 
   // rate models with input noise
   kernel().model_manager.register_node_model< gauss_rate_ipn >(
@@ -299,6 +306,8 @@ ModelsModule::init( SLIInterpreter* )
     "noise_generator" );
   kernel().model_manager.register_node_model< step_current_generator >(
     "step_current_generator" );
+  kernel().model_manager.register_node_model< step_rate_generator >(
+    "step_rate_generator" );
   kernel().model_manager.register_node_model< mip_generator >(
     "mip_generator" );
   kernel().model_manager.register_node_model< sinusoidal_poisson_generator >(
@@ -408,6 +417,18 @@ ModelsModule::init( SLIInterpreter* )
     name, vmdict, false );
 
 #ifdef HAVE_GSL
+  // glif cond models
+  kernel().model_manager.register_node_model< glif_lif_cond >(
+    "glif_lif_cond" );
+  kernel().model_manager.register_node_model< glif_lif_r_cond >(
+    "glif_lif_r_cond" );
+  kernel().model_manager.register_node_model< glif_lif_asc_cond >(
+    "glif_lif_asc_cond" );
+  kernel().model_manager.register_node_model< glif_lif_r_asc_cond >(
+    "glif_lif_r_asc_cond" );
+  kernel().model_manager.register_node_model< glif_lif_r_asc_a_cond >(
+    "glif_lif_r_asc_a_cond" );
+
   kernel().model_manager.register_node_model< iaf_chxk_2008 >(
     "iaf_chxk_2008" );
   kernel().model_manager.register_node_model< iaf_cond_alpha >(
@@ -419,7 +440,11 @@ ModelsModule::init( SLIInterpreter* )
     "iaf_cond_exp_sfa_rr" );
   kernel().model_manager.register_node_model< iaf_cond_alpha_mc >(
     "iaf_cond_alpha_mc" );
+  kernel().model_manager.register_node_model< hh_cond_beta_gap_traub >(
+    "hh_cond_beta_gap_traub" );
   kernel().model_manager.register_node_model< hh_psc_alpha >( "hh_psc_alpha" );
+  kernel().model_manager.register_node_model< hh_psc_alpha_clopath >(
+    "hh_psc_alpha_clopath" );
   kernel().model_manager.register_node_model< hh_psc_alpha_gap >(
     "hh_psc_alpha_gap" );
   kernel().model_manager.register_node_model< hh_cond_exp_traub >(
@@ -432,6 +457,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< gif_pop_psc_exp >(
     "gif_pop_psc_exp" );
 
+  kernel().model_manager.register_node_model< aeif_psc_delta_clopath >(
+    "aeif_psc_delta_clopath" );
   kernel().model_manager.register_node_model< aeif_cond_alpha >(
     "aeif_cond_alpha" );
   kernel().model_manager.register_node_model< aeif_cond_exp >(
@@ -556,6 +583,12 @@ ModelsModule::init( SLIInterpreter* )
     .register_connection_model< STDPConnection< TargetIdentifierIndex > >(
       "stdp_synapse_hpc" );
 
+  kernel()
+    .model_manager
+    .register_connection_model< ClopathConnection< TargetIdentifierPtrRport > >(
+      "clopath_synapse",
+      /*requires_symmetric=*/false,
+      /*requires_clopath_archiving=*/true );
 
   /** @BeginDocumentation
      Name: stdp_pl_synapse_hom_hpc - Variant of stdp_pl_synapse_hom with low

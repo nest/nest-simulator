@@ -1,3 +1,25 @@
+/*
+ *  glif_lif_asc_psc.h
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #ifndef GLIF_LIF_ASC_PSC_H
 #define GLIF_LIF_ASC_PSC_H
 
@@ -12,17 +34,25 @@
 
 /* BeginDocumentation
 Name: glif_lif_asc_psc - Generalized leaky integrate and fire (GLIF) model 3 -
-                         Leaky integrate and fire with after-spike currents model.
+                         Leaky integrate and fire with after-spike currents
+model.
 
 Description:
 
-  glif_lif_asc_psc is an implementation of a generalized leaky integrate and fire (GLIF) model 3
-  (i.e., leaky integrate and fire with after-spike currents model) [1] with alpha-function shaped
-  synaptic currents. Incoming spike events induce a post-synaptic change of current modeled
-  by an alpha function. The alpha function is normalized such that an event of weight 1.0
-  results in a peak current of 1 pA at t = tau_syn. On the postsynapic side, there can be
-  arbitrarily many synaptic time constants. This can be reached by specifying separate receptor ports,
-  each for a different time constant. The port number has to match the respective
+  glif_lif_asc_psc is an implementation of a generalized leaky integrate and
+fire (GLIF) model 3
+  (i.e., leaky integrate and fire with after-spike currents model) [1] with
+alpha-function shaped
+  synaptic currents. Incoming spike events induce a post-synaptic change of
+current modeled
+  by an alpha function. The alpha function is normalized such that an event of
+weight 1.0
+  results in a peak current of 1 pA at t = tau_syn. On the postsynapic side,
+there can be
+  arbitrarily many synaptic time constants. This can be reached by specifying
+separate receptor ports,
+  each for a different time constant. The port number has to match the
+respective
   "receptor_type" in the connectors.
 
 Parameters:
@@ -36,19 +66,28 @@ Parameters:
   C_m               double - Capacitance of the membrane in pF.
   t_ref             double - Duration of refractory time in ms.
   V_reset           double - Reset potential of the membrane in mV.
-  asc_init          double vector - Initial values of after-spike currents in pA.
-  k                 double vector - After-spike current time constants in 1/ms (kj in Equation (3) in [1]).
-  asc_amps          double vector - After-spike current amplitudes in pA (deltaIj in Equation (7) in [1]).
-  r                 double vector - Current fraction following spike coefficients (fj in Equation (7) in [1]).
-  tau_syn           double vector - Rise time constants of the synaptic alpha function in ms.
-  V_dynamics_method string - Voltage dynamics (Equation (1) in [1]) solution methods:
-                             'linear_forward_euler' - Linear Euler forward (RK1) to find next V_m value, or
-                             'linear_exact' - Linear exact to find next V_m value.
+  asc_init          double vector - Initial values of after-spike currents in
+pA.
+  k                 double vector - After-spike current time constants in 1/ms
+(kj in Equation (3) in [1]).
+  asc_amps          double vector - After-spike current amplitudes in pA
+(deltaIj in Equation (7) in [1]).
+  r                 double vector - Current fraction following spike
+coefficients (fj in Equation (7) in [1]).
+  tau_syn           double vector - Rise time constants of the synaptic alpha
+function in ms.
+  V_dynamics_method string - Voltage dynamics (Equation (1) in [1]) solution
+methods:
+                             'linear_forward_euler' - Linear Euler forward (RK1)
+to find next V_m value, or
+                             'linear_exact' - Linear exact to find next V_m
+value.
 
 References:
   [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
       Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
-      Generalized leaky integrate-and-fire models classify multiple neuron types.
+      Generalized leaky integrate-and-fire models classify multiple neuron
+types.
       Nature Communications 9:709.
 
 Author: Binghuang Cai and Kael Dai @ Allen Institute for Brain Science
@@ -60,7 +99,6 @@ namespace nest
 class glif_lif_asc_psc : public nest::Archiving_Node
 {
 public:
-
   glif_lif_asc_psc();
 
   glif_lif_asc_psc( const glif_lif_asc_psc& );
@@ -78,7 +116,7 @@ public:
   nest::port handles_test_event( nest::CurrentEvent&, nest::port );
   nest::port handles_test_event( nest::DataLoggingRequest&, nest::port );
 
-  bool is_off_grid() const  // uses off_grid events
+  bool is_off_grid() const // uses off_grid events
   {
     return true;
   }
@@ -108,19 +146,19 @@ private:
 
   struct Parameters_
   {
-    double V_th_; // A constant spiking threshold in mV
-    double G_; // membrane conductance in nS
-    double E_L_; // resting potential in mV
-    double C_m_; // capacitance in pF
-    double t_ref_; // refractory time in ms
+    double V_th_;    // A constant spiking threshold in mV
+    double G_;       // membrane conductance in nS
+    double E_L_;     // resting potential in mV
+    double C_m_;     // capacitance in pF
+    double t_ref_;   // refractory time in ms
     double V_reset_; // Membrane voltage following spike in mV
 
-    std::vector<double> asc_init_; // initial values of ASCurrents_ in pA
-    std::vector<double> k_; // predefined time scale in 1/ms
-    std::vector<double> asc_amps_; // in pA
-    std::vector<double> r_; // coefficient
-    std::vector< double > tau_syn_; // synaptic port time constants in ms
-    std::string V_dynamics_method_; // voltage dynamic methods
+    std::vector< double > asc_init_; // initial values of ASCurrents_ in pA
+    std::vector< double > k_;        // predefined time scale in 1/ms
+    std::vector< double > asc_amps_; // in pA
+    std::vector< double > r_;        // coefficient
+    std::vector< double > tau_syn_;  // synaptic port time constants in ms
+    std::string V_dynamics_method_;  // voltage dynamic methods
 
     // boolean flag which indicates whether the neuron has connections
     bool has_connections_;
@@ -136,12 +174,12 @@ private:
 
   struct State_
   {
-    double V_m_; // membrane potential in mV
-    std::vector<double> ASCurrents_; // after-spike currents in pA
-    double ASCurrents_sum_; // in pA
+    double V_m_;                       // membrane potential in mV
+    std::vector< double > ASCurrents_; // after-spike currents in pA
+    double ASCurrents_sum_;            // in pA
 
-    double I_; // external current in pA
-    double I_syn_; // post synaptic current in pA
+    double I_;                 // external current in pA
+    double I_syn_;             // post synaptic current in pA
     std::vector< double > y1_; // synapse current evolution state 1 in pA
     std::vector< double > y2_; // synapse current evolution state 2 in pA
 
@@ -157,7 +195,8 @@ private:
     Buffers_( glif_lif_asc_psc& );
     Buffers_( const Buffers_&, glif_lif_asc_psc& );
 
-    std::vector< nest::RingBuffer > spikes_; //!< Buffer incoming spikes through delay, as sum
+    std::vector< nest::RingBuffer >
+      spikes_; //!< Buffer incoming spikes through delay, as sum
     nest::RingBuffer currents_; //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
@@ -167,13 +206,14 @@ private:
   struct Variables_
   {
     double t_ref_remaining_; // counter during refractory period, in ms
-    double t_ref_total_; // total time of refractory period, in ms
-    int method_; // voltage dynamics solver method flag: 0-linear forward euler; 1-linear exact
+    double t_ref_total_;     // total time of refractory period, in ms
+    int method_; // voltage dynamics solver method flag: 0-linear forward euler;
+                 // 1-linear exact
     std::vector< double > P11_; // synaptic current evolution parameter
     std::vector< double > P21_; // synaptic current evolution parameter
     std::vector< double > P22_; // synaptic current evolution parameter
-    double P30_; // membrane current/voltage evolution parameter
-    double P33_; // membrane voltage evolution parameter
+    double P30_;                // membrane current/voltage evolution parameter
+    double P33_;                // membrane voltage evolution parameter
     std::vector< double > P31_; // synaptic/membrane current evolution parameter
     std::vector< double > P32_; // synaptic/membrane current evolution parameter
 
@@ -186,17 +226,20 @@ private:
     unsigned int receptor_types_size_;
   };
 
-  double get_V_m_() const
+  double
+  get_V_m_() const
   {
     return S_.V_m_;
   }
 
-  double get_AScurrents_sum_() const
+  double
+  get_AScurrents_sum_() const
   {
-    return S_.ASCurrents_[0];
+    return S_.ASCurrents_[ 0 ];
   }
 
-  double get_I_syn_() const
+  double
+  get_I_syn_() const
   {
     return S_.I_syn_;
   }
@@ -231,7 +274,8 @@ inline nest::port
 nest::glif_lif_asc_psc::handles_test_event( nest::CurrentEvent&,
   nest::port receptor_type )
 {
-  if ( receptor_type != 0 ){
+  if ( receptor_type != 0 )
+  {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -241,7 +285,8 @@ inline nest::port
 nest::glif_lif_asc_psc::handles_test_event( nest::DataLoggingRequest& dlr,
   nest::port receptor_type )
 {
-  if ( receptor_type != 0 ){
+  if ( receptor_type != 0 )
+  {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

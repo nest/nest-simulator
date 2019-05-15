@@ -10,7 +10,10 @@ pynest/pynestkernel.cpp
 .*
 *.log
 *.pyc
+
 Makefile
+!/doc/Makefile
+
 build/
 install/
 
@@ -30,6 +33,7 @@ install/
 /topology/setup.py
 /topology/doc/Topology_UserManual.out
 /doc/doxygen/
+/doc/_build/
 
 *.kdev4
 
@@ -57,3 +61,4 @@ doc/normaldoc.conf
 lib/sli/rcsinfo.sli
 extras/nest_vars.sh
 
+pynest/examples/README

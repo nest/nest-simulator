@@ -32,6 +32,8 @@ import subprocess
 import os
 import re
 import sys
+import numpy
+import json
 
 from string import Template
 
@@ -53,17 +55,29 @@ __all__ = [
     'is_string',
     'load_help',
     'model_deprecation_warning',
+    'serializable',
     'set_verbosity',
     'show_deprecation_warning',
     'show_help_with_pager',
     'SuppressedDeprecationWarning',
+    'to_json',
     'uni_str',
 ]
 
+# These flags are used to print deprecation warnings only once.
+# Only flags for special cases need to be entered here, all flags for
+# deprecated functions will be registered by the @deprecated decorator.
+_deprecation_warning = {'BackwardCompatibilityConnect': True,
+                        'subnet': True,
+                        'aeif_cond_alpha_RK5': True}
 
-# These flags are used to print deprecation warnings only once. The
-# corresponding functions will be removed in the 2.6 release of NEST.
-_deprecation_warning = {'BackwardCompatibilityConnect': True}
+
+def format_Warning(message, category, filename, lineno, line=None):
+    """Formats deprecation warning."""
+
+    return '%s:%s: %s:%s\n' % (filename, lineno, category.__name__, message)
+
+warnings.formatwarning = format_Warning
 
 
 def get_wrapped_text(text, width=80):
@@ -103,9 +117,7 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
             alt_func_name = 'Connect'
         if text is None:
             text = "{0} is deprecated and will be removed in a future \
-            version of NEST.\nPlease use {1} instead!\n\
-            For details, see\
-            http://www.nest-simulator.org/connection_management\
+            version of NEST.\nPlease use {1} instead!\
             ".format(func_name, alt_func_name)
             text = get_wrapped_text(text)
 
@@ -123,7 +135,7 @@ def deprecated(alt_func_name, text=None):
     Parameters
     ----------
     alt_func_name : str, optional
-        Name of the function to use instead
+        Name of the function to use instead, may be empty string
     text : str, optional
         Text to display instead of standard text
 
@@ -542,7 +554,57 @@ def model_deprecation_warning(model):
         future version of NEST, use {1} instead.\
         ".format(model, deprecated_models[model])
         text = get_wrapped_text(text)
-        warnings.warn('\n' + text)
+        show_deprecation_warning(model, text=text)
+
+
+def serializable(data):
+    """Make data serializable for JSON.
+
+    Parameters
+    ----------
+    data : str, int, float, SLILiteral, list, tuple, dict, ndarray
+
+    Returns
+    -------
+    result : str, int, float, list, dict
+
+    """
+
+    if isinstance(data, kernel.SLILiteral):
+        result = data.name
+
+    elif isinstance(data, numpy.ndarray):
+        result = data.tolist()
+
+    elif type(data) in [list, tuple]:
+        result = [serializable(d) for d in data]
+
+    elif isinstance(data, dict):
+        result = dict([(key, serializable(value))
+                       for key, value in data.items()])
+
+    else:
+        result = data
+
+    return result
+
+
+def to_json(data):
+    """Serialize data to JSON.
+
+    Parameters
+    ----------
+    data : str, int, float, SLILiteral, list, tuple, dict, ndarray
+
+    Returns
+    -------
+    data_json : str
+        JSON format of the data
+    """
+
+    data_serializable = serializable(data)
+    data_json = json.dumps(data_serializable)
+    return data_json
 
 
 class SuppressedDeprecationWarning(object):

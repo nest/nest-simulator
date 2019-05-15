@@ -1,3 +1,25 @@
+/*
+ *  glif_lif_r_asc_cond.h
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #ifndef GLIF_LIF_R_ASC_COND_H
 #define GLIF_LIF_R_ASC_COND_H
 
@@ -21,19 +43,26 @@
 #include "dictdatum.h"
 
 /* BeginDocumentation
-Name: glif_lif_r_asc_cond - Generalized leaky integrate and fire (GLIF) model 4 -
+Name: glif_lif_r_asc_cond - Generalized leaky integrate and fire (GLIF) model 4
+-
                             Leaky integrate and fire with biologically defined
                             reset rules and after-spike currents model.
 
 Description:
 
-  glif_lif_r_asc_cond is an implementation of a generalized leaky integrate and fire (GLIF) model 3
-  (i.e., leaky integrate and fire with biologically defined reset rules and after-spike currents) [1]
+  glif_lif_r_asc_cond is an implementation of a generalized leaky integrate and
+fire (GLIF) model 3
+  (i.e., leaky integrate and fire with biologically defined reset rules and
+after-spike currents) [1]
   with conductance-based synapses. Incoming spike events induce a post-synaptic
-  change of conductance modeled by an alpha function [2]. The alpha function is normalized
-  such that an event of weight 1.0 results in a peak conductance change of 1 nS at t = tau_syn.
-  On the postsynapic side, there can be arbitrarily many synaptic time constants.
-  This can be reached by specifying separate receptor ports, each for a different time constant.
+  change of conductance modeled by an alpha function [2]. The alpha function is
+normalized
+  such that an event of weight 1.0 results in a peak conductance change of 1 nS
+at t = tau_syn.
+  On the postsynapic side, there can be arbitrarily many synaptic time
+constants.
+  This can be reached by specifying separate receptor ports, each for a
+different time constant.
   The port number has to match the respective "receptor_type" in the connectors.
 
 Parameters:
@@ -50,26 +79,37 @@ Parameters:
   b_spike           double - Spike-induced threshold time constant in 1/ms.
   a_reset           double - Voltage fraction coefficient following spike.
   b_reset           double - Voltage addition following spike in mV.
-  asc_init          double vector - Initial values of after-spike currents in pA.
-  k                 double vector - After-spike current time constants in 1/ms (kj in Equation (3) in [1]).
-  asc_amps          double vector - After-spike current amplitudes in pA (deltaIj in Equation (7) in [1]).
-  r                 double vector - Current fraction following spike coefficients (fj in Equation (7) in [1]).
-  tau_syn           double vector - Rise time constants of the synaptic alpha function in ms.
+  asc_init          double vector - Initial values of after-spike currents in
+pA.
+  k                 double vector - After-spike current time constants in 1/ms
+(kj in Equation (3) in [1]).
+  asc_amps          double vector - After-spike current amplitudes in pA
+(deltaIj in Equation (7) in [1]).
+  r                 double vector - Current fraction following spike
+coefficients (fj in Equation (7) in [1]).
+  tau_syn           double vector - Rise time constants of the synaptic alpha
+function in ms.
   E_rev             double vector - Reversal potential in mV.
-  V_dynamics_method string - Voltage dynamics (Equation (1) in [1]) solution methods:
-                             'linear_forward_euler' - Linear Euler forward (RK1) to find next V_m value, or
-                             'linear_exact' - Linear exact to find next V_m value.
+  V_dynamics_method string - Voltage dynamics (Equation (1) in [1]) solution
+methods:
+                             'linear_forward_euler' - Linear Euler forward (RK1)
+to find next V_m value, or
+                             'linear_exact' - Linear exact to find next V_m
+value.
 
 Description:
 
-  glif_lif_r_asc_cond is an implementation of a generalized leaky integrate and fire (GLIF) model 4
-  (i.e., leaky integrate and fire with biologically defined reset rules and after-spike currents model)
+  glif_lif_r_asc_cond is an implementation of a generalized leaky integrate and
+fire (GLIF) model 4
+  (i.e., leaky integrate and fire with biologically defined reset rules and
+after-spike currents model)
   with conductance-based synapses, described in [1].
 
 References:
   [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
       Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
-      Generalized leaky integrate-and-fire models classify multiple neuron types.
+      Generalized leaky integrate-and-fire models classify multiple neuron
+types.
       Nature Communications 9:709.
   [2] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
       model for the large, fluctuating synaptic conductance state typical of
@@ -81,12 +121,12 @@ Author: Binghuang Cai and Kael Dai @ Allen Institute for Brain Science
 namespace nest
 {
 
-extern "C" int glif_lif_r_asc_cond_dynamics( double, const double*, double*, void* );
+extern "C" int
+glif_lif_r_asc_cond_dynamics( double, const double*, double*, void* );
 
 class glif_lif_r_asc_cond : public nest::Archiving_Node
 {
 public:
-
   glif_lif_r_asc_cond();
 
   glif_lif_r_asc_cond( const glif_lif_r_asc_cond& );
@@ -106,7 +146,7 @@ public:
   nest::port handles_test_event( nest::CurrentEvent&, nest::port );
   nest::port handles_test_event( nest::DataLoggingRequest&, nest::port );
 
-  bool is_off_grid() const  // uses off_grid events
+  bool is_off_grid() const // uses off_grid events
   {
     return true;
   }
@@ -130,7 +170,8 @@ private:
   void update( nest::Time const&, const long, const long );
 
   // make dynamics function quasi-member
-  friend int glif_lif_r_asc_cond_dynamics( double, const double*, double*, void* );
+  friend int
+  glif_lif_r_asc_cond_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class nest::RecordablesMap< glif_lif_r_asc_cond >;
@@ -140,28 +181,28 @@ private:
   struct Parameters_
   {
     double th_inf_; // infinity threshold in mV
-    double G_; // membrane conductance in nS
-    double E_L_; // resting potential in mV
-    double C_m_; // capacitance in pF
-    double t_ref_; // refractory time in ms
+    double G_;      // membrane conductance in nS
+    double E_L_;    // resting potential in mV
+    double C_m_;    // capacitance in pF
+    double t_ref_;  // refractory time in ms
 
     double a_spike_; // threshold additive constant following reset in mV
-    double b_spike_; //spike induced threshold in 1/ms
-    double voltage_reset_a_; //voltage fraction following reset coefficient
+    double b_spike_; // spike induced threshold in 1/ms
+    double voltage_reset_a_; // voltage fraction following reset coefficient
     double voltage_reset_b_; // voltage additive constant following reset in mV
 
 
-    std::vector<double> asc_init_; // initial values of ASCurrents_ in pA
-    std::vector<double> k_; // predefined time scale in 1/ms
-    std::vector<double> asc_amps_; // in pA
-    std::vector<double> r_; // coefficient
-    std::vector< double > tau_syn_; // synaptic port time constants in ms
-    std::vector< double > E_rev_; // reversal pontiental in mV
+    std::vector< double > asc_init_; // initial values of ASCurrents_ in pA
+    std::vector< double > k_;        // predefined time scale in 1/ms
+    std::vector< double > asc_amps_; // in pA
+    std::vector< double > r_;        // coefficient
+    std::vector< double > tau_syn_;  // synaptic port time constants in ms
+    std::vector< double > E_rev_;    // reversal pontiental in mV
 
     // boolean flag which indicates whether the neuron has connections
     bool has_connections_;
 
-    size_t n_receptors_() const; //!< Returns the size of tau_syn_
+    size_t n_receptors_() const;  //!< Returns the size of tau_syn_
     size_t n_ASCurrents_() const; //!< Returns the size of after spike currents
 
     Parameters_();
@@ -173,9 +214,9 @@ private:
 
   struct State_
   {
-    double V_m_;  // membrane potential in mV
+    double V_m_;            // membrane potential in mV
     double ASCurrents_sum_; // in pA
-    double threshold_; // voltage threshold in mV
+    double threshold_;      // voltage threshold in mV
 
     //! Symbolic indices to the elements of the state vector y
     enum StateVecElems
@@ -187,8 +228,9 @@ private:
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;        // V_M
-    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2; // DG_SYN, G_SYN
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1; // V_M
+    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR =
+      2; // DG_SYN, G_SYN
 
     std::vector< double > y_; //!< neuron state
 
@@ -196,7 +238,7 @@ private:
     State_( const State_& );
     State_& operator=( const State_& );
 
-    void get( DictionaryDatum&, const Parameters_&) const;
+    void get( DictionaryDatum&, const Parameters_& ) const;
     void set( const DictionaryDatum&, const Parameters_& );
   };
 
@@ -206,7 +248,8 @@ private:
     Buffers_( glif_lif_r_asc_cond& );
     Buffers_( const Buffers_&, glif_lif_r_asc_cond& );
 
-    std::vector< nest::RingBuffer > spikes_;   //!< Buffer incoming spikes through delay, as sum
+    std::vector< nest::RingBuffer >
+      spikes_; //!< Buffer incoming spikes through delay, as sum
     nest::RingBuffer currents_; //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
@@ -233,23 +276,23 @@ private:
      * the first simulation, but not modified before later Simulate calls.
      */
     double I_stim_;
-
   };
 
   struct Variables_
   {
     double t_ref_remaining_; // counter during refractory period, in ms
-    double t_ref_total_; // total time of refractory period, in ms
+    double t_ref_total_;     // total time of refractory period, in ms
 
     double last_spike_; // threshold spike component in mV
 
     /** Amplitude of the synaptic conductance.
-        This value is chosen such that an event of weight 1.0 results in a peak conductance of 1 nS
+        This value is chosen such that an event of weight 1.0 results in a peak
+       conductance of 1 nS
         at t = tau_syn.
     */
-    std::vector< double > CondInitialValues_; // synapse conductance intial values in nS
+    std::vector< double >
+      CondInitialValues_; // synapse conductance intial values in nS
     unsigned int receptor_types_size_;
-
   };
 
   //! Read out state vector elements, used by UniversalDataLogger
@@ -297,7 +340,8 @@ inline nest::port
 nest::glif_lif_r_asc_cond::handles_test_event( nest::CurrentEvent&,
   nest::port receptor_type )
 {
-  if ( receptor_type != 0 ){
+  if ( receptor_type != 0 )
+  {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
@@ -307,7 +351,8 @@ inline nest::port
 nest::glif_lif_r_asc_cond::handles_test_event( nest::DataLoggingRequest& dlr,
   nest::port receptor_type )
 {
-  if ( receptor_type != 0 ){
+  if ( receptor_type != 0 )
+  {
     throw nest::UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

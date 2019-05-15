@@ -45,6 +45,7 @@
 #include "conn_parameter.h"
 #include "gid_collection.h"
 #include "nest_time.h"
+#include "parameter.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -330,7 +331,7 @@ protected:
   void connect_();
 
 private:
-  long outdegree_;
+  Parameter* outdegree_;
 };
 
 class FixedTotalNumberBuilder : public ConnBuilder
@@ -361,7 +362,7 @@ protected:
 
 private:
   void inner_connect_( const int, librandom::RngPtr&, Node*, index );
-  double p_; //!< connection probability
+  Parameter* p_; //!< connection probability
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

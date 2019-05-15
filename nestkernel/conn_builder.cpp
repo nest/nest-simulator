@@ -1288,45 +1288,61 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( GIDCollectionPTR sources,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  , outdegree_( ( *conn_spec )[ names::outdegree ] )
 {
+
   // check for potential errors
   long n_targets = static_cast< long >( targets_->size() );
   if ( n_targets == 0 )
   {
     throw BadProperty( "Target array must not be empty." );
   }
-
-  // verify that outdegree is not larger than target population if multapses are
-  // disabled
-  if ( not multapses_ )
+  ParameterDatum* pd =
+    dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::outdegree ].datum() );
+  if ( pd )
   {
-    if ( outdegree_ > n_targets )
-    {
-      throw BadProperty( "Outdegree cannot be larger than population size." );
-    }
-    else if ( outdegree_ == n_targets and not autapses_ )
-    {
-      LOG( M_WARNING,
-        "FixedOutDegreeBuilder::connect",
-        "Multapses and autapses prohibited. When the sources and the targets "
-        "have a non-empty "
-        "intersection, the connect algorithm will enter an infinite loop." );
-      return;
-    }
-
-    if ( outdegree_ > 0.9 * n_targets )
-    {
-      LOG( M_WARNING,
-        "FixedOutDegreeBuilder::connect",
-        "Multapses are prohibited and you request more than 90% connectivity. "
-        "Expect long connecting times!" );
-    }
+    outdegree_ = pd->get();
+    pd->unlock();
+    // TODO: Checks of parameter range
   }
-
-  if ( outdegree_ < 0 )
+  else
   {
-    throw BadProperty( "Outdegree cannot be less than zero." );
+    // TODO: Is it easier to only accept parameters?
+    // Assume outdegree is a scalar
+    const long value = ( *conn_spec )[ names::outdegree ];
+    outdegree_ = new ConstantParameter( value );
+
+    // verify that outdegree is not larger than target population if multapses
+    // are disabled
+    if ( not multapses_ )
+    {
+      if ( value > n_targets )
+      {
+        throw BadProperty( "Outdegree cannot be larger than population size." );
+      }
+      else if ( value == n_targets and not autapses_ )
+      {
+        LOG( M_WARNING,
+          "FixedOutDegreeBuilder::connect",
+          "Multapses and autapses prohibited. When the sources and the targets "
+          "have a non-empty "
+          "intersection, the connect algorithm will enter an infinite loop." );
+        return;
+      }
+
+      if ( value > 0.9 * n_targets )
+      {
+        LOG( M_WARNING,
+          "FixedOutDegreeBuilder::connect",
+          "Multapses are prohibited and you request more than 90% "
+          "connectivity. "
+          "Expect long connecting times!" );
+      }
+    }
+
+    if ( value < 0 )
+    {
+      throw BadProperty( "Outdegree cannot be less than zero." );
+    }
   }
 }
 
@@ -1344,7 +1360,9 @@ nest::FixedOutDegreeBuilder::connect_()
     std::vector< index > tgt_ids_;
     const long n_rnd = targets_->size();
 
-    for ( long j = 0; j < outdegree_; ++j )
+    Node* source_node = kernel().node_manager.get_node_or_proxy( sgid );
+    const long outdegree_value = outdegree_->value( grng, source_node );
+    for ( long j = 0; j < outdegree_value; ++j )
     {
       unsigned long t_id;
       index tgid;
@@ -1587,11 +1605,26 @@ nest::BernoulliBuilder::BernoulliBuilder( GIDCollectionPTR sources,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  , p_( ( *conn_spec )[ names::p ] )
 {
-  if ( p_ < 0 or 1 < p_ )
+  ParameterDatum* pd =
+    dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
+  if ( pd )
   {
-    throw BadProperty( "Connection probability 0 <= p <= 1 required." );
+    p_ = pd->get();
+    pd->unlock();
+    // TODO: Checks of parameter range
+  }
+  else
+  {
+    // TODO: Is it easier to only accept parameters?
+    // Assume p is a scalar
+    const double value = ( *conn_spec )[ names::p ];
+    if ( value < 0 or 1 < value )
+    {
+      throw BadProperty( "Connection probability 0 <= p <= 1 required." );
+    }
+    // TODO: delete parameter in destructor?
+    p_ = new ConstantParameter( value );
   }
 }
 
@@ -1683,8 +1716,7 @@ nest::BernoulliBuilder::inner_connect_( const int tid,
     {
       continue;
     }
-
-    if ( rng->drand() >= p_ )
+    if ( rng->drand() >= p_->value( rng, sgid, target, target_thread ) )
     {
       continue;
     }

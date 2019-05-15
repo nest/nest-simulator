@@ -309,8 +309,8 @@ class TestNodeParametrization(unittest.TestCase):
         self.assertEqual((p1 / p2).GetValue(), 1.5)
         self.assertEqual((p1 * p2).GetValue(), 6.0)
 
-    def test_synapse_param_parameter(self):
-        """Test synapse param parameter"""
+    def test_syn_spec_parameter(self):
+        """Test parameter in syn_spec"""
         n = nest.Create('iaf_psc_alpha', 2)
         p = nest.hl_api.CreateParameter('constant', {'value': 2.0})
         nest.Connect(n, n, syn_spec={'weight': p})
@@ -318,6 +318,24 @@ class TestNodeParametrization(unittest.TestCase):
         weights = conns.get('weight')
         for w in weights:
             self.assertEqual(w, 2.0)
+
+    def test_conn_spec_parameter(self):
+        """Test parameter in conn_spec"""
+        p = nest.hl_api.CreateParameter('constant', {'value': 1.0})
+        p2 = nest.hl_api.CreateParameter('constant', {'value': 2.0})
+        rule_specs = {
+            'pairwise_bernoulli': [['p', p], ],
+            'fixed_outdegree': [['outdegree', p2], ]
+        }
+        for rule, specs_list in rule_specs.items():
+            for specs in specs_list:
+                nest.ResetKernel()
+                n = nest.Create('iaf_psc_alpha', 2)
+                param, p = specs
+                nest.Connect(n, n, conn_spec={'rule': rule,
+                                              param: p})
+                self.assertEqual(nest.GetKernelStatus()['num_connections'], 4,
+                                 'Error with {}'.format(rule))
 
     def test_node_pos_parameter(self):
         """Test node-position parameter"""

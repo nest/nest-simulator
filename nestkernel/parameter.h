@@ -75,8 +75,10 @@ public:
    * @returns the value of the parameter.
    */
   virtual double value( librandom::RngPtr& rng, Node* node ) const = 0;
-  virtual double
-  value( librandom::RngPtr& rng, Node* source, Node* target ) const = 0;
+  virtual double value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const = 0;
 
   /**
    * Clone method.
@@ -132,6 +134,9 @@ public:
    * @returns a new dynamically allocated parameter.
    */
   virtual Parameter* cos() const;
+
+protected:
+  Node* gid_to_node_ptr_( const index, const thread ) const;
 };
 
 /**
@@ -170,9 +175,9 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* ) const
+  value( librandom::RngPtr& rng, index sgid, Node*, thread target_thread ) const
   {
-    return value( rng, source );
+    return value( rng, nullptr );
   }
 
   Parameter*
@@ -221,9 +226,9 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* ) const
+  value( librandom::RngPtr& rng, index sgid, Node*, thread target_thread ) const
   {
-    return value( rng, source );
+    return value( rng, nullptr );
   }
 
   Parameter*
@@ -289,9 +294,9 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* ) const
+  value( librandom::RngPtr& rng, index sgid, Node*, thread target_thread ) const
   {
-    return value( rng, source );
+    return value( rng, nullptr );
   }
 
   Parameter*
@@ -358,9 +363,9 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* ) const
+  value( librandom::RngPtr& rng, index sgid, Node*, thread target_thread ) const
   {
-    return value( rng, source );
+    return value( rng, nullptr );
   }
 
   Parameter*
@@ -399,9 +404,9 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* ) const
+  value( librandom::RngPtr& rng, index sgid, Node*, thread target_thread ) const
   {
-    return value( rng, source );
+    return value( rng, nullptr );
   }
 
   Parameter*
@@ -455,8 +460,12 @@ public:
     }
     return get_node_pos_( rng, node );
   }
+
   double
-  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const
   {
     switch ( node_location_ )
     {
@@ -464,7 +473,10 @@ public:
       throw BadParameterValue(
         "Node position parameter cannot be used when connecting." );
     case 1:
+    {
+      Node* source = gid_to_node_ptr_( sgid, target_thread );
       return get_node_pos_( rng, source );
+    }
     case 2:
       return get_node_pos_( rng, target );
     }
@@ -504,7 +516,7 @@ public:
       "Spatial distance parameter can only be used when connecting." );
   }
 
-  double value( librandom::RngPtr&, Node*, Node* ) const;
+  double value( librandom::RngPtr&, index, Node*, thread ) const;
 
   Parameter*
   clone() const
@@ -557,10 +569,13 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const
   {
-    return parameter1_->value( rng, source, target )
-      * parameter2_->value( rng, source, target );
+    return parameter1_->value( rng, sgid, target, target_thread )
+      * parameter2_->value( rng, sgid, target, target_thread );
   }
 
   Parameter*
@@ -616,10 +631,13 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const
   {
-    return parameter1_->value( rng, source, target )
-      / parameter2_->value( rng, source, target );
+    return parameter1_->value( rng, sgid, target, target_thread )
+      / parameter2_->value( rng, sgid, target, target_thread );
   }
 
   Parameter*
@@ -675,10 +693,13 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const
   {
-    return parameter1_->value( rng, source, target )
-      + parameter2_->value( rng, source, target );
+    return parameter1_->value( rng, sgid, target, target_thread )
+      + parameter2_->value( rng, sgid, target, target_thread );
   }
 
   Parameter*
@@ -734,10 +755,13 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const
   {
-    return parameter1_->value( rng, source, target )
-      - parameter2_->value( rng, source, target );
+    return parameter1_->value( rng, sgid, target, target_thread )
+      - parameter2_->value( rng, sgid, target, target_thread );
   }
 
   Parameter*
@@ -790,9 +814,12 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const
   {
-    return p_->value( rng, source, target );
+    return p_->value( rng, sgid, target, target_thread );
   }
 
   Parameter*
@@ -872,10 +899,13 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const
   {
-    return compare_( parameter1_->value( rng, source, target ),
-      parameter2_->value( rng, source, target ) );
+    return compare_( parameter1_->value( rng, sgid, target, target_thread ),
+      parameter2_->value( rng, sgid, target, target_thread ) );
   }
 
 
@@ -969,15 +999,18 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const
   {
-    if ( condition_->value( rng, source, target ) )
+    if ( condition_->value( rng, sgid, target, target_thread ) )
     {
-      return if_true_->value( rng, source, target );
+      return if_true_->value( rng, sgid, target, target_thread );
     }
     else
     {
-      return if_false_->value( rng, source, target );
+      return if_false_->value( rng, sgid, target, target_thread );
     }
   }
 
@@ -1033,9 +1066,12 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const
   {
-    return std::exp( p_->value( rng, source, target ) );
+    return std::exp( p_->value( rng, sgid, target, target_thread ) );
   }
 
   Parameter*
@@ -1089,9 +1125,12 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const
   {
-    return std::sin( p_->value( rng, source, target ) );
+    return std::sin( p_->value( rng, sgid, target, target_thread ) );
   }
 
   Parameter*
@@ -1144,9 +1183,12 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* source, Node* target ) const
+  value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const
   {
-    return std::cos( p_->value( rng, source, target ) );
+    return std::cos( p_->value( rng, sgid, target, target_thread ) );
   }
 
   Parameter*

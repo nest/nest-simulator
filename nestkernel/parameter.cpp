@@ -34,6 +34,12 @@ template class lockPTRDatum< nest::Parameter,
 
 namespace nest
 {
+  Node* Parameter::gid_to_node_ptr_( const index gid, const thread t ) const
+  {
+    return kernel().node_manager.get_node_or_proxy( gid, t );
+  }
+
+
 double
 NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
 {
@@ -70,9 +76,11 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
 
 double
 SpatialDistanceParameter::value( librandom::RngPtr& rng,
-  Node* source,
-  Node* target ) const
+  index sgid,
+  Node* target,
+  thread target_thread ) const
 {
+  Node* source = gid_to_node_ptr_( sgid, target_thread );
   // Initial checks
   if ( not source )
   {

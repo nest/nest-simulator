@@ -94,6 +94,7 @@
 #include "gif_pop_psc_exp.h"
 
 // glif models
+#include "glif.h"
 #include "glif_lif.h"
 #include "glif_lif_r.h"
 #include "glif_lif_asc.h"
@@ -216,6 +217,7 @@ ModelsModule::init( SLIInterpreter* )
 {
 
   // glif models
+  kernel().model_manager.register_node_model< glif >( "glif");
   kernel().model_manager.register_node_model< glif_lif >( "glif_lif" );
   kernel().model_manager.register_node_model< glif_lif_r >( "glif_lif_r" );
   kernel().model_manager.register_node_model< glif_lif_asc >( "glif_lif_asc" );

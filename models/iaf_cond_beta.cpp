@@ -383,21 +383,26 @@ nest::iaf_cond_beta::get_normalisation_factor( double tau_rise,
   // close to each other, due to the numerical precision limits.
   // In such case the beta function reduces to the alpha function,
   // and the normalization factor for the alpha function should be used.
-  double denom1 = tau_decay - tau_rise;
+  const double denom1 = tau_decay - tau_rise;
+  double denom2 = 0;
   double normalisation_factor = 0;
   if ( std::abs( denom1 ) > std::numeric_limits< double >::epsilon() )
-  // if rise time != decay time use beta function
   {
     // peak time
     const double t_p =
       tau_decay * tau_rise * std::log( tau_decay / tau_rise ) / denom1;
     // another denominator is computed here to check that it is != 0
-    double denom2 = std::exp( -t_p / tau_decay ) - std::exp( -t_p / tau_rise );
-    normalisation_factor = ( 1. / tau_rise - 1. / tau_decay ) / denom2;
+    denom2 = std::exp( -t_p / tau_decay ) - std::exp( -t_p / tau_rise );
   }
-  else // if rise time == decay time use alpha function
+  if ( std::abs( denom2 ) < std::numeric_limits< double >::epsilon() )
   {
+    // if rise time == decay time use alpha function
     normalisation_factor = 1. * numerics::e / tau_decay;
+  }
+  else
+  {
+    // if rise time != decay time use beta function
+    normalisation_factor = ( 1. / tau_rise - 1. / tau_decay ) / denom2;
   }
   return normalisation_factor;
 }

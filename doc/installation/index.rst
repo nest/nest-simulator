@@ -22,7 +22,7 @@ Please choose on which system you want to install NEST:
 * :doc:`High Performance Computer Systems <hpc_install>`
 * :doc:`NEST Live Media for Virtual Machines <livemedia>`
 
-For more information about configuration options see :doc:`install_options`.
+For more information regarding installation see our :doc:`install_options`.
 
 
 

@@ -180,7 +180,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'conngen',
                     'nest_by_example', 'README.md']
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'manni'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
@@ -224,6 +224,7 @@ intersphinx_mapping = {'https://docs.python.org/': None}
 def setup(app):
     # app.add_stylesheet('css/my_styles.css')
     app.add_stylesheet('css/custom.css')
+    app.add_stylesheet('css/pygments.css')
     app.add_javascript("js/custom.js")
     app.add_config_value('recommonmark_config', {
             'auto_toc_tree_section': 'Contents',

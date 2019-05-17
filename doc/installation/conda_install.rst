@@ -13,8 +13,6 @@ please see our :doc:`install guide for Linux <linux_install>` or :doc:`install g
    The conda-forge package of nest-simulator is still being tested, let us know if you come across
    any problems by `submitting an issue on GitHub <https://github.com/nest/nest-simulator/issues>`_.
 
-* Once you have completed installation, take a look at our :doc:`PyNEST tutorials <../tutorials/index>` page
-  to find out how to create your first simulation or checkout some of our :doc:`example networks <../examples/index>`!
 
 ----
 
@@ -40,21 +38,23 @@ Linux install using conda-forge
   conda install -c conda-forge nest-simulator
 
 
-4. Once installation is complete, you can open up the python or ipython
-   in the terminal and import nest
+4. Once installation is complete, you can open up Python or IPython
+   in the terminal and import nest:
 
 .. code-block:: python
+  :linenos:
 
   python
+  import nest
 
-  >>> import nest
 
-
-You should see the following output:
+If installation was successful, you should see the following output:
 
 .. figure:: ../_static/img/import_nest.png
    :scale: 40%
    :alt: import nest
+
+5. **The install is now complete!** :ref:`Start exploring NEST <after_install>`
 
 -----
 
@@ -89,11 +89,20 @@ MacOSX install using conda-forge
      default python available to conda, so you must use **pythonw** rather than python!
 
 .. code-block:: python
+    :linenos:
 
     pythonw
+    import nest
 
-    >>> import nest
+.. _after_install:
 
+Next Steps
+------------
+
+Once you have completed installation, take a look at our :doc:`PyNEST tutorials <../tutorials/index>` page
+find out how to create your first simulation or checkout some of our :doc:`example networks <../examples/index>`!
+
+----
 
 Source Code:
 https://github.com/conda-forge/nest-simulator-feedstock/

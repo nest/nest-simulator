@@ -255,9 +255,10 @@ nest::glif::calibrate()
     V_.method_ = 1;
   }
   
-  
   switch ( P_.glif_model_ ) {
     case 1:
+      //glif_func = std::bind(&nest::glif::update_glif1, this, 
+      //  std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
       glif_func = [this](nest::Time const& origin, const long from, 
         const long to){nest::glif::update_glif1(origin, from, to);};
       break;
@@ -567,23 +568,21 @@ nest::glif::update_glif4( Time const& origin,
   const long from,
   const long to )
 {
-    // glif_lif_r_asc_a
+    // glif_lif_r_asc
     const double dt = Time::get_resolution().get_ms();
 
     double v_old = S_.V_m_;
-    // double ASCurrents_old_sum = 0.0;
     double spike_component = 0.0;
-    double voltage_component = 0.0;
     double th_old = S_.threshold_;
     double tau = P_.G_ / P_.C_m_;
-    double exp_tau = std::exp( -tau * dt );
+    double exp_tau = std::exp( -dt * tau );
 
     for ( long lag = from; lag < to; ++lag )
     {
-
       // update threshold via exact solution of dynamics of spike component of
       // threshold
       spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
+      S_.threshold_ = spike_component + P_.th_inf_;
       V_.last_spike_ = spike_component;
 
       if ( V_.t_ref_remaining_ > 0.0 )
@@ -610,10 +609,7 @@ nest::glif::update_glif4( Time const& origin,
 
           // reset spike component of threshold
           V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
-
-          // rest the global threshold (voltage component of threshold: stay the
-          // same)
-          S_.threshold_ = V_.last_spike_ + V_.last_voltage_ + P_.th_inf_;
+          S_.threshold_ = V_.last_spike_ + P_.th_inf_;
 
           // Check if bad reset
           // TODO: Better way to handle?
@@ -637,7 +633,6 @@ nest::glif::update_glif4( Time const& origin,
         // Integrate voltage and currents
 
         // Calculate new ASCurrents value using exponential methods
-        // ASCurrents_old_sum = S_.ASCurrents_sum_;
         S_.ASCurrents_sum_ = 0.0;
         for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
         {
@@ -645,7 +640,6 @@ nest::glif::update_glif4( Time const& origin,
           S_.ASCurrents_[ a ] =
             S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
         }
-
         // voltage dynamic
         switch ( V_.method_ )
         {
@@ -663,20 +657,7 @@ nest::glif::update_glif4( Time const& origin,
           break;
         }
 
-        // Calculate exact voltage component of the threshold
-        double beta = ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) / P_.G_;
-        double phi = P_.a_voltage_ / ( P_.b_voltage_ - P_.G_ / P_.C_m_ );
-        voltage_component =
-          phi * ( v_old - beta ) * std::exp( -P_.G_ * dt / P_.C_m_ )
-          + 1 / ( std::exp( P_.b_voltage_ * dt ) )
-            * ( V_.last_voltage_ - phi * ( v_old - beta )
-                - ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ ) )
-          + ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ );
-
-        S_.threshold_ = V_.last_spike_ + voltage_component + P_.th_inf_;
-        V_.last_voltage_ = voltage_component;
-
-        // Check if there is an action potential
+        // Check if their is an action potential
         if ( S_.V_m_ > S_.threshold_ )
         {
           // Marks that the neuron is in a refractory period

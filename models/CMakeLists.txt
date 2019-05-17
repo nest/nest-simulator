@@ -48,6 +48,8 @@ set( models_sources
     gif_cond_exp_multisynapse.h gif_cond_exp_multisynapse.cpp
     gif_pop_psc_exp.h gif_pop_psc_exp.cpp
     glif.h glif.cpp
+    glif_psc.h glif_psc.cpp
+    glif_cond.h glif_cond.cpp
     glif_lif.h glif_lif.cpp
     glif_lif_r.h glif_lif_r.cpp
     glif_lif_asc.h glif_lif_asc.cpp

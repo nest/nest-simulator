@@ -89,10 +89,10 @@ Spike-timing dependent plasticity synapse type
 Examples using Synapse Models
 ------------------------------
 
-* `Quantal STP Synapse <http://www.nest-simulator.org/py_sample/evaluate_quantal_stp_synapse/>`_
-* `Evaluate Tsokyks2 Synapse <http://www.nest-simulator.org/py_sample/evaluate_tsodyks2_synapse/>`_
-* `Tsodyks Faciliating <http://www.nest-simulator.org/py_sample/tsodyks_facilitating/>`_
-* `Tsodyks Depressing <http://www.nest-simulator.org/py_sample/tsodyks_depressing/>`_
-* `Structural Plasticity <http://www.nest-simulator.org/py_sample/structural_plasticity/>`_
-* `Gap Junctions Inhibitory Network <http://www.nest-simulator.org/py_sample/gap_junctions_inhibitory_network/>`_
-* `Gap Junctions Two Neurons <http://www.nest-simulator.org/py_sample/gap_junctions_two_neurons/>`_
+* `Quantal STP Synapse <https://www.nest-simulator.org/py_sample/evaluate_quantal_stp_synapse/>`_
+* `Evaluate Tsokyks2 Synapse <https://www.nest-simulator.org/py_sample/evaluate_tsodyks2_synapse/>`_
+* `Tsodyks Faciliating <https://www.nest-simulator.org/py_sample/tsodyks_facilitating/>`_
+* `Tsodyks Depressing <https://www.nest-simulator.org/py_sample/tsodyks_depressing/>`_
+* `Structural Plasticity <https://www.nest-simulator.org/py_sample/structural_plasticity/>`_
+* `Gap Junctions Inhibitory Network <https://www.nest-simulator.org/py_sample/gap_junctions_inhibitory_network/>`_
+* `Gap Junctions Two Neurons <https://www.nest-simulator.org/py_sample/gap_junctions_two_neurons/>`_

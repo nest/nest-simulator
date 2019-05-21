@@ -101,8 +101,39 @@ def
 /neuron_model /iaf_psc_exp def  % neuron model. For PSP-to-PSC conversion to
                                 % be correct, synapses should be current-based
                                 % with an exponential time course
-/Vm0_mean -58.0 def             % mean of initial membrane potential (mV)
-/Vm0_std 10.0 def               % std of initial membrane potential (mV)
+
+% Initial conditions for the membrane potential, options are:
+% (original): uniform mean and std for all populations
+% (optimized): population-specific mean and std from stationary state
+/Vm0_type (optimized) def        % choose either (original) or (optimized)
+Vm0_type (optimized) eq
+{
+    % optimized
+    % mean of initial membrane potential (mV)
+    /Vm0_mean [[-68.28   % 2/3e
+                -63.16]  % 2/3i
+               [-63.33   % 4e
+                -63.45]  % 4i
+               [-63.11   % 5e
+                -61.66]  % 5i
+               [-66.72   % 6e
+                -61.43]] % 6i
+                def
+    % std of initial membrane potential (mV)
+    /Vm0_std  [[5.36     % 2/3e
+                4.57]    % 2/3i
+               [4.74     % 4e
+                4.94]    % 4i
+               [4.94     % 5e
+                4.55]    % 5i
+               [5.46     % 6e
+                4.48]]   % 6i
+                def
+}{
+    % original
+    /Vm0_mean -58.0 def
+    /Vm0_std 10.0 def
+} ifelse
 
 % neuron model parameters
 /model_params  << /tau_m 10.        % membrane time constant (ms)

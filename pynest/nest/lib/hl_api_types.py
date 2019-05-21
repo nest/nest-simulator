@@ -968,7 +968,7 @@ class TopologyParameter(Parameter):
         command.
         """
         if not (isinstance(datum, kernel.SLIDatum)
-                           or datum.dtype != "topologyparametertype"):
+                or datum.dtype != "topologyparametertype"):
             raise TypeError("expected parameter datum")
         self._datum = datum
 

@@ -673,13 +673,19 @@ class Connectome(object):
         """
         Return iterator containing the source gids of the connectome.
         """
-        return iter(self.get('source'))
+        sources = self.get('source')
+        if not isinstance(sources, (list, tuple)):
+            sources = (sources,)
+        return iter(sources)
 
     def target(self):
         """
         Return iterator containing the target gids of the connectome.
         """
-        return iter(self.get('target'))
+        targets = self.get('target')
+        if not isinstance(targets, (list, tuple)):
+            targets = (targets,)
+        return iter(targets)
 
     def get(self, keys=None, output=''):
         """

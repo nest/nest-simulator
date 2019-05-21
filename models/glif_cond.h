@@ -154,7 +154,14 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
   
-  typedef long model_type;
+  typedef std::string model_type;
+  std::map< std::string, long > model_type_lu = {
+    {"lif", 1}, {"glif_lif", 1}, {"1", 1},
+    {"lif_r", 2}, {"glif_lif_r", 2}, {"2", 2},
+    {"lif_asc", 3}, {"glif_lif_asc", 3}, {"3", 3},
+    {"lif_r_asc", 4}, {"glif_lif_r_asc", 4}, {"4", 4},
+    {"lif_r_asc_a", 5}, {"glif_lif_r_asc_a", 5}, {"5", 5}
+  };
 
 private:
   //! Reset parameters and state of neuron.

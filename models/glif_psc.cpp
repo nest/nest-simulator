@@ -87,7 +87,7 @@ nest::glif_psc::Parameters_::Parameters_()
   , tau_syn_( 1, 2.0 )                           // ms
   , V_dynamics_method_( "linear_forward_euler" )
   , has_connections_( false )
-  , glif_model_(1)
+  , glif_model_( "lif" )
 {
 }
 
@@ -322,7 +322,16 @@ nest::glif_psc::calibrate()
     B_.spikes_[ i ].resize();
   }
   
-  switch ( P_.glif_model_ ) 
+  std::string model_str = P_.glif_model_;
+  std::transform( model_str.begin(), model_str.end(), model_str.begin(), 
+    ::tolower);
+  if ( nest::glif_psc::model_type_lu.find(model_str) == nest::glif_psc::model_type_lu.end() )
+  {
+    throw BadProperty( "Bad glif model type string." );
+  }  
+  long model_type = nest::glif_psc::model_type_lu[model_str];
+  
+  switch ( model_type ) 
   {
     case 1:
       //glif_func = std::bind(&nest::glif::update_glif1, this, 
@@ -842,7 +851,7 @@ nest::glif_psc::update_glif5( Time const& origin, const long from,
   const double dt = Time::get_resolution().get_ms();
 
   double v_old = S_.V_m_;
-  double ASCurrents_old_sum = 0.0;
+  // double ASCurrents_old_sum = 0.0;
   double spike_component = 0.0;
   double voltage_component = 0.0;
   double th_old = S_.threshold_;
@@ -906,7 +915,7 @@ nest::glif_psc::update_glif5( Time const& origin, const long from,
       // Integrate voltage and currents
 
       // Calculate new ASCurrents value using expoential methods
-      ASCurrents_old_sum = S_.ASCurrents_sum_;
+      // ASCurrents_old_sum = S_.ASCurrents_sum_;
       S_.ASCurrents_sum_ = 0.0;
       for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
       {

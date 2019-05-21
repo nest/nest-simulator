@@ -147,7 +147,7 @@ nest::glif_cond::Parameters_::Parameters_()
   , tau_syn_( 1, 2.0 )                           // ms
   , E_rev_( 1, -70.0 )                           // mV
   , has_connections_( false )
-  , glif_model_(1)
+  , glif_model_( "lif" )
 {
 }
 
@@ -213,7 +213,7 @@ nest::glif_cond::Parameters_::get( DictionaryDatum& d ) const
   ArrayDatum E_rev_ad( E_rev_ );
   def< ArrayDatum >( d, names::E_rev, E_rev_ad );
   def< bool >( d, names::has_connections, has_connections_ );
-  def< model_type >( d, "glif_model", glif_model_ );
+  def< model_type >( d, Name( "glif_model" ), glif_model_ );
 }
 
 void
@@ -224,6 +224,7 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_L, E_L_ );
   updateValue< double >( d, names::C_m, C_m_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
+  updateValue< double >( d, names::V_reset, V_reset_ );
 
   updateValue< double >( d, "a_spike", a_spike_ );
   updateValue< double >( d, "b_spike", b_spike_ );
@@ -237,7 +238,7 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
   updateValue< std::vector< double > >( d, Name( "k" ), k_ );
   updateValue< std::vector< double > >( d, Name( "asc_amps" ), asc_amps_ );
   updateValue< std::vector< double > >( d, Name( "r" ), r_ );
-  updateValue< model_type >( d, "glif_model", glif_model_ );
+  updateValue< model_type >( d, Name( "glif_model" ), glif_model_ );
 
   if ( C_m_ <= 0.0 )
   {
@@ -470,7 +471,16 @@ nest::glif_cond::calibrate()
 
   B_.sys_.dimension = S_.y_.size();
   
-  switch ( P_.glif_model_ ) {
+  std::string model_str = P_.glif_model_;
+  std::transform( model_str.begin(), model_str.end(), model_str.begin(), 
+    ::tolower);
+  if ( nest::glif_cond::model_type_lu.find(model_str) == nest::glif_cond::model_type_lu.end() )
+  {
+    throw BadProperty( "Bad glif model type string." );
+  }  
+  long model_type = nest::glif_cond::model_type_lu[model_str];
+
+  switch ( model_type ) {
     case 1:
       //glif_func = std::bind(&nest::glif::update_glif1, this, 
       //  std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);

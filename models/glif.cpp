@@ -85,7 +85,7 @@ nest::glif::Parameters_::Parameters_()
   , asc_amps_( std::vector< double >( 2, 0.0 ) ) // in pA
   , r_( std::vector< double >( 2, 1.0 ) )        // coefficient
   , V_dynamics_method_( "linear_forward_euler" )
-  , glif_model_(1)
+  , glif_model_( "lif" )
 {
 }
 
@@ -254,8 +254,17 @@ nest::glif::calibrate()
   {
     V_.method_ = 1;
   }
+
+  std::string model_str = P_.glif_model_;
+  std::transform( model_str.begin(), model_str.end(), model_str.begin(), 
+    ::tolower);
+  if ( nest::glif::model_type_lu.find(model_str) == nest::glif::model_type_lu.end() )
+  {
+    throw BadProperty( "Bad glif model type string." );
+  }  
+  long model_type = nest::glif::model_type_lu[model_str];
   
-  switch ( P_.glif_model_ ) {
+  switch ( model_type ) {
     case 1:
       //glif_func = std::bind(&nest::glif::update_glif1, this, 
       //  std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);

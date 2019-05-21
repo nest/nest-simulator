@@ -34,6 +34,7 @@
 #include <string>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -146,15 +147,15 @@ nest::siegert_neuron::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d )
+nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::mean, mean_ );
-  updateValue< double >( d, names::theta, theta_ );
-  updateValue< double >( d, names::V_reset, V_reset_ );
-  updateValue< double >( d, names::tau, tau_ );
-  updateValue< double >( d, names::tau_m, tau_m_ );
-  updateValue< double >( d, names::tau_syn, tau_syn_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
+  updateValueParam< double >( d, names::mean, mean_, node );
+  updateValueParam< double >( d, names::theta, theta_, node );
+  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  updateValueParam< double >( d, names::tau, tau_, node );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  updateValueParam< double >( d, names::tau_syn, tau_syn_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
 
   if ( V_reset_ >= theta_ )
   {
@@ -189,9 +190,9 @@ nest::siegert_neuron::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::siegert_neuron::State_::set( const DictionaryDatum& d )
+nest::siegert_neuron::State_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::rate, r_ ); // Rate
+  updateValueParam< double >( d, names::rate, r_, node ); // Rate
 }
 
 nest::siegert_neuron::Buffers_::Buffers_( siegert_neuron& n )

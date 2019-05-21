@@ -108,7 +108,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Membrane time constant in ms. */
     double Tau_;
 
@@ -150,7 +149,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum& );
+    double set( const DictionaryDatum&, Node* node );
   }; // Parameters_
 
   // ----------------------------------------------------------------
@@ -201,7 +200,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, const double );
+    void set( const DictionaryDatum&, const Parameters_&, const double, Node* );
   }; // State_
 
   // ----------------------------------------------------------------

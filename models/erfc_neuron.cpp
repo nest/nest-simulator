@@ -33,10 +33,10 @@ gainfunction_erfc::get( DictionaryDatum& d ) const
 }
 
 void
-gainfunction_erfc::set( const DictionaryDatum& d )
+gainfunction_erfc::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::theta, theta_ );
-  updateValue< double >( d, names::sigma, sigma_ );
+  updateValueParam< double >( d, names::theta, theta_, node );
+  updateValueParam< double >( d, names::sigma, sigma_, node );
 }
 
 /*

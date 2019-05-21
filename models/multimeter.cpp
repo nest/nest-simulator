@@ -25,6 +25,9 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 namespace nest
 {
 Multimeter::Multimeter()
@@ -95,7 +98,8 @@ nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
 
 void
 nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
-  const Buffers_& b )
+  const Buffers_& b,
+  Node* node )
 {
   if ( b.has_targets_
     && ( d->known( names::interval ) || d->known( names::offset )
@@ -108,7 +112,7 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
   }
 
   double v;
-  if ( updateValue< double >( d, names::interval, v ) )
+  if ( updateValueParam< double >( d, names::interval, v, node ) )
   {
     if ( Time( Time::ms( v ) ) < Time::get_resolution() )
     {
@@ -127,7 +131,7 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
     }
   }
 
-  if ( updateValue< double >( d, names::offset, v ) )
+  if ( updateValueParam< double >( d, names::offset, v, node ) )
   {
     // if offset is different from the default value (0), it must be at least
     // as large as the resolution

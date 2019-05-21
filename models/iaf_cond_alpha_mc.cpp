@@ -32,6 +32,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -369,15 +370,16 @@ nest::iaf_cond_alpha_mc::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d )
+nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d,
+  Node* node )
 {
   // allow setting the membrane potential
-  updateValue< double >( d, names::V_th, V_th );
-  updateValue< double >( d, names::V_reset, V_reset );
-  updateValue< double >( d, names::t_ref, t_ref );
+  updateValueParam< double >( d, names::V_th, V_th, node );
+  updateValueParam< double >( d, names::V_reset, V_reset, node );
+  updateValueParam< double >( d, names::t_ref, t_ref, node );
 
-  updateValue< double >( d, Name( names::g_sp ), g_conn[ SOMA ] );
-  updateValue< double >( d, Name( names::g_pd ), g_conn[ PROX ] );
+  updateValueParam< double >( d, Name( names::g_sp ), g_conn[ SOMA ], node );
+  updateValueParam< double >( d, Name( names::g_pd ), g_conn[ PROX ], node );
 
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
@@ -386,14 +388,14 @@ nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d )
     {
       DictionaryDatum dd = getValue< DictionaryDatum >( d, comp_names_[ n ] );
 
-      updateValue< double >( dd, names::E_L, E_L[ n ] );
-      updateValue< double >( dd, names::E_ex, E_ex[ n ] );
-      updateValue< double >( dd, names::E_in, E_in[ n ] );
-      updateValue< double >( dd, names::C_m, C_m[ n ] );
-      updateValue< double >( dd, names::g_L, g_L[ n ] );
-      updateValue< double >( dd, names::tau_syn_ex, tau_synE[ n ] );
-      updateValue< double >( dd, names::tau_syn_in, tau_synI[ n ] );
-      updateValue< double >( dd, names::I_e, I_e[ n ] );
+      updateValueParam< double >( dd, names::E_L, E_L[ n ], node );
+      updateValueParam< double >( dd, names::E_ex, E_ex[ n ], node );
+      updateValueParam< double >( dd, names::E_in, E_in[ n ], node );
+      updateValueParam< double >( dd, names::C_m, C_m[ n ], node );
+      updateValueParam< double >( dd, names::g_L, g_L[ n ], node );
+      updateValueParam< double >( dd, names::tau_syn_ex, tau_synE[ n ], node );
+      updateValueParam< double >( dd, names::tau_syn_in, tau_synI[ n ], node );
+      updateValueParam< double >( dd, names::I_e, I_e[ n ], node );
     }
   }
   if ( V_reset >= V_th )
@@ -437,7 +439,8 @@ nest::iaf_cond_alpha_mc::State_::get( DictionaryDatum& d ) const
 
 void
 nest::iaf_cond_alpha_mc::State_::set( const DictionaryDatum& d,
-  const Parameters_& )
+  const Parameters_&,
+  Node* node )
 {
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
@@ -445,7 +448,7 @@ nest::iaf_cond_alpha_mc::State_::set( const DictionaryDatum& d,
     if ( d->known( comp_names_[ n ] ) )
     {
       DictionaryDatum dd = getValue< DictionaryDatum >( d, comp_names_[ n ] );
-      updateValue< double >( dd, names::V_m, y_[ idx( n, V_M ) ] );
+      updateValueParam< double >( dd, names::V_m, y_[ idx( n, V_M ) ], node );
     }
   }
 }

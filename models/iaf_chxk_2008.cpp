@@ -31,6 +31,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -227,22 +228,22 @@ nest::iaf_chxk_2008::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_chxk_2008::Parameters_::set( const DictionaryDatum& d )
+nest::iaf_chxk_2008::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValue< double >( d, names::V_th, V_th );
-  updateValue< double >( d, names::g_L, g_L );
-  updateValue< double >( d, names::C_m, C_m );
-  updateValue< double >( d, names::E_ex, E_ex );
-  updateValue< double >( d, names::E_in, E_in );
-  updateValue< double >( d, names::E_L, E_L );
-  updateValue< double >( d, names::tau_syn_ex, tau_synE );
-  updateValue< double >( d, names::tau_syn_in, tau_synI );
-  updateValue< double >( d, names::I_e, I_e );
-  updateValue< double >( d, names::tau_ahp, tau_ahp );
-  updateValue< double >( d, names::E_ahp, E_ahp );
-  updateValue< double >( d, names::g_ahp, g_ahp );
-  updateValue< bool >( d, names::ahp_bug, ahp_bug );
+  updateValueParam< double >( d, names::V_th, V_th, node );
+  updateValueParam< double >( d, names::g_L, g_L, node );
+  updateValueParam< double >( d, names::C_m, C_m, node );
+  updateValueParam< double >( d, names::E_ex, E_ex, node );
+  updateValueParam< double >( d, names::E_in, E_in, node );
+  updateValueParam< double >( d, names::E_L, E_L, node );
+  updateValueParam< double >( d, names::tau_syn_ex, tau_synE, node );
+  updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
+  updateValueParam< double >( d, names::I_e, I_e, node );
+  updateValueParam< double >( d, names::tau_ahp, tau_ahp, node );
+  updateValueParam< double >( d, names::E_ahp, E_ahp, node );
+  updateValueParam< double >( d, names::g_ahp, g_ahp, node );
+  updateValueParam< bool >( d, names::ahp_bug, ahp_bug, node );
   if ( C_m <= 0 )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -260,9 +261,11 @@ nest::iaf_chxk_2008::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_chxk_2008::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::iaf_chxk_2008::State_::set( const DictionaryDatum& d,
+  const Parameters_&,
+  Node* node )
 {
-  updateValue< double >( d, names::V_m, y[ V_M ] );
+  updateValueParam< double >( d, names::V_m, y[ V_M ], node );
 }
 
 /* ----------------------------------------------------------------

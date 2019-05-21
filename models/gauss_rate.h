@@ -32,6 +32,9 @@
 #include "rate_transformer_node.h"
 #include "rate_transformer_node_impl.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 
 namespace nest
 {
@@ -113,7 +116,7 @@ public:
   }
 
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-  void set( const DictionaryDatum& ); //!< Set values from dicitonary
+  void set( const DictionaryDatum&, Node* ); //!< Set values from dicitonary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling

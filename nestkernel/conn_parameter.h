@@ -33,6 +33,8 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "parameter.h"
+#include "nest_datums.h"
 
 // Includes from sli:
 #include "token.h"
@@ -75,8 +77,9 @@ public:
    * @param rng   random number generator pointer
    * will be ignored except for random parameters.
    */
-  virtual double value_double( thread, librandom::RngPtr& ) const = 0;
-  virtual long value_int( thread, librandom::RngPtr& ) const = 0;
+  virtual double
+  value_double( thread, librandom::RngPtr&, index, Node* ) const = 0;
+  virtual long value_int( thread, librandom::RngPtr&, index, Node* ) const = 0;
   virtual void
   skip( thread, size_t n_skip ) const
   {
@@ -131,13 +134,13 @@ public:
   }
 
   double
-  value_double( thread, librandom::RngPtr& ) const
+  value_double( thread, librandom::RngPtr&, index, Node* ) const
   {
     return value_;
   }
 
   long
-  value_int( thread, librandom::RngPtr& ) const
+  value_int( thread, librandom::RngPtr&, index, Node* ) const
   {
     throw KernelException(
       "ConnParameter calls value function with false return type." );
@@ -179,13 +182,13 @@ public:
   }
 
   double
-  value_double( thread, librandom::RngPtr& ) const
+  value_double( thread, librandom::RngPtr&, index, Node* ) const
   {
     return static_cast< double >( value_ );
   }
 
   long
-  value_int( thread, librandom::RngPtr& ) const
+  value_int( thread, librandom::RngPtr&, index, Node* ) const
   {
     return value_;
   }
@@ -257,7 +260,7 @@ public:
   }
 
   double
-  value_double( thread tid, librandom::RngPtr& ) const
+  value_double( thread tid, librandom::RngPtr&, index, Node* ) const
   {
     if ( next_[ tid ] != values_->end() )
     {
@@ -270,7 +273,7 @@ public:
   }
 
   long
-  value_int( thread, librandom::RngPtr& ) const
+  value_int( thread, librandom::RngPtr&, index, Node* ) const
   {
     throw KernelException(
       "ConnParameter calls value function with false return type." );
@@ -344,7 +347,7 @@ public:
   }
 
   long
-  value_int( thread tid, librandom::RngPtr& ) const
+  value_int( thread tid, librandom::RngPtr&, index, Node* ) const
   {
     if ( next_[ tid ] != values_->end() )
     {
@@ -357,7 +360,7 @@ public:
   }
 
   double
-  value_double( thread tid, librandom::RngPtr& ) const
+  value_double( thread tid, librandom::RngPtr&, index, Node* ) const
   {
     if ( next_[ tid ] != values_->end() )
     {
@@ -403,13 +406,13 @@ public:
   RandomParameter( const DictionaryDatum&, const size_t );
 
   double
-  value_double( thread, librandom::RngPtr& rng ) const
+  value_double( thread, librandom::RngPtr& rng, index, Node* ) const
   {
     return ( *rdv_ )( rng );
   }
 
   long
-  value_int( thread, librandom::RngPtr& rng ) const
+  value_int( thread, librandom::RngPtr& rng, index, Node* ) const
   {
     return ( *rdv_ )( rng );
   }
@@ -422,6 +425,35 @@ public:
 
 private:
   librandom::RdvPtr rdv_;
+};
+
+class ParameterConnParameterWrapper : public ConnParameter
+{
+public:
+  ParameterConnParameterWrapper( const ParameterDatum&, const size_t );
+
+  double value_double( thread target_thread,
+    librandom::RngPtr& rng,
+    index sgid,
+    Node* target ) const;
+
+  long
+  value_int( thread target_thread,
+    librandom::RngPtr& rng,
+    index sgid,
+    Node* target ) const
+  {
+    return value_double( target_thread, rng, sgid, target );
+  }
+
+  inline bool
+  is_array() const
+  {
+    return false;
+  }
+
+private:
+  Parameter* parameter_;
 };
 
 } // namespace nest

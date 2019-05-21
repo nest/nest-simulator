@@ -55,6 +55,7 @@ __all__ = [
     'Connectome',
     'CopyModel',
     'Create',
+    'CreateParameter',
     'DataConnect',  # deprecated
     'DisableStructuralPlasticity',
     'Disconnect',
@@ -70,6 +71,7 @@ __all__ = [
     'Models',
     'NumProcesses',
     'Parameter',
+    'TopologyParameter',
     'Prepare',
     'Rank',
     'ResetKernel',

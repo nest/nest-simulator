@@ -133,7 +133,7 @@ See examples/nest/mc_neuron.py.
 
 Remarks:
 
-This is a prototype for illustration which has undergone only limited 
+This is a prototype for illustration which has undergone only limited
 testing. Details of the implementation and user-interface will likely
 change. USE AT YOUR OWN PERIL!
 
@@ -306,7 +306,8 @@ private:
     Parameters_& operator=( const Parameters_& ); //!< needed to copy C-arrays
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&,
+      Node* node ); //!< Set values from dicitonary
   };
 
 
@@ -320,7 +321,6 @@ private:
 public:
   struct State_
   {
-
     /**
      * Elements of state vector.
      * For the multicompartmental case here, these are offset values.
@@ -349,7 +349,7 @@ public:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
 
     /**
      * Compute linear index into state array from compartment and element.
@@ -561,10 +561,10 @@ iaf_cond_alpha_mc::get_status( DictionaryDatum& d ) const
 inline void
 iaf_cond_alpha_mc::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

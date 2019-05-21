@@ -44,6 +44,8 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
+// Includes from
+
 // Includes from sli:
 #include "stringdatum.h"
 
@@ -203,7 +205,8 @@ private:
     Parameters_();
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&,
+      Node* node ); //!< Set values from dicitonary
 
     // Note: Conductances are unitless
     // Leaks
@@ -272,7 +275,6 @@ private:
 public:
   struct State_
   {
-
     // y_ = [V, theta, Synapses]
     enum StateVecElems_
     {
@@ -316,7 +318,7 @@ public:
     State_& operator=( const State_& s );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const ht_neuron& );
+    void set( const DictionaryDatum&, const ht_neuron&, Node* node );
   };
 
 private:

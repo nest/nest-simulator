@@ -131,7 +131,8 @@ private:
     Parameters_& operator=( const Parameters_& p );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void set( const DictionaryDatum&,
+      Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -218,7 +219,7 @@ inline void
 dc_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

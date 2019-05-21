@@ -24,6 +24,7 @@ Node Parametrization tests
 """
 
 import nest
+import nest.topology as tp
 import numpy as np
 import unittest
 
@@ -298,6 +299,193 @@ class TestNodeParametrization(unittest.TestCase):
         for vm in nodes.get('V_m'):
             self.assertGreater(vm, -75.)
             self.assertLess(vm, -55.)
+
+    def test_parameter_arithmetic(self):
+        """Test parameter arithmetic"""
+        p1 = nest.hl_api.CreateParameter('constant', {'value': 3.0})
+        p2 = nest.hl_api.CreateParameter('constant', {'value': 2.0})
+        self.assertEqual((p1 + p2).GetValue(), 5.0)
+        self.assertEqual((p1 - p2).GetValue(), 1.0)
+        self.assertEqual((p1 / p2).GetValue(), 1.5)
+        self.assertEqual((p1 * p2).GetValue(), 6.0)
+
+    def test_syn_spec_parameter(self):
+        """Test parameter in syn_spec"""
+        n = nest.Create('iaf_psc_alpha', 2)
+        p = nest.hl_api.CreateParameter('constant', {'value': 2.0})
+        nest.Connect(n, n, syn_spec={'weight': p})
+        conns = nest.GetConnections()
+        weights = conns.get('weight')
+        for w in weights:
+            self.assertEqual(w, 2.0)
+
+    def test_conn_spec_parameter(self):
+        """Test parameter in conn_spec"""
+        p = nest.hl_api.CreateParameter('constant', {'value': 1.0})
+        p2 = nest.hl_api.CreateParameter('constant', {'value': 2.0})
+        rule_specs = {
+            'pairwise_bernoulli': [['p', p], ],
+            'fixed_outdegree': [['outdegree', p2], ]
+        }
+        for rule, specs_list in rule_specs.items():
+            for specs in specs_list:
+                nest.ResetKernel()
+                n = nest.Create('iaf_psc_alpha', 2)
+                param, p = specs
+                nest.Connect(n, n, conn_spec={'rule': rule,
+                                              param: p})
+                self.assertEqual(nest.GetKernelStatus()['num_connections'], 4,
+                                 'Error with {}'.format(rule))
+
+    def test_node_pos_parameter(self):
+        """Test node-position parameter"""
+        positions = [[x, 0.5*x, 0.1+0.2*x] for x in np.linspace(0, 0.5, 5)]
+        layer = tp.CreateLayer({'extent': [5.0, 5.0, 5.0],
+                                'positions': positions,
+                                'elements': 'iaf_psc_alpha'})
+
+        layer.set({'V_m': nest.spatial.pos.x})
+        layer.set({'E_L': nest.spatial.pos.y})
+        layer.set({'C_m': nest.spatial.pos.z})
+
+        status = layer.get()
+        self.assertEqual(status['V_m'], tuple(np.linspace(0, 0.5, 5)))
+        self.assertEqual(status['E_L'], tuple(np.linspace(0, 0.5*0.5, 5)))
+        self.assertEqual(status['C_m'],
+                         tuple([0.1 + 0.2*x for x in np.linspace(0, 0.5, 5)]))
+
+    def test_conn_distance_parameter(self):
+        """Test connection distance parameter"""
+        positions = [[x, x, x] for x in np.linspace(0, 0.5, 5)]
+        layer = tp.CreateLayer({'extent': [5.0, 5.0, 5.0],
+                                'positions': positions,
+                                'elements': 'iaf_psc_alpha'})
+
+        nest.Connect(layer, layer, syn_spec={'weight': nest.spatial.distance})
+        conns = nest.GetConnections()
+        conn_status = conns.get()
+
+        for s, t, w in zip(conn_status['source'],
+                           conn_status['target'],
+                           conn_status['weight']):
+            s_pos = positions[s-1]
+            sx = s_pos[0]
+            sy = s_pos[1]
+            sz = s_pos[2]
+            t_pos = positions[t-1]
+            tx = t_pos[0]
+            ty = t_pos[1]
+            tz = t_pos[2]
+
+            dist = np.sqrt((tx-sx)**2 + (ty-sy)**2 + (tz-sz)**2)
+            self.assertEqual(w, dist)
+
+    def test_src_tgt_position_parameter(self):
+        """Test source and target position parameter"""
+        positions = [[x, x, x] for x in np.linspace(0.1, 1.0, 5)]
+        source_positions = (nest.spatial.source_pos.x,
+                            nest.spatial.source_pos.y,
+                            nest.spatial.source_pos.z)
+        target_positions = (nest.spatial.target_pos.x,
+                            nest.spatial.target_pos.y,
+                            nest.spatial.target_pos.z)
+        for i in range(3):
+            nest.ResetKernel()
+            layer = tp.CreateLayer({'extent': [15.0, 15.0, 15.0],
+                                    'positions': positions,
+                                    'elements': 'iaf_psc_alpha'})
+            # Scale up delay because of limited number of digits.
+            nest.Connect(layer, layer, syn_spec={
+                'weight': source_positions[i],
+                'delay': 100*target_positions[i]})
+            conns = nest.GetConnections()
+            conn_status = conns.get()
+
+            for s, t, w, d in zip(conn_status['source'],
+                                  conn_status['target'],
+                                  conn_status['weight'],
+                                  conn_status['delay']):
+                s_pos = positions[s-1]
+                t_pos = positions[t-1]
+
+                # Almost equal because of roundoff errors.
+                self.assertAlmostEqual(w, s_pos[i], places=12)
+                self.assertAlmostEqual(d, 100*t_pos[i], places=12)
+
+    def test_exp_parameter(self):
+        """Test exponential of a parameter"""
+        for value in np.linspace(0.5, 5.0, 15):
+            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            self.assertEqual(nest.math.exp(p).GetValue(), np.exp(value))
+
+    def test_cos_parameter(self):
+        """Test cosine of a parameter"""
+        for value in np.linspace(0.5, 5.0, 15):
+            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            self.assertEqual(nest.math.cos(p).GetValue(), np.cos(value))
+
+    def test_sin_parameter(self):
+        """Test sine of a parameter"""
+        for value in np.linspace(0.5, 5.0, 15):
+            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            self.assertEqual(nest.math.sin(p).GetValue(), np.sin(value))
+
+    def test_parameter_comparison(self):
+        """Test comparison of parameters"""
+        p1 = nest.hl_api.CreateParameter('constant', {'value': 1.0})
+        p2 = nest.hl_api.CreateParameter('constant', {'value': 2.0})
+
+        self.assertTrue((p1 < p2).GetValue())
+        self.assertTrue((p1 <= p2).GetValue())
+        self.assertTrue((p1 == p2-p1).GetValue())
+        self.assertTrue((p1 != p2).GetValue())
+        self.assertTrue((p2 >= p1).GetValue())
+        self.assertTrue((p2 > p1).GetValue())
+
+        self.assertFalse((p2 < p1).GetValue())
+        self.assertFalse((p2 <= p1).GetValue())
+        self.assertFalse((p1 == p2).GetValue())
+        self.assertFalse((p1 != p2-p1).GetValue())
+        self.assertFalse((p1 >= p2).GetValue())
+        self.assertFalse((p1 > p2).GetValue())
+
+    def test_parameter_conditional(self):
+        """Test conditional parameter"""
+        positions = [[x, x, x] for x in np.linspace(0, 0.5, 20)]
+        layer = tp.CreateLayer({'extent': [5.0, 5.0, 5.0],
+                                'positions': positions,
+                                'elements': 'iaf_psc_alpha'})
+
+        layer.set({'V_m': nest.logic.conditional(nest.spatial.pos.x > 0.3,
+                                                 nest.spatial.pos.x,
+                                                 -nest.spatial.pos.x)})
+        status = layer.get()
+
+        for pos, vm in zip(positions, status['V_m']):
+            x_pos = pos[0]
+            # Almost equal because of roundoff errors.
+            self.assertAlmostEqual(vm,
+                                   x_pos if x_pos > 0.3 else -x_pos,
+                                   places=12)
+
+    def test_parameter_conditional_scalars(self):
+        """Test conditional parameter with scalars"""
+        positions = [[x, x, x] for x in np.linspace(0, 0.5, 20)]
+        layer = tp.CreateLayer({'extent': [5.0, 5.0, 5.0],
+                                'positions': positions,
+                                'elements': 'iaf_psc_alpha'})
+
+        layer.set({'V_m': nest.logic.conditional(nest.spatial.pos.x > 0.3,
+                                                 -42,
+                                                 -50)})
+        status = layer.get()
+
+        for pos, vm in zip(positions, status['V_m']):
+            x_pos = pos[0]
+            # Almost equal because of roundoff errors.
+            self.assertAlmostEqual(vm,
+                                   -42 if x_pos > 0.3 else -50,
+                                   places=12)
 
 
 def suite():

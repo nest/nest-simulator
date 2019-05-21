@@ -145,7 +145,7 @@ private:
     /**
      * Set values from dicitonary.
      */
-    void set( const DictionaryDatum&, State_& );
+    void set( const DictionaryDatum&, State_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -159,7 +159,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //!< Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ------------------------------------------------------------

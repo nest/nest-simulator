@@ -27,6 +27,9 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
@@ -53,9 +56,10 @@ nest::poisson_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::poisson_generator::Parameters_::set( const DictionaryDatum& d )
+nest::poisson_generator::Parameters_::set( const DictionaryDatum& d,
+  Node* node )
 {
-  updateValue< double >( d, names::rate, rate_ );
+  updateValueParam< double >( d, names::rate, rate_, node );
   if ( rate_ < 0 )
   {
     throw BadProperty( "The rate cannot be negative." );

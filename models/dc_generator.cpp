@@ -27,6 +27,9 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
@@ -99,9 +102,9 @@ nest::dc_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::dc_generator::Parameters_::set( const DictionaryDatum& d )
+nest::dc_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::amplitude, amp_ );
+  updateValueParam< double >( d, names::amplitude, amp_, node );
 }
 
 

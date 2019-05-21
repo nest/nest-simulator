@@ -408,8 +408,8 @@ class BasicsTestCase(unittest.TestCase):
 
     def test_Parameter(self):
 
-        x = topo.CreateParameter("constant", {"value": 2.0})
-        y = topo.CreateParameter("constant", {"value": 3.0})
+        x = topo.CreateTopologyParameter("constant", {"value": 2.0})
+        y = topo.CreateTopologyParameter("constant", {"value": 3.0})
 
         z1 = x + y
         z2 = z1 * x

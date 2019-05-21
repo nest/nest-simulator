@@ -272,7 +272,10 @@ private:
    * @param min_gid GID of first neuron to create.
    * @param max_gid GID of last neuron to create (inclusive).
    */
-  void add_neurons_( Model& model, index min_gid, index max_gid );
+  void add_neurons_( Model& model,
+    index min_gid,
+    index max_gid,
+    GIDCollectionPTR gc_ptr );
 
   /**
    * Add device nodes.
@@ -283,7 +286,10 @@ private:
    * @param min_gid GID of first neuron to create.
    * @param max_gid GID of last neuron to create (inclusive).
    */
-  void add_devices_( Model& model, index min_gid, index max_gid );
+  void add_devices_( Model& model,
+    index min_gid,
+    index max_gid,
+    GIDCollectionPTR gc_ptr );
 
   /**
    * Add MUSIC nodes.
@@ -295,7 +301,10 @@ private:
    * @param min_gid GID of first neuron to create.
    * @param max_gid GID of last neuron to create (inclusive).
    */
-  void add_music_nodes_( Model& model, index min_gid, index max_gid );
+  void add_music_nodes_( Model& model,
+    index min_gid,
+    index max_gid,
+    GIDCollectionPTR gc_ptr );
 
 
 private:

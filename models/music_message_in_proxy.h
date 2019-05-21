@@ -179,7 +179,7 @@ private:
     /**
      * Set values from dicitonary.
      */
-    void set( const DictionaryDatum&, State_& );
+    void set( const DictionaryDatum&, State_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -194,7 +194,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -238,7 +238,7 @@ music_message_in_proxy::set_status( const DictionaryDatum& d )
   stmp.set( d, P_ ); // throws if BadProperty
 
   long nm = 0;
-  if ( updateValue< long >( d, names::n_messages, nm ) )
+  if ( updateValueParam< long >( d, names::n_messages, nm, node ) )
   {
     if ( nm == 0 )
     {

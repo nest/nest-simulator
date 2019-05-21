@@ -38,6 +38,7 @@ set( nestkernel_sources
     exceptions.h exceptions.cpp
     genericmodel.h genericmodel_impl.h
     gid_collection.h gid_collection.cpp
+    generic_factory.h
     histentry.h histentry.cpp
     model.h model.cpp
     model_manager.h model_manager_impl.h model_manager.cpp
@@ -50,6 +51,7 @@ set( nestkernel_sources
     modelrange.h modelrange.cpp
     modelrange_manager.h modelrange_manager.cpp
     node.h node.cpp
+    parameter.h parameter.cpp
     proxynode.h proxynode.cpp
     recording_device.h recording_device.cpp
     pseudo_recording_device.h
@@ -102,6 +104,8 @@ target_include_directories( nestkernel PRIVATE
     ${PROJECT_BINARY_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
+    ${PROJECT_SOURCE_DIR}/topology
+    ${PROJECT_SOURCE_DIR}/nestkernel
     )
 
 install( TARGETS nestkernel

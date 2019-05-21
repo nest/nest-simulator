@@ -24,6 +24,7 @@
 #define TOPOLOGYMODULE_H
 
 // Includes from nestkernel:
+#include "generic_factory.h"
 #include "exceptions.h"
 
 // Includes from sli:
@@ -31,7 +32,6 @@
 #include "slimodule.h"
 
 // Includes from topology:
-#include "generic_factory.h"
 #include "ntree.h"
 #include "position.h"
 
@@ -58,8 +58,8 @@ public:
   const std::string name( void ) const;
   const std::string commandstring( void ) const;
 
-  static SLIType MaskType;      ///< SLI type for masks
-  static SLIType ParameterType; ///< SLI type for parameters
+  static SLIType MaskType;              ///< SLI type for masks
+  static SLIType TopologyParameterType; ///< SLI type for parameters
 
   /*
    * SLI functions: See source file for documentation
@@ -143,35 +143,35 @@ public:
     void execute( SLIInterpreter* ) const;
   } sub_M_Mfunction;
 
-  class Mul_P_PFunction : public SLIFunction
+  class MulTopo_P_PFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } mul_P_Pfunction;
+  } multopo_P_Pfunction;
 
-  class Div_P_PFunction : public SLIFunction
+  class DivTopo_P_PFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } div_P_Pfunction;
+  } divtopo_P_Pfunction;
 
-  class Add_P_PFunction : public SLIFunction
+  class AddTopo_P_PFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } add_P_Pfunction;
+  } addtopo_P_Pfunction;
 
-  class Sub_P_PFunction : public SLIFunction
+  class SubTopo_P_PFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } sub_P_Pfunction;
+  } subtopo_P_Pfunction;
 
-  class CreateParameter_DFunction : public SLIFunction
+  class CreateTopologyParameter_DFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } createparameter_Dfunction;
+  } createtopologyparameter_Dfunction;
 
   class GetValue_a_PFunction : public SLIFunction
   {
@@ -298,7 +298,7 @@ public:
    */
   static lockPTRDatum< TopologyParameter,
     &TopologyModule::
-      ParameterType > /*ParameterDatum*/ create_parameter( const Token& );
+      TopologyParameterType > /*ParameterDatum*/ create_topology_parameter( const Token& );
 
   /**
    * Create a new Parameter object using the parameter factory.
@@ -307,7 +307,7 @@ public:
    *             type.
    * @returns dynamically allocated new Parameter object.
    */
-  static TopologyParameter* create_parameter( const Name& name,
+  static TopologyParameter* create_topology_parameter( const Name& name,
     const DictionaryDatum& d );
 
 private:

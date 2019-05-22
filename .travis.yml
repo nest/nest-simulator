@@ -144,6 +144,7 @@ install:
    - which python
    - python --version
    - which pip
+   - pip list
    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then which nosetests; nosetests --version; nosetests --plugins; fi
    - which cmake
    - cmake --version

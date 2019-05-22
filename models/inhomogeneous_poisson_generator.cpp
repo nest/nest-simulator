@@ -296,9 +296,9 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin,
 void
 nest::inhomogeneous_poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
   V_.poisson_dev_.set_lambda( B_.rate_ * V_.h_ );
-  long n_spikes = V_.poisson_dev_.ldev( rng );
+  long n_spikes = V_.poisson_dev_.ldev(
+      kernel().rng_manager.get_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

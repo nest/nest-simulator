@@ -142,8 +142,10 @@ nest::poisson_generator::update( Time const& T, const long from, const long to )
 void
 nest::poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
-  long n_spikes = V_.poisson_dev_.ldev( rng );
+  // Be careful of storing the rng as its own variable. Creation of sharedPTRs
+  // lead to overhead.
+  long n_spikes = V_.poisson_dev_.ldev(
+      kernel().rng_manager.get_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

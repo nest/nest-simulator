@@ -383,20 +383,11 @@ nest::glif_psc::update_glif1( Time const& origin, const long from,
   const long to )
 {
   // glif_lif
-  const double dt = Time::get_resolution().get_ms();
+  const double dt = Time::get_resolution().get_ms(); // in ms
   double v_old = S_.V_m_;
-  double spike_component = 0.0;
-  double th_old = S_.threshold_;
-  double tau = P_.G_ / P_.C_m_;
-  double exp_tau = std::exp( -dt * tau );
 
   for ( long lag = from; lag < to; ++lag )
   {
-    // update threshold via exact solution of dynamics of spike component of
-    // threshold
-    spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
-    S_.threshold_ = spike_component + P_.th_inf_;
-    V_.last_spike_ = spike_component;
 
     if ( V_.t_ref_remaining_ > 0.0 )
     {
@@ -405,23 +396,7 @@ nest::glif_psc::update_glif1( Time const& origin, const long from,
       V_.t_ref_remaining_ -= dt;
       if ( V_.t_ref_remaining_ <= 0.0 )
       {
-        S_.V_m_ = P_.E_L_ + P_.voltage_reset_a_ * ( S_.V_m_ - P_.E_L_ )
-          + P_.voltage_reset_b_;
-
-        V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
-        S_.threshold_ = V_.last_spike_ + P_.th_inf_;
-
-        // Check if bad reset
-        // TODO: Better way to handle?
-        if ( S_.V_m_ > S_.threshold_ )
-        {
-          printf(
-            "Simulation Terminated: Voltage (%f) reset above threshold "
-            "(%f)!!\n",
-            S_.V_m_,
-            S_.threshold_ );
-        }
-        assert( S_.V_m_ <= S_.threshold_ );
+        S_.V_m_ = P_.V_reset_;
       }
       else
       {
@@ -431,7 +406,7 @@ nest::glif_psc::update_glif1( Time const& origin, const long from,
     else
     {
 
-      // voltage dynamic
+      // voltage dynamics of membranes
       switch ( V_.method_ )
       {
       // Linear Euler forward (RK1) to find next V_m value
@@ -441,20 +416,27 @@ nest::glif_psc::update_glif1( Time const& origin, const long from,
         break;
       // Linear Exact to find next V_m value
       case 1:
-        S_.V_m_ = v_old * exp_tau
-          + ( ( S_.I_ + P_.G_ * P_.E_L_ ) / P_.C_m_ ) * ( 1 - exp_tau ) / tau;
+        S_.V_m_ = v_old * V_.P33_ + ( S_.I_ + P_.G_ * P_.E_L_ ) * V_.P30_;
         break;
       }
 
-      if ( S_.V_m_ > S_.threshold_ )
+      // add synapse component for voltage dynamics
+      S_.I_syn_ = 0.0;
+      for ( size_t i = 0; i < P_.n_receptors_(); i++ )
       {
-        V_.t_ref_remaining_ = V_.t_ref_total_;
+        S_.V_m_ += V_.P31_[ i ] * S_.y1_[ i ] + V_.P32_[ i ] * S_.y2_[ i ];
+        S_.I_syn_ += S_.y2_[ i ];
+      }
 
-        // Determine
+      if ( S_.V_m_ > P_.th_inf_ )
+      {
+
+        V_.t_ref_remaining_ = V_.t_ref_total_;
+        // Determine spike offset and send spike event
         double spike_offset =
-          ( 1 - ( ( v_old - th_old )
-                  / ( ( S_.threshold_ - th_old ) - ( S_.V_m_ - v_old ) ) ) )
+          ( 1 - ( P_.th_inf_ - v_old ) / ( S_.V_m_ - v_old ) )
           * Time::get_resolution().get_ms();
+
         set_spiketime(
           Time::step( origin.get_steps() + lag + 1 ), spike_offset );
         SpikeEvent se;
@@ -463,14 +445,26 @@ nest::glif_psc::update_glif1( Time const& origin, const long from,
       }
     }
 
+    // alpha shape PSCs
+    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
+    {
+
+      S_.y2_[ i ] = V_.P21_[ i ] * S_.y1_[ i ] + V_.P22_[ i ] * S_.y2_[ i ];
+      S_.y1_[ i ] *= V_.P11_[ i ];
+
+      // Apply spikes delivered in this step: The spikes arriving at T+1 have an
+      // immediate effect on the state of the neuron
+      S_.y1_[ i ] +=
+        V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
+    }
+
     S_.I_ = B_.currents_.get_value( lag );
 
     B_.logger_.record_data( origin.get_steps() + lag );
 
     v_old = S_.V_m_;
-
-    th_old = S_.threshold_;
   }
+
 }
 
 void

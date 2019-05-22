@@ -32,6 +32,7 @@
 #include "integerdatum.h"
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "compose.hpp"
 #include "logging.h"
 
@@ -70,7 +71,6 @@ nest::music_cont_in_proxy::Parameters_::get( DictionaryDatum& d ) const
 
 void
 nest::music_cont_in_proxy::Parameters_::set( const DictionaryDatum& d,
-  Node* node,
   State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
@@ -79,7 +79,7 @@ nest::music_cont_in_proxy::Parameters_::set( const DictionaryDatum& d,
 
   if ( not s.published_ )
   {
-    updateValueParam< string >( d, names::port_name, port_name_, node );
+    updateValue< string >( d, names::port_name, port_name_ );
   }
 }
 
@@ -92,8 +92,7 @@ nest::music_cont_in_proxy::State_::get( DictionaryDatum& d ) const
 
 void
 nest::music_cont_in_proxy::State_::set( const DictionaryDatum&,
-  const Parameters_&,
-  Node* node )
+  const Parameters_& )
 {
 }
 

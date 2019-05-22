@@ -77,13 +77,12 @@ nest::music_event_in_proxy::Parameters_::get( DictionaryDatum& d ) const
 
 void
 nest::music_event_in_proxy::Parameters_::set( const DictionaryDatum& d,
-  Node* node,
   State_& s )
 {
   if ( not s.registered_ )
   {
-    updateValueParam< long >( d, names::music_channel, channel_, node );
-    updateValueParam< string >( d, names::port_name, port_name_, node );
+    updateValue< long >( d, names::music_channel, channel_ );
+    updateValue< string >( d, names::port_name, port_name_ );
   }
 }
 
@@ -95,8 +94,7 @@ nest::music_event_in_proxy::State_::get( DictionaryDatum& d ) const
 
 void
 nest::music_event_in_proxy::State_::set( const DictionaryDatum&,
-  const Parameters_&,
-  Node* node )
+  const Parameters_& )
 {
 }
 

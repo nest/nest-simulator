@@ -76,12 +76,12 @@ nest::music_message_in_proxy::Parameters_::get( DictionaryDatum& d ) const
 
 void
 nest::music_message_in_proxy::Parameters_::set( const DictionaryDatum& d,
-  Node* node,
-  State_& s )
+  State_& s,
+  Node* node )
 {
   if ( not s.published_ )
   {
-    updateValueParam< string >( d, names::port_name, port_name_, node );
+    updateValue< string >( d, names::port_name, port_name_ );
     updateValueParam< double >(
       d, names::acceptable_latency, acceptable_latency_, node );
   }

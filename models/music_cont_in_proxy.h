@@ -131,9 +131,7 @@ private:
     Parameters_( const Parameters_& ); //!< Recalibrate all times
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      State_&,
-      Node* ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, State_& ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -148,7 +146,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void set( const DictionaryDatum&, const Parameters_& );
   };
 
   // ------------------------------------------------------------

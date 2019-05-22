@@ -85,7 +85,7 @@ RUNFILE="${TEST_RUNFILE}-${script_name}"
 
 
 echo "Running test '${param_script}'... " >> "${LOGFILE}"
-echo "  Running test '${param_script}'..."
+echo "  Running test '${param_script#$TEST_BASEDIR/}'..."
 
 # Very unfortunately, it is cheaper to generate a test runner on fly
 # rather than trying to fight with sh, dash, bash, etc. variable
@@ -153,7 +153,7 @@ else
     fi
 fi
 
-echo "               '${param_script}' ${explanation}"
+echo "               '${param_script#$TEST_BASEDIR/}' ${explanation}"
 
 if test "x${msg_error}" != x ; then
     echo

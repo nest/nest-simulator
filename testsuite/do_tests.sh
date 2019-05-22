@@ -69,6 +69,17 @@ bail_out ()
 
 
 #
+# read certain quantities from the 'testsuite' tags in a JUnit XML
+# file FILE. KEY can be one of 'errors', 'failures', 'skips', 'tests',
+# or 'time'. Use like this: read_junitxml FILE KEY
+#
+read_junitxml () {
+    grep -o '<testsuite[^>]*' $1 \
+        | grep -o "$2=\"[^ ]*\"" | cut -d= -f2 | tr -d \" | tr '\n' '+'
+}
+
+
+#
 # sed has different syntax for extended regular expressions
 # on different operating systems:
 # BSD: -E
@@ -91,11 +102,11 @@ while test $# -gt 0 ; do
             ;;
         --prefix=*)
             PREFIX="$( echo "$1" | sed 's/^--prefix=//' )"
-	    if test ! "${PREFIX}"; then usage 2 "--prefix"; fi
+            if test ! "${PREFIX}"; then usage 2 "--prefix"; fi
             ;;
         --report-dir=*)
             REPORTDIR="$( echo "$1" | sed 's/^--report-dir=//' )"
-	    if test ! "${REPORTDIR}"; then usage 2 "--report-dir"; fi
+            if test ! "${REPORTDIR}"; then usage 2 "--report-dir"; fi
             ;;
         --with-python=*)
             PYTHON="$( echo "$1" | sed 's/^--with-python=//' )"
@@ -123,12 +134,12 @@ unset NEST_DOC_DIR
 
 if test "${PYTHON}"; then
     if test ! "${PYTHONPATH_}"; then
-	usage 3 "Error: \'--with-python\' also requires \'--python-path\'"
+        usage 3 "Error: \'--with-python\' also requires \'--python-path\'"
     fi
 
-    NOSETESTS="$(command -v nosetests 2>&1)" || {
-	echo "Error: PyNEST testing requested but 'nosetests' not executable."
-	exit 1
+    command -v pytest 2>&1 || {
+        echo "Error: PyNEST testing requested but 'pytest' command not executable."
+        exit 1
     }
 
     export PYTHONPATH="$PYTHONPATH_:${PYTHONPATH:-}"
@@ -144,6 +155,7 @@ INFO_OS="$(uname -s)"
 INFO_USER="$(whoami)"
 INFO_VER="$(uname -r)"
 NPROCS="$(cat /proc/cpuinfo | grep processor | wc -l)"
+BASEDIR="$PWD"
 
 print_paths () {
     indent="`printf '%23s'`"
@@ -197,6 +209,7 @@ mkdir "${REPORTDIR}"
 TEST_TMPDIR="$(mktemp -d ${REPORTDIR}/tmp.XXX)"
 NEST_DATA_PATH="${TEST_TMPDIR}"
 export NEST_DATA_PATH
+export TEST_BASEDIR
 
 # touch output files in case they are never written (e.g. no tests fail)
 touch "$TEST_TOTAL" "$TEST_PASSED" "$TEST_SKIPPED" "$TEST_FAILED"
@@ -249,12 +262,8 @@ phase_one() {
     echo 'Phase 1: Testing if SLI can execute scripts and report errors'
     echo '-------------------------------------------------------------'
 
-
     CODES_SUCCESS=' 0 Success'
     CODES_FAILURE=
-    #for test_name in test_pass.sli test_goodhandler.sli test_lazyhandler.sli ; do
-    #    $RUN_TEST "selftests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-    #done
     xargs -L1 -P${NPROCS} -I'{}' $RUN_TEST "${TEST_BASEDIR}/selftests/{}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}" <<TESTS
         test_pass.sli
         test_goodhandler.sli
@@ -280,7 +289,6 @@ phase_two() {
     echo
     echo "Phase 2: Testing SLI's unittest library"
     echo "---------------------------------------"
-
 
     # assert_or_die uses pass_or_die, so pass_or_die should be tested first.
 
@@ -359,9 +367,6 @@ phase_three() {
     echo "Phase 3: Integration  tests"
     echo "---------------------------"
 
-    #for test_ext in sli py ; do
-    #    for test_dir in "unittests/" "topology/unittests/" ; do
-    #        for test_name in $(ls "${TEST_BASEDIR}/${test_dir}" | grep ".*\.${test_ext}\$") ; do
     echo "TEST_BASEDIR $TEST_BASEDIR"
     echo "PWD $(pwd)"
     find "${TEST_BASEDIR}/unittests" "${TEST_BASEDIR}/topology/unittests" -name "*.py" -o -name "*.sli" |\
@@ -373,8 +378,6 @@ phase_four() {
     echo "Phase 4: Regression tests"
     echo "-------------------------"
 
-    #for test_ext in sli py ; do
-    #    for test_name in $(ls "${TEST_BASEDIR}/regressiontests/" | grep ".*\.${test_ext}$") ; do
     find "${TEST_BASEDIR}/regressiontests/" -name "*.sli" -o -name "*.py" |\
         xargs -L1 -P${NPROCS} -I'{}' $RUN_TEST "{}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 }
@@ -383,6 +386,7 @@ phase_five() {
     echo
     echo "Phase 5: MPI tests"
     echo "------------------"
+
     if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
 
         NEST=${PREFIX}/bin/nest_indirect
@@ -417,9 +421,8 @@ phase_six() {
     echo
     echo "Phase 6: MUSIC tests"
     echo "--------------------"
-    if test ${MUSIC}; then
 
-        BASEDIR="$PWD"
+    if test ${MUSIC}; then
 
         TESTDIR="${TEST_BASEDIR}/musictests/"
 
@@ -441,8 +444,8 @@ phase_six() {
 
             proc_txt="processes"
             if test "$np" -eq 1; then proc_txt="process"; fi
-            echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
-            printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
+            echo          "Running test 'musictests/${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
+            printf '%s' "  Running test 'musictests/${test_name}' with $np $proc_txt... "
 
             # Copy everything to the tmpdir.
             cp "${music_file}" ${sh_file} ${sli_files} "${tmpdir}"
@@ -519,59 +522,52 @@ phase_seven() {
 
     if test ${PYTHON}; then
 
-        PYTESTDIR="${PREFIX}/share/nest/tests/python"
-        "${NOSETESTS}" -v --where="${REPORTDIR}" "${PYTESTDIR}" 2>&1 \
-            | tee -a "${TEST_LOGFILE}" \
-            | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" \
-            | sed 's/^/  /'
+	PYTEST_OPTS="-m pytest --tb=no --disable-warnings"
+        cd "${PREFIX}/share/nest/tests/python"
 
-        PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
-        PYNEST_TEST_SKIPPED="$(  tail -n 1 ${TEST_LOGFILE} | sed -$EXTENDED_REGEX_PARAM 's/.*SKIP=([0-9]+).*/\1/')"
-        PYNEST_TEST_FAILURES="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*failures=([0-9]+).*/\1/' )"
-        PYNEST_TEST_ERRORS="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*errors=([0-9]+).*/\1/' )"
+        JUNITFILE="${REPORTDIR}"/pytest-serial.log
+        COLUMNS=110 ${PYTHON} -u $PYTEST_OPTS --junitxml="${JUNITFILE}" --ignore=/mpi_tests.py . 2>&1 \
+            | grep --line-buffered -v "========" | grep --line-buffered -v "generated xml file" \
+            | grep --line-buffered -v '^$' | grep --line-buffered -v '^platform\|^rootdir\|^collected' \
+            | sed -u 's/^/  /' | tee -a "${TEST_LOGFILE}"
 
-        # check that PYNEST_TEST_FAILURES/PYNEST_TEST_ERRORS contain numbers
-        if test ${PYNEST_TEST_FAILURES} -eq ${PYNEST_TEST_FAILURES} 2>/dev/null ; then
-          # PYNEST_TEST_FAILURES is a valid number
-          :
-        else
-          PYNEST_TEST_FAILURES=0
-        fi
-        if test ${PYNEST_TEST_ERRORS} -eq ${PYNEST_TEST_ERRORS} 2>/dev/null ; then
-          # PYNEST_TEST_ERRORS is a valid number
-          :
-        else
-          PYNEST_TEST_ERRORS=0
-        fi
-        if test ${PYNEST_TEST_SKIPPED} -eq ${PYNEST_TEST_SKIPPED} 2>/dev/null ; then
-          # PYNEST_TEST_SKIPPED is a valid number
-          :
-        else
-          PYNEST_TEST_SKIPPED=0
-        fi
+        PYNEST_TEST_TOTAL=$(read_junitxml ${JUNITFILE} "tests")
+        PYNEST_TEST_SKIPPED=$(read_junitxml ${JUNITFILE} "skips")
+        PYNEST_TEST_FAILURES=$(read_junitxml ${JUNITFILE} "failures")
+        PYNEST_TEST_ERRORS=$(read_junitxml ${JUNITFILE} "errors")
+
+        echo
+        JUNITFILE="${REPORTDIR}"/pytest-parallel.log
+        COLUMNS=110 ${PYTHON} -u mpi_tests.py "${JUNITFILE}" "${PYTEST_OPTS}" 2>&1 \
+            | grep --line-buffered -v "========" | grep --line-buffered -v "generated xml file" \
+            | grep --line-buffered -v '^$' | grep --line-buffered -v '^platform\|^rootdir\|^collected' \
+            | sed -u 's/^/  /' | tee -a "${TEST_LOGFILE}"
+
+        PYNEST_TEST_TOTAL=$((${PYNEST_TEST_TOTAL} $(read_junitxml ${JUNITFILE} "tests") 0))
+        PYNEST_TEST_SKIPPED=$((${PYNEST_TEST_SKIPPED} $(read_junitxml ${JUNITFILE} "skips") 0))
+        PYNEST_TEST_FAILURES=$((${PYNEST_TEST_FAILURES} $(read_junitxml ${JUNITFILE} "failures") 0))
+        PYNEST_TEST_ERRORS=$((${PYNEST_TEST_ERRORS} $(read_junitxml ${JUNITFILE} "errors") 0))
+
+        cd - >/dev/null
+
         PYNEST_TEST_FAILED=$(($PYNEST_TEST_ERRORS + $PYNEST_TEST_FAILURES))
         PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_SKIPPED - $PYNEST_TEST_FAILED))
-
-	    echo
-        echo "  PyNEST tests: ${PYNEST_TEST_TOTAL}"
-        echo "     Passed: ${PYNEST_TEST_PASSED}"
-        echo "     Skipped: ${PYNEST_TEST_SKIPPED}"
-        echo "     Failed: ${PYNEST_TEST_FAILED}"
 
         PYNEST_TEST_SKIPPED_TEXT="(${PYNEST_TEST_SKIPPED} PyNEST)"
         PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
 
     else
-	echo "  Not running PyNEST tests because NEST was compiled without support"
-	echo "  for Python. See the file README.md for details."
+        echo "  Not running PyNEST tests because NEST was compiled without support"
+        echo "  for Python. See the file README.md for details."
     fi
 }
 
 phase_eight() {
+    echo
+    echo "Phase 8: C++ tests (experimental)"
+    echo "---------------------------------"
+
     if command -v ${TEST_BASEDIR}/testsuite/cpptests/run_all_cpptests > /dev/null 2>&1; then
-        echo
-        echo "Phase 8: C++ tests (experimental)"
-        echo "---------------------------------"
 
         CPP_TEST_OUTPUT="$(${TEST_BASEDIR}/testsuite/cpptests/run_all_cpptests 2>&1)"
         # TODO:
@@ -597,7 +593,7 @@ phase_eight() {
         echo "     Passed : ${CPP_TEST_PASSED}"
         echo "     Failed : ${CPP_TEST_FAILED}"
     else
-	echo "  Not running C++ tests because NEST was compiled without Boost."
+        echo "  Not running C++ tests because NEST was compiled without Boost."
     fi
 }
 
@@ -615,6 +611,7 @@ echo "NEST Testsuite Summary"
 echo "----------------------"
 echo "  NEST Executable: $(which nest)"
 echo "  SLI Executable : $(which sli)"
+echo
 echo "  Total number of tests: $(( $(cat "${TEST_TOTAL}" | wc -l) + $CPP_TEST_TOTAL + $PYNEST_TEST_TOTAL))"
 echo "     Passed: $(( $(cat "${TEST_PASSED}" | wc -l) + $CPP_TEST_PASSED + $PYNEST_TEST_PASSED ))"
 echo "     Skipped: $(( $(cat "${TEST_SKIPPED}" | wc -l) + $CPP_TEST_SKIPPED + $PYNEST_TEST_SKIPPED )) ${PYNEST_TEST_SKIPPED_TEXT:-}"

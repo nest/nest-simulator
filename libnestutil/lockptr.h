@@ -90,7 +90,6 @@ class lockPTR
 
   private:
     D* pointee; // pointer to handled Datum object
-    size_t number_of_references;
     bool deletable;
     bool locked;
 
@@ -100,7 +99,6 @@ class lockPTR
   public:
     PointerObject( D* p = NULL )
       : pointee( p )
-      , number_of_references( 1 )
       , deletable( true )
       , locked( false )
     {
@@ -108,7 +106,6 @@ class lockPTR
 
     PointerObject( D& p_o )
       : pointee( &p_o )
-      , number_of_references( 1 )
       , deletable( false )
       , locked( false )
     {
@@ -116,8 +113,6 @@ class lockPTR
 
     ~PointerObject()
     {
-      assert( number_of_references == 0 ); // This will invalidate the still
-                                           // existing pointer!
       assert( not locked );
       if ( ( pointee != NULL ) && deletable && ( not locked ) )
       {
@@ -129,28 +124,6 @@ class lockPTR
     get( void ) const
     {
       return pointee;
-    }
-
-    void
-    addReference( void )
-    {
-#pragma omp atomic update // To avoid race conditions.
-      ++number_of_references;
-    }
-
-    void
-    removeReference( void )
-    {
-      assert( number_of_references > 0 );
-
-#pragma omp atomic update // To avoid race conditions.
-      --number_of_references;
-    }
-
-    size_t
-    references( void ) const
-    {
-      return number_of_references;
     }
 
     bool
@@ -193,13 +166,13 @@ public:
 
   explicit lockPTR( D* p = NULL )
   {
-    obj.reset( new PointerObject( p ) );
+    obj = std::make_shared< PointerObject >( p );
     assert( obj != NULL );
   }
 
   explicit lockPTR( D& p_o )
   {
-    obj.reset( new PointerObject( p_o ) );
+    obj = std::make_shared< PointerObject >( p_o );
     assert( obj != NULL );
   }
 
@@ -207,25 +180,17 @@ public:
     : obj( spd.obj )
   {
     assert( obj != NULL );
-    obj->addReference();
   }
 
   virtual ~lockPTR()
   {
     assert( obj != NULL );
-    obj->removeReference();
   }
 
   lockPTR< D > operator=( const lockPTR< D >& spd )
   {
     assert( obj != NULL );
     assert( spd.obj != NULL );
-
-    // The following order of the expressions protects
-    // against a=a;
-
-    spd.obj->addReference();
-    obj->removeReference();
 
     obj = spd.obj;
 
@@ -365,7 +330,7 @@ public:
   size_t
   references( void ) const
   {
-    return ( obj == NULL ) ? 0 : obj->references();
+    return ( obj == NULL ) ? 0 : obj.use_count();
   }
 };
 

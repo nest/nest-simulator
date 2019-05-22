@@ -177,10 +177,17 @@ GIDCollection::create_( const std::vector< index >& gids )
 
   std::vector< GIDCollectionPrimitive > parts;
 
+  index old_gid = 0;
   for ( std::vector< index >::const_iterator gid = ++( gids.begin() );
         gid != gids.end();
         ++gid )
   {
+    if ( *gid == old_gid )
+    {
+      throw BadProperty( "All GIDs in a GIDCollection have to be unique" );
+    }
+    old_gid = *gid;
+
     index next_model = kernel().modelrange_manager.get_model_id( *gid );
 
     if ( next_model == current_model and *gid == ( current_last + 1 ) )

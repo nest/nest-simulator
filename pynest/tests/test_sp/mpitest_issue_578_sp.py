@@ -24,13 +24,14 @@ This test is called from test_mpitests.py
 """
 
 import nest
+import unittest
 import sys
-import traceback
 
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
-class TestIssue578():
+@unittest.skipIf(not HAVE_GSL, "GSL is not available")
+class TestIssue578(unittest.TestCase):
 
     def test_targets(self):
         nest.ResetKernel()
@@ -92,13 +93,10 @@ class TestIssue578():
             self.fail("Exception during simulation")
 
 
-# We can not define the regular suite() and runner() functions here, because
-# it will not show up as failed in the testsuite if it fails. This is
-# because the test is called from test_mpitests, and the unittest system in
-# test_mpitests will only register the failing test if we call this test
-# directly.
-if HAVE_GSL:
-    mpitest = TestIssue578()
-    mpitest.test_targets()
-else:
-    print("Skipping because GSL is not available")
+def suite():
+    test_suite = unittest.makeSuite(TestIssue578, 'test')
+    return test_suite
+
+
+if __name__ == '__main__':
+    unittest.main()

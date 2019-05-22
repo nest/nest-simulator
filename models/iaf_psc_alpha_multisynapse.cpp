@@ -26,6 +26,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 #include "propagator_stability.h"
 
@@ -141,15 +142,16 @@ iaf_psc_alpha_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
+iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d,
+  Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValue< double >( d, names::E_L, E_L_ );
+  updateValueParam< double >( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  if ( updateValueParam< double >( d, names::V_reset, V_reset_, node ) )
   {
     V_reset_ -= E_L_;
   }
@@ -157,7 +159,7 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
   {
     V_reset_ -= delta_EL;
   }
-  if ( updateValue< double >( d, names::V_th, Theta_ ) )
+  if ( updateValueParam< double >( d, names::V_th, Theta_, node ) )
   {
     Theta_ -= E_L_;
   }
@@ -165,7 +167,7 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
   {
     Theta_ -= delta_EL;
   }
-  if ( updateValue< double >( d, names::V_min, LowerBound_ ) )
+  if ( updateValueParam< double >( d, names::V_min, LowerBound_, node ) )
   {
     LowerBound_ -= E_L_;
   }
@@ -173,10 +175,10 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
   {
     LowerBound_ -= delta_EL;
   }
-  updateValue< double >( d, names::I_e, I_e_ );
-  updateValue< double >( d, names::C_m, C_ );
-  updateValue< double >( d, names::tau_m, Tau_ );
-  updateValue< double >( d, names::t_ref, refractory_time_ );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
+  updateValueParam< double >( d, names::C_m, C_, node );
+  updateValueParam< double >( d, names::tau_m, Tau_, node );
+  updateValueParam< double >( d, names::t_ref, refractory_time_, node );
 
   if ( C_ <= 0 )
   {
@@ -228,12 +230,13 @@ iaf_psc_alpha_multisynapse::State_::get( DictionaryDatum& d,
 void
 iaf_psc_alpha_multisynapse::State_::set( const DictionaryDatum& d,
   const Parameters_& p,
-  const double delta_EL )
+  const double delta_EL,
+  Node* node )
 {
   // If the dictionary contains a value for the membrane potential, V_m, adjust
   // it with the resting potential, E_L_. If not, adjust the membrane potential
   // with the provided change in resting potential.
-  if ( updateValue< double >( d, names::V_m, V_m_ ) )
+  if ( updateValueParam< double >( d, names::V_m, V_m_, node ) )
   {
     V_m_ -= p.E_L_;
   }
@@ -453,10 +456,10 @@ iaf_psc_alpha_multisynapse::handle( DataLoggingRequest& e )
 void
 iaf_psc_alpha_multisynapse::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                    // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

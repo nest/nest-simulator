@@ -28,7 +28,7 @@ from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_simulation import GetKernelStatus
-from nest.topology import CreateParameter
+from nest.topology import CreateTopologyParameter
 
 import numpy
 
@@ -43,10 +43,12 @@ __all__ = [
     '_get_params_is_strings',
     '_restructure_data',
     'Connectome',
+    'CreateParameter',
     'GIDCollection',
     'GIDCollectionIterator',
     'Mask',
     'Parameter',
+    'TopologyParameter',
 ]
 
 
@@ -165,6 +167,73 @@ def _get_hierarchical_addressing(gc, params):
     else:
         result = {key: result[key] for key in params[-1]}
     return result
+
+
+def CreateParameter(parametertype, specs):
+    """
+    Create a parameter.
+
+    Parameters
+    ----------
+    parametertype : {'constant', 'linear', 'exponential', 'gaussian', \
+        'gaussian2D', 'uniform', 'normal', 'lognormal'}
+        Function types with or without distance dependency
+    specs : dict
+        Dictionary specifying the parameters of the provided
+        `'parametertype'`, see **Parameter types**.
+
+
+    Returns
+    -------
+    out : ``Parameter`` object
+
+    Notes
+    -----
+    -
+
+
+    **Parameter types**
+
+    Available parameter types (`parametertype` parameter), their function and
+    acceptable keys for their corresponding specification dictionaries
+
+    * Constant
+        ::
+
+            'constant' :
+                {'value' : float} # constant value
+
+    * Randomization
+        ::
+
+            # random parameter with uniform distribution in [min,max)
+            'uniform' :
+                {'min' : float, # minimum value, default: 0.0
+                 'max' : float} # maximum value, default: 1.0
+            # or
+            # random parameter with normal distribution, optionally truncated
+            # to [min,max)
+            'normal':
+                {'mean' : float, # mean value, default: 0.0
+                 'sigma': float, # standard deviation, default: 1.0
+                 'min'  : float, # minimum value, default: -inf
+
+                 'max'  : float} # maximum value, default: +inf
+            # or
+            # random parameter with lognormal distribution,
+            # optionally truncated to [min,max)
+            'lognormal' :
+                {'mu'   : float, # mean value of logarithm, default: 0.0
+                 'sigma': float, # standard deviation of log, default: 1.0
+                 'min'  : float, # minimum value, default: -inf
+                 'max'  : float} # maximum value, default: +inf
+
+
+    **Example**
+        ::
+
+    """
+    return sli_func('CreateParameter', {parametertype: specs})
 
 
 class GIDCollectionIterator(object):
@@ -448,9 +517,6 @@ class GIDCollection(object):
         """
 
         if isinstance(params, dict) and self[0].get('local'):
-            for key, vals in params.items():
-                if isinstance(vals, Parameter):
-                    params[key] = [vals.get_value() for _ in range(len(self))]
 
             contains_list = [is_iterable(vals) and not
                              is_iterable(self[0].get(key))
@@ -472,9 +538,6 @@ class GIDCollection(object):
             if (is_iterable(val) and not
                     isinstance(val, (uni_str, dict))):
                 params = [{params: x} for x in val]
-            elif isinstance(val, Parameter):
-                params = [{params: val.get_value()}
-                          for _ in range(self.__len__())]
             else:
                 params = {params: val}
 
@@ -610,13 +673,19 @@ class Connectome(object):
         """
         Return iterator containing the source gids of the connectome.
         """
-        return iter(self.get('source'))
+        sources = self.get('source')
+        if not isinstance(sources, (list, tuple)):
+            sources = (sources,)
+        return iter(sources)
 
     def target(self):
         """
         Return iterator containing the target gids of the connectome.
         """
-        return iter(self.get('target'))
+        targets = self.get('target')
+        if not isinstance(targets, (list, tuple)):
+            targets = (targets,)
+        return iter(targets)
 
     def get(self, keys=None, output=''):
         """
@@ -796,13 +865,11 @@ class Mask(object):
 
 class Parameter(object):
     """
-    Class for parameters for distance dependency or randomization.
+    Class for parameters
 
-    Parameters are spatial functions which are used when creating
-    connections in the Topology module. A parameter may be used as a
-    probability kernel when creating connections or as synaptic parameters
-    (such as weight and delay). Parameters are created using the
-    ``CreateParameter`` command.
+    A parameter may be used as a probability kernel when creating
+    connections or as synaptic parameters (such as weight and delay).
+    Parameters are created using the ``CreateParameter`` command.
     """
 
     _datum = None
@@ -816,13 +883,16 @@ class Parameter(object):
         self._datum = datum
 
     # Generic binary operation
-    def _binop(self, op, other):
+    def _binop(self, op, other, params=None):
         if isinstance(other, (int, float)):
             other = CreateParameter('constant', {'value': float(other)})
         if not isinstance(other, Parameter):
             return NotImplemented
 
-        return sli_func(op, self._datum, other._datum)
+        if params is None:
+            return sli_func(op, self._datum, other._datum)
+        else:
+            return sli_func(op, self._datum, other._datum, params)
 
     def __add__(self, other):
         return self._binop("add", other)
@@ -851,6 +921,92 @@ class Parameter(object):
     def __truediv__(self, other):
         return self._binop("div", other)
 
+    def __lt__(self, other):
+        return self._binop("compare", other, {'comparator': 0})
+
+    def __le__(self, other):
+        return self._binop("compare", other, {'comparator': 1})
+
+    def __eq__(self, other):
+        return self._binop("compare", other, {'comparator': 2})
+
+    def __ne__(self, other):
+        return self._binop("compare", other, {'comparator': 3})
+
+    def __ge__(self, other):
+        return self._binop("compare", other, {'comparator': 4})
+
+    def __gt__(self, other):
+        return self._binop("compare", other, {'comparator': 5})
+
+    def GetValue(self):
+        """
+        Compute value of parameter.
+
+
+        Returns
+        -------
+        out : value
+            The value of the parameter
+
+
+        See also
+        --------
+        CreateParameter
+
+
+        Notes
+        -----
+        -
+
+
+        **Example**
+            ::
+
+                import nest
+
+                # normal distribution parameter
+                P = nest.CreateParameter('normal', {'mean': 0.0, 'sigma': 1.0})
+
+                # get out value
+                P.GetValue()
+
+        """
+        return sli_func("GetValue", self._datum)
+
+
+class TopologyParameter(Parameter):
+    """
+    Class for parameters for distance dependency or randomization.
+
+    Parameters are spatial functions which are used when creating
+    connections in the Topology module. A parameter may be used as a
+    probability kernel when creating connections or as synaptic parameters
+    (such as weight and delay). Parameters are created using the
+    ``CreateTopologyParameter`` command.
+    """
+    # The constructor should not be called by the user
+
+    def __init__(self, datum):
+        """
+        Parameters must be created using the CreateTopologyParameter
+        command.
+        """
+        if not (isinstance(datum, kernel.SLIDatum)
+                or datum.dtype != "topologyparametertype"):
+            raise TypeError("expected parameter datum")
+        self._datum = datum
+
+    # Generic binary operation
+    def _binop(self, op, other):
+        if isinstance(other, (int, float)):
+            other = CreateTopologyParameter(
+                'constant', {'value': float(other)})
+        if not isinstance(other, Parameter):
+            return NotImplemented
+
+        return sli_func(op, self._datum, other._datum)
+
     def GetValue(self, point):
         """
         Compute value of parameter at a point.
@@ -870,7 +1026,8 @@ class Parameter(object):
 
         See also
         --------
-        CreateParameter : create parameter for e.g., distance dependency
+        CreateTopologyParameter : create parameter for e.g.,
+        distance dependency
 
 
         Notes
@@ -884,7 +1041,7 @@ class Parameter(object):
                 import nest.topology as tp
 
                 #linear dependent parameter
-                P = tp.CreateParameter('linear', {'a' : 2., 'c' : 0.})
+                P = tp.CreateTopologyParameter('linear', {'a' : 2., 'c' : 0.})
 
                 #get out value
                 P.GetValue(point=[3., 4.])

@@ -26,6 +26,7 @@
 #include <numeric>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "compose.hpp"
 #include "logging.h"
 
@@ -101,7 +102,7 @@ nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
+nest::weight_recorder::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   if ( d->known( names::senders ) )
   {
@@ -247,7 +248,7 @@ nest::weight_recorder::set_status( const DictionaryDatum& d )
 
   device_.set_status( d );
 
-  P_.set( d );
+  P_.set( d, this );
 }
 
 

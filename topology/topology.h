@@ -57,7 +57,6 @@ public:
   {
   }
 
-  // TODO481 SetStatus, GetStatus, SetStatus must have flag
   void set_status( const DictionaryDatum&, bool ){};
 
   void
@@ -71,6 +70,12 @@ public:
   get_layer() const
   {
     return layer_;
+  }
+
+  std::string
+  get_type() const
+  {
+    return "spatial";
   }
 
   void
@@ -104,20 +109,21 @@ BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum union_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
-ParameterDatum multiply_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 );
-ParameterDatum divide_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 );
-ParameterDatum add_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 );
-ParameterDatum subtract_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 );
+TopologyParameterDatum multiply_parameter( const TopologyParameterDatum& param1,
+  const TopologyParameterDatum& param2 );
+TopologyParameterDatum divide_parameter( const TopologyParameterDatum& param1,
+  const TopologyParameterDatum& param2 );
+TopologyParameterDatum add_parameter( const TopologyParameterDatum& param1,
+  const TopologyParameterDatum& param2 );
+TopologyParameterDatum subtract_parameter( const TopologyParameterDatum& param1,
+  const TopologyParameterDatum& param2 );
 void connect_layers( GIDCollectionPTR source_gc,
   GIDCollectionPTR target_gc,
   const DictionaryDatum& dict );
-ParameterDatum create_parameter( const DictionaryDatum& param_dict );
+TopologyParameterDatum create_topology_parameter(
+  const DictionaryDatum& param_dict );
 double get_value( const std::vector< double >& point,
-  const ParameterDatum& param );
+  const TopologyParameterDatum& param );
 void dump_layer_nodes( GIDCollectionPTR layer_gc, OstreamDatum& out );
 void dump_layer_connections( const Token& syn_model,
   GIDCollectionPTR source_layer_gc,

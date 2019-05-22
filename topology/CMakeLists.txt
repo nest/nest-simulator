@@ -25,7 +25,6 @@ set( topo_sources
     connection_creator.h
     connection_creator_impl.h
     connection_creator.cpp
-    generic_factory.h
     position.h
     layer.h
     layer_impl.h

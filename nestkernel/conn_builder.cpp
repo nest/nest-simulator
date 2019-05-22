@@ -449,7 +449,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         target_thread,
         synapse_model_id_,
         dummy_param_,
-        delay_->value_double( target_thread, rng ) );
+        delay_->value_double( target_thread, rng, sgid, &target ) );
     }
     else if ( default_delay_ )
     {
@@ -459,12 +459,13 @@ nest::ConnBuilder::single_connect_( index sgid,
         synapse_model_id_,
         dummy_param_,
         numerics::nan,
-        weight_->value_double( target_thread, rng ) );
+        weight_->value_double( target_thread, rng, sgid, &target ) );
     }
     else
     {
-      double delay = delay_->value_double( target_thread, rng );
-      double weight = weight_->value_double( target_thread, rng );
+      double delay = delay_->value_double( target_thread, rng, sgid, &target );
+      double weight =
+        weight_->value_double( target_thread, rng, sgid, &target );
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
@@ -491,7 +492,7 @@ nest::ConnBuilder::single_connect_( index sgid,
           // change value of dictionary entry without allocating new datum
           IntegerDatum* id = static_cast< IntegerDatum* >(
             ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-          ( *id ) = it->second->value_int( target_thread, rng );
+          ( *id ) = it->second->value_int( target_thread, rng, sgid, &target );
         }
         catch ( KernelException& e )
         {
@@ -514,7 +515,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         // change value of dictionary entry without allocating new datum
         DoubleDatum* dd = static_cast< DoubleDatum* >(
           ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-        ( *dd ) = it->second->value_double( target_thread, rng );
+        ( *dd ) = it->second->value_double( target_thread, rng, sgid, &target );
       }
     }
 
@@ -533,7 +534,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         target_thread,
         synapse_model_id_,
         param_dicts_[ target_thread ],
-        delay_->value_double( target_thread, rng ) );
+        delay_->value_double( target_thread, rng, sgid, &target ) );
     }
     else if ( default_delay_ )
     {
@@ -543,12 +544,13 @@ nest::ConnBuilder::single_connect_( index sgid,
         synapse_model_id_,
         param_dicts_[ target_thread ],
         numerics::nan,
-        weight_->value_double( target_thread, rng ) );
+        weight_->value_double( target_thread, rng, sgid, &target ) );
     }
     else
     {
-      double delay = delay_->value_double( target_thread, rng );
-      double weight = weight_->value_double( target_thread, rng );
+      double delay = delay_->value_double( target_thread, rng, sgid, &target );
+      double weight =
+        weight_->value_double( target_thread, rng, sgid, &target );
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
@@ -1285,7 +1287,6 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( GIDCollectionPTR sources,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  , outdegree_( ( *conn_spec )[ names::outdegree ] )
 {
   // check for potential errors
   long n_targets = static_cast< long >( targets_->size() );
@@ -1293,37 +1294,53 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( GIDCollectionPTR sources,
   {
     throw BadProperty( "Target array must not be empty." );
   }
-
-  // verify that outdegree is not larger than target population if multapses are
-  // disabled
-  if ( not multapses_ )
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >(
+    ( *conn_spec )[ names::outdegree ].datum() );
+  if ( pd )
   {
-    if ( outdegree_ > n_targets )
-    {
-      throw BadProperty( "Outdegree cannot be larger than population size." );
-    }
-    else if ( outdegree_ == n_targets and not autapses_ )
-    {
-      LOG( M_WARNING,
-        "FixedOutDegreeBuilder::connect",
-        "Multapses and autapses prohibited. When the sources and the targets "
-        "have a non-empty "
-        "intersection, the connect algorithm will enter an infinite loop." );
-      return;
-    }
-
-    if ( outdegree_ > 0.9 * n_targets )
-    {
-      LOG( M_WARNING,
-        "FixedOutDegreeBuilder::connect",
-        "Multapses are prohibited and you request more than 90% connectivity. "
-        "Expect long connecting times!" );
-    }
+    outdegree_ = pd->get();
+    pd->unlock();
+    // TODO: Checks of parameter range
   }
-
-  if ( outdegree_ < 0 )
+  else
   {
-    throw BadProperty( "Outdegree cannot be less than zero." );
+    // TODO: Is it easier to only accept parameters?
+    // Assume outdegree is a scalar
+    const long value = ( *conn_spec )[ names::outdegree ];
+    outdegree_ = new ConstantParameter( value );
+
+    // verify that outdegree is not larger than target population if multapses
+    // are disabled
+    if ( not multapses_ )
+    {
+      if ( value > n_targets )
+      {
+        throw BadProperty( "Outdegree cannot be larger than population size." );
+      }
+      else if ( value == n_targets and not autapses_ )
+      {
+        LOG( M_WARNING,
+          "FixedOutDegreeBuilder::connect",
+          "Multapses and autapses prohibited. When the sources and the targets "
+          "have a non-empty "
+          "intersection, the connect algorithm will enter an infinite loop." );
+        return;
+      }
+
+      if ( value > 0.9 * n_targets )
+      {
+        LOG( M_WARNING,
+          "FixedOutDegreeBuilder::connect",
+          "Multapses are prohibited and you request more than 90% "
+          "connectivity. "
+          "Expect long connecting times!" );
+      }
+    }
+
+    if ( value < 0 )
+    {
+      throw BadProperty( "Outdegree cannot be less than zero." );
+    }
   }
 }
 
@@ -1341,7 +1358,9 @@ nest::FixedOutDegreeBuilder::connect_()
     std::vector< index > tgt_ids_;
     const long n_rnd = targets_->size();
 
-    for ( long j = 0; j < outdegree_; ++j )
+    Node* source_node = kernel().node_manager.get_node_or_proxy( sgid );
+    const long outdegree_value = outdegree_->value( grng, source_node );
+    for ( long j = 0; j < outdegree_value; ++j )
     {
       unsigned long t_id;
       index tgid;
@@ -1584,11 +1603,26 @@ nest::BernoulliBuilder::BernoulliBuilder( GIDCollectionPTR sources,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  , p_( ( *conn_spec )[ names::p ] )
 {
-  if ( p_ < 0 or 1 < p_ )
+  ParameterDatum* pd =
+    dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
+  if ( pd )
   {
-    throw BadProperty( "Connection probability 0 <= p <= 1 required." );
+    p_ = pd->get();
+    pd->unlock();
+    // TODO: Checks of parameter range
+  }
+  else
+  {
+    // TODO: Is it easier to only accept parameters?
+    // Assume p is a scalar
+    const double value = ( *conn_spec )[ names::p ];
+    if ( value < 0 or 1 < value )
+    {
+      throw BadProperty( "Connection probability 0 <= p <= 1 required." );
+    }
+    // TODO: delete parameter in destructor?
+    p_ = new ConstantParameter( value );
   }
 }
 
@@ -1680,8 +1714,7 @@ nest::BernoulliBuilder::inner_connect_( const int tid,
     {
       continue;
     }
-
-    if ( rng->drand() >= p_ )
+    if ( rng->drand() >= p_->value( rng, sgid, target, target_thread ) )
     {
       continue;
     }

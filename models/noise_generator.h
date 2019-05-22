@@ -200,7 +200,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, const noise_generator& );
+    void set( const DictionaryDatum&, const noise_generator&, Node* node );
   };
 
   // ------------------------------------------------------------
@@ -293,7 +293,7 @@ noise_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;               // temporary copy in case of errors
   ptmp.num_targets_ = P_.num_targets_; // Copy Constr. does not copy connections
-  ptmp.set( d, *this );                // throws if BadProperty
+  ptmp.set( d, *this, this );          // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

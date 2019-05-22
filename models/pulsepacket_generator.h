@@ -110,7 +110,6 @@ private:
 
   struct Parameters_
   {
-
     std::vector< double > pulse_times_; //!< times of pulses
     long a_;                            //!< number of pulses in a packet
     double sdev_;                       //!< standard deviation of the packet
@@ -126,7 +125,7 @@ private:
      * @note Buffer is passed so that the position etc can be reset
      *       parameters have been changed.
      */
-    void set( const DictionaryDatum&, pulsepacket_generator& );
+    void set( const DictionaryDatum&, pulsepacket_generator&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -191,8 +190,8 @@ pulsepacket_generator::get_status( DictionaryDatum& d ) const
 inline void
 pulsepacket_generator::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, *this );  // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, *this, this ); // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

@@ -27,6 +27,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -145,22 +146,23 @@ nest::gamma_sup_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d )
+nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d,
+  Node* node )
 {
-  updateValue< long >( d, names::gamma_shape, gamma_shape_ );
+  updateValueParam< long >( d, names::gamma_shape, gamma_shape_, node );
   if ( gamma_shape_ < 1 )
   {
     throw BadProperty( "The shape must be larger or equal 1" );
   }
 
-  updateValue< double >( d, names::rate, rate_ );
+  updateValueParam< double >( d, names::rate, rate_, node );
   if ( rate_ < 0.0 )
   {
     throw BadProperty( "The rate must be larger than 0." );
   }
 
   long n_proc_l = n_proc_;
-  updateValue< long >( d, names::n_proc, n_proc_l );
+  updateValueParam< long >( d, names::n_proc, n_proc_l, node );
   if ( n_proc_l < 1 )
   {
     throw BadProperty(

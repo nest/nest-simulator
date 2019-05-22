@@ -247,7 +247,8 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void set( const DictionaryDatum&,
+      Node* node ); //!< Set values from dictionary
 
     //! Return the number of receptor ports
     inline size_t
@@ -266,7 +267,6 @@ private:
    */
   struct State_
   {
-
     /**
      * Enumeration identifying elements in state vector State_::y_.
      * This enum identifies the elements of the vector. It must be public to be
@@ -295,7 +295,7 @@ private:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
 
   }; // State_
 

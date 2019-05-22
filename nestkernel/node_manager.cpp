@@ -150,17 +150,20 @@ NodeManager::add_node( index model_id, long n )
   std::vector< lockPTR< WrappedThreadException > >(
     kernel().vp_manager.get_num_threads() ).swap( exceptions_raised_ );
 
+  auto gc_ptr = GIDCollectionPTR(
+    new GIDCollectionPrimitive( min_gid, max_gid, model_id ) );
+
   if ( model->has_proxies() )
   {
-    add_neurons_( *model, min_gid, max_gid );
+    add_neurons_( *model, min_gid, max_gid, gc_ptr );
   }
   else if ( not model->one_node_per_process() )
   {
-    add_devices_( *model, min_gid, max_gid );
+    add_devices_( *model, min_gid, max_gid, gc_ptr );
   }
   else
   {
-    add_music_nodes_( *model, min_gid, max_gid );
+    add_music_nodes_( *model, min_gid, max_gid, gc_ptr );
   }
 
   // check if any exceptions have been raised
@@ -194,13 +197,15 @@ NodeManager::add_node( index model_id, long n )
     .connection_manager
     .resize_target_table_devices_to_number_of_synapse_types();
 
-  return GIDCollectionPTR(
-    new GIDCollectionPrimitive( min_gid, max_gid, model_id ) );
+  return gc_ptr;
 }
 
 
 void
-NodeManager::add_neurons_( Model& model, index min_gid, index max_gid )
+NodeManager::add_neurons_( Model& model,
+  index min_gid,
+  index max_gid,
+  GIDCollectionPTR gc_ptr )
 {
   // upper limit for number of neurons per thread; in practice, either
   // max_new_per_thread-1 or max_new_per_thread nodes will be created
@@ -250,6 +255,7 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid )
       {
         Node* node = model.allocate( t );
         node->set_gid_( gid );
+        node->set_gc_( gc_ptr );
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
         node->set_vp( vp );
@@ -270,7 +276,10 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid )
 }
 
 void
-NodeManager::add_devices_( Model& model, index min_gid, index max_gid )
+NodeManager::add_devices_( Model& model,
+  index min_gid,
+  index max_gid,
+  GIDCollectionPTR gc_ptr )
 {
   const size_t n_per_thread = max_gid - min_gid + 1;
 
@@ -289,6 +298,7 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid )
 
         Node* node = model.allocate( t );
         node->set_gid_( gid );
+        node->set_gc_( gc_ptr );
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
         node->set_vp( kernel().vp_manager.thread_to_vp( t ) );
@@ -309,7 +319,10 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid )
 }
 
 void
-NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid )
+NodeManager::add_music_nodes_( Model& model,
+  index min_gid,
+  index max_gid,
+  GIDCollectionPTR gc_ptr )
 {
 #pragma omp parallel
   {
@@ -325,6 +338,7 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid )
 
           Node* node = model.allocate( 0 );
           node->set_gid_( gid );
+          node->set_gc_( gc_ptr );
           node->set_model_id( model.get_model_id() );
           node->set_thread( 0 );
           node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );

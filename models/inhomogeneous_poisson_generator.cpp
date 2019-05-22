@@ -39,6 +39,8 @@
 #include <cmath>
 #include <limits>
 
+#include "dict_util.h"
+
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
@@ -114,7 +116,8 @@ nest::inhomogeneous_poisson_generator::Parameters_::
 void
 nest::inhomogeneous_poisson_generator::Parameters_::set(
   const DictionaryDatum& d,
-  Buffers_& b )
+  Buffers_& b,
+  Node* node )
 {
   const bool times = d->known( names::rate_times );
   const bool rates = updateValue< std::vector< double_t > >(

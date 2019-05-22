@@ -29,7 +29,7 @@
 // clang under OSX. This must be outside namespace NEST, since the template
 // is defined in the global namespace.
 template class lockPTRDatum< nest::TopologyParameter,
-  &nest::TopologyModule::ParameterType >;
+  &nest::TopologyModule::TopologyParameterType >;
 
 namespace nest
 {
@@ -49,7 +49,8 @@ TopologyParameter::value( const std::vector< double >& pt,
   }
 }
 
-Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
+Gaussian2DTopologyParameter::Gaussian2DTopologyParameter(
+  const DictionaryDatum& d )
   : c_( 0.0 )
   , p_center_( 1.0 )
   , mean_x_( 0.0 )

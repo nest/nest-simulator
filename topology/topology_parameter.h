@@ -47,8 +47,8 @@
 namespace nest
 {
 class TopologyParameter;
-typedef lockPTRDatum< TopologyParameter, &TopologyModule::ParameterType >
-  ParameterDatum;
+typedef lockPTRDatum< TopologyParameter,
+  &TopologyModule::TopologyParameterType > TopologyParameterDatum;
 
 /**
  * Abstract base class for parameters
@@ -161,25 +161,25 @@ public:
    * Create the product of this parameter with another.
    * @returns a new dynamically allocated parameter.
    */
-  virtual TopologyParameter* multiply_parameter(
+  virtual TopologyParameter* multiply_topology_parameter(
     const TopologyParameter& other ) const;
   /**
    * Create the quotient of this parameter with another.
    * @returns a new dynamically allocated parameter.
    */
-  virtual TopologyParameter* divide_parameter(
+  virtual TopologyParameter* divide_topology_parameter(
     const TopologyParameter& other ) const;
   /**
    * Create the sum of this parameter with another.
    * @returns a new dynamically allocated parameter.
    */
-  virtual TopologyParameter* add_parameter(
+  virtual TopologyParameter* add_topology_parameter(
     const TopologyParameter& other ) const;
   /**
    * Create the difference of this parameter with another.
    * @returns a new dynamically allocated parameter.
    */
-  virtual TopologyParameter* subtract_parameter(
+  virtual TopologyParameter* subtract_topology_parameter(
     const TopologyParameter& other ) const;
 
 private:
@@ -189,10 +189,10 @@ private:
 /**
  * Parameter with constant value.
  */
-class ConstantParameter : public TopologyParameter
+class ConstantTopologyParameter : public TopologyParameter
 {
 public:
-  ConstantParameter( double value )
+  ConstantTopologyParameter( double value )
     : TopologyParameter()
     , value_( value )
   {
@@ -202,13 +202,13 @@ public:
    * Parameters:
    * value - constant value of this parameter
    */
-  ConstantParameter( const DictionaryDatum& d )
+  ConstantTopologyParameter( const DictionaryDatum& d )
     : TopologyParameter( d )
   {
     value_ = getValue< double >( d, "value" );
   }
 
-  ~ConstantParameter()
+  ~ConstantTopologyParameter()
   {
   }
 
@@ -229,7 +229,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new ConstantParameter( value_ );
+    return new ConstantTopologyParameter( value_ );
   }
 
 private:
@@ -239,20 +239,20 @@ private:
 /**
  * Abstract base class for parameters only depending on distance.
  */
-class RadialParameter : public TopologyParameter
+class RadialTopologyParameter : public TopologyParameter
 {
 public:
-  RadialParameter()
+  RadialTopologyParameter()
     : TopologyParameter()
   {
   }
 
-  RadialParameter( double cutoff )
+  RadialTopologyParameter( double cutoff )
     : TopologyParameter( cutoff )
   {
   }
 
-  RadialParameter( const DictionaryDatum& d )
+  RadialTopologyParameter( const DictionaryDatum& d )
     : TopologyParameter( d )
   {
   }
@@ -274,7 +274,7 @@ public:
 /**
  * Linear (affine) parameter p(d) = c + a*d.
  */
-class LinearParameter : public RadialParameter
+class LinearTopologyParameter : public RadialTopologyParameter
 {
 public:
   /**
@@ -282,8 +282,8 @@ public:
    * a - coefficient of linear function
    * c - constant offset
    */
-  LinearParameter( const DictionaryDatum& d )
-    : RadialParameter( d )
+  LinearTopologyParameter( const DictionaryDatum& d )
+    : RadialTopologyParameter( d )
     , a_( 1.0 )
     , c_( 0.0 )
   {
@@ -300,7 +300,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new LinearParameter( *this );
+    return new LinearTopologyParameter( *this );
   }
 
 private:
@@ -311,7 +311,7 @@ private:
 /**
  * Exponential parameter p(d) = c + a*exp(-d/tau).
  */
-class ExponentialParameter : public RadialParameter
+class ExponentialTopologyParameter : public RadialTopologyParameter
 {
 public:
   /**
@@ -320,8 +320,8 @@ public:
    * tau - length scale factor
    * c   - constant offset
    */
-  ExponentialParameter( const DictionaryDatum& d )
-    : RadialParameter( d )
+  ExponentialTopologyParameter( const DictionaryDatum& d )
+    : RadialTopologyParameter( d )
     , a_( 1.0 )
     , c_( 0.0 )
     , tau_( 1.0 )
@@ -346,7 +346,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new ExponentialParameter( *this );
+    return new ExponentialTopologyParameter( *this );
   }
 
 private:
@@ -357,7 +357,7 @@ private:
 /**
  * Gaussian parameter p(d) = c + p_center*exp(-(d-mean)^2/(2*sigma^2))
  */
-class GaussianParameter : public RadialParameter
+class GaussianTopologyParameter : public RadialTopologyParameter
 {
 public:
   /**
@@ -367,8 +367,8 @@ public:
    * mean     - distance to center
    * sigma    - width of gaussian
    */
-  GaussianParameter( const DictionaryDatum& d )
-    : RadialParameter( d )
+  GaussianTopologyParameter( const DictionaryDatum& d )
+    : RadialTopologyParameter( d )
     , c_( 0.0 )
     , p_center_( 1.0 )
     , mean_( 0.0 )
@@ -397,7 +397,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new GaussianParameter( *this );
+    return new GaussianTopologyParameter( *this );
   }
 
 private:
@@ -412,7 +412,7 @@ private:
  *                                2*rho*(x-mean_x)*(y-mean_y)/(sigma_x*sigma_y)
  *                               ) / (2*(1-rho^2)) )
  */
-class Gaussian2DParameter : public TopologyParameter
+class Gaussian2DTopologyParameter : public TopologyParameter
 {
 public:
   /**
@@ -425,7 +425,7 @@ public:
    * sigma_y  - width in y-direction
    * rho      - correlation of x and y
    */
-  Gaussian2DParameter( const DictionaryDatum& d );
+  Gaussian2DTopologyParameter( const DictionaryDatum& d );
 
   double
   raw_value( const Position< 2 >& pos, librandom::RngPtr& ) const
@@ -450,7 +450,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new Gaussian2DParameter( *this );
+    return new Gaussian2DTopologyParameter( *this );
   }
 
 private:
@@ -460,7 +460,7 @@ private:
 /**
  * Gamma parameter p(d) = d^(kappa-1)*exp(-d/theta)/(theta^kappa*Gamma(kappa))
  */
-class GammaParameter : public RadialParameter
+class GammaTopologyParameter : public RadialTopologyParameter
 {
 public:
   /**
@@ -468,8 +468,8 @@ public:
    * kappa    - shape of gamma distribution
    * theta    - scale of gamma distribution
    */
-  GammaParameter( const DictionaryDatum& d )
-    : RadialParameter( d )
+  GammaTopologyParameter( const DictionaryDatum& d )
+    : RadialTopologyParameter( d )
     , kappa_( 1.0 )
     , theta_( 1.0 )
     , inv_theta_( 1.0 / theta_ )
@@ -507,7 +507,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new GammaParameter( *this );
+    return new GammaTopologyParameter( *this );
   }
 
 private:
@@ -521,7 +521,7 @@ private:
 /**
  * Random parameter with uniform distribution in [min,max)
  */
-class UniformParameter : public TopologyParameter
+class UniformTopologyParameter : public TopologyParameter
 {
 public:
 public:
@@ -530,7 +530,7 @@ public:
    * min - minimum value
    * max - maximum value
    */
-  UniformParameter( const DictionaryDatum& d )
+  UniformTopologyParameter( const DictionaryDatum& d )
     : TopologyParameter( d )
     , lower_( 0.0 )
     , range_( 1.0 )
@@ -562,7 +562,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new UniformParameter( *this );
+    return new UniformTopologyParameter( *this );
   }
 
 private:
@@ -574,7 +574,7 @@ private:
  * Random parameter with normal distribution, optionally truncated to [min,max).
  * Truncation is implemented by rejection.
  */
-class NormalParameter : public TopologyParameter
+class NormalTopologyParameter : public TopologyParameter
 {
 public:
 public:
@@ -585,7 +585,7 @@ public:
    * min   - minimum value
    * max   - maximum value
    */
-  NormalParameter( const DictionaryDatum& d )
+  NormalTopologyParameter( const DictionaryDatum& d )
     : TopologyParameter( d )
     , mean_( 0.0 )
     , sigma_( 1.0 )
@@ -600,13 +600,13 @@ public:
     if ( sigma_ <= 0 )
     {
       throw BadProperty(
-        "topology::NormalParameter: "
+        "topology::NormalTopologyParameter: "
         "sigma > 0 required." );
     }
     if ( min_ >= max_ )
     {
       throw BadProperty(
-        "topology::NormalParameter: "
+        "topology::NormalTopologyParameter: "
         "min < max required." );
     }
   }
@@ -637,7 +637,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new NormalParameter( *this );
+    return new NormalTopologyParameter( *this );
   }
 
 private:
@@ -650,7 +650,7 @@ private:
  * Random parameter with lognormal distribution, optionally truncated to
  * [min,max). Truncation is implemented by rejection.
  */
-class LognormalParameter : public TopologyParameter
+class LognormalTopologyParameter : public TopologyParameter
 {
 public:
 public:
@@ -661,7 +661,7 @@ public:
    * min   - minimum value
    * max   - maximum value
    */
-  LognormalParameter( const DictionaryDatum& d )
+  LognormalTopologyParameter( const DictionaryDatum& d )
     : TopologyParameter( d )
     , mu_( 0.0 )
     , sigma_( 1.0 )
@@ -713,7 +713,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new LognormalParameter( *this );
+    return new LognormalTopologyParameter( *this );
   }
 
 private:
@@ -726,24 +726,25 @@ private:
  * Parameter class representing a parameter centered at an anchor position.
  */
 template < int D >
-class AnchoredParameter : public TopologyParameter
+class AnchoredTopologyParameter : public TopologyParameter
 {
 public:
-  AnchoredParameter( const TopologyParameter& p, const Position< D >& anchor )
+  AnchoredTopologyParameter( const TopologyParameter& p,
+    const Position< D >& anchor )
     : TopologyParameter( p )
     , p_( p.clone() )
     , anchor_( anchor )
   {
   }
 
-  AnchoredParameter( const AnchoredParameter& p )
+  AnchoredTopologyParameter( const AnchoredTopologyParameter& p )
     : TopologyParameter( p )
     , p_( p.p_->clone() )
     , anchor_( p.anchor_ )
   {
   }
 
-  ~AnchoredParameter()
+  ~AnchoredTopologyParameter()
   {
     delete p_;
   }
@@ -763,7 +764,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new AnchoredParameter( *this );
+    return new AnchoredTopologyParameter( *this );
   }
 
 private:
@@ -774,14 +775,15 @@ private:
 /**
  * Parameter class representing the product of two parameters
  */
-class ProductParameter : public TopologyParameter
+class ProductTopologyParameter : public TopologyParameter
 {
 public:
   /**
    * Construct the product of the two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
-  ProductParameter( const TopologyParameter& m1, const TopologyParameter& m2 )
+  ProductTopologyParameter( const TopologyParameter& m1,
+    const TopologyParameter& m2 )
     : TopologyParameter()
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
@@ -791,14 +793,14 @@ public:
   /**
    * Copy constructor.
    */
-  ProductParameter( const ProductParameter& p )
+  ProductTopologyParameter( const ProductTopologyParameter& p )
     : TopologyParameter( p )
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
   }
 
-  ~ProductParameter()
+  ~ProductTopologyParameter()
   {
     delete parameter1_;
     delete parameter2_;
@@ -821,7 +823,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new ProductParameter( *this );
+    return new ProductTopologyParameter( *this );
   }
 
 protected:
@@ -831,14 +833,15 @@ protected:
 /**
  * Parameter class representing the quotient of two parameters
  */
-class QuotientParameter : public TopologyParameter
+class QuotientTopologyParameter : public TopologyParameter
 {
 public:
   /**
    * Construct the quotient of the two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
-  QuotientParameter( const TopologyParameter& m1, const TopologyParameter& m2 )
+  QuotientTopologyParameter( const TopologyParameter& m1,
+    const TopologyParameter& m2 )
     : TopologyParameter()
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
@@ -848,14 +851,14 @@ public:
   /**
    * Copy constructor.
    */
-  QuotientParameter( const QuotientParameter& p )
+  QuotientTopologyParameter( const QuotientTopologyParameter& p )
     : TopologyParameter( p )
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
   }
 
-  ~QuotientParameter()
+  ~QuotientTopologyParameter()
   {
     delete parameter1_;
     delete parameter2_;
@@ -878,7 +881,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new QuotientParameter( *this );
+    return new QuotientTopologyParameter( *this );
   }
 
 protected:
@@ -888,14 +891,15 @@ protected:
 /**
  * Parameter class representing the sum of two parameters
  */
-class SumParameter : public TopologyParameter
+class SumTopologyParameter : public TopologyParameter
 {
 public:
   /**
    * Construct the sum of the two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
-  SumParameter( const TopologyParameter& m1, const TopologyParameter& m2 )
+  SumTopologyParameter( const TopologyParameter& m1,
+    const TopologyParameter& m2 )
     : TopologyParameter()
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
@@ -905,14 +909,14 @@ public:
   /**
    * Copy constructor.
    */
-  SumParameter( const SumParameter& p )
+  SumTopologyParameter( const SumTopologyParameter& p )
     : TopologyParameter( p )
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
   }
 
-  ~SumParameter()
+  ~SumTopologyParameter()
   {
     delete parameter1_;
     delete parameter2_;
@@ -935,7 +939,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new SumParameter( *this );
+    return new SumTopologyParameter( *this );
   }
 
 protected:
@@ -945,14 +949,14 @@ protected:
 /**
  * Parameter class representing the difference of two parameters
  */
-class DifferenceParameter : public TopologyParameter
+class DifferenceTopologyParameter : public TopologyParameter
 {
 public:
   /**
    * Construct the difference of the two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
-  DifferenceParameter( const TopologyParameter& m1,
+  DifferenceTopologyParameter( const TopologyParameter& m1,
     const TopologyParameter& m2 )
     : TopologyParameter()
     , parameter1_( m1.clone() )
@@ -963,14 +967,14 @@ public:
   /**
    * Copy constructor.
    */
-  DifferenceParameter( const DifferenceParameter& p )
+  DifferenceTopologyParameter( const DifferenceTopologyParameter& p )
     : TopologyParameter( p )
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
   }
 
-  ~DifferenceParameter()
+  ~DifferenceTopologyParameter()
   {
     delete parameter1_;
     delete parameter2_;
@@ -993,7 +997,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new DifferenceParameter( *this );
+    return new DifferenceTopologyParameter( *this );
   }
 
 protected:
@@ -1003,14 +1007,14 @@ protected:
 /**
  * Parameter class for a parameter oriented in the opposite direction.
  */
-class ConverseParameter : public TopologyParameter
+class ConverseTopologyParameter : public TopologyParameter
 {
 public:
   /**
    * Construct the converse of the given parameter. A copy is made of the
    * supplied Parameter object.
    */
-  ConverseParameter( const TopologyParameter& p )
+  ConverseTopologyParameter( const TopologyParameter& p )
     : TopologyParameter( p )
     , p_( p.clone() )
   {
@@ -1019,13 +1023,13 @@ public:
   /**
    * Copy constructor.
    */
-  ConverseParameter( const ConverseParameter& p )
+  ConverseTopologyParameter( const ConverseTopologyParameter& p )
     : TopologyParameter( p )
     , p_( p.p_->clone() )
   {
   }
 
-  ~ConverseParameter()
+  ~ConverseTopologyParameter()
   {
     delete p_;
   }
@@ -1047,7 +1051,7 @@ public:
   TopologyParameter*
   clone() const
   {
-    return new ConverseParameter( *this );
+    return new ConverseTopologyParameter( *this );
   }
 
 protected:
@@ -1055,27 +1059,31 @@ protected:
 };
 
 inline TopologyParameter*
-TopologyParameter::multiply_parameter( const TopologyParameter& other ) const
+TopologyParameter::multiply_topology_parameter(
+  const TopologyParameter& other ) const
 {
-  return new ProductParameter( *this, other );
+  return new ProductTopologyParameter( *this, other );
 }
 
 inline TopologyParameter*
-TopologyParameter::divide_parameter( const TopologyParameter& other ) const
+TopologyParameter::divide_topology_parameter(
+  const TopologyParameter& other ) const
 {
-  return new QuotientParameter( *this, other );
+  return new QuotientTopologyParameter( *this, other );
 }
 
 inline TopologyParameter*
-TopologyParameter::add_parameter( const TopologyParameter& other ) const
+TopologyParameter::add_topology_parameter(
+  const TopologyParameter& other ) const
 {
-  return new SumParameter( *this, other );
+  return new SumTopologyParameter( *this, other );
 }
 
 inline TopologyParameter*
-TopologyParameter::subtract_parameter( const TopologyParameter& other ) const
+TopologyParameter::subtract_topology_parameter(
+  const TopologyParameter& other ) const
 {
-  return new DifferenceParameter( *this, other );
+  return new DifferenceTopologyParameter( *this, other );
 }
 
 

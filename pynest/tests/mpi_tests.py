@@ -23,8 +23,8 @@ from __future__ import print_function
 import sys
 import os
 import subprocess
-import unittest
 import shlex
+from tempfile import mktemp
 
 
 def check_output(cmd):
@@ -38,46 +38,39 @@ def eprint(*args, **kwargs):
 cmd = "nest -c 'statusdict/have_mpi :: =only'"
 HAVE_MPI = check_output(cmd) == "true"
 
+if HAVE_MPI:
+    print("Running PyNEST MPI tests")
+else:
+    print("Not running PyNEST MPI tests, NEST was compiled without MPI.")
 
-class TestConnectAllPatterns(unittest.TestCase):
+script_dir = os.path.dirname(os.path.realpath(__file__))
 
-    @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
-    def testWithMPI(self):
-        script_dir = os.path.dirname(os.path.realpath(__file__))
-        scripts = [
-            "test_connect_all_to_all.py",
-            "test_connect_one_to_one.py",
-            "test_connect_fixed_indegree.py",
-            "test_connect_fixed_outdegree.py",
-            "test_connect_fixed_total_number.py",
-            "test_connect_pairwise_bernoulli.py",
-            "test_sp/mpitest_issue_578_sp.py",
-        ]
+scripts = [
+    "test_connect_all_to_all.py",
+    "test_connect_one_to_one.py",
+    "test_connect_fixed_indegree.py",
+    "test_connect_fixed_outdegree.py",
+    "test_connect_fixed_total_number.py",
+    "test_connect_pairwise_bernoulli.py",
+    "test_sp/mpitest_issue_578_sp.py",
+]
 
-        failing = []
-        for script_name in scripts:
-            script = os.path.join(script_dir, script_name)
-            cmd = "nest -c '2 (python) ({}) mpirun =only'".format(script)
-            test_cmd = check_output(cmd)
-            try:
-                output = check_output(test_cmd)
-                eprint(output)
-            except subprocess.CalledProcessError as e:
-                eprint(e.output)
-                failing.append(script_name)
+with open(sys.argv[1], "w") as junitxml:
 
-        if failing:
-            cmd = "nest -c '2 (python) ([script]) mpirun =only'"
-            test_str = check_output(cmd)
-            self.fail("The following tests failed when executing '{}': {}"
-                      .format(test_str, ", ".join(failing)))
+    failing = []
+    for script_name in scripts:
 
+        script = os.path.join(script_dir, script_name)
 
-def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestConnectAllPatterns)
-    return suite
+        tmpfile = mktemp(".xml")
+        pytest_cmd = "python {} --junitxml={}".format(sys.argv[2], tmpfile)
+        cmd = "nest -c '2 ({}) ({}) mpirun =only'".format(pytest_cmd, script)
+        test_cmd = check_output(cmd)
 
+        output = check_output(test_cmd)
+        eprint(script_name)
 
-if __name__ == '__main__':
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
+        junitxml.write(open(tmpfile, "r").read())
+
+        if os.path.exists(tmpfile):
+            os.remove(tmpfile)

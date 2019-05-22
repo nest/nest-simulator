@@ -5,17 +5,14 @@ NEST Community
 Mailing List
 -------------
 
-The NEST User Mailing list is intended to be a forum for questions on the usage
+The NEST users mailing list is intended to be a forum for questions on the usage
 of NEST, the exchange of code and general discussions about NEST. The philosophy
 is that all users profit by sharing their experience. All NEST core developers
 are subscribed to this list and will participate in the discussions as far as
 time allows.
 
-Subscription
-http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user
-
-Archive (only subscribed users)
-http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user
+For more information, subscription instructions and access to the archives,
+please visit https://www.nest-initiative.org/mailinglist/.
 
 
 Contributing to NEST
@@ -59,4 +56,4 @@ Become a NEST member
 --------------------
 
 If you would like to be actively involved in the NEST Initiative and support its
-goals, please see our `member page <http://www.nest-initiative.org/membership>`_.
+goals, please see our `member page <https://www.nest-initiative.org/membership>`_.

@@ -35,7 +35,7 @@ class TestIssue578(unittest.TestCase):
 
     def test_targets(self):
         nest.ResetKernel()
-        nest.hl_api.set_verbosity('M_ALL')
+        nest.set_verbosity('M_ALL')
         # Testing with 2 MPI processes
         nest.SetKernelStatus(
             {

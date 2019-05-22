@@ -186,7 +186,8 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
 {
   bool flags_changed =
     updateValueParam< bool >( d, names::precise_times, precise_times_, node )
-    or updateValueParam< bool >( d, names::shift_now_spikes, shift_now_spikes_, node )
+    or updateValueParam< bool >(
+         d, names::shift_now_spikes, shift_now_spikes_, node )
     or updateValueParam< bool >(
          d, names::allow_offgrid_times, allow_offgrid_times_, node );
   if ( precise_times_ && ( allow_offgrid_times_ || shift_now_spikes_ ) )

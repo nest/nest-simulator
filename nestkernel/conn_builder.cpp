@@ -1294,8 +1294,8 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( GIDCollectionPTR sources,
   {
     throw BadProperty( "Target array must not be empty." );
   }
-  ParameterDatum* pd =
-    dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::outdegree ].datum() );
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >(
+    ( *conn_spec )[ names::outdegree ].datum() );
   if ( pd )
   {
     outdegree_ = pd->get();
@@ -1311,37 +1311,37 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( GIDCollectionPTR sources,
 
     // verify that outdegree is not larger than target population if multapses
     // are disabled
-  if ( not multapses_ )
-  {
+    if ( not multapses_ )
+    {
       if ( value > n_targets )
-    {
-      throw BadProperty( "Outdegree cannot be larger than population size." );
-    }
+      {
+        throw BadProperty( "Outdegree cannot be larger than population size." );
+      }
       else if ( value == n_targets and not autapses_ )
-    {
-      LOG( M_WARNING,
-        "FixedOutDegreeBuilder::connect",
-        "Multapses and autapses prohibited. When the sources and the targets "
-        "have a non-empty "
-        "intersection, the connect algorithm will enter an infinite loop." );
-      return;
-    }
+      {
+        LOG( M_WARNING,
+          "FixedOutDegreeBuilder::connect",
+          "Multapses and autapses prohibited. When the sources and the targets "
+          "have a non-empty "
+          "intersection, the connect algorithm will enter an infinite loop." );
+        return;
+      }
 
       if ( value > 0.9 * n_targets )
-    {
-      LOG( M_WARNING,
-        "FixedOutDegreeBuilder::connect",
+      {
+        LOG( M_WARNING,
+          "FixedOutDegreeBuilder::connect",
           "Multapses are prohibited and you request more than 90% "
           "connectivity. "
-        "Expect long connecting times!" );
+          "Expect long connecting times!" );
+      }
     }
-  }
 
     if ( value < 0 )
-  {
-    throw BadProperty( "Outdegree cannot be less than zero." );
+    {
+      throw BadProperty( "Outdegree cannot be less than zero." );
+    }
   }
-}
 }
 
 void
@@ -1618,9 +1618,9 @@ nest::BernoulliBuilder::BernoulliBuilder( GIDCollectionPTR sources,
     // Assume p is a scalar
     const double value = ( *conn_spec )[ names::p ];
     if ( value < 0 or 1 < value )
-  {
-    throw BadProperty( "Connection probability 0 <= p <= 1 required." );
-  }
+    {
+      throw BadProperty( "Connection probability 0 <= p <= 1 required." );
+    }
     // TODO: delete parameter in destructor?
     p_ = new ConstantParameter( value );
   }

@@ -34,10 +34,11 @@ template class lockPTRDatum< nest::Parameter,
 
 namespace nest
 {
-  Node* Parameter::gid_to_node_ptr_( const index gid, const thread t ) const
-  {
-    return kernel().node_manager.get_node_or_proxy( gid, t );
-  }
+Node*
+Parameter::gid_to_node_ptr_( const index gid, const thread t ) const
+{
+  return kernel().node_manager.get_node_or_proxy( gid, t );
+}
 
 
 double

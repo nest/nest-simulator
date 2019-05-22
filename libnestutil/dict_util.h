@@ -41,7 +41,11 @@ namespace nest
  * the parameter parameter.
  */
 template < typename FT, typename VT >
-bool updateValueParam(  DictionaryDatum const& d, Name const n, VT& value, nest::Node* node )
+bool
+updateValueParam( DictionaryDatum const& d,
+  Name const n,
+  VT& value,
+  nest::Node* node )
 {
   const Token& t = d->lookup( n );
 
@@ -50,7 +54,7 @@ bool updateValueParam(  DictionaryDatum const& d, Name const n, VT& value, nest:
   {
     if ( not node )
     {
-      throw BadParameter("Cannot use Parameter with this model.");
+      throw BadParameter( "Cannot use Parameter with this model." );
     }
     auto vp = kernel().vp_manager.suggest_vp_for_gid( node->get_gid() );
     auto tid = kernel().vp_manager.vp_to_thread( vp );
@@ -61,7 +65,7 @@ bool updateValueParam(  DictionaryDatum const& d, Name const n, VT& value, nest:
   }
   else
   {
-    return updateValue< FT >(d, n, value);
+    return updateValue< FT >( d, n, value );
   }
 }
 

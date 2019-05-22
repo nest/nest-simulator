@@ -92,7 +92,6 @@ addons:
      - libncurses5-dev 
      - libgsl0-dev
      - python-all-dev
-     - python-numpy
      - ipython
      - pkg-config
      - openmpi-bin
@@ -136,7 +135,7 @@ before_install:
   # outdated versions in the Travis package whitelist.
   # terminaltables is required by parse_travis_log.py to create
   # the build summary.
-   - pip install cython scipy matplotlib terminaltables
+   - pip install cython numpy scipy matplotlib terminaltables
     
 install:
    - which cython

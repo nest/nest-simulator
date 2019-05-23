@@ -531,22 +531,29 @@ phase_seven() {
             | grep --line-buffered -v '^$' | grep --line-buffered -v '^platform\|^rootdir\|^collected' \
             | sed -u 's/^/  /' | tee -a "${TEST_LOGFILE}"
 
-        PYNEST_TEST_TOTAL=$(read_junitxml ${JUNITFILE} "tests")
-        PYNEST_TEST_SKIPPED=$(read_junitxml ${JUNITFILE} "skips")
-        PYNEST_TEST_FAILURES=$(read_junitxml ${JUNITFILE} "failures")
-        PYNEST_TEST_ERRORS=$(read_junitxml ${JUNITFILE} "errors")
+        # The trailing 0 is needed because read_junitxml prints a trailing '+'.
+        # Without having it, the calculation would end in that '+'.
+        PYNEST_TEST_TOTAL=$(($(read_junitxml ${JUNITFILE} "tests") 0))
+        PYNEST_TEST_SKIPPED=$(($(read_junitxml ${JUNITFILE} "skips") 0))
+        PYNEST_TEST_FAILURES=$(($(read_junitxml ${JUNITFILE} "failures") 0))
+        PYNEST_TEST_ERRORS=$(($(read_junitxml ${JUNITFILE} "errors") 0))
 
         echo
-        JUNITFILE="${REPORTDIR}"/pytest-parallel.log
-        COLUMNS=110 ${PYTHON} -u mpi_tests.py "${JUNITFILE}" "${PYTEST_OPTS}" 2>&1 \
-            | grep --line-buffered -v "========" | grep --line-buffered -v "generated xml file" \
-            | grep --line-buffered -v '^$' | grep --line-buffered -v '^platform\|^rootdir\|^collected' \
-            | sed -u 's/^/  /' | tee -a "${TEST_LOGFILE}"
 
-        PYNEST_TEST_TOTAL=$((${PYNEST_TEST_TOTAL} $(read_junitxml ${JUNITFILE} "tests") 0))
-        PYNEST_TEST_SKIPPED=$((${PYNEST_TEST_SKIPPED} $(read_junitxml ${JUNITFILE} "skips") 0))
-        PYNEST_TEST_FAILURES=$((${PYNEST_TEST_FAILURES} $(read_junitxml ${JUNITFILE} "failures") 0))
-        PYNEST_TEST_ERRORS=$((${PYNEST_TEST_ERRORS} $(read_junitxml ${JUNITFILE} "errors") 0))
+        if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then  
+            echo "  Running PyNEST MPI tests"
+            echo "  ------------------------"
+            JUNITFILE="${REPORTDIR}"/pytest-parallel.log
+            COLUMNS=110 ${PYTHON} -u mpi_tests.py "${JUNITFILE}" "${PYTEST_OPTS}" 2>&1 \
+                | grep --line-buffered -v "========" | grep --line-buffered -v "generated xml file" \
+                | grep --line-buffered -v '^$' | grep --line-buffered -v '^platform\|^rootdir\|^collected' \
+                | sed -u 's/^/  /' | tee -a "${TEST_LOGFILE}"
+
+            PYNEST_TEST_TOTAL=$(($(read_junitxml ${JUNITFILE} "tests") ${PYNEST_TEST_TOTAL}))
+            PYNEST_TEST_SKIPPED=$(($(read_junitxml ${JUNITFILE} "skips") ${PYNEST_TEST_SKIPPED}))
+            PYNEST_TEST_FAILURES=$(($(read_junitxml ${JUNITFILE} "failures") ${PYNEST_TEST_FAILURES}))
+            PYNEST_TEST_ERRORS=$(($(read_junitxml ${JUNITFILE} "errors") ${PYNEST_TEST_ERRORS}))
+        fi
 
         cd - >/dev/null
 

@@ -35,15 +35,6 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-cmd = "nest -c 'statusdict/have_mpi :: =only'"
-HAVE_MPI = check_output(cmd) == "true"
-
-if HAVE_MPI:
-    print("Running PyNEST MPI tests")
-else:
-    print("Not running PyNEST MPI tests, NEST was compiled without MPI.")
-    sys.exit(0)
-
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
 scripts = [

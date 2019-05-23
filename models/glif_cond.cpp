@@ -59,8 +59,7 @@ void
 RecordablesMap< nest::glif_cond >::create()
 {
   insert_( names::V_m,
-    &nest::glif_cond::
-      get_y_elem_< nest::glif_cond::State_::V_M > );
+    &nest::glif_cond::get_y_elem_< nest::glif_cond::State_::V_M > );
 }
 }
 
@@ -69,7 +68,7 @@ RecordablesMap< nest::glif_cond >::create()
  * ---------------------------------------------------------------- */
 
 extern "C" inline int
-nest::glif_cond_dynamics( double,
+nest::cond_dynamics_asc( double,
   const double y[],
   double f[],
   void* pnode )
@@ -113,6 +112,61 @@ nest::glif_cond_dynamics( double,
   {
     const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
       + node.P_.n_ASCurrents_() - 1;
+    // Synaptic conductance derivative dG/dt
+    f[ S::DG_SYN + j ] = -y[ S::DG_SYN + j ] / node.P_.tau_syn_[ i ];
+    f[ S::G_SYN + j ] =
+      y[ S::DG_SYN + j ] - ( y[ S::G_SYN + j ] / node.P_.tau_syn_[ i ] );
+  }
+
+  return GSL_SUCCESS;
+}
+
+
+extern "C" inline int
+nest::cond_dynamics( double,
+  const double y[],
+  double f[],
+  void* pnode )
+{
+  // a shorthand
+  typedef nest::glif_cond::State_ S;
+
+  // get access to node so we can almost work as in a member function
+  assert( pnode );
+  const nest::glif_cond& node =
+    *( reinterpret_cast< nest::glif_cond* >( pnode ) );
+
+  // y[] here is---and must be---the state vector supplied by the integrator,
+  // not the state vector in the node, node.S_.y[].
+
+  // The following code is verbose for the sake of clarity. We assume that a
+  // good compiler will optimize the verbosity away ...
+
+  double I_syn = 0.0;
+  for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
+  {
+    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    I_syn += y[ S::G_SYN + j ] * ( y[ S::V_M ] - node.P_.E_rev_[ i ] );
+  }
+
+  const double I_leak = node.P_.G_ * ( y[ S::V_M ] - node.P_.E_L_ );
+
+  // dV_m/dt
+  f[ 0 ] = ( -I_leak - I_syn + node.B_.I_stim_ ) / node.P_.C_m_;
+
+  // dI_asc/dt
+  for ( std::size_t a = 0; a < node.P_.n_ASCurrents_(); ++a )
+  {
+    // ASC variable is not being used for this model, but still zero it out so
+    // there isn't a segfault if user tries to access it.
+    // TODO: consider using memset (or the std++11 equivilent)
+    f[ S::ASC + a ] = 0.0;
+  }
+
+  // d dg_exc/dt, dg_exc/dt
+  for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
+  {
+    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
     // Synaptic conductance derivative dG/dt
     f[ S::DG_SYN + j ] = -y[ S::DG_SYN + j ] / node.P_.tau_syn_[ i ];
     f[ S::G_SYN + j ] =
@@ -426,7 +480,7 @@ nest::glif_cond::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  B_.sys_.function = glif_cond_dynamics;
+  B_.sys_.function = cond_dynamics;
   B_.sys_.jacobian = NULL;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
@@ -482,30 +536,33 @@ nest::glif_cond::calibrate()
 
   switch ( model_type ) {
     case 1:
-      //glif_func = std::bind(&nest::glif::update_glif1, this, 
-      //  std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
       glif_func = [this](nest::Time const& origin, const long from, 
         const long to){nest::glif_cond::update_glif1(origin, from, to);};
+      B_.sys_.function = cond_dynamics;
       break;
       
     case 2:
       glif_func = [this](nest::Time const& origin, const long from, 
         const long to){nest::glif_cond::update_glif2(origin, from, to);};
+      B_.sys_.function = cond_dynamics;
       break;
       
     case 3:
       glif_func = [this](nest::Time const& origin, const long from, 
         const long to){nest::glif_cond::update_glif3(origin, from, to);};
+      B_.sys_.function = cond_dynamics_asc;
       break;
 
     case 4:
       glif_func = [this](nest::Time const& origin, const long from, 
         const long to){nest::glif_cond::update_glif4(origin, from, to);};
+      B_.sys_.function = cond_dynamics_asc;
       break;  
       
     case 5:
       glif_func = [this](nest::Time const& origin, const long from, 
         const long to){nest::glif_cond::update_glif5(origin, from, to);};
+      B_.sys_.function = cond_dynamics_asc;
       break;
     
     default:
@@ -530,6 +587,7 @@ nest::glif_cond::update_glif1( Time const& origin,
   const long from, const long to )
 {
   // glif_lif
+  // std::cout << "HERE" << std::endl;
   const double dt = Time::get_resolution().get_ms(); // in ms
   double v_old = S_.y_[ State_::V_M ];
 

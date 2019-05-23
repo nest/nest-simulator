@@ -122,7 +122,10 @@ namespace nest
 {
 
 extern "C" int
-glif_cond_dynamics( double, const double*, double*, void* );
+cond_dynamics( double, const double*, double*, void* );
+
+extern "C" int
+cond_dynamics_asc( double, const double*, double*, void* );
 
 class glif_cond : public nest::Archiving_Node
 {
@@ -185,7 +188,10 @@ private:
 
   // make dynamics function quasi-member
   friend int
-  glif_cond_dynamics( double, const double*, double*, void* );
+  cond_dynamics( double, const double*, double*, void* );
+  
+  friend int
+  cond_dynamics_asc( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class nest::RecordablesMap< glif_cond >;

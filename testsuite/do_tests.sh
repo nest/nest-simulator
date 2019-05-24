@@ -550,21 +550,20 @@ phase_seven() {
                 | grep --line-buffered -v '^$' \
                 | sed -u 's/^/  /' | tee -a "${TEST_LOGFILE}"
 
-            if [ $? -ne 0 ]; then
-                PYNEST_TEST_TOTAL=$((${PYNEST_TEST_TOTAL} + 1))
-                PYNEST_TEST_FAILURES=$((${PYNEST_TEST_FAILURES} + 1))
-            else
-                PYNEST_TEST_TOTAL=$(($(read_junitxml ${JUNITFILE} "tests") ${PYNEST_TEST_TOTAL}))
-                PYNEST_TEST_SKIPPED=$(($(read_junitxml ${JUNITFILE} "skips") ${PYNEST_TEST_SKIPPED}))
-                PYNEST_TEST_FAILURES=$(($(read_junitxml ${JUNITFILE} "failures") ${PYNEST_TEST_FAILURES}))
-                PYNEST_TEST_ERRORS=$(($(read_junitxml ${JUNITFILE} "errors") ${PYNEST_TEST_ERRORS}))
-            fi
+            PYNEST_TEST_TOTAL=$(($(read_junitxml ${JUNITFILE} "tests") ${PYNEST_TEST_TOTAL}))
+            PYNEST_TEST_SKIPPED=$(($(read_junitxml ${JUNITFILE} "skips") ${PYNEST_TEST_SKIPPED}))
+            PYNEST_TEST_FAILURES=$(($(read_junitxml ${JUNITFILE} "failures") ${PYNEST_TEST_FAILURES}))
+            PYNEST_TEST_ERRORS=$(($(read_junitxml ${JUNITFILE} "errors") ${PYNEST_TEST_ERRORS}))
         fi
 
         cd - >/dev/null
 
         PYNEST_TEST_FAILED=$(($PYNEST_TEST_ERRORS + $PYNEST_TEST_FAILURES))
         PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_SKIPPED - $PYNEST_TEST_FAILED))
+
+	if test ${PYNEST_TEST_FAILED} -gt 0 ; then
+	    echo "PyNEST testsuite" >> "${TEST_FAILED}"
+	fi
 
         PYNEST_TEST_SKIPPED_TEXT="(${PYNEST_TEST_SKIPPED} PyNEST)"
         PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"

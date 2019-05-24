@@ -1,4 +1,4 @@
-Installation on MAC OS X
+Installation on macOS
 =========================
 
 

@@ -88,13 +88,14 @@ noise_generator.
 Parameters:
 
 \verbatim embed:rst
-====== =======  ===========================================================
- tau_m  double  Membrane time constant (mean inter-update-interval) in ms.
- theta  double  threshold for sigmoidal activation function mV
- c1     double  linear gain factor (probability/mV)
- c2     double  prefactor of sigmoidal gain (probability)
- c3     double  slope factor of sigmoidal gain (1/mV)
-====== =======  ===========================================================
+====== ============= ===========================================================
+ tau_m  ms           Membrane time constant (mean inter-update-interval)
+ theta  mV           Threshold for sigmoidal activation function
+ c1     probability/ Linear gain factor
+        mV
+ c2     probability  Prefactor of sigmoidal gain
+ c3     1/mV         Slope factor of sigmoidal gain
+====== ============= ===========================================================
 \endverbatim
 
 References:

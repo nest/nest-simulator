@@ -90,71 +90,70 @@ The following parameters can be set in the status dictionary.
 =========== ======  ===================================================
 **Dynamic state variables**
 -----------------------------------------------------------------------
-V_m         double  Membrane potential in mV.
-w           double  Spike-adaptation current in pA.
-z           double  Spike-adaptation current in pA.
-V_th        double  Adaptive spike initiation threshold in mV.
-u_bar_plus  double  Low-pass filtered Membrane potential in mV.
-u_bar_minus double  Low-pass filtered Membrane potential in mV.
-u_bar_bar   double  Low-pass filtered u_bar_minus in mV.
+V_m         mV      Membrane potential
+w           pA      Spike-adaptation current
+z           pA      Spike-adaptation current
+V_th        mV      Adaptive spike initiation threshold
+u_bar_plus  mV      Low-pass filtered Membrane potential
+u_bar_minus mV      Low-pass filtered Membrane potential
+u_bar_bar   mV      Low-pass filtered u_bar_minus
 =========== ======  ===================================================
 
-=========== ======  =================================================
+============ ======  =================================================
 **Membrane Parameters**
 ---------------------------------------------------------------------
-C_m         double  Capacity of the membrane in pF
-t_ref       double  Duration of refractory period in ms.
-V_reset     double  Reset value for V_m after a spike. In mV.
-E_L         double  Leak reversal potential in mV.
-g_L         double  Leak conductance in nS.
-I_e         double  Constant external input current in pA.
-tau_plus    double  Time constant of u_bar_plus.
-tau_minus   double  Time constant of u_bar_minus.
-tau_bar_bar double  Time constant of u_bar_bar.
-=========== ======  =================================================
+ C_m         pF      Capacity of the membrane
+ t_ref       ms      Duration of refractory period
+ V_reset     mV      Reset value for V_m after a spike
+ E_L         mV      Leak reversal potential
+ g_L         nS      Leak conductance
+ I_e         pA      Constant external input current
+ tau_plus    double  Time constant of u_bar_plus.
+ tau_minus   double  Time constant of u_bar_minus.
+ tau_bar_bar double  Time constant of u_bar_bar.
+============ ======  =================================================
 
 
 ========== ======  ===================================================
 **Spike adaptation parameters**
 ----------------------------------------------------------------------
-a          double  Subthreshold adaptation in nS.
-b          double  Spike-triggered adaptation in pA.
-Delta_T    double  Slope factor in mV.
-tau_w      double  Adaptation time constant in ms.
-V_peak     double  Spike detection threshold in mV.
-V_th_max   double  Value of V_th afer a spike in mV.
-V_th_rest  double  Resting value of V_th in mV.
+a          nS      Subthreshold adaptation
+b          pA      Spike-triggered adaptation
+Delta_T    mV      Slope factor
+tau_w      ms      Adaptation time constant
+V_peak     mV      Spike detection threshold
+V_th_max   mV      Value of V_th afer a spike
+V_th_rest  mV      Resting value of V_th
 ========== ======  ===================================================
 
-============= ======  =======================================================
+============= ======= =======================================================
 **Clopath rule parameters**
 -----------------------------------------------------------------------------
-A_LTD         double  Amplitude of depression in 1/mV.
-A_LTP         double  Amplitude of facilitation in 1/mV^2.
-theta_plus    double  threshold for u in mV.
-theta_minus   double  threshold for u_bar_[plus/minus] in mV.
-A_LTD_const   bool    Flag that indicates whether A_LTD_ should
+A_LTD         1/mV    Amplitude of depression
+A_LTP         1/mV^2  Amplitude of facilitation
+theta_plus    mV      Threshold for u
+theta_minus   mV      Threshold for u_bar_[plus/minus]
+A_LTD_const   boolean Flag that indicates whether A_LTD_ should
                       be constant (true, default) or multiplied by
                       u_bar_bar^2 / u_ref_squared (false).
-delay_u_bars  double  Delay with which u_bar_[plus/minus] are processed
+delay_u_bars  real    Delay with which u_bar_[plus/minus] are processed
                       to compute the synaptic weights.
-U_ref_squared double  Reference value for u_bar_bar_^2.
-============= ======  =======================================================
+U_ref_squared real    Reference value for u_bar_bar_^2.
+============= ======= =======================================================
 
 
 =======  ====== =============================================================
 **Other parameters**
 -----------------------------------------------------------------------------
-t_clamp  double Duration of clamping of Membrane potential after a spike
-                in ms.
-V_clamp  double Value to which the Membrane potential is clamped in mV.
+t_clamp  ms     Duration of clamping of Membrane potential after a spike
+V_clamp  mV     Value to which the Membrane potential is clamped
 =======  ====== =============================================================
 
 
 ============= ======= =========================================================
 **Integration parameters**
 -------------------------------------------------------------------------------
-gsl_error_tol double  This parameter controls the admissible error of the
+gsl_error_tol real    This parameter controls the admissible error of the
                       GSL integrator. Reduce it if NEST complains about
                       numerical instabilities.
 ============= ======= =========================================================

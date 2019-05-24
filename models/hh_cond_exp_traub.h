@@ -99,25 +99,25 @@ The following parameters can be set in the status dictionary.
 
 \verbatim embed:rst
 =========== ======  =========================================================
- V_m        double  Membrane potential in mV
- V_T        double  Voltage offset that controls dynamics. For default
+V_m          mV     Membrane potential
+V_T          mV     Voltage offset that controls dynamics. For default
                     parameters, V_T = -63mV results in a threshold around
-                    -50mV
- E_L        double  Leak reversal potential in mV
- C_m        double  Capacity of the membrane in pF
- g_L        double  Leak conductance in nS
- tau_syn_ex double  Time constant of the excitatory synaptic exponential
-                    function in ms
- tau_syn_in double  Time constant of the inhibitory synaptic exponential
-                    function in ms
- t_ref      double  Duration of refractory period in ms (see Note)
- E_ex       double  Excitatory synaptic reversal potential in mV
- E_in       double  Inhibitory synaptic reversal potential in mV
- E_Na       double  Sodium reversal potential in mV
- g_Na       double  Sodium peak conductance in nS
- E_K        double  Potassium reversal potential in mV
- g_K        double  Potassium peak conductance in nS
- I_e        double  External input current in pA
+                    -50mV.
+E_L          mV     Leak reversal potential
+C_m          pF     Capacity of the membrane
+g_L          nS     Leak conductance
+tau_syn_ex   ms     Time constant of the excitatory synaptic exponential
+                    function
+tau_syn_in   ms     Time constant of the inhibitory synaptic exponential
+                    function
+t_ref        ms     Duration of refractory period (see Note).
+E_ex         mV     Excitatory synaptic reversal potential
+E_in         mV     Inhibitory synaptic reversal potential
+E_Na         mV     Sodium reversal potential
+g_Na         nS     Sodium peak conductance
+E_K          mV     Potassium reversal potential
+g_K          nS     Potassium peak conductance
+I_e          pA     External input current
 =========== ======  =========================================================
 \endverbatim
 

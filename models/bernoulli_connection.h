@@ -51,7 +51,7 @@ receiver port for each connection.
 Parameters:
 \verbatim embed:rst
 =========== ====== ===================================================
- p_transmit double Transmission probability, must be between 0 and 1
+ p_transmit real   Transmission probability, must be between 0 and 1
 =========== ====== ===================================================
 \endverbatim
 

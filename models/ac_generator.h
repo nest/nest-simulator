@@ -59,10 +59,10 @@ where
 Parameters:
 \verbatim embed:rst
 ==========   ======   ====================================
- amplitude   double   Amplitude of sine current in pA
- offset      double   Constant amplitude offset in pA
- frequency   double   Frequency in Hz
- phase       double   Phase of sine current (0-360 deg)
+ amplitude   pA       Amplitude of sine current
+ offset      pA       Constant amplitude offset
+ frequency   Hz       Frequency
+ phase       degree   Phase of sine current (0-360 deg)
 ==========   ======   ====================================
 \endverbatim
 

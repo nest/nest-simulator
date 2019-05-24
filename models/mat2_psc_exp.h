@@ -85,21 +85,20 @@ The following parameters can be set in the status dictionary:
 
 \verbatim embed:rst
 ============ =======  ========================================================
- C_m          double  Capacity of the membrane in pF
- E_L          double  Resting potential in mV
- tau_m        double  Membrane time constant in ms
- tau_syn_ex   double  Time constant of postsynaptic excitatory currents in ms
- tau_syn_in   double  Time constant of postsynaptic inhibitory currents in ms
- t_ref        double  Duration of absolute refractory period (no spiking)
-                      in ms
- V_m          double  Membrane potential in mV
- I_e          double  Constant input current in pA
- t_spike      double  Point in time of last spike in ms
- tau_1        double  Short time constant of adaptive threshold in ms
- tau_2        double  Long time constant of adaptive threshold in ms
- alpha_1      double  Amplitude of short time threshold adaption in mV [3]
- alpha_2      double  Amplitude of long time threshold adaption in mV [3]
- omega        double  Resting spike threshold in mV (absolute value, not
+ C_m          pF      Capacity of the membrane
+ E_L          mV      Resting potential
+ tau_m        ms      Membrane time constant
+ tau_syn_ex   ms      Time constant of postsynaptic excitatory currents
+ tau_syn_in   ms      Time constant of postsynaptic inhibitory currents
+ t_ref        ms      Duration of absolute refractory period (no spiking)
+ V_m          mV      Membrane potential
+ I_e          pA      Constant input current
+ t_spike      ms      Point in time of last spike
+ tau_1        ms      Short time constant of adaptive threshold
+ tau_2        ms      Long time constant of adaptive threshold
+ alpha_1      mV      Amplitude of short time threshold adaption [3]
+ alpha_2      mV      Amplitude of long time threshold adaption [3]
+ omega        mV      Resting spike threshold (absolute value, not
                       relative to E_L as in [3])
 ============ =======  ========================================================
 \endverbatim

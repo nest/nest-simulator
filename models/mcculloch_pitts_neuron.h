@@ -80,9 +80,8 @@ Parameters:
 
 \verbatim embed:rst
 ======= =======  ====================================================
- tau_m   double  Membrane time constant (mean inter-update-interval)
-                 in ms
- theta   double  Threshold for sigmoidal activation function mV
+ tau_m   ms      Membrane time constant (mean inter-update-interval)
+ theta   mV      Threshold for sigmoidal activation function
 ======= =======  ====================================================
 \endverbatim
 

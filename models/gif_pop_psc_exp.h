@@ -92,24 +92,24 @@ The following parameters can be set in the status dictionary.
 
 \verbatim embed:rst
 =========== ============= =====================================================
- V_reset    double        Membrane potential is reset to this value in mV after
+ V_reset    mV            Membrane potential is reset to this value after
                           a spike
- V_T_star   double        Threshold level of the membrane potential in mV
- E_L        double        Resting potential in mV
- Delta_V    double        Noise level of escape rate in mV
- C_m        double        Capacitance of the membrane in pF
- tau_m      double        Membrane time constant in ms
- t_ref      double        Duration of refractory period in ms
- I_e        double        Constant input current in pA
- N          long          Number of neurons in the population
- len_kernel long          Refractory effects are accounted for up to len_kernel
+ V_T_star   mV            Threshold level of the membrane potential
+ E_L        mV            Resting potential
+ Delta_V    mV            Noise level of escape rate
+ C_m        pF            Capacitance of the membrane
+ tau_m      ms            Membrane time constant
+ t_ref      ms            Duration of refractory period
+ I_e        pA            Constant input current
+ N          integer       Number of neurons in the population
+ len_kernel integer       Refractory effects are accounted for up to len_kernel
                           time steps
- lambda_0   double        Firing rate at threshold in 1/s
- tau_syn_ex double        Time constant for excitatory synaptic currents in ms
- tau_syn_in double        Time constant for inhibitory synaptic currents in ms
- tau_sfa    double vector Adaptation time constants in ms
- q_sfa      double vector Adaptation kernel amplitudes in ms
- BinoRand   bool          If True, binomial random numbers are used, otherwise
+ lambda_0   1/s           Firing rate at threshold
+ tau_syn_ex ms            Time constant for excitatory synaptic currents
+ tau_syn_in ms            Time constant for inhibitory synaptic currents
+ tau_sfa    list of ms    vector Adaptation time constants
+ q_sfa      list of ms    Adaptation kernel amplitudes
+ BinoRand   boolean        If True, binomial random numbers are used, otherwise
                           we use Poisson distributed spike counts
 =========== ============= =====================================================
 

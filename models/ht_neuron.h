@@ -88,27 +88,27 @@ Documentation and Examples:
 Parameters:
 
 \verbatim embed:rst
-===============  =============================================================
- V_m             Membrane potential
- tau_m           Membrane time constant applying to all currents except
-                 repolarizing K-current (see [1], p 1677)
- t_ref           Refractory time and duration of post-spike repolarizing
-                 potassium current (t_spike in [1])
- tau_spike       Membrane time constant for post-spike repolarizing
-                 potassium current
- voltage_clamp   If true, clamp voltage to value at beginning of simulation
-                 (default: false, mainly for testing)
- theta           Threshold
- theta_eq        Equilibrium value
- tau_theta       Time constant
- g_KL            Conductance for potassium leak current
- E_K             Reversal potential for potassium leak currents
- g_NaL           Conductance for sodium leak currents
- E_Na            Reversal potential for Na leak currents
- tau_D_KNa       Relaxation time constant for I_KNa
- receptor_types  Dictionary mapping synapse names to ports on neuron model
- recordables     List of recordable quantities
-===============  =============================================================
+=============== ======= ===========================================================
+ V_m            mV      Membrane potential
+ tau_m          ms      Membrane time constant applying to all currents except
+                        repolarizing K-current (see [1], p 1677)
+ t_ref          ms      Refractory time and duration of post-spike repolarizing
+                        potassium current (t_spike in [1])
+ tau_spike      ms      Membrane time constant for post-spike repolarizing
+                        potassium current
+ voltage_clamp  boolean If true, clamp voltage to value at beginning of simulation
+                        (default: false, mainly for testing)
+ theta          mV      Threshold
+ theta_eq       mV      Equilibrium value
+ tau_theta      ms      Time constant
+ g_KL           nS      Conductance for potassium leak current
+ E_K            mV      Reversal potential for potassium leak currents
+ g_NaL          nS      Conductance for sodium leak currents
+ E_Na           mV      Reversal potential for Na leak currents
+ tau_D_KNa      ms      Relaxation time constant for I_KNa
+ receptor_types         Dictionary mapping synapse names to ports on neuron model
+ recordables            List of recordable quantities
+=============== ======= ===========================================================
 
 +------------------------------------------------------------+
 |{E_rev,g_peak,tau_rise,tau_decay}_{AMPA,NMDA,GABA_A,GABA_B} |

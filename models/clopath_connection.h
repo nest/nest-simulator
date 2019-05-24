@@ -63,9 +63,9 @@ Parameters:
 
 \verbatim embed:rst
 =======  ======  ==========================================================
-tau_x    double  Time constant of the trace of the presynaptic spike train.
-Wmax     double  Maximum allowed weight.
-Wmin     double  Minimum allowed weight.
+tau_x    ms      Time constant of the trace of the presynaptic spike train
+Wmax     real    Maximum allowed weight
+Wmin     real    Minimum allowed weight
 =======  ======  ==========================================================
 \endverbatim
 

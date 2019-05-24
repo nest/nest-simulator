@@ -55,10 +55,10 @@ Parameters:
 The following parameters can be set in the status dictionary:
 \verbatim embed:rst
 ========  ======  =========================================================
- tau_P    double  Synaptic vesicle pool recovery time constant [ms]
- delta_P  double  Fractional change in vesicle pool on incoming spikes
-                  [unitless]
- P        double  Current size of the vesicle pool [unitless, 0 <= P <= 1]
+ tau_P    ms      Synaptic vesicle pool recovery time constant
+ delta_P  real    Fractional change in vesicle pool on incoming spikes
+                  (unitless)
+ P        real    Current size of the vesicle pool [unitless, 0 <= P <= 1]
 ========  ======  =========================================================
 \endverbatim
 

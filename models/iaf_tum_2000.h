@@ -90,21 +90,20 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 \verbatim embed:rst
-===========   ======  ========================================================
- E_L          double  Resting membrane potential in mV
- C_m          double  Capacity of the membrane in pF
- tau_m        double  Membrane time constant in ms
- tau_syn_ex   double  Time constant of postsynaptic excitatory currents in ms
- tau_syn_in   double  Time constant of postsynaptic inhibitory currents in ms
- t_ref_abs    double  Duration of absolute refractory period (V_m = V_reset)
-                      in ms
- t_ref_tot    double  Duration of total refractory period (no spiking) in ms
- V_m          double  Membrane potential in mV
- V_th         double  Spike threshold in mV
- V_reset      double  Reset membrane potential after a spike in mV
- I_e          double  Constant input current in pA
- t_spike      double  Point in time of last spike in ms
-===========   ======  ========================================================
+===========  ====== ========================================================
+ E_L          mV     Resting membrane potenial
+ C_m          pF     Capacity of the membrane
+ tau_m        ms     Membrane time constant
+ tau_syn_ex   ms     Time constant of postsynaptic excitatory currents
+ tau_syn_in   ms     Time constant of postsynaptic inhibitory currents
+ t_ref_abs    ms     Duration of absolute refractory period (V_m = V_reset)
+ t_ref_tot    ms     Duration of total refractory period (no spiking)
+ V_m          mV     Membrane potential
+ V_th         mV     Spike threshold
+ V_reset      mV     Reset membrane potential after a spike
+ I_e          pA     Constant input current
+ t_spike      ms     Point in time of last spike
+===========  ====== ========================================================
 \endverbatim
 
 Remarks:

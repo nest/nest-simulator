@@ -72,19 +72,19 @@ Parameters:
 The following parameters can be set in the status dictionary.
 
 \verbatim embed:rst
-======================= ======  ==============================================
- V_m                    double  Membrane potential in mV
- U_m                    double  Membrane potential recovery variable
- V_th                   double  Spike threshold in mV
- I_e                    double  Constant input current in pA. (R=1)
- V_min                  double  Absolute lower value for the membrane potential
- a                      double  Describes time scale of recovery variable
- b                      double  Sensitivity of recovery variable
- c                      double  After-spike reset value of V_m
- d                      double  After-spike reset value of U_m
- consistent_integration bool    Use standard integration technique
-======================= ======  ==============================================
-
+======================= =======  ==============================================
+ V_m                    mV       Membrane potential
+ U_m                    mV       Membrane potential recovery variable
+ V_th                   mV       Spike threshold
+ I_e                    pA       Constant input current (R=1)
+ V_min                  mV       Absolute lower value for the membrane potential
+ a                      real     Describes time scale of recovery variable
+ b                      real     Sensitivity of recovery variable
+ c                      mV       After-spike reset value of V_m
+ d                      mV       After-spike reset value of U_m
+ consistent_integration boolean  Use standard integration technique
+======================= =======  ==============================================
+\endverbatim
 
 References:
 

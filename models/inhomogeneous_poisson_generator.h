@@ -57,10 +57,10 @@ Parameters:
 The following parameters can be set in the status dictionary:
 
 \verbatim embed:rst
-==================== ===============  =========================================
- rate_times          list of doubles  Times at which rate changes in ms
- rate_values         list of doubles  Rate of Poisson spike train in spikes/s
- allow_offgrid_times bool             If false, spike times will be rounded to
+==================== ================ =========================================
+ rate_times          list of ms       Times at which rate changes
+ rate_values         list of spikes/s Rate of Poisson spike train
+ allow_offgrid_times boolean          If false, spike times will be rounded to
                                       the nearest step if they are less than
                                       tic/2 from the step, otherwise NEST
                                       reports an error.
@@ -68,7 +68,7 @@ The following parameters can be set in the status dictionary:
                                       nearest step if within tic/2 from the
                                       step,otherwise they are rounded up to the
                                       *end* of the step. Default: false
-==================== ===============  =========================================
+==================== ================ =========================================
 \endverbatim
 
 Examples:

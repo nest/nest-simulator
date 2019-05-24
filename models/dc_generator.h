@@ -53,7 +53,7 @@ The following parameters can be set in the status dictionary:
 
 \verbatim embed:rst
 ========== ======  =============================
- amplitude double  Amplitude of current in pA
+ amplitude pA      Amplitude of current
 ========== ======  =============================
 \endverbatim
 

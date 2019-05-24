@@ -118,21 +118,22 @@ are called "soma", "proximal", and "distal", respectively. In the list below,
 these parameters are marked with an asterisk.
 
 \verbatim embed:rst
+
 ============ ======= ==========================================================
- V_m*        double  Membrane potential in mV
- E_L*        double  Leak reversal potential in mV
- C_m*        double  Capacity of the membrane in pF
- E_ex*       double  Excitatory reversal potential in mV
- E_in*       double  Inhibitory reversal potential in mV
- g_L*        double  Leak conductance in nS;
- tau_syn_ex* double  Rise time of the excitatory synaptic alpha function in ms
- tau_syn_in* double  Rise time of the inhibitory synaptic alpha function in ms
- I_e*        double  Constant input current in pA
- g_sp        double  Conductance connecting soma and proximal dendrite, in nS
- g_pd        double  Conductance connecting proximal and distal dendrite, in
- t_ref       double  Duration of refractory period in ms
- V_th        double  Spike threshold in mV
- V_reset     double  Reset potential of the membrane in mV
+ V_m*        mV      Membrane potential
+ E_L*        mV      Leak reversal potential
+ C_m*        pF      Capacity of the membrane
+ E_ex*       mV      Excitatory reversal potential
+ E_in*       mV      Inhibitory reversal potential
+ g_L*        nS      Leak conductance
+ tau_syn_ex* ms      Rise time of the excitatory synaptic alpha function
+ tau_syn_in* ms      Rise time of the inhibitory synaptic alpha function
+ I_e*        pA      Constant input current
+ g_sp        nS      Conductance connecting soma and proximal dendrite
+ g_pd        nS      Conductance connecting proximal and distal dendrite
+ t_ref       ms      Duration of refractory period
+ V_th        mV      Spike threshold in mV
+ V_reset     mV      Reset potential of the membrane
 ============ ======= ==========================================================
 \endverbatim
 

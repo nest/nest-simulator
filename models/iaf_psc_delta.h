@@ -98,18 +98,18 @@ The following parameters can be set in the status dictionary.
 
 \verbatim embed:rst
 ================= ======  ======================================================
- V_m              double  Membrane potential in mV
- E_L              double  Resting membrane potential in mV
- C_m              double  Capacitance of the membrane in pF
- tau_m            double  Membrane time constant in ms
- t_ref            double  Duration of refractory period in ms
- V_th             double  Spike threshold in mV
- V_reset          double  Reset potential of the membrane in mV
- I_e              double  Constant input current in pA
- V_min            double  Absolute lower value for the membrane potential in mV
- refractory_input bool    If true, do not discard input during
+ V_m              mV      Membrane potential
+ E_L              mV      Resting membrane potential
+ C_m              pF      Capacity of the membrane
+ tau_m            ms      Membrane time constant
+ t_ref            ms      Duration of refractory period
+ V_th             mV      Spike threshold
+ V_reset          mV      Reset potential of the membrane
+ I_e              pA      Constant input current
+ V_min            mV      Absolute lower value for the membrane potenial
+ refractory_input boolean If true, do not discard input during
                           refractory period. Default: false
-================= ======  ======================================================
+================= ======= ======================================================
 \endverbatim
 
 References:

@@ -94,17 +94,17 @@ The following parameters can be set in the status dictionary.
 
 \verbatim embed:rst
 =========== ======  ==========================================================
- V_m        double  Membrane potential in mV
- E_L        double  Resting membrane potential in mV
- C_m        double  Capacity of the membrane in pF
- tau_m      double  Membrane time constant in ms
- t_ref      double  Duration of refractory period in ms
- V_th       double  Spike threshold in mV
- V_reset    double  Reset potential of the membrane in mV
- tau_syn_ex double  Rise time of the excitatory synaptic alpha function in ms
- tau_syn_in double  Rise time of the inhibitory synaptic alpha function in ms
- I_e        double  Constant external input current in pA
- V_min      double  Absolute lower value for the membrane potential
+ V_m        mV      Membrane potential
+ E_L        mV      Resting membrane potenial
+ C_m        pF      Capacity of the membrane
+ tau_m      ms      Membrane time constant
+ t_ref      ms      Duration of refractory period
+ V_th       mV      Spike threshold
+ V_reset    mV      Reset potential of the membrane
+ tau_syn_ex ms      Rise time of the excitatory synaptic alpha function
+ tau_syn_in ms      Rise time of the inhibitory synaptic alpha function
+ I_e        pA      Constant input current
+ V_min      mV      Absolute lower value for the membrane potenial
 =========== ======  ==========================================================
 \endverbatim
 Remarks:

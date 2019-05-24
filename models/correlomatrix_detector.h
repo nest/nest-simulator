@@ -80,35 +80,33 @@ Parameters:
 
 \verbatim embed:rst
 ================ ========= ====================================================
-Tstart           double    Time when to start counting events. This time should
+Tstart           real      Time when to start counting events. This time should
                            be set to at least start + tau_max in order to avoid
                            edge effects of the correlation counts.
-Tstop            doub      Time when to stop counting events. This time should
+Tstop            real      Time when to stop counting events. This time should
                            be set to at most Tsim - tau_max, where Tsim is the
                            duration of simulation, in order to avoid edge
                            effects of the correlation counts.
-delta_tau        double    Bin width in ms. This has to be an odd multiple of
+delta_tau        ms        Bin width. This has to be an odd multiple of
                            the resolution, to allow the symmetry between
                            positive and negative time-lags.
-tau_max          double    One-sided width in ms. In the lower triagnular part
+tau_max          ms        One-sided width. In the lower triagnular part
                            events with differences in [0, tau_max+delta_tau/2)
                            are counted. On the diagonal and in the upper
                            triangular part events with differences in
                            (0, tau_max+delta_tau/2].
-
-N_channels       long      The number of pools. This defines the range of
+N_channels       integer   The number of pools. This defines the range of
                            receptor_type. Default is 1.
                            Setting N_channels clears count_covariance,
                            covariance and n_events.
-
-covariance       matrix of read-only - raw, weighted, auto/cross
-                 of double correlation counts
-                 vectors
-count_covariance matrix of read-pnly, raw, auto/cross correlation counts
-                 long
-                 vector
-n_events         integer   number of events from all sources
-                 vector
+covariance       3D        matrix of read-only -raw, weighted, auto/cross
+                 matrix of correlation
+                 integers
+count_covariance 3D        matrix of read-only -raw, auto/cross correlation
+                 matrix of counts
+                 integers
+n_events         list of   number of events from all sources
+                 integers
 ================ ========= ====================================================
 \endverbatim
 

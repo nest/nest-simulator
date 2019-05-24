@@ -137,43 +137,43 @@ The following parameters can be set in the status dictionary.
 =========   ======   ======================================================
 **Membrane Parameters**
 ---------------------------------------------------------------------------
- C_m        double   Capacitance of the membrane in pF
- t_ref      double   Duration of refractory period in ms
- V_reset    double   Membrane potential is reset to this value in mV after
-                     a spike
- E_L        double   Resting potential in mV
- g_L        double   Leak conductance in nS
- I_e        double   Constant input current in pA
-=========   ======   ======================================================
+ C_m         pF      Capacity of the membrane
+ t_ref       ms      Duration of refractory period
+ V_reset     mV      Reset value for V_m after a spike
+ E_L         mV      Leak reversal potential
+ g_L         nS      Leak conductance
+ I_e         pA      Constant external input current
+ ========   ======   ======================================================
 
 ========= ==============  =====================================================
 **Spike adaptation and firing intensity parameters**
 -------------------------------------------------------------------------------
- q_stc      double vector   Values added to spike-triggered currents (stc)
-                            after each spike emission in pA
- tau_stc    double vector   Time constants of stc variables in ms
- q_sfa      double vector   Values added to spike-frequency adaptation
-                            (sfa) after each spike emission in mV
- tau_sfa    double vector   Time constants of sfa variables in ms
- Delta_V    double          Stochasticity level in mV
- lambda_0   double          Stochastic intensity at firing threshold V_T in 1/s
- V_T_star   double          Base threshold in mV
-========= ==============  =====================================================
+ q_stc      list of nA        Values added to spike-triggered currents (stc)
+                              after each spike emission
+ tau_stc    list of ms        Time constants of stc variables
+ q_sfa      list of mV        Values added to spike-frequency adaptation
+                              (sfa) after each spike emission
+ tau_sfa    list of ms        Time constants of sfa variables
+ Delta_V    mV                Stochasticity level
+ lambda_0   real              Stochastic intensity at firing threshold V_T i
+                              n 1/s.
+ V_T_star   mV                Base threshold
+ ========= ==============  =====================================================
 
 =========   =============  ===================================================
 **Synaptic parameters**
 ------------------------------------------------------------------------------
- tau_syn    double vector  Time constants of the synaptic conductance
-                           in ms (same size as E_rev)
- E_rev      double vector  Reversal potentials in mV (same size as tau_syn)
+ tau_syn    list of ms     Time constants of the synaptic conductance
+                           (same size as E_rev)
+ E_rev      list of mV     Reversal potentials (same size as tau_syn)
 =========   =============  ===================================================
 
 ==============  ======  ======================================================
 **Integration parameters**
 ------------------------------------------------------------------------------
- gsl_error_tol  double   This parameter controls the admissible error of the
-                         GSL integrator. Reduce it if NEST complains about
-                         numerical instabilities
+ gsl_error_tol  real    This parameter controls the admissible error of the
+                        GSL integrator. Reduce it if NEST complains about
+                        numerical instabilities
 ==============  ======  ======================================================
 
 \endverbatim

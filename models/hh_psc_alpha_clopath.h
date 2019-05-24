@@ -91,47 +91,45 @@ The following parameters can be set in the status dictionary.
 =========== ======  ===================================================
 **Dynamic state variables**
 -----------------------------------------------------------------------
-V_m         double  Membrane potential in mV.
-u_bar_plus  double  Low-pass filtered Membrane potential in mV.
-u_bar_minus double  Low-pass filtered Membrane potential in mV.
-u_bar_bar   double  Low-pass filtered u_bar_minus in mV.
+V_m         mV      Membrane potential
+u_bar_plus  mV      Low-pass filtered Membrane potential
+u_bar_minus mV      Low-pass filtered Membrane potential
+u_bar_bar   mV      Low-pass filtered u_bar_minus
 =========== ======  ===================================================
 
 =========== ======  ===========================================================
 **Membrane Parameters**
 -------------------------------------------------------------------------------
-E_L         double  Resting membrane potential in mV.
-g_L         double  Leak conductance in nS.
-C_m         double  Capacity of the membrane in pF.
-tau_ex      double  Rise time of the excitatory synaptic alpha function in ms.
-tau_in      double  Rise time of the inhibitory synaptic alpha function in ms.
-E_Na        double  Sodium reversal potential in mV.
-g_Na        double  Sodium peak conductance in nS.
-E_K         double  Potassium reversal potential in mV.
-g_K         double  Potassium peak conductance in nS.
-Act_m       double  Activation variable m
-Act_h       double  Activation variable h
-Inact_n     double  Inactivation variable n
-I_e         double  Constant external input current in pA.
+E_L         mV      Leak reversal potential
+C_m         pF      Capacity of the membrane
+g_L         nS      Leak conductance
+tau_ex      ms      Rise time of the excitatory synaptic alpha function
+tau_in      ms      Rise time of the inhibitory synaptic alpha function
+E_Na        mV      Sodium reversal potential
+g_Na        nS      Sodium peak conductance
+E_K         mV      Potassium reversal potential
+g_K         nS      Potassium peak conductance
+Act_m       real    Activation variable m
+Act_h       real    Activation variable h
+Inact_n     real    Inactivation variable n
+I_e         pA      External input current
 =========== ======  ===========================================================
 
-============= ======  =======================================================
+============= ======= =======================================================
 **Clopath rule parameters**
 -----------------------------------------------------------------------------
-A_LTD         double  Amplitude of depression in 1/mV.
-A_LTP         double  Amplitude of facilitation in 1/mV^2.
-theta_plus    double  threshold for u in mV.
-theta_minus   double  threshold for u_bar_[plus/minus] in mV.
-A_LTD_const   bool    Flag that indicates whether A_LTD_ should
+A_LTD         1/mV    Amplitude of depression
+A_LTP         1/mV^2  Amplitude of facilitation
+theta_plus    mV      Threshold for u
+theta_minus   mV      Threshold for u_bar_[plus/minus]
+A_LTD_const   boolean Flag that indicates whether A_LTD_ should
                       be constant (true, default) or multiplied by
                       u_bar_bar^2 / u_ref_squared (false).
-delay_u_bars  double  Delay with which u_bar_[plus/minus] are processed
+delay_u_bars  real    Delay with which u_bar_[plus/minus] are processed
                       to compute the synaptic weights.
-U_ref_squared double  Reference value for u_bar_bar_^2.
-============= ======  =======================================================
+U_ref_squared real    Reference value for u_bar_bar_^2.
+============= ======= =======================================================
 
-
-============ ======= =========================================================
 \endverbatim
 
 

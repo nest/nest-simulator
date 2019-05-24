@@ -78,20 +78,20 @@ The following parameters can be set in the status dictionary.
 
 \verbatim embed:rst
 ============= ====== =========================================================
- V_m          double Membrane potential in mV
- E_L          double Leak reversal potential in mV
- C_m          double Capacity of the membrane in pF
- t_ref        double Duration of refractory period in ms
- V_th         double Spike threshold in mV
- V_reset      double Reset potential of the membrane in mV
- E_ex         double Excitatory reversal potential in mV
- E_in         double Inhibitory reversal potential in mV
- g_L          double Leak conductance in nS
- tau_syn_ex   double Rise time of the excitatory synaptic alpha function in ms
- tau_decay_ex double Rise time of the excitatory synaptic beta function in ms
- tau_syn_in   double Rise time of the inhibitory synaptic alpha function in ms
- tau_decay_in double Rise time of the inhibitory synaptic beta function in ms
- I_e          double Constant input current in pA
+ V_m          mV      Membrane potential
+ E_L          mV      Leak reversal potential
+ C_m          pF      Capacity of the membrane
+ t_ref        ms      Duration of refractory period
+ V_th         mV      Spike threshold
+ V_reset      mV      Reset potential of the membrane
+ E_ex         mV      Excitatory reversal potential
+ E_in         mV      Inhibitory reversal potential
+ g_L          nS      Leak conductance
+ tau_syn_ex   ms      Rise time of the excitatory synaptic alpha function
+ tau_decay_ex ms      Rise time of the excitatory synaptic beta function
+ tau_syn_in   ms      Rise time of the inhibitory synaptic alpha function
+ tau_decay_in ms      Rise time of the inhibitory synaptic beta function
+ I_e          pA      Constant input current
 ============= ====== =========================================================
 \endverbatim
 

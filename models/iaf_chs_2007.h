@@ -75,14 +75,14 @@ Parameters:
 The following parameters can be set in the status dictionary.
 
 \verbatim embed:rst
-========= ================== ==================================================
- tau_epsp  double             Membrane time constant in ms.
- tau_reset double             Refractory time constant in ms.
- U_epsp    double             Maximum amplitude of the EPSP. Normalized.
- U_reset   double             Reset value of the membrane potential. Normalized.
- U_noise   double             Noise scale. Normalized.
- noise     vector of double   Noise signal.
-========= ================== ==================================================
+========== ============== ==================================================
+ tau_epsp  ms             Membrane time constant
+ tau_reset ms             Refractory time constant
+ U_epsp    real           Maximum amplitude of the EPSP, normalized
+ U_reset   real           Reset value of the membrane potential, normalized
+ U_noise   real           Noise scale, normalized
+ noise     list of real   Noise signal
+========== ============== ==================================================
 \endverbatim
 
 References:

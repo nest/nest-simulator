@@ -68,8 +68,8 @@ __all__ = [
 # Only flags for special cases need to be entered here, such as special models
 # or function parameters, all flags for deprecated functions will be registered
 # by the @deprecated decorator.
-_deprecation_warning = {'aeif_cond_alpha_RK5': {'deprecation_issued': False,
-                                                'replacement': 'aeif_cond_alpha'}}
+_deprecation_warning = {'deprecated_model': {'deprecation_issued': False,
+                                             'replacement': 'replacement_mod'}}
 
 
 def format_Warning(message, category, filename, lineno, line=None):

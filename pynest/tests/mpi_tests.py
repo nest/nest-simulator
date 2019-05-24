@@ -35,6 +35,14 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
+cmd = "sli -c 'statusdict/have_mpi :: =only'"
+HAVE_MPI = check_output(cmd) == "true"
+
+if not HAVE_MPI:
+    eprint("Script cannot be run if NEST was compiled without MPI. Exiting.")
+    sys.exit(1)
+
+
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
 scripts = [
@@ -47,11 +55,12 @@ scripts = [
     "test_sp/mpitest_issue_578_sp.py",
 ]
 
+
+failing_scripts = []
+failing_outputs = []
+
 with open(sys.argv[1], "w") as junitxml:
-
-    failing = []
     for script_name in scripts:
-
         script = os.path.join(script_dir, script_name)
 
         tmpfile = mktemp(".xml")
@@ -59,10 +68,22 @@ with open(sys.argv[1], "w") as junitxml:
         cmd = "nest -c '2 ({}) ({}) mpirun =only'".format(pytest_cmd, script)
         test_cmd = check_output(cmd)
 
-        output = check_output(test_cmd)
-        eprint(script_name)
+        try:
+            output = check_output(test_cmd)
+            eprint(output)
+        except subprocess.CalledProcessError as e:
+            failing_scripts.append(script_name)
+            failing_outputs.append(e.output)
+            continue
 
         junitxml.write(open(tmpfile, "r").read())
 
         if os.path.exists(tmpfile):
             os.remove(tmpfile)
+
+if failing_scripts:
+    eprint("There were scripts that failed when running with MPI:")
+    for script, output in zip(failing_scripts, failing_outputs):
+        error_str = "{}\n{}\n========================================"
+        eprint(error_str.format(script, output))
+    sys.exit(1)

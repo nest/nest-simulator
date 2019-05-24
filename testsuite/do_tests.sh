@@ -522,7 +522,7 @@ phase_seven() {
 
     if test ${PYTHON}; then
 
-	PYTEST_OPTS="-m pytest --tb=auto --disable-warnings"
+        PYTEST_OPTS="-m pytest --tb=auto --disable-warnings"
         cd "${PREFIX}/share/nest/tests/python"
 
         JUNITFILE="${REPORTDIR}"/pytest-serial.log
@@ -545,14 +545,20 @@ phase_seven() {
             echo "  ------------------------"
             JUNITFILE="${REPORTDIR}"/pytest-parallel.log
             COLUMNS=110 ${PYTHON} -u mpi_tests.py "${JUNITFILE}" "${PYTEST_OPTS}" 2>&1 \
+                | sed -u 's/\x1b\[[0-9;]*[a-zA-Z]//g' \
                 | grep --line-buffered -v "========" | grep --line-buffered -v "generated xml file" \
-                | grep --line-buffered -v '^$' | grep --line-buffered -v '^platform\|^rootdir\|^collected' \
+                | grep --line-buffered -v '^$' \
                 | sed -u 's/^/  /' | tee -a "${TEST_LOGFILE}"
 
-            PYNEST_TEST_TOTAL=$(($(read_junitxml ${JUNITFILE} "tests") ${PYNEST_TEST_TOTAL}))
-            PYNEST_TEST_SKIPPED=$(($(read_junitxml ${JUNITFILE} "skips") ${PYNEST_TEST_SKIPPED}))
-            PYNEST_TEST_FAILURES=$(($(read_junitxml ${JUNITFILE} "failures") ${PYNEST_TEST_FAILURES}))
-            PYNEST_TEST_ERRORS=$(($(read_junitxml ${JUNITFILE} "errors") ${PYNEST_TEST_ERRORS}))
+            if [ $? -ne 0 ]; then
+                PYNEST_TEST_TOTAL=$((${PYNEST_TEST_TOTAL} + 1))
+                PYNEST_TEST_FAILURES=$((${PYNEST_TEST_FAILURES} + 1))
+            else
+                PYNEST_TEST_TOTAL=$(($(read_junitxml ${JUNITFILE} "tests") ${PYNEST_TEST_TOTAL}))
+                PYNEST_TEST_SKIPPED=$(($(read_junitxml ${JUNITFILE} "skips") ${PYNEST_TEST_SKIPPED}))
+                PYNEST_TEST_FAILURES=$(($(read_junitxml ${JUNITFILE} "failures") ${PYNEST_TEST_FAILURES}))
+                PYNEST_TEST_ERRORS=$(($(read_junitxml ${JUNITFILE} "errors") ${PYNEST_TEST_ERRORS}))
+            fi
         fi
 
         cd - >/dev/null

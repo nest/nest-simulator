@@ -28,7 +28,10 @@ from tempfile import mktemp
 
 
 def check_output(cmd):
-    return subprocess.check_output(shlex.split(cmd)).decode("utf-8")
+    cmd = shlex.split(cmd)
+    stdout = subprocess.STDOUT
+    output = subprocess.check_output(cmd, stderr=stdout)
+    return output.decode("utf-8")
 
 
 def eprint(*args, **kwargs):
@@ -69,8 +72,8 @@ with open(sys.argv[1], "w") as junitxml:
         test_cmd = check_output(cmd)
 
         try:
+            eprint(script_name)
             output = check_output(test_cmd)
-            eprint(output)
         except subprocess.CalledProcessError as e:
             failing_scripts.append(script_name)
             failing_outputs.append(e.output)

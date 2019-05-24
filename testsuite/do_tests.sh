@@ -540,7 +540,7 @@ phase_seven() {
 
         echo
 
-        if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then  
+        if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
             echo "  Running PyNEST MPI tests"
             echo "  ------------------------"
             JUNITFILE="${REPORTDIR}"/pytest-parallel.log

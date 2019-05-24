@@ -561,10 +561,6 @@ phase_seven() {
         PYNEST_TEST_FAILED=$(($PYNEST_TEST_ERRORS + $PYNEST_TEST_FAILURES))
         PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_SKIPPED - $PYNEST_TEST_FAILED))
 
-	if test ${PYNEST_TEST_FAILED} -gt 0 ; then
-	    echo "PyNEST testsuite" >> "${TEST_FAILED}"
-	fi
-
         PYNEST_TEST_SKIPPED_TEXT="(${PYNEST_TEST_SKIPPED} PyNEST)"
         PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
 
@@ -630,7 +626,7 @@ echo "     Skipped: $(( $(cat "${TEST_SKIPPED}" | wc -l) + $CPP_TEST_SKIPPED + $
 echo "     Failed: $(( $(cat "${TEST_FAILED}" | wc -l) + $CPP_TEST_FAILED + $PYNEST_TEST_FAILED )) ${PYNEST_TEST_FAILED_TEXT:-}"
 echo
 
-if test "$(cat "${TEST_FAILED}" | wc -l)" -gt 0 ; then
+if test "$(cat "${TEST_FAILED}" | wc -l)" -gt 0 || test $CPP_TEST_FAILED -gt 0 || test $PYNEST_TEST_FAILED -gt 0; then
     echo "***"
     echo "*** There were errors detected during the run of the NEST test suite!"
     echo "***"

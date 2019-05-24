@@ -24,7 +24,7 @@ import sys
 import os
 import subprocess
 import shlex
-from tempfile import mktemp
+import tempfile
 
 
 def check_output(cmd):
@@ -61,11 +61,20 @@ scripts = [
 
 failing = False
 
-with open(sys.argv[1], "w") as junitxml:
+failure_xml = """<?xml version="1.0" encoding="utf-8"?>\
+<testsuite name="pytest" failures="1" tests="1" time="1">\
+<testcase classname="pynest.mpi_tests.{0}" file="{0}">\
+<system-out>{1}</system-out>\
+</testcase>\
+</testsuite>\
+"""
+
+
+with open(sys.argv[1], "w+") as junitxml:
     for script_name in scripts:
         script = os.path.join(script_dir, script_name)
 
-        tmpfile = mktemp(".xml")
+        tmpfile = tempfile.mktemp(".xml")
         pytest_cmd = "python {} --junitxml={}".format(sys.argv[2], tmpfile)
         cmd = "nest -c '2 ({}) ({}) mpirun =only'".format(pytest_cmd, script)
         test_cmd = check_output(cmd)
@@ -76,7 +85,8 @@ with open(sys.argv[1], "w") as junitxml:
         except subprocess.CalledProcessError as e:
             failing = True
             eprint(e.output)
-            continue
+            with open(tmpfile, "w") as errfile:
+                errfile.write(failure_xml.format(script_name, e.output))
 
         junitxml.write(open(tmpfile, "r").read())
 

@@ -56,7 +56,6 @@ __all__ = [
     'CopyModel',
     'Create',
     'CreateParameter',
-    'DataConnect',  # deprecated
     'DisableStructuralPlasticity',
     'Disconnect',
     'EnableStructuralPlasticity',

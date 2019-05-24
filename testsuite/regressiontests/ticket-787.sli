@@ -71,7 +71,7 @@ systemdict /GNUReadline known not {
         /CopyModel_l_l /CopyModel_l_l_D /CreateLayer_D
 	/CreateMask_D /CreateTopologyParameter_D /CreateRDV_g_vf /CreateRNG_gt_i
 	/Create_l /Create_l_D /Create_l_i /Create_l_i_D /CyclicValue_d_a
-	/CyclicValue_d_d_d /DataConnect_a /DataConnect_i_D_s /Displacement_a_i
+	/CyclicValue_d_d_d /Displacement_a_i
 	/Distance_a_i /DumpLayerConnections_os_i_l
 	/DumpLayerNodes_os_i /FileNames_r /FileNames_s /FixedPoint__p
 	/FixedPoint__p_i /Flatten_a /Flatten_a_i

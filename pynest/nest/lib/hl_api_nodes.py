@@ -89,7 +89,9 @@ def Create(model, n=1, params=None, positions=None, edge_wrap=None):
                 layer_specs['center'] = positions.center
             if positions.depth is not None:
                 layer_specs['layers'] = positions.depth
-        layer = sli_func('CreateLayer', layer_specs)
+        if params is None:
+            params = {}
+        layer = sli_func('CreateLayer', layer_specs, params)
         layer.set_spatial()
         return layer
 

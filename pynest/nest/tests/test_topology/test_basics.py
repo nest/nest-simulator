@@ -36,12 +36,24 @@ except ImportError:
 
 class BasicsTestCase(unittest.TestCase):
     def test_create_layer(self):
-        """Creating a single layer from dict."""
+        """Creating a single layer."""
         nr = 4
         nc = 5
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(nr, nc))
         self.assertEqual(len(l), nr * nc)
+
+    def test_create_layer_with_param(self):
+        """Creating a layer with parameters."""
+        nr = 4
+        nc = 5
+        nest.ResetKernel()
+        l = nest.Create('iaf_psc_alpha',
+                        params={'V_m': -55.0},
+                        positions=nest.spatial.grid(nr, nc))
+        layer_vm = l.get('V_m')
+        for vm in layer_vm:
+            self.assertEqual(vm, -55.0)
 
     def test_GetPosition(self):
         """Check if GetPosition returns proper positions."""

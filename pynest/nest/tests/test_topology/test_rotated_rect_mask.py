@@ -54,9 +54,7 @@ class RotatedRectangularMask(unittest.TestCase):
         """
 
         # Test 2D layer
-        layer = nest.CreateLayer({'rows': 5, 'columns': 5,
-                                  'extent': [5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=5, columns=5, extent=[5., 5.]))
 
         # First test without rotation.
         maskdict = {'lower_left': [-1., -0.5], 'upper_right': [1., 0.5]}
@@ -108,8 +106,7 @@ class RotatedRectangularMask(unittest.TestCase):
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
-        layer = nest.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=pos)
 
         # First test that we get correct GIDs with box mask that is not
         # rotated.
@@ -157,8 +154,7 @@ class RotatedRectangularMask(unittest.TestCase):
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
-        layer = nest.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=pos)
 
         # First test without rotation
         maskdict = {'lower_left': [-0.5, -1.0, -1.0],
@@ -243,8 +239,7 @@ class RotatedRectangularMask(unittest.TestCase):
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
-        layer = nest.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=pos)
 
         # Test with a azimuth angle and polar angle of 45 degrees.
         maskdict = {'lower_left': [-0.5, -1.5, -1.5],
@@ -265,9 +260,7 @@ class RotatedRectangularMask(unittest.TestCase):
         Test rotated rectangle where the mask does not contain the origin.
         """
 
-        layer = nest.CreateLayer({'rows': 11, 'columns': 11,
-                                  'extent': [11., 11.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=11, columns=11, extent=[11., 11.]))
 
         # First test that we get the correct GIDs when our mask does not
         # contain the origin.
@@ -305,8 +298,7 @@ class RotatedRectangularMask(unittest.TestCase):
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
-        layer = nest.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=pos)
 
         # First test that we get the correct GIDs when our mask does not
         # contain the origin.
@@ -372,12 +364,8 @@ class RotatedRectangularMask(unittest.TestCase):
                   /_______ /
         """
 
-        source = nest.CreateLayer({'rows': 5, 'columns': 5,
-                                   'extent': [5., 5.],
-                                   'elements': 'iaf_psc_alpha'})
-        target = nest.CreateLayer({'rows': 5, 'columns': 5,
-                                   'extent': [5., 5.],
-                                   'elements': 'iaf_psc_alpha'})
+        source = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=5, columns=5, extent=[5., 5.]))
+        target = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=5, columns=5, extent=[5., 5.]))
 
         conndict = {'connection_type': 'divergent',
                     'mask': {'rectangular': {'lower_left': [-1.5, -0.5],

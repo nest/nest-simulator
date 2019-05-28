@@ -35,9 +35,9 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
     def test_SelectNodesByMaskIn2D(self):
         """Test SelectNodesByMask for rectangular mask in 2D layer"""
 
-        layer = nest.CreateLayer({'rows': 11, 'columns': 11,
-                                  'extent': [11., 11.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.grid(rows=11, columns=11,
+                                                        extent=[11., 11.]))
         maskdict = {'lower_left': [-2., -1.], 'upper_right': [2., 1.]}
         mask = nest.CreateMask('rectangular', maskdict)
 
@@ -54,9 +54,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         cntr = [3., 3.]
 
-        layer = nest.CreateLayer({'rows': 5, 'columns': 5,
-                                  'extent': [11., 11.], 'center': cntr,
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=5, columns=5, extent=[11., 11.], center=cntr))
         maskdict = {'lower_left': [1., 1.], 'upper_right': [5., 5.]}
         mask = nest.CreateMask('rectangular', maskdict)
 
@@ -70,8 +68,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         pos = [[x*1., y*1., z*1.] for x in range(-5, 6)
                for y in range(-5, 6)
                for z in range(-5, 6)]
-        layer = nest.CreateLayer({'positions': pos, 'extent': [11., 11., 11.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=pos)
 
         maskdict = {'lower_left': [-6., -6., -6.],
                     'upper_right': [-4., -4., -4.]}
@@ -93,9 +90,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
     def test_EllipticalMask2D(self):
         """Simple elliptical mask contains the correct GIDs"""
 
-        layer = nest.CreateLayer({'rows': 11, 'columns': 11,
-                                  'extent': [11., 11.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=11, columns=11, extent=[11., 11.]))
         maskdict = {'major_axis': 2.0, 'minor_axis': 1.0}
         mask = nest.CreateMask('elliptical', maskdict)
 
@@ -118,9 +113,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
     def test_EllipticalMask2DWithAnchor(self):
         """Anchored elliptical mask contains the correct GIDs"""
 
-        layer = nest.CreateLayer({'rows': 11, 'columns': 11,
-                                  'extent': [11., 11.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=11, columns=11, extent=[11., 11.]))
         maskdict = {'major_axis': 6.0, 'minor_axis': 3.0, 'anchor': [-2., -2.]}
         mask = nest.CreateMask('elliptical', maskdict)
 
@@ -135,9 +128,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
     def test_TiltedEllipticalMask2DWithAnchor(self):
         """Tilted and anchored elliptical mask contains the correct GIDs"""
 
-        layer = nest.CreateLayer({'rows': 11, 'columns': 11,
-                                  'extent': [11., 11.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=11, columns=11, extent=[11., 11.]))
         maskdict = {'major_axis': 3.0, 'minor_axis': 1.0,
                     'anchor': [3., 3.], 'azimuth_angle': 45.}
         mask = nest.CreateMask('elliptical', maskdict)
@@ -176,9 +167,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         cntr = [5.0, 5.0]
 
-        layer = nest.CreateLayer({'rows': 5, 'columns': 5,
-                                  'extent': [5., 5.], 'center': cntr,
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=5, columns=5, extent=[5., 5.], center=cntr))
         maskdict = {'major_axis': 3.0, 'minor_axis': 1.0}
         mask = nest.CreateMask('elliptical', maskdict)
 
@@ -199,8 +188,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         pos = [[x*1., y*1., z*1.] for x in range(-5, 6)
                for y in range(-5, 6)
                for z in range(-5, 6)]
-        layer = nest.CreateLayer({'positions': pos, 'extent': [11., 11., 11.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=pos)
 
         maskdict = {'major_axis': 3.0, 'minor_axis': 1.0,
                     'polar_axis': 1.0}
@@ -230,8 +218,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
-        layer = nest.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=pos)
 
         maskdict = {'major_axis': 3.0, 'minor_axis': 1.0,
                     'polar_axis': 1.0,
@@ -250,8 +237,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
-        layer = nest.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=pos)
 
         maskdict = {'major_axis': 4.0, 'minor_axis': 1.,
                     'polar_axis': 1.5,
@@ -269,8 +255,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         nest.ResetKernel()
 
-        layer = nest.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=pos)
 
         maskdict = {'major_axis': 3.0, 'minor_axis': 2.,
                     'polar_axis': 1.0,
@@ -287,8 +272,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         nest.ResetKernel()
 
-        layer = nest.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=pos)
 
         maskdict = {'major_axis': 4.0, 'minor_axis': 1.,
                     'polar_axis': 1.5,
@@ -305,8 +289,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         nest.ResetKernel()
 
-        layer = nest.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=pos)
 
         maskdict = {'major_axis': 4.0, 'minor_axis': 2.5,
                     'polar_axis': 1.0,
@@ -328,8 +311,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         pos = [[x*1., y*1., z*1.] for x in range(-5, 6)
                for y in range(-5, 6)
                for z in range(-5, 6)]
-        layer = nest.CreateLayer({'positions': pos, 'extent': [11., 11., 11.],
-                                  'elements': 'iaf_psc_alpha'})
+        layer = nest.Create('iaf_psc_alpha', positions=pos)
 
         maskdict = {'major_axis': 4.0, 'minor_axis': 1.0,
                     'polar_axis': 1.0, 'anchor': [-5., -5., -4.]}

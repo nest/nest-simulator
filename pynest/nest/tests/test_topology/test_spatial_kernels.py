@@ -197,24 +197,16 @@ class SpatialTester(object):
     def _build(self):
         '''Create populations.'''
         if self._open_bc:
-            ldict_s = {'elements': 'iaf_psc_alpha',
-                       'positions': [[self._x_d, self._y_d]],
-                       'extent': [self._L] * self._dimensions,
-                       'edge_wrap': False}
             x = rnd.uniform(-self._L / 2., self._L / 2., self._N)
             y = rnd.uniform(-self._L / 2., self._L / 2., self._N)
             pos = list(zip(x, y))
-            ldict_t = {'elements': 'iaf_psc_alpha', 'positions': pos,
-                       'extent': [self._L] * self._dimensions,
-                       'edge_wrap': False}
-            self._ls = nest.CreateLayer(ldict_s)
-            self._lt = nest.CreateLayer(ldict_t)
+            self._ls = nest.Create('iaf_psc_alpha',
+                                   positions=[[self._x_d, self._y_d]],
+                                   edge_wrap=False)
+            self._lt = nest.Create('iaf_psc_alpha', positions = pos,
+                                   edge_wrap=False)
             self._driver = self._ls
         else:
-            ldict_s = {'elements': 'iaf_psc_alpha',
-                       'positions': [[0.] * self._dimensions],
-                       'extent': [self._L] * self._dimensions,
-                       'edge_wrap': True}
             x = rnd.uniform(-self._L / 2., self._L / 2., self._N)
             y = rnd.uniform(-self._L / 2., self._L / 2., self._N)
             if self._dimensions == 3:
@@ -222,11 +214,12 @@ class SpatialTester(object):
                 pos = list(zip(x, y, z))
             else:
                 pos = list(zip(x, y))
-            ldict_t = {'elements': 'iaf_psc_alpha', 'positions': pos,
-                       'extent': [self._L] * self._dimensions,
-                       'edge_wrap': True}
-            self._ls = nest.CreateLayer(ldict_s)
-            self._lt = nest.CreateLayer(ldict_t)
+            self._ls = nest.Create('iaf_psc_alpha',
+                                   positions=[[0.] * self._dimensions],
+                                   edge_wrap=True)
+            self._lt = nest.Create('iaf_psc_alpha',
+                                   positions=pos,
+                                   edge_wrap=True)
             cntr = nest.FindCenterElement(self._ls)
             indx = cntr - self._ls[0].get('global_id')
             self._driver = self._ls[indx]

@@ -46,22 +46,24 @@ class PlottingTestCase(unittest.TestCase):
 
     def test_DumpNodes(self):
         """Test dumping nodes."""
-        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
-                 'extent': [2., 2.], 'edge_wrap': True}
         nest.ResetKernel()
-        l = nest.CreateLayer(ldict)
+        l = nest.Create('iaf_psc_alpha',
+                        positions=nest.spatial.grid(rows=3, columns=3,
+                                                    extent=[2., 2.]),
+                        edge_wrap=True)
         nest.DumpLayerNodes(l, os.path.join(self.nest_tmpdir(),
                                             'test_DumpNodes.out.lyr'))
         self.assertTrue(True)
 
     def test_DumpConns(self):
         """Test dumping connections."""
-        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
-                 'extent': [2., 2.], 'edge_wrap': True}
         cdict = {'connection_type': 'divergent',
                  'mask': {'circular': {'radius': 1.}}}
         nest.ResetKernel()
-        l = nest.CreateLayer(ldict)
+        l = nest.Create('iaf_psc_alpha',
+                        positions=nest.spatial.grid(rows=3, columns=3,
+                                                    extent=[2., 2.]),
+                        edge_wrap=True)
         nest.ConnectLayers(l, l, cdict)
 
         nest.DumpLayerConnections(l, l, 'static_synapse',

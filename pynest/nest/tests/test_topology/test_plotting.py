@@ -43,25 +43,19 @@ except:
 class PlottingTestCase(unittest.TestCase):
     def test_PlotLayer(self):
         """Test plotting layer."""
-        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
-                 'extent': [2., 2.], 'edge_wrap': True}
         nest.ResetKernel()
-        l = nest.CreateLayer(ldict)
+        l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=3, columns=3, extent=[2., 2.]), edge_wrap=True)
         nest.PlotLayer(l)
 
         self.assertTrue(True)
 
     def test_PlotTargets(self):
         """Test plotting targets."""
-        ldict = {'elements': 'iaf_psc_alpha',
-                 'rows': 3,
-                 'columns': 3,
-                 'extent': [2., 2.], 'edge_wrap': True}
         cdict = {'connection_type': 'divergent',
                  'synapse_model': 'stdp_synapse',
                  'mask': {'grid': {'rows': 2, 'columns': 2}}}
         nest.ResetKernel()
-        l = nest.CreateLayer(ldict)
+        l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=3, columns=3, extent=[2., 2.]), edge_wrap=True)
 
         # connect l -> l
         nest.ConnectLayers(l, l, cdict)
@@ -74,10 +68,8 @@ class PlottingTestCase(unittest.TestCase):
 
     def test_PlotKernel(self):
         """Test plotting kernels."""
-        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
-                 'extent': [2., 2.], 'edge_wrap': True}
         nest.ResetKernel()
-        l = nest.CreateLayer(ldict)
+        l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=3, columns=3, extent=[2., 2.]), edge_wrap=True)
         f = plt.figure()
         a1 = f.add_subplot(221)
         ctr = nest.FindCenterElement(l)

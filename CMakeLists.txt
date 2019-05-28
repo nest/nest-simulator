@@ -335,11 +335,6 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/topology/setup.py.in"
-    "${PROJECT_BINARY_DIR}/topology/setup.py" @ONLY
-)
-
-configure_file(
     "${PROJECT_SOURCE_DIR}/testsuite/do_tests.sh.in"
     "${PROJECT_BINARY_DIR}/testsuite/do_tests.sh" @ONLY
 )

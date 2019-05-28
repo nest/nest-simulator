@@ -25,7 +25,6 @@ Tests rotated rectangular and box masks.
 
 import unittest
 import nest
-import nest.topology as topo
 
 
 class RotatedRectangularMask(unittest.TestCase):
@@ -55,15 +54,15 @@ class RotatedRectangularMask(unittest.TestCase):
         """
 
         # Test 2D layer
-        layer = topo.CreateLayer({'rows': 5, 'columns': 5,
+        layer = nest.CreateLayer({'rows': 5, 'columns': 5,
                                   'extent': [5., 5.],
                                   'elements': 'iaf_psc_alpha'})
 
         # First test without rotation.
         maskdict = {'lower_left': [-1., -0.5], 'upper_right': [1., 0.5]}
-        mask = topo.CreateMask('rectangular', maskdict)
+        mask = nest.CreateMask('rectangular', maskdict)
         cntr = [0., 0.]
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (8, 13, 18,))
 
@@ -71,8 +70,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-1., -0.5],
                     'upper_right': [1., 0.5],
                     'azimuth_angle': 90.0}
-        mask = topo.CreateMask('rectangular', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('rectangular', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (12, 13, 14,))
 
@@ -80,8 +79,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-1.5, -0.5],
                     'upper_right': [1.5, 0.5],
                     'azimuth_angle': 45.0}
-        mask = topo.CreateMask('rectangular', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('rectangular', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (9, 13, 17,))
 
@@ -89,8 +88,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-1.5, -0.5],
                     'upper_right': [1.5, 0.5],
                     'azimuth_angle': 135.0}
-        mask = topo.CreateMask('rectangular', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('rectangular', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (7, 13, 19,))
 
@@ -100,7 +99,7 @@ class RotatedRectangularMask(unittest.TestCase):
                     'upper_right': [1.5, 0.5],
                     'polar_angle': 45.0}
         with self.assertRaises(nest.kernel.NESTError):
-            mask = topo.CreateMask('rectangular', maskdict)
+            mask = nest.CreateMask('rectangular', maskdict)
 
     def test_RotatedBoxMaskByAzimuthAngle(self):
         """Test rotated box mask with azimuth angle."""
@@ -109,24 +108,24 @@ class RotatedRectangularMask(unittest.TestCase):
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
-        layer = topo.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
+        layer = nest.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
                                   'elements': 'iaf_psc_alpha'})
 
         # First test that we get correct GIDs with box mask that is not
         # rotated.
         maskdict = {'lower_left': [-1., -0.5, -0.5],
                     'upper_right': [1., 0.5, 0.5]}
-        mask = topo.CreateMask('box', maskdict)
+        mask = nest.CreateMask('box', maskdict)
         cntr = [0., 0., 0.]
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (38, 63, 88,))
 
         # Test with a larger box mask.
         maskdict = {'lower_left': [-1., -0.5, -1.],
                     'upper_right': [1., 0.5, 1.]}
-        mask = topo.CreateMask('box', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('box', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
         sorted_gid_list = sorted(gid_list)
 
         self.assertEqual(sorted_gid_list, [37, 38, 39, 62, 63, 64, 87, 88, 89])
@@ -136,8 +135,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-1., -0.5, -0.5],
                     'upper_right': [1., 0.5, 0.5],
                     'azimuth_angle': 90.}
-        mask = topo.CreateMask('box', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('box', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (58, 63, 68,))
 
@@ -145,8 +144,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-1., -0.5, -1.],
                     'upper_right': [1., 0.5, 1.],
                     'azimuth_angle': 90.}
-        mask = topo.CreateMask('box', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('box', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
         sorted_gid_list = sorted(gid_list)
 
         self.assertEqual(sorted_gid_list, [57, 58, 59, 62, 63, 64, 67, 68, 69])
@@ -158,15 +157,15 @@ class RotatedRectangularMask(unittest.TestCase):
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
-        layer = topo.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
+        layer = nest.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
                                   'elements': 'iaf_psc_alpha'})
 
         # First test without rotation
         maskdict = {'lower_left': [-0.5, -1.0, -1.0],
                     'upper_right': [0.5, 1.0, 1.0]}
-        mask = topo.CreateMask('box', maskdict)
+        mask = nest.CreateMask('box', maskdict)
         cntr = [0., 0., 0.]
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
         sorted_gid_list = sorted(gid_list)
 
         self.assertEqual(sorted_gid_list, [57, 58, 59, 62, 63, 64, 67, 68, 69])
@@ -175,8 +174,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-0.5, -1.0, -1.0],
                     'upper_right': [0.5, 1.0, 1.0],
                     'polar_angle': 90.}
-        mask = topo.CreateMask('box', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('box', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
         sorted_gid_list = sorted(gid_list)
 
         self.assertEqual(sorted_gid_list, [33, 38, 43, 58, 63, 68, 83, 88, 93])
@@ -186,8 +185,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-0.5, -1.0, -1.0],
                     'upper_right': [0.5, 1.0, 1.0],
                     'polar_angle': 180.}
-        mask = topo.CreateMask('box', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('box', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
         sorted_gid_list = sorted(gid_list)
 
         self.assertEqual(sorted_gid_list, [57, 58, 59, 62, 63, 64, 67, 68, 69])
@@ -196,8 +195,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-0.5, -1.5, -1.5],
                     'upper_right': [0.5, 1.5, 1.5],
                     'polar_angle': 45.}
-        mask = topo.CreateMask('box', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('box', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
         sorted_gid_list = sorted(gid_list)
 
         self.assertEqual(sorted_gid_list, [32, 37, 42, 58, 63, 68, 84, 89, 94])
@@ -207,8 +206,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-0.5, -1.5, -1.5],
                     'upper_right': [0.5, 1.5, 1.5],
                     'polar_angle': 135.}
-        mask = topo.CreateMask('box', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('box', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
         sorted_gid_list = sorted(gid_list)
 
         self.assertEqual(sorted_gid_list, [34, 39, 44, 58, 63, 68, 82, 87, 92])
@@ -219,8 +218,8 @@ class RotatedRectangularMask(unittest.TestCase):
         # same GIDs as the one without a polar angle.
         maskdict = {'lower_left': [-1., -0.5, -1.],
                     'upper_right': [1., 0.5, 1.]}
-        mask = topo.CreateMask('box', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('box', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
         sorted_gid_list_1 = sorted(gid_list)
 
         self.assertEqual(sorted_gid_list_1,
@@ -229,8 +228,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-1., -0.5, -1.],
                     'upper_right': [1., 0.5, 1.],
                     'polar_angle': 90.}
-        mask = topo.CreateMask('box', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('box', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
         sorted_gid_list = sorted(gid_list)
 
         self.assertEqual(sorted_gid_list, [37, 38, 39, 62, 63, 64, 87, 88, 89])
@@ -244,7 +243,7 @@ class RotatedRectangularMask(unittest.TestCase):
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
-        layer = topo.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
+        layer = nest.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
                                   'elements': 'iaf_psc_alpha'})
 
         # Test with a azimuth angle and polar angle of 45 degrees.
@@ -252,9 +251,9 @@ class RotatedRectangularMask(unittest.TestCase):
                     'upper_right': [0.5, 1.5, 1.5],
                     'azimuth_angle': 45.,
                     'polar_angle': 45.}
-        mask = topo.CreateMask('box', maskdict)
+        mask = nest.CreateMask('box', maskdict)
         cntr = [0., 0., 0.]
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
 
         sorted_gid_list = sorted(gid_list)
 
@@ -266,16 +265,16 @@ class RotatedRectangularMask(unittest.TestCase):
         Test rotated rectangle where the mask does not contain the origin.
         """
 
-        layer = topo.CreateLayer({'rows': 11, 'columns': 11,
+        layer = nest.CreateLayer({'rows': 11, 'columns': 11,
                                   'extent': [11., 11.],
                                   'elements': 'iaf_psc_alpha'})
 
         # First test that we get the correct GIDs when our mask does not
         # contain the origin.
         maskdict = {'lower_left': [1., 1.], 'upper_right': [4., 2.]}
-        mask = topo.CreateMask('rectangular', maskdict)
+        mask = nest.CreateMask('rectangular', maskdict)
         cntr = [0., 0.]
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (70, 71, 81, 82, 92, 93, 103, 104,))
 
@@ -284,8 +283,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [0.5, 0.5],
                     'upper_right': [4.5, 2.5],
                     'azimuth_angle': 45.0}
-        mask = topo.CreateMask('rectangular', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('rectangular', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (71, 81, 82, 83, 91, 92, 93, 103,))
 
@@ -294,8 +293,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [1.0, 1.0],
                     'upper_right': [4.0, 2.0],
                     'azimuth_angle': 90.0}
-        mask = topo.CreateMask('rectangular', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('rectangular', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (80, 81, 82, 83, 91, 92, 93, 94,))
 
@@ -306,16 +305,16 @@ class RotatedRectangularMask(unittest.TestCase):
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
-        layer = topo.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
+        layer = nest.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
                                   'elements': 'iaf_psc_alpha'})
 
         # First test that we get the correct GIDs when our mask does not
         # contain the origin.
         maskdict = {'lower_left': [-2.0, -1.0, 0.5],
                     'upper_right': [-0.5, -0.5, 2.0]}
-        mask = topo.CreateMask('box', maskdict)
+        mask = nest.CreateMask('box', maskdict)
         cntr = [0., 0., 0.]
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (9, 10, 34, 35,))
 
@@ -324,8 +323,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-2.5, -1.0, 0.5],
                     'upper_right': [-0.5, -0.5, 2.5],
                     'azimuth_angle': 45.0}
-        mask = topo.CreateMask('box', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('box', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (9, 10, 39, 40,))
 
@@ -334,8 +333,8 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-1.5, -2.5, 0.5],
                     'upper_right': [-1.0, -0.5, 2.5],
                     'polar_angle': 45.0}
-        mask = topo.CreateMask('box', maskdict)
-        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+        mask = nest.CreateMask('box', maskdict)
+        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (4, 9, 30, 35,))
 
@@ -373,10 +372,10 @@ class RotatedRectangularMask(unittest.TestCase):
                   /_______ /
         """
 
-        source = topo.CreateLayer({'rows': 5, 'columns': 5,
+        source = nest.CreateLayer({'rows': 5, 'columns': 5,
                                    'extent': [5., 5.],
                                    'elements': 'iaf_psc_alpha'})
-        target = topo.CreateLayer({'rows': 5, 'columns': 5,
+        target = nest.CreateLayer({'rows': 5, 'columns': 5,
                                    'extent': [5., 5.],
                                    'elements': 'iaf_psc_alpha'})
 
@@ -385,7 +384,7 @@ class RotatedRectangularMask(unittest.TestCase):
                                              'upper_right': [1.5, 0.5],
                                              'azimuth_angle': 45.}}}
 
-        topo.ConnectLayers(source, target, conndict)
+        nest.ConnectLayers(source, target, conndict)
 
         ref = [[1, 26], [2, 27], [2, 31], [3, 28], [3, 32], [4, 29], [4, 33],
                [5, 30], [5, 34], [6, 27], [6, 31], [7, 28], [7, 32], [7, 36],

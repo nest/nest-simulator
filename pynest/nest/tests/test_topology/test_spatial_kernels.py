@@ -40,7 +40,6 @@ import scipy.special
 import unittest
 
 import nest
-import nest.topology as topo
 
 
 try:
@@ -208,8 +207,8 @@ class SpatialTester(object):
             ldict_t = {'elements': 'iaf_psc_alpha', 'positions': pos,
                        'extent': [self._L] * self._dimensions,
                        'edge_wrap': False}
-            self._ls = topo.CreateLayer(ldict_s)
-            self._lt = topo.CreateLayer(ldict_t)
+            self._ls = nest.CreateLayer(ldict_s)
+            self._lt = nest.CreateLayer(ldict_t)
             self._driver = self._ls
         else:
             ldict_s = {'elements': 'iaf_psc_alpha',
@@ -226,27 +225,27 @@ class SpatialTester(object):
             ldict_t = {'elements': 'iaf_psc_alpha', 'positions': pos,
                        'extent': [self._L] * self._dimensions,
                        'edge_wrap': True}
-            self._ls = topo.CreateLayer(ldict_s)
-            self._lt = topo.CreateLayer(ldict_t)
-            cntr = topo.FindCenterElement(self._ls)
+            self._ls = nest.CreateLayer(ldict_s)
+            self._lt = nest.CreateLayer(ldict_t)
+            cntr = nest.FindCenterElement(self._ls)
             indx = cntr - self._ls[0].get('global_id')
             self._driver = self._ls[indx]
 
     def _connect(self):
         '''Connect populations.'''
 
-        topo.ConnectLayers(self._ls, self._lt, self._conndict)
+        nest.ConnectLayers(self._ls, self._lt, self._conndict)
 
     def _all_distances(self):
         '''Return distances to all nodes in target population.'''
 
-        return topo.Distance(self._driver, self._lt)
+        return nest.Distance(self._driver, self._lt)
 
     def _target_distances(self):
         '''Return distances from source node to connected nodes.'''
 
         # Distance from source node to all nodes in target population
-        dist = topo.Distance(self._driver, self._lt)
+        dist = nest.Distance(self._driver, self._lt)
 
         # Target nodes
         connections = nest.GetConnections(source=self._driver)
@@ -271,13 +270,13 @@ class SpatialTester(object):
     def _positions(self):
         '''Return positions of all nodes.'''
         return [tuple(pos) for pos in
-                topo.GetPosition(self._lt)]
+                nest.GetPosition(self._lt)]
 
     def _target_positions(self):
         '''Return positions of all connected target nodes.'''
 
         return [tuple(pos) for pos in
-                topo.GetTargetPositions(self._driver, self._lt)[0]]
+                nest.GetTargetPositions(self._driver, self._lt)[0]]
 
     def _roi_2d(self, x, y, L):
         '''

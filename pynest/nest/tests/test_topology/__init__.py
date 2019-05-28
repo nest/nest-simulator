@@ -19,13 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from .hl_api import *
+from . import test_all
 
-
-def test():
-    """ Runs a battery of unit tests on Topology PyNEST """
-    import unittest
-    from . import tests
-
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(tests.suite())
+suite = test_all.suite

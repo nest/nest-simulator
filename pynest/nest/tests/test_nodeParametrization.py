@@ -24,7 +24,6 @@ Node Parametrization tests
 """
 
 import nest
-import nest.topology as tp
 import numpy as np
 import unittest
 
@@ -340,7 +339,7 @@ class TestNodeParametrization(unittest.TestCase):
     def test_node_pos_parameter(self):
         """Test node-position parameter"""
         positions = [[x, 0.5*x, 0.1+0.2*x] for x in np.linspace(0, 0.5, 5)]
-        layer = tp.CreateLayer({'extent': [5.0, 5.0, 5.0],
+        layer = nest.CreateLayer({'extent': [5.0, 5.0, 5.0],
                                 'positions': positions,
                                 'elements': 'iaf_psc_alpha'})
 
@@ -357,7 +356,7 @@ class TestNodeParametrization(unittest.TestCase):
     def test_conn_distance_parameter(self):
         """Test connection distance parameter"""
         positions = [[x, x, x] for x in np.linspace(0, 0.5, 5)]
-        layer = tp.CreateLayer({'extent': [5.0, 5.0, 5.0],
+        layer = nest.CreateLayer({'extent': [5.0, 5.0, 5.0],
                                 'positions': positions,
                                 'elements': 'iaf_psc_alpha'})
 
@@ -391,7 +390,7 @@ class TestNodeParametrization(unittest.TestCase):
                             nest.spatial.target_pos.z)
         for i in range(3):
             nest.ResetKernel()
-            layer = tp.CreateLayer({'extent': [15.0, 15.0, 15.0],
+            layer = nest.CreateLayer({'extent': [15.0, 15.0, 15.0],
                                     'positions': positions,
                                     'elements': 'iaf_psc_alpha'})
             # Scale up delay because of limited number of digits.
@@ -452,7 +451,7 @@ class TestNodeParametrization(unittest.TestCase):
     def test_parameter_conditional(self):
         """Test conditional parameter"""
         positions = [[x, x, x] for x in np.linspace(0, 0.5, 20)]
-        layer = tp.CreateLayer({'extent': [5.0, 5.0, 5.0],
+        layer = nest.CreateLayer({'extent': [5.0, 5.0, 5.0],
                                 'positions': positions,
                                 'elements': 'iaf_psc_alpha'})
 
@@ -471,7 +470,7 @@ class TestNodeParametrization(unittest.TestCase):
     def test_parameter_conditional_scalars(self):
         """Test conditional parameter with scalars"""
         positions = [[x, x, x] for x in np.linspace(0, 0.5, 20)]
-        layer = tp.CreateLayer({'extent': [5.0, 5.0, 5.0],
+        layer = nest.CreateLayer({'extent': [5.0, 5.0, 5.0],
                                 'positions': positions,
                                 'elements': 'iaf_psc_alpha'})
 

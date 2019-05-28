@@ -49,11 +49,7 @@ def _setup(arg):
 import nest
 nest.init(["--verbosity=WARNING", "--quiet"])
 
-import nest.topology
-
 import nest.tests
-
-import nest.topology.tests
 
 import unittest
 
@@ -64,11 +60,10 @@ unittest.TestCase.setUp = _setup
 # The testsuite is initialized w/ stdout. That goes into the logfile.
 runner = unittest.TextTestRunner(verbosity=2, stream=sys.stdout)
 result = runner.run(nest.tests.suite())
-result_topo = runner.run(nest.topology.tests.suite())
 
-total = result.testsRun + result_topo.testsRun
-failed = len(result.failures) + len(result.errors) + len(result_topo.failures) + len(result_topo.errors)
-skipped = len(result.skipped) + len(result_topo.skipped)
+total = result.testsRun
+failed = len(result.failures) + len(result.errors)
+skipped = len(result.skipped)
 passed = total - failed - skipped
 
 # We return the numbers of tests via a temporaty file

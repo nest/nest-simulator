@@ -51,7 +51,6 @@ nest::spike_generator::Parameters_::Parameters_()
   , precise_times_( false )
   , allow_offgrid_times_( false )
   , shift_now_spikes_( false )
-  , deprecation_warning_issued_( false )
 {
 }
 
@@ -63,7 +62,6 @@ nest::spike_generator::Parameters_::Parameters_( const Parameters_& op )
   , precise_times_( op.precise_times_ )
   , allow_offgrid_times_( op.allow_offgrid_times_ )
   , shift_now_spikes_( op.shift_now_spikes_ )
-  , deprecation_warning_issued_( op.deprecation_warning_issued_ )
 {
 }
 

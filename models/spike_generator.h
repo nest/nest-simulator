@@ -257,8 +257,6 @@ private:
     //! Shift spike times at present to next step
     bool shift_now_spikes_;
 
-    bool deprecation_warning_issued_;
-
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
 

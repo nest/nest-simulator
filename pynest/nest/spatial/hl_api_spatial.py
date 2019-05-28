@@ -23,6 +23,7 @@ from ..lib.hl_api_types import CreateParameter
 
 __all__ = [
     'distance',
+    'grid',
     'pos',
     'source_pos',
     'target_pos',
@@ -47,3 +48,12 @@ class target_pos(object):
     x = CreateParameter('position', {'dimension': 0, 'type_id': 2})
     y = CreateParameter('position', {'dimension': 1, 'type_id': 2})
     z = CreateParameter('position', {'dimension': 2, 'type_id': 2})
+
+
+class grid(object):
+    def __init__(self, rows, columns, depth=None, center=None, extent=None):
+        self.rows = rows
+        self.columns = columns
+        self.depth = depth
+        self.center = center
+        self.extent = extent

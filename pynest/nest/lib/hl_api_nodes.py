@@ -38,7 +38,7 @@ __all__ = [
 
 
 @check_stack
-def Create(model, n=1, params=None):
+def Create(model, n=1, params=None, positions=None, edge_wrap=None):
     """Create one or more nodes.
 
    Generates `n` new network objects of the supplied model type. If `n` is not
@@ -70,6 +70,29 @@ def Create(model, n=1, params=None):
     """
 
     model_deprecation_warning(model)
+
+    if positions is not None:
+        layer_specs = {'elements': model}
+        if edge_wrap is not None:
+            layer_specs = {'edge_wrap': edge_wrap}
+        if isinstance(positions, (Parameter, list)):
+            layer_specs['positions'] = positions
+        else:
+            if n > 1:
+                raise kernel.NESTError(
+                    'Cannot specify number of nodes with grid positions')
+            layer_specs['rows'] = positions.rows
+            layer_specs['columns'] = positions.columns
+            if positions.extent is not None:
+                layer_specs['extent'] = positions.extent
+            if positions.center is not None:
+                layer_specs['center'] = positions.center
+            if positions.depth is not None:
+                layer_specs['layers'] = positions.depth
+
+        layer = sli_func('CreateLayer', layer_specs)
+        layer.set_spatial()
+        return layer
 
     params_contains_list = True
     if isinstance(params, dict):

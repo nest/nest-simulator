@@ -65,11 +65,11 @@ public:
    * SLI functions: See source file for documentation
    */
 
-  class CreateLayer_DFunction : public SLIFunction
+  class CreateLayer_D_DFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } createlayer_Dfunction;
+  } createlayer_D_Dfunction;
 
   class GetPosition_gFunction : public SLIFunction
   {

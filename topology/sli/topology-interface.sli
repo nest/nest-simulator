@@ -39,8 +39,8 @@
     /ConnectLayers_g_g_D load
   def
 
-  /CreateLayer [/dictionarytype]
-    /CreateLayer_D load
+  /CreateLayer [/dictionarytype /dictionarytype]
+    /CreateLayer_D_D load
   def
 
   /GetPosition [/gidcollectiontype]

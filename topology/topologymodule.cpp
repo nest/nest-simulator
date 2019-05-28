@@ -332,7 +332,7 @@ TopologyModule::init( SLIInterpreter* i )
 {
   // Register the topology functions as SLI commands.
 
-  i->createcommand( "CreateLayer_D", &createlayer_Dfunction );
+  i->createcommand( "CreateLayer_D_D", &createlayer_D_Dfunction );
 
   i->createcommand( "GetPosition_g", &getposition_gfunction );
 
@@ -426,16 +426,23 @@ TopologyModule::init( SLIInterpreter* i )
   Author: Håkon Enger, Kittel Austvoll
 */
 void
-TopologyModule::CreateLayer_DFunction::execute( SLIInterpreter* i ) const
+TopologyModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 1 );
+  i->assert_stack_load( 2 );
 
   DictionaryDatum layer_dict =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+    getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   GIDCollectionDatum layer = create_layer( layer_dict );
 
-  i->OStack.pop( 1 );
+  for ( auto&& gid_triple : *layer )
+  {
+    set_node_status( gid_triple.gid, params );
+  }
+
+
+  i->OStack.pop( 2 );
   i->OStack.push( layer );
   i->EStack.pop();
 }

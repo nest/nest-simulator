@@ -217,22 +217,22 @@ def CreateMask(masktype, specs, anchor=None):
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
 
             # create a grid-based layer
-            l = tp.CreateLayer({'rows'      : 5,
+            l = nest.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
                                 'elements'  : 'iaf_psc_alpha'})
 
             # create a circular mask
-            m = tp.CreateMask('circular', {'radius': 0.2})
+            m = nest.CreateMask('circular', {'radius': 0.2})
 
             # connectivity specifications
             conndict = {'connection_type': 'divergent',
                         'mask'           : m}
 
             # connect layer l with itself according to the specifications
-            tp.ConnectLayers(l, l, conndict)
+            nest.ConnectLayers(l, l, conndict)
 
     """
     if anchor is None:
@@ -364,22 +364,22 @@ def CreateTopologyParameter(parametertype, specs):
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
 
             # create a grid-based layer
-            l = tp.CreateLayer({'rows'      : 5,
+            l = nest.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
                                 'elements'  : 'iaf_psc_alpha'})
 
             # parameter for delay with linear distance dependency
-            d = tp.CreateTopologyParameter('linear', {'a': 0.2,
+            d = nest.CreateTopologyParameter('linear', {'a': 0.2,
                                               'c': 0.2})
 
             # connectivity specifications
             conndict = {'connection_type': 'divergent',
                         'delays': d}
 
-            tp.ConnectLayers(l, l, conndict)
+            nest.ConnectLayers(l, l, conndict)
 
     """
     return nest.ll_api.sli_func('CreateTopologyParameter',
@@ -461,10 +461,9 @@ def CreateLayer(specs):
         ::
 
             import nest
-            import nest.topology as tp
 
             # grid-based layer
-            gl = tp.CreateLayer({'rows'      : 5,
+            gl = nest.CreateLayer({'rows'      : 5,
                                  'columns'   : 5,
                                  'elements'  : 'iaf_psc_alpha'})
 
@@ -472,11 +471,11 @@ def CreateLayer(specs):
             import numpy as np
             pos = [[np.random.uniform(-0.5, 0.5), np.random.uniform(-0.5,0.5)]
                     for i in range(50)]
-            fl = tp.CreateLayer({'positions' : pos,
+            fl = nest.CreateLayer({'positions' : pos,
                                  'elements'  : 'iaf_psc_alpha'})
 
             # extent, center and edge_wrap
-            el = tp.CreateLayer({'rows'      : 5,
+            el = nest.CreateLayer({'rows'      : 5,
                                  'columns'   : 5,
                                  'extent'    : [2.0, 3.0],
                                  'center'    : [1.0, 1.5],
@@ -618,10 +617,10 @@ def ConnectLayers(pre, post, projections):
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
 
             # create a layer
-            l = tp.CreateLayer({'rows'      : 11,
+            l = nest.CreateLayer({'rows'      : 11,
                                 'columns'   : 11,
                                 'extent'    : [11.0, 11.0],
                                 'elements'  : 'iaf_psc_alpha'})
@@ -633,13 +632,13 @@ def ConnectLayers(pre, post, projections):
 
             # connect layer l with itself according to the given
             # specifications
-            tp.ConnectLayers(l, l, conndict1)
+            nest.ConnectLayers(l, l, conndict1)
 
 
             # connection dictionary with distance-dependent kernel
             # (given as Parameter object) and randomized weights
             # (given as a dictionary)
-            gauss_kernel = tp.CreateTopologyParameter(
+            gauss_kernel = nest.CreateTopologyParameter(
                 'gaussian', {'p_center': 1.0, 'sigma': 1.0})
             conndict2 = {'connection_type': 'divergent',
                          'mask': {'circular': {'radius': 2.0}},
@@ -703,13 +702,12 @@ def GetPosition(nodes):
         ::
 
             import nest
-            import nest.topology as tp
 
             # Reset kernel
             nest.ResetKernel
 
             # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
+            l = nest.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
                                 'elements'  : 'iaf_psc_alpha'})
 
@@ -779,10 +777,10 @@ def Displacement(from_arg, to_arg):
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
 
             # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
+            l = nest.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
                                 'elements'  : 'iaf_psc_alpha'})
 
@@ -856,10 +854,10 @@ def Distance(from_arg, to_arg):
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
 
             # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
+            l = nest.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
                                 'elements'  : 'iaf_psc_alpha'})
 
@@ -932,15 +930,15 @@ def FindNearestElement(layer, locations, find_all=False):
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
 
             # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
+            l = nest.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
                                 'elements'  : 'iaf_psc_alpha'})
 
             # get GID of element closest to some location
-            tp.FindNearestElement(l, [3.0, 4.0], True)
+            nest.FindNearestElement(l, [3.0, 4.0], True)
     """
 
     import numpy
@@ -1042,15 +1040,15 @@ def DumpLayerNodes(layer, outname):
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
 
             # create a layer
-            l = tp.CreateLayer({'rows'     : 5,
+            l = nest.CreateLayer({'rows'     : 5,
                                 'columns'  : 5,
                                 'elements' : 'iaf_psc_alpha'})
 
             # write layer node positions to file
-            tp.DumpLayerNodes(l, 'positions.txt')
+            nest.DumpLayerNodes(l, 'positions.txt')
 
     """
     if not isinstance(layer, nest.GIDCollection):
@@ -1117,17 +1115,17 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
 
             # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
+            l = nest.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
                                 'elements'  : 'iaf_psc_alpha'})
-            tp.ConnectLayers(l,l, {'connection_type': 'divergent',
+            nest.ConnectLayers(l,l, {'connection_type': 'divergent',
                                    'synapse_model': 'static_synapse'})
 
             # write connectivity information to file
-            tp.DumpLayerConnections(l, l, 'static_synapse', 'connections.txt')
+            nest.DumpLayerConnections(l, l, 'static_synapse', 'connections.txt')
     """
     if not isinstance(source_layer, nest.GIDCollection):
         raise nest.kernel.NESTError("source_layer must be a GIDCollection")
@@ -1180,15 +1178,15 @@ def FindCenterElement(layer):
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
 
             # create a layer
-            l = tp.CreateLayer({'rows'      : 5,
+            l = nest.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
                                 'elements'  : 'iaf_psc_alpha'})
 
             # get GID of the element closest to the center of the layer
-            tp.FindCenterElement(l)
+            nest.FindCenterElement(l)
     """
 
     if not isinstance(layer, nest.GIDCollection):
@@ -1240,10 +1238,10 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
 
             # create a layer
-            l = tp.CreateLayer({'rows'      : 11,
+            l = nest.CreateLayer({'rows'      : 11,
                                 'columns'   : 11,
                                 'extent'    : [11.0, 11.0],
                                 'elements'  : 'iaf_psc_alpha'})
@@ -1255,10 +1253,10 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
 
             # connect layer l with itself according to the given
             # specifications
-            tp.ConnectLayers(l, l, conndict)
+            nest.ConnectLayers(l, l, conndict)
 
             # get the GIDs of the targets of the source neuron with GID 5
-            tp.GetTargetNodes([5], l)
+            nest.GetTargetNodes([5], l)
     """
     if not nest.hl_api.is_sequence_of_gids(sources):
         raise TypeError("sources must be a sequence of GIDs")
@@ -1318,10 +1316,10 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
 
             # create a layer
-            l = tp.CreateLayer({'rows'      : 11,
+            l = nest.CreateLayer({'rows'      : 11,
                                 'columns'   : 11,
                                 'extent'    : [11.0, 11.0],
                                 'elements'  : 'iaf_psc_alpha'})
@@ -1333,10 +1331,10 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
             # connect layer l with itself according to the given
             # specifications
-            tp.ConnectLayers(l, l, conndict1)
+            nest.ConnectLayers(l, l, conndict1)
 
             # get the positions of the targets of the source neuron with GID 5
-            tp.GetTargetPositions(l[5:6], l)
+            nest.GetTargetPositions(l[5:6], l)
     """
     if not isinstance(sources, nest.GIDCollection):
         raise ValueError("sources must be a GIDCollection.")
@@ -1437,17 +1435,17 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
             import matplotlib.pyplot as plt
 
             # create a layer
-            l = tp.CreateLayer({'rows'      : 11,
+            l = nest.CreateLayer({'rows'      : 11,
                                 'columns'   : 11,
                                 'extent'    : [11.0, 11.0],
                                 'elements'  : 'iaf_psc_alpha'})
 
             # plot layer with all its nodes
-            tp.PlotLayer(l)
+            nest.PlotLayer(l)
             plt.show()
     """
 
@@ -1561,11 +1559,11 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
             import matplotlib.pyplot as plt
 
             # create a layer
-            l = tp.CreateLayer({'rows'      : 11,
+            l = nest.CreateLayer({'rows'      : 11,
                                 'columns'   : 11,
                                 'extent'    : [11.0, 11.0],
                                 'elements'  : 'iaf_psc_alpha'})
@@ -1577,10 +1575,10 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
             # connect layer l with itself according to the given
             # specifications
-            tp.ConnectLayers(l, l, conndict)
+            nest.ConnectLayers(l, l, conndict)
 
             # plot the targets of the source neuron with GID 5
-            tp.PlotTargets(l[4:5], l)
+            nest.PlotTargets(l[4:5], l)
             plt.show()
     """
 
@@ -1702,11 +1700,11 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     **Example**
         ::
 
-            import nest.topology as tp
+            import nest
             import matplotlib.pyplot as plt
 
             # create a layer
-            l = tp.CreateLayer({'rows'      : 11,
+            l = nest.CreateLayer({'rows'      : 11,
                                 'columns'   : 11,
                                 'extent'    : [11.0, 11.0],
                                 'elements'  : 'iaf_psc_alpha'})
@@ -1722,19 +1720,19 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
 
             # connect layer l with itself according to the given
             # specifications
-            tp.ConnectLayers(l, l, conndict)
+            nest.ConnectLayers(l, l, conndict)
 
             # set up figure
             fig, ax = plt.subplots()
 
             # plot layer nodes
-            tp.PlotLayer(l, fig)
+            nest.PlotLayer(l, fig)
 
             # choose center element of the layer as source node
-            ctr_elem = tp.FindCenterElement(l)
+            ctr_elem = nest.FindCenterElement(l)
 
             # plot mask and kernel of the center element
-            tp.PlotKernel(ax,
+            nest.PlotKernel(ax,
                 l[ctr_elem],
                 mask=mask_dict,
                 kern=kernel_dict)

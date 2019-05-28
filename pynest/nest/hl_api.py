@@ -55,6 +55,23 @@ __all__ = [
     'Connectome',
     'CopyModel',
     'Create',
+    'ConnectLayers', ###
+    'CreateLayer',
+    'CreateMask',
+    'CreateTopologyParameter',
+    'Displacement',
+    'Distance',
+    'DumpLayerConnections',
+    'DumpLayerNodes',
+    'FindCenterElement',
+    'FindNearestElement',
+    'GetPosition',
+    'GetTargetNodes',
+    'GetTargetPositions',
+    'PlotKernel',
+    'PlotLayer',
+    'PlotTargets',
+    'SelectNodesByMask', ####
     'CreateParameter',
     'DataConnect',  # deprecated
     'DisableStructuralPlasticity',

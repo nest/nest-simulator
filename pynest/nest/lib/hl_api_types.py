@@ -28,7 +28,7 @@ from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_simulation import GetKernelStatus
-from nest.topology import CreateTopologyParameter
+from .hl_api_topology import CreateTopologyParameter
 
 import numpy
 
@@ -1038,10 +1038,10 @@ class TopologyParameter(Parameter):
         **Example**
             ::
 
-                import nest.topology as tp
+                import nest
 
                 #linear dependent parameter
-                P = tp.CreateTopologyParameter('linear', {'a' : 2., 'c' : 0.})
+                P = nest.CreateTopologyParameter('linear', {'a' : 2., 'c' : 0.})
 
                 #get out value
                 P.GetValue(point=[3., 4.])

@@ -73,7 +73,6 @@ __all__ = [
     'PlotTargets',
     'SelectNodesByMask', ####
     'CreateParameter',
-    'DataConnect',  # deprecated
     'DisableStructuralPlasticity',
     'Disconnect',
     'EnableStructuralPlasticity',

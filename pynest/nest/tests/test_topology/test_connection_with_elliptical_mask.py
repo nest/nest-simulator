@@ -61,12 +61,13 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         13 -> 33  38  43
                   39
         """
-        source = nest.CreateLayer({'rows': 5, 'columns': 5,
-                                   'extent': [5., 5.],
-                                   'elements': 'iaf_psc_alpha'})
-        target = nest.CreateLayer({'rows': 5, 'columns': 5,
-                                   'extent': [5., 5.],
-                                   'elements': 'iaf_psc_alpha'})
+        source = nest.Create('iaf_psc_alpha',
+                             positions=nest.spatial.grid(
+                                 5, 5, extent=[5., 5.]))
+
+        target = nest.Create('iaf_psc_alpha',
+                             positions=nest.spatial.grid(
+                                 5, 5, extent=[5., 5.]))
 
         conndict = {'connection_type': 'divergent',
                     'mask': {'elliptical': {'major_axis': 3.0,
@@ -127,12 +128,12 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         13 ->     38
               34
         """
-        source = nest.CreateLayer({'rows': 5, 'columns': 5,
-                                   'extent': [5., 5.],
-                                   'elements': 'iaf_psc_alpha'})
-        target = nest.CreateLayer({'rows': 5, 'columns': 5,
-                                   'extent': [5., 5.],
-                                   'elements': 'iaf_psc_alpha'})
+        source = nest.Create(
+            'iaf_psc_alpha',
+            positions=nest.spatial.grid(5, 5, extent=[5., 5.]))
+        target = nest.Create(
+            'iaf_psc_alpha',
+            positions=nest.spatial.grid(5, 5, extent=[5., 5.]))
 
         conndict = {'connection_type': 'divergent',
                     'mask': {'elliptical': {'major_axis': 3.0,
@@ -187,12 +188,12 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         13 -> 38  43  48
                   44
         """
-        source = nest.CreateLayer({'rows': 5, 'columns': 5,
-                                   'extent': [5., 5.],
-                                   'elements': 'iaf_psc_alpha'})
-        target = nest.CreateLayer({'rows': 5, 'columns': 5,
-                                   'extent': [5., 5.],
-                                   'elements': 'iaf_psc_alpha'})
+        source = nest.Create(
+            'iaf_psc_alpha',
+            positions=nest.spatial.grid(5, 5, extent=[5., 5.]))
+        target = nest.Create(
+            'iaf_psc_alpha',
+            positions=nest.spatial.grid(5, 5, extent=[5., 5.]))
 
         conndict = {'connection_type': 'divergent',
                     'mask': {'elliptical': {'major_axis': 3.,
@@ -255,14 +256,12 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         13 -> 33  38  43
                   39
         """
-        source = nest.CreateLayer({'rows': 5, 'columns': 5,
-                                   'extent': [5., 5.],
-                                   'elements': 'iaf_psc_alpha',
-                                   'edge_wrap': True})
-        target = nest.CreateLayer({'rows': 5, 'columns': 5,
-                                   'extent': [5., 5.],
-                                   'elements': 'iaf_psc_alpha',
-                                   'edge_wrap': True})
+        source = nest.Create(
+            'iaf_psc_alpha',
+            positions=nest.spatial.grid(5, 5, extent=[5., 5.]), edge_wrap=True)
+        target = nest.Create(
+            'iaf_psc_alpha',
+            positions=nest.spatial.grid(5, 5, extent=[5., 5.]), edge_wrap=True)
 
         conndict = {'connection_type': 'divergent',
                     'mask': {'elliptical': {'major_axis': 3.,

@@ -78,7 +78,6 @@ import nest
 # With '__all__' we provide an explicit index of this submodule.
 __all__ = [
     'ConnectLayers',
-    'CreateLayer',
     'CreateMask',
     'CreateTopologyParameter',
     'Displacement',

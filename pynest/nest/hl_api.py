@@ -56,7 +56,6 @@ __all__ = [
     'CopyModel',
     'Create',
     'ConnectLayers', ###
-    'CreateLayer',
     'CreateMask',
     'CreateTopologyParameter',
     'Displacement',

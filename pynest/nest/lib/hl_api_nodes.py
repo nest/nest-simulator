@@ -74,8 +74,8 @@ def Create(model, n=1, params=None, positions=None, edge_wrap=None):
     if positions is not None:
         layer_specs = {'elements': model}
         if edge_wrap is not None:
-            layer_specs = {'edge_wrap': edge_wrap}
-        if isinstance(positions, (Parameter, list)):
+            layer_specs['edge_wrap'] = edge_wrap
+        if isinstance(positions, (Parameter, list, tuple)):
             layer_specs['positions'] = positions
         else:
             if n > 1:
@@ -89,7 +89,7 @@ def Create(model, n=1, params=None, positions=None, edge_wrap=None):
                 layer_specs['center'] = positions.center
             if positions.depth is not None:
                 layer_specs['layers'] = positions.depth
-
+        print(layer_specs)
         layer = sli_func('CreateLayer', layer_specs)
         layer.set_spatial()
         return layer

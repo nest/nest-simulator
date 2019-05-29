@@ -88,7 +88,7 @@ def Create(model, n=1, params=None, positions=None, edge_wrap=None):
             if positions.center is not None:
                 layer_specs['center'] = positions.center
             if positions.depth is not None:
-                layer_specs['layers'] = positions.depth
+                layer_specs['depth'] = positions.depth
         if params is None:
             params = {}
         layer = sli_func('CreateLayer', layer_specs, params)

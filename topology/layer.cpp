@@ -114,7 +114,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   if ( layer_dict->known( names::positions ) )
   {
     if ( layer_dict->known( names::rows ) or layer_dict->known( names::columns )
-      or layer_dict->known( names::layers ) )
+      or layer_dict->known( names::depth ) )
     {
       throw BadProperty(
         "Can not specify both positions and rows or columns." );
@@ -155,10 +155,10 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     length = getValue< long >( layer_dict, names::columns )
       * getValue< long >( layer_dict, names::rows );
 
-    if ( layer_dict->known( names::layers ) )
+    if ( layer_dict->known( names::depth ) )
     {
       layer_local = new GridLayer< 3 >();
-      length *= getValue< long >( layer_dict, names::layers );
+      length *= getValue< long >( layer_dict, names::depth );
     }
     else
     {

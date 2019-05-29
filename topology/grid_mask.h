@@ -117,8 +117,8 @@ GridMask< D >::GridMask( const DictionaryDatum& d )
   int rows = getValue< long >( d, names::rows );
   if ( D == 3 )
   {
-    int layers = getValue< long >( d, names::layers );
-    lower_right_ = Position< D, int >( columns, rows, layers );
+    int depth = getValue< long >( d, names::depth );
+    lower_right_ = Position< D, int >( columns, rows, depth );
   }
   else if ( D == 2 )
   {
@@ -155,7 +155,7 @@ GridMask< D >::get_dict() const
   def< long >( maskd, names::rows, lower_right_[ 1 ] - upper_left_[ 1 ] );
   if ( D >= 3 )
   {
-    def< long >( maskd, names::layers, lower_right_[ 2 ] - upper_left_[ 2 ] );
+    def< long >( maskd, names::depth, lower_right_[ 2 ] - upper_left_[ 2 ] );
   }
   return d;
 }

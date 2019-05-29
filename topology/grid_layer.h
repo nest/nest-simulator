@@ -179,7 +179,7 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
   }
   if ( D >= 3 )
   {
-    updateValue< long >( d, names::layers, new_dims[ 2 ] );
+    updateValue< long >( d, names::depth, new_dims[ 2 ] );
   }
 
   index new_size = 1;
@@ -211,7 +211,7 @@ GridLayer< D >::get_status( DictionaryDatum& d ) const
   }
   if ( D >= 3 )
   {
-    ( *d )[ names::layers ] = dims_[ 2 ];
+    ( *d )[ names::depth ] = dims_[ 2 ];
   }
 }
 

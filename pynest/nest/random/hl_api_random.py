@@ -82,15 +82,12 @@ def uniform(min=0.0, max=1.0, dimension=None):
             CreateParameter('uniform', {'min': min, 'max': max})
             for _ in range(dimension)]
         if dimension == 2:
-            print('Creating 2d param')
             return sli_func('dimension2d', parameters[0], parameters[1])
         elif dimension == 3:
-            print('Creating 3d param')
             return sli_func('dimension3d', parameters[0], parameters[1], parameters[2])
         else:
             raise ValueError('Must be 2 or 3 dimensional.')
     else:
-        print('Creating 1d param')
         return CreateParameter('uniform', {'min': min, 'max': max})
 
 

@@ -133,15 +133,11 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     }
     else if ( tkn.is_a< ParameterDatum >() )
     {
-      std::cerr << __FILE__ << "::" << __LINE__ << "\n";
       auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
       auto positions = dynamic_cast< DimensionParameter* >( pd->get() );
       pd->unlock();
-      std::cerr << __FILE__ << "::" << __LINE__ << "\n";
       length = getValue< long >( layer_dict, names::n );
-      std::cerr << __FILE__ << "::" << __LINE__ << "\n";
       num_dimensions = positions->get_num_dimensions();
-      std::cerr << __FILE__ << "::" << __LINE__ << "\n";
     }
     else
     {
@@ -217,9 +213,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 
   layer_meta->set_first_gid( gid_coll->operator[]( 0 ) );
 
-  std::cerr << __FILE__ << "::" << __LINE__ << "\n";
   layer_local->set_status( layer_dict );
-  std::cerr << __FILE__ << "::" << __LINE__ << "\n";
 
   return gid_coll;
 }

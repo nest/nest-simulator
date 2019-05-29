@@ -93,16 +93,9 @@ def Create(model, n=1, params=None, positions=None, edge_wrap=None):
                 layer_specs['layers'] = positions.depth
         if params is None:
             params = {}
-        print(layer_specs)
         layer = sli_func('CreateLayer', layer_specs, params)
-        print('Setting spatial')
         layer.set_spatial()
-        print('returning')
-        print(layer)
-        print(layer.spatial)
-        print('-----')
-        sli_run('pstack')
-        print('-----')
+
         return layer
 
     params_contains_list = True

@@ -102,7 +102,6 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
   Position< D > max_point;
   Position< D > eta;
-  std::cerr << __FILE__ << "::" << __LINE__ << "\n";
 
   for ( int d = 0; d < D; ++d )
   {
@@ -152,14 +151,10 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     }
     else if ( tkn.is_a< ParameterDatum >() )
     {
-      std::cerr << __FILE__ << "::" << __LINE__ << "\n";
       auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
-      std::cerr << __FILE__ << "::" << __LINE__ << "\n";
       auto pos = dynamic_cast< DimensionParameter* >( pd->get() );
-      std::cerr << __FILE__ << "::" << __LINE__ << "\n";
       pd->unlock();
       positions_.clear();
-      std::cerr << __FILE__ << "::" << __LINE__ << "\n";
       auto num_nodes = this->gid_collection_->size();
       positions_.reserve( num_nodes );
 
@@ -168,9 +163,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
       for ( size_t i = 0; i < num_nodes; ++i )
       {
-        std::cerr << __FILE__ << "::" << __LINE__ << "\n";
         Position< D > point = pos->get_values( rng );
-        std::cerr << __FILE__ << "::" << __LINE__ << "\n";
         positions_.push_back( point );
         for ( int d = 0; d < D; ++d )
         {
@@ -182,7 +175,6 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
           {
             max_point[ d ] = point[ d ];
           }
-          std::cerr << __FILE__ << "::" << __LINE__ << "\n";
         }
       }
     }
@@ -191,11 +183,9 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       throw KernelException(
         "'positions' must be an array or a DimensionParameter." );
     }
-    std::cerr << __FILE__ << "::" << __LINE__ << "\n";
     this->extent_ = max_point - this->lower_left_;
     // this->extent_ += eta * 2;
     // this->lower_left_ -= eta;
-    std::cerr << __FILE__ << "::" << __LINE__ << "\n";
   }
 }
 

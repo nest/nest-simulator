@@ -69,17 +69,6 @@ template < int D >
 void
 Layer< D >::set_status( const DictionaryDatum& d )
 {
-  if ( d->known( names::extent ) )
-  {
-    Position< D > center = get_center();
-    extent_ = getValue< std::vector< double > >( d, names::extent );
-    lower_left_ = center - extent_ / 2;
-  }
-  if ( d->known( names::center ) )
-  {
-    lower_left_ = getValue< std::vector< double > >( d, names::center );
-    lower_left_ -= extent_ / 2;
-  }
   if ( d->known( names::edge_wrap ) )
   {
     if ( getValue< bool >( d, names::edge_wrap ) )

@@ -20,6 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 from ..lib.hl_api_types import Parameter, CreateParameter
+from ..ll_api import sli_func
 import numpy as np
 
 __all__ = [
@@ -60,8 +61,37 @@ class ParameterWrapper(Parameter):
         return self
 
 
-def uniform(min=0.0, max=1.0):
-    return CreateParameter('uniform', {'min': min, 'max': max})
+def uniform(min=0.0, max=1.0, dimension=None):
+    if isinstance(min, (list, tuple)):
+        if not isinstance(max, (list, tuple)):
+            raise ValueError('Max must be list/tuple.')
+        if not len(min) == len(max):
+            raise ValueError(
+                'Min and max must have same number of dimensions.')
+        parameters = [
+            CreateParameter('uniform', {'min': min_val, 'max': max_val})
+            for min_val, max_val in zip(min, max)]
+        if len(parameters) == 2:
+            return sli_func('dimension2d', *parameters)
+        elif len(parameters) == 3:
+            return sli_func('dimension3d', *parameters)
+        else:
+            raise ValueError('Must be 2 or 3 dimensional.')
+    elif dimension:
+        parameters = [
+            CreateParameter('uniform', {'min': min, 'max': max})
+            for _ in range(dimension)]
+        if dimension == 2:
+            print('Creating 2d param')
+            return sli_func('dimension2d', parameters[0], parameters[1])
+        elif dimension == 3:
+            print('Creating 3d param')
+            return sli_func('dimension3d', parameters[0], parameters[1], parameters[2])
+        else:
+            raise ValueError('Must be 2 or 3 dimensional.')
+    else:
+        print('Creating 1d param')
+        return CreateParameter('uniform', {'min': min, 'max': max})
 
 
 def normal(loc=0.0, scale=1.0, min=None, max=None, redraw=False):

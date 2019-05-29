@@ -1805,6 +1805,37 @@ NestModule::Conditional_P_P_PFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+void
+NestModule::Dimension2d_P_PFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  ParameterDatum param1 = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+  ParameterDatum param2 = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = dimension_parameter( param1, param2 );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
+void
+NestModule::Dimension3d_P_P_PFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 3 );
+
+  ParameterDatum param1 = getValue< ParameterDatum >( i->OStack.pick( 2 ) );
+  ParameterDatum param2 = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+  ParameterDatum param3 = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = dimension_parameter( param1, param2, param3 );
+
+  i->OStack.pop( 3 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
 /** @BeginDocumentation
   Name: GetValue
 */
@@ -1878,6 +1909,9 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "exp_P", &exp_Pfunction );
   i->createcommand( "sin_P", &sin_Pfunction );
   i->createcommand( "cos_P", &cos_Pfunction );
+
+  i->createcommand( "dimension2d_P_P", &dimension2d_P_Pfunction );
+  i->createcommand( "dimension3d_P_P_P", &dimension3d_P_P_Pfunction );
 
   i->createcommand( "CreateParameter_D", &createparameter_Dfunction );
 

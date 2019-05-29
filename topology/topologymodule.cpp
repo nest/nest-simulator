@@ -436,15 +436,20 @@ TopologyModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
 
   GIDCollectionDatum layer = create_layer( layer_dict );
 
+  std::cerr << __FILE__ << "::" << __LINE__ << "\n";
   for ( auto&& gid_triple : *layer )
   {
     set_node_status( gid_triple.gid, params );
   }
 
+  std::cerr << __FILE__ << "::" << __LINE__ << "\n";
 
   i->OStack.pop( 2 );
+  std::cerr << __FILE__ << "::" << __LINE__ << "\n";
   i->OStack.push( layer );
+  std::cerr << __FILE__ << "::" << __LINE__ << "\n";
   i->EStack.pop();
+  std::cerr << __FILE__ << "::" << __LINE__ << "\n";
 }
 
 /** @BeginDocumentation

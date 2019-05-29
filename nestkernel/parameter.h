@@ -140,7 +140,8 @@ public:
    * @returns a new dynamically allocated parameter.
    */
   virtual Parameter* dimension_parameter( const Parameter& y_parameter ) const;
-  virtual Parameter* dimension_parameter( const Parameter& y_parameter, const Parameter& z_parameter ) const;
+  virtual Parameter* dimension_parameter( const Parameter& y_parameter,
+    const Parameter& z_parameter ) const;
 
 protected:
   Node* gid_to_node_ptr_( const index, const thread ) const;
@@ -1251,7 +1252,10 @@ public:
   {
     delete px_;
     delete py_;
-    delete pz_;
+    if ( num_dimensions_ == 3 )
+    {
+      delete pz_;
+    }
   }
 
   /**
@@ -1371,7 +1375,8 @@ Parameter::dimension_parameter( const Parameter& y_parameter ) const
 }
 
 inline Parameter*
-Parameter::dimension_parameter( const Parameter& y_parameter, const Parameter& z_parameter ) const
+Parameter::dimension_parameter( const Parameter& y_parameter,
+  const Parameter& z_parameter ) const
 {
   return new DimensionParameter( *this, y_parameter, z_parameter );
 }

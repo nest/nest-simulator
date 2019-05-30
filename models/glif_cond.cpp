@@ -587,7 +587,6 @@ nest::glif_cond::update_glif1( Time const& origin,
   const long from, const long to )
 {
   // glif_lif
-  // std::cout << "HERE" << std::endl;
   const double dt = Time::get_resolution().get_ms(); // in ms
   double v_old = S_.y_[ State_::V_M ];
 

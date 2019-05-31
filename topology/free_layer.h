@@ -184,8 +184,8 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
         "'positions' must be an array or a DimensionParameter." );
     }
     this->extent_ = max_point - this->lower_left_;
-    // this->extent_ += eta * 2;
-    // this->lower_left_ -= eta;
+    this->extent_ += eta * 2;
+    this->lower_left_ -= eta;
   }
 }
 

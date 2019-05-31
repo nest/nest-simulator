@@ -39,9 +39,6 @@ except ImportError:
     HAVE_PANDAS = False
 
 __all__ = [
-    '_get_hierarchical_addressing',
-    '_get_params_is_strings',
-    '_restructure_data',
     'Connectome',
     'CreateParameter',
     'GIDCollection',

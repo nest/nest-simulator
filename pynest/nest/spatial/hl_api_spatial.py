@@ -24,6 +24,7 @@ from ..lib.hl_api_types import CreateParameter
 __all__ = [
     'distance',
     'grid',
+    'free',
     'pos',
     'source_pos',
     'target_pos',
@@ -56,4 +57,9 @@ class grid(object):
         self.columns = columns
         self.depth = depth
         self.center = center
+        self.extent = extent
+
+class free(object):
+    def __init__(self, pos, extent=None):
+        self.pos = pos
         self.extent = extent

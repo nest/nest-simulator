@@ -135,6 +135,14 @@ public:
    */
   virtual Parameter* cos() const;
 
+  /**
+   * Create TODO
+   * @returns a new dynamically allocated parameter.
+   */
+  virtual Parameter* dimension_parameter( const Parameter& y_parameter ) const;
+  virtual Parameter* dimension_parameter( const Parameter& y_parameter,
+    const Parameter& z_parameter ) const;
+
 protected:
   Node* gid_to_node_ptr_( const index, const thread ) const;
 };
@@ -1201,6 +1209,108 @@ protected:
   Parameter* p_;
 };
 
+
+/**
+ * Parameter class representing .
+ */
+class DimensionParameter : public Parameter
+{
+public:
+  /**
+   * Construct the exponential of the given parameter. A copy is made of the
+   * supplied Parameter object.
+   */
+  DimensionParameter( const Parameter& px, const Parameter& py )
+    : num_dimensions_( 2 )
+    , px_( px.clone() )
+    , py_( py.clone() )
+  {
+  }
+
+  DimensionParameter( const Parameter& px,
+    const Parameter& py,
+    const Parameter& pz )
+    : num_dimensions_( 3 )
+    , px_( px.clone() )
+    , py_( py.clone() )
+    , pz_( pz.clone() )
+  {
+  }
+
+  /**
+   * Copy constructor.
+   */
+  DimensionParameter( const DimensionParameter& p )
+    : num_dimensions_( p.num_dimensions_ )
+    , px_( p.px_->clone() )
+    , py_( p.py_->clone() )
+    , pz_( p.pz_->clone() )
+  {
+  }
+
+  ~DimensionParameter()
+  {
+    delete px_;
+    delete py_;
+    if ( num_dimensions_ == 3 )
+    {
+      delete pz_;
+    }
+  }
+
+  /**
+   * @returns the value of the parameter.
+   */
+  double
+  value( librandom::RngPtr& rng, Node* node ) const
+  {
+    throw KernelException( "Cannot get value of DimensionParameter." );
+  }
+
+  double
+  value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const
+  {
+    throw KernelException( "Cannot get value of DimensionParameter." );
+  }
+
+  std::vector< double >
+  get_values( librandom::RngPtr& rng )
+  {
+    switch ( num_dimensions_ )
+    {
+    case 2:
+      return { px_->value( rng, nullptr ), py_->value( rng, nullptr ) };
+    case 3:
+      return { px_->value( rng, nullptr ),
+        py_->value( rng, nullptr ),
+        pz_->value( rng, nullptr ) };
+    }
+    throw KernelException( "Wrong number of dimensions in get_values!" );
+  }
+
+  int
+  get_num_dimensions() const
+  {
+    return num_dimensions_;
+  }
+
+  Parameter*
+  clone() const
+  {
+    return new DimensionParameter( *this );
+  }
+
+protected:
+  int num_dimensions_;
+  Parameter* px_;
+  Parameter* py_;
+  Parameter* pz_;
+};
+
+
 inline Parameter*
 Parameter::multiply_parameter( const Parameter& other ) const
 {
@@ -1257,6 +1367,19 @@ Parameter::cos() const
   return new CosParameter( *this );
 }
 
+
+inline Parameter*
+Parameter::dimension_parameter( const Parameter& y_parameter ) const
+{
+  return new DimensionParameter( *this, y_parameter );
+}
+
+inline Parameter*
+Parameter::dimension_parameter( const Parameter& y_parameter,
+  const Parameter& z_parameter ) const
+{
+  return new DimensionParameter( *this, y_parameter, z_parameter );
+}
 
 } // namespace nest
 

@@ -26,6 +26,7 @@
 #include "exceptions.h"
 #include "gid_collection.h"
 #include "kernel_manager.h"
+#include "parameter.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -119,21 +120,41 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
       throw BadProperty(
         "Can not specify both positions and rows or columns." );
     }
-    TokenArray positions =
-      getValue< TokenArray >( layer_dict, names::positions );
+    int num_dimensions = 0;
 
-    if ( positions.size() == 0 )
+    const Token& tkn = layer_dict->lookup( names::positions );
+    if ( tkn.is_a< TokenArray >() )
+    {
+      TokenArray positions = getValue< TokenArray >( tkn );
+      length = positions.size();
+      std::vector< double > pos =
+        getValue< std::vector< double > >( positions[ 0 ] );
+      num_dimensions = pos.size();
+    }
+    else if ( tkn.is_a< ParameterDatum >() )
+    {
+      auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
+      auto positions = dynamic_cast< DimensionParameter* >( pd->get() );
+      pd->unlock();
+      length = getValue< long >( layer_dict, names::n );
+      num_dimensions = positions->get_num_dimensions();
+    }
+    else
+    {
+      throw KernelException(
+        "'positions' must be an array or a DimensionParameter." );
+    }
+
+    if ( length == 0 )
     {
       throw BadProperty( "Empty positions array." );
     }
 
-    std::vector< double > pos =
-      getValue< std::vector< double > >( positions[ 0 ] );
-    if ( pos.size() == 2 )
+    if ( num_dimensions == 2 )
     {
       layer_local = new FreeLayer< 2 >();
     }
-    else if ( pos.size() == 3 )
+    else if ( num_dimensions == 3 )
     {
       layer_local = new FreeLayer< 3 >();
     }
@@ -141,8 +162,6 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     {
       throw BadProperty( "Positions must have 2 or 3 coordinates." );
     }
-
-    length = positions.size();
   }
   else if ( layer_dict->known( names::columns ) )
   {

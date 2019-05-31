@@ -195,6 +195,18 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
 
   this->dims_ = new_dims;
 
+  if ( d->known( names::extent ) )
+  {
+    Position< D > center = this->get_center();
+    this->extent_ = getValue< std::vector< double > >( d, names::extent );
+    this->lower_left_ = center - this->extent_ / 2;
+  }
+  if ( d->known( names::center ) )
+  {
+    this->lower_left_ = getValue< std::vector< double > >( d, names::center );
+    this->lower_left_ -= this->extent_ / 2;
+  }
+
   Layer< D >::set_status( d );
 }
 

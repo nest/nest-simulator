@@ -441,7 +441,6 @@ TopologyModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
     set_node_status( gid_triple.gid, params );
   }
 
-
   i->OStack.pop( 2 );
   i->OStack.push( layer );
   i->EStack.pop();

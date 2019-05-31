@@ -555,6 +555,18 @@ public:
     void execute( SLIInterpreter* ) const;
   } cos_Pfunction;
 
+  class Dimension2d_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } dimension2d_P_Pfunction;
+
+  class Dimension3d_P_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } dimension3d_P_P_Pfunction;
+
   class CreateParameter_DFunction : public SLIFunction
   {
   public:

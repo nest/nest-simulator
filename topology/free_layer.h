@@ -100,34 +100,92 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 {
   Layer< D >::set_status( d );
 
+  Position< D > max_point;
+  Position< D > eta;
+
+  for ( int d = 0; d < D; ++d )
+  {
+    this->lower_left_[ d ] = std::numeric_limits< double >::infinity();
+    max_point[ d ] = -std::numeric_limits< double >::infinity();
+    eta[ d ] = 0.1;
+  }
+
+
   // Read positions from dictionary
   if ( d->known( names::positions ) )
   {
-    TokenArray pos = getValue< TokenArray >( d, names::positions );
-    if ( this->gid_collection_->size() != pos.size() )
+    const Token& tkn = d->lookup( names::positions );
+    if ( tkn.is_a< TokenArray >() )
     {
-      std::stringstream expected;
-      std::stringstream got;
-      expected << "position array with length "
-               << this->gid_collection_->size();
-      got << "position array with length" << pos.size();
-      throw TypeMismatch( expected.str(), got.str() );
-    }
-
-    positions_.clear();
-    positions_.reserve( this->gid_collection_->size() );
-
-    for ( Token* it = pos.begin(); it != pos.end(); ++it )
-    {
-      Position< D > point = getValue< std::vector< double > >( *it );
-      if ( not( ( point >= this->lower_left_ )
-             and ( point < this->lower_left_ + this->extent_ ) ) )
+      TokenArray pos = getValue< TokenArray >( tkn );
+      if ( this->gid_collection_->size() != pos.size() )
       {
-        throw BadProperty( "Node position outside of layer" );
+        std::stringstream expected;
+        std::stringstream got;
+        expected << "position array with length "
+                 << this->gid_collection_->size();
+        got << "position array with length" << pos.size();
+        throw TypeMismatch( expected.str(), got.str() );
       }
 
-      positions_.push_back( point );
+      positions_.clear();
+      positions_.reserve( this->gid_collection_->size() );
+
+      for ( Token* it = pos.begin(); it != pos.end(); ++it )
+      {
+        Position< D > point = getValue< std::vector< double > >( *it );
+        positions_.push_back( point );
+
+        for ( int d = 0; d < D; ++d )
+        {
+          if ( point[ d ] < this->lower_left_[ d ] )
+          {
+            this->lower_left_[ d ] = point[ d ];
+          }
+          if ( point[ d ] > max_point[ d ] )
+          {
+            max_point[ d ] = point[ d ];
+          }
+        }
+      }
     }
+    else if ( tkn.is_a< ParameterDatum >() )
+    {
+      auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
+      auto pos = dynamic_cast< DimensionParameter* >( pd->get() );
+      pd->unlock();
+      positions_.clear();
+      auto num_nodes = this->gid_collection_->size();
+      positions_.reserve( num_nodes );
+
+      const thread tid = kernel().vp_manager.get_thread_id();
+      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+
+      for ( size_t i = 0; i < num_nodes; ++i )
+      {
+        Position< D > point = pos->get_values( rng );
+        positions_.push_back( point );
+        for ( int d = 0; d < D; ++d )
+        {
+          if ( point[ d ] < this->lower_left_[ d ] )
+          {
+            this->lower_left_[ d ] = point[ d ];
+          }
+          if ( point[ d ] > max_point[ d ] )
+          {
+            max_point[ d ] = point[ d ];
+          }
+        }
+      }
+    }
+    else
+    {
+      throw KernelException(
+        "'positions' must be an array or a DimensionParameter." );
+    }
+    this->extent_ = max_point - this->lower_left_;
+    // this->extent_ += eta * 2;
+    // this->lower_left_ -= eta;
   }
 }
 

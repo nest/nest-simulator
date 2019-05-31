@@ -183,9 +183,18 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       throw KernelException(
         "'positions' must be an array or a DimensionParameter." );
     }
-    this->extent_ = max_point - this->lower_left_;
-    this->extent_ += eta * 2;
-    this->lower_left_ -= eta;
+    if ( d->known( names::extent ) )
+    {
+      Position< D > center = this->get_center();
+      this->extent_ = getValue< std::vector< double > >( d, names::extent );
+      this->lower_left_ = center - this->extent_ / 2;
+    }
+    else
+    {
+      this->extent_ = max_point - this->lower_left_;
+      this->extent_ += eta * 2;
+      this->lower_left_ -= eta;
+    }
   }
 }
 

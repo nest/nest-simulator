@@ -274,6 +274,7 @@ extern const Name lookuptable_2;
 extern const Name make_symmetric;
 extern const Name max_buffer_size_spike_data;
 extern const Name max_buffer_size_target_data;
+extern const Name max_num_syn_models;
 extern const Name max_delay;
 extern const Name MAXERR;
 extern const Name mean;

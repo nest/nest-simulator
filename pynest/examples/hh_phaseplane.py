@@ -68,7 +68,7 @@ num_v_steps = len(V_vec)
 num_n_steps = len(n_vec)
 
 nest.ResetKernel()
-nest.hl_api.set_verbosity('M_ERROR')
+nest.set_verbosity('M_ERROR')
 
 nest.SetKernelStatus({'resolution': dt})
 neuron = nest.Create('hh_psc_alpha')

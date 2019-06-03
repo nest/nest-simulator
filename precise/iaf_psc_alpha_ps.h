@@ -45,8 +45,9 @@ namespace nest
 
 /** @BeginDocumentation
 Name: iaf_psc_alpha_ps - Leaky integrate-and-fire neuron
-with alpha-shape postsynaptic currents (one timescale for excitatory and
-inhibitory synapses).
+with alpha-shape postsynaptic currents.
+
+.. versionadded:: 2.18
 
 Description:
 
@@ -86,7 +87,7 @@ t_ref        double - Duration of refractory period in ms.
 V_th         double - Spike threshold in mV.
 V_reset      double - Reset potential of the membrane in mV.
 tau_syn_ex   double - Rise time of the excitatory synaptic function in ms.
-tau_syn-in   double - Rise time of the inhibitory synaptic function in ms.
+tau_syn_in   double - Rise time of the inhibitory synaptic function in ms.
 I_e          double - Constant external input current in pA.
 Interpol_Order  int - Interpolation order for spike time:
                       0-none, 1-linear, 2-quadratic, 3-cubic
@@ -119,7 +120,7 @@ References:
     A general and efficient method for incorporating exact spike times in
     globally time-driven simulations Front Neuroinformatics, 4:113
 
-Author: Tanguy Fardet (from Diesmann, Eppler, Morrison, Plesser, Straube)
+Author: Tanguy Fardet (based on Diesmann, Eppler, Morrison, Plesser, Straube)
 
 Sends: SpikeEvent
 
@@ -184,10 +185,7 @@ private:
 
   bool get_next_event_( const long T,
     double& ev_offset,
-    double& ev_weight_ex,
-    double& ev_weight_in,
-    bool& in_spike,
-    bool& ex_spike,
+    double& ev_weight,
     bool& end_of_refract );
 
   /**
@@ -379,8 +377,7 @@ private:
      * Queue for incoming events.
      * @note Handles also pseudo-events marking return from refractoriness.
      */
-    SliceRingBuffer ex_spikes_;
-    SliceRingBuffer in_spikes_;
+    SliceRingBuffer events_;
     RingBuffer currents_;
 
     //! Logger for all analog data

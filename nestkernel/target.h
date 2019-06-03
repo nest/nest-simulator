@@ -39,33 +39,33 @@ namespace nest
  * a target neuron on a (remote) machine. Used in TargetTable for the presynaptic part
  * of the connection infrastructure.
  *
- * The bitwise layout of the neuron identifier:
+ * The bitwise layout of the neuron identifier for the "standard" CMAKE option:
  *
  *  +-------- processed flag
  *  |   +---- synapse-type id (syn_id)
  *  |   |
- *  ||-----||-----tid-----||---------rank------------||----local connection id (lcid)----|
+ *  ||----------||--thread--||---------rank----------||----local connection id (lcid)----|
  *  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000
  *  |       |  |       |  |       |  |       |  |       |  |       |  |       |  |       |
  *  63      56 55      48 47      40 39      32 31      24 23      16 15      8  7       0
+ *
+ * The bitwise layout of the neuron identifier for the "hpc" CMAKE option:
+ *
+ *  +-------- processed flag
+ *  |   +---- synapse-type id (syn_id)
+ *  |   |
+ *  ||-----||---thread----||---------rank------------||----local connection id (lcid)----|
+ *  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000  0000 0000
+ *  |       |  |       |  |       |  |       |  |       |  |       |  |       |  |       |
+ *  63      56 55      48 47      40 39      32 31      24 23      16 15      8  7       0
+ *
+ * Other custom layouts can be chosen by providing a list of 5
+ * numbers, representing the bits required for rank, thread, synapse
+ * id, local connection id and processed flag, respectively. The number
+ * of bits needs to sum to 64. The processed flag must always use one
+ * bit.
  */
 // clang-format on
-
-// constexpr-functions for convenient compile-time generation of the bit-masks
-// and bit-constants. An ill-defined length or size will cause a compile-time
-// error, e.g., num_bits to be shifted exceeds the sizeof(<datatype>) * 8.
-constexpr uint64_t
-generate_bit_mask( uint8_t num_bits, uint8_t bit_position )
-{
-  return (
-    ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 ) << bit_position );
-}
-
-constexpr int
-generate_max_value( uint8_t num_bits )
-{
-  return ( ( static_cast< int >( 1 ) << num_bits ) - 1 );
-}
 
 enum enum_status_target_id
 {
@@ -78,21 +78,17 @@ class Target
 private:
   uint64_t remote_target_id_;
 
-  // define the structure of the remote target neuron identifier
-  static constexpr uint8_t NUM_BITS_LCID = 27U;
-  static constexpr uint8_t NUM_BITS_RANK = 20U;
-  static constexpr uint8_t NUM_BITS_TID = 10U;
-  static constexpr uint8_t NUM_BITS_SYN_ID = 6U;
-  static constexpr uint8_t NUM_BITS_PROCESSED_FLAG = 1U;
-
   static constexpr uint8_t BITPOS_LCID = 0U;
   static constexpr uint8_t BITPOS_RANK = NUM_BITS_LCID;
   static constexpr uint8_t BITPOS_TID = BITPOS_RANK + NUM_BITS_RANK;
   static constexpr uint8_t BITPOS_SYN_ID = BITPOS_TID + NUM_BITS_TID;
   static constexpr uint8_t BITPOS_PROCESSED_FLAG =
     BITPOS_SYN_ID + NUM_BITS_SYN_ID;
-  typedef StaticAssert< BITPOS_PROCESSED_FLAG == 63U >::success
-    position_of_processed_flag;
+
+  using bits_for_processed_flag =
+    StaticAssert< NUM_BITS_PROCESSED_FLAG == 1U >::success;
+  using position_of_processed_flag =
+    StaticAssert< BITPOS_PROCESSED_FLAG == 63U >::success;
 
   // generate bit-masks used in bit-operations
   static constexpr uint64_t MASK_LCID =
@@ -113,11 +109,6 @@ public:
     const thread rank,
     const synindex syn_id,
     const index lcid );
-
-  static constexpr int MAX_LCID = generate_max_value( NUM_BITS_LCID );
-  static constexpr int MAX_RANK = generate_max_value( NUM_BITS_RANK );
-  static constexpr int MAX_TID = generate_max_value( NUM_BITS_TID );
-  static constexpr int MAX_SYN_ID = generate_max_value( NUM_BITS_SYN_ID );
 
   /**
    * Set local connection id.
@@ -179,6 +170,9 @@ public:
    */
   double get_offset() const;
 };
+
+//!< check legal size
+using success_target_size = StaticAssert< sizeof( Target ) == 8 >::success;
 
 inline Target::Target()
   : remote_target_id_( 0 )
@@ -297,7 +291,7 @@ Target::get_status() const
 inline bool
 Target::is_processed() const
 {
-  return ( Target::get_status() == TARGET_ID_PROCESSED );
+  return ( get_status() == TARGET_ID_PROCESSED );
 }
 
 inline double

@@ -74,7 +74,7 @@ M_ERROR setverbosity
 } def 
 
 
-[/iaf_psc_delta_canon /iaf_psc_alpha_canon ]
+[/iaf_psc_delta_canon /iaf_psc_alpha_canon /iaf_psc_alpha_ps ]
 {
  {Run} exch prepend
  [

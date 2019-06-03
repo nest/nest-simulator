@@ -20,9 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-
 import numpy as np
-
 import nest
 
 
@@ -30,8 +28,8 @@ import nest
 Comparing the new implementations the precise ``iaf_psc_alpha_ps`` model to the
 previous reference implementation given by ``iaf_psc_alpha_canon``.
 
-The new implementation provides two separate buffer for excitatory and
-inhibitory spikes, allowing the use of 2 different synaptic timescales.
+The new implementation provides two separate buffers for excitatory and
+inhibitory spikes, allowing the use of 2 different synaptic time-constants.
 
 Rationale of the test:
   - models are identical with respect to currents and spikes when
@@ -41,6 +39,9 @@ Rationale of the test:
 Details:
   The models are compared and we assess that the difference between the
   recorded variables and the reference is smaller than a given tolerance.
+
+Note: this test should be removed when we move to NEST 3, together with the
+iaf_psc_alpha_canon model.
 """
 
 
@@ -53,6 +54,7 @@ class IAFPreciseTestCase(unittest.TestCase):
         '''
         Clean up and initialize NEST before each test.
         '''
+
         msd = 123456
         self.resol = 0.01
         nest.ResetKernel()
@@ -85,6 +87,7 @@ class IAFPreciseTestCase(unittest.TestCase):
             Relative differences between recorded data and reference (one dict
             per model, containing one value per entry in `recordables`).
         '''
+
         rel_diff = {model: {} for model in multimeters.keys()}
         V_lim = (params["V_th"] + params["V_peak"]) / 2.
 
@@ -107,6 +110,7 @@ class IAFPreciseTestCase(unittest.TestCase):
         '''
         Compare models for tau_syn_ex == tau_syn_in (should be equal).
         '''
+
         Ie = 370.
 
         ref = nest.Create("iaf_psc_alpha_canon", params={"I_e": Ie})
@@ -138,13 +142,14 @@ class IAFPreciseTestCase(unittest.TestCase):
 
     def test_unequal_different_timescales(self):
         '''
-        Check that the behavior differs if ``tau_syn_in != tau_syn_ex``
+        Check that the behaviors differ if ``tau_syn_in != tau_syn_ex``
         '''
+
         Ie = 370.
 
         ref = nest.Create("iaf_psc_alpha_canon", params={"I_e": Ie})
-        new = nest.Create("iaf_psc_alpha_ps", params={
-                          "I_e": Ie, "tau_syn_in": 5.})
+        new = nest.Create("iaf_psc_alpha_ps",
+                          params={"I_e": Ie, "tau_syn_in": 5.})
 
         espikes = nest.Create("spike_generator", params={"spike_times": [
                               10., 100., 500.], "spike_weights": [20.]*3})
@@ -168,13 +173,15 @@ class IAFPreciseTestCase(unittest.TestCase):
         data_ref = nest.GetStatus(mm_ref, "events")[0]
         data_new = nest.GetStatus(mm_new, "events")[0]
 
-        # test before 500.
-        keep = data_new["times"] < 500.
+        # test before 500. (ex/in spikes don't overlap => identical behaviors)
+        before500 = data_new["times"] < 500.
 
         self.assertTrue(np.allclose(
-            data_new["V_m"][keep], data_ref["V_m"][keep]))
+            data_new["V_m"][before500], data_ref["V_m"][before500]))
+
+        # test after 500. (ex/in spikes overlap => different behaviors)
         self.assertFalse(np.allclose(
-            data_new["V_m"][~keep], data_ref["V_m"][~keep]))
+            data_new["V_m"][~before500], data_ref["V_m"][~before500]))
 
 
 def suite():

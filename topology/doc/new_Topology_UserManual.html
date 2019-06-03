@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Hans Ekkehard Plesser" />
+  <meta name="author" content="Håkon Enger" />
+  <title>NEST Topology User Manual</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style>
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Topology_UserManual.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">NEST Topology User Manual</h1>
+<p class="subtitle">About the Topology Module</p>
+<p class="author">Hans Ekkehard Plesser</p>
+<p class="author">Håkon Enger</p>
+<p class="date">NEST 2.16</p>
+</header>
+<nav id="TOC">
+<ul>
+<li><a href="#sec:intro"><span class="toc-section-number">1</span> Introduction</a><ul>
+<li><a href="#sec:limitations"><span class="toc-section-number">1.1</span> Limitations and Disclaimer</a></li>
+</ul></li>
+<li><a href="#sec:layers"><span class="toc-section-number">2</span> Layers</a><ul>
+<li><a href="#sec:gridbased"><span class="toc-section-number">2.1</span> Grid-based Layers</a><ul>
+<li><a href="#sec:verysimple"><span class="toc-section-number">2.1.1</span> A very simple layer</a></li>
+<li><a href="#sec:setextent"><span class="toc-section-number">2.1.2</span> Setting the extent</a></li>
+<li><a href="#sec:setcenter"><span class="toc-section-number">2.1.3</span> Setting the center</a></li>
+<li><a href="#sec:fixedlayerexample"><span class="toc-section-number">2.1.4</span> Constructing a layer: an example</a></li>
+</ul></li>
+<li><a href="#sec:freelayer"><span class="toc-section-number">2.2</span> Free layers</a></li>
+<li><a href="#sec:3dlayer"><span class="toc-section-number">2.3</span> 3D layers</a></li>
+<li><a href="#sec:periodic"><span class="toc-section-number">2.4</span> Periodic boundary conditions</a><ul>
+<li><a href="#sec:subnet"><span class="toc-section-number">2.4.1</span> Topology layer as NEST subnet</a></li>
+</ul></li>
+<li><a href="#sec:composite_layers"><span class="toc-section-number">2.5</span> Layers with composite elements</a><ul>
+<li><a href="#sec:layerdesign"><span class="toc-section-number">2.5.1</span> Designing layers</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#sec:connections"><span class="toc-section-number">3</span> Connections</a><ul>
+<li><a href="#sec:conn_basics"><span class="toc-section-number">3.1</span> Basic principles</a><ul>
+<li><a href="#sec:terminology"><span class="toc-section-number">3.1.1</span> Terminology</a></li>
+<li><a href="#sec:minimalcall"><span class="toc-section-number">3.1.2</span> A minimal ConnectLayers call</a></li>
+</ul></li>
+<li><a href="#sec:mapping"><span class="toc-section-number">3.2</span> Mapping source and target layers</a></li>
+<li><a href="#sec:conn_masks"><span class="toc-section-number">3.3</span> Masks</a><ul>
+<li><a href="#sec:free_masks"><span class="toc-section-number">3.3.1</span> Masks for 2D layers</a></li>
+<li><a href="#sec:3d_masks"><span class="toc-section-number">3.3.2</span> Masks for 3D layers</a></li>
+<li><a href="#sec:grid_masks"><span class="toc-section-number">3.3.3</span> Masks for grid-based layers</a></li>
+</ul></li>
+<li><a href="#sec:conn_kernels"><span class="toc-section-number">3.4</span> Kernels</a></li>
+<li><a href="#sec:conn_wd"><span class="toc-section-number">3.5</span> Weights and delays</a></li>
+<li><a href="#sec:conn_pbc"><span class="toc-section-number">3.6</span> Periodic boundary conditions</a></li>
+<li><a href="#sec:prescribed_numbers"><span class="toc-section-number">3.7</span> Prescribed number of connections</a></li>
+<li><a href="#sec:conn_composite"><span class="toc-section-number">3.8</span> Connecting composite layers</a></li>
+<li><a href="#sec:conn_synapse"><span class="toc-section-number">3.9</span> Synapse models and properties</a></li>
+<li><a href="#sec:dev_subregions"><span class="toc-section-number">3.10</span> Connecting devices to subregions of layers</a></li>
+<li><a href="#sec:rec_dev"><span class="toc-section-number">3.11</span> Layers and recording devices</a></li>
+</ul></li>
+<li><a href="#sec:inspection"><span class="toc-section-number">4</span> Inspecting Layers</a><ul>
+<li><a href="#sec:queries"><span class="toc-section-number">4.1</span> Query functions</a></li>
+<li><a href="#sec:visualize"><span class="toc-section-number">4.2</span> Visualization functions</a></li>
+</ul></li>
+<li><a href="#ch:extending"><span class="toc-section-number">5</span> Adding topology kernels and masks</a><ul>
+<li><a href="#adding-kernel-functions"><span class="toc-section-number">5.1</span> Adding kernel functions</a></li>
+<li><a href="#adding-masks"><span class="toc-section-number">5.2</span> Adding masks</a></li>
+</ul></li>
+<li><a href="#sec:changes"><span class="toc-section-number">6</span> Changes between versions</a><ul>
+<li><a href="#changes-from-topology-2.14-to-2.16"><span class="toc-section-number">6.1</span> Changes from Topology 2.14 to 2.16</a></li>
+<li><a href="#changes-from-topology-2.12-to-2.14"><span class="toc-section-number">6.2</span> Changes from Topology 2.12 to 2.14</a></li>
+<li><a href="#changes-from-topology-2.0-to-2.2"><span class="toc-section-number">6.3</span> Changes from Topology 2.0 to 2.2</a></li>
+<li><a href="#changes-from-topology-1.9-to-2.0"><span class="toc-section-number">6.4</span> Changes from Topology 1.9 to 2.0</a></li>
+</ul></li>
+<li><a href="#references">References</a></li>
+</ul>
+</nav>
+<h1 id="sec:intro"><span class="header-section-number">1</span> Introduction</h1>
+<p>The Topology Module provides the NEST simulator<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> <span class="citation" data-cites="Gewa:2007">[<a href="#ref-Gewa:2007">1</a>]</span> with a convenient interface for creating layers of neurons placed in space and connecting neurons in such layers with probabilities and properties depending on the relative placement of neurons. This permits the creation of complex networks with spatial structure.</p>
+<p>This user manual provides an introduction to the functionality provided by the Topology Module. It is based exclusively on the PyNEST, the Python interface to NEST <span class="citation" data-cites="Eppl:2008">[<a href="#ref-Eppl:2008">2</a>]</span>. NEST users using the SLI interface should be able to map instructions to corresponding SLI code. This manual is not meant as a comprehensive reference manual. Please consult the online documentation in PyNEST for details; where appropriate, that documentation also points to relevant SLI documentation.</p>
+<p>This manual describes the Topology Module included with NEST 2.16; the user interface and behavior of the module has not changed significantly since NEST 2.2.</p>
+<p>In the next chapter of this manual, we introduce Topology layers, which place neurons in space. In Chapter <a href="#sec:connections" data-reference-type="ref" data-reference="sec:connections">3</a> we then describe how to connect layers with each other, before discussing in Chapter <a href="#sec:inspection" data-reference-type="ref" data-reference="sec:inspection">4</a> how you can inspect and visualize Topology networks. Chapter <a href="#ch:extending" data-reference-type="ref" data-reference="ch:extending">5</a> deals with the more advanced topic of extending the Topology module with custom kernel functions and masks provided by C++ classes in an extension module.</p>
+<p>You will find the Python scripts used in the examples in this manual in the NEST source code directory under <code>topology/doc/user_manual_scripts</code>.</p>
+<h2 id="sec:limitations"><span class="header-section-number">1.1</span> Limitations and Disclaimer</h2>
+<dl>
+<dt>Undocumented features</dt>
+<dd><p>The Topology Module provides a number of undocumented features, which you may discover by browsing the code. These features are highly experimental and should <em>not be used for simulations</em>, as they have not been validated.</p>
+</dd>
+</dl>
+<h1 id="sec:layers"><span class="header-section-number">2</span> Layers</h1>
+<p>The Topology Module (just Topology for short in the remainder of this document) organizes neuronal networks in <em>layers</em>. We will first illustrate how Topology places elements in simple layers, where each element is a single model neuron. Layers with composite elements are discussed in the following section.</p>
+<p>We will illustrate the definition and use of layers using examples.</p>
+<p>Topology distinguishes between two classes of layers:</p>
+<dl>
+<dt>grid-based layers</dt>
+<dd><p>in which each element is placed at a location in a regular grid;</p>
+</dd>
+<dt>free layers</dt>
+<dd><p>in which elements can be placed arbitrarily in the plane.</p>
+</dd>
+</dl>
+<p>Grid-based layers allow for more efficient connection-generation under certain circumstances.</p>
+<h2 id="sec:gridbased"><span class="header-section-number">2.1</span> Grid-based Layers</h2>
+<h3 id="sec:verysimple"><span class="header-section-number">2.1.1</span> A very simple layer</h3>
+<p>We create a first, grid-based simple layer with the following commands:</p>
+<pre><code>import nest.topology as tp
+
+l = tp.CreateLayer({&#39;rows&#39;: 5,
+                    &#39;columns&#39;: 5,
+                    &#39;elements&#39;: &#39;iaf_psc_alpha&#39;})</code></pre>
+<figure>
+<img src="user_manual_figures/layer1.png" alt="Figure 1: Simple grid-based layer centered about the origin. Blue circles mark layer elements, the thin square the extent of the layer. Row and column indices are shown in the right and top margins, respectively." id="fig:layer1" /><figcaption><span>Figure 1:</span> Simple grid-based layer centered about the origin. Blue circles mark layer elements, the thin square the extent of the layer. Row and column indices are shown in the right and top margins, respectively.</figcaption>
+</figure>
+<p>The layer is shown in Fig. <a href="#fig:layer1">1</a>. Note the following properties:</p>
+<ul>
+<li><p>The layer has five <em>rows</em> and five <em>columns</em>.</p></li>
+<li><p>The <code>'elements'</code> entry of the dictionary passed to <code>CreateLayer</code> determines the <em>elements</em> of the layer. In this case, the layer contains <code>iaf_psc_alpha</code> neurons.</p></li>
+<li><p>The <em>center</em> of the layer is at the origin of the coordinate system, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0,0)</annotation></semantics></math>.</p></li>
+<li><p>The <em>extent</em> or size of the layer is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>×</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">1\times  1</annotation></semantics></math>. This is the default size for layers. The extent is marked by the thin square in Fig. <a href="#fig:layer1">1</a>.</p></li>
+<li><p>The <em>grid spacing</em> of the layer is <span id="eq:dx_dy_extent" style="display: inline-block; position: relative; width: 100%"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right"><mi>d</mi><mi>x</mi></mtd><mtd columnalign="left"><mo>=</mo><mfrac><mtext mathvariant="normal">x-extent</mtext><mtext mathvariant="normal">number of columns</mtext></mfrac></mtd></mtr><mtr><mtd columnalign="right"><mi>d</mi><mi>y</mi></mtd><mtd columnalign="left"><mo>=</mo><mfrac><mtext mathvariant="normal">y-extent</mtext><mtext mathvariant="normal">number of rows</mtext></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{split}
+dx &amp;= \frac{\text{x-extent}}{\text{number of columns}} \\
+dy &amp;= \frac{\text{y-extent}}{\text{number of rows}}
+\end{split}</annotation></semantics></math><span style="position: absolute; right: 0em; top: 50%; line-height:0; text-align: right">(1)</span></span> In the layer shown, we have <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>x</mi><mo>=</mo><mi>d</mi><mi>y</mi><mo>=</mo><mn>0.2</mn></mrow><annotation encoding="application/x-tex">dx=dy=0.2</annotation></semantics></math>, but the grid spacing may differ in x- and y-direction.</p></li>
+<li><p>Layer elements are spaced by the grid spacing and are arranged symmetrically about the center.</p></li>
+<li><p>The outermost layer elements are placed <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>x</mi><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">dx/2</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>y</mi><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">dy/2</annotation></semantics></math> from the borders of the extent.</p></li>
+<li><p>Element <em>positions</em> in the coordinate system are given by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(x,y)</annotation></semantics></math> pairs. The <em>coordinate system</em> follows that standard mathematical convention that the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>-axis runs from left to right and the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>-axis from bottom to top.</p></li>
+<li><p>Each element of a grid-based layer has a <em>row- and column-index</em> in addition to its <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(x,y)</annotation></semantics></math>-coordinates. Indices are shown in the top and right margin of Fig. <a href="#fig:layer1">1</a>. Note that row-indices follow matrix convention, i.e., run from top to bottom. Following pythonic conventions, indices run from 0.</p></li>
+</ul>
+<h3 id="sec:setextent"><span class="header-section-number">2.1.2</span> Setting the extent</h3>
+<p>Layers have a default extent of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>×</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">1\times 1</annotation></semantics></math>. You can specify a different extent of a layer, i.e., its size in <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>- and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>-direction by adding an <code>'extent'</code> entry to the dictionary passed to <code>CreateLayer</code>:</p>
+<pre><code>l = tp.CreateLayer({&#39;rows&#39;: 5,
+                    &#39;columns&#39;: 5,
+                    &#39;extent&#39;: [2.0, 0.5],
+                    &#39;elements&#39;: &#39;iaf_psc_alpha&#39;})</code></pre>
+<figure>
+<img src="user_manual_figures/layer2.png" alt="Figure 2: Same layer as in Fig. 1, but with different extent." id="fig:layer2" /><figcaption><span>Figure 2:</span> Same layer as in Fig. <a href="#fig:layer1">1</a>, but with different extent.</figcaption>
+</figure>
+<p>The resulting layer is shown in Fig. <a href="#fig:layer2">2</a>. The extent is always a two-element tuple of floats. In this example, we have grid spacings <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>x</mi><mo>=</mo><mn>0.4</mn></mrow><annotation encoding="application/x-tex">dx=0.4</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>y</mi><mo>=</mo><mn>0.1</mn></mrow><annotation encoding="application/x-tex">dy=0.1</annotation></semantics></math>. Changing the extent does not affect grid indices.</p>
+<p>The size of <code>'extent'</code> in <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>- and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>-directions should be numbers that can be expressed exactly as binary fractions. This is automatically ensured for integer values. Otherwise, under rare circumstances, subtle rounding errors may occur and trigger an assertion, thus stopping NEST.</p>
+<h3 id="sec:setcenter"><span class="header-section-number">2.1.3</span> Setting the center</h3>
+<p>Layers are centered about the origin <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0,0)</annotation></semantics></math> by default. This can be changed through the <code>'center'</code> entry in the dictionary specifying the layer. The following code creates layers centered about <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0,0)</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mo>−</mo><mn>1</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(-1,1)</annotation></semantics></math>, and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>1.5</mn><mo>,</mo><mn>0.5</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(1.5,0.5)</annotation></semantics></math>, respectively:</p>
+<pre><code>l1 = tp.CreateLayer({&#39;rows&#39;: 5,
+                     &#39;columns&#39;: 5,
+                     &#39;elements&#39;: &#39;iaf_psc_alpha&#39;})
+l2 = tp.CreateLayer({&#39;rows&#39;: 5,
+                     &#39;columns&#39;: 5,
+                     &#39;elements&#39;: &#39;iaf_psc_alpha&#39;,
+                     &#39;center&#39;: [-1., 1.]})
+l3 = tp.CreateLayer({&#39;rows&#39;: 5,
+                     &#39;columns&#39;: 5,
+                     &#39;elements&#39;: &#39;iaf_psc_alpha&#39;,
+                     &#39;center&#39;: [1.5, 0.5]})</code></pre>
+<figure>
+<img src="user_manual_figures/layer3.png" alt="Figure 3: Three layers centered, respectively, about (0,0) (blue), (-1,-1) (green), and (1.5,0.5) (red)." id="fig:layer3" /><figcaption><span>Figure 3:</span> Three layers centered, respectively, about <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0,0)</annotation></semantics></math> (blue), <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mo>−</mo><mn>1</mn><mo>,</mo><mo>−</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(-1,-1)</annotation></semantics></math> (green), and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>1.5</mn><mo>,</mo><mn>0.5</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(1.5,0.5)</annotation></semantics></math> (red).</figcaption>
+</figure>
+<p>The center is given as a two-element tuple of floats. Changing the center does not affect grid indices: For each of the three layers in Fig. <a href="#fig:layer3">3</a>, grid indices run from 0 to 4 through columns and rows, respectively, even though elements in these three layers have different positions in the global coordinate system.</p>
+<p>The <code>'center'</code> coordinates should be numbers that can be expressed exactly as binary fractions. For more information, see Sec. <a href="#sec:setextent" data-reference-type="ref" data-reference="sec:setextent">2.1.2</a>.</p>
+<h3 id="sec:fixedlayerexample"><span class="header-section-number">2.1.4</span> Constructing a layer: an example</h3>
+<p>To see how to construct a layer, consider the following example:</p>
+<ul>
+<li><p>a layer with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mi>r</mi></msub><annotation encoding="application/x-tex">n_r</annotation></semantics></math> rows and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mi>c</mi></msub><annotation encoding="application/x-tex">n_c</annotation></semantics></math> columns;</p></li>
+<li><p>spacing between nodes is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math> in <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>- and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>-directions;</p></li>
+<li><p>the left edge of the extent shall be at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">x=0</annotation></semantics></math>;</p></li>
+<li><p>the extent shall be centered about <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">y=0</annotation></semantics></math>.</p></li>
+</ul>
+<p>From Eq. <a href="#eq:dx_dy_extent">1</a>, we see that the extent of the layer must be <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>n</mi><mi>c</mi></msub><mi>d</mi><mo>,</mo><msub><mi>n</mi><mi>r</mi></msub><mi>d</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(n_c d, n_r d)</annotation></semantics></math>. We now need to find the coordinates <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>c</mi><mi>x</mi></msub><mo>,</mo><msub><mi>c</mi><mi>y</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(c_x, c_y)</annotation></semantics></math> of the center of the layer. To place the left edge of the extent at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">x=0</annotation></semantics></math>, we must place the center of the layer at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>x</mi></msub><mo>=</mo><msub><mi>n</mi><mi>c</mi></msub><mi>d</mi><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">c_x=n_c d / 2</annotation></semantics></math> along the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>-axis, i.e., half the extent width to the right of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">x=0</annotation></semantics></math>. Since the layer is to be centered about <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">y=0</annotation></semantics></math>, we have <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>y</mi></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">c_y=0</annotation></semantics></math>. Thus, the center coordinates are <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>n</mi><mi>c</mi></msub><mi>d</mi><mi>/</mi><mn>2</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(n_c d/2, 0)</annotation></semantics></math>. The layer is created with the following code and shown in Fig. <a href="#fig:layer3a">4</a>:</p>
+<pre><code>nc, nr = 5, 3
+d = 0.1
+l = tp.CreateLayer({&#39;columns&#39;: nc,
+                    &#39;rows&#39;: nr,
+                    &#39;elements&#39;: &#39;iaf_psc_alpha&#39;,
+                    &#39;extent&#39;: [nc * d, nr * d],
+                    &#39;center&#39;: [nc * d / 2., 0.]})
+</code></pre>
+<figure>
+<img src="user_manual_figures/layer3a.png" alt="Figure 4: Layer with n_c=5 rows and n_r=3 columns, spacing d=0.1 and the left edge of the extent at x=0, centered about the y-axis. The cross marks the point on the extent placed at the origin (0,0), the circle the center of the layer." id="fig:layer3a" /><figcaption><span>Figure 4:</span> Layer with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>n</mi><mi>c</mi></msub><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">n_c=5</annotation></semantics></math> rows and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>n</mi><mi>r</mi></msub><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">n_r=3</annotation></semantics></math> columns, spacing <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>=</mo><mn>0.1</mn></mrow><annotation encoding="application/x-tex">d=0.1</annotation></semantics></math> and the left edge of the extent at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">x=0</annotation></semantics></math>, centered about the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>-axis. The cross marks the point on the extent placed at the origin <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0,0)</annotation></semantics></math>, the circle the center of the layer.</figcaption>
+</figure>
+<h2 id="sec:freelayer"><span class="header-section-number">2.2</span> Free layers</h2>
+<p><em>Free layers</em> do not restrict node positions to a grid, but allow free placement within the extent. To this end, the user needs to specify the positions of all nodes explicitly. The following code creates a layer of 50 <code>iaf_psc_alpha</code> neurons uniformly distributed in a layer with extent <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>×</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">1\times 1</annotation></semantics></math>, i.e., spanning the square <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mo>−</mo><mn>0.5</mn><mo>,</mo><mn>0.5</mn><mo stretchy="false" form="postfix">]</mo><mo>×</mo><mo stretchy="false" form="prefix">[</mo><mo>−</mo><mn>0.5</mn><mo>,</mo><mn>0.5</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[-0.5,0.5]\times[-0.5,0.5]</annotation></semantics></math>:</p>
+<pre><code>import numpy as np
+
+pos = [[np.random.uniform(-0.5, 0.5), np.random.uniform(-0.5, 0.5)]
+       for j in range(50)]
+l = tp.CreateLayer({&#39;positions&#39;: pos,
+                    &#39;elements&#39;: &#39;iaf_psc_alpha&#39;})</code></pre>
+<figure>
+<img src="user_manual_figures/layer4.png" alt="Figure 5: A free layer with 50 elements uniformly distributed in an extent of size 1\times 1." id="fig:layer4" /><figcaption><span>Figure 5:</span> A free layer with 50 elements uniformly distributed in an extent of size <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>×</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">1\times 1</annotation></semantics></math>.</figcaption>
+</figure>
+<p>Note the following points:</p>
+<ul>
+<li><p>For free layers, element <em>positions</em> are specified by the <code>'positions'</code> entry in the dictionary passed to <code>CreateLayer</code>. <code>'positions'</code> is mutually exclusive with <code>'rows'</code>/<code>'columns'</code> entries in the dictionary.</p></li>
+<li><p>The <code>'positions'</code> entry must be a Python <code>list</code> (or <code>tuple</code>) of element coordinates, i.e., of two-element tuples of floats giving the (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>)-coordinates of the elements. One layer element is created per element in the <code>'positions'</code> entry.</p></li>
+<li><p>All layer element positions must be <em>within</em> the layer’s extent. Elements may be placed on the perimeter of the extent as long as no periodic boundary conditions are used; see Sec. <a href="#sec:periodic" data-reference-type="ref" data-reference="sec:periodic">2.4</a>.</p></li>
+<li><p>Element positions in free layers are <em>not</em> shifted when specifying the <code>'center'</code> of the layer. The user must make sure that the positions given lie within the extent when centered about the given center.</p></li>
+</ul>
+<h2 id="sec:3dlayer"><span class="header-section-number">2.3</span> 3D layers</h2>
+<p>Although the term “layer” suggests a 2-dimensional structure, the layers in NEST may in fact be 3-dimensional. The example from the previous section may be easily extended with another component in the coordinates for the positions:</p>
+<pre><code>import numpy as np
+
+pos = [[np.random.uniform(-0.5, 0.5), np.random.uniform(-0.5, 0.5),
+        np.random.uniform(-0.5, 0.5)] for j in range(200)]
+l = tp.CreateLayer({&#39;positions&#39;: pos,
+                    &#39;elements&#39;: &#39;iaf_psc_alpha&#39;})</code></pre>
+<figure>
+<img src="user_manual_figures/layer4_3d.png" alt="Figure 6: A free 3D layer with 200 elements uniformly distributed in an extent of size 1\times 1\times 1." id="fig:layer4_3d" /><figcaption><span>Figure 6:</span> A free 3D layer with 200 elements uniformly distributed in an extent of size <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>×</mo><mn>1</mn><mo>×</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">1\times 1\times 1</annotation></semantics></math>.</figcaption>
+</figure>
+<h2 id="sec:periodic"><span class="header-section-number">2.4</span> Periodic boundary conditions</h2>
+<p>Simulations usually model systems much smaller than the biological networks we want to study. One problem this entails is that a significant proportion of neurons in a model network is close to the edges of the network with fewer neighbors than nodes properly inside the network. In the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mo>×</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">5\times 5</annotation></semantics></math>-layer in Fig. <a href="#fig:layer1">1</a>, e.g., 16 out of 25 nodes form the border of the layer.</p>
+<p>One common approach to reducing the effect of boundaries on simulations is to introduce <em>periodic boundary conditions</em>, so that the rightmost elements on a grid are considered nearest neighbors to the leftmost elements, and the topmost to the bottommost. The flat layer becomes the surface of a torus. Fig. <a href="#fig:player">7</a> illustrates this for a one-dimensional layer, which turns from a line to a ring upon introduction of periodic boundary conditions.</p>
+<p>You specify periodic boundary conditions for a layer using the dictionary entry <code>edge_wrap</code>:</p>
+<pre><code>lp = tp.CreateLayer({&#39;rows&#39;: 1, &#39;columns&#39;: 5, &#39;extent&#39;: [5., 1.],
+                     &#39;elements&#39;: &#39;iaf_psc_alpha&#39;,
+                     &#39;edge_wrap&#39;: True})</code></pre>
+<figure>
+<img src="user_manual_figures/player.png" alt="Figure 7: Top left: Layer with single row and five columns without periodic boundary conditions. Numbers above elements show element coordinates. Colors shifting from blue to magenta mark increasing distance from the element at (-2,0). Bottom left: Same layer, but with periodic boundary conditions. Note that the element at (2,0) now is a nearest neighbor to the element at (-2,0). Right: Layer with periodic boundary condition arranged on a circle to illustrate neighborhood relationships." id="fig:player" /><figcaption><span>Figure 7:</span> Top left: Layer with single row and five columns without periodic boundary conditions. Numbers above elements show element coordinates. Colors shifting from blue to magenta mark increasing distance from the element at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mo>−</mo><mn>2</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(-2,0)</annotation></semantics></math>. Bottom left: Same layer, but with periodic boundary conditions. Note that the element at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>2</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(2,0)</annotation></semantics></math> now is a nearest neighbor to the element at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mo>−</mo><mn>2</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(-2,0)</annotation></semantics></math>. Right: Layer with periodic boundary condition arranged on a circle to illustrate neighborhood relationships.</figcaption>
+</figure>
+<p>Note that the longest possible distance between two elements in a layer without periodic boundary conditions is <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msqrt><mrow><msubsup><mi>x</mi><mtext mathvariant="normal">ext</mtext><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>y</mi><mtext mathvariant="normal">ext</mtext><mn>2</mn></msubsup></mrow></msqrt><annotation encoding="application/x-tex">\sqrt{x_{\text{ext}}^2 + y_{\text{ext}}^2}</annotation></semantics></math> but only <span class="math display">$$\left.\sqrt{x_{\text{ext}}^2 + y_{\text{ext}}^2}\right/ 2$$</span> for a layer with periodic boundary conditions; <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mtext mathvariant="normal">ext</mtext></msub><annotation encoding="application/x-tex">x_{\text{ext}}</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mtext mathvariant="normal">ext</mtext></msub><annotation encoding="application/x-tex">y_{\text{ext}}</annotation></semantics></math> are the components of the extent size.</p>
+<p>We will discuss the consequences of periodic boundary conditions more in Chapter <a href="#sec:connections" data-reference-type="ref" data-reference="sec:connections">3</a>.</p>
+<h3 id="sec:subnet"><span class="header-section-number">2.4.1</span> Topology layer as NEST subnet</h3>
+<p>From the perspective of NEST, a Topology layer is a special type of <em>subnet</em>. From the user perspective, the following points may be of interest:</p>
+<ul>
+<li><p>Grid-based layers have the NEST model type <code>topology_layer_grid</code>, free layers the model type <code>topology_layer_free</code>.</p></li>
+<li><p>The status dictionary of a layer has a <code>'topology'</code> entry describing the layer properties (<code>l</code> is the layer created above):</p></li>
+</ul>
+<pre><code>     print(nest.GetStatus(l)[0][&#39;topology&#39;])</code></pre>
+<pre><code>     {&#39;center&#39;: (0.0, 0.0), &#39;columns&#39;: 5, &#39;depth&#39;: 1, &#39;edge_wrap&#39;: False, &#39;extent&#39;: (1.0, 1.0), &#39;rows&#39;: 5}</code></pre>
+<pre><code>The `&#39;topology&#39;` entry is read-only.</code></pre>
+<ul>
+<li>The NEST kernel sees the elements of the layer in the same way as the elements of any subnet. You will notice this when printing a network with a Topology layer:</li>
+</ul>
+<pre><code>     nest.PrintNetwork(depth=3)</code></pre>
+<pre><code>     +-[0] root dim=[1 25]
+        |
+        +-[1] topology_layer_grid dim=[25]
+           |
+           +-[1]...[25] iaf_psc_alpha
+           </code></pre>
+<pre><code>The $5\times 5$ layer created above appears here as a
+`topology_layer_grid` subnet of 25 `iaf_psc_alpha` neurons. Only
+Topology connection and visualization functions heed the spatial
+structure of the layer.</code></pre>
+<h2 id="sec:composite_layers"><span class="header-section-number">2.5</span> Layers with composite elements</h2>
+<p>So far, we have considered layers in which each element was a single model neuron. Topology can also create layers with <em>composite elements</em>, i.e., layers in which each element is a collection of model neurons, or, in general NEST network nodes.</p>
+<p>Construction of layers with composite elements proceeds exactly as for layers with simple elements, except that the <code>'elements'</code> entry of the dictionary passed to <code>CreateLayer</code> is a Python list or tuple. The following code creates a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>×</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">1\times 2</annotation></semantics></math> layer (to keep the output from <code>PrintNetwork()</code> compact) in which each element consists of one <code>'iaf_cond_alpha'</code> and one <code>'poisson_generator'</code> node</p>
+<pre><code> l = tp.CreateLayer({&#39;rows&#39;: 1, &#39;columns&#39;: 2,
+                     &#39;elements&#39;: [&#39;iaf_cond_alpha&#39;,
+                                  &#39;poisson_generator&#39;]})</code></pre>
+<pre><code> +-[0] root dim=[1 4]
+    |
+    +-[1] topology_layer_grid dim=[4]
+       |
+       +-[1]...[2] iaf_cond_alpha
+       +-[3]...[4] poisson_generator
+       </code></pre>
+<p>The network consist of one <code>topology_layer_grid</code> with four elements: two <code>iaf_cond_alpha</code> and two <code>poisson_generator</code> nodes. The identical nodes are grouped, so that the subnet contains first one full layer of <code>iaf_cond_alpha</code> nodes followed by one full layer of <code>poisson_generator</code> nodes.</p>
+<p>You can create network elements with several nodes of each type by following a model name with the number of nodes to be created:</p>
+<pre><code> l = tp.CreateLayer({&#39;rows&#39;: 1, &#39;columns&#39;: 2,
+                     &#39;elements&#39;: [&#39;iaf_cond_alpha&#39;, 10,
+                                  &#39;poisson_generator&#39;,
+                                  &#39;noise_generator&#39;, 2]})</code></pre>
+<pre><code> +-[0] root dim=[1 26]
+    |
+    +-[1] topology_layer_grid dim=[26]
+       |
+       +-[1]...[20] iaf_cond_alpha
+       +-[21]...[22] poisson_generator
+       +-[23]...[26] noise_generator
+       </code></pre>
+<p>In this case, each layer element consists of 10 <code>iaf_cond_alpha</code> neurons, one <code>poisson_generator</code>, and two <code>noise_generator</code>s.</p>
+<p>Note the following points:</p>
+<ul>
+<li><p>Each element of a layer has identical components.</p></li>
+<li><p>All nodes within a composite element have identical positions, namely the position of the layer element.</p></li>
+<li><p>When inspecting a layer as a subnet, the different nodes will appear in groups of identical nodes.</p></li>
+<li><p>For grid-based layers, the function <code>GetElement</code> returns a list of nodes at a given grid position. See Chapter <a href="#sec:inspection" data-reference-type="ref" data-reference="sec:inspection">4</a> for more on inspecting layers.</p></li>
+<li><p>In a previous version of the topology module it was possible to create layers with nested, composite elements, but such nested networks gobble up a lot of memory for subnet constructs and provide no practical advantages, so this is no longer supported. See the next section for design recommendations for more complex layers.</p></li>
+</ul>
+<h3 id="sec:layerdesign"><span class="header-section-number">2.5.1</span> Designing layers</h3>
+<p>A paper on a neural network model might describe the network as follows<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>:</p>
+<blockquote>
+<p>The network consists of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>20</mn><mi>x</mi><mn>20</mn></mrow><annotation encoding="application/x-tex">20x20</annotation></semantics></math> microcolumns placed on a regular grid spanning <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>0.5</mn><mo>∘</mo></msup><mo>×</mo><msup><mn>0.5</mn><mo>∘</mo></msup></mrow><annotation encoding="application/x-tex">0.5^\circ\times 0.5^\circ</annotation></semantics></math> of visual space. Neurons within each microcolumn are organized into L2/3, L4, and L56 subpopulations. Each subpopulation consists of three pyramidal cells and one interneuron. All pyramidal cells are modeled as NEST <code>iaf_psc_alpha</code> neurons with default parameter values, while interneurons are <code>iaf_psc_alpha</code> neurons with threshold voltage <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mtext mathvariant="normal">th</mtext></msub><mo>=</mo><mo>−</mo><mn>52</mn></mrow><annotation encoding="application/x-tex">V_{\text{th}}=-52</annotation></semantics></math>mV.</p>
+</blockquote>
+<p>How should you implement such a network using the Topology module? The recommended approach is to create different models for the neurons in each layer and then define the microcolumn as one composite element:</p>
+<pre><code>for lyr in [&#39;L23&#39;, &#39;L4&#39;, &#39;L56&#39;]:
+    nest.CopyModel(&#39;iaf_psc_alpha&#39;, lyr + &#39;pyr&#39;)
+    nest.CopyModel(&#39;iaf_psc_alpha&#39;, lyr + &#39;in&#39;, {&#39;V_th&#39;: -52.})
+l = tp.CreateLayer({&#39;rows&#39;: 20, &#39;columns&#39;: 20, &#39;extent&#39;: [0.5, 0.5],
+                    &#39;elements&#39;: [&#39;L23pyr&#39;, 3, &#39;L23in&#39;,
+                                 &#39;L4pyr&#39;, 3, &#39;L4in&#39;,
+                                 &#39;L56pyr&#39;, 3, &#39;L56in&#39;]})</code></pre>
+<p>We will discuss in Chapter <a href="#sec:conn_basics" data-reference-type="ref" data-reference="sec:conn_basics">3.1</a> how to connect selectively to different neuron models.</p>
+<h1 id="sec:connections"><span class="header-section-number">3</span> Connections</h1>
+<p>The most important feature of the Topology module is the ability to create connections between layers with quite some flexibility. In this chapter, we will illustrate how to specify and create connections. All connections are created using the <code>ConnectLayers</code> function.</p>
+<h2 id="sec:conn_basics"><span class="header-section-number">3.1</span> Basic principles</h2>
+<h3 id="sec:terminology"><span class="header-section-number">3.1.1</span> Terminology</h3>
+<p>We begin by introducing important terminology:</p>
+<dl>
+<dt>Connection</dt>
+<dd><p>In the context of connections between the elements of Topology layers, we often call the set of all connections between pairs of network nodes created by a single call to <code>ConnectLayers</code> a <em>connection</em>.</p>
+</dd>
+<dt>Connection dictionary</dt>
+<dd><p>A dictionary specifying the properties of a connection between two layers in a call to <code>CreateLayers</code>.</p>
+</dd>
+<dt>Source</dt>
+<dd><p>The <em>source</em> of a single connection is the node sending signals (usually spikes). In a projection, the source layer is the layer from which source nodes are chosen.</p>
+</dd>
+<dt>Target</dt>
+<dd><p>The <em>target</em> of a single connection is the node receiving signals (usually spikes). In a projection, the target layer is the layer from which target nodes are chosen.</p>
+</dd>
+<dt>Connection type</dt>
+<dd><p>The <em>connection type</em> determines how nodes are selected when <code>ConnectLayers</code> creates connections between layers. It is either <code>'convergent'</code> or <code>'divergent'</code>.</p>
+</dd>
+<dt>Convergent connection</dt>
+<dd><p>When creating a <em>convergent connection</em> between layers, Topology visits each node in the target layer in turn and selects sources for it in the source layer. Masks and kernels are applied to the source layer, and periodic boundary conditions are applied in the source layer, provided that the source layer has periodic boundary conditions.</p>
+</dd>
+<dt>Divergent connection</dt>
+<dd><p>When creating a <em>divergent connection</em>, Topology visits each node in the source layer and selects target nodes from the target layer. Masks, kernels, and boundary conditions are applied in the target layer.</p>
+</dd>
+<dt>Driver</dt>
+<dd><p>When connecting two layers, the <em>driver</em> layer is the one in which each node is considered in turn.</p>
+</dd>
+<dt>Pool</dt>
+<dd><p>When connecting two layers, the <em>pool</em> layer is the one from which nodes are chosen for each node in the driver layer. I.e., we have<br />
+</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Connection type</th>
+<th style="text-align: left;">Driver</th>
+<th style="text-align: left;">Pool</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">convergent</td>
+<td style="text-align: left;">target layer</td>
+<td style="text-align: left;">source layer</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">divergent</td>
+<td style="text-align: left;">source layer</td>
+<td style="text-align: left;">target layer</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Displacement</dt>
+<dd><p>The <em>displacement</em> between a driver and a pool node is the shortest vector connecting the driver to the pool node, taking boundary conditions into account.</p>
+</dd>
+<dt>Distance</dt>
+<dd><p>The <em>distance</em> between a driver and a pool node is the length of their displacement.</p>
+</dd>
+<dt>Mask</dt>
+<dd><p>The <em>mask</em> defines which pool nodes are at all considered as potential targets for each driver node. See Sec. <a href="#sec:conn_masks" data-reference-type="ref" data-reference="sec:conn_masks">3.3</a> for details.</p>
+</dd>
+<dt>Kernel</dt>
+<dd><p>The <em>kernel</em> is a function returning a (possibly distance- or displacement-dependent) probability for creating a connection between a driver and a pool node. The default kernel is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>, i.e., connections are created with certainty. See Sec. <a href="#sec:conn_kernels" data-reference-type="ref" data-reference="sec:conn_kernels">3.4</a> for details.</p>
+</dd>
+<dt>Autapse</dt>
+<dd><p>An <em>autapse</em> is a synapse (connection) from a node onto itself. Autapses are permitted by default, but can be disabled by adding <code>'allow_autapses': False</code> to the connection dictionary.</p>
+</dd>
+<dt>Multapse</dt>
+<dd><p>Node A is connected to node B by a <em>multapse</em> if there are synapses (connections) from A to B. Multapses are permitted by default, but can be disabled by adding <code>'allow_multapses': False</code> to the connection dictionary.</p>
+</dd>
+</dl>
+<h3 id="sec:minimalcall"><span class="header-section-number">3.1.2</span> A minimal ConnectLayers call</h3>
+<p>Connections between Topology layers are created by calling <code>ConnectLayers</code> with the following arguments<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>:</p>
+<ol type="1">
+<li><p>The source layer.</p></li>
+<li><p>The target layer (can be identical to source layer).</p></li>
+<li><p>A connection dictionary that contains at least the following entry:</p>
+<dl>
+<dt>‘connection_type’</dt>
+<dd><p>either <code>'convergent'</code> or <code>'divergent'</code>.</p>
+</dd>
+</dl></li>
+</ol>
+<p>In many cases, the connection dictionary will also contain</p>
+<dl>
+<dt>‘mask’</dt>
+<dd><p>a mask specification as described in Sec. <a href="#sec:conn_masks" data-reference-type="ref" data-reference="sec:conn_masks">3.3</a>.</p>
+</dd>
+</dl>
+<p>Only neurons within the mask are considered as potential sources or targets. If no mask is given, all neurons in the respective layer are considered sources or targets.</p>
+<p>Here is a simple example, cf. <a href="#fig:conn1">8</a></p>
+<pre><code>l = tp.CreateLayer({&#39;rows&#39;: 11, &#39;columns&#39;: 11, &#39;extent&#39;: [11., 11.],
+                    &#39;elements&#39;: &#39;iaf_psc_alpha&#39;})
+conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+            &#39;mask&#39;: {&#39;rectangular&#39;: {&#39;lower_left&#39;: [-2., -1.],
+                                     &#39;upper_right&#39;: [2., 1.]}}}
+tp.ConnectLayers(l, l, conndict)</code></pre>
+<figure>
+<img src="user_manual_figures/conn1.png" alt="Figure 8: Left: Minimal connection example from a layer onto itself using a rectangular mask shown as red line for the node at (0,0) (marked light red). The targets of this node are marked with red dots. The targets for the node at (4,5) are marked with yellow dots. This node has fewer targets since it is at the corner and many potential targets are beyond the layer. Right: The effect of periodic boundary conditions is seen here. Source and target layer and connection dictionary were identical, except that periodic boundary conditions were used. The node at (4,5) now has 15 targets, too, but they are spread across the corners of the layer. If we wrapped the layer to a torus, they would form a 5\times 3 rectangle centered on the node at (4,5)." id="fig:conn1" /><figcaption><span>Figure 8:</span> Left: Minimal connection example from a layer onto itself using a rectangular mask shown as red line for the node at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0,0)</annotation></semantics></math> (marked light red). The targets of this node are marked with red dots. The targets for the node at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>4</mn><mo>,</mo><mn>5</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(4,5)</annotation></semantics></math> are marked with yellow dots. This node has fewer targets since it is at the corner and many potential targets are beyond the layer. Right: The effect of periodic boundary conditions is seen here. Source and target layer and connection dictionary were identical, except that periodic boundary conditions were used. The node at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>4</mn><mo>,</mo><mn>5</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(4,5)</annotation></semantics></math> now has 15 targets, too, but they are spread across the corners of the layer. If we wrapped the layer to a torus, they would form a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mo>×</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">5\times 3</annotation></semantics></math> rectangle centered on the node at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>4</mn><mo>,</mo><mn>5</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(4,5)</annotation></semantics></math>.</figcaption>
+</figure>
+<p>In this example, layer <code>l</code> is both source and target layer. Connection type is divergent, i.e., for each node in the layer we choose targets according to the rectangular mask centered about each source node. Since no connection kernel is specified, we connect to all nodes within the mask. Note the effect of normal and periodic boundary conditions on the connections created for different nodes in the layer, as illustrated in Fig. <a href="#fig:conn1">8</a>.</p>
+<h2 id="sec:mapping"><span class="header-section-number">3.2</span> Mapping source and target layers</h2>
+<p>The application of masks and other functions depending on the distance or even the displacement between nodes in the source and target layers requires a mapping of coordinate systems between source and target layers. Topology applies the following <em>coordinate mapping rules</em>:</p>
+<ol type="1">
+<li><p>All layers have two-dimensional Euclidean coordinate systems.</p></li>
+<li><p>No scaling or coordinate transformation can be applied between layers.</p></li>
+<li><p>The displacement <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo stretchy="false" form="prefix">(</mo><mi>D</mi><mo>,</mo><mi>P</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">d(D,P)</annotation></semantics></math> from node <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math> in the driver layer to node <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math> in the pool layer is measured by first mapping the position of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math> in the driver layer to the identical position in the pool layer and then computing the displacement from that position to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>. If the pool layer has periodic boundary conditions, they are taken into account. It does not matter for displacement computations whether the driver layer has periodic boundary conditions.</p></li>
+</ol>
+<h2 id="sec:conn_masks"><span class="header-section-number">3.3</span> Masks</h2>
+<p>A mask describes which area of the pool layer shall be searched for nodes to connect for any given node in the driver layer. We will first describe geometrical masks defined for all layer types and then consider grid-based masks for grid-based layers. If no mask is specified, all nodes in the pool layer will be searched.</p>
+<p>Note that the mask size should not exceed the size of the layer when using periodic boundary conditions, since the mask would “wrap around” in that case and pool nodes would be considered multiple times as targets.</p>
+<p>If none of the mask types provided in the topology library meet your need, you may add more mask types in a NEST extension module. This is covered in Chapter <a href="#ch:extending" data-reference-type="ref" data-reference="ch:extending">5</a>.</p>
+<h3 id="sec:free_masks"><span class="header-section-number">3.3.1</span> Masks for 2D layers</h3>
+<p>Topology currently provides four types of masks usable for 2-dimensional free and grid-based layers. They are illustrated in Fig. <a href="#fig:conn2_a">9</a>. The masks are</p>
+<dl>
+<dt>Rectangular</dt>
+<dd><p>All nodes within a rectangular area are connected. The area is specified by its lower left and upper right corners, measured in the same unit as element coordinates. Example:</p>
+</dd>
+</dl>
+<pre><code>    conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+                &#39;mask&#39;: {&#39;rectangular&#39;: {&#39;lower_left&#39;: [-2., -1.],
+                                         &#39;upper_right&#39;: [2., 1.]}}}</code></pre>
+<dl>
+<dt>Circular</dt>
+<dd><p>All nodes within a circle are connected. The area is specified by its radius.</p>
+</dd>
+</dl>
+<pre><code>    conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+                &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 2.0}}}</code></pre>
+<dl>
+<dt>Doughnut</dt>
+<dd><p>All nodes between an inner and outer circle are connected. Note that nodes <em>on</em> the inner circle are not connected. The area is specified by the radii of the inner and outer circles.</p>
+</dd>
+</dl>
+<pre><code>    conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+                &#39;mask&#39;: {&#39;doughnut&#39;: {&#39;inner_radius&#39;: 1.5,
+                                      &#39;outer_radius&#39;: 3.}}}</code></pre>
+<dl>
+<dt>Elliptical</dt>
+<dd><p>All nodes within an ellipsis are connected. The area is specified by its major and minor axis. Note that this mask was added to NEST with NEST 2.14.</p>
+</dd>
+</dl>
+<pre><code>    conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+                &#39;mask&#39;: {&#39;elliptical&#39;: {&#39;major_axis&#39;: 7.,
+                                        &#39;minor_axis&#39;: 4.}}}</code></pre>
+<figure>
+<img src="user_manual_figures/conn2_a.png" alt="Figure 9: Masks for 2D layers. For all mask types, the driver node is marked by a wide light-red circle, the selected pool nodes by red dots and the masks by red lines. From left to right, top to bottom: rectangular, circular, doughnut and elliptical masks centered about the driver node." id="fig:conn2_a" /><figcaption><span>Figure 9:</span> Masks for 2D layers. For all mask types, the driver node is marked by a wide light-red circle, the selected pool nodes by red dots and the masks by red lines. From left to right, top to bottom: rectangular, circular, doughnut and elliptical masks centered about the driver node.</figcaption>
+</figure>
+<p>By default, the masks are centered about the position of the driver node, mapped into the pool layer. You can change the location of the mask relative to the driver node by specifying an <code>'anchor'</code> entry in the mask dictionary. The anchor is a 2D vector specifying the location of the mask center relative to the driver node, as in the following examples (cf. Fig. <a href="#fig:conn2_b">10</a>).</p>
+<pre><code> conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;rectangular&#39;: {&#39;lower_left&#39;: [-2., -1.],
+                                      &#39;upper_right&#39;: [2., 1.]},
+                      &#39;anchor&#39;: [-1.5, -1.5]}}</code></pre>
+<pre><code> conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 2.0},
+                      &#39;anchor&#39;: [-2.0, 0.0]}}</code></pre>
+<pre><code> conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;doughnut&#39;: {&#39;inner_radius&#39;: 1.5,
+                                   &#39;outer_radius&#39;: 3.},
+                      &#39;anchor&#39;: [1.5, 1.5]}}</code></pre>
+<pre><code> conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;elliptical&#39;: {&#39;major_axis&#39;: 7.,
+                                     &#39;minor_axis&#39;: 4.},
+                      &#39;anchor&#39;: [2.0, -1.0]}}</code></pre>
+<figure>
+<img src="user_manual_figures/conn2_b.png" alt="Figure 10: The same masks as in Fig. 9, but centered about (-1.5,-1.5), (-2,0), (1.5,1.5) and (2, -1), respectively, using the &#39;anchor&#39; parameter." id="fig:conn2_b" /><figcaption><span>Figure 10:</span> The same masks as in Fig. <a href="#fig:conn2_a">9</a>, but centered about <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mo>−</mo><mn>1.5</mn><mo>,</mo><mo>−</mo><mn>1.5</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(-1.5,-1.5)</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mo>−</mo><mn>2</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(-2,0)</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>1.5</mn><mo>,</mo><mn>1.5</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(1.5,1.5)</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>2</mn><mo>,</mo><mo>−</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(2, -1)</annotation></semantics></math>, respectively, using the <code>'anchor'</code> parameter.</figcaption>
+</figure>
+<p>and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="bold">𝐞𝐥𝐥𝐢𝐩𝐭𝐢𝐜𝐚𝐥</mtext><annotation encoding="application/x-tex">\textbf{elliptical}</annotation></semantics></math> masks, see Fig <a href="#fig:conn2_b">10</a>. To do so, add an <code>'azimuth_angle'</code> entry in the specific mask dictionary. The <code>azimuth_angle</code> is measured in degrees and is the rotational angle from the x-axis to the y-axis.</p>
+<pre><code> conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;rectangular&#39;: {&#39;lower_left&#39;: [-2., -1.],
+                                      &#39;upper_right&#39;: [2., 1.],
+                                      &#39;azimuth_angle&#39;: 120.}}}</code></pre>
+<pre><code> conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;elliptical&#39;: {&#39;major_axis&#39;: 7.,
+                                     &#39;minor_axis&#39;: 4.,
+                                     &#39;azimuth_angle&#39;: 45.}}}</code></pre>
+<figure>
+<img src="user_manual_figures/conn2_c.png" alt="Figure 11: Rotated rectangle and elliptical mask from Fig. 9 and Fig. 10, where the rectangle mask is rotated 120^\circ and the elliptical mask is rotated 45^\circ." id="fig:conn2_c" /><figcaption><span>Figure 11:</span> Rotated rectangle and elliptical mask from Fig. <a href="#fig:conn2_a">9</a> and Fig. <a href="#fig:conn2_b">10</a>, where the rectangle mask is rotated <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>120</mn><mo>∘</mo></msup><annotation encoding="application/x-tex">120^\circ</annotation></semantics></math> and the elliptical mask is rotated <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>45</mn><mo>∘</mo></msup><annotation encoding="application/x-tex">45^\circ</annotation></semantics></math>.</figcaption>
+</figure>
+<h3 id="sec:3d_masks"><span class="header-section-number">3.3.2</span> Masks for 3D layers</h3>
+<p>Similarly, there are three mask types that can be used for 3D layers,</p>
+<dl>
+<dt>Box</dt>
+<dd><p>All nodes within a cuboid volume are connected. The area is specified by its lower left and upper right corners, measured in the same unit as element coordinates. Example:</p>
+</dd>
+</dl>
+<pre><code>    conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+                &#39;mask&#39;: {&#39;box&#39;: {&#39;lower_left&#39;: [-2., -1., -1.],
+                                 &#39;upper_right&#39;: [2., 1., 1.]}}}</code></pre>
+<dl>
+<dt>Spherical</dt>
+<dd><p>All nodes within a sphere are connected. The area is specified by its radius.</p>
+</dd>
+</dl>
+<pre><code>    conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+                &#39;mask&#39;: {&#39;spherical&#39;: {&#39;radius&#39;: 2.5}}}</code></pre>
+<dl>
+<dt>Ellipsoidal</dt>
+<dd><p>All nodes within an ellipsoid are connected. The area is specified by its major, minor, and polar axis. This mask has been part of NEST since NEST 2.14.</p>
+</dd>
+</dl>
+<pre><code>    conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+                &#39;mask&#39;: {&#39;ellipsoidal&#39;: {&#39;major_axis&#39;: 7.,
+                                         &#39;minor_axis&#39;: 4.,
+                                         &#39;polar_axis&#39;: 4.5}}}</code></pre>
+<p>As in the 2D case, you can change the location of the mask relative to the driver node by specifying a 3D vector in the <code>'anchor'</code> entry in the mask dictionary. If you want to rotate the box or ellipsoidal masks, you can add an <code>'azimuth_angle'</code> entry in the specific mask dictionary for rotation from the x-axis towards the y-axis about the z-axis, or an <code>'polar_angle'</code> entry, specifying the rotation angle in degrees from the z-axis about the (possibly rotated) x axis, from the (possibly rotated) y-axis. You can specify both at once of course. If both are specified, we first rotate about the z-axis and then about the new x-axis. NEST currently do not support rotation in all three directions, the rotation from the y-axis about the (possibly rotated) z-axis, from the (possibly</p>
+<pre><code>rotated) x-axis is missing.</code></pre>
+<figure>
+<img src="user_manual_figures/conn_3d.png" alt="Figure 12: Masks for 3D layers. For all mask types, the driver node is marked by a wide light-red circle, the selected pool nodes by red dots and the masks by red lines. From left to right: box and spherical masks centered about the driver node." id="fig:conn3d" /><figcaption><span>Figure 12:</span> Masks for 3D layers. For all mask types, the driver node is marked by a wide light-red circle, the selected pool nodes by red dots and the masks by red lines. From left to right: box and spherical masks centered about the driver node.</figcaption>
+</figure>
+<h3 id="sec:grid_masks"><span class="header-section-number">3.3.3</span> Masks for grid-based layers</h3>
+<p>Grid-based layers can be connected using rectangular <em>grid masks</em>. For these, you specify the size of the mask not by lower left and upper right corner coordinates, but give their size in rows and columns, as in this example:</p>
+<pre><code>conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+            &#39;mask&#39;: {&#39;grid&#39;: {&#39;rows&#39;: 3, &#39;columns&#39;: 5}}}</code></pre>
+<p>The resulting connections are shown in Fig. <a href="#fig:conn3">13</a>. By default the top-left corner of a grid mask, i.e., the grid mask element with grid index <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0,0]</annotation></semantics></math><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>, is aligned with the driver node. You can change this alignment by specifying an <em>anchor</em> for the mask:</p>
+<pre><code>conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+            &#39;mask&#39;: {&#39;grid&#39;: {&#39;rows&#39;: 3, &#39;columns&#39;: 5},
+                     &#39;anchor&#39;: {&#39;row&#39;: 1, &#39;column&#39;: 2}}}</code></pre>
+<p>You can even place the anchor outside the mask:</p>
+<pre><code>conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+            &#39;mask&#39;: {&#39;grid&#39;: {&#39;rows&#39;: 3, &#39;columns&#39;: 5},
+                     &#39;anchor&#39;: {&#39;row&#39;: -1, &#39;column&#39;: 2}}}</code></pre>
+<p>The resulting connection patterns are shown in Fig. <a href="#fig:conn3">13</a>.</p>
+<figure>
+<img src="user_manual_figures/conn3.png" alt="Figure 13: Grid masks for connections between grid-based layers. Left: 5\times 3 mask with default alignment at upper left corner. Center: Same mask, but anchored to center node at grid index [1,2]. Right: Same mask, but anchor to the upper left of the mask at grid index [-1,2]." id="fig:conn3" /><figcaption><span>Figure 13:</span> Grid masks for connections between grid-based layers. Left: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mo>×</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">5\times 3</annotation></semantics></math> mask with default alignment at upper left corner. Center: Same mask, but anchored to center node at grid index <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>1</mn><mo>,</mo><mn>2</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[1,2]</annotation></semantics></math>. Right: Same mask, but anchor to the upper left of the mask at grid index <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mo>−</mo><mn>1</mn><mo>,</mo><mn>2</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[-1,2]</annotation></semantics></math>.</figcaption>
+</figure>
+<p>Connections specified using grid masks are generated more efficiently than connections specified using other mask types.</p>
+<p>Note the following:</p>
+<ul>
+<li><p>Grid-based masks are applied by considering grid indices. The position of nodes in physical coordinates is ignored.</p></li>
+<li><p>In consequence, grid-based masks should only be used between layers with identical grid spacings.</p></li>
+<li><p>The semantics of the <code>'anchor'</code> property for grid-based masks differ significantly for general masks described in Sec. <a href="#sec:free_masks" data-reference-type="ref" data-reference="sec:free_masks">3.3.1</a>. For general masks, the anchor is the center of the mask relative to the driver node. For grid-based nodes, the anchor determines which mask element is aligned with the driver element.</p></li>
+</ul>
+<h2 id="sec:conn_kernels"><span class="header-section-number">3.4</span> Kernels</h2>
+<p>Many neuronal network models employ probabilistic connection rules. Topology supports probabilistic connections through <em>kernels</em>. A kernel is a function mapping the distance (or displacement) between a driver and a pool node to a connection probability. Topology then generates a connection according to this probability.</p>
+<p>Probabilistic connections can be generated in two different ways using Topology:</p>
+<dl>
+<dt>Free probabilistic connections</dt>
+<dd><p>are the default. In this case, <code>ConnectLayers</code> considers each driver node <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math> in turn. For each <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math>, it evaluates the kernel for each pool node <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math> within the mask and creates a connection according to the resulting probability. This means in particular that <em>each possible driver-pool pair is inspected exactly once</em> and that there will be <em>at most one connection between each driver-pool pair</em>.</p>
+</dd>
+<dt>Prescribed number of connections</dt>
+<dd><p>can be obtained by specifying the number of connections to create per driver node. See Sec. <a href="#sec:prescribed_numbers" data-reference-type="ref" data-reference="sec:prescribed_numbers">3.7</a> for details.</p>
+</dd>
+</dl>
+<p>Available kernel functions are shown in Table <a href="#tbl:kernels">1</a>. More kernel functions may be created in a NEST extension module. This is covered in Chapter <a href="#ch:extending" data-reference-type="ref" data-reference="ch:extending">5</a>.</p>
+<a name="tbl:kernels"></a>
+<table style="width:98%;">
+<caption><span>Table 1:</span> Functions currently available in the Topology module. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math> is the distance and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>d</mi><mi>x</mi></msub><mo>,</mo><msub><mi>d</mi><mi>y</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(d_x,d_y)</annotation></semantics></math> the displacement. All functions can be used to specify weights and delays, but only the constant and the distance-dependent functions, i.e., all functions above the double line, can be used as kernels. </caption>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 14%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Parameters</th>
+<th style="text-align: left;">Function</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">constant</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">constant <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>∈</mo><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">p\in[0,1]</annotation></semantics></math></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>linear</code></td>
+<td style="text-align: left;"><code>a</code>, <code>c</code></td>
+<td style="text-align: left;"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>c</mi><mo>+</mo><mi>a</mi><mi>d</mi></mrow><annotation encoding="application/x-tex">p(d) = c + a d</annotation></semantics></math></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>exponential</code></td>
+<td style="text-align: left;"><code>a</code>, <code>c</code>, <code>tau</code></td>
+<td style="text-align: left;"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>c</mi><mo>+</mo><mi>a</mi><msup><mi>e</mi><mrow><mo>−</mo><mfrac><mi>d</mi><mi>τ</mi></mfrac></mrow></msup></mrow><annotation encoding="application/x-tex">p(d) = c + a e^{-\frac{d}{\tau}}</annotation></semantics></math></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>gaussian</code></td>
+<td style="text-align: left;"><code>p_center</code>, <code>sigma</code>, <code>mean</code>, <code>c</code></td>
+<td style="text-align: left;"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>c</mi><mo>+</mo><msub><mi>p</mi><mtext mathvariant="normal">center</mtext></msub><msup><mi>e</mi><mrow><mo>−</mo><mfrac><mrow><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo>−</mo><mi>μ</mi><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mi>σ</mi><mn>2</mn></msup></mrow></mfrac></mrow></msup></mrow><annotation encoding="application/x-tex">p(d) = c + p_{\text{center}}  e^{-\frac{(d-\mu)^2}{2\sigma^2}}</annotation></semantics></math></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>gaussian2D</code></td>
+<td style="text-align: left;"><code>p_center</code>, <code>sigma_x</code>, <code>sigma_y</code>, <code>mean_x</code>, <code>mean_y</code>,<code>rho</code>, <code>c</code></td>
+<td style="text-align: left;"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>c</mi><mo>+</mo><msub><mi>p</mi><mtext mathvariant="normal">center</mtext></msub><msup><mi>e</mi><mrow><mo>−</mo><mfrac><mrow><mfrac><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>d</mi><mi>x</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>x</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><msubsup><mi>σ</mi><mi>x</mi><mn>2</mn></msubsup></mfrac><mo>−</mo><mfrac><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>d</mi><mi>y</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>y</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><msubsup><mi>σ</mi><mi>y</mi><mn>2</mn></msubsup></mfrac><mo>+</mo><mn>2</mn><mi>ρ</mi><mfrac><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>d</mi><mi>x</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>x</mi></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>d</mi><mi>y</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>y</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><mrow><msub><mi>σ</mi><mi>x</mi></msub><msub><mi>σ</mi><mi>y</mi></msub></mrow></mfrac></mrow><mrow><mn>2</mn><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>ρ</mi><mn>2</mn></msup><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow></msup></mrow><annotation encoding="application/x-tex">p(d) = c + p_{\text{center}}
+e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-\frac{(d_y-\mu_y)^2}{\sigma_y^2}
++2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x\sigma_y}}{2(1-\rho^2)}}</annotation></semantics></math></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>gamma</code></td>
+<td style="text-align: left;"><code>kappa</code>, <code>theta</code></td>
+<td style="text-align: left;"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mfrac><mrow><msup><mi>d</mi><mrow><mi>κ</mi><mo>−</mo><mn>1</mn></mrow></msup><msup><mi>e</mi><mrow><mo>−</mo><mfrac><mi>d</mi><mi>θ</mi></mfrac></mrow></msup></mrow><mrow><msup><mi>θ</mi><mi>κ</mi></msup><mi>Γ</mi><mo stretchy="false" form="prefix">(</mo><mi>κ</mi><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">p(d) = \frac{d^{\kappa-1}e^{-\frac{d}{\theta}}}{\theta^\kappa\Gamma(\kappa)}</annotation></semantics></math></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>uniform</code></td>
+<td style="text-align: left;"><code>min</code>, <code>max</code></td>
+<td style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>∈</mo><mo stretchy="false" form="prefix">[</mo><mtext mathvariant="normal">min</mtext><mo>,</mo><mtext mathvariant="normal">max</mtext><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">p\in [\text{min},\text{max})</annotation></semantics></math> uniformly</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>normal</code></td>
+<td style="text-align: left;"><code>mean</code>, <code>sigma</code>, <code>min</code>, <code>max</code></td>
+<td style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>∈</mo><mo stretchy="false" form="prefix">[</mo><mtext mathvariant="normal">min</mtext><mo>,</mo><mtext mathvariant="normal">max</mtext><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">p \in [\text{min},\text{max})</annotation></semantics></math> normal with given mean and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>lognormal</code></td>
+<td style="text-align: left;"><code>mu</code>, <code>sigma</code>, <code>min</code>, <code>max</code></td>
+<td style="text-align: left;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>∈</mo><mo stretchy="false" form="prefix">[</mo><mtext mathvariant="normal">min</mtext><mo>,</mo><mtext mathvariant="normal">max</mtext><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">p \in [\text{min},\text{max})</annotation></semantics></math> lognormal with given <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>μ</mi><annotation encoding="application/x-tex">\mu</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math></td>
+</tr>
+</tbody>
+</table>
+<figure>
+<img src="user_manual_figures/conn4.png" alt="Figure 14: Illustration of various kernel functions. Top left: constant kernel, p=0.5. Top center: Gaussian kernel, green dashed lines show \sigma, 2\sigma, 3\sigma. Top right: Same Gaussian kernel anchored at (1.5,1.5). Bottom left: Same Gaussian kernel, but all p&lt;0.5 treated as p=0. Bottom center: 2D-Gaussian." id="fig:conn4" /><figcaption><span>Figure 14:</span> Illustration of various kernel functions. Top left: constant kernel, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">p=0.5</annotation></semantics></math>. Top center: Gaussian kernel, green dashed lines show <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>σ</mi></mrow><annotation encoding="application/x-tex">2\sigma</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mi>σ</mi></mrow><annotation encoding="application/x-tex">3\sigma</annotation></semantics></math>. Top right: Same Gaussian kernel anchored at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>1.5</mn><mo>,</mo><mn>1.5</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(1.5,1.5)</annotation></semantics></math>. Bottom left: Same Gaussian kernel, but all <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>&lt;</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">p&lt;0.5</annotation></semantics></math> treated as <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">p=0</annotation></semantics></math>. Bottom center: 2D-Gaussian.</figcaption>
+</figure>
+<p>Several examples follow. They are illustrated in Fig. <a href="#fig:conn4">14</a>.</p>
+<dl>
+<dt>Constant</dt>
+<dd><p>The simplest kernel is a fixed connection probability:</p>
+</dd>
+</dl>
+<pre><code>    conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+                &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 4.}},
+                &#39;kernel&#39;: 0.5}</code></pre>
+<dl>
+<dt>Gaussian</dt>
+<dd><p>This kernel is distance dependent. In the example, connection probability is 1 for <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">d=0</annotation></semantics></math> and falls off with a “standard deviation” of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\sigma=1</annotation></semantics></math>:</p>
+</dd>
+</dl>
+<pre><code>    conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+                &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 4.}},
+                &#39;kernel&#39;: {&#39;gaussian&#39;: {&#39;p_center&#39;: 1.0,
+                                        &#39;sigma&#39;: 1.}}}</code></pre>
+<dl>
+<dt>Eccentric Gaussian</dt>
+<dd><p>In this example, both kernel and mask have been moved using anchors:</p>
+</dd>
+</dl>
+<pre><code>    conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+                &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 4.},
+                         &#39;anchor&#39;: [1.5, 1.5]},
+                &#39;kernel&#39;: {&#39;gaussian&#39;: {&#39;p_center&#39;: 1.0,
+                                        &#39;sigma&#39;: 1.,
+                                        &#39;anchor&#39;: [1.5, 1.5]}}}</code></pre>
+<pre><code>Note that the anchor for the kernel is specified inside the
+dictionary containing the parameters for the Gaussian.</code></pre>
+<dl>
+<dt>Cut-off Gaussian</dt>
+<dd><p>In this example, all probabilities less than <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.5</mn><annotation encoding="application/x-tex">0.5</annotation></semantics></math> are set to zero:</p>
+</dd>
+</dl>
+<pre><code>    conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+                &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 4.}},
+                &#39;kernel&#39;: {&#39;gaussian&#39;: {&#39;p_center&#39;: 1.0,
+                                        &#39;sigma&#39;: 1.,
+                                        &#39;cutoff&#39;: 0.5}}}</code></pre>
+<dl>
+<dt>2D Gaussian</dt>
+<dd><p>We conclude with an example using a two-dimensional Gaussian, i.e., a Gaussian with different widths in <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>- and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>−</mo></mrow><annotation encoding="application/x-tex">y-</annotation></semantics></math> directions. This kernel depends on displacement, not only on distance:</p>
+</dd>
+</dl>
+<pre><code>    conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+                &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 4.}},
+                &#39;kernel&#39;: {&#39;gaussian2D&#39;: {&#39;p_center&#39;: 1.0,
+                                          &#39;sigma_x&#39;: 1.,
+                                          &#39;sigma_y&#39;: 3.}}}</code></pre>
+<p>Note that for pool layers with periodic boundary conditions, Topology always uses the shortest possible displacement vector from driver to pool neuron as argument to the kernel function.</p>
+<h2 id="sec:conn_wd"><span class="header-section-number">3.5</span> Weights and delays</h2>
+<p>The functions presented in Table <a href="#tbl:kernels">1</a> can also be used to specify distance-dependent or randomized weights and delays for the connections created by <code>ConnectLayers</code>.</p>
+<p>Figure <a href="#fig:conn5">15</a> illustrates weights and delays generated using these functions with the following code examples. All examples use a “layer” of 51 nodes placed on a line; the line is centered about <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>25</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(25,0)</annotation></semantics></math>, so that the leftmost node has coordinates <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0,0)</annotation></semantics></math>. The distance between neighboring elements is 1. The mask is rectangular, spans the entire layer and is centered about the driver node.</p>
+<p>Linear example</p>
+<pre><code>    ldict = {&#39;rows&#39;: 1, &#39;columns&#39;: 51,
+             &#39;extent&#39;: [51., 1.], &#39;center&#39;: [25., 0.],
+             &#39;elements&#39;: &#39;iaf_psc_alpha&#39;}
+    cdict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;rectangular&#39;: {&#39;lower_left&#39;: [-25.5, -0.5],
+                                      &#39;upper_right&#39;: [25.5, 0.5]}},
+             &#39;weights&#39;: {&#39;linear&#39;: {&#39;c&#39;: 1.0,
+                                    &#39;a&#39;: -0.05,
+                                    &#39;cutoff&#39;: 0.0}},
+             &#39;delays&#39;: {&#39;linear&#39;: {&#39;c&#39;: 0.1, &#39;a&#39;: 0.02}}}</code></pre>
+<p>Results are shown in the top panel of Fig. <a href="#fig:conn5">15</a>. Connection weights and delays are shown for the leftmost neuron as driver. Weights drop linearly from <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>. From the node at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>20</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(20,0)</annotation></semantics></math> on, the cutoff sets weights to 0. There are no connections to nodes beyond <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>25</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(25,0)</annotation></semantics></math>, since the mask extends only 25 units to the right of the driver. Delays increase in a stepwise linear fashion, as NEST requires delays to be multiples of the simulation resolution.</p>
+<p>Linear example with periodic boundary conditions</p>
+<pre><code>    cdict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;rectangular&#39;: {&#39;lower_left&#39;: [-25.5, -0.5],
+                                      &#39;upper_right&#39;: [25.5, 0.5]}},
+             &#39;weights&#39;: {&#39;linear&#39;: {&#39;c&#39;: 1.0,
+                                    &#39;a&#39;: -0.05,
+                                    &#39;cutoff&#39;: 0.0}},
+             &#39;delays&#39;: {&#39;linear&#39;: {&#39;c&#39;: 0.1, &#39;a&#39;: 0.02}}}</code></pre>
+<p>Results are shown in the middle panel of Fig. <a href="#fig:conn5">15</a>. This example is identical to the previous, except that the (pool) layer has periodic boundary conditions. Therefore, the left half of the mask about the node at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0,0)</annotation></semantics></math> wraps back to the right half of the layer and that node connects to all nodes in the layer.</p>
+<p>Various functions</p>
+<pre><code>    cdict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;rectangular&#39;: {&#39;lower_left&#39;: [-25.5, -0.5],
+                                      &#39;upper_right&#39;: [25.5, 0.5]}},
+             &#39;weights&#39;: {&#39;exponential&#39;: {&#39;a&#39;: 1., &#39;tau&#39;: 5.}}}</code></pre>
+<pre><code>    cdict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;rectangular&#39;: {&#39;lower_left&#39;: [-25.5, -0.5],
+                                      &#39;upper_right&#39;: [25.5, 0.5]}},
+             &#39;weights&#39;: {&#39;gaussian&#39;: {&#39;p_center&#39;: 1., &#39;sigma&#39;: 5.}}}</code></pre>
+<p>Results are shown in the bottom panel of Fig. <a href="#fig:conn5">15</a>. It shows linear, exponential and Gaussian weight functions for the node at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>25</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(25,0)</annotation></semantics></math>.</p>
+<p>Randomized weights and delays</p>
+<pre><code>    cdict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;rectangular&#39;: {&#39;lower_left&#39;: [-25.5, -0.5],
+                                      &#39;upper_right&#39;: [25.5, 0.5]}},
+             &#39;weights&#39;: {&#39;uniform&#39;: {&#39;min&#39;: 0.2, &#39;max&#39;: 0.8}}}</code></pre>
+<p>By using the <code>'uniform'</code> function for weights or delays, one can obtain randomized values for weights and delays, as shown by the red circles in the bottom panel of Fig. <a href="#fig:conn5">15</a>. Weights and delays can currently only be randomized with uniform distribution.</p>
+<figure>
+<img src="user_manual_figures/conn5.png" alt="Figure 15: Distance-dependent and randomized weights and delays. See text for details." id="fig:conn5" /><figcaption><span>Figure 15:</span> Distance-dependent and randomized weights and delays. See text for details.</figcaption>
+</figure>
+<h2 id="sec:conn_pbc"><span class="header-section-number">3.6</span> Periodic boundary conditions</h2>
+<p>Connections between layers with periodic boundary conditions are based on the following principles:</p>
+<ul>
+<li><p>Periodic boundary conditions are always applied in the pool layer. It is irrelevant whether the driver layer has periodic boundary conditions or not.</p></li>
+<li><p>By default, Topology does not accept masks that are wider than the pool layer when using periodic boundary conditions. Otherwise, one pool node could appear as multiple targets to the same driver node as the masks wraps several times around the layer. For layers with different extents in <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>- and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>-directions this means that the maximum layer size is determined by the smaller extension.</p></li>
+<li><p>Kernel, weight and delay functions always consider the shortest distance (displacement) between driver and pool node.</p></li>
+</ul>
+<p>In most physical systems simulated using periodic boundary conditions, interactions between entities are short-range. Periodic boundary conditions are well-defined in such cases. In neuronal network models with long-range interactions, periodic boundary conditions may not make sense. In general, we recommend to use periodic boundary conditions only when connection masks are significantly smaller than the layers they are applied to.</p>
+<h2 id="sec:prescribed_numbers"><span class="header-section-number">3.7</span> Prescribed number of connections</h2>
+<p>We have so far described how to connect layers by either connecting to all nodes inside the mask or by considering each pool node in turn and connecting it according to a given probability function. In both cases, the number of connections generated depends on mask and kernel.</p>
+<p>Many neuron models in the literature, in contrast, prescribe a certain <em>fan in</em> (number of incoming connections) or <em>fan out</em> (number of outgoing connections) for each node. You can achieve this in Topology by prescribing the number of connections for each driver node. For convergent connections, where the target layer is the driver layer, you thus achieve a constant fan in, for divergent connections a constant fan out.</p>
+<p>Connection generation now proceeds in a different way than before:</p>
+<ol type="1">
+<li><p>For each driver node, <code>ConnectLayers</code> randomly selects a node from the mask region in the pool layer, and creates a connection with the probability prescribed by the kernel. This is repeated until the requested number of connections has been created.</p></li>
+<li><p>Thus, if all nodes in the mask shall be connected with equal probability, you should not specify any kernel.</p></li>
+<li><p>If you specify a non-uniform kernel (e.g., Gaussian, linear, exponential), the connections will be distributed within the mask with the spatial profile given by the kernel.</p></li>
+<li><p>If you prohibit multapses (cf Sec. <a href="#sec:terminology" data-reference-type="ref" data-reference="sec:terminology">3.1.1</a>) and prescribe a number of connections greater than the number of pool nodes in the mask, <code>ConnectLayers</code> may get stuck in an infinite loop and NEST will hang. Keep in mind that the number of nodes within the mask may vary considerably for free layers with randomly placed nodes.</p></li>
+</ol>
+<p>The following code generates a network of 1000 randomly placed nodes and connects them with a fixed fan out of 50 outgoing connections per node distributed with a profile linearly decaying from unit probability to zero probability at distance <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.5</mn><annotation encoding="application/x-tex">0.5</annotation></semantics></math>. Multiple connections (multapses) between pairs of nodes are allowed, self-connections (autapses) prohibited. The probability of finding a connection at a certain distance is then given by the product of the probabilities for finding nodes at a certain distance with the kernel value for this distance. For the kernel and parameter values below we have <span id="eq:ptheo" style="display: inline-block; position: relative; width: 100%"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mtext mathvariant="normal">conn</mtext></msub><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mfrac><mn>12</mn><mi>π</mi></mfrac><mo>×</mo><mn>2</mn><mi>π</mi><mi>r</mi><mo>×</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mn>2</mn><mi>r</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>24</mn><mi>r</mi><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mn>2</mn><mi>r</mi><mo stretchy="false" form="postfix">)</mo><mspace width="2.0em"></mspace><mtext mathvariant="normal">for</mtext><mspace width="1.0em"></mspace><mn>0</mn><mo>≤</mo><mi>r</mi><mo>&lt;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mspace width="0.278em"></mspace><mi>.</mi></mrow><annotation encoding="application/x-tex">p_{\text{conn}}(d) = \frac{12}{\pi} \times 2\pi r \times (1-2r)
+ = 24 r (1-2r) \qquad \text{for} \quad 0\le r &lt; \frac{1}{2}\;.</annotation></semantics></math><span style="position: absolute; right: 0em; top: 50%; line-height:0; text-align: right">(2)</span></span>  The resulting distribution of distances between connected nodes is shown in Fig. <a href="#fig:conn6">16</a>.</p>
+<pre><code>pos = [[np.random.uniform(-1., 1.), np.random.uniform(-1., 1.)]
+       for j in range(1000)]
+ldict = {&#39;positions&#39;: pos, &#39;extent&#39;: [2., 2.],
+         &#39;elements&#39;: &#39;iaf_psc_alpha&#39;, &#39;edge_wrap&#39;: True}
+cdict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+         &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 1.0}},
+         &#39;kernel&#39;: {&#39;linear&#39;: {&#39;c&#39;: 1., &#39;a&#39;: -2., &#39;cutoff&#39;: 0.0}},
+         &#39;number_of_connections&#39;: 50,
+         &#39;allow_multapses&#39;: True, &#39;allow_autapses&#39;: False}</code></pre>
+<figure>
+<img src="user_manual_figures/conn6.png" alt="Figure 16: Distribution of distances between source and target for a network of 1000 randomly placed nodes, a fixed fan out of 50 connections and a connection probability decaying linearly from 1 to 0 at d=0.5. The red line is the expected distribution from Eq. 2." id="fig:conn6" /><figcaption><span>Figure 16:</span> Distribution of distances between source and target for a network of 1000 randomly placed nodes, a fixed fan out of 50 connections and a connection probability decaying linearly from 1 to 0 at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>=</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">d=0.5</annotation></semantics></math>. The red line is the expected distribution from Eq. <a href="#eq:ptheo">2</a>.</figcaption>
+</figure>
+<p>Functions determining weight and delay as function of distance/displacement work in just the same way as before when the number of connections is prescribed.</p>
+<h2 id="sec:conn_composite"><span class="header-section-number">3.8</span> Connecting composite layers</h2>
+<p>Connections between layers with composite elements are based on the following principles:</p>
+<ul>
+<li><p>All nodes within a composite element have the same coordinates, the coordinates of the element.</p></li>
+<li><p>All nodes within a composite element are treated equally. If, e.g., an element of the pool layer contains three nodes and connection probability is 1, then connections with all three nodes will be created. For probabilistic connection schemes, each of the three nodes will be considered individually.</p></li>
+<li><p>If only nodes of a given model within each element shall be considered as sources or targets then this can be achieved by adding a <code>'sources'</code> or <code>'targets'</code> entry to the connection dictionary, which specifies the model to connect.</p></li>
+</ul>
+<p>This is exemplified by the following code, which connects pyramidal cells (<code>pyr</code>) to interneurons (<code>in</code>) with a circular mask and uniform probability and interneurons to pyramidal cells with a rectangular mask unit probability.</p>
+<pre><code>nest.ResetKernel()
+nest.CopyModel(&#39;iaf_psc_alpha&#39;, &#39;pyr&#39;)
+nest.CopyModel(&#39;iaf_psc_alpha&#39;, &#39;in&#39;)
+ldict = {&#39;rows&#39;: 10, &#39;columns&#39;: 10, &#39;elements&#39;: [&#39;pyr&#39;, &#39;in&#39;]}
+cdict_p2i = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 0.5}},
+             &#39;kernel&#39;: 0.8,
+             &#39;sources&#39;: {&#39;model&#39;: &#39;pyr&#39;},
+             &#39;targets&#39;: {&#39;model&#39;: &#39;in&#39;}}
+cdict_i2p = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;rectangular&#39;: {&#39;lower_left&#39;: [-0.2, -0.2],
+                                      &#39;upper_right&#39;: [0.2, 0.2]}},
+             &#39;sources&#39;: {&#39;model&#39;: &#39;in&#39;},
+             &#39;targets&#39;: {&#39;model&#39;: &#39;pyr&#39;}}
+l = tp.CreateLayer(ldict)
+tp.ConnectLayers(l, l, cdict_p2i)
+tp.ConnectLayers(l, l, cdict_i2p)</code></pre>
+<h2 id="sec:conn_synapse"><span class="header-section-number">3.9</span> Synapse models and properties</h2>
+<p>By default, <code>ConnectLayers</code> creates connections using the default synapse model in NEST, <code>static_synapse</code>. You can specify a different model by adding a <code>'synapse_model'</code> entry to the connection dictionary, as in this example:</p>
+<pre><code>nest.ResetKernel()
+nest.CopyModel(&#39;iaf_psc_alpha&#39;, &#39;pyr&#39;)
+nest.CopyModel(&#39;iaf_psc_alpha&#39;, &#39;in&#39;)
+nest.CopyModel(&#39;static_synapse&#39;, &#39;exc&#39;, {&#39;weight&#39;: 2.0})
+nest.CopyModel(&#39;static_synapse&#39;, &#39;inh&#39;, {&#39;weight&#39;: -8.0})
+ldict = {&#39;rows&#39;: 10, &#39;columns&#39;: 10, &#39;elements&#39;: [&#39;pyr&#39;, &#39;in&#39;]}
+cdict_p2i = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 0.5}},
+             &#39;kernel&#39;: 0.8,
+             &#39;sources&#39;: {&#39;model&#39;: &#39;pyr&#39;},
+             &#39;targets&#39;: {&#39;model&#39;: &#39;in&#39;},
+             &#39;synapse_model&#39;: &#39;exc&#39;}
+cdict_i2p = {&#39;connection_type&#39;: &#39;divergent&#39;,
+             &#39;mask&#39;: {&#39;rectangular&#39;: {&#39;lower_left&#39;: [-0.2, -0.2],
+                                      &#39;upper_right&#39;: [0.2, 0.2]}},
+             &#39;sources&#39;: {&#39;model&#39;: &#39;in&#39;},
+             &#39;targets&#39;: {&#39;model&#39;: &#39;pyr&#39;},
+             &#39;synapse_model&#39;: &#39;inh&#39;}
+l = tp.CreateLayer(ldict)
+tp.ConnectLayers(l, l, cdict_p2i)
+tp.ConnectLayers(l, l, cdict_i2p)</code></pre>
+<p>You have to use synapse models if you want to set, e.g., the receptor type of connections or parameters for plastic synapse models. These can not be set in distance-dependent ways at present.</p>
+<h2 id="sec:dev_subregions"><span class="header-section-number">3.10</span> Connecting devices to subregions of layers</h2>
+<p>It is possible to connect stimulation and recording devices only to specific subregions of layers. A simple way to achieve this is to create a layer which contains only the device placed typically in its center. For connecting the device layer to a neuron layer, an appropriate mask needs to be specified and optionally also an anchor for shifting the center of the mask. As demonstrated in the following example, stimulation devices require the divergent connection type</p>
+<pre><code>nrn_layer = tp.CreateLayer({&#39;rows&#39;: 20,
+                            &#39;columns&#39;: 20,
+                            &#39;elements&#39;: &#39;iaf_psc_alpha&#39;})
+
+stim = tp.CreateLayer({&#39;rows&#39;: 1,
+                       &#39;columns&#39;: 1,
+                       &#39;elements&#39;: &#39;poisson_generator&#39;})
+
+cdict_stim = {&#39;connection_type&#39;: &#39;divergent&#39;,
+              &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 0.1},
+                       &#39;anchor&#39;: [0.2, 0.2]}}
+
+tp.ConnectLayers(stim, nrn_layer, cdict_stim)</code></pre>
+<p>while recording devices require the convergent connection type (see also Sec. <a href="#sec:rec_dev" data-reference-type="ref" data-reference="sec:rec_dev">3.11</a>):</p>
+<pre><code>rec = tp.CreateLayer({&#39;rows&#39;: 1,
+                      &#39;columns&#39;: 1,
+                      &#39;elements&#39;: &#39;spike_detector&#39;})
+
+cdict_rec = {&#39;connection_type&#39;: &#39;convergent&#39;,
+             &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 0.1},
+                      &#39;anchor&#39;: [-0.2, 0.2]}}
+
+tp.ConnectLayers(nrn_layer, rec, cdict_rec)</code></pre>
+<h2 id="sec:rec_dev"><span class="header-section-number">3.11</span> Layers and recording devices</h2>
+<p>Generally, one should not create a layer of recording devices, especially spike detectors, to record from a topology layer. Instead, create a single spike detector, and connect all neurons in the layer to that spike detector using a normal connect command:</p>
+<pre><code>rec = nest.Create(&#39;spike_detector&#39;)
+nrns = nest.GetLeaves(nrn_layer, local_only=True)[0]
+nest.Connect(nrns, rec)</code></pre>
+<p>Connections to a layer of recording devices as described in Sec. <a href="#sec:dev_subregions" data-reference-type="ref" data-reference="sec:dev_subregions">3.10</a>, such as spike detectors, are only possible using the convergent connection type without a fixed number of connections. Note that voltmeter and multimeter are not suffering from this restriction, since they are connected as sources, not as targets.</p>
+<h1 id="sec:inspection"><span class="header-section-number">4</span> Inspecting Layers</h1>
+<p>We strongly recommend that you inspect the layers created by Topology to be sure that node placement and connectivity indeed turned out as expected. In this chapter, we describe some functions that NEST and Topology provide to query and visualize networks, layers, and connectivity.</p>
+<h2 id="sec:queries"><span class="header-section-number">4.1</span> Query functions</h2>
+<p>The following table presents some query functions provided by NEST (<code>nest.</code>) and Topology (<code>tp.</code>). For detailed information about these functions, please see the online Python and SLI documentation.</p>
+<table style="width:98%;">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 64%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>nest.PrintNetwork()</code></td>
+<td style="text-align: left;">Print structure of network or subnet from NEST perspective.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>nest.GetConnections()</code></td>
+<td style="text-align: left;">Retrieve connections (all or for a given source or target); see also <a href="http://www.nest-simulator.org/connection_management" class="uri">http://www.nest-simulator.org/connection_management</a>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>nest.GetNodes()</code></td>
+<td style="text-align: left;">Applied to a layer, returns GIDs of the layer elements. For simple layers, these are the actual model neurons, for composite layers the top-level subnets.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>nest.GetLeaves()</code></td>
+<td style="text-align: left;">Applied to a layer, returns GIDs of all actual model neurons, ignoring subnets.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>tp.GetPosition()</code></td>
+<td style="text-align: left;">Return the spatial locations of nodes.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>tp.GetLayer()</code></td>
+<td style="text-align: left;">Return the layer to which nodes belong.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>tp.GetElement()</code></td>
+<td style="text-align: left;">Return the node(s) at the location(s) in the given grid-based layer(s).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>tp.GetTargetNodes()</code></td>
+<td style="text-align: left;">Obtain targets of a list of sources in a given target layer.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>tp.GetTargetPositions()</code></td>
+<td style="text-align: left;">Obtain positions of targets of a list of sources in a given target layer.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>tp.FindNearestElement()</code></td>
+<td style="text-align: left;">Return the node(s) closest to the location(s) in the given layer(s).</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>tp.FindCenterElement()</code></td>
+<td style="text-align: left;">Return GID(s) of node closest to center of layer(s).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>tp.Displacement()</code></td>
+<td style="text-align: left;">Obtain vector of lateral displacement between nodes, taking periodic boundary conditions into account.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>tp.Distance()</code></td>
+<td style="text-align: left;">Obtain vector of lateral distances between nodes, taking periodic boundary conditions into account.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>tp.DumpLayerNodes()</code></td>
+<td style="text-align: left;">Write layer element positions to file.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>tp.DumpLayerConnections()</code></td>
+<td style="text-align: left;">Write connectivity information to file. This function may be very useful to check that Topology created the correct connection structure.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>tp.SelectNodesByMask()</code></td>
+<td style="text-align: left;">Obtain GIDs of nodes/elements inside a masked area of a layer. Part of NEST since NEST 2.14.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sec:visualize"><span class="header-section-number">4.2</span> Visualization functions</h2>
+<p>Topology provides three functions to visualize networks:</p>
+<table style="width:85%;">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 59%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>PlotLayer()</code></td>
+<td style="text-align: left;">Plot nodes in a layer.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>PlotTargets()</code></td>
+<td style="text-align: left;">Plot all targets of a node in a given layer.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>PlotKernel()</code></td>
+<td style="text-align: left;">Add indication of mask and kernel to plot of layer. It does <em>not</em> wrap masks and kernels with respect to periodic boundary conditions. This function is usually called by <code>PlotTargets</code>.</td>
+</tr>
+</tbody>
+</table>
+<figure>
+<img src="user_manual_figures/vislayer.png" alt="Figure 17: 21\times 21 grid with divergent Gaussian projections onto itself. Blue circles mark layer elements, red circles connection targets of the center neuron (marked by large light-red circle). The large red circle is the mask, the dashed green lines mark \sigma, 2\sigma and 3\sigma of the Gaussian kernel." id="fig:vislayer" /><figcaption><span>Figure 17:</span> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>21</mn><mo>×</mo><mn>21</mn></mrow><annotation encoding="application/x-tex">21\times 21</annotation></semantics></math> grid with divergent Gaussian projections onto itself. Blue circles mark layer elements, red circles connection targets of the center neuron (marked by large light-red circle). The large red circle is the mask, the dashed green lines mark <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>σ</mi></mrow><annotation encoding="application/x-tex">2\sigma</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mi>σ</mi></mrow><annotation encoding="application/x-tex">3\sigma</annotation></semantics></math> of the Gaussian kernel.</figcaption>
+</figure>
+<p>The following code shows a practical example: A <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>21</mn><mo>×</mo><mn>21</mn></mrow><annotation encoding="application/x-tex">21\times21</annotation></semantics></math> network which connects to itself with divergent Gaussian connections. The resulting graphics is shown in Fig. <a href="#fig:vislayer">17</a>. All elements and the targets of the center neuron are shown, as well as mask and kernel.</p>
+<pre><code>l = tp.CreateLayer({&#39;rows&#39;: 21, &#39;columns&#39;: 21,
+                    &#39;elements&#39;: &#39;iaf_psc_alpha&#39;})
+conndict = {&#39;connection_type&#39;: &#39;divergent&#39;,
+            &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 0.4}},
+            &#39;kernel&#39;: {&#39;gaussian&#39;: {&#39;p_center&#39;: 1.0, &#39;sigma&#39;: 0.15}}}
+tp.ConnectLayers(l, l, conndict)
+fig = tp.PlotLayer(l, nodesize=80)
+ctr = tp.FindCenterElement(l)
+tp.PlotTargets(ctr, l, fig=fig,
+               mask=conndict[&#39;mask&#39;], kernel=conndict[&#39;kernel&#39;],
+               src_size=250, tgt_color=&#39;red&#39;, tgt_size=20,
+               kernel_color=&#39;green&#39;)</code></pre>
+<h1 id="ch:extending"><span class="header-section-number">5</span> Adding topology kernels and masks</h1>
+<p>This chapter will show examples of how to extend the topology module by adding custom kernel functions and masks. Some knowledge of the C++ programming language is needed for this. The functions will be added as a part of an extension module which is dynamically loaded into NEST. For more information on writing an extension module, see the section titled <a href="http://nest.github.io/nest-simulator/extension_modules">“Writing an Extension Module”</a> in the NEST Developer Manual. The basic steps required to get started are:</p>
+<ol type="1">
+<li><p>From the NEST source directory, copy directory examples/MyModule to somewhere outside the NEST source, build or install directories.</p></li>
+<li><p>Change to the new location of MyModule and prepare by issuing <code>./bootstrap.sh</code></p></li>
+<li><p>Leave MyModule and create a build directory for it, e.g., mmb next to it</p>
+<div class="sourceCode" id="cb55" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb55-1" title="1"><span class="bu">cd</span> ..</a>
+<a class="sourceLine" id="cb55-2" title="2"><span class="fu">mkdir</span> mmb</a>
+<a class="sourceLine" id="cb55-3" title="3"><span class="bu">cd</span> mmb</a></code></pre></div></li>
+<li><p>Configure. The configure process uses the script <code>nest-config</code> to find out where NEST is installed, where the source code resides, and which compiler options were used for compiling NEST. If <code>nest-config</code> is not in your path, you need to provided it explicitly like this</p>
+<div class="sourceCode" id="cb56" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb56-1" title="1"><span class="fu">cmake</span> -Dwith-nest=<span class="va">${NEST_INSTALL_DIR}</span>/bin/nest-config ../MyModule</a></code></pre></div></li>
+<li><p>MyModule will then be installed to <code>\${NEST_INSTALL_DIR}</code>. This ensures that NEST will be able to find initializing SLI files for the module. You should not use the <code>--prefix</code> to select a different installation destination. If you do, you must make sure to use addpath in SLI before loading the module to ensure that NEST will find the SLI initialization file for your module.</p></li>
+<li><p>Compile.</p>
+<div class="sourceCode" id="cb57" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb57-1" title="1"><span class="fu">make</span></a>
+<a class="sourceLine" id="cb57-2" title="2"><span class="fu">make</span> install</a></code></pre></div>
+<p>The previous command installed MyModule to the NEST installation directory, including help files generated from the source code.</p></li>
+</ol>
+<h2 id="adding-kernel-functions"><span class="header-section-number">5.1</span> Adding kernel functions</h2>
+<p>As an example, we will add a kernel function called <code>'affine2d'</code>, which will be linear (actually affine) in the displacement of the nodes, on the form <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>a</mi><msub><mi>d</mi><mi>x</mi></msub><mo>+</mo><mi>b</mi><msub><mi>d</mi><mi>y</mi></msub><mo>+</mo><mi>c</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">p(d) = a d_x + b d_y + c.</annotation></semantics></math> The kernel functions are provided by C++ classes subclassed from <code>nest::Parameter</code>. To enable subclassing, add the following lines at the top of the file <code>mymodule.h</code>:</p>
+<p><code>{.c++ language="C++"} #include "topologymodule.h" #include "parameter.h"</code></p>
+<p>Then, add the class definition, e.g. near the bottom of the file before the brace closing the namespace <code>mynest</code>:</p>
+<p>``` {.c++ language=“C++”} class Affine2DParameter: public nest::Parameter { public: Affine2DParameter(const DictionaryDatum&amp; d): Parameter(d), a_(1.0), b_(1.0), c_(0.0) { updateValue<double>(d, “a”, a_); updateValue<double>(d, “b”, b_); updateValue<double>(d, “c”, c_); }</p>
+<pre><code>double raw_value(const nest::Position&lt;2&gt;&amp; disp,
+                 librandom::RngPtr&amp;) const
+  {
+    return a_*disp[0] + b_*disp[1] + c_;
+  }
+
+nest::Parameter * clone() const
+  { return new Affine2DParameter(*this); }</code></pre>
+<p>private: double a_, b_, c_; }; ```</p>
+<p>The class contains a constructor, which reads the value of the parameters <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math> from the dictionary provided by the user. The function <code>updateValue</code> will do nothing if the given key is not in the dictionary, and the default values <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>=</mo><mi>b</mi><mo>=</mo><mn>1</mn><mo>,</mo><mspace width="0.222em"></mspace><mi>c</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">a=b=1,\ c=0</annotation></semantics></math> will be used.</p>
+<p>The overridden method <code>raw_value()</code> will return the actual value of the kernel function for the displacement given as the first argument, which is of type <code>nest::Position&lt;2&gt;</code>. The template argument 2 refers to a 2-dimensional position. You can also implement a method taking a <code>nest::Position&lt;3&gt;</code> as the first argument if you want to support 3-dimensional layers. The second argument, a random number generator, is not used in this example.</p>
+<p>The class also needs to have a <code>clone()</code> method, which will return a dynamically allocated copy of the object. We use the (default) copy constructor to implement this.</p>
+<p>To make the custom function available to the Topology module, you need to register the class you have provided. To do this, add the line</p>
+<p><code>{.c++ language="C++"} nest::TopologyModule::register_parameter&lt;Affine2DParameter&gt;("affine2d");</code></p>
+<p>to the function <code>MyModule::init()</code> in the file <code>mymodule.cpp</code>. Now compile and install the module by issuing</p>
+<div class="sourceCode" id="cb59" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb59-1" title="1"><span class="fu">make</span></a>
+<a class="sourceLine" id="cb59-2" title="2"><span class="fu">make</span> install</a></code></pre></div>
+<p>To use the function, the module must be loaded into NEST using <code>nest.Install()</code>. Then, the function is available to be used in connections, e.g.</p>
+<pre><code>nest.Install(&#39;mymodule&#39;)
+l = tp.CreateLayer({&#39;rows&#39;: 11, &#39;columns&#39;: 11, &#39;extent&#39;: [1.,1.],
+                        &#39;elements&#39;: &#39;iaf_psc_alpha&#39;})
+tp.ConnectLayers(l,l,{&#39;connection_type&#39;: &#39;convergent&#39;,
+            &#39;mask&#39;: {&#39;circular&#39;: {&#39;radius&#39;: 0.5}},
+            &#39;kernel&#39;: {&#39;affine2d&#39;: {&#39;a&#39;: 1.0, &#39;b&#39;: 2.0, &#39;c&#39;: 0.5}}})</code></pre>
+<h2 id="adding-masks"><span class="header-section-number">5.2</span> Adding masks</h2>
+<p>The process of adding a mask is similar to that of adding a kernel function. A subclass of <code>nest::Mask&lt;D&gt;</code> must be defined, where <code>D</code> is the dimension (2 or 3). In this case we will define a 2-dimensional elliptic mask by creating a class called <code>EllipticMask</code>. Note that elliptical masks are already part of NEST see Sec. <a href="#sec:conn_masks" data-reference-type="ref" data-reference="sec:conn_masks">3.3</a>. That elliptical mask is defined in a different way than what we will do here though, so this can still be used as an introductory example. First, we must include another header file:</p>
+<p><code>{.c++ language="C++"} #include "mask.h"</code></p>
+<p>Compared to the <code>Parameter</code> class discussed in the previous section, the <code>Mask</code> class has a few more methods that must be overridden:</p>
+<p>``` {.c++ language=“C++”} class EllipticMask : public nest::Mask&lt;2&gt; { public: EllipticMask(const DictionaryDatum&amp; d): rx_(1.0), ry_(1.0) { updateValue<double>(d, “r_x”, rx_); updateValue<double>(d, “r_y”, ry_); }</p>
+<pre><code>using Mask&lt;2&gt;::inside;
+
+// returns true if point is inside the ellipse
+bool inside(const nest::Position&lt;2&gt; &amp;p) const
+  { return p[0]*p[0]/rx_/rx_ + p[1]*p[1]/ry_/ry_ &lt;= 1.0; }
+
+// returns true if the whole box is inside the ellipse
+bool inside(const nest::Box&lt;2&gt; &amp;b) const
+  {
+    nest::Position&lt;2&gt; p = b.lower_left;
+
+    // Test if all corners are inside mask
+    if (not inside(p)) return false;       // (0,0)
+    p[0] = b.upper_right[0];
+    if (not inside(p)) return false;       // (0,1)
+    p[1] = b.upper_right[1];
+    if (not inside(p)) return false;       // (1,1)
+    p[0] = b.lower_left[0];
+    if (not inside(p)) return false;       // (1,0)
+
+    return true;
+  }
+
+// returns bounding box of ellipse
+nest::Box&lt;2&gt; get_bbox() const
+  {
+    nest::Position&lt;2&gt; ll(-rx_,-ry_);
+    nest::Position&lt;2&gt; ur(rx_,ry_);
+    return nest::Box&lt;2&gt;(ll,ur);
+  }
+
+nest::Mask&lt;2&gt; * clone() const
+  { return new EllipticMask(*this); }</code></pre>
+<p>protected: double rx_, ry_; }; ```</p>
+<p>The overridden methods include a test if a point is inside the mask, and for efficiency reasons also a test if a box is fully inside the mask. We implement the latter by testing if all the corners are inside, since our elliptic mask is convex. We must also define a function which returns a bounding box for the mask, i.e. a box completely surrounding the mask.</p>
+<p>Similar to kernel functions, the mask class must be registered with the topology module, and this is done by adding a line to the function <code>MyModule::init()</code> in the file <code>mymodule.cpp</code>:</p>
+<p><code>{.c++ language="C++"}     nest::TopologyModule::register_mask&lt;EllipticMask&gt;("elliptic");</code></p>
+<p>After compiling and installing the module, the mask is available to be used in connections, e.g.</p>
+<pre><code>nest.Install(&#39;mymodule&#39;)
+l = tp.CreateLayer({&#39;rows&#39;: 11, &#39;columns&#39;: 11, &#39;extent&#39;: [1.,1.],
+                        &#39;elements&#39;: &#39;iaf_psc_alpha&#39;})
+tp.ConnectLayers(l,l,{&#39;connection_type&#39;: &#39;convergent&#39;,
+            &#39;mask&#39;: {&#39;elliptic&#39;: {&#39;r_x&#39;: 0.5, &#39;r_y&#39;: 0.25}}})</code></pre>
+<h1 id="sec:changes"><span class="header-section-number">6</span> Changes between versions</h1>
+<p>In this chapter we give summaries of the most important changes in the Topology Module between different NEST versions, starting with the most recent ones.</p>
+<h2 id="changes-from-topology-2.14-to-2.16"><span class="header-section-number">6.1</span> Changes from Topology 2.14 to 2.16</h2>
+<p>The one important change in the Topology module from NEST version 2.14 to 2.16 was the inclusion of rotated masks:</p>
+<ul>
+<li>Rotation of <code>rectangular/box</code> and <code>elliptical/ellipsoidal</code> masks is now possible. NEST offers rotation in two directions, from the x-axis towards the y-axis, and from the z-axis away from the y-axis. To specify the former use the variable <code>azimuth_angle</code> and for the latter, use <code>polar_angle</code>.</li>
+</ul>
+<h2 id="changes-from-topology-2.12-to-2.14"><span class="header-section-number">6.2</span> Changes from Topology 2.12 to 2.14</h2>
+<p>This is a short summary of the most important changes in the Topology Module from NEST version 2.12 to 2.14.</p>
+<ul>
+<li><p>Elliptical and ellipsoidal masks have been added to NEST with NEST 2.14. To specify the mask, the <code>major_axis</code>, <code>minor_axis</code> and (for ellipsoidal masks) <code>polar_axis</code> must be specified.</p></li>
+<li><p>It is now possible to obtain the GIDs inside a masked area with the function SelectNodesByMask.</p></li>
+</ul>
+<h2 id="changes-from-topology-2.0-to-2.2"><span class="header-section-number">6.3</span> Changes from Topology 2.0 to 2.2</h2>
+<p>This is a short summary of the most important changes in the Topology Module from NEST version 2.0 to 2.2.</p>
+<ul>
+<li><p>Nested layers are no longer supported.</p></li>
+<li><p>Subnets are no longer used inside composite layers. A call to GetElement for a composite layer will now return a list of GIDs for the nodes at the position rather than a single subnet GID.</p></li>
+<li><p>Positions in layers may now be 3-dimensional.</p></li>
+<li><p>The functions GetPosition, Displacement and Distance now only works for nodes local to the current MPI process, if used in a MPI-parallel simulation.</p></li>
+<li><p>It is now possible to add kernel functions and masks to the Topology module through an extension module. Please see Chapter <a href="#ch:extending" data-reference-type="ref" data-reference="ch:extending">5</a> for examples.</p></li>
+</ul>
+<h2 id="changes-from-topology-1.9-to-2.0"><span class="header-section-number">6.4</span> Changes from Topology 1.9 to 2.0</h2>
+<p>This is a short summary of the most important changes in the NEST Topology Module from the 1.9-xxxx to the 2.0 version.</p>
+<ul>
+<li><p>ConnectLayer is now called ConnectLayers</p></li>
+<li><p>Several other functions changed names, and there are many new functions. Please see Ch. <a href="#sec:inspection" data-reference-type="ref" data-reference="sec:inspection">4</a> for an overview.</p></li>
+<li><p>All nest.topology functions now require lists of GIDs as input, not "naked" GIDs</p></li>
+<li><p>There are a number of new functions in nest.topology, I tried to write good doc strings for them</p></li>
+<li><p>For grid based layers (ie those with /rows and /columns), we have changed the definition of "extent": Previously, nodes were placed on the edges of the extent, so if you had an extend of 2 (in x-direction) and 3 nodes, these had x-coordinates -1, 0, 1. The grid constant was extent/(num_nodes - 1).</p>
+<p>Now, we define the grid constant as extent/num_nodes, center the nodes about 0 and thus add a space of half a grid constant between the outermost nodes and the boundary of the extent. If you want three nodes at -1,0,1 you thus have to set the extent to 3, i.e., stretching from -1.5 to 1.5.</p>
+<p>The main reason for this change was that topology always added this padding silently when you used periodic boundary conditions (otherwise, neurons are the left and right edge would have been in identical locations, not what one wants).</p></li>
+<li><p>The semantics of the <code>anchor</code> entry for kernel functions has changed: the anchor now specifies the center of the probability distribution relative to the driver node. This is consistent with the semantics for free masks, see Sec. <a href="#sec:conn_masks" data-reference-type="ref" data-reference="sec:conn_masks">3.3</a> and <a href="#sec:conn_kernels" data-reference-type="ref" data-reference="sec:conn_kernels">3.4</a>.</p></li>
+<li><p>Functions computing connection probabilities, weights and delays as functions of distance between source and target nodes now handle periodic boundary conditions correctly.</p></li>
+<li><p>Masks with a diameter larger than the diameter of the layer they are applied to are now prohibited by default. This avoids multiple connections when masks overwrap.</p></li>
+</ul>
+<h1 id="references" class="unnumbered">References</h1>
+<div id="refs" class="references">
+<div id="ref-Gewa:2007">
+<p>1. Gewaltig M-O, Diesmann M (2007). NEST (neural simulation tool). Scholarpedia 2 (4): 1430.</p>
+</div>
+<div id="ref-Eppl:2008">
+<p>2. Eppler JM, Helias M, Muller E et al. (2008). PyNEST: A convenient interface to the NEST simulator. Front Neuroinformatics 2 12. doi: <a href="https://doi.org/10.3389/neuro.11.012.2008">10.3389/neuro.11.012.2008</a>.</p>
+</div>
+<div id="ref-Nord:2009">
+<p>3. Nordlie E, Gewaltig M-O, Plesser HE (2009). Towards reproducible descriptions of neuronal network models. PLoS Comput Biol 5 (8): e1000456. doi: <a href="https://doi.org/10.1371/journal.pcbi.1000456">10.1371/journal.pcbi.1000456</a>.</p>
+</div>
+</div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>NEST is available under an open source license at <a href="www.nest-simulator.org">www.nest-simulator.org</a>.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>See <span class="citation" data-cites="Nord:2009">[<a href="#ref-Nord:2009">3</a>]</span>(456) for suggestions on how to describe network models.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>You can also use standard NEST connection functions to connect nodes in Topology layers.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>See Sec. <a href="#sec:verysimple" data-reference-type="ref" data-reference="sec:verysimple">2.1.1</a> for the distinction between layer coordinates and grid indices<a href="#fnref4" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+</body>
+</html>

@@ -54,6 +54,18 @@ rule expand_listings:
         ./insert.py '{input}' >'{output}'
         '''
 
+rule bib2yml:
+    ''' This rule converts the bibtex bibliography to yaml
+    '''
+    input:
+        nest_bibtex = '../../extras/bibliography/nest.bib',
+    output:
+        nest_yaml ='nest_bib.yaml',
+    shell:
+        '''
+        pandoc-citeproc --bib2yaml '{input.nest_bibtex}' > '{output.nest_yaml}'
+        '''
+
 rule md2html:
     input:
         file = 'Topology_UserManual.md',
@@ -63,7 +75,15 @@ rule md2html:
         'Topology_UserManual.html'
     shell:
         '''
-        pandoc -f {SRCFMT} -t html --listings --filter pandoc-citeproc --standalone --toc --mathml --css '{input.css}' '{input.file}' '{input.meta}' -o '{output}'
+        pandoc -f {SRCFMT} -t html \
+               --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos  \
+               --number-sections \
+               --filter pandoc-citeproc --csl nest_style.csl --bibliography nest_bib.yaml \
+               --standalone \
+               --toc \
+               --mathml \
+               --css '{input.css}' \
+               '{input.file}' '{input.meta}' -o '{output}'
         '''
 
 rule md2pdf:
@@ -75,7 +95,13 @@ rule md2pdf:
         'Topology_UserManual.pdf'
     shell:
         '''
-        pandoc -f {SRCFMT} -t latex --listings --toc '{input.file}' '{input.meta}' -o '{output}'
+        pandoc -f {SRCFMT} -t latex \
+               --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos \
+               --number-sections \
+               --pdf-engine=xelatex \
+               --filter pandoc-citeproc --csl nest_style.csl --bibliography nest_bib.yaml \
+               --listings --toc \
+               '{input.file}' '{input.meta}' -o '{output}'
         '''
 
 rule md2rst:
@@ -86,7 +112,11 @@ rule md2rst:
         'Topology_UserManual.rst',
     shell:
         '''
-        pandoc -f {SRCFMT} -t rst --listings --toc '{input.file}' '{input.meta}' -o '{output}'
+        pandoc -f {SRCFMT} -t rst \
+               --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos \
+               --filter pandoc-citeproc --csl nest_style.csl --bibliography nest_bib.yaml \
+               --toc \
+               '{input.file}' '{input.meta}' -o '{output}'
         '''
 
 
@@ -98,7 +128,12 @@ rule md2github:
         'README.md',
     shell:
         '''
-        pandoc -f {SRCFMT} -t markdown_github --listings --toc '{input.file}' '{input.meta}' -o '{output}'
+        pandoc -f {SRCFMT} -t gfm \
+               --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos \
+               --number-sections \
+               --filter pandoc-citeproc --csl nest_style.csl --bibliography nest_bib.yaml\
+               --listings --toc \
+               '{input.file}' '{input.meta}' -o '{output}'
         '''
 
 rule make_patch:

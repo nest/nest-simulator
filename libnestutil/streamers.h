@@ -42,6 +42,7 @@ std::ostream& operator<<( std::ostream& os, const std::vector< T >& vec )
       os << ", ";
     }
     os << element;
+    first = false;
   }
   return os << "]";
 }

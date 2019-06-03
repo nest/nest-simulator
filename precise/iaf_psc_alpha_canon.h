@@ -47,6 +47,9 @@ namespace nest
 Name: iaf_psc_alpha_canon - Leaky integrate-and-fire neuron
 with alpha-shape postsynaptic currents; canoncial implementation.
 
+This model is deprecated and will be removed in NEST 3. Please use
+``iaf_psc_alpha_ps`` instead.
+
 Description:
 
 iaf_psc_alpha_canon is the "canonical" implementatoin of the leaky
@@ -126,7 +129,7 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso: iaf_psc_alpha, iaf_psc_alpha_presc, iaf_psc_exp_ps
+SeeAlso: iaf_psc_alpha_ps, iaf_psc_alpha, iaf_psc_alpha_presc, iaf_psc_exp_ps
 */
 class iaf_psc_alpha_canon : public Archiving_Node
 {

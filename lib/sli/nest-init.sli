@@ -708,6 +708,24 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+/ResetNetwork
+<< /deprecation_warning true >>
+Options
+
+/ResetNetwork
+{
+  << >> begin
+  /ResetNetwork /deprecation_warning GetOption true eq
+  {
+    (SLI function ResetNetwork is deprecated and will be removed in NEST 3.0.) M_DEPRECATED message
+    /ResetNetwork << /deprecation_warning false >> SetOptions
+  } if
+  
+  ::ResetNetwork
+} bind def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 /** @BeginDocumentation
    Name: LayoutNetwork - Create a multidimensional network.
 

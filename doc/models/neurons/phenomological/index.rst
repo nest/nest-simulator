@@ -39,7 +39,7 @@ Phenomological Neurons
 Examples using Phenomological Neurons
 ---------------------------------------
 
-* `IF Curve <http://www.nest-simulator.org/py_sample/if_curve>`_
-* `Brette Gerstner Fig 2c <http://www.nest-simulator.org/py_sample/brette_gerstner_fig_2c>`_
-* `Brette Gerstner Fig 3d <http://www.nest-simulator.org/py_sample/brette_gerstner_fig_3d>`_
+* `IF Curve <https://www.nest-simulator.org/py_sample/if_curve>`_
+* `Brette Gerstner Fig 2c <https://www.nest-simulator.org/py_sample/brette_gerstner_fig_2c>`_
+* `Brette Gerstner Fig 3d <https://www.nest-simulator.org/py_sample/brette_gerstner_fig_3d>`_
 

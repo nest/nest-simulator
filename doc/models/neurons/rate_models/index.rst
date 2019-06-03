@@ -26,11 +26,11 @@ Linear Rate Model
 
 .. note::
 
-    Synapse Model: `Rate Connection <http://www.nest-simulator.org/py_sample/../../synapses/rate_connection_instantaneous>`
+    Synapse Model: `Rate Connection <https://www.nest-simulator.org/py_sample/../../synapses/rate_connection_instantaneous>`
 
 Examples using Rate-based Neurons
 -----------------------------------
 
-* `Rate Neuron DM <http://www.nest-simulator.org/py_sample/rate_neuron_dm>`_
-* `Brunel Siegert <http://www.nest-simulator.org/py_sample/brunel_siegert_nest>`_
-* `Linear Rate IPN <http://www.nest-simulator.org/py_sample/lin_rate_ipn_network>`_
+* `Rate Neuron DM <https://www.nest-simulator.org/py_sample/rate_neuron_dm>`_
+* `Brunel Siegert <https://www.nest-simulator.org/py_sample/brunel_siegert_nest>`_
+* `Linear Rate IPN <https://www.nest-simulator.org/py_sample/lin_rate_ipn_network>`_

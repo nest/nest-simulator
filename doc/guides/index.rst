@@ -6,11 +6,11 @@ Here you can find detailed look into a variety of topics in NEST.
 .. toctree::
     :maxdepth: 1
 
-    analog_recording_with_multimeter
     connection_management
+    running_simulations
     parallel_computing
     random_numbers
-    scheduling_and_simulation_flow
+    analog_recording_with_multimeter
     simulations_with_gap_junctions
     simulations_with_precise_spike_times
     using_nest_with_music

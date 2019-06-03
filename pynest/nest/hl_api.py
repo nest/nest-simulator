@@ -23,49 +23,7 @@
 High-level API of PyNEST Module
 """
 
-import os
-import sys
-
-# We search through the subdirectory "lib" of the "nest" module
-# directory and import the content of all Python files therein into
-# the global namespace. This makes the API functions of PyNEST itself
-# and those of extra modules available to the user.
-
-
-def _pkg_attrs(pkg):
-    # return all package attributes that
-    # from $pkg import *
-    # would put in the module namespace $pkg
-    # see https://docs.python.org/3/reference/simple_stmts.html#import
-    try:
-        # if there's an "__all__", return that
-        return pkg.__all__
-    except AttributeError:
-        # otherwise, return everything at top level that doesn't start with `_`
-        return (attr for attr in pkg.__dict__ if attr[0] != '_')
-
-
-def _import_names(pkg, mod_dict):
-    # import * names from pkg to the dictionary of mod_dict
-    for attr in _pkg_attrs(pkg):
-        mod_dict[attr] = getattr(pkg, attr)
-
-
-def _import_libs(mod_file, mod_dict, path, prefix, ignore_modules=frozenset()):
-    # from .$prefix.$x import *
-    # relative to mod_file which is the filename from which mod_dict was read
-    # where $x.py is all files ./$path/*.py not starting with __
-    libdir = os.path.join(os.path.dirname(mod_file), path)
-    for name in os.listdir(libdir):
-        if not name.endswith(".py") or name.startswith('__'):
-            continue  # not a regular python module
-
-        pkg_name = "{}.{}".format(prefix, name[:-3])
-        if pkg_name in ignore_modules:
-            continue  # this package is not to be imported dynamically
-
-        pkg = __import__(pkg_name, mod_dict, locals(), ['*'], 1)
-        _import_names(pkg, mod_dict)
+from . import import_libs as _il
 
 #############################
 # insert static imports here
@@ -79,9 +37,7 @@ _ignore_modules = set()
 # then do
 #   `from .libs.$X import *`
 # for every module in ./libs/$X.py that is left
-_import_libs(__file__, globals(),
-             'lib', 'lib',
-             _ignore_modules)
+_il.import_libs(__file__, globals(), 'lib', ignore=_ignore_modules)
 ############################
 
 # With '__all__' we provide an explicit index of the package. Without any
@@ -119,9 +75,10 @@ __all__ = [
     'Models',
     'NumProcesses',
     'Prepare',
+    'PrintNetwork',  # deprecated
     'Rank',
     'ResetKernel',
-    'ResetNetwork',
+    'ResetNetwork',  # deprecated
     'Run',
     'RunManager',
     'SetAcceptableLatency',
@@ -132,8 +89,11 @@ __all__ = [
     'SetStructuralPlasticityStatus',
     'Simulate',
     'authors',
+    'get_verbosity',
     'help',
     'helpdesk',
+    'message',
+    'set_verbosity',
     'sysinfo',
     'version',
 ]

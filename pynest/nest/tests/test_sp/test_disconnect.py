@@ -40,7 +40,7 @@ class TestDisconnectSingle(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.hl_api.set_verbosity('M_ERROR')
+        nest.set_verbosity('M_ERROR')
         self.num_procs = 1
         if mpi_test:
             self.comm = MPI.COMM_WORLD

@@ -452,7 +452,7 @@ populations = (retina, Tp, Rp, Vp_h, Vp_v)
 # ! ----------
 
 # ! We can now look at the network using `PrintNetwork`:
-nest.hl_api.PrintNetwork()
+nest.PrintNetwork()
 
 # ! We can also try to plot a single layer in a network. For
 # ! simplicity, we use Rp, which has only a single neuron per position.

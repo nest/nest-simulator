@@ -25,7 +25,7 @@ sections of this primer:
    networks <part_4_topologically_structured_networks>`
 
 More advanced examples can be found at `Example
-Networks <http://www.nest-simulator.org/more-example-networks/>`__, or
+Networks <https://www.nest-simulator.org/more-example-networks/>`__, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 

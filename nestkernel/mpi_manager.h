@@ -74,8 +74,13 @@ public:
 
   void init_mpi( int* argc, char** argv[] );
 #ifdef HAVE_MPI
-  void set_communicator(MPI_Comm);
-  MPI_Comm get_communicator() { return comm; };
+  void set_communicator( MPI_Comm );
+
+  MPI_Comm
+  get_communicator()
+  {
+    return comm;
+  };
 #endif
 
   /**
@@ -324,7 +329,7 @@ private:
   std::vector< int > comm_step_;
   unsigned int COMM_OVERFLOW_ERROR;
 
-//! Variable to hold the MPI communicator to use (the datatype matters).
+  //! Variable to hold the MPI communicator to use (the datatype matters).
   MPI_Comm comm;
   MPI_Datatype MPI_OFFGRID_SPIKE;
 

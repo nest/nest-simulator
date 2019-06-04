@@ -165,8 +165,8 @@ JME: Update for NESTIO!! All of this documentation is kind of outdated
                    when not recording to memory.
   /events        - Dictionary with elements /senders (sender GID), /times (spike
                    times in ms or steps, depending on /time_in_steps) and
-                   /offsets (only if /time_in_steps is true). All data stored in memory
-                   is erased when /n_events is set to 0.
+                   /offsets (only if /time_in_steps is true). All data stored in
+                   memory is erased when /n_events is set to 0.
 
   SeeAlso: Device, StimulatingDevice
 */
@@ -216,7 +216,6 @@ JME: Update for NESTIO!! All of this documentation is kind of outdated
 class RecordingDevice : public DeviceNode, public Device
 {
 public:
-
   void
   init_state( const RecordingDevice& pr )
   {
@@ -262,7 +261,9 @@ public:
   void get_status( DictionaryDatum& ) const;
 
 protected:
-  void write( const Event&, const std::vector< double >&, const std::vector< long >& );
+  void write( const Event&,
+    const std::vector< double >&,
+    const std::vector< long >& );
   void enroll( const std::vector< Name >&, const std::vector< Name >& );
 
 private:
@@ -323,27 +324,29 @@ RecordingDevice::get_time_in_steps() const
 
 inline void
 RecordingDevice::write( const Event& event,
-			const std::vector< double >& double_values,
-			const std::vector< long >& long_values)
+  const std::vector< double >& double_values,
+  const std::vector< long >& long_values )
 {
-  //JME: The number of events needs to be stored on a per-backend basis
+  // JME: The number of events needs to be stored on a per-backend basis
   ++S_.n_events_;
   for ( auto& backend_token : P_.record_to_ )
   {
     Name backend_name( getValue< std::string >( backend_token ) );
-    kernel().io_manager.write( backend_name, *this, event, double_values, long_values );
+    kernel().io_manager.write(
+      backend_name, *this, event, double_values, long_values );
   }
 }
 
 inline void
 RecordingDevice::enroll( const std::vector< Name >& double_value_names,
-			 const std::vector< Name >& long_value_names)
+  const std::vector< Name >& long_value_names )
 {
-  //JME: also handle disenroll
+  // JME: also handle disenroll
   for ( auto& backend_token : P_.record_to_ )
   {
     Name backend_name( getValue< std::string >( backend_token ) );
-    kernel().io_manager.enroll_recorder( backend_name, *this, double_value_names, long_value_names );
+    kernel().io_manager.enroll_recorder(
+      backend_name, *this, double_value_names, long_value_names );
   }
 }
 

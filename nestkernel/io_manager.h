@@ -103,12 +103,23 @@ public:
 
   void clear_recording_backends( const RecordingDevice& );
 
-  void write( Name, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
+  void write( Name,
+    const RecordingDevice&,
+    const Event&,
+    const std::vector< double >&,
+    const std::vector< long >& );
 
-  void enroll_recorder( Name, const RecordingDevice&, const std::vector< Name >&, const std::vector< Name >& );
+  void enroll_recorder( Name,
+    const RecordingDevice&,
+    const std::vector< Name >&,
+    const std::vector< Name >& );
 
-  void get_recording_device_status( Name, const RecordingDevice&, DictionaryDatum& );
-  void set_recording_device_status( Name, const RecordingDevice&, const DictionaryDatum& );
+  void
+  get_recording_device_status( Name, const RecordingDevice&, DictionaryDatum& );
+
+  void set_recording_device_status( Name,
+    const RecordingDevice&,
+    const DictionaryDatum& );
 
 private:
   std::string data_path_;   //!< Path for all files written by devices

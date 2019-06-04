@@ -104,15 +104,8 @@ void
 nest::weight_recorder::calibrate()
 {
   RecordingDevice::calibrate();
-  RecordingDevice::enroll(
-    {
-      nest::names::weights,
-    }, {
-      nest::names::targets,
-      nest::names::receptors,
-      nest::names::ports,
-    }
-  );
+  RecordingDevice::enroll( { nest::names::weights },
+    { nest::names::targets, nest::names::receptors, nest::names::ports } );
 }
 
 void
@@ -166,22 +159,21 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   {
     bool senders_set = not P_.senders_.empty();
     bool sender_gid_in_senders = std::binary_search(
-	P_.senders_.begin(), P_.senders_.end(), e.get_sender_gid() );
+      P_.senders_.begin(), P_.senders_.end(), e.get_sender_gid() );
     bool targets_set = not P_.targets_.empty();
     bool target_gid_in_targets = std::binary_search(
-	P_.targets_.begin(), P_.targets_.end(), e.get_receiver_gid() );
-    
+      P_.targets_.begin(), P_.targets_.end(), e.get_receiver_gid() );
+
     if ( ( senders_set and not sender_gid_in_senders )
-	 or ( targets_set  and not target_gid_in_targets ) )
+      or ( targets_set and not target_gid_in_targets ) )
     {
       return;
     }
 
     RecordingDevice::write( e,
       { e.get_weight() },
-      { static_cast<long>(e.get_receiver_gid()),
-        static_cast<long>(e.get_rport()),
-        static_cast<long>(e.get_port()) }
-    );
+      { static_cast< long >( e.get_receiver_gid() ),
+       static_cast< long >( e.get_rport() ),
+       static_cast< long >( e.get_port() ) } );
   }
 }

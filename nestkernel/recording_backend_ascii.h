@@ -49,8 +49,8 @@ public:
   ~RecordingBackendASCII() throw();
 
   void enroll( const RecordingDevice& device,
-	       const std::vector< Name >& double_value_names,
-	       const std::vector< Name >& long_value_names );
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names );
 
   /**
    * Flush files after a single call to Run
@@ -69,9 +69,9 @@ public:
   void synchronize();
 
   void write( const RecordingDevice&,
-	      const Event&,
-	      const std::vector< double >&,
-	      const std::vector< long >& );
+    const Event&,
+    const std::vector< double >&,
+    const std::vector< long >& );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
@@ -82,7 +82,7 @@ public:
   void initialize();
 
   void get_device_status( const RecordingDevice& device,
-			  DictionaryDatum& ) const;
+    DictionaryDatum& ) const;
 
 private:
   /**
@@ -96,8 +96,8 @@ private:
 
   struct Parameters_
   {
-    long precision_;           //!< Number of decimal places to use for values
-    std::string file_ext_;     //!< File name extension to use, without leading "."
+    long precision_;       //!< Number of decimal places to use for values
+    std::string file_ext_; //!< File name extension to use, without leading "."
 
     Parameters_();
 

@@ -67,12 +67,18 @@ SLIInterpreter& get_engine();
 #ifdef _IS_PYNEST
 #include <Python.h>
 // Call only with GIL
-void set_communicator(PyObject*);
+void set_communicator( PyObject* );
+
+inline bool
+nest_has_mpi4py()
+{
 #ifdef HAVE_MPI4PY
-inline bool nest_has_mpi4py() {return true;}
+  return true;
 #else
-inline bool nest_has_mpi4py() {return false;}
+  return false;
 #endif // HAVE_MPI4PY
+}
+
 #endif // _IS_PYNEST
 
 #endif // #ifndef NEST_STARTUP_H

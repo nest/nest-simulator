@@ -27,7 +27,7 @@
 #include "recording_device.h"
 #include "vp_manager_impl.h"
 
-//includes from sli:
+// includes from sli:
 #include "dictutils.h"
 
 #include "recording_backend_ascii.h"
@@ -43,8 +43,8 @@ nest::RecordingBackendASCII::~RecordingBackendASCII() throw()
 
 void
 nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
-				     const std::vector< Name >& double_value_names,
-				     const std::vector< Name >& long_value_names )
+  const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names )
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
@@ -52,18 +52,19 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
   file_map::value_type::iterator file_it = files_[ t ].find( gid );
   if ( file_it != files_[ t ].end() ) // already enrolled
   {
-    files_[ t ].erase(file_it); 
+    files_[ t ].erase( file_it );
   }
 
   std::string filename = build_filename_( device );
-  
+
   std::ifstream test( filename.c_str() );
   if ( test.good() && not kernel().io_manager.overwrite_files() )
   {
     std::string msg = String::compose(
       "The device file '%1' exists already and will not be overwritten. "
       "Please change data_path, data_prefix or label, or set /overwrite_files "
-      "to true in the root node.", filename );
+      "to true in the root node.",
+      filename );
     LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 
     files_[ t ].insert( std::make_pair( gid,
@@ -72,7 +73,7 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
     throw IOError();
   }
   test.close();
-  
+
   std::ofstream* file = new std::ofstream( filename.c_str() );
   ( *file ) << std::fixed << std::setprecision( P_.precision_ );
 
@@ -81,7 +82,8 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
     std::string msg = String::compose(
       "I/O error while opening file '%1'. "
       "This may be caused by too many open files in networks "
-      "with many recording devices and threads.", filename );
+      "with many recording devices and threads.",
+      filename );
     LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 
     files_[ t ].insert( std::make_pair( gid,
@@ -93,23 +95,23 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
   ( *file ) << "# sender";
   if ( device.get_time_in_steps() )
   {
-      ( *file ) << "\ttime(step)\toffset";
+    ( *file ) << "\ttime(step)\toffset";
   }
   else
   {
-      ( *file ) << "\ttime(ms)";
+    ( *file ) << "\ttime(ms)";
   }
-  for ( auto& val: double_value_names )
+  for ( auto& val : double_value_names )
   {
     ( *file ) << "\t" << val;
   }
-  for ( auto& val: long_value_names )
+  for ( auto& val : long_value_names )
   {
     ( *file ) << "\t" << val;
   }
   ( *file ) << std::endl;
 
-  //enroll the device
+  // enroll the device
   files_[ t ].insert( std::make_pair( gid, std::make_pair( filename, file ) ) );
 }
 
@@ -134,9 +136,9 @@ nest::RecordingBackendASCII::post_run_cleanup()
   }
 }
 
-//JME: Document that Simulate used to append to files previously
-//unless close_after_simulate (default:false) was set to true and will
-//overwrite files now with nestio.
+// JME: Document that Simulate used to append to files previously
+// unless close_after_simulate (default:false) was set to true and will
+// overwrite files now with nestio.
 
 void
 nest::RecordingBackendASCII::finalize()
@@ -149,9 +151,9 @@ nest::RecordingBackendASCII::finalize()
     {
       if ( f->second.second != NULL )
       {
-	f->second.second->close();
-	delete f->second.second;
-	f->second.second = NULL;
+        f->second.second->close();
+        delete f->second.second;
+        f->second.second = NULL;
       }
     }
   }
@@ -164,9 +166,9 @@ nest::RecordingBackendASCII::synchronize()
 
 void
 nest::RecordingBackendASCII::write( const RecordingDevice& device,
-				    const Event& event,
-				    const std::vector< double >& double_values,
-				    const std::vector< long >& long_values )
+  const Event& event,
+  const std::vector< double >& double_values,
+  const std::vector< long >& long_values )
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
@@ -190,12 +192,12 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
   {
     file << stamp.get_ms() - offset;
   }
-  
-  for ( auto& val: double_values )
+
+  for ( auto& val : double_values )
   {
     file << "\t" << val;
   }
-  for ( auto& val: long_values )
+  for ( auto& val : long_values )
   {
     file << "\t" << val;
   }
@@ -235,8 +237,8 @@ nest::RecordingBackendASCII::build_filename_(
   int vp = device.get_vp();
   int gid = device.get_gid();
 
-  basename << "-" << std::setfill( '0' ) << std::setw( giddigits ) << gid
-	   << "-" << std::setfill( '0' ) << std::setw( vpdigits ) << vp;
+  basename << "-" << std::setfill( '0' ) << std::setw( giddigits ) << gid << "-"
+           << std::setfill( '0' ) << std::setw( vpdigits ) << vp;
 
   return basename.str() + '.' + P_.file_ext_;
 }
@@ -269,7 +271,7 @@ void
 nest::RecordingBackendASCII::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );  // throws if BadProperty
+  ptmp.set( d );         // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

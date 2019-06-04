@@ -53,8 +53,8 @@ public:
   }
 
   void enroll( const RecordingDevice& device,
-	       const std::vector< Name >& double_value_names,
-	       const std::vector< Name >& long_value_names );
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names );
 
   /**
    * Finalization function. Nothing has to be finalized in case of the
@@ -69,9 +69,9 @@ public:
   void synchronize();
 
   void write( const RecordingDevice&,
-	      const Event&,
-	      const std::vector< double >&,
-	      const std::vector< long >& );
+    const Event&,
+    const std::vector< double >&,
+    const std::vector< long >& );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;

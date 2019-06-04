@@ -59,15 +59,15 @@ class RecordingBackendSocket : public RecordingBackend
 public:
   RecordingBackendSocket();
 
-   ~RecordingBackendSocket() throw();
+  ~RecordingBackendSocket() throw();
 
   /**
    * Function called by spike detectors using this recording
    * backend. This function opens the socket.
    */
-  void enroll( const RecordingDevice&,         // device
-               const std::vector< Name >&,     // double value names
-               const std::vector< Name >& );   // long value names
+  void enroll( const RecordingDevice&, // device
+    const std::vector< Name >&,        // double value names
+    const std::vector< Name >& );      // long value names
 
   /**
    * Flush files after a single call to Run
@@ -88,10 +88,10 @@ public:
   /**
    * Functions to write data to file.
    */
-  void write( const RecordingDevice&,          // device
-              const Event&,                    // event
-              const std::vector< double >&,    // double values
-              const std::vector< long >& );    // long values
+  void write( const RecordingDevice&, // device
+    const Event&,                     // event
+    const std::vector< double >&,     // double values
+    const std::vector< long >& );     // long values
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
@@ -102,11 +102,10 @@ public:
   void initialize();
 
 private:
-
   struct Parameters_
   {
-    std::string ip_;      //!< The IP address the socket binds to
-    long port_;           //!< The port the socket binds to
+    std::string ip_; //!< The IP address the socket binds to
+    long port_;      //!< The port the socket binds to
 
     Parameters_();
 

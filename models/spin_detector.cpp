@@ -69,19 +69,20 @@ void
 nest::spin_detector::calibrate()
 {
   RecordingDevice::calibrate();
-  RecordingDevice::enroll( RecordingBackend::NO_DOUBLE_VALUE_NAMES,
-	{ nest::names::state }
-	 );
+  RecordingDevice::enroll(
+    RecordingBackend::NO_DOUBLE_VALUE_NAMES, { nest::names::state } );
 }
 
 void
 nest::spin_detector::update( Time const&, const long, const long )
 {
-    if (last_in_gid_ != 0)    // if last_* is empty we dont write
-    {
-      RecordingDevice::write(last_event_, RecordingBackend::NO_DOUBLE_VALUES, {static_cast<int>(last_event_.get_weight())} );
-      last_in_gid_ = 0;
-    }
+  if ( last_in_gid_ != 0 ) // if last_* is empty we dont write
+  {
+    RecordingDevice::write( last_event_,
+      RecordingBackend::NO_DOUBLE_VALUES,
+      { static_cast< int >( last_event_.get_weight() ) } );
+    last_in_gid_ = 0;
+  }
 }
 
 nest::RecordingDevice::Type
@@ -145,25 +146,27 @@ nest::spin_detector::handle( SpikeEvent& e )
       // received twice the same gid, so transition 0->1
       // revise the last event
       // if m == 2 this will just trigger writing in the following sections
-      last_event_.set_weight(1.0);
+      last_event_.set_weight( 1.0 );
     }
-    if (last_in_gid_ != 0 )    // if last_* is empty we dont write
+    if ( last_in_gid_ != 0 ) // if last_* is empty we dont write
     {
       // if it's the second event we write out the last event first
-      RecordingDevice::write(last_event_, RecordingBackend::NO_DOUBLE_VALUES, {static_cast<int>(last_event_.get_weight())} );
+      RecordingDevice::write( last_event_,
+        RecordingBackend::NO_DOUBLE_VALUES,
+        { static_cast< int >( last_event_.get_weight() ) } );
     }
     if ( m == 2 )
     { // already full event
-      RecordingDevice::write(e, RecordingBackend::NO_DOUBLE_VALUES, {1} );
+      RecordingDevice::write( e, RecordingBackend::NO_DOUBLE_VALUES, { 1 } );
       last_in_gid_ = 0;
     }
     else
     {
-      if (last_in_gid_ == 0)
+      if ( last_in_gid_ == 0 )
       {
         // store the new event as last_event_ for the next iteration
         last_event_ = e;
-        last_event_.set_weight(0.0);
+        last_event_.set_weight( 0.0 );
         last_in_gid_ = gid;
         t_last_in_spike_ = t_spike;
       }

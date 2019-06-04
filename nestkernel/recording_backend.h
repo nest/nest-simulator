@@ -85,15 +85,14 @@ public:
    * @param long_value_names the names for long values to be recorded
    *
    * @see write(), initialize()
-   * 
+   *
    * @ingroup NESTio
    */
   virtual void enroll( const RecordingDevice& device,
-		       const std::vector< Name >& double_value_names,
-		       const std::vector< Name >& long_value_names) = 0;
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names ) = 0;
 
-  virtual void
-  initialize() = 0;
+  virtual void initialize() = 0;
 
   virtual void
   prepare()
@@ -120,9 +119,9 @@ public:
   }
 
   virtual void write( const RecordingDevice&,
-		      const Event&,
-		      const std::vector< double >&,
-		      const std::vector< long >& ) = 0;
+    const Event&,
+    const std::vector< double >&,
+    const std::vector< long >& ) = 0;
 
   virtual void
   set_status( const DictionaryDatum& )
@@ -148,7 +147,6 @@ public:
   static const std::vector< Name > NO_LONG_VALUE_NAMES;
   static const std::vector< double > NO_DOUBLE_VALUES;
   static const std::vector< long > NO_LONG_VALUES;
-  
 };
 
 } // namespace

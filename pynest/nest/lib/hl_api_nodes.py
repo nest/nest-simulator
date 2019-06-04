@@ -25,6 +25,7 @@ Functions for node handling
 
 import warnings
 
+import nest
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
@@ -38,7 +39,7 @@ __all__ = [
 
 
 @check_stack
-def Create(model, n=1, params=None, positions=None, edge_wrap=None):
+def Create(model, n=1, params=None, positions=None):
     """Create one or more nodes.
 
    Generates `n` new network objects of the supplied model type. If `n` is not
@@ -73,24 +74,23 @@ def Create(model, n=1, params=None, positions=None, edge_wrap=None):
 
     if positions is not None:
         layer_specs = {'elements': model}
-        if edge_wrap is not None:
-            layer_specs['edge_wrap'] = edge_wrap
-        if isinstance(positions, Parameter):
-            layer_specs['n'] = n
-        if isinstance(positions, (Parameter, list, tuple)):
-            layer_specs['positions'] = positions
+        layer_specs['edge_wrap'] = positions.edge_wrap
+        if isinstance(positions, nest.spatial.free):
+            layer_specs['positions'] = positions.pos
+            if isinstance(positions.pos, Parameter):
+                layer_specs['n'] = n
         else:
             if n > 1:
                 raise kernel.NESTError(
                     'Cannot specify number of nodes with grid positions')
             layer_specs['rows'] = positions.rows
             layer_specs['columns'] = positions.columns
-            if positions.extent is not None:
-                layer_specs['extent'] = positions.extent
             if positions.center is not None:
                 layer_specs['center'] = positions.center
             if positions.depth is not None:
                 layer_specs['depth'] = positions.depth
+        if positions.extent is not None:
+                layer_specs['extent'] = positions.extent
         if params is None:
             params = {}
         layer = sli_func('CreateLayer', layer_specs, params)

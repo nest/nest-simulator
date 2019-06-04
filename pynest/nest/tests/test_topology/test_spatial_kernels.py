@@ -201,10 +201,8 @@ class SpatialTester(object):
             y = rnd.uniform(-self._L / 2., self._L / 2., self._N)
             pos = list(zip(x, y))
             self._ls = nest.Create('iaf_psc_alpha',
-                                   positions=[[self._x_d, self._y_d]],
-                                   edge_wrap=False)
-            self._lt = nest.Create('iaf_psc_alpha', positions = pos,
-                                   edge_wrap=False)
+                                   positions=nest.spatial.free([[self._x_d, self._y_d]], edge_wrap=False))
+            self._lt = nest.Create('iaf_psc_alpha', positions = nest.spatial.free(pos, edge_wrap=False))
             self._driver = self._ls
         else:
             x = rnd.uniform(-self._L / 2., self._L / 2., self._N)
@@ -215,11 +213,9 @@ class SpatialTester(object):
             else:
                 pos = list(zip(x, y))
             self._ls = nest.Create('iaf_psc_alpha',
-                                   positions=[[0.] * self._dimensions],
-                                   edge_wrap=True)
+                                   positions=nest.spatial.free([[0.] * self._dimensions], [self._L] * self._dimensions, edge_wrap=True))
             self._lt = nest.Create('iaf_psc_alpha',
-                                   positions=pos,
-                                   edge_wrap=True)
+                                   positions=nest.spatial.free(pos, [self._L] * self._dimensions, edge_wrap=True))
             cntr = nest.FindCenterElement(self._ls)
             indx = cntr - self._ls[0].get('global_id')
             self._driver = self._ls[indx]

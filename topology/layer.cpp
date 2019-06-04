@@ -57,60 +57,17 @@ GIDCollectionPTR
 AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 {
   index length = 0;
-  std::vector< long > element_ids;
-  std::string element_name;
-  Token element_model;
-
-  const Token& t = layer_dict->lookup( names::elements );
-  ArrayDatum* ad = dynamic_cast< ArrayDatum* >( t.datum() );
-
   AbstractLayer* layer_local = 0;
 
-  if ( ad )
+  auto element_name = getValue< std::string >( layer_dict, names::elements );
+  auto element_model =
+    kernel().model_manager.get_modeldict()->lookup( element_name );
+
+  if ( element_model.empty() )
   {
-
-    for ( Token* tp = ad->begin(); tp != ad->end(); ++tp )
-    {
-
-      element_name = std::string( *tp );
-      element_model =
-        kernel().model_manager.get_modeldict()->lookup( element_name );
-
-      if ( element_model.empty() )
-      {
-        throw UnknownModelName( element_name );
-      }
-      // Creates several nodes if the next element in
-      // the elements variable is a number.
-      if ( ( tp + 1 != ad->end() )
-        && dynamic_cast< IntegerDatum* >( ( tp + 1 )->datum() ) )
-      {
-        // Select how many nodes that should be created.
-        const long number = getValue< long >( *( ++tp ) );
-        for ( long i = 0; i < number; ++i )
-        {
-          element_ids.push_back( static_cast< long >( element_model ) );
-        }
-      }
-      else
-      {
-        element_ids.push_back( static_cast< long >( element_model ) );
-      }
-    }
+    throw UnknownModelName( element_name );
   }
-  else
-  {
-
-    element_name = getValue< std::string >( layer_dict, names::elements );
-    element_model =
-      kernel().model_manager.get_modeldict()->lookup( element_name );
-
-    if ( element_model.empty() )
-    {
-      throw UnknownModelName( element_name );
-    }
-    element_ids.push_back( static_cast< long >( element_model ) );
-  }
+  auto element_id = static_cast< long >( element_model );
 
   if ( layer_dict->known( names::positions ) )
   {
@@ -195,19 +152,9 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 
   // We have at least one element, create a GIDCollection for it
   GIDCollectionPTR gid_coll =
-    kernel().node_manager.add_node( element_ids[ 0 ], length );
+    kernel().node_manager.add_node( element_id, length );
 
   gid_coll->set_metadata( layer_meta );
-
-  // Create all remaining elements and add
-  for ( size_t i = 1; i < element_ids.size(); ++i )
-  {
-    GIDCollectionPTR next_coll =
-      kernel().node_manager.add_node( element_ids[ i ], length );
-    next_coll->set_metadata( layer_meta );
-    gid_coll = gid_coll->operator+( next_coll );
-    next_coll.unlock();
-  }
 
   get_layer( gid_coll )->gid_collection_ = gid_coll;
 

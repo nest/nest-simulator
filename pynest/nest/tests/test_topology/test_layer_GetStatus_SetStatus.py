@@ -35,7 +35,11 @@ class GetSetTestCase(unittest.TestCase):
     def test_LayerSetStatus(self):
         """Test SetStatus on layer GIDCollection."""
 
-        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=3, columns=3, extent=[2., 2.]), edge_wrap=True)
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.grid(
+                                rows=3, columns=3,
+                                extent=[2., 2.],
+                                edge_wrap=True))
 
         with self.assertRaises(nest.kernel.NESTError):
             nest.SetStatus(layer, {'center': [1., 1.]})
@@ -49,7 +53,8 @@ class GetSetTestCase(unittest.TestCase):
     def test_LayerSpatial(self):
         """Test spatial parameter on layer GIDCollection."""
 
-        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=3, columns=3, extent=[2., 2.]), edge_wrap=True)
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(
+            rows=3, columns=3, extent=[2., 2.], edge_wrap=True))
 
         center = layer.spatial['center']
         columns = layer.spatial['columns']
@@ -82,7 +87,8 @@ class GetSetTestCase(unittest.TestCase):
     def test_SingleElementLayerSpatial(self):
         """Test spatial parameter on single element layer."""
 
-        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=1, columns=1))
+        layer = nest.Create(
+            'iaf_psc_alpha', positions=nest.spatial.grid(rows=1, columns=1))
 
         self.assertEqual(len(layer), 1)
         center = layer.spatial['center']
@@ -96,14 +102,16 @@ class GetSetTestCase(unittest.TestCase):
     def test_LayerGet(self):
         """Test get function on layer GIDCollection"""
 
-        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=2, columns=2))
+        layer = nest.Create(
+            'iaf_psc_alpha', positions=nest.spatial.grid(rows=2, columns=2))
 
         self.assertEqual(layer.get('V_m'), (-70., -70., -70., -70.))
 
     def test_LayerSet(self):
         """Test set function on layer GIDCollection."""
 
-        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=3, columns=3, extent=[2., 2.]), edge_wrap=True)
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(
+            rows=3, columns=3, extent=[2., 2.]), edge_wrap=True)
 
         with self.assertRaises(KeyError):
             layer.set({'center': [1., 1.]})

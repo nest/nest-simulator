@@ -258,10 +258,10 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         """
         source = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.]), edge_wrap=True)
+            positions=nest.spatial.grid(5, 5, extent=[5., 5.], edge_wrap=True))
         target = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.]), edge_wrap=True)
+            positions=nest.spatial.grid(5, 5, extent=[5., 5.], edge_wrap=True))
 
         conndict = {'connection_type': 'divergent',
                     'mask': {'elliptical': {'major_axis': 3.,

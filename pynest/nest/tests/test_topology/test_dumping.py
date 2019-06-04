@@ -49,8 +49,8 @@ class PlottingTestCase(unittest.TestCase):
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
                         positions=nest.spatial.grid(rows=3, columns=3,
-                                                    extent=[2., 2.]),
-                        edge_wrap=True)
+                                                    extent=[2., 2.],
+                                                    edge_wrap=True))
         nest.DumpLayerNodes(l, os.path.join(self.nest_tmpdir(),
                                             'test_DumpNodes.out.lyr'))
         self.assertTrue(True)
@@ -62,8 +62,8 @@ class PlottingTestCase(unittest.TestCase):
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
                         positions=nest.spatial.grid(rows=3, columns=3,
-                                                    extent=[2., 2.]),
-                        edge_wrap=True)
+                                                    extent=[2., 2.],
+                                                    edge_wrap=True))
         nest.ConnectLayers(l, l, cdict)
 
         nest.DumpLayerConnections(l, l, 'static_synapse',

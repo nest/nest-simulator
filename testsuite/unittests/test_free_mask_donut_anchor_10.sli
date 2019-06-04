@@ -42,7 +42,7 @@
 %     6	11 16 21 26		  32 37	42 47 52
 %
 %    Exemplary connections
-%           
+%
 %              32                47                52
 %      2 -> 48    33    17 -> 38    48    22 -> 43    28
 %	       29                44                49
@@ -52,13 +52,12 @@
 %              28                43                48
 
 % loop y-coords backwards so that we get same gid-pos mapping as on grid
-[-0.5 0.5 0.25] Range 
+[-0.5 0.5 0.25] Range
 { /x Set [0.5 -0.5 -0.25] Range { x exch 2 arraystore } Map } Map 1 Flatten
 /pos Set
 
 /layer << /positions pos
           /extent [1.25 1.25]
-          /center [0. 0.]
           /edge_wrap true
           /elements /iaf_psc_alpha
         >> def

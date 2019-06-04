@@ -30,13 +30,12 @@
 %  - should give identical results to reg_mask_rect_11.sli
 
 % loop y-coords backwards so that we get same gid-pos mapping as on grid
-[-0.5 0.5 0.25] Range 
+[-0.5 0.5 0.25] Range
 { /x Set [0.5 -0.5 -0.25] Range { x exch 2 arraystore } Map } Map 1 Flatten
 /pos Set
 
 /layer << /positions pos
           /extent [1.25 1.25]
-          /center [0. 0.]
           /edge_wrap true
           /elements /iaf_psc_alpha
         >> def
@@ -45,7 +44,7 @@
 /tgt_layer layer def
 
 /conns << /connection_type (divergent)
-          /mask << /rectangular << /lower_left [0.0 0.0] /upper_right [0.6 0.3] >> 
+          /mask << /rectangular << /lower_left [0.0 0.0] /upper_right [0.6 0.3] >>
                    /anchor      [ -0.5 -0.25 ]
                 >>
        >> def

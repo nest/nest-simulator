@@ -33,7 +33,6 @@
 
 /layer << /positions pos
           /extent [10. 1.]
-          /center [0. 0.]
           /edge_wrap true
           /elements /iaf_psc_alpha
         >> def

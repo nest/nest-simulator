@@ -313,8 +313,9 @@ class BasicsTestCase(unittest.TestCase):
         nest.SetKernelStatus({'sort_connections_by_source': False})
 
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(3, 3, extent=(2., 2.)),
-                        edge_wrap=True)
+                        positions=nest.spatial.grid(3, 3,
+                                                    extent=(2., 2.),
+                                                    edge_wrap=True))
 
         # connect l -> l
         nest.ConnectLayers(l, l, cdict)
@@ -349,16 +350,15 @@ class BasicsTestCase(unittest.TestCase):
     def test_GetTargetPositions(self):
         """Test that GetTargetPosition works as expected"""
 
-        ldict = {'elements': 'iaf_psc_alpha', 'rows': 1, 'columns': 1,
-                 'extent': [1., 1.], 'edge_wrap': False}
         cdict = {'connection_type': 'divergent',
                  'synapse_model': 'stdp_synapse'}
 
         nest.SetKernelStatus({'sort_connections_by_source': False})
 
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(1, 1, extent=(1., 1.)),
-                        edge_wrap=False)
+                        positions=nest.spatial.grid(1, 1,
+                                                    extent=(1., 1.),
+                                                    edge_wrap=False))
         nest.ConnectLayers(l, l, cdict)
 
         # Simple test with one gid in the layer, should be placed in the origin
@@ -376,8 +376,9 @@ class BasicsTestCase(unittest.TestCase):
 
         l = nest.Create('iaf_psc_alpha',
                         positions=nest.spatial.grid(
-                            no_rows, no_cols, extent=[x_extent, y_extent]),
-                        edge_wrap=False)
+                            no_rows, no_cols,
+                            extent=[x_extent, y_extent],
+                            edge_wrap=False))
         nest.ConnectLayers(l, l, cdict)
 
         p = nest.GetTargetPositions(l[:1], l)
@@ -409,8 +410,7 @@ class BasicsTestCase(unittest.TestCase):
         positions = [(numpy.random.uniform(-0.5, 0.5),
                       numpy.random.uniform(-0.5, 0.5)) for _ in range(50)]
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.free(positions),
-                        edge_wrap=False)
+                        positions=nest.spatial.free(positions, edge_wrap=False))
         nest.ConnectLayers(l, l, cdict)
 
         p = nest.GetTargetPositions(l[:1], l)

@@ -22,7 +22,7 @@
 
 
 %  Setup:
-%  - 5x5 -> 5x5, extent 1.05 x 1.05 : 
+%  - 5x5 -> 5x5, extent 1.05 x 1.05 :
 %    Similar to _11, but with minimally enlarged extent, avoiding overlaps
 %  - nodes "freely placed" at regular grid locations
 %  - rectangular mask ll: [0.,0.] ur: [0.6,0.3]
@@ -51,13 +51,12 @@
 
 
 % loop y-coords backwards so that we get same gid-pos mapping as on grid
-[-0.5 0.5 0.25] Range 
+[-0.5 0.5 0.25] Range
 { /x Set [0.5 -0.5 -0.25] Range { x exch 2 arraystore } Map } Map 1 Flatten
 /pos Set
 
 /layer << /positions pos
           /extent [1.05 1.05]
-          /center [0. 0.]
           /edge_wrap true
           /elements /iaf_psc_alpha
         >> def
@@ -66,7 +65,7 @@
 /tgt_layer layer def
 
 /conns << /connection_type (divergent)
-          /mask << /rectangular << /lower_left [-0.001 -0.001] /upper_right [0.6 0.301] >> 
+          /mask << /rectangular << /lower_left [-0.001 -0.001] /upper_right [0.6 0.301] >>
                 >>
        >> def
 

@@ -92,7 +92,6 @@ addons:
      - libncurses5-dev 
      - libgsl0-dev
      - python-all-dev
-     - python-numpy
      - ipython
      - pkg-config
      - openmpi-bin
@@ -137,6 +136,7 @@ before_install:
   # terminaltables is required by parse_travis_log.py to create
   # the build summary.
    - pip install cython scipy matplotlib terminaltables
+   - pip install numpy==1.13.3
     
 install:
    - which cython

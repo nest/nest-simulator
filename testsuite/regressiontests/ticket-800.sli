@@ -147,9 +147,9 @@ def
   << /rows 2 /columns 2 /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap false >>
   << /positions [[0.1 0.1] [0.2 0.2]] /elements /iaf_psc_alpha
-     /extent [2. .5] /center [.2 .3] /edge_wrap true >>
+     /extent [2. .5] /edge_wrap true >>
   << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha
-     /extent [2. .5 3.] /center [.2 .3 .4] /edge_wrap true >>
+     /extent [2. .5 3.] /edge_wrap true >>
 ]
 def
 
@@ -160,11 +160,9 @@ def
   << /rows 2 /columns 2 /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap 3 >>  % bad data type
   << /positions [[0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha  % dim mix
-     /extent [2. .5] /center [.2 .3] /edge_wrap true >>
+     /extent [2. .5] /edge_wrap true >>
   << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha  % dim mix
-     /extent [2. .5 .5] /center [.2 .3] /edge_wrap true >>
-  << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha  % dim mix
-     /extent [2. .5] /center [.2 .2 .3] /edge_wrap true >>
+     /extent [2. .5] /edge_wrap true >>
 ]
 def
 

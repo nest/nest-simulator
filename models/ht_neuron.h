@@ -63,7 +63,7 @@ extern "C" int ht_neuron_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
-@ingroup ht
+@ingroup ht_neuron
 
 Name: ht_neuron - Neuron model after Hill & Tononi (2005).
 
@@ -157,7 +157,7 @@ References:
        DOI: https://doi.org/10.1152/jn.01038.2002
 \endverbatim
 
-SeeAlso: ht_synapse
+SeeAlso: ht_connection
 */
 class ht_neuron : public Archiving_Node
 {

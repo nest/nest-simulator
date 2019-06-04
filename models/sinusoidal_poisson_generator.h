@@ -60,7 +60,7 @@ Parameters:
 The following parameters can be set in the status dictionary:
 
 \verbatim embed:rst
-======================== ======= ====================================================
+======================== ======= ==============================================
  rate                    real    Mean firing rate in spikes/second,
                                  default: 0 s^-1
  amplitude               real    Firing rate modulation amplitude in

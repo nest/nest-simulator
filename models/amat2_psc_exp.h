@@ -114,7 +114,7 @@ The following parameters can be set in the status dictionary:
 
 =========== ==== =======================================================
 **State variables that can be read out with the multimeter device**
-----------------------------------------------------------------------
+------------------------------------------------------------------------
  V_m        mV   Non-resetting membrane potential
  V_th       mV   Two-timescale adaptive threshold
 =========== ==== =======================================================

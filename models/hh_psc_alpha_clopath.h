@@ -62,7 +62,7 @@ hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
 @ingroup Neurons
 @ingroup hh
 @ingroup psc
-@ingroup clopath
+@ingroup clopath_n
 
 Name: hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for the
 Clopath synapse.
@@ -122,7 +122,7 @@ A_LTD         1/mV    Amplitude of depression
 A_LTP         1/mV^2  Amplitude of facilitation
 theta_plus    mV      Threshold for u
 theta_minus   mV      Threshold for u_bar_[plus/minus]
-A_LTD_const   boolean Flag that indicates whether A_LTD_ should
+A_LTD_const   boolean Flag that indicates whether `A_LTD_` should
                       be constant (true, default) or multiplied by
                       u_bar_bar^2 / u_ref_squared (false).
 delay_u_bars  real    Delay with which u_bar_[plus/minus] are processed

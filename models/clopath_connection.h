@@ -42,8 +42,8 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Synapses
-@ingroup STDP
-@ingroup clopath
+@ingroup stdp
+@ingroup clopath_s
 
 Name: clopath_synapse - Synapse type for voltage-based STDP after Clopath.
 

@@ -59,6 +59,7 @@ extern "C" int aeif_psc_alpha_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup iaf
 @ingroup aeif
 @ingroup psc
 

@@ -31,7 +31,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Synapses
-@ingroup ht
+@ingroup ht_synapse
 
 Name: ht_synapse - Synapse with depression after Hill & Tononi (2005).
 

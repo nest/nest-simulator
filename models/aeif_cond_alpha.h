@@ -72,6 +72,7 @@ aeif_cond_alpha_dynamics_DT0( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup iaf
 @ingroup aeif
 @ingroup cond
 

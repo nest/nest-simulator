@@ -36,6 +36,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup iaf
 @ingroup aeif
 @ingroup cond
 

@@ -60,6 +60,8 @@ aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
+@ingroup iaf
+@ingroup clopath_n
 @ingroup aeif
 @ingroup psc
 
@@ -101,7 +103,7 @@ u_bar_bar   mV      Low-pass filtered u_bar_minus
 
 ============ ======  =================================================
 **Membrane Parameters**
----------------------------------------------------------------------
+----------------------------------------------------------------------
  C_m         pF      Capacity of the membrane
  t_ref       ms      Duration of refractory period
  V_reset     mV      Reset value for V_m after a spike
@@ -133,7 +135,7 @@ A_LTD         1/mV    Amplitude of depression
 A_LTP         1/mV^2  Amplitude of facilitation
 theta_plus    mV      Threshold for u
 theta_minus   mV      Threshold for u_bar_[plus/minus]
-A_LTD_const   boolean Flag that indicates whether A_LTD should
+A_LTD_const   boolean Flag that indicates whether `A_LTD_` should
                       be constant (true, default) or multiplied by
                       u_bar_bar^2 / u_ref_squared (false).
 delay_u_bars  real    Delay with which u_bar_[plus/minus] are processed

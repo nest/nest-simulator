@@ -8,37 +8,40 @@ We also have a `list of user-contributed modules <https://github.com/nest/nest-s
 on Github for you to check out.
 
 
-* :doc:`neurons`
+* **Neuron model categories**
 
     * :doc:`iaf`
-    * :doc:`aeif`
     * :doc:`binary`
     * :doc:`conductance`
     * :doc:`current-based`
     * :doc:`hodgkin_huxley`
+    * :doc:`hill_tononi_neuron`
     * :doc:`rate`
     * :doc:`point_process`
-    * :doc:`clopath`
+    * :doc:`clopath_neuron`
     * :doc:`parrot`
+    * :doc:`neurons`
 
-* :doc:`hill_tononi`
-
-* :doc:`synapses`
+* **Synapse model categories**
 
     * :doc:`stdp`
     * :doc:`stp`
     * :doc:`gapjunction`
     * :doc:`static`
+    * :doc:`hill_tononi_synapse`
     * :doc:`cont_delay`
     * :doc:`inst_rate`
+    * :doc:`clopath_synapse`
+    * :doc:`synapses`
 
-* :doc:`devices`
+* **Device categories**
 
     * :doc:`generator`
     * :doc:`detector`
     * :doc:`music`
+    * :doc:`devices`
 
-* Network models
+* **Network models**
 
      * :doc:`../topology/index`
 

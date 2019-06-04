@@ -1,4 +1,4 @@
-Current-based Models
+Current-based models
 ================================
 
 .. doxygengroup:: psc

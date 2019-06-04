@@ -1,4 +1,4 @@
-Generator type Devices
+Generator type devices
 ================================
 
 .. doxygengroup:: generator

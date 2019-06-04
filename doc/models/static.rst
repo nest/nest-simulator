@@ -1,5 +1,5 @@
-Static Synapses
-==================
+Static synapse models
+=======================
 
 .. doxygengroup:: static
    :content-only:

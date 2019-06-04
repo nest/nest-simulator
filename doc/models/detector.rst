@@ -1,4 +1,4 @@
-Detector/Recorder Devices
+Detector/Recorder devices
 ===========================
 
 

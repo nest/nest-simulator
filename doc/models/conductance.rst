@@ -1,4 +1,4 @@
-Conductance-based Models
+Conductance-based models
 ================================
 
 .. doxygengroup:: cond

@@ -1,4 +1,4 @@
-Continuous delay Synapses
+Continuous delay synapse models
 =======================================================
 
 .. doxygengroup:: cont_delay

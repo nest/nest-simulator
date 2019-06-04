@@ -1,4 +1,4 @@
-Short-term plasticity (STP) synapses
+Short-term plasticity (STP) synapse models
 =======================================================
 
 .. doxygengroup:: stp

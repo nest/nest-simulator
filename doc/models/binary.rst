@@ -1,4 +1,4 @@
-Binary Neurons
+Binary neuron model
 ================================
 
 .. doxygengroup:: binary

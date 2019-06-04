@@ -1,5 +1,5 @@
-Phenomological (AEIF) Neurons
-===============================
+Phenomological (AEIF) neuron models
+======================================
 
 .. doxygengroup:: aeif
    :content-only:

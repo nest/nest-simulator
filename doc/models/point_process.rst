@@ -1,4 +1,4 @@
-Point process (PP) Neurons
+Point process (PP) neurons
 ===============================
 
 .. doxygengroup:: pp

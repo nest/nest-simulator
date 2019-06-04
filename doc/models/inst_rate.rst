@@ -1,4 +1,4 @@
-Instananeous rate Synapses
+Instananeous rate synapse models
 =======================================================
 
 .. doxygengroup:: inst_rate

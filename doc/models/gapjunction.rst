@@ -1,4 +1,4 @@
-Gap Junctions
+Gap junction model
 ===============================
 
 .. doxygengroup:: gap

@@ -1,4 +1,4 @@
-Rate-based Neurons
+Rate-based neuron models
 ================================
 
 .. doxygengroup:: rate

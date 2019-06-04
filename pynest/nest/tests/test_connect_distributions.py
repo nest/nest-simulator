@@ -23,7 +23,7 @@ import unittest
 import nest
 from . import test_connect_helpers as hf
 
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
 class TestDists(unittest.TestCase):
@@ -42,8 +42,8 @@ class TestDists(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.sr("statusdict/threading :: (no) eq not")
-        if not nest.spp():
+        nest.ll_api.sr("statusdict/threading :: (no) eq not")
+        if not nest.ll_api.spp():
             # no multi-threading
             nest.SetKernelStatus({'grng_seed': 120,
                                   'rng_seeds': [576]})
@@ -261,9 +261,11 @@ class TestDists(unittest.TestCase):
         self.assertTrue(is_dist)
 
 
-if __name__ == '__main__':
+def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestDists)
-    unittest.TextTestRunner(verbosity=2).run(suite)
-    # suite = unittest.TestSuite()
-    # suite.addTest(TestDists('testGslBinomialDist'))
-    # unittest.TextTestRunner().run(suite)
+    return suite
+
+
+if __name__ == '__main__':
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())

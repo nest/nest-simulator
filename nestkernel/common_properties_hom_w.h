@@ -23,13 +23,16 @@
 #ifndef COMMON_PROPERTIES_HOM_W_H
 #define COMMON_PROPERTIES_HOM_W_H
 
-/* BeginDocumentation
+/** @BeginDocumentation
+
    Name: static_synapse_hom_w - Static synapse type
          using homogeneous weight, i.e. all synapses
          feature the same w.
 
    FirstVersion: April 2008
+
    Author: Moritz Helias, Susanne Kunkel
+
    SeeAlso: synapsedict, static_synapse
 */
 

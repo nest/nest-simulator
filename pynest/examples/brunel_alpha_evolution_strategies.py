@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''Using evolution strategies to find parameters for a random
+"""Using evolution strategies to find parameters for a random
 balanced network with alpha synapses
 ----------------------------------------------------------------
 
@@ -41,29 +41,42 @@ function evaluations is reached or the width of the search
 distribution becomes extremely small.  We use the following fitness
 function:
 
- f = - alpha(r - r*)^2 - beta(cv - cv*)^2 - gamma(corr - corr*)^2
+.. math::
+
+    f = - alpha(r - r*)^2 - beta(cv - cv*)^2 - gamma(corr - corr*)^2
 
 where alpha, beta and gamma are weighting factors, and stars indicate
 target values.
 
 The network contains an excitatory and an inhibitory population on
-the basis of the network used in
-
-Brunel N (2000). Dynamics of Sparsely Connected Networks of Excitatory
-and Inhibitory Spiking Neurons. Journal of Computational Neuroscience
-8, 183-208.
+the basis of the network used in [1]
 
 The optimization algorithm (evolution strategies) is described in
 
 Wierstra et al. (2014). Natural evolution strategies. Journal of
 Machine Learning Research, 15(1), 949-980.
 
-Author: Jakob Jordan
 Year: 2018
-See Also: brunel_alpha_nest.py
 
-'''
+References
+~~~~~~~~~~~~
 
+.. [1] Brunel N (2000). Dynamics of Sparsely Connected Networks of
+       Excitatory and Inhibitory Spiking Neurons. Journal of Computational
+       Neuroscience 8, 183-208.
+
+See Also
+~~~~~~~~~~
+
+brunel_alpha_nest.py
+
+:Authors:
+    Jakob Jordan
+
+KEYWORDS:
+"""
+
+from __future__ import print_function
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 import numpy as np
@@ -72,14 +85,12 @@ import nest
 
 from numpy import exp
 
-
-'''
-Analysis
-'''
+###############################################################################
+# Analysis
 
 
 def cut_warmup_time(spikes, warmup_time):
-    '''Removes initial warmup time from recorded spikes'''
+    # Removes initial warmup time from recorded spikes
     spikes['senders'] = spikes['senders'][
         spikes['times'] > warmup_time]
     spikes['times'] = spikes['times'][
@@ -89,12 +100,12 @@ def cut_warmup_time(spikes, warmup_time):
 
 
 def compute_rate(spikes, N_rec, sim_time):
-    '''Computes average rate from recorded spikes'''
+    # Computes average rate from recorded spikes
     return (1. * len(spikes['times']) / N_rec / sim_time * 1e3)
 
 
 def sort_spikes(spikes):
-    '''Sorts recorded spikes by gid'''
+    # Sorts recorded spikes by gid
     unique_gids = sorted(np.unique(spikes['senders']))
     spiketrains = []
     for gid in unique_gids:
@@ -103,7 +114,7 @@ def sort_spikes(spikes):
 
 
 def compute_cv(spiketrains):
-    '''Computes coefficient of variation from sorted spikes'''
+    # Computes coefficient of variation from sorted spikes
     if spiketrains:
         isis = np.hstack([np.diff(st) for st in spiketrains])
         if len(isis) > 1:
@@ -115,13 +126,13 @@ def compute_cv(spiketrains):
 
 
 def bin_spiketrains(spiketrains, t_min, t_max, t_bin):
-    '''Bins sorted spikes'''
+    # Bins sorted spikes
     bins = np.arange(t_min, t_max, t_bin)
     return bins, [np.histogram(s, bins=bins)[0] for s in spiketrains]
 
 
 def compute_correlations(binned_spiketrains):
-    '''Computes correlations from binned spiketrains'''
+    # Computes correlations from binned spiketrains
     n = len(binned_spiketrains)
     if n > 1:
         cc = np.corrcoef(binned_spiketrains)
@@ -131,11 +142,9 @@ def compute_correlations(binned_spiketrains):
 
 
 def compute_statistics(parameters, espikes, ispikes):
-    '''Computes population-averaged rates coefficients of variation and
-    correlations from recorded spikes of excitatory and inhibitory
-    populations
-
-    '''
+    # Computes population-averaged rates coefficients of variation and
+    # correlations from recorded spikes of excitatory and inhibitory
+    # populations
 
     espikes = cut_warmup_time(espikes, parameters['warmup_time'])
     ispikes = cut_warmup_time(ispikes, parameters['warmup_time'])
@@ -159,23 +168,20 @@ def compute_statistics(parameters, espikes, ispikes):
             np.mean([ecorr, icorr]))
 
 
-'''
-Network simulation
-'''
+###############################################################################
+# Network simulation
 
 
 def simulate(parameters):
-    '''Simulates the network and returns recorded spikes for excitatory
-    and inhibitory population
+    # Simulates the network and returns recorded spikes for excitatory
+    # and inhibitory population
 
-    Code taken from brunel_alpha_nest.py
-
-    '''
+    # Code taken from brunel_alpha_nest.py
 
     def LambertWm1(x):
-        nest.sli_push(x)
-        nest.sli_run('LambertWm1')
-        y = nest.sli_pop()
+        nest.ll_api.sli_push(x)
+        nest.ll_api.sli_run('LambertWm1')
+        y = nest.ll_api.sli_pop()
         return y
 
     def ComputePSPnorm(tauMem, CMem, tauSyn):
@@ -285,42 +291,35 @@ def simulate(parameters):
             nest.GetStatus(ispikes, 'events')[0])
 
 
-'''
-Optimization
-'''
+###############################################################################
+# Optimization
 
 
 def default_population_size(dimensions):
-    '''Returns a population size suited for the given number of dimensions
-    See Wierstra et al. (2014)
+    # Returns a population size suited for the given number of dimensions
+    # See Wierstra et al. (2014)
 
-    '''
     return 4 + int(np.floor(3 * np.log(dimensions)))
 
 
 def default_learning_rate_mu():
-    '''Returns a default learning rate for the mean of the search
-    distribution
-    See Wierstra et al. (2014)
+    # Returns a default learning rate for the mean of the search distribution
+    # See Wierstra et al. (2014)
 
-    '''
     return 1
 
 
 def default_learning_rate_sigma(dimensions):
-    '''Returns a default learning rate for the standard deviation of the
-    search distribution for the given number of dimensions
-    See Wierstra et al. (2014)
+    # Returns a default learning rate for the standard deviation of the
+    # search distribution for the given number of dimensions
+    # See Wierstra et al. (2014)
 
-    '''
     return (3 + np.log(dimensions)) / (12. * np.sqrt(dimensions))
 
 
 def compute_utility(fitness):
-    '''Computes utility and order used for fitness shaping
-    See Wierstra et al. (2014)
-
-    '''
+    # Computes utility and order used for fitness shaping
+    # See Wierstra et al. (2014)
 
     n = len(fitness)
     order = np.argsort(fitness)[::-1]
@@ -337,51 +336,51 @@ def optimize(func, mu, sigma, learning_rate_mu=None, learning_rate_sigma=None,
              population_size=None, fitness_shaping=True,
              mirrored_sampling=True, record_history=False,
              max_generations=2000, min_sigma=1e-8, verbosity=0):
-    '''Optimizes an objective function via evolution strategies using
-    the natural gradient of multinormal search distributions in
-    natural coordinates.  Does not consider covariances between
-    parameters ("Separable natural evolution strategies").
-    See Wierstra et al. (2014)
 
-    Parameters
-    ----------
-    func: function
-        The function to be maximized.
-    mu: float
-        Initial mean of the search distribution.
-    sigma: float
-        Initial standard deviation of the search distribution.
-    learning_rate_mu: float
-        Learning rate of mu.
-    learning_rate_sigma: float
-        Learning rate of sigma.
-    population_size: int
-        Number of individuals sampled in each generation.
-    fitness_shaping: bool
-        Whether to use fitness shaping, compensating for large
-        deviations in fitness, see Wierstra et al. (2014).
-    mirrored_sampling: bool
-        Whether to use mirrored sampling, i.e., evaluating a mirrored
-        sample for each sample, see Wierstra et al. (2014).
-    record_history: bool
-        Whether to record history of search distribution parameters,
-        fitness values and individuals.
-    max_generations: int
-        Maximal number of generations.
-    min_sigma: float
-        Minimal value for standard deviation of search
-        distribution. If any dimension has a value smaller than this,
-        the search is stoppped.
-    verbosity: bool
-        Whether to continuously print progress information.
-
-    Returns
-    -------
-    dict
-        Dictionary of final parameters of search distribution and
-        history.
-
-    '''
+    ###########################################################################
+    # Optimizes an objective function via evolution strategies using the
+    # natural gradient of multinormal search distributions in natural
+    # coordinates.  Does not consider covariances between parameters (
+    # "Separable natural evolution strategies").
+    # See Wierstra et al. (2014)
+    #
+    # Parameters
+    # ----------
+    # func: function
+    #     The function to be maximized.
+    # mu: float
+    #     Initial mean of the search distribution.
+    # sigma: float
+    #     Initial standard deviation of the search distribution.
+    # learning_rate_mu: float
+    #     Learning rate of mu.
+    # learning_rate_sigma: float
+    #     Learning rate of sigma.
+    # population_size: int
+    #     Number of individuals sampled in each generation.
+    # fitness_shaping: bool
+    #     Whether to use fitness shaping, compensating for large
+    #     deviations in fitness, see Wierstra et al. (2014).
+    # mirrored_sampling: bool
+    #     Whether to use mirrored sampling, i.e., evaluating a mirrored
+    #     sample for each sample, see Wierstra et al. (2014).
+    # record_history: bool
+    #     Whether to record history of search distribution parameters,
+    #     fitness values and individuals.
+    # max_generations: int
+    #     Maximal number of generations.
+    # min_sigma: float
+    #     Minimal value for standard deviation of search
+    #     distribution. If any dimension has a value smaller than this,
+    #     the search is stoppped.
+    # verbosity: bool
+    #     Whether to continuously print progress information.
+    #
+    # Returns
+    # -------
+    # dict
+    #     Dictionary of final parameters of search distribution and
+    #     history.
 
     if not isinstance(mu, np.ndarray):
         raise TypeError('mu needs to be of type np.ndarray')
@@ -404,7 +403,7 @@ def optimize(func, mu, sigma, learning_rate_mu=None, learning_rate_sigma=None,
     while True:
 
         # create new population using the search distribution
-        s = np.random.normal(0, 1, size=(population_size, *np.shape(mu)))
+        s = np.random.normal(0, 1, size=(population_size,) + np.shape(mu))
         z = mu + sigma * s
 
         # add mirrored perturbations if enabled
@@ -462,15 +461,12 @@ def optimize(func, mu, sigma, learning_rate_mu=None, learning_rate_sigma=None,
 
 
 def optimize_network(optimization_parameters, simulation_parameters):
-    '''Searches for suitable network parameters to fulfill defined
-    constraints
-
-    '''
+    # Searches for suitable network parameters to fulfill defined constraints
 
     np.random.seed(simulation_parameters['seed'])
 
     def objective_function(g, eta):
-        '''Returns the fitness of a specific network parametrization'''
+        # Returns the fitness of a specific network parametrization
 
         # create local copy of parameters that uses parameters given
         # by optimization algorithm
@@ -503,10 +499,9 @@ def optimize_network(optimization_parameters, simulation_parameters):
         verbosity=optimization_parameters['verbosity']
     )
 
+###############################################################################
+# Main
 
-'''
-Main
-'''
 
 if __name__ == '__main__':
     simulation_parameters = {

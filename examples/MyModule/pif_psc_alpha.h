@@ -37,7 +37,7 @@
 namespace mynest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: pif_psc_alpha - Perfect integrate-and-fire neuron model with alpha PSC
                       synapse.
 
@@ -87,10 +87,6 @@ Hans Ekkehard Plesser, based on iaf_psc_alpha
 
 SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
 */
-
-/**
- * Non-leaky integrate-and-fire neuron with alpha-shaped PSCs.
- */
 class pif_psc_alpha : public nest::Archiving_Node
 {
 public:

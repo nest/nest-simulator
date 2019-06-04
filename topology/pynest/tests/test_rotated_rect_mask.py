@@ -99,7 +99,7 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-1.5, -0.5],
                     'upper_right': [1.5, 0.5],
                     'polar_angle': 45.0}
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.kernel.NESTError):
             mask = topo.CreateMask('rectangular', maskdict)
 
     def test_RotatedBoxMaskByAzimuthAngle(self):
@@ -397,7 +397,7 @@ class RotatedRectangularMask(unittest.TestCase):
                [23, 45], [23, 49], [24, 46], [24, 50], [25, 47], [25, 51],
                [26, 52]]
 
-        connections = nest.GetConnections()
+        connections = list(sorted(nest.GetConnections()))
 
         for conn, conn_ref in zip(connections, ref):
             conn_list = [conn[0], conn[1]]

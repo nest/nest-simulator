@@ -41,8 +41,9 @@
 namespace nest
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: RecordingDevice - Common properties of all recording devices.
+
   Description:
 
   Recording devices are used to measure properties of or signals emitted
@@ -606,7 +607,7 @@ RecordingDevice::is_active( Time const& T ) const
 {
   const long stamp = T.get_steps();
 
-  return get_t_min_() < stamp && stamp <= get_t_max_();
+  return get_t_min_() < stamp and stamp <= get_t_max_();
 }
 
 inline void

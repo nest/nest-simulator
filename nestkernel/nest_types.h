@@ -32,31 +32,15 @@
 // Generated includes:
 #include "config.h"
 
-/**
- * @mainpage NEST: Neural Simulation Tool
- *
- * The main resource on information about NEST is the homepage of the
- * NEST simulator at http://www.nest-simulator.org
- * <p>
- *
- * @see Diesmann, Markus and Gewaltig, Marc-Oliver (2002) NEST: An
- * Environment for Neural Systems Simulations Goettingen : Ges. fuer
- * Wiss. Datenverarbeitung, Forschung und wisschenschaftliches
- * Rechnen, Beitraege zum Heinz-Billing-Preis 2001. 58 : 43--70
- *
- * @see Morrison, Abigail and Mehring, Carsten and Geisel, Theo and
- * Aertsen, Ad and Diesmann, Markus (2005) Advancing the boundaries of
- * high connectivity network simulation with distributed computing
- * Neural Computation. 17 (8) : 1776--1801
- *
- * @see Eppler, Jochen, Diploma Thesis, University of Freiburg (2006),
- * http://mindzoo.de/files/DiplomaThesis-Eppler.pdf
- *
- * @see Eppler, Jochen and Helias, Moritz and Muller, Eilif and
- * Diesmann, Markus and Gewaltig, Marc-Oliver (2008) PyNEST: A
- * convenient interface to the NEST simulator.  Front. Neuroinform. 2
- * : 12. doi:10.3389/neuro.11.012.2008
- */
+#ifdef HAVE_32BIT_ARCH
+#ifdef HAVE_UINT64_T // 32-bit platforms usually provide the ...
+#include <stdint.h> // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
+#else
+#error "32-bit platform does not provide a 64-bit unsigned integer data type"
+#endif
+#else
+#include <cstdint> // `uint64_t` on 64-bit platforms
+#endif
 
 /**
  * Namespace for the NEST simulation kernel.
@@ -75,13 +59,57 @@ namespace nest
  * different architectures (e.g. 32 or 64 bit).
  */
 
+// constexpr-functions for convenient compile-time generation of the bit-masks
+// and bit-constants. An ill-defined length or size will cause a compile-time
+// error, e.g., num_bits to be shifted exceeds the sizeof(<datatype>) * 8.
+constexpr uint64_t
+generate_bit_mask( const uint8_t num_bits, const uint8_t bit_position )
+{
+  return (
+    ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 ) << bit_position );
+}
+
+constexpr uint64_t
+generate_max_value( const uint8_t num_bits )
+{
+  return ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 );
+}
+
+/*
+ * Sizes of bitfields used in various classes in the kernel.
+ */
+#if TARGET_BITS_SPLIT == TARGET_BITS_SPLIT_STANDARD
+constexpr uint8_t NUM_BITS_RANK = 18U;
+constexpr uint8_t NUM_BITS_TID = 9U;
+constexpr uint8_t NUM_BITS_SYN_ID = 9U;
+#elif TARGET_BITS_SPLIT == TARGET_BITS_SPLIT_HPC
+constexpr uint8_t NUM_BITS_RANK = 20U;
+constexpr uint8_t NUM_BITS_TID = 10U;
+constexpr uint8_t NUM_BITS_SYN_ID = 6U;
+#endif
+constexpr uint8_t NUM_BITS_LCID = 27U;
+constexpr uint8_t NUM_BITS_PROCESSED_FLAG = 1U;
+constexpr uint8_t NUM_BITS_MARKER_SPIKE_DATA = 2U;
+constexpr uint8_t NUM_BITS_LAG = 14U;
+constexpr uint8_t NUM_BITS_DELAY = 21U;
+constexpr uint8_t NUM_BITS_GID = 62U;
+
+/*
+ * Maximally allowed values for bitfields
+ */
+constexpr uint64_t MAX_LCID = generate_max_value( NUM_BITS_LCID );
+constexpr int64_t MAX_RANK = generate_max_value( NUM_BITS_RANK );
+constexpr int64_t MAX_TID = generate_max_value( NUM_BITS_TID );
+constexpr uint64_t MAX_SYN_ID = generate_max_value( NUM_BITS_SYN_ID );
+constexpr uint64_t DISABLED_GID = generate_max_value( NUM_BITS_GID );
+constexpr uint64_t MAX_GID = DISABLED_GID - 1;
+
 /**
  * Type for Time tics.
  */
-
 #ifdef HAVE_LONG_LONG
 typedef long long tic_t;
-#ifdef IS_K
+#ifdef LLONG_MAX
 const tic_t tic_t_max = LLONG_MAX;
 const tic_t tic_t_min = LLONG_MIN;
 #else
@@ -104,10 +132,10 @@ typedef size_t index;
 const index invalid_index = SIZE_MAX;
 
 /**
- *  Unsigned char type for enumerations of synapse types.
+ *  For enumerations of synapse types.
  */
-typedef unsigned char synindex;
-const synindex invalid_synindex = UCHAR_MAX;
+typedef unsigned int synindex;
+const synindex invalid_synindex = MAX_SYN_ID;
 
 /**
  * Unsigned short type for compact target representation.

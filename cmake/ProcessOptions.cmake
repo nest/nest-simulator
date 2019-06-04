@@ -47,7 +47,11 @@ endfunction()
 function( NEST_PROCESS_WITH_WARNING )
   if ( with-warning )
     if ( with-warning STREQUAL "ON" )
-      set( with-warning "-Wall" )
+      if ( NOT k-computer STREQUAL "ON" )
+        set( with-warning "-Wall" )
+      else()
+        set( with-warning "" )
+      endif()
     endif ()
     foreach ( flag ${with-warning} )
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" PARENT_SCOPE )
@@ -107,7 +111,8 @@ function( NEST_PROCESS_K_COMPUTER )
     set( IS_K ON PARENT_SCOPE )
     # need alternative tokens command to compile NEST
     set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --alternative_tokens" PARENT_SCOPE )
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --alternative_tokens" PARENT_SCOPE )
+    # FCC accepts GNU flags when -Xg is supplied
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xg --alternative_tokens" PARENT_SCOPE )
   endif ()
 endfunction()
 
@@ -149,6 +154,11 @@ endfunction()
 function( NEST_PROCESS_STATIC_LIBRARIES )
   # build static or shared libraries
   if ( static-libraries )
+
+    if ( with-readline )
+      message( FATAL_ERROR "-Dstatic-libraries=ON requires -Dwith-readline=OFF" )
+    endif ()
+
     set( BUILD_SHARED_LIBS OFF PARENT_SCOPE )
     # set RPATH stuff
     set( CMAKE_SKIP_RPATH TRUE PARENT_SCOPE )
@@ -158,6 +168,9 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
       # be used, so we'll add both to the preference list.
       set( CMAKE_FIND_LIBRARY_SUFFIXES ".a;.lib;.dylib;.so" PARENT_SCOPE )
     endif ()
+
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static" PARENT_SCOPE )
+
   else ()
     set( BUILD_SHARED_LIBS ON PARENT_SCOPE )
 
@@ -343,7 +356,7 @@ function( NEST_PROCESS_WITH_PYTHON )
     # Localize the Python interpreter
     if ( ${with-python} STREQUAL "ON" )
       find_package( PythonInterp )
-    elseif ( ${with-python} STREQUAL "2" )  
+    elseif ( ${with-python} STREQUAL "2" )
       find_package( PythonInterp 2 REQUIRED )
     elseif ( ${with-python} STREQUAL "3" )
       find_package( PythonInterp 3 REQUIRED )
@@ -353,9 +366,9 @@ function( NEST_PROCESS_WITH_PYTHON )
       set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )
       set( PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON ${PYTHON_EXECUTABLE} PARENT_SCOPE )
-      set( PYTHON_VERSION ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR} PARENT_SCOPE )
+      set( PYTHON_VERSION ${PYTHON_VERSION_STRING} PARENT_SCOPE )
 
-      # Localize Python lib/header files and make sure that their version matches 
+      # Localize Python lib/header files and make sure that their version matches
       # the Python interpreter version !
       find_package( PythonLibs ${PYTHON_VERSION_STRING} EXACT )
       if ( PYTHONLIBS_FOUND )
@@ -411,6 +424,8 @@ function( NEST_PROCESS_WITH_OPENMP )
       # set flags
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
+    else()
+      message( FATAL_ERROR "CMake can not find OpenMP." )
     endif ()
   endif ()
 endfunction()
@@ -502,6 +517,42 @@ function( NEST_PROCESS_WITH_MUSIC )
       set( MUSIC_VERSION "${MUSIC_VERSION}" PARENT_SCOPE )
     endif ()
   endif ()
+endfunction()
+
+function( NEST_PROCESS_WITH_BOOST )
+  # Find Boost
+  set( HAVE_BOOST OFF PARENT_SCOPE )
+  if ( with-boost )
+    if ( NOT ${with-boost} STREQUAL "ON" )
+      # a path is set
+      set( BOOST_ROOT "${with-boost}" )
+    endif ()
+
+    # Needs Boost version >=1.58.0 to use Boost sorting
+    find_package( Boost 1.58.0 COMPONENTS unit_test_framework )
+    if ( Boost_FOUND )
+      # export found variables to parent scope
+      set( HAVE_BOOST ON PARENT_SCOPE )
+      # Boost uses lower case in variable names
+      set( BOOST_FOUND "${Boost_FOUND}" PARENT_SCOPE )
+      set( BOOST_LIBRARIES "${Boost_LIBRARIES}" PARENT_SCOPE )
+      set( BOOST_INCLUDE_DIR "${Boost_INCLUDE_DIR}" PARENT_SCOPE )
+      set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
+    endif ()
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_TARGET_BITS_SPLIT )
+  if ( target-bits-split )
+    # set to value according to defines in config.h
+    if ( ${target-bits-split} STREQUAL "standard" )
+      set( TARGET_BITS_SPLIT 0 PARENT_SCOPE )
+    elseif ( ${target-bits-split} STREQUAL "hpc" )
+      set( TARGET_BITS_SPLIT 1 PARENT_SCOPE )
+    else()
+      message( FATAL_ERROR "Invalid target-bits-split selected." )
+    endif()
+  endif()
 endfunction()
 
 function( NEST_DEFAULT_MODULES )

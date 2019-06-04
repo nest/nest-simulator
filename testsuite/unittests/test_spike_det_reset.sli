@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_spike_det_reset - test if resetting works on spike_detector
 
 Synopsis: (test_spike_det_reset) run -> dies if assertion fails
@@ -55,18 +55,18 @@ SeeAlso: spike_detector
   sd [ /n_events ] get                   10 eq res exch append /res Set
   sd [ /events /senders ] get cva length 10 eq res exch append /res Set
   sd [ /events /times   ] get cva length 10 eq res exch append /res Set
-  
+
   % reset
   sd << /n_events 0 >> SetStatus
   sd [ /n_events ] get                   0 eq res exch append /res Set
   sd [ /events /senders ] get cva length 0 eq res exch append /res Set
   sd [ /events /times   ] get cva length 0 eq res exch append /res Set
 
-  % simulate more
-  55 Simulate % spikes 110 .. 150 -> 5 spikes
-  sd [ /n_events ] get                   5 eq res exch append /res Set
-  sd [ /events /senders ] get cva length 5 eq res exch append /res Set
-  sd [ /events /times   ] get cva length 5 eq res exch append /res Set
+  % simulate more, till 160
+  55 Simulate % spikes 110 .. 160 -> 6 spikes
+  sd [ /n_events ] get                   6 eq res exch append /res Set
+  sd [ /events /senders ] get cva length 6 eq res exch append /res Set
+  sd [ /events /times   ] get cva length 6 eq res exch append /res Set
 
   % combine results
   res First res Rest { and } Fold

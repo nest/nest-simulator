@@ -102,11 +102,11 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
       if ( kernel().vp_manager.is_local_vp( i ) )
       {
         rng_.push_back( getValue< librandom::RngDatum >(
-          ( *ad )[ kernel().vp_manager.suggest_vp( i ) ] ) );
+          ( *ad )[ kernel().vp_manager.suggest_vp_for_gid( i ) ] ) );
       }
     }
   }
-  else if ( n_threads_updated && kernel().node_manager.size() == 0 )
+  else if ( n_threads_updated and kernel().node_manager.size() == 0 )
   {
     LOG( M_WARNING,
       "RNGManager::set_status",
@@ -157,7 +157,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
       if ( kernel().vp_manager.is_local_vp( i ) )
       {
         rng_[ kernel().vp_manager.vp_to_thread(
-                kernel().vp_manager.suggest_vp( i ) ) ]->seed( s );
+                kernel().vp_manager.suggest_vp_for_gid( i ) ) ]->seed( s );
       }
 
       rng_seeds_[ i ] = s;
@@ -170,7 +170,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     // pre-seeded grng that can be used directly, no seeding required
     updateValue< librandom::RngDatum >( d, names::grng, grng_ );
   }
-  else if ( n_threads_updated && kernel().node_manager.size() == 0 )
+  else if ( n_threads_updated and kernel().node_manager.size() == 0 )
   {
     LOG( M_WARNING,
       "RNGManager::set_status",

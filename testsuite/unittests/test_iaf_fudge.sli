@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_iaf_fudge - sli script to test normalization of PSP for iaf_psc_alpha model
 
 Synopsis: (test_iaf_fudge) run -> compares response to spike input step with reference data 

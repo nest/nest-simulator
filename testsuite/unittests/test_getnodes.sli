@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_getnodes - sli script to test if GetGlobalNodes works as expected
 
    Synopsis: (test_getnodes) run

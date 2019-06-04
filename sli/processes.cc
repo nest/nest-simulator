@@ -89,6 +89,7 @@ extern "C" {
 // to non-virtual thunk" MH 12-02-22, redid fix by JME 12-01-27.
 long bg_get_heap_mem();
 long bg_get_stack_mem();
+long bg_get_mmap_mem();
 }
 #endif
 
@@ -844,7 +845,7 @@ Processes::MkfifoFunction::execute( SLIInterpreter* i ) const
 }
 
 #if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: memory_thisjob_bg - Reports memory usage on Blue Gene/P/Q systems
  Description:
  memory_thisjob_bg returns a dictionary with the heap and stack memory
@@ -861,6 +862,8 @@ Processes::MemoryThisjobBgFunction::execute( SLIInterpreter* i ) const
   ( *dict )[ "heap" ] = heap_memory;
   unsigned long stack_memory = bg_get_stack_mem();
   ( *dict )[ "stack" ] = stack_memory;
+  unsigned long mmap_memory = bg_get_mmap_mem();
+  ( *dict )[ "mmap" ] = mmap_memory;
 
   i->OStack.push( dict );
   i->EStack.pop();
@@ -868,7 +871,7 @@ Processes::MemoryThisjobBgFunction::execute( SLIInterpreter* i ) const
 #endif
 
 #if defined __APPLE__ && defined HAVE_MACH_MACH_H
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: memory_thisjob_darwin - Reports memory usage on Darwin/Apple systems
  Description:
  memory_thisjob_darwin returns the resident memory usage of a process in Bytes.

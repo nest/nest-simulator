@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
     Name: testsuite::test_iaf_psc_exp_ps_lossless - sli script for overall test of iaf_psc_exp_ps_lossless model
 
     Synopsis: (test_iaf_psc_exp_ps_lossless) run -> compares response to current step with reference data and tests lossless spike detection

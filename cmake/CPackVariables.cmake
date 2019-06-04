@@ -23,7 +23,7 @@ function( NEST_SET_CPACK_VARIABLES )
   set( CPACK_SOURCE_GENERATOR TGZ )
 
   set( CPACK_PACKAGE_DESCRIPTION_SUMMARY "nest::The Neural Simulation Tool" )
-  set( CPACK_PACKAGE_VENDOR "NEST Initiative (http://www.nest-initiative.org/)" )
+  set( CPACK_PACKAGE_VENDOR "NEST Initiative (https://www.nest-initiative.org/)" )
   set( CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/extras/logos/nest.png" )
 
   set( CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE" )

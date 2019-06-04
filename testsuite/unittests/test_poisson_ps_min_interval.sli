@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_poisson_ps_min_interval - checks that intervals are independent of tic size
 
 Synopsis: (test_poisson_ps_min_interval) run -> minimum interal close to 0

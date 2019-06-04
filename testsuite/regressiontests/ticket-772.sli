@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::ticket-772 - NEST should not crash, if integer values for weight/ delay are used
 
    Synopsis: (ticket-772) run -> NEST exits if test fails

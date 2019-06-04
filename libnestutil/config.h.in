@@ -22,10 +22,10 @@
 
 #ifndef CONFIG_H
 #define CONFIG_H
-/* 
+/*
     Configuration header.
     config.h is automatically generated from config.h.in
-    during the configuration process. 
+    during the configuration process.
 
     Please make all changes in config.h.in.
 */
@@ -61,6 +61,9 @@
 /* when to truncate the recursive instantiation of the connector */
 #define CONFIG_CONNECTOR_CUTOFF @connector_cutoff@
 
+/* Define to 1 if you have a 32 bit architecture */
+#cmakedefine HAVE_32BIT_ARCH 1
+
 /* define if the compiler does not include *.h headers ISO conformant */
 #cmakedefine HAVE_ALPHA_CXX_STD_BUG 1
 
@@ -72,11 +75,6 @@
 
 /* Is the GNU Science Library available (ver. >= 1.0)? */
 #cmakedefine HAVE_GSL 1
-
-/* Define to 1 if you have the <inttypes.h> header file.
- * Used in sparseconfig.h.
- */
-#cmakedefine HAVE_INTTYPES_H 1
 
 /* "Define if isnan() is available" */
 #cmakedefine HAVE_ISNAN 1
@@ -93,10 +91,14 @@
 /* libneurosim support enabled? */
 #cmakedefine HAVE_LIBNEUROSIM 1
 
-/* define if we have usable long long type.
- * Used in sparseconfig.h.
- */
+/* Define to 1 if you have usable long long type. */
 #cmakedefine HAVE_LONG_LONG 1
+
+/* Define to 1 if you have u_int46_t type. */
+#cmakedefine HAVE_U_INT64_T 1
+
+/* Define to 1 if you have uint46_t type. */
+#cmakedefine HAVE_UINT64_T 1
 
 /* Define to 1 if you have the <mach/mach.h> header file. */
 #cmakedefine HAVE_MACH_MACH_H 1
@@ -109,6 +111,9 @@
 
 /* MPI is available. */
 #cmakedefine HAVE_MPI 1
+
+/* Boost is available. */
+#cmakedefine HAVE_BOOST 1
 
 /* MUSIC support enabled? */
 #cmakedefine HAVE_MUSIC 1
@@ -140,31 +145,11 @@
 /* define if the compiler fails on static template member declaration */
 #cmakedefine HAVE_STATIC_TEMPLATE_DECLARATION_FAIL 1
 
-/* Define to 1 if you have the <stdint.h> header file.
- * Used in sparseconfig.h.
- */
-#cmakedefine HAVE_STDINT_H 1
-
 /* define for STL vector capacity base unity */
 #cmakedefine HAVE_STL_VECTOR_CAPACITY_BASE_UNITY 1
 
 /* define for STL vector capacity doubling strategy */
 #cmakedefine HAVE_STL_VECTOR_CAPACITY_DOUBLING 1
-
-/* Define to 1 if you have the <sys/types.h> header file.
- * Used in sparseconfig.h.
- */
-#cmakedefine HAVE_SYS_TYPES_H 1
-
-/* Define if the system has the type `uint16_t'.
- * Used in sparseconfig.h.
- */
-#cmakedefine HAVE_UINT16_T 1
-
-/* Define if the system has the type `u_int16_t'.
- * Used in sparseconfig.h.
- */
-#cmakedefine HAVE_U_INT16_T 1
 
 /* Tics per millisecond specified? */
 #cmakedefine HAVE_TICS_PER_MS 1
@@ -192,5 +177,10 @@
 
 /* Use PS array construction semantics */
 #cmakedefine PS_ARRAYS 1
+
+/* Bit counts for Target members */
+#define TARGET_BITS_SPLIT @TARGET_BITS_SPLIT@
+#define TARGET_BITS_SPLIT_STANDARD 0
+#define TARGET_BITS_SPLIT_HPC 1
 
 #endif // #ifndef CONFIG_H

@@ -365,8 +365,13 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
               rng,
               w,
               d );
-            kernel().connection_manager.connect(
-              iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+            kernel().connection_manager.connect( iter->second,
+              *tgt_it,
+              target_thread,
+              synapse_model_,
+              dummy_param_,
+              d,
+              w );
           }
         }
       }
@@ -388,8 +393,13 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
           double w, d;
           get_parameters_(
             target.compute_displacement( iter->first, target_pos ), rng, w, d );
-          kernel().connection_manager.connect(
-            iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_manager.connect( iter->second,
+            *tgt_it,
+            target_thread,
+            synapse_model_,
+            dummy_param_,
+            d,
+            w );
         }
       }
     }
@@ -445,8 +455,13 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
               rng,
               w,
               d );
-            kernel().connection_manager.connect(
-              iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+            kernel().connection_manager.connect( iter->second,
+              *tgt_it,
+              target_thread,
+              synapse_model_,
+              dummy_param_,
+              d,
+              w );
           }
         }
       }
@@ -468,8 +483,13 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
           double w, d;
           get_parameters_(
             target.compute_displacement( iter->first, target_pos ), rng, w, d );
-          kernel().connection_manager.connect(
-            iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_manager.connect( iter->second,
+            *tgt_it,
+            target_thread,
+            synapse_model_,
+            dummy_param_,
+            d,
+            w );
         }
       }
     }
@@ -480,6 +500,11 @@ template < int D >
 void
 ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 {
+  if ( number_of_connections_ < 1 )
+  {
+    return;
+  }
+
   // Convergent connections (fixed fan in)
   //
   // For each local target node:
@@ -520,6 +545,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 
   if ( mask_.valid() )
   {
+    MaskedLayer< D > masked_source(
+      source, source_filter_, mask_, true, allow_oversized_ );
 
     for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
           tgt_it != target_end;
@@ -539,11 +566,16 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
         target.get_position( ( *tgt_it )->get_subnet_index() );
 
       // Get (position,GID) pairs for sources inside mask
-      std::vector< std::pair< Position< D >, index > > positions =
-        source.get_global_positions_vector( source_filter_,
-          mask_,
-          target.get_position( ( *tgt_it )->get_subnet_index() ),
-          allow_oversized_ );
+      const Position< D > anchor =
+        target.get_position( ( *tgt_it )->get_subnet_index() );
+      std::vector< std::pair< Position< D >, index > > positions;
+      for ( typename Ntree< D, index >::masked_iterator iter =
+              masked_source.begin( anchor );
+            iter != masked_source.end();
+            ++iter )
+      {
+        positions.push_back( *iter );
+      }
 
       // We will select `number_of_connections_` sources within the mask.
       // If there is no kernel, we can just draw uniform random numbers,
@@ -608,8 +640,13 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             rng,
             w,
             d );
-          kernel().connection_manager.connect(
-            source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_manager.connect( source_id,
+            *tgt_it,
+            target_thread,
+            synapse_model_,
+            dummy_param_,
+            d,
+            w );
           is_selected[ random_id ] = true;
         }
       }
@@ -650,8 +687,13 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             rng,
             w,
             d );
-          kernel().connection_manager.connect(
-            source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_manager.connect( source_id,
+            *tgt_it,
+            target_thread,
+            synapse_model_,
+            dummy_param_,
+            d,
+            w );
           is_selected[ random_id ] = true;
         }
       }
@@ -742,8 +784,13 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           double w, d;
           get_parameters_(
             source.compute_displacement( target_pos, source_pos ), rng, w, d );
-          kernel().connection_manager.connect(
-            source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_manager.connect( source_id,
+            *tgt_it,
+            target_thread,
+            synapse_model_,
+            dummy_param_,
+            d,
+            w );
           is_selected[ random_id ] = true;
         }
       }
@@ -777,8 +824,13 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           double w, d;
           get_parameters_(
             source.compute_displacement( target_pos, source_pos ), rng, w, d );
-          kernel().connection_manager.connect(
-            source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_manager.connect( source_id,
+            *tgt_it,
+            target_thread,
+            synapse_model_,
+            dummy_param_,
+            d,
+            w );
           is_selected[ random_id ] = true;
         }
       }
@@ -791,6 +843,11 @@ template < int D >
 void
 ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
 {
+  if ( number_of_connections_ < 1 )
+  {
+    return;
+  }
+
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
@@ -919,8 +976,13 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
       }
 
       Node* target_ptr = kernel().node_manager.get_node( target_id );
-      kernel().connection_manager.connect(
-        source_id, target_ptr, target_ptr->get_thread(), synapse_model_, d, w );
+      kernel().connection_manager.connect( source_id,
+        target_ptr,
+        target_ptr->get_thread(),
+        synapse_model_,
+        dummy_param_,
+        d,
+        w );
     }
   }
 }

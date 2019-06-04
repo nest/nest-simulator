@@ -137,8 +137,8 @@ inline bool GIDCollection::const_iterator::operator!=(
 
 inline index GIDCollection::operator[]( const size_t pos ) const
 {
-  if ( ( is_range_ && pos + gid_range_.first > gid_range_.second )
-    || ( not is_range_ && pos >= gid_array_.size() ) )
+  if ( ( is_range_ and pos + gid_range_.first > gid_range_.second )
+    or ( not is_range_ and pos >= gid_array_.size() ) )
   {
     throw std::out_of_range( "pos points outside of the GIDCollection" );
   }

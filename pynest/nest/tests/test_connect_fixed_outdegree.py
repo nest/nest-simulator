@@ -52,7 +52,7 @@ class TestFixedOutDegree(TestParams):
         conn_params['outdegree'] = self.N2 + 1
         try:
             self.setUpNetwork(conn_params)
-        except:
+        except hf.nest.kernel.NESTError:
             got_error = True
         self.assertTrue(got_error)
 
@@ -92,7 +92,7 @@ class TestFixedOutDegree(TestParams):
             ks, p = scipy.stats.kstest(pvalues, 'uniform')
             self.assertTrue(p > self.stat_dict['alpha2'])
 
-    def testAutapses(self):
+    def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
         N = 10
         conn_params['multapses'] = False
@@ -105,7 +105,11 @@ class TestFixedOutDegree(TestParams):
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
         hf.mpi_assert(np.diag(M), np.ones(N), self)
-        hf.nest.ResetKernel()
+
+    def testAutapsesFalse(self):
+        conn_params = self.conn_dict.copy()
+        N = 10
+        conn_params['multapses'] = False
 
         # test that autapses were excluded
         conn_params['outdegree'] = N - 1
@@ -116,7 +120,7 @@ class TestFixedOutDegree(TestParams):
         M = hf.get_connectivity_matrix(pop, pop)
         hf.mpi_assert(np.diag(M), np.zeros(N), self)
 
-    def testMultapses(self):
+    def testMultapsesTrue(self):
         conn_params = self.conn_dict.copy()
         N = 3
         conn_params['autapses'] = True
@@ -128,7 +132,11 @@ class TestFixedOutDegree(TestParams):
         hf.nest.Connect(pop, pop, conn_params)
         nr_conns = len(hf.nest.GetConnections(pop, pop))
         hf.mpi_assert(nr_conns, conn_params['outdegree'] * N, self)
-        hf.nest.ResetKernel()
+
+    def testMultapsesFalse(self):
+        conn_params = self.conn_dict.copy()
+        N = 3
+        conn_params['autapses'] = True
 
         # test that no multapses exist
         conn_params['outdegree'] = N
@@ -149,6 +157,7 @@ def suite():
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
+
 
 if __name__ == '__main__':
     run()

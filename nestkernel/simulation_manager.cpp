@@ -32,6 +32,8 @@
 #include "compose.hpp"
 
 // Includes from nestkernel:
+#include "connection_manager_impl.h"
+#include "event_delivery_manager.h"
 #include "kernel_manager.h"
 #include "sibling_container.h"
 
@@ -121,7 +123,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       from_step_ = 0;
       slice_ = 0;
       // clear all old spikes
-      kernel().event_delivery_manager.configure_spike_buffers();
+      kernel().event_delivery_manager.configure_spike_data_buffers();
     }
   }
 
@@ -137,7 +139,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   bool res_updated = updateValue< double >( d, names::resolution, resd );
   double integer_part; // Dummy variable to be used with std::modf().
 
-  if ( tics_per_ms_updated || res_updated )
+  if ( tics_per_ms_updated or res_updated )
   {
     if ( kernel().node_manager.size() > 1 ) // root always exists
     {
@@ -163,9 +165,9 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "created. Please call ResetKernel first." );
       throw KernelException();
     }
-    else if ( res_updated && tics_per_ms_updated ) // only allow TICS_PER_MS to
-                                                   // be changed together with
-                                                   // resolution
+    else if ( res_updated and tics_per_ms_updated ) // only allow TICS_PER_MS to
+                                                    // be changed together with
+                                                    // resolution
     {
       if ( resd < 1.0 / tics_per_ms )
       {
@@ -198,7 +200,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         // to resolution if no wfr is used explicitly set wfr_comm_interval
         // to resolution because communication in every step is needed
         if ( wfr_comm_interval_ < Time::get_resolution().get_ms()
-          || not use_wfr_ )
+          or not use_wfr_ )
         {
           wfr_comm_interval_ = Time::get_resolution().get_ms();
         }
@@ -236,7 +238,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         // to resolution if no wfr is used explicitly set wfr_comm_interval
         // to resolution because communication in every step is needed
         if ( wfr_comm_interval_ < Time::get_resolution().get_ms()
-          || not use_wfr_ )
+          or not use_wfr_ )
         {
           wfr_comm_interval_ = Time::get_resolution().get_ms();
         }
@@ -354,7 +356,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   long interp_order;
   if ( updateValue< long >( d, names::wfr_interpolation_order, interp_order ) )
   {
-    if ( ( interp_order < 0 ) || ( interp_order == 2 ) || ( interp_order > 3 ) )
+    if ( ( interp_order < 0 ) or ( interp_order == 2 ) or ( interp_order > 3 ) )
     {
       LOG( M_ERROR,
         "SimulationManager::set_status",
@@ -436,7 +438,7 @@ nest::SimulationManager::prepare()
   // if at the beginning of a simulation, set up spike buffers
   if ( not simulated_ )
   {
-    kernel().event_delivery_manager.configure_spike_buffers();
+    kernel().event_delivery_manager.configure_spike_data_buffers();
   }
 
   kernel().node_manager.ensure_valid_thread_local_ids();
@@ -454,6 +456,21 @@ nest::SimulationManager::prepare()
     kernel().music_manager.enter_runtime( tick );
   }
   prepared_ = true;
+
+  // check whether waveform relaxation is used on any MPI process;
+  // needs to be called before update_connection_intrastructure_since
+  // it resizes coefficient arrays for secondary events
+  kernel().node_manager.check_wfr_use();
+
+  if ( kernel().node_manager.have_nodes_changed()
+    or kernel().connection_manager.have_connections_changed() )
+  {
+#pragma omp parallel
+    {
+      const thread tid = kernel().vp_manager.get_thread_id();
+      update_connection_infrastructure( tid );
+    } // of omp parallel
+  }
 }
 
 void
@@ -528,9 +545,6 @@ nest::SimulationManager::run( Time const& t )
 
   // Reset profiling timers and counters within event_delivery_manager
   kernel().event_delivery_manager.reset_timers_counters();
-
-  // Check whether waveform relaxation is used on any MPI process
-  kernel().node_manager.check_wfr_use();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -662,12 +676,59 @@ nest::SimulationManager::call_update_()
   if ( exit_on_user_signal_ )
   {
     LOG( M_WARNING,
-      "SimulationManager::resume",
+      "SimulationManager::run",
       String::compose( "Exiting on user signal %1.", SLIsignalflag ) );
     SLIsignalflag = 0;
   }
 
-  LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
+  LOG( M_INFO, "SimulationManager::run", "Simulation finished." );
+}
+
+void
+nest::SimulationManager::update_connection_infrastructure( const thread tid )
+{
+  kernel().connection_manager.restructure_connection_tables( tid );
+  kernel().connection_manager.sort_connections( tid );
+
+#pragma omp barrier // wait for all threads to finish sorting
+
+#pragma omp single
+  {
+    kernel().connection_manager.compute_target_data_buffer_size();
+    kernel().event_delivery_manager.resize_send_recv_buffers_target_data();
+
+    // check whether primary and secondary connections exists on any
+    // compute node
+    kernel().connection_manager.sync_has_primary_connections();
+    kernel().connection_manager.check_secondary_connections_exist();
+  }
+
+  if ( kernel().connection_manager.secondary_connections_exist() )
+  {
+#pragma omp barrier
+    kernel()
+      .connection_manager.compute_compressed_secondary_recv_buffer_positions(
+        tid );
+#pragma omp single
+    {
+      kernel().event_delivery_manager.configure_secondary_buffers();
+    }
+  }
+
+  // communicate connection information from postsynaptic to
+  // presynaptic side
+  kernel().event_delivery_manager.gather_target_data( tid );
+
+  if ( kernel().connection_manager.secondary_connections_exist() )
+  {
+    kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
+  }
+
+#pragma omp single
+  {
+    kernel().node_manager.set_have_nodes_changed( false );
+    kernel().connection_manager.set_have_connections_changed( false );
+  }
 }
 
 bool
@@ -687,12 +748,10 @@ nest::SimulationManager::update_()
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
     kernel().vp_manager.get_num_threads() );
-  bool exception_raised = false; // none raised on any thread
-
 // parallel section begins
 #pragma omp parallel
   {
-    const int thrd = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     do
     {
@@ -702,13 +761,14 @@ nest::SimulationManager::update_()
       }
 
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
-        && ( clock_.get_steps() + from_step_ )
-            % kernel().sp_manager.get_structural_plasticity_update_interval()
-          == 0 )
+        and ( ( clock_.get_steps() + from_step_ )
+                % kernel()
+                    .sp_manager.get_structural_plasticity_update_interval()
+              == 0 ) )
       {
         for ( std::vector< Node* >::const_iterator i =
-                kernel().node_manager.get_nodes_on_thread( thrd ).begin();
-              i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
+                kernel().node_manager.get_nodes_on_thread( tid ).begin();
+              i != kernel().node_manager.get_nodes_on_thread( tid ).end();
               ++i )
         {
           ( *i )->update_synaptic_elements(
@@ -721,18 +781,23 @@ nest::SimulationManager::update_()
         }
         // Remove 10% of the vacant elements
         for ( std::vector< Node* >::const_iterator i =
-                kernel().node_manager.get_nodes_on_thread( thrd ).begin();
-              i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
+                kernel().node_manager.get_nodes_on_thread( tid ).begin();
+              i != kernel().node_manager.get_nodes_on_thread( tid ).end();
               ++i )
         {
           ( *i )->decay_synaptic_elements_vacant();
         }
-      }
 
+        // after structural plasticity has created and deleted
+        // connections, update the connection infrastructure; implies
+        // complete removal of presynaptic part and reconstruction
+        // from postsynaptic data
+        update_connection_infrastructure( tid );
 
-      if ( from_step_ == 0 ) // deliver only at beginning of slice
+      } // of structural plasticity
+
+      if ( from_step_ == 0 )
       {
-        kernel().event_delivery_manager.deliver_events( thrd );
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
 // be done after deliver_events_() since it calls
@@ -763,8 +828,11 @@ nest::SimulationManager::update_()
 #endif
       }
 
-      // preliminary update of nodes that use waveform relaxtion
-      if ( kernel().node_manager.wfr_is_used() )
+      // preliminary update of nodes that use waveform relaxtion, only
+      // necessary if secondary connections exist and any node uses
+      // wfr
+      if ( kernel().connection_manager.secondary_connections_exist()
+        and kernel().node_manager.wfr_is_used() )
       {
 #pragma omp single
         {
@@ -783,7 +851,7 @@ nest::SimulationManager::update_()
 
         bool max_iterations_reached = true;
         const std::vector< Node* >& thread_local_wfr_nodes =
-          kernel().node_manager.get_wfr_nodes_on_thread( thrd );
+          kernel().node_manager.get_wfr_nodes_on_thread( tid );
         for ( long n = 0; n < wfr_max_iterations_; ++n )
         {
           bool done_p = true;
@@ -795,7 +863,7 @@ nest::SimulationManager::update_()
                 i != thread_local_wfr_nodes.end();
                 ++i )
           {
-            done_p = wfr_update_( *i ) && done_p;
+            done_p = wfr_update_( *i ) and done_p;
           }
 
 // add done value of thread p to done vector
@@ -808,14 +876,14 @@ nest::SimulationManager::update_()
 // the other threads wait at the end of the block
 #pragma omp single
           {
-            // set done_all
-            for ( size_t i = 0; i < done.size(); i++ )
+            // check whether all threads are done
+            for ( size_t i = 0; i < done.size(); ++i )
             {
-              done_all = done[ i ] && done_all;
+              done_all = done[ i ] and done_all;
             }
 
             // gather SecondaryEvents (e.g. GapJunctionEvents)
-            kernel().event_delivery_manager.gather_events( done_all );
+            kernel().event_delivery_manager.gather_secondary_events( done_all );
 
             // reset done and done_all
             //(needs to be in the single threaded part)
@@ -825,7 +893,8 @@ nest::SimulationManager::update_()
 
           // deliver SecondaryEvents generated during wfr_update
           // returns the done value over all threads
-          done_p = kernel().event_delivery_manager.deliver_events( thrd );
+          done_p = kernel().event_delivery_manager.deliver_secondary_events(
+            tid, true );
 
           if ( done_p )
           {
@@ -851,7 +920,7 @@ nest::SimulationManager::update_()
       // end of preliminary update
 
       const std::vector< Node* >& thread_local_nodes =
-        kernel().node_manager.get_nodes_on_thread( thrd );
+        kernel().node_manager.get_nodes_on_thread( tid );
       for (
         std::vector< Node* >::const_iterator node = thread_local_nodes.begin();
         node != thread_local_nodes.end();
@@ -869,35 +938,37 @@ nest::SimulationManager::update_()
         catch ( std::exception& e )
         {
           // so throw the exception after parallel region
-          exceptions_raised.at( thrd ) = lockPTR< WrappedThreadException >(
+          exceptions_raised.at( tid ) = lockPTR< WrappedThreadException >(
             new WrappedThreadException( e ) );
         }
       }
 
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
+      // gather and deliver only at end of slice, i.e., end of min_delay step
+      if ( to_step_ == kernel().connection_manager.get_min_delay() )
+      {
+        if ( kernel().connection_manager.has_primary_connections() )
+        {
+          kernel().event_delivery_manager.gather_spike_data( tid );
+        }
+        if ( kernel().connection_manager.secondary_connections_exist() )
+        {
+#pragma omp single
+          {
+            kernel().event_delivery_manager.gather_secondary_events( true );
+          }
+          kernel().event_delivery_manager.deliver_secondary_events(
+            tid, false );
+        }
+      }
+
+#pragma omp barrier
 
 // the following block is executed by the master thread only
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
       {
-        // check if any thread in parallel section raised an exception
-        for ( index thrd = 0; thrd < kernel().vp_manager.get_num_threads();
-              ++thrd )
-        {
-          if ( exceptions_raised.at( thrd ).valid() )
-          {
-            exception_raised = true;
-            break;
-          }
-        }
-
-        // gather only at end of slice
-        if ( to_step_ == kernel().connection_manager.get_min_delay() )
-        {
-          kernel().event_delivery_manager.gather_events( true );
-        }
-
         advance_time_();
 
         if ( SLIsignalflag != 0 )
@@ -917,29 +988,28 @@ nest::SimulationManager::update_()
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 
-    } while (
-      to_do_ > 0 and not exit_on_user_signal_ and not exception_raised );
+    } while ( to_do_ > 0 and not exit_on_user_signal_
+      and not exceptions_raised.at( tid ) );
 
     // End of the slice, we update the number of synaptic elements
     for ( std::vector< Node* >::const_iterator i =
-            kernel().node_manager.get_nodes_on_thread( thrd ).begin();
-          i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
+            kernel().node_manager.get_nodes_on_thread( tid ).begin();
+          i != kernel().node_manager.get_nodes_on_thread( tid ).end();
           ++i )
     {
       ( *i )->update_synaptic_elements(
         Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     }
-
-  } // end of #pragma parallel omp
+  } // of omp parallel
 
   // check if any exceptions have been raised
-  for ( index thrd = 0; thrd < kernel().vp_manager.get_num_threads(); ++thrd )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    if ( exceptions_raised.at( thrd ).valid() )
+    if ( exceptions_raised.at( tid ).valid() )
     {
       simulating_ = false; // must mark this here, see #311
       inconsistent_state_ = true;
-      throw WrappedThreadException( *( exceptions_raised.at( thrd ) ) );
+      throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
     }
   }
 }

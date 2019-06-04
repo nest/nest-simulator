@@ -25,7 +25,6 @@ API of the PyNEST wrapper.
 """
 
 import warnings
-import inspect
 import json
 import functools
 import textwrap
@@ -33,17 +32,52 @@ import subprocess
 import os
 import re
 import sys
+import numpy
+import json
 
 from string import Template
 
-# These variables MUST be set by __init__.py right after importing.
-# There is no safety net, whatsoever.
-sps = spp = sr = pcd = kernel = None
+from ..ll_api import *
+from .. import pynestkernel as kernel
+
+__all__ = [
+    'broadcast',
+    'deprecated',
+    'get_help_filepath',
+    'get_unistring_type',
+    'get_verbosity',
+    'get_wrapped_text',
+    'is_coercible_to_sli_array',
+    'is_iterable',
+    'is_literal',
+    'is_sequence_of_connections',
+    'is_sequence_of_gids',
+    'is_string',
+    'load_help',
+    'model_deprecation_warning',
+    'serializable',
+    'set_verbosity',
+    'show_deprecation_warning',
+    'show_help_with_pager',
+    'SuppressedDeprecationWarning',
+    'to_json',
+    'uni_str',
+]
+
+# These flags are used to print deprecation warnings only once.
+# Only flags for special cases need to be entered here, all flags for
+# deprecated functions will be registered by the @deprecated decorator.
+_deprecation_warning = {'BackwardCompatibilityConnect': True,
+                        'subnet': True,
+                        'aeif_cond_alpha_RK5': True}
 
 
-# These flags are used to print deprecation warnings only once. The
-# corresponding functions will be removed in the 2.6 release of NEST.
-_deprecation_warning = {'BackwardCompatibilityConnect': True}
+def format_Warning(message, category, filename, lineno, line=None):
+    """Formats deprecation warning."""
+
+    return '%s:%s: %s:%s\n' % (filename, lineno, category.__name__, message)
+
+warnings.formatwarning = format_Warning
 
 
 def get_wrapped_text(text, width=80):
@@ -83,9 +117,7 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
             alt_func_name = 'Connect'
         if text is None:
             text = "{0} is deprecated and will be removed in a future \
-            version of NEST.\nPlease use {1} instead!\n\
-            For details, see\
-            http://www.nest-simulator.org/connection_management\
+            version of NEST.\nPlease use {1} instead!\
             ".format(func_name, alt_func_name)
             text = get_wrapped_text(text)
 
@@ -103,7 +135,7 @@ def deprecated(alt_func_name, text=None):
     Parameters
     ----------
     alt_func_name : str, optional
-        Name of the function to use instead
+        Name of the function to use instead, may be empty string
     text : str, optional
         Text to display instead of standard text
 
@@ -112,6 +144,7 @@ def deprecated(alt_func_name, text=None):
     function:
         Decorator function
     """
+
     def deprecated_decorator(func):
         _deprecation_warning[func.__name__] = True
 
@@ -171,109 +204,6 @@ def is_string(obj):
         True if obj is a unicode string
     """
     return isinstance(obj, uni_str)
-
-
-__debug = False
-
-
-def get_debug():
-    """Return the current value of the debug flag of the high-level API.
-
-    Returns
-    -------
-    bool:
-        current value of the debug flag
-    """
-
-    global __debug
-    return __debug
-
-
-def set_debug(dbg=True):
-    """Set the debug flag of the high-level API.
-
-    Parameters
-    ----------
-    dbg : bool, optional
-        Value to set the debug flag to
-    """
-
-    global __debug
-    __debug = dbg
-
-
-def stack_checker(f):
-    """Decorator to add stack checks to functions using PyNEST's
-    low-level API.
-
-    This decorator works only on functions. See
-    check_stack() for the generic version for functions and
-    classes.
-
-    Parameters
-    ----------
-    f : function
-        Function to decorate
-
-    Returns
-    -------
-    function:
-        Decorated function
-
-    Raises
-    ------
-    kernel.NESTError
-    """
-
-    @functools.wraps(f)
-    def stack_checker_func(*args, **kwargs):
-        if not get_debug():
-            return f(*args, **kwargs)
-        else:
-            sr('count')
-            stackload_before = spp()
-            result = f(*args, **kwargs)
-            sr('count')
-            num_leftover_elements = spp() - stackload_before
-            if num_leftover_elements != 0:
-                eargs = (f.__name__, num_leftover_elements)
-                etext = "Function '%s' left %i elements on the stack."
-                raise kernel.NESTError(etext % eargs)
-            return result
-
-    return stack_checker_func
-
-
-def check_stack(thing):
-    """Convenience wrapper for applying the stack_checker decorator to
-    all class methods of the given class, or to a given function.
-
-    If the object cannot be decorated, it is returned unchanged.
-
-    Parameters
-    ----------
-    thing : function or class
-        Description
-
-    Returns
-    -------
-    function or class
-        Decorated function or class
-
-    Raises
-    ------
-    ValueError
-    """
-
-    if inspect.isfunction(thing):
-        return stack_checker(thing)
-    elif inspect.isclass(thing):
-        for name, mtd in inspect.getmembers(thing, predicate=inspect.ismethod):
-            if name.startswith("test_"):
-                setattr(thing, name, stack_checker(mtd))
-        return thing
-    else:
-        raise ValueError("unable to decorate {0}".format(thing))
 
 
 def is_iterable(seq):
@@ -390,7 +320,7 @@ def broadcast(item, length, allowed_types, name="item"):
     """
 
     if isinstance(item, allowed_types):
-        return length * (item,)
+        return length * (item, )
     elif len(item) == 1:
         return length * item
     elif len(item) != length:
@@ -446,6 +376,8 @@ def __show_help_in_modal_window(objname, hlptxt):
 def get_help_filepath(hlpobj):
     """Get file path of help object
 
+    Prints message if no help is available for hlpobj.
+
     Parameters
     ----------
     hlpobj : string
@@ -454,7 +386,7 @@ def get_help_filepath(hlpobj):
     Returns
     -------
     string:
-        Filepath of the help object.
+        Filepath of the help object or None if no help available
     """
 
     helpdir = os.path.join(sli_func("statusdict/prgdocdir ::"), "help")
@@ -464,7 +396,9 @@ def get_help_filepath(hlpobj):
             if hlp == objname:
                 objf = os.path.join(dirpath, objname)
                 return objf
-    print("Sorry, there is no help for '" + hlpobj + "'!")
+    else:
+        print("Sorry, there is no help for '" + hlpobj + "'.")
+        return None
 
 
 def load_help(hlpobj):
@@ -478,7 +412,7 @@ def load_help(hlpobj):
     Returns
     -------
     string:
-        The documentation of the object.
+        The documentation of the object or None if no help available
     """
 
     objf = get_help_filepath(hlpobj)
@@ -486,9 +420,18 @@ def load_help(hlpobj):
         with open(objf, 'r') as fhlp:
             hlptxt = fhlp.read()
         return hlptxt
+    else:
+        return None
 
 
-def show_help_with_pager(hlpobj, pager):
+def __is_executable(path, candidate):
+    """Returns true for executable files."""
+
+    candidate = os.path.join(path, candidate)
+    return os.access(candidate, os.X_OK) and os.path.isfile(candidate)
+
+
+def show_help_with_pager(hlpobj, pager=None):
     """Output of doc in python with pager or print
 
     Parameters
@@ -496,10 +439,11 @@ def show_help_with_pager(hlpobj, pager):
     hlpobj : object
         Object to display
     pager: str, optional
-        pager to use, NO if you explicity do not want to use a pager
+        pager to use, False if you want to display help using print().
     """
+
     if sys.version_info < (2, 7, 8):
-        print("NEST help is only available with Python 2.7.8 or later. \n")
+        print("NEST help is only available with Python 2.7.8 or later.\n")
         return
 
     if 'NEST_INSTALL_DIR' not in os.environ:
@@ -508,58 +452,68 @@ def show_help_with_pager(hlpobj, pager):
             'Please source nest_vars.sh or define NEST_INSTALL_DIR manually.')
         return
 
-    objname = hlpobj + '.hlp'
-    consolepager = ['less', 'more', 'vi', 'vim', 'nano', 'emacs -nw',
-                    'ed', 'editor']
-
-    # reading ~/.nestrc lookink for pager to use.
-    if pager is None:
-        # check if .netsrc exist
-        rc_file = os.path.join(os.environ['HOME'], '.nestrc')
-        if os.path.isfile(rc_file):
-            # open ~/.nestrc
-            rc = open(rc_file, 'r')
-            # The loop goes through the .nestrc line by line and checks
-            # it for the definition of a pager. Whether a pager is
-            # found or not, this pager is used or the standard pager 'more'.
-            for line in rc:
-                # the re checks if there are lines beginning with '%'
-                rctst = re.match(r'^\s?%', line)
-                if rctst is None:
-                    # the next re checks for a sth. like
-                    # '/page << /command (more)'
-                    # and returns the given pager.
-                    pypagers = re.findall(
-                        r'^\s?/page\s?<<\s?/command\s?\((\w*)', line)
-                    if pypagers:
-                        for pa in pypagers:
-                            if pa:
-                                pager = pa
-                            else:
-                                pager = 'more'
-                        break
-                    else:
-                        pager = 'more'
-            rc.close()
-        else:
-            pager = 'more'
-
+    # check that help is available
     objf = get_help_filepath(hlpobj)
-    if objf:
-        if __check_nb():
-            # Load the helptext, check the file exists.
-            hlptxt = load_help(hlpobj)
-            if hlptxt:
-                # Opens modal window only in notebook.
-                __show_help_in_modal_window(objname, hlptxt)
-        elif pager in consolepager:
-            # Run the pager with the object file.
-            subprocess.call([pager, objf])
+    if objf is None:
+        return   # message is printed by get_help_filepath()
+
+    if __check_nb():
+        # Display help in notebook
+        # Load the helptext, check the file exists.
+        hlptxt = load_help(hlpobj)
+        if hlptxt:
+            # Opens modal window only in notebook.
+            objname = hlpobj + '.hlp'
+            __show_help_in_modal_window(objname, hlptxt)
+        return
+
+    if not pager and pager is not None:
+        # pager == False: display using print()
+        # Note: we cannot use "pager is False" as Numpy has its own False
+        hlptxt = load_help(hlpobj)
+        if hlptxt:
+            print(hlptxt)
+        return
+
+    # Help is to be displayed by pager
+    # try to find a pager if not explicitly given
+    if pager is None:
+        pager = sli_func('/page /command GetOption')
+
+        # pager == false if .nestrc does not define one
+        if not pager:
+            # Search for pager in path. The following is based on
+            # https://stackoverflow.com/questions/377017
+            for candidate in ['less', 'more', 'cat']:
+                if any(__is_executable(path, candidate)
+                       for path in os.environ['PATH'].split(os.pathsep)):
+                    pager = candidate
+                    break
+
+    # check that we have a pager
+    if not pager:
+        print('NEST help requires a pager program. You can configure '
+              'it in the .nestrc file in your home directory.')
+        return
+
+    try:
+        subprocess.check_call([pager, objf])
+    except (OSError, IOError, subprocess.CalledProcessError):
+        print('Displaying help with pager "{}" failed. '
+              'Please define a working parser in file .nestrc '
+              'in your home directory.'.format(pager))
 
 
 @check_stack
 def get_verbosity():
     """Return verbosity level of NEST's messages.
+
+    M_ALL=0,  display all messages
+    M_INFO=10, display information messages and above
+    M_DEPRECATED=18, display deprecation warnings and above
+    M_WARNING=20, display warning messages and above
+    M_ERROR=30, display error messages and above
+    M_FATAL=40, display failure messages and above
 
     Returns
     -------
@@ -576,6 +530,13 @@ def get_verbosity():
 @check_stack
 def set_verbosity(level):
     """Change verbosity level for NEST's messages.
+
+    M_ALL=0,  display all messages
+    M_INFO=10, display information messages and above
+    M_DEPRECATED=18, display deprecation warnings and above
+    M_WARNING=20, display warning messages and above
+    M_ERROR=30, display error messages and above
+    M_FATAL=40, display failure messages and above
 
     Parameters
     ----------
@@ -607,7 +568,57 @@ def model_deprecation_warning(model):
         future version of NEST, use {1} instead.\
         ".format(model, deprecated_models[model])
         text = get_wrapped_text(text)
-        warnings.warn('\n' + text)
+        show_deprecation_warning(model, text=text)
+
+
+def serializable(data):
+    """Make data serializable for JSON.
+
+    Parameters
+    ----------
+    data : str, int, float, SLILiteral, list, tuple, dict, ndarray
+
+    Returns
+    -------
+    result : str, int, float, list, dict
+
+    """
+
+    if isinstance(data, kernel.SLILiteral):
+        result = data.name
+
+    elif isinstance(data, numpy.ndarray):
+        result = data.tolist()
+
+    elif type(data) in [list, tuple]:
+        result = [serializable(d) for d in data]
+
+    elif isinstance(data, dict):
+        result = dict([(key, serializable(value))
+                       for key, value in data.items()])
+
+    else:
+        result = data
+
+    return result
+
+
+def to_json(data):
+    """Serialize data to JSON.
+
+    Parameters
+    ----------
+    data : str, int, float, SLILiteral, list, tuple, dict, ndarray
+
+    Returns
+    -------
+    data_json : str
+        JSON format of the data
+    """
+
+    data_serializable = serializable(data)
+    data_json = json.dumps(data_serializable)
+    return data_json
 
 
 class SuppressedDeprecationWarning(object):

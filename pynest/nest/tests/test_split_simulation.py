@@ -76,6 +76,11 @@ class TestSplit(unittest.TestCase):
         r1 = self.simulate()
         self.assertEqual(r0, r1)
 
-if __name__ == '__main__':
+
+def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestSplit)
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    return suite
+
+if __name__ == '__main__':
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())

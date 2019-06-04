@@ -593,7 +593,7 @@ MaskedLayer< D >::begin( const Position< D >& anchor )
     return ntree_->masked_begin(
       dynamic_cast< const Mask< D >& >( *mask_ ), anchor );
   }
-  catch ( std::bad_cast e )
+  catch ( std::bad_cast& e )
   {
     throw BadProperty( "Mask is incompatible with layer." );
   }

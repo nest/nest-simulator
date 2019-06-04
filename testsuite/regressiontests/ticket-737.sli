@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-737 Ensure that stimulating devices can only be connected with a single synapse type
 
@@ -43,13 +43,19 @@ Author: Hans Ekkehard Plesser, 2014-11-06
 
 M_ERROR setverbosity
 
+% The following models will not be tested:
+/skip_list [
+   /step_rate_generator  %connected with rate_connection_delayed
+] def
+
 /stimulators modeldict keys { GetDefaults /element_type get /stimulator eq } Select def
+/stimulators stimulators { skip_list exch MemberQ not } Select def
 
 % first test: multiple connections with same type
-ResetKernel
 {
   stimulators
   {
+    ResetKernel
     Create /stim Set
     /iaf_psc_alpha Create /n Set
     stim n /static_synapse Connect
@@ -58,10 +64,10 @@ ResetKernel
 } pass_or_die
 
 % second test: multiple connections of user-defined type
-ResetKernel
 {
   stimulators
   {
+    ResetKernel
     /stimname Set
     stimname Create /stim Set
     /iaf_psc_alpha Create /n Set
@@ -72,12 +78,11 @@ ResetKernel
   } forall
 } pass_or_die
 
-
 % third test: no multiple connections with different types
 %   test must fail if a single case fails
-ResetKernel
 stimulators
 {
+  ResetKernel
   /stimname Set
   stimname Create /stim Set
   /iaf_psc_alpha Create /n Set

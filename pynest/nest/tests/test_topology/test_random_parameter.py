@@ -63,7 +63,9 @@ class RandomParameterTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         # Create layer and connect with given weight distribution
-        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=rows, columns=cols))
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.grid(rows=rows,
+                                                        columns=cols))
         nest.ConnectLayers(layer, layer, {'connection_type': 'convergent',
                                           'number_of_connections': Nconn,
                                           'weights': weight_dict})

@@ -40,14 +40,14 @@ nest::RecordingBackendScreen::enroll( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendScreen::initialize()
+nest::RecordingBackendScreen::pre_run_hook()
 {
   enrollment_map tmp( kernel().vp_manager.get_num_threads() );
   enrolled_devices_.swap( tmp );
 }
 
 void
-nest::RecordingBackendScreen::finalize()
+nest::RecordingBackendScreen::cleanup()
 {
 }
 

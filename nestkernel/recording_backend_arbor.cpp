@@ -97,7 +97,7 @@ void nest::RecordingBackendArbor::enroll(
 }
 
 void
-nest::RecordingBackendArbor::initialize()
+nest::RecordingBackendArbor::pre_run_hook()
 {
   auto nthreads = kernel().vp_manager.get_num_threads();
   device_map devices( nthreads );
@@ -106,7 +106,7 @@ nest::RecordingBackendArbor::initialize()
 }
 
 void
-nest::RecordingBackendArbor::finalize()
+nest::RecordingBackendArbor::cleanup()
 {
   if ( prepared_ )
   {

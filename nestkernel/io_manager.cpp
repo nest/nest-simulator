@@ -147,7 +147,7 @@ nest::IOManager::initialize()
   std::map< Name, RecordingBackend* >::const_iterator it;
   for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
   {
-    it->second->initialize();
+    it->second->pre_run_hook();
   }
 }
 
@@ -161,7 +161,7 @@ nest::IOManager::finalize()
   std::map< Name, RecordingBackend* >::const_iterator it;
   for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
   {
-    it->second->finalize();
+      it->second->cleanup();
   }
 }
 
@@ -171,8 +171,8 @@ nest::IOManager::change_num_threads( thread )
   std::map< Name, RecordingBackend* >::const_iterator it;
   for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
   {
-    it->second->finalize();
-    it->second->initialize();
+      it->second->cleanup();
+    it->second->pre_run_hook();
   } 
 }
 
@@ -219,11 +219,11 @@ nest::IOManager::get_status( DictionaryDatum& d )
 }
 
 void
-nest::IOManager::post_run_cleanup()
+nest::IOManager::post_run_hook()
 {
   for ( auto it = recording_backends_.rbegin(); it != recording_backends_.rend(); ++it )
   {
-    it->second->post_run_cleanup();
+      it->second->post_run_hook();
   }
 }
 

@@ -53,7 +53,7 @@ public:
 		       const std::vector< Name >&) = 0;
 
   virtual void
-  initialize() = 0;
+  pre_run_hook() = 0;
 
   virtual void
   prepare()
@@ -61,17 +61,11 @@ public:
   }
 
   virtual void
-  cleanup()
-  {
-    finalize();
-  }
-
-  virtual void
-  post_run_cleanup()
+  post_run_hook()
   {
   }
 
-  virtual void finalize() = 0;
+  virtual void cleanup() = 0;
   virtual void synchronize() = 0;
 
   virtual void

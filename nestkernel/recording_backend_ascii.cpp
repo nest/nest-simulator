@@ -38,7 +38,7 @@ nest::RecordingBackendASCII::RecordingBackendASCII()
 
 nest::RecordingBackendASCII::~RecordingBackendASCII() throw()
 {
-  finalize();
+    cleanup();
 }
 
 void
@@ -114,14 +114,14 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendASCII::initialize()
+nest::RecordingBackendASCII::pre_run_hook()
 {
   file_map tmp( kernel().vp_manager.get_num_threads() );
   files_.swap( tmp );
 }
 
 void
-nest::RecordingBackendASCII::post_run_cleanup()
+nest::RecordingBackendASCII::post_run_hook()
 {
   file_map::iterator inner;
   for ( inner = files_.begin(); inner != files_.end(); ++inner )
@@ -139,7 +139,7 @@ nest::RecordingBackendASCII::post_run_cleanup()
 //overwrite files now with nestio.
 
 void
-nest::RecordingBackendASCII::finalize()
+nest::RecordingBackendASCII::cleanup()
 {
   file_map::iterator inner;
   for ( inner = files_.begin(); inner != files_.end(); ++inner )

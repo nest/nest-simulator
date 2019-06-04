@@ -55,12 +55,12 @@ public:
   /**
    * Flush files after a single call to Run
    */
-  void post_run_cleanup();
+  void post_run_hook();
 
   /**
    * Finalize the RecordingBackendASCII after the simulation has finished.
    */
-  void finalize();
+  void cleanup();
 
   /**
    * Trivial synchronization function. The RecordingBackendASCII does
@@ -79,7 +79,7 @@ public:
   /**
    * Initialize the RecordingBackendASCII during simulation preparation.
    */
-  void initialize();
+  void pre_run_hook();
 
   void get_device_status( const RecordingDevice& device,
 			  DictionaryDatum& ) const;

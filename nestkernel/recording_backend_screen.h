@@ -60,7 +60,7 @@ public:
    * Finalization function. Nothing has to be finalized in case of the
    * RecordingBackendScreen.
    */
-  void finalize();
+  void cleanup();
 
   /**
    * Synchronization function called at the end of each time step.
@@ -79,7 +79,7 @@ public:
   /**
    * Initialization function.
    */
-  void initialize();
+  void pre_run_hook();
 
 private:
   struct Parameters_

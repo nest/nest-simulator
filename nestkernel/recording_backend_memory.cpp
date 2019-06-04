@@ -57,7 +57,7 @@ nest::RecordingBackendMemory::enroll( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendMemory::initialize()
+nest::RecordingBackendMemory::pre_run_hook()
 {
   delete_data_();
   data_map tmp( kernel().vp_manager.get_num_threads() );
@@ -80,7 +80,7 @@ nest::RecordingBackendMemory::delete_data_()
 
 
 void
-nest::RecordingBackendMemory::finalize()
+nest::RecordingBackendMemory::cleanup()
 {
 }
 

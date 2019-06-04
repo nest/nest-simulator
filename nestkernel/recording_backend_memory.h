@@ -67,7 +67,7 @@ public:
   /**
    * Finalize the RecordingBackendMemory after the simulation has finished.
    */
-  void finalize();
+  void cleanup();
 
   /**
    * Trivial synchronization function. The RecordingBackendMemory does
@@ -88,7 +88,7 @@ public:
   /**
    * Initialize the RecordingBackendMemory during simulation preparation.
    */
-  void initialize();
+  void pre_run_hook();
 
   void get_device_status( const RecordingDevice& device,
 			  DictionaryDatum& ) const;

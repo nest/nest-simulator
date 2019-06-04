@@ -90,10 +90,10 @@ def Create(model, n=1, params=None, positions=None):
             if positions.depth is not None:
                 layer_specs['depth'] = positions.depth
         if positions.extent is not None:
-                layer_specs['extent'] = positions.extent
+            layer_specs['extent'] = positions.extent
         if params is None:
             params = {}
-        layer = sli_func('CreateLayer', layer_specs, params)
+        layer = sli_func('CreateLayerParams', layer_specs, params)
         layer.set_spatial()
 
         return layer

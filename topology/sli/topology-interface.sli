@@ -39,9 +39,14 @@
     /ConnectLayers_g_g_D load
   def
 
-  /CreateLayer [/dictionarytype /dictionarytype]
+  /CreateLayerParams [/dictionarytype /dictionarytype]
     /CreateLayer_D_D load
   def
+
+  /CreateLayer [/dictionarytype]
+  {
+    << >> CreateLayerParams
+  } def
 
   /GetPosition [/gidcollectiontype]
     /GetPosition_g load

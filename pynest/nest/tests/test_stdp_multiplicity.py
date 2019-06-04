@@ -27,7 +27,7 @@ import math
 import numpy as np
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class StdpSpikeMultiplicity(unittest.TestCase):
     """
     Test correct handling of spike multiplicity in STDP.
@@ -179,7 +179,7 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             w_pre = nest.GetStatus(syn)[0]['weight']
             syn_ps = nest.GetConnections(source=pre_parrot_ps,
                                          synapse_model="stdp_synapse")
-            w_pre_ps = nest.GetStatus(syn)[0]['weight']
+            w_pre_ps = nest.GetStatus(syn_ps)[0]['weight']
 
             sim_time = max(pre_times + post_times) + 5 * delay
             nest.Simulate(sim_time)

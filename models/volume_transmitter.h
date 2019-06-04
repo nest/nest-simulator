@@ -34,8 +34,10 @@
 #include "namedatum.h"
 
 
-/* BeginDocumentation
+namespace nest
+{
 
+/** @BeginDocumentation
 Name: volume_transmitter - Node used in combination with neuromodulated synaptic
 plasticity. It collects all spikes emitted by the population of neurons
 connected to the volume transmitter and transmits the signal to a user-specific
@@ -82,30 +84,16 @@ References:
     Front. Comput. Neurosci. 4:141. doi:10.3389/fncom.2010.00141
 
 Author: Wiebke Potjans, Abigail Morrison
+
 Remarks: major changes to update function after code revision in Apr 2013 (SK)
+
 Receives: SpikeEvent
 
 SeeAlso: stdp_dopamine_synapse
 
 */
-
-namespace nest
-{
-
 class ConnectorBase;
 
-/**
- * volume transmitter class.
- *
- * This class manages spike recording for normal and precise spikes. It
- * receives spikes via its handle(SpikeEvent&) method and buffers them. In the
- * update() method it stores the newly collected buffer elements, which are
- * delivered in time steps of (d_min*deliver_interval) to the neuromodulated
- * synapses. In addition the synapses can ask the volume transmitter to deliver
- * the elements stored in the update() method with the method deliver_spikes().
- *
- * @ingroup Devices
- */
 class volume_transmitter : public Archiving_Node
 {
 
@@ -138,6 +126,14 @@ public:
 
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d );
+
+  /**
+   * Since volume transmitters are duplicated on each thread, and are
+   * hence treated just as devices during node creation, we need to
+   * define the corresponding setter and getter for local_device_id.
+   **/
+  void set_local_device_id( const index ldid );
+  index get_local_device_id() const;
 
   const std::vector< spikecounter >& deliver_spikes();
 
@@ -172,6 +168,8 @@ private:
 
   Parameters_ P_;
   Buffers_ B_;
+
+  index local_device_id_;
 };
 
 inline port
@@ -213,6 +211,18 @@ inline const std::vector< nest::spikecounter >&
 volume_transmitter::deliver_spikes()
 {
   return B_.spikecounter_;
+}
+
+inline void
+volume_transmitter::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
+}
+
+inline index
+volume_transmitter::get_local_device_id() const
+{
+  return local_device_id_;
 }
 
 } // namespace

@@ -164,16 +164,17 @@ set_connection_status( const ConnectionDatum& conn,
   const DictionaryDatum& dict )
 {
   DictionaryDatum conn_dict = conn.get_dict();
-  long synapse_id = getValue< long >( conn_dict, nest::names::synapse_modelid );
-  long port = getValue< long >( conn_dict, nest::names::port );
-  long gid = getValue< long >( conn_dict, nest::names::source );
-  thread tid = getValue< long >( conn_dict, nest::names::target_thread );
-  kernel().node_manager.get_node( gid ); // Just to check if the node exists
+  const index source_gid = getValue< long >( conn_dict, nest::names::source );
+  const index target_gid = getValue< long >( conn_dict, nest::names::target );
+  const thread tid = getValue< long >( conn_dict, nest::names::target_thread );
+  const synindex syn_id =
+    getValue< long >( conn_dict, nest::names::synapse_modelid );
+  const port p = getValue< long >( conn_dict, nest::names::port );
 
   dict->clear_access_flags();
 
   kernel().connection_manager.set_synapse_status(
-    gid, synapse_id, port, tid, dict );
+    source_gid, target_gid, tid, syn_id, p, dict );
 
   ALL_ENTRIES_ACCESSED2( *dict,
     "SetStatus",
@@ -185,13 +186,11 @@ set_connection_status( const ConnectionDatum& conn,
 DictionaryDatum
 get_connection_status( const ConnectionDatum& conn )
 {
-  long gid = conn.get_source_gid();
-  kernel().node_manager.get_node( gid ); // Just to check if the node exists
-
-  return kernel().connection_manager.get_synapse_status( gid,
+  return kernel().connection_manager.get_synapse_status( conn.get_source_gid(),
+    conn.get_target_gid(),
+    conn.get_target_thread(),
     conn.get_synapse_model_id(),
-    conn.get_port(),
-    conn.get_target_thread() );
+    conn.get_port() );
 }
 
 index
@@ -337,12 +336,6 @@ get_model_defaults( const Name& modelname )
   }
 
   return dict;
-}
-
-void
-set_num_rec_processes( const index n_rec_procs )
-{
-  kernel().mpi_manager.set_num_rec_processes( n_rec_procs, false );
 }
 
 void

@@ -48,6 +48,8 @@
 #include "fdstream.h"
 #include "name.h"
 
+const DictionaryDatum nest::ConnBuilder::dummy_param_ = new Dictionary;
+
 nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   const GIDCollection& targets,
   const DictionaryDatum& conn_spec,
@@ -57,6 +59,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   , autapses_( true )
   , multapses_( true )
   , make_symmetric_( false )
+  , creates_symmetric_connections_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
   , synapse_model_id_( kernel().model_manager.get_synapsedict()->lookup(
       "static_synapse" ) )
@@ -106,7 +109,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   // separately. Important for hom_w synapses, on which weight cannot
   // be set. However, we use default weight and delay for _all_ types
   // of synapses.
-  default_weight_and_delay_ = ( default_weight_ && default_delay_ );
+  default_weight_and_delay_ = ( default_weight_ and default_delay_ );
 
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during
@@ -141,7 +144,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   // Structural plasticity parameters
   // Check if both pre and post synaptic element are provided
   if ( syn_spec->known( names::pre_synaptic_element )
-    && syn_spec->known( names::post_synaptic_element ) )
+    and syn_spec->known( names::post_synaptic_element ) )
   {
     pre_synaptic_element_name_ =
       getValue< std::string >( syn_spec, names::pre_synaptic_element );
@@ -154,7 +157,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   else
   {
     if ( syn_spec->known( names::pre_synaptic_element )
-      || syn_spec->known( names::post_synaptic_element ) )
+      or syn_spec->known( names::post_synaptic_element ) )
     {
       throw BadProperty(
         "In order to use structural plasticity, both a pre and post synaptic "
@@ -201,7 +204,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   // once to avoid re-creating the object over and over again.
   if ( synapse_params_.size() > 0 )
   {
-    for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
     {
       param_dicts_.push_back( new Dictionary() );
 
@@ -210,14 +213,16 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
             ++it )
       {
         if ( it->first == names::receptor_type
-          || it->first == names::music_channel
-          || it->first == names::synapse_label )
+          or it->first == names::music_channel
+          or it->first == names::synapse_label )
         {
-          ( *param_dicts_[ t ] )[ it->first ] = Token( new IntegerDatum( 0 ) );
+          ( *param_dicts_[ tid ] )[ it->first ] =
+            Token( new IntegerDatum( 0 ) );
         }
         else
         {
-          ( *param_dicts_[ t ] )[ it->first ] = Token( new DoubleDatum( 0.0 ) );
+          ( *param_dicts_[ tid ] )[ it->first ] =
+            Token( new DoubleDatum( 0.0 ) );
         }
       }
     }
@@ -243,7 +248,6 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
     }
   }
 }
-
 
 nest::ConnBuilder::~ConnBuilder()
 {
@@ -272,7 +276,7 @@ nest::ConnBuilder::~ConnBuilder()
 bool
 nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
   index tgid,
-  const int tid,
+  const thread tid,
   int update )
 {
 
@@ -351,7 +355,7 @@ nest::ConnBuilder::connect()
   else
   {
     connect_();
-    if ( make_symmetric_ )
+    if ( make_symmetric_ and not creates_symmetric_connections_ )
     {
       // call reset on all parameters
       if ( weight_ )
@@ -376,11 +380,11 @@ nest::ConnBuilder::connect()
   }
 
   // check if any exceptions have been raised
-  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    if ( exceptions_raised_.at( thr ).valid() )
+    if ( exceptions_raised_.at( tid ).valid() )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
     }
   }
 }
@@ -401,11 +405,11 @@ nest::ConnBuilder::disconnect()
   }
 
   // check if any exceptions have been raised
-  for ( index thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    if ( exceptions_raised_.at( thr ).valid() )
+    if ( exceptions_raised_.at( tid ).valid() )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
     }
   }
 }
@@ -428,7 +432,7 @@ nest::ConnBuilder::single_connect_( index sgid,
     if ( default_weight_and_delay_ )
     {
       kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_id_ );
+        sgid, &target, target_thread, synapse_model_id_, dummy_param_ );
     }
     else if ( default_weight_ )
     {
@@ -436,6 +440,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         &target,
         target_thread,
         synapse_model_id_,
+        dummy_param_,
         delay_->value_double( target_thread, rng ) );
     }
     else if ( default_delay_ )
@@ -444,6 +449,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         &target,
         target_thread,
         synapse_model_id_,
+        dummy_param_,
         numerics::nan,
         weight_->value_double( target_thread, rng ) );
     }
@@ -451,21 +457,27 @@ nest::ConnBuilder::single_connect_( index sgid,
     {
       double delay = delay_->value_double( target_thread, rng );
       double weight = weight_->value_double( target_thread, rng );
-      kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_id_, delay, weight );
+      kernel().connection_manager.connect( sgid,
+        &target,
+        target_thread,
+        synapse_model_id_,
+        dummy_param_,
+        delay,
+        weight );
     }
   }
   else
   {
-    assert( kernel().vp_manager.get_num_threads() == param_dicts_.size() );
+    assert( kernel().vp_manager.get_num_threads()
+      == static_cast< thread >( param_dicts_.size() ) );
 
     for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
           it != synapse_params_.end();
           ++it )
     {
       if ( it->first == names::receptor_type
-        || it->first == names::music_channel
-        || it->first == names::synapse_label )
+        or it->first == names::music_channel
+        or it->first == names::synapse_label )
       {
         try
         {
@@ -571,17 +583,17 @@ nest::ConnBuilder::all_parameters_scalar_() const
   bool all_scalar = true;
   if ( weight_ )
   {
-    all_scalar = all_scalar && weight_->is_scalar();
+    all_scalar = all_scalar and weight_->is_scalar();
   }
   if ( delay_ )
   {
-    all_scalar = all_scalar && delay_->is_scalar();
+    all_scalar = all_scalar and delay_->is_scalar();
   }
   for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
         it != synapse_params_.end();
         ++it )
   {
-    all_scalar = all_scalar && it->second->is_scalar();
+    all_scalar = all_scalar and it->second->is_scalar();
   }
   return all_scalar;
 }
@@ -614,7 +626,7 @@ nest::OneToOneBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -714,7 +726,7 @@ nest::OneToOneBuilder::disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -768,7 +780,7 @@ nest::OneToOneBuilder::sp_connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -795,7 +807,10 @@ nest::OneToOneBuilder::sp_connect_()
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
-        single_connect_( *sgid, *target, target_thread, rng );
+        if ( tid == target_thread )
+        {
+          single_connect_( *sgid, *target, target_thread, rng );
+        }
       }
     }
     catch ( std::exception& err )
@@ -821,7 +836,7 @@ nest::OneToOneBuilder::sp_disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -860,7 +875,7 @@ nest::AllToAllBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -963,7 +978,7 @@ nest::AllToAllBuilder::sp_connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
     try
     {
       // allocate pointer to thread specific random generator
@@ -1014,7 +1029,7 @@ nest::AllToAllBuilder::disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1069,7 +1084,7 @@ nest::AllToAllBuilder::sp_disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1154,7 +1169,7 @@ nest::FixedInDegreeBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1243,7 +1258,8 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
       s_id = rng->ulrand( n_rnd );
       sgid = ( *sources_ )[ s_id ];
     } while ( ( not autapses_ and sgid == tgid )
-      || ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
+      or ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
+
     if ( not multapses_ )
     {
       ch_ids.insert( s_id );
@@ -1325,6 +1341,7 @@ nest::FixedOutDegreeBuilder::connect_()
         tgid = ( *targets_ )[ t_id ];
       } while ( ( not autapses_ and tgid == *sgid )
         or ( not multapses_ and ch_ids.find( t_id ) != ch_ids.end() ) );
+
       if ( not multapses_ )
       {
         ch_ids.insert( t_id );
@@ -1336,7 +1353,7 @@ nest::FixedOutDegreeBuilder::connect_()
 #pragma omp parallel
     {
       // get thread id
-      const int tid = kernel().vp_manager.get_thread_id();
+      const thread tid = kernel().vp_manager.get_thread_id();
 
       try
       {
@@ -1437,7 +1454,7 @@ nest::FixedTotalNumberBuilder::connect_()
     size_targets / kernel().mpi_manager.get_num_processes() );
   for ( size_t t = 0; t < targets_->size(); t++ )
   {
-    int vp = kernel().vp_manager.suggest_vp( ( *targets_ )[ t ] );
+    int vp = kernel().vp_manager.suggest_vp_for_gid( ( *targets_ )[ t ] );
     ++number_of_targets_on_vp[ vp ];
     if ( kernel().vp_manager.is_local_vp( vp ) )
     {
@@ -1497,7 +1514,7 @@ nest::FixedTotalNumberBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1515,7 +1532,7 @@ nest::FixedTotalNumberBuilder::connect_()
               it != local_targets.end();
               ++it )
         {
-          if ( kernel().vp_manager.suggest_vp( *it ) == vp_id )
+          if ( kernel().vp_manager.suggest_vp_for_gid( *it ) == vp_id )
           {
             thread_local_targets.push_back( *it );
           }
@@ -1580,7 +1597,7 @@ nest::BernoulliBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1632,7 +1649,7 @@ nest::BernoulliBuilder::connect_()
       exceptions_raised_.at( tid ) =
         lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
     }
-  }
+  } // of omp parallel
 }
 
 void
@@ -1669,6 +1686,167 @@ nest::BernoulliBuilder::inner_connect_( const int tid,
     single_connect_( *sgid, *target, target_thread, rng );
   }
 }
+
+
+nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder(
+  const GIDCollection& sources,
+  const GIDCollection& targets,
+  const DictionaryDatum& conn_spec,
+  const DictionaryDatum& syn_spec )
+  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+  , p_( ( *conn_spec )[ names::p ] )
+{
+  // This connector takes care of symmetric connections on its own
+  creates_symmetric_connections_ = true;
+
+  if ( p_ < 0 or 1 <= p_ )
+  {
+    throw BadProperty( "Connection probability 0 <= p < 1 required." );
+  }
+
+  if ( not multapses_ )
+  {
+    throw BadProperty( "Multapses must be enabled." );
+  }
+
+  if ( autapses_ )
+  {
+    throw BadProperty( "Autapses must be disabled." );
+  }
+
+  if ( not make_symmetric_ )
+  {
+    throw BadProperty( "Symmetric connections must be enabled." );
+  }
+}
+
+
+void
+nest::SymmetricBernoulliBuilder::connect_()
+{
+  // Allocate a pointer to the global random generator. This is used to create a
+  // random generator for each thread, each using the same seed obtained from
+  // the global rng, making all threads across all processes generate identical
+  // random number streams. This is required to generate symmetric connections:
+  // if we would loop only over local targets, we might miss the symmetric
+  // counterpart to a connection where a local target is chosen as a source.
+  librandom::RngPtr grng = kernel().rng_manager.get_grng();
+  const unsigned long s =
+    grng->ulrand( std::numeric_limits< unsigned int >::max() );
+
+#pragma omp parallel
+  {
+    const thread tid = kernel().vp_manager.get_thread_id();
+
+// Create a random generator for each thread, each using the same seed obtained
+// from the global rng. This ensures that all threads across all processes
+// generate identical random number streams.
+#ifdef HAVE_GSL
+    librandom::RngPtr rng(
+      new librandom::GslRandomGen( gsl_rng_knuthran2002, s ) );
+#else
+    librandom::RngPtr rng = librandom::RandomGen::create_knuthlfg_rng( s );
+#endif
+
+    try
+    {
+#ifdef HAVE_GSL
+      librandom::GSL_BinomialRandomDev bino( rng, 0, 0 );
+#else
+      librandom::BinomialRandomDev bino( rng, 0, 0 );
+#endif
+      bino.set_p( p_ );
+      bino.set_n( sources_->size() );
+
+      unsigned long indegree;
+      index sgid;
+      std::set< index > previous_sgids;
+      Node* target;
+      thread target_thread;
+      Node* source;
+      thread source_thread;
+
+      for ( GIDCollection::const_iterator tgid = targets_->begin();
+            tgid != targets_->end();
+            ++tgid )
+      {
+        // sample indegree according to truncated Binomial distribution
+        indegree = sources_->size();
+        while ( indegree >= sources_->size() )
+        {
+          indegree = bino.ldev();
+        }
+        assert( indegree < sources_->size() );
+
+        // check whether the target is on this thread
+        if ( kernel().node_manager.is_local_gid( *tgid ) )
+        {
+          target = kernel().node_manager.get_node( *tgid, tid );
+          target_thread = target->get_thread();
+        }
+        else
+        {
+          target = NULL;
+          target_thread = invalid_thread_;
+        }
+
+        previous_sgids.clear();
+
+        // choose indegree number of sources randomly from all sources
+        size_t i = 0;
+        while ( i < indegree )
+        {
+          sgid = ( *sources_ )[ rng->ulrand( sources_->size() ) ];
+
+          // Avoid autapses and multapses. Due to symmetric connectivity,
+          // multapses might exist if the target neuron with gid sgid draws the
+          // source with gid tgid while choosing sources itself.
+          if ( sgid == *tgid
+            or previous_sgids.find( sgid ) != previous_sgids.end() )
+          {
+            continue;
+          }
+          previous_sgids.insert( sgid );
+
+          if ( kernel().node_manager.is_local_gid( sgid ) )
+          {
+            source = kernel().node_manager.get_node( sgid, tid );
+            source_thread = source->get_thread();
+          }
+          else
+          {
+            source = NULL;
+            source_thread = invalid_thread_;
+          }
+
+          // if target is local: connect
+          if ( target_thread == tid )
+          {
+            assert( target != NULL );
+            single_connect_( sgid, *target, target_thread, rng );
+          }
+
+          // if source is local: connect
+          if ( source_thread == tid )
+          {
+            assert( source != NULL );
+            single_connect_( *tgid, *source, source_thread, rng );
+          }
+
+          ++i;
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
 
 /**
  * The SPBuilder is in charge of the creation of synapses during the simulation
@@ -1711,11 +1889,11 @@ nest::SPBuilder::sp_connect( GIDCollection sources, GIDCollection targets )
   connect_( sources, targets );
 
   // check if any exceptions have been raised
-  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    if ( exceptions_raised_.at( thr ).valid() )
+    if ( exceptions_raised_.at( tid ).valid() )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
     }
   }
 }
@@ -1749,7 +1927,7 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1762,6 +1940,7 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
             ++tgid, ++sgid )
       {
         assert( sgid != sources.end() );
+
         if ( *sgid == *tgid and not autapses_ )
         {
           continue;

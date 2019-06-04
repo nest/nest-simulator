@@ -87,7 +87,7 @@ iaf_psc_alpha_multisynapse::insert_current_recordables( size_t first )
 DataAccessFunctor< iaf_psc_alpha_multisynapse >
 iaf_psc_alpha_multisynapse::get_data_access_functor( size_t elem )
 {
-  return DataAccessFunctor< iaf_psc_alpha_multisynapse >( this, elem );
+  return DataAccessFunctor< iaf_psc_alpha_multisynapse >( *this, elem );
 }
 
 /* ----------------------------------------------------------------
@@ -423,7 +423,7 @@ iaf_psc_alpha_multisynapse::handles_test_event( SpikeEvent&,
 void
 iaf_psc_alpha_multisynapse::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
@@ -433,7 +433,7 @@ iaf_psc_alpha_multisynapse::handle( SpikeEvent& e )
 void
 iaf_psc_alpha_multisynapse::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double I = e.get_current();
   const double w = e.get_weight();
@@ -468,8 +468,6 @@ iaf_psc_alpha_multisynapse::set_status( const DictionaryDatum& d )
    * Here is where we must update the recordablesMap_ if new receptors
    * are added!
    */
-  DynamicRecordablesMap< iaf_psc_alpha_multisynapse > rtmp =
-    recordablesMap_; // temporary copy in case of errors
   if ( ptmp.tau_syn_.size()
     > P_.tau_syn_.size() ) // Number of receptors increased
   {
@@ -479,7 +477,8 @@ iaf_psc_alpha_multisynapse::set_status( const DictionaryDatum& d )
       size_t elem = iaf_psc_alpha_multisynapse::State_::I_SYN
         + i_syn
           * iaf_psc_alpha_multisynapse::State_::NUM_STATE_ELEMENTS_PER_RECEPTOR;
-      rtmp.insert( get_i_syn_name( i_syn ), get_data_access_functor( elem ) );
+      recordablesMap_.insert(
+        get_i_syn_name( i_syn ), get_data_access_functor( elem ) );
     }
   }
   else if ( ptmp.tau_syn_.size() < P_.tau_syn_.size() )
@@ -487,14 +486,13 @@ iaf_psc_alpha_multisynapse::set_status( const DictionaryDatum& d )
     for ( size_t i_syn = ptmp.tau_syn_.size(); i_syn < P_.tau_syn_.size();
           ++i_syn )
     {
-      rtmp.erase( get_i_syn_name( i_syn ) );
+      recordablesMap_.erase( get_i_syn_name( i_syn ) );
     }
   }
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
-  recordablesMap_ = rtmp;
 }
 
 } // namespace

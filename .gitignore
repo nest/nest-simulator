@@ -10,8 +10,12 @@ pynest/pynestkernel.cpp
 .*
 *.log
 *.pyc
+
 Makefile
+!/doc/Makefile
+
 build/
+install/
 
 /juqueen/
 /extras/nest-config
@@ -29,6 +33,7 @@ build/
 /topology/setup.py
 /topology/doc/Topology_UserManual.out
 /doc/doxygen/
+/doc/_build/
 
 *.kdev4
 
@@ -54,6 +59,6 @@ doc/set_rcsinfo.cmake
 doc/fulldoc.conf
 doc/normaldoc.conf
 lib/sli/rcsinfo.sli
-extras/emacs/sli.el
 extras/nest_vars.sh
 
+pynest/examples/README

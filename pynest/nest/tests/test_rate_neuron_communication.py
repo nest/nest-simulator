@@ -32,7 +32,7 @@ def H(x):
     return 0.5 * (np.sign(x) + 1.)
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class RateNeuronCommunicationTestCase(unittest.TestCase):
 
     """Check rate_neuron"""
@@ -42,7 +42,7 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         self.rtol = 0.05
 
         # neuron parameters
-        self.neuron_params = {'tau': 5., 'std': 0.}
+        self.neuron_params = {'tau': 5., 'sigma': 0.}
         self.neuron_params2 = self.neuron_params.copy()
         self.neuron_params2.update({'mult_coupling': True})
         self.neuron_params3 = self.neuron_params.copy()
@@ -63,10 +63,10 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         # set up rate neuron network
         self.rate_neuron_drive = nest.Create(
             'lin_rate_ipn', params={'rate': self.drive,
-                                    'mean': self.drive, 'std': 0.})
+                                    'mu': self.drive, 'sigma': 0.})
         self.rate_neuron_negative_drive = nest.Create(
             'lin_rate_ipn', params={'rate': -self.drive,
-                                    'mean': -self.drive, 'std': 0.})
+                                    'mu': -self.drive, 'sigma': 0.})
 
         self.rate_neuron_1 = nest.Create(
             'lin_rate_ipn', params=self.neuron_params)

@@ -72,15 +72,17 @@ class Archiving_Node;
  * A new type of Node must be derived from this base class and
  * implement its interface.
  * In order to keep the inheritance hierarchy flat, it is encouraged
- * to direcly subclass from base class Node.
+ * to directly subclass from base class Node.
  *
  * @see class Event
  * @see Subnet
  * @ingroup user_interface
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
+
    Name: Node - General properties of all nodes.
+
    Parameters:
    frozen     booltype    - Whether the node is updated during simulation
    global_id  integertype - The global id of the node (cf. local_id)
@@ -94,6 +96,7 @@ class Archiving_Node;
                             locally)
    vp         integertype - The id of the virtual process the node is assigned
                             to (valid globally)
+
    SeeAlso: GetStatus, SetStatus, elementstates
  */
 
@@ -131,24 +134,6 @@ public:
    * new nodes to the network.
    */
   virtual bool has_proxies() const;
-
-  /**
-   * Returns true for potential global receivers (e.g. spike_detector) and false
-   * otherwise
-   */
-  virtual bool potential_global_receiver() const;
-
-  /**
-   * Sets has_proxies_ member variable (to switch to global spike detection
-   * mode)
-   */
-  virtual void set_has_proxies( const bool );
-
-  /**
-   * Sets local_receiver_ member variable (to switch to global spike detection
-   * mode)
-   */
-  virtual void set_local_receiver( const bool );
 
   /**
    * Returns true if the node only receives events from nodes/devices
@@ -493,7 +478,7 @@ public:
    * @throws IllegalConnection
    *
    */
-  virtual void register_stdp_connection( double );
+  virtual void register_stdp_connection( double, double );
 
   /**
    * Handle incoming spike events.
@@ -695,6 +680,8 @@ public:
    */
   virtual double get_K_value( double t );
 
+  virtual double get_LTD_value( double t );
+
   /**
    * write the Kminus and triplet_Kminus values at t (in ms) to
    * the provided locations.
@@ -710,6 +697,11 @@ public:
     double t2,
     std::deque< histentry >::iterator* start,
     std::deque< histentry >::iterator* finish );
+
+  virtual void get_LTP_history( double t1,
+    double t2,
+    std::deque< histentry_cl >::iterator* start,
+    std::deque< histentry_cl >::iterator* finish );
 
   /**
    * Modify Event object parameters during event delivery.
@@ -831,6 +823,20 @@ public:
   {
     buffers_initialized_ = initialized;
   }
+
+  /**
+   * Sets the local device id.
+   * Throws an error if used on a non-device node.
+   * @see get_local_device_id
+   */
+  virtual void set_local_device_id( const index lsdid );
+
+  /**
+   * Gets the local device id.
+   * Throws an error if used on a non-device node.
+   * @see set_local_device_id
+   */
+  virtual index get_local_device_id() const;
 
   /**
    * Return the number of thread siblings in SiblingContainer.
@@ -963,12 +969,6 @@ inline bool
 Node::has_proxies() const
 {
   return true;
-}
-
-inline bool
-Node::potential_global_receiver() const
-{
-  return false;
 }
 
 inline bool

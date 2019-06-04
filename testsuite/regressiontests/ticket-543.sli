@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-543 - Regression test showing too many connections being created on iteration over nested subnets
 

@@ -18,20 +18,17 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set( nestutil_sources
-    stopwatch.h stopwatch.cpp
+    block_vector.h
+    compose.hpp
+    lockptr.h
+    logging_event.h logging_event.cpp
+    logging.h
     numerics.h numerics.cpp
     propagator_stability.h propagator_stability.cpp
-    lockptr.h
-    sparseconfig.h
-    template_util.h
-    type_traits.h
-    libc_allocator_with_realloc.h
-    hashtable-common.h
-    sparsetable.h
-    compose.hpp
+    sort.h
+    stopwatch.h stopwatch.cpp
     string_utils.h
-    logging.h
-    logging_event.h logging_event.cpp
+    vector_util.h
     )
 
 add_library( nestutil ${nestutil_sources} )

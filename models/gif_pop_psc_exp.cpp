@@ -175,7 +175,7 @@ nest::gif_pop_psc_exp::Parameters_::set( const DictionaryDatum& d )
       "The synaptic time constants must be strictly positive." );
   }
 
-  for ( uint i = 0; i < tau_sfa_.size(); ++i )
+  for ( size_t i = 0; i < tau_sfa_.size(); ++i )
   {
     if ( tau_sfa_[ i ] <= 0 )
     {
@@ -366,7 +366,7 @@ nest::gif_pop_psc_exp::calibrate()
     V_.Q30_.clear();
     V_.Q30K_.clear();
 
-    for ( uint k = 0; k < P_.tau_sfa_.size(); ++k )
+    for ( size_t k = 0; k < P_.tau_sfa_.size(); ++k )
     {
       // multiply by tau_sfa here because [1] defines J as product
       // of J and tau_sfa.
@@ -467,7 +467,7 @@ nest::gif_pop_psc_exp::adaptation_kernel( const int k )
   // See below Eq. (87) of [1]. There is no division by tau here because
   // theta_tmp must be in units voltage just as q_sfa_.
   double theta_tmp = 0.;
-  for ( uint j = 0; j < P_.tau_sfa_.size(); ++j )
+  for ( size_t j = 0; j < P_.tau_sfa_.size(); ++j )
   {
     theta_tmp += P_.q_sfa_[ j ] * std::exp( -k * V_.h_ / P_.tau_sfa_[ j ] );
   }
@@ -560,7 +560,7 @@ nest::gif_pop_psc_exp::update( Time const& origin,
     S_.V_m_ = ( S_.V_m_ - P_.E_L_ ) * V_.P22_ + h_tot_; // line 3 of [1]
 
     // compute free adaptation state
-    for ( uint j = 0; j < P_.tau_sfa_.size(); ++j ) // line 4 of [1]
+    for ( size_t j = 0; j < P_.tau_sfa_.size(); ++j ) // line 4 of [1]
     {
       const double g_j_tmp = ( 1. - V_.Q30_[ j ] ) * V_.n_[ V_.k0_ ]
         / ( static_cast< double >( P_.N_ ) * V_.h_ );
@@ -669,7 +669,7 @@ nest::gif_pop_psc_exp::update( Time const& origin,
 void
 gif_pop_psc_exp::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double s = e.get_weight() * e.get_multiplicity();
 
@@ -690,7 +690,7 @@ gif_pop_psc_exp::handle( SpikeEvent& e )
 void
 nest::gif_pop_psc_exp::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

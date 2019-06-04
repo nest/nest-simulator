@@ -20,25 +20,6 @@
  *
  */
 
-
-/* BeginDocumentation
-  Name: static_synapse - Synapse type for static connections.
-
-  Description:
-   static_synapse does not support any kind of plasticity. It simply stores
-   the parameters target, weight, delay and receiver port for each connection.
-
-  FirstVersion: October 2005
-  Author: Jochen Martin Eppler, Moritz Helias
-
-  Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
-  DoubleDataEvent, DataLoggingRequest
-
-  Remarks: Refactored for new connection system design, March 2007
-
-  SeeAlso: synapsedict, tsodyks_synapse, stdp_synapse
-*/
-
 #ifndef STATICCONNECTION_H
 #define STATICCONNECTION_H
 
@@ -48,13 +29,25 @@
 namespace nest
 {
 
-/**
- * Class representing a static connection. A static connection has the
- * properties weight, delay and receiver port. A suitable Connector containing
- * these connections can be obtained from the template GenericConnector.
- */
+/** @BeginDocumentation
+Name: static_synapse - Synapse type for static connections.
 
+Description:
 
+static_synapse does not support any kind of plasticity. It simply stores
+the parameters target, weight, delay and receiver port for each connection.
+
+FirstVersion: October 2005
+
+Author: Jochen Martin Eppler, Moritz Helias
+
+Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
+DoubleDataEvent, DataLoggingRequest
+
+Remarks: Refactored for new connection system design, March 2007
+
+SeeAlso: synapsedict, tsodyks_synapse, stdp_synapse
+*/
 template < typename targetidentifierT >
 class StaticConnection : public Connection< targetidentifierT >
 {
@@ -147,7 +140,6 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -155,11 +147,11 @@ public:
   }
 
   void
-  send( Event& e, thread t, double, const CommonSynapseProperties& )
+  send( Event& e, const thread tid, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
-    e.set_delay( get_delay_steps() );
-    e.set_receiver( *get_target( t ) );
+    e.set_delay_steps( get_delay_steps() );
+    e.set_receiver( *get_target( tid ) );
     e.set_rport( get_rport() );
     e();
   }

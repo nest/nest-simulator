@@ -148,7 +148,7 @@ nest::hh_cond_exp_traub::Parameters_::Parameters_()
   , E_in( -80.0 )
   , tau_synE( 5.0 )  // Synaptic Time Constant Excitatory Synapse (ms)
   , tau_synI( 10.0 ) // Synaptic Time Constant Excitatory Synapse (ms)
-  , t_ref_( 0.0 )    // Refractory time in ms
+  , t_ref_( 2.0 )    // Refractory time in ms
   , I_e( 0.0 )       // Stimulus Current (pA)
 {
 }
@@ -478,7 +478,7 @@ nest::hh_cond_exp_traub::update( Time const& origin,
 void
 nest::hh_cond_exp_traub::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   if ( e.get_weight() > 0.0 )
   {
@@ -499,7 +499,7 @@ nest::hh_cond_exp_traub::handle( SpikeEvent& e )
 void
 nest::hh_cond_exp_traub::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

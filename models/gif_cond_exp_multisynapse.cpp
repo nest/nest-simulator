@@ -682,7 +682,7 @@ nest::gif_cond_exp_multisynapse::handle( SpikeEvent& e )
       "Synaptic weights for conductance based models "
       "must be positive." );
   }
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
   assert(
     ( e.get_rport() > 0 ) && ( ( size_t ) e.get_rport() <= P_.n_receptors() ) );
 
@@ -694,7 +694,7 @@ nest::gif_cond_exp_multisynapse::handle( SpikeEvent& e )
 void
 nest::gif_cond_exp_multisynapse::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double I = e.get_current();
   const double w = e.get_weight();

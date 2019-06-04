@@ -443,13 +443,13 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
 void
 nest::iaf_psc_exp_ps::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   /* We need to compute the absolute time stamp of the delivery time
      of the spike, since spikes might spend longer than min_delay_
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
-  const long Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
+  const long Tdeliver = e.get_stamp().get_steps() + e.get_delay_steps() - 1;
 
   B_.events_.add_spike(
     e.get_rel_delivery_steps(
@@ -462,7 +462,7 @@ nest::iaf_psc_exp_ps::handle( SpikeEvent& e )
 void
 nest::iaf_psc_exp_ps::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();
@@ -497,10 +497,9 @@ nest::iaf_psc_exp_ps::propagate_( const double dt )
     const double expm1_tau_m = numerics::expm1( -dt / P_.tau_m_ );
 
     const double P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
-    const double P21_ex = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ )
-      / P_.c_m_ * ( expm1_tau_ex - expm1_tau_m );
-    const double P21_in = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ )
-      / P_.c_m_ * ( expm1_tau_in - expm1_tau_m );
+
+    const double P21_ex = propagator_32( P_.tau_ex_, P_.tau_m_, P_.c_m_, dt );
+    const double P21_in = propagator_32( P_.tau_in_, P_.tau_m_, P_.c_m_, dt );
 
     S_.y2_ = P20 * ( P_.I_e_ + S_.y0_ ) + P21_ex * S_.y1_ex_
       + P21_in * S_.y1_in_ + expm1_tau_m * S_.y2_ + S_.y2_;
@@ -583,15 +582,12 @@ nest::iaf_psc_exp_ps::bisectioning_( const double dt ) const
 
     div *= 2.0;
 
-    const double expm1_tau_ex = numerics::expm1( -root / P_.tau_ex_ );
-    const double expm1_tau_in = numerics::expm1( -root / P_.tau_in_ );
     const double expm1_tau_m = numerics::expm1( -root / P_.tau_m_ );
 
     const double P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
-    const double P21_ex = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ )
-      / P_.c_m_ * ( expm1_tau_ex - expm1_tau_m );
-    const double P21_in = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ )
-      / P_.c_m_ * ( expm1_tau_in - expm1_tau_m );
+
+    const double P21_ex = propagator_32( P_.tau_ex_, P_.tau_m_, P_.c_m_, root );
+    const double P21_in = propagator_32( P_.tau_in_, P_.tau_m_, P_.c_m_, root );
 
     y2_root = P20 * ( P_.I_e_ + V_.y0_before_ ) + P21_ex * V_.y1_ex_before_
       + P21_in * V_.y1_in_before_ + expm1_tau_m * V_.y2_before_ + V_.y2_before_;

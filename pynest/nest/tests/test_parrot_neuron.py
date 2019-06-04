@@ -27,7 +27,7 @@ import unittest
 import math
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class ParrotNeuronTestCase(unittest.TestCase):
     """Check parrot_neuron spike repetition properties"""
 
@@ -97,7 +97,7 @@ class ParrotNeuronTestCase(unittest.TestCase):
             "Parrot neuron failed to correctly repeat multiple spikes."
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class ParrotNeuronPoissonTestCase(unittest.TestCase):
     """Check parrot_neuron spike repetition properties"""
 
@@ -152,7 +152,7 @@ class ParrotNeuronPoissonTestCase(unittest.TestCase):
             "parrot_neuron adds spikes."
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class ParrotNeuronSTDPTestCase(unittest.TestCase):
     """
     Check STDP protocol between two parrot_neurons connected by a stdp_synapse.

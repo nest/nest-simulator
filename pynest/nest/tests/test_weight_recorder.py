@@ -26,10 +26,10 @@ Test of events
 import unittest
 import nest
 import numpy as np
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 
+HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class WeightRecorderTestCase(unittest.TestCase):
     """Tests for the Weight Recorder"""
 
@@ -193,10 +193,14 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Connect(sg, pre)
 
         nest.SetStatus(wr, {"senders": pre[1:3], "targets": post[:3]})
-        connections = nest.GetConnections(pre[1:3], post[:3])
 
+        # simulate before GetConnections
+        # as order of connections changes at beginning of simulation (sorting)
+        nest.Simulate(1)
+
+        connections = nest.GetConnections(pre[1:3], post[:3])
         targets = np.array([])
-        for i in range(100):
+        for i in range(1):
             nest.Simulate(1)
             targets = np.append(targets, nest.GetStatus(connections,
                                                         "target"))
@@ -224,6 +228,10 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec")
         nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec")
         nest.Connect(sg, pre)
+
+        # simulate before GetConnections
+        # as order of connections changes at beginning of simulation (sorting)
+        nest.Simulate(1)
 
         connections = [(c[0], c[1], c[4])
                        for c in nest.GetConnections(pre, post)]

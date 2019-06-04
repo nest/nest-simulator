@@ -20,6 +20,8 @@
  *
  */
 
+% autorun=true
+
 /*
     This script simulates a network with two populations, 80% Excitatory, 20% Inhibitory,
     initially without connections and relies on structuraly plasticity to generate
@@ -37,7 +39,7 @@
 /overwrite_files true def
 /seed 123 def
 
-/nvp 2 def              % total number of virtual processes
+/nvp 1 def              % total number of virtual processes
 /n_neurons 6000 def     % total number of neurons
 /gamma 0.8 def          % relative size of excitatory population
 
@@ -136,7 +138,7 @@
 
 	    % convert rank to string, prepend 0 if necessary to make
             % numbers equally wide for all ranks
-            Rank cvs 
+            Rank cvs
             dup length max_rank_log cvs length exch sub
             {
 	      48 prepend   % 48 is ASCII code for 0

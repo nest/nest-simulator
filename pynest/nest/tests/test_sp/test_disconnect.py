@@ -33,7 +33,7 @@ except ImportError:
 else:
     # Test with MPI
     mpi_test = 1
-mpi_test = nest.sli_func("statusdict/have_mpi ::") & mpi_test
+mpi_test = nest.ll_api.sli_func("statusdict/have_mpi ::") & mpi_test
 
 
 class TestDisconnectSingle(unittest.TestCase):
@@ -60,6 +60,8 @@ class TestDisconnectSingle(unittest.TestCase):
             'gap_junction_lbl',
             'diffusion_connection',
             'diffusion_connection_lbl',
+            'clopath_synapse',
+            'clopath_synapse_lbl'
         ]
 
     def test_synapse_deletion_one_to_one_no_sp(self):
@@ -108,8 +110,16 @@ class TestDisconnectSingle(unittest.TestCase):
                 try:
                     nest.DisconnectOneToOne(neurons[0], neurons[1], syn_dict)
                     assert False
-                except nest.NESTError:
+                except nest.kernel.NESTError:
                     print("Synapse deletion ok: " + syn_model)
+
+    def test_simple(self):
+        nodes = nest.Create('iaf_psc_alpha', 5)
+        nest.Connect(nodes, nodes, 'one_to_one')
+
+        nest.DisconnectOneToOne(nodes[0], nodes[0], 'static_synapse')
+
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 4)
 
 
 def suite():

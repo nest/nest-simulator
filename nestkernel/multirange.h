@@ -86,7 +86,7 @@ Multirange::push_back( index x )
     return;
   }
 
-  if ( ( not ranges_.empty() ) && ( ranges_.back().second + 1 == x ) )
+  if ( ( not ranges_.empty() ) and ( ranges_.back().second + 1 == x ) )
   {
     ++ranges_.back().second;
   }
@@ -109,7 +109,7 @@ Multirange::contains( index x )
 {
   for ( size_t i = 0; i < ranges_.size(); i++ )
   {
-    if ( ranges_[ i ].first <= x && x <= ranges_[ i ].second )
+    if ( ranges_[ i ].first <= x and x <= ranges_[ i ].second )
     {
       return true;
     }
@@ -145,7 +145,7 @@ inline Multirange::iterator::iterator( RangeVector::const_iterator iter,
 
 inline bool Multirange::iterator::operator!=( const iterator& other ) const
 {
-  return ( other.pair_iter_ != pair_iter_ ) || ( other.n_ != n_ );
+  return ( other.pair_iter_ != pair_iter_ ) or ( other.n_ != n_ );
 }
 
 inline index Multirange::iterator::operator*() const

@@ -69,6 +69,13 @@ Token::Token( unsigned long value )
   p = new IntegerDatum( value );
 }
 
+#ifdef HAVE_32BIT_ARCH
+Token::Token( uint64_t value )
+{
+  p = new IntegerDatum( value );
+}
+#endif
+
 Token::Token( double value )
 {
   p = new DoubleDatum( value );
@@ -195,7 +202,7 @@ Token::matches_as_string( const Token& rhs ) const
     const std::string& right = getValue< std::string >( rhs );
     return left == right;
   }
-  catch ( TypeMismatch )
+  catch ( TypeMismatch& )
   {
     return false;
   }

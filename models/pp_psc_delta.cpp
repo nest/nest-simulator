@@ -166,7 +166,7 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
     updateValue< std::vector< double > >( d, names::tau_sfa, tau_sfa_ );
     updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
   }
-  catch ( TypeMismatch e )
+  catch ( TypeMismatch& e )
   {
     multi_param_ = 0;
     double tau_sfa_temp_;
@@ -476,7 +476,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 void
 nest::pp_psc_delta::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   // EX: We must compute the arrival time of the incoming spike
   //     explicitly, since it depends on delay and offset within
@@ -490,7 +490,7 @@ nest::pp_psc_delta::handle( SpikeEvent& e )
 void
 nest::pp_psc_delta::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

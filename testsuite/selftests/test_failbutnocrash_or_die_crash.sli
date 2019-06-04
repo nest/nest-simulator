@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_failbutnocrash_or_die_crash - sli script to test the failbutnocrash_or_die_crash function
 
    Synopsis: (test_failbutnocrash_or_die_crash) run
@@ -37,7 +37,7 @@
 % For now we just ignore this test, this will later be replaced 
 % by a restart of NEST with a serial binary.
 % The commented code below is the real one.
-statusdict/is_mpi :: {3 quit_i} if
+skip_if_have_mpi
 
 
 /*

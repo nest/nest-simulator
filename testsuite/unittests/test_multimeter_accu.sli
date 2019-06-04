@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multimeter_accu - test support for multimeter accumulation mode
 
 Synopsis: (test_multimeter_accu.sli) run -> dies if assertion fails
@@ -36,12 +36,12 @@ Author: Plesser
 FirstVersion: 2011-02-11
 */
 
-% The following test needs the model iaf_cond_alpha, so
-% this test should only run if we have GSL
-statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
-
 (unittest) run
 /unittest using
+
+% The following test needs the model iaf_cond_alpha, so
+% this test should only run if we have GSL
+skip_if_without_gsl
 
 M_ERROR setverbosity
 

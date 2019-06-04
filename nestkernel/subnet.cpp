@@ -85,7 +85,7 @@ nest::Subnet::get_dimensions_( std::vector< int >& dim ) const
   {
     return;
   }
-  if ( homogeneous_ && ( dynamic_cast< Subnet* >( nodes_.at( 0 ) ) != NULL ) )
+  if ( homogeneous_ and ( dynamic_cast< Subnet* >( nodes_.at( 0 ) ) != NULL ) )
   {
     bool homog = true;
     for ( size_t i = 0; i < nodes_.size() - 1; ++i )
@@ -274,9 +274,9 @@ void
 nest::Subnet::set_label( std::string const label )
 {
   // set the new label on all sibling threads
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    Node* n = kernel().node_manager.get_node( get_gid(), t );
+    Node* n = kernel().node_manager.get_node( get_gid(), tid );
     Subnet* c = dynamic_cast< Subnet* >( n );
     assert( c );
     c->label_ = label;

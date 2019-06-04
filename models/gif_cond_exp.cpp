@@ -598,7 +598,7 @@ nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
 void
 nest::gif_cond_exp::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   // EX: We must compute the arrival time of the incoming spike
   //     explicitly, since it depends on delay and offset within
@@ -614,14 +614,14 @@ nest::gif_cond_exp::handle( SpikeEvent& e )
   {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() * e.get_multiplicity() );
-  }
+      -e.get_weight() * e.get_multiplicity() );
+  } // keep conductance positive
 }
 
 void
 nest::gif_cond_exp::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

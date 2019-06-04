@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_MapIndexed - check if MapIndexed function works
 
 Synopsis: (test_MapIndexed) run -> 

@@ -35,7 +35,8 @@ class TestLayerGIDCollection(unittest.TestCase):
     def test_addLayerAndGIDCollection(self):
         """Test that concatenation of plain gc and layer is illegal."""
         nodes = nest.Create('iaf_psc_alpha', 10)
-        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=5, columns=5))
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.grid(rows=5, columns=5))
 
         with self.assertRaises(nest.kernel.NESTError):
             c = nodes + layer
@@ -44,8 +45,10 @@ class TestLayerGIDCollection(unittest.TestCase):
 
     def test_addTwoLayers(self):
         "Test that concatenation of two layers is illegal"
-        layer1 = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=5, columns=5))
-        layer2 = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=5, columns=5))
+        layer1 = nest.Create('iaf_psc_alpha',
+                             positions=nest.spatial.grid(rows=5, columns=5))
+        layer2 = nest.Create('iaf_psc_alpha',
+                             positions=nest.spatial.grid(rows=5, columns=5))
 
         with self.assertRaises(nest.kernel.NESTError):
             c = layer1 + layer2

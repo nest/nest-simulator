@@ -37,6 +37,14 @@ namespace nest
 class RecordingDevice;
 class Event;
 
+/**
+ * Base class for all NESTio recording backends
+ *
+ * This class provides the interface for the NESTio recording backends
+ * with which `RecordingDevice`s can be enrolled for recording and
+ * which they can use to write their data.
+*/
+
 class RecordingBackend
 {
 public:
@@ -48,9 +56,41 @@ public:
   {
   }
 
-  virtual void enroll( const RecordingDevice&,
-		       const std::vector< Name >&,
-		       const std::vector< Name >&) = 0;
+  /**
+   * Enroll a `RecordingDevice` with the `RecordingBackend`.
+   *
+   * When this function is called by a RecordingDevice @p device, the
+   * RecordingBackend can set up or extend device-specific data
+   * structures by using identifying properties of the @p device like
+   * `thread` or `gid` that may be needed during the simulation phase
+   * where data is written by the device.
+   *
+   * To make the names of recorded quantities known to the
+   * RecordingBackend, the vectors @p double_value_names and @p
+   * long_value_names can be set appropriately. If no values of a
+   * certain type (or none at all) will be recorded by @p device, the
+   * constants @ref NO_DOUBLE_VALUE_NAMES and @ref NO_LONG_VALUE_NAMES
+   * can be used. Please note that the lengths of the value names
+   * vectors have to correspond to the length of the data vectors
+   * written during calls to `write()`, although this is not enforced
+   * by the API.
+   *
+   * A common implementation of this function will create an entry in
+   * a map, associating the device and the name of its stored values
+   * with some kind of output facility. In this case, the containing
+   * map itself would be created in the initialize() function.
+   *
+   * @param device the RecordingDevice to be enrolled
+   * @param double_value_names the names for double values to be recorded
+   * @param long_value_names the names for long values to be recorded
+   *
+   * @see write(), initialize()
+   * 
+   * @ingroup NESTio
+   */
+  virtual void enroll( const RecordingDevice& device,
+		       const std::vector< Name >& double_value_names,
+		       const std::vector< Name >& long_value_names) = 0;
 
   virtual void
   pre_run_hook() = 0;

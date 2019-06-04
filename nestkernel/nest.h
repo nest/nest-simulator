@@ -56,7 +56,7 @@ void enable_dryrun_mode( const index n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 
-enum class Register_Connection_Model_Flags {
+enum class Register_Connection_Model_Flags : unsigned {
   REGISTER_HPC = 1 << 0,
   REGISTER_LBL = 1 << 1,
   IS_PRIMARY = 1 << 2,
@@ -65,6 +65,52 @@ enum class Register_Connection_Model_Flags {
   REQUIRES_SYMMETRIC = 1 << 5,
   REQUIRES_CLOPATH_ARCHIVING = 1 << 6
 };
+
+
+
+
+template<typename Enum>  
+struct EnableBitMaskOperators  
+{
+    static const bool enable = false;
+};
+
+template<>
+struct EnableBitMaskOperators< Register_Connection_Model_Flags >
+{
+    static const bool enable = true;
+};
+
+template<typename Enum>
+typename std::enable_if<EnableBitMaskOperators<Enum>::enable, Enum>::type  
+operator |(Enum lhs, Enum rhs)
+{
+    using underlying = typename std::underlying_type<Enum>::type;
+    return static_cast<Enum> (
+        static_cast<underlying>(lhs) |
+        static_cast<underlying>(rhs)
+    );
+}
+template<typename Enum>
+typename std::enable_if<EnableBitMaskOperators<Enum>::enable, Enum>::type  
+operator &(Enum lhs, Enum rhs)
+{
+    using underlying = typename std::underlying_type<Enum>::type;
+    return static_cast<Enum> (
+        static_cast<underlying>(lhs) &
+        static_cast<underlying>(rhs)
+    );
+}
+
+template< typename Enum >
+bool enumFlagSet(const Enum en, const Enum flag) {
+    using underlying = typename std::underlying_type<Enum>::type;
+    return static_cast< underlying >(en & flag) != 0;
+};
+
+
+
+
 
 const Register_Connection_Model_Flags default_connection_model_flags =
   Register_Connection_Model_Flags::REGISTER_HPC |

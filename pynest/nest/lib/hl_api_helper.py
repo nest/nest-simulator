@@ -172,6 +172,7 @@ def get_unistring_type():
         return basestring
     return str
 
+
 uni_str = get_unistring_type()
 
 

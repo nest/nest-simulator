@@ -1011,7 +1011,7 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
                                    'synapse_model': 'static_synapse'})
 
             # write connectivity information to file
-            nest.DumpLayerConnections(l, l, 'static_synapse', 'connections.txt')
+            nest.DumpLayerConnections(l, l, 'static_synapse', 'conns.txt')
     """
     if not isinstance(source_layer, nest.GIDCollection):
         raise nest.kernel.NESTError("source_layer must be a GIDCollection")

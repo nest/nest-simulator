@@ -256,8 +256,8 @@ def SetStatus(nodes, params, val=None):
     if (isinstance(params, dict) and isinstance(nodes, nest.GIDCollection) and
             nodes[0].get('local')):
 
-        contains_list = [is_iterable(vals)
-                         and not is_iterable(nest.GetStatus(nodes[0], key)[0])
+        contains_list = [is_iterable(vals) and not
+                         is_iterable(nest.GetStatus(nodes[0], key)[0])
                          for key, vals in params.items()]
 
         if any(contains_list):

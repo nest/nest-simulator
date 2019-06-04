@@ -200,6 +200,7 @@ def plot_hist(spikes):
              bins=np.arange(0., max(spikes['times']) + 1.5, 1.),
              histtype='step')
 
+
 t = 1000
 n = 1000
 dt = 1.0

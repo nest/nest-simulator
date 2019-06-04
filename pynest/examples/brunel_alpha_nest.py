@@ -90,6 +90,7 @@ def ComputePSPnorm(tauMem, CMem, tauSyn):
             ((exp(-t_max / tauMem) - exp(-t_max / tauSyn)) / b -
              t_max * exp(-t_max / tauSyn)))
 
+
 nest.ResetKernel()
 
 ###############################################################################

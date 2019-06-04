@@ -58,7 +58,7 @@ __all__ = [
     'Create',
     'CreateMask',
     'CreateParameter',
-    'CreateTopologyParameter',  
+    'CreateTopologyParameter',
     'DisableStructuralPlasticity',
     'Disconnect',
     'Displacement',

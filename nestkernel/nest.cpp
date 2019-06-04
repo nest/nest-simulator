@@ -382,13 +382,16 @@ cos_parameter( const ParameterDatum& param )
 }
 
 ParameterDatum
-dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y )
+dimension_parameter( const ParameterDatum& param_x,
+  const ParameterDatum& param_y )
 {
   return param_x->dimension_parameter( *param_y );
 }
 
 ParameterDatum
-dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y, const ParameterDatum& param_z )
+dimension_parameter( const ParameterDatum& param_x,
+  const ParameterDatum& param_y,
+  const ParameterDatum& param_z )
 {
   return param_x->dimension_parameter( *param_y, *param_z );
 }

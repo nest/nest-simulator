@@ -69,10 +69,10 @@ print("iaf_cond_alpha recordables: {0}".format(
 # expects a model type and, optionally, the desired number of nodes and a
 # dictionary of parameters to overwrite the default values of the model.
 #
-#* For the neuron, the rise time of the excitatory synaptic alpha function
+# * For the neuron, the rise time of the excitatory synaptic alpha function
 # in ms `tau_syn_ex` and the reset potential of the membrane in mV `V_reset`
 #  are specified.
-#* For the multimeter, the time interval for recording in ms `interval` and a
+# * For the multimeter, the time interval for recording in ms `interval` and a
 #  selection of measures to record (the membrane voltage in mV `V_m` and the
 #  excitatory `g_ex` and inhibitoy `g_in` synaptic conductances in nS) are set.
 #
@@ -85,7 +85,7 @@ print("iaf_cond_alpha recordables: {0}".format(
 #  - `label` specifies an arbitrary label for the device. It is used instead of
 #   the name of the model in the output file name.
 #
-#* For the spike generators, the spike times in ms `spike_times` are given
+# * For the spike generators, the spike times in ms `spike_times` are given
 #  explicitly.
 
 n = nest.Create("iaf_cond_alpha",

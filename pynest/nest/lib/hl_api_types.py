@@ -989,8 +989,8 @@ class TopologyParameter(Parameter):
         Parameters must be created using the CreateTopologyParameter
         command.
         """
-        if not (isinstance(datum, kernel.SLIDatum)
-                or datum.dtype != "topologyparametertype"):
+        if not (isinstance(datum, kernel.SLIDatum) or
+                datum.dtype != "topologyparametertype"):
             raise TypeError("expected parameter datum")
         self._datum = datum
 
@@ -1038,7 +1038,8 @@ class TopologyParameter(Parameter):
                 import nest
 
                 #linear dependent parameter
-                P = nest.CreateTopologyParameter('linear', {'a' : 2., 'c' : 0.})
+                P = nest.CreateTopologyParameter('linear',
+                                                 {'a' : 2., 'c' : 0.})
 
                 #get out value
                 P.GetValue(point=[3., 4.])

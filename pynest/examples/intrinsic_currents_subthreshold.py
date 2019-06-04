@@ -205,6 +205,7 @@ def texify_name(name):
 # Next, we add a right vertical axis and plot the currents with respect to
 # that axis.
 
+
 Iax = Vax.twinx()
 Iax.plot(t_dc, I_dc, 'k-', lw=2, label=texify_name('I_DC'))
 

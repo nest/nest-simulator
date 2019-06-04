@@ -114,8 +114,8 @@ class PostTraceTester(object):
             nest.Simulate(self.delay_)
             t = nest.GetStatus([0], "time")[0]
             nearby_pre_spike = np.any(
-                np.abs(t - np.array(self.pre_spike_times_) - self.delay_)
-                < self.resolution_/2.)
+                np.abs(t - np.array(self.pre_spike_times_) - self.delay_) <
+                self.resolution_/2.)
             if show_all_nest_trace_samples or nearby_pre_spike:
                 trace_nest_t.append(t)
                 post_tr = nest.GetStatus(post_parrot_ps)[0]['post_trace']
@@ -138,16 +138,16 @@ class PostTraceTester(object):
             for i in range(n_timepoints):
                 t = (i / float(n_timepoints - 1)) * self.sim_time_
                 if t > t_sp:
-                    trace_python_ref[i] += np.exp(-(t - t_sp)
-                                                  / self.tau_minus_)
+                    trace_python_ref[i] += np.exp(
+                        -(t - t_sp) / self.tau_minus_)
 
         for pre_spike_time in self.pre_spike_times_:
             t_sp = pre_spike_time + self.delay_
             i = int(np.round(t_sp / self.sim_time_
                              * float(len(trace_python_ref) - 1)))
             if debug:
-                print("* At t_sp = " + str(t_sp)
-                      + ", post_trace should be " + str(trace_python_ref[i]))
+                print("* At t_sp = " + str(t_sp) +
+                      ", post_trace should be " + str(trace_python_ref[i]))
 
         return trace_python_ref
 
@@ -165,8 +165,8 @@ class PostTraceTester(object):
 
         for t, trace_nest_val in zip(trace_nest_t[1:], trace_nest[1:]):
             if debug:
-                print("* Finding ref for NEST timepoint t = " + str(t)
-                      + ", trace = " + str(trace_nest_val))
+                print("* Finding ref for NEST timepoint t = " +
+                      str(t) + ", trace = " + str(trace_nest_val))
 
             traces_match = False
             for i_search, t_search in enumerate(
@@ -225,7 +225,7 @@ class PostTraceTester(object):
                     break
 
             if ((not traces_match)
-               and i_search == len(self.pre_spike_times_) - 1):
+                    and i_search == len(self.pre_spike_times_) - 1):
                 if debug:
                     print("\tthe time before the first pre spike")
                 # the time before the first pre spike

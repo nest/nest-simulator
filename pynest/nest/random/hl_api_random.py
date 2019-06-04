@@ -108,7 +108,8 @@ def normal(loc=0.0, scale=1.0, min=None, max=None,
             raise ValueError(
                 'loc and scale must have same number of dimensions.')
 
-        params = [CreateParameter('normal', dict(zip(parameters,t))) for t in zip(*parameters.values())]
+        params = [CreateParameter('normal', dict(zip(parameters, t)))
+                  for t in zip(*parameters.values())]
 
         if len(params) == 2:
             return sli_func('dimension2d', *params)
@@ -169,7 +170,8 @@ def lognormal(mean=0.0, sigma=1.0, min=None, max=None, dimension=None):
             raise ValueError(
                 'mean and sigma must have same number of dimensions.')
 
-        params = [CreateParameter('lognormal', dict(zip(parameters,t))) for t in zip(*parameters.values())]
+        params = [CreateParameter('lognormal', dict(zip(parameters, t)))
+                  for t in zip(*parameters.values())]
 
         if len(params) == 2:
             return sli_func('dimension2d', *params)

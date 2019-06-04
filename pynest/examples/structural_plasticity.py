@@ -319,6 +319,7 @@ class StructralPlasticityExample:
                 print("Progress: " + str(i / 2) + "%")
         print("Simulation finished successfully")
 
+
 '''
 Finally we take all the functions that we have defined and create the sequence
 for our example. We prepare the simulation, create the nodes for the network,

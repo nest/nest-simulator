@@ -192,7 +192,7 @@ t_U = (convolution_resolution * numpy.linspace(-l / 2., l / 2., l) +
 
 nest.ResetKernel()
 nest.SetStatus([0], [{'resolution': simulation_resolution}])
-nest.hl_api.set_verbosity("M_WARNING")
+nest.set_verbosity("M_WARNING")
 
 
 ###############################################################################

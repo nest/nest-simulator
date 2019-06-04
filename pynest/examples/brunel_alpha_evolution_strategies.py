@@ -232,7 +232,7 @@ def simulate(parameters):
     p_rate = 1000.0 * nu_ex * CE
 
     nest.ResetKernel()
-    nest.hl_api.set_verbosity('M_FATAL')
+    nest.set_verbosity('M_FATAL')
 
     nest.SetKernelStatus({'rng_seeds': [parameters['seed']],
                           'resolution': parameters['dt']})

@@ -28,6 +28,12 @@ See `Plesser et al
 information on NEST parallelization and be sure to check the
 documentation on `Random numbers in NEST <random-numbers.md>`__.
 
+**Note:** The NEST simulation kernel assumes that it has full control
+over threads in the NEST process. Combining this with other use of threads
+in the same process that is running the NEST kernel, can lead to unpredictable
+results and **is not supported**. Examples for this would be the use of Python
+threads or multi-threaded modules from within Python.
+
 Concepts and definitions
 ------------------------
 

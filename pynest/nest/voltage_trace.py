@@ -152,10 +152,11 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
     if len(detec) > 1:
         raise nest.kernel.NESTError("Please provide a single voltmeter.")
 
-    if not nest.GetStatus(detec)[0]['model'] in ('voltmeter', 'multimeter'):
+    type_id = nest.GetDefaults(nest.GetStatus(detec, 'model')[0], 'type_id')
+    if not type_id.name in ('voltmeter', 'multimeter'):
         raise nest.kernel.NESTError("Please provide a voltmeter or a \
             multimeter measuring V_m.")
-    elif nest.GetStatus(detec)[0]['model'] == 'multimeter':
+    elif type_id.name == 'multimeter':
         if "V_m" not in nest.GetStatus(detec, "record_from")[0]:
             raise nest.kernel.NESTError("Please provide a multimeter \
                 measuring V_m.")
@@ -219,8 +220,8 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
         return from_file(fname, **kwargs)
 
     else:
-        raise nest.NESTError("No data to plot. Make sure that \
-            record_to is set to either 'ascii' or 'memory'.")
+        raise nest.kernel.NESTError("Provided devices neither record to \
+            file, nor to memory.")
 
 
 def _from_memory(detec):

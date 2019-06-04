@@ -153,4 +153,4 @@ iaf\_cond\_alpha\_mc
 | `NEST HelpDesk <../../index.html>`__   | `Command Index <../helpindex.html>`__   | `NEST Quick Reference <../../quickref.html>`__   |
 +----------------------------------------+-----------------------------------------+--------------------------------------------------+
 
-© 2004 `The NEST Initiative <http://www.nest-initiative.org>`__
+© 2004 `The NEST Initiative <https://www.nest-initiative.org>`__

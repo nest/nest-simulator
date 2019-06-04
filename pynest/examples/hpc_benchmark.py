@@ -357,7 +357,7 @@ def run_simulation():
     with Logger(params['log_file']) as logger:
 
         nest.ResetKernel()
-        nest.hl_api.set_verbosity(M_INFO)
+        nest.set_verbosity(M_INFO)
 
         logger.log(str(memory_thisjob()) + ' # virt_mem_0')
 

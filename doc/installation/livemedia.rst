@@ -25,7 +25,7 @@ SuSe::
 NEST image setup
 ------------------
 
-* Download the `NEST live medium <http://www.nest-simulator.org/downloads/gplreleases/nest-live.ova>`_
+* Download the `NEST live medium <https://www.nest-simulator.org/downloads/gplreleases/nest-live.ova>`_
 
 * Start Virtual Box and import the virtual machine image "lubuntu-16.04_nest-2.14.0.ova" (**File** > **Import Appliance**)
 

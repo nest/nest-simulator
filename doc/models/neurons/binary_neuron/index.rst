@@ -17,5 +17,5 @@ Some text about Binary Neurons
 Examples using Binary Neurons
 ------------------------------
 
-*  `Correlospinmatrix Detector <http://www.nest-simulator/py_sample/correlospinmatrix_detector_two_neuron>`_
+*  `Correlospinmatrix Detector <https://www.nest-simulator/py_sample/correlospinmatrix_detector_two_neuron>`_
 

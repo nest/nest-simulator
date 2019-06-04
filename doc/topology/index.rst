@@ -8,7 +8,7 @@ The Topology Module is designed to build complex, layered networks in NEST.
 
 * We also recommend another **tutorial** :doc:`using the Hill Tononi model <../tutorials/topology/index>`
 
-* For a **comprehensive guide** into topology, please see our `Topology User Manual <http://www.nest-simulator.org/wp-content/uploads/2015/04/Topology_UserManual.pdf>`_
+* For a **comprehensive guide** into topology, please see our `Topology User Manual <https://www.nest-simulator.org/wp-content/uploads/2015/04/Topology_UserManual.pdf>`_
 
 
 .. toctree::

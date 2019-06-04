@@ -184,4 +184,9 @@
 /* Is mpi4py available? */
 #cmakedefine HAVE_MPI4PY 1
 
+/* Bit counts for Target members */
+#define TARGET_BITS_SPLIT @TARGET_BITS_SPLIT@
+#define TARGET_BITS_SPLIT_STANDARD 0
+#define TARGET_BITS_SPLIT_HPC 1
+
 #endif // #ifndef CONFIG_H

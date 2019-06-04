@@ -256,7 +256,7 @@ which yields the following output:
     NO WARRANTY. See the file LICENSE for details.
 
     Problems or suggestions?
-      Website     : <a class="external free" href="http://www.nest-initiative.org" rel="nofollow">http://www.nest-initiative.org</a>
+      Website     : <a class="external free" href="https://www.nest-initiative.org" rel="nofollow">https://www.nest-initiative.org</a>
       Mailing list: nest_user@nest-initiative.org
 
     Type 'nest.help()' to find out more about NEST.
@@ -375,7 +375,7 @@ which yields the following output:
     NO WARRANTY. See the file LICENSE for details.
 
     Problems or suggestions?
-      Website     : <a class="external free" href="http://www.nest-initiative.org" rel="nofollow">http://www.nest-initiative.org</a>
+      Website     : <a class="external free" href="https://www.nest-initiative.org" rel="nofollow">https://www.nest-initiative.org</a>
       Mailing list: nest_user@nest-initiative.org
 
     Type 'nest.help()' to find out more about NEST.

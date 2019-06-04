@@ -121,7 +121,7 @@ tau_in = 6.  # in ms
 # neurons), we can build the populations using the NEST model
 # gif_pop_psc_exp:
 
-nest.hl_api.set_verbosity("M_WARNING")
+nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
 nest.SetKernelStatus(
     {'resolution': dt, 'print_time': True, 'local_num_threads': 1})

@@ -61,7 +61,7 @@ import nest.voltage_trace
 # suppress info messages.
 
 
-nest.hl_api.set_verbosity("M_WARNING")
+nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
 
 ###############################################################################

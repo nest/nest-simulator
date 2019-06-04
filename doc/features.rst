@@ -12,7 +12,7 @@ Features
 
 3.  Nest provides a Topology Module for creating complex networks
     (`Topology Module User Manual
-    (PDF) <http://www.nest-simulator.org/wp-content/uploads/2014/12/NESTTopologyUserManual.pdf>`__)
+    (PDF) <https://www.nest-simulator.org/wp-content/uploads/2014/12/NESTTopologyUserManual.pdf>`__)
 
 4.  NEST provides many examples that help you getting started with your
     own simulation project.
@@ -91,7 +91,7 @@ Network models
 
 -  Topology Module for creating complex networks (`Topology Module User
    Manual
-   (PDF) <http://www.nest-simulator.org/wp-content/uploads/2014/12/NESTTopologyUserManual.pdf>`__)
+   (PDF) <https://www.nest-simulator.org/wp-content/uploads/2014/12/NESTTopologyUserManual.pdf>`__)
 
 Interoperability
 ----------------

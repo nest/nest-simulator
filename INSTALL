@@ -1,6 +1,6 @@
 This file contains a brief summary or the steps needed to install NEST. More
 detailed information is available on the homepage of the NEST simulator at
-http://www.nest-simulator.org/installation
+https://www.nest-simulator.org/installation
 
 Introduction
 ============
@@ -180,7 +180,7 @@ will install all required prequisites. You can then configure NEST with
         </path/to/NEST/src>
 
 For detailed information on installing NEST under OSX/macOS, please see the
-"macOS" section of http://www.nest-simulator.org/installation.
+"macOS" section of https://www.nest-simulator.org/installation.
 
 Compiling for BlueGene/Q
 ========================

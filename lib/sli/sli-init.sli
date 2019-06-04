@@ -1697,7 +1697,7 @@ systemdict /GNUreadline known
   (Type 'sysinfo' to see details on the system configuration.) =
   (Type 'authors' for information about the makers of NEST.) =
   (Type 'license' to display the license agreement that came with your copy of NEST.) =
-  (For more information visit http://www.nest-simulator.org.) =
+  (For more information visit https://www.nest-simulator.org.) =
   (Type 'help' to see this text again.) =
   () =  
 } def
@@ -1752,7 +1752,7 @@ SeeAlso: nestrc
    () =
 
    ( Problems or suggestions?) =
-   (   Visit http://www.nest-simulator.org) =
+   (   Visit https://www.nest-simulator.org) =
    () =
 
    ( Type 'help' to get more information.) =
@@ -1793,7 +1793,7 @@ SeeAlso: nestrc
   (NEST has been created and is maintained by the ) <- 
   (members of the NEST Initiative:) <- endl endl
   (For a list of associated institutions and contributors,) <- endl
-  (visit us at http://www.nest-initiative.org.) <- endl endl ;
+  (visit us at https://www.nest-initiative.org.) <- endl endl ;
     
 } def
 

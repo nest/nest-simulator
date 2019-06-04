@@ -542,6 +542,19 @@ function( NEST_PROCESS_WITH_BOOST )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_TARGET_BITS_SPLIT )
+  if ( target-bits-split )
+    # set to value according to defines in config.h
+    if ( ${target-bits-split} STREQUAL "standard" )
+      set( TARGET_BITS_SPLIT 0 PARENT_SCOPE )
+    elseif ( ${target-bits-split} STREQUAL "hpc" )
+      set( TARGET_BITS_SPLIT 1 PARENT_SCOPE )
+    else()
+      message( FATAL_ERROR "Invalid target-bits-split selected." )
+    endif()
+  endif()
+endfunction()
+
 function( NEST_DEFAULT_MODULES )
     # requires HAVE_LIBNEUROSIM set
     # Static modules

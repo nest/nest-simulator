@@ -79,14 +79,14 @@ How the documentation is organized
 Contribute
 ###########
 
-* Have you used NEST in an article or presentation? :doc:`Let us know <community>` and we will add it to our list of `publications <http://www.nest-simulator.org/publications/>`_.
+* Have you used NEST in an article or presentation? :doc:`Let us know <community>` and we will add it to our list of `publications <https://www.nest-simulator.org/publications/>`_.
   Find out how to :doc:`cite NEST <citing-nest>` in your work.
 
 * If you have any comments or suggestions, please share them on our :doc:`Mailing List <community>`.
 
 * Want to contribute code? Check out our `Developer Space <https://nest.github.io/nest-simulator/>`_ to get started!
 
-* For more info about our larger community and the history of NEST check out the `NEST Initiative <http://www.NEST-initiative.org>`_ website
+* For more info about our larger community and the history of NEST check out the `NEST Initiative <https://www.nest-initiative.org>`_ website
 
 Links to other projects:
 -------------------------------------

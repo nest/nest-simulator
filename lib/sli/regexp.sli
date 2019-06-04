@@ -479,7 +479,7 @@ Examples:
 [(hello) (world)] (^hell)       grep -> [(hello)]
 [(hello) (world)] (not in here) grep -> []
 [(hello) (world)] ()            grep -> [(hello) (world)]
-statusdict /prgdocdir get (LICENSE) joinpath (http) grep -> [(or visit http://www.nest-simulator.org)]
+statusdict /prgdocdir get (LICENSE) joinpath (http) grep -> [(or visit https://www.nest-simulator.org)]
 
 Diagnostics:
 Raises /InvalidRegexError if the expression string is not a valid

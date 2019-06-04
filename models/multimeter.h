@@ -104,7 +104,7 @@ The following parameters can be set in the status dictionary:
 
 \verbatim embed:rst
 ============  ======  ===================================================
- interval     double  Recording interval in ms
+ interval     ms      Recording interval
  record_from  array   Array containing the names of variables to record
                       from, obtained from the /recordables entry of the
                       model from which one wants to record

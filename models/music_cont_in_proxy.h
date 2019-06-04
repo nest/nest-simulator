@@ -68,14 +68,14 @@ Parameters:
 
 The following properties are available in the status dictionary:
 \verbatim embed:rst
-===========  ========================================================
- port_name   The name of the MUSIC input port to listen to (default:
-             cont_in)
- port_width  The width of the MUSIC input port
- data        The data received on the port as vector of doubles
- published   A bool indicating if the port has been already published
-             with MUSIC
-===========  ========================================================
+=========== ======= ========================================================
+ port_name  string  The name of the MUSIC input port to listen to (default:
+                    cont_in)
+ port_width integer The width of the MUSIC input port
+ data       list    The data received on the port
+ published  boolean A bool indicating if the port has been already published
+                    with MUSIC
+=========== ======= ========================================================
 \endverbatim
 The parameter port_name can be set using SetStatus.
 

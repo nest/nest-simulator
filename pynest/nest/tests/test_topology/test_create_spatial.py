@@ -71,7 +71,10 @@ class CreateLayer(unittest.TestCase):
     def test_Create_free_layer_from_LognormalParameter(self):
         """Test Create free layer from lognormal parameter."""
         layer = nest.Create('iaf_psc_alpha', 33,
-                            positions=nest.spatial.free(nest.random.lognormal(mean=1., sigma=2., dimension=2)))
+                            positions=nest.spatial.free(
+                                nest.random.lognormal(mean=1.,
+                                                      sigma=2.,
+                                                      dimension=2)))
 
         self.assertEqual(len(layer), 33)
         self.assertEqual(len(layer.spatial['positions']), 33)
@@ -80,7 +83,9 @@ class CreateLayer(unittest.TestCase):
     def test_Create_3D_free_layer_from_LognormalParameter(self):
         """Test Create 3D free layer from lognormal parameter."""
         layer = nest.Create('iaf_psc_alpha', 33,
-                            positions=nest.spatial.free(nest.random.lognormal(mean=(1., 2., 0.5), sigma=(2., 2., 2.))))
+                            positions=nest.spatial.free(
+                                nest.random.lognormal(mean=(1., 2., 0.5),
+                                                      sigma=(2., 2., 2.))))
 
         self.assertEqual(len(layer), 33)
         self.assertEqual(len(layer.spatial['positions']), 33)
@@ -89,7 +94,10 @@ class CreateLayer(unittest.TestCase):
     def test_Create_free_layer_with_nodeParams(self):
         """Test Create free layer with nodeParams."""
         layer = nest.Create('iaf_psc_alpha', 33,
-                            positions=nest.spatial.free(nest.random.lognormal(mean=1., sigma=2., dimension=3)),
+                            positions=nest.spatial.free(
+                                nest.random.lognormal(mean=1.,
+                                                      sigma=2.,
+                                                      dimension=3)),
                             params={'V_m': nest.random.uniform(),
                                     'C_m': 200.})
 
@@ -101,7 +109,8 @@ class CreateLayer(unittest.TestCase):
     def test_Create_free_layer_from_uniform_Parameter(self):
         """Test Create free layer from uniform parameter."""
         layer = nest.Create('iaf_psc_alpha', 6,
-                            positions=nest.spatial.free(nest.random.uniform(dimension=2)))
+                            positions=nest.spatial.free(
+                                nest.random.uniform(dimension=2)))
 
         self.assertEqual(len(layer), 6)
         self.assertEqual(len(layer.spatial['positions']), 6)

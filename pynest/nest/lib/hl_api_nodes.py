@@ -39,7 +39,7 @@ __all__ = [
 
 
 @check_stack
-def Create(model, n=1, params=None, positions=None, edge_wrap=None):
+def Create(model, n=1, params=None, positions=None):
     """Create one or more nodes.
 
    Generates `n` new network objects of the supplied model type. If `n` is not
@@ -74,8 +74,7 @@ def Create(model, n=1, params=None, positions=None, edge_wrap=None):
 
     if positions is not None:
         layer_specs = {'elements': model}
-        if edge_wrap is not None:
-            layer_specs['edge_wrap'] = edge_wrap
+        layer_specs['edge_wrap'] = positions.edge_wrap
         if isinstance(positions, nest.spatial.free):
             layer_specs['positions'] = positions.pos
             if isinstance(positions.pos, Parameter):

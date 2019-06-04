@@ -100,14 +100,26 @@
  *  This is a subgroup for current-based neurons of NEST
  *
  */
-/** @defgroup ht
+/** @defgroup ht_neuron
  *
- *  This is a subgroup for Hill Tononi models of NEST
+ *  This is a subgroup for Hill Tononi neuron model of NEST
+ *
+ */
+
+/** @defgroup clopath_n
+ *
+ * This is a subgroup for Clopath type neurons of NEST
  *
  */
 /** @defgroup Synapses
  *
  * This module is for the synapses of NEST
+ *
+ */
+
+/** @defgroup ht_synapse
+ *
+ *  This is a subgroup for Hill Tononi synapse model of NEST
  *
  */
 /** @defgroup stdp
@@ -141,7 +153,7 @@
  *  Including neurons that explictly support gap jucntions
  *
  */
-/** @defgroup clopath
+/** @defgroup clopath_s
  *
  * This is a subgroup for Clopath type synapses of NEST
  *

@@ -111,7 +111,7 @@ class GetSetTestCase(unittest.TestCase):
         """Test set function on layer GIDCollection."""
 
         layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(
-            rows=3, columns=3, extent=[2., 2.]), edge_wrap=True)
+            rows=3, columns=3, extent=[2., 2.], edge_wrap=True))
 
         with self.assertRaises(KeyError):
             layer.set({'center': [1., 1.]})

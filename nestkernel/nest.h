@@ -56,7 +56,7 @@ void enable_dryrun_mode( const index n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 
-enum Register_Connection_Model_Flags {
+enum class Register_Connection_Model_Flags {
   REGISTER_HPC = 1 << 0,
   REGISTER_LBL = 1 << 1,
   IS_PRIMARY = 1 << 2,
@@ -66,25 +66,28 @@ enum Register_Connection_Model_Flags {
   REQUIRES_CLOPATH_ARCHIVING = 1 << 6
 };
 
-const int default_connection_model_flags =
-  REGISTER_HPC |
-  REGISTER_LBL |
-  IS_PRIMARY |
-  HAS_DELAY;
+const Register_Connection_Model_Flags default_connection_model_flags =
+  Register_Connection_Model_Flags::REGISTER_HPC |
+  Register_Connection_Model_Flags::REGISTER_LBL |
+  Register_Connection_Model_Flags::IS_PRIMARY |
+  Register_Connection_Model_Flags::HAS_DELAY;
 
-const int default_secondary_connection_model_flags =
-  SUPPORTS_WFR |
-  HAS_DELAY;
+const Register_Connection_Model_Flags default_secondary_connection_model_flags =
+  Register_Connection_Model_Flags::SUPPORTS_WFR |
+  Register_Connection_Model_Flags::HAS_DELAY;
+
+
+
 
 template < template < typename > class ConnectorModelT >
 void
 register_connection_model( const std::string& name,
-                           const enum Register_Connection_Model_Flags flags=static_cast<Register_Connection_Model_Flags>( default_connection_model_flags ) );
+                           const Register_Connection_Model_Flags flags=default_connection_model_flags );
 
 template < template < typename > class ConnectorModelT >
 void
 register_secondary_connection_model( const std::string& name,
-                                     const enum Register_Connection_Model_Flags flags=static_cast<Register_Connection_Model_Flags>( default_secondary_connection_model_flags ) );
+                                     const Register_Connection_Model_Flags flags= default_secondary_connection_model_flags );
 
 void print_network( index gid, index depth, std::ostream& out = std::cout );
 

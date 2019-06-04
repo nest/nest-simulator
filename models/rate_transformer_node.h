@@ -78,9 +78,9 @@ Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
 Parameters:
 
-Only the parameter 
-- linear_summation 
-and the parameters from the class Nonlinearities can be set in the 
+Only the parameter
+- linear_summation
+and the parameters from the class Nonlinearities can be set in the
 status dictionary.
 
 Author: Mario Senden, Jan Hahne, Jannis Schuecker

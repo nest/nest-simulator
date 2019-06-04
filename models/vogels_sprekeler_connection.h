@@ -50,10 +50,10 @@ Parameters:
 
 \verbatim embed:rst
 ======  ======  =========================================================
- tau    double  Time constant of STDP window, potentiation in ms
- Wmax   double  Maximum allowed weight
- eta    double  Learning rate
- alpha  double  Constant depression (= 2 * tau * target firing rate in
+ tau    ms      Time constant of STDP window, potentiation
+ Wmax   real    Maximum allowed weight
+ eta    real    Learning rate
+ alpha  real    Constant depression (= 2 * tau * target firing rate in
                 [1])
 ======  ======  =========================================================
 \endverbatim
@@ -64,7 +64,7 @@ References:
 
 \verbatim embed:rst
 .. [1] Vogels et al. (2011). Inhibitory plasticity balances excitation and
-       inhibition in sensory pathways and memory networks. Science, 
+       inhibition in sensory pathways and memory networks. Science,
        334(6062):1569-1573. DOI: https://doi.org/10.1126/science.1211095
 \endverbatim
 

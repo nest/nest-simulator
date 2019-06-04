@@ -58,25 +58,27 @@ Parameters:
 
 \verbatim embed:rst
 ======================= =========== ===========================================
-Common properties
+**Common properties**
 -------------------------------------------------------------------------------
- tau_plus               double      Time constant of STDP window, causal branch
-                                    in ms
- tau_minus_stdp         double      Time constant of STDP window, anti-causal
-                                    branch in ms
- Wmax                   double      Maximum allowed weight
- no_synapses            long        Total number of synapses
- synapses_per_driver    long        Number of synapses updated at once
- driver_readout_time    double      Time for processing of one synapse row
+ tau_plus               ms          Time constant of STDP window, causal branch
+ tau_minus_stdp         ms          Time constant of STDP window, anti-causal
+                                    branch
+ Wmax                   real        Maximum allowed weight
+ no_synapses            integer     Total number of synapses
+ synapses_per_driver    integer     Number of synapses updated at once
+ driver_readout_time    real        Time for processing of one synapse row
                                     (synapse line driver)
- readout_cycle_duration double      Duration between two subsequent
+ readout_cycle_duration real        Duration between two subsequent
                                     updates of same synapse (synapse line
                                     driver)
- lookuptable_0          vector long Three look-up tables (LUT)
- lookuptable_1          vector long
- lookuptable_2          vector long
- configbit_0            vector long Configuration bits for evaluation
-                                    function. For details see code in
+ lookuptable_0          list of     Three look-up tables (LUT)
+                        integers
+ lookuptable_1          list of
+                        integers
+ lookuptable_2          list of
+                        integers
+ configbit_0            list of     Configuration bits for evaluation
+                        integers    function. For details see code in
                                     function eval_function_ and [4]
                                     (configbit[0]=e_cc, ..[1]=e_ca,
                                     ..[2]=e_ac, ..[3]=e_aa).
@@ -85,9 +87,10 @@ Common properties
                                     according LUTs (out of three: (1,0),
                                     (0,1), (1,1)). For (0,0) continue
                                     without reset.
- configbit_1            vector long
- reset_pattern          vector long Configuration bits for reset behavior.
-                                    Two bits for each LUT (reset causal
+ configbit_1            list of
+                        integers
+ reset_pattern          list of     Configuration bits for reset behavior.
+                        integers    Two bits for each LUT (reset causal
                                     and acausal). In hardware only (all
                                     false; never reset) or (all true;
                                     always reset) is allowed.
@@ -97,13 +100,13 @@ Common properties
 ============  ======= =====================================================
 **Individual properties**
 ---------------------------------------------------------------------------
- a_causal     double  Causal and anti-causal spike pair accumulations
- a_acausal    double
- a_thresh_th  double  Two thresholds used in evaluation function.
+ a_causal     real    Causal and anti-causal spike pair accumulations
+ a_acausal    real
+ a_thresh_th  real    Two thresholds used in evaluation function
                       No common property, because variation of analog
                       synapse circuitry can be applied here
- a_thresh_tl  double
- synapse_id   long    Synapse ID, used to assign synapses to groups (synapse
+ a_thresh_tl  real
+ synapse_id   integer Synapse ID, used to assign synapses to groups (synapse
                       drivers)
 ============  ======= =====================================================
 \endverbatim

@@ -57,7 +57,7 @@ The following parameters appear in the element's status dictionary:
 \verbatim embed:rst
 ============  ======= =========================================================
  rate         real    Mean firing rate of the component processes,
-                      default: 0s^-1
+                      dzefault: 0s^-1
  gamma_shape  integer Shape paramter of component gamma processes, default: 1
  n_proc       integer Number of superimposed independent component processes,
                       default: 1

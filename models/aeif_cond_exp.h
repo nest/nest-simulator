@@ -126,7 +126,7 @@ The following parameters can be set in the status dictionary.
 ======== ======= ==================================
 **Spike adaptation parameters**
 ---------------------------------------------------
- a       ns      Subthreshold adaptation
+ a       nS      Subthreshold adaptation
  b       pA      Spike-triggered adaptation
  Delta_T mV      Slope factor
  tau_w   ms      Adaptation time constant

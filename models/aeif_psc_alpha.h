@@ -123,7 +123,7 @@ The following parameters can be set in the status dictionary.
  tau_w   ms      Adaptation time constant
  V_th    mV      Spike initiation threshold
  V_peak  mV      Spike detection threshold
- ======== ======= ==================================
+======== ======= ==================================
 
 =========== ======= ===========================================================
 **Synaptic parameters**

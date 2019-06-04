@@ -100,7 +100,7 @@ The following parameters can be set in the status dictionary.
 --------------------------------------------------------
  V_m     mV      Membrane potential
  w       pA      Spike-adaptation current
- ======== ======= =======================================
+======== ======= =======================================
 
 ======== ======= =======================================
 **Membrane Parameters**

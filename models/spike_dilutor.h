@@ -56,7 +56,7 @@ The following parameters appear in the element's status dictionary:
 
 \verbatim embed:rst
 ======== ======  ================
- p_copy  double  Copy probability
+ p_copy  real    Copy probability
 ======== ======  ================
  \endverbatim
 

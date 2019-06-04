@@ -97,7 +97,7 @@ Parameters:
 The following parameters can be set in the status dictionary.
 
 \verbatim embed:rst
-================= ======  ======================================================
+================= ======= ======================================================
  V_m              mV      Membrane potential
  E_L              mV      Resting membrane potential
  C_m              pF      Capacity of the membrane

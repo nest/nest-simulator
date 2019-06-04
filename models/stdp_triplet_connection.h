@@ -49,26 +49,26 @@ STDP examples:
 Parameters:
 \verbatim embed:rst
 =================  ======  ===========================================
- tau_plus          double  Time constant of short presynaptic trace
+ tau_plus          real    Time constant of short presynaptic trace
                            (tau_plus of [1])
- tau_plus_triplet  double  Time constant of long presynaptic trace
+ tau_plus_triplet  real    Time constant of long presynaptic trace
                            (tau_x of [1])
- Aplus             double  Weight of pair potentiation rule
+ Aplus             real    Weight of pair potentiation rule
                            (A_plus_2 of [1])
- Aplus_triplet     double  Weight of triplet potentiation rule
+ Aplus_triplet     real    Weight of triplet potentiation rule
                            (A_plus_3 of [1])
- Aminus            double  Weight of pair depression rule
+ Aminus            real    Weight of pair depression rule
                            (A_minus_2 of [1])
- Aminus_triplet    double  Weight of triplet depression rule
+ Aminus_triplet    real    Weight of triplet depression rule
                            (A_minus_3 of [1])
- Wmax              double  Maximum allowed weight
+ Wmax              real    Maximum allowed weight
 =================  ======  ===========================================
 
 =============== ======  ===========================================
-States
+**States**
 -------------------------------------------------------------------
- Kplus          double  Pre-synaptic trace (r_1 of [1])
- Kplus_triplet  double  Triplet pre-synaptic trace (r_2 of [1])
+ Kplus          real    Pre-synaptic trace (r_1 of [1])
+ Kplus_triplet  real    Triplet pre-synaptic trace (r_2 of [1])
 =============== ======  ===========================================
 \endverbatim
 

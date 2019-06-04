@@ -166,19 +166,19 @@ The following properties can be set in the status dictionary.
 
 \verbatim embed:rst
 ===================== ============= ==========================================
- origin               double        Time origin for device timer in ms
- start                double        Earliest possible time stamp of a spike to
-                                    be emitted in ms
- stop                 double        Earliest time stamp of a potential spike
-                                    event that is not emitted in ms
- spike_times          double array  Spike-times in ms
- spike_weights        double array  Corresponding spike-weights, the unit
+ origin               ms            Time origin for device timer
+ start                ms            Earliest possible time stamp of a spike to
+                                    be emitted
+ stop                 ms            Earliest time stamp of a potential spike
+                                    event that is not emitted
+ spike_times          array of ms   Spike-times
+ spike_weights        array         Corresponding spike-weights, the unit
                                     depends on the receiver
- spike_multiplicities int array     Multiplicities of spikes, same length
-                                    as spike_times; mostly for debugging
- precise_times        bool          see above
- allow_offgrid_times  bool          see above
- shift_now_spikes     bool          see above
+ spike_multiplicities integer       Multiplicities of spikes, same length
+                      array         as spike_times; mostly for debugging
+ precise_times        boolean       see above
+ allow_offgrid_times  boolean       see above
+ shift_now_spikes     boolean       see above
 ===================== ============= ==========================================
 \endverbatim
 

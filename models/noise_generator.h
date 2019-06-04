@@ -76,12 +76,12 @@ The following parameters can be set in the status dictionary:
 
 \verbatim embed:rst
 ========== ======  =========================================================
- mean      double  Mean value of the noise current in pA
- std       double  Standard deviation of noise current in pA
- dt        double  Interval between changes in current in ms, default 1.0ms
- std_mod   double  Modulated standard deviation of noise current in pA
- phase     double  Phase of sine modulation (0-360 deg)
- frequency double  Frequency of sine modulation in Hz
+ mean      pA      Mean value of the noise current
+ std       pA      Standard deviation of noise current
+ dt        ms      Interval between changes in current, default 1.0ms
+ std_mod   pA      Modulated standard deviation of noise current
+ phase     real    Phase of sine modulation (0-360 deg)
+ frequency Hz      Frequency of sine modulation
 ========== ======  =========================================================
 \endverbatim
 

@@ -90,14 +90,14 @@ The following parameters can be set in the status dictionary:
 
 \verbatim embed:rst
 ========  ======  ======================================================
- U        double  Maximum probability of release [0,1]
- tau_psc  double  Time constant of synaptic current in ms
- tau_fac  double  Time constant for facilitation in ms
- tau_rec  double  Time constant for depression in ms
- x        double  Initial fraction of synaptic vesicles in the readily
+ U        real    Maximum probability of release [0,1]
+ tau_psc  ms      Time constant of synaptic current
+ tau_fac  ms      Time constant for facilitation
+ tau_rec  ms      Time constant for depression
+ x        real    Initial fraction of synaptic vesicles in the readily
                   releasable pool [0,1]
- y        double  Initial fraction of synaptic vesicles in the synaptic
-                   cleft [0,1]
+ y        real    Initial fraction of synaptic vesicles in the synaptic
+                  cleft [0,1]
 ========  ======  ======================================================
 \endverbatim
 

@@ -67,7 +67,7 @@ The following properties are available in the status dictionary:
 
 \verbatim embed:rst
 =========== ======= ========================================================
- port_name  sting   The name of the MUSIC output_port to forward events to
+ port_name  string  The name of the MUSIC output_port to forward events to
                     (default: event_out)
  port_width integer The width of the MUSIC input port
  published  boolean A bool indicating if the port has been already published

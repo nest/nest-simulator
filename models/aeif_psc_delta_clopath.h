@@ -108,9 +108,9 @@ u_bar_bar   mV      Low-pass filtered u_bar_minus
  E_L         mV      Leak reversal potential
  g_L         nS      Leak conductance
  I_e         pA      Constant external input current
- tau_plus    double  Time constant of u_bar_plus.
- tau_minus   double  Time constant of u_bar_minus.
- tau_bar_bar double  Time constant of u_bar_bar.
+ tau_plus    ms      Time constant of u_bar_plus
+ tau_minus   ms      Time constant of u_bar_minus
+ tau_bar_bar ms      Time constant of u_bar_bar
 ============ ======  =================================================
 
 
@@ -133,7 +133,7 @@ A_LTD         1/mV    Amplitude of depression
 A_LTP         1/mV^2  Amplitude of facilitation
 theta_plus    mV      Threshold for u
 theta_minus   mV      Threshold for u_bar_[plus/minus]
-A_LTD_const   boolean Flag that indicates whether A_LTD_ should
+A_LTD_const   boolean Flag that indicates whether A_LTD should
                       be constant (true, default) or multiplied by
                       u_bar_bar^2 / u_ref_squared (false).
 delay_u_bars  real    Delay with which u_bar_[plus/minus] are processed

@@ -99,20 +99,19 @@ Parameters:
 The following parameters can be set in the status dictionary.
 
 \verbatim embed:rst
-==========  =============== ===========================================
- N          int             Number of represented neurons
- tau_m      double          Membrane time constant in ms
- C_m        double          Capacitance of the membrane in pF
- rho_0      double          Base firing rate in 1/s
- delta_u    double          Voltage scale parameter in mV
- I_e        double          Constant input current in pA
- tau_eta    list of doubles Time constants of post-spike kernel
-                             in ms
- val_eta    list of doubles Amplitudes of exponentials in
-                            post-spike-kernel in mV
- len_kernel double          Post-spike kernel eta is truncated after
+=========== =============== ===========================================
+ N          integer         Number of represented neurons
+ tau_m      ms              Membrane time constant
+ C_m        pF              Capacitance of the membrane
+ rho_0      1/s             Base firing rate
+ delta_u    mV              Voltage scale parameter
+ I_e        pA              Constant input current
+ tau_eta    list of ms      Time constants of post-spike kernel
+ val_eta    list of mV      Amplitudes of exponentials in
+                            post-spike-kernel
+ len_kernel real            Post-spike kernel eta is truncated after
                             max(tau_eta) * len_kernel
-==========  =============== ===========================================
+=========== =============== ===========================================
 \endverbatim
 
 The parameters correspond to the ones of pp_psc_delta as follows.

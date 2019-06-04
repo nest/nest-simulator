@@ -60,10 +60,10 @@ Parameters:
 The following parameters appear in the element's status dictionary:
 \verbatim embed:rst
 =======   ======  =========================================================
- rate     double  Mean firing rate in Hz
- origin   double  Time origin for device timer in ms
- start    double  Begin of device application with resp. to origin in ms
- stop     double  End of device application with resp. to origin in ms
+ rate     Hz      Mean firing rate
+ origin   ms      Time origin for device timer
+ start    ms      Begin of device application with resp. to origin
+ stop     ms      End of device application with resp. to origin
 =======   ======  =========================================================
 \endverbatim
 

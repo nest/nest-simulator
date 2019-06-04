@@ -62,14 +62,14 @@ Examples:
 Parameters:
 \verbatim embed:rst
 ========= =======  ======================================================
- tau_plus  double  Time constant of STDP window, potentiation in ms
+ tau_plus  ms      Time constant of STDP window, potentiation
                    (tau_minus defined in post-synaptic neuron)
- lambda    double  Step size
- alpha     double  Asymmetry parameter (scales depressing increments as
+ lambda    real    Step size
+ alpha     real    Asymmetry parameter (scales depressing increments as
                    alpha*lambda)
- mu_plus   double  Weight dependence exponent, potentiation
- mu_minus  double  Weight dependence exponent, depression
- Wmax      double  Maximum allowed weight
+ mu_plus   real    Weight dependence exponent, potentiation
+ mu_minus  real    Weight dependence exponent, depression
+ Wmax      real    Maximum allowed weight
 ========= =======  ======================================================
 \endverbatim
 

@@ -59,10 +59,9 @@ The following parameters can be set in the status dictionary:
 
 \verbatim embed:rst
 ==================== ===============  ======================================
- amplitude_times     list of doubles  Times at which current changes in ms
- amplitude_values    list of doubles  Amplitudes of step current current in
-                                      pA
- allow_offgrid_times  bool            Default false
+ amplitude_times     list of ms       Times at which current changes
+ amplitude_values    list of pA       Amplitudes of step current current
+ allow_offgrid_times boolean          Default false
 ==================== ===============  ======================================
 \endverbatim
 

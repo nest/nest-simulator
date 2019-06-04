@@ -58,12 +58,12 @@ The following parameters can be set in the status dictionary:
 
 \verbatim embed:rst
 ========  ======  ========================================================
- U        double  Maximum probability of release (U1) [0,1], default=0.5
- u        double  Maximum probability of release (U_se) [0,1],
+ U        real    Maximum probability of release (U1) [0,1], default=0.5
+ u        real    Maximum probability of release (U_se) [0,1],
                   default=0.5
- x        double  Current scaling factor of the weight, default=U
- tau_fac  double  Time constant for facilitation in ms, default = 0(off)
- tau_rec  double  Time constant for depression in ms, default = 800ms
+ x        real    Current scaling factor of the weight, default=U
+ tau_fac  ms      Time constant for facilitation, default = 0(off)
+ tau_rec  ms      Time constant for depression, default = 800ms
 ========  ======  ========================================================
 \endverbatim
 

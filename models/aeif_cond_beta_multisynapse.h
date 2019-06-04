@@ -133,7 +133,7 @@ The following parameters can be set in the status dictionary.
  a       ns      Subthreshold adaptation
  b       pA      Spike-triggered adaptation
  tau_w   ms      Adaptation time constant
- ======== ======= ==================================
+======== ======= ==================================
 
 ======== ============= ========================================================
 **Synaptic parameters**

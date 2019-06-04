@@ -49,12 +49,12 @@ dependent plasticity (as defined in [1]).
 Parameters:
 \verbatim embed:rst
 =========  ======  ====================================================
- tau_plus  double  Time constant of STDP window, potentiation in ms
- ta                (tau_minus defined in post-synaptic neuron)
- ta lambda double  Learning rate
- ta alpha  double  Asymmetry parameter (scales depressing increments as
- ta                alpha*lambda)
- ta mu     double  Weight dependence exponent, potentiation
+ tau_plus  ms      Time constant of STDP window, potentiation
+                   (tau_minus defined in post-synaptic neuron)
+ lambda    real    Learning rate
+ alpha     real    Asymmetry parameter (scales depressing increments as
+                   alpha*lambda)
+ mu        real    Weight dependence exponent, potentiation
 =========  ======  ====================================================
 \endverbatim
 

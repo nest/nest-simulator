@@ -69,26 +69,26 @@ Parameters:
 =========  ======= ======================================================
 **Common properties**
 -------------------------------------------------------------------------
- vt        long    ID of volume_transmitter collecting the spikes
+ vt        integer ID of volume_transmitter collecting the spikes
                    from the pool of dopamine releasing neurons and
                    transmitting the spikes to the synapse. A value of
                    -1 indicates that no volume transmitter has been
                    assigned.
- A_plus    double  Amplitude of weight change for facilitation
- A_minus   double  Amplitude of weight change for depression
- tau_plus  double  STDP time constant for facilitation in ms
- tau_c     double  Time constant of eligibility trace in ms
- tau_n     double  Time constant of dopaminergic trace in ms
- b         double  Dopaminergic baseline concentration
- Wmin      double  Minimal synaptic weight
- Wmax      double  Maximal synaptic weight
+ A_plus    real    Amplitude of weight change for facilitation
+ A_minus   real    Amplitude of weight change for depression
+ tau_plus  ms      STDP time constant for facilitation
+ tau_c     ms      Time constant of eligibility trace
+ tau_n     ms      Time constant of dopaminergic trace
+ b         real    Dopaminergic baseline concentration
+ Wmin      real    Minimal synaptic weight
+ Wmax      real    Maximal synaptic weight
 =========  ======= ======================================================
 
 === ======  =====================================
 **Individual properties**
--------------------------------------------------------------------------
- c  double  Eligibility trace
- n  double  Neuromodulator concentration
+-------------------------------------------------
+ c  real    Eligibility trace
+ n  real    Neuromodulator concentration
 === ======  =====================================
 \endverbatim
 

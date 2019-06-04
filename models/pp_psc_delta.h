@@ -123,27 +123,26 @@ Parameters:
 The following parameters can be set in the status dictionary.
 
 \verbatim embed:rst
-=================  ======  ===================================================
- V_m               double  Membrane potential in mV
- C_m               double  Capacitance of the membrane in pF
- tau_m             double  Membrane time constant in ms
- q_sfa             double  Adaptive threshold jump in mV
- tau_sfa           double  Adaptive threshold time constant in ms
- dead_time         double  Duration of the dead time in ms
- dead_time_random  bool    Should a random dead time be drawn after each
+=================  ======= ===================================================
+ V_m               mV      Membrane potential
+ C_m               pF      Capacitance of the membrane
+ tau_m             ms      Membrane time constant
+ q_sfa             mV      Adaptive threshold jump
+ tau_sfa           ms      Adaptive threshold time constant
+ dead_time         ms      Duration of the dead time
+ dead_time_random  boolean Should a random dead time be drawn after each
                            spike?
- dead_time_shape   int     Shape parameter of dead time gamma distribution
- t_ref_remaining   double  Remaining dead time at simulation start
- with_reset        bool    Should the membrane potential be reset after a
+ dead_time_shape   integer Shape parameter of dead time gamma distribution
+ t_ref_remaining   ms      Remaining dead time at simulation start
+ with_reset        boolean Should the membrane potential be reset after a
                            spike?
- I_e               double  Constant input current in pA
- c_1               double  Slope of linear part of transfer function in
+ I_e               pA      Constant input current
+ c_1               Hz/mV   Slope of linear part of transfer function in
                            Hz/mV
- c_2               double  Prefactor of exponential part of transfer function
-                           in Hz
- c_3               double  Coefficient of exponential non-linearity of
-                           transfer function in 1/mV
-=================  ======  ===================================================
+ c_2               Hz      Prefactor of exponential part of transfer function
+ c_3               1/mV    Coefficient of exponential non-linearity of
+                           transfer function
+=================  ======= ===================================================
 \endverbatim
 
 References:

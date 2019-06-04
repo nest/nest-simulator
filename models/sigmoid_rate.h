@@ -57,17 +57,17 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 \verbatim embed:rst
-==================  ======  ==============================================
- rate               double  Rate (unitless)
- tau                double  Time constant of rate dynamics in ms
- mu                 double  Mean input
- sigma              double  Noise parameter
- g                  double  Gain parameter
- beta               double  Slope parameter
- theta              double  Threshold
- linear_summation   bool    Specifies type of non-linearity (see above)
- rectify_output     bool    Switch to restrict rate to values >= 0
-==================  ======  ==============================================
+==================  ======= ==============================================
+ rate               real    Rate (unitless)
+ tau                ms      Time constant of rate dynamics
+ mu                 real    Mean input
+ sigma              real    Noise parameter
+ g                  real    Gain parameter
+ beta               real    Slope parameter
+ theta              real    Threshold
+ linear_summation   boolean Specifies type of non-linearity (see above)
+ rectify_output     boolean Switch to restrict rate to values >= 0
+==================  ======= ==============================================
 \endverbatim
 
 Note:

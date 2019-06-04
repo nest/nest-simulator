@@ -105,10 +105,10 @@ The following parameters can be set in the status dictionary:
 
 The following state variables can be read out with the multimeter device:
 \verbatim embed:rst
-======   =================================
- V_m     Non-resetting membrane potential
- V_th    Two-timescale adaptive threshold
-======   =================================
+====== ====  =================================
+ V_m   mV    Non-resetting membrane potential
+ V_th  mV    Two-timescale adaptive threshold
+====== ====  =================================
 \endverbatim
 
 Remarks:

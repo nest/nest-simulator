@@ -59,7 +59,7 @@ class BasicsTestCase(unittest.TestCase):
         """Check if GetPosition returns proper positions."""
         pos = ((1.0, 0.0), (0.0, 1.0), (3.5, 1.5))
         nest.ResetKernel()
-        l = nest.Create('iaf_psc_alpha', positions=pos)
+        l = nest.Create('iaf_psc_alpha', positions=nest.spatial.free(pos))
 
         # GetPosition of single node
         nodepos_exp = nest.GetPosition(l[:1])
@@ -409,7 +409,7 @@ class BasicsTestCase(unittest.TestCase):
         positions = [(numpy.random.uniform(-0.5, 0.5),
                       numpy.random.uniform(-0.5, 0.5)) for _ in range(50)]
         l = nest.Create('iaf_psc_alpha',
-                        positions=positions,
+                        positions=nest.spatial.free(positions),
                         edge_wrap=False)
         nest.ConnectLayers(l, l, cdict)
 

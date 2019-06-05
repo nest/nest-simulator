@@ -4,29 +4,20 @@
 #   $1: sourcedir
 #   $2: builddir
 
-# default value, if git is not installed or if the source directory is
-# not under version control
-version="v2.16.0"
+# default values
+branch="master"
+codename=""
 
 # check if we can run the git command
 if command -v git >/dev/null 2>&1; then
   # check if sourcedir is a git repository
   if (cd $1 && git status) >/dev/null 2>&1; then
     branch=`cd $1; git rev-parse --abbrev-ref HEAD`
-    if [ $branch = "HEAD" ] || [ $branch = "master" ]; then
-      branch=""
-    else
-      branch=$branch'@'
-    fi
-    version=$branch`cd $1; git rev-parse --short HEAD`
+    githash=@`cd $1; git rev-parse --short HEAD`
   fi
 fi
 
-# create destination directory for rcsinfo.sli
-sli_libdir="$2/lib/sli"
-mkdir -p $sli_libdir
+version="$branch${codename:--$codename}${githash:-}"
 
-# create rcsinfo.sli
-echo "statusdict /rcsinfo ($version) put" > $sli_libdir/rcsinfo.sli
-
-exit 0
+mkdir -p $2/libnestutil
+echo "#define NEST_VERSION $version" > $2/libnestutil/version.h

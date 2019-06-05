@@ -22,19 +22,13 @@
 
 #ifndef CONFIG_H
 #define CONFIG_H
-/*
-    Configuration header.
-    config.h is automatically generated from config.h.in
-    during the configuration process.
 
-    Please make all changes in config.h.in.
+/*
+  config.h is automatically generated from config.h.in during the
+  configuration process. Please make all changes in config.h.in.
 */
 
-#define NEST_VERSION_PRGNAME "@NEST_VERSION_PRGNAME@"
-
-#define NEST_VERSION_MAJOR_REVISION @NEST_VERSION_MAJOR@
-#define NEST_VERSION_MINOR_REVISION @NEST_VERSION_MINOR@
-#define NEST_VERSION_PATCHLEVEL "@NEST_VERSION_PATCHLEVEL@"
+#include "version.h"
 
 // TODO NEST_HOST and NEST_HOSTVENDOR not available with cmake
 #define NEST_HOST "@NEST_TARGET_TRIPLE@"

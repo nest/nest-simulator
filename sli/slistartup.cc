@@ -417,16 +417,9 @@ SLIStartup::init( SLIInterpreter* i )
   assert( statusdict.valid() );
 
   statusdict->insert_move( argv_name, targs );
-  statusdict->insert(
-    prgname_name, Token( new StringDatum( NEST_VERSION_PRGNAME ) ) );
+  statusdict->insert( version_name, Token( new StringDatum( NEST_VERSION ) ) );
   statusdict->insert(
     exitcode_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
-  statusdict->insert(
-    prgmajor_name, Token( new IntegerDatum( NEST_VERSION_MAJOR_REVISION ) ) );
-  statusdict->insert(
-    prgminor_name, Token( new IntegerDatum( NEST_VERSION_MINOR_REVISION ) ) );
-  statusdict->insert(
-    prgpatch_name, Token( new StringDatum( NEST_VERSION_PATCHLEVEL ) ) );
   statusdict->insert( prgbuilt_name,
     Token( new StringDatum(
       String::compose( "%1 %2", __DATE__, __TIME__ ) ) ) );

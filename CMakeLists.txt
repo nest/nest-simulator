@@ -25,14 +25,6 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 project( nest CXX C )
 set( NEST_USER_EMAIL "nest_user@nest-initiative.org" )
 
-# VERSION exported to libnestutil/config.h, pynest/setup.py
-set( NEST_VERSION_MAJOR 2 )
-set( NEST_VERSION_MINOR 16 )
-set( NEST_VERSION_PATCHLEVEL 0 )
-
-set( NEST_VERSION_VERSION "${NEST_VERSION_MAJOR}.${NEST_VERSION_MINOR}.${NEST_VERSION_PATCHLEVEL}" )
-set( NEST_VERSION_PRGNAME "${PROJECT_NAME}-${NEST_VERSION_VERSION}" )
-
 ################################################################################
 ##################         All User Defined options           ##################
 ################################################################################
@@ -118,8 +110,17 @@ endif ()
 find_package( Doxygen )
 find_program( SED NAMES sed gsed )
 
+###JMETODO: Find git
+
 ################################################################################
-##################   CPack, checks, ... in external modules   ##################
+##################           Create version string            ##################
+################################################################################
+
+set(  )
+
+
+################################################################################
+##################                Load includes               ##################
 ################################################################################
 
 # This include checks the symbols, etc.
@@ -128,7 +129,6 @@ include( CheckIncludesSymbols )
 # These includes publish function names.
 include( ProcessOptions )
 include( WriteStaticModules_h )
-include( CPackVariables )
 include( CheckExtraCompilerFeatures )
 include( ConfigureSummary )
 include( GetTriple )
@@ -138,9 +138,6 @@ include( DefaultCompilerFlags )
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
 get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )
 
-# set cpack variables and
-# generate CPackConfig.cmake CPackSourceConfig.cmake files
-nest_set_cpack_variables()
 
 # set default compiler flags
 nest_set_default_compiler_flags()
@@ -355,6 +352,17 @@ configure_file(
     "${PROJECT_SOURCE_DIR}/extras/nest_vars.sh.in"
     "${PROJECT_BINARY_DIR}/extras/nest_vars.sh" @ONLY
 )
+
+configure_file(
+    "${PROJECT_SOURCE_DIR}/doc/normaldoc.conf.in"
+    "${PROJECT_BINARY_DIR}/doc/normaldoc.conf" @ONLY
+)
+
+configure_file(
+    "${PROJECT_SOURCE_DIR}/doc/fulldoc.conf.in"
+    "${PROJECT_BINARY_DIR}/doc/fulldoc.conf" @ONLY
+)
+
 
 ################################################################################
 ##################            Install Extra Files             ##################

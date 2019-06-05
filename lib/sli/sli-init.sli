@@ -2128,15 +2128,6 @@ moduleinitializers
 
 /start {
   {
-    % Check for rcsinfo SLI file and run it. If it does not
-    % exist, put an empty string into statusdict/rcsinfo.
-    mark
-      { (rcsinfo) (r) file } stopped not
-        { (rcsinfo) run }
-        { statusdict /rcsinfo () put }
-      ifelse
-    ] ;
-
     :commandline
     { % we have an interactive session
       welcome

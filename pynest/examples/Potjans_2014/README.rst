@@ -39,7 +39,7 @@ progress should be set to False in the file ``sim_params.py``. For running, use
 ``python example.py``. The output will be saved in the directory ``data``.
 
 The code can be parallelized using OpenMP and MPI, if NEST has been built with
-these applications `(Parallel computing with NEST) <http://www.nest-simulator.org/parallel_computing/>`__.
+these applications `(Parallel computing with NEST) <https://www.nest-simulator.org/parallel_computing/>`__.
 The number of threads (per MPI process) can be chosen by adjusting
 `local_num_threads` in ``sim_params.py``. The number of MPI processes can be
 set by choosing a reasonable value for `num_mpi_prc` and then running the

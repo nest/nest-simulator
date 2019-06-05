@@ -24,9 +24,9 @@ Table of Contents
    :caption: Getting Involved
 
    community
-   Publications <http://www.nest-simulator.org/publications/>
+   Publications <https://www.nest-simulator.org/publications/>
    Developer Space <https://nest.github.io/nest-simulator/>
-   NEST-Initiative <http://www.nest-initiative.org/>
+   NEST-Initiative <https://www.nest-initiative.org/>
 
 .. toctree::
    :maxdepth: 2

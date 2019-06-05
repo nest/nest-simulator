@@ -504,29 +504,27 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
     t_spike - dendritic_delay,
     &start,
     &finish );
-  // facilitation due to post-synaptic spikes since last pre-synaptic spike
-  double minus_dt = 0;
-  double plus_dt = 0;
 
-  if ( start != finish ) // take only first postspike after last prespike
+  // facilitation due to the first post-synaptic spike since the last
+  // pre-synaptic spike
+  if ( start != finish )
   {
-    minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
-  }
+    double minus_dt_causal = t_lastspike_ - ( start->t_ + dendritic_delay );
 
-  if ( start != finish ) // take only last postspike before current spike
-  {
+    // get_history() should make sure that
+    // start->t_ > t_lastspike_ - dendritic_delay, i.e. minus_dt < 0
+    assert(
+      minus_dt_causal < -1.0 * kernel().connection_manager.get_stdp_eps() );
+
+    a_causal_ += std::exp( minus_dt_causal / cp.tau_plus_ );
+
+    // take only last postspike before current spike
+    double minus_dt_acausal;
+
     --finish;
-    plus_dt = ( finish->t_ + dendritic_delay ) - t_spike;
-  }
+    minus_dt_acausal = ( finish->t_ + dendritic_delay ) - t_spike;
 
-  if ( minus_dt != 0 )
-  {
-    a_causal_ += std::exp( minus_dt / cp.tau_plus_ );
-  }
-
-  if ( plus_dt != 0 )
-  {
-    a_acausal_ += std::exp( plus_dt / cp.tau_minus_ );
+    a_acausal_ += std::exp( minus_dt_acausal / cp.tau_minus_ );
   }
 
   e.set_receiver( *get_target( t ) );

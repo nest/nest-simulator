@@ -77,13 +77,26 @@ public:
   // Initialize global backend-specific data structures
   void pre_run_hook() override;
 
+  // Prepare the backend at begin of the NEST Simulate function
   void prepare() override;
+
+  // Clean up the backend at the end of a Run
   void post_run_hook() override;
+
+  // Discard all recorded data
   void clear( const RecordingDevice& ) override;
+
+  // Set the status of the recording backend
   void set_status( const DictionaryDatum& ) override;
+
+  // Return the status of the recording backend
   void get_status( DictionaryDatum& ) const override;
+
+  // Set the per-device status of the given recording device
   void set_device_status( const RecordingDevice& device,
     const DictionaryDatum& d ) override;
+
+  // Return the per-device status of the given recording device
   void get_device_status( const RecordingDevice& device,
     DictionaryDatum& d ) const override;
 

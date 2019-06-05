@@ -246,15 +246,20 @@ nest::RecordingBackendASCII::build_filename_(
 void
 nest::RecordingBackendASCII::clear( nest::RecordingDevice const& )
 {
+  // nothing to do
 }
+
 void
 nest::RecordingBackendASCII::set_device_status( nest::RecordingDevice const&,
   lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
 {
+  // nothing to do
 }
+
 void
 nest::RecordingBackendASCII::prepare()
 {
+  // nothing to do
 }
 
 /* ----------------------------------------------------------------

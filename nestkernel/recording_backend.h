@@ -174,7 +174,9 @@ public:
   virtual void synchronize() = 0;
 
   /**
-   * Discard all recorded data. Called when the user sets the property
+   * Discard all recorded data.
+   *
+   * Called when the user sets the property
    * n_events on @p device to 0. This function only needs to be 
    * implemented by backends which store data of devices in memory.
    * 

@@ -130,12 +130,6 @@ private:
   Buffers_ B_;
 };
 
-// inline void
-// RecordingBackendSocket::get_status( DictionaryDatum& d ) const
-// {
-//  P_.get( d );
-//}
-
 } // namespace
 
 #endif // RECORDING_BACKEND_SOCKET_H

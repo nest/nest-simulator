@@ -155,18 +155,25 @@ nest::RecordingBackendMemory::set_device_status( const RecordingDevice& device,
 void
 nest::RecordingBackendMemory::post_run_hook()
 {
+  // nothing to do
 }
+
 void
 nest::RecordingBackendMemory::get_status(
   lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
 {
+  // nothing to do
 }
+
 void
 nest::RecordingBackendMemory::set_status(
   lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
 {
+  // nothing to do
 }
+
 void
 nest::RecordingBackendMemory::prepare()
 {
+  // nothing to do
 }

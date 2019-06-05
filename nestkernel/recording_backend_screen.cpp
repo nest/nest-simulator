@@ -105,23 +105,32 @@ void
 nest::RecordingBackendScreen::get_device_status( nest::RecordingDevice const&,
   lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
 {
+  // nothing to do
 }
+
 void
 nest::RecordingBackendScreen::clear( nest::RecordingDevice const& )
 {
+  // nothing to do
 }
+
 void
 nest::RecordingBackendScreen::set_device_status( nest::RecordingDevice const&,
   lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
 {
+  // nothing to do
 }
+
 void
 nest::RecordingBackendScreen::prepare()
 {
+  // nothing to do
 }
+
 void
 nest::RecordingBackendScreen::post_run_hook()
 {
+  // nothing to do
 }
 
 /* ----------------------------------------------------------------

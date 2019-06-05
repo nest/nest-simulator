@@ -31,17 +31,18 @@ namespace nest
 template < template < typename > class ConnectorModelT >
 void
 register_connection_model( const std::string& name,
-                           const Register_Connection_Model_Flags flags )
+  const Register_Connection_Model_Flags flags )
 {
-  kernel().model_manager.register_connection_model< ConnectorModelT >( name, flags );
+  kernel().model_manager.register_connection_model< ConnectorModelT >(
+    name, flags );
 }
 
 template < template < typename > class ConnectorModelT >
 void
 register_secondary_connection_model( const std::string& name,
-                                     const Register_Connection_Model_Flags flags )
+  const Register_Connection_Model_Flags flags )
 {
-  kernel().model_manager.register_secondary_connection_model< ConnectorModelT >( name, flags );
+  kernel().model_manager.register_secondary_connection_model< ConnectorModelT >(
+    name, flags );
 }
-
 }

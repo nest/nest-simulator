@@ -41,5 +41,4 @@ Voltmeter::Voltmeter( const Voltmeter& n )
   : Multimeter( n )
 {
 }
-
 }

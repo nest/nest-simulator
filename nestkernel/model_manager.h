@@ -31,11 +31,11 @@
 #include "genericmodel.h"
 #include "manager_interface.h"
 #include "model.h"
+#include "nest.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "node.h"
-#include "nest.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -192,12 +192,14 @@ public:
    * @param name The name under which the ConnectorModel will be registered.
    */
   template < template < typename targetidentifierT > class ConnectionT >
-  void register_connection_model(const std::string& name,
-                                 const Register_Connection_Model_Flags flags=default_connection_model_flags );
+  void register_connection_model( const std::string& name,
+    const Register_Connection_Model_Flags flags =
+      default_connection_model_flags );
 
   template < template < typename targetidentifierT > class ConnectionT >
   void register_secondary_connection_model( const std::string& name,
-                                            const Register_Connection_Model_Flags flags=default_secondary_connection_model_flags );
+    const Register_Connection_Model_Flags flags =
+      default_secondary_connection_model_flags );
 
   /**
    * @return The model id of a given model name

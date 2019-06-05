@@ -30,14 +30,14 @@
 
 // Neuron models
 #include "aeif_cond_alpha.h"
-#include "aeif_cond_alpha_multisynapse.h"
 #include "aeif_cond_alpha_RK5.h"
+#include "aeif_cond_alpha_multisynapse.h"
 #include "aeif_cond_beta_multisynapse.h"
 #include "aeif_cond_exp.h"
 #include "aeif_psc_alpha.h"
 #include "aeif_psc_delta.h"
-#include "aeif_psc_exp.h"
 #include "aeif_psc_delta_clopath.h"
+#include "aeif_psc_exp.h"
 #include "amat2_psc_exp.h"
 #include "erfc_neuron.h"
 #include "gauss_rate.h"
@@ -47,8 +47,8 @@
 #include "gif_psc_exp.h"
 #include "gif_psc_exp_multisynapse.h"
 #include "ginzburg_neuron.h"
-#include "hh_cond_exp_traub.h"
 #include "hh_cond_beta_gap_traub.h"
+#include "hh_cond_exp_traub.h"
 #include "hh_psc_alpha.h"
 #include "hh_psc_alpha_clopath.h"
 #include "hh_psc_alpha_gap.h"
@@ -363,9 +363,9 @@ ModelsModule::init( SLIInterpreter* )
 
   // register all connection models
   register_connection_model< BernoulliConnection >( "bernoulli_synapse" );
-  register_connection_model< ClopathConnection >(
-    "clopath_synapse",
-    default_connection_model_flags | Register_Connection_Model_Flags::REQUIRES_CLOPATH_ARCHIVING );
+  register_connection_model< ClopathConnection >( "clopath_synapse",
+    default_connection_model_flags
+      | Register_Connection_Model_Flags::REQUIRES_CLOPATH_ARCHIVING );
   register_connection_model< ContDelayConnection >( "cont_delay_synapse" );
   register_connection_model< HTConnection >( "ht_synapse" );
   register_connection_model< Quantal_StpConnection >( "quantal_stp_synapse" );
@@ -374,22 +374,28 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< STDPConnection >( "stdp_synapse" );
   register_connection_model< STDPConnectionHom >( "stdp_synapse_hom" );
   register_connection_model< STDPDopaConnection >( "stdp_dopamine_synapse" );
-  register_connection_model< STDPFACETSHWConnectionHom >( "stdp_facetshw_synapse_hom" );
+  register_connection_model< STDPFACETSHWConnectionHom >(
+    "stdp_facetshw_synapse_hom" );
   register_connection_model< STDPPLConnectionHom >( "stdp_pl_synapse_hom" );
   register_connection_model< STDPTripletConnection >( "stdp_triplet_synapse" );
   register_connection_model< TsodyksConnection >( "tsodyks_synapse" );
   register_connection_model< TsodyksConnectionHom >( "tsodyks_synapse_hom" );
   register_connection_model< Tsodyks2Connection >( "tsodyks2_synapse" );
-  register_connection_model< VogelsSprekelerConnection >( "vogels_sprekeler_synapse" );
+  register_connection_model< VogelsSprekelerConnection >(
+    "vogels_sprekeler_synapse" );
 
   // register secondary connection models
-  register_secondary_connection_model< GapJunction >(
-    "gap_junction",
-    Register_Connection_Model_Flags::REQUIRES_SYMMETRIC | Register_Connection_Model_Flags::SUPPORTS_WFR );
+  register_secondary_connection_model< GapJunction >( "gap_junction",
+    Register_Connection_Model_Flags::REQUIRES_SYMMETRIC
+      | Register_Connection_Model_Flags::SUPPORTS_WFR );
 
-  register_secondary_connection_model< RateConnectionInstantaneous >("rate_connection_instantaneous", Register_Connection_Model_Flags::SUPPORTS_WFR );
-  register_secondary_connection_model< RateConnectionDelayed >( "rate_connection_delayed", Register_Connection_Model_Flags::HAS_DELAY );
-  register_secondary_connection_model< DiffusionConnection >( "diffusion_connection", Register_Connection_Model_Flags::SUPPORTS_WFR );
+  register_secondary_connection_model< RateConnectionInstantaneous >(
+    "rate_connection_instantaneous",
+    Register_Connection_Model_Flags::SUPPORTS_WFR );
+  register_secondary_connection_model< RateConnectionDelayed >(
+    "rate_connection_delayed", Register_Connection_Model_Flags::HAS_DELAY );
+  register_secondary_connection_model< DiffusionConnection >(
+    "diffusion_connection", Register_Connection_Model_Flags::SUPPORTS_WFR );
 }
 
 } // namespace nest

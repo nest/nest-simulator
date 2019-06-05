@@ -56,7 +56,8 @@ void enable_dryrun_mode( const index n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 
-enum class Register_Connection_Model_Flags : unsigned {
+enum class Register_Connection_Model_Flags : unsigned
+{
   REGISTER_HPC = 1 << 0,
   REGISTER_LBL = 1 << 1,
   IS_PRIMARY = 1 << 2,
@@ -67,73 +68,64 @@ enum class Register_Connection_Model_Flags : unsigned {
 };
 
 
-
-
-template<typename Enum>  
-struct EnableBitMaskOperators  
+template < typename Enum >
+struct EnableBitMaskOperators
 {
-    static const bool enable = false;
+  static const bool enable = false;
 };
 
-template<>
+template <>
 struct EnableBitMaskOperators< Register_Connection_Model_Flags >
 {
-    static const bool enable = true;
+  static const bool enable = true;
 };
 
-template<typename Enum>
-typename std::enable_if<EnableBitMaskOperators<Enum>::enable, Enum>::type  
-operator |(Enum lhs, Enum rhs)
+template < typename Enum >
+typename std::enable_if< EnableBitMaskOperators< Enum >::enable, Enum >::type
+operator|( Enum lhs, Enum rhs )
 {
-    using underlying = typename std::underlying_type<Enum>::type;
-    return static_cast<Enum> (
-        static_cast<underlying>(lhs) |
-        static_cast<underlying>(rhs)
-    );
+  using underlying = typename std::underlying_type< Enum >::type;
+  return static_cast< Enum >(
+    static_cast< underlying >( lhs ) | static_cast< underlying >( rhs ) );
 }
-template<typename Enum>
-typename std::enable_if<EnableBitMaskOperators<Enum>::enable, Enum>::type  
-operator &(Enum lhs, Enum rhs)
+template < typename Enum >
+typename std::enable_if< EnableBitMaskOperators< Enum >::enable, Enum >::type
+operator&( Enum lhs, Enum rhs )
 {
-    using underlying = typename std::underlying_type<Enum>::type;
-    return static_cast<Enum> (
-        static_cast<underlying>(lhs) &
-        static_cast<underlying>(rhs)
-    );
+  using underlying = typename std::underlying_type< Enum >::type;
+  return static_cast< Enum >(
+    static_cast< underlying >( lhs ) & static_cast< underlying >( rhs ) );
 }
 
-template< typename Enum >
-bool enumFlagSet(const Enum en, const Enum flag) {
-    using underlying = typename std::underlying_type<Enum>::type;
-    return static_cast< underlying >(en & flag) != 0;
+template < typename Enum >
+bool
+enumFlagSet( const Enum en, const Enum flag )
+{
+  using underlying = typename std::underlying_type< Enum >::type;
+  return static_cast< underlying >( en & flag ) != 0;
 };
-
-
-
 
 
 const Register_Connection_Model_Flags default_connection_model_flags =
-  Register_Connection_Model_Flags::REGISTER_HPC |
-  Register_Connection_Model_Flags::REGISTER_LBL |
-  Register_Connection_Model_Flags::IS_PRIMARY |
-  Register_Connection_Model_Flags::HAS_DELAY;
+  Register_Connection_Model_Flags::REGISTER_HPC
+  | Register_Connection_Model_Flags::REGISTER_LBL
+  | Register_Connection_Model_Flags::IS_PRIMARY
+  | Register_Connection_Model_Flags::HAS_DELAY;
 
 const Register_Connection_Model_Flags default_secondary_connection_model_flags =
-  Register_Connection_Model_Flags::SUPPORTS_WFR |
-  Register_Connection_Model_Flags::HAS_DELAY;
-
-
+  Register_Connection_Model_Flags::SUPPORTS_WFR
+  | Register_Connection_Model_Flags::HAS_DELAY;
 
 
 template < template < typename > class ConnectorModelT >
-void
-register_connection_model( const std::string& name,
-                           const Register_Connection_Model_Flags flags=default_connection_model_flags );
+void register_connection_model( const std::string& name,
+  const Register_Connection_Model_Flags flags =
+    default_connection_model_flags );
 
 template < template < typename > class ConnectorModelT >
-void
-register_secondary_connection_model( const std::string& name,
-                                     const Register_Connection_Model_Flags flags= default_secondary_connection_model_flags );
+void register_secondary_connection_model( const std::string& name,
+  const Register_Connection_Model_Flags flags =
+    default_secondary_connection_model_flags );
 
 void print_network( index gid, index depth, std::ostream& out = std::cout );
 

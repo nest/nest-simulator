@@ -94,7 +94,8 @@ ModelManager::register_connection_model( const std::string& name,
 {
   // register normal version of the synapse
   ConnectorModel* cf =
-    new GenericConnectorModel< ConnectionT< TargetIdentifierPtrRport > >( name,
+    new GenericConnectorModel< ConnectionT< TargetIdentifierPtrRport > >(
+      name,
       enumFlagSet( flags, Register_Connection_Model_Flags::IS_PRIMARY ),
       enumFlagSet( flags, Register_Connection_Model_Flags::HAS_DELAY ),
       enumFlagSet( flags, Register_Connection_Model_Flags::REQUIRES_SYMMETRIC ),

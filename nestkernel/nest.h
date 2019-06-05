@@ -105,7 +105,6 @@ enumFlagSet( const Enum en, const Enum flag )
   return static_cast< underlying >( en & flag ) != 0;
 };
 
-
 const Register_Connection_Model_Flags default_connection_model_flags =
   Register_Connection_Model_Flags::REGISTER_HPC
   | Register_Connection_Model_Flags::REGISTER_LBL

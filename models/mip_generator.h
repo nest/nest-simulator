@@ -63,12 +63,12 @@ Parameters:
 The following parameters appear in the element's status dictionary:
 
 \verbatim embed:rst
-============  ======= ================================================
- rate         Hz      Mean firing rate of the mother process
- p_copy       real    Copy probability
- mother_rng   rng     Random number generator of mother process
- mother_seed  integer Seed of RNG of mother process
-============  ======= ================================================
+============  ======== ================================================
+ rate         spikes/s Mean firing rate of the mother process
+ p_copy       real     Copy probability
+ mother_rng   rng      Random number generator of mother process
+ mother_seed  integer  Seed of RNG of mother process
+============  ======== ================================================
 \endverbatim
 
 Remarks:

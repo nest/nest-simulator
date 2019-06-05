@@ -59,12 +59,12 @@ Parameters:
 
 The following parameters appear in the element's status dictionary:
 \verbatim embed:rst
-=======   ======  =========================================================
- rate     Hz      Mean firing rate
- origin   ms      Time origin for device timer
- start    ms      Begin of device application with resp. to origin
- stop     ms      End of device application with resp. to origin
-=======   ======  =========================================================
+=======   ======== =========================================================
+ rate     spikes/s Mean firing rate
+ origin   ms       Time origin for device timer
+ start    ms       Begin of device application with resp. to origin
+ stop     ms       End of device application with resp. to origin
+=======   ======== =========================================================
 \endverbatim
 
 Sends: SpikeEvent

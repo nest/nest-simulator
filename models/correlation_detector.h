@@ -101,7 +101,9 @@ N_channels           integer  The number of pools. This defines the range of
                               receptor_type. Default is 1.
                               Setting N_channels clears count_covariance,
                               covariance and n_events.
-histogram            real     read-only - raw, weighted, cross-correlation counts
+histogram            squared  read-only - raw, weighted, cross-correlation counts
+                     synaptic Unit depends on model
+                     weights
 histogram_correction list of  read-only - Correction factors for kahan summation
                      integers algoritm
 n_events             list of  Number of events from source 0 and 1. By setting

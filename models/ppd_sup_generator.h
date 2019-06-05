@@ -60,16 +60,16 @@ Parameters:
 
 The following parameters appear in the element's status dictionary:
 \verbatim embed:rst
-===================  ======= =================================================
- rate                real    Mean firing rate of the component processes,
-                             default: 0 s^-1
- dead_time           ms      Minimal time between two spikes of the component
-                             processes, default: 0 ms
- n_proc              integer Number of superimposed independent component
-                             processes, default: 1
- frequency           Hz      Rate modulation frequency, default: 0 Hz
- relative_amplitude  real    Relative rate modulation amplitude, default: 0
-===================  ======= =================================================
+===================  ======== =================================================
+ rate                spikes/s Mean firing rate of the component processes,
+                              default: 0 spikes/s
+ dead_time           ms       Minimal time between two spikes of the component
+                              processes, default: 0 ms
+ n_proc              integer  Number of superimposed independent component
+                              processes, default: 1
+ frequency           Hz       Rate modulation frequency, default: 0 Hz
+ relative_amplitude  real     Relative rate modulation amplitude, default: 0
+===================  ======== =================================================
 \endverbatim
 
 Remarks:

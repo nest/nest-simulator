@@ -66,16 +66,16 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 \verbatim embed:rst
-======================== ======= ==============================================
- rate                    real    Mean firing rate in spikes/second,
-                                 default: 0 s^-1
- amplitude               real    Firing rate modulation amplitude in
-                                 spikes/second, default: 0 s^-1
- frequency               Hz      Modulation frequency, default: 0 Hz
- phase                   real    Modulation phase in degree [0-360], default: 0
- order                   real    Gamma order (>= 1), default: 1
- individual_spike_trains boolean See note below, default: true
-======================== ======= ==============================================
+======================== ======== ==============================================
+ rate                    spikes/s Mean firing rate,
+                                  default: 0 spikes/s
+ amplitude               spikes/s Firing rate modulation amplitude,
+                                  default: 0 s^-1
+ frequency               Hz       Modulation frequency, default: 0 Hz
+ phase                   real     Modulation phase in degree [0-360], default: 0
+ order                   real     Gamma order (>= 1), default: 1
+ individual_spike_trains boolean  See note below, default: true
+======================== ======== ==============================================
 \endverbatim
 
 

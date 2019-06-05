@@ -171,11 +171,11 @@ The following properties can be set in the status dictionary.
                                     be emitted
  stop                 ms            Earliest time stamp of a potential spike
                                     event that is not emitted
- spike_times          array of ms   Spike-times
- spike_weights        array         Corresponding spike-weights, the unit
-                                    depends on the receiver
+ spike_times          ms            Spike-times
+ spike_weights        synaptic      Corresponding spike-weights, the unit
+                      weights       depends on the receiver
  spike_multiplicities integer       Multiplicities of spikes, same length
-                      array         as spike_times; mostly for debugging
+                                    as spike_times; mostly for debugging
  precise_times        boolean       see above
  allow_offgrid_times  boolean       see above
  shift_now_spikes     boolean       see above

@@ -938,11 +938,6 @@ SeeAlso: info, LocateFileNames, searchifstream, searchfile
 */
 statusdict 
 begin
-  /version 
-   prgmajor cvs (.) join_s 
-   prgminor cvs join_s (.) join_s
-   prgpatch cvs join_s 
-  def
   /userargs [] def
   /interactive true def
   /files [] def
@@ -1743,7 +1738,7 @@ SeeAlso: nestrc
      (              -- N E S T --) =
    } ifelse
    (  Copyright (C) 2004 The NEST Initiative) = () =
-   ( Version: ) =only statusdict/rcsinfo :: =
+   ( Version: ) =only statusdict/version :: =
    ( Built: ) =only statusdict/built :: =
    () =
 
@@ -1771,7 +1766,7 @@ SeeAlso: nestrc
    {
        (NEST ) =only
    } ifelse
-   statusdict/rcsinfo :: =only
+   statusdict/version :: =only
    ( (C) 2004 The NEST Initiative) =
 } def
 
@@ -2069,7 +2064,7 @@ moduleinitializers
     printversion
     {
       statusdict begin
-	cout (NEST version ) <- rcsinfo <- (, built on ) <- built <- ( for ) <- host <- endl
+	cout (NEST version ) <- version <- (, built on ) <- built <- ( for ) <- host <- endl
 	(Copyright (C) 2004 The NEST Initiative) <- endl endl
       end
       quit

@@ -64,6 +64,7 @@ set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Inte
 set( with-libraries OFF CACHE STRING "Link additional libraries. Give full path. Separate multiple libraries by ';'. [default OFF]" )
 set( with-includes OFF CACHE STRING "Add additional include paths. Give full path without '-I'. Separate multiple include paths by ';'. [default OFF]" )
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1'. Separate multiple defines by ';'. [default OFF]" )
+set( with-version-suffix "" CACHE STRING "Set a user defined version suffix. [default '']" )
 
 # cross-compiling
 # should be set via toolchain files
@@ -109,15 +110,6 @@ endif ()
 # needed for target doc and fulldoc
 find_package( Doxygen )
 find_program( SED NAMES sed gsed )
-
-###JMETODO: Find git
-
-################################################################################
-##################           Create version string            ##################
-################################################################################
-
-set(  )
-
 
 ################################################################################
 ##################                Load includes               ##################
@@ -167,6 +159,7 @@ nest_process_with_libneurosim()
 nest_process_with_music()
 nest_process_with_boost()
 nest_process_target_bits_split()
+nest_process_version_suffix()
 
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
@@ -189,6 +182,19 @@ nest_check_have_stl_vector_capacity_doubling()
 nest_check_have_xlc_ice_on_using()
 nest_check_have_std_nan()
 nest_check_have_std_isnan()
+
+################################################################################
+##################           Create version string            ##################
+################################################################################
+
+include( NestVersionInfo )
+get_version_info()
+
+message("-- NEST version: ${NEST_VERSION_STRING}")
+#message("NEST_VERSION_BRANCH \"${NEST_VERSION_BRANCH}\"")
+#message("NEST_VERSION_SUFFIX \"${NEST_VERSION_SUFFIX}\"")
+#message("NEST_VERSION \"${NEST_VERSION}\"")
+#message("NEST_VERSION_GITHASH \"${NEST_VERSION_GITHASH}\"")
 
 ################################################################################
 ##################         Enable Testing Targets             ##################

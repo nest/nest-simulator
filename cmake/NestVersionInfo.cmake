@@ -1,10 +1,6 @@
-message("hello world")
-
 
 macro(get_version_info)
-    set(NEST_VERSION_SUFFIX "rc1")
-
-    execute_process(
+   execute_process(
         COMMAND "git" "rev-parse" "--short" "HEAD"
         OUTPUT_VARIABLE NEST_VERSION_GITHASH
         OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -31,9 +27,10 @@ macro(get_version_info)
     endif()
 
     string(SUBSTRING "${NEST_VERSION_BRANCH}" 0 5 isRelease)
-    message("isRelease: ${isRelease}")
     if (isRelease STREQUAL "nest-")
         string(SUBSTRING "${NEST_VERSION_BRANCH}${versionsuffix}" 5 99999 NEST_VERSION)
+    else()
+        set(NEST_VERSION "${NEST_VERSION_BRANCH}${versionsuffix}")
     endif()
 
     set(NEST_VERSION_STRING "${NEST_VERSION_BRANCH}${versionsuffix}${githash}")
@@ -42,11 +39,3 @@ macro(get_version_info)
     unset(githash)
 
 endmacro()
-
-get_version_info()
-message("#define NEST_VERSION_STRING \"${NEST_VERSION_STRING}\"")
-message("#define NEST_VERSION_BRANCH \"${NEST_VERSION_BRANCH}\"")
-message("#define NEST_VERSION_SUFFIX \"${NEST_VERSION_SUFFIX}\"")
-message("#define NEST_VERSION \"${NEST_VERSION}\"")
-message("#define NEST_VERSION_GITHASH \"${NEST_VERSION_GITHASH}\"")
-

@@ -31,12 +31,6 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 import sys
 import os
 
-
-import pip
-
-# pip.main(['install', 'Sphinx==1.5.6'])
-# pip.main(['install', 'sphinx-gallery'])
-
 # import sphinx_gallery
 import subprocess
 
@@ -45,15 +39,51 @@ import subprocess
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('./..'))
-sys.path.insert(0, os.path.abspath('./../topology'))
-sys.path.insert(0, os.path.abspath('./../pynest/nest'))
 
 source_suffix = ['.rst']
 
+
+# If extensions (or modules to document with autodoc) are in another directory,
+# add these directories to sys.path here. If the directory is relative to the
+# documentation root, use os.path.abspath to make it absolute, like shown here.
+
+doc_path  = os.path.abspath(os.path.dirname(__file__))
+root_path = os.path.abspath(doc_path + "/..")
+
+sys.path.insert(0, os.path.abspath(root_path))
+sys.path.insert(0, os.path.abspath(root_path + '/topology'))
+sys.path.insert(0, os.path.abspath(root_path + '/pynest/'))
+sys.path.insert(0, os.path.abspath(root_path + '/pynest/nest'))
+sys.path.insert(0, os.path.abspath(doc_path))
+
+
+# -- Mock pynestkernel ----------------------------------------------------
+
+from mock_kernel import convert
+
+# create mockfile
+
+excfile = root_path + "/pynest/nest/lib/hl_api_exceptions.py"
+infile  = root_path + "/pynest/pynestkernel.pyx"
+outfile = doc_path + "/pynestkernel_mock.py"
+
+with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as fout:
+    mockedmodule  = fexc.read() + "\n\n"
+    mockedmodule += "from mock import MagicMock\n\n"
+    mockedmodule += convert(fin)
+
+    fout.write(mockedmodule)
+
+# import and set mockfile to sys.modules
+
+import pynestkernel_mock
+
+sys.modules["nest.pynestkernel"] = pynestkernel_mock
+sys.modules["nest.kernel"] = pynestkernel_mock
+
+
+# -- Checking for pandoc --------------------------------------------------
+>>>>>>> eaa8fe89... Merge pull request #2 from Silmathoron/fix_pynest_apis2
 
 # -- General configuration ------------------------------------------------
 

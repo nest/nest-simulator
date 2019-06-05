@@ -19,9 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Example using hh_psc_alpha
---------------------------
+"""Example using hh_psc_alpha
+-------------------------------
 
 This example produces a rate-response (FI) curve of the Hodgkin-Huxley
 neuron  in response to a range of different current (DC) stimulations.
@@ -29,6 +28,16 @@ The result is plotted using matplotlib.
 
 Since a DC input affetcs only the neuron's channel dynamics, this routine
 does not yet check correctness of synaptic response.
+
+References
+~~~~~~~~~~~
+
+See Also
+~~~~~~~~~~
+
+:Authors:
+
+KEYWORDS:
 """
 
 import nest
@@ -53,7 +62,6 @@ sd = nest.Create('spike_detector')
 nest.SetStatus(sd, {'to_memory': False})
 
 nest.Connect(neuron, sd, syn_spec={'weight': 1.0, 'delay': h})
-
 
 # Simulation loop
 n_data = int(dcto / float(dcstep))

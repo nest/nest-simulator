@@ -20,6 +20,8 @@
  *
  */
 
+% autorun=true
+
 /*
     Implementation of the multi-layered local cortical network model by
     

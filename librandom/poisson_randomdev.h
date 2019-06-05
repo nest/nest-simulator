@@ -85,8 +85,9 @@
 namespace librandom
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rdevdict::poisson - poisson random deviate generator
+
 Description:
    Generates poisson distributed random numbers.
 
@@ -96,6 +97,7 @@ Parameters:
    lambda - distribution parameter, lambda
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
+
 Author: Hans Ekkehard Plesser
 */
 

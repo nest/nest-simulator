@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_pp_psc_delta - test of pp_psc_delta neuron functionality
 
 Synopsis: (test_pp_psc_delta) run -> compare spike train statistics with expectations

@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_pulsepacket_generator - Test parallel generation of Poissonian trains
 
 Synopsis: nest_indirect test_pulsepacket_generator.sli -> -

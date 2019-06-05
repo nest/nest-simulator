@@ -45,30 +45,6 @@ class TestHelperFunctions(unittest.TestCase):
             verbosity = nest.get_verbosity()
             self.assertEqual(verbosity, code)
 
-    def test_stack_checker(self):
-        def empty_stack():
-            nest.sli_run('clear')
-
-        def leave_on_stack():
-            nest.sli_push(1)
-
-        check_empty_stack = nest.stack_checker(empty_stack)
-        check_leave_on_stack = nest.stack_checker(leave_on_stack)
-
-        debug = nest.get_debug()
-        # We have to set debug to True to check the stack
-        nest.set_debug(True)
-
-        # This should pass without errors
-        check_empty_stack()
-
-        try:
-            self.assertRaises(nest.NESTError, check_leave_on_stack)
-        except:  # Ensure that debug is reset if we get an error.
-            nest.set_debug(debug)
-            raise
-        nest.set_debug(debug)
-
 
 def suite():
     suite = unittest.makeSuite(TestHelperFunctions, 'test')

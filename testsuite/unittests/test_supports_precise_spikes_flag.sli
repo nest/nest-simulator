@@ -20,7 +20,7 @@
  *
  */
  
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::test_supports_precise_spikes_flag - Checks that the 
 supports_precise_flag is a) available b) is set correctly by the precise and

@@ -78,6 +78,8 @@ nest::iaf_psc_exp::Parameters_::Parameters_()
   , V_reset_( -70.0 - E_L_ ) // in mV
   , tau_ex_( 2.0 )           // in ms
   , tau_in_( 2.0 )           // in ms
+  , rho_( 0.01 )             // in 1/s
+  , delta_( 0.0 )            // in mV
 {
 }
 
@@ -106,6 +108,8 @@ nest::iaf_psc_exp::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_syn_ex, tau_ex_ );
   def< double >( d, names::tau_syn_in, tau_in_ );
   def< double >( d, names::t_ref, t_ref_ );
+  def< double >( d, names::rho, rho_ );
+  def< double >( d, names::delta, delta_ );
 }
 
 double
@@ -157,6 +161,18 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d )
   if ( t_ref_ < 0 )
   {
     throw BadProperty( "Refractory time must not be negative." );
+  }
+
+  updateValue< double >( d, "rho", rho_ );
+  if ( rho_ < 0 )
+  {
+    throw BadProperty( "Stochastic firing intensity must not be negative." );
+  }
+
+  updateValue< double >( d, "delta", delta_ );
+  if ( delta_ < 0 )
+  {
+    throw BadProperty( "Width of threshold region must not be negative." );
   }
 
   return delta_EL;
@@ -289,6 +305,8 @@ nest::iaf_psc_exp::calibrate()
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryCounts_ >= 0 );
+
+  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 }
 
 void
@@ -297,6 +315,8 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
+
+  const double h = Time::get_resolution().get_ms();
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
@@ -327,7 +347,11 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
     S_.i_syn_ex_ += V_.weighted_spikes_ex_;
     S_.i_syn_in_ += V_.weighted_spikes_in_;
 
-    if ( S_.V_m_ >= P_.Theta_ ) // threshold crossing
+    if ( ( P_.delta_ < 1e-10
+           and S_.V_m_ >= P_.Theta_ ) // deterministic threshold crossing
+      or ( P_.delta_ > 1e-10
+           and V_.rng_->drand() < phi_() * h
+               * 1e-3 ) ) // stochastic threshold crossing
     {
       S_.r_ref_ = V_.RefractoryCounts_;
       S_.V_m_ = P_.V_reset_;
@@ -350,7 +374,7 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
 void
 nest::iaf_psc_exp::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   if ( e.get_weight() >= 0.0 )
   {
@@ -369,7 +393,7 @@ nest::iaf_psc_exp::handle( SpikeEvent& e )
 void
 nest::iaf_psc_exp::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();

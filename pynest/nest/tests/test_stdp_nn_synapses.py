@@ -27,7 +27,7 @@ import unittest
 from math import exp
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class STDPNNSynapsesTest(unittest.TestCase):
     """
     Test the weight change by STDP

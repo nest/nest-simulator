@@ -229,7 +229,7 @@ Node::send_test_event( Node&, rport, synindex, bool )
  * throws IllegalConnection
  */
 void
-Node::register_stdp_connection( double )
+Node::register_stdp_connection( double, double )
 {
   throw IllegalConnection();
 }
@@ -426,6 +426,12 @@ Node::sends_secondary_event( DelayedRateConnectionEvent& )
 
 
 double
+Node::get_LTD_value( double )
+{
+  throw UnexpectedEvent();
+}
+
+double
 Node::get_K_value( double )
 {
   throw UnexpectedEvent();
@@ -443,6 +449,15 @@ nest::Node::get_history( double,
   double,
   std::deque< histentry >::iterator*,
   std::deque< histentry >::iterator* )
+{
+  throw UnexpectedEvent();
+}
+
+void
+nest::Node::get_LTP_history( double,
+  double,
+  std::deque< histentry_cl >::iterator*,
+  std::deque< histentry_cl >::iterator* )
 {
   throw UnexpectedEvent();
 }

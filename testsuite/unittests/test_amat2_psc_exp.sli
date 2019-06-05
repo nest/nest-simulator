@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
     Name: testsuite::test_amat2_psc_exp - sli script for overall test of amat2_psc_exp neuron model
 
     Synopsis: (test_amat2_psc_exp) run -> compares response to current step with reference data 

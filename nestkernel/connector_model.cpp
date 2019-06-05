@@ -29,13 +29,15 @@ ConnectorModel::ConnectorModel( const std::string name,
   const bool is_primary,
   const bool has_delay,
   const bool requires_symmetric,
-  const bool supports_wfr )
+  const bool supports_wfr,
+  const bool requires_clopath_archiving )
   : name_( name )
   , default_delay_needs_check_( true )
   , is_primary_( is_primary )
   , has_delay_( has_delay )
   , requires_symmetric_( requires_symmetric )
   , supports_wfr_( supports_wfr )
+  , requires_clopath_archiving_( requires_clopath_archiving )
 {
 }
 
@@ -47,6 +49,7 @@ ConnectorModel::ConnectorModel( const ConnectorModel& cm,
   , has_delay_( cm.has_delay_ )
   , requires_symmetric_( cm.requires_symmetric_ )
   , supports_wfr_( cm.supports_wfr_ )
+  , requires_clopath_archiving_( cm.requires_clopath_archiving_ )
 {
 }
 

@@ -53,7 +53,8 @@ public:
     const bool is_primary,
     const bool has_delay,
     const bool requires_symmetric,
-    const bool supports_wfr );
+    const bool supports_wfr,
+    const bool requires_clopath_archiving );
   ConnectorModel( const ConnectorModel&, const std::string );
   virtual ~ConnectorModel()
   {
@@ -82,14 +83,6 @@ public:
     const DictionaryDatum& d,
     const double delay = NAN,
     const double weight = NAN ) = 0;
-
-  /**
-   * Reserves the specified amount of connections at the specified index in the
-   * connection vector.
-   */
-  virtual void reserve_connections( std::vector< ConnectorBase* >& hetconn,
-    const synindex syn_id,
-    const size_t count ) = 0;
 
   virtual ConnectorModel* clone( std::string ) const = 0;
 
@@ -136,6 +129,12 @@ public:
   }
 
   bool
+  requires_clopath_archiving() const
+  {
+    return requires_clopath_archiving_;
+  }
+
+  bool
   supports_wfr() const
   {
     return supports_wfr_;
@@ -154,6 +153,8 @@ protected:
   bool requires_symmetric_;
   //! indicates whether connection can be used during wfr update
   bool supports_wfr_;
+  //! indicates that ConnectorModel requires Clopath archiving
+  bool requires_clopath_archiving_;
 
 }; // ConnectorModel
 
@@ -174,12 +175,14 @@ public:
     bool is_primary,
     bool has_delay,
     bool requires_symmetric,
-    bool supports_wfr )
+    bool supports_wfr,
+    bool requires_clopath_archiving )
     : ConnectorModel( name,
         is_primary,
         has_delay,
         requires_symmetric,
-        supports_wfr )
+        supports_wfr,
+        requires_clopath_archiving )
     , receptor_type_( 0 )
   {
   }
@@ -245,10 +248,6 @@ public:
     return prototype_events;
   }
 
-  void reserve_connections( std::vector< ConnectorBase* >& hetconn,
-    const synindex syn_id,
-    const size_t count );
-
 private:
   void used_default_delay();
 
@@ -278,7 +277,8 @@ public:
         /*is _primary=*/false,
         has_delay,
         requires_symmetric,
-        supports_wfr )
+        supports_wfr,
+        /*requires_clopath_archiving=*/false )
     , pev_( 0 )
   {
     pev_ = new typename ConnectionT::EventType();

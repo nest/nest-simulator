@@ -48,6 +48,8 @@
 #include "fdstream.h"
 #include "name.h"
 
+const DictionaryDatum nest::ConnBuilder::dummy_param_ = new Dictionary;
+
 nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   const GIDCollection& targets,
   const DictionaryDatum& conn_spec,
@@ -247,7 +249,6 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   }
 }
 
-
 nest::ConnBuilder::~ConnBuilder()
 {
   delete weight_;
@@ -428,13 +429,10 @@ nest::ConnBuilder::single_connect_( index sgid,
 
   if ( param_dicts_.empty() ) // indicates we have no synapse params
   {
-    const DictionaryDatum params = new Dictionary; // empty parameter dictionary
-    // required by connect() calls
-
     if ( default_weight_and_delay_ )
     {
       kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_id_, params );
+        sgid, &target, target_thread, synapse_model_id_, dummy_param_ );
     }
     else if ( default_weight_ )
     {
@@ -442,7 +440,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         &target,
         target_thread,
         synapse_model_id_,
-        params,
+        dummy_param_,
         delay_->value_double( target_thread, rng ) );
     }
     else if ( default_delay_ )
@@ -451,7 +449,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         &target,
         target_thread,
         synapse_model_id_,
-        params,
+        dummy_param_,
         numerics::nan,
         weight_->value_double( target_thread, rng ) );
     }
@@ -463,7 +461,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         &target,
         target_thread,
         synapse_model_id_,
-        params,
+        dummy_param_,
         delay,
         weight );
     }
@@ -632,13 +630,6 @@ nest::OneToOneBuilder::connect_()
 
     try
     {
-      const size_t expected_targets =
-        std::ceil( targets_->size()
-          / static_cast< double >(
-                     kernel().vp_manager.get_num_virtual_processes() ) );
-      kernel().connection_manager.reserve_connections(
-        tid, get_synapse_model(), expected_targets + 2 );
-
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
@@ -888,13 +879,6 @@ nest::AllToAllBuilder::connect_()
 
     try
     {
-      const size_t expected_targets =
-        std::ceil( sources_->size() * targets_->size()
-          / static_cast< double >(
-                     kernel().vp_manager.get_num_virtual_processes() ) );
-      kernel().connection_manager.reserve_connections(
-        tid, get_synapse_model(), expected_targets + sources_->size() );
-
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
@@ -1189,13 +1173,6 @@ nest::FixedInDegreeBuilder::connect_()
 
     try
     {
-      const size_t expected_targets =
-        std::ceil( targets_->size()
-          / static_cast< double >(
-                     kernel().vp_manager.get_num_virtual_processes() ) );
-      kernel().connection_manager.reserve_connections(
-        tid, get_synapse_model(), expected_targets * indegree_ + 100 );
-
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
@@ -1380,13 +1357,6 @@ nest::FixedOutDegreeBuilder::connect_()
 
       try
       {
-        const size_t expected_new_syns =
-          std::ceil( sources_->size() * outdegree_
-            / static_cast< double >(
-                       kernel().vp_manager.get_num_virtual_processes() ) );
-        kernel().connection_manager.reserve_connections(
-          tid, get_synapse_model(), expected_new_syns + 100 );
-
         // allocate pointer to thread specific random generator
         librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
@@ -1570,9 +1540,6 @@ nest::FixedTotalNumberBuilder::connect_()
         assert(
           thread_local_targets.size() == number_of_targets_on_vp[ vp_id ] );
 
-        kernel().connection_manager.reserve_connections(
-          tid, get_synapse_model(), num_conns_on_vp[ vp_id ] );
-
         while ( num_conns_on_vp[ vp_id ] > 0 )
         {
 
@@ -1631,20 +1598,6 @@ nest::BernoulliBuilder::connect_()
   {
     // get thread id
     const thread tid = kernel().vp_manager.get_thread_id();
-
-    // compute expected number of connections from binomial
-    // distribution; estimate an upper bound by assuming Gaussianity
-    const size_t max_num_connections =
-      std::ceil( float( targets_->size() ) * float( sources_->size() )
-        / kernel().vp_manager.get_num_virtual_processes() );
-
-    const size_t expected_num_connections = max_num_connections * p_;
-    const size_t std_num_connections =
-      std::sqrt( max_num_connections * p_ * ( 1 - p_ ) );
-
-    kernel().connection_manager.reserve_connections( tid,
-      get_synapse_model(),
-      expected_num_connections + 3 * std_num_connections );
 
     try
     {
@@ -1804,19 +1757,6 @@ nest::SymmetricBernoulliBuilder::connect_()
 #endif
       bino.set_p( p_ );
       bino.set_n( sources_->size() );
-
-      // compute expected number of connections from binomial
-      // distribution; estimate an upper bound by assuming Gaussianity
-      const size_t max_num_connections =
-        std::ceil( targets_->size() * sources_->size()
-          / static_cast< double >(
-                     kernel().vp_manager.get_num_virtual_processes() ) );
-      const size_t expected_num_connections = max_num_connections * p_;
-      const size_t std_num_connections =
-        std::sqrt( max_num_connections * p_ * ( 1 - p_ ) );
-      kernel().connection_manager.reserve_connections( tid,
-        get_synapse_model(),
-        2 * ( expected_num_connections + 3 * std_num_connections ) );
 
       unsigned long indegree;
       index sgid;
@@ -1991,9 +1931,6 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
 
     try
     {
-      kernel().connection_manager.reserve_connections(
-        tid, get_synapse_model(), sources.size() );
-
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 

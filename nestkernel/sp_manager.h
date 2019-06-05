@@ -220,8 +220,10 @@ private:
   bool structural_plasticity_enabled_;
   std::vector< SPBuilder* > sp_conn_builders_;
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
+
    Name: growthcurvedict - growth curves for Model of Structural Plasticity
+
    Description:
    This dictionary provides indexes for the growth curve factory
    */

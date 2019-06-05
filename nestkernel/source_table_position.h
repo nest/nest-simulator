@@ -28,6 +28,8 @@
 #include <iostream>
 #include <vector>
 
+#include "block_vector.h"
+
 namespace nest
 {
 
@@ -45,7 +47,7 @@ struct SourceTablePosition
 
   template < typename T >
   void wrap_position(
-    const std::vector< std::vector< std::vector< T > > >& sources );
+    const std::vector< std::vector< BlockVector< T > > >& sources );
 
   bool is_at_end() const;
 };
@@ -77,7 +79,7 @@ inline SourceTablePosition::SourceTablePosition(
 template < typename T >
 inline void
 SourceTablePosition::wrap_position(
-  const std::vector< std::vector< std::vector< T > > >& sources )
+  const std::vector< std::vector< BlockVector< T > > >& sources )
 {
   // check for validity of indices and update if necessary
   while ( lcid < 0 )

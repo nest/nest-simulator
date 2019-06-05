@@ -37,7 +37,7 @@
 namespace nest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: sli_neuron - neuron with SLI callback
 
 Description:
@@ -80,13 +80,14 @@ dictionary, to allow debugging of the node.
 
 Parameters:
 
-
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Author: Diesmann, Plesser, Gewaltig
+
 FirstVersion: January 2009
+
 SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, testsuite::test_sli_neuron
 */
 

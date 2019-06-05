@@ -26,7 +26,7 @@ import unittest
 from math import exp
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class VogelsSprekelerConnectionTestCase(unittest.TestCase):
 
     """Check vogels_sprekeler_synapse model properties."""
@@ -102,7 +102,7 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
                          syn_spec=bad_syn_spec)
 
         def badPropertyWith(content, parameters):
-            self.assertRaisesRegexp(nest.NESTError, "BadProperty(.+)" +
+            self.assertRaisesRegexp(nest.kernel.NESTError, "BadProperty(.+)" +
                                     content, setupProperty, parameters)
 
         badPropertyWith("Kplus", {"Kplus": -1.0})

@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_dirname - tests dirname from filesystem.sli for POSIX conformance
 
    Synopsis: (test_dirname) run

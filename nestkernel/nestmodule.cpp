@@ -95,7 +95,7 @@ NestModule::commandstring( void ) const
 }
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ChangeSubnet - change the current working subnet.
    Synopsis:
    gid   ChangeSubnet -> -
@@ -126,7 +126,7 @@ NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: CurrentSubnet - return the gid of the current network node.
 
    Synopsis: CurrentSubnet -> gid
@@ -146,7 +146,7 @@ NestModule::CurrentSubnetFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: SetStatus - sets the value of properties of a node, connection, random
    deviate generator or object
 
@@ -280,7 +280,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetStatus - return the property dictionary of a node, connection,
    random deviate generator or object
 
@@ -395,7 +395,7 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: SetDefaults - Set the default values for a node or synapse model.
   Synopsis: /modelname dict SetDefaults -> -
   SeeAlso: GetDefaults
@@ -416,7 +416,7 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: GetDefaults - Return the default values for a node or synapse model.
   Synopsis: /modelname GetDefaults -> dict
   SeeAlso: SetDefaults
@@ -451,16 +451,15 @@ NestModule::GetConnections_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: Simulate - simulate n milliseconds
 
    Synopsis:
    n(int) Simulate -> -
 
    Description: Simulate the network for n milliseconds.
-   Use resume to continue the simulation after an interrupt.
 
-   SeeAlso: resume, ResumeSimulation, unit_conversion
+   SeeAlso: Run, Prepare, Cleanup, unit_conversion
 */
 void
 NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
@@ -476,7 +475,7 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: Run - simulate n milliseconds
 
    Synopsis:
@@ -491,7 +490,7 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
    Any changes made between Prepare and Cleanup may cause
    undefined behavior and incorrect results.
 
-   SeeAlso: Simulate, resume, unit_conversion, Prepare, Cleanup
+   SeeAlso: Simulate, unit_conversion, Prepare, Cleanup
 */
 void
 NestModule::RunFunction::execute( SLIInterpreter* i ) const
@@ -507,7 +506,7 @@ NestModule::RunFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: Prepare - prepare the network for a simulation
 
    Synopsis:
@@ -530,7 +529,7 @@ NestModule::PrepareFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: Cleanup - cleanup the network after a simulation
 
    Synopsis:
@@ -553,7 +552,7 @@ NestModule::CleanupFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: CopyModel - copy a model to a new name, set parameters for copy, if
    given
    Synopsis:
@@ -586,7 +585,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: Create - create a number of equal nodes in the current subnet
    Synopsis:
    /model          Create -> gid
@@ -694,7 +693,7 @@ NestModule::GetLeaves_i_D_bFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ResetKernel - Put the simulation kernel back to its initial state.
    Description:
    This function re-initializes the simulation kernel, returning it to the
@@ -720,10 +719,14 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ResetNetwork - Reset the dynamic state of the network.
    Synopsis: ResetNetwork -> -
    Description:
+
+   ResetNetwork is deprecated as of NEST 2.18 and will be removed in NEST 3.0,
+   because it cannot be implemented in an efficient and consistent way.
+
    ResetNetwork resets the dynamic state of the entire network to its state
    at T=0. The dynamic state comprises typically the membrane potential,
    synaptic currents, buffers holding input that has been delivered, but not
@@ -829,7 +832,7 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: DataConnect_i_D_s - Connect many neurons from data.
 
    Synopsis:
@@ -893,7 +896,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
     Name: DataConnect_a - Connect many neurons from a list of synapse status
    dictionaries.
 
@@ -942,7 +945,7 @@ NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: MemoryInfo - Report current memory usage.
    Description:
    MemoryInfo reports the current utilization of the memory manager for all
@@ -963,7 +966,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: PrintNetwork - Print network tree in readable form.
    Synopsis:
    gid depth  PrintNetwork -> -
@@ -1108,7 +1111,7 @@ NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: Rank - Return the MPI rank of the process.
    Synopsis: Rank -> int
    Description:
@@ -1129,7 +1132,7 @@ NestModule::RankFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: NumProcesses - Return the number of MPI processes.
    Synopsis: NumProcesses -> int
    Description:
@@ -1147,7 +1150,7 @@ NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: SetFakeNumProcesses - Set a fake number of MPI processes.
    Synopsis: n_procs SetFakeNumProcesses -> -
    Description:
@@ -1201,7 +1204,7 @@ NestModule::SetFakeNumProcesses_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: SyncProcesses - Synchronize all MPI processes.
    Synopsis: SyncProcesses -> -
    Availability: NEST 2.0
@@ -1221,7 +1224,7 @@ NestModule::SyncProcessesFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: TimeCommunication - returns average time taken for MPI_Allgather over n
    calls with m bytes
    Synopsis:
@@ -1254,7 +1257,7 @@ NestModule::TimeCommunication_i_i_bFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( time );
   i->EStack.pop();
 }
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: TimeCommunicationv - returns average time taken for MPI_Allgatherv over
    n calls with m
    bytes
@@ -1284,7 +1287,7 @@ NestModule::TimeCommunicationv_i_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: TimeCommunicationAlltoall - returns average time taken for MPI_Alltoall
    over n calls with m
    bytes
@@ -1315,7 +1318,7 @@ NestModule::TimeCommunicationAlltoall_i_iFunction::execute(
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: TimeCommunicationAlltoallv - returns average time taken for
    MPI_Alltoallv over n calls with
    m bytes
@@ -1347,7 +1350,7 @@ NestModule::TimeCommunicationAlltoallv_i_iFunction::execute(
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ProcessorName - Returns a unique specifier for the actual node.
    Synopsis: ProcessorName -> string
    Availability: NEST 2.0
@@ -1372,7 +1375,7 @@ NestModule::ProcessorNameFunction::execute( SLIInterpreter* i ) const
 }
 
 #ifdef HAVE_MPI
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: abort - Abort all NEST processes gracefully.
    Paramteres:
    exitcode - The exitcode to quit with
@@ -1398,7 +1401,7 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
 }
 #endif
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetVpRNG - return random number generator associated to virtual process
    of node
    Synopsis:
@@ -1455,7 +1458,7 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: GetGlobalRNG - return global random number generator
    Synopsis:
    GetGlobalRNG -> rngtype
@@ -1554,7 +1557,7 @@ NestModule::Size_gFunction::execute( SLIInterpreter* i ) const
 }
 
 #ifdef HAVE_MUSIC
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: SetAcceptableLatency - set the acceptable latency of a MUSIC input port
 
    Synopsis:
@@ -1600,7 +1603,7 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
 }
 #endif
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: SetStructuralPlasticityStatus - Set up parameters for structural
    plasticity.
 
@@ -1740,7 +1743,7 @@ NestModule::init( SLIInterpreter* i )
     "DataConnect_i_D_s", &dataconnect_i_D_sfunction, "NEST 3.0" );
   i->createcommand( "DataConnect_a", &dataconnect_afunction, "NEST 3.0" );
 
-  i->createcommand( "ResetNetwork", &resetnetworkfunction );
+  i->createcommand( "::ResetNetwork", &resetnetworkfunction );
   i->createcommand( "ResetKernel", &resetkernelfunction );
 
   i->createcommand( "MemoryInfo", &memoryinfofunction );

@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_poisson_generator_campbell_alpha - test if of poisson noise generates correct membrane potential
 
 Synopsis: (test_poisson_generator_campbell_alpha) run -> dies if assertion fails

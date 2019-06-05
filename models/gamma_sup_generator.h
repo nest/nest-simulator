@@ -37,29 +37,34 @@
 #include "nest_types.h"
 #include "stimulating_device.h"
 
-/*BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
 Name: gamma_sup_generator - simulate the superimposed spike train of a
                             population of gamma process.
 Description:
 
-  The gamma_sup_generator generator simulates the pooled spike train of a
-  population of neurons firing independently with gamma process statistics.
+The gamma_sup_generator generator simulates the pooled spike train of a
+population of neurons firing independently with gamma process statistics.
 
 Parameters:
-   The following parameters appear in the element's status dictionary:
 
-   rate         double - mean firing rate of the component processes,
-                         default: 0s^-1
-   gamma_shape  long   - shape paramter of component gamma processes, default: 1
-   n_proc       long   - number of superimposed independent component processes,
-                         default: 1
+The following parameters appear in the element's status dictionary:
+
+rate         double - mean firing rate of the component processes,
+                      default: 0s^-1
+gamma_shape  long   - shape paramter of component gamma processes, default: 1
+n_proc       long   - number of superimposed independent component processes,
+                      default: 1
 
 Remarks:
-   The generator has been published in Deger, Helias, Boucsein, Rotter (2011)
-   Statistical properties of superimposed stationary spike trains,
-   Journal of Computational Neuroscience.
-   URL: http://www.springerlink.com/content/u75211r381p08301/
-   DOI: 10.1007/s10827-011-0362-8
+
+The generator has been published in Deger, Helias, Boucsein, Rotter (2011)
+Statistical properties of superimposed stationary spike trains,
+Journal of Computational Neuroscience.
+URL: http://www.springerlink.com/content/u75211r381p08301/
+DOI: 10.1007/s10827-011-0362-8
 
 Author:
    Jan 2011, Moritz Deger
@@ -67,19 +72,6 @@ Author:
 SeeAlso: ppd_sup_generator, poisson_generator_ps, spike_generator, Device,
 StimulatingDevice
 */
-
-namespace nest
-{
-
-/**
- * Generator of the spike output of a population of gamma processes with
- * integer shape parameter.
- *
- * This gamma process superposition generator sends different spike
- * trains to all its targets.
- *
- * @ingroup Devices
- */
 class gamma_sup_generator : public DeviceNode
 {
 

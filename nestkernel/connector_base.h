@@ -106,6 +106,18 @@ public:
     std::deque< ConnectionID >& conns ) const = 0;
 
   /**
+   * Add ConnectionID with given source_gid and lcid to conns. If
+   * target_neuron_gids is given, only add connection if
+   * target_neuron_gids contains the gid of the target of the connection.
+   */
+  virtual void get_connection_with_specified_targets( const index source_gid,
+    const std::vector< size_t >& target_neuron_gids,
+    const thread tid,
+    const index lcid,
+    const long synapse_label,
+    std::deque< ConnectionID >& conns ) const = 0;
+
+  /**
    * Add ConnectionIDs with given source_gid to conns, looping over
    * all lcids. If target_gid is given, only add connection if
    * target_gid matches the gid of the target of the connection.
@@ -173,12 +185,7 @@ public:
   /**
    * Sort connections according to source gids.
    */
-  virtual void sort_connections( std::vector< Source >& ) = 0;
-
-  /**
-   * Reserve memory for the specified amount of connections.
-   */
-  virtual void reserve( const size_t ) = 0;
+  virtual void sort_connections( BlockVector< Source >& ) = 0;
 
   /**
    * Set a flag in the connection indicating whether the following
@@ -226,7 +233,7 @@ template < typename ConnectionT >
 class Connector : public ConnectorBase
 {
 private:
-  std::vector< ConnectionT > C_;
+  BlockVector< ConnectionT > C_;
   const synindex syn_id_;
 
 public:
@@ -281,8 +288,6 @@ public:
   Connector< ConnectionT >&
   push_back( const ConnectionT& c )
   {
-    vector_util::grow( C_ );
-
     C_.push_back( c );
     return *this;
   }
@@ -303,6 +308,32 @@ public:
         const index current_target_gid =
           C_[ lcid ].get_target( tid )->get_gid();
         if ( current_target_gid == target_gid or target_gid == 0 )
+        {
+          conns.push_back( ConnectionDatum( ConnectionID(
+            source_gid, current_target_gid, tid, syn_id_, lcid ) ) );
+        }
+      }
+    }
+  }
+
+  void
+  get_connection_with_specified_targets( const index source_gid,
+    const std::vector< size_t >& target_neuron_gids,
+    const thread tid,
+    const index lcid,
+    const long synapse_label,
+    std::deque< ConnectionID >& conns ) const
+  {
+    if ( not C_[ lcid ].is_disabled() )
+    {
+      if ( synapse_label == UNLABELED_CONNECTION
+        or C_[ lcid ].get_label() == synapse_label )
+      {
+        const index current_target_gid =
+          C_[ lcid ].get_target( tid )->get_gid();
+        if ( std::find( target_neuron_gids.begin(),
+               target_neuron_gids.end(),
+               current_target_gid ) != target_neuron_gids.end() )
         {
           conns.push_back( ConnectionDatum( ConnectionID(
             source_gid, current_target_gid, tid, syn_id_, lcid ) ) );
@@ -449,13 +480,7 @@ public:
   }
 
   void
-  reserve( const size_t count )
-  {
-    C_.reserve( count );
-  }
-
-  void
-  sort_connections( std::vector< Source >& sources )
+  sort_connections( BlockVector< Source >& sources )
   {
     nest::sort( sources, C_ );
   }

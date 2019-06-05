@@ -22,10 +22,10 @@
 
 #ifndef CONFIG_H
 #define CONFIG_H
-/* 
+/*
     Configuration header.
     config.h is automatically generated from config.h.in
-    during the configuration process. 
+    during the configuration process.
 
     Please make all changes in config.h.in.
 */
@@ -61,6 +61,9 @@
 /* when to truncate the recursive instantiation of the connector */
 #define CONFIG_CONNECTOR_CUTOFF @connector_cutoff@
 
+/* Define to 1 if you have a 32 bit architecture */
+#cmakedefine HAVE_32BIT_ARCH 1
+
 /* define if the compiler does not include *.h headers ISO conformant */
 #cmakedefine HAVE_ALPHA_CXX_STD_BUG 1
 
@@ -91,6 +94,12 @@
 /* Define to 1 if you have usable long long type. */
 #cmakedefine HAVE_LONG_LONG 1
 
+/* Define to 1 if you have u_int46_t type. */
+#cmakedefine HAVE_U_INT64_T 1
+
+/* Define to 1 if you have uint46_t type. */
+#cmakedefine HAVE_UINT64_T 1
+
 /* Define to 1 if you have the <mach/mach.h> header file. */
 #cmakedefine HAVE_MACH_MACH_H 1
 
@@ -102,6 +111,9 @@
 
 /* MPI is available. */
 #cmakedefine HAVE_MPI 1
+
+/* Boost is available. */
+#cmakedefine HAVE_BOOST 1
 
 /* MUSIC support enabled? */
 #cmakedefine HAVE_MUSIC 1
@@ -165,5 +177,10 @@
 
 /* Use PS array construction semantics */
 #cmakedefine PS_ARRAYS 1
+
+/* Bit counts for Target members */
+#define TARGET_BITS_SPLIT @TARGET_BITS_SPLIT@
+#define TARGET_BITS_SPLIT_STANDARD 0
+#define TARGET_BITS_SPLIT_HPC 1
 
 #endif // #ifndef CONFIG_H

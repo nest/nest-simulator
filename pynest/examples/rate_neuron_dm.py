@@ -26,8 +26,8 @@ rate_neuron decision making
 A binary decision is implemented in the form of two rate neurons
 engaging in mutual inhibition.
 
-Evidence for each decision is reflected by the mean of Gaussian
-white noise experienced by the respective neuron.
+Evidence for each decision is reflected by the mean input
+experienced by the respective neuron.
 The activity of each neuron is recorded using multimeter devices.
 
 It can be observed how noise as well as the difference in evidence
@@ -48,7 +48,7 @@ return the handles of two decision units and the mutimeter
 def build_network(sigma, dt):
     nest.ResetKernel()
     nest.SetKernelStatus({'resolution': dt, 'use_wfr': False})
-    Params = {'lambda': 0.1, 'std': sigma, 'tau': 1., 'rectify_output': True}
+    Params = {'lambda': 0.1, 'sigma': sigma, 'tau': 1., 'rectify_output': True}
     D1 = nest.Create('lin_rate_ipn', params=Params)
     D2 = nest.Create('lin_rate_ipn', params=Params)
 
@@ -66,8 +66,8 @@ def build_network(sigma, dt):
 
 
 '''
-The function build_network takes the standard deviation of Gaussian
-white noise and the time resolution as arguments.
+The function build_network takes the noise parameter sigma
+and the time resolution as arguments.
 First the Kernel is reset and the use_wfr (waveform-relaxation) is set to
 false while the resolution is set to the specified value dt.
 Two rate neurons with linear activation functions are created and the
@@ -111,8 +111,8 @@ for i in range(9):
     '''
 
     nest.Simulate(100.0)
-    nest.SetStatus(D1, {'mean': 1. + dE[c]})
-    nest.SetStatus(D2, {'mean': 1. - dE[c]})
+    nest.SetStatus(D1, {'mu': 1. + dE[c]})
+    nest.SetStatus(D2, {'mu': 1. - dE[c]})
     nest.Simulate(100.0)
     '''
     The network is simulated using `Simulate`, which takes the desired

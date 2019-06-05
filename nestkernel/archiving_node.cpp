@@ -132,41 +132,6 @@ nest::Archiving_Node::get_K_value( double t )
 void
 nest::Archiving_Node::get_K_values( double t,
   double& K_value,
-  double& triplet_K_value )
-{
-  // case when the neuron has not yet spiked
-  if ( history_.empty() )
-  {
-    triplet_K_value = triplet_Kminus_;
-    K_value = Kminus_;
-    return;
-  }
-
-  // search for the latest post spike in the history buffer that came strictly
-  // before `t`
-  int i = history_.size() - 1;
-  while ( i >= 0 )
-  {
-    if ( t - history_[ i ].t_ > kernel().connection_manager.get_stdp_eps() )
-    {
-      triplet_K_value = ( history_[ i ].triplet_Kminus_
-        * std::exp( ( history_[ i ].t_ - t ) * tau_minus_triplet_inv_ ) );
-      K_value = ( history_[ i ].Kminus_
-        * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
-      return;
-    }
-    --i;
-  }
-
-  // this case occurs when the trace was requested at a time precisely at or
-  // before the first spike in the history
-  triplet_K_value = 0.0;
-  K_value = 0.0;
-}
-
-void
-nest::Archiving_Node::get_K_values( double t,
-  double& K_value,
   double& nearest_neighbor_K_value,
   double& triplet_K_value )
 {

@@ -111,23 +111,25 @@ sd GetStatus info
 %
 
 
+% Conversion guide:
 
 
 % Lost properties in nestio:
 %   /close_after_simulate    always true
 %   /fbuffer_size            always OS default
 %   /flush_after_simulate    always true
+
+
+
+% 
 %   /time_in_steps           always in ms
+% 
 
 
 
 
 % TODO Jochen
-%  - Re-add /time_in_steps for memory, screen, ascii
-%  - Re-add /precise_times
 %  - Fix that setting precision messes with stream permanently
-%  - Re-add spin_detector and weight_recorder
 %  - Write tests and documentation.
 %  - Rename RecordingBackend to OutputBackend
-%  - Fix SIONlib documentation and change data format
 %  - Provide NEST API + PyNEST function for accessing backend settings

@@ -85,64 +85,34 @@ public:
    * @param long_value_names the names for long values to be recorded
    *
    * @see write(), initialize()
-   * 
+   *
    * @ingroup NESTio
    */
   virtual void enroll( const RecordingDevice& device,
-		       const std::vector< Name >& double_value_names,
-		       const std::vector< Name >& long_value_names) = 0;
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names ) = 0;
 
-  virtual void
-  pre_run_hook() = 0;
-
-  virtual void
-  prepare()
-  {
-  }
-
-  virtual void
-  post_run_hook()
-  {
-  }
-
+  virtual void pre_run_hook() = 0;
+  virtual void prepare() = 0;
+  virtual void post_run_hook() = 0;
   virtual void cleanup() = 0;
   virtual void synchronize() = 0;
-
-  virtual void
-  clear( const RecordingDevice& )
-  {
-  }
-
+  virtual void clear( const RecordingDevice& ) = 0;
   virtual void write( const RecordingDevice&,
-		      const Event&,
-		      const std::vector< double >&,
-		      const std::vector< long >& ) = 0;
-
-  virtual void
-  set_status( const DictionaryDatum& )
-  {
-  }
-
-  virtual void
-  get_status( DictionaryDatum& ) const
-  {
-  }
-
-  virtual void
-  set_device_status( const RecordingDevice& device, const DictionaryDatum& d )
-  {
-  }
-
-  virtual void
-  get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
-  {
-  }
+    const Event&,
+    const std::vector< double >&,
+    const std::vector< long >& ) = 0;
+  virtual void set_status( const DictionaryDatum& ) = 0;
+  virtual void get_status( DictionaryDatum& ) const = 0;
+  virtual void set_device_status( const RecordingDevice& device,
+    const DictionaryDatum& d ) = 0;
+  virtual void get_device_status( const RecordingDevice& device,
+    DictionaryDatum& d ) const = 0;
 
   static const std::vector< Name > NO_DOUBLE_VALUE_NAMES;
   static const std::vector< Name > NO_LONG_VALUE_NAMES;
   static const std::vector< double > NO_DOUBLE_VALUES;
   static const std::vector< long > NO_LONG_VALUES;
-  
 };
 
 } // namespace

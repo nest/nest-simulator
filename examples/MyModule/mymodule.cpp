@@ -143,6 +143,7 @@ mynest::MyModule::init( SLIInterpreter* i )
       "soundclick" );
 #endif
 
-  nest::kernel().io_manager.register_recording_backend< nest::RecordingBackendSocket >(
-    "socket" );
+  nest::kernel()
+    .io_manager.register_recording_backend< nest::RecordingBackendSocket >(
+      "socket" );
 } // MyModule::init()

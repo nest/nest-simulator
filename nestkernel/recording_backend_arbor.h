@@ -39,8 +39,8 @@ public:
   ~RecordingBackendArbor() throw();
 
   void enroll( const RecordingDevice& device,
-	       const std::vector< Name >& double_value_names,
-	       const std::vector< Name >& long_value_names );
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names );
 
   void cleanup();
   void synchronize();
@@ -49,9 +49,9 @@ public:
   void cleanup();
 
   void write( const RecordingDevice&,
-	      const Event&,
-	      const std::vector< double >&,
-	      const std::vector< long >& );
+    const Event&,
+    const std::vector< double >&,
+    const std::vector< long >& );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
@@ -60,7 +60,7 @@ public:
   void calibrate();
 
 private:
-  void exchange_(std::vector<arb::shadow::spike>&);
+  void exchange_( std::vector< arb::shadow::spike >& );
 
   bool enrolled_;
   bool prepared_;

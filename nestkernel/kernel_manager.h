@@ -173,7 +173,7 @@ public:
   void change_num_threads( thread num_threads );
 
   void prepare();
-  void cleanup(); 
+  void cleanup();
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& );

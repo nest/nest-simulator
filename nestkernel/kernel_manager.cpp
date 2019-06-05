@@ -58,8 +58,7 @@ nest::KernelManager::KernelManager()
   , music_manager()
   , node_manager()
   , io_manager()
-  , managers({
-      &logging_manager,
+  , managers( { &logging_manager,
       &mpi_manager,
       &vp_manager,
       &rng_manager,
@@ -71,8 +70,7 @@ nest::KernelManager::KernelManager()
       &event_delivery_manager,
       &music_manager,
       &io_manager,
-      &node_manager
-      })
+      &node_manager } )
   , initialized_( false )
 {
 }
@@ -84,7 +82,7 @@ nest::KernelManager::~KernelManager()
 void
 nest::KernelManager::initialize()
 {
-  for (auto& m: managers)
+  for ( auto& m : managers )
   {
     m->initialize();
   }
@@ -95,7 +93,7 @@ nest::KernelManager::initialize()
 void
 nest::KernelManager::prepare()
 {
-  for (auto& m: managers)
+  for ( auto& m : managers )
   {
     m->prepare();
   }
@@ -104,11 +102,9 @@ nest::KernelManager::prepare()
 void
 nest::KernelManager::cleanup()
 {
-  for (auto&& m_it = managers.rbegin();
-       m_it != managers.rend();
-       ++m_it)
+  for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
   {
-    (*m_it)->cleanup();
+    ( *m_it )->cleanup();
   }
 }
 
@@ -117,11 +113,9 @@ nest::KernelManager::finalize()
 {
   initialized_ = false;
 
-  for (auto&& m_it = managers.rbegin();
-       m_it != managers.rend();
-       ++m_it)
+  for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
   {
-    (*m_it)->finalize();
+    ( *m_it )->finalize();
   }
 }
 
@@ -162,7 +156,7 @@ nest::KernelManager::change_num_threads( thread num_threads )
   music_manager.initialize();
   node_manager.initialize();
 
-  for (auto& manager: managers)
+  for ( auto& manager : managers )
   {
     manager->change_num_threads( num_threads );
   }

@@ -44,8 +44,8 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& device,
 
 void
 nest::RecordingDevice::Parameters_::set( const RecordingDevice&,
-					 const DictionaryDatum& d,
-					 long n_events )
+  const DictionaryDatum& d,
+  long n_events )
 {
   updateValue< std::string >( d, names::label, label_ );
 
@@ -53,8 +53,9 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice&,
   updateValue< bool >( d, names::time_in_steps, time_in_steps );
   if ( time_in_steps != time_in_steps_ and n_events != 0 )
   {
-    throw BadProperty("Property /time_in_steps cannot be set if recordings exist. "
-		      "Please clear the events first by setting /n_events to 0.");
+    throw BadProperty(
+      "Property /time_in_steps cannot be set if recordings exist. "
+      "Please clear the events first by setting /n_events to 0." );
   }
   time_in_steps_ = time_in_steps;
 
@@ -67,8 +68,8 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice&,
       Name backend_name( getValue< std::string >( *t ) );
       if ( not kernel().io_manager.is_valid_recording_backend( backend_name ) )
       {
-        std::string msg = String::compose( "Unknown recording backend '%1'",
-                                           backend_name.toString() );
+        std::string msg = String::compose(
+          "Unknown recording backend '%1'", backend_name.toString() );
         throw BadProperty( msg );
       }
       record_to_.push_back( LiteralDatum( backend_name ) );
@@ -110,7 +111,8 @@ nest::RecordingDevice::State_::set( const DictionaryDatum& d,
     }
     else
     {
-      throw BadProperty( "Property /n_events can only be set "
+      throw BadProperty(
+        "Property /n_events can only be set "
         "to 0 (which clears all stored events)." );
     }
   }
@@ -119,13 +121,13 @@ nest::RecordingDevice::State_::set( const DictionaryDatum& d,
 void
 nest::RecordingDevice::set_status( const DictionaryDatum& d )
 {
-  State_ stmp = S_;         // temporary copy in case of errors
-  stmp.set( d, *this );     // throws if BadProperty
-  Parameters_ ptmp = P_;    // temporary copy in case of errors
+  State_ stmp = S_;                     // temporary copy in case of errors
+  stmp.set( d, *this );                 // throws if BadProperty
+  Parameters_ ptmp = P_;                // temporary copy in case of errors
   ptmp.set( *this, d, stmp.n_events_ ); // throws if BadProperty
 
   Device::set_status( d );
-  
+
   for ( auto& backend_token : P_.record_to_ )
   {
     Name backend_name( getValue< std::string >( backend_token ) );

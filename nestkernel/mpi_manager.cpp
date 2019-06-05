@@ -95,7 +95,7 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 #else /* HAVE_MPI */
 
 void
-nest::MPIManager::set_communicator(MPI_Comm global_comm)
+nest::MPIManager::set_communicator( MPI_Comm global_comm )
 {
   comm = global_comm;
   MPI_Comm_size( comm, &num_processes_ );
@@ -114,11 +114,11 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 #ifdef HAVE_MUSIC
     kernel().music_manager.init_music( argc, argv );
     // get a communicator from MUSIC
-    set_communicator((MPI_Comm) kernel().music_manager.communicator());
+    set_communicator( ( MPI_Comm ) kernel().music_manager.communicator() );
 #else  /* #ifdef HAVE_MUSIC */
     int provided_thread_level;
     MPI_Init_thread( argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
-    set_communicator(MPI_COMM_WORLD);
+    set_communicator( MPI_COMM_WORLD );
 #endif /* #ifdef HAVE_MUSIC */
   }
 

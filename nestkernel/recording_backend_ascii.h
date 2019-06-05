@@ -49,40 +49,47 @@ public:
   ~RecordingBackendASCII() throw();
 
   void enroll( const RecordingDevice& device,
-	       const std::vector< Name >& double_value_names,
-	       const std::vector< Name >& long_value_names );
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names ) override;
 
   /**
    * Flush files after a single call to Run
    */
-  void post_run_hook();
+  void post_run_hook() override;
 
   /**
    * Finalize the RecordingBackendASCII after the simulation has finished.
    */
-  void cleanup();
+  void cleanup() override;
 
   /**
    * Trivial synchronization function. The RecordingBackendASCII does
    * not need explicit synchronization after each time step.
    */
-  void synchronize();
+  void synchronize() override;
 
   void write( const RecordingDevice&,
-	      const Event&,
-	      const std::vector< double >&,
-	      const std::vector< long >& );
+    const Event&,
+    const std::vector< double >&,
+    const std::vector< long >& ) override;
 
-  void set_status( const DictionaryDatum& );
-  void get_status( DictionaryDatum& ) const;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) const override;
 
   /**
    * Initialize the RecordingBackendASCII during simulation preparation.
    */
-  void pre_run_hook();
+  void pre_run_hook() override;
 
   void get_device_status( const RecordingDevice& device,
-			  DictionaryDatum& ) const;
+    DictionaryDatum& ) const override;
+
+  void prepare() override;
+
+  void clear( const RecordingDevice& ) override;
+
+  void set_device_status( const RecordingDevice& device,
+    const DictionaryDatum& d ) override;
 
 private:
   /**
@@ -96,8 +103,8 @@ private:
 
   struct Parameters_
   {
-    long precision_;           //!< Number of decimal places to use for values
-    std::string file_ext_;     //!< File name extension to use, without leading "."
+    long precision_;       //!< Number of decimal places to use for values
+    std::string file_ext_; //!< File name extension to use, without leading "."
 
     Parameters_();
 

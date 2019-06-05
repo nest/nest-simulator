@@ -39,30 +39,32 @@ nest::RecordingBackendSoundClick::RecordingBackendSoundClick()
 // Destructor
 nest::RecordingBackendSoundClick::~RecordingBackendSoundClick() throw()
 {
-  finalize();
+  cleanup();
 }
 
 // Called by each multimeter during network calibration
-void nest::RecordingBackendSoundClick::enroll(
-        const RecordingDevice& device,
-        const std::vector< Name >& double_value_names,
-        const std::vector< Name >& long_value_names )
+void
+nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device,
+  const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names )
 {
-  if (device.get_type() == RecordingDevice::SPIKE_DETECTOR) {
-     // Start or resume, respectively, the stopwatch, which represents the
+  if ( device.get_type() == RecordingDevice::SPIKE_DETECTOR )
+  {
+    // Start or resume, respectively, the stopwatch, which represents the
     // real time.
     stopwatch_.start();
   }
-  else {
+  else
+  {
     throw BadProperty(
-            "Only spike detectors can record to recording backend "
-            ">SoundClick<");
+      "Only spike detectors can record to recording backend "
+      ">SoundClick<" );
   }
 }
 
 // Called on simulation startup
 void
-nest::RecordingBackendSoundClick::initialize()
+nest::RecordingBackendSoundClick::pre_run_hook()
 {
   LOG( M_INFO,
     "Recording Backend",
@@ -71,7 +73,7 @@ nest::RecordingBackendSoundClick::initialize()
 
 // Called at the end of a call to Simulate
 void
-nest::RecordingBackendSoundClick::finalize()
+nest::RecordingBackendSoundClick::cleanup()
 {
   // Halt the stopwatch, which represents the real time.
   // It continues when the simulation continues, that is with the next call
@@ -88,36 +90,48 @@ nest::RecordingBackendSoundClick::synchronize()
 
 // Called by the spike detectors on every spike event
 void
-nest::RecordingBackendSoundClick::write(
-            const RecordingDevice& device,
-            const Event& event,
-            const std::vector< double >& double_values,
-            const std::vector< long >& long_values )
+nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
+  const Event& event,
+  const std::vector< double >& double_values,
+  const std::vector< long >& long_values )
 {
   // Calculate the time lag between real time (i.e., the stopwatch) and the
   // time of the spike event, and, if necessary, delay playing the sound.
   // This creates the illusion of a realistic sound from an
   // electrophysiological recording.
 
-  if (device.get_type() == RecordingDevice::SPIKE_DETECTOR) {
+  if ( device.get_type() == RecordingDevice::SPIKE_DETECTOR )
+  {
     int time_spike_event_us =
-        static_cast< int >( floor(event.get_stamp().get_ms() * 1000.0));
+      static_cast< int >( floor( event.get_stamp().get_ms() * 1000.0 ) );
     int time_elapsed_us =
-        static_cast< int >( floor(stopwatch_.elapsed_timestamp()));
+      static_cast< int >( floor( stopwatch_.elapsed_timestamp() ) );
     int time_lag_us = time_spike_event_us - time_elapsed_us;
 
     // Slow down the simulation to biological real time!
     if ( time_lag_us > 0 )
     {
-        usleep( time_lag_us );
+      usleep( time_lag_us );
     }
 
     sound_.
 
-    play();
+      play();
   }
-  else {
+  else
+  {
     throw;
   }
 }
 
+void nest::RecordingBackendSoundClick::prepare(){};
+void nest::RecordingBackendSoundClick::post_run_hook(){};
+void nest::RecordingBackendSoundClick::clear( const RecordingDevice& ){};
+void nest::RecordingBackendSoundClick::set_status( const DictionaryDatum& ){};
+void nest::RecordingBackendSoundClick::get_status( DictionaryDatum& ) const {};
+void nest::RecordingBackendSoundClick::set_device_status(
+  const RecordingDevice& device,
+  const DictionaryDatum& d ){};
+void nest::RecordingBackendSoundClick::get_device_status(
+  const RecordingDevice& device,
+  DictionaryDatum& d ) const {};

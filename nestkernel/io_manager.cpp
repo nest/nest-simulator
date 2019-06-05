@@ -55,14 +55,19 @@
 nest::IOManager::IOManager()
   : overwrite_files_( false )
 {
-  recording_backends_.insert(std::make_pair( "ascii", new RecordingBackendASCII() ) );
-  recording_backends_.insert(std::make_pair( "memory", new RecordingBackendMemory() ) );
-  recording_backends_.insert(std::make_pair( "screen", new RecordingBackendScreen() ) );
+  recording_backends_.insert(
+    std::make_pair( "ascii", new RecordingBackendASCII() ) );
+  recording_backends_.insert(
+    std::make_pair( "memory", new RecordingBackendMemory() ) );
+  recording_backends_.insert(
+    std::make_pair( "screen", new RecordingBackendScreen() ) );
 #ifdef HAVE_MPI
-  recording_backends_.insert(std::make_pair( "arbor", new RecordingBackendArbor() ) );
+  recording_backends_.insert(
+    std::make_pair( "arbor", new RecordingBackendArbor() ) );
 #endif
 #ifdef HAVE_SIONLIB
-  recording_backends_.insert(std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
+  recording_backends_.insert(
+    std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
 #endif
 }
 
@@ -143,9 +148,10 @@ nest::IOManager::initialize()
   {
     set_data_path_prefix_( dict );
   }
-  
+
   std::map< Name, RecordingBackend* >::const_iterator it;
-  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
+  for ( it = recording_backends_.begin(); it != recording_backends_.end();
+        ++it )
   {
     it->second->pre_run_hook();
   }
@@ -159,21 +165,22 @@ nest::IOManager::finalize()
   overwrite_files_ = false;
 
   std::map< Name, RecordingBackend* >::const_iterator it;
-  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
+  for ( it = recording_backends_.begin(); it != recording_backends_.end();
+        ++it )
   {
-      it->second->cleanup();
+    it->second->cleanup();
   }
 }
 
-void
-nest::IOManager::change_num_threads( thread )
+void nest::IOManager::change_num_threads( thread )
 {
   std::map< Name, RecordingBackend* >::const_iterator it;
-  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
+  for ( it = recording_backends_.begin(); it != recording_backends_.end();
+        ++it )
   {
-      it->second->cleanup();
+    it->second->cleanup();
     it->second->pre_run_hook();
-  } 
+  }
 }
 
 /*
@@ -186,15 +193,18 @@ nest::IOManager::set_status( const DictionaryDatum& d )
   updateValue< bool >( d, names::overwrite_files, overwrite_files_ );
 
   DictionaryDatum recording_backends;
-  if ( updateValue< DictionaryDatum >( d, names::recording_backends, recording_backends ) )
+  if ( updateValue< DictionaryDatum >(
+         d, names::recording_backends, recording_backends ) )
   {
     std::map< Name, RecordingBackend* >::const_iterator it;
-    for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
+    for ( it = recording_backends_.begin(); it != recording_backends_.end();
+          ++it )
     {
       DictionaryDatum recording_backend_status;
-      if ( updateValue< DictionaryDatum >(recording_backends, it->first, recording_backend_status ) )
+      if ( updateValue< DictionaryDatum >(
+             recording_backends, it->first, recording_backend_status ) )
       {
-	it->second->set_status( recording_backend_status );
+        it->second->set_status( recording_backend_status );
       }
     }
   }
@@ -209,7 +219,8 @@ nest::IOManager::get_status( DictionaryDatum& d )
 
   DictionaryDatum recording_backends( new Dictionary );
   std::map< Name, RecordingBackend* >::const_iterator it;
-  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
+  for ( it = recording_backends_.begin(); it != recording_backends_.end();
+        ++it )
   {
     DictionaryDatum recording_backend_status( new Dictionary );
     it->second->get_status( recording_backend_status );
@@ -221,16 +232,20 @@ nest::IOManager::get_status( DictionaryDatum& d )
 void
 nest::IOManager::post_run_hook()
 {
-  for ( auto it = recording_backends_.rbegin(); it != recording_backends_.rend(); ++it )
+  for ( auto it = recording_backends_.rbegin();
+        it != recording_backends_.rend();
+        ++it )
   {
-      it->second->post_run_hook();
+    it->second->post_run_hook();
   }
 }
 
 void
 nest::IOManager::cleanup()
 {
-  for ( auto it = recording_backends_.rbegin(); it != recording_backends_.rend(); ++it )
+  for ( auto it = recording_backends_.rbegin();
+        it != recording_backends_.rend();
+        ++it )
   {
     it->second->cleanup();
   }
@@ -240,7 +255,8 @@ void
 nest::IOManager::prepare()
 {
   std::map< Name, RecordingBackend* >::const_iterator it;
-  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
+  for ( it = recording_backends_.begin(); it != recording_backends_.end();
+        ++it )
   {
     it->second->prepare();
   }
@@ -250,7 +266,8 @@ void
 nest::IOManager::synchronize()
 {
   std::map< Name, RecordingBackend* >::const_iterator it;
-  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
+  for ( it = recording_backends_.begin(); it != recording_backends_.end();
+        ++it )
   {
     it->second->synchronize();
   }
@@ -277,7 +294,8 @@ void
 nest::IOManager::clear_recording_backends( const RecordingDevice& device )
 {
   std::map< Name, RecordingBackend* >::const_iterator it;
-  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
+  for ( it = recording_backends_.begin(); it != recording_backends_.end();
+        ++it )
   {
     it->second->clear( device );
   }
@@ -285,10 +303,10 @@ nest::IOManager::clear_recording_backends( const RecordingDevice& device )
 
 void
 nest::IOManager::write( Name backend_name,
-			const RecordingDevice& device,
-			const Event& event,
-			const std::vector< double >& double_values,
-    			const std::vector< long >& long_values )
+  const RecordingDevice& device,
+  const Event& event,
+  const std::vector< double >& double_values,
+  const std::vector< long >& long_values )
 {
   RecordingBackend* backend = get_recording_backend_( backend_name );
   backend->write( device, event, double_values, long_values );
@@ -296,9 +314,9 @@ nest::IOManager::write( Name backend_name,
 
 void
 nest::IOManager::enroll_recorder( Name backend_name,
-				  const RecordingDevice& device,
-				  const std::vector< Name >& double_value_names,
-				  const std::vector< Name >& long_value_names )
+  const RecordingDevice& device,
+  const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names )
 {
   RecordingBackend* backend = get_recording_backend_( backend_name );
   backend->enroll( device, double_value_names, long_value_names );
@@ -306,8 +324,8 @@ nest::IOManager::enroll_recorder( Name backend_name,
 
 void
 nest::IOManager::get_recording_device_status( Name backend_name,
-					      const RecordingDevice& device,
-					      DictionaryDatum& d )
+  const RecordingDevice& device,
+  DictionaryDatum& d )
 {
   RecordingBackend* backend = get_recording_backend_( backend_name );
   backend->get_device_status( device, d );
@@ -315,8 +333,8 @@ nest::IOManager::get_recording_device_status( Name backend_name,
 
 void
 nest::IOManager::set_recording_device_status( Name backend_name,
-					      const RecordingDevice& device,
-					      const DictionaryDatum& d )
+  const RecordingDevice& device,
+  const DictionaryDatum& d )
 {
   RecordingBackend* backend = get_recording_backend_( backend_name );
   backend->set_device_status( device, d );

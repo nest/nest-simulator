@@ -274,11 +274,11 @@ public:
    */
   void init_buffers();
 
-// JME: we should call calibrate() at the end of set_status and at the
-// end of the constructor call instead of during Prepare. This would
-// make Prepare -> Run Run ... -> Cleanup much more robust. We also
-// need to prohibit the change of recorder properties between
-// Runs. This requires a flag set in Prepare and unset in Cleanup.
+  // JME: we should call calibrate() at the end of set_status and at the
+  // end of the constructor call instead of during Prepare. This would
+  // make Prepare -> Run Run ... -> Cleanup much more robust. We also
+  // need to prohibit the change of recorder properties between
+  // Runs. This requires a flag set in Prepare and unset in Cleanup.
 
   /**
    * Re-calculate dependent parameters of the node.

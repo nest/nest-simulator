@@ -38,40 +38,43 @@ nest::RecordingBackendSocket::RecordingBackendSocket()
 
 nest::RecordingBackendSocket::~RecordingBackendSocket() throw()
 {
-  finalize();
+  cleanup();
 }
 
 void
-nest::RecordingBackendSocket::enroll(
-        const RecordingDevice& device,
-        const std::vector< Name >& double_value_names,
-        const std::vector< Name >& long_value_names ) {
+nest::RecordingBackendSocket::enroll( const RecordingDevice& device,
+  const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names )
+{
 
-  if (device.get_type() == RecordingDevice::SPIKE_DETECTOR) {
+  if ( device.get_type() == RecordingDevice::SPIKE_DETECTOR )
+  {
     B_.addr_.sin_family = AF_INET;
-    inet_aton(P_.ip_.c_str(), &B_.addr_.sin_addr);
-    B_.addr_.sin_port = htons(P_.port_);
+    inet_aton( P_.ip_.c_str(), &B_.addr_.sin_addr );
+    B_.addr_.sin_port = htons( P_.port_ );
 
-    B_.socket_ = socket(PF_INET, SOCK_DGRAM, 0);
-  } else {
+    B_.socket_ = socket( PF_INET, SOCK_DGRAM, 0 );
+  }
+  else
+  {
     throw BadProperty(
-            "Only spike detectors can record to recording backend "
-            ">Socket<");
+      "Only spike detectors can record to recording backend "
+      ">Socket<" );
   }
 }
 
 void
-nest::RecordingBackendSocket::initialize()
+nest::RecordingBackendSocket::pre_run_hook()
 {
 }
 
 void
-nest::RecordingBackendSocket::post_run_cleanup()
+nest::RecordingBackendSocket::post_run_hook()
 {
 }
 
 void
-nest::RecordingBackendSocket::finalize()
+nest::RecordingBackendSocket::cleanup()
 {
 }
 
@@ -81,34 +84,39 @@ nest::RecordingBackendSocket::synchronize()
 }
 
 void
-nest::RecordingBackendSocket::write(
-        const RecordingDevice& device,
-        const Event& event,
-        const std::vector< double >& double_values,
-        const std::vector< long >& long_values )
+nest::RecordingBackendSocket::write( const RecordingDevice& device,
+  const Event& event,
+  const std::vector< double >& double_values,
+  const std::vector< long >& long_values )
 {
-  if (device.get_type() == RecordingDevice::SPIKE_DETECTOR) {
+  if ( device.get_type() == RecordingDevice::SPIKE_DETECTOR )
+  {
 #pragma omp critical
     {
       index sd_gid = device.get_gid();
       index node_gid = event.get_sender_gid();
       std::string msg = String::compose(
-              "spike_detector %1 got a spike by node %2", sd_gid, node_gid );
+        "spike_detector %1 got a spike by node %2", sd_gid, node_gid );
 
       // We explicitly ignore errors here by not evaluating the return
       // code of the sendto() function.
-      sendto(B_.socket_, msg.c_str(), msg.size(), 0,
-             ( struct sockaddr * )& B_.addr_, sizeof( B_.addr_ ) );
+      sendto( B_.socket_,
+        msg.c_str(),
+        msg.size(),
+        0,
+        ( struct sockaddr* ) &B_.addr_,
+        sizeof( B_.addr_ ) );
     }
   }
-  else {
+  else
+  {
     throw;
   }
 }
 
 nest::RecordingBackendSocket::Parameters_::Parameters_()
-    : ip_( "127.0.0.1" )
-    , port_( 50000 )
+  : ip_( "127.0.0.1" )
+  , port_( 50000 )
 {
 }
 
@@ -130,8 +138,23 @@ void
 nest::RecordingBackendSocket::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );  // throws if BadProperty
+  ptmp.set( d );         // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
 }
+
+void
+nest::RecordingBackendSocket::get_status( DictionaryDatum& d ) const
+{
+  P_.get( d );
+}
+
+void nest::RecordingBackendSocket::prepare(){};
+void nest::RecordingBackendSocket::clear( const RecordingDevice& ){};
+void nest::RecordingBackendSocket::set_device_status(
+  const RecordingDevice& device,
+  const DictionaryDatum& d ){};
+void nest::RecordingBackendSocket::get_device_status(
+  const RecordingDevice& device,
+  DictionaryDatum& d ) const {};

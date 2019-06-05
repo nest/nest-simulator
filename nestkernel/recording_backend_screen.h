@@ -53,33 +53,45 @@ public:
   }
 
   void enroll( const RecordingDevice& device,
-	       const std::vector< Name >& double_value_names,
-	       const std::vector< Name >& long_value_names );
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names ) override;
 
   /**
    * Finalization function. Nothing has to be finalized in case of the
    * RecordingBackendScreen.
    */
-  void cleanup();
+  void cleanup() override;
 
   /**
    * Synchronization function called at the end of each time step.
    * Again, the RecordingBackendScreen is not doing anything in this function.
    */
-  void synchronize();
+  void synchronize() override;
 
   void write( const RecordingDevice&,
-	      const Event&,
-	      const std::vector< double >&,
-	      const std::vector< long >& );
+    const Event&,
+    const std::vector< double >&,
+    const std::vector< long >& ) override;
 
   void set_status( const DictionaryDatum& );
-  void get_status( DictionaryDatum& ) const;
+  void get_status( DictionaryDatum& ) const override;
 
   /**
    * Initialization function.
    */
-  void pre_run_hook();
+  void pre_run_hook() override;
+
+  void post_run_hook() override;
+
+  void get_device_status( const RecordingDevice& device,
+    DictionaryDatum& ) const override;
+
+  void prepare() override;
+
+  void clear( const RecordingDevice& ) override;
+
+  void set_device_status( const RecordingDevice& device,
+    const DictionaryDatum& d ) override;
 
 private:
   struct Parameters_

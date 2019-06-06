@@ -67,6 +67,16 @@ in a scenario with two processes with two threads each.
  real node free on remote processes).
 
 
+.. note::
+
+ The status dictionary of each node (i.e. neuron or device) contains
+ three entries that are related to parallel computing:
+
+ *  *local* (boolean): indicating if the node exists on the local process or not
+ *  *thread* (integer): id of the local thread the node is assigned to
+ *  *vp* (integer): id of the virtual process the node is assigned to
+
+
 Neuron distribution
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -102,16 +112,6 @@ analog recordings from the ``multimeter`` have ``dat`` as file extension.
 
 The ``label`` and ``file_extension`` of a recording device can be set like any
 other parameter of a node using ``SetStatus``.
-
-.. note::
-
- The status dictionary of each node (i.e. neuron or device) contains
- three entries that are related to parallel computing:
-
- *  *local* (boolean): indicating if the node exists on the local process or not
- *  *thread* (integer): id of the local thread the node is assigned to
- *  *vp* (integer): id of the virtual process the node is assigned to
-
 
 Spike exchange and synapse update
 ------------------------------------

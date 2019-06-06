@@ -1,4 +1,4 @@
-Hill and Tononi synapse model
+Hill-Tononi synapse model
 ==============================
 
 .. doxygengroup:: ht_synapse

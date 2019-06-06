@@ -49,7 +49,7 @@ public:
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names );
 
-  void finalize();
+  void cleanup();
   void synchronize();
 
   void write( const RecordingDevice& device,
@@ -60,7 +60,7 @@ public:
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
-  void initialize();
+  void pre_run_hook();
   void calibrate();
 
 private:

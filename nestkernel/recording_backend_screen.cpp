@@ -40,14 +40,14 @@ nest::RecordingBackendScreen::enroll( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendScreen::initialize()
+nest::RecordingBackendScreen::pre_run_hook()
 {
   enrollment_map tmp( kernel().vp_manager.get_num_threads() );
   enrolled_devices_.swap( tmp );
 }
 
 void
-nest::RecordingBackendScreen::finalize()
+nest::RecordingBackendScreen::cleanup()
 {
 }
 
@@ -99,6 +99,38 @@ nest::RecordingBackendScreen::write( const RecordingDevice& device,
 
     restore_cout_();
   }
+}
+
+void
+nest::RecordingBackendScreen::get_device_status( nest::RecordingDevice const&,
+  lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendScreen::clear( nest::RecordingDevice const& )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendScreen::set_device_status( nest::RecordingDevice const&,
+  lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendScreen::prepare()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendScreen::post_run_hook()
+{
+  // nothing to do
 }
 
 /* ----------------------------------------------------------------

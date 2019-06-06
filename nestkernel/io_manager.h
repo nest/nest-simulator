@@ -80,7 +80,7 @@ public:
    * Clean up in all registered recording backends after a single call to run by
    * calling the backends' post_run_cleanup() functions
    */
-  void post_run_cleanup();
+  void post_run_hook();
 
   /**
    * Finalize all registered recording backends after a call to

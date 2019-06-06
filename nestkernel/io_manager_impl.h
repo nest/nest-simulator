@@ -32,7 +32,7 @@ void
 IOManager::register_recording_backend( Name name )
 {
   RBType* recording_backend = new RBType();
-  recording_backend->initialize();
+  recording_backend->pre_run_hook();
 
   recording_backends_.insert( std::make_pair( name, recording_backend ) );
 }

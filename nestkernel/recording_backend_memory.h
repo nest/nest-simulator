@@ -61,39 +61,47 @@ public:
 
   virtual void enroll( const RecordingDevice& device,
     const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names );
+    const std::vector< Name >& long_value_names ) override;
 
   /**
    * Finalize the RecordingBackendMemory after the simulation has finished.
    */
-  void finalize();
+  void cleanup() override;
 
   /**
    * Trivial synchronization function. The RecordingBackendMemory does
    * not need explicit synchronization after each time step.
    */
-  void synchronize();
+  void synchronize() override;
 
   /**
    * Clear the recorded data for the given RecordingDevice.
    */
-  void clear( const RecordingDevice& );
+  void clear( const RecordingDevice& ) override;
 
   virtual void write( const RecordingDevice&,
     const Event&,
     const std::vector< double >&,
-    const std::vector< long >& );
+    const std::vector< long >& ) override;
 
   /**
    * Initialize the RecordingBackendMemory during simulation preparation.
    */
-  void initialize();
+  void pre_run_hook() override;
 
   void get_device_status( const RecordingDevice& device,
-    DictionaryDatum& ) const;
+    DictionaryDatum& ) const override;
 
   void set_device_status( const RecordingDevice& device,
-    const DictionaryDatum& );
+    const DictionaryDatum& ) override;
+
+  void prepare() override;
+
+  void post_run_hook() override;
+
+  void set_status( const DictionaryDatum& ) override;
+
+  void get_status( DictionaryDatum& ) const override;
 
 private:
   class Recordings

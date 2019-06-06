@@ -65,41 +65,48 @@ public:
    * Function called by spike detectors using this recording
    * backend. This function opens the socket.
    */
-  void enroll( const RecordingDevice&, // device
-    const std::vector< Name >&,        // double value names
-    const std::vector< Name >& );      // long value names
+  void enroll( const RecordingDevice&,     // device
+    const std::vector< Name >&,            // double value names
+    const std::vector< Name >& ) override; // long value names
 
   /**
    * Flush files after a single call to Run
    */
-  void post_run_cleanup();
+  void post_run_hook() override;
 
   /**
    * Finalize the RecordingBackendSocket after the simulation has finished.
    */
-  void finalize();
+  void cleanup() override;
 
   /**
    * Trivial synchronization function. The RecordingBackendSocket does
    * not need explicit synchronization after each time step.
    */
-  void synchronize();
+  void synchronize() override;
 
   /**
    * Functions to write data to file.
    */
-  void write( const RecordingDevice&, // device
-    const Event&,                     // event
-    const std::vector< double >&,     // double values
-    const std::vector< long >& );     // long values
+  void write( const RecordingDevice&,      // device
+    const Event&,                          // event
+    const std::vector< double >&,          // double values
+    const std::vector< long >& ) override; // long values
 
-  void set_status( const DictionaryDatum& );
-  void get_status( DictionaryDatum& ) const;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& d ) const override;
 
   /**
    * Initialize the RecordingBackendSocket during simulation preparation.
    */
-  void initialize();
+  void pre_run_hook() override;
+
+  void prepare() override;
+  void clear( const RecordingDevice& ) override;
+  void set_device_status( const RecordingDevice& device,
+    const DictionaryDatum& d ) override;
+  void get_device_status( const RecordingDevice& device,
+    DictionaryDatum& d ) const override;
 
 private:
   struct Parameters_
@@ -122,12 +129,6 @@ private:
   Parameters_ P_;
   Buffers_ B_;
 };
-
-inline void
-RecordingBackendSocket::get_status( DictionaryDatum& d ) const
-{
-  P_.get( d );
-}
 
 } // namespace
 

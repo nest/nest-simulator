@@ -38,9 +38,10 @@ nest::RecordingBackendSocket::RecordingBackendSocket()
 
 nest::RecordingBackendSocket::~RecordingBackendSocket() throw()
 {
-  finalize();
+  cleanup();
 }
 
+// Register backend
 void
 nest::RecordingBackendSocket::enroll( const RecordingDevice& device,
   const std::vector< Name >& double_value_names,
@@ -63,26 +64,7 @@ nest::RecordingBackendSocket::enroll( const RecordingDevice& device,
   }
 }
 
-void
-nest::RecordingBackendSocket::initialize()
-{
-}
-
-void
-nest::RecordingBackendSocket::post_run_cleanup()
-{
-}
-
-void
-nest::RecordingBackendSocket::finalize()
-{
-}
-
-void
-nest::RecordingBackendSocket::synchronize()
-{
-}
-
+// Write the data from the event to the backend specific channel
 void
 nest::RecordingBackendSocket::write( const RecordingDevice& device,
   const Event& event,
@@ -134,6 +116,7 @@ nest::RecordingBackendSocket::Parameters_::set( const DictionaryDatum& d )
   updateValue< long >( d, "port", port_ );
 }
 
+// Set the status of the recording backend
 void
 nest::RecordingBackendSocket::set_status( const DictionaryDatum& d )
 {
@@ -142,4 +125,63 @@ nest::RecordingBackendSocket::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+// Return the status of the recording backend
+void
+nest::RecordingBackendSocket::get_status( DictionaryDatum& d ) const
+{
+  P_.get( d );
+}
+
+void
+nest::RecordingBackendSocket::pre_run_hook()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSocket::post_run_hook()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSocket::cleanup()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSocket::synchronize()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSocket::prepare()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSocket::clear( const RecordingDevice& )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSocket::set_device_status(
+  const RecordingDevice& device,
+  const DictionaryDatum& d )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSocket::get_device_status(
+  const RecordingDevice& device,
+  DictionaryDatum& d ) const
+{
+  // nothing to do
 }

@@ -58,7 +58,7 @@ nest::RecordingBackendMemory::enroll( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendMemory::initialize()
+nest::RecordingBackendMemory::pre_run_hook()
 {
   delete_data_();
   data_map tmp( kernel().vp_manager.get_num_threads() );
@@ -81,7 +81,7 @@ nest::RecordingBackendMemory::delete_data_()
 
 
 void
-nest::RecordingBackendMemory::finalize()
+nest::RecordingBackendMemory::cleanup()
 {
 }
 
@@ -150,4 +150,30 @@ nest::RecordingBackendMemory::set_device_status( const RecordingDevice& device,
     bool time_in_steps = device.get_time_in_steps();
     data_[ t ].find( gid )->second->set_time_in_steps( time_in_steps );
   }
+}
+
+void
+nest::RecordingBackendMemory::post_run_hook()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendMemory::get_status(
+  lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendMemory::set_status(
+  lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendMemory::prepare()
+{
+  // nothing to do
 }

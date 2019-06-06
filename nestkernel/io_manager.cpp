@@ -153,7 +153,7 @@ nest::IOManager::initialize()
   for ( it = recording_backends_.begin(); it != recording_backends_.end();
         ++it )
   {
-    it->second->initialize();
+    it->second->pre_run_hook();
   }
 }
 
@@ -168,7 +168,7 @@ nest::IOManager::finalize()
   for ( it = recording_backends_.begin(); it != recording_backends_.end();
         ++it )
   {
-    it->second->finalize();
+    it->second->cleanup();
   }
 }
 
@@ -178,8 +178,8 @@ void nest::IOManager::change_num_threads( thread )
   for ( it = recording_backends_.begin(); it != recording_backends_.end();
         ++it )
   {
-    it->second->finalize();
-    it->second->initialize();
+    it->second->cleanup();
+    it->second->pre_run_hook();
   }
 }
 
@@ -230,13 +230,13 @@ nest::IOManager::get_status( DictionaryDatum& d )
 }
 
 void
-nest::IOManager::post_run_cleanup()
+nest::IOManager::post_run_hook()
 {
   for ( auto it = recording_backends_.rbegin();
         it != recording_backends_.rend();
         ++it )
   {
-    it->second->post_run_cleanup();
+    it->second->post_run_hook();
   }
 }
 

@@ -26,8 +26,6 @@
 // Own includes
 #include "recording_backend_soundclick.h"
 
-
-// Constructor
 nest::RecordingBackendSoundClick::RecordingBackendSoundClick()
 {
   // Load the raw sound data into the SFML sound buffer.
@@ -36,12 +34,12 @@ nest::RecordingBackendSoundClick::RecordingBackendSoundClick()
   sound_.setBuffer( sound_buffer_ );
 }
 
-// Destructor
 nest::RecordingBackendSoundClick::~RecordingBackendSoundClick() throw()
 {
-  finalize();
+  cleanup();
 }
 
+// Register a device to record data using a certain backend
 // Called by each multimeter during network calibration
 void
 nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device,
@@ -62,18 +60,19 @@ nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device,
   }
 }
 
-// Called on simulation startup
+// Initialize global backend-specific data structures
+// Called during simulation startup
 void
-nest::RecordingBackendSoundClick::initialize()
+nest::RecordingBackendSoundClick::pre_run_hook()
 {
   LOG( M_INFO,
     "Recording Backend",
     ( "Recording backend >SoundClick< successfully initialized." ) );
 }
 
-// Called at the end of a call to Simulate
+// Clean up the backend at the end of a call to Simulate
 void
-nest::RecordingBackendSoundClick::finalize()
+nest::RecordingBackendSoundClick::cleanup()
 {
   // Halt the stopwatch, which represents the real time.
   // It continues when the simulation continues, that is with the next call
@@ -81,14 +80,7 @@ nest::RecordingBackendSoundClick::finalize()
   stopwatch_.stop();
 }
 
-// Synchronize backend at the end of each simulation cycle
-void
-nest::RecordingBackendSoundClick::synchronize()
-{
-  // nothing to do
-}
-
-// Called by the spike detectors on every spike event
+// Write the data from the spike-event to the backend specific channel
 void
 nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
   const Event& event,
@@ -122,4 +114,57 @@ nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
   {
     throw;
   }
+}
+
+// Synchronize backend at the end of each simulation cycle
+void
+nest::RecordingBackendSoundClick::synchronize()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSoundClick::prepare()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSoundClick::post_run_hook()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSoundClick::clear( const RecordingDevice& )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSoundClick::set_status( const DictionaryDatum& )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSoundClick::get_status( DictionaryDatum& ) const
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSoundClick::set_device_status(
+  const RecordingDevice& device,
+  const DictionaryDatum& d )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSoundClick::get_device_status(
+  const RecordingDevice& device,
+  DictionaryDatum& d ) const
+{
+  // nothing to do
 }

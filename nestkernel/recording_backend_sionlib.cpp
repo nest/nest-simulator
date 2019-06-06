@@ -98,7 +98,7 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendSIONlib::initialize()
+nest::RecordingBackendSIONlib::pre_run_hook()
 {
   device_map devices( kernel().vp_manager.get_num_threads() );
   devices_.swap( devices );
@@ -212,7 +212,7 @@ nest::RecordingBackendSIONlib::open_files_()
 }
 
 void
-nest::RecordingBackendSIONlib::finalize()
+nest::RecordingBackendSIONlib::cleanup()
 {
   close_files_();
 }

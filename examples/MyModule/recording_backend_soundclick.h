@@ -58,24 +58,47 @@ public:
   ~RecordingBackendSoundClick() throw();
 
   // Register a device to record data using a certain backend
-  void enroll( const RecordingDevice&, // device
-    const std::vector< Name >&,        // double value names
-    const std::vector< Name >& );      // long value names
+  void enroll( const RecordingDevice&,     // device
+    const std::vector< Name >&,            // double value names
+    const std::vector< Name >& ) override; // long value names
 
   // Clean up the backend at the end of a call to Simulate
-  void finalize();
+  void cleanup() override;
 
   // Synchronize backends at the end of each simulation cycle
-  void synchronize();
+  void synchronize() override;
 
   // Write the data from the event to the backend specific channel
-  void write( const RecordingDevice&, // device
-    const Event&,                     // event
-    const std::vector< double >&,     // double values
-    const std::vector< long >& );     // long values
+  void write( const RecordingDevice&,      // device
+    const Event&,                          // event
+    const std::vector< double >&,          // double values
+    const std::vector< long >& ) override; // long values
 
   // Initialize global backend-specific data structures
-  void initialize();
+  void pre_run_hook() override;
+
+  // Prepare the backend at begin of the NEST Simulate function
+  void prepare() override;
+
+  // Clean up the backend at the end of a Run
+  void post_run_hook() override;
+
+  // Discard all recorded data
+  void clear( const RecordingDevice& ) override;
+
+  // Set the status of the recording backend
+  void set_status( const DictionaryDatum& ) override;
+
+  // Return the status of the recording backend
+  void get_status( DictionaryDatum& ) const override;
+
+  // Set the per-device status of the given recording device
+  void set_device_status( const RecordingDevice& device,
+    const DictionaryDatum& d ) override;
+
+  // Return the per-device status of the given recording device
+  void get_device_status( const RecordingDevice& device,
+    DictionaryDatum& d ) const override;
 
 private:
   // NEST Stopwatch object

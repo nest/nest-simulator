@@ -134,7 +134,7 @@ nest::RecordingBackendSIONlib::open_files_()
   // NodeManager::prepare_nodes())!
   const thread t = kernel().vp_manager.get_thread_id();
   const thread task = kernel().vp_manager.thread_to_vp( t );
-  if ( !task )
+  if ( not task )
   {
     t_start_ = kernel().simulation_manager.get_time().get_ms();
   }
@@ -154,7 +154,7 @@ nest::RecordingBackendSIONlib::open_files_()
     std::string filename = build_filename_();
 
     std::ifstream test( filename.c_str() );
-    if ( test.good() & !kernel().io_manager.overwrite_files() )
+    if ( test.good() & not kernel().io_manager.overwrite_files() )
     {
       std::string msg = String::compose(
         "The device file '%1' exists already and will not be overwritten. "
@@ -194,7 +194,7 @@ nest::RecordingBackendSIONlib::open_files_()
   catch ( std::exception& e )
   {
 #pragma omp critical
-    if ( !we )
+    if ( not we )
     {
       we = new WrappedThreadException( e );
     }
@@ -517,8 +517,10 @@ nest::RecordingBackendSIONlib::build_filename_() const
 {
   std::ostringstream basename;
   const std::string& path = kernel().io_manager.get_data_path();
-  if ( !path.empty() )
+  if ( not path.empty() )
+  {
     basename << path << '/';
+  }
   basename << kernel().io_manager.get_data_prefix();
 
   return basename.str() + P_.filename_;
@@ -546,7 +548,9 @@ nest::RecordingBackendSIONlib::SIONBuffer::SIONBuffer( size_t size )
 nest::RecordingBackendSIONlib::SIONBuffer::~SIONBuffer()
 {
   if ( buffer_ != NULL )
+  {
     delete[] buffer_;
+  }
 }
 
 void

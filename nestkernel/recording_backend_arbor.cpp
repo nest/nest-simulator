@@ -135,7 +135,7 @@ nest::RecordingBackendArbor::exchange_(
 void
 nest::RecordingBackendArbor::prepare()
 {
-  if ( !enrolled_ )
+  if ( not enrolled_ )
   {
     return;
   }
@@ -190,12 +190,12 @@ nest::RecordingBackendArbor::prepare()
 void
 nest::RecordingBackendArbor::cleanup_()
 {
-  if ( !enrolled_ )
+  if ( not enrolled_ )
   {
     return;
   }
 
-  if ( !prepared_ )
+  if ( not prepared_ )
   {
     throw BackendNotPrepared( "RecordingBackendArbor" );
   }

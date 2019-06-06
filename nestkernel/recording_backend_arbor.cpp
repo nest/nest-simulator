@@ -74,7 +74,7 @@ nest::RecordingBackendArbor::RecordingBackendArbor()
 
 nest::RecordingBackendArbor::~RecordingBackendArbor() throw()
 {
-  finalize();
+  cleanup();
 }
 
 void
@@ -116,7 +116,7 @@ nest::RecordingBackendArbor::cleanup()
 {
   if ( prepared_ )
   {
-    cleanup();
+    cleanup_();
   }
 }
 
@@ -124,7 +124,7 @@ void
 nest::RecordingBackendArbor::exchange_(
   std::vector< arb::shadow::spike >& local_spikes )
 {
-  static int step = 0;
+  // static int step = 0;
   // std::cerr << "NEST: n: " << step++ << std::endl;
   // std::cerr << "NEST: Output spikes" << std::endl;
   arb::shadow::gather_spikes( local_spikes, MPI_COMM_WORLD );
@@ -188,7 +188,7 @@ nest::RecordingBackendArbor::prepare()
 }
 
 void
-nest::RecordingBackendArbor::cleanup()
+nest::RecordingBackendArbor::cleanup_()
 {
   if ( !enrolled_ )
   {
@@ -258,6 +258,37 @@ nest::RecordingBackendArbor::write( const RecordingDevice& device,
   buffer.push_back( { { num_arbor_cells_ + sender_gid, 0 }, time } );
 }
 
+void
+nest::RecordingBackendArbor::get_status( DictionaryDatum& d ) const
+{
+  P_.get( *this, d );
+}
+
+void
+nest::RecordingBackendArbor::post_run_hook()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendArbor::clear( const nest::RecordingDevice& )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendArbor::set_device_status( const nest::RecordingDevice& device,
+        const DictionaryDatum& params_dictionary )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendArbor::get_device_status( const nest::RecordingDevice& device,
+        DictionaryDatum& params_dictionary ) const
+{
+  // nothing to do
+}
 
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions

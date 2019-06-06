@@ -1,4 +1,4 @@
-Hill and Tononi neuron model
+Hill-Tononi neuron model
 ==============================
 
 

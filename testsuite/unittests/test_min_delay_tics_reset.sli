@@ -54,8 +54,6 @@ ResetKernel
 
 
 /iaf_psc_alpha_ps Create /neuron Set
-neuron </Interpol_Order 3 >> SetStatus
-
 
    % works if "100.0 delay" is inserted
    %              | 

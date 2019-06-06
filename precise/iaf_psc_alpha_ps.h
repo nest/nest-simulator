@@ -45,15 +45,16 @@ namespace nest
 
 /** @BeginDocumentation
 Name: iaf_psc_alpha_ps - Leaky integrate-and-fire neuron
-with alpha-shape postsynaptic currents.
+with alpha-shape postsynaptic currents and bisectioning method for
+approximation of threshold crossing..
 
 .. versionadded:: 2.18
 
 Description:
 
-iaf_psc_alpha_ps is the "canonical" implementatoin of the leaky
+iaf_psc_alpha_ps is the "canonical" implementation of the leaky
 integrate-and-fire model neuron with alpha-shaped postsynaptic
-currents in the sense of [1].  This is the most exact implementation
+currents in the sense of [1]. This is the most exact implementation
 available.
 
 PSCs are normalized to an amplitude of 1pA.
@@ -62,15 +63,15 @@ The precise implementation handles neuronal dynamics in a locally
 event-based manner with in coarse time grid defined by the minimum
 delay in the network, see [1]. Incoming spikes are applied at the
 precise moment of their arrival, while the precise time of outgoing
-spikes is determined by interpolation once a threshold crossing has
-been detected. Return from refractoriness occurs precisly at spike
-time plus refractory period.
+spikes is determined by a bisectioning method to approximate the timing
+of a threshold crossing [1,3]. Return from refractoriness occurs precisly
+at spike time plus refractory period.
 
 This implementation is more complex than the plain iaf_psc_alpha
 neuron, but achieves much higher precision. In particular, it does not
 suffer any binning of spike times to grid points. Depending on your
 application, the canonical application may provide superior overall
-performance given an accuracy goal; see [1] for details.  Subthreshold
+performance given an accuracy goal; see [1] for details. Subthreshold
 dynamics are integrated using exact integration between events [2].
 
 
@@ -89,8 +90,6 @@ V_reset      double - Reset potential of the membrane in mV.
 tau_syn_ex   double - Rise time of the excitatory synaptic function in ms.
 tau_syn_in   double - Rise time of the inhibitory synaptic function in ms.
 I_e          double - Constant external input current in pA.
-Interpol_Order  int - Interpolation order for spike time:
-                      0-none, 1-linear, 2-quadratic, 3-cubic
 
 Remarks:
 
@@ -263,16 +262,11 @@ private:
   };
 
   /**
-   * Localize threshold crossing.
-   * Driver function to invoke the correct interpolation function
-   * for the chosen interpolation order.
+   * Localize threshold crossing by bisectioning.
    * @param   double length of interval since previous event
    * @returns time from previous event to threshold crossing
    */
-  double thresh_find_( double const ) const;
-  double thresh_find1_( double const ) const;
-  double thresh_find2_( double const ) const;
-  double thresh_find3_( double const ) const;
+  double bisectioning_( const double dt ) const;
   //@}
 
 
@@ -320,9 +314,6 @@ private:
               value. Relative to resting potential.
      */
     double U_reset_;
-
-    /** Interpolation order */
-    interpOrder Interpol_;
 
     Parameters_(); //!< Sets default parameter values
 

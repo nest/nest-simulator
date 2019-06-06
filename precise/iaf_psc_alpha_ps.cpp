@@ -79,7 +79,6 @@ nest::iaf_psc_alpha_ps::Parameters_::Parameters_()
   , U_th_( -55.0 - E_L_ )                                // mV, rel to E_L_
   , U_min_( -std::numeric_limits< double >::infinity() ) // mV
   , U_reset_( -70.0 - E_L_ )                             // mV, rel to E_L_
-  , Interpol_( iaf_psc_alpha_ps::LINEAR )
 {
 }
 
@@ -113,7 +112,6 @@ nest::iaf_psc_alpha_ps::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_syn_ex, tau_syn_ex_ );
   def< double >( d, names::tau_syn_in, tau_syn_in_ );
   def< double >( d, names::t_ref, t_ref_ );
-  def< long >( d, names::Interpol_Order, Interpol_ );
 }
 
 double
@@ -159,29 +157,17 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d )
     U_reset_ -= delta_EL;
   }
 
-  long tmp;
-  if ( updateValue< long >( d, names::Interpol_Order, tmp ) )
-  {
-    if ( NO_INTERPOL <= tmp && tmp < END_INTERP_ORDER )
-    {
-      Interpol_ = static_cast< interpOrder >( tmp );
-    }
-    else
-    {
-      throw BadProperty(
-        "Invalid interpolation order. "
-        "Valid orders are 0, 1, 2, 3." );
-    }
-  }
   if ( U_reset_ >= U_th_ )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
   }
+
   if ( U_reset_ < U_min_ )
   {
     throw BadProperty(
       "Reset potential must be greater equal minimum potential." );
   }
+
   if ( c_m_ <= 0 )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -191,6 +177,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadProperty( "Refractory time must be at least one time step." );
   }
+
   if ( tau_m_ <= 0 || tau_syn_ex_ <= 0 || tau_syn_in_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
@@ -589,7 +576,7 @@ nest::iaf_psc_alpha_ps::emit_spike_( Time const& origin,
 
   // compute spike time relative to beginning of step
   S_.last_spike_step_ = origin.get_steps() + lag + 1;
-  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + thresh_find_( dt ) );
+  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + bisectioning_( dt ) );
 
   // reset neuron and make it refractory
   S_.V_m_ = P_.U_reset_;
@@ -628,139 +615,37 @@ nest::iaf_psc_alpha_ps::emit_instant_spike_( Time const& origin,
   return;
 }
 
-// finds threshpassing
-inline double
-nest::iaf_psc_alpha_ps::thresh_find_( const double dt ) const
-{
-  switch ( P_.Interpol_ )
-  {
-  case NO_INTERPOL:
-    return dt;
-  case LINEAR:
-    return thresh_find1_( dt );
-  case QUADRATIC:
-    return thresh_find2_( dt );
-  case CUBIC:
-    return thresh_find3_( dt );
-  default:
-    throw BadProperty( "Invalid interpolation order in iaf_psc_alpha_ps." );
-  }
-  return 0;
-}
-
-// finds threshpassing via linear interpolation
 double
-nest::iaf_psc_alpha_ps::thresh_find1_( const double dt ) const
+nest::iaf_psc_alpha_ps::bisectioning_( const double dt ) const
 {
-  const double tau =
-    ( P_.U_th_ - V_.V_m_before_ ) * dt / ( S_.V_m_ - V_.V_m_before_ );
-  return tau;
-}
+  double root = 0.0;
 
-// finds threshpassing via quadratic interpolation
-double
-nest::iaf_psc_alpha_ps::thresh_find2_( const double dt ) const
-{
-  const double h_sq = dt * dt;
-  const double derivative = -V_.V_m_before_ / P_.tau_m_
-    + ( P_.I_e_ + V_.y_input_before_ + V_.I_ex_before_ + +V_.I_in_before_ )
-      / P_.c_m_;
+  double V_m_root = V_.V_m_before_;
 
-  const double a =
-    ( -V_.V_m_before_ / h_sq ) + ( S_.V_m_ / h_sq ) - ( derivative / dt );
-  const double b = derivative;
-  const double c = V_.V_m_before_;
+  double div = 2.0;
 
-  const double sqr_ = std::sqrt( b * b - 4 * a * c + 4 * a * P_.U_th_ );
-  const double tau1 = ( -b + sqr_ ) / ( 2 * a );
-  const double tau2 = ( -b - sqr_ ) / ( 2 * a );
-  if ( tau1 >= 0 )
+  while ( fabs( P_.U_th_ - V_m_root ) > 1e-14 )
   {
-    return tau1;
-  }
-  else if ( tau2 >= 0 )
-  {
-    return tau2;
-  }
-  else
-  {
-    return thresh_find1_( dt );
-  }
-}
-
-double
-nest::iaf_psc_alpha_ps::thresh_find3_( const double dt ) const
-{
-  const double h_ms = dt;
-  const double h_sq = h_ms * h_ms;
-  const double h_cb = h_sq * h_ms;
-
-  const double deriv_t1 = -V_.V_m_before_ / P_.tau_m_
-    + ( P_.I_e_ + V_.y_input_before_ + V_.I_ex_before_ + V_.I_in_before_ )
-      / P_.c_m_;
-  const double deriv_t2 = -S_.V_m_ / P_.tau_m_
-    + ( P_.I_e_ + S_.y_input_ + S_.I_ex_ + +S_.I_in_ ) / P_.c_m_;
-
-  const double w3_ = ( 2 * V_.V_m_before_ / h_cb ) - ( 2 * S_.V_m_ / h_cb )
-    + ( deriv_t1 / h_sq ) + ( deriv_t2 / h_sq );
-  const double w2_ = -( 3 * V_.V_m_before_ / h_sq ) + ( 3 * S_.V_m_ / h_sq )
-    - ( 2 * deriv_t1 / h_ms ) - ( deriv_t2 / h_ms );
-  const double w1_ = deriv_t1;
-  const double w0_ = V_.V_m_before_;
-
-  // normal form :    x^3 + r*x^2 + s*x + t with coefficients : r, s, t
-  const double r = w2_ / w3_;
-  const double s = w1_ / w3_;
-  const double t = ( w0_ - P_.U_th_ ) / w3_;
-  const double r_sq = r * r;
-
-  // substitution y = x + r/3 :  y^3 + p*y + q == 0
-  const double p = -r_sq / 3 + s;
-  const double q = 2 * ( r_sq * r ) / 27 - r * s / 3 + t;
-
-  // discriminante
-  const double D = std::pow( ( p / 3 ), 3 ) + std::pow( ( q / 2 ), 2 );
-
-  double tau1;
-  double tau2;
-  double tau3;
-
-  if ( D < 0 )
-  {
-    const double roh = std::sqrt( -( p * p * p ) / 27 );
-    const double phi = std::acos( -q / ( 2 * roh ) );
-    const double a = 2 * std::pow( roh, ( 1.0 / 3.0 ) );
-    tau1 = ( a * std::cos( phi / 3 ) ) - r / 3;
-    tau2 = ( a * std::cos( phi / 3 + 2 * numerics::pi / 3 ) ) - r / 3;
-    tau3 = ( a * std::cos( phi / 3 + 4 * numerics::pi / 3 ) ) - r / 3;
-  }
-  else
-  {
-    const double sgnq = ( q >= 0 ? 1 : -1 );
-    const double u =
-      -sgnq * std::pow( std::fabs( q ) / 2.0 + std::sqrt( D ), 1.0 / 3.0 );
-    const double v = -p / ( 3 * u );
-    tau1 = ( u + v ) - r / 3;
-    if ( tau1 >= 0 )
+    if ( V_m_root > P_.U_th_ )
     {
-      return tau1;
+      root -= dt / div;
     }
     else
     {
-      return thresh_find2_( dt );
+      root += dt / div;
     }
-  }
 
-  // set tau to the smallest root above 0
+    div *= 2.0;
 
-  double tau = ( tau1 >= 0 ) ? tau1 : 2 * h_ms;
-  if ( ( tau2 >= 0 ) && ( tau2 < tau ) )
-  {
-    tau = tau2;
+    const double expm1_tau_m = numerics::expm1( -root / P_.tau_m_ );
+
+    const double P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
+
+    const double P21_ex = propagator_32( P_.tau_syn_ex_, P_.tau_m_, P_.c_m_, root );
+    const double P21_in = propagator_32( P_.tau_syn_in_, P_.tau_m_, P_.c_m_, root );
+
+    V_m_root = P20 * ( P_.I_e_ + V_.y_input_before_ ) + P21_ex * V_.I_ex_before_
+      + P21_in * V_.I_in_before_ + expm1_tau_m * V_.V_m_before_ + V_.V_m_before_;
   }
-  if ( ( tau3 >= 0 ) && ( tau3 < tau ) )
-  {
-    tau = tau3;
-  }
-  return ( tau <= V_.h_ms_ ) ? tau : thresh_find2_( dt );
+  return root;
 }

@@ -75,7 +75,7 @@ On all other virtual processes, no object is created. Proxies ensure the id
 of the real node on a given VP is kept free.
 
 The virtual process `idVP` on which a neuron with global id `idNode` is
-allocated is given by :math:`idVP = idNode %NVP`, where `NVP` is the total
+allocated is given by :math:`id_{vp} = gid_{node} %N_{vp}`, where :math:`N_{vp}` is the total
 number of virtual processes in the simulation.
 
 Device Distribution

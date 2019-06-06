@@ -1,4 +1,4 @@
-Current-based models
+Neuron models with current-based synapses
 ================================
 
 .. doxygengroup:: psc

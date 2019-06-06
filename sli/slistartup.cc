@@ -414,7 +414,8 @@ SLIStartup::init( SLIInterpreter* i )
   assert( statusdict.valid() );
 
   statusdict->insert_move( argv_name, targs );
-  statusdict->insert( version_name, Token( new StringDatum( NEST_VERSION_STRING ) ) );
+  statusdict->insert(
+    version_name, Token( new StringDatum( NEST_VERSION_STRING ) ) );
   statusdict->insert(
     exitcode_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
   statusdict->insert( prgbuilt_name,

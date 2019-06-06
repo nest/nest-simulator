@@ -110,7 +110,7 @@ other parameter of a node using ``SetStatus``.
 
  *  *local* (boolean): indicating if the node exists on the local process or not
  *  *thread* (integer): id of the local thread the node is assigned to
- *  *vp* (integer): id of the virtual process the node is assigned to
+ *  *vp* (integer): id of the virtual process the node is assigned to (denoted :math:`id_{vp}` here)
 
 
 Spike exchange and synapse update

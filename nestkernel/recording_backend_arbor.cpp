@@ -277,15 +277,17 @@ nest::RecordingBackendArbor::clear( const nest::RecordingDevice& )
 }
 
 void
-nest::RecordingBackendArbor::set_device_status( const nest::RecordingDevice& device,
-        const DictionaryDatum& params_dictionary )
+nest::RecordingBackendArbor::set_device_status(
+  const nest::RecordingDevice& device,
+  const DictionaryDatum& params_dictionary )
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendArbor::get_device_status( const nest::RecordingDevice& device,
-        DictionaryDatum& params_dictionary ) const
+nest::RecordingBackendArbor::get_device_status(
+  const nest::RecordingDevice& device,
+  DictionaryDatum& params_dictionary ) const
 {
   // nothing to do
 }

@@ -44,22 +44,23 @@ class Event;
  * with which `RecordingDevice`s can be enrolled for recording and
  * which they can use to write their data.
  *
- * All recording backends are registered in the pre_run_hook() function 
+ * All recording backends are registered in the pre_run_hook() function
  * of the IOManager by inserting an instance of each of them into a std::map
  * indexed by the name of the backend. A user level call to the NEST Simulate
- * function internally executes the sequence Prepare → Run → Cleanup. 
+ * function internally executes the sequence Prepare → Run → Cleanup.
  * During Prepare, the pre_run_hook() function of each backend is called by the
  * IOManager. This gives the backend an opportunity to prepare data structures
  * for the upcoming simulation. The user level function Run runs the simulation
  * main loop and in every cycle updates all nodes and calls the function
  * IOManager::synchronize(), which in turn calls all backends’ synchronize()
- * function. During the simulation cycles, the recording devices might call 
- * the write() function of the IOManager. These calls are forwarded to all 
+ * function. During the simulation cycles, the recording devices might call
+ * the write() function of the IOManager. These calls are forwarded to all
  * backends.At the end of Run the IOManager calls the post_run_hook() function
  * of every backend. Cleanup on the user level finally calls the cleanup()
  * function of all backends.
  *
- * Backend functions have to return as soon as possible if they have nothing to do.
+ * Backend functions have to return as soon as possible if they have nothing to
+ *do.
 */
 
 class RecordingBackend
@@ -122,19 +123,19 @@ public:
    */
   virtual void prepare() = 0;
 
-   /**
-   * Clean up the backend at the end of a user level call to the NEST Simulate
-   * function.
-   *
-   * This function is called by `SimulationManager::cleanup()` and allows the
-   * backend to close open files or network connections or take similar action.
-   *
-   * @ingroup NESTio
-   */
+  /**
+  * Clean up the backend at the end of a user level call to the NEST Simulate
+  * function.
+  *
+  * This function is called by `SimulationManager::cleanup()` and allows the
+  * backend to close open files or network connections or take similar action.
+  *
+  * @ingroup NESTio
+  */
   virtual void cleanup() = 0;
 
   /**
-   * Initialize global backend-specific data structures. 
+   * Initialize global backend-specific data structures.
 
    * This function is called on each backend on simulator startup as well as
    * upon changes in the number of threads. It is also called within Prepare.
@@ -142,44 +143,44 @@ public:
    * the backend can also re-structure its global data-structures accordingly.
    *
    * @see post_run_hook()
-   * 
+   *
    * @ingroup NESTio
    */
   virtual void pre_run_hook() = 0;
 
-   /**
-   * Clean up the backend at the end of a Run.
-   *
-   * This is called right before `SimulationManager::run()` terminates. It
-   * allows the backend to flush open files, write remaining data to the
-   * screen, or perform similar operations that make sure that the user
-   * has access to all data from the previous simulation run.
-   *
-   * @see pre_run_hook()
-   *
-   * @ingroup NESTio
-   */
+  /**
+  * Clean up the backend at the end of a Run.
+  *
+  * This is called right before `SimulationManager::run()` terminates. It
+  * allows the backend to flush open files, write remaining data to the
+  * screen, or perform similar operations that make sure that the user
+  * has access to all data from the previous simulation run.
+  *
+  * @see pre_run_hook()
+  *
+  * @ingroup NESTio
+  */
   virtual void post_run_hook() = 0;
- 
-   /**
-   * Synchronize backends at the end of each simulation cycle.
-   * 
-   * This is called once per simulation cycle after all nodes have been
-   * updated. Backends which record data collectively in a thread- or 
-   * MPI-parallel manner can implement backend-specific synchronization
-   * tasks here.
-   *
-   * @ingroup NESTio
-   */
+
+  /**
+  * Synchronize backends at the end of each simulation cycle.
+  *
+  * This is called once per simulation cycle after all nodes have been
+  * updated. Backends which record data collectively in a thread- or
+  * MPI-parallel manner can implement backend-specific synchronization
+  * tasks here.
+  *
+  * @ingroup NESTio
+  */
   virtual void synchronize() = 0;
 
   /**
    * Discard all recorded data.
    *
    * Called when the user sets the property
-   * n_events on @p device to 0. This function only needs to be 
+   * n_events on @p device to 0. This function only needs to be
    * implemented by backends which store data of devices in memory.
-   * 
+   *
    * @param device the RecordingDevice to be cleared
    *
    * @ingroup NESTio
@@ -195,7 +196,7 @@ public:
    * is not enrolled with the backend.
    *
    * @param device the RecordingDevice, backend-specific channel to write to
-   * @param event the event 
+   * @param event the event
    * @param double_values vector of double valued to be written
    * @param long_values vector of long values to be written
    *
@@ -227,7 +228,7 @@ public:
    * @see set_status()
    *
    * @ingroup NESTio
-   */  
+   */
   virtual void get_status( DictionaryDatum& params_dictionary ) const = 0;
 
   /**
@@ -245,7 +246,7 @@ public:
     const DictionaryDatum& params_dictionary ) = 0;
 
   /**
-   * Return the per-device status of the given recording device by 
+   * Return the per-device status of the given recording device by
    * writing it to the given params dictionary.
    *
    * @param device the recording device for which the status is returned

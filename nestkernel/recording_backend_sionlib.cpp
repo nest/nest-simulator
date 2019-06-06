@@ -676,15 +676,17 @@ nest::RecordingBackendSIONlib::clear( const nest::RecordingDevice& device )
 }
 
 void
-nest::RecordingBackendSIONlib::set_device_status( const nest::RecordingDevice& device,
-                                                  const DictionaryDatum& params_dictionary )
+nest::RecordingBackendSIONlib::set_device_status(
+  const nest::RecordingDevice& device,
+  const DictionaryDatum& params_dictionary )
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendSIONlib::get_device_status( const nest::RecordingDevice& device,
-                                                  DictionaryDatum& params_dictionary ) const
+nest::RecordingBackendSIONlib::get_device_status(
+  const nest::RecordingDevice& device,
+  DictionaryDatum& params_dictionary ) const
 {
   // nothing to do
 }

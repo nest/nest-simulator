@@ -171,16 +171,14 @@ nest::RecordingBackendSocket::clear( const RecordingDevice& )
 }
 
 void
-nest::RecordingBackendSocket::set_device_status(
-  const RecordingDevice& device,
+nest::RecordingBackendSocket::set_device_status( const RecordingDevice& device,
   const DictionaryDatum& d )
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendSocket::get_device_status(
-  const RecordingDevice& device,
+nest::RecordingBackendSocket::get_device_status( const RecordingDevice& device,
   DictionaryDatum& d ) const
 {
   // nothing to do

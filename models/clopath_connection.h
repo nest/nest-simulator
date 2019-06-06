@@ -41,6 +41,10 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup stdp
+@ingroup clopath_s
+
 Name: clopath_synapse - Synapse type for voltage-based STDP after Clopath.
 
 Description:
@@ -57,9 +61,13 @@ hh_psc_alpha_clopath.
 
 Parameters:
 
-tau_x    double - Time constant of the trace of the presynaptic spike train.
-Wmax     double - Maximum allowed weight.
-Wmin     double - Minimum allowed weight.
+\verbatim embed:rst
+=======  ======  ==========================================================
+tau_x    ms      Time constant of the trace of the presynaptic spike train
+Wmax     real    Maximum allowed weight
+Wmin     real    Minimum allowed weight
+=======  ======  ==========================================================
+\endverbatim
 
 Other parameters like the amplitudes for long-term potentiation (LTP) and
 depression (LTD) are stored in in the neuron models that are compatible with the
@@ -69,15 +77,16 @@ Transmits: SpikeEvent
 
 References:
 
-[1] Clopath et al. (2010) Connectivity reflects coding:
-    a model of voltage-based STDP with homeostasis.
-    Nature Neuroscience 13:3, 344--352
-[2] Clopath and Gerstner (2010) Voltage and spike timing interact
-    in STDP – a unified model. Front. Synaptic Neurosci. 2:25
-    doi: 10.3389/fnsyn.2010.00025
-[3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
-    https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
-
+\verbatim embed:rst
+.. [1] Clopath et al. (2010). Connectivity reflects coding:
+       a model of voltage-based STDP with homeostasis.
+       Nature Neuroscience 13:3, 344--352. DOI: https://doi.org/10.1038/nn.2479
+.. [2] Clopath and Gerstner (2010). Voltage and spike timing interact
+       in STDP – a unified model. Frontiers in Synaptic Neuroscience 2:25.
+       DOI: https://doi.org/10.3389/fnsyn.2010.00025
+.. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
+       https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
+\endverbatim
 Authors: Jonas Stapmanns, David Dahmen, Jan Hahne
 
 SeeAlso: stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath

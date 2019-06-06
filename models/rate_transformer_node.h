@@ -45,6 +45,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup rate
+
 Name: rate_transformer_node - Rate neuron that sums up incoming rates
                 and applies a nonlinearity specified via the template.
 
@@ -75,8 +78,10 @@ Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
 Parameters:
 
-Only the parameter linear_summation and the parameters from the
-class Nonlinearities can be set in the status dictionary.
+Only the parameter
+- linear_summation
+and the parameters from the class Nonlinearities can be set in the
+status dictionary.
 
 Author: Mario Senden, Jan Hahne, Jannis Schuecker
 

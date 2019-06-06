@@ -1,4 +1,4 @@
-Hill Tononi models
+Hill-Tononi models
 ====================
 
 .. doxygengroup:: ht

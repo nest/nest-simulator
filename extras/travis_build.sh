@@ -56,6 +56,9 @@ if [ "$xPYTHON" = "1" ] ; then
    elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.4.4/include/python3.4m/"
    fi
+   if [[ $OSTYPE == darwin* ]]; then
+      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/libpython2.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python@2/2.7.16/Frameworks/Python.framework/Versions/2.7/include/python2.7"
+   fi
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
 fi
@@ -102,11 +105,23 @@ else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
 
-
+if [[ $OSTYPE == darwin* ]]; then
+    export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
+    export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
+    CONFIGURE_BOOST="-Dwith-boost=OFF"
+else
+    CONFIGURE_BOOST="-Dwith-boost=ON"
+fi
+ 
 NEST_VPATH=build
 NEST_RESULT=result
-NEST_RESULT=$(readlink -f $NEST_RESULT)
+if [ "$(uname -s)" = 'Linux' ]; then
+    NEST_RESULT=$(readlink -f $NEST_RESULT)
+else
+    NEST_RESULT=$(greadlink -f $NEST_RESULT)
+fi
 
+echo $NEST_VPATH
 mkdir "$NEST_VPATH" "$NEST_RESULT"
 mkdir "$NEST_VPATH/reports"
 
@@ -213,6 +228,11 @@ fi  # End of Static code analysis.
 
 cd "$NEST_VPATH"
 cp ../examples/sli/nestrc.sli ~/.nestrc
+# Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
+# Not having this in place leads to a "not enough slots available" error.
+if [[ "$OSTYPE" == "darwin"* ]] ; then
+    sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
+fi
 
 echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -220,20 +240,21 @@ echo "+               C O N F I G U R E   N E S T   B U I L D                   
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "MSGBLD0230: Configuring CMake."
 cmake \
-  -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
-  -Dwith-optimize=ON \
-  -Dwith-warning=ON \
-  -Dwith-boost=ON \
-  $CONFIGURE_THREADING \
-  $CONFIGURE_MPI \
-  $CONFIGURE_PYTHON \
-  $CONFIGURE_MUSIC \
-  $CONFIGURE_GSL \
-  $CONFIGURE_LTDL \
-  $CONFIGURE_READLINE \
-  $CONFIGURE_SIONLIB \
-  $CONFIGURE_LIBNEUROSIM \
-  ..
+    -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
+    -Dwith-optimize=ON \
+    -Dwith-warning=ON \
+    $CONFIGURE_BOOST \
+    $CONFIGURE_THREADING \
+    $CONFIGURE_MPI \
+    $CONFIGURE_PYTHON \
+    $CONFIGURE_MUSIC \
+    $CONFIGURE_GSL \
+    $CONFIGURE_LTDL \
+    $CONFIGURE_READLINE \
+    $CONFIGURE_SIONLIB \
+    $CONFIGURE_LIBNEUROSIM \
+    ..
+
 echo "MSGBLD0240: CMake configure completed."
 
 echo

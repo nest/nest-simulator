@@ -35,6 +35,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup generator
+
 Name: spike_dilutor - repeats incoming spikes with a certain probability.
 
 Description:
@@ -50,7 +53,12 @@ and spikes are collected only from local sources.
 Parameters:
 
 The following parameters appear in the element's status dictionary:
-p_copy double - Copy probability
+
+\verbatim embed:rst
+======== ======  ================
+ p_copy  real    Copy probability
+======== ======  ================
+ \endverbatim
 
 Sends: SpikeEvent
 

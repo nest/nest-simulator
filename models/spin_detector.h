@@ -38,6 +38,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup detector
+
 Name: spin_detector - Device for detecting binary states in neurons.
 
 Description:
@@ -83,7 +86,6 @@ SeeAlso: spike_detector, Device, RecordingDevice
  * spikes via its handle(SpikeEvent&) method, decodes the state, and
  * stores them via its RecordingDevice.
  *
- * @ingroup Devices
  */
 
 class spin_detector : public RecordingDevice

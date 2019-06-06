@@ -33,6 +33,7 @@ stages:
    - MPI-Threading-Python
    - Python-Full-build
    - GCC8Clang7
+   - OsX
 
 # list of build stages to run. Stages with the same name get run in parallel.
 
@@ -68,7 +69,12 @@ jobs:
     - stage: GCC8Clang7
       language: cpp
       env: MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
-
+    - stage: OsX
+      os: osx
+      osx_image: xcode10.2
+      language: generic
+      env: xTHREADING=1 xMPI=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # Without MUSIC, MPI and Libneurosim
+    
 #https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
 addons:
    apt:
@@ -86,7 +92,6 @@ addons:
      - libncurses5-dev 
      - libgsl0-dev
      - python-all-dev
-     - python-numpy
      - ipython
      - pkg-config
      - openmpi-bin
@@ -124,6 +129,7 @@ before_install:
    - echo $PATH
   # Upgrade pip and setuptools
    - if [[ $TRAVIS_BUILD_STAGE_NAME == "Gcc8clang7" ]]; then pyenv global 3.6.3; fi
+   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew --version; brew update; brew tap brewsci/science; brew tap brewsci/bio; brew install coreutils gsl open-mpi automake autoconf libtool; fi
    - pip install -U pip
    - pip install -U setuptools
   
@@ -132,6 +138,7 @@ before_install:
   # terminaltables is required by parse_travis_log.py to create
   # the build summary.
    - pip install cython scipy matplotlib terminaltables
+   - pip install numpy==1.13.3
     
 install:
    - which cython
@@ -139,9 +146,8 @@ install:
    - which python
    - python --version
    - which pip
-   - which nosetests
-   - nosetests --version
-   - nosetests --plugins
+   - pip list
+   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then which nosetests; nosetests --version; nosetests --plugins; fi
    - which cmake
    - cmake --version
    - echo ${CC}

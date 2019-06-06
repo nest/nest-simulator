@@ -38,14 +38,15 @@
 
 #include "recording_backend_sionlib.h"
 
-const unsigned int nest::RecordingBackendSIONlib::SIONLIB_REC_BACKEND_VERSION = 2;
+const unsigned int nest::RecordingBackendSIONlib::SIONLIB_REC_BACKEND_VERSION =
+  2;
 const unsigned int nest::RecordingBackendSIONlib::DEV_NAME_BUFFERSIZE = 32;
 const unsigned int nest::RecordingBackendSIONlib::DEV_LABEL_BUFFERSIZE = 32;
 const unsigned int nest::RecordingBackendSIONlib::VALUE_NAME_BUFFERSIZE = 16;
 const unsigned int nest::RecordingBackendSIONlib::NEST_VERSION_BUFFERSIZE = 128;
 
 nest::RecordingBackendSIONlib::RecordingBackendSIONlib()
- : files_opened_( false )
+  : files_opened_( false )
 {
 }
 
@@ -63,11 +64,11 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device,
   const thread gid = device.get_gid();
 
   device_map::value_type::iterator device_it = devices_[ t ].find( gid );
-  if ( device_it  != devices_[ t ].end() )
+  if ( device_it != devices_[ t ].end() )
   {
     devices_[ t ].erase( device_it );
   }
-  
+
   DeviceEntry entry( device );
   DeviceInfo& info = entry.info;
 
@@ -81,12 +82,12 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device,
   info.t_stop = device.get_stop().get_steps();
 
   info.double_value_names.reserve( double_value_names.size() );
-  for ( auto& val: double_value_names )
+  for ( auto& val : double_value_names )
   {
     info.double_value_names.push_back( val.toString() );
   }
   info.long_value_names.reserve( long_value_names.size() );
-  for ( auto& val: long_value_names )
+  for ( auto& val : long_value_names )
   {
     info.long_value_names.push_back( val.toString() );
   }
@@ -97,11 +98,11 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendSIONlib::initialize()
+nest::RecordingBackendSIONlib::pre_run_hook()
 {
   device_map devices( kernel().vp_manager.get_num_threads() );
   devices_.swap( devices );
-}    
+}
 
 void
 nest::RecordingBackendSIONlib::open_files_()
@@ -110,11 +111,11 @@ nest::RecordingBackendSIONlib::open_files_()
   {
     return;
   }
-    
+
   local_comm_ = MPI_COMM_NULL;
 #ifdef BG_MULTIFILE
-  // MPIX calls not thread-safe; use only master thread here 
-  // (omp single may be problematic as well)
+// MPIX calls not thread-safe; use only master thread here
+// (omp single may be problematic as well)
 #pragma omp master
   {
     MPIX_Pset_same_comm_create( &local_comm_ );
@@ -129,7 +130,8 @@ nest::RecordingBackendSIONlib::open_files_()
   // section
   WrappedThreadException* we = NULL;
 
-  // This code is executed in a parallel region (opened in NodeManager::prepare_nodes())!
+  // This code is executed in a parallel region (opened in
+  // NodeManager::prepare_nodes())!
   const thread t = kernel().vp_manager.get_thread_id();
   const thread task = kernel().vp_manager.thread_to_vp( t );
   if ( !task )
@@ -157,7 +159,8 @@ nest::RecordingBackendSIONlib::open_files_()
       std::string msg = String::compose(
         "The device file '%1' exists already and will not be overwritten. "
         "Please change data_path, or data_prefix, or set /overwrite_files "
-        "to true in the root node.", filename );
+        "to true in the root node.",
+        filename );
       LOG( M_ERROR, "RecordingBackendSIONlib::open_files_()", msg );
       throw IOError();
     }
@@ -209,7 +212,7 @@ nest::RecordingBackendSIONlib::open_files_()
 }
 
 void
-nest::RecordingBackendSIONlib::finalize()
+nest::RecordingBackendSIONlib::cleanup()
 {
   close_files_();
 }
@@ -241,14 +244,16 @@ nest::RecordingBackendSIONlib::close_files_()
 
 #pragma omp master
     {
-      // loop over devices and determine number of recorded data points per device
+      // loop over devices and determine number of recorded data points per
+      // device
       device_map::value_type::iterator it;
       for ( it = devices_[ t ].begin(); it != devices_[ t ].end(); ++it )
       {
         const index gid = it->first;
         sion_uint64 n_rec = 0;
 
-	// accumulate number of locally recorded data points over all local threads
+        // accumulate number of locally recorded data points over all local
+        // threads
         device_map::iterator jj;
         for ( jj = devices_.begin(); jj != devices_.end(); ++jj )
         {
@@ -292,18 +297,20 @@ nest::RecordingBackendSIONlib::close_files_()
       sion_fwrite( &resolution, sizeof( double ), 1, file.sid );
 
       // write version of the sionlib recording backend into container file
-      sion_fwrite( &SIONLIB_REC_BACKEND_VERSION, sizeof( sion_uint32 ), 1, file.sid );
+      sion_fwrite(
+        &SIONLIB_REC_BACKEND_VERSION, sizeof( sion_uint32 ), 1, file.sid );
 
       // get nest version info from the SLI interpreter's statusdict
       SLIInterpreter& i = get_engine();
-      const Token& rcsinfo_token = i.statusdict->lookup2( Name("rcsinfo") );
+      const Token& rcsinfo_token = i.statusdict->lookup2( Name( "rcsinfo" ) );
       std::string rcsinfo = getValue< std::string >( rcsinfo_token );
 
       // write nest version into sionlib container file
-      char rcsinfo_buffer[NEST_VERSION_BUFFERSIZE];
-      strncpy( rcsinfo_buffer, rcsinfo.c_str(), NEST_VERSION_BUFFERSIZE-1 );
-      rcsinfo_buffer[NEST_VERSION_BUFFERSIZE-1] = '\0';
-      sion_fwrite( rcsinfo_buffer, sizeof( char ), NEST_VERSION_BUFFERSIZE, file.sid );
+      char rcsinfo_buffer[ NEST_VERSION_BUFFERSIZE ];
+      strncpy( rcsinfo_buffer, rcsinfo.c_str(), NEST_VERSION_BUFFERSIZE - 1 );
+      rcsinfo_buffer[ NEST_VERSION_BUFFERSIZE - 1 ] = '\0';
+      sion_fwrite(
+        rcsinfo_buffer, sizeof( char ), NEST_VERSION_BUFFERSIZE, file.sid );
 
       // write device info
       const sion_uint64 n_dev =
@@ -331,13 +338,13 @@ nest::RecordingBackendSIONlib::close_files_()
         sion_fwrite( &type, sizeof( sion_uint32 ), 1, file.sid );
 
         char name[ DEV_NAME_BUFFERSIZE ];
-        strncpy( name, dev_info.name.c_str(), DEV_NAME_BUFFERSIZE-1 );
-        name[DEV_NAME_BUFFERSIZE-1] = '\0';
+        strncpy( name, dev_info.name.c_str(), DEV_NAME_BUFFERSIZE - 1 );
+        name[ DEV_NAME_BUFFERSIZE - 1 ] = '\0';
         sion_fwrite( &name, sizeof( char ), DEV_NAME_BUFFERSIZE, file.sid );
 
         char label[ DEV_NAME_BUFFERSIZE ];
-        strncpy( label, dev_info.label.c_str(), DEV_NAME_BUFFERSIZE-1 );
-        label[DEV_NAME_BUFFERSIZE-1] = '\0';
+        strncpy( label, dev_info.label.c_str(), DEV_NAME_BUFFERSIZE - 1 );
+        label[ DEV_NAME_BUFFERSIZE - 1 ] = '\0';
         sion_fwrite( &label, sizeof( char ), DEV_NAME_BUFFERSIZE, file.sid );
 
         origin = static_cast< sion_int64 >( dev_info.origin );
@@ -352,23 +359,25 @@ nest::RecordingBackendSIONlib::close_files_()
 
         // potentially dangerous downcasting from size_t assuming that we do
         // not have that many observables
-        double_n_val = static_cast< sion_uint32 >( dev_info.double_value_names.size() );
+        double_n_val =
+          static_cast< sion_uint32 >( dev_info.double_value_names.size() );
         sion_fwrite( &double_n_val, sizeof( sion_uint32 ), 1, file.sid );
-        long_n_val = static_cast< sion_uint32 >( dev_info.long_value_names.size() );
+        long_n_val =
+          static_cast< sion_uint32 >( dev_info.long_value_names.size() );
         sion_fwrite( &long_n_val, sizeof( sion_uint32 ), 1, file.sid );
 
-        for ( const auto& val: dev_info.double_value_names )
+        for ( const auto& val : dev_info.double_value_names )
         {
           char name[ VALUE_NAME_BUFFERSIZE ];
-          strncpy( name, val.c_str(), VALUE_NAME_BUFFERSIZE-1 );
-          name[VALUE_NAME_BUFFERSIZE-1] = '\0';
+          strncpy( name, val.c_str(), VALUE_NAME_BUFFERSIZE - 1 );
+          name[ VALUE_NAME_BUFFERSIZE - 1 ] = '\0';
           sion_fwrite( &name, sizeof( char ), VALUE_NAME_BUFFERSIZE, file.sid );
         }
-        for ( const auto& val: dev_info.long_value_names )
+        for ( const auto& val : dev_info.long_value_names )
         {
           char name[ VALUE_NAME_BUFFERSIZE ];
-          strncpy( name, val.c_str(), VALUE_NAME_BUFFERSIZE-1 );
-          name[VALUE_NAME_BUFFERSIZE-1] = '\0';
+          strncpy( name, val.c_str(), VALUE_NAME_BUFFERSIZE - 1 );
+          name[ VALUE_NAME_BUFFERSIZE - 1 ] = '\0';
           sion_fwrite( &name, sizeof( char ), VALUE_NAME_BUFFERSIZE, file.sid );
         }
       }
@@ -415,15 +424,17 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
   {
     return;
   }
-    
+
   FileEntry& file = files_[ device.get_vp() ];
   SIONBuffer& buffer = file.buffer;
   DeviceInfo& device_info = devices_[ t ].find( device_gid )->second.info;
 
   assert( device_info.double_value_names.size() == double_values.size() );
-  const sion_uint32 double_n_values = static_cast< sion_uint32 >( double_values.size() );
+  const sion_uint32 double_n_values =
+    static_cast< sion_uint32 >( double_values.size() );
   assert( device_info.long_value_names.size() == long_values.size() );
-  const sion_uint32 long_n_values = static_cast< sion_uint32 >( long_values.size() );
+  const sion_uint32 long_n_values =
+    static_cast< sion_uint32 >( long_values.size() );
 
   device_info.n_rec++;
 
@@ -431,22 +442,25 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
   // double values + number of long values + one double per double value +
   // one int64 per long value
   const unsigned int required_space = 2 * sizeof( sion_uint64 )
-      + sizeof( sion_int64 ) + sizeof( double ) + 2 * sizeof( sion_uint32 )
-      + double_n_values * sizeof( double ) + long_n_values * sizeof( sion_int64 );
+    + sizeof( sion_int64 ) + sizeof( double ) + 2 * sizeof( sion_uint32 )
+    + double_n_values * sizeof( double ) + long_n_values * sizeof( sion_int64 );
 
-  const sion_uint64 sender_gid = static_cast< sion_uint64 >( event.get_sender_gid() );
-  const sion_int64 step = static_cast< sion_int64 >( event.get_stamp().get_steps() );
+  const sion_uint64 sender_gid =
+    static_cast< sion_uint64 >( event.get_sender_gid() );
+  const sion_int64 step =
+    static_cast< sion_int64 >( event.get_stamp().get_steps() );
   const double offset = event.get_offset();
-  
+
   if ( P_.sion_collective_ )
   {
     buffer.ensure_space( required_space );
-    buffer << device_gid << sender_gid << step << offset << double_n_values << long_n_values;
-    for (const auto& val: double_values )
+    buffer << device_gid << sender_gid << step << offset << double_n_values
+           << long_n_values;
+    for ( const auto& val : double_values )
     {
       buffer << val;
     }
-    for (const auto& val: long_values )
+    for ( const auto& val : long_values )
     {
       buffer << val;
     }
@@ -461,12 +475,13 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
       buffer.clear();
     }
 
-    buffer << device_gid << sender_gid << step << offset << double_n_values << long_n_values;
-    for (const auto& val: double_values )
+    buffer << device_gid << sender_gid << step << offset << double_n_values
+           << long_n_values;
+    for ( const auto& val : double_values )
     {
       buffer << val;
     }
-    for (const auto& val: long_values )
+    for ( const auto& val : long_values )
     {
       buffer << val;
     }
@@ -486,11 +501,11 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
     sion_fwrite( &double_n_values, sizeof( sion_uint32 ), 1, file.sid );
     sion_fwrite( &long_n_values, sizeof( sion_uint32 ), 1, file.sid );
 
-    for (const auto& val: double_values )
+    for ( const auto& val : double_values )
     {
       sion_fwrite( &val, sizeof( double ), 1, file.sid );
     }
-    for (const auto& val: long_values )
+    for ( const auto& val : long_values )
     {
       sion_fwrite( &val, sizeof( sion_int64 ), 1, file.sid );
     }
@@ -570,7 +585,9 @@ nest::RecordingBackendSIONlib::SIONBuffer::write( const char* v, size_t n )
   {
     std::string msg = String::compose(
       "SIONBuffer: buffer overflow: ptr=%1, n=%2, max_size=%3.",
-     ptr_, n, max_size_ );
+      ptr_,
+      n,
+      max_size_ );
     LOG( M_ERROR, "RecordingBackendSIONlib::write()", msg );
     throw IOError();
   }

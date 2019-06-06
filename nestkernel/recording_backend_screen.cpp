@@ -30,8 +30,8 @@
 
 void
 nest::RecordingBackendScreen::enroll( const RecordingDevice& device,
-				      const std::vector< Name >&,
-				      const std::vector< Name >& )
+  const std::vector< Name >&,
+  const std::vector< Name >& )
 {
   const index gid = device.get_gid();
   const thread t = device.get_thread();
@@ -40,14 +40,14 @@ nest::RecordingBackendScreen::enroll( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendScreen::initialize()
+nest::RecordingBackendScreen::pre_run_hook()
 {
   enrollment_map tmp( kernel().vp_manager.get_num_threads() );
   enrolled_devices_.swap( tmp );
 }
 
 void
-nest::RecordingBackendScreen::finalize()
+nest::RecordingBackendScreen::cleanup()
 {
 }
 
@@ -58,9 +58,9 @@ nest::RecordingBackendScreen::synchronize()
 
 void
 nest::RecordingBackendScreen::write( const RecordingDevice& device,
-				     const Event& event,
-				     const std::vector< double >& double_values,
-				     const std::vector< long >& long_values )
+  const Event& event,
+  const std::vector< double >& double_values,
+  const std::vector< long >& long_values )
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
@@ -81,11 +81,11 @@ nest::RecordingBackendScreen::write( const RecordingDevice& device,
     std::cout << sender << "\t";
     if ( device.get_time_in_steps() )
     {
-      std::cout	<< stamp.get_steps() << "\t" << offset;
+      std::cout << stamp.get_steps() << "\t" << offset;
     }
     else
     {
-      std::cout	<< stamp.get_ms() - offset;
+      std::cout << stamp.get_ms() - offset;
     }
     for ( auto& val : double_values )
     {
@@ -99,6 +99,38 @@ nest::RecordingBackendScreen::write( const RecordingDevice& device,
 
     restore_cout_();
   }
+}
+
+void
+nest::RecordingBackendScreen::get_device_status( nest::RecordingDevice const&,
+  lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendScreen::clear( nest::RecordingDevice const& )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendScreen::set_device_status( nest::RecordingDevice const&,
+  lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendScreen::prepare()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendScreen::post_run_hook()
+{
+  // nothing to do
 }
 
 /* ----------------------------------------------------------------

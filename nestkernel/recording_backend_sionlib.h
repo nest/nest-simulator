@@ -49,7 +49,7 @@ public:
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names );
 
-  void finalize();
+  void cleanup();
   void synchronize();
 
   void write( const RecordingDevice& device,
@@ -60,7 +60,7 @@ public:
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
-  void initialize();
+  void pre_run_hook();
   void calibrate();
 
 private:
@@ -164,20 +164,21 @@ private:
   file_map files_;
 
   std::string filename_;
-  MPI_Comm local_comm_;     // single copy of local MPI communicator
-                            // for all threads using the sionlib
-                            // recording backend in parallel (for broadcasting
-                            // the results of MPIX..(..) in open_files_(..))
+  MPI_Comm local_comm_; // single copy of local MPI communicator
+                        // for all threads using the sionlib
+                        // recording backend in parallel (for broadcasting
+                        // the results of MPIX..(..) in open_files_(..))
 
   double t_start_; // simulation start time for storing
 
   struct Parameters_
   {
     std::string filename_; //!< the file name extension to use, without .
-    bool sion_collective_;  //!< use SIONlib's collective mode.
-    long sion_chunksize_;   //!< the size of SIONlib's buffer.
-    int sion_n_files_;      //!< the number of SIONLIB container files automatically used.
-    long buffer_size_;      //!< the size of the internal buffer.
+    bool sion_collective_; //!< use SIONlib's collective mode.
+    long sion_chunksize_;  //!< the size of SIONlib's buffer.
+    int sion_n_files_; //!< the number of SIONLIB container files automatically
+                       //used.
+    long buffer_size_; //!< the size of the internal buffer.
 
     Parameters_();
 

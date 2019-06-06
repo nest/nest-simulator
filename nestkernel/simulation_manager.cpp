@@ -573,7 +573,7 @@ nest::SimulationManager::run( Time const& t )
 
   call_update_();
 
-  kernel().io_manager.post_run_cleanup();
+  kernel().io_manager.post_run_hook();
 }
 
 void

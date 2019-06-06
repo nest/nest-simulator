@@ -133,7 +133,7 @@ See examples/nest/mc_neuron.py.
 
 Remarks:
 
-This is a prototype for illustration which has undergone only limited 
+This is a prototype for illustration which has undergone only limited
 testing. Details of the implementation and user-interface will likely
 change. USE AT YOUR OWN PERIL!
 

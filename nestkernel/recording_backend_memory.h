@@ -48,7 +48,6 @@ namespace nest
 class RecordingBackendMemory : public RecordingBackend
 {
 public:
-
   /**
    * RecordingBackendMemory constructor.
    * The actual setup is done in initialize().
@@ -61,46 +60,56 @@ public:
   ~RecordingBackendMemory() throw();
 
   virtual void enroll( const RecordingDevice& device,
-		       const std::vector< Name >& double_value_names,
-		       const std::vector< Name >& long_value_names );
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names ) override;
 
   /**
    * Finalize the RecordingBackendMemory after the simulation has finished.
    */
-  void finalize();
+  void cleanup() override;
 
   /**
    * Trivial synchronization function. The RecordingBackendMemory does
    * not need explicit synchronization after each time step.
    */
-  void synchronize();
+  void synchronize() override;
 
   /**
    * Clear the recorded data for the given RecordingDevice.
    */
-  void clear( const RecordingDevice& );
+  void clear( const RecordingDevice& ) override;
 
   virtual void write( const RecordingDevice&,
-		      const Event&,
-		      const std::vector< double >&,
-		      const std::vector< long >& );
+    const Event&,
+    const std::vector< double >&,
+    const std::vector< long >& ) override;
 
   /**
    * Initialize the RecordingBackendMemory during simulation preparation.
    */
-  void initialize();
+  void pre_run_hook() override;
 
   void get_device_status( const RecordingDevice& device,
-			  DictionaryDatum& ) const;
+    DictionaryDatum& ) const override;
 
   void set_device_status( const RecordingDevice& device,
-			  const DictionaryDatum& );
+    const DictionaryDatum& ) override;
+
+
+  void prepare() override;
+
+  void post_run_hook() override;
+
+  void set_status( const DictionaryDatum& ) override;
+
+  void get_status( DictionaryDatum& ) const override;
 
 private:
   class Recordings
   {
   public:
-    Recordings( const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names)
+    Recordings( const std::vector< Name >& double_value_names,
+      const std::vector< Name >& long_value_names )
       : double_value_names_( double_value_names )
       , long_value_names_( long_value_names )
       , time_in_steps_( false )
@@ -110,7 +119,10 @@ private:
     }
 
     void
-    push_back( index sender, const Event& event, const std::vector< double >& double_values, const std::vector< long >& long_values )
+    push_back( index sender,
+      const Event& event,
+      const std::vector< double >& double_values,
+      const std::vector< long >& long_values )
     {
       const Time stamp = event.get_stamp();
       const double offset = event.get_offset();
@@ -126,7 +138,7 @@ private:
       {
         times_ms_.push_back( stamp.get_ms() - offset );
       }
-    
+
       for ( size_t i = 0; i < double_values.size(); ++i )
       {
         double_values_[ i ].push_back( double_values[ i ] );
@@ -144,12 +156,12 @@ private:
 
       if ( not d->known( names::events ) )
       {
-	events = DictionaryDatum( new Dictionary );
-	( *d )[ names::events ] = events;
+        events = DictionaryDatum( new Dictionary );
+        ( *d )[ names::events ] = events;
       }
       else
       {
-	events = getValue< DictionaryDatum >( d, names::events );
+        events = getValue< DictionaryDatum >( d, names::events );
       }
 
       initialize_property_intvector( events, names::senders );
@@ -158,26 +170,27 @@ private:
       if ( time_in_steps_ )
       {
         initialize_property_intvector( events, names::times );
-        append_property( events,  names::times, times_steps_ );
+        append_property( events, names::times, times_steps_ );
 
         initialize_property_doublevector( events, names::offsets );
-        append_property( events,  names::offsets, times_offset_ );
+        append_property( events, names::offsets, times_offset_ );
       }
       else
       {
         initialize_property_doublevector( events, names::times );
-        append_property( events,  names::times, times_ms_ );
+        append_property( events, names::times, times_ms_ );
       }
 
       for ( size_t i = 0; i < double_values_.size(); ++i )
       {
         initialize_property_doublevector( events, double_value_names_[ i ] );
-        append_property( events,  double_value_names_[ i ], double_values_[ i ] );
+        append_property(
+          events, double_value_names_[ i ], double_values_[ i ] );
       }
       for ( size_t i = 0; i < long_values_.size(); ++i )
       {
         initialize_property_intvector( events, long_value_names_[ i ] );
-        append_property( events,  long_value_names_[ i ], long_values_[ i ] );
+        append_property( events, long_value_names_[ i ], long_values_[ i ] );
       }
     }
 
@@ -204,17 +217,17 @@ private:
       {
         long_values_[ i ].clear();
       }
-      
     }
 
   private:
     Recordings();
 
-    std::vector< long > senders_; //!< sender gids of the events
-    std::vector< long > targets_; //!< receiver gids of the events
-    std::vector< double > times_ms_; //!< times of registered events in ms
+    std::vector< long > senders_;     //!< sender gids of the events
+    std::vector< long > targets_;     //!< receiver gids of the events
+    std::vector< double > times_ms_;  //!< times of registered events in ms
     std::vector< long > times_steps_; //!< times of registered events in steps
-    std::vector< double > times_offset_; //!< offsets of registered events if time_in_steps_
+    std::vector< double >
+      times_offset_; //!< offsets of registered events if time_in_steps_
     std::vector< Name > double_value_names_;
     std::vector< Name > long_value_names_;
     std::vector< std::vector< double > > double_values_;

@@ -28,7 +28,7 @@ Both methods can be combined within a simulation.
 
 See `Plesser et al. (2007) <http://dx.doi.org/10.1007/978-3-540-74466-5_71>`__
 for more information on NEST parallelization and be sure to check the
-documentation on `Random numbers in NEST <random-numbers.md>`__.
+documentation on :ref:`Random numbers in NEST <random_numbers>`
 
 
 
@@ -84,8 +84,8 @@ Neurons are assigned to one of the virtual processes in a round-robin fashion.
 On all other virtual processes, no object is created. Proxies ensure the id
 of the real node on a given VP is kept free.
 
-The virtual process `idVP` on which a neuron with global id `idNode` is
-allocated is given by :math:`idVP = idNode %NVP`, where `NVP` is the total
+The virtual process :math:`id_{vp}` on which a neuron with global id :math:`gid_{node}` is
+allocated is given by :math:`id_{vp} = gid_{node} %N_{vp}`, where :math:`N_{vp}` is the total
 number of virtual processes in the simulation.
 
 Device Distribution
@@ -113,6 +113,19 @@ analog recordings from the ``multimeter`` have ``dat`` as file extension.
 The ``label`` and ``file_extension`` of a recording device can be set like any
 other parameter of a node using ``SetStatus``.
 
+<<<<<<< HEAD
+=======
+.. note::
+
+ The status dictionary of each node (i.e. neuron or device) contains
+ three entries that are related to parallel computing:
+
+ *  *local* (boolean): indicating if the node exists on the local process or not
+ *  *thread* (integer): id of the local thread the node is assigned to
+ *  *vp* (integer): id of the virtual process the node is assigned to (denoted :math:`id_{vp}` here)
+
+
+>>>>>>> 591029d62ba3e725576786d34b18c7d202cd9bc8
 Spike exchange and synapse update
 ------------------------------------
 

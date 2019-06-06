@@ -46,7 +46,7 @@ namespace nest
 /** @BeginDocumentation
 Name: iaf_psc_alpha_ps - Leaky integrate-and-fire neuron
 with alpha-shape postsynaptic currents and bisectioning method for
-approximation of threshold crossing..
+approximation of threshold crossing.
 
 .. versionadded:: 2.18
 

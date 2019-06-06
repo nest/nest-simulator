@@ -259,7 +259,6 @@ brunel_params dup using
     /E_detector /spike_detector Create def
     E_detector
     <<
-       /withtime true
        /to_file true
        /label detector_label
     >> SetStatus

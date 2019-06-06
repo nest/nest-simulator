@@ -79,7 +79,7 @@ neuron1
 >> SetStatus
 
 /voltmeter Create /vm Set
-vm << /withtime true  /time_in_steps true /interval h >> SetStatus
+vm << /time_in_steps true /interval h >> SetStatus
 
 [neuron1] [neuron2] 
 << /rule /one_to_one /make_symmetric true >> 

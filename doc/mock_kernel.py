@@ -33,7 +33,7 @@ def has_return(ast_func):
     for node in ast.walk(ast_func):
         if isinstance(node, ast.Return):
             b = True
-    
+
     return b
 
 
@@ -98,12 +98,12 @@ def convert(infile):
                     args = ", ".join([a.arg for a in child.args.args])
 
                 res += "    def {name}({args}):\n".format(name=child.name, args=args)
-            
+
                 if has_return(child):
                     res += "        return MagicMock()\n"
                 else:
                     res += "        pass\n"
-        
+
         res += "\n\n"
 
     return res

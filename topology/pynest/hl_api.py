@@ -702,7 +702,7 @@ def ConnectLayers(pre, post, projections):
         parameters for distance dependency and randomization. Parameters can
         be used to specify the parameters `'kernel'`, `'weights'` and
         `'delays'` of the connection dictionary.
-    nest.GetConnections : Retrieve connections.
+    GetConnections : Retrieve connections.
 
 
     Other parameters
@@ -1460,7 +1460,7 @@ def DumpLayerConnections(layers, synapse_model, outname):
     --------
     DumpLayerNodes : Write layer node positions to file.
     GetPosition : Return the spatial locations of nodes.
-    nest.GetConnections : Return connection identifiers between
+    GetConnections : Return connection identifiers between
         sources and targets
 
 
@@ -1589,7 +1589,7 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     --------
     GetTargetPositions : Obtain positions of targets of a list of sources in a
         given target layer.
-    nest.GetConnections : Return connection identifiers between
+    GetConnections : Return connection identifiers between
         sources and targets
 
 

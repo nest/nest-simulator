@@ -42,7 +42,6 @@ from mock import Mock as MagicMock
 
 source_suffix = ['.rst']
 
-
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -58,6 +57,8 @@ sys.path.insert(0, os.path.abspath(doc_path))
 
 
 # -- Mock pynestkernel ----------------------------------------------------
+#on_rtd = os.environ.get('READTHEDOCS') == 'True'
+#if on_rtd:
 
 from mock_kernel import convert
 
@@ -81,9 +82,6 @@ import pynestkernel_mock
 sys.modules["nest.pynestkernel"] = pynestkernel_mock
 sys.modules["nest.kernel"] = pynestkernel_mock
 
-
-# -- Checking for pandoc --------------------------------------------------
->>>>>>> eaa8fe89... Merge pull request #2 from Silmathoron/fix_pynest_apis2
 
 # -- General configuration ------------------------------------------------
 
@@ -121,14 +119,6 @@ extensions = [
 breathe_projects = {"EXTRACT_MODELS": "./xml/"}
 
 breathe_default_project = "EXTRACT_MODELS"
-# sphinx_gallery_conf = {
-#    'doc_module': ('sphinx_gallery', 'numpy'),
-#    # path to your examples scripts
-#    'examples_dirs': '../pynest/examples',
-#    # path where to save gallery generated examples
-#    'gallery_dirs': 'auto_examples',
-#    'backreferences_dir': False
-# }
 
 subprocess.call('doxygen', shell=True)
 
@@ -217,12 +207,22 @@ github_doc_root = ''
 
 intersphinx_mapping = {'https://docs.python.org/': None}
 
+nitpick_ignore =  [('py:class', 'None'),
+                   ('py:class', 'optional'),
+                   ('py:class', 's'),
+                   ('cpp:identifier', 'CommonSynapseProperties'),
+                   ('cpp:identifier', 'Connection<targetidentifierT>'),
+                   ('cpp:identifier', 'Archiving_Node'),
+                   ('cpp:identifier', 'DeviceNode'),
+                   ('cpp:identifier', 'Node'),
+                   ('cpp:identifier', 'Clopath_Archiving_Node'),
+                   ('cpp:identifier', 'MessageHandler'),
+                   ('cpp:identifer', 'CommonPropertiesHomW') ]
 
 def setup(app):
     app.add_stylesheet('css/custom.css')
     app.add_stylesheet('css/pygments.css')
     app.add_javascript("js/custom.js")
-
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -275,8 +275,6 @@ texinfo_documents = [
 ]
 
 # -- Options for readthedocs ----------------------------------------------
-# on_rtd = os.environ.get('READTHEDOCS') == 'True'
-# if on_rtd:
 #    html_theme = 'alabaster'
 # else:
 #    html_theme = 'nat'

@@ -113,19 +113,7 @@ analog recordings from the ``multimeter`` have ``dat`` as file extension.
 The ``label`` and ``file_extension`` of a recording device can be set like any
 other parameter of a node using ``SetStatus``.
 
-<<<<<<< HEAD
-=======
-.. note::
 
- The status dictionary of each node (i.e. neuron or device) contains
- three entries that are related to parallel computing:
-
- *  *local* (boolean): indicating if the node exists on the local process or not
- *  *thread* (integer): id of the local thread the node is assigned to
- *  *vp* (integer): id of the virtual process the node is assigned to (denoted :math:`id_{vp}` here)
-
-
->>>>>>> 591029d62ba3e725576786d34b18c7d202cd9bc8
 Spike exchange and synapse update
 ------------------------------------
 

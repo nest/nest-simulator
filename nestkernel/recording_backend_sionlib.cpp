@@ -52,7 +52,7 @@ nest::RecordingBackendSIONlib::RecordingBackendSIONlib()
 
 nest::RecordingBackendSIONlib::~RecordingBackendSIONlib() throw()
 {
-  finalize();
+  cleanup();
 }
 
 void
@@ -231,7 +231,7 @@ nest::RecordingBackendSIONlib::close_files_()
     const thread task = kernel().vp_manager.thread_to_vp( t );
 
     assert( ( files_.find( task ) != files_.end() )
-      && "initialize() was not called before calling finalize()" );
+      && "initialize() was not called before calling cleanup()" );
 
     FileEntry& file = files_[ task ];
     SIONBuffer& buffer = file.buffer;
@@ -647,4 +647,44 @@ nest::RecordingBackendSIONlib::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+void
+nest::RecordingBackendSIONlib::get_status( DictionaryDatum& d ) const
+{
+  P_.get( *this, d );
+
+  ( *d )[ names::filename ] = filename_;
+}
+
+void
+nest::RecordingBackendSIONlib::prepare()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSIONlib::post_run_hook()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSIONlib::clear( const nest::RecordingDevice& device )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSIONlib::set_device_status( const nest::RecordingDevice& device,
+                                                  const DictionaryDatum& params_dictionary )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSIONlib::get_device_status( const nest::RecordingDevice& device,
+                                                  DictionaryDatum& params_dictionary ) const
+{
+  // nothing to do
 }

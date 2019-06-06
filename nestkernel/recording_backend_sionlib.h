@@ -47,21 +47,34 @@ public:
 
   void enroll( const RecordingDevice& device,
     const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names );
+    const std::vector< Name >& long_value_names ) override;
 
-  void cleanup();
-  void synchronize();
+  void prepare() override;
+
+  void cleanup() override;
+
+  void synchronize() override;
 
   void write( const RecordingDevice& device,
     const Event& event,
     const std::vector< double >& double_values,
-    const std::vector< long >& long_values );
+    const std::vector< long >& long_values ) override;
 
-  void set_status( const DictionaryDatum& );
-  void get_status( DictionaryDatum& ) const;
+  void set_status( const DictionaryDatum& ) override;
 
-  void pre_run_hook();
-  void calibrate();
+  void get_status( DictionaryDatum& ) const override;
+
+  void pre_run_hook() override;
+
+  void post_run_hook() override;
+
+  void clear( const RecordingDevice& ) override;
+
+  void set_device_status( const RecordingDevice& device,
+                          const DictionaryDatum& params_dictionary ) override;
+
+  void get_device_status( const RecordingDevice& device,
+                          DictionaryDatum& params_dictionary ) const override;
 
 private:
   void open_files_();
@@ -187,14 +200,6 @@ private:
 
   Parameters_ P_;
 };
-
-inline void
-RecordingBackendSIONlib::get_status( DictionaryDatum& d ) const
-{
-  P_.get( *this, d );
-
-  ( *d )[ names::filename ] = filename_;
-}
 
 } // namespace
 

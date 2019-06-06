@@ -1,4 +1,4 @@
-Conductance-based models
+Neuron models with conductance-based synapses
 ================================
 
 .. doxygengroup:: cond

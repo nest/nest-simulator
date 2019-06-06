@@ -217,14 +217,12 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
 
 def _process_spatial_projections(conn_spec, syn_spec):
     allowed_conn_spec_keys = ['mask', 'kernel',
-                              'multapses', 'autapses', 'rule']
+                              'multapses', 'autapses', 'rule', 'indegree', 'outdegree', 'p', 'use_on_source']
     allowed_syn_spec_keys = ['weight', 'delay']
     for key in conn_spec.keys():
         if key not in allowed_conn_spec_keys:
-            raise ValueError("'{}' is not allowed in conn_spec when connecting with mask or kernel".format(key))
-    for key in syn_spec.keys():
-        if key not in allowed_syn_spec_keys:
-            raise ValueError("'{}' is not allowed in syn_spec when connecting with mask or kernel".format(key))
+            raise ValueError(
+                "'{}' is not allowed in conn_spec when connecting with mask or kernel".format(key))
 
     projections = {}
     for key in ['mask', 'kernel']:
@@ -236,6 +234,10 @@ def _process_spatial_projections(conn_spec, syn_spec):
     if 'autapses' in conn_spec:
         projections['allow_autapses'] = conn_spec['autapses']
     if syn_spec is not None:
+        for key in syn_spec.keys():
+            if key not in allowed_syn_spec_keys:
+                raise ValueError(
+                    "'{}' is not allowed in syn_spec when connecting with mask or kernel".format(key))
         # TODO: change topology names of weights, delays to be consistent
         if 'weight' in syn_spec:
             projections['weights'] = syn_spec['weight']
@@ -442,7 +444,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     # If mask or kernel is specified, a different connection method is used.
     if ('mask' in processed_conn_spec or
-            'distribution' in processed_conn_spec):
+            'kernel' in processed_conn_spec):
         # Check that pre and post are layers
         if pre.spatial is None:
             raise TypeError(

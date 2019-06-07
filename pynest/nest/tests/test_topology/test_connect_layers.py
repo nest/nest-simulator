@@ -25,6 +25,7 @@ Tests of Connect with layers.
 
 import unittest
 import nest
+import numpy as np
 
 
 class ConnectLayersTestCase(unittest.TestCase):
@@ -192,7 +193,6 @@ class ConnectLayersTestCase(unittest.TestCase):
             with self.assertRaises(nest.kernel.NESTError):
                 nest.Connect(self.layer, self.layer, conn_spec)
 
-    # TODO: weights and delays as Parameter into ConnectLayers
     def test_connect_layers_weights(self):
         """Connecting layers with specified weights"""
         conn_spec = {
@@ -201,10 +201,14 @@ class ConnectLayersTestCase(unittest.TestCase):
             'kernel': 0.1
         }
         syn_spec = {
-            'weight': nest.random.uniform()
+            'weight': nest.random.uniform(min=0.5)
         }
         nest.Connect(self.layer, self.layer, conn_spec, syn_spec)
         conns = nest.GetConnections()
+        conn_weights = np.array(conns.get('weight'))
+        self.assertTrue(len(np.unique(conn_weights)) > 1)
+        self.assertTrue((conn_weights >= 0.5).all())
+        self.assertTrue((conn_weights <= 1.0).all())
 
     def test_connect_layers_delays(self):
         """Connecting layers with specified delays"""
@@ -214,10 +218,14 @@ class ConnectLayersTestCase(unittest.TestCase):
             'kernel': 0.1
         }
         syn_spec = {
-            'delay': nest.random.uniform()
+            'delay': nest.random.uniform(min=0.5)
         }
         nest.Connect(self.layer, self.layer, conn_spec, syn_spec)
         conns = nest.GetConnections()
+        conn_delays = np.array(conns.get('delay'))
+        self.assertTrue(len(np.unique(conn_delays)) > 1)
+        self.assertTrue((conn_delays >= 0.5).all())
+        self.assertTrue((conn_delays <= 1.0).all())
 
 
 def suite():

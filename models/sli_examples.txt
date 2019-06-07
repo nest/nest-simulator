@@ -1,0 +1,18 @@
+cont_delay_connection.h:50:0 << /resolution 1.0 >> SetStatus
+correlation_detector.h:128:s1 << /spike_times [ 1.0 1.5 2.7 4.0 5.1 ] >> SetStatus
+correlomatrix_detector.h:128:   s1 << /spike_times [ 1.0 1.5 2.7 4.0 5.1 ] >> SetStatus
+correlospinmatrix_detector.h:115:   csd << /N_channels 3 /tau_max 10. /delta_tau 1.0 >> SetStatus
+dc_generator.h:61:dc_gen << /amplitude 1500. >> SetStatus
+gap_junction.h:47:i j << /rule /one_to_one /make_symmetric true >> /gap_junction Connect
+ht_neuron.h:236:    double V_act_NMDA;     // mV, inactive for V << Vact, inflection of sigmoid
+inhomogeneous_poisson_generator.h:70:sc << /rate_times [0.2 0.5] /rate_values [2.0 4.0] >> SetStatus
+multimeter.h:114:SLI ] mm << /interval 0.5 /record_from [/V_m /g_ex /g_in] >> SetStatus
+music_event_in_proxy.h:78:meip << /music_channel 2 >> SetStatus
+music_event_out_proxy.h:79:n meop << /music_channel 2 >> Connect
+spike_generator.h:101:spike_generator << /spike_times [1.0 2.0 3.0] >> SetStatus
+stdp_connection_facetshw_hom.h:416:    std::cout << "init synapse " << synapse_id_
+stdp_connection_facetshw_hom_impl.h:129:  // std::cout << "stdp_connection_facetshw_hom::debug: readout cycle duration
+stdp_dopa_connection.h:61:/stdp_dopamine_synapse  << /vt vol >>  SetDefaults
+step_current_generator.h:77:sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
+step_rate_generator.h:78:sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
+volume_transmitter.h:73:/stdp_dopamine_synapse  << /vt vol >>  SetDefaults

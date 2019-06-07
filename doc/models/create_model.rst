@@ -1,4 +1,4 @@
-Creating your own Model in NEST
+Create your own Model in NEST
 ================================
 
 

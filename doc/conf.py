@@ -84,9 +84,9 @@ for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
 
 
 # import errors on libraries that depend on C modules
-# http://blog.rtwilson.com/
-# how-to-make-your-sphinx-documentation-compile-with-readthedocs-when-youre
-# -using-numpy-and-scipy/
+# http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-
+# compile-with-readthedocs-when-youre-using-numpy-and-scipy/
+
 
 class Mock(MagicMock):
     @classmethod
@@ -125,8 +125,12 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
+    'breathe',
 ]
 
+breathe_projects = {"EXTRACT_MODELS": "./xml/"}
+
+breathe_default_project = "EXTRACT_MODELS"
 # sphinx_gallery_conf = {
 #    'doc_module': ('sphinx_gallery', 'numpy'),
 #    # path to your examples scripts
@@ -136,11 +140,12 @@ extensions = [
 #    'backreferences_dir': False
 # }
 
+subprocess.call('doxygen', shell=True)
 
 mathjax_path = \
     "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax" \
-    ".js?config=TeX" \
-    "-AMS-MML_HTMLorMML"
+              ".js?config=TeX" \
+              "-AMS-MML_HTMLorMML"
 
 
 # Add any paths that contain templates here, relative to this directory.

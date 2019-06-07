@@ -32,6 +32,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup static
+
 Name: bernoulli_synapse - Static synapse with stochastic transmission.
 
 Description:
@@ -46,33 +49,38 @@ the parameters target, weight, transmission probability, delay and
 receiver port for each connection.
 
 Parameters:
-
-p_transmit double - Transmission probability, must be between 0 and 1
+\verbatim embed:rst
+=========== ====== ===================================================
+ p_transmit real   Transmission probability, must be between 0 and 1
+=========== ====== ===================================================
+\endverbatim
 
 FirstVersion: June 2017
 
 Author: Susanne Kunkel, Maximilian Schmidt, Milena Menezes Carvalho
 
 Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
-DoubleDataEvent, DataLoggingRequest
+           DoubleDataEvent, DataLoggingRequest
 
 SeeAlso: synapsedict, static_synapse, static_synapse_hom_w
 
 References:
 
-  [1] Sandrine Lefort, Christian Tomm, J.-C. Floyd Sarria, Carl C.H. Petersen,
-The Excitatory Neuronal Network of the C2 Barrel Column in Mouse Primary
-Somatosensory Cortex, Neuron, Volume 61, Issue 2, 29 January 2009, Pages
-301-316, DOI: 10.1016/j.neuron.2008.12.020.
+\verbatim embed:rst
+.. [1] Lefort S, Tomm C, Sarria J-C F, Petersen CCH (2009). The excitatory
+       neuronal network of the C2 barrel column in mouse primary
+       somatosensory cortex. Neuron, 61(2):301-316.
+       DOI: https://doi.org/10.1016/j.neuron.2008.12.020.
 
-  [2] Jun-nosuke Teramae, Yasuhiro Tsubo & Tomoki Fukai, Optimal spike-based
-communication in excitable networks with strong-sparse and weak-dense links,
-Scientific Reports 2, Article number: 485 (2012), DOI: 10.1038/srep00485
+.. [2] Teramae J, Tsubo Y, Fukai T (2012). Optimal spike-based communication
+       in excitable networks with strong-sparse and weak-dense  links,
+       Scientific Reports 2,485. DOI: https://doi.org/10.1038/srep00485
 
-  [3] Yoshiyuki Omura, Milena M. Carvalho, Kaoru Inokuchi, Tomoki Fukai, A
-Lognormal Recurrent Network Model for Burst Generation during Hippocampal
-Sharp Waves, Journal of Neuroscience 28 October 2015, 35 (43) 14585-14601,
-DOI: 10.1523/JNEUROSCI.4944-14.2015
+.. [3] Omura Y, Carvalho MM, Inokuchi K, Fukai T (2015). A lognormal recurrent
+       network model for burst generation during hippocampal sharp waves.
+       Journal of Neuroscience, 35(43):14585-14601.
+       DOI: https://doi.org/10.1523/JNEUROSCI.4944-14.2015
+\endverbatim
 */
 template < typename targetidentifierT >
 class BernoulliConnection : public Connection< targetidentifierT >

@@ -27,7 +27,7 @@ sections of this primer:
    networks <part_4_topologically_structured_networks>`
 
 More advanced examples can be found at `Example
-Networks <http://www.nest-simulator.org/more-example-networks/>`__, or
+Networks <https://www.nest-simulator.org/more-example-networks/>`__, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
@@ -48,7 +48,7 @@ exploit the optional arguments of ``Create()``:
     ndict = {"I_e": 200.0, "tau_m": 20.0}
     neuronpop = nest.Create("iaf_psc_alpha", 100, params=ndict)
 
-The variable ``neuronpop`` is a list of all the ids of the created
+The variable ``neuronpop`` is a tuple of all the ids of the created
 neurons.
 
 Parameterising the neurons at creation is more efficient than using
@@ -203,7 +203,7 @@ Here we have just used very simple connection schemes. Connectivity
 patterns requiring the specification of further parameters, such as
 in-degree or connection probabilities, must be defined in a dictionary
 containing the key ``rule`` and the key for parameters associated to the
-rule. Please see :doc:`Connection management <../../guides/connection_management>`_
+rule. Please see :doc:`Connection management <../../guides/connection_management>`
 for an illustrated guide to the usage of ``Connect``.
 
 Connecting populations with random connections
@@ -357,7 +357,7 @@ Models
    Return a dictionary with the default parameters of the given
    ``model``, specified by a string.
 
--  ``SetDefaults(model, params)`` 
+-  ``SetDefaults(model, params)``
 
    Set the default parameters of the given ``model`` to the values
    specified in the ``params`` dictionary.
@@ -371,14 +371,14 @@ Models
 Simulation control
 ~~~~~~~~~~~~~~~~~~
 
--  ``ResetKernel()`` 
+-  ``ResetKernel()``
 
    Reset the simulation kernel. This will destroy the network as well as
    all custom models created with ``CopyModel()``. The parameters of
    built-in models are reset to their defaults. Calling this function is
    equivalent to restarting NEST.
 
--  ``ResetNetwork()`` 
+-  ``ResetNetwork()``
 
    Reset all nodes and connections to the defaults of their respective
    model.

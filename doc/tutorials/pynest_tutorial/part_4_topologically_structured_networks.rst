@@ -431,7 +431,7 @@ was built correctly:
    of composite layers;
 
 -  `create plots using functions in
-   ``nest.topology`` <http://www.nest-simulator.org/pynest-topology/>`__
+   ``nest.topology`` <https://www.nest-simulator.org/pynest-topology/>`__
 
    There are three functions that can be combined:
 
@@ -465,4 +465,4 @@ References
 ----------
 
 .. [1] Plesser HE and Enger H.  NEST Topology User Manual,
- http://www.nest-simulator.org/wp-content/uploads/2015/04/Topology_UserManual.pdf
+ https://www.nest-simulator.org/wp-content/uploads/2015/04/Topology_UserManual.pdf

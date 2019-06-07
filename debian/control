@@ -11,4 +11,4 @@ Depends: ${shlibs:Depends}, openmpi-bin
 Description: NEST is a simulator for networks of spiking neurons.
  NEST is a simulation system for large networks of biologically realistic
  point-neurons and neurons with a small number of electrical compartments.
- For more information, see http://www.nest-initiative.org
+ For more information, see https://www.nest-initiative.org

@@ -48,6 +48,8 @@ nest::Archiving_Node::Archiving_Node()
   , tau_minus_inv_( 1. / tau_minus_ )
   , tau_minus_triplet_( 110.0 )
   , tau_minus_triplet_inv_( 1. / tau_minus_triplet_ )
+  , max_delay_( -1.0 )
+  , trace_( 0. )
   , last_spike_( -1.0 )
   , Ca_t_( 0.0 )
   , Ca_minus_( 0.0 )
@@ -66,6 +68,8 @@ nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
   , tau_minus_inv_( n.tau_minus_inv_ )
   , tau_minus_triplet_( n.tau_minus_triplet_ )
   , tau_minus_triplet_inv_( n.tau_minus_triplet_inv_ )
+  , max_delay_( n.max_delay_ )
+  , trace_( n.trace_ )
   , last_spike_( n.last_spike_ )
   , Ca_t_( n.Ca_t_ )
   , Ca_minus_( n.Ca_minus_ )
@@ -76,7 +80,7 @@ nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
 }
 
 void
-Archiving_Node::register_stdp_connection( double t_first_read )
+Archiving_Node::register_stdp_connection( double t_first_read, double delay )
 {
   // Mark all entries in the deque, which we will not read in future as read by
   // this input input, so that we savely increment the incoming number of
@@ -93,26 +97,38 @@ Archiving_Node::register_stdp_connection( double t_first_read )
   }
 
   n_incoming_++;
+
+  max_delay_ = std::max( delay, max_delay_ );
 }
 
 double
 nest::Archiving_Node::get_K_value( double t )
 {
+  // case when the neuron has not yet spiked
   if ( history_.empty() )
   {
-    return Kminus_;
+    trace_ = 0.;
+    return trace_;
   }
+
+  // search for the latest post spike in the history buffer that came strictly
+  // before `t`
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
     if ( t - history_[ i ].t_ > kernel().connection_manager.get_stdp_eps() )
     {
-      return ( history_[ i ].Kminus_
+      trace_ = ( history_[ i ].Kminus_
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
+      return trace_;
     }
-    i--;
+    --i;
   }
-  return 0;
+
+  // this case occurs when the trace was requested at a time precisely at or
+  // before the first spike in the history
+  trace_ = 0.;
+  return trace_;
 }
 
 void
@@ -127,7 +143,9 @@ nest::Archiving_Node::get_K_values( double t,
     K_value = Kminus_;
     return;
   }
-  // case
+
+  // search for the latest post spike in the history buffer that came strictly
+  // before `t`
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
@@ -139,12 +157,11 @@ nest::Archiving_Node::get_K_values( double t,
         * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
       return;
     }
-    i--;
+    --i;
   }
 
-  // we only get here if t< time of all spikes in history)
-
-  // return 0.0 for both K values
+  // this case occurs when the trace was requested at a time precisely at or
+  // before the first spike in the history
   triplet_K_value = 0.0;
   K_value = 0.0;
 }
@@ -187,10 +204,17 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
   if ( n_incoming_ )
   {
     // prune all spikes from history which are no longer needed
-    // except the penultimate one. we might still need it.
+    // only remove a spike if:
+    // - its access counter indicates it has been read out by all connected
+    //   STDP synapses, and
+    // - there is another, later spike, that is strictly more than
+    //   (max_delay_ + eps) away from the new spike (at t_sp_ms)
     while ( history_.size() > 1 )
     {
-      if ( history_.front().access_counter_ >= n_incoming_ )
+      const double next_t_sp = history_[ 1 ].t_;
+      if ( history_.front().access_counter_ >= n_incoming_
+        and t_sp_ms - next_t_sp > max_delay_
+            + kernel().connection_manager.get_stdp_eps() )
       {
         history_.pop_front();
       }
@@ -226,6 +250,7 @@ nest::Archiving_Node::get_status( DictionaryDatum& d ) const
   def< double >( d, names::tau_Ca, tau_Ca_ );
   def< double >( d, names::beta_Ca, beta_Ca_ );
   def< double >( d, names::tau_minus_triplet, tau_minus_triplet_ );
+  def< double >( d, names::post_trace, trace_ );
 #ifdef DEBUG_ARCHIVER
   def< int >( d, names::archiver_length, history_.size() );
 #endif

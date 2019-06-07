@@ -58,6 +58,11 @@ namespace nest
 extern "C" int aeif_psc_delta_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+@ingroup aeif
+@ingroup psc
+
 Name: aeif_psc_delta - Current-based adaptive exponential integrate-and-fire
 neuron model according to Brette and Gerstner (2005) with delta synapse.
 
@@ -71,13 +76,15 @@ This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
 solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
-C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)+I(t)+I_e
+
+@f[ C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
+                                                     -g_i(t)(V-E_i)-w +I_e @f]
 
 and
 
-tau_w * dw/dt= a(V-E_L) -W
+@f[ \tau_w * dw/dt= a(V-E_L) -W @f]
 
-I(t) = J Sum_k delta(t - t^k).
+@f[ I(t) = J \sum_k \delta(t - t^k). @f]
 
 Here delta is the dirac delta function and k indexes incoming
 spikes. This is implemented such that V_m will be incremented/decremented by
@@ -87,30 +94,46 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-Dynamic state variables:
-  V_m        double - Membrane potential in mV
-  w          double - Spike-adaptation current in pA.
+\verbatim embed:rst
 
-Membrane Parameters:
-  C_m        double - Capacity of the membrane in pF
-  t_ref      double - Duration of refractory period in ms.
-  V_reset    double - Reset value for V_m after a spike. In mV.
-  E_L        double - Leak reversal potential in mV.
-  g_L        double - Leak conductance in nS.
-  I_e        double - Constant external input current in pA.
+======== ======= =======================================
+**Dynamic state variables**
+--------------------------------------------------------
+ V_m     mV      Membrane potential
+ w       pA      Spike-adaptation current
+======== ======= =======================================
 
-Spike adaptation parameters:
-  a          double - Subthreshold adaptation in nS.
-  b          double - Spike-triggered adaptation in pA.
-  Delta_T    double - Slope factor in mV
-  tau_w      double - Adaptation time constant in ms
-  V_th       double - Spike initiation threshold in mV
-  V_peak     double - Spike detection threshold in mV.
+======== ======= =======================================
+**Membrane Parameters**
+--------------------------------------------------------
+ C_m     pF      Capacity of the membrane
+ t_ref   ms      Duration of refractory period
+ V_reset mV      Reset value for V_m after a spike
+ E_L     mV      Leak reversal potential
+ g_L     nS      Leak conductance
+ I_e     pA      Constant external input current
+======== ======= =======================================
 
-Integration parameters
-  gsl_error_tol  double - This parameter controls the admissible error of the
-                          GSL integrator. Reduce it if NEST complains about
-                          numerical instabilities.
+======== ======= ==================================
+**Spike adaptation parameters**
+---------------------------------------------------
+ a       ns      Subthreshold adaptation
+ b       pA      Spike-triggered adaptation
+ tau_w   ms      Adaptation time constant
+ Delta_T mV      Slope factor
+ tau_w   ms      Adaptation time constant
+ V_th    mV      Spike initiation threshold
+ V_peak  mV      Spike detection threshold
+======== ======= ==================================
+
+============= ======= =========================================================
+**Integration parameters**
+-------------------------------------------------------------------------------
+gsl_error_tol real    This parameter controls the admissible error of the
+                      GSL integrator. Reduce it if NEST complains about
+                      numerical instabilities.
+============= ======= =========================================================
+\endverbatim
 
 Author: Mikkel Elle Lepperød adapted from aeif_psc_exp and iaf_psc_delta
 
@@ -118,9 +141,14 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-References: Brette R and Gerstner W (2005) Adaptive Exponential
-            Integrate-and-Fire Model as an Effective Description of
-            Neuronal Activity. J Neurophysiol 94:3637-3642
+References:
+
+\verbatim embed:rst
+.. [1] Brette R and Gerstner W (2005). Adaptive Exponential
+       Integrate-and-Fire Model as an Effective Description of Neuronal
+       Activity. J Neurophysiol 94:3637-3642.
+       DOI: https://doi.org/10.1152/jn.00686.2005
+\endverbatim
 
 SeeAlso: iaf_psc_delta, aeif_cond_exp, aeif_psc_exp
 */

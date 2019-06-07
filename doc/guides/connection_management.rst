@@ -53,8 +53,7 @@ given as a string defining the synapse model (default:
 (``Connect(pre, post, syn_spec=syn_spec_dict)``), the conn\_spec can be
 omitted in the call to connect and 'all\_to\_all' is assumed as the
 default. The exact usage of the synapse dictionary is described in
-`Synapse
-Specification <connection-management.md#synapse-specification>`__.
+:ref:`synapse-spec`.
 
 Connection Rules
 ----------------
@@ -191,13 +190,14 @@ Example:
     conn_dict = {'rule': 'pairwise_bernoulli', 'p': p}
     Connect(A, B, conn_dict)
 
+.. _synapse-spec:
+
 Synapse Specification
 ~~~~~~~~~~~~~~~~~~~~~
 
 The synapse properties can be given as a string or a dictionary. The
 string can be the name of a pre-defined synapse which can be found in
-the synapsedict (see `Synapse
-Types <connection-management.md#synapse-types>`__) or a manually defined
+the synapsedict (see  :ref:`synapse-types`) or a manually defined
 synapse via ``CopyModel()``.
 
 Example:
@@ -222,8 +222,7 @@ types, as long as they agree with the connection routine ('rule').
 
 **Scalar** parameters must be given as floats except for the
 'receptor\_type' which has to be initialized as an integer. For more
-information on the receptor type see `Receptor
-Types <connection-management.md#synapse-types>`__ .
+information on the receptor type see :ref:`receptor-types`.
 
 Example:
 
@@ -301,7 +300,7 @@ Example:
 specifying the 'distribution' and the distribution-specific parameters,
 whose specification is optional.
 
-Available distributions are given in the rdevdict, the most common ones
+Available distributions are given in the ``rdevdict``, the most common ones
 are:
 
 Distributions Keys 'normal' 'mu', 'sigma' 'normal\_clipped' 'mu',
@@ -353,8 +352,8 @@ parameters it needs to be defined in two steps:
                }
     Connect(A, B, syn_spec=syn_dict)
 
-For further information on the distributions see `Random numbers in
-NEST <random-numbers.md>`__.
+For further information on the distributions see :doc:`Random numbers in
+NEST <random_numbers>`.
 
 Old Connection Routines
 -----------------------
@@ -526,8 +525,10 @@ Topological Connections
 If the connect functions above are not sufficient, the topology provides
 more sophisticated functions. For example, it is possible to create
 receptive field structures and much more! See `Topological
-Connections <http://www.nest-simulator.org/wp-content/uploads/2015/04/Topology_UserManual.pdf>`__
+Connections <https://www.nest-simulator.org/wp-content/uploads/2015/04/Topology_UserManual.pdf>`__
 for more information.
+
+.. _receptor-types:
 
 Receptor Types
 --------------
@@ -572,6 +573,8 @@ post-synaptic node.
 The code block above connects a standard integrate-and-fire neuron to a
 somatic excitatory receptor of a multi-compartment integrate-and-fire
 neuron model. The result is illustrated in the figure.
+
+.. _synapse-types:
 
 Synapse Types
 -------------

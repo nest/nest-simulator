@@ -33,6 +33,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup cont_delay
+
 Name: cont_delay_synapse - Synapse type for continuous delays
 
 Description:
@@ -45,21 +48,24 @@ combined with off-grid spike times.
 
 Example:
 
-0 << /resolution 1.0 >> SetStatus
+    SLI
 
-/sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
-def
-/n  /iaf_psc_delta_canon Create def
-/sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create
-def
+    0 << /resolution 1.0 >> SetStatus
 
-/cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
-sg n /cont_delay_synapse Connect
-n sd Connect
+    /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
 
-10 Simulate
+    def
+    /n  /iaf_psc_delta_ps Create def
+    /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create
+    def
 
-sd GetStatus /events/times :: ==   %  --> <. 3.7 7.2 .>
+    /cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
+    sg n /cont_delay_synapse Connect
+    n sd Connect
+
+    10 Simulate
+
+    sd GetStatus /events/times :: ==   %  --> <. 3.7 7.2 .>
 
 Remarks:
 
@@ -70,10 +76,10 @@ using cont_delay_connection. To set non-grid delays, you must either
 2) set the delay for each synapse after the connections have been created,
    e.g.,
 
-     sg n 100. 1.0 /cont_delay_synapse Connect
-     << /source [ sg ] /synapse_model /cont_delay_synapse >> GetConnections
-        { << /delay 1.7 >> SetStatus }
-     forall
+    sg n 100. 1.0 /cont_delay_synapse Connect
+    << /source [ sg ] /synapse_model /cont_delay_synapse >> GetConnections
+       { << /delay 1.7 >> SetStatus }
+    forall
 
 Alternative 1) is much more efficient, but all synapses then will have the
                same delay.
@@ -83,8 +89,6 @@ Continuous delays cannot be shorter than the simulation resolution.
 
 Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
            DoubleDataEvent
-
-References: none
 
 FirstVersion: June 2007
 

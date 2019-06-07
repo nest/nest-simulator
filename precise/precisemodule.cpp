@@ -51,7 +51,7 @@
 #include "iaf_psc_alpha_canon.h"
 #include "iaf_psc_alpha_presc.h"
 #include "iaf_psc_alpha_ps.h"
-#include "iaf_psc_delta_canon.h"
+#include "iaf_psc_delta_ps.h"
 #include "iaf_psc_exp_ps.h"
 #include "parrot_neuron_ps.h"
 #include "poisson_generator_ps.h"
@@ -98,8 +98,10 @@ PreciseModule::init( SLIInterpreter* )
     "iaf_psc_alpha_presc" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_ps >(
     "iaf_psc_alpha_ps" );
-  kernel().model_manager.register_node_model< iaf_psc_delta_canon >(
+  kernel().model_manager.register_node_model< iaf_psc_delta_ps >(
     "iaf_psc_delta_canon" );
+  kernel().model_manager.register_node_model< iaf_psc_delta_ps >(
+    "iaf_psc_delta_ps" );
   kernel().model_manager.register_node_model< iaf_psc_exp_ps >(
     "iaf_psc_exp_ps" );
   kernel().model_manager.register_node_model< iaf_psc_exp_ps_lossless >(

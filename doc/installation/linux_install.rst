@@ -1,6 +1,8 @@
 Ubuntu / Debian Installation
 ===============================
 
+.. _standard:
+
 Standard Installation
 ------------------------
 

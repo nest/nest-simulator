@@ -189,12 +189,7 @@ nest_check_have_std_isnan()
 
 include( NestVersionInfo )
 get_version_info()
-
 message("-- NEST version: ${NEST_VERSION_STRING}")
-#message("NEST_VERSION_BRANCH \"${NEST_VERSION_BRANCH}\"")
-#message("NEST_VERSION_SUFFIX \"${NEST_VERSION_SUFFIX}\"")
-#message("NEST_VERSION \"${NEST_VERSION}\"")
-#message("NEST_VERSION_GITHASH \"${NEST_VERSION_GITHASH}\"")
 
 ################################################################################
 ##################         Enable Testing Targets             ##################

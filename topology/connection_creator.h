@@ -190,10 +190,10 @@ private:
   bool allow_oversized_;
   index number_of_connections_;
   lockPTR< AbstractMask > mask_;
-  lockPTR< TopologyParameter > kernel_;
+  lockPTR< Parameter > kernel_;
   index synapse_model_;
-  lockPTR< TopologyParameter > weight_;
-  lockPTR< TopologyParameter > delay_;
+  lockPTR< Parameter > weight_;
+  lockPTR< Parameter > delay_;
 
   //! Empty dictionary to pass to connect functions
   const static DictionaryDatum dummy_param_;

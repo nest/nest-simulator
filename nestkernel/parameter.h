@@ -36,6 +36,7 @@
 #include "nest_types.h"
 #include "nestmodule.h"
 
+
 // Includes from sli:
 #include "dictutils.h"
 
@@ -75,10 +76,29 @@ public:
    * @returns the value of the parameter.
    */
   virtual double value( librandom::RngPtr& rng, Node* node ) const = 0;
-  virtual double value( librandom::RngPtr& rng,
+  virtual double
+  value( librandom::RngPtr& rng,
     index sgid,
     Node* target,
-    thread target_thread ) const = 0;
+    thread target_thread ) const
+  {
+    return value( rng, nullptr );
+  }
+
+  virtual double
+  value( librandom::RngPtr& rng, const std::vector< double >& pos ) const
+  {
+    return value( rng, nullptr );
+  }
+
+  virtual double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const double distance ) const
+  {
+    return value( rng, nullptr );
+  }
 
   /**
    * Clone method.
@@ -182,12 +202,6 @@ public:
     return value_;
   }
 
-  double
-  value( librandom::RngPtr& rng, index sgid, Node*, thread target_thread ) const
-  {
-    return value( rng, nullptr );
-  }
-
   Parameter*
   clone() const
   {
@@ -231,12 +245,6 @@ public:
   value( librandom::RngPtr& rng, Node* ) const
   {
     return lower_ + rng->drand() * range_;
-  }
-
-  double
-  value( librandom::RngPtr& rng, index sgid, Node*, thread target_thread ) const
-  {
-    return value( rng, nullptr );
   }
 
   Parameter*
@@ -299,12 +307,6 @@ public:
       val = mean_ + rdev( rng ) * sigma_;
     } while ( ( val < min_ ) or ( val >= max_ ) );
     return val;
-  }
-
-  double
-  value( librandom::RngPtr& rng, index sgid, Node*, thread target_thread ) const
-  {
-    return value( rng, nullptr );
   }
 
   Parameter*
@@ -370,12 +372,6 @@ public:
     return val;
   }
 
-  double
-  value( librandom::RngPtr& rng, index sgid, Node*, thread target_thread ) const
-  {
-    return value( rng, nullptr );
-  }
-
   Parameter*
   clone() const
   {
@@ -409,12 +405,6 @@ public:
   value( librandom::RngPtr& rng, Node* ) const
   {
     return scale_ * ( -std::log( 1 - rng->drand() ) );
-  }
-
-  double
-  value( librandom::RngPtr& rng, index sgid, Node*, thread target_thread ) const
-  {
-    return value( rng, nullptr );
   }
 
   Parameter*
@@ -492,6 +482,27 @@ public:
     throw KernelException( "Wrong node_location_." );
   }
 
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const double distance ) const
+  {
+    switch ( node_location_ )
+    {
+    case 0:
+      throw BadParameterValue(
+        "Node position parameter cannot be used when connecting." );
+    case 1:
+    {
+      return source_pos[ dimension_ ];
+    }
+    case 2:
+      return target_pos[ dimension_ ];
+    }
+    throw KernelException( "Wrong node_location_." );
+  }
+
   Parameter*
   clone() const
   {
@@ -525,6 +536,11 @@ public:
   }
 
   double value( librandom::RngPtr&, index, Node*, thread ) const;
+
+  double value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const double distance ) const;
 
   Parameter*
   clone() const

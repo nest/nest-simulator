@@ -151,4 +151,13 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
   return source_layer->compute_distance( target_pos, source_lid );
 }
 
+double
+SpatialDistanceParameter::value( librandom::RngPtr& rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const double distance ) const
+{
+  return distance;
+}
+
 } /* namespace nest */

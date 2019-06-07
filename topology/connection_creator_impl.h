@@ -79,8 +79,8 @@ ConnectionCreator::get_parameters_( const Position< D >& pos,
 {
   // keeping this function temporarily until all connection variants are cleaned
   // up
-  weight = weight_->value( pos, rng );
-  delay = delay_->value( pos, rng );
+  weight = weight_->value( rng, pos );
+  delay = delay_->value( rng, pos );
 }
 
 template < typename Iterator, int D >
@@ -104,16 +104,18 @@ ConnectionCreator::connect_to_target_( Iterator from,
 
     if ( without_kernel
       or rng->drand()
-        < kernel_->value(
-            source.compute_displacement( tgt_pos, iter->first ), rng ) )
+        < kernel_->value( rng,
+            iter->first,
+            tgt_pos,
+            source.compute_displacement( tgt_pos, iter->first ).length() ) )
     {
-      const Position< D > disp =
-        source.compute_displacement( tgt_pos, iter->first );
+      const double dist =
+        source.compute_displacement( tgt_pos, iter->first ).length();
       connect_( iter->second,
         tgt_ptr,
         tgt_thread,
-        weight_->value( disp, rng ),
-        delay_->value( disp, rng ),
+        weight_->value( rng, iter->first, tgt_pos, dist ),
+        delay_->value( rng, iter->first, tgt_pos, dist ),
         synapse_model_ );
     }
   }
@@ -461,8 +463,10 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
           ++iter )
         {
 
-          probabilities.push_back( kernel_->value(
-            source.compute_displacement( target_pos, iter->first ), rng ) );
+          probabilities.push_back( kernel_->value( rng,
+            iter->first,
+            target_pos,
+            source.compute_displacement( target_pos, iter->first ).length() ) );
         }
 
         if ( positions.empty()
@@ -601,8 +605,10 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
           iter != positions->end();
           ++iter )
         {
-          probabilities.push_back( kernel_->value(
-            source.compute_displacement( target_pos, iter->first ), rng ) );
+          probabilities.push_back( kernel_->value( rng,
+            iter->first,
+            target_pos,
+            source.compute_displacement( target_pos, iter->first ).length() ) );
         }
 
         // A Vose object draws random integers with a non-uniform
@@ -764,7 +770,10 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
 
       if ( kernel_.valid() )
       {
-        probabilities.push_back( kernel_->value( target_displ, rng ) );
+        probabilities.push_back( kernel_->value( rng,
+          source_pos,
+          tgt_it->first,
+          source.compute_displacement( tgt_it->first, source_pos ).length() ) );
       }
       else
       {

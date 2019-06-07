@@ -25,14 +25,6 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 project( nest CXX C )
 set( NEST_USER_EMAIL "nest_user@nest-initiative.org" )
 
-# VERSION exported to libnestutil/config.h, pynest/setup.py
-set( NEST_VERSION_MAJOR 2 )
-set( NEST_VERSION_MINOR 16 )
-set( NEST_VERSION_PATCHLEVEL 0 )
-
-set( NEST_VERSION_VERSION "${NEST_VERSION_MAJOR}.${NEST_VERSION_MINOR}.${NEST_VERSION_PATCHLEVEL}" )
-set( NEST_VERSION_PRGNAME "${PROJECT_NAME}-${NEST_VERSION_VERSION}" )
-
 ################################################################################
 ##################         All User Defined options           ##################
 ################################################################################
@@ -72,6 +64,7 @@ set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Inte
 set( with-libraries OFF CACHE STRING "Link additional libraries. Give full path. Separate multiple libraries by ';'. [default OFF]" )
 set( with-includes OFF CACHE STRING "Add additional include paths. Give full path without '-I'. Separate multiple include paths by ';'. [default OFF]" )
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1'. Separate multiple defines by ';'. [default OFF]" )
+set( with-version-suffix "" CACHE STRING "Set a user defined version suffix. [default '']" )
 
 # cross-compiling
 # should be set via toolchain files
@@ -119,7 +112,7 @@ find_package( Doxygen )
 find_program( SED NAMES sed gsed )
 
 ################################################################################
-##################   CPack, checks, ... in external modules   ##################
+##################                Load includes               ##################
 ################################################################################
 
 # This include checks the symbols, etc.
@@ -128,7 +121,6 @@ include( CheckIncludesSymbols )
 # These includes publish function names.
 include( ProcessOptions )
 include( WriteStaticModules_h )
-include( CPackVariables )
 include( CheckExtraCompilerFeatures )
 include( ConfigureSummary )
 include( GetTriple )
@@ -138,9 +130,6 @@ include( DefaultCompilerFlags )
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
 get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )
 
-# set cpack variables and
-# generate CPackConfig.cmake CPackSourceConfig.cmake files
-nest_set_cpack_variables()
 
 # set default compiler flags
 nest_set_default_compiler_flags()
@@ -170,6 +159,7 @@ nest_process_with_libneurosim()
 nest_process_with_music()
 nest_process_with_boost()
 nest_process_target_bits_split()
+nest_process_version_suffix()
 
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
@@ -192,6 +182,14 @@ nest_check_have_stl_vector_capacity_doubling()
 nest_check_have_xlc_ice_on_using()
 nest_check_have_std_nan()
 nest_check_have_std_isnan()
+
+################################################################################
+##################           Create version string            ##################
+################################################################################
+
+include( NestVersionInfo )
+get_version_info()
+message("-- NEST version: ${NEST_VERSION_STRING}")
 
 ################################################################################
 ##################         Enable Testing Targets             ##################
@@ -355,6 +353,17 @@ configure_file(
     "${PROJECT_SOURCE_DIR}/extras/nest_vars.sh.in"
     "${PROJECT_BINARY_DIR}/extras/nest_vars.sh" @ONLY
 )
+
+configure_file(
+    "${PROJECT_SOURCE_DIR}/doc/normaldoc.conf.in"
+    "${PROJECT_BINARY_DIR}/doc/normaldoc.conf" @ONLY
+)
+
+configure_file(
+    "${PROJECT_SOURCE_DIR}/doc/fulldoc.conf.in"
+    "${PROJECT_BINARY_DIR}/doc/fulldoc.conf" @ONLY
+)
+
 
 ################################################################################
 ##################            Install Extra Files             ##################

@@ -77,11 +77,8 @@ class SLIStartup : public SLIModule
 
 public:
   Name argv_name;
-  Name prgname_name;
+  Name version_name;
   Name exitcode_name;
-  Name prgmajor_name;
-  Name prgminor_name;
-  Name prgpatch_name;
   Name prgbuilt_name;
   Name prefix_name;
   Name prgdatadir_name;

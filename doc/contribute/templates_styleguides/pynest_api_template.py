@@ -49,7 +49,7 @@ def get.Connections(source=None, target=None, synape_model=None,
     Any combination of source, target, synapse_model and
     synapse_label parameters is permitted.
 
-    [[ Deprecation warnings should appear directly after a brief description.
+    [[ Deprecation warnings should appear directly after the extended summary.
       It should state in what version the object was deprecated, when it will 
       be removed and what recommend way obtains the same functionality]]
 

@@ -26,19 +26,19 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
 
 
 **Have an idea of the type of model you need?**
-    Click on one of the images to access our model directory:
+    Click on one of the images to access our :doc:`model directory <models/index>`:
 
 .. raw:: html
 
  <embed>
 
- <a href="models/neurons/index.html">
+ <a href="models/neurons.html">
     <img src="_static/img/neuron.png" alt="Neuron Models" style="width:150px;height:150px;border:0;">
   </a>
-  <a href="models/synapses/index.html">
+  <a href="models/synapses.html">
     <img src="_static/img/synapse1.png" alt="Synapse Models" style="width:150px;height:150px;border:0;">
   </a>
-  <a href="models/devices/index.html">
+  <a href="models/devices.html">
     <img src="_static/img/oscilloscope.png" alt="Devices" style="width:150px;height:150px;border:0;">
   </a>
   </embed>

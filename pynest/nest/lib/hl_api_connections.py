@@ -216,7 +216,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
 
 
 def _process_spatial_projections(conn_spec, syn_spec):
-    allowed_conn_spec_keys = ['mask', 'kernel',
+    allowed_conn_spec_keys = ['mask',
                               'multapses', 'autapses', 'rule', 'indegree', 'outdegree', 'p', 'use_on_source']
     allowed_syn_spec_keys = ['weight', 'delay']
     for key in conn_spec.keys():
@@ -225,9 +225,11 @@ def _process_spatial_projections(conn_spec, syn_spec):
                 "'{}' is not allowed in conn_spec when connecting with mask or kernel".format(key))
 
     projections = {}
-    for key in ['mask', 'kernel']:
+    for key in ['mask']:
         if key in conn_spec:
             projections[key] = conn_spec[key]
+    if 'p' in conn_spec:
+        projections['kernel'] = conn_spec['p']
     # TODO: change topology names of {mul,aut}apses to be consistent
     if 'multapses' in conn_spec:
         projections['allow_multapses'] = conn_spec['multapses']
@@ -269,6 +271,13 @@ def _process_spatial_projections(conn_spec, syn_spec):
                                "connection rules are 'pairwise_bernoulli', "
                                "'fixed_indegree', or 'fixed_outdegree'")
     return projections
+
+
+def _connect_layers_needed(conn_spec):
+    rule_is_bernoulli = conn_spec['rule'] == 'pairwise_bernoulli'
+    return ('mask' in conn_spec or
+            ('p' in conn_spec and not rule_is_bernoulli) or
+            'use_on_source' in conn_spec)
 
 
 def _connect_spatial(pre, post, projections):
@@ -435,16 +444,15 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     sps(pre)
     sps(post)
 
-    # Converting conn_spec to dict, without putting it on the stack.
+    # Converting conn_spec to dict, without putting it on the SLI stack.
     processed_conn_spec = _process_conn_spec(conn_spec)
     # If syn_spec is given, its contents are checked, and if needed converted
     # to the right formats.
     processed_syn_spec = _process_syn_spec(
         syn_spec, processed_conn_spec, len(pre), len(post))
 
-    # If mask or kernel is specified, a different connection method is used.
-    if ('mask' in processed_conn_spec or
-            'kernel' in processed_conn_spec):
+    # In some cases we must connect with ConnectLayers instead.
+    if _connect_layers_needed(processed_conn_spec):
         # Check that pre and post are layers
         if pre.spatial is None:
             raise TypeError(

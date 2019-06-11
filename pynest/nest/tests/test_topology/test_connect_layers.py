@@ -81,7 +81,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         conn_spec = {
             'rule': 'fixed_indegree',
             'indegree': 1,
-            'kernel': 0.5
+            'p': 0.5
         }
         self._check_connections(conn_spec, 20)
 
@@ -91,7 +91,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'rule': 'fixed_indegree',
             'indegree': 1,
             'mask': {'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0., 0.]}},
-            'kernel': 0.5
+            'p': 0.5
         }
         self._check_connections(conn_spec, 20)
 
@@ -109,7 +109,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         conn_spec = {
             'rule': 'fixed_outdegree',
             'outdegree': 1,
-            'kernel': 0.5
+            'p': 0.5
         }
         self._check_connections(conn_spec, 20)
 
@@ -119,7 +119,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'rule': 'fixed_outdegree',
             'outdegree': 1,
             'mask': {'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0., 0.]}},
-            'kernel': 0.5
+            'p': 0.5
         }
         self._check_connections(conn_spec, 20)
 
@@ -136,8 +136,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         """Connecting layers with pairwise_bernoulli and kernel"""
         conn_spec = {
             'rule': 'pairwise_bernoulli',
-            'p': 1.0,
-            'kernel': 0.5
+            'p': 0.5,
         }
         self._check_connections(conn_spec, 215)
 
@@ -145,8 +144,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         """Connecting layers with pairwise_bernoulli, kernel and mask"""
         conn_spec = {
             'rule': 'pairwise_bernoulli',
-            'p': 1.0,
-            'kernel': 0.5,
+            'p': 0.5,
             'mask': {'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0., 0.]}}
         }
         self._check_connections(conn_spec, 52)
@@ -155,8 +153,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         """Connecting layers with pairwise_bernoulli, kernel and mask on source"""
         conn_spec = {
             'rule': 'pairwise_bernoulli',
-            'p': 1.0,
-            'kernel': 0.5,
+            'p': 0.5,
             'mask': {'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0., 0.]}},
             'use_on_source': True
         }
@@ -177,16 +174,16 @@ class ConnectLayersTestCase(unittest.TestCase):
         """Throw when connecting non-layer GIDCollections with kernel."""
         neurons = nest.Create('iaf_psc_alpha', 20)
         conn_spec = {
-            'rule': 'pairwise_bernoulli',
+            'rule': 'fixed_outdegree',
+            'outdegree': 1,
             'p': 1.0,
-            'kernel': 0.5
         }
         with self.assertRaises(TypeError):
             nest.Connect(neurons, neurons, conn_spec)
 
     def test_connect_kernel_mask_wrong_rule(self):
         """Throw when connecting with mask or kernel and wrong rule."""
-        conn_spec_kernel = {'rule': 'all_to_all', 'kernel': 0.5}
+        conn_spec_kernel = {'rule': 'all_to_all', 'p': 0.5}
         conn_spec_mask = {'rule': 'all_to_all', 'mask': {
             'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0., 0.]}}}
         for conn_spec in [conn_spec_kernel, conn_spec_mask]:
@@ -198,7 +195,6 @@ class ConnectLayersTestCase(unittest.TestCase):
         conn_spec = {
             'rule': 'pairwise_bernoulli',
             'p': 1.0,
-            'kernel': 0.1
         }
         syn_spec = {
             'weight': nest.random.uniform(min=0.5)
@@ -215,7 +211,6 @@ class ConnectLayersTestCase(unittest.TestCase):
         conn_spec = {
             'rule': 'pairwise_bernoulli',
             'p': 1.0,
-            'kernel': 0.1
         }
         syn_spec = {
             'delay': nest.random.uniform(min=0.5)
@@ -226,6 +221,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         self.assertTrue(len(np.unique(conn_delays)) > 1)
         self.assertTrue((conn_delays >= 0.5).all())
         self.assertTrue((conn_delays <= 1.0).all())
+        # TODO: Check delays agains a ref
 
 
 def suite():

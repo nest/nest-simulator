@@ -36,7 +36,6 @@
 #include "nest_types.h"
 #include "nestmodule.h"
 
-
 // Includes from sli:
 #include "dictutils.h"
 
@@ -86,16 +85,10 @@ public:
   }
 
   virtual double
-  value( librandom::RngPtr& rng, const std::vector< double >& pos ) const
-  {
-    return value( rng, nullptr );
-  }
-
-  virtual double
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const double distance ) const
+    const std::vector< double >& displacement ) const
   {
     return value( rng, nullptr );
   }
@@ -486,7 +479,7 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const double distance ) const
+    const std::vector< double >& displacement ) const
   {
     switch ( node_location_ )
     {
@@ -525,12 +518,15 @@ class SpatialDistanceParameter : public Parameter
 public:
   SpatialDistanceParameter( const DictionaryDatum& d )
     : Parameter( d )
+    , dimension_( 0 )
   {
+    updateValue< long >( d, names::dimension, dimension_ );
   }
 
   double
   value( librandom::RngPtr& rng, Node* ) const
   {
+    assert( false );
     throw BadParameterValue(
       "Spatial distance parameter can only be used when connecting." );
   }
@@ -540,13 +536,16 @@ public:
   double value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const double distance ) const;
+    const std::vector< double >& displacement ) const;
 
   Parameter*
   clone() const
   {
     return new SpatialDistanceParameter( *this );
   }
+
+private:
+  int dimension_;
 };
 
 
@@ -600,6 +599,16 @@ public:
   {
     return parameter1_->value( rng, sgid, target, target_thread )
       * parameter2_->value( rng, sgid, target, target_thread );
+  }
+
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const
+  {
+    return parameter1_->value( rng, source_pos, target_pos, displacement )
+      * parameter2_->value( rng, source_pos, target_pos, displacement );
   }
 
   Parameter*
@@ -664,6 +673,16 @@ public:
       / parameter2_->value( rng, sgid, target, target_thread );
   }
 
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const
+  {
+    return parameter1_->value( rng, source_pos, target_pos, displacement )
+      / parameter2_->value( rng, source_pos, target_pos, displacement );
+  }
+
   Parameter*
   clone() const
   {
@@ -724,6 +743,16 @@ public:
   {
     return parameter1_->value( rng, sgid, target, target_thread )
       + parameter2_->value( rng, sgid, target, target_thread );
+  }
+
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const
+  {
+    return parameter1_->value( rng, source_pos, target_pos, displacement )
+      + parameter2_->value( rng, source_pos, target_pos, displacement );
   }
 
   Parameter*
@@ -788,6 +817,16 @@ public:
       - parameter2_->value( rng, sgid, target, target_thread );
   }
 
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const
+  {
+    return parameter1_->value( rng, source_pos, target_pos, displacement )
+      - parameter2_->value( rng, source_pos, target_pos, displacement );
+  }
+
   Parameter*
   clone() const
   {
@@ -844,6 +883,15 @@ public:
     thread target_thread ) const
   {
     return p_->value( rng, sgid, target, target_thread );
+  }
+
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const
+  {
+    return p_->value( rng, source_pos, target_pos, displacement );
   }
 
   Parameter*
@@ -932,6 +980,16 @@ public:
       parameter2_->value( rng, sgid, target, target_thread ) );
   }
 
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const
+  {
+    return compare_(
+      parameter1_->value( rng, source_pos, target_pos, displacement ),
+      parameter2_->value( rng, source_pos, target_pos, displacement ) );
+  }
 
   Parameter*
   clone() const
@@ -1038,6 +1096,21 @@ public:
     }
   }
 
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const
+  {
+    if ( condition_->value( rng, source_pos, target_pos, displacement ) )
+    {
+      return if_true_->value( rng, source_pos, target_pos, displacement );
+    }
+    else
+    {
+      return if_false_->value( rng, source_pos, target_pos, displacement );
+    }
+  }
 
   Parameter*
   clone() const
@@ -1096,6 +1169,15 @@ public:
     thread target_thread ) const
   {
     return std::exp( p_->value( rng, sgid, target, target_thread ) );
+  }
+
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const
+  {
+    return std::exp( p_->value( rng, source_pos, target_pos, displacement ) );
   }
 
   Parameter*
@@ -1157,6 +1239,15 @@ public:
     return std::sin( p_->value( rng, sgid, target, target_thread ) );
   }
 
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const
+  {
+    return std::sin( p_->value( rng, source_pos, target_pos, displacement ) );
+  }
+
   Parameter*
   clone() const
   {
@@ -1215,6 +1306,15 @@ public:
     return std::cos( p_->value( rng, sgid, target, target_thread ) );
   }
 
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const
+  {
+    return std::cos( p_->value( rng, source_pos, target_pos, displacement ) );
+  }
+
   Parameter*
   clone() const
   {
@@ -1226,7 +1326,7 @@ protected:
 };
 
 
-/**
+/** TODO: doc
  * Parameter class representing .
  */
 class DimensionParameter : public Parameter

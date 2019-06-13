@@ -179,8 +179,10 @@ private:
    * TODO: remove when all four connection variants are refactored
    */
   template < int D >
-  void get_parameters_( const Position< D >& pos,
-    librandom::RngPtr rng,
+  void get_parameters_(librandom::RngPtr rng,
+     const Position< D >& source_pos,
+     const Position< D >& target_pos,
+     const Position< D >& displacement,
     double& weight,
     double& delay );
 

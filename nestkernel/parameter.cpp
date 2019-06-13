@@ -148,16 +148,53 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
   std::vector< double > target_pos =
     target_layer->get_position_vector( target_lid );
 
-  return source_layer->compute_distance( target_pos, source_lid );
+  switch ( dimension_ )
+  {
+  case 0:
+    return source_layer->compute_distance( target_pos, source_lid );
+  case 1:
+  case 2:
+  case 3:
+    return source_layer->compute_displacement(
+      target_pos, source_lid )[ dimension_ - 1 ];
+  default:
+    throw KernelException( String::compose(
+      "SpatialDistanceParameter dimension must be either 0 for unspecified,"
+      " or 1-3 for x-z. Got ",
+      dimension_ ) );
+    break;
+  }
 }
 
 double
 SpatialDistanceParameter::value( librandom::RngPtr& rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const double distance ) const
+  const std::vector< double >& displacement ) const
 {
-  return distance;
+  // throw NotImplemented("");
+  switch ( dimension_ )
+  {
+  case 0:
+  {
+    double sq_sum = 0;
+    for ( auto&& disp_n : displacement )
+    {
+      sq_sum += disp_n * disp_n;
+    }
+    return std::sqrt( sq_sum );
+  }
+  case 1:
+  case 2:
+  case 3:
+    return displacement[ dimension_ - 1 ];
+  default:
+    throw KernelException( String::compose(
+      "SpatialDistanceParameter dimension must be either 0 for unspecified,"
+      " or 1 or 2 for x or y dimension. Got ",
+      dimension_ ) );
+    break;
+  }
 }
 
 } /* namespace nest */

@@ -274,7 +274,9 @@ def _process_spatial_projections(conn_spec, syn_spec):
 
 
 def _connect_layers_needed(conn_spec):
-    rule_is_bernoulli = conn_spec['rule'] == 'pairwise_bernoulli'
+    if conn_spec is None:
+        return False
+    rule_is_bernoulli = 'pairwise_bernoulli' in str(conn_spec['rule'])
     return ('mask' in conn_spec or
             ('p' in conn_spec and not rule_is_bernoulli) or
             'use_on_source' in conn_spec)
@@ -433,6 +435,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
            'mu': 5.0, 'sigma': 1.0}
       }
     """
+
+    print('Connecting with conn_spec=', conn_spec)
+    print('syn_spec=', syn_spec)
 
     if not isinstance(pre, GIDCollection):
         raise TypeError("Not implemented, presynaptic nodes must be a "

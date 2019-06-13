@@ -72,15 +72,17 @@ ConnectionCreator::connect( Layer< D >& source,
 
 template < int D >
 void
-ConnectionCreator::get_parameters_( const Position< D >& pos,
-  librandom::RngPtr rng,
+ConnectionCreator::get_parameters_( librandom::RngPtr rng,
+  const Position< D >& source_pos,
+  const Position< D >& target_pos,
+  const Position< D >& displacement,
   double& weight,
   double& delay )
 {
   // keeping this function temporarily until all connection variants are cleaned
   // up
-  weight = weight_->value( rng, pos );
-  delay = delay_->value( rng, pos );
+  weight = weight_->value( rng, source_pos, target_pos, displacement );
+  delay = delay_->value( rng, source_pos, target_pos, displacement );
 }
 
 template < typename Iterator, int D >
@@ -107,15 +109,14 @@ ConnectionCreator::connect_to_target_( Iterator from,
         < kernel_->value( rng,
             iter->first,
             tgt_pos,
-            source.compute_displacement( tgt_pos, iter->first ).length() ) )
+            source.compute_displacement( tgt_pos, iter->first ) ) )
     {
-      const double dist =
-        source.compute_displacement( tgt_pos, iter->first ).length();
+      const auto disp = source.compute_displacement( tgt_pos, iter->first );
       connect_( iter->second,
         tgt_ptr,
         tgt_thread,
-        weight_->value( rng, iter->first, tgt_pos, dist ),
-        delay_->value( rng, iter->first, tgt_pos, dist ),
+        weight_->value( rng, iter->first, tgt_pos, disp ),
+        delay_->value( rng, iter->first, tgt_pos, disp ),
         synapse_model_ );
     }
   }
@@ -466,7 +467,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
           probabilities.push_back( kernel_->value( rng,
             iter->first,
             target_pos,
-            source.compute_displacement( target_pos, iter->first ).length() ) );
+            source.compute_displacement( target_pos, iter->first ) ) );
         }
 
         if ( positions.empty()
@@ -506,9 +507,11 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
             continue;
           }
           double w, d;
-          get_parameters_( source.compute_displacement(
-                             target_pos, positions[ random_id ].first ),
-            rng,
+          get_parameters_( rng,
+            positions[ random_id ].first,
+            target_pos,
+            source.compute_displacement(
+              target_pos, positions[ random_id ].first ),
             w,
             d );
           kernel().connection_manager.connect(
@@ -548,9 +551,11 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
           }
           index source_id = positions[ random_id ].second;
           double w, d;
-          get_parameters_( source.compute_displacement(
-                             target_pos, positions[ random_id ].first ),
-            rng,
+          get_parameters_( rng,
+            positions[ random_id ].first,
+            target_pos,
+            source.compute_displacement(
+              target_pos, positions[ random_id ].first ),
             w,
             d );
           kernel().connection_manager.connect(
@@ -608,7 +613,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
           probabilities.push_back( kernel_->value( rng,
             iter->first,
             target_pos,
-            source.compute_displacement( target_pos, iter->first ).length() ) );
+            source.compute_displacement( target_pos, iter->first ) ) );
         }
 
         // A Vose object draws random integers with a non-uniform
@@ -638,8 +643,12 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
 
           Position< D > source_pos = ( *positions )[ random_id ].first;
           double w, d;
-          get_parameters_(
-            source.compute_displacement( target_pos, source_pos ), rng, w, d );
+          get_parameters_( rng,
+            source_pos,
+            target_pos,
+            source.compute_displacement( target_pos, source_pos ),
+            w,
+            d );
           kernel().connection_manager.connect(
             source_id, tgt, target_thread, synapse_model_, dummy_param_, d, w );
           is_selected[ random_id ] = true;
@@ -673,8 +682,12 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
 
           Position< D > source_pos = ( *positions )[ random_id ].first;
           double w, d;
-          get_parameters_(
-            source.compute_displacement( target_pos, source_pos ), rng, w, d );
+          get_parameters_( rng,
+            source_pos,
+            target_pos,
+            source.compute_displacement( target_pos, source_pos ),
+            w,
+            d );
           kernel().connection_manager.connect(
             source_id, tgt, target_thread, synapse_model_, dummy_param_, d, w );
           is_selected[ random_id ] = true;
@@ -745,7 +758,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
     Position< D > source_pos = src_it->first;
     index source_id = src_it->second;
     std::vector< index > targets;
-    std::vector< Position< D > > displacements;
+    std::vector< std::pair< double, double > > weight_delay_pairs;
     std::vector< double > probabilities;
 
     // Find potential targets and probabilities
@@ -761,19 +774,25 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
         continue;
       }
 
-      Position< D > target_displ =
-        target.compute_displacement( source_pos, tgt_it->first );
+      std::pair< double, double > target_weight_delay;
       librandom::RngPtr rng = get_global_rng();
 
+      get_parameters_( rng,
+        source_pos,
+        tgt_it->first,
+        target.compute_displacement( source_pos, tgt_it->first ),
+        target_weight_delay.first,
+        target_weight_delay.second );
+
       targets.push_back( tgt_it->second );
-      displacements.push_back( target_displ );
+      weight_delay_pairs.push_back( target_weight_delay );
 
       if ( kernel_.valid() )
       {
         probabilities.push_back( kernel_->value( rng,
           source_pos,
           tgt_it->first,
-          source.compute_displacement( tgt_it->first, source_pos ).length() ) );
+          source.compute_displacement( tgt_it->first, source_pos ) ) );
       }
       else
       {
@@ -808,11 +827,8 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
         continue;
       }
       is_selected[ random_id ] = true;
-      Position< D > target_displ = displacements[ random_id ];
+      auto target_weight_delay = weight_delay_pairs[ random_id ];
       index target_id = targets[ random_id ];
-
-      double w, d;
-      get_parameters_( target_displ, get_global_rng(), w, d );
 
       // We bail out for non-local neurons only now after all possible
       // random numbers haven been drawn. Bailing out any earlier may lead
@@ -828,8 +844,8 @@ ConnectionCreator::divergent_connect_( Layer< D >& source,
         target_ptr->get_thread(),
         synapse_model_,
         dummy_param_,
-        d,
-        w );
+        target_weight_delay.second,
+        target_weight_delay.first );
     }
   }
 }

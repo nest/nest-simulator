@@ -420,6 +420,7 @@ public:
   /**
    * Parameters:
    * dimension - Dimension from which to get the position value of the node.
+   *             0: x, 1: y, 2: z.
    * type_id - If specified, specifies if the position should be taken from the
    *           presynaptic or postsynaptic node in a connection.
    *           0: unspecified, 1: presynaptic, 2: postsynaptic.
@@ -429,7 +430,19 @@ public:
     , dimension_( 0 )
     , node_location_( 0 )
   {
-    updateValue< long >( d, names::dimension, dimension_ );
+    bool dimension_specified =
+      updateValue< long >( d, names::dimension, dimension_ );
+    if ( not dimension_specified )
+    {
+      throw BadParameterValue(
+        "Dimension must be specified when creating a node position "
+        "parameter." );
+    }
+    if ( dimension_ < 0 )
+    {
+      throw BadParameterValue(
+        "Node position parameter dimension cannot be negative." );
+    }
     updateValue< long >(
       d, names::type_id, node_location_ ); // TODO: Better name than "type_id"?
     if ( node_location_ < 0 or 2 < node_location_ )
@@ -521,6 +534,11 @@ public:
     , dimension_( 0 )
   {
     updateValue< long >( d, names::dimension, dimension_ );
+    if ( dimension_ < 0 )
+    {
+      throw BadParameterValue(
+        "Spatial distance parameter dimension cannot be negative." );
+    }
   }
 
   double

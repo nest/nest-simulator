@@ -72,6 +72,12 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
   }
   index lid = node->get_gid() - meta->get_first_gid();
   std::vector< double > pos = layer->get_position_vector( lid );
+  if ( ( uint ) dimension_ >= pos.size() )
+  {
+    throw KernelException(
+      "Node position dimension must be within the defined number of "
+      "dimensions for the node." );
+  }
   return pos[ dimension_ ];
 }
 
@@ -155,8 +161,14 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
   case 1:
   case 2:
   case 3:
-    return source_layer->compute_displacement(
-      target_pos, source_lid )[ dimension_ - 1 ];
+    if ( ( uint ) dimension_ > target_pos.size() )
+    {
+      throw KernelException(
+        "Spatial distance dimension must be within the defined number of "
+        "dimensions for the nodes." );
+    }
+    return std::abs( source_layer->compute_displacement(
+      target_pos, source_lid )[ dimension_ - 1 ] );
   default:
     throw KernelException( String::compose(
       "SpatialDistanceParameter dimension must be either 0 for unspecified,"
@@ -172,7 +184,6 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
   const std::vector< double >& target_pos,
   const std::vector< double >& displacement ) const
 {
-  // throw NotImplemented("");
   switch ( dimension_ )
   {
   case 0:
@@ -187,11 +198,17 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
   case 1:
   case 2:
   case 3:
-    return displacement[ dimension_ - 1 ];
+    if ( ( uint ) dimension_ > displacement.size() )
+    {
+      throw KernelException(
+        "Spatial distance dimension must be within the defined number of "
+        "dimensions for the nodes." );
+    }
+    return std::abs( displacement[ dimension_ - 1 ] );
   default:
     throw KernelException( String::compose(
       "SpatialDistanceParameter dimension must be either 0 for unspecified,"
-      " or 1 or 2 for x or y dimension. Got ",
+      " or 1-3 for x-z. Got ",
       dimension_ ) );
     break;
   }

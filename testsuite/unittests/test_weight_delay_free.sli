@@ -40,10 +40,15 @@
 /src_layer layer def
 /tgt_layer layer def
 
+<< /constant << /value 1.0 >> >> CreateParameter
+<< /constant << /value -0.02 >> >> CreateParameter
+<< /distance << >> >> CreateParameter
+mul add /linear_parameter Set
+
 /conns << /connection_type (divergent)
           /mask    << /rectangular << /lower_left [ -0.5 -0.5 ] /upper_right [ 9.5 0.5 ] >> >>
-          /weights << /linear << /c 1.0 /a -0.02 >> >>
-          /delays  << /linear << /c 1.0 /a -0.02 >> >>
+          /weights linear_parameter
+          /delays  linear_parameter
        >> def
 
 % required to make sure that resolution goes into userdict

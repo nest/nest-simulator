@@ -253,19 +253,24 @@ class TestGIDCollectionGetSet(unittest.TestCase):
                                                index=tuple(multi_sd)))
 
         # Single node, hierarchical with array parameter
-        pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
-                                            output='pandas'),
-                              pandas.DataFrame({'times': [[]],
-                                                'senders': [[]]},
-                                               index=tuple(single_sd)))
+        ref_df = pandas.DataFrame(
+            {'times': [[]], 'senders': [[]]}, index=tuple(single_sd))
+        ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
+        pt.assert_frame_equal(single_sd.get(
+            'events', ['senders', 'times'], output='pandas'),
+            ref_df)
 
         # Multiple nodes, hierarchical with array parameter
         ref_dict = {'times': [[] for i in range(len(multi_sd))],
                     'senders': [[] for i in range(len(multi_sd))]}
-        pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
-                                           output='pandas'),
-                              pandas.DataFrame(ref_dict,
-                                               index=tuple(multi_sd)))
+        ref_df = pandas.DataFrame(
+            ref_dict,
+            index=tuple(multi_sd))
+        ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
+        sd_df = multi_sd.get('events', ['senders', 'times'], output='pandas')
+        sd_df = sd_df.reindex(sorted(sd_df.columns), axis=1)
+        pt.assert_frame_equal(sd_df,
+                              ref_df)
 
         # Single node, no parameter (gets all values)
         values = single_sd.get(output='pandas')
@@ -291,18 +296,20 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         ref_dict = {'times': [[31.8, 36.1, 38.5]],
                     'senders': [[17, 12, 20]]}
+        ref_df = pandas.DataFrame(ref_dict, index=tuple(single_sd))
+        ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
         pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
                                             output='pandas'),
-                              pandas.DataFrame(ref_dict,
-                                               index=tuple(single_sd)))
+                              ref_df)
 
         ref_dict = {'times': [[36.1], [], [], [], [], [31.8], [], [], [38.5],
                               []],
                     'senders': [[12], [], [], [], [], [17], [], [], [20], []]}
+        ref_df = pandas.DataFrame(ref_dict, index=tuple(multi_sd))
+        ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
         pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
                                            output='pandas'),
-                              pandas.DataFrame(ref_dict,
-                                               index=tuple(multi_sd)))
+                              ref_df)
 
     def test_get_JSON(self):
         """

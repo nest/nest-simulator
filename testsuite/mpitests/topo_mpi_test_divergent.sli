@@ -32,9 +32,14 @@
   /l1 layer_specs CreateLayer def
   /l2 layer_specs CreateLayer def
 
+  << /constant << /value 1.0 >> >> CreateParameter
+  << /constant << /value -0.02 >> >> CreateParameter
+  << /distance << >> >> CreateParameter
+  mul add /linear_parameter Set
+
   /conns << /connection_type (divergent)
             /mask << /circular << /radius 0.25 >> /anchor [ 0.0 0.0 ] >>
-            /weights << /linear << /c 1.0 /a -5.0 >> >>
+            /weights linear_parameter
          >> def
   l1 l2 conns ConnectLayers
 

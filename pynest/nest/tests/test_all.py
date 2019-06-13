@@ -68,6 +68,7 @@ from . import test_split_simulation
 from . import test_stack
 from . import test_status
 from . import test_stdp_multiplicity
+from . import test_stdp_nn_synapses
 from . import test_stdp_triplet_synapse
 from . import test_threads
 from . import test_use_gid_in_filename

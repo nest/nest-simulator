@@ -63,9 +63,9 @@ public:
   const std::string commandstring( void ) const;
   const std::string name( void ) const;
 
-  static lockPTRDatum< Parameter, &ParameterType > create_nest_parameter(
+  static lockPTRDatum< Parameter, &ParameterType > create_parameter(
     const Token& );
-  static Parameter* create_nest_parameter( const Name& name,
+  static Parameter* create_parameter( const Name& name,
     const DictionaryDatum& d );
 
   using ParameterFactory = GenericFactory< Parameter >;

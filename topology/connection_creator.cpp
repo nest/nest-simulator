@@ -77,7 +77,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
     else if ( dit->first == names::kernel )
     {
-      kernel_ = NestModule::create_nest_parameter( dit->second );
+      kernel_ = NestModule::create_parameter( dit->second );
     }
     else if ( dit->first == names::synapse_model )
     {
@@ -95,11 +95,11 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
     else if ( dit->first == names::weights )
     {
-      weight_ = NestModule::create_nest_parameter( dit->second );
+      weight_ = NestModule::create_parameter( dit->second );
     }
     else if ( dit->first == names::delays )
     {
-      delay_ = NestModule::create_nest_parameter( dit->second );
+      delay_ = NestModule::create_parameter( dit->second );
     }
     else
     {
@@ -114,18 +114,18 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   if ( not weight_.valid() )
   {
     weight_ =
-      NestModule::create_nest_parameter( ( *syn_defaults )[ names::weight ] );
+      NestModule::create_parameter( ( *syn_defaults )[ names::weight ] );
   }
   if ( not delay_.valid() )
   {
     if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) )
     {
-      delay_ = NestModule::create_nest_parameter( numerics::nan );
+      delay_ = NestModule::create_parameter( numerics::nan );
     }
     else
     {
       delay_ =
-        NestModule::create_nest_parameter( ( *syn_defaults )[ names::delay ] );
+        NestModule::create_parameter( ( *syn_defaults )[ names::delay ] );
     }
   }
 

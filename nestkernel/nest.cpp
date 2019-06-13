@@ -401,7 +401,7 @@ create_parameter( const DictionaryDatum& param_dict )
 {
   param_dict->clear_access_flags();
 
-  ParameterDatum datum( NestModule::create_nest_parameter( param_dict ) );
+  ParameterDatum datum( NestModule::create_parameter( param_dict ) );
 
   ALL_ENTRIES_ACCESSED(
     *param_dict, "nest::CreateParameter", "Unread dictionary entries: " );

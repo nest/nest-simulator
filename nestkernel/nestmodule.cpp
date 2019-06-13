@@ -97,7 +97,7 @@ NestModule::commandstring( void ) const
 }
 
 ParameterDatum
-NestModule::create_nest_parameter( const Token& t )
+NestModule::create_parameter( const Token& t )
 {
   // t can be an existing ParameterDatum, a DoubleDatum containing a
   // constant value for this parameter, or a Dictionary containing
@@ -129,7 +129,7 @@ NestModule::create_nest_parameter( const Token& t )
 
     Name n = ( *dictd )->begin()->first;
     DictionaryDatum pdict = getValue< DictionaryDatum >( *dictd, n );
-    return create_nest_parameter( n, pdict );
+    return create_parameter( n, pdict );
   }
   else
   {
@@ -139,7 +139,7 @@ NestModule::create_nest_parameter( const Token& t )
 }
 
 Parameter*
-NestModule::create_nest_parameter( const Name& name, const DictionaryDatum& d )
+NestModule::create_parameter( const Name& name, const DictionaryDatum& d )
 {
   // The parameter factory will create the parameter
   Parameter* param = parameter_factory_().create( name, d );

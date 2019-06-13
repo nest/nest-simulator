@@ -436,9 +436,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
       }
     """
 
-    print('Connecting with conn_spec=', conn_spec)
-    print('syn_spec=', syn_spec)
-
     if not isinstance(pre, GIDCollection):
         raise TypeError("Not implemented, presynaptic nodes must be a "
                         "GIDCollection")

@@ -26,10 +26,9 @@ set( TRIPLET_VENDOR fujitsu )
 # Set k-computer for main CMakeList.txt
 #
 set( k-computer ON CACHE BOOL "Enable K computer." FORCE )
-# better to build static for K computer
-set( static-libraries ON CACHE BOOL "Build static libraries. [default=no]" FORCE )
 # no readline support on K computer
 set( with-readline OFF CACHE BOOL "Find a readline library [default=ON]. To set a specific readline, set install path." FORCE )
+set( with-ltdl OFF CACHE BOOL "Find a ltdl library [default=ON]. To set a specific ltdl, set install path." FORCE )
 # we obviously want to do mpi on K computer
 set( with-mpi ON CACHE BOOL "Request compilation with MPI; optionally give directory with MPI installation." FORCE )
 
@@ -57,15 +56,9 @@ set( CMAKE_CXX_COMPILER mpiFCCpx CACHE FILEPATH "Override C++ compiler" )
 set( CMAKE_C_COMPILER_ID "Fujitsu" CACHE STRING "Fujitsu C cross-compiler" FORCE )
 set( CMAKE_CXX_COMPILER_ID "Fujitsu" CACHE STRING "Fujitsu C++ cross-compiler" FORCE )
 
-# Set specific OpenMPI variables
-set( MPI_CXX_COMPIER mpiFCCpx )
-set( MPI_CXX_HEADER_DIR "/opt/FJSVtclang/GM-1.2.0-24/include/mpi/fujitsu/" CACHE PATH "Location of the mpi.h header on disk" FORCE )
-#set( MPI_CXX_LIBRARIES "mpi" CACHE STRING "" FORCE )
-#set( MPI_CXX_LINK_FLAGS "-mt -Kident_mpi -lmpi_cxx -lmpi -ltofucom -ltofutop -lm -lnsl -lutil" CACHE STRING "" FORCE )
-
 # Set specific OpenMP variables
 set( OpenMP_C_FLAGS "-Kopenmp" CACHE STRING "Compiler flag for OpenMP parallelization" FORCE )
 set( OpenMP_CXX_FLAGS "-Kopenmp" CACHE STRING "Compiler flag for OpenMP parallelization" FORCE )
 set( OpenMP_C_LIB_NAMES "fjomp" CACHE STRING "libfjomp" FORCE )
 set( OpenMP_CXX_LIB_NAMES "fjomp" CACHE STRING "libfjomp" FORCE )
-set( OpenMP_fjomp_LIBRARY "/opt/FJSVtclang/GM-1.2.0-24/lib64/" CACHE STRING "PATH to fjomp" FORCE )
+set( OpenMP_fjomp_LIBRARY "/opt/FJSVtclang/GM-1.2.0-25/lib64/" CACHE STRING "PATH to fjomp" FORCE )

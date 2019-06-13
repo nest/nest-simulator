@@ -55,7 +55,7 @@ Example:
     /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
 
     def
-    /n  /iaf_psc_delta_canon Create def
+    /n  /iaf_psc_delta_ps Create def
     /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create
     def
 
@@ -94,7 +94,7 @@ FirstVersion: June 2007
 
 Author: Abigail Morrison
 
-SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_canon
+SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_ps
 */
 template < typename targetidentifierT >
 class ContDelayConnection : public Connection< targetidentifierT >

@@ -28,7 +28,7 @@ time grid at a user-defined resolution. The precise spiking models
 overcome this by handling spikes in continuous time [1]_ and [2]_.
 
 The precise spiking neuron models in NEST include: iaf_psc_exp_ps,
-iaf_psc_alpha_canon, iaf_psc_alpha_presc and iaf_psc_delta_canon.
+iaf_psc_alpha_ps, iaf_psc_alpha_presc and iaf_psc_delta_ps.
 More detailed information about the precise spiking models can be
 found here:
   https://www.nest-simulator.org/simulations-with-precise-spike-times/

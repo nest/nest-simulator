@@ -1,5 +1,5 @@
 /*
- *  iaf_psc_delta_canon.cpp
+ *  iaf_psc_delta_ps.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,10 +20,10 @@
  *
  */
 
-// iaf_psc_delta_canon is a neuron where the potential jumps on each spike
+// iaf_psc_delta_ps is a neuron where the potential jumps on each spike
 // arrival.
 
-#include "iaf_psc_delta_canon.h"
+#include "iaf_psc_delta_ps.h"
 
 // C++ includes:
 #include <limits>
@@ -48,7 +48,7 @@ namespace nest
  * Recordables map
  * ---------------------------------------------------------------- */
 
-RecordablesMap< iaf_psc_delta_canon > iaf_psc_delta_canon::recordablesMap_;
+RecordablesMap< iaf_psc_delta_ps > iaf_psc_delta_ps::recordablesMap_;
 
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
@@ -56,17 +56,17 @@ RecordablesMap< iaf_psc_delta_canon > iaf_psc_delta_canon::recordablesMap_;
  */
 template <>
 void
-RecordablesMap< iaf_psc_delta_canon >::create()
+RecordablesMap< iaf_psc_delta_ps >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::V_m, &iaf_psc_delta_canon::get_V_m_ );
+  insert_( names::V_m, &iaf_psc_delta_ps::get_V_m_ );
 }
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::iaf_psc_delta_canon::Parameters_::Parameters_()
+nest::iaf_psc_delta_ps::Parameters_::Parameters_()
   : tau_m_( 10.0 )                                  // ms
   , c_m_( 250.0 )                                   // pF
   , t_ref_( 2.0 )                                   // ms
@@ -78,7 +78,7 @@ nest::iaf_psc_delta_canon::Parameters_::Parameters_()
 {
 }
 
-nest::iaf_psc_delta_canon::State_::State_()
+nest::iaf_psc_delta_ps::State_::State_()
   : U_( 0.0 ) //  or U_ = U_reset_;
   , I_( 0. )
   , last_spike_step_( -1 )
@@ -93,7 +93,7 @@ nest::iaf_psc_delta_canon::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_delta_canon::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_psc_delta_ps::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::E_L, E_L_ );
   def< double >( d, names::I_e, I_e_ );
@@ -106,7 +106,7 @@ nest::iaf_psc_delta_canon::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::iaf_psc_delta_canon::Parameters_::set( const DictionaryDatum& d )
+nest::iaf_psc_delta_ps::Parameters_::set( const DictionaryDatum& d )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -172,7 +172,7 @@ nest::iaf_psc_delta_canon::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::iaf_psc_delta_canon::State_::get( DictionaryDatum& d,
+nest::iaf_psc_delta_ps::State_::get( DictionaryDatum& d,
   const Parameters_& p ) const
 {
   def< double >( d, names::V_m, U_ + p.E_L_ ); // Membrane potential
@@ -181,7 +181,7 @@ nest::iaf_psc_delta_canon::State_::get( DictionaryDatum& d,
 }
 
 void
-nest::iaf_psc_delta_canon::State_::set( const DictionaryDatum& d,
+nest::iaf_psc_delta_ps::State_::set( const DictionaryDatum& d,
   const Parameters_& p,
   double delta_EL )
 {
@@ -195,13 +195,13 @@ nest::iaf_psc_delta_canon::State_::set( const DictionaryDatum& d,
   }
 }
 
-nest::iaf_psc_delta_canon::Buffers_::Buffers_( iaf_psc_delta_canon& n )
+nest::iaf_psc_delta_ps::Buffers_::Buffers_( iaf_psc_delta_ps& n )
   : logger_( n )
 {
 }
 
-nest::iaf_psc_delta_canon::Buffers_::Buffers_( const Buffers_&,
-  iaf_psc_delta_canon& n )
+nest::iaf_psc_delta_ps::Buffers_::Buffers_( const Buffers_&,
+  iaf_psc_delta_ps& n )
   : logger_( n )
 {
 }
@@ -210,7 +210,7 @@ nest::iaf_psc_delta_canon::Buffers_::Buffers_( const Buffers_&,
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::iaf_psc_delta_canon::iaf_psc_delta_canon()
+nest::iaf_psc_delta_ps::iaf_psc_delta_ps()
   : Archiving_Node()
   , P_()
   , S_()
@@ -219,7 +219,7 @@ nest::iaf_psc_delta_canon::iaf_psc_delta_canon()
   recordablesMap_.create();
 }
 
-nest::iaf_psc_delta_canon::iaf_psc_delta_canon( const iaf_psc_delta_canon& n )
+nest::iaf_psc_delta_ps::iaf_psc_delta_ps( const iaf_psc_delta_ps& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -232,14 +232,14 @@ nest::iaf_psc_delta_canon::iaf_psc_delta_canon( const iaf_psc_delta_canon& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_delta_canon::init_state_( const Node& proto )
+nest::iaf_psc_delta_ps::init_state_( const Node& proto )
 {
-  const iaf_psc_delta_canon& pr = downcast< iaf_psc_delta_canon >( proto );
+  const iaf_psc_delta_ps& pr = downcast< iaf_psc_delta_ps >( proto );
   S_ = pr.S_;
 }
 
 void
-nest::iaf_psc_delta_canon::init_buffers_()
+nest::iaf_psc_delta_ps::init_buffers_()
 {
   B_.events_.resize();
   B_.events_.clear();
@@ -250,7 +250,7 @@ nest::iaf_psc_delta_canon::init_buffers_()
 }
 
 void
-iaf_psc_delta_canon::calibrate()
+iaf_psc_delta_ps::calibrate()
 {
   B_.logger_.init();
 
@@ -269,7 +269,7 @@ iaf_psc_delta_canon::calibrate()
 }
 
 void
-iaf_psc_delta_canon::update( Time const& origin,
+iaf_psc_delta_ps::update( Time const& origin,
   const long from,
   const long to )
 {
@@ -469,7 +469,7 @@ iaf_psc_delta_canon::update( Time const& origin,
 }
 
 void
-nest::iaf_psc_delta_canon::propagate_( const double dt )
+nest::iaf_psc_delta_ps::propagate_( const double dt )
 {
   assert( not S_.is_refractory_ ); // should not be called if neuron is
                                    // refractory
@@ -483,7 +483,7 @@ nest::iaf_psc_delta_canon::propagate_( const double dt )
 }
 
 void
-nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
+nest::iaf_psc_delta_ps::emit_spike_( Time const& origin,
   const long lag,
   const double offset_U )
 {
@@ -512,7 +512,7 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
 }
 
 void
-nest::iaf_psc_delta_canon::emit_instant_spike_( Time const& origin,
+nest::iaf_psc_delta_ps::emit_instant_spike_( Time const& origin,
   const long lag,
   const double spike_offs )
 {
@@ -536,7 +536,7 @@ nest::iaf_psc_delta_canon::emit_instant_spike_( Time const& origin,
 }
 
 void
-iaf_psc_delta_canon::handle( SpikeEvent& e )
+iaf_psc_delta_ps::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -553,7 +553,7 @@ iaf_psc_delta_canon::handle( SpikeEvent& e )
 }
 
 void
-iaf_psc_delta_canon::handle( CurrentEvent& e )
+iaf_psc_delta_ps::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -568,7 +568,7 @@ iaf_psc_delta_canon::handle( CurrentEvent& e )
 
 
 void
-nest::iaf_psc_delta_canon::handle( DataLoggingRequest& e )
+nest::iaf_psc_delta_ps::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }

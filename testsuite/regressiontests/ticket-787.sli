@@ -69,7 +69,7 @@ systemdict /GNUReadline known not {
 	/CompareFiles_s_s /ConnectLayers_i_i_D /Connect_g_g_D_D
 	/Connect_i_i_D_l /Connect_i_i_d_d_l /Connect_i_i_l
         /CopyModel_l_l /CopyModel_l_l_D /CreateLayer_D
-	/CreateMask_D /CreateTopologyParameter_D /CreateRDV_g_vf /CreateRNG_gt_i
+	/CreateMask_D /CreateRDV_g_vf /CreateRNG_gt_i
 	/Create_l /Create_l_D /Create_l_i /Create_l_i_D /CyclicValue_d_a
 	/CyclicValue_d_d_d /Displacement_a_i
 	/Distance_a_i /DumpLayerConnections_os_i_l

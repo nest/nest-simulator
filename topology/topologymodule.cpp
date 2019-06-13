@@ -50,20 +50,16 @@
 #include "mask.h"
 #include "mask_impl.h"
 #include "topology.h"
-#include "topology_parameter.h"
 
 
 namespace nest
 {
 SLIType TopologyModule::MaskType;
-SLIType TopologyModule::TopologyParameterType;
 
 TopologyModule::TopologyModule()
 {
   MaskType.settypename( "masktype" );
   MaskType.setdefaultaction( SLIInterpreter::datatypefunction );
-  TopologyParameterType.settypename( "topologyparametertype" );
-  TopologyParameterType.setdefaultaction( SLIInterpreter::datatypefunction );
 }
 
 TopologyModule::~TopologyModule()
@@ -86,13 +82,6 @@ GenericFactory< AbstractMask >&
 TopologyModule::mask_factory_( void )
 {
   static GenericFactory< AbstractMask > factory;
-  return factory;
-}
-
-GenericFactory< TopologyParameter >&
-TopologyModule::parameter_factory_( void )
-{
-  static GenericFactory< TopologyParameter > factory;
   return factory;
 }
 
@@ -224,84 +213,6 @@ TopologyModule::create_mask( const Token& t )
   }
 }
 
-TopologyParameterDatum
-TopologyModule::create_topology_parameter( const Token& t )
-{
-  // t can be an existing ParameterDatum, a DoubleDatum containing a
-  // constant value for this parameter, or a Dictionary containing
-  // parameters
-  TopologyParameterDatum* pd =
-    dynamic_cast< TopologyParameterDatum* >( t.datum() );
-  if ( pd )
-  {
-    return *pd;
-  }
-
-  // If t is a DoubleDatum, create a ConstantParameter with this value
-  DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
-  if ( dd )
-  {
-    return new ConstantTopologyParameter( *dd );
-  }
-
-  DictionaryDatum* dictd = dynamic_cast< DictionaryDatum* >( t.datum() );
-  if ( dictd )
-  {
-
-    // The dictionary should only have a single key, which is the name of
-    // the parameter type to create.
-    if ( ( *dictd )->size() != 1 )
-    {
-      throw BadProperty(
-        "Parameter definition dictionary must contain one single key only." );
-    }
-
-    Name n = ( *dictd )->begin()->first;
-    DictionaryDatum pdict = getValue< DictionaryDatum >( *dictd, n );
-    return create_topology_parameter( n, pdict );
-  }
-  else
-  {
-    throw BadProperty(
-      "Parameter must be parametertype, constant or dictionary." );
-  }
-}
-
-TopologyParameter*
-TopologyModule::create_topology_parameter( const Name& name,
-  const DictionaryDatum& d )
-{
-  // The parameter factory will create the parameter without regard for
-  // the anchor
-  TopologyParameter* param = parameter_factory_().create( name, d );
-
-  // Wrap the parameter object created above in an AnchoredParameter if
-  // the dictionary contains an anchor
-  if ( d->known( names::anchor ) )
-  {
-    std::vector< double > anchor =
-      getValue< std::vector< double > >( d, names::anchor );
-    TopologyParameter* aparam;
-    switch ( anchor.size() )
-    {
-    case 2:
-      aparam = new AnchoredTopologyParameter< 2 >( *param, anchor );
-      break;
-    case 3:
-      aparam = new AnchoredTopologyParameter< 3 >( *param, anchor );
-      break;
-    default:
-      throw BadProperty( "Anchor must be 2- or 3-dimensional." );
-    }
-
-    delete param;
-    param = aparam;
-  }
-
-  return param;
-}
-
-
 static AbstractMask*
 create_doughnut( const DictionaryDatum& d )
 {
@@ -354,20 +265,7 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "sub_M_M", &sub_M_Mfunction );
 
-  i->createcommand( "multopo_P_P", &multopo_P_Pfunction );
-
-  i->createcommand( "divtopo_P_P", &divtopo_P_Pfunction );
-
-  i->createcommand( "addtopo_P_P", &addtopo_P_Pfunction );
-
-  i->createcommand( "subtopo_P_P", &subtopo_P_Pfunction );
-
   i->createcommand( "ConnectLayers_g_g_D", &connectlayers_g_g_Dfunction );
-
-  i->createcommand(
-    "CreateTopologyParameter_D", &createtopologyparameter_Dfunction );
-
-  i->createcommand( "GetValue_a_P", &getvalue_a_Pfunction );
 
   i->createcommand( "GetLayerStatus_g", &getlayerstatus_gfunction );
 
@@ -391,17 +289,6 @@ TopologyModule::init( SLIInterpreter* i )
   register_mask< BoxMask< 3 > >( "volume" ); // For compatibility with topo 2.0
   register_mask( "doughnut", create_doughnut );
   register_mask< GridMask< 2 > >();
-
-  // Register parameter types
-  register_parameter< ConstantTopologyParameter >( "constant" );
-  register_parameter< LinearTopologyParameter >( "linear" );
-  register_parameter< ExponentialTopologyParameter >( "exponential" );
-  register_parameter< GaussianTopologyParameter >( "gaussian" );
-  register_parameter< Gaussian2DTopologyParameter >( "gaussian2D" );
-  register_parameter< GammaTopologyParameter >( "gamma" );
-  register_parameter< UniformTopologyParameter >( "uniform" );
-  register_parameter< NormalTopologyParameter >( "normal" );
-  register_parameter< LognormalTopologyParameter >( "lognormal" );
 }
 
 /** @BeginDocumentation
@@ -772,74 +659,6 @@ TopologyModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-void
-TopologyModule::MulTopo_P_PFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 2 );
-
-  TopologyParameterDatum param1 =
-    getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
-  TopologyParameterDatum param2 =
-    getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
-
-  TopologyParameterDatum newparam = multiply_parameter( param1, param2 );
-
-  i->OStack.pop( 2 );
-  i->OStack.push( newparam );
-  i->EStack.pop();
-}
-
-void
-TopologyModule::DivTopo_P_PFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 2 );
-
-  TopologyParameterDatum param1 =
-    getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
-  TopologyParameterDatum param2 =
-    getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
-
-  TopologyParameterDatum newparam = divide_parameter( param1, param2 );
-
-  i->OStack.pop( 2 );
-  i->OStack.push( newparam );
-  i->EStack.pop();
-}
-
-void
-TopologyModule::AddTopo_P_PFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 2 );
-
-  TopologyParameterDatum param1 =
-    getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
-  TopologyParameterDatum param2 =
-    getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
-
-  TopologyParameterDatum newparam = add_parameter( param1, param2 );
-
-  i->OStack.pop( 2 );
-  i->OStack.push( newparam );
-  i->EStack.pop();
-}
-
-void
-TopologyModule::SubTopo_P_PFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 2 );
-
-  TopologyParameterDatum param1 =
-    getValue< TopologyParameterDatum >( i->OStack.pick( 1 ) );
-  TopologyParameterDatum param2 =
-    getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
-
-  TopologyParameterDatum newparam = subtract_parameter( param1, param2 );
-
-  i->OStack.pop( 2 );
-  i->OStack.push( newparam );
-  i->EStack.pop();
-}
-
 /** @BeginDocumentation
   Name: topology::ConnectLayers - connect two layers
 
@@ -1039,41 +858,6 @@ TopologyModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-
-/** @BeginDocumentation
-  Name: topology::CreateTopologyParameter - create a spatial function
-
-  Synopsis:
-  << /type dict >> CreateTopologyParameter -> parameter
-
-  Parameters:
-  /type - parameter type
-  dict  - dictionary with parameter specifications
-
-  Description: Parameters are spatial functions which are used when
-  creating connections in the Topology module. A parameter may be used as
-  a probability kernel when creating connections or as synaptic
-  parameters (such as weight and delay). This command creates a parameter
-  object which may be combined with other parameter objects using
-  arithmetic operators. The parameter is specified in a dictionary.
-
-  Author: Håkon Enger
-*/
-void
-TopologyModule::CreateTopologyParameter_DFunction::execute(
-  SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-  const DictionaryDatum param_dict =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-
-  TopologyParameterDatum datum = nest::create_topology_parameter( param_dict );
-
-  i->OStack.pop( 1 );
-  i->OStack.push( datum );
-  i->EStack.pop();
-}
-
 /*BeginDocumentation
 
   Name: topology::GetLayerStatus - return information about layer
@@ -1099,39 +883,6 @@ TopologyModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop( 1 );
   i->OStack.push( result );
-  i->EStack.pop();
-}
-
-
-/** @BeginDocumentation
-  Name: topology::GetValue - compute value of parameter at a point
-
-  Synopsis:
-  point param GetValue -> value
-
-  Parameters:
-  point - array of coordinates
-  param - parameter object
-
-  Returns:
-  value - the value of the parameter at the point.
-
-  Author: Håkon Enger
-*/
-void
-TopologyModule::GetValue_a_PFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 2 );
-
-  std::vector< double > point =
-    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
-  TopologyParameterDatum param =
-    getValue< TopologyParameterDatum >( i->OStack.pick( 0 ) );
-
-  double value = get_value( point, param );
-
-  i->OStack.pop( 2 );
-  i->OStack.push( value );
   i->EStack.pop();
 }
 

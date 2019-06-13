@@ -28,7 +28,6 @@ from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_simulation import GetKernelStatus
-from .hl_api_topology import CreateTopologyParameter
 
 import numpy
 
@@ -45,7 +44,6 @@ __all__ = [
     'GIDCollectionIterator',
     'Mask',
     'Parameter',
-    'TopologyParameter',
 ]
 
 
@@ -970,79 +968,3 @@ class Parameter(object):
 
         """
         return sli_func("GetValue", self._datum)
-
-
-class TopologyParameter(Parameter):
-    """
-    Class for parameters for distance dependency or randomization.
-
-    Parameters are spatial functions which are used when creating
-    connections in the Topology module. A parameter may be used as a
-    probability kernel when creating connections or as synaptic parameters
-    (such as weight and delay). Parameters are created using the
-    ``CreateTopologyParameter`` command.
-    """
-    # The constructor should not be called by the user
-
-    def __init__(self, datum):
-        """
-        Parameters must be created using the CreateTopologyParameter
-        command.
-        """
-        if not (isinstance(datum, kernel.SLIDatum) or
-                datum.dtype != "topologyparametertype"):
-            raise TypeError("expected parameter datum")
-        self._datum = datum
-
-    # Generic binary operation
-    def _binop(self, op, other):
-        if isinstance(other, (int, float)):
-            other = CreateTopologyParameter(
-                'constant', {'value': float(other)})
-        if not isinstance(other, Parameter):
-            return NotImplemented
-
-        return sli_func(op, self._datum, other._datum)
-
-    def GetValue(self, point):
-        """
-        Compute value of parameter at a point.
-
-
-        Parameters
-        ----------
-        point : tuple/list of float values
-            coordinate of point
-
-
-        Returns
-        -------
-        out : value
-            The value of the parameter at the point
-
-
-        See also
-        --------
-        CreateTopologyParameter : create parameter for e.g.,
-        distance dependency
-
-
-        Notes
-        -----
-        -
-
-
-        **Example**
-            ::
-
-                import nest
-
-                #linear dependent parameter
-                P = nest.CreateTopologyParameter('linear',
-                                                 {'a' : 2., 'c' : 0.})
-
-                #get out value
-                P.GetValue(point=[3., 4.])
-
-        """
-        return sli_func("GetValue", point, self._datum)

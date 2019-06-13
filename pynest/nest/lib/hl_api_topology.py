@@ -50,7 +50,6 @@ NEST:
 
 Functions in the Topology module:
   - CreateMask(masktype, specs, anchor=None)
-  - CreateTopologyParameter(parametertype, specs)
   - CreateLayer(specs)
   - ConnectLayers(pre, post, projections)
   - Distance(from_arg, to_arg)
@@ -79,7 +78,6 @@ import nest
 __all__ = [
     'ConnectLayers',
     'CreateMask',
-    'CreateTopologyParameter',
     'Displacement',
     'Distance',
     'DumpLayerConnections',
@@ -241,150 +239,6 @@ def CreateMask(masktype, specs, anchor=None):
                                     {masktype: specs, 'anchor': anchor})
 
 
-def CreateTopologyParameter(parametertype, specs):
-    """
-    Create a parameter for distance dependency or randomization.
-
-    Parameters are (spatial) functions which are used when creating
-    connections in the Topology module for distance dependency or
-    randomization. This command creates a Parameter object which may be
-    combined with other ``TopologyParameter`` objects using arithmetic
-    operators. The parameter is specified in a dictionary.
-
-    A parameter may be used as a probability kernel when creating connections
-    or as synaptic parameters (such as weight and delay), i.e., for specifying
-    the parameters `'kernel'`, `'weights'` and `'delays'` in the
-    connection dictionary passed to ``ConnectLayers``.
-
-
-    Parameters
-    ----------
-    parametertype : {'constant', 'linear', 'exponential', 'gaussian', \
-        'gaussian2D', 'uniform', 'normal', 'lognormal'}
-        Function types with or without distance dependency
-    specs : dict
-        Dictionary specifying the parameters of the provided
-        `'parametertype'`, see **Parameter types**.
-
-
-    Returns
-    -------
-    out : ``TopologyParameter`` object
-
-
-    See also
-    --------
-    ConnectLayers : Connect two layers pairwise according to
-        specified projections. Parameters can be used to specify the
-        parameters `'kernel'`, `'weights'` and `'delays'` in the
-        connection dictionary.
-    Parameters : Class for parameters for distance dependency or randomization.
-
-
-    Notes
-    -----
-    -
-
-
-    **Parameter types**
-
-    Available parameter types (`parametertype` parameter), their function and
-    acceptable keys for their corresponding specification dictionaries
-
-    * Constant
-        ::
-
-            'constant' :
-                {'value' : float} # constant value
-
-    * With dependence on the distance `d`
-        ::
-
-            # p(d) = c + a * d
-            'linear' :
-                {'a' : float, # slope, default: 1.0
-                 'c' : float} # constant offset, default: 0.0
-            # or
-            # p(d) = c + a*exp(-d/tau)
-            'exponential' :
-                {'a'   : float, # coefficient of exponential term, default: 1.0
-                 'c'   : float, # constant offset, default: 0.0
-                 'tau' : float} # length scale factor, default: 1.0
-            # or
-            # p(d) = c + p_center*exp(-(d-mean)^2/(2*sigma^2))
-            'gaussian' :
-                {'p_center' : float, # value at center, default: 1.0
-                 'mean'     : float, # distance to center, default: 0.0
-                 'sigma'    : float, # width of Gaussian, default: 1.0
-                 'c'        : float} # constant offset, default: 0.0
-
-    * Bivariate Gaussian parameter:
-        ::
-
-            # p(x,y) = c + p_center *
-            #          exp( -( (x-mean_x)^2/sigma_x^2 + (y-mean_y)^2/sigma_y^2
-            #          + 2*rho*(x-mean_x)*(y-mean_y)/(sigma_x*sigma_y) ) /
-            #          (2*(1-rho^2)) )
-            'gaussian2D' :
-                {'p_center' : float, # value at center, default: 1.0
-                 'mean_x'   : float, # x-coordinate of center, default: 0.0
-                 'mean_y'   : float, # y-coordinate of center, default: 0.0
-                 'sigma_x'  : float, # width in x-direction, default: 1.0
-                 'sigma_y'  : float, # width in y-direction, default: 1.0
-                 'rho'      : float, # correlation of x and y, default: 0.0
-                 'c'        : float} # constant offset, default: 0.0
-
-    * Without distance dependency, for randomization
-        ::
-
-            # random parameter with uniform distribution in [min,max)
-            'uniform' :
-                {'min' : float, # minimum value, default: 0.0
-                 'max' : float} # maximum value, default: 1.0
-            # or
-            # random parameter with normal distribution, optionally truncated
-            # to [min,max)
-            'normal':
-                {'mean' : float, # mean value, default: 0.0
-                 'sigma': float, # standard deviation, default: 1.0
-                 'min'  : float, # minimum value, default: -inf
-
-                 'max'  : float} # maximum value, default: +inf
-            # or
-            # random parameter with lognormal distribution,
-            # optionally truncated to [min,max)
-            'lognormal' :
-                {'mu'   : float, # mean value of logarithm, default: 0.0
-                 'sigma': float, # standard deviation of log, default: 1.0
-                 'min'  : float, # minimum value, default: -inf
-                 'max'  : float} # maximum value, default: +inf
-
-
-    **Example**
-        ::
-
-            import nest
-
-            # create a grid-based layer
-            l = nest.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
-
-            # parameter for delay with linear distance dependency
-            d = nest.CreateTopologyParameter('linear', {'a': 0.2,
-                                              'c': 0.2})
-
-            # connectivity specifications
-            conndict = {'connection_type': 'divergent',
-                        'delays': d}
-
-            nest.ConnectLayers(l, l, conndict)
-
-    """
-    return nest.ll_api.sli_func('CreateTopologyParameter',
-                                {parametertype: specs})
-
-
 def ConnectLayers(pre, post, projections):
     """
     Pairwise connect of pre- and postsynaptic layers.
@@ -427,7 +281,7 @@ def ConnectLayers(pre, post, projections):
     CreateMask : Create a ``Mask`` object. Documentation on available spatial
         masks. Masks can be used to specify the key `'mask'` of the
         connection dictionary.
-    CreateTopologyParameter : Create a ``TopologyParameter`` object.
+    CreateParameter : Create a ``Parameter`` object.
         Documentation on available parameters for distance dependency and
         randomization. Parameters can be used to specify the parameters
         `'kernel'`, `'weights'` and `'delays'` of the connection dictionary.
@@ -453,14 +307,14 @@ def ConnectLayers(pre, post, projections):
         Delays can be constant, randomized or distance-dependent according
         to a provided function.
         Information on available functions can be found in the
-        documentation on the function ``CreateTopologyParameter``.
+        documentation on the function ``CreateParameter``.
     kernel : [float | dict | Parameter object], optional, default: 1.0
         A kernel is a function mapping the distance (or displacement)
         between a driver and a pool node to a connection probability. The
         default kernel is 1.0, i.e., connections are created with
         certainty.
         Information on available functions can be found in the
-        documentation on the function ``CreateTopologyParameter``.
+        documentation on the function ``CreateParameter``.
     mask : [dict | Mask object], optional
         The mask defines which pool nodes are considered as potential
         targets for each driver node. Parameters of the different
@@ -481,7 +335,7 @@ def ConnectLayers(pre, post, projections):
         Weights can be constant, randomized or distance-dependent according
         to a provided function.
         Information on available functions can be found in the
-        documentation on the function ``CreateTopologyParameter``.
+        documentation on the function ``CreateParameter``.
 
 
     Notes
@@ -1572,7 +1426,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     --------
     CreateMask : Create a ``Mask`` object. Documentation on available spatial
         masks.
-    CreateTopologyParameter : Create a ``TopologyParameter`` object.
+    CreateParameter : Create a ``Parameter`` object.
         Documentation on available parameters for distance dependency and
         randomization.
     PlotLayer : Plot all nodes in a layer.

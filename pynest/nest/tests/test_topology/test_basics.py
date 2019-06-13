@@ -419,23 +419,6 @@ class BasicsTestCase(unittest.TestCase):
             self.assertAlmostEqual(positions[indx][0], p[0][indx][0])
             self.assertAlmostEqual(positions[indx][1], p[0][indx][1])
 
-    def test_Parameter(self):
-
-        x = nest.CreateTopologyParameter("constant", {"value": 2.0})
-        y = nest.CreateTopologyParameter("constant", {"value": 3.0})
-
-        z1 = x + y
-        z2 = z1 * x
-        z3 = z2 - x
-        z4 = z3 / x
-        z5 = z4 - y
-
-        self.assertEqual(int(z1.GetValue((0.0, 0.0))), 5)
-        self.assertEqual(int(z2.GetValue((1.0, 0.0))), 10)
-        self.assertEqual(int(z3.GetValue((0.0, 1.0))), 8)
-        self.assertEqual(int(z4.GetValue((1.0, 1.0))), 4)
-        self.assertEqual(int(z5.GetValue((0.0, 0.0))), 1)
-
 
 def suite():
     suite = unittest.makeSuite(BasicsTestCase, 'test')

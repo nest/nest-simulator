@@ -39,7 +39,6 @@ namespace nest
 {
 class AbstractLayer;
 class AbstractMask;
-class TopologyParameter;
 
 template < int D >
 class Layer;
@@ -58,8 +57,7 @@ public:
   const std::string name( void ) const;
   const std::string commandstring( void ) const;
 
-  static SLIType MaskType;              ///< SLI type for masks
-  static SLIType TopologyParameterType; ///< SLI type for parameters
+  static SLIType MaskType; ///< SLI type for masks
 
   /*
    * SLI functions: See source file for documentation
@@ -143,42 +141,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } sub_M_Mfunction;
 
-  class MulTopo_P_PFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } multopo_P_Pfunction;
-
-  class DivTopo_P_PFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } divtopo_P_Pfunction;
-
-  class AddTopo_P_PFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } addtopo_P_Pfunction;
-
-  class SubTopo_P_PFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } subtopo_P_Pfunction;
-
-  class CreateTopologyParameter_DFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } createtopologyparameter_Dfunction;
-
-  class GetValue_a_PFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getvalue_a_Pfunction;
-
   class DumpLayerNodes_os_gFunction : public SLIFunction
   {
   public:
@@ -258,68 +220,11 @@ public:
   static AbstractMask* create_mask( const Name& name,
     const DictionaryDatum& d );
 
-  typedef GenericFactory< TopologyParameter > ParameterFactory;
-  typedef GenericFactory< TopologyParameter >::CreatorFunction
-    ParameterCreatorFunction;
-
-  /**
-   * Register an Parameter subclass as a new parameter type with the
-   * given name.
-   * @param name name of the new parameter type.
-   * @returns true if the new type was successfully registered, or false
-   *          if a parameter type with the same name already exists.
-   */
-  template < class T >
-  static bool register_parameter( const Name& name );
-
-  /**
-   * Register a new parameter type with the given name, with a supplied
-   * function to create parameter objects of this type.
-   * @param name    name of the new parameter type.
-   * @param creator function creating objects of this type. The function
-   *                will be called with the parameter dictionary as
-   *                argument and should return a pointer to a new
-   *                Parameter object.
-   * @returns true if the new type was successfully registered, or false
-   *          if a parameter type with the same name already exists.
-   */
-  static bool register_parameter( const Name& name,
-    ParameterCreatorFunction creator );
-
-  /**
-   * Return a Parameter object.
-   * @param t Either an existing ParameterDatum, or a DoubleDatum
-   *          containing a constant value for this parameter, or a
-   *          Dictionary containing parameters. The dictionary
-   *          should contain a single key with the name of the parameter
-   *          type, with a dictionary of parameters as value.
-   * @returns Either the ParameterDatum given as argument, or a new
-   *          parameter.
-   */
-  static lockPTRDatum< TopologyParameter,
-    &TopologyModule::
-      TopologyParameterType > /*ParameterDatum*/ create_topology_parameter( const Token& );
-
-  /**
-   * Create a new Parameter object using the parameter factory.
-   * @param name Parameter type to create.
-   * @param d    Dictionary with parameters specific for this parameter
-   *             type.
-   * @returns dynamically allocated new Parameter object.
-   */
-  static TopologyParameter* create_topology_parameter( const Name& name,
-    const DictionaryDatum& d );
-
 private:
   /**
    * Return a reference to the mask factory class.
    */
   static MaskFactory& mask_factory_();
-
-  /**
-   * Return a reference to the parameter factory class.
-   */
-  static ParameterFactory& parameter_factory_();
 };
 
 
@@ -385,21 +290,6 @@ TopologyModule::create_mask( const Name& name, const DictionaryDatum& d )
 {
   return mask_factory_().create( name, d );
 }
-
-template < class T >
-inline bool
-TopologyModule::register_parameter( const Name& name )
-{
-  return parameter_factory_().register_subtype< T >( name );
-}
-
-inline bool
-TopologyModule::register_parameter( const Name& name,
-  ParameterCreatorFunction creator )
-{
-  return parameter_factory_().register_subtype( name, creator );
-}
-
 
 } // namespace nest
 

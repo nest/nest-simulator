@@ -40,7 +40,6 @@
 // Includes from topology:
 #include "layer.h"
 #include "mask.h"
-#include "topology_parameter.h"
 
 
 namespace nest
@@ -109,21 +108,9 @@ BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum union_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
-TopologyParameterDatum multiply_parameter( const TopologyParameterDatum& param1,
-  const TopologyParameterDatum& param2 );
-TopologyParameterDatum divide_parameter( const TopologyParameterDatum& param1,
-  const TopologyParameterDatum& param2 );
-TopologyParameterDatum add_parameter( const TopologyParameterDatum& param1,
-  const TopologyParameterDatum& param2 );
-TopologyParameterDatum subtract_parameter( const TopologyParameterDatum& param1,
-  const TopologyParameterDatum& param2 );
 void connect_layers( GIDCollectionPTR source_gc,
   GIDCollectionPTR target_gc,
   const DictionaryDatum& dict );
-TopologyParameterDatum create_topology_parameter(
-  const DictionaryDatum& param_dict );
-double get_value( const std::vector< double >& point,
-  const TopologyParameterDatum& param );
 void dump_layer_nodes( GIDCollectionPTR layer_gc, OstreamDatum& out );
 void dump_layer_connections( const Token& syn_model,
   GIDCollectionPTR source_layer_gc,

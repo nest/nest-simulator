@@ -34,7 +34,6 @@
 #include "position.h"
 #include "topology_names.h"
 #include "topologymodule.h"
-#include "topology_parameter.h"
 #include "vose.h"
 
 namespace nest

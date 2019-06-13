@@ -71,10 +71,6 @@ cdef extern from "parameter.h":
     cppclass ParameterDatum:
         ParameterDatum(const ParameterDatum&)
 
-cdef extern from "topology_parameter.h" namespace "nest":
-    cppclass TopologyParameterDatum:
-        TopologyParameterDatum(const TopologyParameterDatum&)
-
 cdef extern from "gid_collection.h":
     cppclass GIDCollectionDatum:
         GIDCollectionDatum(const GIDCollectionDatum&)

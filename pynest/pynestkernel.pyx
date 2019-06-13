@@ -52,7 +52,6 @@ cdef string SLI_TYPE_CONNECTION = b"connectiontype"
 cdef string SLI_TYPE_VECTOR_INT = b"intvectortype"
 cdef string SLI_TYPE_VECTOR_DOUBLE = b"doublevectortype"
 cdef string SLI_TYPE_MASK = b"masktype"
-cdef string SLI_TYPE_TOPO_PARAMETER = b"topologyparametertype"
 cdef string SLI_TYPE_PARAMETER = b"parametertype"
 cdef string SLI_TYPE_GIDCOLLECTION = b"gidcollectiontype"
 cdef string SLI_TYPE_GIDCOLLECTIONITERATOR = b"gidcollectioniteratortype"
@@ -485,8 +484,6 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
     elif isinstance(obj, SLIDatum):
         if (<SLIDatum> obj).dtype == SLI_TYPE_MASK.decode():
             ret = <Datum*> new MaskDatum(deref(<MaskDatum*> (<SLIDatum> obj).thisptr))
-        elif (<SLIDatum> obj).dtype == SLI_TYPE_TOPO_PARAMETER.decode():
-            ret = <Datum*> new TopologyParameterDatum(deref(<TopologyParameterDatum*> (<SLIDatum> obj).thisptr))
         elif (<SLIDatum> obj).dtype == SLI_TYPE_PARAMETER.decode():
             ret = <Datum*> new ParameterDatum(deref(<ParameterDatum*> (<SLIDatum> obj).thisptr))
         elif (<SLIDatum> obj).dtype == SLI_TYPE_GIDCOLLECTION.decode():
@@ -612,10 +609,6 @@ cdef inline object sli_datum_to_object(Datum* dat):
         datum = SLIDatum()
         (<SLIDatum> datum)._set_datum(<Datum*> new MaskDatum(deref(<MaskDatum*> dat)), SLI_TYPE_MASK.decode())
         ret = nest.Mask(datum)
-    elif datum_type == SLI_TYPE_TOPO_PARAMETER:
-        datum = SLIDatum()
-        (<SLIDatum> datum)._set_datum(<Datum*> new TopologyParameterDatum(deref(<TopologyParameterDatum*> dat)), SLI_TYPE_TOPO_PARAMETER.decode())
-        ret = nest.TopologyParameter(datum)
     elif datum_type == SLI_TYPE_PARAMETER:
         datum = SLIDatum()
         (<SLIDatum> datum)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())

@@ -32,8 +32,6 @@ set( with-ltdl OFF CACHE BOOL "Find a ltdl library [default=ON]. To set a specif
 # we obviously want to do mpi on K computer
 set( with-mpi ON CACHE BOOL "Request compilation with MPI; optionally give directory with MPI installation." FORCE )
 
-set_property( GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS FALSE )
-
 #
 # Library prefixes, suffixes, extra libs.
 #
@@ -55,10 +53,3 @@ set( CMAKE_CXX_COMPILER mpiFCCpx CACHE FILEPATH "Override C++ compiler" )
 # Prevent CMake from adding GNU-specific linker flags (-rdynamic)
 set( CMAKE_C_COMPILER_ID "Fujitsu" CACHE STRING "Fujitsu C cross-compiler" FORCE )
 set( CMAKE_CXX_COMPILER_ID "Fujitsu" CACHE STRING "Fujitsu C++ cross-compiler" FORCE )
-
-# Set specific OpenMP variables
-set( OpenMP_C_FLAGS "-Kopenmp" CACHE STRING "Compiler flag for OpenMP parallelization" FORCE )
-set( OpenMP_CXX_FLAGS "-Kopenmp" CACHE STRING "Compiler flag for OpenMP parallelization" FORCE )
-set( OpenMP_C_LIB_NAMES "fjomp" CACHE STRING "libfjomp" FORCE )
-set( OpenMP_CXX_LIB_NAMES "fjomp" CACHE STRING "libfjomp" FORCE )
-set( OpenMP_fjomp_LIBRARY "/opt/FJSVtclang/GM-1.2.0-25/lib64/" CACHE STRING "PATH to fjomp" FORCE )

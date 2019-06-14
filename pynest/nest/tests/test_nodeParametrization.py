@@ -352,6 +352,19 @@ class TestNodeParametrization(unittest.TestCase):
         self.assertEqual(status['C_m'],
                          tuple([0.1 + 0.2*x for x in np.linspace(0, 0.5, 5)]))
 
+    def test_node_pos_parameter_wrong_dimension(self):
+        """Test node-position parameter with wrong dimension"""
+        positions = [[x, 0.5*x] for x in np.linspace(0, 0.5, 5)]
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.free(positions))
+
+        with self.assertRaises(nest.kernel.NESTError):
+            layer.set({'V_m': nest.spatial.pos.n(-1)})
+
+        # TODO: this causes a C++ assertion to fail
+        # with self.assertRaises(nest.kernel.NESTError):
+        #     layer.set({'V_m': nest.spatial.pos.z})
+
     def test_conn_distance_parameter(self):
         """Test connection distance parameter"""
         positions = [[x, x, x] for x in np.linspace(0, 0.5, 5)]
@@ -376,6 +389,48 @@ class TestNodeParametrization(unittest.TestCase):
 
             dist = np.sqrt((tx-sx)**2 + (ty-sy)**2 + (tz-sz)**2)
             self.assertEqual(w, dist)
+
+    def test_conn_dimension_distance_parameter(self):
+        """Test dimension specific connection distance parameter"""
+        positions = [[x, x, x] for x in np.linspace(0, 0.5, 5)]
+
+        for i, parameter in enumerate([nest.spatial.dimension_distance.x,
+                                       nest.spatial.dimension_distance.y,
+                                       nest.spatial.dimension_distance.z]):
+            nest.ResetKernel()
+            layer = nest.Create('iaf_psc_alpha',
+                                positions=nest.spatial.free(positions))
+            nest.Connect(layer, layer,
+                         syn_spec={'weight': parameter})
+            conns = nest.GetConnections()
+            conn_status = conns.get()
+
+            for s, t, w in zip(conn_status['source'],
+                               conn_status['target'],
+                               conn_status['weight']):
+                s_pos = positions[s-1]
+                sn = s_pos[0]
+                t_pos = positions[t-1]
+                tn = t_pos[0]
+
+                n_dist = np.abs(tn-sn)
+                self.assertEqual(w, n_dist)
+
+    def test_conn_distance_parameter_wrong_dimension(self):
+        """Test connection distance parameter with wrong dimension"""
+        positions = [[x, x] for x in np.linspace(0, 0.5, 5)]
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.free(positions))
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.Connect(layer, layer,
+                         syn_spec={'weight':
+                                   nest.spatial.dimension_distance.z})
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.Connect(layer, layer,
+                         syn_spec={'weight':
+                                   nest.spatial.dimension_distance.n(-1)})
 
     def test_src_tgt_position_parameter(self):
         """Test source and target position parameter"""
@@ -407,6 +462,28 @@ class TestNodeParametrization(unittest.TestCase):
                 # Almost equal because of roundoff errors.
                 self.assertAlmostEqual(w, s_pos[i], places=12)
                 self.assertAlmostEqual(d, 100*t_pos[i], places=12)
+
+    def test_src_tgt_position_parameter_wrong_args(self):
+        """Test source and target position parameter with wrong arguments"""
+        positions = [[x, x] for x in np.linspace(0.1, 1.0, 5)]
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.free(positions))
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.Connect(layer, layer, syn_spec={
+                'weight': nest.spatial.source_pos.z})
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.Connect(layer, layer, syn_spec={
+                'weight': nest.spatial.source_pos.n(-1)})
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.Connect(layer, layer, syn_spec={
+                'weight': nest.spatial.target_pos.z})
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.Connect(layer, layer, syn_spec={
+                'weight': nest.spatial.target_pos.n(-1)})
 
     def test_exp_parameter(self):
         """Test exponential of a parameter"""

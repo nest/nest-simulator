@@ -46,13 +46,14 @@ The following are the basic steps to compile and install NEST from source code:
 
     cd nest-simulator-x.y.z-build
 
-* Configure NEST:
+* Configure NEST.
+
+  You may need additional ``cmake`` options and you can find the :doc:`configuration options here <install_options>`
 
 .. code-block:: sh
 
    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
 
-You may need additional ``cmake`` options and you can find the :doc:`configuration options here <install_options>`
 
 .. note::  ``/install/path`` should be an absolute path
 

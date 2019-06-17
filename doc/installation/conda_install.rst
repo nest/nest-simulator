@@ -49,7 +49,7 @@ or WITH openmpi:
 
 .. note::
 
-   The current version on conda-forge is NEST 2.16.0
+   The conda-forge package is available from NEST 2.16.0 onward
 
 4. Once installation is complete, you can open up Python or IPython
    in the terminal and import nest:

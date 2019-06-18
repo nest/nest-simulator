@@ -91,7 +91,8 @@ nest::glif_cond_dynamics( double,
   double I_syn = 0.0;
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
   {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+      + node.P_.n_ASCurrents_() - 1;
     I_syn += y[ S::G_SYN + j ] * ( y[ S::V_M ] - node.P_.E_rev_[ i ] );
   }
 
@@ -113,7 +114,8 @@ nest::glif_cond_dynamics( double,
   // d dg_exc/dt, dg_exc/dt
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
   {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+      + node.P_.n_ASCurrents_() - 1;
     // Synaptic conductance derivative dG/dt
     f[ S::DG_SYN + j ] = -y[ S::DG_SYN + j ] / node.P_.tau_syn_[ i ];
     f[ S::G_SYN + j ] =

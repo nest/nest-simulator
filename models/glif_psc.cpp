@@ -68,33 +68,32 @@ RecordablesMap< nest::glif_psc >::create()
  * ---------------------------------------------------------------- */
 
 nest::glif_psc::Parameters_::Parameters_()
-  : th_inf_( 26.5 )                              // in mV
-  , G_( 4.6951 )                                 // in nS
-  , E_L_( -77.4 )                                // in mv
-  , C_m_( 99.182 )                               // in pF
-  , t_ref_( 0.5 )                                // in ms
-  , V_reset_( -77.4 )                            // in mV
-  , a_spike_( 0.0 )                              // in mV
-  , b_spike_( 0.0 )                              // in 1/ms
-  , voltage_reset_a_( 0.0 )                      // coefficient
-  , voltage_reset_b_( 0.0 )                      // in mV
-  , a_voltage_( 0.0 )                            // in 1/ms
-  , b_voltage_( 0.0 )                            // in 1/ms
+  : th_inf_( -51.68 )                // in mV
+  , G_( 9.43 )                       // in nS
+  , E_L_( -78.85 )                   // in mv
+  , C_m_( 58.72 )                    // in pF
+  , t_ref_( 3.75 )                 // in ms
+  , V_reset_( -78.85 )               // in mV
+  , a_spike_( 0.37 )              // in mV
+  , b_spike_( 0.009 )             // in 1/ms
+  , voltage_reset_a_( 0.20 )      // deterministic
+  , voltage_reset_b_( 18.51 )       // in mV
+  , a_voltage_( 0.005 )           // in 1/ms
+  , b_voltage_( 0.09 )            // in 1/ms
   , asc_init_( std::vector< double >( 2, 0.0 ) ) // in pA
-  , k_( std::vector< double >( 2, 0.0 ) )        // in 1/ms
-  , asc_amps_( std::vector< double >( 2, 0.0 ) ) // in pA
-  , r_( std::vector< double >( 2, 1.0 ) )        // coefficient
+  , k_( std::vector< double >{0.003, 0.1})       // in 1/ms
+  , asc_amps_(std::vector< double >{-9.18, -198.94} ) // in pA
+  , r_( std::vector< double >( 2, 1.0 ) )        // deterministic
   , tau_syn_( 1, 2.0 )                           // ms
-  , V_dynamics_method_( "linear_forward_euler" )
   , has_connections_( false )
   , glif_model_( "lif" )
 {
 }
 
 nest::glif_psc::State_::State_()
-  : V_m_( -77.4 )                                  // in mV
+  : V_m_( -78.85 )                                 // in mV
   , ASCurrents_( std::vector< double >( 2, 0.0 ) ) // in pA
-  , threshold_( 26.5 )                             // in mV
+  , threshold_( -51.68 )                           // in mV
   , I_( 0.0 )                                      // in pA
 {
   y1_.clear();
@@ -129,7 +128,6 @@ nest::glif_psc::Parameters_::get( DictionaryDatum& d ) const
   def< std::vector< double > >( d, Name( "r" ), r_ );
   ArrayDatum tau_syn_ad( tau_syn_ );
   def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
-  def< std::string >( d, "V_dynamics_method", V_dynamics_method_ );
   def< bool >( d, names::has_connections, has_connections_ );
   def< model_type >( d, "glif_model", glif_model_ );
 }
@@ -157,7 +155,6 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
   updateValue< std::vector< double > >( d, Name( "asc_amps" ), asc_amps_ );
   updateValue< std::vector< double > >( d, Name( "r" ), r_ );
   updateValue< std::vector< double > >( d, "tau_syn", tau_syn_ );
-  updateValue< std::string >( d, "V_dynamics_method", V_dynamics_method_ );
   updateValue< model_type >( d, "glif_model", glif_model_ );
 
   if ( V_reset_ >= th_inf_ )
@@ -281,12 +278,6 @@ nest::glif_psc::calibrate()
   V_.last_spike_ = 0.0;
   V_.last_voltage_ = 0.0;
 
-  V_.method_ = 0; // default using linear forward euler for voltage dynamics
-  if ( P_.V_dynamics_method_ == "linear_exact" )
-  {
-    V_.method_ = 1;
-  }
-
   // post synapse currents
   const double h = Time::get_resolution().get_ms(); // in ms
 
@@ -407,18 +398,9 @@ nest::glif_psc::update_glif1( Time const& origin, const long from,
     {
 
       // voltage dynamics of membranes
-      switch ( V_.method_ )
-      {
-      // Linear Euler forward (RK1) to find next V_m value
-      case 0:
-        S_.V_m_ =
-          v_old + dt * ( S_.I_ - P_.G_ * ( v_old - P_.E_L_ ) ) / P_.C_m_;
-        break;
       // Linear Exact to find next V_m value
-      case 1:
-        S_.V_m_ = v_old * V_.P33_ + ( S_.I_ + P_.G_ * P_.E_L_ ) * V_.P30_;
-        break;
-      }
+      S_.V_m_ = v_old * V_.P33_ + ( S_.I_ + P_.G_ * P_.E_L_ ) * V_.P30_;
+
 
       // add synapse component for voltage dynamics
       S_.I_syn_ = 0.0;
@@ -518,18 +500,9 @@ nest::glif_psc::update_glif2( Time const& origin, const long from,
     else
     {
       // voltage dynamics of membranes
-      switch ( V_.method_ )
-      {
-      // Linear Euler forward (RK1) to find next V_m value
-      case 0:
-        S_.V_m_ =
-          v_old + dt * ( S_.I_ - P_.G_ * ( v_old - P_.E_L_ ) ) / P_.C_m_;
-        break;
       // Linear Exact to find next V_m value
-      case 1:
-        S_.V_m_ = v_old * V_.P33_ + ( S_.I_ + P_.G_ * P_.E_L_ ) * V_.P30_;
-        break;
-      }
+      S_.V_m_ = v_old * V_.P33_ + ( S_.I_ + P_.G_ * P_.E_L_ ) * V_.P30_;
+
 
       // add synapse component for voltage dynamics
       S_.I_syn_ = 0.0;
@@ -627,20 +600,9 @@ nest::glif_psc::update_glif3( Time const& origin, const long from,
       }
 
       // voltage dynamics of membranes
-      switch ( V_.method_ )
-      {
-      // Linear Euler forward (RK1) to find next V_m value
-      case 0:
-        S_.V_m_ = v_old
-          + dt * ( S_.I_ + S_.ASCurrents_sum_ - P_.G_ * ( v_old - P_.E_L_ ) )
-            / P_.C_m_;
-        break;
       // Linear Exact to find next V_m value
-      case 1:
-        S_.V_m_ = v_old * V_.P33_
+      S_.V_m_ = v_old * V_.P33_
           + ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) * V_.P30_;
-        break;
-      }
 
       // add synapse component for voltage dynamics
       S_.I_syn_ = 0.0;
@@ -769,20 +731,9 @@ nest::glif_psc::update_glif4( Time const& origin, const long from,
       }
 
       // voltage dynamics of membranes
-      switch ( V_.method_ )
-      {
-      // Linear Euler forward (RK1) to find next V_m value
-      case 0:
-        S_.V_m_ = v_old
-          + dt * ( S_.I_ + S_.ASCurrents_sum_ - P_.G_ * ( v_old - P_.E_L_ ) )
-            / P_.C_m_;
-        break;
       // Linear Exact to find next V_m value
-      case 1:
-        S_.V_m_ = v_old * V_.P33_
+      S_.V_m_ = v_old * V_.P33_
           + ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) * V_.P30_;
-        break;
-      }
 
       // add synapse component for voltage dynamics
       S_.I_syn_ = 0.0;
@@ -919,20 +870,9 @@ nest::glif_psc::update_glif5( Time const& origin, const long from,
       }
 
       // voltage dynamics of membranes
-      switch ( V_.method_ )
-      {
-      // Linear Euler forward (RK1) to find next V_m value
-      case 0:
-        S_.V_m_ = v_old
-          + dt * ( S_.I_ + S_.ASCurrents_sum_ - P_.G_ * ( v_old - P_.E_L_ ) )
-            / P_.C_m_;
-        break;
       // Linear Exact to find next V_m value
-      case 1:
-        S_.V_m_ = v_old * V_.P33_
+      S_.V_m_ = v_old * V_.P33_
           + ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) * V_.P30_;
-        break;
-      }
 
       // add synapse component for voltage dynamics
       S_.I_syn_ = 0.0;

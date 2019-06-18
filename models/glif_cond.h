@@ -43,11 +43,7 @@
 #include "dictdatum.h"
 
 /* BeginDocumentation
-Name: glif_cond - Generalized leaky integrate and fire (GLIF) model
-5 -
-                              Leaky integrate and fire with biologically defined
-                              reset rules, after-spike currents and a voltage
-                              dependent threshold model.
+Name: glif_cond - Conductance-based generalized leaky integrate and fire (GLIF) model
 
 Description:
 
@@ -104,6 +100,12 @@ methods:
 to find next V_m value, or
                              'linear_exact' - Linear exact to find next V_m
 value.
+  glif_model        string - glif model type:
+                             "lif" / "glif_lif" / "1" - GLIF model 1 - Traditional leaky integrate and fire (LIF) model,
+                             "lif_r" / "glif_lif_r" / "2" - GLIF model 2 - Leaky integrate and fire with biologically defined reset rules model,
+                             "lif_asc" / "glif_lif_asc" / "3" - GLIF model 3 - Leaky integrate and fire with after-spike currents model,
+                             "lif_r_asc" / "glif_lif_r_asc" / "4" - GLIF model 4 - Leaky integrate and fire with biologically defined reset rules and after-spike currents model, or
+                             "lif_r_asc_a" / "glif_lif_r_asc_a" / "5" - (GLIF) model 5 - Leaky integrate and fire with biologically defined reset rules, after-spike currents and a voltage dependent threshold model.
 
 References:
   [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
@@ -122,10 +124,10 @@ namespace nest
 {
 
 extern "C" int
-cond_dynamics( double, const double*, double*, void* );
+glif_cond_dynamics( double, const double*, double*, void* );
 
 extern "C" int
-cond_dynamics_asc( double, const double*, double*, void* );
+glif_cond_dynamics_asc( double, const double*, double*, void* );
 
 class glif_cond : public nest::Archiving_Node
 {
@@ -188,10 +190,10 @@ private:
 
   // make dynamics function quasi-member
   friend int
-  cond_dynamics( double, const double*, double*, void* );
+  glif_cond_dynamics( double, const double*, double*, void* );
   
   friend int
-  cond_dynamics_asc( double, const double*, double*, void* );
+  glif_cond_dynamics_asc( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class nest::RecordablesMap< glif_cond >;

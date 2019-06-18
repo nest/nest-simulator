@@ -33,19 +33,12 @@
 #include "dictdatum.h"
 
 /* BeginDocumentation
-Name: glif_psc - Generalized leaky integrate and fire (GLIF) model 5
--
-                             Leaky integrate and fire with biologically defined
-                             reset rules, after-spike currents and a voltage
-                             dependent threshold model.
+Name: glif_psc - Current-based generalized leaky integrate and fire (GLIF) models
 
 Description:
 
-  glif_psc is an implementation of a generalized leaky integrate and
-fire (GLIF) model 5
-  (i.e., leaky integrate and fire with biologically defined reset rules,
-after-spike currents
-  and a voltage dependent threshold model) [1] with alpha-function shaped
+  glif_psc is implementations of five generalized leaky integrate and
+fire (GLIF) models [1] with alpha-function shaped
   synaptic currents. Incoming spike events induce a post-synaptic change of
 current modeled
   by an alpha function. The alpha function is normalized such that an event of
@@ -91,12 +84,12 @@ of which is the time constant
 in 1/ms (bv in Equation (4) in [1]).
   tau_syn           double vector - Rise time constants of the synaptic alpha
 function in ms.
-  V_dynamics_method string - Voltage dynamics (Equation (1) in [1]) solution
-methods:
-                             'linear_forward_euler' - Linear Euler forward (RK1)
-to find next V_m value, or
-                             'linear_exact' - Linear exact to find next V_m
-value.
+  glif_model        string - glif model type:
+                             "lif" / "glif_lif" / "1" - GLIF model 1 - Traditional leaky integrate and fire (LIF) model,
+                             "lif_r" / "glif_lif_r" / "2" - GLIF model 2 - Leaky integrate and fire with biologically defined reset rules model,
+                             "lif_asc" / "glif_lif_asc" / "3" - GLIF model 3 - Leaky integrate and fire with after-spike currents model,
+                             "lif_r_asc" / "glif_lif_r_asc" / "4" - GLIF model 4 - Leaky integrate and fire with biologically defined reset rules and after-spike currents model, or
+                             "lif_r_asc_a" / "glif_lif_r_asc_a" / "5" - (GLIF) model 5 - Leaky integrate and fire with biologically defined reset rules, after-spike currents and a voltage dependent threshold model.
 
 Description:
 
@@ -206,7 +199,6 @@ private:
     std::vector< double > asc_amps_; // in pA
     std::vector< double > r_;        // coefficient
     std::vector< double > tau_syn_;  // synaptic port time constants in ms
-    std::string V_dynamics_method_;  // voltage dynamic methods
 
     // boolean flag which indicates whether the neuron has connections
     bool has_connections_;

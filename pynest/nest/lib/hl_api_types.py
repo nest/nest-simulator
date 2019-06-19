@@ -916,6 +916,9 @@ class Parameter(object):
     def __truediv__(self, other):
         return self._binop("div", other)
 
+    def __pow__(self, exponent):
+        return sli_func("pow", self._datum, float(exponent))
+
     def __lt__(self, other):
         return self._binop("compare", other, {'comparator': 0})
 

@@ -25,7 +25,6 @@ __all__ = [
     'exp',
     'sin',
     'cos',
-    'power',
 ]
 
 # TODO: Special cases when argument is a number?
@@ -41,7 +40,3 @@ def sin(parameter):
 
 def cos(parameter):
     return sli_func("cos", parameter)
-
-
-def power(parameter, exponent):
-    return sli_func("pow", parameter, float(exponent))

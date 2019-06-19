@@ -510,14 +510,14 @@ class TestNodeParametrization(unittest.TestCase):
             p = nest.hl_api.CreateParameter('constant', {'value': value})
             # Exponents must be integers
             for exponent in range(-15, 15):
-                self.assertEqual(nest.math.power(p, exponent).GetValue(),
+                self.assertEqual((p**exponent).GetValue(),
                                  value**exponent)
 
         # Positive values
         for value in np.linspace(0.0, 5.0, 15):
             p = nest.hl_api.CreateParameter('constant', {'value': value})
             for exponent in np.linspace(-5.0, 5.0, 15):
-                self.assertEqual(nest.math.power(p, exponent).GetValue(),
+                self.assertEqual((p**exponent).GetValue(),
                                  value**exponent)
 
     def test_parameter_comparison(self):

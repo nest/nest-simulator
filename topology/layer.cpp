@@ -93,6 +93,15 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
       auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
       auto positions = dynamic_cast< DimensionParameter* >( pd->get() );
       pd->unlock();
+      // To avoid nasty segfaults, we check that the parameter is indeed a
+      // DimensionParameter.
+      if ( not std::is_same< std::remove_reference< decltype(
+                               *positions ) >::type,
+             DimensionParameter >::value )
+      {
+        throw KernelException(
+          "When 'positions' is a Parameter, it must be a DimensionParameter." );
+      }
       length = getValue< long >( layer_dict, names::n );
       num_dimensions = positions->get_num_dimensions();
     }

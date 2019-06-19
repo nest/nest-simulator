@@ -558,6 +558,23 @@ class TestNodeParametrization(unittest.TestCase):
                                    -42 if x_pos > 0.3 else -50,
                                    places=12)
 
+    def test_parameter_pos(self):
+        """Test positions specified by parameter"""
+        positions = nest.random.normal()
+
+        for n_dim in [2, 3]:
+            nest.ResetKernel()
+            layer = nest.Create('iaf_psc_alpha',
+                                10,
+                                positions=nest.spatial.free(
+                                    positions, num_dimensions=n_dim))
+            self.assertEqual(len(layer.spatial['center']), n_dim)
+            self.assertEqual(len(layer.spatial['extent']), n_dim)
+            self.assertEqual(len(layer.spatial['positions']), 10)
+            self.assertEqual(len(layer.spatial['positions'][0]), n_dim)
+            self.assertEqual(
+                len(np.unique(layer.spatial['positions'][0])), n_dim)
+
 
 def suite():
     suite = unittest.makeSuite(TestNodeParametrization, 'test')

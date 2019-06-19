@@ -168,22 +168,21 @@ class SpatialTester(object):
             kernel = (self._params['c'] + self._params['a'] *
                       nest.spatial.distance)
         elif kernel_name == 'exponential':
-            kernel = (self._params['c'] + self._params['a'] *
-                      nest.math.exp(-nest.spatial.distance / self._params['tau']))
+            kernel = self._params['c'] + nest.distributions.exponential(
+                nest.spatial.distance,
+                a=self._params['a'],
+                tau=self._params['tau'])
         elif kernel_name == 'gaussian':
-            dist_sub_mean = nest.spatial.distance - self._params['mean']
-            kernel = (self._params['c'] + self._params['p_center'] *
-                      nest.math.exp(- dist_sub_mean * dist_sub_mean /
-                      (2. * self._params['sigma']**2)))
+            kernel = self._params['c'] + nest.distributions.gaussian(
+                nest.spatial.distance,
+                p_center=self._params['p_center'],
+                mean=self._params['mean'],
+                std_deviation=self._params['sigma'])
         elif kernel_name == 'gamma':
-            raise NotImplementedError('Parameter representation of gamma'
-                                      ' kernel is not yet implemented')
-            # TODO: Implement gamma kernel
-            # kernel = (nest.spatial.dist ** (self._params['kappa'] - 1) /
-            #           (self._params['theta'] **
-            #            self._params['kappa'] *
-            #            scipy.special.gamma(self._params['kappa'])) *
-            #           math.exp(-D / self._params['theta']))
+            kernel = nest.distributions.gamma(
+                nest.spatial.distance,
+                alpha=self._params['kappa'],
+                theta=self._params['theta'])
 
         self._conndict = {'connection_type': 'divergent',
                           'mask': maskdict, 'kernel': kernel}
@@ -671,7 +670,7 @@ class TestSpatial2D(unittest.TestCase):
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
         self.assertGreater(p_Z, P_MIN, '{} failed Z-test'.format(kernel))
 
-    @unittest.skip("Parameter representation of gamma kernel not implemented")
+    # @unittest.skip("Parameter representation of gamma kernel not implemented")
     def test_gamma(self):
         kernel = 'gamma'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
@@ -723,7 +722,7 @@ class TestSpatial2DOBC(unittest.TestCase):
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
         self.assertGreater(p_Z, P_MIN, '{} failed Z-test'.format(kernel))
 
-    @unittest.skip("Parameter representation of gamma kernel not implemented")
+    # @unittest.skip("Parameter representation of gamma kernel not implemented")
     def test_gamma(self):
         kernel = 'gamma'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
@@ -775,7 +774,7 @@ class TestSpatial3D(unittest.TestCase):
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(kernel))
         self.assertGreater(p_Z, P_MIN, '{} failed Z-test'.format(kernel))
 
-    @unittest.skip("Parameter representation of gamma kernel not implemented")
+    # @unittest.skip("Parameter representation of gamma kernel not implemented")
     def test_gamma(self):
         kernel = 'gamma'
         test = SpatialTester(seed=SEED, dim=3, L=1.0, N=10000,

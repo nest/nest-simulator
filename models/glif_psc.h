@@ -280,7 +280,8 @@ private:
   double
   get_AScurrents_sum_() const
   {
-    return S_.ASCurrents_[ 0 ];
+    //return S_.ASCurrents_[ 0 ];
+	return S_.ASCurrents_sum_;
   }
 
   double

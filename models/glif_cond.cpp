@@ -99,64 +99,6 @@ nest::glif_cond_dynamics( double,
   const double I_leak = node.P_.G_ * ( y[ S::V_M ] - node.P_.E_L_ );
 
   // dV_m/dt
-  f[ 0 ] = ( -I_leak - I_syn + node.B_.I_stim_ ) / node.P_.C_m_;
-
-  // dI_asc/dt
-  for ( std::size_t a = 0; a < node.P_.n_ASCurrents_(); ++a )
-  {
-    // ASC variable is not being used for this model, but still zero it out so
-    // there isn't a segfault if user tries to access it.
-    // TODO: consider using memset (or the std++11 equivilent)
-    f[ S::ASC + a ] = 0.0;
-  }
-
-
-  // d dg_exc/dt, dg_exc/dt
-  for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
-  {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-      + node.P_.n_ASCurrents_() - 1;
-    // Synaptic conductance derivative dG/dt
-    f[ S::DG_SYN + j ] = -y[ S::DG_SYN + j ] / node.P_.tau_syn_[ i ];
-    f[ S::G_SYN + j ] =
-      y[ S::DG_SYN + j ] - ( y[ S::G_SYN + j ] / node.P_.tau_syn_[ i ] );
-  }
-
-  return GSL_SUCCESS;
-}
-
-
-extern "C" inline int
-nest::glif_cond_dynamics_asc( double,
-  const double y[],
-  double f[],
-  void* pnode )
-{
-  // a shorthand
-  typedef nest::glif_cond::State_ S;
-
-  // get access to node so we can almost work as in a member function
-  assert( pnode );
-  const nest::glif_cond& node =
-    *( reinterpret_cast< nest::glif_cond* >( pnode ) );
-
-  // y[] here is---and must be---the state vector supplied by the integrator,
-  // not the state vector in the node, node.S_.y[].
-
-  // The following code is verbose for the sake of clarity. We assume that a
-  // good compiler will optimize the verbosity away ...
-
-  double I_syn = 0.0;
-  for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
-  {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-      + node.P_.n_ASCurrents_() - 1;
-    I_syn += y[ S::G_SYN + j ] * ( y[ S::V_M ] - node.P_.E_rev_[ i ] );
-  }
-
-  const double I_leak = node.P_.G_ * ( y[ S::V_M ] - node.P_.E_L_ );
-
-  // dV_m/dt
   f[ 0 ] = ( -I_leak - I_syn + node.B_.I_stim_ + node.S_.ASCurrents_sum_ )
     / node.P_.C_m_;
 
@@ -543,38 +485,32 @@ nest::glif_cond::calibrate()
     case 1:
       glif_func = [this](nest::Time const& origin, const long from, 
         const long to){nest::glif_cond::update_glif1(origin, from, to);};
-      B_.sys_.function = glif_cond_dynamics;
-      //P_.asc_amps_ = std::vector< double >( 2, 0.0 );
-      //P_.k_ = std::vector< double >( 2, 0.0 );
-      //P_.asc_init_ = std::vector< double >( 2, 0.0 );
+      P_.asc_amps_ = std::vector< double >( 2, 0.0 );
+      P_.k_ = std::vector< double >( 2, 0.0 );
+      P_.asc_init_ = std::vector< double >( 2, 0.0 );
       break;
       
     case 2:
       glif_func = [this](nest::Time const& origin, const long from, 
         const long to){nest::glif_cond::update_glif2(origin, from, to);};
-      B_.sys_.function = glif_cond_dynamics;
-      //B_.sys_.function = glif_cond_dynamics_asc;
-      //P_.asc_amps_ = std::vector< double >( 2, 0.0 );
-      //P_.k_ = std::vector< double >( 2, 0.0 );
-      //P_.asc_init_ = std::vector< double >( 2, 0.0 );
+      P_.asc_amps_ = std::vector< double >( 2, 0.0 );
+      P_.k_ = std::vector< double >( 2, 0.0 );
+      P_.asc_init_ = std::vector< double >( 2, 0.0 );
       break;
       
     case 3:
       glif_func = [this](nest::Time const& origin, const long from, 
         const long to){nest::glif_cond::update_glif3(origin, from, to);};
-      B_.sys_.function = glif_cond_dynamics_asc;
       break;
 
     case 4:
       glif_func = [this](nest::Time const& origin, const long from, 
         const long to){nest::glif_cond::update_glif4(origin, from, to);};
-      B_.sys_.function = glif_cond_dynamics_asc;
       break;  
       
     case 5:
       glif_func = [this](nest::Time const& origin, const long from, 
         const long to){nest::glif_cond::update_glif5(origin, from, to);};
-      B_.sys_.function = glif_cond_dynamics_asc;
       break;
     
     default:
@@ -617,11 +553,9 @@ nest::glif_cond::update_glif1( Time const& origin,
     // enforce setting IntegrationStep to step-t; this is of advantage
     // for a consistent and efficient integration across subsequent
     // simulation intervals
-    //int count = 0;
+
     while ( t < B_.step_ )
     {
-      double told = t;
-      //printf("%d, %.20f, %f, %f\n", count, t, B_.step_, &B_.IntegrationStep_);
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
@@ -634,29 +568,7 @@ nest::glif_cond::update_glif1( Time const& origin,
       {
         throw GSLSolverFailure( get_name(), status );
       }
-/*
-      printf("%d, %.20f, %f, %f, %.40f\n", count, t, B_.step_, &B_.IntegrationStep_, t-told);
-      count++;
-      for (int i=0; i<S_.y_.size();i++){
-    	printf("%f,", S_.y_[i]);
-      }
-      printf("\n");
 
-      if (abs(t-told) < 1e-6)
-      {
-    	printf("t not changed, reset!\n");
-    	B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
-
-        if ( B_.c_ == 0 )
-    	{
-          B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
-    	}
-    	else
-    	{
-          gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
-    	}
-      }
-*/
     }
 
     if ( V_.t_ref_remaining_ > 0.0 )
@@ -698,9 +610,9 @@ nest::glif_cond::update_glif1( Time const& origin,
     {
       // Apply spikes delivered in this step: The spikes arriving at T+1 have an
       // immediate effect on the state of the neuron
-      S_.y_[ State_::DG_SYN + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                                * i ) ] += B_.spikes_[ i ].get_value( lag )
-        * V_.CondInitialValues_[ i ]; // add incoming spike
+      S_.y_[ State_::DG_SYN + P_.n_ASCurrents_() - 1 +
+		( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
+		B_.spikes_[ i ].get_value( lag ) * V_.CondInitialValues_[ i ]; // add incoming spike
     }
 
     B_.I_stim_ = B_.currents_.get_value( lag );
@@ -811,9 +723,9 @@ nest::glif_cond::update_glif2( Time const& origin,
     // add spikes
     for ( size_t i = 0; i < P_.n_receptors_(); i++ )
     {
-      S_.y_[ State_::DG_SYN + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                                * i ) ] += B_.spikes_[ i ].get_value( lag )
-        * V_.CondInitialValues_[ i ]; // add incoming spike
+      S_.y_[ State_::DG_SYN + P_.n_ASCurrents_() - 1
+		+ ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
+		B_.spikes_[ i ].get_value( lag ) * V_.CondInitialValues_[ i ]; // add incoming spike
     }
 
     B_.I_stim_ = B_.currents_.get_value( lag );
@@ -857,10 +769,8 @@ nest::glif_cond::update_glif3( Time const& origin,
     // enforce setting IntegrationStep to step-t; this is of advantage
     // for a consistent and efficient integration across subsequent
     // simulation intervals
-    //int count = 0;
     while ( t < B_.step_ )
     {
-      //printf("%d, %f, %f, %f\n", count, t, B_.step_, &B_.IntegrationStep_);
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
@@ -873,12 +783,6 @@ nest::glif_cond::update_glif3( Time const& origin,
       {
         throw GSLSolverFailure( get_name(), status );
       }
-      //printf("%d, %f, %f, %f\n", count, t, B_.step_, &B_.IntegrationStep_);
-      //count++;
-      //for (int i=0; i<S_.y_.size();i++){
-    	//printf("%f,", S_.y_[i]);
-      //}
-      //printf("\n");
     }
 
     if ( V_.t_ref_remaining_ > 0.0 )

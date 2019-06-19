@@ -36,6 +36,10 @@ Author: Hans Ekkehard Plesser, 2014-12-13
 (unittest) run
 /unittest using
 
+% TODO: This test should be rewritten as a new test, testing parameters of the
+% new Parameter classes.
+/skipped exit_test_gracefully
+
 M_ERROR setverbosity
 
 /good_random_parameters

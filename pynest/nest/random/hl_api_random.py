@@ -61,38 +61,12 @@ class ParameterWrapper(Parameter):
         return self
 
 
-def uniform(min=0.0, max=1.0, dimension=None):
-    if isinstance(min, (list, tuple)):
-        if not isinstance(max, (list, tuple)):
-            raise ValueError('Max must be list/tuple.')
-        if not len(min) == len(max):
-            raise ValueError(
-                'Min and max must have same number of dimensions.')
-        parameters = [
-            CreateParameter('uniform', {'min': min_val, 'max': max_val})
-            for min_val, max_val in zip(min, max)]
-        if len(parameters) == 2:
-            return sli_func('dimension2d', *parameters)
-        elif len(parameters) == 3:
-            return sli_func('dimension3d', *parameters)
-        else:
-            raise ValueError('Must be 2 or 3 dimensional.')
-    elif dimension:
-        parameters = [
-            CreateParameter('uniform', {'min': min, 'max': max})
-            for _ in range(dimension)]
-        if dimension == 2:
-            return sli_func('dimension2d', *parameters)
-        elif dimension == 3:
-            return sli_func('dimension3d', *parameters)
-        else:
-            raise ValueError('Must be 2 or 3 dimensional.')
-    else:
-        return CreateParameter('uniform', {'min': min, 'max': max})
+def uniform(min=0.0, max=1.0):
+    return CreateParameter('uniform', {'min': min, 'max': max})
 
 
 def normal(loc=0.0, scale=1.0, min=None, max=None,
-           redraw=False, dimension=None):
+           redraw=False):
     if redraw:
         raise NotImplementedError('Redraw is not supported yet')
     parameters = {'mean': loc, 'sigma': scale}
@@ -100,59 +74,11 @@ def normal(loc=0.0, scale=1.0, min=None, max=None,
         parameters.update({'min': min})
     if max:
         parameters.update({'max': max})
-
-    if isinstance(loc, (list, tuple)):
-        if not isinstance(scale, (list, tuple)):
-            raise ValueError('scale must be list/tuple.')
-        if not len(loc) == len(scale):
-            raise ValueError(
-                'loc and scale must have same number of dimensions.')
-
-        params = [CreateParameter('normal', dict(zip(parameters, t)))
-                  for t in zip(*parameters.values())]
-
-        if len(params) == 2:
-            return sli_func('dimension2d', *params)
-        elif len(params) == 3:
-            return sli_func('dimension3d', *params)
-        else:
-            raise ValueError('Must be 2 or 3 dimensional.')
-    elif dimension:
-        parameters = [
-            CreateParameter('normal', parameters) for _ in range(dimension)]
-        if dimension == 2:
-            return sli_func('dimension2d', *parameters)
-        elif dimension == 3:
-            return sli_func('dimension3d', *parameters)
-        else:
-            raise ValueError('Must be 2 or 3 dimensional.')
-    else:
-        return CreateParameter('normal', parameters)
+    return CreateParameter('normal', parameters)
 
 
-def exponential(scale=1.0, dimension=None):
-    if isinstance(scale, (list, tuple)):
-        parameters = [
-            CreateParameter('exponential', {'scale': scale_val})
-            for scale_val in scale]
-        if len(parameters) == 2:
-            return sli_func('dimension2d', *parameters)
-        elif len(parameters) == 3:
-            return sli_func('dimension3d', *parameters)
-        else:
-            raise ValueError('Must be 2 or 3 dimensional.')
-    elif dimension:
-        parameters = [
-            CreateParameter('exponential', {'scale': scale})
-            for _ in range(dimension)]
-        if dimension == 2:
-            return sli_func('dimension2d', *parameters)
-        elif dimension == 3:
-            return sli_func('dimension3d', *parameters)
-        else:
-            raise ValueError('Must be 2 or 3 dimensional.')
-    else:
-        return CreateParameter('exponential', {'scale': scale})
+def exponential(scale=1.0):
+    return CreateParameter('exponential', {'scale': scale})
 
 
 def lognormal(mean=0.0, sigma=1.0, min=None, max=None, dimension=None):
@@ -162,31 +88,4 @@ def lognormal(mean=0.0, sigma=1.0, min=None, max=None, dimension=None):
         parameters.update({'min': min})
     if max:
         parameters.update({'max': max})
-
-    if isinstance(mean, (list, tuple)):
-        if not isinstance(sigma, (list, tuple)):
-            raise ValueError('sigma must be list/tuple.')
-        if not len(mean) == len(sigma):
-            raise ValueError(
-                'mean and sigma must have same number of dimensions.')
-
-        params = [CreateParameter('lognormal', dict(zip(parameters, t)))
-                  for t in zip(*parameters.values())]
-
-        if len(params) == 2:
-            return sli_func('dimension2d', *params)
-        elif len(params) == 3:
-            return sli_func('dimension3d', *params)
-        else:
-            raise ValueError('Must be 2 or 3 dimensional.')
-    elif dimension:
-        parameters = [
-            CreateParameter('lognormal', parameters) for _ in range(dimension)]
-        if dimension == 2:
-            return sli_func('dimension2d', *parameters)
-        elif dimension == 3:
-            return sli_func('dimension3d', *parameters)
-        else:
-            raise ValueError('Must be 2 or 3 dimensional.')
-    else:
-        return CreateParameter('lognormal', parameters)
+    return CreateParameter('lognormal', parameters)

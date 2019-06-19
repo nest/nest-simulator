@@ -90,7 +90,7 @@ class free(object):
         if extent and num_dimensions:
             raise TypeError(
                 'extent and number of dimensions cannot be specified at the same time')
-        if isinstance(pos, (list, np.ndarray)):
+        if isinstance(pos, (list, tuple, np.ndarray)):
             if num_dimensions:
                 raise TypeError(
                     'number of dimensions cannot be specified when using an array of positions')

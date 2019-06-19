@@ -1757,6 +1757,21 @@ NestModule::Cos_PFunction::execute( SLIInterpreter* i ) const
 }
 
 void
+NestModule::Pow_P_dFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+  double exponent = getValue< double >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = pow_parameter( param, exponent );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
+void
 NestModule::Sub_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
@@ -1909,6 +1924,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "exp_P", &exp_Pfunction );
   i->createcommand( "sin_P", &sin_Pfunction );
   i->createcommand( "cos_P", &cos_Pfunction );
+  i->createcommand( "pow_P_d", &pow_P_dfunction );
 
   i->createcommand( "dimension2d_P_P", &dimension2d_P_Pfunction );
   i->createcommand( "dimension3d_P_P_P", &dimension3d_P_P_Pfunction );

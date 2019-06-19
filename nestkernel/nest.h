@@ -148,6 +148,8 @@ ParameterDatum conditional_parameter( const ParameterDatum& param1,
 ParameterDatum exp_parameter( const ParameterDatum& param );
 ParameterDatum sin_parameter( const ParameterDatum& param );
 ParameterDatum cos_parameter( const ParameterDatum& param );
+ParameterDatum pow_parameter( const ParameterDatum& param,
+  const double exponent );
 ParameterDatum dimension_parameter( const ParameterDatum& param_x,
   const ParameterDatum& param_y );
 ParameterDatum dimension_parameter( const ParameterDatum& param_x,

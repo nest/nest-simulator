@@ -147,6 +147,11 @@ public:
    * @returns a new dynamically allocated parameter.
    */
   virtual Parameter* cos() const;
+  /**
+   * Create this parameter raised to the power of an exponent.
+   * @returns a new dynamically allocated parameter.
+   */
+  virtual Parameter* pow( const double exponent ) const;
 
   /**
    * Create TODO
@@ -1344,6 +1349,78 @@ protected:
 };
 
 
+/**
+ * Parameter class representing the parameter raised to the power of an
+ * exponent.
+ */
+class PowParameter : public Parameter
+{
+public:
+  /**
+   * Construct the parameter. A copy is made of the supplied Parameter object.
+   */
+  PowParameter( const Parameter& p, const double exponent )
+    : Parameter( p )
+    , p_( p.clone() )
+    , exponent_( exponent )
+  {
+  }
+
+  /**
+   * Copy constructor.
+   */
+  PowParameter( const PowParameter& p )
+    : Parameter( p )
+    , p_( p.p_->clone() )
+    , exponent_( p.exponent_ )
+  {
+  }
+
+  ~PowParameter()
+  {
+    delete p_;
+  }
+
+  /**
+   * @returns the value of the parameter.
+   */
+  double
+  value( librandom::RngPtr& rng, Node* node ) const
+  {
+    return std::pow( p_->value( rng, node ), exponent_ );
+  }
+
+  double
+  value( librandom::RngPtr& rng,
+    index sgid,
+    Node* target,
+    thread target_thread ) const
+  {
+    return std::pow( p_->value( rng, sgid, target, target_thread ), exponent_ );
+  }
+
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const
+  {
+    return std::pow(
+      p_->value( rng, source_pos, target_pos, displacement ), exponent_ );
+  }
+
+  Parameter*
+  clone() const
+  {
+    return new PowParameter( *this );
+  }
+
+protected:
+  Parameter* p_;
+  const double exponent_;
+};
+
+
 /** TODO: doc
  * Parameter class representing .
  */
@@ -1499,6 +1576,12 @@ inline Parameter*
 Parameter::cos() const
 {
   return new CosParameter( *this );
+}
+
+inline Parameter*
+Parameter::pow( const double exponent ) const
+{
+  return new PowParameter( *this, exponent );
 }
 
 

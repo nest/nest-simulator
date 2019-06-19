@@ -487,21 +487,38 @@ class TestNodeParametrization(unittest.TestCase):
 
     def test_exp_parameter(self):
         """Test exponential of a parameter"""
-        for value in np.linspace(0.5, 5.0, 15):
+        for value in np.linspace(-5.0, 5.0, 15):
             p = nest.hl_api.CreateParameter('constant', {'value': value})
             self.assertEqual(nest.math.exp(p).GetValue(), np.exp(value))
 
     def test_cos_parameter(self):
         """Test cosine of a parameter"""
-        for value in np.linspace(0.5, 5.0, 15):
+        for value in np.linspace(-5.0, 5.0, 15):
             p = nest.hl_api.CreateParameter('constant', {'value': value})
             self.assertEqual(nest.math.cos(p).GetValue(), np.cos(value))
 
     def test_sin_parameter(self):
         """Test sine of a parameter"""
-        for value in np.linspace(0.5, 5.0, 15):
+        for value in np.linspace(-5.0, 5.0, 15):
             p = nest.hl_api.CreateParameter('constant', {'value': value})
             self.assertEqual(nest.math.sin(p).GetValue(), np.sin(value))
+
+    def test_power_parameter(self):
+        """Test parameter raised to the power of an exponent"""
+        # Negative values
+        for value in np.linspace(-5.0, 0.0, 15):
+            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            # Exponents must be integers
+            for exponent in range(-15, 15):
+                self.assertEqual(nest.math.power(p, exponent).GetValue(),
+                                 value**exponent)
+
+        # Positive values
+        for value in np.linspace(0.0, 5.0, 15):
+            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            for exponent in np.linspace(-5.0, 5.0, 15):
+                self.assertEqual(nest.math.power(p, exponent).GetValue(),
+                                 value**exponent)
 
     def test_parameter_comparison(self):
         """Test comparison of parameters"""

@@ -352,6 +352,10 @@ def
   /cos_P load
 def
 
+/pow [/parametertype /doubletype]
+  /pow_P_d load
+def
+
 /dimension2d [/parametertype /parametertype]
   /dimension2d_P_P load
 def

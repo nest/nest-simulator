@@ -382,6 +382,12 @@ cos_parameter( const ParameterDatum& param )
 }
 
 ParameterDatum
+pow_parameter( const ParameterDatum& param, const double exponent )
+{
+  return param->pow( exponent );
+}
+
+ParameterDatum
 dimension_parameter( const ParameterDatum& param_x,
   const ParameterDatum& param_y )
 {

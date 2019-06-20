@@ -1136,7 +1136,6 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( GIDCollectionPTR sources,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  , indegree_( ( *conn_spec )[ names::indegree ] )
 {
   // check for potential errors
   long n_sources = static_cast< long >( sources_->size() );
@@ -1144,36 +1143,54 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( GIDCollectionPTR sources,
   {
     throw BadProperty( "Source array must not be empty." );
   }
-  // verify that indegree is not larger than source population if multapses are
-  // disabled
-  if ( not multapses_ )
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >(
+    ( *conn_spec )[ names::indegree ].datum() );
+  if ( pd )
   {
-    if ( indegree_ > n_sources )
-    {
-      throw BadProperty( "Indegree cannot be larger than population size." );
-    }
-    else if ( indegree_ == n_sources and not autapses_ )
-    {
-      LOG( M_WARNING,
-        "FixedInDegreeBuilder::connect",
-        "Multapses and autapses prohibited. When the sources and the targets "
-        "have a non-empty "
-        "intersection, the connect algorithm will enter an infinite loop." );
-      return;
-    }
-
-    if ( indegree_ > 0.9 * n_sources )
-    {
-      LOG( M_WARNING,
-        "FixedInDegreeBuilder::connect",
-        "Multapses are prohibited and you request more than 90% connectivity. "
-        "Expect long connecting times!" );
-    }
-  } // if (not multapses_ )
-
-  if ( indegree_ < 0 )
+    indegree_ = pd->get();
+    pd->unlock();
+    // TODO: Checks of parameter range
+  }
+  else
   {
-    throw BadProperty( "Indegree cannot be less than zero." );
+    // TODO: Is it easier to only accept parameters?
+    // Assume indegree is a scalar
+    const long value = ( *conn_spec )[ names::indegree ];
+    indegree_ = new ConstantParameter( value );
+
+    // verify that indegree is not larger than source population if multapses
+    // are
+    // disabled
+    if ( not multapses_ )
+    {
+      if ( value > n_sources )
+      {
+        throw BadProperty( "Indegree cannot be larger than population size." );
+      }
+      else if ( value == n_sources and not autapses_ )
+      {
+        LOG( M_WARNING,
+          "FixedInDegreeBuilder::connect",
+          "Multapses and autapses prohibited. When the sources and the targets "
+          "have a non-empty "
+          "intersection, the connect algorithm will enter an infinite loop." );
+        return;
+      }
+
+      if ( value > 0.9 * n_sources )
+      {
+        LOG( M_WARNING,
+          "FixedInDegreeBuilder::connect",
+          "Multapses are prohibited and you request more than 90% "
+          "connectivity. "
+          "Expect long connecting times!" );
+      }
+    } // if (not multapses_ )
+
+    if ( value < 0 )
+    {
+      throw BadProperty( "Indegree cannot be less than zero." );
+    }
   }
 }
 
@@ -1199,14 +1216,16 @@ nest::FixedInDegreeBuilder::connect_()
           const index tgid = ( *target_it ).gid;
           Node* const target =
             kernel().node_manager.get_node_or_proxy( tgid, tid );
+
+          const long indegree_value = std::round( indegree_->value( rng, target ) );
           if ( target->is_proxy() )
           {
             // skip array parameters handled in other virtual processes
-            skip_conn_parameter_( tid, indegree_ );
+            skip_conn_parameter_( tid, indegree_value );
             continue;
           }
 
-          inner_connect_( tid, rng, target, tgid, true );
+          inner_connect_( tid, rng, target, tgid, true, indegree_value );
         }
       }
       else
@@ -1223,8 +1242,10 @@ nest::FixedInDegreeBuilder::connect_()
           {
             continue;
           }
+          auto source = n->get_node();
+          const long indegree_value = std::round( indegree_->value( rng, source ) );
 
-          inner_connect_( tid, rng, n->get_node(), tgid, false );
+          inner_connect_( tid, rng, source, tgid, false, indegree_value );
         }
       }
     }
@@ -1243,7 +1264,8 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   librandom::RngPtr& rng,
   Node* target,
   index tgid,
-  bool skip )
+  bool skip,
+  long indegree_value )
 {
   const thread target_thread = target->get_thread();
 
@@ -1253,7 +1275,7 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
     // skip array parameters handled in other virtual processes
     if ( skip )
     {
-      skip_conn_parameter_( tid, indegree_ );
+      skip_conn_parameter_( tid, indegree_value );
     }
     return;
   }
@@ -1261,7 +1283,7 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   std::set< long > ch_ids;
   long n_rnd = sources_->size();
 
-  for ( long j = 0; j < indegree_; ++j )
+  for ( long j = 0; j < indegree_value; ++j )
   {
     unsigned long s_id;
     index sgid;
@@ -1359,7 +1381,7 @@ nest::FixedOutDegreeBuilder::connect_()
     const long n_rnd = targets_->size();
 
     Node* source_node = kernel().node_manager.get_node_or_proxy( sgid );
-    const long outdegree_value = outdegree_->value( grng, source_node );
+    const long outdegree_value = std::round( outdegree_->value( grng, source_node ) );
     for ( long j = 0; j < outdegree_value; ++j )
     {
       unsigned long t_id;

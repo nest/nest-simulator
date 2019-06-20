@@ -318,8 +318,8 @@ protected:
   void connect_();
 
 private:
-  void inner_connect_( const int, librandom::RngPtr&, Node*, index, bool );
-  long indegree_;
+  void inner_connect_( const int, librandom::RngPtr&, Node*, index, bool, long );
+  Parameter* indegree_;
 };
 
 class FixedOutDegreeBuilder : public ConnBuilder

@@ -41,6 +41,7 @@ class dimension_distance(object):
     y = CreateParameter('distance', {'dimension': 2})
     z = CreateParameter('distance', {'dimension': 3})
 
+    @staticmethod
     def n(dimension):
         return CreateParameter('distance', {'dimension': dimension})
 
@@ -50,6 +51,7 @@ class pos(object):
     y = CreateParameter('position', {'dimension': 1})
     z = CreateParameter('position', {'dimension': 2})
 
+    @staticmethod
     def n(dimension):
         return CreateParameter('position', {'dimension': dimension})
 
@@ -59,6 +61,7 @@ class source_pos(object):
     y = CreateParameter('position', {'dimension': 1, 'type_id': 1})
     z = CreateParameter('position', {'dimension': 2, 'type_id': 1})
 
+    @staticmethod
     def n(dimension):
         return CreateParameter('position',
                                {'dimension': dimension, 'type_id': 1})
@@ -69,6 +72,7 @@ class target_pos(object):
     y = CreateParameter('position', {'dimension': 1, 'type_id': 2})
     z = CreateParameter('position', {'dimension': 2, 'type_id': 2})
 
+    @staticmethod
     def n(dimension):
         return CreateParameter('position',
                                {'dimension': dimension, 'type_id': 2})

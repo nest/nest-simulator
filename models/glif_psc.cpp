@@ -114,22 +114,24 @@ nest::glif_psc::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::V_reset, V_reset_ );
 
-  def< double >( d, "a_spike", a_spike_ );
-  def< double >( d, "b_spike", b_spike_ );
-  def< double >( d, "a_reset", voltage_reset_a_ );
-  def< double >( d, "b_reset", voltage_reset_b_ );
+  //def< double >( d, "a_spike", a_spike_ );
+  def< double >( d, names::a_spike, a_spike_ );
+  def< double >( d, names::b_spike, b_spike_ );
+  def< double >( d, names::a_reset, voltage_reset_a_ );
+  def< double >( d, names::b_reset, voltage_reset_b_ );
 
-  def< double >( d, "a_voltage", a_voltage_ );
-  def< double >( d, "b_voltage", b_voltage_ );
+  def< double >( d, names::a_voltage, a_voltage_ );
+  def< double >( d, names::b_voltage, b_voltage_ );
 
-  def< std::vector< double > >( d, Name( "asc_init" ), asc_init_ );
-  def< std::vector< double > >( d, Name( "k" ), k_ );
-  def< std::vector< double > >( d, Name( "asc_amps" ), asc_amps_ );
-  def< std::vector< double > >( d, Name( "r" ), r_ );
+  //def< std::vector< double > >( d, Name( "asc_init" ), asc_init_ );
+  def< std::vector< double > >( d, names::asc_init, asc_init_ );
+  def< std::vector< double > >( d, names::k, k_ );
+  def< std::vector< double > >( d, names::asc_amps, asc_amps_ );
+  def< std::vector< double > >( d, names::r, r_ );
   ArrayDatum tau_syn_ad( tau_syn_ );
   def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
   def< bool >( d, names::has_connections, has_connections_ );
-  def< model_type >( d, "glif_model", glif_model_ );
+  def< model_type >( d, names::glif_model, glif_model_ );
 }
 
 void
@@ -142,20 +144,20 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::t_ref, t_ref_ );
   updateValue< double >( d, names::V_reset, V_reset_ );
 
-  updateValue< double >( d, "a_spike", a_spike_ );
-  updateValue< double >( d, "b_spike", b_spike_ );
-  updateValue< double >( d, "a_reset", voltage_reset_a_ );
-  updateValue< double >( d, "b_reset", voltage_reset_b_ );
+  updateValue< double >( d, names::a_spike, a_spike_ );
+  updateValue< double >( d, names::b_spike, b_spike_ );
+  updateValue< double >( d, names::a_reset, voltage_reset_a_ );
+  updateValue< double >( d, names::b_reset, voltage_reset_b_ );
 
-  updateValue< double >( d, "a_voltage", a_voltage_ );
-  updateValue< double >( d, "b_voltage", b_voltage_ );
+  updateValue< double >( d, names::a_voltage, a_voltage_ );
+  updateValue< double >( d, names::b_voltage, b_voltage_ );
 
-  updateValue< std::vector< double > >( d, Name( "asc_init" ), asc_init_ );
-  updateValue< std::vector< double > >( d, Name( "k" ), k_ );
-  updateValue< std::vector< double > >( d, Name( "asc_amps" ), asc_amps_ );
-  updateValue< std::vector< double > >( d, Name( "r" ), r_ );
-  updateValue< std::vector< double > >( d, "tau_syn", tau_syn_ );
-  updateValue< model_type >( d, "glif_model", glif_model_ );
+  updateValue< std::vector< double > >( d, names::asc_init, asc_init_ );
+  updateValue< std::vector< double > >( d, names::k, k_ );
+  updateValue< std::vector< double > >( d, names::asc_amps, asc_amps_ );
+  updateValue< std::vector< double > >( d, names::r, r_ );
+  updateValue< std::vector< double > >( d, names::tau_syn, tau_syn_ );
+  updateValue< model_type >( d, names::glif_model, glif_model_ );
 
   if ( V_reset_ >= th_inf_ )
   {

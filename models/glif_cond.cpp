@@ -208,54 +208,54 @@ void
 nest::glif_cond::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_th, th_inf_ );
-  def< double >( d, Name( "g_m" ), G_ );
+  def< double >( d, names::g_m, G_ );
   def< double >( d, names::E_L, E_L_ );
   def< double >( d, names::C_m, C_m_ );
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, "a_spike", a_spike_ );
-  def< double >( d, "b_spike", b_spike_ );
-  def< double >( d, "a_reset", voltage_reset_a_ );
-  def< double >( d, "b_reset", voltage_reset_b_ );
+  def< double >( d, names::a_spike, a_spike_ );
+  def< double >( d, names::b_spike, b_spike_ );
+  def< double >( d, names::a_reset, voltage_reset_a_ );
+  def< double >( d, names::b_reset, voltage_reset_b_ );
 
-  def< double >( d, "a_voltage", a_voltage_ );
-  def< double >( d, "b_voltage", b_voltage_ );
+  def< double >( d, names::a_voltage, a_voltage_ );
+  def< double >( d, names::b_voltage, b_voltage_ );
 
-  def< std::vector< double > >( d, Name( "asc_init" ), asc_init_ );
-  def< std::vector< double > >( d, Name( "k" ), k_ );
-  def< std::vector< double > >( d, Name( "asc_amps" ), asc_amps_ );
-  def< std::vector< double > >( d, Name( "r" ), r_ );
+  def< std::vector< double > >( d, names::asc_init, asc_init_ );
+  def< std::vector< double > >( d, names::k, k_ );
+  def< std::vector< double > >( d, names::asc_amps, asc_amps_ );
+  def< std::vector< double > >( d, names::r, r_ );
   ArrayDatum tau_syn_ad( tau_syn_ );
   def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
   ArrayDatum E_rev_ad( E_rev_ );
   def< ArrayDatum >( d, names::E_rev, E_rev_ad );
   def< bool >( d, names::has_connections, has_connections_ );
-  def< model_type >( d, Name( "glif_model" ), glif_model_ );
+  def< model_type >( d, names::glif_model, glif_model_ );
 }
 
 void
 nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::V_th, th_inf_ );
-  updateValue< double >( d, Name( "g_m" ), G_ );
+  updateValue< double >( d, names::g_m, G_ );
   updateValue< double >( d, names::E_L, E_L_ );
   updateValue< double >( d, names::C_m, C_m_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
   updateValue< double >( d, names::V_reset, V_reset_ );
 
-  updateValue< double >( d, "a_spike", a_spike_ );
-  updateValue< double >( d, "b_spike", b_spike_ );
-  updateValue< double >( d, "a_reset", voltage_reset_a_ );
-  updateValue< double >( d, "b_reset", voltage_reset_b_ );
+  updateValue< double >( d, names::a_spike, a_spike_ );
+  updateValue< double >( d, names::b_spike, b_spike_ );
+  updateValue< double >( d, names::a_reset, voltage_reset_a_ );
+  updateValue< double >( d, names::b_reset, voltage_reset_b_ );
 
-  updateValue< double >( d, "a_voltage", a_voltage_ );
-  updateValue< double >( d, "b_voltage", b_voltage_ );
+  updateValue< double >( d, names::a_voltage, a_voltage_ );
+  updateValue< double >( d, names::b_voltage, b_voltage_ );
 
-  updateValue< std::vector< double > >( d, Name( "asc_init" ), asc_init_ );
-  updateValue< std::vector< double > >( d, Name( "k" ), k_ );
-  updateValue< std::vector< double > >( d, Name( "asc_amps" ), asc_amps_ );
-  updateValue< std::vector< double > >( d, Name( "r" ), r_ );
-  updateValue< model_type >( d, Name( "glif_model" ), glif_model_ );
+  updateValue< std::vector< double > >( d, names::asc_init, asc_init_ );
+  updateValue< std::vector< double > >( d, names::k, k_ );
+  updateValue< std::vector< double > >( d, names::asc_amps, asc_amps_ );
+  updateValue< std::vector< double > >( d, names::r, r_ );
+  updateValue< model_type >( d, names::glif_model, glif_model_ );
 
   if ( C_m_ <= 0.0 )
   {
@@ -292,8 +292,8 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
 
   const size_t old_n_receptors = this->n_receptors_();
   bool tau_flag =
-    updateValue< std::vector< double > >( d, "tau_syn", tau_syn_ );
-  bool Erev_flag = updateValue< std::vector< double > >( d, "E_rev", E_rev_ );
+    updateValue< std::vector< double > >( d, names::tau_syn, tau_syn_ );
+  bool Erev_flag = updateValue< std::vector< double > >( d, names::E_rev, E_rev_ );
 
   if ( tau_flag || Erev_flag )
   { // receptor arrays have been modified

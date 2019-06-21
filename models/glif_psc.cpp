@@ -177,6 +177,24 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Refractory time constant must be strictly positive." );
   }
 
+  if ( b_voltage_ <= 0.0 )
+  {
+    throw BadProperty( "Voltage-induced threshold time constant must be strictly positive." );
+  }
+
+  if ( b_spike_ <= 0.0 )
+  {
+    throw BadProperty( "Spike induced threshold time constant must be strictly positive." );
+  }
+
+  for ( std::size_t a = 0; a < k_.size(); ++a )
+  {
+    if ( k_[a] <= 0.0 )
+	{
+      throw BadProperty( "After-spike current time constant must be strictly positive." );
+	}
+  }
+
   const size_t old_n_receptors = this->n_receptors_();
   if ( updateValue< std::vector< double > >( d, "tau_syn", tau_syn_ ) )
   {
@@ -313,48 +331,6 @@ nest::glif_psc::calibrate()
     B_.spikes_[ i ].resize();
   }
   
-  std::string model_str = P_.glif_model_;
-  std::transform( model_str.begin(), model_str.end(), model_str.begin(), 
-    ::tolower);
-  if ( nest::glif_psc::model_type_lu.find(model_str) == nest::glif_psc::model_type_lu.end() )
-  {
-    throw BadProperty( "Bad glif model type string." );
-  }  
-  long model_type = nest::glif_psc::model_type_lu[model_str];
-  
-  switch ( model_type ) 
-  {
-    case 1:
-      //glif_func = std::bind(&nest::glif::update_glif1, this, 
-      //  std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif_psc::update_glif1(origin, from, to);};
-      break;
-      
-    case 2:
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif_psc::update_glif2(origin, from, to);};
-      break;
-      
-    case 3:
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif_psc::update_glif3(origin, from, to);};
-      break;
-
-    case 4:
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif_psc::update_glif4(origin, from, to);};
-      break;  
-      
-    case 5:
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif_psc::update_glif5(origin, from, to);};
-      break;
-    
-    default:
-      throw BadProperty( "Only GLIF models 1-5 available." );
-      break;    
-  }
 }
 
 /* ----------------------------------------------------------------
@@ -362,438 +338,21 @@ nest::glif_psc::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::glif_psc::update( Time const& origin,
-  const long from,
-  const long to )
-{
-  glif_func(origin, from, to);
-}
-
-void
-nest::glif_psc::update_glif1( Time const& origin, const long from, 
-  const long to )
-{
-  // glif_lif
-  const double dt = Time::get_resolution().get_ms(); // in ms
-  double v_old = S_.V_m_;
-
-  for ( long lag = from; lag < to; ++lag )
-  {
-
-    if ( V_.t_ref_remaining_ > 0.0 )
-    {
-      // While neuron is in refractory period count-down in time steps (since dt
-      // may change while in refractory) while holding the voltage at last peak.
-      V_.t_ref_remaining_ -= dt;
-      if ( V_.t_ref_remaining_ <= 0.0 )
-      {
-        S_.V_m_ = P_.V_reset_;
-      }
-      else
-      {
-        S_.V_m_ = v_old;
-      }
-    }
-    else
-    {
-
-      // voltage dynamics of membranes
-      // Linear Exact to find next V_m value
-      S_.V_m_ = v_old * V_.P33_ + ( S_.I_ + P_.G_ * P_.E_L_ ) * V_.P30_;
-
-
-      // add synapse component for voltage dynamics
-      S_.I_syn_ = 0.0;
-      for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-      {
-        S_.V_m_ += V_.P31_[ i ] * S_.y1_[ i ] + V_.P32_[ i ] * S_.y2_[ i ];
-        S_.I_syn_ += S_.y2_[ i ];
-      }
-
-      if ( S_.V_m_ > P_.th_inf_ )
-      {
-
-        V_.t_ref_remaining_ = V_.t_ref_total_;
-        // Determine spike offset and send spike event
-        double spike_offset =
-          ( 1 - ( P_.th_inf_ - v_old ) / ( S_.V_m_ - v_old ) )
-          * Time::get_resolution().get_ms();
-
-        set_spiketime(
-          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
-        SpikeEvent se;
-        se.set_offset( spike_offset );
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
-    }
-
-    // alpha shape PSCs
-    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-    {
-
-      S_.y2_[ i ] = V_.P21_[ i ] * S_.y1_[ i ] + V_.P22_[ i ] * S_.y2_[ i ];
-      S_.y1_[ i ] *= V_.P11_[ i ];
-
-      // Apply spikes delivered in this step: The spikes arriving at T+1 have an
-      // immediate effect on the state of the neuron
-      S_.y1_[ i ] +=
-        V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
-    }
-
-    S_.I_ = B_.currents_.get_value( lag );
-
-    B_.logger_.record_data( origin.get_steps() + lag );
-
-    v_old = S_.V_m_;
-  }
-
-}
-
-void
-nest::glif_psc::update_glif2( Time const& origin, const long from, 
-  const long to )
-{
-  // glif_lif_r
-  const double dt = Time::get_resolution().get_ms();
-  double v_old = S_.V_m_;
-  double spike_component = 0.0;
-  double th_old = S_.threshold_;
-
-  for ( long lag = from; lag < to; ++lag )
-  {
-    // update threshold via exact solution of dynamics of spike component of
-    // threshold
-    spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
-    S_.threshold_ = spike_component + P_.th_inf_;
-    V_.last_spike_ = spike_component;
-
-    if ( V_.t_ref_remaining_ > 0.0 )
-    {
-      // While neuron is in refractory period count-down in time steps (since dt
-      // may change while in refractory) while holding the voltage at last peak.
-      V_.t_ref_remaining_ -= dt;
-      if ( V_.t_ref_remaining_ <= 0.0 )
-      {
-        S_.V_m_ = P_.E_L_ + P_.voltage_reset_a_ * ( S_.V_m_ - P_.E_L_ )
-          + P_.voltage_reset_b_;
-
-        V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
-        S_.threshold_ = V_.last_spike_ + P_.th_inf_;
-
-        // Check if bad reset
-        // TODO: Better way to handle?
-        if ( S_.V_m_ > S_.threshold_ )
-        {
-          printf(
-            "Simulation Terminated: Voltage (%f) reset above threshold "
-            "(%f)!!\n",
-            S_.V_m_,
-            S_.threshold_ );
-        }
-        assert( S_.V_m_ <= S_.threshold_ );
-      }
-      else
-      {
-        S_.V_m_ = v_old;
-      }
-    }
-    else
-    {
-      // voltage dynamics of membranes
-      // Linear Exact to find next V_m value
-      S_.V_m_ = v_old * V_.P33_ + ( S_.I_ + P_.G_ * P_.E_L_ ) * V_.P30_;
-
-
-      // add synapse component for voltage dynamics
-      S_.I_syn_ = 0.0;
-      for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-      {
-        S_.V_m_ += V_.P31_[ i ] * S_.y1_[ i ] + V_.P32_[ i ] * S_.y2_[ i ];
-        S_.I_syn_ += S_.y2_[ i ];
-      }
-
-      if ( S_.V_m_ > S_.threshold_ )
-      {
-        V_.t_ref_remaining_ = V_.t_ref_total_;
-
-        // Determine
-        double spike_offset =
-          ( 1 - ( ( v_old - th_old )
-                  / ( ( S_.threshold_ - th_old ) - ( S_.V_m_ - v_old ) ) ) )
-          * Time::get_resolution().get_ms();
-        set_spiketime(
-          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
-        SpikeEvent se;
-        se.set_offset( spike_offset );
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
-    }
-
-    // alpha shape PSCs
-    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-    {
-      S_.y2_[ i ] = V_.P21_[ i ] * S_.y1_[ i ] + V_.P22_[ i ] * S_.y2_[ i ];
-      S_.y1_[ i ] *= V_.P11_[ i ];
-
-      // Apply spikes delivered in this step: The spikes arriving at T+1 have an
-      // immediate effect on the state of the neuron
-      S_.y1_[ i ] +=
-        V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
-    }
-
-    S_.I_ = B_.currents_.get_value( lag );
-
-    B_.logger_.record_data( origin.get_steps() + lag );
-
-    v_old = S_.V_m_;
-
-    th_old = S_.threshold_;
-  }
-}
-
-void
-nest::glif_psc::update_glif3( Time const& origin, const long from, 
-  const long to )
-{
-  // glif_lif_asc
-  const double dt = Time::get_resolution().get_ms();
-  double v_old = S_.V_m_;
-
-  for ( long lag = from; lag < to; ++lag )
-  {
-    if ( V_.t_ref_remaining_ > 0.0 )
-    {
-      // While neuron is in refractory period count-down in time steps (since dt
-      // may change while in refractory) while holding the voltage at last peak.
-      V_.t_ref_remaining_ -= dt;
-      if ( V_.t_ref_remaining_ <= 0.0 )
-      {
-        // Neuron has left refractory period, reset voltage and after-spike
-        // current
-        // Reset ASC_currents
-        for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
-        {
-          S_.ASCurrents_[ a ] = P_.asc_amps_[ a ]
-            + S_.ASCurrents_[ a ] * P_.r_[ a ]
-              * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
-        }
-
-        // Reset voltage
-        S_.V_m_ = P_.V_reset_;
-      }
-      else
-      {
-        S_.V_m_ = v_old;
-      }
-    }
-    else
-    {
-      // Integrate voltage and currents
-
-      // Calculate new ASCurrents value using exponential methods
-      S_.ASCurrents_sum_ = 0.0;
-      for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
-      {
-        S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
-        S_.ASCurrents_[ a ] =
-          S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
-      }
-
-      // voltage dynamics of membranes
-      // Linear Exact to find next V_m value
-      S_.V_m_ = v_old * V_.P33_
-          + ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) * V_.P30_;
-
-      // add synapse component for voltage dynamics
-      S_.I_syn_ = 0.0;
-      for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-      {
-        S_.V_m_ += V_.P31_[ i ] * S_.y1_[ i ] + V_.P32_[ i ] * S_.y2_[ i ];
-        S_.I_syn_ += S_.y2_[ i ];
-      }
-
-      // Check if there is an action potential
-      if ( S_.V_m_ > P_.th_inf_ )
-      {
-        // Marks that the neuron is in a refractory period
-        V_.t_ref_remaining_ = V_.t_ref_total_;
-
-        // Find the exact time during this step that the neuron crossed the
-        // threshold and record it
-        double spike_offset = ( 1 - ( P_.th_inf_ - v_old ) / ( S_.V_m_ - v_old ) )
-          * Time::get_resolution().get_ms();
-
-        set_spiketime(
-          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
-        SpikeEvent se;
-        se.set_offset( spike_offset );
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
-    }
-
-    // alpha shape PSCs
-    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-    {
-
-      S_.y2_[ i ] = V_.P21_[ i ] * S_.y1_[ i ] + V_.P22_[ i ] * S_.y2_[ i ];
-      S_.y1_[ i ] *= V_.P11_[ i ];
-
-      // Apply spikes delivered in this step: The spikes arriving at T+1 have an
-      // immediate effect on the state of the neuron
-      S_.y1_[ i ] +=
-        V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
-    }
-
-    // Update any external currents
-    S_.I_ = B_.currents_.get_value( lag );
-
-    // Save voltage
-    B_.logger_.record_data( origin.get_steps() + lag );
-
-    v_old = S_.V_m_;
-  }
-}
-
-void
-nest::glif_psc::update_glif4( Time const& origin, const long from, 
-  const long to )
-{
-  // glif_lif_r_asc
-  const double dt = Time::get_resolution().get_ms();
-
-  double v_old = S_.V_m_;
-  double spike_component = 0.0;
-  double th_old = S_.threshold_;
-
-  for ( long lag = from; lag < to; ++lag )
-  {
-
-    // update threshold via exact solution of dynamics of spike component of
-    // threshold
-    spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
-    S_.threshold_ = spike_component + P_.th_inf_;
-    V_.last_spike_ = spike_component;
-
-    if ( V_.t_ref_remaining_ > 0.0 )
-    {
-      // While neuron is in refractory period count-down in time steps (since dt
-      // may change while in refractory) while holding the voltage at last peak.
-      V_.t_ref_remaining_ -= dt;
-      if ( V_.t_ref_remaining_ <= 0.0 )
-      {
-        // Neuron has left refractory period, reset voltage and after-spike
-        // current
-
-        // Reset ASC_currents
-        for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
-        {
-          S_.ASCurrents_[ a ] = P_.asc_amps_[ a ]
-            + S_.ASCurrents_[ a ] * P_.r_[ a ]
-              * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
-        }
-
-        // Reset voltage
-        S_.V_m_ = P_.E_L_ + P_.voltage_reset_a_ * ( S_.V_m_ - P_.E_L_ )
-          + P_.voltage_reset_b_;
-
-        // reset spike component of threshold
-        V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
-        S_.threshold_ = V_.last_spike_ + P_.th_inf_;
-
-        // Check if bad reset
-        // TODO: Better way to handle?
-        if ( S_.V_m_ > S_.threshold_ )
-        {
-          printf(
-            "Simulation Terminated: Voltage (%f) reset above threshold "
-            "(%f)!!\n",
-            S_.V_m_,
-            S_.threshold_ );
-        }
-        assert( S_.V_m_ <= S_.threshold_ );
-      }
-      else
-      {
-        S_.V_m_ = v_old;
-      }
-    }
-    else
-    {
-      // Integrate voltage and currents
-
-      // Calculate new ASCurrents value using expoential methods
-      S_.ASCurrents_sum_ = 0.0;
-      for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
-      {
-        S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
-        S_.ASCurrents_[ a ] =
-          S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
-      }
-
-      // voltage dynamics of membranes
-      // Linear Exact to find next V_m value
-      S_.V_m_ = v_old * V_.P33_
-          + ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) * V_.P30_;
-
-      // add synapse component for voltage dynamics
-      S_.I_syn_ = 0.0;
-      for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-      {
-        S_.V_m_ += V_.P31_[ i ] * S_.y1_[ i ] + V_.P32_[ i ] * S_.y2_[ i ];
-        S_.I_syn_ += S_.y2_[ i ];
-      }
-
-      // Check if there is an action potential
-      if ( S_.V_m_ > S_.threshold_ )
-      {
-        // Marks that the neuron is in a refractory period
-        V_.t_ref_remaining_ = V_.t_ref_total_;
-
-        // Find the exact time during this step that the neuron crossed the
-        // threshold and record it
-        double spike_offset =
-          ( 1
-            - ( v_old - th_old )
-              / ( ( S_.threshold_ - th_old ) - ( S_.V_m_ - v_old ) ) )
-          * Time::get_resolution().get_ms();
-        set_spiketime(
-          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
-        SpikeEvent se;
-        se.set_offset( spike_offset );
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
-    }
-
-    // alpha shape PSCs
-    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-    {
-      S_.y2_[ i ] = V_.P21_[ i ] * S_.y1_[ i ] + V_.P22_[ i ] * S_.y2_[ i ];
-      S_.y1_[ i ] *= V_.P11_[ i ];
-
-      // Apply spikes delivered in this step: The spikes arriving at T+1 have an
-      // immediate effect on the state of the neuron
-      S_.y1_[ i ] +=
-        V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
-    }
-
-    // Update any external currents
-    S_.I_ = B_.currents_.get_value( lag );
-
-    // Save voltage
-    B_.logger_.record_data( origin.get_steps() + lag );
-
-    v_old = S_.V_m_;
-
-    th_old = S_.threshold_;
-  }
-}
-
-void
-nest::glif_psc::update_glif5( Time const& origin, const long from, 
+nest::glif_psc::update( Time const& origin, const long from,
   const long to )
 {
   // glif_lif_r_asc_a
   const double dt = Time::get_resolution().get_ms();
+
+  // get model type
+  std::string model_str = P_.glif_model_;
+  std::transform( model_str.begin(), model_str.end(), model_str.begin(),
+    ::tolower);
+  if ( nest::glif_psc::model_type_lu.find(model_str) == nest::glif_psc::model_type_lu.end() )
+  {
+    throw BadProperty( "Bad glif model type string." );
+  }
+  long model_type = nest::glif_psc::model_type_lu[model_str];
 
   double v_old = S_.V_m_;
   // double ASCurrents_old_sum = 0.0;
@@ -806,8 +365,12 @@ nest::glif_psc::update_glif5( Time const& origin, const long from,
 
     // update threshold via exact solution of dynamics of spike component of
     // threshold
-    spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
-    V_.last_spike_ = spike_component;
+	//exact solution of dynamics of spike component of threshold for glif2/4/5 models with "R"
+	if (model_type == 2 || model_type == 4 || model_type == 5)
+	{
+      spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
+	}
+	V_.last_spike_ = spike_component;
 
     if ( V_.t_ref_remaining_ > 0.0 )
     {
@@ -819,25 +382,37 @@ nest::glif_psc::update_glif5( Time const& origin, const long from,
         // Neuron has left refractory period, reset voltage and after-spike
         // current
 
-        // Reset ASC_currents
-        for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
-        {
-          S_.ASCurrents_[ a ] = P_.asc_amps_[ a ]
-            + S_.ASCurrents_[ a ] * P_.r_[ a ]
-              * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
-        }
+        // Reset ASC_currentsfor glif3/4/5 models with "ASC"
+      	if (model_type == 3 || model_type == 4 || model_type == 5)
+      	{
+          for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
+          {
+            S_.ASCurrents_[ a ] = P_.asc_amps_[ a ]
+              + S_.ASCurrents_[ a ] * P_.r_[ a ]
+                * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
+          }
+      	}
 
         // Reset voltage
-        S_.V_m_ = P_.E_L_ + P_.voltage_reset_a_ * ( S_.V_m_ - P_.E_L_ )
-          + P_.voltage_reset_b_;
+        if (model_type == 1 || model_type == 3)
+        {
+        // Reset voltage for glif1/3 models without "R"
+        	S_.V_m_ = P_.V_reset_;
+        }
+        else
+        {
+          // Reset voltage for glif2/4/5 models with "R"
+          S_.V_m_ = P_.E_L_ + P_.voltage_reset_a_ * ( S_.V_m_ - P_.E_L_ )
+            + P_.voltage_reset_b_;
 
-        // reset spike component of threshold
-        V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
 
-        // rest the global threshold (voltage component of threshold: stay the
-        // same)
-        S_.threshold_ = V_.last_spike_ + V_.last_voltage_ + P_.th_inf_;
+          // reset spike component of threshold
+          V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
 
+          // rest the global threshold (voltage component of threshold: stay the
+          // same)
+          S_.threshold_ = V_.last_spike_ + V_.last_voltage_ + P_.th_inf_;
+        }
         // Check if bad reset
         // TODO: Better way to handle?
         if ( S_.V_m_ > S_.threshold_ )
@@ -860,15 +435,17 @@ nest::glif_psc::update_glif5( Time const& origin, const long from,
       // Integrate voltage and currents
 
       // Calculate new ASCurrents value using expoential methods
-      // ASCurrents_old_sum = S_.ASCurrents_sum_;
       S_.ASCurrents_sum_ = 0.0;
-      for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
+      // for glif3/4/5 models with "ASC"
+      if (model_type == 3 || model_type == 4 || model_type == 5)
       {
-        S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
-        S_.ASCurrents_[ a ] =
-          S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
+        for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
+        {
+          S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
+          S_.ASCurrents_[ a ] =
+            S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
+        }
       }
-
       // voltage dynamics of membranes
       // Linear Exact to find next V_m value
       S_.V_m_ = v_old * V_.P33_
@@ -882,15 +459,18 @@ nest::glif_psc::update_glif5( Time const& origin, const long from,
         S_.I_syn_ += S_.y2_[ i ];
       }
 
-      // Calculate exact voltage component of the threshold
-      double beta = ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) / P_.G_;
-      double phi = P_.a_voltage_ / ( P_.b_voltage_ - P_.G_ / P_.C_m_ );
-      voltage_component =
-        phi * ( v_old - beta ) * std::exp( -P_.G_ * dt / P_.C_m_ )
-        + 1 / ( std::exp( P_.b_voltage_ * dt ) )
-          * ( V_.last_voltage_ - phi * ( v_old - beta )
-              - ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ ) )
-        + ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ );
+      // Calculate exact voltage component of the threshold for glif5 model with "A"
+      if (model_type == 5)
+      {
+        double beta = ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) / P_.G_;
+        double phi = P_.a_voltage_ / ( P_.b_voltage_ - P_.G_ / P_.C_m_ );
+        voltage_component =
+          phi * ( v_old - beta ) * std::exp( -P_.G_ * dt / P_.C_m_ )
+          + 1 / ( std::exp( P_.b_voltage_ * dt ) )
+            * ( V_.last_voltage_ - phi * ( v_old - beta )
+                - ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ ) )
+          + ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ );
+      }
 
       S_.threshold_ = V_.last_spike_ + voltage_component + P_.th_inf_;
       V_.last_voltage_ = voltage_component;

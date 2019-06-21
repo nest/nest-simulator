@@ -47,11 +47,8 @@ Name: glif_cond - Conductance-based generalized leaky integrate and fire (GLIF) 
 
 Description:
 
-  glif_cond is an implementation of a generalized leaky integrate
-and fire (GLIF) model 5
-  (i.e., leaky integrate and fire with biologically defined reset rules,
-after-spike currents
-  and a voltage dependent threshold model) [1] with conductance-based synapses.
+  glif_cond is an implementation of five generalized leaky integrate
+and fire (GLIF) models [1] with conductance-based synapses.
   Incoming spike events induce a post-synaptic change of conductance modeled
   by an alpha function [2]. The alpha function is normalized such that an event
 of weight 1.0
@@ -94,12 +91,6 @@ in 1/ms (bv in Equation (4) in [1]).
   tau_syn           double vector - Rise time constants of the synaptic alpha
 function in ms.
   E_rev             double vector - Reversal potential in mV.
-  V_dynamics_method string - Voltage dynamics (Equation (1) in [1]) solution
-methods:
-                             'linear_forward_euler' - Linear Euler forward (RK1)
-to find next V_m value, or
-                             'linear_exact' - Linear exact to find next V_m
-value.
   glif_model        string - glif model type:
                              "lif" / "glif_lif" / "1" - GLIF model 1 - Traditional leaky integrate and fire (LIF) model,
                              "lif_r" / "glif_lif_r" / "2" - GLIF model 2 - Leaky integrate and fire with biologically defined reset rules model,
@@ -179,11 +170,6 @@ private:
 
   //! Take neuron through given time interval
   void update( nest::Time const&, const long, const long );
-  void update_glif1( nest::Time const&, const long, const long );
-  void update_glif2( nest::Time const&, const long, const long );
-  void update_glif3( nest::Time const&, const long, const long );
-  void update_glif4( nest::Time const&, const long, const long );
-  void update_glif5( nest::Time const&, const long, const long );
 
   // make dynamics function quasi-member
   friend int
@@ -210,7 +196,7 @@ private:
     double a_voltage_;       // a 'leak-conductance' for the voltage-dependent
                              // component of the threshold in 1/ms
     double b_voltage_;       // inverse of which is the time constant of the
-    // voltage-dependent component of the threshold in 1/ms
+                             // voltage-dependent component of the threshold in 1/ms
 
     std::vector< double > asc_init_; // initial values of ASCurrents_ in pA
     std::vector< double > k_;        // predefined time scale in 1/ms
@@ -331,9 +317,6 @@ private:
   State_ S_;
   Variables_ V_;
   Buffers_ B_;
-
-  std::function< void(nest::Time const&, const long, const long) > 
-    glif_func;
 
   // Mapping of recordables names to access functions
   static nest::RecordablesMap< glif_cond > recordablesMap_;

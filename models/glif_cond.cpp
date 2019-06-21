@@ -66,8 +66,6 @@ RecordablesMap< nest::glif_cond >::create()
 /* ----------------------------------------------------------------
  * Iteration function
  * ---------------------------------------------------------------- */
-
-
 extern "C" inline int
 nest::glif_cond_dynamics( double,
   const double y[],
@@ -81,6 +79,16 @@ nest::glif_cond_dynamics( double,
   assert( pnode );
   const nest::glif_cond& node =
     *( reinterpret_cast< nest::glif_cond* >( pnode ) );
+
+  // get node glif model type
+  std::string model_str = node.P_.glif_model_;
+  std::transform( model_str.begin(), model_str.end(), model_str.begin(), ::tolower);
+  if ( node.model_type_lu.find(model_str) == node.model_type_lu.end() )
+  {
+	throw BadProperty( "Bad glif model type string." );
+  }
+
+  long model_type = node.model_type_lu.at(model_str);
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -105,8 +113,16 @@ nest::glif_cond_dynamics( double,
   // dI_asc/dt
   for ( std::size_t a = 0; a < node.P_.n_ASCurrents_(); ++a )
   {
-    f[ S::ASC + a ] = -node.P_.k_[ a ] * y[ S::ASC + a ];
-    //if (f[ S::ASC + a ]!=0.0){printf("%f\n", f[ S::ASC + a ]);}
+	if (model_type == 3 || model_type == 4 || model_type == 5)
+	{
+      // for glif3/4/5 models with "ASC"
+	  f[ S::ASC + a ] = -node.P_.k_[ a ] * y[ S::ASC + a ];
+	}
+	else
+	{
+	  // for glif1/2 models without "ASC"
+      f[ S::ASC + a ] = 0.0;
+	}
   }
 
   // d dg_exc/dt, dg_exc/dt
@@ -254,6 +270,24 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
   if ( t_ref_ <= 0.0 )
   {
     throw BadProperty( "Refractory time constant must be strictly positive." );
+  }
+
+  if ( b_voltage_ <= 0.0 )
+  {
+    throw BadProperty( "Voltage-induced threshold time constant must be strictly positive." );
+  }
+
+  if ( b_spike_ <= 0.0 )
+  {
+    throw BadProperty( "Spike induced threshold time constant must be strictly positive." );
+  }
+
+  for ( std::size_t a = 0; a < k_.size(); ++a )
+  {
+    if ( k_[a] <= 0.0 )
+	{
+      throw BadProperty( "After-spike current time constant must be strictly positive." );
+	}
   }
 
   const size_t old_n_receptors = this->n_receptors_();
@@ -472,51 +506,6 @@ nest::glif_cond::calibrate()
 
   B_.sys_.dimension = S_.y_.size();
   
-  std::string model_str = P_.glif_model_;
-  std::transform( model_str.begin(), model_str.end(), model_str.begin(), 
-    ::tolower);
-  if ( nest::glif_cond::model_type_lu.find(model_str) == nest::glif_cond::model_type_lu.end() )
-  {
-    throw BadProperty( "Bad glif model type string." );
-  }  
-  long model_type = nest::glif_cond::model_type_lu[model_str];
-
-  switch ( model_type ) {
-    case 1:
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif_cond::update_glif1(origin, from, to);};
-      P_.asc_amps_ = std::vector< double >( 2, 0.0 );
-      P_.k_ = std::vector< double >( 2, 0.0 );
-      P_.asc_init_ = std::vector< double >( 2, 0.0 );
-      break;
-      
-    case 2:
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif_cond::update_glif2(origin, from, to);};
-      P_.asc_amps_ = std::vector< double >( 2, 0.0 );
-      P_.k_ = std::vector< double >( 2, 0.0 );
-      P_.asc_init_ = std::vector< double >( 2, 0.0 );
-      break;
-      
-    case 3:
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif_cond::update_glif3(origin, from, to);};
-      break;
-
-    case 4:
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif_cond::update_glif4(origin, from, to);};
-      break;  
-      
-    case 5:
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif_cond::update_glif5(origin, from, to);};
-      break;
-    
-    default:
-      throw BadProperty( "Only GLIF models 1-5 available." );
-      break;    
-  }
 }
 
 /* ----------------------------------------------------------------
@@ -527,480 +516,20 @@ void
 nest::glif_cond::update( Time const& origin,
   const long from, const long to )
 {
-  glif_func(origin, from, to);
-}
 
-void
-nest::glif_cond::update_glif1( Time const& origin,
-  const long from, const long to )
-{
-  // glif_lif
-  const double dt = Time::get_resolution().get_ms(); // in ms
-  double v_old = S_.y_[ State_::V_M ];
-
-  for ( long lag = from; lag < to; ++lag )
-  {
-    double t = 0.0;
-    // numerical integration with adaptive step size control:
-    // ------------------------------------------------------
-    // gsl_odeiv_evolve_apply performs only a single numerical
-    // integration step, starting from t and bounded by step;
-    // the while-loop ensures integration over the whole simulation
-    // step (0, step] if more than one integration step is needed due
-    // to a small integration step size;
-    // note that (t+IntegrationStep > step) leads to integration over
-    // (t, step] and afterwards setting t to step, but it does not
-    // enforce setting IntegrationStep to step-t; this is of advantage
-    // for a consistent and efficient integration across subsequent
-    // simulation intervals
-
-    while ( t < B_.step_ )
-    {
-      const int status = gsl_odeiv_evolve_apply( B_.e_,
-        B_.c_,
-        B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        &S_.y_[ 0 ] );        // neuronal state
-      if ( status != GSL_SUCCESS )
-      {
-        throw GSLSolverFailure( get_name(), status );
-      }
-
-    }
-
-    if ( V_.t_ref_remaining_ > 0.0 )
-    {
-      // While neuron is in refractory period count-down in time steps (since dt
-      // may change while in refractory) while holding the voltage at last peak.
-      V_.t_ref_remaining_ -= dt;
-      if ( V_.t_ref_remaining_ <= 0.0 )
-      {
-        S_.y_[ State_::V_M ] = P_.V_reset_;
-      }
-      else
-      {
-        S_.y_[ State_::V_M ] = v_old;
-      }
-    }
-    else
-    {
-
-      if ( S_.y_[ State_::V_M ] >= P_.th_inf_ )
-      {
-
-        V_.t_ref_remaining_ = V_.t_ref_total_;
-
-        // Determine spike offset and send spike event
-        double spike_offset =
-          ( 1 - ( P_.th_inf_ - v_old ) / ( S_.y_[ State_::V_M ] - v_old ) )
-          * Time::get_resolution().get_ms();
-        set_spiketime(
-          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
-        SpikeEvent se;
-        se.set_offset( spike_offset );
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
-    }
-
-    // add incoming spike
-    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-    {
-      // Apply spikes delivered in this step: The spikes arriving at T+1 have an
-      // immediate effect on the state of the neuron
-      S_.y_[ State_::DG_SYN + P_.n_ASCurrents_() - 1 +
-		( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
-		B_.spikes_[ i ].get_value( lag ) * V_.CondInitialValues_[ i ]; // add incoming spike
-    }
-
-    B_.I_stim_ = B_.currents_.get_value( lag );
-
-    B_.logger_.record_data( origin.get_steps() + lag );
-
-    v_old = S_.y_[ State_::V_M ];
-  }
-}
-
-void
-nest::glif_cond::update_glif2( Time const& origin,
-  const long from, const long to )
-{
-  // glif_lif_r
-  const double dt = Time::get_resolution().get_ms();
-  double v_old = S_.y_[ State_::V_M ];
-  double spike_component = 0.0;
-  double th_old = S_.threshold_;
-
-  for ( long lag = from; lag < to; ++lag )
-  {
-    // update threshold via exact solution of dynamics of spike component of
-    // threshold
-    spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
-    S_.threshold_ = spike_component + P_.th_inf_;
-    V_.last_spike_ = spike_component;
-
-    double t = 0.0;
-    // numerical integration with adaptive step size control:
-    // ------------------------------------------------------
-    // gsl_odeiv_evolve_apply performs only a single numerical
-    // integration step, starting from t and bounded by step;
-    // the while-loop ensures integration over the whole simulation
-    // step (0, step] if more than one integration step is needed due
-    // to a small integration step size;
-    // note that (t+IntegrationStep > step) leads to integration over
-    // (t, step] and afterwards setting t to step, but it does not
-    // enforce setting IntegrationStep to step-t; this is of advantage
-    // for a consistent and efficient integration across subsequent
-    // simulation intervals
-    while ( t < B_.step_ )
-    {
-      const int status = gsl_odeiv_evolve_apply( B_.e_,
-        B_.c_,
-        B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        &S_.y_[ 0 ] );        // neuronal state
-      if ( status != GSL_SUCCESS )
-      {
-        throw GSLSolverFailure( get_name(), status );
-      }
-    }
-
-    if ( V_.t_ref_remaining_ > 0.0 )
-    {
-      // While neuron is in refractory period count-down in time steps (since dt
-      // may change while in refractory) while holding the voltage at last peak.
-      V_.t_ref_remaining_ -= dt;
-      if ( V_.t_ref_remaining_ <= 0.0 )
-      {
-        S_.y_[ State_::V_M ] = P_.E_L_
-          + P_.voltage_reset_a_ * ( v_old - P_.E_L_ ) + P_.voltage_reset_b_;
-
-        V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
-        S_.threshold_ = V_.last_spike_ + P_.th_inf_;
-
-        // Check if bad reset
-        // TODO: Better way to handle?
-        if ( S_.y_[ State_::V_M ] > S_.threshold_ )
-        {
-          printf(
-            "Simulation Terminated: Voltage (%f) reset above threshold "
-            "(%f)!!\n",
-            S_.y_[ State_::V_M ],
-            S_.threshold_ );
-        }
-        assert( S_.y_[ State_::V_M ] <= S_.threshold_ );
-      }
-      else
-      {
-        S_.y_[ State_::V_M ] = v_old;
-      }
-    }
-    else
-    {
-      if ( S_.y_[ State_::V_M ] > S_.threshold_ )
-      {
-        V_.t_ref_remaining_ = V_.t_ref_total_;
-
-        // Determine
-        double spike_offset =
-          ( 1
-            - ( ( v_old - th_old ) / ( ( S_.threshold_ - th_old )
-                                       - ( S_.y_[ State_::V_M ] - v_old ) ) ) )
-          * Time::get_resolution().get_ms();
-        set_spiketime(
-          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
-        SpikeEvent se;
-        se.set_offset( spike_offset );
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
-    }
-
-    // add spikes
-    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-    {
-      S_.y_[ State_::DG_SYN + P_.n_ASCurrents_() - 1
-		+ ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
-		B_.spikes_[ i ].get_value( lag ) * V_.CondInitialValues_[ i ]; // add incoming spike
-    }
-
-    B_.I_stim_ = B_.currents_.get_value( lag );
-
-    B_.logger_.record_data( origin.get_steps() + lag );
-
-    v_old = S_.y_[ State_::V_M ];
-
-    th_old = S_.threshold_;
-  }
-}
-
-void
-nest::glif_cond::update_glif3( Time const& origin,
-  const long from, const long to )
-{
-  // glif_lif_asc
   const double dt = Time::get_resolution().get_ms();
 
-  double v_old = S_.y_[ State_::V_M ];
-
-  for ( long lag = from; lag < to; ++lag )
+  // get model type
+  std::string model_str = P_.glif_model_;
+  std::transform( model_str.begin(), model_str.end(), model_str.begin(),
+    ::tolower);
+  if ( nest::glif_cond::model_type_lu.find(model_str) == nest::glif_cond::model_type_lu.end() )
   {
-    // Calculate new sum of ASCurrents values
-    S_.ASCurrents_sum_ = 0.0;
-    for ( std::size_t a = 0; a < P_.n_ASCurrents_(); ++a )
-    {
-      S_.ASCurrents_sum_ += S_.y_[ State_::ASC + a ];
-    }
-
-    double t = 0.0;
-    // numerical integration with adaptive step size control:
-    // ------------------------------------------------------
-    // gsl_odeiv_evolve_apply performs only a single numerical
-    // integration step, starting from t and bounded by step;
-    // the while-loop ensures integration over the whole simulation
-    // step (0, step] if more than one integration step is needed due
-    // to a small integration step size;
-    // note that (t+IntegrationStep > step) leads to integration over
-    // (t, step] and afterwards setting t to step, but it does not
-    // enforce setting IntegrationStep to step-t; this is of advantage
-    // for a consistent and efficient integration across subsequent
-    // simulation intervals
-    while ( t < B_.step_ )
-    {
-      const int status = gsl_odeiv_evolve_apply( B_.e_,
-        B_.c_,
-        B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        &S_.y_[ 0 ] );        // neuronal state
-      if ( status != GSL_SUCCESS )
-      {
-        throw GSLSolverFailure( get_name(), status );
-      }
-    }
-
-    if ( V_.t_ref_remaining_ > 0.0 )
-    {
-      // While neuron is in refractory period count-down in time steps (since dt
-      // may change while in refractory) while holding the voltage at last peak.
-      V_.t_ref_remaining_ -= dt;
-      if ( V_.t_ref_remaining_ <= 0.0 )
-      {
-        // Neuron has left refractory period, reset voltage and after-spike
-        // current
-        // Reset ASC_currents
-        for ( std::size_t a = 0; a < P_.n_ASCurrents_(); ++a )
-        {
-          S_.y_[ State_::ASC + a ] =
-            P_.asc_amps_[ a ] + S_.y_[ State_::ASC + a ];
-        }
-
-        // Reset voltage
-        S_.y_[ State_::V_M ] = P_.V_reset_;
-      }
-      else
-      {
-        S_.y_[ State_::V_M ] = v_old;
-      }
-    }
-    else
-    {
-      // Check if there is an action potential
-      if ( S_.y_[ State_::V_M ] > P_.th_inf_ )
-      {
-        // Marks that the neuron is in a refractory period
-        V_.t_ref_remaining_ = V_.t_ref_total_;
-
-        // Find the exact time during this step that the neuron crossed the
-        // threshold and record it
-        double spike_offset =
-          ( 1 - ( P_.th_inf_ - v_old ) / ( S_.y_[ State_::V_M ] - v_old ) )
-          * Time::get_resolution().get_ms();
-        set_spiketime(
-          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
-        SpikeEvent se;
-        se.set_offset( spike_offset );
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
-    }
-
-    // add spike inputs to synaptic conductance
-    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-    {
-      // Apply spikes delivered in this step: The spikes arriving at T+1 have an
-      // immediate effect on the state of the neuron
-      S_.y_[ State_::DG_SYN + P_.n_ASCurrents_() - 1
-        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
-        B_.spikes_[ i ].get_value( lag )
-        * V_.CondInitialValues_[ i ]; // add incoming spike
-    }
-
-    // Update any external currents
-    B_.I_stim_ = B_.currents_.get_value( lag );
-
-    // Save voltage
-    B_.logger_.record_data( origin.get_steps() + lag );
-
-    v_old = S_.y_[ State_::V_M ];
+    throw BadProperty( "Bad glif model type string." );
   }
-}
+  long model_type = nest::glif_cond::model_type_lu[model_str];
 
-void
-nest::glif_cond::update_glif4( Time const& origin,
-  const long from, const long to )
-{
-  // glif_lif_r_asc
-  const double dt = Time::get_resolution().get_ms();
-
-  double v_old = S_.y_[ State_::V_M ];
-  double spike_component = 0.0;
-  double th_old = S_.threshold_;
-
-  for ( long lag = from; lag < to; ++lag )
-  {
-    // update threshold via exact solution of dynamics of spike component of
-    // threshold
-    spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
-    S_.threshold_ = spike_component + P_.th_inf_;
-    V_.last_spike_ = spike_component;
-
-    // Calculate new ASCurrents value using exponential methods
-    S_.ASCurrents_sum_ = 0.0;
-    for ( std::size_t a = 0; a < P_.n_ASCurrents_(); ++a )
-    {
-      S_.ASCurrents_sum_ += S_.y_[ State_::ASC + a ];
-    }
-
-    double t = 0.0;
-    // numerical integration with adaptive step size control:
-    // ------------------------------------------------------
-    // gsl_odeiv_evolve_apply performs only a single numerical
-    // integration step, starting from t and bounded by step;
-    // the while-loop ensures integration over the whole simulation
-    // step (0, step] if more than one integration step is needed due
-    // to a small integration step size;
-    // note that (t+IntegrationStep > step) leads to integration over
-    // (t, step] and afterwards setting t to step, but it does not
-    // enforce setting IntegrationStep to step-t; this is of advantage
-    // for a consistent and efficient integration across subsequent
-    // simulation intervals
-    while ( t < B_.step_ )
-    {
-      const int status = gsl_odeiv_evolve_apply( B_.e_,
-        B_.c_,
-        B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        &S_.y_[ 0 ] );        // neuronal state
-      if ( status != GSL_SUCCESS )
-      {
-        throw GSLSolverFailure( get_name(), status );
-      }
-    }
-
-    if ( V_.t_ref_remaining_ > 0.0 )
-    {
-      // While neuron is in refractory period count-down in time steps (since dt
-      // may change while in refractory) while holding the voltage at last peak.
-      V_.t_ref_remaining_ -= dt;
-      if ( V_.t_ref_remaining_ <= 0.0 )
-      {
-        // Neuron has left refractory period, reset voltage and after-spike
-        // current
-
-        // Reset ASC_currents
-        for ( std::size_t a = 0; a < P_.n_ASCurrents_(); ++a )
-        {
-          S_.y_[ State_::ASC + a ] =
-            P_.asc_amps_[ a ] + S_.y_[ State_::ASC + a ];
-        }
-
-        // Reset voltage
-        S_.y_[ State_::V_M ] = P_.E_L_
-          + P_.voltage_reset_a_ * ( v_old - P_.E_L_ ) + P_.voltage_reset_b_;
-
-        // reset spike component of threshold
-        V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
-        S_.threshold_ = V_.last_spike_ + P_.th_inf_;
-
-        // Check if bad reset
-        // TODO: Better way to handle?
-        if ( S_.y_[ State_::V_M ] > S_.threshold_ )
-        {
-          printf(
-            "Simulation Terminated: Voltage (%f) reset above threshold "
-            "(%f)!!\n",
-            S_.y_[ State_::V_M ],
-            S_.threshold_ );
-        }
-        assert( S_.y_[ State_::V_M ] <= S_.threshold_ );
-      }
-      else
-      {
-        S_.y_[ State_::V_M ] = v_old;
-      }
-    }
-    else
-    {
-      // Check if their is an action potential
-      if ( S_.y_[ State_::V_M ] > S_.threshold_ )
-      {
-        // Marks that the neuron is in a refractory period
-        V_.t_ref_remaining_ = V_.t_ref_total_;
-
-        // Find the exact time during this step that the neuron crossed the
-        // threshold and record it
-        double spike_offset =
-          ( 1
-            - ( v_old - th_old ) / ( ( S_.threshold_ - th_old )
-                                     - ( S_.y_[ State_::V_M ] - v_old ) ) )
-          * Time::get_resolution().get_ms();
-        set_spiketime(
-          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
-        SpikeEvent se;
-        se.set_offset( spike_offset );
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
-    }
-
-    // spike input
-    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-    {
-      // Apply spikes delivered in this step: The spikes arriving at T+1 have an
-      // immediate effect on the state of the neuron
-      S_.y_[ State_::DG_SYN + P_.n_ASCurrents_() - 1
-        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
-        B_.spikes_[ i ].get_value( lag )
-        * V_.CondInitialValues_[ i ]; // add incoming spike
-    }
-
-    // Update any external currents
-    B_.I_stim_ = B_.currents_.get_value( lag );
-
-    // Save voltage
-    B_.logger_.record_data( origin.get_steps() + lag );
-
-    v_old = S_.y_[ State_::V_M ];
-
-    th_old = S_.threshold_;
-  }
-}
-
-void
-nest::glif_cond::update_glif5( Time const& origin,
-  const long from, const long to )
-{
-  // glif_lif_r_asc_a
-  const double dt = Time::get_resolution().get_ms();
-
+  // initial values
   double v_old = S_.y_[ State_::V_M ];
   double spike_component = 0.0;
   double voltage_component = 0.0;
@@ -1008,18 +537,24 @@ nest::glif_cond::update_glif5( Time const& origin,
 
   for ( long lag = from; lag < to; ++lag )
   {
-
-    // update threshold via exact solution of dynamics of spike component of
-    // threshold
-    spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
-    S_.threshold_ = spike_component + V_.last_voltage_ + P_.th_inf_;
+	//exact solution of dynamics of spike component of threshold for glif2/4/5 with "R"
+	if (model_type == 2 || model_type == 4 || model_type == 5 )
+	{
+      spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
+	}
+	//update threshold
+	S_.threshold_ = spike_component + V_.last_voltage_ + P_.th_inf_;
     V_.last_spike_ = spike_component;
 
     // Calculate new ASCurrents value using exponential methods
     S_.ASCurrents_sum_ = 0.0;
-    for ( std::size_t a = 0; a < P_.n_ASCurrents_(); ++a )
+    // for glif3/4/5 models with "ASC"
+    if (model_type == 3 || model_type == 4 || model_type == 5)
     {
-      S_.ASCurrents_sum_ += S_.y_[ State_::ASC + a ];
+      for ( std::size_t a = 0; a < P_.n_ASCurrents_(); ++a )
+      {
+        S_.ASCurrents_sum_ += S_.y_[ State_::ASC + a ];
+      }
     }
 
     double t = 0.0;
@@ -1061,23 +596,34 @@ nest::glif_cond::update_glif5( Time const& origin,
         // Neuron has left refractory period, reset voltage and after-spike
         // current
 
-        // Reset ASC_currents
+        // Reset ASC_currents for glif3/4/5 models with "ASC"
+    	if (model_type == 3 || model_type == 4 || model_type == 5)
+    	{
         for ( std::size_t a = 0; a < P_.n_ASCurrents_(); ++a )
+          {
+            S_.y_[ State_::ASC + a ] =
+              P_.asc_amps_[ a ] + S_.y_[ State_::ASC + a ];
+          }
+    	}
+
+        //Reset voltage/threshold
+        if (model_type == 1 || model_type == 3)
         {
-          S_.y_[ State_::ASC + a ] =
-            P_.asc_amps_[ a ] + S_.y_[ State_::ASC + a ];
+        // Reset voltage for glif1/3 models without "R"
+          S_.y_[ State_::V_M ] = P_.V_reset_;
         }
+        else
+        {
+          // Reset voltage for glif2/4/5 models with "R"
+          S_.y_[ State_::V_M ] = P_.E_L_
+            + P_.voltage_reset_a_ * ( v_old - P_.E_L_ ) + P_.voltage_reset_b_;
 
-        // Reset voltage
-        S_.y_[ State_::V_M ] = P_.E_L_
-          + P_.voltage_reset_a_ * ( v_old - P_.E_L_ ) + P_.voltage_reset_b_;
+          // reset spike component of threshold
+          V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
 
-        // reset spike component of threshold
-        V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
-
-        // rest the global threshold (voltage component of threshold: stay the
-        // same)
-        S_.threshold_ = V_.last_spike_ + V_.last_voltage_ + P_.th_inf_;
+          // rest the global threshold (voltage component of threshold: stay the same)
+          S_.threshold_ = V_.last_spike_ + V_.last_voltage_ + P_.th_inf_;
+        }
 
         // Check if bad reset
         // TODO: Better way to handle?
@@ -1098,17 +644,19 @@ nest::glif_cond::update_glif5( Time const& origin,
     }
     else
     {
-
-      // Calculate exact voltage component of the threshold
-      double beta =
-        ( B_.I_stim_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) / P_.G_;
-      double phi = P_.a_voltage_ / ( P_.b_voltage_ - P_.G_ / P_.C_m_ );
-      voltage_component =
-        phi * ( v_old - beta ) * std::exp( -P_.G_ * dt / P_.C_m_ )
-        + 1 / ( std::exp( P_.b_voltage_ * dt ) )
-          * ( V_.last_voltage_ - phi * ( v_old - beta )
-              - ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ ) )
-        + ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ );
+      // Calculate exact voltage component of the threshold for glif5 model with "A"
+      if (model_type == 5)
+      {
+        double beta =
+          ( B_.I_stim_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) / P_.G_;
+        double phi = P_.a_voltage_ / ( P_.b_voltage_ - P_.G_ / P_.C_m_ );
+        voltage_component =
+          phi * ( v_old - beta ) * std::exp( -P_.G_ * dt / P_.C_m_ )
+          + 1 / ( std::exp( P_.b_voltage_ * dt ) )
+            * ( V_.last_voltage_ - phi * ( v_old - beta )
+                - ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ ) )
+          + ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ );
+      }
 
       S_.threshold_ = V_.last_spike_ + voltage_component + P_.th_inf_;
       V_.last_voltage_ = voltage_component;

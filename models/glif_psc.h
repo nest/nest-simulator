@@ -89,16 +89,7 @@ function in ms.
                              "lif_r" / "glif_lif_r" / "2" - GLIF model 2 - Leaky integrate and fire with biologically defined reset rules model,
                              "lif_asc" / "glif_lif_asc" / "3" - GLIF model 3 - Leaky integrate and fire with after-spike currents model,
                              "lif_r_asc" / "glif_lif_r_asc" / "4" - GLIF model 4 - Leaky integrate and fire with biologically defined reset rules and after-spike currents model, or
-                             "lif_r_asc_a" / "glif_lif_r_asc_a" / "5" - (GLIF) model 5 - Leaky integrate and fire with biologically defined reset rules, after-spike currents and a voltage dependent threshold model.
-
-Description:
-
-  glif_psc is an implementation of a generalized leaky integrate and
-fire (GLIF) model 5
-  (i.e., leaky integrate and fire with biologically defined reset rules,
-after-spike currents
-  and a voltage dependent threshold model) with alpha-function shaped synaptic
-currents, described in [1].
+                             "lif_r_asc_a" / "glif_lif_r_asc_a" / "5" - GLIF model 5 - Leaky integrate and fire with biologically defined reset rules, after-spike currents and a voltage dependent threshold model.
 
 References:
   [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
@@ -164,12 +155,6 @@ private:
 
   //! Take neuron through given time interval
   void update( nest::Time const&, const long, const long );
-  
-  void update_glif1( nest::Time const&, const long, const long );
-  void update_glif2( nest::Time const&, const long, const long );
-  void update_glif3( nest::Time const&, const long, const long );
-  void update_glif4( nest::Time const&, const long, const long );
-  void update_glif5( nest::Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class nest::RecordablesMap< glif_psc >;
@@ -192,7 +177,7 @@ private:
     double a_voltage_;       // a 'leak-conductance' for the voltage-dependent
                              // component of the threshold in 1/ms
     double b_voltage_;       // inverse of which is the time constant of the
-    // voltage-dependent component of the threshold in 1/ms
+                             // voltage-dependent component of the threshold in 1/ms
 
     std::vector< double > asc_init_; // initial values of ASCurrents_ in pA
     std::vector< double > k_;        // predefined time scale in 1/ms
@@ -252,8 +237,7 @@ private:
     double t_ref_total_;     // total time of refractory period, in ms
     double last_spike_;      // threshold spike component in mV
     double last_voltage_;    // threshold voltage component in mV
-    int method_; // voltage dynamics solver method flag: 0-linear forward euler;
-                 // 1-linear exact
+
     std::vector< double > P11_; // synaptic current evolution parameter
     std::vector< double > P21_; // synaptic current evolution parameter
     std::vector< double > P22_; // synaptic current evolution parameter
@@ -294,9 +278,6 @@ private:
   State_ S_;
   Variables_ V_;
   Buffers_ B_;
-  
-  std::function< void(nest::Time const&, const long, const long) > 
-    glif_func;
 
   // Mapping of recordables names to access functions
   static nest::RecordablesMap< glif_psc > recordablesMap_;

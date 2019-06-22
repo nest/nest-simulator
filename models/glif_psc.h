@@ -195,13 +195,14 @@ private:
     Parameters_();
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    double set( const DictionaryDatum& );
   };
 
 
   struct State_
   {
-    double V_m_;                       // membrane potential in mV
+    //double V_m_;                       // membrane potential in mV
+    double U_;                         // relative membrane potential in mV
     std::vector< double > ASCurrents_; // after-spike currents in pA
     double ASCurrents_sum_;            // in pA
     double threshold_;                 // voltage threshold in mV
@@ -211,10 +212,10 @@ private:
     std::vector< double > y1_; // synapse current evolution state 1 in pA
     std::vector< double > y2_; // synapse current evolution state 2 in pA
 
-    State_();
+    State_(const Parameters_& );
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void get( DictionaryDatum&, const Parameters_& ) const;
+    void set( const DictionaryDatum&, const Parameters_&, double );
   };
 
 
@@ -258,7 +259,7 @@ private:
   double
   get_V_m_() const
   {
-    return S_.V_m_;
+    return S_.U_ + P_.E_L_;
   }
 
   double
@@ -328,7 +329,7 @@ glif_psc::get_status( DictionaryDatum& d ) const
 {
   // get our own parameter and state data
   P_.get( d );
-  S_.get( d );
+  S_.get( d, P_ );
 
   // get information managed by parent class
   Archiving_Node::get_status( d );
@@ -339,10 +340,10 @@ glif_psc::get_status( DictionaryDatum& d ) const
 inline void
 glif_psc::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;                 // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d ); // throws if BadProperty
+  State_ stmp = S_;                      // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
 
   Archiving_Node::set_status( d );
 

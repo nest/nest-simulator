@@ -85,6 +85,7 @@ extern const Name Aplus_triplet;
 extern const Name archiver_length;
 extern const Name asc_amps;
 extern const Name asc_init;
+extern const Name ASCurrents;
 extern const Name autapses;
 extern const Name available;
 

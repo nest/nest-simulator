@@ -1,30 +1,12 @@
 --- Topology_UserManual-patched.md
 +++ Topology_UserManual-patched.md
-@@ -16,18 +16,18 @@
- appropriate, that documentation also points to relevant SLI
- documentation.
+@@ -1,5 +1,3 @@
+-\maketitle
+-\tableofcontents
+ Introduction {#sec:intro}
+ ============
  
--This manual describes the Topology Module included with NEST 2.16; the
-+This manual describes the Topology Module included with NEST 2.16; the
- user interface and behavior of the module has not changed significantly
--since NEST 2.2.
-+since NEST 2.2.
- 
- In the next chapter of this manual, we introduce Topology layers, which
- place neurons in space. In
--Chapter [3](#sec:connections){reference-type="ref"
-+Chapter [3](#sec:connections){reference-type="ref"
- reference="sec:connections"} we then describe how to connect layers with
- each other, before discussing in
--Chapter [4](#sec:inspection){reference-type="ref"
-+Chapter [4](#sec:inspection){reference-type="ref"
- reference="sec:inspection"} how you can inspect and visualize Topology
--networks. Chapter [5](#ch:extending){reference-type="ref"
-+networks. Chapter [5](#ch:extending){reference-type="ref"
- reference="ch:extending"} deals with the more advanced topic of
- extending the Topology module with custom kernel functions and masks
- provided by C++ classes in an extension module.
-@@ -76,364 +76,16 @@
+@@ -78,365 +76,16 @@
  
  We create a first, grid-based simple layer with the following commands:
  
@@ -387,19 +369,21 @@
 -width="0.5\linewidth"}
 +respectively.](user_manual_figures/layer1.png){#fig:layer1}
  
--The layer is shown in Fig. [2.1](#fig:layer1){reference-type="ref"
+-The layer is shown in
+-Fig. [\[fig:layer1\]](#fig:layer1){reference-type="ref"
 -reference="fig:layer1"}. Note the following properties:
-+The layer is shown in Fig. {@fig:layer1}. Note the following properties:
++The layer is shown in Fig. {@fig:layer1}. Note the following properties:
  
  -   The layer has five *rows* and five *columns*.
  
-@@ -446,14 +98,13 @@
+@@ -449,15 +98,13 @@
  
  -   The *extent* or size of the layer is $1\times
        1$. This is the default size for layers. The extent is marked by
--    the thin square in Fig. [2.1](#fig:layer1){reference-type="ref"
+-    the thin square in
+-    Fig. [\[fig:layer1\]](#fig:layer1){reference-type="ref"
 -    reference="fig:layer1"}.
-+    the thin square in Fig. {@fig:layer1}.
++    the thin square in Fig. {@fig:layer1}.
  
  -   The *grid spacing* of the layer is
 -    $$\label{eq:dx_dy_extent}\begin{split}
@@ -411,17 +395,18 @@
      spacing may differ in x- and y-direction.
  
  -   Layer elements are spaced by the grid spacing and are arranged
-@@ -469,8 +120,7 @@
+@@ -473,9 +120,7 @@
  
  -   Each element of a grid-based layer has a *row- and column-index* in
      addition to its $(x,y)$-coordinates. Indices are shown in the top
--    and right margin of Fig. [2.1](#fig:layer1){reference-type="ref"
+-    and right margin of
+-    Fig. [\[fig:layer1\]](#fig:layer1){reference-type="ref"
 -    reference="fig:layer1"}. Note that row-indices follow matrix
-+    and right margin of Fig. {@fig:layer1}. Note that row-indices follow matrix
++    and right margin of Fig. {@fig:layer1}. Note that row-indices follow matrix
      convention, i.e., run from top to bottom. Following pythonic
      conventions, indices run from 0.
  
-@@ -480,363 +130,16 @@
+@@ -485,367 +130,19 @@
  extent of a layer, i.e., its size in $x$- and $y$-direction by adding an
  `'extent'` entry to the dictionary passed to `CreateLayer`:
  
@@ -775,7 +760,8 @@
 -plt.savefig('../user_manual_figures/vislayer.png', bbox_inches='tight')
 -```
 -
--![Same layer as in Fig. [2.1](#fig:layer1){reference-type="ref"
+-![Same layer as in
+-Fig. [\[fig:layer1\]](#fig:layer1){reference-type="ref"
 -reference="fig:layer1"}, but with different
 -extent.[]{label="fig:layer2"}](layer2){#fig:layer2
 -width="0.8\linewidth"}
@@ -788,12 +774,18 @@
 +
  
  The resulting layer is shown in
--Fig. [2.2](#fig:layer2){reference-type="ref" reference="fig:layer2"}.
+-Fig. [\[fig:layer2\]](#fig:layer2){reference-type="ref"
+-reference="fig:layer2"}. The extent is always a two-element tuple of
+-floats. In this example, we have grid spacings $dx=0.4$ and $dy=0.1$.
+-Changing the extent does not affect grid indices.
 +Fig. {@fig:layer2}.
- The extent is always a two-element tuple of floats. In this example, we
- have grid spacings $dx=0.4$ and $dy=0.1$. Changing the extent does not
- affect grid indices.
-@@ -853,370 +156,24 @@
++The extent is always a two-element tuple of floats. In this example, we
++have grid spacings $dx=0.4$ and $dy=0.1$. Changing the extent does not
++affect grid indices.
+ 
+ The size of `'extent'` in $x$- and $y$-directions should be numbers that
+ can be expressed exactly as binary fractions. This is automatically
+@@ -859,366 +156,20 @@
  layer. The following code creates layers centered about $(0,0)$,
  $(-1,1)$, and $(1.5,0.5)$, respectively:
  
@@ -1156,34 +1148,33 @@
  
  The center is given as a two-element tuple of floats. Changing the
  center does not affect grid indices: For each of the three layers in
--Fig. [2.3](#fig:layer3){reference-type="ref" reference="fig:layer3"},
-+Fig. {@fig:layer3},
- grid indices run from 0 to 4 through columns and rows, respectively,
- even though elements in these three layers have different positions in
- the global coordinate system.
+-Fig. [\[fig:layer3\]](#fig:layer3){reference-type="ref"
+-reference="fig:layer3"}, grid indices run from 0 to 4 through columns
+-and rows, respectively, even though elements in these three layers have
+-different positions in the global coordinate system.
++Fig. {@fig:layer3},
++grid indices run from 0 to 4 through columns and rows, respectively,
++even though elements in these three layers have different positions in
++the global coordinate system.
  
  The `'center'` coordinates should be numbers that can be expressed
  exactly as binary fractions. For more information, see
--Sec. [2.1.2](#sec:setextent){reference-type="ref"
-+Sec. [2.1.2](#sec:setextent){reference-type="ref"
- reference="sec:setextent"}.
- 
- ### Constructing a layer: an example {#sec:fixedlayerexample}
-@@ -1231,8 +188,7 @@
+@@ -1237,8 +188,7 @@
  
  -   the extent shall be centered about $y=0$.
  
 -From Eq. [\[eq:dx\_dy\_extent\]](#eq:dx_dy_extent){reference-type="ref"
 -reference="eq:dx_dy_extent"}, we see that the extent of the layer must
-+From Eq. {@eq:dx_dy_extent}, we see that the extent of the layer must
++From Eq. {@eq:dx_dy_extent}, we see that the extent of the layer must
  be $(n_c d, n_r d)$. We now need to find the coordinates $(c_x,
  c_y)$ of the center of the layer. To place the left edge of the extent
  at $x=0$, we must place the center of the layer at $c_x=n_c d / 2$ along
-@@ -1240,363 +196,17 @@
+@@ -1246,364 +196,17 @@
  the layer is to be centered about $y=0$, we have $c_y=0$. Thus, the
  center coordinates are $(n_c d/2, 0)$. The layer is created with the
  following code and shown in
--Fig. [2.4](#fig:layer3a){reference-type="ref" reference="fig:layer3a"}:
+-Fig. [\[fig:layer3a\]](#fig:layer3a){reference-type="ref"
+-reference="fig:layer3a"}:
 +Fig. {@fig:layer3a}:
  
 -``` {.python linerange="layer3a-end"}
@@ -1548,7 +1539,7 @@
  
  Free layers {#sec:freelayer}
  -----------
-@@ -1607,359 +217,13 @@
+@@ -1614,359 +217,13 @@
  50 `iaf_psc_alpha` neurons uniformly distributed in a layer with extent
  $1\times 1$, i.e., spanning the square $[-0.5,0.5]\times[-0.5,0.5]$:
  
@@ -1912,16 +1903,7 @@
  
  Note the following points:
  
-@@ -1976,7 +240,7 @@
- -   All layer element positions must be *within* the layer's extent.
-     Elements may be placed on the perimeter of the extent as long as no
-     periodic boundary conditions are used; see
--    Sec. [2.4](#sec:periodic){reference-type="ref"
-+    Sec. [2.4](#sec:periodic){reference-type="ref"
-     reference="sec:periodic"}.
- 
- -   Element positions in free layers are *not* shifted when specifying
-@@ -1992,360 +256,13 @@
+@@ -1999,360 +256,13 @@
  section may be easily extended with another component in the coordinates
  for the positions:
  
@@ -2285,21 +2267,24 @@
  
  Periodic boundary conditions {#sec:periodic}
  ----------------------------
-@@ -2355,369 +272,22 @@
+@@ -2362,371 +272,22 @@
  significant proportion of neurons in a model network is close to the
  edges of the network with fewer neighbors than nodes properly inside the
  network. In the $5\times 5$-layer in
--Fig. [2.1](#fig:layer1){reference-type="ref" reference="fig:layer1"},
+-Fig. [\[fig:layer1\]](#fig:layer1){reference-type="ref"
+-reference="fig:layer1"}, e.g., 16 out of 25 nodes form the border of the
+-layer.
 +Fig. {@fig:layer1},
- e.g., 16 out of 25 nodes form the border of the layer.
++e.g., 16 out of 25 nodes form the border of the layer.
  
  One common approach to reducing the effect of boundaries on simulations
  is to introduce *periodic boundary conditions*, so that the rightmost
  elements on a grid are considered nearest neighbors to the leftmost
  elements, and the topmost to the bottommost. The flat layer becomes the
--surface of a torus. Fig. [2.6](#fig:player){reference-type="ref"
+-surface of a torus.
+-Fig. [\[fig:player\]](#fig:player){reference-type="ref"
 -reference="fig:player"} illustrates this for a one-dimensional layer,
-+surface of a torus. Fig. {@fig:player} illustrates this for a one-dimensional layer,
++surface of a torus. Fig. {@fig:player} illustrates this for a one-dimensional layer,
  which turns from a line to a ring upon introduction of periodic boundary
  conditions.
  
@@ -2659,7 +2644,7 @@
  ```
  
  ![Top left: Layer with single row and five columns without periodic
-@@ -2727,8 +297,7 @@
+@@ -2736,8 +297,7 @@
  conditions. Note that the element at $(2,0)$ now is a nearest neighbor
  to the element at $(-2,0)$. Right: Layer with periodic boundary
  condition arranged on a circle to illustrate neighborhood
@@ -2669,16 +2654,7 @@
  
  Note that the longest possible distance between two elements in a layer
  without periodic boundary conditions is
-@@ -2738,7 +307,7 @@
- $y_{\text{ext}}$ are the components of the extent size.
- 
- We will discuss the consequences of periodic boundary conditions more in
--Chapter [3](#sec:connections){reference-type="ref"
-+Chapter [3](#sec:connections){reference-type="ref"
- reference="sec:connections"}.
- 
- ### Topology layer as NEST subnet {#sec:subnet}
-@@ -2753,537 +322,13 @@
+@@ -2762,537 +322,13 @@
  -   The status dictionary of a layer has a `'topology'` entry describing
      the layer properties (`l` is the layer created above):
  
@@ -3222,7 +3198,7 @@
  
      The `'topology'` entry is read-only.
  
-@@ -3291,537 +336,13 @@
+@@ -3300,537 +336,13 @@
      the elements of any subnet. You will notice this when printing a
      network with a Topology layer:
  
@@ -3766,7 +3742,7 @@
  
      The $5\times 5$ layer created above appears here as a
      `topology_layer_grid` subnet of 25 `iaf_psc_alpha` neurons. Only
-@@ -3843,536 +364,12 @@
+@@ -3852,536 +364,12 @@
  `PrintNetwork()` compact) in which each element consists of one
  `'iaf_cond_alpha'` and one `'poisson_generator'` node
  
@@ -4308,7 +4284,7 @@
  ```
  
  The network consist of one `topology_layer_grid` with four elements: two
-@@ -4384,536 +381,12 @@
+@@ -4393,536 +381,12 @@
  You can create network elements with several nodes of each type by
  following a model name with the number of nodes to be created:
  
@@ -4850,16 +4826,7 @@
  ```
  
  In this case, each layer element consists of 10 `iaf_cond_alpha`
-@@ -4931,7 +404,7 @@
- 
- -   For grid-based layers, the function `GetElement` returns a list of
-     nodes at a given grid position. See
--    Chapter [4](#sec:inspection){reference-type="ref"
-+    Chapter [4](#sec:inspection){reference-type="ref"
-     reference="sec:inspection"} for more on inspecting layers.
- 
- -   In a previous version of the topology module it was possible to
-@@ -4957,357 +430,11 @@
+@@ -4966,354 +430,8 @@
  recommended approach is to create different models for the neurons in
  each layer and then define the microcolumn as one composite element:
  
@@ -5215,42 +5182,13 @@
 +MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer10-end
  ```
  
--We will discuss in Chapter [3.1](#sec:conn_basics){reference-type="ref"
-+We will discuss in Chapter [3.1](#sec:conn_basics){reference-type="ref"
- reference="sec:conn_basics"} how to connect selectively to different
- neuron models.
- 
-@@ -5402,7 +529,7 @@
- 
- :   The *mask* defines which pool nodes are at all considered as
-     potential targets for each driver node. See
--    Sec. [3.3](#sec:conn_masks){reference-type="ref"
-+    Sec. [3.3](#sec:conn_masks){reference-type="ref"
-     reference="sec:conn_masks"} for details.
- 
- Kernel
-@@ -5411,7 +538,7 @@
-     displacement-dependent) probability for creating a connection
-     between a driver and a pool node. The default kernel is $1$, i.e.,
-     connections are created with certainty. See
--    Sec. [3.4](#sec:conn_kernels){reference-type="ref"
-+    Sec. [3.4](#sec:conn_kernels){reference-type="ref"
-     reference="sec:conn_kernels"} for details.
- 
- Autapse
-@@ -5447,659 +574,17 @@
- 'mask'
- 
- :   a mask specification as described in
--    Sec. [3.3](#sec:conn_masks){reference-type="ref"
-+    Sec. [3.3](#sec:conn_masks){reference-type="ref"
-     reference="sec:conn_masks"}.
- 
- Only neurons within the mask are considered as potential sources or
+ We will discuss in Chapter [3.1](#sec:conn_basics){reference-type="ref"
+@@ -5463,653 +581,10 @@
  targets. If no mask is given, all neurons in the respective layer are
  considered sources or targets.
  
--Here is a simple example, cf. [3.1](#fig:conn1){reference-type="ref"
+-Here is a simple example,
+-cf. [\[fig:conn1\]](#fig:conn1){reference-type="ref"
 -reference="fig:conn1"}:
 -
 -``` {.python linerange="conn1-end"}
@@ -5862,8 +5800,7 @@
 -nrn_layer = tp.CreateLayer({'rows': 20,
 -                            'columns': 20,
 -                            'elements': 'iaf_psc_alpha'})
-+Here is a simple example, cf. {@fig:conn1}
- 
+-
 -stim = tp.CreateLayer({'rows': 1,
 -                       'columns': 1,
 -                       'elements': 'poisson_generator'})
@@ -5889,7 +5826,8 @@
 -
 -tp.ConnectLayers(nrn_layer, rec, cdict_rec)
 -#{ end #}
--
++Here is a simple example, cf. {@fig:conn1}
+ 
 -# ----------------------------
 -
 -#{ conn11 #}
@@ -5902,7 +5840,7 @@
  ```
  
  ![Left: Minimal connection example from a layer onto itself using a
-@@ -6113,7 +598,7 @@
+@@ -6123,7 +598,7 @@
  now has 15 targets, too, but they are spread across the corners of the
  layer. If we wrapped the layer to a torus, they would form a $5\times 3$
  rectangle centered on the node at
@@ -5911,34 +5849,27 @@
  
  In this example, layer `l` is both source and target layer. Connection
  type is divergent, i.e., for each node in the layer we choose targets
-@@ -6121,7 +606,7 @@
+@@ -6131,8 +606,7 @@
  no connection kernel is specified, we connect to all nodes within the
  mask. Note the effect of normal and periodic boundary conditions on the
  connections created for different nodes in the layer, as illustrated in
--Fig. [3.1](#fig:conn1){reference-type="ref" reference="fig:conn1"}.
-+Fig. {@fig:conn1}.
+-Fig. [\[fig:conn1\]](#fig:conn1){reference-type="ref"
+-reference="fig:conn1"}.
++Fig. {@fig:conn1}.
  
  Mapping source and target layers {#sec:mapping}
  --------------------------------
-@@ -6160,15 +645,14 @@
- 
- If none of the mask types provided in the topology library meet your
- need, you may add more mask types in a NEST extension module. This is
--covered in Chapter [5](#ch:extending){reference-type="ref"
-+covered in Chapter [5](#ch:extending){reference-type="ref"
- reference="ch:extending"}.
- 
- ### Masks for 2D layers {#sec:free_masks}
+@@ -6178,8 +652,7 @@
  
  Topology currently provides four types of masks usable for 2-dimensional
  free and grid-based layers. They are illustrated in
 -Fig. [\[fig:conn2\_a\]](#fig:conn2_a){reference-type="ref"
 -reference="fig:conn2_a"}. The masks are
-+Fig. {@fig:conn2_a}. The masks are
++Fig. {@fig:conn2_a}. The masks are
  
  Rectangular
  
-@@ -6176,1300 +660,18 @@
+@@ -6187,1300 +660,18 @@
      specified by its lower left and upper right corners, measured in the
      same unit as element coordinates. Example:
  
@@ -7245,7 +7176,7 @@
  
  Doughnut
  
-@@ -7477,5212 +679,76 @@
+@@ -7488,650 +679,9 @@
      nodes *on* the inner circle are not connected. The area is specified
      by the radii of the inner and outer circles.
  
@@ -7899,10 +7830,10 @@
  
  Elliptical
  
- :   All nodes within an ellipsis are connected. The area is specified by
+@@ -8139,15730 +689,381 @@
      its major and minor axis. Note that this mask was added to NEST with
--    NEST 2.14.
--
+     NEST 2.14.
+ 
 -    ``` {.python linerange="conn2e-end"}
 -    # -*- coding: utf-8 -*-
 -    #
@@ -8223,8 +8154,7 @@
 -                'mask': {'grid': {'rows': 3, 'columns': 5}}}
 -    #{ end #}
 -    grid_mask_fig(fig, 131, conndict)
-+    NEST 2.14.
- 
+-
 -    #{ conn3c #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'grid': {'rows': 3, 'columns': 5},
@@ -11117,15 +11047,15 @@
 -stim = tp.CreateLayer({'rows': 1,
 -                       'columns': 1,
 -                       'elements': 'poisson_generator'})
-+examples (cf. Fig. {@fig:conn2_b}).
- 
+-
 -cdict_stim = {'connection_type': 'divergent',
 -              'mask': {'circular': {'radius': 0.1},
 -                       'anchor': [0.2, 0.2]}}
++examples (cf. Fig. {@fig:conn2_b}).
  
 -tp.ConnectLayers(stim, nrn_layer, cdict_stim)
 -#{ end #}
--
+ 
 -
 -# ----------------------------
 -
@@ -11137,49 +11067,36 @@
 -cdict_rec = {'connection_type': 'convergent',
 -             'mask': {'circular': {'radius': 0.1},
 -                      'anchor': [-0.2, 0.2]}}
-+```
-+ MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2ro-end
-+```
- 
+-
 -tp.ConnectLayers(nrn_layer, rec, cdict_rec)
 -#{ end #}
-+```
-+ MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2co-end
-+```
- 
+-
 -# ----------------------------
-+```
-+ MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2do-end
-+```
- 
+-
 -#{ conn11 #}
 -rec = nest.Create('spike_detector')
 -nrns = nest.GetLeaves(nrn_layer, local_only=True)[0]
 -nest.Connect(nrns, rec)
 -#{ end #}
- ```
-+ MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2eo-end
 +```
-+
++ MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2ro-end
+ ```
  
- ![The same masks as in
+-![The same masks as in
 -Fig. [\[fig:conn2\_a\]](#fig:conn2_a){reference-type="ref"
 -reference="fig:conn2_a"}, but centered about $(-1.5,-1.5)$, $(-2,0)$,
-+Fig. {@fig:conn2_a}, but centered about $(-1.5,-1.5)$, $(-2,0)$,
- $(1.5,1.5)$ and $(2, -1)$, respectively, using the `'anchor'`
+-$(1.5,1.5)$ and $(2, -1)$, respectively, using the `'anchor'`
 -parameter.](conn2_b){width="0.9\linewidth"}
 -
 -[\[fig:conn2\_b\]]{#fig:conn2_b label="fig:conn2_b"}
-+parameter.](user_manual_figures/conn2_b.png){#fig:conn2_b}
- 
+-
 -It is, as of NEST 2.16, possible to rotate the $\textbf{rectangular}$
- and $\textbf{elliptical}$ masks, see
+-and $\textbf{elliptical}$ masks, see
 -Fig [\[fig:conn2\_c\]](#fig:conn2_c){reference-type="ref"
 -reference="fig:conn2_c"}. To do so, add an `'azimuth_angle'` entry in
-+Fig {@fig:conn2_b}. To do so, add an `'azimuth_angle'` entry in
- the specific mask dictionary. The `azimuth_angle` is measured in degrees
- and is the rotational angle from the x-axis to the y-axis.
- 
+-the specific mask dictionary. The `azimuth_angle` is measured in degrees
+-and is the rotational angle from the x-axis to the y-axis.
+-
 -``` {.python linerange="conn2rr-end"}
 -# -*- coding: utf-8 -*-
 -#
@@ -11825,6 +11742,7 @@
 -#{ end #}
 -```
 -
+-\newpage
 -``` {.python linerange="conn2er-end"}
 -# -*- coding: utf-8 -*-
 -#
@@ -12462,38 +12380,34 @@
 -#{ end #}
 -
 -# ----------------------------
-+```
-+ MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2rr-end
-+```
- 
+-
 -#{ conn11 #}
 -rec = nest.Create('spike_detector')
 -nrns = nest.GetLeaves(nrn_layer, local_only=True)[0]
 -nest.Connect(nrns, rec)
 -#{ end #}
-+```
-+ MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2er-end
  ```
- 
- ![Rotated rectangle and elliptical mask from
+-
+-![Rotated rectangle and elliptical mask from
 -Fig. [\[fig:conn2\_a\]](#fig:conn2_a){reference-type="ref"
 -reference="fig:conn2_a"} and
 -Fig. [\[fig:conn2\_b\]](#fig:conn2_b){reference-type="ref"
 -reference="fig:conn2_b"}, where the rectangle mask is rotated
-+Fig. {@fig:conn2_a} and
-+Fig. {@fig:conn2_b}, where the rectangle mask is rotated
- $120^\circ$ and the elliptical mask is rotated
+-$120^\circ$ and the elliptical mask is rotated
 -$45^\circ$.](conn2_c){width="0.9\linewidth"}
-+$45^\circ$.](user_manual_figures/conn2_c.png){#fig:conn2_c}
- 
+-
 -[\[fig:conn2\_c\]]{#fig:conn2_c label="fig:conn2_c"}
- 
- ### Masks for 3D layers {#sec:3d_masks}
- 
-@@ -12694,1951 +760,28 @@
-     specified by its lower left and upper right corners, measured in the
-     same unit as element coordinates. Example:
- 
+-
+-### Masks for 3D layers {#sec:3d_masks}
+-
+-Similarly, there are three mask types that can be used for 3D layers,
+-
+-Box
+-
+-:   All nodes within a cuboid volume are connected. The area is
+-    specified by its lower left and upper right corners, measured in the
+-    same unit as element coordinates. Example:
+-
 -    ``` {.python linerange="conn_3d_a-end"}
 -    # -*- coding: utf-8 -*-
 -    #
@@ -13138,15 +13052,12 @@
 -    nest.Connect(nrns, rec)
 -    #{ end #}
 -    ```
-+```
-+    MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn_3d_a-end
-+```
- 
- Spherical
- 
- :   All nodes within a sphere are connected. The area is specified by
-     its radius.
- 
+-
+-Spherical
+-
+-:   All nodes within a sphere are connected. The area is specified by
+-    its radius.
+-
 -    ``` {.python linerange="conn_3d_b-end"}
 -    # -*- coding: utf-8 -*-
 -    #
@@ -13791,14 +13702,11 @@
 -    nest.Connect(nrns, rec)
 -    #{ end #}
 -    ```
-+```
-+    MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn_3d_b-end
-+```
- 
- Ellipsoidal
- 
- :   All nodes within an ellipsoid are connected. The area is specified
-     by its major, minor, and polar axis. This mask has been part of NEST
+-
+-Ellipsoidal
+-
+-:   All nodes within an ellipsoid are connected. The area is specified
+-    by its major, minor, and polar axis. This mask has been part of NEST
 -    since NEST 2.14.
 -
 -    ``` {.python linerange="conn_3d_c-end"}
@@ -13940,8 +13848,7 @@
 -
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2))
-+    since NEST 2.14.
- 
+-
 -    fig = plt.figure()
 -
 -    #{ conn2r #}
@@ -14446,34 +14353,34 @@
 -    nest.Connect(nrns, rec)
 -    #{ end #}
 -    ```
-+```
-+    MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn_3d_c-end
-+```
- 
- As in the 2D case, you can change the location of the mask relative to
- the driver node by specifying a 3D vector in the `'anchor'` entry in the
-@@ -14651,14 +794,14 @@
- we first rotate about the z-axis and then about the new x-axis. NEST
- currently do not support rotation in all three directions, the rotation
- from the y-axis about the (possibly rotated) z-axis, from the (possibly
-+```
- rotated) x-axis is missing.
-+```
- 
- ![Masks for 3D layers. For all mask types, the driver node is marked by
- a wide light-red circle, the selected pool nodes by red dots and the
- masks by red lines. From left to right: box and spherical masks centered
+-
+-As in the 2D case, you can change the location of the mask relative to
+-the driver node by specifying a 3D vector in the `'anchor'` entry in the
+-mask dictionary. If you want to rotate the box or ellipsoidal masks, you
+-can add an `'azimuth_angle'` entry in the specific mask dictionary for
+-rotation from the x-axis towards the y-axis about the z-axis, or an
+-`'polar_angle'` entry, specifying the rotation angle in degrees from the
+-z-axis about the (possibly rotated) x axis, from the (possibly rotated)
+-y-axis. You can specify both at once of course. If both are specified,
+-we first rotate about the z-axis and then about the new x-axis. NEST
+-currently do not support rotation in all three directions, the rotation
+-from the y-axis about the (possibly rotated) z-axis, from the (possibly
+-rotated) x-axis is missing.
+-
+-![Masks for 3D layers. For all mask types, the driver node is marked by
+-a wide light-red circle, the selected pool nodes by red dots and the
+-masks by red lines. From left to right: box and spherical masks centered
 -about the driver node.](conn_3d){width="0.9\linewidth"}
 -
 -[\[fig:conn\_3d\]]{#fig:conn_3d label="fig:conn_3d"}
-+about the driver node.](user_manual_figures/conn_3d.png){#fig:conn3d}
- 
- ### Masks for grid-based layers {#sec:grid_masks}
- 
-@@ -14667,1957 +810,34 @@
- right corner coordinates, but give their size in rows and columns, as in
- this example:
- 
+-
+-### Masks for grid-based layers {#sec:grid_masks}
+-
+-Grid-based layers can be connected using rectangular *grid masks*. For
+-these, you specify the size of the mask not by lower left and upper
+-right corner coordinates, but give their size in rows and columns, as in
+-this example:
+-
 -``` {.python linerange="conn3-end"}
 -# -*- coding: utf-8 -*-
 -#
@@ -15117,17 +15024,16 @@
 -nrns = nest.GetLeaves(nrn_layer, local_only=True)[0]
 -nest.Connect(nrns, rec)
 -#{ end #}
-+```
-+MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn3-end
++ MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2co-end
  ```
  
- The resulting connections are shown in
--Fig. [3.2](#fig:conn3){reference-type="ref" reference="fig:conn3"}. By
-+Fig. {@fig:conn3}. By
- default the top-left corner of a grid mask, i.e., the grid mask element
- with grid index $[0,0]$[^4], is aligned with the driver node. You can
- change this alignment by specifying an *anchor* for the mask:
- 
+-The resulting connections are shown in
+-Fig. [\[fig:conn3\]](#fig:conn3){reference-type="ref"
+-reference="fig:conn3"}. By default the top-left corner of a grid mask,
+-i.e., the grid mask element with grid index $[0,0]$[^4], is aligned with
+-the driver node. You can change this alignment by specifying an *anchor*
+-for the mask:
+-
 -``` {.python linerange="conn3c-end"}
 -# -*- coding: utf-8 -*-
 -#
@@ -15771,12 +15677,10 @@
 -nrns = nest.GetLeaves(nrn_layer, local_only=True)[0]
 -nest.Connect(nrns, rec)
 -#{ end #}
-+```
-+MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn3c-end
- ```
- 
- You can even place the anchor outside the mask:
- 
+-```
+-
+-You can even place the anchor outside the mask:
+-
 -``` {.python linerange="conn3x-end"}
 -# -*- coding: utf-8 -*-
 -#
@@ -16420,89 +16324,690 @@
 -nrns = nest.GetLeaves(nrn_layer, local_only=True)[0]
 -nest.Connect(nrns, rec)
 -#{ end #}
-+```
-+MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn3x-end
- ```
- 
- The resulting connection patterns are shown in
--Fig. [3.2](#fig:conn3){reference-type="ref" reference="fig:conn3"}.
-+Fig. {@fig:conn3}.
- 
- ![Grid masks for connections between grid-based layers. Left:
- $5\times 3$ mask with default alignment at upper left corner. Center:
- Same mask, but anchored to center node at grid index $[1,2]$. Right:
- Same mask, but anchor to the upper left of the mask at grid index
+-```
+-
+-The resulting connection patterns are shown in
+-Fig. [\[fig:conn3\]](#fig:conn3){reference-type="ref"
+-reference="fig:conn3"}.
+-
+-![Grid masks for connections between grid-based layers. Left:
+-$5\times 3$ mask with default alignment at upper left corner. Center:
+-Same mask, but anchored to center node at grid index $[1,2]$. Right:
+-Same mask, but anchor to the upper left of the mask at grid index
 -$[-1,2]$.[]{label="fig:conn3"}](conn3){#fig:conn3 width="0.9\linewidth"}
-+$[-1,2]$.](user_manual_figures/conn3.png){#fig:conn3}
- 
- Connections specified using grid masks are generated more efficiently
- than connections specified using other mask types.
-@@ -16632,7 +852,7 @@
- 
- -   The semantics of the `'anchor'` property for grid-based masks differ
-     significantly for general masks described in
+-
+-Connections specified using grid masks are generated more efficiently
+-than connections specified using other mask types.
+-
+-Note the following:
+-
+--   Grid-based masks are applied by considering grid indices. The
+-    position of nodes in physical coordinates is ignored.
+-
+--   In consequence, grid-based masks should only be used between layers
+-    with identical grid spacings.
+-
+--   The semantics of the `'anchor'` property for grid-based masks differ
+-    significantly for general masks described in
 -    Sec. [3.3.1](#sec:free_masks){reference-type="ref"
-+    Sec. [3.3.1](#sec:free_masks){reference-type="ref"
-     reference="sec:free_masks"}. For general masks, the anchor is the
-     center of the mask relative to the driver node. For grid-based
-     nodes, the anchor determines which mask element is aligned with the
-@@ -16663,14 +883,13 @@
- 
- :   can be obtained by specifying the number of connections to create
-     per driver node. See
+-    reference="sec:free_masks"}. For general masks, the anchor is the
+-    center of the mask relative to the driver node. For grid-based
+-    nodes, the anchor determines which mask element is aligned with the
+-    driver element.
+-
+-Kernels {#sec:conn_kernels}
+--------
+-
+-Many neuronal network models employ probabilistic connection rules.
+-Topology supports probabilistic connections through *kernels*. A kernel
+-is a function mapping the distance (or displacement) between a driver
+-and a pool node to a connection probability. Topology then generates a
+-connection according to this probability.
+-
+-Probabilistic connections can be generated in two different ways using
+-Topology:
+-
+-Free probabilistic connections
+-
+-:   are the default. In this case, `ConnectLayers` considers each driver
+-    node $D$ in turn. For each $D$, it evaluates the kernel for each
+-    pool node $P$ within the mask and creates a connection according to
+-    the resulting probability. This means in particular that *each
+-    possible driver-pool pair is inspected exactly once* and that there
+-    will be *at most one connection between each driver-pool pair*.
+-
+-Prescribed number of connections
+-
+-:   can be obtained by specifying the number of connections to create
+-    per driver node. See
 -    Sec. [3.7](#sec:prescribed_numbers){reference-type="ref"
-+    Sec. [3.7](#sec:prescribed_numbers){reference-type="ref"
-     reference="sec:prescribed_numbers"} for details.
- 
- Available kernel functions are shown in
+-    reference="sec:prescribed_numbers"} for details.
+-
+-Available kernel functions are shown in
 -Table [\[tab:kernels\]](#tab:kernels){reference-type="ref"
 -reference="tab:kernels"}. More kernel functions may be created in a NEST
-+Table {@tbl:kernels}. More kernel functions may be created in a NEST
- extension module. This is covered in
+-extension module. This is covered in
 -Chapter [5](#ch:extending){reference-type="ref"
-+Chapter [5](#ch:extending){reference-type="ref"
- reference="ch:extending"}.
- 
-   -------------------------------------------------------------------------------------------------------------------
-@@ -16690,7 +909,7 @@
-                   `sigma_x`,       e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-\frac{(d_y-\mu_y)^2}{\sigma_y^2}
-                   `sigma_y`,                 +2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x\sigma_y}}{2(1-\rho^2)}}$$
-                   `mean_x`,        
--                  `mean_y`,`rho`   
-+                  `mean_y`,`rho`,   
-                   `c`              
- 
-   `gamma`         `kappa`, `theta` $$p(d) = \frac{d^{\kappa-1}e^{-\frac{d}{\theta}}}{\theta^\kappa\Gamma(\kappa)}$$
-@@ -16705,671 +924,30 @@
-                   `min`, `max`     
-   -------------------------------------------------------------------------------------------------------------------
- 
--  : Functions currently available in the Topology module. $d$ is the
-+  Table: Functions currently available in the Topology module. $d$ is the
-   distance and $(d_x,d_y)$ the displacement. All functions can be used
-   to specify weights and delays, but only the constant and the
-   distance-dependent functions, i.e., all functions above the double
--  line, can be used as kernels. []{label="tab:kernels"}
-+  line, can be used as kernels. {#tbl:kernels}
- 
- ![Illustration of various kernel functions. Top left: constant kernel,
- $p=0.5$. Top center: Gaussian kernel, green dashed lines show $\sigma$,
- $2\sigma$, $3\sigma$. Top right: Same Gaussian kernel anchored at
- $(1.5,1.5)$. Bottom left: Same Gaussian kernel, but all $p<0.5$ treated
- as $p=0$. Bottom center:
+-reference="ch:extending"}.
+-
+-+---+-------------+---+
+-| N | Parameters  | F |
+-| a |             | u |
+-| m |             | n |
+-| e |             | c |
+-|   |             | t |
+-|   |             | i |
+-|   |             | o |
+-|   |             | n |
+-+:==+:============+:==+
+-| \ |             | c |
+-| r |             | o |
+-| o |             | n |
+-| w |             | s |
+-| c |             | t |
+-| o |             | a |
+-| l |             | n |
+-| o |             | t |
+-| r |             | $ |
+-| { |             | p |
+-| l |             | \ |
+-| s |             | i |
+-| t |             | n |
+-| c |             | [ |
+-| o |             | 0 |
+-| l |             | , |
+-| o |             | 1 |
+-| r |             | ] |
+-| } |             | $ |
+-| c |             |   |
+-| o |             |   |
+-| n |             |   |
+-| s |             |   |
+-| t |             |   |
+-| a |             |   |
+-| n |             |   |
+-| t |             |   |
+-+---+-------------+---+
+-| ` | `a`, `c`    | $ |
+-| l |             | $ |
+-| i |             | p |
+-| n |             | ( |
+-| e |             | d |
+-| a |             | ) |
+-| r |             |   |
+-| ` |             | = |
+-|   |             |   |
+-|   |             | c |
+-|   |             |   |
+-|   |             | + |
+-|   |             |   |
+-|   |             | a |
+-|   |             |   |
+-|   |             | d |
+-|   |             | $ |
+-|   |             | $ |
+-+---+-------------+---+
+-| \ | `a`, `c`,   | $ |
+-| r | `tau`       | $ |
+-| o |             | p |
+-| w |             | ( |
+-| c |             | d |
+-| o |             | ) |
+-| l |             |   |
+-| o |             | = |
+-| r |             |   |
+-| { |             | c |
+-| l |             |   |
+-| s |             | + |
+-| t |             |   |
+-| c |             | a |
+-| o |             |   |
+-| l |             | e |
+-| o |             | ^ |
+-| r |             | { |
+-| } |             | - |
+-| ` |             | \ |
+-| e |             | f |
+-| x |             | r |
+-| p |             | a |
+-| o |             | c |
+-| n |             | { |
+-| e |             | d |
+-| n |             | } |
+-| t |             | { |
+-| i |             | \ |
+-| a |             | t |
+-| l |             | a |
+-| ` |             | u |
+-|   |             | } |
+-|   |             | } |
+-|   |             | $ |
+-|   |             | $ |
+-+---+-------------+---+
+-| ` | `p_center`, | $ |
+-| g | `sigma`,    | $ |
+-| a | `mean`, `c` | p |
+-| u |             | ( |
+-| s |             | d |
+-| s |             | ) |
+-| i |             |   |
+-| a |             | = |
+-| n |             |   |
+-| ` |             | c |
+-|   |             |   |
+-|   |             | + |
+-|   |             |   |
+-|   |             | p |
+-|   |             | _ |
+-|   |             | { |
+-|   |             | \ |
+-|   |             | t |
+-|   |             | e |
+-|   |             | x |
+-|   |             | t |
+-|   |             | { |
+-|   |             | c |
+-|   |             | e |
+-|   |             | n |
+-|   |             | t |
+-|   |             | e |
+-|   |             | r |
+-|   |             | } |
+-|   |             | } |
+-|   |             |   |
+-|   |             |   |
+-|   |             | e |
+-|   |             | ^ |
+-|   |             | { |
+-|   |             | - |
+-|   |             | \ |
+-|   |             | f |
+-|   |             | r |
+-|   |             | a |
+-|   |             | c |
+-|   |             | { |
+-|   |             | ( |
+-|   |             | d |
+-|   |             | - |
+-|   |             | \ |
+-|   |             | m |
+-|   |             | u |
+-|   |             | ) |
+-|   |             | ^ |
+-|   |             | 2 |
+-|   |             | } |
+-|   |             | { |
+-|   |             | 2 |
+-|   |             | \ |
+-|   |             | s |
+-|   |             | i |
+-|   |             | g |
+-|   |             | m |
+-|   |             | a |
+-|   |             | ^ |
+-|   |             | 2 |
+-|   |             | } |
+-|   |             | } |
+-|   |             | $ |
+-|   |             | $ |
+-+---+-------------+---+
+-| \ | `p_center`, | $ |
+-| r | `sigma_x`,  | $ |
+-| o | `sigma_y`,  | p |
+-| w | `mean_x`,   | ( |
+-| c | `mean_y`,`r | d |
+-| o | ho`         | ) |
+-| l | `c`         |   |
+-| o |             | = |
+-| r |             |   |
+-| { |             | c |
+-| l |             |   |
+-| s |             | + |
+-| t |             |   |
+-| c |             | p |
+-| o |             | _ |
+-| l |             | { |
+-| o |             | \ |
+-| r |             | t |
+-| } |             | e |
+-| ` |             | x |
+-| g |             | t |
+-| a |             | { |
+-| u |             | c |
+-| s |             | e |
+-| s |             | n |
+-| i |             | t |
+-| a |             | e |
+-| n |             | r |
+-| 2 |             | } |
+-| D |             | } |
+-| ` |             | e |
+-|   |             | ^ |
+-|   |             | { |
+-|   |             | - |
+-|   |             | \ |
+-|   |             | f |
+-|   |             | r |
+-|   |             | a |
+-|   |             | c |
+-|   |             | { |
+-|   |             | \ |
+-|   |             | f |
+-|   |             | r |
+-|   |             | a |
+-|   |             | c |
+-|   |             | { |
+-|   |             | ( |
+-|   |             | d |
+-|   |             | _ |
+-|   |             | x |
+-|   |             | - |
+-|   |             | \ |
+-|   |             | m |
+-|   |             | u |
+-|   |             | _ |
+-|   |             | x |
+-|   |             | ) |
+-|   |             | ^ |
+-|   |             | 2 |
+-|   |             | } |
+-|   |             | { |
+-|   |             | \ |
+-|   |             | s |
+-|   |             | i |
+-|   |             | g |
+-|   |             | m |
+-|   |             | a |
+-|   |             | _ |
+-|   |             | x |
+-|   |             | ^ |
+-|   |             | 2 |
+-|   |             | } |
+-|   |             | - |
+-|   |             | \ |
+-|   |             | f |
+-|   |             | r |
+-|   |             | a |
+-|   |             | c |
+-|   |             | { |
+-|   |             | ( |
+-|   |             | d |
+-|   |             | _ |
+-|   |             | y |
+-|   |             | - |
+-|   |             | \ |
+-|   |             | m |
+-|   |             | u |
+-|   |             | _ |
+-|   |             | y |
+-|   |             | ) |
+-|   |             | ^ |
+-|   |             | 2 |
+-|   |             | } |
+-|   |             | { |
+-|   |             | \ |
+-|   |             | s |
+-|   |             | i |
+-|   |             | g |
+-|   |             | m |
+-|   |             | a |
+-|   |             | _ |
+-|   |             | y |
+-|   |             | ^ |
+-|   |             | 2 |
+-|   |             | } |
+-|   |             |   |
+-|   |             |   |
+-|   |             |   |
+-|   |             |   |
+-|   |             |   |
+-|   |             |   |
+-|   |             |   |
+-|   |             |   |
+-|   |             |   |
+-|   |             |   |
+-|   |             | + |
+-|   |             | 2 |
+-|   |             | \ |
+-|   |             | r |
+-|   |             | h |
+-|   |             | o |
+-|   |             | \ |
+-|   |             | f |
+-|   |             | r |
+-|   |             | a |
+-|   |             | c |
+-|   |             | { |
+-|   |             | ( |
+-|   |             | d |
+-|   |             | _ |
+-|   |             | x |
+-|   |             | - |
+-|   |             | \ |
+-|   |             | m |
+-|   |             | u |
+-|   |             | _ |
+-|   |             | x |
+-|   |             | ) |
+-|   |             | ( |
+-|   |             | d |
+-|   |             | _ |
+-|   |             | y |
+-|   |             | - |
+-|   |             | \ |
+-|   |             | m |
+-|   |             | u |
+-|   |             | _ |
+-|   |             | y |
+-|   |             | ) |
+-|   |             | } |
+-|   |             | { |
+-|   |             | \ |
+-|   |             | s |
+-|   |             | i |
+-|   |             | g |
+-|   |             | m |
+-|   |             | a |
+-|   |             | _ |
+-|   |             | x |
+-|   |             | \ |
+-|   |             | s |
+-|   |             | i |
+-|   |             | g |
+-|   |             | m |
+-|   |             | a |
+-|   |             | _ |
+-|   |             | y |
+-|   |             | } |
+-|   |             | } |
+-|   |             | { |
+-|   |             | 2 |
+-|   |             | ( |
+-|   |             | 1 |
+-|   |             | - |
+-|   |             | \ |
+-|   |             | r |
+-|   |             | h |
+-|   |             | o |
+-|   |             | ^ |
+-|   |             | 2 |
+-|   |             | ) |
+-|   |             | } |
+-|   |             | } |
+-|   |             | $ |
+-|   |             | $ |
+-+---+-------------+---+
+-| ` | `kappa`,    | $ |
+-| g | `theta`     | $ |
+-| a |             | p |
+-| m |             | ( |
+-| m |             | d |
+-| a |             | ) |
+-| ` |             |   |
+-|   |             | = |
+-|   |             |   |
+-|   |             | \ |
+-|   |             | f |
+-|   |             | r |
+-|   |             | a |
+-|   |             | c |
+-|   |             | { |
+-|   |             | d |
+-|   |             | ^ |
+-|   |             | { |
+-|   |             | \ |
+-|   |             | k |
+-|   |             | a |
+-|   |             | p |
+-|   |             | p |
+-|   |             | a |
+-|   |             | - |
+-|   |             | 1 |
+-|   |             | } |
+-|   |             | e |
+-|   |             | ^ |
+-|   |             | { |
+-|   |             | - |
+-|   |             | \ |
+-|   |             | f |
+-|   |             | r |
+-|   |             | a |
+-|   |             | c |
+-|   |             | { |
+-|   |             | d |
+-|   |             | } |
+-|   |             | { |
+-|   |             | \ |
+-|   |             | t |
+-|   |             | h |
+-|   |             | e |
+-|   |             | t |
+-|   |             | a |
+-|   |             | } |
+-|   |             | } |
+-|   |             | } |
+-|   |             | { |
+-|   |             | \ |
+-|   |             | t |
+-|   |             | h |
+-|   |             | e |
+-|   |             | t |
+-|   |             | a |
+-|   |             | ^ |
+-|   |             | \ |
+-|   |             | k |
+-|   |             | a |
+-|   |             | p |
+-|   |             | p |
+-|   |             | a |
+-|   |             | \ |
+-|   |             | G |
+-|   |             | a |
+-|   |             | m |
+-|   |             | m |
+-|   |             | a |
+-|   |             | ( |
+-|   |             | \ |
+-|   |             | k |
+-|   |             | a |
+-|   |             | p |
+-|   |             | p |
+-|   |             | a |
+-|   |             | ) |
+-|   |             | } |
+-|   |             | $ |
+-|   |             | $ |
+-+---+-------------+---+
+-| ` | `min`,      | $ |
+-| u | `max`       | p |
+-| n |             | \ |
+-| i |             | i |
+-| f |             | n |
+-| o |             | [ |
+-| r |             | \ |
+-| m |             | t |
+-| ` |             | e |
+-|   |             | x |
+-|   |             | t |
+-|   |             | { |
+-|   |             | m |
+-|   |             | i |
+-|   |             | n |
+-|   |             | } |
+-|   |             | , |
+-|   |             | \ |
+-|   |             | t |
+-|   |             | e |
+-|   |             | x |
+-|   |             | t |
+-|   |             | { |
+-|   |             | m |
+-|   |             | a |
+-|   |             | x |
+-|   |             | } |
+-|   |             | ) |
+-|   |             | $ |
+-|   |             | u |
+-|   |             | n |
+-|   |             | i |
+-|   |             | f |
+-|   |             | o |
+-|   |             | r |
+-|   |             | m |
+-|   |             | l |
+-|   |             | y |
+-+---+-------------+---+
+-| \ | `mean`,     | $ |
+-| r | `sigma`,    | p |
+-| o | `min`,      |   |
+-| w | `max`       | \ |
+-| c |             | i |
+-| o |             | n |
+-| l |             |   |
+-| o |             | [ |
+-| r |             | \ |
+-| { |             | t |
+-| l |             | e |
+-| s |             | x |
+-| t |             | t |
+-| c |             | { |
+-| o |             | m |
+-| l |             | i |
+-| o |             | n |
+-| r |             | } |
+-| } |             | , |
+-| ` |             | \ |
+-| n |             | t |
+-| o |             | e |
+-| r |             | x |
+-| m |             | t |
+-| a |             | { |
+-| l |             | m |
+-| ` |             | a |
+-|   |             | x |
+-|   |             | } |
+-|   |             | ) |
+-|   |             | $ |
+-|   |             | n |
+-|   |             | o |
+-|   |             | r |
+-|   |             | m |
+-|   |             | a |
+-|   |             | l |
+-|   |             | w |
+-|   |             | i |
+-|   |             | t |
+-|   |             | h |
+-|   |             | g |
+-|   |             | i |
+-|   |             | v |
+-|   |             | e |
+-|   |             | n |
+-|   |             | m |
+-|   |             | e |
+-|   |             | a |
+-|   |             | n |
+-|   |             | a |
+-|   |             | n |
+-|   |             | d |
+-|   |             | $ |
+-|   |             | \ |
+-|   |             | s |
+-|   |             | i |
+-|   |             | g |
+-|   |             | m |
+-|   |             | a |
+-|   |             | $ |
+-+---+-------------+---+
+-| ` | `mu`,       | $ |
+-| l | `sigma`,    | p |
+-| o | `min`,      |   |
+-| g | `max`       | \ |
+-| n |             | i |
+-| o |             | n |
+-| r |             |   |
+-| m |             | [ |
+-| a |             | \ |
+-| l |             | t |
+-| ` |             | e |
+-|   |             | x |
+-|   |             | t |
+-|   |             | { |
+-|   |             | m |
+-|   |             | i |
+-|   |             | n |
+-|   |             | } |
+-|   |             | , |
+-|   |             | \ |
+-|   |             | t |
+-|   |             | e |
+-|   |             | x |
+-|   |             | t |
+-|   |             | { |
+-|   |             | m |
+-|   |             | a |
+-|   |             | x |
+-|   |             | } |
+-|   |             | ) |
+-|   |             | $ |
+-|   |             | l |
+-|   |             | o |
+-|   |             | g |
+-|   |             | n |
+-|   |             | o |
+-|   |             | r |
+-|   |             | m |
+-|   |             | a |
+-|   |             | l |
+-|   |             | w |
+-|   |             | i |
+-|   |             | t |
+-|   |             | h |
+-|   |             | g |
+-|   |             | i |
+-|   |             | v |
+-|   |             | e |
+-|   |             | n |
+-|   |             | $ |
+-|   |             | \ |
+-|   |             | m |
+-|   |             | u |
+-|   |             | $ |
+-|   |             | a |
+-|   |             | n |
+-|   |             | d |
+-|   |             | $ |
+-|   |             | \ |
+-|   |             | s |
+-|   |             | i |
+-|   |             | g |
+-|   |             | m |
+-|   |             | a |
+-|   |             | $ |
+-+---+-------------+---+
+-
+-: Functions currently available in the Topology module. $d$ is the
+-distance and $(d_x,d_y)$ the displacement. All functions can be used to
+-specify weights and delays, but only the constant and the
+-distance-dependent functions, i.e., all functions above the double line,
+-can be used as kernels. []{label="tab:kernels"}
+-
+-![Illustration of various kernel functions. Top left: constant kernel,
+-$p=0.5$. Top center: Gaussian kernel, green dashed lines show $\sigma$,
+-$2\sigma$, $3\sigma$. Top right: Same Gaussian kernel anchored at
+-$(1.5,1.5)$. Bottom left: Same Gaussian kernel, but all $p<0.5$ treated
+-as $p=0$. Bottom center:
 -2D-Gaussian.[]{label="fig:conn4"}](conn4){#fig:conn4
 -width="0.9\linewidth"}
-+2D-Gaussian.](user_manual_figures/conn4.png){#fig:conn4}
-+
- 
- Several examples follow. They are illustrated in
--Fig. [3.3](#fig:conn4){reference-type="ref" reference="fig:conn4"}.
-+Fig. {@fig:conn4}.
- 
- Constant
- 
- :   The simplest kernel is a fixed connection probability:
- 
+-
+-Several examples follow. They are illustrated in
+-Fig. [\[fig:conn4\]](#fig:conn4){reference-type="ref"
+-reference="fig:conn4"}.
+-
+-Constant
+-
+-:   The simplest kernel is a fixed connection probability:
+-
 -    ``` {.python linerange="conn4cp-end"}
 -    # -*- coding: utf-8 -*-
 -    #
@@ -17147,16 +17652,13 @@
 -    nest.Connect(nrns, rec)
 -    #{ end #}
 -    ```
-+```
-+    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn4cp-end
-+```
- 
- Gaussian
- 
-@@ -17377,1299 +955,17 @@
-     probability is 1 for $d=0$ and falls off with a "standard deviation"
-     of $\sigma=1$:
- 
+-
+-Gaussian
+-
+-:   This kernel is distance dependent. In the example, connection
+-    probability is 1 for $d=0$ and falls off with a "standard deviation"
+-    of $\sigma=1$:
+-
 -    ``` {.python linerange="conn4g-end"}
 -    # -*- coding: utf-8 -*-
 -    #
@@ -17801,14 +18303,11 @@
 -    nest.Connect(nrns, rec)
 -    #{ end #}
 -    ```
-+```
-+    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn4g-end
-+```
- 
- Eccentric Gaussian
- 
- :   In this example, both kernel and mask have been moved using anchors:
- 
+-
+-Eccentric Gaussian
+-
+-:   In this example, both kernel and mask have been moved using anchors:
+-
 -    ``` {.python linerange="conn4gx-end"}
 -    # -*- coding: utf-8 -*-
 -    #
@@ -18453,16 +18952,14 @@
 -    nest.Connect(nrns, rec)
 -    #{ end #}
 -    ```
-+```
-+    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn4gx-end
-+```
- 
-     Note that the anchor for the kernel is specified inside the
-     dictionary containing the parameters for the Gaussian.
-@@ -18678,650 +974,9 @@
- 
- :   In this example, all probabilities less than $0.5$ are set to zero:
- 
+-
+-    Note that the anchor for the kernel is specified inside the
+-    dictionary containing the parameters for the Gaussian.
+-
+-Cut-off Gaussian
+-
+-:   In this example, all probabilities less than $0.5$ are set to zero:
+-
 -    ``` {.python linerange="conn4cut-end"}
 -    # -*- coding: utf-8 -*-
 -    #
@@ -19107,16 +19604,13 @@
 -    nest.Connect(nrns, rec)
 -    #{ end #}
 -    ```
-+```
-+    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn4cut-end
-+```
- 
- 2D Gaussian
- 
-@@ -19329,650 +984,9 @@
-     a Gaussian with different widths in $x$- and $y-$ directions. This
-     kernel depends on displacement, not only on distance:
- 
+-
+-2D Gaussian
+-
+-:   We conclude with an example using a two-dimensional Gaussian, i.e.,
+-    a Gaussian with different widths in $x$- and $y-$ directions. This
+-    kernel depends on displacement, not only on distance:
+-
 -    ``` {.python linerange="conn42d-end"}
 -    # -*- coding: utf-8 -*-
 -    #
@@ -19761,31 +20255,30 @@
 -    nest.Connect(nrns, rec)
 -    #{ end #}
 -    ```
-+```
-+    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn42d-end
-+```
- 
- Note that for pool layers with periodic boundary conditions, Topology
- always uses the shortest possible displacement vector from driver to
-@@ -19982,12 +996,11 @@
- ------------------
- 
- The functions presented in
+-
+-Note that for pool layers with periodic boundary conditions, Topology
+-always uses the shortest possible displacement vector from driver to
+-pool neuron as argument to the kernel function.
+-
+-Weights and delays {#sec:conn_wd}
+-------------------
+-
+-The functions presented in
 -Table [\[tab:kernels\]](#tab:kernels){reference-type="ref"
 -reference="tab:kernels"} can also be used to specify distance-dependent
-+Table {@tbl:kernels} can also be used to specify distance-dependent
- or randomized weights and delays for the connections created by
- `ConnectLayers`.
- 
--Figure [3.4](#fig:conn5){reference-type="ref" reference="fig:conn5"}
-+Figure {@fig:conn5}
- illustrates weights and delays generated using these functions with the
- following code examples. All examples use a "layer" of 51 nodes placed
- on a line; the line is centered about $(25,0)$, so that the leftmost
-@@ -19997,3291 +1010,60 @@
- 
- Linear example
- 
+-or randomized weights and delays for the connections created by
+-`ConnectLayers`.
+-
+-Figure [\[fig:conn5\]](#fig:conn5){reference-type="ref"
+-reference="fig:conn5"} illustrates weights and delays generated using
+-these functions with the following code examples. All examples use a
+-"layer" of 51 nodes placed on a line; the line is centered about
+-$(25,0)$, so that the leftmost node has coordinates $(0,0)$. The
+-distance between neighboring elements is 1. The mask is rectangular,
+-spans the entire layer and is centered about the driver node.
+-
+-Linear example
+-
 -:   
 -
 -    ------------------------------------------------------------------------
@@ -20133,13 +20626,19 @@
 -    # -----------------------------------------------
 -
 -    # free masks
--
++```
++ MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2do-end
++```
+ 
 -    def kernel_fig(fig, loc, cdict, showkern=True):
 -        nest.ResetKernel()
 -        l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
 -                            'elements': 'iaf_psc_alpha'})
 -        tp.ConnectLayers(l, l, cdict)
--
++```
++ MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2eo-end
++```
+ 
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2),
 -                    showkern=showkern)
@@ -20436,35 +20935,44 @@
 -    nest.Connect(nrns, rec)
 -    #{ end #}
 -    ```
-+```
-+    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5lin-end
-+```
  
 -    Results are shown in the top panel of
--    Fig. [3.4](#fig:conn5){reference-type="ref" reference="fig:conn5"}.
--    Connection weights and delays are shown for the leftmost neuron as
--    driver. Weights drop linearly from $1$. From the node at $(20,0)$
--    on, the cutoff sets weights to 0. There are no connections to nodes
--    beyond $(25,0)$, since the mask extends only 25 units to the right
--    of the driver. Delays increase in a stepwise linear fashion, as NEST
--    requires delays to be multiples of the simulation resolution.
-+Results are shown in the top panel of
-+Fig. {@fig:conn5}.
-+Connection weights and delays are shown for the leftmost neuron as
-+driver. Weights drop linearly from $1$. From the node at $(20,0)$
-+on, the cutoff sets weights to 0. There are no connections to nodes
-+beyond $(25,0)$, since the mask extends only 25 units to the right
-+of the driver. Delays increase in a stepwise linear fashion, as NEST
-+requires delays to be multiples of the simulation resolution.
+-    Fig. [\[fig:conn5\]](#fig:conn5){reference-type="ref"
+-    reference="fig:conn5"}. Connection weights and delays are shown for
+-    the leftmost neuron as driver. Weights drop linearly from $1$. From
+-    the node at $(20,0)$ on, the cutoff sets weights to 0. There are no
+-    connections to nodes beyond $(25,0)$, since the mask extends only 25
+-    units to the right of the driver. Delays increase in a stepwise
+-    linear fashion, as NEST requires delays to be multiples of the
+-    simulation resolution.
++![The same masks as in
++Fig. {@fig:conn2_a}, but centered about $(-1.5,-1.5)$, $(-2,0)$,
++$(1.5,1.5)$ and $(2, -1)$, respectively, using the `'anchor'`
++parameter.](user_manual_figures/conn2_b.png){#fig:conn2_b}
  
- Linear example with periodic boundary conditions
+-Linear example with periodic boundary conditions
++and $\textbf{elliptical}$ masks, see
++Fig {@fig:conn2_b}. To do so, add an `'azimuth_angle'` entry in
++the specific mask dictionary. The `azimuth_angle` is measured in degrees
++and is the rotational angle from the x-axis to the y-axis.
  
 -:   
--
++```
++ MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2rr-end
++```
+ 
 -    ------------------------------------------------------------------------
--
++```
++ MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2er-end
++```
+ 
 -    \
--
++![Rotated rectangle and elliptical mask from
++Fig. {@fig:conn2_a} and
++Fig. {@fig:conn2_b}, where the rectangle mask is rotated
++$120^\circ$ and the elliptical mask is rotated
++$45^\circ$.](user_manual_figures/conn2_c.png){#fig:conn2_c}
+ 
 -    ``` {.python linerange="conn5linpbc-end"}
 -    # -*- coding: utf-8 -*-
 -    #
@@ -20601,12 +21109,14 @@
 -        l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
 -                            'elements': 'iaf_psc_alpha'})
 -        tp.ConnectLayers(l, l, cdict)
--
+ 
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2))
--
++### Masks for 3D layers {#sec:3d_masks}
+ 
 -    fig = plt.figure()
--
++Similarly, there are three mask types that can be used for 3D layers,
+ 
 -    #{ conn2r #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'rectangular': {'lower_left': [-2., -1.],
@@ -20772,47 +21282,86 @@
 -        l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
 -                            'elements': 'iaf_psc_alpha'})
 -        tp.ConnectLayers(l, l, cdict)
--
++Box
+ 
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2),
 -                    showmask=False)
--
--
++:   All nodes within a cuboid volume are connected. The area is
++    specified by its lower left and upper right corners, measured in the
++    same unit as element coordinates. Example:
+ 
++```
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn_3d_a-end
++```
+ 
 -    fig = plt.figure()
--
++Spherical
+ 
 -    #{ conn3 #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'grid': {'rows': 3, 'columns': 5}}}
 -    #{ end #}
 -    grid_mask_fig(fig, 131, conndict)
--
++:   All nodes within a sphere are connected. The area is specified by
++    its radius.
+ 
 -    #{ conn3c #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'grid': {'rows': 3, 'columns': 5},
 -                         'anchor': {'row': 1, 'column': 2}}}
 -    #{ end #}
 -    grid_mask_fig(fig, 132, conndict)
--
++```
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn_3d_b-end
++```
+ 
 -    #{ conn3x #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'grid': {'rows': 3, 'columns': 5},
 -                         'anchor': {'row': -1, 'column': 2}}}
 -    #{ end #}
 -    grid_mask_fig(fig, 133, conndict)
--
++Ellipsoidal
+ 
 -    plt.savefig('../user_manual_figures/conn3.png', bbox_inches='tight')
--
--
++:   All nodes within an ellipsoid are connected. The area is specified
++    by its major, minor, and polar axis. This mask has been part of NEST
++    since NEST 2.14.
+ 
++```
++    MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn_3d_c-end
++```
+ 
 -    # -----------------------------------------------
--
++As in the 2D case, you can change the location of the mask relative to
++the driver node by specifying a 3D vector in the `'anchor'` entry in the
++mask dictionary. If you want to rotate the box or ellipsoidal masks, you
++can add an `'azimuth_angle'` entry in the specific mask dictionary for
++rotation from the x-axis towards the y-axis about the z-axis, or an
++`'polar_angle'` entry, specifying the rotation angle in degrees from the
++z-axis about the (possibly rotated) x axis, from the (possibly rotated)
++y-axis. You can specify both at once of course. If both are specified,
++we first rotate about the z-axis and then about the new x-axis. NEST
++currently do not support rotation in all three directions, the rotation
++from the y-axis about the (possibly rotated) z-axis, from the (possibly
++```
++rotated) x-axis is missing.
++```
+ 
 -    # free masks
--
++![Masks for 3D layers. For all mask types, the driver node is marked by
++a wide light-red circle, the selected pool nodes by red dots and the
++masks by red lines. From left to right: box and spherical masks centered
++about the driver node.](user_manual_figures/conn_3d.png){#fig:conn3d}
+ 
 -    def kernel_fig(fig, loc, cdict, showkern=True):
 -        nest.ResetKernel()
 -        l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
 -                            'elements': 'iaf_psc_alpha'})
 -        tp.ConnectLayers(l, l, cdict)
--
++### Masks for grid-based layers {#sec:grid_masks}
+ 
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2),
 -                    showkern=showkern)
@@ -21109,31 +21658,42 @@
 -    nest.Connect(nrns, rec)
 -    #{ end #}
 -    ```
-+```
-+    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5linpbc-end
-+```
++Grid-based layers can be connected using rectangular *grid masks*. For
++these, you specify the size of the mask not by lower left and upper
++right corner coordinates, but give their size in rows and columns, as in
++this example:
  
 -    Results are shown in the middle panel of
--    Fig. [3.4](#fig:conn5){reference-type="ref" reference="fig:conn5"}.
--    This example is identical to the previous, except that the (pool)
--    layer has periodic boundary conditions. Therefore, the left half of
--    the mask about the node at $(0,0)$ wraps back to the right half of
--    the layer and that node connects to all nodes in the layer.
-+Results are shown in the middle panel of
-+Fig. {@fig:conn5}.
-+This example is identical to the previous, except that the (pool)
-+layer has periodic boundary conditions. Therefore, the left half of
-+the mask about the node at $(0,0)$ wraps back to the right half of
-+ the layer and that node connects to all nodes in the layer.
+-    Fig. [\[fig:conn5\]](#fig:conn5){reference-type="ref"
+-    reference="fig:conn5"}. This example is identical to the previous,
+-    except that the (pool) layer has periodic boundary conditions.
+-    Therefore, the left half of the mask about the node at $(0,0)$ wraps
+-    back to the right half of the layer and that node connects to all
+-    nodes in the layer.
++```
++MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn3-end
++```
  
- Various functions
+-Various functions
++The resulting connections are shown in
++Fig. {@fig:conn3}. By
++default the top-left corner of a grid mask, i.e., the grid mask element
++with grid index $[0,0]$[^4], is aligned with the driver node. You can
++change this alignment by specifying an *anchor* for the mask:
  
 -:   
--
++```
++MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn3c-end
++```
+ 
 -    ------------------------------------------------------------------------
--
++You can even place the anchor outside the mask:
+ 
 -    \
--
++```
++MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn3x-end
++```
+ 
 -    ``` {.python linerange="conn5exp-end"}
 -    # -*- coding: utf-8 -*-
 -    #
@@ -21270,12 +21830,21 @@
 -        l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
 -                            'elements': 'iaf_psc_alpha'})
 -        tp.ConnectLayers(l, l, cdict)
--
++The resulting connection patterns are shown in
++Fig. {@fig:conn3}.
+ 
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2))
--
++![Grid masks for connections between grid-based layers. Left:
++$5\times 3$ mask with default alignment at upper left corner. Center:
++Same mask, but anchored to center node at grid index $[1,2]$. Right:
++Same mask, but anchor to the upper left of the mask at grid index
++$[-1,2]$.](user_manual_figures/conn3.png){#fig:conn3}
+ 
 -    fig = plt.figure()
--
++Connections specified using grid masks are generated more efficiently
++than connections specified using other mask types.
+ 
 -    #{ conn2r #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'rectangular': {'lower_left': [-2., -1.],
@@ -21441,47 +22010,85 @@
 -        l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
 -                            'elements': 'iaf_psc_alpha'})
 -        tp.ConnectLayers(l, l, cdict)
--
++Note the following:
+ 
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2),
 -                    showmask=False)
--
--
++-   Grid-based masks are applied by considering grid indices. The
++    position of nodes in physical coordinates is ignored.
+ 
++-   In consequence, grid-based masks should only be used between layers
++    with identical grid spacings.
+ 
 -    fig = plt.figure()
--
++-   The semantics of the `'anchor'` property for grid-based masks differ
++    significantly for general masks described in
++    Sec. [3.3.1](#sec:free_masks){reference-type="ref"
++    reference="sec:free_masks"}. For general masks, the anchor is the
++    center of the mask relative to the driver node. For grid-based
++    nodes, the anchor determines which mask element is aligned with the
++    driver element.
+ 
 -    #{ conn3 #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'grid': {'rows': 3, 'columns': 5}}}
 -    #{ end #}
 -    grid_mask_fig(fig, 131, conndict)
--
++Kernels {#sec:conn_kernels}
++-------
+ 
 -    #{ conn3c #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'grid': {'rows': 3, 'columns': 5},
 -                         'anchor': {'row': 1, 'column': 2}}}
 -    #{ end #}
 -    grid_mask_fig(fig, 132, conndict)
--
++Many neuronal network models employ probabilistic connection rules.
++Topology supports probabilistic connections through *kernels*. A kernel
++is a function mapping the distance (or displacement) between a driver
++and a pool node to a connection probability. Topology then generates a
++connection according to this probability.
+ 
 -    #{ conn3x #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'grid': {'rows': 3, 'columns': 5},
 -                         'anchor': {'row': -1, 'column': 2}}}
 -    #{ end #}
 -    grid_mask_fig(fig, 133, conndict)
--
++Probabilistic connections can be generated in two different ways using
++Topology:
+ 
 -    plt.savefig('../user_manual_figures/conn3.png', bbox_inches='tight')
--
--
++Free probabilistic connections
+ 
++:   are the default. In this case, `ConnectLayers` considers each driver
++    node $D$ in turn. For each $D$, it evaluates the kernel for each
++    pool node $P$ within the mask and creates a connection according to
++    the resulting probability. This means in particular that *each
++    possible driver-pool pair is inspected exactly once* and that there
++    will be *at most one connection between each driver-pool pair*.
+ 
 -    # -----------------------------------------------
--
++Prescribed number of connections
+ 
 -    # free masks
++:   can be obtained by specifying the number of connections to create
++    per driver node. See
++    Sec. [3.7](#sec:prescribed_numbers){reference-type="ref"
++    reference="sec:prescribed_numbers"} for details.
  
 -    def kernel_fig(fig, loc, cdict, showkern=True):
 -        nest.ResetKernel()
 -        l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
 -                            'elements': 'iaf_psc_alpha'})
 -        tp.ConnectLayers(l, l, cdict)
--
++Available kernel functions are shown in
++Table {@tbl:kernels}. More kernel functions may be created in a NEST
++extension module. This is covered in
++Chapter [5](#ch:extending){reference-type="ref"
++reference="ch:extending"}.
+ 
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2),
 -                    showkern=showkern)
@@ -21778,7 +22385,44 @@
 -    nest.Connect(nrns, rec)
 -    #{ end #}
 -    ```
--
++  -------------------------------------------------------------------------------------------------------------------
++  Name            Parameters       Function
++  --------------- ---------------- ----------------------------------------------------------------------------------
++  constant                         constant $p\in[0,1]$
++
++  `linear`        `a`, `c`         $$p(d) = c + a d$$
++
++  `exponential`   `a`, `c`, `tau`  $$p(d) = c + a e^{-\frac{d}{\tau}}$$
++
++  `gaussian`      `p_center`,      $$p(d) = c + p_{\text{center}}  e^{-\frac{(d-\mu)^2}{2\sigma^2}}$$
++                  `sigma`, `mean`, 
++                  `c`              
++
++  `gaussian2D`    `p_center`,      $$p(d) = c + p_{\text{center}}
++                  `sigma_x`,       e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-\frac{(d_y-\mu_y)^2}{\sigma_y^2}
++                  `sigma_y`,                 +2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x\sigma_y}}{2(1-\rho^2)}}$$
++                  `mean_x`,        
++                  `mean_y`,`rho`,   
++                  `c`              
++
++  `gamma`         `kappa`, `theta` $$p(d) = \frac{d^{\kappa-1}e^{-\frac{d}{\theta}}}{\theta^\kappa\Gamma(\kappa)}$$
++
++  `uniform`       `min`, `max`     $p\in
++                                   [\text{min},\text{max})$ uniformly
++
++  `normal`        `mean`, `sigma`, $p \in [\text{min},\text{max})$ normal with given mean and $\sigma$
++                  `min`, `max`     
++
++  `lognormal`     `mu`, `sigma`,   $p \in [\text{min},\text{max})$ lognormal with given $\mu$ and $\sigma$
++                  `min`, `max`     
++  -------------------------------------------------------------------------------------------------------------------
++
++  Table: Functions currently available in the Topology module. $d$ is the
++  distance and $(d_x,d_y)$ the displacement. All functions can be used
++  to specify weights and delays, but only the constant and the
++  distance-dependent functions, i.e., all functions above the double
++  line, can be used as kernels. {#tbl:kernels}
+ 
 -    ``` {.python linerange="conn5gauss-end"}
 -    # -*- coding: utf-8 -*-
 -    #
@@ -21915,12 +22559,20 @@
 -        l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
 -                            'elements': 'iaf_psc_alpha'})
 -        tp.ConnectLayers(l, l, cdict)
--
++![Illustration of various kernel functions. Top left: constant kernel,
++$p=0.5$. Top center: Gaussian kernel, green dashed lines show $\sigma$,
++$2\sigma$, $3\sigma$. Top right: Same Gaussian kernel anchored at
++$(1.5,1.5)$. Bottom left: Same Gaussian kernel, but all $p<0.5$ treated
++as $p=0$. Bottom center:
++2D-Gaussian.](user_manual_figures/conn4.png){#fig:conn4}
+ 
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2))
--
+ 
 -    fig = plt.figure()
--
++Several examples follow. They are illustrated in
++Fig. {@fig:conn4}.
+ 
 -    #{ conn2r #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'rectangular': {'lower_left': [-2., -1.],
@@ -22086,49 +22738,67 @@
 -        l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
 -                            'elements': 'iaf_psc_alpha'})
 -        tp.ConnectLayers(l, l, cdict)
--
++Constant
+ 
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2),
 -                    showmask=False)
--
--
++:   The simplest kernel is a fixed connection probability:
+ 
++```
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn4cp-end
++```
+ 
 -    fig = plt.figure()
--
++Gaussian
+ 
 -    #{ conn3 #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'grid': {'rows': 3, 'columns': 5}}}
 -    #{ end #}
 -    grid_mask_fig(fig, 131, conndict)
--
++:   This kernel is distance dependent. In the example, connection
++    probability is 1 for $d=0$ and falls off with a "standard deviation"
++    of $\sigma=1$:
+ 
 -    #{ conn3c #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'grid': {'rows': 3, 'columns': 5},
 -                         'anchor': {'row': 1, 'column': 2}}}
 -    #{ end #}
 -    grid_mask_fig(fig, 132, conndict)
--
++```
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn4g-end
++```
+ 
 -    #{ conn3x #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'grid': {'rows': 3, 'columns': 5},
 -                         'anchor': {'row': -1, 'column': 2}}}
 -    #{ end #}
 -    grid_mask_fig(fig, 133, conndict)
--
++Eccentric Gaussian
+ 
 -    plt.savefig('../user_manual_figures/conn3.png', bbox_inches='tight')
--
--
++:   In this example, both kernel and mask have been moved using anchors:
+ 
++```
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn4gx-end
++```
+ 
 -    # -----------------------------------------------
--
++    Note that the anchor for the kernel is specified inside the
++    dictionary containing the parameters for the Gaussian.
+ 
 -    # free masks
--
++Cut-off Gaussian
+ 
 -    def kernel_fig(fig, loc, cdict, showkern=True):
 -        nest.ResetKernel()
 -        l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
 -                            'elements': 'iaf_psc_alpha'})
 -        tp.ConnectLayers(l, l, cdict)
-+```
-+    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5exp-end
-+```
++:   In this example, all probabilities less than $0.5$ are set to zero:
  
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2),
@@ -22427,24 +23097,34 @@
 -    #{ end #}
 -    ```
 +```
-+    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5gauss-end
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn4cut-end
 +```
  
 -    Results are shown in the bottom panel of
--    Fig. [3.4](#fig:conn5){reference-type="ref" reference="fig:conn5"}.
--    It shows linear, exponential and Gaussian weight functions for the
--    node at $(25,0)$.
-+Results are shown in the bottom panel of Fig. {@fig:conn5}.
-+It shows linear, exponential and Gaussian weight functions for the node at $(25,0)$.
+-    Fig. [\[fig:conn5\]](#fig:conn5){reference-type="ref"
+-    reference="fig:conn5"}. It shows linear, exponential and Gaussian
+-    weight functions for the node at $(25,0)$.
++2D Gaussian
  
- Randomized weights and delays
+-Randomized weights and delays
++:   We conclude with an example using a two-dimensional Gaussian, i.e.,
++    a Gaussian with different widths in $x$- and $y-$ directions. This
++    kernel depends on displacement, not only on distance:
  
 -:   
--
++```
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn42d-end
++```
+ 
 -    ------------------------------------------------------------------------
--
++Note that for pool layers with periodic boundary conditions, Topology
++always uses the shortest possible displacement vector from driver to
++pool neuron as argument to the kernel function.
+ 
 -    \
--
++Weights and delays {#sec:conn_wd}
++------------------
+ 
 -    ``` {.python linerange="conn5uniform-end"}
 -    # -*- coding: utf-8 -*-
 -    #
@@ -22581,12 +23261,24 @@
 -        l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
 -                            'elements': 'iaf_psc_alpha'})
 -        tp.ConnectLayers(l, l, cdict)
--
++The functions presented in
++Table {@tbl:kernels} can also be used to specify distance-dependent
++or randomized weights and delays for the connections created by
++`ConnectLayers`.
+ 
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2))
--
++Figure {@fig:conn5}
++illustrates weights and delays generated using these functions with the
++following code examples. All examples use a "layer" of 51 nodes placed
++on a line; the line is centered about $(25,0)$, so that the leftmost
++node has coordinates $(0,0)$. The distance between neighboring elements
++is 1. The mask is rectangular, spans the entire layer and is centered
++about the driver node.
+ 
 -    fig = plt.figure()
--
++Linear example
+ 
 -    #{ conn2r #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'rectangular': {'lower_left': [-2., -1.],
@@ -22752,50 +23444,78 @@
 -        l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
 -                            'elements': 'iaf_psc_alpha'})
 -        tp.ConnectLayers(l, l, cdict)
--
++```
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5lin-end
++```
+ 
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2),
 -                    showmask=False)
--
--
++Results are shown in the top panel of
++Fig. {@fig:conn5}.
++Connection weights and delays are shown for the leftmost neuron as
++driver. Weights drop linearly from $1$. From the node at $(20,0)$
++on, the cutoff sets weights to 0. There are no connections to nodes
++beyond $(25,0)$, since the mask extends only 25 units to the right
++of the driver. Delays increase in a stepwise linear fashion, as NEST
++requires delays to be multiples of the simulation resolution.
+ 
++Linear example with periodic boundary conditions
+ 
 -    fig = plt.figure()
--
++```
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5linpbc-end
++```
+ 
 -    #{ conn3 #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'grid': {'rows': 3, 'columns': 5}}}
 -    #{ end #}
 -    grid_mask_fig(fig, 131, conndict)
--
++Results are shown in the middle panel of
++Fig. {@fig:conn5}.
++This example is identical to the previous, except that the (pool)
++layer has periodic boundary conditions. Therefore, the left half of
++the mask about the node at $(0,0)$ wraps back to the right half of
++ the layer and that node connects to all nodes in the layer.
+ 
 -    #{ conn3c #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'grid': {'rows': 3, 'columns': 5},
 -                         'anchor': {'row': 1, 'column': 2}}}
 -    #{ end #}
 -    grid_mask_fig(fig, 132, conndict)
--
++Various functions
+ 
 -    #{ conn3x #}
 -    conndict = {'connection_type': 'divergent',
 -                'mask': {'grid': {'rows': 3, 'columns': 5},
 -                         'anchor': {'row': -1, 'column': 2}}}
 -    #{ end #}
 -    grid_mask_fig(fig, 133, conndict)
--
+ 
 -    plt.savefig('../user_manual_figures/conn3.png', bbox_inches='tight')
++```
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5exp-end
++```
  
 +```
-+    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5uniform-end
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5gauss-end
 +```
  
 -    # -----------------------------------------------
--
++Results are shown in the bottom panel of Fig. {@fig:conn5}.
++It shows linear, exponential and Gaussian weight functions for the node at $(25,0)$.
+ 
 -    # free masks
--
++Randomized weights and delays
+ 
 -    def kernel_fig(fig, loc, cdict, showkern=True):
 -        nest.ResetKernel()
 -        l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
 -                            'elements': 'iaf_psc_alpha'})
 -        tp.ConnectLayers(l, l, cdict)
--
+ 
 -        fig.add_subplot(loc)
 -        conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2),
 -                    showkern=showkern)
@@ -23092,13 +23812,16 @@
 -    nest.Connect(nrns, rec)
 -    #{ end #}
 -    ```
--
++```
++    MISSING SCRIPT BLOCK HERE! file: user_manual_scripts/connections.py lines conn5uniform-end
++```
+ 
 -    By using the `'uniform'` function for weights or delays, one can
 -    obtain randomized values for weights and delays, as shown by the red
 -    circles in the bottom panel of
--    Fig. [3.4](#fig:conn5){reference-type="ref" reference="fig:conn5"}.
--    Weights and delays can currently only be randomized with uniform
--    distribution.
+-    Fig. [\[fig:conn5\]](#fig:conn5){reference-type="ref"
+-    reference="fig:conn5"}. Weights and delays can currently only be
+-    randomized with uniform distribution.
 +By using the `'uniform'` function for weights or delays, one can
 +obtain randomized values for weights and delays, as shown by the red
 +circles in the bottom panel of Fig. {@fig:conn5}.
@@ -23110,22 +23833,14 @@
  
  Periodic boundary conditions {#sec:conn_pbc}
  ----------------------------
-@@ -23342,7 +1124,7 @@
-     with the spatial profile given by the kernel.
- 
- 4.  If you prohibit multapses (cf
--    Sec. [3.1.1](#sec:terminology){reference-type="ref"
-+    Sec. [3.1.1](#sec:terminology){reference-type="ref"
-     reference="sec:terminology"}) and prescribe a number of connections
-     greater than the number of pool nodes in the mask, `ConnectLayers`
-     may get stuck in an infinite loop and NEST will hang. Keep in mind
-@@ -23359,663 +1141,19 @@
+@@ -23940,664 +1141,19 @@
  nodes at a certain distance with the kernel value for this distance. For
  the kernel and parameter values below we have
  $$p_{\text{conn}}(d) = \frac{12}{\pi} \times 2\pi r \times (1-2r)
 - = 24 r (1-2r) \qquad \text{for} \quad 0\le r < \frac{1}{2}\;.
 -\label{eq:ptheo}$$ The resulting distribution of distances between
--connected nodes is shown in Fig. [3.5](#fig:conn6){reference-type="ref"
+-connected nodes is shown in
+-Fig. [\[fig:conn6\]](#fig:conn6){reference-type="ref"
 -reference="fig:conn6"}.
 -
 -``` {.python linerange="conn6-end"}
@@ -23745,10 +24460,7 @@
 -cdict_stim = {'connection_type': 'divergent',
 -              'mask': {'circular': {'radius': 0.1},
 -                       'anchor': [0.2, 0.2]}}
-+ = 24 r (1-2r) \qquad \text{for} \quad 0\le r < \frac{1}{2}\;.$$ {#eq:ptheo} 
-+The resulting distribution of distances between
-+connected nodes is shown in Fig. {@fig:conn6}.
- 
+-
 -tp.ConnectLayers(stim, nrn_layer, cdict_stim)
 -#{ end #}
 -
@@ -23766,7 +24478,10 @@
 -
 -tp.ConnectLayers(nrn_layer, rec, cdict_rec)
 -#{ end #}
--
++ = 24 r (1-2r) \qquad \text{for} \quad 0\le r < \frac{1}{2}\;.$$ {#eq:ptheo} 
++The resulting distribution of distances between
++connected nodes is shown in Fig. {@fig:conn6}.
+ 
 -# ----------------------------
 -
 -#{ conn11 #}
@@ -23785,11 +24500,11 @@
 -Eq. [\[eq:ptheo\]](#eq:ptheo){reference-type="ref"
 -reference="eq:ptheo"}.[]{label="fig:conn6"}](conn6){#fig:conn6
 -width="0.5\linewidth"}
-+Eq. {@eq:ptheo}.](user_manual_figures/conn6.png){#fig:conn6}
++Eq. {@eq:ptheo}.](user_manual_figures/conn6.png){#fig:conn6}
  
  Functions determining weight and delay as function of
  distance/displacement work in just the same way as before when the
-@@ -24046,649 +1184,8 @@
+@@ -24628,649 +1184,8 @@
  probability and interneurons to pyramidal cells with a rectangular mask
  unit probability.
  
@@ -24441,7 +25156,7 @@
  ```
  
  Synapse models and properties {#sec:conn_synapse}
-@@ -24699,649 +1196,8 @@
+@@ -25281,649 +1196,8 @@
  model by adding a `'synapse_model'` entry to the connection dictionary,
  as in this example:
  
@@ -25093,7 +25808,7 @@
  ```
  
  You have to use synapse models if you want to set, e.g., the receptor
-@@ -25359,1298 +1215,16 @@
+@@ -25941,1298 +1215,16 @@
  center of the mask. As demonstrated in the following example,
  stimulation devices require the divergent connection type
  
@@ -25745,8 +26460,7 @@
  ```
  
  while recording devices require the convergent connection type (see also
--Sec. [3.11](#sec:rec_dev){reference-type="ref"
-+Sec. [3.11](#sec:rec_dev){reference-type="ref"
+ Sec. [3.11](#sec:rec_dev){reference-type="ref"
  reference="sec:rec_dev"}):
  
 -``` {.python linerange="conn10-end"}
@@ -26397,7 +27111,7 @@
  ```
  
  Layers and recording devices {#sec:rec_dev}
-@@ -26661,653 +1235,12 @@
+@@ -27243,649 +1235,8 @@
  create a single spike detector, and connect all neurons in the layer to
  that spike detector using a normal connect command:
  
@@ -27049,21 +27763,7 @@
  ```
  
  Connections to a layer of recording devices as described in
--Sec. [3.10](#sec:dev_subregions){reference-type="ref"
-+Sec. [3.10](#sec:dev_subregions){reference-type="ref"
- reference="sec:dev_subregions"}, such as spike detectors, are only
- possible using the convergent connection type without a fixed number of
- connections. Note that voltmeter and multimeter are not suffering from
-@@ -27375,7 +1308,7 @@
-                                 correct connection structure.
- 
-   `tp.SelectNodesByMask()`      Obtain GIDs of nodes/elements inside a masked area of a
--                                layer. Part of NEST since NEST 2.14.
-+                                layer. Part of NEST since NEST 2.14.
-   ----------------------------- --------------------------------------------------------
- 
- Visualization functions {#sec:visualize}
-@@ -27401,364 +1334,16 @@
+@@ -27983,364 +1334,16 @@
  center neuron (marked by large light-red circle). The large red circle
  is the mask, the dashed green lines mark $\sigma$, $2\sigma$ and
  $3\sigma$ of the Gaussian
@@ -27074,7 +27774,7 @@
  The following code shows a practical example: A $21\times21$ network
  which connects to itself with divergent Gaussian connections. The
  resulting graphics is shown in
--Fig. [4.1](#fig:vislayer){reference-type="ref"
+-Fig. [\[fig:vislayer\]](#fig:vislayer){reference-type="ref"
 -reference="fig:vislayer"}. All elements and the targets of the center
 +Fig. {@fig:vislayer}. All elements and the targets of the center
  neuron are shown, as well as mask and kernel.
@@ -27432,81 +28132,39 @@
  ```
  
  Adding topology kernels and masks {#ch:extending}
-@@ -27782,7 +1367,7 @@
- 3.  Leave MyModule and create a build directory for it, e.g., mmb next
-     to it
- 
--    ``` {.bash language="bash"}
-+    ```bash
-     cd ..
-     mkdir mmb
-     cd mmb
-@@ -27794,7 +1379,7 @@
-     `nest-config` is not in your path, you need to provided it
-     explicitly like this
- 
--    ``` {.bash language="bash"}
-+    ```bash
-     cmake -Dwith-nest=${NEST_INSTALL_DIR}/bin/nest-config ../MyModule
-     ```
- 
-@@ -27807,7 +1392,7 @@
- 
- 6.  Compile.
- 
--    ``` {.bash language="bash"}
-+    ```bash
-     make
-     make install
-     ```
-@@ -27824,7 +1409,7 @@
+@@ -28406,7 +1409,7 @@
  by C++ classes subclassed from `nest::Parameter`. To enable subclassing,
  add the following lines at the top of the file `mymodule.h`:
  
 -``` {.c++ language="C++"}
-+```cpp
++``` {.c language="c"}
  #include "topologymodule.h"
  #include "parameter.h"
  ```
-@@ -27832,7 +1417,7 @@
+@@ -28414,7 +1417,7 @@
  Then, add the class definition, e.g. near the bottom of the file before
  the brace closing the namespace `mynest`:
  
 -``` {.c++ language="C++"}
-+```cpp
++``` {.c language="c"}
    class Affine2DParameter: public nest::Parameter
    {
    public:
-@@ -27881,14 +1466,14 @@
+@@ -28463,7 +1466,7 @@
  To make the custom function available to the Topology module, you need
  to register the class you have provided. To do this, add the line
  
 -``` {.c++ language="C++"}
-+```cpp
++``` {.c language="c"}
  nest::TopologyModule::register_parameter<Affine2DParameter>("affine2d");
  ```
  
- to the function `MyModule::init()` in the file `mymodule.cpp`. Now
- compile and install the module by issuing
- 
--``` {.bash language="bash"}
-+```bash
- make
- make install
- ```
-@@ -27912,20 +1497,20 @@
- the dimension (2 or 3). In this case we will define a 2-dimensional
- elliptic mask by creating a class called `EllipticMask`. Note that
- elliptical masks are already part of NEST see
--Sec. [3.3](#sec:conn_masks){reference-type="ref"
-+Sec. [3.3](#sec:conn_masks){reference-type="ref"
- reference="sec:conn_masks"}. That elliptical mask is defined in a
- different way than what we will do here though, so this can still be
+@@ -28500,14 +1503,14 @@
  used as an introductory example. First, we must include another header
  file:
  
 -``` {.c++ language="C++"}
-+```cpp
++``` {.c language="c"}
  #include "mask.h"
  ```
  
@@ -27514,72 +28172,30 @@
  `Mask` class has a few more methods that must be overridden:
  
 -``` {.c++ language="C++"}
-+```cpp
++``` {.c language="c"}
    class EllipticMask : public nest::Mask<2>
    {
    public:
-@@ -27985,7 +1570,7 @@
+@@ -28567,7 +1570,7 @@
  topology module, and this is done by adding a line to the function
  `MyModule::init()` in the file `mymodule.cpp`:
  
 -``` {.c++ language="C++"}
-+```cpp
++``` {.c language="c"}
      nest::TopologyModule::register_mask<EllipticMask>("elliptic");
  ```
  
-@@ -28024,7 +1609,7 @@
- Module from NEST version 2.12 to 2.14.
- 
- -   Elliptical and ellipsoidal masks have been added to NEST with
--    NEST 2.14. To specify the mask, the `major_axis`, `minor_axis` and
-+    NEST 2.14. To specify the mask, the `major_axis`, `minor_axis` and
-     (for ellipsoidal masks) `polar_axis` must be specified.
- 
- -   It is now possible to obtain the GIDs inside a masked area with the
-@@ -28050,7 +1635,7 @@
- 
- -   It is now possible to add kernel functions and masks to the Topology
-     module through an extension module. Please see
--    Chapter [5](#ch:extending){reference-type="ref"
-+    Chapter [5](#ch:extending){reference-type="ref"
-     reference="ch:extending"} for examples.
- 
- Changes from Topology 1.9 to 2.0
-@@ -28062,7 +1647,7 @@
- -   ConnectLayer is now called ConnectLayers
- 
- -   Several other functions changed names, and there are many new
--    functions. Please see Ch. [4](#sec:inspection){reference-type="ref"
-+    functions. Please see Ch. [4](#sec:inspection){reference-type="ref"
-     reference="sec:inspection"} for an overview.
- 
- -   All nest.topology functions now require lists of GIDs as input, not
-@@ -28092,7 +1677,7 @@
-     changed: the anchor now specifies the center of the probability
-     distribution relative to the driver node. This is consistent with
-     the semantics for free masks, see
--    Sec. [3.3](#sec:conn_masks){reference-type="ref"
-+    Sec. [3.3](#sec:conn_masks){reference-type="ref"
-     reference="sec:conn_masks"} and
-     [3.4](#sec:conn_kernels){reference-type="ref"
-     reference="sec:conn_kernels"}.
-@@ -28105,6 +1690,10 @@
+@@ -28687,10 +1690,9 @@
      applied to are now prohibited by default. This avoids multiple
      connections when masks overwrap.
  
+-\bibliographystyle{plainnat}
+-\listoffigures 
+-\listoftables  
+-\printindex
 +References
 +==========
 +
-+
+ 
  [^1]: NEST is available under an open source license at
      [www.nest-simulator.org](www.nest-simulator.org).
- 
-@@ -28114,6 +1703,7 @@
- [^3]: You can also use standard NEST connection functions to connect
-     nodes in Topology layers.
- 
--[^4]: See Sec. [2.1.1](#sec:verysimple){reference-type="ref"
-+[^4]: See Sec. [2.1.1](#sec:verysimple){reference-type="ref"
-     reference="sec:verysimple"} for the distinction between layer
-     coordinates and grid indices
-+

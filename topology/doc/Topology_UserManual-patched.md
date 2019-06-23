@@ -1409,7 +1409,7 @@ the form $$p(d) = a d_x + b d_y + c.$$ The kernel functions are provided
 by C++ classes subclassed from `nest::Parameter`. To enable subclassing,
 add the following lines at the top of the file `mymodule.h`:
 
-``` {.c++ language="C++"}
+``` {.c language="c"}
 #include "topologymodule.h"
 #include "parameter.h"
 ```
@@ -1417,7 +1417,7 @@ add the following lines at the top of the file `mymodule.h`:
 Then, add the class definition, e.g. near the bottom of the file before
 the brace closing the namespace `mynest`:
 
-``` {.c++ language="C++"}
+``` {.c language="c"}
   class Affine2DParameter: public nest::Parameter
   {
   public:
@@ -1466,7 +1466,7 @@ constructor to implement this.
 To make the custom function available to the Topology module, you need
 to register the class you have provided. To do this, add the line
 
-``` {.c++ language="C++"}
+``` {.c language="c"}
 nest::TopologyModule::register_parameter<Affine2DParameter>("affine2d");
 ```
 
@@ -1503,14 +1503,14 @@ different way than what we will do here though, so this can still be
 used as an introductory example. First, we must include another header
 file:
 
-``` {.c++ language="C++"}
+``` {.c language="c"}
 #include "mask.h"
 ```
 
 Compared to the `Parameter` class discussed in the previous section, the
 `Mask` class has a few more methods that must be overridden:
 
-``` {.c++ language="C++"}
+``` {.c language="c"}
   class EllipticMask : public nest::Mask<2>
   {
   public:
@@ -1570,7 +1570,7 @@ Similar to kernel functions, the mask class must be registered with the
 topology module, and this is done by adding a line to the function
 `MyModule::init()` in the file `mymodule.cpp`:
 
-``` {.c++ language="C++"}
+``` {.c language="c"}
     nest::TopologyModule::register_mask<EllipticMask>("elliptic");
 ```
 

@@ -101,7 +101,7 @@ rule md2pdf:
         pandoc -f {SRCFMT} -t latex \
                --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos \
                --number-sections \
-               --pdf-engine=xelatex \
+               --pdf-engine=$(command -v xelatex) \
                --filter pandoc-citeproc --csl nest_style.csl --bibliography {input.bib} \
                --listings --toc \
                '{input.file}' '{input.meta}' -o '{output}'

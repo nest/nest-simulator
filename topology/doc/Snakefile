@@ -1,54 +1,32 @@
 
 rule done:
+    '''
+    produce all output formats
+    '''
     input:
-        'Topology_UserManual.html',
-        'Topology_UserManual.pdf',
-        'Topology_UserManual.rst',
-        'README.md',
+        expand('rendered/Topology_UserManual.{fmt}', fmt='html pdf rst'.split()),
+        'rendered/README.md',
 
 SRCFMT = "markdown+yaml_metadata_block+smart+implicit_figures+implicit_header_references+simple_tables"
-
-rule tex2md:
-    '''
-    Convert the LaTeX document to a Markdown source file.
-
-    This rule is not needed anymore once the Markdown document becomes the
-    authoritaive source.
-    '''
-    input:
-        tex = 'Topology_UserManual.tex',
-    output:
-        original = 'Topology_UserManual-original.md',
-    shell:
-        '''
-        pandoc -f latex -t markdown --listings '{input.tex}' >'{output.original}'
-        '''
-
-rule patch_md:
-    '''
-    Some Information can not be extracted automatically or produces buggy
-    output. For this a patch file is applied. See `patch` rule!!!
-    '''
-    input:
-        patch = 'Topology_UserManual.md.patch',
-        original = 'Topology_UserManual-original.md',
-    output:
-        patched = 'Topology_UserManual-patched.md',
-    shell:
-        '''
-        cp -v {input.original} {output.patched}
-        patch -p0 <'{input.patch}'
-        '''
+BASEFILE = 'rendered/Topology_UserManual.md'
 
 rule expand_listings:
     '''
-    This rule fills all the missing code snippets that pandoc can not
-    automatically inject from the latex lstlistings commands.
+    This rule takes the Markdown source file and fills all the missing code
+    snippets.
+
+    The original latex sources used lstlistings commands that Markdown can not
+    emulate. Therefore, this step is necessary to avoid duplication and
+    subsequent disagreement when example scripts are modified.
+
+    In the markdown version you find lines with "MISSING CODE BLOCK", that
+    point at the right source snippet to insert and `insert.py` does exactly
+    that.
     '''
     input:
-        'Topology_UserManual-patched.md',
+        'source/Topology_UserManual.md',
     output:
-        'Topology_UserManual.md',
+        BASEFILE,
     shell:
         '''
         ./insert.py '{input}' >'{output}'
@@ -56,27 +34,31 @@ rule expand_listings:
 
 rule bib2yml:
     '''
-    This rule converts the bibtex bibliography to yaml
+    This rule converts the bibtex bibliography to yaml.
     '''
     input:
         '../../extras/bibliography/nest.bib',
     output:
-        'nest_bib.yaml',
+        temporary('nest_bib.yaml'),
     shell:
         '''
         pandoc-citeproc --bib2yaml '{input}' > '{output}'
         '''
 
 rule md2html:
+    '''
+    final conversion to HTML output format
+    '''
     input:
-        file = 'Topology_UserManual.md',
-        css = 'Topology_UserManual.css',
-        meta = 'metadata.yaml',
+        file = BASEFILE,
+        css = 'source/Topology_UserManual.css',
+        meta = 'source/metadata.yaml',
         bib ='nest_bib.yaml',
     output:
-        'Topology_UserManual.html'
+        'rendered/Topology_UserManual.html',
     shell:
         '''
+        cp -fv "{input.css}" "$(dirname {output})"
         pandoc -f {SRCFMT} -t html \
                --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos  \
                --number-sections \
@@ -84,18 +66,21 @@ rule md2html:
                --standalone \
                --toc \
                --mathml \
-               --css '{input.css}' \
+               --css "$(basename '{input.css}')" \
                '{input.file}' '{input.meta}' -o '{output}'
         '''
 
 rule md2pdf:
+    '''
+    final conversion to PDF output format
+    '''
     input:
-        file = 'Topology_UserManual.md',
-        css = 'Topology_UserManual.css',
-        meta = 'metadata.yaml',
+        file = BASEFILE,
+        css = 'source/Topology_UserManual.css',
+        meta = 'source/metadata.yaml',
         bib ='nest_bib.yaml',
     output:
-        'Topology_UserManual.pdf'
+        'rendered/Topology_UserManual.pdf'
     shell:
         '''
         pandoc -f {SRCFMT} -t latex \
@@ -108,12 +93,15 @@ rule md2pdf:
         '''
 
 rule md2rst:
+    '''
+    final conversion to RST output format
+    '''
     input:
-        file = 'Topology_UserManual.md',
-        meta = 'metadata.yaml',
+        file = BASEFILE,
+        meta = 'source/metadata.yaml',
         bib ='nest_bib.yaml',
     output:
-        'Topology_UserManual.rst',
+        'rendered/Topology_UserManual.rst',
     shell:
         '''
         pandoc -f {SRCFMT} -t rst \
@@ -125,12 +113,15 @@ rule md2rst:
 
 
 rule md2github:
+    '''
+    final conversion to GitHub-flavoured Markdown (GFM) output format
+    '''
     input:
-        file = 'Topology_UserManual.md',
-        meta = 'metadata.yaml',
+        file = BASEFILE,
+        meta = 'source/metadata.yaml',
         bib ='nest_bib.yaml',
     output:
-        'README.md',
+        'rendered/README.md',
     shell:
         '''
         pandoc -f {SRCFMT} -t gfm \
@@ -141,21 +132,3 @@ rule md2github:
                '{input.file}' '{input.meta}' -o '{output}'
         '''
 
-rule make_patch:
-    '''
-    Run this rule whenever you do manual changes to the intermediate Markdown
-    file!
-
-    When the Markdown file manually edited the changes will be lost upon next
-    convert from LaTeX sources. This rule saves the changes in a patch that is
-    automatically applied next time the tex2md rule is run.
-    '''
-    input:
-        old=ancient('Topology_UserManual-original.md'),
-        new=ancient('Topology_UserManual-patched.md'),
-    output:
-        'Topology_UserManual.md.patch'
-    shell:
-        '''
-        diff -u '{input.old}' '{input.new}' --label '{input.new}' --label '{input.new}'  >'{output}' || true
-        '''

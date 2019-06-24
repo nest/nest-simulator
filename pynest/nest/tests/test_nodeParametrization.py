@@ -324,7 +324,7 @@ class TestNodeParametrization(unittest.TestCase):
         p2 = nest.hl_api.CreateParameter('constant', {'value': 2.0})
         rule_specs = {
             'pairwise_bernoulli': [['p', p], ],
-            'fixed_outdegree': [['outdegree', p2],],
+            'fixed_outdegree': [['outdegree', p2], ],
             'fixed_indegree': [['indegree', p2], ]
         }
         for rule, specs_list in rule_specs.items():

@@ -94,7 +94,7 @@ class CreateLayer(unittest.TestCase):
         """Test Create free layer with nodeParams."""
         layer = nest.Create('iaf_psc_alpha', 33,
                             positions=nest.spatial.free(
-                                nest.random.lognormal(mean=1.,sigma=2.),
+                                nest.random.lognormal(mean=1., sigma=2.),
                                 num_dimensions=3),
                             params={'V_m': nest.random.uniform(),
                                     'C_m': 200.})

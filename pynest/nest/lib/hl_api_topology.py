@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# hl_api.py
+# hl_api_topology.py
 #
 # This file is part of NEST.
 #

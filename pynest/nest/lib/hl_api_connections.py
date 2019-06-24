@@ -217,12 +217,14 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
 
 def _process_spatial_projections(conn_spec, syn_spec):
     allowed_conn_spec_keys = ['mask',
-                              'multapses', 'autapses', 'rule', 'indegree', 'outdegree', 'p', 'use_on_source']
+                              'multapses', 'autapses', 'rule', 'indegree',
+                              'outdegree', 'p', 'use_on_source']
     allowed_syn_spec_keys = ['weight', 'delay']
     for key in conn_spec.keys():
         if key not in allowed_conn_spec_keys:
             raise ValueError(
-                "'{}' is not allowed in conn_spec when connecting with mask or kernel".format(key))
+                "'{}' is not allowed in conn_spec when".format(key) +
+                " connecting with mask or kernel")
 
     projections = {}
     for key in ['mask']:
@@ -239,7 +241,8 @@ def _process_spatial_projections(conn_spec, syn_spec):
         for key in syn_spec.keys():
             if key not in allowed_syn_spec_keys:
                 raise ValueError(
-                    "'{}' is not allowed in syn_spec when connecting with mask or kernel".format(key))
+                    "'{}' is not allowed in syn_spec when ".format(key) +
+                    "connecting with mask or kernel".format(key))
         # TODO: change topology names of weights, delays to be consistent
         if 'weight' in syn_spec:
             projections['weights'] = syn_spec['weight']
@@ -249,14 +252,16 @@ def _process_spatial_projections(conn_spec, syn_spec):
     if conn_spec['rule'] == 'fixed_indegree':
         if 'use_on_source' in conn_spec:
             raise ValueError(
-                "'use_on_source' can only be set when using pairwise_bernoulli")
+                "'use_on_source' can only be set when using " +
+                "pairwise_bernoulli")
         projections['connection_type'] = 'convergent'
         projections['number_of_connections'] = conn_spec['indegree']
 
     elif conn_spec['rule'] == 'fixed_outdegree':
         if 'use_on_source' in conn_spec:
             raise ValueError(
-                "'use_on_source' can only be set when using pairwise_bernoulli")
+                "'use_on_source' can only be set when using " +
+                "pairwise_bernoulli")
         projections['connection_type'] = 'divergent'
         projections['number_of_connections'] = conn_spec['outdegree']
 

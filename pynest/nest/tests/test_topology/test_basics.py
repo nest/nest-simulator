@@ -410,7 +410,8 @@ class BasicsTestCase(unittest.TestCase):
         positions = [(numpy.random.uniform(-0.5, 0.5),
                       numpy.random.uniform(-0.5, 0.5)) for _ in range(50)]
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.free(positions, edge_wrap=False))
+                        positions=nest.spatial.free(positions,
+                                                    edge_wrap=False))
         nest.ConnectLayers(l, l, cdict)
 
         p = nest.GetTargetPositions(l[:1], l)

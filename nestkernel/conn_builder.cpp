@@ -1217,7 +1217,8 @@ nest::FixedInDegreeBuilder::connect_()
           Node* const target =
             kernel().node_manager.get_node_or_proxy( tgid, tid );
 
-          const long indegree_value = std::round( indegree_->value( rng, target ) );
+          const long indegree_value =
+            std::round( indegree_->value( rng, target ) );
           if ( target->is_proxy() )
           {
             // skip array parameters handled in other virtual processes
@@ -1243,7 +1244,8 @@ nest::FixedInDegreeBuilder::connect_()
             continue;
           }
           auto source = n->get_node();
-          const long indegree_value = std::round( indegree_->value( rng, source ) );
+          const long indegree_value =
+            std::round( indegree_->value( rng, source ) );
 
           inner_connect_( tid, rng, source, tgid, false, indegree_value );
         }
@@ -1381,7 +1383,8 @@ nest::FixedOutDegreeBuilder::connect_()
     const long n_rnd = targets_->size();
 
     Node* source_node = kernel().node_manager.get_node_or_proxy( sgid );
-    const long outdegree_value = std::round( outdegree_->value( grng, source_node ) );
+    const long outdegree_value =
+      std::round( outdegree_->value( grng, source_node ) );
     for ( long j = 0; j < outdegree_value; ++j )
     {
       unsigned long t_id;

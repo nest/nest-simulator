@@ -34,6 +34,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup parrot
+
 Name: parrot_neuron - Neuron that repeats incoming spikes.
 
 Description:
@@ -67,6 +70,7 @@ Receives: SpikeEvent
 Sends: SpikeEvent
 
 Parameters:
+
 No parameters to be set in the status dictionary.
 
 Author: David Reichert, Abigail Morrison, Alexander Seeholzer, Hans Ekkehard

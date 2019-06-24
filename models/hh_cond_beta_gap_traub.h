@@ -60,6 +60,10 @@ namespace nest
 extern "C" int hh_cond_beta_gap_traub_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup hh
+@ingroup cond
+
 Name: hh_cond_beta_gap_traub - modified Hodgkin-Huxley neuron as featured in
 Brette et al (2007) review with added gap junction support and beta function
 synaptic conductance.
@@ -88,18 +92,18 @@ simulators covered is available from ModelDB [3].
 Note:
 In this model, a spike is emitted if
 
-         V_m >= V_T + 30 mV and V_m has fallen during the current time step
+@f[ V_m >= V_T + 30 mV and V_m has fallen during the current time step @f]
 
 To avoid that this leads to multiple spikes during the falling flank of a
 spike, it is essential to chose a sufficiently long refractory period.
-Traub and Miles used t_ref = 3 ms [2, p 118], while we used t_ref = 2 ms
-in [2].
+Traub and Miles used \f$ t_ref = 3 ms \f$ [2, p 118], while we used
+\f$ t_ref = 2 ms \f$ in [2].
 
 Post-synaptic currents
 Incoming spike events induce a post-synaptic change of conductance modelled by a
 beta function as outlined in [4,5]. The beta function is normalised such that an
-event of weight 1.0 results in a peak current of 1 nS at t = tau_rise_xx where
-xx is ex or in.
+event of weight 1.0 results in a peak current of 1 nS at \f$ t = tau_rise_xx \f$
+where xx is ex or in.
 
 Spike Detection
 Spike detection is done by a combined threshold-and-local-maximum search: if
@@ -107,45 +111,52 @@ there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
 
 Gap Junctions
-Gap Junctions are implemented by a gap current of the form g_ij( V_i - V_j).
+Gap Junctions are implemented by a gap current of the form
+\f$ g_ij( V_i - V_j) \f$.
 
 Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m          double - Membrane potential in mV
-V_T          double - Voltage offset that controls dynamics. For default
-                      parameters, V_T = -63mV results in a threshold around
-                      -50mV.
-E_L          double - Leak reversal potential in mV.
-C_m          double - Capacity of the membrane in pF.
-g_L          double - Leak conductance in nS.
-tau_rise_ex  double - Excitatory synaptic beta function rise time in ms.
-tau_decay_ex double - Excitatory synaptic beta function decay time in ms.
-tau_rise_in  double - Inhibitory synaptic beta function rise time in ms.
-tau_decay_in double - Inhibitory synaptic beta function decay time in ms.
-t_ref        double - Duration of refractory period in ms (see Note).
-E_ex         double - Excitatory synaptic reversal potential in mV.
-E_in         double - Inhibitory synaptic reversal potential in mV.
-E_Na         double - Sodium reversal potential in mV.
-g_Na         double - Sodium peak conductance in nS.
-E_K          double - Potassium reversal potential in mV.
-g_K          double - Potassium peak conductance in nS.
-I_e          double - External input current in pA.
+\verbatim embed:rst
+============ ======  =======================================================
+V_m          mV      Membrane potential
+V_T          mV      Voltage offset that controls dynamics. For default
+                     parameters, V_T = -63mV results in a threshold around
+                     -50mV
+E_L          mV      Leak reversal potential
+C_m          pF      Capacity of the membrane
+g_L          nS      Leak conductance
+tau_rise_ex  ms      Excitatory synaptic beta function rise time
+tau_decay_ex ms      Excitatory synaptic beta function decay time
+tau_rise_in  ms      Inhibitory synaptic beta function rise time
+tau_decay_in ms      Inhibitory synaptic beta function decay time
+t_ref        ms      Duration of refractory period (see Note)
+E_ex         mV      Excitatory synaptic reversal potential
+E_in         mV      Inhibitory synaptic reversal potential
+E_Na         mV      Sodium reversal potential
+g_Na         nS      Sodium peak conductance
+E_K          mV      Potassium reversal potential
+g_K          nS      Potassium peak conductance
+I_e          pA      External input current
+============ ======  =======================================================
+\endverbatim
 
 References:
-
-[1] Brette R et al (2007) Simulation of networks of spiking neurons: A review
-    of tools and strategies. J Comp Neurosci 23:349-98.
-    doi 10.1007/s10827-007-0038-6
-[2] Traub RD and Miles R (1991) Neuronal Networks of the Hippocampus.
-    Cambridge University Press, Cambridge UK.
-[3] http://modeldb.yale.edu/83319
-[4] Rotter & Diesmann, Biol Cybern 81:381 (1999)
-[5] Roth and van Rossum,
-    Ch 6, in De Schutter, Computational Modeling Methods for Neuroscientists,
-    MIT Press, 2010.
-
+\verbatim embed:rst
+.. [1] Brette R et al (2007). Simulation of networks of spiking neurons: A
+       review of tools and strategies. Journal of Computational Neuroscience
+       23:349-98. DOI: https://doi.org/10.1007/s10827-007-0038-6
+.. [2] Traub RD and Miles R (1991). Neuronal Networks of the Hippocampus.
+       Cambridge University Press, Cambridge UK.
+.. [3] http://modeldb.yale.edu/83319
+.. [4] Rotter S and Diesmann M (1999). Exact digital simulation of
+       time-invariant linear systems with applications to neuronal modeling.
+       Biological Cybernetics 81:381 DOI: https://doi.org/10.1007/s004220050570
+.. [5] Roth A and van Rossum M (2010). Chapter 6: Modeling synapses.
+       in De Schutter, Computational Modeling Methods for Neuroscientists,
+       MIT Press.
+\endverbatim
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest

@@ -78,7 +78,7 @@ __all__ = [
     'PrintNetwork',  # deprecated
     'Rank',
     'ResetKernel',
-    'ResetNetwork',
+    'ResetNetwork',  # deprecated
     'Run',
     'RunManager',
     'SetAcceptableLatency',

@@ -57,6 +57,10 @@ namespace nest
 extern "C" int iaf_cond_exp_sfa_rr_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+@ingroup cond
+
 Name: iaf_cond_exp_sfa_rr - Simple conductance based leaky integrate-and-fire
                             neuron model.
 
@@ -81,30 +85,32 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m        double - Membrane potential in mV
-E_L        double - Leak reversal potential in mV.
-C_m        double - Capacity of the membrane in pF
-t_ref      double - Duration of refractory period in ms.
-V_th       double - Spike threshold in mV.
-V_reset    double - Reset potential of the membrane in mV.
-E_ex       double - Excitatory reversal potential in mV.
-E_in       double - Inhibitory reversal potential in mV.
-g_L        double - Leak conductance in nS;
-tau_syn_ex double - Time constant of the excitatory synaptic exponential
-                    function in ms.
-tau_syn_in double - Time constant of the inhibitory synaptic exponential
-                    function in ms.
-q_sfa      double - Outgoing spike activated quantal spike-frequency adaptation
-                    conductance increase in nS.
-q_rr       double - Outgoing spike activated quantal relative refractory
-                    conductance increase in nS.
-tau_sfa    double - Time constant of spike-frequency adaptation in ms.
-tau_rr     double - Time constant of the relative refractory mechanism in ms.
-E_sfa      double - spike-frequency adaptation conductance reversal potential in
-                    mV.
-E_rr       double - relative refractory mechanism conductance reversal potential
-                    in mV.
-I_e        double - an external stimulus current in pA.
+\verbatim embed:rst
+=========== ======  ===========================================================
+ V_m        mV      Membrane potential
+ E_L        mV      Leak reversal potential
+ C_m        pF      Capacity of the membrane
+ t_ref      ms      Duration of refractory period
+ V_th       mV      Spike threshold
+ V_reset    mV      Reset potential of the membrane
+ E_ex       mV      Excitatory reversal potential
+ E_in       mV      Inhibitory reversal potential
+ g_L        nS      Leak conductance
+ tau_syn_ex ms      Rise time of the excitatory synaptic alpha function
+ tau_syn_in ms      Rise time of the inhibitory synaptic alpha function
+ q_sfa      nS      Outgoing spike activated quantal spike-frequency adaptation
+                    conductance increase in nS
+ q_rr       nS      Outgoing spike activated quantal relative refractory
+                    conductance increase in nS
+ tau_sfa    ms      Time constant of spike-frequency adaptation in ms
+ tau_rr     ms      Time constant of the relative refractory mechanism in ms
+ E_sfa      mV      Spike-frequency adaptation conductance reversal potential
+                    in mV
+ E_rr       mV      Relative refractory mechanism conductance reversal
+                    potential in mV
+ I_e        pA      Constant input current
+=========== ======  ===========================================================
+\endverbatim
 
 Sends: SpikeEvent
 
@@ -113,11 +119,17 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 References:
 
-Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
-model for the large, fluctuating synaptic conductance state typical of
-neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
-
-Dayan, P. and Abbott, L. F. (2001). Theoretical Neuroscience, MIT Press (p166)
+\verbatim embed:rst
+.. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
+       model for the large, fluctuating synaptic conductance state typical of
+       neocortical neurons in vivo. Journal of Computational Neuroscience,
+       16:159-175.
+       DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
+.. [2] Dayan P, Abbott LF (2001). Theoretical neuroscience: Computational and
+       mathematical modeling of neural systems. Cambridge, MA: MIT Press.
+       https://pure.mpg.de/pubman/faces/ViewItemOverviewPage.jsp?itemId=
+                                                            item_3006127
+\endverbatim
 
 Author: Sven Schrader, Eilif Muller
 

@@ -31,6 +31,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup static
+
 Name: static_synapse_hom_w - Synapse type for static connections with
 homogeneous weight.
 
@@ -49,13 +52,6 @@ CopyModel, each derived model can have a different weight.
 Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
 DataLoggingRequest, DoubleDataEvent
 
-Parameters:
-
-No Parameters
-
-References:
-
-No References
 
 FirstVersion: April 2008
 

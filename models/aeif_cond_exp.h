@@ -69,6 +69,11 @@ extern "C" int aeif_cond_exp_dynamics( double, const double*, double*, void* );
 extern "C" int aeif_cond_exp_dynamics_DT0( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+@ingroup aeif
+@ingroup cond
+
 Name: aeif_cond_exp - Conductance based exponential integrate-and-fire neuron
                       model according to Brette and Gerstner (2005).
 
@@ -82,55 +87,72 @@ This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
 solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
-C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e)
-                                                     -g_i(t)(V-E_i)-w +I_e
+@f[ C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
+                                                     -g_i(t)(V-E_i)-w +I_e @f]
 
 and
 
-tau_w * dw/dt= a(V-E_L) -W
-
+@f[ \tau_w * dw/dt= a(V-E_L) -W @f]
 
 Note that the spike detection threshold V_peak is automatically set to
-V_th+10 mV to avoid numerical instabilites that may result from
+\f$ V_th+10 mV \f$ to avoid numerical instabilites that may result from
 setting V_peak too high.
 
 Parameters:
 The following parameters can be set in the status dictionary.
 
-Dynamic state variables:
-  V_m        double - Membrane potential in mV
-  g_ex       double - Excitatory synaptic conductance in nS.
-  g_in       double - Inhibitory synaptic conductance in nS.
-  w          double - Spike-adaptation current in pA.
+\verbatim embed:rst
 
-Membrane Parameters:
-  C_m        double - Capacity of the membrane in pF
-  t_ref      double - Duration of refractory period in ms.
-  V_reset    double - Reset value for V_m after a spike. In mV.
-  E_L        double - Leak reversal potential in mV.
-  g_L        double - Leak conductance in nS.
-  I_e        double - Constant external input current in pA.
+======== ======= =======================================
+**Dynamic state variables:**
+--------------------------------------------------------
+ V_m     mV      Membrane potential
+ g_ex    nS      Excitatory synaptic conductance
+ g_in    nS      Inhibitory synaptic conductance
+ w       pA      Spike-adaptation current
+======== ======= =======================================
 
-Spike adaptation parameters:
-  a          double - Subthreshold adaptation in nS.
-  b          double - Spike-triggered adaptation in pA.
-  Delta_T    double - Slope factor in mV
-  tau_w      double - Adaptation time constant in ms
-  V_t        double - Spike initiation threshold in mV
-  V_peak     double - Spike detection threshold in mV.
+======== ======= =======================================
+**Membrane Parameters**
+--------------------------------------------------------
+ C_m     pF      Capacity of the membrane
+ t_ref   ms      Duration of refractory period
+ V_reset mV      Reset value for V_m after a spike
+ E_L     mV      Leak reversal potential
+ g_L     nS      Leak conductance
+ I_e     pA      Constant external input current
+======== ======= =======================================
 
-Synaptic parameters
-  E_ex       double - Excitatory reversal potential in mV.
-  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (exp
-                      function).
-  E_in       double - Inhibitory reversal potential in mV.
-  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms
-                      (exp function).
+======== ======= ==================================
+**Spike adaptation parameters**
+---------------------------------------------------
+ a       nS      Subthreshold adaptation
+ b       pA      Spike-triggered adaptation
+ Delta_T mV      Slope factor
+ tau_w   ms      Adaptation time constant
+ V_th    mV      Spike initiation threshold
+ V_peak  mV      Spike detection threshold
+======== ======= ==================================
 
-Integration parameters
-  gsl_error_tol  double - This parameter controls the admissible error of the
-                          GSL integrator. Reduce it if NEST complains about
-                          numerical instabilities.
+=========== ======= ===========================================================
+**Synaptic parameters**
+-------------------------------------------------------------------------------
+ E_ex       mV      Excitatory reversal potential
+ tau_syn_ex ms      Rise time of excitatory synaptic conductance (alpha
+                    function)
+ E_in       mV      Inhibitory reversal potential
+ tau_syn_in ms      Rise time of the inhibitory synaptic conductance
+                    (alpha function)
+=========== ======= ===========================================================
+
+============= ======= =========================================================
+**Integration parameters**
+-------------------------------------------------------------------------------
+gsl_error_tol real    This parameter controls the admissible error of the
+                      GSL integrator. Reduce it if NEST complains about
+                      numerical instabilities.
+============= ======= =========================================================
+\endverbatim
 
 Author: Adapted from aeif_cond_alpha by Lyle Muller; full revision by Tanguy
 Fardet on December 2016
@@ -139,9 +161,12 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-References: Brette R and Gerstner W (2005) Adaptive Exponential
-            Integrate-and-Fire Model as an Effective Description of
-            Neuronal Activity. J Neurophysiol 94:3637-3642
+\verbatim embed:rst
+.. [1] Brette R and Gerstner W (2005). Adaptive Exponential
+       Integrate-and-Fire Model as an Effective Description of Neuronal
+       Activity. J Neurophysiol 94:3637-3642.
+       DOI: https://doi.org/10.1152/jn.00686.2005
+\endverbatim
 
 SeeAlso: iaf_cond_exp, aeif_cond_alpha
 */

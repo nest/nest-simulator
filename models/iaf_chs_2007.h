@@ -39,6 +39,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+
 Name: iaf_chs_2007 - Spike-response model used in Carandini et al 2007.
 
 Description:
@@ -71,20 +74,28 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-tau_epsp       double - Membrane time constant in ms.
-tau_reset      double - Refractory time constant in ms.
-U_epsp         double - Maximum amplitude of the EPSP. Normalized.
-U_reset        double - Reset value of the membrane potential. Normalized.
-U_noise        double - Noise scale. Normalized.
-noise   vector<double>- Noise signal.
+\verbatim embed:rst
+========== ============== ==================================================
+ tau_epsp  ms             Membrane time constant
+ tau_reset ms             Refractory time constant
+ U_epsp    real           Maximum amplitude of the EPSP, normalized
+ U_reset   real           Reset value of the membrane potential, normalized
+ U_noise   real           Noise scale, normalized
+ noise     list of real   Noise signal
+========== ============== ==================================================
+\endverbatim
 
 References:
 
-[1] Carandini M, Horton JC, Sincich LC (2007) Thalamic filtering of retinal
-spike trains by postsynaptic summation. J Vis 7(14):20,1-11.
-[2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-systems with applications to neuronal modeling. Biologial Cybernetics
-81:381-402.
+\verbatim embed:rst
+.. [1] Carandini M, Horton JC, Sincich LC (2007). Thalamic filtering of retinal
+       spike trains by postsynaptic summation. Journal of Vision 7(14):20,1-11.
+       DOI: https://doi.org/10.1167/7.14.20
+.. [2] Rotter S,  Diesmann M (1999). Exact simulation of time-invariant linear
+       systems with applications to neuronal modeling. Biologial Cybernetics
+       81:381-402.
+       DOI: https://doi.org/10.1007/s004220050570
+\endverbatim
 
 Sends: SpikeEvent
 

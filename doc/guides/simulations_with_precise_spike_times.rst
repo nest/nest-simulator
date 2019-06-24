@@ -67,12 +67,12 @@ grid-constrained counterpart ``poisson_generator``.
 grid-constrained counterpart ``parrot_neuron`` but it is able to
 represent precise spike times.
 
-``iaf_psc_delta_canon`` is an integrate-and-fire neuron model with
+``iaf_psc_delta_ps`` is an integrate-and-fire neuron model with
 delta-shaped post-synaptic currents that employs precise spike times;
 its grid-constrained counterpart is ``iaf_psc_delta``. In this model the
 precise location of an outgoing spike is determined analytically.
 
-``iaf_psc_alpha_canon`` and ``iaf_psc_alpha_presc`` are
+``iaf_psc_alpha_ps`` and ``iaf_psc_alpha_presc`` are
 integrate-and-fire neuron models with alpha-shaped post-synaptic
 currents that employ precise spike times; their grid-constrained
 counterpart is ``iaf_psc_alpha``. The neuron models have been developed

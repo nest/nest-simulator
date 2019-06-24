@@ -426,7 +426,7 @@ TEST_FAILED=0
 TIME_TOTAL=0
 TIME_ELAPSED=0
 
-echo >  "${TEST_LOGFILE}" "NEST v. @NEST_VERSION_VERSION@ testsuite log"
+echo >  "${TEST_LOGFILE}" "NEST v. @NEST_VERSION_STRING@ testsuite log"
 echo >> "${TEST_LOGFILE}" "======================"
 echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
 

@@ -344,11 +344,8 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
     S_.i_syn_ex_ += V_.weighted_spikes_ex_;
     S_.i_syn_in_ += V_.weighted_spikes_in_;
 
-    if ( ( P_.delta_ < 1e-10
-           and S_.V_m_ >= P_.Theta_ ) // deterministic threshold crossing
-      or ( P_.delta_ > 1e-10
-           and V_.rng_->drand() < phi_() * h
-               * 1e-3 ) ) // stochastic threshold crossing
+    if ( ( P_.delta_ < 1e-10 and S_.V_m_ >= P_.Theta_ )                   // deterministic threshold crossing
+      or ( P_.delta_ > 1e-10 and V_.rng_->drand() < phi_() * h * 1e-3 ) ) // stochastic threshold crossing
     {
       S_.r_ref_ = V_.RefractoryCounts_;
       S_.V_m_ = P_.V_reset_;

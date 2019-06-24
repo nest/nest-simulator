@@ -376,8 +376,7 @@ nest::iaf_cond_beta::get_normalisation_factor( double tau_rise, double tau_decay
   if ( std::abs( denom1 ) > std::numeric_limits< double >::epsilon() )
   {
     // peak time
-    const double t_p =
-      tau_decay * tau_rise * std::log( tau_decay / tau_rise ) / denom1;
+    const double t_p = tau_decay * tau_rise * std::log( tau_decay / tau_rise ) / denom1;
     // another denominator is computed here to check that it is != 0
     denom2 = std::exp( -t_p / tau_decay ) - std::exp( -t_p / tau_rise );
   }

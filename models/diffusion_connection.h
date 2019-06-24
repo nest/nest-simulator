@@ -69,7 +69,7 @@ References:
        Bolten M, Helias M, Diesmann, M. (2017).
        Integration of continuous-time dynamics in a
        spiking neural network simulator.
-       Frontiers in Neuroinformatics, 11:34. 
+       Frontiers in Neuroinformatics, 11:34.
        DOI: https://doi.org/10.3389/fninf.2017.00034
 \endverbatim
 

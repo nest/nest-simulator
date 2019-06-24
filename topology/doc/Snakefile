@@ -7,8 +7,9 @@ rule done:
         expand('rendered/Topology_UserManual.{fmt}', fmt='html pdf rst'.split()),
         'rendered/README.md',
 
-SRCFMT = "markdown+yaml_metadata_block+smart+implicit_figures+implicit_header_references+simple_tables"
-BASEFILE = 'rendered/Topology_UserManual.md'
+#SRCFMT = "markdown+yaml_metadata_block+smart+implicit_figures+implicit_header_references+simple_tables"
+SRCFMT = "rst"
+BASEFILE = 'rendered/Topology_UserManual.rst'
 
 rule expand_listings:
     '''
@@ -32,6 +33,18 @@ rule expand_listings:
         ./insert.py '{input}' >'{output}'
         '''
 
+rule copyRST:
+    input:
+        'source/Topology_UserManual.rst',
+    output:
+        BASEFILE,
+    shell:
+        '''
+        cp {input} {output}
+        '''
+
+ruleorder: copyRST > expand_listings
+
 rule bib2yml:
     '''
     This rule converts the bibtex bibliography to yaml.
@@ -52,6 +65,7 @@ rule md2html:
     input:
         file = BASEFILE,
         css = 'source/Topology_UserManual.css',
+        csl = 'source/nest_style.csl',
         meta = 'source/metadata.yaml',
         bib ='nest_bib.yaml',
     output:
@@ -62,10 +76,10 @@ rule md2html:
         pandoc -f {SRCFMT} -t html \
                --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos  \
                --number-sections \
-               --filter pandoc-citeproc --csl nest_style.csl --bibliography {input.bib} \
+               --filter pandoc-citeproc --csl {input.csl} --bibliography {input.bib} \
                --standalone \
                --toc \
-               --mathml \
+               --mathjax \
                --css "$(basename '{input.css}')" \
                '{input.file}' '{input.meta}' -o '{output}'
         '''
@@ -77,6 +91,7 @@ rule md2pdf:
     input:
         file = BASEFILE,
         css = 'source/Topology_UserManual.css',
+        csl = 'source/nest_style.csl',
         meta = 'source/metadata.yaml',
         bib ='nest_bib.yaml',
     output:
@@ -87,7 +102,7 @@ rule md2pdf:
                --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos \
                --number-sections \
                --pdf-engine=$(command -v xelatex) \
-               --filter pandoc-citeproc --csl nest_style.csl --bibliography {input.bib} \
+               --filter pandoc-citeproc --csl {input.csl} --bibliography {input.bib} \
                --listings --toc \
                '{input.file}' '{input.meta}' -o '{output}'
         '''
@@ -99,6 +114,7 @@ rule md2rst:
     input:
         file = BASEFILE,
         meta = 'source/metadata.yaml',
+        csl = 'source/nest_style.csl',
         bib ='nest_bib.yaml',
     output:
         'rendered/Topology_UserManual.rst',
@@ -106,11 +122,10 @@ rule md2rst:
         '''
         pandoc -f {SRCFMT} -t rst \
                --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos \
-               --filter pandoc-citeproc --csl nest_style.csl --bibliography {input.bib} \
+               --filter pandoc-citeproc --csl {input.csl} --bibliography {input.bib} \
                --toc \
                '{input.file}' '{input.meta}' -o '{output}'
         '''
-
 
 rule md2github:
     '''
@@ -119,6 +134,7 @@ rule md2github:
     input:
         file = BASEFILE,
         meta = 'source/metadata.yaml',
+        csl = 'source/nest_style.csl',
         bib ='nest_bib.yaml',
     output:
         'rendered/README.md',
@@ -127,7 +143,7 @@ rule md2github:
         pandoc -f {SRCFMT} -t gfm \
                --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos \
                --number-sections \
-               --filter pandoc-citeproc --csl nest_style.csl --bibliography {input.bib}\
+               --filter pandoc-citeproc --csl {input.csl} --bibliography {input.bib}\
                --listings --toc \
                '{input.file}' '{input.meta}' -o '{output}'
         '''

@@ -323,7 +323,7 @@ code small and localized. Example:
 
 #### Files
 
-Files are named in `lower_case_under_lined` notation. C/C++ Header files have
+Files are named in `lower_case_under_lined` notation. C/C++ header files have
 the extension `.h`. C implementation files have the extension `.c`. C++
 implementation files have the extension `.cpp`. The use of `.cc` is deprecated
 and is only left for compatibility.
@@ -331,7 +331,7 @@ and is only left for compatibility.
 All files in NEST start with a preamble, which contains the filename and the
 NEST copyright text (see example below).
 
-Lines should not exceed 100 characters (clang-format). Files should not be to
+Lines should not exceed 120 characters (clang-format). Files should not be too
 long (max. 2000 lines) (vera++:L006). No trailing whitespace (clang-format).
 
 #### Folders

@@ -323,11 +323,11 @@ interest:
     the layer properties (`l` is the layer created above):
 
 ```
-     MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer1s-end
+    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer1s-end
 ```
 
 ```
-     MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.log lines layer1s.log-end.log
+    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.log lines layer1s.log-end.log
 ```
 
     The `'topology'` entry is read-only.
@@ -337,11 +337,11 @@ interest:
     network with a Topology layer:
 
 ```
-     MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer1p-end
+    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer1p-end
 ```
 
 ```
-     MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.log lines layer1p.log-end.log
+    MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.log lines layer1p.log-end.log
 ```
 
     The $5\times 5$ layer created above appears here as a
@@ -365,11 +365,11 @@ following code creates a $1\times 2$ layer (to keep the output from
 `'iaf_cond_alpha'` and one `'poisson_generator'` node
 
 ```
- MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer6-end
+MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer6-end
 ```
 
 ```
- MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.log lines layer6-end
+MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.log lines layer6-end
 ```
 
 The network consist of one `topology_layer_grid` with four elements: two
@@ -382,11 +382,11 @@ You can create network elements with several nodes of each type by
 following a model name with the number of nodes to be created:
 
 ```
- MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer7-end
+MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.py lines layer7-end
 ```
 
 ```
- MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.log lines layer7-end
+MISSING SCRIPT CODE HERE! file: user_manual_scripts/layers.log lines layer7-end
 ```
 
 In this case, each layer element consists of 10 `iaf_cond_alpha`
@@ -709,19 +709,19 @@ examples (cf. Fig. {@fig:conn2_b}).
 
 
 ```
- MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2ro-end
+MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2ro-end
 ```
 
 ```
- MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2co-end
+MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2co-end
 ```
 
 ```
- MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2do-end
+MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2do-end
 ```
 
 ```
- MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2eo-end
+MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2eo-end
 ```
 
 
@@ -736,11 +736,11 @@ the specific mask dictionary. The `azimuth_angle` is measured in degrees
 and is the rotational angle from the x-axis to the y-axis.
 
 ```
- MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2rr-end
+MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2rr-end
 ```
 
 ```
- MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2er-end
+MISSING SCRIPT CODE HERE! file: user_manual_scripts/connections.py lines conn2er-end
 ```
 
 ![Rotated rectangle and elliptical mask from

@@ -9,9 +9,9 @@ Most functions now take `GIDCollection` instead of lists, but, seeing as `Create
 Functions that you have to be careful about:
 
 - `nest.GetConnections()` returns a `Connectome` object
-
-- `tp.GetPosition` -> no longer take list of GIDs
-- `tp.FindCenterElement` -> now returns `int` instead of `tuple`
+- All topology functions are now part of `nest` and not `nest.topology`
+- `nest.GetPosition` -> no longer take list of GIDs
+- `nest.FindCenterElement` -> now returns `int` instead of `tuple`
 
 ### Nodes
 
@@ -25,26 +25,26 @@ Functions that you have to be careful about:
 | NEST 2.x                                                     | NEST 3.0                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `nest.GetConnections(list=None, list=None, synapse_model=None, synapse_label=None)`  <br /><br />returns `numpy.array` | `nest.GetConnections(nest.GIDCollection=None, nest.GIDCollection=None,synapse_model=None, synapse_label=None)` <br /><br />returns `nest.Connectome` |
-| `nest.Connect(list, list, conn_spec=None, syn_spec=None, model=None)` | `nest.Connect(nest.GIDCollection, nest.GIDCollection, conn_spec=None, syn_spec=None, model=None)` |
-| `nest.DataConnect(pre, params=None, model="static_synapse")` | `nest.DataConnect(list, params=None, model="static_synapse")` <br /><br /> NB! Will be removed. |
+| `nest.Connect(list, list, conn_spec=None, syn_spec=None, model=None)` | `nest.Connect(nest.GIDCollection, nest.GIDCollection, conn_spec=None, syn_spec=None, return_connectome=False)` <br /><br />In `syn_spec` the synapse model is given by `synapse_model`, not `model`. |
+| `nest.DataConnect(pre, params=None, model="static_synapse")` |                                                              |
 | `nest.CGConnect(list, list, cg, parameter_map=None, model="static_synapse")` | `nest.CGConnect(nest.GIDCollection, nest.GIDCollection, cg, parameter_map=None, model="static_synapse")` |
 | `nest.DisconnectOneToOne(int, int, syn_spec)`                |                                                              |
 | `nest.Disconnect(list, list, conn_spec='one_to_one', syn_spec='static_synapse')` | `nest.Disconnect(nest.GIDCollection, nest.GIDCollection, conn_spec='one_to_one', syn_spec='static_synapse')` |
 
 ### Subnets
 
-| NEST 2.x                                                     | NEST 3.0                                     |
-| ------------------------------------------------------------ | -------------------------------------------- |
-| `nest.PrintNetwork(depth=1, subnet=None)`                    | `nest.PrintNodes()`                          |
-| `nest.CurrentSubnet()`                                       |                                              |
-| `nest.ChangeSubnet(subnet)`                                  |                                              |
-| `nest.GetLeaves(subnet, properties=None, local_only=False)`  | `nest.GIDCollection` will contain all nodes  |
-| `nest.GetNodes(subnets, properties=None, local_only=False)`  | `nest.GIDCollection` will contain all nodes. |
-| `nest.GetChildren(subnets, properties=None, local_only=False)` | `nest.GIDColleciton` will contain all nodes. |
-| `nest.GetNetwork(gid, depth)`                                |                                              |
-| `nest.BeginSubnet(label=None, params=None)`                  |                                              |
-| `nest.EndSubnet()`                                           |                                              |
-| `nest.LayoutNetwork(model, dim, label=None, params=None)`    | Use `nest.Create(model, n=1, params=None)`   |
+| NEST 2.x                                                     | NEST 3.0                                                   |
+| ------------------------------------------------------------ | ---------------------------------------------------------- |
+| `nest.PrintNetwork(depth=1, subnet=None)`                    | `nest.PrintNodes()`                                        |
+| `nest.CurrentSubnet()`                                       |                                                            |
+| `nest.ChangeSubnet(subnet)`                                  |                                                            |
+| `nest.GetLeaves(subnet, properties=None, local_only=False)`  | `nest.GIDCollection` will contain all nodes                |
+| `nest.GetNodes(subnets, properties=None, local_only=False)`  | `nest.GIDCollection` will contain all nodes.               |
+| `nest.GetChildren(subnets, properties=None, local_only=False)` | `nest.GIDColleciton` will contain all nodes.               |
+| `nest.GetNetwork(gid, depth)`                                |                                                            |
+| `nest.BeginSubnet(label=None, params=None)`                  |                                                            |
+| `nest.EndSubnet()`                                           |                                                            |
+| `nest.LayoutNetwork(model, dim, label=None, params=None)`    | Use `nest.Create(model, n=1, params=None, positions=None)` |
 
 ### Info
 
@@ -52,6 +52,29 @@ Functions that you have to be careful about:
 | ---------------------------------------------- | ------------------------------------------------------------ |
 | `nest.SetStatus(list/tuple, params, val=None)` | `nest.SetStatus(nest.GIDCollection, params, val=None)`<br /><br />Can also use `nodes.set(params)` or `conns.set(params)` |
 | `nest.GetStatus(list/tuple, keys=None)`        | `nest.GetStatus(nest.GIDCollection, keys=None)`<br /><br />Can also use `nodes.get(keys=None)` or `conns.get(keys=None)` |
+
+### Topology
+
+| NEST 2.x                                                     | NEST 3.0                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `tp.CreateLayer(specs)`<br /><br />returns `tuple of int(s)`<br /><br /> | `nest.Create(model, params=None, positions=nest.spatial.free/grid)`<br /><br />returns `nest.GIDCollection`<br /><br />NB! Composite layers no longer possible. |
+| `tp.ConnectLayers(list, list, projections)`                  | `nest.Connect(nest.GIDCollection, nest.GIDCollection, conn_spec=None, syn_spec=None, return_connectome=False)` |
+|                                                              | `layer_GIDCollection.spatial`                                |
+| `tp.GetLayer(nodes)`<br /><br />returns `tuple`              |                                                              |
+| `tp.GetElement(layers, location)`<br /><br />returns `tuple` |                                                              |
+| `tp.GetPosition(tuple)`<br /><br />returns `tuple of tuple(s)` | `nest.GetPosition(nest.GIDCollection)`<br /><br />returns `tuple` or `tuple of tuple(s)` |
+| `tp.Displacement(from_arg, to_arg)`<br /><br />`from_arg`: `tuple/list of int(s) / tuple/list of tuples/lists of floats]`<br /><br />`to_arg`: `tuple/list of int(s)`<br /><br />returns `tuple` | `nest.Displacement(from_arg, to_arg)`<br /><br />`from_arg`:  `nest.GIDCollection or tuple/list with tuple(s)/list(s) of floats`<br /><br />`to_arg`: `nest.GIDCollection`<br /><br />returns `tuple` |
+| `tp.Distance(from_arg, to_arg)`<br /><br />`from_arg`: `[tuple/list of ints / tuple/list with tuples/lists of floats]`<br /><br />`to:arg`: `tuple/list of ints`<br /><br />returns `tuple` | `nest.Distance(from_arg, to_arg)`<br /><br />`from_arg`: `nest.GIDCollection or tuple/list with tuple(s)/list(s) of floats`<br /><br />`to_arg`: `nest.GIDCollection`<br /><br />returns `tuple` |
+| `tp.FindNearestElement(tuple/list, locations, find_all=True)`<br /><br />returns `tuple` | `nest.FindNearestElement(nest.GIDCollection, locations, find_all=True)`<br /><br />returns `tuple` |
+| `tp.DumpLayerNodes(tuple, outname)`                          | `nest.DumpLayerNodes(nest.GIDCollection, outname)`           |
+| `tp.DumpLayerConnections(tuple, synapse_model, outname)`     | `nest.DumpLayerConnections(nest.GIDCollection, nest.GIDCollection, synapse_model, outname)` |
+| `tp.FindCenterElement(tuple)`<br /><br />returns `tuple`     | `nest.FindCenterElement(nest.GIDCollection)`<br /><br />returns `int` |
+| `tp.GetTargetNodes(tuple, tuple, tgt_model=None, syn_model=None)`<br /><br />returns `tuple of list(s) of int(s)` | `nest.GetTargetNodes(tuple, nest.GIDCollection, syn_model=None)`<br /><br />returns `tuple of list(s) of int(s)` |
+| `tp.GetTargetPositions(tuple, tuple, tgt_model=None, syn_model=None)`<br /><br />returns `tuple of tuple(s) of tuple(s) of floats` | `nest.GetTargetPositions(nest.GIDCollection, nest.GIDCollection, syn_model=None)`<br /><br />returns `list of list(s) of tuple(s) of floats` |
+| `tp.SelectNodesByMask(tuple, anchor, mask_obj)`<br /><br />returns `list` | `nest.SelectNodesByMaks(nest.GIDCollection, anchor, mask_obj)`<br /><br />returns `list` |
+| `tp.PlotLayer(tuple, fig=None, nodecolor='b', nodesize=20)`<br /><br />returns `matplotlib.figure.Figure` object | `nest.PlotLayer(nest.GIDCollection, fig=None, nodecolor='b', nodesize=20)`<br /><br />returns`matplotlib.figure.Figure` object |
+| `tp.PlotTargets(int, tuple, tgt_model=None, syn_type=None, fig=None, mask=None, kernel=None, src_color='red', src_size=50, tgt_color='blue', tgt_size=20, mask_color='red', kernel_color='red')`<br /><br />returns `matplotlib.figure.Figure` object | `nest.PlotTargets(nest.GIDCollection, nest.GIDCollection, syn_type=None, fig=None, mask=None, kernel=None, src_color='red', src_size=50, tgt_color='blue', tgt_size=20, mask_color='red', kernel_color='red')`<br /><br />returns `matplotlib.figure.Figure` object |
+| `tp.PlotKernel(ax, int, mask, kern=None, mask_color='red', kernel_color='red')` | `nest.PlotKernel(ax, nest.GIDCollection, mask, kern=None, mask_color='red', kernel_color='red')` |
 
 ### Types
 
@@ -70,31 +93,59 @@ No Change
 
 No Change
 
-### Parallell Computing
+### Parallel Computing
 
 No Change
 
-### Topology
+### Parameters
 
-| NEST 2.x                                                     | NEST 3.0                                                     |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `tp.CreateLayer(specs)`<br /><br />returns `tuple of int(s)`<br /><br /> | `tp.CreateLayer(specs)`<br /><br />returns `nest.GIDCollection`<br /><br />NB! Composite layers no longer possible. |
-| `tp.ConnectLayers(list, list, projections)`                  | `tp.ConnectLayers(nest.GIDCollection, nest.GIDCollection, projections)` |
-| `tp.GetLayer(nodes)`<br /><br />returns `tuple`              |                                                              |
-| `tp.GetElement(layers, location)`<br /><br />returns `tuple` |                                                              |
-| `tp.GetPosition(tuple)`<br /><br />returns `tuple of tuple(s)` | `tp.GetPosition(nest.GIDCollection)`<br /><br />returns `tuple` or `tuple of tuple(s)` |
-| `tp.Displacement(from_arg, to_arg)`<br /><br />`from_arg`: `tuple/list of int(s) | tuple/list of tuples/lists of floats]`<br /><br />`to_arg`: `tuple/list of int(s)`<br /><br />returns `tuple` | `tp.Displacement(from_arg, to_arg)`<br /><br />`from_arg`:  `nest.GIDCollection or tuple/list with tuple(s)/list(s) of floats`<br /><br />`to_arg`: `nest.GIDCollection`<br /><br />returns `tuple` |
-| `tp.Distance(from_arg, to_arg)`<br /><br />`from_arg`: `[tuple/list of ints |tuple/list with tuples/lists of floats]`<br /><br />`to:arg`: `tuple/list of ints`<br /><br />returns `tuple` | `tp.Distance(from_arg, to_arg)`<br /><br />`from_arg`: `nest.GIDCollection or tuple/list with tuple(s)/list(s) of floats`<br /><br />`to_arg`: `nest.GIDCollection`<br /><br />returns `tuple` |
-| `tp.FindNearestElement(tuple/list, locations, find_all=True)`<br /><br />returns `tuple` | `tp.FindNearestElement(nest.GIDCollection, locations, find_all=True)`<br /><br />returns `tuple` |
-| `tp.DumpLayerNodes(tuple, outname)`                          | `tp.DumpLayerNodes(nest.GIDCollection, outname)`             |
-| `tp.DumpLayerConnections(tuple, synapse_model, outname)`     | `tp.DumpLayerConnections(nest.GIDCollection, nest.GIDCollection, synapse_model, outname)` |
-| `tp.FindCenterElement(tuple)`<br /><br />returns `tuple`     | `tp.FindCenterElement(nest.GIDCollection)`<br /><br />returns `int` |
-| `tp.GetTargetNodes(tuple, tuple, tgt_model=None, syn_model=None)`<br /><br />returns `tuple of list(s) of int(s)` | `tp.GetTargetNodes(tuple, nest.GIDCollection, syn_model=None)`<br /><br />returns `tuple of list(s) of int(s)` |
-| `tp.GetTargetPositions(tuple, tuple, tgt_model=None, syn_model=None)`<br /><br />returns `tuple of tuple(s) of tuple(s) of floats` | `tp.GetTargetPositions(nest.GIDCollection, nest.GIDCollection, syn_model=None)`<br /><br />returns `list of list(s) of tuple(s) of floats` |
-| `tp.SelectNodesByMask(tuple, anchor, mask_obj)`<br /><br />returns `list` | `tp.SelectNodesByMaks(nest.GIDCollection, anchor, mask_obj)`<br /><br />returns `list` |
-| `tp.PlotLayer(tuple, fig=None, nodecolor='b', nodesize=20)`<br /><br />returns `matplotlib.figure.Figure` object | `tp.PlotLayer(nest.GIDCollection, fig=None, nodecolor='b', nodesize=20)`<br /><br />returns`matplotlib.figure.Figure` object |
-| `tp.PlotTargets(int, tuple, tgt_model=None, syn_type=None, fig=None, mask=None, kernel=None, src_color='red', src_size=50, tgt_color='blue', tgt_size=20, mask_color='red', kernel_color='red')`<br /><br />returns `matplotlib.figure.Figure` object | `tp.PlotTargets(nest.GIDCollection, nest.GIDCollection, syn_type=None, fig=None, mask=None, kernel=None, src_color='red', src_size=50, tgt_color='blue', tgt_size=20, mask_color='red', kernel_color='red')`<br /><br />returns `matplotlib.figure.Figure` object |
-| `tp.PlotKernel(ax, int, mask, kern=None, mask_color='red', kernel_color='red')` | `tp.PlotKernel(ax, nest.GIDCollection, mask, kern=None, mask_color='red', kernel_color='red')` |
+Parameters can be used to set node and connection parameters.
+
+**random**
+
+| NEST 2.x | NEST 3.0                                                     |
+| -------- | ------------------------------------------------------------ |
+|          | `nest.random.exponential(scale=1.0)`<br /><br />returns `nest.Parameter` |
+|          | `nest.random.lognormal(mean=0.0, sigma=1.0, min=None, max=None, dimension=None)`<br /><br />returns `nest.Parameter` |
+|          | `nest.random.normal(loc=0.0, scale=1.0, min=None, max=None, redraw=False)`<br /><br />returns `nest.Parameter` |
+|          | `nest.random.uniform(min=0.0, max=1.0)`<br /><br />returns `nest.Parameter` |
+
+**spatial**
+
+| NEST 2.x | NEST 3.0                                                     |
+| -------- | ------------------------------------------------------------ |
+|          | `nest.spatial.dimension_distance.x`<br /><br />`nest.spatial.dimension_distance.y`<br /><br />`nest.spatial.dimension_distance.z`<br /><br />returns `nest.Parameter` |
+|          | `nest.spatial.distance`<br /><br />returns `nest.Parameter`  |
+|          | `nest.spatial.free(pos, extent=None, edge_wrap=False, num_dimensions=None)`<br /><br />returns `nest.Parameter` |
+|          | `nest.spatial.grid(rows, columns, depth=None, center=None, extent=None, edge_wrap=False)`<br /><br />returns `nest.Parameter` |
+|          | `nest.spatial.pos.x`<br /><br />`nest.spatial.pos.y`<br /><br />`nest.spatial.pos.z`<br /><br />returns `nest.Parameter` |
+|          | `nest.spatial.source_pos.x`<br /><br />`nest.spatial.source_pos.y`<br /><br />`nest.spatial.source_pos.z`<br /><br />returns `nest.Parameter` |
+|          | `nest.spatial.target_pos.x`<br /><br />`nest.spatial.target_pos.y`<br /><br />`nest.spatial.target_pos.z`<br /><br />returns `nest.Parameter` |
+
+**math**
+
+| NEST 2.x | NEST 3.0                        |
+| -------- | ------------------------------- |
+|          | `nest.math.exp(nest.Parameter)` |
+|          | `nest.math.sin(nest.Parameter)` |
+|          | `nest.math.cos(nest.Parameter)` |
+
+**logic**
+
+| NEST 2.x | NEST 3.0                                                     |
+| -------- | ------------------------------------------------------------ |
+|          | `nest.logic.conditional(condition, param_if_true, param_if_false)`<br /><br />returns `nest.Parameter` |
+
+**distributions**
+
+| NEST 2.x | NEST 3.0                                                     |
+| -------- | ------------------------------------------------------------ |
+|          | `nest.distributions.exponential(nest.Parameter, a=1.0, tau=1.0)` |
+|          | `nest.distributions.gaussian(nest.Parameter, p_center=1.0, mean=0.0, std_deviation=1.0)` |
+|          | `nest.distributions.gaussian2D(nest.Parameter, y, p_center=1.0, mean_x=0.0, mean_y=0.0, std_deviation_x=1.0,std_deviation_y=1.0, rho=0.0)` |
+|          | `nest.distributions.gamma(nest.Parameter, alpha=1.0, theta=1.0)` |
+
+
 
 
 
@@ -114,6 +165,7 @@ Supports:
 - `len()`
 - `get` parameters
 - `set` parameters
+- get spatial parameters on GIDCollections with spatial metadata with`spatial`
 
 **Example**
 

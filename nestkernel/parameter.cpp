@@ -72,7 +72,7 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
   }
   index lid = node->get_gid() - meta->get_first_gid();
   std::vector< double > pos = layer->get_position_vector( lid );
-  if ( ( uint ) dimension_ >= pos.size() )
+  if ( ( unsigned int ) dimension_ >= pos.size() )
   {
     throw KernelException(
       "Node position dimension must be within the defined number of "
@@ -161,7 +161,7 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
   case 1:
   case 2:
   case 3:
-    if ( ( uint ) dimension_ > target_pos.size() )
+    if ( ( unsigned int ) dimension_ > target_pos.size() )
     {
       throw KernelException(
         "Spatial distance dimension must be within the defined number of "
@@ -198,7 +198,7 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
   case 1:
   case 2:
   case 3:
-    if ( ( uint ) dimension_ > displacement.size() )
+    if ( ( unsigned int ) dimension_ > displacement.size() )
     {
       throw KernelException(
         "Spatial distance dimension must be within the defined number of "

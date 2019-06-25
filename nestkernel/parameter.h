@@ -1452,7 +1452,8 @@ public:
    * Copy constructor.
    */
   DimensionParameter( const DimensionParameter& p )
-    : num_dimensions_( p.num_dimensions_ )
+    : Parameter( p )
+    , num_dimensions_( p.num_dimensions_ )
     , px_( p.px_->clone() )
     , py_( p.py_->clone() )
     , pz_( p.pz_->clone() )

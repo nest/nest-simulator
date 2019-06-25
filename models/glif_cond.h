@@ -204,7 +204,6 @@ private:
     std::vector< double > r_;        // coefficient
     std::vector< double > tau_syn_;  // synaptic port time constants in ms
     std::vector< double > E_rev_;    // reversal potential in mV
-    // std::string V_dynamics_method_; // voltage dynamic methods
 
     // boolean flag which indicates whether the neuron has connections
     bool has_connections_;
@@ -217,7 +216,7 @@ private:
     Parameters_();
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    double set( const DictionaryDatum& );
   };
 
 
@@ -248,7 +247,7 @@ private:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, double );
   };
 
 
@@ -310,7 +309,16 @@ private:
   double
   get_y_elem_() const
   {
-    return S_.y_[ elem ];
+
+	if(elem == nest::glif_cond::State_::V_M)
+	{
+	  return S_.y_[ elem ] + P_.E_L_;
+	}
+	else
+	{
+	  return S_.y_[ elem ];
+	}
+
   }
 
   Parameters_ P_;
@@ -385,10 +393,10 @@ glif_cond::get_status( DictionaryDatum& d ) const
 inline void
 glif_cond::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;                 // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d ); // throws if BadProperty
+  State_ stmp = S_;                      // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
 
   Archiving_Node::set_status( d );
 

@@ -101,10 +101,10 @@ nest::glif_cond_dynamics( double,
   {
     const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
       + node.P_.n_ASCurrents_() - 1;
-    I_syn += y[ S::G_SYN + j ] * ( y[ S::V_M ] - node.P_.E_rev_[ i ] );
+    I_syn += y[ S::G_SYN + j ] * ( y[ S::V_M ] + node.P_.E_L_ - node.P_.E_rev_[ i ] );
   }
 
-  const double I_leak = node.P_.G_ * ( y[ S::V_M ] - node.P_.E_L_ );
+  const double I_leak = node.P_.G_ * ( y[ S::V_M ] );
 
   // dV_m/dt
   f[ 0 ] = ( -I_leak - I_syn + node.B_.I_stim_ + node.S_.ASCurrents_sum_ )
@@ -145,12 +145,12 @@ nest::glif_cond_dynamics( double,
  * ---------------------------------------------------------------- */
 
 nest::glif_cond::Parameters_::Parameters_()
-  : th_inf_( -51.68 )                                 // in mV
+  : E_L_( -78.85 )                                    // in mV
   , G_( 9.43 )                                        // in nS
-  , E_L_( -78.85 )                                    // in mv
+  , th_inf_( 27.17 )                                  // in mv, rel to E_L_, 51.68 - E_L_
   , C_m_( 58.72 )                                     // in pF
   , t_ref_( 3.75 )                                    // in ms
-  , V_reset_( -78.85 )                                // in mV
+  , V_reset_( 0.0)                                    // in mV, rel to E_L_, -78.85 - E_L_
   , a_spike_( 0.37 )                                  // in mV
   , b_spike_( 0.009 )                                 // in 1/ms
   , voltage_reset_a_( 0.20 )                          // deterministic
@@ -169,11 +169,11 @@ nest::glif_cond::Parameters_::Parameters_()
 }
 
 nest::glif_cond::State_::State_( const Parameters_& p )
-  : threshold_( -51.68 ) // in mV
+  : threshold_( -51.68 - p.E_L_ ) // in mV
   , y_( STATE_VECTOR_MIN_SIZE, 0.0 )
 
 {
-  y_[ V_M ] = p.E_L_; // initialize to membrane potential
+  y_[ V_M ] = 0.0; // initialize to membrane potential
   for ( std::size_t a = 0; a < p.n_ASCurrents_(); ++a )
   {
     y_[ ASC + a ] = p.asc_init_[ a ];
@@ -207,12 +207,12 @@ operator=( const State_& s )
 void
 nest::glif_cond::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::V_th, th_inf_ );
+  def< double >( d, names::V_th, th_inf_ + E_L_ );
   def< double >( d, names::g_m, G_ );
   def< double >( d, names::E_L, E_L_ );
   def< double >( d, names::C_m, C_m_ );
   def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::V_reset, V_reset_ );
+  def< double >( d, names::V_reset, V_reset_ + E_L_ );
   def< double >( d, names::a_spike, a_spike_ );
   def< double >( d, names::b_spike, b_spike_ );
   def< double >( d, names::a_reset, voltage_reset_a_ );
@@ -233,15 +233,35 @@ nest::glif_cond::Parameters_::get( DictionaryDatum& d ) const
   def< model_type >( d, names::glif_model, glif_model_ );
 }
 
-void
+double
 nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
 {
-  updateValue< double >( d, names::V_th, th_inf_ );
-  updateValue< double >( d, names::g_m, G_ );
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
+  const double delta_EL = E_L_ - ELold;
+
+  if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  {
+	V_reset_ -= E_L_;
+  }
+  else
+  {
+	V_reset_ -= delta_EL;
+  }
+
+  if ( updateValue< double >( d, names::V_th, th_inf_ ) )
+  {
+    th_inf_ -= E_L_;
+  }
+  else
+  {
+	th_inf_ -= delta_EL;
+  }
+
+  updateValue< double >( d, names::g_m, G_ );
   updateValue< double >( d, names::C_m, C_m_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::V_reset, V_reset_ );
 
   updateValue< double >( d, names::a_spike, a_spike_ );
   updateValue< double >( d, names::b_spike, b_spike_ );
@@ -256,6 +276,11 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
   updateValue< std::vector< double > >( d, names::asc_amps, asc_amps_ );
   updateValue< std::vector< double > >( d, names::r, r_ );
   updateValue< model_type >( d, names::glif_model, glif_model_ );
+
+  if ( V_reset_ >= th_inf_ )
+  {
+    throw BadProperty( "Reset potential must be smaller than threshold." );
+  }
 
   if ( C_m_ <= 0.0 )
   {
@@ -329,13 +354,14 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
       }
     }
   }
+  return delta_EL;
 }
 
 void
 nest::glif_cond::State_::get( DictionaryDatum& d,
   const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] );
+  def< double >( d, names::V_m, y_[ V_M ] + p.E_L_ );
 
   std::vector< double >* dg = new std::vector< double >();
   std::vector< double >* g = new std::vector< double >();
@@ -360,10 +386,18 @@ nest::glif_cond::State_::get( DictionaryDatum& d,
 
 void
 nest::glif_cond::State_::set( const DictionaryDatum& d,
-  const Parameters_& p )
+  const Parameters_& p,
+  double delta_EL )
 {
-  updateValue< double >( d, names::V_m, y_[ V_M ] );
-  threshold_ = p.th_inf_;
+  if (updateValue< double >( d, names::V_m, y_[ V_M ] ) )
+  {
+	y_[ V_M ] -= p.E_L_;
+  }
+  else
+  {
+	y_[ V_M ] -= delta_EL;
+  }
+
 }
 
 nest::glif_cond::Buffers_::Buffers_( glif_cond& n )
@@ -615,8 +649,7 @@ nest::glif_cond::update( Time const& origin,
         else
         {
           // Reset voltage for glif2/4/5 models with "R"
-          S_.y_[ State_::V_M ] = P_.E_L_
-            + P_.voltage_reset_a_ * ( v_old - P_.E_L_ ) + P_.voltage_reset_b_;
+          S_.y_[ State_::V_M ] = P_.voltage_reset_a_ * v_old + P_.voltage_reset_b_;
 
           // reset spike component of threshold
           V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
@@ -647,15 +680,14 @@ nest::glif_cond::update( Time const& origin,
       // Calculate exact voltage component of the threshold for glif5 model with "A"
       if (model_type == 5)
       {
-        double beta =
-          ( B_.I_stim_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) / P_.G_;
+        double beta = ( B_.I_stim_ + S_.ASCurrents_sum_ ) / P_.G_;
         double phi = P_.a_voltage_ / ( P_.b_voltage_ - P_.G_ / P_.C_m_ );
         voltage_component =
           phi * ( v_old - beta ) * std::exp( -P_.G_ * dt / P_.C_m_ )
           + 1 / ( std::exp( P_.b_voltage_ * dt ) )
             * ( V_.last_voltage_ - phi * ( v_old - beta )
-                - ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ ) )
-          + ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ );
+                - ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta ) )
+          + ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta );
       }
 
       S_.threshold_ = V_.last_spike_ + voltage_component + P_.th_inf_;

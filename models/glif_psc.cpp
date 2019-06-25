@@ -91,14 +91,17 @@ nest::glif_psc::Parameters_::Parameters_()
 }
 
 nest::glif_psc::State_::State_(const Parameters_& p)
-  //: V_m_( -78.85 )                               // in mV
   : U_ (0.0)                                       // in mV
   , ASCurrents_( std::vector< double >( 2, 0.0 ) ) // in pA
-  , threshold_( -51.68  - p.E_L_ )                           // in mV
+  , threshold_( -51.68  - p.E_L_ )                 // in mV
   , I_( 0.0 )                                      // in pA
 {
   y1_.clear();
   y2_.clear();
+  for ( std::size_t a = 0; a < ASCurrents_.size(); ++a )
+  {
+	ASCurrents_[ a ] = p.asc_init_[ a ];
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -261,9 +264,6 @@ nest::glif_psc::State_::set( const DictionaryDatum& d,
 
   updateValue< std::vector< double > >( d, names::ASCurrents, ASCurrents_ );
 
-  //V_m_ = p.E_L_;
-  ASCurrents_ = p.asc_init_;
-  threshold_ = p.th_inf_;
 }
 
 nest::glif_psc::Buffers_::Buffers_( glif_psc& n )
@@ -387,7 +387,6 @@ nest::glif_psc::update( Time const& origin, const long from,
   long model_type = nest::glif_psc::model_type_lu[model_str];
 
   double v_old = S_.U_;
-  // double ASCurrents_old_sum = 0.0;
   double spike_component = 0.0;
   double voltage_component = 0.0;
   double th_old = S_.threshold_;
@@ -434,7 +433,6 @@ nest::glif_psc::update( Time const& origin, const long from,
         else
         {
           // Reset voltage for glif2/4/5 models with "R"
-          //S_.U_ = P_.E_L_ + P_.voltage_reset_a_ * ( S_.U_ - P_.E_L_ ) + P_.voltage_reset_b_;
 		  S_.U_ = P_.voltage_reset_a_ * S_.U_ + P_.voltage_reset_b_;
 
           // reset spike component of threshold
@@ -479,9 +477,7 @@ nest::glif_psc::update( Time const& origin, const long from,
       }
       // voltage dynamics of membranes
       // Linear Exact to find next V_m value
-      S_.U_ = v_old * V_.P33_
-          //+ ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) * V_.P30_;
-          + ( S_.I_ + S_.ASCurrents_sum_ ) * V_.P30_;
+      S_.U_ = v_old * V_.P33_ + ( S_.I_ + S_.ASCurrents_sum_ ) * V_.P30_;
 
       // add synapse component for voltage dynamics
       S_.I_syn_ = 0.0;
@@ -494,15 +490,8 @@ nest::glif_psc::update( Time const& origin, const long from,
       // Calculate exact voltage component of the threshold for glif5 model with "A"
       if (model_type == 5)
       {
-        //double beta = ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) / P_.G_;
         double beta = ( S_.I_ + S_.ASCurrents_sum_) / P_.G_;
         double phi = P_.a_voltage_ / ( P_.b_voltage_ - P_.G_ / P_.C_m_ );
-        //voltage_component =
-        //  phi * ( v_old - beta ) * std::exp( -P_.G_ * dt / P_.C_m_ )
-        //  + 1 / ( std::exp( P_.b_voltage_ * dt ) )
-        //    * ( V_.last_voltage_ - phi * ( v_old - beta )
-        //        - ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ ) )
-        //  + ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta - P_.E_L_ );
         voltage_component =
           phi * ( v_old - beta ) * std::exp( -P_.G_ * dt / P_.C_m_ )
           + 1 / ( std::exp( P_.b_voltage_ * dt ) )
@@ -538,7 +527,6 @@ nest::glif_psc::update( Time const& origin, const long from,
     // alpha shape PSCs
     for ( size_t i = 0; i < P_.n_receptors_(); i++ )
     {
-
       S_.y2_[ i ] = V_.P21_[ i ] * S_.y1_[ i ] + V_.P22_[ i ] * S_.y2_[ i ];
       S_.y1_[ i ] *= V_.P11_[ i ];
 

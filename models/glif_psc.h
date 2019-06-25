@@ -201,7 +201,6 @@ private:
 
   struct State_
   {
-    //double V_m_;                       // membrane potential in mV
     double U_;                         // relative membrane potential in mV
     std::vector< double > ASCurrents_; // after-spike currents in pA
     double ASCurrents_sum_;            // in pA

@@ -32,8 +32,8 @@ namespace nest
 
 struct SynIdDelay
 {
-  unsigned int delay : 22;
-  unsigned int syn_id : 8;
+  unsigned int delay : NUM_BITS_DELAY;
+  unsigned int syn_id : NUM_BITS_SYN_ID;
   bool subsequent_targets : 1;
   bool disabled : 1;
 
@@ -105,6 +105,10 @@ struct SynIdDelay
     return disabled;
   }
 };
+
+//! check legal size
+using success_syn_id_delay_data_size =
+  StaticAssert< sizeof( SynIdDelay ) == 4 >::success;
 }
 
 #endif

@@ -42,6 +42,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup generator
+
 Name: poisson_generator - simulate neuron firing with Poisson processes
                           statistics.
 Description:
@@ -55,11 +58,14 @@ parrot neuron inbetween the poisson generator and the targets.
 Parameters:
 
 The following parameters appear in the element's status dictionary:
-
-rate     double - mean firing rate in Hz
-origin   double - Time origin for device timer in ms
-start    double - begin of device application with resp. to origin in ms
-stop     double - end of device application with resp. to origin in ms
+\verbatim embed:rst
+=======   ======== =========================================================
+ rate     spikes/s Mean firing rate
+ origin   ms       Time origin for device timer
+ start    ms       Begin of device application with resp. to origin
+ stop     ms       End of device application with resp. to origin
+=======   ======== =========================================================
+\endverbatim
 
 Sends: SpikeEvent
 

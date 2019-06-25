@@ -28,171 +28,63 @@ language: python
 sudo: required
 dist: trusty
 
-env:
-  matrix:
-   # We don't have to run a full matrix here, because most of the options are
-   # independent. This means we only need a minimal and maximal configuration
-   # and some additional jobs for interdependent options.
-   # See also https://docs.travis-ci.com/user/caching/#Caches-and-build-matrices
-   - xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
-   - xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
-   - xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
-   - xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
-   - xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
-   - xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
-   - xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
-python:
-  - 2.7.13
-  - 3.4.4
+stages:
+   - Staticcheck
+   - MPI-Threading-Python
+   - Python-Full-build
+   - GCC8Clang7
+   - OsX
 
-matrix:
-    exclude:
-    - env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
-      python: 3.4.4
-    - env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
-      python: 3.4.4
-    - env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
-      python: 3.4.4
-    - env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
-      python: 3.4.4
-    - env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
-      python: 3.4.4
-    - env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
-      python: 3.4.4
-       	     
-    # Notify immediately when a build job fails.
-    fast_finish: true
-#https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
+# list of build stages to run. Stages with the same name get run in parallel.
 
-    include:
-    - language: cpp
-      compiler: gcc-8
-      env:
-        - C_COMPILER=gcc-8
-        - CXX_COMPILER=g++-8       
-      addons:
-        apt:
-          sources:
-            - r-packages-trusty
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-            - build-essential
-            - cmake
-            - libltdl-dev
-            - libreadline6-dev
-            - libncurses5-dev 
-            - libgsl0-dev
-            - python-all-dev
-            - python-numpy
-            - ipython
-            - pkg-config
-            - openmpi-bin
-            - libopenmpi-dev
-            - python-nose
-            - libpcre3
-            - libpcre3-dev
-            - llvm-3.6-dev
-            - jq
-            - pep8
-            - libboost-filesystem-dev
-            - libboost-regex-dev
-            - libboost-wave-dev
-            - libboost-python-dev
-            - libboost-program-options-dev
-            - libboost-test-dev
-            - python-mpi4py
-          
-      before_install:
-        - pyenv install -s 2.7.13
-        - pyenv global 2.7.13
-        - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-        - echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
-        - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-        - export SOURCEDIR=$PWD
-        - echo $PWD
-        - ls $PWD
-        - cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
-        - cd $HOME/build
-        - echo $PATH
-        # Upgrade pip and setuptools
-        - pip install -U pip
-        - pip install -U setuptools
-  
-       # Installing additional packages using pip as they only have
-       # outdated versions in the Travis package whitelist.
-       # terminaltables is required by parse_travis_log.py to create
-       # the build summary.
-        - pip install cython scipy matplotlib terminaltables mpi4py
-    - language: cpp
-      compiler: clang-7.0
-      env:
-        - C_COMPILER=clang-7
-        - CXX_COMPILER=clang++-7
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - r-packages-trusty
-            - llvm-toolchain-trusty-7
-          packages:
-            - clang-7
-            - build-essential
-            - cmake
-            - libltdl-dev
-            - libreadline6-dev
-            - libncurses5-dev
-            - libgsl0-dev
-            - python-all-dev
-            - python-numpy
-            - ipython
-            - pkg-config
-            - openmpi-bin
-            - libopenmpi-dev
-            - python-nose
-            - libpcre3
-            - libpcre3-dev
-            - llvm-3.6-dev
-            - jq
-            - pep8
-            - libboost-filesystem-dev
-            - libboost-regex-dev
-            - libboost-wave-dev
-            - libboost-python-dev
-            - libboost-program-options-dev
-            - libboost-test-dev
-            - python-mpi4py
-              
-      before_install:
-        - pyenv install -s 2.7.13
-        - pyenv global 2.7.13
-        - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-        - echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
-        - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-        - export SOURCEDIR=$PWD
-        - echo $PWD
-        - ls $PWD
-        - cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
-        - cd $HOME/build
-        - echo $PATH
-        # Upgrade pip and setuptools
-        - pip install -U pip
-        - pip install -U setuptools
-
-        # Installing additional packages using pip as they only have
-        # outdated versions in the Travis package whitelist.
-        # terminaltables is required by parse_travis_log.py to create
-        # the build summary.
-        - pip install cython scipy matplotlib terminaltables
-    # Notify immediately when a build job fails.
-    fast_finish: true
+jobs:
+  include:
+    - stage: Staticcheck
+      python: 3.4.4
+      env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 xRUN_TESTSUITE=0 CACHE_NAME=JOB   # only static code analysis and build
+    - stage: MPI-Threading-Python
+      python: 3.4.4
+      env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # only MPI
+    - stage: MPI-Threading-Python
+      python: 3.4.4
+      env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # only threading 
+    - stage: MPI-Threading-Python
+      python: 3.4.4
+      env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # Python & Threading
+    - stage: MPI-Threading-Python
+      python: 3.4.4
+      env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # Python & MPI
+    - stage: MPI-Threading-Python
+      python: 3.4.4
+      env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # only Python
+    - stage: Python-Full-build
+      python: 3.4.4
+      env: xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # full
+    - stage: Python-Full-build
+      python: 2.7.13
+      env: xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # full
+    - stage: GCC8Clang7
+      language: cpp
+      env: MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+    - stage: GCC8Clang7
+      language: cpp
+      env: MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
+    - stage: OsX
+      os: osx
+      osx_image: xcode10.2
+      language: generic
+      env: xTHREADING=1 xMPI=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # Without MUSIC, MPI and Libneurosim
+    
 #https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
 addons:
    apt:
     sources:
      - r-packages-trusty
      - ubuntu-toolchain-r-test
+     - llvm-toolchain-trusty-7
     packages:
+     - g++-8
+     - clang-7
      - build-essential
      - cmake
      - libltdl-dev
@@ -200,7 +92,6 @@ addons:
      - libncurses5-dev 
      - libgsl0-dev
      - python-all-dev
-     - python-numpy
      - ipython
      - pkg-config
      - openmpi-bin
@@ -223,38 +114,40 @@ cache:
      - $HOME/.cache
 
 before_install:
-     - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-     - echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
-     - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-     - export SOURCEDIR=$PWD
-     - echo $PWD
-     - ls $PWD
-     - cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
-     - cd $HOME/build
-     - echo $PATH
-   # Upgrade pip and setuptools
-     - pip install -U pip
-     - pip install -U setuptools
+   - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+   - echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
+   - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+   - echo ${MATRIX_EVAL}
+   - eval "${MATRIX_EVAL}"
+   - export SOURCEDIR=$PWD
+   - echo $PWD
+   - ls $PWD
+   - cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
+   - cd $HOME/build
+   - echo $PATH
+  # Upgrade pip and setuptools
+   - if [[ $TRAVIS_BUILD_STAGE_NAME == "Gcc8clang7" ]]; then pyenv global 3.6.3; fi
+   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew --version; brew update; brew tap brewsci/science; brew tap brewsci/bio; brew install coreutils gsl open-mpi automake autoconf libtool; fi
+   - pip install -U pip
+   - pip install -U setuptools
   
-   # Installing additional packages using pip as they only have
-   # outdated versions in the Travis package whitelist.
-   # terminaltables is required by parse_travis_log.py to create
-   # the build summary.
-     - pip install cython scipy matplotlib terminaltables
-
+  # Installing additional packages using pip as they only have
+  # outdated versions in the Travis package whitelist.
+  # terminaltables is required by parse_travis_log.py to create
+  # the build summary.
+   - pip install cython scipy matplotlib terminaltables
+   - pip install numpy==1.13.3
+    
 install:
    - which cython
    - cython --version
    - which python
    - python --version
    - which pip
-   - which nosetests
-   - nosetests --version
-   - nosetests --plugins
+   - pip list
+   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then which nosetests; nosetests --version; nosetests --plugins; fi
    - which cmake
    - cmake --version
-   - if [ "$CXX" = "g++" ]; then export CXX="g++-8" CC="gcc-8"; ${CXX} --version; fi
-   - if [ "$CXX" = "clang++" ]; then export CXX="clang++-7" CC="clang-7"; ${CXX} --version; fi
    - echo ${CC}
    - echo ${CXX}
   
@@ -264,7 +157,6 @@ before_script:
    - chmod +x extras/travis_build.sh
 script:
    - set -o pipefail
-   - export CXXFLAGS=${CI_CXX_FLAGS}
    - ./extras/travis_build.sh 2>&1 | tee travis_build.sh.log
    - python extras/parse_travis_log.py travis_build.sh.log
 

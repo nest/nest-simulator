@@ -1268,7 +1268,7 @@ functions, please see the online Python and SLI documentation.
 
   `nest.GetConnections()`       Retrieve connections (all or for a given source or
                                 target); see also
-                                <http://www.nest-simulator.org/connection_management>.
+                                <https://www.nest-simulator.org/connection_management>.
 
   `nest.GetNodes()`             Applied to a layer, returns GIDs of the layer elements.
                                 For simple layers, these are the actual model neurons,
@@ -1323,9 +1323,7 @@ Topology provides three functions to visualize networks:
                     layer.
 
   `PlotKernel()`    Add indication of mask and kernel to plot
-                    of layer. It does *not* wrap masks and
-                    kernels with respect to periodic boundary
-                    conditions. This function is usually
+                    of layer. This function is usually
                     called by `PlotTargets`.
   ----------------- ------------------------------------------
 
@@ -1355,7 +1353,7 @@ programming language is needed for this. The functions will be added as
 a part of an extension module which is dynamically loaded into NEST. For
 more information on writing an extension module, see the section titled
 ["Writing an Extension
-Module"](http://nest.github.io/nest-simulator/extension_modules) in the
+Module"](https://nest.github.io/nest-simulator/extension_modules) in the
 NEST Developer Manual. The basic steps required to get started are:
 
 1.  From the NEST source directory, copy directory examples/MyModule to

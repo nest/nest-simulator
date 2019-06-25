@@ -89,7 +89,7 @@ M_ERROR setverbosity
  ResetKernel
 
   % this case always went well  
-  /iaf_psc_delta_canon /static_synapse /static_synapse Run
+  /iaf_psc_delta_ps /static_synapse /static_synapse Run
   and
 } debugging { exec = } { assert_or_die } ifelse
 
@@ -98,7 +98,7 @@ M_ERROR setverbosity
   ResetKernel
 
   /static_synapse /hoo CopyModel
-  /iaf_psc_delta_canon /hoo /hoo Run
+  /iaf_psc_delta_ps /hoo /hoo Run
   and
 } debugging { exec = } { assert_or_die } ifelse
 
@@ -110,7 +110,7 @@ M_ERROR setverbosity
 
   /static_synapse /foo CopyModel
   /static_synapse /goo CopyModel
-  /iaf_psc_delta_canon /foo /goo Run
+  /iaf_psc_delta_ps /foo /goo Run
   and
 } debugging { exec = } { fail_or_die } ifelse
 

@@ -75,14 +75,23 @@ Parameters:
   V_min         double - Absolute lower value for the membrane potential.
   V_reset       double - Reset value for the membrane potential.
 
-Note: In the current implementation, tau_syn_ex and tau_syn_in must be equal.
-  This is because the state space would be 3-dimensional otherwise, which
-  makes the detection of threshold crossing more difficult [1].
-  Support for different time constants may be added in the future, see issue
-  #921.
-
 Remarks:
-  @todo Implement current input in consistent way.
+
+This model transmits precise spike times to target nodes (on-grid spike
+time and offset). If this node is connected to a spike_detector, the
+property "precise_times" of the spike_detector has to be set to true in
+order to record the offsets in addition to the on-grid spike times.
+
+The iaf_psc_delta_ps neuron accepts connections transmitting
+CurrentEvents. These events transmit stepwise-constant currents which
+can only change at on-grid times.
+
+In the current implementation, tau_syn_ex and tau_syn_in must be equal.
+This is because the state space would be 3-dimensional otherwise, which
+makes the detection of threshold crossing more difficult [1].
+Support for different time constants may be added in the future,
+see issue #921.
+
 
 References:
 [1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E

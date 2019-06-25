@@ -76,7 +76,9 @@ public:
   using value_type = value_type_;
   using pointer = ptr_;
   using reference = ref_;
-  using difference_type = size_t;
+  using difference_type = long int;
+
+  bv_iterator() = default;
 
   /**
    * @brief Creates an iterator pointing to the first element in a BlockVector.
@@ -104,8 +106,11 @@ public:
 
   bv_iterator& operator++();
   bv_iterator& operator--();
-  bv_iterator& operator+=( size_t );
-  bv_iterator operator+( size_t );
+  bv_iterator& operator+=( difference_type );
+  bv_iterator& operator-=( difference_type );
+  bv_iterator operator+( difference_type );
+  bv_iterator operator-( difference_type );
+  bv_iterator operator++( int );
   reference operator*() const;
   pointer operator->() const;
   difference_type operator-( const iterator& ) const;
@@ -545,9 +550,9 @@ inline bv_iterator< value_type_, ref_, ptr_ >&
 template < typename value_type_, typename ref_, typename ptr_ >
 inline bv_iterator< value_type_, ref_, ptr_ >&
   bv_iterator< value_type_, ref_, ptr_ >::
-  operator+=( size_t val )
+  operator+=( difference_type val )
 {
-  for ( size_t i = 0; i < val; ++i )
+  for ( difference_type i = 0; i < val; ++i )
   {
     operator++();
   }
@@ -555,11 +560,40 @@ inline bv_iterator< value_type_, ref_, ptr_ >&
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
+inline bv_iterator< value_type_, ref_, ptr_ >&
+  bv_iterator< value_type_, ref_, ptr_ >::
+  operator-=( difference_type val )
+{
+  for ( difference_type i = 0; i < val; ++i )
+  {
+    operator--();
+  }
+  return *this;
+}
+
+template < typename value_type_, typename ref_, typename ptr_ >
 inline bv_iterator< value_type_, ref_, ptr_ >
-  bv_iterator< value_type_, ref_, ptr_ >::operator+( size_t val )
+  bv_iterator< value_type_, ref_, ptr_ >::operator+( difference_type val )
 {
   bv_iterator tmp = *this;
   return tmp += val;
+}
+
+template < typename value_type_, typename ref_, typename ptr_ >
+inline bv_iterator< value_type_, ref_, ptr_ >
+  bv_iterator< value_type_, ref_, ptr_ >::operator-( difference_type val )
+{
+  bv_iterator tmp = *this;
+  return tmp -= val;
+}
+
+template < typename value_type_, typename ref_, typename ptr_ >
+inline bv_iterator< value_type_, ref_, ptr_ >
+  bv_iterator< value_type_, ref_, ptr_ >::operator++( int )
+{
+  bv_iterator< value_type_, ref_, ptr_ > old( *this );
+  ++( *this );
+  return old;
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >

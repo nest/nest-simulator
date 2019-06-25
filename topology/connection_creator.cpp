@@ -25,6 +25,8 @@
 namespace nest
 {
 
+const DictionaryDatum ConnectionCreator::dummy_param_ = new Dictionary;
+
 ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   : allow_autapses_( true )
   , allow_multapses_( true )
@@ -139,8 +141,15 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   }
   if ( not delay_.valid() )
   {
-    delay_ =
-      TopologyModule::create_parameter( ( *syn_defaults )[ names::delay ] );
+    if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) )
+    {
+      delay_ = TopologyModule::create_parameter( numerics::nan );
+    }
+    else
+    {
+      delay_ =
+        TopologyModule::create_parameter( ( *syn_defaults )[ names::delay ] );
+    }
   }
 
   if ( connection_type == names::convergent )

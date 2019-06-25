@@ -82,7 +82,7 @@ public:
   {
     first_gid_ = gid;
   }
-  const index
+  index
   get_first_gid() const
   {
     return first_gid_;

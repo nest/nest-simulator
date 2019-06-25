@@ -70,7 +70,7 @@ public:
   virtual void get_status( DictionaryDatum& ) const = 0;
 
   virtual void set_first_gid( index ) = 0;
-  virtual const index get_first_gid() const = 0;
+  virtual index get_first_gid() const = 0;
   virtual std::string get_type() const = 0;
 };
 

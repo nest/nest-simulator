@@ -67,7 +67,7 @@ Parameters:
 
   V_m               double - Membrane potential in mV
   V_th              double - Instantaneous threshold in mV.
-  g                 double - Membrane conductance in nS.
+  g_m               double - Membrane conductance in nS.
   E_L               double - Resting membrane potential in mV.
   C_m               double - Capacitance of the membrane in pF.
   t_ref             double - Duration of refractory time in ms.

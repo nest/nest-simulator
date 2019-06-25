@@ -46,8 +46,7 @@
 using namespace nest;
 
 
-nest::RecordablesMap< nest::glif >
-  nest::glif::recordablesMap_;
+nest::RecordablesMap< nest::glif > nest::glif::recordablesMap_;
 
 namespace nest
 {
@@ -58,8 +57,7 @@ void
 RecordablesMap< nest::glif >::create()
 {
   insert_( names::V_m, &nest::glif::get_V_m_ );
-  insert_(
-    Name( "AScurrents_sum" ), &nest::glif::get_AScurrents_sum_ );
+  insert_( Name( "AScurrents_sum" ), &nest::glif::get_AScurrents_sum_ );
 }
 }
 
@@ -109,7 +107,7 @@ nest::glif::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::E_L, E_L_ );
   def< double >( d, names::C_m, C_m_ );
   def< double >( d, names::t_ref, t_ref_ );
-  def<double>(d, names::V_reset, V_reset_);
+  def< double >( d, names::V_reset, V_reset_ );
 
   def< double >( d, "a_spike", a_spike_ );
   def< double >( d, "b_spike", b_spike_ );
@@ -166,7 +164,6 @@ nest::glif::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadProperty( "Refractory time constant must be strictly positive." );
   }
-  
 }
 
 void
@@ -177,8 +174,7 @@ nest::glif::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::glif::State_::set( const DictionaryDatum& d,
-  const Parameters_& p )
+nest::glif::State_::set( const DictionaryDatum& d, const Parameters_& p )
 {
   updateValue< double >( d, names::V_m, V_m_ );
   updateValue< std::vector< double > >( d, Name( "ASCurrents" ), ASCurrents_ );
@@ -193,8 +189,7 @@ nest::glif::Buffers_::Buffers_( glif& n )
 {
 }
 
-nest::glif::Buffers_::Buffers_( const Buffers_&,
-  glif& n )
+nest::glif::Buffers_::Buffers_( const Buffers_&, glif& n )
   : logger_( n )
 {
 }
@@ -256,133 +251,144 @@ nest::glif::calibrate()
   }
 
   std::string model_str = P_.glif_model_;
-  std::transform( model_str.begin(), model_str.end(), model_str.begin(), 
-    ::tolower);
-  if ( nest::glif::model_type_lu.find(model_str) == nest::glif::model_type_lu.end() )
+  std::transform(
+    model_str.begin(), model_str.end(), model_str.begin(), ::tolower );
+  if ( nest::glif::model_type_lu.find( model_str )
+    == nest::glif::model_type_lu.end() )
   {
     throw BadProperty( "Bad glif model type string." );
-  }  
-  long model_type = nest::glif::model_type_lu[model_str];
-  
-  switch ( model_type ) {
-    case 1:
-      //glif_func = std::bind(&nest::glif::update_glif1, this, 
-      //  std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif::update_glif1(origin, from, to);};
-      break;
-      
-    case 2:
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif::update_glif2(origin, from, to);};
-      break;
-      
-    case 3:
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif::update_glif3(origin, from, to);};
-      break;
-
-    case 4:
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif::update_glif4(origin, from, to);};
-      break;  
-      
-    case 5:
-      glif_func = [this](nest::Time const& origin, const long from, 
-        const long to){nest::glif::update_glif5(origin, from, to);};
-      break;
-    
-    default:
-      throw BadProperty( "Only GLIF models 1-5 available." );
-      break;    
   }
+  long model_type = nest::glif::model_type_lu[ model_str ];
 
+  switch ( model_type )
+  {
+  case 1:
+    // glif_func = std::bind(&nest::glif::update_glif1, this,
+    //  std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    glif_func =
+      [this]( nest::Time const& origin, const long from, const long to )
+    {
+      nest::glif::update_glif1( origin, from, to );
+    };
+    break;
+
+  case 2:
+    glif_func =
+      [this]( nest::Time const& origin, const long from, const long to )
+    {
+      nest::glif::update_glif2( origin, from, to );
+    };
+    break;
+
+  case 3:
+    glif_func =
+      [this]( nest::Time const& origin, const long from, const long to )
+    {
+      nest::glif::update_glif3( origin, from, to );
+    };
+    break;
+
+  case 4:
+    glif_func =
+      [this]( nest::Time const& origin, const long from, const long to )
+    {
+      nest::glif::update_glif4( origin, from, to );
+    };
+    break;
+
+  case 5:
+    glif_func =
+      [this]( nest::Time const& origin, const long from, const long to )
+    {
+      nest::glif::update_glif5( origin, from, to );
+    };
+    break;
+
+  default:
+    throw BadProperty( "Only GLIF models 1-5 available." );
+    break;
+  }
 }
 
 /* ----------------------------------------------------------------
  * Update and spike handling functions
  * ---------------------------------------------------------------- */
-void nest::glif::update( Time const& origin,
-  const long from,
-  const long to)
+void
+nest::glif::update( Time const& origin, const long from, const long to )
 {
-  glif_func(origin, from, to);
+  glif_func( origin, from, to );
 }
 
 void
-nest::glif::update_glif1( Time const& origin,
-  const long from,
-  const long to )
+nest::glif::update_glif1( Time const& origin, const long from, const long to )
 {
-    // glif_lif
-    const double dt = Time::get_resolution().get_ms();
-    double v_old = S_.V_m_;
-    double tau = P_.G_ / P_.C_m_;
-    double exp_tau = std::exp( -dt * tau );
+  // glif_lif
+  const double dt = Time::get_resolution().get_ms();
+  double v_old = S_.V_m_;
+  double tau = P_.G_ / P_.C_m_;
+  double exp_tau = std::exp( -dt * tau );
 
-    for ( long lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
+  {
+
+    if ( V_.t_ref_remaining_ > 0.0 )
     {
-
-      if ( V_.t_ref_remaining_ > 0.0 )
+      // While neuron is in refractory period count-down in time steps (since dt
+      // may change while in refractory) while holding the voltage at last peak.
+      V_.t_ref_remaining_ -= dt;
+      if ( V_.t_ref_remaining_ <= 0.0 )
       {
-        // While neuron is in refractory period count-down in time steps (since dt
-        // may change while in refractory) while holding the voltage at last peak.
-        V_.t_ref_remaining_ -= dt;
-        if ( V_.t_ref_remaining_ <= 0.0 )
-        {
-          S_.V_m_ = P_.V_reset_;
-        }
-        else
-        {
-          S_.V_m_ = v_old;
-        }
+        S_.V_m_ = P_.V_reset_;
       }
       else
       {
-        // voltage dynamics
-        switch ( V_.method_ )
-        {
-        // Linear Euler forward (RK1) to find next V_m value
-        case 0:
-          S_.V_m_ =
-            v_old + dt * ( S_.I_ - P_.G_ * ( v_old - P_.E_L_ ) ) / P_.C_m_;
-          break;
-        // Linear Exact to find next V_m value
-        case 1:
-          S_.V_m_ = v_old * exp_tau
-            + ( ( S_.I_ + P_.G_ * P_.E_L_ ) / P_.C_m_ ) * ( 1 - exp_tau ) / tau;
-          break;
-        }
-
-        if ( S_.V_m_ > P_.th_inf_ )
-        {
-
-          V_.t_ref_remaining_ = V_.t_ref_total_;
-
-          // Determine spike offset and send spike event
-          double spike_offset =
-            ( 1 - ( P_.th_inf_ - v_old ) / ( S_.V_m_ - v_old ) )
-            * Time::get_resolution().get_ms();
-          set_spiketime(
-            Time::step( origin.get_steps() + lag + 1 ), spike_offset );
-          SpikeEvent se;
-          se.set_offset( spike_offset );
-          kernel().event_delivery_manager.send( *this, se, lag );
-        }
+        S_.V_m_ = v_old;
+      }
+    }
+    else
+    {
+      // voltage dynamics
+      switch ( V_.method_ )
+      {
+      // Linear Euler forward (RK1) to find next V_m value
+      case 0:
+        S_.V_m_ =
+          v_old + dt * ( S_.I_ - P_.G_ * ( v_old - P_.E_L_ ) ) / P_.C_m_;
+        break;
+      // Linear Exact to find next V_m value
+      case 1:
+        S_.V_m_ = v_old * exp_tau
+          + ( ( S_.I_ + P_.G_ * P_.E_L_ ) / P_.C_m_ ) * ( 1 - exp_tau ) / tau;
+        break;
       }
 
-      S_.I_ = B_.currents_.get_value( lag );
+      if ( S_.V_m_ > P_.th_inf_ )
+      {
 
-      B_.logger_.record_data( origin.get_steps() + lag );
+        V_.t_ref_remaining_ = V_.t_ref_total_;
 
-      v_old = S_.V_m_;
+        // Determine spike offset and send spike event
+        double spike_offset =
+          ( 1 - ( P_.th_inf_ - v_old ) / ( S_.V_m_ - v_old ) )
+          * Time::get_resolution().get_ms();
+        set_spiketime(
+          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
+        SpikeEvent se;
+        se.set_offset( spike_offset );
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
     }
-} 
+
+    S_.I_ = B_.currents_.get_value( lag );
+
+    B_.logger_.record_data( origin.get_steps() + lag );
+
+    v_old = S_.V_m_;
+  }
+}
 
 void
-nest::glif::update_glif2( Time const& origin,
-  const long from,
-  const long to )
+nest::glif::update_glif2( Time const& origin, const long from, const long to )
 {
   // glif_lif_r
   const double dt = Time::get_resolution().get_ms();
@@ -473,236 +479,231 @@ nest::glif::update_glif2( Time const& origin,
 
     th_old = S_.threshold_;
   }
-} 
+}
 
 void
-nest::glif::update_glif3( Time const& origin,
-  const long from,
-  const long to )
+nest::glif::update_glif3( Time const& origin, const long from, const long to )
 {
-    // glif_lif_asc
-    const double dt = Time::get_resolution().get_ms();
-    double v_old = S_.V_m_;
-    double tau = P_.G_ / P_.C_m_;
-    double exp_tau = std::exp( -dt * tau );
+  // glif_lif_asc
+  const double dt = Time::get_resolution().get_ms();
+  double v_old = S_.V_m_;
+  double tau = P_.G_ / P_.C_m_;
+  double exp_tau = std::exp( -dt * tau );
 
-    for ( long lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
+  {
+
+    if ( V_.t_ref_remaining_ > 0.0 )
     {
-
-      if ( V_.t_ref_remaining_ > 0.0 )
+      // While neuron is in refractory period count-down in time steps (since dt
+      // may change while in refractory) while holding the voltage at last peak.
+      V_.t_ref_remaining_ -= dt;
+      if ( V_.t_ref_remaining_ <= 0.0 )
       {
-        // While neuron is in refractory period count-down in time steps (since dt
-        // may change while in refractory) while holding the voltage at last peak.
-        V_.t_ref_remaining_ -= dt;
-        if ( V_.t_ref_remaining_ <= 0.0 )
+        // Neuron has left refractory period, reset voltage and after-spike
+        // current
+        // Reset ASC_currents
+        for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
         {
-          // Neuron has left refractory period, reset voltage and after-spike
-          // current
-          // Reset ASC_currents
-          for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
-          {
-            S_.ASCurrents_[ a ] = P_.asc_amps_[ a ]
-              + S_.ASCurrents_[ a ] * P_.r_[ a ]
-                * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
-          }
+          S_.ASCurrents_[ a ] = P_.asc_amps_[ a ]
+            + S_.ASCurrents_[ a ] * P_.r_[ a ]
+              * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
+        }
 
-          // Reset voltage
-          S_.V_m_ = P_.V_reset_;
-        }
-        else
-        {
-          S_.V_m_ = v_old;
-        }
+        // Reset voltage
+        S_.V_m_ = P_.V_reset_;
       }
       else
       {
-        // Integrate voltage and currents
-
-        // Calculate new ASCurrents value using exponential methods
-        S_.ASCurrents_sum_ = 0.0;
-        for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
-        {
-          S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
-          S_.ASCurrents_[ a ] =
-            S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
-        }
-
-        // voltage dynamic
-        switch ( V_.method_ )
-        {
-        // Linear Euler forward (RK1) to find next V_m value
-        case 0:
-          S_.V_m_ = v_old
-            + dt * ( S_.I_ + S_.ASCurrents_sum_ - P_.G_ * ( v_old - P_.E_L_ ) )
-              / P_.C_m_;
-          break;
-        // Linear Exact to find next V_m value
-        case 1:
-          S_.V_m_ = v_old * exp_tau
-            + ( ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) / P_.C_m_ )
-              * ( 1 - exp_tau ) / tau;
-          break;
-        }
-
-        // Check if there is an action potential
-        if ( S_.V_m_ > P_.th_inf_ )
-        {
-          // Marks that the neuron is in a refractory period
-          V_.t_ref_remaining_ = V_.t_ref_total_;
-
-          // Find the exact time during this step that the neuron crossed the
-          // threshold and record it
-          double spike_offset = ( 1 - ( P_.th_inf_ - v_old ) / ( S_.V_m_ - v_old ) )
-            * Time::get_resolution().get_ms();
-          set_spiketime(
-            Time::step( origin.get_steps() + lag + 1 ), spike_offset );
-          SpikeEvent se;
-          se.set_offset( spike_offset );
-          kernel().event_delivery_manager.send( *this, se, lag );
-        }
+        S_.V_m_ = v_old;
       }
-
-      // Update any external currents
-      S_.I_ = B_.currents_.get_value( lag );
-
-      // Save voltage
-      B_.logger_.record_data( origin.get_steps() + lag );
-
-      v_old = S_.V_m_;
     }
-} 
+    else
+    {
+      // Integrate voltage and currents
+
+      // Calculate new ASCurrents value using exponential methods
+      S_.ASCurrents_sum_ = 0.0;
+      for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
+      {
+        S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
+        S_.ASCurrents_[ a ] =
+          S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
+      }
+
+      // voltage dynamic
+      switch ( V_.method_ )
+      {
+      // Linear Euler forward (RK1) to find next V_m value
+      case 0:
+        S_.V_m_ = v_old
+          + dt * ( S_.I_ + S_.ASCurrents_sum_ - P_.G_ * ( v_old - P_.E_L_ ) )
+            / P_.C_m_;
+        break;
+      // Linear Exact to find next V_m value
+      case 1:
+        S_.V_m_ = v_old * exp_tau
+          + ( ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) / P_.C_m_ )
+            * ( 1 - exp_tau ) / tau;
+        break;
+      }
+
+      // Check if there is an action potential
+      if ( S_.V_m_ > P_.th_inf_ )
+      {
+        // Marks that the neuron is in a refractory period
+        V_.t_ref_remaining_ = V_.t_ref_total_;
+
+        // Find the exact time during this step that the neuron crossed the
+        // threshold and record it
+        double spike_offset =
+          ( 1 - ( P_.th_inf_ - v_old ) / ( S_.V_m_ - v_old ) )
+          * Time::get_resolution().get_ms();
+        set_spiketime(
+          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
+        SpikeEvent se;
+        se.set_offset( spike_offset );
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
+    }
+
+    // Update any external currents
+    S_.I_ = B_.currents_.get_value( lag );
+
+    // Save voltage
+    B_.logger_.record_data( origin.get_steps() + lag );
+
+    v_old = S_.V_m_;
+  }
+}
 
 void
-nest::glif::update_glif4( Time const& origin,
-  const long from,
-  const long to )
+nest::glif::update_glif4( Time const& origin, const long from, const long to )
 {
-    // glif_lif_r_asc
-    const double dt = Time::get_resolution().get_ms();
+  // glif_lif_r_asc
+  const double dt = Time::get_resolution().get_ms();
 
-    double v_old = S_.V_m_;
-    double spike_component = 0.0;
-    double th_old = S_.threshold_;
-    double tau = P_.G_ / P_.C_m_;
-    double exp_tau = std::exp( -dt * tau );
+  double v_old = S_.V_m_;
+  double spike_component = 0.0;
+  double th_old = S_.threshold_;
+  double tau = P_.G_ / P_.C_m_;
+  double exp_tau = std::exp( -dt * tau );
 
-    for ( long lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
+  {
+    // update threshold via exact solution of dynamics of spike component of
+    // threshold
+    spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
+    S_.threshold_ = spike_component + P_.th_inf_;
+    V_.last_spike_ = spike_component;
+
+    if ( V_.t_ref_remaining_ > 0.0 )
     {
-      // update threshold via exact solution of dynamics of spike component of
-      // threshold
-      spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
-      S_.threshold_ = spike_component + P_.th_inf_;
-      V_.last_spike_ = spike_component;
-
-      if ( V_.t_ref_remaining_ > 0.0 )
+      // While neuron is in refractory period count-down in time steps (since dt
+      // may change while in refractory) while holding the voltage at last peak.
+      V_.t_ref_remaining_ -= dt;
+      if ( V_.t_ref_remaining_ <= 0.0 )
       {
-        // While neuron is in refractory period count-down in time steps (since dt
-        // may change while in refractory) while holding the voltage at last peak.
-        V_.t_ref_remaining_ -= dt;
-        if ( V_.t_ref_remaining_ <= 0.0 )
-        {
-          // Neuron has left refractory period, reset voltage and after-spike
-          // current
+        // Neuron has left refractory period, reset voltage and after-spike
+        // current
 
-          // Reset ASC_currents
-          for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
-          {
-            S_.ASCurrents_[ a ] = P_.asc_amps_[ a ]
-              + S_.ASCurrents_[ a ] * P_.r_[ a ]
-                * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
-          }
-
-          // Reset voltage
-          S_.V_m_ = P_.E_L_ + P_.voltage_reset_a_ * ( S_.V_m_ - P_.E_L_ )
-            + P_.voltage_reset_b_;
-
-          // reset spike component of threshold
-          V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
-          S_.threshold_ = V_.last_spike_ + P_.th_inf_;
-
-          // Check if bad reset
-          // TODO: Better way to handle?
-          if ( S_.V_m_ > S_.threshold_ )
-          {
-            printf(
-              "Simulation Terminated: Voltage (%f) reset above threshold "
-              "(%f)!!\n",
-              S_.V_m_,
-              S_.threshold_ );
-          }
-          assert( S_.V_m_ <= S_.threshold_ );
-        }
-        else
-        {
-          S_.V_m_ = v_old;
-        }
-      }
-      else
-      {
-        // Integrate voltage and currents
-
-        // Calculate new ASCurrents value using exponential methods
-        S_.ASCurrents_sum_ = 0.0;
+        // Reset ASC_currents
         for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
         {
-          S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
-          S_.ASCurrents_[ a ] =
-            S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
-        }
-        // voltage dynamic
-        switch ( V_.method_ )
-        {
-        // Linear Euler forward (RK1) to find next V_m value
-        case 0:
-          S_.V_m_ = v_old
-            + dt * ( S_.I_ + S_.ASCurrents_sum_ - P_.G_ * ( v_old - P_.E_L_ ) )
-              / P_.C_m_;
-          break;
-        // Linear Exact to find next V_m value
-        case 1:
-          S_.V_m_ = v_old * exp_tau
-            + ( ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) / P_.C_m_ )
-              * ( 1 - exp_tau ) / tau;
-          break;
+          S_.ASCurrents_[ a ] = P_.asc_amps_[ a ]
+            + S_.ASCurrents_[ a ] * P_.r_[ a ]
+              * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
         }
 
-        // Check if their is an action potential
+        // Reset voltage
+        S_.V_m_ = P_.E_L_ + P_.voltage_reset_a_ * ( S_.V_m_ - P_.E_L_ )
+          + P_.voltage_reset_b_;
+
+        // reset spike component of threshold
+        V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
+        S_.threshold_ = V_.last_spike_ + P_.th_inf_;
+
+        // Check if bad reset
+        // TODO: Better way to handle?
         if ( S_.V_m_ > S_.threshold_ )
         {
-          // Marks that the neuron is in a refractory period
-          V_.t_ref_remaining_ = V_.t_ref_total_;
-
-          // Find the exact time during this step that the neuron crossed the
-          // threshold and record it
-          double spike_offset =
-            ( 1
-              - ( v_old - th_old )
-                / ( ( S_.threshold_ - th_old ) - ( S_.V_m_ - v_old ) ) )
-            * Time::get_resolution().get_ms();
-          set_spiketime(
-            Time::step( origin.get_steps() + lag + 1 ), spike_offset );
-          SpikeEvent se;
-          se.set_offset( spike_offset );
-          kernel().event_delivery_manager.send( *this, se, lag );
+          printf(
+            "Simulation Terminated: Voltage (%f) reset above threshold "
+            "(%f)!!\n",
+            S_.V_m_,
+            S_.threshold_ );
         }
+        assert( S_.V_m_ <= S_.threshold_ );
+      }
+      else
+      {
+        S_.V_m_ = v_old;
+      }
+    }
+    else
+    {
+      // Integrate voltage and currents
+
+      // Calculate new ASCurrents value using exponential methods
+      S_.ASCurrents_sum_ = 0.0;
+      for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
+      {
+        S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
+        S_.ASCurrents_[ a ] =
+          S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
+      }
+      // voltage dynamic
+      switch ( V_.method_ )
+      {
+      // Linear Euler forward (RK1) to find next V_m value
+      case 0:
+        S_.V_m_ = v_old
+          + dt * ( S_.I_ + S_.ASCurrents_sum_ - P_.G_ * ( v_old - P_.E_L_ ) )
+            / P_.C_m_;
+        break;
+      // Linear Exact to find next V_m value
+      case 1:
+        S_.V_m_ = v_old * exp_tau
+          + ( ( S_.I_ + S_.ASCurrents_sum_ + P_.G_ * P_.E_L_ ) / P_.C_m_ )
+            * ( 1 - exp_tau ) / tau;
+        break;
       }
 
-      // Update any external currents
-      S_.I_ = B_.currents_.get_value( lag );
+      // Check if their is an action potential
+      if ( S_.V_m_ > S_.threshold_ )
+      {
+        // Marks that the neuron is in a refractory period
+        V_.t_ref_remaining_ = V_.t_ref_total_;
 
-      // Save voltage
-      B_.logger_.record_data( origin.get_steps() + lag );
-
-      v_old = S_.V_m_;
-
-      th_old = S_.threshold_;
+        // Find the exact time during this step that the neuron crossed the
+        // threshold and record it
+        double spike_offset =
+          ( 1
+            - ( v_old - th_old )
+              / ( ( S_.threshold_ - th_old ) - ( S_.V_m_ - v_old ) ) )
+          * Time::get_resolution().get_ms();
+        set_spiketime(
+          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
+        SpikeEvent se;
+        se.set_offset( spike_offset );
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
     }
-} 
+
+    // Update any external currents
+    S_.I_ = B_.currents_.get_value( lag );
+
+    // Save voltage
+    B_.logger_.record_data( origin.get_steps() + lag );
+
+    v_old = S_.V_m_;
+
+    th_old = S_.threshold_;
+  }
+}
 
 void
-nest::glif::update_glif5( Time const& origin,
-  const long from,
-  const long to )
+nest::glif::update_glif5( Time const& origin, const long from, const long to )
 {
   // glif_lif_r_asc_a
   const double dt = Time::get_resolution().get_ms();

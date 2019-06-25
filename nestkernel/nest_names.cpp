@@ -64,7 +64,7 @@ const Name Aplus_triplet( "Aplus_triplet" );
 const Name archiver_length( "archiver_length" );
 const Name asc_amps( "asc_amps" );
 const Name asc_init( "asc_init" );
-const Name ASCurrents( "ASCurrents");
+const Name ASCurrents( "ASCurrents" );
 const Name autapses( "autapses" );
 const Name available( "available" );
 

@@ -33,18 +33,12 @@
 #include "dictdatum.h"
 
 /* BeginDocumentation
-Name: glif - Generalized leaky integrate and fire (GLIF) model 5 -
-                         Leaky integrate and fire with biologically defined
-                         reset rules, after-spike currents and a voltage
-                         dependent threshold model.
+Name: glif - Generalized leaky integrate and fire (GLIF) models.
 
 Description:
 
-  glif is an implementation of a generalized leaky integrate and
-fire (GLIF) model 5
-  (i.e., leaky integrate and fire with biologically defined reset rules,
-after-spike currents
-  and a voltage dependent threshold model), described in [1].
+  glif is implementations of five generalized leaky integrate and
+fire (GLIF) models described in [1].
 
 Parameters:
 
@@ -82,6 +76,19 @@ methods:
 to find next V_m value, or
                              'linear_exact' - Linear exact to find next V_m
 value.
+  glif_model        string - glif model type:
+                             "lif" / "glif_lif" / "1" - GLIF model 1 -
+Traditional leaky integrate and fire (LIF) model,
+                             "lif_r" / "glif_lif_r" / "2" - GLIF model 2 - Leaky
+integrate and fire with biologically defined reset rules model,
+                             "lif_asc" / "glif_lif_asc" / "3" - GLIF model 3 -
+Leaky integrate and fire with after-spike currents model,
+                             "lif_r_asc" / "glif_lif_r_asc" / "4" - GLIF model 4
+- Leaky integrate and fire with biologically defined reset rules and after-spike
+currents model, or
+                             "lif_r_asc_a" / "glif_lif_r_asc_a" / "5" - (GLIF)
+model 5 - Leaky integrate and fire with biologically defined reset rules,
+after-spike currents and a voltage dependent threshold model.
 
 References:
   [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
@@ -123,15 +130,23 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-  
+
   typedef std::string model_type;
-  std::map< std::string, long > model_type_lu = {
-    {"lif", 1}, {"glif_lif", 1}, {"1", 1},
-    {"lif_r", 2}, {"glif_lif_r", 2}, {"2", 2},
-    {"lif_asc", 3}, {"glif_lif_asc", 3}, {"3", 3},
-    {"lif_r_asc", 4}, {"glif_lif_r_asc", 4}, {"4", 4},
-    {"lif_r_asc_a", 5}, {"glif_lif_r_asc_a", 5}, {"5", 5}
-  };
+  std::map< std::string, long > model_type_lu = { { "lif", 1 },
+    { "glif_lif", 1 },
+    { "1", 1 },
+    { "lif_r", 2 },
+    { "glif_lif_r", 2 },
+    { "2", 2 },
+    { "lif_asc", 3 },
+    { "glif_lif_asc", 3 },
+    { "3", 3 },
+    { "lif_r_asc", 4 },
+    { "glif_lif_r_asc", 4 },
+    { "4", 4 },
+    { "lif_r_asc_a", 5 },
+    { "glif_lif_r_asc_a", 5 },
+    { "5", 5 } };
 
 private:
   //! Reset parameters and state of neuron.
@@ -146,7 +161,7 @@ private:
   void calibrate();
 
   //! Take neuron through given time interval
-  void update( nest::Time const&, const long, const long );  
+  void update( nest::Time const&, const long, const long );
   void update_glif1( nest::Time const&, const long, const long );
   void update_glif2( nest::Time const&, const long, const long );
   void update_glif3( nest::Time const&, const long, const long );
@@ -161,9 +176,9 @@ private:
   struct Parameters_
   {
     // GLIF model 1
-    double V_reset_;                // Membrane voltage following spike in mV
-    
-    
+    double V_reset_; // Membrane voltage following spike in mV
+
+
     double th_inf_; // infinity threshold in mV
     double G_;      // membrane conductance in nS
     double E_L_;    // resting potential in mV
@@ -186,7 +201,7 @@ private:
     std::string V_dynamics_method_; // voltage dynamic methods
 
     model_type glif_model_;
-    
+
     Parameters_();
 
     void get( DictionaryDatum& ) const;
@@ -250,8 +265,8 @@ private:
   State_ S_;
   Variables_ V_;
   Buffers_ B_;
-  
-  std::function< void(nest::Time const&, const long, const long) > 
+
+  std::function< void( nest::Time const&, const long, const long ) >
     glif_func; // = &update_glif5;
 
   // Mapping of recordables names to access functions
@@ -270,8 +285,7 @@ nest::glif::send_test_event( nest::Node& target,
 }
 
 inline nest::port
-nest::glif::handles_test_event( nest::SpikeEvent&,
-  nest::port receptor_type )
+nest::glif::handles_test_event( nest::SpikeEvent&, nest::port receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -281,8 +295,7 @@ nest::glif::handles_test_event( nest::SpikeEvent&,
 }
 
 inline nest::port
-nest::glif::handles_test_event( nest::CurrentEvent&,
-  nest::port receptor_type )
+nest::glif::handles_test_event( nest::CurrentEvent&, nest::port receptor_type )
 {
   if ( receptor_type != 0 )
   {

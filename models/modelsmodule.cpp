@@ -219,9 +219,9 @@ ModelsModule::init( SLIInterpreter* )
 {
 
   // glif models
-  kernel().model_manager.register_node_model< glif >( "glif");
-  kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );  
-  
+  kernel().model_manager.register_node_model< glif >( "glif" );
+  kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );
+
   kernel().model_manager.register_node_model< glif_lif >( "glif_lif" );
   kernel().model_manager.register_node_model< glif_lif_r >( "glif_lif_r" );
   kernel().model_manager.register_node_model< glif_lif_asc >( "glif_lif_asc" );
@@ -424,8 +424,7 @@ ModelsModule::init( SLIInterpreter* )
 
 #ifdef HAVE_GSL
   // glif cond models
-  kernel().model_manager.register_node_model< glif_cond >(
-    "glif_cond" );
+  kernel().model_manager.register_node_model< glif_cond >( "glif_cond" );
   kernel().model_manager.register_node_model< glif_lif_cond >(
     "glif_lif_cond" );
   kernel().model_manager.register_node_model< glif_lif_r_cond >(

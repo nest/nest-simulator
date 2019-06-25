@@ -64,9 +64,10 @@ RecordablesMap< nest::glif_lif >::create()
  * ---------------------------------------------------------------- */
 
 nest::glif_lif::Parameters_::Parameters_()
-  : th_inf_( 26.5 )   // mV
-  , G_( 4.6951 )      // nS (1/Gohm)
-  , E_L_( -77.4 )     // mV
+  : th_inf_( 26.5 ) // mV
+  , G_( 4.6951 )    // nS (1/Gohm)
+  , E_L_( -77.4 )   // mV
+  // E_L_(p.E_L_)
   , C_m_( 99.182 )    // pF
   , t_ref_( 0.5 )     // ms
   , V_reset_( -77.4 ) // mV
@@ -74,10 +75,15 @@ nest::glif_lif::Parameters_::Parameters_()
 {
 }
 
-nest::glif_lif::State_::State_()
-  : V_m_( -77.4 ) // mV
-  , I_( 0.0 )     // pA
+nest::glif_lif::State_::State_( const Parameters_& p )
+  //: V_m_(-77.4) // mV
+  : V_m_( p.E_L_ ) // mV
+    ,
+    I_( 0.0 ) // pA
 {
+  // printf("el%f, vm%f", p.E_L_, V_m_);
+  // V_m_ = p.E_L_; // mV
+  /// printf("el%f, vm%f", p.E_L_, V_m_);
 }
 
 /* ----------------------------------------------------------------
@@ -101,7 +107,9 @@ nest::glif_lif::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::V_th, th_inf_ );
   updateValue< double >( d, names::g, G_ );
+  // printf("el%f\n", E_L_);
   updateValue< double >( d, names::E_L, E_L_ );
+  // printf("el%f\n", E_L_);
   updateValue< double >( d, names::C_m, C_m_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
   updateValue< double >( d, names::V_reset, V_reset_ );
@@ -141,7 +149,8 @@ nest::glif_lif::State_::set( const DictionaryDatum& d, const Parameters_& p )
   // variables settable.
   // updateValue< double >( d, names::V_m, V_m_ );
   updateValue< double >( d, names::V_m, V_m_ );
-  V_m_ = p.E_L_;
+  // V_m_ = p.E_L_;
+  // printf("updateVM: el%f, vm%f\n", p.E_L_, V_m_);
 }
 
 nest::glif_lif::Buffers_::Buffers_( glif_lif& n )
@@ -161,7 +170,7 @@ nest::glif_lif::Buffers_::Buffers_( const Buffers_&, glif_lif& n )
 nest::glif_lif::glif_lif()
   : Archiving_Node()
   , P_()
-  , S_()
+  , S_( P_ )
   , B_( *this )
 {
   recordablesMap_.create();

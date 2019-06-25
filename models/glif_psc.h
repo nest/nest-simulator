@@ -33,7 +33,8 @@
 #include "dictdatum.h"
 
 /* BeginDocumentation
-Name: glif_psc - Current-based generalized leaky integrate and fire (GLIF) models
+Name: glif_psc - Current-based generalized leaky integrate and fire (GLIF)
+models
 
 Description:
 
@@ -85,11 +86,18 @@ in 1/ms (bv in Equation (4) in [1]).
   tau_syn           double vector - Rise time constants of the synaptic alpha
 function in ms.
   glif_model        string - glif model type:
-                             "lif" / "glif_lif" / "1" - GLIF model 1 - Traditional leaky integrate and fire (LIF) model,
-                             "lif_r" / "glif_lif_r" / "2" - GLIF model 2 - Leaky integrate and fire with biologically defined reset rules model,
-                             "lif_asc" / "glif_lif_asc" / "3" - GLIF model 3 - Leaky integrate and fire with after-spike currents model,
-                             "lif_r_asc" / "glif_lif_r_asc" / "4" - GLIF model 4 - Leaky integrate and fire with biologically defined reset rules and after-spike currents model, or
-                             "lif_r_asc_a" / "glif_lif_r_asc_a" / "5" - GLIF model 5 - Leaky integrate and fire with biologically defined reset rules, after-spike currents and a voltage dependent threshold model.
+                             "lif" / "glif_lif" / "1" - GLIF model 1 -
+Traditional leaky integrate and fire (LIF) model,
+                             "lif_r" / "glif_lif_r" / "2" - GLIF model 2 - Leaky
+integrate and fire with biologically defined reset rules model,
+                             "lif_asc" / "glif_lif_asc" / "3" - GLIF model 3 -
+Leaky integrate and fire with after-spike currents model,
+                             "lif_r_asc" / "glif_lif_r_asc" / "4" - GLIF model 4
+- Leaky integrate and fire with biologically defined reset rules and after-spike
+currents model, or
+                             "lif_r_asc_a" / "glif_lif_r_asc_a" / "5" - GLIF
+model 5 - Leaky integrate and fire with biologically defined reset rules,
+after-spike currents and a voltage dependent threshold model.
 
 References:
   [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
@@ -131,15 +139,23 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-  
+
   typedef std::string model_type;
-  std::map< std::string, long > model_type_lu = {
-    {"lif", 1}, {"glif_lif", 1}, {"1", 1},
-    {"lif_r", 2}, {"glif_lif_r", 2}, {"2", 2},
-    {"lif_asc", 3}, {"glif_lif_asc", 3}, {"3", 3},
-    {"lif_r_asc", 4}, {"glif_lif_r_asc", 4}, {"4", 4},
-    {"lif_r_asc_a", 5}, {"glif_lif_r_asc_a", 5}, {"5", 5}
-  };
+  std::map< std::string, long > model_type_lu = { { "lif", 1 },
+    { "glif_lif", 1 },
+    { "1", 1 },
+    { "lif_r", 2 },
+    { "glif_lif_r", 2 },
+    { "2", 2 },
+    { "lif_asc", 3 },
+    { "glif_lif_asc", 3 },
+    { "3", 3 },
+    { "lif_r_asc", 4 },
+    { "glif_lif_r_asc", 4 },
+    { "4", 4 },
+    { "lif_r_asc_a", 5 },
+    { "glif_lif_r_asc_a", 5 },
+    { "5", 5 } };
 
 private:
   //! Reset parameters and state of neuron.
@@ -163,11 +179,11 @@ private:
 
   struct Parameters_
   {
-    double th_inf_; // infinity threshold in mV
-    double G_;      // membrane conductance in nS
-    double E_L_;    // resting potential in mV
-    double C_m_;    // capacitance in pF
-    double t_ref_;  // refractory time in ms
+    double th_inf_;  // infinity threshold in mV
+    double G_;       // membrane conductance in nS
+    double E_L_;     // resting potential in mV
+    double C_m_;     // capacitance in pF
+    double t_ref_;   // refractory time in ms
     double V_reset_; // Membrane voltage following spike in mV
 
     double a_spike_; // threshold additive constant following reset in mV
@@ -177,7 +193,7 @@ private:
     double a_voltage_;       // a 'leak-conductance' for the voltage-dependent
                              // component of the threshold in 1/ms
     double b_voltage_;       // inverse of which is the time constant of the
-                             // voltage-dependent component of the threshold in 1/ms
+    // voltage-dependent component of the threshold in 1/ms
 
     std::vector< double > asc_init_; // initial values of ASCurrents_ in pA
     std::vector< double > k_;        // predefined time scale in 1/ms
@@ -211,7 +227,7 @@ private:
     std::vector< double > y1_; // synapse current evolution state 1 in pA
     std::vector< double > y2_; // synapse current evolution state 2 in pA
 
-    State_(const Parameters_& );
+    State_( const Parameters_& );
 
     void get( DictionaryDatum&, const Parameters_& ) const;
     void set( const DictionaryDatum&, const Parameters_&, double );
@@ -264,8 +280,8 @@ private:
   double
   get_AScurrents_sum_() const
   {
-    //return S_.ASCurrents_[ 0 ];
-	return S_.ASCurrents_sum_;
+    // return S_.ASCurrents_[ 0 ];
+    return S_.ASCurrents_sum_;
   }
 
   double

@@ -140,7 +140,7 @@ private:
     double V_m_; // membrane potential in mV
     double I_;   // external current in pA
 
-    State_();
+    State_( const Parameters_& );
 
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum&, const Parameters_& );

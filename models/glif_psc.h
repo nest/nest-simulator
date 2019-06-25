@@ -38,73 +38,68 @@ models
 
 Description:
 
-  glif_psc is implementations of five generalized leaky integrate and
-fire (GLIF) models [1] with alpha-function shaped
-  synaptic currents. Incoming spike events induce a post-synaptic change of
-current modeled
-  by an alpha function. The alpha function is normalized such that an event of
-weight 1.0
-  results in a peak current of 1 pA at t = tau_syn. On the postsynapic side,
-there can be
-  arbitrarily many synaptic time constants. This can be reached by specifying
-separate receptor ports,
-  each for a different time constant. The port number has to match the
-respective
-  "receptor_type" in the connectors.
+glif_psc is implementations of five generalized leaky integrate and
+fire (GLIF) models [1] with alpha-function shaped synaptic currents.
+Incoming spike events induce a post-synaptic change of current modeled
+by an alpha function. The alpha function is normalized such that an event of
+weight 1.0 results in a peak current of 1 pA at t = tau_syn. On the postsynapic
+side, there can be arbitrarily many synaptic time constants. This can be reached
+by specifying separate receptor ports, each for a different time constant.
+The port number has to match the respective "receptor_type" in the connectors.
+
+The five GLIF models are
+
+GLIF model 1 - Traditional leaky integrate and fire (LIF) model,
+GLIF model 2 - Leaky integrate and fire with biologically defined reset rules
+               model,
+GLIF model 3 - Leaky integrate and fire with after-spike currents model,
+GLIF model 4 - Leaky integrate and fire with biologically defined reset rules
+               and after-spike currents model,
+GLIF model 5 - Leaky integrate and fire with biologically defined reset rules,
+               after-spike currents and a voltage dependent threshold model.
 
 Parameters:
 
-  The following parameters can be set in the status dictionary.
+The following parameters can be set in the status dictionary.
 
-  V_m               double - Membrane potential in mV
-  V_th              double - Instantaneous threshold in mV.
-  g                 double - Membrane conductance in nS.
-  E_L               double - Resting membrane potential in mV.
-  C_m               double - Capacitance of the membrane in pF.
-  t_ref             double - Duration of refractory time in ms.
-  V_reset           double - Reset potential of the membrane in mV (glif 1-3).
-  a_spike           double - Threshold addition following spike in mV.
-  b_spike           double - Spike-induced threshold time constant in 1/ms.
-  a_reset           double - Voltage fraction coefficient following spike.
-  b_reset           double - Voltage addition following spike in mV.
-  asc_init          double vector - Initial values of after-spike currents in
-pA.
-  k                 double vector - After-spike current time constants in 1/ms
-(kj in Equation (3) in [1]).
-  asc_amps          double vector - After-spike current amplitudes in pA
-(deltaIj in Equation (7) in [1]).
-  r                 double vector - Current fraction following spike
-coefficients (fj in Equation (7) in [1]).
-  a_voltage         double - Adaptation index of threshold - A
-'leak-conductance' for the voltage-dependent
-                             component of the threshold in 1/ms (av in Equation
-(4) in [1]).
-  b_voltage         double - Voltage-induced threshold time constant - Inverse
-of which is the time constant
-                             of the voltage-dependent component of the threshold
-in 1/ms (bv in Equation (4) in [1]).
-  tau_syn           double vector - Rise time constants of the synaptic alpha
-function in ms.
-  glif_model        string - glif model type:
-                             "lif" / "glif_lif" / "1" - GLIF model 1 -
-Traditional leaky integrate and fire (LIF) model,
-                             "lif_r" / "glif_lif_r" / "2" - GLIF model 2 - Leaky
-integrate and fire with biologically defined reset rules model,
-                             "lif_asc" / "glif_lif_asc" / "3" - GLIF model 3 -
-Leaky integrate and fire with after-spike currents model,
-                             "lif_r_asc" / "glif_lif_r_asc" / "4" - GLIF model 4
-- Leaky integrate and fire with biologically defined reset rules and after-spike
-currents model, or
-                             "lif_r_asc_a" / "glif_lif_r_asc_a" / "5" - GLIF
-model 5 - Leaky integrate and fire with biologically defined reset rules,
-after-spike currents and a voltage dependent threshold model.
+V_m        double - Membrane potential in mV
+V_th       double - Instantaneous threshold in mV.
+g          double - Membrane conductance in nS.
+E_L        double - Resting membrane potential in mV.
+C_m        double - Capacitance of the membrane in pF.
+t_ref      double - Duration of refractory time in ms.
+V_reset    double - Reset potential of the membrane in mV (glif 1-3).
+a_spike    double - Threshold addition following spike in mV.
+b_spike    double - Spike-induced threshold time constant in 1/ms.
+a_reset    double - Voltage fraction coefficient following spike.
+b_reset    double - Voltage addition following spike in mV.
+asc_init   double vector - Initial values of after-spike currents in pA.
+k          double vector - After-spike current time constants in 1/ms
+                           (kj in Equation (3) in [1]).
+asc_amps   double vector - After-spike current amplitudes in pA
+                           (deltaIj in Equation (7) in [1]).
+r          double vector - Current fraction following spike coefficients
+                           (fj in Equation (7) in [1]).
+a_voltage  double - Adaptation index of threshold - A 'leak-conductance'
+                    for the voltage-dependent component of the threshold
+                    in 1/ms (av in Equation (4) in [1]).
+b_voltage  double - Voltage-induced threshold time constant - Inverse of which
+                    is the time constant of the voltage-dependent component
+                    of the threshold in 1/ms (bv in Equation (4) in [1]).
+tau_syn    double vector - Rise time constants of the synaptic alpha function
+                           in ms.
+glif_model string - glif model type:
+                    "lif"/"glif_lif"/"1" - GLIF model 1,
+                    "lif_r"/"glif_lif_r"/"2" - GLIF model 2,
+                    "lif_asc"/"glif_lif_asc"/"3" - GLIF model 3,
+                    "lif_r_asc"/"glif_lif_r_asc"/"4" - GLIF model 4, or
+                    "lif_r_asc_a"/"glif_lif_r_asc_a"/"5" - GLIF model 5.
 
 References:
-  [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
-      Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
-      Generalized leaky integrate-and-fire models classify multiple neuron
-types.
-      Nature Communications 9:709.
+[1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
+    Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
+    Generalized leaky integrate-and-fire models classify multiple neuron types.
+    Nature Communications 9:709.
 
 Author: Binghuang Cai and Kael Dai @ Allen Institute for Brain Science
 */

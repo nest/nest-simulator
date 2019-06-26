@@ -300,4 +300,3 @@ texinfo_documents = [
 #    html_theme = 'alabaster'
 # else:
 #    html_theme = 'nat'
-

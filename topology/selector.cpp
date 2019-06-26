@@ -53,8 +53,7 @@ Selector::Selector( const DictionaryDatum& d )
   if ( updateValue< std::string >( d, names::model, modelname ) )
   {
 
-    const Token model_token =
-      kernel().model_manager.get_modeldict()->lookup( modelname );
+    const Token model_token = kernel().model_manager.get_modeldict()->lookup( modelname );
 
     if ( model_token.empty() )
     {

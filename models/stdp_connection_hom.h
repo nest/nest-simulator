@@ -220,10 +220,7 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -235,18 +232,14 @@ private:
   double
   facilitate_( double w, double kplus, const STDPHomCommonProperties& cp )
   {
-    double norm_w = ( w / cp.Wmax_ )
-      + ( cp.lambda_ * std::pow( 1.0 - ( w / cp.Wmax_ ), cp.mu_plus_ )
-                      * kplus );
+    double norm_w = ( w / cp.Wmax_ ) + ( cp.lambda_ * std::pow( 1.0 - ( w / cp.Wmax_ ), cp.mu_plus_ ) * kplus );
     return norm_w < 1.0 ? norm_w * cp.Wmax_ : cp.Wmax_;
   }
 
   double
   depress_( double w, double kminus, const STDPHomCommonProperties& cp )
   {
-    double norm_w =
-      ( w / cp.Wmax_ ) - ( cp.alpha_ * cp.lambda_
-                           * std::pow( w / cp.Wmax_, cp.mu_minus_ ) * kminus );
+    double norm_w = ( w / cp.Wmax_ ) - ( cp.alpha_ * cp.lambda_ * std::pow( w / cp.Wmax_, cp.mu_minus_ ) * kminus );
     return norm_w > 0.0 ? norm_w * cp.Wmax_ : 0.0;
   }
 
@@ -271,8 +264,7 @@ STDPConnectionHom< targetidentifierT >::STDPConnectionHom()
 }
 
 template < typename targetidentifierT >
-STDPConnectionHom< targetidentifierT >::STDPConnectionHom(
-  const STDPConnectionHom& rhs )
+STDPConnectionHom< targetidentifierT >::STDPConnectionHom( const STDPConnectionHom& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , Kplus_( rhs.Kplus_ )
@@ -287,9 +279,7 @@ STDPConnectionHom< targetidentifierT >::STDPConnectionHom(
  */
 template < typename targetidentifierT >
 inline void
-STDPConnectionHom< targetidentifierT >::send( Event& e,
-  thread t,
-  const STDPHomCommonProperties& cp )
+STDPConnectionHom< targetidentifierT >::send( Event& e, thread t, const STDPHomCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
 
@@ -303,10 +293,7 @@ STDPConnectionHom< targetidentifierT >::send( Event& e,
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history( t_lastspike_ - dendritic_delay,
-    t_spike - dendritic_delay,
-    &start,
-    &finish );
+  target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   double minus_dt;
   while ( start != finish )
@@ -316,13 +303,11 @@ STDPConnectionHom< targetidentifierT >::send( Event& e,
     // get_history() should make sure that
     // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
     assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
-    weight_ =
-      facilitate_( weight_, Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
+    weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
   }
 
   // depression due to new pre-synaptic spike
-  weight_ =
-    depress_( weight_, target->get_K_value( t_spike - dendritic_delay ), cp );
+  weight_ = depress_( weight_, target->get_K_value( t_spike - dendritic_delay ), cp );
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
@@ -351,8 +336,7 @@ STDPConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-STDPConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+STDPConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // base class properties
   ConnectionBase::set_status( d, cm );

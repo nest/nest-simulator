@@ -76,8 +76,7 @@ PreciseModule::~PreciseModule()
 const std::string
 PreciseModule::name( void ) const
 {
-  return std::string(
-    "NEST Precise Spike-Timing Models Module" ); // Return name of the module
+  return std::string( "NEST Precise Spike-Timing Models Module" ); // Return name of the module
 }
 
 const std::string
@@ -92,24 +91,15 @@ void
 PreciseModule::init( SLIInterpreter* )
 {
   // register models
-  kernel().model_manager.register_node_model< iaf_psc_alpha_canon >(
-    "iaf_psc_alpha_canon" );
-  kernel().model_manager.register_node_model< iaf_psc_alpha_presc >(
-    "iaf_psc_alpha_presc" );
-  kernel().model_manager.register_node_model< iaf_psc_alpha_ps >(
-    "iaf_psc_alpha_ps" );
-  kernel().model_manager.register_node_model< iaf_psc_delta_ps >(
-    "iaf_psc_delta_canon" );
-  kernel().model_manager.register_node_model< iaf_psc_delta_ps >(
-    "iaf_psc_delta_ps" );
-  kernel().model_manager.register_node_model< iaf_psc_exp_ps >(
-    "iaf_psc_exp_ps" );
-  kernel().model_manager.register_node_model< iaf_psc_exp_ps_lossless >(
-    "iaf_psc_exp_ps_lossless" );
-  kernel().model_manager.register_node_model< parrot_neuron_ps >(
-    "parrot_neuron_ps" );
-  kernel().model_manager.register_node_model< poisson_generator_ps >(
-    "poisson_generator_ps" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha_canon >( "iaf_psc_alpha_canon" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha_presc >( "iaf_psc_alpha_presc" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha_ps >( "iaf_psc_alpha_ps" );
+  kernel().model_manager.register_node_model< iaf_psc_delta_ps >( "iaf_psc_delta_canon" );
+  kernel().model_manager.register_node_model< iaf_psc_delta_ps >( "iaf_psc_delta_ps" );
+  kernel().model_manager.register_node_model< iaf_psc_exp_ps >( "iaf_psc_exp_ps" );
+  kernel().model_manager.register_node_model< iaf_psc_exp_ps_lossless >( "iaf_psc_exp_ps_lossless" );
+  kernel().model_manager.register_node_model< parrot_neuron_ps >( "parrot_neuron_ps" );
+  kernel().model_manager.register_node_model< poisson_generator_ps >( "poisson_generator_ps" );
 } // PreciseModule::init()
 
 

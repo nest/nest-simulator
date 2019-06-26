@@ -158,4 +158,3 @@
  * This is a subgroup for Clopath type synapses of NEST
  *
  */
-

@@ -27,9 +27,7 @@
 
 nest::index nest::Multirange::operator[]( index n ) const
 {
-  for ( RangeVector::const_iterator iter = ranges_.begin();
-        iter != ranges_.end();
-        ++iter )
+  for ( RangeVector::const_iterator iter = ranges_.begin(); iter != ranges_.end(); ++iter )
   {
     if ( n <= iter->second - iter->first )
     {

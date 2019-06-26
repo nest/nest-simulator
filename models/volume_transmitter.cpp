@@ -88,8 +88,7 @@ nest::volume_transmitter::init_buffers_()
 {
   B_.neuromodulatory_spikes_.clear();
   B_.spikecounter_.clear();
-  B_.spikecounter_.push_back(
-    spikecounter( 0.0, 0.0 ) ); // insert pseudo last dopa spike at t = 0.0
+  B_.spikecounter_.push_back( spikecounter( 0.0, 0.0 ) ); // insert pseudo last dopa spike at t = 0.0
   Archiving_Node::clear_history();
 }
 
@@ -97,8 +96,7 @@ void
 nest::volume_transmitter::calibrate()
 {
   // +1 as pseudo dopa spike at t_trig is inserted after trigger_update_weight
-  B_.spikecounter_.reserve(
-    kernel().connection_manager.get_min_delay() * P_.deliver_interval_ + 1 );
+  B_.spikecounter_.reserve( kernel().connection_manager.get_min_delay() * P_.deliver_interval_ + 1 );
 }
 
 void
@@ -112,10 +110,7 @@ nest::volume_transmitter::update( const Time&, const long from, const long to )
     multiplicity = B_.neuromodulatory_spikes_.get_value( lag );
     if ( multiplicity > 0 )
     {
-      t_spike =
-        Time(
-          Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
-            + lag + 1 ) ).get_ms();
+      t_spike = Time( Time::step( kernel().simulation_manager.get_slice_origin().get_steps() + lag + 1 ) ).get_ms();
       B_.spikecounter_.push_back( spikecounter( t_spike, multiplicity ) );
     }
   }
@@ -125,15 +120,11 @@ nest::volume_transmitter::update( const Time&, const long from, const long to )
       % ( P_.deliver_interval_ * kernel().connection_manager.get_min_delay() )
     == 0 )
   {
-    double t_trig =
-      Time(
-        Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
-          + to ) ).get_ms();
+    double t_trig = Time( Time::step( kernel().simulation_manager.get_slice_origin().get_steps() + to ) ).get_ms();
 
     if ( not B_.spikecounter_.empty() )
     {
-      kernel().connection_manager.trigger_update_weight(
-        get_gid(), B_.spikecounter_, t_trig );
+      kernel().connection_manager.trigger_update_weight( get_gid(), B_.spikecounter_, t_trig );
     }
 
     // clear spikecounter
@@ -148,7 +139,6 @@ nest::volume_transmitter::update( const Time&, const long from, const long to )
 void
 nest::volume_transmitter::handle( SpikeEvent& e )
 {
-  B_.neuromodulatory_spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  B_.neuromodulatory_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     static_cast< double >( e.get_multiplicity() ) );
 }

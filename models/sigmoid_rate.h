@@ -145,8 +145,7 @@ nonlinearities_sigmoid_rate::mult_coupling_in( double rate )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_sigmoid_rate > sigmoid_rate_ipn;
-typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate >
-  rate_transformer_sigmoid;
+typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate > rate_transformer_sigmoid;
 
 template <>
 void RecordablesMap< sigmoid_rate_ipn >::create();

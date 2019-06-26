@@ -176,10 +176,7 @@ private:
 };
 
 inline port
-music_event_in_proxy::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+music_event_in_proxy::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

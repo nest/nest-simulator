@@ -152,8 +152,7 @@ nonlinearities_lin_rate::mult_coupling_in( double rate )
 
 typedef rate_neuron_ipn< nest::nonlinearities_lin_rate > lin_rate_ipn;
 typedef rate_neuron_opn< nest::nonlinearities_lin_rate > lin_rate_opn;
-typedef rate_transformer_node< nest::nonlinearities_lin_rate >
-  rate_transformer_lin;
+typedef rate_transformer_node< nest::nonlinearities_lin_rate > rate_transformer_lin;
 
 template <>
 void RecordablesMap< lin_rate_ipn >::create();

@@ -80,16 +80,18 @@ Interpol_Order  int - Interpolation order for spike time:
 
 Remarks:
 
-Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time plus offset). If this node is
-connected to a spike_detector, the property "precise_times" of the
-spike_detector has to be set to true in order to record the offsets
-in addition to the on-grid spike times.
+This model transmits precise spike times to target nodes (on-grid spike
+time and offset). If this node is connected to a spike_detector, the
+property "precise_times" of the spike_detector has to be set to true in
+order to record the offsets in addition to the on-grid spike times.
+
+The iaf_psc_delta_ps neuron accepts connections transmitting
+CurrentEvents. These events transmit stepwise-constant currents which
+can only change at on-grid times.
 
 If tau_m is very close to tau_syn, the model will numerically behave
 as if tau_m is equal to tau_syn, to avoid numerical instabilities.
-For details, please see IAF_Neruons_Singularity.ipynb in
-the NEST source code (docs/model_details).
+For details, please see doc/model_details/IAF_neurons_singularity.ipynb.
 
 References:
 
@@ -106,7 +108,7 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso: iaf_psc_alpha, iaf_psc_alpha_canon, iaf_psc_delta_canon
+SeeAlso: iaf_psc_alpha, iaf_psc_alpha_ps, iaf_psc_delta_ps
 */
 class iaf_psc_alpha_presc : public Archiving_Node
 {

@@ -41,6 +41,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup generator
+
 Name: gamma_sup_generator - simulate the superimposed spike train of a
                             population of gamma process.
 Description:
@@ -51,20 +54,23 @@ population of neurons firing independently with gamma process statistics.
 Parameters:
 
 The following parameters appear in the element's status dictionary:
+\verbatim embed:rst
+============  ======== =========================================================
+ rate         spikes/s Mean firing rate of the component processes,
+                       default: 0 spikes/s
+ gamma_shape  integer  Shape paramter of component gamma processes, default: 1
+ n_proc       integer  Number of superimposed independent component processes,
+                       default: 1
+============  ======== =========================================================
+\endverbatim
 
-rate         double - mean firing rate of the component processes,
-                      default: 0s^-1
-gamma_shape  long   - shape paramter of component gamma processes, default: 1
-n_proc       long   - number of superimposed independent component processes,
-                      default: 1
+References:
 
-Remarks:
-
-The generator has been published in Deger, Helias, Boucsein, Rotter (2011)
-Statistical properties of superimposed stationary spike trains,
-Journal of Computational Neuroscience.
-URL: http://www.springerlink.com/content/u75211r381p08301/
-DOI: 10.1007/s10827-011-0362-8
+\verbatim embed:rst
+.. [1] Deger, Helias, Boucsein, Rotter (2011). Statistical properties of
+       superimposed stationary spike trains. Journal of Computational
+       Neuroscience. DOI: https://doi.org/10.1007/s10827-011-0362-8
+\endverbatim
 
 Author:
    Jan 2011, Moritz Deger

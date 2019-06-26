@@ -38,6 +38,9 @@
 namespace nest
 {
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup detector
+
 Name: correlospinmatrix_detector - Device for measuring the covariance matrix
                                   from several inputs
 
@@ -48,8 +51,9 @@ to record correlations from binary neurons from several binary sources and
 calculates the raw auto and cross correlation binned to bins of duration
 delta_tau. The result can be obtained via GetStatus under the key
 /count_covariance. The result is a tensor of rank 3 of size
-N_channels x N_channels, with each entry C_ij being a vector of size
-2*tau_max/delta_tau + 1 containing the histogram for the different time lags.
+N_channels x N_channels, with each entry \f$ C_{ij} \f$ being a vector of size
+\f$ 2*\tau_{max}/\delta_{\tau} + 1 \f$ containing the histogram for the different
+time lags.
 
 The bins are centered around the time difference they represent, and are
 left-closed and right-open in the lower triangular part of the matrix. On the
@@ -62,25 +66,35 @@ specified receptor will be pooled.
 
 Parameters:
 
-Tstart     double    - Time when to start counting events. This time should
-                      be set to at least start + tau_max in order to avoid
-                      edge effects of the correlation counts.
-Tstop      double    - Time when to stop counting events. This time should be
-                      set to at most Tsim - tau_max, where Tsim is the
-                      duration of simulation, in order to avoid edge effects
-                      of the correlation counts.
-delta_tau  double    - bin width in ms. This has to be a multiple of the
-                      resolution.
-tau_max    double    - one-sided width in ms. In the lower triangular part
-                      events with differences in [0, tau_max+delta_tau/2)
-                      are counted. On the diagonal and in the upper
-                      triangular part events with differences in (0,
-                      tau_max+delta_tau/2]
-N_channels long      - The number of inputs to correlate. This defines the
-                      range of receptor_type. Default is 1.
-
-count_covariance matrix of long vectors, read-only   - raw, auto/cross
-                                                      correlation counts
+\verbatim embed:rst
+================ ========= ====================================================
+Tstart           real      Time when to start counting events. This time should
+                           be set to at least start + tau_max in order to avoid
+                           edge effects of the correlation counts.
+Tstop            real      Time when to stop counting events. This time should
+                           be set to at most Tsim - tau_max, where Tsim is the
+                           duration of simulation, in order to avoid edge
+                           effects of the correlation counts.
+delta_tau        ms        Bin width. This has to be an odd multiple of
+                           the resolution, to allow the symmetry between
+                           positive and negative time-lags.
+tau_max          ms        One-sided width. In the lower triagnular part
+                           events with differences in [0, tau_max+delta_tau/2)
+                           are counted. On the diagonal and in the upper
+                           triangular part events with differences in
+                           (0, tau_max+delta_tau/2].
+N_channels       integer   The number of pools. This defines the range of
+                           receptor_type. Default is 1.
+                           Setting N_channels clears count_covariance,
+                           covariance and n_events.
+covariance       3D        matrix of read-only -raw, weighted, auto/cross
+                 matrix of correlation
+                 integers
+count_covariance 3D        matrix of read-only -raw, auto/cross correlation
+                 matrix of counts
+                 integers
+================ ========= ====================================================
+\endverbatim
 
 Remarks:
 
@@ -104,27 +118,27 @@ Sompolinsky (1994) PRE 50(4) p. 3171.
 See also examples/nest/correlospinmatrix_detector.sli for a basic
 example in sli.
 
-   /sg1 /spike_generator Create def
-   /sg2 /spike_generator Create def
-   /sg3 /spike_generator Create def
+    /sg1 /spike_generator Create def
+    /sg2 /spike_generator Create def
+    /sg3 /spike_generator Create def
 
-   /csd /correlospinmatrix_detector Create def
+    /csd /correlospinmatrix_detector Create def
 
-   csd << /N_channels 3 /tau_max 10. /delta_tau 1.0 >> SetStatus
+    csd << /N_channels 3 /tau_max 10. /delta_tau 1.0 >> SetStatus
 
-   sg1 << /spike_times [10. 10. 16.] >> SetStatus
-   sg2 << /spike_times [15. 15. 20.] >> SetStatus
-
-
-   % one final event needed so that last down transition will be detected
-   sg3 << /spike_times [25.] >> SetStatus
+    sg1 << /spike_times [10. 10. 16.] >> SetStatus
+    sg2 << /spike_times [15. 15. 20.] >> SetStatus
 
 
-   sg1 csd << /receptor_type 0 >> Connect
-   sg2 csd << /receptor_type 1 >> Connect
-   sg3 csd << /receptor_type 2 >> Connect
+    % one final event needed so that last down transition will be detected
+    sg3 << /spike_times [25.] >> SetStatus
 
-   100. Simulate
+
+    sg1 csd << /receptor_type 0 >> Connect
+    sg2 csd << /receptor_type 1 >> Connect
+    sg3 csd << /receptor_type 2 >> Connect
+
+    100. Simulate
 
 Receives: SpikeEvent
 

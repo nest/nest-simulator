@@ -20,6 +20,8 @@
  *
  */
 
+% autorun=true
+
 /*
     This file illustrates recording from a iaf_cond_alpha neuron
     using a multimeter.

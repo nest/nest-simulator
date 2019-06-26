@@ -33,6 +33,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup stdp
+
 Name: stdp_pl_synapse_hom - Synapse type for spike-timing dependent
 plasticity with power law implementation using homogeneous parameters, i.e.
 all synapses have the same parameters.
@@ -44,13 +47,16 @@ dependent plasticity (as defined in [1]).
 
 
 Parameters:
-
-tau_plus  double - Time constant of STDP window, potentiation in ms
+\verbatim embed:rst
+=========  ======  ====================================================
+ tau_plus  ms      Time constant of STDP window, potentiation
                    (tau_minus defined in post-synaptic neuron)
-lambda    double - Learning rate
-alpha     double - Asymmetry parameter (scales depressing increments as
+ lambda    real    Learning rate
+ alpha     real    Asymmetry parameter (scales depressing increments as
                    alpha*lambda)
-mu        double - Weight dependence exponent, potentiation
+ mu        real    Weight dependence exponent, potentiation
+=========  ======  ====================================================
+\endverbatim
 
 Remarks:
 
@@ -58,8 +64,12 @@ The parameters can only be set by SetDefaults and apply to all synapses of
 the model.
 
 References:
-[1] Morrison et al. (2007) Spike-timing dependent plasticity in balanced
-    random networks. Neural Computation.
+
+\verbatim embed:rst
+.. [1] Morrison A, Aertsen A, Diesmann M. (2007) Spike-timing dependent
+       plasticity in balanced random netrks. Neural Computation,
+       19(6):1437-1467. DOI: https://doi.org/10.1162/neco.2007.19.6.1437
+\endverbatim
 
 Transmits: SpikeEvent
 
@@ -188,7 +198,7 @@ public:
 
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_lastspike_ - get_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_delay(), get_delay() );
   }
 
   void

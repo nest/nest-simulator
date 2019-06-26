@@ -458,9 +458,8 @@ NestModule::GetConnections_DFunction::execute( SLIInterpreter* i ) const
    n(int) Simulate -> -
 
    Description: Simulate the network for n milliseconds.
-   Use resume to continue the simulation after an interrupt.
 
-   SeeAlso: resume, ResumeSimulation, unit_conversion
+   SeeAlso: Run, Prepare, Cleanup, unit_conversion
 */
 void
 NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
@@ -491,7 +490,7 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
    Any changes made between Prepare and Cleanup may cause
    undefined behavior and incorrect results.
 
-   SeeAlso: Simulate, resume, unit_conversion, Prepare, Cleanup
+   SeeAlso: Simulate, unit_conversion, Prepare, Cleanup
 */
 void
 NestModule::RunFunction::execute( SLIInterpreter* i ) const
@@ -724,6 +723,10 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
    Name: ResetNetwork - Reset the dynamic state of the network.
    Synopsis: ResetNetwork -> -
    Description:
+
+   ResetNetwork is deprecated as of NEST 2.18 and will be removed in NEST 3.0,
+   because it cannot be implemented in an efficient and consistent way.
+
    ResetNetwork resets the dynamic state of the entire network to its state
    at T=0. The dynamic state comprises typically the membrane potential,
    synaptic currents, buffers holding input that has been delivered, but not
@@ -1740,7 +1743,7 @@ NestModule::init( SLIInterpreter* i )
     "DataConnect_i_D_s", &dataconnect_i_D_sfunction, "NEST 3.0" );
   i->createcommand( "DataConnect_a", &dataconnect_afunction, "NEST 3.0" );
 
-  i->createcommand( "ResetNetwork", &resetnetworkfunction );
+  i->createcommand( "::ResetNetwork", &resetnetworkfunction );
   i->createcommand( "ResetKernel", &resetkernelfunction );
 
   i->createcommand( "MemoryInfo", &memoryinfofunction );

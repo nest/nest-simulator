@@ -19,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+% autorun=true
+
 %%%%%%%%%%%%%%%% Write welcome message %%%%%%%%%%%%%%%%%%%%%%
 (\n\n) =
 1 1 80 { (#) =only } for ( ) =
@@ -161,7 +164,7 @@ modeldict begin
          /overwrite_files true          % overwrite previous output
        >> SetStatus
 
-  sim 1 eq { /iaf_psc_alpha_canon nr Create pop }
+  sim 1 eq { /iaf_psc_alpha_ps nr Create pop }
            { /iaf_psc_alpha nr Create pop } ifelse
   /neurons 0 GetGlobalNodes def
 

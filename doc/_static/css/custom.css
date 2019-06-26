@@ -1,0 +1,113 @@
+t.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
+    color: #f63;
+}
+
+
+.wy-side-nav-search>a, .wy-side-nav-search .wy-dropdown>a {
+   content: url(../../_static/img/nest_logo.png);
+}
+
+.wy-side-nav-search {
+	background: linear-gradient(45deg, #fff, #eee);
+	color: #888;
+    border-bottom: 1px solid #e1e4e5;
+}
+
+.wy-side-nav-search input[type=text] {
+    border-color: #f63;
+}
+
+.wy-nav-side {
+	background: linear-gradient(90deg, #fff, #eee);
+	color: #888;
+	border-right: 1px solid #e1e4e5;
+}
+
+.wy-menu-vertical a,
+.wy-menu-vertical a:visited {
+	color: #444;
+}
+
+.wy-menu-vertical a:hover {
+    color: #aaa;
+}
+
+.wy-menu-vertical header, .wy-menu-vertical p.caption {
+	background-color: #c1c1c1;
+    color: #6f6f6f;
+    border-top: 1px solid #aaa;
+}
+
+.wy-menu-vertical li.current a {
+	color: #888;
+}
+
+.wy-nav-top {
+    display: none;
+    background: linear-gradient(90deg, #fff, #eee);;
+    color: #888;
+    padding: .4045em .809em;
+    position: relative;
+    line-height: 50px;
+    text-align: center;
+    font-size: 100%;
+    border-bottom: 1px solid #e1e4e5;
+}
+
+.wy-nav-top a {
+    color: #f63;
+    font-weight: bold;
+}
+
+@media screen and (max-width: 768px) {
+    .wy-nav-top {
+        display: block;
+    }
+}
+
+video {
+    margin-bottom: 20px;
+    background-color: lightgrey;
+    border: 1px solid lightgrey;
+}
+
+a:visited {
+    color: #f63;
+}
+a {
+    color: #f63;
+    text-decoration: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+a:hover {
+    color: #f63;
+    text-decoration: underline;
+}
+code.descclassname {
+    display: none;
+}
+
+.rst-content dl:not(.docutils) dt  em[class^='property']{
+     display:none;
+}
+.rst-content pre.literal-block, .rst-content div[class^='highlight'] pre, .rst-content .linenodiv pre {
+    line-height: 1.3em;
+}
+
+.highlight {
+    background: rgba(255, 165, 0, 0.1);
+}
+/* override table width restrictions */
+@media screen and (min-width: 767px) {
+
+   .wy-table-responsive table td {
+      /* !important prevents the common CSS stylesheets from overriding
+         this as on RTD they are loaded after this stylesheet */
+      white-space: normal !important;
+   }
+
+   .wy-table-responsive {
+      overflow: visible !important;
+   }
+}

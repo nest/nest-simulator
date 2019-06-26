@@ -23,12 +23,26 @@
 Functions for connection handling
 """
 
+import numpy
+
+from ..ll_api import *
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_subnets import GetChildren
-import numpy
+
+__all__ = [
+    'CGConnect',
+    'CGParse',
+    'CGSelectImplementation',
+    'Connect',
+    'DataConnect',
+    'Disconnect',
+    'DisconnectOneToOne',
+    'GetConnections',
+]
 
 
 @check_stack
@@ -232,10 +246,10 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     if model is not None:
         deprecation_text = "".join([
             "The argument 'model' is there for backward compatibility with ",
-            "the old Connect function and will be removed in a future",
-            "version of NEST. Please change the name of the keyword argument ",
-            "from 'model' to 'syn_spec'. For details, see the documentation ",
-            "at:\nhttp://www.nest-simulator.org/connection_management"
+            "the old Connect function and will be removed in NEST 3.0. ",
+            "Please change the name of the keyword argument from 'model' to ",
+            "'syn_spec'. For details, see the documentation ",
+            "at:\nhttps://www.nest-simulator.org/connection_management"
         ])
         show_deprecation_warning("BackwardCompatibilityConnect",
                                  text=deprecation_text)
@@ -451,7 +465,7 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
 
     For further information, see
     * The NEST documentation on using the CG Interface at
-      http://nest-simulator.org/connection-generator-interface
+      https://www.nest-simulator.org/connection-generator-interface
     * The GitHub repository and documentation for libneurosim at
       https://github.com/INCF/libneurosim/
     * The publication about the Connection Generator Interface at
@@ -485,8 +499,8 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
     if parameter_map is None:
         parameter_map = {}
 
-    sli_func('CGConnect', cg, pre, post,
-             parameter_map, '/' + model, litconv=True)
+    sli_func('CGConnect', cg, pre, post, parameter_map, '/' + model,
+             litconv=True)
 
 
 @check_stack

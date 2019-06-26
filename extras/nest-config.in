@@ -54,7 +54,7 @@ while test $# -gt 0; do
         echo $exec_prefix
         ;;
     --version)
-        echo "@NEST_VERSION_VERSION@"
+        echo "@NEST_VERSION_STRING@"
         ;;
     --help)
         usage 0

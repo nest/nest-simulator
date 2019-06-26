@@ -37,6 +37,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup stdp
+
 Name: stdp_dopamine_synapse - Synapse type for dopamine-modulated
                               spike-timing dependent plasticity.
 
@@ -52,34 +55,42 @@ dopaminergic dynamics is calculated in the synapse itself.
 
 Examples:
 
-/volume_transmitter Create /vol Set
-/iaf_psc_alpha Create /pre_neuron Set
-/iaf_psc_alpha Create /post_neuron Set
-/iaf_psc_alpha Create /neuromod_neuron Set
-/stdp_dopamine_synapse  << /vt vol >>  SetDefaults
-neuromod_neuron vol Connect
-pre_neuron post_neuron /stdp_dopamine_synapse Connect
+    /volume_transmitter Create /vol Set
+    /iaf_psc_alpha Create /pre_neuron Set
+    /iaf_psc_alpha Create /post_neuron Set
+    /iaf_psc_alpha Create /neuromod_neuron Set
+    /stdp_dopamine_synapse  << /vt vol >>  SetDefaults
+    neuromod_neuron vol Connect
+    pre_neuron post_neuron /stdp_dopamine_synapse Connect
 
 Parameters:
 
-Common properties:
-      vt        long   - ID of volume_transmitter collecting the spikes
-                         from the pool of dopamine releasing neurons and
-                         transmitting the spikes to the synapse. A value of
-                         -1 indicates that no volume transmitter has been
-                         assigned.
-      A_plus    double - Amplitude of weight change for facilitation
-      A_minus   double - Amplitude of weight change for depression
-      tau_plus  double - STDP time constant for facilitation in ms
-      tau_c     double - Time constant of eligibility trace in ms
-      tau_n     double - Time constant of dopaminergic trace in ms
-      b         double - Dopaminergic baseline concentration
-      Wmin      double - Minimal synaptic weight
-      Wmax      double - Maximal synaptic weight
+\verbatim embed:rst
+=========  ======= ======================================================
+**Common properties**
+-------------------------------------------------------------------------
+ vt        integer ID of volume_transmitter collecting the spikes
+                   from the pool of dopamine releasing neurons and
+                   transmitting the spikes to the synapse. A value of
+                   -1 indicates that no volume transmitter has been
+                   assigned.
+ A_plus    real    Amplitude of weight change for facilitation
+ A_minus   real    Amplitude of weight change for depression
+ tau_plus  ms      STDP time constant for facilitation
+ tau_c     ms      Time constant of eligibility trace
+ tau_n     ms      Time constant of dopaminergic trace
+ b         real    Dopaminergic baseline concentration
+ Wmin      real    Minimal synaptic weight
+ Wmax      real    Maximal synaptic weight
+=========  ======= ======================================================
 
-Individual properties:
-      c         double - eligibility trace
-      n         double - neuromodulator concentration
+=== ======  =====================================
+**Individual properties**
+-------------------------------------------------
+ c  real    Eligibility trace
+ n  real    Neuromodulator concentration
+=== ======  =====================================
+\endverbatim
 
 Remarks:
 The common properties can only be set by SetDefaults and apply to all
@@ -87,13 +98,15 @@ synapses of the model.
 
 References:
 
-[1] Potjans W, Morrison A and Diesmann M (2010). Enabling
-    functional neural circuit simulations with distributed
-    computing of neuromodulated plasticity.
-    Front. Comput. Neurosci. 4:141. doi:10.3389/fncom.2010.00141
-[2] Izhikevich, E.M. (2007). Solving the distal reward problem
-    through linkage of STDP and dopamine signaling. Cereb. Cortex,
-    17(10), 2443-2452.
+\verbatim embed:rst
+.. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional neural
+       circuit simulations with distributed computing of neuromodulated
+       plasticity. Frontiers in Computational Neuroscience, 4:141.
+       DOI: https://doi.org/10.3389/fncom.2010.00141
+.. [2] Izhikevich EM (2007). Solving the distal reward problem through linkage
+       of STDP and dopamine signaling. Cerebral Cortex, 17(10):2443-2452.
+       DOI: https://doi.org/10.1093/cercor/bhl152
+\endverbatim
 
 Transmits: SpikeEvent
 
@@ -262,7 +275,7 @@ public:
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_lastspike_ - get_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_delay(), get_delay() );
   }
 
   void

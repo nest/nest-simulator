@@ -158,7 +158,7 @@ def help(obj=None, pager=None, return_text=False):
               "configuration.")
         print("Type 'nest.version()' for information about the NEST "
               "version.\n")
-        print("For more information visit http://www.nest-simulator.org.")
+        print("For more information visit https://www.nest-simulator.org.")
 
 
 @check_stack

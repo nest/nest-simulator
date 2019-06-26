@@ -49,8 +49,8 @@ M_ERROR setverbosity
 % n4 receives one spike with weight w1, one at same time with weight w2
 % Both must have same V_m after simulation
 
-[ /iaf_psc_alpha_canon /iaf_psc_alpha_presc /iaf_psc_delta_canon
-  /iaf_psc_exp_ps
+[ /iaf_psc_alpha_canon /iaf_psc_alpha_presc /iaf_psc_alpha_ps
+  /iaf_psc_delta_ps /iaf_psc_exp_ps
 ]
 {
   ResetKernel

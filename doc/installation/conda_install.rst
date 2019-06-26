@@ -13,7 +13,7 @@ please see our :doc:`install guide for Linux <linux_install>` or :doc:`install g
    any problems by `submitting an issue on GitHub <https://github.com/nest/nest-simulator/issues>`_.
 
 
-----
+
 
 Install the latest conda-forge package for NEST
 -----------------------------------------------------
@@ -54,7 +54,9 @@ Where the syntax for this install follows the pattern: ``nest-simulator=<version
 
 .. note::
 
+
   The conda-forge package is available from NEST 2.16.0 onward
+
 
 3. Once installation is complete, you can open up Python or IPython
    in the terminal and import nest:

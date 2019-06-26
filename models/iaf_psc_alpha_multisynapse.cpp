@@ -186,9 +186,7 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
   {
     if ( this->n_receptors_() != old_n_receptors && has_connections_ == true )
     {
-      throw BadProperty(
-        "The neuron has connections, therefore the number of ports cannot be "
-        "reduced." );
+      throw BadProperty( "The neuron has connections, therefore the number of ports cannot be reduced." );
     }
     for ( size_t i = 0; i < tau_syn_.size(); ++i )
     {

@@ -195,6 +195,8 @@ todo_include_todos = False
 # add numbered figure link
 numfig = True
 
+numfig_secnum_depth = (2)
+numfig_format = {'figure': 'Figure %s', 'table': 'Table %s', 'code-block': 'Code Block %s'}
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for

@@ -143,8 +143,8 @@ subprocess.call('doxygen', shell=True)
 
 mathjax_path = \
     "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax" \
-              ".js?config=TeX" \
-              "-AMS-MML_HTMLorMML"
+    ".js?config=TeX" \
+    "-AMS-MML_HTMLorMML"
 
 
 # Add any paths that contain templates here, relative to this directory.
@@ -196,7 +196,8 @@ todo_include_todos = False
 numfig = True
 
 numfig_secnum_depth = (2)
-numfig_format = {'figure': 'Figure %s', 'table': 'Table %s', 'code-block': 'Code Block %s'}
+numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
+                 'code-block': 'Code Block %s'}
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -299,3 +300,4 @@ texinfo_documents = [
 #    html_theme = 'alabaster'
 # else:
 #    html_theme = 'nat'
+

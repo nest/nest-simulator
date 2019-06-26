@@ -7,7 +7,7 @@ If you don't have Conda installed, we recommend you follow the instructions on `
 If you need to install NEST with additional configuration options,
 please see our :doc:`install guide for Linux <linux_install>` or :doc:`install guide for macOS <mac_install>`
 
-.. admonition:: Important!
+.. note::
 
    The conda-forge package of `nest-simulator` is still being tested, let us know if you come across
    any problems by `submitting an issue on GitHub <https://github.com/nest/nest-simulator/issues>`_.
@@ -19,13 +19,31 @@ Install the latest conda-forge package for NEST
 -----------------------------------------------------
 
 
-1. Create your conda environment. We recommend that you create a dedicated
+1. Create your conda environment and install NEST. We recommend that you create a dedicated
    environment for NEST, which should ensure there are no conflicts with previously
    installed packages.
 
+.. admonition:: IMPORTANT!
+
+   We strongly recommend that you install all programs you'll need,
+   (such as ipython or jupyter-lab) in the environment (ENVNAME) at the same time, by appending them to the following command.
+   Installing packages later may override previously installed dependencies and potentially break packages!
+   See `managing environments in the Conda documentation <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_ for more information.
+
+WITHOUT openmpi:
+
 .. code-block:: sh
 
-  conda create --name ENVNAME
+  conda create --name ENVNAME -c conda-forge nest-simulator python
+
+WITH openmpi:
+
+.. code-block:: sh
+
+   conda create --name ENVNAME -c conda-forge nest-simulator=*=mpi_openmpi*  python
+
+Where the syntax for this install follows the pattern: ``nest-simulator=<version>=<build_string>``
+
 
 2. Activate your environment:
 
@@ -33,25 +51,12 @@ Install the latest conda-forge package for NEST
 
   conda activate ENVNAME
 
-3. Install the latest `nest-simulator` package from conda-forge. You can choose to install it
-
-WITHOUT openmpi:
-
-.. code-block:: sh
-
-  conda install -c conda-forge nest-simulator
-
-or WITH openmpi:
-
-.. code-block:: sh
-
-   conda install -c conda-forge nest-simulator=*=mpi_openmpi*
 
 .. note::
 
-   The current version on conda-forge is NEST 2.16.0
+  The conda-forge package is available from NEST 2.16.0 onward
 
-4. Once installation is complete, you can open up Python or IPython
+3. Once installation is complete, you can open up Python or IPython
    in the terminal and import nest:
 
 .. code-block:: python

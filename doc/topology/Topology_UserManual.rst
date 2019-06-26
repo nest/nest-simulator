@@ -1,7 +1,7 @@
 .. _sec:intro:
 
-Introduction
-============
+Topology User Manual
+=====================
 
 The Topology Module provides the NEST simulator [1]_
 with a convenient interface for creating layers of neurons placed in
@@ -32,7 +32,7 @@ functions and masks provided by C++ classes in an extension module.
 
 You will find the Python scripts used in the examples in this manual in
 the NEST source code directory under
-``topology/doc/user_manual_scripts``.
+``doc/topology/user_manual_scripts``.
 
 .. _sec:limitations:
 
@@ -81,18 +81,20 @@ A very simple layer
 
 We create a first, grid-based simple layer with the following commands:
 
-.. literalinclude:: ../../topology/doc/user_manual_scripts/layers.py
+.. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer1 #}
     :end-before: #{ end #}
 
-.. figure:: ../../topology/doc/user_manual_figures/layer1.png
+.. _fig_layer1:
+
+.. figure:: user_manual_figures/layer1.png
    :name: fig:layer1
 
    Simple grid-based layer centered about the origin. Blue circles mark
    layer elements, the thin square the extent of the layer. Row and
    column indices are shown in the right and top margins, respectively.
 
-The layer is shown in Fig. {@fig:layer1}. Note the following properties:
+The layer is shown in :numref:`fig_layer1`. Note the following properties:
 
 -  The layer has five *rows* and five *columns*.
 
@@ -105,7 +107,7 @@ The layer is shown in Fig. {@fig:layer1}. Note the following properties:
 
 -  The *extent* or size of the layer is :math:`1\times  1`. This is the
    default size for layers. The extent is marked by the thin square in
-   Fig. {@fig:layer1}.
+    :numref:`fig_layer1`.
 
 -  The *grid spacing* of the layer is
 
@@ -134,7 +136,7 @@ but the grid spacing may differ in x- and y-direction.
 
 -  Each element of a grid-based layer has a *row- and column-index* in
    addition to its :math:`(x,y)`-coordinates. Indices are shown in the
-   top and right margin of Fig. {@fig:layer1}. Note that row-indices
+   top and right margin of  :numref:`fig_layer1`. Note that row-indices
    follow matrix convention, i.e., run from top to bottom. Following
    pythonic conventions, indices run from 0.
 
@@ -148,16 +150,18 @@ different extent of a layer, i.e., its size in :math:`x`- and
 :math:`y`-direction by adding an ``'extent'`` entry to the dictionary
 passed to ``CreateLayer``:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.py
+.. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer2 #}
     :end-before: #{ end #}
 
-.. figure:: ../../topology/doc/user_maunal_figures/layer2.png
+.. _fig_layer2:
+
+.. figure:: user_manual_figures/layer2.png
    :name: fig:layer2
 
-   Same layer as in Fig. {@fig:layer1}, but with different extent.
+   Same layer as in :numref:`fig_layer1`, but with different extent.
 
-The resulting layer is shown in Fig. {@fig:layer2}. The extent is always
+The resulting layer is shown in :numref:`fig_layer2`. The extent is always
 a two-element tuple of floats. In this example, we have grid spacings
 :math:`dx=0.4` and :math:`dy=0.1`. Changing the extent does not affect
 grid indices.
@@ -178,11 +182,13 @@ be changed through the ``'center'`` entry in the dictionary specifying
 the layer. The following code creates layers centered about
 :math:`(0,0)`, :math:`(-1,1)`, and :math:`(1.5,0.5)`, respectively:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.py
+.. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer3 #}
     :end-before: #{ end #}
 
-.. figure:: ../../topology/doc/user_maunal_figures/layer3.png
+.. _fig_layer3:
+
+.. figure:: user_manual_figures/layer3.png
    :name: fig:layer3
 
    Three layers centered, respectively, about :math:`(0,0)` (blue),
@@ -190,7 +196,7 @@ the layer. The following code creates layers centered about
 
 The center is given as a two-element tuple of floats. Changing the
 center does not affect grid indices: For each of the three layers in
-Fig. {@fig:layer3}, grid indices run from 0 to 4 through columns and
+ :numref:`fig_layer3`, grid indices run from 0 to 4 through columns and
 rows, respectively, even though elements in these three layers have
 different positions in the global coordinate system.
 
@@ -214,7 +220,7 @@ To see how to construct a layer, consider the following example:
 
 -  the extent shall be centered about :math:`y=0`.
 
-From Eq. {@eq:dx_dy_extent}, we see that the extent of the layer must be
+From Eq. :numref:`dx_dy_extent`, we see that the extent of the layer must be
 :math:`(n_c d, n_r d)`. We now need to find the coordinates
 :math:`(c_x, c_y)` of the center of the layer. To place the left edge of
 the extent at :math:`x=0`, we must place the center of the layer at
@@ -222,13 +228,15 @@ the extent at :math:`x=0`, we must place the center of the layer at
 width to the right of :math:`x=0`. Since the layer is to be centered
 about :math:`y=0`, we have :math:`c_y=0`. Thus, the center coordinates
 are :math:`(n_c d/2, 0)`. The layer is created with the following code
-and shown in Fig. {@fig:layer3a}:
+and shown in :numref:`fig_layer3a`:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.py
+.. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer3a #}
     :end-before: #{ end #}
 
-.. figure:: ../../topology/doc/user_maunal_figures/layer3a.png
+.. _fig_layer3a:
+
+.. figure:: user_manual_figures/layer3a.png
    :name: fig:layer3a
 
    Layer with :math:`n_c=5` rows and :math:`n_r=3` columns, spacing
@@ -249,11 +257,13 @@ positions of all nodes explicitly. The following code creates a layer of
 extent :math:`1\times 1`, i.e., spanning the square
 :math:`[-0.5,0.5]\times[-0.5,0.5]`:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.py
+.. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer4 #}
     :end-before: #{ end #}
 
-.. figure:: ../../topology/doc/user_maunal_figures/layer4.png
+.. _fig_layer4:
+
+.. figure:: user_manual_figures/layer4.png
    :name: fig:layer4
 
    A free layer with 50 elements uniformly distributed in an extent of
@@ -274,7 +284,7 @@ Note the following points:
 -  All layer element positions must be *within* the layer’s extent.
    Elements may be placed on the perimeter of the extent as long as no
    periodic boundary conditions are used; see
-   Sec. \ :ref:`2.4 <#sec:periodic>`.
+   Sec. \ :ref:`2.4 <sec:periodic>`.
 
 -  Element positions in free layers are *not* shifted when specifying
    the ``'center'`` of the layer. The user must make sure that the
@@ -291,11 +301,13 @@ in NEST may in fact be 3-dimensional. The example from the previous
 section may be easily extended with another component in the coordinates
 for the positions:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.py
+.. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer4_3d #}
     :end-before: #{ end #}
 
-.. figure:: ../../topology/doc/user_maunal_figures/layer4_3d.png
+.. _fig_layer4_3d:
+
+.. figure:: user_manual_figures/layer4_3d.png
    :name: fig:layer4_3d
 
    A free 3D layer with 200 elements uniformly distributed in an extent
@@ -310,25 +322,27 @@ Simulations usually model systems much smaller than the biological
 networks we want to study. One problem this entails is that a
 significant proportion of neurons in a model network is close to the
 edges of the network with fewer neighbors than nodes properly inside the
-network. In the :math:`5\times 5`-layer in Fig. {@fig:layer1}, e.g., 16
+network. In the :math:`5\times 5`-layer in :numref:`fig_layer1`, e.g., 16
 out of 25 nodes form the border of the layer.
 
 One common approach to reducing the effect of boundaries on simulations
 is to introduce *periodic boundary conditions*, so that the rightmost
 elements on a grid are considered nearest neighbors to the leftmost
 elements, and the topmost to the bottommost. The flat layer becomes the
-surface of a torus. Fig. {@fig:player} illustrates this for a
+surface of a torus.  :numref:`fig_player` illustrates this for a
 one-dimensional layer, which turns from a line to a ring upon
 introduction of periodic boundary conditions.
 
 You specify periodic boundary conditions for a layer using the
 dictionary entry ``edge_wrap``:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.py
+.. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ player #}
     :end-before: #{ end #}
 
-.. figure:: ../../topology/doc/user_maunal_figures/player.png
+.. _fig_player:
+
+.. figure:: user_manual_figures/player.png
    :name: fig:player
 
    Top left: Layer with single row and five columns without periodic
@@ -370,36 +384,36 @@ interest:
 -  The status dictionary of a layer has a ``'topology'`` entry
    describing the layer properties (``l`` is the layer created above):
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.py
+.. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer1s #}
     :end-before: #{ end #}
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.log
+.. literalinclude:: user_manual_scripts/layers.log
     :start-after: #{ layer1s.log #}
     :end-before: #{ end.log #}
 
-::
 
-   The `'topology'` entry is read-only.
+
+The `'topology'` entry is read-only.
 
 -  The NEST kernel sees the elements of the layer in the same way as the
    elements of any subnet. You will notice this when printing a network
    with a Topology layer:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.py
+.. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer1p #}
     :end-before: #{ end #}
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.log
+.. literalinclude:: user_manual_scripts/layers.log
     :start-after: #{ layer1p.log #}
     :end-before: #{ end.log #}
 
-::
 
-   The $5\times 5$ layer created above appears here as a
-   `topology_layer_grid` subnet of 25 `iaf_psc_alpha` neurons. Only
-   Topology connection and visualization functions heed the spatial
-   structure of the layer.
+
+The `5 times` 5 layer created above appears here as a
+`topology_layer_grid` subnet of 25 `iaf_psc_alpha` neurons. Only
+Topology connection and visualization functions heed the spatial
+structure of the layer.
 
 .. _sec:composite_layers:
 
@@ -418,11 +432,11 @@ following code creates a :math:`1\times 2` layer (to keep the output
 from ``PrintNetwork()`` compact) in which each element consists of one
 ``'iaf_cond_alpha'`` and one ``'poisson_generator'`` node
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.py
+.. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer6 #}
     :end-before: #{ end #}
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.log
+.. literalinclude:: user_manual_scripts/layers.log
     :start-after: #{ layer6 #}
     :end-before: #{ end #}
 
@@ -435,11 +449,11 @@ layer of ``iaf_cond_alpha`` nodes followed by one full layer of
 You can create network elements with several nodes of each type by
 following a model name with the number of nodes to be created:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.py
+.. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer7 #}
     :end-before: #{ end #}
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.log
+.. literalinclude:: user_manual_scripts/layers.log
     :start-after: #{ layer7 #}
     :end-before: #{ end #}
 
@@ -487,7 +501,7 @@ How should you implement such a network using the Topology module? The
 recommended approach is to create different models for the neurons in
 each layer and then define the microcolumn as one composite element:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.py
+.. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer10 #}
     :end-before: #{ end #}
 
@@ -630,13 +644,15 @@ Only neurons within the mask are considered as potential sources or
 targets. If no mask is given, all neurons in the respective layer are
 considered sources or targets.
 
-Here is a simple example, cf. {@fig:conn1}
+Here is a simple example, cf. :numref:`fig_conn1`
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn1 #}
     :end-before: #{ end #}
 
-.. figure:: ../../topology/doc/user_maunal_figures/conn1.png
+.. _fig_conn1:
+
+.. figure:: user_manual_figures/conn1.png
    :name: fig:conn1
 
    Left: Minimal connection example from a layer onto itself using a
@@ -658,7 +674,7 @@ according to the rectangular mask centered about each source node. Since
 no connection kernel is specified, we connect to all nodes within the
 mask. Note the effect of normal and periodic boundary conditions on the
 connections created for different nodes in the layer, as illustrated in
-Fig. {@fig:conn1}.
+ :numref:`fig_conn1`.
 
 .. _sec:mapping:
 
@@ -710,7 +726,7 @@ Masks for 2D layers
 ~~~~~~~~~~~~~~~~~~~
 
 Topology currently provides four types of masks usable for 2-dimensional
-free and grid-based layers. They are illustrated in Fig. {@fig:conn2_a}.
+free and grid-based layers. They are illustrated in  :numref:`fig_conn2_a`.
 The masks are
 
 Rectangular
@@ -718,7 +734,7 @@ Rectangular
    specified by its lower left and upper right corners, measured in the
    same unit as element coordinates. Example:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn2r #}
     :end-before: #{ end #}
 
@@ -726,7 +742,7 @@ Circular
    All nodes within a circle are connected. The area is specified by its
    radius.
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn2c #}
     :end-before: #{ end #}
 
@@ -735,7 +751,7 @@ Doughnut
    nodes *on* the inner circle are not connected. The area is specified
    by the radii of the inner and outer circles.
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn2d #}
     :end-before: #{ end #}
 
@@ -744,11 +760,13 @@ Elliptical
    its major and minor axis. Note that this mask was added to NEST with
    NEST 2.14.
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn2e #}
     :end-before: #{ end #}
 
-.. figure:: ../../topology/doc/user_maunal_figures/conn2_a.png
+.. _fig_conn2_a:
+
+.. figure:: user_manual_figures/conn2_a.png
    :name: fig:conn2_a
 
    Masks for 2D layers. For all mask types, the driver node is marked by
@@ -762,49 +780,53 @@ node, mapped into the pool layer. You can change the location of the
 mask relative to the driver node by specifying an ``'anchor'`` entry in
 the mask dictionary. The anchor is a 2D vector specifying the location
 of the mask center relative to the driver node, as in the following
-examples (cf. Fig. {@fig:conn2_b}).
+examples (cf.  :numref:`fig_conn2_b`).
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn2ro #}
     :end-before: #{ end #}
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn2co #}
     :end-before: #{ end #}
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn2do #}
     :end-before: #{ end #}
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn2eo #}
     :end-before: #{ end #}
 
-.. figure:: ../../topology/doc/user_maunal_figures/conn2_b.png
+.. _fig_conn2_b:
+
+.. figure:: user_manual_figures/conn2_b.png
    :name: fig:conn2_b
 
-   The same masks as in Fig. {@fig:conn2_a}, but centered about
+   The same masks as in :numref:`fig_conn2_a`, but centered about
    :math:`(-1.5,-1.5)`, :math:`(-2,0)`, :math:`(1.5,1.5)` and
    :math:`(2, -1)`, respectively, using the ``'anchor'`` parameter.
 
-and :math:`\textbf{elliptical}` masks, see Fig {@fig:conn2_b}. To do so,
+and :math:`\textbf{elliptical}` masks, see Fig :numref:`fig_conn2_b`. To do so,
 add an ``'azimuth_angle'`` entry in the specific mask dictionary. The
 ``azimuth_angle`` is measured in degrees and is the rotational angle
 from the x-axis to the y-axis.
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn2rr #}
     :end-before: #{ end #}
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn2er #}
     :end-before: #{ end #}
 
-.. figure:: ../../topology/doc/user_maunal_figures/conn2_c.png
+.. _fig_conn2_c:
+
+.. figure:: user_manual_figures/conn2_c.png
    :name: fig:conn2_c
 
-   Rotated rectangle and elliptical mask from Fig. {@fig:conn2_a} and
-   Fig. {@fig:conn2_b}, where the rectangle mask is rotated
+   Rotated rectangle and elliptical mask from  :numref:`fig_conn2_a` and
+    :numref:`fig_conn2_b`, where the rectangle mask is rotated
    :math:`120^\circ` and the elliptical mask is rotated
    :math:`45^\circ`.
 
@@ -820,7 +842,7 @@ Box
    by its lower left and upper right corners, measured in the same unit
    as element coordinates. Example:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn_3d_a #}
     :end-before: #{ end #}
 
@@ -828,7 +850,7 @@ Spherical
    All nodes within a sphere are connected. The area is specified by its
    radius.
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn_3d_b #}
     :end-before: #{ end #}
 
@@ -837,7 +859,7 @@ Ellipsoidal
    its major, minor, and polar axis. This mask has been part of NEST
    since NEST 2.14.
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn_3d_c #}
     :end-before: #{ end #}
 
@@ -854,7 +876,9 @@ x-axis. NEST currently do not support rotation in all three directions,
 the rotation from the y-axis about the (possibly rotated) z-axis, from
 the (possibly rotated) x-axis is missing.
 
-.. figure:: ../../topology/doc/user_maunal_figures/conn_3d.png
+.. _fig_conn_3d:
+
+.. figure:: user_manual_figures/conn_3d.png
    :name: fig:conn3d
 
    Masks for 3D layers. For all mask types, the driver node is marked by
@@ -872,28 +896,30 @@ these, you specify the size of the mask not by lower left and upper
 right corner coordinates, but give their size in rows and columns, as in
 this example:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn3 #}
     :end-before: #{ end #}
 
-The resulting connections are shown in Fig. {@fig:conn3}. By default the
+The resulting connections are shown in  :numref:`fig_conn3`. By default the
 top-left corner of a grid mask, i.e., the grid mask element with grid
 index :math:`[0,0]`\  [4]_, is aligned with the driver node. You can
 change this alignment by specifying an *anchor* for the mask:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn3c #}
     :end-before: #{ end #}
 
 You can even place the anchor outside the mask:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn3x #}
     :end-before: #{ end #}
 
-The resulting connection patterns are shown in Fig. {@fig:conn3}.
+The resulting connection patterns are shown in  :numref:`fig_conn3`.
 
-.. figure:: ../../topology/doc/user_maunal_figures/conn3.png
+.. _fig_conn3:
+
+.. figure:: user_manual_figures/conn3.png
    :name: fig:conn3
 
    Grid masks for connections between grid-based layers. Left:
@@ -954,74 +980,65 @@ covered in Chapter \ `5 <#ch:extending>`__.
 
 .. _tbl_kernels:
 
-.. table:: Functions currently available in the Topology module.
+Functions currently available in the Topology module
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-:math:`d` is the distance and :math:`(d_x,d_y)` the displacement. All
-functions can be used to specify weights and delays, but only the
-constant and the distance-dependent functions, i.e., all functions above
-the double line, can be used as kernels.
+   :math:`d` is the distance and :math:`(d_x,d_y)` the displacement. All
+   functions can be used to specify weights and delays, but only the
+   constant and the distance-dependent functions, i.e., all functions above
+   the double line, can be used as kernels.
 
-   +--------+---------+-------------------------------------------------+
-   | Name   | Paramet | Function                                        |
-   |        | ers     |                                                 |
-   +========+=========+=================================================+
-   | consta |         | constant :math:`p\in[0,1]`                      |
-   | nt     |         |                                                 |
-   +--------+---------+-------------------------------------------------+
-   | ``line | ``a``,  | .. math:: p(d) = c + a d                        |
-   |   ar`` | ``c``   |                                                 |
-   +--------+---------+-------------------------------------------------+
-   | ``expo | ``a``,  | .. math:: p(d) = c + a e^{-\frac{d}{\tau}}      |
-   | nentia | ``c``,  |                                                 |
-   | l``    | ``tau`` |                                                 |
-   +--------+---------+-------------------------------------------------+
-   | ``gaus | ``p_cen | .. math:: p(d) = c + p_{\text{center}}  e^{-\fr |
-   | sian`` | ter``,  | ac{(d-\mu)^2}{2\sigma^2}}                       |
-   |        | ``sigma |                                                 |
-   |        | ``,     |                                                 |
-   |        | ``mean` |                                                 |
-   |        | `,      |                                                 |
-   |        | ``c``   |                                                 |
-   +--------+---------+-------------------------------------------------+
-   | ``gaus | ``p_cen | .. math::                                       |
-   | sian2D | ter``,  |                                                 |
-   | ``     | ``sigma |    p(d) = c + p_{\text{center}}                 |
-   |        | _x``,   |    e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-\ |
-   |        | ``sigma | frac{(d_y-\mu_y)^2}{\sigma_y^2}                 |
-   |        | _y``,   |    +2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x |
-   |        | ``mean_ | \sigma_y}}{2(1-\rho^2)}}                        |
-   |        | x``,    |                                                 |
-   |        | ``mean_ |                                                 |
-   |        | y``,\ ` |                                                 |
-   |        | `rho``, |                                                 |
-   |        | ``c``   |                                                 |
-   +--------+---------+-------------------------------------------------+
-   | ``gamm | ``kappa | .. math:: p(d) = \frac{d^{\kappa-1}e^{-\frac{d} |
-   | a``    | ``,     | {\theta}}}{\theta^\kappa\Gamma(\kappa)}         |
-   |        | ``theta |                                                 |
-   |        | ``      |                                                 |
-   +--------+---------+-------------------------------------------------+
-   | ``unif | ``min`` | :math:`p\in [\text{min},\text{max})` uniformly  |
-   | orm``  | ,       |                                                 |
-   |        | ``max`` |                                                 |
-   +--------+---------+-------------------------------------------------+
-   | ``norm | ``mean` | :math:`p \in [\text{min},\text{max})` normal    |
-   | al``   | `,      | with given mean and :math:`\sigma`              |
-   |        | ``sigma |                                                 |
-   |        | ``,     |                                                 |
-   |        | ``min`` |                                                 |
-   |        | ,       |                                                 |
-   |        | ``max`` |                                                 |
-   +--------+---------+-------------------------------------------------+
-   | ``logn | ``mu``, | :math:`p \in [\text{min},\text{max})` lognormal |
-   | ormal` | ``sigma | with given :math:`\mu` and :math:`\sigma`       |
-   | `      | ``,     |                                                 |
-   |        | ``min`` |                                                 |
-   |        | ,       |                                                 |
-   |        | ``max`` |                                                 |
-   +--------+---------+-------------------------------------------------+
+   +-----------------+---------------+-------------------------------------------------+
+   | Name            | Parameters    | Function                                        |
+   |                 |               |                                                 |
+   +=================+===============+=================================================+
+   | ``constant``    |               | constant :math:`p\in[0,1]`                      |
+   +-----------------+---------------+-------------------------------------------------+
+   | ``linear``      | ``a``,        | .. math:: p(d) = c + a d                        |
+   |                 | ``c``         |                                                 |
+   +-----------------+---------------+-------------------------------------------------+
+   | ``exponential`` | ``a``,        | .. math:: p(d) = c + a e^{-\frac{d}{\tau}}      |
+   |                 | ``c``,        |                                                 |
+   |                 | ``tau``       |                                                 |
+   +-----------------+---------------+-------------------------------------------------+
+   | ``gausssian``   | ``p_center``, | .. math::                                       |
+   |                 | ``sigma``,    |     p(d) = c + p_{\iext{center}}  e^{-\fr       |
+   |                 | ``mean``,     |     ac{(d-\mu)^2}{2\sigma^2}}                   |
+   |                 | ``c``         |                                                 |
+   |                 |               |                                                 |
+   +-----------------+---------------+-------------------------------------------------+
+   | ``gaussian2D``  | ``p_center``, | .. math::                                       |
+   |                 | ``sigma_x``,  |                                                 |
+   |                 | ``sigma_y``,  |    p(d) = c + p_{\text{center}}                 |
+   |                 | ``mean_x``,   |    e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-\ |
+   |                 | ``mean_y``,   |    frac{(d_y-\mu_y)^2}{\sigma_y^2}              |
+   |                 | ``rho``,      |    +2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x |
+   |                 | ``c``         |    \sigma_y}}{2(1-\rho^2)}}                     |
+   |                 |               |                                                 |
+   +-----------------+---------------+-------------------------------------------------+
+   | ``gamma``       | ``kappa``,    | .. math:: p(d) = \frac{d^{\kappa-1}e^{-\frac{d} |
+   |                 |               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}     |
+   |                 | ``theta``     |                                                 |
+   |                 |               |                                                 |
+   +-----------------+---------------+-------------------------------------------------+
+   | ``uniform``     | ``min``,      | :math:`p\in [\text{min},\text{max})` uniformly  |
+   |                 |               |                                                 |
+   |                 | ``max``       |                                                 |
+   +-----------------+---------------+-------------------------------------------------+
+   | ``normal``      | ``mean``,     | :math:`p \in [\text{min},\text{max})` normal    |
+   |                 | ``sigma``,    | with given mean and :math:`\sigma`              |
+   |                 | ``min``,      |                                                 |
+   |                 | ``max``       |                                                 |
+   +-----------------+---------------+-------------------------------------------------+
+   | ``lognormal``   | ``mu``,       | :math:`p \in [\text{min},\text{max})` lognormal |
+   |                 | ``sigma``,    | with given :math:`\mu` and :math:`\sigma`       |
+   |                 | ``min``,      |                                                 |
+   |                 | ``max``       |                                                 |
+   +-----------------+---------------+-------------------------------------------------+
 
-.. figure:: ../../topology/doc/user_maunal_figures/conn4.png
+.. _fig_conn4:
+
+.. figure:: user_manual_figures/conn4.png
    :name: fig:conn4
 
    Illustration of various kernel functions. Top left: constant kernel,
@@ -1031,12 +1048,12 @@ the double line, can be used as kernels.
    Gaussian kernel, but all :math:`p<0.5` treated as :math:`p=0`. Bottom
    center: 2D-Gaussian.
 
-Several examples follow. They are illustrated in Fig. {@fig:conn4}.
+Several examples follow. They are illustrated in  :numref:`fig_conn4`.
 
 Constant
    The simplest kernel is a fixed connection probability:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn4cp #}
     :end-before: #{ end #}
 
@@ -1045,27 +1062,27 @@ Gaussian
    probability is 1 for :math:`d=0` and falls off with a “standard
    deviation” of :math:`\sigma=1`:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn4g #}
     :end-before: #{ end #}
 
 Eccentric Gaussian
    In this example, both kernel and mask have been moved using anchors:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn4gx #}
     :end-before: #{ end #}
 
-::
 
-   Note that the anchor for the kernel is specified inside the
-   dictionary containing the parameters for the Gaussian.
+
+Note that the anchor for the kernel is specified inside the
+dictionary containing the parameters for the Gaussian.
 
 Cut-off Gaussian
    In this example, all probabilities less than :math:`0.5` are set to
    zero:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn4cut #}
     :end-before: #{ end #}
 
@@ -1075,7 +1092,7 @@ Cut-off Gaussian
    directions. This kernel depends on displacement, not only on
    distance:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn42d #}
     :end-before: #{ end #}
 
@@ -1092,7 +1109,7 @@ The functions presented in Table :ref:`tbl_kernels` can also be used to
 specify distance-dependent or randomized weights and delays for the
 connections created by ``ConnectLayers``.
 
-Figure {@fig:conn5} illustrates weights and delays generated using these
+Figure :numref:`fig_conn5` illustrates weights and delays generated using these
 functions with the following code examples. All examples use a “layer”
 of 51 nodes placed on a line; the line is centered about :math:`(25,0)`,
 so that the leftmost node has coordinates :math:`(0,0)`. The distance
@@ -1101,11 +1118,11 @@ entire layer and is centered about the driver node.
 
 Linear example
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn5lin #}
     :end-before: #{ end #}
 
-Results are shown in the top panel of Fig. {@fig:conn5}. Connection
+Results are shown in the top panel of  :numref:`fig_conn5`. Connection
 weights and delays are shown for the leftmost neuron as driver. Weights
 drop linearly from :math:`1`. From the node at :math:`(20,0)` on, the
 cutoff sets weights to 0. There are no connections to nodes beyond
@@ -1115,11 +1132,11 @@ delays to be multiples of the simulation resolution.
 
 Linear example with periodic boundary conditions
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn5linpbc #}
     :end-before: #{ end #}
 
-Results are shown in the middle panel of Fig. {@fig:conn5}. This example
+Results are shown in the middle panel of  :numref:`fig_conn5`. This example
 is identical to the previous, except that the (pool) layer has periodic
 boundary conditions. Therefore, the left half of the mask about the node
 at :math:`(0,0)` wraps back to the right half of the layer and that node
@@ -1127,30 +1144,32 @@ connects to all nodes in the layer.
 
 Various functions
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn5exp #}
     :end-before: #{ end #}
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn5gauss #}
     :end-before: #{ end #}
 
-Results are shown in the bottom panel of Fig. {@fig:conn5}. It shows
+Results are shown in the bottom panel of :numref:`fig_conn5`. It shows
 linear, exponential and Gaussian weight functions for the node at
 :math:`(25,0)`.
 
 Randomized weights and delays
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn5uniform #}
     :end-before: #{ end #}
 
 By using the ``'uniform'`` function for weights or delays, one can
 obtain randomized values for weights and delays, as shown by the red
-circles in the bottom panel of Fig. {@fig:conn5}. Weights and delays can
+circles in the bottom panel of :numref:`fig_conn5`. Weights and delays can
 currently only be randomized with uniform distribution.
 
-.. figure:: ../../topology/doc/user_maunal_figures/conn5.png
+.. _fig_conn5:
+
+.. figure:: user_manual_figures/conn5.png
    :name: fig:conn5
 
    Distance-dependent and randomized weights and delays. See text for
@@ -1235,26 +1254,30 @@ certain distance is then given by the product of the probabilities for
 finding nodes at a certain distance with the kernel value for this
 distance. For the kernel and parameter values below we have
 
+.. _eq_ptheo:
+
 .. math::
 
    p_{\text{conn}}(d) = \frac{12}{\pi} \times 2\pi r \times (1-2r) \\
-    = 24 r (1-2r) \qquad \text{for} \quad 0\le r < \frac{1}{2}\;.\qquad {#eq:ptheo}
+    = 24 r (1-2r) \qquad \text{for} \quad 0\le r < \frac{1}{2}\;.\qquad
 
 The resulting distribution of distances between connected nodes is shown in
-Fig. {@fig:conn6}.
+ :numref:`fig_conn6`.
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn6 #}
     :end-before: #{ end #}
 
-.. figure:: ../../topology/doc/user_maunal_figures/conn6.png
+.. _fig_conn6:
+
+.. figure:: user_manual_figures/conn6.png
    :name: fig:conn6
 
    Distribution of distances between source and target for a network of
    1000 randomly placed nodes, a fixed fan out of 50 connections and a
    connection probability decaying linearly from 1 to 0 at
    :math:`d=0.5`. The red line is the expected distribution from
-   Eq. {@eq:ptheo}.
+   Eq. :numref:`eq_ptheo`.
 
 Functions determining weight and delay as function of
 distance/displacement work in just the same way as before when the
@@ -1287,7 +1310,7 @@ cells (``pyr``) to interneurons (``in``) with a circular mask and
 uniform probability and interneurons to pyramidal cells with a
 rectangular mask unit probability.
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn7 #}
     :end-before: #{ end #}
 
@@ -1301,7 +1324,7 @@ synapse model in NEST, ``static_synapse``. You can specify a different
 model by adding a ``'synapse_model'`` entry to the connection
 dictionary, as in this example:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn8 #}
     :end-before: #{ end #}
 
@@ -1322,14 +1345,14 @@ needs to be specified and optionally also an anchor for shifting the
 center of the mask. As demonstrated in the following example,
 stimulation devices require the divergent connection type
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn9 #}
     :end-before: #{ end #}
 
 while recording devices require the convergent connection type (see also
 Sec. \ :ref:`3.11 <sec:rec_dev>`):
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn10 #}
     :end-before: #{ end #}
 
@@ -1343,7 +1366,7 @@ especially spike detectors, to record from a topology layer. Instead,
 create a single spike detector, and connect all neurons in the layer to
 that spike detector using a normal connect command:
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/connections.py
+.. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn11 #}
     :end-before: #{ end #}
 
@@ -1373,62 +1396,62 @@ The following table presents some query functions provided by NEST
 (``nest.``) and Topology (``tp.``). For detailed information about these
 functions, please see the online Python and SLI documentation.
 
-+-----------------------+---------------------------------------------+
-| ``nest.PrintNetwork() | Print structure of network or subnet from   |
-| ``                    | NEST perspective.                           |
-+-----------------------+---------------------------------------------+
-| ``nest.GetConnections | Retrieve connections (all or for a given    |
-| ()``                  | source or target); see also                 |
-|                       | http://www.nest-simulator.org/connection_ma |
-|                       | nagement.                                   |
-+-----------------------+---------------------------------------------+
-| ``nest.GetNodes()``   | Applied to a layer, returns GIDs of the     |
-|                       | layer elements. For simple layers, these    |
-|                       | are the actual model neurons, for composite |
-|                       | layers the top-level subnets.               |
-+-----------------------+---------------------------------------------+
-| ``nest.GetLeaves()``  | Applied to a layer, returns GIDs of all     |
-|                       | actual model neurons, ignoring subnets.     |
-+-----------------------+---------------------------------------------+
-| ``tp.GetPosition()``  | Return the spatial locations of nodes.      |
-+-----------------------+---------------------------------------------+
-| ``tp.GetLayer()``     | Return the layer to which nodes belong.     |
-+-----------------------+---------------------------------------------+
-| ``tp.GetElement()``   | Return the node(s) at the location(s) in    |
-|                       | the given grid-based layer(s).              |
-+-----------------------+---------------------------------------------+
-| ``tp.GetTargetNodes() | Obtain targets of a list of sources in a    |
-| ``                    | given target layer.                         |
-+-----------------------+---------------------------------------------+
-| ``tp.GetTargetPositio | Obtain positions of targets of a list of    |
-| ns()``                | sources in a given target layer.            |
-+-----------------------+---------------------------------------------+
-| ``tp.FindNearestEleme | Return the node(s) closest to the           |
-| nt()``                | location(s) in the given layer(s).          |
-+-----------------------+---------------------------------------------+
-| ``tp.FindCenterElemen | Return GID(s) of node closest to center of  |
-| t()``                 | layer(s).                                   |
-+-----------------------+---------------------------------------------+
-| ``tp.Displacement()`` | Obtain vector of lateral displacement       |
-|                       | between nodes, taking periodic boundary     |
-|                       | conditions into account.                    |
-+-----------------------+---------------------------------------------+
-| ``tp.Distance()``     | Obtain vector of lateral distances between  |
-|                       | nodes, taking periodic boundary conditions  |
-|                       | into account.                               |
-+-----------------------+---------------------------------------------+
-| ``tp.DumpLayerNodes() | Write layer element positions to file.      |
-| ``                    |                                             |
-+-----------------------+---------------------------------------------+
-| ``tp.DumpLayerConnect | Write connectivity information to file.     |
-| ions()``              | This function may be very useful to check   |
-|                       | that Topology created the correct           |
-|                       | connection structure.                       |
-+-----------------------+---------------------------------------------+
-| ``tp.SelectNodesByMas | Obtain GIDs of nodes/elements inside a      |
-| k()``                 | masked area of a layer. Part of NEST since  |
-|                       | NEST 2.14.                                  |
-+-----------------------+---------------------------------------------+
++-------------------------------+---------------------------------------------+
+| ``nest.PrintNetwork()``       | Print structure of network or subnet from   |
+|                               | NEST perspective.                           |
++-------------------------------+---------------------------------------------+
+| ``nest.GetConnections()``     | Retrieve connections (all or for a given    |
+|                               | source or target); see also                 |
+|                               | http://www.nest-simulator.org/connection_ma |
+|                               | nagement.                                   |
++-------------------------------+---------------------------------------------+
+| ``nest.GetNodes()``           | Applied to a layer, returns GIDs of the     |
+|                               | layer elements. For simple layers, these    |
+|                               | are the actual model neurons, for composite |
+|                               | layers the top-level subnets.               |
++-------------------------------+---------------------------------------------+
+| ``nest.GetLeaves()``          | Applied to a layer, returns GIDs of all     |
+|                               | actual model neurons, ignoring subnets.     |
++-------------------------------+---------------------------------------------+
+| ``tp.GetPosition()``          | Return the spatial locations of nodes.      |
++-------------------------------+---------------------------------------------+
+| ``tp.GetLayer()``             | Return the layer to which nodes belong.     |
++-------------------------------+---------------------------------------------+
+| ``tp.GetElement()``           | Return the node(s) at the location(s) in    |
+|                               | the given grid-based layer(s).              |
++-------------------------------+---------------------------------------------+
+| ``tp.GetTargetNodes()``       | Obtain targets of a list of sources in a    |
+|                               | given target layer.                         |
++-------------------------------+---------------------------------------------+
+| ``tp.GetTargetPositions()``   | Obtain positions of targets of a list of    |
+|                               | sources in a given target layer.            |
++-------------------------------+---------------------------------------------+
+| ``tp.FindNearestElement()``   | Return the node(s) closest to the           |
+|                               | location(s) in the given layer(s).          |
++-------------------------------+---------------------------------------------+
+| ``tp.FindCenterElement()``    | Return GID(s) of node closest to center of  |
+|                               | layer(s).                                   |
++-------------------------------+---------------------------------------------+
+| ``tp.Displacement()``         | Obtain vector of lateral displacement       |
+|                               | between nodes, taking periodic boundary     |
+|                               | conditions into account.                    |
++-------------------------------+---------------------------------------------+
+| ``tp.Distance()``             | Obtain vector of lateral distances between  |
+|                               | nodes, taking periodic boundary conditions  |
+|                               | into account.                               |
++-------------------------------+---------------------------------------------+
+| ``tp.DumpLayerNodes()``       | Write layer element positions to file.      |
+|                               |                                             |
++-------------------------------+---------------------------------------------+
+| ``tp.DumpLayerConnections()`` | Write connectivity information to file.     |
+|                               | This function may be very useful to check   |
+|                               | that Topology created the correct           |
+|                               | connection structure.                       |
++-------------------------------+---------------------------------------------+
+| ``tp.SelectNodesByMask()``    | Obtain GIDs of nodes/elements inside a      |
+|                               | masked area of a layer. Part of NEST since  |
+|                               | NEST 2.14.                                  |
++-------------------------------+---------------------------------------------+
 
 .. _sec:visualize:
 
@@ -1437,20 +1460,22 @@ Visualization functions
 
 Topology provides three functions to visualize networks:
 
-+-----------------+------------------------------------------+
-| ``PlotLayer()`` | Plot nodes in a layer.                   |
-+-----------------+------------------------------------------+
-| ``PlotTargets() | Plot all targets of a node in a given    |
-| ``              | layer.                                   |
-+-----------------+------------------------------------------+
-| ``PlotKernel()` | Add indication of mask and kernel to     |
-| `               | plot of layer. It does *not* wrap masks  |
-|                 | and kernels with respect to periodic     |
-|                 | boundary conditions. This function is    |
-|                 | usually called by ``PlotTargets``.       |
-+-----------------+------------------------------------------+
++-------------------+------------------------------------------+
+| ``PlotLayer()``   | Plot nodes in a layer.                   |
++-------------------+------------------------------------------+
+| ``PlotTargets()`` | Plot all targets of a node in a given    |
+|                   | layer.                                   |
++-------------------+------------------------------------------+
+| ``PlotKernel()``  | Add indication of mask and kernel to     |
+|                   | plot of layer. It does *not* wrap masks  |
+|                   | and kernels with respect to periodic     |
+|                   | boundary conditions. This function is    |
+|                   | usually called by ``PlotTargets``.       |
++-------------------+------------------------------------------+
 
-.. figure:: ../../topology/doc/user_maunal_figures/vislayer.png
+.. _fig_vislayer:
+
+.. figure:: user_manual_figures/vislayer.png
    :name: fig:vislayer
 
    :math:`21\times 21` grid with divergent Gaussian projections onto
@@ -1462,11 +1487,11 @@ Topology provides three functions to visualize networks:
 
 The following code shows a practical example: A :math:`21\times21`
 network which connects to itself with divergent Gaussian connections.
-The resulting graphics is shown in Fig. {@fig:vislayer}. All elements
+The resulting graphics is shown in :numref:`fig_vislayer`. All elements
 and the targets of the center neuron are shown, as well as mask and
 kernel.
 
-.. literalinclude:: ../../topology/doc/user_maunal_scripts/layers.py
+.. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ vislayer #}
     :end-before: #{ end #}
 
@@ -1810,7 +1835,7 @@ Topology Module from the 1.9-xxxx to the 2.0 version.
 -  The semantics of the ``anchor`` entry for kernel functions has
    changed: the anchor now specifies the center of the probability
    distribution relative to the driver node. This is consistent with the
-   semantics for free masks, see Sec. \ :ref:`3.3 <sec:conn_masks` and
+   semantics for free masks, see Sec. \ :ref:`3.3 <sec:conn_masks>` and
    :ref:`3.4 <sec:conn_kernels>`.
 
 -  Functions computing connection probabilities, weights and delays as
@@ -1829,7 +1854,7 @@ References
    `www.nest-simulator.org <www.nest-simulator.org>`__.
 
 .. [2]
-   See @Nord:2009(456) for suggestions on how to describe network
+   See Nord (2009) for suggestions on how to describe network
    models.
 
 .. [3]

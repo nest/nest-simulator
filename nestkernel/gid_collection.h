@@ -636,15 +636,6 @@ inline GIDTriple gc_const_iterator::operator*() const
     gt.gid = composite_collection_->parts_[ part_idx_ ][ element_idx_ ];
     gt.model_id = composite_collection_->parts_[ part_idx_ ].model_id_;
     gt.lid += element_idx_;
-
-    // TODO481 : Temporary check of correctness
-    if ( composite_collection_->operator[]( gt.lid ) != gt.gid )
-    {
-      std::cerr << composite_collection_->operator[]( gt.lid )
-                << " != " << gt.gid << std::endl;
-      throw KernelException(
-        "The GID at the local_placement does not match the GID of the Triple" );
-    }
   }
   return gt;
 }

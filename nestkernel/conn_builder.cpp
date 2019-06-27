@@ -2018,10 +2018,8 @@ nest::SPBuilder::connect_( const std::vector< index >& sources,
         }
         Node* const target =
           kernel().node_manager.get_node_or_proxy( *tgid_it, tid );
-        // todo481 do we need to check for proxyness of the target?
-        const thread target_thread = target->get_thread();
 
-        single_connect_( *sgid_it, *target, target_thread, rng );
+        single_connect_( *sgid_it, *target, tid, rng );
       }
     }
     catch ( std::exception& err )

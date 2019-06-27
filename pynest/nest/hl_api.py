@@ -70,6 +70,7 @@ __all__ = [
     'GetConnections',
     'GetDefaults',
     'GetKernelStatus',
+    'GetLocalGIDCollection',
     'GetPosition',
     'GetStatus',
     'GetStructuralPlasticityStatus',

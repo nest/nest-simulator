@@ -28,5 +28,4 @@
 // Explicit definition required to ensure visibility when compiling with
 // clang under OSX. This must be outside namespace NEST, since the template
 // is defined in the global namespace.
-template class lockPTRDatum< nest::AbstractMask,
-  &nest::TopologyModule::MaskType >;
+template class lockPTRDatum< nest::AbstractMask, &nest::TopologyModule::MaskType >;

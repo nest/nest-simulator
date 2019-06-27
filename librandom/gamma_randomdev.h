@@ -102,8 +102,7 @@ public:
   // otherwise creation of a lock ptr would
   // occur as side effect---might be unhealthy
   GammaRandomDev( RngPtr, double a_in = 1.0 ); //!< create with fixed RNG
-  GammaRandomDev(
-    double a_in = 1.0 ); //!< create w/o fixed RNG for threaded simulations
+  GammaRandomDev( double a_in = 1.0 );         //!< create w/o fixed RNG for threaded simulations
 
   void set_order( double ); //!< set order
   void set_scale( double ); //!< set scale parameter
@@ -115,13 +114,11 @@ public:
   void get_status( DictionaryDatum& ) const;
 
   using RandomDev::operator();
-  double operator()( RngPtr ) const; //!< draw number, threaded
-  double operator()( RngPtr,
-    double ); //!< draw number, threaded, explicit order
+  double operator()( RngPtr ) const;   //!< draw number, threaded
+  double operator()( RngPtr, double ); //!< draw number, threaded, explicit order
 
 private:
-  double unscaled_gamma(
-    RngPtr r ) const; //! worker function creating Gamma(x; order, 1) number
+  double unscaled_gamma( RngPtr r ) const; //! worker function creating Gamma(x; order, 1) number
 
   double a;  // gamma density order
   double b_; // gamma scale parameter

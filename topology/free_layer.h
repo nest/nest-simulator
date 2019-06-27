@@ -59,13 +59,9 @@ protected:
   template < class Ins >
   void communicate_positions_( Ins iter, const Selector& filter );
 
-  void insert_global_positions_ntree_( Ntree< D, index >& tree,
-    const Selector& filter );
-  void insert_global_positions_vector_(
-    std::vector< std::pair< Position< D >, index > >& vec,
-    const Selector& filter );
-  void insert_local_positions_ntree_( Ntree< D, index >& tree,
-    const Selector& filter );
+  void insert_global_positions_ntree_( Ntree< D, index >& tree, const Selector& filter );
+  void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec, const Selector& filter );
+  void insert_local_positions_ntree_( Ntree< D, index >& tree, const Selector& filter );
 
   /// Vector of positions. Should match node vector in Subnet.
   std::vector< Position< D > > positions_;
@@ -113,8 +109,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     {
       std::stringstream expected;
       std::stringstream got;
-      expected << "position array with length "
-               << this->global_size() / this->depth_;
+      expected << "position array with length " << this->global_size() / this->depth_;
       got << "position array with length" << pos.size();
       throw TypeMismatch( expected.str(), got.str() );
     }
@@ -130,24 +125,19 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     const index nodes_per_depth = this->global_size() / this->depth_;
     const index first_lid = this->nodes_[ 0 ]->get_lid();
 
-    for ( std::vector< Node* >::iterator i = this->local_begin();
-          i != this->local_end();
-          ++i )
+    for ( std::vector< Node* >::iterator i = this->local_begin(); i != this->local_end(); ++i )
     {
 
       // Nodes are grouped by depth. When lid % nodes_per_depth ==
       // first_lid, we have "wrapped around", and do not need to gather
       // more positions.
-      if ( ( ( *i )->get_lid() != first_lid )
-        && ( ( *i )->get_lid() % nodes_per_depth == first_lid ) )
+      if ( ( ( *i )->get_lid() != first_lid ) && ( ( *i )->get_lid() % nodes_per_depth == first_lid ) )
       {
         break;
       }
 
-      Position< D > point = getValue< std::vector< double > >(
-        pos[ ( *i )->get_lid() % nodes_per_depth ] );
-      if ( not( ( point >= this->lower_left_ )
-             and ( point < this->lower_left_ + this->extent_ ) ) )
+      Position< D > point = getValue< std::vector< double > >( pos[ ( *i )->get_lid() % nodes_per_depth ] );
+      if ( not( ( point >= this->lower_left_ ) and ( point < this->lower_left_ + this->extent_ ) ) )
       {
         throw BadProperty( "Node position outside of layer" );
       }
@@ -163,14 +153,10 @@ FreeLayer< D >::get_status( DictionaryDatum& d ) const
 {
   Layer< D >::get_status( d );
 
-  DictionaryDatum topology_dict =
-    getValue< DictionaryDatum >( ( *d )[ names::topology ] );
+  DictionaryDatum topology_dict = getValue< DictionaryDatum >( ( *d )[ names::topology ] );
 
   TokenArray points;
-  for ( typename std::vector< Position< D > >::const_iterator it =
-          positions_.begin();
-        it != positions_.end();
-        ++it )
+  for ( typename std::vector< Position< D > >::const_iterator it = positions_.begin(); it != positions_.end(); ++it )
   {
     points.push_back( it->getToken() );
   }
@@ -202,8 +188,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
   // just adjust the begin and end pointers:
   if ( filter.select_depth() )
   {
-    local_gid_pos.reserve(
-      ( D + 1 ) * ( this->nodes_.size() / this->depth_ + 1 ) );
+    local_gid_pos.reserve( ( D + 1 ) * ( this->nodes_.size() / this->depth_ + 1 ) );
     nodes_begin = this->local_begin( filter.depth );
     nodes_end = this->local_end( filter.depth );
   }
@@ -214,13 +199,10 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
     nodes_end = this->local_end();
   }
 
-  for ( std::vector< Node* >::const_iterator node_it = nodes_begin;
-        node_it != nodes_end;
-        ++node_it )
+  for ( std::vector< Node* >::const_iterator node_it = nodes_begin; node_it != nodes_end; ++node_it )
   {
 
-    if ( filter.select_model()
-      && ( ( *node_it )->get_model_id() != filter.model ) )
+    if ( filter.select_model() && ( ( *node_it )->get_model_id() != filter.model ) )
     {
       continue;
     }
@@ -230,16 +212,14 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
     // Push coordinates one by one
     for ( int j = 0; j < D; ++j )
     {
-      local_gid_pos.push_back( positions_[ ( *node_it )->get_subnet_index()
-        % positions_.size() ][ j ] );
+      local_gid_pos.push_back( positions_[ ( *node_it )->get_subnet_index() % positions_.size() ][ j ] );
     }
   }
 
   // This array will be filled with GID,pos_x,pos_y[,pos_z] for global nodes:
   std::vector< double > global_gid_pos;
   std::vector< int > displacements;
-  kernel().mpi_manager.communicate(
-    local_gid_pos, global_gid_pos, displacements );
+  kernel().mpi_manager.communicate( local_gid_pos, global_gid_pos, displacements );
 
   // To avoid copying the vector one extra time in order to sort, we
   // sneakishly use reinterpret_cast
@@ -255,15 +235,13 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
   // Unpack GIDs and coordinates
   for ( ; pos_ptr < pos_end; pos_ptr++ )
   {
-    *iter++ = std::pair< Position< D >, index >(
-      pos_ptr->get_position(), pos_ptr->get_gid() );
+    *iter++ = std::pair< Position< D >, index >( pos_ptr->get_position(), pos_ptr->get_gid() );
   }
 }
 
 template < int D >
 void
-FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree,
-  const Selector& filter )
+FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree, const Selector& filter )
 {
 
   communicate_positions_( std::inserter( tree, tree.end() ), filter );
@@ -271,8 +249,7 @@ FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree,
 
 template < int D >
 void
-FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
-  const Selector& filter )
+FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree, const Selector& filter )
 {
   assert( this->nodes_.size() >= positions_.size() );
 
@@ -292,36 +269,30 @@ FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
     nodes_end = this->local_end();
   }
 
-  for ( std::vector< Node* >::const_iterator node_it = nodes_begin;
-        node_it != nodes_end;
-        ++node_it )
+  for ( std::vector< Node* >::const_iterator node_it = nodes_begin; node_it != nodes_end; ++node_it )
   {
 
-    if ( filter.select_model()
-      && ( ( *node_it )->get_model_id() != filter.model ) )
+    if ( filter.select_model() && ( ( *node_it )->get_model_id() != filter.model ) )
     {
       continue;
     }
 
     tree.insert( std::pair< Position< D >, index >(
-      positions_[ ( *node_it )->get_subnet_index() % positions_.size() ],
-      ( *node_it )->get_gid() ) );
+      positions_[ ( *node_it )->get_subnet_index() % positions_.size() ], ( *node_it )->get_gid() ) );
   }
 }
 
 // Helper function to compare GIDs used for sorting (Position,GID) pairs
 template < int D >
 static bool
-gid_less( const std::pair< Position< D >, index >& a,
-  const std::pair< Position< D >, index >& b )
+gid_less( const std::pair< Position< D >, index >& a, const std::pair< Position< D >, index >& b )
 {
   return a.second < b.second;
 }
 
 template < int D >
 void
-FreeLayer< D >::insert_global_positions_vector_(
-  std::vector< std::pair< Position< D >, index > >& vec,
+FreeLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec,
   const Selector& filter )
 {
 

@@ -38,8 +38,7 @@ namespace nest
 
 extern SLIType ConnectionGeneratorType;
 
-typedef lockPTRDatum< ConnectionGenerator, &ConnectionGeneratorType >
-  ConnectionGeneratorDatum;
+typedef lockPTRDatum< ConnectionGenerator, &ConnectionGeneratorType > ConnectionGeneratorDatum;
 
 } // namespace nest
 

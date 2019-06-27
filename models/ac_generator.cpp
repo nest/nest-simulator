@@ -71,8 +71,7 @@ nest::ac_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::ac_generator::Parameters_& nest::ac_generator::Parameters_::operator=(
-  const Parameters_& p )
+nest::ac_generator::Parameters_& nest::ac_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -206,8 +205,7 @@ nest::ac_generator::calibrate()
 void
 nest::ac_generator::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   long start = origin.get_steps();

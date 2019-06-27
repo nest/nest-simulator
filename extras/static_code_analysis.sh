@@ -54,6 +54,9 @@ PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
 PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
 PEP8_IGNORES_TOPO_MANUAL="${PEP8_IGNORES_EXAMPLES},E265"
 
+# PEP8 rules.
+PEP8_MAX_LINE_LENGTH=120
+
 # Constants
 typeset -i MAX_CPPCHECK_MSG_COUNT=10
 
@@ -238,7 +241,7 @@ for f in $FILE_NAMES; do
             IGNORES=$PEP8_IGNORES
             ;;
         esac
-        if ! pep8_result=`$PEP8 --ignore=$IGNORES $f` ; then
+        if ! pep8_result=`$PEP8 --max-line-length $PEP8_MAX_LINE_LENGTH --ignore=$IGNORES $f` ; then
           printf '%s\n' "$pep8_result" | while IFS= read -r line
           do
             print_msg "MSGBLD0195: " "[PEP8] $line"

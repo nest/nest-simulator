@@ -283,10 +283,7 @@ private:
 };
 
 inline port
-iaf_chs_2007::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+iaf_chs_2007::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

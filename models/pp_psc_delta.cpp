@@ -199,8 +199,7 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
 
   if ( dead_time_shape_ < 1 )
   {
-    throw BadProperty(
-      "Shape of the dead time gamma distribution must not be smaller than 1." );
+    throw BadProperty( "Shape of the dead time gamma distribution must not be smaller than 1." );
   }
 
   if ( tau_m_ <= 0 )
@@ -366,15 +365,13 @@ void
 nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 {
 
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
   {
 
-    S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_
-      + B_.spikes_.get_value( lag );
+    S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
 
     double q_temp_ = 0;
     for ( unsigned int i = 0; i < S_.q_elems_.size(); i++ )
@@ -425,8 +422,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
           // Set dead time interval according to paramters
           if ( P_.dead_time_random_ )
           {
-            S_.r_ = Time( Time::ms( V_.gamma_dev_( V_.rng_ ) / V_.dt_rate_ ) )
-                      .get_steps();
+            S_.r_ = Time( Time::ms( V_.gamma_dev_( V_.rng_ ) / V_.dt_rate_ ) ).get_steps();
           }
           else
           {
@@ -483,8 +479,7 @@ nest::pp_psc_delta::handle( SpikeEvent& e )
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
   B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -496,9 +491,7 @@ nest::pp_psc_delta::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

@@ -321,10 +321,7 @@ private:
 };
 
 inline port
-sinusoidal_gamma_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -361,8 +358,7 @@ sinusoidal_gamma_generator::send_test_event( Node& target,
 }
 
 inline port
-sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

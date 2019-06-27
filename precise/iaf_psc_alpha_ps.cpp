@@ -44,8 +44,7 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_psc_alpha_ps >
-  nest::iaf_psc_alpha_ps::recordablesMap_;
+nest::RecordablesMap< nest::iaf_psc_alpha_ps > nest::iaf_psc_alpha_ps::recordablesMap_;
 
 namespace nest
 {
@@ -164,8 +163,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d )
 
   if ( U_reset_ < U_min_ )
   {
-    throw BadProperty(
-      "Reset potential must be greater equal minimum potential." );
+    throw BadProperty( "Reset potential must be greater equal minimum potential." );
   }
 
   if ( c_m_ <= 0 )
@@ -187,8 +185,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::iaf_psc_alpha_ps::State_::get( DictionaryDatum& d,
-  const Parameters_& p ) const
+nest::iaf_psc_alpha_ps::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
   def< double >( d, names::I_syn_ex, I_ex_ );    // Excitatory synaptic current
@@ -199,9 +196,7 @@ nest::iaf_psc_alpha_ps::State_::get( DictionaryDatum& d,
 }
 
 void
-nest::iaf_psc_alpha_ps::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  double delta_EL )
+nest::iaf_psc_alpha_ps::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
   {
@@ -218,8 +213,7 @@ nest::iaf_psc_alpha_ps::Buffers_::Buffers_( iaf_psc_alpha_ps& n )
 {
 }
 
-nest::iaf_psc_alpha_ps::Buffers_::Buffers_( const Buffers_&,
-  iaf_psc_alpha_ps& n )
+nest::iaf_psc_alpha_ps::Buffers_::Buffers_( const Buffers_&, iaf_psc_alpha_ps& n )
   : logger_( n )
 {
 }
@@ -279,12 +273,10 @@ nest::iaf_psc_alpha_ps::calibrate()
   V_.psc_norm_in_ = 1.0 * numerics::e / P_.tau_syn_in_;
 
   V_.gamma_ex_ = 1 / P_.c_m_ / ( 1 / P_.tau_syn_ex_ - 1 / P_.tau_m_ );
-  V_.gamma_sq_ex_ = 1 / P_.c_m_ / ( ( 1 / P_.tau_syn_ex_ - 1 / P_.tau_m_ )
-                                    * ( 1 / P_.tau_syn_ex_ - 1 / P_.tau_m_ ) );
+  V_.gamma_sq_ex_ = 1 / P_.c_m_ / ( ( 1 / P_.tau_syn_ex_ - 1 / P_.tau_m_ ) * ( 1 / P_.tau_syn_ex_ - 1 / P_.tau_m_ ) );
 
   V_.gamma_in_ = 1 / P_.c_m_ / ( 1 / P_.tau_syn_in_ - 1 / P_.tau_m_ );
-  V_.gamma_sq_in_ = 1 / P_.c_m_ / ( ( 1 / P_.tau_syn_in_ - 1 / P_.tau_m_ )
-                                    * ( 1 / P_.tau_syn_in_ - 1 / P_.tau_m_ ) );
+  V_.gamma_sq_in_ = 1 / P_.c_m_ / ( ( 1 / P_.tau_syn_in_ - 1 / P_.tau_m_ ) * ( 1 / P_.tau_syn_in_ - 1 / P_.tau_m_ ) );
 
   // pre-compute matrix for full time step
   V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
@@ -311,23 +303,16 @@ nest::iaf_psc_alpha_ps::calibrate()
  * ---------------------------------------------------------------- */
 
 bool
-nest::iaf_psc_alpha_ps::get_next_event_( const long T,
-  double& ev_offset,
-  double& ev_weight,
-  bool& end_of_refract )
+nest::iaf_psc_alpha_ps::get_next_event_( const long T, double& ev_offset, double& ev_weight, bool& end_of_refract )
 {
-  return B_.events_.get_next_spike(
-    T, false, ev_offset, ev_weight, end_of_refract );
+  return B_.events_.get_next_spike( T, false, ev_offset, ev_weight, end_of_refract );
 }
 
 void
-nest::iaf_psc_alpha_ps::update( Time const& origin,
-  const long from,
-  const long to )
+nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from )
-    < kernel().connection_manager.get_min_delay() );
+  assert( static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -342,9 +327,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin,
   */
   if ( S_.V_m_ >= P_.U_th_ )
   {
-    emit_instant_spike_( origin,
-      from,
-      V_.h_ms_ * ( 1 - std::numeric_limits< double >::epsilon() ) );
+    emit_instant_spike_( origin, from, V_.h_ms_ * ( 1 - std::numeric_limits< double >::epsilon() ) );
   }
 
   for ( long lag = from; lag < to; ++lag )
@@ -353,8 +336,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin,
     const long T = origin.get_steps() + lag;
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_
-      && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
@@ -379,21 +361,18 @@ nest::iaf_psc_alpha_ps::update( Time const& origin,
       // update membrane potential
       if ( not S_.is_refractory_ )
       {
-        S_.V_m_ = V_.P30_ * ( P_.I_e_ + S_.y_input_ ) + V_.P31_ex_ * S_.dI_ex_
-          + V_.P32_ex_ * S_.I_ex_ + V_.P31_in_ * S_.dI_in_
-          + V_.P32_in_ * S_.I_in_ + V_.expm1_tau_m_ * S_.V_m_ + S_.V_m_;
+        S_.V_m_ = V_.P30_ * ( P_.I_e_ + S_.y_input_ ) + V_.P31_ex_ * S_.dI_ex_ + V_.P32_ex_ * S_.I_ex_
+          + V_.P31_in_ * S_.dI_in_ + V_.P32_in_ * S_.I_in_ + V_.expm1_tau_m_ * S_.V_m_ + S_.V_m_;
 
         // lower bound of membrane potential
         S_.V_m_ = ( S_.V_m_ < P_.U_min_ ? P_.U_min_ : S_.V_m_ );
       }
 
       // update synaptic currents
-      S_.I_ex_ = ( V_.expm1_tau_syn_ex_ + 1. ) * V_.h_ms_ * S_.dI_ex_
-        + ( V_.expm1_tau_syn_ex_ + 1. ) * S_.I_ex_;
+      S_.I_ex_ = ( V_.expm1_tau_syn_ex_ + 1. ) * V_.h_ms_ * S_.dI_ex_ + ( V_.expm1_tau_syn_ex_ + 1. ) * S_.I_ex_;
       S_.dI_ex_ = ( V_.expm1_tau_syn_ex_ + 1. ) * S_.dI_ex_;
 
-      S_.I_in_ = ( V_.expm1_tau_syn_in_ + 1. ) * V_.h_ms_ * S_.dI_in_
-        + ( V_.expm1_tau_syn_in_ + 1. ) * S_.I_in_;
+      S_.I_in_ = ( V_.expm1_tau_syn_in_ + 1. ) * V_.h_ms_ * S_.dI_in_ + ( V_.expm1_tau_syn_in_ + 1. ) * S_.I_in_;
       S_.dI_in_ = ( V_.expm1_tau_syn_in_ + 1. ) * S_.dI_in_;
 
       /* The following must not be moved before the y1_, dI_ex_ update,
@@ -492,9 +471,7 @@ nest::iaf_psc_alpha_ps::handle( SpikeEvent& e )
   */
   const long Tdeliver = e.get_stamp().get_steps() + e.get_delay_steps() - 1;
 
-  B_.events_.add_spike(
-    e.get_rel_delivery_steps(
-      nest::kernel().simulation_manager.get_slice_origin() ),
+  B_.events_.add_spike( e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -509,10 +486,7 @@ nest::iaf_psc_alpha_ps::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps(
-      nest::kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void
@@ -536,41 +510,31 @@ nest::iaf_psc_alpha_ps::propagate_( const double dt )
     const double ps_e_Tau = numerics::expm1( -dt / P_.tau_m_ );
     const double ps_P30 = -P_.tau_m_ / P_.c_m_ * ps_e_Tau;
 
-    const double ps_P31_ex = V_.gamma_sq_ex_ * ps_e_Tau
-      - V_.gamma_sq_ex_ * ps_e_TauSyn_ex - dt * V_.gamma_ex_ * ps_e_TauSyn_ex
-      - dt * V_.gamma_ex_;
-    const double ps_P32_ex =
-      V_.gamma_ex_ * ps_e_Tau - V_.gamma_ex_ * ps_e_TauSyn_ex;
+    const double ps_P31_ex = V_.gamma_sq_ex_ * ps_e_Tau - V_.gamma_sq_ex_ * ps_e_TauSyn_ex
+      - dt * V_.gamma_ex_ * ps_e_TauSyn_ex - dt * V_.gamma_ex_;
+    const double ps_P32_ex = V_.gamma_ex_ * ps_e_Tau - V_.gamma_ex_ * ps_e_TauSyn_ex;
 
-    const double ps_P31_in = V_.gamma_sq_in_ * ps_e_Tau
-      - V_.gamma_sq_in_ * ps_e_TauSyn_in - dt * V_.gamma_in_ * ps_e_TauSyn_in
-      - dt * V_.gamma_in_;
-    const double ps_P32_in =
-      V_.gamma_in_ * ps_e_Tau - V_.gamma_in_ * ps_e_TauSyn_in;
+    const double ps_P31_in = V_.gamma_sq_in_ * ps_e_Tau - V_.gamma_sq_in_ * ps_e_TauSyn_in
+      - dt * V_.gamma_in_ * ps_e_TauSyn_in - dt * V_.gamma_in_;
+    const double ps_P32_in = V_.gamma_in_ * ps_e_Tau - V_.gamma_in_ * ps_e_TauSyn_in;
 
-    S_.V_m_ = ps_P30 * ( P_.I_e_ + S_.y_input_ ) + ps_P31_ex * S_.dI_ex_
-      + ps_P32_ex * S_.I_ex_ + ps_P31_in * S_.dI_in_ + ps_P32_in * S_.I_in_
-      + ps_e_Tau * S_.V_m_ + S_.V_m_;
+    S_.V_m_ = ps_P30 * ( P_.I_e_ + S_.y_input_ ) + ps_P31_ex * S_.dI_ex_ + ps_P32_ex * S_.I_ex_ + ps_P31_in * S_.dI_in_
+      + ps_P32_in * S_.I_in_ + ps_e_Tau * S_.V_m_ + S_.V_m_;
 
     // lower bound of membrane potential
     S_.V_m_ = ( S_.V_m_ < P_.U_min_ ? P_.U_min_ : S_.V_m_ );
   }
 
   // now the synaptic components
-  S_.I_ex_ = ( ps_e_TauSyn_ex + 1. ) * dt * S_.dI_ex_
-    + ( ps_e_TauSyn_ex + 1. ) * S_.I_ex_;
+  S_.I_ex_ = ( ps_e_TauSyn_ex + 1. ) * dt * S_.dI_ex_ + ( ps_e_TauSyn_ex + 1. ) * S_.I_ex_;
   S_.dI_ex_ = ( ps_e_TauSyn_ex + 1. ) * S_.dI_ex_;
 
-  S_.I_in_ = ( ps_e_TauSyn_in + 1. ) * dt * S_.dI_in_
-    + ( ps_e_TauSyn_in + 1. ) * S_.I_in_;
+  S_.I_in_ = ( ps_e_TauSyn_in + 1. ) * dt * S_.dI_in_ + ( ps_e_TauSyn_in + 1. ) * S_.I_in_;
   S_.dI_in_ = ( ps_e_TauSyn_in + 1. ) * S_.dI_in_;
 }
 
 void
-nest::iaf_psc_alpha_ps::emit_spike_( Time const& origin,
-  const long lag,
-  const double t0,
-  const double dt )
+nest::iaf_psc_alpha_ps::emit_spike_( Time const& origin, const long lag, const double t0, const double dt )
 {
   // we know that the potential is subthreshold at t0, super at t0+dt
 
@@ -592,9 +556,7 @@ nest::iaf_psc_alpha_ps::emit_spike_( Time const& origin,
 }
 
 void
-nest::iaf_psc_alpha_ps::emit_instant_spike_( Time const& origin,
-  const long lag,
-  const double spike_offs )
+nest::iaf_psc_alpha_ps::emit_instant_spike_( Time const& origin, const long lag, const double spike_offs )
 {
   assert( S_.V_m_ >= P_.U_th_ ); // ensure we are superthreshold
 
@@ -644,8 +606,8 @@ nest::iaf_psc_alpha_ps::bisectioning_( const double dt ) const
     const double P21_ex = propagator_32( P_.tau_syn_ex_, P_.tau_m_, P_.c_m_, root );
     const double P21_in = propagator_32( P_.tau_syn_in_, P_.tau_m_, P_.c_m_, root );
 
-    V_m_root = P20 * ( P_.I_e_ + V_.y_input_before_ ) + P21_ex * V_.I_ex_before_
-      + P21_in * V_.I_in_before_ + expm1_tau_m * V_.V_m_before_ + V_.V_m_before_;
+    V_m_root = P20 * ( P_.I_e_ + V_.y_input_before_ ) + P21_ex * V_.I_ex_before_ + P21_in * V_.I_in_before_
+      + expm1_tau_m * V_.V_m_before_ + V_.V_m_before_;
   }
   return root;
 }

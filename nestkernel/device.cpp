@@ -73,9 +73,7 @@ nest::Device::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::Device::Parameters_::update_( const DictionaryDatum& d,
-  const Name& name,
-  Time& value )
+nest::Device::Parameters_::update_( const DictionaryDatum& d, const Name& name, Time& value )
 {
   /* We cannot update the Time values directly, since updateValue()
          doesn't support Time objects. We thus read the value in ms into

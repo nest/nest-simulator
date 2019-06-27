@@ -173,23 +173,19 @@ nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::pp_pop_psc_delta::State_::get( DictionaryDatum& d,
-  const Parameters_& ) const
+nest::pp_pop_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& ) const
 {
   def< double >( d, names::V_m, h_ ); // Filterd version of input
-  int n_spikes = n_spikes_past_.size() > 0
-    ? n_spikes_past_[ p_n_spikes_past_ ]
-    : 0; // return 0 if n_spikes_past_ has not been initialized yet
-  def< long >( d, names::n_events, n_spikes ); // Number of generated spikes
+  int n_spikes = n_spikes_past_.size() > 0 ? n_spikes_past_[ p_n_spikes_past_ ]
+                                           : 0; // return 0 if n_spikes_past_ has not been initialized yet
+  def< long >( d, names::n_events, n_spikes );  // Number of generated spikes
 }
 
 void
-nest::pp_pop_psc_delta::State_::set( const DictionaryDatum& d,
-  const Parameters_& )
+nest::pp_pop_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& )
 {
   updateValue< double >( d, names::V_m, h_ );
-  initialized_ =
-    false; // vectors of the state should be initialized with new parameter set.
+  initialized_ = false; // vectors of the state should be initialized with new parameter set.
 }
 
 nest::pp_pop_psc_delta::Buffers_::Buffers_( pp_pop_psc_delta& n )
@@ -197,8 +193,7 @@ nest::pp_pop_psc_delta::Buffers_::Buffers_( pp_pop_psc_delta& n )
 {
 }
 
-nest::pp_pop_psc_delta::Buffers_::Buffers_( const Buffers_&,
-  pp_pop_psc_delta& n )
+nest::pp_pop_psc_delta::Buffers_::Buffers_( const Buffers_&, pp_pop_psc_delta& n )
   : logger_( n )
 {
 }
@@ -303,8 +298,7 @@ nest::pp_pop_psc_delta::calibrate()
     {
       for ( unsigned int i = 0; i < P_.tau_eta_.size(); i++ )
       {
-        temp +=
-          std::exp( -ts[ j ] / P_.tau_eta_.at( i ) ) * ( -P_.val_eta_.at( i ) );
+        temp += std::exp( -ts[ j ] / P_.tau_eta_.at( i ) ) * ( -P_.val_eta_.at( i ) );
       }
 
       V_.theta_kernel_.push_back( temp );
@@ -333,20 +327,16 @@ nest::pp_pop_psc_delta::calibrate()
  */
 
 void
-nest::pp_pop_psc_delta::update( Time const& origin,
-  const long from,
-  const long to )
+nest::pp_pop_psc_delta::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
   {
 
 
-    S_.h_ = S_.h_ * V_.P33_ + V_.P30_ * ( S_.y0_ + P_.I_e_ )
-      + B_.spikes_.get_value( lag );
+    S_.h_ = S_.h_ * V_.P33_ + V_.P30_ * ( S_.y0_ + P_.I_e_ ) + B_.spikes_.get_value( lag );
 
 
     // get_thetas_ages
@@ -358,8 +348,7 @@ nest::pp_pop_psc_delta::update( Time const& origin,
     for ( unsigned int i = 0; i < V_.eta_kernel_.size(); i++ )
     {
       tmp_vector.push_back( V_.eta_kernel_[ i ]
-        * S_.n_spikes_past_[ ( S_.p_n_spikes_past_ + i )
-            % S_.n_spikes_past_.size() ] * V_.h_ * 0.001 );
+        * S_.n_spikes_past_[ ( S_.p_n_spikes_past_ + i ) % S_.n_spikes_past_.size() ] * V_.h_ * 0.001 );
       integral += tmp_vector[ i ];
     }
 
@@ -368,8 +357,7 @@ nest::pp_pop_psc_delta::update( Time const& origin,
 
     for ( unsigned int i = 1; i < V_.eta_kernel_.size(); i++ )
     {
-      S_.thetas_ages_.push_back(
-        S_.thetas_ages_[ i - 1 ] - tmp_vector[ i - 1 ] );
+      S_.thetas_ages_.push_back( S_.thetas_ages_[ i - 1 ] - tmp_vector[ i - 1 ] );
     }
 
     for ( unsigned int i = 0; i < V_.eta_kernel_.size(); i++ )
@@ -382,8 +370,7 @@ nest::pp_pop_psc_delta::update( Time const& origin,
     // get_escape_rate
     for ( unsigned int i = 0; i < S_.rhos_ages_.size(); i++ )
     {
-      S_.rhos_ages_[ i ] =
-        P_.rho_0_ * std::exp( ( S_.h_ + S_.thetas_ages_[ i ] ) / P_.delta_u_ );
+      S_.rhos_ages_[ i ] = P_.rho_0_ * std::exp( ( S_.h_ + S_.thetas_ages_[ i ] ) / P_.delta_u_ );
     }
 
 
@@ -393,18 +380,15 @@ nest::pp_pop_psc_delta::update( Time const& origin,
     for ( unsigned int i = 0; i < S_.age_occupations_.size(); i++ )
     {
 
-      if ( S_.age_occupations_[ ( S_.p_age_occupations_ + i )
-             % S_.age_occupations_.size() ] > 0 )
+      if ( S_.age_occupations_[ ( S_.p_age_occupations_ + i ) % S_.age_occupations_.size() ] > 0 )
       {
 
-        p_argument = -numerics::expm1( -S_.rhos_ages_[ i ] * V_.h_
-                       * 0.001 ); // V_.h_ is in ms, S_.rhos_ages_ is in Hz
+        p_argument = -numerics::expm1( -S_.rhos_ages_[ i ] * V_.h_ * 0.001 ); // V_.h_ is in ms, S_.rhos_ages_ is in Hz
 
         if ( p_argument > V_.min_double_ )
         {
-          V_.binom_dev_.set_p_n( p_argument,
-            S_.age_occupations_[ ( S_.p_age_occupations_ + i )
-              % S_.age_occupations_.size() ] );
+          V_.binom_dev_.set_p_n(
+            p_argument, S_.age_occupations_[ ( S_.p_age_occupations_ + i ) % S_.age_occupations_.size() ] );
           S_.n_spikes_ages_[ i ] = V_.binom_dev_.ldev( V_.rng_ );
         }
         else
@@ -419,12 +403,11 @@ nest::pp_pop_psc_delta::update( Time const& origin,
     }
 
 
-    S_.p_n_spikes_past_ = ( S_.p_n_spikes_past_ - 1 + S_.n_spikes_past_.size() )
-      % S_.n_spikes_past_.size(); // shift to the right
+    S_.p_n_spikes_past_ =
+      ( S_.p_n_spikes_past_ - 1 + S_.n_spikes_past_.size() ) % S_.n_spikes_past_.size(); // shift to the right
 
     int temp_sum = 0;
-    for ( unsigned int i = 0; i < S_.n_spikes_ages_.size();
-          i++ ) // cumulative sum
+    for ( unsigned int i = 0; i < S_.n_spikes_ages_.size(); i++ ) // cumulative sum
     {
       temp_sum += S_.n_spikes_ages_[ i ];
     }
@@ -435,23 +418,17 @@ nest::pp_pop_psc_delta::update( Time const& origin,
     // update_age_occupations
     for ( unsigned int i = 0; i < S_.age_occupations_.size(); i++ )
     {
-      S_.age_occupations_[ ( S_.p_age_occupations_ + i )
-        % S_.age_occupations_.size() ] -= S_.n_spikes_ages_[ i ];
+      S_.age_occupations_[ ( S_.p_age_occupations_ + i ) % S_.age_occupations_.size() ] -= S_.n_spikes_ages_[ i ];
     }
 
-    int last_element_value =
-      S_.age_occupations_[ ( S_.p_age_occupations_ - 1
-                             + S_.age_occupations_.size() )
-        % S_.age_occupations_.size() ]; // save the last element
+    int last_element_value = S_.age_occupations_[ ( S_.p_age_occupations_ - 1 + S_.age_occupations_.size() )
+      % S_.age_occupations_.size() ]; // save the last element
 
     S_.p_age_occupations_ =
-      ( S_.p_age_occupations_ - 1 + S_.age_occupations_.size() )
-      % S_.age_occupations_.size(); // shift to the right
-    S_.age_occupations_[ ( S_.p_age_occupations_ - 1
-                           + S_.age_occupations_.size() )
-      % S_.age_occupations_.size() ] += last_element_value;
-    S_.age_occupations_[ S_.p_age_occupations_ ] =
-      S_.n_spikes_past_[ S_.p_n_spikes_past_ ];
+      ( S_.p_age_occupations_ - 1 + S_.age_occupations_.size() ) % S_.age_occupations_.size(); // shift to the right
+    S_.age_occupations_[ ( S_.p_age_occupations_ - 1 + S_.age_occupations_.size() ) % S_.age_occupations_.size() ] +=
+      last_element_value;
+    S_.age_occupations_[ S_.p_age_occupations_ ] = S_.n_spikes_past_[ S_.p_n_spikes_past_ ];
 
     // Set new input current
     S_.y0_ = B_.currents_.get_value( lag );
@@ -482,8 +459,7 @@ nest::pp_pop_psc_delta::handle( SpikeEvent& e )
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
   B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -495,9 +471,7 @@ nest::pp_pop_psc_delta::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

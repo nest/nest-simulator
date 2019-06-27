@@ -38,8 +38,7 @@ template < class D, SLIType* slt >
 bool
 lockPTRDatum< D, slt >::equals( const Datum* dat ) const
 {
-  const lockPTRDatum< D, slt >* ddc =
-    dynamic_cast< const lockPTRDatum< D, slt >* >( dat );
+  const lockPTRDatum< D, slt >* ddc = dynamic_cast< const lockPTRDatum< D, slt >* >( dat );
   return ddc && lockPTR< D >::operator==( *ddc );
 }
 
@@ -47,8 +46,8 @@ template < class D, SLIType* slt >
 void
 lockPTRDatum< D, slt >::pprint( std::ostream& out ) const
 {
-  out << "<lockPTR[" << this->references() << "]->" << this->gettypename()
-      << '(' << static_cast< void* >( this->get() ) << ")>";
+  out << "<lockPTR[" << this->references() << "]->" << this->gettypename() << '(' << static_cast< void* >( this->get() )
+      << ")>";
   this->unlock();
 }
 

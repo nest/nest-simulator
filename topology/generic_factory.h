@@ -88,8 +88,7 @@ private:
 
 template < class BaseT >
 inline BaseT*
-GenericFactory< BaseT >::create( const Name& name,
-  const DictionaryDatum& d ) const
+GenericFactory< BaseT >::create( const Name& name, const DictionaryDatum& d ) const
 {
   typename AssocMap::const_iterator i = associations_.find( name );
   if ( i != associations_.end() )
@@ -109,11 +108,9 @@ GenericFactory< BaseT >::register_subtype( const Name& name )
 
 template < class BaseT >
 inline bool
-GenericFactory< BaseT >::register_subtype( const Name& name,
-  CreatorFunction creator )
+GenericFactory< BaseT >::register_subtype( const Name& name, CreatorFunction creator )
 {
-  return associations_.insert( std::pair< Name, CreatorFunction >(
-                                 name, creator ) ).second;
+  return associations_.insert( std::pair< Name, CreatorFunction >( name, creator ) ).second;
 }
 
 template < class BaseT >

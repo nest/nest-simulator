@@ -51,9 +51,7 @@ CommonSynapseProperties::~CommonSynapseProperties()
 void
 CommonSynapseProperties::get_status( DictionaryDatum& d ) const
 {
-  def< long >( d,
-    names::weight_recorder,
-    weight_recorder_ ? weight_recorder_->get_gid() : -1 );
+  def< long >( d, names::weight_recorder, weight_recorder_ ? weight_recorder_->get_gid() : -1 );
 }
 
 void

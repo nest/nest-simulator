@@ -143,8 +143,7 @@ nonlinearities_tanh_rate::mult_coupling_in( double rate )
 
 typedef rate_neuron_ipn< nest::nonlinearities_tanh_rate > tanh_rate_ipn;
 typedef rate_neuron_opn< nest::nonlinearities_tanh_rate > tanh_rate_opn;
-typedef rate_transformer_node< nest::nonlinearities_tanh_rate >
-  rate_transformer_tanh;
+typedef rate_transformer_node< nest::nonlinearities_tanh_rate > rate_transformer_tanh;
 
 template <>
 void RecordablesMap< tanh_rate_ipn >::create();

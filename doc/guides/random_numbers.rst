@@ -1,3 +1,5 @@
+.. _random_numbers:
+
 Random numbers
 ==============
 

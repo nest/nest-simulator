@@ -938,11 +938,6 @@ SeeAlso: info, LocateFileNames, searchifstream, searchfile
 */
 statusdict 
 begin
-  /version 
-   prgmajor cvs (.) join_s 
-   prgminor cvs join_s (.) join_s
-   prgpatch cvs join_s 
-  def
   /userargs [] def
   /interactive true def
   /files [] def
@@ -1697,7 +1692,7 @@ systemdict /GNUreadline known
   (Type 'sysinfo' to see details on the system configuration.) =
   (Type 'authors' for information about the makers of NEST.) =
   (Type 'license' to display the license agreement that came with your copy of NEST.) =
-  (For more information visit http://www.nest-simulator.org.) =
+  (For more information visit https://www.nest-simulator.org.) =
   (Type 'help' to see this text again.) =
   () =  
 } def
@@ -1743,7 +1738,7 @@ SeeAlso: nestrc
      (              -- N E S T --) =
    } ifelse
    (  Copyright (C) 2004 The NEST Initiative) = () =
-   ( Version: ) =only statusdict/rcsinfo :: =
+   ( Version: ) =only statusdict/version :: =
    ( Built: ) =only statusdict/built :: =
    () =
 
@@ -1752,7 +1747,7 @@ SeeAlso: nestrc
    () =
 
    ( Problems or suggestions?) =
-   (   Visit http://www.nest-simulator.org) =
+   (   Visit https://www.nest-simulator.org) =
    () =
 
    ( Type 'help' to get more information.) =
@@ -1771,7 +1766,7 @@ SeeAlso: nestrc
    {
        (NEST ) =only
    } ifelse
-   statusdict/rcsinfo :: =only
+   statusdict/version :: =only
    ( (C) 2004 The NEST Initiative) =
 } def
 
@@ -1793,7 +1788,7 @@ SeeAlso: nestrc
   (NEST has been created and is maintained by the ) <- 
   (members of the NEST Initiative:) <- endl endl
   (For a list of associated institutions and contributors,) <- endl
-  (visit us at http://www.nest-initiative.org.) <- endl endl ;
+  (visit us at https://www.nest-initiative.org.) <- endl endl ;
     
 } def
 
@@ -2069,7 +2064,7 @@ moduleinitializers
     printversion
     {
       statusdict begin
-	cout (NEST version ) <- rcsinfo <- (, built on ) <- built <- ( for ) <- host <- endl
+	cout (NEST version ) <- version <- (, built on ) <- built <- ( for ) <- host <- endl
 	(Copyright (C) 2004 The NEST Initiative) <- endl endl
       end
       quit
@@ -2128,15 +2123,6 @@ moduleinitializers
 
 /start {
   {
-    % Check for rcsinfo SLI file and run it. If it does not
-    % exist, put an empty string into statusdict/rcsinfo.
-    mark
-      { (rcsinfo) (r) file } stopped not
-        { (rcsinfo) run }
-        { statusdict /rcsinfo () put }
-      ifelse
-    ] ;
-
     :commandline
     { % we have an interactive session
       welcome

@@ -17,13 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-execute_process( COMMAND ${PROJECT_SOURCE_DIR}/extras/create_rcsinfo.sh ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR} )
-if ( EXISTS ${PROJECT_BINARY_DIR}/lib/sli/rcsinfo.sli )
-  install( FILES ${PROJECT_BINARY_DIR}/lib/sli/rcsinfo.sli
-      DESTINATION ${CMAKE_INSTALL_DATADIR}/sli
-      )
-endif ()
-
 install( DIRECTORY bibliography logos
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )

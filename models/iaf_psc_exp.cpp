@@ -86,6 +86,7 @@ nest::iaf_psc_exp::Parameters_::Parameters_()
 
 nest::iaf_psc_exp::State_::State_()
   : i_0_( 0.0 )
+  , i_1_( 0.0 )
   , i_syn_ex_( 0.0 )
   , i_syn_in_( 0.0 )
   , V_m_( 0.0 )

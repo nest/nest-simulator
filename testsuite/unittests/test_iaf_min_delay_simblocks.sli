@@ -68,7 +68,7 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractor
     /delay delay
   >> SetDefaults
 
-%  /iaf_psc_alpha_canon Create /neuron Set
+%  /iaf_psc_alpha_ps Create /neuron Set
   /iaf_psc_alpha Create /neuron Set
 
   /dc_generator Create /dc_gen Set

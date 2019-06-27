@@ -47,7 +47,7 @@ def _setup(arg):
 
 
 import nest
-nest.init(["--verbosity=WARNING", "--quiet"])
+nest.ll_api.init(["--verbosity=WARNING", "--quiet"])
 
 import nest.tests
 

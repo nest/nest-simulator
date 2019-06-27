@@ -176,9 +176,7 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
   {
     if ( this->n_receptors_() != old_n_receptors && has_connections_ == true )
     {
-      throw BadProperty(
-        "The neuron has connections, therefore the number of ports cannot be "
-        "reduced." );
+      throw BadProperty( "The neuron has connections, therefore the number of ports cannot be reduced." );
     }
     for ( size_t i = 0; i < tau_syn_.size(); ++i )
     {
@@ -189,8 +187,7 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
       if ( tau_syn_[ i ] == Tau_ )
       {
         throw BadProperty(
-          "Membrane and synapse time constant(s) must differ. See note in "
-          "documentation." );
+          "Membrane and synapse time constant(s) must differ. See note in documentation." );
       }
     }
   }

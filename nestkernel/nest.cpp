@@ -40,6 +40,14 @@ namespace nest
 {
 
 void
+init_nest( int* argc, char** argv[] )
+{
+  KernelManager::create_kernel_manager();
+  kernel().mpi_manager.init_mpi( argc, argv );
+  kernel().initialize();
+}
+    
+void
 fail_exit( int )
 {
 }

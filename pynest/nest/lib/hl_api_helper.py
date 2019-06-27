@@ -69,7 +69,10 @@ __all__ = [
 # deprecated functions will be registered by the @deprecated decorator.
 _deprecation_warning = {'BackwardCompatibilityConnect': True,
                         'subnet': True,
-                        'aeif_cond_alpha_RK5': True}
+                        'aeif_cond_alpha_RK5': True,
+                        'iaf_psc_alpha_canon': True,
+                        'iaf_psc_alpha_presc': True,
+                        'iaf_psc_delta_canon': True}
 
 
 def format_Warning(message, category, filename, lineno, line=None):
@@ -561,7 +564,9 @@ def model_deprecation_warning(model):
     """
 
     deprecated_models = {'subnet': 'GIDCollection',
-                         'aeif_cond_alpha_RK5': 'aeif_cond_alpha'}
+                         'aeif_cond_alpha_RK5': 'aeif_cond_alpha',
+                         'iaf_psc_alpha_canon': 'iaf_psc_alpha_ps',
+                         'iaf_psc_delta_canon': 'iaf_psc_delta_ps'}
 
     if model in deprecated_models:
         text = "The {0} model is deprecated and will be removed in a \

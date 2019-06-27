@@ -217,11 +217,8 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , verbosity_( SLIInterpreter::M_INFO ) // default verbosity level
   , debug_( false )
   , argv_name( "argv" )
-  , prgname_name( "prgname" )
+  , version_name( "version" )
   , exitcode_name( "exitcode" )
-  , prgmajor_name( "prgmajor" )
-  , prgminor_name( "prgminor" )
-  , prgpatch_name( "prgpatch" )
   , prgbuilt_name( "built" )
   , prefix_name( "prefix" )
   , prgdatadir_name( "prgdatadir" )
@@ -399,11 +396,8 @@ SLIStartup::init( SLIInterpreter* i )
   assert( statusdict.valid() );
 
   statusdict->insert_move( argv_name, targs );
-  statusdict->insert( prgname_name, Token( new StringDatum( NEST_VERSION_PRGNAME ) ) );
+  statusdict->insert( version_name, Token( new StringDatum( NEST_VERSION_STRING ) ) );
   statusdict->insert( exitcode_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
-  statusdict->insert( prgmajor_name, Token( new IntegerDatum( NEST_VERSION_MAJOR_REVISION ) ) );
-  statusdict->insert( prgminor_name, Token( new IntegerDatum( NEST_VERSION_MINOR_REVISION ) ) );
-  statusdict->insert( prgpatch_name, Token( new StringDatum( NEST_VERSION_PATCHLEVEL ) ) );
   statusdict->insert( prgbuilt_name, Token( new StringDatum( String::compose( "%1 %2", __DATE__, __TIME__ ) ) ) );
   statusdict->insert( prgdatadir_name, Token( new StringDatum( slihomepath ) ) );
   statusdict->insert( prgdocdir_name, Token( new StringDatum( slidocdir ) ) );

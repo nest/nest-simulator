@@ -180,7 +180,7 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 Author:  July 2009, Deger, Helias; January 2011, Zaytsev; May 2014, Setareh
 
 SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp,
-iaf_psc_delta_canon
+iaf_psc_delta_ps
 */
 class pp_psc_delta : public Archiving_Node
 {

@@ -28,7 +28,8 @@
 namespace nest
 {
 Multimeter::Multimeter()
-  : P_()
+  : RecordingDevice()
+  , P_()
   , S_()
   , B_()
 {

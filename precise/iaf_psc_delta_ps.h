@@ -1,5 +1,5 @@
 /*
- *  iaf_psc_delta_canon.h
+ *  iaf_psc_delta_ps.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef IAF_PSC_DELTA_CANON_H
-#define IAF_PSC_DELTA_CANON_H
+#ifndef IAF_PSC_DELTA_PS_H
+#define IAF_PSC_DELTA_PS_H
 
 // Generated includes:
 #include "config.h"
@@ -40,12 +40,20 @@
 namespace nest
 {
 
+
 /** @BeginDocumentation
-Name: iaf_psc_delta_canon - Leaky integrate-and-fire neuron model.
+Name: iaf_psc_delta_canon - Former leaky integrate-and-fire neuron model.
+
+See: iaf_psc_delta_ps
+*/
+
+
+/** @BeginDocumentation
+Name: iaf_psc_delta_ps - Leaky integrate-and-fire neuron model.
 
 Description:
 
-iaf_psc_delta_canon is an implementation of a leaky integrate-and-fire model
+iaf_psc_delta_ps is an implementation of a leaky integrate-and-fire model
 where the potential jumps on each spike arrival.
 
 The threshold crossing is followed by an absolute refractory period
@@ -83,7 +91,7 @@ Critical tests for the formulation of the neuron model are the
 comparisons of simulation results for different computation step
 sizes. sli/testsuite/nest contains a number of such tests.
 
-The iaf_psc_delta_canon is the standard model used to check the consistency
+The iaf_psc_delta_ps is the standard model used to check the consistency
 of the nest simulation kernel because it is at the same time complex
 enough to exhibit non-trivial dynamics and simple enough compute
 relevant measures analytically.
@@ -110,7 +118,7 @@ Remarks:
 Please note that this node is capable of sending precise spike times
 to target nodes (on-grid spike time plus offset).
 
-The iaf_psc_delta_canon neuron accepts connections transmitting
+The iaf_psc_delta_ps neuron accepts connections transmitting
 CurrentEvents. These events transmit stepwise-constant currents which
 can only change at on-grid times.
 
@@ -138,7 +146,7 @@ Straube, Eppler
 
 SeeAlso: iaf_psc_delta, iaf_psc_exp_ps
 */
-class iaf_psc_delta_canon : public Archiving_Node
+class iaf_psc_delta_ps : public Archiving_Node
 {
 
 public:
@@ -146,7 +154,7 @@ public:
       This constructor should only be used by GenericModel to create
       model prototype instances.
   */
-  iaf_psc_delta_canon();
+  iaf_psc_delta_ps();
 
   /** Copy constructor.
       GenericModel::allocate_() uses the copy constructor to clone
@@ -155,7 +163,7 @@ public:
       @note The copy constructor MUST NOT be used to create nodes based
       on nodes that have been placed in the network.
   */
-  iaf_psc_delta_canon( const iaf_psc_delta_canon& );
+  iaf_psc_delta_ps( const iaf_psc_delta_ps& );
 
   /**
    * Import sets of overloaded virtual functions.
@@ -273,8 +281,8 @@ private:
 
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< iaf_psc_delta_canon >;
-  friend class UniversalDataLogger< iaf_psc_delta_canon >;
+  friend class RecordablesMap< iaf_psc_delta_ps >;
+  friend class UniversalDataLogger< iaf_psc_delta_ps >;
 
   // ----------------------------------------------------------------
 
@@ -315,8 +323,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_psc_delta_canon& );
-    Buffers_( const Buffers_&, iaf_psc_delta_canon& );
+    Buffers_( iaf_psc_delta_ps& );
+    Buffers_( const Buffers_&, iaf_psc_delta_ps& );
 
     /**
      * Queue for incoming events.
@@ -331,7 +339,7 @@ private:
     RingBuffer currents_;
 
     //! Logger for all analog data
-    UniversalDataLogger< iaf_psc_delta_canon > logger_;
+    UniversalDataLogger< iaf_psc_delta_ps > logger_;
   };
 
   // ----------------------------------------------------------------
@@ -380,12 +388,12 @@ private:
   /** @} */
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< iaf_psc_delta_canon > recordablesMap_;
+  static RecordablesMap< iaf_psc_delta_ps > recordablesMap_;
 };
 
 
 inline port
-nest::iaf_psc_delta_canon::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::iaf_psc_delta_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -393,7 +401,7 @@ nest::iaf_psc_delta_canon::send_test_event( Node& target, rport receptor_type, s
 }
 
 inline port
-iaf_psc_delta_canon::handles_test_event( SpikeEvent&, rport receptor_type )
+iaf_psc_delta_ps::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -403,7 +411,7 @@ iaf_psc_delta_canon::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_delta_canon::handles_test_event( CurrentEvent&, rport receptor_type )
+iaf_psc_delta_ps::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -413,7 +421,7 @@ iaf_psc_delta_canon::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_delta_canon::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_psc_delta_ps::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -423,7 +431,7 @@ iaf_psc_delta_canon::handles_test_event( DataLoggingRequest& dlr, rport receptor
 }
 
 inline void
-iaf_psc_delta_canon::get_status( DictionaryDatum& d ) const
+iaf_psc_delta_ps::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
@@ -433,7 +441,7 @@ iaf_psc_delta_canon::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-iaf_psc_delta_canon::set_status( const DictionaryDatum& d )
+iaf_psc_delta_ps::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;                 // temporary copy in case of errors
   const double delta_EL = ptmp.set( d ); // throws if BadProperty
@@ -453,4 +461,4 @@ iaf_psc_delta_canon::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-#endif // IAF_PSC_DELTA_CANON_H
+#endif // IAF_PSC_DELTA_PS_H

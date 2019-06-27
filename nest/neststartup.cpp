@@ -81,11 +81,13 @@ sli_logging( const nest::LoggingEvent& e )
 }
 
 int
+#ifndef _IS_PYNEST
+neststartup( int* argc, char*** argv, SLIInterpreter& engine )
+#else
 neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string modulepath )
+#endif
 {
-  nest::KernelManager::create_kernel_manager();
-  nest::kernel().mpi_manager.init_mpi( argc, argv );
-  nest::kernel().initialize();
+  nest::init_nest( argc, argv );
 
   sli_engine = &engine;
   register_logger_client( sli_logging );
@@ -199,34 +201,3 @@ CYTHON_unpackConnectionGeneratorDatum( PyObject* obj )
   return ret;
 }
 #endif
-
-
-#ifdef _IS_PYNEST
-#ifdef HAVE_MPI4PY
-
-#include <mpi4py/mpi4py.h>
-
-void
-set_communicator( PyObject* pyobj )
-{
-  import_mpi4py();
-
-  // If object is not a mpi4py communicator, bail
-  if ( !PyObject_TypeCheck( pyobj, &PyMPIComm_Type ) )
-  {
-    throw nest::KernelException( "set_communicator: argument is not a mpi4py communicator" );
-  }
-
-  nest::kernel().mpi_manager.set_communicator( *PyMPIComm_Get( pyobj ) );
-}
-
-#else // ! HAVE_MPI4PY
-
-void
-set_communicator( PyObject* )
-{
-  throw nest::KernelException( "set_communicator: NEST not compiled with MPI4PY" );
-}
-
-#endif
-#endif //_IS_PYNEST

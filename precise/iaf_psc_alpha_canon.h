@@ -47,6 +47,9 @@ namespace nest
 Name: iaf_psc_alpha_canon - Leaky integrate-and-fire neuron
 with alpha-shape postsynaptic currents; canoncial implementation.
 
+This model is deprecated and will be removed in NEST 3. Please use
+``iaf_psc_alpha_ps`` instead.
+
 Description:
 
 iaf_psc_alpha_canon is the "canonical" implementatoin of the leaky
@@ -103,7 +106,7 @@ time and offset). If this node is connected to a spike_detector, the
 property "precise_times" of the spike_detector has to be set to true in
 order to record the offsets in addition to the on-grid spike times.
 
-The iaf_psc_delta_canon neuron accepts connections transmitting
+The iaf_psc_delta_ps neuron accepts connections transmitting
 CurrentEvents. These events transmit stepwise-constant currents which
 can only change at on-grid times.
 
@@ -133,7 +136,7 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso: iaf_psc_alpha, iaf_psc_alpha_presc, iaf_psc_exp_ps
+SeeAlso: iaf_psc_alpha_ps, iaf_psc_alpha, iaf_psc_alpha_presc, iaf_psc_exp_ps
 */
 class iaf_psc_alpha_canon : public Archiving_Node
 {

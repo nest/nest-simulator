@@ -48,10 +48,7 @@ public:
 
   void prepare() override;
 
-  void write( const RecordingDevice&,
-    const Event&,
-    const std::vector< double >&,
-    const std::vector< long >& ) override;
+  void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
 
   void set_status( const DictionaryDatum& ) override;
 
@@ -63,11 +60,9 @@ public:
 
   void clear( const RecordingDevice& ) override;
 
-  void set_device_status( const RecordingDevice& device,
-    const DictionaryDatum& params_dictionary ) override;
+  void set_device_status( const RecordingDevice& device, const DictionaryDatum& params_dictionary ) override;
 
-  void get_device_status( const RecordingDevice& device,
-    DictionaryDatum& params_dictionary ) const override;
+  void get_device_status( const RecordingDevice& device, DictionaryDatum& params_dictionary ) const override;
 
 private:
   void exchange_( std::vector< arb::shadow::spike >& );

@@ -143,15 +143,13 @@ nest::RecordingBackendScreen::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingBackendScreen::Parameters_::get( const RecordingBackendScreen&,
-  DictionaryDatum& d ) const
+nest::RecordingBackendScreen::Parameters_::get( const RecordingBackendScreen&, DictionaryDatum& d ) const
 {
   ( *d )[ names::precision ] = precision_;
 }
 
 void
-nest::RecordingBackendScreen::Parameters_::set( const RecordingBackendScreen&,
-  const DictionaryDatum& d )
+nest::RecordingBackendScreen::Parameters_::set( const RecordingBackendScreen&, const DictionaryDatum& d )
 {
   if ( updateValue< long >( d, names::precision, precision_ ) )
   {

@@ -69,8 +69,7 @@ void
 nest::spin_detector::calibrate()
 {
   RecordingDevice::calibrate();
-  RecordingDevice::enroll(
-    RecordingBackend::NO_DOUBLE_VALUE_NAMES, { nest::names::state } );
+  RecordingDevice::enroll( RecordingBackend::NO_DOUBLE_VALUE_NAMES, { nest::names::state } );
 }
 
 void
@@ -78,9 +77,8 @@ nest::spin_detector::update( Time const&, const long, const long )
 {
   if ( last_in_gid_ != 0 ) // if last_* is empty we dont write
   {
-    RecordingDevice::write( last_event_,
-      RecordingBackend::NO_DOUBLE_VALUES,
-      { static_cast< int >( last_event_.get_weight() ) } );
+    RecordingDevice::write(
+      last_event_, RecordingBackend::NO_DOUBLE_VALUES, { static_cast< int >( last_event_.get_weight() ) } );
     last_in_gid_ = 0;
   }
 }
@@ -101,11 +99,9 @@ nest::spin_detector::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings =
-      kernel().node_manager.get_thread_siblings( get_gid() );
+    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
-          ++sibling )
+    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
     {
       ( *sibling )->get_status( d );
     }
@@ -151,9 +147,8 @@ nest::spin_detector::handle( SpikeEvent& e )
     if ( last_in_gid_ != 0 ) // if last_* is empty we dont write
     {
       // if it's the second event we write out the last event first
-      RecordingDevice::write( last_event_,
-        RecordingBackend::NO_DOUBLE_VALUES,
-        { static_cast< int >( last_event_.get_weight() ) } );
+      RecordingDevice::write(
+        last_event_, RecordingBackend::NO_DOUBLE_VALUES, { static_cast< int >( last_event_.get_weight() ) } );
     }
     if ( m == 2 )
     { // already full event

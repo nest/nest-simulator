@@ -66,8 +66,7 @@ void
 nest::spike_detector::calibrate()
 {
   RecordingDevice::calibrate();
-  RecordingDevice::enroll( RecordingBackend::NO_DOUBLE_VALUE_NAMES,
-    RecordingBackend::NO_LONG_VALUE_NAMES );
+  RecordingDevice::enroll( RecordingBackend::NO_DOUBLE_VALUE_NAMES, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void
@@ -91,11 +90,9 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings =
-      kernel().node_manager.get_thread_siblings( get_gid() );
+    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
-          ++sibling )
+    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
     {
       ( *sibling )->get_status( d );
     }
@@ -119,9 +116,7 @@ nest::spike_detector::handle( SpikeEvent& e )
 
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
-      RecordingDevice::write( e,
-        RecordingBackend::NO_DOUBLE_VALUES,
-        RecordingBackend::NO_LONG_VALUES );
+      RecordingDevice::write( e, RecordingBackend::NO_DOUBLE_VALUES, RecordingBackend::NO_LONG_VALUES );
     }
   }
 }

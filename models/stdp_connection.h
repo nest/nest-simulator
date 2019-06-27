@@ -166,10 +166,7 @@ public:
   };
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -188,16 +185,14 @@ private:
   double
   facilitate_( double w, double kplus )
   {
-    double norm_w = ( w / Wmax_ )
-      + ( lambda_ * std::pow( 1.0 - ( w / Wmax_ ), mu_plus_ ) * kplus );
+    double norm_w = ( w / Wmax_ ) + ( lambda_ * std::pow( 1.0 - ( w / Wmax_ ), mu_plus_ ) * kplus );
     return norm_w < 1.0 ? norm_w * Wmax_ : Wmax_;
   }
 
   double
   depress_( double w, double kminus )
   {
-    double norm_w = ( w / Wmax_ )
-      - ( alpha_ * lambda_ * std::pow( w / Wmax_, mu_minus_ ) * kminus );
+    double norm_w = ( w / Wmax_ ) - ( alpha_ * lambda_ * std::pow( w / Wmax_, mu_minus_ ) * kminus );
     return norm_w > 0.0 ? norm_w * Wmax_ : 0.0;
   }
 
@@ -223,9 +218,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-STDPConnection< targetidentifierT >::send( Event& e,
-  thread t,
-  const CommonSynapseProperties& )
+STDPConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
   const double t_spike = e.get_stamp().get_ms();
@@ -247,10 +240,7 @@ STDPConnection< targetidentifierT >::send( Event& e,
   // history[0, ..., t_last_spike - dendritic_delay] have been
   // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for
   // details.
-  target->get_history( t_lastspike_ - dendritic_delay,
-    t_spike - dendritic_delay,
-    &start,
-    &finish );
+  target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   double minus_dt;
   while ( start != finish )
@@ -296,8 +286,7 @@ STDPConnection< targetidentifierT >::STDPConnection()
 }
 
 template < typename targetidentifierT >
-STDPConnection< targetidentifierT >::STDPConnection(
-  const STDPConnection< targetidentifierT >& rhs )
+STDPConnection< targetidentifierT >::STDPConnection( const STDPConnection< targetidentifierT >& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , tau_plus_( rhs.tau_plus_ )
@@ -328,8 +317,7 @@ STDPConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -341,8 +329,7 @@ STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   updateValue< double >( d, names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ has the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )
-         == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
   {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }

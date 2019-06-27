@@ -97,8 +97,7 @@ nest::iaf_chs_2007::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_epsp, tau_epsp_ );
   def< double >( d, names::tau_reset, tau_reset_ );
   def< double >( d, names::V_noise, U_noise_ );
-  ( *d )[ names::noise ] =
-    DoubleVectorDatum( new std::vector< double >( noise_ ) );
+  ( *d )[ names::noise ] = DoubleVectorDatum( new std::vector< double >( noise_ ) );
 }
 
 void
@@ -110,8 +109,7 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s )
   updateValue< double >( d, names::tau_reset, tau_reset_ );
   updateValue< double >( d, names::V_noise, U_noise_ );
 
-  const bool updated_noise =
-    updateValue< std::vector< double > >( d, names::noise, noise_ );
+  const bool updated_noise = updateValue< std::vector< double > >( d, names::noise, noise_ );
   if ( updated_noise )
   {
     s.position_ = 0;
@@ -230,8 +228,7 @@ nest::iaf_chs_2007::calibrate()
   // these depend on the above. Please do not change the order.
   // TODO: use expm1 here to improve accuracy for small timesteps
 
-  V_.P21ex_ =
-    P_.U_epsp_ * std::exp( 1.0 ) / ( P_.C_ ) * V_.P11ex_ * h / P_.tau_epsp_;
+  V_.P21ex_ = P_.U_epsp_ * std::exp( 1.0 ) / ( P_.C_ ) * V_.P11ex_ * h / P_.tau_epsp_;
 
   V_.P20_ = P_.tau_epsp_ / P_.C_ * ( 1.0 - V_.P22_ );
 }
@@ -239,8 +236,7 @@ nest::iaf_chs_2007::calibrate()
 void
 nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -258,9 +254,7 @@ nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
     // exponentially decaying ahp
     S_.V_spike_ *= V_.P30_;
 
-    double noise_term = P_.U_noise_ > 0.0 && not P_.noise_.empty()
-      ? P_.U_noise_ * P_.noise_[ S_.position_++ ]
-      : 0.0;
+    double noise_term = P_.U_noise_ > 0.0 && not P_.noise_.empty() ? P_.U_noise_ * P_.noise_[ S_.position_++ ] : 0.0;
 
     S_.V_m_ = S_.V_syn_ + S_.V_spike_ + noise_term;
 
@@ -289,8 +283,7 @@ nest::iaf_chs_2007::handle( SpikeEvent& e )
 
   if ( e.get_weight() >= 0.0 )
   {
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
 }

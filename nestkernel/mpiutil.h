@@ -42,8 +42,7 @@ template < typename I >
 struct basic_spike;
 using spike = basic_spike< cell_member_type >;
 
-std::vector< spike > gather_spikes( const std::vector< spike >& values,
-  MPI_Comm comm );
+std::vector< spike > gather_spikes( const std::vector< spike >& values, MPI_Comm comm );
 
 int mpi_rank( MPI_Comm c );
 int mpi_size( MPI_Comm c );

@@ -89,12 +89,10 @@ nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
-  const Buffers_& b )
+nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b )
 {
   if ( b.has_targets_
-    && ( d->known( names::interval ) || d->known( names::offset )
-         || d->known( names::record_from ) ) )
+    && ( d->known( names::interval ) || d->known( names::offset ) || d->known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval, the interval offset and the list of properties "
@@ -171,8 +169,7 @@ void
 Multimeter::calibrate()
 {
   RecordingDevice::calibrate();
-  RecordingDevice::enroll(
-    P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
+  RecordingDevice::enroll( P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void
@@ -227,8 +224,7 @@ Multimeter::handle( DataLoggingReply& reply )
     // const Time stamp = reply.get_stamp();
     // const double offset = reply.get_offset();
 
-    RecordingDevice::write(
-      reply, info[ j ].data, RecordingBackend::NO_LONG_VALUES );
+    RecordingDevice::write( reply, info[ j ].data, RecordingBackend::NO_LONG_VALUES );
 
     S_.data_.push_back( info[ j ].data );
   }

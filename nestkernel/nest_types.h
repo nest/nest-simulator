@@ -35,7 +35,7 @@
 
 #ifdef HAVE_32BIT_ARCH
 #ifdef HAVE_UINT64_T // 32-bit platforms usually provide the ...
-#include <stdint.h> // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
+#include <stdint.h>  // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
 #else
 #error "32-bit platform does not provide a 64-bit unsigned integer data type"
 #endif
@@ -66,8 +66,7 @@ namespace nest
 constexpr uint64_t
 generate_bit_mask( const uint8_t num_bits, const uint8_t bit_position )
 {
-  return (
-    ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 ) << bit_position );
+  return ( ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 ) << bit_position );
 }
 
 constexpr uint64_t
@@ -146,8 +145,7 @@ const synindex invalid_synindex = MAX_SYN_ID;
 //! target index into thread local node vector
 typedef unsigned short targetindex;
 const targetindex invalid_targetindex = USHRT_MAX;
-__attribute__( (
-  __unused__ ) ) const index max_targetindex = invalid_targetindex - 1;
+__attribute__( ( __unused__ ) ) const index max_targetindex = invalid_targetindex - 1;
 
 /**
  * Thread index type.

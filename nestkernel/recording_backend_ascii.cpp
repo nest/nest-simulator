@@ -67,8 +67,7 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
       filename );
     LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 
-    files_[ t ].insert( std::make_pair( gid,
-      std::make_pair( filename, static_cast< std::ofstream* >( NULL ) ) ) );
+    files_[ t ].insert( std::make_pair( gid, std::make_pair( filename, static_cast< std::ofstream* >( NULL ) ) ) );
 
     throw IOError();
   }
@@ -86,8 +85,7 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
       filename );
     LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 
-    files_[ t ].insert( std::make_pair( gid,
-      std::make_pair( filename, static_cast< std::ofstream* >( NULL ) ) ) );
+    files_[ t ].insert( std::make_pair( gid, std::make_pair( filename, static_cast< std::ofstream* >( NULL ) ) ) );
 
     throw IOError();
   }
@@ -128,8 +126,7 @@ nest::RecordingBackendASCII::post_run_hook()
   file_map::iterator inner;
   for ( inner = files_.begin(); inner != files_.end(); ++inner )
   {
-    for ( file_map::value_type::iterator f = inner->begin(); f != inner->end();
-          ++f )
+    for ( file_map::value_type::iterator f = inner->begin(); f != inner->end(); ++f )
     {
       f->second.second->flush();
     }
@@ -205,16 +202,13 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
 }
 
 const std::string
-nest::RecordingBackendASCII::build_filename_(
-  const RecordingDevice& device ) const
+nest::RecordingBackendASCII::build_filename_( const RecordingDevice& device ) const
 {
   // number of digits in number of virtual processes
   const int vpdigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >(
-      kernel().vp_manager.get_num_virtual_processes() ) ) ) + 1 );
-  const int giddigits = static_cast< int >(
-    std::floor( std::log10(
-      static_cast< float >( kernel().node_manager.size() ) ) ) + 1 );
+    std::floor( std::log10( static_cast< float >( kernel().vp_manager.get_num_virtual_processes() ) ) ) + 1 );
+  const int giddigits =
+    static_cast< int >( std::floor( std::log10( static_cast< float >( kernel().node_manager.size() ) ) ) + 1 );
 
   std::ostringstream basename;
   const std::string& path = kernel().io_manager.get_data_path();
@@ -237,8 +231,8 @@ nest::RecordingBackendASCII::build_filename_(
   int vp = device.get_vp();
   int gid = device.get_gid();
 
-  basename << "-" << std::setfill( '0' ) << std::setw( giddigits ) << gid << "-"
-           << std::setfill( '0' ) << std::setw( vpdigits ) << vp;
+  basename << "-" << std::setfill( '0' ) << std::setw( giddigits ) << gid << "-" << std::setfill( '0' )
+           << std::setw( vpdigits ) << vp;
 
   return basename.str() + '.' + P_.file_ext_;
 }
@@ -297,8 +291,7 @@ nest::RecordingBackendASCII::set_status( const DictionaryDatum& d )
 }
 
 void
-nest::RecordingBackendASCII::get_device_status( const RecordingDevice& device,
-  DictionaryDatum& d ) const
+nest::RecordingBackendASCII::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();

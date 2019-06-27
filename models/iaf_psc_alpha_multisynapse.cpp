@@ -50,15 +50,12 @@ namespace nest
 // for each quantity to be recorded.
 template <>
 void
-DynamicRecordablesMap< iaf_psc_alpha_multisynapse >::create(
-  iaf_psc_alpha_multisynapse& host )
+DynamicRecordablesMap< iaf_psc_alpha_multisynapse >::create( iaf_psc_alpha_multisynapse& host )
 {
   // use standard names wherever you can for consistency!
-  insert( names::V_m,
-    host.get_data_access_functor( iaf_psc_alpha_multisynapse::State_::V_M ) );
+  insert( names::V_m, host.get_data_access_functor( iaf_psc_alpha_multisynapse::State_::V_M ) );
 
-  insert( names::I_syn,
-    host.get_data_access_functor( iaf_psc_alpha_multisynapse::State_::I ) );
+  insert( names::I_syn, host.get_data_access_functor( iaf_psc_alpha_multisynapse::State_::I ) );
 
   host.insert_current_recordables();
 }
@@ -77,10 +74,8 @@ iaf_psc_alpha_multisynapse::insert_current_recordables( size_t first )
   for ( size_t receptor = first; receptor < P_.tau_syn_.size(); ++receptor )
   {
     size_t elem = iaf_psc_alpha_multisynapse::State_::I_SYN
-      + receptor
-        * iaf_psc_alpha_multisynapse::State_::NUM_STATE_ELEMENTS_PER_RECEPTOR;
-    recordablesMap_.insert(
-      get_i_syn_name( receptor ), this->get_data_access_functor( elem ) );
+      + receptor * iaf_psc_alpha_multisynapse::State_::NUM_STATE_ELEMENTS_PER_RECEPTOR;
+    recordablesMap_.insert( get_i_syn_name( receptor ), this->get_data_access_functor( elem ) );
   }
 }
 
@@ -199,8 +194,7 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
     {
       if ( tau_syn_[ i ] <= 0 )
       {
-        throw BadProperty(
-          "All synaptic time constants must be strictly positive." );
+        throw BadProperty( "All synaptic time constants must be strictly positive." );
       }
     }
   }
@@ -219,16 +213,13 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-iaf_psc_alpha_multisynapse::State_::get( DictionaryDatum& d,
-  const Parameters_& p ) const
+iaf_psc_alpha_multisynapse::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
 }
 
 void
-iaf_psc_alpha_multisynapse::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  const double delta_EL )
+iaf_psc_alpha_multisynapse::State_::set( const DictionaryDatum& d, const Parameters_& p, const double delta_EL )
 {
   // If the dictionary contains a value for the membrane potential, V_m, adjust
   // it with the resting potential, E_L_. If not, adjust the membrane potential
@@ -248,8 +239,7 @@ iaf_psc_alpha_multisynapse::Buffers_::Buffers_( iaf_psc_alpha_multisynapse& n )
 {
 }
 
-iaf_psc_alpha_multisynapse::Buffers_::Buffers_( const Buffers_&,
-  iaf_psc_alpha_multisynapse& n )
+iaf_psc_alpha_multisynapse::Buffers_::Buffers_( const Buffers_&, iaf_psc_alpha_multisynapse& n )
   : logger_( n )
 {
 }
@@ -267,8 +257,7 @@ iaf_psc_alpha_multisynapse::iaf_psc_alpha_multisynapse()
   recordablesMap_.create( *this );
 }
 
-iaf_psc_alpha_multisynapse::iaf_psc_alpha_multisynapse(
-  const iaf_psc_alpha_multisynapse& n )
+iaf_psc_alpha_multisynapse::iaf_psc_alpha_multisynapse( const iaf_psc_alpha_multisynapse& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -284,8 +273,7 @@ iaf_psc_alpha_multisynapse::iaf_psc_alpha_multisynapse(
 void
 iaf_psc_alpha_multisynapse::init_state_( const Node& proto )
 {
-  const iaf_psc_alpha_multisynapse& pr =
-    downcast< iaf_psc_alpha_multisynapse >( proto );
+  const iaf_psc_alpha_multisynapse& pr = downcast< iaf_psc_alpha_multisynapse >( proto );
   S_ = pr.S_;
 }
 
@@ -341,12 +329,9 @@ iaf_psc_alpha_multisynapse::calibrate()
 }
 
 void
-iaf_psc_alpha_multisynapse::update( Time const& origin,
-  const long from,
-  const long to )
+iaf_psc_alpha_multisynapse::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -359,8 +344,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
       S_.current_ = 0.0;
       for ( size_t i = 0; i < P_.n_receptors_(); i++ )
       {
-        S_.V_m_ += V_.P31_syn_[ i ] * S_.y1_syn_[ i ]
-          + V_.P32_syn_[ i ] * S_.y2_syn_[ i ];
+        S_.V_m_ += V_.P31_syn_[ i ] * S_.y1_syn_[ i ] + V_.P32_syn_[ i ] * S_.y2_syn_[ i ];
         S_.current_ += S_.y2_syn_[ i ];
       }
 
@@ -375,13 +359,11 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
     for ( size_t i = 0; i < P_.n_receptors_(); i++ )
     {
       // alpha shape PSCs
-      S_.y2_syn_[ i ] =
-        V_.P21_syn_[ i ] * S_.y1_syn_[ i ] + V_.P22_syn_[ i ] * S_.y2_syn_[ i ];
+      S_.y2_syn_[ i ] = V_.P21_syn_[ i ] * S_.y1_syn_[ i ] + V_.P22_syn_[ i ] * S_.y2_syn_[ i ];
       S_.y1_syn_[ i ] *= V_.P11_syn_[ i ];
 
       // collect spikes
-      S_.y1_syn_[ i ] +=
-        V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
+      S_.y1_syn_[ i ] += V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
     }
 
     if ( S_.V_m_ >= P_.Theta_ ) // threshold crossing
@@ -407,11 +389,9 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
 }
 
 port
-iaf_psc_alpha_multisynapse::handles_test_event( SpikeEvent&,
-  rport receptor_type )
+iaf_psc_alpha_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0
-    || receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors_() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }
@@ -426,8 +406,7 @@ iaf_psc_alpha_multisynapse::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -439,9 +418,7 @@ iaf_psc_alpha_multisynapse::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * I );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
 }
 
 void
@@ -468,23 +445,18 @@ iaf_psc_alpha_multisynapse::set_status( const DictionaryDatum& d )
    * Here is where we must update the recordablesMap_ if new receptors
    * are added!
    */
-  if ( ptmp.tau_syn_.size()
-    > P_.tau_syn_.size() ) // Number of receptors increased
+  if ( ptmp.tau_syn_.size() > P_.tau_syn_.size() ) // Number of receptors increased
   {
-    for ( size_t i_syn = P_.tau_syn_.size(); i_syn < ptmp.tau_syn_.size();
-          ++i_syn )
+    for ( size_t i_syn = P_.tau_syn_.size(); i_syn < ptmp.tau_syn_.size(); ++i_syn )
     {
       size_t elem = iaf_psc_alpha_multisynapse::State_::I_SYN
-        + i_syn
-          * iaf_psc_alpha_multisynapse::State_::NUM_STATE_ELEMENTS_PER_RECEPTOR;
-      recordablesMap_.insert(
-        get_i_syn_name( i_syn ), get_data_access_functor( elem ) );
+        + i_syn * iaf_psc_alpha_multisynapse::State_::NUM_STATE_ELEMENTS_PER_RECEPTOR;
+      recordablesMap_.insert( get_i_syn_name( i_syn ), get_data_access_functor( elem ) );
     }
   }
   else if ( ptmp.tau_syn_.size() < P_.tau_syn_.size() )
   { // Number of receptors decreased
-    for ( size_t i_syn = ptmp.tau_syn_.size(); i_syn < P_.tau_syn_.size();
-          ++i_syn )
+    for ( size_t i_syn = ptmp.tau_syn_.size(); i_syn < P_.tau_syn_.size(); ++i_syn )
     {
       recordablesMap_.erase( get_i_syn_name( i_syn ) );
     }

@@ -68,10 +68,7 @@ public:
    */
   void synchronize() override;
 
-  void write( const RecordingDevice&,
-    const Event&,
-    const std::vector< double >&,
-    const std::vector< long >& ) override;
+  void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
 
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) const override;
@@ -81,15 +78,13 @@ public:
    */
   void pre_run_hook() override;
 
-  void get_device_status( const RecordingDevice& device,
-    DictionaryDatum& ) const override;
+  void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
 
   void prepare() override;
 
   void clear( const RecordingDevice& ) override;
 
-  void set_device_status( const RecordingDevice& device,
-    const DictionaryDatum& d ) override;
+  void set_device_status( const RecordingDevice& device, const DictionaryDatum& d ) override;
 
 private:
   /**
@@ -121,8 +116,7 @@ private:
    *
    * vp -> ( gid -> [ file_name, file_stream ] )
   */
-  typedef std::vector< std::map< size_t,
-    std::pair< std::string, std::ofstream* > > > file_map;
+  typedef std::vector< std::map< size_t, std::pair< std::string, std::ofstream* > > > file_map;
   file_map files_;
 };
 

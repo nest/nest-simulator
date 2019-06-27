@@ -34,8 +34,7 @@ nest::RecordingDevice::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingDevice::Parameters_::get( const RecordingDevice& device,
-  DictionaryDatum& d ) const
+nest::RecordingDevice::Parameters_::get( const RecordingDevice& device, DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
   ( *d )[ names::time_in_steps ] = time_in_steps_;
@@ -43,9 +42,7 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& device,
 }
 
 void
-nest::RecordingDevice::Parameters_::set( const RecordingDevice&,
-  const DictionaryDatum& d,
-  long n_events )
+nest::RecordingDevice::Parameters_::set( const RecordingDevice&, const DictionaryDatum& d, long n_events )
 {
   updateValue< std::string >( d, names::label, label_ );
 
@@ -68,8 +65,7 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice&,
       Name backend_name( getValue< std::string >( *t ) );
       if ( not kernel().io_manager.is_valid_recording_backend( backend_name ) )
       {
-        std::string msg = String::compose(
-          "Unknown recording backend '%1'", backend_name.toString() );
+        std::string msg = String::compose( "Unknown recording backend '%1'", backend_name.toString() );
         throw BadProperty( msg );
       }
       record_to_.push_back( LiteralDatum( backend_name ) );
@@ -98,8 +94,7 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::RecordingDevice::State_::set( const DictionaryDatum& d,
-  const RecordingDevice& rd )
+nest::RecordingDevice::State_::set( const DictionaryDatum& d, const RecordingDevice& rd )
 {
   long n_events = n_events_;
   if ( updateValue< long >( d, names::n_events, n_events ) )

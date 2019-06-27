@@ -103,10 +103,8 @@ public:
 
   void prepare() override;
   void clear( const RecordingDevice& ) override;
-  void set_device_status( const RecordingDevice& device,
-    const DictionaryDatum& d ) override;
-  void get_device_status( const RecordingDevice& device,
-    DictionaryDatum& d ) const override;
+  void set_device_status( const RecordingDevice& device, const DictionaryDatum& d ) override;
+  void get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const override;
 
 private:
   struct Parameters_

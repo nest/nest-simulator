@@ -93,12 +93,10 @@ public:
   void get_status( DictionaryDatum& ) const override;
 
   // Set the per-device status of the given recording device
-  void set_device_status( const RecordingDevice& device,
-    const DictionaryDatum& d ) override;
+  void set_device_status( const RecordingDevice& device, const DictionaryDatum& d ) override;
 
   // Return the per-device status of the given recording device
-  void get_device_status( const RecordingDevice& device,
-    DictionaryDatum& d ) const override;
+  void get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const override;
 
 private:
   // NEST Stopwatch object

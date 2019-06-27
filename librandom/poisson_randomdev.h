@@ -175,11 +175,7 @@ private:
   static const unsigned n_a_; //!< length of array
 
   //! Procedure F from Ahrens & Dieter
-  void proc_f_( const unsigned k,
-    double& px,
-    double& py,
-    double& fx,
-    double& fy ) const;
+  void proc_f_( const unsigned k, double& px, double& py, double& fx, double& fy ) const;
 };
 }
 

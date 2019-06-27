@@ -261,9 +261,7 @@ public:
   void get_status( DictionaryDatum& ) const;
 
 protected:
-  void write( const Event&,
-    const std::vector< double >&,
-    const std::vector< long >& );
+  void write( const Event&, const std::vector< double >&, const std::vector< long >& );
   void enroll( const std::vector< Name >&, const std::vector< Name >& );
 
 private:
@@ -332,14 +330,12 @@ RecordingDevice::write( const Event& event,
   for ( auto& backend_token : P_.record_to_ )
   {
     Name backend_name( getValue< std::string >( backend_token ) );
-    kernel().io_manager.write(
-      backend_name, *this, event, double_values, long_values );
+    kernel().io_manager.write( backend_name, *this, event, double_values, long_values );
   }
 }
 
 inline void
-RecordingDevice::enroll( const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+RecordingDevice::enroll( const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names )
 {
   // TODO: also handle disenroll here by running a loop over all backends
   // and calling enroll_recorder() for the ones that are in the
@@ -347,8 +343,7 @@ RecordingDevice::enroll( const std::vector< Name >& double_value_names,
   for ( auto& backend_token : P_.record_to_ )
   {
     Name backend_name( getValue< std::string >( backend_token ) );
-    kernel().io_manager.enroll_recorder(
-      backend_name, *this, double_value_names, long_value_names );
+    kernel().io_manager.enroll_recorder( backend_name, *this, double_value_names, long_value_names );
   }
 }
 

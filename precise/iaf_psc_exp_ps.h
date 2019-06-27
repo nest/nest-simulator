@@ -215,10 +215,7 @@ private:
    * @param t0      Beginning of mini-timestep
    * @param dt      Duration of mini-timestep
    */
-  void emit_spike_( const Time& origin,
-    const long lag,
-    const double t0,
-    const double dt );
+  void emit_spike_( const Time& origin, const long lag, const double t0, const double dt );
 
   /**
    * Instantaneously emit a spike at the precise time defined by
@@ -228,9 +225,7 @@ private:
    * @param lag           Time step within slice
    * @param spike_offset  Time offset for spike
    */
-  void emit_instant_spike_( const Time& origin,
-    const long lag,
-    const double spike_offset );
+  void emit_instant_spike_( const Time& origin, const long lag, const double spike_offset );
 
   /**
    * Localize threshold crossing by bisectioning.
@@ -389,10 +384,7 @@ private:
 };
 
 inline port
-nest::iaf_psc_exp_ps::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+nest::iaf_psc_exp_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -420,8 +412,7 @@ iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

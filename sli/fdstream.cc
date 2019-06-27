@@ -40,21 +40,18 @@ fdbuf::open( const char* s, std::ios_base::openmode mode )
   //  bool success=true;
 
   int oflag;
-  std::ios_base::openmode open_mode =
-    ( mode & ~std::ios_base::ate & ~std::ios_base::binary );
+  std::ios_base::openmode open_mode = ( mode & ~std::ios_base::ate & ~std::ios_base::binary );
 
   // the corresponding O_*-flags are as described in Josuttis Chap. 13 (p.632)
   if ( open_mode == std::ios_base::out ) // corresponds to "w"
   {
     oflag = ( O_WRONLY | O_TRUNC | O_CREAT );
   }
-  else if ( open_mode
-    == ( std::ios_base::out | std::ios_base::app ) ) // corresponds to "a"
+  else if ( open_mode == ( std::ios_base::out | std::ios_base::app ) ) // corresponds to "a"
   {
     oflag = ( O_WRONLY | O_APPEND | O_CREAT );
   }
-  else if ( open_mode
-    == ( std::ios_base::out | std::ios_base::trunc ) ) // corresponds to "w"
+  else if ( open_mode == ( std::ios_base::out | std::ios_base::trunc ) ) // corresponds to "w"
   {
     oflag = ( O_WRONLY | O_TRUNC | O_CREAT );
   }
@@ -62,13 +59,11 @@ fdbuf::open( const char* s, std::ios_base::openmode mode )
   {
     oflag = O_RDONLY;
   }
-  else if ( open_mode
-    == ( std::ios_base::in | std::ios_base::out ) ) // corresponds to "r+"
+  else if ( open_mode == ( std::ios_base::in | std::ios_base::out ) ) // corresponds to "r+"
   {
     oflag = O_RDWR;
   }
-  else if ( open_mode == ( std::ios_base::in | std::ios_base::out
-                           | std::ios_base::trunc ) ) // corresponds to "w+"
+  else if ( open_mode == ( std::ios_base::in | std::ios_base::out | std::ios_base::trunc ) ) // corresponds to "w+"
   {
     oflag = ( O_RDWR | O_TRUNC | O_CREAT );
   }
@@ -79,8 +74,7 @@ fdbuf::open( const char* s, std::ios_base::openmode mode )
   }
 
   // these file permissions are required by POSIX.1 (see Stevens 5.5)
-  m_fd = ::open(
-    s, oflag, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH );
+  m_fd = ::open( s, oflag, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH );
 
   if ( m_fd == -1 )
   {

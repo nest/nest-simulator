@@ -242,8 +242,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void set_device_status( const RecordingDevice& device,
-    const DictionaryDatum& params_dictionary ) = 0;
+  virtual void set_device_status( const RecordingDevice& device, const DictionaryDatum& params_dictionary ) = 0;
 
   /**
    * Return the per-device status of the given recording device by
@@ -256,8 +255,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void get_device_status( const RecordingDevice& device,
-    DictionaryDatum& params_dictionary ) const = 0;
+  virtual void get_device_status( const RecordingDevice& device, DictionaryDatum& params_dictionary ) const = 0;
 
   static const std::vector< Name > NO_DOUBLE_VALUE_NAMES;
   static const std::vector< Name > NO_LONG_VALUE_NAMES;

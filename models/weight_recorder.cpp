@@ -104,8 +104,8 @@ void
 nest::weight_recorder::calibrate()
 {
   RecordingDevice::calibrate();
-  RecordingDevice::enroll( { nest::names::weights },
-    { nest::names::targets, nest::names::receptors, nest::names::ports } );
+  RecordingDevice::enroll(
+    { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
 }
 
 void
@@ -129,11 +129,9 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings =
-      kernel().node_manager.get_thread_siblings( get_gid() );
+    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
-          ++sibling )
+    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
     {
       ( *sibling )->get_status( d );
     }
@@ -158,14 +156,11 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   if ( is_active( e.get_stamp() ) )
   {
     bool senders_set = not P_.senders_.empty();
-    bool sender_gid_in_senders = std::binary_search(
-      P_.senders_.begin(), P_.senders_.end(), e.get_sender_gid() );
+    bool sender_gid_in_senders = std::binary_search( P_.senders_.begin(), P_.senders_.end(), e.get_sender_gid() );
     bool targets_set = not P_.targets_.empty();
-    bool target_gid_in_targets = std::binary_search(
-      P_.targets_.begin(), P_.targets_.end(), e.get_receiver_gid() );
+    bool target_gid_in_targets = std::binary_search( P_.targets_.begin(), P_.targets_.end(), e.get_receiver_gid() );
 
-    if ( ( senders_set and not sender_gid_in_senders )
-      or ( targets_set and not target_gid_in_targets ) )
+    if ( ( senders_set and not sender_gid_in_senders ) or ( targets_set and not target_gid_in_targets ) )
     {
       return;
     }

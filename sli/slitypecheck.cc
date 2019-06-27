@@ -116,10 +116,8 @@ AddtotrieFunction::execute( SLIInterpreter* i ) const
 
   if ( ad->size() == 0 )
   {
-    i->message(
-      SLIInterpreter::M_ERROR, "addtotrie", "type-array must not be empty." );
-    i->message(
-      SLIInterpreter::M_ERROR, "addtotrie", "No change was made to the trie." );
+    i->message( SLIInterpreter::M_ERROR, "addtotrie", "type-array must not be empty." );
+    i->message( SLIInterpreter::M_ERROR, "addtotrie", "No change was made to the trie." );
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
@@ -133,15 +131,10 @@ AddtotrieFunction::execute( SLIInterpreter* i ) const
     {
       std::ostringstream message;
       message << "In trie " << trie->getname() << ". "
-              << "Error at array position " << t - ad->begin() << '.'
-              << std::ends;
+              << "Error at array position " << t - ad->begin() << '.' << std::ends;
       i->message( SLIInterpreter::M_ERROR, "addtotrie", message.str().c_str() );
-      i->message( SLIInterpreter::M_ERROR,
-        "addtotrie",
-        "Array must contain typenames as literals." );
-      i->message( SLIInterpreter::M_ERROR,
-        "addtotrie",
-        "No change was made to the trie." );
+      i->message( SLIInterpreter::M_ERROR, "addtotrie", "Array must contain typenames as literals." );
+      i->message( SLIInterpreter::M_ERROR, "addtotrie", "No change was made to the trie." );
 
       i->raiseerror( i->ArgumentTypeError );
       return;
@@ -228,8 +221,7 @@ TrieInfoFunction::execute( SLIInterpreter* i ) const
 
   i->EStack.pop();
 
-  OstreamDatum* osd =
-    dynamic_cast< OstreamDatum* >( i->OStack.pick( 1 ).datum() );
+  OstreamDatum* osd = dynamic_cast< OstreamDatum* >( i->OStack.pick( 1 ).datum() );
   assert( osd != 0 );
 
   Token trietoken;
@@ -312,8 +304,7 @@ Cvt_aFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
   assert( i->OStack.size() > 1 );
 
-  LiteralDatum* name =
-    dynamic_cast< LiteralDatum* >( i->OStack.pick( 1 ).datum() );
+  LiteralDatum* name = dynamic_cast< LiteralDatum* >( i->OStack.pick( 1 ).datum() );
   assert( name != NULL );
   ArrayDatum* arr = dynamic_cast< ArrayDatum* >( i->OStack.pick( 0 ).datum() );
   assert( arr != NULL );

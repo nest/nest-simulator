@@ -100,8 +100,7 @@ inline PseudoRecordingDevice::PseudoRecordingDevice()
 {
 }
 
-inline PseudoRecordingDevice::PseudoRecordingDevice(
-  const PseudoRecordingDevice& prd )
+inline PseudoRecordingDevice::PseudoRecordingDevice( const PseudoRecordingDevice& prd )
   : Device( prd )
 {
 }

@@ -38,8 +38,7 @@ proxynode::proxynode( index gid, index parent_gid, index model_id, index vp )
   : Node()
 {
   set_gid_( gid );
-  Subnet* parent =
-    dynamic_cast< Subnet* >( kernel().node_manager.get_node( parent_gid ) );
+  Subnet* parent = dynamic_cast< Subnet* >( kernel().node_manager.get_node( parent_gid ) );
   assert( parent );
   set_parent_( parent );
   set_model_id( model_id );
@@ -48,10 +47,7 @@ proxynode::proxynode( index gid, index parent_gid, index model_id, index vp )
 }
 
 port
-proxynode::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+proxynode::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   return kernel()
     .model_manager.get_model( get_model_id() )
@@ -61,33 +57,25 @@ proxynode::send_test_event( Node& target,
 void
 proxynode::sends_secondary_event( GapJunctionEvent& ge )
 {
-  kernel()
-    .model_manager.get_model( get_model_id() )
-    ->sends_secondary_event( ge );
+  kernel().model_manager.get_model( get_model_id() )->sends_secondary_event( ge );
 }
 
 void
 proxynode::sends_secondary_event( InstantaneousRateConnectionEvent& re )
 {
-  kernel()
-    .model_manager.get_model( get_model_id() )
-    ->sends_secondary_event( re );
+  kernel().model_manager.get_model( get_model_id() )->sends_secondary_event( re );
 }
 
 void
 proxynode::sends_secondary_event( DiffusionConnectionEvent& de )
 {
-  kernel()
-    .model_manager.get_model( get_model_id() )
-    ->sends_secondary_event( de );
+  kernel().model_manager.get_model( get_model_id() )->sends_secondary_event( de );
 }
 
 void
 proxynode::sends_secondary_event( DelayedRateConnectionEvent& re )
 {
-  kernel()
-    .model_manager.get_model( get_model_id() )
-    ->sends_secondary_event( re );
+  kernel().model_manager.get_model( get_model_id() )->sends_secondary_event( re );
 }
 
 /**

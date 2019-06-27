@@ -97,8 +97,7 @@ nest::RecordingBackendArbor::enroll( const RecordingDevice& device,
   }
   else
   {
-    throw BadProperty(
-      "Only spike detectors can record to arbor recording backend" );
+    throw BadProperty( "Only spike detectors can record to arbor recording backend" );
   }
 }
 
@@ -121,8 +120,7 @@ nest::RecordingBackendArbor::cleanup()
 }
 
 void
-nest::RecordingBackendArbor::exchange_(
-  std::vector< arb::shadow::spike >& local_spikes )
+nest::RecordingBackendArbor::exchange_( std::vector< arb::shadow::spike >& local_spikes )
 {
   // static int step = 0;
   // std::cerr << "NEST: n: " << step++ << std::endl;
@@ -147,8 +145,7 @@ nest::RecordingBackendArbor::prepare()
   prepared_ = true;
 
   //  INITIALISE MPI
-  arbor_->info = arb::shadow::get_comm_info(
-    false, kernel().mpi_manager.get_communicator() );
+  arbor_->info = arb::shadow::get_comm_info( false, kernel().mpi_manager.get_communicator() );
 
   //  MODEL SETUP
   DictionaryDatum dict_out( new Dictionary );
@@ -158,23 +155,18 @@ nest::RecordingBackendArbor::prepare()
 
   // HAND SHAKE ARBOR-NEST
   // hand shake #1: communicate cell populations
-  num_arbor_cells_ =
-    arb::shadow::broadcast( 0, MPI_COMM_WORLD, arbor_->info.arbor_root );
-  arb::shadow::broadcast(
-    num_nest_cells, MPI_COMM_WORLD, arbor_->info.nest_root );
+  num_arbor_cells_ = arb::shadow::broadcast( 0, MPI_COMM_WORLD, arbor_->info.arbor_root );
+  arb::shadow::broadcast( num_nest_cells, MPI_COMM_WORLD, arbor_->info.nest_root );
 
   // hand shake #2: communications step size synchronized
-  const float arb_comm_time =
-    arb::shadow::broadcast( 0.f, MPI_COMM_WORLD, arbor_->info.arbor_root );
+  const float arb_comm_time = arb::shadow::broadcast( 0.f, MPI_COMM_WORLD, arbor_->info.arbor_root );
   const float nest_comm_time = nest_min_delay;
-  arb::shadow::broadcast(
-    nest_comm_time, MPI_COMM_WORLD, arbor_->info.nest_root );
+  arb::shadow::broadcast( nest_comm_time, MPI_COMM_WORLD, arbor_->info.nest_root );
   const float min_delay = std::min( nest_comm_time, arb_comm_time );
 
   // hand shake #3: steps
   steps_left_ = arbor_steps_ =
-    arb::shadow::broadcast( 0u, MPI_COMM_WORLD, arbor_->info.arbor_root )
-    + 1; // arbor has a pre-exchange
+    arb::shadow::broadcast( 0u, MPI_COMM_WORLD, arbor_->info.arbor_root ) + 1; // arbor has a pre-exchange
 
   // set min_delay
   DictionaryDatum dict_in( new Dictionary );
@@ -277,16 +269,14 @@ nest::RecordingBackendArbor::clear( const nest::RecordingDevice& )
 }
 
 void
-nest::RecordingBackendArbor::set_device_status(
-  const nest::RecordingDevice& device,
+nest::RecordingBackendArbor::set_device_status( const nest::RecordingDevice& device,
   const DictionaryDatum& params_dictionary )
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendArbor::get_device_status(
-  const nest::RecordingDevice& device,
+nest::RecordingBackendArbor::get_device_status( const nest::RecordingDevice& device,
   DictionaryDatum& params_dictionary ) const
 {
   // nothing to do
@@ -301,14 +291,12 @@ nest::RecordingBackendArbor::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingBackendArbor::Parameters_::get( const RecordingBackendArbor& al,
-  DictionaryDatum& d ) const
+nest::RecordingBackendArbor::Parameters_::get( const RecordingBackendArbor& al, DictionaryDatum& d ) const
 {
 }
 
 void
-nest::RecordingBackendArbor::Parameters_::set( const RecordingBackendArbor& al,
-  const DictionaryDatum& d )
+nest::RecordingBackendArbor::Parameters_::set( const RecordingBackendArbor& al, const DictionaryDatum& d )
 {
 }
 

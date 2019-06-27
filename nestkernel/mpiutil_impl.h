@@ -148,8 +148,7 @@ struct comm_info
 comm_info
 get_comm_info( bool is_arbor, MPI_Comm comm )
 {
-  static_assert( ( sizeof( spike ) % alignof( spike ) ) == 0,
-    "Alignment requirements of spike data type not met!" );
+  static_assert( ( sizeof( spike ) % alignof( spike ) ) == 0, "Alignment requirements of spike data type not met!" );
 
   comm_info info;
   info.is_arbor = is_arbor;
@@ -171,8 +170,7 @@ get_comm_info( bool is_arbor, MPI_Comm comm )
   info.nest_size = info.global_size - info.arbor_size;
 
   std::vector< int > local_ranks( local_size );
-  MPI_Allgather(
-    &info.global_rank, 1, MPI_INT, local_ranks.data(), 1, MPI_INT, info.comm );
+  MPI_Allgather( &info.global_rank, 1, MPI_INT, local_ranks.data(), 1, MPI_INT, info.comm );
   std::sort( local_ranks.begin(), local_ranks.end() );
 
   auto first_missing = []( const std::vector< int >& x )

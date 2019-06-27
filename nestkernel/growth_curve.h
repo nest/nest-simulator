@@ -53,12 +53,8 @@ public:
   }
   virtual void get( DictionaryDatum& d ) const = 0;
   virtual void set( const DictionaryDatum& d ) = 0;
-  virtual double update( double t,
-    double t_minus,
-    double Ca_minus,
-    double z,
-    double tau_Ca,
-    double growth_rate ) const = 0;
+  virtual double
+  update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const = 0;
   virtual bool
   is( Name n )
   {
@@ -137,12 +133,7 @@ public:
   GrowthCurveLinear();
   void get( DictionaryDatum& d ) const;
   void set( const DictionaryDatum& d );
-  double update( double t,
-    double t_minus,
-    double Ca_minus,
-    double z,
-    double tau_Ca,
-    double growth_rate ) const;
+  double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
 
 private:
   double eps_;
@@ -229,12 +220,7 @@ public:
   GrowthCurveGaussian();
   void get( DictionaryDatum& d ) const;
   void set( const DictionaryDatum& d );
-  double update( double t,
-    double t_minus,
-    double Ca_minus,
-    double z,
-    double tau_Ca,
-    double growth_rate ) const;
+  double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
 
 private:
   double eta_;
@@ -306,12 +292,7 @@ public:
   GrowthCurveSigmoid();
   void get( DictionaryDatum& d ) const;
   void set( const DictionaryDatum& d );
-  double update( double t,
-    double t_minus,
-    double Ca_minus,
-    double z,
-    double tau_Ca,
-    double growth_rate ) const;
+  double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
 
 private:
   double eps_;

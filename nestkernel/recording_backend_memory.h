@@ -79,21 +79,17 @@ public:
    */
   void clear( const RecordingDevice& ) override;
 
-  virtual void write( const RecordingDevice&,
-    const Event&,
-    const std::vector< double >&,
-    const std::vector< long >& ) override;
+  virtual void
+  write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
 
   /**
    * Initialize the RecordingBackendMemory during simulation preparation.
    */
   void pre_run_hook() override;
 
-  void get_device_status( const RecordingDevice& device,
-    DictionaryDatum& ) const override;
+  void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
 
-  void set_device_status( const RecordingDevice& device,
-    const DictionaryDatum& ) override;
+  void set_device_status( const RecordingDevice& device, const DictionaryDatum& ) override;
 
   void prepare() override;
 
@@ -107,8 +103,7 @@ private:
   class Recordings
   {
   public:
-    Recordings( const std::vector< Name >& double_value_names,
-      const std::vector< Name >& long_value_names )
+    Recordings( const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names )
       : double_value_names_( double_value_names )
       , long_value_names_( long_value_names )
       , time_in_steps_( false )
@@ -183,8 +178,7 @@ private:
       for ( size_t i = 0; i < double_values_.size(); ++i )
       {
         initialize_property_doublevector( events, double_value_names_[ i ] );
-        append_property(
-          events, double_value_names_[ i ], double_values_[ i ] );
+        append_property( events, double_value_names_[ i ], double_values_[ i ] );
       }
       for ( size_t i = 0; i < long_values_.size(); ++i )
       {
@@ -221,12 +215,11 @@ private:
   private:
     Recordings();
 
-    std::vector< long > senders_;     //!< sender gids of the events
-    std::vector< long > targets_;     //!< receiver gids of the events
-    std::vector< double > times_ms_;  //!< times of registered events in ms
-    std::vector< long > times_steps_; //!< times of registered events in steps
-    std::vector< double >
-      times_offset_; //!< offsets of registered events if time_in_steps_
+    std::vector< long > senders_;        //!< sender gids of the events
+    std::vector< long > targets_;        //!< receiver gids of the events
+    std::vector< double > times_ms_;     //!< times of registered events in ms
+    std::vector< long > times_steps_;    //!< times of registered events in steps
+    std::vector< double > times_offset_; //!< offsets of registered events if time_in_steps_
     std::vector< Name > double_value_names_;
     std::vector< Name > long_value_names_;
     std::vector< std::vector< double > > double_values_;

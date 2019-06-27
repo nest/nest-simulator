@@ -29,8 +29,7 @@
 nest::RecordingBackendSoundClick::RecordingBackendSoundClick()
 {
   // Load the raw sound data into the SFML sound buffer.
-  sound_buffer_.loadFromMemory(
-    sound_click_16bit_44_1khz_wav, sizeof( sound_click_16bit_44_1khz_wav ) );
+  sound_buffer_.loadFromMemory( sound_click_16bit_44_1khz_wav, sizeof( sound_click_16bit_44_1khz_wav ) );
   sound_.setBuffer( sound_buffer_ );
 }
 
@@ -65,9 +64,7 @@ nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device,
 void
 nest::RecordingBackendSoundClick::pre_run_hook()
 {
-  LOG( M_INFO,
-    "Recording Backend",
-    ( "Recording backend >SoundClick< successfully initialized." ) );
+  LOG( M_INFO, "Recording Backend", ( "Recording backend >SoundClick< successfully initialized." ) );
 }
 
 // Clean up the backend at the end of a call to Simulate
@@ -94,10 +91,8 @@ nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
 
   if ( device.get_type() == RecordingDevice::SPIKE_DETECTOR )
   {
-    int time_spike_event_us =
-      static_cast< int >( floor( event.get_stamp().get_ms() * 1000.0 ) );
-    int time_elapsed_us =
-      static_cast< int >( floor( stopwatch_.elapsed_timestamp() ) );
+    int time_spike_event_us = static_cast< int >( floor( event.get_stamp().get_ms() * 1000.0 ) );
+    int time_elapsed_us = static_cast< int >( floor( stopwatch_.elapsed_timestamp() ) );
     int time_lag_us = time_spike_event_us - time_elapsed_us;
 
     // Slow down the simulation to biological real time!
@@ -154,17 +149,13 @@ nest::RecordingBackendSoundClick::get_status( DictionaryDatum& ) const
 }
 
 void
-nest::RecordingBackendSoundClick::set_device_status(
-  const RecordingDevice& device,
-  const DictionaryDatum& d )
+nest::RecordingBackendSoundClick::set_device_status( const RecordingDevice& device, const DictionaryDatum& d )
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendSoundClick::get_device_status(
-  const RecordingDevice& device,
-  DictionaryDatum& d ) const
+nest::RecordingBackendSoundClick::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
 {
   // nothing to do
 }

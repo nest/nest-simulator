@@ -63,8 +63,7 @@ public:
 std::ostream& operator<<( std::ostream&, const IteratorState& );
 
 
-class IteratorDatum
-  : public GenericDatum< IteratorState, &SLIInterpreter::Iteratortype >
+class IteratorDatum : public GenericDatum< IteratorState, &SLIInterpreter::Iteratortype >
 {
 protected:
   static sli::pool memory;

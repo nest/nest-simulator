@@ -49,8 +49,7 @@ nest::RecordingBackendMemory::enroll( const RecordingDevice& device,
   // If the device is not already enrolled, enroll it
   if ( data_[ t ].find( gid ) == data_[ t ].end() )
   {
-    data_[ t ].insert( std::make_pair(
-      gid, new Recordings( double_value_names, long_value_names ) ) );
+    data_[ t ].insert( std::make_pair( gid, new Recordings( double_value_names, long_value_names ) ) );
   }
 
   bool time_in_steps = device.get_time_in_steps();
@@ -125,8 +124,7 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device,
-  DictionaryDatum& d ) const
+nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
@@ -139,8 +137,7 @@ nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendMemory::set_device_status( const RecordingDevice& device,
-  const DictionaryDatum& d )
+nest::RecordingBackendMemory::set_device_status( const RecordingDevice& device, const DictionaryDatum& d )
 {
   const int t = device.get_thread();
   const int gid = device.get_gid();
@@ -159,15 +156,13 @@ nest::RecordingBackendMemory::post_run_hook()
 }
 
 void
-nest::RecordingBackendMemory::get_status(
-  lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
+nest::RecordingBackendMemory::get_status( lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMemory::set_status(
-  lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
+nest::RecordingBackendMemory::set_status( lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
 {
   // nothing to do
 }

@@ -77,17 +77,11 @@ nest::RecordingBackendSocket::write( const RecordingDevice& device,
     {
       index sd_gid = device.get_gid();
       index node_gid = event.get_sender_gid();
-      std::string msg = String::compose(
-        "spike_detector %1 got a spike by node %2", sd_gid, node_gid );
+      std::string msg = String::compose( "spike_detector %1 got a spike by node %2", sd_gid, node_gid );
 
       // We explicitly ignore errors here by not evaluating the return
       // code of the sendto() function.
-      sendto( B_.socket_,
-        msg.c_str(),
-        msg.size(),
-        0,
-        ( struct sockaddr* ) &B_.addr_,
-        sizeof( B_.addr_ ) );
+      sendto( B_.socket_, msg.c_str(), msg.size(), 0, ( struct sockaddr* ) &B_.addr_, sizeof( B_.addr_ ) );
     }
   }
   else
@@ -171,15 +165,13 @@ nest::RecordingBackendSocket::clear( const RecordingDevice& )
 }
 
 void
-nest::RecordingBackendSocket::set_device_status( const RecordingDevice& device,
-  const DictionaryDatum& d )
+nest::RecordingBackendSocket::set_device_status( const RecordingDevice& device, const DictionaryDatum& d )
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendSocket::get_device_status( const RecordingDevice& device,
-  DictionaryDatum& d ) const
+nest::RecordingBackendSocket::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
 {
   // nothing to do
 }

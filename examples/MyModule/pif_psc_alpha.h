@@ -322,10 +322,7 @@ private:
 };
 
 inline nest::port
-mynest::pif_psc_alpha::send_test_event( nest::Node& target,
-  nest::port receptor_type,
-  nest::synindex,
-  bool )
+mynest::pif_psc_alpha::send_test_event( nest::Node& target, nest::port receptor_type, nest::synindex, bool )
 {
   // You should usually not change the code in this function.
   // It confirms that the target of connection @c c accepts @c SpikeEvent on
@@ -336,8 +333,7 @@ mynest::pif_psc_alpha::send_test_event( nest::Node& target,
 }
 
 inline nest::port
-mynest::pif_psc_alpha::handles_test_event( nest::SpikeEvent&,
-  nest::port receptor_type )
+mynest::pif_psc_alpha::handles_test_event( nest::SpikeEvent&, nest::port receptor_type )
 {
   // You should usually not change the code in this function.
   // It confirms to the connection management system that we are able
@@ -351,8 +347,7 @@ mynest::pif_psc_alpha::handles_test_event( nest::SpikeEvent&,
 }
 
 inline nest::port
-mynest::pif_psc_alpha::handles_test_event( nest::CurrentEvent&,
-  nest::port receptor_type )
+mynest::pif_psc_alpha::handles_test_event( nest::CurrentEvent&, nest::port receptor_type )
 {
   // You should usually not change the code in this function.
   // It confirms to the connection management system that we are able
@@ -366,8 +361,7 @@ mynest::pif_psc_alpha::handles_test_event( nest::CurrentEvent&,
 }
 
 inline nest::port
-mynest::pif_psc_alpha::handles_test_event( nest::DataLoggingRequest& dlr,
-  nest::port receptor_type )
+mynest::pif_psc_alpha::handles_test_event( nest::DataLoggingRequest& dlr, nest::port receptor_type )
 {
   // You should usually not change the code in this function.
   // It confirms to the connection management system that we are able

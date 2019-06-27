@@ -107,8 +107,7 @@ librandom::RngPtr
 get_vp_rng( thread tid )
 {
   assert( tid >= 0 );
-  assert(
-    tid < static_cast< thread >( kernel().vp_manager.get_num_threads() ) );
+  assert( tid < static_cast< thread >( kernel().vp_manager.get_num_threads() ) );
   return kernel().rng_manager.get_rng( tid );
 }
 
@@ -152,21 +151,18 @@ get_node_status( const index node_id )
 }
 
 void
-set_connection_status( const ConnectionDatum& conn,
-  const DictionaryDatum& dict )
+set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict )
 {
   DictionaryDatum conn_dict = conn.get_dict();
   const index source_gid = getValue< long >( conn_dict, nest::names::source );
   const index target_gid = getValue< long >( conn_dict, nest::names::target );
   const thread tid = getValue< long >( conn_dict, nest::names::target_thread );
-  const synindex syn_id =
-    getValue< long >( conn_dict, nest::names::synapse_modelid );
+  const synindex syn_id = getValue< long >( conn_dict, nest::names::synapse_modelid );
   const port p = getValue< long >( conn_dict, nest::names::port );
 
   dict->clear_access_flags();
 
-  kernel().connection_manager.set_synapse_status(
-    source_gid, target_gid, tid, syn_id, p, dict );
+  kernel().connection_manager.set_synapse_status( source_gid, target_gid, tid, syn_id, p, dict );
 
   ALL_ENTRIES_ACCESSED2( *dict,
     "SetStatus",
@@ -193,8 +189,7 @@ create( const Name& model_name, const index n_nodes )
     throw RangeCheck();
   }
 
-  const Token model =
-    kernel().model_manager.get_modeldict()->lookup( model_name );
+  const Token model = kernel().model_manager.get_modeldict()->lookup( model_name );
   if ( model.empty() )
   {
     throw UnknownModelName( model_name );
@@ -212,8 +207,7 @@ connect( const GIDCollection& sources,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params )
 {
-  kernel().connection_manager.connect(
-    sources, targets, connectivity, synapse_params );
+  kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 }
 
 ArrayDatum
@@ -223,8 +217,7 @@ get_connections( const DictionaryDatum& dict )
 
   ArrayDatum array = kernel().connection_manager.get_connections( dict );
 
-  ALL_ENTRIES_ACCESSED(
-    *dict, "GetConnections", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: " );
 
   return array;
 }
@@ -273,9 +266,7 @@ cleanup()
 }
 
 void
-copy_model( const Name& oldmodname,
-  const Name& newmodname,
-  const DictionaryDatum& dict )
+copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict )
 {
   kernel().model_manager.copy_model( oldmodname, newmodname, dict );
 }
@@ -289,10 +280,8 @@ set_model_defaults( const Name& modelname, const DictionaryDatum& dict )
 DictionaryDatum
 get_model_defaults( const Name& modelname )
 {
-  const Token nodemodel =
-    kernel().model_manager.get_modeldict()->lookup( modelname );
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( modelname );
+  const Token nodemodel = kernel().model_manager.get_modeldict()->lookup( modelname );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );
 
   DictionaryDatum dict;
 
@@ -336,13 +325,9 @@ current_subnet()
 }
 
 ArrayDatum
-get_nodes( const index node_id,
-  const DictionaryDatum& params,
-  const bool include_remotes,
-  const bool return_gids_only )
+get_nodes( const index node_id, const DictionaryDatum& params, const bool include_remotes, const bool return_gids_only )
 {
-  Subnet* subnet =
-    dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
+  Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
   if ( subnet == NULL )
   {
     throw SubnetExpected();
@@ -352,21 +337,16 @@ get_nodes( const index node_id,
   std::vector< MPIManager::NodeAddressingData > globalnodes;
   if ( params->empty() )
   {
-    kernel().mpi_manager.communicate(
-      localnodes, globalnodes, include_remotes );
+    kernel().mpi_manager.communicate( localnodes, globalnodes, include_remotes );
   }
   else
   {
-    kernel().mpi_manager.communicate(
-      localnodes, globalnodes, params, include_remotes );
+    kernel().mpi_manager.communicate( localnodes, globalnodes, params, include_remotes );
   }
 
   ArrayDatum result;
   result.reserve( globalnodes.size() );
-  for ( std::vector< MPIManager::NodeAddressingData >::iterator n =
-          globalnodes.begin();
-        n != globalnodes.end();
-        ++n )
+  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n )
   {
     if ( return_gids_only )
     {
@@ -386,12 +366,9 @@ get_nodes( const index node_id,
 }
 
 ArrayDatum
-get_leaves( const index node_id,
-  const DictionaryDatum& params,
-  const bool include_remotes )
+get_leaves( const index node_id, const DictionaryDatum& params, const bool include_remotes )
 {
-  Subnet* subnet =
-    dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
+  Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
   if ( subnet == NULL )
   {
     throw SubnetExpected();
@@ -403,20 +380,15 @@ get_leaves( const index node_id,
   std::vector< MPIManager::NodeAddressingData > globalnodes;
   if ( params->empty() )
   {
-    kernel().mpi_manager.communicate(
-      localnodes, globalnodes, include_remotes );
+    kernel().mpi_manager.communicate( localnodes, globalnodes, include_remotes );
   }
   else
   {
-    kernel().mpi_manager.communicate(
-      localnodes, globalnodes, params, include_remotes );
+    kernel().mpi_manager.communicate( localnodes, globalnodes, params, include_remotes );
   }
   result.reserve( globalnodes.size() );
 
-  for ( std::vector< MPIManager::NodeAddressingData >::iterator n =
-          globalnodes.begin();
-        n != globalnodes.end();
-        ++n )
+  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n )
   {
     result.push_back( new IntegerDatum( n->get_gid() ) );
   }
@@ -425,12 +397,9 @@ get_leaves( const index node_id,
 }
 
 ArrayDatum
-get_children( const index node_id,
-  const DictionaryDatum& params,
-  const bool include_remotes )
+get_children( const index node_id, const DictionaryDatum& params, const bool include_remotes )
 {
-  Subnet* subnet =
-    dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
+  Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
   if ( subnet == NULL )
   {
     throw SubnetExpected();
@@ -442,19 +411,14 @@ get_children( const index node_id,
   std::vector< MPIManager::NodeAddressingData > globalnodes;
   if ( params->empty() )
   {
-    kernel().mpi_manager.communicate(
-      localnodes, globalnodes, include_remotes );
+    kernel().mpi_manager.communicate( localnodes, globalnodes, include_remotes );
   }
   else
   {
-    kernel().mpi_manager.communicate(
-      localnodes, globalnodes, params, include_remotes );
+    kernel().mpi_manager.communicate( localnodes, globalnodes, params, include_remotes );
   }
   result.reserve( globalnodes.size() );
-  for ( std::vector< MPIManager::NodeAddressingData >::iterator n =
-          globalnodes.begin();
-        n != globalnodes.end();
-        ++n )
+  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n )
   {
     result.push_back( new IntegerDatum( n->get_gid() ) );
   }

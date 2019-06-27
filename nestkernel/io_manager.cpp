@@ -70,8 +70,7 @@ nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
         msg = String::compose( "Directory '%1' does not exist.", tmp );
         break;
       default:
-        msg = String::compose(
-          "Errno %1 received when trying to open '%2'", errno, tmp );
+        msg = String::compose( "Errno %1 received when trying to open '%2'", errno, tmp );
         break;
       }
 
@@ -87,8 +86,7 @@ nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
     }
     else
     {
-      LOG(
-        M_ERROR, "SetStatus", "Data prefix must not contain path elements." );
+      LOG( M_ERROR, "SetStatus", "Data prefix must not contain path elements." );
     }
   }
 }

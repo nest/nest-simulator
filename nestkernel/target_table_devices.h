@@ -54,12 +54,10 @@ class TargetTableDevices
 {
 private:
   //! 3d structure storing connections from neurons to devices
-  std::vector< std::vector< std::vector< ConnectorBase* > > >
-    target_to_devices_;
+  std::vector< std::vector< std::vector< ConnectorBase* > > > target_to_devices_;
 
   //! 3d structure storing connections from devices to neurons
-  std::vector< std::vector< std::vector< ConnectorBase* > > >
-    target_from_devices_;
+  std::vector< std::vector< std::vector< ConnectorBase* > > > target_from_devices_;
 
   //! 3d structure storing gids of sending devices (necessary for
   //! get_connections)
@@ -105,18 +103,12 @@ public:
   /**
    * Sends a spike event to all targets of the source neuron.
    */
-  void send_to_device( const thread tid,
-    const index s_gid,
-    Event& e,
-    const std::vector< ConnectorModel* >& cm );
+  void send_to_device( const thread tid, const index s_gid, Event& e, const std::vector< ConnectorModel* >& cm );
 
   /**
    * Sends a spike event to all targets of the source device.
    */
-  void send_from_device( const thread tid,
-    const index ldid,
-    Event& e,
-    const std::vector< ConnectorModel* >& cm );
+  void send_from_device( const thread tid, const index ldid, Event& e, const std::vector< ConnectorModel* >& cm );
 
   /**
    * Resizes vectors according to number of local nodes.
@@ -214,8 +206,7 @@ TargetTableDevices::get_synapse_status_from_device( const thread tid,
   DictionaryDatum& dict,
   const index lcid ) const
 {
-  target_from_devices_[ tid ][ ldid ][ syn_id ]->get_synapse_status(
-    tid, lcid, dict );
+  target_from_devices_[ tid ][ ldid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
 }
 
 inline void
@@ -226,8 +217,7 @@ TargetTableDevices::set_synapse_status_from_device( const thread tid,
   const DictionaryDatum& dict,
   const index lcid )
 {
-  target_from_devices_[ tid ][ ldid ][ syn_id ]->set_synapse_status(
-    lcid, dict, cm );
+  target_from_devices_[ tid ][ ldid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
 }
 
 inline void
@@ -236,8 +226,7 @@ TargetTableDevices::send_from_device( const thread tid,
   Event& e,
   const std::vector< ConnectorModel* >& cm )
 {
-  for ( std::vector< ConnectorBase* >::iterator it =
-          target_from_devices_[ tid ][ ldid ].begin();
+  for ( std::vector< ConnectorBase* >::iterator it = target_from_devices_[ tid ][ ldid ].begin();
         it != target_from_devices_[ tid ][ ldid ].end();
         ++it )
   {

@@ -42,8 +42,7 @@ nest_quicksort( BlockVector< size_t >& bv0, BlockVector< size_t >& bv1 )
 }
 
 const bool
-is_sorted( BlockVector< size_t >::const_iterator begin,
-  BlockVector< size_t >::const_iterator end )
+is_sorted( BlockVector< size_t >::const_iterator begin, BlockVector< size_t >::const_iterator end )
 {
   for ( BlockVector< size_t >::const_iterator it = begin; it < --end; )
   {

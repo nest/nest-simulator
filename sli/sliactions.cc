@@ -51,8 +51,7 @@ DatatypeFunction::execute( SLIInterpreter* i ) const
 void
 NametypeFunction::execute( SLIInterpreter* i ) const
 {
-  i->EStack.top() =
-    i->lookup2( *static_cast< NameDatum* >( i->EStack.top().datum() ) );
+  i->EStack.top() = i->lookup2( *static_cast< NameDatum* >( i->EStack.top().datum() ) );
 }
 
 void
@@ -62,8 +61,7 @@ ProceduretypeFunction::execute( SLIInterpreter* i ) const
   // wen don't have to look it up each time.
   static Token iiterate( i->Iiterate() );
 
-  i->code_accessed +=
-    ( static_cast< ProcedureDatum* >( i->EStack.top().datum() ) )->size();
+  i->code_accessed += ( static_cast< ProcedureDatum* >( i->EStack.top().datum() ) )->size();
 
   i->EStack.push_by_pointer( new IntegerDatum( 0 ) );
   i->EStack.push_by_ref( iiterate );
@@ -78,8 +76,7 @@ LitproceduretypeFunction::execute( SLIInterpreter* i ) const
   // moved to the operand stack. After this, the literal procedure becomes
   // an executable procedure and will be treated as such.
 
-  LitprocedureDatum* lpd =
-    static_cast< LitprocedureDatum* >( i->EStack.top().datum() );
+  LitprocedureDatum* lpd = static_cast< LitprocedureDatum* >( i->EStack.top().datum() );
   i->OStack.push_by_pointer( new ProcedureDatum( *lpd ) ); //
   i->EStack.pop();
 }

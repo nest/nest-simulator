@@ -58,8 +58,7 @@ namespace nest
  * @note No point in declaring it inline, since it is called
  *       through a function pointer.
  */
-extern "C" int
-iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
+extern "C" int iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
 
 
 /** @BeginDocumentation
@@ -242,8 +241,7 @@ private:
     SUP_SPIKE_RECEPTOR
   };
 
-  static const size_t NUM_SPIKE_RECEPTORS =
-    SUP_SPIKE_RECEPTOR - MIN_SPIKE_RECEPTOR;
+  static const size_t NUM_SPIKE_RECEPTORS = SUP_SPIKE_RECEPTOR - MIN_SPIKE_RECEPTOR;
 
   /**
    * Minimal current receptor type.
@@ -263,13 +261,11 @@ private:
     SUP_CURR_RECEPTOR
   };
 
-  static const size_t NUM_CURR_RECEPTORS =
-    SUP_CURR_RECEPTOR - MIN_CURR_RECEPTOR;
+  static const size_t NUM_CURR_RECEPTORS = SUP_CURR_RECEPTOR - MIN_CURR_RECEPTOR;
 
   // Friends --------------------------------------------------------
 
-  friend int
-  iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
+  friend int iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
 
   friend class RecordablesMap< iaf_cond_alpha_mc >;
   friend class UniversalDataLogger< iaf_cond_alpha_mc >;
@@ -306,16 +302,16 @@ private:
     double C_m[ NCOMP ];        //!< Membrane Capacitance in pF
     double E_ex[ NCOMP ];       //!< Excitatory reversal Potential in mV
     double E_in[ NCOMP ];       //!< Inhibitory reversal Potential in mV
-    double E_L[ NCOMP ]; //!< Leak reversal Potential (aka resting potential)
-                         //!< in mV
-    double tau_synE[ NCOMP ]; //!< Synaptic Time Constant Excitatory Synapse
-                              //!< in ms
-    double tau_synI[ NCOMP ]; //!< Synaptic Time Constant for Inhibitory
-                              //!< Synapse in ms
-    double I_e[ NCOMP ];      //!< Constant Current in pA
+    double E_L[ NCOMP ];        //!< Leak reversal Potential (aka resting potential)
+                                //!< in mV
+    double tau_synE[ NCOMP ];   //!< Synaptic Time Constant Excitatory Synapse
+                                //!< in ms
+    double tau_synI[ NCOMP ];   //!< Synaptic Time Constant for Inhibitory
+                                //!< Synapse in ms
+    double I_e[ NCOMP ];        //!< Constant Current in pA
 
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< needed to copy C-arrays
+    Parameters_();                                //!< Sets default parameter values
+    Parameters_( const Parameters_& );            //!< needed to copy C-arrays
     Parameters_& operator=( const Parameters_& ); //!< needed to copy C-arrays
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -476,10 +472,7 @@ private:
 };
 
 inline port
-iaf_cond_alpha_mc::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+iaf_cond_alpha_mc::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -489,8 +482,7 @@ iaf_cond_alpha_mc::send_test_event( Node& target,
 inline port
 iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_SPIKE_RECEPTOR
-    || receptor_type >= SUP_SPIKE_RECEPTOR )
+  if ( receptor_type < MIN_SPIKE_RECEPTOR || receptor_type >= SUP_SPIKE_RECEPTOR )
   {
     if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
     {
@@ -511,8 +503,7 @@ iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, rport receptor_type )
   {
     if ( receptor_type >= 0 && receptor_type < MIN_CURR_RECEPTOR )
     {
-      throw IncompatibleReceptorType(
-        receptor_type, get_name(), "CurrentEvent" );
+      throw IncompatibleReceptorType( receptor_type, get_name(), "CurrentEvent" );
     }
     else
     {
@@ -523,8 +514,7 @@ iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -534,8 +524,7 @@ iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr,
     }
     else
     {
-      throw IncompatibleReceptorType(
-        receptor_type, get_name(), "DataLoggingRequest" );
+      throw IncompatibleReceptorType( receptor_type, get_name(), "DataLoggingRequest" );
     }
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );

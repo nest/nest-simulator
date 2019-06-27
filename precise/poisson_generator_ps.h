@@ -187,10 +187,7 @@ private:
 };
 
 inline port
-poisson_generator_ps::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+poisson_generator_ps::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 

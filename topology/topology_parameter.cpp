@@ -28,15 +28,13 @@
 // Explicit definition required to ensure visibility when compiling with
 // clang under OSX. This must be outside namespace NEST, since the template
 // is defined in the global namespace.
-template class lockPTRDatum< nest::TopologyParameter,
-  &nest::TopologyModule::ParameterType >;
+template class lockPTRDatum< nest::TopologyParameter, &nest::TopologyModule::ParameterType >;
 
 namespace nest
 {
 
 double
-TopologyParameter::value( const std::vector< double >& pt,
-  librandom::RngPtr& rng ) const
+TopologyParameter::value( const std::vector< double >& pt, librandom::RngPtr& rng ) const
 {
   switch ( pt.size() )
   {

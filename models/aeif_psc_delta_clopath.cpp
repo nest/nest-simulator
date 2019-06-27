@@ -50,8 +50,7 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_psc_delta_clopath >
-  nest::aeif_psc_delta_clopath::recordablesMap_;
+nest::RecordablesMap< nest::aeif_psc_delta_clopath > nest::aeif_psc_delta_clopath::recordablesMap_;
 
 namespace nest
 {
@@ -66,42 +65,26 @@ void
 RecordablesMap< aeif_psc_delta_clopath >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m,
-    &aeif_psc_delta_clopath::
-      get_y_elem_< aeif_psc_delta_clopath::State_::V_M > );
-  insert_( names::w,
-    &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::W > );
-  insert_( names::z,
-    &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::Z > );
-  insert_( names::V_th,
-    &aeif_psc_delta_clopath::
-      get_y_elem_< aeif_psc_delta_clopath::State_::V_TH > );
-  insert_( names::u_bar_plus,
-    &aeif_psc_delta_clopath::
-      get_y_elem_< aeif_psc_delta_clopath::State_::U_BAR_PLUS > );
-  insert_( names::u_bar_minus,
-    &aeif_psc_delta_clopath::
-      get_y_elem_< aeif_psc_delta_clopath::State_::U_BAR_MINUS > );
-  insert_( names::u_bar_bar,
-    &aeif_psc_delta_clopath::
-      get_y_elem_< aeif_psc_delta_clopath::State_::U_BAR_BAR > );
+  insert_( names::V_m, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::V_M > );
+  insert_( names::w, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::W > );
+  insert_( names::z, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::Z > );
+  insert_( names::V_th, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::V_TH > );
+  insert_( names::u_bar_plus, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::U_BAR_PLUS > );
+  insert_( names::u_bar_minus, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::U_BAR_MINUS > );
+  insert_( names::u_bar_bar, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::U_BAR_BAR > );
 }
 }
 
 
 extern "C" int
-nest::aeif_psc_delta_clopath_dynamics( double,
-  const double y[],
-  double f[],
-  void* pnode )
+nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
   typedef nest::aeif_psc_delta_clopath::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_psc_delta_clopath& node =
-    *( reinterpret_cast< nest::aeif_psc_delta_clopath* >( pnode ) );
+  const nest::aeif_psc_delta_clopath& node = *( reinterpret_cast< nest::aeif_psc_delta_clopath* >( pnode ) );
 
   const bool is_refractory = node.S_.r_ > 0;
   const bool is_clamped = node.S_.clamp_r_ > 0;
@@ -114,9 +97,8 @@ nest::aeif_psc_delta_clopath_dynamics( double,
 
   // Clamp membrane potential to V_reset while refractory, otherwise bound
   // it to V_peak.
-  const double& V = ( is_refractory || is_clamped )
-    ? ( is_clamped ? node.P_.V_clamp_ : node.P_.V_reset_ )
-    : std::min( y[ S::V_M ], node.P_.V_peak_ );
+  const double& V = ( is_refractory || is_clamped ) ? ( is_clamped ? node.P_.V_clamp_ : node.P_.V_reset_ )
+                                                    : std::min( y[ S::V_M ], node.P_.V_peak_ );
   // shorthand for the other state variables
   const double& w = y[ S::W ];
   const double& z = y[ S::Z ];
@@ -125,20 +107,15 @@ nest::aeif_psc_delta_clopath_dynamics( double,
   const double& u_bar_minus = y[ S::U_BAR_MINUS ];
   const double& u_bar_bar = y[ S::U_BAR_BAR ];
 
-  const double I_spike = node.P_.Delta_T == 0.
-    ? 0.
-    : ( node.P_.g_L * node.P_.Delta_T
-        * std::exp( ( V - V_th ) / node.P_.Delta_T ) );
+  const double I_spike =
+    node.P_.Delta_T == 0. ? 0. : ( node.P_.g_L * node.P_.Delta_T * std::exp( ( V - V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = ( is_refractory || is_clamped )
-    ? 0.0
-    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + z + node.P_.I_e
-        + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = ( is_refractory || is_clamped ) ? 0.0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + z
+                                                          + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   // Adaptation current w.
-  f[ S::W ] =
-    is_clamped ? 0.0 : ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
+  f[ S::W ] = is_clamped ? 0.0 : ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
 
   f[ S::Z ] = -z / node.P_.tau_z;
 
@@ -208,8 +185,7 @@ nest::aeif_psc_delta_clopath::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_psc_delta_clopath::State_& nest::aeif_psc_delta_clopath::State_::
-operator=( const State_& s )
+nest::aeif_psc_delta_clopath::State_& nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -297,8 +273,7 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d )
   {
     // check for possible numerical overflow with the exponential divergence at
     // spike time, keep a 1e20 margin for the subsequent calculations
-    const double max_delta_arg =
-      std::log( std::numeric_limits< double >::max() / 1e20 );
+    const double max_delta_arg = std::log( std::numeric_limits< double >::max() / 1e20 );
     if ( ( V_peak_ - V_th_rest ) / Delta_T >= max_delta_arg )
     {
       throw BadProperty(
@@ -334,9 +309,7 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Ensure that t_clamp >= 0" );
   }
 
-  if ( tau_w <= 0 or tau_V_th <= 0 or tau_w <= 0 or tau_z <= 0 or tau_plus <= 0
-    or tau_minus <= 0
-    or tau_bar_bar <= 0 )
+  if ( tau_w <= 0 or tau_V_th <= 0 or tau_w <= 0 or tau_z <= 0 or tau_plus <= 0 or tau_minus <= 0 or tau_bar_bar <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -358,8 +331,7 @@ nest::aeif_psc_delta_clopath::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_psc_delta_clopath::State_::set( const DictionaryDatum& d,
-  const Parameters_& )
+nest::aeif_psc_delta_clopath::State_::set( const DictionaryDatum& d, const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::w, y_[ W ] );
@@ -378,8 +350,7 @@ nest::aeif_psc_delta_clopath::Buffers_::Buffers_( aeif_psc_delta_clopath& n )
   // init_buffers_().
 }
 
-nest::aeif_psc_delta_clopath::Buffers_::Buffers_( const Buffers_&,
-  aeif_psc_delta_clopath& n )
+nest::aeif_psc_delta_clopath::Buffers_::Buffers_( const Buffers_&, aeif_psc_delta_clopath& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -402,8 +373,7 @@ nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath()
   recordablesMap_.create();
 }
 
-nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath(
-  const aeif_psc_delta_clopath& n )
+nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath( const aeif_psc_delta_clopath& n )
   : Clopath_Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -435,8 +405,7 @@ nest::aeif_psc_delta_clopath::~aeif_psc_delta_clopath()
 void
 nest::aeif_psc_delta_clopath::init_state_( const Node& proto )
 {
-  const aeif_psc_delta_clopath& pr =
-    downcast< aeif_psc_delta_clopath >( proto );
+  const aeif_psc_delta_clopath& pr = downcast< aeif_psc_delta_clopath >( proto );
   S_ = pr.S_;
 }
 
@@ -456,8 +425,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
 
   if ( B_.s_ == 0 )
   {
-    B_.s_ =
-      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
   else
   {
@@ -469,8 +437,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
   }
   else
   {
-    gsl_odeiv_control_init(
-      B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
+    gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
   }
 
   if ( B_.e_ == 0 )
@@ -515,12 +482,9 @@ nest::aeif_psc_delta_clopath::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_psc_delta_clopath::update( const Time& origin,
-  const long from,
-  const long to )
+nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -554,8 +518,7 @@ nest::aeif_psc_delta_clopath::update( const Time& origin,
         throw GSLSolverFailure( get_name(), status );
       }
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
-        || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
       {
         throw NumericalInstability( get_name() );
       }
@@ -565,8 +528,7 @@ nest::aeif_psc_delta_clopath::update( const Time& origin,
       if ( S_.r_ == 0 && S_.clamp_r_ == 0 )
       {
         // neuron not refractory
-        S_.y_[ State_::V_M ] =
-          S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
+        S_.y_[ State_::V_M ] = S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
       }
       else // neuron is absolute refractory
       {
@@ -576,9 +538,8 @@ nest::aeif_psc_delta_clopath::update( const Time& origin,
       // set the right threshold depending on Delta_T
       if ( P_.Delta_T == 0. )
       {
-        V_.V_peak_ =
-          S_.y_[ State_::V_TH ]; // same as IAF dynamics for spikes if
-                                 // Delta_T == 0.
+        V_.V_peak_ = S_.y_[ State_::V_TH ]; // same as IAF dynamics for spikes if
+                                            // Delta_T == 0.
       }
 
       if ( S_.y_[ State_::V_M ] >= V_.V_peak_ && S_.clamp_r_ == 0 )
@@ -651,8 +612,7 @@ nest::aeif_psc_delta_clopath::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -664,9 +624,7 @@ nest::aeif_psc_delta_clopath::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

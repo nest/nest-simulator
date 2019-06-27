@@ -301,8 +301,8 @@ private:
     double neuron_state_[ STATE_VEC_SIZE ];
 
     double I_stim_; //!< This is piecewise constant external current
-    double sfa_; //!< This is the change of the 'threshold' due to adaptation.
-    double stc_; //!< Spike-triggered current.
+    double sfa_;    //!< This is the change of the 'threshold' due to adaptation.
+    double stc_;    //!< Spike-triggered current.
 
     std::vector< double > sfa_elems_; //!< Vector of adaptation parameters.
     std::vector< double > stc_elems_; //!< Vector of spike-triggered parameters.
@@ -357,8 +357,7 @@ private:
    */
   struct Variables_
   {
-    std::vector< double >
-      P_sfa_; // decay terms of spike-triggered current elements
+    std::vector< double > P_sfa_; // decay terms of spike-triggered current elements
     std::vector< double > P_stc_; // decay terms of adaptive threshold elements
 
     librandom::RngPtr rng_; // random number generator of my own thread
@@ -409,10 +408,7 @@ private:
 };
 
 inline port
-gif_cond_exp::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+gif_cond_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

@@ -221,8 +221,7 @@ public:
 
   void gather_secondary_events( const bool done );
 
-  bool deliver_secondary_events( const thread tid,
-    const bool called_from_wfr_update );
+  bool deliver_secondary_events( const thread tid, const bool called_from_wfr_update );
 
   /**
    * Update table of fixed modulos, including slice-based.
@@ -258,8 +257,7 @@ private:
   bool collocate_spike_data_buffers_( const thread tid,
     const AssignedRanks& assigned_ranks,
     SendBufferPosition& send_buffer_position,
-    std::vector< std::vector< std::vector< std::vector< TargetT > > > >&
-      spike_register,
+    std::vector< std::vector< std::vector< std::vector< TargetT > > > >& spike_register,
     std::vector< SpikeDataT >& send_buffer );
 
   /**
@@ -293,8 +291,7 @@ private:
    * nodes.
    */
   template < typename SpikeDataT >
-  bool deliver_events_( const thread tid,
-    const std::vector< SpikeDataT >& recv_buffer );
+  bool deliver_events_( const thread tid, const std::vector< SpikeDataT >& recv_buffer );
 
   /**
    * Deletes all spikes from spike registers and resets spike
@@ -390,8 +387,7 @@ private:
    * - Third dim: lag
    * - Fourth dim: Target (will be converted in SpikeData)
    */
-  std::vector< std::vector< std::vector< std::vector< Target > > > >
-    spike_register_;
+  std::vector< std::vector< std::vector< std::vector< Target > > > > spike_register_;
 
   /**
    * Register for gids of precise neurons that spiked. This is a 4-dim
@@ -403,8 +399,7 @@ private:
    * - Third dim: lag
    * - Fourth dim: OffGridTarget (will be converted in OffGridSpikeData)
    */
-  std::vector< std::vector< std::vector< std::vector< OffGridTarget > > > >
-    off_grid_spike_register_;
+  std::vector< std::vector< std::vector< std::vector< OffGridTarget > > > > off_grid_spike_register_;
 
   /**
    * Buffer to collect the secondary events
@@ -449,29 +444,22 @@ private:
 inline void
 EventDeliveryManager::reset_spike_register_( const thread tid )
 {
-  for ( std::vector< std::vector< std::vector< Target > > >::iterator it =
-          spike_register_[ tid ].begin();
+  for ( std::vector< std::vector< std::vector< Target > > >::iterator it = spike_register_[ tid ].begin();
         it < spike_register_[ tid ].end();
         ++it )
   {
-    for ( std::vector< std::vector< Target > >::iterator iit = it->begin();
-          iit < it->end();
-          ++iit )
+    for ( std::vector< std::vector< Target > >::iterator iit = it->begin(); iit < it->end(); ++iit )
     {
       ( *iit ).clear();
     }
   }
 
   for (
-    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
-      off_grid_spike_register_[ tid ].begin();
+    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = off_grid_spike_register_[ tid ].begin();
     it < off_grid_spike_register_[ tid ].end();
     ++it )
   {
-    for (
-      std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin();
-      iit < it->end();
-      ++iit )
+    for ( std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin(); iit < it->end(); ++iit )
     {
       iit->clear();
     }
@@ -487,30 +475,22 @@ EventDeliveryManager::is_marked_for_removal_( const Target& target )
 inline void
 EventDeliveryManager::clean_spike_register_( const thread tid )
 {
-  for ( std::vector< std::vector< std::vector< Target > > >::iterator it =
-          spike_register_[ tid ].begin();
+  for ( std::vector< std::vector< std::vector< Target > > >::iterator it = spike_register_[ tid ].begin();
         it < spike_register_[ tid ].end();
         ++it )
   {
-    for ( std::vector< std::vector< Target > >::iterator iit = it->begin();
-          iit < it->end();
-          ++iit )
+    for ( std::vector< std::vector< Target > >::iterator iit = it->begin(); iit < it->end(); ++iit )
     {
-      std::vector< Target >::iterator new_end =
-        std::remove_if( iit->begin(), iit->end(), is_marked_for_removal_ );
+      std::vector< Target >::iterator new_end = std::remove_if( iit->begin(), iit->end(), is_marked_for_removal_ );
       iit->erase( new_end, iit->end() );
     }
   }
   for (
-    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
-      off_grid_spike_register_[ tid ].begin();
+    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = off_grid_spike_register_[ tid ].begin();
     it < off_grid_spike_register_[ tid ].end();
     ++it )
   {
-    for (
-      std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin();
-      iit < it->end();
-      ++iit )
+    for ( std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin(); iit < it->end(); ++iit )
     {
       std::vector< OffGridTarget >::iterator new_end =
         std::remove_if( iit->begin(), iit->end(), is_marked_for_removal_ );
@@ -549,8 +529,7 @@ EventDeliveryManager::get_modulo( delay d )
 {
   // Note, here d may be 0, since bin 0 represents the "current" time
   // when all events due are read out.
-  assert(
-    static_cast< std::vector< delay >::size_type >( d ) < moduli_.size() );
+  assert( static_cast< std::vector< delay >::size_type >( d ) < moduli_.size() );
 
   return moduli_[ d ];
 }
@@ -560,8 +539,7 @@ EventDeliveryManager::get_slice_modulo( delay d )
 {
   // Note, here d may be 0, since bin 0 represents the "current" time
   // when all events due are read out.
-  assert( static_cast< std::vector< delay >::size_type >( d )
-    < slice_moduli_.size() );
+  assert( static_cast< std::vector< delay >::size_type >( d ) < slice_moduli_.size() );
 
   return slice_moduli_[ d ];
 }

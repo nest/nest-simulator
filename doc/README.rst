@@ -26,7 +26,7 @@ Requirements for building the docs include::
  mock
 
 
-You can now build the docs using this commandi (make sure you are in the doc folder)::
+You can now build the docs using this command (make sure you are in the doc folder)::
 
     make html
 

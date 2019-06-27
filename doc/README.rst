@@ -6,6 +6,37 @@ on improving the documentation and making updates. However, if you notice
 something out of place, you can `submit an issue <https://nest.github.io/nest-simulator/development_workflow#reporting-bugs-and-issues>`_
 in our GitHub repository.
 
+Build the docs locally
+-----------------------
+
+You will need the NEST source code in your project::
+
+
+    cd nest-simulator/doc/
+
+Requirements for building the docs include::
+
+ sphinx
+ recommonmark
+ sphinx-rtd-theme
+ nbsphinx
+ breathe
+ sphinx-gallery
+ ipython
+ mock
+
+
+You can now build the docs using this commandi (make sure you are in the doc folder)::
+
+    make html
+
+
+Once this complete, you can open `_build/html/index.html` to view the docs!
+
+::
+
+    xdg-open _build/html/index.html
+
 For **developer documentation**, we use `doxygen <http://doxygen.org/>`__
 comments extensively throughout NEST.
 After installing NEST, you can extract comments from the source code with

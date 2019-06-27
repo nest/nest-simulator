@@ -126,7 +126,7 @@ References
   Author(s) should be comma separated with first name as initials followed
   by last name ]]
 
-:Authors:
+:Authors: D Adams, N Gaiman
     D Adams, N Gaiman
 
     [[ Include a couple of comma-separated keywords - this will help us

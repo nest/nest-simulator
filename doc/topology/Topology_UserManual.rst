@@ -1002,16 +1002,16 @@ Functions currently available in the Topology module
    |                 | ``tau``       |                                                 |
    +-----------------+---------------+-------------------------------------------------+
    | ``gausssian``   | ``p_center``, | .. math::                                       |
-   |                 | ``sigma``,    |     p(d) = c + p_{\iext{center}}  e^{-\fr       |
-   |                 | ``mean``,     |     ac{(d-\mu)^2}{2\sigma^2}}                   |
+   |                 | ``sigma``,    |     p(d) = c + p_{\text{center}}  e^{-\frac     |
+   |                 | ``mean``,     |     {(d-\mu)^2}{2\sigma^2}}                     |
    |                 | ``c``         |                                                 |
    |                 |               |                                                 |
    +-----------------+---------------+-------------------------------------------------+
    | ``gaussian2D``  | ``p_center``, | .. math::                                       |
    |                 | ``sigma_x``,  |                                                 |
    |                 | ``sigma_y``,  |    p(d) = c + p_{\text{center}}                 |
-   |                 | ``mean_x``,   |    e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-\ |
-   |                 | ``mean_y``,   |    frac{(d_y-\mu_y)^2}{\sigma_y^2}              |
+   |                 | ``mean_x``,   |    e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-  |
+   |                 | ``mean_y``,   |    \frac{(d_y-\mu_y)^2}{\sigma_y^2}             |
    |                 | ``rho``,      |    +2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x |
    |                 | ``c``         |    \sigma_y}}{2(1-\rho^2)}}                     |
    |                 |               |                                                 |
@@ -1258,7 +1258,7 @@ distance. For the kernel and parameter values below we have
 
 .. math::
 
-   p_{\text{conn}}(d) = \frac{12}{\pi} \times 2\pi r \times (1-2r) \\
+   p_{\text{conn}}(d) = \frac{12}{\pi} \times 2\pi r \times (1-2r)
     = 24 r (1-2r) \qquad \text{for} \quad 0\le r < \frac{1}{2}\;.\qquad
 
 The resulting distribution of distances between connected nodes is shown in

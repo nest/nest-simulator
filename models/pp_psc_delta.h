@@ -64,7 +64,8 @@ both by adjusting three parameters:
 
 where the effective potential \f$ V' = V_m - E_{sfa} \f$ and \f$ E_{sfa} \f$
 is called the adaptive threshold. Here Rect means rectifier:
-\f$ Rect(x) = {x \text{ if } x>=0, 0 \text{ else}} \f$ (this is necessary because
+\f$ Rect(x) = {x \text{ if } x>=0, 0 \text{ else}} \f$ (this is necessary
+because
 negative rates are not possible).
 
 By setting c_3 = 0, c_2 can be used as an offset spike rate for an otherwise

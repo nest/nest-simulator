@@ -122,7 +122,8 @@ The following parameters can be set in the status dictionary:
 
 Remarks:
 
-\f$ \tau_m != \tau_{syn_{ex,in}} \f$ is required by the current implementation to
+\f$ \tau_m != \tau_{syn_{ex,in}} \f$ is required by the current implementation
+to
 avoid a degenerate case of the ODE describing the model [1].
 For very similar values, numerics will be unstable.
 

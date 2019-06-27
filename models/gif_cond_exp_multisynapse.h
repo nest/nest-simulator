@@ -71,7 +71,8 @@ C*dV(t)/dt = -g_L*(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots - \eta_n(t)
  + I(t)
 @f]
 
-where each \f$ eta_i \f$ is a spike-triggered current (stc), and the neuron model can
+where each \f$ eta_i \f$ is a spike-triggered current (stc), and the neuron
+model can
 have arbitrary number of them.
 Dynamic of each \f$ eta_i \f$ is described by:
 @f[

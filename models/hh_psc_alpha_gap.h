@@ -93,7 +93,7 @@ Parameters:
 The following parameters can be set in the status dictionary.
 
 \verbatim embed:rst
-===========  ======  ============================================================
+===========  ====== ============================================================
 tau_ex       ms      Rise time of the excitatory synaptic alpha function
 tau_in       ms      Rise time of the inhibitory synaptic alpha function
 g_K          nS      Potassium peak conductance
@@ -112,7 +112,7 @@ Act_m        real    Activation variable m
 Act_h        real    Activation variable h
 Inact_n      real    Inactivation variable n
 I_e          pA      External input current
-===========  ======  ============================================================
+===========  ====== ============================================================
 \endverbatim
 
 References:

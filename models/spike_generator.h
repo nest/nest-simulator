@@ -129,7 +129,8 @@ onto the grid will be handled as follows for different option settings:
     ---> spikes at step 10, offset 0.0; step 11, offset -0.05;
          step 31, offset -0.0999
 
-    Assume we have simulated 10.0ms and simulation times is thus 10.0 (step 100).
+    Assume we have simulated 10.0ms and simulation times is thus 10.0 (step
+100).
     Then, any spike times set, at this time, must be later than step 100.
 
     /spike_generator << /spike_times [10.0001] >> Create
@@ -142,7 +143,8 @@ onto the grid will be handled as follows for different option settings:
     /spike_generator
       << /spike_times [10.0001 11.0001] /shift_now_spikes true >>
     Create
-    ---> spike at step 101, spike shifted into the future, and spike at step 110,
+    ---> spike at step 101, spike shifted into the future, and spike at step
+110,
          not shifted, since it is in the future anyways
 
 

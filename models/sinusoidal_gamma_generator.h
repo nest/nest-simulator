@@ -135,7 +135,8 @@ SeeAlso: sinusoidal_poisson_generator, gamma_sup_generator
  * calculation of \f$\Lambda(t)\f$ and \f$h(t)\f$ in order to keep the mean rate
  * constant with varying \f$a\f$
  *
- * @note Let \f$t_0\f$ be the time of the most recent spike. If stimulus parameters
+ * @note Let \f$t_0\f$ be the time of the most recent spike. If stimulus
+ parameters
  * are changed at
  *       \f$t_c > t_0\f$, then \f$\Lambda(t)\f$ is integrated piecewise for
  *       \f$t>t_c\f$ as

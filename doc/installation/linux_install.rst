@@ -1,4 +1,4 @@
-Ubuntu Installation
+Ubuntu/Debian Installation
 ===============================
 
 .. _standard:
@@ -16,15 +16,16 @@ The following are the basic steps to compile and install NEST from source code:
     sudo apt-get install -y \
     build-essential \
     cmake \
-    cython3 \
+    cython \
     libgsl-dev \
     libltdl-dev \
     libncurses-dev \
     libreadline-dev \
-    python3-all-dev \
-    python3-numpy \
-    python3-scipy \
-    python3-matplotlib \
+    python-all-dev \
+    python-numpy \
+    python-scipy \
+    python-matplotlib \
+    python-nose \
     openmpi-bin \
     libopenmpi-dev
 

@@ -15,7 +15,7 @@ If you have not done so, you can :doc:`download NEST here <../download>`.
 Please choose on which system you want to install NEST:
 
 
-* :doc:`Ubuntu installation <linux_install>`
+* :doc:`Ubuntu/Debian installation <linux_install>`
 * :doc:`Mac OS X <mac_install>`
 * :doc:`High Performance Computer Systems <hpc_install>`
 * :doc:`NEST Live Media for Virtual Machines <livemedia>`

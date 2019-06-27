@@ -17,7 +17,7 @@ Please choose on which system you want to install NEST:
 
 
 * **BETA** :doc:`Conda installation for Linux and macOS <conda_install>`
-* :doc:`Standard Ubuntu installation <linux_install>`
+* :doc:`Ubuntu/Debian installation <linux_install>`
 * :doc:`Standard macOS installation <mac_install>`
 * :doc:`High Performance Computer Systems <hpc_install>`
 * :doc:`NEST Live Media for Virtual Machines <livemedia>`

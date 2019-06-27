@@ -90,8 +90,7 @@ TypeTrie::TypeNode::toTokenArray( TokenArray& a ) const
 }
 
 void
-TypeTrie::TypeNode::info( std::ostream& out,
-  std::vector< TypeNode const* >& tl ) const
+TypeTrie::TypeNode::info( std::ostream& out, std::vector< TypeNode const* >& tl ) const
 {
   if ( next == NULL && alt == NULL ) // Leaf node
   {

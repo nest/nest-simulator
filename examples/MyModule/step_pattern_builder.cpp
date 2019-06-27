@@ -76,8 +76,7 @@
    SeeAlso: Connect
 */
 
-mynest::StepPatternBuilder::StepPatternBuilder(
-  const nest::GIDCollection& sources,
+mynest::StepPatternBuilder::StepPatternBuilder( const nest::GIDCollection& sources,
   const nest::GIDCollection& targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
@@ -111,12 +110,10 @@ mynest::StepPatternBuilder::connect_()
       // allocate pointer to thread-specific random generator
       librandom::RngPtr rng = nest::kernel().rng_manager.get_rng( tid );
 
-      for ( nest::GIDCollection::const_iterator tgid = targets_->begin();
-            tgid < targets_->end();
+      for ( nest::GIDCollection::const_iterator tgid = targets_->begin(); tgid < targets_->end();
             tgid = advance_( tgid, targets_->end(), target_step_ ) )
       {
-        for ( nest::GIDCollection::const_iterator sgid = sources_->begin();
-              sgid < sources_->end();
+        for ( nest::GIDCollection::const_iterator sgid = sources_->begin(); sgid < sources_->end();
               sgid = advance_( sgid, sources_->end(), source_step_ ) )
         {
           if ( not autapses_ and *sgid == *tgid )
@@ -126,16 +123,13 @@ mynest::StepPatternBuilder::connect_()
           }
           if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
           {
-            for ( nest::GIDCollection::const_iterator sgid = sources_->begin();
-                  sgid < sources_->end();
-                  ++sgid )
+            for ( nest::GIDCollection::const_iterator sgid = sources_->begin(); sgid < sources_->end(); ++sgid )
             {
               skip_conn_parameter_( tid );
             }
             continue;
           }
-          nest::Node* const target =
-            nest::kernel().node_manager.get_node( *tgid, tid );
+          nest::Node* const target = nest::kernel().node_manager.get_node( *tgid, tid );
           const nest::thread target_thread = target->get_thread();
           single_connect_( *sgid, *target, target_thread, rng );
         }
@@ -145,8 +139,7 @@ mynest::StepPatternBuilder::connect_()
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( tid ) =
-        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( tid ) = lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
 }

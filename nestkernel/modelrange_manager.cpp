@@ -120,9 +120,7 @@ ModelRangeManager::model_in_use( index i ) const
 {
   bool found = false;
 
-  for ( std::vector< modelrange >::const_iterator it = modelranges_.begin();
-        it != modelranges_.end();
-        ++it )
+  for ( std::vector< modelrange >::const_iterator it = modelranges_.begin(); it != modelranges_.end(); ++it )
   {
     if ( it->get_model_id() == i )
     {
@@ -142,9 +140,7 @@ ModelRangeManager::get_contiguous_gid_range( index gid ) const
     throw UnknownNode( gid );
   }
 
-  for ( std::vector< modelrange >::const_iterator it = modelranges_.begin();
-        it != modelranges_.end();
-        ++it )
+  for ( std::vector< modelrange >::const_iterator it = modelranges_.begin(); it != modelranges_.end(); ++it )
   {
     if ( it->is_in_range( gid ) )
     {

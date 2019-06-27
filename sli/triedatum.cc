@@ -34,8 +34,7 @@ TrieDatum::equals( Datum const* dat ) const
   // a direct dynamic_cast<const GenericDatum<D,slt> * > does not seem
   // to work.
 
-  const TrieDatum* fd =
-    dynamic_cast< TrieDatum* >( const_cast< Datum* >( dat ) );
+  const TrieDatum* fd = dynamic_cast< TrieDatum* >( const_cast< Datum* >( dat ) );
 
   return ( fd == NULL ) ? false : ( tree == fd->tree );
 }

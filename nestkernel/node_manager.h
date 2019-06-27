@@ -252,9 +252,7 @@ private:
    *        each call so Node::set_status_()
    * @throws UnaccessedDictionaryEntry
    */
-  void set_status_single_node_( Node&,
-    const DictionaryDatum&,
-    bool clear_flags = true );
+  void set_status_single_node_( Node&, const DictionaryDatum&, bool clear_flags = true );
 
   /**
    * Initialized buffers, register in list of nodes to update/finalize.
@@ -272,10 +270,7 @@ private:
    * @param min_gid GID of first neuron to create.
    * @param max_gid GID of last neuron to create (inclusive).
    */
-  void add_neurons_( Model& model,
-    index min_gid,
-    index max_gid,
-    GIDCollectionPTR gc_ptr );
+  void add_neurons_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
 
   /**
    * Add device nodes.
@@ -286,10 +281,7 @@ private:
    * @param min_gid GID of first neuron to create.
    * @param max_gid GID of last neuron to create (inclusive).
    */
-  void add_devices_( Model& model,
-    index min_gid,
-    index max_gid,
-    GIDCollectionPTR gc_ptr );
+  void add_devices_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
 
   /**
    * Add MUSIC nodes.
@@ -301,10 +293,7 @@ private:
    * @param min_gid GID of first neuron to create.
    * @param max_gid GID of last neuron to create (inclusive).
    */
-  void add_music_nodes_( Model& model,
-    index min_gid,
-    index max_gid,
-    GIDCollectionPTR gc_ptr );
+  void add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
 
 
 private:
@@ -314,11 +303,10 @@ private:
   */
   std::vector< SparseNodeArray > local_nodes_;
 
-  std::vector< std::vector< Node* > >
-    wfr_nodes_vec_;  //!< Nodelists for unfrozen nodes that
-                     //!< use the waveform relaxation method
-  bool wfr_is_used_; //!< there is at least one node that uses
-                     //!< waveform relaxation
+  std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
+                                                      //!< use the waveform relaxation method
+  bool wfr_is_used_;                                  //!< there is at least one node that uses
+                                                      //!< waveform relaxation
   //! Network size when wfr_nodes_vec_ was last updated
   index wfr_network_size_;
   size_t num_active_nodes_; //!< number of nodes created by prepare_nodes

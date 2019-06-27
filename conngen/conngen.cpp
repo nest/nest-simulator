@@ -56,8 +56,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
   const DictionaryDatum& params_map,
   const Name& synmodel_name )
 {
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
   {
     throw UnknownSynapseType( synmodel_name.toString() );
@@ -78,19 +77,15 @@ cg_connect( ConnectionGeneratorDatum& cg,
     {
       // No need to check for locality of the target, as the mask
       // created by cg_set_masks() only contain local nodes.
-      kernel().connection_manager.connect( ( *source_gids )[ source ],
-        ( *target_gids )[ target ],
-        dummy_params,
-        synmodel_id );
+      kernel().connection_manager.connect(
+        ( *source_gids )[ source ], ( *target_gids )[ target ], dummy_params, synmodel_id );
     }
   }
   else if ( num_parameters == 2 )
   {
-    if ( not params_map->known( names::weight )
-      or not params_map->known( names::delay ) )
+    if ( not params_map->known( names::weight ) or not params_map->known( names::delay ) )
     {
-      throw BadProperty(
-        "The parameter map has to contain the indices of weight and delay." );
+      throw BadProperty( "The parameter map has to contain the indices of weight and delay." );
     }
 
     const size_t w_idx = ( *params_map )[ names::weight ];
@@ -101,8 +96,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
     const bool indices_differ = ( w_idx != d_idx );
     if ( not( w_idx_is_0_or_1 and d_idx_is_0_or_1 and indices_differ ) )
     {
-      throw BadProperty(
-        "w_idx and d_idx have to differ and be either 0 or 1." );
+      throw BadProperty( "w_idx and d_idx have to differ and be either 0 or 1." );
     }
 
     std::vector< double > params( 2 );
@@ -112,8 +106,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
     {
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contain local nodes.
-      Node* const target_node =
-        kernel().node_manager.get_node_or_proxy( ( *target_gids )[ target ] );
+      Node* const target_node = kernel().node_manager.get_node_or_proxy( ( *target_gids )[ target ] );
       const thread target_thread = target_node->get_thread();
 
       kernel().connection_manager.connect( ( *source_gids )[ source ],
@@ -127,9 +120,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else
   {
-    LOG( M_ERROR,
-      "CGConnect",
-      "Either two or no parameters in the ConnectionSet expected." );
+    LOG( M_ERROR, "CGConnect", "Either two or no parameters in the ConnectionSet expected." );
     throw DimensionMismatch();
   }
 }
@@ -143,13 +134,10 @@ cg_connect( ConnectionGeneratorDatum& cg,
  * \param targets The target ranges to create the target masks from
  */
 void
-cg_set_masks( ConnectionGeneratorDatum& cg,
-  const GIDCollectionPTR sources,
-  const GIDCollectionPTR targets )
+cg_set_masks( ConnectionGeneratorDatum& cg, const GIDCollectionPTR sources, const GIDCollectionPTR targets )
 {
   const size_t np = kernel().mpi_manager.get_num_processes();
-  std::vector< ConnectionGenerator::Mask > masks(
-    np, ConnectionGenerator::Mask( 1, np ) );
+  std::vector< ConnectionGenerator::Mask > masks( np, ConnectionGenerator::Mask( 1, np ) );
 
   RangeSet source_ranges;
   cg_get_ranges( source_ranges, sources );
@@ -196,23 +184,18 @@ cg_set_masks( ConnectionGeneratorDatum& cg,
  * setup.
 */
 void
-cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks,
-  RangeSet& sources,
-  RangeSet& targets )
+cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks, RangeSet& sources, RangeSet& targets )
 {
   // The index of the left border of the currently looked at range
   // (counting from 0). This is used for index translation.
   size_t cg_idx_left = 0;
 
   // For sources, we only need to translate from NEST to CG indices.
-  for ( RangeSet::iterator source = sources.begin(); source != sources.end();
-        ++source )
+  for ( RangeSet::iterator source = sources.begin(); source != sources.end(); ++source )
   {
     const size_t num_elements = source->last - source->first + 1;
     const size_t right = cg_idx_left + num_elements - 1;
-    for ( size_t proc = 0; proc
-            < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
-          ++proc )
+    for ( size_t proc = 0; proc < static_cast< size_t >( kernel().mpi_manager.get_num_processes() ); ++proc )
     {
       masks[ proc ].sources.insert( cg_idx_left, right );
     }
@@ -223,13 +206,10 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks,
   // translation for the targets.
   cg_idx_left = 0;
 
-  for ( RangeSet::iterator target = targets.begin(); target != targets.end();
-        ++target )
+  for ( RangeSet::iterator target = targets.begin(); target != targets.end(); ++target )
   {
     size_t num_elements = target->last - target->first + 1;
-    for ( size_t proc = 0; proc
-            < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
-          ++proc )
+    for ( size_t proc = 0; proc < static_cast< size_t >( kernel().mpi_manager.get_num_processes() ); ++proc )
     {
       // Make sure that the range is only added on as many ranks as
       // there are elements in the range, or exactly on every rank,
@@ -250,9 +230,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks,
         // of neurons in NEST. This ensures that the mask is set for
         // the rank where left acutally is the first neuron fromt
         // the currently looked at range.
-        masks[ ( proc + target->first )
-          % kernel().mpi_manager.get_num_processes() ].targets.insert( left,
-          right );
+        masks[ ( proc + target->first ) % kernel().mpi_manager.get_num_processes() ].targets.insert( left, right );
       }
     }
 
@@ -298,8 +276,7 @@ cg_get_right_border( index left, size_t step, const GIDCollectionPTR gids )
     // (i.e. we're back at an already visited index), we found the
     // right border of the contiguous range (last_i) and return it.
     if ( ( i == static_cast< long >( gids->size() ) - 1
-           and ( *gids )[ i ] - ( *gids )[ left ]
-             == i - static_cast< index >( left ) ) or i == leftmost_r )
+           and ( *gids )[ i ] - ( *gids )[ left ] == i - static_cast< index >( left ) ) or i == leftmost_r )
     {
       return last_i;
     }
@@ -312,8 +289,7 @@ cg_get_right_border( index left, size_t step, const GIDCollectionPTR gids )
     // set i to the right by step steps, else update the variable
     // for leftmost_r to the current i (i.e. the known leftmost
     // position) and set i to the left by step steps.
-    if ( ( *gids )[ i ] - ( *gids )[ left ]
-      == i - static_cast< index >( left ) )
+    if ( ( *gids )[ i ] - ( *gids )[ left ] == i - static_cast< index >( left ) )
     {
       i += step;
     }

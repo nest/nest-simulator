@@ -123,8 +123,7 @@ NestModule::create_parameter( const Token& t )
     // the parameter type to create.
     if ( ( *dictd )->size() != 1 )
     {
-      throw BadProperty(
-        "Parameter definition dictionary must contain one single key only." );
+      throw BadProperty( "Parameter definition dictionary must contain one single key only." );
     }
 
     Name n = ( *dictd )->begin()->first;
@@ -133,8 +132,7 @@ NestModule::create_parameter( const Token& t )
   }
   else
   {
-    throw BadProperty(
-      "Parameter must be parametertype, constant or dictionary." );
+    throw BadProperty( "Parameter must be parametertype, constant or dictionary." );
   }
 }
 
@@ -388,12 +386,11 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
 
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
-  DictionaryDatum result_dict =
-    kernel().connection_manager.get_synapse_status( conn.get_source_gid(),
-      conn.get_target_gid(),
-      conn.get_target_thread(),
-      conn.get_synapse_model_id(),
-      conn.get_port() );
+  DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( conn.get_source_gid(),
+    conn.get_target_gid(),
+    conn.get_target_thread(),
+    conn.get_synapse_model_id(),
+    conn.get_port() );
 
   i->OStack.pop();
   i->OStack.push( result_dict );
@@ -412,12 +409,11 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
   for ( size_t nt = 0; nt < n_results; ++nt )
   {
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
-    DictionaryDatum result_dict =
-      kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
-        con_id.get_target_gid(),
-        con_id.get_target_thread(),
-        con_id.get_synapse_model_id(),
-        con_id.get_port() );
+    DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
+      con_id.get_target_gid(),
+      con_id.get_target_thread(),
+      con_id.get_synapse_model_id(),
+      con_id.get_port() );
     result.push_back( result_dict );
   }
 
@@ -784,18 +780,13 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 4 );
 
-  GIDCollectionDatum sources =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
-  GIDCollectionDatum targets =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
-  DictionaryDatum connectivity =
-    getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  DictionaryDatum synapse_params =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionDatum sources = getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
+  GIDCollectionDatum targets = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by disconnect
-  kernel().sp_manager.disconnect(
-    sources, targets, connectivity, synapse_params );
+  kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
   i->EStack.pop();
@@ -808,18 +799,13 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 4 );
 
-  GIDCollectionDatum sources =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
-  GIDCollectionDatum targets =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
-  DictionaryDatum connectivity =
-    getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  DictionaryDatum synapse_params =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionDatum sources = getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
+  GIDCollectionDatum targets = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by connect
-  kernel().connection_manager.connect(
-    sources, targets, connectivity, synapse_params );
+  kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
   i->EStack.pop();
@@ -1073,8 +1059,7 @@ NestModule::TimeCommunicationv_i_iFunction::execute( SLIInterpreter* i ) const
    SeeAlso: TimeCommunication
  */
 void
-NestModule::TimeCommunicationAlltoall_i_iFunction::execute(
-  SLIInterpreter* i ) const
+NestModule::TimeCommunicationAlltoall_i_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
   long samples = getValue< long >( i->OStack.pick( 1 ) );
@@ -1105,8 +1090,7 @@ NestModule::TimeCommunicationAlltoall_i_iFunction::execute(
    SeeAlso: TimeCommunication
  */
 void
-NestModule::TimeCommunicationAlltoallv_i_iFunction::execute(
-  SLIInterpreter* i ) const
+NestModule::TimeCommunicationAlltoallv_i_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
   long samples = getValue< long >( i->OStack.pick( 1 ) );
@@ -1265,8 +1249,7 @@ void
 NestModule::Cva_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionDatum gidcoll =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
   ArrayDatum gids = gidcoll->to_array();
 
   i->OStack.pop();
@@ -1278,8 +1261,7 @@ void
 NestModule::Size_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionDatum gidcoll =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   i->OStack.pop();
   i->OStack.push( gidcoll->size() );
@@ -1290,8 +1272,7 @@ void
 NestModule::ValidQ_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionDatum gidcoll =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   i->OStack.pop();
   i->OStack.push( gidcoll->valid() );
@@ -1302,10 +1283,8 @@ void
 NestModule::Join_g_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionDatum left =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
-  GIDCollectionDatum right =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionDatum left = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionDatum right = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   GIDCollectionDatum combined = left + right;
 
@@ -1318,8 +1297,7 @@ void
 NestModule::MemberQ_g_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionDatum gidcoll =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   const long gid = getValue< long >( i->OStack.pick( 0 ) );
 
   const bool res = gidcoll->contains( gid );
@@ -1332,11 +1310,9 @@ void
 NestModule::BeginIterator_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionDatum gidcoll =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
-  GIDCollectionIteratorDatum it =
-    new gc_const_iterator( gidcoll->begin( gidcoll ) );
+  GIDCollectionIteratorDatum it = new gc_const_iterator( gidcoll->begin( gidcoll ) );
 
   i->OStack.pop();
   i->OStack.push( it );
@@ -1347,11 +1323,9 @@ void
 NestModule::EndIterator_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionDatum gidcoll =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
-  GIDCollectionIteratorDatum it =
-    new gc_const_iterator( gidcoll->end( gidcoll ) );
+  GIDCollectionIteratorDatum it = new gc_const_iterator( gidcoll->end( gidcoll ) );
 
   i->OStack.pop();
   i->OStack.push( it );
@@ -1362,8 +1336,7 @@ void
 NestModule::GetGID_qFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionIteratorDatum it =
-    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionIteratorDatum it = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
   index gid = ( **it ).gid;
 
@@ -1376,8 +1349,7 @@ void
 NestModule::GetGIDModelID_qFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionIteratorDatum it =
-    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionIteratorDatum it = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
   ArrayDatum gm_pair;
   const GIDTriple& gp = **it;
@@ -1393,8 +1365,7 @@ void
 NestModule::Next_qFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionIteratorDatum it =
-    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionIteratorDatum it = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
   ++( *it );
 
@@ -1406,10 +1377,8 @@ void
 NestModule::Eq_q_qFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionIteratorDatum it_l =
-    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 1 ) );
-  GIDCollectionIteratorDatum it_r =
-    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionIteratorDatum it_l = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionIteratorDatum it_r = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
   const bool res = not it_l->operator!=( *it_r );
 
@@ -1423,10 +1392,8 @@ void
 NestModule::Lt_q_qFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionIteratorDatum it_l =
-    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 1 ) );
-  GIDCollectionIteratorDatum it_r =
-    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionIteratorDatum it_l = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionIteratorDatum it_r = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
   const bool res = it_l->operator<( *it_r );
 
@@ -1440,8 +1407,7 @@ void
 NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionDatum gidcoll =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   long idx = getValue< long >( i->OStack.pick( 0 ) );
 
   const size_t g_size = gidcoll->size();
@@ -1465,8 +1431,7 @@ void
 NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionDatum gidcoll =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   TokenArray slice = getValue< TokenArray >( i->OStack.pick( 0 ) );
 
   if ( slice.size() != 3 )
@@ -1535,8 +1500,7 @@ NestModule::SetAcceptableLatencyFunction::execute( SLIInterpreter* i ) const
   std::string port_name = getValue< std::string >( i->OStack.pick( 1 ) );
   double latency = getValue< double >( i->OStack.pick( 0 ) );
 
-  kernel().music_manager.set_music_in_port_acceptable_latency(
-    port_name, latency );
+  kernel().music_manager.set_music_in_port_acceptable_latency( port_name, latency );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -1550,8 +1514,7 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
   std::string port_name = getValue< std::string >( i->OStack.pick( 1 ) );
   int maxBuffered = getValue< long >( i->OStack.pick( 0 ) );
 
-  kernel().music_manager.set_music_in_port_max_buffered(
-    port_name, maxBuffered );
+  kernel().music_manager.set_music_in_port_max_buffered( port_name, maxBuffered );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -1577,12 +1540,10 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
    FirstVersion: December 2014
 */
 void
-NestModule::SetStructuralPlasticityStatus_DFunction::execute(
-  SLIInterpreter* i ) const
+NestModule::SetStructuralPlasticityStatus_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  DictionaryDatum structural_plasticity_dictionary =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  DictionaryDatum structural_plasticity_dictionary = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   kernel().sp_manager.set_status( structural_plasticity_dictionary );
 
@@ -1591,13 +1552,11 @@ NestModule::SetStructuralPlasticityStatus_DFunction::execute(
 }
 
 void
-NestModule::GetStructuralPlasticityStatus_DFunction::execute(
-  SLIInterpreter* i ) const
+NestModule::GetStructuralPlasticityStatus_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  DictionaryDatum current_status =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  DictionaryDatum current_status = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
   kernel().sp_manager.get_status( current_status );
 
   i->OStack.pop( 1 );
@@ -1611,8 +1570,7 @@ NestModule::GetStructuralPlasticityStatus_DFunction::execute(
  * @param i
  */
 void
-NestModule::EnableStructuralPlasticity_Function::execute(
-  SLIInterpreter* i ) const
+NestModule::EnableStructuralPlasticity_Function::execute( SLIInterpreter* i ) const
 {
   kernel().sp_manager.enable_structural_plasticity();
 
@@ -1623,8 +1581,7 @@ NestModule::EnableStructuralPlasticity_Function::execute(
  * @param i
  */
 void
-NestModule::DisableStructuralPlasticity_Function::execute(
-  SLIInterpreter* i ) const
+NestModule::DisableStructuralPlasticity_Function::execute( SLIInterpreter* i ) const
 {
   kernel().sp_manager.disable_structural_plasticity();
 
@@ -1659,8 +1616,7 @@ void
 NestModule::CreateParameter_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  const DictionaryDatum param_dict =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const DictionaryDatum param_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   ParameterDatum datum = nest::create_parameter( param_dict );
 
@@ -1878,8 +1834,7 @@ NestModule::init( SLIInterpreter* i )
   GIDCollectionType.setdefaultaction( SLIInterpreter::datatypefunction );
 
   GIDCollectionIteratorType.settypename( "gidcollectioniteratortype" );
-  GIDCollectionIteratorType.setdefaultaction(
-    SLIInterpreter::datatypefunction );
+  GIDCollectionIteratorType.setdefaultaction( SLIInterpreter::datatypefunction );
 
   ParameterType.settypename( "parametertype" );
   ParameterType.setdefaultaction( SLIInterpreter::datatypefunction );
@@ -1947,13 +1902,10 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "NumProcesses", &numprocessesfunction );
   i->createcommand( "SetFakeNumProcesses", &setfakenumprocesses_ifunction );
   i->createcommand( "SyncProcesses", &syncprocessesfunction );
-  i->createcommand(
-    "TimeCommunication_i_i_b", &timecommunication_i_i_bfunction );
+  i->createcommand( "TimeCommunication_i_i_b", &timecommunication_i_i_bfunction );
   i->createcommand( "TimeCommunicationv_i_i", &timecommunicationv_i_ifunction );
-  i->createcommand(
-    "TimeCommunicationAlltoall_i_i", &timecommunicationalltoall_i_ifunction );
-  i->createcommand(
-    "TimeCommunicationAlltoallv_i_i", &timecommunicationalltoallv_i_ifunction );
+  i->createcommand( "TimeCommunicationAlltoall_i_i", &timecommunicationalltoall_i_ifunction );
+  i->createcommand( "TimeCommunicationAlltoallv_i_i", &timecommunicationalltoallv_i_ifunction );
   i->createcommand( "ProcessorName", &processornamefunction );
 #ifdef HAVE_MPI
   i->createcommand( "MPI_Abort", &mpiabort_ifunction );
@@ -1985,46 +1937,32 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "SetAcceptableLatency", &setacceptablelatency_l_dfunction );
   i->createcommand( "SetMaxBuffered", &setmaxbuffered_l_ifunction );
 #endif
-  i->createcommand(
-    "EnableStructuralPlasticity", &enablestructuralplasticity_function );
-  i->createcommand(
-    "DisableStructuralPlasticity", &disablestructuralplasticity_function );
-  i->createcommand(
-    "SetStructuralPlasticityStatus", &setstructuralplasticitystatus_Dfunction );
-  i->createcommand(
-    "GetStructuralPlasticityStatus", &getstructuralplasticitystatus_function );
+  i->createcommand( "EnableStructuralPlasticity", &enablestructuralplasticity_function );
+  i->createcommand( "DisableStructuralPlasticity", &disablestructuralplasticity_function );
+  i->createcommand( "SetStructuralPlasticityStatus", &setstructuralplasticitystatus_Dfunction );
+  i->createcommand( "GetStructuralPlasticityStatus", &getstructuralplasticitystatus_function );
   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
 
   i->createcommand( "SetStdpEps", &setstdpeps_dfunction );
 
   // Add connection rules
-  kernel().connection_manager.register_conn_builder< OneToOneBuilder >(
-    "one_to_one" );
-  kernel().connection_manager.register_conn_builder< AllToAllBuilder >(
-    "all_to_all" );
-  kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >(
-    "fixed_indegree" );
-  kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >(
-    "fixed_outdegree" );
-  kernel().connection_manager.register_conn_builder< BernoulliBuilder >(
-    "pairwise_bernoulli" );
-  kernel()
-    .connection_manager.register_conn_builder< SymmetricBernoulliBuilder >(
-      "symmetric_pairwise_bernoulli" );
-  kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >(
-    "fixed_total_number" );
+  kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
+  kernel().connection_manager.register_conn_builder< AllToAllBuilder >( "all_to_all" );
+  kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
+  kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
+  kernel().connection_manager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
+  kernel().connection_manager.register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
+  kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
 
   // Add MSP growth curves
   kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
-  kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >(
-    "gaussian" );
+  kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
   kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
 
   Token statusd = i->baselookup( Name( "statusdict" ) );
   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );
   dd->insert( Name( "kernelname" ), new StringDatum( "NEST" ) );
-  dd->insert(
-    Name( "is_mpi" ), new BoolDatum( kernel().mpi_manager.is_mpi_used() ) );
+  dd->insert( Name( "is_mpi" ), new BoolDatum( kernel().mpi_manager.is_mpi_used() ) );
 
   register_parameter< ConstantParameter >( "constant" );
   register_parameter< UniformParameter >( "uniform" );

@@ -248,7 +248,7 @@ private:
     long dt_steps_;                         //!< update interval in steps
     librandom::NormalRandomDev normal_dev_; //!< random deviate generator
     double omega_;                          //!< Angelfrequency i rad/s
-    double phi_rad_; //!< Phase of sine current (0-2Pi rad)
+    double phi_rad_;                        //!< Phase of sine current (0-2Pi rad)
 
     // The exact integration matrix
     double A_00_;
@@ -275,8 +275,7 @@ private:
 };
 
 inline port
-noise_generator::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+noise_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

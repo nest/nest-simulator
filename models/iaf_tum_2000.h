@@ -249,8 +249,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void
-    set( const DictionaryDatum&, const Parameters_&, double delta_EL, Node* );
+    void set( const DictionaryDatum&, const Parameters_&, double delta_EL, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -338,10 +337,7 @@ private:
 
 
 inline port
-iaf_tum_2000::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+iaf_tum_2000::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -391,10 +387,10 @@ iaf_tum_2000::get_status( DictionaryDatum& d ) const
 inline void
 iaf_tum_2000::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                    // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

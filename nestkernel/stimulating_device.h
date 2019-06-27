@@ -160,8 +160,7 @@ StimulatingDevice< EmittedEvent >::StimulatingDevice()
 }
 
 template < typename EmittedEvent >
-StimulatingDevice< EmittedEvent >::StimulatingDevice(
-  StimulatingDevice< EmittedEvent > const& sd )
+StimulatingDevice< EmittedEvent >::StimulatingDevice( StimulatingDevice< EmittedEvent > const& sd )
   : Device( sd )
   , first_syn_id_( invalid_synindex ) // a new instance can have no connections
 {
@@ -184,8 +183,7 @@ StimulatingDevice< nest::CurrentEvent >::is_active( const Time& T ) const
 
 template <>
 inline bool
-StimulatingDevice< nest::DelayedRateConnectionEvent >::is_active(
-  const Time& T ) const
+StimulatingDevice< nest::DelayedRateConnectionEvent >::is_active( const Time& T ) const
 {
   // same as for the CurrentEvent
   const long step = T.get_steps() + 1;
@@ -219,8 +217,7 @@ StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const
 
 template < typename EmittedEvent >
 inline void
-nest::StimulatingDevice< EmittedEvent >::enforce_single_syn_type(
-  synindex syn_id )
+nest::StimulatingDevice< EmittedEvent >::enforce_single_syn_type( synindex syn_id )
 {
   if ( first_syn_id_ == invalid_synindex )
   {

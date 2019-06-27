@@ -252,8 +252,7 @@ private:
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool
-    set( const DictionaryDatum&, const correlospinmatrix_detector&, Node* );
+    bool set( const DictionaryDatum&, const correlospinmatrix_detector&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -312,8 +311,7 @@ private:
 };
 
 inline port
-correlospinmatrix_detector::handles_test_event( SpikeEvent&,
-  rport receptor_type )
+correlospinmatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type < 0 || receptor_type > P_.N_channels_ - 1 )
   {

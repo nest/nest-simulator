@@ -123,21 +123,18 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-  void set( const DictionaryDatum&,
-    Node* node ); //!< Set values from dicitonary
+  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
 
   bool operator()( librandom::RngPtr, double h );
 };
 
-inline bool gainfunction_mcculloch_pitts::operator()( librandom::RngPtr,
-  double h )
+inline bool gainfunction_mcculloch_pitts::operator()( librandom::RngPtr, double h )
 {
   return h > theta_;
 }
 
-typedef nest::binary_neuron< nest::gainfunction_mcculloch_pitts >
-  mcculloch_pitts_neuron;
+typedef nest::binary_neuron< nest::gainfunction_mcculloch_pitts > mcculloch_pitts_neuron;
 
 template <>
 void RecordablesMap< mcculloch_pitts_neuron >::create();

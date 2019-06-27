@@ -96,21 +96,16 @@ private:
 AbstractLayerPTR get_layer( GIDCollectionPTR layer_gc );
 GIDCollectionPTR create_layer( const DictionaryDatum& layer_dict );
 ArrayDatum get_position( GIDCollectionPTR layer_gc );
-ArrayDatum displacement( GIDCollectionPTR layer_to_gc,
-  GIDCollectionPTR layer_from_gc );
+ArrayDatum displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc );
 ArrayDatum displacement( GIDCollectionPTR layer_gc, const ArrayDatum point );
-std::vector< double > distance( GIDCollectionPTR layer_to_gc,
-  GIDCollectionPTR layer_from_gc );
-std::vector< double > distance( GIDCollectionPTR layer_gc,
-  const ArrayDatum point );
+std::vector< double > distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc );
+std::vector< double > distance( GIDCollectionPTR layer_gc, const ArrayDatum point );
 MaskDatum create_mask( const DictionaryDatum& mask_dict );
 BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum union_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
-void connect_layers( GIDCollectionPTR source_gc,
-  GIDCollectionPTR target_gc,
-  const DictionaryDatum& dict );
+void connect_layers( GIDCollectionPTR source_gc, GIDCollectionPTR target_gc, const DictionaryDatum& dict );
 void dump_layer_nodes( GIDCollectionPTR layer_gc, OstreamDatum& out );
 void dump_layer_connections( const Token& syn_model,
   GIDCollectionPTR source_layer_gc,

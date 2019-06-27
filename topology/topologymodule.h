@@ -208,8 +208,7 @@ public:
    *          as value, and optionally an anchor.
    * @returns Either the MaskDatum given as argument, or a new mask.
    */
-  static lockPTRDatum< AbstractMask,
-    &TopologyModule::MaskType > /*MaskDatum*/ create_mask( const Token& t );
+  static lockPTRDatum< AbstractMask, &TopologyModule::MaskType > /*MaskDatum*/ create_mask( const Token& t );
 
   /**
    * Create a new Mask object using the mask factory.
@@ -217,8 +216,7 @@ public:
    * @param d    Dictionary with parameters specific for this mask type.
    * @returns dynamically allocated new Mask object.
    */
-  static AbstractMask* create_mask( const Name& name,
-    const DictionaryDatum& d );
+  static AbstractMask* create_mask( const Name& name, const DictionaryDatum& d );
 
 private:
   /**

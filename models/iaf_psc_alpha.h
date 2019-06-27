@@ -354,10 +354,7 @@ private:
 };
 
 inline port
-nest::iaf_psc_alpha::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+nest::iaf_psc_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -385,8 +382,7 @@ iaf_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_alpha::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_psc_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -408,10 +404,10 @@ iaf_psc_alpha::get_status( DictionaryDatum& d ) const
 inline void
 iaf_psc_alpha::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                    // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

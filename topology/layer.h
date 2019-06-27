@@ -85,8 +85,7 @@ public:
    * @param lid index of node within layer
    * @returns position of node as std::vector
    */
-  virtual std::vector< double > get_position_vector(
-    const index lid ) const = 0;
+  virtual std::vector< double > get_position_vector( const index lid ) const = 0;
 
   /**
    * Returns displacement of node from given position. When using periodic
@@ -95,9 +94,7 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns vector pointing from from_pos to node to's position
    */
-  virtual std::vector< double > compute_displacement(
-    const std::vector< double >& from_pos,
-    const index to ) const = 0;
+  virtual std::vector< double > compute_displacement( const std::vector< double >& from_pos, const index to ) const = 0;
 
   /**
    * Returns distance to node from given position. When using periodic
@@ -106,8 +103,7 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns length of vector pointing from from_pos to node to's position
    */
-  virtual double compute_distance( const std::vector< double >& from_pos,
-    const index lid ) const = 0;
+  virtual double compute_distance( const std::vector< double >& from_pos, const index lid ) const = 0;
 
   /**
    * Connect this layer to the given target layer. The actual connections
@@ -116,9 +112,7 @@ public:
    *                  as this layer.
    * @param connector connection properties
    */
-  virtual void connect( AbstractLayerPTR target,
-    GIDCollectionPTR target_gc,
-    ConnectionCreator& connector ) = 0;
+  virtual void connect( AbstractLayerPTR target, GIDCollectionPTR target_gc, ConnectionCreator& connector ) = 0;
 
   /**
    * Factory function for layers. The supplied dictionary contains
@@ -135,9 +129,8 @@ public:
    * @param allow_oversized allow mask to be greater than layer
    * @returns nodes in layer inside mask.
    */
-  virtual std::vector< index > get_global_nodes( const MaskDatum& mask,
-    const std::vector< double >& anchor,
-    bool allow_oversized ) = 0;
+  virtual std::vector< index >
+  get_global_nodes( const MaskDatum& mask, const std::vector< double >& anchor, bool allow_oversized ) = 0;
 
   /**
    * Write layer data to stream.
@@ -155,9 +148,7 @@ public:
    * @param out output stream
    * @param synapse_id type of connection
    */
-  virtual void dump_connections( std::ostream& out,
-    AbstractLayerPTR target_layer,
-    const Token& syn_model ) = 0;
+  virtual void dump_connections( std::ostream& out, AbstractLayerPTR target_layer, const Token& syn_model ) = 0;
 
 protected:
   /**
@@ -287,8 +278,7 @@ public:
    * @param to_pos    position to which displacement is to be computed
    * @returns vector pointing from from_pos to to_pos
    */
-  virtual Position< D > compute_displacement( const Position< D >& from_pos,
-    const Position< D >& to_pos ) const;
+  virtual Position< D > compute_displacement( const Position< D >& from_pos, const Position< D >& to_pos ) const;
 
   /**
    * Returns displacement of node from given position. When using periodic
@@ -297,12 +287,9 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns vector pointing from from_pos to node to's position
    */
-  Position< D > compute_displacement( const Position< D >& from_pos,
-    const index to ) const;
+  Position< D > compute_displacement( const Position< D >& from_pos, const index to ) const;
 
-  std::vector< double > compute_displacement(
-    const std::vector< double >& from_pos,
-    const index to ) const;
+  std::vector< double > compute_displacement( const std::vector< double >& from_pos, const index to ) const;
 
   /**
    * Returns distance to node from given position. When using periodic
@@ -311,11 +298,9 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns length of vector pointing from from_pos to node to's position
    */
-  double compute_distance( const Position< D >& from_pos,
-    const index lid ) const;
+  double compute_distance( const Position< D >& from_pos, const index lid ) const;
 
-  double compute_distance( const std::vector< double >& from_pos,
-    const index lid ) const;
+  double compute_distance( const std::vector< double >& from_pos, const index lid ) const;
 
   /**
    * Get positions for all nodes in layer, including nodes on other MPI
@@ -332,25 +317,19 @@ public:
    * coordinates are only used for the dimensions where the supplied
    * periodic flag is set.
    */
-  lockPTR< Ntree< D, index > > get_global_positions_ntree(
-    std::bitset< D > periodic,
-    Position< D > lower_left,
-    Position< D > extent );
+  lockPTR< Ntree< D, index > >
+  get_global_positions_ntree( std::bitset< D > periodic, Position< D > lower_left, Position< D > extent );
 
-  std::vector< std::pair< Position< D >, index > >*
-  get_global_positions_vector();
+  std::vector< std::pair< Position< D >, index > >* get_global_positions_vector();
 
   virtual std::vector< std::pair< Position< D >, index > >
-  get_global_positions_vector( const MaskDatum& mask,
-    const Position< D >& anchor,
-    bool allow_oversized );
+  get_global_positions_vector( const MaskDatum& mask, const Position< D >& anchor, bool allow_oversized );
 
   /**
    * Return a vector with the GIDs of the nodes inside the mask.
    */
-  std::vector< index > get_global_nodes( const MaskDatum& mask,
-    const std::vector< double >& anchor,
-    bool allow_oversized );
+  std::vector< index >
+  get_global_nodes( const MaskDatum& mask, const std::vector< double >& anchor, bool allow_oversized );
 
   /**
    * Connect this layer to the given target layer. The actual connections
@@ -360,9 +339,7 @@ public:
    * @param target_gc GIDCollection to the target layer.
    * @param connector connection properties
    */
-  void connect( AbstractLayerPTR target,
-    GIDCollectionPTR target_gc,
-    ConnectionCreator& connector );
+  void connect( AbstractLayerPTR target, GIDCollectionPTR target_gc, ConnectionCreator& connector );
 
   /**
    * Write layer data to stream.
@@ -380,9 +357,7 @@ public:
    * @param out output stream
    * @param synapse_id type of connection
    */
-  void dump_connections( std::ostream& out,
-    AbstractLayerPTR target_layer,
-    const Token& syn_model );
+  void dump_connections( std::ostream& out, AbstractLayerPTR target_layer, const Token& syn_model );
 
 protected:
   /**
@@ -405,8 +380,7 @@ protected:
   /**
    * Insert global position info into vector.
    */
-  virtual void insert_global_positions_vector_(
-    std::vector< std::pair< Position< D >, index > >& ) = 0;
+  virtual void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& ) = 0;
 
   //! lower left corner (minimum coordinates) of layer
   Position< D > lower_left_;
@@ -451,10 +425,7 @@ public:
    * @param target          The layer which the given mask is defined for
    * (target layer)
    */
-  MaskedLayer( Layer< D >& layer,
-    const MaskDatum& mask,
-    bool allow_oversized,
-    Layer< D >& target );
+  MaskedLayer( Layer< D >& layer, const MaskDatum& mask, bool allow_oversized, Layer< D >& target );
 
   ~MaskedLayer();
 
@@ -464,8 +435,7 @@ public:
    * @returns an iterator for the nodes inside the mask centered on the anchor
    * position
    */
-  typename Ntree< D, index >::masked_iterator begin(
-    const Position< D >& anchor );
+  typename Ntree< D, index >::masked_iterator begin( const Position< D >& anchor );
 
   /**
    * @return end iterator
@@ -490,9 +460,7 @@ protected:
 };
 
 template < int D >
-inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
-  const MaskDatum& maskd,
-  bool allow_oversized )
+inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer, const MaskDatum& maskd, bool allow_oversized )
   : mask_( maskd )
 {
   ntree_ = layer.get_global_positions_ntree();
@@ -507,8 +475,7 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
   Layer< D >& target )
   : mask_( maskd )
 {
-  ntree_ = layer.get_global_positions_ntree(
-    target.get_periodic_mask(), target.get_lower_left(), target.get_extent() );
+  ntree_ = layer.get_global_positions_ntree( target.get_periodic_mask(), target.get_lower_left(), target.get_extent() );
 
   check_mask_( target, allow_oversized );
   mask_ = new ConverseMask< D >( dynamic_cast< const Mask< D >& >( *mask_ ) );
@@ -525,8 +492,7 @@ MaskedLayer< D >::begin( const Position< D >& anchor )
 {
   try
   {
-    return ntree_->masked_begin(
-      dynamic_cast< const Mask< D >& >( *mask_ ), anchor );
+    return ntree_->masked_begin( dynamic_cast< const Mask< D >& >( *mask_ ), anchor );
   }
   catch ( std::bad_cast& e )
   {
@@ -577,25 +543,21 @@ inline Layer< D >::~Layer()
 
 template < int D >
 inline Position< D >
-Layer< D >::compute_displacement( const Position< D >& from_pos,
-  const index to_lid ) const
+Layer< D >::compute_displacement( const Position< D >& from_pos, const index to_lid ) const
 {
   return compute_displacement( from_pos, get_position( to_lid ) );
 }
 
 template < int D >
 inline std::vector< double >
-Layer< D >::compute_displacement( const std::vector< double >& from_pos,
-  const index to_lid ) const
+Layer< D >::compute_displacement( const std::vector< double >& from_pos, const index to_lid ) const
 {
-  return std::vector< double >(
-    compute_displacement( Position< D >( from_pos ), to_lid ) );
+  return std::vector< double >( compute_displacement( Position< D >( from_pos ), to_lid ) );
 }
 
 template < int D >
 inline double
-Layer< D >::compute_distance( const Position< D >& from_pos,
-  const index lid ) const
+Layer< D >::compute_distance( const Position< D >& from_pos, const index lid ) const
 {
   if ( lid < 0 )
   {
@@ -606,8 +568,7 @@ Layer< D >::compute_distance( const Position< D >& from_pos,
 
 template < int D >
 inline double
-Layer< D >::compute_distance( const std::vector< double >& from_pos,
-  const index lid ) const
+Layer< D >::compute_distance( const std::vector< double >& from_pos, const index lid ) const
 {
   if ( lid < 0 )
   {

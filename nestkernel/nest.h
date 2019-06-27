@@ -66,8 +66,7 @@ DictionaryDatum get_kernel_status();
 void set_node_status( const index node_id, const DictionaryDatum& dict );
 DictionaryDatum get_node_status( const index node_id );
 
-void set_connection_status( const ConnectionDatum& conn,
-  const DictionaryDatum& dict );
+void set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict );
 DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
 GIDCollectionPTR create( const Name& model_name, const index n );
@@ -122,39 +121,28 @@ void prepare();
  */
 void cleanup();
 
-void copy_model( const Name& oldmodname,
-  const Name& newmodname,
-  const DictionaryDatum& dict );
+void copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict );
 
 void set_model_defaults( const Name& model_name, const DictionaryDatum& );
 DictionaryDatum get_model_defaults( const Name& model_name );
 
 void restore_nodes( const ArrayDatum& node_list );
 
-ParameterDatum multiply_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 );
-ParameterDatum divide_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 );
-ParameterDatum add_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 );
-ParameterDatum subtract_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 );
-ParameterDatum compare_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2,
-  const DictionaryDatum& d );
-ParameterDatum conditional_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2,
-  const ParameterDatum& param3 );
+ParameterDatum multiply_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
+ParameterDatum divide_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
+ParameterDatum add_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
+ParameterDatum subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
+ParameterDatum
+compare_parameter( const ParameterDatum& param1, const ParameterDatum& param2, const DictionaryDatum& d );
+ParameterDatum
+conditional_parameter( const ParameterDatum& param1, const ParameterDatum& param2, const ParameterDatum& param3 );
 ParameterDatum exp_parameter( const ParameterDatum& param );
 ParameterDatum sin_parameter( const ParameterDatum& param );
 ParameterDatum cos_parameter( const ParameterDatum& param );
-ParameterDatum pow_parameter( const ParameterDatum& param,
-  const double exponent );
-ParameterDatum dimension_parameter( const ParameterDatum& param_x,
-  const ParameterDatum& param_y );
-ParameterDatum dimension_parameter( const ParameterDatum& param_x,
-  const ParameterDatum& param_y,
-  const ParameterDatum& param_z );
+ParameterDatum pow_parameter( const ParameterDatum& param, const double exponent );
+ParameterDatum dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y );
+ParameterDatum
+dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y, const ParameterDatum& param_z );
 ParameterDatum create_parameter( const DictionaryDatum& param_dict );
 double get_value( const ParameterDatum& param );
 }

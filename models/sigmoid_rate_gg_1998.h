@@ -115,9 +115,8 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-  void set( const DictionaryDatum&,
-    Node* node ); //!< Set values from dicitonary
+  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling
@@ -142,10 +141,8 @@ nonlinearities_sigmoid_rate_gg_1998::mult_coupling_in( double rate )
   return 1.;
 }
 
-typedef rate_neuron_ipn< nest::nonlinearities_sigmoid_rate_gg_1998 >
-  sigmoid_rate_gg_1998_ipn;
-typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate_gg_1998 >
-  rate_transformer_sigmoid_gg_1998;
+typedef rate_neuron_ipn< nest::nonlinearities_sigmoid_rate_gg_1998 > sigmoid_rate_gg_1998_ipn;
+typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate_gg_1998 > rate_transformer_sigmoid_gg_1998;
 
 template <>
 void RecordablesMap< sigmoid_rate_gg_1998_ipn >::create();

@@ -29,8 +29,7 @@
 
 #include "parameter.h"
 
-template class lockPTRDatum< nest::Parameter,
-  &nest::NestModule::ParameterType >;
+template class lockPTRDatum< nest::Parameter, &nest::NestModule::ParameterType >;
 
 namespace nest
 {
@@ -58,8 +57,7 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
   {
     throw KernelException( "NodePosParameter: not meta" );
   }
-  LayerMetadata const* const layer_meta =
-    dynamic_cast< LayerMetadata const* >( meta.get() );
+  LayerMetadata const* const layer_meta = dynamic_cast< LayerMetadata const* >( meta.get() );
   meta.unlock();
   if ( not layer_meta )
   {
@@ -82,10 +80,7 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
 }
 
 double
-SpatialDistanceParameter::value( librandom::RngPtr& rng,
-  index sgid,
-  Node* target,
-  thread target_thread ) const
+SpatialDistanceParameter::value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
 {
   Node* source = gid_to_node_ptr_( sgid, target_thread );
   // Initial checks
@@ -110,8 +105,7 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
   {
     throw KernelException( "SpatialDistanceParameter: not source meta" );
   }
-  LayerMetadata const* const source_layer_meta =
-    dynamic_cast< LayerMetadata const* >( source_meta.get() );
+  LayerMetadata const* const source_layer_meta = dynamic_cast< LayerMetadata const* >( source_meta.get() );
   source_meta.unlock();
   if ( not source_layer_meta )
   {
@@ -138,8 +132,7 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
   {
     throw KernelException( "SpatialDistanceParameter: not target meta" );
   }
-  LayerMetadata const* const target_layer_meta =
-    dynamic_cast< LayerMetadata const* >( target_meta.get() );
+  LayerMetadata const* const target_layer_meta = dynamic_cast< LayerMetadata const* >( target_meta.get() );
   target_meta.unlock();
   if ( not target_layer_meta )
   {
@@ -151,8 +144,7 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
     throw KernelException( "SpatialDistanceParameter: not valid target layer" );
   }
   index target_lid = target->get_gid() - target_meta->get_first_gid();
-  std::vector< double > target_pos =
-    target_layer->get_position_vector( target_lid );
+  std::vector< double > target_pos = target_layer->get_position_vector( target_lid );
 
   switch ( dimension_ )
   {
@@ -167,8 +159,7 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
         "Spatial distance dimension must be within the defined number of "
         "dimensions for the nodes." );
     }
-    return std::abs( source_layer->compute_displacement(
-      target_pos, source_lid )[ dimension_ - 1 ] );
+    return std::abs( source_layer->compute_displacement( target_pos, source_lid )[ dimension_ - 1 ] );
   default:
     throw KernelException( String::compose(
       "SpatialDistanceParameter dimension must be either 0 for unspecified,"

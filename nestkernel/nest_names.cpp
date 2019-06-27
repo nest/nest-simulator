@@ -197,8 +197,7 @@ const Name grng( "grng" );
 const Name grng_seed( "grng_seed" );
 const Name growth_curve( "growth_curve" );
 const Name growth_factor_buffer_spike_data( "growth_factor_buffer_spike_data" );
-const Name growth_factor_buffer_target_data(
-  "growth_factor_buffer_target_data" );
+const Name growth_factor_buffer_target_data( "growth_factor_buffer_target_data" );
 const Name growth_rate( "growth_rate" );
 const Name gsl_error_tol( "gsl_error_tol" );
 
@@ -380,8 +379,7 @@ const Name std_mod( "std_mod" );
 const Name stimulator( "stimulator" );
 const Name stop( "stop" );
 const Name structural_plasticity_synapses( "structural_plasticity_synapses" );
-const Name structural_plasticity_update_interval(
-  "structural_plasticity_update_interval" );
+const Name structural_plasticity_update_interval( "structural_plasticity_update_interval" );
 const Name supports_precise_spikes( "supports_precise_spikes" );
 const Name synapse_id( "synapse_id" );
 const Name synapse_label( "synapse_label" );

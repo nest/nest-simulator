@@ -50,8 +50,7 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_cond_beta >
-  nest::iaf_cond_beta::recordablesMap_;
+nest::RecordablesMap< nest::iaf_cond_beta > nest::iaf_cond_beta::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -64,12 +63,9 @@ void
 RecordablesMap< iaf_cond_beta >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_(
-    names::V_m, &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::V_M > );
-  insert_(
-    names::g_ex, &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::G_EXC > );
-  insert_(
-    names::g_in, &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::G_INH > );
+  insert_( names::V_m, &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::V_M > );
+  insert_( names::g_ex, &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::G_EXC > );
+  insert_( names::g_in, &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::G_INH > );
 
   insert_( names::t_ref_remaining, &iaf_cond_beta::get_r_ );
 }
@@ -80,18 +76,14 @@ RecordablesMap< iaf_cond_beta >::create()
  * ---------------------------------------------------------------- */
 
 extern "C" inline int
-nest::iaf_cond_beta_dynamics( double,
-  const double y[],
-  double f[],
-  void* pnode )
+nest::iaf_cond_beta_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
   typedef nest::iaf_cond_beta::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_cond_beta& node =
-    *( reinterpret_cast< nest::iaf_cond_beta* >( pnode ) );
+  const nest::iaf_cond_beta& node = *( reinterpret_cast< nest::iaf_cond_beta* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -105,8 +97,7 @@ nest::iaf_cond_beta_dynamics( double,
   const double I_leak = node.P_.g_L * ( V - node.P_.E_L );
 
   // dV_m/dt
-  f[ 0 ] = ( -I_leak - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e )
-    / node.P_.C_m;
+  f[ 0 ] = ( -I_leak - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e ) / node.P_.C_m;
 
   // d dg_exc/dt, dg_exc/dt
   f[ 1 ] = -y[ S::DG_EXC ] / node.P_.tau_decay_ex;
@@ -159,8 +150,7 @@ nest::iaf_cond_beta::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_cond_beta::State_& nest::iaf_cond_beta::State_::operator=(
-  const State_& s )
+nest::iaf_cond_beta::State_& nest::iaf_cond_beta::State_::operator=( const State_& s )
 {
   if ( this == &s ) // avoid assignment to self
   {
@@ -250,8 +240,7 @@ nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_rise_ex <= 0 || tau_decay_ex <= 0 || tau_rise_in <= 0
-    || tau_decay_in <= 0 )
+  if ( tau_rise_ex <= 0 || tau_decay_ex <= 0 || tau_rise_in <= 0 || tau_decay_in <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -264,9 +253,7 @@ nest::iaf_cond_beta::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_beta::State_::set( const DictionaryDatum& d,
-  const Parameters_&,
-  Node* node )
+nest::iaf_cond_beta::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
   updateValueParam< double >( d, names::V_m, y[ V_M ], node );
 }
@@ -337,8 +324,7 @@ nest::iaf_cond_beta::init_buffers_()
 
   if ( B_.s_ == 0 )
   {
-    B_.s_ =
-      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
   else
   {
@@ -372,8 +358,7 @@ nest::iaf_cond_beta::init_buffers_()
 }
 
 double
-nest::iaf_cond_beta::get_normalisation_factor( double tau_rise,
-  double tau_decay )
+nest::iaf_cond_beta::get_normalisation_factor( double tau_rise, double tau_decay )
 {
   // Factor used to normalise the synaptic conductance such that
   // incoming spike causes a peak conductance of 1 nS.
@@ -392,8 +377,7 @@ nest::iaf_cond_beta::get_normalisation_factor( double tau_rise,
   if ( std::abs( denom1 ) > std::numeric_limits< double >::epsilon() )
   {
     // peak time
-    const double t_p =
-      tau_decay * tau_rise * std::log( tau_decay / tau_rise ) / denom1;
+    const double t_p = tau_decay * tau_rise * std::log( tau_decay / tau_rise ) / denom1;
     // another denominator is computed here to check that it is != 0
     denom2 = std::exp( -t_p / tau_decay ) - std::exp( -t_p / tau_rise );
   }
@@ -416,10 +400,8 @@ nest::iaf_cond_beta::calibrate()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  V_.PSConInit_E = nest::iaf_cond_beta::get_normalisation_factor(
-    P_.tau_rise_ex, P_.tau_decay_ex );
-  V_.PSConInit_I = nest::iaf_cond_beta::get_normalisation_factor(
-    P_.tau_rise_in, P_.tau_decay_in );
+  V_.PSConInit_E = nest::iaf_cond_beta::get_normalisation_factor( P_.tau_rise_ex, P_.tau_decay_ex );
+  V_.PSConInit_I = nest::iaf_cond_beta::get_normalisation_factor( P_.tau_rise_in, P_.tau_decay_in );
   V_.RefractoryCounts = Time( Time::ms( P_.t_ref ) ).get_steps();
 
   // since t_ref >= 0, this can only fail in error
@@ -431,13 +413,10 @@ nest::iaf_cond_beta::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_beta::update( Time const& origin,
-  const long from,
-  const long to )
+nest::iaf_cond_beta::update( Time const& origin, const long from, const long to )
 {
 
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -512,14 +491,12 @@ nest::iaf_cond_beta::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   } // ensure conductance is positive
 }
@@ -531,8 +508,7 @@ nest::iaf_cond_beta::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_current() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
 
 void

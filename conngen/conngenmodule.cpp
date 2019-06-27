@@ -33,8 +33,7 @@
 #include "stringdatum.h"
 #include "tokenutils.h"
 
-template class lockPTRDatum< ConnectionGenerator,
-  &nest::ConnectionGeneratorType >;
+template class lockPTRDatum< ConnectionGenerator, &nest::ConnectionGeneratorType >;
 
 namespace nest
 {
@@ -70,8 +69,7 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
   i->createcommand( "CGConnect_cg_g_g_D_l", &cgconnect_cg_g_g_D_lfunction );
   i->createcommand( "CGParse", &cgparse_sfunction );
   i->createcommand( "CGParseFile", &cgparsefile_sfunction );
-  i->createcommand(
-    "CGSelectImplementation", &cgselectimplementation_s_sfunction );
+  i->createcommand( "CGSelectImplementation", &cgselectimplementation_s_sfunction );
 
   // Register the low level functions of the connection generator interface
   i->createcommand( ":cgsetmask", &cgsetmask_cg_g_gfunction );
@@ -113,19 +111,14 @@ CGSelectImplementation
 
 // CGConnect for conngen gidcollection gidcollection dict literal
 void
-ConnectionGeneratorModule::CGConnect_cg_g_g_D_lFunction::execute(
-  SLIInterpreter* i ) const
+ConnectionGeneratorModule::CGConnect_cg_g_g_D_lFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 5 );
 
-  ConnectionGeneratorDatum cg =
-    getValue< ConnectionGeneratorDatum >( i->OStack.pick( 4 ) );
-  GIDCollectionDatum sources =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
-  GIDCollectionDatum targets =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
-  DictionaryDatum params_map =
-    getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  ConnectionGeneratorDatum cg = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 4 ) );
+  GIDCollectionDatum sources = getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
+  GIDCollectionDatum targets = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  DictionaryDatum params_map = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< Name >( i->OStack.pick( 0 ) );
 
   cg_connect( cg, sources, targets, params_map, synmodel_name );
@@ -189,8 +182,7 @@ FirstVersion: February 2014
 SeeAlso: CGParse, CGConnect, CGSelectImplementation
 */
 void
-ConnectionGeneratorModule::CGParseFile_sFunction::execute(
-  SLIInterpreter* i ) const
+ConnectionGeneratorModule::CGParseFile_sFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
@@ -224,8 +216,7 @@ FirstVersion: September 2013
 SeeAlso: CGParse, CGParseFile, CGConnect
 */
 void
-ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute(
-  SLIInterpreter* i ) const
+ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
@@ -266,17 +257,13 @@ FirstVersion: March 2011
 SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation
 */
 void
-ConnectionGeneratorModule::CGSetMask_cg_g_gFunction::execute(
-  SLIInterpreter* i ) const
+ConnectionGeneratorModule::CGSetMask_cg_g_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  ConnectionGeneratorDatum cg =
-    getValue< ConnectionGeneratorDatum >( i->OStack.pick( 2 ) );
-  GIDCollectionDatum sources =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
-  GIDCollectionDatum targets =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  ConnectionGeneratorDatum cg = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 2 ) );
+  GIDCollectionDatum sources = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionDatum targets = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   cg_set_masks( cg, sources, targets );
 
@@ -309,13 +296,11 @@ FirstVersion: March 2011
 SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation
 */
 void
-ConnectionGeneratorModule::CGStart_cgFunction::execute(
-  SLIInterpreter* i ) const
+ConnectionGeneratorModule::CGStart_cgFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  ConnectionGeneratorDatum cgd =
-    getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
+  ConnectionGeneratorDatum cgd = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
 
   cgd->start();
 
@@ -356,8 +341,7 @@ ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  ConnectionGeneratorDatum cgd =
-    getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
+  ConnectionGeneratorDatum cgd = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
 
   const int arity = cgd->arity();
   double* values = new double[ arity ];

@@ -815,7 +815,6 @@ Scanner::print_error( const char* msg )
 {
   std::cout << "% parser: At line " << line << " position " << col << ".\n"
             << "% parser: Syntax Error: " << msg << "\n";
-  std::cout << "% parser: Context preceding the error follows:\n" << old_context
-            << std::endl
+  std::cout << "% parser: Context preceding the error follows:\n" << old_context << std::endl
             << context << std::endl;
 }

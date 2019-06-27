@@ -63,10 +63,8 @@ public:
   const std::string commandstring( void ) const;
   const std::string name( void ) const;
 
-  static lockPTRDatum< Parameter, &ParameterType > create_parameter(
-    const Token& );
-  static Parameter* create_parameter( const Name& name,
-    const DictionaryDatum& d );
+  static lockPTRDatum< Parameter, &ParameterType > create_parameter( const Token& );
+  static Parameter* create_parameter( const Name& name, const DictionaryDatum& d );
 
   using ParameterFactory = GenericFactory< Parameter >;
   using ParameterCreatorFunction = GenericFactory< Parameter >::CreatorFunction;

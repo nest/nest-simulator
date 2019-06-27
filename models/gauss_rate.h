@@ -123,7 +123,7 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+  void get( DictionaryDatum& ) const;        //!< Store current values in dictionary
   void set( const DictionaryDatum&, Node* ); //!< Set values from dicitonary
 
   double input( double h );               // non-linearity on input
@@ -150,8 +150,7 @@ nonlinearities_gauss_rate::mult_coupling_in( double rate )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_gauss_rate > gauss_rate_ipn;
-typedef rate_transformer_node< nest::nonlinearities_gauss_rate >
-  rate_transformer_gauss;
+typedef rate_transformer_node< nest::nonlinearities_gauss_rate > rate_transformer_gauss;
 
 template <>
 void RecordablesMap< gauss_rate_ipn >::create();

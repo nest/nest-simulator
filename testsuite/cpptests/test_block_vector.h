@@ -161,9 +161,7 @@ BOOST_AUTO_TEST_CASE( test_iterating )
 
   // Iterator decrement operator
   int k = N - 1;
-  for ( BlockVector< int >::const_iterator it = --block_vector.end();
-        it != block_vector.begin();
-        --it )
+  for ( BlockVector< int >::const_iterator it = --block_vector.end(); it != block_vector.begin(); --it )
   {
     BOOST_REQUIRE( *it == k );
     --k;
@@ -179,8 +177,7 @@ BOOST_AUTO_TEST_CASE( test_iterator_arithmetic )
     block_vector.push_back( i );
   }
   BOOST_REQUIRE( *( block_vector.begin() + 1 ) == block_vector[ 1 ] );
-  BOOST_REQUIRE(
-    *( block_vector.begin() + ( N - 1 ) ) == block_vector[ N - 1 ] );
+  BOOST_REQUIRE( *( block_vector.begin() + ( N - 1 ) ) == block_vector[ N - 1 ] );
 
   auto it = block_vector.begin();
   it += N - 5;

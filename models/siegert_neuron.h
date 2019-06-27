@@ -231,14 +231,11 @@ private:
     Buffers_( siegert_neuron& );
     Buffers_( const Buffers_&, siegert_neuron& );
 
-    std::vector< double >
-      drift_input_; //!< buffer for drift term received by DiffusionConnection
+    std::vector< double > drift_input_;     //!< buffer for drift term received by DiffusionConnection
     std::vector< double > diffusion_input_; //!< buffer for diffusion term
     // received by DiffusionConnection
-    std::vector< double >
-      last_y_values; //!< remembers y_values from last wfr_update
-    UniversalDataLogger< siegert_neuron >
-      logger_; //!< Logger for all analog data
+    std::vector< double > last_y_values;           //!< remembers y_values from last wfr_update
+    UniversalDataLogger< siegert_neuron > logger_; //!< Logger for all analog data
   };
 
   // ----------------------------------------------------------------
@@ -291,8 +288,7 @@ siegert_neuron::wfr_update( Time const& origin, const long from, const long to )
 }
 
 inline port
-siegert_neuron::handles_test_event( DiffusionConnectionEvent&,
-  rport receptor_type )
+siegert_neuron::handles_test_event( DiffusionConnectionEvent&, rport receptor_type )
 {
   if ( receptor_type == 0 )
   {
@@ -309,8 +305,7 @@ siegert_neuron::handles_test_event( DiffusionConnectionEvent&,
 }
 
 inline port
-siegert_neuron::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+siegert_neuron::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

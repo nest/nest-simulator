@@ -144,7 +144,6 @@ subprocess.call('doxygen', shell=True)
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
 
-
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -193,6 +192,9 @@ todo_include_todos = False
 # add numbered figure link
 numfig = True
 
+numfig_secnum_depth = (2)
+numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
+                 'code-block': 'Code Block %s'}
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -264,8 +266,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'NESTsimulator.tex', u'NEST simulator Documentation',
-     u'steffengraber', 'manual'),
+    (master_doc, 'NESTsimulator.tex', u'NEST Simulator Documentation',
+     u'NEST Developer Community', 'manual'),
 ]
 
 

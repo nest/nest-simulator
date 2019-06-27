@@ -4,6 +4,7 @@ Installation Instructions
 .. toctree::
    :hidden:
 
+   conda_install
    linux_install
    mac_install
    hpc_install
@@ -15,16 +16,17 @@ If you have not done so, you can :doc:`download NEST here <../download>`.
 Please choose on which system you want to install NEST:
 
 
-* :doc:`Debian/ Ubuntu installation <linux_install>`
-* :doc:`Mac OS X <mac_install>`
+* **BETA** :doc:`Conda installation for Linux and macOS <conda_install>`
+* :doc:`Standard Ubuntu installation <linux_install>`
+* :doc:`Standard macOS installation <mac_install>`
 * :doc:`High Performance Computer Systems <hpc_install>`
 * :doc:`NEST Live Media for Virtual Machines <livemedia>`
 
+For more information regarding installation see our :doc:`install_options`.
 
 
-.. note::  NEST is not supported natively on Microsoft Windows. However, it is possible to use NEST in Windows using a :doc:`virtual machine <livemedia>`
 
-
+.. note::  NEST is not supported natively on Microsoft Windows. However, it is possible to use NEST in Windows using a :doc:`virtual machine <livemedia>`.
 
 
 .. note:: These installation instructions are for **NEST 2.12 and later** as well as the most recent version obtained from `GitHub <https://github.com/nest/nest-simulator>`_.

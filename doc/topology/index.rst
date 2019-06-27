@@ -12,6 +12,7 @@ The Topology Module is designed to build complex, layered networks in NEST.
 
 .. toctree::
    :hidden:
+   :maxdepth: 1
 
    ../tutorials/pynest_tutorial/part_4_topologically_structured_networks
    ../tutorials/topology/index
@@ -21,13 +22,13 @@ The Topology Module is designed to build complex, layered networks in NEST.
    :caption: Examples using Topology
    :maxdepth: 1
 
-   conncomp
-   conncon_sources
-   conncon_targets
-   connex
-   gaussex
-   grid_iaf
-   grid_iaf_irr
-   grid_iaf_oc
+   examples/conncomp
+   examples/conncon_sources
+   examples/conncon_targets
+   examples/connex
+   examples/gaussex
+   examples/grid_iaf
+   examples/grid_iaf_irr
+   examples/grid_iaf_oc
 
 

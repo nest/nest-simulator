@@ -1,5 +1,5 @@
 /*
- *  run_all.cpp
+ *  test_streamers.h
  *
  *  This file is part of NEST.
  *
@@ -20,12 +20,40 @@
  *
  */
 
-#define BOOST_TEST_MODULE cpptests
+#ifndef TEST_STEAMERS_H
+#define TEST_STEAMERS_H
+
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 
-// Includes from cpptests
-#include "test_sort.h"
-#include "test_target_fields.h"
-#include "test_block_vector.h"
-#include "test_streamers.h"
+// C++ includes:
+#include <vector>
+#include <sstream>
+
+// Includes from libnestutil:
+#include "streamers.h"
+
+namespace nest
+{
+
+BOOST_AUTO_TEST_SUITE( test_streamers )
+
+/**
+ * Tests whether an example array with some numbers is streamed
+ * correctly by a single call to the operator<<().
+ */
+BOOST_AUTO_TEST_CASE( test_int )
+{
+  std::ostringstream s;
+  const std::vector<int> x = {2, 3, 4, 5};
+
+  s << x;
+
+  BOOST_REQUIRE( s.str() == "vector[2, 3, 4, 5]" );
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+} // of namespace nest
+
+#endif /* TEST_STEAMERS_H */

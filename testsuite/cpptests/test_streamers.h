@@ -39,8 +39,8 @@ namespace nest
 BOOST_AUTO_TEST_SUITE( test_streamers )
 
 /**
- * Tests whether two arrays with randomly generated numbers are streamers
- * correctly by a single call to streamers.
+ * Tests whether an example arrays with some numbers is streamed
+ * correctly by a single call to the operator<<().
  */
 BOOST_AUTO_TEST_CASE( test_int )
 {

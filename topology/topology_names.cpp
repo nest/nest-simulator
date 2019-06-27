@@ -76,7 +76,6 @@ const Name polar_axis( "polar_axis" );
 const Name positions( "positions" );
 const Name radius( "radius" );
 const Name rectangular( "rectangular" );
-const Name rho( "rho" );
 const Name row( "row" );
 const Name rows( "rows" );
 const Name sigma_x( "sigma_x" );

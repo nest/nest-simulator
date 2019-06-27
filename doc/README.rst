@@ -16,6 +16,9 @@ You will need the NEST source code in your project::
 
 Requirements for building the docs include::
 
+ python 3.6
+ setuptools
+ pandoc
  sphinx
  recommonmark
  sphinx-rtd-theme

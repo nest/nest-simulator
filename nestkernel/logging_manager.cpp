@@ -66,8 +66,7 @@ nest::LoggingManager::get_status( DictionaryDatum& dict )
 
 
 void
-nest::LoggingManager::register_logging_client(
-  const deliver_logging_event_ptr callback )
+nest::LoggingManager::register_logging_client( const deliver_logging_event_ptr callback )
 {
   assert( callback != 0 );
 
@@ -82,8 +81,7 @@ nest::LoggingManager::deliver_logging_event_( const LoggingEvent& event ) const
     default_logging_callback_( event );
   }
   std::vector< deliver_logging_event_ptr >::iterator it;
-  for ( std::vector< deliver_logging_event_ptr >::const_iterator it =
-          client_callbacks_.begin();
+  for ( std::vector< deliver_logging_event_ptr >::const_iterator it = client_callbacks_.begin();
         it != client_callbacks_.end();
         ++it )
   {
@@ -92,8 +90,7 @@ nest::LoggingManager::deliver_logging_event_( const LoggingEvent& event ) const
 }
 
 void
-nest::LoggingManager::default_logging_callback_(
-  const LoggingEvent& event ) const
+nest::LoggingManager::default_logging_callback_( const LoggingEvent& event ) const
 {
   std::ostream* out;
 

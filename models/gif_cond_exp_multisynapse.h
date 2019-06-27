@@ -44,8 +44,7 @@
 namespace nest
 {
 
-extern "C" int
-gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
+extern "C" int gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
@@ -261,8 +260,7 @@ private:
   void update( Time const&, const long, const long );
 
   // make dynamics function quasi-member
-  friend int
-  gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
+  friend int gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< gif_cond_exp_multisynapse >;
@@ -318,9 +316,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      Node* node ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
     //! Return the number of receptor ports
     inline size_t
@@ -351,8 +348,8 @@ private:
     std::vector< double > y_; //!< neuron state
 
     double I_stim_; //!< This is piecewise constant external current
-    double sfa_; //!< This is the change of the 'threshold' due to adaptation.
-    double stc_; //!< Spike-triggered current.
+    double sfa_;    //!< This is the change of the 'threshold' due to adaptation.
+    double stc_;    //!< Spike-triggered current.
 
     std::vector< double > sfa_elems_; //!< Vector of adaptation parameters.
     std::vector< double > stc_elems_; //!< Vector of spike-triggered parameters.
@@ -407,8 +404,7 @@ private:
    */
   struct Variables_
   {
-    std::vector< double >
-      P_sfa_; // decay terms of spike-triggered current elements
+    std::vector< double > P_sfa_; // decay terms of spike-triggered current elements
     std::vector< double > P_stc_; // decay terms of adaptive threshold elements
 
     librandom::RngPtr rng_; // random number generator of my own thread
@@ -459,10 +455,7 @@ private:
 };
 
 inline port
-gif_cond_exp_multisynapse::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+gif_cond_exp_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -471,11 +464,9 @@ gif_cond_exp_multisynapse::send_test_event( Node& target,
 }
 
 inline port
-gif_cond_exp_multisynapse::handles_test_event( SpikeEvent&,
-  rport receptor_type )
+gif_cond_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0
-    || receptor_type > static_cast< port >( P_.n_receptors() ) )
+  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }
@@ -485,8 +476,7 @@ gif_cond_exp_multisynapse::handles_test_event( SpikeEvent&,
 }
 
 inline port
-gif_cond_exp_multisynapse::handles_test_event( CurrentEvent&,
-  rport receptor_type )
+gif_cond_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -496,8 +486,7 @@ gif_cond_exp_multisynapse::handles_test_event( CurrentEvent&,
 }
 
 inline port
-gif_cond_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+gif_cond_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

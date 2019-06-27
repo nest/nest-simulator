@@ -211,9 +211,8 @@ private:
 
     Parameters_(); //!< Set default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      Node* node ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // State variables class --------------------------------------------
@@ -363,10 +362,7 @@ private:
 // Boilerplate inline function definitions ----------------------------------
 
 inline port
-iaf_cond_beta::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+iaf_cond_beta::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -394,8 +390,7 @@ iaf_cond_beta::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_cond_beta::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_cond_beta::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

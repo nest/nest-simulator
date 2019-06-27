@@ -233,8 +233,8 @@ private:
 
   struct Parameters_
   {
-    Time interval_; //!< recording interval, in ms
-    Time offset_;   //!< offset relative to which interval is calculated, in ms
+    Time interval_;                   //!< recording interval, in ms
+    Time offset_;                     //!< offset relative to which interval is calculated, in ms
     std::vector< Name > record_from_; //!< which data to record
 
     Parameters_();
@@ -322,8 +322,7 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const std::vector< Node* > siblings =
-      kernel().node_manager.get_thread_siblings( get_gid() );
+    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator s;
     for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {

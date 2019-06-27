@@ -134,15 +134,12 @@ public:
    * notified, if a MUSIC event is being received on the respective
    * channel and port.
    */
-  void register_music_event_in_proxy( std::string portname,
-    int channel,
-    nest::Node* mp );
+  void register_music_event_in_proxy( std::string portname, int channel, nest::Node* mp );
 
   /**
    * Set the acceptable latency (latency) for a music input port (portname).
    */
-  void set_music_in_port_acceptable_latency( std::string portname,
-    double latency );
+  void set_music_in_port_acceptable_latency( std::string portname, double latency );
   void set_music_in_port_max_buffered( std::string portname, int maxbuffered );
   /**
    * Data structure to hold variables and parameters associated with a port.

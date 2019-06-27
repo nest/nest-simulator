@@ -152,17 +152,15 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-  void set( const DictionaryDatum&,
-    Node* node ); //!< Set values from dicitonary
+  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
 
   bool operator()( librandom::RngPtr rng, double h );
 };
 
 inline bool gainfunction_ginzburg::operator()( librandom::RngPtr rng, double h )
 {
-  return rng->drand() < c1_ * h
-    + c2_ * 0.5 * ( 1.0 + tanh( c3_ * ( h - theta_ ) ) );
+  return rng->drand() < c1_ * h + c2_ * 0.5 * ( 1.0 + tanh( c3_ * ( h - theta_ ) ) );
 }
 
 typedef binary_neuron< nest::gainfunction_ginzburg > ginzburg_neuron;

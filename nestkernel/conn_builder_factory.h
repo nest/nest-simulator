@@ -49,10 +49,8 @@ public:
   virtual ~GenericConnBuilderFactory()
   {
   }
-  virtual ConnBuilder* create( GIDCollectionPTR,
-    GIDCollectionPTR,
-    const DictionaryDatum&,
-    const DictionaryDatum& ) const = 0;
+  virtual ConnBuilder*
+  create( GIDCollectionPTR, GIDCollectionPTR, const DictionaryDatum&, const DictionaryDatum& ) const = 0;
 };
 
 /**

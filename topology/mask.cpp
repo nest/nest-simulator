@@ -128,37 +128,23 @@ BoxMask< 2 >::calculate_min_max_values_()
   {
     const Position< 2 > lower_left_cos = ( lower_left_ - cntr_ ) * azimuth_cos_;
     const Position< 2 > lower_left_sin = ( lower_left_ - cntr_ ) * azimuth_sin_;
-    const Position< 2 > upper_right_cos =
-      ( upper_right_ - cntr_ ) * azimuth_cos_;
-    const Position< 2 > upper_right_sin =
-      ( upper_right_ - cntr_ ) * azimuth_sin_;
+    const Position< 2 > upper_right_cos = ( upper_right_ - cntr_ ) * azimuth_cos_;
+    const Position< 2 > upper_right_sin = ( upper_right_ - cntr_ ) * azimuth_sin_;
 
-    const double rotatedLLx =
-      lower_left_cos[ 0 ] - lower_left_sin[ 1 ] + cntr_[ 0 ];
-    const double rotatedLLy =
-      lower_left_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_[ 1 ];
+    const double rotatedLLx = lower_left_cos[ 0 ] - lower_left_sin[ 1 ] + cntr_[ 0 ];
+    const double rotatedLLy = lower_left_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_[ 1 ];
 
-    const double rotatedLRx =
-      upper_right_cos[ 0 ] - lower_left_sin[ 1 ] + cntr_[ 0 ];
-    const double rotatedLRy =
-      upper_right_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_[ 1 ];
+    const double rotatedLRx = upper_right_cos[ 0 ] - lower_left_sin[ 1 ] + cntr_[ 0 ];
+    const double rotatedLRy = upper_right_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_[ 1 ];
 
-    const double rotatedURx =
-      upper_right_cos[ 0 ] - upper_right_sin[ 1 ] + cntr_[ 0 ];
-    const double rotatedURy =
-      upper_right_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_[ 1 ];
+    const double rotatedURx = upper_right_cos[ 0 ] - upper_right_sin[ 1 ] + cntr_[ 0 ];
+    const double rotatedURy = upper_right_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_[ 1 ];
 
-    const double rotatedULx =
-      lower_left_cos[ 0 ] - upper_right_sin[ 1 ] + cntr_[ 0 ];
-    const double rotatedULy =
-      lower_left_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_[ 1 ];
+    const double rotatedULx = lower_left_cos[ 0 ] - upper_right_sin[ 1 ] + cntr_[ 0 ];
+    const double rotatedULy = lower_left_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_[ 1 ];
 
-    const double rotated_x[] = {
-      rotatedLLx, rotatedLRx, rotatedURx, rotatedULx
-    };
-    const double rotated_y[] = {
-      rotatedLLy, rotatedLRy, rotatedURy, rotatedULy
-    };
+    const double rotated_x[] = { rotatedLLx, rotatedLRx, rotatedURx, rotatedULx };
+    const double rotated_y[] = { rotatedLLy, rotatedLRy, rotatedURy, rotatedULy };
 
     min_values_[ 0 ] = *std::min_element( rotated_x, rotated_x + 4 );
     min_values_[ 1 ] = *std::min_element( rotated_y, rotated_y + 4 );
@@ -212,116 +198,71 @@ BoxMask< 3 >::calculate_min_max_values_()
   {
     const Position< 3 > lower_left_cos = ( lower_left_ - cntr_ ) * azimuth_cos_;
     const Position< 3 > lower_left_sin = ( lower_left_ - cntr_ ) * azimuth_sin_;
-    const Position< 3 > upper_right_cos =
-      ( upper_right_ - cntr_ ) * azimuth_cos_;
-    const Position< 3 > upper_right_sin =
-      ( upper_right_ - cntr_ ) * azimuth_sin_;
+    const Position< 3 > upper_right_cos = ( upper_right_ - cntr_ ) * azimuth_cos_;
+    const Position< 3 > upper_right_sin = ( upper_right_ - cntr_ ) * azimuth_sin_;
 
-    const double lower_left_polar_cos =
-      ( lower_left_[ 2 ] - cntr_[ 2 ] ) * polar_cos_;
-    const double lower_left_polar_sin =
-      ( lower_left_[ 2 ] - cntr_[ 2 ] ) * polar_sin_;
-    const double upper_right_polar_cos =
-      ( upper_right_[ 2 ] - cntr_[ 2 ] ) * polar_cos_;
-    const double upper_right_polar_sin =
-      ( upper_right_[ 2 ] - cntr_[ 2 ] ) * polar_sin_;
+    const double lower_left_polar_cos = ( lower_left_[ 2 ] - cntr_[ 2 ] ) * polar_cos_;
+    const double lower_left_polar_sin = ( lower_left_[ 2 ] - cntr_[ 2 ] ) * polar_sin_;
+    const double upper_right_polar_cos = ( upper_right_[ 2 ] - cntr_[ 2 ] ) * polar_cos_;
+    const double upper_right_polar_sin = ( upper_right_[ 2 ] - cntr_[ 2 ] ) * polar_sin_;
 
     const double rotatedLLLx =
-      ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_
-      - lower_left_polar_sin + cntr_[ 0 ];
-    const double rotatedLLLy =
-      lower_left_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_[ 1 ];
+      ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_ - lower_left_polar_sin + cntr_[ 0 ];
+    const double rotatedLLLy = lower_left_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_[ 1 ];
     const double rotatedLLLz =
-      ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_
-      + lower_left_polar_cos + cntr_[ 2 ];
+      ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_ + lower_left_polar_cos + cntr_[ 2 ];
 
     const double rotatedLLHx =
-      ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_
-      - upper_right_polar_sin + cntr_[ 0 ];
-    const double rotatedLLHy =
-      lower_left_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_[ 1 ];
+      ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_ - upper_right_polar_sin + cntr_[ 0 ];
+    const double rotatedLLHy = lower_left_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_[ 1 ];
     const double rotatedLLHz =
-      ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_
-      + upper_right_polar_cos + cntr_[ 2 ];
+      ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_ + upper_right_polar_cos + cntr_[ 2 ];
 
     const double rotatedHLLx =
-      ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_
-      - lower_left_polar_sin + cntr_[ 0 ];
-    const double rotatedHLLy =
-      upper_right_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_[ 1 ];
+      ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_ - lower_left_polar_sin + cntr_[ 0 ];
+    const double rotatedHLLy = upper_right_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_[ 1 ];
     const double rotatedHLLz =
-      ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_
-      + lower_left_polar_cos + cntr_[ 2 ];
+      ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_ + lower_left_polar_cos + cntr_[ 2 ];
 
     const double rotatedHLHx =
-      ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_
-      - upper_right_polar_sin + cntr_[ 0 ];
-    const double rotatedHLHy =
-      upper_right_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_[ 1 ];
+      ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_ - upper_right_polar_sin + cntr_[ 0 ];
+    const double rotatedHLHy = upper_right_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_[ 1 ];
     const double rotatedHLHz =
-      ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_
-      + upper_right_polar_cos + cntr_[ 2 ];
+      ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_ + upper_right_polar_cos + cntr_[ 2 ];
 
     const double rotatedHHHx =
-      ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_
-      - upper_right_polar_sin + cntr_[ 0 ];
-    const double rotatedHHHy =
-      upper_right_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_[ 1 ];
+      ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_ - upper_right_polar_sin + cntr_[ 0 ];
+    const double rotatedHHHy = upper_right_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_[ 1 ];
     const double rotatedHHHz =
-      ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_
-      + upper_right_polar_cos + cntr_[ 2 ];
+      ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_ + upper_right_polar_cos + cntr_[ 2 ];
 
     const double rotatedHHLx =
-      ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_
-      - lower_left_polar_sin + cntr_[ 0 ];
-    const double rotatedHHLy =
-      upper_right_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_[ 1 ];
+      ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_ - lower_left_polar_sin + cntr_[ 0 ];
+    const double rotatedHHLy = upper_right_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_[ 1 ];
     const double rotatedHHLz =
-      ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_
-      + lower_left_polar_cos + cntr_[ 2 ];
+      ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_ + lower_left_polar_cos + cntr_[ 2 ];
 
     const double rotatedLHHx =
-      ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_
-      - upper_right_polar_sin + cntr_[ 0 ];
-    const double rotatedLHHy =
-      lower_left_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_[ 1 ];
+      ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_ - upper_right_polar_sin + cntr_[ 0 ];
+    const double rotatedLHHy = lower_left_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_[ 1 ];
     const double rotatedLHHz =
-      ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_
-      + upper_right_polar_cos + cntr_[ 2 ];
+      ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_ + upper_right_polar_cos + cntr_[ 2 ];
 
     const double rotatedLHLx =
-      ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_
-      - lower_left_polar_sin + cntr_[ 0 ];
-    const double rotatedLHLy =
-      lower_left_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_[ 1 ];
+      ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_ - lower_left_polar_sin + cntr_[ 0 ];
+    const double rotatedLHLy = lower_left_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_[ 1 ];
     const double rotatedLHLz =
-      ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_
-      + lower_left_polar_cos + cntr_[ 2 ];
+      ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_ + lower_left_polar_cos + cntr_[ 2 ];
 
-    const double rotated_x[] = { rotatedLLLx,
-      rotatedLLHx,
-      rotatedHLLx,
-      rotatedHLHx,
-      rotatedHHHx,
-      rotatedHHLx,
-      rotatedLHHx,
-      rotatedLHLx };
-    const double rotated_y[] = { rotatedLLLy,
-      rotatedLLHy,
-      rotatedHLLy,
-      rotatedHLHy,
-      rotatedHHHy,
-      rotatedHHLy,
-      rotatedLHHy,
-      rotatedLHLy };
-    const double rotated_z[] = { rotatedLLLz,
-      rotatedLLHz,
-      rotatedHLLz,
-      rotatedHLHz,
-      rotatedHHHz,
-      rotatedHHLz,
-      rotatedLHHz,
-      rotatedLHLz };
+    const double rotated_x[] = {
+      rotatedLLLx, rotatedLLHx, rotatedHLLx, rotatedHLHx, rotatedHHHx, rotatedHHLx, rotatedLHHx, rotatedLHLx
+    };
+    const double rotated_y[] = {
+      rotatedLLLy, rotatedLLHy, rotatedHLLy, rotatedHLHy, rotatedHHHy, rotatedHHLy, rotatedLHHy, rotatedLHLy
+    };
+    const double rotated_z[] = {
+      rotatedLLLz, rotatedLLHz, rotatedHLLz, rotatedHLHz, rotatedHHHz, rotatedHHLz, rotatedLHHz, rotatedLHLz
+    };
 
     min_values_[ 0 ] = *std::min_element( rotated_x, rotated_x + 8 );
     min_values_[ 1 ] = *std::min_element( rotated_y, rotated_y + 8 );
@@ -351,10 +292,8 @@ BoxMask< 2 >::inside( const Position< 2 >& p ) const
 
   // See https://en.wikipedia.org/wiki/Rotation_matrix for more.
 
-  const double new_x = p[ 0 ] * azimuth_cos_ - cntr_x_az_cos_
-    + p[ 1 ] * azimuth_sin_ - cntr_y_az_sin_ + cntr_[ 0 ];
-  const double new_y = -p[ 0 ] * azimuth_sin_ + cntr_x_az_sin_
-    + p[ 1 ] * azimuth_cos_ - cntr_y_az_cos_ + cntr_[ 1 ];
+  const double new_x = p[ 0 ] * azimuth_cos_ - cntr_x_az_cos_ + p[ 1 ] * azimuth_sin_ - cntr_y_az_sin_ + cntr_[ 0 ];
+  const double new_y = -p[ 0 ] * azimuth_sin_ + cntr_x_az_sin_ + p[ 1 ] * azimuth_cos_ - cntr_y_az_cos_ + cntr_[ 1 ];
   const Position< 2 > new_p( new_x, new_y );
 
   // We need to add a small epsilon in case of rounding errors.
@@ -382,14 +321,11 @@ BoxMask< 3 >::inside( const Position< 3 >& p ) const
 
   // See https://en.wikipedia.org/wiki/Rotation_matrix for more.
 
-  const double new_x = p[ 0 ] * az_cos_pol_cos_ - cntr_x_az_cos_pol_cos_
-    + p[ 1 ] * az_sin_pol_cos_ - cntr_y_az_sin_pol_cos_ - p[ 2 ] * polar_sin_
-    + cntr_z_pol_sin_ + cntr_[ 0 ];
-  const double new_y = -p[ 0 ] * azimuth_sin_ + cntr_x_az_sin_
-    + p[ 1 ] * azimuth_cos_ - cntr_y_az_cos_ + cntr_[ 1 ];
-  const double new_z = p[ 0 ] * az_cos_pol_sin_ - cntr_x_az_cos_pol_sin_
-    + p[ 1 ] * az_sin_pol_sin_ - cntr_y_az_sin_pol_sin_ + p[ 2 ] * polar_cos_
-    - cntr_z_pol_cos_ + cntr_[ 2 ];
+  const double new_x = p[ 0 ] * az_cos_pol_cos_ - cntr_x_az_cos_pol_cos_ + p[ 1 ] * az_sin_pol_cos_
+    - cntr_y_az_sin_pol_cos_ - p[ 2 ] * polar_sin_ + cntr_z_pol_sin_ + cntr_[ 0 ];
+  const double new_y = -p[ 0 ] * azimuth_sin_ + cntr_x_az_sin_ + p[ 1 ] * azimuth_cos_ - cntr_y_az_cos_ + cntr_[ 1 ];
+  const double new_z = p[ 0 ] * az_cos_pol_sin_ - cntr_x_az_cos_pol_sin_ + p[ 1 ] * az_sin_pol_sin_
+    - cntr_y_az_sin_pol_sin_ + p[ 2 ] * polar_cos_ - cntr_z_pol_cos_ + cntr_[ 2 ];
 
   const Position< 3 > new_p( new_x, new_y, new_z );
 
@@ -401,10 +337,8 @@ template <>
 bool
 EllipseMask< 2 >::inside( const Position< 2 >& p ) const
 {
-  const double new_x = ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_
-    + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_;
-  const double new_y = ( p[ 0 ] - center_[ 0 ] ) * azimuth_sin_
-    - ( p[ 1 ] - center_[ 1 ] ) * azimuth_cos_;
+  const double new_x = ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_ + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_;
+  const double new_y = ( p[ 0 ] - center_[ 0 ] ) * azimuth_sin_ - ( p[ 1 ] - center_[ 1 ] ) * azimuth_cos_;
 
   return std::pow( new_x, 2 ) * x_scale_ + std::pow( new_y, 2 ) * y_scale_ <= 1;
 }
@@ -422,21 +356,16 @@ EllipseMask< 3 >::inside( const Position< 3 >& p ) const
   // See https://en.wikipedia.org/wiki/Rotation_matrix for more.
 
   const double new_x =
-    ( ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_
-      + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_ ) * polar_cos_
+    ( ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_ + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_ ) * polar_cos_
     - ( p[ 2 ] - center_[ 2 ] ) * polar_sin_;
 
-  const double new_y = ( ( p[ 0 ] - center_[ 0 ] ) * azimuth_sin_
-    - ( p[ 1 ] - center_[ 1 ] ) * azimuth_cos_ );
+  const double new_y = ( ( p[ 0 ] - center_[ 0 ] ) * azimuth_sin_ - ( p[ 1 ] - center_[ 1 ] ) * azimuth_cos_ );
 
   const double new_z =
-    ( ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_
-      + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_ ) * polar_sin_
+    ( ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_ + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_ ) * polar_sin_
     + ( p[ 2 ] - center_[ 2 ] ) * polar_cos_;
 
-  return std::pow( new_x, 2 ) * x_scale_ + std::pow( new_y, 2 ) * y_scale_
-    + std::pow( new_z, 2 ) * z_scale_
-    <= 1;
+  return std::pow( new_x, 2 ) * x_scale_ + std::pow( new_y, 2 ) * y_scale_ + std::pow( new_z, 2 ) * z_scale_ <= 1;
 }
 
 template <>

@@ -112,8 +112,7 @@ TopologyModule::create_mask( const Token& t )
     bool has_anchor = false;
     AbstractMask* mask = 0;
 
-    for ( Dictionary::iterator dit = ( *dd )->begin(); dit != ( *dd )->end();
-          ++dit )
+    for ( Dictionary::iterator dit = ( *dd )->begin(); dit != ( *dd )->end(); ++dit )
     {
 
       if ( dit->first == names::anchor )
@@ -127,11 +126,9 @@ TopologyModule::create_mask( const Token& t )
 
         if ( mask != 0 )
         { // mask has already been defined
-          throw BadProperty(
-            "Mask definition dictionary contains extraneous items." );
+          throw BadProperty( "Mask definition dictionary contains extraneous items." );
         }
-        mask =
-          create_mask( dit->first, getValue< DictionaryDatum >( dit->second ) );
+        mask = create_mask( dit->first, getValue< DictionaryDatum >( dit->second ) );
       }
     }
 
@@ -144,19 +141,16 @@ TopologyModule::create_mask( const Token& t )
       try
       {
 
-        std::vector< double > anchor =
-          getValue< std::vector< double > >( anchor_token );
+        std::vector< double > anchor = getValue< std::vector< double > >( anchor_token );
         AbstractMask* amask;
 
         switch ( anchor.size() )
         {
         case 2:
-          amask = new AnchoredMask< 2 >(
-            dynamic_cast< Mask< 2 >& >( *mask ), anchor );
+          amask = new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), anchor );
           break;
         case 3:
-          amask = new AnchoredMask< 3 >(
-            dynamic_cast< Mask< 3 >& >( *mask ), anchor );
+          amask = new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), anchor );
           break;
         default:
           throw BadProperty( "Anchor must be 2- or 3-dimensional." );
@@ -184,8 +178,7 @@ TopologyModule::create_mask( const Token& t )
         case 2:
           try
           {
-            GridMask< 2 >& grid_mask_2d =
-              dynamic_cast< GridMask< 2 >& >( *mask );
+            GridMask< 2 >& grid_mask_2d = dynamic_cast< GridMask< 2 >& >( *mask );
             grid_mask_2d.set_anchor( Position< 2, int >( column, row ) );
           }
           catch ( std::bad_cast& e )
@@ -196,8 +189,7 @@ TopologyModule::create_mask( const Token& t )
         case 3:
           try
           {
-            GridMask< 3 >& grid_mask_3d =
-              dynamic_cast< GridMask< 3 >& >( *mask );
+            GridMask< 3 >& grid_mask_3d = dynamic_cast< GridMask< 3 >& >( *mask );
             grid_mask_3d.set_anchor( Position< 3, int >( column, row, layer ) );
           }
           catch ( std::bad_cast& e )
@@ -271,13 +263,11 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "DumpLayerNodes_os_g", &dumplayernodes_os_gfunction );
 
-  i->createcommand(
-    "DumpLayerConnections_os_g_g_l", &dumplayerconnections_os_g_g_lfunction );
+  i->createcommand( "DumpLayerConnections_os_g_g_l", &dumplayerconnections_os_g_g_lfunction );
 
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
 
-  i->createcommand(
-    "SelectNodesByMask_g_a_M", &selectnodesbymask_g_a_Mfunction );
+  i->createcommand( "SelectNodesByMask_g_a_M", &selectnodesbymask_g_a_Mfunction );
 
   // Register mask types
   register_mask< BallMask< 2 > >();
@@ -317,8 +307,7 @@ TopologyModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  DictionaryDatum layer_dict =
-    getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  DictionaryDatum layer_dict = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   GIDCollectionDatum layer = create_layer( layer_dict );
@@ -368,8 +357,7 @@ TopologyModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  const GIDCollectionDatum layer =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   ArrayDatum result = get_position( layer );
 
@@ -433,17 +421,13 @@ TopologyModule::Displacement_g_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer_to =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const GIDCollectionDatum layer_to = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
-  const GIDCollectionDatum layer_from =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  const GIDCollectionDatum layer_from = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
 
-  if ( layer_to->size() != 1 and layer_from->size() != 1
-    and not( layer_to->size() == layer_from->size() ) )
+  if ( layer_to->size() != 1 and layer_from->size() != 1 and not( layer_to->size() == layer_from->size() ) )
   {
-    throw BadProperty(
-      "GIDCollections must have equal length or one must have size 1." );
+    throw BadProperty( "GIDCollections must have equal length or one must have size 1." );
   }
 
   ArrayDatum result = displacement( layer_to, layer_from );
@@ -458,8 +442,7 @@ TopologyModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
   const ArrayDatum point = getValue< ArrayDatum >( i->OStack.pick( 1 ) );
 
   ArrayDatum result = displacement( layer, point );
@@ -516,17 +499,13 @@ TopologyModule::Distance_g_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer_to =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const GIDCollectionDatum layer_to = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
-  const GIDCollectionDatum layer_from =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  const GIDCollectionDatum layer_from = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
 
-  if ( layer_to->size() != 1 and layer_from->size() != 1
-    and not( layer_to->size() == layer_from->size() ) )
+  if ( layer_to->size() != 1 and layer_from->size() != 1 and not( layer_to->size() == layer_from->size() ) )
   {
-    throw BadProperty(
-      "GIDCollections must have equal length or one must have size 1." );
+    throw BadProperty( "GIDCollections must have equal length or one must have size 1." );
   }
 
   Token result = distance( layer_to, layer_from );
@@ -541,8 +520,7 @@ TopologyModule::Distance_a_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
   const ArrayDatum point = getValue< ArrayDatum >( i->OStack.pick( 1 ) );
 
   Token result = distance( layer, point );
@@ -575,8 +553,7 @@ TopologyModule::CreateMask_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  const DictionaryDatum mask_dict =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const DictionaryDatum mask_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   MaskDatum datum = nest::create_mask( mask_dict );
 
@@ -603,8 +580,7 @@ TopologyModule::Inside_a_MFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  std::vector< double > point =
-    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
+  std::vector< double > point = getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
 
   bool ret = inside( point, mask );
@@ -845,12 +821,9 @@ TopologyModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  const GIDCollectionDatum source =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
-  const GIDCollectionDatum target =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
-  const DictionaryDatum connection_dict =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const GIDCollectionDatum source = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  const GIDCollectionDatum target = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  const DictionaryDatum connection_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   connect_layers( source, target, connection_dict );
 
@@ -876,8 +849,7 @@ TopologyModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  const GIDCollectionDatum layer =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   DictionaryDatum result = get_layer_status( layer );
 
@@ -929,8 +901,7 @@ TopologyModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
   OstreamDatum out = getValue< OstreamDatum >( i->OStack.pick( 1 ) );
 
   dump_layer_nodes( layer, out );
@@ -980,16 +951,13 @@ TopologyModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
 */
 
 void
-TopologyModule::DumpLayerConnections_os_g_g_lFunction::execute(
-  SLIInterpreter* i ) const
+TopologyModule::DumpLayerConnections_os_g_g_lFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 4 );
 
   OstreamDatum out_file = getValue< OstreamDatum >( i->OStack.pick( 3 ) );
-  const GIDCollectionDatum source_layer =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
-  const GIDCollectionDatum target_layer =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  const GIDCollectionDatum source_layer = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  const GIDCollectionDatum target_layer = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   const Token syn_model = i->OStack.pick( 0 );
 
   dump_layer_connections( syn_model, source_layer, target_layer, out_file );
@@ -1013,15 +981,12 @@ TopologyModule::Cvdict_MFunction::execute( SLIInterpreter* i ) const
 
 
 void
-TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
-  SLIInterpreter* i ) const
+TopologyModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  const GIDCollectionDatum layer_gc =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
-  std::vector< double > anchor =
-    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
+  const GIDCollectionDatum layer_gc = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  std::vector< double > anchor = getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
 
   std::vector< index > mask_gids;
@@ -1045,9 +1010,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
 
     MaskedLayer< 2 > ml = MaskedLayer< 2 >( *layer, mask, false );
 
-    for ( Ntree< 2, index >::masked_iterator it =
-            ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
-          it != ml.end();
+    for ( Ntree< 2, index >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) ); it != ml.end();
           ++it )
     {
       mask_gids.push_back( it->second );
@@ -1063,8 +1026,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
 
     MaskedLayer< 3 > ml = MaskedLayer< 3 >( *layer, mask, false );
 
-    for ( Ntree< 3, index >::masked_iterator it =
-            ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
+    for ( Ntree< 3, index >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
           it != ml.end();
           ++it )
     {

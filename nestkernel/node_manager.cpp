@@ -147,11 +147,9 @@ NodeManager::add_node( index model_id, long n )
   kernel().modelrange_manager.add_range( model_id, min_gid, max_gid );
 
   // clear any exceptions from previous call
-  std::vector< lockPTR< WrappedThreadException > >(
-    kernel().vp_manager.get_num_threads() ).swap( exceptions_raised_ );
+  std::vector< lockPTR< WrappedThreadException > >( kernel().vp_manager.get_num_threads() ).swap( exceptions_raised_ );
 
-  auto gc_ptr = GIDCollectionPTR(
-    new GIDCollectionPrimitive( min_gid, max_gid, model_id ) );
+  auto gc_ptr = GIDCollectionPTR( new GIDCollectionPrimitive( min_gid, max_gid, model_id ) );
 
   if ( model->has_proxies() )
   {
@@ -191,27 +189,21 @@ NodeManager::add_node( index model_id, long n )
   // resize the target table for delivery of events to devices to make
   // sure the first dimension matches the number of local nodes and
   // the second dimension matches number of synapse types
-  kernel()
-    .connection_manager.resize_target_table_devices_to_number_of_neurons();
-  kernel()
-    .connection_manager
-    .resize_target_table_devices_to_number_of_synapse_types();
+  kernel().connection_manager.resize_target_table_devices_to_number_of_neurons();
+  kernel().connection_manager.resize_target_table_devices_to_number_of_synapse_types();
 
   return gc_ptr;
 }
 
 
 void
-NodeManager::add_neurons_( Model& model,
-  index min_gid,
-  index max_gid,
-  GIDCollectionPTR gc_ptr )
+NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr )
 {
   // upper limit for number of neurons per thread; in practice, either
   // max_new_per_thread-1 or max_new_per_thread nodes will be created
   const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
-  const size_t max_new_per_thread = static_cast< size_t >(
-    std::ceil( static_cast< double >( max_gid - min_gid + 1 ) / num_vps ) );
+  const size_t max_new_per_thread =
+    static_cast< size_t >( std::ceil( static_cast< double >( max_gid - min_gid + 1 ) / num_vps ) );
 
 #pragma omp parallel
   {
@@ -233,8 +225,7 @@ NodeManager::add_neurons_( Model& model,
       //   - gid local to this thread
       //   - gid >= min_gid
       const size_t vp = kernel().vp_manager.thread_to_vp( t );
-      const size_t min_gid_vp =
-        kernel().vp_manager.suggest_vp_for_gid( min_gid );
+      const size_t min_gid_vp = kernel().vp_manager.suggest_vp_for_gid( min_gid );
 
       size_t gid = 0;
       if ( min_gid_vp == vp )
@@ -269,17 +260,13 @@ NodeManager::add_neurons_( Model& model,
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( t ) =
-        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( t ) = lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
 }
 
 void
-NodeManager::add_devices_( Model& model,
-  index min_gid,
-  index max_gid,
-  GIDCollectionPTR gc_ptr )
+NodeManager::add_devices_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr )
 {
   const size_t n_per_thread = max_gid - min_gid + 1;
 
@@ -312,17 +299,13 @@ NodeManager::add_devices_( Model& model,
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( t ) =
-        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( t ) = lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
 }
 
 void
-NodeManager::add_music_nodes_( Model& model,
-  index min_gid,
-  index max_gid,
-  GIDCollectionPTR gc_ptr )
+NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr )
 {
 #pragma omp parallel
   {
@@ -352,8 +335,7 @@ NodeManager::add_music_nodes_( Model& model,
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( t ) =
-        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( t ) = lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
 }
@@ -428,8 +410,8 @@ NodeManager::is_local_gid( index gid ) const
 index
 NodeManager::get_max_num_local_nodes() const
 {
-  return static_cast< index >( ceil( static_cast< double >( size() )
-    / kernel().vp_manager.get_num_virtual_processes() ) );
+  return static_cast< index >(
+    ceil( static_cast< double >( size() ) / kernel().vp_manager.get_num_virtual_processes() ) );
 }
 
 index
@@ -477,8 +459,7 @@ NodeManager::get_node_or_proxy( index gid )
 Node*
 NodeManager::get_mpi_local_node_or_device_head( index gid )
 {
-  thread t = kernel().vp_manager.vp_to_thread(
-    kernel().vp_manager.suggest_vp_for_gid( gid ) );
+  thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp_for_gid( gid ) );
 
   Node* node = local_nodes_[ t ].get_node_by_gid( gid );
 
@@ -623,9 +604,7 @@ NodeManager::destruct_nodes_()
 }
 
 void
-NodeManager::set_status_single_node_( Node& target,
-  const DictionaryDatum& d,
-  bool clear_flags )
+NodeManager::set_status_single_node_( Node& target, const DictionaryDatum& d, bool clear_flags )
 {
   // proxies have no properties
   if ( not target.is_proxy() )
@@ -638,8 +617,7 @@ NodeManager::set_status_single_node_( Node& target,
 
     // TODO: Not sure this check should be at single neuron level; advantage is
     // it stops after first failure.
-    ALL_ENTRIES_ACCESSED(
-      *d, "NodeManager::set_status", "Unread dictionary entries: " );
+    ALL_ENTRIES_ACCESSED( *d, "NodeManager::set_status", "Unread dictionary entries: " );
   }
 }
 
@@ -662,8 +640,7 @@ NodeManager::prepare_nodes()
   size_t num_active_nodes = 0;     // counts nodes that will be updated
   size_t num_active_wfr_nodes = 0; // counts nodes that use waveform relaxation
 
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
-    kernel().vp_manager.get_num_threads() );
+  std::vector< lockPTR< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
 #ifdef _OPENMP
 #pragma omp parallel reduction( + : num_active_nodes, num_active_wfr_nodes )
@@ -678,9 +655,7 @@ NodeManager::prepare_nodes()
     // exceptions here and then handle them after the parallel region.
     try
     {
-      for ( SparseNodeArray::const_iterator it = local_nodes_[ t ].begin();
-            it != local_nodes_[ t ].end();
-            ++it )
+      for ( SparseNodeArray::const_iterator it = local_nodes_[ t ].begin(); it != local_nodes_[ t ].end(); ++it )
       {
         prepare_node_( ( it )->get_node() );
         if ( not( it->get_node() )->is_frozen() )
@@ -696,8 +671,7 @@ NodeManager::prepare_nodes()
     catch ( std::exception& e )
     {
       // so throw the exception after parallel region
-      exceptions_raised.at( t ) =
-        lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
+      exceptions_raised.at( t ) = lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
     }
 
   } // end of parallel section / end of for threads
@@ -718,8 +692,7 @@ NodeManager::prepare_nodes()
   if ( num_active_wfr_nodes != 0 )
   {
     tmp_str = num_active_wfr_nodes == 1 ? " uses " : " use ";
-    os << " " << num_active_wfr_nodes << " of them" << tmp_str
-       << "iterative solution techniques.";
+    os << " " << num_active_wfr_nodes << " of them" << tmp_str << "iterative solution techniques.";
   }
 
   num_active_nodes_ = num_active_nodes;
@@ -774,14 +747,10 @@ NodeManager::check_wfr_use()
   wfr_is_used_ = kernel().mpi_manager.any_true( wfr_is_used_ );
 
   GapJunctionEvent::set_coeff_length(
-    kernel().connection_manager.get_min_delay()
-    * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 ) );
-  InstantaneousRateConnectionEvent::set_coeff_length(
-    kernel().connection_manager.get_min_delay() );
-  DelayedRateConnectionEvent::set_coeff_length(
-    kernel().connection_manager.get_min_delay() );
-  DiffusionConnectionEvent::set_coeff_length(
-    kernel().connection_manager.get_min_delay() );
+    kernel().connection_manager.get_min_delay() * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 ) );
+  InstantaneousRateConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
+  DelayedRateConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
+  DiffusionConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
 }
 
 void
@@ -791,8 +760,7 @@ NodeManager::print( std::ostream& out ) const
   const double max_gid_width = std::floor( std::log10( max_gid ) );
   const double gid_range_width = 6 + 2 * max_gid_width;
 
-  for ( std::vector< modelrange >::const_iterator it =
-          kernel().modelrange_manager.begin();
+  for ( std::vector< modelrange >::const_iterator it = kernel().modelrange_manager.begin();
         it != kernel().modelrange_manager.end();
         ++it )
   {
@@ -806,8 +774,7 @@ NodeManager::print( std::ostream& out ) const
     {
       gid_range_strs << " .. " << std::setw( max_gid_width + 1 ) << last_gid;
     }
-    out << std::setw( gid_range_width ) << std::left << gid_range_strs.str()
-        << " " << mod->get_name();
+    out << std::setw( gid_range_width ) << std::left << gid_range_strs.str() << " " << mod->get_name();
 
     if ( it + 1 != kernel().modelrange_manager.end() )
     {

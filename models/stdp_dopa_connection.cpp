@@ -75,8 +75,7 @@ STDPDopaCommonProperties::get_status( DictionaryDatum& d ) const
 }
 
 void
-STDPDopaCommonProperties::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
@@ -107,8 +106,7 @@ STDPDopaCommonProperties::get_node()
 {
   if ( vt_ == 0 )
   {
-    throw BadProperty(
-      "No volume transmitter has been assigned to the dopamine synapse." );
+    throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
   }
   else
   {

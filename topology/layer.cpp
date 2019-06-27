@@ -44,10 +44,8 @@
 namespace nest
 {
 
-GIDCollectionMetadataPTR AbstractLayer::cached_ntree_gc_ =
-  GIDCollectionMetadataPTR( 0 );
-GIDCollectionMetadataPTR AbstractLayer::cached_vector_gc_ =
-  GIDCollectionMetadataPTR( 0 );
+GIDCollectionMetadataPTR AbstractLayer::cached_ntree_gc_ = GIDCollectionMetadataPTR( 0 );
+GIDCollectionMetadataPTR AbstractLayer::cached_vector_gc_ = GIDCollectionMetadataPTR( 0 );
 
 AbstractLayer::~AbstractLayer()
 {
@@ -60,8 +58,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   AbstractLayer* layer_local = 0;
 
   auto element_name = getValue< std::string >( layer_dict, names::elements );
-  auto element_model =
-    kernel().model_manager.get_modeldict()->lookup( element_name );
+  auto element_model = kernel().model_manager.get_modeldict()->lookup( element_name );
 
   if ( element_model.empty() )
   {
@@ -71,11 +68,9 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 
   if ( layer_dict->known( names::positions ) )
   {
-    if ( layer_dict->known( names::rows ) or layer_dict->known( names::columns )
-      or layer_dict->known( names::depth ) )
+    if ( layer_dict->known( names::rows ) or layer_dict->known( names::columns ) or layer_dict->known( names::depth ) )
     {
-      throw BadProperty(
-        "Can not specify both positions and rows or columns." );
+      throw BadProperty( "Can not specify both positions and rows or columns." );
     }
     int num_dimensions = 0;
 
@@ -84,8 +79,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     {
       TokenArray positions = getValue< TokenArray >( tkn );
       length = positions.size();
-      std::vector< double > pos =
-        getValue< std::vector< double > >( positions[ 0 ] );
+      std::vector< double > pos = getValue< std::vector< double > >( positions[ 0 ] );
       num_dimensions = pos.size();
     }
     else if ( tkn.is_a< ParameterDatum >() )
@@ -95,20 +89,16 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
       pd->unlock();
       // To avoid nasty segfaults, we check that the parameter is indeed a
       // DimensionParameter.
-      if ( not std::is_same< std::remove_reference< decltype(
-                               *positions ) >::type,
-             DimensionParameter >::value )
+      if ( not std::is_same< std::remove_reference< decltype( *positions ) >::type, DimensionParameter >::value )
       {
-        throw KernelException(
-          "When 'positions' is a Parameter, it must be a DimensionParameter." );
+        throw KernelException( "When 'positions' is a Parameter, it must be a DimensionParameter." );
       }
       length = getValue< long >( layer_dict, names::n );
       num_dimensions = positions->get_num_dimensions();
     }
     else
     {
-      throw KernelException(
-        "'positions' must be an array or a DimensionParameter." );
+      throw KernelException( "'positions' must be an array or a DimensionParameter." );
     }
 
     if ( length == 0 )
@@ -137,8 +127,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
       throw BadProperty( "Both columns and rows must be given." );
     }
 
-    length = getValue< long >( layer_dict, names::columns )
-      * getValue< long >( layer_dict, names::rows );
+    length = getValue< long >( layer_dict, names::columns ) * getValue< long >( layer_dict, names::rows );
 
     if ( layer_dict->known( names::depth ) )
     {
@@ -160,8 +149,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   GIDCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
 
   // We have at least one element, create a GIDCollection for it
-  GIDCollectionPTR gid_coll =
-    kernel().node_manager.add_node( element_id, length );
+  GIDCollectionPTR gid_coll = kernel().node_manager.add_node( element_id, length );
 
   gid_coll->set_metadata( layer_meta );
 

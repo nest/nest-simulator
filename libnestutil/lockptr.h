@@ -256,8 +256,7 @@ public:
   }
 
 
-  bool operator not()
-    const //!< returns true if and only if obj->pointee == NULL
+  bool operator not() const //!< returns true if and only if obj->pointee == NULL
   {
     // assert(obj != NULL);
 

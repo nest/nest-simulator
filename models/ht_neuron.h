@@ -233,9 +233,8 @@ private:
   {
     Parameters_();
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      Node* node ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
 
     // Note: Conductances are unitless
     // Leaks
@@ -260,11 +259,11 @@ private:
     double E_rev_AMPA;     // mV
 
     double g_peak_NMDA;
-    double tau_rise_NMDA;  // ms
-    double tau_decay_NMDA; // ms
-    double E_rev_NMDA;     // mV
-    double V_act_NMDA;     // mV, inactive for V << Vact, inflection of sigmoid
-    double S_act_NMDA;     // mV, scale of inactivation
+    double tau_rise_NMDA;    // ms
+    double tau_decay_NMDA;   // ms
+    double E_rev_NMDA;       // mV
+    double V_act_NMDA;       // mV, inactive for V << Vact, inflection of sigmoid
+    double S_act_NMDA;       // mV, scale of inactivation
     double tau_Mg_slow_NMDA; // ms
     double tau_Mg_fast_NMDA; // ms
     bool instant_unblock_NMDA;
@@ -511,8 +510,7 @@ ht_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   assert( B_.spike_inputs_.size() == 4 );
 
-  if ( not( INF_SPIKE_RECEPTOR < receptor_type
-         && receptor_type < SUP_SPIKE_RECEPTOR ) )
+  if ( not( INF_SPIKE_RECEPTOR < receptor_type && receptor_type < SUP_SPIKE_RECEPTOR ) )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
     return 0;

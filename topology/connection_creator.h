@@ -104,8 +104,7 @@ public:
    * @param target target layer.
    */
   template < int D >
-  void
-  connect( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void connect( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
 private:
   /**
@@ -123,14 +122,11 @@ private:
     void define( MaskedLayer< D >* );
     void define( std::vector< std::pair< Position< D >, index > >* );
 
-    typename Ntree< D, index >::masked_iterator masked_begin(
-      const Position< D >& pos ) const;
+    typename Ntree< D, index >::masked_iterator masked_begin( const Position< D >& pos ) const;
     typename Ntree< D, index >::masked_iterator masked_end() const;
 
-    typename std::vector< std::pair< Position< D >, index > >::iterator
-    begin() const;
-    typename std::vector< std::pair< Position< D >, index > >::iterator
-    end() const;
+    typename std::vector< std::pair< Position< D >, index > >::iterator begin() const;
+    typename std::vector< std::pair< Position< D >, index > >::iterator end() const;
 
   private:
     MaskedLayer< D >* masked_layer_;
@@ -146,31 +142,18 @@ private:
     const Layer< D >& source );
 
   template < int D >
-  void target_driven_connect_( Layer< D >& source,
-    Layer< D >& target,
-    GIDCollectionPTR target_gc );
+  void target_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void source_driven_connect_( Layer< D >& source,
-    Layer< D >& target,
-    GIDCollectionPTR target_gc );
+  void source_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void convergent_connect_( Layer< D >& source,
-    Layer< D >& target,
-    GIDCollectionPTR target_gc );
+  void convergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void divergent_connect_( Layer< D >& source,
-    Layer< D >& target,
-    GIDCollectionPTR target_gc );
+  void divergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
-  void connect_( index s,
-    Node* target,
-    thread target_thread,
-    double w,
-    double d,
-    index syn );
+  void connect_( index s, Node* target, thread target_thread, double w, double d, index syn );
 
   /**
    * Calculate parameter values for this position.
@@ -203,12 +186,7 @@ private:
 // TODO481 : do we need this function at all? Why not call kernel's connect
 // directly?
 inline void
-ConnectionCreator::connect_( index s,
-  Node* target,
-  thread target_thread,
-  double w,
-  double d,
-  index syn )
+ConnectionCreator::connect_( index s, Node* target, thread target_thread, double w, double d, index syn )
 {
   // TODO481 Why do we need to check for locality her?
   // check whether the target is on this process
@@ -220,8 +198,7 @@ ConnectionCreator::connect_( index s,
     if ( tid == target_thread )
     {
       // TODO481 implement in terms of nest-api
-      kernel().connection_manager.connect(
-        s, target, target_thread, syn, dummy_param_, d, w );
+      kernel().connection_manager.connect( s, target, target_thread, syn, dummy_param_, d, w );
     }
   }
 }

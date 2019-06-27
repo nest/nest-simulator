@@ -76,10 +76,7 @@ public:
    */
   virtual double value( librandom::RngPtr& rng, Node* node ) const = 0;
   virtual double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
     return value( rng, nullptr );
   }
@@ -123,15 +120,13 @@ public:
    * Create comparison of this parameter with another.
    * @returns a new dynamically allocated parameter.
    */
-  virtual Parameter* compare_parameter( const Parameter& other,
-    const DictionaryDatum& d ) const;
+  virtual Parameter* compare_parameter( const Parameter& other, const DictionaryDatum& d ) const;
   /**
    * Create parameter choosing between two other parameters,
    * based on this parameter.
    * @returns a new dynamically allocated parameter.
    */
-  virtual Parameter* conditional_parameter( const Parameter& if_true,
-    const Parameter& if_false ) const;
+  virtual Parameter* conditional_parameter( const Parameter& if_true, const Parameter& if_false ) const;
   /**
    * Create the exponential of this parameter.
    * @returns a new dynamically allocated parameter.
@@ -158,8 +153,7 @@ public:
    * @returns a new dynamically allocated parameter.
    */
   virtual Parameter* dimension_parameter( const Parameter& y_parameter ) const;
-  virtual Parameter* dimension_parameter( const Parameter& y_parameter,
-    const Parameter& z_parameter ) const;
+  virtual Parameter* dimension_parameter( const Parameter& y_parameter, const Parameter& z_parameter ) const;
 
 protected:
   Node* gid_to_node_ptr_( const index, const thread ) const;
@@ -435,8 +429,7 @@ public:
     , dimension_( 0 )
     , node_location_( 0 )
   {
-    bool dimension_specified =
-      updateValue< long >( d, names::dimension, dimension_ );
+    bool dimension_specified = updateValue< long >( d, names::dimension, dimension_ );
     if ( not dimension_specified )
     {
       throw BadParameterValue(
@@ -445,11 +438,9 @@ public:
     }
     if ( dimension_ < 0 )
     {
-      throw BadParameterValue(
-        "Node position parameter dimension cannot be negative." );
+      throw BadParameterValue( "Node position parameter dimension cannot be negative." );
     }
-    updateValue< long >(
-      d, names::type_id, node_location_ ); // TODO: Better name than "type_id"?
+    updateValue< long >( d, names::type_id, node_location_ ); // TODO: Better name than "type_id"?
     if ( node_location_ < 0 or 2 < node_location_ )
     {
       throw BadParameterValue(
@@ -471,16 +462,12 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
     switch ( node_location_ )
     {
     case 0:
-      throw BadParameterValue(
-        "Node position parameter cannot be used when connecting." );
+      throw BadParameterValue( "Node position parameter cannot be used when connecting." );
     case 1:
     {
       Node* source = gid_to_node_ptr_( sgid, target_thread );
@@ -502,8 +489,7 @@ public:
     switch ( node_location_ )
     {
     case 0:
-      throw BadParameterValue(
-        "Node position parameter cannot be used when connecting." );
+      throw BadParameterValue( "Node position parameter cannot be used when connecting." );
     case 1:
     {
       return source_pos[ dimension_ ];
@@ -541,8 +527,7 @@ public:
     updateValue< long >( d, names::dimension, dimension_ );
     if ( dimension_ < 0 )
     {
-      throw BadParameterValue(
-        "Spatial distance parameter dimension cannot be negative." );
+      throw BadParameterValue( "Spatial distance parameter dimension cannot be negative." );
     }
   }
 
@@ -550,8 +535,7 @@ public:
   value( librandom::RngPtr& rng, Node* ) const
   {
     assert( false );
-    throw BadParameterValue(
-      "Spatial distance parameter can only be used when connecting." );
+    throw BadParameterValue( "Spatial distance parameter can only be used when connecting." );
   }
 
   double value( librandom::RngPtr&, index, Node*, thread ) const;
@@ -615,10 +599,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
     return parameter1_->value( rng, sgid, target, target_thread )
       * parameter2_->value( rng, sgid, target, target_thread );
@@ -687,10 +668,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
     return parameter1_->value( rng, sgid, target, target_thread )
       / parameter2_->value( rng, sgid, target, target_thread );
@@ -759,10 +737,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
     return parameter1_->value( rng, sgid, target, target_thread )
       + parameter2_->value( rng, sgid, target, target_thread );
@@ -831,10 +806,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
     return parameter1_->value( rng, sgid, target, target_thread )
       - parameter2_->value( rng, sgid, target, target_thread );
@@ -900,10 +872,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
     return p_->value( rng, sgid, target, target_thread );
   }
@@ -947,9 +916,7 @@ public:
    *              1: >
    *
    */
-  ComparingParameter( const Parameter& m1,
-    const Parameter& m2,
-    const DictionaryDatum& d )
+  ComparingParameter( const Parameter& m1, const Parameter& m2, const DictionaryDatum& d )
     : Parameter()
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
@@ -961,8 +928,7 @@ public:
     }
     if ( comparator_ < 0 or 5 < comparator_ )
     {
-      throw BadParameter(
-        "Comparator specification has to be in the range 0-5." );
+      throw BadParameter( "Comparator specification has to be in the range 0-5." );
     }
   }
 
@@ -989,18 +955,14 @@ public:
   double
   value( librandom::RngPtr& rng, Node* node ) const
   {
-    return compare_(
-      parameter1_->value( rng, node ), parameter2_->value( rng, node ) );
+    return compare_( parameter1_->value( rng, node ), parameter2_->value( rng, node ) );
   }
 
   double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
-    return compare_( parameter1_->value( rng, sgid, target, target_thread ),
-      parameter2_->value( rng, sgid, target, target_thread ) );
+    return compare_(
+      parameter1_->value( rng, sgid, target, target_thread ), parameter2_->value( rng, sgid, target, target_thread ) );
   }
 
   double
@@ -1009,8 +971,7 @@ public:
     const std::vector< double >& target_pos,
     const std::vector< double >& displacement ) const
   {
-    return compare_(
-      parameter1_->value( rng, source_pos, target_pos, displacement ),
+    return compare_( parameter1_->value( rng, source_pos, target_pos, displacement ),
       parameter2_->value( rng, source_pos, target_pos, displacement ) );
   }
 
@@ -1059,9 +1020,7 @@ public:
    * Construct the choice of two given parameters, based on a third.
    * Copies are made of the supplied Parameter objects.
    */
-  ConditionalParameter( const Parameter& condition,
-    const Parameter& if_true,
-    const Parameter& if_false )
+  ConditionalParameter( const Parameter& condition, const Parameter& if_true, const Parameter& if_false )
     : Parameter()
     , condition_( condition.clone() )
     , if_true_( if_true.clone() )
@@ -1104,10 +1063,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
     if ( condition_->value( rng, sgid, target, target_thread ) )
     {
@@ -1186,10 +1142,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
     return std::exp( p_->value( rng, sgid, target, target_thread ) );
   }
@@ -1254,10 +1207,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
     return std::sin( p_->value( rng, sgid, target, target_thread ) );
   }
@@ -1321,10 +1271,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
     return std::cos( p_->value( rng, sgid, target, target_thread ) );
   }
@@ -1391,10 +1338,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
     return std::pow( p_->value( rng, sgid, target, target_thread ), exponent_ );
   }
@@ -1405,8 +1349,7 @@ public:
     const std::vector< double >& target_pos,
     const std::vector< double >& displacement ) const
   {
-    return std::pow(
-      p_->value( rng, source_pos, target_pos, displacement ), exponent_ );
+    return std::pow( p_->value( rng, source_pos, target_pos, displacement ), exponent_ );
   }
 
   Parameter*
@@ -1438,9 +1381,7 @@ public:
   {
   }
 
-  DimensionParameter( const Parameter& px,
-    const Parameter& py,
-    const Parameter& pz )
+  DimensionParameter( const Parameter& px, const Parameter& py, const Parameter& pz )
     : num_dimensions_( 3 )
     , px_( px.clone() )
     , py_( py.clone() )
@@ -1480,10 +1421,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng,
-    index sgid,
-    Node* target,
-    thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
     throw KernelException( "Cannot get value of DimensionParameter." );
   }
@@ -1496,9 +1434,7 @@ public:
     case 2:
       return { px_->value( rng, nullptr ), py_->value( rng, nullptr ) };
     case 3:
-      return { px_->value( rng, nullptr ),
-        py_->value( rng, nullptr ),
-        pz_->value( rng, nullptr ) };
+      return { px_->value( rng, nullptr ), py_->value( rng, nullptr ), pz_->value( rng, nullptr ) };
     }
     throw KernelException( "Wrong number of dimensions in get_values!" );
   }
@@ -1548,15 +1484,13 @@ Parameter::subtract_parameter( const Parameter& other ) const
 }
 
 inline Parameter*
-Parameter::compare_parameter( const Parameter& other,
-  const DictionaryDatum& d ) const
+Parameter::compare_parameter( const Parameter& other, const DictionaryDatum& d ) const
 {
   return new ComparingParameter( *this, other, d );
 }
 
 inline Parameter*
-Parameter::conditional_parameter( const Parameter& if_true,
-  const Parameter& if_false ) const
+Parameter::conditional_parameter( const Parameter& if_true, const Parameter& if_false ) const
 {
   return new ConditionalParameter( *this, if_true, if_false );
 }
@@ -1593,8 +1527,7 @@ Parameter::dimension_parameter( const Parameter& y_parameter ) const
 }
 
 inline Parameter*
-Parameter::dimension_parameter( const Parameter& y_parameter,
-  const Parameter& z_parameter ) const
+Parameter::dimension_parameter( const Parameter& y_parameter, const Parameter& z_parameter ) const
 {
   return new DimensionParameter( *this, y_parameter, z_parameter );
 }

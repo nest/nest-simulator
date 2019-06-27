@@ -170,9 +170,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      Node* node ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -185,15 +184,12 @@ private:
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
     //! occupation numbers of ages below dead time
     std::vector< unsigned long > occ_refractory_;
-    unsigned long
-      occ_active_;    //!< summed occupation number of ages above dead time
-    size_t activate_; //!< rotating pointer
+    unsigned long occ_active_; //!< summed occupation number of ages above dead time
+    size_t activate_;          //!< rotating pointer
 
   public:
     //! initialize age dist
-    Age_distribution_( size_t num_age_bins,
-      unsigned long ini_occ_ref,
-      unsigned long ini_occ_act );
+    Age_distribution_( size_t num_age_bins, unsigned long ini_occ_ref, unsigned long ini_occ_act );
 
     //! update age dist and generate spikes
     unsigned long update( double hazard_rate, librandom::RngPtr rng );
@@ -242,10 +238,7 @@ private:
 };
 
 inline port
-ppd_sup_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+ppd_sup_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 

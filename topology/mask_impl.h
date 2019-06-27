@@ -78,8 +78,7 @@ Mask< D >::outside( const Box< D >& b ) const
   Box< D > bb = get_bbox();
   for ( int i = 0; i < D; ++i )
   {
-    if ( ( b.upper_right[ i ] < bb.lower_left[ i ] )
-      || ( b.lower_left[ i ] > bb.upper_right[ i ] ) )
+    if ( ( b.upper_right[ i ] < bb.lower_left[ i ] ) || ( b.lower_left[ i ] > bb.upper_right[ i ] ) )
     {
       return true;
     }
@@ -106,8 +105,7 @@ BoxMask< D >::outside( const Box< D >& b ) const
   // so we don't know if it is an actual problem.
   for ( int i = 0; i < D; ++i )
   {
-    if ( ( b.upper_right[ i ] < min_values_[ i ] )
-      || ( b.lower_left[ i ] > max_values_[ i ] ) )
+    if ( ( b.upper_right[ i ] < min_values_[ i ] ) || ( b.lower_left[ i ] > max_values_[ i ] ) )
     {
       return true;
     }
@@ -158,8 +156,7 @@ BallMask< D >::outside( const Box< D >& b ) const
   // the ball. This could be made more refined.
   for ( int i = 0; i < D; ++i )
   {
-    if ( ( b.upper_right[ i ] < center_[ i ] - radius_ )
-      || ( b.lower_left[ i ] > center_[ i ] + radius_ ) )
+    if ( ( b.upper_right[ i ] < center_[ i ] - radius_ ) || ( b.lower_left[ i ] > center_[ i ] + radius_ ) )
     {
       return true;
     }
@@ -219,8 +216,7 @@ EllipseMask< D >::create_bbox_()
     // If the ellipse or ellipsoid is tilted, we make the boundary box
     // quadratic, with the length of the sides equal to the axis with greatest
     // length. This could be more refined.
-    const double greatest_semi_axis =
-      std::max( major_axis_, polar_axis_ ) / 2.0;
+    const double greatest_semi_axis = std::max( major_axis_, polar_axis_ ) / 2.0;
     radii[ 0 ] = greatest_semi_axis;
     radii[ 1 ] = greatest_semi_axis;
     radii[ 2 ] = greatest_semi_axis;
@@ -244,8 +240,7 @@ EllipseMask< D >::outside( const Box< D >& b ) const
 
   for ( int i = 0; i < D; ++i )
   {
-    if ( ( b.upper_right[ i ] < bb.lower_left[ i ] )
-      || ( b.lower_left[ i ] > bb.upper_right[ i ] ) )
+    if ( ( b.upper_right[ i ] < bb.lower_left[ i ] ) || ( b.lower_left[ i ] > bb.upper_right[ i ] ) )
     {
       return true;
     }
@@ -462,16 +457,14 @@ template < int D >
 bool
 AnchoredMask< D >::inside( const Box< D >& b ) const
 {
-  return m_->inside(
-    Box< D >( b.lower_left - anchor_, b.upper_right - anchor_ ) );
+  return m_->inside( Box< D >( b.lower_left - anchor_, b.upper_right - anchor_ ) );
 }
 
 template < int D >
 bool
 AnchoredMask< D >::outside( const Box< D >& b ) const
 {
-  return m_->outside(
-    Box< D >( b.lower_left - anchor_, b.upper_right - anchor_ ) );
+  return m_->outside( Box< D >( b.lower_left - anchor_, b.upper_right - anchor_ ) );
 }
 
 template < int D >

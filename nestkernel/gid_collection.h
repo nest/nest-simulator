@@ -102,8 +102,8 @@ class gc_const_iterator
 private:
   GIDCollectionPTR coll_ptr_; //!< holds pointer reference in safe iterators
   size_t element_idx_;        //!< index into (current) primitive gid collection
-  size_t part_idx_; //!< index into parts vector of composite collection
-  size_t step_;     //!< step for skipping due to e.g. slicing
+  size_t part_idx_;           //!< index into parts vector of composite collection
+  size_t step_;               //!< step for skipping due to e.g. slicing
 
   /**
    * Pointer to primitive collection to iterate over.
@@ -249,8 +249,7 @@ public:
    *
    * @return an iterator representing the beginning of the GIDCollection
    */
-  virtual const_iterator begin(
-    GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
+  virtual const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
 
   /**
    * Method to get an iterator representing the beginning of the GIDCollection.
@@ -258,8 +257,7 @@ public:
    * @return an iterator representing the beginning of the GIDCollection, in a
    * parallel context.
    */
-  virtual const_iterator local_begin(
-    GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
+  virtual const_iterator local_begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
 
   /**
    * Method to get an iterator representing the beginning of the GIDCollection.
@@ -267,8 +265,7 @@ public:
    * @return an iterator representing the beginning of the GIDCollection, in an
    * MPI-parallel context.
    */
-  virtual const_iterator MPI_local_begin(
-    GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
+  virtual const_iterator MPI_local_begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
 
   /**
    * Method to get an iterator representing the end of the GIDCollection.
@@ -278,8 +275,7 @@ public:
    * @return an iterator representing the end of the GIDCollection, taking
    * offset into account
    */
-  virtual const_iterator end(
-    GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
+  virtual const_iterator end( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
 
   /**
    * Method that creates an ArrayDatum filled with GIDs from the GIDCollection.
@@ -312,8 +308,7 @@ public:
    * @param step Number of places between GIDs to skip. Defaults to 1
    * @return a GIDCollection pointer to the new, sliced GIDCollection.
    */
-  virtual GIDCollectionPTR
-  slice( size_t start, size_t stop, size_t step ) const = 0;
+  virtual GIDCollectionPTR slice( size_t start, size_t stop, size_t step ) const = 0;
 
   /**
    * Sets the metadata of the GIDCollection.
@@ -373,10 +368,7 @@ public:
    * @param model_id Model ID of the GIDs
    * @param meta Metadata pointer of the GIDs
    */
-  GIDCollectionPrimitive( index first,
-    index last,
-    index model_id,
-    GIDCollectionMetadataPTR );
+  GIDCollectionPrimitive( index first, index last, index model_id, GIDCollectionMetadataPTR );
 
   /**
    * Create a primitive from a range of GIDs, with provided model ID.
@@ -420,8 +412,7 @@ public:
 
   const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
   const_iterator local_begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
-  const_iterator MPI_local_begin(
-    GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
+  const_iterator MPI_local_begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
   const_iterator end( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
 
   //! Returns an ArrayDatum filled with GIDs from the primitive.
@@ -478,11 +469,11 @@ class GIDCollectionComposite : public GIDCollection
 private:
   std::vector< GIDCollectionPrimitive > parts_; //!< Vector of primitives
   size_t size_;                                 //!< Total number of GIDs
-  size_t step_;         //!< Step length, set when slicing.
-  size_t start_part_;   //!< Primitive to start at, set when slicing
-  size_t start_offset_; //!< Element to start at, set when slicing
-  size_t stop_part_;    //!< Primitive to stop at, set when slicing
-  size_t stop_offset_;  //!< Element to stop at, set when slicing
+  size_t step_;                                 //!< Step length, set when slicing.
+  size_t start_part_;                           //!< Primitive to start at, set when slicing
+  size_t start_offset_;                         //!< Element to start at, set when slicing
+  size_t stop_part_;                            //!< Primitive to stop at, set when slicing
+  size_t stop_offset_;                          //!< Element to stop at, set when slicing
 
   /**
    * Goes through the vector of primitives, merging as much as possible.
@@ -500,10 +491,7 @@ public:
    * @param stop Offset in the primtive to stop at.
    * @param step Length to step in the primitive.
    */
-  GIDCollectionComposite( const GIDCollectionPrimitive&,
-    size_t,
-    size_t,
-    size_t );
+  GIDCollectionComposite( const GIDCollectionPrimitive&, size_t, size_t, size_t );
 
   /**
      * Composite copy constructor.
@@ -521,10 +509,7 @@ public:
      * @param stop Index in the composite to stop at.
      * @param step Length to step in the composite.
      */
-  GIDCollectionComposite( const GIDCollectionComposite&,
-    size_t,
-    size_t,
-    size_t );
+  GIDCollectionComposite( const GIDCollectionComposite&, size_t, size_t, size_t );
 
   /**
    * Create a composite from a vector of primitives.
@@ -553,8 +538,7 @@ public:
 
   const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
   const_iterator local_begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
-  const_iterator MPI_local_begin(
-    GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
+  const_iterator MPI_local_begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
   const_iterator end( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
 
   //! Returns an ArrayDatum filled with GIDs from the composite.
@@ -602,8 +586,7 @@ inline GIDTriple gc_const_iterator::operator*() const
   {
     // for efficiency we check each value instead of simply checking against
     // composite_collection->end()
-    if ( composite_collection_->stop_offset_ != 0
-      or composite_collection_->stop_part_ != 0 )
+    if ( composite_collection_->stop_offset_ != 0 or composite_collection_->stop_part_ != 0 )
     {
       if ( not( part_idx_ < composite_collection_->stop_part_
              or ( part_idx_ == composite_collection_->stop_part_
@@ -621,8 +604,7 @@ inline GIDTriple gc_const_iterator::operator*() const
     // Add to local placement from GIDCollectionPrimitives that comes before the
     // current one.
     gt.lid = 0;
-    for ( std::vector< GIDCollectionPrimitive >::const_iterator part =
-            composite_collection_->parts_.begin();
+    for ( std::vector< GIDCollectionPrimitive >::const_iterator part = composite_collection_->parts_.begin();
           part != composite_collection_->parts_.end();
           ++part )
     {
@@ -694,14 +676,12 @@ inline bool gc_const_iterator::operator!=( const gc_const_iterator& rhs ) const
 
 inline bool gc_const_iterator::operator<( const gc_const_iterator& rhs ) const
 {
-  return ( part_idx_ < rhs.part_idx_
-    or ( part_idx_ == rhs.part_idx_ and element_idx_ < rhs.element_idx_ ) );
+  return ( part_idx_ < rhs.part_idx_ or ( part_idx_ == rhs.part_idx_ and element_idx_ < rhs.element_idx_ ) );
 }
 
 inline bool gc_const_iterator::operator<=( const gc_const_iterator& rhs ) const
 {
-  return ( part_idx_ < rhs.part_idx_
-    or ( part_idx_ == rhs.part_idx_ and element_idx_ <= rhs.element_idx_ ) );
+  return ( part_idx_ < rhs.part_idx_ or ( part_idx_ == rhs.part_idx_ and element_idx_ <= rhs.element_idx_ ) );
 }
 
 inline void
@@ -723,19 +703,16 @@ inline index GIDCollectionPrimitive::operator[]( const size_t idx ) const
 
 inline bool GIDCollectionPrimitive::operator==( GIDCollectionPTR rhs ) const
 {
-  GIDCollectionPrimitive const* const rhs_ptr =
-    dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
+  GIDCollectionPrimitive const* const rhs_ptr = dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
   rhs.unlock();
 
-  return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_
-    and model_id_ == rhs_ptr->model_id_ and metadata_ == rhs_ptr->metadata_;
+  return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_
+    and metadata_ == rhs_ptr->metadata_;
 }
 
-inline bool GIDCollectionPrimitive::operator==(
-  const GIDCollectionPrimitive& rhs ) const
+inline bool GIDCollectionPrimitive::operator==( const GIDCollectionPrimitive& rhs ) const
 {
-  return first_ == rhs.first_ and last_ == rhs.last_
-    and model_id_ == rhs.model_id_ and metadata_ == rhs.metadata_;
+  return first_ == rhs.first_ and last_ == rhs.last_ and model_id_ == rhs.model_id_ and metadata_ == rhs.metadata_;
 }
 
 inline GIDCollectionPrimitive::const_iterator
@@ -797,10 +774,8 @@ GIDCollectionPrimitive::find( const index neuron_id ) const
 inline index GIDCollectionComposite::operator[]( const size_t i ) const
 {
   long tot_prev_gids = 0;
-  for (
-    std::vector< GIDCollectionPrimitive >::const_iterator gc = parts_.begin();
-    gc != parts_.end();
-    ++gc ) // iterate over GIDCollections
+  for ( std::vector< GIDCollectionPrimitive >::const_iterator gc = parts_.begin(); gc != parts_.end();
+        ++gc ) // iterate over GIDCollections
   {
     if ( tot_prev_gids + ( *gc ).size() > i ) // is i in current GIDCollection?
     {
@@ -819,19 +794,15 @@ inline index GIDCollectionComposite::operator[]( const size_t i ) const
 
 inline bool GIDCollectionComposite::operator==( GIDCollectionPTR rhs ) const
 {
-  GIDCollectionComposite const* const rhs_ptr =
-    dynamic_cast< GIDCollectionComposite const* >( rhs.get() );
+  GIDCollectionComposite const* const rhs_ptr = dynamic_cast< GIDCollectionComposite const* >( rhs.get() );
   rhs.unlock();
 
   if ( size_ != rhs_ptr->size() || parts_.size() != rhs_ptr->parts_.size() )
   {
     return false;
   }
-  std::vector< GIDCollectionPrimitive >::const_iterator rhs_gc =
-    rhs_ptr->parts_.begin();
-  for ( std::vector< GIDCollectionPrimitive >::const_iterator
-          lhs_gc = parts_.begin();
-        lhs_gc != parts_.end();
+  std::vector< GIDCollectionPrimitive >::const_iterator rhs_gc = rhs_ptr->parts_.begin();
+  for ( std::vector< GIDCollectionPrimitive >::const_iterator lhs_gc = parts_.begin(); lhs_gc != parts_.end();
         ++lhs_gc, ++rhs_gc ) // iterate over GIDCollections
   {
     if ( not( ( *lhs_gc ) == ( *rhs_gc ) ) )
@@ -875,8 +846,7 @@ GIDCollectionComposite::contains( index gid ) const
   while ( lower <= upper )
   {
     size_t middle = floor( ( lower + upper ) / 2.0 );
-    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid
-      < gid )
+    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid < gid )
     {
       lower = middle + 1;
     }
@@ -895,8 +865,7 @@ GIDCollectionComposite::contains( index gid ) const
 inline void
 GIDCollectionComposite::set_metadata( GIDCollectionMetadataPTR meta )
 {
-  for ( std::vector< GIDCollectionPrimitive >::iterator gc = parts_.begin();
-        gc != parts_.end();
+  for ( std::vector< GIDCollectionPrimitive >::iterator gc = parts_.begin(); gc != parts_.end();
         ++gc ) // iterate over GIDCollections
   {
     ( *gc ).set_metadata( meta );
@@ -924,8 +893,7 @@ GIDCollectionComposite::find( const index neuron_id ) const
   while ( lower <= upper )
   {
     size_t middle = floor( ( lower + upper ) / 2.0 );
-    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid
-      < neuron_id )
+    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid < neuron_id )
     {
       lower = middle + 1;
     }

@@ -56,8 +56,7 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int
-hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
+extern "C" int hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
@@ -228,9 +227,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      Node* node ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
 public:
@@ -371,9 +369,7 @@ hh_psc_alpha_gap::update( Time const& origin, const long from, const long to )
 }
 
 inline bool
-hh_psc_alpha_gap::wfr_update( Time const& origin,
-  const long from,
-  const long to )
+hh_psc_alpha_gap::wfr_update( Time const& origin, const long from, const long to )
 {
   State_ old_state = S_; // save state before wfr_update
   const bool wfr_tol_exceeded = update_( origin, from, to, true );
@@ -383,10 +379,7 @@ hh_psc_alpha_gap::wfr_update( Time const& origin,
 }
 
 inline port
-hh_psc_alpha_gap::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+hh_psc_alpha_gap::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent se;
   se.set_sender( *this );
@@ -415,8 +408,7 @@ hh_psc_alpha_gap::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-hh_psc_alpha_gap::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+hh_psc_alpha_gap::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

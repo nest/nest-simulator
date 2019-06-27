@@ -157,8 +157,7 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
   }
   if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
   {
-    throw BadProperty(
-      "Membrane and synapse time constants must be strictly positive." );
+    throw BadProperty( "Membrane and synapse time constants must be strictly positive." );
   }
   if ( t_ref_ < 0 )
   {
@@ -187,10 +186,7 @@ nest::iaf_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-nest::iaf_psc_exp::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  double delta_EL,
-  Node* node )
+nest::iaf_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( updateValueParam< double >( d, names::V_m, V_m_, node ) )
   {
@@ -315,8 +311,7 @@ nest::iaf_psc_exp::calibrate()
 void
 nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const double h = Time::get_resolution().get_ms();
@@ -326,8 +321,8 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
   {
     if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
     {
-      S_.V_m_ = S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_
-        + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
+      S_.V_m_ =
+        S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_ + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
     }
     else
     {
@@ -351,11 +346,8 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
     S_.i_syn_ex_ += V_.weighted_spikes_ex_;
     S_.i_syn_in_ += V_.weighted_spikes_in_;
 
-    if ( ( P_.delta_ < 1e-10
-           and S_.V_m_ >= P_.Theta_ ) // deterministic threshold crossing
-      or ( P_.delta_ > 1e-10
-           and V_.rng_->drand() < phi_() * h
-               * 1e-3 ) ) // stochastic threshold crossing
+    if ( ( P_.delta_ < 1e-10 and S_.V_m_ >= P_.Theta_ )                   // deterministic threshold crossing
+      or ( P_.delta_ > 1e-10 and V_.rng_->drand() < phi_() * h * 1e-3 ) ) // stochastic threshold crossing
     {
       S_.r_ref_ = V_.RefractoryCounts_;
       S_.V_m_ = P_.V_reset_;
@@ -382,14 +374,12 @@ nest::iaf_psc_exp::handle( SpikeEvent& e )
 
   if ( e.get_weight() >= 0.0 )
   {
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -405,17 +395,11 @@ nest::iaf_psc_exp::handle( CurrentEvent& e )
   // add weighted current; HEP 2002-10-04
   if ( 0 == e.get_rport() )
   {
-    B_.currents_[ 0 ].add_value(
-      e.get_rel_delivery_steps(
-        kernel().simulation_manager.get_slice_origin() ),
-      w * c );
+    B_.currents_[ 0 ].add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
   }
   if ( 1 == e.get_rport() )
   {
-    B_.currents_[ 1 ].add_value(
-      e.get_rel_delivery_steps(
-        kernel().simulation_manager.get_slice_origin() ),
-      w * c );
+    B_.currents_[ 1 ].add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
   }
 }
 

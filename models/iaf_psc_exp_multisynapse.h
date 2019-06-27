@@ -263,8 +263,7 @@ private:
   DynamicRecordablesMap< iaf_psc_exp_multisynapse > recordablesMap_;
 
   // Data Access Functor getter
-  DataAccessFunctor< iaf_psc_exp_multisynapse > get_data_access_functor(
-    size_t elem );
+  DataAccessFunctor< iaf_psc_exp_multisynapse > get_data_access_functor( size_t elem );
   inline double
   get_state_element( size_t elem )
   {
@@ -296,10 +295,7 @@ iaf_psc_exp_multisynapse::Parameters_::n_receptors_() const
 }
 
 inline port
-iaf_psc_exp_multisynapse::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+iaf_psc_exp_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -308,8 +304,7 @@ iaf_psc_exp_multisynapse::send_test_event( Node& target,
 }
 
 inline port
-iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&,
-  rport receptor_type )
+iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -319,8 +314,7 @@ iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&,
 }
 
 inline port
-iaf_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

@@ -255,8 +255,7 @@ private:
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool
-    set( const DictionaryDatum&, const correlomatrix_detector&, Node* node );
+    bool set( const DictionaryDatum&, const correlomatrix_detector&, Node* node );
   };
 
   // ------------------------------------------------------------

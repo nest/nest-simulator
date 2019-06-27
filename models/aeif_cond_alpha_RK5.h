@@ -200,17 +200,17 @@ private:
     double V_reset_; //!< Reset Potential in mV
     double t_ref_;   //!< Refractory period in ms
 
-    double g_L;     //!< Leak Conductance in nS
-    double C_m;     //!< Membrane Capacitance in pF
-    double E_ex;    //!< Excitatory reversal Potential in mV
-    double E_in;    //!< Inhibitory reversal Potential in mV
-    double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T; //!< Slope faktor in ms.
-    double tau_w;   //!< adaptation time-constant in ms.
-    double a;       //!< Subthreshold adaptation in nS.
-    double b;       //!< Spike-triggered adaptation in pA
-    double V_th;    //!< Spike threshold in mV.
-    double t_ref;   //!< Refractory period in ms.
+    double g_L;        //!< Leak Conductance in nS
+    double C_m;        //!< Membrane Capacitance in pF
+    double E_ex;       //!< Excitatory reversal Potential in mV
+    double E_in;       //!< Inhibitory reversal Potential in mV
+    double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
+    double Delta_T;    //!< Slope faktor in ms.
+    double tau_w;      //!< adaptation time-constant in ms.
+    double a;          //!< Subthreshold adaptation in nS.
+    double b;          //!< Spike-triggered adaptation in pA
+    double V_th;       //!< Spike threshold in mV.
+    double t_ref;      //!< Refractory period in ms.
     double tau_syn_ex; //!< Excitatory synaptic rise time.
     double tau_syn_in; //!< Inhibitory synaptic rise time.
     double I_e;        //!< Intrinsic current in pA.
@@ -219,9 +219,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      Node* node ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
 public:
@@ -279,9 +278,8 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_cond_alpha_RK5& ); //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&,
-      aeif_cond_alpha_RK5& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_cond_alpha_RK5& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_cond_alpha_RK5& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< aeif_cond_alpha_RK5 > logger_;
@@ -295,9 +293,8 @@ public:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_; //!< simulation step size in ms
-    double
-      IntegrationStep_; //!< current integration time step, updated by solver
+    double step_;            //!< simulation step size in ms
+    double IntegrationStep_; //!< current integration time step, updated by solver
 
     /**
      * Input current injected by CurrentEvent.
@@ -356,10 +353,7 @@ public:
 };
 
 inline port
-aeif_cond_alpha_RK5::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+aeif_cond_alpha_RK5::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -388,8 +382,7 @@ aeif_cond_alpha_RK5::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cond_alpha_RK5::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+aeif_cond_alpha_RK5::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -433,8 +426,7 @@ aeif_cond_alpha_RK5::set_status( const DictionaryDatum& d )
  * @param f Derivatives (output).
  */
 inline void
-aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics( const double y[],
-  double f[] )
+aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics( const double y[], double f[] )
 {
   // a shorthand
   typedef aeif_cond_alpha_RK5::State_ S;
@@ -463,8 +455,7 @@ aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics( const double y[],
   const double I_spike = P_.Delta_T * std::exp( exp_arg );
 
   // dv/dt
-  f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
-                  - w + P_.I_e + B_.I_stim_ ) / P_.C_m;
+  f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh - w + P_.I_e + B_.I_stim_ ) / P_.C_m;
   f[ S::DG_EXC ] = -dg_ex / P_.tau_syn_ex;
   f[ S::G_EXC ] = dg_ex - g_ex / P_.tau_syn_ex; // Synaptic Conductance (nS)
 
@@ -481,8 +472,7 @@ aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics( const double y[],
  * @param f Derivatives (output).
  */
 inline void
-aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics_DT0( const double y[],
-  double f[] )
+aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics_DT0( const double y[], double f[] )
 {
   // a shorthand
   typedef aeif_cond_alpha_RK5::State_ S;
@@ -505,8 +495,7 @@ aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics_DT0( const double y[],
   const double I_syn_inh = g_in * ( V - P_.E_in );
 
   // dv/dt
-  f[ S::V_M ] = ( -P_.g_L * ( V - P_.E_L ) - I_syn_exc - I_syn_inh - w + P_.I_e
-                  + B_.I_stim_ ) / P_.C_m;
+  f[ S::V_M ] = ( -P_.g_L * ( V - P_.E_L ) - I_syn_exc - I_syn_inh - w + P_.I_e + B_.I_stim_ ) / P_.C_m;
   f[ S::DG_EXC ] = -dg_ex / P_.tau_syn_ex;
   f[ S::G_EXC ] = dg_ex - g_ex / P_.tau_syn_ex; // Synaptic Conductance (nS)
 

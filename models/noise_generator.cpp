@@ -79,8 +79,7 @@ nest::noise_generator::Parameters_::Parameters_( const Parameters_& p )
   dt_.calibrate();
 }
 
-nest::noise_generator::Parameters_& nest::noise_generator::Parameters_::
-operator=( const Parameters_& p )
+nest::noise_generator::Parameters_& nest::noise_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -137,9 +136,7 @@ nest::noise_generator::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::noise_generator::Parameters_::set( const DictionaryDatum& d,
-  const noise_generator& n,
-  Node* node )
+nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_generator& n, Node* node )
 {
   updateValueParam< double >( d, names::mean, mean_, node );
   updateValueParam< double >( d, names::std, std_, node );
@@ -236,9 +233,7 @@ nest::noise_generator::calibrate()
   device_.calibrate();
   if ( P_.num_targets_ != B_.amps_.size() )
   {
-    LOG( M_INFO,
-      "noise_generator::calibrate()",
-      "The number of targets has changed, drawing new amplitudes." );
+    LOG( M_INFO, "noise_generator::calibrate()", "The number of targets has changed, drawing new amplitudes." );
     init_buffers_();
   }
 
@@ -268,10 +263,7 @@ nest::noise_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 nest::port
-nest::noise_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+nest::noise_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -298,12 +290,9 @@ nest::noise_generator::send_test_event( Node& target,
 // Time Evolution Operator
 //
 void
-nest::noise_generator::update( Time const& origin,
-  const long from,
-  const long to )
+nest::noise_generator::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const long start = origin.get_steps();
@@ -331,8 +320,7 @@ nest::noise_generator::update( Time const& origin,
     if ( now >= B_.next_step_ )
     {
       // compute new currents
-      for ( AmpVec_::iterator it = B_.amps_.begin(); it != B_.amps_.end();
-            ++it )
+      for ( AmpVec_::iterator it = B_.amps_.begin(); it != B_.amps_.end(); ++it )
       {
         *it = P_.mean_
           + std::sqrt( P_.std_ * P_.std_ + S_.y_1_ * P_.std_mod_ * P_.std_mod_ )

@@ -345,9 +345,7 @@ class IncompatibleReceptorType : public KernelException
   std::string event_type_;
 
 public:
-  IncompatibleReceptorType( long receptor_type,
-    std::string name,
-    std::string event )
+  IncompatibleReceptorType( long receptor_type, std::string name, std::string event )
     : KernelException( "IncompatibleReceptorType" )
     , receptor_type_( receptor_type )
     , name_( name )
@@ -715,9 +713,7 @@ public:
    * @param property  name of property conflicting
    * @param value     value of property conflicting
    */
-  InvalidDefaultResolution( const std::string& model,
-    const Name& property,
-    const Time& value )
+  InvalidDefaultResolution( const std::string& model, const Name& property, const Time& value )
     : KernelException( "InvalidDefaultResolution" )
     , model_( model )
     , prop_( property )
@@ -753,9 +749,7 @@ public:
    * @param property  name of property conflicting
    * @param value     value of property conflicting
    */
-  InvalidTimeInModel( const std::string& model,
-    const Name& property,
-    const Time& value )
+  InvalidTimeInModel( const std::string& model, const Name& property, const Time& value )
     : KernelException( "InvalidTimeInModel" )
     , model_( model )
     , prop_( property )
@@ -789,9 +783,7 @@ public:
    * @param property  name of property conflicting
    * @param value     value of property conflicting
    */
-  StepMultipleRequired( const std::string& model,
-    const Name& property,
-    const Time& value )
+  StepMultipleRequired( const std::string& model, const Name& property, const Time& value )
     : KernelException( "StepMultipleRequired" )
     , model_( model )
     , prop_( property )
@@ -923,9 +915,7 @@ class KeyError : public KernelException
   const std::string map_op_;
 
 public:
-  KeyError( const Name& key,
-    const std::string& map_type,
-    const std::string& map_op )
+  KeyError( const Name& key, const std::string& map_type, const std::string& map_op )
     : KernelException( "KeyError" )
     , key_( key )
     , map_type_( map_type )
@@ -1045,8 +1035,7 @@ public:
    *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    */
-  MUSICPortAlreadyPublished( const std::string& model,
-    const std::string& portname )
+  MUSICPortAlreadyPublished( const std::string& model, const std::string& portname )
     : KernelException( "MUSICPortAlreadyPublished" )
     , model_( model )
     , portname_( portname )
@@ -1105,9 +1094,7 @@ public:
   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    */
-  MUSICChannelUnknown( const std::string& model,
-    const std::string& portname,
-    int channel )
+  MUSICChannelUnknown( const std::string& model, const std::string& portname, int channel )
     : KernelException( "MUSICChannelUnknown" )
     , portname_( portname )
     , channel_( channel )
@@ -1162,9 +1149,7 @@ public:
   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    */
-  MUSICChannelAlreadyMapped( const std::string& model,
-    const std::string& portname,
-    int channel )
+  MUSICChannelAlreadyMapped( const std::string& model, const std::string& portname, int channel )
     : KernelException( "MUSICChannelAlreadyMapped" )
     , portname_( portname )
     , channel_( channel )

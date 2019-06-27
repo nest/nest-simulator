@@ -281,11 +281,7 @@ private:
      *       spike_times_ or spike_weights_ vector has been filled with
      *       new data, or if the origin was reset.
      */
-    void set( const DictionaryDatum&,
-      State_&,
-      const Time&,
-      const Time&,
-      Node* node );
+    void set( const DictionaryDatum&, State_&, const Time&, const Time&, Node* node );
 
     /**
      * Insert spike time to arrays, throw BadProperty for invalid spike times.
@@ -294,8 +290,7 @@ private:
      * @param origin
      * @param current simulation time
      */
-    void
-    assert_valid_spike_time_and_insert_( double, const Time&, const Time& );
+    void assert_valid_spike_time_and_insert_( double, const Time&, const Time& );
   };
 
   // ------------------------------------------------------------
@@ -307,10 +302,7 @@ private:
 };
 
 inline port
-spike_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+spike_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 

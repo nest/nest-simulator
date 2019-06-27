@@ -47,8 +47,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-nest::RecordablesMap< nest::hh_psc_alpha_gap >
-  nest::hh_psc_alpha_gap::recordablesMap_;
+nest::RecordablesMap< nest::hh_psc_alpha_gap > nest::hh_psc_alpha_gap::recordablesMap_;
 
 namespace nest
 {
@@ -59,35 +58,24 @@ void
 RecordablesMap< hh_psc_alpha_gap >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m,
-    &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::V_M > );
-  insert_( names::I_syn_ex,
-    &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::I_EXC > );
-  insert_( names::I_syn_in,
-    &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::I_INH > );
-  insert_( names::Act_m,
-    &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_M > );
-  insert_( names::Act_h,
-    &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_H > );
-  insert_( names::Inact_n,
-    &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_N > );
-  insert_( names::Inact_p,
-    &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_P > );
+  insert_( names::V_m, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::V_M > );
+  insert_( names::I_syn_ex, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::I_EXC > );
+  insert_( names::I_syn_in, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::I_INH > );
+  insert_( names::Act_m, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_M > );
+  insert_( names::Act_h, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_H > );
+  insert_( names::Inact_n, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_N > );
+  insert_( names::Inact_p, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_P > );
 }
 
 extern "C" int
-hh_psc_alpha_gap_dynamics( double time,
-  const double y[],
-  double f[],
-  void* pnode )
+hh_psc_alpha_gap_dynamics( double time, const double y[], double f[], void* pnode )
 {
   // a shorthand
   typedef nest::hh_psc_alpha_gap::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::hh_psc_alpha_gap& node =
-    *( reinterpret_cast< nest::hh_psc_alpha_gap* >( pnode ) );
+  const nest::hh_psc_alpha_gap& node = *( reinterpret_cast< nest::hh_psc_alpha_gap* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -106,20 +94,16 @@ hh_psc_alpha_gap_dynamics( double time,
   const double& dI_in = y[ S::DI_INH ];
   const double& I_in = y[ S::I_INH ];
 
-  const double alpha_m =
-    40. * ( V - 75.5 ) / ( 1. - std::exp( -( V - 75.5 ) / 13.5 ) );
+  const double alpha_m = 40. * ( V - 75.5 ) / ( 1. - std::exp( -( V - 75.5 ) / 13.5 ) );
   const double beta_m = 1.2262 / std::exp( V / 42.248 );
   const double alpha_h = 0.0035 / std::exp( V / 24.186 );
-  const double beta_h =
-    0.017 * ( 51.25 + V ) / ( 1. - std::exp( -( 51.25 + V ) / 5.2 ) );
+  const double beta_h = 0.017 * ( 51.25 + V ) / ( 1. - std::exp( -( 51.25 + V ) / 5.2 ) );
   const double alpha_p = ( V - 95. ) / ( 1. - std::exp( -( V - 95. ) / 11.8 ) );
   const double beta_p = 0.025 / std::exp( V / 22.222 );
-  const double alpha_n =
-    0.014 * ( V + 44. ) / ( 1. - std::exp( -( V + 44. ) / 2.3 ) );
+  const double alpha_n = 0.014 * ( V + 44. ) / ( 1. - std::exp( -( V + 44. ) / 2.3 ) );
   const double beta_n = 0.0043 / std::exp( ( V + 44. ) / 34. );
   const double I_Na = node.P_.g_Na * m * m * m * h * ( V - node.P_.E_Na );
-  const double I_K = ( node.P_.g_Kv1 * n * n * n * n + node.P_.g_Kv3 * p * p )
-    * ( V - node.P_.E_K );
+  const double I_K = ( node.P_.g_Kv1 * n * n * n * n + node.P_.g_Kv3 * p * p ) * ( V - node.P_.E_K );
   const double I_L = node.P_.g_L * ( V - node.P_.E_L );
 
   // set I_gap depending on interpolation order
@@ -130,19 +114,16 @@ hh_psc_alpha_gap_dynamics( double time,
   switch ( kernel().simulation_manager.get_wfr_interpolation_order() )
   {
   case 0:
-    gap = -node.B_.sumj_g_ij_ * V
-      + node.B_.interpolation_coefficients[ node.B_.lag_ ];
+    gap = -node.B_.sumj_g_ij_ * V + node.B_.interpolation_coefficients[ node.B_.lag_ ];
     break;
 
   case 1:
-    gap = -node.B_.sumj_g_ij_ * V
-      + node.B_.interpolation_coefficients[ node.B_.lag_ * 2 + 0 ]
+    gap = -node.B_.sumj_g_ij_ * V + node.B_.interpolation_coefficients[ node.B_.lag_ * 2 + 0 ]
       + node.B_.interpolation_coefficients[ node.B_.lag_ * 2 + 1 ] * t;
     break;
 
   case 3:
-    gap = -node.B_.sumj_g_ij_ * V
-      + node.B_.interpolation_coefficients[ node.B_.lag_ * 4 + 0 ]
+    gap = -node.B_.sumj_g_ij_ * V + node.B_.interpolation_coefficients[ node.B_.lag_ * 4 + 0 ]
       + node.B_.interpolation_coefficients[ node.B_.lag_ * 4 + 1 ] * t
       + node.B_.interpolation_coefficients[ node.B_.lag_ * 4 + 2 ] * t * t
       + node.B_.interpolation_coefficients[ node.B_.lag_ * 4 + 3 ] * t * t * t;
@@ -155,18 +136,13 @@ hh_psc_alpha_gap_dynamics( double time,
   const double I_gap = gap;
 
   // V dot -- synaptic input are currents, inhib current is negative
-  f[ S::V_M ] = ( -( I_Na + I_K + I_L ) + node.B_.I_stim_ + node.P_.I_e + I_ex
-                  + I_in + I_gap ) / node.P_.C_m;
+  f[ S::V_M ] = ( -( I_Na + I_K + I_L ) + node.B_.I_stim_ + node.P_.I_e + I_ex + I_in + I_gap ) / node.P_.C_m;
 
   // channel dynamics
-  f[ S::HH_M ] =
-    alpha_m * ( 1 - y[ S::HH_M ] ) - beta_m * y[ S::HH_M ]; // m-variable
-  f[ S::HH_H ] =
-    alpha_h * ( 1 - y[ S::HH_H ] ) - beta_h * y[ S::HH_H ]; // h-variable
-  f[ S::HH_P ] =
-    alpha_p * ( 1 - y[ S::HH_P ] ) - beta_p * y[ S::HH_P ]; // p-variable
-  f[ S::HH_N ] =
-    alpha_n * ( 1 - y[ S::HH_N ] ) - beta_n * y[ S::HH_N ]; // n-variable
+  f[ S::HH_M ] = alpha_m * ( 1 - y[ S::HH_M ] ) - beta_m * y[ S::HH_M ]; // m-variable
+  f[ S::HH_H ] = alpha_h * ( 1 - y[ S::HH_H ] ) - beta_h * y[ S::HH_H ]; // h-variable
+  f[ S::HH_P ] = alpha_p * ( 1 - y[ S::HH_P ] ) - beta_p * y[ S::HH_P ]; // p-variable
+  f[ S::HH_N ] = alpha_n * ( 1 - y[ S::HH_N ] ) - beta_n * y[ S::HH_N ]; // n-variable
 
   // synapses: alpha functions
   f[ S::DI_EXC ] = -dI_ex / node.P_.tau_synE;
@@ -210,17 +186,13 @@ nest::hh_psc_alpha_gap::State_::State_( const Parameters_& )
   }
 
   // equilibrium values for (in)activation variables
-  const double alpha_m =
-    40. * ( y_[ 0 ] - 75.5 ) / ( 1. - std::exp( -( y_[ 0 ] - 75.5 ) / 13.5 ) );
+  const double alpha_m = 40. * ( y_[ 0 ] - 75.5 ) / ( 1. - std::exp( -( y_[ 0 ] - 75.5 ) / 13.5 ) );
   const double beta_m = 1.2262 / std::exp( y_[ 0 ] / 42.248 );
   const double alpha_h = 0.0035 / std::exp( y_[ 0 ] / 24.186 );
-  const double beta_h = 0.017 * ( 51.25 + y_[ 0 ] )
-    / ( 1. - std::exp( -( 51.25 + y_[ 0 ] ) / 5.2 ) );
-  const double alpha_p =
-    ( y_[ 0 ] - 95. ) / ( 1. - std::exp( -( y_[ 0 ] - 95. ) / 11.8 ) );
+  const double beta_h = 0.017 * ( 51.25 + y_[ 0 ] ) / ( 1. - std::exp( -( 51.25 + y_[ 0 ] ) / 5.2 ) );
+  const double alpha_p = ( y_[ 0 ] - 95. ) / ( 1. - std::exp( -( y_[ 0 ] - 95. ) / 11.8 ) );
   const double beta_p = 0.025 / std::exp( y_[ 0 ] / 22.222 );
-  const double alpha_n =
-    0.014 * ( y_[ 0 ] + 44. ) / ( 1. - std::exp( -( y_[ 0 ] + 44. ) / 2.3 ) );
+  const double alpha_n = 0.014 * ( y_[ 0 ] + 44. ) / ( 1. - std::exp( -( y_[ 0 ] + 44. ) / 2.3 ) );
   const double beta_n = 0.0043 / std::exp( ( y_[ 0 ] + 44. ) / 34. );
 
   y_[ HH_H ] = alpha_h / ( alpha_h + beta_h );
@@ -238,8 +210,7 @@ nest::hh_psc_alpha_gap::State_::State_( const State_& s )
   }
 }
 
-nest::hh_psc_alpha_gap::State_& nest::hh_psc_alpha_gap::State_::operator=(
-  const State_& s )
+nest::hh_psc_alpha_gap::State_& nest::hh_psc_alpha_gap::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -340,8 +311,7 @@ nest::hh_psc_alpha_gap::Buffers_::Buffers_( hh_psc_alpha_gap& n )
   // init_buffers_().
 }
 
-nest::hh_psc_alpha_gap::Buffers_::Buffers_( const Buffers_&,
-  hh_psc_alpha_gap& n )
+nest::hh_psc_alpha_gap::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_gap& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -419,8 +389,8 @@ nest::hh_psc_alpha_gap::init_buffers_()
   // per min_delay step)
 
   // resize interpolation_coefficients depending on interpolation order
-  const size_t buffer_size = kernel().connection_manager.get_min_delay()
-    * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 );
+  const size_t buffer_size =
+    kernel().connection_manager.get_min_delay() * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 );
 
   B_.interpolation_coefficients.resize( buffer_size, 0.0 );
 
@@ -437,8 +407,7 @@ nest::hh_psc_alpha_gap::init_buffers_()
 
   if ( B_.s_ == 0 )
   {
-    B_.s_ =
-      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
   else
   {
@@ -489,25 +458,19 @@ nest::hh_psc_alpha_gap::calibrate()
  * ---------------------------------------------------------------- */
 
 bool
-nest::hh_psc_alpha_gap::update_( Time const& origin,
-  const long from,
-  const long to,
-  const bool called_from_wfr_update )
+nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
 
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  const size_t interpolation_order =
-    kernel().simulation_manager.get_wfr_interpolation_order();
+  const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
   bool wfr_tol_exceeded = false;
 
   // allocate memory to store the new interpolation coefficients
   // to be sent by gap event
-  const size_t buffer_size =
-    kernel().connection_manager.get_min_delay() * ( interpolation_order + 1 );
+  const size_t buffer_size = kernel().connection_manager.get_min_delay() * ( interpolation_order + 1 );
   std::vector< double > new_coefficients( buffer_size, 0.0 );
 
   // parameters needed for piecewise interpolation
@@ -526,8 +489,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
       y_i = S_.y_[ State_::V_M ];
       if ( interpolation_order == 3 )
       {
-        hh_psc_alpha_gap_dynamics(
-          0, S_.y_, f_temp, reinterpret_cast< void* >( this ) );
+        hh_psc_alpha_gap_dynamics( 0, S_.y_, f_temp, reinterpret_cast< void* >( this ) );
         hf_i = B_.step_ * f_temp[ State_::V_M ];
       }
     }
@@ -565,10 +527,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 
     if ( not called_from_wfr_update )
     {
-      S_.y_[ State_::DI_EXC ] +=
-        B_.spike_exc_.get_value( lag ) * V_.PSCurrInit_E_;
-      S_.y_[ State_::DI_INH ] +=
-        B_.spike_inh_.get_value( lag ) * V_.PSCurrInit_I_;
+      S_.y_[ State_::DI_EXC ] += B_.spike_exc_.get_value( lag ) * V_.PSCurrInit_E_;
+      S_.y_[ State_::DI_INH ] += B_.spike_inh_.get_value( lag ) * V_.PSCurrInit_I_;
       // sending spikes: crossing 0 mV, pseudo-refractoriness and local
       // maximum...
       // refractory?
@@ -596,13 +556,10 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
     }
     else // if(called_from_wfr_update)
     {
-      S_.y_[ State_::DI_EXC ] +=
-        B_.spike_exc_.get_value_wfr_update( lag ) * V_.PSCurrInit_E_;
-      S_.y_[ State_::DI_INH ] +=
-        B_.spike_inh_.get_value_wfr_update( lag ) * V_.PSCurrInit_I_;
+      S_.y_[ State_::DI_EXC ] += B_.spike_exc_.get_value_wfr_update( lag ) * V_.PSCurrInit_E_;
+      S_.y_[ State_::DI_INH ] += B_.spike_inh_.get_value_wfr_update( lag ) * V_.PSCurrInit_I_;
       // check if deviation from last iteration exceeds wfr_tol
-      wfr_tol_exceeded = wfr_tol_exceeded
-        or fabs( S_.y_[ State_::V_M ] - B_.last_y_values[ lag ] ) > wfr_tol;
+      wfr_tol_exceeded = wfr_tol_exceeded or fabs( S_.y_[ State_::V_M ] - B_.last_y_values[ lag ] ) > wfr_tol;
       B_.last_y_values[ lag ] = S_.y_[ State_::V_M ];
 
       // update different interpolations
@@ -623,15 +580,12 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 
       case 3:
         y_ip1 = S_.y_[ State_::V_M ];
-        hh_psc_alpha_gap_dynamics(
-          B_.step_, S_.y_, f_temp, reinterpret_cast< void* >( this ) );
+        hh_psc_alpha_gap_dynamics( B_.step_, S_.y_, f_temp, reinterpret_cast< void* >( this ) );
         hf_ip1 = B_.step_ * f_temp[ State_::V_M ];
 
         new_coefficients[ lag * ( interpolation_order + 1 ) + 1 ] = hf_i;
-        new_coefficients[ lag * ( interpolation_order + 1 ) + 2 ] =
-          -3 * y_i + 3 * y_ip1 - 2 * hf_i - hf_ip1;
-        new_coefficients[ lag * ( interpolation_order + 1 ) + 3 ] =
-          2 * y_i - 2 * y_ip1 + hf_i + hf_ip1;
+        new_coefficients[ lag * ( interpolation_order + 1 ) + 2 ] = -3 * y_i + 3 * y_ip1 - 2 * hf_i - hf_ip1;
+        new_coefficients[ lag * ( interpolation_order + 1 ) + 3 ] = 2 * y_i - 2 * y_ip1 + hf_i + hf_ip1;
         break;
 
       default:
@@ -648,12 +602,10 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
   {
     for ( long temp = from; temp < to; ++temp )
     {
-      new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] =
-        S_.y_[ State_::V_M ];
+      new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] = S_.y_[ State_::V_M ];
     }
 
-    std::vector< double >( kernel().connection_manager.get_min_delay(), 0.0 )
-      .swap( B_.last_y_values );
+    std::vector< double >( kernel().connection_manager.get_min_delay(), 0.0 ).swap( B_.last_y_values );
   }
 
   // Send gap-event
@@ -663,8 +615,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 
   // Reset variables
   B_.sumj_g_ij_ = 0.0;
-  std::vector< double >( buffer_size, 0.0 )
-    .swap( B_.interpolation_coefficients );
+  std::vector< double >( buffer_size, 0.0 ).swap( B_.interpolation_coefficients );
 
   return wfr_tol_exceeded;
 }
@@ -676,14 +627,12 @@ nest::hh_psc_alpha_gap::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -696,9 +645,7 @@ nest::hh_psc_alpha_gap::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

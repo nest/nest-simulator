@@ -122,9 +122,8 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-  void set( const DictionaryDatum&,
-    Node* node ); //!< Set values from dicitonary
+  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling
@@ -149,12 +148,9 @@ nonlinearities_threshold_lin_rate::mult_coupling_in( double rate )
   return 1.;
 }
 
-typedef rate_neuron_ipn< nest::nonlinearities_threshold_lin_rate >
-  threshold_lin_rate_ipn;
-typedef rate_neuron_opn< nest::nonlinearities_threshold_lin_rate >
-  threshold_lin_rate_opn;
-typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate >
-  rate_transformer_threshold_lin;
+typedef rate_neuron_ipn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_ipn;
+typedef rate_neuron_opn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_opn;
+typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate > rate_transformer_threshold_lin;
 
 template <>
 void RecordablesMap< threshold_lin_rate_ipn >::create();

@@ -614,8 +614,7 @@ inline DataLoggingRequest::DataLoggingRequest()
 {
 }
 
-inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int,
-  const std::vector< Name >& recs )
+inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const std::vector< Name >& recs )
   : Event()
   , recording_interval_( rec_int )
   , record_from_( &recs )
@@ -846,10 +845,8 @@ public:
 
   //! size of event in units of unsigned int
   virtual size_t size() = 0;
-  virtual std::vector< unsigned int >::iterator& operator<<(
-    std::vector< unsigned int >::iterator& pos ) = 0;
-  virtual std::vector< unsigned int >::iterator& operator>>(
-    std::vector< unsigned int >::iterator& pos ) = 0;
+  virtual std::vector< unsigned int >::iterator& operator<<( std::vector< unsigned int >::iterator& pos ) = 0;
+  virtual std::vector< unsigned int >::iterator& operator>>( std::vector< unsigned int >::iterator& pos ) = 0;
 
   virtual const std::vector< synindex >& get_supported_syn_ids() const = 0;
 
@@ -897,9 +894,7 @@ write_to_comm_buffer( T d, std::vector< unsigned int >::iterator& pos )
 
   for ( size_t i = 0; i < num_uints; i++ )
   {
-    memcpy( &( *( pos + i ) ),
-      c + i * sizeof( unsigned int ),
-      std::min( left_to_copy, sizeof( unsigned int ) ) );
+    memcpy( &( *( pos + i ) ), c + i * sizeof( unsigned int ), std::min( left_to_copy, sizeof( unsigned int ) ) );
     left_to_copy -= sizeof( unsigned int );
   }
 
@@ -926,9 +921,7 @@ read_from_comm_buffer( T& d, std::vector< unsigned int >::iterator& pos )
 
   for ( size_t i = 0; i < num_uints; i++ )
   {
-    memcpy( c + i * sizeof( unsigned int ),
-      &( *( pos + i ) ),
-      std::min( left_to_copy, sizeof( unsigned int ) ) );
+    memcpy( c + i * sizeof( unsigned int ), &( *( pos + i ) ), std::min( left_to_copy, sizeof( unsigned int ) ) );
     left_to_copy -= sizeof( unsigned int );
   }
 
@@ -1034,9 +1027,7 @@ public:
   bool
   supports_syn_id( const synindex synid ) const
   {
-    return (
-      std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
-      != supported_syn_ids_.end() );
+    return ( std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid ) != supported_syn_ids_.end() );
   }
 
   void
@@ -1051,8 +1042,7 @@ public:
    * The following operator is used to read the information of the
    * DataSecondaryEvent from the buffer in EventDeliveryManager::deliver_events
    */
-  std::vector< unsigned int >::iterator& operator<<(
-    std::vector< unsigned int >::iterator& pos )
+  std::vector< unsigned int >::iterator& operator<<( std::vector< unsigned int >::iterator& pos )
   {
     // The synid can be skipped here as it is stored in a static vector
 
@@ -1073,12 +1063,9 @@ public:
    * All DataSecondaryEvents are identified by the synid of the
    * first element in supported_syn_ids_.
    */
-  std::vector< unsigned int >::iterator& operator>>(
-    std::vector< unsigned int >::iterator& pos )
+  std::vector< unsigned int >::iterator& operator>>( std::vector< unsigned int >::iterator& pos )
   {
-    for ( typename std::vector< DataType >::iterator i = coeffarray_as_d_begin_;
-          i != coeffarray_as_d_end_;
-          i++ )
+    for ( typename std::vector< DataType >::iterator i = coeffarray_as_d_begin_; i != coeffarray_as_d_end_; i++ )
     {
       // we need the static_cast here as the size of a stand-alone variable
       // and a std::vector entry may differ (e.g. for std::vector< bool >)
@@ -1132,8 +1119,7 @@ public:
  * Event for rate model connections without delay. The event transmits
  * the rate to the connected neurons.
  */
-class InstantaneousRateConnectionEvent
-  : public DataSecondaryEvent< double, InstantaneousRateConnectionEvent >
+class InstantaneousRateConnectionEvent : public DataSecondaryEvent< double, InstantaneousRateConnectionEvent >
 {
 
 public:
@@ -1149,8 +1135,7 @@ public:
  * Event for rate model connections with delay. The event transmits
  * the rate to the connected neurons.
  */
-class DelayedRateConnectionEvent
-  : public DataSecondaryEvent< double, DelayedRateConnectionEvent >
+class DelayedRateConnectionEvent : public DataSecondaryEvent< double, DelayedRateConnectionEvent >
 {
 
 public:
@@ -1166,8 +1151,7 @@ public:
  * Event for diffusion connections (rate model connections for the
  * siegert_neuron). The event transmits the rate to the connected neurons.
  */
-class DiffusionConnectionEvent
-  : public DataSecondaryEvent< double, DiffusionConnectionEvent >
+class DiffusionConnectionEvent : public DataSecondaryEvent< double, DiffusionConnectionEvent >
 {
 private:
   // drift factor of the corresponding connection
@@ -1201,8 +1185,7 @@ public:
 
 template < typename DataType, typename Subclass >
 inline DataType
-DataSecondaryEvent< DataType, Subclass >::get_coeffvalue(
-  std::vector< unsigned int >::iterator& pos )
+DataSecondaryEvent< DataType, Subclass >::get_coeffvalue( std::vector< unsigned int >::iterator& pos )
 {
   DataType elem;
   read_from_comm_buffer( elem, pos );
@@ -1210,12 +1193,10 @@ DataSecondaryEvent< DataType, Subclass >::get_coeffvalue(
 }
 
 template < typename Datatype, typename Subclass >
-std::vector< synindex >
-  DataSecondaryEvent< Datatype, Subclass >::pristine_supported_syn_ids_;
+std::vector< synindex > DataSecondaryEvent< Datatype, Subclass >::pristine_supported_syn_ids_;
 
 template < typename DataType, typename Subclass >
-std::vector< synindex >
-  DataSecondaryEvent< DataType, Subclass >::supported_syn_ids_;
+std::vector< synindex > DataSecondaryEvent< DataType, Subclass >::supported_syn_ids_;
 
 template < typename DataType, typename Subclass >
 size_t DataSecondaryEvent< DataType, Subclass >::coeff_length_ = 0;

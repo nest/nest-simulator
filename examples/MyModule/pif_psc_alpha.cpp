@@ -46,8 +46,7 @@ using namespace nest;
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< mynest::pif_psc_alpha >
-  mynest::pif_psc_alpha::recordablesMap_;
+nest::RecordablesMap< mynest::pif_psc_alpha > mynest::pif_psc_alpha::recordablesMap_;
 
 namespace nest
 {
@@ -112,13 +111,11 @@ mynest::pif_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::t_ref, t_ref );
   if ( C_m <= 0 )
   {
-    throw nest::BadProperty(
-      "The membrane capacitance must be strictly positive." );
+    throw nest::BadProperty( "The membrane capacitance must be strictly positive." );
   }
   if ( tau_syn <= 0 )
   {
-    throw nest::BadProperty(
-      "The synaptic time constant must be strictly positive." );
+    throw nest::BadProperty( "The synaptic time constant must be strictly positive." );
   }
   if ( V_reset >= V_th )
   {
@@ -126,8 +123,7 @@ mynest::pif_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   }
   if ( t_ref < 0 )
   {
-    throw nest::BadProperty(
-      "The refractory time must be at least one simulation step." );
+    throw nest::BadProperty( "The refractory time must be at least one simulation step." );
   }
 }
 
@@ -141,8 +137,7 @@ mynest::pif_psc_alpha::State_::get( DictionaryDatum& d ) const
 }
 
 void
-mynest::pif_psc_alpha::State_::set( const DictionaryDatum& d,
-  const Parameters_& p )
+mynest::pif_psc_alpha::State_::set( const DictionaryDatum& d, const Parameters_& p )
 {
   // Only the membrane potential can be set; one could also make other state
   // variables
@@ -224,8 +219,7 @@ mynest::pif_psc_alpha::calibrate()
 
   // refractory time in steps
   V_.t_ref_steps = Time( Time::ms( P_.t_ref ) ).get_steps();
-  assert(
-    V_.t_ref_steps >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  assert( V_.t_ref_steps >= 0 ); // since t_ref_ >= 0, this can only fail in error
 }
 
 /* ----------------------------------------------------------------
@@ -233,9 +227,7 @@ mynest::pif_psc_alpha::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-mynest::pif_psc_alpha::update( Time const& slice_origin,
-  const long from_step,
-  const long to_step )
+mynest::pif_psc_alpha::update( Time const& slice_origin, const long from_step, const long to_step )
 {
   for ( long lag = from_step; lag < to_step; ++lag )
   {
@@ -245,8 +237,7 @@ mynest::pif_psc_alpha::update( Time const& slice_origin,
     // update membrane potential
     if ( S_.refr_count == 0 ) // neuron absolute not refractory
     {
-      S_.V_m +=
-        V_.P30 * ( S_.I_ext + P_.I_e ) + V_.P31 * S_.dI_syn + V_.P32 * S_.I_syn;
+      S_.V_m += V_.P30 * ( S_.I_ext + P_.I_e ) + V_.P31 * S_.dI_syn + V_.P32 * S_.I_syn;
     }
     else
     {
@@ -288,8 +279,7 @@ mynest::pif_psc_alpha::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   B_.spikes.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -298,8 +288,7 @@ mynest::pif_psc_alpha::handle( CurrentEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   B_.currents.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_current() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
 
 // Do not move this function as inline to h-file. It depends on

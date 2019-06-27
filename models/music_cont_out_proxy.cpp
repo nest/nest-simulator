@@ -122,8 +122,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
     updateValue< string >( d, names::port_name, port_name_ );
   }
 
-  if ( buffers.has_targets_
-    && ( d->known( names::interval ) || d->known( names::record_from ) ) )
+  if ( buffers.has_targets_ && ( d->known( names::interval ) || d->known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval and the list of properties to record "
@@ -142,8 +141,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 
     // see if we can represent interval as multiple of step
     interval_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( std::abs( 1 - interval_.get_ms() / v ) > 10
-        * std::numeric_limits< double >::epsilon() )
+    if ( std::abs( 1 - interval_.get_ms() / v ) > 10 * std::numeric_limits< double >::epsilon() )
     {
       throw BadProperty(
         "The sampling interval must be a multiple of "
@@ -166,8 +164,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
   {
     if ( record_from_.empty() )
     {
-      throw BadProperty(
-        "The property record_from must be set before passing targets." );
+      throw BadProperty( "The property record_from must be set before passing targets." );
     }
 
     if ( state.published_ == false )
@@ -200,8 +197,7 @@ nest::music_cont_out_proxy::music_cont_out_proxy()
 {
 }
 
-nest::music_cont_out_proxy::music_cont_out_proxy(
-  const music_cont_out_proxy& n )
+nest::music_cont_out_proxy::music_cont_out_proxy( const music_cont_out_proxy& n )
   : DeviceNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -226,10 +222,7 @@ nest::music_cont_out_proxy::finalize()
 }
 
 nest::port
-nest::music_cont_out_proxy::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+nest::music_cont_out_proxy::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
 
   DataLoggingRequest e( P_.interval_, P_.record_from_ );
@@ -249,10 +242,8 @@ nest::music_cont_out_proxy::calibrate()
   // only publish the output port once,
   if ( S_.published_ == false )
   {
-    const Token synmodel =
-      kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
-    assert(
-      synmodel.empty() == false && "synapse 'static_synapse' not available" );
+    const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
+    assert( synmodel.empty() == false && "synapse 'static_synapse' not available" );
 
     const index synmodel_id = static_cast< index >( synmodel );
     std::vector< MUSIC::GlobalIndex > music_index_map;
@@ -263,8 +254,7 @@ nest::music_cont_out_proxy::calibrate()
       const index tgid = ( *P_.targets_ )[ i ];
       if ( kernel().node_manager.is_local_gid( tgid ) )
       {
-        kernel().connection_manager.connect(
-          get_gid(), tgid, dummy_params, synmodel_id );
+        kernel().connection_manager.connect( get_gid(), tgid, dummy_params, synmodel_id );
 
         for ( size_t j = 0; j < P_.record_from_.size(); ++j )
         {
@@ -300,28 +290,23 @@ nest::music_cont_out_proxy::calibrate()
     // Check if any port is out of bounds
     if ( P_.targets_->size() > S_.port_width_ )
     {
-      throw MUSICChannelUnknown(
-        get_name(), P_.port_name_, S_.port_width_ + 1 );
+      throw MUSICChannelUnknown( get_name(), P_.port_name_, S_.port_width_ + 1 );
     }
 
     // The permutation index map, contains global_index[local_index]
-    MUSIC::PermutationIndex* music_perm_ind = new MUSIC::PermutationIndex(
-      &music_index_map.front(), music_index_map.size() );
+    MUSIC::PermutationIndex* music_perm_ind =
+      new MUSIC::PermutationIndex( &music_index_map.front(), music_index_map.size() );
 
     MUSIC::ArrayData* dmap =
-      new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ),
-        MPI::DOUBLE,
-        music_perm_ind );
+      new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI::DOUBLE, music_perm_ind );
 
     // Setup an array map
     MP->map( dmap );
 
     S_.published_ = true;
 
-    std::string msg = String::compose(
-      "Mapping MUSIC continuous output port '%1' with width=%2.",
-      P_.port_name_,
-      S_.port_width_ );
+    std::string msg =
+      String::compose( "Mapping MUSIC continuous output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
     LOG( M_INFO, "music_cont_out_proxy::calibrate()", msg.c_str() );
   }
 }
@@ -341,8 +326,7 @@ nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const std::vector< Node* > siblings =
-      kernel().node_manager.get_thread_siblings( get_gid() );
+    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator s;
     for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {
@@ -358,9 +342,7 @@ nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
 }
 
 void
-nest::music_cont_out_proxy::update( Time const& origin,
-  const long from,
-  const long )
+nest::music_cont_out_proxy::update( Time const& origin, const long from, const long )
 {
   /* There is nothing to request during the first time slice. For
      each subsequent slice, we collect all data generated during

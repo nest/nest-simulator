@@ -264,8 +264,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'NESTsimulator.tex', u'NEST simulator Documentation',
-     u'steffengraber', 'manual'),
+    (master_doc, 'NESTsimulator.tex', u'NEST Simulator Documentation',
+     u'NEST Developer Community', 'manual'),
 ]
 
 

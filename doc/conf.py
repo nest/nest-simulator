@@ -269,7 +269,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'NESTsimulator.tex', u'NEST Simulator Documentation',
-     u'NEST developer community', 'manual'),
+     u'NEST Developer Community', 'manual'),
 ]
 
 

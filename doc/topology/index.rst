@@ -16,9 +16,9 @@ The Topology Module is designed to build complex, layered networks in NEST.
    :hidden:
    :maxdepth: 1
 
+   Topology_UserManual
    ../tutorials/pynest_tutorial/part_4_topologically_structured_networks
    ../tutorials/topology/index
-   Topology_UserManual
    examples/index
 
 

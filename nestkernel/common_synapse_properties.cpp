@@ -51,7 +51,7 @@ CommonSynapseProperties::~CommonSynapseProperties()
 void
 CommonSynapseProperties::get_status( DictionaryDatum& d ) const
 {
-  if ( weight_recorder_.valid() )
+  if ( weight_recorder_.get() )
   {
     def< GIDCollectionDatum >( d, names::weight_recorder, weight_recorder_ );
   }

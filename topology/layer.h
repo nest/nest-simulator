@@ -45,7 +45,7 @@ namespace nest
 {
 
 class AbstractLayer;
-typedef lockPTR< AbstractLayer > AbstractLayerPTR;
+typedef std::shared_ptr< AbstractLayer > AbstractLayerPTR;
 
 /**
  * Abstract base class for Layers of unspecified dimension.
@@ -177,7 +177,7 @@ protected:
   virtual void clear_vector_cache_() const = 0;
 
   /**
-   * Gets a lockPTR to the metadata to the GIDCollection to which this layer
+   * Gets a std::shared_ptr to the metadata to the GIDCollection to which this layer
    * belongs.
    */
   GIDCollectionMetadataPTR get_metadata() const;
@@ -309,7 +309,7 @@ public:
    * user should group together all ConnectLayers calls using the same
    * pool layer.
    */
-  lockPTR< Ntree< D, index > > get_global_positions_ntree();
+  std::shared_ptr< Ntree< D, index > > get_global_positions_ntree();
 
   /**
    * Get positions globally, overriding the dimensions of the layer and
@@ -317,7 +317,7 @@ public:
    * coordinates are only used for the dimensions where the supplied
    * periodic flag is set.
    */
-  lockPTR< Ntree< D, index > >
+  std::shared_ptr< Ntree< D, index > >
   get_global_positions_ntree( std::bitset< D > periodic, Position< D > lower_left, Position< D > extent );
 
   std::vector< std::pair< Position< D >, index > >* get_global_positions_vector();
@@ -370,7 +370,7 @@ protected:
    */
   void clear_vector_cache_() const;
 
-  lockPTR< Ntree< D, index > > do_get_global_positions_ntree_();
+  std::shared_ptr< Ntree< D, index > > do_get_global_positions_ntree_();
 
   /**
    * Insert global position info into ntree.
@@ -390,7 +390,7 @@ protected:
   /**
    * Global position information for a single layer
    */
-  static lockPTR< Ntree< D, index > > cached_ntree_;
+  static std::shared_ptr< Ntree< D, index > > cached_ntree_;
   static std::vector< std::pair< Position< D >, index > >* cached_vector_;
 
   friend class MaskedLayer< D >;
@@ -455,7 +455,7 @@ protected:
    */
   void check_mask_( Layer< D >& layer, bool allow_oversized );
 
-  lockPTR< Ntree< D, index > > ntree_;
+  std::shared_ptr< Ntree< D, index > > ntree_;
   MaskDatum mask_;
 };
 
@@ -588,7 +588,7 @@ template < int D >
 inline void
 Layer< D >::clear_ntree_cache_() const
 {
-  cached_ntree_ = lockPTR< Ntree< D, index > >();
+  cached_ntree_ = std::shared_ptr< Ntree< D, index > >();
   cached_ntree_gc_ = GIDCollectionMetadataPTR( 0 );
 }
 

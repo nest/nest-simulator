@@ -35,9 +35,6 @@
 #include <map>
 #include <vector>
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from librandom:
 #include "gslrandomgen.h"
 
@@ -183,7 +180,7 @@ protected:
   bool creates_symmetric_connections_;
 
   //! buffer for exceptions raised in threads
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 
   // Name of the pre synaptic and post synaptic elements for this connection
   // builder

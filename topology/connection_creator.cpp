@@ -107,11 +107,11 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
 
   // Set default weight and delay if not given explicitly
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_ );
-  if ( not weight_.valid() )
+  if ( not weight_.get() )
   {
     weight_ = NestModule::create_parameter( ( *syn_defaults )[ names::weight ] );
   }
-  if ( not delay_.valid() )
+  if ( not delay_.get() )
   {
     if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) )
     {

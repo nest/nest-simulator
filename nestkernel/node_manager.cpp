@@ -147,7 +147,8 @@ NodeManager::add_node( index model_id, long n )
   kernel().modelrange_manager.add_range( model_id, min_gid, max_gid );
 
   // clear any exceptions from previous call
-  std::vector< lockPTR< WrappedThreadException > >( kernel().vp_manager.get_num_threads() ).swap( exceptions_raised_ );
+  std::vector< std::shared_ptr< WrappedThreadException > >( kernel().vp_manager.get_num_threads() )
+    .swap( exceptions_raised_ );
 
   auto gc_ptr = GIDCollectionPTR( new GIDCollectionPrimitive( min_gid, max_gid, model_id ) );
 
@@ -167,7 +168,7 @@ NodeManager::add_node( index model_id, long n )
   // check if any exceptions have been raised
   for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
-    if ( exceptions_raised_.at( t ).valid() )
+    if ( exceptions_raised_.at( t ).get() )
     {
       throw WrappedThreadException( *( exceptions_raised_.at( t ) ) );
     }
@@ -260,7 +261,7 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, GIDCollec
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( t ) = lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
 }
@@ -299,7 +300,7 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid, GIDCollec
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( t ) = lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
 }
@@ -335,7 +336,7 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCo
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( t ) = lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
 }
@@ -640,7 +641,7 @@ NodeManager::prepare_nodes()
   size_t num_active_nodes = 0;     // counts nodes that will be updated
   size_t num_active_wfr_nodes = 0; // counts nodes that use waveform relaxation
 
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
 #ifdef _OPENMP
 #pragma omp parallel reduction( + : num_active_nodes, num_active_wfr_nodes )
@@ -671,7 +672,7 @@ NodeManager::prepare_nodes()
     catch ( std::exception& e )
     {
       // so throw the exception after parallel region
-      exceptions_raised.at( t ) = lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
+      exceptions_raised.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( e ) );
     }
 
   } // end of parallel section / end of for threads
@@ -679,7 +680,7 @@ NodeManager::prepare_nodes()
   // check if any exceptions have been raised
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    if ( exceptions_raised.at( tid ).valid() )
+    if ( exceptions_raised.at( tid ).get() )
     {
       throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
     }

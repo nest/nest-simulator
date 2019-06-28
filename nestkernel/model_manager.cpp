@@ -337,7 +337,7 @@ ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& para
   params->clear_access_flags();
   assert_valid_syn_id( model_id );
 
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
 // We have to run this in parallel to set the status on nodes that exist on each
 // thread, such as volume_transmitter.
@@ -353,13 +353,13 @@ ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& para
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( tid ) = lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
 
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    if ( exceptions_raised_.at( tid ).valid() )
+    if ( exceptions_raised_.at( tid ).get() )
     {
       throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
     }

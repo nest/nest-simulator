@@ -24,8 +24,8 @@
 
 // explicit instantiations
 template class AggregateDatum< nest::ConnectionID, &nest::NestModule::ConnectionType >;
-template class lockPTRDatum< nest::GIDCollection, &nest::NestModule::GIDCollectionType >;
-template class lockPTRDatum< nest::gc_const_iterator, &nest::NestModule::GIDCollectionIteratorType >;
+template class sharedPtrDatum< nest::GIDCollection, &nest::NestModule::GIDCollectionType >;
+template class sharedPtrDatum< nest::gc_const_iterator, &nest::NestModule::GIDCollectionIteratorType >;
 
 // instantiate memory management pool
 template <>

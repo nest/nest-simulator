@@ -74,7 +74,7 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
   if ( pd )
   {
-    return new ParameterConnParameterWrapper( **pd, nthreads );
+    return new ParameterConnParameterWrapper( *pd, nthreads );
   }
 
   // array of integer
@@ -112,7 +112,6 @@ nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec, const s
 nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( const ParameterDatum& pd, const size_t )
   : parameter_( pd.get() )
 {
-  pd.unlock();
 }
 
 double

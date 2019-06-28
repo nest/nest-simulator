@@ -62,7 +62,6 @@ get_layer( GIDCollectionPTR gc )
   GIDCollectionMetadataPTR meta = gc->get_metadata();
 
   LayerMetadata const* const layer_meta = dynamic_cast< LayerMetadata const* >( meta.get() );
-  meta.unlock();
   if ( not layer_meta )
   {
     throw LayerExpected();

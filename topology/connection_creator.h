@@ -173,11 +173,11 @@ private:
   bool allow_multapses_;
   bool allow_oversized_;
   index number_of_connections_;
-  lockPTR< AbstractMask > mask_;
-  lockPTR< Parameter > kernel_;
+  std::shared_ptr< AbstractMask > mask_;
+  std::shared_ptr< Parameter > kernel_;
   index synapse_model_;
-  lockPTR< Parameter > weight_;
-  lockPTR< Parameter > delay_;
+  std::shared_ptr< Parameter > weight_;
+  std::shared_ptr< Parameter > delay_;
 
   //! Empty dictionary to pass to connect functions
   const static DictionaryDatum dummy_param_;

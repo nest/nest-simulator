@@ -86,7 +86,6 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     {
       auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
       auto positions = dynamic_cast< DimensionParameter* >( pd->get() );
-      pd->unlock();
       // To avoid nasty segfaults, we check that the parameter is indeed a
       // DimensionParameter.
       if ( not std::is_same< std::remove_reference< decltype( *positions ) >::type, DimensionParameter >::value )
@@ -145,7 +144,8 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   }
 
   assert( layer_local );
-  lockPTR< AbstractLayer > layer_safe( layer_local );
+  std::shared_ptr< AbstractLayer > layer_safe( layer_local );
+  // auto layer_safe = std::make_shared< AbstractLayer >( layer_local );
   GIDCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
 
   // We have at least one element, create a GIDCollection for it

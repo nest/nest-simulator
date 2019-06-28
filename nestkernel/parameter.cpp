@@ -25,11 +25,11 @@
 #include "topology.h"
 
 // includes from sli
-#include "lockptrdatum_impl.h"
+#include "sharedptrdatum.h"
 
 #include "parameter.h"
 
-template class lockPTRDatum< nest::Parameter, &nest::NestModule::ParameterType >;
+template class sharedPtrDatum< nest::Parameter, &nest::NestModule::ParameterType >;
 
 namespace nest
 {
@@ -48,23 +48,22 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
     throw KernelException( "NodePosParameter: not node" );
   }
   GIDCollectionPTR gc = node->get_gc();
-  if ( not gc.valid() )
+  if ( not gc.get() )
   {
     throw KernelException( "NodePosParameter: not gc" );
   }
   GIDCollectionMetadataPTR meta = gc->get_metadata();
-  if ( not meta.valid() )
+  if ( not meta.get() )
   {
     throw KernelException( "NodePosParameter: not meta" );
   }
   LayerMetadata const* const layer_meta = dynamic_cast< LayerMetadata const* >( meta.get() );
-  meta.unlock();
   if ( not layer_meta )
   {
     throw KernelException( "NodePosParameter: not layer_meta" );
   }
   AbstractLayerPTR layer = layer_meta->get_layer();
-  if ( not layer.valid() )
+  if ( not layer.get() )
   {
     throw KernelException( "NodePosParameter: not valid layer" );
   }
@@ -96,23 +95,22 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng, index sgid, Node* targe
   // Source
 
   GIDCollectionPTR source_gc = source->get_gc();
-  if ( not source_gc.valid() )
+  if ( not source_gc.get() )
   {
     throw KernelException( "SpatialDistanceParameter: not source gc" );
   }
   GIDCollectionMetadataPTR source_meta = source_gc->get_metadata();
-  if ( not source_meta.valid() )
+  if ( not source_meta.get() )
   {
     throw KernelException( "SpatialDistanceParameter: not source meta" );
   }
   LayerMetadata const* const source_layer_meta = dynamic_cast< LayerMetadata const* >( source_meta.get() );
-  source_meta.unlock();
   if ( not source_layer_meta )
   {
     throw KernelException( "SpatialDistanceParameter: not source_layer_meta" );
   }
   AbstractLayerPTR source_layer = source_layer_meta->get_layer();
-  if ( not source_layer.valid() )
+  if ( not source_layer.get() )
   {
     throw KernelException( "SpatialDistanceParameter: not valid source layer" );
   }
@@ -123,23 +121,22 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng, index sgid, Node* targe
   // Target
 
   GIDCollectionPTR target_gc = target->get_gc();
-  if ( not target_gc.valid() )
+  if ( not target_gc.get() )
   {
     throw KernelException( "SpatialDistanceParameter: not target gc" );
   }
   GIDCollectionMetadataPTR target_meta = target_gc->get_metadata();
-  if ( not target_meta.valid() )
+  if ( not target_meta.get() )
   {
     throw KernelException( "SpatialDistanceParameter: not target meta" );
   }
   LayerMetadata const* const target_layer_meta = dynamic_cast< LayerMetadata const* >( target_meta.get() );
-  target_meta.unlock();
   if ( not target_layer_meta )
   {
     throw KernelException( "SpatialDistanceParameter: not target_layer_meta" );
   }
   AbstractLayerPTR target_layer = target_layer_meta->get_layer();
-  if ( not target_layer.valid() )
+  if ( not target_layer.get() )
   {
     throw KernelException( "SpatialDistanceParameter: not valid target layer" );
   }

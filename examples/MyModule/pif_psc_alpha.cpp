@@ -38,7 +38,7 @@
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-#include "lockptrdatum.h"
+#include "sharedptrdatum.h"
 
 using namespace nest;
 

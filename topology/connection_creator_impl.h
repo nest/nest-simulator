@@ -94,7 +94,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
 {
   librandom::RngPtr rng = get_vp_rng( tgt_thread );
 
-  const bool without_kernel = not kernel_.valid();
+  const bool without_kernel = not kernel_.get();
   for ( Iterator iter = from; iter != to; ++iter )
   {
     if ( ( not allow_autapses_ ) and ( iter->second == tgt_ptr->get_gid() ) )
@@ -194,7 +194,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source, Layer< D >& targe
 
   // retrieve global positions, either for masked or unmasked pool
   PoolWrapper_< D > pool;
-  if ( mask_.valid() ) // MaskedLayer will be freed by PoolWrapper d'tor
+  if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
   {
     pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_ ) );
   }
@@ -203,7 +203,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source, Layer< D >& targe
     pool.define( source.get_global_positions_vector() );
   }
 
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
 // sharing specs on next line commented out because gcc 4.2 cannot handle them
 #pragma omp parallel // default(none) shared(source, target, masked_layer,
@@ -223,7 +223,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source, Layer< D >& targe
         {
           const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
-          if ( mask_.valid() )
+          if ( mask_.get() )
           {
             connect_to_target_(
               pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, thread_id, source );
@@ -239,13 +239,14 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source, Layer< D >& targe
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( thread_id ) = lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( thread_id ) =
+        std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   } // omp parallel
   // check if any exceptions have been raised
   for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
   {
-    if ( exceptions_raised_.at( thr ).valid() )
+    if ( exceptions_raised_.at( thr ).get() )
     {
       throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
     }
@@ -266,7 +267,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
   //     connection conditionally
 
   PoolWrapper_< D > pool;
-  if ( mask_.valid() ) // MaskedLayer will be freed by PoolWrapper d'tor
+  if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
   {
     // By supplying the target layer to the MaskedLayer constructor, the
     // mask is mirrored so it may be applied to the source layer instead
@@ -277,7 +278,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
     pool.define( source.get_global_positions_vector() );
   }
 
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
   // We only need to check the first in the GIDCollection
   Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
@@ -306,7 +307,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
 
         const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
-        if ( mask_.valid() )
+        if ( mask_.get() )
         {
           // We do the same as in the target driven case, except that we
           // calculate
@@ -329,13 +330,14 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( thread_id ) = lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( thread_id ) =
+        std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   } // omp parallel
   // check if any exceptions have been raised
   for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
   {
-    if ( exceptions_raised_.at( thr ).valid() )
+    if ( exceptions_raised_.at( thr ).get() )
     {
       throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
     }
@@ -380,7 +382,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
     assert( not tgt->is_proxy() );
   }
 
-  if ( mask_.valid() )
+  if ( mask_.get() )
   {
     MaskedLayer< D > masked_source( source, mask_, allow_oversized_ );
 
@@ -407,7 +409,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
       // If there is no kernel, we can just draw uniform random numbers,
       // but with a kernel we have to set up a probability distribution
       // function using the Vose class.
-      if ( kernel_.valid() )
+      if ( kernel_.get() )
       {
 
         std::vector< double > probabilities;
@@ -532,7 +534,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
       // If there is no kernel, we can just draw uniform random numbers,
       // but with a kernel we have to set up a probability distribution
       // function using the Vose class.
-      if ( kernel_.valid() )
+      if ( kernel_.get() )
       {
 
         std::vector< double > probabilities;
@@ -695,7 +697,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
       targets.push_back( tgt_it->second );
       weight_delay_pairs.push_back( target_weight_delay );
 
-      if ( kernel_.valid() )
+      if ( kernel_.get() )
       {
         probabilities.push_back(
           kernel_->value( rng, source_pos, tgt_it->first, source.compute_displacement( tgt_it->first, source_pos ) ) );

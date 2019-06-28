@@ -28,9 +28,7 @@
 #include <ostream>
 #include <stdexcept> // out_of_range
 #include <vector>
-
-// Includes from libnestuil:
-#include "lockptr.h"
+#include <memory>
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -47,8 +45,8 @@ class GIDCollectionPrimitive;
 class GIDCollectionComposite;
 class GIDCollectionMetadata;
 
-typedef lockPTR< GIDCollection > GIDCollectionPTR;
-typedef lockPTR< GIDCollectionMetadata > GIDCollectionMetadataPTR;
+typedef std::shared_ptr< GIDCollection > GIDCollectionPTR;
+typedef std::shared_ptr< GIDCollectionMetadata > GIDCollectionMetadataPTR;
 
 /**
  * Class for Metadata attached to GIDCollection.
@@ -119,7 +117,7 @@ private:
 
   /**
    * Create safe iterator for GIDCollectionPrimitive.
-   * @param collection_ptr lockptr to collection to keep collection alive
+   * @param collection_ptr smart pointer to collection to keep collection alive
    * @param collection  Collection to iterate over
    * @param offset  Index of collection element iterator points to
    * @param step    Step for skipping due to e.g. slicing
@@ -131,7 +129,7 @@ private:
 
   /**
    * Create safe iterator for GIDCollectionComposite.
-   * @param collection_ptr lockptr to collection to keep collection alive
+   * @param collection_ptr smart pointer to collection to keep collection alive
    * @param collection  Collection to iterate over
    * @param part    Index of part of collection iterator points to
    * @param offset  Index of element in GC part that iterator points to
@@ -711,7 +709,6 @@ inline index GIDCollectionPrimitive::operator[]( const size_t idx ) const
 inline bool GIDCollectionPrimitive::operator==( GIDCollectionPTR rhs ) const
 {
   GIDCollectionPrimitive const* const rhs_ptr = dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
-  rhs.unlock();
 
   return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_
     and metadata_ == rhs_ptr->metadata_;
@@ -802,7 +799,6 @@ inline index GIDCollectionComposite::operator[]( const size_t i ) const
 inline bool GIDCollectionComposite::operator==( GIDCollectionPTR rhs ) const
 {
   GIDCollectionComposite const* const rhs_ptr = dynamic_cast< GIDCollectionComposite const* >( rhs.get() );
-  rhs.unlock();
 
   if ( size_ != rhs_ptr->size() || parts_.size() != rhs_ptr->parts_.size() )
   {

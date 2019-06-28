@@ -721,7 +721,7 @@ nest::SimulationManager::update_()
   delay old_to_step;
   exit_on_user_signal_ = false;
 
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 // parallel section begins
 #pragma omp parallel
   {
@@ -900,7 +900,7 @@ nest::SimulationManager::update_()
         catch ( std::exception& e )
         {
           // so throw the exception after parallel region
-          exceptions_raised.at( tid ) = lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
+          exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( e ) );
         }
       }
 
@@ -961,7 +961,7 @@ nest::SimulationManager::update_()
   // check if any exceptions have been raised
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    if ( exceptions_raised.at( tid ).valid() )
+    if ( exceptions_raised.at( tid ).get() )
     {
       simulating_ = false; // must mark this here, see #311
       inconsistent_state_ = true;

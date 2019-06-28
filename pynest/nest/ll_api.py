@@ -75,6 +75,7 @@ __all__ = [
     'check_stack',
     'get_debug',
     'pcd',
+    'possibly_promote_plain_gid_to_iterable',
     'set_debug',
     'sli_func',
     'sli_pop',
@@ -202,6 +203,52 @@ def get_debug():
     """
 
     return __debug
+
+def possibly_promote_plain_gid_to_iterable(*indices, demote_output=False):
+    """Decorator to promote the function arguments at given indices to iterables if
+    they are plain GIDs, i.e., integers.
+
+    Parameters
+    ----------
+    indices: arbitrary number of indices that should be checked for promotion
+             to iterable
+
+    demote_output: whether the output iterable should be reduced to its first
+                   element if one of the inputs was promoted to an iterable
+                   default: False
+
+    Returns
+    -------
+    function
+        Decorated function
+
+    """
+
+    def outer_wrapper(func):
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+
+            new_args = list(args)  # convert to list to make arguments mutable
+            del args  # just to make sure we do not accidentally use it later
+
+            input_promoted = False
+            for idx in indices:
+                if isinstance(new_args[idx], int):
+                    new_args[idx] = (new_args[idx],)
+                    input_promoted = True
+
+            res = func(*new_args, **kwargs)
+
+            # to be consistent we only demote output if input was promoted
+            if demote_output and input_promoted:
+                return res[0]
+            else:
+                return res
+
+        return wrapper
+
+    return outer_wrapper
 
 
 def set_debug(dbg=True):

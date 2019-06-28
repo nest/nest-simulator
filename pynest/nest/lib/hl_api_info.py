@@ -202,6 +202,7 @@ def message(level, sender, text):
     sr('message')
 
 
+@possibly_promote_plain_gid_to_iterable(0)
 @check_stack
 def SetStatus(nodes, params, val=None):
     """Set parameters of nodes or connections.
@@ -269,6 +270,7 @@ def SetStatus(nodes, params, val=None):
     sr('Transpose { arrayload pop SetStatus } forall')
 
 
+@possibly_promote_plain_gid_to_iterable(0, demote_output=True)
 @check_stack
 def GetStatus(nodes, keys=None, output=''):
     """Return the parameter dictionaries of nodes or connections.

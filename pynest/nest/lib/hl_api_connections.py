@@ -107,6 +107,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
     return spp()
 
 
+@possibly_promote_plain_gid_to_iterable(0, 1)
 @check_stack
 def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     """

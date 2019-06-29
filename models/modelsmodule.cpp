@@ -94,24 +94,8 @@
 #include "gif_pop_psc_exp.h"
 
 // glif models
-#include "glif.h"
 #include "glif_psc.h"
 #include "glif_cond.h"
-#include "glif_lif.h"
-#include "glif_lif_r.h"
-#include "glif_lif_asc.h"
-#include "glif_lif_r_asc.h"
-#include "glif_lif_r_asc_a.h"
-#include "glif_lif_psc.h"
-#include "glif_lif_r_psc.h"
-#include "glif_lif_asc_psc.h"
-#include "glif_lif_r_asc_psc.h"
-#include "glif_lif_r_asc_a_psc.h"
-#include "glif_lif_cond.h"
-#include "glif_lif_r_cond.h"
-#include "glif_lif_asc_cond.h"
-#include "glif_lif_r_asc_cond.h"
-#include "glif_lif_r_asc_a_cond.h"
 
 // Stimulation devices
 #include "ac_generator.h"
@@ -219,26 +203,7 @@ ModelsModule::init( SLIInterpreter* )
 {
 
   // glif models
-  kernel().model_manager.register_node_model< glif >( "glif" );
   kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );
-
-  kernel().model_manager.register_node_model< glif_lif >( "glif_lif" );
-  kernel().model_manager.register_node_model< glif_lif_r >( "glif_lif_r" );
-  kernel().model_manager.register_node_model< glif_lif_asc >( "glif_lif_asc" );
-  kernel().model_manager.register_node_model< glif_lif_r_asc >(
-    "glif_lif_r_asc" );
-  kernel().model_manager.register_node_model< glif_lif_r_asc_a >(
-    "glif_lif_r_asc_a" );
-  kernel().model_manager.register_node_model< glif_lif_psc >( "glif_lif_psc" );
-  kernel().model_manager.register_node_model< glif_lif_r_psc >(
-    "glif_lif_r_psc" );
-  kernel().model_manager.register_node_model< glif_lif_asc_psc >(
-    "glif_lif_asc_psc" );
-  kernel().model_manager.register_node_model< glif_lif_r_asc_psc >(
-    "glif_lif_r_asc_psc" );
-  kernel().model_manager.register_node_model< glif_lif_r_asc_a_psc >(
-    "glif_lif_r_asc_a_psc" );
-
 
   // rate models with input noise
   kernel().model_manager.register_node_model< gauss_rate_ipn >(
@@ -425,16 +390,6 @@ ModelsModule::init( SLIInterpreter* )
 #ifdef HAVE_GSL
   // glif cond models
   kernel().model_manager.register_node_model< glif_cond >( "glif_cond" );
-  kernel().model_manager.register_node_model< glif_lif_cond >(
-    "glif_lif_cond" );
-  kernel().model_manager.register_node_model< glif_lif_r_cond >(
-    "glif_lif_r_cond" );
-  kernel().model_manager.register_node_model< glif_lif_asc_cond >(
-    "glif_lif_asc_cond" );
-  kernel().model_manager.register_node_model< glif_lif_r_asc_cond >(
-    "glif_lif_r_asc_cond" );
-  kernel().model_manager.register_node_model< glif_lif_r_asc_a_cond >(
-    "glif_lif_r_asc_a_cond" );
 
   kernel().model_manager.register_node_model< iaf_chxk_2008 >(
     "iaf_chxk_2008" );

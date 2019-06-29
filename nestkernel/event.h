@@ -960,10 +960,23 @@ private:
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
-  typename std::vector< DataType >::iterator coeffarray_as_d_begin_;
-  typename std::vector< DataType >::iterator coeffarray_as_d_end_;
-  std::vector< unsigned int >::iterator coeffarray_as_uints_begin_;
-  std::vector< unsigned int >::iterator coeffarray_as_uints_end_;
+  union CoeffarrayBegin
+  {
+    std::vector< unsigned int >::iterator as_uint;
+    typename std::vector< DataType >::iterator as_d;
+
+    CoeffarrayBegin(){}; // need to provide default constructor due to
+                         // non-trivial constructors of iterators
+  } coeffarray_begin_;
+
+  union CoeffarrayEnd
+  {
+    std::vector< unsigned int >::iterator as_uint;
+    typename std::vector< DataType >::iterator as_d;
+
+    CoeffarrayEnd(){}; // need to provide default constructor due to
+                       // non-trivial constructors of iterators
+  } coeffarray_end_;
 
 public:
   /**
@@ -1033,8 +1046,8 @@ public:
   void
   set_coeffarray( std::vector< DataType >& ca )
   {
-    coeffarray_as_d_begin_ = ca.begin();
-    coeffarray_as_d_end_ = ca.end();
+    coeffarray_begin_.as_d = ca.begin();
+    coeffarray_end_.as_d = ca.end();
     assert( coeff_length_ == ca.size() );
   }
 
@@ -1048,11 +1061,11 @@ public:
 
     // generating a copy of the coeffarray is too time consuming
     // therefore we save an iterator to the beginning+end of the coeffarray
-    coeffarray_as_uints_begin_ = pos;
+    coeffarray_begin_.as_uint = pos;
 
     pos += coeff_length_ * number_of_uints_covered< DataType >();
 
-    coeffarray_as_uints_end_ = pos;
+    coeffarray_end_.as_uint = pos;
 
     return pos;
   }
@@ -1065,11 +1078,11 @@ public:
    */
   std::vector< unsigned int >::iterator& operator>>( std::vector< unsigned int >::iterator& pos )
   {
-    for ( typename std::vector< DataType >::iterator i = coeffarray_as_d_begin_; i != coeffarray_as_d_end_; i++ )
+    for ( typename std::vector< DataType >::iterator it = coeffarray_begin_.as_d; it != coeffarray_end_.as_d; ++it )
     {
       // we need the static_cast here as the size of a stand-alone variable
       // and a std::vector entry may differ (e.g. for std::vector< bool >)
-      write_to_comm_buffer( static_cast< DataType >( *i ), pos );
+      write_to_comm_buffer( static_cast< DataType >( *it ), pos );
     }
     return pos;
   }
@@ -1087,13 +1100,13 @@ public:
   const std::vector< unsigned int >::iterator&
   begin()
   {
-    return coeffarray_as_uints_begin_;
+    return coeffarray_begin_.as_uint;
   }
 
   const std::vector< unsigned int >::iterator&
   end()
   {
-    return coeffarray_as_uints_end_;
+    return coeffarray_end_.as_uint;
   }
 
   DataType get_coeffvalue( std::vector< unsigned int >::iterator& pos );

@@ -91,14 +91,14 @@ nest::TargetTableDevices::send_to_device( const thread tid,
 }
 
 inline void
-nest::TargetTableDevices::send_to_device( const thread tid, const index source_gid, SecondaryEvent& e,
+nest::TargetTableDevices::send_to_device( const thread tid,
+  const index source_gid,
+  SecondaryEvent& e,
   const std::vector< ConnectorModel* >& cm )
 {
   const index lid = kernel().vp_manager.gid_to_lid( source_gid );
   const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
-  for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin();
-        cit != supported_syn_ids.end();
-        ++cit )
+  for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin(); cit != supported_syn_ids.end(); ++cit )
   {
     if ( target_to_devices_[ tid ][ lid ][ *cit ] != NULL )
     {

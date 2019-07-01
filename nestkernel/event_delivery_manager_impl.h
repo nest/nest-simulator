@@ -149,7 +149,7 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
     // considered.
     const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
     for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin(); cit != supported_syn_ids.end();
-	++cit )
+          ++cit )
     {
       const std::vector< size_t >& positions =
         kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid, *cit );
@@ -159,15 +159,14 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
         std::vector< unsigned int >::iterator it = send_buffer_secondary_events_.begin() + positions[ i ];
         e >> it;
       }
-
     }
     kernel().connection_manager.send_to_devices( tid, source_gid, e );
   }
   else
   {
-    send_local_( source, e, 0 );  // need to pass lag (last argument), but not
-                                  // used in template specialization, so pass
-                                  // zero as dummy value
+    send_local_( source, e, 0 ); // need to pass lag (last argument), but not
+                                 // used in template specialization, so pass
+                                 // zero as dummy value
   }
 }
 

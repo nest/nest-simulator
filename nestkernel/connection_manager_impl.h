@@ -59,8 +59,7 @@ ConnectionManager::send_to_devices( const thread tid, const index source_gid, Ev
 inline void
 ConnectionManager::send_to_devices( const thread tid, const index source_gid, SecondaryEvent& e )
 {
-  target_table_devices_.send_to_device(
-    tid, source_gid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+  target_table_devices_.send_to_device( tid, source_gid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
 }
 
 inline void
